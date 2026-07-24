@@ -1,7 +1,7 @@
 // Pure HRI text-zone resolution shared by the barcode renderer (getDisplaySize)
 // and the group-rotation bbox probe, so zone height and side never drift apart.
 
-import { ObjectRegistry, type LeafObject } from "@zplab/core/registry";
+import { ObjectRegistry, type LeafObject } from "../registry";
 import {
   EAN_TEXT_ZONE_DOTS,
   LOGMARS_TEXT_ZONE_DOTS,
@@ -10,8 +10,8 @@ import {
   GS1_HRI_FONT_SCALE,
   GS1_HRI_WIDTH_RATIO,
   HRI_FONT_0,
-} from "@zplab/core/lib/bwipConstants";
-import { measureInkWidthPx } from "@zplab/core/lib/labelGeometry/measureTextDots";
+} from "./bwipConstants";
+import { measureInkWidthPx } from "./labelGeometry/measureTextDots";
 
 /** GS1-128 HRI font em (dots): the scaled-up base, shrunk to fit the bar width
  *  by measured advance so it matches the print whatever face we use. Falls back

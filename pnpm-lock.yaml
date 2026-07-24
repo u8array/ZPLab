@@ -207,6 +207,9 @@ importers:
       '@zplab/core':
         specifier: workspace:*
         version: link:../core
+      bwip-js:
+        specifier: ^4.11.2
+        version: 4.11.2
       zod:
         specifier: 'catalog:'
         version: 4.4.3

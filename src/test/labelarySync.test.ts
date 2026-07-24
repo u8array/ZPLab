@@ -14,7 +14,7 @@ import {
   zebraWidthBarGeometry,
   zebraWidthBarText,
   type ZebraWidthBarType,
-} from "../lib/barcodeRawGeometry";
+} from "@zplab/core/lib/barcodeRawGeometry";
 import { dotsToPx } from "@zplab/core/lib/coordinates";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { upcSuppTextZoneDots, QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";

@@ -5,7 +5,7 @@ import { dirname, resolve } from "node:path";
 import { buildBwipOptions, dataMatrixMinFitIndex, getDisplaySize, getEanUpcHriFragments, parseZplCode128Escapes } from "./bwipHelpers";
 import type { LeafObject } from "@zplab/core/registry";
 import { dmSizePairs, type DataMatrixProps } from "@zplab/core/registry/datamatrix";
-import { placeholderContentFor, samplePropsFor } from "../../registry/placeholderContent";
+import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
 import { ZD230_QA_123 } from "../../test/qrFixtures";
 type LabelObject = LeafObject;
 
@@ -275,13 +275,16 @@ describe("buildBwipOptions aztec ecLevel mapping", () => {
 });
 
 describe("getDisplaySize coverage (ZPL-first policy)", () => {
-  // Static parse of bwipHelpers.ts: every barcode type registered via BCID
+  // Static parse of the core kernel: every barcode type registered via BCID
   // must have an explicit `case "type":` in getUprightDisplaySize, otherwise
   // the default fallback returns bwip-natural pixels and silently violates
   // the ZPL-first sizing policy.
   it("every BCID-registered type has an explicit case (no silent default)", () => {
     const here = dirname(fileURLToPath(import.meta.url));
-    const src = readFileSync(resolve(here, "bwipHelpers.ts"), "utf-8");
+    const src = readFileSync(
+      resolve(here, "../../../packages/core/src/lib/barcodeDims.ts"),
+      "utf-8",
+    );
 
     const bcidBlock = /const BCID:[^=]*=\s*\{([\s\S]*?)\};/.exec(src);
     expect(bcidBlock, "BCID literal not found in source").toBeTruthy();

@@ -8,7 +8,7 @@
  * build).
  */
 
-import { PLESSEY_RATIO } from "@zplab/core/registry/plessey";
+import { PLESSEY_RATIO } from "../registry/plessey";
 
 export interface RawBarRect {
   x: number;

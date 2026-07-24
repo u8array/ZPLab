@@ -8,6 +8,7 @@ import {
 } from "@zplab/core/lib/designFile";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { importZplText, type ZplImportResult } from "@zplab/core/lib/zplImportService";
+import { withFootprintBinding } from "./footprint.js";
 import type { ImportReport } from "@zplab/core/lib/zplParser";
 import { computePreflight } from "@zplab/core/lib/preflight";
 import type { BoundingBoxDots, ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
@@ -326,11 +327,13 @@ export type ValidateDraftResult =
 export function validateDraft(designFile: unknown): ValidateDraftResult {
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;
-  const { label, pages } = parsed.value;
+  const { label, pages, variables } = parsed.value;
   return {
     ok: true,
-    warnings: perPage(pages, label, preflightOf),
-    ...geometryFor(pages, label),
+    ...withFootprintBinding(label, variables, () => ({
+      warnings: perPage(pages, label, preflightOf),
+      ...geometryFor(pages, label),
+    })),
   };
 }
 
@@ -377,7 +380,10 @@ export function exportZpl(designFile: unknown): ExportZplResult {
   if (!parsed.ok) return parsed;
   const { label, pages, variables } = parsed.value;
   // Same path as the app's export: per-page emit replays captured overlays.
-  return { ok: true, zpl: generateMultiPageZPL(label, pages, variables) };
+  return {
+    ok: true,
+    zpl: withFootprintBinding(label, variables, () => generateMultiPageZPL(label, pages, variables)),
+  };
 }
 
 // ── Raw-ZPL input: parse a ZPL stream back into the editable model, so the
@@ -480,8 +486,10 @@ export function validateZpl(
     pageCount: imported.pages.length,
     label,
     findings: findingsOf(imported.report),
-    warnings: perPage(imported.pages, label, preflightOf),
-    ...geometryFor(imported.pages, label),
+    ...withFootprintBinding(label, imported.variables, () => ({
+      warnings: perPage(imported.pages, label, preflightOf),
+      ...geometryFor(imported.pages, label),
+    })),
   };
 }
 
@@ -517,8 +525,10 @@ export function importZpl(
     ok: true,
     designFile: JSON.parse(serialized) as DesignFileJson,
     findings: findingsOf(imported.report),
-    warnings: perPage(imported.pages, label, preflightOf),
-    ...geometryFor(imported.pages, label),
+    ...withFootprintBinding(label, imported.variables, () => ({
+      warnings: perPage(imported.pages, label, preflightOf),
+      ...geometryFor(imported.pages, label),
+    })),
   };
 }
 

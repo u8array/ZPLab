@@ -6,7 +6,8 @@ import {
 } from "@zplab/core/lib/variableBinding";
 import { objectResolvesCtrl, type LeafObject } from "@zplab/core/registry";
 import { isGroup, type LabelObject } from "@zplab/core/types/Group";
-import { measureBarcodeFootprintDots } from "../components/Canvas/bwipHelpers";
+import bwipjs from "bwip-js/browser";
+import { measureBarcodeFootprintDotsWith, type BwipEngine } from "@zplab/core/lib/barcodeDims";
 import { useLabelStore } from "../store/labelStore";
 
 const measure = (o: LabelObject, dpmm?: number) => {
@@ -21,7 +22,7 @@ const measure = (o: LabelObject, dpmm?: number) => {
     clockCtxFromLabel(s.label),
     objectResolvesCtrl(o),
   );
-  return measureBarcodeFootprintDots(resolved as LeafObject, d, d);
+  return measureBarcodeFootprintDotsWith(bwipjs as unknown as BwipEngine, resolved as LeafObject, d, d);
 };
 
 /** Registers the exact (dot-space, binding-resolved) footprint measurer before

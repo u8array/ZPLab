@@ -1,5 +1,5 @@
-import { getEntry } from '@zplab/core/registry';
-import { GS1_SAMPLE_CONTENT } from '@zplab/core/lib/gs1';
+import { getEntry } from './index';
+import { GS1_SAMPLE_CONTENT } from '../lib/gs1';
 
 /** The sample a blank field renders on canvas and in the Labelary preview
  *  overlay: the type's placeholderContent, or the GS1 sample once the field

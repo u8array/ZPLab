@@ -17,9 +17,9 @@ import {
   type BarcodeDisplaySize,
   type EanUpcType,
 } from "./bwipHelpers";
-import { resolveHriAbove, gs1HriFontDots } from "../../lib/barcodeHri";
+import { resolveHriAbove, gs1HriFontDots } from "@zplab/core/lib/barcodeHri";
 import { gs1ContentToElementString } from "@zplab/core/lib/gs1";
-import { placeholderContentFor, samplePropsFor } from "../../registry/placeholderContent";
+import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { hasTemplateMarkers } from "@zplab/core/lib/fnTemplate";
 import { hasControlMarkers } from "@zplab/core/types/controlKey";

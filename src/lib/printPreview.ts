@@ -5,7 +5,7 @@ import { isGroup, type LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
 import { applyBindingToTree, clockCtxFromLabel, getObjectStringContent, type ActiveRow } from "@zplab/core/lib/variableBinding";
 import { objectResolvesCtrl } from "@zplab/core/registry";
-import { placeholderContentFor, samplePropsFor } from "../registry/placeholderContent";
+import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
 
 /** Blank fields rendered with their symbology sample, so the preview overlay
  *  matches the canvas (which shows the same sample behind the warning frame).
