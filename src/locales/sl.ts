@@ -394,6 +394,8 @@ const sl = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Sidranje črtne kode na strani tiskalnika',
+    emitZJustifyHint: 'Odda desno usidrane 1D črtne kode s parametrom poravnave ZPL, tako da tiskalnik ohranja desni rob nespremenjen za serijske številke in spremenljive podatke. Zahteva strojno programsko opremo V50.14 ali novejšo; starejši tiskalniki bi te črtne kode postavili napačno.',
     printQuantity: 'Količina tiskanja',
     pauseCount: 'Premor vsakih N etiket',
     replicates: 'Replike na etiketo',

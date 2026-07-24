@@ -394,6 +394,8 @@ const pl = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Zakotwiczenie kodu kreskowego po stronie drukarki',
+    emitZJustifyHint: 'Generuje kody kreskowe 1D zakotwiczone do prawej krawędzi za pomocą parametru justowania ZPL, dzięki czemu drukarka utrzymuje stałą prawą krawędź dla numerów seryjnych i danych zmiennych. Wymaga oprogramowania sprzętowego V50.14 lub nowszego; starsze drukarki błędnie umieszczałyby te kody kreskowe.',
     printQuantity: 'Ilość wydruków',
     pauseCount: 'Pauza co N etykiet',
     replicates: 'Replikacje na etykietę',

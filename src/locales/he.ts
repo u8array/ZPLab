@@ -394,6 +394,8 @@ const he = {
     dpmm24: '24 נקודות/מ"מ (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'עיגון ברקוד בצד המדפסת',
+    emitZJustifyHint: 'פליטת ברקודים חד-ממדיים מעוגנים לימין באמצעות פרמטר היישור של ZPL, כך שהמדפסת שומרת על הקצה הימני קבוע עבור מספרים סידוריים ונתונים משתנים. דורש קושחה V50.14 ומעלה; מדפסות ישנות יותר ימקמו ברקודים אלה באופן שגוי.',
     printQuantity: 'כמות הדפסה',
     pauseCount: 'השהיה כל N תוויות',
     replicates: 'שכפולים לכל תווית',

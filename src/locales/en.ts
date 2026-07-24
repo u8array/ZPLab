@@ -394,6 +394,8 @@ const en = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Printer-side barcode anchoring',
+    emitZJustifyHint: 'Emit right-anchored 1D barcodes with the ZPL justification parameter so the printer keeps the right edge fixed for serial numbers and variable data. Requires firmware V50.14 or newer; older printers would misplace these barcodes.',
     printQuantity: 'Print quantity',
     pauseCount: 'Pause every N labels',
     replicates: 'Replicates per label',

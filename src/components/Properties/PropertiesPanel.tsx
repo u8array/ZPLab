@@ -642,6 +642,21 @@ function LabelConfigPanel({
             }}
           />
         </div>
+
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            className="mt-0.5 accent-accent"
+            checked={label.emit1dZJustify ?? false}
+            onChange={(e) => onUpdate({ emit1dZJustify: e.target.checked || undefined })}
+          />
+          <span className={labelCls}>
+            {t.label.emitZJustify}
+            <Tooltip content={t.label.emitZJustifyHint}>
+              <InformationCircleIcon className="w-3.5 h-3.5 ml-1 inline-block align-text-bottom text-muted cursor-help" />
+            </Tooltip>
+          </span>
+        </label>
         </StaticSectionCard>
 
         <SectionCard

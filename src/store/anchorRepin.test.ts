@@ -182,12 +182,22 @@ describe("dirty semantics of fieldJustify", () => {
       [asPage(after)] as Parameters<typeof stampDirtyLeaves>[1],
     )[0]!.objects[0] as { dirty?: boolean }).dirty;
 
-  it("a 1D justify toggle does not stamp dirty (no z emitted yet; overlay survives)", () => {
+  it("a 1D justify toggle does not stamp dirty while the z-emit gate is off", () => {
     const leaf = barcode();
-    // R, not only C: R is the value a future z-emit would make emit-affecting.
     expect(stamp(leaf, { ...leaf, fieldJustify: "C" } as LabelObject)).toBeUndefined();
     const noJustify = barcode({ fieldJustify: undefined });
     expect(stamp(noJustify, { ...noJustify, fieldJustify: "R" } as LabelObject)).toBeUndefined();
+  });
+
+  it("a 1D justify toggle stamps dirty when emit1dZJustify is on (bytes change)", () => {
+    const leaf = barcode({ fieldJustify: undefined });
+    const changed = { ...leaf, fieldJustify: "R" } as LabelObject;
+    const stamped = stampDirtyLeaves(
+      [asPage(leaf)] as Parameters<typeof stampDirtyLeaves>[0],
+      [asPage(changed)] as Parameters<typeof stampDirtyLeaves>[1],
+      true,
+    );
+    expect((stamped[0]!.objects[0] as { dirty?: boolean }).dirty).toBe(true);
   });
 
   it("a 2D justify change stamps dirty (fieldPosZ echoes the z)", () => {

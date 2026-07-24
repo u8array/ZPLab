@@ -394,6 +394,8 @@ const ro = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Ancorarea codului de bare pe partea imprimantei',
+    emitZJustifyHint: 'Emite coduri de bare 1D ancorate la dreapta cu parametrul de aliniere ZPL, astfel încât imprimanta să mențină marginea dreaptă fixă pentru numere de serie și date variabile. Necesită firmware V50.14 sau mai nou; imprimantele mai vechi ar poziționa greșit aceste coduri de bare.',
     printQuantity: 'Cantitate imprimare',
     pauseCount: 'Pauză la fiecare N etichete',
     replicates: 'Replicări pe etichetă',

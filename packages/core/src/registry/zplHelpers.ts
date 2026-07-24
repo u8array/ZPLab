@@ -8,6 +8,8 @@ import { modelToZplAnchor } from "../lib/labelGeometry/textPositionTransforms";
 import { getTextRenderMetrics } from "../lib/labelGeometry/textRenderMetrics";
 import { blockInterLineExtentDots } from "../lib/zebraTextLayout";
 import type { LabelObject } from "../types/Group";
+import { objectRotation } from "./rotation";
+import { measureFootprintDots } from "../lib/footprintProber";
 
 /** Emit `^FT` or `^FO` depending on how the object was originally positioned.
  *  1D emitters use this z-less form: their x is import-normalised top-left,
@@ -15,6 +17,29 @@ import type { LabelObject } from "../types/Group";
 export function fieldPos(obj: LabelObjectBase): string {
   const cmd = obj.positionType === "FT" ? "FT" : "FO";
   return `^${cmd}${obj.x},${obj.y}`;
+}
+
+/** Printer-side right-anchor x (model x + measured width) when the gated,
+ *  verified combo (R, FT, rotation N) applies; null otherwise. Single source
+ *  for the emit, the home-shift drop test and the off-label preflight, so the
+ *  three can never disagree on which edge the printer sees. Callers own the
+ *  1D-type check (importing BARCODE_1D_TYPES here would cycle the registry). */
+export function printerAnchoredX(
+  obj: LabelObjectBase & { type: string },
+  label: { emit1dZJustify?: boolean; dpmm?: number },
+): number | null {
+  if (!label.emit1dZJustify) return null;
+  if (obj.fieldJustify !== "R" || obj.positionType !== "FT") return null;
+  if (objectRotation((obj as unknown as { props: object }).props) !== "N") return null;
+  const fp = measureFootprintDots(obj as LabelObject, label.dpmm);
+  return fp ? obj.x + fp.w : null;
+}
+
+/** {@link fieldPos} for 1D: behind the emit1dZJustify gate an R field emits
+ *  `^FT x+w,y,1` so the PRINTER anchors the right edge (^SN/variable data). */
+export function fieldPos1d(obj: LabelObjectBase & { type: string }, ctx?: ZplEmitContext): string {
+  const ax = ctx ? printerAnchoredX(obj, ctx.label) : null;
+  return ax === null ? fieldPos(obj) : `^FT${ax},${obj.y},1`;
 }
 
 /** {@link fieldPos} with the z echo: import never normalises these fields, so

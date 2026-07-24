@@ -1,6 +1,6 @@
 import type { LabelObjectBase } from '../types/LabelObject';
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { fieldPos, fdFieldFor } from './zplHelpers';
+import { fieldPos1d, fdFieldFor } from './zplHelpers';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { type ZplRotation } from './rotation';
 import {
@@ -81,6 +81,6 @@ export const gs1databar: ObjectTypeCore<Gs1DatabarProps> = {
     // ^BRo,s,m,sep,h[,sg]: segments must only be present for Expanded Stacked (7).
     // Including segments on sym 1–6 makes Labelary stack the symbol (wrong rendering).
     const segs = p.symbology === 7 ? `,${p.segments ?? GS1_DATABAR_DEFAULT_SEGMENTS}` : '';
-    return `^BY${p.magnification}${fieldPos(obj)}^BR${p.rotation},${p.symbology},${p.magnification},2,${ZPL_HEIGHT_PLACEHOLDER}${segs}${fdFieldFor(p.content, ctx)}`;
+    return `^BY${p.magnification}${fieldPos1d(obj, ctx)}^BR${p.rotation},${p.symbology},${p.magnification},2,${ZPL_HEIGHT_PLACEHOLDER}${segs}${fdFieldFor(p.content, ctx)}`;
   },
 };

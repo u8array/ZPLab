@@ -14,12 +14,12 @@ import { EMIT_AFFECTING_KEYS, NON_EMITTING_PROP_KEYS } from './labelStore.intern
 /** True when any emit-affecting field differs. Scalars compare by value;
  *  props diffs shallowly (editor-aid keys skipped) and relies on mutators
  *  replacing, never mutating, nested prop values. */
-function emitAffectingChanged(a: LabelObject, b: LabelObject): boolean {
+function emitAffectingChanged(a: LabelObject, b: LabelObject, emit1dZ: boolean): boolean {
   for (const k of EMIT_AFFECTING_KEYS) {
     const av = (a as Record<string, unknown>)[k];
     const bv = (b as Record<string, unknown>)[k];
     if (av === bv) continue;
-    if (k === 'fieldJustify' && !emitsFieldJustify(b.type)) continue;
+    if (k === 'fieldJustify' && !emitsFieldJustify(b.type, emit1dZ)) continue;
     if (k === 'props' && !propsEmitChanged(av as object, bv as object)) continue;
     return true;
   }
@@ -44,7 +44,7 @@ function indexLeaves(objects: LabelObject[], out: Map<string, LabelObject>): voi
 /** Return `nextPages` with `dirty` stamped on any leaf whose emit-affecting
  *  fields changed versus its same-id counterpart in `prevPages`. Identity-
  *  preserving: untouched subtrees keep their references. */
-export function stampDirtyLeaves(prevPages: Page[], nextPages: Page[]): Page[] {
+export function stampDirtyLeaves(prevPages: Page[], nextPages: Page[], emit1dZ = false): Page[] {
   const prev = new Map<string, LabelObject>();
   for (const p of prevPages) indexLeaves(p.objects, prev);
 
@@ -61,7 +61,7 @@ export function stampDirtyLeaves(prevPages: Page[], nextPages: Page[]): Page[] {
       const before = prev.get(o.id);
       // New object (no prior) or untouched reference: nothing to stamp.
       if (!before || before === o) return o;
-      if (!emitAffectingChanged(before, o)) return o;
+      if (!emitAffectingChanged(before, o, emit1dZ)) return o;
       changed = true;
       return { ...o, dirty: true };
     });
@@ -82,7 +82,7 @@ export function stampDirtyLeaves(prevPages: Page[], nextPages: Page[]): Page[] {
  *  Mutator-preserving pass-through (adds no store type). Only the `set` injected
  *  into slices is wrapped; a direct `useLabelStore.setState` would bypass
  *  stamping, but all production mutations go through slice actions. */
-export const dirtyTracking = (<T extends { pages: Page[] }>(
+export const dirtyTracking = (<T extends { pages: Page[]; label?: { emit1dZJustify?: boolean } }>(
   initializer: StateCreator<T, [], []>,
 ): StateCreator<T, [], []> =>
   (set, get, api) => {
@@ -96,7 +96,8 @@ export const dirtyTracking = (<T extends { pages: Page[] }>(
       if (patch && typeof patch === 'object' && 'pages' in patch) {
         const nextPages = (patch as { pages?: Page[] }).pages;
         if (nextPages && nextPages !== prevPages) {
-          const stamped = stampDirtyLeaves(prevPages, nextPages);
+          const emit1dZ = get().label?.emit1dZJustify === true;
+          const stamped = stampDirtyLeaves(prevPages, nextPages, emit1dZ);
           if (stamped !== nextPages) {
             return (set as (p: unknown, r?: boolean) => void)({ ...patch, pages: stamped }, replace);
           }
@@ -105,6 +106,6 @@ export const dirtyTracking = (<T extends { pages: Page[] }>(
       return (set as (p: unknown, r?: boolean) => void)(patch, replace);
     };
     return initializer(stampingSet, get, api);
-  }) as <T extends { pages: Page[] }, Mps extends [StoreMutatorIdentifier, unknown][] = [], Mcs extends [StoreMutatorIdentifier, unknown][] = []>(
+  }) as <T extends { pages: Page[]; label?: { emit1dZJustify?: boolean } }, Mps extends [StoreMutatorIdentifier, unknown][] = [], Mcs extends [StoreMutatorIdentifier, unknown][] = []>(
     initializer: StateCreator<T, Mps, Mcs>,
   ) => StateCreator<T, Mps, Mcs>;

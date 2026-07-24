@@ -1,5 +1,5 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { fieldPos, fdFieldFor } from './zplHelpers';
+import { fieldPos1d, fdFieldFor } from './zplHelpers';
 import { commitBarcodeWidthHeightTransform } from './transformHelpers';
 import { limitedSupportPreflight } from '../lib/barcodeScannability';
 import { type ZplRotation } from './rotation';
@@ -78,7 +78,7 @@ export const code49: ObjectTypeCore<Code49Props> = {
     const interp = p.printInterpretation ? 'Y' : 'N';
     return [
       `^BY${p.moduleWidth}`,
-      fieldPos(obj),
+      fieldPos1d(obj, ctx),
       `^B4${p.rotation},${p.height},${interp},${p.mode}`,
       fdFieldFor(p.content, ctx),
     ]

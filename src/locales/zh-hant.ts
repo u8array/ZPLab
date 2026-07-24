@@ -394,6 +394,8 @@ const zhHant = {
     dpmm24: '24 點/公釐 (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: '印表機端條碼錨定',
+    emitZJustifyHint: '使用 ZPL 對齊參數發出右對齊的一維條碼，讓印表機在列印序號和可變資料時保持右邊緣固定。需要 V50.14 或更新的韌體；較舊的印表機會錯誤定位這些條碼。',
     printQuantity: '列印數量',
     pauseCount: '每 N 個標籤暫停',
     replicates: '每個標籤的副本數',

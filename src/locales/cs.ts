@@ -394,6 +394,8 @@ const cs = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Ukotvení čárového kódu na straně tiskárny',
+    emitZJustifyHint: 'Odešle vpravo ukotvené 1D čárové kódy s parametrem zarovnání ZPL, aby tiskárna udržela pravý okraj pevný pro sériová čísla a proměnná data. Vyžaduje firmware V50.14 nebo novější; starší tiskárny by tyto čárové kódy umístily špatně.',
     printQuantity: 'Počet výtisků',
     pauseCount: 'Pauza každých N štítků',
     replicates: 'Replikace na štítek',

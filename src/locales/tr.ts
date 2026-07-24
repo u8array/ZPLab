@@ -394,6 +394,8 @@ const tr = {
     dpmm24: '24 nokta/mm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Yazıcı taraflı barkod sabitleme',
+    emitZJustifyHint: 'Yazıcının seri numaraları ve değişken veriler için sağ kenarı sabit tutması amacıyla ZPL hizalama parametresiyle sağa sabitlenmiş 1D barkodlar üretir. V50.14 veya daha yeni bir aygıt yazılımı gerektirir; eski yazıcılar bu barkodları yanlış konumlandırır.',
     printQuantity: 'Baskı miktarı',
     pauseCount: 'Her N etikette duraklat',
     replicates: 'Etiket başına kopya',

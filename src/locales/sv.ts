@@ -394,6 +394,8 @@ const sv = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Skrivarsidig streckkodsförankring',
+    emitZJustifyHint: 'Skickar högerförankrade 1D-streckkoder med ZPL:s justeringsparameter så att skrivaren håller högerkanten fast för serienummer och variabel data. Kräver firmware V50.14 eller nyare; äldre skrivare skulle placera dessa streckkoder fel.',
     printQuantity: 'Utskriftsmängd',
     pauseCount: 'Paus var N:e etikett',
     replicates: 'Repliker per etikett',

@@ -394,6 +394,8 @@ const fa = {
     dpmm24: '24 نقطه/میلی‌متر (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'لنگرسازی بارکد در سمت چاپگر',
+    emitZJustifyHint: 'بارکدهای یک‌بعدی لنگرشده به راست را با پارامتر تراز ZPL ارسال می‌کند تا چاپگر لبه راست را برای شماره‌های سریال و داده‌های متغیر ثابت نگه دارد. نیازمند فریمور V50.14 یا جدیدتر است؛ چاپگرهای قدیمی‌تر این بارکدها را نادرست قرار می‌دهند.',
     printQuantity: 'تعداد چاپ',
     pauseCount: 'توقف هر N برچسب',
     replicates: 'تکرار در هر برچسب',

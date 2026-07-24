@@ -130,6 +130,10 @@ export const labelConfigSchema = z.object({
   /** Design-time safe-area inset (mm) from every edge. Drives the align/pin
    *  reference rect and a canvas guide; optional so older designs stay valid. */
   safeAreaMm: z.number().min(0).optional(),
+  /** Emit ^FT x,y,1 for right-justified 1D barcodes so the PRINTER anchors the
+   *  right edge (variable data stays pinned). Requires firmware V50.14/V60.14+;
+   *  older firmware ignores z and would misplace the shifted x, hence opt-in. */
+  emit1dZJustify: z.boolean().optional(),
   printQuantity: z.number().optional(),
   /** ^PQ p2: pause every N labels (0 = none). */
   pauseCount: z.number().int().min(0).max(99999999).optional(),

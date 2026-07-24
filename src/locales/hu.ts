@@ -394,6 +394,8 @@ const hu = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Nyomtató oldali vonalkód-rögzítés',
+    emitZJustifyHint: 'Jobbra rögzített 1D vonalkódokat küld a ZPL igazítási paraméterével, hogy a nyomtató a sorozatszámok és a változó adatok jobb szélét fixen tartsa. V50.14 vagy újabb firmware szükséges; a régebbi nyomtatók rosszul helyeznék el ezeket a vonalkódokat.',
     printQuantity: 'Nyomtatási mennyiség',
     pauseCount: 'Szünet N címkénként',
     replicates: 'Ismétlés címkénként',

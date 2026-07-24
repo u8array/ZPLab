@@ -394,6 +394,8 @@ const ar = {
     dpmm24: '24 نقطة/مم (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'تثبيت الباركود من جهة الطابعة',
+    emitZJustifyHint: 'إرسال باركود أحادي البعد مثبت من الجهة اليمنى باستخدام معامل المحاذاة في ZPL، بحيث تحافظ الطابعة على ثبات الحافة اليمنى للأرقام التسلسلية والبيانات المتغيرة. يتطلب البرنامج الثابت V50.14 أو أحدث؛ الطابعات الأقدم قد تضع هذه الباركودات في مكان خاطئ.',
     printQuantity: 'كمية الطباعة',
     pauseCount: 'إيقاف مؤقت كل N ملصق',
     replicates: 'نسخ لكل ملصق',

@@ -394,6 +394,8 @@ const hr = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Sidrenje crtičnog koda na strani pisača',
+    emitZJustifyHint: 'Generira 1D crtične kodove usidrene s desne strane pomoću ZPL parametra poravnanja, kako bi pisač zadržao desni rub fiksnim za serijske brojeve i promjenjive podatke. Zahtijeva firmver V50.14 ili noviji; stariji pisači bi te crtične kodove pogrešno postavili.',
     printQuantity: 'Količina ispisa',
     pauseCount: 'Pauza svakih N etiketa',
     replicates: 'Replike po etiketi',

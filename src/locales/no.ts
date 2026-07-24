@@ -394,6 +394,8 @@ const no = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Skriverbasert strekkodeforankring',
+    emitZJustifyHint: 'Sender ut høyreforankrede 1D-strekkoder med ZPL-justeringsparameteren, slik at skriveren holder høyrekanten fast for serienumre og variable data. Krever fastvare V50.14 eller nyere; eldre skrivere ville plassert disse strekkodene feil.',
     printQuantity: 'Utskriftsmengde',
     pauseCount: 'Pause hver N etikett',
     replicates: 'Replikeringer per etikett',

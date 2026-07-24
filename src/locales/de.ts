@@ -394,6 +394,8 @@ const de = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Sicherheitsabstand',
     safeAreaHint: 'Gleichmäßiger Rand zu allen Kanten. Zeigt eine Hilfslinie und richtet "An Etikett ausrichten" am Rand aus.',
+    emitZJustify: 'Druckerseitige Barcode-Verankerung',
+    emitZJustifyHint: 'Rechtsverankerte 1D-Barcodes mit dem ZPL-Ausrichtungsparameter ausgeben, damit der Drucker die rechte Kante für Seriennummern und variable Daten fixiert hält. Erfordert Firmware V50.14 oder neuer; ältere Drucker platzieren diese Barcodes sonst falsch.',
     printQuantity: 'Druckanzahl',
     pauseCount: 'Pause nach N Etiketten',
     replicates: 'Wiederholungen pro Etikett',

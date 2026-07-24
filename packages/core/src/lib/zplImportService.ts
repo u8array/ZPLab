@@ -7,7 +7,9 @@ import type { CustomFontMapping, LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
 import type { LabelObject, Page } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type Variable } from "../types/Variable";
-import { BARCODE_1D_TYPES } from "../registry";
+import { BARCODE_1D_TYPES, objectResolvesCtrl } from "../registry";
+import { applyBindingToObject, clockCtxFromLabel } from "./variableBinding";
+import { measureFootprintDots } from "./footprintProber";
 import { objectRotation } from "../registry/rotation";
 
 export interface ZplImportResult {
@@ -27,13 +29,7 @@ export interface ZplImportResult {
   mixedPageGeometry: boolean;
 }
 
-export interface ZplImportOptions {
-  /** Rotated visual footprint (dots), or null when unmeasurable. Enables the
-   *  ^FT+R barcode x-normalisation; headless callers omit it (x uncorrected). */
-  measureFootprint?: (obj: LabelObject) => { w: number; h: number } | null;
-}
-
-export function importZplText(zpl: string, dpmm: number, opts?: ZplImportOptions): ZplImportResult {
+export function importZplText(zpl: string, dpmm: number): ZplImportResult {
   // Single pass: stream-persistent state (^MU, ^CC/^CT/^CD, ^CI, ^CW/uploads,
   // ^CF/^BY, ^LH/^LT/^LR) carries across ^XA blocks, and the parser owns the
   // page boundaries (prefix-aware, unlike a literal ^XA split).
@@ -47,6 +43,7 @@ export function importZplText(zpl: string, dpmm: number, opts?: ZplImportOptions
   // becomes a separate Variable on a free fnNumber, keeping fn
   // document-unique for mapping/batch/header.
   const variables: Variable[] = [];
+  let zNormalized = false;
   const variablesBySourceFn = new Map<number, Variable[]>();
   // Renumbering must avoid every source ^FN in the document (overlays replay
   // original bytes, so a regenerated field would otherwise collide).
@@ -100,12 +97,19 @@ export function importZplText(zpl: string, dpmm: number, opts?: ZplImportOptions
     // ^FT + rotation N only: ^FO-z and the rotation interaction are spec-
     // ambiguous, pending printer check (the branch's own FT+I math would even
     // demand shift 0 for R). Text unshifted (import measurement fragile).
-    if (opts?.measureFootprint) {
-      for (const o of page.objects) {
-        if (o.fieldJustify !== "R" || o.positionType !== "FT" || !BARCODE_1D_TYPES.has(o.type)) continue;
-        if (objectRotation((o as { props: object }).props) !== "N") continue;
-        const fp = opts.measureFootprint(o);
-        if (fp) o.x -= fp.w;
+    // Markers resolve against the IMPORTED bindings (defaults, no dataset row)
+    // so the shift can't depend on whatever document happens to be open.
+    for (const o of page.objects) {
+      if (o.fieldJustify !== "R" || o.positionType !== "FT" || !BARCODE_1D_TYPES.has(o.type)) continue;
+      if (objectRotation((o as { props: object }).props) !== "N") continue;
+      const resolved = applyBindingToObject(
+        o, variables, null, "preview", clockCtxFromLabel(page.labelConfig), objectResolvesCtrl(o),
+      );
+      // Sidecar density wins: the stream's dot values live in ITS dpmm.
+      const fp = measureFootprintDots(resolved, r.labelConfig.dpmm ?? dpmm);
+      if (fp) {
+        o.x -= fp.w;
+        zNormalized = true;
       }
     }
     // A bare page (no ^XA wrapper) usually carries just fonts/profile. But a
@@ -129,6 +133,9 @@ export function importZplText(zpl: string, dpmm: number, opts?: ZplImportOptions
   // blocks' values. Fonts stay document-wide, and the ZPLLAB sidecar (dpmm,
   // which plain ZPL can't carry) is a page-0 preamble that overrides the size.
   const labelConfig: Partial<LabelConfig> = { ...r.pages[0]?.labelConfig };
+  // The stream carried ^FT z on a 1D field, so the target firmware supports
+  // it; without the gate a later edit would regenerate z-less shifted bytes.
+  if (zNormalized) labelConfig.emit1dZJustify = true;
   if (r.labelConfig.customFonts) labelConfig.customFonts = r.labelConfig.customFonts;
   else delete labelConfig.customFonts;
   if (r.labelConfig.dpmm !== undefined) {

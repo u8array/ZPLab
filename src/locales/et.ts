@@ -394,6 +394,8 @@ const et = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Triipkoodi ankurdamine printeri poolel',
+    emitZJustifyHint: 'Väljastab paremale ankurdatud 1D-triipkoodid ZPL joondusparameetriga, et printer hoiaks parema serva seerianumbrite ja muutuvate andmete jaoks paigal. Nõuab püsivara V50.14 või uuemat; vanemad printerid paigutaksid need triipkoodid valesti.',
     printQuantity: 'Trükikogus',
     pauseCount: 'Paus iga N sildi järel',
     replicates: 'Korduvad sildi kohta',

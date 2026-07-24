@@ -394,6 +394,8 @@ const sr = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Usidravanje bar koda na strani štampača',
+    emitZJustifyHint: 'Emituje 1D bar kodove usidrene s desne strane pomoću ZPL parametra za poravnanje, tako da štampač zadržava desnu ivicu fiksnom za serijske brojeve i promenljive podatke. Zahteva firmver V50.14 ili noviji; stariji štampači bi ove bar kodove pogrešno pozicionirali.',
     printQuantity: 'Количина штампе',
     pauseCount: 'Пауза сваких N етикета',
     replicates: 'Реплике по етикети',

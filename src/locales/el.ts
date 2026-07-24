@@ -394,6 +394,8 @@ const el = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Αγκύρωση γραμμωτού κώδικα από την πλευρά του εκτυπωτή',
+    emitZJustifyHint: 'Εκπέμπει γραμμωτούς κώδικες 1D αγκυρωμένους στα δεξιά με την παράμετρο στοίχισης ZPL, ώστε ο εκτυπωτής να διατηρεί σταθερή τη δεξιά άκρη για σειριακούς αριθμούς και μεταβλητά δεδομένα. Απαιτεί υλικολογισμικό V50.14 ή νεότερο· παλαιότεροι εκτυπωτές θα τοποθετούσαν λανθασμένα αυτούς τους κώδικες.',
     printQuantity: 'Ποσότητα εκτύπωσης',
     pauseCount: 'Παύση κάθε Ν ετικέτες',
     replicates: 'Αντίγραφα ανά ετικέτα',

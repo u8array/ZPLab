@@ -394,6 +394,8 @@ const zhHans = {
     dpmm24: '24 点/毫米 (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: '打印机端条码锚定',
+    emitZJustifyHint: '使用 ZPL 对齐参数发出右对齐的一维条码，使打印机在打印序列号和可变数据时保持右边缘固定。需要 V50.14 或更新的固件；较旧的打印机会错误定位这些条码。',
     printQuantity: '打印数量',
     pauseCount: '每 N 个标签暂停',
     replicates: '每个标签的副本数',

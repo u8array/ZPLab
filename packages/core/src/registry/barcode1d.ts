@@ -1,7 +1,7 @@
 import type { LabelObjectBase, ObjectGroup } from '../types/LabelObject';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import type { HriBehavior } from '../types/ZplEmit';
-import { fieldPos, fdFieldFor } from './zplHelpers';
+import { fieldPos1d, fdFieldFor } from './zplHelpers';
 import { serialFieldData, type SerialMode } from './serialField';
 import { commitBarcodeWidthHeightTransform } from './transformHelpers';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
@@ -176,7 +176,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
             config.controlChars === true && !p.gs1);
       return [
         byCmd,
-        fieldPos(obj),
+        fieldPos1d(obj, ctx),
         config.zplCommand(p),
         fieldData,
       ].filter(Boolean).join('');

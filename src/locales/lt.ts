@@ -394,6 +394,8 @@ const lt = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Brūkšninio kodo tvirtinimas spausdintuvo pusėje',
+    emitZJustifyHint: 'Siunčia dešinėje pusėje užfiksuotus 1D brūkšninius kodus naudojant ZPL lygiavimo parametrą, kad spausdintuvas išlaikytų fiksuotą dešinįjį kraštą serijos numeriams ir kintamiems duomenims. Reikalinga V50.14 ar naujesnė programinė aparatinė įranga; senesni spausdintuvai šiuos brūkšninius kodus išdėstytų neteisingai.',
     printQuantity: 'Spausdinimo kiekis',
     pauseCount: 'Pauzė kas N etikečių',
     replicates: 'Pakartojimai etiketei',

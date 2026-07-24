@@ -394,6 +394,8 @@ const ko = {
     dpmm24: '24 점/mm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: '프린터 측 바코드 고정',
+    emitZJustifyHint: 'ZPL 정렬 매개변수를 사용하여 오른쪽으로 고정된 1D 바코드를 출력하여, 프린터가 일련번호와 가변 데이터의 오른쪽 가장자리를 고정 유지하도록 합니다. 펌웨어 V50.14 이상이 필요하며, 이전 프린터에서는 바코드 위치가 잘못될 수 있습니다.',
     printQuantity: '인쇄 수량',
     pauseCount: 'N개 라벨마다 일시정지',
     replicates: '라벨당 복제 수',

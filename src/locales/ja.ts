@@ -394,6 +394,8 @@ const ja = {
     dpmm24: '24 ドット/mm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'プリンター側でのバーコード位置固定',
+    emitZJustifyHint: 'ZPLの位置揃えパラメータを使用して右端固定の1Dバーコードを出力し、シリアル番号や可変データでプリンターが右端を固定したまま印字できるようにします。ファームウェアV50.14以降が必要です。古いプリンターではバーコードの位置がずれます。',
     printQuantity: '印刷枚数',
     pauseCount: 'N枚ごとに一時停止',
     replicates: 'ラベルごとの複製数',

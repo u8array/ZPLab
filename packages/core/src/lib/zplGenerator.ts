@@ -1,6 +1,6 @@
 import { mmToDots } from './coordinates';
-import { getEntry } from '../registry';
-import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES } from '../registry/zplHelpers';
+import { getEntry , BARCODE_1D_TYPES } from '../registry';
+import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import {
   extractTemplateRefs,
   hasTemplateMarkers,
@@ -410,6 +410,11 @@ function shiftObjectsByHome(
       const anchorX = (obj.fieldJustify === 'R' ? b.x + w : b.x) - homeX;
       const anchorY = b.y + h - homeY - top;
       return anchorX < 0 || anchorY < 0 ? [] : [{ ...obj, x, y }];
+    }
+    // Gated 1D-R emits its right anchor (x+w); drop-test that, like graphics.
+    if (BARCODE_1D_TYPES.has(obj.type)) {
+      const ax = printerAnchoredX(obj, label);
+      if (ax !== null) return ax - homeX < 0 || y < 0 ? [] : [{ ...obj, x, y }];
     }
     return x < 0 || y < 0 ? [] : [{ ...obj, x, y }];
   };

@@ -394,6 +394,8 @@ const fi = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Tulostimen puoleinen viivakoodin ankkurointi',
+    emitZJustifyHint: 'Lähettää oikealle ankkuroituja 1D-viivakoodeja ZPL:n tasausparametrilla, jotta tulostin pitää oikean reunan kiinteänä sarjanumeroille ja muuttuvalle datalle. Vaatii laiteohjelmiston V50.14 tai uudemman; vanhemmat tulostimet sijoittaisivat nämä viivakoodit väärin.',
     printQuantity: 'Tulostusmäärä',
     pauseCount: 'Tauko joka N. etiketti',
     replicates: 'Replikoinnit per etiketti',

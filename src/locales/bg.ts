@@ -394,6 +394,8 @@ const bg = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Закотвяне на баркода от страна на принтера',
+    emitZJustifyHint: 'Извежда 1D баркодове, закотвени вдясно, с параметъра за подравняване на ZPL, така че принтерът да запазва десния край фиксиран за серийни номера и променливи данни. Изисква фърмуер V50.14 или по-нов; по-старите принтери биха позиционирали грешно тези баркодове.',
     printQuantity: 'Количество за печат',
     pauseCount: 'Пауза на всеки N етикета',
     replicates: 'Реплики на етикет',

@@ -394,6 +394,8 @@ const lv = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Svītrkoda enkurošana printera pusē',
+    emitZJustifyHint: 'Izvada pa labi enkurotus 1D svītrkodus ar ZPL līdzināšanas parametru, lai printeris saglabātu fiksētu labo malu sērijas numuriem un mainīgajiem datiem. Nepieciešams V50.14 vai jaunāks aparātprogrammatūras variants; vecāki printeri šos svītrkodus izvietotu nepareizi.',
     printQuantity: 'Drukāšanas daudzums',
     pauseCount: 'Pauze ik pēc N etiķetēm',
     replicates: 'Atkārtojumi uz etiķeti',

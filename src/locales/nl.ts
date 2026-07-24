@@ -394,6 +394,8 @@ const nl = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Barcode-verankering aan printerzijde',
+    emitZJustifyHint: 'Genereer rechts verankerde 1D-barcodes met de ZPL-uitlijningsparameter, zodat de printer de rechterrand vast houdt voor serienummers en variabele gegevens. Vereist firmware V50.14 of nieuwer; oudere printers plaatsen deze barcodes anders verkeerd.',
     printQuantity: 'Afdrukoplage',
     pauseCount: 'Pauze elke N labels',
     replicates: 'Replicaties per label',

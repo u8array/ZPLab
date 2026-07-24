@@ -394,6 +394,8 @@ const it = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Ancoraggio del codice a barre lato stampante',
+    emitZJustifyHint: 'Emette codici a barre 1D ancorati a destra con il parametro di giustificazione ZPL affinché la stampante mantenga fisso il bordo destro per numeri di serie e dati variabili. Richiede firmware V50.14 o successivo; le stampanti più vecchie posizionerebbero male questi codici a barre.',
     printQuantity: 'Quantità di stampa',
     pauseCount: 'Pausa ogni N etichette',
     replicates: 'Repliche per etichetta',

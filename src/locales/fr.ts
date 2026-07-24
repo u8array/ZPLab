@@ -394,6 +394,8 @@ const fr = {
     dpmm24: '24 dpmm (600 dpi)',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
+    emitZJustify: 'Ancrage du code-barres côté imprimante',
+    emitZJustifyHint: "Émettre des codes-barres 1D ancrés à droite avec le paramètre de justification ZPL afin que l'imprimante conserve le bord droit fixe pour les numéros de série et les données variables. Nécessite le firmware V50.14 ou plus récent ; les imprimantes plus anciennes positionneraient mal ces codes-barres.",
     printQuantity: 'Quantité d\'impression',
     pauseCount: 'Pause toutes les N étiquettes',
     replicates: 'Réplications par étiquette',

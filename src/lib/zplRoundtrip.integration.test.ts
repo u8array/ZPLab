@@ -4,6 +4,7 @@ import { importZplText } from "@zplab/core/lib/zplImportService";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { serializeDesign, parseDesignFile } from "@zplab/core/lib/designFile";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
+import { registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
 
 // Integration: drive the REAL user paths (importZplText -> loadDesign -> store ->
 // generateMultiPageZPL), not parseZPL/generate in isolation. Asserts the actual
@@ -288,6 +289,26 @@ describe("round-trip integration (real import -> store -> export)", () => {
     store().appendPages(r.pages);
     const appended = store().pages[store().pages.length - 1]!;
     expect(appended.overlay).toBeUndefined();
+  });
+
+  it("append-mode keeps the current gate; appended z fields re-emit z-less in place", () => {
+    registerFootprintMeasurer(() => ({ w: 40, h: 100 }));
+    try {
+      importInto("^XA^FO10,10^A0N,30,30^FDbase^FS^XZ");
+      const r = importZplText("^XA^FT100,150,1^BCN,100,Y,N,N^FD123^FS^XZ", store().label.dpmm);
+      expect(r.labelConfig.emit1dZJustify).toBe(true);
+      store().appendPages(r.pages);
+      // Gate is coupled to the import that normalised its objects' x; append
+      // must not flip it globally (an unnormalised anchor-x field elsewhere
+      // would double-shift). Placement survives: normalised left edge, z-less.
+      expect(store().label.emit1dZJustify).toBeUndefined();
+      expect(store().pages[1]!.overlay).toBeUndefined();
+      const out = exportZpl();
+      expect(out).toContain("^FT60,150^");
+      expect(out).not.toContain(",1^BC");
+    } finally {
+      registerFootprintMeasurer(null);
+    }
   });
 
   it("an emit-affecting config edit drops the overlay and reflects the new value", () => {
