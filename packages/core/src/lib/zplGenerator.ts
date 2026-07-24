@@ -1,5 +1,5 @@
 import { mmToDots } from './coordinates';
-import { getEntry , BARCODE_1D_TYPES } from '../registry';
+import { getEntry, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import {
   extractTemplateRefs,

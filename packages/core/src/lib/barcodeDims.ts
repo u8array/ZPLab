@@ -17,7 +17,13 @@ import {
   gs1ContentToElementString,
 } from "./gs1";
 import { isRectangular, dmVersionString, type DataMatrixProps } from "../registry/datamatrix";
-import { getObjectStringContent } from "./variableBinding";
+import {
+  applyBindingToObject,
+  getObjectStringContent,
+  type ClockResolveCtx,
+} from "./variableBinding";
+import { objectResolvesCtrl } from "../registry";
+import type { Variable } from "../types/Variable";
 import { qrBwipOptions } from "./qrGraphic";
 import {
   barSubRect,
@@ -777,7 +783,7 @@ function getUprightDisplaySize(
 }
 
 /** Valid MicroPDF417 row counts in TLC39's linked 4-column geometry. */
-export const TLC39_MICROPDF_ROW_COUNTS = [4, 6, 8, 10] as const;
+const TLC39_MICROPDF_ROW_COUNTS = [4, 6, 8, 10] as const;
 
 /** Snap to the nearest valid row count, bwip-js throws on any other value. */
 export function snapTlc39MicroPdfRows(requested: number): number {
@@ -842,10 +848,11 @@ function dimsDrawing() {
 }
 
 /** bwip surface size for `opts`, matching toCanvas' canvas dims; null on
- *  encode failure. */
-export function bwipDims(bwip: BwipEngine, opts: Record<string, unknown>): CanvasDims | null {
+ *  encode failure (bwip yields `false` when nothing was drawn). */
+function bwipDims(bwip: BwipEngine, opts: Record<string, unknown>): CanvasDims | null {
   try {
-    return (bwip.render(opts, dimsDrawing()) as CanvasDims | null) ?? null;
+    const d = bwip.render(opts, dimsDrawing());
+    return d && typeof d === "object" ? (d as CanvasDims) : null;
   } catch {
     return null;
   }
@@ -859,8 +866,7 @@ export function eanUpcTotalModules(g: BwipRawLinear): number {
 }
 
 /** Rendered-surface pixel dims for `obj`, replicating each renderBarcodeCanvas
- *  path without a canvas. Every branch mirrors the app's drawn surface so the
- *  measured footprint cannot depend on which host measures. */
+ *  path without a canvas. */
 function barcodeDimsPx(
   bwip: BwipEngine,
   obj: LeafObject,
@@ -901,6 +907,32 @@ function barcodeDimsPx(
   return bwipDims(bwip, opts);
 }
 
+/** Surface rounding shared by the TLC39 kernel dims and the canvas renderer. */
+export function roundedDims(width: number, height: number): CanvasDims {
+  return { width: Math.max(1, Math.round(width)), height: Math.max(1, Math.round(height)) };
+}
+
+export interface Tlc39CompositeLayout {
+  width: number;
+  height: number;
+  mpdfPxH: number;
+  code39PxH: number;
+}
+
+/** TLC39 composite layout (MicroPDF417 over Code 39, shared width): single
+ *  source for kernel dims and canvas renderer so the two cannot drift. */
+export function tlc39CompositeLayout(
+  code39W: number,
+  mpdfW: number,
+  mpdfH: number,
+  code39H: number,
+): Tlc39CompositeLayout {
+  const width = Math.max(1, Math.round(Math.max(code39W, mpdfW)));
+  const mpdfPxH = Math.max(1, Math.round(mpdfH));
+  const code39PxH = Math.max(1, Math.round(code39H));
+  return { width, height: mpdfPxH + code39PxH, mpdfPxH, code39PxH };
+}
+
 /** TLC39 composite dims (MicroPDF417 on top, Code 39 below; shared width). */
 function tlc39DimsPx(
   bwip: BwipEngine,
@@ -922,15 +954,10 @@ function tlc39DimsPx(
       includetext: false,
     });
 
-  const stretched = (targetW: number, targetH: number): CanvasDims => ({
-    width: Math.max(1, Math.round(targetW)),
-    height: Math.max(1, Math.round(targetH)),
-  });
-
   if (!serial) {
     const src = code39Dims(eci);
     if (!src) return null;
-    return stretched((src.width / bwipScale) * modulePx, code39H);
+    return roundedDims((src.width / bwipScale) * modulePx, code39H);
   }
 
   // "T" linkage flag only appended after MicroPDF actually renders.
@@ -949,36 +976,44 @@ function tlc39DimsPx(
   if (!code39Src) return null;
   const code39W = (code39Src.width / bwipScale) * modulePx;
 
-  if (!mpdfOk) return stretched(code39W, code39H);
+  if (!mpdfOk) return roundedDims(code39W, code39H);
 
   const mpdfW = (mpdfSrc.width / BWIP_SCALE) * modulePx;
   const mpdfH = snappedRows * dotsToPx(props.microPdfRowHeight, scale, dpmm);
-
-  const w = Math.max(1, Math.round(Math.max(code39W, mpdfW)));
-  const mpdfPxH = Math.max(1, Math.round(mpdfH));
-  const code39PxH = Math.max(1, Math.round(code39H));
-  return { width: w, height: mpdfPxH + code39PxH };
+  const layout = tlc39CompositeLayout(code39W, mpdfW, mpdfH, code39H);
+  return { width: layout.width, height: layout.height };
 }
 
 /** Headless twin of the app's canvas measureBarcodeFootprintDots: identical
- *  blank/sample fallback and zone math, dims from the injected bwip engine. */
+ *  blank/sample fallback and zone math, dims from the injected bwip engine.
+ *  Measures at scale = dpmm (px = dots), intrinsic to a headless measure. */
 export function measureBarcodeFootprintDotsWith(
   bwip: BwipEngine,
   obj: LeafObject,
-  scale: number,
   dpmm: number,
 ): { w: number; h: number } | null {
   const blank = (getObjectStringContent(obj) ?? "").trim() === "";
   let target = obj;
-  let dims = blank ? null : barcodeDimsPx(bwip, obj, scale, dpmm);
+  let dims = blank ? null : barcodeDimsPx(bwip, obj, dpmm, dpmm);
   if (!dims) {
     const sample = placeholderContentFor(obj.type, obj.props);
     if (!sample) return null;
     target = { ...obj, props: { ...samplePropsFor(obj.type, obj.props), content: sample } } as LeafObject;
-    dims = barcodeDimsPx(bwip, target, scale, dpmm);
+    dims = barcodeDimsPx(bwip, target, dpmm, dpmm);
     if (!dims) return null;
   }
-  const dim = getDisplaySize(target, dims, scale, dpmm);
+  const dim = getDisplaySize(target, dims, dpmm, dpmm);
   if (dim.w <= 0 || dim.h <= 0) return null;
-  return { w: pxToDots(dim.w, scale, dpmm), h: pxToDots(dim.h, scale, dpmm) };
+  return { w: pxToDots(dim.w, dpmm, dpmm), h: pxToDots(dim.h, dpmm, dpmm) };
+}
+
+/** Marker resolution for measurement: variable defaults only, no dataset row
+ *  or render mode, so a measured width never tracks transient preview state
+ *  (the gated ^FT anchor is one byte per design; ^DF stores it once). */
+export function resolveForMeasure<T extends LabelObject>(
+  obj: T,
+  variables: readonly Variable[],
+  clock?: ClockResolveCtx,
+): T {
+  return applyBindingToObject(obj, variables, null, "preview", clock, objectResolvesCtrl(obj));
 }

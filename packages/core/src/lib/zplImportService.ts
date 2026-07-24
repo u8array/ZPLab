@@ -7,10 +7,11 @@ import type { CustomFontMapping, LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
 import type { LabelObject, Page } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type Variable } from "../types/Variable";
-import { BARCODE_1D_TYPES, objectResolvesCtrl } from "../registry";
-import { applyBindingToObject, clockCtxFromLabel } from "./variableBinding";
+import { BARCODE_1D_TYPES } from "../registry";
+import { verifiedZJustifyCombo } from "../registry/zplHelpers";
+import { resolveForMeasure } from "./barcodeDims";
+import { clockCtxFromLabel } from "./variableBinding";
 import { measureFootprintDots } from "./footprintProber";
-import { objectRotation } from "../registry/rotation";
 
 export interface ZplImportResult {
   labelConfig: Partial<LabelConfig>;
@@ -100,11 +101,8 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     // Markers resolve against the IMPORTED bindings (defaults, no dataset row)
     // so the shift can't depend on whatever document happens to be open.
     for (const o of page.objects) {
-      if (o.fieldJustify !== "R" || o.positionType !== "FT" || !BARCODE_1D_TYPES.has(o.type)) continue;
-      if (objectRotation((o as { props: object }).props) !== "N") continue;
-      const resolved = applyBindingToObject(
-        o, variables, null, "preview", clockCtxFromLabel(page.labelConfig), objectResolvesCtrl(o),
-      );
+      if (!BARCODE_1D_TYPES.has(o.type) || !verifiedZJustifyCombo(o)) continue;
+      const resolved = resolveForMeasure(o, variables, clockCtxFromLabel(page.labelConfig));
       // Sidecar density wins: the stream's dot values live in ITS dpmm.
       const fp = measureFootprintDots(resolved, r.labelConfig.dpmm ?? dpmm);
       if (fp) {

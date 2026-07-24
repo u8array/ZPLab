@@ -114,6 +114,20 @@ try {
   });
   check("create_draft", JSON.parse(created.result.content[0].text).ok === true);
 
+  // Exercises the bundled bwip engine end to end: z-normalisation only
+  // happens when the binary can actually measure the barcode.
+  const zImport = await rpc(9, "tools/call", {
+    name: "import_zpl",
+    arguments: { zpl: "^XA^FT300,150,1^BCN,100,Y,N,N^FD123^FS^XZ", dpmm: 8 },
+  });
+  const zi = JSON.parse(zImport.result.content[0].text);
+  check(
+    "import_zpl z-normalisation (bwip in SEA)",
+    zi.ok === true &&
+      zi.designFile?.label?.emit1dZJustify === true &&
+      zi.designFile?.pages?.[0]?.objects?.[0]?.x < 300,
+  );
+
   const denied = await fetch(BASE, {
     method: "POST",
     headers: { ...H, authorization: "Bearer wrong" },

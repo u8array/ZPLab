@@ -13,6 +13,20 @@ import { ObjectRegistry, BARCODE_1D_TYPES, STACKED_2D_TYPES } from "@zplab/core/
 import { ObjectPanels } from "./panels";
 
 describe("registry isolation baseline", () => {
+  // fieldPos1d emits the gated printer anchor; a non-1d emitter calling it
+  // would disagree with the BARCODE_1D_TYPES guards in home-shift/preflight.
+  it("every emitter calling fieldPos1d is a 1d-class symbology", () => {
+    const dir = join(dirname(fileURLToPath(import.meta.url)), "../../packages/core/src/registry");
+    const offenders = readdirSync(dir)
+      .filter((f) => f.endsWith(".ts") && !f.endsWith(".test.ts") && f !== "zplHelpers.ts")
+      .filter((f) => {
+        const src = readFileSync(join(dir, f), "utf-8");
+        return src.includes("fieldPos1d(") && !src.includes("barcodeClass: '1d'");
+      });
+    expect(offenders).toEqual([]);
+  });
+
+
   it("registers 34 object types", () => {
     expect(Object.keys(ObjectRegistry)).toHaveLength(34);
   });

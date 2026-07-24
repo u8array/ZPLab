@@ -11,9 +11,9 @@ interface Footprint {
  *  to an unrelated open document's. */
 type FootprintMeasurer = (obj: LabelObject, dpmm?: number) => Footprint | null;
 
-/** Barcode extents need bwip; headless callers leave this null and import
- *  normalisation / 1D z-emit fall back to their z-less behaviour. The app
- *  registers a canvas measurer, the MCP sidecar a bwip-raw one (S3b). */
+/** Barcode extents need bwip; callers without a registration fall back to
+ *  the z-less behaviour. App and MCP sidecar both register the shared dims
+ *  kernel (barcodeDims), bound to their own bwip build. */
 let measurer: FootprintMeasurer | null = null;
 // Memo per props reference: mutators replace props on every edit (the same
 // invariant dirty tracking relies on), so unrelated edits hit the cache and

@@ -298,9 +298,8 @@ describe("round-trip integration (real import -> store -> export)", () => {
       const r = importZplText("^XA^FT100,150,1^BCN,100,Y,N,N^FD123^FS^XZ", store().label.dpmm);
       expect(r.labelConfig.emit1dZJustify).toBe(true);
       store().appendPages(r.pages);
-      // Gate is coupled to the import that normalised its objects' x; append
-      // must not flip it globally (an unnormalised anchor-x field elsewhere
-      // would double-shift). Placement survives: normalised left edge, z-less.
+      // Append keeps the current gate (see labelConfigSlice); placement
+      // survives as a normalised left edge, z-less.
       expect(store().label.emit1dZJustify).toBeUndefined();
       expect(store().pages[1]!.overlay).toBeUndefined();
       const out = exportZpl();

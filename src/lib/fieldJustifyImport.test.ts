@@ -148,7 +148,7 @@ describe("1D z-emit behind the emit1dZJustify gate", () => {
       ...over,
     }) as unknown as LabelObject;
 
-  it("gate off (S3 tripwire): emits z-less regardless of measurement", () => {
+  it("gate off (tripwire): emits z-less regardless of measurement", () => {
     registerFootprintMeasurer(measure40);
     const zpl = generateZPL(BASE, [barcode1dR()]);
     expect(zpl).toContain("^FT60,50^");

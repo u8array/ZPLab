@@ -111,9 +111,8 @@ export const STACKED_2D_TYPES: ReadonlySet<string> = new Set(
 
 /** True when this type's emitter serializes fieldJustify (graphicAnchor for
  *  graphics, the z echo for the rest, the gated printerAnchoredX for 1D).
- *  Deliberately over-broad for gated 1D (a C toggle changes no bytes):
- *  judging the R+FT+N transition here would duplicate emit logic in the
- *  dirty diff, and over-stamping only regenerates, never loses bytes. */
+ *  Over-broad for gated 1D by design: precisely judging the R+FT+N transition
+ *  here would duplicate emit logic, and over-stamping only regenerates bytes. */
 export function emitsFieldJustify(type: string, emit1dZJustify = false): boolean {
   return emit1dZJustify || !BARCODE_1D_TYPES.has(type);
 }

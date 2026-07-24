@@ -27,8 +27,10 @@ import {
   getDisplaySize,
   getEanUpcHriFragmentsWith,
   rawEanUpc,
+  roundedDims,
   snapTlc39MicroPdfRows,
   splitTlc39Content,
+  tlc39CompositeLayout,
   type BarcodeDisplaySize,
   type BwipEngine,
   type EanUpcType,
@@ -45,7 +47,6 @@ export {
   parseZplCode128Escapes,
   snapTlc39MicroPdfRows,
   splitTlc39Content,
-  TLC39_MICROPDF_ROW_COUNTS,
 } from "@zplab/core/lib/barcodeDims";
 export type { BarcodeDisplaySize, EanUpcType, EanUpcHriFragment } from "@zplab/core/lib/barcodeDims";
 export { eanCheckDigit, upceCheckDigit } from "@zplab/core/lib/barcodeCheckDigits";
@@ -221,8 +222,9 @@ export function renderTlc39Canvas(
     targetH: number,
   ): HTMLCanvasElement | null => {
     const out = document.createElement("canvas");
-    out.width = Math.max(1, Math.round(targetW));
-    out.height = Math.max(1, Math.round(targetH));
+    const dims = roundedDims(targetW, targetH);
+    out.width = dims.width;
+    out.height = dims.height;
     const c = out.getContext("2d");
     if (!c) return null;
     c.fillStyle = "white";
@@ -265,19 +267,17 @@ export function renderTlc39Canvas(
   const mpdfW = (mpdfSrc.width / BWIP_SCALE) * modulePx;
   const mpdfH = snappedRows * dotsToPx(props.microPdfRowHeight, scale, dpmm);
 
-  const w = Math.max(1, Math.round(Math.max(code39W, mpdfW)));
-  const mpdfPxH = Math.max(1, Math.round(mpdfH));
-  const code39PxH = Math.max(1, Math.round(code39H));
+  const layout = tlc39CompositeLayout(code39W, mpdfW, mpdfH, code39H);
   const composite = document.createElement("canvas");
-  composite.width = w;
-  composite.height = mpdfPxH + code39PxH;
+  composite.width = layout.width;
+  composite.height = layout.height;
   const ctx = composite.getContext("2d");
   if (!ctx) return null;
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, composite.width, composite.height);
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(mpdfSrc, 0, 0, w, mpdfPxH);
-  ctx.drawImage(code39Src, 0, mpdfPxH, w, code39PxH);
+  ctx.drawImage(mpdfSrc, 0, 0, layout.width, layout.mpdfPxH);
+  ctx.drawImage(code39Src, 0, layout.mpdfPxH, layout.width, layout.code39PxH);
   return composite;
 }
 

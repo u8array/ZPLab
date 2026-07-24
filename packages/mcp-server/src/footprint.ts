@@ -2,13 +2,13 @@
 // symbology encoder, not the ToRaw encodation API the kernel needs.
 import bwipjs from "bwip-js/generic";
 import { registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
-import { measureBarcodeFootprintDotsWith, type BwipEngine } from "@zplab/core/lib/barcodeDims";
 import {
-  applyBindingToObject,
-  clockCtxFromLabel,
-  type ClockResolveCtx,
-} from "@zplab/core/lib/variableBinding";
-import { objectResolvesCtrl, type LeafObject } from "@zplab/core/registry";
+  measureBarcodeFootprintDotsWith,
+  resolveForMeasure,
+  type BwipEngine,
+} from "@zplab/core/lib/barcodeDims";
+import { clockCtxFromLabel, type ClockResolveCtx } from "@zplab/core/lib/variableBinding";
+import { type LeafObject } from "@zplab/core/registry";
 import { isGroup, type LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
 import type { LabelConfig } from "@zplab/core/types/LabelConfig";
@@ -20,13 +20,9 @@ let binding: { variables: readonly Variable[]; clock: ClockResolveCtx } | null =
 
 const measure = (o: LabelObject, dpmm?: number) => {
   if (isGroup(o)) return null;
-  const resolved = binding
-    ? applyBindingToObject(o, binding.variables, null, "preview", binding.clock, objectResolvesCtrl(o))
-    : o;
-  // scale == dpmm keeps px ≡ dots, so the value cancels; 8 only backs a
-  // caller that passed none.
-  const d = dpmm ?? 8;
-  return measureBarcodeFootprintDotsWith(engine, resolved as LeafObject, d, d);
+  const resolved = binding ? resolveForMeasure(o, binding.variables, binding.clock) : o;
+  // Width in dots is dpmm-invariant; 8 only backs a caller that passed none.
+  return measureBarcodeFootprintDotsWith(engine, resolved as LeafObject, dpmm ?? 8);
 };
 
 /** Idempotent; re-registering only resets the seam's memo. */
@@ -41,10 +37,11 @@ export function withFootprintBinding<T>(
   variables: readonly Variable[],
   fn: () => T,
 ): T {
+  const prev = binding;
   binding = { variables, clock: clockCtxFromLabel(label) };
   try {
     return fn();
   } finally {
-    binding = null;
+    binding = prev;
   }
 }

@@ -19,18 +19,23 @@ export function fieldPos(obj: LabelObjectBase): string {
   return `^${cmd}${obj.x},${obj.y}`;
 }
 
+/** The firmware-verified justify combo (R + ^FT + rotation N); shared with
+ *  the import normaliser so gate and shift can never disagree on it. */
+export function verifiedZJustifyCombo(obj: LabelObjectBase & { type: string }): boolean {
+  if (obj.fieldJustify !== "R" || obj.positionType !== "FT") return false;
+  return objectRotation((obj as unknown as { props: object }).props) === "N";
+}
+
 /** Printer-side right-anchor x (model x + measured width) when the gated,
- *  verified combo (R, FT, rotation N) applies; null otherwise. Single source
- *  for the emit, the home-shift drop test and the off-label preflight, so the
- *  three can never disagree on which edge the printer sees. Callers own the
- *  1D-type check (importing BARCODE_1D_TYPES here would cycle the registry). */
+ *  verified combo applies; null otherwise. Single source for the emit, the
+ *  home-shift drop test and the off-label preflight, so the three can never
+ *  disagree on which edge the printer sees. Callers own the 1D-type check
+ *  (importing BARCODE_1D_TYPES here would cycle the registry). */
 export function printerAnchoredX(
   obj: LabelObjectBase & { type: string },
   label: { emit1dZJustify?: boolean; dpmm?: number },
 ): number | null {
-  if (!label.emit1dZJustify) return null;
-  if (obj.fieldJustify !== "R" || obj.positionType !== "FT") return null;
-  if (objectRotation((obj as unknown as { props: object }).props) !== "N") return null;
+  if (!label.emit1dZJustify || !verifiedZJustifyCombo(obj)) return null;
   const fp = measureFootprintDots(obj as LabelObject, label.dpmm);
   return fp ? obj.x + fp.w : null;
 }

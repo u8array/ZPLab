@@ -129,9 +129,8 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       // current design (whose label config replaces the imported one), so their
       // captured source config/^FN bytes no longer apply and must regenerate.
       // The imported emit1dZJustify is discarded with the rest of the config:
-      // the gate is only sound together with the import that normalised its
-      // objects' x; flipping it globally could double-shift existing anchor-x
-      // fields. Appended normalised fields keep their placement z-less.
+      // flipping it globally would silently change how EXISTING R fields grow
+      // under variable data. Appended normalised fields keep placement z-less.
       const newPages = [...state.pages, ...dropPageOverlays(pages)];
       return {
         pages: newPages,

@@ -15,7 +15,7 @@ import type { BoundingBoxDots, ObjectBoundsCtx } from "@zplab/core/lib/objectBou
 import type { DesignResponse } from "./appBridge.js";
 import { computeOverlaps, leafBoxesDots, MAX_OVERLAPS, type OverlapDots } from "@zplab/core/lib/objectOverlap";
 import { getEntry, ObjectRegistry } from "@zplab/core/registry";
-import { exportableLeaves, type LabelObject } from "@zplab/core/types/Group";
+import { exportableLeaves, type LabelObject, type Page } from "@zplab/core/types/Group";
 import { DPMM_VALUES, isDpmm, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
 import type { PreflightKind, PreflightSeverity } from "@zplab/core/lib/preflight";
 import type { Variable } from "@zplab/core/types/Variable";
@@ -309,8 +309,7 @@ export function createDraft(input: CreateDraftInput): CreateDraftResult {
   return {
     ok: true,
     designFile,
-    warnings: perPage(parsed.value.pages, label, preflightOf),
-    ...geometryFor(parsed.value.pages, label),
+    ...boundReport(label, parsed.value.variables, parsed.value.pages),
   };
 }
 
@@ -324,17 +323,25 @@ export type ValidateDraftResult =
     }
   | ToolError;
 
+/** Preflight + geometry with markers resolved against the design's own
+ *  bindings; the one report block every design-shaped tool returns. */
+function boundReport(
+  label: LabelConfig,
+  variables: readonly Variable[],
+  pages: Page[],
+  measured?: ObjectBoundsCtx["measured"],
+) {
+  return withFootprintBinding(label, variables, () => ({
+    warnings: perPage(pages, label, preflightOf),
+    ...geometryFor(pages, label, measured),
+  }));
+}
+
 export function validateDraft(designFile: unknown): ValidateDraftResult {
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;
   const { label, pages, variables } = parsed.value;
-  return {
-    ok: true,
-    ...withFootprintBinding(label, variables, () => ({
-      warnings: perPage(pages, label, preflightOf),
-      ...geometryFor(pages, label),
-    })),
-  };
+  return { ok: true, ...boundReport(label, variables, pages) };
 }
 
 export type GetCurrentDesignResult =
@@ -353,13 +360,12 @@ export type GetCurrentDesignResult =
 export function buildCurrentDesignResult(response: DesignResponse): GetCurrentDesignResult {
   const parsed = parseEnvelope(response.designFile);
   if (!parsed.ok) return parsed;
-  const { label, pages } = parsed.value;
+  const { label, pages, variables } = parsed.value;
   const measured = response.measured ? new Map(Object.entries(response.measured)) : undefined;
   return {
     ok: true,
     designFile: response.designFile as unknown as DesignFileJson,
-    warnings: perPage(pages, label, preflightOf),
-    ...geometryFor(pages, label, measured),
+    ...boundReport(label, variables, pages, measured),
   };
 }
 
@@ -486,10 +492,7 @@ export function validateZpl(
     pageCount: imported.pages.length,
     label,
     findings: findingsOf(imported.report),
-    ...withFootprintBinding(label, imported.variables, () => ({
-      warnings: perPage(imported.pages, label, preflightOf),
-      ...geometryFor(imported.pages, label),
-    })),
+    ...boundReport(label, imported.variables, imported.pages),
   };
 }
 
@@ -525,10 +528,7 @@ export function importZpl(
     ok: true,
     designFile: JSON.parse(serialized) as DesignFileJson,
     findings: findingsOf(imported.report),
-    ...withFootprintBinding(label, imported.variables, () => ({
-      warnings: perPage(imported.pages, label, preflightOf),
-      ...geometryFor(imported.pages, label),
-    })),
+    ...boundReport(label, imported.variables, imported.pages),
   };
 }
 

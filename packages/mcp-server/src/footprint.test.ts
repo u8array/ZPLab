@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import bwipjs from "bwip-js/generic";
 import { registerSidecarFootprintMeasurer } from "./footprint.js";
-import { importZpl, exportZpl } from "./tools.js";
+import { importZpl, exportZpl, buildCurrentDesignResult } from "./tools.js";
+import { withFootprintBinding } from "./footprint.js";
+import { measureFootprintDots } from "@zplab/core/lib/footprintProber";
 import { registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
 import { measureBarcodeFootprintDotsWith, type BwipEngine } from "@zplab/core/lib/barcodeDims";
 import { EAN_TEXT_ZONE_DOTS } from "@zplab/core/lib/bwipConstants";
@@ -26,7 +28,6 @@ describe("sidecar footprint kernel", () => {
       engine,
       leaf("code128", { content: "123", height: 100, moduleWidth: 2, printInterpretation: false, checkDigit: false, rotation: "N" }),
       8,
-      8,
     );
     expect(fp).toEqual({ w: modules * 2, h: 100 });
   });
@@ -35,7 +36,6 @@ describe("sidecar footprint kernel", () => {
     const fp = measureBarcodeFootprintDotsWith(
       engine,
       leaf("ean13", { content: "4006381333931", height: 80, moduleWidth: 3, printInterpretation: true, checkDigit: false, rotation: "N" }),
-      8,
       8,
     );
     expect(fp).toEqual({ w: 95 * 3, h: 80 + EAN_TEXT_ZONE_DOTS });
@@ -46,13 +46,11 @@ describe("sidecar footprint kernel", () => {
       engine,
       leaf("plessey", { content: "12345", height: 60, moduleWidth: 2, printInterpretation: false, checkDigit: false, rotation: "N" }),
       8,
-      8,
     );
     expect(plessey?.w).toBeGreaterThan(0);
     const tlc39 = measureBarcodeFootprintDotsWith(
       engine,
       leaf("tlc39", { content: "123456,S00001", height: 40, moduleWidth: 2, microPdfRowHeight: 4, microPdfRows: 4, printInterpretation: false, checkDigit: false, rotation: "N" }),
-      8,
       8,
     );
     expect(tlc39?.w).toBeGreaterThan(0);
@@ -61,8 +59,8 @@ describe("sidecar footprint kernel", () => {
 
   it("a rotated 1D swaps the footprint axes", () => {
     const props = { content: "123", height: 100, moduleWidth: 2, printInterpretation: false, checkDigit: false, rotation: "R" };
-    const n = measureBarcodeFootprintDotsWith(engine, leaf("code128", { ...props, rotation: "N" }), 8, 8);
-    const r = measureBarcodeFootprintDotsWith(engine, leaf("code128", props), 8, 8);
+    const n = measureBarcodeFootprintDotsWith(engine, leaf("code128", { ...props, rotation: "N" }), 8);
+    const r = measureBarcodeFootprintDotsWith(engine, leaf("code128", props), 8);
     expect(r).toEqual({ w: n!.h, h: n!.w });
   });
 });
@@ -73,7 +71,6 @@ describe("MCP import/export with the sidecar measurer", () => {
       engine,
       leaf("code128", { content: "123", height: 100, moduleWidth: 2, printInterpretation: true, checkDigit: false, rotation: "N" }),
       8,
-      8,
     );
     const r = importZpl("^XA^FT300,150,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
     expect(r.ok).toBe(true);
@@ -83,6 +80,38 @@ describe("MCP import/export with the sidecar measurer", () => {
     const obj = (r.designFile.pages as { objects: { x: number; fieldJustify?: string }[] }[])[0]!.objects[0]!;
     expect(obj.fieldJustify).toBe("R");
     expect(obj.x).toBe(300 - fp!.w);
+  });
+
+  it("get_current_design resolves markers before measuring the anchor", () => {
+    // Default (15 chars) is wider than the code128 sample fallback (8 chars):
+    // resolved anchor = 100 (on-label), unresolved would be negative (outside).
+    const r = importZpl("^XA^PW800^FT100,150,1^BCN,100,Y,N,N^FN1^FD123456789012345^FS^XZ", 8);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const out = buildCurrentDesignResult({ designFile: r.designFile } as never);
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.warnings.filter((w) => w.kind.startsWith("offLabel"))).toEqual([]);
+  });
+
+  it("withFootprintBinding restores an outer binding when a nested scope exits", () => {
+    const label = { secondaryClockOffset: undefined, tertiaryClockOffset: undefined };
+    const vars = (val: string) => [{ id: "v1", name: "v", fnNumber: 1, defaultValue: val }];
+    const bound = leaf("code128", {
+      content: "«v»", height: 100, moduleWidth: 2,
+      printInterpretation: false, checkDigit: false, rotation: "N",
+    });
+    const widthUnder = (val: string) =>
+      withFootprintBinding(label, vars(val), () => {
+        withFootprintBinding(label, vars("XX"), () => undefined);
+        return measureFootprintDots(bound, 8)?.w;
+      });
+    const literal = (val: string) =>
+      measureBarcodeFootprintDotsWith(engine, leaf("code128", {
+        content: val, height: 100, moduleWidth: 2,
+        printInterpretation: false, checkDigit: false, rotation: "N",
+      }), 8)?.w;
+    expect(widthUnder("1234567890")).toBe(literal("1234567890"));
   });
 
   it("regenerated export restores the original anchored bytes", () => {
