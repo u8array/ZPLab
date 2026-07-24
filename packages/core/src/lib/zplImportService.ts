@@ -7,6 +7,8 @@ import type { CustomFontMapping, LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
 import type { LabelObject, Page } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type Variable } from "../types/Variable";
+import { BARCODE_1D_TYPES } from "../registry";
+import { objectRotation } from "../registry/rotation";
 
 export interface ZplImportResult {
   labelConfig: Partial<LabelConfig>;
@@ -25,7 +27,13 @@ export interface ZplImportResult {
   mixedPageGeometry: boolean;
 }
 
-export function importZplText(zpl: string, dpmm: number): ZplImportResult {
+export interface ZplImportOptions {
+  /** Rotated visual footprint (dots), or null when unmeasurable. Enables the
+   *  ^FT+R barcode x-normalisation; headless callers omit it (x uncorrected). */
+  measureFootprint?: (obj: LabelObject) => { w: number; h: number } | null;
+}
+
+export function importZplText(zpl: string, dpmm: number, opts?: ZplImportOptions): ZplImportResult {
   // Single pass: stream-persistent state (^MU, ^CC/^CT/^CD, ^CI, ^CW/uploads,
   // ^CF/^BY, ^LH/^LT/^LR) carries across ^XA blocks, and the parser owns the
   // page boundaries (prefix-aware, unlike a literal ^XA split).
@@ -88,6 +96,17 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     // helper is shape-agnostic.
     if (nameRemap.size > 0) {
       rewireBindings(page.objects, nameRemap);
+    }
+    // ^FT + rotation N only: ^FO-z and the rotation interaction are spec-
+    // ambiguous, pending printer check (the branch's own FT+I math would even
+    // demand shift 0 for R). Text unshifted (import measurement fragile).
+    if (opts?.measureFootprint) {
+      for (const o of page.objects) {
+        if (o.fieldJustify !== "R" || o.positionType !== "FT" || !BARCODE_1D_TYPES.has(o.type)) continue;
+        if (objectRotation((o as { props: object }).props) !== "N") continue;
+        const fp = opts.measureFootprint(o);
+        if (fp) o.x -= fp.w;
+      }
     }
     // A bare page (no ^XA wrapper) usually carries just fonts/profile. But a
     // wrapper-less paste of real fields also lands here; import those as a page

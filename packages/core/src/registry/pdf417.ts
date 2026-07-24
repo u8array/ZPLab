@@ -1,5 +1,5 @@
 import type { ObjectTypeCore } from "../types/ObjectType";
-import { fieldPos, fdFieldFor } from "./zplHelpers";
+import { fieldPosZ, fdFieldFor } from "./zplHelpers";
 import { commitStacked2DTransform } from "./transformHelpers";
 import { moduleTooSmallPreflight } from "../lib/barcodeScannability";
 import { type ZplRotation } from "./rotation";
@@ -46,7 +46,7 @@ export const pdf417: ObjectTypeCore<Pdf417Props> = {
     const p = obj.props;
     return [
       `^BY${p.moduleWidth}`,
-      fieldPos(obj),
+      fieldPosZ(obj),
       `^B7${p.rotation},${p.rowHeight},${p.securityLevel},${p.columns},,,`,
       fdFieldFor(p.content, ctx, undefined, undefined, CONTROL_CHARS),
     ]

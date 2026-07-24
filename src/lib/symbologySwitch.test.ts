@@ -164,13 +164,11 @@ describe('convertSymbologyMapper', () => {
     expect(c39.moduleWidth).toBe(2);
   });
 
-  it('carries the top-level fieldJustify through a symbology switch', () => {
+  it('carries fieldJustify within the 1D class, drops it across the boundary', () => {
     const src = { ...barcode('code128', { content: 'A' }), fieldJustify: 'R' } as LabelObject;
-    const c39 = convertSymbologyMapper('code39' as never)(src);
-    expect(c39.fieldJustify).toBe('R');
-    // Inert on 2D today (no re-pin, no z emit) but preserved for a switch back.
-    const qr = convertSymbologyMapper('qrcode' as never)(src);
-    expect(qr.fieldJustify).toBe('R');
+    expect(convertSymbologyMapper('code39' as never)(src).fieldJustify).toBe('R');
+    // Crossing the class boundary would break the echo invariant (mapper).
+    expect(convertSymbologyMapper('qrcode' as never)(src).fieldJustify).toBeUndefined();
   });
 
   it('is a no-op for same type and non-barcode objects', () => {

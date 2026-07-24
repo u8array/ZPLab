@@ -29,11 +29,9 @@ export const EMIT_AFFECTING_KEYS = new Set(['x', 'y', 'rotation', 'positionType'
  *  wrongly added here would silently skip the overlay drop and emit stale config. */
 export const NON_EMITTING_CONFIG_KEYS = new Set(['safeAreaMm']);
 
-/** Object PROP keys that never reach emitted ZPL; a props diff touching only
- *  these must not stamp dirty (it would needlessly drop the verbatim overlay).
- *  Same contract as NON_EMITTING_CONFIG_KEYS. Classifies globally by key name:
- *  a future type reusing this name for an EMITTING prop would silently skip
- *  the overlay drop (membership lock in anchorRepin.test.ts). */
+/** Prop keys that never reach emitted ZPL: a props diff touching only these
+ *  must not stamp dirty and drop the verbatim overlay. Classifies globally by
+ *  key name (membership locked in anchorRepin.test.ts). */
 export const NON_EMITTING_PROP_KEYS = new Set(['preSerialContent']);
 
 /** True when a config patch changes a field that reaches emitted ZPL. Used to

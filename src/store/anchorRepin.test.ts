@@ -1,7 +1,8 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { applyObjectChanges, NON_EMITTING_PROP_KEYS } from "./labelStore.internals";
-import { registerBarcodeWidthProber, unregisterBarcodeWidthProber, probeBarcodeFootprint } from "./anchorRepin";
+import { registerBarcodeWidthProber, unregisterBarcodeWidthProber, probeBarcodeFootprint, anchorRepin } from "./anchorRepin";
 import { stampDirtyLeaves } from "./dirtyTracking";
+import { convertSymbologyMapper } from "../lib/symbologySwitch";
 import { valueAnchorShift } from "@zplab/core/lib/valueAnchor";
 import type { LabelObject } from "@zplab/core/types/Group";
 
@@ -9,7 +10,8 @@ import type { LabelObject } from "@zplab/core/types/Group";
 const probe = (o: LabelObject) => {
   const p = (o as { props: { content: string; rotation?: string } }).props;
   const w = p.content.length * 10;
-  return p.rotation === "R" ? { w: 30, h: w } : { w, h: 30 };
+  const swapped = p.rotation === "R" || p.rotation === "B";
+  return swapped ? { w: 30, h: w } : { w, h: 30 };
 };
 
 const barcode = (over: object = {}, props: object = {}): LabelObject =>
@@ -97,6 +99,13 @@ describe("anchorRepin", () => {
     expect(back.x).toBe(100);
   });
 
+  it("treats absent justify as L under ^FT+I (implicit == explicit)", () => {
+    registerBarcodeWidthProber(probe);
+    const implicit = barcode({ positionType: "FT", fieldJustify: undefined }, { rotation: "I" });
+    // Same compensation as explicit L: holding the left edge needs the delta.
+    expect(applyObjectChanges(implicit, { props: { content: "ABCD" } }).x).toBe(120);
+  });
+
   it("inverts the shift under ^FT with rotation I (bar-width-dependent origin)", () => {
     registerBarcodeWidthProber(probe);
     const ftI = barcode({ positionType: "FT" }, { rotation: "I" });
@@ -105,6 +114,31 @@ describe("anchorRepin", () => {
     const ftIL = barcode({ positionType: "FT", fieldJustify: "L" }, { rotation: "I" });
     // Holding the LEFT edge under FT+I needs the full delta.
     expect(applyObjectChanges(ftIL, { props: { content: "ABCD" } }).x).toBe(120);
+  });
+
+  it("applies the same inversion on the swapped axis under ^FT with rotation B", () => {
+    registerBarcodeWidthProber(probe);
+    const ftB = barcode({ positionType: "FT" }, { rotation: "B" });
+    // FT+B pins the justified edge on the y axis; right stays put.
+    const r = applyObjectChanges(ftB, { props: { content: "ABCD" } });
+    expect(r.x).toBe(100);
+    expect(r.y).toBe(50);
+    const ftBL = barcode({ positionType: "FT", fieldJustify: "L" }, { rotation: "B" });
+    expect(applyObjectChanges(ftBL, { props: { content: "ABCD" } }).y).toBe(70);
+  });
+});
+
+describe("symbology switch re-pin", () => {
+  afterEach(() => registerBarcodeWidthProber(null));
+
+  it("holds the justified edge when a type switch changes the width", () => {
+    const typedProbe = (o: LabelObject) =>
+      o.type === "code39" ? { w: 15, h: 30 } : { w: 20, h: 30 };
+    registerBarcodeWidthProber(typedProbe);
+    const src = barcode();
+    const next = anchorRepin(src, { props: {} }, convertSymbologyMapper("code39" as never)(src));
+    // Width 20 -> 15 with anchor R: origin moves right by the delta.
+    expect(next.x).toBe(105);
   });
 });
 
@@ -150,7 +184,15 @@ describe("dirty semantics of fieldJustify", () => {
 
   it("a 1D justify toggle does not stamp dirty (no z emitted yet; overlay survives)", () => {
     const leaf = barcode();
+    // R, not only C: R is the value a future z-emit would make emit-affecting.
     expect(stamp(leaf, { ...leaf, fieldJustify: "C" } as LabelObject)).toBeUndefined();
+    const noJustify = barcode({ fieldJustify: undefined });
+    expect(stamp(noJustify, { ...noJustify, fieldJustify: "R" } as LabelObject)).toBeUndefined();
+  });
+
+  it("a 2D justify change stamps dirty (fieldPosZ echoes the z)", () => {
+    const qr = barcode({ type: "qrcode", fieldJustify: undefined });
+    expect(stamp(qr, { ...qr, fieldJustify: "R" } as LabelObject)).toBe(true);
   });
 
   it("a graphic justify change stamps dirty (graphicAnchor emits it)", () => {

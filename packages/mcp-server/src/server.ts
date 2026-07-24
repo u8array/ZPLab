@@ -109,7 +109,9 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
       description:
         "Parse a raw ZPL stream into an editable design file (one page per ^XA block; " +
         "feed it to export_zpl or open_in_app) plus parser findings, per-object bounds " +
-        "(dots), and bbox overlaps. Size falls back to the caller's hints then 100x50mm.",
+        "(dots), and bbox overlaps. Size falls back to the caller's hints then 100x50mm. " +
+        "Right-justified (^FO/^FT z=1) fields keep their ZPL x here (headless, no " +
+        "measurement); the app import normalises ^FT+R barcodes to top-left.",
       inputSchema: zplInputShape,
     },
     async ({ zpl, dpmm, widthMm, heightMm }) => json(importZpl(zpl, dpmm, widthMm, heightMm)),

@@ -102,6 +102,8 @@ export interface DefaultsState {
   cfWidth: number;
   cfFontId: string | undefined;
   fwRotation: TextProps["rotation"];
+  /** ^FW z: default justification for fields whose ^FO/^FT omits z. */
+  fwJustify: "L" | "R";
   fbWidth: number;
   fbLines: number;
   fbSpacing: number;
@@ -273,6 +275,9 @@ export function resetFormatScopedState(s: ParserState): void {
   s.comment.fnNumber = null;
   s.comment.fnComment = undefined;
   s.field = freshFieldState();
+  // ^FW justify persists across ^XA (like fwRotation); a later page's first
+  // position-less field must inherit it, not the fresh-state 'L'.
+  s.field.justify = s.defaults.fwJustify;
   s.format.fhActive = false;
   resetFieldBlockDefaults(s.defaults);
 }
@@ -318,6 +323,7 @@ export function createParserState(): ParserState {
       cfWidth: 0,
       cfFontId: undefined,
       fwRotation: "N",
+      fwJustify: "L",
       fbWidth: 0,
       fbLines: 1,
       fbSpacing: 0,

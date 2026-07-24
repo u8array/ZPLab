@@ -1,5 +1,5 @@
 import type { ObjectTypeCore } from "../types/ObjectType";
-import { fieldPos, fdFieldFor } from "./zplHelpers";
+import { fieldPosZ, fdFieldFor } from "./zplHelpers";
 import { commitBarcodeWidthHeightTransform } from "./transformHelpers";
 import { limitedSupportPreflight } from "../lib/barcodeScannability";
 import { type ZplRotation } from "./rotation";
@@ -47,7 +47,7 @@ export const tlc39: ObjectTypeCore<Tlc39Props> = {
     const p = obj.props;
     return [
       `^BY${p.moduleWidth}`,
-      fieldPos(obj),
+      fieldPosZ(obj),
       // r1 (wide:narrow ratio) is not exposed as a prop; emit the
       // canonical "2" so the field round-trips.
       `^BT${p.rotation},${p.moduleWidth},2,${p.height},${p.microPdfRowHeight},${p.microPdfRows}`,

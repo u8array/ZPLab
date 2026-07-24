@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 import { XMarkIcon, ClipboardDocumentIcon, CheckIcon, FolderOpenIcon } from '@heroicons/react/16/solid';
 import { importZplText, routeSetupCommands, mergeSetupFonts, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
 import { readFileAsText } from '../../lib/readFile';
+import { measureBarcodeFootprintDots } from '../Canvas/bwipHelpers';
+import type { LeafObject } from '@zplab/core/registry';
 import { useLabelStore } from '../../store/labelStore';
 import type { Page } from '@zplab/core/types/Group';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
@@ -103,7 +105,10 @@ export function ZplImportModal({ onClose }: Props) {
   // Shared by both entry points (paste, file picker); they differ only in how
   // they obtain the text.
   const processImport = (text: string) => {
-    const imported = importZplText(text, label.dpmm);
+    // scale = dpmm renders at 1px per dot: exact, zoom-independent footprints.
+    const imported = importZplText(text, label.dpmm, {
+      measureFootprint: (o) => measureBarcodeFootprintDots(o as LeafObject, label.dpmm, label.dpmm),
+    });
     const { labelConfig, printerProfile, pages } = imported;
     const totalObjects = pages.reduce((s, p) => s + p.objects.length, 0);
     if (

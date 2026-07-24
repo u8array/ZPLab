@@ -1,6 +1,6 @@
 import type { StateCreator, StoreMutatorIdentifier } from 'zustand';
 import { isGroup, type LabelObject, type Page } from '@zplab/core/types/Group';
-import { BARCODE_1D_TYPES } from '@zplab/core/registry';
+import { emitsFieldJustify } from '@zplab/core/registry';
 import { EMIT_AFFECTING_KEYS, NON_EMITTING_PROP_KEYS } from './labelStore.internals';
 
 // Centralizes round-trip dirty-tracking that was otherwise scattered across every
@@ -11,19 +11,15 @@ import { EMIT_AFFECTING_KEYS, NON_EMITTING_PROP_KEYS } from './labelStore.intern
 // temporal, so zundo's restore path (which replays via the original setState,
 // outside this wrapper) does not re-stamp on undo/redo.
 
-/** True when any emit-affecting field differs. Scalars compare by value; a
- *  fresh `props` reference is diffed shallowly so edits touching only
- *  non-emitting editor-aid props keep the verbatim overlay alive.
- *  The no-under-stamp guarantee now rests on per-key immutability: mutators
- *  must replace (not mutate) nested prop values, which all of them do. */
+/** True when any emit-affecting field differs. Scalars compare by value;
+ *  props diffs shallowly (editor-aid keys skipped) and relies on mutators
+ *  replacing, never mutating, nested prop values. */
 function emitAffectingChanged(a: LabelObject, b: LabelObject): boolean {
   for (const k of EMIT_AFFECTING_KEYS) {
     const av = (a as Record<string, unknown>)[k];
     const bv = (b as Record<string, unknown>)[k];
     if (av === bv) continue;
-    // fieldJustify emits for graphics (graphicAnchor) but not yet for 1D
-    // barcodes (no z-param emit); a barcode justify toggle changes no bytes.
-    if (k === 'fieldJustify' && BARCODE_1D_TYPES.has(b.type)) continue;
+    if (k === 'fieldJustify' && !emitsFieldJustify(b.type)) continue;
     if (k === 'props' && !propsEmitChanged(av as object, bv as object)) continue;
     return true;
   }

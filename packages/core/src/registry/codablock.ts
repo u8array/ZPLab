@@ -1,5 +1,5 @@
 import type { ObjectTypeCore } from "../types/ObjectType";
-import { fieldPos, fdFieldFor } from "./zplHelpers";
+import { fieldPosZ, fdFieldFor } from "./zplHelpers";
 import { clamp, commitStacked2DTransform } from "./transformHelpers";
 import { moduleTooSmallPreflight } from "../lib/barcodeScannability";
 import { type ZplRotation } from "./rotation";
@@ -67,7 +67,7 @@ export const codablock: ObjectTypeCore<CodablockProps> = {
     // stack, verified on a ZD230). Mode F (Code 128) matches the codablockf preview.
     return [
       `^BY${p.moduleWidth}`,
-      fieldPos(obj),
+      fieldPosZ(obj),
       `^BB${p.rotation},${p.rowHeight},${p.securityLevel},${clampCodablockColumns(p.columns)},,F`,
       fdFieldFor(p.content, ctx),
     ]

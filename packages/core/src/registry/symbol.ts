@@ -1,5 +1,5 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { fieldPos } from './zplHelpers';
+import { fieldPosZ } from './zplHelpers';
 import { commitRotatedWidthHeightTransform } from './transformHelpers';
 import type { ZplRotation } from './rotation';
 
@@ -60,7 +60,7 @@ export const symbol: ObjectTypeCore<SymbolProps> = {
 
   toZPL: (obj) => {
     const p = obj.props;
-    return `${fieldPos(obj)}^GS${p.rotation},${p.height},${p.width}^FD${p.symbol}^FS`;
+    return `${fieldPosZ(obj)}^GS${p.rotation},${p.height},${p.width}^FD${p.symbol}^FS`;
   },
 
   commitTransform: commitRotatedWidthHeightTransform,

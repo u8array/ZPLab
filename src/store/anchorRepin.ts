@@ -2,7 +2,7 @@ import type { LabelObject } from "@zplab/core/types/Group";
 import type { ObjectChanges } from "@zplab/core/types/LabelObject";
 import { BARCODE_1D_TYPES } from "@zplab/core/registry";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
-import { valueAnchorShift, type FieldJustify } from "@zplab/core/lib/valueAnchor";
+import { valueAnchorShift } from "@zplab/core/lib/valueAnchor";
 
 /** Rotated visual footprint in dots, as the canvas measures it. */
 interface BarcodeFootprint {
@@ -39,12 +39,11 @@ export function anchorRepin(obj: LabelObject, changes: ObjectChanges, next: Labe
   // graphics use an "N" offset + module shift the re-pin doesn't model);
   // graphics have static extents, so fieldJustify never re-pins them.
   if (!BARCODE_1D_TYPES.has(next.type)) return next;
-  const justify = next.fieldJustify;
-  if (!justify) return next;
+  // Absent means L (schema contract), and L participates under the FT flip.
+  const justify = next.fieldJustify ?? 'L';
   const props = (next as { props: object }).props;
   const rot = objectRotation(props);
-  // ^FT under I/B carries a bar-width-dependent origin offset (objectBounds
-  // barcodeFtAnchorOffset), inverting the FO anchor math; 'L' participates.
+  // ^FT+I/B inverts the anchor math (see valueAnchorShift).
   const ftFlip =
     (next as { positionType?: string }).positionType === 'FT' && (rot === 'I' || rot === 'B');
   if (justify === 'L' && !ftFlip) return next;
@@ -58,7 +57,7 @@ export function anchorRepin(obj: LabelObject, changes: ObjectChanges, next: Labe
   if (!before || !after) return next;
   const swapped = isAxisSwapped(rot);
   const delta = swapped ? before.h - after.h : before.w - after.w;
-  const shift = valueAnchorShift(justify as FieldJustify, delta, ftFlip);
+  const shift = valueAnchorShift(justify, delta, ftFlip);
   if (shift === 0) return next;
   return swapped ? { ...next, y: next.y + shift } : { ...next, x: next.x + shift };
 }

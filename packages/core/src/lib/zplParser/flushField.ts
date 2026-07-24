@@ -6,6 +6,7 @@ import {
   markerOf,
   type Variable,
 } from "../../types/Variable";
+import type { LabelObject } from "../../types/Group";
 import { embedsToMarkers } from "../fnTemplate";
 import { tokensToMarkers } from "../fcTemplate";
 import { controlBytesToMarkers } from "../../types/controlKey";
@@ -111,6 +112,12 @@ export function createFlushField(
   };
 
   const resetFB = () => resetFieldBlockDefaults(s.defaults);
+
+  // ^FO/^FT z rides onto the leaf like the graphics handlers do; L is implicit.
+  const pushLeaf = (o: LabelObject) => {
+    if (s.field.justify === "R") o.fieldJustify = "R";
+    objects.push(o);
+  };
 
   const flushField = () => {
     if (!s.field.fieldType || s.field.pendingFD === null) {
@@ -234,7 +241,7 @@ export function createFlushField(
         if (s.field.fpCharGap > 0) {
           textProps.fpCharGap = s.field.fpCharGap;
         }
-        objects.push(
+        pushLeaf(
           makeObj("text", modelPos.x, modelPos.y, textProps, posType, comment),
         );
         resetFB();
@@ -243,7 +250,7 @@ export function createFlushField(
       case "code128": {
         // GS1-128 (^BC…,D): store the canonical compact form, not the parens.
         const gs1 = s.field.bcGs1;
-        objects.push(
+        pushLeaf(
           makeObj(
             "code128",
             s.field.x,
@@ -265,7 +272,7 @@ export function createFlushField(
         break;
       }
       case "code39":
-        objects.push(
+        pushLeaf(
           makeObj(
             "code39",
             s.field.x,
@@ -285,7 +292,7 @@ export function createFlushField(
         );
         break;
       case "ean13":
-        objects.push(
+        pushLeaf(
           makeObj(
             "ean13",
             s.field.x,
@@ -308,7 +315,7 @@ export function createFlushField(
         // content format from toZPL: "{ec}A,{data}"  e.g. "QA,https://example.com"
         const ec = (content[0] ?? "Q") as QrCodeProps["errorCorrection"];
         const data = content.slice(3);
-        objects.push(
+        pushLeaf(
           makeObj(
             "qrcode",
             s.field.x,
@@ -333,7 +340,7 @@ export function createFlushField(
         // valid only there; otherwise the field data is plain, kept verbatim.
         const esc = s.field.dmQuality === 200 ? s.field.dmEscape : undefined;
         const gs1Content = esc ? dataMatrixFdToGs1Content(content, esc) : null;
-        objects.push(
+        pushLeaf(
           makeObj(
             "datamatrix",
             s.field.x,
@@ -355,7 +362,7 @@ export function createFlushField(
         break;
       }
       case "upce":
-        objects.push(
+        pushLeaf(
           makeObj(
             "upce",
             s.field.x,
@@ -390,7 +397,7 @@ export function createFlushField(
       case "planet":
       case "postal":
       case "upcEanExtension":
-        objects.push(
+        pushLeaf(
           makeObj(
             s.field.fieldType,
             s.field.x,
@@ -410,7 +417,7 @@ export function createFlushField(
         );
         break;
       case "gs1databar":
-        objects.push(
+        pushLeaf(
           makeObj(
             "gs1databar",
             s.field.x,
@@ -431,7 +438,7 @@ export function createFlushField(
         );
         break;
       case "pdf417":
-        objects.push(
+        pushLeaf(
           makeObj(
             "pdf417",
             s.field.x,
@@ -450,7 +457,7 @@ export function createFlushField(
         );
         break;
       case "code49":
-        objects.push(
+        pushLeaf(
           makeObj(
             "code49",
             s.field.x,
@@ -469,7 +476,7 @@ export function createFlushField(
         );
         break;
       case "aztec":
-        objects.push(
+        pushLeaf(
           makeObj(
             "aztec",
             s.field.x,
@@ -486,7 +493,7 @@ export function createFlushField(
         );
         break;
       case "maxicode":
-        objects.push(
+        pushLeaf(
           makeObj(
             "maxicode",
             s.field.x,
@@ -501,7 +508,7 @@ export function createFlushField(
         );
         break;
       case "micropdf417":
-        objects.push(
+        pushLeaf(
           makeObj(
             "micropdf417",
             s.field.x,
@@ -519,7 +526,7 @@ export function createFlushField(
         );
         break;
       case "codablock":
-        objects.push(
+        pushLeaf(
           makeObj(
             "codablock",
             s.field.x,
@@ -538,7 +545,7 @@ export function createFlushField(
         );
         break;
       case "tlc39":
-        objects.push(
+        pushLeaf(
           makeObj(
             "tlc39",
             s.field.x,
@@ -562,7 +569,7 @@ export function createFlushField(
         // import still produces a sensible visible object.
         const raw = content.trim().charAt(0).toUpperCase();
         const code = (GS_SYMBOL_CODES.has(raw) ? raw : DEFAULT_GS_SYMBOL) as SymbolProps["symbol"];
-        objects.push(
+        pushLeaf(
           makeObj(
             "symbol",
             s.field.x,

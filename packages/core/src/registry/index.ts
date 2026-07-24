@@ -109,6 +109,13 @@ export const STACKED_2D_TYPES: ReadonlySet<string> = new Set(
   (Object.keys(ObjectRegistry) as LeafType[]).filter((t) => ObjectRegistry[t].barcodeClass === 'stacked2d'),
 );
 
+/** True when this type's emitter serializes fieldJustify (graphicAnchor for
+ *  graphics, the z echo in fieldPosZ/textFieldPos for the rest). Only 1D holds
+ *  it un-emitted until the S3 z-emit; dirty tracking reads the same fact. */
+export function emitsFieldJustify(type: string): boolean {
+  return !BARCODE_1D_TYPES.has(type);
+}
+
 /** Dynamic lookup for `LabelObject['type']`; undefined for non-leaf (e.g. `'group'`). */
 export function getEntry(type: string): (typeof ObjectRegistry)[LeafType] | undefined {
   return (ObjectRegistry as Record<string, (typeof ObjectRegistry)[LeafType] | undefined>)[type];

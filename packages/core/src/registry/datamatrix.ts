@@ -1,5 +1,5 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { fieldPos, fdFieldFor } from './zplHelpers';
+import { fieldPosZ, fdFieldFor } from './zplHelpers';
 import { DATAMATRIX_FD_ESCAPE, gs1ContentToDataMatrixFd } from '../lib/dataMatrixFd';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { type ZplRotation } from './rotation';
@@ -89,7 +89,7 @@ export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
     ];
     while (params.at(-1) === '') params.pop();
     return [
-      fieldPos(obj),
+      fieldPosZ(obj),
       `^BX${params.join(',')}`,
       fdFieldFor(p.content, ctx, p.gs1 ? gs1ContentToDataMatrixFd : undefined, undefined, CONTROL_CHARS && !p.gs1),
     ].join('');

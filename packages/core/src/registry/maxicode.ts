@@ -1,5 +1,5 @@
 import type { ObjectTypeCore } from "../types/ObjectType";
-import { fieldPos, fdFieldFor } from "./zplHelpers";
+import { fieldPosZ, fdFieldFor } from "./zplHelpers";
 
 // ISO/IEC 16023 fixed physical size (28.14 x 26.91 mm); no magnification.
 // 2=US SCM, 3=intl SCM, 4=standard, 5=full EEC, 6=reader programming.
@@ -34,7 +34,7 @@ export const maxicode: ObjectTypeCore<MaxicodeProps> = {
     const p = obj.props;
     // ^BV; structured-append slots fixed at (1,1) since unexposed.
     return [
-      fieldPos(obj),
+      fieldPosZ(obj),
       `^BVN,${p.mode},1,1`,
       fdFieldFor(p.content, ctx),
     ].join("");

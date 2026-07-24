@@ -1,5 +1,5 @@
 import type { ObjectTypeCore } from "../types/ObjectType";
-import { fieldPos, fdFieldFor } from "./zplHelpers";
+import { fieldPosZ, fdFieldFor } from "./zplHelpers";
 import { moduleTooSmallPreflight } from "../lib/barcodeScannability";
 import { type ZplRotation } from "./rotation";
 
@@ -47,7 +47,7 @@ export const aztec: ObjectTypeCore<AztecProps> = {
     // menuSymbol, numberOfSymbols, structuredID. ecLevel=0 is Zebra's
     // documented default for errorControl, so emitting it as-is is valid.
     return [
-      fieldPos(obj),
+      fieldPosZ(obj),
       `^B0${p.rotation},${p.magnification},N,${p.ecLevel}`,
       fdFieldFor(p.content, ctx, undefined, undefined, CONTROL_CHARS),
     ].join("");

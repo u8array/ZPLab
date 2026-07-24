@@ -1,6 +1,6 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
 import type { LabelObjectBase } from '../types/LabelObject';
-import { fieldPos, fdFieldFor } from './zplHelpers';
+import { fieldPosZ, fdFieldFor } from './zplHelpers';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { formatQrSidecarComment, qrRotatedGfaCached } from '../lib/qrGraphic';
@@ -81,14 +81,14 @@ export const qrcode: ObjectTypeCore<QrCodeProps> = {
       );
       const g = resolved ? qrRotatedGfaCached(p, { ...p, content: resolved }) : null;
       if (g) {
-        return [formatQrSidecarComment(p), fieldPos(obj), g.gfa, '^FS'].join('');
+        return [formatQrSidecarComment(p), fieldPosZ(obj), g.gfa, '^FS'].join('');
       }
     }
     // Prefix passed as the fdFieldFor transform (not baked into content) so it
     // composes with the binding: single-bind default / template / CSV override
     // all get the prefix instead of the payload being emitted raw.
     return [
-      fieldPos(obj),
+      fieldPosZ(obj),
       `^BQN,${p.model},${p.magnification}`,
       fdFieldFor(p.content, ctx, qrFdTransform(obj), undefined, CONTROL_CHARS),
     ].join('');

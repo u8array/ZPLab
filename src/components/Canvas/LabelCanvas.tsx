@@ -455,9 +455,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   } = useCanvasPanZoom({ zoom, onZoomChange, fitZoom, containerRef });
 
   const scale = SCREEN_PX_PER_MM * zoom;
-  // Anchored barcodes: the store's re-pin probes width synchronously through
-  // the same bwip pipeline the canvas renders with, on the same binding-
-  // resolved content KonvaObject draws (headless tests: no prober).
+  // The probe measures the same binding-resolved content KonvaObject draws.
   const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
   useEffect(() => {
     const { variables: vars, active, clock } = previewBinding;

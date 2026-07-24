@@ -102,7 +102,14 @@ export function convertSymbologyMapper(targetType: LeafType): (obj: LabelObject)
       // The serial-off restore snapshot travels with the serial flag.
       if (typeof p.preSerialContent === "string") props.preSerialContent = p.preSerialContent;
     }
-    // fieldJustify is top-level, so it rides along via the object spread.
-    return { ...obj, type: targetType, props } as unknown as LabelObject;
+    // x-space differs per class (see fieldPos/fieldPosZ), so the flag must
+    // not survive a 1D <-> non-1D crossing.
+    const crossed = (source.barcodeClass === '1d') !== (target.barcodeClass === '1d');
+    return {
+      ...obj,
+      type: targetType,
+      props,
+      ...(crossed ? { fieldJustify: undefined } : {}),
+    } as unknown as LabelObject;
   };
 }

@@ -27,7 +27,7 @@ export const objectInputSchema = z.object({
   // Anchor semantics: FO = top-left origin, FT = typeset baseline; fieldJustify
   // right-aligns. Omitted keeps the model default (FO / left).
   positionType: z.enum(["FO", "FT"]).optional(),
-  fieldJustify: z.enum(["L", "R"]).optional(),
+  fieldJustify: z.enum(["L", "C", "R"]).optional(),
   props: z.record(z.string(), z.unknown()).optional(),
 });
 export type ObjectInput = z.infer<typeof objectInputSchema>;
@@ -129,6 +129,12 @@ function parseEnvelope(designFile: unknown): { ok: true; value: DesignFile } | T
  *  defaults; the schema is tolerant, so createDraft guards it up front. */
 function toLabelObject(input: ObjectInput, id: string): LabelObject {
   const defaults = getEntry(input.type)?.defaultProps ?? {};
+  // 'C' has meaning only on 1D barcodes (editor centre); anywhere else it
+  // would persist as dead metadata, so canonicalize it away here.
+  const justify =
+    input.fieldJustify === "C" && getEntry(input.type)?.barcodeClass !== "1d"
+      ? undefined
+      : input.fieldJustify;
   return {
     id,
     type: input.type,
@@ -136,7 +142,7 @@ function toLabelObject(input: ObjectInput, id: string): LabelObject {
     y: input.y,
     rotation: 0,
     ...(input.positionType !== undefined ? { positionType: input.positionType } : {}),
-    ...(input.fieldJustify !== undefined ? { fieldJustify: input.fieldJustify } : {}),
+    ...(justify !== undefined ? { fieldJustify: justify } : {}),
     props: { ...defaults, ...(input.props ?? {}) },
     // Schema is intentionally loose; createDraft rejects unknown types up front.
   } as LabelObject;
@@ -595,7 +601,7 @@ const SCHEMA: SchemaResult = {
     x: "number, dots from left",
     y: "number, dots from top",
     positionType: "optional FO (top-left origin, default) | FT (typeset baseline)",
-    fieldJustify: "optional L (default) | R (right-align)",
+    fieldJustify: "optional L (default) | R | C (centre; 1D barcodes only, dropped elsewhere). On non-1D fields R means x IS the ZPL right-edge anchor and re-emits as z=1; on 1D barcodes x stays the top-left and the editor re-pins on value changes",
     props: "object, merged over defaultProps",
   },
   types: (Object.keys(ObjectRegistry) as (keyof typeof ObjectRegistry)[]).map((type) => {

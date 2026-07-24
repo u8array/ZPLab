@@ -333,8 +333,7 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
               />
             </div>
           )}
-          {/* ^FO/^FT z-justification (C is editor-only); origin semantics,
-              hence position box. */}
+          {/* Origin semantics (which edge x pins), hence the position box. */}
           {!groupRow && BARCODE_1D_TYPES.has(obj.type) && (
             <div className="flex items-center justify-between gap-2">
               <Tooltip content={t.properties.valueAnchorHint}>
@@ -342,7 +341,13 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
               </Tooltip>
               <SegmentedControl
                 value={obj.fieldJustify ?? "L"}
-                onChange={(fieldJustify) => updateObject(obj.id, { fieldJustify })}
+                onChange={(v) => {
+                  // L maps back to the implicit default; skip no-op clicks so
+                  // they don't mint phantom undo steps / document diffs.
+                  const fieldJustify = v === "L" ? undefined : v;
+                  if (fieldJustify === obj.fieldJustify) return;
+                  updateObject(obj.id, { fieldJustify });
+                }}
                 options={[
                   { value: "L", label: t.registry.text.justifyL },
                   { value: "C", label: t.registry.text.justifyC },

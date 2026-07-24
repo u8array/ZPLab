@@ -10,6 +10,15 @@ export function readRotation(
   return raw && isZplRotation(raw) ? raw : fallback;
 }
 
+/** ^FO/^FT z-justification: explicit 0/1 wins, an omitted z falls back to the
+ *  ^FW default (spec p.201/205); 2 (auto) has no fixed geometry, treated as L. */
+export function readJustify(raw: string | undefined, fallback: "L" | "R"): "L" | "R" {
+  const z = raw?.trim();
+  if (z === "1") return "R";
+  if (z === "0" || z === "2") return "L";
+  return fallback;
+}
+
 /** Validate ^GB/^GC/^GD/^GE colour char; default "B" per spec. */
 export function readColor(raw: string | undefined): "B" | "W" {
   return raw === "W" ? "W" : "B";

@@ -9,10 +9,19 @@ import { getTextRenderMetrics } from "../lib/labelGeometry/textRenderMetrics";
 import { blockInterLineExtentDots } from "../lib/zebraTextLayout";
 import type { LabelObject } from "../types/Group";
 
-/** Emit `^FT` or `^FO` depending on how the object was originally positioned. */
+/** Emit `^FT` or `^FO` depending on how the object was originally positioned.
+ *  1D emitters use this z-less form: their x is import-normalised top-left,
+ *  and z-emit for 1D is the S3 stage. */
 export function fieldPos(obj: LabelObjectBase): string {
   const cmd = obj.positionType === "FT" ? "FT" : "FO";
   return `^${cmd}${obj.x},${obj.y}`;
+}
+
+/** {@link fieldPos} with the z echo: import never normalises these fields, so
+ *  x is still the ZPL anchor and echoing z=1 reproduces the source placement. */
+export function fieldPosZ(obj: LabelObjectBase): string {
+  const z = obj.fieldJustify === "R" ? ",1" : "";
+  return `${fieldPos(obj)}${z}`;
 }
 
 /** Graphic leaf types whose ^FO/^FT origin comes from {@link graphicAnchor}
@@ -147,7 +156,9 @@ export function textZplAnchorCoords(obj: TextLikeObjForFieldPos): {
 /** Converts EM top-left model coord to ZPL anchor (cap-top/baseline). */
 export function textFieldPos(obj: TextLikeObjForFieldPos): string {
   const a = textZplAnchorCoords(obj);
-  return `^${a.cmd}${a.x},${a.y}`;
+  // Same echo contract as fieldPosZ (text is never import-normalised).
+  const z = obj.fieldJustify === "R" ? ",1" : "";
+  return `^${a.cmd}${a.x},${a.y}${z}`;
 }
 
 /** ^FX has no ^FH escape; strip ^/~ to prevent surrounding-command termination. */

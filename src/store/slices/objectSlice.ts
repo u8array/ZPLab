@@ -13,6 +13,7 @@ import {
   type Page,
 } from '@zplab/core/types/Group';
 import { getEntry } from '@zplab/core/registry';
+import { anchorRepin } from '../anchorRepin';
 import { reorderForZ, type ZOrderDir } from '../../lib/zorder';
 import { makeReverseBackingBox, precedingBackingExists, isOwnReverseBacking } from '@zplab/core/lib/reverseBacking';
 import { spawnRotationOverride } from '../../lib/spawn';
@@ -204,7 +205,12 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       // design; the mapper owns the result's validity (line/box have no hook).
       // The type/props change is stamped dirty centrally by the dirtyTracking
       // middleware.
-      const next = mapObjectById(objs, id, (o) => mapper(o));
+      // anchorRepin still runs: a type switch changes the measured width, so
+      // the justified edge must hold like on any value edit.
+      const next = mapObjectById(objs, id, (o) => {
+        const mapped = mapper(o);
+        return mapped === o ? o : anchorRepin(o, { props: {} }, mapped);
+      });
       // A no-op mapper must not rebuild pages: the fresh array would record a
       // phantom undo step (temporalEquality is a ref compare).
       if (next === objs) return {};

@@ -10,7 +10,7 @@ import {
   resetFieldBlockDefaults,
   type ParserState,
 } from "../context";
-import { ciToEncoding, dotsFor, getDecoder, int, readRotation } from "../helpers";
+import { ciToEncoding, dotsFor, getDecoder, int, readJustify, readRotation } from "../helpers";
 import type { Handler, Wildcard } from "../types";
 
 /** flushField + appendComment are shared with the orchestrator. */
@@ -78,16 +78,14 @@ export function createFieldHandlers(
       flushField();
       s.field.x = dots(p[0]) + s.label.lhX;
       s.field.y = dots(p[1]) + s.label.lhY + s.label.ltY;
-      // 3rd param z = justification (0 left, 1 right, 2 auto). Only graphics
-      // honour it (right corner); other fields keep the left default for now.
-      s.field.justify = p[2]?.trim() === "1" ? "R" : "L";
+      s.field.justify = readJustify(p[2], s.defaults.fwJustify);
       s.field.positionIsFT = false;
     },
     FT(p) {
       flushField();
       s.field.x = dots(p[0]) + s.label.lhX;
       s.field.y = dots(p[1]) + s.label.lhY + s.label.ltY;
-      s.field.justify = p[2]?.trim() === "1" ? "R" : "L";
+      s.field.justify = readJustify(p[2], s.defaults.fwJustify);
       s.field.positionIsFT = true;
     },
 
@@ -122,13 +120,17 @@ export function createFieldHandlers(
       }
     },
 
-    // ── Field-wide default rotation ───────────────────────────────────────
-    // ^FW{rotation}  e.g. ^FWR
-    FW(_, rest) {
+    // ── Field-wide defaults ───────────────────────────────────────────────
+    // ^FW{rotation},{z}  e.g. ^FWR or ^FWN,1
+    FW(p, rest) {
       const fw = (rest[0] ?? "N").toUpperCase();
       if (fw === "N" || fw === "R" || fw === "I" || fw === "B") {
         s.defaults.fwRotation = fw;
       }
+      // z sets the default justification for ^FO/^FT that omit their own z;
+      // 2 (auto) resets to L, same collapse readJustify applies per field.
+      const z = p[1]?.trim();
+      if (z === "0" || z === "1" || z === "2") s.defaults.fwJustify = z === "1" ? "R" : "L";
     },
 
     // ── Field block ───────────────────────────────────────────────────────
@@ -185,6 +187,9 @@ export function createFieldHandlers(
       s.field.fpDirection = "H";
       s.field.fpCharGap = 0;
       s.field.gsMagnification = undefined;
+      // Spec: an omitted z falls back to ^FW, never to the PRIOR field's z, so
+      // a position-command-less follow field must not inherit the leaked R.
+      s.field.justify = s.defaults.fwJustify;
       resetFieldBlockDefaults(s.defaults);
       s.comment.fnNumber = null;
       s.comment.fnComment = undefined;

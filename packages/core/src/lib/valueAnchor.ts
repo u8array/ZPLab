@@ -1,4 +1,4 @@
-/** ^FO/^FT z-justification vocabulary plus the editor-only centre. */
+/** fieldJustify vocabulary; semantics documented at the schema field. */
 export type FieldJustify = 'L' | 'C' | 'R';
 
 /** Origin shift keeping the justified edge fixed for an extent change `delta`
