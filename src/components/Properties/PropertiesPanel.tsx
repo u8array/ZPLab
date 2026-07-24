@@ -4,7 +4,7 @@ import { useLabelStore, useCurrentObjects, selectPreviewLocksEditor } from "../.
 import type { LabelCanvasHandle } from "../Canvas/LabelCanvas";
 import type { AlignOp, DistributeAxis, AlignRef } from "../../lib/align";
 import type { AlignSelectionRef } from "../../store/slices/uiSlice";
-import { getEntry } from "@zplab/core/registry";
+import { getEntry, BARCODE_1D_TYPES } from "@zplab/core/registry";
 import { getPanel } from "../../registry/panels";
 import { canGroupSelection, findObjectById, hasLockedAncestor, isGroup } from "@zplab/core/types/Group";
 import { symbologyTargets } from "../../lib/symbologySwitch";
@@ -330,6 +330,25 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
                   { value: "FT", label: "^FT", tooltip: t.properties.anchorBaselineHint },
                 ]}
                 aria-label={t.properties.anchorMode}
+              />
+            </div>
+          )}
+          {/* ^FO/^FT z-justification (C is editor-only); origin semantics,
+              hence position box. */}
+          {!groupRow && BARCODE_1D_TYPES.has(obj.type) && (
+            <div className="flex items-center justify-between gap-2">
+              <Tooltip content={t.properties.valueAnchorHint}>
+                <span className={labelCls}>{t.properties.valueAnchor}</span>
+              </Tooltip>
+              <SegmentedControl
+                value={obj.fieldJustify ?? "L"}
+                onChange={(fieldJustify) => updateObject(obj.id, { fieldJustify })}
+                options={[
+                  { value: "L", label: t.registry.text.justifyL },
+                  { value: "C", label: t.registry.text.justifyC },
+                  { value: "R", label: t.registry.text.justifyR },
+                ]}
+                aria-label={t.properties.valueAnchor}
               />
             </div>
           )}

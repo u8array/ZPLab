@@ -346,6 +346,8 @@ const zhHans = {
     optionsSection: '选项',
     contentSection: '内容',
     settingsSection: '设置',
+    valueAnchor: '锚点',
+    valueAnchorHint: '数值变化导致宽度改变时保持固定的边',
     typographySection: '排版',
     name: '名称',
     x: 'X',

@@ -9,9 +9,11 @@ export const labelObjectBaseSchema = z.object({
   rotation: z.number(),
   /** 'FT' = field typeset (baseline), 'FO' = field origin (top-left). Defaults to 'FO'. */
   positionType: z.enum(['FO', 'FT']).optional(),
-  /** ^FO/^FT z-justification. 'R' (z=1) anchors a graphic at its right corner;
-   *  absent = left (default). Only graphics (^GB) honour it today. */
-  fieldJustify: z.enum(['L', 'R']).optional(),
+  /** ^FO/^FT z-justification (spec p.201/205): 'R' (z=1) anchors at the right
+   *  edge, absent = left. 'C' is an editor-only extension for 1D barcodes
+   *  (value-change re-pin; ZPL has no centre z). Graphics emit L/R via
+   *  graphicAnchor; barcode z-emit is a planned follow-up. */
+  fieldJustify: z.enum(['L', 'C', 'R']).optional(),
   /** Emitted as ^FX before this field in ZPL output. Carries no print output. */
   comment: z.string().optional(),
   /** When true, blocks position/size/prop edits, drag, resize and deletion.

@@ -346,6 +346,8 @@ const es = {
     optionsSection: 'Opciones',
     contentSection: 'Contenido',
     settingsSection: 'Ajustes',
+    valueAnchor: 'Anclaje',
+    valueAnchorHint: 'Borde que permanece fijo cuando un cambio de valor altera el ancho',
     typographySection: 'Tipografía',
     name: 'Nombre',
     x: 'X',

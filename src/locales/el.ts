@@ -346,6 +346,8 @@ const el = {
     optionsSection: 'Επιλογές',
     contentSection: 'Περιεχόμενο',
     settingsSection: 'Ρυθμίσεις',
+    valueAnchor: 'Άγκυρα',
+    valueAnchorHint: 'Η άκρη που παραμένει σταθερή όταν μια αλλαγή τιμής μεταβάλλει το πλάτος',
     typographySection: 'Τυπογραφία',
     name: 'Όνομα',
     x: 'X',

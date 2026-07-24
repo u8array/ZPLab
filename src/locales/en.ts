@@ -346,6 +346,8 @@ const en = {
     optionsSection: 'Options',
     contentSection: 'Content',
     settingsSection: 'Settings',
+    valueAnchor: 'Anchor',
+    valueAnchorHint: 'Edge that stays fixed when a value change alters the width',
     typographySection: 'Typography',
     name: 'Name',
     x: 'X',

@@ -346,6 +346,8 @@ const ar = {
     optionsSection: 'خيارات',
     contentSection: 'المحتوى',
     settingsSection: 'الإعدادات',
+    valueAnchor: 'مرساة',
+    valueAnchorHint: 'الحافة التي تبقى ثابتة عند تغيّر العرض بسبب تغيير القيمة',
     typographySection: 'الطباعة',
     name: 'الاسم',
     x: 'X',

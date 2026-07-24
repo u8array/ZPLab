@@ -346,6 +346,8 @@ const he = {
     optionsSection: 'אפשרויות',
     contentSection: 'תוכן',
     settingsSection: 'הגדרות',
+    valueAnchor: 'עוגן',
+    valueAnchorHint: 'הקצה שנשאר קבוע כאשר שינוי בערך משנה את הרוחב',
     typographySection: 'טיפוגרפיה',
     name: 'שם',
     x: 'X',

@@ -346,6 +346,8 @@ const bg = {
     optionsSection: 'Опции',
     contentSection: 'Съдържание',
     settingsSection: 'Настройки',
+    valueAnchor: 'Котва',
+    valueAnchorHint: 'Ръб, който остава фиксиран, когато промяна на стойността променя ширината',
     typographySection: 'Типография',
     name: 'Име',
     x: 'X',

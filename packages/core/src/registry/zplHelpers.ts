@@ -39,7 +39,7 @@ export function graphicAnchorCoords(
   w: number,
   h: number,
   positionType: LabelObjectBase["positionType"],
-  justify: "L" | "R" | undefined,
+  justify: LabelObjectBase["fieldJustify"],
 ): { x: number; y: number } {
   if (positionType !== "FT") return { x, y };
   return justify === "R" ? { x: x + w, y: y + h } : { x, y: y + h };
@@ -53,7 +53,7 @@ export function graphicAnchor(
   w: number,
   h: number,
   positionType: LabelObjectBase["positionType"],
-  justify: "L" | "R" | undefined,
+  justify: LabelObjectBase["fieldJustify"],
 ): string {
   const a = graphicAnchorCoords(x, y, w, h, positionType, justify);
   if (positionType !== "FT") return `^FO${a.x},${a.y}`;

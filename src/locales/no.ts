@@ -346,6 +346,8 @@ const no = {
     optionsSection: 'Alternativer',
     contentSection: 'Innhold',
     settingsSection: 'Innstillinger',
+    valueAnchor: 'Anker',
+    valueAnchorHint: 'Kanten som forblir fast når en verdiendring endrer bredden',
     typographySection: 'Typografi',
     name: 'Navn',
     x: 'X',

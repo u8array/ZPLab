@@ -346,6 +346,8 @@ const da = {
     optionsSection: 'Valg',
     contentSection: 'Indhold',
     settingsSection: 'Indstillinger',
+    valueAnchor: 'Anker',
+    valueAnchorHint: 'Kanten der forbliver fast, når en værdiændring ændrer bredden',
     typographySection: 'Typografi',
     name: 'Navn',
     x: 'X',

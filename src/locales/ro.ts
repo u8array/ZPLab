@@ -346,6 +346,8 @@ const ro = {
     optionsSection: 'Opțiuni',
     contentSection: 'Conținut',
     settingsSection: 'Setări',
+    valueAnchor: 'Ancoră',
+    valueAnchorHint: 'Marginea care rămâne fixă atunci când o modificare a valorii schimbă lățimea',
     typographySection: 'Tipografie',
     name: 'Nume',
     x: 'X',

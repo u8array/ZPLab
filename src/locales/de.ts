@@ -346,6 +346,8 @@ const de = {
     optionsSection: 'Optionen',
     contentSection: 'Inhalt',
     settingsSection: 'Einstellungen',
+    valueAnchor: 'Anker',
+    valueAnchorHint: 'Kante, die beim Ändern der Breite durch eine Wertänderung fix bleibt',
     typographySection: 'Typografie',
     name: 'Name',
     x: 'X',

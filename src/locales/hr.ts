@@ -346,6 +346,8 @@ const hr = {
     optionsSection: 'Opcije',
     contentSection: 'Sadržaj',
     settingsSection: 'Postavke',
+    valueAnchor: 'Sidro',
+    valueAnchorHint: 'Rub koji ostaje fiksan kada promjena vrijednosti mijenja širinu',
     typographySection: 'Tipografija',
     name: 'Naziv',
     x: 'X',

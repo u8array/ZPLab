@@ -10,7 +10,8 @@ import { upceData6FromFd } from "@zplab/core/registry/hriFormatters";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { Gs1DatabarProps } from "@zplab/core/registry/gs1databar";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
-import { dotsToPx } from "@zplab/core/lib/coordinates";
+import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
+import { placeholderContentFor, samplePropsFor } from "../../registry/placeholderContent";
 import {
   GS1_DATABAR_DEFAULT_SEGMENTS,
   GS1_DATABAR_EXPANDED_SYMBOLOGIES,
@@ -639,6 +640,29 @@ export function stateFrameProps(ub: BarcodeDisplaySize["upright"], isEanUpc: boo
   return isEanUpc
     ? { x: ub.barLeftPx, y: ub.barTopPx, width: ub.barW, height: ub.barH }
     : { width: Math.max(ub.w, 1), height: Math.max(ub.h, 1) };
+}
+
+/** Synchronous footprint probe for the store's anchor re-pin. Blank/uncodable
+ *  content falls back to the sample bars, mirroring BarcodeObject, so prop
+ *  edits on a sample-rendered barcode still re-pin against the drawn width. */
+export function measureBarcodeFootprintDots(
+  obj: LeafObject,
+  scale: number,
+  dpmm: number,
+): { w: number; h: number } | null {
+  const blank = (getObjectStringContent(obj) ?? "").trim() === "";
+  let target = obj;
+  let canvas = blank ? null : renderBarcodeCanvas(obj, scale, dpmm).canvas;
+  if (!canvas) {
+    const sample = placeholderContentFor(obj.type, obj.props);
+    if (!sample) return null;
+    target = { ...obj, props: { ...samplePropsFor(obj.type, obj.props), content: sample } } as LeafObject;
+    canvas = renderBarcodeCanvas(target, scale, dpmm).canvas;
+    if (!canvas) return null;
+  }
+  const dim = getDisplaySize(target, canvas, scale, dpmm);
+  if (dim.w <= 0 || dim.h <= 0) return null;
+  return { w: pxToDots(dim.w, scale, dpmm), h: pxToDots(dim.h, scale, dpmm) };
 }
 
 export function getDisplaySize(

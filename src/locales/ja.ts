@@ -346,6 +346,8 @@ const ja = {
     optionsSection: 'オプション',
     contentSection: 'コンテンツ',
     settingsSection: '設定',
+    valueAnchor: 'アンカー',
+    valueAnchorHint: '値の変更で幅が変わる際に固定されたままの辺',
     typographySection: 'タイポグラフィ',
     name: '名前',
     x: 'X',

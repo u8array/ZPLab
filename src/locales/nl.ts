@@ -346,6 +346,8 @@ const nl = {
     optionsSection: 'Opties',
     contentSection: 'Inhoud',
     settingsSection: 'Instellingen',
+    valueAnchor: 'Anker',
+    valueAnchorHint: 'Rand die vast blijft wanneer een waardewijziging de breedte verandert',
     typographySection: 'Typografie',
     name: 'Naam',
     x: 'X',

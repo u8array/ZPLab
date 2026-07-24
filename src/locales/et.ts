@@ -346,6 +346,8 @@ const et = {
     optionsSection: 'Valikud',
     contentSection: 'Sisu',
     settingsSection: 'Sätted',
+    valueAnchor: 'Ankur',
+    valueAnchorHint: 'Serv, mis jääb fikseerituks, kui väärtuse muutus muudab laiust',
     typographySection: 'Tüpograafia',
     name: 'Nimi',
     x: 'X',

@@ -346,6 +346,8 @@ const lv = {
     optionsSection: 'Opcijas',
     contentSection: 'Saturs',
     settingsSection: 'Iestatījumi',
+    valueAnchor: 'Enkurs',
+    valueAnchorHint: 'Mala, kas paliek fiksēta, kad vērtības izmaiņas maina platumu',
     typographySection: 'Tipogrāfija',
     name: 'Nosaukums',
     x: 'X',

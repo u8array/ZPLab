@@ -346,6 +346,8 @@ const lt = {
     optionsSection: 'Parinktys',
     contentSection: 'Turinys',
     settingsSection: 'Nustatymai',
+    valueAnchor: 'Inkaras',
+    valueAnchorHint: 'Kraštas, kuris išlieka fiksuotas, kai reikšmės pakeitimas pakeičia plotį',
     typographySection: 'Tipografija',
     name: 'Pavadinimas',
     x: 'X',

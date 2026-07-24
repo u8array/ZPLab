@@ -346,6 +346,8 @@ const cs = {
     optionsSection: 'Možnosti',
     contentSection: 'Obsah',
     settingsSection: 'Nastavení',
+    valueAnchor: 'Kotva',
+    valueAnchorHint: 'Hrana, která zůstává pevná, když změna hodnoty změní šířku',
     typographySection: 'Typografie',
     name: 'Název',
     x: 'X',

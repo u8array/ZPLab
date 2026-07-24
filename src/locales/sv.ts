@@ -346,6 +346,8 @@ const sv = {
     optionsSection: 'Alternativ',
     contentSection: 'Innehåll',
     settingsSection: 'Inställningar',
+    valueAnchor: 'Ankare',
+    valueAnchorHint: 'Kanten som förblir fast när en värdeändring ändrar bredden',
     typographySection: 'Typografi',
     name: 'Namn',
     x: 'X',

@@ -4,6 +4,7 @@ import { isLocaleCode, type LocaleCode } from '../locales';
 import { renameTemplateMarkers, substituteTemplateMarker } from '@zplab/core/lib/fnTemplate';
 import { getObjectStringContent } from '@zplab/core/lib/variableBinding';
 import { getEntry } from '@zplab/core/registry';
+import { anchorRepin } from './anchorRepin';
 
 /** Meta fields that remain editable on a locked object so the user can
  *  release the lock or annotate without unlocking first. Everything else
@@ -27,6 +28,13 @@ export const EMIT_AFFECTING_KEYS = new Set(['x', 'y', 'rotation', 'positionType'
  *  a page overlay's raw config bytes stale. Exported for a tripwire test: a key
  *  wrongly added here would silently skip the overlay drop and emit stale config. */
 export const NON_EMITTING_CONFIG_KEYS = new Set(['safeAreaMm']);
+
+/** Object PROP keys that never reach emitted ZPL; a props diff touching only
+ *  these must not stamp dirty (it would needlessly drop the verbatim overlay).
+ *  Same contract as NON_EMITTING_CONFIG_KEYS. Classifies globally by key name:
+ *  a future type reusing this name for an EMITTING prop would silently skip
+ *  the overlay drop (membership lock in anchorRepin.test.ts). */
+export const NON_EMITTING_PROP_KEYS = new Set(['preSerialContent']);
 
 /** True when a config patch changes a field that reaches emitted ZPL. Used to
  *  drop page overlays: until config-segment linkage lands, an overlay replays
@@ -144,7 +152,7 @@ export function applyObjectChanges(
   } as LabelObject;
   // Dirty-tracking is centralized in the dirtyTracking middleware (a state diff),
   // so this mutator no longer stamps dirty itself.
-  return next;
+  return anchorRepin(obj, normalized, next);
 }
 
 export function detectLocale(): LocaleCode {

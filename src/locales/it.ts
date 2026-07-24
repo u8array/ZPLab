@@ -346,6 +346,8 @@ const it = {
     optionsSection: 'Opzioni',
     contentSection: 'Contenuto',
     settingsSection: 'Impostazioni',
+    valueAnchor: 'Ancora',
+    valueAnchorHint: 'Bordo che rimane fisso quando una modifica del valore altera la larghezza',
     typographySection: 'Tipografia',
     name: 'Nome',
     x: 'X',

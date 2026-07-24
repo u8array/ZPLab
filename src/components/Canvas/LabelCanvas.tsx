@@ -30,6 +30,10 @@ import { barcodeEncodeFindings } from "./barcodePreflight";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { useContextMenu } from "../../hooks/useContextMenu";
 import { rotateSelectionChanges } from "../../lib/groupRotation";
+import { registerBarcodeWidthProber, unregisterBarcodeWidthProber } from "../../store/anchorRepin";
+import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
+import { objectResolvesCtrl } from "@zplab/core/registry";
+import { measureBarcodeFootprintDots } from "./bwipHelpers";
 import { selectTidyTargets } from "../../lib/tidyClassify";
 import { safeAreaRectDots } from "../../lib/safeArea";
 import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "./measuredBoundsCache";
@@ -451,6 +455,20 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   } = useCanvasPanZoom({ zoom, onZoomChange, fitZoom, containerRef });
 
   const scale = SCREEN_PX_PER_MM * zoom;
+  // Anchored barcodes: the store's re-pin probes width synchronously through
+  // the same bwip pipeline the canvas renders with, on the same binding-
+  // resolved content KonvaObject draws (headless tests: no prober).
+  const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
+  useEffect(() => {
+    const { variables: vars, active, clock } = previewBinding;
+    const probe = (o: LabelObject) => {
+      if (isGroup(o)) return null;
+      const resolved = applyBindingToObject(o, vars, active, dataRenderMode, clock, objectResolvesCtrl(o));
+      return measureBarcodeFootprintDots(resolved as LeafObject, scale, label.dpmm);
+    };
+    registerBarcodeWidthProber(probe);
+    return () => unregisterBarcodeWidthProber(probe);
+  }, [scale, label.dpmm, previewBinding, dataRenderMode]);
   const labelWidthPx = effectiveWidthMm * scale;
   const physicalWidthPx = label.widthMm * scale;
   const labelHeightPx = label.heightMm * scale;

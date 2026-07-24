@@ -346,6 +346,8 @@ const ko = {
     optionsSection: '옵션',
     contentSection: '콘텐츠',
     settingsSection: '설정',
+    valueAnchor: '앵커',
+    valueAnchorHint: '값 변경으로 너비가 바뀔 때 고정된 상태로 유지되는 모서리',
     typographySection: '타이포그래피',
     name: '이름',
     x: 'X',

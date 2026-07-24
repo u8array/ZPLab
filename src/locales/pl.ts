@@ -346,6 +346,8 @@ const pl = {
     optionsSection: 'Opcje',
     contentSection: 'Treść',
     settingsSection: 'Ustawienia',
+    valueAnchor: 'Kotwica',
+    valueAnchorHint: 'Krawędź, która pozostaje nieruchoma, gdy zmiana wartości zmienia szerokość',
     typographySection: 'Typografia',
     name: 'Nazwa',
     x: 'X',

@@ -346,6 +346,8 @@ const fa = {
     optionsSection: 'گزینه‌ها',
     contentSection: 'محتوا',
     settingsSection: 'تنظیمات',
+    valueAnchor: 'لنگر',
+    valueAnchorHint: 'لبه‌ای که هنگام تغییر عرض بر اثر تغییر مقدار ثابت می‌ماند',
     typographySection: 'تایپوگرافی',
     name: 'نام',
     x: 'X',

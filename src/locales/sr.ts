@@ -346,6 +346,8 @@ const sr = {
     optionsSection: 'Опције',
     contentSection: 'Садржај',
     settingsSection: 'Подешавања',
+    valueAnchor: 'Сидро',
+    valueAnchorHint: 'Ивица која остаје фиксна када промена вредности мења ширину',
     typographySection: 'Типографија',
     name: 'Naziv',
     x: 'X',

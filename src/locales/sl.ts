@@ -346,6 +346,8 @@ const sl = {
     optionsSection: 'Možnosti',
     contentSection: 'Vsebina',
     settingsSection: 'Nastavitve',
+    valueAnchor: 'Sidro',
+    valueAnchorHint: 'Rob, ki ostane fiksen, ko sprememba vrednosti spremeni širino',
     typographySection: 'Tipografija',
     name: 'Ime',
     x: 'X',

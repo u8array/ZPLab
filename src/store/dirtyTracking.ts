@@ -1,6 +1,7 @@
 import type { StateCreator, StoreMutatorIdentifier } from 'zustand';
 import { isGroup, type LabelObject, type Page } from '@zplab/core/types/Group';
-import { EMIT_AFFECTING_KEYS } from './labelStore.internals';
+import { BARCODE_1D_TYPES } from '@zplab/core/registry';
+import { EMIT_AFFECTING_KEYS, NON_EMITTING_PROP_KEYS } from './labelStore.internals';
 
 // Centralizes round-trip dirty-tracking that was otherwise scattered across every
 // object mutator (the chokepoint plus each wholesale-rewrite bypass). A single
@@ -10,14 +11,28 @@ import { EMIT_AFFECTING_KEYS } from './labelStore.internals';
 // temporal, so zundo's restore path (which replays via the original setState,
 // outside this wrapper) does not re-stamp on undo/redo.
 
-/** True when any emit-affecting field differs. Scalars compare by value; `props`
- *  compares by reference. Given the store's identity-preserving mutators (which
- *  keep the same `props` object when nothing changed and produce a fresh one on
- *  an edit), this never UNDER-stamps; it can only over-stamp on a no-op props
- *  rebuild, which merely regenerates a byte-identical field. Reuses the single
- *  EMIT_AFFECTING_KEYS source. */
+/** True when any emit-affecting field differs. Scalars compare by value; a
+ *  fresh `props` reference is diffed shallowly so edits touching only
+ *  non-emitting editor-aid props keep the verbatim overlay alive.
+ *  The no-under-stamp guarantee now rests on per-key immutability: mutators
+ *  must replace (not mutate) nested prop values, which all of them do. */
 function emitAffectingChanged(a: LabelObject, b: LabelObject): boolean {
   for (const k of EMIT_AFFECTING_KEYS) {
+    const av = (a as Record<string, unknown>)[k];
+    const bv = (b as Record<string, unknown>)[k];
+    if (av === bv) continue;
+    // fieldJustify emits for graphics (graphicAnchor) but not yet for 1D
+    // barcodes (no z-param emit); a barcode justify toggle changes no bytes.
+    if (k === 'fieldJustify' && BARCODE_1D_TYPES.has(b.type)) continue;
+    if (k === 'props' && !propsEmitChanged(av as object, bv as object)) continue;
+    return true;
+  }
+  return false;
+}
+
+function propsEmitChanged(a: object = {}, b: object = {}): boolean {
+  for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) {
+    if (NON_EMITTING_PROP_KEYS.has(k)) continue;
     if ((a as Record<string, unknown>)[k] !== (b as Record<string, unknown>)[k]) return true;
   }
   return false;

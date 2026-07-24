@@ -346,6 +346,8 @@ const tr = {
     optionsSection: 'Seçenekler',
     contentSection: 'İçerik',
     settingsSection: 'Ayarlar',
+    valueAnchor: 'Çapa',
+    valueAnchorHint: 'Değer değişikliği genişliği değiştirdiğinde sabit kalan kenar',
     typographySection: 'Tipografi',
     name: 'Ad',
     x: 'X',

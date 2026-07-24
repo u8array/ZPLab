@@ -346,6 +346,8 @@ const pt = {
     optionsSection: 'Opções',
     contentSection: 'Conteúdo',
     settingsSection: 'Definições',
+    valueAnchor: 'Âncora',
+    valueAnchorHint: 'Borda que permanece fixa quando uma alteração de valor altera a largura',
     typographySection: 'Tipografia',
     name: 'Nome',
     x: 'X',

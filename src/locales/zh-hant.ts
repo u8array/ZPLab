@@ -346,6 +346,8 @@ const zhHant = {
     optionsSection: '選項',
     contentSection: '內容',
     settingsSection: '設定',
+    valueAnchor: '錨點',
+    valueAnchorHint: '數值變化導致寬度改變時保持固定的邊',
     typographySection: '排版',
     name: '名稱',
     x: 'X',

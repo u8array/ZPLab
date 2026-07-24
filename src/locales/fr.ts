@@ -346,6 +346,8 @@ const fr = {
     optionsSection: 'Options',
     contentSection: 'Contenu',
     settingsSection: 'Paramètres',
+    valueAnchor: 'Ancrage',
+    valueAnchorHint: "Bord qui reste fixe lorsqu'une modification de valeur change la largeur",
     typographySection: 'Typographie',
     name: 'Nom',
     x: 'X',

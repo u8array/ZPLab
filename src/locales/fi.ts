@@ -346,6 +346,8 @@ const fi = {
     optionsSection: 'Valinnat',
     contentSection: 'Sisältö',
     settingsSection: 'Asetukset',
+    valueAnchor: 'Ankkuri',
+    valueAnchorHint: 'Reuna, joka pysyy kiinteänä, kun arvon muutos muuttaa leveyttä',
     typographySection: 'Typografia',
     name: 'Nimi',
     x: 'X',

@@ -346,6 +346,8 @@ const hu = {
     optionsSection: 'Lehetőségek',
     contentSection: 'Tartalom',
     settingsSection: 'Beállítások',
+    valueAnchor: 'Horgony',
+    valueAnchorHint: 'Az a szél, amely rögzítve marad, ha egy értékváltozás megváltoztatja a szélességet',
     typographySection: 'Tipográfia',
     name: 'Név',
     x: 'X',

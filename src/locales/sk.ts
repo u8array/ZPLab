@@ -346,6 +346,8 @@ const sk = {
     optionsSection: 'Možnosti',
     contentSection: 'Obsah',
     settingsSection: 'Nastavenia',
+    valueAnchor: 'Kotva',
+    valueAnchorHint: 'Hrana, ktorá zostáva pevná, keď zmena hodnoty zmení šírku',
     typographySection: 'Typografia',
     name: 'Názov',
     x: 'X',
