@@ -7,6 +7,7 @@
 import { hydrateLocalStoragePrefix, safeLocalStorageRemove, safeLocalStorageSet } from "./localStorageBucket";
 import { loadImage } from "./loadImage";
 
+import { newId } from "./ids";
 export interface CachedImage {
   id: string;
   name: string;
@@ -66,7 +67,7 @@ export async function loadImageFile(file: File): Promise<CachedImage> {
       loadImage(dataUrl, `Failed to decode image: ${file.name}`)
         .then((img) => {
           const entry: CachedImage = {
-            id: crypto.randomUUID(),
+            id: newId(),
             name: file.name,
             dataUrl,
             width: img.naturalWidth,

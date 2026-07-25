@@ -4,6 +4,7 @@ import { useLabelStore } from "../../store/labelStore";
 import { FONT_LINKS_MAX_PER_BASE } from "@zplab/core/types/PrinterProfile";
 import { SafeStringInput, ZplCommandLabel, ZplField, ZplFieldHint } from "./zplFieldPrimitives";
 
+import { newId } from "@zplab/core/lib/ids";
 function overflowingBases(links: readonly { base: string }[]): string[] {
   const counts = new Map<string, number>();
   for (const l of links) {
@@ -25,10 +26,10 @@ export function FontLinksField() {
 
   // Stable per-row IDs preserve focus when rows are removed mid-list.
   // Re-synced when links arrive from outside the component (import, rehydrate).
-  const [rowIds, setRowIds] = useState<string[]>(() => links.map(() => crypto.randomUUID()));
+  const [rowIds, setRowIds] = useState<string[]>(() => links.map(() => newId()));
   if (rowIds.length !== links.length) {
     const next = rowIds.slice(0, links.length);
-    while (next.length < links.length) next.push(crypto.randomUUID());
+    while (next.length < links.length) next.push(newId());
     setRowIds(next);
   }
 
@@ -41,7 +42,7 @@ export function FontLinksField() {
     patch({ fontLinks: next.length > 0 ? next : undefined });
   };
   const addRow = () => {
-    setRowIds([...rowIds, crypto.randomUUID()]);
+    setRowIds([...rowIds, newId()]);
     patch({ fontLinks: [...links, { ext: "", base: "" }] });
   };
 

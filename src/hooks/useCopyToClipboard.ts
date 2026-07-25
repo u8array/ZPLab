@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { copyText } from '../lib/clipboard';
 
 /** Copy-to-clipboard with a transient "copied" flag for button UI.
  *  `getPayload` is called at copy-time (not at hook-call-time) so
@@ -12,17 +13,15 @@ export function useCopyToClipboard(getPayload: () => string, resetMs = 1500) {
   const copy = () => {
     const payload = getPayload();
     if (!payload) return;
-    // navigator.clipboard is undefined in non-secure contexts
-    // (plain HTTP, file://) and in some embedded WebViews.
-    if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(payload).then(() => {
+    void copyText(payload).then((r) => {
+      if (r !== 'copied') return;
       setCopied(true);
       if (timerRef.current !== null) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
         timerRef.current = null;
         setCopied(false);
       }, resetMs);
-    }).catch(() => { /* swallow: user-cancel or permission-denied */ });
+    });
   };
 
   useEffect(() => {

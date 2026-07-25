@@ -11,6 +11,7 @@ import type { QrCodeProps } from "../../../registry/qrcode";
 import { dotsFor, ftTopLeft, int, makeObj, readColor, readRotation } from "../helpers";
 import type { Handler } from "../types";
 
+import { newId } from "../../ids";
 /** Characters of a `^GF`/`~DY` payload retained in browserLimit findings;
  *  rest is replaced with an ellipsis so a single multi-KB base64 blob
  *  doesn't drown out the import report. */
@@ -217,7 +218,7 @@ export function createGraphicsHandlers(
         gfBytesPerRow,
         gfParams[0] ?? "",
         gfParams[1] ?? "",
-        `imported_${crypto.randomUUID().slice(0, 8)}.png`,
+        `imported_${newId().slice(0, 8)}.png`,
       );
       if (!gfImage) {
         // Undecodable, but the header still describes the bitmap, so preserve

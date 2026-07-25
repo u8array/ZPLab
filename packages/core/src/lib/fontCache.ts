@@ -2,6 +2,7 @@
 
 import { hydrateLocalStoragePrefix, safeLocalStorageRemove, safeLocalStorageSet } from "./localStorageBucket";
 
+import { newId } from "./ids";
 export interface CachedFont {
   id: string;
   /** Uppercase printer filename. */
@@ -148,7 +149,7 @@ function registerBytes(bytes: Uint8Array, printerName: string): CachedFont {
   const dataUrl = `data:${fontMime(name)};base64,${btoa(binary)}`;
   const fontFamily = printerNameToFamily(name);
   const entry: CachedFont = {
-    id: crypto.randomUUID(),
+    id: newId(),
     name,
     dataUrl,
     fontFamily,

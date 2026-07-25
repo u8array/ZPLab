@@ -2,6 +2,7 @@ import type { LabelObject } from "../../types/Group";
 import { isZplRotation, type ZplRotation } from "../../registry/rotation";
 import { opensImmediateCommand } from "../zplImmediate";
 
+import { newId } from "../ids";
 /** Validated ZplRotation or `fallback` (default 'N'). */
 export function readRotation(
   raw: string | undefined,
@@ -184,7 +185,7 @@ export function makeObj(
   comment?: string,
 ): LabelObject {
   return {
-    id: crypto.randomUUID(),
+    id: newId(),
     type,
     x,
     y,

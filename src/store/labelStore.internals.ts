@@ -6,6 +6,7 @@ import { getObjectStringContent } from '@zplab/core/lib/variableBinding';
 import { getEntry } from '@zplab/core/registry';
 import { anchorRepin } from './anchorRepin';
 
+import { newId } from "@zplab/core/lib/ids";
 /** Meta fields that remain editable on a locked object so the user can
  *  release the lock or annotate without unlocking first. Everything else
  *  (position, props, rotation, positionType) is blocked. */
@@ -195,13 +196,13 @@ export function cloneChildrenFresh(children: LabelObject[]): LabelObject[] {
     if (isGroup(c)) {
       return {
         ...c,
-        id: crypto.randomUUID(),
+        id: newId(),
         children: cloneChildrenFresh(c.children),
       };
     }
     return dropProvenance({
       ...c,
-      id: crypto.randomUUID(),
+      id: newId(),
       props: { ...c.props },
     } as LabelObject);
   });
@@ -214,7 +215,7 @@ export function cloneShifted(src: LabelObject, dx: number, dy: number): LabelObj
   if (isGroup(src)) {
     return {
       ...src,
-      id: crypto.randomUUID(),
+      id: newId(),
       x: src.x + dx,
       y: src.y + dy,
       children: src.children.map((c) => cloneShifted(c, dx, dy)),
@@ -222,7 +223,7 @@ export function cloneShifted(src: LabelObject, dx: number, dy: number): LabelObj
   }
   return dropProvenance({
     ...src,
-    id: crypto.randomUUID(),
+    id: newId(),
     x: src.x + dx,
     y: src.y + dy,
     props: { ...src.props },

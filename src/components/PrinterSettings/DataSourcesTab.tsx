@@ -18,6 +18,7 @@ import { Select } from '../ui/Select';
 import { inputCls } from '../Properties/styles';
 import type { DbProfile, DbSslMode } from '../../lib/db';
 
+import { newId } from "@zplab/core/lib/ids";
 type Driver = DbProfile['driver'];
 
 /** Settings tab: pick-or-create a connection profile, browse its tables,
@@ -105,7 +106,7 @@ export function DataSourcesTab() {
 
   const handleAdd = () => {
     const created: DbProfile = {
-      id: crypto.randomUUID(),
+      id: newId(),
       name: nextProfileName(dbProfiles, tv.dbProfileLabel),
       driver: 'sqlite',
       path: '',

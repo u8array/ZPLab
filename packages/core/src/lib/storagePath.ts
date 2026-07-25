@@ -1,5 +1,7 @@
 // Zebra storage paths: bare `device:name` (~DY) vs `device:name.ext` (^XG).
 
+import { newId } from "./ids";
+
 /** R volatile RAM, E flash, B alt flash, A alias. */
 export const STORAGE_DEVICES = ["R", "E", "B", "A"] as const;
 export type StorageDevice = (typeof STORAGE_DEVICES)[number];
@@ -10,7 +12,7 @@ export const STORAGE_NAME_FILTER_RE = /[^A-Z0-9_]/g;
 
 /** Short UUID slice avoids collisions without forcing user-chosen name. */
 export function defaultStorageName(): string {
-  return `IMG_${crypto.randomUUID().slice(0, 4).toUpperCase()}`;
+  return `IMG_${newId().slice(0, 4).toUpperCase()}`;
 }
 
 export interface StoragePath {

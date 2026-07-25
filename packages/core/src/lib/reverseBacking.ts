@@ -8,6 +8,7 @@ import type { LabelConfig } from "../types/LabelConfig";
 import type { LabelObject } from "../types/Group";
 import { isGroup } from "../types/Group";
 
+import { newId } from "./ids";
 type FontLabel = Pick<LabelConfig, "customFonts" | "defaultFontId">;
 
 /** Minimal text shape the geometry needs; works on typed and migrated data. */
@@ -121,7 +122,7 @@ export function makeReverseBackingBox(
   const geo = reverseBackingBoxGeometry(text, label);
   const { width, height, thickness } = geo.props;
   const base: Record<string, unknown> = {
-    id: crypto.randomUUID(),
+    id: newId(),
     x: geo.x,
     y: geo.y,
     rotation: 0,

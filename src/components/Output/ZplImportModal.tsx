@@ -13,6 +13,7 @@ import { ImportSummaryBody } from './ImportSummary';
 import { ImportSetupChoice } from './ImportSetupChoice';
 import { useT } from '../../hooks/useT';
 import { DialogShell } from '../ui/DialogShell';
+import { copyText } from '../../lib/clipboard';
 
 interface Props {
   onClose: () => void;
@@ -153,7 +154,8 @@ export function ZplImportModal({ onClose }: Props) {
 
   const handleCopy = () => {
     if (!result) return;
-    navigator.clipboard.writeText(formatReportAsText(result)).then(() => {
+    void copyText(formatReportAsText(result)).then((r) => {
+      if (r !== 'copied') return;
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     });
@@ -227,7 +229,7 @@ export function ZplImportModal({ onClose }: Props) {
             <input
               ref={fileInputRef}
               type="file"
-              accept=".zpl,text/plain"
+              accept=".zpl,.prn,text/plain"
               className="hidden"
               onChange={handleFileSelect}
             />

@@ -3,6 +3,7 @@ import { BITS_PER_BYTE } from "./constants";
 import { gfPayloadToBytes } from "./gfa";
 import type { DecodedGraphic } from "../types";
 
+import { newId } from "../../ids";
 /**
  * Decode a GF-shaped payload into an image-cache entry. Shared between
  * the `^GF` inline path and the `~DY` graphic-upload preamble; both
@@ -49,7 +50,7 @@ export function decodeGraphicToImage(
     }
   }
   ctx.putImageData(imgData, 0, 0);
-  const imageId = crypto.randomUUID();
+  const imageId = newId();
   putImage({
     id: imageId,
     name: nameHint,

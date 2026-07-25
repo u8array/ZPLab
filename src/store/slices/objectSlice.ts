@@ -28,6 +28,7 @@ import {
 import { selectPreviewLocksEditor, currentObjects } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
+import { newId } from "@zplab/core/lib/ids";
 export interface ObjectSlice {
   pages: Page[];
   currentPageIndex: number;
@@ -108,7 +109,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       ...spawnRotationOverride(type, propsOverride, get().canvasSettings.viewRotation),
     };
     const obj = {
-      id: crypto.randomUUID(),
+      id: newId(),
       type,
       x: position.x,
       y: position.y,
@@ -352,7 +353,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
         -1,
       );
       const group: GroupObject = {
-        id: crypto.randomUUID(),
+        id: newId(),
         type: 'group',
         x: 0,
         y: 0,
@@ -393,7 +394,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
     set((state) => {
       if (selectPreviewLocksEditor(state)) return {};
       const group: GroupObject = {
-        id: crypto.randomUUID(),
+        id: newId(),
         type: 'group',
         x: 0,
         y: 0,

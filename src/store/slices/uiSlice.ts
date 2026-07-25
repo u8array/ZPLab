@@ -13,6 +13,7 @@ import { makeCredentialHydrator, setCredential } from '../../lib/credentialStore
 import { generateMcpToken, stopMcpServer } from '../../lib/mcpServer';
 import { selectEffectivePreviewProvider } from '../labelStore.selectors';
 
+import { newId } from "@zplab/core/lib/ids";
 /** Credential-store account name for the Labelary API key. */
 const LABELARY_KEY_CRED = 'labelary-api-key';
 
@@ -411,7 +412,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
       if (state.paletteRows.some((r) => r.entryId === entryId)) {
         return { paletteRows: state.paletteRows.filter((r) => r.entryId !== entryId) };
       }
-      const id = `${entryId}-${crypto.randomUUID().slice(0, 8)}`;
+      const id = `${entryId}-${newId().slice(0, 8)}`;
       return { paletteRows: [...state.paletteRows, { id, entryId }] };
     }),
   removePaletteRow: (index) =>

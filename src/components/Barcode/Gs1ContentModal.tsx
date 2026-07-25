@@ -14,6 +14,7 @@ import { extractTemplateRefs, hasTemplateMarkers, markersToEmbeds } from "@zplab
 import { DEFAULT_CLOCK_CHARS, markersToTokens } from "@zplab/core/lib/fcTemplate";
 import { MarkerTextField } from "../Properties/MarkerTextField";
 import { findObjectById } from "@zplab/core/types/Group";
+import { newId } from "@zplab/core/lib/ids";
 import {
   aiSpec,
   gs1AddBlockReason,
@@ -46,7 +47,7 @@ interface DraftSegment extends Gs1Segment {
   key: string;
 }
 
-const draftSegment = (s: Gs1Segment): DraftSegment => ({ ...s, key: crypto.randomUUID() });
+const draftSegment = (s: Gs1Segment): DraftSegment => ({ ...s, key: newId() });
 
 /** Long-tail count for the palette hint: offerable catalog minus the curated
  *  set (all common AIs are satisfiable, guarded by test). */

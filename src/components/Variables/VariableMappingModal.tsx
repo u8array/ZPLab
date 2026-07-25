@@ -27,6 +27,7 @@ import { VariableSourceBadge } from './VariableSourceBadge';
 import { Tooltip } from '../ui/Tooltip';
 
 
+import { newId } from "@zplab/core/lib/ids";
 interface Props {
   onClose: () => void;
   /** Opens the CSV file picker (the same one as the File menu's import). */
@@ -286,7 +287,7 @@ export function VariableMappingModal({ onClose, onImportCsv }: Props) {
       const fn = nextFreeFnNumber(prev.map((v) => v.fnNumber));
       if (fn === null) return prev;
       const newVar: Variable = {
-        id: crypto.randomUUID(),
+        id: newId(),
         name: nextDefaultVariableName(prev),
         fnNumber: fn,
         defaultValue: '',

@@ -34,6 +34,7 @@ import { registerBarcodeWidthProber, unregisterBarcodeWidthProber } from "../../
 import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
 import { objectResolvesCtrl } from "@zplab/core/registry";
 import { measureBarcodeFootprintDots } from "./bwipHelpers";
+import { copyText } from "../../lib/clipboard";
 import { selectTidyTargets } from "../../lib/tidyClassify";
 import { safeAreaRectDots } from "../../lib/safeArea";
 import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "./measuredBoundsCache";
@@ -1241,10 +1242,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       toggleLock: () => setSelectionLocked(!isSelectionLocked(objects, sel)),
       addHere: (type: string, propsOverride?: object) => addObject(type, click, propsOverride),
       copyZplSelected: () => {
-        void navigator.clipboard?.writeText(zplForSelection(label, objects, sel, variables));
+        void copyText(zplForSelection(label, objects, sel, variables));
       },
       copyZplLabel: () => {
-        void navigator.clipboard?.writeText(generateMultiPageZPL(label, pages, variables));
+        void copyText(generateMultiPageZPL(label, pages, variables));
       },
       copyImage: () => {
         // Call write synchronously with the pending blob so the user activation

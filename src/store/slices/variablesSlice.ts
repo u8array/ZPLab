@@ -17,6 +17,7 @@ import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
 import { selectPreviewLocksEditor } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
+import { newId } from "@zplab/core/lib/ids";
 export interface VariablesSlice {
   /** Document-level template variables. Fields reference them via `«name»`
    *  content markers; export emits `^FN{fnNumber}^FD{defaultValue}^FS`.
@@ -62,7 +63,7 @@ export const createVariablesSlice: StateCreator<LabelState, [], [], VariablesSli
     }
 
     const variable: Variable = {
-      id: crypto.randomUUID(),
+      id: newId(),
       name: trimmedName,
       fnNumber,
       // A default is a literal fallback; strip marker delimiters so it can't

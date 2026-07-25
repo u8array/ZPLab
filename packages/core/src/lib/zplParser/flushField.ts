@@ -43,6 +43,7 @@ import { upceData6FromFd } from "../../registry/hriFormatters";
 import { decodeFH, makeObj, variableNameFromComment } from "./helpers";
 import { getPosType, resetFieldBlockDefaults, type ParserState } from "./context";
 
+import { newId } from "../ids";
 /** Cross-family deps flushField borrows from graphics (^GB+^FR) and parseZPL (^FX). */
 export interface FlushFieldDeps {
   commitPendingReverseBg: () => void;
@@ -80,7 +81,7 @@ export function createFlushField(
     const hinted = variableNameFromComment(commentHint);
     const base = hinted && isValidVariableName(hinted) ? hinted : `field_${fnNumber}`;
     const v: Variable = {
-      id: crypto.randomUUID(),
+      id: newId(),
       name: uniqueVariableName(base, variables),
       fnNumber,
       defaultValue,
