@@ -33,7 +33,7 @@ printers = "2.3.0"
 keyring = { version = "3", features = ["windows-native", "apple-native", "sync-secret-service"] }
 # Read-only dataset connector (db.rs). Bundled SQLite, no system lib to link;
 # rustls-ring for pg/mysql TLS (aws-lc would drag cmake/nasm into every build).
-sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "sqlite", "postgres", "mysql", "tls-rustls-ring"] }
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "sqlite", "postgres", "mysql", "tls-rustls-ring"] }
 # Excel as a plain file reader (excel.rs): ZebraDesigner-parity without the
 # ODBC driver-manager tax. dates maps serial datetimes via chrono.
 calamine = { version = "0.36", features = ["dates"] }
