@@ -7,17 +7,20 @@ import { StateFrame } from "./BarcodeObject";
 import { stateFrameProps } from "./bwipHelpers";
 import { naturalRect } from "./nodeRect";
 
-const ub = { w: 200, h: 213, barW: 200, barH: 200, barLeftPx: 0, barTopPx: 0 };
-
 describe("stateFrameProps", () => {
-  // EAN/UPC reserves an HRI text zone even with interpretation off, so the
-  // frame must track the bar sub-rect on BOTH render paths, not the footprint.
-  it("frames the bar rect for EAN/UPC", () => {
-    expect(stateFrameProps(ub, true)).toEqual({ x: 0, y: 0, width: 200, height: 200 });
+  it("frames the bar rect below-zone (EAN/UPC)", () => {
+    const ub = { w: 200, h: 213, barW: 200, barH: 200, barLeftPx: 0, barTopPx: 0 };
+    expect(stateFrameProps(ub)).toEqual({ x: 0, y: 0, width: 200, height: 200 });
   });
 
-  it("frames the full footprint for other symbologies", () => {
-    expect(stateFrameProps(ub, false)).toEqual({ width: 200, height: 213 });
+  it("frames the bar rect above-zone (logmars-style)", () => {
+    const ub = { w: 200, h: 213, barW: 200, barH: 200, barLeftPx: 0, barTopPx: 13 };
+    expect(stateFrameProps(ub)).toEqual({ x: 0, y: 13, width: 200, height: 200 });
+  });
+
+  it("equals the footprint when no zone is reserved", () => {
+    const ub = { w: 200, h: 100, barW: 200, barH: 100, barLeftPx: 0, barTopPx: 0 };
+    expect(stateFrameProps(ub)).toEqual({ x: 0, y: 0, width: 200, height: 100 });
   });
 });
 

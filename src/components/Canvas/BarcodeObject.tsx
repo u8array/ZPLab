@@ -455,7 +455,7 @@ export function BarcodeObject({
             )}
             <Group key={`hri-${fontVersion}`} ref={setOverlayGroupRef}>{overlayContent}</Group>
             {showStateFrame && (
-              <StateFrame {...stateFrameProps(ub, isEanUpc)} color={stateFrameColor} />
+              <StateFrame {...stateFrameProps(ub)} color={stateFrameColor} />
             )}
           </Group>
         </Group>
@@ -490,7 +490,7 @@ export function BarcodeObject({
             strokeScaleEnabled={false}
           />
           {showStateFrame && (
-            <StateFrame {...stateFrameProps(ub, isEanUpc)} color={stateFrameColor} />
+            <StateFrame {...stateFrameProps(ub)} color={stateFrameColor} />
           )}
         </Group>
       </Group>

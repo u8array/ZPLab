@@ -157,13 +157,16 @@ export function renderEanUpcRawCanvas({
   return canvas;
 }
 
-/** Warning frame geometry: the bar sub-rect for EAN/UPC (guard tails and the
- *  reserved HRI zone excluded, matching the selection frame), the full
- *  footprint otherwise. Same on both render paths so HRI on/off stays aligned. */
-export function stateFrameProps(ub: BarcodeDisplaySize["upright"], isEanUpc: boolean) {
-  return isEanUpc
-    ? { x: ub.barLeftPx, y: ub.barTopPx, width: ub.barW, height: ub.barH }
-    : { width: Math.max(ub.w, 1), height: Math.max(ub.h, 1) };
+/** Warning frame geometry: always the bar sub-rect, matching the selection
+ *  frame (any reserved HRI zone, below for EAN/UPC or above for logmars/^BS,
+ *  lies outside it; without a zone the bar rect is the footprint). */
+export function stateFrameProps(ub: BarcodeDisplaySize["upright"]) {
+  return {
+    x: ub.barLeftPx,
+    y: ub.barTopPx,
+    width: Math.max(ub.barW, 1),
+    height: Math.max(ub.barH, 1),
+  };
 }
 
 /** Synchronous footprint probe for the store's anchor re-pin. Blank/uncodable
