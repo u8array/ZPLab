@@ -1,6 +1,17 @@
 # Fail-closed license gate for the Rust dependency tree shipped in the desktop
 # binaries; mirror of scripts/check-licenses.mjs for npm. Adding an id to
 # `allow` or a crate to `exceptions` is a deliberate review step.
+# RustSec advisories fail the same CI gate; unmaintained crates only warn
+# (no fix available by definition, tracked via dependabot bumps instead).
+[advisories]
+unmaintained = "workspace"
+yanked = "deny"
+ignore = [
+    # sqlx-mysql pulls rsa for the auth handshake; no fixed release exists
+    # (Marvin timing side channel). Revisit when sqlx drops the rsa crate.
+    { id = "RUSTSEC-2023-0071", reason = "no upstream fix; local-network DB auth only" },
+]
+
 [licenses]
 allow = [
     "MIT",
@@ -14,7 +25,6 @@ allow = [
     "Unlicense",
     "CC0-1.0",
     "Zlib",
-    "Python-2.0",
     # ICU4X family (icu_*, zerovec, yoke, ...); OSI-approved permissive.
     "Unicode-3.0",
 ]

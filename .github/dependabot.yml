@@ -17,6 +17,21 @@ updates:
           - minor
           - patch
 
+  # Rust dependencies of the desktop shell
+  - package-ecosystem: cargo
+    directory: /src-tauri
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
   # GitHub Actions used in .github/workflows/
   - package-ecosystem: github-actions
     directory: /
