@@ -107,19 +107,27 @@ export function PreviewSettingsTab() {
   // Retry the credential-store load on open (a startup hydrate may have
   // failed). Persist only via an explicit Save: a keychain write can raise an
   // OS unlock prompt, so it must be deliberate, not an incidental blur.
+  const migrateLabelaryKey = useLabelStore((s) => s.migrateLabelaryKey);
   useEffect(() => {
-    void hydrateLabelaryApiKey();
-  }, [hydrateLabelaryApiKey]);
+    // Retry of the startup migration + hydrate; a keychain failure must not
+    // surface as an unhandled rejection or skip the hydrate.
+    void migrateLabelaryKey().catch(() => undefined).then(hydrateLabelaryApiKey);
+  }, [hydrateLabelaryApiKey, migrateLabelaryKey]);
   const [keyDraft, setKeyDraft] = useState<string | null>(null);
-  const keyValue = keyDraft ?? storeKey;
+  // Desktop keeps the key in the keychain only (never hydrated into the store),
+  // so the field is write-only there: it shows the draft, never a stored value.
+  const keyValue = keyDraft ?? (isDesktopShell ? '' : storeKey);
   const [keySaveFailed, setKeySaveFailed] = useState(false);
   // A keychain write can raise an OS unlock prompt and take seconds; block a
   // second save (and its duplicate prompt) until this one settles.
   const [keySaving, setKeySaving] = useState(false);
-  const keyDirty = keyValue.trim() !== storeKey;
+  const keyDirty = isDesktopShell ? keyDraft !== null : keyValue.trim() !== storeKey;
   const saveKey = () => {
     setKeySaveFailed(false);
     setKeySaving(true);
+    // Bind the key to the host the user currently sees, not a still-unblurred
+    // host draft (setLabelaryHost is a no-op when unchanged).
+    persistHost();
     saveLabelaryApiKey(keyValue)
       .then(() => setKeyDraft(null))
       .catch(() => setKeySaveFailed(true))

@@ -42,19 +42,34 @@ pub(crate) fn write_password(name: &str, value: &str) -> Result<(), CredError> {
   Ok(())
 }
 
+/// Rust-internal delete; a missing entry is the desired end state. Blocking.
+pub(crate) fn delete_password(name: &str) -> Result<(), CredError> {
+  match entry(name)?.delete_credential() {
+    Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
+    Err(e) => Err(e.into()),
+  }
+}
+
 /// db-profile passwords flow keychain -> Rust connector only (db.rs
 /// `password_cred`): the webview may delete them but never read or write them
 /// over the generic IPC (writes go through the endpoint-binding `db_set_password`).
 pub(crate) const RUST_ONLY_PREFIX: &str = "db-profile-";
 
+/// Credential-name prefixes the generic IPC may never read or write: the
+/// db-profile passwords and the host-bound Labelary key (`preview.rs`). Each
+/// is written only through its endpoint-binding command.
+const RUST_ONLY_PREFIXES: [&str; 2] = [RUST_ONLY_PREFIX, "preview-"];
+
 /// Windows Credential Manager matches target names case-insensitively, so the
 /// guard must too or `DB-PROFILE-x` slips past yet resolves the same secret.
 /// Allocation-free ASCII prefix compare.
 pub(crate) fn is_rust_only(name: &str) -> bool {
-  name
-    .as_bytes()
-    .get(..RUST_ONLY_PREFIX.len())
-    .is_some_and(|p| p.eq_ignore_ascii_case(RUST_ONLY_PREFIX.as_bytes()))
+  RUST_ONLY_PREFIXES.iter().any(|prefix| {
+    name
+      .as_bytes()
+      .get(..prefix.len())
+      .is_some_and(|p| p.eq_ignore_ascii_case(prefix.as_bytes()))
+  })
 }
 
 #[tauri::command]

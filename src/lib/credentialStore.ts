@@ -66,6 +66,26 @@ export async function deleteCredential(name: string): Promise<void> {
   localStorage.removeItem(LS_PREFIX + name);
 }
 
+export const LABELARY_KEY_CRED = 'labelary-api-key';
+
+/** Store the Labelary key bound to `host`. Desktop routes to the rust-only,
+ *  host-bound keychain command so the key never re-enters the webview. The web
+ *  build has no keychain/CSP threat model: it keeps the key in localStorage
+ *  under the legacy name and is NOT host-scoped (host is ignored there). */
+export async function setLabelaryKeyBound(host: string, key: string): Promise<void> {
+  if (isDesktopShell) {
+    await invoke('preview_set_labelary_key', { host, key: key.trim() });
+    return;
+  }
+  await setCredential(LABELARY_KEY_CRED, key);
+}
+
+/** Desktop one-time move of the legacy unbound key into the host-bound
+ *  credential; no-op on web (its key already lives under the legacy name). */
+export async function migrateLabelaryKeyBinding(host: string): Promise<void> {
+  if (isDesktopShell) await invoke('preview_migrate_labelary_key', { host });
+}
+
 /** API-key semantics: trim, and an empty/whitespace value deletes. */
 export async function setCredential(name: string, value: string): Promise<void> {
   const trimmed = value.trim();

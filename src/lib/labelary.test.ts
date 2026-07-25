@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { resolveHost, resolveApiKey, isDefaultHost, fetchPreview } from "./labelary";
+import { resolveHost, resolveApiKey, isDefaultHost, fetchPreview, labelaryPath } from "./labelary";
 
 const LABEL = { dpmm: 8, widthMm: 101.6, heightMm: 50.8 } as const;
 const DEFAULT_HOST = "https://api.labelary.com";
@@ -50,6 +50,12 @@ describe("resolveApiKey", () => {
   it("a blank runtime key falls back to the build env key", () => {
     vi.stubEnv("VITE_LABELARY_API_KEY", "env-key");
     expect(resolveApiKey("  ")).toBe("env-key");
+  });
+});
+
+describe("labelaryPath", () => {
+  it("builds the printer/size print route the proxy validates against", () => {
+    expect(labelaryPath({ ...LABEL } as never)).toBe("/v1/printers/8dpmm/labels/4.000x2.000/0/");
   });
 });
 

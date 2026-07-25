@@ -3,6 +3,7 @@ mod dataset;
 mod db;
 mod excel;
 mod mcp;
+mod preview;
 mod print;
 mod scope;
 mod transport;
@@ -37,6 +38,9 @@ pub fn run() {
       scope::pick_sqlite_file,
       scope::pick_excel_file,
       scope::revoke_db_path,
+      preview::fetch_labelary_preview,
+      preview::preview_set_labelary_key,
+      preview::preview_migrate_labelary_key,
       credentials::credential_get,
       credentials::credential_set,
       credentials::credential_delete,

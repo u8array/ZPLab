@@ -9,13 +9,14 @@ import {
 } from '../labelStore.internals';
 import type { LabelState } from '../labelStore';
 import { defaultPaletteRows } from '../../registry/paletteTypes';
-import { makeCredentialHydrator, setCredential } from '../../lib/credentialStore';
+import { makeCredentialHydrator, setCredential, setLabelaryKeyBound, migrateLabelaryKeyBinding, LABELARY_KEY_CRED } from '../../lib/credentialStore';
+import { isDesktopShell } from '../../lib/platform';
+import { resolveHost } from '../../lib/labelary';
 import { generateMcpToken, stopMcpServer } from '../../lib/mcpServer';
 import { selectEffectivePreviewProvider } from '../labelStore.selectors';
 
 import { newId } from "@zplab/core/lib/ids";
 /** Credential-store account name for the Labelary API key. */
-const LABELARY_KEY_CRED = 'labelary-api-key';
 
 /** Credential-store account name for the MCP loopback bearer token. */
 const MCP_TOKEN_CRED = 'mcp-server-token';
@@ -128,6 +129,9 @@ export interface UiSlice {
    *  either the hydrate or a save has set the key, a late-resolving hydrate is
    *  a no-op so it can't clobber a freshly saved key. Transient. */
   labelaryApiKeyLoaded: boolean;
+  /** Bumped on every key save so the preview cache invalidates even on desktop,
+   *  where the key lives only in the keychain and never in this store. */
+  labelaryKeyEpoch: number;
   previewProvider: PreviewProvider;
   canvasSettings: CanvasSettings;
   /** Curated object-palette rows ({type, variant} instances, duplicates
@@ -199,6 +203,8 @@ export interface UiSlice {
   /** Load the key from the credential store once at startup. Idempotent and
    *  race-safe: skips if a save already populated the key. */
   hydrateLabelaryApiKey: () => Promise<void>;
+  /** Desktop one-time legacy-key migration; see migrateLabelaryKeyBinding. */
+  migrateLabelaryKey: () => Promise<void>;
   acknowledgeLabelaryNotice: () => void;
   revokeLabelaryNotice: () => void;
   /** Reset app preferences (theme, canvas, palette, power-user, Labelary
@@ -309,6 +315,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   labelaryHost: '',
   labelaryApiKey: '',
   labelaryApiKeyLoaded: false,
+  labelaryKeyEpoch: 0,
   // Keychain-held like the Labelary key; a settings reset keeps it.
   mcpServerToken: '',
   mcpServerTokenLoaded: false,
@@ -360,21 +367,34 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   },
   saveLabelaryApiKey: async (key) => {
     const trimmed = key.trim();
-    // Throws on an unavailable store; caller surfaces it. Mark loaded so a
-    // still-pending startup hydrate can't overwrite the value we just set.
-    await setCredential(LABELARY_KEY_CRED, trimmed);
-    set({ labelaryApiKey: trimmed, labelaryApiKeyLoaded: true });
+    const bumpEpoch = () => set((s) => ({ labelaryKeyEpoch: s.labelaryKeyEpoch + 1 }));
+    // Throws on an unavailable store; caller surfaces it.
+    if (isDesktopShell) {
+      // Desktop never mirrors the key into this store; the proxy reads it from
+      // the keychain (see preview.rs).
+      await setLabelaryKeyBound(resolveHost(get().labelaryHost), trimmed);
+    } else {
+      await setCredential(LABELARY_KEY_CRED, trimmed);
+      set({ labelaryApiKey: trimmed, labelaryApiKeyLoaded: true });
+    }
+    bumpEpoch();
     if (selectEffectivePreviewProvider(get()) === 'labelary') get().exitPreviewMode();
   },
-  // Losing this key is harmless (the user re-enters it), so there is no
-  // fallback: an unreadable store stays unloaded and a later open retries.
-  hydrateLabelaryApiKey: makeCredentialHydrator({
-    credName: LABELARY_KEY_CRED,
-    isLoaded: () => get().labelaryApiKeyLoaded,
-    onStored: (key) => set({ labelaryApiKey: key.trim(), labelaryApiKeyLoaded: true }),
-    onEmpty: () => set({ labelaryApiKey: '', labelaryApiKeyLoaded: true }),
-    onError: () => undefined,
-  }),
+  // Desktop keeps the key out of the webview entirely (the proxy reads it from
+  // the keychain), so hydrate only marks loaded there; the web build reads it.
+  // Losing the key is harmless (the user re-enters it), so there is no fallback.
+  hydrateLabelaryApiKey: isDesktopShell
+    ? async () => set({ labelaryApiKeyLoaded: true })
+    : makeCredentialHydrator({
+        credName: LABELARY_KEY_CRED,
+        isLoaded: () => get().labelaryApiKeyLoaded,
+        onStored: (key) => set({ labelaryApiKey: key.trim(), labelaryApiKeyLoaded: true }),
+        onEmpty: () => set({ labelaryApiKey: '', labelaryApiKeyLoaded: true }),
+        onError: () => undefined,
+      }),
+  migrateLabelaryKey: async () => {
+    if (isDesktopShell) await migrateLabelaryKeyBinding(resolveHost(get().labelaryHost));
+  },
   acknowledgeLabelaryNotice: () => set({ labelaryNoticeAcknowledged: true }),
   // Revoke consent so the Labelary gate closes again; re-enabling re-shows the
   // disclosure, keeping consent explicit and reversible. Tear down any live

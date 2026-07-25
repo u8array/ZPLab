@@ -1,4 +1,5 @@
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
+import { isDesktopShell } from './platform';
 const TIMEOUT_MS = 10_000;
 const DEFAULT_HOST = 'https://api.labelary.com';
 
@@ -41,16 +42,56 @@ class LabelaryError extends Error {
   }
 }
 
+/** The labelary print route for `label`; the desktop proxy validates it
+ *  against exactly this shape before joining it to the checked host. */
+export function labelaryPath(label: LabelConfig): string {
+  const { dpmm, widthMm, heightMm } = label;
+  const widthIn = (widthMm / 25.4).toFixed(3);
+  const heightIn = (heightMm / 25.4).toFixed(3);
+  return `/v1/printers/${dpmm}dpmm/labels/${widthIn}x${heightIn}/0/`;
+}
+
+type PreviewProxyResult =
+  | { kind: 'png'; base64: string }
+  | { kind: 'api'; status: number }
+  | { kind: 'timeout' }
+  | { kind: 'network' }
+  | { kind: 'too_large' };
+
+/** Desktop: the Rust proxy fetches (CSP blocks webview http/https) and
+ *  resolves the API key from the keychain, so it never enters the webview. */
+async function fetchPreviewDesktop(zpl: string, label: LabelConfig, host: string): Promise<string> {
+  const { invoke } = await import('@tauri-apps/api/core');
+  let r: PreviewProxyResult;
+  try {
+    r = await invoke<PreviewProxyResult>('fetch_labelary_preview', {
+      host,
+      path: labelaryPath(label),
+      zpl,
+    });
+  } catch (e) {
+    throw new LabelaryError('network', String(e));
+  }
+  switch (r.kind) {
+    case 'png':
+      return `data:image/png;base64,${r.base64}`;
+    case 'api':
+      throw new LabelaryError('api', `Labelary API error: ${r.status}`);
+    case 'timeout':
+      throw new LabelaryError('timeout', 'Request timed out.');
+    default:
+      throw new LabelaryError('network', 'Could not reach the Labelary API.');
+  }
+}
+
 export async function fetchPreview(
   zpl: string,
   label: LabelConfig,
   host: string,
   apiKey?: string,
 ): Promise<string> {
-  const { dpmm, widthMm, heightMm } = label;
-  const widthIn = (widthMm / 25.4).toFixed(3);
-  const heightIn = (heightMm / 25.4).toFixed(3);
-  const url = `${host}/v1/printers/${dpmm}dpmm/labels/${widthIn}x${heightIn}/0/`;
+  if (isDesktopShell) return fetchPreviewDesktop(zpl, label, resolveHost(host));
+  const url = `${host}${labelaryPath(label)}`;
 
   const headers: Record<string, string> = { 'Content-Type': 'application/x-www-form-urlencoded' };
   if (apiKey) headers['X-API-Key'] = apiKey;

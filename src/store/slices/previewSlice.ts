@@ -12,6 +12,7 @@ import { buildActiveRow } from '@zplab/core/lib/variableBinding';
 import { buildPreviewZpl } from '../../lib/printPreview';
 import { currentObjects, selectEffectivePreviewProvider, selectLabelaryEndpoint } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
+import { isDesktopShell } from '../../lib/platform';
 
 /** A finished render. `printerDims` (printer provider only; Labelary already
  *  fits the label) drives the overlay's crop and mismatch hatching. */
@@ -88,7 +89,11 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     // await it once (gated on the loaded flag) so the request isn't sent keyless.
     // Placed before the snapshot+guard so the captured design can't go stale and
     // a concurrent enter can't slip past the status guard.
+    // The first preview after an upgrade must not race the fire-and-forget
+    // startup migration, or the still-legacy key stays unbound and the fetch
+    // goes keyless; await the migration once here too.
     if (selectEffectivePreviewProvider(get()) === 'labelary' && !get().labelaryApiKeyLoaded) {
+      if (isDesktopShell) await get().migrateLabelaryKey().catch(() => undefined);
       await get().hydrateLabelaryApiKey();
     }
     const state = get();
@@ -125,7 +130,7 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     };
     const cacheKey = printerTarget
       ? printerKey(printerTarget)
-      : [provider, endpoint.host, endpoint.apiKey ?? '', zpl].join('\0');
+      : [provider, endpoint.host, endpoint.apiKey ?? '', String(state.labelaryKeyEpoch), zpl].join('\0');
     if (serveCached(cacheKey)) return;
     set({ previewMode: { status: 'loading' } });
     // Stale-request guard: status check catches an exit mid-fetch; the
