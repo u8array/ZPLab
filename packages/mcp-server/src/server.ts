@@ -112,7 +112,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "Parse a raw ZPL stream into an editable design file (one page per ^XA block; " +
         "feed it to export_zpl or open_in_app) plus parser findings, per-object bounds " +
         "(dots), and bbox overlaps. Size falls back to the caller's hints then 100x50mm. " +
-        "Right-justified ^FT z=1 1D barcodes are normalised to top-left x (bwip-" +
+        "Right-justified z=1 1D barcodes (^FO/^FT) are normalised to top-left x (bwip-" +
         "measured, same as the app import) and enable the label's emit1dZJustify gate.",
       inputSchema: zplInputShape,
     },

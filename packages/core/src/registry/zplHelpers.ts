@@ -19,10 +19,10 @@ export function fieldPos(obj: LabelObjectBase): string {
   return `^${cmd}${obj.x},${obj.y}`;
 }
 
-/** The firmware-verified justify combo (R + ^FT + rotation N); shared with
- *  the import normaliser so gate and shift can never disagree on it. */
+/** The firmware-verified justify combo (R + rotation N, ^FO or ^FT); shared
+ *  with the import normaliser so gate and shift can never disagree on it. */
 export function verifiedZJustifyCombo(obj: LabelObjectBase & { type: string }): boolean {
-  if (obj.fieldJustify !== "R" || obj.positionType !== "FT") return false;
+  if (obj.fieldJustify !== "R") return false;
   return objectRotation((obj as unknown as { props: object }).props) === "N";
 }
 
@@ -41,10 +41,10 @@ export function printerAnchoredX(
 }
 
 /** {@link fieldPos} for 1D: behind the emit1dZJustify gate an R field emits
- *  `^FT x+w,y,1` so the PRINTER anchors the right edge (^SN/variable data). */
+ *  `x+w,y,1` so the PRINTER anchors the right edge (^SN/variable data). */
 export function fieldPos1d(obj: LabelObjectBase & { type: string }, ctx?: ZplEmitContext): string {
   const ax = ctx ? printerAnchoredX(obj, ctx.label) : null;
-  return ax === null ? fieldPos(obj) : `^FT${ax},${obj.y},1`;
+  return ax === null ? fieldPos(obj) : `${fieldPos({ ...obj, x: ax })},1`;
 }
 
 /** {@link fieldPos} with the z echo: import never normalises these fields, so

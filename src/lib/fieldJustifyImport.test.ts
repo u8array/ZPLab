@@ -80,10 +80,10 @@ describe("^FO/^FT z-justification import", () => {
     expect(o.fieldJustify).toBe("R");
   });
 
-  it("leaves ^FO z=1 x untouched (z effect on ^FO unverified on firmware)", () => {
+  it("normalises a right-justified ^FO barcode x (ZD230-verified mirror)", () => {
     registerFootprintMeasurer(measure40);
     const o = leaf("^XA^FO100,50,1^BCN,100,Y,N,N^FD123^FS^XZ");
-    expect(o.x).toBe(100);
+    expect(o.x).toBe(60);
     expect(o.fieldJustify).toBe("R");
   });
 
@@ -169,6 +169,14 @@ describe("1D z-emit behind the emit1dZJustify gate", () => {
     expect(zpl).toContain("^FT100,150,1");
   });
 
+  it("round-trip fixpoint: FO+R import normalises, gated emit restores the bytes", () => {
+    registerFootprintMeasurer(measure40);
+    const r = importZplText("^XA^FO100,50,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
+    expect(r.pages[0]!.objects[0]!.x).toBe(60);
+    const zpl = generateZPL({ ...BASE, emit1dZJustify: true }, r.pages[0]!.objects);
+    expect(zpl).toContain("^FO100,50,1");
+  });
+
   it("home-shift drop-tests the printer anchor, not the model left edge", () => {
     registerFootprintMeasurer(measure40);
     // labelHomeX 30: left edge 10-30 < 0, right anchor 50-30 = 20 stays on-label.
@@ -203,10 +211,14 @@ describe("1D z-emit behind the emit1dZJustify gate", () => {
     expect(a.x).toBe(100);
   });
 
-  it("gate on but unverified combos stay z-less (FO, rotated, no measurer)", () => {
+  it("gate on emits the anchored ^FO for an FO-positioned R barcode", () => {
     registerFootprintMeasurer(measure40);
     const fo = generateZPL({ ...BASE, emit1dZJustify: true }, [barcode1dR({ positionType: undefined })]);
-    expect(fo).toContain("^FO60,50^");
+    expect(fo).toContain("^FO100,50,1^");
+  });
+
+  it("gate on but unverified combos stay z-less (rotated, no measurer)", () => {
+    registerFootprintMeasurer(measure40);
     const rot = barcode1dR();
     (rot as unknown as { props: { rotation: string } }).props = {
       ...(rot as unknown as { props: object }).props, rotation: "R",
@@ -216,5 +228,7 @@ describe("1D z-emit behind the emit1dZJustify gate", () => {
     registerFootprintMeasurer(null);
     const unmeasured = generateZPL({ ...BASE, emit1dZJustify: true }, [barcode1dR()]);
     expect(unmeasured).toContain("^FT60,50^");
+    const unmeasuredFo = generateZPL({ ...BASE, emit1dZJustify: true }, [barcode1dR({ positionType: undefined })]);
+    expect(unmeasuredFo).toContain("^FO60,50^");
   });
 });

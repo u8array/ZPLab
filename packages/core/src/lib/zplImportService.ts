@@ -95,9 +95,8 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     if (nameRemap.size > 0) {
       rewireBindings(page.objects, nameRemap);
     }
-    // ^FT + rotation N only: ^FO-z and the rotation interaction are spec-
-    // ambiguous, pending printer check (the branch's own FT+I math would even
-    // demand shift 0 for R). Text unshifted (import measurement fragile).
+    // ^FO/^FT + rotation N (ZD230-verified mirror); rotated z needs the
+    // axis-aware shift first. Text unshifted (import measurement fragile).
     // Markers resolve against the IMPORTED bindings (defaults, no dataset row)
     // so the shift can't depend on whatever document happens to be open.
     for (const o of page.objects) {
@@ -131,7 +130,7 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
   // blocks' values. Fonts stay document-wide, and the ZPLLAB sidecar (dpmm,
   // which plain ZPL can't carry) is a page-0 preamble that overrides the size.
   const labelConfig: Partial<LabelConfig> = { ...r.pages[0]?.labelConfig };
-  // The stream carried ^FT z on a 1D field, so the target firmware supports
+  // The stream carried z on a 1D field, so the target firmware supports
   // it; without the gate a later edit would regenerate z-less shifted bytes.
   if (zNormalized) labelConfig.emit1dZJustify = true;
   if (r.labelConfig.customFonts) labelConfig.customFonts = r.labelConfig.customFonts;
