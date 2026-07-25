@@ -44,7 +44,7 @@ zip = { version = "4", default-features = false, features = ["deflate"] }
 chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 # Typed errors inside the db/excel connector (stringified only at the IPC edge).
 # Already transitive via sqlx.
-thiserror = "1"
+thiserror = "2"
 # Canonicalize without the \\?\ prefix (scope.rs): stored grants must match
 # user-visible paths or revoke's literal fallback can't find them.
 dunce = "1"
