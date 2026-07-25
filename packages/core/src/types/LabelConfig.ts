@@ -202,3 +202,9 @@ export const PER_LABEL_ZPL_FIELDS = [
   'labelHomeX', 'labelHomeY', 'labelTop', 'labelShift',
   'printQuantity', 'pauseCount', 'replicates', 'overridePauseCount',
 ] as const satisfies readonly (keyof LabelConfig)[];
+
+/** The ^PQ family is scoped to its own ^XA block; every other config field is
+ *  persistent printer state a later block may contribute to the design. */
+export const PER_FORMAT_ZPL_FIELDS = [
+  'printQuantity', 'pauseCount', 'replicates', 'overridePauseCount',
+] as const satisfies readonly (keyof LabelConfig)[];

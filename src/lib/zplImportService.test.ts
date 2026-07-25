@@ -129,6 +129,22 @@ describe('importZplText - single label', () => {
 
 });
 
+describe('importZplText - driver dump (.prn)', () => {
+  it("adopts the job block's persistent settings behind a settings-only block 0", () => {
+    // Real ZDesigner anatomy: BOM, DLE control-prefix reset, binary junk,
+    // settings block without ^PW/^LL, then the job block that has them.
+    const dump =
+      '\uFEFF\x10CT~~CD,~CC^~CT~\r\n\x1b##\x01\x00junk' +
+      '^XA~JSN^LT0^MNW^JUS^XZ' +
+      '^XA^MMT^PW831^LL406^LS0^FO50,50^GFA,8,8,1,FF00FF00FF00FF00^FS^PQ1^XZ';
+    const r = importZplText(dump, 8);
+    expect(r.labelConfig.widthMm).toBeCloseTo(831 / 8, 1);
+    expect(r.labelConfig.heightMm).toBeCloseTo(406 / 8, 1);
+    expect(r.labelConfig.mediaMode).toBe('T');
+    expect(r.pages.some((p) => p.objects.some((o) => o.type === 'image'))).toBe(true);
+  });
+});
+
 describe('importZplText - multi-label', () => {
   it('splits into one page per ^XA...^XZ block', () => {
     const zpl = [

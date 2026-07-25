@@ -3,7 +3,7 @@ import { replayRiskFindings, dedupCommandsByKind } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
 import { stripDrivePrefix } from "./customFonts";
 import { renameTemplateMarkers } from "./fnTemplate";
-import type { CustomFontMapping, LabelConfig } from "../types/LabelConfig";
+import { PER_FORMAT_ZPL_FIELDS, type CustomFontMapping, type LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
 import type { LabelObject, Page } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type Variable } from "../types/Variable";
@@ -125,11 +125,19 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     }
   });
 
-  // Single-label design: keep block 0's config. Per-format fields like ^PQ are
-  // block-scoped, so the document-accumulated last-write would leak later
-  // blocks' values. Fonts stay document-wide, and the ZPLLAB sidecar (dpmm,
-  // which plain ZPL can't carry) is a page-0 preamble that overrides the size.
+  // Single-label design: block 0 wins where it speaks; other persistent
+  // settings fall through to the first block that sets them (driver dumps
+  // carry ^PW/^LL/^MM only in the job block). The ^PQ family is block-scoped
+  // and never falls through. Fonts stay document-wide; the ZPLLAB sidecar
+  // (dpmm, which plain ZPL can't carry) is a page-0 preamble overriding size.
   const labelConfig: Partial<LabelConfig> = { ...r.pages[0]?.labelConfig };
+  const perFormat = new Set<string>(PER_FORMAT_ZPL_FIELDS);
+  for (const page of r.pages) {
+    for (const [k, v] of Object.entries(page.labelConfig)) {
+      if (v === undefined || perFormat.has(k) || k in labelConfig) continue;
+      (labelConfig as Record<string, unknown>)[k] = v;
+    }
+  }
   // The stream carried z on a 1D field, so the target firmware supports
   // it; without the gate a later edit would regenerate z-less shifted bytes.
   if (zNormalized) labelConfig.emit1dZJustify = true;
