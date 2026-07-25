@@ -34,12 +34,9 @@ enum ExcelError {
   Zip(#[from] zip::result::ZipError),
   #[error("excel read timed out")]
   Timeout,
-  #[error("file too large: {0} bytes (max {})", MAX_FILE_BYTES)]
+  #[error("file too large: {0} bytes (max {max})", max = MAX_FILE_BYTES)]
   TooLarge(u64),
-  #[error(
-    "workbook expands to more than {} bytes uncompressed",
-    MAX_UNCOMPRESSED_BYTES
-  )]
+  #[error("workbook expands to more than {max} bytes uncompressed", max = MAX_UNCOMPRESSED_BYTES)]
   TooLargeUncompressed,
   #[error("empty sheet: {0}")]
   EmptySheet(String),

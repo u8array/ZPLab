@@ -33,7 +33,7 @@ printers = "2.3.0"
 keyring = { version = "3", features = ["windows-native", "apple-native", "sync-secret-service"] }
 # Read-only dataset connector (db.rs). Bundled SQLite, no system lib to link;
 # rustls-ring for pg/mysql TLS (aws-lc would drag cmake/nasm into every build).
-sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "sqlite", "postgres", "mysql", "tls-rustls-ring"] }
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "sqlite", "postgres", "mysql", "tls-rustls-ring"] }
 # Excel as a plain file reader (excel.rs): ZebraDesigner-parity without the
 # ODBC driver-manager tax. dates maps serial datetimes via chrono.
 calamine = { version = "0.36", features = ["dates"] }
@@ -44,7 +44,7 @@ zip = { version = "8", default-features = false, features = ["deflate"] }
 chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 # Typed errors inside the db/excel connector (stringified only at the IPC edge).
 # Already transitive via sqlx.
-thiserror = "1"
+thiserror = "2"
 # Canonicalize without the \\?\ prefix (scope.rs): stored grants must match
 # user-visible paths or revoke's literal fallback can't find them.
 dunce = "1"

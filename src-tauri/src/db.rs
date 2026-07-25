@@ -376,7 +376,10 @@ macro_rules! impl_text_query {
       width: usize,
     ) -> Result<Vec<Vec<String>>, DbError> {
       use tokio_stream::StreamExt;
-      let mut q = sqlx::query(sql);
+      // sqlx 0.9 gates `query` on SqlSafeStr; the SQL is composed here against
+      // validated identifiers and all data goes through `bind`, never string
+      // interpolation, so asserting it safe is sound.
+      let mut q = sqlx::query(sqlx::AssertSqlSafe(sql));
       for b in binds {
         q = q.bind(*b);
       }
