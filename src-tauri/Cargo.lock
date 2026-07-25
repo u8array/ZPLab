@@ -6300,10 +6300,8 @@ checksum = "caa8cd6af31c3b31c6631b8f483848b91589021b28fffe50adada48d4f4d2ed1"
 dependencies = [
  "arbitrary",
  "crc32fast",
- "flate2",
  "indexmap 2.14.0",
  "memchr",
- "zopfli",
 ]
 
 [[package]]
@@ -6370,7 +6368,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "windows-sys 0.61.2",
- "zip 4.6.1",
+ "zip 8.6.0",
 ]
 
 [[package]]

@@ -40,7 +40,7 @@ calamine = { version = "0.36", features = ["dates"] }
 # Already transitive via calamine; used directly in excel.rs to bound a
 # workbook's DECLARED uncompressed size before calamine materializes it, so a
 # decompression bomb can't defeat the compressed-only file-size cap.
-zip = { version = "4", default-features = false, features = ["deflate"] }
+zip = { version = "8", default-features = false, features = ["deflate"] }
 chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 # Typed errors inside the db/excel connector (stringified only at the IPC edge).
 # Already transitive via sqlx.
