@@ -8,8 +8,6 @@ import { Tooltip } from '../ui/Tooltip';
 import { VariableSourceBadge } from './VariableSourceBadge';
 import type { MappingDraft } from './useMappingDraft';
 
-/** One Variable → column row: source badge + editable name, the column select,
- *  and the active-row sample. Derives its per-row flags from the shared draft. */
 export function MappingRow({ draft, variable }: { draft: MappingDraft; variable: Variable }) {
   const tv = useT().variables;
   const {
@@ -89,8 +87,6 @@ export function MappingRow({ draft, variable }: { draft: MappingDraft; variable:
   );
 }
 
-/** The active-row sample: the bound cell when present, otherwise the variable's
- *  default (or the placeholder), so the user always sees what would print. */
 function SampleCell({
   draft,
   variable,

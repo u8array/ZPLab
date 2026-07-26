@@ -7,9 +7,8 @@ import { Tooltip } from '../ui/Tooltip';
 import { MappingRow } from './MappingRow';
 import type { DraftOptions, MappingDraft } from './useMappingDraft';
 
-/** Presentational body of the Variable → column mapping: the table, add-row,
- *  active-row preview and CSV parse options. Chrome (modal dialog, wizard step)
- *  wraps this and drives the footer from `draft.canApply` / `draft.apply`. */
+/** Chrome (the modal, later the wizard step) wraps this and drives its footer
+ *  from `draft.canApply` / `draft.apply`. */
 export function MappingEditor({ draft }: { draft: MappingDraft }) {
   const tv = useT().variables;
   const {

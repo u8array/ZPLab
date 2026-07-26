@@ -25,9 +25,8 @@ export interface DraftOptions {
   encoding: string;
 }
 
-/** Everything the mapping body renders and the chrome (modal / wizard step)
- *  needs to drive its footer. The draft lifecycle (clone on mount, atomic
- *  apply, discard on unmount) lives here so both consumers share one core. */
+/** The draft lifecycle (clone on mount, atomic apply, discard on unmount) lives
+ *  here so the modal and the wizard step share one mapping core. */
 export interface MappingDraft {
   /** False when there is no dataset or the CSV cache is empty; the chrome then
    *  shows a close-only / import-first affordance instead of the editor. */
@@ -51,15 +50,12 @@ export interface MappingDraft {
   changeBinding: (variableId: string, value: string) => void;
   removeDraftVariable: (id: string) => void;
   addVariable: () => void;
-  /** True when the draft can be committed (valid names, parseable CSV). */
   canApply: boolean;
   /** Commit the whole bundle atomically; caller decides what to do next. */
   apply: () => void;
 }
 
-/** Owns the Variable → column mapping draft (variable list, bindings, active
- *  row, CSV parse options), cloned from the store on mount. Live re-parse of
- *  the cached raw text drives the table so option tweaks feel instant. */
+/** Owns the Variable → column mapping draft, cloned from the store on mount. */
 export function useMappingDraft(): MappingDraft {
   const tv = useT().variables;
   const variables = useLabelStore((s) => s.variables);
@@ -71,7 +67,6 @@ export function useMappingDraft(): MappingDraft {
   const csvSource = dataset === null || dataset.source.kind === 'csv';
   const csvMeta = dataset !== null && dataset.source.kind === 'csv' ? dataset.source : null;
 
-  // Lazy useState initialiser, so the store snapshot doesn't re-seed each render.
   const [draftVariables, setDraftVariables] = useState<Variable[]>(() => [...variables]);
   // IDs already in the store at open, so rows that exist only in the draft
   // (added inline) can be flagged "will be created".
@@ -97,8 +92,7 @@ export function useMappingDraft(): MappingDraft {
   }, [csvSource, draftOptions.encoding]);
   const [draftRow, setDraftRow] = useState<number>(dataset?.activeRowIndex ?? 0);
 
-  // Live re-parse from the (possibly re-decoded) raw text whenever options
-  // change. Synchronous + memoised so option tweaks feel instant.
+  // Live re-parse from the (possibly re-decoded) raw text on every option change.
   const draftParse = useMemo(() => {
     if (!rawText) return null;
     return parseCsvText(rawText, {
@@ -151,15 +145,13 @@ export function useMappingDraft(): MappingDraft {
     });
   }, [virtualHeaders, draftVariables, initialVariableIds, explicitlyUnmapped]);
 
-  // Clamp active-row to virtual rows length (an option change may have shrunk
-  // the dataset).
+  // An option change may have shrunk the dataset under the active row.
   useEffect(() => {
     if (virtualRows.length === 0) return;
     setDraftRow((r) => Math.min(r, virtualRows.length - 1));
   }, [virtualRows.length]);
 
-  // Headers bound by more than one variable: almost always a mistake, flagged
-  // inline so the user notices before Apply.
+  // Headers bound by more than one variable: almost always a mistake.
   const duplicateHeaders = useMemo(() => {
     const counts = new Map<string, number>();
     for (const h of Object.values(draftBindings)) {
@@ -170,8 +162,6 @@ export function useMappingDraft(): MappingDraft {
     return dups;
   }, [draftBindings]);
 
-  // Name validity per row. Empty is always invalid; duplicate (trimmed) is
-  // invalid for every row sharing the value; then the identifier rule.
   const nameErrors = useMemo(() => {
     const counts = new Map<string, number>();
     for (const v of draftVariables) {
@@ -239,8 +229,7 @@ export function useMappingDraft(): MappingDraft {
   };
 
   const apply = () => {
-    // CSV commits the freshly-parsed rows; db/excel commit the already-loaded
-    // dataset. dbExcelParseOptions keeps the carried options safe for re-import.
+    // dbExcelParseOptions keeps the carried options safe for re-import.
     if (!dataset) return;
     let ds: DatasetInput;
     let parseOptions: CsvParseOptionsPersisted | undefined;
@@ -295,8 +284,6 @@ export function useMappingDraft(): MappingDraft {
   };
 }
 
-/** Build the initial draft-bindings: keep existing mapping entries whose header
- *  is still present in the current parse, then auto-suggest for the rest. */
 function buildInitialBindings(
   columnMapping: ColumnMapping | null,
   variables: readonly Variable[],

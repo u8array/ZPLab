@@ -10,10 +10,9 @@ interface Props {
   onImportCsv: () => void;
 }
 
-/** Dialog chrome around the shared MappingEditor: header, Cancel/Apply footer,
- *  and a close-only shell when there is no editable dataset (e.g. the raw-text
- *  cache was lost on a mid-session reload). The draft lifecycle lives in
- *  useMappingDraft, shared with the connect-data wizard. */
+/** Dialog chrome around the shared MappingEditor. Falls back to a close-only
+ *  shell when there is no editable dataset (e.g. the raw-text cache was lost on
+ *  a mid-session reload). */
 export function VariableMappingModal({ onClose, onImportCsv }: Props) {
   const t = useT();
   const tv = t.variables;
