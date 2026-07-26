@@ -55,9 +55,7 @@ fn http_host_allowed(host: &str) -> bool {
   }
   match host.parse::<std::net::IpAddr>() {
     Ok(ip) => match ip {
-      std::net::IpAddr::V4(v4) => {
-        v4.is_loopback() || v4.is_private() || v4.is_link_local()
-      }
+      std::net::IpAddr::V4(v4) => v4.is_loopback() || v4.is_private() || v4.is_link_local(),
       std::net::IpAddr::V6(v6) => v6.is_loopback(),
     },
     Err(_) => false,
@@ -95,7 +93,9 @@ fn build_url(host: &str, path: &str) -> Result<reqwest::Url, String> {
     "http" => {
       let h = url.host_str().unwrap_or_default();
       if !http_host_allowed(h) {
-        return Err(format!("plain http is only allowed for local hosts, not {h}"));
+        return Err(format!(
+          "plain http is only allowed for local hosts, not {h}"
+        ));
       }
     }
     s => return Err(format!("unsupported scheme: {s}")),
@@ -162,7 +162,9 @@ pub async fn fetch_labelary_preview(
     return Ok(PreviewFetchResult::Network);
   }
   if !status.is_success() {
-    return Ok(PreviewFetchResult::Api { status: status.as_u16() });
+    return Ok(PreviewFetchResult::Api {
+      status: status.as_u16(),
+    });
   }
   if res.content_length().is_some_and(|l| l > MAX_BYTES as u64) {
     return Ok(PreviewFetchResult::TooLarge);
@@ -232,12 +234,20 @@ mod tests {
 
   #[test]
   fn accepts_the_labelary_print_path() {
-    assert!(build_url("https://api.labelary.com", "/v1/printers/8dpmm/labels/3.937x1.969/0/").is_ok());
+    assert!(build_url(
+      "https://api.labelary.com",
+      "/v1/printers/8dpmm/labels/3.937x1.969/0/"
+    )
+    .is_ok());
   }
 
   #[test]
   fn rejects_foreign_paths_and_schemes() {
-    assert!(build_url("https://api.labelary.com", "/v1/printers/8dpmm/labels/1x1/0/../../steal").is_err());
+    assert!(build_url(
+      "https://api.labelary.com",
+      "/v1/printers/8dpmm/labels/1x1/0/../../steal"
+    )
+    .is_err());
     assert!(build_url("https://api.labelary.com", "/anything").is_err());
     assert!(build_url("ftp://api.labelary.com", "/v1/printers/8dpmm/labels/1x1/0/").is_err());
   }
@@ -253,7 +263,10 @@ mod tests {
 
   #[test]
   fn normalize_host_trims_slash_space_and_case() {
-    assert_eq!(normalize_host("  https://API.Labelary.com/ "), "https://api.labelary.com");
+    assert_eq!(
+      normalize_host("  https://API.Labelary.com/ "),
+      "https://api.labelary.com"
+    );
   }
 
   #[test]
@@ -262,8 +275,16 @@ mod tests {
     assert!(host_allowed("http://192.168.1.5", "192.168.1.5", false));
     assert!(host_allowed("http://localhost:9090", "localhost", false));
     // Custom remote host only with a bound key; bare relay is refused.
-    assert!(!host_allowed("https://attacker.example", "attacker.example", false));
-    assert!(host_allowed("https://custom.example.com", "custom.example.com", true));
+    assert!(!host_allowed(
+      "https://attacker.example",
+      "attacker.example",
+      false
+    ));
+    assert!(host_allowed(
+      "https://custom.example.com",
+      "custom.example.com",
+      true
+    ));
   }
 
   #[test]
@@ -271,7 +292,11 @@ mod tests {
     assert!(build_url("http://127.0.0.1:8080", "/v1/printers/8dpmm/labels/1x1/0/").is_ok());
     assert!(build_url("http://192.168.1.20", "/v1/printers/8dpmm/labels/1x1/0/").is_ok());
     assert!(build_url("http://localhost:9090", "/v1/printers/8dpmm/labels/1x1/0/").is_ok());
-    assert!(build_url("http://api.labelary.com", "/v1/printers/8dpmm/labels/1x1/0/").is_err());
+    assert!(build_url(
+      "http://api.labelary.com",
+      "/v1/printers/8dpmm/labels/1x1/0/"
+    )
+    .is_err());
     assert!(build_url("http://8.8.8.8", "/v1/printers/8dpmm/labels/1x1/0/").is_err());
   }
 }
