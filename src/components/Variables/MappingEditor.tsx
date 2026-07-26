@@ -1,11 +1,10 @@
-import { PlusIcon, XMarkIcon } from '@heroicons/react/16/solid';
+import { PlusIcon } from '@heroicons/react/16/solid';
 import { useT } from '../../hooks/useT';
-import { getVariableSource } from '@zplab/core/lib/variableBinding';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
 import { inputCls } from '../Properties/styles';
 import { Select } from '../ui/Select';
 import { Tooltip } from '../ui/Tooltip';
-import { VariableSourceBadge } from './VariableSourceBadge';
+import { MappingRow } from './MappingRow';
 import type { DraftOptions, MappingDraft } from './useMappingDraft';
 
 /** Presentational body of the Variable → column mapping: the table, add-row,
@@ -16,22 +15,14 @@ export function MappingEditor({ draft }: { draft: MappingDraft }) {
   const {
     csvSource,
     draftVariables,
-    draftBindings,
     draftOptions,
     setDraftOptions,
     draftRow,
     setDraftRow,
-    virtualHeaders,
     virtualRows,
-    initialVariableIds,
-    duplicateHeaders,
-    nameErrors,
     allSlotsTaken,
     showMismatchWarning,
     parseError,
-    setDraftVariableName,
-    changeBinding,
-    removeDraftVariable,
     addVariable,
   } = draft;
 
@@ -65,108 +56,7 @@ export function MappingEditor({ draft }: { draft: MappingDraft }) {
                   </td>
                 </tr>
               ) : (
-                draftVariables.map((v) => {
-                  const nameError = nameErrors[v.id];
-                  const isNew = !initialVariableIds.has(v.id);
-                  const boundHeader = draftBindings[v.id];
-                  const isDuplicate =
-                    boundHeader !== undefined && duplicateHeaders.has(boundHeader);
-                  // Classify against the draft (not the committed store state)
-                  // so the badge reflects live binding edits before Apply.
-                  const draftSource = getVariableSource(
-                    v,
-                    { headers: virtualHeaders },
-                    { bindings: draftBindings, headerSnapshot: virtualHeaders },
-                  );
-                  return (
-                    <tr key={v.id} className="border-t border-border/50 align-top">
-                      <td className="py-1.5 px-3">
-                        <div className="flex items-center gap-1">
-                          <VariableSourceBadge
-                            source={draftSource}
-                            boundHeader={draftBindings[v.id]}
-                            size="xs"
-                          />
-                          <input
-                            className={`${inputCls} ${nameError ? 'border-amber-400' : ''}`}
-                            value={v.name}
-                            onChange={(e) => setDraftVariableName(v.id, e.target.value)}
-                          />
-                          {isNew && (
-                            <Tooltip content={tv.csvRemoveDraftAria}>
-                              <button
-                                onClick={() => removeDraftVariable(v.id)}
-                                aria-label={tv.csvRemoveDraftAria}
-                                className="shrink-0 p-1 rounded text-muted hover:text-amber-400 hover:bg-surface-2 transition-colors"
-                              >
-                                <XMarkIcon className="w-3 h-3" />
-                              </button>
-                            </Tooltip>
-                          )}
-                        </div>
-                        {nameError ? (
-                          <p className="mt-0.5 font-mono text-[9px] text-amber-400">{nameError}</p>
-                        ) : isNew ? (
-                          <p className="mt-0.5 font-mono text-[9px] text-accent/70 italic">
-                            {tv.csvWillBeCreated}
-                          </p>
-                        ) : null}
-                      </td>
-                      <td className="py-1.5 pr-3">
-                        <div className={isDuplicate ? 'rounded border border-amber-400' : ''}>
-                          <Select<string>
-                            value={boundHeader ?? ''}
-                            onChange={(value) => changeBinding(v.id, value)}
-                            groups={[
-                              {
-                                options: [
-                                  { value: '', label: tv.csvIgnoreOption },
-                                  ...virtualHeaders.map((h) => ({ value: h, label: h })),
-                                ],
-                              },
-                            ]}
-                          />
-                        </div>
-                        {isDuplicate && (
-                          <p className="mt-0.5 font-mono text-[9px] text-amber-400">
-                            {tv.csvDuplicateColumn}
-                          </p>
-                        )}
-                      </td>
-                      <td className="py-1.5 pr-3 align-middle">
-                        {(() => {
-                          // Sample value for the active preview row. Bound + header
-                          // present in the parse → the cell; otherwise the
-                          // variable's default (or empty marker).
-                          if (boundHeader !== undefined) {
-                            const colIdx = virtualHeaders.indexOf(boundHeader);
-                            const cell = colIdx >= 0 ? virtualRows[draftRow]?.[colIdx] ?? '' : '';
-                            return cell === '' ? (
-                              <span className="text-[10px] text-muted italic">
-                                {tv.csvSampleEmpty}
-                              </span>
-                            ) : (
-                              <span
-                                className="text-[10px] text-text truncate block max-w-[120px]"
-                                title={cell}
-                              >
-                                {cell}
-                              </span>
-                            );
-                          }
-                          return (
-                            <span
-                              className="text-[10px] text-muted italic truncate block max-w-[120px]"
-                              title={v.defaultValue || tv.csvSamplePlaceholder}
-                            >
-                              {v.defaultValue || tv.csvSamplePlaceholder}
-                            </span>
-                          );
-                        })()}
-                      </td>
-                    </tr>
-                  );
-                })
+                draftVariables.map((v) => <MappingRow key={v.id} draft={draft} variable={v} />)
               )}
             </tbody>
           </table>
