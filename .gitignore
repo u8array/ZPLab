@@ -57,3 +57,7 @@ tmp/
 
 CLAUDE.md
 *.tar.gz
+
+# playwright
+test-results/
+playwright-report/

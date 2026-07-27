@@ -40,6 +40,17 @@ jobs:
 
       - run: pnpm build
 
+      - uses: actions/cache@v4
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install chromium
+      # OS deps are not cacheable; the runner image must not be relied on.
+      - run: pnpm exec playwright install-deps chromium
+      - run: pnpm exec playwright test
+
       - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: dist
