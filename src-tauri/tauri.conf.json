@@ -47,7 +47,8 @@
     "shortDescription": "ZPL label designer",
     "longDescription": "Visual designer for Zebra ZPL printer labels with live preview and ZPL import/export.",
     "macOS": {
-      "signingIdentity": "-"
+      "signingIdentity": "-",
+      "entitlements": "entitlements.plist"
     },
     "icon": [
       "icons/32x32.png",
