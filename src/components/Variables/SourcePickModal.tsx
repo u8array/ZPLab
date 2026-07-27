@@ -3,26 +3,29 @@ import { ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/16/solid';
 import { useT } from '../../hooks/useT';
 import { DialogShell } from '../ui/DialogShell';
 import { Select } from '../ui/Select';
-import type { PendingExcelImport } from '../../hooks/useExcelImportActions';
 
 interface Props {
-  pending: PendingExcelImport;
-  onLoad: (sheet: string) => Promise<boolean>;
+  /** Header text (filename / profile name) and its full-value tooltip. */
+  titleText: string;
+  titleAttr: string;
+  /** Field label for the single choice (worksheet / table). */
+  label: string;
+  options: string[];
+  onLoad: (value: string) => Promise<boolean>;
   onCancel: () => void;
 }
 
-/** Worksheet picker between file pick and dataset commit. Always shown so a
- *  dataset replace takes a deliberate Load click (parity with the CSV
- *  confirm and the DB modal). */
-export function ExcelSheetModal({ pending, onLoad, onCancel }: Props) {
+/** Pick one entry from a source (excel worksheet, sqlite table) then Load.
+ *  Always shown so a dataset replace takes a deliberate Load click. */
+export function SourcePickModal({ titleText, titleAttr, label, options, onLoad, onCancel }: Props) {
   const tv = useT().variables;
-  const [sheet, setSheet] = useState(() => pending.sheets[0] ?? '');
+  const [value, setValue] = useState(() => options[0] ?? '');
   const [loading, setLoading] = useState(false);
 
   const handleLoad = () => {
-    if (sheet === '') return;
+    if (value === '') return;
     setLoading(true);
-    void onLoad(sheet).then((ok) => {
+    void onLoad(value).then((ok) => {
       if (!ok) setLoading(false);
     });
   };
@@ -30,16 +33,16 @@ export function ExcelSheetModal({ pending, onLoad, onCancel }: Props) {
   return (
     <DialogShell
       onClose={onCancel}
-      labelledBy="excel-sheet-title"
+      labelledBy="source-pick-title"
       boxClassName="bg-surface border border-border rounded-lg w-80 flex flex-col shadow-2xl"
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <span
-          id="excel-sheet-title"
+          id="source-pick-title"
           className="font-mono text-xs text-muted uppercase tracking-widest truncate"
-          title={pending.filename}
+          title={titleAttr}
         >
-          {pending.filename}
+          {titleText}
         </span>
         <button
           onClick={onCancel}
@@ -51,13 +54,11 @@ export function ExcelSheetModal({ pending, onLoad, onCancel }: Props) {
       </div>
 
       <div className="flex flex-col gap-1 px-4 py-4 font-mono text-xs">
-        <label className="text-[10px] text-muted uppercase tracking-wider">
-          {tv.excelSheetLabel}
-        </label>
+        <label className="text-[10px] text-muted uppercase tracking-wider">{label}</label>
         <Select<string>
-          value={sheet}
-          onChange={setSheet}
-          groups={[{ options: pending.sheets.map((s) => ({ value: s, label: s })) }]}
+          value={value}
+          onChange={setValue}
+          groups={[{ options: options.map((o) => ({ value: o, label: o })) }]}
         />
       </div>
 
@@ -70,7 +71,7 @@ export function ExcelSheetModal({ pending, onLoad, onCancel }: Props) {
         </button>
         <button
           onClick={handleLoad}
-          disabled={sheet === '' || loading}
+          disabled={value === '' || loading}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono bg-accent text-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
         >
           <ArrowUpTrayIcon className="w-3.5 h-3.5" />

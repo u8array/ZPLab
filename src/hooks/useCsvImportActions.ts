@@ -43,11 +43,11 @@ export interface PendingImport {
   previousColumnCount: number;
 }
 
-/** File-picker hook for "Import CSV data" in the File menu. Owns the
- *  hidden <input> ref (web), the native-dialog entry point (desktop), and
- *  the pending-import slot that gates a destructive replace behind a
- *  ConfirmDialog. Errors go to the shared user-error channel. */
-export function useCsvImportActions() {
+/** File-picker hook for "Import CSV data": owns the hidden <input> ref (web),
+ *  the native-dialog entry point (desktop), and the pending-import slot that
+ *  gates a destructive replace behind a ConfirmDialog. `onApplied` fires after
+ *  THIS instance's import committed, so a caller can tell its own load from foreign ones. */
+export function useCsvImportActions(onApplied?: () => void) {
   const csvInputRef = useRef<HTMLInputElement>(null);
   const setUserError = useLabelStore((s) => s.setUserError);
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
@@ -90,6 +90,7 @@ export function useCsvImportActions() {
     // mapping) inside applyImport handles UX from there.
     if (!dataset) {
       applyImport(parsed, { keepMapping: true });
+      onApplied?.();
       return;
     }
 
@@ -147,6 +148,7 @@ export function useCsvImportActions() {
     // it now would overwrite the new context the user moved on to.
     if (isCurrentDataContext(pendingImport.token)) {
       applyImport(pendingImport.parsed, opts);
+      onApplied?.();
     }
     setPendingImport(null);
   };

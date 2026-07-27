@@ -7,7 +7,7 @@ const FLAGS: MenuFlags = {
   canBatchExport: false,
   batchRowCount: 0,
   batchPrintCount: 0,
-  includeExcelImport: false,
+  connectDataWizard: false,
   labelaryEnabled: true,
   canUndo: true,
   canRedo: false,
@@ -54,10 +54,15 @@ describe("buildMenuModel", () => {
     expect(byId(m, "exportBatch")?.label).toContain("7");
   });
 
-  it("shows the excel item only on the desktop shell", () => {
-    expect(byId(buildMenuModel(en, FLAGS), "importExcel")).toBeUndefined();
-    const m = buildMenuModel(en, { ...FLAGS, includeExcelImport: true });
-    expect(ids(m).indexOf("importExcel")).toBe(ids(m).indexOf("importCsv") + 1);
+  it("offers the direct CSV import on web and the connect-data wizard on desktop", () => {
+    const web = buildMenuModel(en, FLAGS);
+    expect(byId(web, "importCsv")).toBeDefined();
+    expect(byId(web, "connectData")).toBeUndefined();
+    const desktop = buildMenuModel(en, { ...FLAGS, connectDataWizard: true });
+    expect(byId(desktop, "importCsv")).toBeUndefined();
+    expect(byId(desktop, "connectData")).toBeDefined();
+    // Replaces the CSV slot (after saveDesign), not an extra entry.
+    expect(ids(desktop).indexOf("connectData")).toBe(ids(desktop).indexOf("saveDesign") + 1);
   });
 
   it("hides print entirely when the Labelary gate is off", () => {

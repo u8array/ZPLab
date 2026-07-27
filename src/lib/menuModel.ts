@@ -19,7 +19,7 @@ export type MenuItemId =
   | 'openDesign'
   | 'saveDesign'
   | 'importCsv'
-  | 'importExcel'
+  | 'connectData'
   | 'print'
   | 'sendToZebra'
   | 'undo'
@@ -68,8 +68,9 @@ export interface MenuFlags {
   /** Physical labels a batch send produces: rows × per-label ^PQ quantity.
    *  exportBatch keeps batchRowCount (it names file content, not printing). */
   batchPrintCount: number;
-  /** The Excel reader needs the desktop shell's Rust side; web hides it. */
-  includeExcelImport: boolean;
+  /** Desktop routes every data source through the connect-data wizard (one File
+   *  entry); web keeps the direct CSV import as its only supported source. */
+  connectDataWizard: boolean;
   /** Labelary gate off hides the print item entirely (matches the dropdown). */
   labelaryEnabled: boolean;
   canUndo: boolean;
@@ -99,10 +100,9 @@ export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
     [
       { id: 'openDesign', label: t.app.openDesign, enabled: true },
       { id: 'saveDesign', label: t.app.saveDesign, enabled: f.hasObjects },
-      { id: 'importCsv', label: t.app.importCsvData, enabled: true },
-      ...(f.includeExcelImport
-        ? [{ id: 'importExcel' as const, label: t.app.importExcelData, enabled: true }]
-        : []),
+      f.connectDataWizard
+        ? { id: 'connectData' as const, label: t.connectData.title, enabled: true }
+        : { id: 'importCsv' as const, label: t.app.importCsvData, enabled: true },
     ],
     [
       ...(f.labelaryEnabled

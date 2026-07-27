@@ -11,8 +11,8 @@ import { HistoryDropdown } from "./History/HistoryDropdown";
 import { ZPLOutput } from "./Output/ZPLOutput";
 import { ZplImportModal } from "./Output/ZplImportModal";
 import { VariableMappingModal } from "./Variables/VariableMappingModal";
+import { ConnectDataWizard } from "./Variables/ConnectDataWizard";
 import { CsvImportConfirmDialog } from "./Variables/CsvImportConfirmDialog";
-import { ExcelSheetModal } from "./Variables/ExcelSheetModal";
 import { PrintToZebraDialog } from "./Output/PrintToZebraDialog";
 import {
   DropdownMenu,
@@ -43,7 +43,8 @@ import {
 } from "@heroicons/react/16/solid";
 import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectPreviewLocksEditor, selectBatchPrintCount } from "../store/labelStore";
 import { datasetTimestamp } from "@zplab/core/types/DataSource";
-import { isCurrentDataContext } from "../store/datasetActions";
+import { isCurrentDataContext, settleDatasetReplace } from "../store/datasetActions";
+import { ConfirmDialog } from "./ui/ConfirmDialog";
 import { formatTemplate } from "../lib/formatTemplate";
 import { buildMenuModel, type MenuItemId } from "../lib/menuModel";
 import { NativeMenuBridge } from "./NativeMenuBridge";
@@ -63,7 +64,6 @@ import { useGlobalShortcuts } from "../hooks/useGlobalShortcuts";
 import { useDesignFileActions } from "../hooks/useDesignFileActions";
 import { useMcpBridge } from "../hooks/useMcpBridge";
 import { useCsvImportActions } from "../hooks/useCsvImportActions";
-import { useExcelImportActions } from "../hooks/useExcelImportActions";
 import { useZplImportExport } from "../hooks/useZplImportExport";
 import { useOutputPanel, OUTPUT_DEFAULT_H } from "../hooks/useOutputPanel";
 import { useCollapsiblePanel } from "../hooks/useCollapsiblePanel";
@@ -107,7 +107,7 @@ const MENU_ICONS: Partial<Record<MenuItemId, ComponentType<SVGProps<SVGSVGElemen
   openDesign: FolderOpenIcon,
   saveDesign: DocumentArrowDownIcon,
   importCsv: TableCellsIcon,
-  importExcel: TableCellsIcon,
+  connectData: TableCellsIcon,
   print: PrinterIcon,
   sendToZebra: PaperAirplaneIcon,
   undo: ArrowUturnLeftIcon,
@@ -178,9 +178,19 @@ export function AppShell() {
     confirmPendingImport,
     cancelPendingImport,
   } = useCsvImportActions();
-  const { openExcelPicker, pendingExcel, loadSheet, cancelExcelImport } =
-    useExcelImportActions();
   const mappingModalOpen = useLabelStore((s) => s.mappingModalOpen);
+  const connectWizardOpen = useLabelStore((s) => s.connectWizardOpen);
+  const openConnectWizard = useLabelStore((s) => s.openConnectWizard);
+  const pendingDatasetReplace = useLabelStore((s) => s.pendingDatasetReplace);
+  const datasetFetchToken = useLabelStore((s) => s.datasetFetchToken);
+  // A context bump while the replace confirm is open (doc swap, foreign load)
+  // supersedes it; drop actively so the deferred fetch promise settles instead
+  // of leaking behind the hidden dialog.
+  useEffect(() => {
+    if (pendingDatasetReplace && pendingDatasetReplace.token !== datasetFetchToken) {
+      settleDatasetReplace(false);
+    }
+  }, [pendingDatasetReplace, datasetFetchToken]);
   const closeMappingModal = useLabelStore((s) => s.closeMappingModal);
   // Remount the mapping modal when the dataset changes (e.g. importing from its
   // own empty state) so its open-time draft re-seeds with the new data. The
@@ -212,7 +222,7 @@ export function AppShell() {
     canBatchExport,
     batchRowCount,
     batchPrintCount,
-    includeExcelImport: isDesktopShell,
+    connectDataWizard: isDesktopShell,
     labelaryEnabled,
     canUndo,
     canRedo,
@@ -229,7 +239,7 @@ export function AppShell() {
     openDesign: handleOpen,
     saveDesign: handleSave,
     importCsv: openCsvPicker,
-    importExcel: openExcelPicker,
+    connectData: openConnectWizard,
     // Print routes through Labelary; clicking before the notice has been
     // acknowledged opens the disclosure first, then prints.
     print: () => (noticeRequired ? setShowPrintNotice(true) : void handlePrint()),
@@ -520,30 +530,35 @@ export function AppShell() {
       </div>
 
       {showZplImport && <ZplImportModal onClose={closeZplImport} />}
-      {mappingModalOpen && (
+      {mappingModalOpen && !connectWizardOpen && (
         <VariableMappingModal
           key={datasetKey ?? "none"}
           onClose={closeMappingModal}
           onImportCsv={openCsvPicker}
         />
       )}
+      {connectWizardOpen && <ConnectDataWizard />}
       {/* Token gate: a doc/context swap leaves the local pending state stale, so
           hide the dialog rather than let it hover over the new document. */}
-      {pendingExcel && isCurrentDataContext(pendingExcel.token) && (
-        <ExcelSheetModal
-          // Remount on a fresh pick so the sheet select re-seeds instead of
-          // keeping a previous file's stale selection.
-          key={pendingExcel.path}
-          pending={pendingExcel}
-          onLoad={loadSheet}
-          onCancel={cancelExcelImport}
-        />
-      )}
       {pendingImport && isCurrentDataContext(pendingImport.token) && (
         <CsvImportConfirmDialog
           pending={pendingImport}
           onConfirm={confirmPendingImport}
           onCancel={cancelPendingImport}
+        />
+      )}
+      {/* Replace confirm for fetched sources (excel/db); same token gate as the
+          sibling pending dialogs, and settleDatasetReplace re-checks on click. */}
+      {pendingDatasetReplace && isCurrentDataContext(pendingDatasetReplace.token) && (
+        <ConfirmDialog
+          message={formatTemplate(t.variables.csvReplaceCsvBodyFmt, {
+            old: pendingDatasetReplace.oldName,
+            new: pendingDatasetReplace.newName,
+          })}
+          confirmLabel={t.variables.csvReplaceAction}
+          cancelLabel={t.variables.cancel}
+          onConfirm={() => settleDatasetReplace(true)}
+          onCancel={() => settleDatasetReplace(false)}
         />
       )}
       {showZebraPrint && (

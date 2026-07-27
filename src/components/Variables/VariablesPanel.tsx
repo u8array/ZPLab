@@ -49,6 +49,7 @@ export function VariablesPanel() {
   const setActiveRow = useLabelStore((s) => s.setActiveRow);
   const setColumnMapping = useLabelStore((s) => s.setColumnMapping);
   const openMappingModal = useLabelStore((s) => s.openMappingModal);
+  const openConnectWizard = useLabelStore((s) => s.openConnectWizard);
   const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
   const setCanvasSettings = useLabelStore((s) => s.setCanvasSettings);
   const dataSourceRef = useLabelStore((s) => s.dataSourceRef);
@@ -144,7 +145,16 @@ export function VariablesPanel() {
   return (
     <div className="flex flex-col gap-3 p-3">
       {variables.length > 0 && (
-        <div className="flex items-start justify-end gap-2">
+        <div className="flex items-start justify-between gap-2">
+          {/* Persistent entry: the empty-state CTA is gone once variables exist,
+              but connecting data is exactly then most useful. */}
+          <button
+            onClick={openConnectWizard}
+            className="shrink-0 flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-text hover:bg-surface-2 border border-border transition-colors"
+          >
+            <TableCellsIcon className="w-3 h-3" />
+            {tv.connectData}
+          </button>
           <Tooltip
             content={
               dataRenderMode === 'preview'
@@ -316,6 +326,13 @@ export function VariablesPanel() {
           <p className="font-mono text-[10px] text-muted leading-relaxed">
             {tv.emptyExample}
           </p>
+          <button
+            onClick={openConnectWizard}
+            className="self-start mt-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono bg-accent text-bg hover:opacity-90 transition-opacity"
+          >
+            <TableCellsIcon className="w-3.5 h-3.5" />
+            {tv.connectData}
+          </button>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">

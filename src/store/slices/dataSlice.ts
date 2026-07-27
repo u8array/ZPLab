@@ -41,10 +41,17 @@ export interface DataSlice {
    *  auto-open trigger (after import, on header mismatch) and the
    *  manual-open trigger share one flag without prop drilling. */
   mappingModalOpen: boolean;
+  /** The guided connect-data wizard is open; while true AppShell suppresses the
+   *  standalone mapping modal so the wizard owns the mapping step. */
+  connectWizardOpen: boolean;
   /** Monotonic epoch of the current data context; bumped by every load/clear/
    *  cancel and by loadDesign. Async producers and pending dialogs capture it
    *  and skip their commit if it changed. Session-only. */
   datasetFetchToken: number;
+  /** Render payload for the fetched-dataset replace confirm; the deferred
+   *  input itself stays module-side in datasetActions (not serializable).
+   *  `token` = the data-context epoch it was raised in, for staleness gating. */
+  pendingDatasetReplace: { oldName: string; newName: string; token: number } | null;
 
   /** Replace the entire dataset and reset the active row to 0. */
   loadDataset: (result: DatasetInput) => void;
@@ -68,6 +75,20 @@ export interface DataSlice {
   }) => void;
   openMappingModal: () => void;
   closeMappingModal: () => void;
+  openConnectWizard: () => void;
+  closeConnectWizard: () => void;
+  setPendingDatasetReplace: (
+    payload: { oldName: string; newName: string; token: number } | null,
+  ) => void;
+  /** Put the data context back to a captured state (wizard abort): dataset,
+   *  design link and mapping together, bumping the epoch like any load. */
+  restoreDataSnapshot: (snap: DataSnapshot) => void;
+}
+
+export interface DataSnapshot {
+  dataset: LabelState['dataset'];
+  dataSourceRef: DbSourceRef | null;
+  columnMapping: ColumnMapping | null;
 }
 
 export const createDataSlice: StateCreator<LabelState, [], [], DataSlice> = (set, get) => ({
@@ -75,7 +96,9 @@ export const createDataSlice: StateCreator<LabelState, [], [], DataSlice> = (set
   dataSourceRef: null,
   columnMapping: null,
   mappingModalOpen: false,
+  connectWizardOpen: false,
   datasetFetchToken: 0,
+  pendingDatasetReplace: null,
 
   // Replacing the dataset invalidates any active preview snapshot; tear the
   // preview down and apply, rather than no-op under the lock (which would let
@@ -179,4 +202,19 @@ export const createDataSlice: StateCreator<LabelState, [], [], DataSlice> = (set
 
   openMappingModal: () => set({ mappingModalOpen: true }),
   closeMappingModal: () => set({ mappingModalOpen: false }),
+  // Clearing the flag on open dismisses a standalone review explicitly (the
+  // wizard's mapping step supersedes it); clearing on close keeps the flag the
+  // wizard's own loads set (applyImport -> openMappingModal) from popping after.
+  openConnectWizard: () => set({ connectWizardOpen: true, mappingModalOpen: false }),
+  closeConnectWizard: () => set({ connectWizardOpen: false, mappingModalOpen: false }),
+  setPendingDatasetReplace: (payload) => set({ pendingDatasetReplace: payload }),
+  restoreDataSnapshot: (snap) => {
+    get().exitPreviewMode();
+    set((s) => ({
+      dataset: snap.dataset,
+      dataSourceRef: snap.dataSourceRef,
+      columnMapping: snap.columnMapping,
+      datasetFetchToken: s.datasetFetchToken + 1,
+    }));
+  },
 });

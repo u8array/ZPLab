@@ -9,7 +9,7 @@ const FLAGS: MenuFlags = {
   canBatchExport: false,
   batchRowCount: 0,
   batchPrintCount: 0,
-  includeExcelImport: false,
+  connectDataWizard: false,
   labelaryEnabled: true,
   canUndo: true,
   canRedo: false,

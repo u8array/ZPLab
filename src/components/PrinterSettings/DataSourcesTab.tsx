@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CircleStackIcon, PlusIcon, TrashIcon } from '@heroicons/react/16/solid';
+import { CircleStackIcon, PlusIcon, TableCellsIcon, TrashIcon } from '@heroicons/react/16/solid';
 import { useLabelStore } from '../../store/labelStore';
 import { useT } from '../../hooks/useT';
 import { useDbConnectActions } from '../../hooks/useDbConnectActions';
@@ -8,6 +8,7 @@ import {
   dbPasswordCred,
   dbSetPassword,
   enqueueCredWrite,
+  grantedSqlitePaths,
   pickSqliteFile,
   revokeSqlitePath,
 } from '../../lib/db';
@@ -16,7 +17,8 @@ import { formatTemplate } from '../../lib/formatTemplate';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { Select } from '../ui/Select';
 import { inputCls } from '../Properties/styles';
-import type { DbProfile, DbSslMode } from '../../lib/db';
+import { NetworkDbFields } from '../db/NetworkDbFields';
+import type { DbProfile } from '../../lib/db';
 
 import { newId } from "@zplab/core/lib/ids";
 type Driver = DbProfile['driver'];
@@ -33,6 +35,7 @@ export function DataSourcesTab() {
   const removeDbProfile = useLabelStore((s) => s.removeDbProfile);
   const dataSourceRef = useLabelStore((s) => s.dataSourceRef);
   const setPrinterSettingsTab = useLabelStore((s) => s.setPrinterSettingsTab);
+  const openConnectWizard = useLabelStore((s) => s.openConnectWizard);
   const { loadFromDb } = useDbConnectActions();
 
   const [selectedId, setSelectedId] = useState<string>(() => {
@@ -119,10 +122,7 @@ export function DataSourcesTab() {
   // Call AFTER the profile mutation so the keep list reflects the new state
   // (revokeSqlitePath documents the shared-grant semantics).
   const revokeOrphanedGrant = (path: string) => {
-    const keep = useLabelStore
-      .getState()
-      .dbProfiles.flatMap((p) => (p.driver === 'sqlite' && p.path ? [p.path] : []));
-    void revokeSqlitePath(path, keep);
+    void revokeSqlitePath(path, grantedSqlitePaths(useLabelStore.getState().dbProfiles));
   };
 
   const handleDriverChange = (driver: Driver) => {
@@ -220,6 +220,18 @@ export function DataSourcesTab() {
 
   return (
     <div className="flex flex-col gap-3 font-mono text-xs max-w-md">
+        {/* Secondary entry into the guided flow; the wizard replaces the modal. */}
+        <button
+          onClick={() => {
+            setPrinterSettingsTab(null);
+            openConnectWizard();
+          }}
+          className="self-start flex items-center gap-1.5 px-2 py-1.5 rounded text-xs border border-dashed border-border text-muted hover:text-text hover:border-border-2 transition-colors"
+        >
+          <TableCellsIcon className="w-3.5 h-3.5" />
+          {tv.connectData}
+        </button>
+
         <div className="flex items-end gap-2">
           <div className="flex flex-col gap-1 flex-1 min-w-0">
             <label className={fieldLabel}>{tv.dbProfileLabel}</label>
@@ -308,51 +320,17 @@ export function DataSourcesTab() {
                 </div>
               </div>
             ) : (
-              <>
-                <div className="flex items-end gap-2">
-                  <div className="flex flex-col gap-1 flex-1 min-w-0">
-                    <label className={fieldLabel}>{tv.dbHostLabel}</label>
-                    <input
-                      className={inputCls}
-                      value={profile.host}
-                      onChange={(e) => updateDbProfile({ ...profile, host: e.target.value })}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 w-20 shrink-0">
-                    <label className={fieldLabel}>{tv.dbPortLabel}</label>
-                    <input
-                      type="number"
-                      className={inputCls}
-                      placeholder={profile.driver === 'postgres' ? '5432' : '3306'}
-                      value={profile.port ?? ''}
-                      onChange={(e) => {
-                        const n = parseInt(e.target.value, 10);
-                        updateDbProfile({
-                          ...profile,
-                          // Rust deserializes into u16; clamp instead of an
-                          // opaque serde error at fetch time.
-                          port: Number.isNaN(n) ? undefined : Math.min(65535, Math.max(1, n)),
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className={fieldLabel}>{tv.dbDatabaseLabel}</label>
-                  <input
-                    className={inputCls}
-                    value={profile.database}
-                    onChange={(e) => updateDbProfile({ ...profile, database: e.target.value })}
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className={fieldLabel}>{tv.dbUserLabel}</label>
-                  <input
-                    className={inputCls}
-                    value={profile.user}
-                    onChange={(e) => updateDbProfile({ ...profile, user: e.target.value })}
-                  />
-                </div>
+              <NetworkDbFields
+                driver={profile.driver}
+                value={{
+                  host: profile.host,
+                  port: profile.port,
+                  database: profile.database,
+                  user: profile.user,
+                  sslMode: profile.sslMode ?? 'prefer',
+                }}
+                onChange={(patch) => updateDbProfile({ ...profile, ...patch })}
+              >
                 <div className="flex flex-col gap-1">
                   <label className={fieldLabel}>{tv.dbPasswordLabel}</label>
                   <input
@@ -373,28 +351,13 @@ export function DataSourcesTab() {
                     {tv.dbPasswordClear}
                   </button>
                 </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className={fieldLabel}>{tv.dbSslLabel}</label>
-                  <Select<DbSslMode>
-                    value={profile.sslMode ?? 'prefer'}
-                    onChange={(sslMode) => updateDbProfile({ ...profile, sslMode })}
-                    groups={[
-                      {
-                        options: (['prefer', 'require', 'verify-full', 'disable'] as const).map(
-                          (m) => ({ value: m, label: m }),
-                        ),
-                      },
-                    ]}
-                  />
-                </div>
-              </>
+              </NetworkDbFields>
             )}
 
             <div className="flex flex-col gap-1">
               <label className={fieldLabel}>{tv.dbTableLabel}</label>
               {tablesError ? (
-                <p className="text-[10px] text-amber-400 break-words">
+                <p className="text-[10px] text-amber-400 wrap-break-word">
                   {formatTemplate(tv.dbTablesErrorFmt, { error: tablesError })}
                 </p>
               ) : (

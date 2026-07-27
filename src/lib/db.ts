@@ -82,6 +82,12 @@ export async function revokeSqlitePath(path: string, keep: string[]): Promise<vo
   await invoke('revoke_db_path', { path, keep });
 }
 
+/** Every sqlite path still referenced by a profile: the keep-set for
+ *  {@link revokeSqlitePath}, so a file shared by another profile keeps its grant. */
+export function grantedSqlitePaths(profiles: readonly DbProfile[]): string[] {
+  return profiles.flatMap((p) => (p.driver === 'sqlite' && p.path ? [p.path] : []));
+}
+
 /** Keychain account for a profile's password (mirrors Rust `password_cred`). */
 export const dbPasswordCred = (profileId: string): string => `db-profile-${profileId}`;
 
