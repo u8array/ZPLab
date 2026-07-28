@@ -1095,6 +1095,7 @@ const ar = {
       symbolTrademark: 'علامة تجارية (™)',
       symbolUL: 'اعتماد UL',
       symbolCSA: 'اعتماد CSA',
+      certMarkWarningFmt: '{mark} علامة اعتماد محمية. استخدمها فقط على المنتجات المعتمدة من الجهة المُصدرة.',
     },
     upca: {
       content: 'المحتوى (11 رقم)',

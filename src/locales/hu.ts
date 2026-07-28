@@ -1095,6 +1095,7 @@ const hu = {
       symbolTrademark: 'Védjegy (™)',
       symbolUL: 'UL-jóváhagyás',
       symbolCSA: 'CSA-jóváhagyás',
+      certMarkWarningFmt: 'A(z) {mark} védett tanúsítási jelölés. Csak a kibocsátó szervezet által tanúsított termékeken használja.',
     },
     upca: {
       content: 'Tartalom (11 számjegy)',

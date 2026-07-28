@@ -1095,6 +1095,7 @@ const tr = {
       symbolTrademark: 'Ticari marka (™)',
       symbolUL: 'UL onayı',
       symbolCSA: 'CSA onayı',
+      certMarkWarningFmt: '{mark} korumalı bir sertifikasyon işaretidir. Yalnızca veren kuruluş tarafından sertifikalandırılmış ürünlerde kullanın.',
     },
     upca: {
       content: 'İçerik (11 hane)',

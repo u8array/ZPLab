@@ -1095,6 +1095,7 @@ const cs = {
       symbolTrademark: 'Ochranná známka (™)',
       symbolUL: 'Schválení UL',
       symbolCSA: 'Schválení CSA',
+      certMarkWarningFmt: '{mark} je chráněná certifikační značka. Používejte ji pouze u produktů certifikovaných příslušnou organizací.',
     },
     upca: {
       content: 'Obsah (11 číslic)',

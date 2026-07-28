@@ -1095,6 +1095,7 @@ const et = {
       symbolTrademark: 'Kaubamärk (™)',
       symbolUL: 'UL heakskiit',
       symbolCSA: 'CSA heakskiit',
+      certMarkWarningFmt: '{mark} on kaitstud sertifitseerimismärk. Kasutage seda ainult toodetel, mille on sertifitseerinud väljastav organisatsioon.',
     },
     upca: {
       content: 'Sisu (11 numbrit)',

@@ -1095,6 +1095,7 @@ const lt = {
       symbolTrademark: 'Prekės ženklas (™)',
       symbolUL: 'UL patvirtinimas',
       symbolCSA: 'CSA patvirtinimas',
+      certMarkWarningFmt: '{mark} yra saugomas sertifikavimo ženklas. Naudokite jį tik produktams, kuriuos sertifikavo juos išduodanti organizacija.',
     },
     upca: {
       content: 'Turinys (11 skaitmenų)',

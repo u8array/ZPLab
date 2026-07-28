@@ -1095,6 +1095,7 @@ const fa = {
       symbolTrademark: 'علامت تجاری (™)',
       symbolUL: 'تأیید UL',
       symbolCSA: 'تأیید CSA',
+      certMarkWarningFmt: '{mark} یک علامت گواهی حفاظت‌شده است. تنها آن را روی محصولاتی استفاده کنید که توسط سازمان صادرکننده گواهی شده‌اند.',
     },
     upca: {
       content: 'محتوا (۱۱ رقم)',

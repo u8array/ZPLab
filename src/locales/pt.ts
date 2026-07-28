@@ -1095,6 +1095,7 @@ const pt = {
       symbolTrademark: 'Marca registrada (™)',
       symbolUL: 'Aprovação UL',
       symbolCSA: 'Aprovação CSA',
+      certMarkWarningFmt: '{mark} é uma marca de certificação protegida. Utilize-a apenas em produtos certificados pela organização emissora.',
     },
     upca: {
       content: 'Conteúdo (11 dígitos)',

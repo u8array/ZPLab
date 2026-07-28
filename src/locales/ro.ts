@@ -1095,6 +1095,7 @@ const ro = {
       symbolTrademark: 'Marcă comercială (™)',
       symbolUL: 'Aprobare UL',
       symbolCSA: 'Aprobare CSA',
+      certMarkWarningFmt: '{mark} este o marcă de certificare protejată. Utilizați-o doar pe produse certificate de organizația emitentă.',
     },
     upca: {
       content: 'Conținut (11 cifre)',

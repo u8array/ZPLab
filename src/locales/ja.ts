@@ -1095,6 +1095,7 @@ const ja = {
       symbolTrademark: '商標 (™)',
       symbolUL: 'UL認証',
       symbolCSA: 'CSA認証',
+      certMarkWarningFmt: '{mark}は保護された認証マークです。発行団体が認証した製品にのみ使用してください。',
     },
     upca: {
       content: '内容（11桁）',

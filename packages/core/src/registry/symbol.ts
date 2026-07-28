@@ -36,6 +36,10 @@ export const DEFAULT_GS_SYMBOL_META =
  *  for which codes round-trip cleanly. */
 export const GS_SYMBOL_CODES: ReadonlySet<string> = new Set(GS_SYMBOLS.map((s) => s.code));
 
+/** UL and CSA are protected certification marks, legal only on products
+ *  certified by the issuing organisation. */
+export const CERTIFICATION_MARK_CODES: ReadonlySet<SymbolCode> = new Set(['D', 'E']);
+
 export interface SymbolProps {
   /** Single-letter ZPL ^GS code that selects which symbol the printer
    *  renders. A=®, B=©, C=™, D=UL logo, E=CSA logo. */

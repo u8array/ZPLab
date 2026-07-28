@@ -1095,6 +1095,7 @@ const ko = {
       symbolTrademark: '상표 (™)',
       symbolUL: 'UL 승인',
       symbolCSA: 'CSA 승인',
+      certMarkWarningFmt: '{mark}는 보호되는 인증 마크입니다. 발행 기관이 인증한 제품에만 사용하세요.',
     },
     upca: {
       content: '내용 (11자리)',

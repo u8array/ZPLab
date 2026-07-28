@@ -1095,6 +1095,7 @@ const lv = {
       symbolTrademark: 'Preču zīme (™)',
       symbolUL: 'UL apstiprinājums',
       symbolCSA: 'CSA apstiprinājums',
+      certMarkWarningFmt: '{mark} ir aizsargāta sertifikācijas zīme. Izmantojiet to tikai produktiem, kurus sertificējusi izdevēja organizācija.',
     },
     upca: {
       content: 'Saturs (11 cipari)',

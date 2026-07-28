@@ -1095,6 +1095,7 @@ const hr = {
       symbolTrademark: 'Zaštitni znak (™)',
       symbolUL: 'UL odobrenje',
       symbolCSA: 'CSA odobrenje',
+      certMarkWarningFmt: '{mark} je zaštićena certifikacijska oznaka. Koristite je samo na proizvodima koje je certificirala izdavačka organizacija.',
     },
     upca: {
       content: 'Sadržaj (11 znamenki)',

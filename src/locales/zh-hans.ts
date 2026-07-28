@@ -1095,6 +1095,7 @@ const zhHans = {
       symbolTrademark: '商标 (™)',
       symbolUL: 'UL 认证',
       symbolCSA: 'CSA 认证',
+      certMarkWarningFmt: '{mark} 是受保护的认证标志。仅可用于经发证机构认证的产品。',
     },
     upca: {
       content: '内容（11位）',

@@ -1095,6 +1095,7 @@ const he = {
       symbolTrademark: 'סימן מסחרי (™)',
       symbolUL: 'אישור UL',
       symbolCSA: 'אישור CSA',
+      certMarkWarningFmt: '{mark} הוא סימן הסמכה מוגן. יש להשתמש בו רק במוצרים המוסמכים על ידי הגוף המנפיק.',
     },
     upca: {
       content: 'תוכן (11 ספרות)',

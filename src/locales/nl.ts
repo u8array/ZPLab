@@ -1095,6 +1095,7 @@ const nl = {
       symbolTrademark: 'Handelsmerk (™)',
       symbolUL: 'UL-goedkeuring',
       symbolCSA: 'CSA-goedkeuring',
+      certMarkWarningFmt: '{mark} is een beschermd certificeringsmerk. Gebruik het alleen op producten die door de uitgevende organisatie zijn gecertificeerd.',
     },
     upca: {
       content: 'Inhoud (11 cijfers)',

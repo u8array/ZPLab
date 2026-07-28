@@ -1095,6 +1095,7 @@ const sv = {
       symbolTrademark: 'Varumärke (™)',
       symbolUL: 'UL-godkännande',
       symbolCSA: 'CSA-godkännande',
+      certMarkWarningFmt: '{mark} är ett skyddat certifieringsmärke. Använd det endast på produkter certifierade av den utfärdande organisationen.',
     },
     upca: {
       content: 'Innehåll (11 siffror)',

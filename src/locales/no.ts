@@ -1095,6 +1095,7 @@ const no = {
       symbolTrademark: 'Varemerke (™)',
       symbolUL: 'UL-godkjenning',
       symbolCSA: 'CSA-godkjenning',
+      certMarkWarningFmt: '{mark} er et beskyttet sertifiseringsmerke. Bruk det kun på produkter sertifisert av den utstedende organisasjonen.',
     },
     upca: {
       content: 'Innhold (11 siffer)',

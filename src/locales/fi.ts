@@ -1095,6 +1095,7 @@ const fi = {
       symbolTrademark: 'Tavaramerkki (™)',
       symbolUL: 'UL-hyväksyntä',
       symbolCSA: 'CSA-hyväksyntä',
+      certMarkWarningFmt: '{mark} on suojattu sertifiointimerkki. Käytä sitä vain tuotteissa, jotka myöntävä organisaatio on sertifioinut.',
     },
     upca: {
       content: 'Sisältö (11 numeroa)',

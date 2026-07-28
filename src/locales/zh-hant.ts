@@ -1095,6 +1095,7 @@ const zhHant = {
       symbolTrademark: '商標 (™)',
       symbolUL: 'UL 認證',
       symbolCSA: 'CSA 認證',
+      certMarkWarningFmt: '{mark} 是受保護的認證標誌。僅可用於經發證機構認證的產品。',
     },
     upca: {
       content: '內容（11位）',

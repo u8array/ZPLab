@@ -1095,6 +1095,7 @@ const pl = {
       symbolTrademark: 'Znak towarowy (™)',
       symbolUL: 'Aprobata UL',
       symbolCSA: 'Aprobata CSA',
+      certMarkWarningFmt: '{mark} to chroniony znak certyfikacji. Używaj go wyłącznie na produktach certyfikowanych przez wydającą je organizację.',
     },
     upca: {
       content: 'Zawartość (11 cyfr)',
