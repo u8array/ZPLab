@@ -14,6 +14,15 @@ type ZplCommandStatus =
   | 'browser-limit'  // Requires printer hardware / file storage; cannot be used in the browser
   | 'unsupported';   // Carries design information but not yet implemented
 
+/** Locale key (importReport block) describing the loss; keys instead of
+ *  prose so the import report renders in the UI language. */
+export type ImportLossKey =
+  | 'lossFontFace'
+  | 'lossPrinterComms'
+  | 'lossGfRawBinary'
+  | 'lossFileStorage'
+  | 'lossPrinterStorage';
+
 interface ZplCommandInfo {
   /** 2-character ZPL command code, uppercase, without the leading ^ or ~ */
   cmd: string;
@@ -22,7 +31,7 @@ interface ZplCommandInfo {
   /** Import fidelity status */
   status: ZplCommandStatus;
   /** What is lost or approximated when status is 'partial' or 'browser-limit' */
-  loss?: string;
+  loss?: ImportLossKey;
 }
 
 const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
@@ -63,7 +72,7 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   {
     cmd: 'A@', status: 'partial',
     description: 'TrueType/OpenType font reference by device path',
-    loss: 'Font face is not imported; text content and point size are preserved with best-effort sizing',
+    loss: 'lossFontFace',
   },
   { cmd: 'TB', status: 'supported', description: 'Text block: alternative to ^A + ^FB for wrapped/justified text' },
   { cmd: 'PA', status: 'supported', description: 'Advanced text properties: glyph/bidi/shaping/OpenType flags; round-trips through the Printer Settings setup script' },
@@ -72,12 +81,12 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   {
     cmd: 'HT', status: 'browser-limit',
     description: 'Host linked font list: retrieves font data from printer',
-    loss: 'Requires printer communication; not available in the browser',
+    loss: 'lossPrinterComms',
   },
   {
     cmd: 'LF', status: 'browser-limit',
     description: 'List font links: retrieves linked font info from printer',
-    loss: 'Requires printer communication; not available in the browser',
+    loss: 'lossPrinterComms',
   },
 
   // ── Reverse / invert ──────────────────────────────────────────────────────
@@ -123,7 +132,7 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   {
     cmd: 'GF', status: 'partial',
     description: 'Graphic field: embedded monochrome bitmap',
-    loss: 'Raw binary ^GFB/^GFC payloads are skipped; ^GFA and :B64:/:Z64:-wrapped B/C payloads decode',
+    loss: 'lossGfRawBinary',
   },
   { cmd: 'GS', status: 'supported', description: 'Graphic symbol glyph (registered/copyright/trademark/UL/CSA)' },
 
@@ -162,12 +171,12 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   {
     cmd: 'IM', status: 'browser-limit',
     description: 'Image recall from printer memory',
-    loss: 'Cannot access printer file storage from a browser; the field is skipped entirely',
+    loss: 'lossFileStorage',
   },
   {
     cmd: 'DG', status: 'browser-limit',
     description: 'Download graphic to printer storage (~DG)',
-    loss: 'Stores data on the physical printer; not relevant for canvas label design',
+    loss: 'lossPrinterStorage',
   },
 
   // Templates & batch merge: ^DF/^XF with R: drive path for CSV-driven batch printing.

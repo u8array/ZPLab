@@ -112,7 +112,7 @@ export function ZplImportModal({ onClose }: Props) {
       Object.keys(labelConfig).length === 0 &&
       Object.keys(printerProfile).length === 0
     ) {
-      setError('No supported objects found in the ZPL code.');
+      setError(t.importModal.errNoObjects);
       return;
     }
     if (replayRiskFindings(imported.report).length > 0) {
@@ -125,7 +125,7 @@ export function ZplImportModal({ onClose }: Props) {
   const handleImport = () => {
     setError(null);
     if (!zpl.trim()) {
-      setError('Please paste some ZPL code first.');
+      setError(t.importModal.errPasteFirst);
       return;
     }
     processImport(zpl);
@@ -141,12 +141,12 @@ export function ZplImportModal({ onClose }: Props) {
     try {
       text = await readFileAsText(file);
     } catch {
-      setError('Could not read the file.');
+      setError(t.importModal.errFileRead);
       return;
     }
 
     if (!text.trim()) {
-      setError('The file appears to be empty.');
+      setError(t.importModal.errFileEmpty);
       return;
     }
     processImport(text);
@@ -154,7 +154,7 @@ export function ZplImportModal({ onClose }: Props) {
 
   const handleCopy = () => {
     if (!result) return;
-    void copyText(formatReportAsText(result)).then((r) => {
+    void copyText(formatReportAsText(result, t.importReport)).then((r) => {
       if (r !== 'copied') return;
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
@@ -197,8 +197,8 @@ export function ZplImportModal({ onClose }: Props) {
               className="flex items-center gap-1.5 font-mono text-[10px] text-muted hover:text-text transition-colors"
             >
               {copied
-                ? <><CheckIcon className="w-3.5 h-3.5" /> Copied</>
-                : <><ClipboardDocumentIcon className="w-3.5 h-3.5" /> Copy report</>}
+                ? <><CheckIcon className="w-3.5 h-3.5" /> {t.importModal.copied}</>
+                : <><ClipboardDocumentIcon className="w-3.5 h-3.5" /> {t.importModal.copyReport}</>}
             </button>
             <button
               onClick={onClose}
@@ -212,12 +212,15 @@ export function ZplImportModal({ onClose }: Props) {
         <>
           <div className="flex flex-col gap-3 p-4 flex-1 min-h-0">
             <p className="font-mono text-[10px] text-muted leading-relaxed">
-              Import produces an{' '}
-              <span className="text-amber-400">editable reconstruction</span>
-              , not an exact replica. Simple labels import cleanly; complex or
-              machine-generated ZPL may lose fidelity. Use{' '}
-              <span className="text-text">Save design (.json)</span> as the
-              lossless source format.
+              {t.importModal.intro.split(/(\{recon\}|\{save\})/).map((part, i) =>
+                part === '{recon}' ? (
+                  <span key={i} className="text-amber-400">{t.importModal.introRecon}</span>
+                ) : part === '{save}' ? (
+                  <span key={i} className="text-text">{t.importModal.introSave}</span>
+                ) : (
+                  part
+                ),
+              )}
             </p>
             <textarea
               className="flex-1 min-h-60 bg-surface-2 border border-border rounded px-3 py-2 font-mono text-xs text-text focus:border-accent focus:outline-none resize-none"
@@ -271,7 +274,7 @@ export function ZplImportModal({ onClose }: Props) {
                 disabled={!zpl.trim()}
                 className="px-3 py-1.5 rounded text-xs font-mono bg-accent text-bg hover:opacity-90 disabled:opacity-25 disabled:cursor-not-allowed transition-opacity"
               >
-                Import
+                {t.importModal.importAction}
               </button>
             </div>
           </div>

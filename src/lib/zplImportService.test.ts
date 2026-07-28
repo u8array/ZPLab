@@ -3,6 +3,7 @@ import { importZplText, routeSetupCommands, mergeSetupFonts } from '@zplab/core/
 import { generateSetupScript } from './zplSetupScript';
 import { generateMultiPageZPL } from '@zplab/core/lib/zplGenerator';
 import { describeFinding } from './importReport';
+import { fallbackTranslations } from '../locales';
 import { replayRiskFindings, printerCommandFindings, resolveRoutedReport } from '@zplab/core/lib/importReport';
 import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
@@ -83,7 +84,7 @@ describe('importZplText - replay-risk findings', () => {
     expect(r.report.replayRisk).toContain('^KN');
     const finding = r.report.findings.find((f) => f.kind === 'replayRisk');
     expect(finding).toBeDefined();
-    expect(describeFinding(finding!).detail).toBe('^KN');
+    expect(describeFinding(finding!, fallbackTranslations.importReport).detail).toBe('^KN');
   });
 
   it('does not flag a label without setup commands', () => {
@@ -686,7 +687,7 @@ describe('routeSetupCommands - setup-only pages', () => {
     expect(imported.mixedPageGeometry).toBe(true);
     const finding = imported.report.findings.find((f) => f.kind === 'mixedPageGeometry');
     expect(finding).toBeDefined();
-    expect(describeFinding(finding!).title).toMatch(/Multiple label sizes/);
+    expect(describeFinding(finding!, fallbackTranslations.importReport).title).toMatch(/Multiple label sizes/);
   });
 
   it('does not flag a shared explicit size (^PW/^LL persist across ^XA)', () => {

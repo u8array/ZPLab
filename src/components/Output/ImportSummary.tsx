@@ -1,6 +1,7 @@
 import { describeFinding } from '../../lib/importReport';
 import type { ImportResult } from '../../lib/importReport';
 import type { ImportFinding, ImportFindingKind } from '@zplab/core/lib/importReport';
+import { useT } from '../../hooks/useT';
 
 export type { ImportResult };
 
@@ -26,12 +27,13 @@ const TONE: Record<ImportFindingKind, string> = {
 };
 
 export function FindingRow({ finding, showPage }: { finding: ImportFinding; showPage: boolean }) {
-  const { title, detail } = describeFinding(finding);
+  const t = useT();
+  const { title, detail } = describeFinding(finding, t.importReport);
   return (
     <div className="flex items-start gap-2 px-3 py-2">
       {showPage && (
         <span className="font-mono text-[9px] uppercase tracking-wider text-muted shrink-0 mt-0.5">
-          Page&nbsp;{finding.pageIndex + 1}
+          {t.importReport.pageFmt.replace('{n}', String(finding.pageIndex + 1))}
         </span>
       )}
       <div className="flex flex-col gap-0.5 flex-1 min-w-0">
@@ -47,6 +49,7 @@ export function FindingRow({ finding, showPage }: { finding: ImportFinding; show
 }
 
 export function ImportSummaryBody({ result }: { result: ImportResult }) {
+  const t = useT();
   const { objectCount, report } = result;
   const { findings } = report;
   // Only show per-row page badges when the import actually spanned multiple
@@ -56,8 +59,9 @@ export function ImportSummaryBody({ result }: { result: ImportResult }) {
   return (
     <div className="flex flex-col gap-3 p-4 flex-1 min-h-0 overflow-y-auto">
       <p className="font-mono text-[10px] text-amber-400 leading-relaxed">
-        Imported {objectCount} object{objectCount !== 1 ? 's' : ''} with{' '}
-        {findings.length} issue{findings.length !== 1 ? 's' : ''}:
+        {t.importModal.summaryFmt
+          .replace('{n}', String(objectCount))
+          .replace('{m}', String(findings.length))}
       </p>
       <div className="flex flex-col">
         {findings.map((f, i) => (

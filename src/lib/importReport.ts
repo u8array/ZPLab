@@ -1,4 +1,5 @@
 import type { ImportFinding, ImportReport } from '@zplab/core/lib/importReport';
+import type { Translations } from '../locales';
 import { ZPL_COMMAND_MAP } from './zplCommandSupport';
 
 export interface ImportResult {
@@ -6,11 +7,22 @@ export interface ImportResult {
   report: ImportReport;
 }
 
+type ReportStrings = Translations['importReport'];
+
+/** ZPL tokens stay out of the locale strings (translator safety); the one
+ *  loss text that names formats gets them interpolated here. */
+const LOSS_SUBSTITUTIONS: readonly [string, string][] = [
+  ['{rawFmts}', '^GFB/^GFC'],
+  ['{hexFmt}', '^GFA'],
+  ['{wrapFmts}', ':B64:/:Z64:'],
+];
+
 /** Returns the loss description for a partial command code, e.g. "^A@" → font face note. */
-function partialLoss(cmd: string): string {
+function partialLoss(cmd: string, tr: ReportStrings): string {
   const key = cmd.slice(1);
   const entry = ZPL_COMMAND_MAP.get(key) ?? (key[0] === 'A' ? ZPL_COMMAND_MAP.get('A@') : undefined);
-  return entry?.loss ?? 'imported with limitations';
+  if (!entry?.loss) return tr.partialFallback;
+  return LOSS_SUBSTITUTIONS.reduce((s, [m, v]) => s.replace(m, v), tr[entry.loss]);
 }
 
 /**
@@ -23,88 +35,70 @@ function partialLoss(cmd: string): string {
  * `detail` is the secondary line (loss description for partial, raw
  * token for the others).
  */
-export function describeFinding(f: ImportFinding): { title: string; detail: string } {
+export function describeFinding(
+  f: ImportFinding,
+  tr: ReportStrings,
+): { title: string; detail: string } {
   if (f.kind === 'partial') {
     return {
-      title: `Partially imported (${f.command})`,
-      detail: partialLoss(f.command),
+      title: tr.partialTitleFmt.replace('{cmd}', f.command),
+      detail: partialLoss(f.command, tr),
     };
   }
   if (f.kind === 'browserLimit') {
-    return {
-      title: 'Skipped: needs printer hardware',
-      detail: f.command,
-    };
+    return { title: tr.browserLimitTitle, detail: f.command };
   }
   if (f.kind === 'replayRisk') {
-    return {
-      title: 'Printer setup command: runs on the printer when exported/printed',
-      detail: f.command,
-    };
+    return { title: tr.replayRiskTitle, detail: f.command };
   }
   if (f.kind === 'deviceAction') {
-    return {
-      title: 'Printer device action: runs on the printer when exported/printed',
-      detail: f.command,
-    };
+    return { title: tr.deviceActionTitle, detail: f.command };
   }
   if (f.kind === 'lossyEdit') {
-    return {
-      title: 'First edit re-emits the whole label (not byte-exact)',
-      detail: f.command,
-    };
+    return { title: tr.lossyEditTitle, detail: f.command };
   }
   if (f.kind === 'fnRenumbered') {
-    return {
-      title: 'Shared ^FN slot with a different default: field moved to a free slot',
-      detail: f.command,
-    };
+    return { title: tr.fnRenumberedTitleFmt.replace('{fn}', '^FN'), detail: f.command };
   }
   if (f.kind === 'fnDefaultDropped') {
-    return {
-      title: "All ^FN slots taken: this field keeps the first page's default",
-      detail: f.command,
-    };
+    return { title: tr.fnDefaultDroppedTitleFmt.replace('{fn}', '^FN'), detail: f.command };
   }
   if (f.kind === 'mixedPageGeometry') {
     return {
-      title: 'Multiple label sizes: later pages use the first size',
-      detail: `^PW/^LL differ between blocks (${f.command})`,
+      title: tr.mixedGeoTitle,
+      detail: tr.mixedGeoDetailFmt.replace('{cmds}', '^PW/^LL').replace('{detail}', f.command),
     };
   }
-  return {
-    title: 'Skipped: command not recognised',
-    detail: f.command,
-  };
+  return { title: tr.unknownTitle, detail: f.command };
 }
 
 /** Compact "Page N: " prefix when a finding originates from a multi-page
  *  import. Single-page reports omit it to stay terse. */
-function pagePrefix(f: ImportFinding, multiPage: boolean): string {
-  return multiPage ? `Page ${f.pageIndex + 1}: ` : '';
+function pagePrefix(f: ImportFinding, multiPage: boolean, pageFmt: string): string {
+  return multiPage ? `${pageFmt.replace('{n}', String(f.pageIndex + 1))}: ` : '';
 }
 
-export function formatReportAsText(result: ImportResult): string {
+export function formatReportAsText(result: ImportResult, tr: ReportStrings): string {
   const { objectCount, report } = result;
   const findings = report.findings;
   const multiPage = findings.some((f) => f.pageIndex > 0);
 
   const lines: string[] = [
-    `ZPL Import Report`,
-    `Objects imported: ${objectCount}`,
+    tr.reportHeader,
+    tr.reportObjectsFmt.replace('{n}', String(objectCount)),
     '',
   ];
 
   if (findings.length === 0) {
-    lines.push('All commands recognised. No design information was lost.');
+    lines.push(tr.reportClean);
     return lines.join('\n');
   }
 
   // One row per finding (per page-occurrence). Matches the UI list so the
   // copied text mirrors what the user sees in the modal.
   for (const f of findings) {
-    const { title, detail } = describeFinding(f);
-    lines.push(`${pagePrefix(f, multiPage)}${title}: ${detail}`);
+    const { title, detail } = describeFinding(f, tr);
+    lines.push(`${pagePrefix(f, multiPage, tr.pageFmt)}${title}: ${detail}`);
   }
   return lines.join('\n');
 }
