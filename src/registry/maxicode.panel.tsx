@@ -38,7 +38,7 @@ export const maxicodePanel: ObjectTypeUi<MaxicodeProps> = {
 
         <SectionCard id={`${obj.type}-settings`} title={t.properties.settingsSection}>
           <div className="flex flex-col gap-1">
-            <FieldLabel cmd="^BV">{loc.mode}</FieldLabel>
+            <FieldLabel cmd="^BD">{loc.mode}</FieldLabel>
             <Select<MaxicodeProps["mode"]>
               value={p.mode}
               onChange={(mode) => onChange({ mode })}

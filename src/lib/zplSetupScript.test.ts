@@ -428,7 +428,55 @@ describe("generateSetupScript — output shape", () => {
       "paSlotB",
       "paSlotC",
       "paSlotD",
+      "fontCacheOn",
+      "fontCacheAddKb",
+      "fontCacheType",
+      "modeProtection",
+      "modeProtectionExplicit",
     ]);
+  });
+
+  it("emits ^CO with only the slots the profile sets (parse-generate identity)", () => {
+    expect(generateSetupScript({})).not.toContain("^CO");
+    expect(generateSetupScript({ fontCacheAddKb: 78 })).toContain("^CO,78");
+    expect(generateSetupScript({ fontCacheOn: "N", fontCacheType: "1" })).toContain("^CON,,1");
+    expect(generateSetupScript({ fontCacheOn: "Y" })).toMatch(/\^COY(?!,)/);
+  });
+
+  it("emits the ^MPE baseline only for an absolute set", () => {
+    expect(generateSetupScript({})).not.toContain("^MP");
+    // Absolute (UI-authored or stream carried ^MPE): reset first.
+    const absolute = generateSetupScript({ modeProtection: ["D", "C"], modeProtectionExplicit: true });
+    expect(absolute).toContain("^MPE\n^MPD\n^MPC");
+    // Relative import (^MPD without ^MPE): additions only, no injected reset.
+    const relative = generateSetupScript({ modeProtection: ["D", "C"] });
+    expect(relative).toContain("^MPD\n^MPC");
+    expect(relative).not.toContain("^MPE");
+    // Imported enable-all (^MPE with nothing after) round-trips as empty set.
+    expect(generateSetupScript({ modeProtection: [], modeProtectionExplicit: true })).toContain("^MPE");
+  });
+
+  it("a fully-empty ^CO normalises to its a-slot default and round-trips", () => {
+    const { printerProfile } = parseZPL("^XA^CO^XZ");
+    expect(printerProfile.fontCacheOn).toBe("Y");
+    expect(generateSetupScript(printerProfile)).toMatch(/\^COY(?!,)/);
+  });
+
+  it("later shorter ^CO clears slots an earlier ^CO had set (last command wins)", () => {
+    const { printerProfile } = parseZPL("^XA^COY,78,1^CON^XZ");
+    expect(printerProfile.fontCacheOn).toBe("N");
+    expect(printerProfile.fontCacheAddKb).toBeUndefined();
+    expect(printerProfile.fontCacheType).toBeUndefined();
+  });
+
+  it("a relative ^MP import round-trips without a fabricated ^MPE", () => {
+    const { printerProfile } = parseZPL("^XA^MPD^XZ");
+    expect(printerProfile.modeProtection).toEqual(["D"]);
+    expect(printerProfile.modeProtectionExplicit).toBeUndefined();
+    expect(generateSetupScript(printerProfile)).not.toContain("^MPE");
+    const explicit = parseZPL("^XA^MPE^MPD^XZ").printerProfile;
+    expect(explicit.modeProtectionExplicit).toBe(true);
+    expect(generateSetupScript(explicit)).toContain("^MPE\n^MPD");
   });
 
   it("places configurationUpdate as the last persistent entry so ^JUS commits the block", () => {

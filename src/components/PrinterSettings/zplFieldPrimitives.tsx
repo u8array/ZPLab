@@ -326,6 +326,7 @@ export function ZplEnumSegmented<T extends string>({
   onChange,
   defaultLabel,
   optionLabel,
+  hint,
 }: {
   label: string;
   command: string;
@@ -334,6 +335,7 @@ export function ZplEnumSegmented<T extends string>({
   onChange: (next: T | undefined) => void;
   defaultLabel: string;
   optionLabel: (v: T) => string;
+  hint?: ReactNode;
 }) {
   return (
     <ZplField>
@@ -345,6 +347,7 @@ export function ZplEnumSegmented<T extends string>({
         defaultLabel={defaultLabel}
         options={values.map((v) => ({ value: v, label: optionLabel(v) }))}
       />
+      {hint ? <ZplFieldHint>{hint}</ZplFieldHint> : null}
     </ZplField>
   );
 }
@@ -357,6 +360,7 @@ export function ZplBoundedIntInput({
   value,
   onChange,
   unit,
+  hint,
 }: {
   label: string;
   command: string;
@@ -365,6 +369,7 @@ export function ZplBoundedIntInput({
   value: number | undefined;
   onChange: (next: number | undefined) => void;
   unit?: string;
+  hint?: ReactNode;
 }) {
   const id = useId();
   const inputBox = (
@@ -383,6 +388,7 @@ export function ZplBoundedIntInput({
           </div>
         )
         : inputBox}
+      {hint ? <ZplFieldHint>{hint}</ZplFieldHint> : null}
     </ZplField>
   );
 }

@@ -676,7 +676,7 @@ describe('ObjectRegistry', () => {
 
   // The rotation prop's existence IS the rotatability capability (spawn, panel,
   // canvas and emit all key off it). qrcode rotates via a baked ^GFA like image;
-  // maxicode stays off (^BV is a no-op, MaxiCode is omnidirectional). Belongs
+  // maxicode stays off (^BD has no orientation slot, MaxiCode is omnidirectional). Belongs
   // here only with a working o=N/R/I/B or a baked graphic emit.
   it('rotation prop membership matches the ZPL orientation capability', () => {
     const rotatable = Object.entries(ObjectRegistry)

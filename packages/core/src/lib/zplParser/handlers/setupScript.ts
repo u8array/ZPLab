@@ -1,19 +1,55 @@
-import { CLOCK_TOLERANCE_RANGE, FONT_LINKS_PATH_MAX_LEN, HEAD_CLEANING_INTERVAL_METERS, HEAD_TEST_INTERVAL_RANGE, JH_SLOT_F, JH_SLOT_G, MAINTENANCE_ALERT_DEFAULTS, MAINTENANCE_DISTANCE_MAX_BY_TYPE, MAINTENANCE_MESSAGE_MAX_LEN, PRINTER_NAME_MAX_LEN, PRINTER_PASSWORD_REGEX, TEAR_OFF_ADJUST_RANGE, isClockFormat, isClockLanguage, isConfigUpdateAction, isMaintenanceAlertPrint, isMaintenanceAlertType, isMaintenanceAlertUnit, isPrinterLocale, isZplMode, setupScriptUnsafeCharRegex } from "../../../types/PrinterProfile";
+import { CLOCK_TOLERANCE_RANGE, FONT_CACHE_KB_RANGE, FONT_LINKS_PATH_MAX_LEN, HEAD_CLEANING_INTERVAL_METERS, HEAD_TEST_INTERVAL_RANGE, JH_SLOT_F, JH_SLOT_G, MAINTENANCE_ALERT_DEFAULTS, MAINTENANCE_DISTANCE_MAX_BY_TYPE, MAINTENANCE_MESSAGE_MAX_LEN, PRINTER_NAME_MAX_LEN, PRINTER_PASSWORD_REGEX, TEAR_OFF_ADJUST_RANGE, isClockFormat, isClockLanguage, isConfigUpdateAction, isFontCacheType, isMaintenanceAlertPrint, isMaintenanceAlertType, isMaintenanceAlertUnit, isModeProtection, isPrinterLocale, isZplMode, setupScriptUnsafeCharRegex } from "../../../types/PrinterProfile";
 import { parseIntOrUndef } from "../../inputParse";
+import { isYesNo } from "../../../types/typeHelpers";
 import { parseRealtimeClock } from "../../realtimeClock";
 import type { ParserState } from "../context";
 import { inRange, strParam } from "../helpers";
 import type { Handler } from "../types";
 
-/** Setup-Script commands (^JZ, ^JT, ~TA, ^ST, ^KD, ^KL, ^SE, ^SZ,
- *  ^KN, ^SL, ^KP, ^MA, ^MI, ^MW, ^JH, ^JU): all write the shared
- *  `printerProfile` slice. */
+/** Setup-Script command handlers: all write the shared `printerProfile` slice. */
 export function createSetupScriptHandlers(s: ParserState): Record<string, Handler> {
   const printerProfile = s.result.printerProfile;
   return {
+    // Each ^CO is a complete command: an empty slot means the printer's own
+    // default, so it clears a value an earlier ^CO in the stream had set.
+    CO(p) {
+      const on = strParam(p[0]);
+      // A fully-empty ^CO would parse to nothing and vanish on re-emit;
+      // normalise it to its a-slot default (Y, cache on) instead.
+      if (on === "" && strParam(p[1]) === "" && strParam(p[2]) === "") {
+        printerProfile.fontCacheOn = "Y";
+        delete printerProfile.fontCacheAddKb;
+        delete printerProfile.fontCacheType;
+        return;
+      }
+      if (on === "") delete printerProfile.fontCacheOn;
+      else if (isYesNo(on)) printerProfile.fontCacheOn = on;
+      const rawKb = strParam(p[1]);
+      if (rawKb === "") delete printerProfile.fontCacheAddKb;
+      else {
+        const kb = inRange(parseIntOrUndef(rawKb), FONT_CACHE_KB_RANGE);
+        if (kb !== undefined) printerProfile.fontCacheAddKb = kb;
+      }
+      const type = strParam(p[2]);
+      if (type === "") delete printerProfile.fontCacheType;
+      else if (isFontCacheType(type)) printerProfile.fontCacheType = type;
+    },
+    MP(p) {
+      const v = strParam(p[0]);
+      // E re-enables all modes, wiping the protection set. It also anchors
+      // the set as absolute; without it the stream only ADDS modes and the
+      // emitter must not inject a resetting ^MPE baseline.
+      if (v === "E") {
+        printerProfile.modeProtection = [];
+        printerProfile.modeProtectionExplicit = true;
+      } else if (isModeProtection(v)) {
+        const set = printerProfile.modeProtection ?? [];
+        if (!set.includes(v)) printerProfile.modeProtection = [...set, v];
+      }
+    },
     JZ(p) {
       const v = strParam(p[0]);
-      if (v === "Y" || v === "N") printerProfile.reprintAfterError = v;
+      if (isYesNo(v)) printerProfile.reprintAfterError = v;
     },
     JT(p) {
       const v = inRange(parseIntOrUndef(p[0]), HEAD_TEST_INTERVAL_RANGE);
@@ -130,11 +166,11 @@ export function createSetupScriptHandlers(s: ParserState): Record<string, Handle
     },
     MW(_, rest) {
       const v = rest.trim().toUpperCase();
-      if (v === "Y" || v === "N") printerProfile.headColdWarning = v;
+      if (isYesNo(v)) printerProfile.headColdWarning = v;
     },
     CV(_, rest) {
       const v = rest.trim().toUpperCase();
-      if (v === "Y" || v === "N") printerProfile.codeValidation = v;
+      if (isYesNo(v)) printerProfile.codeValidation = v;
     },
     PA(p) {
       // ^PAa,b,c,d each 0/1; missing slot = 0 (printer default).

@@ -6,6 +6,7 @@ import {
   type PrinterProfile,
 } from '@zplab/core/types/PrinterProfile';
 import { formatFontDownloadFromPath } from '@zplab/core/lib/customFonts';
+import { trimTrailingEmptySlots } from '@zplab/core/lib/zplGenerator';
 import { formatRealtimeClockForZpl, toLocalIsoString } from '@zplab/core/lib/realtimeClock';
 
 /** Generates the one-shot Setup-Script ZPL for a printer profile:
@@ -239,6 +240,41 @@ const SETUP_SCRIPT_EMITTERS = {
   paSlotB: { kind: 'foldedInto', target: 'paSlotA' },
   paSlotC: { kind: 'foldedInto', target: 'paSlotA' },
   paSlotD: { kind: 'foldedInto', target: 'paSlotA' },
+  // ^CO sizes the DRAM character cache: session state, gone at power-off.
+  // fontCacheOn owns the composite; unset slots stay EMPTY (printer applies
+  // its spec defaults) so parse(generate(p)) returns exactly p.
+  fontCacheOn: {
+    kind: 'emit',
+    channel: 'block',
+    scope: 'session',
+    emit: (p) => {
+      const slots = trimTrailingEmptySlots([
+        p.fontCacheOn ?? '',
+        p.fontCacheAddKb?.toString() ?? '',
+        p.fontCacheType ?? '',
+      ]);
+      return slots.length > 0 ? `^CO${slots.join(',')}` : null;
+    },
+  },
+  fontCacheAddKb: { kind: 'foldedInto', target: 'fontCacheOn' },
+  fontCacheType: { kind: 'foldedInto', target: 'fontCacheOn' },
+  // ^MPE baseline only for an absolute set; a relative import (^MPD without
+  // ^MPE) re-emits additions only, since injecting the reset would first
+  // unprotect everything else. Never tied to ^JUS, so session-scoped.
+  modeProtection: {
+    kind: 'emit',
+    channel: 'block',
+    scope: 'session',
+    emit: (p) => {
+      if (p.modeProtection === undefined) return null;
+      const lines = [
+        ...(p.modeProtectionExplicit ? ['^MPE'] : []),
+        ...p.modeProtection.map((m) => `^MP${m}`),
+      ];
+      return lines.length > 0 ? lines.join('\n') : null;
+    },
+  },
+  modeProtectionExplicit: { kind: 'foldedInto', target: 'modeProtection' },
 } as const satisfies Partial<Record<keyof PrinterProfile, SetupScriptEntry>>;
 
 /** Public list of the PrinterProfile fields that flow through the

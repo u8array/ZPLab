@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { intInRange, makeEnumGuard } from './typeHelpers';
+import { YES_NO_VALUES, intInRange, makeEnumGuard } from './typeHelpers';
 
 /** Two row shapes: uploaded font (path + optional preview, bytes in cache)
  *  or manual printer-resident reference (path only, no bytes). Empty strings
@@ -30,10 +30,14 @@ export const isMediaTracking = makeEnumGuard(MEDIA_TRACKING_VALUES);
 export const isMediaFeedMode = makeEnumGuard(MEDIA_FEED_VALUES);
 
 /** ~JS backfeed sequence: A=100% after, B=before next label, N=normal,
- *  O=off. Percent forms 10-90 are not modeled (param-fidelity limit). */
+ *  O=off, or percent-after in tens (printer rounds to the nearest ten, p276). */
 export const BACKFEED_SEQUENCE_VALUES = ['A', 'B', 'N', 'O'] as const;
 export type BackfeedSequence = (typeof BACKFEED_SEQUENCE_VALUES)[number];
 export const isBackfeedSequence = makeEnumGuard(BACKFEED_SEQUENCE_VALUES);
+export const BACKFEED_PERCENT_VALUES = [10, 20, 30, 40, 50, 60, 70, 80, 90] as const;
+export type BackfeedPercent = (typeof BACKFEED_PERCENT_VALUES)[number];
+export const isBackfeedPercent = (n: number): n is BackfeedPercent =>
+  (BACKFEED_PERCENT_VALUES as readonly number[]).includes(n);
 
 /** ^MM print mode (per-label cut/peel/tear behaviour). */
 export const MEDIA_MODE_VALUES = ['T', 'V', 'D', 'K'] as const;
@@ -63,6 +67,7 @@ export const DARKNESS_PERMANENT_RANGE = { min: -30, max: 30 } as const;
 export const DARKNESS_INSTANT_RANGE = { min: 0, max: 30 } as const;
 /** ^ML: maximum label length, in dots. Zebra spec accepts 1..32000. */
 export const MAX_LABEL_LENGTH_RANGE = { min: 1, max: 32000 } as const;
+export const SLEW_DOT_ROWS_RANGE = { min: 0, max: 32000 } as const;
 
 /** ^MU b,c dpi tokens; 200 = 203 dpi; ratio drives resampling. */
 export const MU_DPI_VALUES = [150, 200, 300, 600] as const;
@@ -77,6 +82,18 @@ export const muResamplingSchema = z.object({
   outputDpi: muDpiSchema,
 });
 export type MuResampling = z.infer<typeof muResamplingSchema>;
+
+/** Setting one slot seeds the other from it, keeping both-or-neither. */
+export function composeMuResampling(
+  current: MuResampling | undefined,
+  slot: keyof MuResampling,
+  dpi: MuDpi,
+): MuResampling {
+  return {
+    formatDpi: slot === 'formatDpi' ? dpi : current?.formatDpi ?? dpi,
+    outputDpi: slot === 'outputDpi' ? dpi : current?.outputDpi ?? dpi,
+  };
+}
 
 /** ^SO offset slots; mirrors the b,c,d,e,f,g wire-format order. All
  *  fields signed; omitted = 0. Schema-natural order in our type is
@@ -140,7 +157,7 @@ export const labelConfigSchema = z.object({
   /** ^PQ p3: replicates of each serialised label. */
   replicates: z.number().int().min(0).max(99999999).optional(),
   /** ^PQ p4: override pause count (cutter behaviour). */
-  overridePauseCount: z.enum(['Y', 'N']).optional(),
+  overridePauseCount: z.enum(YES_NO_VALUES).optional(),
   mediaMode: z.enum(MEDIA_MODE_VALUES).optional(),
   labelShift: z.number().optional(),
   /** ^LH x; field FOs shifted at export so screen == print. */
@@ -160,7 +177,7 @@ export const labelConfigSchema = z.object({
   mediaType: z.enum(MEDIA_TYPE_VALUES).optional(),
   printOrientation: z.enum(PRINT_ORIENTATION_VALUES).optional(),
   /** ^PM: mirror image (left/right flip). */
-  mirror: z.enum(['Y', 'N']).optional(),
+  mirror: z.enum(YES_NO_VALUES).optional(),
   defaultFontId: z.string().min(1).optional(),
   defaultFontHeight: z.number().int().positive().optional(),
   /** ^CF width param. Spec allows 0 → printer auto-derives from height. */
@@ -178,13 +195,23 @@ export const labelConfigSchema = z.object({
   /** ^XB: suppress backfeed for the next label. Standalone toggle. */
   suppressBackfeed: z.boolean().optional(),
   /** ~JS: backfeed sequence. Immediate/transient, emitted before ^XA. */
-  backfeedSequence: z.enum(BACKFEED_SEQUENCE_VALUES).optional(),
+  backfeedSequence: z
+    .union([z.enum(BACKFEED_SEQUENCE_VALUES), z.number().refine(isBackfeedPercent)])
+    .optional(),
   /** ^MU b,c; set only when both slots arrived valid. */
   muResampling: muResamplingSchema.optional(),
   /** ^SO2: secondary clock offset (`«clock2:T»` markers resolve through this). */
   secondaryClockOffset: z.preprocess(coerceEmptyOffset, clockOffsetSchema.optional()),
   /** ^SO3: tertiary clock offset (`«clock3:T»` markers resolve through this). */
   tertiaryClockOffset: z.preprocess(coerceEmptyOffset, clockOffsetSchema.optional()),
+  /** ^MC: N retains the bitmap as background of subsequent labels. */
+  mapClear: z.enum(YES_NO_VALUES).optional(),
+  /** ^PF: slew this many dot rows instead of printing blank bottom area. */
+  slewDotRows: intInRange(SLEW_DOT_ROWS_RANGE).optional(),
+  /** ^PH: feed one blank label after the format prints. */
+  slewToHome: z.boolean().optional(),
+  /** ^PP: pause after the format prints (until PAUSE or ~PS). */
+  programmablePause: z.boolean().optional(),
 });
 
 export type LabelConfig = z.infer<typeof labelConfigSchema>;
@@ -201,10 +228,13 @@ export const PER_LABEL_ZPL_FIELDS = [
   'darkness', 'instantDarkness',
   'labelHomeX', 'labelHomeY', 'labelTop', 'labelShift',
   'printQuantity', 'pauseCount', 'replicates', 'overridePauseCount',
+  'mapClear', 'slewDotRows', 'slewToHome', 'programmablePause',
 ] as const satisfies readonly (keyof LabelConfig)[];
 
-/** The ^PQ family is scoped to its own ^XA block; every other config field is
- *  persistent printer state a later block may contribute to the design. */
+/** Fields the import fold scopes to their own ^XA block; the rest is
+ *  persistent state a later block may extend. ^MC persists on the wire
+ *  (p300), but folding a later ^MCN back would leak its bitmap into page two. */
 export const PER_FORMAT_ZPL_FIELDS = [
   'printQuantity', 'pauseCount', 'replicates', 'overridePauseCount',
+  'slewDotRows', 'slewToHome', 'programmablePause', 'mapClear',
 ] as const satisfies readonly (keyof LabelConfig)[];

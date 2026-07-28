@@ -14,6 +14,31 @@ describe("Printer Settings Modal Tab 1 — generator", () => {
     expect(zpl).not.toContain("^XB");
   });
 
+  it("emits ^MC / ^PF / ^PH / ^PP only when set and round-trips them", () => {
+    expect(generateZPL(base, [])).not.toMatch(/\^MC|\^PF|\^PH|\^PP/);
+    const zpl = generateZPL(
+      { ...base, mapClear: "N", slewDotRows: 120, slewToHome: true, programmablePause: true },
+      [],
+    );
+    expect(zpl).toContain("^MCN");
+    expect(zpl).toContain("^PF120");
+    expect(zpl).toContain("^PH");
+    expect(zpl).toContain("^PP");
+    const back = parseZPL(zpl, 8).labelConfig;
+    expect(back.mapClear).toBe("N");
+    expect(back.slewDotRows).toBe(120);
+    expect(back.slewToHome).toBe(true);
+    expect(back.programmablePause).toBe(true);
+  });
+
+  it("emits ^PF0 (explicit no-slew) rather than dropping the zero", () => {
+    expect(generateZPL({ ...base, slewDotRows: 0 }, [])).toContain("^PF0");
+  });
+
+  it("emits an explicit imported ^MCY (both enum states are representable)", () => {
+    expect(generateZPL({ ...base, mapClear: "Y" }, [])).toContain("^MCY");
+  });
+
   it("emits ^MN with the selected tracking mode", () => {
     const zpl = generateZPL({ ...base, mediaTracking: "W" }, []);
     expect(zpl).toContain("^MNW");

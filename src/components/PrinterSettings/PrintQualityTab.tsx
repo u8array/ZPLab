@@ -1,6 +1,6 @@
 import { useT } from "../../hooks/useT";
 import { useLabelStore } from "../../store/labelStore";
-import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, PRINT_ORIENTATION_VALUES, SPEED_RANGE, type PrintOrientation } from "@zplab/core/types/LabelConfig";
+import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, MU_DPI_VALUES, PRINT_ORIENTATION_VALUES, SPEED_RANGE, composeMuResampling, type MuDpi, type PrintOrientation } from "@zplab/core/types/LabelConfig";
 import { HEAD_TEST_INTERVAL_RANGE, TEAR_OFF_ADJUST_RANGE } from "@zplab/core/types/PrinterProfile";
 import { RegionFocus } from "./printerIllustration";
 import {
@@ -9,10 +9,16 @@ import {
   ZplCheckbox,
   ZplCommandLabel,
   ZplEnumSegmented,
+  ZplEnumSubCustomSelect,
   ZplField,
   ZplSubField,
 } from "./zplFieldPrimitives";
 import { fieldGridCols, fieldGridCell } from "../ui/formStyles";
+
+const MU_DPI_STRINGS = MU_DPI_VALUES.map(String);
+// ^MU wire tokens name nominal densities (200 = a 203 dpi head); display
+// the physical dpi so an 8 dpmm printer isn't labelled "200 dpi".
+const MU_PHYSICAL_DPI: Record<string, string> = { '150': '152', '200': '203', '300': '300', '600': '600' };
 
 type LocPrintQuality = ReturnType<typeof useT>["printerSettings"]["printQuality"];
 
@@ -22,14 +28,22 @@ const ORIENTATION_LABEL_KEYS = {
 } as const satisfies Record<PrintOrientation, keyof LocPrintQuality>;
 
 /** Tab 2 of the Printer Settings Modal. Per-label print quality
- *  (orientation, mirror, speed, darkness) plus setup-script-only
- *  ^JZ / ^JT / ~TA / ^CV which the user provisions once. */
+ *  (orientation, mirror, map clear, speed, darkness, ^MU resampling)
+ *  plus setup-script-only ^JZ / ^JT / ~TA / ^CV provisioned once. */
 export function PrintQualityTab() {
   const t = useT();
   const label = useLabelStore((s) => s.label);
   const setLabelConfig = useLabelStore((s) => s.setLabelConfig);
   const profile = useLabelStore((s) => s.printerProfile);
   const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
+  const setMuSlot = (slot: 'formatDpi' | 'outputDpi', v: string | undefined) => {
+    setLabelConfig({
+      muResampling:
+        v === undefined
+          ? undefined
+          : composeMuResampling(label.muResampling, slot, Number(v) as MuDpi),
+    });
+  };
   const loc = t.printerSettings.printQuality;
 
   return (
@@ -52,6 +66,20 @@ export function PrintQualityTab() {
           command="^PM"
           checked={label.mirror === "Y"}
           onChange={(v) => setLabelConfig({ mirror: v ? "Y" : undefined })}
+        />
+      </RegionFocus>
+
+      {/* Tri-state so an imported explicit ^MCY stays visible and editable. */}
+      <RegionFocus region="label">
+        <ZplEnumSegmented
+          label={loc.mapClear}
+          command="^MC"
+          values={['Y', 'N'] as const}
+          value={label.mapClear}
+          onChange={(mapClear) => setLabelConfig({ mapClear })}
+          defaultLabel={t.printerSettings.defaultOption}
+          optionLabel={(v) => v === 'Y' ? loc.mapClearOptionClear : loc.mapClearOptionRetain}
+          hint={loc.mapClearHint}
         />
       </RegionFocus>
 
@@ -123,6 +151,33 @@ export function PrintQualityTab() {
           value={label.instantDarkness}
           onChange={(v) => setLabelConfig({ instantDarkness: v })}
         />
+      </RegionFocus>
+
+      {/* ^MU b,c: both-or-neither pair; picking one slot seeds the other. */}
+      <RegionFocus region="printhead">
+        <ZplField>
+          <ZplCommandLabel text={loc.muHeading} command="^MU" />
+          <div className={`grid grid-cols-2 ${fieldGridCols}`}>
+            <ZplEnumSubCustomSelect
+              label={loc.muFormatDpi}
+              values={MU_DPI_STRINGS}
+              value={label.muResampling ? String(label.muResampling.formatDpi) : undefined}
+              onChange={(v) => setMuSlot('formatDpi', v)}
+              defaultLabel={t.printerSettings.defaultOption}
+              optionLabel={(d) => `${MU_PHYSICAL_DPI[d] ?? d} dpi`}
+              className={fieldGridCell}
+            />
+            <ZplEnumSubCustomSelect
+              label={loc.muOutputDpi}
+              values={MU_DPI_STRINGS}
+              value={label.muResampling ? String(label.muResampling.outputDpi) : undefined}
+              onChange={(v) => setMuSlot('outputDpi', v)}
+              defaultLabel={t.printerSettings.defaultOption}
+              optionLabel={(d) => `${MU_PHYSICAL_DPI[d] ?? d} dpi`}
+              className={fieldGridCell}
+            />
+          </div>
+        </ZplField>
       </RegionFocus>
 
       {/* Printer default for ^JZ is "Y" (reprint enabled). The

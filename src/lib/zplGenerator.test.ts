@@ -653,6 +653,12 @@ describe('generateZPL — printer params', () => {
     expect(zpl.indexOf('~JSB')).toBeLessThan(zpl.indexOf('^XA'));
   });
 
+  it('emits ~JS percent form and round-trips it', () => {
+    const zpl = generateZPL({ ...BASE_LABEL, backfeedSequence: 40 }, []);
+    expect(zpl).toContain('~JS40');
+    expect(parseZPL(zpl, 8).labelConfig.backfeedSequence).toBe(40);
+  });
+
   it('emits ^PR when only slew or backfeed is set (printSpeed undefined)', () => {
     expect(generateZPL({ ...BASE_LABEL, slewSpeed: 8 }, [])).toContain('^PR8');
     // backfeed-only: ZPL has no positional skip, so slew slot repeats the

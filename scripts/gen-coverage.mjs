@@ -47,6 +47,10 @@ const README_ROWS = [
 // so the status-legend and bucket example tables (prose second cell) are skipped.
 const ROW_RE = /^\|\s*`\[([ x])\]`\s*\|\s*`([~^][A-Z0-9@]+)`/;
 
+// The roadmap is a full partition of the ZPL II guide's commands;
+// a row added or removed MUST consciously move this number.
+const TRACKED_TOTAL = 225;
+
 /** Parse the roadmap into { section -> { supported, total, cmds:[{cmd,ok}] } }. */
 function parseRoadmap() {
   const lines = readFileSync(ROADMAP, 'utf8').split(/\r?\n/);
@@ -62,6 +66,14 @@ function parseRoadmap() {
     const s = sections.get(section);
     s.total++; if (ok) s.supported++;
     s.cmds.push({ cmd: m[2], ok });
+  }
+  const total = [...sections.values()].reduce((n, s) => n + s.total, 0);
+  if (total !== TRACKED_TOTAL) {
+    console.error(
+      `roadmap tracks ${total} commands, pin says ${TRACKED_TOTAL}; ` +
+      'update TRACKED_TOTAL only for a deliberate row change',
+    );
+    process.exit(1);
   }
   return sections;
 }

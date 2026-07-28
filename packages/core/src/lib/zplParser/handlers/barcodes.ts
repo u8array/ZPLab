@@ -153,15 +153,12 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     B0: handleAztec,
     BO: handleAztec,
 
-    // ^BVo,{mode},{symbolNumber},{totalSymbols}: Maxicode (fixed
-    // physical size, no magnification). symbolNumber/totalSymbols
-    // describe structured-append composition; we don't expose that
-    // in the editor, so the params are read but the emitted form
-    // pins them to (1, 1).
-    // ^BV orientation slot is a firmware no-op; canonicalized on emit.
-    BV(p) {
+    // ^BDm,{symbolNumber},{totalSymbols}: Maxicode (spec p106; fixed
+    // physical size, no orientation slot). Structured-append params are
+    // read but pinned to (1,1) on emit.
+    BD(p) {
       field.fieldType = "maxicode";
-      const m = int(p[1], 4);
+      const m = int(p[0], 4);
       field.maxicodeMode = (m >= 2 && m <= 6 ? m : 4) as MaxicodeProps["mode"];
     },
 

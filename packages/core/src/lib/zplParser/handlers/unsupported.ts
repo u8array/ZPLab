@@ -20,7 +20,6 @@ export function createUnsupportedHandlers(
     JE: noop,
     JI: noop,
     JR: noop,
-    PP: noop,
     // Browser-limit factories, surface as "not loaded" findings.
     HT: mkBrowserLimit("HT"),
     LF: mkBrowserLimit("LF"),

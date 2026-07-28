@@ -67,16 +67,8 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   },
   { cmd: 'TB', status: 'supported', description: 'Text block: alternative to ^A + ^FB for wrapped/justified text' },
   { cmd: 'PA', status: 'supported', description: 'Advanced text properties: glyph/bidi/shaping/OpenType flags; round-trips through the Printer Settings setup script' },
-  {
-    cmd: 'CW', status: 'browser-limit',
-    description: 'Font identifier: assigns a single-letter alias to a printer-resident font',
-    loss: 'Cannot access printer font storage; alias is ignored but subsequent ^A references fall back to default font',
-  },
-  {
-    cmd: 'FL', status: 'browser-limit',
-    description: 'Font linking: links host fonts on the printer',
-    loss: 'Requires printer font storage; not applicable in the browser',
-  },
+  { cmd: 'CW', status: 'supported', description: 'Font identifier: alias-to-font mapping, round-trips; canvas renders the substitute font' },
+  { cmd: 'FL', status: 'supported', description: 'Font linking: round-trips through the Printer Settings setup script' },
   {
     cmd: 'HT', status: 'browser-limit',
     description: 'Host linked font list: retrieves font data from printer',
@@ -105,7 +97,7 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   { cmd: 'BA', status: 'supported', description: 'Code 93 barcode' },
   { cmd: 'BB', status: 'supported', description: 'CODABLOCK barcode' },
   { cmd: 'BC', status: 'supported', description: 'Code 128 barcode' },
-  { cmd: 'BD', status: 'unsupported', description: 'UPS MaxiCode barcode' },
+  { cmd: 'BD', status: 'supported', description: 'UPS MaxiCode barcode' },
   { cmd: 'BE', status: 'supported', description: 'EAN-13 barcode' },
   { cmd: 'BF', status: 'supported', description: 'MicroPDF417 barcode' },
   { cmd: 'BI', status: 'supported', description: 'Industrial 2 of 5 barcode' },
@@ -118,7 +110,7 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   { cmd: 'BQ', status: 'supported', description: 'QR Code' },
   { cmd: 'BR', status: 'supported', description: 'GS1 Databar' },
   { cmd: 'BS', status: 'supported', description: 'UPC/EAN 2- or 5-digit supplement barcode' },
-  { cmd: 'BT', status: 'unsupported', description: 'TLC39 barcode' },
+  { cmd: 'BT', status: 'supported', description: 'TLC39 barcode (MicroPDF417 + Code 39)' },
   { cmd: 'BU', status: 'supported', description: 'UPC-A barcode' },
   { cmd: 'BX', status: 'supported', description: 'DataMatrix code' },
   { cmd: 'BZ', status: 'supported', description: 'POSTAL barcode' },
@@ -131,13 +123,9 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   {
     cmd: 'GF', status: 'partial',
     description: 'Graphic field: embedded monochrome bitmap',
-    loss: 'Only ^GFA (hex / ZPL-compressed format) is supported; ^GFB and ^GFC formats are skipped',
+    loss: 'Raw binary ^GFB/^GFC payloads are skipped; ^GFA and :B64:/:Z64:-wrapped B/C payloads decode',
   },
-  {
-    cmd: 'GS', status: 'browser-limit',
-    description: 'Graphic symbol: prints a printer-resident symbol character',
-    loss: 'Symbols are stored on the printer; cannot be rendered in the browser',
-  },
+  { cmd: 'GS', status: 'supported', description: 'Graphic symbol glyph (registered/copyright/trademark/UL/CSA)' },
 
   // ── Serialisation ─────────────────────────────────────────────────────────
   { cmd: 'SN', status: 'supported', description: 'Serialisation data (^SNv,n,z; the start value is the field data)' },
@@ -146,24 +134,29 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   // ── Clock & time ──────────────────────────────────────────────────────────
   { cmd: 'SO', status: 'supported', description: 'Set offset: secondary/tertiary RTC clock offsets; round-trips via labelConfig' },
 
+  // ── Fonts & panel ─────────────────────────────────────────────────────────
+  { cmd: 'CO', status: 'supported', description: 'Cache on: size the scalable-character cache (on/off, extra KB, buffer type); session-scoped' },
+  { cmd: 'MP', status: 'supported', description: 'Mode protection: lock control-panel modes; one letter per command, E re-enables all' },
+  { cmd: 'CV', status: 'supported', description: 'Code validation: round-trips through the Printer Settings setup script' },
+
   // ── Encoding ──────────────────────────────────────────────────────────────
-  { cmd: 'CI', status: 'structural', description: 'Change international font/encoding: not required; UTF-8 is used natively in the browser' },
+  { cmd: 'CI', status: 'supported', description: 'Change international encoding: parsed on import; exports emit ^CI28 (UTF-8)' },
 
   // ── Control & media ───────────────────────────────────────────────────────
-  { cmd: 'MC', status: 'structural', description: 'Map clear: clears the bitmap buffer before building the label' },
+  { cmd: 'MC', status: 'supported', description: 'Map clear: Y clears the bitmap per label (default); N retains it behind subsequent labels' },
   { cmd: 'MD', status: 'structural', description: 'Media darkness: printer hardware setting' },
   { cmd: 'ML', status: 'structural', description: 'Maximum label length: printer calibration value' },
   { cmd: 'MN', status: 'structural', description: 'Media tracking: continuous/gap/mark sensing (hardware)' },
 
   // ── Print control ─────────────────────────────────────────────────────────
-  { cmd: 'PF', status: 'structural', description: 'Slew given number of dot rows: printer movement command' },
-  { cmd: 'PH', status: 'structural', description: 'Slew to home position: printer movement command' },
-  { cmd: 'PM', status: 'structural', description: 'Print mirror image: hardware mirror setting' },
-  { cmd: 'PO', status: 'structural', description: 'Print orientation: sets label print orientation on printer' },
-  { cmd: 'PP', status: 'structural', description: 'Programmable pause: pauses after each label (hardware)' },
+  { cmd: 'PF', status: 'supported', description: 'Slew given number of dot rows (0-32000) instead of printing a blank bottom area' },
+  { cmd: 'PH', status: 'supported', description: 'Slew to home: feed one blank label after the format prints (caret form; ~PH is a device action)' },
+  { cmd: 'PM', status: 'supported', description: 'Print mirror image: round-trips as label config' },
+  { cmd: 'PO', status: 'supported', description: 'Print orientation: round-trips as label config' },
+  { cmd: 'PP', status: 'supported', description: 'Programmable pause after the format prints, until PAUSE or ~PS (caret form; ~PP is a device action)' },
   { cmd: 'PR', status: 'structural', description: 'Print rate: sets print speed (hardware)' },
   { cmd: 'PS', status: 'structural', description: 'Print start: resumes printing after a pause (hardware)' },
-  { cmd: 'JS', status: 'partial', description: 'Change backfeed sequence (A/B/N/O)', loss: 'Percent backfeed forms (10-90) are not modeled; A/B/N/O are supported' },
+  { cmd: 'JS', status: 'supported', description: 'Change backfeed sequence (A/B/N/O or percent 10-90, rounded to tens like the printer)' },
 
   // ── Printer storage & resources ───────────────────────────────────────────
   {

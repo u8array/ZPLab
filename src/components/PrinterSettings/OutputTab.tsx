@@ -96,6 +96,12 @@ export function OutputTab() {
           value={label.pauseCount}
           onChange={(pauseCount) => setLabelConfig({ pauseCount })}
         />
+        <ZplCheckbox
+          text={t.label.programmablePause}
+          command="^PP"
+          checked={label.programmablePause === true}
+          onChange={(v) => setLabelConfig({ programmablePause: v || undefined })}
+        />
         <ZplBoundedIntInput
           label={t.label.replicates}
           command="^PQ"

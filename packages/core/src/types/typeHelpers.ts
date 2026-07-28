@@ -11,3 +11,8 @@ export function makeEnumGuard<T extends string>(values: readonly T[]): (v: strin
 export function intInRange(r: { min: number; max: number }) {
   return z.number().int().min(r.min).max(r.max);
 }
+
+/** The recurring Y/N command slot, shared so parser guards cannot drift from
+ *  the z.enum(['Y','N']) schema fields they feed. */
+export const YES_NO_VALUES = ['Y', 'N'] as const;
+export const isYesNo = makeEnumGuard(YES_NO_VALUES);

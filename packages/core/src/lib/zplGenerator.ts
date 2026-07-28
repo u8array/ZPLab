@@ -448,6 +448,14 @@ export function planFieldEmission(
   return { headerLines, bodyLines: shifted.flatMap(emitLeaf) };
 }
 
+/** Positional-command slots with trailing empties dropped, so unset
+ *  params fall back to the printer's own defaults on the wire. */
+export function trimTrailingEmptySlots(slots: readonly string[]): string[] {
+  const trimmed = [...slots];
+  while (trimmed.length > 0 && trimmed[trimmed.length - 1] === "") trimmed.pop();
+  return trimmed;
+}
+
 export function generateZPL(
   label: LabelConfig,
   objects: LabelObject[],
@@ -531,6 +539,11 @@ export function generateZPL(
   if (label.darkness !== undefined) lines.push(`^MD${label.darkness}`);
   if (label.printOrientation) lines.push(`^PO${label.printOrientation}`);
   if (label.mirror) lines.push(`^PM${label.mirror}`);
+  if (label.mapClear) lines.push(`^MC${label.mapClear}`);
+  // slewDotRows=0 is a valid explicit "no slew"; check undefined.
+  if (label.slewDotRows !== undefined) lines.push(`^PF${label.slewDotRows}`);
+  if (label.slewToHome) lines.push('^PH');
+  if (label.programmablePause) lines.push('^PP');
   // ^LH / ^LT subtract below from per-field absolute (x,y) so emit matches editor.
   const homeX = label.labelHomeX ?? 0;
   const homeY = label.labelHomeY ?? 0;
@@ -552,12 +565,11 @@ export function generateZPL(
     label.defaultFontHeight !== undefined ||
     label.defaultFontWidth !== undefined
   ) {
-    const slots = [
+    const slots = trimTrailingEmptySlots([
       label.defaultFontId ?? "",
       label.defaultFontHeight !== undefined ? String(label.defaultFontHeight) : "",
       label.defaultFontWidth !== undefined ? String(label.defaultFontWidth) : "",
-    ];
-    while (slots.length > 1 && slots[slots.length - 1] === "") slots.pop();
+    ]);
     lines.push(`^CF${slots.join(",")}`);
   }
 

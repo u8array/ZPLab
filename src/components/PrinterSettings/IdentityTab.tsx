@@ -5,16 +5,32 @@ import { inputCls, labelCls } from "../ui/formStyles";
 import {
   CONFIG_UPDATE_VALUES,
   type ConfigUpdateAction,
+  MODE_PROTECTION_VALUES,
+  type ModeProtection,
   PRINTER_NAME_MAX_LEN,
   PRINTER_PASSWORD_REGEX,
+  toggleModeProtection,
 } from "@zplab/core/types/PrinterProfile";
 import {
   SafeStringInput,
+  ZplCheckbox,
   ZplCommandLabel,
   ZplEnumCustomSelect,
+  ZplEnumSegmented,
   ZplField,
   ZplSubField,
 } from "./zplFieldPrimitives";
+
+const MODE_PROTECTION_LABEL_KEYS = {
+  D: "modeProtectDarkness",
+  P: "modeProtectPosition",
+  C: "modeProtectCalibration",
+  S: "modeProtectSaves",
+  W: "modeProtectPause",
+  F: "modeProtectFeed",
+  X: "modeProtectCancel",
+  M: "modeProtectMenu",
+} as const satisfies Record<ModeProtection, keyof LocIdentity>;
 
 type LocIdentity = ReturnType<typeof useT>["printerSettings"]["identity"];
 
@@ -115,6 +131,46 @@ export function IdentityTab() {
           {loc.setPasswordHint}
         </span>
       </ZplField>
+
+      {/* Tri-state: unset leaves the printer alone; Custom is the absolute
+          set (empty = visible ^MPE enable-all), avoiding a checkbox group's
+          invisible []-vs-undefined ambiguity. */}
+      <ZplEnumSegmented
+        label={loc.modeProtection}
+        command="^MP"
+        values={['custom'] as const}
+        value={profile.modeProtection !== undefined ? 'custom' : undefined}
+        onChange={(v) =>
+          patchPrinterProfile(
+            v === 'custom'
+              ? { modeProtection: [], modeProtectionExplicit: true }
+              : { modeProtection: undefined, modeProtectionExplicit: undefined },
+          )
+        }
+        defaultLabel={t.printerSettings.defaultOption}
+        optionLabel={() => loc.modeProtectCustom}
+        hint={profile.modeProtection?.length === 0 ? loc.modeProtectCustomHint : undefined}
+      />
+      {profile.modeProtection !== undefined && (
+        <ZplField>
+          <div className="flex flex-col gap-1.5">
+            {MODE_PROTECTION_VALUES.map((m) => (
+              <ZplCheckbox
+                key={m}
+                command={`^MP${m}`}
+                text={loc[MODE_PROTECTION_LABEL_KEYS[m]]}
+                checked={(profile.modeProtection ?? []).includes(m)}
+                onChange={(on) => {
+                  patchPrinterProfile({
+                    modeProtection: toggleModeProtection(profile.modeProtection, m, on),
+                    modeProtectionExplicit: true,
+                  });
+                }}
+              />
+            ))}
+          </div>
+        </ZplField>
+      )}
 
       <ZplEnumCustomSelect
         label={loc.configurationUpdate}

@@ -9,7 +9,7 @@ export const ALL_MODES = [2, 3, 4, 5, 6] as const;
 /** Mode 4 = standard symbol, only mode without UPS-domain SCM requirement. */
 const MAXICODE_DEFAULT_MODE = 4 as const;
 
-// No rotation prop: ^BV orientation slot is a firmware no-op (^BD has none).
+// No rotation prop: ^BD has no orientation slot (spec p106).
 export interface MaxicodeProps {
   content: string;
   mode: 2 | 3 | 4 | 5 | 6;
@@ -18,7 +18,7 @@ export interface MaxicodeProps {
 export const maxicode: ObjectTypeCore<MaxicodeProps> = {
   label: "Maxicode",
   icon: "⬡",
-  zplCmd: "^BV",
+  zplCmd: "^BD",
   group: "code-2d",
   bindable: true,
   defaultProps: {
@@ -32,10 +32,10 @@ export const maxicode: ObjectTypeCore<MaxicodeProps> = {
 
   toZPL: (obj, ctx) => {
     const p = obj.props;
-    // ^BV; structured-append slots fixed at (1,1) since unexposed.
+    // Structured-append slots fixed at (1,1) since unexposed.
     return [
       fieldPosZ(obj),
-      `^BVN,${p.mode},1,1`,
+      `^BD${p.mode},1,1`,
       fdFieldFor(p.content, ctx),
     ].join("");
   },

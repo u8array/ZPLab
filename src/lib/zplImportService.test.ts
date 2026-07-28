@@ -42,6 +42,26 @@ describe('importZplText - cross-block parser state (parser-owned pages)', () => 
     expect(r.labelConfig.printQuantity).toBeUndefined();
   });
 
+  it('keeps block 0 config; a later block ^PF/^PH/^PP does not leak (format-scoped)', () => {
+    const r = importZplText(
+      '^XA^FO10,10^A0N,30,30^FDa^FS^XZ^XA^PF200^PH^PP^FO10,10^A0N,30,30^FDb^FS^XZ',
+      8,
+    );
+    expect(r.labelConfig.slewDotRows).toBeUndefined();
+    expect(r.labelConfig.slewToHome).toBeUndefined();
+    expect(r.labelConfig.programmablePause).toBeUndefined();
+  });
+
+  // A folded-back ^MCN would retain page one's bitmap INTO page two on
+  // re-export, garbage the original stream never printed.
+  it('keeps block 0 config; a later block ^MC does not leak', () => {
+    const r = importZplText(
+      '^XA^FO10,10^A0N,30,30^FDa^FS^XZ^XA^MCN^FO10,10^A0N,30,30^FDb^FS^XZ',
+      8,
+    );
+    expect(r.labelConfig.mapClear).toBeUndefined();
+  });
+
   it('accepts the ZPLLAB sidecar from a later block while no object was seen (settings-block re-export)', () => {
     const sc = '^FXZPLLAB:{"dpmm":12,"wMm":100,"hMm":50}^FS';
     const r = importZplText(`^XA^MMT^XZ^XA${sc}^PW1200^LL600^FO10,10^A0N,30,30^FDx^FS^XZ`, 8);

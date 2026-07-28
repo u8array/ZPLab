@@ -20,13 +20,13 @@ function makeObj(props: MaxicodeProps, overrides?: Partial<LabelObjectBase>): La
 describe("maxicode.toZPL", () => {
   const def = defined(ObjectRegistry["maxicode"]);
 
-  it("emits ^BV with mode and pinned (1,1) structured-append fields", () => {
+  it("emits ^BD with mode and pinned (1,1) structured-append fields", () => {
     const zpl = def.toZPL(makeObj({
       content: "abc",
       mode: 4,
     }));
     expect(zpl).toContain("^FO100,200");
-    expect(zpl).toContain("^BVN,4,1,1");
+    expect(zpl).toContain("^BD4,1,1");
     expect(zpl).toContain("^FDabc^FS");
   });
 });
@@ -56,21 +56,20 @@ describe("validateMaxicodeBwip", () => {
 });
 
 describe("maxicode parser roundtrip", () => {
-  it("parses ^BV back to a maxicode object; the no-op orientation slot is canonicalized away", () => {
-    const src = "^XA^PW400^LL400^FO50,50^BVR,3,1,1^FDPAYLOAD^FS^XZ";
+  it("parses ^BD back to a maxicode object", () => {
+    const src = "^XA^PW400^LL400^FO50,50^BD3,1,1^FDPAYLOAD^FS^XZ";
     const { objects } = parseSingle(src);
     const obj = objects[0];
     expect(obj?.type).toBe("maxicode");
     if (obj?.type !== "maxicode") return;
     expect(obj.props.content).toBe("PAYLOAD");
     expect(obj.props.mode).toBe(3);
-    // Firmware ignores the slot; re-emit pins it to N.
-    expect(defined(ObjectRegistry["maxicode"]).toZPL(obj)).toContain("^BVN,3,1,1");
+    expect(defined(ObjectRegistry["maxicode"]).toZPL(obj)).toContain("^BD3,1,1");
   });
 
   it("defaults mode to 4 when an out-of-range value is given", () => {
     // mode 9 doesn't exist; parser clamps to the safe standalone default.
-    const src = "^XA^FO0,0^BVN,9,1,1^FDX^FS^XZ";
+    const src = "^XA^FO0,0^BD9,1,1^FDX^FS^XZ";
     const { objects } = parseSingle(src);
     const obj = objects[0];
     if (obj?.type !== "maxicode") throw new Error("expected maxicode");

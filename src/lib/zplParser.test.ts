@@ -1369,9 +1369,57 @@ describe('parseZPL — printer params', () => {
     expect(labelConfig.overridePauseCount).toBe('Y');
   });
 
+  it('parses ^BD maxicode; nonexistent ^BV stays an unknown token', () => {
+    // ^BDm,n,t (spec p106): mode is the FIRST param.
+    const bd = parseSingle('^XA^FO10,10^BD5,1,1^FDx^FS^XZ', 8);
+    expect(props(bd.objects[0]).mode).toBe(5);
+    // ^BV is not a ZPL command; it must not fabricate a maxicode object.
+    const bv = parseSingle('^XA^FO10,10^BVN,3,1,1^FDx^FS^XZ', 8);
+    expect(bv.objects.some((o) => 'props' in o && (o.props as { mode?: number }).mode === 3)).toBe(false);
+    expect(commandsOf(bv, 'unknown').some((c) => c.startsWith('^BV'))).toBe(true);
+  });
+
   it('parses ^PM mirror', () => {
     expect(parseZPL('^XA^PMY^XZ', 8).labelConfig.mirror).toBe('Y');
     expect(parseZPL('^XA^PMN^XZ', 8).labelConfig.mirror).toBe('N');
+  });
+
+  it('parses ^MC, ^PF, ^PH and ^PP into the label config', () => {
+    const { labelConfig } = parseZPL('^XA^MCN^PF120^PH^PP^XZ', 8);
+    expect(labelConfig.mapClear).toBe('N');
+    expect(labelConfig.slewDotRows).toBe(120);
+    expect(labelConfig.slewToHome).toBe(true);
+    expect(labelConfig.programmablePause).toBe(true);
+  });
+
+  it('drops an out-of-range ^PF instead of clamping into the model', () => {
+    expect(parseZPL('^XA^PF33000^XZ', 8).labelConfig.slewDotRows).toBeUndefined();
+  });
+
+  it('routes ~PH/~PP as device actions without touching the model', () => {
+    const r = parseSingle('~PH~PP^XA^XZ', 8);
+    expect(r.labelConfig.slewToHome).toBeUndefined();
+    expect(r.labelConfig.programmablePause).toBeUndefined();
+    expect(commandsOf(r, 'deviceAction')).toContain('~PH');
+    expect(commandsOf(r, 'deviceAction')).toContain('~PP');
+    // Flagged once, not additionally surfaced as unrecognised.
+    expect(commandsOf(r, 'unknown')).toEqual([]);
+  });
+
+  it('parses ^CO into the printer profile with per-slot validation', () => {
+    const { printerProfile } = parseZPL('^XA^COY,78,1^XZ', 8);
+    expect(printerProfile.fontCacheOn).toBe('Y');
+    expect(printerProfile.fontCacheAddKb).toBe(78);
+    expect(printerProfile.fontCacheType).toBe('1');
+    // Out-of-range KB slot is dropped, valid slots still land.
+    const partial = parseZPL('^XA^CON,0,0^XZ', 8).printerProfile;
+    expect(partial.fontCacheOn).toBe('N');
+    expect(partial.fontCacheAddKb).toBeUndefined();
+  });
+
+  it('accumulates ^MP modes and lets ^MPE reset the set', () => {
+    expect(parseZPL('^XA^MPD^MPC^MPD^XZ', 8).printerProfile.modeProtection).toEqual(['D', 'C']);
+    expect(parseZPL('^XA^MPD^MPE^XZ', 8).printerProfile.modeProtection).toEqual([]);
   });
 
   it('parses ^CF width into defaultFontWidth', () => {
@@ -1444,12 +1492,15 @@ describe('parseZPL — printer params', () => {
     expect(parseZPL('~SD30^XA^XZ', 8).labelConfig.instantDarkness).toBe(30);
   });
 
-  it('parses ~JS backfeed sequence; percent forms surface as partial', () => {
+  it('parses ~JS backfeed sequence including percent forms', () => {
     expect(parseZPL('~JSA^XA^XZ', 8).labelConfig.backfeedSequence).toBe('A');
     expect(parseZPL('~JSO^XA^XZ', 8).labelConfig.backfeedSequence).toBe('O');
-    const { labelConfig, findings } = parseSingle('~JS40^XA^XZ', 8);
-    expect(labelConfig.backfeedSequence).toBeUndefined();
-    expect(commandsOf({ findings }, 'partial')).toContain('~JS');
+    expect(parseZPL('~JS40^XA^XZ', 8).labelConfig.backfeedSequence).toBe(40);
+    // Printer rounds to the nearest ten (~JS55 -> 60, p276); mirror that.
+    expect(parseZPL('~JS55^XA^XZ', 8).labelConfig.backfeedSequence).toBe(60);
+    // Out of range or garbage: dropped, never clamped in.
+    expect(parseZPL('~JS95^XA^XZ', 8).labelConfig.backfeedSequence).toBeUndefined();
+    expect(parseZPL('~JSX^XA^XZ', 8).labelConfig.backfeedSequence).toBeUndefined();
   });
 
   it('parses ^MD darkness including 0', () => {

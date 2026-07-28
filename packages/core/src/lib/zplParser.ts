@@ -152,8 +152,12 @@ export function parseZPL(
   // ^DY font uploads are intentionally not flagged.
   const replayRiskCodes = new Set(Object.keys(setupScriptHandlers));
   const deviceActionCodes = new Set([
-    "JA", "JM", "JC", "JD", "JE", "JI", "JR", "PP",
+    "JA", "JM", "JC", "JD", "JE", "JI", "JR",
   ]);
+  // ^PH/^PP are modelled per-format settings, but their tilde twins are
+  // immediate device controls; the handler map keys have no prefix, so the
+  // split happens at dispatch via the token's source char.
+  const tildeDeviceCodes = new Set(["PH", "PP"]);
   Object.assign(handlers, setupScriptHandlers);
   Object.assign(handlers, createLabelConfigHandlers(s, dpmm));
   Object.assign(handlers, createUnitsHandler(s, dpmm));
@@ -323,6 +327,12 @@ export function parseZPL(
     const p = rest.split(s.format.delimiterChar);
     // Flag printer-config commands: lossless replay re-emits them, so they run
     // on the user's printer at print/export. Recorded by code (deduped later).
+    // ~PH/~PP: flagged as device actions AND skipped entirely, or they would
+    // fall through to the unknown bucket and surface twice in the summary.
+    if (tildeDeviceCodes.has(cmd) && zpl[start] === s.format.tildeChar) {
+      deviceAction.push(`~${cmd}`);
+      continue;
+    }
     if (replayRiskCodes.has(cmd)) replayRisk.push(`^${cmd}`);
     else if (deviceActionCodes.has(cmd)) deviceAction.push(`^${cmd}`);
     const handler = handlers[cmd] ?? wildcards.find((w) => w.matches(cmd))?.handle;

@@ -1,6 +1,6 @@
 import { useT } from "../../hooks/useT";
 import { useLabelStore } from "../../store/labelStore";
-import { BACKFEED_SEQUENCE_VALUES, MAX_LABEL_LENGTH_RANGE, MEDIA_FEED_VALUES, MEDIA_MODE_VALUES, MEDIA_TRACKING_VALUES, MEDIA_TYPE_VALUES, type BackfeedSequence, type MediaFeedMode, type MediaMode, type MediaTracking, type MediaType } from "@zplab/core/types/LabelConfig";
+import { BACKFEED_PERCENT_VALUES, BACKFEED_SEQUENCE_VALUES, MAX_LABEL_LENGTH_RANGE, SLEW_DOT_ROWS_RANGE, MEDIA_FEED_VALUES, MEDIA_MODE_VALUES, MEDIA_TRACKING_VALUES, MEDIA_TYPE_VALUES, isBackfeedSequence, type BackfeedPercent, type BackfeedSequence, type MediaFeedMode, type MediaMode, type MediaTracking, type MediaType } from "@zplab/core/types/LabelConfig";
 import { RegionFocus } from "./printerIllustration";
 import {
   ZplBoundedIntInput,
@@ -11,6 +11,8 @@ import {
   ZplField,
 } from "./zplFieldPrimitives";
 import { fieldGridCols, fieldGridCell } from "../ui/formStyles";
+
+const BACKFEED_VALUE_STRINGS = [...BACKFEED_SEQUENCE_VALUES, ...BACKFEED_PERCENT_VALUES.map(String)];
 
 type LocMediaFeed = ReturnType<typeof useT>["printerSettings"]["mediaFeed"];
 
@@ -102,6 +104,27 @@ export function MediaFeedTab() {
         />
       </RegionFocus>
 
+      <RegionFocus region="exit">
+        <ZplBoundedIntInput
+          label={loc.slewDotRows}
+          command="^PF"
+          min={SLEW_DOT_ROWS_RANGE.min}
+          max={SLEW_DOT_ROWS_RANGE.max}
+          value={label.slewDotRows}
+          onChange={(v) => setLabelConfig({ slewDotRows: v })}
+          hint={loc.slewDotRowsHint}
+        />
+      </RegionFocus>
+
+      <RegionFocus region="exit">
+        <ZplCheckbox
+          text={loc.slewToHome}
+          command="^PH"
+          checked={label.slewToHome === true}
+          onChange={(v) => setLabelConfig({ slewToHome: v || undefined })}
+        />
+      </RegionFocus>
+
       <RegionFocus region="label">
         <ZplBoundedIntInput
           label={loc.maxLabelLength}
@@ -158,11 +181,18 @@ export function MediaFeedTab() {
         <ZplEnumCustomSelect
           label={loc.backfeedSequence}
           command="~JS"
-          values={BACKFEED_SEQUENCE_VALUES}
-          value={label.backfeedSequence}
-          onChange={(v) => setLabelConfig({ backfeedSequence: v })}
+          values={BACKFEED_VALUE_STRINGS}
+          value={label.backfeedSequence === undefined ? undefined : String(label.backfeedSequence)}
+          onChange={(v) =>
+            setLabelConfig({
+              backfeedSequence:
+                v === undefined ? undefined : isBackfeedSequence(v) ? v : (Number(v) as BackfeedPercent),
+            })
+          }
           defaultLabel={t.printerSettings.defaultOption}
-          optionLabel={(m) => loc[BACKFEED_LABEL_KEYS[m]]}
+          optionLabel={(m) =>
+            isBackfeedSequence(m) ? loc[BACKFEED_LABEL_KEYS[m]] : loc.backfeedSeqPctFmt.replace("{pct}", m)
+          }
         />
       </RegionFocus>
     </div>

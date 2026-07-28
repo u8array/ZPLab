@@ -1,5 +1,6 @@
-import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, MAX_LABEL_LENGTH_RANGE, SPEED_RANGE, isBackfeedSequence, isMediaFeedMode, isMediaMode, isMediaTracking, isMediaType, isPrintOrientation } from "../../../types/LabelConfig";
+import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, MAX_LABEL_LENGTH_RANGE, SLEW_DOT_ROWS_RANGE, SPEED_RANGE, isBackfeedPercent, isBackfeedSequence, isMediaFeedMode, isMediaMode, isMediaTracking, isMediaType, isPrintOrientation } from "../../../types/LabelConfig";
 import { parseIntOrUndef } from "../../inputParse";
+import { isYesNo } from "../../../types/typeHelpers";
 import type { ParserState } from "../context";
 import { dotsFor, firstChar, inRange, int, strParam } from "../helpers";
 import type { Handler } from "../types";
@@ -38,7 +39,7 @@ export function createLabelConfigHandlers(
       }
       if (p.length > 3) {
         const o = (p[3] ?? "").toUpperCase();
-        if (o === "Y" || o === "N") labelConfig.overridePauseCount = o;
+        if (isYesNo(o)) labelConfig.overridePauseCount = o;
       }
     },
     MM(_, rest) {
@@ -64,6 +65,22 @@ export function createLabelConfigHandlers(
     MT(_, rest) {
       const mt = firstChar(rest);
       if (isMediaType(mt)) labelConfig.mediaType = mt;
+    },
+    MC(p) {
+      const v = strParam(p[0]);
+      if (isYesNo(v)) labelConfig.mapClear = v;
+    },
+    PF(p) {
+      const v = inRange(parseIntOrUndef(p[0]), SLEW_DOT_ROWS_RANGE);
+      if (v !== undefined) labelConfig.slewDotRows = v;
+    },
+    // ^PH/^PP take no parameters; the tilde forms never reach these handlers
+    // (dispatch routes them as device actions).
+    PH() {
+      labelConfig.slewToHome = true;
+    },
+    PP() {
+      labelConfig.programmablePause = true;
     },
     MN(p) {
       // ^MNa,b: b is an optional black-mark offset for W/M modes,
@@ -92,7 +109,7 @@ export function createLabelConfigHandlers(
     },
     PM(_, rest) {
       const m = firstChar(rest);
-      if (m === "Y" || m === "N") labelConfig.mirror = m;
+      if (isYesNo(m)) labelConfig.mirror = m;
     },
     // ~SD: instant darkness set (00..30). Tilde-prefix, so the tokenizer
     // drops the delimiter and this is the canonical SD handler.
@@ -100,12 +117,18 @@ export function createLabelConfigHandlers(
       const v = inRange(parseIntOrUndef(rest), DARKNESS_INSTANT_RANGE);
       if (v !== undefined) labelConfig.instantDarkness = v;
     },
-    // ~JS: change backfeed sequence. A/B/N/O modeled; percent forms
-    // (10-90) aren't, so track them as a partial-import loss.
+    // ~JS: change backfeed sequence. Percent forms round to the nearest
+    // ten like the printer does (~JS55 -> 60, p276).
     JS(_, rest) {
       const v = firstChar(rest);
-      if (isBackfeedSequence(v)) labelConfig.backfeedSequence = v;
-      else if (rest) s.result.partialCmds.add("~JS");
+      if (isBackfeedSequence(v)) {
+        labelConfig.backfeedSequence = v;
+        return;
+      }
+      const pct = inRange(parseIntOrUndef(rest), { min: 10, max: 90 });
+      if (pct === undefined) return;
+      const rounded = Math.round(pct / 10) * 10;
+      if (isBackfeedPercent(rounded)) labelConfig.backfeedSequence = rounded;
     },
   };
 }

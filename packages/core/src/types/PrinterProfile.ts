@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { intInRange, makeEnumGuard } from './typeHelpers';
+import { YES_NO_VALUES, intInRange, makeEnumGuard } from './typeHelpers';
 
 /** ^ST real-time clock value (HTML5 datetime-local shape). */
 export const realtimeClockIsoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/;
@@ -56,6 +56,29 @@ export type ClockFormat = (typeof CLOCK_FORMAT_VALUES)[number];
 export const isClockFormat = makeEnumGuard(CLOCK_FORMAT_VALUES);
 
 export const HEAD_TEST_INTERVAL_RANGE = { min: 0, max: 10000 } as const;
+
+/** ^CO b: additional cache memory in KB. */
+export const FONT_CACHE_KB_RANGE = { min: 1, max: 9999 } as const;
+/** ^CO c: 0 = normal cache buffer, 1 = internal (Asian fonts). */
+export const FONT_CACHE_TYPE_VALUES = ['0', '1'] as const;
+export const isFontCacheType = makeEnumGuard(FONT_CACHE_TYPE_VALUES);
+/** ^MP one-letter modes; E (enable all) clears the protection set. */
+export const MODE_PROTECTION_VALUES = ['D', 'P', 'C', 'S', 'W', 'F', 'X', 'M'] as const;
+export type ModeProtection = (typeof MODE_PROTECTION_VALUES)[number];
+export const isModeProtection = makeEnumGuard(MODE_PROTECTION_VALUES);
+
+/** Only reachable in the UI's Custom mode, where the set is always defined:
+ *  [] is the visible "protect nothing" state that emits the explicit ^MPE. */
+export function toggleModeProtection(
+  current: readonly ModeProtection[] | undefined,
+  mode: ModeProtection,
+  on: boolean,
+): ModeProtection[] {
+  const set = new Set(current ?? []);
+  if (on) set.add(mode);
+  else set.delete(mode);
+  return MODE_PROTECTION_VALUES.filter((v) => set.has(v));
+}
 export const TEAR_OFF_ADJUST_RANGE = { min: -120, max: 120 } as const;
 
 /** ^KP 4-digit; '0000' disables LCD-setup protection. */
@@ -116,7 +139,7 @@ export const MAINTENANCE_ALERT_DEFAULTS = {
 /** EEPROM-persistent fields; separated from labelConfig so design files
  *  don't leak per-install values. */
 export const printerProfileSchema = z.object({
-  reprintAfterError: z.enum(['Y', 'N']).optional(),
+  reprintAfterError: z.enum(YES_NO_VALUES).optional(),
   headTestInterval: intInRange(HEAD_TEST_INTERVAL_RANGE).optional(),
   tearOffAdjust: intInRange(TEAR_OFF_ADJUST_RANGE).optional(),
   setRealtimeClock: z.string().regex(realtimeClockIsoRegex).optional(),
@@ -136,7 +159,7 @@ export const printerProfileSchema = z.object({
   /** Requires earlyWarningMaintenance==='E' to fire; per-type caps in superRefine. */
   maintenanceAlert: z.object({
     type: z.enum(MAINTENANCE_ALERT_TYPES),
-    print: z.enum(['Y', 'N']),
+    print: z.enum(YES_NO_VALUES),
     threshold: z.number().int().min(0).max(MAINTENANCE_DISTANCE_MAX_BY_TYPE.R),
     frequency: z.number().int().min(0).max(MAINTENANCE_DISTANCE_MAX_BY_TYPE.R),
     units: z.enum(MAINTENANCE_ALERT_UNITS),
@@ -147,9 +170,20 @@ export const printerProfileSchema = z.object({
     text: z.string().min(1).max(MAINTENANCE_MESSAGE_MAX_LEN).regex(setupScriptSafeStringRegex),
   }).optional(),
   /** ^MW head-cold warning LCD/alert toggle. */
-  headColdWarning: z.enum(['Y', 'N']).optional(),
+  headColdWarning: z.enum(YES_NO_VALUES).optional(),
+  /** ^CO a: character cache on/off (session-scoped DRAM sizing). */
+  fontCacheOn: z.enum(YES_NO_VALUES).optional(),
+  /** ^CO b: additional cache KB; resizing discards cached characters. */
+  fontCacheAddKb: intInRange(FONT_CACHE_KB_RANGE).optional(),
+  /** ^CO c: cache type. */
+  fontCacheType: z.enum(FONT_CACHE_TYPE_VALUES).optional(),
+  /** ^MP: control-panel modes to protect; one command per letter on emit. */
+  modeProtection: z.array(z.enum(MODE_PROTECTION_VALUES)).optional(),
+  /** True when the set is absolute (stream carried ^MPE, or UI-authored):
+   *  emit resets with ^MPE first. Absent = relative additions only. */
+  modeProtectionExplicit: z.boolean().optional(),
   /** ^CV barcode validation (session-scoped per spec, not persisted by ^JUS). */
-  codeValidation: z.enum(['Y', 'N']).optional(),
+  codeValidation: z.enum(YES_NO_VALUES).optional(),
   /** ^PA advanced text properties (ZPL II PG P1012728 p.299, firmware
    *  V60.14.x+). Four session-scoped 0/1 slots. 0=printer default,
    *  1=feature on. a: show font's missing-glyph box (instead of space).
