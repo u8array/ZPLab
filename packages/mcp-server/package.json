@@ -9,7 +9,7 @@
     "smoke:sea": "node scripts/smoke-sea.mjs"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@zplab/core": "workspace:*",
     "bwip-js": "^4.11.2",
     "zod": "catalog:"
