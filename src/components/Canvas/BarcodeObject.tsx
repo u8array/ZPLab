@@ -42,6 +42,13 @@ import {
   QR_FT_MODULE_OFFSET,
 } from "@zplab/core/lib/bwipConstants";
 
+/** Drops the EAN/UPC getSelfRect patch so the prototype method resurfaces.
+ *  Konva reuses the Image instance across symbology switches; without this
+ *  every type after an EAN/UPC visit keeps measuring the stale bar rect. */
+function restoreSelfRect(node: Konva.Image | null): void {
+  if (node) delete (node as Partial<Konva.Image>).getSelfRect;
+}
+
 /** Resolve a registry value that may be a constant or a function of
  *  moduleWidth. Mirrors the pattern formatHri uses for content. */
 function resolveMwValue<T>(
@@ -425,15 +432,19 @@ export function BarcodeObject({
               height={isEanUpc
                 ? ub.barH + dotsToPx(EAN_TEXT_ZONE_DOTS, scale, dpmm)
                 : ub.barH}
-              // Clip Transformer bbox to the bar area so resize handles
-              // ignore the guard tails.
-              ref={isEanUpc ? (node) => {
-                if (node) {
+              // Clip Transformer bbox to the bar area so resize handles ignore
+              // the guard tails; the non-EAN case must undo the patch on the
+              // reused instance (see restoreSelfRect).
+              ref={(node) => {
+                if (!node) return;
+                if (isEanUpc) {
                   const w = ub.barW;
                   const h = ub.barH;
                   node.getSelfRect = () => ({ x: 0, y: 0, width: w, height: h });
+                } else {
+                  restoreSelfRect(node);
                 }
-              } : undefined}
+              }}
               imageSmoothingEnabled={false}
               // EAN/UPC draws its selection stroke as the Rect below so
               // the highlight skips the guard tails.
@@ -484,6 +495,7 @@ export function BarcodeObject({
             crop={bitmapCrop}
             width={ub.barW}
             height={ub.barH}
+            ref={restoreSelfRect}
             imageSmoothingEnabled={false}
             stroke={isSelected ? colors.selection : undefined}
             strokeWidth={isSelected ? 2 : 0}
