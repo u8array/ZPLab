@@ -403,6 +403,18 @@ describe('parseZPL — ^BC Code 128', () => {
     expect(props(objects[0]).height).toBe(270);
     expect(props(objects[0]).moduleWidth).toBe(5);
   });
+
+  it('keeps barcodes on later blocks after a page reset (live field state)', () => {
+    // resetFormatScopedState reassigns s.field at each page close; a stale
+    // destructured alias made every ^B* handler from block 2 on write a dead
+    // object, degrading the barcode to text.
+    const r = parseZPL(
+      '^XA^FO10,10^BY2^BCN,100,N,N,N^FD123^FS^XZ^XA^FO20,20^BY2^BCN,80,N,N,N^FD456^FS^XZ',
+      8,
+    );
+    expect(r.pages[0]?.objects[0]?.type).toBe('code128');
+    expect(r.pages[1]?.objects[0]?.type).toBe('code128');
+  });
 });
 
 describe('parseZPL — ^BR GS1 Databar', () => {
