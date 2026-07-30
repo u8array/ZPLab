@@ -86,7 +86,7 @@ Edit an imported label and export it again:
 
 - **Preserved:** everything you didn't touch comes back byte-for-byte, including fields, label settings, comments, whitespace, and commands the editor doesn't model. A zero-edit import/export cycle reproduces the file exactly.
 - **Regenerated:** only the objects you edit, add, or delete are re-emitted from the model. The rest of the file is spliced back unchanged.
-- **Full-regeneration fallback:** a few constructs make per-object patching unsafe: `^MU` unit scaling, non-default `^CC`/`^CT`/`^CD` command prefixes, non-UTF-8 `^CI` encoding, non-default `^FE` embed delimiters, a bare `^FN` declared outside a field, and a barcode relying on a `^BY` from an earlier field. On such labels the first edit regenerates the whole label; with no edits the export stays byte-for-byte.
+- **Full-regeneration fallback:** a few constructs make per-object patching unsafe: `^MU` unit scaling, non-default `^CC`/`^CT`/`^CD` command prefixes, non-UTF-8 `^CI` encoding, non-default `^FE` embed delimiters, a bare `^FN` declared outside a field, an in-span `^JM` density switch, and a barcode relying on a `^BY` from an earlier field. On such labels the first edit regenerates the whole label; with no edits the export stays byte-for-byte.
 
 Byte capture at import is deliberately conservative: when a field can't be mapped cleanly to a single object, the whole label falls back to model regeneration, which keeps the content but not the exact bytes. The captured bytes are stored in saved `.json` designs; a design from an older app version with an outdated capture format is detected and rebuilt.
 
@@ -152,7 +152,7 @@ Both `.zpl` and `.json` round-trip cleanly. `.zpl` preserves all printable conte
 ## Coverage
 
 <!-- coverage:start (generated from docs/zpl-roadmap.md by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-113 of the 225 ZPL II commands tracked in the [roadmap](docs/zpl-roadmap.md) are supported today. Categorical breakdown:
+114 of the 225 ZPL II commands tracked in the [roadmap](docs/zpl-roadmap.md) are supported today. Categorical breakdown:
 
 | Area | Supported |
 |---|---|
@@ -169,7 +169,7 @@ Both `.zpl` and `.json` round-trip cleanly. `.zpl` preserves all printable conte
 | Text & fonts | 7 / 14 |
 | Print quality | 10 / 18 |
 | Configuration & persistence | 3 / 5 |
-| Hardware / Host comm / RFID / Network | 0 / 87 |
+| Hardware / Host comm / RFID / Network | 1 / 87 |
 <!-- coverage:end -->
 
 ---
