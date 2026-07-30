@@ -249,7 +249,7 @@ These need printer-side feedback or are intrinsically connection bound.
 | `[ ]` | `^JJ` | set auxiliary port | `Native build` |
 | `[ ]` | `^JS` | sensor select (reflective / transmissive) | `Native build` |
 | `[ ]` | `~JL` | set label length | `Native build` |
-| `[ ]` | `^JM` | set dots per millimeter (B halves density and doubles format scale; A = normal, default) | `Coming soon` |
+| `[x]` | `^JM` | set dots per millimeter (B halves density and doubles format scale; A = normal, default) | |
 | `[ ]` | `~JN` | head test fatal | `Native build` |
 | `[ ]` | `~JO` | head test non-fatal | `Native build` |
 | `[ ]` | `~JP` | pause and cancel format | `Native build` |
