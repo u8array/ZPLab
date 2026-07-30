@@ -27,7 +27,8 @@ function withBlankSamples(objects: LabelObject[]): LabelObject[] {
  *  loaded). Shared by `printLabel` (new window with image) and
  *  `enterPreviewMode` (canvas overlay) so the two stay in lockstep;
  *  only the overlay opts into blank-field samples, printing must
- *  never put sample data on paper. */
+ *  never put sample data on paper. `label` is the page's label (its ^JM
+ *  override included), since the emitted dots live in that density. */
 export function buildPreviewZpl(
   label: LabelConfig,
   objects: LabelObject[],

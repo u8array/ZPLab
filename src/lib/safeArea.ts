@@ -1,6 +1,7 @@
 // Pure geometry for the configurable safe-area (margin) inset. A uniform
 // margin in mm, converted to dots, that align/pin and the canvas guide use
 // so elements keep a consistent distance to the label edge.
+import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 
 import { printableRectDots, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
 import type { LabelConfig } from "@zplab/core/types/LabelConfig";
@@ -12,7 +13,7 @@ import { mmToDots } from "@zplab/core/lib/coordinates";
 export function safeAreaRectDots(label: LabelConfig): BoundingBoxDots | null {
   const mm = label.safeAreaMm ?? 0;
   if (mm <= 0) return null;
-  const inset = mmToDots(mm, label.dpmm);
+  const inset = mmToDots(mm, effectiveDpmm(label));
   if (inset <= 0) return null;
   const r = printableRectDots(label);
   const width = r.width - 2 * inset;

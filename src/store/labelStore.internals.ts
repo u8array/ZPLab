@@ -1,5 +1,6 @@
 import { isGroup, type LabelObject, type Page } from '@zplab/core/types/Group';
 import type { ObjectChanges } from '@zplab/core/types/LabelObject';
+import { NON_EMITTING_CONFIG_FIELDS } from '@zplab/core/types/LabelConfig';
 import { isLocaleCode, type LocaleCode } from '../locales';
 import { renameTemplateMarkers, substituteTemplateMarker } from '@zplab/core/lib/fnTemplate';
 import { getObjectStringContent } from '@zplab/core/lib/variableBinding';
@@ -26,9 +27,11 @@ export const EMIT_AFFECTING_KEYS = new Set(['x', 'y', 'rotation', 'positionType'
 
 /** Label-config keys that never reach emitted ZPL (design-time editor aids
  *  only). Everything else maps to a config command, so changing it would make
- *  a page overlay's raw config bytes stale. Exported for a tripwire test: a key
- *  wrongly added here would silently skip the overlay drop and emit stale config. */
-export const NON_EMITTING_CONFIG_KEYS = new Set(['safeAreaMm']);
+ *  a page overlay's raw config bytes stale. Derived from the `emits` axis of
+ *  LABEL_CONFIG_FIELDS; a tripwire test pins the membership. */
+export const NON_EMITTING_CONFIG_KEYS: ReadonlySet<string> = new Set<string>(
+  NON_EMITTING_CONFIG_FIELDS,
+);
 
 /** Prop keys that never reach emitted ZPL: a props diff touching only these
  *  must not stamp dirty and drop the verbatim overlay. Classifies globally by

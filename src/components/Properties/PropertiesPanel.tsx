@@ -1,6 +1,6 @@
 import { useId, useState, type RefObject } from "react";
 import { Cog6ToothIcon, InformationCircleIcon, FolderPlusIcon } from "@heroicons/react/16/solid";
-import { useLabelStore, useCurrentObjects, selectPreviewLocksEditor } from "../../store/labelStore";
+import { useLabelStore, useCurrentObjects, currentPageLabel, selectPreviewLocksEditor } from "../../store/labelStore";
 import type { LabelCanvasHandle } from "../Canvas/LabelCanvas";
 import type { AlignOp, DistributeAxis, AlignRef } from "../../lib/align";
 import type { AlignSelectionRef } from "../../store/slices/uiSlice";
@@ -29,12 +29,14 @@ import { Tooltip } from "../ui/Tooltip";
 import { SegmentedControl } from "../ui/SegmentedControl";
 import { Select } from "../ui/Select";
 import { positionTypeOf, supportsPositionToggle } from "../../lib/positionConvert";
+import { rescaleWouldChange } from "../../lib/densityRescale";
 import { fontSelectGroups } from "./fontSelectGroups";
 import { AlignToolbar } from "./AlignToolbar";
 import { DensityRescaleModal } from "./DensityRescaleModal";
 import { inputCls, labelCls } from "./styles";
 import { fieldGridCols, fieldGridCell } from "../ui/formStyles";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { JmDensity, LabelConfig } from "@zplab/core/types/LabelConfig";
+import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 import type { LabelObjectBase } from "@zplab/core/types/LabelObject";
 
 /** Tooltip-icon flagging that the canvas render is approximate for
@@ -116,7 +118,6 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
     selectedIds,
     updateObject,
     groupSelection,
-    label,
     setLabelConfig,
     canvasSettings,
     setCanvasSettings,
@@ -124,6 +125,9 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
     setAlignRef,
     showZplCommands,
   } = useLabelStore();
+  // X/Y are this page's dots; the config panel below edits the design instead.
+  const label = useLabelStore(currentPageLabel);
+  const designLabel = useLabelStore((s) => s.label);
   const objects = useCurrentObjects();
   const unit = canvasSettings.unit;
   // Walk the tree: when the layers panel drills into a nested child, the
@@ -180,7 +184,7 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
   if (!obj) {
     return (
       <LabelConfigPanel
-        label={label}
+        label={designLabel}
         onUpdate={setLabelConfig}
         unit={unit}
         onUnitChange={(u) =>
@@ -280,13 +284,13 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
                 <input
                   type="number"
                   className={inputCls}
-                  value={mmToUnit(dotsToMm(obj.x, label.dpmm), unit)}
+                  value={mmToUnit(dotsToMm(obj.x, effectiveDpmm(label)), unit)}
                   step={unitStep(unit)}
                   onChange={(e) =>
                     updateObject(obj.id, {
                       x: mmToDots(
                         unitToMm(Number(e.target.value), unit),
-                        label.dpmm,
+                        effectiveDpmm(label),
                       ),
                     })
                   }
@@ -299,13 +303,13 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
                 <input
                   type="number"
                   className={inputCls}
-                  value={mmToUnit(dotsToMm(obj.y, label.dpmm), unit)}
+                  value={mmToUnit(dotsToMm(obj.y, effectiveDpmm(label)), unit)}
                   step={unitStep(unit)}
                   onChange={(e) =>
                     updateObject(obj.id, {
                       y: mmToDots(
                         unitToMm(Number(e.target.value), unit),
-                        label.dpmm,
+                        effectiveDpmm(label),
                       ),
                     })
                   }
@@ -480,13 +484,20 @@ function LabelConfigPanel({
   onUnitChange,
 }: LabelConfigPanelProps) {
   const t = useT();
-  const [pendingDpmm, setPendingDpmm] = useState<number | null>(null);
-  // Rescale is only meaningful when there is geometry to scale; an empty design
-  // just adopts the new density. Under the preview lock every label edit no-ops,
-  // so skip the prompt rather than open a modal that would do nothing.
-  const hasObjects = useLabelStore((s) => s.pages.some((p) => p.objects.length > 0));
+  const [pendingDpmm, setPendingDpmm] = useState<{ toDpmm: number; configPatch?: Partial<LabelConfig> } | null>(null);
+  const [pendingJm, setPendingJm] = useState<{ to: JmDensity | undefined } | null>(null);
+  // Skip a dead rescale prompt: open only when rescaleDesign would actually
+  // change a field for the pending target. Read on demand rather than
+  // subscribed, so an unrelated pages-identity change can't re-render the panel.
+  const wouldRescale = (patch: Partial<LabelConfig>, includeCalibrationFields: boolean) => {
+    const s = useLabelStore.getState();
+    return rescaleWouldChange(s.pages, s.label, includeCalibrationFields, patch);
+  };
   const locked = useLabelStore(selectPreviewLocksEditor);
   const setPrinterSettingsTab = useLabelStore((s) => s.setPrinterSettingsTab);
+  // The select edits the design-wide mode; surface a page's persisted ^JM
+  // override so a diverging page is not an invisible no-op target.
+  const pageJm = useLabelStore((s) => currentPageLabel(s).jmDensity);
   const matchedPreset = PRESETS.find(
     (p) =>
       p.widthMm === label.widthMm &&
@@ -501,7 +512,15 @@ function LabelConfigPanel({
     if (value === "custom") return;
     const p = PRESETS[Number(value)];
     if (!p) return;
-    onUpdate({ widthMm: p.widthMm, heightMm: p.heightMm, dpmm: p.dpmm });
+    // A preset that changes dpmm reinterprets stored dots, same as the dpmm
+    // selector, so route it through the rescale prompt; the new size rides along
+    // as a configPatch (cancel then reverts size too, keep/scale stamp it).
+    const configPatch = { widthMm: p.widthMm, heightMm: p.heightMm };
+    if (p.dpmm !== label.dpmm && wouldRescale({ dpmm: p.dpmm }, false)) {
+      setPendingDpmm({ toDpmm: p.dpmm, configPatch });
+    } else {
+      onUpdate({ ...configPatch, dpmm: p.dpmm });
+    }
   };
 
   // ^CF / ^A suggestions: the shared resolver returns the same union
@@ -538,6 +557,7 @@ function LabelConfigPanel({
           <label className={labelCls}>{t.label.preset}</label>
           <Select<string>
             value={presetValue}
+            disabled={locked}
             onChange={handlePreset}
             groups={[
               {
@@ -600,8 +620,11 @@ function LabelConfigPanel({
           <label className={labelCls}>{t.label.dpmm}</label>
           <Select<number>
             value={label.dpmm}
+            // Every commit path is a no-op under the preview lock, so the
+            // control has to read as unavailable instead of silently dropping.
+            disabled={locked}
             onChange={(value) => {
-              if (value !== label.dpmm && hasObjects && !locked) setPendingDpmm(value);
+              if (value !== label.dpmm && wouldRescale({ dpmm: value }, false)) setPendingDpmm({ toDpmm: value });
               else onUpdate({ dpmm: value });
             }}
             groups={[
@@ -616,8 +639,40 @@ function LabelConfigPanel({
             ]}
           />
         </div>
+        <div className="flex flex-col gap-1">
+          <FieldLabel cmd="^JM">{t.label.jmDensity}</FieldLabel>
+          <Select<string>
+            value={label.jmDensity ?? ''}
+            disabled={locked}
+            onChange={(v) => {
+              const next = v === '' ? undefined : (v as JmDensity);
+              if (wouldRescale({ jmDensity: next }, true)) setPendingJm({ to: next });
+              else onUpdate({ jmDensity: next });
+            }}
+            groups={[
+              {
+                options: [
+                  { value: '', label: t.label.jmDensityDefault },
+                  { value: 'A', label: t.label.jmDensityA },
+                  { value: 'B', label: t.label.jmDensityB },
+                ],
+              },
+            ]}
+          />
+          {pageJm !== label.jmDensity && (
+            <p className="text-[10px] text-muted leading-snug">
+              {t.label.jmPageOverrideHintFmt.split('{mode}').join(pageJm ?? 'A')}
+            </p>
+          )}
+        </div>
         {pendingDpmm !== null && (
-          <DensityRescaleModal toDpmm={pendingDpmm} onClose={() => setPendingDpmm(null)} />
+          <DensityRescaleModal
+            pending={{ kind: 'dpmm', toDpmm: pendingDpmm.toDpmm, configPatch: pendingDpmm.configPatch }}
+            onClose={() => setPendingDpmm(null)}
+          />
+        )}
+        {pendingJm !== null && (
+          <DensityRescaleModal pending={{ kind: 'jm', toJm: pendingJm.to }} onClose={() => setPendingJm(null)} />
         )}
 
         <div className="flex flex-col gap-1">
@@ -681,6 +736,7 @@ function LabelConfigPanel({
             minDots={1}
             allowUnset
             onChangeDots={(defaultFontHeight) => onUpdate({ defaultFontHeight })}
+            scope="design"
             zplCmd="^CF"
             className={fieldGridCell}
           />
@@ -690,6 +746,7 @@ function LabelConfigPanel({
             minDots={0}
             allowUnset
             onChangeDots={(defaultFontWidth) => onUpdate({ defaultFontWidth })}
+            scope="design"
             zplCmd="^CF"
             className={fieldGridCell}
           />

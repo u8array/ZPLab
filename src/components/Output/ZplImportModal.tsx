@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { XMarkIcon, ClipboardDocumentIcon, CheckIcon, FolderOpenIcon } from '@heroicons/react/16/solid';
-import { importZplText, routeSetupCommands, mergeSetupFonts, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
+import { importZplText, routeSetupCommands, mergeSetupFonts, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
 import { readFileAsText } from '../../lib/readFile';
 import { useLabelStore } from '../../store/labelStore';
 import type { Page } from '@zplab/core/types/Group';
@@ -57,9 +57,12 @@ export function ZplImportModal({ onClose }: Props) {
         // append-mode preserves the current Variables tab; merging here
         // would risk name/fnNumber collisions the user can't see in the
         // dialog. Round-trip from a saved design uses Save/Load, not Append.
-        appendPages(importedPages);
+        // The imported ^JM was folded into the discarded config, so re-pin each
+        // page's density against the design it joins or a diverging block reprints
+        // at the wrong density.
+        appendPages(rebaseAppendedPageDensity(importedPages, labelConfig.jmDensity, label.jmDensity));
       } else {
-        loadDesign({ ...label, ...labelConfig }, importedPages, importedVariables);
+        loadDesign(replaceImportLabel(label, labelConfig), importedPages, importedVariables);
       }
     }
     // Profile fields are per-installation state, applied regardless of

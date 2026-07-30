@@ -7,7 +7,8 @@ import { markerOf } from "../types/Variable";
 import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
 import { tokenize } from "./zplParser/helpers";
-import { createParserState, resetFormatScopedState } from "./zplParser/context";
+import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
+import { createParserState, deriveUnitScale, resetFormatScopedState } from "./zplParser/context";
 import { createFlushField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
 import { createDynamicFontAWildcard, createFieldHandlers } from "./zplParser/handlers/fields";
@@ -16,7 +17,7 @@ import { createLabelConfigHandlers } from "./zplParser/handlers/labelConfig";
 import { createSetupScriptHandlers } from "./zplParser/handlers/setupScript";
 import { createUnitsHandler } from "./zplParser/handlers/units";
 import { createUnsupportedHandlers } from "./zplParser/handlers/unsupported";
-import { buildBlockOverlay, type BlockOverlay, type LinkedSpan } from "./zplOverlay/overlay";
+import { buildBlockOverlay, type BlockOverlay, type FormatHead, type JmSpan, type LinkedSpan } from "./zplOverlay/overlay";
 import type {
   Handler,
   ImportFinding,
@@ -72,8 +73,9 @@ export const BY_CONSUMING_BARCODE_TYPES = new Set<string>([
 
 /** Commands defining persistent state a later field may consume implicitly;
  *  in-span they make single-field regen unsafe (the span replace drops the
- *  definition). ^BY absent: consumers self-flag via sawBareBarcode. */
-const PERSISTENT_DEF_CODES = new Set(["CF", "FW", "CW", "SO", "LH", "LT"]);
+ *  definition). ^BY absent: consumers self-flag via sawBareBarcode; ^JM is
+ *  legal pre-^FS, so it can sit in a field span too. */
+const PERSISTENT_DEF_CODES = new Set(["CF", "FW", "CW", "SO", "LH", "LT", "JM"]);
 
 /** Parse a ZPL II byte stream into an editable design model. `captureOverlay`
  *  builds a source-patch overlay (segments linking each object to its bytes;
@@ -134,10 +136,14 @@ export function parseZPL(
       commitPendingReverseBg();
       s.format.embedChar = "#";
       s.format.clockChars = { ...DEFAULT_CLOCK_CHARS };
+      s.format.inFormatHead = true;
       resetComment(p, rest, cmd);
     },
     XZ(p, rest, cmd) {
       commitPendingReverseBg();
+      // Between formats there is no head: a ^JM out here is neither read by the
+      // next format's lookahead nor rewritable, so it must not be taken for one.
+      s.format.inFormatHead = false;
       resetComment(p, rest, cmd);
     },
   };
@@ -152,12 +158,13 @@ export function parseZPL(
   // ^DY font uploads are intentionally not flagged.
   const replayRiskCodes = new Set(Object.keys(setupScriptHandlers));
   const deviceActionCodes = new Set([
-    "JA", "JM", "JC", "JD", "JE", "JI", "JR",
+    "JA", "JC", "JD", "JE", "JI", "JR",
   ]);
   // ^PH/^PP are modelled per-format settings, but their tilde twins are
   // immediate device controls; the handler map keys have no prefix, so the
-  // split happens at dispatch via the token's source char.
-  const tildeDeviceCodes = new Set(["PH", "PP"]);
+  // split happens at dispatch via the token's source char. ~JM is not a real
+  // command (only caret ^JM sets density), so it routes here as a noop too.
+  const tildeDeviceCodes = new Set(["PH", "PP", "JM"]);
   Object.assign(handlers, setupScriptHandlers);
   Object.assign(handlers, createLabelConfigHandlers(s, dpmm));
   Object.assign(handlers, createUnitsHandler(s, dpmm));
@@ -179,7 +186,6 @@ export function parseZPL(
   // replay relies on). Page 0 opens at offset 0 and owns any preamble.
   const pages: ParsedPage[] = [];
   let mixedPageGeometry = false;
-  let sawXA = false;
   let lastPageW: number | undefined;
   let lastPageH: number | undefined;
 
@@ -208,11 +214,29 @@ export function parseZPL(
     // Format state that would re-interpret a regenerated object's bytes on
     // replay; drives the overlay's regenSafe flag (verbatim replay unaffected).
     regenHostileFormat: false,
+    // Format head for the export-time ^JM pass: injection point and the head's
+    // own ^JM spans, block-relative. Re-armed at this page's ^XA; a block
+    // without one keeps at 0, where a ^JM is equally valid.
+    head: {
+      caret: s.format.caretChar,
+      at: 0,
+      jmSpans: [] as JmSpan[],
+    } satisfies FormatHead,
     sawNonUtf8Ci: false,
     sawBareBarcode: false,
     sawFnDeclaration: false,
   });
   let pg = freshPageScope(0);
+
+  // A wrapper-less stream has no ^XA for the lookahead to hang off, so its own
+  // leading ^JM is resolved here instead; a ^JM ahead of a real ^XA is not.
+  const bare = scanBareStream(zpl, s.format, s.format.delimiterChar);
+  s.format.inFormatHead = !bare.hasXa;
+  if (bare.density) {
+    s.format.jmDensity = bare.density;
+    labelConfig.jmDensity = bare.density;
+    s.format.unitScale = deriveUnitScale(s.format, dpmm);
+  }
 
   const bucketFindings = (
     pageIndex: number,
@@ -276,7 +300,7 @@ export function parseZPL(
           overlaySpans
             .slice(pg.span)
             .map((sp) => ({ ...sp, start: sp.start - pg.start, end: sp.end - pg.start })),
-          { regenSafe: pageRegenSafe, frame },
+          { regenSafe: pageRegenSafe, frame, head: pg.head },
         );
       } catch (err) {
         console.warn("buildBlockOverlay failed, dropping overlay for this page", err);
@@ -305,7 +329,7 @@ export function parseZPL(
       labelConfig: { ...labelConfig },
     };
     if (pageOverlay) page.overlay = pageOverlay;
-    if (!sawXA) page.bare = true;
+    if (!s.sawXa) page.bare = true;
     pages.push(page);
     // ^PW/^LL persist across ^XA, so only a value CHANGE between page closes is
     // a real divergence the single-label model cannot represent.
@@ -349,6 +373,18 @@ export function parseZPL(
           ? { x: s.label.lhX, y: s.label.lhY, t: s.label.ltY }
           : null;
       handler(p, rest, cmd);
+      if (cmd === "FS") s.format.inFormatHead = false;
+      // Every ^JM in the head is recorded, invalid values included: export
+      // rewrites the valid ones and must place a new declaration behind the
+      // last of them either way.
+      if (cmd === "JM" && s.format.inFormatHead) {
+        // trimEnd: `rest` runs to the next command, so it drags the line break
+        // of multi-line ZPL into the span.
+        const from = start - pg.start;
+        // A ^CC/^CD inside the head retargets the prefix/value read, so each span
+        // carries the caret and delimiter live at its own ^JM, not the opener's.
+        pg.head.jmSpans.push({ start: from, end: from + 3 + rest.trimEnd().length, delim: s.format.delimiterChar, caret: s.format.caretChar });
+      }
       if (opts.captureOverlay) {
         if (
           s.format.caretChar !== "^" ||
@@ -376,7 +412,13 @@ export function parseZPL(
         }
         // A persistent definition inside a field span: regen replaces the
         // span and drops the definition a later verbatim field may consume.
-        if (PERSISTENT_DEF_CODES.has(cmd) && pg.ovStart !== null) {
+        // A post-^FS ^JM is a no-op (the lookahead already applied the density),
+        // so only a pre-FS in-span ^JM stays regen-hostile.
+        if (
+          PERSISTENT_DEF_CODES.has(cmd) &&
+          pg.ovStart !== null &&
+          (cmd !== "JM" || s.format.inFormatHead)
+        ) {
           pg.regenHostileFormat = true;
         }
         // A home change after this page already linked fields: earlier fields
@@ -465,8 +507,23 @@ export function parseZPL(
       // this token's capture block so a boundary-committed reverse-bg span
       // still lands in the closing page.
       if (cmd === "XA") {
-        if (sawXA) closePage(start);
-        sawXA = true;
+        if (s.sawXa) closePage(start);
+        s.sawXa = true;
+        // Drops any ^JM span from a pre-^XA preamble: those sit outside the
+        // head the lookahead reads, so export must not rewrite them either.
+        pg.head = {
+          caret: s.format.caretChar,
+          at: start - pg.start + 3,
+          jmSpans: [],
+        };
+        // Resolve this format's ^JM density up front so ^MU-scaled reads see
+        // the final density; absent ^JM leaves the persistent density.
+        const jm = lookaheadJmDensity(zpl, start, s.format, s.format.delimiterChar);
+        if (jm) {
+          s.format.jmDensity = jm;
+          labelConfig.jmDensity = jm;
+        }
+        s.format.unitScale = deriveUnitScale(s.format, dpmm);
       }
       continue;
     }

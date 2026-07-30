@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parseDesignFile, serializeDesign, CURRENT_DESIGN_SCHEMA_VERSION } from '@zplab/core/lib/designFile';
+import { importZplText } from '@zplab/core/lib/zplImportService';
 import type { LabelObject } from '@zplab/core/types/Group';
 import type { Variable } from '@zplab/core/types/Variable';
 
@@ -401,6 +402,48 @@ describe('parseDesignFile', () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.error).toBe('invalid_schema');
+  });
+
+  // A main-era v3 save predates the persisted ^JM fields; it loads through the
+  // legacy reconstruction, which reads the head density from the overlay bytes.
+  it('loads a v3 file and reconstructs its ^JM density from the overlay', () => {
+    const v3 = importZplText('^XA^JMB^FO10,10^A0N,30,30^FDa^FS^XZ', 8);
+    const legacyPages = v3.pages.map((p) => {
+      const overlay = p.overlay ? { ...p.overlay } : undefined;
+      if (overlay) delete overlay.head;
+      return { objects: p.objects, overlay };
+    });
+    const json = JSON.stringify({
+      schemaVersion: 3,
+      label: { widthMm: 100, heightMm: 50, dpmm: 8 },
+      pages: legacyPages,
+    });
+    const result = parseDesignFile(json);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.label.jmDensity).toBe('B');
+    expect(result.value.pages[0]?.jmDensity).toBeUndefined();
+    expect(result.value.pages[0]?.overlay?.head).toBeDefined();
+  });
+
+  // A v4 file already carries the density fields; it loads unchanged, the legacy
+  // reconstruction sees the label density and skips.
+  it('loads a v4 file and leaves its ^JM density untouched', () => {
+    const json = JSON.stringify({
+      schemaVersion: 4,
+      label: { widthMm: 100, heightMm: 50, dpmm: 8, jmDensity: 'B' },
+      pages: [{ objects: SAMPLE_OBJECTS, jmDensity: 'A' }],
+    });
+    const result = parseDesignFile(json);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.label.jmDensity).toBe('B');
+    expect(result.value.pages[0]?.jmDensity).toBe('A');
+  });
+
+  it('writes schemaVersion 4 on save', () => {
+    const json = serializeDesign({ widthMm: 100, heightMm: 60, dpmm: 8 }, [{ objects: SAMPLE_OBJECTS }]);
+    expect((JSON.parse(json) as { schemaVersion: number }).schemaVersion).toBe(4);
   });
 
   it('returns parse_error for invalid JSON', () => {

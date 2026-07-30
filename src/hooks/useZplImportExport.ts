@@ -10,7 +10,7 @@ import { generateSetupScript } from "../lib/zplSetupScript";
 import { printLabel } from "../lib/printPreview";
 import { saveTextFile, saveErrorMessage, ZPL_FILTER } from "../lib/fileDialogs";
 import { labelaryErrorMessage } from "../lib/labelary";
-import { selectLabelaryEndpoint } from "../store/labelStore.selectors";
+import { currentPageLabel, selectLabelaryEndpoint } from "../store/labelStore.selectors";
 import { buildActiveRow } from "@zplab/core/lib/variableBinding";
 
 export function useZplImportExport() {
@@ -49,7 +49,7 @@ export function useZplImportExport() {
     const batch = selectBatchInputs(s);
     if (!batch) return;
     const zpl = generateBatchZpl(
-      s.label, currentObjects(s), s.variables, batch.dataset, batch.mapping,
+      currentPageLabel(s), currentObjects(s), s.variables, batch.dataset, batch.mapping,
     );
     void saveTextFile(zpl, {
       filename: "label-batch.zpl",
@@ -75,7 +75,7 @@ export function useZplImportExport() {
       const s = useLabelStore.getState();
       const active = buildActiveRow(s.dataset, s.columnMapping);
       const { host, apiKey } = selectLabelaryEndpoint(s);
-      await printLabel(s.label, currentObjects(s), host, apiKey, s.variables, active);
+      await printLabel(currentPageLabel(s), currentObjects(s), host, apiKey, s.variables, active);
       clearUserError();
     } catch (e) {
       setUserError(labelaryErrorMessage(e), { retryExport: true });
@@ -95,7 +95,7 @@ export function useZplImportExport() {
     const batch = selectBatchInputs(s);
     return batch
       ? generateBatchZpl(
-          s.label, currentObjects(s), s.variables, batch.dataset, batch.mapping,
+          currentPageLabel(s), currentObjects(s), s.variables, batch.dataset, batch.mapping,
         )
       : generateMultiPageZPL(s.label, s.pages, s.variables);
   };

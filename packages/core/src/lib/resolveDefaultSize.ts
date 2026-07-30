@@ -1,5 +1,6 @@
 import { mmToDots } from "./coordinates";
 import type { LabelConfig } from "../types/LabelConfig";
+import { effectiveDpmm } from "../types/LabelConfig";
 import type { ObjectTypeCore } from "../types/ObjectType";
 /** Resolve a registry `defaultSize` declaration to dot units against
  *  the active label config. Spec-fixed-physical-size symbols (e.g.
@@ -13,8 +14,8 @@ export function resolveDefaultSizeDots(
 ): { width: number; height: number } {
   if ("widthMm" in defaultSize) {
     return {
-      width: mmToDots(defaultSize.widthMm, label.dpmm),
-      height: mmToDots(defaultSize.heightMm, label.dpmm),
+      width: mmToDots(defaultSize.widthMm, effectiveDpmm(label)),
+      height: mmToDots(defaultSize.heightMm, effectiveDpmm(label)),
     };
   }
   // Shallow-copy the dots-branch so callers can't accidentally

@@ -29,6 +29,9 @@ export interface ImportFinding {
   /** Page index (^XA block) this finding originated from, stamped by the
    *  single-pass parser. */
   pageIndex: number;
+  /** Which divergence a 'mixedPageGeometry' finding reports, so consumers
+   *  pick their message without sniffing `command`. */
+  cause?: 'size' | 'jm';
 }
 
 export interface ImportReport {
@@ -77,7 +80,8 @@ export interface ParsedZPL {
    *  ^MU/^CC/^CW carries across pages). At least one page, possibly empty. */
   pages: ParsedPage[];
   /** ^XA blocks set different explicit ^PW/^LL: a single-label design keeps
-   *  only one size, so callers reject or warn. */
+   *  only one size, so callers reject or warn. Diverging ^JM densities are
+   *  folded into the import service's flag of the same name, not this one. */
   mixedPageGeometry: boolean;
   labelConfig: Partial<LabelConfig>;
   /** EEPROM-persistent printer-state extracted from any Setup-Script

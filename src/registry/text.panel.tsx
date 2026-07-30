@@ -5,7 +5,7 @@ import { buttonCls, inputCls, labelCls } from "../components/Properties/styles";
 import { getFont, loadFontFile } from "@zplab/core/lib/fontCache";
 import { useFontCacheVersion } from "../hooks/useFontCacheVersion";
 import { useLabelStore } from "../store/labelStore";
-import { currentObjects } from "../store/labelStore.selectors";
+import { currentObjects, currentPageLabel } from "../store/labelStore.selectors";
 import { reverseTextHasBacking, reverseTextHasOwnBacking } from "@zplab/core/lib/reverseBacking";
 import { RotationSelect } from "../components/Properties/RotationSelect";
 import { UnitNumberInput } from "../components/Properties/UnitNumberInput";
@@ -31,10 +31,10 @@ export const textPanel: ObjectTypeUi<TextProps> = {
     const addReverseBackground = useLabelStore((s) => s.addReverseBackground);
     const removeReverseBackground = useLabelStore((s) => s.removeReverseBackground);
     const hasReverseBacking = useLabelStore((s) =>
-      reverseTextHasBacking(currentObjects(s), obj.id, s.label),
+      reverseTextHasBacking(currentObjects(s), obj.id, currentPageLabel(s)),
     );
     const hasOwnReverseBacking = useLabelStore((s) =>
-      reverseTextHasOwnBacking(currentObjects(s), obj.id, s.label),
+      reverseTextHasOwnBacking(currentObjects(s), obj.id, currentPageLabel(s)),
     );
 
     // Font picker options: every alias the user can reference from this
@@ -94,6 +94,7 @@ export const textPanel: ObjectTypeUi<TextProps> = {
           <div className={`grid grid-cols-2 ${fieldGridCols}`}>
             <UnitNumberInput
               label={t.registry.text.fontHeight}
+              scope="page"
               valueDots={p.fontHeight}
               minDots={1}
               onChangeDots={(fontHeight) => onChange({ fontHeight })}
@@ -102,6 +103,7 @@ export const textPanel: ObjectTypeUi<TextProps> = {
             />
             <UnitNumberInput
               label={t.registry.text.fontWidth}
+              scope="page"
               valueDots={p.fontWidth}
               minDots={0}
               onChangeDots={(fontWidth) => onChange({ fontWidth })}

@@ -33,6 +33,7 @@ export function OutputTab() {
               minDots={0}
               allowUnset
               onChangeDots={(labelHomeX) => setLabelConfig({ labelHomeX })}
+              scope="design"
               zplCmd="^LH"
               className="contents"
             />
@@ -44,6 +45,7 @@ export function OutputTab() {
               minDots={0}
               allowUnset
               onChangeDots={(labelHomeY) => setLabelConfig({ labelHomeY })}
+              scope="design"
               zplCmd="^LH"
               className="contents"
             />
@@ -56,6 +58,7 @@ export function OutputTab() {
               maxDots={120}
               allowUnset
               onChangeDots={(labelTop) => setLabelConfig({ labelTop })}
+              scope="design"
               zplCmd="^LT"
               className="contents"
             />
@@ -73,6 +76,7 @@ export function OutputTab() {
           minDots={0}
           allowUnset
           onChangeDots={(labelShift) => setLabelConfig({ labelShift })}
+          scope="design"
           zplCmd="^LS"
         />
       </RegionFocus>

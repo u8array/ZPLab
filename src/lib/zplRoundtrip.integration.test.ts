@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useLabelStore } from "../store/labelStore";
-import { importZplText } from "@zplab/core/lib/zplImportService";
+import { importZplText, replaceImportLabel } from "@zplab/core/lib/zplImportService";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { serializeDesign, parseDesignFile } from "@zplab/core/lib/designFile";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
@@ -32,7 +32,7 @@ beforeEach(() => {
 function importInto(zpl: string): void {
   const label = store().label;
   const r = importZplText(zpl, label.dpmm);
-  store().loadDesign({ ...label, ...r.labelConfig }, r.pages, r.variables);
+  store().loadDesign(replaceImportLabel(label, r.labelConfig), r.pages, r.variables);
 }
 const exportZpl = (): string => {
   const s = store();
@@ -65,6 +65,15 @@ const REAL_LABEL = [
 describe("round-trip integration (real import -> store -> export)", () => {
   it("a realistic foreign label re-exports byte-identically with zero edits", () => {
     importInto(REAL_LABEL);
+    expect(exportZpl()).toBe(REAL_LABEL);
+  });
+
+  it("replace-import without ^JM clears the open document's density mode", () => {
+    // Inheriting the old ^JMB would reinterpret every imported dot at half
+    // density; an import without ^JM declares full density.
+    useLabelStore.setState({ label: { ...store().label, jmDensity: "B" } });
+    importInto(REAL_LABEL);
+    expect(store().label.jmDensity).toBeUndefined();
     expect(exportZpl()).toBe(REAL_LABEL);
   });
 

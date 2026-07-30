@@ -28,6 +28,11 @@ describe("buildPreviewZpl blank-field samples", () => {
     expect(zpl).not.toContain("^FD12345678^FS");
   });
 
+  it("emits the page's ^JM so a diverging page previews at its own density", () => {
+    const zpl = buildPreviewZpl({ ...label, jmDensity: "B" }, blankBarcode(), [], null);
+    expect(zpl).toContain("^JMB");
+  });
+
   it("blank text has no sample and stays blank even with the opt-in", () => {
     const text = [
       {

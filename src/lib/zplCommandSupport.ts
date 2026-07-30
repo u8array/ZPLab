@@ -166,6 +166,7 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   { cmd: 'PR', status: 'structural', description: 'Print rate: sets print speed (hardware)' },
   { cmd: 'PS', status: 'structural', description: 'Print start: resumes printing after a pause (hardware)' },
   { cmd: 'JS', status: 'supported', description: 'Change backfeed sequence (A/B/N/O or percent 10-90, rounded to tens like the printer)' },
+  { cmd: 'JM', status: 'supported', description: 'Set dots per millimeter: B halves the density, dot values then count in the halved scale' },
 
   // ── Printer storage & resources ───────────────────────────────────────────
   {

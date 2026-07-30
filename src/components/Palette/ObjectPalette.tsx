@@ -10,7 +10,7 @@ import { useContextMenu } from '../../hooks/useContextMenu';
 import { resolveAddable, typeLabelFor, type AddableEntry } from '../../registry/palettePresets';
 import { getEntry } from '@zplab/core/registry';
 import { useT } from '../../hooks/useT';
-import { useLabelStore } from '../../store/labelStore';
+import { useLabelStore, currentPageLabel } from '../../store/labelStore';
 import { printableRectDots } from '@zplab/core/lib/objectBounds';
 import { centeredSpawnAnchor } from '../../lib/spawn';
 import { DragHandleIcon } from '../ui/DragHandleIcon';
@@ -43,11 +43,14 @@ function entryCategory(entry: AddableEntry, t: Translations): string {
  *  centeredSpawnAnchor with the drag path, so both gestures land the same way
  *  and honour the spawn rotation of a rotated canvas view. */
 function spawnCentered(entry: AddableEntry) {
-  const { addObject, label, canvasSettings } = useLabelStore.getState();
+  const state = useLabelStore.getState();
+  // Current page's dot scale: addObject writes into it, so a jm-diverged page
+  // must not size/place against the design label.
+  const label = currentPageLabel(state);
   const r = printableRectDots(label);
   const at = { x: r.x + r.width / 2, y: r.y + r.height / 2 };
-  const pos = centeredSpawnAnchor(entry.type, entry.propsOverride, at, label, canvasSettings.viewRotation);
-  if (pos) addObject(entry.type, pos, entry.propsOverride);
+  const pos = centeredSpawnAnchor(entry.type, entry.propsOverride, at, label, state.canvasSettings.viewRotation);
+  if (pos) state.addObject(entry.type, pos, entry.propsOverride);
 }
 
 const rowBodyCls =

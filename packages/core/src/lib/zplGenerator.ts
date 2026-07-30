@@ -12,11 +12,13 @@ import { classifyField } from './variableField';
 import { escapeGs1FdValue } from './gs1';
 import { gs1ModeDExclusiveFns } from './gs1ModeDFns';
 import { formatLabelMetaComment } from './zplLabelMeta';
-import type { ClockOffset, CustomFontMapping, LabelConfig } from '../types/LabelConfig';
+import { jmDensityOf } from '../types/LabelConfig';
+import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig } from '../types/LabelConfig';
 import type { ZplEmitContext } from '../types/ZplEmit';
 import type { Variable } from '../types/Variable';
-import { exportableLeaves, isGroup, walkObjects, type LabelObject, type LeafObject, type Page } from '../types/Group';
-import { isOverlayConsistent } from './zplOverlay/overlay';
+import { exportableLeaves, isGroup, pageLabelConfig, walkObjects, type LabelObject, type LeafObject, type Page } from '../types/Group';
+import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from './zplOverlay/overlay';
+import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
 import { imageEmitDims, type ImageProps } from '../registry/image';
@@ -156,6 +158,18 @@ function formatGraphicUpload(p: ImageProps): string | undefined {
   return `~DY${formatStoragePath(p.storedAs, false)},${format},G,${total},${bpr},${data}`;
 }
 
+/** Head-less replay block, once a density decision is due: self-declares
+ *  target -> keep, latch wire; contradiction, or due with no self-declaration
+ *  -> regenerate; nothing due (target === wire) -> replay as-is. */
+function headlessAction(
+  selfDeclared: JmDensity | undefined,
+  target: JmDensity,
+  wireJm: JmDensity | undefined,
+): 'keep' | 'regenerate' | 'replay' {
+  if (selfDeclared === target) return 'keep';
+  return selfDeclared !== undefined || target !== wireJm ? 'regenerate' : 'replay';
+}
+
 /** Each page becomes its own ^XA..^XZ block (separate labels to the printer).
  *  A page imported with a source-patch overlay replays its original bytes
  *  verbatim except for edited/added/removed objects; everything else
@@ -166,17 +180,41 @@ export function generateMultiPageZPL(
   variables: readonly Variable[] = [],
 ): string {
   let out = '';
+  // ^JM persists on the wire, so a block only declares a density the preceding
+  // blocks didn't set. `undefined` means nothing declared one yet, so a block
+  // inheriting its ^JM from outside this export gets the declaration back.
+  let wireJm: JmDensity | undefined;
   for (const p of pages) {
-    let block: string;
+    const pageLabel = pageLabelConfig(label, p);
+    let emitted: PageBlock;
     try {
-      block = emitOverlayPage(label, p, variables);
+      emitted = emitPageBlock(pageLabel, p, variables);
     } catch (err) {
-      // emitOverlayPage handles expected inconsistencies internally, so a throw
-      // here is an unexpected bug. Surface it (still degrading to regeneration)
-      // rather than silently disabling the overlay.
-      console.warn('emitOverlayPage failed, regenerating page from model', err);
-      block = generateZPL(label, p.objects, variables);
+      // A throw here is an unexpected bug, not an expected inconsistency (those
+      // are handled internally); warn instead of failing silently, then regenerate.
+      console.warn('emitPageBlock failed, regenerating page from model', err);
+      emitted = generateZplBlock(pageLabel, p.objects, variables);
     }
+    // Unset means full density, so a page after a ^JMB page resets the wire;
+    // while nothing is declared yet there is nothing to reset.
+    const target = pageLabel.jmDensity ?? (wireJm ? 'A' : undefined);
+    // A replayed block whose head the parser never recorded (or whose bytes
+    // moved) has no place to splice a declaration; a density-only scan of its
+    // bytes (cold path) decides instead of always regenerating.
+    if (!emitted.head && target !== undefined) {
+      const action = headlessAction(reconstructBlockHead(emitted.block).density, target, wireJm);
+      if (action === 'regenerate') {
+        emitted = generateZplBlock(pageLabel, p.objects, variables);
+      } else if (action === 'keep') {
+        // applyJmDensity can't read a head-less block, so latch the wire here.
+        wireJm = target;
+      }
+    }
+    const applied = applyJmDensity(emitted, pageLabel.jmDensity, target === wireJm ? undefined : target);
+    const block = applied.block;
+    // Track what the block actually carries, not the intent: an unreachable
+    // head would leave the next block believing a density the wire never got.
+    wireJm = applied.wireJm ?? wireJm;
     // An overlay page already carries the inter-block separator captured at
     // import (the splitter folds it into the preceding block). Only insert a
     // newline when the previous block didn't end with one (a fresh or
@@ -188,20 +226,110 @@ export function generateMultiPageZPL(
 }
 
 
+/** One page's emitted bytes plus the format head they carry (`undefined` when unknown). */
+interface PageBlock {
+  block: string;
+  head: FormatHead | undefined;
+}
+
+/** Density the head declares: the last VALID `^JM` wins, mirroring the parser
+ *  (which ignores an invalid one rather than letting it clear the density).
+ *  Undefined when nothing readable is declared. */
+function declaredJm(block: string, head: FormatHead): JmDensity | undefined {
+  for (let i = head.jmSpans.length - 1; i >= 0; i--) {
+    const span = head.jmSpans[i];
+    if (!span) continue;
+    const v = jmDensityOf(block.slice(span.start + MIN_JM_SPAN, span.end), span.delim);
+    if (v) return v;
+  }
+  return undefined;
+}
+
+/** True while the head's offsets still land, in bounds and in order, on the
+ *  commands they were recorded for; a shifted or malformed head fails so the
+ *  caller regenerates instead of splicing bytes it never owned. */
+function headMatches(block: string, head: FormatHead): boolean {
+  const nameAt = (at: number): string => block.slice(at + 1, at + 3).toUpperCase();
+  if (head.at > block.length) return false;
+  if (head.at > 0 && (block[head.at - 3] !== head.caret || nameAt(head.at - 3) !== 'XA')) {
+    return false;
+  }
+  let cursor = 0;
+  for (const s of head.jmSpans) {
+    if (s.start < cursor || s.end < s.start + MIN_JM_SPAN || s.end > block.length) return false;
+    if (block[s.start] !== (s.caret) || nameAt(s.start) !== 'JM') return false;
+    cursor = s.end;
+  }
+  return true;
+}
+
+/** Rewrites a block's head to the target density; the model wins over any
+ *  existing declaration. `target` folds in the running wire state (undefined = nothing to add). */
+function applyJmDensity(
+  emitted: PageBlock,
+  pageJm: JmDensity | undefined,
+  target: JmDensity | undefined,
+): { block: string; wireJm: JmDensity | undefined } {
+  const { block, head } = emitted;
+  if (!head) return { block, wireJm: undefined };
+  const declared = declaredJm(block, head);
+  if (declared !== undefined) {
+    const want = pageJm ?? 'A';
+    if (declared === want) return { block, wireJm: want };
+    // Every declaration in the head is rewritten, not just the last: leaving a
+    // stale one behind would make the density depend on emit order. Back to
+    // front so the earlier spans keep their offsets.
+    let rewritten = block;
+    for (const s of [...head.jmSpans].reverse()) {
+      const params = block.slice(s.start + MIN_JM_SPAN, s.end);
+      // ^JM takes one parameter; anything past the delimiter is unmodelled, so
+      // carry it rather than dropping bytes the source had. Per-span delimiter so
+      // a ^CD retarget mid-head splits at the right byte.
+      const tailAt = params.indexOf(s.delim);
+      const tail = tailAt < 0 ? '' : params.slice(tailAt);
+      rewritten = `${rewritten.slice(0, s.start)}${s.caret}JM${want}${tail}${rewritten.slice(s.end)}`;
+    }
+    return { block: rewritten, wireJm: want };
+  }
+  if (!target) return { block, wireJm: undefined };
+  // Insert after the head's last ^JM, not before, since an unreadable one would
+  // otherwise outrank a fresh declaration; with no spans, the ^XA caret is the
+  // injection point.
+  const last = head.jmSpans[head.jmSpans.length - 1];
+  const at = last ? last.end : head.at;
+  const caret = last ? last.caret : head.caret;
+  return {
+    block: `${block.slice(0, at)}${caret}JM${target}${block.slice(at)}`,
+    wireJm: target,
+  };
+}
+
 /** Emit one page from its overlay: verbatim segments for untouched objects,
  *  in-place regeneration for dirty ones, appended fields for new ones, raw
  *  segments (config/comments/unmodeled commands/whitespace) replayed as-is.
  *  Falls back to full regeneration when the overlay is missing/inconsistent,
  *  or when an edit exists in a block whose running state (^MU/prefix/^CI/^FE)
- *  would re-interpret a regenerated field. */
+ *  would re-interpret a regenerated field.
+ *  Single-block only: skips the wire-state ^JM pass, so it won't declare an
+ *  inherited or head-less density; real exports use generateMultiPageZPL. */
 export function emitOverlayPage(
-  label: LabelConfig,
+  design: LabelConfig,
   page: Page,
   variables: readonly Variable[] = [],
 ): string {
+  return emitPageBlock(pageLabelConfig(design, page), page, variables).block;
+}
+
+/** Overlay replay plus the head those bytes carry, so the ^JM pass patches a
+ *  parser-recorded position, not an inferred one. Label is pre-resolved (^JM override folded in). */
+function emitPageBlock(
+  label: LabelConfig,
+  page: Page,
+  variables: readonly Variable[] = [],
+): PageBlock {
   const overlay = page.overlay;
   if (!overlay || !isOverlayConsistent(overlay)) {
-    return generateZPL(label, page.objects, variables);
+    return generateZplBlock(label, page.objects, variables);
   }
 
   const exportable = exportableLeaves(page.objects);
@@ -219,7 +347,7 @@ export function emitOverlayPage(
   const liveLinkedOrder = exportable.filter((l) => segmentIds.has(l.id)).map((l) => l.id);
   const segmentLiveOrder = segmentObjectOrder.filter((id) => exportableById.has(id));
   if (liveLinkedOrder.some((id, i) => id !== segmentLiveOrder[i])) {
-    return generateZPL(label, page.objects, variables);
+    return generateZplBlock(label, page.objects, variables);
   }
   // New objects are appended after all segments, so they must sit at the model
   // tail. If a segment-linked object follows a new one in model order, appending
@@ -227,7 +355,7 @@ export function emitOverlayPage(
   let sawNew = false;
   for (const l of exportable) {
     if (!segmentIds.has(l.id)) sawNew = true;
-    else if (sawNew) return generateZPL(label, page.objects, variables);
+    else if (sawNew) return generateZplBlock(label, page.objects, variables);
   }
 
   const dirtyLeaves = exportable.filter((l) => segmentIds.has(l.id) && l.dirty);
@@ -237,7 +365,7 @@ export function emitOverlayPage(
   // non-regenSafe block is not, so fall back wholesale the moment an edit
   // (dirty or new) exists there.
   if ((dirtyLeaves.length > 0 || newLeaves.length > 0) && !overlay.regenSafe) {
-    return generateZPL(label, page.objects, variables);
+    return generateZplBlock(label, page.objects, variables);
   }
 
   const fx = overlay.frame?.homeX ?? 0;
@@ -302,7 +430,8 @@ export function emitOverlayPage(
       idx >= 0 ? `${result.slice(0, idx)}${block}\n${result.slice(idx)}` : `${result}\n${block}`;
   }
 
-  return result;
+  const head = overlay.head;
+  return { block: result, head: head && headMatches(result, head) ? head : undefined };
 }
 
 /** R: is volatile RAM, matches single-run batch scope. */
@@ -461,6 +590,20 @@ export function generateZPL(
   objects: LabelObject[],
   variables: readonly Variable[] = [],
 ): string {
+  return generateZplBlock(label, objects, variables).block;
+}
+
+/** Model emit plus the format head it wrote. The head is exact by construction
+ *  rather than searched for; the ^A@ aliasing at the end only rewrites body
+ *  bytes, so the offsets survive it. */
+function generateZplBlock(
+  label: LabelConfig,
+  objects: LabelObject[],
+  variables: readonly Variable[] = [],
+): PageBlock {
+  // ^PW/^LL are consumed in physical head dots (ZD230-verified), even under
+  // ^JMB: the body's object dots emit in the effective (halved) scale, but the
+  // print width/length stay physical.
   const widthDots = mmToDots(label.widthMm, label.dpmm);
   const heightDots = mmToDots(label.heightMm, label.dpmm);
 
@@ -497,6 +640,16 @@ export function generateZPL(
   if (label.backfeedSequence) lines.push(`~JS${label.backfeedSequence}`);
 
   lines.push('^XA');
+  // Offset just past the ^XA: every preceding line plus its newline.
+  const headAt = lines.reduce((n, l) => n + l.length + 1, 0) - 1;
+  // ^JM must precede the first ^FS (p269), and the sidecar comment below
+  // already closes with one; emit it first.
+  const jmSpans: JmSpan[] = [];
+  if (label.jmDensity) {
+    const jm = `^JM${label.jmDensity}`;
+    jmSpans.push({ start: headAt + 1, end: headAt + 1 + jm.length, delim: ',', caret: '^' });
+    lines.push(jm);
+  }
   // Leading geometry sidecar: recovers exact width/height/dpmm on re-import,
   // which plain ^PW/^LL (dots, no dpmm) can't. A comment, so print is unaffected.
   lines.push(formatLabelMetaComment({
@@ -590,7 +743,10 @@ export function generateZPL(
 
   lines.push('^XZ');
 
-  return aliasFontPaths(lines.join('\n'), label);
+  return {
+    block: aliasFontPaths(lines.join('\n'), label),
+    head: { caret: '^', at: headAt, jmSpans },
+  };
 }
 
 /** Rewrite `^A@…PATH` to `^A{alias}` for paths the user registered via `^CW`.

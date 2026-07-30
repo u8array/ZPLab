@@ -64,6 +64,11 @@ export function describeFinding(
     return { title: tr.fnDefaultDroppedTitleFmt.replace('{fn}', '^FN'), detail: f.command };
   }
   if (f.kind === 'mixedPageGeometry') {
+    // ^JM divergence is a mode conflict, not a size one, so it gets its own
+    // headline; the command token alone is the detail (title carries meaning).
+    if (f.cause === 'jm') {
+      return { title: tr.mixedJmTitle, detail: f.command };
+    }
     return {
       title: tr.mixedGeoTitle,
       detail: tr.mixedGeoDetailFmt.replace('{cmds}', '^PW/^LL').replace('{detail}', f.command),

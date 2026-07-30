@@ -1,14 +1,37 @@
-import type { LabelObject } from '@zplab/core/types/Group';
+import { pageLabelConfig, type LabelObject } from '@zplab/core/types/Group';
 import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
 import { isDesktopShell } from '../lib/platform';
 import type { Dataset } from './slices/dataSlice';
 import type { ColumnMapping } from '@zplab/core/types/Variable';
 import type { LabelState } from './labelStore';
 import type { PageState } from './labelStore.internals';
-import { PER_LABEL_ZPL_FIELDS } from '@zplab/core/types/LabelConfig';
+import { PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig } from '@zplab/core/types/LabelConfig';
 
 export const currentObjects = (state: PageState): LabelObject[] =>
   state.pages[state.currentPageIndex]?.objects ?? [];
+
+// pageLabelConfig builds a fresh object per override, which a zustand selector
+// would hand back as a new reference on every store read. Cache per (design
+// label, density) so subscribers only re-render when one of them changes.
+const overrideCache = new WeakMap<LabelConfig, Map<JmDensity, LabelConfig>>();
+
+/** The label as the current page prints it: its ^JM override wins so every
+ *  editor-geometry root (mm<->dots, bounds, snap, preflight) and single-page
+ *  emit works in this page's density. Design-scope reads keep `state.label`. */
+export const currentPageLabel = (state: LabelState): LabelConfig => {
+  const jm = state.pages[state.currentPageIndex]?.jmDensity;
+  if (jm === undefined || jm === state.label.jmDensity) return state.label;
+  let byDensity = overrideCache.get(state.label);
+  if (!byDensity) {
+    byDensity = new Map();
+    overrideCache.set(state.label, byDensity);
+  }
+  const cached = byDensity.get(jm);
+  if (cached) return cached;
+  const built = pageLabelConfig(state.label, { jmDensity: jm });
+  byDensity.set(jm, built);
+  return built;
+};
 
 /** True while any per-label print override is set; drives the reset button's
  *  visibility so its disappearance after a reset doubles as feedback. */

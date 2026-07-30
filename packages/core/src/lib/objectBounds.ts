@@ -15,6 +15,7 @@ import { getAllLeaves, isGroup } from "../types/Group";
 import type { LeafObject } from "../registry";
 import { BARCODE_1D_TYPES, STACKED_2D_TYPES, getEntry } from "../registry";
 import type { LabelConfig } from "../types/LabelConfig";
+import { effectiveDpmm, type JmDensity } from "../types/LabelConfig";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "../registry/rotation";
 import { resolveTextMode } from "../registry/text";
 import { blockBoundsDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isBlankText, rotatedLineOffset, tbBoundsDots, zebraLineWidthDots } from "./zebraTextLayout";
@@ -344,14 +345,15 @@ export function printableRectDots(label: {
   widthMm: number;
   heightMm: number;
   dpmm: number;
+  jmDensity?: JmDensity;
   labelShift?: number;
 }): BoundingBoxDots {
   const shift = label.labelShift ?? 0;
   return {
     x: shift,
     y: 0,
-    width: mmToDots(label.widthMm, label.dpmm),
-    height: mmToDots(label.heightMm, label.dpmm),
+    width: mmToDots(label.widthMm, effectiveDpmm(label)),
+    height: mmToDots(label.heightMm, effectiveDpmm(label)),
   };
 }
 

@@ -10,7 +10,7 @@ import {
   resetFieldBlockDefaults,
   type ParserState,
 } from "../context";
-import { ciToEncoding, dotsFor, getDecoder, int, readJustify, readRotation } from "../helpers";
+import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, int, readJustify, readRotation } from "../helpers";
 import type { Handler, Wildcard } from "../types";
 
 /** flushField + appendComment are shared with the orchestrator. */
@@ -104,19 +104,20 @@ export function createFieldHandlers(
     // ^CF{font},{height},{width}  → sets default for fields without ^A
     CF(p) {
       const fontId = (p[0] ?? "").trim();
-      const explicitHeight = dotsOrUndef(p[1]);
-      const explicitWidth = dotsOrUndef(p[2]);
-      if (explicitHeight !== undefined) s.defaults.cfHeight = explicitHeight;
-      if (explicitWidth !== undefined) s.defaults.cfWidth = explicitWidth;
+      // No fallback: a missing height/width leaves the current default.
+      const cfH = dotsOrUndef(p[1]);
+      if (cfH !== undefined) {
+        s.defaults.cfHeight = cfH;
+        if (cfH > 0) labelConfig.defaultFontHeight = cfH;
+      }
+      const cfW = dotsOrUndef(p[2]);
+      if (cfW !== undefined) {
+        s.defaults.cfWidth = cfW;
+        if (cfW >= 0) labelConfig.defaultFontWidth = cfW;
+      }
       if (fontId) {
         labelConfig.defaultFontId = fontId;
         s.defaults.cfFontId = fontId;
-      }
-      if (explicitHeight !== undefined && explicitHeight > 0) {
-        labelConfig.defaultFontHeight = explicitHeight;
-      }
-      if (explicitWidth !== undefined && explicitWidth >= 0) {
-        labelConfig.defaultFontWidth = explicitWidth;
       }
     },
 
@@ -425,7 +426,7 @@ export function createFieldHandlers(
     // a role boundary (tilde, delimiter) and end up parsing nothing.
     CC(_, rest) {
       const c = rest[0];
-      if (!c || c <= " " || c === "\x7F" || c === s.format.tildeChar || c === s.format.delimiterChar) {
+      if (!acceptsPrefixRemap(c, s.format.tildeChar, s.format.delimiterChar)) {
         s.result.partialCmds.add("^CC");
         return;
       }
@@ -434,7 +435,7 @@ export function createFieldHandlers(
     // ^CT<char> / ~CT<char>: change the tilde-form prefix (default ~).
     CT(_, rest) {
       const c = rest[0];
-      if (!c || c <= " " || c === "\x7F" || c === s.format.caretChar || c === s.format.delimiterChar) {
+      if (!acceptsPrefixRemap(c, s.format.caretChar, s.format.delimiterChar)) {
         s.result.partialCmds.add("^CT");
         return;
       }
@@ -443,7 +444,7 @@ export function createFieldHandlers(
     // ^CD<char> / ~CD<char>: change the parameter delimiter (default ,).
     CD(_, rest) {
       const c = rest[0];
-      if (!c || c <= " " || c === "\x7F" || c === s.format.caretChar || c === s.format.tildeChar) {
+      if (!acceptsPrefixRemap(c, s.format.caretChar, s.format.tildeChar)) {
         s.result.partialCmds.add("^CD");
         return;
       }

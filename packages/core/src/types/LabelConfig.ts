@@ -54,6 +54,36 @@ export const PRINT_ORIENTATION_VALUES = ['N', 'I'] as const;
 export type PrintOrientation = (typeof PRINT_ORIENTATION_VALUES)[number];
 export const isPrintOrientation = makeEnumGuard(PRINT_ORIENTATION_VALUES);
 
+/** ^JM: B halves the print density, so every stream dot value lives in the
+ *  halved scale; A restores full density. Model dots stay as-stream, the
+ *  effectiveDpmm seam applies the interpretation. */
+export const JM_DENSITY_VALUES = ['A', 'B'] as const;
+export type JmDensity = (typeof JM_DENSITY_VALUES)[number];
+export const isJmDensity = makeEnumGuard(JM_DENSITY_VALUES);
+
+/** Density a `^JM` parameter tail declares, or undefined if invalid. Shared by
+ *  parser and export so both agree where the value ends; `raw` runs to the next
+ *  command, carrying further slots and the line break of multi-line ZPL. */
+export function jmDensityOf(raw: string, delimiter: string): JmDensity | undefined {
+  const v = (raw.split(delimiter)[0] ?? '').trim().toUpperCase();
+  // A bare ^JM is full density (spec p269).
+  if (v === '') return 'A';
+  return isJmDensity(v) ? v : undefined;
+}
+
+/** The density dot values are interpreted in: head density, halved under ^JMB.
+ *  Every mm<->dots and dots<->px boundary must use this instead of raw dpmm;
+ *  exceptions are physical head selectors (Labelary URL, rescale) and the printer-preview raster. */
+export function effectiveDpmm(label: { dpmm: number; jmDensity?: JmDensity }): number {
+  return label.jmDensity === 'B' ? label.dpmm / 2 : label.dpmm;
+}
+
+/** The label under a per-page density override. Returns `label` itself when the
+ *  override is absent or already the label's, so callers can memo on identity. */
+export function withJmDensity(label: LabelConfig, jmDensity: JmDensity | undefined): LabelConfig {
+  return jmDensity === undefined || jmDensity === label.jmDensity ? label : { ...label, jmDensity };
+}
+
 /** Print densities Zebra ships (152/203/300/600 dpi). The label settings UI
  *  offers exactly these; the ZPL geometry sidecar validates against the set. */
 export const DPMM_VALUES = [6, 8, 12, 24] as const;
@@ -68,6 +98,8 @@ export const DARKNESS_INSTANT_RANGE = { min: 0, max: 30 } as const;
 /** ^ML: maximum label length, in dots. Zebra spec accepts 1..32000. */
 export const MAX_LABEL_LENGTH_RANGE = { min: 1, max: 32000 } as const;
 export const SLEW_DOT_ROWS_RANGE = { min: 0, max: 32000 } as const;
+/** ^LT y range (Zebra -120..+120); shared with the density rescale clamp. */
+export const LABEL_TOP_RANGE = { min: -120, max: 120 } as const;
 
 /** ^MU b,c dpi tokens; 200 = 203 dpi; ratio drives resampling. */
 export const MU_DPI_VALUES = [150, 200, 300, 600] as const;
@@ -165,7 +197,7 @@ export const labelConfigSchema = z.object({
   /** ^LH y; see labelHomeX. */
   labelHomeY: z.number().int().min(0).optional(),
   /** ^LT y; Zebra -120..+120. */
-  labelTop: z.number().int().min(-120).max(120).optional(),
+  labelTop: intInRange(LABEL_TOP_RANGE).optional(),
   printSpeed: intInRange(SPEED_RANGE).optional(),
   /** ^PR p2: slew (inter-label) speed. */
   slewSpeed: intInRange(SPEED_RANGE).optional(),
@@ -200,6 +232,8 @@ export const labelConfigSchema = z.object({
     .optional(),
   /** ^MU b,c; set only when both slots arrived valid. */
   muResampling: muResamplingSchema.optional(),
+  /** ^JM: dot-density interpretation of this design's dot values. */
+  jmDensity: z.enum(JM_DENSITY_VALUES).optional(),
   /** ^SO2: secondary clock offset (`«clock2:T»` markers resolve through this). */
   secondaryClockOffset: z.preprocess(coerceEmptyOffset, clockOffsetSchema.optional()),
   /** ^SO3: tertiary clock offset (`«clock3:T»` markers resolve through this). */
@@ -216,25 +250,120 @@ export const labelConfigSchema = z.object({
 
 export type LabelConfig = z.infer<typeof labelConfigSchema>;
 
+/** Fields holding a plain number, the only ones a density rescale may scale. */
+export type NumericLabelConfigField = {
+  [K in keyof LabelConfig]-?: NonNullable<LabelConfig[K]> extends number ? K : never;
+}[keyof LabelConfig];
+
+export interface LabelConfigFieldSpec {
+  /** perLabel = print override `resetPerLabelConfig` clears back to unset;
+   *  design = geometry or document state a reset must keep. */
+  scope: 'design' | 'perLabel';
+  /** A change reaches the emitted ZPL. false = design-time editor aid, so a
+   *  patch touching only such fields keeps a page overlay's bytes valid. */
+  emits: boolean;
+  /** `always` = layout dots, scaled on a dpmm swap and on ^JM; `jmOnly` =
+   *  printer-persistent dots that keep their value across a head swap but are
+   *  reinterpreted by ^JM; `never` = physical head dots and non-dot values. */
+  scales: 'never' | 'always' | 'jmOnly';
+  /** The import fold keeps this inside its own ^XA block instead of letting it
+   *  fall through to later blocks. Orthogonal to `scope`. */
+  perFormat?: true;
+  /** Spec bounds the scaled value is clamped into. */
+  clamp?: { readonly min: number; readonly max: number };
+  /** Post-scale floor. */
+  floor?: number;
+}
+
+/** Non-numeric fields cannot scale, so the table may not claim they do. */
+type SpecFor<K extends keyof LabelConfig> = K extends NumericLabelConfigField
+  ? LabelConfigFieldSpec
+  : LabelConfigFieldSpec & { scales: 'never' };
+
+/** One row per LabelConfig field (scope, emits, scale); every consumer derives
+ *  from here. The satisfies `-?` is load-bearing: LabelConfig's keys are
+ *  optional, so without it the mapped type would accept a table omitting a field. */
+export const LABEL_CONFIG_FIELDS = {
+  widthMm: { scope: 'design', emits: true, scales: 'never' },
+  heightMm: { scope: 'design', emits: true, scales: 'never' },
+  // Design geometry: clearing or rescaling it would reinterpret every stored
+  // dot value, so it is neither a per-label override nor itself scaled.
+  dpmm: { scope: 'design', emits: true, scales: 'never' },
+  safeAreaMm: { scope: 'design', emits: false, scales: 'never' },
+  emit1dZJustify: { scope: 'design', emits: true, scales: 'never' },
+  printQuantity: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
+  pauseCount: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
+  replicates: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
+  overridePauseCount: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
+  mediaMode: { scope: 'perLabel', emits: true, scales: 'never' },
+  labelShift: { scope: 'perLabel', emits: true, scales: 'jmOnly' },
+  labelHomeX: { scope: 'perLabel', emits: true, scales: 'always', floor: 0 },
+  labelHomeY: { scope: 'perLabel', emits: true, scales: 'always', floor: 0 },
+  labelTop: { scope: 'perLabel', emits: true, scales: 'jmOnly', clamp: LABEL_TOP_RANGE },
+  printSpeed: { scope: 'perLabel', emits: true, scales: 'never' },
+  slewSpeed: { scope: 'perLabel', emits: true, scales: 'never' },
+  backfeedSpeed: { scope: 'perLabel', emits: true, scales: 'never' },
+  darkness: { scope: 'perLabel', emits: true, scales: 'never' },
+  instantDarkness: { scope: 'perLabel', emits: true, scales: 'never' },
+  mediaType: { scope: 'perLabel', emits: true, scales: 'never' },
+  printOrientation: { scope: 'perLabel', emits: true, scales: 'never' },
+  mirror: { scope: 'perLabel', emits: true, scales: 'never' },
+  defaultFontId: { scope: 'design', emits: true, scales: 'never' },
+  defaultFontHeight: { scope: 'design', emits: true, scales: 'always', floor: 1 },
+  defaultFontWidth: { scope: 'design', emits: true, scales: 'always', floor: 0 },
+  customFonts: { scope: 'design', emits: true, scales: 'never' },
+  mediaTracking: { scope: 'perLabel', emits: true, scales: 'never' },
+  // ZD230-verified physical head dots, so a density change leaves them alone.
+  maxLabelLength: { scope: 'perLabel', emits: true, scales: 'never' },
+  mediaFeedPowerUp: { scope: 'perLabel', emits: true, scales: 'never' },
+  mediaFeedHeadClose: { scope: 'perLabel', emits: true, scales: 'never' },
+  suppressBackfeed: { scope: 'perLabel', emits: true, scales: 'never' },
+  backfeedSequence: { scope: 'perLabel', emits: true, scales: 'never' },
+  muResampling: { scope: 'design', emits: true, scales: 'never' },
+  // Persists on the wire, but folding it back would retroactively rescale
+  // earlier pages, so each page's own labelConfig carries it.
+  jmDensity: { scope: 'design', emits: true, scales: 'never', perFormat: true },
+  secondaryClockOffset: { scope: 'design', emits: true, scales: 'never' },
+  tertiaryClockOffset: { scope: 'design', emits: true, scales: 'never' },
+  // Persists on the wire; folding it back would bleed the bitmap into earlier
+  // pages under ^MCN.
+  mapClear: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
+  slewDotRows: { scope: 'perLabel', emits: true, scales: 'jmOnly', perFormat: true, clamp: SLEW_DOT_ROWS_RANGE },
+  slewToHome: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
+  programmablePause: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
+} as const satisfies { [K in keyof LabelConfig]-?: SpecFor<K> };
+
+const FIELD_ENTRIES = Object.entries(LABEL_CONFIG_FIELDS) as [
+  keyof LabelConfig,
+  LabelConfigFieldSpec,
+][];
+
+const fieldsWhere = (
+  pred: (spec: LabelConfigFieldSpec) => boolean,
+): readonly (keyof LabelConfig)[] =>
+  FIELD_ENTRIES.filter(([, spec]) => pred(spec)).map(([key]) => key);
+
+/** Widened row lookup; the literal-typed table itself cannot be indexed by a
+ *  key union because the optional axes differ per row. */
+export const labelConfigSpec = (key: keyof LabelConfig): LabelConfigFieldSpec =>
+  LABEL_CONFIG_FIELDS[key];
+
+/** Numeric fields a density rescale scales in the given mode. */
+export const scaledLabelConfigFields = (
+  mode: 'always' | 'jmOnly',
+): readonly NumericLabelConfigField[] =>
+  FIELD_ENTRIES.filter(([, spec]) => spec.scales === mode).map(
+    ([key]) => key as NumericLabelConfigField,
+  );
+
 /** Per-label ZPL overrides the printer-modal perLabel tabs edit; the store's
  *  `resetPerLabelConfig` clears exactly these back to unset (= printer default,
- *  not emitted). Design-time fields (size, dpmm, fonts) are not print overrides.
- *  Lives here so the `keyof LabelConfig` check sits next to the schema, and a
- *  leaf-module home keeps the slice and selectors that read it cycle-free. */
-export const PER_LABEL_ZPL_FIELDS = [
-  'mediaMode', 'mediaType', 'mediaTracking', 'maxLabelLength',
-  'mediaFeedPowerUp', 'mediaFeedHeadClose', 'suppressBackfeed', 'backfeedSequence',
-  'printOrientation', 'mirror', 'printSpeed', 'slewSpeed', 'backfeedSpeed',
-  'darkness', 'instantDarkness',
-  'labelHomeX', 'labelHomeY', 'labelTop', 'labelShift',
-  'printQuantity', 'pauseCount', 'replicates', 'overridePauseCount',
-  'mapClear', 'slewDotRows', 'slewToHome', 'programmablePause',
-] as const satisfies readonly (keyof LabelConfig)[];
+ *  not emitted). */
+export const PER_LABEL_ZPL_FIELDS = fieldsWhere((s) => s.scope === 'perLabel');
 
 /** Fields the import fold scopes to their own ^XA block; the rest is
- *  persistent state a later block may extend. ^MC persists on the wire
- *  (p300), but folding a later ^MCN back would leak its bitmap into page two. */
-export const PER_FORMAT_ZPL_FIELDS = [
-  'printQuantity', 'pauseCount', 'replicates', 'overridePauseCount',
-  'slewDotRows', 'slewToHome', 'programmablePause', 'mapClear',
-] as const satisfies readonly (keyof LabelConfig)[];
+ *  persistent state a later block may extend. */
+export const PER_FORMAT_ZPL_FIELDS = fieldsWhere((s) => s.perFormat === true);
+
+/** Config keys that never reach emitted ZPL. */
+export const NON_EMITTING_CONFIG_FIELDS = fieldsWhere((s) => !s.emits);

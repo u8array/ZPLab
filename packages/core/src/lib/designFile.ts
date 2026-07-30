@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { labelConfigSchema, type LabelConfig } from "../types/LabelConfig";
+import { JM_DENSITY_VALUES, labelConfigSchema, type JmDensity, type LabelConfig } from "../types/LabelConfig";
 import { labelObjectBaseSchema } from "../types/LabelObject";
 import {
   variableSchema,
@@ -9,7 +9,8 @@ import {
 } from "../types/Variable";
 import { dbSourceRefSchema, type DbSourceRef } from "../types/DataSource";
 import type { LabelObject } from "../types/Group";
-import { blockOverlaySchema, type BlockOverlay } from "./zplOverlay/overlay";
+import { blockOverlaySchema, overlayText, type BlockOverlay } from "./zplOverlay/overlay";
+import { reconstructLegacyBlockHeads } from "./zplHeadScan";
 import { visitLeavesInPages, foldSerialLeaf, bindSingleMarkerLeaf, sanitiseVariableNames, safeUniqueNameById } from "./objectTree";
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from "./reverseBacking";
 import { ok, err, type Result } from "./result";
@@ -19,10 +20,10 @@ import { ok, err, type Result } from "./result";
  *  migrator below and dispatch on `schemaVersion` in `parseDesignFile`.
  *  The persist middleware in `labelStore` has its own independent
  *  version for localStorage state; do not conflate. */
-export const CURRENT_DESIGN_SCHEMA_VERSION = 3;
+export const CURRENT_DESIGN_SCHEMA_VERSION = 4;
 
 export type DesignFileError = "parse_error" | "invalid_schema";
-export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay }
+export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity }
 export interface DesignFile {
   label: LabelConfig;
   pages: DesignFilePage[];
@@ -64,10 +65,13 @@ const labelObjectSchema: z.ZodType<unknown> = z.union([groupSchema, leafSchema])
 const pageSchema = z.object({
   objects: z.array(labelObjectSchema),
   overlay: blockOverlaySchema.optional().catch(undefined),
+  jmDensity: z.enum(JM_DENSITY_VALUES).optional(),
 });
 
 const designFileSchema = z.object({
-  schemaVersion: z.literal(3),
+  // v3 predates ^JM: it loads through the legacy JM reconstruction. v4 carries
+  // the persisted density fields; both are read, anything else is rejected.
+  schemaVersion: z.union([z.literal(3), z.literal(4)]),
   label: labelConfigSchema,
   pages: z.array(pageSchema),
   variables: z.array(variableSchema).optional(),
@@ -93,6 +97,7 @@ export function parseDesignFile(text: string): Result<DesignFile, DesignFileErro
   const parsed = designFileSchema.safeParse(json);
   if (parsed.success) {
     const pages = parsed.data.pages as unknown as DesignFilePage[];
+    reconstructLegacyJmDensity(parsed.data.label, pages);
     const variables = parsed.data.variables ?? [];
     // Enforce the marker-safe name invariant: an old/foreign name like `clock:Y`
     // can't be a single-bind marker, so rename offenders + rewrite their markers.
@@ -185,6 +190,31 @@ function migrateSingleBindToMarker(json: unknown): void {
   const nameById = safeUniqueNameById(vars);
   visitLeavesInPages(j.pages, (leaf) => bindSingleMarkerLeaf(leaf, nameById));
   j.schemaVersion = 3;
+}
+
+/** Payloads without ^JM modeling carried a head ^JM only in the raw overlay
+ *  bytes, which a full regen would drop. Reconstructs the fold a fresh import
+ *  would yield; no-op once any label/page density or recorded head is present. */
+export function reconstructLegacyJmDensity(
+  label: { jmDensity?: JmDensity },
+  pages: DesignFilePage[],
+): void {
+  if (label.jmDensity !== undefined) return;
+  for (const page of pages) {
+    if (page.jmDensity !== undefined || page.overlay?.head) return;
+  }
+  const heads = reconstructLegacyBlockHeads(
+    pages.map((page) => (page.overlay ? overlayText(page.overlay) : undefined)),
+  );
+  const anchorIndex = pages.findIndex((p) => p.objects.length > 0);
+  if (anchorIndex >= 0) label.jmDensity = heads[anchorIndex]?.density;
+  const designJm: JmDensity = label.jmDensity ?? "A";
+  pages.forEach((page, i) => {
+    const { density, head } = heads[i] ?? {};
+    const blockJm: JmDensity = density ?? "A";
+    if (blockJm !== designJm) page.jmDensity = blockJm;
+    if (head && page.overlay) page.overlay.head = head;
+  });
 }
 
 interface SerializedDesign {

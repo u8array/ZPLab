@@ -15,8 +15,8 @@ import type { BoundingBoxDots, ObjectBoundsCtx } from "@zplab/core/lib/objectBou
 import type { DesignResponse } from "./appBridge.js";
 import { computeOverlaps, leafBoxesDots, MAX_OVERLAPS, type OverlapDots } from "@zplab/core/lib/objectOverlap";
 import { getEntry, ObjectRegistry } from "@zplab/core/registry";
-import { exportableLeaves, type LabelObject, type Page } from "@zplab/core/types/Group";
-import { DPMM_VALUES, isDpmm, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
+import { exportableLeaves, pageLabelConfig, type LabelObject, type Page } from "@zplab/core/types/Group";
+import { DPMM_VALUES, isDpmm, type Dpmm, type JmDensity, type LabelConfig } from "@zplab/core/types/LabelConfig";
 import type { PreflightKind, PreflightSeverity } from "@zplab/core/lib/preflight";
 import type { Variable } from "@zplab/core/types/Variable";
 
@@ -185,15 +185,17 @@ export interface PreflightWarning {
 
 interface PageLike {
   objects: LabelObject[];
+  jmDensity?: JmDensity;
 }
 
-/** Run a per-page report over every page of a design. */
+/** Run a per-page report over every page of a design. Pages with a ^JM
+ *  override get their density folded into the label they are judged against. */
 function perPage<T>(
   pages: PageLike[],
   label: LabelConfig,
   fn: (objects: LabelObject[], label: LabelConfig, pageIndex: number) => T[],
 ): T[] {
-  return pages.flatMap((page, i) => fn(page.objects, label, i));
+  return pages.flatMap((page, i) => fn(page.objects, pageLabelConfig(label, page), i));
 }
 
 function preflightOf(
@@ -266,7 +268,7 @@ function geometryFor(
       truncated = true;
       return;
     }
-    const boxes = leafBoxesDots(leaves, { label, measured });
+    const boxes = leafBoxesDots(leaves, { label: pageLabelConfig(label, page), measured });
     for (const b of boxes) {
       bounds.push({ pageIndex, objectId: b.id, ...roundRect(b.box), approx: b.approx });
     }
@@ -413,14 +415,23 @@ function oversizeError(zpl: string): ToolError | null {
 }
 
 /** Reject a parsed stream the single-label draft model can't represent:
- *  divergent per-block ^PW/^LL, or too many objects/pages. */
+ *  divergent per-block ^PW/^LL or ^JM, or too many objects/pages. */
 function importRejection(imported: ZplImportResult): ToolError | null {
   if (imported.mixedPageGeometry) {
+    const geo = imported.report.findings.filter((f) => f.kind === "mixedPageGeometry");
+    const hasJm = geo.some((f) => f.cause === "jm");
+    const hasSize = geo.some((f) => f.cause === "size");
+    const cause =
+      hasJm && !hasSize
+        ? "set different ^JM density modes"
+        : hasSize && !hasJm
+          ? "set different ^PW/^LL sizes"
+          : "set different ^PW/^LL sizes or ^JM density modes";
     return {
       ok: false,
       errors: [
-        "^XA blocks set different ^PW/^LL sizes, which a single-label draft cannot " +
-          "represent; split the stream into one label per size.",
+        `^XA blocks ${cause}, which a single-label draft cannot represent; ` +
+          "split the stream into one label per block.",
       ],
     };
   }

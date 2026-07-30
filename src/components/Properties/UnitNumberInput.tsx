@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useLabelStore } from '../../store/labelStore';
+import { useLabelStore, currentPageLabel } from '../../store/labelStore';
 import { inputCls } from './styles';
 import { FieldLabel } from './ZplCmd';
 import { mmToUnit, unitToMm, unitLabel, unitStep } from '@zplab/core/lib/units';
 import { dotsToMm, mmToDots } from '@zplab/core/lib/coordinates';
+import { effectiveDpmm } from '@zplab/core/types/LabelConfig';
 
 interface UnitNumberInputProps {
   label: string;
@@ -20,6 +21,10 @@ interface UnitNumberInputProps {
   zplCmd?: string;
   /** Replaces the cell layout (e.g. fieldGridCell); omit for the default column. */
   className?: string;
+  /** Density the dots are stored in: object props live in the current page's
+   *  scale, label/design fields in the design's own (a page ^JM must not
+   *  reinterpret them). Required so every call site decides explicitly. */
+  scope: 'page' | 'design';
 }
 
 /**
@@ -39,9 +44,12 @@ export function UnitNumberInput({
   disabled,
   zplCmd,
   className,
+  scope,
 }: UnitNumberInputProps) {
   const unit = useLabelStore((s) => s.canvasSettings.unit);
-  const dpmm = useLabelStore((s) => s.label.dpmm);
+  const dpmm = useLabelStore((s) =>
+    effectiveDpmm(scope === 'design' ? s.label : currentPageLabel(s)),
+  );
   const toUnit = (dots: number) => mmToUnit(dotsToMm(dots, dpmm), unit);
   // null = not editing; show the canonical store value. Otherwise show the raw
   // keystrokes verbatim so the input never fights the user mid-entry.

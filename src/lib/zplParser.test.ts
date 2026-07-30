@@ -405,9 +405,9 @@ describe('parseZPL — ^BC Code 128', () => {
   });
 
   it('keeps barcodes on later blocks after a page reset (live field state)', () => {
-    // resetFormatScopedState reassigns s.field at each page close; a stale
-    // destructured alias made every ^B* handler from block 2 on write a dead
-    // object, degrading the barcode to text.
+    // resetFormatScopedState reassigns s.field at each page close; ^B* handlers
+    // must read the live field, not a destructured alias from before the reset,
+    // or blocks after the first render as bare text.
     const r = parseZPL(
       '^XA^FO10,10^BY2^BCN,100,N,N,N^FD123^FS^XZ^XA^FO20,20^BY2^BCN,80,N,N,N^FD456^FS^XZ',
       8,

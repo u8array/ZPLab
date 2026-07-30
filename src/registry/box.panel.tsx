@@ -25,6 +25,7 @@ export const boxPanel: ObjectTypeUi<BoxProps> = {
         <div className={`grid grid-cols-2 ${fieldGridCols}`}>
           <UnitNumberInput
             label={t.registry.box.width}
+            scope="page"
             valueDots={p.width}
             minDots={1}
             onChangeDots={(width) => onChange({ width })}
@@ -33,6 +34,7 @@ export const boxPanel: ObjectTypeUi<BoxProps> = {
           />
           <UnitNumberInput
             label={t.registry.box.height}
+            scope="page"
             valueDots={p.height}
             minDots={1}
             onChangeDots={(height) => onChange({ height })}
@@ -57,6 +59,7 @@ export const boxPanel: ObjectTypeUi<BoxProps> = {
         {!p.filled && (
           <UnitNumberInput
             label={t.registry.box.thickness}
+            scope="page"
             valueDots={p.thickness}
             minDots={1}
             onChangeDots={(thickness) => onChange({ thickness })}

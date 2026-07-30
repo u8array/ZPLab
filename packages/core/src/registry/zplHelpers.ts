@@ -1,4 +1,5 @@
 import type { LabelObjectBase } from "../types/LabelObject";
+import { effectiveDpmm, type JmDensity } from "../types/LabelConfig";
 import type { ZplEmitContext } from "../types/ZplEmit";
 import { hasTemplateMarkers, markersToEmbeds } from "../lib/fnTemplate";
 import { hasClockMarkers, markersToTokens } from "../lib/fcTemplate";
@@ -33,10 +34,13 @@ export function verifiedZJustifyCombo(obj: LabelObjectBase & { type: string }): 
  *  (importing BARCODE_1D_TYPES here would cycle the registry). */
 export function printerAnchoredX(
   obj: LabelObjectBase & { type: string },
-  label: { emit1dZJustify?: boolean; dpmm?: number },
+  label: { emit1dZJustify?: boolean; dpmm?: number; jmDensity?: JmDensity },
 ): number | null {
   if (!label.emit1dZJustify || !verifiedZJustifyCombo(obj)) return null;
-  const fp = measureFootprintDots(obj as LabelObject, label.dpmm);
+  const fp = measureFootprintDots(
+    obj as LabelObject,
+    label.dpmm === undefined ? undefined : effectiveDpmm({ dpmm: label.dpmm, jmDensity: label.jmDensity }),
+  );
   return fp ? obj.x + fp.w : null;
 }
 

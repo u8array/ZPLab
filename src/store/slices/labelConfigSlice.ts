@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import { PER_LABEL_ZPL_FIELDS, type LabelConfig } from '@zplab/core/types/LabelConfig';
+import { PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { Page } from '@zplab/core/types/Group';
 import type { Variable, ColumnMapping } from '@zplab/core/types/Variable';
 import type { DbSourceRef } from '@zplab/core/types/DataSource';
@@ -9,7 +9,7 @@ import { parseDesignFile, designFileErrors } from '@zplab/core/lib/designFile';
 import { selectPreviewLocksEditor } from '../labelStore.selectors';
 import { configPatchAffectsEmit } from '../labelStore.internals';
 import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
-import { rescaleDesign } from '../../lib/densityRescale';
+import { rescaleDesign, rescaleParamsFor } from '../../lib/densityRescale';
 import type { LabelState } from '../labelStore';
 
 /** zundo attaches `.temporal` to the store api; reach it through the injected
@@ -44,8 +44,12 @@ export interface LabelConfigSlice {
    *  Switches focus to the first appended page. */
   appendPages: (pages: Page[]) => void;
   /** Change print density and proportionally rescale every dot-valued field so
-   *  the physical size is preserved (one undo step). */
-  rescaleDensity: (toDpmm: number) => void;
+   *  the physical size is preserved (one undo step). `configPatch` stamps extra
+   *  label fields with the same commit (a preset also carries the new size). */
+  rescaleDensity: (toDpmm: number, configPatch?: Partial<LabelConfig>) => void;
+  /** Switch the ^JM mode and rescale dots by the effective-density ratio so
+   *  the physical size is preserved; a no-ratio switch (A vs unset) just sets. */
+  rescaleJmDensity: (jmDensity: JmDensity | undefined) => void;
 }
 
 export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfigSlice> = (set, get, api) => ({
@@ -140,13 +144,27 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       };
     }),
 
-  rescaleDensity: (toDpmm) =>
+  rescaleDensity: (toDpmm, configPatch) =>
     set((state) => {
       if (selectPreviewLocksEditor(state)) return {};
       if (toDpmm === state.label.dpmm) return {};
+      const p = rescaleParamsFor({ kind: 'dpmm', toDpmm, configPatch }, state.label);
       // Geometry changes, so the captured overlay bytes no longer match; drop
       // them so the rescaled pages regenerate from the model.
-      const { pages, label } = rescaleDesign(state.pages, state.label, state.label.dpmm, toDpmm);
+      const { pages, label } = rescaleDesign(state.pages, state.label, p.fromEff, p.toEff, p.patch, p.includeCalibrationFields);
+      return { label, pages: dropPageOverlays(pages) };
+    }),
+
+  rescaleJmDensity: (jmDensity) =>
+    set((state) => {
+      if (selectPreviewLocksEditor(state)) return {};
+      const p = rescaleParamsFor({ kind: 'jm', toJm: jmDensity }, state.label);
+      // Emission changes either way (^JMA vs none), so overlays go stale
+      // even without a ratio change; mirror setLabelConfig.
+      if (p.fromEff === p.toEff) {
+        return { label: { ...state.label, jmDensity }, pages: dropPageOverlays(state.pages) };
+      }
+      const { pages, label } = rescaleDesign(state.pages, state.label, p.fromEff, p.toEff, p.patch, p.includeCalibrationFields);
       return { label, pages: dropPageOverlays(pages) };
     }),
 });

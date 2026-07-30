@@ -107,6 +107,7 @@ export function TextModeSection({
           <div className={`grid grid-cols-2 ${fieldGridCols}`}>
             <UnitNumberInput
               label={t.registry.text.blockWidth}
+              scope="page"
               valueDots={p.blockWidth ?? 0}
               minDots={1}
               onChangeDots={(blockWidth) => onChange({ blockWidth })}
@@ -115,6 +116,7 @@ export function TextModeSection({
             />
             <UnitNumberInput
               label={t.registry.text.blockHeight}
+              scope="page"
               valueDots={p.blockHeight ?? 0}
               minDots={1}
               onChangeDots={(blockHeight) => onChange({ blockHeight })}

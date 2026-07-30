@@ -11,7 +11,7 @@ import {
 } from "@zplab/core/lib/objectBounds";
 import { measuredBoundsMap } from "../measuredBoundsCache";
 import { expandSelection, findObjectById, getAllLeaves } from "@zplab/core/types/Group";
-import { useLabelStore, currentObjects, type ObjectChanges } from "../../../store/labelStore";
+import { useLabelStore, currentObjects, currentPageLabel, type ObjectChanges } from "../../../store/labelStore";
 
 /** Everything the controller needs from LabelCanvas; mirrors the param style of
  *  useKonvaTransformer so move and resize sit at the same layer. */
@@ -134,7 +134,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
     const state = useLabelStore.getState();
     const objs = currentObjects(state);
     if (!findObjectById(objs, primaryId)) return;
-    const ctx = { label: state.label, measured: measuredBoundsMap() };
+    const ctx = { label: currentPageLabel(state), measured: measuredBoundsMap() };
 
     // Drag the whole movable selection when the grabbed node is part of a 2+
     // selection; otherwise just the grabbed object.
@@ -165,7 +165,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
       const b = objectBoundsDots(leaf, ctx);
       others.push({ id: leaf.id, ...b });
     }
-    const labelDots = labelSnapRectDots(state.label);
+    const labelDots = labelSnapRectDots(currentPageLabel(state));
 
     dragRef.current = {
       ids,

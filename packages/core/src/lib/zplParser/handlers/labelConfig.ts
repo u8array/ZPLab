@@ -1,8 +1,9 @@
 import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, MAX_LABEL_LENGTH_RANGE, SLEW_DOT_ROWS_RANGE, SPEED_RANGE, isBackfeedPercent, isBackfeedSequence, isMediaFeedMode, isMediaMode, isMediaTracking, isMediaType, isPrintOrientation } from "../../../types/LabelConfig";
 import { parseIntOrUndef } from "../../inputParse";
 import { isYesNo } from "../../../types/typeHelpers";
-import type { ParserState } from "../context";
-import { dotsFor, firstChar, inRange, int, strParam } from "../helpers";
+import { dotsToMm } from "../../coordinates";
+import { deriveUnitScale, type ParserState } from "../context";
+import { dotsFor, firstChar, inRange, int, intDotsOrUndef, strParam } from "../helpers";
 import type { Handler } from "../types";
 
 /** ^PQ extended params (pauseCount, replicates); Zebra spec caps at
@@ -15,15 +16,19 @@ export function createLabelConfigHandlers(
   dpmm: number,
 ): Record<string, Handler> {
   const labelConfig = s.result.labelConfig;
-  const { dots, dotsOrUndef } = dotsFor(s);
+  const { dotsOrUndef } = dotsFor(s);
+  // ^PW/^LL/^ML are physical head dots, ^JM-independent (ZD230-verified): omit
+  // jmDensity from the scale so the un-halved ^MU multiplier applies.
+  const physDots = (raw: string | undefined): number | undefined =>
+    intDotsOrUndef(raw, deriveUnitScale({ muMode: s.format.muMode }, dpmm));
   return {
     PW(_, rest) {
-      const w = dots(rest);
-      if (w > 0) labelConfig.widthMm = Math.round((w / dpmm) * 10) / 10;
+      const w = physDots(rest);
+      if (w !== undefined && w > 0) labelConfig.widthMm = dotsToMm(w, dpmm);
     },
     LL(_, rest) {
-      const h = dots(rest);
-      if (h > 0) labelConfig.heightMm = Math.round((h / dpmm) * 10) / 10;
+      const h = physDots(rest);
+      if (h !== undefined && h > 0) labelConfig.heightMm = dotsToMm(h, dpmm);
     },
     PQ(p) {
       const qty = int(p[0], 0);
@@ -47,8 +52,8 @@ export function createLabelConfigHandlers(
       if (isMediaMode(mode)) labelConfig.mediaMode = mode;
     },
     LS(_, rest) {
-      const shift = dots(rest);
-      if (shift !== 0) labelConfig.labelShift = shift;
+      const d = dotsOrUndef(rest);
+      if (d !== undefined && d !== 0) labelConfig.labelShift = d;
     },
     PR(p) {
       const print = inRange(parseIntOrUndef(p[0]), SPEED_RANGE);
@@ -70,8 +75,9 @@ export function createLabelConfigHandlers(
       const v = strParam(p[0]);
       if (isYesNo(v)) labelConfig.mapClear = v;
     },
+    // Dot rows, so ^MU-scaled and ^JM-effective like ^LS/^LT (not physical).
     PF(p) {
-      const v = inRange(parseIntOrUndef(p[0]), SLEW_DOT_ROWS_RANGE);
+      const v = inRange(dotsOrUndef(p[0]), SLEW_DOT_ROWS_RANGE);
       if (v !== undefined) labelConfig.slewDotRows = v;
     },
     // ^PH/^PP take no parameters; the tilde forms never reach these handlers
@@ -91,7 +97,9 @@ export function createLabelConfigHandlers(
       if (isMediaTracking(v)) labelConfig.mediaTracking = v;
     },
     ML(p) {
-      const v = inRange(dotsOrUndef(p[0]), MAX_LABEL_LENGTH_RANGE);
+      const d = physDots(p[0]);
+      if (d === undefined) return;
+      const v = inRange(d, MAX_LABEL_LENGTH_RANGE);
       if (v !== undefined) labelConfig.maxLabelLength = v;
     },
     MF(p) {

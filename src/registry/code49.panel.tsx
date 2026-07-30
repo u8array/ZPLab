@@ -32,6 +32,7 @@ export const code49Panel: ObjectTypeUi<Code49Props> = {
           <div className={`grid grid-cols-2 ${fieldGridCols}`}>
             <UnitNumberInput
               label={loc.height}
+              scope="page"
               valueDots={p.height}
               minDots={code49MinHeight(p.moduleWidth)}
               maxDots={code49MaxHeight(p.moduleWidth)}

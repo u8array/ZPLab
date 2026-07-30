@@ -7,7 +7,9 @@ import { PRINTER_PROFILE_FIELDS, printerProfileSchema } from '@zplab/core/types/
 import { visitLeavesInPages, foldSerialLeaf, bindSingleMarkerLeaf, sanitiseVariableNames, safeUniqueNameById } from '@zplab/core/lib/objectTree';
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from '@zplab/core/lib/reverseBacking';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
-import type { CustomFontMapping, LabelConfig } from '@zplab/core/types/LabelConfig';
+import { reconstructLegacyJmDensity } from '@zplab/core/lib/designFile';
+import type { DesignFilePage } from '@zplab/core/lib/designFile';
+import type { CustomFontMapping, JmDensity, LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { LabelObject } from '@zplab/core/types/Group';
 import {
   createPrinterProfileSlice,
@@ -47,6 +49,7 @@ export type LabelState =
 
 export {
   currentObjects,
+  currentPageLabel,
   canCallLabelary,
   selectLabelaryNoticeRequired,
   selectEffectivePreviewProvider,
@@ -304,6 +307,14 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
   // can't represent). Renames offenders + rewrites their markers in place.
   if (Array.isArray(s.variables) && Array.isArray(s.pages)) {
     sanitiseVariableNames(s.variables as { name?: unknown; fnNumber?: unknown }[], s.pages);
+  }
+
+  // Unconditional (not version-gated): main-era sessions persist at the current
+  // version but carry legacy overlays whose head ^JM rode only in the bytes, so
+  // a full regen would drop it. Latch the density back as a page override.
+  if (Array.isArray(s.pages)) {
+    const label = s.label as { jmDensity?: JmDensity } | undefined;
+    if (label) reconstructLegacyJmDensity(label, s.pages as DesignFilePage[]);
   }
 
   // Re-validate the rehydrated profile so a legacy snapshot that

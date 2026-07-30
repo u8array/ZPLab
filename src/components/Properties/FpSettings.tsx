@@ -85,6 +85,7 @@ export function FpSettings({ props: p, onChange }: Props) {
         <div>
           <UnitNumberInput
             label={t.registry.text.fpCharGap}
+            scope="page"
             valueDots={p.fpCharGap}
             minDots={0}
             allowUnset

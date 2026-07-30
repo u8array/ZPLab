@@ -1,10 +1,10 @@
-import { isMuDpi } from "../../../types/LabelConfig";
-import type { ParserState } from "../context";
+import { isMuDpi, jmDensityOf } from "../../../types/LabelConfig";
+import { deriveUnitScale, type ParserState } from "../context";
 import type { Handler } from "../types";
 
-/** ^MU units-of-measure handler. Owns one format-state slice
- *  (`unitScale`) and one labelConfig slice (`muResampling`); kept
- *  together because both express the same command's intent. */
+/** ^MU / ^JM handlers. ^MU owns the dot-scale of body values; the ^JM density
+ *  is resolved by the ^XA format-head lookahead (spec p269), so this ^JM handler
+ *  only validates and surfaces the values the lookahead ignores. */
 export function createUnitsHandler(s: ParserState, dpmm: number): Record<string, Handler> {
   const labelConfig = s.result.labelConfig;
   const markPartial = () => s.result.partialCmds.add("^MU");
@@ -15,10 +15,10 @@ export function createUnitsHandler(s: ParserState, dpmm: number): Record<string,
     // for re-emit; printer does the actual scaling at print time.
     MU(p) {
       const a = (p[0] ?? "").trim().toUpperCase();
-      if (a === "I") s.format.unitScale = dpmm * 25.4;
-      else if (a === "M") s.format.unitScale = dpmm;
-      else if (a === "" || a === "D") s.format.unitScale = 1;
-      else markPartial(); // unknown a-slot: preserve prior unitScale
+      if (a === "I" || a === "M" || a === "" || a === "D") {
+        s.format.muMode = a === "I" || a === "M" ? a : "D";
+        s.format.unitScale = deriveUnitScale(s.format, dpmm);
+      } else markPartial(); // unknown a-slot: preserve prior unitScale
 
       const rawB = (p[1] ?? "").trim();
       const rawC = (p[2] ?? "").trim();
@@ -32,6 +32,13 @@ export function createUnitsHandler(s: ParserState, dpmm: number): Record<string,
       } else {
         markPartial();
       }
+    },
+    // Density is resolved by the format-head lookahead (or, without a wrapper,
+    // the stream head); this handler only reports what the lookahead ignores:
+    // an invalid value, or a ^JM outside any head (post-^FS, preamble, between formats).
+    JM(_p, rest) {
+      const v = jmDensityOf(rest, s.format.delimiterChar);
+      if (v === undefined || !s.format.inFormatHead) s.result.partialCmds.add("^JM");
     },
   };
 }

@@ -169,6 +169,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
           {/* Width */}
           <UnitNumberInput
             label={t.registry.image.widthDots}
+            scope="page"
             valueDots={p.widthDots}
             minDots={8}
             onChangeDots={(w) => w !== undefined && handleWidthChange(w)}

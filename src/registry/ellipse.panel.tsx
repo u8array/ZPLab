@@ -22,6 +22,7 @@ export const ellipsePanel: ObjectTypeUi<EllipseProps> = {
         {p.lockAspect ? (
           <UnitNumberInput
             label={t.registry.circle.diameter}
+            scope="page"
             valueDots={p.width}
             minDots={1}
             onChangeDots={(d) => onChange({ width: d, height: d })}
@@ -31,6 +32,7 @@ export const ellipsePanel: ObjectTypeUi<EllipseProps> = {
           <div className={`grid grid-cols-2 ${fieldGridCols}`}>
             <UnitNumberInput
               label={t.registry.ellipse.width}
+              scope="page"
               valueDots={p.width}
               minDots={1}
               onChangeDots={(width) => onChange({ width })}
@@ -39,6 +41,7 @@ export const ellipsePanel: ObjectTypeUi<EllipseProps> = {
             />
             <UnitNumberInput
               label={t.registry.ellipse.height}
+              scope="page"
               valueDots={p.height}
               minDots={1}
               onChangeDots={(height) => onChange({ height })}
@@ -93,6 +96,7 @@ export const ellipsePanel: ObjectTypeUi<EllipseProps> = {
         {!p.filled && (
           <UnitNumberInput
             label={t.registry.ellipse.thickness}
+            scope="page"
             valueDots={p.thickness}
             minDots={1}
             onChangeDots={(thickness) => onChange({ thickness })}

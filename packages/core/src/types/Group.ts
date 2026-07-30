@@ -1,6 +1,7 @@
 import type { LeafObject } from '../registry/leafObject';
 import type { LabelObjectBase } from './LabelObject';
 import type { BlockOverlay } from '../lib/zplOverlay/overlay';
+import { withJmDensity, type JmDensity, type LabelConfig } from './LabelConfig';
 export type { LeafObject };
 /** Non-leaf container; cascades lock/visibility/inclusion. Intentionally
  *  outside the registry (no toZPL/defaultSize/PropertiesPanel). */
@@ -15,11 +16,22 @@ export type LabelObject = LeafObject | GroupObject;
 
 export interface Page {
   objects: LabelObject[];
+  /** ^JM override for this page, set only where the imported block's density
+   *  diverges from the design's; export falls back to `label.jmDensity`, so a
+   *  density change in the UI still reaches every non-diverging page. */
+  jmDensity?: JmDensity;
   /** Source-patch overlay of the ^XA…^XZ block this page was imported from,
    *  letting export replay untouched bytes verbatim. Absent on fresh designs
    *  and on pages the parser couldn't fully link; those regenerate from the
    *  model. Rides persist + zundo as part of the page. */
   overlay?: BlockOverlay;
+}
+
+/** The label as this page prints it: its own ^JM wins, so a block imported at
+ *  a diverging density keeps that density through export (coordinates included,
+ *  since every dots<->mm boundary reads it through effectiveDpmm). */
+export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity'>): LabelConfig {
+  return withJmDensity(label, page.jmDensity);
 }
 
 export function isGroup(obj: LabelObject): obj is GroupObject {

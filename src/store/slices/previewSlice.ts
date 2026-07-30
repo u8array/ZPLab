@@ -10,7 +10,7 @@ import {
 import { getPreviewTransport, getPrinterAddress, getUsbPrinterId } from '../../lib/printerAddress';
 import { buildActiveRow } from '@zplab/core/lib/variableBinding';
 import { buildPreviewZpl } from '../../lib/printPreview';
-import { currentObjects, selectEffectivePreviewProvider, selectLabelaryEndpoint } from '../labelStore.selectors';
+import { currentObjects, currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 import { isDesktopShell } from '../../lib/platform';
 
@@ -105,7 +105,8 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     const provider = selectEffectivePreviewProvider(state);
     const objs = currentObjects(state);
     const active = buildActiveRow(state.dataset, state.columnMapping);
-    const zpl = buildPreviewZpl(state.label, objs, state.variables, active, { blankSamples: true });
+    const pageLabel = currentPageLabel(state);
+    const zpl = buildPreviewZpl(pageLabel, objs, state.variables, active, { blankSamples: true });
     // The printer target resolves before the cache lookup so the key can fold
     // the device in; an unconfigured target fails here, before 'loading'.
     let printerTarget: PreviewTarget | null = null;
@@ -140,7 +141,7 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     // immutable updates.
     const isStale = (): boolean =>
       get().previewMode.status !== 'loading' ||
-      get().label !== state.label ||
+      currentPageLabel(get()) !== pageLabel ||
       currentObjects(get()) !== objs;
 
     if (printerTarget) {
@@ -210,6 +211,8 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     }
 
     try {
+      // Physical head, not the page density: the URL picks the printer the
+      // stream's ^JM is then interpreted against.
       const url = await fetchPreview(zpl, state.label, endpoint.host, endpoint.apiKey);
       if (isStale()) {
         URL.revokeObjectURL(url);

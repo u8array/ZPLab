@@ -1,4 +1,5 @@
 import type { PreflightCtx, PreflightProducerResult } from "../types/preflight";
+import { effectiveDpmm } from "../types/LabelConfig";
 import { mmToUnitExact, unitLabel, type Unit } from "./units";
 
 /** Recommended minimum barcode module / X-dimension in mm for reliable general
@@ -34,7 +35,7 @@ export function moduleTooSmallFindings(
 export function moduleTooSmallPreflight<P extends object>(
   prop: keyof P & string,
 ): (obj: { props: P }, ctx: PreflightCtx) => PreflightProducerResult[] {
-  return (obj, ctx) => moduleTooSmallFindings(obj.props[prop] as number, ctx.label.dpmm, ctx.unit);
+  return (obj, ctx) => moduleTooSmallFindings(obj.props[prop] as number, effectiveDpmm(ctx.label), ctx.unit);
 }
 
 /** Registry `preflight` for legacy/niche symbologies (Code 49, TLC39): the
@@ -44,7 +45,7 @@ export function limitedSupportPreflight<P extends object>(
   prop: keyof P & string,
 ): (obj: { props: P }, ctx: PreflightCtx) => PreflightProducerResult[] {
   return (obj, ctx) => [
-    ...moduleTooSmallFindings(obj.props[prop] as number, ctx.label.dpmm, ctx.unit),
+    ...moduleTooSmallFindings(obj.props[prop] as number, effectiveDpmm(ctx.label), ctx.unit),
     { kind: "printerSupportLimited" },
   ];
 }

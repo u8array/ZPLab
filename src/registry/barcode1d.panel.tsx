@@ -107,6 +107,7 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
 
             <UnitNumberInput
               label={loc.height}
+              scope="page"
               valueDots={p.height}
               minDots={1}
               disabled={config.heightLocked}

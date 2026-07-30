@@ -44,6 +44,7 @@ export const symbolPanel: ObjectTypeUi<SymbolProps> = {
         <div className={`grid grid-cols-2 ${fieldGridCols}`}>
           <UnitNumberInput
             label={t.registry.symbol.height}
+            scope="page"
             valueDots={p.height}
             minDots={1}
             onChangeDots={(height) => onChange({ height })}
@@ -52,6 +53,7 @@ export const symbolPanel: ObjectTypeUi<SymbolProps> = {
           />
           <UnitNumberInput
             label={t.registry.symbol.width}
+            scope="page"
             valueDots={p.width}
             minDots={1}
             onChangeDots={(width) => onChange({ width })}

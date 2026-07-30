@@ -14,9 +14,10 @@ import { CANVAS_DROPPABLE_ID } from "../../dnd/types";
 import { paletteGhostHandlers } from "./paletteGhostMonitor";
 import { Stage, Layer, Group, Image as KImage, Rect, Transformer } from "react-konva";
 import type Konva from "konva";
-import { useLabelStore, useCurrentObjects, currentObjects, getCurrentObjects, selectPreviewLocksEditor } from "../../store/labelStore";
+import { useLabelStore, useCurrentObjects, currentObjects, currentPageLabel, getCurrentObjects, selectPreviewLocksEditor } from "../../store/labelStore";
 import { isGroup, getAllLeaves, exportableLeaves, expandSelection, selectionTargetId, findObjectById, canDeleteSelection, canGroupSelection, canUngroupSelection, hasLockedAncestor, isSelectionLocked, type LabelObject } from "@zplab/core/types/Group";
 import { pxToDots, dotsToPx, mmToDots, SCREEN_PX_PER_MM } from "@zplab/core/lib/coordinates";
+import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 import { loadImage } from "@zplab/core/lib/loadImage";
 import { SNAP_OPTIONS } from "@zplab/core/lib/units";
 import type { Unit } from "@zplab/core/lib/units";
@@ -226,7 +227,6 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const t = useT();
 
   const {
-    label,
     selectedIds,
     pristineEmptyIds,
     addObject,
@@ -248,6 +248,11 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     variables,
     pages,
   } = useLabelStore();
+  // Everything on canvas is drawn in the current page's dot scale; only the
+  // whole-document emit below still needs the design label.
+  const label = useLabelStore(currentPageLabel);
+  const designLabel = useLabelStore((s) => s.label);
+  const effDpmm = effectiveDpmm(label);
   const objects = useCurrentObjects();
   const previewBinding = usePreviewBinding();
   // Raw dataset/mapping (not just the active row): markerValueFindings
@@ -389,9 +394,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
 
       // shift = 10 mm, normal = snapSize when snap on, 1 dot when snap off
       const step = e.shiftKey
-        ? label.dpmm * 10
+        ? effDpmm * 10
         : snapEnabled
-          ? Math.round(snapSizeMm * label.dpmm)
+          ? Math.round(snapSizeMm * effDpmm)
           : 1;
       const screenDx = e.code === "ArrowRight" ? step : e.code === "ArrowLeft" ? -step : 0;
       const screenDy = e.code === "ArrowDown" ? step : e.code === "ArrowUp" ? -step : 0;
@@ -410,7 +415,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [snapEnabled, snapSizeMm, label.dpmm, updateObjects, viewRotation]);
+  }, [snapEnabled, snapSizeMm, effDpmm, updateObjects, viewRotation]);
 
   // usable area after reserving space for the ruler
   const usableWidth = containerSize.width - RULER_SIZE;
@@ -419,7 +424,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // ^LS shifts content LEFT by labelShift (spec/Labelary): model x=0 sits at the
   // viewport left, the physical label rect sits labelShift dots to its right. The
   // viewport is widened by labelShift so off-label-left content stays visible.
-  const labelShiftMm = (label.labelShift ?? 0) / label.dpmm;
+  const labelShiftMm = (label.labelShift ?? 0) / effDpmm;
   const effectiveWidthMm = label.widthMm + labelShiftMm;
 
   // zoom=1 = 100% (96 dpi CSS); fitZoom swaps axes at 90/270.
@@ -463,16 +468,17 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const probe = (o: LabelObject) => {
       if (isGroup(o)) return null;
       const resolved = applyBindingToObject(o, vars, active, dataRenderMode, clock, objectResolvesCtrl(o));
-      return measureBarcodeFootprintDots(resolved as LeafObject, scale, label.dpmm);
+      return measureBarcodeFootprintDots(resolved as LeafObject, scale, effDpmm);
     };
     registerBarcodeWidthProber(probe);
     return () => unregisterBarcodeWidthProber(probe);
-  }, [scale, label.dpmm, previewBinding, dataRenderMode]);
+  }, [scale, effDpmm, previewBinding, dataRenderMode]);
   const labelWidthPx = effectiveWidthMm * scale;
   const physicalWidthPx = label.widthMm * scale;
   const labelHeightPx = label.heightMm * scale;
-  // Printer render reconciled against the label in dot space; Labelary fills
-  // the rect as-is.
+  // Printer bitmap is physical head-raster dots: the preview stream carries
+  // ^JMB, but ^PW/^LL stay physical (ZD230-verified), so this projection uses
+  // physical dpmm, not effective.
   const toPreviewPx = (dots: number) => dotsToPx(dots, scale, label.dpmm);
   const printerLayout =
     previewMode.status === 'active' && previewMode.printerDims
@@ -520,13 +526,13 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // Safe-area guide rect in screen px (dots scaled, object-offset aligned).
   const safeAreaDots = safeAreaRectDots(label);
   const safeAreaPx = safeAreaDots && {
-    x: objectsOffsetX + (safeAreaDots.x / label.dpmm) * scale,
-    y: labelOffsetY + (safeAreaDots.y / label.dpmm) * scale,
-    width: (safeAreaDots.width / label.dpmm) * scale,
-    height: (safeAreaDots.height / label.dpmm) * scale,
+    x: objectsOffsetX + (safeAreaDots.x / effDpmm) * scale,
+    y: labelOffsetY + (safeAreaDots.y / effDpmm) * scale,
+    width: (safeAreaDots.width / effDpmm) * scale,
+    height: (safeAreaDots.height / effDpmm) * scale,
   };
 
-  const snapUnit = Math.round(snapSizeMm * label.dpmm);
+  const snapUnit = Math.round(snapSizeMm * effDpmm);
   const snap = (dots: number) =>
     snapEnabled ? Math.round(dots / snapUnit) * snapUnit : dots;
 
@@ -598,10 +604,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const staticSelIds = visibleSelIds.filter((id) => !movableSelIds.includes(id));
   const toFramePx = (b: { x: number; y: number; width: number; height: number } | null) =>
     b && {
-      x: objectsOffsetX + dotsToPx(b.x, scale, label.dpmm),
-      y: labelOffsetY + dotsToPx(b.y, scale, label.dpmm),
-      width: dotsToPx(b.width, scale, label.dpmm),
-      height: dotsToPx(b.height, scale, label.dpmm),
+      x: objectsOffsetX + dotsToPx(b.x, scale, effDpmm),
+      y: labelOffsetY + dotsToPx(b.y, scale, effDpmm),
+      width: dotsToPx(b.width, scale, effDpmm),
+      height: dotsToPx(b.height, scale, effDpmm),
     };
   // Frame Rect is multi-only; the movable/static bases also drive the action bar
   // (single drags too), so compute them for any selection.
@@ -627,7 +633,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     : suppressPristineEmpty(
         [
           ...computePreflight(preflightLeaves, frameCtx, unit),
-          ...barcodeEncodeFindings(preflightLeaves, scale, label.dpmm, previewBinding),
+          ...barcodeEncodeFindings(preflightLeaves, scale, effDpmm, previewBinding),
           ...markerValueFindings(preflightLeaves, {
             variables: previewBinding.variables,
             dataset,
@@ -728,7 +734,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     stageRef,
     transformerRef,
     scale,
-    dpmm: label.dpmm,
+    dpmm: effDpmm,
     objectsOffsetX,
     labelOffsetY,
     snapEnabled,
@@ -800,7 +806,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         if (ids.length === 0) return null;
         const objs = currentObjects(state);
         const measured = measuredBoundsMap();
-        const ctx = { label: state.label, measured };
+        const ctx = { label: currentPageLabel(state), measured };
 
         // Locked/hidden objects are non-participants (like drag/nudge/lasso).
         const movable = ids
@@ -808,7 +814,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
           .filter((o): o is LabelObject => o !== undefined && !o.locked && o.visible !== false);
         if (movable.length === 0) return null;
 
-        const printable = printableRectDots(state.label);
+        const printable = printableRectDots(currentPageLabel(state));
         // Exclude structural primitives (full-label frame, spanning dividers) so
         // they neither inflate the reference nor get rearranged; content only,
         // consistent with tidy. Falls back to all when fewer than 2 content.
@@ -826,7 +832,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
 
         // Align-to-label pins to the safe-area inset when configured, so the
         // 6-edge buttons keep a uniform margin; otherwise the printable rect.
-        const labelBox = safeAreaRectDots(state.label) ?? printable;
+        const labelBox = safeAreaRectDots(currentPageLabel(state)) ?? printable;
         let refBox: ReturnType<typeof selectionUnionDots>;
         // A single unit (one object or one group) has no meaningful "selection"
         // or "key" frame of its own, so it aligns to the label (Figma: a single
@@ -896,7 +902,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
           const measured = measuredBoundsMap();
           if (isBarcode(obj) && !measured.has(id)) return;
           const patch = convertPositionType(obj, target, {
-            label: state.label,
+            label: currentPageLabel(state),
             measured,
           });
           if (patch) updateObject(id, patch);
@@ -924,7 +930,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     // transformer detaches (raw leaves would show dead resize handles).
     objects: visibleLeaves,
     scale,
-    dpmm: label.dpmm,
+    dpmm: effDpmm,
     objectsOffsetX,
     labelOffsetY,
     snap,
@@ -1162,8 +1168,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const px = labelCenterX + rx;
     const py = labelCenterY + ry;
     return {
-      x: snap(pxToDots(px - objectsOffsetX, scale, label.dpmm)),
-      y: snap(pxToDots(py - labelOffsetY, scale, label.dpmm)),
+      x: snap(pxToDots(px - objectsOffsetX, scale, effDpmm)),
+      y: snap(pxToDots(py - labelOffsetY, scale, effDpmm)),
     };
   };
 
@@ -1245,7 +1251,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         void copyText(zplForSelection(label, objects, sel, variables));
       },
       copyZplLabel: () => {
-        void copyText(generateMultiPageZPL(label, pages, variables));
+        void copyText(generateMultiPageZPL(designLabel, pages, variables));
       },
       copyImage: () => {
         // Call write synchronously with the pending blob so the user activation
@@ -1572,7 +1578,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                     key={obj.id}
                     obj={obj}
                     scale={scale}
-                    dpmm={label.dpmm}
+                    dpmm={effDpmm}
                     offsetX={objectsOffsetX}
                     offsetY={labelOffsetY}
                     isSelected={attachableIds.includes(obj.id)}
@@ -1640,7 +1646,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                     onSelect={() => { /* ghost */ }}
                     onChange={() => { /* ghost */ }}
                     snap={snap}
-                    dpmm={label.dpmm}
+                    dpmm={effDpmm}
                   />
                 </Group>
               )}

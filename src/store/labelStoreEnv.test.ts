@@ -8,6 +8,9 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
  *
  *  Lives in a dedicated file because each case needs to re-import the
  *  store module after stubbing import.meta.env. */
+// Re-importing the labelStore module graph can exceed 5s under full-suite load.
+vi.setConfig({ testTimeout: 20_000 });
+
 describe('thirdParty defaults from env', () => {
   afterEach(() => {
     vi.unstubAllEnvs();

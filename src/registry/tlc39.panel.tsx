@@ -23,6 +23,7 @@ export const tlc39Panel: ObjectTypeUi<Tlc39Props> = {
           <div className={`grid grid-cols-2 ${fieldGridCols}`}>
             <UnitNumberInput
               label={loc.height}
+              scope="page"
               valueDots={p.height}
               minDots={1}
               onChangeDots={(height) => onChange({ height })}
@@ -43,6 +44,7 @@ export const tlc39Panel: ObjectTypeUi<Tlc39Props> = {
           <div className={`grid grid-cols-2 ${fieldGridCols}`}>
             <UnitNumberInput
               label={loc.microPdfRowHeight}
+              scope="page"
               valueDots={p.microPdfRowHeight}
               minDots={1}
               maxDots={255}

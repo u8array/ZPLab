@@ -23,6 +23,7 @@ export const pdf417Panel: ObjectTypeUi<Pdf417Props> = {
           <div className={`grid grid-cols-2 ${fieldGridCols}`}>
             <UnitNumberInput
               label={loc.rowHeight}
+              scope="page"
               valueDots={p.rowHeight}
               minDots={1}
               onChangeDots={(rowHeight) => onChange({ rowHeight })}

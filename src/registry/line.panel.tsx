@@ -51,6 +51,7 @@ export const linePanel: ObjectTypeUi<LineProps> = {
         <div className={`grid grid-cols-2 ${fieldGridCols}`}>
           <UnitNumberInput
             label={t.registry.line.length}
+            scope="page"
             valueDots={p.length}
             minDots={1}
             // Shrinking length below the current thickness would land
@@ -81,6 +82,7 @@ export const linePanel: ObjectTypeUi<LineProps> = {
 
         <UnitNumberInput
           label={t.registry.line.thickness}
+          scope="page"
           valueDots={p.thickness}
           minDots={1}
           // Capped at length so the ZPL output stays out of the ^GB

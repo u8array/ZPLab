@@ -30,6 +30,17 @@ export function firstChar(rest: string): string {
   return (rest.trim()[0] ?? "").toUpperCase();
 }
 
+/** Accepts a ^CC/^CT/^CD remap char only if it's printable, non-DEL, and
+ *  distinct from both other role chars (a collision would collapse a
+ *  prefix/delimiter boundary). Shared with the ^JM head scan so both agree on effective remaps. */
+export function acceptsPrefixRemap(
+  char: string | undefined,
+  roleA: string,
+  roleB: string,
+): char is string {
+  return !!char && char > " " && char !== "\x7F" && char !== roleA && char !== roleB;
+}
+
 /** Live command-prefix chars; the tokenizer reads these on every char
  *  scan so ^CC/^CT mutations take effect on the very next command. */
 export interface TokenizerChars {
@@ -152,10 +163,10 @@ export function intDots(
   return intDotsOrUndef(s, unitScale) ?? fallback;
 }
 
-/** Bind `intDots`/`intDotsOrUndef` to a parser state's live unit
- *  scale, so handler factories don't each rebuild the same closures.
- *  Returns helpers that read `state.format.unitScale` at call time
- *  (load-bearing: ^MU mid-format mutates it). */
+/** Bind `intDots`/`intDotsOrUndef` to a parser state's live unit scale, so
+ *  handler factories don't each rebuild the same closures. Reads
+ *  `state.format.unitScale` at call time: load-bearing, since ^MU mid-format
+ *  mutation and the ^XA ^JM lookahead both land before any read. */
 export function dotsFor(state: { format: { unitScale: number } }): {
   dots: (raw: string | undefined, fb?: number) => number;
   dotsOrUndef: (raw: string | undefined) => number | undefined;

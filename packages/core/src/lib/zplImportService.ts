@@ -3,7 +3,7 @@ import { replayRiskFindings, dedupCommandsByKind } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
 import { stripDrivePrefix } from "./customFonts";
 import { renameTemplateMarkers } from "./fnTemplate";
-import { PER_FORMAT_ZPL_FIELDS, type CustomFontMapping, type LabelConfig } from "../types/LabelConfig";
+import { PER_FORMAT_ZPL_FIELDS, effectiveDpmm, type CustomFontMapping, type JmDensity, type LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
 import type { LabelObject, Page } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type Variable } from "../types/Variable";
@@ -24,9 +24,9 @@ export interface ZplImportResult {
   pages: Page[];
   variables: Variable[];
   report: ImportReport;
-  /** True when ^XA blocks set different ^PW/^LL: the single-label design keeps
-   *  only block 0's size, so later pages would render/preflight at the wrong
-   *  size. Interactive import ignores it; the MCP tools reject on it. */
+  /** True when ^XA blocks diverge in ^PW/^LL or ^JM density, which the
+   *  single-label design shows only once, so other pages render/preflight
+   *  wrong. Interactive import ignores it; the MCP tools reject on it. */
   mixedPageGeometry: boolean;
 }
 
@@ -102,8 +102,11 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     for (const o of page.objects) {
       if (!BARCODE_1D_TYPES.has(o.type) || !verifiedZJustifyCombo(o)) continue;
       const resolved = resolveForMeasure(o, variables, clockCtxFromLabel(page.labelConfig));
-      // Sidecar density wins: the stream's dot values live in ITS dpmm.
-      const fp = measureFootprintDots(resolved, r.labelConfig.dpmm ?? dpmm);
+      // Sidecar density wins; under ^JMB the stream dots live halved.
+      const fp = measureFootprintDots(
+        resolved,
+        effectiveDpmm({ dpmm: r.labelConfig.dpmm ?? dpmm, jmDensity: page.labelConfig.jmDensity }),
+      );
       if (fp) {
         o.x -= fp.w;
         zNormalized = true;
@@ -113,10 +116,11 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     // wrapper-less paste of real fields also lands here; import those as a page
     // so they aren't silently dropped (no overlay: the wrapper-less source has
     // nothing to replay byte-for-byte, and re-export adds the ^XA/^XZ wrapper).
+    const jmDensity = page.labelConfig.jmDensity;
     if (!page.bare) {
-      pages.push({ objects: page.objects, overlay: page.overlay });
+      pages.push({ objects: page.objects, overlay: page.overlay, jmDensity });
     } else if (page.objects.length > 0) {
-      pages.push({ objects: page.objects });
+      pages.push({ objects: page.objects, jmDensity });
     }
     for (const f of page.findings) {
       // A bare page replays nothing, so its lossyEdit caveat is moot.
@@ -205,7 +209,33 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
           .map((sz) => `${sz.widthMm ?? ''}x${sz.heightMm ?? ''}`),
       ),
     ];
-    findings.push({ kind: 'mixedPageGeometry', command: sizes.join(', '), pageIndex: 0 });
+    findings.push({ kind: 'mixedPageGeometry', command: sizes.join(', '), pageIndex: 0, cause: 'size' });
+  }
+
+  // ^JM is per-format on the wire; the single-label model folds it to the
+  // first object-bearing block's density (unset there means full density).
+  let jmDiverges = false;
+  const anchorIndex = r.pages.findIndex((p) => p.objects.length > 0);
+  if (anchorIndex >= 0) {
+    const anchorJm = r.pages[anchorIndex]?.labelConfig.jmDensity;
+    if (anchorJm === undefined) delete labelConfig.jmDensity;
+    else labelConfig.jmDensity = anchorJm;
+  }
+  // Pages carry their density only as an override from the design (unset = A),
+  // so a block that prints at A under a B-folded design is pinned to 'A'.
+  const designJm: JmDensity = labelConfig.jmDensity ?? 'A';
+  for (const page of pages) {
+    const pageJm: JmDensity = page.jmDensity ?? 'A';
+    if (pageJm === designJm) delete page.jmDensity;
+    else page.jmDensity = pageJm;
+  }
+  const keptHalf = labelConfig.jmDensity === 'B';
+  for (const [i, page] of r.pages.entries()) {
+    if (i <= anchorIndex || page.objects.length === 0) continue;
+    if ((page.labelConfig.jmDensity === 'B') !== keptHalf) {
+      findings.push({ kind: 'mixedPageGeometry', command: '^JM', pageIndex: i, cause: 'jm' });
+      jmDiverges = true;
+    }
   }
 
   // Bucket views deduplicate by command code to match the JSDoc contract on
@@ -228,8 +258,36 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     pages,
     variables,
     report,
-    mixedPageGeometry: r.mixedPageGeometry,
+    mixedPageGeometry: r.mixedPageGeometry || jmDiverges,
   };
+}
+
+/** Current label patched with the imported stream, except ^JM, which the
+ *  import always sets (absent means full density): inheriting the open
+ *  document's mode would reinterpret every imported dot at the wrong scale. */
+export function replaceImportLabel(
+  current: LabelConfig,
+  imported: Partial<LabelConfig>,
+): LabelConfig {
+  const merged = { ...current, ...imported };
+  if (imported.jmDensity === undefined) delete merged.jmDensity;
+  return merged;
+}
+
+/** Re-pin appended pages to their true ^JM density against the joined design.
+ *  Append drops the import's own design density, so a page whose folded
+ *  density differs from the target must carry it as an explicit override. */
+export function rebaseAppendedPageDensity(
+  pages: Page[],
+  importJmDensity: JmDensity | undefined,
+  designJmDensity: JmDensity | undefined,
+): Page[] {
+  const designJm = designJmDensity ?? 'A';
+  const importJm = importJmDensity ?? 'A';
+  return pages.map((p) => {
+    const pageJm = p.jmDensity ?? importJm;
+    return pageJm === designJm ? { ...p, jmDensity: undefined } : { ...p, jmDensity: pageJm };
+  });
 }
 
 /** Additive setup-font merge (dedupe by normalized path): a stream lists only

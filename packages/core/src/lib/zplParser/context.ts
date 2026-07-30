@@ -11,6 +11,7 @@ import type { MaxicodeProps } from "../../registry/maxicode";
 import { CODABLOCK_DEFAULT_COLUMNS, type CodablockProps } from "../../registry/codablock";
 import type { ZplRotation } from "../../registry/rotation";
 import { DEFAULT_CLOCK_CHARS, type ClockChars } from "../fcTemplate";
+import { effectiveDpmm } from "../../types/LabelConfig";
 import { getDecoder } from "./helpers";
 import type { UploadedGraphic } from "./types";
 
@@ -94,6 +95,27 @@ export interface FormatState {
    *  Internal model is dots-canonical; I/M sources get scaled on read.
    *  Survives ^XA per spec (^MU carries field-by-field until overridden). */
   unitScale: number;
+  /** ^MU a-slot mode, kept so ^JM can re-derive unitScale (both persist). */
+  muMode: 'D' | 'I' | 'M';
+  /** ^JM density; persistent across formats (p269). Resolved at each ^XA by a
+   *  format-head lookahead (last ^JM before the first ^FS wins), so ^MU-scaled
+   *  reads already see the final density and never need a late-^JM replay. */
+  jmDensity?: 'A' | 'B';
+  /** True while the stream sits in a format head (^XA up to the first ^FS), the
+   *  only place a ^JM declares a density (p269). A wrapper-less body counts as
+   *  its own head; between ^XZ and the next ^XA nothing does. */
+  inFormatHead: boolean;
+}
+
+/** ^MU a-slot scale for object/body dot reads, at the EFFECTIVE (^JM-adjusted)
+ *  density: I = eff·25.4, M = eff, D = 1. ^PW/^LL bypass this and read at the
+ *  PHYSICAL density instead (ZD230-verified, ^JM-independent). */
+export function deriveUnitScale(
+  format: Pick<FormatState, "muMode" | "jmDensity">,
+  dpmm: number,
+): number {
+  const eff = effectiveDpmm({ dpmm, jmDensity: format.jmDensity });
+  return format.muMode === "I" ? eff * 25.4 : format.muMode === "M" ? eff : 1;
 }
 
 /** Persistent defaults for following fields (^CF, ^FW, ^FB, ^BY). */
@@ -229,6 +251,10 @@ export interface ParserState {
    *  ^FN is per-format scoped, so find-or-reuse must not reach into an earlier
    *  page's variables; advanced at each page close. */
   varScopeStart: number;
+  /** True once the stream's first ^XA opened a format. A ^JM before it has no
+   *  head for the lookahead to latch onto, so the ^JM handler reports it partial
+   *  instead of silently dropping it. */
+  sawXa: boolean;
 }
 
 /** trimEnd: `token` carries `rest` up to the next command, which in multi-line
@@ -317,6 +343,8 @@ export function createParserState(): ParserState {
       tildeChar: "~",
       delimiterChar: ",",
       unitScale: 1,
+      muMode: "D",
+      inFormatHead: false,
     },
     defaults: {
       cfHeight: 0,
@@ -343,6 +371,7 @@ export function createParserState(): ParserState {
     bareDeclaredFns: new Set<number>(),
     serialStrippedFns: new Set<number>(),
     varScopeStart: 0,
+    sawXa: false,
     field: freshFieldState(),
   };
 }

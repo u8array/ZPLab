@@ -8,6 +8,10 @@ import {
   __resetPreviewCacheForTests,
   migrateLegacy,
 } from './labelStore';
+import { currentPageLabel } from './labelStore.selectors';
+import { importZplText } from '@zplab/core/lib/zplImportService';
+import { dotsToMm } from '@zplab/core/lib/coordinates';
+import { effectiveDpmm } from '@zplab/core/types/LabelConfig';
 import { loadFetchedDataset, currentDataContext, isCurrentDataContext } from './datasetActions';
 import { isGroup, getAllLeaves, type LabelObject } from '@zplab/core/types/Group';
 import { DEFAULT_CANVAS_SETTINGS } from './slices/uiSlice';
@@ -968,6 +972,64 @@ describe('duplicatePage', () => {
     expect(state().currentPageIndex).toBe(1);
     expect(objs()).toHaveLength(1);
     expect(defined(objs()[0]).id).not.toBe(originalId);
+  });
+
+  it('keeps the ^JM override, so the clone prints at the density its dots use', () => {
+    useLabelStore.setState({ pages: [{ objects: [], jmDensity: 'B' }] });
+    state().duplicatePage(0);
+    expect(defined(state().pages[1]).jmDensity).toBe('B');
+  });
+});
+
+describe('currentPageLabel', () => {
+  it('lets a page ^JM override the design density (batch export, preview)', () => {
+    useLabelStore.setState({
+      pages: [{ objects: [] }, { objects: [], jmDensity: 'B' }],
+      currentPageIndex: 1,
+    });
+    expect(currentPageLabel(state()).jmDensity).toBe('B');
+    state().setCurrentPage(0);
+    expect(currentPageLabel(state()).jmDensity).toBeUndefined();
+  });
+
+  // A fresh object per read would re-render every subscriber on every store
+  // write, which in a zustand selector means an endless render loop.
+  it('is reference-stable across reads', () => {
+    useLabelStore.setState({ pages: [{ objects: [], jmDensity: 'B' }], currentPageIndex: 0 });
+    expect(currentPageLabel(state())).toBe(currentPageLabel(state()));
+    const before = currentPageLabel(state());
+    state().setLabelConfig({ widthMm: 80 });
+    expect(currentPageLabel(state())).not.toBe(before);
+  });
+
+  it('reads the editor geometry of an imported ^JMB page at the halved density', () => {
+    const r = importZplText(
+      '^XA^FO10,10^A0N,30,30^FDa^FS^XZ\n^XA^JMB^FO10,10^A0N,30,30^FDb^FS^XZ',
+      8,
+    );
+    useLabelStore.setState({
+      label: { ...state().label, ...r.labelConfig },
+      pages: r.pages,
+      currentPageIndex: 1,
+    });
+    // 8 dpmm head, halved by ^JMB: the page's 100 dots are 25 mm, not 12.5.
+    expect(dotsToMm(100, effectiveDpmm(currentPageLabel(state())))).toBe(25);
+    state().setCurrentPage(0);
+    expect(dotsToMm(100, effectiveDpmm(currentPageLabel(state())))).toBe(12.5);
+  });
+
+  it('builds the preview stream at the current page density', async () => {
+    const labelary = await import('../lib/labelary');
+    const fetchSpy = vi.mocked(labelary.fetchPreview);
+    fetchSpy.mockClear();
+    useLabelStore.setState({
+      pages: [{ objects: [] }, { objects: [], jmDensity: 'B' }],
+      currentPageIndex: 1,
+      labelaryNoticeAcknowledged: true,
+    });
+    state().addObject('text');
+    await state().enterPreviewMode();
+    expect(fetchSpy.mock.calls[0]?.[0]).toContain('^JMB');
   });
 });
 

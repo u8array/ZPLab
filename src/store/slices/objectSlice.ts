@@ -25,7 +25,7 @@ import {
   freshPasteCopies,
   updateCurrentObjects,
 } from '../labelStore.internals';
-import { selectPreviewLocksEditor, currentObjects } from '../labelStore.selectors';
+import { selectPreviewLocksEditor, currentObjects, currentPageLabel } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
 import { newId } from "@zplab/core/lib/ids";
@@ -134,14 +134,14 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       const text = findObjectById(objs, textId);
       if (!text || isGroup(text) || text.type !== 'text') return {};
       if (text.locked || hasLockedAncestor(objs, textId)) return {};
-      const box = makeReverseBackingBox(text, state.label);
+      const box = makeReverseBackingBox(text, currentPageLabel(state));
       // Insert into the text's own container, right before it, so it renders
       // behind. Idempotent: skip if a backing already sits there.
       let inserted = false;
       const insertBehind = (list: LabelObject[]): LabelObject[] => {
         const i = list.findIndex((o) => o.id === textId);
         if (i >= 0) {
-          if (precedingBackingExists(list, i, text, state.label)) return list;
+          if (precedingBackingExists(list, i, text, currentPageLabel(state))) return list;
           inserted = true;
           const next = [...list];
           next.splice(i, 0, box);
@@ -170,7 +170,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
           // Closest feature-style backing before the text (z-order: nearest
           // behind). Strict match so a shared banner/header isn't deleted.
           for (let j = i - 1; j >= 0 && !removedId; j--) {
-            if (isOwnReverseBacking(list[j], text, state.label)) removedId = list[j]?.id;
+            if (isOwnReverseBacking(list[j], text, currentPageLabel(state))) removedId = list[j]?.id;
           }
           return removedId ? list.filter((o) => o.id !== removedId) : list;
         }
@@ -561,7 +561,9 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       if (!source) return {};
       // Fresh ids + dropped provenance: the clone is net-new (no overlay), so
       // it regenerates from the model. Omitting `overlay` keeps it that way.
+      // The ^JM override travels along: the cloned dots are in its density.
       const cloned: Page = { objects: cloneChildrenFresh(source.objects) };
+      if (source.jmDensity !== undefined) cloned.jmDensity = source.jmDensity;
       const insertPos = index + 1;
       const newPages = [
         ...state.pages.slice(0, insertPos),

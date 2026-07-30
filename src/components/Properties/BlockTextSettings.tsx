@@ -52,6 +52,7 @@ export function BlockTextSettings({ props: p, onChange }: Props) {
       <div className={`grid grid-cols-2 ${fieldGridCols}`}>
         <UnitNumberInput
           label={t.registry.text.blockWidth}
+          scope="page"
           valueDots={p.blockWidth}
           minDots={1}
           allowUnset
@@ -69,6 +70,7 @@ export function BlockTextSettings({ props: p, onChange }: Props) {
       <div className={`grid grid-cols-2 ${fieldGridCols}`}>
         <UnitNumberInput
           label={t.registry.text.blockLineSpacing}
+          scope="page"
           valueDots={p.blockLineSpacing}
           allowUnset
           onChangeDots={(blockLineSpacing) => onChange({ blockLineSpacing })}
@@ -76,6 +78,7 @@ export function BlockTextSettings({ props: p, onChange }: Props) {
         />
         <UnitNumberInput
           label={t.registry.text.blockHangingIndent}
+          scope="page"
           valueDots={p.blockHangingIndent}
           minDots={0}
           allowUnset

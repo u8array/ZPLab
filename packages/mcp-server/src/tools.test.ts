@@ -314,6 +314,22 @@ describe("mcp-server tools", () => {
     expect(r.errors[0]).toMatch(/object limit/);
   });
 
+  it("resolves per-page ^JM density in preflight and geometry", () => {
+    // 100mm at dpmm 12: printable width 1200 dots at density A, 600 at B.
+    // x=700 is inside the design-density rect but outside the page's B rect.
+    const df = {
+      schemaVersion: 3,
+      label: { widthMm: 100, heightMm: 50, dpmm: 12 },
+      pages: [
+        { objects: [textObject("t1", "A")] },
+        { jmDensity: "B", objects: [{ ...textObject("t2", "B"), x: 700, y: 50 }] },
+      ],
+    };
+    const r = ok(validateDraft(df));
+    const page1Kinds = r.warnings.filter((w) => w.pageIndex === 1).map((w) => w.kind);
+    expect(page1Kinds).toContain("offLabelOutside");
+  });
+
   it("rejects a design file past the page limit", () => {
     const pages = Array.from({ length: 1001 }, () => ({ objects: [] as never[] }));
     const df = { schemaVersion: 3, label: { widthMm: 100, heightMm: 50, dpmm: 8 }, pages };
@@ -355,6 +371,15 @@ describe("mcp-server tools", () => {
     expect(v.ok).toBe(false);
     if (v.ok) return;
     expect(v.errors[0]).toMatch(/different \^PW\/\^LL|single-label/);
+    expect(importZpl(mixed).ok).toBe(false);
+  });
+
+  it("rejects a multi-^XA stream whose blocks diverge in ^JM at equal size", () => {
+    const mixed = "^XA^PW800^LL400^FO10,10^FDA^FS^XZ^XA^JMB^PW800^LL400^FO10,10^FDB^FS^XZ";
+    const v = validateZpl(mixed);
+    expect(v.ok).toBe(false);
+    if (v.ok) return;
+    expect(v.errors[0]).toMatch(/\^JM density modes/);
     expect(importZpl(mixed).ok).toBe(false);
   });
 

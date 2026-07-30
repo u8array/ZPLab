@@ -201,6 +201,50 @@ describe('importZplText - multi-label', () => {
     const result = importZplText(zpl, 8);
     expect(result.pages).toHaveLength(2);
   });
+
+  it('flags and rejects a stream whose later block diverges in ^JM density', () => {
+    const zpl = [
+      '^XA^FO10,10^A0N,30,30^FDx^FS^XZ',
+      '^XA^JMB^FO10,10^A0N,30,30^FDy^FS^XZ',
+    ].join('\n');
+    const result = importZplText(zpl, 8);
+    expect(result.mixedPageGeometry).toBe(true);
+    expect(result.report.findings).toContainEqual({ kind: 'mixedPageGeometry', command: '^JM', pageIndex: 1, cause: 'jm' });
+    const finding = result.report.findings.find((f) => f.command === '^JM');
+    expect(describeFinding(finding!, fallbackTranslations.importReport).title).toBe(
+      'Density mode differs between blocks: later pages keep their own mode, but only the first is editable',
+    );
+  });
+
+  it('lets a settings-only block 0 inherit a later block ^JM (no divergence)', () => {
+    const zpl = ['^XA^MNY^XZ', '^XA^JMB^FO10,10^A0N,30,30^FDy^FS^XZ'].join('\n');
+    const result = importZplText(zpl, 8);
+    expect(result.mixedPageGeometry).toBe(false);
+    expect(result.report.findings.some((f) => f.command === '^JM')).toBe(false);
+    expect(result.labelConfig.jmDensity).toBe('B');
+  });
+
+  it('anchors on the first object block, not on a settings-only lead block', () => {
+    const zpl = [
+      '^XA^MNY^XZ',
+      '^XA^FO10,10^GB50,50,2^FS^XZ',
+      '^XA^JMB^FO10,10^GB50,50,2^FS^XZ',
+    ].join('\n');
+    const result = importZplText(zpl, 8);
+    expect(result.labelConfig.jmDensity).toBeUndefined();
+    expect(result.mixedPageGeometry).toBe(true);
+    expect(result.report.findings).toContainEqual({ kind: 'mixedPageGeometry', command: '^JM', pageIndex: 2, cause: 'jm' });
+  });
+
+  it('treats a later ^JMA block as full density (no divergence from an unset first block)', () => {
+    const zpl = [
+      '^XA^FO10,10^A0N,30,30^FDx^FS^XZ',
+      '^XA^JMA^FO10,10^A0N,30,30^FDy^FS^XZ',
+    ].join('\n');
+    const result = importZplText(zpl, 8);
+    expect(result.mixedPageGeometry).toBe(false);
+    expect(result.report.findings.some((f) => f.command === '^JM')).toBe(false);
+  });
 });
 
 describe('importZplText - empty / malformed', () => {
