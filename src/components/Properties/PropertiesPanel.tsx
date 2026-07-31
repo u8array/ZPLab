@@ -10,6 +10,7 @@ import { canGroupSelection, findObjectById, hasLockedAncestor, isGroup } from "@
 import { symbologyTargets } from "../../lib/symbologySwitch";
 import { typeLabelFor } from "../../registry/palettePresets";
 import { SymbologySelect } from "./SymbologySelect";
+import { JUSTIFY_ICONS } from "./justifyIcons";
 import { BWIP_APPROX_SEVERITY } from "@zplab/core/lib/bwipConstants";
 import { stripZplCommandChars } from "@zplab/core/registry/zplHelpers";
 import { dotsToMm, mmToDots } from "@zplab/core/lib/coordinates";
@@ -353,9 +354,9 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
                   updateObject(obj.id, { fieldJustify });
                 }}
                 options={[
-                  { value: "L", label: t.registry.text.justifyL },
-                  { value: "C", label: t.registry.text.justifyC },
-                  { value: "R", label: t.registry.text.justifyR },
+                  { value: "L", label: t.registry.text.justifyL, icon: JUSTIFY_ICONS.L, tooltip: t.registry.text.justifyL },
+                  { value: "C", label: t.registry.text.justifyC, icon: JUSTIFY_ICONS.C, tooltip: t.registry.text.justifyC },
+                  { value: "R", label: t.registry.text.justifyR, icon: JUSTIFY_ICONS.R, tooltip: t.registry.text.justifyR },
                 ]}
                 aria-label={t.properties.valueAnchor}
               />
@@ -587,9 +588,8 @@ function LabelConfigPanel({
           </div>
         </div>
 
-        {/* widthMm/heightMm are mm-native; ^PW/^LL are physical head dots
-            (never ^JM-scaled), so bridge through raw-dpmm dots. allowUnset=false
-            keeps the last valid value on a transient clear instead of freezing at 0. */}
+        {/* ^PW/^LL are physical head dots (never ^JM-scaled); bridge via raw dpmm.
+            No allowUnset: a transient clear keeps the last valid value, not 0. */}
         <div className={`grid grid-cols-2 ${fieldGridCols}`}>
           <UnitNumberInput
             label={t.label.width}

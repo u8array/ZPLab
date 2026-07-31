@@ -1,50 +1,11 @@
-import type { ReactNode } from "react";
 import { useT } from "../../hooks/useT";
 import { Tooltip } from "../ui/Tooltip";
-import type { TextProps } from "@zplab/core/registry/text";
-
-type Justify = NonNullable<TextProps["blockJustify"]>;
+import { JUSTIFY_ICONS, type Justify } from "./justifyIcons";
 
 interface Props {
   value: Justify;
   onChange: (next: Justify) => void;
 }
-
-/** Inline SVG glyphs for the four justify modes. Stroke uses
- *  `currentColor` so the active/inactive button colour drives the
- *  icon; single source of truth for theming. Inline SVG (vs.
- *  Unicode glyphs) avoids font-fallback tofu on systems without the
- *  niche math/arrow ranges installed. */
-const ICONS: Record<Justify, ReactNode> = {
-  L: (
-    <svg viewBox="0 0 16 12" className="w-4 h-3 mx-auto" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <line x1="1" y1="2" x2="15" y2="2" />
-      <line x1="1" y1="6" x2="11" y2="6" />
-      <line x1="1" y1="10" x2="13" y2="10" />
-    </svg>
-  ),
-  C: (
-    <svg viewBox="0 0 16 12" className="w-4 h-3 mx-auto" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <line x1="1" y1="2" x2="15" y2="2" />
-      <line x1="3" y1="6" x2="13" y2="6" />
-      <line x1="2" y1="10" x2="14" y2="10" />
-    </svg>
-  ),
-  R: (
-    <svg viewBox="0 0 16 12" className="w-4 h-3 mx-auto" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <line x1="1" y1="2" x2="15" y2="2" />
-      <line x1="5" y1="6" x2="15" y2="6" />
-      <line x1="3" y1="10" x2="15" y2="10" />
-    </svg>
-  ),
-  J: (
-    <svg viewBox="0 0 16 12" className="w-4 h-3 mx-auto" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <line x1="1" y1="2" x2="15" y2="2" />
-      <line x1="1" y1="6" x2="15" y2="6" />
-      <line x1="1" y1="10" x2="15" y2="10" />
-    </svg>
-  ),
-};
 
 /** ^FB text-justification toggle: 4 icon buttons (left / centre /
  *  right / justified); same MS Word pattern users already know.
@@ -75,7 +36,7 @@ export function JustifyButtons({ value, onChange }: Props) {
                   : "border-border text-muted hover:text-text hover:bg-surface-2"
               }`}
             >
-              {ICONS[v]}
+              {JUSTIFY_ICONS[v]}
             </button>
           </Tooltip>
         );

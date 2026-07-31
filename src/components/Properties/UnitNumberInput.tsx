@@ -21,10 +21,9 @@ interface UnitNumberInputProps {
   zplCmd?: string;
   /** Replaces the cell layout (e.g. fieldGridCell); omit for the default column. */
   className?: string;
-  /** Density the dots are stored in: object props live in the current page's
-   *  scale, label/design fields in the design's own (a page ^JM must not
-   *  reinterpret them), 'physical' the raw head resolution (^PW/^LL are
-   *  physical head dots, never ^JM-scaled). Required so every call site decides. */
+  /** Density scope for the dots: 'page' object props (page ^JM-scaled), 'design'
+   *  the label's own scale (a page ^JM must not reinterpret it), 'physical' raw
+   *  head dots (^PW/^LL, never ^JM-scaled). Required so every call site decides. */
   scope: 'page' | 'design' | 'physical';
 }
 
@@ -49,7 +48,7 @@ export function UnitNumberInput({
 }: UnitNumberInputProps) {
   const unit = useLabelStore((s) => s.canvasSettings.unit);
   const dpmm = useLabelStore((s) => {
-    // 'physical' = raw head resolution: ^PW/^LL are physical head dots, never the ^JM-halved effective scale.
+    // physical: raw head dpmm, never ^JM-halved effective scale.
     if (scope === 'physical') return s.label.dpmm;
     return effectiveDpmm(scope === 'design' ? s.label : currentPageLabel(s));
   });

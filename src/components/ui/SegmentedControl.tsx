@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Tooltip } from './Tooltip';
 
 /**
@@ -9,7 +10,9 @@ import { Tooltip } from './Tooltip';
 interface SegmentedControlProps<T extends string> {
   value: T | undefined;
   onChange: (value: T | undefined) => void;
-  options: { value: T; label: string; disabled?: boolean; tooltip?: string }[];
+  /** `icon`, when set, renders in place of the text; `label` is then the
+   *  accessible name (aria-label) so the button stays announceable. */
+  options: { value: T; label: string; disabled?: boolean; tooltip?: string; icon?: ReactNode }[];
   /** When provided, a leading segment selects `undefined` (unset/default). */
   defaultLabel?: string;
   'aria-label'?: string;
@@ -22,7 +25,7 @@ export function SegmentedControl<T extends string>({
   defaultLabel,
   'aria-label': ariaLabel,
 }: SegmentedControlProps<T>) {
-  const segments: { value: T | undefined; label: string; disabled?: boolean; tooltip?: string }[] =
+  const segments: { value: T | undefined; label: string; disabled?: boolean; tooltip?: string; icon?: ReactNode }[] =
     defaultLabel !== undefined
       ? [{ value: undefined, label: defaultLabel }, ...options]
       : options;
@@ -37,9 +40,12 @@ export function SegmentedControl<T extends string>({
             <button
               type="button"
               aria-pressed={active}
+              aria-label={seg.icon ? seg.label : undefined}
               disabled={seg.disabled}
               onClick={() => onChange(seg.value)}
               className={`flex-1 whitespace-nowrap px-2 py-1 rounded border text-xs transition-colors ${
+                seg.icon ? 'flex items-center justify-center' : ''
+              } ${
                 seg.disabled
                   ? 'border-border text-muted opacity-50 cursor-not-allowed'
                   : active
@@ -47,7 +53,7 @@ export function SegmentedControl<T extends string>({
                     : 'border-border text-muted hover:text-text hover:bg-surface-2'
               }`}
             >
-              {seg.label}
+              {seg.icon ?? seg.label}
             </button>
           </Tooltip>
         );
