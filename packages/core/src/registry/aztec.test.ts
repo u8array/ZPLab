@@ -12,13 +12,13 @@ const az = (ecLevel: number): LeafObject =>
 
 describe("aztec ecLevel preflight", () => {
   it("flags percent values below the encoder band (1-4)", () => {
-    expect(getEntry("aztec")!.preflight!(az(1), pctx)).toEqual([{ kind: "aztecEcLevelOutOfRange", detail: "1 (valid 5-95)" }]);
-    expect(getEntry("aztec")!.preflight!(az(4), pctx)).toEqual([{ kind: "aztecEcLevelOutOfRange", detail: "4 (valid 5-95)" }]);
+    expect(getEntry("aztec")!.preflight!(az(1), pctx)).toEqual([{ kind: "aztecEcLevelOutOfRange", detail: "1 (valid 0, 5-95, 101-104, 201-232, 300)" }]);
+    expect(getEntry("aztec")!.preflight!(az(4), pctx)).toEqual([{ kind: "aztecEcLevelOutOfRange", detail: "4 (valid 0, 5-95, 101-104, 201-232, 300)" }]);
   });
 
   it("flags percent values above the encoder band (96-99)", () => {
-    expect(getEntry("aztec")!.preflight!(az(96), pctx)).toEqual([{ kind: "aztecEcLevelOutOfRange", detail: "96 (valid 5-95)" }]);
-    expect(getEntry("aztec")!.preflight!(az(99), pctx)).toEqual([{ kind: "aztecEcLevelOutOfRange", detail: "99 (valid 5-95)" }]);
+    expect(getEntry("aztec")!.preflight!(az(96), pctx)).toEqual([{ kind: "aztecEcLevelOutOfRange", detail: "96 (valid 0, 5-95, 101-104, 201-232, 300)" }]);
+    expect(getEntry("aztec")!.preflight!(az(99), pctx)).toEqual([{ kind: "aztecEcLevelOutOfRange", detail: "99 (valid 0, 5-95, 101-104, 201-232, 300)" }]);
   });
 
   it("accepts the band edges 5 and 95", () => {
@@ -37,7 +37,7 @@ describe("aztec ecLevel preflight", () => {
     // silently auto-sizes and printer behavior is undefined, hence the warning.
     for (const ec of [100, 105, 150, 200, 233, 299]) {
       expect(getEntry("aztec")!.preflight!(az(ec), pctx)).toEqual([
-        { kind: "aztecEcLevelOutOfRange", detail: `${ec} (valid 5-95)` },
+        { kind: "aztecEcLevelOutOfRange", detail: `${ec} (valid 0, 5-95, 101-104, 201-232, 300)` },
       ]);
     }
   });

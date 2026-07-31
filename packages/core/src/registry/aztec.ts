@@ -27,7 +27,7 @@ function ecLevelFindings(ecLevel: number): PreflightProducerResult[] {
     (ec >= 201 && ec <= 232) ||
     ec === 300;
   if (!defined) {
-    return [{ kind: "aztecEcLevelOutOfRange", detail: `${ec} (valid ${EC_PERCENT_MIN}-${EC_PERCENT_MAX})` }];
+    return [{ kind: "aztecEcLevelOutOfRange", detail: `${ec} (valid 0, ${EC_PERCENT_MIN}-${EC_PERCENT_MAX}, 101-104, 201-232, 300)` }];
   }
   return [];
 }
