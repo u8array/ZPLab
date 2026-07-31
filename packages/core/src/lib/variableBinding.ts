@@ -174,6 +174,22 @@ export function buildActiveRow(
   return { headers: dataset.headers, row, mapping: columnMapping };
 }
 
+/** The active row's bound cell for `variable`, or undefined when there is no
+ *  active row or the variable isn't bound to a present column (unbound / stale
+ *  header). A present-but-empty cell yields ""; unlike resolveVariableValue this
+ *  never folds in the default, so editor hints can pick their own fallback. */
+export function activeCellValue(
+  variable: Pick<Variable, "id">,
+  active: ActiveRow | null,
+): string | undefined {
+  if (!active) return undefined;
+  const header = active.mapping.bindings[variable.id];
+  if (header === undefined) return undefined;
+  const idx = active.headers.indexOf(header);
+  if (idx === -1) return undefined;
+  return active.row[idx] ?? "";
+}
+
 /** Identity-preserving: returns same ref when unbound or unchanged. */
 export function applyBindingToObject<T extends LabelObject>(
   obj: T,

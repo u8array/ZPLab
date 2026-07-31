@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   resolveVariableValue,
   buildActiveRow,
+  activeCellValue,
   applyBindingToObject,
   applyBindingToTree,
   getVariableSource,
@@ -124,6 +125,50 @@ describe('buildActiveRow', () => {
       row: ['B2', '5'],
       mapping: mapping({ v1: 'sku' }),
     });
+  });
+});
+
+describe('activeCellValue', () => {
+  it('returns undefined when there is no active row', () => {
+    expect(activeCellValue(variable(), null)).toBeUndefined();
+  });
+
+  it('returns undefined when the variable is unbound', () => {
+    expect(
+      activeCellValue(variable(), active(['sku'], ['A1'], { other: 'sku' })),
+    ).toBeUndefined();
+  });
+
+  it('returns undefined when the bound header is missing (stale mapping)', () => {
+    expect(
+      activeCellValue(variable(), active(['qty'], ['10'], { v1: 'sku' })),
+    ).toBeUndefined();
+  });
+
+  it('returns the bound cell value', () => {
+    expect(
+      activeCellValue(variable(), active(['sku'], ['A1'], { v1: 'sku' })),
+    ).toBe('A1');
+  });
+
+  it('returns "" for an empty cell (no default fold-in)', () => {
+    expect(
+      activeCellValue(variable(), active(['sku'], [''], { v1: 'sku' })),
+    ).toBe('');
+  });
+
+  it('returns "" when the row is shorter than headers', () => {
+    expect(
+      activeCellValue(variable(), active(['sku', 'qty'], ['A1'], { v1: 'qty' })),
+    ).toBe('');
+  });
+
+  // Whitespace is a genuine print value, kept verbatim; the empty/whitespace
+  // fallback split is the placeholder's, not this helper's.
+  it('returns a whitespace-only cell verbatim', () => {
+    expect(
+      activeCellValue(variable(), active(['sku'], ['  '], { v1: 'sku' })),
+    ).toBe('  ');
   });
 });
 

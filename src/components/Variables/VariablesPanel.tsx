@@ -30,7 +30,12 @@ import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { Tooltip } from '../ui/Tooltip';
 import { useT } from '../../hooks/useT';
 import type { Translations } from '../../locales';
-import { getVariableSource, type VariableSource } from '@zplab/core/lib/variableBinding';
+import {
+  activeCellValue,
+  buildActiveRow,
+  getVariableSource,
+  type VariableSource,
+} from '@zplab/core/lib/variableBinding';
 import { countBindings } from '@zplab/core/lib/variableField';
 import { VariableSourceBadge } from './VariableSourceBadge';
 
@@ -73,6 +78,11 @@ export function VariablesPanel() {
   const mappedCount = variables.filter(
     (v) => getVariableSource(v, dataset, columnMapping) === 'bound',
   ).length;
+
+  // Active row of the connected dataset; feeds each variable's default-field
+  // placeholder. Follows the row stepper because dataset (with its
+  // activeRowIndex) is a store subscription.
+  const activeRow = buildActiveRow(dataset, columnMapping);
 
   const [pendingDelete, setPendingDelete] = useState<Variable | null>(null);
 
@@ -343,6 +353,7 @@ export function VariablesPanel() {
                 bindings={bindingCounts.get(entry.id) ?? 0}
                 source={source}
                 boundHeader={boundHeader}
+                boundCellValue={activeCellValue(entry, activeRow)}
                 error={rowError[entry.id]}
                 showZpl={showZpl}
                 tv={tv}
@@ -440,6 +451,10 @@ interface RowProps {
   bindings: number;
   source: VariableSource;
   boundHeader: string | undefined;
+  /** Active-row cell for a bound variable; shown as the default field's
+   *  placeholder. Undefined (unbound / no data) or empty falls back to the
+   *  generic label. */
+  boundCellValue: string | undefined;
   error?: string;
   /** Power-user flag: reveals the editable ^FN slot field. */
   showZpl: boolean;
@@ -459,6 +474,7 @@ function VariableRow({
   bindings,
   source,
   boundHeader,
+  boundCellValue,
   error,
   showZpl,
   tv,
@@ -555,7 +571,9 @@ function VariableRow({
       <input
         className={inputCls}
         aria-label={tv.defaultLabel}
-        placeholder={tv.defaultLabel}
+        // Empty string (empty cell) is falsy, so it falls back to the generic
+        // label; a whitespace-only cell is a real print value and stays shown.
+        placeholder={boundCellValue || tv.defaultLabel}
         value={def}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setDef(e.target.value)}
         onBlur={commitDef}
