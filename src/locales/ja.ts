@@ -1312,7 +1312,6 @@ const ja = {
     panelHint: '印刷時に挿入されるデフォルト値。プロパティタブからフィールドにバインドします。',
     add: '変数を追加',
     empty: '変数はまだありません。',
-    emptyExample: '連番のSKU、バッチ番号、顧客名などに便利です。',
     connectData: 'データを接続',
     nameLabel: '名前',
     fnLabel: 'スロット',

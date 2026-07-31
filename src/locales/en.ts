@@ -1342,7 +1342,6 @@ const en = {
     panelHint: 'Defaults that get filled in at print time. Bind a field from its Properties tab.',
     add: 'Add variable',
     empty: 'No variables yet.',
-    emptyExample: 'Useful for sequential SKUs, batch numbers, or customer names.',
     connectData: 'Connect data',
     nameLabel: 'Name',
     fnLabel: 'Slot',

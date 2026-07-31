@@ -1312,7 +1312,6 @@ const et = {
     panelHint: 'Vaikeväärtused, mis täidetakse trükkimise ajal. Seo väli omaduste vahekaardilt.',
     add: 'Lisa muutuja',
     empty: 'Veel pole muutujaid.',
-    emptyExample: 'Sobib järjestikuste SKU-de, partii numbrite või klientide nimede jaoks.',
     connectData: 'Ühenda andmed',
     nameLabel: 'Nimi',
     fnLabel: 'Pesa',

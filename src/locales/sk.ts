@@ -1312,7 +1312,6 @@ const sk = {
     panelHint: 'Predvolené hodnoty dopĺňané pri tlači. Naviažte pole zo záložky Vlastnosti.',
     add: 'Pridať premennú',
     empty: 'Zatiaľ žiadne premenné.',
-    emptyExample: 'Hodí sa na sekvenčné SKU, čísla šarží alebo mená zákazníkov.',
     connectData: 'Pripojiť údaje',
     nameLabel: 'Názov',
     fnLabel: 'Slot',

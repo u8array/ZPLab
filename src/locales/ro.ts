@@ -1312,7 +1312,6 @@ const ro = {
     panelHint: 'Valori implicite completate la imprimare. Asociați un câmp din fila Proprietăți.',
     add: 'Adaugă variabilă',
     empty: 'Încă nu există variabile.',
-    emptyExample: 'Util pentru SKU-uri secvențiale, numere de lot sau nume de clienți.',
     connectData: 'Conectează date',
     nameLabel: 'Nume',
     fnLabel: 'Slot',

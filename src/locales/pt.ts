@@ -1312,7 +1312,6 @@ const pt = {
     panelHint: 'Valores padrão preenchidos no momento da impressão. Vincule um campo na aba Propriedades.',
     add: 'Adicionar variável',
     empty: 'Ainda não há variáveis.',
-    emptyExample: 'Útil para SKUs sequenciais, números de lote ou nomes de clientes.',
     connectData: 'Conectar dados',
     nameLabel: 'Nome',
     fnLabel: 'Slot',

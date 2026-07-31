@@ -1312,7 +1312,6 @@ const da = {
     panelHint: 'Standardværdier, der udfyldes ved udskrivning. Bind et felt fra fanen Egenskaber.',
     add: 'Tilføj variabel',
     empty: 'Ingen variabler endnu.',
-    emptyExample: 'Nyttig til sekventielle SKU\\\'er, batchnumre eller kundenavne.',
     connectData: 'Forbind data',
     nameLabel: 'Navn',
     fnLabel: 'Slot',

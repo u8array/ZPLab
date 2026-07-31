@@ -1312,7 +1312,6 @@ const fr = {
     panelHint: 'Valeurs par défaut renseignées à l\\\'impression. Liez un champ depuis l\\\'onglet Propriétés.',
     add: 'Ajouter une variable',
     empty: 'Aucune variable pour l\\\'instant.',
-    emptyExample: 'Pratique pour des SKU séquentiels, numéros de lot ou noms de clients.',
     connectData: 'Connecter des données',
     nameLabel: 'Nom',
     fnLabel: 'Emplacement',

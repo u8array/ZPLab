@@ -1312,7 +1312,6 @@ const no = {
     panelHint: 'Standardverdier som fylles inn ved utskrift. Bind et felt fra Egenskaper-fanen.',
     add: 'Legg til variabel',
     empty: 'Ingen variabler ennå.',
-    emptyExample: 'Nyttig for sekvensielle SKU-er, batchnummer eller kundenavn.',
     connectData: 'Koble til data',
     nameLabel: 'Navn',
     fnLabel: 'Plass',

@@ -1312,7 +1312,6 @@ const pl = {
     panelHint: 'Wartości domyślne wypełniane podczas druku. Powiąż pole z karty Właściwości.',
     add: 'Dodaj zmienną',
     empty: 'Brak zmiennych.',
-    emptyExample: 'Przydatne dla kolejnych SKU, numerów partii lub nazw klientów.',
     connectData: 'Połącz dane',
     nameLabel: 'Nazwa',
     fnLabel: 'Slot',

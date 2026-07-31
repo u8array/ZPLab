@@ -1312,7 +1312,6 @@ const nl = {
     panelHint: 'Standaardwaarden die bij het printen worden ingevuld. Bind een veld via het tabblad Eigenschappen.',
     add: 'Variabele toevoegen',
     empty: 'Nog geen variabelen.',
-    emptyExample: 'Handig voor opvolgende SKU\\\'s, batchnummers of klantnamen.',
     connectData: 'Gegevens verbinden',
     nameLabel: 'Naam',
     fnLabel: 'Slot',

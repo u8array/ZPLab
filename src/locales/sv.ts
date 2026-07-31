@@ -1312,7 +1312,6 @@ const sv = {
     panelHint: 'Standardvärden som fylls i vid utskrift. Bind ett fält från fliken Egenskaper.',
     add: 'Lägg till variabel',
     empty: 'Inga variabler än.',
-    emptyExample: 'Användbart för sekventiella SKU:er, batchnummer eller kundnamn.',
     connectData: 'Anslut data',
     nameLabel: 'Namn',
     fnLabel: 'Plats',

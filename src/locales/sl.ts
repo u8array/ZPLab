@@ -1312,7 +1312,6 @@ const sl = {
     panelHint: 'Privzete vrednosti, ki se izpolnijo ob tiskanju. Polje povežite na zavihku Lastnosti.',
     add: 'Dodaj spremenljivko',
     empty: 'Še ni spremenljivk.',
-    emptyExample: 'Uporabno za zaporedne SKU, številke serij ali imena strank.',
     connectData: 'Poveži podatke',
     nameLabel: 'Ime',
     fnLabel: 'Reža',

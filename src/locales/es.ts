@@ -1312,7 +1312,6 @@ const es = {
     panelHint: 'Valores predeterminados que se rellenan al imprimir. Vincula un campo desde la pestaña Propiedades.',
     add: 'Añadir variable',
     empty: 'Aún no hay variables.',
-    emptyExample: 'Útil para SKU secuenciales, números de lote o nombres de clientes.',
     connectData: 'Conectar datos',
     nameLabel: 'Nombre',
     fnLabel: 'Ranura',

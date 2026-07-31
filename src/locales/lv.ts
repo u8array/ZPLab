@@ -1312,7 +1312,6 @@ const lv = {
     panelHint: 'Noklusējuma vērtības, kas tiek aizpildītas drukāšanas laikā. Sasaistiet lauku no cilnes Rekvizīti.',
     add: 'Pievienot mainīgo',
     empty: 'Vēl nav mainīgo.',
-    emptyExample: 'Noderīgi secīgiem SKU, partijas numuriem vai klientu vārdiem.',
     connectData: 'Savienot datus',
     nameLabel: 'Nosaukums',
     fnLabel: 'Slots',

@@ -1312,7 +1312,6 @@ const zhHant = {
     panelHint: '在列印時填入的預設值。從屬性面板綁定欄位。',
     add: '新增變數',
     empty: '尚無變數。',
-    emptyExample: '適合連續的 SKU、批次號或客戶名稱。',
     connectData: '連接資料',
     nameLabel: '名稱',
     fnLabel: '槽位',

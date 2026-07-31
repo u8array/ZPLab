@@ -1312,7 +1312,6 @@ const zhHans = {
     panelHint: '在打印时填入的默认值。从属性面板绑定字段。',
     add: '添加变量',
     empty: '暂无变量。',
-    emptyExample: '适合连续的 SKU、批次号或客户名称。',
     connectData: '连接数据',
     nameLabel: '名称',
     fnLabel: '槽位',

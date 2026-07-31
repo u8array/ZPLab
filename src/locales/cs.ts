@@ -1312,7 +1312,6 @@ const cs = {
     panelHint: 'Výchozí hodnoty doplňované při tisku. Provázat pole lze v záložce Vlastnosti.',
     add: 'Přidat proměnnou',
     empty: 'Zatím žádné proměnné.',
-    emptyExample: 'Hodí se na sekvenční SKU, čísla šarží nebo jména zákazníků.',
     connectData: 'Připojit data',
     nameLabel: 'Název',
     fnLabel: 'Slot',

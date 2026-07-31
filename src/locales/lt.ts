@@ -1312,7 +1312,6 @@ const lt = {
     panelHint: 'Numatytosios reikšmės, įrašomos spausdinant. Susiekite lauką iš Savybių kortelės.',
     add: 'Pridėti kintamąjį',
     empty: 'Kintamųjų dar nėra.',
-    emptyExample: 'Naudinga nuosekliems SKU, partijų numeriams arba klientų vardams.',
     connectData: 'Prijungti duomenis',
     nameLabel: 'Pavadinimas',
     fnLabel: 'Lizdas',

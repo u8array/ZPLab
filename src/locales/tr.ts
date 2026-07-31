@@ -1312,7 +1312,6 @@ const tr = {
     panelHint: 'Yazdırma sırasında doldurulan varsayılan değerler. Bir alanı Özellikler sekmesinden bağlayın.',
     add: 'Değişken ekle',
     empty: 'Henüz değişken yok.',
-    emptyExample: 'Sıralı SKU\\\'lar, parti numaraları veya müşteri adları için kullanışlıdır.',
     connectData: 'Veri bağla',
     nameLabel: 'Ad',
     fnLabel: 'Yuva',

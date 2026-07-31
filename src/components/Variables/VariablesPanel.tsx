@@ -323,9 +323,6 @@ export function VariablesPanel() {
       {variables.length === 0 ? (
         <div className="flex flex-col gap-2">
           <p className="font-mono text-[10px] text-muted italic">{tv.empty}</p>
-          <p className="font-mono text-[10px] text-muted leading-relaxed">
-            {tv.emptyExample}
-          </p>
           <button
             onClick={openConnectWizard}
             className="self-start mt-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono bg-accent text-bg hover:opacity-90 transition-opacity"

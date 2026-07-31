@@ -1312,7 +1312,6 @@ const it = {
     panelHint: 'Valori predefiniti compilati al momento della stampa. Collega un campo dalla scheda Proprietà.',
     add: 'Aggiungi variabile',
     empty: 'Nessuna variabile ancora.',
-    emptyExample: 'Utile per SKU sequenziali, numeri di lotto o nomi cliente.',
     connectData: 'Collega dati',
     nameLabel: 'Nome',
     fnLabel: 'Slot',

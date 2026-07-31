@@ -1312,7 +1312,6 @@ const hu = {
     panelHint: 'Alapértelmezett értékek, amelyek nyomtatáskor töltődnek ki. Mezőt a Tulajdonságok lapon köthet hozzá.',
     add: 'Változó hozzáadása',
     empty: 'Még nincsenek változók.',
-    emptyExample: 'Sorszámozott SKU-khoz, gyártási tételszámokhoz vagy ügyfélnevekhez hasznos.',
     connectData: 'Adatok csatlakoztatása',
     nameLabel: 'Név',
     fnLabel: 'Hely',

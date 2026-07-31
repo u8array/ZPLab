@@ -1312,7 +1312,6 @@ const hr = {
     panelHint: 'Zadane vrijednosti koje se popunjavaju pri ispisu. Poveži polje s kartice Svojstva.',
     add: 'Dodaj varijablu',
     empty: 'Još nema varijabli.',
-    emptyExample: 'Korisno za sekvencijalne SKU, brojeve serija ili imena kupaca.',
     connectData: 'Poveži podatke',
     nameLabel: 'Naziv',
     fnLabel: 'Utor',

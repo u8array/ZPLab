@@ -1342,7 +1342,6 @@ const de = {
     panelHint: 'Standardwerte, die zur Druckzeit eingesetzt werden. Feld in der Eigenschaften-Tab binden.',
     add: 'Variable hinzufügen',
     empty: 'Noch keine Variablen.',
-    emptyExample: 'Praktisch für fortlaufende SKUs, Chargennummern oder Kundennamen.',
     connectData: 'Daten verbinden',
     nameLabel: 'Name',
     fnLabel: 'Slot',

@@ -1312,7 +1312,6 @@ const ko = {
     panelHint: '인쇄 시 채워지는 기본값입니다. 속성 탭에서 필드를 바인딩하세요.',
     add: '변수 추가',
     empty: '아직 변수가 없습니다.',
-    emptyExample: '순차 SKU, 배치 번호 또는 고객 이름에 유용합니다.',
     connectData: '데이터 연결',
     nameLabel: '이름',
     fnLabel: '슬롯',

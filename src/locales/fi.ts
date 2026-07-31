@@ -1312,7 +1312,6 @@ const fi = {
     panelHint: 'Oletukset, jotka täytetään tulostushetkellä. Sido kenttä Ominaisuudet-välilehdestä.',
     add: 'Lisää muuttuja',
     empty: 'Ei vielä muuttujia.',
-    emptyExample: 'Hyödyllinen peräkkäisille SKU-koodeille, eränumeroille tai asiakasnimille.',
     connectData: 'Yhdistä tiedot',
     nameLabel: 'Nimi',
     fnLabel: 'Paikka',
