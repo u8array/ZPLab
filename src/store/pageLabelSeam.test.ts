@@ -29,6 +29,8 @@ const ALLOWED = [
   // Explicit design scope: label-config fields are stored in the design's own
   // density, so a page ^JM must not rescale what they show or write back.
   "scope === 'design' ? s.label : currentPageLabel(s)",
+  // Physical scope: ^PW/^LL are raw head dots, unaffected by any ^JM.
+  "if (scope === 'physical') return s.label.dpmm;",
   // Clock offsets are design-wide and carry no density.
   ".label.secondaryClockOffset",
   ".label.tertiaryClockOffset",

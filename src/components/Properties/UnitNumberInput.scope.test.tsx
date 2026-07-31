@@ -82,4 +82,42 @@ describe("UnitNumberInput density scope", () => {
     });
     expect(written).toBe(20);
   });
+
+  // ^PW/^LL are physical head dots: a ^JMB design (effective dpmm halved) must
+  // NOT reinterpret them. widthMm 100 round-trips as 100, not 50/200.
+  it("keeps a physical field at raw head dpmm on a ^JMB design", () => {
+    act(() => {
+      useLabelStore.setState({
+        label: { widthMm: 100, heightMm: 50, dpmm: 8, jmDensity: "B" },
+        pages: [{ objects: [], jmDensity: "B" }],
+        currentPageIndex: 0,
+        canvasSettings: { ...useLabelStore.getState().canvasSettings, unit: "mm" },
+      } as never);
+    });
+    let written: number | undefined;
+    const { container } = render(
+      <UnitNumberInput label="w" valueDots={800} onChangeDots={(d) => { written = d; }} scope="physical" />,
+    );
+    expect(shown(container)).toBe("100");
+    const input = container.querySelector("input") as HTMLInputElement;
+    // Raw dpmm 8 → 80 mm = 640 dots; the design-scope (effective 4) bug would write 320.
+    act(() => {
+      fireEvent.change(input, { target: { value: "80" } });
+    });
+    expect(written).toBe(640);
+  });
+
+  // Transient clear (allowUnset omitted) must retain the last valid value
+  // rather than commit undefined/0, which previously froze the field at 0.
+  it("does not commit on an empty field without allowUnset", () => {
+    let calls = 0;
+    const { container } = render(
+      <UnitNumberInput label="w" valueDots={800} onChangeDots={() => { calls += 1; }} minDots={8} scope="physical" />,
+    );
+    const input = container.querySelector("input") as HTMLInputElement;
+    act(() => {
+      fireEvent.change(input, { target: { value: "" } });
+    });
+    expect(calls).toBe(0);
+  });
 });

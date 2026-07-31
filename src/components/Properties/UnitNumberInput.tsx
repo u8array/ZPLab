@@ -23,8 +23,9 @@ interface UnitNumberInputProps {
   className?: string;
   /** Density the dots are stored in: object props live in the current page's
    *  scale, label/design fields in the design's own (a page ^JM must not
-   *  reinterpret them). Required so every call site decides explicitly. */
-  scope: 'page' | 'design';
+   *  reinterpret them), 'physical' the raw head resolution (^PW/^LL are
+   *  physical head dots, never ^JM-scaled). Required so every call site decides. */
+  scope: 'page' | 'design' | 'physical';
 }
 
 /**
@@ -47,9 +48,11 @@ export function UnitNumberInput({
   scope,
 }: UnitNumberInputProps) {
   const unit = useLabelStore((s) => s.canvasSettings.unit);
-  const dpmm = useLabelStore((s) =>
-    effectiveDpmm(scope === 'design' ? s.label : currentPageLabel(s)),
-  );
+  const dpmm = useLabelStore((s) => {
+    // 'physical' = raw head resolution: ^PW/^LL are physical head dots, never the ^JM-halved effective scale.
+    if (scope === 'physical') return s.label.dpmm;
+    return effectiveDpmm(scope === 'design' ? s.label : currentPageLabel(s));
+  });
   const toUnit = (dots: number) => mmToUnit(dotsToMm(dots, dpmm), unit);
   // null = not editing; show the canonical store value. Otherwise show the raw
   // keystrokes verbatim so the input never fights the user mid-entry.

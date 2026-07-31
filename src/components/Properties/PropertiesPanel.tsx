@@ -587,33 +587,32 @@ function LabelConfigPanel({
           </div>
         </div>
 
+        {/* widthMm/heightMm are mm-native; ^PW/^LL are physical head dots
+            (never ^JM-scaled), so bridge through raw-dpmm dots. allowUnset=false
+            keeps the last valid value on a transient clear instead of freezing at 0. */}
         <div className={`grid grid-cols-2 ${fieldGridCols}`}>
-          <div className={fieldGridCell}>
-            <FieldLabel cmd="^PW">{t.label.width}</FieldLabel>
-            <input
-              type="number"
-              className={inputCls}
-              value={mmToUnit(label.widthMm, unit)}
-              min={mmToUnit(1, unit)}
-              step={unitStep(unit)}
-              onChange={(e) =>
-                onUpdate({ widthMm: unitToMm(Number(e.target.value), unit) })
-              }
-            />
-          </div>
-          <div className={fieldGridCell}>
-            <FieldLabel cmd="^LL">{t.label.height}</FieldLabel>
-            <input
-              type="number"
-              className={inputCls}
-              value={mmToUnit(label.heightMm, unit)}
-              min={mmToUnit(1, unit)}
-              step={unitStep(unit)}
-              onChange={(e) =>
-                onUpdate({ heightMm: unitToMm(Number(e.target.value), unit) })
-              }
-            />
-          </div>
+          <UnitNumberInput
+            label={t.label.width}
+            valueDots={mmToDots(label.widthMm, label.dpmm)}
+            minDots={mmToDots(1, label.dpmm)}
+            onChangeDots={(dots) => {
+              if (dots !== undefined) onUpdate({ widthMm: dotsToMm(dots, label.dpmm) });
+            }}
+            scope="physical"
+            zplCmd="^PW"
+            className={fieldGridCell}
+          />
+          <UnitNumberInput
+            label={t.label.height}
+            valueDots={mmToDots(label.heightMm, label.dpmm)}
+            minDots={mmToDots(1, label.dpmm)}
+            onChangeDots={(dots) => {
+              if (dots !== undefined) onUpdate({ heightMm: dotsToMm(dots, label.dpmm) });
+            }}
+            scope="physical"
+            zplCmd="^LL"
+            className={fieldGridCell}
+          />
         </div>
 
         <div className="flex flex-col gap-1">
