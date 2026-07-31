@@ -518,8 +518,9 @@ export function BarcodeObject({
   }
 
   // Fallback placeholder (error or not yet rendered); a literal mode 2/3
-  // MaxiCode missing its carrier message already reports via preflight, so
-  // suppress the red alarm box. Bound fields keep it (renderFailed case).
+  // MaxiCode missing its carrier message already reports via preflight
+  // (missing-SCM, or emptyContent when blank), so suppress the red alarm
+  // box. Bound fields keep it (renderFailed case).
   const scmOwned =
     obj.type === "maxicode" &&
     maxicodeScmOwnedByPreflight(preBindingContent, obj.props as MaxicodeProps);

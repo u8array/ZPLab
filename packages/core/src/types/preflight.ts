@@ -71,8 +71,8 @@ export const PREFLIGHT_SEVERITY: Record<PreflightKind, PreflightSeverity> = {
   // Modes 2/3 need a structured carrier message (GS-separated postcode,
   // country, service); without it the symbol cannot encode.
   maxicodeModeMissingScm: 'error',
-  // Percent band outside the preview encoder's 5-95 range: the printer accepts
-  // 1-99 (spec p64) and the value round-trips, only the canvas cannot show it.
+  // Outside every defined ^B0 d-domain, or a percent the preview encoder
+  // cannot show (printer accepts 1-99 per spec p64); export keeps the value.
   aztecEcLevelOutOfRange: 'warning',
   // A leaf whose type isn't in the registry: it has no emitter, so it prints
   // nothing. Only reachable via an imported/foreign design file.

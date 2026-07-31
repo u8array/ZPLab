@@ -15,13 +15,18 @@ export const EC_LEVEL_MAX = 300;
 export const EC_PERCENT_MIN = 5;
 export const EC_PERCENT_MAX = 95;
 
-/** Flags an ecLevel that reads as a percent (1-99) but sits outside the
- *  encoder's 5-95 band. The special layer/rune domains (0, 101-104, 201-232,
- *  300) are valid and never flagged. */
+/** Flags an ecLevel outside every defined domain (0, 5-95 percent, 101-104
+ *  compact, 201-232 full, 300 rune): the preview falls back to auto sizing
+ *  and the printer behavior is undefined, so the value deserves a warning. */
 function ecLevelFindings(ecLevel: number): PreflightProducerResult[] {
   const ec = Math.round(ecLevel);
-  const inPercentBand = ec >= 1 && ec <= 99;
-  if (inPercentBand && (ec < EC_PERCENT_MIN || ec > EC_PERCENT_MAX)) {
+  const defined =
+    ec === 0 ||
+    (ec >= EC_PERCENT_MIN && ec <= EC_PERCENT_MAX) ||
+    (ec >= 101 && ec <= 104) ||
+    (ec >= 201 && ec <= 232) ||
+    ec === 300;
+  if (!defined) {
     return [{ kind: "aztecEcLevelOutOfRange", detail: `${ec} (valid ${EC_PERCENT_MIN}-${EC_PERCENT_MAX})` }];
   }
   return [];
@@ -36,6 +41,8 @@ export interface AztecProps {
 
 // One switch for the capability flag and the emitter's chip resolution.
 const CONTROL_CHARS = true;
+
+const magnificationTooSmall = moduleTooSmallPreflight<AztecProps>('magnification');
 
 export const aztec: ObjectTypeCore<AztecProps> = {
   label: "Aztec",
@@ -57,7 +64,7 @@ export const aztec: ObjectTypeCore<AztecProps> = {
   uniformScaleProp: { name: 'magnification', min: MAGNIFICATION_MIN, max: MAGNIFICATION_MAX },
 
   preflight: (obj, ctx) => [
-    ...moduleTooSmallPreflight<AztecProps>('magnification')(obj, ctx),
+    ...magnificationTooSmall(obj, ctx),
     ...ecLevelFindings(obj.props.ecLevel),
   ],
 

@@ -31,6 +31,16 @@ describe("aztec ecLevel preflight", () => {
       expect(getEntry("aztec")!.preflight!(az(ec), pctx)).toEqual([]);
     }
   });
+
+  it("flags the undefined zones between the domains (100, 105-200, 233-299)", () => {
+    // The UI range is a continuous 0-300, so these are enterable; the preview
+    // silently auto-sizes and printer behavior is undefined, hence the warning.
+    for (const ec of [100, 105, 150, 200, 233, 299]) {
+      expect(getEntry("aztec")!.preflight!(az(ec), pctx)).toEqual([
+        { kind: "aztecEcLevelOutOfRange", detail: `${ec} (valid 5-95)` },
+      ]);
+    }
+  });
 });
 
 describe("aztecBwipOptions maps to the encoder's real 5-95 band", () => {
