@@ -465,7 +465,7 @@ export function KonvaObject(props_: Props) {
   const shape =
     obj.type === "line" ? <LineObject {...renderProps} obj={obj} /> :
     obj.type === "image" ? <ImageObject {...renderProps} obj={obj} /> :
-    BARCODE_TYPES.has(obj.type) ? <BarcodeObject {...renderProps} preBindingContent={getObjectStringContent(props_.obj)} /> :
+    BARCODE_TYPES.has(obj.type) ? <BarcodeObject {...renderProps} preBindingContent={getObjectStringContent(props_.obj) ?? ""} /> :
     <KonvaObjectInner {...renderProps} />;
 
   if (!showFallbackTint) return shape;

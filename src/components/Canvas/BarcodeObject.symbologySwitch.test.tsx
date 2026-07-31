@@ -56,6 +56,7 @@ describe("symbology switch re-measures the node footprint", () => {
             dpmm={8}
             offsetX={0}
             offsetY={0}
+            preBindingContent={(o.props as { content?: string }).content ?? ""}
             {...noopHandlers}
           />
         </Layer>

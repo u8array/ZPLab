@@ -113,8 +113,10 @@ export function BarcodeObject({
   preBindingContent,
 }: KonvaObjectProps & {
   /** Content before marker resolution: `obj` arrives resolved, so the SCM
-   *  alarm suppression needs the raw string to tell literal from bound. */
-  preBindingContent?: string;
+   *  alarm suppression needs the raw string to tell literal from bound.
+   *  Required: a resolved-content fallback would silently re-suppress the
+   *  alarm for bound fields. */
+  preBindingContent: string;
 }) {
   const colors = useColorScheme();
   // Vera Mono (HRI) loads async; Konva won't repaint on an unchanged
@@ -520,7 +522,7 @@ export function BarcodeObject({
   // suppress the red alarm box. Bound fields keep it (renderFailed case).
   const scmOwned =
     obj.type === "maxicode" &&
-    maxicodeScmOwnedByPreflight(preBindingContent ?? getObjectStringContent(obj) ?? "", obj.props as MaxicodeProps);
+    maxicodeScmOwnedByPreflight(preBindingContent, obj.props as MaxicodeProps);
   const fallbackError = scmOwned ? null : errorMsg;
   const fbW = dotsToPx(200, scale, dpmm);
   const fbH = dotsToPx(80, scale, dpmm);
