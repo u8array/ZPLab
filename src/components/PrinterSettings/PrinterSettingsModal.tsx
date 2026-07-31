@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type FC } from "react";
-import { CheckIcon, ClipboardDocumentIcon, TrashIcon, XMarkIcon } from "@heroicons/react/16/solid";
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon, ClipboardDocumentIcon, TrashIcon, XMarkIcon } from "@heroicons/react/16/solid";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { useMcpAvailability } from "../../hooks/useMcpServer";
 import { useT } from "../../hooks/useT";
@@ -290,15 +290,31 @@ function PreviewDock({
   const t = useT();
   // Live-clock mode needs the payload generated at click-time.
   const { copy, copied } = useCopyToClipboard(() => generateSetupScript(printerProfile));
+  // Collapse frees vertical space on short screens; no animation/persistence by design.
+  const [collapsed, setCollapsed] = useState(false);
 
   const hasScript = !!setupScript;
+  const collapseLabel = collapsed ? t.app.expand : t.app.collapse;
 
   return (
-    <div className={`${PREVIEW_HEIGHT} shrink-0 border-t border-border flex flex-col bg-surface`}>
+    <div className={`${collapsed ? '' : PREVIEW_HEIGHT} shrink-0 border-t border-border flex flex-col bg-surface`}>
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-border shrink-0">
-        <span className="font-mono text-[10px] text-muted uppercase tracking-widest">
-          {t.printerSettings.previewHeading}
-        </span>
+        <div className="flex items-center gap-2">
+          <Tooltip content={collapseLabel}>
+            <button
+              type="button"
+              onClick={() => setCollapsed((c) => !c)}
+              aria-label={collapseLabel}
+              aria-expanded={!collapsed}
+              className="p-0.5 rounded text-muted hover:text-text hover:bg-border transition-colors"
+            >
+              {collapsed ? <ChevronUpIcon className="w-3.5 h-3.5" /> : <ChevronDownIcon className="w-3.5 h-3.5" />}
+            </button>
+          </Tooltip>
+          <span className="font-mono text-[10px] text-muted uppercase tracking-widest">
+            {t.printerSettings.previewHeading}
+          </span>
+        </div>
         <div className="flex items-center gap-3">
           {/* Clear: separated from Send by a divider; red hover +
               red focus-visible ring so destructive intent is visible
@@ -338,12 +354,14 @@ function PreviewDock({
         </div>
       </div>
 
-      <pre className="flex-1 overflow-auto p-3 font-mono text-xs leading-relaxed text-text m-0">
-        {hasScript
-          ? setupScript.split('\n').map((line, i) => <ZplLine key={i} line={line} />)
-          : null
-        }
-      </pre>
+      {!collapsed && (
+        <pre className="flex-1 overflow-auto p-3 font-mono text-xs leading-relaxed text-text m-0">
+          {hasScript
+            ? setupScript.split('\n').map((line, i) => <ZplLine key={i} line={line} />)
+            : null
+          }
+        </pre>
+      )}
     </div>
   );
 }
