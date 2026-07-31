@@ -33,6 +33,13 @@ export function maxicodeMissingScm(props: MaxicodeProps): boolean {
   return (props.mode === 2 || props.mode === 3) && !props.content.includes(SCM_FIELD_SEPARATOR);
 }
 
+/** True when the missing-SCM report is owned by the preflight producer, so
+ *  renderFailed/red-box surfaces must stand down. Only literal content: the
+ *  producer never sees a bound value, so marker fields keep the alarm. */
+export function maxicodeScmOwnedByPreflight(rawContent: string, resolved: MaxicodeProps): boolean {
+  return !hasTemplateMarkers(rawContent) && maxicodeMissingScm(resolved);
+}
+
 export const maxicode: ObjectTypeCore<MaxicodeProps> = {
   label: "Maxicode",
   icon: "⬡",

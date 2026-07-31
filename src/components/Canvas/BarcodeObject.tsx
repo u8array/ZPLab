@@ -24,7 +24,7 @@ import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { hasTemplateMarkers } from "@zplab/core/lib/fnTemplate";
 import { hasControlMarkers } from "@zplab/core/types/controlKey";
 import { objectRotation } from "@zplab/core/registry/rotation";
-import { maxicodeMissingScm, type MaxicodeProps } from "@zplab/core/registry/maxicode";
+import { maxicodeScmOwnedByPreflight, type MaxicodeProps } from "@zplab/core/registry/maxicode";
 import { rotatedGroupTransform } from "./rotatedGroupTransform";
 import { buildEanUpcDigitOverlay } from "./eanUpcDigitNodes";
 import { buildCode1dStartStopGlyphs } from "./code1dHriOverlay";
@@ -110,7 +110,12 @@ export function BarcodeObject({
   isSelected,
   onSelect,
   dragHandlers,
-}: KonvaObjectProps) {
+  preBindingContent,
+}: KonvaObjectProps & {
+  /** Content before marker resolution: `obj` arrives resolved, so the SCM
+   *  alarm suppression needs the raw string to tell literal from bound. */
+  preBindingContent?: string;
+}) {
   const colors = useColorScheme();
   // Vera Mono (HRI) loads async; Konva won't repaint on an unchanged
   // fontFamily once the FontFace resolves. Keying the overlay on this
@@ -510,11 +515,13 @@ export function BarcodeObject({
     );
   }
 
-  // Fallback placeholder (error or not yet rendered); mode 2/3 MaxiCode
-  // missing its carrier message already reported via preflight, so suppress
-  // the red alarm box here and show the neutral placeholder instead.
-  const scmMissing = obj.type === "maxicode" && maxicodeMissingScm(obj.props as MaxicodeProps);
-  const fallbackError = scmMissing ? null : errorMsg;
+  // Fallback placeholder (error or not yet rendered); a literal mode 2/3
+  // MaxiCode missing its carrier message already reports via preflight, so
+  // suppress the red alarm box. Bound fields keep it (renderFailed case).
+  const scmOwned =
+    obj.type === "maxicode" &&
+    maxicodeScmOwnedByPreflight(preBindingContent ?? getObjectStringContent(obj) ?? "", obj.props as MaxicodeProps);
+  const fallbackError = scmOwned ? null : errorMsg;
   const fbW = dotsToPx(200, scale, dpmm);
   const fbH = dotsToPx(80, scale, dpmm);
   return (

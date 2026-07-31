@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
 import { Ellipse, Group, Rect, Shape, Text } from "react-konva";
-import { shouldShowFallbackTint } from "@zplab/core/lib/variableBinding";
+import { getObjectStringContent, shouldShowFallbackTint } from "@zplab/core/lib/variableBinding";
 import { lookupBoundVariable } from "@zplab/core/lib/variableField";
 import { BarcodeObject } from "./BarcodeObject";
 import { LineObject } from "./LineObject";
@@ -465,7 +465,7 @@ export function KonvaObject(props_: Props) {
   const shape =
     obj.type === "line" ? <LineObject {...renderProps} obj={obj} /> :
     obj.type === "image" ? <ImageObject {...renderProps} obj={obj} /> :
-    BARCODE_TYPES.has(obj.type) ? <BarcodeObject {...renderProps} /> :
+    BARCODE_TYPES.has(obj.type) ? <BarcodeObject {...renderProps} preBindingContent={getObjectStringContent(props_.obj)} /> :
     <KonvaObjectInner {...renderProps} />;
 
   if (!showFallbackTint) return shape;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import bwipjs from "bwip-js/generic";
-import { maxicodeMissingScm } from "./maxicode";
+import { maxicodeMissingScm, maxicodeScmOwnedByPreflight } from "./maxicode";
 import { getEntry, type LeafObject } from ".";
 import { measureBarcodeFootprintDotsWith, type BwipEngine } from "../lib/barcodeDims";
 import type { LabelObject } from "../types/Group";
@@ -28,6 +28,22 @@ describe("maxicodeMissingScm", () => {
     expect(maxicodeMissingScm({ mode: 4, content: "1234567890" })).toBe(false);
     expect(maxicodeMissingScm({ mode: 5, content: "x" })).toBe(false);
     expect(maxicodeMissingScm({ mode: 6, content: "x" })).toBe(false);
+  });
+});
+
+describe("maxicodeScmOwnedByPreflight", () => {
+  it("owns only literal marker-free content", () => {
+    expect(maxicodeScmOwnedByPreflight("1234567890", { mode: 2, content: "1234567890" })).toBe(true);
+  });
+
+  it("leaves bound content to renderFailed: markers in the raw string keep the alarm", () => {
+    // The producer never fires for «scm», so suppressing here too would hide
+    // the broken symbol behind a neutral placeholder on every surface.
+    expect(maxicodeScmOwnedByPreflight("«scm»", { mode: 2, content: "1234567890" })).toBe(false);
+  });
+
+  it("never owns a resolved value that carries a separator", () => {
+    expect(maxicodeScmOwnedByPreflight("12345", { mode: 2, content: `12345${GS}840${GS}001` })).toBe(false);
   });
 });
 

@@ -1,6 +1,5 @@
 import { objectResolvesCtrl, type LeafObject } from "@zplab/core/registry";
-import { maxicodeMissingScm, type MaxicodeProps } from "@zplab/core/registry/maxicode";
-import { hasTemplateMarkers } from "@zplab/core/lib/fnTemplate";
+import { maxicodeScmOwnedByPreflight, type MaxicodeProps } from "@zplab/core/registry/maxicode";
 import { isBarcode } from "@zplab/core/lib/objectBounds";
 import { PREFLIGHT_SEVERITY, type PreflightFinding } from "@zplab/core/lib/preflight";
 import type { Variable } from "@zplab/core/types/Variable";
@@ -87,8 +86,7 @@ export function barcodeEncodeFindings(
     // double report. Marker content isn't skipped: the producer guards it out.
     if (
       resolved.type === "maxicode" &&
-      !hasTemplateMarkers(getObjectStringContent(leaf) ?? "") &&
-      maxicodeMissingScm(resolved.props as MaxicodeProps)
+      maxicodeScmOwnedByPreflight(getObjectStringContent(leaf) ?? "", resolved.props as MaxicodeProps)
     ) {
       continue;
     }
