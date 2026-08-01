@@ -9,7 +9,8 @@ import {
 import type { LabelObject } from "../../types/Group";
 import { embedsToMarkers } from "../fnTemplate";
 import { tokensToMarkers } from "../fcTemplate";
-import { controlBytesToMarkers } from "../../types/controlKey";
+import { controlBytesAllCatalogued, controlBytesToMarkers } from "../../types/controlKey";
+import { code128FdToBytes } from "../code128Subset";
 import { decodeFbContent } from "../fbContent";
 import { decodeTbContent } from "../tbContent";
 import { zplFdToModelContent } from "../gs1";
@@ -150,6 +151,13 @@ export function createFlushField(
     // normalisation in the type cases below must still see. Text keeps raw
     // newlines (^FB); other types keep the bytes for the suspicious preflight.
     const gs1Field = s.field.bcGs1 || (s.field.dmQuality === 200 && !!s.field.dmEscape);
+    if (!gs1Field && s.field.fieldType === "code128") {
+      // Subset invocations are the only ^BC form the firmware encodes control
+      // bytes from; adopt the decode only when it recovers one, so an escape
+      // stream carrying nothing chippable still re-exports verbatim.
+      const bytes = code128FdToBytes(content);
+      if (bytes !== null && controlBytesAllCatalogued(bytes)) content = bytes;
+    }
     if (!gs1Field && s.field.fieldType && getEntry(s.field.fieldType)?.controlChars) {
       content = controlBytesToMarkers(content);
     }
