@@ -5,7 +5,7 @@
 
 import type { LabelObject, LeafObject } from "@zplab/core/types/Group";
 import { isGroup } from "@zplab/core/types/Group";
-import { objectBoundsDots, selectionUnionDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
+import { objectBoundsDots, selectionUnionDots, type BoundingBoxDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import { ZPL_ROTATIONS, isZplRotation, type ZplRotation } from "@zplab/core/registry/rotation";
 import { barSubRect } from "@zplab/core/lib/bwipConstants";
 import { barcodeTextZoneDots, barcodeZoneAbove } from "@zplab/core/lib/barcodeHri";
@@ -52,6 +52,14 @@ function rotatedRect(leaf: LeafObject, pivot: Vec, steps: number, ctx: ObjectBou
     y: Math.round(Math.min(c1.y, c2.y)),
     width: Math.round(Math.abs(c2.x - c1.x)),
     height: Math.round(Math.abs(c2.y - c1.y)),
+  };
+}
+
+/** Model anchor that lands a probe bbox (measured at x=y=0) centred on `centre`. */
+function anchorFor(centre: Vec, probe: BoundingBoxDots): { x: number; y: number } {
+  return {
+    x: Math.round(centre.x - (probe.x + probe.width / 2)),
+    y: Math.round(centre.y - (probe.y + probe.height / 2)),
   };
 }
 
@@ -110,7 +118,9 @@ function leafChanges(
   const centre = rotateAbout({ x: b.x + b.width / 2, y: b.y + b.height / 2 }, pivot, steps);
   const props = leaf.props as { rotation?: string };
   if (typeof props.rotation !== "string") {
-    return { x: Math.round(centre.x - b.width / 2), y: Math.round(centre.y - b.height / 2) };
+    // Rotation-less type (maxicode): footprint can't turn, but the anchor may
+    // still be a ^FT baseline, so probe the bbox instead of writing a top-left.
+    return anchorFor(centre, objectBoundsDots({ ...leaf, x: 0, y: 0 } as LeafObject, ctx));
   }
   const newRot = advanceRotation(props.rotation, steps) as ZplRotation;
   // Feed the probe the post-turn measured footprint + barcode bar sub-rect so
@@ -120,11 +130,7 @@ function leafChanges(
     { ...leaf, x: 0, y: 0, props: { ...leaf.props, rotation: newRot } } as LeafObject,
     probeCtx,
   );
-  return {
-    x: Math.round(centre.x - (probe.x + probe.width / 2)),
-    y: Math.round(centre.y - (probe.y + probe.height / 2)),
-    props: { rotation: newRot },
-  };
+  return { ...anchorFor(centre, probe), props: { rotation: newRot } };
 }
 
 /** Clone the bounds ctx with this leaf's measured footprint set for `newRot`:

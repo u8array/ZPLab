@@ -199,6 +199,28 @@ describe("rotateSelectionChanges", () => {
     expect(Math.abs((ean.y as number) - 100)).toBeLessThanOrEqual(2);
   });
 
+  // maxicode has no rotation prop, so it takes the no-turn fallback. That path
+  // used to write a top-left into obj.y, teleporting an ^FT-anchored symbol up
+  // by its own footprint height.
+  it("keeps an FT maxicode's baseline through a group turn", () => {
+    const mc = {
+      id: "mc", type: "maxicode", x: 100, y: 300, rotation: 0, positionType: "FT",
+      props: { mode: 4, content: "1234567890" },
+    } as unknown as LabelObject;
+    const measured = new Map([
+      [mc.id, { width: 209, height: 199, uprightBarWDots: 209, uprightBarHDots: 199 }],
+    ]);
+    const companion = box(0, 0, 20, 20);
+    const before = objectBoundsDots(mc, ctx(measured));
+    const c = rotateSelectionChanges([mc, companion], [mc.id, companion.id], ctx(measured), 1).get(mc.id)!;
+    const after = objectBoundsDots({ ...mc, x: c.x, y: c.y } as LabelObject, ctx(measured));
+    // Footprint can't turn, so a quarter turn only moves the symbol's centre
+    // about the pivot; the bbox must keep its size and stay on the label.
+    expect([after.width, after.height]).toEqual([before.width, before.height]);
+    expect(after.y).toBe(100);
+    expect(c.y).toBe(299);
+  });
+
   it("returns no changes for a zero (mod 4) turn", () => {
     const b = box(10, 10, 40, 20);
     expect(rotateSelectionChanges([b], [b.id], ctx(), 4).size).toBe(0);
