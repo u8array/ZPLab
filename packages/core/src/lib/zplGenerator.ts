@@ -17,8 +17,8 @@ import { fnConsumerBuckets } from './gs1ModeDFns';
 import { planCode128Fd } from './code128Plan';
 import { resolveControlMarkers } from '../types/controlKey';
 import { formatLabelMetaComment } from './zplLabelMeta';
-import { jmDensityOf } from '../types/LabelConfig';
-import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig } from '../types/LabelConfig';
+import { designAsPageLabel, jmDensityOf } from '../types/LabelConfig';
+import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig, PageLabel } from '../types/LabelConfig';
 import type { ZplEmitContext } from '../types/ZplEmit';
 import type { Variable } from '../types/Variable';
 import { exportableLeaves, isGroup, pageLabelConfig, walkObjects, type LabelObject, type LeafObject, type Page } from '../types/Group';
@@ -350,7 +350,7 @@ export function emitOverlayPage(
 /** Overlay replay plus the head those bytes carry, so the ^JM pass patches a
  *  parser-recorded position, not an inferred one. Label is pre-resolved (^JM override folded in). */
 function emitPageBlock(
-  label: LabelConfig,
+  label: PageLabel,
   page: Page,
   variables: readonly Variable[] = [],
 ): PageBlock {
@@ -510,7 +510,9 @@ const BATCH_TEMPLATE_PATH = 'R:LBL.ZPL';
 /** Store template via ^DF then emit one ^XA^XF...^XZ recall block per
  *  CSV row. Unmapped variables fall back to the template's ^FD default. */
 export function generateBatchZpl(
-  label: LabelConfig,
+  // Page-resolved: batch recalls one page's objects, so the caller must hand
+  // in the label that page prints at.
+  label: PageLabel,
   objects: LabelObject[],
   variables: readonly Variable[],
   dataset: {
@@ -596,7 +598,7 @@ function shiftObjectsByHome(
   homeX: number,
   homeY: number,
   top: number,
-  label: LabelConfig,
+  label: PageLabel,
 ): LabelObject[] {
   if (homeX === 0 && homeY === 0 && top === 0) return objects;
   const ctx: ObjectBoundsCtx = { label };
@@ -639,7 +641,7 @@ function shiftObjectsByHome(
  *  home/top shift (dropping negative origins) and the template/clock emit
  *  context, but emits no ^XA / label config / ^XZ. */
 export function planFieldEmission(
-  label: LabelConfig,
+  label: PageLabel,
   objects: LabelObject[],
   variables: readonly Variable[] = [],
 ): { headerLines: string[]; bodyLines: string[] } {
@@ -674,14 +676,16 @@ export function generateZPL(
   objects: LabelObject[],
   variables: readonly Variable[] = [],
 ): string {
-  return generateZplBlock(label, objects, variables).block;
+  // Public single-block entry: callers own the page scope (generateMultiPageZPL
+  // folds ^JM itself, the app passes currentPageLabel), so the brand starts here.
+  return generateZplBlock(designAsPageLabel(label), objects, variables).block;
 }
 
 /** Model emit plus the format head it wrote. The head is exact by construction
  *  rather than searched for; the ^A@ aliasing at the end only rewrites body
  *  bytes, so the offsets survive it. */
 function generateZplBlock(
-  label: LabelConfig,
+  label: PageLabel,
   objects: LabelObject[],
   variables: readonly Variable[] = [],
 ): PageBlock {

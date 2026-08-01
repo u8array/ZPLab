@@ -4,13 +4,13 @@
 import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 
 import { printableRectDots, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import { mmToDots } from "@zplab/core/lib/coordinates";
 
 /** Inset rectangle (dots) for the label's safe area, or null when no safe
  *  area applies: unset/zero margin, or an inset so large the rect collapses.
  *  Inset from the printable rect so it stays consistent under ^LS. */
-export function safeAreaRectDots(label: LabelConfig): BoundingBoxDots | null {
+export function safeAreaRectDots(label: PageLabel): BoundingBoxDots | null {
   const mm = label.safeAreaMm ?? 0;
   if (mm <= 0) return null;
   const inset = mmToDots(mm, effectiveDpmm(label));

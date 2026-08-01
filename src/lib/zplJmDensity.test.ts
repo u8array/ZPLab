@@ -3,7 +3,7 @@ import { parseZPL } from '@zplab/core/lib/zplParser';
 import { emitOverlayPage, generateMultiPageZPL, generateZPL } from '@zplab/core/lib/zplGenerator';
 import { importZplText, rebaseAppendedPageDensity } from '@zplab/core/lib/zplImportService';
 import { parseDesignFile, serializeDesign } from '@zplab/core/lib/designFile';
-import { effectiveDpmm, type JmDensity, type LabelConfig } from "@zplab/core/types/LabelConfig";
+import { effectiveDpmm, type JmDensity, type LabelConfig, type PageLabel } from "@zplab/core/types/LabelConfig";
 import { printableRectDots } from '@zplab/core/lib/objectBounds';
 import { blockOverlaySchema } from '@zplab/core/lib/zplOverlay/overlay';
 
@@ -271,8 +271,8 @@ describe('^JM density', () => {
 
 
   it('printableRectDots follows the effective density (drag bounds, align, spawn)', () => {
-    expect(printableRectDots(base).width).toBe(800);
-    expect(printableRectDots({ ...base, jmDensity: 'B' })).toMatchObject({ width: 400, height: 200 });
+    expect(printableRectDots(base as PageLabel).width).toBe(800);
+    expect(printableRectDots({ ...base, jmDensity: 'B' } as PageLabel)).toMatchObject({ width: 400, height: 200 });
   });
 
   it('^PW is jm-independent across blocks (physical, same mm both pages)', () => {

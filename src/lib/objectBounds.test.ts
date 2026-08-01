@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { objectBoundsDots, selectionUnionDots, barcodeFtAnchorOffset, offLabelPlacement, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import type { ZplRotation } from "@zplab/core/registry/rotation";
 import { QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { LeafObject } from "@zplab/core/registry";
 
-const label: LabelConfig = { widthMm: 100, heightMm: 50, dpmm: 8 };
+const label = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
 const ctx = (measured?: ObjectBoundsCtx["measured"]): ObjectBoundsCtx => ({ label, measured });
 
 function leaf<T extends LeafObject["type"]>(

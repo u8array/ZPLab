@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 import { emittedAnchorDots } from "@zplab/core/lib/emittedAnchor";
 import type { ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import type { LabelObject } from "@zplab/core/types/Group";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import type { LeafObject } from "@zplab/core/registry";
 
-const label = { widthMm: 100, heightMm: 50, dpmm: 8 };
+const label = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
 const ctx: ObjectBoundsCtx = { label };
 
 const leaf = (type: string, x: number, y: number, props: object, extra: object = {}): LeafObject =>

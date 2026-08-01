@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { resolveDefaultSizeDots } from "@zplab/core/lib/resolveDefaultSize";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
-const labelAt = (dpmm: number): LabelConfig =>
-  ({ widthMm: 100, heightMm: 50, dpmm }) as LabelConfig;
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
+const labelAt = (dpmm: number): PageLabel =>
+  ({ widthMm: 100, heightMm: 50, dpmm }) as PageLabel;
 
 describe("resolveDefaultSizeDots", () => {
   it("passes a dots-shape through unchanged regardless of dpmm", () => {

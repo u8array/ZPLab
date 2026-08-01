@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { computeOverlaps, leafBoxesDots } from "@zplab/core/lib/objectOverlap";
 import type { ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import type { LeafObject } from "@zplab/core/registry";
 
-const label: LabelConfig = { widthMm: 100, heightMm: 50, dpmm: 8 };
+const label = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
 const ctx: ObjectBoundsCtx = { label };
 
 const box = (id: string, x: number, y: number, width: number, height: number) =>

@@ -1,4 +1,4 @@
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import { isGroup, getAllLeaves, type LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
 import { planFieldEmission } from "@zplab/core/lib/zplGenerator";
@@ -10,7 +10,7 @@ import { planFieldEmission } from "@zplab/core/lib/zplGenerator";
  *  armings ride on each field, not here); it stays empty for plain objects.
  *  Empty string when nothing is selected. */
 export function zplForSelection(
-  label: LabelConfig,
+  label: PageLabel,
   pageObjects: readonly LabelObject[],
   selectedIds: readonly string[],
   variables: readonly Variable[] = [],

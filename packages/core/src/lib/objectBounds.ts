@@ -16,8 +16,8 @@ import type { LeafObject } from "../registry";
 import { gfaHeaderDims, type ImageProps } from "../registry/image";
 import { getImage } from "./imageCache";
 import { BARCODE_1D_TYPES, STACKED_2D_TYPES, getEntry } from "../registry";
-import type { LabelConfig } from "../types/LabelConfig";
-import { effectiveDpmm, type JmDensity } from "../types/LabelConfig";
+import type { PageLabel } from "../types/LabelConfig";
+import { effectiveDpmm } from "../types/LabelConfig";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "../registry/rotation";
 import { resolveTextMode } from "../registry/text";
 import { blockBoundsDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isBlankText, rotatedLineOffset, tbBoundsDots, zebraLineWidthDots } from "./zebraTextLayout";
@@ -33,7 +33,7 @@ export interface BoundingBoxDots {
 }
 
 export interface ObjectBoundsCtx {
-  label: LabelConfig;
+  label: PageLabel;
   /** Measured footprints (dots) published by the render layer for types whose
    *  size isn't purely computable (barcodes, single-line text). Keyed by obj.id.
    *  The FT anchor uses uprightBar*Dots; barHeightDots is the legacy fallback. */
@@ -69,7 +69,7 @@ function rotatedFootprint(
  *  (object not yet rendered). Spec-fixed symbols carry mm; the rest carry dots. */
 function fallbackSizeDots(
   obj: LeafObject,
-  label: LabelConfig,
+  label: PageLabel,
 ): { width: number; height: number } {
   const def = getEntry(obj.type)?.defaultSize;
   return def ? resolveDefaultSizeDots(def, label) : { width: 0, height: 0 };
@@ -360,13 +360,7 @@ export function selectionUnionDots(
  *  labelShift (ZPL spec + Labelary-verified): a field at model x prints at
  *  x-labelShift, so the visible model window is [labelShift, labelShift+width].
  *  Single source for the drag-snap boundary and the out-of-bounds check. */
-export function printableRectDots(label: {
-  widthMm: number;
-  heightMm: number;
-  dpmm: number;
-  jmDensity?: JmDensity;
-  labelShift?: number;
-}): BoundingBoxDots {
+export function printableRectDots(label: PageLabel): BoundingBoxDots {
   const shift = label.labelShift ?? 0;
   return {
     x: shift,
@@ -395,7 +389,7 @@ export type OffLabel = "clipped" | "outside";
 export function offLabelPlacement(
   anchor: { x: number; y: number },
   box: BoundingBoxDots,
-  label: Parameters<typeof printableRectDots>[0],
+  label: PageLabel,
 ): OffLabel | null {
   const r = printableRectDots(label);
   if (anchor.x < r.x - EDGE_EPS || anchor.y < r.y - EDGE_EPS) return "outside";

@@ -1,6 +1,6 @@
 import { generateZPL } from "@zplab/core/lib/zplGenerator";
 import { fetchPreview } from "./labelary";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import { isGroup, type LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
 import { applyBindingToTree, clockCtxFromLabel, getObjectStringContent, type ActiveRow } from "@zplab/core/lib/variableBinding";
@@ -30,7 +30,7 @@ function withBlankSamples(objects: LabelObject[]): LabelObject[] {
  *  never put sample data on paper. `label` is the page's label (its ^JM
  *  override included), since the emitted dots live in that density. */
 export function buildPreviewZpl(
-  label: LabelConfig,
+  label: PageLabel,
   objects: LabelObject[],
   variables: readonly Variable[],
   active: ActiveRow | null,
@@ -59,7 +59,7 @@ export function buildPrintHtml(imageUrl: string): string {
 }
 
 export async function printLabel(
-  label: LabelConfig,
+  label: PageLabel,
   objects: LabelObject[],
   host: string,
   apiKey: string | undefined,

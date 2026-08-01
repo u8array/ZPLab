@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import { convertPositionType, supportsPositionToggle } from "./positionConvert";
 import { objectBoundsDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import { QR_FO_Y_OFFSET_DOTS, QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { LeafObject } from "@zplab/core/registry";
 import type { ZplRotation } from "@zplab/core/registry/rotation";
 
-const label: LabelConfig = { widthMm: 100, heightMm: 50, dpmm: 8 };
+const label = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
 const ctx = (measured?: ObjectBoundsCtx["measured"]): ObjectBoundsCtx => ({ label, measured });
 
 function leaf<T extends LeafObject["type"]>(

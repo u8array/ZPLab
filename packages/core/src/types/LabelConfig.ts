@@ -250,6 +250,20 @@ export const labelConfigSchema = z.object({
 
 export type LabelConfig = z.infer<typeof labelConfigSchema>;
 
+declare const pageResolved: unique symbol;
+
+/** A LabelConfig resolved against one page's ^JM override (phantom brand,
+ *  compile-time only). Editor geometry and single-page emit demand it, so a
+ *  raw design label cannot reach a dots<->mm boundary on a diverging page.
+ *  Consumer-side only: a helper declared with a plain LabelConfig param
+ *  still accepts a design label unchecked. */
+export type PageLabel = LabelConfig & { readonly [pageResolved]: true };
+
+/** Assert a label is already page-resolved, for the two spots the type cannot
+ *  prove it: an absent override (design label == page label) and a public entry
+ *  whose caller owns the page scope. Every use must say which at the call site. */
+export const designAsPageLabel = (label: LabelConfig): PageLabel => label as PageLabel;
+
 /** Fields holding a plain number, the only ones a density rescale may scale. */
 export type NumericLabelConfigField = {
   [K in keyof LabelConfig]-?: NonNullable<LabelConfig[K]> extends number ? K : never;

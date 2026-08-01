@@ -6,12 +6,12 @@ import { getDisplaySize, measureBarcodeFootprintDotsWith, type BwipEngine } from
 import { pxToDots } from "../lib/coordinates";
 import { resolveDefaultSizeDots } from "../lib/resolveDefaultSize";
 import type { LabelObject } from "../types/Group";
-import type { LabelConfig } from "../types/LabelConfig";
+import type { PageLabel } from "../types/LabelConfig";
 
 const engine = bwipjs as unknown as BwipEngine;
 /** bwip's maxicode bitmap at BWIP_SCALE; pinned by src/test/maxicodeBitmap.test.ts. */
 const BWIP_CANVAS = { width: 210, height: 200 };
-const pctx = { label: { widthMm: 100, heightMm: 100, dpmm: 8 } as LabelConfig, unit: "mm" } as const;
+const pctx = { label: { widthMm: 100, heightMm: 100, dpmm: 8 } as PageLabel, unit: "mm" } as const;
 
 const mc = (mode: 2 | 3 | 4 | 5 | 6, content: string): LeafObject =>
   ({ id: "m", type: "maxicode", x: 0, y: 0, rotation: 0, props: { mode, content } } as LabelObject as LeafObject);
@@ -85,7 +85,7 @@ describe("maxicode footprint tracks dpmm (fixed physical size)", () => {
   // Guards the mmToDots quantization: an unquantised mm->px->dots path loses a
   // ULP and flips a dot at some zoom levels whenever mm*dpmm lands near a tie.
   it("stays zoom-stable at 12 dpmm and agrees with the palette default size", () => {
-    const def = resolveDefaultSizeDots(getEntry("maxicode")!.defaultSize, { dpmm: 12 } as LabelConfig);
+    const def = resolveDefaultSizeDots(getEntry("maxicode")!.defaultSize, { dpmm: 12 } as PageLabel);
     expect([def.width, def.height]).toEqual([303, 288]);
     for (const scale of [0.65, 0.75, 0.77, 1, 1.29, 1.5, 3]) {
       const d = getDisplaySize(mc(4, "1234567890"), BWIP_CANVAS, scale, 12);

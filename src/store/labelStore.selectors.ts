@@ -5,7 +5,7 @@ import type { Dataset } from './slices/dataSlice';
 import type { ColumnMapping } from '@zplab/core/types/Variable';
 import type { LabelState } from './labelStore';
 import type { PageState } from './labelStore.internals';
-import { PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig } from '@zplab/core/types/LabelConfig';
+import { designAsPageLabel, PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig, type PageLabel } from '@zplab/core/types/LabelConfig';
 
 export const currentObjects = (state: PageState): LabelObject[] =>
   state.pages[state.currentPageIndex]?.objects ?? [];
@@ -13,14 +13,15 @@ export const currentObjects = (state: PageState): LabelObject[] =>
 // pageLabelConfig builds a fresh object per override, which a zustand selector
 // would hand back as a new reference on every store read. Cache per (design
 // label, density) so subscribers only re-render when one of them changes.
-const overrideCache = new WeakMap<LabelConfig, Map<JmDensity, LabelConfig>>();
+const overrideCache = new WeakMap<LabelConfig, Map<JmDensity, PageLabel>>();
 
 /** The label as the current page prints it: its ^JM override wins so every
  *  editor-geometry root (mm<->dots, bounds, snap, preflight) and single-page
  *  emit works in this page's density. Design-scope reads keep `state.label`. */
-export const currentPageLabel = (state: LabelState): LabelConfig => {
+export const currentPageLabel = (state: LabelState): PageLabel => {
   const jm = state.pages[state.currentPageIndex]?.jmDensity;
-  if (jm === undefined || jm === state.label.jmDensity) return state.label;
+  // No divergence means the design label already IS this page's resolved label.
+  if (jm === undefined || jm === state.label.jmDensity) return designAsPageLabel(state.label);
   let byDensity = overrideCache.get(state.label);
   if (!byDensity) {
     byDensity = new Map();

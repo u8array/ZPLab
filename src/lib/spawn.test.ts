@@ -3,8 +3,9 @@ import { centeredSpawnAnchor, spawnRotationOverride } from './spawn';
 import { objectBoundsDots } from '@zplab/core/lib/objectBounds';
 import { getEntry } from '@zplab/core/registry';
 import type { LabelObject } from '@zplab/core/types/Group';
+import type { PageLabel } from '@zplab/core/types/LabelConfig';
 
-const LABEL = { widthMm: 100, heightMm: 60, dpmm: 8 };
+const LABEL = { widthMm: 100, heightMm: 60, dpmm: 8 } as PageLabel;
 
 describe('spawnRotationOverride', () => {
   it('pre-rotates step-rotation types against the view rotation', () => {
