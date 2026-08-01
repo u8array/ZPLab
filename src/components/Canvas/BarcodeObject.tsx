@@ -23,6 +23,7 @@ import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/plac
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { hasTemplateMarkers } from "@zplab/core/lib/fnTemplate";
 import { hasControlMarkers } from "@zplab/core/types/controlKey";
+import { stripHriControlBytes } from "@zplab/core/registry/hriFormatters";
 import { objectRotation } from "@zplab/core/registry/rotation";
 import { maxicodeScmOwnedByPreflight, type MaxicodeProps } from "@zplab/core/registry/maxicode";
 import { rotatedGroupTransform } from "./rotatedGroupTransform";
@@ -301,7 +302,9 @@ export function BarcodeObject({
     // its own box and needs no correction.
     const aboveBottomPad = hri?.fontDots ? 0 : glyphTopPad;
     const checkDigit = (obj.props as { checkDigit?: boolean }).checkDigit;
-    const displayText = hri?.formatHri?.(rawContent, checkDigit) ?? rawContent;
+    const displayText = stripHriControlBytes(
+      hri?.formatHri?.(rawContent, checkDigit) ?? rawContent,
+    );
     const isTextAbove = resolveHriAbove(obj);
     // Above-gap grows with module width (Labelary); per-symbology override
     // wins (logmars/^BS), else the shared above-gap table. 3px floor keeps
