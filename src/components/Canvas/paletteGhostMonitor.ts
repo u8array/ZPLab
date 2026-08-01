@@ -4,7 +4,7 @@ import { getEntry } from "@zplab/core/registry";
 import type { LeafObject } from "@zplab/core/registry";
 import { centeredSpawnAnchor, spawnRotationOverride } from "../../lib/spawn";
 import type { ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import type { ViewRotation } from "./rotationGeometry";
 
 /** Id of the palette drop-preview object; renderers treat it like a pristine
@@ -24,7 +24,7 @@ export interface PaletteGhostDeps {
    *  rotation the store applies on drop. */
   viewRotation: () => ViewRotation;
   /** Label config for the bounds math that centers the spawn on the pointer. */
-  label: () => LabelConfig;
+  label: () => PageLabel;
   /** Live measured-footprint snapshot: the drag ghost publishes its real
    *  (rotated) render size here, so centering uses it instead of the upright
    *  registry fallback that mis-sizes barcodes and text. */

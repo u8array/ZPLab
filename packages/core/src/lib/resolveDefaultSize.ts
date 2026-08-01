@@ -1,5 +1,5 @@
 import { mmToDots } from "./coordinates";
-import type { LabelConfig } from "../types/LabelConfig";
+import type { PageLabel } from "../types/LabelConfig";
 import { effectiveDpmm } from "../types/LabelConfig";
 import type { ObjectTypeCore } from "../types/ObjectType";
 /** Resolve a registry `defaultSize` declaration to dot units against
@@ -10,7 +10,7 @@ import type { ObjectTypeCore } from "../types/ObjectType";
  *  stays testable in isolation. */
 export function resolveDefaultSizeDots(
   defaultSize: ObjectTypeCore["defaultSize"],
-  label: LabelConfig,
+  label: PageLabel,
 ): { width: number; height: number } {
   if ("widthMm" in defaultSize) {
     return {

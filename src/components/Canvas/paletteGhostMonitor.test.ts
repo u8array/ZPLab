@@ -4,9 +4,10 @@ import { paletteGhostHandlers, PALETTE_GHOST_ID, type PaletteGhostDeps } from ".
 import { CANVAS_DROPPABLE_ID } from "../../dnd/types";
 import type { LeafObject } from "@zplab/core/registry";
 import { centeredSpawnAnchor } from "../../lib/spawn";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 
 const CANVAS = CANVAS_DROPPABLE_ID;
-const LABEL = { widthMm: 100, heightMm: 60, dpmm: 8 };
+const LABEL = { widthMm: 100, heightMm: 60, dpmm: 8 } as PageLabel;
 /** Pointer used by the default harness; spawns center on it. */
 const POINTER = { x: 10, y: 20 };
 const centeredAt = (type: string, propsOverride?: object) =>

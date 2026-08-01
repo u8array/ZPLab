@@ -4,9 +4,9 @@ import { getEntry } from "@zplab/core/registry";
 import type { ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { LeafObject } from "@zplab/core/registry";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 
-const label: LabelConfig = { widthMm: 100, heightMm: 50, dpmm: 8 }; // printable 800 x 400
+const label = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel; // printable 800 x 400
 const ctx: ObjectBoundsCtx = { label };
 const pctx = { label, unit: "mm" } as const;
 
@@ -28,7 +28,7 @@ describe('tlc39 scannability covers both module widths', () => {
       props: { content: '123456,SXYZ789', moduleWidth: 2, wideRatio: 2, height: 60,
                microPdfModuleWidth: 1, microPdfRowHeight: 4, rotation: 'N' },
     } as never;
-    const findings = computePreflight([leaf], { label: { widthMm: 100, heightMm: 50, dpmm: 8 } }, 'mm');
+    const findings = computePreflight([leaf], { label }, 'mm');
     expect(findings.some((f) => f.kind === 'barcodeTooSmall')).toBe(true);
   });
 });

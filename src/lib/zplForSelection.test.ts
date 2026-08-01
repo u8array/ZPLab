@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { zplForSelection } from "./zplForSelection";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import type { LabelObject } from "@zplab/core/types/Group";
 
-const LABEL: LabelConfig = { widthMm: 100, heightMm: 50, dpmm: 8 };
+const LABEL = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
 
 const box = (id: string, x: number): LabelObject =>
   ({

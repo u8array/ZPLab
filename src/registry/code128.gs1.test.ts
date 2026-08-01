@@ -6,11 +6,11 @@ import type { Variable } from '@zplab/core/types/Variable';
 import { GS1_SAMPLE_CONTENT, GS1_GS, elementStringToContent } from '@zplab/core/lib/gs1';
 import { PALETTE_PRESET_IDS } from './palettePresets';
 import { gs1EnablePatch } from '@zplab/core/registry/gs1FieldSpec';
-import type { LabelConfig } from '@zplab/core/types/LabelConfig';
+import type { PageLabel } from '@zplab/core/types/LabelConfig';
 import type { LabelObject } from '@zplab/core/types/Group';
 import { parseSingle } from '../test/helpers';
 
-const LABEL: LabelConfig = { widthMm: 100, heightMm: 50, dpmm: 8 };
+const LABEL = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
 
 const baseProps = {
   content: GS1_SAMPLE_CONTENT,

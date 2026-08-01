@@ -2,16 +2,17 @@ import { describe, it, expect } from "vitest";
 import { snapToGrid, gridSnapDelta, smartSnapDelta, labelSnapRectDots } from "./dragGeometry";
 import type { BoundingBoxDots } from "@zplab/core/lib/objectBounds";
 import type { SnapRect } from "../../lib/snapGuides";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 
 describe("labelSnapRectDots", () => {
   it("is the plain printable area without ^LS", () => {
-    expect(labelSnapRectDots({ widthMm: 10, heightMm: 5, dpmm: 8 })).toEqual({
+    expect(labelSnapRectDots({ widthMm: 10, heightMm: 5, dpmm: 8 } as PageLabel)).toEqual({
       id: "_lbl", x: 0, y: 0, width: 80, height: 40,
     });
   });
 
   it("accounts for the ^LS shift: content shifts left, window starts at +shift", () => {
-    expect(labelSnapRectDots({ widthMm: 10, heightMm: 5, dpmm: 8, labelShift: 12 })).toEqual({
+    expect(labelSnapRectDots({ widthMm: 10, heightMm: 5, dpmm: 8, labelShift: 12 } as PageLabel)).toEqual({
       id: "_lbl", x: 12, y: 0, width: 80, height: 40,
     });
   });

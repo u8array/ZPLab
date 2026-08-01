@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { buildPreviewZpl } from "./printPreview";
-import type { LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import type { LabelObject } from "@zplab/core/types/Group";
 
-const label: LabelConfig = { widthMm: 100, heightMm: 50, dpmm: 8 };
+const label = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
 
 const blankBarcode = (): LabelObject[] => [
   {

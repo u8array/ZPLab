@@ -1,7 +1,7 @@
 import { getEntry } from '@zplab/core/registry';
 import { getStepRotation, zplRotationForView, type ViewRotation, type ZplRotation } from '@zplab/core/registry/rotation';
 import { objectBoundsDots, type ObjectBoundsCtx } from '@zplab/core/lib/objectBounds';
-import type { LabelConfig } from '@zplab/core/types/LabelConfig';
+import type { PageLabel } from '@zplab/core/types/LabelConfig';
 import type { LabelObject } from '@zplab/core/types/Group';
 
 /** Props patch so a palette spawn lands upright in a rotated canvas view.
@@ -34,7 +34,7 @@ export function centeredSpawnAnchor(
   type: string,
   propsOverride: object | undefined,
   at: { x: number; y: number },
-  label: LabelConfig,
+  label: PageLabel,
   view: ViewRotation,
   measured?: { footprints: ObjectBoundsCtx['measured']; id: string },
 ): { x: number; y: number } | null {

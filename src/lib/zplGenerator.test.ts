@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { zlibSync } from 'fflate';
 import { generateZPL, generateMultiPageZPL, generateBatchZpl } from '@zplab/core/lib/zplGenerator';
 import { parseZPL } from '@zplab/core/lib/zplParser';
-import type { LabelConfig } from '@zplab/core/types/LabelConfig';
+import type { LabelConfig, PageLabel } from '@zplab/core/types/LabelConfig';
 import type { GroupObject, LabelObject } from '@zplab/core/types/Group';
 import { defined, parseSingle, props, serialOf } from '../test/helpers';
 import { NON_EMITTING_CONFIG_KEYS } from '../store/labelStore.internals';
@@ -1617,7 +1617,7 @@ describe('generateZPL — variable bindings', () => {
 });
 
 describe('generateBatchZpl', () => {
-  const baseLabel: LabelConfig = { widthMm: 50, heightMm: 30, dpmm: 8 };
+  const baseLabel = { widthMm: 50, heightMm: 30, dpmm: 8 } as PageLabel;
   // Single-bind field: content is the variable's lone marker.
   const textObj = (markerName: string): LabelObject =>
     ({
@@ -1702,7 +1702,7 @@ describe('generateBatchZpl', () => {
     const mapping = { bindings: { v1: 'sku' } };
     // instantDarkness adds a `~SD` preamble line before ^XA; a start-
     // anchored regex would silently skip the inject.
-    const labelWithPreamble: LabelConfig = { ...baseLabel, instantDarkness: 5 };
+    const labelWithPreamble: PageLabel = { ...baseLabel, instantDarkness: 5 };
     const result = generateBatchZpl(
       labelWithPreamble, objects, variables, dataset, mapping,
     );

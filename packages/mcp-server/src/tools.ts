@@ -17,7 +17,7 @@ import type { DesignResponse } from "./appBridge.js";
 import { computeOverlaps, leafBoxesDots, MAX_OVERLAPS, type OverlapDots } from "@zplab/core/lib/objectOverlap";
 import { getEntry, ObjectRegistry } from "@zplab/core/registry";
 import { exportableLeaves, pageLabelConfig, type LabelObject, type Page } from "@zplab/core/types/Group";
-import { effectiveDpmm, DPMM_VALUES, isDpmm, type Dpmm, type JmDensity, type LabelConfig } from "@zplab/core/types/LabelConfig";
+import { effectiveDpmm, DPMM_VALUES, isDpmm, type Dpmm, type JmDensity, type LabelConfig, type PageLabel } from "@zplab/core/types/LabelConfig";
 import type { PreflightKind, PreflightSeverity } from "@zplab/core/lib/preflight";
 import type { Variable } from "@zplab/core/types/Variable";
 
@@ -194,14 +194,14 @@ interface PageLike {
 function perPage<T>(
   pages: PageLike[],
   label: LabelConfig,
-  fn: (objects: LabelObject[], label: LabelConfig, pageIndex: number) => T[],
+  fn: (objects: LabelObject[], label: PageLabel, pageIndex: number) => T[],
 ): T[] {
   return pages.flatMap((page, i) => fn(page.objects, pageLabelConfig(label, page), i));
 }
 
 function preflightOf(
   objects: LabelObject[],
-  label: LabelConfig,
+  label: PageLabel,
   pageIndex: number,
   measured?: ObjectBoundsCtx["measured"],
 ): PreflightWarning[] {

@@ -1,7 +1,7 @@
 import type { LeafObject } from '../registry/leafObject';
 import type { LabelObjectBase } from './LabelObject';
 import type { BlockOverlay } from '../lib/zplOverlay/overlay';
-import { withJmDensity, type JmDensity, type LabelConfig } from './LabelConfig';
+import { withJmDensity, type JmDensity, type LabelConfig, type PageLabel } from './LabelConfig';
 export type { LeafObject };
 /** Non-leaf container; cascades lock/visibility/inclusion. Intentionally
  *  outside the registry (no toZPL/defaultSize/PropertiesPanel). */
@@ -30,8 +30,9 @@ export interface Page {
 /** The label as this page prints it: its own ^JM wins, so a block imported at
  *  a diverging density keeps that density through export (coordinates included,
  *  since every dots<->mm boundary reads it through effectiveDpmm). */
-export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity'>): LabelConfig {
-  return withJmDensity(label, page.jmDensity);
+export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity'>): PageLabel {
+  // The only mint backed by a real resolution: folding the page's ^JM in.
+  return withJmDensity(label, page.jmDensity) as PageLabel;
 }
 
 export function isGroup(obj: LabelObject): obj is GroupObject {

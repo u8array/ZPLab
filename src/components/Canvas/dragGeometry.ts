@@ -4,15 +4,11 @@
 
 import { computeSnap, type SnapGuide, type SnapRect } from "../../lib/snapGuides";
 import { printableRectDots, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
+import type { PageLabel } from "@zplab/core/types/LabelConfig";
 
 /** Printable-area snap rect (dots), the {@link printableRectDots} rect tagged
  *  with the snap id so it shares one source with the out-of-bounds check. */
-export function labelSnapRectDots(label: {
-  widthMm: number;
-  heightMm: number;
-  dpmm: number;
-  labelShift?: number;
-}): SnapRect {
+export function labelSnapRectDots(label: PageLabel): SnapRect {
   return { id: "_lbl", ...printableRectDots(label) };
 }
 
