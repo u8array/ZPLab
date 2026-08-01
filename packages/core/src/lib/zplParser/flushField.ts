@@ -502,6 +502,8 @@ export function createFlushField(
             {
               content,
               mode: s.field.maxicodeMode,
+              symbolNumber: s.field.maxicodeNumber,
+              symbolTotal: s.field.maxicodeTotal,
             } satisfies MaxicodeProps,
             posType,
             comment,

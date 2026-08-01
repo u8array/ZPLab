@@ -20,7 +20,7 @@ function makeObj(props: MaxicodeProps, overrides?: Partial<LabelObjectBase>): La
 describe("maxicode.toZPL", () => {
   const def = defined(ObjectRegistry["maxicode"]);
 
-  it("emits ^BD with mode and pinned (1,1) structured-append fields", () => {
+  it("emits ^BD with mode and defaults the structured-append slots to (1,1)", () => {
     const zpl = def.toZPL(makeObj({
       content: "abc",
       mode: 4,
@@ -28,6 +28,11 @@ describe("maxicode.toZPL", () => {
     expect(zpl).toContain("^FO100,200");
     expect(zpl).toContain("^BD4,1,1");
     expect(zpl).toContain("^FDabc^FS");
+  });
+
+  it("emits the carried structured-append slots", () => {
+    const zpl = def.toZPL(makeObj({ content: "abc", mode: 4, symbolNumber: 2, symbolTotal: 3 }));
+    expect(zpl).toContain("^BD4,2,3");
   });
 });
 
@@ -67,13 +72,54 @@ describe("maxicode parser roundtrip", () => {
     expect(defined(ObjectRegistry["maxicode"]).toZPL(obj)).toContain("^BD3,1,1");
   });
 
-  it("defaults mode to 4 when an out-of-range value is given", () => {
-    // mode 9 doesn't exist; parser clamps to the safe standalone default.
+  // Spec p106: m defaults to 2 and 2-6 is the whole value list, so an omitted
+  // and an out-of-range m both land on 2 (the firmware's reading). 4 is only the
+  // spawn default for new objects, never a parse fallback.
+  it("reads an omitted mode as the spec default 2", () => {
+    const src = "^XA^FO50,50^BD,1,1^FD12345\x1d840\x1d001\x1dX^FS^XZ";
+    const { objects } = parseSingle(src);
+    const obj = objects[0];
+    if (obj?.type !== "maxicode") throw new Error("expected maxicode");
+    expect(obj.props.mode).toBe(2);
+    expect(defined(ObjectRegistry["maxicode"]).toZPL(obj)).toContain("^BD2,1,1");
+  });
+
+  it("coerces an out-of-range mode to the spec default 2", () => {
     const src = "^XA^FO0,0^BD9,1,1^FDX^FS^XZ";
     const { objects } = parseSingle(src);
     const obj = objects[0];
     if (obj?.type !== "maxicode") throw new Error("expected maxicode");
-    expect(obj.props.mode).toBe(4);
+    expect(obj.props.mode).toBe(2);
+  });
+
+  it("round-trips the structured-append slots of a 3-symbol set", () => {
+    const src = [
+      "^XA",
+      "^FO0,0^BD4,1,3^FDA^FS",
+      "^FO0,220^BD4,2,3^FDB^FS",
+      "^FO0,440^BD4,3,3^FDC^FS",
+      "^XZ",
+    ].join("");
+    const def = defined(ObjectRegistry["maxicode"]);
+    const symbols = parseSingle(src).objects.map((o) => {
+      if (o.type !== "maxicode") throw new Error("expected maxicode");
+      return o;
+    });
+    expect(symbols.map((o) => [o.props.symbolNumber, o.props.symbolTotal])).toEqual([
+      [1, 3], [2, 3], [3, 3],
+    ]);
+    expect(symbols.map((o) => def.toZPL(o).match(/\^BD[\d,]+/)?.[0])).toEqual([
+      "^BD4,1,3",
+      "^BD4,2,3",
+      "^BD4,3,3",
+    ]);
+  });
+
+  it("clamps out-of-range structured-append slots into the spec 1-8 range", () => {
+    const { objects } = parseSingle("^XA^FO0,0^BD4,0,99^FDX^FS^XZ");
+    const obj = objects[0];
+    if (obj?.type !== "maxicode") throw new Error("expected maxicode");
+    expect([obj.props.symbolNumber, obj.props.symbolTotal]).toEqual([1, 8]);
   });
 
   it("emit -> parse roundtrip preserves content and mode", () => {

@@ -213,6 +213,8 @@ export interface FieldState {
   pdfColumns: number;
   aztecMag: number;
   maxicodeMode: MaxicodeProps["mode"];
+  maxicodeNumber: number;
+  maxicodeTotal: number;
   mpdfRowHeight: number;
   cbRowHeight: number;
   cbColumns: number;
@@ -419,7 +421,9 @@ export function freshFieldState(): FieldState {
     pdfSecurity: 0,
     pdfColumns: 0,
     aztecMag: 4,
-    maxicodeMode: 4,
+    maxicodeMode: 2,
+    maxicodeNumber: 1,
+    maxicodeTotal: 1,
     mpdfRowHeight: 10,
     cbRowHeight: 10,
     cbColumns: CODABLOCK_DEFAULT_COLUMNS,

@@ -2,7 +2,7 @@ import type { Code49Props } from "../../../registry/code49";
 import { clampCodablockColumns } from "../../../registry/codablock";
 import { isDmRectPair, type DataMatrixProps } from "../../../registry/datamatrix";
 import type { Gs1DatabarProps } from "../../../registry/gs1databar";
-import type { MaxicodeProps } from "../../../registry/maxicode";
+import { clampMaxicodeAppend, type MaxicodeProps } from "../../../registry/maxicode";
 import { GS1_DATABAR_DEFAULT_SEGMENTS } from "../../gs1";
 import type { ParserState } from "../context";
 import { dotsFor, int, readRotation } from "../helpers";
@@ -156,13 +156,15 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     B0: handleAztec,
     BO: handleAztec,
 
-    // ^BDm,{symbolNumber},{totalSymbols}: Maxicode (spec p106; fixed
-    // physical size, no orientation slot). Structured-append params are
-    // read but pinned to (1,1) on emit.
+    // ^BDm,n,t: Maxicode (spec p106; fixed physical size, no orientation slot).
+    // 2-6 is the whole value list, so an out-of-range m falls back to the same
+    // 2 the firmware reads for an omitted one.
     BD(p) {
       s.field.fieldType = "maxicode";
-      const m = int(p[0], 4);
-      s.field.maxicodeMode = (m >= 2 && m <= 6 ? m : 4) as MaxicodeProps["mode"];
+      const m = int(p[0], 2);
+      s.field.maxicodeMode = (m >= 2 && m <= 6 ? m : 2) as MaxicodeProps["mode"];
+      s.field.maxicodeNumber = clampMaxicodeAppend(int(p[1], 1));
+      s.field.maxicodeTotal = clampMaxicodeAppend(int(p[2], 1));
     },
 
     // ^BFN,{rowHeight}: MicroPDF417
