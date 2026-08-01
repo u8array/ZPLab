@@ -454,6 +454,7 @@ const en = {
     emptyContent: 'Field is empty',
     suspiciousChars: 'Odd characters',
     markerValueUnsafe: 'Variable value breaks encoding',
+    markerArmFailed: 'Markers print as literal text',
     gs1ValueInvalid: 'Variable value breaks GS1 data',
     printerSupportLimited: 'Limited support',
     qrRotatedStatic: 'Rotated QR prints a static value',

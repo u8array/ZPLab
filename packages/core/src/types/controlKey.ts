@@ -1,8 +1,9 @@
 /** Reserved control-key marker grammar: `ctrl:` plus a catalogued key name
- *  (e.g. `ctrl:TAB`). Chips resolve to their control byte at emit/encode via
- *  ^FH hex escaping; scanner keyboard-wedge setups use them to jump form
- *  fields (TAB) or submit (CR). Lives in the types base layer like
- *  `clockMarker` so `types/Variable`'s name guard can consume it. */
+ *  (e.g. `ctrl:TAB`). Chips resolve to their control byte at emit/encode (^FH
+ *  hex, or the symbology's own escape form where ^FH is lossy, see Code 128);
+ *  scanner keyboard-wedge setups use them to jump form fields (TAB) or submit
+ *  (CR). Lives in the types base layer like `clockMarker` so
+ *  `types/Variable`'s name guard can consume it. */
 
 /** Key name -> control byte. Small catalogue on purpose: the scanner-relevant
  *  whitespace keys plus the AIM data separators. */
@@ -55,13 +56,12 @@ const byteToKey = new Map<string, ControlKeyName>(
 const CTRL_BYTE_RE = new RegExp(`[${Object.values(CONTROL_KEYS).join("")}]`, "g");
 
 // eslint-disable-next-line no-control-regex
-const ANY_C0_RE = /[\x00-\x1F\x7F]/g;
+const C0_RE = /[\x00-\x1F]/g;
 
-/** True when `content` holds at least one control byte and every one of them is
- *  catalogued, i.e. the whole string survives the chip round-trip. */
-export function controlBytesAllCatalogued(content: string): boolean {
-  const found = content.match(ANY_C0_RE);
-  return !!found && found.every((ch) => byteToKey.has(ch));
+/** Drop every control byte, mirroring what a symbology that cannot encode them
+ *  on the ^FH path actually prints (Code 128 inside a template payload). */
+export function stripControlBytes(content: string): string {
+  return content.replace(C0_RE, "");
 }
 
 /** Raw control byte -> `«ctrl:…»` chip, the import symmetry of

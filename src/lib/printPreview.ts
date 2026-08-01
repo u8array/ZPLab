@@ -4,7 +4,7 @@ import type { LabelConfig } from "@zplab/core/types/LabelConfig";
 import { isGroup, type LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
 import { applyBindingToTree, clockCtxFromLabel, getObjectStringContent, type ActiveRow } from "@zplab/core/lib/variableBinding";
-import { objectResolvesCtrl } from "@zplab/core/registry";
+import { ctrlParityFor } from "@zplab/core/registry";
 import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
 
 /** Blank fields rendered with their symbology sample, so the preview overlay
@@ -36,7 +36,7 @@ export function buildPreviewZpl(
   active: ActiveRow | null,
   opts: { blankSamples?: boolean } = {},
 ): string {
-  const substituted = applyBindingToTree(objects, variables, active, "preview", clockCtxFromLabel(label), objectResolvesCtrl);
+  const substituted = applyBindingToTree(objects, variables, active, "preview", clockCtxFromLabel(label), ctrlParityFor);
   const previewed = opts.blankSamples ? withBlankSamples(substituted) : substituted;
   return generateZPL(label, previewed, []);
 }

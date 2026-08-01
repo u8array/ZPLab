@@ -454,6 +454,7 @@ const cs = {
     emptyContent: 'Pole prázdné',
     suspiciousChars: 'Podezřelé znaky',
     markerValueUnsafe: 'Hodnota proměnné porušuje kódování',
+    markerArmFailed: 'Značky se vytisknou jako prostý text',
     gs1ValueInvalid: 'Hodnota proměnné porušuje GS1 data',
     printerSupportLimited: 'Omezená podpora',
     qrRotatedStatic: 'Otočený QR kód tiskne statickou hodnotu',

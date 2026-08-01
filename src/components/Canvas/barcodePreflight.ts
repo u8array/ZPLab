@@ -1,4 +1,4 @@
-import { objectResolvesCtrl, type LeafObject } from "@zplab/core/registry";
+import { ctrlParityFor, type LeafObject } from "@zplab/core/registry";
 import { maxicodeScmOwnedByPreflight, type MaxicodeProps } from "@zplab/core/registry/maxicode";
 import { isBarcode } from "@zplab/core/lib/objectBounds";
 import { PREFLIGHT_SEVERITY, type PreflightFinding } from "@zplab/core/lib/preflight";
@@ -48,7 +48,7 @@ function cachedEncodeError(
 
 /** Preview-resolved leaf for the encoder (identity-preserving when unbound). */
 export function resolveForEncode(leaf: LeafObject, env: EncodeEnv): LeafObject {
-  return applyBindingToObject(leaf, env.variables, env.active, "preview", env.clock, objectResolvesCtrl(leaf));
+  return applyBindingToObject(leaf, env.variables, env.active, "preview", env.clock, ctrlParityFor(leaf));
 }
 
 /** Encode check over ALL exportable leaves, not just rendered ones, so a

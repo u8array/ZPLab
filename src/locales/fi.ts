@@ -454,6 +454,7 @@ const fi = {
     emptyContent: 'Kenttä tyhjä',
     suspiciousChars: 'Oudot merkit',
     markerValueUnsafe: 'Muuttujan arvo rikkoo koodauksen',
+    markerArmFailed: 'Merkit tulostuvat kirjaimellisena tekstinä',
     gs1ValueInvalid: 'Muuttujan arvo rikkoo GS1-tiedot',
     printerSupportLimited: 'Rajoitettu tuki',
     qrRotatedStatic: 'Käännetty QR-koodi tulostaa staattisen arvon',

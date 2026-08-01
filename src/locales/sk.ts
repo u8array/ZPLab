@@ -454,6 +454,7 @@ const sk = {
     emptyContent: 'Pole prázdne',
     suspiciousChars: 'Podozrivé znaky',
     markerValueUnsafe: 'Hodnota premennej porušuje kódovanie',
+    markerArmFailed: 'Značky sa vytlačia ako obyčajný text',
     gs1ValueInvalid: 'Hodnota premennej porušuje GS1 dáta',
     printerSupportLimited: 'Obmedzená podpora',
     qrRotatedStatic: 'Otočený QR kód tlačí statickú hodnotu',

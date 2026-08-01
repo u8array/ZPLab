@@ -454,6 +454,7 @@ const et = {
     emptyContent: 'Väli tühi',
     suspiciousChars: 'Kahtlased märgid',
     markerValueUnsafe: 'Muutuja väärtus rikub kodeeringut',
+    markerArmFailed: 'Markerid trükitakse tavalise tekstina',
     gs1ValueInvalid: 'Muutuja väärtus rikub GS1 andmeid',
     printerSupportLimited: 'Piiratud tugi',
     qrRotatedStatic: 'Pööratud QR-kood trükib staatilise väärtuse',

@@ -17,7 +17,7 @@ import {
   gtin14WithCheck,
   gs1ContentToElementString,
 } from "./gs1";
-import { code128ControlBwipRaw } from "./code128Subset";
+import { code128ControlBwipRaw, code128FdToSymbols, code128PlainFd, code128SymbolsToBwipRaw } from "./code128Subset";
 import { isRectangular, dmVersionString, type DataMatrixProps } from "../registry/datamatrix";
 import { MAXICODE_WIDTH_MM, MAXICODE_HEIGHT_MM } from "../registry/maxicode";
 import {
@@ -25,7 +25,7 @@ import {
   getObjectStringContent,
   type ClockResolveCtx,
 } from "./variableBinding";
-import { objectResolvesCtrl } from "../registry";
+import { ctrlParityFor } from "../registry";
 import type { Variable } from "../types/Variable";
 import { qrBwipOptions } from "./qrGraphic";
 import {
@@ -239,34 +239,6 @@ function toCode128BRaw(text: string): string | null {
   return parts.join("");
 }
 
-// Translate ^BC field-data escapes (`>X`) to bwip parsefnc; null when none.
-// ZPL II: >0 literal >, >5..>8 FNC1..FNC4, >9 FNC1 only at pos 0 (else
-// subset switch handled by bwip auto), >:/>; subset switches (dropped).
-export function parseZplCode128Escapes(text: string): string | null {
-  if (!/>[05-9:;]/.test(text)) return null;
-  let out = "";
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    // bwip parsefnc treats `^` as escape char; double it for a literal `^`.
-    if (ch === "^") { out += "^^"; continue; }
-    if (ch === ">" && i + 1 < text.length) {
-      const next = text[i + 1];
-      switch (next) {
-        case "0": out += ">"; i++; continue;
-        case "5": out += "^FNC1"; i++; continue;
-        case "6": out += "^FNC2"; i++; continue;
-        case "7": out += "^FNC3"; i++; continue;
-        case "8": out += "^FNC4"; i++; continue;
-        case "9": if (i === 0) out += "^FNC1"; i++; continue;
-        case ":":
-        case ";": i++; continue; // subset switch, bwip auto-mode handles it
-      }
-    }
-    out += ch;
-  }
-  return out;
-}
-
 export function buildBwipOptions(
   obj: LeafObject,
   renderScale?: number,
@@ -350,13 +322,15 @@ export function buildBwipOptions(
         opts = { bcid, text: ctrlRaw, raw: true, scale, height: 10 };
         break;
       }
-      // ^BC e=Y only prints MOD-10 in HRI, not in encoded data. ZPL escapes
-      // need parsefnc auto-mode to match firmware's symbol count; plain ASCII
-      // stays on the raw Code B path.
-      const escaped = parseZplCode128Escapes(text);
-      if (escaped !== null) {
-        opts = { bcid, text: escaped, parsefnc: true, scale, height: 10 };
-        break;
+      // Interpret the EMITTED payload: the printer only reads the
+      // fdPlainEscape form, and a bare `>` diverges from the model content.
+      const fdText = code128PlainFd(text);
+      if (/>[0-9:;<=]/.test(fdText)) {
+        const symbols = code128FdToSymbols(fdText);
+        if (symbols) {
+          opts = { bcid, text: code128SymbolsToBwipRaw(symbols), raw: true, scale, height: 10 };
+          break;
+        }
       }
       const rawB = toCode128BRaw(text);
       if (rawB) {
@@ -1035,5 +1009,5 @@ export function resolveForMeasure<T extends LabelObject>(
   variables: readonly Variable[],
   clock?: ClockResolveCtx,
 ): T {
-  return applyBindingToObject(obj, variables, null, "preview", clock, objectResolvesCtrl(obj));
+  return applyBindingToObject(obj, variables, null, "preview", clock, ctrlParityFor(obj));
 }

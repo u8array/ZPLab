@@ -454,6 +454,7 @@ const fa = {
     emptyContent: 'فیلد خالی',
     suspiciousChars: 'نویسه‌های مشکوک',
     markerValueUnsafe: 'مقدار متغیر کدگذاری را می‌شکند',
+    markerArmFailed: 'نشانگرها به‌صورت متن ساده چاپ می‌شوند',
     gs1ValueInvalid: 'مقدار متغیر داده‌های GS1 را می‌شکند',
     printerSupportLimited: 'پشتیبانی محدود',
     qrRotatedStatic: 'کد QR چرخانده‌شده مقدار ثابت چاپ می‌کند',

@@ -1,6 +1,7 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
 import type { LeafType, ObjectRegistryMap } from './leafObject';
 import { resolveContentSpec, type ContentSpec } from './contentSpec';
+import type { CtrlParity } from '../lib/markerResolve';
 
 export type { LeafObject, LeafType } from './leafObject';
 
@@ -131,6 +132,13 @@ export function objectResolvesCtrl(obj: { type: string; props?: object }): boole
     getEntry(obj.type)?.controlChars === true &&
     (obj.props as { gs1?: boolean } | undefined)?.gs1 !== true
   );
+}
+
+/** {@link objectResolvesCtrl} refined by how the byte survives to the symbol,
+ *  so a preview renders what the firmware prints (see {@link CtrlParity}). */
+export function ctrlParityFor(obj: { type: string; props?: object }): CtrlParity {
+  if (!objectResolvesCtrl(obj)) return "literal";
+  return getEntry(obj.type)?.ctrlNeedsOwnEscape ? "byteOutsideTemplate" : "byte";
 }
 
 /** The object's effective content spec: its entry's rule resolved against props. */

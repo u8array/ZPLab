@@ -454,6 +454,7 @@ const nl = {
     emptyContent: 'Veld leeg',
     suspiciousChars: 'Rare tekens',
     markerValueUnsafe: 'Variabelwaarde breekt codering',
+    markerArmFailed: 'Markers worden als letterlijke tekst afgedrukt',
     gs1ValueInvalid: 'Variabelewaarde schendt GS1-gegevens',
     printerSupportLimited: 'Beperkte ondersteuning',
     qrRotatedStatic: 'Gedraaide QR-code drukt statische waarde',

@@ -31,6 +31,9 @@ export interface ZplEmitContext {
   embedChar?: string;
   /** ^FC chars; defaults `% { #`. */
   clockChars?: { date: string; time: string; tertiary: string };
+  /** ^FN slots a plain ^BC single-bind must emit RAW (chip-resolved only):
+   *  the slot is shared, so the Code 128 escape would corrupt co-consumers. */
+  rawFdFns?: ReadonlySet<number>;
 }
 
 /** Per-type HRI overrides; defaults render text below bars in raw form. */

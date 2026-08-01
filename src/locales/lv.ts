@@ -454,6 +454,7 @@ const lv = {
     emptyContent: 'Lauks tukšs',
     suspiciousChars: 'Aizdomīgas rakstzīmes',
     markerValueUnsafe: 'Mainīgā vērtība pārkāpj kodējumu',
+    markerArmFailed: 'Marķieri tiek drukāti kā vienkāršs teksts',
     gs1ValueInvalid: 'Mainīgā vērtība pārkāpj GS1 datus',
     printerSupportLimited: 'Ierobežots atbalsts',
     qrRotatedStatic: 'Pagriezts QR kods drukā statisku vērtību',

@@ -454,6 +454,7 @@ const tr = {
     emptyContent: 'Alan boş',
     suspiciousChars: 'Şüpheli karakterler',
     markerValueUnsafe: 'Değişken değeri kodlamayı bozuyor',
+    markerArmFailed: 'İşaretleyiciler düz metin olarak yazdırılır',
     gs1ValueInvalid: 'Değişken değeri GS1 verilerini bozuyor',
     printerSupportLimited: 'Sınırlı destek',
     qrRotatedStatic: 'Döndürülmüş QR Kodu statik değer basar',

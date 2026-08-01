@@ -454,6 +454,7 @@ const ko = {
     emptyContent: '빈칸',
     suspiciousChars: '의심스러운 문자',
     markerValueUnsafe: '변수 값이 인코딩을 깨뜨림',
+    markerArmFailed: '마커가 일반 텍스트로 인쇄됩니다',
     gs1ValueInvalid: '변수 값이 GS1 데이터를 위반',
     printerSupportLimited: '지원 제한',
     qrRotatedStatic: '회전된 QR 코드는 고정값을 인쇄',

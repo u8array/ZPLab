@@ -454,6 +454,7 @@ const ar = {
     emptyContent: 'الحقل فارغ',
     suspiciousChars: 'أحرف مريبة',
     markerValueUnsafe: 'قيمة المتغير تكسر الترميز',
+    markerArmFailed: 'تُطبع العلامات كنص حرفي',
     gs1ValueInvalid: 'قيمة المتغير تُفسد بيانات GS1',
     printerSupportLimited: 'دعم محدود',
     qrRotatedStatic: 'رمز QR الدوّار يطبع قيمة ثابتة',

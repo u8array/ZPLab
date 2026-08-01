@@ -454,6 +454,7 @@ const lt = {
     emptyContent: 'Laukas tuščias',
     suspiciousChars: 'Įtartini simboliai',
     markerValueUnsafe: 'Kintamojo reikšmė laužo kodavimą',
+    markerArmFailed: 'Žymos spausdinamos kaip paprastas tekstas',
     gs1ValueInvalid: 'Kintamojo reikšmė pažeidžia GS1 duomenis',
     printerSupportLimited: 'Ribotas palaikymas',
     qrRotatedStatic: 'Pasuktas QR kodas spausdina statinę reikšmę',

@@ -10,7 +10,9 @@ import { hasClockMarkers, pickClockChars } from './fcTemplate';
 import { boundColumnIndex, getObjectStringContent } from './variableBinding';
 import { classifyField } from './variableField';
 import { escapeGs1FdValue } from './gs1';
-import { gs1ModeDExclusiveFns } from './gs1ModeDFns';
+import { fnConsumerBuckets } from './gs1ModeDFns';
+import { code128EscapeLiterals, code128PlainFd } from './code128Subset';
+import { resolveControlMarkers } from '../types/controlKey';
 import { formatLabelMetaComment } from './zplLabelMeta';
 import { jmDensityOf } from '../types/LabelConfig';
 import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig } from '../types/LabelConfig';
@@ -61,7 +63,10 @@ export function planTemplateHeader(
 ): { headerLines: string[]; emitCtx: ZplEmitContext } {
   // O(N+V) vs O(N*V) per-marker re-scan.
   const varsByName = new Map(variables.map((v) => [v.name, v]));
-  const modeDFns = gs1ModeDExclusiveFns(shifted, variables);
+  const buckets = fnConsumerBuckets(shifted, variables);
+  const modeDFns = buckets.modeDExclusive;
+  const plain128Fns = buckets.plainExclusive;
+  const plainSharedFns = buckets.plainShared;
 
   const templatePayloads: string[] = [];
   const clockPayloads: string[] = [];
@@ -80,14 +85,23 @@ export function planTemplateHeader(
       singleBindFns.add(cls.variable.fnNumber);
       continue;
     }
-    if (hasTemplateMarkers(c)) {
-      templatePayloads.push(c);
+    // Scan the payload as it will be EMITTED: the plain-^BC escape injects
+    // '0'/'<'/'=' after this scan, and '<'/'=' are ^FC candidate chars.
+    const scan =
+      getEntry(leaf.type)?.ctrlNeedsOwnEscape
+      && !(leaf as { props?: { gs1?: boolean } }).props?.gs1
+        ? code128EscapeLiterals(c)
+        : c;
+    // Chips-only payloads arm no ^FE (they emit as invocations/bytes), so
+    // their literals must not constrain the embed-char pick.
+    if (hasTemplateMarkers(resolveControlMarkers(c))) {
+      templatePayloads.push(scan);
       for (const name of extractTemplateRefs(c)) {
         const v = varsByName.get(name);
         if (v) templateVarsByFn.set(v.fnNumber, v);
       }
     }
-    if (hasClockMarkers(c)) clockPayloads.push(c);
+    if (hasClockMarkers(c)) clockPayloads.push(scan);
   }
   // FN-definition lines and their defaults never arm ^FE (firmware honours it
   // only for the next ^FD), so only the armed template payloads need the scan.
@@ -95,12 +109,20 @@ export function planTemplateHeader(
     templatePayloads.length > 0 ? pickEmbedChar(templatePayloads) : '#';
   const headerLines: string[] = [];
   const emitCtx: ZplEmitContext = { label, variables };
+  if (plainSharedFns.size > 0) emitCtx.rawFdFns = plainSharedFns;
 
   if (pickedEmbedChar !== null) {
     for (const [fn, v] of [...templateVarsByFn].sort(([a], [b]) => a - b)) {
       if (singleBindFns.has(fn)) continue;
       // Mode-D-exclusive slot: > needs its >0 invocation (parser reverses).
-      const def = modeDFns.has(fn) ? escapeGs1FdValue(v.defaultValue) : v.defaultValue;
+      // Plain-^BC-exclusive slot likewise: >/^/~ need their invocation
+      // literals; the ^FH hex fdField would otherwise use is dropped from
+      // the symbol.
+      const def = modeDFns.has(fn)
+        ? escapeGs1FdValue(v.defaultValue)
+        : plain128Fns.has(fn)
+          ? code128PlainFd(v.defaultValue)
+          : v.defaultValue;
       headerLines.push(`^FN${fn}${fdField(def)}`);
     }
     emitCtx.embedChar = pickedEmbedChar;
@@ -461,7 +483,10 @@ export function generateBatchZpl(
   // Excluded leaves aren't in the stored template, so don't source a transform
   // from one (it could shadow an exported field sharing the same variable).
   const leaves = [...walkObjects(objects)].filter((o) => o.includeInExport !== false);
-  const modeDFns = gs1ModeDExclusiveFns(objects, variables);
+  const batchBuckets = fnConsumerBuckets(objects, variables);
+  const modeDFns = batchBuckets.modeDExclusive;
+  const plain128Fns = batchBuckets.plainExclusive;
+  const plainSharedFns = batchBuckets.plainShared;
   const overrides: { fn: number; colIdx: number; transform: (s: string) => string }[] = [];
   for (const v of variables) {
     const colIdx = boundColumnIndex(v, dataset, columnMapping);
@@ -476,11 +501,18 @@ export function generateBatchZpl(
       const cls = classifyField(c, variables);
       return cls.kind === "single" && cls.variable.id === v.id;
     });
-    // A template-embedded mode-D slot has no bound transform but still
-    // needs the > escape.
-    const transform =
-      (bound && !isGroup(bound) ? getEntry(bound.type)?.fdTransform?.(bound) : undefined) ??
-      (modeDFns.has(v.fnNumber) ? escapeGs1FdValue : identity);
+    // A template-embedded mode-D or plain-^BC slot has no bound transform but
+    // still needs its escape. A shared plain slot bound to the code128 emits
+    // raw instead: the escape would corrupt the co-consumers.
+    const boundPlainShared =
+      bound && !isGroup(bound) && !!getEntry(bound.type)?.ctrlNeedsOwnEscape
+      && !(bound.props as { gs1?: boolean }).gs1 && plainSharedFns.has(v.fnNumber);
+    const transform = boundPlainShared
+      ? resolveControlMarkers
+      : (bound && !isGroup(bound) ? getEntry(bound.type)?.fdTransform?.(bound) : undefined) ??
+        (modeDFns.has(v.fnNumber)
+          ? escapeGs1FdValue
+          : plain128Fns.has(v.fnNumber) ? code128PlainFd : identity);
     overrides.push({ fn: v.fnNumber, colIdx, transform });
   }
 

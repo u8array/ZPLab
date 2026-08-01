@@ -188,17 +188,79 @@ describe('applyBindingToObject', () => {
     expect(applyBindingToObject(o, [variable()])).toBe(o);
   });
 
-  it('resolves control chips only when the caller grants emitter parity (ctrlOk)', () => {
+  it('resolves control chips only when the caller grants emitter parity', () => {
     const chip = (type: string, extra: object = {}): LabelObject =>
       ({ id: 'c1', type, x: 0, y: 0, rotation: 0, props: { content: 'A«ctrl:TAB»B', ...extra } }) as unknown as LabelObject;
     const content = (o: LabelObject) => (o as unknown as { props: { content: string } }).props.content;
-    expect(content(applyBindingToObject(chip('code128'), [], null, 'preview', undefined, true))).toBe('A\tB');
-    // Default (and explicit false) keeps the chip literal, like export on
+    expect(content(applyBindingToObject(chip('code128'), [], null, 'preview', undefined, 'byte'))).toBe('A\tB');
+    // Default (and explicit 'literal') keeps the chip literal, like export on
     // incapable types; identity preserved.
     const e = chip('ean13');
     expect(applyBindingToObject(e, [])).toBe(e);
     const g = chip('code128', { gs1: true });
-    expect(applyBindingToObject(g, [], null, 'preview', undefined, false)).toBe(g);
+    expect(applyBindingToObject(g, [], null, 'preview', undefined, 'literal')).toBe(g);
+  });
+
+  it('escapes literal spans before substitution (print-time > adjacency)', () => {
+    // Emit escapes `>` before tokenization, so a digit-leading bound value
+    // must not turn the preceding `>` into an invocation on the canvas.
+    const o = { id: 'c1', type: 'code128', x: 0, y: 0, rotation: 0,
+      props: { content: 'A>«sku»X' } } as unknown as LabelObject;
+    const vars = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: '5B' }];
+    const out = applyBindingToObject(o, vars, null, 'preview', undefined, 'byteOutsideTemplate');
+    expect((out as unknown as { props: { content: string } }).props.content).toBe('A>05BX');
+  });
+
+  it('escapes substituted values independently (value-boundary > adjacency)', () => {
+    // Print escapes the value at its ^FN declaration, so a value ending in >
+    // must not pair with the literal digit that follows the marker.
+    const o = { id: 'c1', type: 'code128', x: 0, y: 0, rotation: 0,
+      props: { content: '«v»5' } } as unknown as LabelObject;
+    const vars = [{ id: 'v1', name: 'v', fnNumber: 1, defaultValue: 'A>' }];
+    const out = applyBindingToObject(o, vars, null, 'preview', undefined, 'byteOutsideTemplate');
+    expect((out as unknown as { props: { content: string } }).props.content).toBe('A>05');
+  });
+
+  it('keeps chips-only payloads unescaped for the invocation plan', () => {
+    const o = { id: 'c1', type: 'code128', x: 0, y: 0, rotation: 0,
+      props: { content: 'A>B«ctrl:TAB»' } } as unknown as LabelObject;
+    const out = applyBindingToObject(o, [], null, 'preview', undefined, 'byteOutsideTemplate');
+    expect((out as unknown as { props: { content: string } }).props.content).toBe('A>B\t');
+  });
+
+  it('leaves marker bodies untouched by the literal-span escape', () => {
+    const o = { id: 'c1', type: 'code128', x: 0, y: 0, rotation: 0,
+      props: { content: 'a«x^y»b' } } as unknown as LabelObject;
+    const vars = [{ id: 'v1', name: 'x^y', fnNumber: 1, defaultValue: 'V' }];
+    const out = applyBindingToObject(o, vars, null, 'preview', undefined, 'byteOutsideTemplate');
+    expect((out as unknown as { props: { content: string } }).props.content).toBe('aVb');
+  });
+
+  it('keeps a bound control byte for a lone marker (emit uses the invocation form)', () => {
+    const o = { id: 'c1', type: 'code128', x: 0, y: 0, rotation: 0,
+      props: { content: '«sku»' } } as unknown as LabelObject;
+    const vars = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'A\tB' }];
+    const out = applyBindingToObject(o, vars, null, 'preview', undefined, 'byteOutsideTemplate');
+    expect((out as unknown as { props: { content: string } }).props.content).toBe('A\tB');
+    // A chip inside the lone-bind default resolves too, like fdTransformFor.
+    const chipVars = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'A«ctrl:TAB»B' }];
+    const outChip = applyBindingToObject(o, chipVars, null, 'preview', undefined, 'byteOutsideTemplate');
+    expect((outChip as unknown as { props: { content: string } }).props.content).toBe('A\tB');
+    // A real template still drops it: its emit keeps the lossy ^FH path.
+    const t = { ...o, props: { content: 'X«sku»Y' } } as unknown as LabelObject;
+    const outT = applyBindingToObject(t, vars, null, 'preview', undefined, 'byteOutsideTemplate');
+    expect((outT as unknown as { props: { content: string } }).props.content).toBe('XABY');
+  });
+
+  it('drops the chip byte when a clock marker forces the lossy ^FH path', () => {
+    // The emitter gates ctrlFdEncode BEFORE ^FC token substitution, so a clock
+    // marker keeps ^FH and the firmware drops the C0 byte from the symbol.
+    const o = { id: 'c1', type: 'code128', x: 0, y: 0, rotation: 0,
+      props: { content: 'A«ctrl:TAB»B«clock:Y»' } } as unknown as LabelObject;
+    const out = applyBindingToObject(o, [], null, 'preview', undefined, 'byteOutsideTemplate');
+    const c = (out as unknown as { props: { content: string } }).props.content;
+    expect(c).not.toContain('\t');
+    expect(c.startsWith('AB')).toBe(true);
   });
 
   it('resolveContentPreview keeps chips literal on request (GS1 builder parity)', () => {

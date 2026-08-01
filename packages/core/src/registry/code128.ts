@@ -1,5 +1,6 @@
 import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
-import { code128ControlFd } from '../lib/code128Subset';
+import { code128ControlFd, code128PlainFd } from '../lib/code128Subset';
+import { formatCode128Hri } from './hriFormatters';
 export type { Barcode1DProps as Code128Props } from './barcode1d';
 
 export const code128CoreConfig: Barcode1DCoreConfig = {
@@ -11,6 +12,8 @@ export const code128CoreConfig: Barcode1DCoreConfig = {
   // Code Set A covers the C0 range.
   controlChars: true,
   ctrlFdEncode: code128ControlFd,
+  fdPlainEscape: code128PlainFd,
+  hri: { formatHri: formatCode128Hri },
   zplCommand: (p) => {
     const interp = p.printInterpretation ? 'Y' : 'N';
     const check = p.checkDigit ? 'Y' : 'N';

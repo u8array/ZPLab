@@ -1,4 +1,5 @@
 import { code11CheckDigits, eanCheckDigit, upceCheckDigit } from '../lib/barcodeCheckDigits';
+import { code128FdToDisplayText, code128PlainFd } from '../lib/code128Subset';
 
 /**
  * HRI text formatters per 1D symbology. Each takes the user-provided
@@ -76,4 +77,11 @@ export function formatUpcEanExtensionHri(content: string): string {
 export function stripHriControlBytes(text: string): string {
   // eslint-disable-next-line no-control-regex
   return text.replace(/[\x00-\x1F\x7F]/g, '');
+}
+
+/** Plain ^BC HRI shows the DECODED data, never invocation codes (spec p.98,
+ *  Fig 3/4). Runs on the emit-escaped form, so typed text the escape protects
+ *  is a fixed point. GS1 mode bypasses this (mode-D grammar). */
+export function formatCode128Hri(content: string): string {
+  return code128FdToDisplayText(code128PlainFd(content));
 }

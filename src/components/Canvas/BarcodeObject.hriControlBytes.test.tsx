@@ -56,4 +56,15 @@ describe("1D interpretation line", () => {
   it("leaves a control-free line untouched", () => {
     expect(hriText(code128("ABCDEF"))).toBe("ABCDEF");
   });
+
+  it("decodes a verbatim escape stream like the printed HRI (spec p.98)", () => {
+    expect(hriText(code128(">:AB>8CD"))).toBe("ABCD");
+    expect(hriText(code128("A>B"))).toBe("A>B");
+  });
+
+  it("bypasses the plain decoder in GS1 mode (mode-D grammar escapes differently)", () => {
+    const gs1 = code128("10A>5B");
+    (gs1.props as { gs1?: boolean }).gs1 = true;
+    expect(hriText(gs1)).toBe("(10)A>5B");
+  });
 });

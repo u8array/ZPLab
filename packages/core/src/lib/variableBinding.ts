@@ -2,13 +2,13 @@ import type { LabelObject } from "../types/Group";
 import { markerOf, type ColumnMapping, type Variable } from "../types/Variable";
 import { resolveTemplateMarkers } from "./fnTemplate";
 import { channelDatesFrom, hasClockMarkers, resolveClockMarkers } from "./fcTemplate";
-import { clockDatesThunk, resolveMarkerChain, type ClockResolveCtx } from "./markerResolve";
+import { clockDatesThunk, resolveMarkerChain, type CtrlParity, type ClockResolveCtx } from "./markerResolve";
 
 // Chain internals live in markerResolve (a leaf module): this module sits in
 // the registry's own init chain (typedContent/preflight/variableField import
 // it), so it must never import the registry back. Capability flags therefore
-// arrive as caller params (see `ctrlOk` / `isCtrlOk`).
-export { clockCtxFromLabel, resolveContentPreview, type ClockResolveCtx } from "./markerResolve";
+// arrive as caller params (see `ctrl` / `ctrlParityOf`).
+export { clockCtxFromLabel, resolveContentPreview, type ClockResolveCtx, type CtrlParity } from "./markerResolve";
 
 /** Read `props.content` if present and string-typed; one place for the
  *  unsafe cast that consumers walking heterogeneous trees share. */
@@ -71,9 +71,9 @@ export function applyBindingToTree<T extends LabelObject>(
   /** Shared clock context so every leaf sees the same instant and the
    *  same label-level ^SO offsets. */
   clock?: ClockResolveCtx,
-  /** Per-leaf control-chip capability (`objectResolvesCtrl`); see
+  /** Per-leaf control-byte emitter parity (`ctrlParityFor`); see
    *  applyBindingToObject. */
-  isCtrlOk?: (obj: LabelObject) => boolean,
+  ctrlParityOf?: (obj: LabelObject) => CtrlParity,
 ): T[] {
   // Lift once per tree so all leaves share one instant + offsets.
   const now = clock?.now ?? new Date();
@@ -86,10 +86,10 @@ export function applyBindingToTree<T extends LabelObject>(
   return objects.map((o) => {
     const asGroup = o as unknown as { type?: string; children?: readonly T[] };
     if (asGroup.type === "group" && Array.isArray(asGroup.children)) {
-      const nextChildren = applyBindingToTree(asGroup.children, variables, active, mode, shared, isCtrlOk);
+      const nextChildren = applyBindingToTree(asGroup.children, variables, active, mode, shared, ctrlParityOf);
       return { ...o, children: nextChildren } as T;
     }
-    return applyBindingToObject(o, variables, active, mode, shared, isCtrlOk?.(o) ?? false);
+    return applyBindingToObject(o, variables, active, mode, shared, ctrlParityOf?.(o) ?? "literal");
   });
 }
 
@@ -198,9 +198,9 @@ export function applyBindingToObject<T extends LabelObject>(
   mode: RenderMode = "preview",
   /** Lazy-initialised inside the clock branch. */
   clock?: ClockResolveCtx,
-  /** Emitter parity for control chips (`objectResolvesCtrl(obj)`); default
-   *  false keeps a chip literal, matching export on incapable types. */
-  ctrlOk = false,
+  /** Emitter parity for control bytes (`ctrlParityFor(obj)`); default keeps a
+   *  chip literal, matching export on incapable types. */
+  ctrl: CtrlParity = "literal",
 ): T {
   const content = getObjectStringContent(obj);
   if (content === undefined) return obj;
@@ -218,7 +218,7 @@ export function applyBindingToObject<T extends LabelObject>(
       return v ? resolveVariableValue(v, active, mode) : undefined;
     },
     mode === "preview" ? clockDatesThunk(clock) : null,
-    ctrlOk,
+    ctrl,
   );
   if (next === content) return obj;
   const props = (obj as { props: object }).props;

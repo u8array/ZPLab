@@ -454,6 +454,7 @@ const sv = {
     emptyContent: 'Fält tomt',
     suspiciousChars: 'Konstiga tecken',
     markerValueUnsafe: 'Variabelvärde bryter kodning',
+    markerArmFailed: 'Markörer skrivs ut som vanlig text',
     gs1ValueInvalid: 'Variabelvärde bryter GS1-data',
     printerSupportLimited: 'Begränsat stöd',
     qrRotatedStatic: 'Roterad QR-kod skriver ut statiskt värde',

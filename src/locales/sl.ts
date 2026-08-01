@@ -454,6 +454,7 @@ const sl = {
     emptyContent: 'Polje prazno',
     suspiciousChars: 'Sumljivi znaki',
     markerValueUnsafe: 'Vrednost spremenljivke krši kodiranje',
+    markerArmFailed: 'Oznake se natisnejo kot navadno besedilo',
     gs1ValueInvalid: 'Vrednost spremenljivke krši GS1 podatke',
     printerSupportLimited: 'Omejena podpora',
     qrRotatedStatic: 'Zasukana QR koda natisne statično vrednost',

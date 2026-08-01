@@ -454,6 +454,7 @@ const hu = {
     emptyContent: 'Mező üres',
     suspiciousChars: 'Gyanús karakterek',
     markerValueUnsafe: 'Változóérték megtöri a kódolást',
+    markerArmFailed: 'A jelölők egyszerű szövegként nyomtatódnak',
     gs1ValueInvalid: 'A változó értéke sérti a GS1 adatokat',
     printerSupportLimited: 'Korlátozott támogatás',
     qrRotatedStatic: 'Forgatott QR-kód statikus értéket nyomtat',

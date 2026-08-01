@@ -373,6 +373,34 @@ describe("computePreflight (suspicious-chars producer)", () => {
     expect(findings.some((f) => f.kind === "suspiciousChars")).toBe(false);
   });
 
+  it("flags a raw ^BC invocation sequence in plain code128 content", () => {
+    const bc = (id: string, content: string, extra: object = {}): LeafObject =>
+      ({ id, type: "code128", x: 10, y: 10, rotation: 0,
+         props: { content, height: 100, moduleWidth: 2, printInterpretation: false,
+                  printInterpretationAbove: false, checkDigit: false, rotation: "N", ...extra },
+       } as LabelObject as LeafObject);
+    // `>5` is emitted verbatim (escaping would corrupt imported streams) and
+    // the firmware reads a CODE C switch, so the user must see the trade.
+    const findings = computePreflight([bc("a", "A>5B")], ctx, "mm");
+    const f = findings.find((x) => x.kind === "suspiciousChars");
+    expect(f?.detail).toContain('">5"');
+    // Escaped/plain `>` forms, GS1 mode, serial and other types stay quiet.
+    expect(computePreflight([bc("b", "A>B")], ctx, "mm")
+      .some((x) => x.kind === "suspiciousChars")).toBe(false);
+    expect(computePreflight([bc("c", "10A>5B", { gs1: true })], ctx, "mm")
+      .some((x) => x.kind === "suspiciousChars")).toBe(false);
+    expect(computePreflight([bc("d", "A>5B", { serial: { start: 1 } })], ctx, "mm")
+      .some((x) => x.kind === "suspiciousChars")).toBe(false);
+
+    // Chips alongside another marker keep the lossy ^FH path (emitter gate),
+    // so the dropped bytes must badge; a chips-only field encodes fine.
+    const chipTemplate = computePreflight([bc("e", "A«ctrl:TAB»B«sku»")], ctx, "mm")
+      .find((x) => x.kind === "suspiciousChars");
+    expect(chipTemplate?.detail).toContain("control chips");
+    expect(computePreflight([bc("f", "A«ctrl:TAB»B")], ctx, "mm")
+      .some((x) => x.kind === "suspiciousChars")).toBe(false);
+  });
+
   it("still flags a control char in a non-GS1 field", () => {
     const findings = computePreflight([dm("a", "10ABC" + GS + "21XYZ")], ctx, "mm");
     expect(findings.some((f) => f.kind === "suspiciousChars")).toBe(true);
@@ -571,5 +599,82 @@ describe("markerValueFindings (mode-D shared ^FN slot)", () => {
       [code128("c", gs1Content, true), text("t", "lot «batch» end")],
       { variables: clean, dataset: null, columnMapping: null });
     expect(out).toEqual([]);
+  });
+
+  it("warns on the plain-^BC twin: >/^/~ in a slot shared with a text field", () => {
+    const dirty = [{ id: "v", name: "batch", fnNumber: 1, defaultValue: "X^Y" }];
+    const out = markerValueFindings(
+      [code128("c", "A«batch»B", false), text("t", "lot «batch» end")],
+      { variables: dirty, dataset: null, columnMapping: null });
+    expect(out).toEqual([
+      { objectId: "c", kind: "markerValueUnsafe", severity: "warning",
+        detail: '">", "^" or "~" in batch corrupts the symbol (shared ^FN slot emits unescaped)' },
+    ]);
+    // Exclusive slot: the header escape handles it, no warning.
+    expect(markerValueFindings(
+      [code128("c", "A«batch»B", false)],
+      { variables: dirty, dataset: null, columnMapping: null })).toEqual([]);
+  });
+
+  it("flags a > before an invocation char too (unfixable by escaping)", () => {
+    // code128PlainFd leaves `>5` alone, but the firmware still reads it as a
+    // CODE C switch; the warning must not use the escape delta as its test.
+    const dirty = [{ id: "v", name: "batch", fnNumber: 1, defaultValue: "A>5B" }];
+    const out = markerValueFindings(
+      [code128("c", "A«batch»B", false), text("t", "lot «batch» end")],
+      { variables: dirty, dataset: null, columnMapping: null });
+    expect(out).toHaveLength(1);
+    expect(out[0]?.kind).toBe("markerValueUnsafe");
+  });
+
+  it("flags control bytes in a template-consumed plain slot, not in a lone bind", () => {
+    // A template keeps the ^FH path and the firmware drops the C0 byte from
+    // the symbol; an EXCLUSIVE lone bind encodes it losslessly as an
+    // invocation, but a SHARED lone bind emits raw/^FH and loses it too.
+    const dirty = [{ id: "v", name: "batch", fnNumber: 1, defaultValue: "A\tB" }];
+    const deps = { variables: dirty, dataset: null, columnMapping: null };
+    const out = markerValueFindings([code128("c", "X«batch»Y", false)], deps);
+    expect(out).toHaveLength(1);
+    expect(out[0]?.detail).toContain("control bytes");
+    expect(markerValueFindings([code128("c", "«batch»", false)], deps)).toEqual([]);
+    const shared = markerValueFindings(
+      [code128("c", "«batch»", false), text("t", "L «batch» R")], deps);
+    expect(shared.some((f) => f.detail?.includes("control bytes"))).toBe(true);
+  });
+
+  it("warns when the payloads exhaust every ^FC candidate (markers print literally)", () => {
+    // `~` escapes to `>=` on a plain ^BC, so %$*+ plus ~ consume all five
+    // date candidates; export then arms no ^FC and ships the marker as text.
+    const deps = { variables: [], dataset: null, columnMapping: null };
+    const out = markerValueFindings([code128("c", "%$*+~Y«clock:m»", false)], deps);
+    expect(out.some((f) => f.kind === "markerArmFailed")).toBe(true);
+    // One candidate left: quiet.
+    expect(markerValueFindings([code128("c", "%$*+Y«clock:m»", false)], deps)
+      .some((f) => f.kind === "markerArmFailed")).toBe(false);
+    // A lone clock marker is scanned (and warned) too: only KNOWN single-bind
+    // variables are exempt, mirroring planTemplateHeader.
+    const lone = markerValueFindings(
+      [code128("c", "«clock:Y»", false), text("t", "%$*+= «clock:m»")], deps);
+    expect(lone.filter((f) => f.kind === "markerArmFailed")).toHaveLength(2);
+    // A chips-only payload arms no ^FE: its literals neither exhaust the
+    // embed pick nor warn (it exports as a Code 128 invocation).
+    const chips = markerValueFindings([code128("c", "#@|%&?!«ctrl:TAB»", false)], deps);
+    expect(chips.some((f) => f.kind === "markerArmFailed")).toBe(false);
+  });
+
+  it("flags > before an invocation char in an EXCLUSIVE plain slot", () => {
+    // The exclusive-slot escape protects a bare `>`, `^` and `~`, but leaves
+    // `>5`/`>8`/`>:` verbatim; the value channel must surface that residue.
+    const dirty = [{ id: "v", name: "batch", fnNumber: 1, defaultValue: ">5" }];
+    const out = markerValueFindings(
+      [code128("c", "A«batch»B", false)],
+      { variables: dirty, dataset: null, columnMapping: null });
+    expect(out).toHaveLength(1);
+    expect(out[0]?.detail).toContain("invocation");
+    // A bare `>` in an exclusive slot is fully handled by the escape: quiet.
+    const safe = [{ id: "v", name: "batch", fnNumber: 1, defaultValue: "A>B" }];
+    expect(markerValueFindings(
+      [code128("c", "A«batch»B", false)],
+      { variables: safe, dataset: null, columnMapping: null })).toEqual([]);
   });
 });

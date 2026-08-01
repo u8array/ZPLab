@@ -454,6 +454,7 @@ const bg = {
     emptyContent: 'Полето е празно',
     suspiciousChars: 'Съмнителни знаци',
     markerValueUnsafe: 'Стойност нарушава кодирането',
+    markerArmFailed: 'Маркерите се отпечатват като обикновен текст',
     gs1ValueInvalid: 'Стойността на променливата нарушава GS1 данни',
     printerSupportLimited: 'Ограничена поддръжка',
     qrRotatedStatic: 'Завъртян QR код отпечатва статична стойност',

@@ -454,6 +454,7 @@ const da = {
     emptyContent: 'Felt tomt',
     suspiciousChars: 'Mærkelige tegn',
     markerValueUnsafe: 'Variabelværdi bryder kodning',
+    markerArmFailed: 'Markører udskrives som bogstavelig tekst',
     gs1ValueInvalid: 'Variabelværdi bryder GS1-data',
     printerSupportLimited: 'Begrænset support',
     qrRotatedStatic: 'Roteret QR-kode udskriver statisk værdi',

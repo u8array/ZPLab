@@ -1,6 +1,10 @@
 import { hasTemplateMarkers, resolveTemplateMarkers } from "./fnTemplate";
+// SINGLE_MARKER_RE direct: variableField's isLoneMarker would cycle back into
+// this leaf module via variableBinding.
+import { SINGLE_MARKER_RE } from "../types/Variable";
+import { code128EscapeLiterals, code128PlainFd } from "./code128Subset";
 import { channelDatesFrom, hasClockMarkers, resolveClockMarkers, type ChannelDates } from "./fcTemplate";
-import { hasControlMarkers, resolveControlMarkers } from "../types/controlKey";
+import { hasControlMarkers, resolveControlMarkers, stripControlBytes } from "../types/controlKey";
 import type { ClockOffset, LabelConfig } from "../types/LabelConfig";
 import type { Variable } from "../types/Variable";
 
@@ -35,23 +39,46 @@ export function clockDatesThunk(clock?: ClockResolveCtx): () => ChannelDates {
   );
 }
 
-/** Shared clock -> control -> variable order: field-own display markers first
- *  (a chip in substituted data stays literal, matching export). `getDates` is
- *  a thunk (Date only when a clock marker exists); `resolveCtrl` mirrors the
- *  emitter's capability gate. */
+/** How the emitter treats control bytes, so preview resolution can mirror it.
+ *  `byteOutsideTemplate`: the symbology's own escape form (Code 128) cannot
+ *  wrap a ^FE template payload, so the firmware drops the bytes there. */
+export type CtrlParity = "literal" | "byte" | "byteOutsideTemplate";
+
+/** Shared control -> clock -> variable order: field-own display markers first
+ *  (a chip in substituted data stays literal, matching export; lone binds are
+ *  the exception below). `ctrl` mirrors the emitter's capability gate. */
 export function resolveMarkerChain(
   content: string,
   resolveVar: (name: string) => string | undefined,
   getDates: (() => ChannelDates) | null,
-  resolveCtrl: boolean,
+  ctrl: CtrlParity,
 ): string {
   let next = content;
+  // Template-form plain-^BC: escape literal spans pre-substitution, escape
+  // substituted values like their ^FN declarations, drop bytes like ^FH does.
+  let templateFd = false;
+  let loneBind = false;
   if (getDates) {
+    if (ctrl !== "literal" && hasControlMarkers(next)) next = resolveControlMarkers(next);
+    // Emitter gate, evaluated pre-^FC there too: clock markers keep the lossy
+    // ^FH path; a lone bind is a whole ^FD and encodes its own escape form.
+    // Chips-only payloads stay raw (they print via the invocation plan).
+    loneBind = ctrl === "byteOutsideTemplate" && SINGLE_MARKER_RE.test(next);
+    templateFd = ctrl === "byteOutsideTemplate" && hasTemplateMarkers(next) && !loneBind;
+    if (templateFd) next = code128EscapeLiterals(next);
     if (hasClockMarkers(next)) next = resolveClockMarkers(next, getDates());
-    if (resolveCtrl && hasControlMarkers(next)) next = resolveControlMarkers(next);
   }
-  if (hasTemplateMarkers(next)) next = resolveTemplateMarkers(next, resolveVar);
-  return next;
+  if (hasTemplateMarkers(next)) {
+    next = resolveTemplateMarkers(next, !templateFd ? resolveVar : (name) => {
+      const value = resolveVar(name);
+      return value === undefined ? value : code128PlainFd(value);
+    });
+  }
+  // The emitter resolves chips inside a lone-bind value too (fdTransformFor
+  // runs resolveControlMarkers on the whole-field default/CSV cell).
+  if (loneBind && hasControlMarkers(next)) next = resolveControlMarkers(next);
+  // After substitution, so a control byte from the bound value drops too.
+  return templateFd ? stripControlBytes(next) : next;
 }
 
 /** Resolve content to printable text as the canvas preview would (variables to
@@ -69,6 +96,6 @@ export function resolveContentPreview(
     content,
     (name) => byName.get(name)?.defaultValue,
     clockDatesThunk(clock),
-    opts?.resolveCtrl ?? true,
+    (opts?.resolveCtrl ?? true) ? "byte" : "literal",
   );
 }

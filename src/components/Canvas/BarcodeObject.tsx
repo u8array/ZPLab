@@ -302,8 +302,11 @@ export function BarcodeObject({
     // its own box and needs no correction.
     const aboveBottomPad = hri?.fontDots ? 0 : glyphTopPad;
     const checkDigit = (obj.props as { checkDigit?: boolean }).checkDigit;
+    // GS1 mode bypasses formatHri: its emit uses the mode-D grammar, not the
+    // plain escape the code128 formatter decodes, and prints the element
+    // string as-is.
     const displayText = stripHriControlBytes(
-      hri?.formatHri?.(rawContent, checkDigit) ?? rawContent,
+      (gs1Hri ? undefined : hri?.formatHri?.(rawContent, checkDigit)) ?? rawContent,
     );
     const isTextAbove = resolveHriAbove(obj);
     // Above-gap grows with module width (Labelary); per-symbology override

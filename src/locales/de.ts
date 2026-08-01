@@ -454,6 +454,7 @@ const de = {
     emptyContent: 'Feld ist leer',
     suspiciousChars: 'Verdächtige Zeichen',
     markerValueUnsafe: 'Variablenwert bricht Kodierung',
+    markerArmFailed: 'Marker werden als reiner Text gedruckt',
     gs1ValueInvalid: 'Variablenwert bricht GS1-Daten',
     printerSupportLimited: 'Eingeschränkt unterstützt',
     qrRotatedStatic: 'Gedrehter QR-Code druckt statischen Wert',

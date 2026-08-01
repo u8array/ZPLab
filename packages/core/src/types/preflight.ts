@@ -16,6 +16,7 @@ export type PreflightKind =
   | 'imageMissing'
   | 'suspiciousChars'
   | 'markerValueUnsafe'
+  | 'markerArmFailed'
   | 'gs1ValueInvalid'
   | 'emptyContent'
   | 'printerSupportLimited'
@@ -52,6 +53,9 @@ export const PREFLIGHT_SEVERITY: Record<PreflightKind, PreflightSeverity> = {
   // Same tier: the barcode encodes, but the marker's print-time value carries
   // structural chars its typed encoding can't take, so it scans corrupted.
   markerValueUnsafe: 'warning',
+  // The payloads use every ^FE/^FC candidate char, so export cannot arm the
+  // markers and they print as literal text. Still prints, so warn.
+  markerArmFailed: 'warning',
   // Split from markerValueUnsafe: not a scan-corruption but GS1-INVALID data
   // (wrong fixed-AI width, charset, date) from a substitution; it still
   // prints, so warn rather than block.
