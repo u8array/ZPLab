@@ -454,6 +454,7 @@ const it = {
     emptyContent: 'Campo vuoto',
     suspiciousChars: 'Caratteri sospetti',
     markerValueUnsafe: 'Valore rompe la codifica',
+    markerArmFailed: 'I marcatori vengono stampati come testo letterale',
     gs1ValueInvalid: 'Il valore della variabile viola i dati GS1',
     printerSupportLimited: 'Supporto limitato',
     qrRotatedStatic: 'Codice QR ruotato stampa un valore statico',

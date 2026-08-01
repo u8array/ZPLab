@@ -454,6 +454,7 @@ const no = {
     emptyContent: 'Felt tomt',
     suspiciousChars: 'Merkelige tegn',
     markerValueUnsafe: 'Variabelverdi bryter koding',
+    markerArmFailed: 'Markører skrives ut som ren tekst',
     gs1ValueInvalid: 'Variabelverdi bryter GS1-data',
     printerSupportLimited: 'Begrenset støtte',
     qrRotatedStatic: 'Rotert QR-kode skriver ut statisk verdi',

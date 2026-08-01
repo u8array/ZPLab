@@ -454,6 +454,7 @@ const ja = {
     emptyContent: '空欄',
     suspiciousChars: '不審な文字',
     markerValueUnsafe: '変数値がエンコードを破損',
+    markerArmFailed: 'マーカーはそのままテキストとして印字されます',
     gs1ValueInvalid: '変数値がGS1データを破損',
     printerSupportLimited: '一部非対応',
     qrRotatedStatic: '回転したQRコードは固定値を印刷',

@@ -257,6 +257,10 @@ export interface ParserState {
    *  head for the lookahead to latch onto, so the ^JM handler reports it partial
    *  instead of silently dropping it. */
   sawXa: boolean;
+  /** A ^BC ^FD kept verbatim whose re-emit the plain escape rewrites (bare
+   *  `>` in an unadopted stream): regen changes bytes, so the page is only
+   *  byte-exact through its overlay. */
+  bcFdRegenLossy: boolean;
 }
 
 /** trimEnd: `token` carries `rest` up to the next command, which in multi-line
@@ -307,6 +311,7 @@ export function resetFormatScopedState(s: ParserState): void {
   // position-less field must inherit it, not the fresh-state 'L'.
   s.field.justify = s.defaults.fwJustify;
   s.format.fhActive = false;
+  s.bcFdRegenLossy = false;
   resetFieldBlockDefaults(s.defaults);
 }
 
@@ -374,6 +379,7 @@ export function createParserState(): ParserState {
     serialStrippedFns: new Set<number>(),
     varScopeStart: 0,
     sawXa: false,
+    bcFdRegenLossy: false,
     field: freshFieldState(),
   };
 }

@@ -33,7 +33,7 @@ import { useContextMenu } from "../../hooks/useContextMenu";
 import { rotateSelectionChanges } from "../../lib/groupRotation";
 import { registerBarcodeWidthProber, unregisterBarcodeWidthProber } from "../../store/anchorRepin";
 import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
-import { objectResolvesCtrl } from "@zplab/core/registry";
+import { ctrlParityFor } from "@zplab/core/registry";
 import { measureBarcodeFootprintDots } from "./bwipHelpers";
 import { copyText } from "../../lib/clipboard";
 import { selectTidyTargets } from "../../lib/tidyClassify";
@@ -467,7 +467,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const { variables: vars, active, clock } = previewBinding;
     const probe = (o: LabelObject) => {
       if (isGroup(o)) return null;
-      const resolved = applyBindingToObject(o, vars, active, dataRenderMode, clock, objectResolvesCtrl(o));
+      const resolved = applyBindingToObject(o, vars, active, dataRenderMode, clock, ctrlParityFor(o));
       return measureBarcodeFootprintDots(resolved as LeafObject, scale, effDpmm);
     };
     registerBarcodeWidthProber(probe);

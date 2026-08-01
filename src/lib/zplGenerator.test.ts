@@ -1737,8 +1737,8 @@ describe('generateBatchZpl', () => {
   }] as unknown as LabelObject[];
 
   it('emits a control-key chip as a Code 128 subset invocation, not ^FH hex', () => {
-    // Regression: the ^FH hex form reached the printer but ^BC dropped every C0
-    // byte from the symbol (ZD230-verified, pixel-identical to no chip at all).
+    // ^FH hex reaches the printer but ^BC drops every C0 byte from the symbol
+    // (ZD230-verified, pixel-identical to no chip at all).
     const out = generateZPL(baseLabel, code128Chip('A«ctrl:GS»B«ctrl:CR»'));
     expect(out).toContain('^FD>933933477^FS');
     expect(out).not.toContain('^FH_');
@@ -1751,6 +1751,209 @@ describe('generateBatchZpl', () => {
     const { objects } = parseSingle(out, 8);
     expect(props(defined(objects[0])).content).toBe('AB«ctrl:TAB»cd«ctrl:CR»EF');
     expect(generateZPL(baseLabel, objects)).toBe(out);
+  });
+
+  it('encodes a raw control byte the same way as a chip', () => {
+    // Gate is the resolved payload, not the chip marker: an imported byte the
+    // catalogue does not cover reaches the symbol only in invocation form.
+    expect(generateZPL(baseLabel, code128Chip('AB\tCD'))).toContain('^FD>93334733536^FS');
+    const out = generateZPL(baseLabel, code128Chip('A\x01B'));
+    expect(out).toContain('^FD>9336534^FS');
+    expect(out).not.toContain('^FH_');
+  });
+
+  it('adopts an invocation stream with an uncatalogued C0 byte (byte-identical re-emit)', () => {
+    const { objects } = parseSingle('^XA^FO0,0^BY2^BCN,100,Y,N,N^FD>9336534^FS^XZ', 8);
+    expect(props(defined(objects[0])).content).toBe('A\x01B');
+    expect(generateZPL(baseLabel, objects)).toContain('^FD>9336534^FS');
+  });
+
+  it('encodes chip payloads with >/^ from UNescaped bytes (no double escape)', () => {
+    // Chips-only content takes the invocation plan; pre-escaping it would
+    // push the escape's own characters into the symbol as data.
+    const out = generateZPL(baseLabel, code128Chip('A>B«ctrl:TAB»'));
+    expect(out).toContain('^FD>933303473^FS');
+    const { objects } = parseSingle(out, 8);
+    expect(props(defined(objects[0])).content).toBe('A>B«ctrl:TAB»');
+    expect(generateZPL(baseLabel, objects)).toBe(out);
+  });
+
+  it('picks ^FC chars against the ESCAPED payload (escape injects < and =)', () => {
+    // `^` escapes to `><`; with `{` in the payload, a pre-escape scan would
+    // pick '<' as the time char and re-import `<Y` as a clock-2 token.
+    const out = generateZPL(baseLabel, code128Chip('{^Y«clock:m»'));
+    expect(out).not.toContain('^FC%,<');
+    const { objects } = parseSingle(out, 8);
+    expect(props(defined(objects[0])).content).toBe('{^Y«clock:m»');
+    expect(generateZPL(baseLabel, objects)).toBe(out);
+  });
+
+  it('lets a chips-only payload keep the embed-char pick free', () => {
+    // The chips-only field emits as an invocation, never arms ^FE, so its
+    // literals must not push the pick into exhaustion for real templates.
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'V' }];
+    const textLeaf = {
+      id: 't1', type: 'text', x: 0, y: 0, rotation: 0,
+      props: { content: 'L «sku» R', fontHeight: 30, fontWidth: 0, rotation: 'N' },
+    } as unknown as LabelObject;
+    const out = generateZPL(baseLabel, [...code128Chip('#@|%&?!«ctrl:TAB»'), textLeaf], variables);
+    expect(out).toContain('^FE');
+  });
+
+  it('keeps binding for a variable whose name carries ^ (span-limited escape)', () => {
+    const variables = [{ id: 'v1', name: 'x^y', fnNumber: 1, defaultValue: 'V' }];
+    const out = generateZPL(baseLabel, code128Chip('a«x^y»b'), variables);
+    expect(out).toContain('^FDa#1#b^FS');
+  });
+
+  it('escapes a literal > before a clock token, even when the date char is =', () => {
+    // %$*+ in the payload force '=' as the ^FC date char; a post-token escape
+    // would read `>=` as an invocation literal and drop the `>0`, so the
+    // printer would merge the > into the substituted date.
+    const out = generateZPL(baseLabel, code128Chip('%$*+A>«clock:Y»'));
+    expect(out).toContain('^FC=');
+    expect(out).toContain('%$*+A>0=Y^FS');
+    const { objects } = parseSingle(out, 8);
+    expect(props(defined(objects[0])).content).toBe('%$*+A>«clock:Y»');
+    expect(generateZPL(baseLabel, objects)).toBe(out);
+  });
+
+  it('escapes a literal > before an embed reference and round-trips it', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: '5B' }];
+    const out = generateZPL(baseLabel, code128Chip('A>«sku»X'), variables);
+    expect(out).toContain('^FDA>0#1#X^FS');
+    const r = parseSingle(out, 8);
+    // Parser names the unnamed slot field_1; the escape must still reverse.
+    expect(props(defined(r.objects[0])).content).toBe('A>«field_1»X');
+    expect(generateZPL(baseLabel, r.objects, r.variables)).toBe(out);
+  });
+
+  it('leaves a shared-slot ^FN default verbatim on import (exclusivity decides)', () => {
+    // flushField must not decode the default: only the page-close pass knows
+    // the slot is shared, where the raw emit makes `>0AB` the true bytes.
+    const zpl = '^XA^FO10,10^BY2^BCN,100,Y,N,N^FN1^FD>0AB^FS^FO10,60^A0N,30,0^FE#^FDL #1# R^FS^XZ';
+    const r = parseSingle(zpl, 8);
+    expect(defined(r.variables[0]).defaultValue).toBe('>0AB');
+  });
+
+  it('does not flag lossyEdit for a shared-slot default that re-emits raw', () => {
+    const zpl = '^XA^FO10,10^BY2^BCN,100,Y,N,N^FN1^FDX>Y^FS^FO10,60^A0N,30,0^FE#^FDL #1# R^FS^XZ';
+    const { findings } = parseSingle(zpl, 8, { captureOverlay: true });
+    expect(findings.some((f) => f.kind === 'lossyEdit')).toBe(false);
+  });
+
+  it('flags lossyEdit for an exclusive ^FH control-byte default (regen emits invocations)', () => {
+    const zpl = '^XA^FO10,10^BY2^BCN,100,Y,N,N^FN1^FH_^FDA_09B^FS^XZ';
+    const { findings } = parseSingle(zpl, 8, { captureOverlay: true });
+    expect(findings.some((f) => f.kind === 'lossyEdit')).toBe(true);
+  });
+
+  it('keeps > escapes inside marker bodies intact on import', () => {
+    // The non-span decoder must not run on marker-bearing payloads: a `>0`
+    // inside a variable NAME is body text, not an escape.
+    const zpl = '^XA^FX Field: a>0b^FS^FN1^FDD^FS^FO10,10^BY2^BCN,50,N,N,N^FE#^FD#1#X^FS^XZ';
+    const r = parseSingle(zpl, 8);
+    expect(props(defined(r.objects[0])).content).toBe('«a>0b»X');
+  });
+
+  it('normalizes a bare ^FN invocation default for a pure lone-bind consumer', () => {
+    // The lone-bind emit re-encodes the bytes to the same stream, so the
+    // default adopts (chips included) instead of reading as unsafe `>` text.
+    const zpl = '^XA^FN1^FD>9337334^FS^FO0,0^BY2^BCN,100,Y,N,N^FE#^FD#1#^FS^XZ';
+    const r = parseSingle(zpl, 8);
+    expect(defined(r.variables[0]).defaultValue).toBe('A«ctrl:TAB»B');
+    expect(generateZPL(baseLabel, r.objects, r.variables)).toContain('^FD>9337334^FS');
+  });
+
+  it('escapes a literal > and round-trips it', () => {
+    // Bare `>` opens an invocation code, so the firmware swallowed `>B`
+    // (Labelary-measured: 92 dots instead of 136).
+    const out = generateZPL(baseLabel, code128Chip('A>B'));
+    expect(out).toContain('^FDA>0B^FS');
+    const { objects } = parseSingle(out, 8);
+    expect(props(defined(objects[0])).content).toBe('A>B');
+    expect(generateZPL(baseLabel, objects)).toBe(out);
+  });
+
+  it('escapes ^ and ~ as invocation literals and round-trips them', () => {
+    // The ^FH hex form (_5E/_7E) is silently dropped from the symbol
+    // (ZD230-measured 136 dots, HRI ABC); ></>= encode losslessly (180 dots).
+    const out = generateZPL(baseLabel, code128Chip('A^B~C'));
+    expect(out).toContain('^FDA><B>=C^FS');
+    expect(out).not.toContain('_5E');
+    const { objects } = parseSingle(out, 8);
+    expect(props(defined(objects[0])).content).toBe('A^B~C');
+    expect(generateZPL(baseLabel, objects)).toBe(out);
+  });
+
+  it('re-emits an unmodelled invocation stream verbatim', () => {
+    const zpl = '^XA^FO0,0^BY2^BCN,100,Y,N,N^FD>:AB>8CD^FS^XZ';
+    const { objects } = parseSingle(zpl, 8);
+    expect(props(defined(objects[0])).content).toBe('>:AB>8CD');
+    expect(generateZPL(baseLabel, objects)).toContain('^FD>:AB>8CD^FS');
+  });
+
+  it('emits a single-bind default with control bytes as a subset invocation', () => {
+    // The bound default is the whole ^FD, so the invocation form applies;
+    // the ^FH hex fdField would otherwise use is dropped from the symbol (ZD230).
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'A«ctrl:TAB»B' }];
+    const out = generateZPL(baseLabel, code128Chip('«sku»'), variables);
+    expect(out).toContain('^FN1^FD>9337334^FS');
+    expect(out).not.toContain('^FH_');
+    const r = parseSingle(out, 8);
+    expect(generateZPL(baseLabel, r.objects, r.variables)).toBe(out);
+  });
+
+  it('falls back to resolved bytes, not chip marker text, when the plan fails', () => {
+    // Ä fits no subset, so the invocation plan bails; the ^FH fallback must
+    // carry the byte, never the internal «ctrl:» grammar.
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'Ä«ctrl:TAB»B' }];
+    const out = generateZPL(baseLabel, code128Chip('«sku»'), variables);
+    expect(out).toContain('_09');
+    expect(out).not.toContain('«ctrl:');
+  });
+
+  it('emits a shared-slot single-bind default raw (escape would corrupt co-consumers)', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'X>Y^Z' }];
+    const textLeaf = {
+      id: 't1', type: 'text', x: 0, y: 0, rotation: 0,
+      props: { content: 'A«sku»B', fontHeight: 30, fontWidth: 0, rotation: 'N' },
+    } as unknown as LabelObject;
+    const out = generateZPL(baseLabel, [...code128Chip('«sku»'), textLeaf], variables);
+    // The firmware substitutes ONE value everywhere; an escaped default would
+    // print `X>0Y><Z` through the text field, so the slot emits raw (mode-D
+    // precedent) and preflight owns the barcode-side warning.
+    expect(out).not.toContain('>0Y');
+    expect(out).toContain('X>Y_5EZ');
+  });
+
+  it('emits a batch row value with control bytes as a subset invocation', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'X' }];
+    const objects = code128Chip('«sku»');
+    const dataset = { headers: ['sku'], rows: [['A\tB']] };
+    const mapping = { bindings: { v1: 'sku' } };
+    const result = generateBatchZpl(baseLabel, objects, variables, dataset, mapping);
+    const recall = result.split('^XFR:LBL.ZPL').slice(1).join('');
+    expect(recall).toContain('^FN1^FD>9337334^FS');
+    expect(recall).not.toContain('^FH_');
+  });
+
+  it('keeps a compacted Subset C stream verbatim (adoption would widen the symbol)', () => {
+    const zpl = '^XA^FO0,0^BY2^BCN,100,Y,N,N^FD>;12345678>773^FS^XZ';
+    const { objects } = parseSingle(zpl, 8);
+    expect(props(defined(objects[0])).content).toBe('>;12345678>773');
+    expect(generateZPL(baseLabel, objects)).toContain('^FD>;12345678>773^FS');
+  });
+
+  it('escapes >/^/~ in a plain-^BC-exclusive ^FN default and reverses on import', () => {
+    // The default substitutes into the ^BC ^FD; unescaped, `>Y` collapses and
+    // ^/~ ride the ^FH hex the firmware drops from the symbol.
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'X>Y^Z' }];
+    const out = generateZPL(baseLabel, code128Chip('A«sku»B'), variables);
+    expect(out).toContain('^FN1^FDX>0Y><Z^FS');
+    const r = parseSingle(out, 8);
+    expect(defined(r.variables[0]).defaultValue).toBe('X>Y^Z');
+    expect(generateZPL(baseLabel, r.objects, r.variables)).toBe(out);
   });
 
   it('keeps the ^FH path for a chip inside a template payload', () => {

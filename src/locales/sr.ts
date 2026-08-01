@@ -454,6 +454,7 @@ const sr = {
     emptyContent: 'Поље празно',
     suspiciousChars: 'Сумњиви знакови',
     markerValueUnsafe: 'Вредност квари кодирање',
+    markerArmFailed: 'Маркери се штампају као обичан текст',
     gs1ValueInvalid: 'Вредност променљиве нарушава GS1 податке',
     printerSupportLimited: 'Ограничена подршка',
     qrRotatedStatic: 'Ротирани QR код штампа статичну вредност',

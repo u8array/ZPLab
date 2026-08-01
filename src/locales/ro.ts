@@ -454,6 +454,7 @@ const ro = {
     emptyContent: 'Câmp gol',
     suspiciousChars: 'Caractere suspecte',
     markerValueUnsafe: 'Valoarea variabilei strică codificarea',
+    markerArmFailed: 'Marcatorii se tipăresc ca text literal',
     gs1ValueInvalid: 'Valoarea variabilei încalcă datele GS1',
     printerSupportLimited: 'Suport limitat',
     qrRotatedStatic: 'Codul QR rotit imprimă o valoare statică',

@@ -600,6 +600,15 @@ describe('parseZPL — ^FH hex escape', () => {
     expect(props(objects[0]).content).toBe('ab«ctrl:TAB»CD');
   });
 
+  it('keeps a stream whose >6/>7 mean FNC 4 verbatim', () => {
+    // Table 2 is direction-dependent: >6 out of Subset B and >7 out of Subset A
+    // are FNC 4, not switches. Adopting them dropped a symbol on re-export.
+    for (const fd of ['>:AB>6CD>773', '>93334>773']) {
+      const { objects } = parseSingle(`^XA^FO0,0^BY2^BCN,100,Y,N,N^FD${fd}^FS^XZ`, 8);
+      expect(props(objects[0]).content, fd).toBe(fd);
+    }
+  });
+
   it('keeps an escape stream that carries no control byte verbatim', () => {
     // Nothing to chip means nothing to fix; the payload must re-export byte-exact.
     const { objects } = parseSingle('^XA^FO0,0^BY2^BCN,100,Y,N,N^FD>:CODE128^FS^XZ', 8);
@@ -2637,6 +2646,32 @@ describe('parseZPL — lossyEdit finding for regen-unsafe blocks', () => {
     const zpl = '^XA^FO10,10^A0N,30,0^FDx^FS^XZ';
     const { findings } = parseSingle(zpl, 8, { captureOverlay: true });
     expect(findings.some((x) => x.kind === 'lossyEdit')).toBe(false);
+  });
+
+  it('flags a verbatim ^BC stream whose re-emit the plain escape rewrites', () => {
+    // `A>B` is kept verbatim (lossy on the printer), but regen emits `A>0B`.
+    const zpl = '^XA^FO10,10^BY2^BCN,100,Y,N,N^FDA>B^FS^XZ';
+    const { findings } = parseSingle(zpl, 8, { captureOverlay: true });
+    const f = findings.find((x) => x.kind === 'lossyEdit');
+    expect(f?.command).toContain('re-escapes');
+    // Adopted (`A>0B`) and verbatim-stable (`>:AB>8CD`) streams stay clean.
+    for (const fd of ['A>0B', '>:AB>8CD']) {
+      const clean = parseSingle(`^XA^FO10,10^BY2^BCN,100,Y,N,N^FD${fd}^FS^XZ`, 8, { captureOverlay: true });
+      expect(clean.findings.some((x) => x.kind === 'lossyEdit')).toBe(false);
+    }
+  });
+
+  it('flags ^FH-imported control bytes on a ^BC (regen re-emits invocations)', () => {
+    // ^FH-imported control bytes regenerate as invocations, changing bytes
+    // and symbol, so the page cannot claim byte-exact regen.
+    for (const fd of ['A_09B', 'A_01B']) {
+      const zpl = `^XA^FO10,10^BY2^BCN,100,Y,N,N^FH_^FD${fd}^FS^XZ`;
+      const { findings } = parseSingle(zpl, 8, { captureOverlay: true });
+      expect(findings.some((x) => x.kind === 'lossyEdit'), fd).toBe(true);
+    }
+    // The invocation form itself is adopted and re-emits identically: clean.
+    const clean = parseSingle('^XA^FO10,10^BY2^BCN,100,Y,N,N^FD>9337334^FS^XZ', 8, { captureOverlay: true });
+    expect(clean.findings.some((x) => x.kind === 'lossyEdit')).toBe(false);
   });
 });
 

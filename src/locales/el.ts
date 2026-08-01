@@ -454,6 +454,7 @@ const el = {
     emptyContent: 'Πεδίο κενό',
     suspiciousChars: 'Ύποπτοι χαρακτήρες',
     markerValueUnsafe: 'Τιμή μεταβλητής παραβιάζει κωδικοποίηση',
+    markerArmFailed: 'Οι δείκτες εκτυπώνονται ως απλό κείμενο',
     gs1ValueInvalid: 'Η τιμή μεταβλητής παραβιάζει δεδομένα GS1',
     printerSupportLimited: 'Περιορισμένη υποστήριξη',
     qrRotatedStatic: 'Περιστραμμένος κωδικός QR εκτυπώνει στατική τιμή',

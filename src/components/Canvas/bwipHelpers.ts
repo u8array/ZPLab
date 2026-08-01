@@ -44,7 +44,6 @@ export {
   BWIP_SCALE,
   get1DBwipScale,
   getDisplaySize,
-  parseZplCode128Escapes,
   snapTlc39MicroPdfRows,
   splitTlc39Content,
 } from "@zplab/core/lib/barcodeDims";

@@ -454,6 +454,7 @@ const hr = {
     emptyContent: 'Polje prazno',
     suspiciousChars: 'Sumnjivi znakovi',
     markerValueUnsafe: 'Vrijednost kvari kodiranje',
+    markerArmFailed: 'Oznake se ispisuju kao obični tekst',
     gs1ValueInvalid: 'Vrijednost varijable kvari GS1 podatke',
     printerSupportLimited: 'Ograničena podrška',
     qrRotatedStatic: 'Rotirani QR kod ispisuje statičnu vrijednost',

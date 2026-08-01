@@ -69,6 +69,10 @@ export interface ObjectTypeCore<P extends object = object> {
    *  editor's control-key chips and the import's byte-to-chip tokenising.
    *  False/absent for fixed-charset symbologies (EAN/UPC, Code 39) and text. */
   controlChars?: boolean;
+  /** Control bytes reach this symbology's symbol only through its own escape
+   *  form (Code 128 invocations), never through ^FH hex, which the firmware
+   *  drops. Set by the emitters that carry such an encoder. */
+  ctrlNeedsOwnEscape?: boolean;
   /** 1:1 aspect-locked free resize (ellipse with lockAspect). For
    *  integer-module 2D symbologies use uniformScaleProp instead. */
   uniformScale?: boolean | ((props: P) => boolean);

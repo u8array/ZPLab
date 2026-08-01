@@ -1,7 +1,9 @@
 import { DEFAULT_CLOCK_CHARS } from "./fcTemplate";
 import { unescapeGs1FdValue, zplFdToModelContent } from "./gs1";
-import { gs1ModeDExclusiveFns } from "./gs1ModeDFns";
-import { extractTemplateRefs } from "./fnTemplate";
+import { code128PlainExclusiveFns, gs1ModeDExclusiveFns } from "./gs1ModeDFns";
+import { code128ControlFd, code128FdToBytes, code128PlainFd, hasControlBytes } from "./code128Subset";
+import { extractTemplateRefs, hasTemplateMarkers } from "./fnTemplate";
+import { controlBytesToMarkers, resolveControlMarkers } from "../types/controlKey";
 import { isLoneMarker } from "./variableField";
 import { markerOf } from "../types/Variable";
 import { getObjectStringContent } from "./variableBinding";
@@ -58,6 +60,55 @@ function normalizeModeDDefaults(objects: readonly LabelObject[], variables: Vari
       ? (zplFdToModelContent(v.defaultValue) ?? unescapeGs1FdValue(v.defaultValue))
       : unescapeGs1FdValue(v.defaultValue);
   }
+}
+
+/** Inverse of the plain-^BC ^FN-default escape (flushField leaves ^FN
+ *  payloads verbatim: only this pass knows slot exclusivity). Adopts only
+ *  byte-identical re-encodes; returns true when a default's regen would
+ *  rewrite the imported bytes (lossyEdit signal). */
+function normalizeCode128PlainDefaults(objects: readonly LabelObject[], variables: Variable[]): boolean {
+  const plainFns = code128PlainExclusiveFns(objects, variables);
+  if (plainFns.size === 0) return false;
+  const fnByVarName = new Map(variables.map((v) => [v.name, v.fnNumber]));
+  const loneFns = new Set<number>();
+  const templateFns = new Set<number>();
+  for (const o of objects) {
+    const c = getObjectStringContent(o);
+    if (c === undefined || !hasTemplateMarkers(c)) continue;
+    const target = isLoneMarker(c) ? loneFns : templateFns;
+    for (const name of extractTemplateRefs(c)) {
+      const fn = fnByVarName.get(name);
+      if (fn !== undefined) target.add(fn);
+    }
+  }
+  let regenLossy = false;
+  for (const v of variables) {
+    if (!plainFns.has(v.fnNumber)) continue;
+    const pureLone = loneFns.has(v.fnNumber) && !templateFns.has(v.fnNumber);
+    const bytes = code128FdToBytes(v.defaultValue);
+    let adopted = false;
+    if (bytes !== null && hasControlBytes(bytes)) {
+      if (pureLone && code128ControlFd(bytes) === v.defaultValue) {
+        v.defaultValue = controlBytesToMarkers(bytes);
+        adopted = true;
+      }
+    } else if (bytes !== null && bytes !== v.defaultValue
+        && code128PlainFd(bytes) === v.defaultValue) {
+      // Identity "adoption" (bytes === default) must fall through: a default
+      // carrying chip markers decodes to itself yet regen-encodes differently.
+      v.defaultValue = bytes;
+      adopted = true;
+    }
+    if (adopted) continue;
+    // Not adopted: regen emits the escape form; flag when that rewrites the
+    // imported bytes (chips resolve either way, so compare against both).
+    const resolved = resolveControlMarkers(v.defaultValue);
+    const emitted = pureLone
+      ? (code128ControlFd(resolved) ?? code128PlainFd(resolved))
+      : code128PlainFd(v.defaultValue);
+    if (emitted !== v.defaultValue && emitted !== resolved) regenLossy = true;
+  }
+  return regenLossy;
 }
 
 /** Barcode object types whose module width comes from ^BY (mirrors the
@@ -275,6 +326,7 @@ export function parseZPL(
     const pageObjects = objects.slice(pg.obj);
     const pageVariables = variables.slice(pg.vari);
     normalizeModeDDefaults(pageObjects, pageVariables);
+    if (normalizeCode128PlainDefaults(pageObjects, pageVariables)) s.bcFdRegenLossy = true;
     const pageIndex = pages.length;
     const findings = bucketFindings(
       pageIndex,
@@ -285,7 +337,8 @@ export function parseZPL(
       deviceAction.slice(pg.device),
     );
     const pageRegenSafe =
-      !pg.regenHostileFormat && !pg.sawNonUtf8Ci && !pg.sawBareBarcode && !pg.sawFnDeclaration;
+      !pg.regenHostileFormat && !pg.sawNonUtf8Ci && !pg.sawBareBarcode && !pg.sawFnDeclaration &&
+      !s.bcFdRegenLossy;
     let pageOverlay: BlockOverlay | undefined;
     if (opts.captureOverlay && pageObjects.every((o) => linkedIds.has(o.id))) {
       const frame =
@@ -316,7 +369,9 @@ export function parseZPL(
           ? "a barcode without an explicit ^BY"
           : pg.sawFnDeclaration
             ? "a standalone ^FN declaration"
-            : "a non-default format state (prefix, delimiter, unit, out-of-field ^FE/^FC, or ^LR)";
+            : s.bcFdRegenLossy
+              ? "a Code 128 escape stream the export re-escapes"
+              : "a non-default format state (prefix, delimiter, unit, out-of-field ^FE/^FC, or ^LR)";
       findings.push({ kind: "lossyEdit", command: reason, pageIndex });
     }
     const w = labelConfig.widthMm;

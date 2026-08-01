@@ -454,6 +454,7 @@ const pl = {
     emptyContent: 'Pole puste',
     suspiciousChars: 'Podejrzane znaki',
     markerValueUnsafe: 'Wartość zmiennej łamie kodowanie',
+    markerArmFailed: 'Znaczniki drukują się jako zwykły tekst',
     gs1ValueInvalid: 'Wartość zmiennej narusza dane GS1',
     printerSupportLimited: 'Ograniczone wsparcie',
     qrRotatedStatic: 'Obrócony kod QR drukuje statyczną wartość',

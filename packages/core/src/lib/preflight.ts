@@ -4,11 +4,14 @@ import { emittedAnchorDots } from "./emittedAnchor";
 import { suspiciousCharDetail } from "./suspiciousChars";
 import { GS1_GS, parseGs1ToSegments, validateGs1Segment, validateGs1SegmentResolved } from "./gs1";
 import { DATAMATRIX_FD_ESCAPE } from "./dataMatrixFd";
-import { extractTemplateRefs, hasTemplateMarkers } from "./fnTemplate";
-import { isLoneMarker } from "./variableField";
+import { extractTemplateRefs, hasTemplateMarkers, pickEmbedChar } from "./fnTemplate";
+import { hasClockMarkers, pickClockChars } from "./fcTemplate";
+import { code128EscapeLiterals } from "./code128Subset";
+import { hasControlMarkers, resolveControlMarkers } from "../types/controlKey";
+import { classifyField, isLoneMarker } from "./variableField";
 import { parseContent, typedContentIncompleteRows, typedContentMarkerFindings } from "./typedContent";
 import { getObjectStringContent, resolveForRow, variableSubstitutions } from "./variableBinding";
-import { gs1ModeDSharedFns, isModeDLeaf } from "./gs1ModeDFns";
+import { fnConsumerBuckets, isModeDLeaf } from "./gs1ModeDFns";
 import { isBlankText } from "./zebraTextLayout";
 import { resolveTextMode } from "../registry/text";
 import type { ColumnMapping, Variable } from "../types/Variable";
@@ -58,7 +61,7 @@ export function markerValueFindings(
   deps: MarkerValueDeps,
 ): PreflightFinding[] {
   const out: PreflightFinding[] = [];
-  const finding = (leaf: LeafObject, kind: "markerValueUnsafe" | "gs1ValueInvalid", detail: string): PreflightFinding => ({
+  const finding = (leaf: LeafObject, kind: "markerValueUnsafe" | "gs1ValueInvalid" | "markerArmFailed", detail?: string): PreflightFinding => ({
     objectId: leaf.id,
     kind,
     severity: PREFLIGHT_SEVERITY[kind],
@@ -189,29 +192,99 @@ export function markerValueFindings(
     markerValueCache.set(leaf, { ...deps, findings });
     out.push(...findings);
   }
-  // Shared slot (see gs1ModeDSharedFns): a > in any printing value scans as
-  // an invocation code. Cross-leaf state, so outside the per-leaf cache.
-  const shared = gs1ModeDSharedFns(leaves, deps.variables);
-  if (shared.size > 0) {
-    const byName = new Map(deps.variables.map((v) => [v.name, v]));
+  // ^FN slot-value checks (cross-leaf state, so outside the per-leaf cache):
+  // shared slots emit raw; exclusive plain-^BC slots still leak `>` before an
+  // invocation char, which the escape leaves verbatim by design.
+  const byName = new Map(deps.variables.map((v) => [v.name, v]));
+  const slotValueWarnings = (
+    slots: Set<number>,
+    leafPred: (leaf: LeafObject) => boolean,
+    dirtyPred: (val: string) => boolean,
+    message: (names: string) => string,
+  ) => {
+    if (slots.size === 0) return;
     for (const leaf of leaves) {
-      if (!isModeDLeaf(leaf)) continue;
+      if (!leafPred(leaf)) continue;
       const content = getObjectStringContent(leaf);
       if (content === undefined || !hasTemplateMarkers(content)) continue;
       const dirty: string[] = [];
       for (const name of new Set(extractTemplateRefs(content))) {
         const v = byName.get(name);
-        if (!v || !shared.has(v.fnNumber)) continue;
-        if (variableSubstitutions(v, deps.dataset, deps.columnMapping).some((val) => val.includes(">"))) {
+        if (!v || !slots.has(v.fnNumber)) continue;
+        if (variableSubstitutions(v, deps.dataset, deps.columnMapping).some(dirtyPred)) {
           dirty.push(v.name);
         }
       }
       if (dirty.length > 0) {
-        out.push(finding(
-          leaf,
-          "markerValueUnsafe",
-          `">" in ${dirty.join(", ")} prints as an invocation code (slot shared with a non-GS1 field)`,
-        ));
+        out.push(finding(leaf, "markerValueUnsafe", message(dirty.join(", "))));
+      }
+    }
+  };
+  const plainLeaf = (leaf: LeafObject) =>
+    !!getEntry(leaf.type)?.ctrlNeedsOwnEscape && !isModeDLeaf(leaf);
+  const buckets = fnConsumerBuckets(leaves, deps.variables);
+  slotValueWarnings(
+    buckets.modeDShared,
+    isModeDLeaf,
+    (val) => val.includes(">"),
+    (names) => `">" in ${names} prints as an invocation code (slot shared with a non-GS1 field)`,
+  );
+  slotValueWarnings(
+    buckets.plainShared,
+    plainLeaf,
+    // Not the escape delta: a `>` before an invocation char is unfixable by
+    // escaping yet still corrupts (swallow / subset switch), so flag every >^~.
+    (val) => /[>^~]/.test(val),
+    (names) => `">", "^" or "~" in ${names} corrupts the symbol (shared ^FN slot emits unescaped)`,
+  );
+  slotValueWarnings(
+    buckets.plainExclusive,
+    plainLeaf,
+    (val) => />[0-9:;<=]/.test(val),
+    (names) => `">" before an invocation character in ${names} prints as a barcode invocation, not text`,
+  );
+  // eslint-disable-next-line no-control-regex
+  const hasC0 = (val: string) => /[\x00-\x1F]/.test(val);
+  const c0Message = (names: string) =>
+    `control bytes in ${names} are dropped from the printed symbol (^FH path)`;
+  // Exclusive slots: only a lone bind encodes control bytes losslessly
+  // (invocation form); a template keeps ^FH where the firmware drops them.
+  slotValueWarnings(
+    buckets.plainExclusive,
+    (leaf) => plainLeaf(leaf) && !isLoneMarker(getObjectStringContent(leaf) ?? ""),
+    hasC0,
+    c0Message,
+  );
+  // Shared slots emit raw/^FH even for a lone bind, so no exemption there.
+  slotValueWarnings(
+    buckets.plainShared,
+    plainLeaf,
+    hasC0,
+    c0Message,
+  );
+  // Exhausted ^FC/^FE candidate sets arm nothing at export: markers ship as
+  // literal text. Mirror planTemplateHeader's scan exactly (skip only KNOWN
+  // single-binds; include the chars the plain-^BC escape injects).
+  const inScan = (c: string) => classifyField(c, deps.variables).kind !== "single";
+  // Chips-only payloads arm no ^FE, so they neither constrain nor warn.
+  const armsFe = (c: string) => hasTemplateMarkers(resolveControlMarkers(c));
+  const clockPayloads: string[] = [];
+  const templatePayloads: string[] = [];
+  for (const leaf of leaves) {
+    const c = getObjectStringContent(leaf);
+    if (c === undefined || !inScan(c)) continue;
+    const scan = plainLeaf(leaf) ? code128EscapeLiterals(c) : c;
+    if (armsFe(c)) templatePayloads.push(scan);
+    if (hasClockMarkers(c)) clockPayloads.push(scan);
+  }
+  const embedsDead = templatePayloads.length > 0 && pickEmbedChar(templatePayloads) === null;
+  const clocksDead = clockPayloads.length > 0 && pickClockChars(clockPayloads) === null;
+  if (embedsDead || clocksDead) {
+    for (const leaf of leaves) {
+      const c = getObjectStringContent(leaf);
+      if (c === undefined || !inScan(c)) continue;
+      if ((embedsDead && armsFe(c)) || (clocksDead && hasClockMarkers(c))) {
+        out.push(finding(leaf, "markerArmFailed"));
       }
     }
   }
@@ -267,7 +340,24 @@ export function computePreflight(
         (leaf.props as { gs1?: boolean }).gs1 ||
         (leaf.type === "maxicode" && [2, 3].includes((leaf.props as { mode?: number }).mode ?? 0));
       const scanned = gsStructural ? content.split(GS1_GS).join("") : content;
-      const detail = suspiciousCharDetail(scanned);
+      let detail = suspiciousCharDetail(scanned);
+      // Plain ^BC: `>` before an invocation char stays verbatim (escaping it
+      // would corrupt imported streams), so the firmware reads an invocation.
+      // Serial excluded: the ^SN seed is filtered to alphanumerics anyway.
+      const p = leaf.props as { gs1?: boolean; serial?: unknown };
+      if (getEntry(leaf.type)?.ctrlNeedsOwnEscape && !p.gs1 && !p.serial) {
+        const invocations = content.match(/>[0-9:;<=]/g);
+        if (invocations) {
+          const inv = `${[...new Set(invocations)].map((s) => `"${s}"`).join(", ")} read as barcode invocation codes, not text`;
+          detail = detail ? `${detail}; ${inv}` : inv;
+        }
+        // Chips alongside other markers keep the lossy ^FH path (emitter
+        // gate), where the firmware drops the bytes from the symbol.
+        if (hasControlMarkers(content) && hasTemplateMarkers(resolveControlMarkers(content))) {
+          const chips = "control chips in a template field are dropped from the printed symbol";
+          detail = detail ? `${detail}; ${chips}` : chips;
+        }
+      }
       if (detail) {
         // Hidden chars win over emptiness: NBSP/BOM-only content trims to empty
         // but carries invisible ink, so name it rather than call the field blank.

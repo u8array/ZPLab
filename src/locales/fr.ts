@@ -454,6 +454,7 @@ const fr = {
     emptyContent: 'Champ vide',
     suspiciousChars: 'Caractères suspects',
     markerValueUnsafe: "Valeur brise l'encodage",
+    markerArmFailed: "Les marqueurs s'impriment en texte littéral",
     gs1ValueInvalid: 'La valeur de la variable enfreint les données GS1',
     printerSupportLimited: 'Support limité',
     qrRotatedStatic: 'QR Code pivoté imprime une valeur statique',

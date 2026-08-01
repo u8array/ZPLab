@@ -454,6 +454,7 @@ const he = {
     emptyContent: 'שדה ריק',
     suspiciousChars: 'תווים חשודים',
     markerValueUnsafe: 'ערך משתנה שובר קידוד',
+    markerArmFailed: 'הסמנים מודפסים כטקסט מילולי',
     gs1ValueInvalid: 'ערך המשתנה שובר נתוני GS1',
     printerSupportLimited: 'תמיכה מוגבלת',
     qrRotatedStatic: 'קוד QR מסובב מדפיס ערך סטטי',

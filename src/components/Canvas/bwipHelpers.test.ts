@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { buildBwipOptions, dataMatrixMinFitIndex, getDisplaySize, getEanUpcHriFragments, parseZplCode128Escapes } from "./bwipHelpers";
+import { buildBwipOptions, dataMatrixMinFitIndex, getDisplaySize, getEanUpcHriFragments } from "./bwipHelpers";
 import type { LeafObject } from "@zplab/core/registry";
 import { dmSizePairs, type DataMatrixProps } from "@zplab/core/registry/datamatrix";
 import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
@@ -301,56 +301,6 @@ describe("getDisplaySize coverage (ZPL-first policy)", () => {
   });
 });
 
-describe("parseZplCode128Escapes", () => {
-  it("returns null for plain ASCII (no escape sequences)", () => {
-    expect(parseZplCode128Escapes("ABC123")).toBeNull();
-    expect(parseZplCode128Escapes("")).toBeNull();
-  });
-
-  it("translates >5 to FNC1", () => {
-    expect(parseZplCode128Escapes("AB>5CD")).toBe("AB^FNC1CD");
-  });
-
-  it("translates >9 to FNC1 only at the start of the field (per ZPL spec)", () => {
-    expect(parseZplCode128Escapes(">91234")).toBe("^FNC11234");
-    // Mid-string >9 is just a Code-C invocation; bwip auto-mode picks C
-    // for the digit run, so we drop the escape entirely.
-    expect(parseZplCode128Escapes("A>9123")).toBe("A123");
-  });
-
-  it("translates >6/>7/>8 to FNC2/FNC3/FNC4", () => {
-    expect(parseZplCode128Escapes("A>6B")).toBe("A^FNC2B");
-    expect(parseZplCode128Escapes("A>7B")).toBe("A^FNC3B");
-    expect(parseZplCode128Escapes("A>8B")).toBe("A^FNC4B");
-  });
-
-  it("translates >0 to a literal `>`", () => {
-    expect(parseZplCode128Escapes("A>0B>5")).toBe("A>B^FNC1");
-  });
-
-  it("drops >: and >; (subset switches — bwip auto-mode picks the subset)", () => {
-    expect(parseZplCode128Escapes("A>:B>;C>5")).toBe("ABC^FNC1");
-  });
-
-  it("doubles literal `^` so bwip parsefnc does not treat it as an escape", () => {
-    expect(parseZplCode128Escapes("A^B>5")).toBe("A^^B^FNC1");
-  });
-
-  it("leaves trailing `>` and unknown `>X` literal — matches firmware behaviour", () => {
-    expect(parseZplCode128Escapes("abc>")).toBeNull();
-    // `>z` is not a defined ZPL escape; Zebra treats it as literal `>z`.
-    expect(parseZplCode128Escapes("a>z>5")).toBe("a>z^FNC1");
-  });
-
-  it("handles the reported case STRSTR>5… with auto Code-C compaction", () => {
-    // Without translation: 21 raw Subset-B symbols.
-    // After translation: bwip sees STRSTR + FNC1 + 16 digits, auto-switches
-    // to Code C for the digit run → ~15 data symbols, matching firmware.
-    expect(parseZplCode128Escapes("STRSTR>52316094000242201"))
-      .toBe("STRSTR^FNC12316094000242201");
-  });
-});
-
 describe("buildBwipOptions code128 escape handling", () => {
   const code128 = (content: string): LabelObject =>
     ({
@@ -377,11 +327,31 @@ describe("buildBwipOptions code128 escape handling", () => {
     expect((opts?.text as string).startsWith("^104")).toBe(true);
   });
 
-  it("switches to parsefnc auto-mode when ZPL escape sequences are present", () => {
+  it("renders an escape stream from the firmware's Table-2 read (raw symbols)", () => {
+    // >5 is CODE C (99), then digit pairs: 6 literals + 9 symbols, exactly
+    // the compaction the firmware prints.
     const opts = buildBwipOptions(code128("STRSTR>52316094000242201"), 1, 8);
-    expect(opts?.parsefnc).toBe(true);
-    expect(opts?.raw).toBeUndefined();
-    expect(opts?.text).toBe("STRSTR^FNC12316094000242201");
+    expect(opts?.raw).toBe(true);
+    expect(opts?.text).toBe(
+      "^104^051^052^050^051^052^050^099^023^016^009^040^000^024^022^001",
+    );
+  });
+
+  it("renders a verbatim FNC1 stream as the firmware does", () => {
+    const opts = buildBwipOptions(code128(">:AB>8CD"), 1, 8);
+    expect(opts?.text).toBe("^104^033^034^102^035^036");
+  });
+
+  it("renders typed >< as the literal ^ the printer encodes", () => {
+    const opts = buildBwipOptions(code128("A><B"), 1, 8);
+    expect(opts?.text).toBe("^104^033^062^034");
+  });
+
+  it("interprets the emitted payload, not the model content", () => {
+    // The printer reads the fdPlainEscape form: bare > becomes >0, so `>:`
+    // never acts as a start code here.
+    const opts = buildBwipOptions(code128("A>B>:C"), 1, 8);
+    expect(opts?.text).toBe("^104^033^030^034^035");
   });
 });
 
