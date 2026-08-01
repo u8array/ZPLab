@@ -69,3 +69,11 @@ export function formatUpcEanExtensionHri(content: string): string {
   const t = content.replace(/\D/g, '');
   return t.length === 2 ? t : t.slice(0, 5).padEnd(5, '0');
 }
+
+/** Firmware prints no glyph for a control byte in the interpretation line
+ *  (ZD230-verified: `AB<HT>CD…` prints `ABCDEFGH`), so strip them from every
+ *  1D HRI line before layout, which is length-based. */
+export function stripHriControlBytes(text: string): string {
+  // eslint-disable-next-line no-control-regex
+  return text.replace(/[\x00-\x1F\x7F]/g, '');
+}
