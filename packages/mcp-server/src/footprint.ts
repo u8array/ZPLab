@@ -21,7 +21,9 @@ let binding: { variables: readonly Variable[]; clock: ClockResolveCtx } | null =
 const measure = (o: LabelObject, dpmm?: number) => {
   if (isGroup(o)) return null;
   const resolved = binding ? resolveForMeasure(o, binding.variables, binding.clock) : o;
-  // Width in dots is dpmm-invariant; 8 only backs a caller that passed none.
+  // The 8 only backs the 1D z-justify callers, whose dot width is dpmm-invariant.
+  // Fixed-physical types (maxicode) scale with dpmm, so any caller reaching them
+  // must pass a density.
   return measureBarcodeFootprintDotsWith(engine, resolved as LeafObject, dpmm ?? 8);
 };
 

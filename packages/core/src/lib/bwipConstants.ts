@@ -125,6 +125,11 @@ export const GS1_DATABAR_SPEC_HEIGHT_MODULES: Partial<
 /** bwip's paddingheight rows; shared with bitmap-crop logic. */
 export const GS1_DATABAR_PADDING_ROWS = 2;
 
+/** Dead pixels around bwip's maxicode ink at BWIP_SCALE (canvas 210x200, ink
+ *  209x198 at (0,1)); cropping them keeps the drawn ink filling the footprint
+ *  box instead of stopping ~1 dot short per axis. Pinned by maxicodeBitmap.test.ts. */
+export const MAXICODE_INK_MARGIN_PX = { left: 0, top: 1, right: 1, bottom: 1 } as const;
+
 export const EAN_UPC_TYPES = new Set<string>([
   "ean13",
   "ean8",

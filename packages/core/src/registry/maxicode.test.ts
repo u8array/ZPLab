@@ -2,11 +2,15 @@ import { describe, expect, it } from "vitest";
 import bwipjs from "bwip-js/generic";
 import { maxicodeMissingScm, maxicodeScmOwnedByPreflight } from "./maxicode";
 import { getEntry, type LeafObject } from ".";
-import { measureBarcodeFootprintDotsWith, type BwipEngine } from "../lib/barcodeDims";
+import { getDisplaySize, measureBarcodeFootprintDotsWith, type BwipEngine } from "../lib/barcodeDims";
+import { pxToDots } from "../lib/coordinates";
+import { resolveDefaultSizeDots } from "../lib/resolveDefaultSize";
 import type { LabelObject } from "../types/Group";
 import type { LabelConfig } from "../types/LabelConfig";
 
 const engine = bwipjs as unknown as BwipEngine;
+/** bwip's maxicode bitmap at BWIP_SCALE; pinned by src/test/maxicodeBitmap.test.ts. */
+const BWIP_CANVAS = { width: 210, height: 200 };
 const pctx = { label: { widthMm: 100, heightMm: 100, dpmm: 8 } as LabelConfig, unit: "mm" } as const;
 
 const mc = (mode: 2 | 3 | 4 | 5 | 6, content: string): LeafObject =>
@@ -67,16 +71,30 @@ describe("maxicode preflight producer", () => {
 });
 
 describe("maxicode footprint tracks dpmm (fixed physical size)", () => {
-  // Labelary ink: 200x193 dots @ 8dpmm, 300x289 @ 12dpmm. The pre-fix footprint
-  // was ~105x100 dots at BOTH densities (bwip's dpmm-independent pixel canvas).
-  it("measures the printed ink extent at 8 dpmm", () => {
+  it("measures the calibrated footprint at 8 dpmm", () => {
     const dim = measureBarcodeFootprintDotsWith(engine, mc(4, "1234567890"), 8)!;
-    // Labelary-measured dots, pinned literally so a constants drift fails here.
-    expect([dim.w, dim.h]).toEqual([200, 193]);
+    // Visually calibrated dots (INK_DOTS_8DPMM), pinned so a drift fails here.
+    expect([dim.w, dim.h]).toEqual([202, 192]);
   });
 
   it("scales proportionally at 12 dpmm", () => {
     const dim = measureBarcodeFootprintDotsWith(engine, mc(4, "1234567890"), 12)!;
-    expect([dim.w, dim.h]).toEqual([300, 289]);
+    expect([dim.w, dim.h]).toEqual([303, 288]);
+  });
+
+  // Guards the mmToDots quantization: an unquantised mm->px->dots path loses a
+  // ULP and flips a dot at some zoom levels whenever mm*dpmm lands near a tie.
+  it("stays zoom-stable at 12 dpmm and agrees with the palette default size", () => {
+    const def = resolveDefaultSizeDots(getEntry("maxicode")!.defaultSize, { dpmm: 12 } as LabelConfig);
+    expect([def.width, def.height]).toEqual([303, 288]);
+    for (const scale of [0.65, 0.75, 0.77, 1, 1.29, 1.5, 3]) {
+      const d = getDisplaySize(mc(4, "1234567890"), BWIP_CANVAS, scale, 12);
+      expect([pxToDots(d.w, scale, 12), pxToDots(d.h, scale, 12)]).toEqual([303, 288]);
+    }
+  });
+
+  it("crops bwip's dead bitmap margin so the drawn ink fills the footprint", () => {
+    const d = getDisplaySize(mc(4, "1234567890"), BWIP_CANVAS, 8, 8);
+    expect(d.bitmapCrop).toEqual({ x: 0, y: 1, width: 209, height: 198 });
   });
 });

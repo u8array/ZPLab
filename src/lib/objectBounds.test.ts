@@ -224,6 +224,17 @@ describe("objectBoundsDots", () => {
     expect(objectBoundsDots(bc, ctx(measured))).toEqual({ x: 20, y: 20, width: 150, height: 80 });
   });
 
+  // ZD230-measured (^IS/^HY preview, 8 dpmm): `^FT100,300^BD4,1,1` prints its
+  // ink bottom row exactly on y=300, so the full 199-dot footprint sits above
+  // the baseline, same as `^FO100,101`.
+  it("barcode (FT maxicode): the whole 199-dot footprint sits above the baseline", () => {
+    const mc = leaf("maxicode", 100, 300, { content: "1234567890", mode: 4 }, { positionType: "FT" });
+    const measured = new Map([
+      [mc.id, { width: 209, height: 199, uprightBarWDots: 209, uprightBarHDots: 199 }],
+    ]);
+    expect(objectBoundsDots(mc, ctx(measured))).toEqual({ x: 100, y: 101, width: 209, height: 199 });
+  });
+
   it("barcode (FT 1D with HRI zone): top shifts by BAR height, not the full footprint", () => {
     // ean13: bar height 80, measured footprint 93 (13-dot HRI text zone below bars).
     const bc = leaf(

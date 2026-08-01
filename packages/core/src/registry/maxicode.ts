@@ -1,6 +1,7 @@
 import type { ObjectTypeCore } from "../types/ObjectType";
 import type { PreflightProducerResult } from "../types/preflight";
 import { fieldPosZ, fdFieldFor } from "./zplHelpers";
+import { clamp } from "./transformHelpers";
 import { hasTemplateMarkers } from "../lib/fnTemplate";
 
 // ISO/IEC 16023 fixed physical symbol; no magnification.
@@ -8,18 +9,30 @@ import { hasTemplateMarkers } from "../lib/fnTemplate";
 // 2/3 require SCM payload; bwip surfaces errors. 6 produces a config symbol.
 export const ALL_MODES = [2, 3, 4, 5, 6] as const;
 
-// Printed ink extent (Labelary-measured: 200x193 dots @ 8dpmm, 300x289 @ 12);
-// the symbol size tracks dpmm, not bwip's dpmm-independent pixel canvas.
-export const MAXICODE_WIDTH_MM = 25.0;
-export const MAXICODE_HEIGHT_MM = 24.1;
+/** Canvas footprint at 8 dpmm, visually calibrated against the preview (the
+ *  ZD230 raster measured 209x199 ink). The dots are the source of truth, the
+ *  mm derived so the footprint tracks dpmm. */
+const INK_DOTS_8DPMM = { w: 202, h: 192 } as const;
+export const MAXICODE_WIDTH_MM = INK_DOTS_8DPMM.w / 8;
+export const MAXICODE_HEIGHT_MM = INK_DOTS_8DPMM.h / 8;
 
-/** Mode 4 = standard symbol, only mode without UPS-domain SCM requirement. */
+/** Mode 4 = the only mode without a UPS-domain SCM requirement, so new objects
+ *  spawn codable. Not the ^BD parse default, which is 2 (spec p106). */
 const MAXICODE_DEFAULT_MODE = 4 as const;
 
 // No rotation prop: ^BD has no orientation slot (spec p106).
 export interface MaxicodeProps {
   content: string;
   mode: 2 | 3 | 4 | 5 | 6;
+  /** ^BD n/t structured append (spec p106, 1-8 each). Unexposed in the UI;
+   *  carried so an imported multi-symbol set round-trips. */
+  symbolNumber?: number;
+  symbolTotal?: number;
+}
+
+/** Clamp a ^BD n/t slot into the spec's 1-8 range (p106). */
+export function clampMaxicodeAppend(v: number): number {
+  return clamp(1, 8, v);
 }
 
 // bwip's mode 2/3 SCM parser splits the postcode/country/service fields on GS
@@ -67,10 +80,9 @@ export const maxicode: ObjectTypeCore<MaxicodeProps> = {
 
   toZPL: (obj, ctx) => {
     const p = obj.props;
-    // Structured-append slots fixed at (1,1) since unexposed.
     return [
       fieldPosZ(obj),
-      `^BD${p.mode},1,1`,
+      `^BD${p.mode},${p.symbolNumber ?? 1},${p.symbolTotal ?? 1}`,
       fdFieldFor(p.content, ctx),
     ].join("");
   },

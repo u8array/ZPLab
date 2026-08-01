@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { Image as KImage, Group, Rect, Shape, Text } from "react-konva";
 import type Konva from "konva";
 import { BARCODE_1D_TYPES, ObjectRegistry, objectResolvesCtrl } from "@zplab/core/registry";
-import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
+import { dotsToPx, mmToDots, pxToDots } from "@zplab/core/lib/coordinates";
 import { barcodeFtAnchorOffset, qrPrintsAsGraphic } from "@zplab/core/lib/objectBounds";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
@@ -525,8 +525,15 @@ export function BarcodeObject({
     obj.type === "maxicode" &&
     maxicodeScmOwnedByPreflight(preBindingContent, obj.props as MaxicodeProps);
   const fallbackError = scmOwned ? null : errorMsg;
-  const fbW = dotsToPx(200, scale, dpmm);
-  const fbH = dotsToPx(80, scale, dpmm);
+  // Spec-fixed-size types (maxicode) draw the card at their real footprint, so
+  // snap/align/selection never work against a phantom box.
+  const fixedSize = ObjectRegistry[obj.type]?.defaultSize;
+  const fbDots =
+    fixedSize && "widthMm" in fixedSize
+      ? { w: mmToDots(fixedSize.widthMm, dpmm), h: mmToDots(fixedSize.heightMm, dpmm) }
+      : { w: 200, h: 80 };
+  const fbW = dotsToPx(fbDots.w, scale, dpmm);
+  const fbH = dotsToPx(fbDots.h, scale, dpmm);
   return (
     <Group
       id={obj.id}

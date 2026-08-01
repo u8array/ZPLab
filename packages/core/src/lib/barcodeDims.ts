@@ -10,7 +10,7 @@ import { EC_PERCENT_MIN, EC_PERCENT_MAX } from "../registry/aztec";
 import { upceData6FromFd } from "../registry/hriFormatters";
 import type { Gs1DatabarProps } from "../registry/gs1databar";
 import { isAxisSwapped, objectRotation } from "../registry/rotation";
-import { dotsToPx, pxToDots } from "./coordinates";
+import { dotsToPx, mmToDots, pxToDots } from "./coordinates";
 import {
   GS1_DATABAR_DEFAULT_SEGMENTS,
   GS1_DATABAR_EXPANDED_SYMBOLOGIES,
@@ -34,6 +34,7 @@ import {
   GS1_DATABAR_PADDING_ROWS,
   GS1_DATABAR_SPEC_HEIGHT_MODULES,
   LOGMARS_TEXT_ZONE_DOTS,
+  MAXICODE_INK_MARGIN_PX,
   MICROPDF417_PX_PER_ROW,
   MICROPDF417_QUIET_ZONE_ROWS,
   upcSuppTextZoneDots,
@@ -595,6 +596,14 @@ export function getDisplaySize(
         height: canvas.height - 2 * padPx,
       };
     }
+  } else if (obj.type === "maxicode") {
+    const m = MAXICODE_INK_MARGIN_PX;
+    bitmapCrop = {
+      x: m.left,
+      y: m.top,
+      width: canvas.width - m.left - m.right,
+      height: canvas.height - m.top - m.bottom,
+    };
   }
 
   const uprightView = {
@@ -750,11 +759,11 @@ function getUprightDisplaySize(
       return { w: size, h: size };
     }
     case "maxicode": {
-      // Fixed physical symbol: size tracks dpmm, unlike bwip's dpmm-independent
-      // pixel canvas (which rendered ~half the printed size). The ink-only bwip
-      // bitmap fills this footprint, so drawn ink matches the printed extent.
-      const w = dotsToPx(MAXICODE_WIDTH_MM * dpmm, scale, dpmm);
-      const h = dotsToPx(MAXICODE_HEIGHT_MM * dpmm, scale, dpmm);
+      // Fixed physical symbol: size tracks dpmm. Quantise through mmToDots, the
+      // path resolveDefaultSizeDots takes, so both round half-dot ties alike and
+      // the footprint can't flip with the zoom level.
+      const w = dotsToPx(mmToDots(MAXICODE_WIDTH_MM, dpmm), scale, dpmm);
+      const h = dotsToPx(mmToDots(MAXICODE_HEIGHT_MM, dpmm), scale, dpmm);
       return { w, h };
     }
     case "micropdf417": {
