@@ -586,6 +586,26 @@ describe('parseZPL — ^FH hex escape', () => {
     expect(props(objects[0]).content).toBe('AB«ctrl:TAB»CD');
   });
 
+  it('chip-tokenises Code 128 subset invocations (the form the printer encodes)', () => {
+    // ZD230-verified payload: >9 Start Code A plus Subset A value pairs.
+    const { objects } = parseSingle(
+      '^XA^FO0,0^BY2^BCN,100,Y,N,N^FD>933347335367774373893923940^FS^XZ', 8,
+    );
+    expect(props(objects[0]).content)
+      .toBe('AB«ctrl:TAB»CD«ctrl:CR»«ctrl:LF»EF«ctrl:GS»«ctrl:FS»GH');
+  });
+
+  it('decodes a Subset B start with a mid-field switch to A', () => {
+    const { objects } = parseSingle('^XA^FO0,0^BY2^BCN,100,Y,N,N^FD>:ab>7733536^FS^XZ', 8);
+    expect(props(objects[0]).content).toBe('ab«ctrl:TAB»CD');
+  });
+
+  it('keeps an escape stream that carries no control byte verbatim', () => {
+    // Nothing to chip means nothing to fix; the payload must re-export byte-exact.
+    const { objects } = parseSingle('^XA^FO0,0^BY2^BCN,100,Y,N,N^FD>:CODE128^FS^XZ', 8);
+    expect(props(objects[0]).content).toBe('>:CODE128');
+  });
+
   it('decodes UTF-8 multibyte escapes (German umlauts)', () => {
     // _C3_A4 = ä, _C3_B6 = ö, _C3_BC = ü
     const { objects } = parseSingle('^XA^FH_^FO0,0^A0N,30,0^FD_C3_A4_C3_B6_C3_BC^FS^XZ', 8);

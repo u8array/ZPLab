@@ -54,6 +54,16 @@ const byteToKey = new Map<string, ControlKeyName>(
 // Derived from the catalogue so a new key cannot desync the import side.
 const CTRL_BYTE_RE = new RegExp(`[${Object.values(CONTROL_KEYS).join("")}]`, "g");
 
+// eslint-disable-next-line no-control-regex
+const ANY_C0_RE = /[\x00-\x1F\x7F]/g;
+
+/** True when `content` holds at least one control byte and every one of them is
+ *  catalogued, i.e. the whole string survives the chip round-trip. */
+export function controlBytesAllCatalogued(content: string): boolean {
+  const found = content.match(ANY_C0_RE);
+  return !!found && found.every((ch) => byteToKey.has(ch));
+}
+
 /** Raw control byte -> `«ctrl:…»` chip, the import symmetry of
  *  {@link resolveControlMarkers}. Only catalogued bytes tokenise. */
 export function controlBytesToMarkers(content: string): string {
