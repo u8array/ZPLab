@@ -17,6 +17,7 @@ import {
   gtin14WithCheck,
   gs1ContentToElementString,
 } from "./gs1";
+import { code128ControlBwipRaw } from "./code128Subset";
 import { isRectangular, dmVersionString, type DataMatrixProps } from "../registry/datamatrix";
 import { MAXICODE_WIDTH_MM, MAXICODE_HEIGHT_MM } from "../registry/maxicode";
 import {
@@ -342,6 +343,13 @@ export function buildBwipOptions(
         break;
       }
       const text = p.content || "0";
+      // Control bytes render from the same symbol plan the emitter writes as
+      // subset invocations, so canvas width equals printed width by construction.
+      const ctrlRaw = code128ControlBwipRaw(text);
+      if (ctrlRaw) {
+        opts = { bcid, text: ctrlRaw, raw: true, scale, height: 10 };
+        break;
+      }
       // ^BC e=Y only prints MOD-10 in HRI, not in encoded data. ZPL escapes
       // need parsefnc auto-mode to match firmware's symbol count; plain ASCII
       // stays on the raw Code B path.

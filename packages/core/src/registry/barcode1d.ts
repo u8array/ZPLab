@@ -1,12 +1,13 @@
 import type { LabelObjectBase, ObjectGroup } from '../types/LabelObject';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import type { HriBehavior } from '../types/ZplEmit';
-import { fieldPos1d, fdFieldFor } from './zplHelpers';
+import { fieldPos1d, fdField, fdFieldFor } from './zplHelpers';
 import { serialFieldData, type SerialMode } from './serialField';
 import { commitBarcodeWidthHeightTransform } from './transformHelpers';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { isLoneMarker } from '../lib/variableField';
+import { hasControlMarkers, resolveControlMarkers } from '../types/controlKey';
 import { gs1ContentToZplFd, parseGs1ToSegments, segmentsToZplFd } from '../lib/gs1';
 import { GS1_CONTENT_SPEC } from './gs1FieldSpec';
 import type { ContentSpec } from '../types/contentSpec';
@@ -65,6 +66,10 @@ export interface Barcode1DCoreConfig {
   contentSpec?: ContentSpec;
   /** See {@link ObjectTypeCore.controlChars}. */
   controlChars?: boolean;
+  /** Encode a resolved literal payload that carries control bytes into the
+   *  symbology's own escape form, because the firmware drops ^FH-escaped C0
+   *  bytes from the symbol. Null falls back to the ^FH emit. */
+  ctrlFdEncode?: (payload: string) => string | null;
 }
 
 export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore<Barcode1DProps> {
@@ -168,7 +173,18 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
           fdTransformOnce = undefined;
         }
       }
-      const fieldData = obj.props.serial
+      // Control chips on a plain literal: the symbology encodes them itself
+      // (^FH hex would be dropped by the firmware). A template payload keeps the
+      // ^FH path, since the escape form cannot survive ^FE embed substitution.
+      let ctrlFd: string | null = null;
+      if (config.ctrlFdEncode && config.controlChars === true && !p.gs1
+          && !obj.props.serial && hasControlMarkers(content)) {
+        const resolved = resolveControlMarkers(content);
+        if (!hasTemplateMarkers(resolved)) ctrlFd = config.ctrlFdEncode(resolved);
+      }
+      const fieldData = ctrlFd !== null
+        ? fdField(ctrlFd)
+        : obj.props.serial
         ? serialFieldData(fdTransform ? fdTransform(p.content) : p.content, obj.props.serial)
         : fdFieldFor(content, ctx, fdTransformOnce, undefined,
             // Chips resolve only outside GS1 mode (a raw byte would corrupt

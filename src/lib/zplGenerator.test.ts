@@ -1725,20 +1725,41 @@ describe('generateBatchZpl', () => {
   it('imports ^FH control bytes as chips on control-capable barcodes and re-emits them', () => {
     const { objects } = parseSingle('^XA^FO0,0^BY2^BCN,100,Y,N,N^FH_^FDAB_09CD^FS^XZ', 8);
     expect(props(defined(objects[0])).content).toBe('AB«ctrl:TAB»CD');
+    // ^FH is only how the byte arrived; ^BC re-emits it as subset invocations.
     const out = generateZPL(baseLabel, objects);
-    expect(out).toContain('^FH_');
-    expect(out).toContain('AB_09CD');
+    expect(out).toContain('^FD>93334733536^FS');
+    expect(out).not.toContain('^FH_');
   });
 
-  it('emits a control-key chip as its ^FH-escaped byte', () => {
-    const objects = [{
-      id: 'b1', type: 'code128', x: 0, y: 0, rotation: 0,
-      props: { content: 'A«ctrl:GS»B«ctrl:CR»', height: 100, moduleWidth: 2, printInterpretation: true, printInterpretationAbove: false, checkDigit: false, rotation: 'N' },
-    }] as unknown as LabelObject[];
-    const out = generateZPL(baseLabel, objects);
-    expect(out).toContain('^FH_');
-    expect(out).toContain('A_1DB_0D');
+  const code128Chip = (content: string): LabelObject[] => [{
+    id: 'b1', type: 'code128', x: 0, y: 0, rotation: 0,
+    props: { content, height: 100, moduleWidth: 2, printInterpretation: true, printInterpretationAbove: false, checkDigit: false, rotation: 'N' },
+  }] as unknown as LabelObject[];
+
+  it('emits a control-key chip as a Code 128 subset invocation, not ^FH hex', () => {
+    // Regression: the ^FH hex form reached the printer but ^BC dropped every C0
+    // byte from the symbol (ZD230-verified, pixel-identical to no chip at all).
+    const out = generateZPL(baseLabel, code128Chip('A«ctrl:GS»B«ctrl:CR»'));
+    expect(out).toContain('^FD>933933477^FS');
+    expect(out).not.toContain('^FH_');
+    expect(out).not.toContain('_1D');
     expect(out).not.toContain('«ctrl:');
+  });
+
+  it('round-trips a chip-bearing code128 byte-identically', () => {
+    const out = generateZPL(baseLabel, code128Chip('AB«ctrl:TAB»cd«ctrl:CR»EF'));
+    const { objects } = parseSingle(out, 8);
+    expect(props(defined(objects[0])).content).toBe('AB«ctrl:TAB»cd«ctrl:CR»EF');
+    expect(generateZPL(baseLabel, objects)).toBe(out);
+  });
+
+  it('keeps the ^FH path for a chip inside a template payload', () => {
+    // ^FE embed tokens are substituted after the barcode data is parsed, so the
+    // subset form cannot wrap them; the field stays on the (lossy) hex escape.
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'X' }];
+    const out = generateZPL(baseLabel, code128Chip('A«sku»B«ctrl:TAB»'), variables);
+    expect(out).toContain('^FH_');
+    expect(out).toContain('_09');
   });
 
   it('resolves chips on every controlChars-capable 2D emitter', () => {
