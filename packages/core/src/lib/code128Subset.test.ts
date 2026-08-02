@@ -154,6 +154,35 @@ describe("code128FdToSymbols", () => {
   });
 });
 
+describe("strict/lenient reader drift", () => {
+  it("the lenient reader reproduces every emitted invocation plan", () => {
+    // Deterministic LCG so failures reproduce; the two Table-2 readers are
+    // separate by design (adoption gate vs firmware emulation), this pins
+    // that they agree on everything the emitter can produce.
+    let seed = 0x2f6e2b1;
+    const rnd = () => (seed = (seed * 48271) % 0x7fffffff) / 0x7fffffff;
+    const alphabet = "AZaz09 >^~\t\r\n\x1D\x1C\x01\x7F";
+    for (let i = 0; i < 2000; i++) {
+      const len = 1 + Math.floor(rnd() * 12);
+      let text = "";
+      for (let j = 0; j < len; j++) text += alphabet[Math.floor(rnd() * alphabet.length)];
+      const plan = planCode128Symbols(text);
+      if (!plan) continue;
+      const fd = code128SymbolsToFd(plan);
+      expect(code128FdToSymbols(fd), JSON.stringify(text)).toEqual(plan);
+      // The strict reader recovers the exact bytes for every emitted form.
+      expect(code128FdToBytes(fd), JSON.stringify(text)).toBe(text);
+    }
+  });
+});
+
+describe("DEL (0x7F)", () => {
+  it("takes the invocation path instead of shipping a raw byte", () => {
+    expect(code128ControlFd("A\x7FB")).toBe(">:A>1B");
+    expect(code128FdToBytes(">:A>1B")).toBe("A\x7FB");
+  });
+});
+
 describe("code128FdToDisplayText", () => {
   it("decodes an escape stream to the interpretation-line data (spec p.98 Fig 3/4)", () => {
     expect(code128FdToDisplayText(">:CODE128")).toBe("CODE128");

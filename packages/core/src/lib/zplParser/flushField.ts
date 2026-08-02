@@ -59,6 +59,33 @@ export interface FlushFieldDeps {
   takeComment: () => string | undefined;
 }
 
+/** Adopt a plain-^BC ^FD into model bytes only when the emit re-encodes it
+ *  byte-identically (an uncatalogued C0 stays a raw byte; a compacted
+ *  Subset-C or FNC stream stays verbatim and re-exports unchanged). Payloads
+ *  a regen would rewrite flag `bcFdRegenLossy` instead. */
+function adoptCode128Fd(content: string, s: ParserState): string {
+  const bytes = hasTemplateMarkers(content) ? null : code128FdToBytes(content);
+  const unescaped = hasTemplateMarkers(content) ? code128DecodeLiterals(content) : null;
+  if (bytes !== null
+      && (hasControlBytes(bytes)
+        ? code128ControlFd(bytes) === content
+        : code128PlainFd(bytes) === content)) {
+    return bytes;
+  }
+  if (unescaped !== null && code128EscapeLiterals(unescaped) === content) {
+    // Marker-bearing payload: the emit escaped the literal spans before
+    // tokenization, so reverse that (same byte-identity gate).
+    return unescaped;
+  }
+  if (code128PlainFd(content) !== content || code128ControlFd(content) !== null) {
+    // Regen rewrites this field (bare `>` re-escaped, ^FH-imported control
+    // bytes become invocations; unencodable bytes keep the identical ^FH
+    // path), so byte exactness only holds through the page's overlay.
+    s.bcFdRegenLossy = true;
+  }
+  return content;
+}
+
 /** Field-emit closure: turns cached s.field into a pushed LabelObject at ^FS. */
 export function createFlushField(
   s: ParserState,
@@ -161,29 +188,7 @@ export function createFlushField(
     // ^FN defaults are excluded: their escape depends on slot exclusivity,
     // which only the page-close pass knows (normalizeCode128PlainDefaults).
     if (!gs1Field && s.field.fieldType === "code128" && s.comment.fnNumber === null) {
-      // Adopt the decode only when the emit re-escapes it byte-identically,
-      // so adoption never changes the ZPL or the symbol (a compacted Subset-C
-      // stream, an FNC stream etc. stay verbatim and re-export unchanged).
-      // Byte-identical re-emit is the whole criterion: an uncatalogued C0
-      // stays a raw byte in the model (no chip), which the emit re-encodes
-      // the same way.
-      const bytes = hasTemplateMarkers(content) ? null : code128FdToBytes(content);
-      const unescaped = hasTemplateMarkers(content) ? code128DecodeLiterals(content) : null;
-      if (bytes !== null
-          && (hasControlBytes(bytes)
-            ? code128ControlFd(bytes) === content
-            : code128PlainFd(bytes) === content)) {
-        content = bytes;
-      } else if (unescaped !== null && code128EscapeLiterals(unescaped) === content) {
-        // Marker-bearing payload: the emit escaped the literal spans before
-        // tokenization, so reverse that (same byte-identity gate).
-        content = unescaped;
-      } else if (code128PlainFd(content) !== content || code128ControlFd(content) !== null) {
-        // Regen rewrites this field (bare `>` re-escaped, ^FH-imported control
-        // bytes become invocations; unencodable bytes keep the identical ^FH
-        // path), so byte exactness only holds through the page's overlay.
-        s.bcFdRegenLossy = true;
-      }
+      content = adoptCode128Fd(content, s);
     }
     if (!gs1Field && s.field.fieldType && getEntry(s.field.fieldType)?.controlChars) {
       content = controlBytesToMarkers(content);

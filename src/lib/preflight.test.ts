@@ -392,13 +392,22 @@ describe("computePreflight (suspicious-chars producer)", () => {
     expect(computePreflight([bc("d", "A>5B", { serial: { start: 1 } })], ctx, "mm")
       .some((x) => x.kind === "suspiciousChars")).toBe(false);
 
-    // Chips alongside another marker keep the lossy ^FH path (emitter gate),
-    // so the dropped bytes must badge; a chips-only field encodes fine.
+    // Control bytes (chips or raw) alongside another marker keep the lossy
+    // ^FH path (emitter gate), so the drop must badge; an encodable
+    // chips-only or raw-byte field stays quiet.
     const chipTemplate = computePreflight([bc("e", "A«ctrl:TAB»B«sku»")], ctx, "mm")
       .find((x) => x.kind === "suspiciousChars");
-    expect(chipTemplate?.detail).toContain("control chips");
+    expect(chipTemplate?.detail).toContain("control bytes");
     expect(computePreflight([bc("f", "A«ctrl:TAB»B")], ctx, "mm")
       .some((x) => x.kind === "suspiciousChars")).toBe(false);
+    // A byte beside a character no subset carries loses the invocation plan
+    // and falls to ^FH: badge that too, chip or raw alike.
+    const chipUnencodable = computePreflight([bc("g", "Ä«ctrl:TAB»B")], ctx, "mm")
+      .find((x) => x.kind === "suspiciousChars");
+    expect(chipUnencodable?.detail).toContain("cannot encode");
+    const rawUnencodable = computePreflight([bc("h", "Ä\tB")], ctx, "mm")
+      .find((x) => x.kind === "suspiciousChars");
+    expect(rawUnencodable?.detail).toContain("cannot encode");
   });
 
   it("still flags a control char in a non-GS1 field", () => {
@@ -640,6 +649,16 @@ describe("markerValueFindings (mode-D shared ^FN slot)", () => {
     const shared = markerValueFindings(
       [code128("c", "«batch»", false), text("t", "L «batch» R")], deps);
     expect(shared.some((f) => f.detail?.includes("control bytes"))).toBe(true);
+    // Exclusive lone bind loses too when the value defeats the invocation
+    // plan (a byte no subset carries forces the ^FH fallback), whether the
+    // byte arrives raw or as a chip marker in the default.
+    for (const dv of ["ä\tB", "Ä«ctrl:TAB»B"]) {
+      const unencodable = [{ id: "v", name: "batch", fnNumber: 1, defaultValue: dv }];
+      const out2 = markerValueFindings(
+        [code128("c", "«batch»", false)],
+        { variables: unencodable, dataset: null, columnMapping: null });
+      expect(out2.some((f) => f.detail?.includes("control bytes")), JSON.stringify(dv)).toBe(true);
+    }
   });
 
   it("warns when the payloads exhaust every ^FC candidate (markers print literally)", () => {
