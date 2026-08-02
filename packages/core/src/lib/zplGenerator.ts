@@ -11,7 +11,7 @@ import { boundColumnIndex, getObjectStringContent } from './variableBinding';
 import { classifyField } from './variableField';
 import { escapeGs1FdValue } from './gs1';
 import { fnConsumerBuckets } from './gs1ModeDFns';
-import { code128EscapeLiterals, code128PlainFd } from './code128Subset';
+import { planCode128Fd } from './code128Plan';
 import { resolveControlMarkers } from '../types/controlKey';
 import { formatLabelMetaComment } from './zplLabelMeta';
 import { jmDensityOf } from '../types/LabelConfig';
@@ -90,7 +90,7 @@ export function planTemplateHeader(
     const scan =
       getEntry(leaf.type)?.ctrlNeedsOwnEscape
       && !(leaf as { props?: { gs1?: boolean } }).props?.gs1
-        ? code128EscapeLiterals(c)
+        ? planCode128Fd(c, 'template').fd
         : c;
     // Chips-only payloads arm no ^FE (they emit as invocations/bytes), so
     // their literals must not constrain the embed-char pick.
@@ -121,7 +121,7 @@ export function planTemplateHeader(
       const def = modeDFns.has(fn)
         ? escapeGs1FdValue(v.defaultValue)
         : plain128Fns.has(fn)
-          ? code128PlainFd(v.defaultValue)
+          ? planCode128Fd(v.defaultValue, 'templateValue').fd
           : v.defaultValue;
       headerLines.push(`^FN${fn}${fdField(def)}`);
     }
@@ -508,11 +508,13 @@ export function generateBatchZpl(
       bound && !isGroup(bound) && !!getEntry(bound.type)?.ctrlNeedsOwnEscape
       && !(bound.props as { gs1?: boolean }).gs1 && plainSharedFns.has(v.fnNumber);
     const transform = boundPlainShared
-      ? resolveControlMarkers
+      ? (s: string) => planCode128Fd(s, 'sharedRaw').fd
       : (bound && !isGroup(bound) ? getEntry(bound.type)?.fdTransform?.(bound) : undefined) ??
         (modeDFns.has(v.fnNumber)
           ? escapeGs1FdValue
-          : plain128Fns.has(v.fnNumber) ? code128PlainFd : identity);
+          : plain128Fns.has(v.fnNumber)
+            ? (s: string) => planCode128Fd(s, 'templateValue').fd
+            : identity);
     overrides.push({ fn: v.fnNumber, colIdx, transform });
   }
 

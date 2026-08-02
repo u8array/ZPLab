@@ -316,7 +316,9 @@ export function buildBwipOptions(
       }
       const text = p.content || "0";
       // Control bytes render from the same symbol plan the emitter writes as
-      // subset invocations, so canvas width equals printed width by construction.
+      // subset invocations, so canvas width equals printed width by
+      // construction. This is planCode128Fd's whole mode in bwip symbol
+      // values; keep the two branches in lockstep with code128Plan.ts.
       const ctrlRaw = code128ControlBwipRaw(text);
       if (ctrlRaw) {
         opts = { bcid, text: ctrlRaw, raw: true, scale, height: 10 };

@@ -7,7 +7,7 @@ import { commitBarcodeWidthHeightTransform } from './transformHelpers';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { classifyField, isLoneMarker } from '../lib/variableField';
-import { code128EscapeLiterals } from '../lib/code128Subset';
+import { planCode128Fd } from '../lib/code128Plan';
 import { resolveControlMarkers } from '../types/controlKey';
 import { gs1ContentToZplFd, parseGs1ToSegments, segmentsToZplFd } from '../lib/gs1';
 import { GS1_CONTENT_SPEC } from './gs1FieldSpec';
@@ -109,20 +109,16 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
             : config.gs1Capable && obj.props.gs1
               ? gs1ContentToZplFd
               : config.fdContent;
-          // Non-template payloads are whole ^FD values, so control bytes in a
-          // bound default/CSV cell encode in the symbology's own form; the
-          // ^FH hex fdField would otherwise drop them from the symbol.
-          const ctrlEncode =
-            !isTemplate && escape && config.ctrlFdEncode && config.controlChars === true
-              ? config.ctrlFdEncode
-              : undefined;
+          // Non-template payloads are whole ^FD values; the plan owns the
+          // invocation-vs-^FH decision (fdPlainEscape implies the code128
+          // grammar, pinned by the carrier tripwire in gs1ModeDFns.test).
+          const ctrlWhole =
+            !isTemplate && escape && config.ctrlFdEncode && config.controlChars === true;
           const plain = !base ? escape : !escape ? base : (s: string) => escape(base(s));
-          if (!ctrlEncode || !plain) return plain;
-          // Resolve once so the ^FH fallback gets bytes, not chip marker text.
-          return (s: string) => {
-            const r = resolveControlMarkers(s);
-            return ctrlEncode(r) ?? plain(r);
-          };
+          if (!ctrlWhole || !plain) return plain;
+          // base stays in the chain (runs pre chip-resolve; unreachable until
+          // a carrier defines both fdContent and ctrlFdEncode).
+          return (s: string) => planCode128Fd(base ? base(s) : s, 'whole').fd;
         }
       : undefined;
 
@@ -199,7 +195,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
           && isLoneMarker(content)) {
         const cls = classifyField(content, ctx.variables);
         if (cls.kind === 'single' && ctx.rawFdFns.has(cls.variable.fnNumber)) {
-          fdTransformOnce = resolveControlMarkers;
+          fdTransformOnce = (s: string) => planCode128Fd(s, 'sharedRaw').fd;
         }
       }
       // Template payload: escape literal spans BEFORE ^FE/^FC tokenization. A
@@ -209,7 +205,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
       // marker BODIES stay raw too (names may carry >/^/~).
       if (!p.gs1 && config.fdPlainEscape && !isLoneMarker(content)
           && hasTemplateMarkers(resolveControlMarkers(content))) {
-        content = code128EscapeLiterals(content);
+        content = planCode128Fd(content, 'template').fd;
         fdTransformOnce = undefined;
       }
       if (config.gs1Capable && p.gs1 && hasTemplateMarkers(content) && !isLoneMarker(content)) {

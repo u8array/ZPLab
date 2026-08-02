@@ -1,7 +1,8 @@
 import { DEFAULT_CLOCK_CHARS } from "./fcTemplate";
 import { unescapeGs1FdValue, zplFdToModelContent } from "./gs1";
 import { code128PlainExclusiveFns, gs1ModeDExclusiveFns } from "./gs1ModeDFns";
-import { code128ControlFd, code128FdToBytes, code128PlainFd, hasControlBytes } from "./code128Subset";
+import { code128FdToBytes, hasControlBytes } from "./code128Subset";
+import { planCode128Fd } from "./code128Plan";
 import { extractTemplateRefs, hasTemplateMarkers } from "./fnTemplate";
 import { controlBytesToMarkers, resolveControlMarkers } from "../types/controlKey";
 import { isLoneMarker } from "./variableField";
@@ -91,25 +92,26 @@ function normalizeCode128PlainDefaults(objects: readonly LabelObject[], variable
     const bytes = code128FdToBytes(v.defaultValue);
     let adopted = false;
     if (bytes !== null && hasControlBytes(bytes)) {
-      if (pureLone && code128ControlFd(bytes) === v.defaultValue) {
+      // Raw C0 in the decode = invocation-form default; chips-free domain.
+      if (pureLone && planCode128Fd(bytes, "whole").fd === v.defaultValue) {
         v.defaultValue = controlBytesToMarkers(bytes);
         adopted = true;
       }
     } else if (bytes !== null && bytes !== v.defaultValue
-        && code128PlainFd(bytes) === v.defaultValue) {
-      // Identity "adoption" (bytes === default) must fall through: a default
-      // carrying chip markers decodes to itself yet regen-encodes differently.
+        && planCode128Fd(bytes, "templateValue").fd === v.defaultValue) {
+      // Marker-PRESERVING domain: whole mode would resolve chips and never
+      // match a chipified default. Identity adoption (bytes === default)
+      // falls through to the lossy check.
       v.defaultValue = bytes;
       adopted = true;
     }
     if (adopted) continue;
-    // Not adopted: regen emits the escape form; flag when that rewrites the
-    // imported bytes (chips resolve either way, so compare against both).
-    const resolved = resolveControlMarkers(v.defaultValue);
-    const emitted = pureLone
-      ? (code128ControlFd(resolved) ?? code128PlainFd(resolved))
-      : code128PlainFd(v.defaultValue);
-    if (emitted !== v.defaultValue && emitted !== resolved) regenLossy = true;
+    // Not adopted: the plan says what regen emits; flag when that rewrites
+    // the imported bytes (chips resolve either way, compare against both).
+    const emitted = planCode128Fd(v.defaultValue, pureLone ? "whole" : "templateValue").fd;
+    if (emitted !== v.defaultValue && emitted !== resolveControlMarkers(v.defaultValue)) {
+      regenLossy = true;
+    }
   }
   return regenLossy;
 }

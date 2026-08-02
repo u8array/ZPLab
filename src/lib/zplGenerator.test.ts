@@ -1828,6 +1828,28 @@ describe('generateBatchZpl', () => {
     expect(generateZPL(baseLabel, r.objects, r.variables)).toBe(out);
   });
 
+  it('emits a chip-bearing template ^FN default with chips as literal text', () => {
+    // Lockstep pin for the generator half of the templateValue pair: the
+    // header ships chip markers literally (only >^~ escape), the parser's
+    // normalize gate reverses in the same marker-preserving domain.
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'A«ctrl:TAB»B^C' }];
+    const out = generateZPL(baseLabel, code128Chip('X«sku»Y'), variables);
+    expect(out).toContain('^FN1^FDA«ctrl:TAB»B><C^FS');
+  });
+
+  it('reverses ^FN-default escapes in the chip-PRESERVING domain', () => {
+    // The adoption gate must compare marker text against marker text: a
+    // whole-field (chip-resolving) comparison never matches a chipified
+    // default and the escape form leaks into the model.
+    for (const dv of ['Ä^B«ctrl:TAB»', 'A>>«ctrl:TAB»']) {
+      const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: dv }];
+      const out = generateZPL(baseLabel, code128Chip('«sku»'), variables);
+      const r = parseSingle(out, 8);
+      expect(defined(r.variables[0]).defaultValue, dv).toBe(dv);
+      expect(generateZPL(baseLabel, r.objects, r.variables)).toBe(out);
+    }
+  });
+
   it('leaves a shared-slot ^FN default verbatim on import (exclusivity decides)', () => {
     // flushField must not decode the default: only the page-close pass knows
     // the slot is shared, where the raw emit makes `>0AB` the true bytes.
