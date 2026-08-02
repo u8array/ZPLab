@@ -6,6 +6,7 @@
  *  (shared ^FN slots excepted: they emit raw and preflight warns). */
 
 import { mapLiteralSpans } from "./fnTemplate";
+import { C0_OR_DEL_RE } from "../types/controlKey";
 
 const START_A = 103;
 const START_B = 104;
@@ -34,11 +35,10 @@ function charFromB(value: number): string {
   return String.fromCharCode(value === 95 ? 127 : value + 32);
 }
 
-// eslint-disable-next-line no-control-regex
-const C0_BYTE = /[\x00-\x1F]/;
-
+/** DEL included: Subset B carries it as value 95 (`>1`), so it takes the
+ *  invocation path like the C0 range instead of shipping as a raw byte. */
 export function hasControlBytes(text: string): boolean {
-  return C0_BYTE.test(text);
+  return C0_OR_DEL_RE.test(text);
 }
 
 /**

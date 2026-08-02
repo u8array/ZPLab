@@ -1,5 +1,6 @@
 import { code11CheckDigits, eanCheckDigit, upceCheckDigit } from '../lib/barcodeCheckDigits';
 import { code128FdToDisplayText, code128PlainFd } from '../lib/code128Subset';
+import { C0_OR_DEL_RE } from '../types/controlKey';
 
 /**
  * HRI text formatters per 1D symbology. Each takes the user-provided
@@ -74,9 +75,10 @@ export function formatUpcEanExtensionHri(content: string): string {
 /** Firmware prints no glyph for a control byte in the interpretation line
  *  (ZD230-verified: `AB<HT>CD…` prints `ABCDEFGH`), so strip them from every
  *  1D HRI line before layout, which is length-based. */
+const C0_OR_DEL_RE_G = new RegExp(C0_OR_DEL_RE.source, 'g');
+
 export function stripHriControlBytes(text: string): string {
-  // eslint-disable-next-line no-control-regex
-  return text.replace(/[\x00-\x1F\x7F]/g, '');
+  return text.replace(C0_OR_DEL_RE_G, '');
 }
 
 /** Plain ^BC HRI shows the DECODED data, never invocation codes (spec p.98,

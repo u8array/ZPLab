@@ -1,7 +1,7 @@
 import type { LabelObjectBase, ObjectGroup } from '../types/LabelObject';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import type { HriBehavior } from '../types/ZplEmit';
-import { fieldPos1d, fdField, fdFieldFor } from './zplHelpers';
+import { fieldPos1d, fdFieldFor } from './zplHelpers';
 import { serialFieldData, type SerialMode } from './serialField';
 import { commitBarcodeWidthHeightTransform } from './transformHelpers';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
@@ -96,10 +96,14 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
           // GS1 mode brings its own escaping.
           const escape = obj.props.gs1 ? undefined : config.fdPlainEscape;
           // A lone marker (single-bind) still transforms its default/CSV value;
-          // only a real template is skipped. The plain escape applies either
-          // way: it touches literal text, never an embed reference.
+          // only a real template is skipped. Ctrl-capable types resolve chips
+          // first: chips-only is non-template there (whole-field ctrlEncode).
           const isTemplate =
-            hasTemplateMarkers(obj.props.content) && !isLoneMarker(obj.props.content);
+            hasTemplateMarkers(
+              config.controlChars === true
+                ? resolveControlMarkers(obj.props.content)
+                : obj.props.content,
+            ) && !isLoneMarker(obj.props.content);
           const base = isTemplate
             ? undefined
             : config.gs1Capable && obj.props.gs1
@@ -201,7 +205,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
       // Template payload: escape literal spans BEFORE ^FE/^FC tokenization. A
       // clock char may be '=' or '<', so a post-token escape would read a
       // literal `>` next to a token as an invocation and skip the `>0`.
-      // Chips-only payloads stay raw for the ctrlFd invocation plan below;
+      // Chips-only payloads stay raw for fdTransformFor's invocation plan;
       // marker BODIES stay raw too (names may carry >/^/~).
       if (!p.gs1 && config.fdPlainEscape && !isLoneMarker(content)
           && hasTemplateMarkers(resolveControlMarkers(content))) {
@@ -216,19 +220,10 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
           fdTransformOnce = undefined;
         }
       }
-      // Literal control bytes take the symbology's own escape (^FH hex is
-      // dropped by the firmware), gated on the RESOLVED bytes so an imported
-      // raw byte matches the canvas plan; templates keep ^FH (^FE tokens
-      // cannot survive inside the escape form).
-      let ctrlFd: string | null = null;
-      if (config.ctrlFdEncode && config.controlChars === true && !p.gs1
-          && !obj.props.serial) {
-        const resolved = resolveControlMarkers(content);
-        if (!hasTemplateMarkers(resolved)) ctrlFd = config.ctrlFdEncode(resolved);
-      }
-      const fieldData = ctrlFd !== null
-        ? fdField(ctrlFd)
-        : obj.props.serial
+      // Control bytes on non-template payloads take the symbology's own
+      // escape via the fdTransformFor ctrlEncode wrap; templates keep ^FH
+      // (^FE tokens cannot survive inside the escape form).
+      const fieldData = obj.props.serial
         // Serial seeds skip fdPlainEscape: ^SN data is filtered alphanumeric,
         // and an injected `>0` would leave a stray 0 in the ^SF mask. A
         // template seed skips the base transform too (pre-escape behaviour).

@@ -6,8 +6,8 @@ import { GS1_GS, parseGs1ToSegments, validateGs1Segment, validateGs1SegmentResol
 import { DATAMATRIX_FD_ESCAPE } from "./dataMatrixFd";
 import { extractTemplateRefs, hasTemplateMarkers, pickEmbedChar } from "./fnTemplate";
 import { hasClockMarkers, pickClockChars } from "./fcTemplate";
-import { code128EscapeLiterals } from "./code128Subset";
-import { hasControlMarkers, resolveControlMarkers } from "../types/controlKey";
+import { code128ControlFd, code128EscapeLiterals, hasControlBytes } from "./code128Subset";
+import { C0_RE, resolveControlMarkers } from "../types/controlKey";
 import { classifyField, isLoneMarker } from "./variableField";
 import { parseContent, typedContentIncompleteRows, typedContentMarkerFindings } from "./typedContent";
 import { getObjectStringContent, resolveForRow, variableSubstitutions } from "./variableBinding";
@@ -196,6 +196,18 @@ export function markerValueFindings(
   // shared slots emit raw; exclusive plain-^BC slots still leak `>` before an
   // invocation char, which the escape leaves verbatim by design.
   const byName = new Map(deps.variables.map((v) => [v.name, v]));
+  // One CSV row-walk per variable per run, not per warning channel. Values
+  // are chip-resolved: the emit resolves them too, so the dirty predicates
+  // must see the byte, not the marker text.
+  const subsCache = new Map<string, string[]>();
+  const substitutionsOf = (v: Variable): string[] => {
+    let subs = subsCache.get(v.id);
+    if (!subs) {
+      subs = variableSubstitutions(v, deps.dataset, deps.columnMapping).map(resolveControlMarkers);
+      subsCache.set(v.id, subs);
+    }
+    return subs;
+  };
   const slotValueWarnings = (
     slots: Set<number>,
     leafPred: (leaf: LeafObject) => boolean,
@@ -211,7 +223,7 @@ export function markerValueFindings(
       for (const name of new Set(extractTemplateRefs(content))) {
         const v = byName.get(name);
         if (!v || !slots.has(v.fnNumber)) continue;
-        if (variableSubstitutions(v, deps.dataset, deps.columnMapping).some(dirtyPred)) {
+        if (substitutionsOf(v).some(dirtyPred)) {
           dirty.push(v.name);
         }
       }
@@ -243,16 +255,23 @@ export function markerValueFindings(
     (val) => />[0-9:;<=]/.test(val),
     (names) => `">" before an invocation character in ${names} prints as a barcode invocation, not text`,
   );
-  // eslint-disable-next-line no-control-regex
-  const hasC0 = (val: string) => /[\x00-\x1F]/.test(val);
+  const hasC0 = (val: string) => C0_RE.test(val);
   const c0Message = (names: string) =>
     `control bytes in ${names} are dropped from the printed symbol (^FH path)`;
-  // Exclusive slots: only a lone bind encodes control bytes losslessly
-  // (invocation form); a template keeps ^FH where the firmware drops them.
+  // Exclusive slots: a lone bind encodes control bytes losslessly (invocation
+  // form), a template keeps ^FH where the firmware drops them.
   slotValueWarnings(
     buckets.plainExclusive,
     (leaf) => plainLeaf(leaf) && !isLoneMarker(getObjectStringContent(leaf) ?? ""),
     hasC0,
+    c0Message,
+  );
+  // Lone binds still lose when the value defeats the invocation plan (a byte
+  // no subset carries): the emit then falls back to ^FH.
+  slotValueWarnings(
+    buckets.plainExclusive,
+    (leaf) => plainLeaf(leaf) && isLoneMarker(getObjectStringContent(leaf) ?? ""),
+    (val) => hasC0(val) && code128ControlFd(resolveControlMarkers(val)) === null,
     c0Message,
   );
   // Shared slots emit raw/^FH even for a lone bind, so no exemption there.
@@ -351,11 +370,17 @@ export function computePreflight(
           const inv = `${[...new Set(invocations)].map((s) => `"${s}"`).join(", ")} read as barcode invocation codes, not text`;
           detail = detail ? `${detail}; ${inv}` : inv;
         }
-        // Chips alongside other markers keep the lossy ^FH path (emitter
-        // gate), where the firmware drops the bytes from the symbol.
-        if (hasControlMarkers(content) && hasTemplateMarkers(resolveControlMarkers(content))) {
-          const chips = "control chips in a template field are dropped from the printed symbol";
-          detail = detail ? `${detail}; ${chips}` : chips;
+        // Control bytes (chips or raw) beside other markers (^FH path) or
+        // beside a byte no subset carries (invocation plan bails) both drop
+        // from the symbol.
+        const resolved = resolveControlMarkers(content);
+        if (hasControlBytes(resolved)) {
+          const drop = hasTemplateMarkers(resolved)
+            ? "control bytes in a template field are dropped from the printed symbol"
+            : code128ControlFd(resolved) === null
+              ? "control bytes are dropped from the printed symbol (payload has a character Code 128 cannot encode)"
+              : null;
+          if (drop) detail = detail ? `${detail}; ${drop}` : drop;
         }
       }
       if (detail) {

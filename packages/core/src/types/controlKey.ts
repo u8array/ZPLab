@@ -55,13 +55,19 @@ const byteToKey = new Map<string, ControlKeyName>(
 // Derived from the catalogue so a new key cannot desync the import side.
 const CTRL_BYTE_RE = new RegExp(`[${Object.values(CONTROL_KEYS).join("")}]`, "g");
 
+/** Single source for the two control-byte classes: C0 proper, and C0 plus
+ *  DEL (Code 128 Subset B carries DEL as value 95). */
 // eslint-disable-next-line no-control-regex
-const C0_RE = /[\x00-\x1F]/g;
+export const C0_RE = /[\x00-\x1F]/;
+// eslint-disable-next-line no-control-regex
+export const C0_OR_DEL_RE = /[\x00-\x1F\x7F]/;
+
+const C0_RE_G = new RegExp(C0_RE.source, "g");
 
 /** Drop every control byte, mirroring what a symbology that cannot encode them
  *  on the ^FH path actually prints (Code 128 inside a template payload). */
 export function stripControlBytes(content: string): string {
-  return content.replace(C0_RE, "");
+  return content.replace(C0_RE_G, "");
 }
 
 /** Raw control byte -> `«ctrl:…»` chip, the import symmetry of

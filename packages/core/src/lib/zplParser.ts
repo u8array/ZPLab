@@ -37,38 +37,12 @@ export type {
 import type { LabelObject } from "../types/Group";
 import type { Variable } from "../types/Variable";
 
-/** Normalize mode-D-exclusive ^FN defaults to model form (inverse of the emit
- *  escape; mixed slots stay raw, see gs1ModeDExclusiveFns). A lone-marker slot
- *  holds the whole payload and gets the full decode; an embedded slot is one
- *  AI's value, where canonicalization could mutate bytes (GTIN check digit), so
- *  only the >0 escape reverses. Scoped per page: a later page reusing the same
- *  ^FN number with a plain field must not inherit this page's GS1 decode. */
-function normalizeModeDDefaults(objects: readonly LabelObject[], variables: Variable[]): void {
-  const modeDFns = gs1ModeDExclusiveFns(objects, variables);
-  if (modeDFns.size === 0) return;
-  const fnByVarName = new Map(variables.map((v) => [v.name, v.fnNumber]));
-  const loneMarkerFns = new Set<number>();
-  for (const o of objects) {
-    const c = getObjectStringContent(o);
-    if (c === undefined || !isLoneMarker(c)) continue;
-    const fn = fnByVarName.get(extractTemplateRefs(c)[0] ?? "");
-    if (fn !== undefined) loneMarkerFns.add(fn);
-  }
-  for (const v of variables) {
-    if (!modeDFns.has(v.fnNumber)) continue;
-    v.defaultValue = loneMarkerFns.has(v.fnNumber)
-      ? (zplFdToModelContent(v.defaultValue) ?? unescapeGs1FdValue(v.defaultValue))
-      : unescapeGs1FdValue(v.defaultValue);
-  }
-}
-
-/** Inverse of the plain-^BC ^FN-default escape (flushField leaves ^FN
- *  payloads verbatim: only this pass knows slot exclusivity). Adopts only
- *  byte-identical re-encodes; returns true when a default's regen would
- *  rewrite the imported bytes (lossyEdit signal). */
-function normalizeCode128PlainDefaults(objects: readonly LabelObject[], variables: Variable[]): boolean {
-  const plainFns = code128PlainExclusiveFns(objects, variables);
-  if (plainFns.size === 0) return false;
+/** Lone-marker vs. template consumers per ^FN slot; shared by both default
+ *  normalizers so their whole-payload criterion cannot drift. */
+function fnConsumerShapes(
+  objects: readonly LabelObject[],
+  variables: readonly Variable[],
+): { loneFns: Set<number>; templateFns: Set<number> } {
   const fnByVarName = new Map(variables.map((v) => [v.name, v.fnNumber]));
   const loneFns = new Set<number>();
   const templateFns = new Set<number>();
@@ -81,6 +55,35 @@ function normalizeCode128PlainDefaults(objects: readonly LabelObject[], variable
       if (fn !== undefined) target.add(fn);
     }
   }
+  return { loneFns, templateFns };
+}
+
+/** Normalize mode-D-exclusive ^FN defaults to model form (inverse of the emit
+ *  escape; mixed slots stay raw, see gs1ModeDExclusiveFns). A lone-marker slot
+ *  holds the whole payload and gets the full decode; an embedded slot is one
+ *  AI's value, where canonicalization could mutate bytes (GTIN check digit), so
+ *  only the >0 escape reverses. Scoped per page: a later page reusing the same
+ *  ^FN number with a plain field must not inherit this page's GS1 decode. */
+function normalizeModeDDefaults(objects: readonly LabelObject[], variables: Variable[]): void {
+  const modeDFns = gs1ModeDExclusiveFns(objects, variables);
+  if (modeDFns.size === 0) return;
+  const { loneFns } = fnConsumerShapes(objects, variables);
+  for (const v of variables) {
+    if (!modeDFns.has(v.fnNumber)) continue;
+    v.defaultValue = loneFns.has(v.fnNumber)
+      ? (zplFdToModelContent(v.defaultValue) ?? unescapeGs1FdValue(v.defaultValue))
+      : unescapeGs1FdValue(v.defaultValue);
+  }
+}
+
+/** Inverse of the plain-^BC ^FN-default escape (flushField leaves ^FN
+ *  payloads verbatim: only this pass knows slot exclusivity). Adopts only
+ *  byte-identical re-encodes; returns true when a default's regen would
+ *  rewrite the imported bytes (lossyEdit signal). */
+function normalizeCode128PlainDefaults(objects: readonly LabelObject[], variables: Variable[]): boolean {
+  const plainFns = code128PlainExclusiveFns(objects, variables);
+  if (plainFns.size === 0) return false;
+  const { loneFns, templateFns } = fnConsumerShapes(objects, variables);
   let regenLossy = false;
   for (const v of variables) {
     if (!plainFns.has(v.fnNumber)) continue;
