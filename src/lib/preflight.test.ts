@@ -408,6 +408,13 @@ describe("computePreflight (suspicious-chars producer)", () => {
     const rawUnencodable = computePreflight([bc("h", "Ä\tB")], ctx, "mm")
       .find((x) => x.kind === "suspiciousChars");
     expect(rawUnencodable?.detail).toContain("cannot encode");
+    // Whole-field content the invocation form protects stays quiet: `>`
+    // sequences encode as symbol values, they are never read as invocations.
+    expect(computePreflight([bc("i", "A>8\tB")], ctx, "mm")
+      .some((x) => x.detail?.includes("invocation"))).toBe(false);
+    // DEL ships as a raw byte on the ^FH path, never a drop warning.
+    expect(computePreflight([bc("j", "A\x7FB«sku»")], ctx, "mm")
+      .some((x) => x.detail?.includes("dropped"))).toBe(false);
   });
 
   it("still flags a control char in a non-GS1 field", () => {
@@ -679,6 +686,18 @@ describe("markerValueFindings (mode-D shared ^FN slot)", () => {
     // embed pick nor warn (it exports as a Code 128 invocation).
     const chips = markerValueFindings([code128("c", "#@|%&?!«ctrl:TAB»", false)], deps);
     expect(chips.some((f) => f.kind === "markerArmFailed")).toBe(false);
+  });
+
+  it("stays quiet when the whole-field emit protects the value (plan modes)", () => {
+    // Lone bind with encodable C0 plus >5: whole mode encodes everything as
+    // invocation symbols, so neither loss channel may fire.
+    const dirty = [{ id: "v", name: "batch", fnNumber: 1, defaultValue: "A\t>5B" }];
+    const deps = { variables: dirty, dataset: null, columnMapping: null };
+    expect(markerValueFindings([code128("c", "«batch»", false)], deps)).toEqual([]);
+    // The same value on a TEMPLATE consumer loses both ways and must warn.
+    const out = markerValueFindings([code128("c", "X«batch»Y", false)], deps);
+    expect(out.some((f) => f.detail?.includes("invocation"))).toBe(true);
+    expect(out.some((f) => f.detail?.includes("control bytes"))).toBe(true);
   });
 
   it("flags > before an invocation char in an EXCLUSIVE plain slot", () => {

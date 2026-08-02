@@ -56,6 +56,8 @@ export function resolveMarkerChain(
   let next = content;
   // Template-form plain-^BC: escape literal spans pre-substitution, escape
   // substituted values like their ^FN declarations, drop bytes like ^FH does.
+  // Mirrors planCode128Fd's template/templateValue modes on the render side;
+  // changes there must land here too (code128Plan.ts is the emit oracle).
   let templateFd = false;
   let loneBind = false;
   if (getDates) {

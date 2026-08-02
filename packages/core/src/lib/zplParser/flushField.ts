@@ -10,14 +10,8 @@ import type { LabelObject } from "../../types/Group";
 import { embedsToMarkers, hasTemplateMarkers } from "../fnTemplate";
 import { tokensToMarkers } from "../fcTemplate";
 import { controlBytesToMarkers } from "../../types/controlKey";
-import {
-  code128ControlFd,
-  code128DecodeLiterals,
-  code128EscapeLiterals,
-  code128FdToBytes,
-  code128PlainFd,
-  hasControlBytes,
-} from "../code128Subset";
+import { code128DecodeLiterals, code128FdToBytes } from "../code128Subset";
+import { planCode128Fd } from "../code128Plan";
 import { decodeFbContent } from "../fbContent";
 import { decodeTbContent } from "../tbContent";
 import { zplFdToModelContent } from "../gs1";
@@ -59,25 +53,19 @@ export interface FlushFieldDeps {
   takeComment: () => string | undefined;
 }
 
-/** Adopt a plain-^BC ^FD into model bytes only when the emit re-encodes it
- *  byte-identically (an uncatalogued C0 stays a raw byte; a compacted
+/** Adopt a plain-^BC ^FD into model bytes only when the emit plan re-encodes
+ *  it byte-identically (an uncatalogued C0 stays a raw byte; a compacted
  *  Subset-C or FNC stream stays verbatim and re-exports unchanged). Payloads
  *  a regen would rewrite flag `bcFdRegenLossy` instead. */
 function adoptCode128Fd(content: string, s: ParserState): string {
-  const bytes = hasTemplateMarkers(content) ? null : code128FdToBytes(content);
-  const unescaped = hasTemplateMarkers(content) ? code128DecodeLiterals(content) : null;
-  if (bytes !== null
-      && (hasControlBytes(bytes)
-        ? code128ControlFd(bytes) === content
-        : code128PlainFd(bytes) === content)) {
-    return bytes;
+  if (hasTemplateMarkers(content)) {
+    const unescaped = code128DecodeLiterals(content);
+    if (planCode128Fd(unescaped, "template").fd === content) return unescaped;
+  } else {
+    const bytes = code128FdToBytes(content);
+    if (bytes !== null && planCode128Fd(bytes, "whole").fd === content) return bytes;
   }
-  if (unescaped !== null && code128EscapeLiterals(unescaped) === content) {
-    // Marker-bearing payload: the emit escaped the literal spans before
-    // tokenization, so reverse that (same byte-identity gate).
-    return unescaped;
-  }
-  if (code128PlainFd(content) !== content || code128ControlFd(content) !== null) {
+  if (planCode128Fd(content, "whole").fd !== content) {
     // Regen rewrites this field (bare `>` re-escaped, ^FH-imported control
     // bytes become invocations; unencodable bytes keep the identical ^FH
     // path), so byte exactness only holds through the page's overlay.

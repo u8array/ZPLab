@@ -6,8 +6,8 @@ import { GS1_GS, parseGs1ToSegments, validateGs1Segment, validateGs1SegmentResol
 import { DATAMATRIX_FD_ESCAPE } from "./dataMatrixFd";
 import { extractTemplateRefs, hasTemplateMarkers, pickEmbedChar } from "./fnTemplate";
 import { hasClockMarkers, pickClockChars } from "./fcTemplate";
-import { code128ControlFd, code128EscapeLiterals, hasControlBytes } from "./code128Subset";
-import { C0_RE, resolveControlMarkers } from "../types/controlKey";
+import { planCode128Fd, planHasLoss } from "./code128Plan";
+import { resolveControlMarkers } from "../types/controlKey";
 import { classifyField, isLoneMarker } from "./variableField";
 import { parseContent, typedContentIncompleteRows, typedContentMarkerFindings } from "./typedContent";
 import { getObjectStringContent, resolveForRow, variableSubstitutions } from "./variableBinding";
@@ -241,44 +241,54 @@ export function markerValueFindings(
     (val) => val.includes(">"),
     (names) => `">" in ${names} prints as an invocation code (slot shared with a non-GS1 field)`,
   );
+  // Plain-^BC value channels: the LEAF shape picks the plan mode, the loss
+  // kind picks the message. Known over-warn on mixed slots' template leaf
+  // (the single-bind emit carries the invocation form there).
+  const c0Message = (names: string) =>
+    `control bytes in ${names} are dropped from the printed symbol (^FH path)`;
   slotValueWarnings(
     buckets.plainShared,
     plainLeaf,
-    // Not the escape delta: a `>` before an invocation char is unfixable by
-    // escaping yet still corrupts (swallow / subset switch), so flag every >^~.
-    (val) => /[>^~]/.test(val),
+    (val) => planHasLoss(planCode128Fd(val, "sharedRaw"), "rawUnescaped"),
     (names) => `">", "^" or "~" in ${names} corrupts the symbol (shared ^FN slot emits unescaped)`,
   );
   slotValueWarnings(
-    buckets.plainExclusive,
-    plainLeaf,
-    (val) => />[0-9:;<=]/.test(val),
-    (names) => `">" before an invocation character in ${names} prints as a barcode invocation, not text`,
-  );
-  const hasC0 = (val: string) => C0_RE.test(val);
-  const c0Message = (names: string) =>
-    `control bytes in ${names} are dropped from the printed symbol (^FH path)`;
-  // Exclusive slots: a lone bind encodes control bytes losslessly (invocation
-  // form), a template keeps ^FH where the firmware drops them.
-  slotValueWarnings(
-    buckets.plainExclusive,
-    (leaf) => plainLeaf(leaf) && !isLoneMarker(getObjectStringContent(leaf) ?? ""),
-    hasC0,
-    c0Message,
-  );
-  // Lone binds still lose when the value defeats the invocation plan (a byte
-  // no subset carries): the emit then falls back to ^FH.
-  slotValueWarnings(
-    buckets.plainExclusive,
-    (leaf) => plainLeaf(leaf) && isLoneMarker(getObjectStringContent(leaf) ?? ""),
-    (val) => hasC0(val) && code128ControlFd(resolveControlMarkers(val)) === null,
-    c0Message,
-  );
-  // Shared slots emit raw/^FH even for a lone bind, so no exemption there.
-  slotValueWarnings(
     buckets.plainShared,
     plainLeaf,
-    hasC0,
+    (val) => planHasLoss(planCode128Fd(val, "sharedRaw"), "controlBytesDropped"),
+    c0Message,
+  );
+  // Exclusive slots: a lone bind is a whole ^FD (invocation form covers
+  // control bytes AND protects `>`+invocation sequences by encoding them);
+  // a template value keeps ^FH and ships the sequences verbatim.
+  const invMessage = (names: string) =>
+    `">" before an invocation character in ${names} prints as a barcode invocation, not text`;
+  const templateLeaf = (leaf: LeafObject) =>
+    plainLeaf(leaf) && !isLoneMarker(getObjectStringContent(leaf) ?? "");
+  const loneLeaf = (leaf: LeafObject) =>
+    plainLeaf(leaf) && isLoneMarker(getObjectStringContent(leaf) ?? "");
+  slotValueWarnings(
+    buckets.plainExclusive,
+    templateLeaf,
+    (val) => planHasLoss(planCode128Fd(val, "templateValue"), "invocationRead"),
+    invMessage,
+  );
+  slotValueWarnings(
+    buckets.plainExclusive,
+    loneLeaf,
+    (val) => planHasLoss(planCode128Fd(val, "whole"), "invocationRead"),
+    invMessage,
+  );
+  slotValueWarnings(
+    buckets.plainExclusive,
+    templateLeaf,
+    (val) => planHasLoss(planCode128Fd(val, "templateValue"), "controlBytesDropped"),
+    c0Message,
+  );
+  slotValueWarnings(
+    buckets.plainExclusive,
+    loneLeaf,
+    (val) => planHasLoss(planCode128Fd(val, "whole"), "controlBytesDropped"),
     c0Message,
   );
   // Exhausted ^FC/^FE candidate sets arm nothing at export: markers ship as
@@ -292,7 +302,7 @@ export function markerValueFindings(
   for (const leaf of leaves) {
     const c = getObjectStringContent(leaf);
     if (c === undefined || !inScan(c)) continue;
-    const scan = plainLeaf(leaf) ? code128EscapeLiterals(c) : c;
+    const scan = plainLeaf(leaf) ? planCode128Fd(c, "template").fd : c;
     if (armsFe(c)) templatePayloads.push(scan);
     if (hasClockMarkers(c)) clockPayloads.push(scan);
   }
@@ -360,27 +370,21 @@ export function computePreflight(
         (leaf.type === "maxicode" && [2, 3].includes((leaf.props as { mode?: number }).mode ?? 0));
       const scanned = gsStructural ? content.split(GS1_GS).join("") : content;
       let detail = suspiciousCharDetail(scanned);
-      // Plain ^BC: `>` before an invocation char stays verbatim (escaping it
-      // would corrupt imported streams), so the firmware reads an invocation.
-      // Serial excluded: the ^SN seed is filtered to alphanumerics anyway.
+      // Plain ^BC: read the emit plan's losses for this content. Serial is
+      // excluded: the ^SN seed is filtered to alphanumerics anyway. Known
+      // gap: an unencodable byte without any C0 (e.g. DEL plus Ä) drops
+      // silently; C0_RE keys the drop loss, DEL alone is routing, not loss.
       const p = leaf.props as { gs1?: boolean; serial?: unknown };
       if (getEntry(leaf.type)?.ctrlNeedsOwnEscape && !p.gs1 && !p.serial) {
-        const invocations = content.match(/>[0-9:;<=]/g);
-        if (invocations) {
-          const inv = `${[...new Set(invocations)].map((s) => `"${s}"`).join(", ")} read as barcode invocation codes, not text`;
-          detail = detail ? `${detail}; ${inv}` : inv;
-        }
-        // Control bytes (chips or raw) beside other markers (^FH path) or
-        // beside a byte no subset carries (invocation plan bails) both drop
-        // from the symbol.
-        const resolved = resolveControlMarkers(content);
-        if (hasControlBytes(resolved)) {
-          const drop = hasTemplateMarkers(resolved)
-            ? "control bytes in a template field are dropped from the printed symbol"
-            : code128ControlFd(resolved) === null
-              ? "control bytes are dropped from the printed symbol (payload has a character Code 128 cannot encode)"
-              : null;
-          if (drop) detail = detail ? `${detail}; ${drop}` : drop;
+        const templateFd = hasTemplateMarkers(resolveControlMarkers(content));
+        const plan = planCode128Fd(content, templateFd ? "template" : "whole");
+        for (const loss of plan.losses) {
+          const msg = loss.kind === "invocationRead"
+            ? `${loss.seqs.map((s) => `"${s}"`).join(", ")} read as barcode invocation codes, not text`
+            : templateFd
+              ? "control bytes in a template field are dropped from the printed symbol"
+              : "control bytes are dropped from the printed symbol (payload has a character Code 128 cannot encode)";
+          detail = detail ? `${detail}; ${msg}` : msg;
         }
       }
       if (detail) {
