@@ -6,7 +6,9 @@ import {
   markerOf,
   type Variable,
 } from "../../types/Variable";
-import type { LabelObject } from "../../types/Group";
+import { isGroup, type LabelObject } from "../../types/Group";
+import { isModeDLeaf } from "../gs1ModeDFns";
+import { getObjectStringContent } from "../variableBinding";
 import { embedsToMarkers, hasTemplateMarkers } from "../fnTemplate";
 import { tokensToMarkers } from "../fcTemplate";
 import { controlBytesToMarkers } from "../../types/controlKey";
@@ -43,7 +45,13 @@ import type { CodablockProps } from "../../registry/codablock";
 import type { Tlc39Props } from "../../registry/tlc39";
 import { upceData6FromFd } from "../../registry/hriFormatters";
 import { decodeFH, makeObj, variableNameFromComment } from "./helpers";
-import { getPosType, resetFieldBlockDefaults, type ParserState } from "./context";
+import {
+  getPosType,
+  resetFieldBlockDefaults,
+  resetSymbologyModeFlags,
+  type FnDefaultCandidate,
+  type ParserState,
+} from "./context";
 
 import { newId } from "../ids";
 /** Cross-family deps flushField borrows from graphics (^GB+^FR) and parseZPL (^FX). */
@@ -72,6 +80,37 @@ function adoptCode128Fd(content: string, s: ParserState): string {
     s.bcFdRegenLossy = true;
   }
   return content;
+}
+
+/** Slot-scoped: a plain co-consumer prints the raw slot value, so only a
+ *  re-encodable decode may be offered. Mode-D/plain ^BC defer to their
+ *  page-close normalizers. */
+function fnDefaultCandidate(
+  leaf: LabelObject,
+  varDefault: string,
+  wire: string,
+): NonNullable<FnDefaultCandidate> {
+  if (!isGroup(leaf) && !isModeDLeaf(leaf) && !getEntry(leaf.type)?.ctrlNeedsOwnEscape) {
+    const leafContent = getObjectStringContent(leaf);
+    if (leafContent !== undefined && leafContent !== varDefault) {
+      const encode = getEntry(leaf.type)?.fdTransform?.(leaf);
+      if (encode && encode(leafContent) === wire) {
+        return { value: leafContent, decoded: true };
+      }
+    }
+  }
+  return { value: varDefault, decoded: false };
+}
+
+function recordFnDefaultCandidate(
+  map: Map<number, FnDefaultCandidate>,
+  fn: number,
+  cand: NonNullable<FnDefaultCandidate>,
+): void {
+  const rec = map.get(fn);
+  if (rec === undefined) map.set(fn, cand);
+  else if (rec === null || rec.value !== cand.value) map.set(fn, null);
+  else if (cand.decoded) rec.decoded = true;
 }
 
 /** Field-emit closure: turns cached s.field into a pushed LabelObject at ^FS. */
@@ -158,6 +197,7 @@ export function createFlushField(
       s.field.pendingFD = null;
       // Reset half-formed field (e.g. `^GS…^FS` without `^FD`) so kind doesn't leak.
       s.field.fieldType = null;
+      resetSymbologyModeFlags(s.field);
       return;
     }
     const rawDecoded = s.format.fhActive
@@ -627,8 +667,8 @@ export function createFlushField(
     // Bind pending ^FN slot; existing Variable for same fnNumber is reused.
     if (s.comment.fnNumber !== null) {
       if (justPushed) {
-        // ^TB encodes the bound default (`<<>`), so store the decoded plain
-        // value to stay symmetric with the generator; ^FB/plain keep content.
+        // ^TB decodes here: its wire form (`<<>`) is not stable under a
+        // second encode, so the generic candidate path cannot recover it.
         const varDefault = isTbField ? decoded : content;
         const variable = upsertVariable(s.comment.fnNumber, varDefault, s.comment.fnComment);
         // Serial wins over the binding, but only when actually applied
@@ -640,6 +680,15 @@ export function createFlushField(
         if (serialApplied) {
           s.serialStrippedFns.add(s.comment.fnNumber);
         } else {
+          // An empty ^FD carries no wire form; abstaining keeps the slot's
+          // agreement intact.
+          if (content !== "") {
+            recordFnDefaultCandidate(
+              s.fnDefaultCandidates,
+              s.comment.fnNumber,
+              fnDefaultCandidate(justPushed, varDefault, content),
+            );
+          }
           // Field links to its variable via a single «name» marker (single-bind
           // on emit), not a stored variableId.
           const leaf = justPushed as { props?: { content?: string } };
@@ -671,6 +720,7 @@ export function createFlushField(
     s.field.fieldType = null;
     s.field.pendingFD = null;
     s.field.frActive = false;
+    resetSymbologyModeFlags(s.field);
   };
 
   return flushField;

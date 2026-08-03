@@ -11,7 +11,7 @@ import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
 import { tokenize } from "./zplParser/helpers";
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
-import { createParserState, deriveUnitScale, resetFormatScopedState } from "./zplParser/context";
+import { createParserState, deriveUnitScale, resetFormatScopedState, type FnDefaultCandidate } from "./zplParser/context";
 import { createFlushField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
 import { createDynamicFontAWildcard, createFieldHandlers } from "./zplParser/handlers/fields";
@@ -38,8 +38,23 @@ export type {
 import type { LabelObject } from "../types/Group";
 import type { Variable } from "../types/Variable";
 
-/** Lone-marker vs. template consumers per ^FN slot; shared by both default
- *  normalizers so their whole-payload criterion cannot drift. */
+/** Page-close override of the upsert-order default. Runs BEFORE the
+ *  mode-D/code128 normalizers, whose slots carry wire-form candidates. */
+function adoptFnDefaultCandidates(
+  variables: Variable[],
+  candidates: ReadonlyMap<number, FnDefaultCandidate>,
+  templateFns: ReadonlySet<number>,
+): void {
+  for (const v of variables) {
+    const rec = candidates.get(v.fnNumber);
+    if (rec?.decoded && !templateFns.has(v.fnNumber)) {
+      v.defaultValue = rec.value;
+    }
+  }
+}
+
+/** Lone-marker vs. template consumers per ^FN slot; shared by all page-close
+ *  default passes so their whole-payload criterion cannot drift. */
 function fnConsumerShapes(
   objects: readonly LabelObject[],
   variables: readonly Variable[],
@@ -65,10 +80,13 @@ function fnConsumerShapes(
  *  AI's value, where canonicalization could mutate bytes (GTIN check digit), so
  *  only the >0 escape reverses. Scoped per page: a later page reusing the same
  *  ^FN number with a plain field must not inherit this page's GS1 decode. */
-function normalizeModeDDefaults(objects: readonly LabelObject[], variables: Variable[]): void {
+function normalizeModeDDefaults(
+  objects: readonly LabelObject[],
+  variables: Variable[],
+  loneFns: ReadonlySet<number>,
+): void {
   const modeDFns = gs1ModeDExclusiveFns(objects, variables);
   if (modeDFns.size === 0) return;
-  const { loneFns } = fnConsumerShapes(objects, variables);
   for (const v of variables) {
     if (!modeDFns.has(v.fnNumber)) continue;
     v.defaultValue = loneFns.has(v.fnNumber)
@@ -81,10 +99,14 @@ function normalizeModeDDefaults(objects: readonly LabelObject[], variables: Vari
  *  payloads verbatim: only this pass knows slot exclusivity). Adopts only
  *  byte-identical re-encodes; returns true when a default's regen would
  *  rewrite the imported bytes (lossyEdit signal). */
-function normalizeCode128PlainDefaults(objects: readonly LabelObject[], variables: Variable[]): boolean {
+function normalizeCode128PlainDefaults(
+  objects: readonly LabelObject[],
+  variables: Variable[],
+  shapes: { loneFns: ReadonlySet<number>; templateFns: ReadonlySet<number> },
+): boolean {
   const plainFns = code128PlainExclusiveFns(objects, variables);
   if (plainFns.size === 0) return false;
-  const { loneFns, templateFns } = fnConsumerShapes(objects, variables);
+  const { loneFns, templateFns } = shapes;
   let regenLossy = false;
   for (const v of variables) {
     if (!plainFns.has(v.fnNumber)) continue;
@@ -330,8 +352,10 @@ export function parseZPL(
     const pagePartial = [...s.result.partialCmds];
     const pageObjects = objects.slice(pg.obj);
     const pageVariables = variables.slice(pg.vari);
-    normalizeModeDDefaults(pageObjects, pageVariables);
-    if (normalizeCode128PlainDefaults(pageObjects, pageVariables)) s.bcFdRegenLossy = true;
+    const shapes = fnConsumerShapes(pageObjects, pageVariables);
+    adoptFnDefaultCandidates(pageVariables, s.fnDefaultCandidates, shapes.templateFns);
+    normalizeModeDDefaults(pageObjects, pageVariables, shapes.loneFns);
+    if (normalizeCode128PlainDefaults(pageObjects, pageVariables, shapes)) s.bcFdRegenLossy = true;
     const pageIndex = pages.length;
     const findings = bucketFindings(
       pageIndex,
