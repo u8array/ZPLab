@@ -422,6 +422,30 @@ describe("computePreflight (suspicious-chars producer)", () => {
     expect(findings.some((f) => f.kind === "suspiciousChars")).toBe(true);
   });
 
+  it("warns when static GS1 content does not segment (ships verbatim)", () => {
+    const c128gs1 = (content: string): LeafObject =>
+      ({ id: "g", type: "code128", x: 0, y: 0, rotation: 0,
+         props: { content, height: 100, moduleWidth: 2, printInterpretation: false,
+                  printInterpretationAbove: false, checkDigit: false, rotation: "N", gs1: true },
+       } as LabelObject as LeafObject);
+    const bad = computePreflight([c128gs1("0112345")], ctx, "mm")
+      .find((f) => f.kind === "gs1ContentUnparsed");
+    expect(bad?.detail).toContain("verbatim");
+    expect(computePreflight([c128gs1("0112345678901231")], ctx, "mm")
+      .some((f) => f.kind === "gs1ContentUnparsed")).toBe(false);
+    // Template content is owned by markerValueFindings.
+    expect(computePreflight([c128gs1("01«gtin»")], ctx, "mm")
+      .some((f) => f.kind === "gs1ContentUnparsed")).toBe(false);
+    // DM excluded: its _1 codec encodes FNC1 positions exactly, nothing ships
+    // verbatim there.
+    const gs = String.fromCharCode(0x1d);
+    const dmGs1 = { id: "d", type: "datamatrix", x: 10, y: 10, rotation: 0,
+      props: { content: `0112345678901231${gs}10ABC`, gs1: true, dimension: 20, quality: 200, rotation: "N" },
+    } as LabelObject as LeafObject;
+    expect(computePreflight([dmGs1], ctx, "mm")
+      .some((f) => f.kind === "gs1ContentUnparsed")).toBe(false);
+  });
+
   it("does not flag the GS separator on expanded GS1 DataBar (symbology IS the GS1 flag)", () => {
     const dbar = (symbology: number): LeafObject =>
       ({ id: "r", type: "gs1databar", x: 0, y: 0, rotation: 0,

@@ -456,6 +456,7 @@ const no = {
     markerValueUnsafe: 'Variabelverdi bryter koding',
     markerArmFailed: 'Markører skrives ut som ren tekst',
     gs1ValueInvalid: 'Variabelverdi bryter GS1-data',
+    gs1ContentUnparsed: 'GS1-innhold kan ikke tolkes',
     printerSupportLimited: 'Begrenset støtte',
     qrRotatedStatic: 'Rotert QR-kode skriver ut statisk verdi',
     qrRotatedModel2: 'Rotert QR-kode skriver ut som Modell 2',

@@ -1,8 +1,9 @@
 import type { CustomFontMapping } from "../../../types/LabelConfig";
 import { FN_NUMBER_MAX, FN_NUMBER_MIN } from "../../../types/Variable";
 import { applySerialToLeaf } from "../../../registry/serialField";
-import { getEntry } from "../../../registry";
+import { getEntry, isGs1Active } from "../../../registry";
 import { classifyField } from "../../variableField";
+import { isGroup } from "../../../types/Group";
 import { ZPL_BUILTIN_FONT_LETTERS } from "../../customFonts";
 import {
   getDefaultTextH,
@@ -214,7 +215,9 @@ export function createFieldHandlers(
         // dropped at flush, so don't corrupt its ^FD / variable default. An empty
         // start (^SN,1,Y) keeps the ^FD, or seeds empty when there is none so an
         // empty-seed serial still survives (the pendingFD===null guard).
-        const serialisable = !!getEntry(s.field.fieldType)?.serialisable;
+        // GS1 fields drop the ^SN at flush, so the seed must not replace
+        // their ^FD either.
+        const serialisable = !!getEntry(s.field.fieldType)?.serialisable && !s.field.bcGs1;
         if (snStart && serialisable) s.field.pendingFD = snStart;
         else if (s.field.pendingFD === null) s.field.pendingFD = snStart;
         return;
@@ -222,6 +225,11 @@ export function createFieldHandlers(
       const lastObj = s.result.objects[s.result.objects.length - 1];
       // Only types whose emitter emits ^SN/^SF (text + 1D) take a serial; a
       // 2D/stacked field would import a state the emitter drops on export.
+      // GS1 fields drop it with a loss note, like the in-field placement.
+      if (lastObj && !isGroup(lastObj) && isGs1Active(getEntry(lastObj.type), lastObj.props)) {
+        s.result.partialCmds.add("^SN");
+        return;
+      }
       if (lastObj && getEntry(lastObj.type)?.serialisable) {
         const cur = (lastObj as { props: { content?: string } }).props.content ?? "";
         const cls = classifyField(cur, s.result.variables);

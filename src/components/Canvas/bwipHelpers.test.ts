@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import bwipjs from "bwip-js/browser";
+import { measureBarcodeFootprintDotsWith, type BwipEngine } from "@zplab/core/lib/barcodeDims";
 import { buildBwipOptions, dataMatrixMinFitIndex, getDisplaySize, getEanUpcHriFragments } from "./bwipHelpers";
 import type { LeafObject } from "@zplab/core/registry";
 import { dmSizePairs, type DataMatrixProps } from "@zplab/core/registry/datamatrix";
@@ -146,9 +148,6 @@ describe("getDisplaySize gs1databar sym 7 fallback", () => {
 });
 
 describe("buildBwipOptions gs1databar Expanded fallback", () => {
-  // AI 01 + 11 numeric digits is not a valid GTIN-14 element string. Zebra
-  // firmware emits General Compaction (~149 modules) rather than Method 1
-  // padding. We route bwip-js through `(99)` so the rendered width matches.
   const obj = (content: string): LabelObject => ({
     id: "1",
     type: "gs1databar",
@@ -164,14 +163,55 @@ describe("buildBwipOptions gs1databar Expanded fallback", () => {
     },
   });
 
-  it("re-routes AI 01 + 11-digit fragment through (99) wrap", () => {
+  it("keeps an unparseable fragment verbatim (no guessed element string)", () => {
+    // 11 digits after AI 01 segment nothing; the wire ships it raw, so the
+    // canvas must not invent a (99) wrap that renders a different symbol.
     const opts = buildBwipOptions(obj("0112345678901"), 1, 8);
-    expect(opts?.text).toBe("(99)0112345678901");
+    expect(opts?.text).toBe("0112345678901");
+  });
+
+  it("still measures a footprint for blank/unparseable Expanded (GS1 sample)", () => {
+    // The honest encode failure must fall back to the GS1 sample, not null:
+    // MCP footprint and the canvas sample path depend on it.
+    const engine = bwipjs as unknown as BwipEngine;
+    for (const content of ["", "0112345678901"]) {
+      expect(measureBarcodeFootprintDotsWith(engine, obj(content), 8), content).not.toBeNull();
+    }
   });
 
   it("keeps valid AI 01 GTIN-14 input on the standard wrap path", () => {
     const opts = buildBwipOptions(obj("0112345678901231"), 1, 8);
     expect(opts?.text).toBe("(01)12345678901231");
+  });
+});
+
+describe("buildBwipOptions GS1 canvas == wire (plan-derived)", () => {
+  const c128 = (content: string): LabelObject =>
+    ({ id: "1", type: "code128", x: 0, y: 0, rotation: 0,
+       props: { content, height: 100, moduleWidth: 2, printInterpretation: false,
+                printInterpretationAbove: false, checkDigit: false, rotation: "N", gs1: true },
+     }) as LabelObject;
+
+  it("renders unparseable GS1-128 content as the raw mode-D stream, not a guess", () => {
+    // `0112345` ships verbatim (leading FNC1 only); the old element-string
+    // guess rendered (01)00000000123457, a symbol the printer never prints.
+    const opts = buildBwipOptions(c128("0112345"), 1, 8);
+    expect(opts?.bcid).toBe("code128");
+    expect(opts?.parsefnc).toBe(true);
+    expect(opts?.text).toBe("^FNC10112345");
+  });
+
+  it("encodes a GS-after-fixed-AI DataMatrix payload instead of alarming", () => {
+    // Legal input the catalog cannot segment; the `_1` wire prints it, so the
+    // canvas must encode the equivalent raw FNC1 stream.
+    const gs = String.fromCharCode(0x1d);
+    const dm = { id: "d", type: "datamatrix", x: 0, y: 0, rotation: 0,
+      props: { content: `0112345678901231${gs}10ABC`, gs1: true, dimension: 20, quality: 200, rotation: "N" },
+    } as LabelObject;
+    const opts = buildBwipOptions(dm, 1, 8);
+    expect(opts?.bcid).toBe("datamatrix");
+    expect(opts?.parsefnc).toBe(true);
+    expect(opts?.text).toBe(`^FNC10112345678901231^FNC110ABC`);
   });
 });
 
@@ -226,12 +266,14 @@ describe("buildBwipOptions datamatrix GS1 mode", () => {
   });
 
   it("disables nothing when the content cannot be auto-encoded at all", () => {
-    // Oversized (or invalid) content fails at every size — that is a content
-    // problem the preflight reports; the size list must stay usable.
+    // Oversized content fails at every size, a content problem the
+    // preflight reports; the size list must stay usable.
     const oversized = dm("X".repeat(200), false, { aspectRatio: 2 }).props as DataMatrixProps;
     expect(dataMatrixMinFitIndex(oversized, dmSizePairs(oversized))).toBe(0);
+    // Unsegmentable GS1 content still encodes (raw FNC1 path, matching the
+    // `_1` wire), so the fit is real, not the fallback.
     const invalidGs1 = dm("01095011015300031", true).props as DataMatrixProps;
-    expect(dataMatrixMinFitIndex(invalidGs1, dmSizePairs(invalidGs1))).toBe(0);
+    expect(dataMatrixMinFitIndex(invalidGs1, dmSizePairs(invalidGs1))).toBeGreaterThan(0);
   });
 
   it("forces a firmware-valid c/r pair via version; unknown pairs auto-size", () => {

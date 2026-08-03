@@ -456,6 +456,7 @@ const et = {
     markerValueUnsafe: 'Muutuja väärtus rikub kodeeringut',
     markerArmFailed: 'Markerid trükitakse tavalise tekstina',
     gs1ValueInvalid: 'Muutuja väärtus rikub GS1 andmeid',
+    gs1ContentUnparsed: 'GS1 sisu ei õnnestu parsida',
     printerSupportLimited: 'Piiratud tugi',
     qrRotatedStatic: 'Pööratud QR-kood trükib staatilise väärtuse',
     qrRotatedModel2: 'Pööratud QR-kood trükib mudelina 2',

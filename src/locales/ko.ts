@@ -456,6 +456,7 @@ const ko = {
     markerValueUnsafe: '변수 값이 인코딩을 깨뜨림',
     markerArmFailed: '마커가 일반 텍스트로 인쇄됩니다',
     gs1ValueInvalid: '변수 값이 GS1 데이터를 위반',
+    gs1ContentUnparsed: 'GS1 콘텐츠를 파싱할 수 없습니다',
     printerSupportLimited: '지원 제한',
     qrRotatedStatic: '회전된 QR 코드는 고정값을 인쇄',
     qrRotatedModel2: '회전된 QR 코드는 모델 2로 인쇄',

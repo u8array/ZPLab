@@ -37,7 +37,7 @@ import {
   type SymbolProps,
 } from "../../registry/symbol";
 import { applySerialToLeaf } from "../../registry/serialField";
-import { getEntry } from "../../registry";
+import { getEntry, isGs1Active } from "../../registry";
 import type { AztecProps } from "../../registry/aztec";
 import type { MaxicodeProps } from "../../registry/maxicode";
 import type { MicroPdf417Props } from "../../registry/micropdf417";
@@ -662,7 +662,14 @@ export function createFlushField(
     // The just-pushed leaf and whether its emitter honours ^SN/^SF: derived once,
     // consumed by both the ^FN-bind and the ^SN/^SF blocks below.
     const justPushed = objects[objects.length - 1];
-    const lastSerialisable = !!justPushed && !!getEntry(justPushed.type)?.serialisable;
+    // GS1 excluded: a serial counter inside GS1-structured data is
+    // meaningless, and the emit-side alnum filter would corrupt the payload
+    // (the UI blocks the combination; imports must not smuggle it in).
+    const lastGs1 = !!justPushed && !isGroup(justPushed)
+      && isGs1Active(getEntry(justPushed.type), justPushed.props);
+    const lastSerialisable = !!justPushed && !lastGs1
+      && !!getEntry(justPushed.type)?.serialisable;
+    if (s.field.snPending && lastGs1) s.result.partialCmds.add(`^${s.field.snMode}`);
 
     // Bind pending ^FN slot; existing Variable for same fnNumber is reused.
     if (s.comment.fnNumber !== null) {

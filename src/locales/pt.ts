@@ -456,6 +456,7 @@ const pt = {
     markerValueUnsafe: 'Valor quebra a codificação',
     markerArmFailed: 'Os marcadores são impressos como texto literal',
     gs1ValueInvalid: 'O valor da variável viola os dados GS1',
+    gs1ContentUnparsed: 'O conteúdo GS1 não pode ser analisado',
     printerSupportLimited: 'Suporte limitado',
     qrRotatedStatic: 'Código QR rotacionado imprime um valor estático',
     qrRotatedModel2: 'Código QR rotacionado imprime como Modelo 2',

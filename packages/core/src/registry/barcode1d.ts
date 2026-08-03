@@ -219,10 +219,11 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
       // Control bytes on non-template payloads take the symbology's own
       // escape via the fdTransformFor ctrlEncode wrap; templates keep ^FH
       // (^FE tokens cannot survive inside the escape form).
-      const fieldData = obj.props.serial
-        // Serial seeds skip fdPlainEscape: ^SN data is filtered alphanumeric,
-        // and an injected `>0` would leave a stray 0 in the ^SF mask. A
-        // template seed skips the base transform too (pre-escape behaviour).
+      const fieldData = obj.props.serial && !p.gs1
+        // GS1 excluded (legacy models may carry both flags): the alnum seed
+        // filter would eat the >8 FNC1 and merge AI values. Serial seeds skip
+        // fdPlainEscape (an injected `>0` would leave a stray 0 in the ^SF
+        // mask) and a template seed skips the base transform too.
         ? serialFieldData(
             (hasTemplateMarkers(p.content) && !isLoneMarker(p.content)
               ? undefined

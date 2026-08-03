@@ -456,6 +456,7 @@ const nl = {
     markerValueUnsafe: 'Variabelwaarde breekt codering',
     markerArmFailed: 'Markers worden als letterlijke tekst afgedrukt',
     gs1ValueInvalid: 'Variabelewaarde schendt GS1-gegevens',
+    gs1ContentUnparsed: 'GS1-inhoud kan niet worden geparsed',
     printerSupportLimited: 'Beperkte ondersteuning',
     qrRotatedStatic: 'Gedraaide QR-code drukt statische waarde',
     qrRotatedModel2: 'Gedraaide QR-code drukt als model 2',

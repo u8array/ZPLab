@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   gtin14WithCheck,
-  wrapGs1AIs,
   mod10CheckDigit,
   validateGs1Segment,
   validateGs1SegmentResolved,
@@ -11,7 +10,6 @@ import {
   segmentsToElementString,
   segmentsToContent,
   parseGs1ToSegments,
-  gs1ContentToElementString,
   GS1_GS,
   GS1_DATABAR_EXPANDED_SYMBOLOGIES,
   GS1_DATABAR_DEFAULT_SEGMENTS,
@@ -43,28 +41,6 @@ describe("gtin14WithCheck", () => {
 
   it("ignores non-digit characters", () => {
     expect(gtin14WithCheck("(01)12345")).toHaveLength(14);
-  });
-});
-
-describe("wrapGs1AIs", () => {
-  it("wraps raw AI 01 + GTIN-14 in parens", () => {
-    expect(wrapGs1AIs("0112345678901231")).toBe("(01)12345678901231");
-  });
-
-  it("auto-completes the GTIN check digit when AI 01 data is short", () => {
-    // 9 digits after "01" → padded to 13 + check = 14
-    const out = wrapGs1AIs("01123456789");
-    expect(out.startsWith("(01)")).toBe(true);
-    expect(out.slice(4)).toHaveLength(14);
-  });
-
-  it("passes through already-parenthesised input unchanged", () => {
-    expect(wrapGs1AIs("(01)12345678901231")).toBe("(01)12345678901231");
-  });
-
-  it("appends unknown AI data verbatim so bwip-js surfaces the error", () => {
-    // AI 99 is not in the fixed-length table
-    expect(wrapGs1AIs("99abcdef")).toBe("99abcdef");
   });
 });
 
@@ -341,19 +317,6 @@ describe("segments serialize/parse", () => {
   it("returns null for non-GS1 content (fallback to free text)", () => {
     expect(parseGs1ToSegments("hello world")).toBeNull();
     expect(parseGs1ToSegments("0112")).toBeNull(); // fixed AI too short
-  });
-
-  it("derives the bwip element string from raw content", () => {
-    expect(gs1ContentToElementString(segmentsToContent(segs))).toBe(
-      "(01)09501101530003(10)ABC123(21)12345",
-    );
-  });
-
-  it("falls back to the legacy wrapper when content is not cleanly segmentable", () => {
-    // AI 01 with a short body: catalog parse fails, legacy wrapper completes it.
-    const out = gs1ContentToElementString("01123");
-    expect(out.startsWith("(01)")).toBe(true);
-    expect(out.slice(4)).toHaveLength(14);
   });
 });
 

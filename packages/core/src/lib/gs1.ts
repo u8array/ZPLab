@@ -103,14 +103,6 @@ const AI_BY_CODE: ReadonlyMap<string, Gs1AiSpec> = (() => {
 /** AI codes longest-first, so raw parsing matches 4/3-digit AIs before 2-digit. */
 const AI_CODES_BY_LEN: readonly string[] = [...AI_BY_CODE.keys()].sort((a, b) => b.length - a.length);
 
-/** Fixed-length AIs (single source: derived from the catalog), for the legacy
- *  raw-wrap fallback which only consumes 2-digit AIs. */
-const FIXED_AI_LEN: Record<string, number> = Object.fromEntries(
-  [...AI_BY_CODE.values()]
-    .filter((s) => s.ai.length === 2 && !isVariableKind(s.kind))
-    .map((s) => [s.ai, s.len]),
-);
-
 /** All resolved specs (ranges expanded, multiComponent omitted); the palette
  *  module builds its group index from this. */
 export const GS1_AI_SPECS: readonly Gs1AiSpec[] = [...AI_BY_CODE.values()];
@@ -549,18 +541,6 @@ export function parseGs1ToSegments(
 }
 
 /**
- * Element-string form for bwip-js from raw model content. Prefers a clean
- * segment parse; falls back to the legacy fixed-AI wrapper so existing content
- * still renders, and to verbatim pass-through for already-parenthesized input.
- */
-export function gs1ContentToElementString(content: string): string {
-  if (content.startsWith("(")) return content;
-  const segs = parseGs1ToSegments(content);
-  if (segs) return segmentsToElementString(segs);
-  return wrapGs1AIs(content);
-}
-
-/**
  * If `raw` is a pasted element string `(AI)…(AI)…` (whitespace tolerated), parse
  * it and return the raw model content with GS separators; otherwise null. Lets
  * the input accept pasted GS1 notation instead of silently stripping the parens.
@@ -570,29 +550,4 @@ export function elementStringToContent(raw: string): string | null {
   if (!trimmed.startsWith("(")) return null;
   const segs = parseGs1ToSegments(trimmed);
   return segs ? segmentsToContent(segs) : null;
-}
-/**
- * Legacy: wrap a raw fixed-AI sequence in parens for bwip-js. Kept for content
- * that predates the catalog parser. Unknown/variable AIs short-circuit and are
- * appended verbatim so bwip-js can surface a helpful parser error.
- */
-export function wrapGs1AIs(content: string): string {
-  if (content.includes("(")) return content;
-  let out = "";
-  let pos = 0;
-  while (pos < content.length) {
-    const ai = content.slice(pos, pos + 2);
-    const len = FIXED_AI_LEN[ai];
-    if (len === undefined) {
-      out += content.slice(pos);
-      break;
-    }
-    let data = content.slice(pos + 2, pos + 2 + len);
-    if (ai === "01" && data.length < 14 && /^\d+$/.test(data)) {
-      data = gtin14WithCheck(data);
-    }
-    out += `(${ai})${data}`;
-    pos += 2 + len;
-  }
-  return out;
 }
