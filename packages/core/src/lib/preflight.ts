@@ -1,4 +1,4 @@
-import { getEntry, type LeafObject } from "../registry";
+import { getEntry, isGs1Active, type LeafObject } from "../registry";
 import { objectBoundsDots, offLabelPlacement, type ObjectBoundsCtx } from "./objectBounds";
 import { emittedAnchorDots } from "./emittedAnchor";
 import { suspiciousCharDetail } from "./suspiciousChars";
@@ -70,8 +70,9 @@ export function markerValueFindings(
   for (const leaf of leaves) {
     const content = getObjectStringContent(leaf);
     if (content === undefined || !hasTemplateMarkers(content)) continue;
-    const gs1Data = (leaf.props as { gs1?: boolean }).gs1 === true || leaf.type === "gs1databar";
-    const typed = !gs1Data && !!getEntry(leaf.type)?.typedContent;
+    const leafEntry = getEntry(leaf.type);
+    const gs1Data = isGs1Active(leafEntry, leaf.props);
+    const typed = !gs1Data && !!leafEntry?.typedContent;
     const blockMode =
       !gs1Data && !typed && leaf.type === "text"
         ? resolveTextMode(leaf.props as Parameters<typeof resolveTextMode>[0])
@@ -365,8 +366,10 @@ export function computePreflight(
       // GS1 fields carry a structural GS separator (0x1D) between chained AIs,
       // and a MaxiCode carrier message (modes 2/3 only; 5 is plain EEC data)
       // is GS-delimited by spec; intentional, not smuggled, so drop GS first.
+      const leafEntry = getEntry(leaf.type);
+      const gs1 = isGs1Active(leafEntry, leaf.props);
       const gsStructural =
-        (leaf.props as { gs1?: boolean }).gs1 ||
+        gs1 ||
         (leaf.type === "maxicode" && [2, 3].includes((leaf.props as { mode?: number }).mode ?? 0));
       const scanned = gsStructural ? content.split(GS1_GS).join("") : content;
       let detail = suspiciousCharDetail(scanned);
@@ -374,8 +377,8 @@ export function computePreflight(
       // excluded: the ^SN seed is filtered to alphanumerics anyway. Known
       // gap: an unencodable byte without any C0 (e.g. DEL plus Ä) drops
       // silently; C0_RE keys the drop loss, DEL alone is routing, not loss.
-      const p = leaf.props as { gs1?: boolean; serial?: unknown };
-      if (getEntry(leaf.type)?.ctrlNeedsOwnEscape && !p.gs1 && !p.serial) {
+      const p = leaf.props as { serial?: unknown };
+      if (leafEntry?.ctrlNeedsOwnEscape && !gs1 && !p.serial) {
         const templateFd = hasTemplateMarkers(resolveControlMarkers(content));
         const plan = planCode128Fd(content, templateFd ? "template" : "whole");
         for (const loss of plan.losses) {

@@ -422,6 +422,18 @@ describe("computePreflight (suspicious-chars producer)", () => {
     expect(findings.some((f) => f.kind === "suspiciousChars")).toBe(true);
   });
 
+  it("does not flag the GS separator on expanded GS1 DataBar (symbology IS the GS1 flag)", () => {
+    const dbar = (symbology: number): LeafObject =>
+      ({ id: "r", type: "gs1databar", x: 0, y: 0, rotation: 0,
+         props: { content: "10ABC" + GS + "21XYZ", symbology, magnification: 3, rotation: "N" },
+       } as unknown as LeafObject);
+    expect(computePreflight([dbar(6)], ctx, "mm")
+      .some((f) => f.kind === "suspiciousChars")).toBe(false);
+    // Non-expanded variants carry a plain GTIN; a GS there IS suspicious.
+    expect(computePreflight([dbar(1)], ctx, "mm")
+      .some((f) => f.kind === "suspiciousChars")).toBe(true);
+  });
+
   // The mode 2/3 carrier message is GS-delimited by spec; requiring the
   // separator and warning about it at the same time would be contradictory.
   const maxi = (mode: number, content: string): LeafObject =>
@@ -714,5 +726,29 @@ describe("markerValueFindings (mode-D shared ^FN slot)", () => {
     expect(markerValueFindings(
       [code128("c", "A«batch»B", false)],
       { variables: safe, dataset: null, columnMapping: null })).toEqual([]);
+  });
+});
+
+describe("markerValueFindings (GS1 activity is the entry's own predicate)", () => {
+  const br = (symbology: number, content: string): LeafObject =>
+    ({ id: "r", type: "gs1databar", x: 0, y: 0, rotation: 0,
+       props: { content, symbology, magnification: 3, rotation: "N" },
+     } as unknown as LeafObject);
+
+  it("does not GS1-validate a non-expanded DataBar (plain GTIN, no AI structure)", () => {
+    // A valid GTIN-13 parsed as an element string would flag "(12) dateMonth".
+    const vars = [{ id: "g", name: "gtin", fnNumber: 1, defaultValue: "1234567890128" }];
+    const dataset = { headers: ["gtin"], rows: [["1234567890128"]] };
+    const columnMapping = { bindings: { g: "gtin" }, headerSnapshot: ["gtin"] };
+    expect(markerValueFindings([br(1, "«gtin»")], { variables: vars, dataset, columnMapping })
+      .filter((f) => f.kind === "gs1ValueInvalid")).toEqual([]);
+    expect(markerValueFindings([br(1, "0«gtin»")], { variables: vars, dataset: null, columnMapping: null })
+      .filter((f) => f.kind === "gs1ValueInvalid")).toEqual([]);
+  });
+
+  it("still GS1-validates the expanded variants", () => {
+    const dirty = [{ id: "b", name: "batch", fnNumber: 1, defaultValue: "" }];
+    expect(markerValueFindings([br(6, "10«batch»")], { variables: dirty, dataset: null, columnMapping: null })
+      .some((f) => f.kind === "gs1ValueInvalid")).toBe(true);
   });
 });
