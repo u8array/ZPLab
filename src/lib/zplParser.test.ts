@@ -2677,6 +2677,32 @@ describe('parseZPL — ^FN defaults decode through the leaf\'s ^FD encoder', () 
     }
   });
 
+  it('drops an imported ^SN on a GS1 field and reports the loss (both placements)', () => {
+    // In-field and post-^FS: the handler doc names both forms; the post-^FS
+    // one also overwrote the GS1 content with the seed.
+    const shapes = [
+      '^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231^SN1,1,Y^FS^XZ',
+      '^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231^FS^SN2,1,Y^XZ',
+    ];
+    for (const zpl of shapes) {
+      const r = parseSingle(zpl, 8);
+      expect(serialOf(defined(r.objects[0])), zpl).toBeUndefined();
+      expect(props(defined(r.objects[0])).content, zpl).toContain('12345678901231');
+      expect(r.findings.some((f) => f.kind === 'partial' && f.command === '^SN'), zpl).toBe(true);
+    }
+  });
+
+  it('keeps the field when an in-field ^SN seeds a GS1 field without ^FD', () => {
+    // The seed lands as content here on purpose: skipping it would leave
+    // pendingFD null and flushField would drop the whole field, losing the
+    // partial note with it. Bounded: a real ^FD is never overwritten.
+    const zpl = '^XA^FO10,10^BY2^BCN,100,Y,N,N,D^SN1234,1,Y^FS^XZ';
+    const r = parseSingle(zpl, 8);
+    expect(serialOf(defined(r.objects[0]))).toBeUndefined();
+    expect(props(defined(r.objects[0])).content).toBe('1234');
+    expect(r.findings.some((f) => f.kind === 'partial' && f.command === '^SN')).toBe(true);
+  });
+
   it('scopes candidates per page (a later page must not inherit the decode)', () => {
     const two = '^XA^FO10,10^BQN,2,4^FN1^FDQA,foo^FS^XZ'
       + '^XA^FO10,10^A0N,30,0^FN1^FDQA,foo^FS^XZ';

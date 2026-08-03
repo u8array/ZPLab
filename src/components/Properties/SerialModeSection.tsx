@@ -31,8 +31,8 @@ export function SerialModeCheckbox({ obj, onChange }: Props) {
   const t = useT();
   const { resolveDefaults } = usePreviewBinding();
   const entry = getEntry(obj.type);
-  // gs1 hides the toggle only while serial is OFF; the parser can import both
-  // flags on one field (^BC GS1 + ^SN), so serial-on must keep its way out.
+  // gs1 hides the toggle only while serial is OFF; legacy designs may still
+  // carry both flags, so serial-on must keep its way out.
   if (!entry?.serialisable || (obj.props.gs1 && !obj.props.serial)) return null;
   const spec = specForObject(obj);
   return (

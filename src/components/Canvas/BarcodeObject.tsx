@@ -18,7 +18,7 @@ import {
   type EanUpcType,
 } from "./bwipHelpers";
 import { resolveHriAbove, gs1HriFontDots } from "@zplab/core/lib/barcodeHri";
-import { gs1ContentToElementString } from "@zplab/core/lib/gs1";
+import { gs1CarrierFor, planGs1Fd } from "@zplab/core/lib/gs1Plan";
 import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { hasTemplateMarkers } from "@zplab/core/lib/fnTemplate";
@@ -178,7 +178,11 @@ export function BarcodeObject({
   const invalid = usingSample && (unresolvableCtrl || !hasTemplateMarkers(contentRaw));
   const displayObj = showSample ? withSample : obj;
   const effectiveContent = showSample ? sample : contentRaw;
-  const rawContent = gs1Hri ? gs1ContentToElementString(effectiveContent) : effectiveContent;
+  // HRI shows the plan's element string; unparsed content stays verbatim,
+  // matching the bars.
+  const rawContent = gs1Hri
+    ? planGs1Fd(effectiveContent, gs1CarrierFor(obj.type) ?? "code128").bwipText
+    : effectiveContent;
   const printInterpEnabled =
     !ObjectRegistry[obj.type]?.interpretationLocked &&
     !!(obj.props as { printInterpretation?: boolean }).printInterpretation;

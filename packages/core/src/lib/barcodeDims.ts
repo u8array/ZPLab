@@ -15,8 +15,8 @@ import {
   GS1_DATABAR_DEFAULT_SEGMENTS,
   GS1_DATABAR_EXPANDED_SYMBOLOGIES,
   gtin14WithCheck,
-  gs1ContentToElementString,
 } from "./gs1";
+import { planGs1Fd } from "./gs1Plan";
 import { code128ControlBwipRaw, code128FdToSymbols, code128PlainFd, code128SymbolsToBwipRaw } from "./code128Subset";
 import { isRectangular, dmVersionString, type DataMatrixProps } from "../registry/datamatrix";
 import { MAXICODE_WIDTH_MM, MAXICODE_HEIGHT_MM } from "../registry/maxicode";
@@ -57,17 +57,6 @@ import { placeholderContentFor, samplePropsFor } from "../registry/placeholderCo
 export interface BwipEngine {
   raw(opts: object): unknown;
   render(opts: object, drawing: object): unknown;
-}
-
-function isAi01ElevenDigitFragment(content: string): boolean {
-  return /^01\d{11}$/.test(content);
-}
-
-function gs1BwipText(content: string): string {
-  if (isAi01ElevenDigitFragment(content)) return `(99)${content}`;
-  // Catalog parser handles variable AIs (GS-separated); falls back to the
-  // legacy fixed-AI wrapper for content it can't cleanly segment.
-  return gs1ContentToElementString(content);
 }
 
 /** ^B0 `d` param (AztecProps.ecLevel) -> bwip bcid + size options: 5-95 is EC%,
@@ -134,15 +123,23 @@ const BWIP_2D_INTERNAL_SCALE = 2;
 // compacts down stays approximate (use the printer preview for exact size).
 const CODABLOCK_FIRMWARE_MODULE_OFFSET = 6;
 
-/** GS1 mode: bwip auto-inserts FNC1 from the (AI)… element string. */
-export function dmBwipInput(p: DataMatrixProps): { bcid: string; text: string } {
+/** GS1 mode: bwip auto-inserts FNC1 from the (AI)… element string; content
+ *  the catalog cannot segment encodes as raw FNC1 markers instead of failing
+ *  on a guessed element string (the `_1` escapes print it fine, see Gs1FdLoss). */
+export function dmBwipInput(p: DataMatrixProps): { bcid: string; text: string; parsefnc?: boolean } {
   const rect = isRectangular(p);
-  return {
-    bcid: p.gs1
-      ? (rect ? "gs1datamatrixrectangular" : "gs1datamatrix")
-      : (rect ? "datamatrixrectangular" : "datamatrix"),
-    text: (p.gs1 ? gs1ContentToElementString(p.content) : p.content) || " ",
-  };
+  if (p.gs1) {
+    const plan = planGs1Fd(p.content, "datamatrix");
+    if (plan.bwipParsefncText !== null) {
+      return {
+        bcid: rect ? "datamatrixrectangular" : "datamatrix",
+        text: plan.bwipParsefncText,
+        parsefnc: true,
+      };
+    }
+    return { bcid: rect ? "gs1datamatrixrectangular" : "gs1datamatrix", text: plan.bwipText || " " };
+  }
+  return { bcid: rect ? "datamatrixrectangular" : "datamatrix", text: p.content || " " };
 }
 
 // Mirrors Zebra's columns=0 auto-heuristic. Empirically validated against
@@ -308,10 +305,13 @@ export function buildBwipOptions(
     case "code128": {
       const p = obj.props;
       const scale = bwipScale1D(p.moduleWidth, renderScale, renderDpmm);
-      // GS1-128: feed the (AI)data element string; not gs1BwipText, whose (99)
-      // shortcut is a DataBar convention that would desync bars from HRI/^FD.
+      // GS1-128 renders from the emit plan; unparsed content is the raw
+      // mode-D read (leading FNC1 plus literals, see the plan's parsefnc doc).
       if (p.gs1) {
-        opts = { bcid: "gs1-128", text: gs1ContentToElementString(p.content) || "(01)00000000000000", scale, height: 10 };
+        const plan = planGs1Fd(p.content, "code128");
+        opts = plan.bwipParsefncText !== null
+          ? { bcid: "code128", text: plan.bwipParsefncText, parsefnc: true, scale, height: 10 }
+          : { bcid: "gs1-128", text: plan.bwipText || "(01)00000000000000", scale, height: 10 };
         break;
       }
       const text = p.content || "0";
@@ -401,9 +401,10 @@ export function buildBwipOptions(
       const sym = p.symbology;
       const isExpanded = GS1_DATABAR_EXPANDED_SYMBOLOGIES.has(sym);
       // bwip needs (AI)data parens; model stores raw digits.
-      // Sym 1..5 require AI 01 + valid 14-digit GTIN with check.
+      // Sym 1..5 require AI 01 + valid 14-digit GTIN with check; Expanded
+      // renders from the emit plan (unparsed stays verbatim).
       const text = isExpanded
-        ? gs1BwipText(p.content)
+        ? planGs1Fd(p.content, "databar").bwipText
         : `(01)${gtin14WithCheck(p.content)}`;
       opts = {
         bcid: GS1_DATABAR_BCID[sym],

@@ -7,6 +7,7 @@ import { DATAMATRIX_FD_ESCAPE } from "./dataMatrixFd";
 import { extractTemplateRefs, hasTemplateMarkers, pickEmbedChar } from "./fnTemplate";
 import { hasClockMarkers, pickClockChars } from "./fcTemplate";
 import { planCode128Fd, planHasLoss } from "./code128Plan";
+import { gs1StaticUnparsed } from "./gs1Plan";
 import { resolveControlMarkers } from "../types/controlKey";
 import { classifyField, isLoneMarker } from "./variableField";
 import { parseContent, typedContentIncompleteRows, typedContentMarkerFindings } from "./typedContent";
@@ -368,6 +369,14 @@ export function computePreflight(
       // is GS-delimited by spec; intentional, not smuggled, so drop GS first.
       const leafEntry = getEntry(leaf.type);
       const gs1 = isGs1Active(leafEntry, leaf.props);
+      if (gs1StaticUnparsed(leaf.type, leaf.props, content)) {
+        findings.push({
+          objectId: leaf.id,
+          kind: "gs1ContentUnparsed",
+          severity: PREFLIGHT_SEVERITY.gs1ContentUnparsed,
+          detail: "the printer receives the content verbatim",
+        });
+      }
       const gsStructural =
         gs1 ||
         (leaf.type === "maxicode" && [2, 3].includes((leaf.props as { mode?: number }).mode ?? 0));

@@ -456,6 +456,7 @@ const en = {
     markerValueUnsafe: 'Variable value breaks encoding',
     markerArmFailed: 'Markers print as literal text',
     gs1ValueInvalid: 'Variable value breaks GS1 data',
+    gs1ContentUnparsed: 'GS1 content does not parse',
     printerSupportLimited: 'Limited support',
     qrRotatedStatic: 'Rotated QR prints a static value',
     qrRotatedModel2: 'Rotated QR prints as Model 2',

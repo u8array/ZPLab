@@ -456,6 +456,7 @@ const he = {
     markerValueUnsafe: 'ערך משתנה שובר קידוד',
     markerArmFailed: 'הסמנים מודפסים כטקסט מילולי',
     gs1ValueInvalid: 'ערך המשתנה שובר נתוני GS1',
+    gs1ContentUnparsed: 'תוכן ה-GS1 לא ניתן לניתוח',
     printerSupportLimited: 'תמיכה מוגבלת',
     qrRotatedStatic: 'קוד QR מסובב מדפיס ערך סטטי',
     qrRotatedModel2: 'קוד QR מסובב מדפיס כדגם 2',

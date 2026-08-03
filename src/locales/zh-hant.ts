@@ -456,6 +456,7 @@ const zhHant = {
     markerValueUnsafe: '變數值破壞編碼',
     markerArmFailed: '標記將以純文字方式列印',
     gs1ValueInvalid: '變數值違反GS1資料',
+    gs1ContentUnparsed: 'GS1 內容無法解析',
     printerSupportLimited: '支援有限',
     qrRotatedStatic: '旋轉的二維碼列印靜態值',
     qrRotatedModel2: '旋轉的二維碼以型號2列印',

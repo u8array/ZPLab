@@ -456,6 +456,7 @@ const cs = {
     markerValueUnsafe: 'Hodnota proměnné porušuje kódování',
     markerArmFailed: 'Značky se vytisknou jako prostý text',
     gs1ValueInvalid: 'Hodnota proměnné porušuje GS1 data',
+    gs1ContentUnparsed: 'Obsah GS1 nelze zpracovat',
     printerSupportLimited: 'Omezená podpora',
     qrRotatedStatic: 'Otočený QR kód tiskne statickou hodnotu',
     qrRotatedModel2: 'Otočený QR kód tiskne jako Model 2',

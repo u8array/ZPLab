@@ -1960,6 +1960,22 @@ describe('generateBatchZpl', () => {
     expect(recall).not.toContain('^FH_');
   });
 
+  it('emits a GS1 field as mode-D data even when a legacy model carries serial', () => {
+    // The alnum seed filter would eat the >8 FNC1 and merge AI values; a
+    // legacy gs1+serial object must print its GS1 payload, not a seed.
+    const gs = String.fromCharCode(0x1d);
+    const leaf = {
+      id: 'g', type: 'code128', x: 0, y: 0, rotation: 0,
+      props: { content: `10LOT42${gs}21SER7`, height: 100, moduleWidth: 2,
+               printInterpretation: false, printInterpretationAbove: false,
+               checkDigit: false, rotation: 'N', gs1: true,
+               serial: { increment: 1, zplMode: 'SN' } },
+    } as unknown as LabelObject;
+    const out = generateZPL(baseLabel, [leaf]);
+    expect(out).toContain('^FD(10)LOT42>8(21)SER7^FS');
+    expect(out).not.toContain('^SN');
+  });
+
   it('keeps a compacted Subset C stream verbatim (adoption would widen the symbol)', () => {
     const zpl = '^XA^FO0,0^BY2^BCN,100,Y,N,N^FD>;12345678>773^FS^XZ';
     const { objects } = parseSingle(zpl, 8);

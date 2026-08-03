@@ -456,6 +456,7 @@ const hr = {
     markerValueUnsafe: 'Vrijednost kvari kodiranje',
     markerArmFailed: 'Oznake se ispisuju kao obični tekst',
     gs1ValueInvalid: 'Vrijednost varijable kvari GS1 podatke',
+    gs1ContentUnparsed: 'GS1 sadržaj se ne može raščlaniti',
     printerSupportLimited: 'Ograničena podrška',
     qrRotatedStatic: 'Rotirani QR kod ispisuje statičnu vrijednost',
     qrRotatedModel2: 'Rotirani QR kod ispisuje kao Model 2',

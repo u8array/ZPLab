@@ -81,6 +81,28 @@ describe("barcodeEncodeFindings", () => {
     expect(barcodeEncodeFindings([maxi(2, "1234567890")], 1, 8, noEnv, () => "bwipp.maxicodeExpectedCountryCode")).toEqual([]);
   });
 
+  it("does not emit renderFailed for static unparsed GS1 content (gs1ContentUnparsed owns it)", () => {
+    const c128gs1 = (content: string): LeafObject =>
+      ({ id: "g", type: "code128", x: 0, y: 0, rotation: 0,
+         props: { content, height: 100, moduleWidth: 2, printInterpretation: false,
+                  printInterpretationAbove: false, checkDigit: false, rotation: "N", gs1: true },
+       } as LabelObject as LeafObject);
+    expect(barcodeEncodeFindings([c128gs1("NOTGS1AT@ALL")], 1, 8, noEnv, () => "bwipp.GS1error")).toEqual([]);
+    // Marker content keeps the encode check (no static warning exists there).
+    const env: EncodeEnv = {
+      variables: [{ id: "v", name: "gtin", fnNumber: 1, defaultValue: "NOTGS1" }],
+      active: null,
+    };
+    expect(barcodeEncodeFindings([c128gs1("01«gtin»")], 1, 8, env, () => "bwipp.GS1error"))
+      .toHaveLength(1);
+    // DM is excluded from the suppression (its warning never fires).
+    const gs = String.fromCharCode(0x1d);
+    const dm = { id: "d", type: "datamatrix", x: 0, y: 0, rotation: 0,
+      props: { content: `0112345678901231${gs}10ABC`, gs1: true, dimension: 20, quality: 200, rotation: "N" },
+    } as LabelObject as LeafObject;
+    expect(barcodeEncodeFindings([dm], 1, 8, noEnv, () => "bwipp.someError")).toHaveLength(1);
+  });
+
   it("keeps renderFailed for a BOUND MaxiCode whose value has no separator (the producer never sees it)", () => {
     // The core producer skips marker content, so the resolved-value failure
     // must surface here; skipping both sides would hide the broken symbol.

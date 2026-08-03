@@ -1,6 +1,7 @@
 import { ctrlParityFor, type LeafObject } from "@zplab/core/registry";
 import { maxicodeScmOwnedByPreflight, type MaxicodeProps } from "@zplab/core/registry/maxicode";
 import { isBarcode } from "@zplab/core/lib/objectBounds";
+import { gs1StaticUnparsed } from "@zplab/core/lib/gs1Plan";
 import { PREFLIGHT_SEVERITY, type PreflightFinding } from "@zplab/core/lib/preflight";
 import type { Variable } from "@zplab/core/types/Variable";
 import {
@@ -88,6 +89,11 @@ export function barcodeEncodeFindings(
       resolved.type === "maxicode" &&
       maxicodeScmOwnedByPreflight(getObjectStringContent(leaf) ?? "", resolved.props as MaxicodeProps)
     ) {
+      continue;
+    }
+    // Static unparsed GS1 is owned by gs1ContentUnparsed (see
+    // gs1StaticUnparsed); a second renderFailed would contradict it.
+    if (gs1StaticUnparsed(leaf.type, leaf.props, getObjectStringContent(leaf) ?? "")) {
       continue;
     }
     const error = encodeError(leaf, resolved);
