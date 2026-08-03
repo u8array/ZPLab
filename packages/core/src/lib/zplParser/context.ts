@@ -233,6 +233,8 @@ export interface FieldState {
   snMode: SerialMode["zplMode"];
 }
 
+export type FnDefaultCandidate = { value: string; decoded: boolean } | null;
+
 export interface ParserState {
   result: ParserResult;
   label: LabelFrameState;
@@ -261,6 +263,10 @@ export interface ParserState {
    *  `>` in an unadopted stream): regen changes bytes, so the page is only
    *  byte-exact through its overlay. */
   bcFdRegenLossy: boolean;
+  /** Per ^FN slot: the bound consumers' default candidate. `null` = consumers
+   *  disagreed; `decoded` = at least one consumer actually decoded (a bare
+   *  wire-form echo must not override a header declaration). */
+  fnDefaultCandidates: Map<number, FnDefaultCandidate>;
 }
 
 /** trimEnd: `token` carries `rest` up to the next command, which in multi-line
@@ -282,6 +288,14 @@ export function getDefaultTextW(defaults: DefaultsState): number {
 /** ^FO vs ^FT discriminator for emit sites. */
 export function getPosType(field: FieldState): "FT" | "FO" {
   return field.positionIsFT ? "FT" : "FO";
+}
+
+/** Sticky GS1/^BX mode flags would act on any later field, so every flush
+ *  path drops them with the flushed field. */
+export function resetSymbologyModeFlags(field: FieldState): void {
+  field.bcGs1 = false;
+  field.dmEscape = undefined;
+  field.dmQuality = 200;
 }
 
 /** Reset the field-scoped ^FB/^TB block defaults. They bind to a single field
@@ -312,6 +326,7 @@ export function resetFormatScopedState(s: ParserState): void {
   s.field.justify = s.defaults.fwJustify;
   s.format.fhActive = false;
   s.bcFdRegenLossy = false;
+  s.fnDefaultCandidates = new Map();
   resetFieldBlockDefaults(s.defaults);
 }
 
@@ -380,6 +395,7 @@ export function createParserState(): ParserState {
     varScopeStart: 0,
     sawXa: false,
     bcFdRegenLossy: false,
+    fnDefaultCandidates: new Map(),
     field: freshFieldState(),
   };
 }

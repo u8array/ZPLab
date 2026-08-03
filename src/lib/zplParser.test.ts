@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { zlibSync } from 'fflate';
 import { parseZPL, BY_CONSUMING_BARCODE_TYPES } from '@zplab/core/lib/zplParser';
+import { generateZPL } from '@zplab/core/lib/zplGenerator';
 import { formatLabelMetaComment } from '@zplab/core/lib/zplLabelMeta';
 import { ObjectRegistry } from '@zplab/core/registry';
-import { props, serialOf, parseSingle, commandsOf } from '../test/helpers';
+import { defined, props, serialOf, parseSingle, commandsOf } from '../test/helpers';
 
 // Drift guard for the bare-^BY hazard set. Every 1D and postal barcode emits a
 // ^BY on regen, so it must be classified ^BY-consuming; a forgotten new one
@@ -2580,6 +2581,144 @@ describe('parseZPL — ^FO with justification parameter', () => {
     expect(objects[0]?.x).toBeCloseTo(100);
     expect(objects[0]?.y).toBeCloseTo(200 - 4.62);
     expect(props(objects[0]).content).toBe('Justified');
+  });
+});
+
+describe('parseZPL — ^FN defaults decode through the leaf\'s ^FD encoder', () => {
+  // Without the symmetric decode every import/export cycle stacked another
+  // encode layer (QA,QA,..., C:\\\\x).
+  const FN_BASE = { widthMm: 100, heightMm: 50, dpmm: 8 };
+  const cycle = (zpl: string) => {
+    const r1 = parseSingle(zpl, 8);
+    const out1 = generateZPL(FN_BASE, r1.objects, r1.variables);
+    const r2 = parseSingle(out1, 8);
+    const out2 = generateZPL(FN_BASE, r2.objects, r2.variables);
+    return { default1: r1.variables[0]?.defaultValue, out1, out2 };
+  };
+
+  it('strips the QR {ec}A, prefix from the default and stays fixed', () => {
+    const { default1, out1, out2 } = cycle('^XA^FO10,10^BQN,2,4^FN1^FDQA,https://x.io^FS^XZ');
+    expect(default1).toBe('https://x.io');
+    expect(out1).toContain('^FDQA,https://x.io^FS');
+    expect(out2).toBe(out1);
+  });
+
+  it('unescapes an ^FB default and stays fixed', () => {
+    const { default1, out1, out2 } = cycle('^XA^FO10,10^A0N,30,0^FB200,2,0,L,0^FN1^FDC:\\\\x^FS^XZ');
+    expect(default1).toBe('C:\\x');
+    expect(out2).toBe(out1);
+  });
+
+  it('decodes a GS1 DataMatrix default and stays fixed', () => {
+    const zpl = '^XA^FO10,10^BXN,5,200,,,,_^FN1^FD_101234567890123_110ABC^FS^XZ';
+    const { out1, out2 } = cycle(zpl);
+    expect(out2).toBe(out1);
+  });
+
+  it('strips the UPC-E number-system digit from the default and stays fixed', () => {
+    const { default1, out1, out2 } = cycle('^XA^FO10,10^B9N,100,Y,N,Y^FN1^FD0123456^FS^XZ');
+    expect(default1).toBe('123456');
+    expect(out2).toBe(out1);
+  });
+
+  it('keeps a foreign default verbatim when the encoder cannot reproduce it', () => {
+    const { default1 } = cycle('^XA^FO10,10^BQN,2,4^FN1^FDhello^FS^XZ');
+    expect(default1).toBe('hello');
+  });
+
+  it('keeps a slot shared with a plain co-consumer verbatim (slot-scoped value)', () => {
+    // The text field prints the raw slot value; adopting the UPC-E decode
+    // would rewrite what it prints.
+    const zpl = '^XA^FO10,10^B9N,100,Y,N,Y^FN1^FD0123456^FS^FO10,300^A0N,30,0^FN1^FD0123456^FS^XZ';
+    const { default1, out1 } = cycle(zpl);
+    expect(default1).toBe('0123456');
+    expect(out1).toContain('^A0N,30,0^FN1^FD0123456^FS');
+  });
+
+  it('adopts a shared slot when the co-consumer carries the model value', () => {
+    // Own-export shape: the QR wire has the prefix, the text wire is the raw
+    // default, so both candidates agree on the model value.
+    const zpl = '^XA^FO10,10^BQN,2,4^FN1^FDQA,foo^FS^FO10,300^A0N,30,0^FN1^FDfoo^FS^XZ';
+    const { default1, out1, out2 } = cycle(zpl);
+    expect(default1).toBe('foo');
+    expect(out2).toBe(out1);
+  });
+
+  it('adopts past a bare pre-declaration (page-close overrides upsert order)', () => {
+    const zpl = '^XA^FN1^FDQA,foo^FS^FO10,10^BQN,2,4^FN1^FDQA,foo^FS^XZ';
+    const { default1, out1, out2 } = cycle(zpl);
+    expect(default1).toBe('foo');
+    expect(out2).toBe(out1);
+  });
+
+  it('still adopts after an unrelated mode-D field (per-leaf gate, not field flag)', () => {
+    // The flag reset itself is pinned by the chip-tokenising test below.
+    const zpl = '^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FN2^FD(01)12345678901231^FS'
+      + '^FO10,300^BQN,2,4^FN1^FDQA,foo^FS^XZ';
+    const r = parseSingle(zpl, 8);
+    expect(r.variables.find((v) => v.fnNumber === 1)?.defaultValue).toBe('foo');
+    const { out1, out2 } = cycle(zpl);
+    expect(out2).toBe(out1);
+  });
+
+  it('tokenises control chips after an unrelated mode-D field', () => {
+    // The mode flags must fall with the flushed field on EVERY flush path,
+    // including the half-formed early return and the ^BX escape flag.
+    const chipTail = '^FH^FO10,300^BQN,2,4^FDQA,A_0DB^FS^XZ';
+    const shapes: [name: string, zpl: string, objIdx: number][] = [
+      ['fs', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231^FS${chipTail}`, 1],
+      ['fo', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231${chipTail}`, 1],
+      ['ft', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231^FS^FH^FT10,300^BQN,2,4^FDQA,A_0DB^FS^XZ`, 1],
+      ['half-formed', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D${chipTail}`, 0],
+      ['bx-escape', `^XA^FO10,10^BXN,5,200,,,,_^FD_101234567890123^FS${chipTail}`, 1],
+    ];
+    for (const [name, zpl, objIdx] of shapes) {
+      expect(props(defined(parseSingle(zpl, 8).objects[objIdx])).content, name).toBe('A«ctrl:CR»B');
+    }
+  });
+
+  it('scopes candidates per page (a later page must not inherit the decode)', () => {
+    const two = '^XA^FO10,10^BQN,2,4^FN1^FDQA,foo^FS^XZ'
+      + '^XA^FO10,10^A0N,30,0^FN1^FDQA,foo^FS^XZ';
+    const r = parseZPL(two, 8);
+    expect(defined(defined(r.pages[0]).variables[0]).defaultValue).toBe('foo');
+    expect(defined(defined(r.pages[1]).variables[0]).defaultValue).toBe('QA,foo');
+  });
+
+  it('keeps a header default when the bound field has an empty ^FD', () => {
+    // A wire-form echo (no decode) must never override the declaration.
+    const cases: [zpl: string, expected: string][] = [
+      ['^XA^FN1^FDreal^FS^FO10,10^A0N,30,0^FN1^FD^FS^XZ', 'real'],
+      ['^XA^FN1^FDQA,real^FS^FO10,10^BQN,2,4^FN1^FD^FS^XZ', 'QA,real'],
+      ['^XA^FN1^FDother^FS^FO10,10^A0N,30,0^FN1^FDfoo^FS^XZ', 'other'],
+    ];
+    for (const [zpl, expected] of cases) {
+      expect(defined(parseSingle(zpl, 8).variables[0]).defaultValue, zpl).toBe(expected);
+    }
+  });
+
+  it('lets an empty ^FD abstain so a decoding co-consumer still adopts', () => {
+    const zpl = '^XA^FO10,10^BQN,2,4^FN1^FDQA,real^FS^FO10,200^BQN,2,4^FN1^FD^FS^XZ';
+    const { default1, out1, out2 } = cycle(zpl);
+    expect(default1).toBe('real');
+    expect(out2).toBe(out1);
+    const withHeader = cycle('^XA^FN1^FDQA,real^FS^FO10,10^BQN,2,4^FN1^FDQA,real^FS^FO10,200^BQN,2,4^FN1^FD^FS^XZ');
+    expect(withHeader.default1).toBe('real');
+  });
+
+  it('ignores the candidate of a serial-stripped field (not a slot consumer)', () => {
+    const zpl = '^XA^FN1^FDseed^FS'
+      + '^FO10,10^A0N,30,0^FB200,2,0,L,0^FN1^SN1,1,Y^FDA\\&B^FS^XZ';
+    const r = parseSingle(zpl, 8);
+    expect(defined(r.variables[0]).defaultValue).toBe('seed');
+  });
+
+  it('declines adoption on a shared slot with disagreeing candidates (QR + text)', () => {
+    // No roundtrip assert: the emit-side re-encode of such a slot is a known
+    // pre-existing limitation.
+    const zpl = '^XA^FO10,10^BQN,2,4^FN1^FDQA,foo^FS^FO10,300^A0N,30,0^FN1^FDQA,foo^FS^XZ';
+    const r = parseSingle(zpl, 8);
+    expect(defined(r.variables[0]).defaultValue).toBe('QA,foo');
   });
 });
 
