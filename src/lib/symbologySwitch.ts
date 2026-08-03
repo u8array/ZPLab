@@ -1,4 +1,4 @@
-import { getEntry, ObjectRegistry } from "@zplab/core/registry";
+import { getEntry, isGs1Active, ObjectRegistry } from "@zplab/core/registry";
 import { resolveContentSpec, hasValidLength, violatesCharset } from "@zplab/core/registry/contentSpec";
 import type { ContentSpec } from "@zplab/core/types/contentSpec";
 import type { LeafType } from "@zplab/core/registry/leafObject";
@@ -10,14 +10,6 @@ import { hasControlMarkers, resolveControlMarkers } from "@zplab/core/types/cont
 const BARCODE_GROUPS: ReadonlySet<ObjectGroup> = new Set(["code-1d", "code-2d", "legacy"]);
 
 type CoreEntry = NonNullable<ReturnType<typeof getEntry>>;
-
-/** Whether the object currently carries GS1 content, per the entry's own
- *  model (gs1Active hook, default `gs1Capable && props.gs1`). */
-function isGs1Active(entry: CoreEntry, props: Record<string, unknown> | undefined): boolean {
-  if (!props) return false;
-  if (entry.gs1Active) return entry.gs1Active(props);
-  return entry.gs1Capable === true && props.gs1 === true;
-}
 
 /** Props patch that puts a target into GS1 mode when GS1 content is carried in. */
 const gs1EnterProps = (entry: CoreEntry): object => entry.gs1EnterProps ?? { gs1: true };

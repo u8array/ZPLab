@@ -123,15 +123,23 @@ export function getEntry(type: string): (typeof ObjectRegistry)[LeafType] | unde
   return (ObjectRegistry as Record<string, (typeof ObjectRegistry)[LeafType] | undefined>)[type];
 }
 
+/** Single evaluation point for {@link ObjectTypeCore.gs1Active}. */
+export function isGs1Active(
+  entry: (typeof ObjectRegistry)[LeafType] | undefined,
+  props: object | undefined,
+): boolean {
+  if (!entry || !props) return false;
+  if (entry.gs1Active) return entry.gs1Active(props);
+  return entry.gs1Capable === true && (props as { gs1?: boolean }).gs1 === true;
+}
+
 /** Emitter parity for control-key chips: they resolve to bytes only on a
  *  `controlChars` type outside GS1 mode. Callers pass this into the binding
  *  resolvers (variableBinding sits in the registry's init chain and must not
- *  look the flag up itself). */
+ *  resolve GS1 activity itself). */
 export function objectResolvesCtrl(obj: { type: string; props?: object }): boolean {
-  return (
-    getEntry(obj.type)?.controlChars === true &&
-    (obj.props as { gs1?: boolean } | undefined)?.gs1 !== true
-  );
+  const entry = getEntry(obj.type);
+  return entry?.controlChars === true && !isGs1Active(entry, obj.props);
 }
 
 /** {@link objectResolvesCtrl} refined by how the byte survives to the symbol,

@@ -1,5 +1,5 @@
 import { mmToDots } from './coordinates';
-import { getEntry, BARCODE_1D_TYPES } from '../registry';
+import { getEntry, isGs1Active, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import {
   extractTemplateRefs,
@@ -87,9 +87,10 @@ export function planTemplateHeader(
     }
     // Scan the payload as it will be EMITTED: the plain-^BC escape injects
     // '0'/'<'/'=' after this scan, and '<'/'=' are ^FC candidate chars.
+    const leafEntry = getEntry(leaf.type);
     const scan =
-      getEntry(leaf.type)?.ctrlNeedsOwnEscape
-      && !(leaf as { props?: { gs1?: boolean } }).props?.gs1
+      leafEntry?.ctrlNeedsOwnEscape
+      && !isGs1Active(leafEntry, (leaf as { props?: object }).props)
         ? planCode128Fd(c, 'template').fd
         : c;
     // Chips-only payloads arm no ^FE (they emit as invocations/bytes), so
@@ -504,12 +505,13 @@ export function generateBatchZpl(
     // A template-embedded mode-D or plain-^BC slot has no bound transform but
     // still needs its escape. A shared plain slot bound to the code128 emits
     // raw instead: the escape would corrupt the co-consumers.
+    const boundEntry = bound && !isGroup(bound) ? getEntry(bound.type) : undefined;
     const boundPlainShared =
-      bound && !isGroup(bound) && !!getEntry(bound.type)?.ctrlNeedsOwnEscape
-      && !(bound.props as { gs1?: boolean }).gs1 && plainSharedFns.has(v.fnNumber);
+      bound && !isGroup(bound) && !!boundEntry?.ctrlNeedsOwnEscape
+      && !isGs1Active(boundEntry, bound.props) && plainSharedFns.has(v.fnNumber);
     const transform = boundPlainShared
       ? (s: string) => planCode128Fd(s, 'sharedRaw').fd
-      : (bound && !isGroup(bound) ? getEntry(bound.type)?.fdTransform?.(bound) : undefined) ??
+      : (bound && !isGroup(bound) ? boundEntry?.fdTransform?.(bound) : undefined) ??
         (modeDFns.has(v.fnNumber)
           ? escapeGs1FdValue
           : plain128Fns.has(v.fnNumber)
