@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { planGs1Fd } from "@zplab/core/lib/gs1Plan";
 import {
   gtin14WithCheck,
   mod10CheckDigit,
@@ -16,7 +17,6 @@ import {
   GS1_AI_SPECS,
   gs1AddBlockReason,
   segmentsToZplFd,
-  gs1ContentToZplFd,
   zplFdToGs1Input,
 } from "@zplab/core/lib/gs1";
 
@@ -333,11 +333,13 @@ describe("constants", () => {
   });
 });
 
-describe("segmentsToZplFd / gs1ContentToZplFd (mode D ^FD form)", () => {
+const gs1ModeDFdOf = (content: string) => planGs1Fd(content, "code128").fd;
+
+describe("segmentsToZplFd / planGs1Fd fd (mode D ^FD form)", () => {
   const content = "0104012345678901" + "1020260707" + GS1_GS + "17261231" + "30144";
 
   it("adds the >8 FNC1 invocation only after non-final variable AIs", () => {
-    expect(gs1ContentToZplFd(content)).toBe(
+    expect(gs1ModeDFdOf(content)).toBe(
       "(01)04012345678901(10)20260707>8(17)261231(30)144",
     );
   });
@@ -345,19 +347,19 @@ describe("segmentsToZplFd / gs1ContentToZplFd (mode D ^FD form)", () => {
   it("passes unparseable content through verbatim (no re-escape corruption)", () => {
     // A foreign mode-D field kept verbatim on import must round-trip byte-stable;
     // re-escaping > here would turn >8 into >08 and corrupt the FNC1.
-    expect(gs1ContentToZplFd(">;>80100003486")).toBe(">;>80100003486");
+    expect(gs1ModeDFdOf(">;>80100003486")).toBe(">;>80100003486");
   });
 
   it("inserts >8 for the element-string form too, not just raw content", () => {
     // The parenthesized form must not bypass segment parsing into the fallback.
-    expect(gs1ContentToZplFd("(01)04012345678901(10)20260707(17)261231(30)144")).toBe(
+    expect(gs1ModeDFdOf("(01)04012345678901(10)20260707(17)261231(30)144")).toBe(
       "(01)04012345678901(10)20260707>8(17)261231(30)144",
     );
   });
 
   it("adds no separator for a single or final variable AI", () => {
-    expect(gs1ContentToZplFd("1020260707")).toBe("(10)20260707");
-    expect(gs1ContentToZplFd("010401234567890110ABC")).toBe("(01)04012345678901(10)ABC");
+    expect(gs1ModeDFdOf("1020260707")).toBe("(10)20260707");
+    expect(gs1ModeDFdOf("010401234567890110ABC")).toBe("(01)04012345678901(10)ABC");
   });
 
   it("escapes a literal > in values as >0", () => {

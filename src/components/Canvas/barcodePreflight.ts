@@ -1,7 +1,6 @@
-import { ctrlParityFor, type LeafObject } from "@zplab/core/registry";
+import { ctrlParityFor, gs1StaticUnparsed, type LeafObject } from "@zplab/core/registry";
 import { maxicodeScmOwnedByPreflight, type MaxicodeProps } from "@zplab/core/registry/maxicode";
 import { isBarcode } from "@zplab/core/lib/objectBounds";
-import { gs1StaticUnparsed } from "@zplab/core/lib/gs1Plan";
 import { PREFLIGHT_SEVERITY, type PreflightFinding } from "@zplab/core/lib/preflight";
 import type { Variable } from "@zplab/core/types/Variable";
 import {

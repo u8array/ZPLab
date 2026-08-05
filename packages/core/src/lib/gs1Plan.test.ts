@@ -32,7 +32,7 @@ describe("planGs1Fd", () => {
     expect(dm.losses).toEqual([]);
   });
 
-  it("matches the real emitters byte for byte (drift tripwire via toZPL)", () => {
+  it("matches the full toZPL output byte for byte (covers the ^FH wrapping layer)", () => {
     // plan.fd is the payload handed to fdField, which may still wrap it in
     // ^FH hex (raw GS on the databar wire); undo that layer for comparison.
     const fdOf = (zpl: string): string => {

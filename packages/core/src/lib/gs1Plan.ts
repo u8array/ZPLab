@@ -5,8 +5,6 @@ import {
   segmentsToZplFd,
 } from "./gs1";
 import { gs1ContentToDataMatrixFd } from "./dataMatrixFd";
-import { hasTemplateMarkers } from "./fnTemplate";
-import { getEntry, isGs1Active } from "../registry";
 
 /** GS1 carriers with distinct ^FD grammars: ^BC mode D (parenthesized + >8),
  *  ^BX quality 200 (`_1` escapes), ^BR (raw content; separator grammar is
@@ -40,10 +38,9 @@ function parsefncRuns(content: string, joiner: string): string {
   return `^FNC1${runs.join(joiner)}`;
 }
 
-/** Single GS1 derivation (planCode128Fd's sibling): mirrors the emit
- *  transforms (byte-equality pinned by test); canvas and preflight consume
- *  it. Known limit: unparsed `>` invocations print as invocations (spec
- *  p.104) but render literally on canvas. */
+/** Single GS1 ^FD derivation (planCode128Fd's sibling): emit, canvas and
+ *  preflight consume it. Known limit: unparsed `>` invocations print as
+ *  invocations (spec p.104) but render literally. */
 export function planGs1Fd(content: string, carrier: Gs1Carrier): Gs1FdPlan {
   if (content === "") {
     return {
@@ -73,17 +70,6 @@ export function planGs1Fd(content: string, carrier: Gs1Carrier): Gs1FdPlan {
     case "databar":
       return parsed(content);
   }
-}
-
-/** Static GS1 content that ships verbatim: owns the gs1ContentUnparsed
- *  warning, and the canvas suppresses renderFailed on the same predicate.
- *  Template content is owned by markerValueFindings. */
-export function gs1StaticUnparsed(type: string, props: object, content: string): boolean {
-  const carrier = gs1CarrierFor(type);
-  return carrier !== null
-    && isGs1Active(getEntry(type), props)
-    && !hasTemplateMarkers(content)
-    && planGs1Fd(content, carrier).losses.length > 0;
 }
 
 /** GS1 carriers by leaf type; other types have no GS1 ^FD grammar. */

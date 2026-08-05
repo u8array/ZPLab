@@ -407,13 +407,6 @@ export function segmentsToZplFd(segments: readonly Gs1Segment[]): string {
     .join("");
 }
 
-/** ^FD form of model content, raw or parenthesized (see segmentsToZplFd).
- *  Unparseable content passes through unchanged: its FNC1 positions are
- *  unknown, and re-escaping would corrupt existing invocations. */
-export function gs1ContentToZplFd(content: string): string {
-  const segs = parseGs1ToSegments(content);
-  return segs ? segmentsToZplFd(segs) : content;
-}
 
 /** Undo the ^FD invocations on import: strip FNC1 markers (the parens already
  *  delimit segments) and unescape literal `>`. Order matters: `>08` is an

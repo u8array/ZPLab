@@ -1,6 +1,7 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { fieldPosZ, fdFieldFor } from './zplHelpers';
-import { DATAMATRIX_FD_ESCAPE, gs1ContentToDataMatrixFd } from '../lib/dataMatrixFd';
+import { DATAMATRIX_FD_ESCAPE } from '../lib/dataMatrixFd';
+import { planGs1Fd } from '../lib/gs1Plan';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { type ZplRotation } from './rotation';
 import { GS1_CONTENT_SPEC } from './gs1FieldSpec';
@@ -18,6 +19,8 @@ export const DM_SQUARE_SIZES = [
 export const DM_RECT_SIZES = [
   [8, 18], [8, 32], [12, 26], [12, 36], [16, 36], [16, 48],
 ] as const;
+
+const dmGs1Fd = (s: string): string => planGs1Fd(s, 'datamatrix').fd;
 
 export interface DataMatrixProps {
   content: string;
@@ -70,7 +73,7 @@ export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
   // GS1 mode FNC1-escapes the payload; shared with the CSV batch override.
   // Non-GS1 content is arbitrary bytes, emitted verbatim (the printer owns any
   // ^BX escape sequences it contains).
-  fdTransform: (obj) => (obj.props.gs1 ? gs1ContentToDataMatrixFd : undefined),
+  fdTransform: (obj) => (obj.props.gs1 ? dmGs1Fd : undefined),
 
   toZPL: (obj, ctx) => {
     const p = obj.props;
@@ -91,7 +94,7 @@ export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
     return [
       fieldPosZ(obj),
       `^BX${params.join(',')}`,
-      fdFieldFor(p.content, ctx, p.gs1 ? gs1ContentToDataMatrixFd : undefined, undefined, CONTROL_CHARS && !p.gs1),
+      fdFieldFor(p.content, ctx, p.gs1 ? dmGs1Fd : undefined, undefined, CONTROL_CHARS && !p.gs1),
     ].join('');
   },
 };
