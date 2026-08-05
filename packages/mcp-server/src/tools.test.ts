@@ -81,6 +81,8 @@ describe("mcp-server tools", () => {
       if ((ObjectRegistry as Record<string, { gs1Capable?: boolean }>)[t.type]?.gs1Capable) {
         allowed.add("gs1");
       }
+      // Optional import-produced props documented on purpose (^FR reverse).
+      if (t.type === "text") allowed.add("reverse");
       for (const key of Object.keys(t.props)) {
         expect(allowed.has(key), `${t.type}.${key} is not a known prop`).toBe(true);
       }
@@ -169,7 +171,7 @@ describe("mcp-server tools", () => {
     expect(v.findings.replayRisk).toContain("^JU");
   });
 
-  it("create_draft reports per-object bounds, approx only for the barcode", () => {
+  it("create_draft reports per-object bounds; barcodes are kernel-probed exact", () => {
     const created = createDraft({
       widthMm: 100,
       heightMm: 50,
@@ -183,7 +185,127 @@ describe("mcp-server tools", () => {
     if (!created.ok) return;
     const box = created.bounds.find((b) => b.objectId === "b");
     expect(box).toMatchObject({ x: 10, y: 20, width: 200, height: 100, approx: false });
-    expect(created.bounds.find((b) => b.objectId === "c")?.approx).toBe(true);
+    const bc = created.bounds.find((b) => b.objectId === "c");
+    expect(bc?.approx).toBe(false);
+    expect(bc!.height).toBe(80);
+  });
+
+  it("reports probed barcode footprints with the full bar-rect entry", () => {
+    const created = ok(createDraft({
+      widthMm: 100,
+      heightMm: 50,
+      dpmm: 8,
+      objects: [
+        { type: "qrcode", x: 0, y: 0, id: "q", props: { content: "12345", magnification: 10 } },
+      ],
+    }));
+    const q = created.bounds.find((b) => b.objectId === "q");
+    expect(q?.approx).toBe(false);
+    // 21 modules x mag 10, not the 200x200 registry default box.
+    expect(q!.width).toBe(210);
+    expect(q!.width).toBe(q!.height);
+    // A rotated ^FT EAN anchors off the upright bar-rect, so the probed
+    // entry must carry it, not just the outer box.
+    const ean = ok(createDraft({
+      widthMm: 100, heightMm: 50, dpmm: 8,
+      objects: [{ type: "ean13", x: 400, y: 300, id: "e", positionType: "FT",
+        props: { content: "4012345678901", height: 80, rotation: "B" } }],
+    })).bounds.find((b) => b.objectId === "e");
+    expect(ean?.approx).toBe(false);
+    expect(ean!.height).toBeGreaterThan(80);
+  });
+
+  it("exports an imported image's ^GFA bytes in a headless host", () => {
+    // Without the store the imported _gfaCache is the only byte source;
+    // an empty ^FD^FS with ok:true would silently lose the graphic.
+    const gfa = "^GFA,8,8,1,00FF00FF00FF00FF";
+    const leaf = {
+      id: "img", type: "image", x: 10, y: 20, rotation: 0,
+      props: { imageId: "gone", widthDots: 8, threshold: 128, rotation: "N", _gfaCache: gfa },
+    };
+    const design = {
+      schemaVersion: 5,
+      label: { widthMm: 50, heightMm: 30, dpmm: 8 },
+      pages: [{ objects: [leaf] }],
+    };
+    const out = ok(exportZpl(design));
+    expect(out.zpl).toContain(gfa);
+    expect(ok(validateDraft(design)).warnings.some((w) => w.kind === "imageMissing")).toBe(false);
+    // A rotated field would need a re-raster no headless host can do.
+    const rotated = { ...design, pages: [{ objects: [{ ...leaf, props: { ...leaf.props, rotation: "R" } }] }] };
+    const outR = ok(exportZpl(rotated));
+    expect(outR.zpl).not.toContain(gfa);
+    expect(ok(validateDraft(rotated)).warnings.some((w) => w.kind === "imageMissing")).toBe(true);
+  });
+
+  it("emits and measures a store-less cache by its ^GFA header truth", () => {
+    // A foreign envelope may carry stale props; the header is the byte
+    // truth, so non-square images survive headless export.
+    const gfa = "^GFA,4,4,1,00FF00FF"; // 8 dots wide, 4 rows: non-square
+    const design = (widthDots: number) => ({
+      schemaVersion: 5,
+      label: { widthMm: 50, heightMm: 30, dpmm: 8 },
+      pages: [{ objects: [{
+        id: "img", type: "image", x: 0, y: 0, rotation: 0,
+        props: { imageId: "gone", widthDots, threshold: 128, rotation: "N", _gfaCache: gfa },
+      }] }],
+    });
+    expect(ok(exportZpl(design(8))).zpl).toContain(gfa);
+    // Mismatched props still export the bytes; bounds follow the header.
+    const mismatched = ok(validateDraft(design(200)));
+    expect(mismatched.warnings.some((w) => w.kind === "imageMissing")).toBe(false);
+    expect(mismatched.bounds.find((b) => b.objectId === "img"))
+      .toMatchObject({ width: 8, height: 4, approx: false });
+  });
+
+  it("keeps a preserved foreign header with an empty count slot exportable", () => {
+    // The parser preserves such headers verbatim and always sets heightDots;
+    // the empty count must not read as unusable (silent drop again).
+    const gfa = "^GFA,4,,1,00FF00FF";
+    const design = {
+      schemaVersion: 5,
+      label: { widthMm: 50, heightMm: 30, dpmm: 8 },
+      pages: [{ objects: [{
+        id: "img", type: "image", x: 0, y: 0, rotation: 0,
+        props: { imageId: "gone", widthDots: 8, heightDots: 4, threshold: 128, rotation: "N", _gfaCache: gfa },
+      }] }],
+    };
+    expect(ok(exportZpl(design)).zpl).toContain(gfa);
+    expect(ok(validateDraft(design)).bounds.find((b) => b.objectId === "img"))
+      .toMatchObject({ width: 8, height: 4 });
+    // Fractional or zero rows stay unusable (malformed header).
+    const bad = { ...design, pages: [{ objects: [{ ...design.pages[0]!.objects[0]!,
+      props: { ...design.pages[0]!.objects[0]!.props, _gfaCache: "^GFA,5,5,2,00FF00FF00" } }] }] };
+    expect(ok(exportZpl(bad)).zpl).not.toContain("^GFA,5,5,2");
+    expect(ok(validateDraft(bad)).warnings.some((w) => w.kind === "imageMissing")).toBe(true);
+  });
+
+  it("off-label preflight judges barcodes by their probed size", () => {
+    // A probed QR (210 dots) overflowing a label its 200-dot default box
+    // would still fit must warn; warnings and bounds share one measured map.
+    const nearEdge = ok(createDraft({
+      widthMm: 30, heightMm: 30, dpmm: 8, // 240 dots printable
+      objects: [{ type: "qrcode", x: 35, y: 0, id: "q",
+        props: { content: "12345", magnification: 10 } }],
+    }));
+    expect(nearEdge.warnings.some((w) => w.objectId === "q" && w.kind.startsWith("offLabel"))).toBe(true);
+  });
+
+  it("clears a stale ^GFA cache when width or threshold change without fresh bytes", () => {
+    // A prop change on a machine without the source image must invalidate
+    // the cache, not print stale bytes at a new anchor width.
+    const entry = ObjectRegistry.image;
+    const obj = {
+      id: "i", type: "image", x: 0, y: 0, rotation: 0,
+      props: { imageId: "gone", widthDots: 64, threshold: 128, rotation: "N", _gfaCache: "^GFA,8,8,1,00FF00FF00FF00FF" },
+    } as never;
+    const widthOnly = entry.normalizeChanges!(obj, { props: { widthDots: 80 } });
+    expect((widthOnly.props as { _gfaCache?: string })._gfaCache).toBeUndefined();
+    expect("_gfaCache" in (widthOnly.props as object)).toBe(true);
+    const withFresh = entry.normalizeChanges!(obj, { props: { widthDots: 80, _gfaCache: "^GFA,1,1,1,00" } });
+    expect((withFresh.props as { _gfaCache?: string })._gfaCache).toBe("^GFA,1,1,1,00");
+    const unrelated = entry.normalizeChanges!(obj, { props: { rotation: "R" } });
+    expect("_gfaCache" in (unrelated.props as object)).toBe(false);
   });
 
   it("validate_zpl reports the intersection rect of two overlapping boxes", () => {
@@ -428,9 +550,9 @@ describe("buildCurrentDesignResult", () => {
     expect(b?.approx).toBe(false);
   });
 
-  it("keeps an unmeasured barcode approx", () => {
+  it("probes a barcode the app did not measure (kernel fallback, exact)", () => {
     const result = ok(buildCurrentDesignResult({ id: 2, designFile: design }));
-    expect(result.bounds.find((x) => x.objectId === "bc1")?.approx).toBe(true);
+    expect(result.bounds.find((x) => x.objectId === "bc1")?.approx).toBe(false);
   });
 
   it("maps a malformed design to the ToolError shape", () => {

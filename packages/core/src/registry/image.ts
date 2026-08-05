@@ -40,6 +40,12 @@ export function imageEmitDims(p: ImageProps): { width: number; height: number } 
   if (isImageRotatable(p) && isAxisSwapped(objectRotation(p))) {
     return { width: gfByteWidth(imageEmitHeight(p)), height: p.widthDots };
   }
+  if (!getImage(p.imageId) && objectRotation(p) === 'N') {
+    const header = gfaHeaderDims(p._gfaCache);
+    if (header) {
+      return { width: header.width, height: header.height ?? (p.heightDots ?? p.widthDots) };
+    }
+  }
   return { width: gfByteWidth(p.widthDots), height: imageEmitHeight(p) };
 }
 
@@ -99,6 +105,30 @@ function gfaSync(dataUrl: string, widthDots: number, threshold: number, rotation
   return raster ? gfaFromRaster(raster) : '';
 }
 
+/** Printed size from a ^GF header (spec p.215: width = bytes per row x 8,
+ *  lines = count / bytes per row); the header, not the props, is the byte
+ *  truth for store-less emit and bounds (uploads never persist heightDots).
+ *  Empty count slot (preserved foreign header): height null, callers fall
+ *  back to model dims. Null on unparsable or non-positive/fractional rows. */
+export function gfaHeaderDims(
+  cache: string | undefined,
+): { width: number; height: number | null } | null {
+  const m = cache ? /^\^GF[ABC],\d*,(\d*),(\d+),/.exec(cache) : null;
+  if (!m) return null;
+  const bytesPerRow = Number(m[2]);
+  if (bytesPerRow <= 0) return null;
+  const width = bytesPerRow * 8;
+  if (m[1] === "") return { width, height: null };
+  const height = Number(m[1]) / bytesPerRow;
+  return Number.isInteger(height) && height > 0 ? { width, height } : null;
+}
+
+/** Store-less byte source: unrotated (a re-raster needs the source image)
+ *  with a parsable header, which then also provides the emit dimensions. */
+function gfaCacheUsable(p: ImageProps): boolean {
+  return !!p._gfaCache && objectRotation(p) === 'N' && gfaHeaderDims(p._gfaCache) !== null;
+}
+
 export const image: ObjectTypeCore<ImageProps> = {
   label: 'Image',
   icon: 'img',
@@ -112,12 +142,23 @@ export const image: ObjectTypeCore<ImageProps> = {
   },
   defaultSize: { width: 200, height: 200 },
 
+  // A width/threshold change without a fresh cache in the same change
+  // invalidates the bytes, or emit/preflight would use the stale raster.
+  normalizeChanges: (_obj, changes) => {
+    const next = changes.props as Partial<ImageProps> | undefined;
+    if (!next || !('widthDots' in next || 'threshold' in next) || '_gfaCache' in next) {
+      return changes;
+    }
+    return { ...changes, props: { ...next, _gfaCache: undefined } };
+  },
+
   // No resolvable bytes (no opaque ^GF, no recall path, nothing cached) emits a
   // blank ^FD^FS, so flag the silent empty graphic. Pure (mirrors toZPL), so it
   // also covers exportable-but-hidden images the canvas never renders.
   preflight: (obj) => {
     const p = obj.props;
-    const resolvable = !!p.rawGf || !!p.storedAs || !!getImage(p.imageId);
+    const resolvable =
+      !!p.rawGf || !!p.storedAs || !!getImage(p.imageId) || gfaCacheUsable(p);
     return resolvable ? [] : [{ kind: 'imageMissing' }];
   },
 
@@ -174,7 +215,12 @@ export const image: ObjectTypeCore<ImageProps> = {
     if (p.storedAs) {
       return `${anchor}^XG${formatStoragePath(p.storedAs, true)},1,1^FS`;
     }
-    if (!cached) return `${anchor}^FD^FS`;
+    if (!cached) {
+      // Headless host (MCP sidecar) has no image store; the imported ^GFA
+      // cache is the only byte source. Rotation would need a re-raster.
+      if (gfaCacheUsable(p)) return `${anchor}${p._gfaCache}^FS`;
+      return `${anchor}^FD^FS`;
+    }
     // _gfaCache holds the upright bytes, so a rotated field regenerates fresh
     // (rasterizeMono bakes the rotation in).
     const rot = objectRotation(p);

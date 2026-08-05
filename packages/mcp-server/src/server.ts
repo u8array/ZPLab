@@ -35,9 +35,9 @@ export const SERVER_INSTRUCTIONS =
   "object types and their props. Build a label with create_draft (x/y in dots " +
   "from the top-left origin; props merge over defaults), then read the returned " +
   "warnings, bounds, and overlaps and iterate until nothing unintended remains. " +
-  "bounds/overlaps marked approx are headless estimates (barcodes and single-line " +
-  "text): keep extra " +
-  "clearance around them. Overlaps are neutral facts, not errors: a frame or " +
+  "Barcode bounds are probed with the app's measurement kernel; bounds/overlaps " +
+  "marked approx are headless estimates (single-line text): keep extra " +
+  "clearance around those. Overlaps are neutral facts, not errors: a frame or " +
   "reverse box overlaps its contents by design. Bring existing ZPL through " +
   "import_zpl (editable design file) or validate_zpl (lint only); both split " +
   "multi-label streams into one page per ^XA block. export_zpl returns the " +

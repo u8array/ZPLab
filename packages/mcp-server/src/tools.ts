@@ -8,7 +8,8 @@ import {
 } from "@zplab/core/lib/designFile";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { importZplText, type ZplImportResult } from "@zplab/core/lib/zplImportService";
-import { withFootprintBinding } from "./footprint.js";
+import { measureBoundsEntry, withFootprintBinding } from "./footprint.js";
+import { isBarcode } from "@zplab/core/lib/objectBounds";
 import type { ImportReport } from "@zplab/core/lib/zplParser";
 import { computePreflight } from "@zplab/core/lib/preflight";
 import type { BoundingBoxDots, ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
@@ -16,7 +17,7 @@ import type { DesignResponse } from "./appBridge.js";
 import { computeOverlaps, leafBoxesDots, MAX_OVERLAPS, type OverlapDots } from "@zplab/core/lib/objectOverlap";
 import { getEntry, ObjectRegistry } from "@zplab/core/registry";
 import { exportableLeaves, pageLabelConfig, type LabelObject, type Page } from "@zplab/core/types/Group";
-import { DPMM_VALUES, isDpmm, type Dpmm, type JmDensity, type LabelConfig } from "@zplab/core/types/LabelConfig";
+import { effectiveDpmm, DPMM_VALUES, isDpmm, type Dpmm, type JmDensity, type LabelConfig } from "@zplab/core/types/LabelConfig";
 import type { PreflightKind, PreflightSeverity } from "@zplab/core/lib/preflight";
 import type { Variable } from "@zplab/core/types/Variable";
 
@@ -202,8 +203,9 @@ function preflightOf(
   objects: LabelObject[],
   label: LabelConfig,
   pageIndex: number,
+  measured?: ObjectBoundsCtx["measured"],
 ): PreflightWarning[] {
-  return computePreflight(exportableLeaves(objects), { label }, "mm").map((f) => ({
+  return computePreflight(exportableLeaves(objects), { label, measured }, "mm").map((f) => ({
     pageIndex,
     objectId: f.objectId,
     kind: f.kind,
@@ -214,7 +216,8 @@ function preflightOf(
 
 /** Per-object geometry so the agent can reason about size/placement without
  *  recomputing it. Dots, visual top-left. `approx` marks headless estimates
- *  (barcode footprints and single-line text), not render-exact bounds. */
+ *  (single-line text, unprobed leaves); probed barcode footprints share the
+ *  app's measurement kernel and report exact. */
 export interface ObjectBounds extends BoundingBoxDots {
   pageIndex: number;
   objectId: string;
@@ -325,6 +328,28 @@ export type ValidateDraftResult =
     }
   | ToolError;
 
+/** Probe every barcode's real bounds (the bwip kernel the app uses) so
+ *  geometry reports true sizes and anchors instead of the registry's
+ *  default boxes. Skips pages past the geometry cap. */
+function measuredBarcodes(
+  pages: PageLike[],
+  label: LabelConfig,
+  measured?: ObjectBoundsCtx["measured"],
+): ObjectBoundsCtx["measured"] {
+  const map = new Map(measured ?? []);
+  for (const page of pages) {
+    const leaves = exportableLeaves(page.objects);
+    if (leaves.length > MAX_GEOMETRY_OBJECTS) continue;
+    const dpmm = effectiveDpmm(pageLabelConfig(label, page));
+    for (const leaf of leaves) {
+      if (!isBarcode(leaf) || map.has(leaf.id)) continue;
+      const entry = measureBoundsEntry(leaf, dpmm);
+      if (entry) map.set(leaf.id, entry);
+    }
+  }
+  return map;
+}
+
 /** Preflight + geometry with markers resolved against the design's own
  *  bindings; the one report block every design-shaped tool returns. */
 function boundReport(
@@ -333,10 +358,16 @@ function boundReport(
   pages: Page[],
   measured?: ObjectBoundsCtx["measured"],
 ) {
-  return withFootprintBinding(label, variables, () => ({
-    warnings: perPage(pages, label, preflightOf),
-    ...geometryFor(pages, label, measured),
-  }));
+  return withFootprintBinding(label, variables, () => {
+    // One probe pass for both consumers, or the off-label check would judge
+    // clipping with unprobed default boxes while bounds report real sizes.
+    const probed = measuredBarcodes(pages, label, measured);
+    return {
+      warnings: perPage(pages, label, (objects, pageLabel, i) =>
+        preflightOf(objects, pageLabel, i, probed)),
+      ...geometryFor(pages, label, probed),
+    };
+  });
 }
 
 export function validateDraft(designFile: unknown): ValidateDraftResult {
@@ -551,6 +582,7 @@ const PROP_SUMMARIES: Record<string, Record<string, string>> = {
     fontHeight: "dots, glyph height",
     fontWidth: "dots, 0 = auto from height",
     rotation: "N | R | I | B (0/90/180/270)",
+    reverse: "boolean, white-on-black knockout (^FR; needs a dark shape behind)",
   },
   code128: {
     content: "string payload",
