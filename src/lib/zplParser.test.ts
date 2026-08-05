@@ -5,6 +5,7 @@ import { generateZPL } from '@zplab/core/lib/zplGenerator';
 import { formatLabelMetaComment } from '@zplab/core/lib/zplLabelMeta';
 import { ObjectRegistry } from '@zplab/core/registry';
 import { defined, props, serialOf, parseSingle, commandsOf } from '../test/helpers';
+import { parseGfWrapper } from '@zplab/core/lib/zplParser/decoders/crc';
 
 // Drift guard for the bare-^BY hazard set. Every 1D and postal barcode emits a
 // ^BY on regen, so it must be classified ^BY-consuming; a forgotten new one
@@ -1286,6 +1287,156 @@ describe('parseZPL — ^FX label metadata sidecar', () => {
   });
 });
 
+// ── raw binary ^GF payloads (byte-counted) ───────────────────────────────────
+
+describe('parseZPL — raw binary ^GF payloads', () => {
+  // Contains a literal "^FS", the delimiter, a tilde and high bytes: every
+  // way a prefix-scanned tokenizer would split the field early.
+  const BIN = String.fromCharCode(0x5e, 0x46, 0x53, 0x2c, 0x7e, 0x80, 0xff, 0x0a);
+
+  it('decodes a raw ^GFB payload and keeps parsing after it', () => {
+    const { objects, findings } = parseSingle(
+      `^XA^FO0,0^GFB,8,8,1,${BIN}^FS^FO0,20^A0N,30,30^FDAFTER^FS^XZ`,
+      8,
+    );
+    expect(objects).toHaveLength(2);
+    const img = props(objects[0]);
+    expect(objects[0]?.type).toBe('image');
+    expect(img.widthDots).toBe(8);
+    expect(img.heightDots).toBe(8);
+    expect(img.imageId).toBeTruthy();
+    // The cache re-encodes the raster as A + :B64: (the ZDesigner-proven spec
+    // form); UTF-8 write-out of the emitted ZPL must not corrupt it.
+    expect(img._gfaCache).toMatch(/^\^GFA,8,8,1,:B64:/);
+    const wrapped = parseGfWrapper(String(img._gfaCache).slice('^GFA,8,8,1,'.length));
+    expect(wrapped?.crcOk).toBe(true);
+    expect(Array.from(wrapped?.bytes ?? [])).toEqual(
+      Array.from(BIN, (c) => c.charCodeAt(0)),
+    );
+    expect(props(objects[1]).content).toBe('AFTER');
+    expect(commandsOf({ findings }, 'browserLimit')).toHaveLength(0);
+    expect(commandsOf({ findings }, 'partial')).not.toContain('^GF');
+  });
+
+  it('preserves a raw ^GFC payload byte-counted and text-safe', () => {
+    // Zebra's compressed-binary scheme is proprietary: no raster, but the
+    // bytes survive as a :B64:-wrapped rawGf and the stream keeps parsing.
+    const bin = String.fromCharCode(0x5e, 0x58, 0x5a, 0x81); // literal "^XZ" + high byte
+    const { objects, findings } = parseSingle(`^XA^FO0,0^GFC,4,16,2,${bin}^FS^XZ`, 8);
+    expect(objects).toHaveLength(1);
+    const p = props(objects[0]);
+    expect(p.widthDots).toBe(16);
+    expect(p.heightDots).toBe(8);
+    expect(String(p.rawGf)).toMatch(/^\^GFC,4,16,2,:B64:/);
+    const wrapped = parseGfWrapper(String(p.rawGf).slice('^GFC,4,16,2,'.length));
+    expect(Array.from(wrapped?.bytes ?? [])).toEqual(
+      Array.from(bin, (c) => c.charCodeAt(0)),
+    );
+    expect(commandsOf({ findings }, 'partial')).toContain('^GF');
+  });
+
+  it('does not latch a ^JM density from bytes inside a binary payload', () => {
+    // "^JMB," parses as a clean ^JM token when the payload is prefix-scanned.
+    const jmBin = '^JMB,' + String.fromCharCode(0x80, 0x81, 0x82);
+    const { labelConfig } = parseSingle(`^XA^FO0,0^GFB,8,8,1,${jmBin}^FS^XZ`, 8);
+    expect(labelConfig.jmDensity).toBeUndefined();
+  });
+
+  it('keeps the prefix-scan boundary when the byte count is invalid', () => {
+    // b missing/zero means the device ignores the command; the payload is
+    // ASCII here, so the verbatim preserve stays byte-exact (no wrapper).
+    const { objects } = parseSingle('^XA^FO0,0^GFB,0,8,1,AB^FS^XZ', 8);
+    expect(objects).toHaveLength(1);
+    expect(props(objects[0]).rawGf).toBe('^GFB,0,8,1,AB');
+  });
+
+  it('reads a raw payload whose first byte is a colon byte-counted', () => {
+    // Only genuine :B64:/:Z64: wrappers opt out of the byte-counted read.
+    const bin = ':' + String.fromCharCode(0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86);
+    const { objects } = parseSingle(`^XA^FO0,0^GFB,8,8,1,${bin}^FS^XZ`, 8);
+    expect(objects).toHaveLength(1);
+    expect(props(objects[0]).imageId).toBeTruthy();
+  });
+
+  it('honours a wrapper behind leading whitespace (no byte-counted read)', () => {
+    // parseGfWrapper trims, so the opt-out must too.
+    const b64 = btoa(String.fromCharCode(0, 255, 0, 255));
+    const field = ':B64:' + b64 + ':' + testCrc16(b64);
+    const nl = String.fromCharCode(10);
+    const { objects } = parseSingle('^XA^FO0,0^GFB,4,4,1,' + nl + field + '^FS^XZ', 8);
+    expect(objects).toHaveLength(1);
+    expect(props(objects[0]).imageId).toBeTruthy();
+  });
+
+  it('wraps a byte-counted payload of text-safe bytes too (CRLF hazard)', () => {
+    // LF bytes are load-bearing data here; an unwrapped emit would break on
+    // newline normalization.
+    const bin = 'AB' + String.fromCharCode(10) + 'CD' + String.fromCharCode(10) + 'EF';
+    const { objects } = parseSingle(`^XA^FO0,0^GFB,8,8,1,${bin}^FS^XZ`, 8);
+    expect(props(objects[0])._gfaCache).toMatch(/^\^GFA,8,8,1,:B64:/);
+  });
+
+  it('keeps a format-A cache verbatim even with a stray control byte', () => {
+    // The NUL is noise in hex text; wrapping would base64 the hex CHARS as
+    // if they were raster bytes and silently replace the bitmap.
+    const { objects } = parseSingle(`^XA^FO0,0^GFA,6,6,1,FF00FF00FF00${String.fromCharCode(0)}^FS^XZ`, 8);
+    const cache = String(props(objects[0])._gfaCache);
+    expect(cache).not.toContain(':B64:');
+    expect(cache).toContain('FF00FF00FF00');
+  });
+
+  it('never decodes format C, wrapper or not (data stays Zebra-compressed)', () => {
+    const b64 = btoa('AAAA');
+    const field = `:B64:${b64}:${testCrc16(b64)}`;
+    const { objects, findings } = parseSingle(`^XA^FO0,0^GFC,4,16,2,${field}^FS^XZ`, 8);
+    expect(props(objects[0]).rawGf).toBe(`^GFC,4,16,2,${field}`);
+    expect(props(objects[0]).imageId).toBeFalsy();
+    expect(commandsOf({ findings }, 'partial')).toContain('^GF');
+  });
+
+  it('preserves a non-byte-per-char payload verbatim (paste path)', () => {
+    // Chars above 0xFF cannot round-trip through latin1; the exact string is
+    // the only faithful preserve.
+    const field = '€ABC';
+    const { objects } = parseSingle(`^XA^FO0,0^GFC,4,16,2,${field}^FS^XZ`, 8);
+    expect(props(objects[0]).rawGf).toBe(`^GFC,4,16,2,${field}`);
+  });
+
+  it('does not byte-count a compressed ~DY (t is the decompressed size)', () => {
+    // Spec p.182: for b=C, t counts bytes AFTER decompression; trusting it
+    // would swallow following labels.
+    const zpl =
+      `~DYR:LOGO,C,G,20,1,ABCD
+` +
+      '^XA^FO10,10^A0N,20,0^FDfirst^FS^XZ^XA^FO10,10^A0N,20,0^FDsecond^FS^XZ';
+    const r = parseZPL(zpl, 8);
+    expect(r.pages).toHaveLength(2);
+  });
+
+  it('caps a binary ^GF browserLimit finding instead of dumping the payload', () => {
+    // bytesPerRow=0 rejects after the byte-counted consume; the finding must
+    // not carry the whole blob.
+    const blob = String.fromCharCode(...Array.from({ length: 200 }, (_, i) => 0x80 + (i % 64)));
+    const { findings } = parseSingle(`^XA^FO0,0^GFB,200,200,0,${blob}^FS^XZ`, 8);
+    const gf = commandsOf({ findings }, 'browserLimit').find((c) => c.startsWith('^GF'));
+    expect(gf).toBeDefined();
+    expect(gf!.length).toBeLessThan(120);
+  });
+
+  it('decodes a raw binary ~DY graphic upload for ^XG recall', () => {
+    const bin = String.fromCharCode(0x5e, 0x00, 0xff, 0x2c); // "^", NUL, high byte, ","
+    const zpl =
+      `~DYR:BLOB,B,G,4,1,${bin}
+` +
+      '^XA^FO50,80^XGR:BLOB.GRF,1,1^FS^XZ';
+    const { objects, findings } = parseSingle(zpl, 8);
+    expect(objects).toHaveLength(1);
+    expect(objects[0]?.type).toBe('image');
+    expect(props(objects[0]).widthDots).toBe(8);
+    expect(commandsOf({ findings }, 'browserLimit')).toHaveLength(0);
+  });
+});
+
 // ── ~DY graphic upload + ^XG recall ──────────────────────────────────────────
 
 describe('parseZPL — ~DY + ^XG graphic upload/recall', () => {
@@ -2538,6 +2689,8 @@ describe('parseZPL — unknown findings', () => {
   });
 
   it('preserves an undecodable ^GFB format as an opaque verbatim image', () => {
+    // b=32 overruns the stream end; the byte-counted read declines (a device
+    // would sit waiting) and the prefix scan preserves the span verbatim.
     const { objects, findings } = parseSingle('^XA^FO0,0^GFB,32,32,4,AABBCCDD^FS^XZ', 8);
     expect(objects).toHaveLength(1);
     expect(objects[0]?.type).toBe('image');

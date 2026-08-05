@@ -415,12 +415,14 @@ describe("mcp-server tools", () => {
     expect(created.geometryTruncated).toBeUndefined();
   });
 
-  it("counts the size cap in bytes, not UTF-16 code units", () => {
-    // ~200k '€' = 200k code units but ~600k UTF-8 bytes, over the 256 KB cap.
-    const multibyte = "^XA^FO10,10^FD" + "€".repeat(200_000) + "^FS^XZ";
-    expect(multibyte.length).toBeLessThan(256 * 1024);
-    const v = validateZpl(multibyte);
-    expect(v.ok).toBe(false);
+  it("admits a byte-per-char binary stream up to the full cap", () => {
+    // The cap counts code units: UTF-8 byteLength would double-count latin1
+    // binary payloads and reject valid streams at half the documented limit.
+    const bin = String.fromCharCode(0x80).repeat(200_000);
+    const v = validateZpl(`^XA^FO0,0^GFB,200000,200000,250,${bin}^FS^XZ`);
+    expect(v.ok).toBe(true);
+    const over = validateZpl("^XA^FO10,10^FD" + "x".repeat(262_144) + "^FS^XZ");
+    expect(over.ok).toBe(false);
   });
 
   it("counts group children against the object cap (no smuggling via subtree)", () => {

@@ -21,7 +21,7 @@ interface HeadToken {
 export interface PrefixState {
   caretChar: string;
   tildeChar: string;
-  delim: string;
+  delimiterChar: string;
 }
 
 /** Tokenize from `fromOffset` with the live caret/delimiter per token, applying
@@ -30,11 +30,11 @@ export interface PrefixState {
 function* headTokens(zpl: string, fromOffset: number, st: PrefixState): Generator<HeadToken> {
   for (const t of tokenize(zpl.slice(fromOffset), st)) {
     const arg = t.rest[0];
-    if (t.cmd === "CC") { if (acceptsPrefixRemap(arg, st.tildeChar, st.delim)) st.caretChar = arg; continue; }
-    if (t.cmd === "CT") { if (acceptsPrefixRemap(arg, st.caretChar, st.delim)) st.tildeChar = arg; continue; }
-    if (t.cmd === "CD") { if (acceptsPrefixRemap(arg, st.caretChar, st.tildeChar)) st.delim = arg; continue; }
+    if (t.cmd === "CC") { if (acceptsPrefixRemap(arg, st.tildeChar, st.delimiterChar)) st.caretChar = arg; continue; }
+    if (t.cmd === "CT") { if (acceptsPrefixRemap(arg, st.caretChar, st.delimiterChar)) st.tildeChar = arg; continue; }
+    if (t.cmd === "CD") { if (acceptsPrefixRemap(arg, st.caretChar, st.tildeChar)) st.delimiterChar = arg; continue; }
     const start = fromOffset + t.start;
-    yield { cmd: t.cmd, rest: t.rest, start, isCaret: zpl[start] === st.caretChar, caret: st.caretChar, delim: st.delim };
+    yield { cmd: t.cmd, rest: t.rest, start, isCaret: zpl[start] === st.caretChar, caret: st.caretChar, delim: st.delimiterChar };
   }
 }
 
@@ -47,7 +47,7 @@ export function lookaheadJmDensity(
   delimiter: string,
 ): JmDensity | undefined {
   let density: JmDensity | undefined;
-  const st: PrefixState = { caretChar: chars.caretChar, tildeChar: chars.tildeChar, delim: delimiter };
+  const st: PrefixState = { caretChar: chars.caretChar, tildeChar: chars.tildeChar, delimiterChar: delimiter };
   for (const t of headTokens(zpl, fromOffset, st)) {
     if (t.cmd === "FS" || t.cmd === "XZ") break;
     if (t.cmd === "XA" && t.start > fromOffset) break;
@@ -101,7 +101,7 @@ export function reconstructBlockHead(block: string): {
   density: JmDensity | undefined;
   head: FormatHead | undefined;
 } {
-  return scanBlockHead(block, { caretChar: "^", tildeChar: "~", delim: "," }, false);
+  return scanBlockHead(block, { caretChar: "^", tildeChar: "~", delimiterChar: "," }, false);
 }
 
 /** Per-block head density and FormatHead for a legacy stream, threading ^CC/^CT/^CD
@@ -110,7 +110,7 @@ export function reconstructBlockHead(block: string): {
 export function reconstructLegacyBlockHeads(
   blocks: readonly (string | undefined)[],
 ): { density: JmDensity | undefined; head: FormatHead | undefined }[] {
-  const st: PrefixState = { caretChar: "^", tildeChar: "~", delim: "," };
+  const st: PrefixState = { caretChar: "^", tildeChar: "~", delimiterChar: "," };
   let carried: JmDensity | undefined;
   return blocks.map((block) => {
     if (block === undefined) return { density: carried, head: undefined };
@@ -130,7 +130,7 @@ export function scanBareStream(
 ): { hasXa: boolean; density: JmDensity | undefined } {
   let density: JmDensity | undefined;
   let inHead = true;
-  const st: PrefixState = { caretChar: chars.caretChar, tildeChar: chars.tildeChar, delim: delimiter };
+  const st: PrefixState = { caretChar: chars.caretChar, tildeChar: chars.tildeChar, delimiterChar: delimiter };
   for (const t of headTokens(zpl, 0, st)) {
     if (t.cmd === "XA") return { hasXa: true, density: undefined };
     if (t.cmd === "FS" || t.cmd === "XZ") { inHead = false; continue; }

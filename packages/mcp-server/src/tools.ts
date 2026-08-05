@@ -432,16 +432,16 @@ export function exportZpl(designFile: unknown): ExportZplResult {
 const DEFAULT_WIDTH_MM = 100;
 const DEFAULT_HEIGHT_MM = 50;
 
-/** Byte budget for a raw ZPL stream. Import retains overlay bytes and
- *  re-serializes, so an oversized stream costs several copies plus O(n²)
- *  geometry; real labels are far under this. */
-const MAX_ZPL_BYTES = 256 * 1024;
+/** Size budget (UTF-16 code units) for a raw ZPL stream. Import retains
+ *  overlay bytes and re-serializes, so an oversized stream costs several
+ *  copies plus O(n²) geometry; real labels are far under this. */
+const MAX_ZPL_CHARS = 256 * 1024;
 
 function oversizeError(zpl: string): ToolError | null {
-  // Byte length, not zpl.length: multibyte ^FD content is up to ~4x the code
-  // unit count, which would slip past the memory budget the cap protects.
-  return Buffer.byteLength(zpl, "utf8") > MAX_ZPL_BYTES
-    ? { ok: false, errors: [`ZPL exceeds the ${MAX_ZPL_BYTES}-byte limit`] }
+  // Code units, not UTF-8 bytes: cost scales with units, and byteLength
+  // would double-count byte-per-char binary payloads.
+  return zpl.length > MAX_ZPL_CHARS
+    ? { ok: false, errors: [`ZPL exceeds the ${MAX_ZPL_CHARS}-character limit`] }
     : null;
 }
 

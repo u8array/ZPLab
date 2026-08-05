@@ -134,7 +134,7 @@ The Printer Settings Modal (Media & Feed / Print Quality / Clock & Time / Encodi
 | `[x]` | `^GD` | diagonal line | |
 | `[x]` | `^GE` | ellipse | |
 | `[x]` | `^GC` | circle | |
-| `[x]` | `^GF` | monochrome bitmap (^GFA and B64/Z64-wrapped B/C; raw binary skipped) | |
+| `[x]` | `^GF` | monochrome bitmap (A hex/RLE, B64/Z64 wrappers, raw binary B; raw C preserved) | |
 | `[x]` | `^GS` | graphic symbol (printer resident chars) | |
 | `[ ]` | `^IL` | image load | `Native build` |
 | `[ ]` | `^IM` | image move | `Native build` |

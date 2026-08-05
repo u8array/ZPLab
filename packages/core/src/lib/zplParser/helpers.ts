@@ -3,6 +3,7 @@ import { isZplRotation, type ZplRotation } from "../../registry/rotation";
 import { opensImmediateCommand } from "../zplImmediate";
 
 import { newId } from "../ids";
+import { NON_LATIN1_RE } from "../binaryText";
 /** Validated ZplRotation or `fallback` (default 'N'). */
 export function readRotation(
   raw: string | undefined,
@@ -41,11 +42,104 @@ export function acceptsPrefixRemap(
   return !!char && char > " " && char !== "\x7F" && char !== roleA && char !== roleB;
 }
 
-/** Live command-prefix chars; the tokenizer reads these on every char
- *  scan so ^CC/^CT mutations take effect on the very next command. */
+/** Live command-prefix and delimiter chars; the tokenizer reads these on
+ *  every scan so ^CC/^CT/^CD mutations take effect on the next command. */
 export interface TokenizerChars {
   caretChar: string;
   tildeChar: string;
+  delimiterChar: string;
+}
+
+/** Raw-binary payload commands: header slots before data, format/count slot
+ *  indices, `formats` = letters whose count is the transmitted byte count
+ *  (^GF b: B and C, p.215; ~DY t is the decompressed size for C, p.182). */
+const BINARY_PAYLOAD_SPECS: Record<
+  string,
+  { params: number; format: number; count: number; formats: readonly string[] }
+> = {
+  GF: { params: 4, format: 0, count: 1, formats: ["B", "C"] },
+  DY: { params: 5, format: 1, count: 3, formats: ["B"] },
+};
+
+/** Sanity cap on the header span scanned for delimiters; real headers are a
+ *  path plus a few numerics, so a longer span means delimiter-less junk. */
+const BINARY_HEADER_CAP = 128;
+
+const UNSAFE_PAYLOAD_RE = /[^ -~]/;
+
+export interface UnsafeRawFieldSpan extends BinaryPayloadSpan {
+  start: number;
+}
+
+/** Byte-counted raw fields (^CC/^CT/^CD threaded like the parser) whose
+ *  counted payload cannot survive a UTF-8 decode collapse, CRLF
+ *  normalization, or a verbatim overlay replay. */
+export function unsafeRawFieldSpans(text: string): UnsafeRawFieldSpan[] {
+  const st: TokenizerChars = { caretChar: "^", tildeChar: "~", delimiterChar: "," };
+  const spans: UnsafeRawFieldSpan[] = [];
+  for (const t of tokenize(text, st)) {
+    const arg = t.rest[0];
+    if (t.cmd === "CC") { if (acceptsPrefixRemap(arg, st.tildeChar, st.delimiterChar)) st.caretChar = arg; continue; }
+    if (t.cmd === "CT") { if (acceptsPrefixRemap(arg, st.caretChar, st.delimiterChar)) st.tildeChar = arg; continue; }
+    if (t.cmd === "CD") { if (acceptsPrefixRemap(arg, st.caretChar, st.tildeChar)) st.delimiterChar = arg; continue; }
+    if (t.cmd !== "GF" && t.cmd !== "DY") continue;
+    const span = binaryPayloadEnd(text, t.cmd, t.start + 3, st.delimiterChar);
+    if (!span) continue;
+    const payload = text.slice(span.dataStart, span.end);
+    // Chars above 0xFF (paste path) have no byte truth left to wrap; the
+    // verbatim string is the only faithful preserve (see preserveGfData).
+    if (UNSAFE_PAYLOAD_RE.test(payload) && !NON_LATIN1_RE.test(payload)) {
+      spans.push({ start: t.start, ...span });
+    }
+  }
+  return spans;
+}
+
+export interface BinaryPayloadSpan {
+  dataStart: number;
+  end: number;
+  /** Slot bounds of the format letter, for a text-safe transcode. */
+  formatStart: number;
+  formatEnd: number;
+  format: "B" | "C";
+}
+
+/** Data span of a byte-counted raw binary payload; null keeps the
+ *  prefix-scan boundary (ASCII formats, wrappers, broken headers, and a
+ *  count past the end of input, where the device would sit waiting). */
+function binaryPayloadEnd(
+  zpl: string,
+  cmd: string,
+  restStart: number,
+  delimiter: string,
+): BinaryPayloadSpan | null {
+  const spec = BINARY_PAYLOAD_SPECS[cmd];
+  if (!spec) return null;
+  const params: string[] = [];
+  let p = restStart;
+  let formatStart = restStart;
+  let formatEnd = restStart;
+  for (let n = 0; n < spec.params; n++) {
+    const next = zpl.indexOf(delimiter, p);
+    if (next === -1 || next - restStart > BINARY_HEADER_CAP) return null;
+    params.push(zpl.slice(p, next));
+    if (n === spec.format) {
+      formatStart = p;
+      formatEnd = next;
+    }
+    p = next + 1;
+  }
+  const format = params[spec.format]?.trim().toUpperCase();
+  if ((format !== "B" && format !== "C") || !spec.formats.includes(format)) return null;
+  // Only genuine wrappers opt out; a raster whose first byte is ":" must
+  // still be read byte-counted. parseGfWrapper trims, so skip whitespace too.
+  let q = p;
+  while (q < zpl.length && /\s/.test(zpl[q] ?? "")) q++;
+  if (zpl.startsWith(":B64:", q) || zpl.startsWith(":Z64:", q)) return null;
+  const count = Number.parseInt(params[spec.count] ?? "", 10);
+  if (count <= 0 || Number.isNaN(count)) return null;
+  const end = p + count;
+  return end <= zpl.length ? { dataStart: p, end, formatStart, formatEnd, format } : null;
 }
 
 /** Command-name alphabet: a prefix char outside it can never be part of a
@@ -117,6 +211,12 @@ export function* tokenize(
       const argChar = zpl[cmdStart + 3] ?? "";
       pos = cmdStart + 4;
       yield { cmd, rest: argChar, start: cmdStart, end: pos };
+      continue;
+    }
+    const bin = binaryPayloadEnd(zpl, cmd, cmdStart + 3, chars.delimiterChar);
+    if (bin !== null) {
+      pos = bin.end;
+      yield { cmd, rest: zpl.slice(cmdStart + 3, bin.end), start: cmdStart, end: bin.end };
       continue;
     }
     const boundary = PAYLOAD_CMDS.has(cmd) ? isCmdStartInPayload : isCmdStart;

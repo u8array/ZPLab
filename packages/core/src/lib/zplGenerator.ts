@@ -1,4 +1,7 @@
 import { mmToDots } from './coordinates';
+import { CONTROL_BYTES_RE } from './binaryText';
+import { unsafeRawFieldSpans } from './zplParser/helpers';
+import { rewriteRawFieldSpans } from './zplParser/decoders/gfa';
 import { getEntry, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import {
@@ -23,7 +26,7 @@ import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from '
 import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
-import { imageEmitDims, type ImageProps } from '../registry/image';
+import { inlineGfaFor, imageEmitDims, type ImageProps } from '../registry/image';
 import { formatStoragePath } from './storagePath';
 
 function formatDownloadObject(m: CustomFontMapping): string | undefined {
@@ -169,9 +172,11 @@ function formatSetOffset(
 
 /** ~DY for a graphic upload. Format letter is preserved so :Z64: stays paired with C. */
 function formatGraphicUpload(p: ImageProps): string | undefined {
-  if (!p.storedAs || !p._gfaCache) return undefined;
+  if (!p.storedAs) return undefined;
+  const cache = p._gfaCache ?? inlineGfaFor(p);
+  if (!cache) return undefined;
   // Byte-count headers are optional in ^GF, hence \d* not \d+.
-  const m = /^\^GF([ABC]),(\d*),(\d*),(\d+),([\s\S]*)$/.exec(p._gfaCache);
+  const m = /^\^GF([ABC]),(\d*),(\d*),(\d+),([\s\S]*)$/.exec(cache);
   if (!m) return undefined;
   const format = m[1];
   const total = m[2];
@@ -380,10 +385,53 @@ function emitPageBlock(
     else if (sawNew) return generateZplBlock(label, page.objects, variables);
   }
 
-  const dirtyLeaves = exportable.filter((l) => segmentIds.has(l.id) && l.dirty);
+  // Unsafe counted spans: linked segments re-emit from their wrapped model
+  // bytes, unlinked ones (e.g. a ~DY no ^XG consumes) rewrite in place.
+  // Detection runs on the joined block so earlier-segment remaps thread.
+  const unsafeSpans = unsafeRawFieldSpans(overlay.segments.map((seg) => seg.text).join(''));
+  const binarySegIds = new Set<string>();
+  const rewrittenSegs = new Map<number, string>();
+  let fullRegen = false;
+  let segOffset = 0;
+  overlay.segments.forEach((seg, i) => {
+    const from = segOffset;
+    const to = (segOffset += seg.text.length);
+    const inSeg = unsafeSpans.filter((sp) => sp.start < to && sp.end > from);
+    if (inSeg.some((sp) => sp.start < from || sp.end > to)) {
+      fullRegen = true;
+      return;
+    }
+    if (seg.kind === 'object') {
+      if (inSeg.length > 0 || CONTROL_BYTES_RE.test(seg.text)) binarySegIds.add(seg.objectId);
+      return;
+    }
+    if (inSeg.length === 0 && !CONTROL_BYTES_RE.test(seg.text)) return;
+    const rewritten = rewriteRawFieldSpans(
+      seg.text,
+      inSeg.map((sp) => ({
+        ...sp,
+        start: sp.start - from,
+        dataStart: sp.dataStart - from,
+        formatStart: sp.formatStart - from,
+        formatEnd: sp.formatEnd - from,
+        end: sp.end - from,
+      })),
+    );
+    // Residual control junk outside counted fields has no safe form.
+    if (CONTROL_BYTES_RE.test(rewritten)) {
+      fullRegen = true;
+      return;
+    }
+    rewrittenSegs.set(i, rewritten);
+  });
+  if (fullRegen) return generateZplBlock(label, page.objects, variables);
+
+  const dirtyLeaves = exportable.filter(
+    (l) => segmentIds.has(l.id) && (l.dirty || binarySegIds.has(l.id)),
+  );
   const newLeaves = exportable.filter((l) => !segmentIds.has(l.id));
 
-  // A verbatim 0-edit replay is always byte-safe; a regeneration in a
+  // A verbatim replay of text-safe segments is byte-safe; a regeneration in a
   // non-regenSafe block is not, so fall back wholesale the moment an edit
   // (dirty or new) exists there.
   if ((dirtyLeaves.length > 0 || newLeaves.length > 0) && !overlay.regenSafe) {
@@ -418,15 +466,15 @@ function emitPageBlock(
     if (headerLines.length > 0) out.push(`${headerLines.join('\n')}\n`);
   };
 
-  for (const seg of overlay.segments) {
+  for (const [i, seg] of overlay.segments.entries()) {
     if (seg.kind === 'raw' || seg.kind === 'config') {
-      out.push(seg.text);
+      out.push(rewrittenSegs.get(i) ?? seg.text);
       continue;
     }
     // object segment
     const live = exportableById.get(seg.objectId);
     if (!live) continue; // deleted or hidden
-    if (!live.dirty) {
+    if (!live.dirty && !binarySegIds.has(seg.objectId)) {
       out.push(seg.text); // untouched -> verbatim
       continue;
     }
@@ -656,7 +704,7 @@ function generateZplBlock(
   for (const obj of flattenObjects(objects)) {
     if (obj.type !== 'image') continue;
     const p = obj.props as ImageProps;
-    if (!p.storedAs || !p._gfaCache) continue;
+    if (!p.storedAs) continue;
     // Recall-only: bytes uploaded out-of-band; ZPL only emits ^XG references.
     if (p.storedAs.embedInZpl === false) continue;
     const key = formatStoragePath(p.storedAs, false);
