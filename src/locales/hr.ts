@@ -457,6 +457,7 @@ const hr = {
     markerArmFailed: 'Oznake se ispisuju kao obični tekst',
     gs1ValueInvalid: 'Vrijednost varijable kvari GS1 podatke',
     gs1ContentUnparsed: 'GS1 sadržaj se ne može raščlaniti',
+    previewApproximate: 'Pregled je približan prikaz otisnutog simbola',
     printerSupportLimited: 'Ograničena podrška',
     qrRotatedStatic: 'Rotirani QR kod ispisuje statičnu vrijednost',
     qrRotatedModel2: 'Rotirani QR kod ispisuje kao Model 2',
@@ -1262,7 +1263,8 @@ const hr = {
       height: 'Visina',
       moduleWidth: 'Širina modula',
       microPdfRowHeight: 'Visina retka MicroPDF',
-      microPdfRows: 'MicroPDF retci',
+      microPdfModuleWidth: 'Širina modula MicroPDF',
+      wideRatio: 'Omjer širokog stupca',
     },
   },
 

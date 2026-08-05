@@ -180,6 +180,8 @@ export interface FieldState {
   bcInterp: boolean;
   bcInterpAbove: boolean;
   bcCheck: boolean;
+  bcMsiCheckMode: "C" | "D" | undefined;
+  bcMsiHriCheck: boolean;
   bcRotation: ZplRotation;
   /** ^BC m=D (UCC/EAN) → GS1-128; consumed by the code128 case in flushField. */
   bcGs1: boolean;
@@ -216,14 +218,16 @@ export interface FieldState {
   maxicodeNumber: number;
   maxicodeTotal: number;
   mpdfRowHeight: number;
+  mpdfMode: number;
   cbRowHeight: number;
   cbColumns: number;
   cbSecurity: CodablockProps["securityLevel"];
   // TLC39 pending
   tlcModuleWidth: number | undefined;
+  tlcWideRatio: number;
   tlcHeight: number;
+  tlcMicroPdfModuleWidth: number;
   tlcMicroPdfRowHeight: number;
-  tlcMicroPdfRows: number;
   // Pending font reference (^A@ or ^A{id}), mutually exclusive
   pendingPrinterFontName: string | undefined;
   pendingFontId: string | undefined;
@@ -296,6 +300,8 @@ export function resetSymbologyModeFlags(field: FieldState): void {
   field.bcGs1 = false;
   field.dmEscape = undefined;
   field.dmQuality = 200;
+  field.bcMsiCheckMode = undefined;
+  field.bcMsiHriCheck = false;
 }
 
 /** Reset the field-scoped ^FB/^TB block defaults. They bind to a single field
@@ -422,6 +428,8 @@ export function freshFieldState(): FieldState {
     bcInterp: true,
     bcInterpAbove: false,
     bcCheck: false,
+    bcMsiCheckMode: undefined,
+    bcMsiHriCheck: false,
     bcRotation: "N",
     bcGs1: false,
     bcCode49Mode: "A",
@@ -447,13 +455,15 @@ export function freshFieldState(): FieldState {
     maxicodeNumber: 1,
     maxicodeTotal: 1,
     mpdfRowHeight: 10,
+    mpdfMode: 0,
     cbRowHeight: 10,
     cbColumns: CODABLOCK_DEFAULT_COLUMNS,
     cbSecurity: "Y",
     tlcModuleWidth: undefined,
+    tlcWideRatio: 2,
     tlcHeight: 40,
+    tlcMicroPdfModuleWidth: 2,
     tlcMicroPdfRowHeight: 4,
-    tlcMicroPdfRows: 4,
     pendingPrinterFontName: undefined,
     pendingFontId: undefined,
     snPending: false,

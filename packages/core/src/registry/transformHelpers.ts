@@ -73,19 +73,27 @@ function commitRotatedSizeTransform<
   } as Partial<P>;
 }
 
-/** moduleWidth clamped to ^BY [1,10]; bitmap stretches mid-drag, rounded on release. */
+/** moduleWidth clamped to ^BY [1,10]; bitmap stretches mid-drag, rounded on
+ *  release. `extraModuleWidthProps` (TLC39's ^BT w2) scale with the same
+ *  factor so a horizontal resize keeps the composite proportions. */
 export function commitBarcodeWidthHeightTransform<
   P extends { height: number; moduleWidth: number; rotation: "N" | "R" | "I" | "B" },
 >(
   obj: LabelObjectBase & { props: P },
   ctx: TransformContext,
+  extraModuleWidthProps?: readonly (keyof P & string)[],
 ): Partial<P> {
   const { snap } = ctx;
   const { esx, esy } = effectiveScale(obj.props.rotation, ctx);
-  return {
+  const out = {
     height: Math.max(1, snap(Math.round(obj.props.height * esy))),
     moduleWidth: clamp(1, 10, Math.round(obj.props.moduleWidth * esx)),
-  } as Partial<P>;
+  } as Record<string, number>;
+  for (const name of extraModuleWidthProps ?? []) {
+    const v = obj.props[name];
+    if (typeof v === "number") out[name] = clamp(1, 10, Math.round(v * esx));
+  }
+  return out as Partial<P>;
 }
 
 interface Stacked2DProps {

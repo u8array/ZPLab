@@ -8,6 +8,7 @@ import { createCanvas, loadImage, type Canvas, type Image } from "@napi-rs/canva
 import { testCases } from "../../tests/fixtures/testCases";
 import { testModels } from "./testModels";
 import { defined } from "./helpers";
+import { bwipPngWithRetry } from "./bwipPng";
 import { inkBounds } from "./pngInk";
 import {
   BOUNDS_ONLY_TESTS,
@@ -84,15 +85,7 @@ describe("Visual Regression - bwip-js vs Labelary", () => {
       } else {
         const opts = buildBwipOptions(obj, 8, 8);
         expect(opts).not.toBeNull();
-        const localBwipBuffer = await new Promise<Buffer>((resolve, reject) => {
-          bwipjs.toBuffer(
-            opts as unknown as Parameters<typeof bwipjs.toBuffer>[0],
-            (err: string | Error, png: Buffer) => {
-              if (err) reject(err);
-              else resolve(png);
-            },
-          );
-        });
+        const localBwipBuffer = await bwipPngWithRetry(opts as Record<string, unknown>);
         bwipImage = await loadImage(localBwipBuffer);
       }
 

@@ -457,6 +457,7 @@ const de = {
     markerArmFailed: 'Marker werden als reiner Text gedruckt',
     gs1ValueInvalid: 'Variablenwert bricht GS1-Daten',
     gs1ContentUnparsed: 'GS1-Inhalt lässt sich nicht parsen',
+    previewApproximate: 'Vorschau nähert sich dem gedruckten Symbol an',
     printerSupportLimited: 'Eingeschränkt unterstützt',
     qrRotatedStatic: 'Gedrehter QR-Code druckt statischen Wert',
     qrRotatedModel2: 'Gedrehter QR-Code druckt als Modell 2',
@@ -1292,7 +1293,8 @@ const de = {
       height: 'Höhe',
       moduleWidth: 'Modulbreite',
       microPdfRowHeight: 'MicroPDF Zeilenhöhe',
-      microPdfRows: 'MicroPDF Zeilen',
+      microPdfModuleWidth: 'MicroPDF-Modulbreite',
+      wideRatio: 'Breit-Balken-Verhältnis',
     },
   },
 

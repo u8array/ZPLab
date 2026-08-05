@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import bwipjs from "bwip-js/browser";
-import { measureBarcodeFootprintDotsWith, type BwipEngine } from "@zplab/core/lib/barcodeDims";
+import { bwipRetryOptions, measureBarcodeFootprintDotsWith, type BwipEngine } from "@zplab/core/lib/barcodeDims";
 import { buildBwipOptions, dataMatrixMinFitIndex, getDisplaySize, getEanUpcHriFragments } from "./bwipHelpers";
 import type { LeafObject } from "@zplab/core/registry";
 import { dmSizePairs, type DataMatrixProps } from "@zplab/core/registry/datamatrix";
@@ -298,7 +298,8 @@ describe("buildBwipOptions aztec ecLevel mapping", () => {
   });
 
   it("maps the ecLevel domain to bwip bcid/format/size options", () => {
-    // Default + EC% stay compact (Zebra compact-preferred auto sizing).
+    // Default + EC% start compact (firmware-preferred); full-range is the
+    // bwipRetryOptions fallback once content outgrows 4 compact layers.
     expect(buildBwipOptions(az(0), 1, 8)).toMatchObject({ bcid: "azteccodecompact" });
     expect(buildBwipOptions(az(0), 1, 8)).not.toHaveProperty("format");
     expect(buildBwipOptions(az(50), 1, 8)).toMatchObject({ bcid: "azteccodecompact", eclevel: 50 });
@@ -310,9 +311,194 @@ describe("buildBwipOptions aztec ecLevel mapping", () => {
     expect(buildBwipOptions(az(300), 1, 8)).toMatchObject({ bcid: "azteccode", format: "rune" });
   });
 
+  it("falls back to full-range beyond compact's 4-layer capacity", () => {
+    // ^B0 auto sizing spans full-range; pinning compact failed >~89 chars on
+    // a symbol the printer prints fine.
+    const engine = bwipjs as unknown as BwipEngine;
+    const long = { ...az(0), props: { ...az(0).props, content: "A".repeat(120) } } as LeafObject;
+    const opts = buildBwipOptions(long, 1, 8)!;
+    expect(() => engine.raw(opts)).toThrow();
+    const retry = bwipRetryOptions(opts);
+    expect(retry).toMatchObject({ bcid: "azteccode" });
+    expect(() => engine.raw(retry!)).not.toThrow();
+    // ZD230-measured 2026-08-03: 120 chars -> 37x37 full-range, matching the
+    // retried bwip symbol exactly (mag 4: 148x148 dots ink).
+    const big = measureBarcodeFootprintDotsWith(engine, long, 8);
+    expect(big).toEqual({ w: 37 * 4, h: 37 * 4 });
+  });
+
+  it("keeps a forced compact layer count hard (no fallback: the firmware pins it too)", () => {
+    const opts = buildBwipOptions(az(101), 1, 8)!;
+    expect(bwipRetryOptions(opts)).toBeNull();
+  });
+
   it("rounds a non-integer ecLevel so bwip never gets a float layer count", () => {
     expect(buildBwipOptions(az(210.4), 1, 8)).toMatchObject({ format: "full", layers: 10 });
     expect(buildBwipOptions(az(Number.NaN), 1, 8)).toMatchObject({ bcid: "azteccodecompact" });
+  });
+});
+
+describe("buildBwipOptions micropdf417 ^BF mode", () => {
+  const mp = (mode: number): LabelObject => ({
+    id: "1",
+    type: "micropdf417",
+    x: 0,
+    y: 0,
+    rotation: 0,
+    props: { content: "12", moduleWidth: 2, rowHeight: 8, mode, rotation: "N" },
+  });
+
+  it("forces the mode's fixed columns/rows version (Table 5)", () => {
+    expect(buildBwipOptions(mp(0), 1, 8)).toMatchObject({ columns: 1, rows: 11 });
+    expect(buildBwipOptions(mp(23), 1, 8)).toMatchObject({ columns: 4, rows: 6 });
+    expect(buildBwipOptions(mp(33), 1, 8)).toMatchObject({ columns: 4, rows: 4 });
+    // Out-of-band mode falls to the spec default 0.
+    expect(buildBwipOptions(mp(34), 1, 8)).toMatchObject({ columns: 1, rows: 11 });
+    expect(buildBwipOptions(mp(Number.NaN), 1, 8)).toMatchObject({ columns: 1, rows: 11 });
+  });
+
+  it("retries without rows when BWIPP rejects a version the ^BF table allows", () => {
+    // 1x11 holds 8 digits per Table 5, but BWIPP rejects "1234" there; the
+    // retry keeps the mode's column class and lets the rows grow.
+    const engine = bwipjs as unknown as BwipEngine;
+    const gap = { ...mp(0), props: { ...mp(0).props, content: "1234" } } as LeafObject;
+    const opts = buildBwipOptions(gap, 1, 8)!;
+    expect(() => engine.raw(opts)).toThrow();
+    const retry = bwipRetryOptions(opts)!;
+    expect(retry).toMatchObject({ columns: 1 });
+    expect(retry).not.toHaveProperty("rows");
+    expect(() => engine.raw(retry)).not.toThrow();
+  });
+
+  it("derives byte capacity from the exact ISO EC codewords", async () => {
+    // Rounded percent shares were off by one codeword at some boundaries
+    // (4x44: 126 data codewords, byte cap 150, not 151).
+    const { micropdf417ByteCapacity } = await import("@zplab/core/registry/micropdf417");
+    expect(micropdf417ByteCapacity(4, 44)).toBe(150);
+    expect(micropdf417ByteCapacity(1, 11)).toBe(3);
+    expect(micropdf417ByteCapacity(4, 15)).toBe(45);
+  });
+
+  it("yields no options when content exceeds the mode capacity BWIPP would still encode", () => {
+    // 4x44 byte capacity is 150; BWIPP accepts 151 bytes anyway, the printer
+    // prints nothing (mode-capacity class, ZD230-measured).
+    const over = { ...mp(32), props: { ...mp(32).props, content: "!".repeat(151) } } as LeafObject;
+    expect(buildBwipOptions(over, 1, 8)).toBeNull();
+    const atCap = { ...mp(32), props: { ...mp(32).props, content: "!".repeat(150) } } as LeafObject;
+    expect(buildBwipOptions(atCap, 1, 8)).not.toBeNull();
+  });
+
+  it("rates non-alphanumeric content against the byte capacity, not the alpha column", () => {
+    // "A,A,A," is 6 chars (alpha cap 6) but byte-compacts on the firmware;
+    // mode 0 holds 3 bytes and the options builder gates capacity, so that
+    // content yields no options at all. Pure alnum at the cap stays a
+    // legitimate BWIPP-gap retry.
+    const over = { ...mp(0), props: { ...mp(0).props, content: "A,A,A," } } as LeafObject;
+    expect(buildBwipOptions(over, 1, 8)).toBeNull();
+    const alnum = { ...mp(0), props: { ...mp(0).props, content: "ABCDE1" } } as LeafObject;
+    expect(bwipRetryOptions(buildBwipOptions(alnum, 1, 8)!)).not.toBeNull();
+  });
+
+  it("stops past the mode's Table-5 capacity (ZD230 prints nothing there)", () => {
+    // ^BFN,8,0 with 20 digits renders an EMPTY label; a fallback symbol
+    // here would be pure fiction.
+    const over = { ...mp(0), props: { ...mp(0).props, content: "12345678901234567890" } } as LeafObject;
+    expect(buildBwipOptions(over, 1, 8)).toBeNull();
+  });
+
+  it("matches the ZD230 raster for a mode-pinned symbol", () => {
+    // ^BY2^BFN,8,23^FD1234 -> ink 198x48 dots (4 cols x 99 modules x 2,
+    // 6 rows x 8); mode 0 "1234" -> 76x88 (1x11, which BWIPP rejects; the
+    // retry renders 1x14, three rows taller, known limit).
+    const engine = bwipjs as unknown as BwipEngine;
+    const m23 = measureBarcodeFootprintDotsWith(engine, mp(23) as LeafObject, 8);
+    expect(m23).toEqual({ w: 198, h: 48 });
+    const gap = { ...mp(0), props: { ...mp(0).props, content: "1234" } } as LeafObject;
+    expect(measureBarcodeFootprintDotsWith(engine, gap, 8)).toEqual({ w: 76, h: 88 });
+  });
+
+  it("badges an approximated encode as previewApproximate, silent when exact", async () => {
+    // mode 0 "1234": the drawn bitmap is a taller auto version squeezed into
+    // the 11-row footprint (the raw-level gap is pinned above); the verdict
+    // is injected because jsdom cannot host bwip's canvas render.
+    const { barcodeEncodeFindings } = await import("./barcodePreflight");
+    const gap = { ...mp(0), props: { ...mp(0).props, content: "1234" } } as LeafObject;
+    const out = barcodeEncodeFindings([gap], 1, 8, { variables: [], active: null },
+      () => ({ error: null, approximated: true }));
+    expect(out).toEqual([
+      { objectId: "1", kind: "previewApproximate", severity: "warning" },
+    ]);
+    expect(barcodeEncodeFindings([mp(23)], 1, 8, { variables: [], active: null },
+      () => ({ error: null, approximated: false }))).toEqual([]);
+  });
+
+  it("footprint tracks the ^BF mode", () => {
+    const engine = bwipjs as unknown as BwipEngine;
+    const a = measureBarcodeFootprintDotsWith(engine, mp(0) as LeafObject, 8);
+    const b = measureBarcodeFootprintDotsWith(engine, mp(23) as LeafObject, 8);
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    expect(a!.w).not.toBe(b!.w);
+    expect(a!.h).not.toBe(b!.h);
+  });
+});
+
+describe("msiCheckDigits mirrors bwip's encoded checks", () => {
+  it("appends the exact digits bwip encodes (bar-pattern equality)", async () => {
+    const { msiCheckDigits } = await import("@zplab/core/lib/barcodeCheckDigits");
+    const engine = bwipjs as unknown as BwipEngine;
+    const sbs = (opts: object) =>
+      ((engine.raw(opts) as { sbs?: number[] }[])[0]?.sbs ?? []).join("");
+    // Spec-valid lengths only (^BM ^FD caps at 14 digits).
+    for (const text of ["12345678", "1234567", "80523", "9".repeat(14)]) {
+      for (const [mode, checktype] of [["B", undefined], ["C", "mod1010"], ["D", "mod1110"]] as const) {
+        const withCheck = sbs({ bcid: "msi", text, includecheck: true, ...(checktype && { checktype }) });
+        expect(sbs({ bcid: "msi", text: text + msiCheckDigits(text, mode) }), `${text}/${mode}`)
+          .toBe(withCheck);
+      }
+    }
+  });
+
+  it("stays a digit (BigInt) beyond the spec cap where floats would drift", async () => {
+    const { msiCheckDigits } = await import("@zplab/core/lib/barcodeCheckDigits");
+    expect(msiCheckDigits("9".repeat(34), "B")).toMatch(/^\d$/);
+  });
+});
+
+describe("buildBwipOptions bar-encoded check digits (ZD230-measured)", () => {
+  const bar = (type: string, checkDigit: boolean): LeafObject => ({
+    id: "1",
+    type,
+    x: 0,
+    y: 0,
+    rotation: 0,
+    props: { content: "1234", height: 60, moduleWidth: 2, printInterpretation: false,
+             printInterpretationAbove: false, checkDigit, rotation: "N" },
+  } as LabelObject as LeafObject);
+
+  it("maps msiCheckMode to bwip's double-check variants", () => {
+    const msiCD = (mode: "C" | "D") => ({ ...bar("msi", true),
+      props: { ...bar("msi", true).props, msiCheckMode: mode } }) as LeafObject;
+    expect(buildBwipOptions(msiCD("C"), 1, 8)).toMatchObject({ includecheck: true, checktype: "mod1010" });
+    expect(buildBwipOptions(msiCD("D"), 1, 8)).toMatchObject({ includecheck: true, checktype: "mod1110" });
+    expect(buildBwipOptions(bar("msi", true), 1, 8)).not.toHaveProperty("checktype");
+  });
+
+  it("mirrors ^BM/^B3/^B2 e into the bars via includecheck", () => {
+    // MSI A=73 vs B=89 modules, Code 39 +16, I2of5 +18.
+    for (const type of ["msi", "code39", "interleaved2of5"]) {
+      expect(buildBwipOptions(bar(type, true), 1, 8), type).toMatchObject({ includecheck: true });
+      expect(buildBwipOptions(bar(type, false), 1, 8), type).not.toHaveProperty("includecheck");
+    }
+  });
+
+  it("keeps codabar free of includecheck (spec-fixed e=N, device-confirmed no-op)", () => {
+    const opts = buildBwipOptions({ ...bar("codabar", true), props: { ...bar("codabar", true).props, content: "A1234B" } } as LeafObject, 1, 8);
+    expect(opts).not.toHaveProperty("includecheck");
+  });
+
+  it("keeps ^BC e ignored (device: e=Y adds nothing on free content)", () => {
+    expect(buildBwipOptions(bar("code128", true), 1, 8)).not.toHaveProperty("includecheck");
   });
 });
 

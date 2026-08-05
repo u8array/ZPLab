@@ -205,8 +205,8 @@ export const testCases: TestCase[] = [
   },
   {
     id: "barcode_msi_standard",
-    zpl_input: "^XA^BY2,2^FO50,50^BMN,N,100,N,N^FD12345678^FS^XZ",
-    expected_bounds: { x: 50, y: 50, width: 230, height: 100 },
+    zpl_input: "^XA^BY2,2^FO50,50^BMN,A,100,N,N^FD12345678^FS^XZ",
+    expected_bounds: { x: 50, y: 50, width: 206, height: 100 },
     image_ref: "barcode_msi_standard.png",
   },
   {

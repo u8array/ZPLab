@@ -457,6 +457,7 @@ const lt = {
     markerArmFailed: 'Žymos spausdinamos kaip paprastas tekstas',
     gs1ValueInvalid: 'Kintamojo reikšmė pažeidžia GS1 duomenis',
     gs1ContentUnparsed: 'GS1 turinio nepavyksta apdoroti',
+    previewApproximate: 'Peržiūra apytiksliai atvaizduoja spausdinamą simbolį',
     printerSupportLimited: 'Ribotas palaikymas',
     qrRotatedStatic: 'Pasuktas QR kodas spausdina statinę reikšmę',
     qrRotatedModel2: 'Pasuktas QR kodas spausdina kaip 2 modelis',
@@ -1262,7 +1263,8 @@ const lt = {
       height: 'Aukštis',
       moduleWidth: 'Modulio plotis',
       microPdfRowHeight: 'MicroPDF eilutės aukštis',
-      microPdfRows: 'MicroPDF eilutės',
+      microPdfModuleWidth: 'MicroPDF modulio plotis',
+      wideRatio: 'Plataus brūkšnio santykis',
     },
   },
 

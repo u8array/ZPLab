@@ -457,6 +457,7 @@ const tr = {
     markerArmFailed: 'İşaretleyiciler düz metin olarak yazdırılır',
     gs1ValueInvalid: 'Değişken değeri GS1 verilerini bozuyor',
     gs1ContentUnparsed: 'GS1 içeriği ayrıştırılamıyor',
+    previewApproximate: 'Önizleme, basılan sembole yaklaşık bir gösterimdir',
     printerSupportLimited: 'Sınırlı destek',
     qrRotatedStatic: 'Döndürülmüş QR Kodu statik değer basar',
     qrRotatedModel2: 'Döndürülmüş QR Kodu Model 2 olarak basar',
@@ -1262,7 +1263,8 @@ const tr = {
       height: 'Yükseklik',
       moduleWidth: 'Modül genişliği',
       microPdfRowHeight: 'MicroPDF satır yüksekliği',
-      microPdfRows: 'MicroPDF satırları',
+      microPdfModuleWidth: 'MicroPDF modül genişliği',
+      wideRatio: 'Geniş çubuk oranı',
     },
   },
 

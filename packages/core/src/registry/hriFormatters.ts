@@ -1,4 +1,6 @@
-import { code11CheckDigits, eanCheckDigit, upceCheckDigit } from '../lib/barcodeCheckDigits';
+import { mod10CheckDigit } from "../lib/gs1";
+import type { HriFormatProps } from "../types/ZplEmit";
+import { code11CheckDigits, msiCheckDigits, eanCheckDigit, upceCheckDigit } from '../lib/barcodeCheckDigits';
 import { code128FdToDisplayText, code128PlainFd } from '../lib/code128Subset';
 import { C0_OR_DEL_RE } from '../types/controlKey';
 
@@ -49,19 +51,48 @@ export function formatUpceHri(content: string): string {
 /** Code 11 HRI: data plus its check digit(s). ^B1 e=N encodes two (C+K),
  *  e=Y encodes one (C); checkDigit=true maps to e=Y, hence `two = !checkDigit`.
  *  The start/stop triangles are drawn as shapes, not part of this string. */
-export function formatCode11Hri(content: string, checkDigit?: boolean): string {
-  return `${content}${code11CheckDigits(content, !checkDigit)}`;
+export function formatCode11Hri(content: string, props?: HriFormatProps): string {
+  return `${content}${code11CheckDigits(content, !props?.checkDigit)}`;
 }
 
-const LOGMARS_CHARSET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%';
+const MOD43_CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
+
+/** ^B3 e=Y encodes AND prints the Mod-43 check char; the firmware also
+ *  uppercases the data (spec p.70; Labelary: ^FD1234 -> *1234A*). */
+export function formatCode39Hri(content: string, props?: HriFormatProps): string {
+  const data = content.toUpperCase();
+  if (!props?.checkDigit) return data;
+  let sum = 0;
+  for (const ch of data) {
+    const v = MOD43_CHARSET.indexOf(ch);
+    if (v < 0) return data;
+    sum += v;
+  }
+  return data + MOD43_CHARSET[sum % 43];
+}
+
+/** ^B2 e=Y prints the Mod 10 check digit; an odd total gains the leading 0
+ *  the firmware pads (spec p.68-69). */
+export function formatInterleaved2of5Hri(content: string, props?: HriFormatProps): string {
+  if (!/^\d+$/.test(content)) return content;
+  const digits = props?.checkDigit ? content + mod10CheckDigit(content) : content;
+  return digits.length % 2 === 1 ? `0${digits}` : digits;
+}
+
+/** ^BM e2=Y prints the encoded check digits in the HRI. */
+export function formatMsiHri(content: string, props?: HriFormatProps): string {
+  if (!props?.checkDigit || !props.msiHriCheck || !/^\d+$/.test(content)) return content;
+  return content + msiCheckDigits(content, props.msiCheckMode ?? "B");
+}
+
 
 export function formatLogmarsHri(content: string): string {
   let sum = 0;
   for (const c of content) {
-    const idx = LOGMARS_CHARSET.indexOf(c.toUpperCase());
+    const idx = MOD43_CHARSET.indexOf(c.toUpperCase());
     if (idx >= 0) sum += idx;
   }
-  return `${content}${LOGMARS_CHARSET[sum % 43] ?? ''}`;
+  return `${content}${MOD43_CHARSET[sum % 43] ?? ''}`;
 }
 
 /** ^BS shows the supplement as a single 2- or 5-digit string, padded

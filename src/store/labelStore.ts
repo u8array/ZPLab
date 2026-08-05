@@ -4,7 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { dirtyTracking } from './dirtyTracking';
 import type { ObjectChanges } from '@zplab/core/types/LabelObject';
 import { PRINTER_PROFILE_FIELDS, printerProfileSchema } from '@zplab/core/types/PrinterProfile';
-import { visitLeavesInPages, foldSerialLeaf, bindSingleMarkerLeaf, sanitiseVariableNames, safeUniqueNameById } from '@zplab/core/lib/objectTree';
+import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, sanitiseVariableNames, safeUniqueNameById } from '@zplab/core/lib/objectTree';
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from '@zplab/core/lib/reverseBacking';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { reconstructLegacyJmDensity } from '@zplab/core/lib/designFile';
@@ -186,6 +186,12 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
         }),
       };
     }
+  }
+
+  // v15→v16: TLC39 props move to the real ^BT slots (w2/h2, wideRatio);
+  // emit and canvas read the new shape unguarded.
+  if (version < 16 && Array.isArray(s.pages)) {
+    visitLeavesInPages(s.pages, fixTlc39SlotsLeaf);
   }
 
   // v9→v10: reverse text dropped its synthesized self-background ^GB for a
@@ -506,7 +512,7 @@ export const useLabelStore = create<LabelState>()(
     }),
     {
       name: 'zpl-designer-session',
-      version: 15,
+      version: 16,
       migrate: (persistedState, version) => migrateLegacy(persistedState, version) as LabelState,
       storage: createJSONStorage(() => localStorage),
       partialize: persistPartialize,

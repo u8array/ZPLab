@@ -21,6 +21,18 @@ function box(id: string, x: number, y: number, width: number, height: number): L
   } as LabelObject as LeafObject;
 }
 
+describe('tlc39 scannability covers both module widths', () => {
+  it('warns when only the MicroPDF module width is under the 0.25 mm floor', () => {
+    const leaf = {
+      id: 't1', type: 'tlc39', x: 0, y: 0, rotation: 0,
+      props: { content: '123456,SXYZ789', moduleWidth: 2, wideRatio: 2, height: 60,
+               microPdfModuleWidth: 1, microPdfRowHeight: 4, rotation: 'N' },
+    } as never;
+    const findings = computePreflight([leaf], { label: { widthMm: 100, heightMm: 50, dpmm: 8 } }, 'mm');
+    expect(findings.some((f) => f.kind === 'barcodeTooSmall')).toBe(true);
+  });
+});
+
 describe("computePreflight (off-label producer)", () => {
   it("returns no findings when every leaf is inside", () => {
     expect(computePreflight([box("a", 10, 10, 100, 50)], ctx, "mm")).toEqual([]);

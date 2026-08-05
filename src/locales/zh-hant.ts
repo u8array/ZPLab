@@ -457,6 +457,7 @@ const zhHant = {
     markerArmFailed: '標記將以純文字方式列印',
     gs1ValueInvalid: '變數值違反GS1資料',
     gs1ContentUnparsed: 'GS1 內容無法解析',
+    previewApproximate: '預覽是列印符號的近似顯示',
     printerSupportLimited: '支援有限',
     qrRotatedStatic: '旋轉的二維碼列印靜態值',
     qrRotatedModel2: '旋轉的二維碼以型號2列印',
@@ -1262,7 +1263,8 @@ const zhHant = {
       height: '高度',
       moduleWidth: '模組寬度',
       microPdfRowHeight: 'MicroPDF 列高',
-      microPdfRows: 'MicroPDF 列數',
+      microPdfModuleWidth: 'MicroPDF 模組寬度',
+      wideRatio: '寬條比例',
     },
   },
 

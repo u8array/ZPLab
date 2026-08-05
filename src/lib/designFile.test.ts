@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { ObjectRegistry } from '@zplab/core/registry';
 import { parseDesignFile, serializeDesign, CURRENT_DESIGN_SCHEMA_VERSION } from '@zplab/core/lib/designFile';
 import { importZplText } from '@zplab/core/lib/zplImportService';
 import type { LabelObject } from '@zplab/core/types/Group';
@@ -362,6 +363,43 @@ describe('parseDesignFile', () => {
     expect(p.zplMode).toBeUndefined();
   });
 
+  it('remaps legacy tlc39 slot props (rowHeight held w2, rows held h2)', () => {
+    // Slot-preserving: the re-emitted ^BT bytes stay identical to what the
+    // legacy model produced.
+    const legacyJson = JSON.stringify({
+      schemaVersion: 3,
+      label: { widthMm: 100, heightMm: 60, dpmm: 8 },
+      pages: [
+        {
+          objects: [
+            {
+              id: 't1', type: 'tlc39', x: 0, y: 0, rotation: 0,
+              props: { content: '123456,X', moduleWidth: 2, height: 40,
+                       microPdfRowHeight: 3, microPdfRows: 6, rotation: 'N' },
+            },
+          ],
+        },
+      ],
+    });
+    const result = parseDesignFile(legacyJson);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const obj = result.value.pages[0]?.objects[0];
+    const p = (obj as unknown as { props: Record<string, unknown> }).props;
+    expect(p.microPdfModuleWidth).toBe(3);
+    expect(p.microPdfRowHeight).toBe(6);
+    expect(p.wideRatio).toBe(2);
+    expect(p.microPdfRows).toBeUndefined();
+    // The remap is slot-preserving on the wire: the legacy values re-emit
+    // into the same ^BT positions.
+    expect(ObjectRegistry.tlc39.toZPL(obj as never)).toContain('^BTN,2,2,40,3,6');
+  });
+
+
+
+
+
+
   it('migrates a v2 single-bind variableId to a «name» content marker', () => {
     const v2Json = JSON.stringify({
       schemaVersion: 2,
@@ -441,9 +479,17 @@ describe('parseDesignFile', () => {
     expect(result.value.pages[0]?.jmDensity).toBe('A');
   });
 
-  it('writes schemaVersion 4 on save', () => {
+  it('writes schemaVersion 5 on save', () => {
     const json = serializeDesign({ widthMm: 100, heightMm: 60, dpmm: 8 }, [{ objects: SAMPLE_OBJECTS }]);
-    expect((JSON.parse(json) as { schemaVersion: number }).schemaVersion).toBe(4);
+    expect((JSON.parse(json) as { schemaVersion: number }).schemaVersion).toBe(5);
+  });
+
+  it('rejects valid JSON that is not an object instead of throwing', () => {
+    for (const text of ['null', 'true', '"x"', '3']) {
+      const r = parseDesignFile(text);
+      expect(r.ok, text).toBe(false);
+      if (!r.ok) expect(r.error, text).toBe('invalid_schema');
+    }
   });
 
   it('returns parse_error for invalid JSON', () => {

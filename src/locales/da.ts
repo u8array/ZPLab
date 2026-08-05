@@ -457,6 +457,7 @@ const da = {
     markerArmFailed: 'Markører udskrives som bogstavelig tekst',
     gs1ValueInvalid: 'Variabelværdi bryder GS1-data',
     gs1ContentUnparsed: 'GS1-indhold kan ikke fortolkes',
+    previewApproximate: 'Forhåndsvisningen er en tilnærmelse til det trykte symbol',
     printerSupportLimited: 'Begrænset support',
     qrRotatedStatic: 'Roteret QR-kode udskriver statisk værdi',
     qrRotatedModel2: 'Roteret QR-kode udskriver som Model 2',
@@ -1262,7 +1263,8 @@ const da = {
       height: 'Højde',
       moduleWidth: 'Modulbredde',
       microPdfRowHeight: 'MicroPDF rækkehøjde',
-      microPdfRows: 'MicroPDF rækker',
+      microPdfModuleWidth: 'MicroPDF-modulbredde',
+      wideRatio: 'Bredt stregforhold',
     },
   },
 

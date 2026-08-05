@@ -20,6 +20,7 @@ import { planGs1Fd } from "./gs1Plan";
 import { code128ControlBwipRaw, code128FdToSymbols, code128PlainFd, code128SymbolsToBwipRaw } from "./code128Subset";
 import { isRectangular, dmVersionString, type DataMatrixProps } from "../registry/datamatrix";
 import { MAXICODE_WIDTH_MM, MAXICODE_HEIGHT_MM } from "../registry/maxicode";
+import { micropdf417ModeDims, micropdf417ModeFits } from "../registry/micropdf417";
 import {
   applyBindingToObject,
   getObjectStringContent,
@@ -36,8 +37,6 @@ import {
   GS1_DATABAR_SPEC_HEIGHT_MODULES,
   LOGMARS_TEXT_ZONE_DOTS,
   MAXICODE_INK_MARGIN_PX,
-  MICROPDF417_PX_PER_ROW,
-  MICROPDF417_QUIET_ZONE_ROWS,
   upcSuppTextZoneDots,
 } from "./bwipConstants";
 import {
@@ -70,6 +69,26 @@ export function aztecBwipOptions(ecLevel: number): Record<string, unknown> {
   if (ec >= 101 && ec <= 104) return { bcid: "azteccodecompact", layers: ec - 100 };
   if (ec >= EC_PERCENT_MIN && ec <= EC_PERCENT_MAX) return { bcid: "azteccodecompact", eclevel: ec };
   return { bcid: "azteccodecompact" };
+}
+
+/** Second-chance options when the encoder rejects the spec-honest primary:
+ *  Aztec auto grows compact into full-range (firmware auto spans both, compact
+ *  alone caps at 4 layers) and MicroPDF417 drops the mode-pinned rows (BWIPP
+ *  rejects combos the ^BF table allows, e.g. 1x11 with 4 digits). Null when no
+ *  fallback applies. */
+export function bwipRetryOptions(
+  opts: Record<string, unknown>,
+): Record<string, unknown> | null {
+  if (opts.bcid === "azteccodecompact" && opts.layers === undefined) {
+    return { ...opts, bcid: "azteccode" };
+  }
+  if (opts.bcid === "micropdf417" && opts.rows !== undefined) {
+    // Bridges the BWIPP gap below the mode's capacity; over-capacity content
+    // never reaches here (buildBwipOptions yields no options for it).
+    const { rows: _rows, ...rest } = opts;
+    return rest;
+  }
+  return null;
 }
 
 const GS1_DATABAR_BCID: Record<Gs1DatabarProps["symbology"], string> = {
@@ -353,7 +372,12 @@ export function buildBwipOptions(
       const needsUpper = obj.type === "code39" || obj.type === "codabar";
       const raw = p.content || "0";
       const text = needsUpper ? raw.toUpperCase() : raw;
-      opts = { bcid, text, scale, height: 10 };
+      // ^B3/^B2 e encode Mod 43 / Mod 10 into the bars (ZD230-measured: +1
+      // char / +1 digit pair). Codabar's e-slot is a spec-fixed N and the
+      // 2of5 pair has no check param.
+      const includecheck =
+        (obj.type === "code39" || obj.type === "interleaved2of5") && !!p.checkDigit;
+      opts = { bcid, text, scale, height: 10, ...(includecheck && { includecheck }) };
       break;
     }
     case "code93": {
@@ -378,8 +402,17 @@ export function buildBwipOptions(
     case "msi": {
       const p = obj.props;
       const scale = bwipScale1D(p.moduleWidth, renderScale, renderDpmm);
-      // Zebra always encodes Mod10 in MSI; ^BM e=N only suppresses the HRI digit.
-      opts = { bcid, text: p.content || "0", scale, height: 10, includecheck: true };
+      // ^BM e encodes the check into the bars (ZD230-measured: B is one
+      // digit wider than A); C/D select bwip's double-check variants.
+      opts = {
+        bcid, text: p.content || "0", scale, height: 10,
+        ...(p.checkDigit && {
+          includecheck: true,
+          ...(p.msiCheckMode && {
+            checktype: p.msiCheckMode === "C" ? "mod1010" : "mod1110",
+          }),
+        }),
+      };
       break;
     }
     case "logmars": {
@@ -465,10 +498,18 @@ export function buildBwipOptions(
     }
     case "micropdf417": {
       const p = obj.props;
+      // ^BF mode pins the symbol version; without it bwip auto-sizes to the
+      // minimal fit and the footprint diverges from the print (up to 2x).
+      // Over-capacity content encodes in BWIPP but prints NOTHING, so it
+      // yields no options at all (the canvas rejects it with an error).
+      const version = micropdf417ModeDims(p.mode);
+      if (!micropdf417ModeFits(version.columns, version.rows, p.content ?? "")) return null;
       opts = {
         bcid,
         text: p.content || " ",
         scale: BWIP_SCALE,
+        columns: version.columns,
+        rows: version.rows,
         rowheight: Math.max(
           1,
           Math.round(p.rowHeight / Math.max(p.moduleWidth, 1)),
@@ -753,10 +794,12 @@ function getUprightDisplaySize(
     }
     case "micropdf417": {
       const p = obj.props;
-      const numRows = micropdfDataRows(ch);
+      // Row count comes from the ^BF mode, not the rendered canvas: the
+      // firmware prints the mode's rows even where the BWIPP-gap retry drew
+      // a taller fallback symbol (ZD230-measured, mode 0 stays 11 rows).
       const w =
         (cw / BWIP_SCALE) * dotsToPx(p.moduleWidth, scale, dpmm);
-      const h = numRows * dotsToPx(p.rowHeight, scale, dpmm);
+      const h = micropdf417ModeDims(p.mode).rows * dotsToPx(p.rowHeight, scale, dpmm);
       return { w, h };
     }
     case "codablock": {
@@ -779,42 +822,69 @@ function getUprightDisplaySize(
   }
 }
 
-/** Valid MicroPDF417 row counts in TLC39's linked 4-column geometry. */
-const TLC39_MICROPDF_ROW_COUNTS = [4, 6, 8, 10] as const;
-
-/** Snap to the nearest valid row count, bwip-js throws on any other value. */
-export function snapTlc39MicroPdfRows(requested: number): number {
-  if (!Number.isFinite(requested)) return 4;
-  for (const r of TLC39_MICROPDF_ROW_COUNTS) if (requested <= r) return r;
-  return 10;
+/** Code 39 bar/space runs in narrow modules with the printer's TLC39
+ *  geometry (ZD230-decoded 2026-08-03): wide bars scale with r1 (bwip
+ *  hardcodes ratio 3), intercharacter gaps stay 1 module, and the LINKED
+ *  form prints the complete `*eci*` symbol, a 10-module gap, then the
+ *  linkage character `T` alone at 1.4*h1 tall. `tallFromModule` marks where
+ *  that tall region starts (null when unlinked: plain Code 39). */
+export interface Tlc39Code39Runs {
+  runs: number[];
+  totalModules: number;
+  tallFromModule: number | null;
 }
 
-/** Data-row count from a bwip-js MicroPDF417 canvas height (assumes scale=BWIP_SCALE). */
-function micropdfDataRows(canvasHeight: number): number {
-  return Math.max(
-    0,
-    canvasHeight / (BWIP_SCALE * MICROPDF417_PX_PER_ROW)
-      - MICROPDF417_QUIET_ZONE_ROWS,
+function code39RawRuns(bwip: BwipEngine, text: string, wideRatio: number): number[] | null {
+  let entry: { sbs?: number[] };
+  try {
+    entry = firstRawEntry(bwip.raw({ bcid: "code39", text: text || " " }));
+  } catch {
+    return null;
+  }
+  if (!entry.sbs?.length) return null;
+  const runs = entry.sbs.map((w, i) =>
+    i % 10 === 9 ? 1 : Number(w) >= 3 ? wideRatio : 1,
   );
+  // bwip appends a gap after the stop char; the symbol ends on its last bar.
+  if (runs.length % 10 === 0) runs.pop();
+  return runs;
 }
 
-/** Split on first comma: ECI for Code 39, serial for MicroPDF417 (leading "S" stripped). */
+export function tlc39Code39Runs(
+  bwip: BwipEngine,
+  eci: string,
+  wideRatio: number,
+  linked: boolean,
+): Tlc39Code39Runs | null {
+  const runs = code39RawRuns(bwip, eci, wideRatio);
+  if (!runs) return null;
+  let tallFromModule: number | null = null;
+  if (linked) {
+    // The lone T sits at elements 10-18 of bwip's `*T*` render.
+    const tRuns = code39RawRuns(bwip, "T", wideRatio)?.slice(10, 19);
+    if (tRuns?.length === 9) {
+      tallFromModule = runs.reduce((a, b) => a + b, 0) + TLC39_LINK_GAP_MODULES;
+      runs.push(TLC39_LINK_GAP_MODULES, ...tRuns);
+    }
+  }
+  return { runs, totalModules: runs.reduce((a, b) => a + b, 0), tallFromModule };
+}
+
+/** Split on first comma: ECI for Code 39, serial for MicroPDF417. */
 export function splitTlc39Content(content: string): { eci: string; serial: string } {
   if (!content) return { eci: "", serial: "" };
   const comma = content.indexOf(",");
   if (comma < 0) return { eci: content, serial: "" };
-  const eci = content.slice(0, comma);
-  let serial = content.slice(comma + 1);
-  if (serial.startsWith("S")) serial = serial.slice(1);
-  return { eci, serial };
+  return { eci: content.slice(0, comma), serial: content.slice(comma + 1) };
 }
 
 export interface Tlc39RenderProps {
   content: string;
   moduleWidth: number;
+  wideRatio: number;
   height: number;
+  microPdfModuleWidth: number;
   microPdfRowHeight: number;
-  microPdfRows: number;
 }
 
 /** Drawing that mirrors bwip's DrawingBuiltin sizing (integer scale, padding,
@@ -846,13 +916,20 @@ function dimsDrawing() {
 
 /** bwip surface size for `opts`, matching toCanvas' canvas dims; null on
  *  encode failure (bwip yields `false` when nothing was drawn). */
-function bwipDims(bwip: BwipEngine, opts: Record<string, unknown>): CanvasDims | null {
+function bwipDimsExact(bwip: BwipEngine, opts: Record<string, unknown>): CanvasDims | null {
   try {
     const d = bwip.render(opts, dimsDrawing());
     return d && typeof d === "object" ? (d as CanvasDims) : null;
   } catch {
     return null;
   }
+}
+
+function bwipDims(bwip: BwipEngine, opts: Record<string, unknown>): CanvasDims | null {
+  const first = bwipDimsExact(bwip, opts);
+  if (first) return first;
+  const retry = bwipRetryOptions(opts);
+  return retry ? bwipDimsExact(bwip, retry) : null;
 }
 
 /** Total EAN/UPC symbol width in modules (sum of the raw bar/space widths). */
@@ -905,32 +982,117 @@ function barcodeDimsPx(
 }
 
 /** Surface rounding shared by the TLC39 kernel dims and the canvas renderer. */
-export function roundedDims(width: number, height: number): CanvasDims {
+function roundedDims(width: number, height: number): CanvasDims {
   return { width: Math.max(1, Math.round(width)), height: Math.max(1, Math.round(height)) };
 }
 
 export interface Tlc39CompositeLayout {
   width: number;
   height: number;
+  mpdfX: number;
+  mpdfY: number;
+  mpdfPxW: number;
   mpdfPxH: number;
+  code39Y: number;
   code39PxH: number;
+  /** Tall-stop overhang above and below the Code 39 band (0 when unlinked). */
+  stopOverhangPx: number;
 }
 
-/** TLC39 composite layout (MicroPDF417 over Code 39, shared width): single
- *  source for kernel dims and canvas renderer so the two cannot drift. */
+/** TLC39 composite layout, single source for kernel dims and canvas renderer.
+ *  ZD230-measured 2026-08-03: MicroPDF indents 1*w1, the gap below it is
+ *  1*w1, and the linked stop char overhangs the Code 39 band by h1/5 on both
+ *  sides (12 @ h1=60, 21 @ h1=100; round() accepts the 1-dot drift). */
 export function tlc39CompositeLayout(
   code39W: number,
   mpdfW: number,
   mpdfH: number,
   code39H: number,
+  modulePx: number,
+  linked: boolean,
 ): Tlc39CompositeLayout {
-  const width = Math.max(1, Math.round(Math.max(code39W, mpdfW)));
-  const mpdfPxH = Math.max(1, Math.round(mpdfH));
+  const code39PxW = Math.max(1, Math.round(code39W));
   const code39PxH = Math.max(1, Math.round(code39H));
-  return { width, height: mpdfPxH + code39PxH, mpdfPxH, code39PxH };
+  if (!linked) {
+    return {
+      width: code39PxW, height: code39PxH,
+      mpdfX: 0, mpdfY: 0, mpdfPxW: 0, mpdfPxH: 0,
+      code39Y: 0, code39PxH, stopOverhangPx: 0,
+    };
+  }
+  const mpdfX = Math.round(modulePx);
+  const mpdfPxW = Math.max(1, Math.round(mpdfW));
+  const mpdfPxH = Math.max(1, Math.round(mpdfH));
+  const gap = Math.round(modulePx);
+  const stopOverhangPx = Math.round(code39PxH / 5);
+  // The stop char may poke above the MicroPDF; shift everything down then.
+  const topOverflow = Math.max(0, stopOverhangPx - (mpdfPxH + gap));
+  const code39Y = topOverflow + mpdfPxH + gap;
+  return {
+    width: Math.max(code39PxW, mpdfX + mpdfPxW),
+    height: code39Y + code39PxH + stopOverhangPx,
+    mpdfX, mpdfY: topOverflow, mpdfPxW, mpdfPxH,
+    code39Y, code39PxH, stopOverhangPx,
+  };
 }
 
-/** TLC39 composite dims (MicroPDF417 on top, Code 39 below; shared width). */
+// ZD230-measured 4-column row ladder (details: tlc39MicroPdfDims).
+const TLC39_4COL_ROWS: readonly number[] = [6, 8, 10, 12, 15, 20, 26, 32, 38, 44];
+
+/** Modules between the Code 39 stop and the tall linkage T (ZD230-decoded). */
+const TLC39_LINK_GAP_MODULES = 10;
+
+/** Firmware-derived row target: the smallest linked version whose Table-5
+ *  capacity (digits / alpha / byte compaction) fits the serial. */
+function tlc39TargetRows(serial: string): number | null {
+  for (const rows of TLC39_4COL_ROWS) {
+    if (micropdf417ModeFits(4, rows, serial)) return rows;
+  }
+  // Past every linked capacity: no version is print-true (BWIPP may still
+  // encode 4x44); the caller degrades to the badged unlinked form.
+  return null;
+}
+
+/** Linked TLC39 MicroPDF dims: always 4 columns, smallest version from 6
+ *  rows up that fits the encoded serial (ZD230-measured; 4x4 is never
+ *  chosen). A serial with non-alphanumeric bytes compacts in byte mode on
+ *  the firmware where BWIPP would text-compact (measured: 39 chars with
+ *  commas print 15 rows, BWIPP fits 10), so the row count is estimated
+ *  byte-wise there. Returns bwip px dims plus the row count. */
+export interface Tlc39MicroPdf {
+  dims: CanvasDims;
+  /** Rows of the DRAWN bwip symbol (>= targetRows when escalated). */
+  rows: number;
+  /** Firmware-derived row count; footprint and layout size to THIS so the
+   *  approximated case keeps the print-true bounds (the drawn bitmap gets
+   *  squeezed, mirroring the ^BF mode-gap handling). */
+  targetRows: number;
+  /** BWIPP could not render the firmware-derived version and the symbol
+   *  escalated to a larger one. */
+  approximated: boolean;
+}
+
+export function tlc39MicroPdfDims(
+  bwip: BwipEngine,
+  serial: string,
+): Tlc39MicroPdf | null {
+  // Exact renders only, from the firmware target upward: the generic
+  // micropdf417 retry would silently fall back to auto rows and split
+  // `rows` from `dims`, and BWIPP's own auto pick can diverge from the
+  // Table-5 target near capacity. Escalation flags `approximated`.
+  const target = tlc39TargetRows(serial);
+  if (target === null) return null;
+  for (const rows of TLC39_4COL_ROWS) {
+    if (rows < target) continue;
+    const dims = bwipDimsExact(bwip, {
+      bcid: "micropdf417", text: serial, scale: BWIP_SCALE, columns: 4, rows,
+    });
+    if (dims) return { dims, rows, targetRows: target, approximated: rows > target };
+  }
+  return null;
+}
+
+/** TLC39 composite dims (MicroPDF417 on top, Code 39 below). */
 function tlc39DimsPx(
   bwip: BwipEngine,
   props: Tlc39RenderProps,
@@ -938,46 +1100,20 @@ function tlc39DimsPx(
   dpmm: number,
 ): CanvasDims | null {
   const { eci, serial } = splitTlc39Content(props.content);
-  const bwipScale = get1DBwipScale(props.moduleWidth, scale, dpmm);
   const modulePx = dotsToPx(props.moduleWidth, scale, dpmm);
   const code39H = dotsToPx(props.height, scale, dpmm);
 
-  const code39Dims = (text: string): CanvasDims | null =>
-    bwipDims(bwip, {
-      bcid: "code39",
-      text: text || " ",
-      scale: bwipScale,
-      height: 10,
-      includetext: false,
-    });
+  // The tall "T" linkage char only appears after MicroPDF actually renders.
+  const mpdf = serial ? tlc39MicroPdfDims(bwip, serial) : null;
+  const geo = tlc39Code39Runs(bwip, eci, props.wideRatio, mpdf !== null);
+  if (!geo) return null;
+  const code39W = geo.totalModules * modulePx;
 
-  if (!serial) {
-    const src = code39Dims(eci);
-    if (!src) return null;
-    return roundedDims((src.width / bwipScale) * modulePx, code39H);
-  }
+  if (!mpdf) return roundedDims(code39W, code39H);
 
-  // "T" linkage flag only appended after MicroPDF actually renders.
-  const snappedRows = snapTlc39MicroPdfRows(props.microPdfRows);
-  const mpdfSrc = bwipDims(bwip, {
-    bcid: "micropdf417",
-    text: serial,
-    scale: BWIP_SCALE,
-    rows: snappedRows,
-    // TLC39 spec: linked MicroPDF417 is fixed at 4 columns.
-    columns: 4,
-  });
-  const mpdfOk = mpdfSrc !== null;
-
-  const code39Src = code39Dims(mpdfOk ? `${eci}T` : eci);
-  if (!code39Src) return null;
-  const code39W = (code39Src.width / bwipScale) * modulePx;
-
-  if (!mpdfOk) return roundedDims(code39W, code39H);
-
-  const mpdfW = (mpdfSrc.width / BWIP_SCALE) * modulePx;
-  const mpdfH = snappedRows * dotsToPx(props.microPdfRowHeight, scale, dpmm);
-  const layout = tlc39CompositeLayout(code39W, mpdfW, mpdfH, code39H);
+  const mpdfW = (mpdf.dims.width / BWIP_SCALE) * dotsToPx(props.microPdfModuleWidth, scale, dpmm);
+  const mpdfH = mpdf.targetRows * dotsToPx(props.microPdfRowHeight, scale, dpmm);
+  const layout = tlc39CompositeLayout(code39W, mpdfW, mpdfH, code39H, modulePx, true);
   return { width: layout.width, height: layout.height };
 }
 

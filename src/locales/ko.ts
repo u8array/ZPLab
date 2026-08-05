@@ -457,6 +457,7 @@ const ko = {
     markerArmFailed: '마커가 일반 텍스트로 인쇄됩니다',
     gs1ValueInvalid: '변수 값이 GS1 데이터를 위반',
     gs1ContentUnparsed: 'GS1 콘텐츠를 파싱할 수 없습니다',
+    previewApproximate: '미리보기는 인쇄되는 심벌의 근사치입니다',
     printerSupportLimited: '지원 제한',
     qrRotatedStatic: '회전된 QR 코드는 고정값을 인쇄',
     qrRotatedModel2: '회전된 QR 코드는 모델 2로 인쇄',
@@ -1262,7 +1263,8 @@ const ko = {
       height: '높이',
       moduleWidth: '모듈 너비',
       microPdfRowHeight: 'MicroPDF 행 높이',
-      microPdfRows: 'MicroPDF 행 수',
+      microPdfModuleWidth: 'MicroPDF 모듈 너비',
+      wideRatio: '넓은 바 비율',
     },
   },
 

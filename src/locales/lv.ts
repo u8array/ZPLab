@@ -457,6 +457,7 @@ const lv = {
     markerArmFailed: 'Marķieri tiek drukāti kā vienkāršs teksts',
     gs1ValueInvalid: 'Mainīgā vērtība pārkāpj GS1 datus',
     gs1ContentUnparsed: 'GS1 saturu nevar parsēt',
+    previewApproximate: 'Priekšskatījums ir aptuvens drukātā simbola attēlojums',
     printerSupportLimited: 'Ierobežots atbalsts',
     qrRotatedStatic: 'Pagriezts QR kods drukā statisku vērtību',
     qrRotatedModel2: 'Pagriezts QR kods drukā kā 2. modeli',
@@ -1262,7 +1263,8 @@ const lv = {
       height: 'Augstums',
       moduleWidth: 'Moduļa platums',
       microPdfRowHeight: 'MicroPDF rindas augstums',
-      microPdfRows: 'MicroPDF rindas',
+      microPdfModuleWidth: 'MicroPDF moduļa platums',
+      wideRatio: 'Platās joslas attiecība',
     },
   },
 

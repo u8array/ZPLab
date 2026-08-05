@@ -1657,6 +1657,45 @@ describe('migrateLegacy — v14→v15 dataset-model renames', () => {
   });
 });
 
+describe('migrateLegacy — v15→v16 tlc39 slot remap', () => {
+  it('remaps a main-era session (persisted at 15) and backfills wideRatio', () => {
+    const persisted = {
+      pages: [{ objects: [{
+        id: 't1', type: 'tlc39', x: 0, y: 0, rotation: 0,
+        props: { content: '123456,X', moduleWidth: 2, height: 40,
+                 microPdfRowHeight: 3, microPdfRows: 6, rotation: 'N' },
+      }] }],
+    };
+    const migrated = migrateLegacy(persisted, 15) as {
+      pages: { objects: { props: Record<string, unknown> }[] }[];
+    };
+    const p = migrated.pages[0]!.objects[0]!.props;
+    expect(p.microPdfModuleWidth).toBe(3);
+    expect(p.microPdfRowHeight).toBe(6);
+    expect(p.wideRatio).toBe(2);
+    expect('microPdfRows' in p).toBe(false);
+  });
+
+
+  it('keeps new-shape values when a stale microPdfRows sits next to them', () => {
+    const persisted = {
+      pages: [{ objects: [{
+        id: 't1', type: 'tlc39', x: 0, y: 0, rotation: 0,
+        props: { content: '123456,X', moduleWidth: 2, wideRatio: 2.5, height: 40,
+                 microPdfModuleWidth: 4, microPdfRowHeight: 5, microPdfRows: 6, rotation: 'N' },
+      }] }],
+    };
+    const migrated = migrateLegacy(persisted, 15) as {
+      pages: { objects: { props: Record<string, unknown> }[] }[];
+    };
+    const p = migrated.pages[0]!.objects[0]!.props;
+    expect(p.microPdfModuleWidth).toBe(4);
+    expect(p.microPdfRowHeight).toBe(5);
+    expect(p.wideRatio).toBe(2.5);
+    expect('microPdfRows' in p).toBe(false);
+  });
+});
+
 describe('migrateLegacy — v9→v10 reverse text backing', () => {
   it('inserts a black backing before a legacy reverse text', () => {
     const persisted = {

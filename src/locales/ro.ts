@@ -457,6 +457,7 @@ const ro = {
     markerArmFailed: 'Marcatorii se tipăresc ca text literal',
     gs1ValueInvalid: 'Valoarea variabilei încalcă datele GS1',
     gs1ContentUnparsed: 'Conținutul GS1 nu poate fi analizat',
+    previewApproximate: 'Previzualizarea aproximează simbolul tipărit',
     printerSupportLimited: 'Suport limitat',
     qrRotatedStatic: 'Codul QR rotit imprimă o valoare statică',
     qrRotatedModel2: 'Codul QR rotit imprimă ca Modelul 2',
@@ -1262,7 +1263,8 @@ const ro = {
       height: 'Înălțime',
       moduleWidth: 'Lățime modul',
       microPdfRowHeight: 'Înălțime rând MicroPDF',
-      microPdfRows: 'Rânduri MicroPDF',
+      microPdfModuleWidth: 'Lățime modul MicroPDF',
+      wideRatio: 'Raport bară lată',
     },
   },
 

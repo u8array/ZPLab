@@ -144,6 +144,13 @@ function rescaleLeaf(leaf: LeafObject, factor: number, warnings: RescaleWarning[
     next.moduleWidth = r.value;
     if (r.clamped) warn("moduleWidth", "moduleClamped");
   }
+  for (const name of entry?.extraModuleWidthProps ?? []) {
+    const v = props[name];
+    if (typeof v !== "number") continue;
+    const r = scaleClamped(v, factor, 1, MODULE_MAX);
+    next[name] = r.value;
+    if (r.clamped) warn(name, "moduleClamped");
+  }
   const usp = entry?.uniformScaleProp;
   if (usp && typeof props[usp.name] === "number") {
     const r = scaleClamped(props[usp.name] as number, factor, usp.min, usp.max);

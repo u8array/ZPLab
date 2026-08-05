@@ -36,6 +36,38 @@ function walkNode(node: unknown, visit: (leaf: UnknownNode) => void): void {
 /** Shared migration leaf-mutators, used by both the persist-store and design-file
  *  migration channels so the per-leaf rewrite lives in one place. */
 
+/** Legacy TLC39 slot mismatch: `microPdfRowHeight` held the ^BT w2 value and
+ *  `microPdfRows` the h2 value, so remapping keeps the wire bytes identical.
+ *  Also backfills the props the legacy shape never had (wideRatio); emit and
+ *  canvas read them unguarded. */
+export function fixTlc39SlotsLeaf(leaf: UnknownNode): void {
+  if (leaf.type !== "tlc39" || !leaf.props || typeof leaf.props !== "object") return;
+  const props = leaf.props as Record<string, unknown>;
+  if ("microPdfRows" in props) {
+    // A mixed shape (new key already present next to the stale legacy one)
+    // keeps the new values; only a pure legacy shape is slot-remapped.
+    if (!("microPdfModuleWidth" in props)) {
+      props.microPdfModuleWidth =
+        typeof props.microPdfRowHeight === "number" ? props.microPdfRowHeight : 2;
+      props.microPdfRowHeight =
+        typeof props.microPdfRows === "number" ? props.microPdfRows : 4;
+    }
+    delete props.microPdfRows;
+  }
+  // Non-positive or out-of-range values (hand-edited JSON) fall to the
+  // parser's defaults; oversized module widths stay byte-stable on purpose
+  // (the wire carried them under main too).
+  if (typeof props.wideRatio !== "number" || props.wideRatio < 2 || props.wideRatio > 3) {
+    props.wideRatio = 2;
+  }
+  if (typeof props.microPdfModuleWidth !== "number" || props.microPdfModuleWidth < 1) {
+    props.microPdfModuleWidth = 2;
+  }
+  if (typeof props.microPdfRowHeight !== "number" || props.microPdfRowHeight < 1) {
+    props.microPdfRowHeight = 4;
+  }
+}
+
 /** Legacy standalone `serial` object type → `text` field with a `serial` prop. */
 export function foldSerialLeaf(leaf: UnknownNode): void {
   if (leaf.type !== "serial" || !leaf.props || typeof leaf.props !== "object") return;

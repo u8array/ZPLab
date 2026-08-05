@@ -457,6 +457,7 @@ const sl = {
     markerArmFailed: 'Oznake se natisnejo kot navadno besedilo',
     gs1ValueInvalid: 'Vrednost spremenljivke krši GS1 podatke',
     gs1ContentUnparsed: 'Vsebine GS1 ni mogoče razčleniti',
+    previewApproximate: 'Predogled je približek natisnjenega simbola',
     printerSupportLimited: 'Omejena podpora',
     qrRotatedStatic: 'Zasukana QR koda natisne statično vrednost',
     qrRotatedModel2: 'Zasukana QR koda natisne kot Model 2',
@@ -1262,7 +1263,8 @@ const sl = {
       height: 'Višina',
       moduleWidth: 'Širina modula',
       microPdfRowHeight: 'Višina vrstice MicroPDF',
-      microPdfRows: 'Vrstice MicroPDF',
+      microPdfModuleWidth: 'Širina modula MicroPDF',
+      wideRatio: 'Razmerje širokega črtnega traku',
     },
   },
 

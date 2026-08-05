@@ -457,6 +457,7 @@ const hu = {
     markerArmFailed: 'A jelölők egyszerű szövegként nyomtatódnak',
     gs1ValueInvalid: 'A változó értéke sérti a GS1 adatokat',
     gs1ContentUnparsed: 'A GS1 tartalom nem elemezhető',
+    previewApproximate: 'Az előnézet közelíti a nyomtatott szimbólumot',
     printerSupportLimited: 'Korlátozott támogatás',
     qrRotatedStatic: 'Forgatott QR-kód statikus értéket nyomtat',
     qrRotatedModel2: 'Forgatott QR-kód 2. modellként nyomtat',
@@ -1262,7 +1263,8 @@ const hu = {
       height: 'Magasság',
       moduleWidth: 'Modulszélesség',
       microPdfRowHeight: 'MicroPDF sormagasság',
-      microPdfRows: 'MicroPDF sorok',
+      microPdfModuleWidth: 'MicroPDF modulszélesség',
+      wideRatio: 'Széles vonal arány',
     },
   },
 

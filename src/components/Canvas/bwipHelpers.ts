@@ -25,12 +25,13 @@ import {
   eanUpcTotalModules,
   get1DBwipScale,
   getDisplaySize,
+  bwipRetryOptions,
   getEanUpcHriFragmentsWith,
   rawEanUpc,
-  roundedDims,
-  snapTlc39MicroPdfRows,
   splitTlc39Content,
+  tlc39Code39Runs,
   tlc39CompositeLayout,
+  tlc39MicroPdfDims,
   type BarcodeDisplaySize,
   type BwipEngine,
   type EanUpcType,
@@ -44,7 +45,6 @@ export {
   BWIP_SCALE,
   get1DBwipScale,
   getDisplaySize,
-  snapTlc39MicroPdfRows,
   splitTlc39Content,
 } from "@zplab/core/lib/barcodeDims";
 export type { BarcodeDisplaySize, EanUpcType, EanUpcHriFragment } from "@zplab/core/lib/barcodeDims";
@@ -191,96 +191,78 @@ export function measureBarcodeFootprintDots(
   return { w: pxToDots(dim.w, scale, dpmm), h: pxToDots(dim.h, scale, dpmm) };
 }
 
-/** TLC39 composite (MicroPDF417 on top, Code 39 below; shared width, no separator). */
+/** TLC39 composite (ZD230-true): MicroPDF417 indented 1*w1 on top, Code 39
+ *  below, and in linked form the lone linkage T behind a 10-module gap
+ *  printed 1.4*h1 tall (see tlc39Code39Runs / tlc39CompositeLayout). */
 export function renderTlc39Canvas(
   props: Tlc39RenderProps,
   scale: number,
   dpmm: number,
-): HTMLCanvasElement | null {
+): { canvas: HTMLCanvasElement | null; approximated: boolean } {
   const { eci, serial } = splitTlc39Content(props.content);
-  const bwipScale = get1DBwipScale(props.moduleWidth, scale, dpmm);
   const modulePx = dotsToPx(props.moduleWidth, scale, dpmm);
   const code39H = dotsToPx(props.height, scale, dpmm);
+  const engine = bwipjs as unknown as BwipEngine;
 
-  const renderCode39 = (text: string): HTMLCanvasElement | null => {
-    const c = document.createElement("canvas");
-    try {
-      bwipjs.toCanvas(c, {
-        bcid: "code39",
-        text: text || " ",
-        scale: bwipScale,
-        height: 10,
-        includetext: false,
-      } as unknown as Parameters<typeof bwipjs.toCanvas>[1]);
-    } catch {
-      return null;
-    }
-    return c;
-  };
+  const mpdf = serial ? tlc39MicroPdfDims(engine, serial) : null;
+  // A serial no linked version can encode degrades to the unlinked Code 39;
+  // that preview is a stand-in, so it must badge too.
+  const approximated = mpdf ? mpdf.approximated : serial !== "";
+  const geo = tlc39Code39Runs(engine, eci, props.wideRatio, mpdf !== null);
+  if (!geo) return { canvas: null, approximated };
+  const code39W = geo.totalModules * modulePx;
 
-  const stretchTo = (
-    src: HTMLCanvasElement,
-    targetW: number,
-    targetH: number,
-  ): HTMLCanvasElement | null => {
-    const out = document.createElement("canvas");
-    const dims = roundedDims(targetW, targetH);
-    out.width = dims.width;
-    out.height = dims.height;
-    const c = out.getContext("2d");
-    if (!c) return null;
-    c.fillStyle = "white";
-    c.fillRect(0, 0, out.width, out.height);
-    c.imageSmoothingEnabled = false;
-    c.drawImage(src, 0, 0, out.width, out.height);
-    return out;
-  };
+  const mpdfW = mpdf
+    ? (mpdf.dims.width / BWIP_SCALE) * dotsToPx(props.microPdfModuleWidth, scale, dpmm)
+    : 0;
+  const mpdfH = mpdf ? mpdf.targetRows * dotsToPx(props.microPdfRowHeight, scale, dpmm) : 0;
+  const layout = tlc39CompositeLayout(code39W, mpdfW, mpdfH, code39H, modulePx, mpdf !== null);
 
-  if (!serial) {
-    const src = renderCode39(eci);
-    if (!src) return null;
-    const w = (src.width / bwipScale) * modulePx;
-    return stretchTo(src, w, code39H);
-  }
-
-  // "T" linkage flag only appended after MicroPDF actually renders.
-  const snappedRows = snapTlc39MicroPdfRows(props.microPdfRows);
-  const mpdfSrc = document.createElement("canvas");
-  let mpdfOk = true;
-  try {
-    bwipjs.toCanvas(mpdfSrc, {
-      bcid: "micropdf417",
-      text: serial,
-      scale: BWIP_SCALE,
-      rows: snappedRows,
-      // TLC39 spec: linked MicroPDF417 is fixed at 4 columns.
-      columns: 4,
-    } as unknown as Parameters<typeof bwipjs.toCanvas>[1]);
-  } catch {
-    mpdfOk = false;
-  }
-
-  const code39Src = renderCode39(mpdfOk ? `${eci}T` : eci);
-  if (!code39Src) return null;
-  const code39W = (code39Src.width / bwipScale) * modulePx;
-
-  if (!mpdfOk) return stretchTo(code39Src, code39W, code39H);
-
-  const mpdfW = (mpdfSrc.width / BWIP_SCALE) * modulePx;
-  const mpdfH = snappedRows * dotsToPx(props.microPdfRowHeight, scale, dpmm);
-
-  const layout = tlc39CompositeLayout(code39W, mpdfW, mpdfH, code39H);
   const composite = document.createElement("canvas");
   composite.width = layout.width;
   composite.height = layout.height;
   const ctx = composite.getContext("2d");
-  if (!ctx) return null;
+  if (!ctx) return { canvas: null, approximated };
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, composite.width, composite.height);
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(mpdfSrc, 0, 0, layout.width, layout.mpdfPxH);
-  ctx.drawImage(code39Src, 0, layout.mpdfPxH, layout.width, layout.code39PxH);
-  return composite;
+  ctx.fillStyle = "black";
+
+  // Code 39 bars from the module runs; the tall stop region overhangs.
+  // Boundary rounding (not per-run) so sub-pixel modules cannot collapse
+  // wide and narrow runs into the same drawn width at small zoom.
+  let xModules = 0;
+  for (let i = 0; i < geo.runs.length; i++) {
+    const w = geo.runs[i] ?? 0;
+    if (i % 2 === 0) {
+      const tall = geo.tallFromModule !== null && xModules >= geo.tallFromModule;
+      const y = tall ? layout.code39Y - layout.stopOverhangPx : layout.code39Y;
+      const h = tall ? layout.code39PxH + 2 * layout.stopOverhangPx : layout.code39PxH;
+      const x0 = Math.round(xModules * modulePx);
+      const x1 = Math.round((xModules + w) * modulePx);
+      ctx.fillRect(x0, y, Math.max(1, x1 - x0), h);
+    }
+    xModules += w;
+  }
+
+  if (mpdf) {
+    const mpdfSrc = document.createElement("canvas");
+    try {
+      bwipjs.toCanvas(mpdfSrc, {
+        bcid: "micropdf417",
+        text: serial,
+        scale: BWIP_SCALE,
+        columns: 4,
+        // Always the derived count: auto would draw a different version for
+        // the bumped and byte-mode cases and get stretched into the footprint.
+        rows: mpdf.rows,
+      } as unknown as Parameters<typeof bwipjs.toCanvas>[1]);
+      ctx.drawImage(mpdfSrc, layout.mpdfX, layout.mpdfY, layout.mpdfPxW, layout.mpdfPxH);
+    } catch {
+      // Dims already succeeded; a draw failure leaves the Code 39 alone.
+    }
+  }
+  return { canvas: composite, approximated };
 }
 
 function renderZebraWidthBars(
@@ -318,10 +300,10 @@ export function renderBarcodeCanvas(
   obj: LeafObject,
   scale: number,
   dpmm: number,
-): { canvas: HTMLCanvasElement | null; error: string | null } {
+): { canvas: HTMLCanvasElement | null; error: string | null; approximated?: boolean } {
   if (obj.type === "tlc39") {
-    const canvas = renderTlc39Canvas(obj.props as Parameters<typeof renderTlc39Canvas>[0], scale, dpmm);
-    return { canvas, error: canvas ? null : "TLC39 render failed" };
+    const r = renderTlc39Canvas(obj.props as Parameters<typeof renderTlc39Canvas>[0], scale, dpmm);
+    return { canvas: r.canvas, error: r.canvas ? null : "TLC39 render failed", approximated: r.approximated };
   }
   if (ZEBRA_WIDTH_BAR_TYPES.has(obj.type)) {
     return renderZebraWidthBars(obj, scale, dpmm);
@@ -342,12 +324,32 @@ export function renderBarcodeCanvas(
     return { canvas, error: canvas ? null : "EAN/UPC encode failed" };
   }
   const opts = buildBwipOptions(obj, scale, dpmm);
-  if (!opts) return { canvas: null, error: null };
+  if (!opts) {
+    // The options builder yields null for over-capacity ^BF content (the
+    // firmware prints nothing there, ZD230-measured); surface that as an
+    // encode error instead of a silent no-render.
+    return {
+      canvas: null,
+      error: obj.type === "micropdf417" ? "content exceeds the ^BF mode capacity" : null,
+    };
+  }
   const canvas = document.createElement("canvas");
   try {
     bwipjs.toCanvas(canvas, opts as unknown as Parameters<typeof bwipjs.toCanvas>[1]);
     return { canvas, error: null };
   } catch (e) {
+    const retry = bwipRetryOptions(opts);
+    if (retry) {
+      try {
+        bwipjs.toCanvas(canvas, retry as unknown as Parameters<typeof bwipjs.toCanvas>[1]);
+        // The micropdf417 retry draws a different symbol version squeezed
+        // into the mode-true footprint; surface that (previewApproximate).
+        // The Aztec fallback is the device's own auto growth, no flag.
+        return { canvas, error: null, approximated: opts.bcid === "micropdf417" };
+      } catch {
+        // Report the primary failure; the retry is best-effort.
+      }
+    }
     return { canvas: null, error: cleanBwipError(e) };
   }
 }

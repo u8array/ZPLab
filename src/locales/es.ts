@@ -457,6 +457,7 @@ const es = {
     markerArmFailed: 'Los marcadores se imprimen como texto literal',
     gs1ValueInvalid: 'El valor de variable rompe los datos GS1',
     gs1ContentUnparsed: 'El contenido GS1 no se puede analizar',
+    previewApproximate: 'La vista previa aproxima el símbolo impreso',
     printerSupportLimited: 'Soporte limitado',
     qrRotatedStatic: 'Código QR rotado imprime un valor estático',
     qrRotatedModel2: 'Código QR rotado imprime como Modelo 2',
@@ -1262,7 +1263,8 @@ const es = {
       height: 'Altura',
       moduleWidth: 'Ancho de módulo',
       microPdfRowHeight: 'Altura de fila MicroPDF',
-      microPdfRows: 'Filas MicroPDF',
+      microPdfModuleWidth: 'Ancho de módulo MicroPDF',
+      wideRatio: 'Relación de barra ancha',
     },
   },
 

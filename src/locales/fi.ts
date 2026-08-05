@@ -457,6 +457,7 @@ const fi = {
     markerArmFailed: 'Merkit tulostuvat kirjaimellisena tekstinä',
     gs1ValueInvalid: 'Muuttujan arvo rikkoo GS1-tiedot',
     gs1ContentUnparsed: 'GS1-sisältöä ei voi jäsentää',
+    previewApproximate: 'Esikatselu on likiarvo tulostetusta symbolista',
     printerSupportLimited: 'Rajoitettu tuki',
     qrRotatedStatic: 'Käännetty QR-koodi tulostaa staattisen arvon',
     qrRotatedModel2: 'Käännetty QR-koodi tulostaa mallina 2',
@@ -1262,7 +1263,8 @@ const fi = {
       height: 'Korkeus',
       moduleWidth: 'Moduulin leveys',
       microPdfRowHeight: 'MicroPDF-rivin korkeus',
-      microPdfRows: 'MicroPDF-rivit',
+      microPdfModuleWidth: 'MicroPDF-moduulin leveys',
+      wideRatio: 'Leveän palkin suhde',
     },
   },
 

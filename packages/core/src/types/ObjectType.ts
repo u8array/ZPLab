@@ -83,6 +83,9 @@ export interface ObjectTypeCore<P extends object = object> {
   /** ^BY moduleWidth lower bound for stacked-2D resize (default 1); CODABLOCK A
    *  requires 2. Drives both the drag-time snap and the release commit. */
   moduleWidthMin?: number;
+  /** Further 1-10 module-width props (TLC39's ^BT w2) so the density rescale
+   *  scales them like moduleWidth without a per-type special case. */
+  extraModuleWidthProps?: readonly (keyof P & string)[];
   toZPL: (obj: LabelObjectBase & { props: P }, ctx?: ZplEmitContext) => string;
   /** Optional ^FD payload transform (QR `{ec}A,` prefix, UPC-E compaction, GS1
    *  FNC1 escaping). Returned per object so the single emit AND the CSV batch

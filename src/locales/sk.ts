@@ -457,6 +457,7 @@ const sk = {
     markerArmFailed: 'Značky sa vytlačia ako obyčajný text',
     gs1ValueInvalid: 'Hodnota premennej porušuje GS1 dáta',
     gs1ContentUnparsed: 'Obsah GS1 sa nedá analyzovať',
+    previewApproximate: 'Náhľad približuje tlačený symbol',
     printerSupportLimited: 'Obmedzená podpora',
     qrRotatedStatic: 'Otočený QR kód tlačí statickú hodnotu',
     qrRotatedModel2: 'Otočený QR kód tlačí ako Model 2',
@@ -1262,7 +1263,8 @@ const sk = {
       height: 'Výška',
       moduleWidth: 'Šírka modulu',
       microPdfRowHeight: 'Výška riadku MicroPDF',
-      microPdfRows: 'Riadky MicroPDF',
+      microPdfModuleWidth: 'Šírka modulu MicroPDF',
+      wideRatio: 'Pomer širokého pruhu',
     },
   },
 

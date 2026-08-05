@@ -457,6 +457,7 @@ const ar = {
     markerArmFailed: 'تُطبع العلامات كنص حرفي',
     gs1ValueInvalid: 'قيمة المتغير تُفسد بيانات GS1',
     gs1ContentUnparsed: 'محتوى GS1 لا يمكن تحليله',
+    previewApproximate: 'المعاينة تقارب الرمز المطبوع',
     printerSupportLimited: 'دعم محدود',
     qrRotatedStatic: 'رمز QR الدوّار يطبع قيمة ثابتة',
     qrRotatedModel2: 'رمز QR الدوّار يطبع كطراز 2',
@@ -1262,7 +1263,8 @@ const ar = {
       height: 'الارتفاع',
       moduleWidth: 'عرض الوحدة',
       microPdfRowHeight: 'ارتفاع صف MicroPDF',
-      microPdfRows: 'صفوف MicroPDF',
+      microPdfModuleWidth: 'عرض وحدة MicroPDF',
+      wideRatio: 'نسبة الشريط العريض',
     },
   },
 
