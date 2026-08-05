@@ -1,6 +1,6 @@
 [package]
 name = "zplab"
-version = "0.3.1"
+version = "0.3.2"
 description = "ZPLab desktop shell"
 authors = ["u8array"]
 license = "MIT"
