@@ -13,6 +13,8 @@
 import type { LabelObject } from "../types/Group";
 import { getAllLeaves, isGroup } from "../types/Group";
 import type { LeafObject } from "../registry";
+import { gfaHeaderDims, type ImageProps } from "../registry/image";
+import { getImage } from "./imageCache";
 import { BARCODE_1D_TYPES, STACKED_2D_TYPES, getEntry } from "../registry";
 import type { LabelConfig } from "../types/LabelConfig";
 import { effectiveDpmm, type JmDensity } from "../types/LabelConfig";
@@ -176,6 +178,13 @@ export function isBarcode(obj: { type: string }): boolean {
   return BARCODE_TYPES.has(obj.type);
 }
 
+/** Store-less ^GFA header dims (the byte truth objectBoundsDots sizes by);
+ *  null whenever the image resolves through any other source. */
+function imageHeaderBounds(p: ImageProps): { width: number; height: number | null } | null {
+  if (p.storedAs || p.rawGf || getImage(p.imageId) || objectRotation(p) !== "N") return null;
+  return gfaHeaderDims(p._gfaCache);
+}
+
 /** True when objectBoundsDots estimates this leaf headlessly: barcode registry
  *  footprint, single-line-text font estimate, image-without-heightDots square
  *  guess. Everything else, and any leaf with a `measured` footprint (render
@@ -186,7 +195,9 @@ export function boundsAreApprox(
 ): boolean {
   if (measured?.has(obj.id)) return false;
   if (isBarcode(obj)) return true;
-  if (obj.type === "image") return obj.props.heightDots === undefined;
+  if (obj.type === "image") {
+    return obj.props.heightDots === undefined && imageHeaderBounds(obj.props) === null;
+  }
   if (obj.type !== "text") return false;
   const p = obj.props;
   return !(resolveTextMode(p) !== "normal" && !!p.blockWidth && p.blockWidth > 0);
@@ -210,6 +221,14 @@ export function objectBoundsDots(obj: LabelObject, ctx: ObjectBoundsCtx): Boundi
       // fallback rotates the upright prop dims itself for R/B.
       const m = ctx.measured?.get(obj.id);
       if (m) return { x: obj.x, y: obj.y, width: m.width, height: m.height };
+      const header = imageHeaderBounds(p);
+      if (header) {
+        return {
+          x: obj.x, y: obj.y,
+          width: header.width,
+          height: header.height ?? (p.heightDots ?? p.widthDots),
+        };
+      }
       // storedAs/rawGf stay upright (rot='N'), so their fallback footprint isn't
       // swapped. (Pure path: no cache check, but a no-cache image is empty and
       // inconsequential.)

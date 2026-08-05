@@ -3,6 +3,7 @@
 import bwipjs from "bwip-js/generic";
 import { registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
 import {
+  measureBarcodeBoundsWith,
   measureBarcodeFootprintDotsWith,
   resolveForMeasure,
   type BwipEngine,
@@ -30,6 +31,14 @@ const measure = (o: LabelObject, dpmm?: number) => {
 /** Idempotent; re-registering only resets the seam's memo. */
 export function registerSidecarFootprintMeasurer(): void {
   registerFootprintMeasurer(measure);
+}
+
+/** Full measured-bounds record for the geometry report, resolved against the
+ *  active binding like `measure`. */
+export function measureBoundsEntry(o: LabelObject, dpmm: number) {
+  if (isGroup(o)) return null;
+  const resolved = binding ? resolveForMeasure(o, binding.variables, binding.clock) : o;
+  return measureBarcodeBoundsWith(engine, resolved as LeafObject, dpmm);
 }
 
 /** Run `fn` with markers resolving against the design's own bindings, the

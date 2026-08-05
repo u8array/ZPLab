@@ -1120,11 +1120,11 @@ function tlc39DimsPx(
 /** Headless twin of the app's canvas measureBarcodeFootprintDots: identical
  *  blank/sample fallback and zone math, dims from the injected bwip engine.
  *  Measures at scale = dpmm (px = dots), intrinsic to a headless measure. */
-export function measureBarcodeFootprintDotsWith(
+function measureDisplayWith(
   bwip: BwipEngine,
   obj: LeafObject,
   dpmm: number,
-): { w: number; h: number } | null {
+): BarcodeDisplaySize | null {
   const blank = (getObjectStringContent(obj) ?? "").trim() === "";
   let target = obj;
   let dims = blank ? null : barcodeDimsPx(bwip, obj, dpmm, dpmm);
@@ -1136,8 +1136,45 @@ export function measureBarcodeFootprintDotsWith(
     if (!dims) return null;
   }
   const dim = getDisplaySize(target, dims, dpmm, dpmm);
-  if (dim.w <= 0 || dim.h <= 0) return null;
-  return { w: pxToDots(dim.w, dpmm, dpmm), h: pxToDots(dim.h, dpmm, dpmm) };
+  return dim.w > 0 && dim.h > 0 ? dim : null;
+}
+
+export function measureBarcodeFootprintDotsWith(
+  bwip: BwipEngine,
+  obj: LeafObject,
+  dpmm: number,
+): { w: number; h: number } | null {
+  const dim = measureDisplayWith(bwip, obj, dpmm);
+  return dim ? { w: pxToDots(dim.w, dpmm, dpmm), h: pxToDots(dim.h, dpmm, dpmm) } : null;
+}
+
+/** Headless twin of BarcodeObject's measured-bounds record: the full
+ *  bar-rect, so objectBounds anchors FT/rotated fields exactly. */
+export function measureBarcodeBoundsWith(
+  bwip: BwipEngine,
+  obj: LeafObject,
+  dpmm: number,
+): {
+  width: number;
+  height: number;
+  barHeightDots: number;
+  barLeftDots: number;
+  barTopDots: number;
+  uprightBarWDots: number;
+  uprightBarHDots: number;
+} | null {
+  const dim = measureDisplayWith(bwip, obj, dpmm);
+  if (!dim) return null;
+  const d = (px: number) => pxToDots(px, dpmm, dpmm);
+  return {
+    width: d(dim.w),
+    height: d(dim.h),
+    barHeightDots: d(dim.barH),
+    barLeftDots: d(dim.barLeftPx),
+    barTopDots: d(dim.barTopPx),
+    uprightBarWDots: d(dim.upright.barW),
+    uprightBarHDots: d(dim.upright.barH),
+  };
 }
 
 /** Marker resolution for measurement: variable defaults only, no dataset row
