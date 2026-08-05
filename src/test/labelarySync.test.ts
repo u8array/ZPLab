@@ -22,6 +22,7 @@ import { barcodeFtAnchorOffset } from "@zplab/core/lib/objectBounds";
 import { ObjectRegistry } from "@zplab/core/registry";
 import { objectRotation } from "@zplab/core/registry/rotation";
 import { defined } from "./helpers";
+import { bwipPngWithRetry } from "./bwipPng";
 import { testModels } from "./testModels";
 import { EXPECTED_BOUNDS_DELTA } from "./barcodeFidelity";
 
@@ -94,15 +95,7 @@ describe("Labelary Sync - Canvas Dimension Logic", () => {
         const opts = buildBwipOptions(obj, 1, 8);
         expect(opts).not.toBeNull();
 
-        const buffer = await new Promise<Buffer>((resolve, reject) => {
-          bwipjs.toBuffer(
-            opts as unknown as Parameters<typeof bwipjs.toBuffer>[0],
-            (err: string | Error, png: Buffer) => {
-              if (err) reject(err);
-              else resolve(png);
-            },
-          );
-        });
+        const buffer = await bwipPngWithRetry(opts as Record<string, unknown>);
 
         const { width, height } = getPngDimensions(buffer);
         mockCanvas = { width, height } as HTMLCanvasElement;

@@ -145,7 +145,10 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
             {config.hasCheckDigit && (
               <CheckboxRow
                 checked={p.checkDigit}
-                onChange={(checkDigit) => onChange({ checkDigit })}
+                // Toggling drops the imported ^BM extras (C/D mode, e2 HRI
+                // digit): they would otherwise stick invisibly to the emit.
+                onChange={(checkDigit) =>
+                  onChange({ checkDigit, msiCheckMode: undefined, msiHriCheck: undefined })}
                 label={loc.checkDigit ?? ''}
                 cmd={config.zplCommand}
               />

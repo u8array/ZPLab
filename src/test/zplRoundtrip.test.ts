@@ -457,7 +457,7 @@ describe('round-trip — barcode1d types (UPC-A, EAN-8, UPC-E, I2of5, Code93)', 
   it.each([
     ['industrial2of5', '^XA^BY2^FO10,10^BIN,80,Y,Y^FD12345678^FS^XZ'],
     ['standard2of5', '^XA^BY2^FO10,10^BJN,80,Y,Y^FD12345678^FS^XZ'],
-    ['msi', '^XA^BY2^FO10,10^BMN,N,80,Y,Y^FD12345678^FS^XZ'],
+    ['msi', '^XA^BY2^FO10,10^BMN,A,80,Y,Y^FD12345678^FS^XZ'],
     ['plessey', '^XA^BY2^FO10,10^BPN,N,80,Y,Y^FD12345678^FS^XZ'],
     ['planet', '^XA^BY2^FO10,10^B5N,80,Y,Y^FD12345678901^FS^XZ'],
     ['postal', '^XA^BY2^FO10,10^BZN,80,Y,Y^FD12345^FS^XZ'],
@@ -510,11 +510,10 @@ describe('round-trip — ^LH label home offset', () => {
 // ── MSI barcode ──────────────────────────────────────────────────────────────
 
 describe('round-trip — MSI barcode', () => {
-  // ^BM format: ^BMN,{checkType},{height},{interp},N
-  // checkType: A=Mod10, B=Mod11, C=Mod10+Mod10, D=Mod11+Mod10, N=none
+  // ^BMo,e,h,f,g; e: A=no check, B=1 Mod 10 (default), C/D=multi-check.
   it('parses ^BM height from third parameter (new format)', () => {
     const { first } = roundtrip(
-      '^XA^PW784^LL264^CI28^BY2^FO0,0^BMN,N,80,Y,N^FD12345678^FS^XZ',
+      '^XA^PW784^LL264^CI28^BY2^FO0,0^BMN,A,80,Y,N^FD12345678^FS^XZ',
     );
     const obj = first.objects[0];
     expect(obj?.type).toBe('msi');
@@ -524,17 +523,62 @@ describe('round-trip — MSI barcode', () => {
     expect(props(obj).moduleWidth).toBe(2);
   });
 
-  it('parses ^BM check digit flag correctly', () => {
+  it('parses ^BM check digit flag correctly (A=none, B/default/invalid=checked)', () => {
+    // ZD230-measured: e=A prints one digit narrower than B; an invalid e
+    // (the old emitter wrote N) falls back to B, i.e. checked.
     const { first } = roundtrip(
       '^XA^PW400^LL200^BY2^FO0,0^BMN,A,100,N,N^FD12345678^FS^XZ',
     );
-    expect(props(first.objects[0]).checkDigit).toBe(true);
+    expect(props(first.objects[0]).checkDigit).toBe(false);
     expect(props(first.objects[0]).printInterpretation).toBe(false);
+    for (const zpl of [
+      '^XA^BY2^FO0,0^BMN,B,100,N,N^FD12345678^FS^XZ',
+      '^XA^BY2^FO0,0^BMN,,100,N,N^FD12345678^FS^XZ',
+      '^XA^BY2^FO0,0^BMN,N,100,N,N^FD12345678^FS^XZ',
+    ]) {
+      expect(props(roundtrip(zpl).first.objects[0]).checkDigit, zpl).toBe(true);
+    }
+  });
+
+  it('keeps the PRINTED semantics of main-era ^BM wire (inverted emitter)', () => {
+    // main wrote e=A for its checked flag and an invalid e=N for unchecked;
+    // the ZD230 printed A without and N with a check digit regardless. The
+    // import mirrors the print: A stays byte-stable, N re-emits as the
+    // equivalent B.
+    const a = roundtrip('^XA^BY2^FO0,0^BMN,A,100,N,N^FD12345678^FS^XZ');
+    expect(props(a.first.objects[0]).checkDigit).toBe(false);
+    expect(a.regenerated).toContain('^BMN,A,');
+    const n = roundtrip('^XA^BY2^FO0,0^BMN,N,100,N,N^FD12345678^FS^XZ');
+    expect(props(n.first.objects[0]).checkDigit).toBe(true);
+    expect(n.regenerated).toContain('^BMN,B,');
+  });
+
+  it('round-trips the multi-check ^BM modes C/D and e2=Y byte-stable', () => {
+    const c = roundtrip('^XA^BY2^FO0,0^BMN,C,100,N,N^FD12345678^FS^XZ');
+    expect(props(c.first.objects[0]).msiCheckMode).toBe('C');
+    expect(c.regenerated).toContain('^BMN,C,100,N,N');
+    const e2 = roundtrip('^XA^BY2^FO0,0^BMN,B,100,Y,N,Y^FD12345678^FS^XZ');
+    expect(props(e2.first.objects[0]).msiHriCheck).toBe(true);
+    expect(e2.regenerated).toContain('^BMN,B,100,Y,N,Y');
+    // No partial finding: the wire round-trips byte-stable.
+    for (const r of [c, e2]) {
+      expect(r.first.findings.some((f) => f.kind === 'partial' && f.command === '^BM')).toBe(false);
+    }
+    // A plain design keeps the 5-param wire (no trailing e2 slot).
+    const clean = roundtrip('^XA^BY2^FO0,0^BMN,B,100,Y,N,N^FD12345678^FS^XZ');
+    expect(clean.regenerated).toContain('^BMN,B,100,Y,N^FD');
+  });
+
+  it('emits e=B for checked and e=A for unchecked MSI', () => {
+    const { regenerated } = roundtrip('^XA^BY2^FO0,0^BMN,B,100,N,N^FD12345678^FS^XZ');
+    expect(regenerated).toContain('^BMN,B,');
+    const off = roundtrip('^XA^BY2^FO0,0^BMN,A,100,N,N^FD12345678^FS^XZ');
+    expect(off.regenerated).toContain('^BMN,A,');
   });
 
   it('survives a full round-trip without changing height or check', () => {
     const { first, second } = roundtrip(
-      '^XA^PW784^LL264^CI28^BY2^FO0,0^BMN,N,80,Y,N^FD12345678^FS^XZ',
+      '^XA^PW784^LL264^CI28^BY2^FO0,0^BMN,A,80,Y,N^FD12345678^FS^XZ',
     );
     expect(props(second.objects[0]).height).toBe(props(first.objects[0]).height);
     expect(props(second.objects[0]).checkDigit).toBe(props(first.objects[0]).checkDigit);

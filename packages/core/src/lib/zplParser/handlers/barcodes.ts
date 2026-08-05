@@ -85,12 +85,15 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
         : "A";
     },
 
-    // MSI: check logic is "any letter except N" (not simple "Y"); keep inline.
-    // ^BMN,{checkType},{height},{interp},N  (checkType: A/B/C/D=enabled, N=none)
+    // MSI ^BMN,{e},{h},{f},{g},{e2}; e: A=no check, B/C/D=checked (default
+    // B; the firmware also treats invalid values as B, ZD230-measured).
     BM(p) {
       s.field.fieldType = "msi";
       s.field.bcRotation = readRotation(p[0]);
-      s.field.bcCheck = (p[1] ?? "N") !== "N";
+      const e = (p[1] ?? "B").toUpperCase() || "B";
+      s.field.bcCheck = e !== "A";
+      s.field.bcMsiCheckMode = e === "C" || e === "D" ? e : undefined;
+      s.field.bcMsiHriCheck = (p[5] ?? "N").toUpperCase() === "Y";
       s.field.bcHeight = dots(p[2], defaults.byHeight || 100);
       s.field.bcInterp = (p[3] ?? "Y") === "Y";
       s.field.bcInterpAbove = (p[4] ?? "N") === "Y";
@@ -167,11 +170,14 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
       s.field.maxicodeTotal = clampMaxicodeAppend(int(p[2], 1));
     },
 
-    // ^BFN,{rowHeight}: MicroPDF417
+    // ^BFo,{rowHeight},{mode}: MicroPDF417; mode pins the symbol version
+    // (Table 5), out-of-band values fall to the spec default 0.
     BF(p) {
       s.field.fieldType = "micropdf417";
       s.field.bcRotation = readRotation(p[0]);
       s.field.mpdfRowHeight = dots(p[1], 10);
+      const mode = int(p[2], 0);
+      s.field.mpdfMode = mode >= 0 && mode <= 33 ? mode : 0;
     },
 
     // ^BBN,{rowHeight},{security},{numCharsPerRow},{numRows},{mode}: CODABLOCK.
@@ -187,20 +193,19 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
       s.field.cbColumns = clampCodablockColumns(int(p[3], 0) || undefined);
     },
 
-    // ^BTo,w1,r1,h1,w2,h2: TLC39 (Code 39 + optional MicroPDF417 stack)
+    // ^BTo,w1,r1,h1,w2,h2 (spec p.140). The MicroPDF row count has no
+    // param: the firmware derives it from the serial (always 4 columns).
     BT(p) {
       s.field.fieldType = "tlc39";
       s.field.bcRotation = readRotation(p[0]);
       // w1 (Code 39 narrow bar) overrides ^BY when present; undefined
       // means fall back to defaults.byModuleWidth at flush time.
       s.field.tlcModuleWidth = dots(p[1], 0) || undefined;
-      // p[2] (r1) intentionally dropped, canonicalized on emit.
+      const r1 = Number.parseFloat(p[2] ?? "");
+      s.field.tlcWideRatio = r1 >= 2 && r1 <= 3 ? r1 : 2;
       s.field.tlcHeight = dots(p[3], defaults.byHeight || 40);
-      s.field.tlcMicroPdfRowHeight = dots(p[4], 4);
-      // Zebra ^BT h2 range is 1-10; firmware snaps to a valid linked
-      // MicroPDF417 row count {4,6,8,10} on print.
-      const rows = int(p[5], 4);
-      s.field.tlcMicroPdfRows = rows >= 1 && rows <= 10 ? rows : 4;
+      s.field.tlcMicroPdfModuleWidth = dots(p[4], 2);
+      s.field.tlcMicroPdfRowHeight = dots(p[5], 4);
     },
   };
 }

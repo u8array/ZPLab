@@ -50,7 +50,7 @@ describe("sidecar footprint kernel", () => {
     expect(plessey?.w).toBeGreaterThan(0);
     const tlc39 = measureBarcodeFootprintDotsWith(
       engine,
-      leaf("tlc39", { content: "123456,S00001", height: 40, moduleWidth: 2, microPdfRowHeight: 4, microPdfRows: 4, printInterpretation: false, checkDigit: false, rotation: "N" }),
+      leaf("tlc39", { content: "123456,S00001", height: 40, moduleWidth: 2, wideRatio: 2, microPdfModuleWidth: 2, microPdfRowHeight: 4, printInterpretation: false, checkDigit: false, rotation: "N" }),
       8,
     );
     expect(tlc39?.w).toBeGreaterThan(0);

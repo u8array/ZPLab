@@ -274,6 +274,8 @@ export function useKonvaTransformer({
         uprightW0: number;
         uprightH0: number;
         snapshot: { x: number; y: number; moduleWidth: number; height?: number };
+        /** Gesture-start values of extraModuleWidthProps (TLC39 ^BT w2). */
+        extraWidths0?: Record<string, number>;
         changed: boolean;
         lastCentered: boolean;
       })
@@ -755,6 +757,12 @@ export function useKonvaTransformer({
             // effect of the per-tick moduleWidth writes (code49), and the undo
             // baseline must restore that too.
             snapshot: { x: obj.x, y: obj.y, moduleWidth: p.moduleWidth, height: p.height },
+            extraWidths0: Object.fromEntries(
+              (getEntry(obj.type)?.extraModuleWidthProps ?? []).flatMap((name) => {
+                const v = (p as Record<string, unknown>)[name];
+                return typeof v === "number" ? [[name, v]] : [];
+              }),
+            ),
             changed: false,
             lastCentered: altKeyRef.current,
           };
@@ -980,11 +988,17 @@ export function useKonvaTransformer({
             br.uprightW0 * ratio,
             br.uprightH0,
           );
+          // TLC39's second module width follows the same ratio so the
+          // composite keeps its proportions mid-drag.
+          const extraWidths: Record<string, number> = {};
+          for (const [name, v0] of Object.entries(br.extraWidths0 ?? {})) {
+            extraWidths[name] = Math.min(10, Math.max(1, Math.round(v0 * ratio)));
+          }
           flushSync(() => {
             updateObject(id, {
               x: swapped ? br.snapshot.x : model.x,
               y: swapped ? model.y : br.snapshot.y,
-              props: { moduleWidth: geo.moduleWidth },
+              props: { moduleWidth: geo.moduleWidth, ...extraWidths },
             });
           });
           br.changed = true;
@@ -1265,9 +1279,13 @@ export function useKonvaTransformer({
             y: br.snapshot.y,
             props:
               br.mode === "mw"
-                ? typeof br.snapshot.height === "number"
-                  ? { moduleWidth: br.snapshot.moduleWidth, height: br.snapshot.height }
-                  : { moduleWidth: br.snapshot.moduleWidth }
+                ? {
+                    moduleWidth: br.snapshot.moduleWidth,
+                    // The undo baseline must restore the ratio-scaled extra
+                    // widths too, or Ctrl+Z leaves w2 on the post-drag value.
+                    ...br.extraWidths0,
+                    ...(typeof br.snapshot.height === "number" && { height: br.snapshot.height }),
+                  }
                 : { height: br.snapshot.height },
           },
           final: { x: cur.x, y: cur.y, props: finalProps },

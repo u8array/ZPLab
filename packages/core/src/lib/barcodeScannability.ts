@@ -20,12 +20,13 @@ export function moduleTooSmallFindings(
   moduleDots: number,
   dpmm: number,
   unit: Unit,
+  propLabel?: string,
 ): PreflightProducerResult[] {
   const mm = moduleDots / dpmm;
   if (!(mm < MIN_BARCODE_MODULE_MM)) return []; // also short-circuits NaN/Infinity
   return [{
     kind: "barcodeTooSmall",
-    detail: `${formatModule(mm, unit)} (min ${formatModule(MIN_BARCODE_MODULE_MM, unit)})`,
+    detail: `${propLabel ? `${propLabel}: ` : ""}${formatModule(mm, unit)} (min ${formatModule(MIN_BARCODE_MODULE_MM, unit)})`,
   }];
 }
 
@@ -42,10 +43,20 @@ export function moduleTooSmallPreflight<P extends object>(
  *  module-size check plus a standing "not supported on all printers" warning,
  *  since many printers, especially entry-level, do not implement these. */
 export function limitedSupportPreflight<P extends object>(
-  prop: keyof P & string,
+  ...props: ((keyof P & string) | [prop: keyof P & string, label: string])[]
 ): (obj: { props: P }, ctx: PreflightCtx) => PreflightProducerResult[] {
   return (obj, ctx) => [
-    ...moduleTooSmallFindings(obj.props[prop] as number, effectiveDpmm(ctx.label), ctx.unit),
+    ...props.flatMap((entry) => {
+      const [prop, label]: [keyof P & string, string | undefined] =
+        typeof entry === "string" ? [entry, undefined] : entry;
+      return moduleTooSmallFindings(
+        obj.props[prop] as number,
+        effectiveDpmm(ctx.label),
+        ctx.unit,
+        // Only ambiguous with several width props (TLC39 w1/w2).
+        props.length > 1 ? (label ?? prop) : undefined,
+      );
+    }),
     { kind: "printerSupportLimited" },
   ];
 }

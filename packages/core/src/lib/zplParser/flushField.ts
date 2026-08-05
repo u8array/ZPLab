@@ -478,6 +478,12 @@ export function createFlushField(
               printInterpretation: s.field.bcInterp,
               printInterpretationAbove: s.field.bcInterpAbove,
               checkDigit: s.field.bcCheck,
+              // Only msi models carry the ^BM extras (a malformed ^BM
+              // before another ^B* must not leak them).
+              ...(s.field.fieldType === "msi" && {
+                ...(s.field.bcMsiCheckMode && { msiCheckMode: s.field.bcMsiCheckMode }),
+                ...(s.field.bcMsiHriCheck && { msiHriCheck: true }),
+              }),
               rotation: s.field.bcRotation,
             } satisfies Barcode1DProps,
             posType,
@@ -588,7 +594,7 @@ export function createFlushField(
               content,
               moduleWidth: s.defaults.byModuleWidth,
               rowHeight: s.field.mpdfRowHeight,
-              mode: 0,
+              mode: s.field.mpdfMode,
               rotation: s.field.bcRotation,
             } satisfies MicroPdf417Props,
             posType,
@@ -624,9 +630,10 @@ export function createFlushField(
             {
               content,
               moduleWidth: s.field.tlcModuleWidth ?? s.defaults.byModuleWidth,
+              wideRatio: s.field.tlcWideRatio,
               height: s.field.tlcHeight,
+              microPdfModuleWidth: s.field.tlcMicroPdfModuleWidth,
               microPdfRowHeight: s.field.tlcMicroPdfRowHeight,
-              microPdfRows: s.field.tlcMicroPdfRows,
               rotation: s.field.bcRotation,
             } satisfies Tlc39Props,
             posType,

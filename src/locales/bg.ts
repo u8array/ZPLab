@@ -457,6 +457,7 @@ const bg = {
     markerArmFailed: 'Маркерите се отпечатват като обикновен текст',
     gs1ValueInvalid: 'Стойността на променливата нарушава GS1 данни',
     gs1ContentUnparsed: 'GS1 съдържанието не може да бъде анализирано',
+    previewApproximate: 'Прегледът е приблизителен спрямо отпечатания символ',
     printerSupportLimited: 'Ограничена поддръжка',
     qrRotatedStatic: 'Завъртян QR код отпечатва статична стойност',
     qrRotatedModel2: 'Завъртян QR код отпечатва като Модел 2',
@@ -1262,7 +1263,8 @@ const bg = {
       height: 'Височина',
       moduleWidth: 'Ширина на модула',
       microPdfRowHeight: 'Височина на ред MicroPDF',
-      microPdfRows: 'Редове MicroPDF',
+      microPdfModuleWidth: 'Ширина на модула на MicroPDF',
+      wideRatio: 'Съотношение на широката лента',
     },
   },
 

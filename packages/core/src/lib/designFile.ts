@@ -11,7 +11,7 @@ import { dbSourceRefSchema, type DbSourceRef } from "../types/DataSource";
 import type { LabelObject } from "../types/Group";
 import { blockOverlaySchema, overlayText, type BlockOverlay } from "./zplOverlay/overlay";
 import { reconstructLegacyBlockHeads } from "./zplHeadScan";
-import { visitLeavesInPages, foldSerialLeaf, bindSingleMarkerLeaf, sanitiseVariableNames, safeUniqueNameById } from "./objectTree";
+import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, sanitiseVariableNames, safeUniqueNameById } from "./objectTree";
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from "./reverseBacking";
 import { ok, err, type Result } from "./result";
 
@@ -20,7 +20,7 @@ import { ok, err, type Result } from "./result";
  *  migrator below and dispatch on `schemaVersion` in `parseDesignFile`.
  *  The persist middleware in `labelStore` has its own independent
  *  version for localStorage state; do not conflate. */
-export const CURRENT_DESIGN_SCHEMA_VERSION = 4;
+export const CURRENT_DESIGN_SCHEMA_VERSION = 5;
 
 export type DesignFileError = "parse_error" | "invalid_schema";
 export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity }
@@ -71,7 +71,9 @@ const pageSchema = z.object({
 const designFileSchema = z.object({
   // v3 predates ^JM: it loads through the legacy JM reconstruction. v4 carries
   // the persisted density fields; both are read, anything else is rejected.
-  schemaVersion: z.union([z.literal(3), z.literal(4)]),
+  // v5: tlc39 props remapped to the real ^BT slots (microPdfModuleWidth /
+  // microPdfRowHeight semantics, wideRatio; microPdfRows gone).
+  schemaVersion: z.union([z.literal(3), z.literal(4), z.literal(5)]),
   label: labelConfigSchema,
   pages: z.array(pageSchema),
   variables: z.array(variableSchema).optional(),
@@ -88,8 +90,11 @@ export function parseDesignFile(text: string): Result<DesignFile, DesignFileErro
   } catch {
     return err("parse_error");
   }
+  // Valid JSON that is not an object (null, true, "x") must reject, not throw.
+  if (!json || typeof json !== "object") return err("invalid_schema");
 
   migrateGs1databarModuleWidth(json);
+  visitLeavesInPages((json as { pages?: unknown }).pages, fixTlc39SlotsLeaf);
   migrateReverseTextBackground(json);
   migrateSerialToTextMode(json);
   migrateSingleBindToMarker(json);

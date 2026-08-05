@@ -457,6 +457,7 @@ const et = {
     markerArmFailed: 'Markerid trükitakse tavalise tekstina',
     gs1ValueInvalid: 'Muutuja väärtus rikub GS1 andmeid',
     gs1ContentUnparsed: 'GS1 sisu ei õnnestu parsida',
+    previewApproximate: 'Eelvaade on trükitud sümboli lähendus',
     printerSupportLimited: 'Piiratud tugi',
     qrRotatedStatic: 'Pööratud QR-kood trükib staatilise väärtuse',
     qrRotatedModel2: 'Pööratud QR-kood trükib mudelina 2',
@@ -1262,7 +1263,8 @@ const et = {
       height: 'Kõrgus',
       moduleWidth: 'Mooduli laius',
       microPdfRowHeight: 'MicroPDF rea kõrgus',
-      microPdfRows: 'MicroPDF read',
+      microPdfModuleWidth: 'MicroPDF mooduli laius',
+      wideRatio: 'Laia riba suhe',
     },
   },
 

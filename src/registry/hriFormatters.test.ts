@@ -5,7 +5,7 @@ import {
   formatUpcaHri,
   formatUpceHri,
   upceData6FromFd,
-  formatCode11Hri,
+  formatCode11Hri, formatCode39Hri, formatInterleaved2of5Hri, formatMsiHri,
   formatLogmarsHri,
   formatUpcEanExtensionHri,
 } from '@zplab/core/registry/hriFormatters';
@@ -50,13 +50,42 @@ describe('HRI formatters', () => {
 
   describe('formatCode11Hri', () => {
     it('appends C+K check digits when checkDigit is off (e=N, two checks)', () => {
-      expect(formatCode11Hri('12345', false)).toBe('1234528');
+      expect(formatCode11Hri('12345', { checkDigit: false })).toBe('1234528');
     });
     it('appends only the C check digit when checkDigit is on (e=Y, one check)', () => {
-      expect(formatCode11Hri('12345', true)).toBe('123452');
+      expect(formatCode11Hri('12345', { checkDigit: true })).toBe('123452');
     });
     it('defaults to two check digits', () => {
       expect(formatCode11Hri('12345')).toBe('1234528');
+    });
+  });
+
+  describe('formatCode39Hri', () => {
+    it('appends the Mod-43 check char and uppercases like the firmware', () => {
+      expect(formatCode39Hri('1234', { checkDigit: true })).toBe('1234A');
+      expect(formatCode39Hri('1234', { checkDigit: false })).toBe('1234');
+      expect(formatCode39Hri('abc', { checkDigit: true })).toBe('ABCX');
+    });
+  });
+
+  describe('formatInterleaved2of5Hri', () => {
+    it('appends the Mod 10 check and pads an odd total with the firmware 0', () => {
+      expect(formatInterleaved2of5Hri('1234', { checkDigit: true })).toBe('012348');
+      expect(formatInterleaved2of5Hri('12345', { checkDigit: true })).toBe('123457');
+      expect(formatInterleaved2of5Hri('1234', { checkDigit: false })).toBe('1234');
+      // The firmware pad applies without a check digit too (bars carry it).
+      expect(formatInterleaved2of5Hri('12345', { checkDigit: false })).toBe('012345');
+    });
+  });
+
+  describe('formatMsiHri', () => {
+    it('appends the ^BM check digits only when e2 is set', () => {
+      const on = { checkDigit: true, msiHriCheck: true };
+      expect(formatMsiHri('12345678', on)).toBe('123456782');
+      expect(formatMsiHri('12345678', { ...on, msiCheckMode: 'C' })).toBe('1234567822');
+      expect(formatMsiHri('12345678', { ...on, msiCheckMode: 'D' })).toBe('1234567855');
+      expect(formatMsiHri('12345678', { checkDigit: true })).toBe('12345678');
+      expect(formatMsiHri('12345678', { msiHriCheck: true })).toBe('12345678');
     });
   });
 

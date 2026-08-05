@@ -149,6 +149,14 @@ describe("rescaleDesign", () => {
     expect((out.props as { height: number }).height).toBe(80);
   });
 
+  it("scales the tlc39 MicroPDF module width like the Code 39 one", () => {
+    const tlc = leaf("x", "tlc39", 0, 0, { content: "1,2", moduleWidth: 2, wideRatio: 2, height: 40, microPdfModuleWidth: 2, microPdfRowHeight: 4, rotation: "N" } as never);
+    const r = rescaleDesign(page(tlc), label, 8, 16, { dpmm: 16 }); // factor 2
+    const p = (r.pages[0]!.objects[0] as typeof tlc).props as unknown as { moduleWidth: number; microPdfModuleWidth: number };
+    expect(p.moduleWidth).toBe(4);
+    expect(p.microPdfModuleWidth).toBe(4);
+  });
+
   it("warns on device-font snap for fonts A-H but not font 0", () => {
     const a = leaf("t1", "text", 0, 0, { content: "x", fontHeight: 30, fontWidth: 0, fontId: "A", rotation: "N" } as never);
     const z = leaf("t2", "text", 0, 0, { content: "x", fontHeight: 30, fontWidth: 0, fontId: "0", rotation: "N" } as never);

@@ -457,6 +457,7 @@ const nl = {
     markerArmFailed: 'Markers worden als letterlijke tekst afgedrukt',
     gs1ValueInvalid: 'Variabelewaarde schendt GS1-gegevens',
     gs1ContentUnparsed: 'GS1-inhoud kan niet worden geparsed',
+    previewApproximate: 'Voorbeeld benadert het afgedrukte symbool',
     printerSupportLimited: 'Beperkte ondersteuning',
     qrRotatedStatic: 'Gedraaide QR-code drukt statische waarde',
     qrRotatedModel2: 'Gedraaide QR-code drukt als model 2',
@@ -1262,7 +1263,8 @@ const nl = {
       height: 'Hoogte',
       moduleWidth: 'Modulebreedte',
       microPdfRowHeight: 'MicroPDF rijhoogte',
-      microPdfRows: 'MicroPDF rijen',
+      microPdfModuleWidth: 'MicroPDF-modulebreedte',
+      wideRatio: 'Brede balkverhouding',
     },
   },
 

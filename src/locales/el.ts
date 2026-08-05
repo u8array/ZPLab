@@ -457,6 +457,7 @@ const el = {
     markerArmFailed: 'Οι δείκτες εκτυπώνονται ως απλό κείμενο',
     gs1ValueInvalid: 'Η τιμή μεταβλητής παραβιάζει δεδομένα GS1',
     gs1ContentUnparsed: 'Το περιεχόμενο GS1 δεν αναλύεται',
+    previewApproximate: 'Η προεπισκόπηση προσεγγίζει το εκτυπωμένο σύμβολο',
     printerSupportLimited: 'Περιορισμένη υποστήριξη',
     qrRotatedStatic: 'Περιστραμμένος κωδικός QR εκτυπώνει στατική τιμή',
     qrRotatedModel2: 'Περιστραμμένος κωδικός QR εκτυπώνει ως Μοντέλο 2',
@@ -1262,7 +1263,8 @@ const el = {
       height: 'Ύψος',
       moduleWidth: 'Πλάτος μονάδας',
       microPdfRowHeight: 'Ύψος γραμμής MicroPDF',
-      microPdfRows: 'Γραμμές MicroPDF',
+      microPdfModuleWidth: 'Πλάτος μονάδας MicroPDF',
+      wideRatio: 'Αναλογία πλατιάς γραμμής',
     },
   },
 

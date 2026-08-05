@@ -2296,8 +2296,9 @@ describe('parseZPL — ^BT TLC39', () => {
     expect(p.content).toBe('123456,ABC');
     expect(p.moduleWidth).toBe(3);
     expect(p.height).toBe(60);
-    expect(p.microPdfRowHeight).toBe(5);
-    expect(p.microPdfRows).toBe(3);
+    expect(p.microPdfModuleWidth).toBe(5);
+    expect(p.microPdfRowHeight).toBe(3);
+    expect(p.wideRatio).toBe(3);
     expect(p.rotation).toBe('N');
   });
 
@@ -2307,32 +2308,36 @@ describe('parseZPL — ^BT TLC39', () => {
     expect(props(objects[0]).moduleWidth).toBe(5);
   });
 
-  it('preserves microPdfRows mid-range', () => {
-    const zpl = '^XA^FO0,0^BTN,2,3,40,4,6^FD123456,X^FS^XZ';
-    const { objects } = parseSingle(zpl, 8);
-    expect(props(objects[0]).microPdfRows).toBe(6);
+  it('maps the ^BT w2/h2 slots to MicroPDF module width and row height', () => {
+    // Row count has no ^BT param; the firmware derives it from the serial.
+    const zpl = '^XA^FO0,0^BTN,2,2,40,3,6^FD123456,X^FS^XZ';
+    const p = props(parseSingle(zpl, 8).objects[0]);
+    expect(p.microPdfModuleWidth).toBe(3);
+    expect(p.microPdfRowHeight).toBe(6);
   });
 
-  it('accepts microPdfRows=1 and =10 (^BT spec bounds)', () => {
-    const z1 = parseSingle('^XA^FO0,0^BTN,2,3,40,4,1^FD123456,X^FS^XZ', 8).objects;
-    expect(props(z1[0]).microPdfRows).toBe(1);
-    const z10 = parseSingle('^XA^FO0,0^BTN,2,3,40,4,10^FD123456,X^FS^XZ', 8).objects;
-    expect(props(z10[0]).microPdfRows).toBe(10);
+  it('defaults absent w2/h2 to 2 and 4 (200dpi spec defaults)', () => {
+    const p = props(parseSingle('^XA^FO0,0^BTN,2,2,40^FD123456,X^FS^XZ', 8).objects[0]);
+    expect(p.microPdfModuleWidth).toBe(2);
+    expect(p.microPdfRowHeight).toBe(4);
   });
 
-  it('rejects microPdfRows outside ^BT spec range (-1, 0, 11, 20) and falls back to default 4', () => {
-    for (const v of [-1, 0, 11, 20]) {
-      const zpl = `^XA^FO0,0^BTN,2,3,40,4,${v}^FD123456,X^FS^XZ`;
-      const { objects } = parseSingle(zpl, 8);
-      expect(props(objects[0]).microPdfRows, `rows=${v}`).toBe(4);
-    }
-  });
-
-  it('drops non-canonical r1 on round-trip (re-emits as 2)', async () => {
+  it('round-trips r1 including fractional ratios; invalid falls to 2', async () => {
     const { ObjectRegistry } = await import('@zplab/core/registry');
-    const { objects } = parseSingle('^XA^FO0,0^BTN,2,3,40,4,4^FD123,X^FS^XZ', 8);
+    const { objects } = parseSingle('^XA^FO0,0^BTN,2,2.5,40,4,4^FD123,X^FS^XZ', 8);
+    expect(props(objects[0]).wideRatio).toBe(2.5);
     const emitted = ObjectRegistry.tlc39.toZPL(objects[0] as never);
-    expect(emitted).toContain('^BTN,2,2,40,4,4');
+    expect(emitted).toContain('^BTN,2,2.5,40,4,4');
+    expect(props(parseSingle('^XA^FO0,0^BTN,2,9,40,4,4^FD123,X^FS^XZ', 8).objects[0]).wideRatio).toBe(2);
+  });
+
+  it('keeps the leading S of the serial through model and emit', async () => {
+    // The old canvas-side S-strip never touched the model or the wire; pin
+    // that a legacy-shaped content emits verbatim.
+    const { ObjectRegistry } = await import('@zplab/core/registry');
+    const { objects } = parseSingle('^XA^FO0,0^BTN,2,2,40,2,4^FD123456,SXYZ789^FS^XZ', 8);
+    expect(props(objects[0]).content).toBe('123456,SXYZ789');
+    expect(ObjectRegistry.tlc39.toZPL(objects[0] as never)).toContain('^FD123456,SXYZ789^FS');
   });
 
   it('round-trips ^BT without serial (no MicroPDF block, no trailing comma)', async () => {
@@ -2361,20 +2366,27 @@ describe('parseZPL — ^BT TLC39', () => {
   });
 });
 
-describe('snapTlc39MicroPdfRows', () => {
-  it('snaps in-range requests up to the nearest valid {4,6,8,10}', async () => {
-    const { snapTlc39MicroPdfRows } = await import('../components/Canvas/bwipHelpers');
-    expect(snapTlc39MicroPdfRows(1)).toBe(4);
-    expect(snapTlc39MicroPdfRows(4)).toBe(4);
-    expect(snapTlc39MicroPdfRows(5)).toBe(6);
-    expect(snapTlc39MicroPdfRows(7)).toBe(8);
-    expect(snapTlc39MicroPdfRows(9)).toBe(10);
-    expect(snapTlc39MicroPdfRows(10)).toBe(10);
+describe('parseZPL — ^BM extras stay on the msi field', () => {
+  it('does not leak msiCheckMode/msiHriCheck into a following barcode', () => {
+    const zpl = '^XA^FO0,0^BMN,C,80,N,N,Y^FD123^FS^FO0,120^BPN,N,80,N,N^FD456^FS^XZ';
+    const { objects } = parseSingle(zpl, 8);
+    expect(props(objects[0]).msiCheckMode).toBe('C');
+    expect(props(objects[1]).msiCheckMode).toBeUndefined();
+    expect(props(objects[1]).msiHriCheck).toBeUndefined();
+  });
+});
+
+describe('parseZPL — ^BF MicroPDF417 mode', () => {
+  it('round-trips a non-zero mode', () => {
+    const r = parseSingle('^XA^FO10,10^BY2^BFN,8,23^FD1234^FS^XZ', 8);
+    expect(props(defined(r.objects[0])).mode).toBe(23);
+    expect(generateZPL({ widthMm: 100, heightMm: 50, dpmm: 8 }, r.objects, r.variables)).toContain('^BFN,8,23');
   });
 
-  it('clamps above-range to the highest valid count', async () => {
-    const { snapTlc39MicroPdfRows } = await import('../components/Canvas/bwipHelpers');
-    expect(snapTlc39MicroPdfRows(99)).toBe(10);
+  it('falls back to the spec default 0 for absent or out-of-band modes', () => {
+    for (const zpl of ['^XA^FO10,10^BFN,8^FD1234^FS^XZ', '^XA^FO10,10^BFN,8,34^FD1234^FS^XZ']) {
+      expect(props(defined(parseSingle(zpl, 8).objects[0])).mode, zpl).toBe(0);
+    }
   });
 });
 
@@ -2384,9 +2396,9 @@ describe('splitTlc39Content', () => {
     expect(splitTlc39Content('123456,ABC123')).toEqual({ eci: '123456', serial: 'ABC123' });
   });
 
-  it('strips a leading S data identifier from the serial', async () => {
+  it('keeps a leading S in the serial (spec p.141: stored verbatim)', async () => {
     const { splitTlc39Content } = await import('../components/Canvas/bwipHelpers');
-    expect(splitTlc39Content('123456,SXYZ789')).toEqual({ eci: '123456', serial: 'XYZ789' });
+    expect(splitTlc39Content('123456,SXYZ789')).toEqual({ eci: '123456', serial: 'SXYZ789' });
   });
 
   it('returns empty serial when no comma is present', async () => {

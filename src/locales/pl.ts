@@ -457,6 +457,7 @@ const pl = {
     markerArmFailed: 'Znaczniki drukują się jako zwykły tekst',
     gs1ValueInvalid: 'Wartość zmiennej narusza dane GS1',
     gs1ContentUnparsed: 'Nie można przeanalizować zawartości GS1',
+    previewApproximate: 'Podgląd przybliża drukowany symbol',
     printerSupportLimited: 'Ograniczone wsparcie',
     qrRotatedStatic: 'Obrócony kod QR drukuje statyczną wartość',
     qrRotatedModel2: 'Obrócony kod QR drukuje jako Model 2',
@@ -1262,7 +1263,8 @@ const pl = {
       height: 'Wysokość',
       moduleWidth: 'Szerokość modułu',
       microPdfRowHeight: 'Wysokość wiersza MicroPDF',
-      microPdfRows: 'Wiersze MicroPDF',
+      microPdfModuleWidth: 'Szerokość modułu MicroPDF',
+      wideRatio: 'Współczynnik szerokiego paska',
     },
   },
 

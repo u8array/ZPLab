@@ -88,12 +88,6 @@ export const VERA_MONO_HRI_CAP_TOP_PAD = 0.14;
 // glyph + LOGMARS_TEXT_ABOVE_GAP_DOTS; firmware-reserved regardless of interpretation.
 export const LOGMARS_TEXT_ZONE_DOTS = 20;
 
-// bwip-js adds 3 quiet-zone rows to MicroPDF417 canvas output.
-export const MICROPDF417_QUIET_ZONE_ROWS = 3;
-
-// bwip-js renders MicroPDF417 at 2 internal px per data row, independent of `rowheight`.
-export const MICROPDF417_PX_PER_ROW = 2;
-
 /** User contract per tier: approx = bitmap visual diverges, dimensions
  *  match the print; unverified = bitmap diverges AND dimensions may
  *  differ from the print. */

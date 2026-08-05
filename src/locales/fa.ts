@@ -457,6 +457,7 @@ const fa = {
     markerArmFailed: 'نشانگرها به‌صورت متن ساده چاپ می‌شوند',
     gs1ValueInvalid: 'مقدار متغیر داده‌های GS1 را می‌شکند',
     gs1ContentUnparsed: 'محتوای GS1 قابل تجزیه نیست',
+    previewApproximate: 'پیش‌نمایش نمادی تقریبی از نماد چاپ‌شده است',
     printerSupportLimited: 'پشتیبانی محدود',
     qrRotatedStatic: 'کد QR چرخانده‌شده مقدار ثابت چاپ می‌کند',
     qrRotatedModel2: 'کد QR چرخانده‌شده به‌صورت مدل ۲ چاپ می‌کند',
@@ -1262,7 +1263,8 @@ const fa = {
       height: 'ارتفاع',
       moduleWidth: 'عرض ماژول',
       microPdfRowHeight: 'ارتفاع ردیف MicroPDF',
-      microPdfRows: 'ردیف‌های MicroPDF',
+      microPdfModuleWidth: 'عرض ماژول MicroPDF',
+      wideRatio: 'نسبت میله پهن',
     },
   },
 

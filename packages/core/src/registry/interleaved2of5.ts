@@ -1,4 +1,5 @@
 import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { formatInterleaved2of5Hri } from './hriFormatters';
 export type { Barcode1DProps as Interleaved2of5Props } from './barcode1d';
 
 export const interleaved2of5CoreConfig: Barcode1DCoreConfig = {
@@ -6,6 +7,7 @@ export const interleaved2of5CoreConfig: Barcode1DCoreConfig = {
   icon: 'I25',
   placeholderContent: '12345678',
   group: 'code-1d',
+  hri: { formatHri: formatInterleaved2of5Hri },
   zplCommand: (p) => {
     const interp = p.printInterpretation ? 'Y' : 'N';
     const check = p.checkDigit ? 'Y' : 'N';

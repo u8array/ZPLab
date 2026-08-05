@@ -53,11 +53,24 @@ export const tlc39Panel: ObjectTypeUi<Tlc39Props> = {
               className={fieldGridCell}
             />
             <NumberInput
-              label={loc.microPdfRows}
-              value={p.microPdfRows}
+              label={loc.microPdfModuleWidth}
+              value={p.microPdfModuleWidth}
               min={1}
               max={10}
-              onChange={(microPdfRows) => onChange({ microPdfRows })}
+              onChange={(microPdfModuleWidth) => onChange({ microPdfModuleWidth })}
+              zplCmd="^BT"
+              className={fieldGridCell}
+            />
+          </div>
+
+          <div className={`grid grid-cols-2 ${fieldGridCols}`}>
+            <NumberInput
+              label={loc.wideRatio}
+              value={p.wideRatio}
+              min={2}
+              max={3}
+              step={0.1}
+              onChange={(wideRatio) => onChange({ wideRatio })}
               zplCmd="^BT"
               className={fieldGridCell}
             />

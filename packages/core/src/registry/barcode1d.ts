@@ -31,6 +31,11 @@ export interface Barcode1DProps {
   preSerialContent?: string;
   /** GS1-128 mode (`^BC…,D`). Only honoured by a `gs1Capable` symbology. */
   gs1?: boolean;
+  /** MSI multi-check ^BM e beyond the boolean (C = 2x Mod 10, D = Mod 11 +
+   *  Mod 10); set by import, not the panel. */
+  msiCheckMode?: 'C' | 'D';
+  /** ^BM e2: HRI includes the check digits. Set by import, not the panel. */
+  msiHriCheck?: boolean;
 }
 
 export interface Barcode1DCoreConfig {

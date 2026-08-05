@@ -1,4 +1,5 @@
 import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { formatCode39Hri } from './hriFormatters';
 export type { Barcode1DProps as Code39Props } from './barcode1d';
 
 export const code39CoreConfig: Barcode1DCoreConfig = {
@@ -13,7 +14,7 @@ export const code39CoreConfig: Barcode1DCoreConfig = {
   },
   // Start/stop is the asterisk; rendered as flanking glyphs (lowered to sit
   // centered like Labelary), so the data text carries no `*`.
-  hri: { startStopGlyph: 'asterisk' },
+  hri: { startStopGlyph: 'asterisk', formatHri: formatCode39Hri },
   contentSpec: { charset: '0-9A-Za-z\\-. $/+%' },
 };
 

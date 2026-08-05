@@ -19,6 +19,7 @@ export type PreflightKind =
   | 'markerArmFailed'
   | 'gs1ValueInvalid'
   | 'gs1ContentUnparsed'
+  | 'previewApproximate'
   | 'emptyContent'
   | 'printerSupportLimited'
   | 'qrRotatedStatic'
@@ -64,6 +65,10 @@ export const PREFLIGHT_SEVERITY: Record<PreflightKind, PreflightSeverity> = {
   // Static GS1 content that does not segment: it ships verbatim (FNC1
   // positions unknown), so the scan risk is real but printing works.
   gs1ContentUnparsed: 'warning',
+  // The encoder cannot produce the printer-pinned symbol version, so the
+  // preview draws a near variant into the true footprint; the print itself
+  // is unaffected.
+  previewApproximate: 'warning',
   // A blank field is legal ZPL and a normal drafting state; it prints a gap,
   // so warn rather than block. Mirrors the canvas placeholder.
   emptyContent: 'warning',

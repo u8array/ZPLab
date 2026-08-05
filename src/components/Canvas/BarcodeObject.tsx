@@ -19,6 +19,7 @@ import {
 } from "./bwipHelpers";
 import { resolveHriAbove, gs1HriFontDots } from "@zplab/core/lib/barcodeHri";
 import { gs1CarrierFor, planGs1Fd } from "@zplab/core/lib/gs1Plan";
+import type { HriFormatProps } from "@zplab/core/types/ZplEmit";
 import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { hasTemplateMarkers } from "@zplab/core/lib/fnTemplate";
@@ -305,12 +306,12 @@ export function BarcodeObject({
     // glyph bottom (not the box) lands aboveGapPx over the bars; ^BS bottom-aligns
     // its own box and needs no correction.
     const aboveBottomPad = hri?.fontDots ? 0 : glyphTopPad;
-    const checkDigit = (obj.props as { checkDigit?: boolean }).checkDigit;
     // GS1 mode bypasses formatHri: its emit uses the mode-D grammar, not the
     // plain escape the code128 formatter decodes, and prints the element
     // string as-is.
     const displayText = stripHriControlBytes(
-      (gs1Hri ? undefined : hri?.formatHri?.(rawContent, checkDigit)) ?? rawContent,
+      // Weak-type cast: non-barcode props share none of the optional keys.
+      (gs1Hri ? undefined : hri?.formatHri?.(rawContent, obj.props as HriFormatProps)) ?? rawContent,
     );
     const isTextAbove = resolveHriAbove(obj);
     // Above-gap grows with module width (Labelary); per-symbology override

@@ -457,6 +457,7 @@ const he = {
     markerArmFailed: 'הסמנים מודפסים כטקסט מילולי',
     gs1ValueInvalid: 'ערך המשתנה שובר נתוני GS1',
     gs1ContentUnparsed: 'תוכן ה-GS1 לא ניתן לניתוח',
+    previewApproximate: 'התצוגה המקדימה מקרבת את הסמל המודפס',
     printerSupportLimited: 'תמיכה מוגבלת',
     qrRotatedStatic: 'קוד QR מסובב מדפיס ערך סטטי',
     qrRotatedModel2: 'קוד QR מסובב מדפיס כדגם 2',
@@ -1262,7 +1263,8 @@ const he = {
       height: 'גובה',
       moduleWidth: 'רוחב מודול',
       microPdfRowHeight: 'גובה שורה של MicroPDF',
-      microPdfRows: 'שורות MicroPDF',
+      microPdfModuleWidth: 'רוחב מודול MicroPDF',
+      wideRatio: 'יחס פס רחב',
     },
   },
 

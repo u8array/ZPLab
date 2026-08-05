@@ -36,15 +36,22 @@ export interface ZplEmitContext {
   rawFdFns?: ReadonlySet<number>;
 }
 
+/** The prop slice HRI formatters may read; every leaf props bag satisfies it. */
+export interface HriFormatProps {
+  checkDigit?: boolean;
+  msiCheckMode?: "C" | "D";
+  msiHriCheck?: boolean;
+}
+
 /** Per-type HRI overrides; defaults render text below bars in raw form. */
 export interface HriBehavior {
   /** HRI sits above bars (logmars, ^BS). */
   textAbove?: boolean;
   /** Bar-to-text gap in dots; function form for moduleWidth dependence (^BS). */
   aboveGapDots?: number | ((moduleWidth: number) => number);
-  /** Transform raw content for display; default identity. `checkDigit` is
-   *  the symbology's check-digit flag (Code 11 shows 1 vs 2 check digits). */
-  formatHri?: (content: string, checkDigit?: boolean) => string;
+  /** Transform raw content for display; default identity. `props` is the
+   *  leaf's props bag (Code 11 reads checkDigit, MSI its ^BM extras). */
+  formatHri?: (content: string, props?: HriFormatProps) => string;
   /** Start/stop marker flanking the HRI text: Code 11 triangle and Code 93
    *  square are shapes (no font glyph); Code 39 asterisk is a real glyph but
    *  rendered as a flanking node so it can be lowered to sit centered. */

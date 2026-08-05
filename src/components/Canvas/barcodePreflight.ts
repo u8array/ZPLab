@@ -26,25 +26,31 @@ export interface EncodeEnv {
 // preserving). The RESOLVED content string is the binding-sensitive key: a
 // marker-free barcode stays stable across unrelated variable/CSV/clock edits,
 // a marker barcode re-encodes exactly when its substituted payload changes.
+export interface EncodeVerdict {
+  error: string | null;
+  approximated: boolean;
+}
+
 const encodeCache = new WeakMap<
   LeafObject,
-  { scale: number; dpmm: number; content: string; error: string | null }
+  { scale: number; dpmm: number; content: string } & EncodeVerdict
 >();
 
-function cachedEncodeError(
+function cachedEncode(
   leaf: LeafObject,
   resolved: LeafObject,
   scale: number,
   dpmm: number,
-): string | null {
+): EncodeVerdict {
   const content = getObjectStringContent(resolved) ?? "";
   const hit = encodeCache.get(leaf);
   if (hit && hit.scale === scale && hit.dpmm === dpmm && hit.content === content) {
-    return hit.error;
+    return hit;
   }
-  const error = renderBarcodeCanvas(resolved, scale, dpmm).error;
-  encodeCache.set(leaf, { scale, dpmm, content, error });
-  return error;
+  const r = renderBarcodeCanvas(resolved, scale, dpmm);
+  const verdict = { error: r.error, approximated: r.approximated === true };
+  encodeCache.set(leaf, { scale, dpmm, content, ...verdict });
+  return verdict;
 }
 
 /** Preview-resolved leaf for the encoder (identity-preserving when unbound). */
@@ -61,8 +67,7 @@ export function barcodeEncodeFindings(
   scale: number,
   dpmm: number,
   env: EncodeEnv,
-  encodeError: (leaf: LeafObject, resolved: LeafObject) => string | null = (leaf, resolved) =>
-    cachedEncodeError(leaf, resolved, scale, dpmm),
+  encodeError?: (leaf: LeafObject, resolved: LeafObject) => string | null | EncodeVerdict,
 ): PreflightFinding[] {
   const findings: PreflightFinding[] = [];
   for (const leaf of leaves) {
@@ -96,9 +101,13 @@ export function barcodeEncodeFindings(
     if (gs1StaticUnparsed(leaf.type, leaf.props, getObjectStringContent(leaf) ?? "")) {
       continue;
     }
-    const error = encodeError(leaf, resolved);
-    if (error) {
-      findings.push({ objectId: leaf.id, kind: "renderFailed", severity: PREFLIGHT_SEVERITY.renderFailed, detail: error });
+    const raw = encodeError ? encodeError(leaf, resolved) : cachedEncode(leaf, resolved, scale, dpmm);
+    const verdict: EncodeVerdict =
+      raw === null || typeof raw === "string" ? { error: raw, approximated: false } : raw;
+    if (verdict.error) {
+      findings.push({ objectId: leaf.id, kind: "renderFailed", severity: PREFLIGHT_SEVERITY.renderFailed, detail: verdict.error });
+    } else if (verdict.approximated) {
+      findings.push({ objectId: leaf.id, kind: "previewApproximate", severity: PREFLIGHT_SEVERITY.previewApproximate });
     }
   }
   return findings;

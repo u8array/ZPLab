@@ -457,6 +457,7 @@ const ja = {
     markerArmFailed: 'マーカーはそのままテキストとして印字されます',
     gs1ValueInvalid: '変数値がGS1データを破損',
     gs1ContentUnparsed: 'GS1コンテンツを解析できません',
+    previewApproximate: 'プレビューは印刷されるシンボルの近似表示です',
     printerSupportLimited: '一部非対応',
     qrRotatedStatic: '回転したQRコードは固定値を印刷',
     qrRotatedModel2: '回転したQRコードはモデル2として印刷',
@@ -1262,7 +1263,8 @@ const ja = {
       height: '高さ',
       moduleWidth: 'モジュール幅',
       microPdfRowHeight: 'MicroPDF行の高さ',
-      microPdfRows: 'MicroPDF行数',
+      microPdfModuleWidth: 'MicroPDFモジュール幅',
+      wideRatio: '太バー比率',
     },
   },
 
