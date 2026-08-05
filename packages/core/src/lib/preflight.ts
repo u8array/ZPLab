@@ -1,4 +1,4 @@
-import { getEntry, isGs1Active, type LeafObject } from "../registry";
+import { getEntry, gs1StaticUnparsed, isGs1Active, usesPlainCode128Escape, type LeafObject } from "../registry";
 import { objectBoundsDots, offLabelPlacement, type ObjectBoundsCtx } from "./objectBounds";
 import { emittedAnchorDots } from "./emittedAnchor";
 import { suspiciousCharDetail } from "./suspiciousChars";
@@ -7,7 +7,6 @@ import { DATAMATRIX_FD_ESCAPE } from "./dataMatrixFd";
 import { extractTemplateRefs, hasTemplateMarkers, pickEmbedChar } from "./fnTemplate";
 import { hasClockMarkers, pickClockChars } from "./fcTemplate";
 import { planCode128Fd, planHasLoss } from "./code128Plan";
-import { gs1StaticUnparsed } from "./gs1Plan";
 import { resolveControlMarkers } from "../types/controlKey";
 import { classifyField, isLoneMarker } from "./variableField";
 import { parseContent, typedContentIncompleteRows, typedContentMarkerFindings } from "./typedContent";
@@ -387,7 +386,7 @@ export function computePreflight(
       // gap: an unencodable byte without any C0 (e.g. DEL plus Ä) drops
       // silently; C0_RE keys the drop loss, DEL alone is routing, not loss.
       const p = leaf.props as { serial?: unknown };
-      if (leafEntry?.ctrlNeedsOwnEscape && !gs1 && !p.serial) {
+      if (usesPlainCode128Escape(leafEntry, leaf.props) && !p.serial) {
         const templateFd = hasTemplateMarkers(resolveControlMarkers(content));
         const plan = planCode128Fd(content, templateFd ? "template" : "whole");
         for (const loss of plan.losses) {

@@ -9,7 +9,8 @@ import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { classifyField, isLoneMarker } from '../lib/variableField';
 import { planCode128Fd } from '../lib/code128Plan';
 import { resolveControlMarkers } from '../types/controlKey';
-import { gs1ContentToZplFd, parseGs1ToSegments, segmentsToZplFd } from '../lib/gs1';
+import { parseGs1ToSegments, segmentsToZplFd } from '../lib/gs1';
+import { planGs1Fd } from '../lib/gs1Plan';
 import { GS1_CONTENT_SPEC } from './gs1FieldSpec';
 import type { ContentSpec } from '../types/contentSpec';
 import { type ZplRotation } from './rotation';
@@ -82,6 +83,8 @@ export interface Barcode1DCoreConfig {
   fdPlainEscape?: (payload: string) => string;
 }
 
+const gs1ModeDFd = (s: string): string => planGs1Fd(s, 'code128').fd;
+
 export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore<Barcode1DProps> {
   const defaultProps: Barcode1DProps = {
     content: '',
@@ -112,7 +115,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
           const base = isTemplate
             ? undefined
             : config.gs1Capable && obj.props.gs1
-              ? gs1ContentToZplFd
+              ? gs1ModeDFd
               : config.fdContent;
           // Non-template payloads are whole ^FD values; the plan owns the
           // invocation-vs-^FH decision (fdPlainEscape implies the code128
@@ -230,9 +233,10 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
         // fdPlainEscape (an injected `>0` would leave a stray 0 in the ^SF
         // mask) and a template seed skips the base transform too.
         ? serialFieldData(
+            // No gs1 arm: the serial path is gated on !p.gs1 above.
             (hasTemplateMarkers(p.content) && !isLoneMarker(p.content)
               ? undefined
-              : config.gs1Capable && p.gs1 ? gs1ContentToZplFd : config.fdContent
+              : config.fdContent
             )?.(p.content) ?? p.content,
             obj.props.serial)
         : fdFieldFor(content, ctx, fdTransformOnce, undefined,

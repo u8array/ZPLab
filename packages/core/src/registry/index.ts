@@ -1,4 +1,6 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
+import { hasTemplateMarkers } from '../lib/fnTemplate';
+import { gs1CarrierFor, planGs1Fd } from '../lib/gs1Plan';
 import type { LeafType, ObjectRegistryMap } from './leafObject';
 import { resolveContentSpec, type ContentSpec } from './contentSpec';
 import type { CtrlParity } from '../lib/markerResolve';
@@ -131,6 +133,26 @@ export function isGs1Active(
   if (!entry || !props) return false;
   if (entry.gs1Active) return entry.gs1Active(props);
   return entry.gs1Capable === true && (props as { gs1?: boolean }).gs1 === true;
+}
+
+/** The leaf's ^FD grammar is the plain Code 128 escape (ctrl-capable type
+ *  outside GS1 mode). */
+export function usesPlainCode128Escape(
+  entry: Parameters<typeof isGs1Active>[0],
+  props: object | undefined,
+): boolean {
+  return entry?.ctrlNeedsOwnEscape === true && !isGs1Active(entry, props);
+}
+
+/** Static GS1 content that ships verbatim: owns the gs1ContentUnparsed
+ *  warning, and the canvas suppresses renderFailed on the same predicate.
+ *  Template content is owned by markerValueFindings. */
+export function gs1StaticUnparsed(type: string, props: object, content: string): boolean {
+  const carrier = gs1CarrierFor(type);
+  return carrier !== null
+    && isGs1Active(getEntry(type), props)
+    && !hasTemplateMarkers(content)
+    && planGs1Fd(content, carrier).losses.length > 0;
 }
 
 /** Emitter parity for control-key chips: they resolve to bytes only on a

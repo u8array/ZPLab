@@ -1,5 +1,5 @@
 import { mmToDots } from './coordinates';
-import { getEntry, isGs1Active, BARCODE_1D_TYPES } from '../registry';
+import { getEntry, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import {
   extractTemplateRefs,
@@ -89,8 +89,7 @@ export function planTemplateHeader(
     // '0'/'<'/'=' after this scan, and '<'/'=' are ^FC candidate chars.
     const leafEntry = getEntry(leaf.type);
     const scan =
-      leafEntry?.ctrlNeedsOwnEscape
-      && !isGs1Active(leafEntry, (leaf as { props?: object }).props)
+      usesPlainCode128Escape(leafEntry, (leaf as { props?: object }).props)
         ? planCode128Fd(c, 'template').fd
         : c;
     // Chips-only payloads arm no ^FE (they emit as invocations/bytes), so
@@ -507,8 +506,9 @@ export function generateBatchZpl(
     // raw instead: the escape would corrupt the co-consumers.
     const boundEntry = bound && !isGroup(bound) ? getEntry(bound.type) : undefined;
     const boundPlainShared =
-      bound && !isGroup(bound) && !!boundEntry?.ctrlNeedsOwnEscape
-      && !isGs1Active(boundEntry, bound.props) && plainSharedFns.has(v.fnNumber);
+      bound && !isGroup(bound)
+      && usesPlainCode128Escape(boundEntry, bound.props)
+      && plainSharedFns.has(v.fnNumber);
     const transform = boundPlainShared
       ? (s: string) => planCode128Fd(s, 'sharedRaw').fd
       : (bound && !isGroup(bound) ? boundEntry?.fdTransform?.(bound) : undefined) ??
