@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { XMarkIcon, ClipboardDocumentIcon, CheckIcon, FolderOpenIcon } from '@heroicons/react/16/solid';
 import { importZplText, routeSetupCommands, mergeSetupFonts, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
-import { readFileAsText } from '../../lib/readFile';
+import { readFileAsZplText } from '../../lib/readFile';
 import { useLabelStore } from '../../store/labelStore';
 import type { Page } from '@zplab/core/types/Group';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
@@ -142,7 +142,7 @@ export function ZplImportModal({ onClose }: Props) {
     setError(null);
     let text: string;
     try {
-      text = await readFileAsText(file);
+      text = await readFileAsZplText(file);
     } catch {
       setError(t.importModal.errFileRead);
       return;

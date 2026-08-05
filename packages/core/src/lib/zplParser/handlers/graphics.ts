@@ -6,6 +6,7 @@ import { loadFontBytesSync } from "../../fontCache";
 import { formatStoragePath, parseStoragePath } from "../../storagePath";
 import { getPosType, pushBrowserLimit, type ParserState } from "../context";
 import { decodeGraphicToImage } from "../decoders/graphic";
+import { preserveGfData } from "../decoders/gfa";
 import { extractQrSidecar } from "../../qrGraphic";
 import type { QrCodeProps } from "../../../registry/qrcode";
 import { dotsFor, ftTopLeft, int, makeObj, readColor, readRotation } from "../helpers";
@@ -179,11 +180,15 @@ export function createGraphicsHandlers(
     },
     GF(_, rest) {
       commitPendingReverseBg();
+      // Byte-counted payloads can be multi-KB binary; cap the finding text.
+      const gfSummary =
+        rest.length > IMPORT_FINDING_PAYLOAD_LIMIT
+          ? `^GF${rest.trimEnd().slice(0, IMPORT_FINDING_PAYLOAD_LIMIT)}…`
+          : `^GF${rest}`;
       // ^GF{A|B|C},{totalBytes},{totalBytes},{bytesPerRow},{payload}
-      // Payload: raw hex (fmt A, RLE-optional) or `:B64:` / `:Z64:` wrappers.
       const format = rest[0]?.toUpperCase();
       if (format !== "A" && format !== "B" && format !== "C") {
-        pushBrowserLimit(s.result, `^GF${rest}`);
+        pushBrowserLimit(s.result, gfSummary);
         return;
       }
 
@@ -197,7 +202,7 @@ export function createGraphicsHandlers(
         if (commaPos === -1) break;
       }
       if (commaPos === -1) {
-        pushBrowserLimit(s.result, `^GF${rest}`);
+        pushBrowserLimit(s.result, gfSummary);
         return;
       }
 
@@ -207,7 +212,7 @@ export function createGraphicsHandlers(
       const gfRawData = gfRest.slice(commaPos + 1);
 
       if (gfBytesPerRow <= 0) {
-        pushBrowserLimit(s.result, `^GF${rest}`);
+        pushBrowserLimit(s.result, gfSummary);
         return;
       }
 
@@ -241,7 +246,7 @@ export function createGraphicsHandlers(
             widthDots: opaqueWidth,
             heightDots: opaqueH,
             threshold: 128,
-            rawGf: `^GF${format},${gfParams[0]},${gfParams[1]},${gfParams[2]},${gfRawData}`,
+            rawGf: `^GF${format},${gfParams[0]},${gfParams[1]},${gfParams[2]},${preserveGfData(gfRawData, format, int(gfParams[0], -1))}`,
           } satisfies ImageProps,
           takeComment(),
         );

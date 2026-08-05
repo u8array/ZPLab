@@ -616,6 +616,72 @@ describe('routeSetupCommands', () => {
   });
 });
 
+describe('raw binary payloads across import -> export', () => {
+  it('re-emits a raw binary ^GFB text-safe instead of replaying raw bytes', () => {
+    // A verbatim replay of the raw binary span would be corrupted by the
+    // UTF-8 write-out; it must re-emit from the wrapped model bytes.
+    const bin = String.fromCharCode(0x5e, 0x46, 0x53, 0x2c, 0x7e, 0x80, 0xff, 0x0a);
+    const zpl = `^XA^FO0,0^GFB,8,8,1,${bin}^FS^XZ`;
+    const imported = importZplText(zpl, 8);
+    const label = { widthMm: 100, heightMm: 60, dpmm: 8, ...imported.labelConfig } as LabelConfig;
+    const out = generateMultiPageZPL(label, imported.pages);
+    expect(out).toContain(':B64:');
+    expect(/[^\t\n\r\x20-\x7E]/.test(out)).toBe(false);
+  });
+});
+
+describe('byte-counted text-safe payloads across import -> export', () => {
+  it('re-emits a LF-bearing byte-counted ^GFB wrapped instead of verbatim', () => {
+    // The bytes survive our own write, but any CRLF-normalizing hop would
+    // shift the count; the model cache is wrapped, the replay must use it.
+    const bin = 'AB' + String.fromCharCode(10) + 'CD' + String.fromCharCode(10) + 'EF';
+    const imported = importZplText(`^XA^FO0,0^GFB,8,8,1,${bin}^FS^XZ`, 8);
+    const label = { widthMm: 100, heightMm: 60, dpmm: 8, ...imported.labelConfig } as LabelConfig;
+    const out = generateMultiPageZPL(label, imported.pages);
+    expect(out).toContain(':B64:');
+  });
+
+  it('replays untouched non-ASCII text segments verbatim (no false binary flag)', () => {
+    // Non-ASCII is legitimate ^FD text; regenerating it would drop original
+    // syntax like the ^CD remap alongside it.
+    const src = '^XA^CD;^FO10;10^A0N;30;0^FDÄhre^FS^XZ';
+    const imported = importZplText(src, 8);
+    const label = { widthMm: 100, heightMm: 60, dpmm: 8, ...imported.labelConfig } as LabelConfig;
+    const out = generateMultiPageZPL(label, imported.pages);
+    expect(out).toContain('^CD;');
+    expect(out).toContain('^FDÄhre');
+  });
+
+  it('keeps an orphan raw ~DY upload text-safe on export (no ^XG consumer)', () => {
+    // No model object carries the upload; the raw segment itself must,
+    // rewritten to the A + :B64: form instead of dropped by a full regen.
+    const bin = String.fromCharCode(0x5e, 0x00, 0xff, 0x2c);
+    const imported = importZplText(`^XA~DYR:ORPH,B,G,4,1,${bin}^FO10,10^A0N,20,0^FDx^FS^XZ`, 8);
+    const label = { widthMm: 100, heightMm: 60, dpmm: 8, ...imported.labelConfig } as LabelConfig;
+    const out = generateMultiPageZPL(label, imported.pages);
+    expect(out).toContain('~DYR:ORPH,A,G,4,1,:B64:');
+    expect(/[^\t\n\r\x20-\x7E]/.test(out)).toBe(false);
+  });
+
+  it('leaves a pasted non-latin1 payload verbatim instead of masking bytes', () => {
+    // U+20AC has no byte truth left; a latin1 wrap would silently turn it
+    // into 0xAC.
+    const src = '^XA~DYR:EURO,B,G,4,1,€ABC^FO10,10^A0N,20,0^FDx^FS^XZ';
+    const imported = importZplText(src, 8);
+    const label = { widthMm: 100, heightMm: 60, dpmm: 8, ...imported.labelConfig } as LabelConfig;
+    const out = generateMultiPageZPL(label, imported.pages);
+    expect(out).toContain('~DYR:EURO,B,G,4,1,€ABC');
+    expect(out).not.toContain(':B64:');
+  });
+
+  it('applies the wrap rule behind a ^CD delimiter remap too', () => {
+    const bin = 'AB' + String.fromCharCode(10) + 'CD' + String.fromCharCode(10) + 'EF';
+    const imported = importZplText(`^XA^CD;^FO0;0^GFB;8;8;1;${bin}^FS^XZ`, 8);
+    const label = { widthMm: 100, heightMm: 60, dpmm: 8, ...imported.labelConfig } as LabelConfig;
+    expect(generateMultiPageZPL(label, imported.pages)).toContain(':B64:');
+  });
+});
+
 describe('replay-risk report helpers', () => {
   it('replayRiskFindings selects only the replayRisk kind', () => {
     const { report } = importZplText('^XA^KNfoo^FO0,0^A@N,20,0,E:A.TTF^FDx^FS^XZ', 8);

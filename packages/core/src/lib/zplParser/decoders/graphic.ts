@@ -1,6 +1,7 @@
 import { putImage } from "../../imageCache";
 import { BITS_PER_BYTE } from "./constants";
 import { gfPayloadToBytes } from "./gfa";
+import { wrapGfB64 } from "./crc";
 import type { DecodedGraphic } from "../types";
 
 import { newId } from "../../ids";
@@ -22,7 +23,12 @@ export function decodeGraphicToImage(
   // Headless (Node/MCP): no canvas to paint the bitmap; degrade to the same
   // browserLimit path as an undecodable payload.
   if (typeof document === "undefined") return null;
-  const decoded = gfPayloadToBytes(rawData, format, bytesPerRow);
+  const decoded = gfPayloadToBytes(
+    rawData,
+    format,
+    bytesPerRow,
+    Number.parseInt(totalBytesHeader, 10),
+  );
   if (!decoded) return null;
   const widthDots = bytesPerRow * BITS_PER_BYTE;
   const heightDots = Math.floor(decoded.data.length / bytesPerRow);
@@ -62,7 +68,11 @@ export function decodeGraphicToImage(
     imageId,
     widthDots,
     heightDots,
-    gfaCache: `^GF${format},${totalBytesHeader},${dataBytesHeader},${bytesPerRow},${rawData}`,
+    // Raw binary re-encodes as A + :B64: of the raster (the ZDesigner-proven
+    // spec form, p.1602); b then equals c per the uncompressed convention.
+    gfaCache: decoded.raw
+      ? `^GFA,${decoded.data.length},${decoded.data.length},${bytesPerRow},${wrapGfB64(decoded.data)}`
+      : `^GF${format},${totalBytesHeader},${dataBytesHeader},${bytesPerRow},${rawData}`,
     crcOk: decoded.crcOk,
   };
 }

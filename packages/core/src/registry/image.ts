@@ -129,6 +129,14 @@ function gfaCacheUsable(p: ImageProps): boolean {
   return !!p._gfaCache && objectRotation(p) === 'N' && gfaHeaderDims(p._gfaCache) !== null;
 }
 
+/** Fresh upright ^GFA from the image store, for emit sites that need bytes
+ *  after a cache-clearing edit (canvas resize regens only via the panel). */
+export function inlineGfaFor(p: ImageProps): string | undefined {
+  const img = getImage(p.imageId);
+  if (!img) return undefined;
+  return gfaSync(img.dataUrl, p.widthDots, p.threshold, 'N') || undefined;
+}
+
 export const image: ObjectTypeCore<ImageProps> = {
   label: 'Image',
   icon: 'img',

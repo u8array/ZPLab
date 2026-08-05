@@ -1,4 +1,5 @@
 import { BITS_PER_BYTE } from "./constants";
+import { bytesToLatin1 } from "../../binaryText";
 
 const CRC16_POLY = 0x1021;
 const CRC16_MSB_MASK = 0x8000;
@@ -22,6 +23,13 @@ function crc16Xmodem(s: string): number {
     }
   }
   return crc;
+}
+
+/** Bytes -> `:B64:<base64>:<crc>` wrapper (spec p.1602): the text-safe form
+ *  of a raw binary payload, decoded identically by firmware and re-import. */
+export function wrapGfB64(bytes: Uint8Array): string {
+  const b64 = btoa(bytesToLatin1(bytes));
+  return `:B64:${b64}:${crc16Xmodem(b64).toString(16).padStart(CRC_HEX_DIGITS, "0").toUpperCase()}`;
 }
 
 type GfWrapperKind = "b64" | "z64";
