@@ -308,12 +308,12 @@ password-coupled ^RL. Read-back stays native. ^RM/^RR folded into ^RS,
 | `[ ]` | `^RM` | enable motion (pre-Link-OS; folded into ^RS; passthrough) | `Out of scope` |
 | `[ ]` | `^RN` | detect multiple tags (pre-Link-OS; absent from current guide; passthrough) | `Out of scope` |
 | `[ ]` | `^RR` | RFID retries (pre-Link-OS; folded into ^RS; passthrough) | `Out of scope` |
-| `[ ]` | `^RB` | define EPC data structure (partitions consumed by ^RF EPC writes) | `Coming soon` |
-| `[ ]` | `^RS` | RFID setup (tag type, programming position, retries, error handling) | `Coming soon` |
+| `[x]` | `^RB` | define EPC data structure (partitions consumed by ^RF EPC writes; spec-modelled, hardware-unverified) | |
+| `[x]` | `^RS` | RFID setup (tag type, position, VOID handling, retries; legacy/a/c slots flagged partial; spec-modelled, hardware-unverified) | |
 | `[ ]` | `^RT` | read tag (legacy; superseded by ^RF read) | `Native build` |
 | `[ ]` | `^RU` | read unique chip serialization (TID-derived EPC serial) | `Native build` |
 | `[ ]` | `~RV` | report encoding result (pre-Link-OS; absent from current guide; passthrough) | `Out of scope` |
-| `[ ]` | `^RW` | set read & write power | `Coming soon` |
+| `[x]` | `^RW` | set read & write power (antenna slot flagged partial; spec-modelled, hardware-unverified) | |
 | `[ ]` | `^RL` | lock / permalock tag memory (password-coupled companion of ^RF) | `Coming soon` |
 | `[ ]` | `^HR` | calibrate RFID tag position | `Native build` |
 | `[ ]` | `^HL` / `~HL` | RFID data log (return to host) | `Native build` |

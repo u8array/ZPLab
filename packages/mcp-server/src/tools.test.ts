@@ -89,6 +89,22 @@ describe("mcp-server tools", () => {
     }
   });
 
+  it("drops a mismatched ^RB pair from a hand-edited envelope", () => {
+    // Parser and UI keep partitions summing to the bits; the envelope path
+    // must not emit an invalid ^RB from a hand-edited file.
+    const design = {
+      schemaVersion: 5,
+      label: { widthMm: 50, heightMm: 30, dpmm: 8, rfidEpcBits: 96, rfidEpcPartitions: [1] },
+      pages: [{ objects: [] }],
+    };
+    expect(ok(exportZpl(design)).zpl).not.toContain("^RB");
+    const intact = {
+      ...design,
+      label: { ...design.label, rfidEpcPartitions: [8, 24, 64] },
+    };
+    expect(ok(exportZpl(intact)).zpl).toContain("^RB96,8,24,64");
+  });
+
   it("rejects duplicate explicit ids with a structured error", () => {
     const created = createDraft({
       widthMm: 50,

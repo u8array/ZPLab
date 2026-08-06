@@ -758,6 +758,29 @@ function generateZplBlock(
   if (label.mediaMode) lines.push(`^MM${label.mediaMode}`);
   if (label.mediaType) lines.push(`^MT${label.mediaType}`);
   if (label.mediaTracking) lines.push(`^MN${label.mediaTracking}`);
+
+  const rsSlots = trimTrailingEmptySlots([
+    label.rfidTagType?.toString() ?? '',
+    label.rfidPosition ?? '',
+    label.rfidVoidLength?.toString() ?? '',
+    label.rfidRetries?.toString() ?? '',
+    label.rfidErrorHandling ?? '',
+    '',
+    '',
+    label.rfidVoidSpeed?.toString() ?? '',
+  ]);
+  if (rsSlots.length > 0) lines.push(`^RS${rsSlots.join(',')}`);
+  if (label.rfidEpcBits !== undefined) {
+    const parts = label.rfidEpcPartitions ? `,${label.rfidEpcPartitions.join(',')}` : '';
+    lines.push(`^RB${label.rfidEpcBits}${parts}`);
+  }
+  if (label.rfidReadPower !== undefined || label.rfidWritePower !== undefined) {
+    const slots = trimTrailingEmptySlots([
+      label.rfidReadPower?.toString() ?? '',
+      label.rfidWritePower?.toString() ?? '',
+    ]);
+    lines.push(`^RW${slots.join(',')}`);
+  }
   if (label.maxLabelLength !== undefined) lines.push(`^ML${label.maxLabelLength}`);
   // Positional pair; default the unset slot to "N" (no motion).
   if (label.mediaFeedPowerUp || label.mediaFeedHeadClose) {
