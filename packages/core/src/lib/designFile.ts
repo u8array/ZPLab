@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { JM_DENSITY_VALUES, labelConfigSchema, type JmDensity, type LabelConfig } from "../types/LabelConfig";
+import { JM_DENSITY_VALUES, labelConfigSchema, sanitizeRfidEpc, type JmDensity, type LabelConfig } from "../types/LabelConfig";
 import { labelObjectBaseSchema } from "../types/LabelObject";
 import {
   variableSchema,
@@ -103,6 +103,7 @@ export function parseDesignFile(text: string): Result<DesignFile, DesignFileErro
   if (parsed.success) {
     const pages = parsed.data.pages as unknown as DesignFilePage[];
     reconstructLegacyJmDensity(parsed.data.label, pages);
+    sanitizeRfidEpc(parsed.data.label);
     const variables = parsed.data.variables ?? [];
     // Enforce the marker-safe name invariant: an old/foreign name like `clock:Y`
     // can't be a single-bind marker, so rename offenders + rewrite their markers.

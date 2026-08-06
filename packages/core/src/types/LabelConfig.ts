@@ -101,6 +101,41 @@ export const SLEW_DOT_ROWS_RANGE = { min: 0, max: 32000 } as const;
 /** ^LT y range (Zebra -120..+120); shared with the density rescale clamp. */
 export const LABEL_TOP_RANGE = { min: -120, max: 120 } as const;
 
+/** ^RS n: encode retries per label before error handling kicks in. */
+export const RFID_RETRIES_RANGE = { min: 1, max: 10 } as const;
+/** ^RW r/w numeric power band; some firmware takes H/M/L instead. */
+export const RFID_POWER_RANGE = { min: 0, max: 30 } as const;
+export const RFID_POWER_LEVELS = ['H', 'M', 'L'] as const;
+export type RfidPowerLevel = (typeof RFID_POWER_LEVELS)[number];
+export const isRfidPowerLevel = makeEnumGuard(RFID_POWER_LEVELS);
+const rfidPowerSchema = z.union([
+  intInRange(RFID_POWER_RANGE),
+  z.enum(RFID_POWER_LEVELS),
+]);
+export type RfidPower = z.infer<typeof rfidPowerSchema>;
+/** ^RW r/w: the firmware-dependent union of a level letter and 0-30. */
+export function parseRfidPower(raw: string | undefined): RfidPower | undefined {
+  const value = (raw ?? '').trim().toUpperCase();
+  if (isRfidPowerLevel(value)) return value;
+  const n = Number.parseInt(value, 10);
+  return String(n) === value && n >= RFID_POWER_RANGE.min && n <= RFID_POWER_RANGE.max
+    ? n
+    : undefined;
+}
+
+/** ^RS e: drop format (N), pause (P) or error mode (E) after retries. */
+export const RFID_ERROR_HANDLING_VALUES = ['N', 'P', 'E'] as const;
+export type RfidErrorHandling = (typeof RFID_ERROR_HANDLING_VALUES)[number];
+export const isRfidErrorHandling = makeEnumGuard(RFID_ERROR_HANDLING_VALUES);
+/** ^RS p: absolute dots from the label top, or F/B + mm off the leading
+ *  edge (F0-F999, B0-B30, spec p.435); kept in its wire form. */
+export const RFID_POSITION_RE = /^(?:\d{1,5}|F\d{1,3}|B(?:\d|[12]\d|30))$/;
+export const RFID_EPC_PARTITION_RANGE = { min: 1, max: 64 } as const;
+export const RFID_EPC_MAX_PARTITIONS = 16;
+/** ^RB n: spec-unbounded ("bit size of the tag"); sane 16-bit cap. The
+ *  partition form is implicitly tighter (16 x 64 via the sum rule). */
+export const RFID_EPC_BITS_RANGE = { min: 1, max: 65535 } as const;
+
 /** ^MU b,c dpi tokens; 200 = 203 dpi; ratio drives resampling. */
 export const MU_DPI_VALUES = [150, 200, 300, 600] as const;
 export type MuDpi = (typeof MU_DPI_VALUES)[number];
@@ -246,6 +281,32 @@ export const labelConfigSchema = z.object({
   slewToHome: z.boolean().optional(),
   /** ^PP: pause after the format prints (until PAUSE or ~PS). */
   programmablePause: z.boolean().optional(),
+  /** ^RS t: 8 = Gen 2, the only tag type current RFID printers support.
+   *  Typed number (not literal) so the numeric-field derivations stay uniform. */
+  rfidTagType: z.number().int().refine((n): boolean => n === 8).optional(),
+  /** ^RS p: programming position, wire form (dots or F/B mm). */
+  rfidPosition: z.string().regex(RFID_POSITION_RE).optional(),
+  /** ^RS v: VOID printout length in dot rows. */
+  rfidVoidLength: intInRange(SLEW_DOT_ROWS_RANGE).optional(),
+  /** ^RS n: encode retries. */
+  rfidRetries: intInRange(RFID_RETRIES_RANGE).optional(),
+  /** ^RS e: error handling after retries. */
+  rfidErrorHandling: z.enum(RFID_ERROR_HANDLING_VALUES).optional(),
+  /** ^RS s: VOID print speed. */
+  rfidVoidSpeed: intInRange(SPEED_RANGE).optional(),
+  /** ^RB n: EPC data-structure size in bits. */
+  rfidEpcBits: intInRange(RFID_EPC_BITS_RANGE).optional(),
+  /** ^RB p0..p15: partition sizes in bits; only stored when they sum to
+   *  rfidEpcBits (spec p.424). */
+  rfidEpcPartitions: z
+    .array(intInRange(RFID_EPC_PARTITION_RANGE))
+    .min(1)
+    .max(RFID_EPC_MAX_PARTITIONS)
+    .optional(),
+  /** ^RW r: read power. */
+  rfidReadPower: rfidPowerSchema.optional(),
+  /** ^RW w: write power. */
+  rfidWritePower: rfidPowerSchema.optional(),
 });
 
 export type LabelConfig = z.infer<typeof labelConfigSchema>;
@@ -345,6 +406,19 @@ export const LABEL_CONFIG_FIELDS = {
   slewDotRows: { scope: 'perLabel', emits: true, scales: 'jmOnly', perFormat: true, clamp: SLEW_DOT_ROWS_RANGE },
   slewToHome: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
   programmablePause: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
+  // RFID setup persists on the printer across formats (spec p.424/435), so
+  // none is perFormat; spec-only (no RFID hardware), scales stay 'never'
+  // (rfidVoidLength parses via physDots like ^ML; rfidPosition is wire-form).
+  rfidTagType: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidPosition: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidVoidLength: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidRetries: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidErrorHandling: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidVoidSpeed: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidEpcBits: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidEpcPartitions: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidReadPower: { scope: 'perLabel', emits: true, scales: 'never' },
+  rfidWritePower: { scope: 'perLabel', emits: true, scales: 'never' },
 } as const satisfies { [K in keyof LabelConfig]-?: SpecFor<K> };
 
 const FIELD_ENTRIES = Object.entries(LABEL_CONFIG_FIELDS) as [
@@ -381,3 +455,17 @@ export const PER_FORMAT_ZPL_FIELDS = fieldsWhere((s) => s.perFormat === true);
 
 /** Config keys that never reach emitted ZPL. */
 export const NON_EMITTING_CONFIG_FIELDS = fieldsWhere((s) => !s.emits);
+
+/** Enforce the ^RB cross-field invariant on a loaded envelope: partitions
+ *  must sum to the bit count (parser and UI already guarantee it; a
+ *  hand-edited design file must not emit an invalid ^RB). Mirrors the
+ *  parser: a mismatched pair drops whole, not half. */
+export function sanitizeRfidEpc(label: LabelConfig): void {
+  const { rfidEpcBits, rfidEpcPartitions } = label;
+  if (rfidEpcPartitions === undefined) return;
+  if (rfidEpcBits !== undefined && rfidEpcPartitions.reduce((a, b) => a + b, 0) === rfidEpcBits) {
+    return;
+  }
+  delete label.rfidEpcBits;
+  delete label.rfidEpcPartitions;
+}

@@ -1,4 +1,4 @@
-import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, MAX_LABEL_LENGTH_RANGE, SLEW_DOT_ROWS_RANGE, SPEED_RANGE, isBackfeedPercent, isBackfeedSequence, isMediaFeedMode, isMediaMode, isMediaTracking, isMediaType, isPrintOrientation } from "../../../types/LabelConfig";
+import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, MAX_LABEL_LENGTH_RANGE, RFID_EPC_BITS_RANGE, RFID_EPC_MAX_PARTITIONS, RFID_EPC_PARTITION_RANGE, RFID_POSITION_RE, RFID_RETRIES_RANGE, SLEW_DOT_ROWS_RANGE, SPEED_RANGE, isBackfeedPercent, isBackfeedSequence, isMediaFeedMode, isMediaMode, isMediaTracking, isMediaType, isPrintOrientation, isRfidErrorHandling, parseRfidPower, type RfidPower } from "../../../types/LabelConfig";
 import { parseIntOrUndef } from "../../inputParse";
 import { isYesNo } from "../../../types/typeHelpers";
 import { dotsToMm } from "../../coordinates";
@@ -46,6 +46,94 @@ export function createLabelConfigHandlers(
         const o = (p[3] ?? "").toUpperCase();
         if (isYesNo(o)) labelConfig.overridePauseCount = o;
       }
+    },
+    // ^RSt,p,v,n,e,a,c,s (spec p.434-437). Every slot the design carried but
+    // we could not adopt is reported: dropping it silently would hide a real
+    // setting (legacy tag types, the unmodelled a/c slots, out-of-domain values).
+    RS(p) {
+      const adopt = (slot: number, take: (raw: string | undefined) => boolean) => {
+        if (take(p[slot])) return;
+        if (strParam(p[slot]) !== "") s.result.partialCmds.add("^RS");
+      };
+      adopt(0, (raw) => {
+        if (int(raw, 0) !== 8) return false;
+        labelConfig.rfidTagType = 8;
+        return true;
+      });
+      adopt(1, (raw) => {
+        const pos = strParam(raw);
+        if (!RFID_POSITION_RE.test(pos)) return false;
+        labelConfig.rfidPosition = pos;
+        return true;
+      });
+      adopt(2, (raw) => {
+        const v = inRange(physDots(raw), SLEW_DOT_ROWS_RANGE);
+        if (v === undefined) return false;
+        labelConfig.rfidVoidLength = v;
+        return true;
+      });
+      adopt(3, (raw) => {
+        const n = inRange(parseIntOrUndef(raw), RFID_RETRIES_RANGE);
+        if (n === undefined) return false;
+        labelConfig.rfidRetries = n;
+        return true;
+      });
+      adopt(4, (raw) => {
+        const e = strParam(raw);
+        if (!isRfidErrorHandling(e)) return false;
+        labelConfig.rfidErrorHandling = e;
+        return true;
+      });
+      adopt(5, () => false);
+      adopt(6, () => false);
+      adopt(7, (raw) => {
+        const vs = inRange(parseIntOrUndef(raw), SPEED_RANGE);
+        if (vs === undefined) return false;
+        labelConfig.rfidVoidSpeed = vs;
+        return true;
+      });
+    },
+    // ^RBn,p0..p15: partitions must sum to n (spec p.424), else the whole
+    // command drops (a half-adopted structure would encode wrong fields).
+    RB(p) {
+      const bits = inRange(parseIntOrUndef(p[0]), RFID_EPC_BITS_RANGE);
+      if (bits === undefined) {
+        s.result.partialCmds.add("^RB");
+        return;
+      }
+      // Only a trailing delimiter is noise; an empty slot inside the list is
+      // a value we cannot read, so it must not be normalised away.
+      const slots = p.slice(1);
+      while (slots.length > 0 && (slots[slots.length - 1] ?? "").trim() === "") slots.pop();
+      if (slots.length === 0) {
+        labelConfig.rfidEpcBits = bits;
+        delete labelConfig.rfidEpcPartitions;
+        return;
+      }
+      const parts = slots.map((x) => inRange(parseIntOrUndef(x), RFID_EPC_PARTITION_RANGE));
+      if (
+        slots.length > RFID_EPC_MAX_PARTITIONS ||
+        slots.some((x) => (x ?? "").trim() === "") ||
+        parts.some((x) => x === undefined) ||
+        parts.reduce((a, b) => (a ?? 0) + (b ?? 0), 0) !== bits
+      ) {
+        s.result.partialCmds.add("^RB");
+        return;
+      }
+      labelConfig.rfidEpcBits = bits;
+      labelConfig.rfidEpcPartitions = parts as number[];
+    },
+    // ^RWr,w,a: power as 0-30 or H/M/L (firmware union).
+    RW(p) {
+      const take = (slot: number, set: (v: RfidPower) => void) => {
+        const value = parseRfidPower(p[slot]);
+        if (value !== undefined) set(value);
+        else if (strParam(p[slot]) !== "") s.result.partialCmds.add("^RW");
+      };
+      take(0, (v) => (labelConfig.rfidReadPower = v));
+      take(1, (v) => (labelConfig.rfidWritePower = v));
+      // The antenna slot is unmodelled, so any value in it is a loss.
+      if (strParam(p[2]) !== "") s.result.partialCmds.add("^RW");
     },
     MM(_, rest) {
       const mode = firstChar(rest);
