@@ -43,6 +43,7 @@ import { isEditableTarget } from "../../lib/dom";
 import { KonvaObject } from "./KonvaObject";
 import { PreflightOverlay } from "./PreflightOverlay";
 import { CAPTURE_CHROME } from "./konvaObjectProps";
+import { RfidPositionGuide } from "./RfidPositionGuide";
 import { Grid } from "./Grid";
 import { GuideLines } from "./GuideLines";
 import { Ruler, RULER_SIZE } from "./Ruler";
@@ -224,6 +225,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   }, []);
 
   const colors = useColorScheme();
+  // The programming position is media motion, not artwork: unlike the safe
+  // area it constrains nothing on the label, so the guide stays contextual
+  // (pick in progress or its settings tab open) instead of permanent chrome.
+  const pickingRfidPosition = useLabelStore((st) => st.pickingRfidPosition);
+  const endRfidPositionPick = useLabelStore((st) => st.endRfidPositionPick);
+  const rfidGuideVisible = useLabelStore(
+    (st) => st.printerSettingsTab === "rfid" || st.pickingRfidPosition,
+  );
   const t = useT();
 
   const {
@@ -262,6 +271,20 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const paletteRows = useLabelStore((s) => s.paletteRows);
   const previewMode = useLabelStore((s) => s.previewMode);
   const previewLocks = useLabelStore(selectPreviewLocksEditor);
+
+  useEffect(() => {
+    if (!pickingRfidPosition) return;
+    // A preview covers the canvas, so the pick has nothing left to click.
+    if (previewLocks) {
+      endRfidPositionPick();
+      return;
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") endRfidPositionPick();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pickingRfidPosition, previewLocks, endRfidPositionPick]);
   const exitPreviewMode = useLabelStore((s) => s.exitPreviewMode);
   // Entering preview unmounts the dragged node, so a mid-drag dragend may never
   // fire; clear the flag so off-label marks aren't stranded hidden afterwards.
@@ -1341,7 +1364,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         backgroundImage: `radial-gradient(circle, ${colors.canvasDot} 1px, transparent 1px)`,
         backgroundSize: "24px 24px",
         // Locus-of-attention feedback for preview lock.
-        cursor: previewLocks ? 'not-allowed' : cursor,
+        cursor: previewLocks ? 'not-allowed' : pickingRfidPosition ? 'crosshair' : cursor,
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -1367,6 +1390,22 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               className="font-mono text-[10px] text-muted hover:text-text transition-colors shrink-0"
             >
               {t.app.close}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {pickingRfidPosition && (
+        <div className="absolute inset-x-0 top-3 z-20 flex justify-center px-3 pointer-events-none">
+          <div className="bg-surface border border-border rounded px-3 py-1.5 flex items-center gap-3 pointer-events-auto">
+            <span className="font-mono text-[10px] text-muted leading-relaxed">
+              {t.printerSettings.rfid.pickHint}
+            </span>
+            <button
+              onClick={endRfidPositionPick}
+              className="font-mono text-[10px] text-text hover:text-accent transition-colors shrink-0"
+            >
+              {t.printerSettings.rfid.pickDone}
             </button>
           </div>
         </div>
@@ -1528,6 +1567,22 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                   strokeWidth={1}
                   dash={[4, 3]}
                   listening={false}
+                />
+              )}
+
+              {/* ^RS programming position: label-config guide, drawn with
+                  the safe area rather than as an object. */}
+              {!previewLocks && rfidGuideVisible && (
+                <RfidPositionGuide
+                  labelX={physicalLabelX}
+                  labelY={labelOffsetY}
+                  labelWidthPx={physicalWidthPx}
+                  labelHeightPx={labelHeightPx}
+                  scale={scale}
+                  picking={pickingRfidPosition}
+                  onPicked={endRfidPositionPick}
+                  color={colors.accent}
+                  mutedColor={colors.muted}
                 />
               )}
 

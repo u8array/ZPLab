@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { rfidPositionValue } from "@zplab/core/lib/rfidPosition";
 import { useLabelStore } from "../../store/labelStore";
 
 /** Physical printer regions the settings fields map onto. The illustration
@@ -15,7 +16,8 @@ export type PrinterRegion =
   | "originY"
   | "top"
   | "shift"
-  | "stack";
+  | "stack"
+  | "antenna";
 
 type Source = "focus" | "hover";
 
@@ -104,6 +106,48 @@ export function PrinterIllustration() {
   // hides the label boundary entirely; gap/web show the die-cut notches,
   // mark the black mark, auto a scanning sensor.
   const tracking = useLabelStore((s) => s.label.mediaTracking);
+  // RFID gadgets: inlay + encoder waves ride the ^RS position when one is
+  // set (absolute dots or F-mm over the label length; B sits at the leading
+  // edge), waves scale with the write power, VOID previews on exit focus.
+  const rfidSet = useLabelStore(
+    (s) =>
+      s.label.rfidTagType !== undefined ||
+      s.label.rfidPosition !== undefined ||
+      s.label.rfidEpcBits !== undefined ||
+      s.label.rfidReadPower !== undefined ||
+      s.label.rfidWritePower !== undefined,
+  );
+  // The whole gadget set also ghosts while the RFID tab itself is open, so
+  // browsing the tab explains the geometry before any value is set.
+  const rfidTabActive = useLabelStore((s) => s.printerSettingsTab === "rfid");
+  const rfidPosition = useLabelStore((s) => s.label.rfidPosition);
+  const rfidWritePower = useLabelStore((s) => s.label.rfidWritePower);
+  const rfidVoid = useLabelStore((s) => s.label.rfidVoidLength !== undefined);
+  const heightMm = useLabelStore((s) => s.label.heightMm);
+  const dpmm = useLabelStore((s) => s.label.dpmm);
+  const STRIP_TOP = 56;
+  const STRIP_HEIGHT = 56;
+  // Same reader as the canvas guide, so both pictures cannot drift apart.
+  const rfidValue = rfidPositionValue(rfidPosition, dpmm);
+  const rfidLine =
+    rfidValue === null
+      ? null
+      : STRIP_TOP + Math.min(1, Math.max(0, rfidValue.mm / heightMm)) * STRIP_HEIGHT;
+  const rfidY = rfidLine !== null ? Math.min(105, Math.max(63, rfidLine)) : 102.5;
+  const waves =
+    rfidWritePower === undefined
+      ? 2
+      : rfidWritePower === "H"
+        ? 3
+        : rfidWritePower === "M"
+          ? 2
+          : rfidWritePower === "L"
+            ? 1
+            : rfidWritePower <= 10
+              ? 1
+              : rfidWritePower <= 20
+                ? 2
+                : 3;
   const axisMarkerActive =
     r === "originX" || r === "originY" || r === "top" || r === "shift";
   return (
@@ -220,6 +264,40 @@ export function PrinterIllustration() {
         <path d="M52 68 h72 M88 62 v12" className={cls(r === "top", "opacity-0")} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
         {/* ^LS lateral shift arrows */}
         <path d="M60 102 h56 M66 98 l-6 4 6 4 M110 98 l6 4 -6 4" className={cls(r === "shift", "opacity-0")} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {/* RFID inlay + encoder waves, a state gadget like ^MM/^MT. The
+            wave count scales with the write power (L/M/H or thirds of 0-30). */}
+        {(rfidSet || rfidTabActive || r === "antenna") && (
+          <g className={cls(r === "antenna", "text-muted opacity-40")} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+            <rect x="76" y={rfidY - 4.5} width="9" height="9" rx="1.5" />
+            {waves >= 1 && <path d={`M89 ${rfidY - 4.5} a7 7 0 0 1 0 9`} />}
+            {waves >= 2 && <path d={`M93 ${rfidY - 7.5} a12 12 0 0 1 0 15`} />}
+            {waves >= 3 && <path d={`M97 ${rfidY - 10.5} a17 17 0 0 1 0 21`} />}
+            {rfidWritePower !== undefined && (
+              <text x="104" y={rfidY + 3} fontSize="8" fontFamily="monospace" fill="currentColor" stroke="none">
+                {String(rfidWritePower)}
+              </text>
+            )}
+          </g>
+        )}
+        {/* ^RS programming position: encode line across the strip, placed
+            proportionally (absolute dots / F-mm over the label length;
+            B-forms sit at the leading edge). */}
+        {rfidLine !== null && (
+          <g className={cls(r === "antenna", "text-muted opacity-40")}>
+            <line
+              x1="52" y1={rfidLine} x2="124" y2={rfidLine}
+              stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 3"
+            />
+            <text x="126" y={rfidLine + 3} fontSize="8" fontFamily="monospace" fill="currentColor">
+              {rfidPosition}
+            </text>
+          </g>
+        )}
+        {/* ^RS VOID handling: the failed label prints VOID on its way out */}
+        {(rfidVoid || rfidTabActive) && r === "exit" && (
+          <text x="88" y="90" textAnchor="middle" className="text-accent" fill="currentColor"
+            fontSize="11" fontWeight="bold" transform="rotate(-14 88 90)" letterSpacing="2">VOID</text>
+        )}
         {/* media motion beside the strip: ^MF feeds forward, ^XB/~JS back */}
         <path d="M136 72 v24 M130 90 l6 8 6 -8" className={cls(r === "feed", "opacity-0")} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M136 100 v-24 M130 82 l6 -8 6 8" className={cls(r === "backfeed", "opacity-0")} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

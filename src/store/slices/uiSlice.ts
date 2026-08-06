@@ -67,6 +67,7 @@ export type PrinterSettingsTab =
   | 'mcpServer'
   | 'dataSources'
   | 'mediaFeed'
+  | 'rfid'
   | 'printQuality'
   | 'output'
   | 'clockTime'
@@ -167,6 +168,10 @@ export interface UiSlice {
   sidebarTab: SidebarTab;
   /** Block resize-handle mode; see BlockDragMode. Transient. */
   blockDragMode: BlockDragMode;
+  /** Canvas pick for the ^RS programming position: the printer-settings
+   *  modal covers the canvas, so it steps aside for the duration and
+   *  reopens on its RFID tab afterwards. Transient. */
+  pickingRfidPosition: boolean;
   /** Reference for the "Align" section toggle; see AlignSelectionRef. Transient. */
   alignRef: AlignSelectionRef;
   printerSettingsTab: PrinterSettingsTab | null;
@@ -235,6 +240,8 @@ export interface UiSlice {
   setMcpSidecarAvailable: (available: boolean) => void;
   setSidebarTab: (tab: SidebarTab) => void;
   setBlockDragMode: (mode: BlockDragMode) => void;
+  startRfidPositionPick: () => void;
+  endRfidPositionPick: () => void;
   setAlignRef: (ref: AlignSelectionRef) => void;
   setPrinterSettingsTab: (tab: PrinterSettingsTab | null) => void;
   openZebraPrint: (source: 'label' | 'setupScript') => void;
@@ -322,6 +329,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   mcpSidecarAvailable: null,
   sidebarTab: 'properties',
   blockDragMode: 'frame',
+  pickingRfidPosition: false,
   alignRef: 'selection',
   printerSettingsTab: null,
   zebraPrintSource: null,
@@ -450,6 +458,8 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
     }),
   setPaletteView: (view) => set({ paletteView: view }),
   togglePaletteEditing: () => set((state) => ({ paletteEditing: !state.paletteEditing })),
+  startRfidPositionPick: () => set({ pickingRfidPosition: true, printerSettingsTab: null }),
+  endRfidPositionPick: () => set({ pickingRfidPosition: false, printerSettingsTab: 'rfid' }),
   setShowZplCommands: (show) => set({ showZplCommands: show }),
   setMcpServerEnabled: (enabled) => set({ mcpServerEnabled: enabled }),
   setMcpServerPort: (port) => set({ mcpServerPort: port }),
@@ -498,7 +508,9 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   setSidebarTab: (tab) => set({ sidebarTab: tab }),
   setBlockDragMode: (mode) => set({ blockDragMode: mode }),
   setAlignRef: (ref) => set({ alignRef: ref }),
-  setPrinterSettingsTab: (tab) => set({ printerSettingsTab: tab }),
+  // Opening or closing the dialog ends a pick: its capture layer must never
+  // outlive the flow that started it.
+  setPrinterSettingsTab: (tab) => set({ printerSettingsTab: tab, pickingRfidPosition: false }),
   openZebraPrint: (source) => set({ zebraPrintSource: source }),
   closeZebraPrint: () => set({ zebraPrintSource: null }),
   openGs1Builder: (objectId) => set({ gs1BuilderObjectId: objectId }),

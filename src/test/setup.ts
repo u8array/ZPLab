@@ -50,6 +50,27 @@ Object.defineProperty(globalThis, 'FontFace', {
   value: FakeFontFace,
 });
 
+// ── ResizeObserver ────────────────────────────────────────────────────────────
+
+// jsdom ships none, and the headless-ui popovers the settings dialog uses
+// construct one on open; without it they throw as an unhandled error.
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  Object.defineProperty(globalThis, 'ResizeObserver', {
+    configurable: true,
+    value: class {
+      observe(): undefined {
+        return undefined;
+      }
+      unobserve(): undefined {
+        return undefined;
+      }
+      disconnect(): undefined {
+        return undefined;
+      }
+    },
+  });
+}
+
 // A real DOM (jsdom) is present only for files that opt in via
 // `// @vitest-environment jsdom`; the default lane is pure Node. The stubs
 // below would clobber jsdom's window/document, so apply them only when no
