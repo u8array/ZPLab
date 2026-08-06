@@ -176,3 +176,113 @@ describe("Printer Settings Modal Tab 2 — Print Quality commands (Setup Script)
     expect(parseZPL("~TA-200^XA^XZ").printerProfile.tearOffAdjust).toBeUndefined();
   });
 });
+
+describe("RFID setup (^RS / ^RB / ^RW, spec-only)", () => {
+  const base = { widthMm: 50, heightMm: 30, dpmm: 8 } as LabelConfig;
+
+  it("emits nothing when no RFID field is set", () => {
+    const zpl = generateZPL(base, []);
+    expect(zpl).not.toContain("^RS");
+    expect(zpl).not.toContain("^RB");
+    expect(zpl).not.toContain("^RW");
+  });
+
+  it("round-trips the full ^RS slot set (a and c stay unmodelled)", () => {
+    const cfg = {
+      ...base,
+      rfidTagType: 8, rfidPosition: "F1", rfidVoidLength: 200,
+      rfidRetries: 5, rfidErrorHandling: "P" as const, rfidVoidSpeed: 4,
+    };
+    const zpl = generateZPL(cfg, []);
+    expect(zpl).toContain("^RS8,F1,200,5,P,,,4");
+    const back = parseZPL(zpl, 8).labelConfig;
+    expect(back.rfidTagType).toBe(8);
+    expect(back.rfidPosition).toBe("F1");
+    expect(back.rfidVoidLength).toBe(200);
+    expect(back.rfidRetries).toBe(5);
+    expect(back.rfidErrorHandling).toBe("P");
+    expect(back.rfidVoidSpeed).toBe(4);
+  });
+
+  it("trims trailing empty ^RS slots", () => {
+    expect(generateZPL({ ...base, rfidTagType: 8 }, [])).toContain("^RS8" + String.fromCharCode(10));
+    expect(generateZPL({ ...base, rfidPosition: "520" }, [])).toContain("^RS,520" + String.fromCharCode(10));
+  });
+
+  it("round-trips ^RB with partitions and drops a mismatched sum", () => {
+    const cfg = { ...base, rfidEpcBits: 96, rfidEpcPartitions: [8, 3, 3, 20, 24, 38] };
+    const zpl = generateZPL(cfg, []);
+    expect(zpl).toContain("^RB96,8,3,3,20,24,38");
+    const back = parseZPL(zpl, 8).labelConfig;
+    expect(back.rfidEpcBits).toBe(96);
+    expect(back.rfidEpcPartitions).toEqual([8, 3, 3, 20, 24, 38]);
+    // Partitions summing to 95 != 96 would encode wrong fields: drop whole cmd.
+    const badParse = parseZPL("^XA^RB96,8,3,3,20,24,37^XZ", 8);
+    expect(badParse.labelConfig.rfidEpcBits).toBeUndefined();
+    expect(badParse.labelConfig.rfidEpcPartitions).toBeUndefined();
+    // The drop is reported, never silent.
+    expect(
+      badParse.pages[0]?.findings.filter((f) => f.kind === "partial").map((f) => f.command),
+    ).toContain("^RB");
+  });
+
+  it("reports a gap inside the ^RB partition list instead of closing it", () => {
+    const r = parseZPL("^XA^RB96,8,,24,64^XZ", 8);
+    expect(r.labelConfig.rfidEpcPartitions).toBeUndefined();
+    expect(
+      r.pages[0]?.findings.filter((f) => f.kind === "partial").map((f) => f.command),
+    ).toContain("^RB");
+    // A trailing delimiter is only noise, so that list still adopts.
+    expect(parseZPL("^XA^RB96,8,24,64,^XZ", 8).labelConfig.rfidEpcPartitions).toEqual([8, 24, 64]);
+  });
+
+  it("round-trips ^RW across the numeric/level power union", () => {
+    expect(generateZPL({ ...base, rfidReadPower: 16, rfidWritePower: "L" }, [])).toContain("^RW16,L");
+    const back = parseZPL("^XA^RWH,30^XZ", 8).labelConfig;
+    expect(back.rfidReadPower).toBe("H");
+    expect(back.rfidWritePower).toBe(30);
+  });
+
+  it("flags the unmodelled ^RS a/c and ^RW antenna slots as partial", () => {
+    const r = parseZPL("^XA^RS8,,,,,A2^RW16,16,A3^XZ", 8);
+    const partial = r.pages[0]?.findings.filter((f) => f.kind === "partial").map((f) => f.command);
+    expect(partial).toContain("^RS");
+    expect(partial).toContain("^RW");
+    // The modelled slots still adopt.
+    expect(r.labelConfig.rfidTagType).toBe(8);
+    expect(r.labelConfig.rfidReadPower).toBe(16);
+  });
+
+  it("flags a legacy tag type as partial and keeps the other slots", () => {
+    const r = parseZPL("^XA^RS1,520^XZ", 8);
+    expect(r.labelConfig.rfidTagType).toBeUndefined();
+    expect(r.labelConfig.rfidPosition).toBe("520");
+    const partial = r.pages[0]?.findings.filter((f) => f.kind === "partial").map((f) => f.command);
+    expect(partial).toContain("^RS");
+  });
+
+  it("adopts a partition-less ^RB beyond the 16x64 form", () => {
+    expect(parseZPL("^XA^RB2048^XZ", 8).labelConfig.rfidEpcBits).toBe(2048);
+  });
+
+  it("bounds the forward position at F999 per the Link-OS spec", () => {
+    expect(parseZPL("^XA^RS8,F999^XZ", 8).labelConfig.rfidPosition).toBe("F999");
+    expect(parseZPL("^XA^RS8,F1000^XZ", 8).labelConfig.rfidPosition).toBeUndefined();
+  });
+
+  it("reads the VOID length through the ^MU multiplier like ^ML", () => {
+    // ^MUI: 2 inches = 406 dots at 8 dpmm (203 dpi).
+    expect(parseZPL("^XA^MUI^RS8,,2^XZ", 8).labelConfig.rfidVoidLength).toBe(406);
+  });
+
+  it("ignores invalid RFID slot values", () => {
+    const back = parseZPL("^XA^RS9,X99,-1,11,Q^RW31,Z^XZ", 8).labelConfig;
+    expect(back.rfidTagType).toBeUndefined();
+    expect(back.rfidPosition).toBeUndefined();
+    expect(back.rfidVoidLength).toBeUndefined();
+    expect(back.rfidRetries).toBeUndefined();
+    expect(back.rfidErrorHandling).toBeUndefined();
+    expect(back.rfidReadPower).toBeUndefined();
+    expect(back.rfidWritePower).toBeUndefined();
+  });
+});

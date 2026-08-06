@@ -21,6 +21,7 @@ import { IdentityTab } from "./IdentityTab";
 import { MaintenanceTab } from "./MaintenanceTab";
 import { McpServerTab } from "./McpServerTab";
 import { MediaFeedTab } from "./MediaFeedTab";
+import { RfidTab } from "./RfidTab";
 import { OutputTab } from "./OutputTab";
 import { PreviewSettingsTab } from "./PreviewSettingsTab";
 import { PrintQualityTab } from "./PrintQualityTab";
@@ -38,6 +39,8 @@ const TOP_TAB_OF = {
   mediaFeed: 'perLabel',
   printQuality: 'perLabel',
   output: 'perLabel',
+  // Niche hardware last in the group.
+  rfid: 'perLabel',
   clockTime: 'setupScript',
   encodingLanguage: 'setupScript',
   fonts: 'setupScript',
@@ -70,6 +73,7 @@ const TAB_COMPONENTS: Partial<Record<PrinterSettingsTab, FC>> = {
   mcpServer: McpServerTab,
   dataSources: DataSourcesTab,
   mediaFeed: MediaFeedTab,
+  rfid: RfidTab,
   printQuality: PrintQualityTab,
   output: OutputTab,
   clockTime: ClockAndTimeTab,

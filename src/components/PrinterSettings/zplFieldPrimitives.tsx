@@ -163,6 +163,7 @@ export function BoundedIntControl({
   onChange,
   disabled,
   required,
+  ariaLabel,
 }: {
   id?: string;
   min: number;
@@ -171,6 +172,8 @@ export function BoundedIntControl({
   onChange: (next: number | undefined) => void;
   disabled?: boolean;
   required?: boolean;
+  /** For repeated controls that share one group label (e.g. EPC partitions). */
+  ariaLabel?: string;
 }) {
   const externalText = value === undefined ? "" : String(value);
   const [draft, setDraft] = useState(externalText);
@@ -183,6 +186,7 @@ export function BoundedIntControl({
     <input
       id={id}
       type="number"
+      aria-label={ariaLabel}
       className={inputCls}
       min={min}
       max={max}
