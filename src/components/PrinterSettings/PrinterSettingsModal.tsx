@@ -112,7 +112,15 @@ function ResetPerLabelButton({
           : "border-border text-muted hover:text-text hover:bg-surface-2")
       }
     >
-      {armed ? confirmLabel : label}
+      {/* Both labels share one grid cell so the button keeps the taller
+          height: a shrink on arming would shift the layout mid-click and
+          let the second click land unconfirmed. */}
+      <span className="grid">
+        <span className={"col-start-1 row-start-1 " + (armed ? "invisible" : "")}>{label}</span>
+        <span className={"col-start-1 row-start-1 " + (armed ? "" : "invisible")}>
+          {confirmLabel}
+        </span>
+      </span>
     </button>
   );
 }
