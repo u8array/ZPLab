@@ -40,11 +40,9 @@ export function imageEmitDims(p: ImageProps): { width: number; height: number } 
   if (isImageRotatable(p) && isAxisSwapped(objectRotation(p))) {
     return { width: gfByteWidth(imageEmitHeight(p)), height: p.widthDots };
   }
-  if (!getImage(p.imageId) && objectRotation(p) === 'N') {
-    const header = gfaHeaderDims(p._gfaCache);
-    if (header) {
-      return { width: header.width, height: header.height ?? (p.heightDots ?? p.widthDots) };
-    }
+  const header = gfaHeaderDims(headerByteSource(p));
+  if (header) {
+    return { width: header.width, height: header.height ?? (p.heightDots ?? p.widthDots) };
   }
   return { width: gfByteWidth(p.widthDots), height: imageEmitHeight(p) };
 }
@@ -105,28 +103,146 @@ function gfaSync(dataUrl: string, widthDots: number, threshold: number, rotation
   return raster ? gfaFromRaster(raster) : '';
 }
 
+/** Spec p.215 range for ^GF's byte counts and bytes-per-row. */
+const inGfRange = (n: number): boolean => Number.isInteger(n) && n >= 1 && n <= 99999;
+
+export interface GfHeader {
+  format: "A" | "B" | "C";
+  /** b / c params as written; byte-count headers are optional (empty string). */
+  totalBytes: string;
+  dataBytes: string;
+  bytesPerRow: number;
+  payload: string;
+}
+
+/** The one ^GF header grammar. Every consumer (dims, preview decode, ~DY
+ *  upload, the MCP boundary) reads it through here, so they cannot drift on
+ *  what counts as a header. */
+export function parseGfHeader(value: string | undefined): GfHeader | null {
+  // The comma after d is required whenever a payload follows: without it the
+  // firmware reads "2FF00" as d and drops the graphic.
+  const m = value ? /^\^GF([ABC]),(\d*),(\d*),(\d+)(?:,|$)/.exec(value) : null;
+  if (!m) return null;
+  const bytesPerRow = Number(m[4]);
+  // Spec p.215: b, c and d are each "Values: 1 to 99999". Enforced in the one
+  // place that owns the grammar, so no consumer has to re-derive it — without
+  // it a c of 4000000 drove the emitted ^FT anchor and a b of 1e20 sailed past
+  // Number.isInteger into the overhang scan. Empty b/c stay legal (the byte
+  // counts are optional, and the parser preserves headers that omit them).
+  if (!inGfRange(bytesPerRow)) return null;
+  if ((m[2] !== "" && !inGfRange(Number(m[2]))) || (m[3] !== "" && !inGfRange(Number(m[3])))) {
+    return null;
+  }
+  return {
+    format: m[1] as GfHeader["format"],
+    totalBytes: m[2] ?? "",
+    dataBytes: m[3] ?? "",
+    bytesPerRow,
+    payload: value !== undefined ? value.slice(m[0].length) : "",
+  };
+}
+
+/** 8192 dots a row, far past any real label at 24 dpmm. Shared cap so bounds,
+ *  emit and the preview decoder reject the same runaway header. */
+export const GF_MAX_BYTES_PER_ROW = 1024;
+
+/** Rows a header may declare. Past this it is not a label graphic, and the
+ *  derived height would reach the emitted ^FT and the off-label check. */
+export const GF_MAX_ROWS = 20_000;
+
+/** Can this ^GF string be shipped verbatim without the firmware reading part of
+ *  it as a command? Format A and the :B64:/:Z64: wrappers are ASCII alphabets,
+ *  so a ^/~ anywhere in them is an appended command. Raw binary B/C carries
+ *  those bytes as data INSIDE its declared count (spec p.215) and the firmware
+ *  resumes parsing past it, so only the overhang matters — and with no count
+ *  declared nothing bounds the data, so the whole payload has to be clean.
+ *  Sliced in string units: ^ and ~ are single-byte ASCII wherever they sit.
+ *  Lives here because emit is what turns these bytes into a stream; the MCP
+ *  boundary reuses it for caller-supplied props. */
+export function gfShipsSafely(value: string): boolean {
+  const head = parseGfHeader(value);
+  // The shared runaway cap, applied here too: without it a wide graphic shipped
+  // at full width while gfaHeaderDims returned null and the footprint fell back
+  // to the props width, so emit and bounds described different ink.
+  if (head && head.bytesPerRow > GF_MAX_BYTES_PER_ROW) return false;
+  // A header we cannot read carries no count to bound its data by, so nothing
+  // here can tell data from an appended command.
+  if (!head) return false;
+  // A bare header declares bytes it never sends, so the firmware reads the rest
+  // of the stream as graphic data (p.215) and the block never terminates.
+  if (head.payload.trim() === "") return false;
+  const trimmed = head.payload.replace(/^\s+/, "");
+  const wrapped = trimmed.startsWith(":B64:") || trimmed.startsWith(":Z64:");
+  // p.215, ASCII hex: "~DN or any caret or tilde character prematurely aborts
+  // the download" — so in format A (and the base64 wrappers, whose alphabet has
+  // neither) one anywhere ends the graphic, wherever the count says it stops.
+  if (head.format === "A" || wrapped) return !/[\^~]/.test(head.payload);
+  // p.215, binary: "All control prefixes are ignored until the total number of
+  // bytes needed for the graphic format is sent" — so b (or c when b is
+  // omitted) IS the boundary, and only bytes past it are read as commands.
+  const countStr = head.totalBytes !== "" ? head.totalBytes : head.dataBytes;
+  // Nothing declares where the data ends, so the whole payload must be clean.
+  if (countStr === "") return !/[\^~]/.test(head.payload);
+  // WIRE bytes, not string indices: the generator emits ^CI28, so one payload
+  // char can be several bytes and a JS slice would cut in the wrong place.
+  // parseGfHeader has already held the count to the spec's 1..99999, so it can
+  // no longer exceed any real payload by enough to make this scan vacuous.
+  const wire = new TextEncoder().encode(head.payload);
+  return !wire.subarray(Number(countStr)).some((b) => b === 0x5e || b === 0x7e);
+}
+
 /** Printed size from a ^GF header (spec p.215: width = bytes per row x 8,
- *  lines = count / bytes per row); the header, not the props, is the byte
- *  truth for store-less emit and bounds (uploads never persist heightDots).
- *  Empty count slot (preserved foreign header): height null, callers fall
- *  back to model dims. Null on unparsable or non-positive/fractional rows. */
+ *  lines = count / bytes per row); the header, not the props, is the byte truth
+ *  for store-less emit and bounds. Empty count slot: height null, callers fall
+ *  back to model dims; null on fractional rows or a runaway width. */
 export function gfaHeaderDims(
   cache: string | undefined,
 ): { width: number; height: number | null } | null {
-  const m = cache ? /^\^GF[ABC],\d*,(\d*),(\d+),/.exec(cache) : null;
-  if (!m) return null;
-  const bytesPerRow = Number(m[2]);
-  if (bytesPerRow <= 0) return null;
-  const width = bytesPerRow * 8;
-  if (m[1] === "") return { width, height: null };
-  const height = Number(m[1]) / bytesPerRow;
-  return Number.isInteger(height) && height > 0 ? { width, height } : null;
+  const h = parseGfHeader(cache);
+  // A payload-less header (^GFA,8,8,1 with no data) is not a usable graphic:
+  // emit would ship the bare header and firmware would read past it into ^FS.
+  if (!h || h.bytesPerRow > GF_MAX_BYTES_PER_ROW || h.payload.trim() === "") return null;
+  const width = h.bytesPerRow * 8;
+  if (h.dataBytes === "") return { width, height: null };
+  const height = Number(h.dataBytes) / h.bytesPerRow;
+  // Rows bounded like the width: an unbounded c drove a 20-million-dot field
+  // into the ^FT anchor and the off-label check, and past 1e21 the number
+  // formats as "1e+21", which no firmware parses.
+  if (!Number.isInteger(height) || height <= 0 || height > GF_MAX_ROWS) return null;
+  return { width, height };
 }
 
-/** Store-less byte source: unrotated (a re-raster needs the source image)
- *  with a parsable header, which then also provides the emit dimensions. */
+/** Store-less byte source: unrotated (a re-raster needs the source image) with a
+ *  parsable header that also provides the emit dimensions, and bytes the stream
+ *  can carry as data rather than as commands. */
 function gfaCacheUsable(p: ImageProps): boolean {
-  return !!p._gfaCache && objectRotation(p) === 'N' && gfaHeaderDims(p._gfaCache) !== null;
+  return (
+    !!p._gfaCache &&
+    objectRotation(p) === 'N' &&
+    gfaHeaderDims(p._gfaCache) !== null &&
+    gfShipsSafely(p._gfaCache)
+  );
+}
+
+/** Bytes with no source image behind them are the graphic's only copy: no edit
+ *  may clear them, nothing could re-encode them. The one predicate behind
+ *  commitTransform, normalizeChanges and densityRescale, at ANY rotation:
+ *  a rotated cache is only latently blank (rotating back restores it). */
+export function gfaCacheIsOnlyCopy(p: ImageProps): boolean {
+  return !!p._gfaCache && !getImage(p.imageId);
+}
+
+/** The graphic whose header describes the printed ink, for the sites that size
+ *  the field. rawGf counts at any rotation because toZPL ships it verbatim; a
+ *  cache only upright, where the emit uses it too. */
+export function headerByteSource(p: ImageProps): string | undefined {
+  if (getImage(p.imageId)) return undefined;
+  // Only bytes emit will actually ship: without this the bounds, the ^FT anchor
+  // and the canvas all described ink that toZPL replaces with an empty field.
+  if (p.rawGf) return gfShipsSafely(p.rawGf) ? p.rawGf : undefined;
+  return objectRotation(p) === 'N' && p._gfaCache && gfShipsSafely(p._gfaCache)
+    ? p._gfaCache
+    : undefined;
 }
 
 /** Fresh upright ^GFA from the image store, for emit sites that need bytes
@@ -152,11 +268,14 @@ export const image: ObjectTypeCore<ImageProps> = {
 
   // A width/threshold change without a fresh cache in the same change
   // invalidates the bytes, or emit/preflight would use the stale raster.
-  normalizeChanges: (_obj, changes) => {
+  normalizeChanges: (obj, changes) => {
     const next = changes.props as Partial<ImageProps> | undefined;
     if (!next || !('widthDots' in next || 'threshold' in next) || '_gfaCache' in next) {
       return changes;
     }
+    // Only when a source image can re-encode them: otherwise the cache is the
+    // graphic's only copy and clearing it prints nothing.
+    if (gfaCacheIsOnlyCopy(obj.props)) return changes;
     return { ...changes, props: { ...next, _gfaCache: undefined } };
   },
 
@@ -165,6 +284,22 @@ export const image: ObjectTypeCore<ImageProps> = {
   // also covers exportable-but-hidden images the canvas never renders.
   preflight: (obj) => {
     const p = obj.props;
+    // Named separately from "no bytes at all": these bytes exist but carry a ^/~
+    // the firmware would read as a command, so emit drops them (see toZPL) and
+    // the user/agent has to hear why rather than seeing a blank field.
+    if (p.rawGf && !gfShipsSafely(p.rawGf)) {
+      return [{ kind: 'imageMissing', detail: 'the stored ^GF bytes carry ^ or ~ outside their declared byte count, so they cannot be printed' }];
+    }
+    // A recall field that means to ship its bytes: formatGraphicUpload drops the
+    // ~DY when it cannot, but the ^XG stays, so the field recalls a file that
+    // was never uploaded. `storedAs` alone made this count as resolvable below,
+    // which is why it printed nothing without a word.
+    if (p.storedAs && p.storedAs.embedInZpl !== false) {
+      const upload = p._gfaCache ?? inlineGfaFor(p);
+      if (!upload || !gfShipsSafely(upload)) {
+        return [{ kind: 'imageMissing', detail: 'this field recalls a stored graphic whose upload cannot be written, so the printer has nothing to recall' }];
+      }
+    }
     const resolvable =
       !!p.rawGf || !!p.storedAs || !!getImage(p.imageId) || gfaCacheUsable(p);
     return resolvable ? [] : [{ kind: 'imageMissing' }];
@@ -192,6 +327,11 @@ export const image: ObjectTypeCore<ImageProps> = {
       const dominant = Math.abs(sx - 1) >= Math.abs(sy - 1) ? sx : sy;
       return { widthDots: widthDots(dominant), _gfaCache: undefined };
     }
+    // Bytes with no source image cannot be re-encoded at a new size, so the
+    // box is theirs to keep: clearing the cache would trade a visible graphic
+    // for an empty field, and nothing could bring it back. Rotation-agnostic
+    // like the rawGf guard above; the upright-only rule is emit's, not ours.
+    if (gfaCacheIsOnlyCopy(obj.props)) return {};
     // First-resize fallback for heightDots: use the current widthDots so
     // the implicit default (square placeholder) matches what the canvas
     // renders before the user has dragged. Drifting from that (e.g. a
@@ -215,7 +355,12 @@ export const image: ObjectTypeCore<ImageProps> = {
     const anchor = graphicFieldPos(obj, d.width, d.height);
     // Opaque graphic: re-emit the original ^GF verbatim at the (possibly moved)
     // field position. The bytes were never decoded, so there's nothing to regen.
-    if (p.rawGf) return `${anchor}${p.rawGf}^FS`;
+    // Guarded here rather than at the input boundary: this is the one place that
+    // turns them into a stream, and it needs no guess about where they came from
+    // (preflight reports the same refusal, so the drop is never silent).
+    if (p.rawGf) {
+      return gfShipsSafely(p.rawGf) ? `${anchor}${p.rawGf}^FS` : `${anchor}^FD^FS`;
+    }
     // Recall path: upload happened in the preamble; here we just reference
     // it via ^XG. The `.GRF` extension is implicit on `~DY{path},A,G,…`;
     // Zebra firmware persists the file as `path.GRF` and `^XG` resolves
@@ -232,8 +377,11 @@ export const image: ObjectTypeCore<ImageProps> = {
     // _gfaCache holds the upright bytes, so a rotated field regenerates fresh
     // (rasterizeMono bakes the rotation in).
     const rot = objectRotation(p);
+    // The cache goes through the same ship guard as every other verbatim path;
+    // with a source image behind it we can simply re-encode instead of dropping.
+    const usableCache = p._gfaCache && gfShipsSafely(p._gfaCache) ? p._gfaCache : '';
     const gfa = rot === 'N'
-      ? (p._gfaCache || gfaSync(cached.dataUrl, p.widthDots, p.threshold, 'N'))
+      ? (usableCache || gfaSync(cached.dataUrl, p.widthDots, p.threshold, 'N'))
       : gfaSync(cached.dataUrl, p.widthDots, p.threshold, rot);
     return `${anchor}${gfa}^FS`;
   },

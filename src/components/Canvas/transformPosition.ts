@@ -1,6 +1,13 @@
 import type { LeafObject } from "@zplab/core/registry";
 import { QR_FO_Y_OFFSET_DOTS, QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
-import { barcodeFtAnchorOffset, isBarcode, qrPrintsAsGraphic } from "@zplab/core/lib/objectBounds";
+import {
+  barcodeFtAnchorOffset,
+  isBarcode,
+  qrPrintsAsGraphic,
+  rightAnchorBoxWidthDots,
+  rightAnchorShiftDots,
+  rotatedFootprint,
+} from "@zplab/core/lib/objectBounds";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "@zplab/core/registry/rotation";
 import { getMeasuredSnapshot } from "./measuredBoundsCache";
 
@@ -72,15 +79,34 @@ export function modelPositionFromRenderedTopLeft(
   committedUprightH?: number,
   committedMagnification?: number,
 ): { x: number; y: number } {
+  // Every branch shifts: the renderers and objectBounds do it unconditionally,
+  // and objectBounds shifts by the BOX width, which on a quarter turn is the
+  // upright height (the committed pair is always upright; a symbol's box never
+  // turns, see rightAnchorBoxWidthDots).
+  const committedBoxW =
+    committedUprightW !== undefined && committedUprightH !== undefined && obj.type !== "symbol"
+      ? rotatedFootprint(committedUprightW, committedUprightH, objectRotation(obj.props)).width
+      : committedUprightW;
+  const anchor = rightAnchorShift(obj, committedBoxW);
   if (obj.type === "qrcode" && obj.positionType !== "FT" && !qrPrintsAsGraphic(obj)) {
-    return { x: renderedXDots, y: renderedYDots - QR_FO_Y_OFFSET_DOTS };
+    return { x: renderedXDots + anchor, y: renderedYDots - QR_FO_Y_OFFSET_DOTS };
   }
   if (isFtBarcode(obj)) {
     const c = cacheBar(obj);
-    const d = ftBarcodeRenderDelta(obj, committedUprightW ?? c.w, committedUprightH ?? c.h, committedMagnification);
-    return { x: renderedXDots - d.x, y: renderedYDots - d.y };
+    const w = committedUprightW ?? c.w;
+    const h = committedUprightH ?? c.h;
+    const d = ftBarcodeRenderDelta(obj, w, h, committedMagnification);
+    const barAnchor = rightAnchorShiftDots(obj, rotatedFootprint(w, h, objectRotation(obj.props)).width);
+    return { x: renderedXDots - d.x + barAnchor, y: renderedYDots - d.y };
   }
-  return { x: renderedXDots, y: renderedYDots };
+  // ^FO barcodes: the render shifts by the HRI zone (objectBounds.barcodeTopLeft
+  // subtracts it), so the inverse must add it back or a resize commits a
+  // position one zone off from where the object was drawn.
+  const zone = foBarcodeZone(obj);
+  return {
+    x: renderedXDots + zone.barLeft + anchor,
+    y: renderedYDots + zone.barTop,
+  };
 }
 
 /** Inverse of `modelPositionFromRenderedTopLeft` at the current size. */
@@ -89,12 +115,36 @@ export function renderedTopLeftFromModel(obj: LeafObject): {
   y: number;
 } {
   if (obj.type === "qrcode" && obj.positionType !== "FT" && !qrPrintsAsGraphic(obj)) {
-    return { x: obj.x, y: obj.y + QR_FO_Y_OFFSET_DOTS };
+    return renderedWithAnchor(obj, obj.x, obj.y + QR_FO_Y_OFFSET_DOTS);
   }
   if (isFtBarcode(obj)) {
     const c = cacheBar(obj);
     const d = ftBarcodeRenderDelta(obj, c.w, c.h);
-    return { x: obj.x + d.x, y: obj.y + d.y };
+    return renderedWithAnchor(obj, obj.x + d.x, obj.y + d.y);
   }
-  return { x: obj.x, y: obj.y };
+  const zone = foBarcodeZone(obj);
+  return { x: obj.x - zone.barLeft - rightAnchorShift(obj), y: obj.y - zone.barTop };
+}
+
+/** Same shift for the branches that return before the fall-through. */
+function renderedWithAnchor(obj: LeafObject, x: number, y: number): { x: number; y: number } {
+  return { x: x - rightAnchorShift(obj), y };
+}
+
+/** The width a right-justified field's render shifts left by, from the same
+ *  measured footprint the renderer and objectBounds use. Without it a resize
+ *  would commit the visual left edge into a model x that means the right one. */
+function rightAnchorShift(obj: LeafObject, committedWidth?: number): number {
+  // A resize passes the width it is committing; otherwise the measured
+  // footprint, with core resolving the unmeasured cases.
+  const width = rightAnchorBoxWidthDots(obj, committedWidth ?? getMeasuredSnapshot().get(obj.id)?.width);
+  return rightAnchorShiftDots(obj, width);
+}
+
+/** The HRI-zone offset an ^FO barcode's render applies, zero for everything
+ *  else. Mirrors objectBounds.barcodeTopLeft's plain-^FO return. */
+function foBarcodeZone(obj: LeafObject): { barLeft: number; barTop: number } {
+  if (!isBarcode(obj)) return { barLeft: 0, barTop: 0 };
+  const c = cacheBar(obj);
+  return { barLeft: c.barLeft, barTop: c.barTop };
 }

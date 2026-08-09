@@ -32,8 +32,7 @@ import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { useContextMenu } from "../../hooks/useContextMenu";
 import { rotateSelectionChanges } from "../../lib/groupRotation";
 import { registerBarcodeWidthProber, unregisterBarcodeWidthProber } from "../../store/anchorRepin";
-import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
-import { ctrlParityFor } from "@zplab/core/registry";
+import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
 import { measureBarcodeFootprintDots } from "./bwipHelpers";
 import { copyText } from "../../lib/clipboard";
 import { selectTidyTargets } from "../../lib/tidyClassify";
@@ -484,18 +483,20 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   } = useCanvasPanZoom({ zoom, onZoomChange, fitZoom, containerRef });
 
   const scale = SCREEN_PX_PER_MM * zoom;
-  // The probe measures the same binding-resolved content KonvaObject draws.
-  const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
+  // Variable DEFAULTS, not the previewed row or render mode (resolveForMeasure):
+  // this probe only feeds the anchor re-pin, which writes a persisted x, so a
+  // preview toggle must not move what prints — and the sidecar, which has no
+  // row, has to arrive at the same number for the same edit.
   useEffect(() => {
-    const { variables: vars, active, clock } = previewBinding;
+    const { variables: vars, clock } = previewBinding;
     const probe = (o: LabelObject) => {
       if (isGroup(o)) return null;
-      const resolved = applyBindingToObject(o, vars, active, dataRenderMode, clock, ctrlParityFor(o));
+      const resolved = resolveForMeasure(o, vars, clock);
       return measureBarcodeFootprintDots(resolved as LeafObject, scale, effDpmm);
     };
     registerBarcodeWidthProber(probe);
     return () => unregisterBarcodeWidthProber(probe);
-  }, [scale, effDpmm, previewBinding, dataRenderMode]);
+  }, [scale, effDpmm, previewBinding]);
   const labelWidthPx = effectiveWidthMm * scale;
   const physicalWidthPx = label.widthMm * scale;
   const labelHeightPx = label.heightMm * scale;

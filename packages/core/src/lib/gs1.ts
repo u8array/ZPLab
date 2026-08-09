@@ -379,9 +379,48 @@ export function unescapeGs1FdValue(value: string): string {
   return value.replaceAll(">0", ">");
 }
 
-/** Segment value as emitted: GTIN completed to 14 digits, others verbatim. */
+/** Typed `(AI)value…` parts, or null when the content is not entirely in that
+ *  shape. The AIs are not checked against the catalog: a carrier that only
+ *  needs the parentheses gone can work without it. */
+export function typedGs1Shape(content: string): { ai: string; value: string }[] | null {
+  const parts = [...content.matchAll(/\(([0-9]{2,4})\)([^(]*)/g)];
+  if (parts.length === 0) return null;
+  const covered = parts.reduce((n, m) => n + m[0].length, 0);
+  return covered === content.length
+    ? parts.map((m) => ({ ai: m[1] ?? "", value: m[2] ?? "" }))
+    : null;
+}
+
+/** Typed parts whose AIs the catalog all carries, which is what deciding FNC1
+ *  placement needs. */
+export function typedGs1Parts(content: string): { ai: string; value: string }[] | null {
+  const parts = typedGs1Shape(content);
+  return parts?.every((p) => aiSpec(p.ai) !== undefined) ? parts : null;
+}
+
+/** A typed part's value as emitted, completing a literal GTIN exactly as
+ *  segmentValue does for parsed segments: without it, binding any OTHER part
+ *  to a variable would silently ship a 13-digit AI-01. A value carrying a
+ *  marker passes through, since its check digit belongs to the supplied row. */
+export function typedSegmentValue(ai: string, value: string): string {
+  if (aiSpec(ai)?.kind !== "gtin") return value;
+  return /^[0-9]+$/.test(value) ? gtin14WithCheck(value) : value;
+}
+
+/** Typed content with its literal GTINs completed, for the carriers that ship
+ *  the `(AI)value` form as written (^BC mode D). Null when the content is not
+ *  in the typed form. */
+export function completeTypedGtins(content: string): string | null {
+  const parts = typedGs1Parts(content);
+  if (!parts) return null;
+  return parts.map((p) => `(${p.ai})${typedSegmentValue(p.ai, p.value)}`).join("");
+}
+
+/** Segment value as emitted, on the same rule the typed path uses: a GTIN gets
+ *  completed only when it IS digits, so a value the parser could not structure
+ *  (trailing text, a marker) reaches the symbol instead of being stripped. */
 function segmentValue(s: Gs1Segment): string {
-  return AI_BY_CODE.get(s.ai)?.kind === "gtin" ? gtin14WithCheck(s.value) : s.value;
+  return typedSegmentValue(s.ai, s.value);
 }
 
 /** A variable-length AI that is not the last segment needs a trailing FNC1

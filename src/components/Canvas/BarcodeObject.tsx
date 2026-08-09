@@ -3,7 +3,7 @@ import { Image as KImage, Group, Rect, Shape, Text } from "react-konva";
 import type Konva from "konva";
 import { BARCODE_1D_TYPES, ObjectRegistry, objectResolvesCtrl } from "@zplab/core/registry";
 import { dotsToPx, mmToDots, pxToDots } from "@zplab/core/lib/coordinates";
-import { barcodeFtAnchorOffset, qrPrintsAsGraphic } from "@zplab/core/lib/objectBounds";
+import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "@zplab/core/lib/objectBounds";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
 import { selectionHandlers, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
@@ -261,7 +261,10 @@ export function BarcodeObject({
   // when the text zone extends LEFT/ABOVE the bars (rotated EAN/UPC,
   // inverted EAN/UPC/LOGMARS). The Konva Group is positioned at bbox
   // top-left and KImage offsets back to land bars at FO.
-  const x = offsetX + dotsToPx(displayX, scale, dpmm) - dim.barLeftPx;
+  const x =
+    offsetX +
+    dotsToPx(displayX - rightAnchorShiftDots(obj, pxToDots(dim.w, scale, dpmm)), scale, dpmm) -
+    dim.barLeftPx;
   const y = offsetY + dotsToPx(displayY, scale, dpmm) - dim.barTopPx;
 
   // Dotted frame over the sample bars: orange for a blank (unconfigured) field,

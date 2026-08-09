@@ -29,7 +29,9 @@ describe("locale registry", () => {
     expect(isLocaleCode("de")).toBe(true);
   });
 
-  it("every locale matches the en key structure exactly", async () => {
+  // Own timeout: 33 dynamic locale imports are transform-bound, and the default
+  // 5s is a coin flip once the rest of the suite runs alongside them.
+  it("every locale matches the en key structure exactly", { timeout: 30_000 }, async () => {
     // Replaces the compile-time guarantee the old eager map gave implicitly;
     // deep both-direction parity so a missing OR extra key fails per locale.
     const enKeys = keyPaths(en as unknown as Record<string, unknown>).sort();

@@ -40,7 +40,7 @@ import {
   modelPositionFromRenderedTopLeft,
   renderedTopLeftFromModel,
 } from "../transformPosition";
-import { isBarcode, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
+import { isBarcode, isRightAnchoredField, rotatedFootprint, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
 import { projectMultiResize } from "../../../lib/multiResize";
 import { lineHandlesNodeId, lineRootNodeId } from "../konvaObjectProps";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
@@ -1354,7 +1354,16 @@ export function useKonvaTransformer({
           y: mr.bboxDots.y + pxToDots(endY - mr.start.y, scale, dpmm),
         };
         // Drop no-op entries so a sub-dot jiggle records no undo step.
-        const changes = projectMultiResize(leafs, mr.bboxDots, origin, fx, fy, snap).filter(
+        const measured = getMeasuredSnapshot();
+        const changes = projectMultiResize(
+          leafs,
+          mr.bboxDots,
+          origin,
+          fx,
+          fy,
+          snap,
+          (id) => measured.get(id)?.width,
+        ).filter(
           (c) => {
             const l = leafById.get(c.id);
             if (!l) return false;
@@ -1435,6 +1444,22 @@ export function useKonvaTransformer({
       );
       committedW = dims.w;
       committedH = dims.h;
+    } else if (!(obj.positionType === "FT" && isBarcode(obj)) && isRightAnchoredField(obj)) {
+      // Right-anchored text/symbol/FO-2D: the inverse must add back the width
+      // being committed. The measured snapshot holds the pre-resize box, the
+      // drag scale is what the release multiplied it by; the id-bearing node is
+      // a Konva Group, whose own width()/height() are always 0. Symbols never
+      // publish a snapshot: their box is their props (and never turns).
+      const m = getMeasuredSnapshot().get(singleId);
+      if (m && m.width > 0) {
+        const up = rotatedFootprint(m.width * sx, m.height * sy, objectRotation(obj.props));
+        committedW = up.width;
+        committedH = up.height;
+      } else if (obj.type === "symbol") {
+        const sp = obj.props as { width: number; height: number };
+        committedW = sp.width * sx;
+        committedH = sp.height * sy;
+      }
     }
     // Invert per-type render offsets (QR's +10 Y, the rotation-aware FT bar
     // anchor) so the stored model matches the render path. Text renders at

@@ -1,9 +1,10 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { applyObjectChanges, NON_EMITTING_PROP_KEYS } from "./labelStore.internals";
+import { applyObjectChanges } from "./labelStore.internals";
 import { registerBarcodeWidthProber, unregisterBarcodeWidthProber, probeBarcodeFootprint, anchorRepin } from "./anchorRepin";
 import { stampDirtyLeaves } from "./dirtyTracking";
 import { convertSymbologyMapper } from "../lib/symbologySwitch";
 import { valueAnchorShift } from "@zplab/core/lib/valueAnchor";
+import { applyChanges } from "@zplab/core/lib/anchorRepin";
 import type { LabelObject } from "@zplab/core/types/Group";
 
 // Fake probe: width tracks content length, axes swap under R rotation.
@@ -72,6 +73,23 @@ describe("anchorRepin", () => {
     const next = applyObjectChanges(barcode(), { props: { rotation: "R" } });
     expect(next.x).toBe(100);
     expect(next.y).toBe(50);
+  });
+
+  it("skips the op that introduces the justify itself (no pinned edge yet)", () => {
+    registerBarcodeWidthProber(probe);
+    const src = barcode({ fieldJustify: undefined });
+    const next = applyObjectChanges(src, { fieldJustify: "R", props: { content: "ABCD" } });
+    // The right edge was never in force; shifting would move the object off
+    // the position the caller just set (patch_design sends both together).
+    expect(next.fieldJustify).toBe("R");
+    expect(next.x).toBe(100);
+  });
+
+  it("skips the op that first flips the FT anchor", () => {
+    registerBarcodeWidthProber(probe);
+    const src = barcode({ fieldJustify: "L" }, { rotation: "I" });
+    const next = applyObjectChanges(src, { positionType: "FT", props: { content: "ABCD" } });
+    expect(next.x).toBe(100);
   });
 
   it("is inert without a registered prober (headless)", () => {
@@ -155,12 +173,6 @@ describe("prober registry", () => {
   });
 });
 
-describe("NON_EMITTING_PROP_KEYS", () => {
-  it("membership lock: exactly the editor-only, never-emitted prop keys", () => {
-    expect([...NON_EMITTING_PROP_KEYS].sort()).toEqual(["preSerialContent"]);
-  });
-});
-
 describe("valueAnchorShift", () => {
   it("is symmetric for centre (away-from-zero halves)", () => {
     expect(valueAnchorShift("C", 7, false)).toBe(4);
@@ -214,5 +226,16 @@ describe("dirty semantics of fieldJustify", () => {
     const leaf = barcode();
     const changed = { ...leaf, props: { ...(leaf as { props: object }).props, content: "XYZ" } } as LabelObject;
     expect(stamp(leaf, changed)).toBe(true);
+  });
+});
+
+describe("applyChanges with an explicit props: undefined", () => {
+  it("keeps the object's props instead of wiping them", () => {
+    // ObjectChanges declares props?: object, and a conditional spread left the
+    // undefined the outer spread had already copied on — handing every renderer
+    // and emitter a propless object.
+    const src = barcode();
+    const next = applyChanges(src, { x: 20, props: undefined } as never, () => null);
+    expect((next as { props?: object }).props).toEqual((src as { props: object }).props);
   });
 });

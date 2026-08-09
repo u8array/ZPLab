@@ -45,6 +45,12 @@ export type LabelObjectBase = z.infer<typeof labelObjectBaseSchema>;
 
 export type ObjectChanges = Partial<Omit<LabelObjectBase, 'id' | 'type'>> & { props?: object };
 
+/** Prop keys that never reach emitted ZPL (design-time state only), classified
+ *  globally by key name. Consumers: the dirty-tracking overlay invalidation and
+ *  the MCP boundary's control-character check (verbatim user text is legal
+ *  here). Membership locked in LabelObject.test.ts. */
+export const NON_EMITTING_PROP_KEYS: ReadonlySet<string> = new Set(['preSerialContent']);
+
 /** Palette DISPLAY grouping only, not a barcode's dimension: `legacy` collects
  *  deprecated/rarely-supported symbologies (obsolete linear + deprecated postal
  *  like PLANET/POSTNET). The 1D/2D truth lives in BARCODE_1D_TYPES /

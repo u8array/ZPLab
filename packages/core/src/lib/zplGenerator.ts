@@ -26,7 +26,7 @@ import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from '
 import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
-import { inlineGfaFor, imageEmitDims, type ImageProps } from '../registry/image';
+import { inlineGfaFor, imageEmitDims, gfShipsSafely, parseGfHeader, type ImageProps } from '../registry/image';
 import { formatStoragePath } from './storagePath';
 
 function formatDownloadObject(m: CustomFontMapping): string | undefined {
@@ -175,14 +175,12 @@ function formatGraphicUpload(p: ImageProps): string | undefined {
   if (!p.storedAs) return undefined;
   const cache = p._gfaCache ?? inlineGfaFor(p);
   if (!cache) return undefined;
-  // Byte-count headers are optional in ^GF, hence \d* not \d+.
-  const m = /^\^GF([ABC]),(\d*),(\d*),(\d+),([\s\S]*)$/.exec(cache);
-  if (!m) return undefined;
-  const format = m[1];
-  const total = m[2];
-  const bpr = m[4];
-  const data = m[5];
-  return `~DY${formatStoragePath(p.storedAs, false)},${format},G,${total},${bpr},${data}`;
+  const h = parseGfHeader(cache);
+  // The ~DY preamble is a second site that turns these bytes into a stream, so
+  // it runs the same ship guard as toZPL: a payload carrying ^/~ past its count
+  // would execute here exactly as it would in the field.
+  if (!h || !gfShipsSafely(cache)) return undefined;
+  return `~DY${formatStoragePath(p.storedAs, false)},${h.format},G,${h.totalBytes},${h.bytesPerRow},${h.payload}`;
 }
 
 /** Head-less replay block, once a density decision is due: self-declares

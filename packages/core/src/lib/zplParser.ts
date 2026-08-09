@@ -243,6 +243,11 @@ export function parseZPL(
   // split happens at dispatch via the token's source char. ~JM is not a real
   // command (only caret ^JM sets density), so it routes here as a noop too.
   const tildeDeviceCodes = new Set(["PH", "PP", "JM"]);
+  // Commands whose LAST parameter is literal user data, where a trailing space
+  // is a character and not line-wrap whitespace: ^SN's serial seed, ^SF's mask,
+  // ^A@'s font path. Everything else ends in an enum/number, where a hanging
+  // space before a line break is only formatting.
+  const LITERAL_TAIL_CMDS = new Set(["SN", "SF", "A@"]);
   Object.assign(handlers, setupScriptHandlers);
   Object.assign(handlers, createLabelConfigHandlers(s, dpmm));
   Object.assign(handlers, createUnitsHandler(s, dpmm));
@@ -432,7 +437,18 @@ export function parseZPL(
   };
 
   for (const { cmd, rest, start } of tokens) {
-    const p = rest.split(s.format.delimiterChar);
+    // Strip the trailing break plus the next line's indent, then spaces left
+    // hanging after the LAST PARAMETER's real content ("N \n" -> "N"). A break
+    // and a real trailing space are indistinguishable syntactically, so the
+    // exemption is by command: LITERAL_TAIL_CMDS end in user data where a space
+    // counts. A whitespace-VALUED parameter survives either way (`^FE `,
+    // `^FC%,{, ` keep their space); the delimiter is never whitespace
+    // (acceptsPrefixRemap), so this cannot eat one. ^FD keeps `rest` verbatim.
+    const p = rest.replace(/[\r\n]+\s*$/, "").split(s.format.delimiterChar);
+    const last = p[p.length - 1];
+    if (!LITERAL_TAIL_CMDS.has(cmd) && last !== undefined && /\S/.test(last)) {
+      p[p.length - 1] = last.replace(/[^\S\r\n]+$/, "");
+    }
     // Flag printer-config commands: lossless replay re-emits them, so they run
     // on the user's printer at print/export. Recorded by code (deduped later).
     // ~PH/~PP: flagged as device actions AND skipped entirely, or they would

@@ -370,7 +370,7 @@ describe('generateZPL — printer params', () => {
     putImage({ id: 'imgC', name: 'c', dataUrl: 'data:,', width: 100, height: 200 });
     const ftImage: LabelObject = {
       id: 'imc', type: 'image', x: 0, y: 10, rotation: 0, positionType: 'FT',
-      props: { imageId: 'imgC', widthDots: 120, heightDots: 10, threshold: 128, _gfaCache: '^GFA1,1,1,00' },
+      props: { imageId: 'imgC', widthDots: 120, heightDots: 10, threshold: 128, _gfaCache: '^GFA,1,1,1,00' },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
     // aspect height = round(120 * 200/100) = 240; anchor y = 10 + 240 - home 200 = 50

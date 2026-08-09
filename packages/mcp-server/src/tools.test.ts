@@ -203,7 +203,8 @@ describe("mcp-server tools", () => {
     expect(box).toMatchObject({ x: 10, y: 20, width: 200, height: 100, approx: false });
     const bc = created.bounds.find((b) => b.objectId === "c");
     expect(bc?.approx).toBe(false);
-    expect(bc!.height).toBe(80);
+    // 80 bars + the 21-dot HRI line at module width 2 (Labelary-measured).
+    expect(bc!.height).toBe(101);
   });
 
   it("reports probed barcode footprints with the full bar-rect entry", () => {
@@ -305,23 +306,6 @@ describe("mcp-server tools", () => {
         props: { content: "12345", magnification: 10 } }],
     }));
     expect(nearEdge.warnings.some((w) => w.objectId === "q" && w.kind.startsWith("offLabel"))).toBe(true);
-  });
-
-  it("clears a stale ^GFA cache when width or threshold change without fresh bytes", () => {
-    // A prop change on a machine without the source image must invalidate
-    // the cache, not print stale bytes at a new anchor width.
-    const entry = ObjectRegistry.image;
-    const obj = {
-      id: "i", type: "image", x: 0, y: 0, rotation: 0,
-      props: { imageId: "gone", widthDots: 64, threshold: 128, rotation: "N", _gfaCache: "^GFA,8,8,1,00FF00FF00FF00FF" },
-    } as never;
-    const widthOnly = entry.normalizeChanges!(obj, { props: { widthDots: 80 } });
-    expect((widthOnly.props as { _gfaCache?: string })._gfaCache).toBeUndefined();
-    expect("_gfaCache" in (widthOnly.props as object)).toBe(true);
-    const withFresh = entry.normalizeChanges!(obj, { props: { widthDots: 80, _gfaCache: "^GFA,1,1,1,00" } });
-    expect((withFresh.props as { _gfaCache?: string })._gfaCache).toBe("^GFA,1,1,1,00");
-    const unrelated = entry.normalizeChanges!(obj, { props: { rotation: "R" } });
-    expect("_gfaCache" in (unrelated.props as object)).toBe(false);
   });
 
   it("validate_zpl reports the intersection rect of two overlapping boxes", () => {

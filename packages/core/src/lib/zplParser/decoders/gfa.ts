@@ -1,4 +1,4 @@
-import { unzlibSync } from "fflate";
+import { Unzlib } from "fflate";
 import { parseGfWrapper, wrapGfB64 } from "./crc";
 import { latin1ToBytes, NON_LATIN1_RE } from "../../binaryText";
 import type { UnsafeRawFieldSpan } from "../helpers";
@@ -24,10 +24,41 @@ export function rewriteRawFieldSpans(
   return out + text.slice(cursor);
 }
 
-/** Inflate `:Z64:` zlib payload; null on malformed deflate stream. */
+/** Inflate `:Z64:` zlib payload; null on a malformed stream or one that
+ *  decompresses past the decode budget. Streamed so a zip-bomb cache (a few KB
+ *  inflating to hundreds of MB) aborts after the cap instead of OOMing the
+ *  webview the moment the render path decodes it. */
 function tryInflateZlib(input: Uint8Array): Uint8Array | null {
+  // unzlibSync threw on empty input; the streamed loop simply never runs, so
+  // without this a 0-byte payload decoded "successfully" to nothing and the
+  // canvas painted a transparent graphic over the missing-graphic placeholder.
+  if (input.length === 0) return null;
   try {
-    return unzlibSync(input);
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+    let overflow = false;
+    const inflate = new Unzlib((chunk) => {
+      total += chunk.length;
+      if (total > GF_MAX_DECODED_BYTES) {
+        overflow = true;
+        throw new Error("gf inflate exceeds the decode budget");
+      }
+      chunks.push(chunk);
+    });
+    // Fed in slices so a runaway ratio is caught after the first over-cap chunk,
+    // before the full output is ever allocated.
+    const STEP = 16_384;
+    for (let i = 0; i < input.length && !overflow; i += STEP) {
+      inflate.push(input.subarray(i, i + STEP), i + STEP >= input.length);
+    }
+    if (overflow) return null;
+    const out = new Uint8Array(total);
+    let offset = 0;
+    for (const c of chunks) {
+      out.set(c, offset);
+      offset += c.length;
+    }
+    return out;
   } catch {
     return null;
   }
@@ -86,13 +117,24 @@ export function gfPayloadToBytes(
   }
   if (format === "C") return null;
   if (format === "A") {
-    return { data: gfaHexToBytes(decompressGFA(rawData, bytesPerRow)), crcOk: true };
+    const expanded = decompressGFA(rawData, bytesPerRow);
+    // Past the budget the decoder stops mid-graphic; returning the partial rows
+    // would store a silently cropped image and re-export it at the crop height.
+    // Null instead, matching the :Z64: path, so callers keep the payload as
+    // undecodable rather than as a smaller graphic than the one that prints.
+    if (expanded === null) return null;
+    return { data: gfaHexToBytes(expanded), crcOk: true };
   }
   if (rawData.length === byteCount && !NON_LATIN1_RE.test(rawData)) {
     return { data: latin1ToBytes(rawData), crcOk: true, raw: true };
   }
   return null;
 }
+
+/** Decode ceiling shared with the preview budget (gfaDecode's 16 Mdot cap):
+ *  RLE lets a few input chars declare unbounded output, so the decoder stops
+ *  at the size no consumer would accept anyway. */
+export const GF_MAX_DECODED_BYTES = 2_000_000;
 
 const HEX_RE = /[0-9A-Fa-f]/;
 const isHex = (ch: string) => HEX_RE.test(ch);
@@ -106,24 +148,38 @@ const repeatCount = (ch: string): number => {
 
 // ^GFA ZPL Alt Data Compression: G-Y x1-19, g-z x20-400 (mult 20), combinable.
 // , = pad row with 0; ! = pad with F; : = repeat previous row.
-function decompressGFA(data: string, bytesPerRow: number): string {
+function decompressGFA(data: string, bytesPerRow: number): string | null {
   const nibblesPerRow = bytesPerRow * 2;
+  const maxRows = Math.ceil((GF_MAX_DECODED_BYTES * 2) / nibblesPerRow);
   const rows: string[] = [];
   let currentRow = "";
   let i = 0;
+
+  /** Set when a repeat run had to be cut short: the output is then a partial
+   *  graphic, never an honest one. */
+  let clamped = false;
+
+  /** Nibbles still inside the decode budget, so no single step can exceed it. */
+  const remainingNibbles = () =>
+    Math.max(0, (maxRows - rows.length) * nibblesPerRow - currentRow.length);
 
   const pushRow = () => {
     rows.push(currentRow.slice(0, nibblesPerRow).padEnd(nibblesPerRow, "0"));
     currentRow = "";
   };
 
-  while (i < data.length) {
+  while (i < data.length && rows.length < maxRows) {
     const ch = data[i] ?? "";
 
     if (ch === ",") {
+      // Always produces a row, even right after one the data filled exactly:
+      // Labelary-verified (gfaDecode.labelary.test.ts), where `FFFF,8001,` on a
+      // 2-byte row renders FFFF, blank, 8001, blank. Its purpose is letting a
+      // row omit its trailing zeros, not terminating a row that is already full.
       pushRow();
       i++;
     } else if (ch === "!") {
+      // Same with ones (p.1759), and likewise unconditional.
       currentRow = currentRow.padEnd(nibblesPerRow, "F");
       rows.push(currentRow.slice(0, nibblesPerRow));
       currentRow = "";
@@ -144,7 +200,13 @@ function decompressGFA(data: string, bytesPerRow: number): string {
       }
       const nextCh = data[i] ?? "";
       if (i < data.length && isHex(nextCh)) {
-        currentRow += nextCh.repeat(count);
+        // Clamped before the allocation, not by the row cap below: consecutive
+        // compress chars accumulate an unbounded count, and `repeat` would
+        // allocate all of it (or throw RangeError) in one step. A clamp means
+        // the graphic did not fit, which the caller has to hear about.
+        const room = remainingNibbles();
+        if (count > room) clamped = true;
+        currentRow += nextCh.repeat(Math.min(count, room));
         i++;
       }
     } else if (isHex(ch)) {
@@ -154,11 +216,18 @@ function decompressGFA(data: string, bytesPerRow: number): string {
       i++;
     }
 
-    if (currentRow.length >= nibblesPerRow) {
+    // Drained fully: one long repeat run can span many rows, and a lone `if`
+    // lets currentRow grow (and re-slice) quadratically.
+    while (currentRow.length >= nibblesPerRow) {
       rows.push(currentRow.slice(0, nibblesPerRow));
       currentRow = currentRow.slice(nibblesPerRow);
     }
   }
+
+  // Stopped on the cap rather than on the input, or cut a run short: either way
+  // the rest of the graphic was never expanded, so there is no honest partial
+  // answer to hand back.
+  if (i < data.length || clamped) return null;
 
   if (currentRow.length > 0) {
     pushRow();

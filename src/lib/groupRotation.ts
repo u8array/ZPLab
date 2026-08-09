@@ -5,7 +5,7 @@
 
 import type { LabelObject, LeafObject } from "@zplab/core/types/Group";
 import { isGroup } from "@zplab/core/types/Group";
-import { objectBoundsDots, selectionUnionDots, type BoundingBoxDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
+import { rightAnchorShiftDots, objectBoundsDots, selectionUnionDots, type BoundingBoxDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import { ZPL_ROTATIONS, isZplRotation, type ZplRotation } from "@zplab/core/registry/rotation";
 import { barSubRect } from "@zplab/core/lib/bwipConstants";
 import { barcodeTextZoneDots, barcodeZoneAbove } from "@zplab/core/lib/barcodeHri";
@@ -101,7 +101,9 @@ function leafChanges(
   if (leaf.type === "symbol" || leaf.type === "image") {
     const b = objectBoundsDots(leaf, ctx);
     const centre = rotateAbout({ x: b.x + b.width / 2, y: b.y + b.height / 2 }, pivot, steps);
-    const x = Math.round(centre.x - b.width / 2);
+    // The box of a right-justified field sits one width left of its model x, so
+    // the new left edge has to be carried back to the anchor before storing it.
+    const x = Math.round(centre.x - b.width / 2) + rightAnchorShiftDots(leaf, b.width);
     const y = Math.round(centre.y - b.height / 2);
     if (leaf.type === "symbol") {
       const r = advanceRotation((leaf.props as { rotation: string }).rotation, steps);
@@ -148,7 +150,10 @@ function rotateMeasured(
   const width = odd ? m.height : m.width;
   const height = odd ? m.width : m.height;
   const next = { ...m, width, height };
-  const tz = barcodeTextZoneDots(leaf);
+  // The measured upright bar width, so the GS1 band shrinks to fit exactly as
+  // it did in the measurement this entry came from; omitting it would reserve
+  // the un-shrunk band and re-anchor the rotated bars off the canvas.
+  const tz = barcodeTextZoneDots(leaf, m.uprightBarWDots ?? 0);
   if (tz > 0) {
     // Same placement the renderer uses; objectBounds only needs the bar's top,
     // left and height for the FT anchor, so barW is dropped here.

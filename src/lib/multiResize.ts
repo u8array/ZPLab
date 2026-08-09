@@ -1,6 +1,10 @@
 import type { LeafObject } from "@zplab/core/registry";
 import { getEntry, SHAPE_PRIMITIVE_TYPES } from "@zplab/core/registry";
-import type { BoundingBoxDots } from "@zplab/core/lib/objectBounds";
+import {
+  rightAnchorBoxWidthDots,
+  rightAnchorShiftDots,
+  type BoundingBoxDots,
+} from "@zplab/core/lib/objectBounds";
 import { makeFree } from "./lineConstrain";
 
 export interface MultiResizeChange {
@@ -21,12 +25,25 @@ export function projectMultiResize(
   fx: number,
   fy: number,
   snap: (v: number) => number,
+  /** Rendered box width (dots) by id, for the right-anchor carry-back below;
+   *  the canvas's measured snapshot, the source the single-resize inverse uses.
+   *  Omitted, only props-derivable widths (symbol, blank text) carry back. */
+  measuredWidthDots?: (id: string) => number | undefined,
 ): MultiResizeChange[] {
   const projectX = (x: number) => origin.x + (x - bbox.x) * fx;
   const projectY = (y: number) => origin.y + (y - bbox.y) * fy;
   const changes: MultiResizeChange[] = [];
   for (const leaf of leafs) {
-    const x = Math.round(projectX(leaf.x));
+    // The union bbox is ink space while leaf.x is the model anchor, and for a
+    // right-justified field those differ by one box width: project the ink edge
+    // and carry the anchor back (same rule as groupRotation's leafChanges).
+    // Zero for shapes, which are never right-anchored (GRAPHIC_ANCHOR_TYPES),
+    // and their width is the one this gesture changes.
+    const shift = rightAnchorShiftDots(
+      leaf,
+      rightAnchorBoxWidthDots(leaf, measuredWidthDots?.(leaf.id)),
+    );
+    const x = Math.round(projectX(leaf.x - shift)) + shift;
     const y = Math.round(projectY(leaf.y));
     if (!SHAPE_PRIMITIVE_TYPES.has(leaf.type)) {
       changes.push({ id: leaf.id, x, y });

@@ -2,7 +2,7 @@
 // as `_1`, a literal `_` doubled, non-printable bytes as `_dNNN`. Non-GS1 field
 // data is arbitrary bytes and never routed here. Pure, no UI.
 
-import { GS1_GS } from "./gs1";
+import { aiSpec, GS1_GS, isVariableKind, typedGs1Parts, typedSegmentValue } from "./gs1";
 
 /** Escape-sequence control character we emit (^BX g param). Kept outside
  *  `^`/`~` so it never collides with fdField's ^FH escaping. */
@@ -73,4 +73,22 @@ export function dataMatrixFdToGs1Content(fd: string, escape: string): string | n
   const fnc1 = escape + "1";
   if (!fd.startsWith(fnc1)) return null;
   return decodeEscapes(fd, escape, fnc1.length);
+}
+
+/** Typed `(AI)value…` content into the ^BX payload while the values are still
+ *  opaque: the AI codes are literal, so parentheses and FNC1 placement are
+ *  already decidable. Null when the content is not in the typed form. */
+export function typedGs1ToDataMatrixFd(content: string): string | null {
+  const parts = typedGs1Parts(content);
+  if (!parts) return null;
+  const fnc1 = ESC + "1";
+  let out = fnc1;
+  for (const [index, part] of parts.entries()) {
+    // Same completion the literal path applies, or the bound form would carry
+    // a different AI-01 payload than the same content written out.
+    out += escapeRun(`${part.ai}${typedSegmentValue(part.ai, part.value)}`);
+    const spec = aiSpec(part.ai);
+    if (spec && isVariableKind(spec.kind) && index < parts.length - 1) out += fnc1;
+  }
+  return out;
 }

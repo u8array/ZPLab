@@ -127,3 +127,21 @@ describe("projectMultiResize", () => {
   });
 
 });
+
+describe("a right-justified member of the selection", () => {
+  // Its model x IS the printed right edge while the union bbox is ink space, so
+  // projecting the raw x walked the field right by its own box width and out of
+  // the selection frame.
+  it("keeps its ink edge flush with a left-anchored twin", () => {
+    const symbol = leaf("s", "symbol", 400, 100, { width: 120, height: 40, symbol: "A", rotation: "N" });
+    (symbol as unknown as { fieldJustify: string }).fieldJustify = "R";
+    const box = leaf("b", "box", 280, 100, { width: 200, height: 40, thickness: 2, filled: false, color: "B", rounding: 0 });
+    // Both ink left edges sit at 280, so the union starts there; pin that edge.
+    const union = { x: 280, y: 100, width: 200, height: 40 };
+    const changes = projectMultiResize([symbol, box], union, { x: union.x, y: union.y }, 2, 1, ident);
+    // The box stays at 280, and the symbol's ink left edge (x - width) must stay
+    // 280 too, i.e. its model x stays 400.
+    expect(changes.find((c) => c.id === "b")?.x).toBe(280);
+    expect((changes.find((c) => c.id === "s")?.x ?? 0) - 120).toBe(280);
+  });
+});

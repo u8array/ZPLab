@@ -103,6 +103,18 @@ describe("rotateSelectionChanges", () => {
     expect(c).toEqual({ x: 10, y: 10, props: { rotation: "R" } });
   });
 
+  it("keeps a right-justified symbol on its anchor across a turn", () => {
+    // objectBounds puts the box one width left of x, so writing the rotated
+    // left edge straight back would move the symbol by its own width.
+    const s = leaf("symbol", 100, 10, { symbol: "A", width: 30, height: 30, rotation: "N" });
+    (s as { fieldJustify?: string }).fieldJustify = "R";
+    const c = rotateSelectionChanges([s], [s.id], ctx(), 1).get(s.id) as { x: number; y: number };
+    // A single object turns about its own centre: the box, and with it the
+    // anchor, stays where it was.
+    expect(c.x).toBe(100);
+    expect(c.y).toBe(10);
+  });
+
   it("no drift over four turns with a non-integer union centre", () => {
     // union (0,0)-(61,20), centre x=30.5 -> a float pivot would round each step
     // and the two boxes would drift apart, only re-aligning after 360deg.

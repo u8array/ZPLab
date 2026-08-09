@@ -157,7 +157,14 @@ export function monoPreviewCanvas(
   threshold: number,
 ): HTMLCanvasElement | null {
   const raster = rasterizeMono(img, widthDots, threshold);
-  if (!raster) return null;
+  return raster ? rasterPreviewCanvas(raster) : null;
+}
+
+/** The packed raster as a canvas, shared by the source-image path and the
+ *  decoded-^GF one so both previews are drawn identically. */
+export function rasterPreviewCanvas(raster: MonoRaster): HTMLCanvasElement | null {
+  // A degenerate raster would make ImageData throw (same guard as rasterizeMono).
+  if (raster.widthDots <= 0 || raster.heightDots <= 0) return null;
   const canvas = document.createElement("canvas");
   canvas.width = raster.widthDots;
   canvas.height = raster.heightDots;
@@ -183,7 +190,23 @@ export async function imageToGFA(
   threshold = 128,
   rotation: ZplRotation = 'N',
 ): Promise<GfaResult> {
-  const img = await loadImage(dataUrl, 'Failed to load image for GFA conversion');
+  return gfaFromImage(
+    await loadImage(dataUrl, 'Failed to load image for GFA conversion'),
+    widthDots,
+    threshold,
+    rotation,
+  );
+}
+
+/** Same encode from an already-decoded image, for callers that had to decode
+ *  first to check it: a second decode of the same source costs its own timeout
+ *  budget. */
+export function gfaFromImage(
+  img: HTMLImageElement,
+  widthDots: number,
+  threshold = 128,
+  rotation: ZplRotation = 'N',
+): GfaResult {
   const raster = rasterizeMono(img, widthDots, threshold, rotation);
   if (!raster) throw new Error("Could not rasterize image");
   return {

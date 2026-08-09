@@ -5,6 +5,7 @@
 
 import type { LeafObject } from "../registry";
 import type { LabelObject } from "../types/Group";
+import { errorMessage } from "./errorMessage";
 import { clampCodablockColumns, CODABLOCK_PREVIEW_COLUMNS_MIN } from "../registry/codablock";
 import { EC_PERCENT_MIN, EC_PERCENT_MAX } from "../registry/aztec";
 import { upceData6FromFd } from "../registry/hriFormatters";
@@ -596,7 +597,13 @@ export function getDisplaySize(
   const w = isQuarter ? upright.h : upright.w;
   const h = isQuarter ? upright.w : upright.h;
 
-  const textZonePx = dotsToPx(barcodeTextZoneDots(obj), scale, dpmm);
+  // Upright bar width feeds the GS1 band's shrink-to-fit; without it that band
+  // would be reserved un-shrunk.
+  const textZonePx = dotsToPx(
+    barcodeTextZoneDots(obj, pxToDots(upright.w, scale, dpmm)),
+    scale,
+    dpmm,
+  );
   const zoneAbove = barcodeZoneAbove(obj);
 
   // Map the upright "below the bars" zone onto the rotated bbox: it travels
@@ -690,7 +697,8 @@ function getUprightDisplaySize(
       const modulePx = dotsToPx(obj.props.moduleWidth, scale, dpmm);
       const bwipSc = get1DBwipScale(obj.props.moduleWidth, scale, dpmm);
       const w = (cw / bwipSc) * modulePx;
-      const h = dotsToPx(obj.props.height, scale, dpmm);
+      const zone = barcodeTextZoneDots(obj, pxToDots(w, scale, dpmm));
+      const h = dotsToPx(obj.props.height + zone, scale, dpmm);
       return { w, h };
     }
     case "ean13":
@@ -751,7 +759,7 @@ function getUprightDisplaySize(
       const bwipSc = get1DBwipScale(obj.props.moduleWidth, scale, dpmm);
       const extraPx = bwipSc === 1 ? 1 : 0;
       const w = ((cw - extraPx) / bwipSc) * modulePx;
-      const h = dotsToPx(obj.props.height, scale, dpmm);
+      const h = dotsToPx(obj.props.height + barcodeTextZoneDots(obj), scale, dpmm);
       return { w, h };
     }
     case "pdf417": {
@@ -1137,6 +1145,57 @@ function measureDisplayWith(
   }
   const dim = getDisplaySize(target, dims, dpmm, dpmm);
   return dim.w > 0 && dim.h > 0 ? dim : null;
+}
+
+/** Why the leaf's OWN content does not encode, or null when it does.
+ *  measureDisplayWith falls back to sample content, so a measured footprint
+ *  proves nothing. Blank is not a failure: emptyContent owns that signal. */
+export function barcodeEncodeIssueWith(
+  bwip: BwipEngine,
+  obj: LeafObject,
+  dpmm: number,
+): string | null {
+  if ((getObjectStringContent(obj) ?? "").trim() === "") return null;
+  try {
+    if (barcodeDimsPx(bwip, obj, dpmm, dpmm) !== null) return null;
+  } catch {
+    // The diagnostic run below reports the throw instead of hiding it.
+  }
+  return encodeFailureReason(bwip, obj, dpmm);
+}
+
+/** Re-run the encoder with its errors uncaught, so the caller can say WHAT is
+ *  wrong. The dims path deliberately swallows these to keep measuring. */
+function encodeFailureReason(bwip: BwipEngine, obj: LeafObject, dpmm: number): string {
+  try {
+    if (EAN_UPC_TYPES.has(obj.type)) {
+      const text = getObjectStringContent(obj) ?? "";
+      const encoded = obj.type === "upce" ? `0${upceData6FromFd(text)}` : text;
+      bwip.raw({ bcid: obj.type, text: encoded, includetext: true });
+      return "the encoder produced no symbol for this payload";
+    }
+    // barcodeDimsPx routes these past buildBwipOptions, so their missing BCID
+    // entry says nothing about them: re-run their own encoder for the reason.
+    if (ZEBRA_WIDTH_BAR_TYPES.has(obj.type)) {
+      const t = obj.type as ZebraWidthBarType;
+      const text = zebraWidthBarText(t, getObjectStringContent(obj) ?? "");
+      bwip.raw({ bcid: ZEBRA_WIDTH_BCID[t], text });
+      return "the encoder produced no symbol for this payload";
+    }
+    if (obj.type === "tlc39") return "the encoder produced no symbol for this payload";
+    const opts = buildBwipOptions(obj, dpmm, dpmm);
+    // Only ^BF refuses on capacity; every other null is a type with no encoder
+    // path, which must not be reported to the caller as a payload problem.
+    if (!opts) {
+      return obj.type === "micropdf417"
+        ? "the payload exceeds what this symbology can carry"
+        : "this symbology has no encoder";
+    }
+    bwip.render(opts, dimsDrawing());
+    return "the encoder produced no symbol for this payload";
+  } catch (e) {
+    return errorMessage(e);
+  }
 }
 
 export function measureBarcodeFootprintDotsWith(

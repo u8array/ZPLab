@@ -37,9 +37,10 @@ export interface LabelConfigSlice {
     columnMapping?: ColumnMapping | null,
     dataSource?: DbSourceRef | null,
   ) => void;
-  /** Parse serialized design-file text and load it, routing a parse failure
-   *  to userError; every text source (file open, MCP push) shares this path. */
-  loadDesignText: (text: string) => void;
+  /** Parse serialized design-file text and load it, routing a parse failure to
+   *  userError; every text source (file open, MCP push) shares this path. False
+   *  on a text that is no design file, so the MCP bridge can report it back. */
+  loadDesignText: (text: string) => boolean;
   /** Append pages to the current design without touching label config.
    *  Switches focus to the first appended page. */
   appendPages: (pages: Page[]) => void;
@@ -114,7 +115,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
     const result = parseDesignFile(text);
     if (!result.ok) {
       get().setUserError(designFileErrors[result.error]);
-      return;
+      return false;
     }
     get().clearUserError();
     get().loadDesign(
@@ -124,6 +125,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       result.value.columnMapping,
       result.value.dataSource,
     );
+    return true;
   },
 
   appendPages: (pages) =>
