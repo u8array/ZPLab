@@ -264,10 +264,21 @@ const SHIP_SOURCE_CACHE = new WeakMap<ImageProps, { value: string | undefined }>
 
 /** Fresh upright ^GFA from the image store, for emit sites that need bytes
  *  after a cache-clearing edit (canvas resize regens only via the panel). */
-export function inlineGfaFor(p: ImageProps): string | undefined {
+export function inlineGfaFor(p: ImageProps, rotation: ZplRotation = 'N'): string | undefined {
   const img = getImage(p.imageId);
   if (!img) return undefined;
-  return gfaSync(img.dataUrl, p.widthDots, p.threshold, 'N') || undefined;
+  return gfaSync(img.dataUrl, p.widthDots, p.threshold, rotation) || undefined;
+}
+
+/** The ^GF bytes an emit site should ship: a cache the stream can carry, else a
+ *  fresh encode from the source image. Undefined when neither exists, which is
+ *  the field that prints nothing. Both sites that turn these bytes into a
+ *  stream read it (toZPL's inline field and the ~DY preamble), so they cannot
+ *  disagree on whether a graphic is shippable — the ~DY used to drop while the
+ *  ^XG it belongs to still shipped, recalling a file nobody uploaded. */
+export function shippableGfa(p: ImageProps, rotation: ZplRotation = 'N'): string | undefined {
+  if (rotation === 'N' && p._gfaCache && gfShipsSafely(p._gfaCache)) return p._gfaCache;
+  return inlineGfaFor(p, rotation);
 }
 
 export const image: ObjectTypeCore<ImageProps> = {
@@ -397,13 +408,6 @@ export const image: ObjectTypeCore<ImageProps> = {
     }
     // _gfaCache holds the upright bytes, so a rotated field regenerates fresh
     // (rasterizeMono bakes the rotation in).
-    const rot = objectRotation(p);
-    // The cache goes through the same ship guard as every other verbatim path;
-    // with a source image behind it we can simply re-encode instead of dropping.
-    const usableCache = p._gfaCache && gfShipsSafely(p._gfaCache) ? p._gfaCache : '';
-    const gfa = rot === 'N'
-      ? (usableCache || gfaSync(cached.dataUrl, p.widthDots, p.threshold, 'N'))
-      : gfaSync(cached.dataUrl, p.widthDots, p.threshold, rot);
-    return `${anchor}${gfa}^FS`;
+    return `${anchor}${shippableGfa(p, objectRotation(p)) ?? ''}^FS`;
   },
 };

@@ -26,7 +26,7 @@ import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from '
 import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
-import { inlineGfaFor, imageEmitDims, gfShipsSafely, parseGfHeader, type ImageProps } from '../registry/image';
+import { imageEmitDims, parseGfHeader, shippableGfa, type ImageProps } from '../registry/image';
 import { formatStoragePath } from './storagePath';
 
 function formatDownloadObject(m: CustomFontMapping): string | undefined {
@@ -173,13 +173,11 @@ function formatSetOffset(
 /** ~DY for a graphic upload. Format letter is preserved so :Z64: stays paired with C. */
 function formatGraphicUpload(p: ImageProps): string | undefined {
   if (!p.storedAs) return undefined;
-  const cache = p._gfaCache ?? inlineGfaFor(p);
-  if (!cache) return undefined;
-  const h = parseGfHeader(cache);
-  // The ~DY preamble is a second site that turns these bytes into a stream, so
-  // it runs the same ship guard as toZPL: a payload carrying ^/~ past its count
-  // would execute here exactly as it would in the field.
-  if (!h || !gfShipsSafely(cache)) return undefined;
+  // Same resolver toZPL uses, so an unshippable cache falls back to a fresh
+  // encode here too instead of dropping the upload the ^XG depends on.
+  const cache = shippableGfa(p);
+  const h = cache ? parseGfHeader(cache) : null;
+  if (!h) return undefined;
   return `~DY${formatStoragePath(p.storedAs, false)},${h.format},G,${h.totalBytes},${h.bytesPerRow},${h.payload}`;
 }
 
