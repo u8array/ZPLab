@@ -35,11 +35,7 @@ export function projectMultiResize(
   const projectY = (y: number) => origin.y + (y - bbox.y) * fy;
   const changes: MultiResizeChange[] = [];
   for (const leaf of leafs) {
-    // The union bbox is ink space while leaf.x is the model anchor, and for a
-    // right-justified field those differ by one box width: project the ink edge
-    // and carry the anchor back (same rule as groupRotation's leafChanges).
-    // Zero for shapes, which are never right-anchored (GRAPHIC_ANCHOR_TYPES),
-    // and their width is the one this gesture changes.
+    // Union bbox is ink space but leaf.x is the model anchor: project the ink edge, then carry the anchor back by one box width.
     const boxWidth = rightAnchorBoxWidthDots(leaf, measuredWidthDots?.(leaf.id));
     // Unmeasured right-anchored leaf: its ink edge is unknown, so projecting
     // its model x would move it in the wrong space and persist that. Leaving it

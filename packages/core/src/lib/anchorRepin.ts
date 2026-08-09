@@ -13,11 +13,7 @@ function hasFtFlip(o: LabelObject): boolean {
   return (o as { positionType?: string }).positionType === "FT" && (rot === "I" || rot === "B");
 }
 
-/** Justified 1D barcodes: shift the origin so a width-changing props edit
- *  keeps the justified edge fixed. `probe` is the caller's width source, so
- *  editor and patch_design re-pin the same way. Skipped on positioning edits
- *  (x/y present), rotation changes (axes swap), and the op that introduces
- *  the justify/flip itself (no pinned edge existed yet). */
+/** Re-pins justified 1D barcodes so a width-changing edit keeps the justified edge fixed. */
 export function anchorRepin(
   obj: LabelObject,
   changes: ObjectChanges,
@@ -52,10 +48,7 @@ export function anchorRepin(
   return swapped ? { ...next, y: next.y + shift } : { ...next, x: next.x + shift };
 }
 
-/** The leaf edit pipeline shared by the editor and patch_design: registry
- *  normalize, top-level replace, props merge, anchor re-pin. The hook ORDER is
- *  the domain rule, so it lives once; callers add only their own gates (the
- *  editor's lock bypass, patch_design's loud lock refusal) and their probe. */
+/** Shared leaf edit pipeline: normalize, replace, merge props, re-pin, in that order. */
 export function applyChanges(
   obj: LabelObject,
   changes: ObjectChanges,

@@ -18,12 +18,7 @@ const rows = (gfa: string, width: number): string[] => {
   return out;
 };
 
-// Rendered on Labelary (8dpmm, 2x1) and read back pixel by pixel, because the
-// spec (p.1759) defines what a comma, a bang and a colon each do but not what
-// they do after a line the data already filled exactly. The answer is that all
-// three ALWAYS produce a row: a comma following a full row fills a fresh line
-// with zeros, it is not a no-op. Anything that makes them conditional turns
-// every comma-separated ^GFA into half its rows.
+// Labelary-verified: comma/bang/colon always emit a row, even right after one the data already filled.
 describe("^GFA fill semantics, against the Labelary raster", () => {
   it("puts a blank row after a comma that follows a full row", () => {
     expect(rows("^GFA,16,16,2,FFFF,8001,!!!!!!", 16)).toEqual([

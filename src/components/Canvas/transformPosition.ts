@@ -79,10 +79,7 @@ export function modelPositionFromRenderedTopLeft(
   committedUprightH?: number,
   committedMagnification?: number,
 ): { x: number; y: number } {
-  // Every branch shifts: the renderers and objectBounds do it unconditionally,
-  // and objectBounds shifts by the BOX width, which on a quarter turn is the
-  // upright height (the committed pair is always upright; a symbol's box never
-  // turns, see rightAnchorBoxWidthDots).
+  // Shifts by the upright BOX width, which on a quarter turn is the upright height; the committed pair is always upright.
   const committedBoxW =
     committedUprightW !== undefined && committedUprightH !== undefined && obj.type !== "symbol"
       ? rotatedFootprint(committedUprightW, committedUprightH, objectRotation(obj.props)).width
@@ -131,13 +128,8 @@ function renderedWithAnchor(obj: LeafObject, x: number, y: number): { x: number;
   return { x: x - rightAnchorShift(obj), y };
 }
 
-/** How far left of its model x the CANVAS draws a right-justified field. An
- *  unmeasurable width draws unshifted, which is the whole policy: the renderer,
- *  this forward transform and its inverse all read it here, so they stay each
- *  other's inverse and a resize cannot commit the visual left edge as a model x
- *  that means the right one. objectBoundsDots sizes from its own estimate
- *  instead, so it still describes a box this trio does not use until the leaf
- *  has been rendered once. */
+/** How far left of its model x the canvas draws a right-justified field; unmeasurable draws unshifted,
+ *  and the renderer, this transform and its inverse all read it here so they stay each other's inverse. */
 export function rightAnchorShift(obj: LeafObject, committedWidth?: number): number {
   // A resize passes the width it is committing; otherwise the measured footprint.
   const width = rightAnchorBoxWidthDots(obj, committedWidth ?? getMeasuredSnapshot().get(obj.id)?.width);

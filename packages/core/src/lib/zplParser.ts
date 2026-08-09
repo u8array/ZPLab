@@ -243,10 +243,7 @@ export function parseZPL(
   // split happens at dispatch via the token's source char. ~JM is not a real
   // command (only caret ^JM sets density), so it routes here as a noop too.
   const tildeDeviceCodes = new Set(["PH", "PP", "JM"]);
-  // Commands whose LAST parameter is literal user data, where a trailing space
-  // is a character and not line-wrap whitespace: ^SN's serial seed, ^SF's mask,
-  // ^A@'s font path. Everything else ends in an enum/number, where a hanging
-  // space before a line break is only formatting.
+  // Commands whose last param is literal data, where a trailing space is real (^SN, ^SF, ^A@), not line-wrap noise.
   const LITERAL_TAIL_CMDS = new Set(["SN", "SF", "A@"]);
   Object.assign(handlers, setupScriptHandlers);
   Object.assign(handlers, createLabelConfigHandlers(s, dpmm));
@@ -437,13 +434,7 @@ export function parseZPL(
   };
 
   for (const { cmd, rest, start } of tokens) {
-    // Strip the trailing break plus the next line's indent, then spaces left
-    // hanging after the LAST PARAMETER's real content ("N \n" -> "N"). A break
-    // and a real trailing space are indistinguishable syntactically, so the
-    // exemption is by command: LITERAL_TAIL_CMDS end in user data where a space
-    // counts. A whitespace-VALUED parameter survives either way (`^FE `,
-    // `^FC%,{, ` keep their space); the delimiter is never whitespace
-    // (acceptsPrefixRemap), so this cannot eat one. ^FD keeps `rest` verbatim.
+    // Strips trailing break plus indent from the last literal param; LITERAL_TAIL_CMDS keep real trailing spaces.
     const p = stripLineWrap(rest).split(s.format.delimiterChar);
     const last = p[p.length - 1];
     if (!LITERAL_TAIL_CMDS.has(cmd) && last !== undefined && /\S/.test(last)) {

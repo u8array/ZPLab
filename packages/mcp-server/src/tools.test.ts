@@ -276,10 +276,7 @@ describe("mcp-server tools", () => {
   });
 
   it("reports a preserved foreign header with an empty count slot", () => {
-    // Labelary: a ^GF missing c produces NO label, because nothing tells the
-    // firmware where the graphic ends and it eats the rest of the stream,
-    // ^XZ included. Shipping it verbatim would take the whole print job down,
-    // so the field drops, but loudly, which is what the roundtrip rule asks.
+    // Labelary: a ^GF missing c eats the rest of the stream (^XZ included), so the field must drop loudly.
     const gfa = "^GFA,4,,1,00FF00FF";
     const design = {
       schemaVersion: 5,

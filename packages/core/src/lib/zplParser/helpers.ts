@@ -372,11 +372,7 @@ export function decodeFH(
   });
 }
 
-/** Cut the trailing line break and the next line's indent off a command's
- *  parameter text. Scanned, not matched: `/[\r\n]+\s*$/` has overlapping
- *  classes, so a long run of breaks followed by anything else backtracks
- *  cubically (114 s at 8000 breaks), and a raw-binary ^GF payload carries
- *  exactly such runs. */
+/** Scanned, not regex-matched: the old pattern backtracked cubically on long break runs. */
 export function stripLineWrap(rest: string): string {
   const kept = rest.trimEnd().length;
   const nl = rest.slice(kept).search(/[\r\n]/);

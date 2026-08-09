@@ -24,10 +24,7 @@ export function rewriteRawFieldSpans(
   return out + text.slice(cursor);
 }
 
-/** Inflate `:Z64:` zlib payload; null on a malformed stream or one that
- *  decompresses past the decode budget. Streamed so a zip-bomb cache (a few KB
- *  inflating to hundreds of MB) aborts after the cap instead of OOMing the
- *  webview the moment the render path decodes it. */
+/** Inflates a :Z64: zlib payload, streamed so a zip bomb aborts at the cap instead of OOMing the webview. */
 function tryInflateZlib(input: Uint8Array): Uint8Array | null {
   // unzlibSync threw on empty input; the streamed loop simply never runs, so
   // without this a 0-byte payload decoded "successfully" to nothing and the
@@ -118,10 +115,7 @@ export function gfPayloadToBytes(
   if (format === "C") return null;
   if (format === "A") {
     const expanded = decompressGFA(rawData, bytesPerRow);
-    // Past the budget the decoder stops mid-graphic; returning the partial rows
-    // would store a silently cropped image and re-export it at the crop height.
-    // Null instead, matching the :Z64: path, so callers keep the payload as
-    // undecodable rather than as a smaller graphic than the one that prints.
+    // Null past the budget rather than partial rows, which would re-export a silently cropped image.
     if (expanded === null) return null;
     return { data: gfaHexToBytes(expanded), crcOk: true };
   }
@@ -172,10 +166,7 @@ function decompressGFA(data: string, bytesPerRow: number): string | null {
     const ch = data[i] ?? "";
 
     if (ch === ",") {
-      // Always produces a row, even right after one the data filled exactly:
-      // Labelary-verified (gfaDecode.labelary.test.ts), where `FFFF,8001,` on a
-      // 2-byte row renders FFFF, blank, 8001, blank. Its purpose is letting a
-      // row omit its trailing zeros, not terminating a row that is already full.
+      // Labelary: always emits a row, even after one the data filled exactly.
       pushRow();
       i++;
     } else if (ch === "!") {
@@ -200,10 +191,7 @@ function decompressGFA(data: string, bytesPerRow: number): string | null {
       }
       const nextCh = data[i] ?? "";
       if (i < data.length && isHex(nextCh)) {
-        // Clamped before the allocation, not by the row cap below: consecutive
-        // compress chars accumulate an unbounded count, and `repeat` would
-        // allocate all of it (or throw RangeError) in one step. A clamp means
-        // the graphic did not fit, which the caller has to hear about.
+        // Clamped before the allocation, not by the row cap below: one repeat count can over-allocate on its own.
         const room = remainingNibbles();
         if (count > room) clamped = true;
         currentRow += nextCh.repeat(Math.min(count, room));

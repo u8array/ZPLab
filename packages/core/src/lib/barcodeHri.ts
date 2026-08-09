@@ -80,10 +80,7 @@ export function barcodeTextZoneDots(obj: LeafObject): number {
     : hriZoneDots(moduleWidth);
 }
 
-/** GS1-128 band, Labelary-measured at 8 dpmm over module widths 1-5
- *  (21/34/52/66/82 dots) and fitted to never read short: a short band hides HRI
- *  running off the media. Module width only, so the headless kernel and the
- *  canvas cannot answer differently for one object. */
+/** GS1-128 HRI band, Labelary-measured at 8dpmm over module widths 1-5, fitted to never read short. */
 function gs1HriZoneDots(moduleWidth: number): number {
   return 15 * Math.max(1, Math.round(moduleWidth)) + 7;
 }

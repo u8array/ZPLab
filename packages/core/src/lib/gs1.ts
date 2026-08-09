@@ -398,10 +398,7 @@ export function typedGs1Parts(content: string): { ai: string; value: string }[] 
   return parts?.every((p) => aiSpec(p.ai) !== undefined) ? parts : null;
 }
 
-/** A typed part's value as emitted, completing a literal GTIN exactly as
- *  segmentValue does for parsed segments: without it, binding any OTHER part
- *  to a variable would silently ship a 13-digit AI-01. A value carrying a
- *  marker passes through, since its check digit belongs to the supplied row. */
+/** Emits a typed part's value, completing a literal GTIN so binding another part does not ship a bare AI-01. */
 export function typedSegmentValue(ai: string, value: string): string {
   if (aiSpec(ai)?.kind !== "gtin") return value;
   return /^[0-9]+$/.test(value) ? gtin14WithCheck(value) : value;

@@ -178,11 +178,7 @@ export function isBarcode(obj: { type: string }): boolean {
   return BARCODE_TYPES.has(obj.type);
 }
 
-/** Store-less ^GFA header dims (the byte truth objectBoundsDots sizes by).
- *  Exactly what imageEmitDims consults, `storedAs` included: a recall field
- *  prints the stored graphic at its header size, so excluding it here sized the
- *  box (and the off-label check) off props while the generator anchored off the
- *  header. Recall-only fields carry no bytes, so they still fall back to props. */
+/** Store-less ^GFA header dims, the byte truth objectBoundsDots sizes by (recall fields included). */
 function imageHeaderBounds(p: ImageProps): { width: number; height: number | null } | null {
   return gfaHeaderDims(headerByteSource(p));
 }
@@ -213,13 +209,7 @@ export function objectBoundsDots(obj: LabelObject, ctx: ObjectBoundsCtx): Boundi
   return shift === 0 ? box : { ...box, x: box.x - shift };
 }
 
-/** The rotated box width a right-anchored field shifts by, or null when this
- *  object's width cannot be known without measuring it. Null is NOT zero: a
- *  zero shift is a statement about the field, an absent width is a statement
- *  about the caller, and conflating them let a resize commit the visual left
- *  edge as a model x that means the right one. A caller with a measured or
- *  committed box passes it; without one only a symbol (its box is its props and
- *  never turns) and blank text (it draws the placeholder) can be answered. */
+/** Rotated box width for a right-anchored field; null (unmeasurable) is distinct from a real zero shift. */
 export function rightAnchorBoxWidthDots(
   obj: LeafObject,
   measuredBoxWidthDots?: number,
@@ -235,10 +225,7 @@ export function rightAnchorBoxWidthDots(
   return null;
 }
 
-/** Whether this field's printed box sits left of `obj.x` (z=1 anchor). Text
- *  and the 2D symbologies emit the anchor as-is, so their right-justified x IS
- *  the printed right edge; 1D barcodes and graphics convert on emit and keep x
- *  on the left. */
+/** Whether the printed box sits left of obj.x; 1D barcodes/graphics convert on emit, text/2D symbols do not. */
 export function isRightAnchoredField(obj: LabelObject): boolean {
   if (isGroup(obj) || obj.fieldJustify !== "R") return false;
   if (BARCODE_1D_TYPES.has(obj.type) || GRAPHIC_ANCHOR_TYPES.has(obj.type)) return false;
@@ -259,11 +246,7 @@ export function rightAnchorShiftDots(obj: LabelObject, widthDots: number): numbe
   return isRightAnchoredField(obj) ? widthDots : 0;
 }
 
-/** True when the ink runs LEFT of the EMITTED anchor, so the anchor's own
- *  near-edge test says nothing about the home edge. Two shapes reach it: a
- *  right-justified text/symbol/2D field (model x already IS the right edge),
- *  and a right-justified ^FT graphic, whose model x is the left edge but whose
- *  emitted anchor is x+w (graphicAnchorCoords). ^FO graphics ignore justify. */
+/** True when ink runs left of the emitted anchor (right-justified text/symbol/2D, or right-justified ^FT graphic). */
 export function inkRunsLeftOfAnchor(obj: LabelObject): boolean {
   if (isRightAnchoredField(obj)) return true;
   return (

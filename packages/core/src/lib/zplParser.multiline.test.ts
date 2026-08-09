@@ -77,10 +77,7 @@ describe("a whitespace character parameter at line end", () => {
 });
 
 describe("a command whose parameters carry a long run of line breaks", () => {
-  // The line-wrap strip used to be `/[\r\n]+\s*$/`, whose overlapping classes
-  // backtrack cubically: 114 s at 8000 breaks, and a raw-binary ^GF payload
-  // carries exactly such runs. Sub-millisecond now; the budget is generous so
-  // the pin is about the complexity class, not the machine.
+  // Regression pin: the old strip regex backtracked cubically (114s at 8000 breaks) on raw-binary ^GF payloads.
   it("parses in linear time instead of backtracking", () => {
     const zpl = `^XA^FO10,10^A0N,20,20^FD${"\n".repeat(8000)}x^FS^XZ`;
     const started = Date.now();

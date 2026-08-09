@@ -120,10 +120,7 @@ export function emitsFieldJustify(type: string, emit1dZJustify = false): boolean
   return emit1dZJustify || !BARCODE_1D_TYPES.has(type);
 }
 
-/** Dynamic lookup for `LabelObject['type']`; undefined for non-leaf (e.g. `'group'`).
- *  hasOwn-gated: a bare bracket read resolves Object.prototype members, so a
- *  type of "constructor" or "toString" answered as a registered entry and every
- *  caller's `getEntry(t) === undefined` guard passed it through. */
+/** Dynamic LabelObject['type'] lookup, hasOwn-gated so "constructor"/"toString" cannot masquerade as a type. */
 export function getEntry(type: string): (typeof ObjectRegistry)[LeafType] | undefined {
   if (!Object.hasOwn(ObjectRegistry, type)) return undefined;
   return (ObjectRegistry as Record<string, (typeof ObjectRegistry)[LeafType] | undefined>)[type];

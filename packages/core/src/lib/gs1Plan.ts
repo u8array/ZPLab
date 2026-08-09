@@ -57,10 +57,7 @@ export function planGs1Fd(content: string, carrier: Gs1Carrier): Gs1FdPlan {
   // own characters as the field); post-substitution emitters pass the resolved
   // form themselves.
   if (hasTemplateMarkers(content)) {
-    // Only bwipText/parsefnc consumers reach this (canvas bars, dims); the emit
-    // resolves markers first and never routes template content through .fd. So
-    // this feeds a preview: completeTypedGtins fills a TYPED "(01)…" GTIN (MCP
-    // input) for the sample, and returns null for the app's raw model content.
+    // Feeds preview only; emit resolves markers separately and never routes template content through .fd.
     const typed = carrier === "code128" ? completeTypedGtins(content) : null;
     return {
       // ^BX takes the structural form (parens out, FNC1 by AI).

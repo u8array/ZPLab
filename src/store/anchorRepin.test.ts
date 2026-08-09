@@ -80,7 +80,7 @@ describe("anchorRepin", () => {
     const src = barcode({ fieldJustify: undefined });
     const next = applyObjectChanges(src, { fieldJustify: "R", props: { content: "ABCD" } });
     // The right edge was never in force; shifting would move the object off
-    // the position the caller just set (patch_design sends both together).
+    // the position the caller just set (a patch sends both together).
     expect(next.fieldJustify).toBe("R");
     expect(next.x).toBe(100);
   });
@@ -232,7 +232,7 @@ describe("dirty semantics of fieldJustify", () => {
 describe("applyChanges with an explicit props: undefined", () => {
   it("keeps the object's props instead of wiping them", () => {
     // ObjectChanges declares props?: object, and a conditional spread left the
-    // undefined the outer spread had already copied on — handing every renderer
+    // undefined the outer spread had already copied on, handing every renderer
     // and emitter a propless object.
     const src = barcode();
     const next = applyChanges(src, { x: 20, props: undefined } as never, () => null);

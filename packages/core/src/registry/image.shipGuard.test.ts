@@ -1,11 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { gfShipsSafely } from "./image";
 
-// Every payload a review round found reaching the wire, kept together so a
-// later change to the guard cannot quietly reopen one of them. The guard has
-// been rebuilt several times (byte counts, a whitelist, wire-byte offsets) and
-// each rebuild closed one shape while opening another; this is the corpus that
-// makes that visible in one run.
+// Corpus of every payload a review found reaching the wire, so a guard rewrite cannot quietly reopen one.
 describe("payloads that must never ship verbatim", () => {
   const REFUSED: [string, string][] = [
     ["no byte count at all", "^GFB,,,1,^XZ^XA^JUS^XZ"],

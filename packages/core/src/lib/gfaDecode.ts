@@ -2,11 +2,8 @@
 // that own only the encoded bytes. The payload decoding stays the parser's.
 
 import type { MonoRaster } from "./imageToZpl";
-import { GF_MAX_BYTES_PER_ROW, parseGfHeader } from "../registry/image";
+import { GF_MAX_BYTES_PER_ROW, GF_MAX_ROWS, parseGfHeader } from "../registry/image";
 import { GF_MAX_DECODED_BYTES, gfPayloadToBytes } from "./zplParser/decoders/gfa";
-
-/** Rows a preview will draw; past this the raster is not a label graphic. */
-const MAX_ROWS = 20_000;
 
 /** And the two together: the caps multiply out to 163 Mpx, which the preview
  *  canvas would back with hundreds of megabytes. Derived from the decoder's
@@ -27,9 +24,8 @@ export function rasterFromGfa(gfa: string, visibleWidthDots?: number): MonoRaste
   if (!Number.isInteger(bytesPerRow) || bytesPerRow > GF_MAX_BYTES_PER_ROW) {
     return null;
   }
-  // b, or c when b is omitted (spec p.215: b == c uncompressed) — the same
-  // fallback the boundary applies. A bare parseInt("") is NaN, and the raw-binary
-  // branch then length-compares against it and refuses a graphic that prints.
+  // b, or c when b is omitted (spec p.215: b == c uncompressed), same fallback the boundary applies.
+  // A bare parseInt("") is NaN, and the raw-binary branch then length-compares against it and refuses a graphic that prints.
   const countStr = head.totalBytes !== "" ? head.totalBytes : head.dataBytes;
   const decoded = gfPayloadToBytes(
     head.payload,
@@ -38,23 +34,13 @@ export function rasterFromGfa(gfa: string, visibleWidthDots?: number): MonoRaste
     countStr === "" ? Number.NaN : Number.parseInt(countStr, 10),
   );
   if (!decoded) return null;
-  // Rows come from the header count (spec p.215: c / d), which is the number
-  // bounds and emit use; the stream may carry more or fewer than it declares.
-  // A present-but-fractional count is malformed: fall back to the placeholder
-  // like gfaHeaderDims/emit do, or the canvas would draw a floored row count the
-  // emitter rejects and the two would disagree on an ^FT image's position.
-  // c is required, so there is no stream fallback: a header without it prints
-  // nothing (it consumes the rest of the stream instead), and drawing the rows
-  // that happened to decode would show ink the printer never produces.
+  // Row count comes from the header (p.215 c/d); a fractional or missing count falls back to the placeholder.
   if (head.dataBytes === "") return null;
   const declaredRows = Number.parseInt(head.dataBytes, 10) / bytesPerRow;
   if (!Number.isInteger(declaredRows) || declaredRows <= 0) return null;
-  // The declared count is the height bounds and emit size the field by, and the
-  // firmware prints the rows the payload omits as blank, so a short stream is
-  // padded rather than shrinking the graphic. Past the caps nothing is drawn at
-  // all (placeholder), rather than under-drawing one we cannot hold.
+  // A short stream pads to the declared row count instead of shrinking the graphic; past the caps nothing draws.
   const heightDots = declaredRows;
-  if (heightDots <= 0 || heightDots > MAX_ROWS) return null;
+  if (heightDots <= 0 || heightDots > GF_MAX_ROWS) return null;
   if (heightDots * bytesPerRow * 8 > MAX_DOTS) return null;
   const needed = heightDots * bytesPerRow;
   let bytes = decoded.data.subarray(0, needed);

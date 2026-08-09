@@ -1445,11 +1445,7 @@ export function useKonvaTransformer({
       committedW = dims.w;
       committedH = dims.h;
     } else if (!(obj.positionType === "FT" && isBarcode(obj)) && isRightAnchoredField(obj)) {
-      // Right-anchored text/symbol/FO-2D: the inverse must add back the width
-      // being committed. The measured snapshot holds the pre-resize box, the
-      // drag scale is what the release multiplied it by; the id-bearing node is
-      // a Konva Group, whose own width()/height() are always 0. Symbols never
-      // publish a snapshot: their box is their props (and never turns).
+      // Right-anchored fields: the inverse adds back the committed width, since the Group node's width()/height() are always 0.
       const m = getMeasuredSnapshot().get(singleId);
       if (m && m.width > 0) {
         const up = rotatedFootprint(m.width * sx, m.height * sy, objectRotation(obj.props));

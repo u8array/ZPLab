@@ -483,10 +483,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   } = useCanvasPanZoom({ zoom, onZoomChange, fitZoom, containerRef });
 
   const scale = SCREEN_PX_PER_MM * zoom;
-  // Variable DEFAULTS, not the previewed row or render mode (resolveForMeasure):
-  // this probe only feeds the anchor re-pin, which writes a persisted x, so a
-  // preview toggle must not move what prints — and the sidecar, which has no
-  // row, has to arrive at the same number for the same edit.
+  // Probes variable DEFAULTS, not the previewed row, so a preview toggle cannot move the persisted anchor x.
   useEffect(() => {
     const { variables: vars, clock } = previewBinding;
     const probe = (o: LabelObject) => {

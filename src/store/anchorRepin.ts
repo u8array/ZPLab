@@ -4,10 +4,8 @@ import { anchorRepin as coreAnchorRepin, type BarcodeFootprint } from "@zplab/co
 
 type BarcodeWidthProber = (obj: LabelObject) => BarcodeFootprint | null;
 
-/** The canvas registers a probe that resolves variable DEFAULTS, the same
- *  source the sidecar's measurer uses (resolveForMeasure): the re-pin writes a
- *  persisted x, so neither the previewed row nor a render-mode toggle may reach
- *  it. Null in node tests, where re-pinning is simply off. */
+/** Probe resolving variable DEFAULTS, the same source the sidecar uses, so a preview toggle cannot move the persisted x.
+ *  Null in node tests, where re-pinning is simply off. */
 let prober: BarcodeWidthProber | null = null;
 
 export function registerBarcodeWidthProber(p: BarcodeWidthProber | null): void {

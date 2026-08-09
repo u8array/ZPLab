@@ -1,7 +1,4 @@
-// The one decision tree for barcode encode findings: which leaf gets
-// emptyContent, renderFailed or previewApproximate, and which is owned by
-// another producer. The editor and the MCP sidecar both feed it their own
-// encoder seam, so the two reports cannot drift (they did, three times).
+// Single decision tree for encode findings, shared by editor and MCP sidecar so the two reports cannot drift.
 
 import { ctrlParityFor, gs1StaticUnparsed, type LeafObject } from "../registry";
 import { maxicodeScmOwnedByPreflight, type MaxicodeProps } from "../registry/maxicode";
@@ -13,7 +10,6 @@ import {
   getObjectStringContent,
   type ActiveRow,
   type ClockResolveCtx,
-  type RenderMode,
 } from "./variableBinding";
 
 /** Binding context so the check encodes what PRINTS: `«marker»` content is
@@ -22,8 +18,6 @@ export interface EncodeEnv {
   variables: readonly Variable[];
   active: ActiveRow | null;
   clock?: ClockResolveCtx;
-  /** How markers resolve; the canvas passes its user toggle. */
-  mode?: RenderMode;
 }
 
 export interface EncodeVerdict {
@@ -37,7 +31,9 @@ export function resolveForEncode(leaf: LeafObject, env: EncodeEnv): LeafObject {
     leaf,
     env.variables,
     env.active,
-    env.mode ?? "preview",
+    // Always the resolved values: a schema render substitutes placeholders,
+    // and encoding those would clear a barcode whose real payload cannot code.
+    "preview",
     env.clock,
     ctrlParityFor(leaf),
   );
