@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { projectMultiResize } from "./multiResize";
+import { projectedAnchorXDots, projectMultiResize } from "./multiResize";
 import type { LeafObject } from "@zplab/core/registry";
 
 const ident = (v: number) => v;
@@ -163,5 +163,39 @@ describe("a right-justified member whose width was never measured", () => {
     const [c] = projectMultiResize([qr], bbox, { x: 0, y: bbox.y }, 2, 1, ident, () => 200);
     // Ink edge 500-200=300 projects to (300-100)*2 = 400, anchor back to 600.
     expect(c?.x).toBe(600);
+  });
+});
+
+// The transformer's live preview projects projectedAnchorXDots and lets the
+// render offset ride along unscaled; the commit projects the same quantity and
+// carries the anchor back. Pinning the shared rule keeps the drag from showing
+// one position and the release committing another.
+describe("the quantity a resize projects", () => {
+  const rightSymbol = () => {
+    const s = leaf("s", "symbol", 400, 100, { width: 120, height: 40, symbol: "A", rotation: "N" });
+    (s as unknown as { fieldJustify: string }).fieldJustify = "R";
+    return s;
+  };
+
+  it("is the ink edge for a right-anchored field and the model x otherwise", () => {
+    expect(projectedAnchorXDots(rightSymbol())).toBe(280);
+    expect(projectedAnchorXDots(leaf("t", "text", 400, 100, { content: "x" }))).toBe(400);
+  });
+
+  it("is null exactly when the commit holds the leaf still", () => {
+    const qr = leaf("q", "qrcode", 500, 100, { content: "X", magnification: 5, errorCorrection: "M", model: 2, rotation: "N" });
+    (qr as unknown as { fieldJustify: string }).fieldJustify = "R";
+    expect(projectedAnchorXDots(qr)).toBeNull();
+    expect(projectMultiResize([qr], bbox, { x: 0, y: bbox.y }, 2, 1, ident)[0]?.x).toBe(500);
+  });
+
+  it("lands the live preview and the commit on the same rendered x", () => {
+    const s = rightSymbol();
+    const union = { x: 280, y: 100, width: 200, height: 40 };
+    const fx = 2;
+    const proj = projectedAnchorXDots(s)!;
+    const live = union.x + (proj - union.x) * fx + (s.x - 120 - proj);
+    const committed = projectMultiResize([s], union, { x: union.x, y: union.y }, fx, 1, ident)[0]!.x;
+    expect(live).toBe(committed - 120);
   });
 });

@@ -15,6 +15,18 @@ export interface MultiResizeChange {
   props?: Record<string, number>;
 }
 
+/** The x a resize projects for this leaf: the ink edge for a right-anchored
+ *  field (the union bbox is ink space while `leaf.x` is the model anchor), else
+ *  its model x. Null when a right-anchored width is unmeasured and the leaf has
+ *  to hold still: projecting its model x would move it in the wrong space and
+ *  persist that. The live preview reads it too, or the two project in different
+ *  spaces and the object jumps by one shift on release. */
+export function projectedAnchorXDots(leaf: LeafObject, measuredWidth?: number): number | null {
+  const boxWidth = rightAnchorBoxWidthDots(leaf, measuredWidth);
+  if (boxWidth === null) return isRightAnchoredField(leaf) ? null : leaf.x;
+  return leaf.x - rightAnchorShiftDots(leaf, boxWidth);
+}
+
 /** Linear reprojection to a resized union: x' = origin.x + (x - bbox.x) * fx.
  *  Shapes also scale (box/ellipse via commitTransform, line via endpoint),
  *  stroke thickness never. `origin` is the POST-gesture bbox origin: left/top
@@ -35,20 +47,16 @@ export function projectMultiResize(
   const projectY = (y: number) => origin.y + (y - bbox.y) * fy;
   const changes: MultiResizeChange[] = [];
   for (const leaf of leafs) {
-    // Union bbox is ink space but leaf.x is the model anchor: project the ink edge, then carry the anchor back by one box width.
-    const boxWidth = rightAnchorBoxWidthDots(leaf, measuredWidthDots?.(leaf.id));
-    // Unmeasured right-anchored leaf: its ink edge is unknown, so projecting
-    // its model x would move it in the wrong space and persist that. Leaving it
-    // where it is loses the resize for one member; guessing loses its position.
-    if (boxWidth === null && isRightAnchoredField(leaf)) {
+    const projX = projectedAnchorXDots(leaf, measuredWidthDots?.(leaf.id));
+    if (projX === null) {
       changes.push({ id: leaf.id, x: leaf.x, y: Math.round(projectY(leaf.y)) });
       continue;
     }
-    const shift = rightAnchorShiftDots(leaf, boxWidth ?? 0);
+    const shift = leaf.x - projX;
     // Rounded once, around the whole expression: re-adding a fractional
     // measured width after rounding left a non-integer x, and a vertical-only
     // drag then recorded an undo step for a sub-dot horizontal nudge.
-    const x = Math.round(projectX(leaf.x - shift) + shift);
+    const x = Math.round(projectX(projX) + shift);
     const y = Math.round(projectY(leaf.y));
     if (!SHAPE_PRIMITIVE_TYPES.has(leaf.type)) {
       changes.push({ id: leaf.id, x, y });

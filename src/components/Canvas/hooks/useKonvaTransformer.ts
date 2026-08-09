@@ -41,7 +41,7 @@ import {
   renderedTopLeftFromModel,
 } from "../transformPosition";
 import { isBarcode, isRightAnchoredField, rotatedFootprint, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
-import { projectMultiResize } from "../../../lib/multiResize";
+import { projectedAnchorXDots, projectMultiResize } from "../../../lib/multiResize";
 import { lineHandlesNodeId, lineRootNodeId } from "../konvaObjectProps";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
 import { getMeasuredSnapshot } from "../measuredBoundsCache";
@@ -313,6 +313,7 @@ export function useKonvaTransformer({
       anchorPxY: number;
       scales: boolean;
       uniform: boolean;
+      frozenX: boolean;
       hide?: Konva.Node;
     }[];
     ids: string[];
@@ -564,15 +565,20 @@ export function useKonvaTransformer({
         // Grips would deform under the group scale; hide for the gesture.
         const hide = leaf.type === "line" ? stage.findOne<Konva.Node>(`#${lineHandlesNodeId(id)}`) : null;
         hide?.visible(false);
+        const projX = projectedAnchorXDots(leaf, getMeasuredSnapshot().get(id)?.width);
         return [
           {
             node,
             startX: node.x(),
             startY: node.y(),
-            // Commit and live both project the MODEL anchor; render-offset
-            // nodes (^FT bar base, ^BQ shift) would jump by off*(f-1) else.
-            anchorPxX: objectsOffsetX + dotsToPx(leaf.x, scale, dpmm),
+            // The quantity the commit projects (projectedAnchorXDots), not the
+            // model anchor: a right-anchored field projects its ink edge, so
+            // projecting x here jumped it by shift*(1-f) on release. Render
+            // offsets (^FT bar base, ^BQ shift) ride along unscaled below.
+            anchorPxX: objectsOffsetX + dotsToPx(projX ?? leaf.x, scale, dpmm),
             anchorPxY: labelOffsetY + dotsToPx(leaf.y, scale, dpmm),
+            // Unmeasured right-anchored leaf: the commit holds x, so must live.
+            frozenX: projX === null,
             scales: SHAPE_PRIMITIVE_TYPES.has(leaf.type),
             // lockAspect commits min(fx, fy); live must match or it snaps back.
             uniform:
@@ -845,7 +851,7 @@ export function useKonvaTransformer({
         } else {
           // Anchor projects, the render offset rides along unscaled.
           n.node.position({
-            x: px + (n.anchorPxX - mr.start.x) * fx + (n.startX - n.anchorPxX),
+            x: n.frozenX ? n.startX : px + (n.anchorPxX - mr.start.x) * fx + (n.startX - n.anchorPxX),
             y: py + (n.anchorPxY - mr.start.y) * fy + (n.startY - n.anchorPxY),
           });
         }
