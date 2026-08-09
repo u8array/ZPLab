@@ -103,8 +103,6 @@ function gfaSync(dataUrl: string, widthDots: number, threshold: number, rotation
   return raster ? gfaFromRaster(raster) : '';
 }
 
-/** Spec p.215 range for ^GF's byte counts and bytes-per-row. */
-const inGfRange = (n: number): boolean => Number.isInteger(n) && n >= 1 && n <= 99999;
 
 export interface GfHeader {
   format: "A" | "B" | "C";
@@ -124,15 +122,13 @@ export function parseGfHeader(value: string | undefined): GfHeader | null {
   const m = value ? /^\^GF([ABC]),(\d*),(\d*),(\d+)(?:,|$)/.exec(value) : null;
   if (!m) return null;
   const bytesPerRow = Number(m[4]);
-  // Spec p.215: b, c and d are each "Values: 1 to 99999". Enforced in the one
-  // place that owns the grammar, so no consumer has to re-derive it — without
-  // it a c of 4000000 drove the emitted ^FT anchor and a b of 1e20 sailed past
-  // Number.isInteger into the overhang scan. Empty b/c stay legal (the byte
-  // counts are optional, and the parser preserves headers that omit them).
-  if (!inGfRange(bytesPerRow)) return null;
-  if ((m[2] !== "" && !inGfRange(Number(m[2]))) || (m[3] !== "" && !inGfRange(Number(m[3])))) {
-    return null;
-  }
+  // No range gate on b/c. The spec documents them as 1..99999 (p.215), but that
+  // is a documentation limit, not a wire limit: our own encoder writes
+  // ^GFA,124236,124236,102 for a 4x6in graphic at 8 dpmm, and rejecting it here
+  // made every consumer read the header as unusable and drop the graphic.
+  // The render budgets that DO bind live where they are spent (gfaHeaderDims,
+  // the decode caps), not in the grammar.
+  if (bytesPerRow <= 0) return null;
   return {
     format: m[1] as GfHeader["format"],
     totalBytes: m[2] ?? "",
@@ -178,17 +174,24 @@ export function gfShipsSafely(value: string): boolean {
   // neither) one anywhere ends the graphic, wherever the count says it stops.
   if (head.format === "A" || wrapped) return !/[\^~]/.test(head.payload);
   // p.215, binary: "All control prefixes are ignored until the total number of
-  // bytes needed for the graphic format is sent" — so b (or c when b is
-  // omitted) IS the boundary, and only bytes past it are read as commands.
-  const countStr = head.totalBytes !== "" ? head.totalBytes : head.dataBytes;
+  // bytes needed for the graphic format is sent", so b is the boundary and only
+  // bytes past it are read as commands. c may stand in for b only where the two
+  // are equal, which is the UNCOMPRESSED case: for format C, c is the size of
+  // the decompressed image and always outruns the wire payload, so taking it
+  // would put the cut past the end and scan nothing at all.
+  const countStr =
+    head.totalBytes !== "" ? head.totalBytes : head.format === "C" ? "" : head.dataBytes;
   // Nothing declares where the data ends, so the whole payload must be clean.
   if (countStr === "") return !/[\^~]/.test(head.payload);
+  const byteCount = Number(countStr);
+  if (!Number.isInteger(byteCount) || byteCount < 0) return false;
   // WIRE bytes, not string indices: the generator emits ^CI28, so one payload
-  // char can be several bytes and a JS slice would cut in the wrong place.
-  // parseGfHeader has already held the count to the spec's 1..99999, so it can
-  // no longer exceed any real payload by enough to make this scan vacuous.
+  // char can be several bytes and a JS slice would cut in the wrong place. A
+  // count at or past the payload leaves no overhang, which is the honest answer:
+  // the firmware then keeps consuming the following stream AS DATA, so the label
+  // breaks but no command of ours executes.
   const wire = new TextEncoder().encode(head.payload);
-  return !wire.subarray(Number(countStr)).some((b) => b === 0x5e || b === 0x7e);
+  return !wire.subarray(byteCount).some((b) => b === 0x5e || b === 0x7e);
 }
 
 /** Printed size from a ^GF header (spec p.215: width = bytes per row x 8,
