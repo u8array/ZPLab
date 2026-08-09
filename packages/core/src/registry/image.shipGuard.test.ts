@@ -14,6 +14,11 @@ describe("payloads that must never ship verbatim", () => {
     // c is the DECOMPRESSED size for format C, so it can never bound the wire.
     ["compressed, c standing in for b", `^GFC,,4096,80,${"A".repeat(40)}^XZ${"B".repeat(36)}`],
     ["header carrying no data", "^GFB,8,8,1,"],
+    // Labelary: omitting c produces no label at all, the firmware eats the rest
+    // of the stream looking for an end it was never told.
+    ["no graphic-field count", "^GFB,,,2,ABCD"],
+    // c bounds the data, not b: cutting at b left the ^XZ past c unscanned.
+    ["commands past c while b over-declares", "^GFB,9999,2,2,AB^XZ"],
     ["bare header, no payload at all", "^GFA,8,8,1"],
     ["not a ^GF command", "^XZ"],
     ["a bare device command", "~JB"],
@@ -33,11 +38,11 @@ describe("payloads the importer preserves and that must keep shipping", () => {
     ["the wrapper the parser writes", "^GFB,4,4,2,:B64:AAAA:9c02"],
     ["control bytes inside the declared count", "^GFB,4,4,2,A^B~"],
     ["under-read payload, count over-declared", "^GFB,9999,9999,10,AB"],
+    ["b omitted, which Labelary prints identically", "^GFB,,4,2,ABCD"],
     // Looks like a hole and is not: the firmware still owes itself 1e20 bytes,
     // so it eats everything following AS DATA and the ^XZ never executes. A
     // broken label, which is what the source stream already said, not a command.
     ["a count no payload could ever satisfy", "^GFB,99999999999999999999,8,1,AB^XZ"],
-    ["no count, clean payload", "^GFB,,,2,ABCD"],
     // What our own encoder writes for a 4x6in label at 8 dpmm. A spec-range
     // gate on b/c silently emptied exactly this.
     ["a full-size graphic our encoder emits", `^GFA,124236,124236,102,${"F".repeat(20)}`],

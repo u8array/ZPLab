@@ -275,9 +275,11 @@ describe("mcp-server tools", () => {
       .toMatchObject({ width: 8, height: 4, approx: false });
   });
 
-  it("keeps a preserved foreign header with an empty count slot exportable", () => {
-    // The parser preserves such headers verbatim and always sets heightDots;
-    // the empty count must not read as unusable (silent drop again).
+  it("reports a preserved foreign header with an empty count slot", () => {
+    // Labelary: a ^GF missing c produces NO label, because nothing tells the
+    // firmware where the graphic ends and it eats the rest of the stream,
+    // ^XZ included. Shipping it verbatim would take the whole print job down,
+    // so the field drops, but loudly, which is what the roundtrip rule asks.
     const gfa = "^GFA,4,,1,00FF00FF";
     const design = {
       schemaVersion: 5,
@@ -287,8 +289,11 @@ describe("mcp-server tools", () => {
         props: { imageId: "gone", widthDots: 8, heightDots: 4, threshold: 128, rotation: "N", _gfaCache: gfa },
       }] }],
     };
-    expect(ok(exportZpl(design)).zpl).toContain(gfa);
-    expect(ok(validateDraft(design)).bounds.find((b) => b.objectId === "img"))
+    expect(ok(exportZpl(design)).zpl).not.toContain(gfa);
+    const report = ok(validateDraft(design));
+    expect(report.warnings.some((w) => w.kind === "imageMissing")).toBe(true);
+    // Bounds still describe the field, from props, so placement stays editable.
+    expect(report.bounds.find((b) => b.objectId === "img"))
       .toMatchObject({ width: 8, height: 4 });
     // Fractional or zero rows stay unusable (malformed header).
     const bad = { ...design, pages: [{ objects: [{ ...design.pages[0]!.objects[0]!,

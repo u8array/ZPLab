@@ -112,8 +112,11 @@ describe("the header count, not the stream", () => {
     expect(rasterFromGfa("^GFA,2,2,2,C3D4FFFF")?.heightDots).toBe(1);
   });
 
-  it("falls back to the stream when the count slot is empty", () => {
-    expect(rasterFromGfa("^GFA,,,2,C3D4FFFF")?.heightDots).toBe(2);
+  it("refuses a header without the count, which prints nothing", () => {
+    // Labelary: omitting b renders identically, omitting c produces no label
+    // at all, because the firmware never learns where the graphic ends.
+    expect(rasterFromGfa("^GFA,,,2,C3D4FFFF")).toBeNull();
+    expect(rasterFromGfa("^GFA,,4,2,C3D4FFFF")?.heightDots).toBe(2);
   });
 
   it("refuses a fractional row count instead of flooring past what emit uses", () => {

@@ -167,6 +167,10 @@ export function gfShipsSafely(value: string): boolean {
   // A bare header declares bytes it never sends, so the firmware reads the rest
   // of the stream as graphic data (p.215) and the block never terminates.
   if (head.payload.trim() === "") return false;
+  // Same outcome without c: Labelary produces no label for a header missing it,
+  // because nothing tells the firmware where the graphic ends. b may be omitted
+  // freely, which renders identically.
+  if (head.dataBytes === "") return false;
   const trimmed = head.payload.replace(/^\s+/, "");
   const wrapped = trimmed.startsWith(":B64:") || trimmed.startsWith(":Z64:");
   // p.215, ASCII hex: "~DN or any caret or tilde character prematurely aborts
@@ -174,14 +178,12 @@ export function gfShipsSafely(value: string): boolean {
   // neither) one anywhere ends the graphic, wherever the count says it stops.
   if (head.format === "A" || wrapped) return !/[\^~]/.test(head.payload);
   // p.215, binary: "All control prefixes are ignored until the total number of
-  // bytes needed for the graphic format is sent", so b is the boundary and only
-  // bytes past it are read as commands. c may stand in for b only where the two
-  // are equal, which is the UNCOMPRESSED case: for format C, c is the size of
-  // the decompressed image and always outruns the wire payload, so taking it
-  // would put the cut past the end and scan nothing at all.
-  const countStr =
-    head.totalBytes !== "" ? head.totalBytes : head.format === "C" ? "" : head.dataBytes;
-  // Nothing declares where the data ends, so the whole payload must be clean.
+  // bytes needed for THE GRAPHIC FORMAT is sent", so the boundary is c (the
+  // bitmap size), not b (what the host transmits). Labelary-confirmed: omitting
+  // b prints identically, omitting c consumes the rest of the stream. For
+  // format C the wire carries less than c, so no wire boundary is expressible
+  // and the payload has to be clean throughout.
+  const countStr = head.format === "C" ? "" : head.dataBytes;
   if (countStr === "") return !/[\^~]/.test(head.payload);
   const byteCount = Number(countStr);
   if (!Number.isInteger(byteCount) || byteCount < 0) return false;
@@ -205,8 +207,11 @@ export function gfaHeaderDims(
   // A payload-less header (^GFA,8,8,1 with no data) is not a usable graphic:
   // emit would ship the bare header and firmware would read past it into ^FS.
   if (!h || h.bytesPerRow > GF_MAX_BYTES_PER_ROW || h.payload.trim() === "") return null;
+  // c is required: Labelary renders a header missing b identically to a full
+  // one, but a header missing c produces no label at all, because the firmware
+  // never learns where the graphic ends and eats the rest of the stream.
+  if (h.dataBytes === "") return null;
   const width = h.bytesPerRow * 8;
-  if (h.dataBytes === "") return { width, height: null };
   const height = Number(h.dataBytes) / h.bytesPerRow;
   // Rows bounded like the width: an unbounded c drove a 20-million-dot field
   // into the ^FT anchor and the off-label check, and past 1e21 the number

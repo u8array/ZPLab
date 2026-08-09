@@ -43,15 +43,17 @@ export function rasterFromGfa(gfa: string, visibleWidthDots?: number): MonoRaste
   // A present-but-fractional count is malformed: fall back to the placeholder
   // like gfaHeaderDims/emit do, or the canvas would draw a floored row count the
   // emitter rejects and the two would disagree on an ^FT image's position.
-  const declaredRows = head.dataBytes === "" ? 0 : Number.parseInt(head.dataBytes, 10) / bytesPerRow;
-  if (head.dataBytes !== "" && (!Number.isInteger(declaredRows) || declaredRows <= 0)) return null;
-  const streamRows = Math.floor(decoded.data.length / bytesPerRow);
-  // The DECLARED count wins, never the shorter stream: it is the height bounds
-  // and emit size the field by, and the firmware prints the rows the payload
-  // omits as blank. Shrinking to what decoded would draw a smaller graphic than
-  // the one that prints. Past the caps nothing is drawn at all (placeholder),
-  // rather than silently under-drawing a graphic we cannot hold.
-  const heightDots = declaredRows > 0 ? declaredRows : streamRows;
+  // c is required, so there is no stream fallback: a header without it prints
+  // nothing (it consumes the rest of the stream instead), and drawing the rows
+  // that happened to decode would show ink the printer never produces.
+  if (head.dataBytes === "") return null;
+  const declaredRows = Number.parseInt(head.dataBytes, 10) / bytesPerRow;
+  if (!Number.isInteger(declaredRows) || declaredRows <= 0) return null;
+  // The declared count is the height bounds and emit size the field by, and the
+  // firmware prints the rows the payload omits as blank, so a short stream is
+  // padded rather than shrinking the graphic. Past the caps nothing is drawn at
+  // all (placeholder), rather than under-drawing one we cannot hold.
+  const heightDots = declaredRows;
   if (heightDots <= 0 || heightDots > MAX_ROWS) return null;
   if (heightDots * bytesPerRow * 8 > MAX_DOTS) return null;
   const needed = heightDots * bytesPerRow;
