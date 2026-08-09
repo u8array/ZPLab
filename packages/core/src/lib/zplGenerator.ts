@@ -711,9 +711,13 @@ function generateZplBlock(
     if (p.storedAs.embedInZpl === false) continue;
     const key = formatStoragePath(p.storedAs, false);
     if (seenGraphics.has(key)) continue;
-    seenGraphics.add(key);
     const dy = formatGraphicUpload(p);
-    if (dy) lines.push(dy);
+    if (!dy) continue;
+    // Claimed only once an upload actually exists: reserving the path first
+    // meant one object whose bytes cannot be written silenced every later
+    // object sharing it, so each emitted its ^XG against a file nobody sent.
+    seenGraphics.add(key);
+    lines.push(dy);
   }
 
   // ~SD is immediate (not EEPROM), emit before ^XA so it applies to this label.

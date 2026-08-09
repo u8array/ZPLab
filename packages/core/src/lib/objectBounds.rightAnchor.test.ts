@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { objectBoundsDots, rightAnchorShiftDots } from "./objectBounds";
+import { isRightAnchoredField, objectBoundsDots, rightAnchorShiftDots } from "./objectBounds";
 import { computePreflight } from "./preflight";
 import type { LabelObject } from "../types/Group";
 import type { PageLabel } from "../types/LabelConfig";
@@ -119,5 +119,24 @@ describe("a runaway ^GF bytes-per-row", () => {
     } as never;
     const box = objectBoundsDots(img, { label });
     expect(box.width).toBeLessThan(100000);
+  });
+});
+
+describe("a right-justified text whose block has no width", () => {
+  // The renderer drew it as plain text (shifting the ink left) while the bounds
+  // still called it a block (no shift), so a resize committed the visual left
+  // edge as the model x and walked the field left by its own ink width.
+  it("is treated as plain text by every consumer, so the anchor agrees", () => {
+    const leaf = {
+      id: "t", type: "text", x: 400, y: 50, rotation: 0, fieldJustify: "R",
+      props: { content: "HELLO", fontHeight: 30, fontWidth: 0, rotation: "N", textMode: "tb", blockWidth: 0 },
+    } as never;
+    expect(isRightAnchoredField(leaf)).toBe(true);
+    // With a width the block owns its justification, so the field anchor drops.
+    const withWidth = {
+      ...(leaf as object),
+      props: { ...(leaf as { props: object }).props, blockWidth: 200 },
+    } as never;
+    expect(isRightAnchoredField(withWidth)).toBe(false);
   });
 });
