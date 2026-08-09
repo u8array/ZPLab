@@ -145,3 +145,23 @@ describe("a right-justified member of the selection", () => {
     expect((changes.find((c) => c.id === "s")?.x ?? 0) - 120).toBe(280);
   });
 });
+
+describe("a right-justified member whose width was never measured", () => {
+  // Its ink edge is unknown, so projecting its model x would move it in the
+  // wrong space. Keeping x loses the resize for that member; guessing lost its
+  // position by a full ink width and persisted that.
+  it("keeps its x rather than projecting the wrong space", () => {
+    const qr = leaf("q", "qrcode", 500, 100, { content: "X", magnification: 5, errorCorrection: "M", model: 2, rotation: "N" });
+    (qr as unknown as { fieldJustify: string }).fieldJustify = "R";
+    const [c] = projectMultiResize([qr], bbox, { x: 0, y: bbox.y }, 2, 1, ident);
+    expect(c?.x).toBe(500);
+  });
+
+  it("still projects it once a measurement exists", () => {
+    const qr = leaf("q", "qrcode", 500, 100, { content: "X", magnification: 5, errorCorrection: "M", model: 2, rotation: "N" });
+    (qr as unknown as { fieldJustify: string }).fieldJustify = "R";
+    const [c] = projectMultiResize([qr], bbox, { x: 0, y: bbox.y }, 2, 1, ident, () => 200);
+    // Ink edge 500-200=300 projects to (300-100)*2 = 400, anchor back to 600.
+    expect(c?.x).toBe(600);
+  });
+});

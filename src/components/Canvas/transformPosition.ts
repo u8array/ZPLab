@@ -137,8 +137,12 @@ function renderedWithAnchor(obj: LeafObject, x: number, y: number): { x: number;
 function rightAnchorShift(obj: LeafObject, committedWidth?: number): number {
   // A resize passes the width it is committing; otherwise the measured
   // footprint, with core resolving the unmeasured cases.
+  // Null (unmeasured, non-symbol, non-blank) draws unshifted in KonvaObject
+  // too, so forward and inverse stay each other's inverse. It does mean
+  // objectBoundsDots, which sizes from its own estimate, describes a box this
+  // pair does not use until the leaf has been rendered once.
   const width = rightAnchorBoxWidthDots(obj, committedWidth ?? getMeasuredSnapshot().get(obj.id)?.width);
-  return rightAnchorShiftDots(obj, width);
+  return rightAnchorShiftDots(obj, width ?? 0);
 }
 
 /** The HRI-zone offset an ^FO barcode's render applies, zero for everything

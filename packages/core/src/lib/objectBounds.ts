@@ -213,12 +213,17 @@ export function objectBoundsDots(obj: LabelObject, ctx: ObjectBoundsCtx): Boundi
   return shift === 0 ? box : { ...box, x: box.x - shift };
 }
 
-/** The rotated box width a right-anchored field shifts by. A caller with a
- *  measured or committed box passes it; without one, a symbol's own props are
- *  the truth (its box never turns) and blank text draws the placeholder. A 2D
- *  barcode's box comes from its encoding, so it has no props-only width: its
- *  renderer (BarcodeObject) always publishes a measured box before this runs. */
-export function rightAnchorBoxWidthDots(obj: LeafObject, measuredBoxWidthDots?: number): number {
+/** The rotated box width a right-anchored field shifts by, or null when this
+ *  object's width cannot be known without measuring it. Null is NOT zero: a
+ *  zero shift is a statement about the field, an absent width is a statement
+ *  about the caller, and conflating them let a resize commit the visual left
+ *  edge as a model x that means the right one. A caller with a measured or
+ *  committed box passes it; without one only a symbol (its box is its props and
+ *  never turns) and blank text (it draws the placeholder) can be answered. */
+export function rightAnchorBoxWidthDots(
+  obj: LeafObject,
+  measuredBoxWidthDots?: number,
+): number | null {
   if (measuredBoxWidthDots !== undefined && measuredBoxWidthDots > 0) return measuredBoxWidthDots;
   if (obj.type === "symbol") return (obj.props as { width: number }).width;
   if (obj.type === "text") {
@@ -227,7 +232,7 @@ export function rightAnchorBoxWidthDots(obj: LeafObject, measuredBoxWidthDots?: 
       return rotatedFootprint(p.fontHeight * EMPTY_TEXT_PLACEHOLDER_GLYPHS, p.fontHeight, p.rotation).width;
     }
   }
-  return 0;
+  return null;
 }
 
 /** Whether this field's printed box sits left of `obj.x` (z=1 anchor). Text

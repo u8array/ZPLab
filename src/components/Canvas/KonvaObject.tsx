@@ -563,7 +563,7 @@ function KonvaObjectInner({
       : undefined;
   const x =
     offsetX +
-    dotsToPx(obj.x - rightAnchorShiftDots(obj, rightAnchorBoxWidthDots(obj, measuredBoxW)), scale, dpmm);
+    dotsToPx(obj.x - rightAnchorShiftDots(obj, rightAnchorBoxWidthDots(obj, measuredBoxW) ?? 0), scale, dpmm);
   useEffect(() => {
     if (!isSingleLineText) return;
     // Blank (empty or whitespace) or zero-height: drop the measured entry so

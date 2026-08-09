@@ -1,6 +1,7 @@
 import type { LeafObject } from "@zplab/core/registry";
 import { getEntry, SHAPE_PRIMITIVE_TYPES } from "@zplab/core/registry";
 import {
+  isRightAnchoredField,
   rightAnchorBoxWidthDots,
   rightAnchorShiftDots,
   type BoundingBoxDots,
@@ -39,11 +40,19 @@ export function projectMultiResize(
     // and carry the anchor back (same rule as groupRotation's leafChanges).
     // Zero for shapes, which are never right-anchored (GRAPHIC_ANCHOR_TYPES),
     // and their width is the one this gesture changes.
-    const shift = rightAnchorShiftDots(
-      leaf,
-      rightAnchorBoxWidthDots(leaf, measuredWidthDots?.(leaf.id)),
-    );
-    const x = Math.round(projectX(leaf.x - shift)) + shift;
+    const boxWidth = rightAnchorBoxWidthDots(leaf, measuredWidthDots?.(leaf.id));
+    // Unmeasured right-anchored leaf: its ink edge is unknown, so projecting
+    // its model x would move it in the wrong space and persist that. Leaving it
+    // where it is loses the resize for one member; guessing loses its position.
+    if (boxWidth === null && isRightAnchoredField(leaf)) {
+      changes.push({ id: leaf.id, x: leaf.x, y: Math.round(projectY(leaf.y)) });
+      continue;
+    }
+    const shift = rightAnchorShiftDots(leaf, boxWidth ?? 0);
+    // Rounded once, around the whole expression: re-adding a fractional
+    // measured width after rounding left a non-integer x, and a vertical-only
+    // drag then recorded an undo step for a sub-dot horizontal nudge.
+    const x = Math.round(projectX(leaf.x - shift) + shift);
     const y = Math.round(projectY(leaf.y));
     if (!SHAPE_PRIMITIVE_TYPES.has(leaf.type)) {
       changes.push({ id: leaf.id, x, y });
