@@ -26,7 +26,7 @@ import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from '
 import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
-import { imageEmitDims, parseGfHeader, shippableGfa, type ImageProps } from '../registry/image';
+import { imageEmitDims, imageEmitRotation, parseGfHeader, shippableGfa, type ImageProps } from '../registry/image';
 import { formatStoragePath } from './storagePath';
 
 function formatDownloadObject(m: CustomFontMapping): string | undefined {
@@ -175,7 +175,7 @@ function formatGraphicUpload(p: ImageProps): string | undefined {
   if (!p.storedAs) return undefined;
   // Same resolver toZPL uses, so an unshippable cache falls back to a fresh
   // encode here too instead of dropping the upload the ^XG depends on.
-  const cache = shippableGfa(p);
+  const cache = shippableGfa(p, imageEmitRotation(p));
   const h = cache ? parseGfHeader(cache) : null;
   if (!h) return undefined;
   return `~DY${formatStoragePath(p.storedAs, false)},${h.format},G,${h.totalBytes},${h.bytesPerRow},${h.payload}`;

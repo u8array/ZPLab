@@ -33,6 +33,16 @@ export function isImageRotatable(p: ImageProps): boolean {
   return !!getImage(p.imageId) && !p.storedAs && !p.rawGf;
 }
 
+/** The rotation the bytes are resolved at. ^XG recall and opaque rawGf print
+ *  upright by construction, so a rotation left over from an inline past is
+ *  meaningless there, not merely unachievable: gating on it dropped the ~DY
+ *  while the ^XG depending on it still shipped. A cache with no source image
+ *  keeps its rotation, so an impossible re-raster still refuses out loud
+ *  instead of printing the wrong orientation. */
+export function imageEmitRotation(p: ImageProps): ZplRotation {
+  return p.storedAs || p.rawGf ? 'N' : objectRotation(p);
+}
+
 /** Emitted (byte-padded) footprint of the image field, axes swapped on a baked
  *  R/B rotation. Shared by toZPL and the generator's home-shift drop check so
  *  the two can't disagree on the anchor footprint. */
@@ -204,7 +214,7 @@ export function gfaHeaderDims(
 function gfaCacheUsable(p: ImageProps): boolean {
   return (
     !!p._gfaCache &&
-    objectRotation(p) === 'N' &&
+    imageEmitRotation(p) === 'N' &&
     gfaHeaderDims(p._gfaCache) !== null &&
     gfShipsSafely(p._gfaCache)
   );
@@ -227,7 +237,7 @@ export function headerByteSource(p: ImageProps): string | undefined {
     ? gfShipsSafely(p.rawGf)
       ? p.rawGf
       : undefined
-    : objectRotation(p) === 'N' && p._gfaCache && gfShipsSafely(p._gfaCache)
+    : imageEmitRotation(p) === 'N' && p._gfaCache && gfShipsSafely(p._gfaCache)
       ? p._gfaCache
       : undefined;
   SHIP_SOURCE_CACHE.set(p, { value: source });
@@ -369,6 +379,6 @@ export const image: ObjectTypeCore<ImageProps> = {
     }
     // _gfaCache holds the upright bytes, so a rotated field regenerates fresh
     // (rasterizeMono bakes the rotation in).
-    return `${anchor}${shippableGfa(p, objectRotation(p)) ?? ''}^FS`;
+    return `${anchor}${shippableGfa(p, imageEmitRotation(p)) ?? ''}^FS`;
   },
 };

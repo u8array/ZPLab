@@ -4,7 +4,7 @@ import type { LabelObject } from "@zplab/core/types/Group";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
 import { getImage } from "@zplab/core/lib/imageCache";
 import { rasterFromGfa } from "@zplab/core/lib/gfaDecode";
-import { headerByteSource } from "@zplab/core/registry/image";
+import { headerByteSource, imageEmitRotation, isImageRotatable } from "@zplab/core/registry/image";
 import { loadImage } from "@zplab/core/lib/loadImage";
 import { monoPreviewCanvas, rasterPreviewCanvas } from "@zplab/core/lib/imageToZpl";
 import { useColorScheme } from "../../hooks/useColorScheme";
@@ -81,11 +81,9 @@ export function ImageObject({
     };
   }, [cached]);
 
-  // Rotatable only for an inline cached bitmap (see isImageRotatable); reuse
-  // the `cached` lookup already made above.
-  const rotatable = !!cached && !p.storedAs && !p.rawGf;
-
-  const rotation = rotatable ? objectRotation(p) : "N";
+  // Whether this instance turns, which is not the same question as the rotation
+  // its bytes resolve at (imageEmitRotation).
+  const rotation = isImageRotatable(p) ? objectRotation(p) : "N";
   const swap = isAxisSwapped(rotation);
 
   // WYSIWYG mono preview (see monoPreviewCanvas), handed to Konva to nearest-
@@ -93,14 +91,9 @@ export function ImageObject({
   // the inner Group turns it. The colored source is never shown on the label.
   const preview = htmlImg && cached
     ? monoPreviewCanvas(htmlImg, p.widthDots, p.threshold)
-    // Byte-only graphic: headerByteSource is the emit-side precedence (rawGf at
-    // any rotation, _gfaCache only upright, nothing while a store image exists),
-    // so the canvas can't show bytes the print would not use.
-    : gfaPreviewCanvas(
-        p,
-        headerByteSource(p),
-        p.rawGf ? "N" : objectRotation(p),
-      );
+    // Byte-only graphic: headerByteSource is the emit-side precedence, so the
+    // canvas cannot show bytes the print would not use.
+    : gfaPreviewCanvas(p, headerByteSource(p), imageEmitRotation(p));
   const widthDots = !cached && preview ? preview.width : p.widthDots;
   const w = dotsToPx(widthDots, scale, dpmm);
   // Height from the raster is dot-quantised, so the box matches the emitted
