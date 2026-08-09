@@ -1,5 +1,6 @@
 import { isGroup, type LabelObject, type LeafObject, type Page } from "@zplab/core/types/Group";
 import { getEntry } from "@zplab/core/registry";
+import { gfaCacheIsOnlyCopy, type ImageProps } from "@zplab/core/registry/image";
 import { effectiveDpmm, labelConfigSpec, scaledLabelConfigFields, type JmDensity, type LabelConfig } from "@zplab/core/types/LabelConfig";
 
 /** Pending density change: a new head dpmm or a new ^JM mode, both reinterpreting
@@ -120,7 +121,10 @@ function rescaleLeaf(leaf: LeafObject, factor: number, warnings: RescaleWarning[
   // carry fixed-resolution bytes: their footprint is locked (mirrors
   // image.commitTransform), only position scales, and we warn it cannot rescale.
   if (leaf.type === "image") {
-    if (props.rawGf != null || props.storedAs != null) {
+    // A cache with no source image behind it is the graphic's only copy (what
+    // raster_image hands over), so it counts as fixed bytes too: re-scaling
+    // would clear it with nothing left to re-encode from.
+    if (props.rawGf != null || props.storedAs != null || gfaCacheIsOnlyCopy(props as unknown as ImageProps)) {
       warn("widthDots", "imageFixed");
     } else {
       for (const k of ["widthDots", "heightDots"] as const) {

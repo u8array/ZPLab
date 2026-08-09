@@ -2,10 +2,13 @@ import { isGroup, type LabelObject, type Page } from '@zplab/core/types/Group';
 import type { ObjectChanges } from '@zplab/core/types/LabelObject';
 import { NON_EMITTING_CONFIG_FIELDS } from '@zplab/core/types/LabelConfig';
 import { isLocaleCode, type LocaleCode } from '../locales';
-import { renameTemplateMarkers, substituteTemplateMarker } from '@zplab/core/lib/fnTemplate';
-import { getObjectStringContent } from '@zplab/core/lib/variableBinding';
-import { getEntry } from '@zplab/core/registry';
-import { anchorRepin } from './anchorRepin';
+export {
+  rewriteTemplateMarkers,
+  rewriteTemplateMarkersMap,
+  substituteTemplateMarkers,
+} from '@zplab/core/lib/templateObjects';
+import { applyChanges } from '@zplab/core/lib/anchorRepin';
+import { probeBarcodeFootprint } from './anchorRepin';
 
 import { newId } from "@zplab/core/lib/ids";
 /** Meta fields that remain editable on a locked object so the user can
@@ -33,10 +36,8 @@ export const NON_EMITTING_CONFIG_KEYS: ReadonlySet<string> = new Set<string>(
   NON_EMITTING_CONFIG_FIELDS,
 );
 
-/** Prop keys that never reach emitted ZPL: a props diff touching only these
- *  must not stamp dirty and drop the verbatim overlay. Classifies globally by
- *  key name (membership locked in anchorRepin.test.ts). */
-export const NON_EMITTING_PROP_KEYS = new Set(['preSerialContent']);
+// Shared with the MCP boundary, so it lives in core.
+export { NON_EMITTING_PROP_KEYS } from '@zplab/core/types/LabelObject';
 
 /** True when a config patch changes a field that reaches emitted ZPL. Used to
  *  drop page overlays: until config-segment linkage lands, an overlay replays
@@ -59,73 +60,6 @@ function dropProvenance<T extends LabelObject>(node: T): T {
   return next;
 }
 
-/** Apply `renameTemplateMarker` to every leaf's `content` in a subtree.
- *  Identity-preserving: returns the same array (and same node refs)
- *  when no markers needed rewriting, so React memoisation downstream
- *  stays effective for the common case where the rename touched no
- *  templates. */
-export function rewriteTemplateMarkers(
-  objects: LabelObject[],
-  oldName: string,
-  newName: string,
-): LabelObject[] {
-  return rewriteTemplateMarkersMap(objects, new Map([[oldName, newName]]));
-}
-
-/** Like `rewriteTemplateMarkers` but renames many names in ONE pass per leaf,
- *  looking each marker up against the original name. Order-independent and
- *  collision-safe (swaps/chains can't cascade). Identity-preserving. */
-export function rewriteTemplateMarkersMap(
-  objects: LabelObject[],
-  renames: ReadonlyMap<string, string>,
-): LabelObject[] {
-  if (renames.size === 0) return objects;
-  let changed = false;
-  const next = objects.map((obj) => {
-    if (isGroup(obj)) {
-      const nextChildren = rewriteTemplateMarkersMap(obj.children, renames);
-      if (nextChildren === obj.children) return obj;
-      changed = true;
-      return { ...obj, children: nextChildren };
-    }
-    const content = getObjectStringContent(obj);
-    if (content === undefined) return obj;
-    const renamed = renameTemplateMarkers(content, renames);
-    if (renamed === content) return obj;
-    changed = true;
-    const props = (obj as { props: object }).props;
-    return { ...obj, props: { ...props, content: renamed } } as LabelObject;
-  });
-  return changed ? next : objects;
-}
-
-/** Replace every `«name»` marker with `replacement` across a subtree's leaf
- *  `content`. Identity-preserving when nothing matched (see
- *  {@link rewriteTemplateMarkers}). Used on variable deletion. */
-export function substituteTemplateMarkers(
-  objects: LabelObject[],
-  name: string,
-  replacement: string,
-): LabelObject[] {
-  let changed = false;
-  const next = objects.map((obj) => {
-    if (isGroup(obj)) {
-      const nextChildren = substituteTemplateMarkers(obj.children, name, replacement);
-      if (nextChildren === obj.children) return obj;
-      changed = true;
-      return { ...obj, children: nextChildren };
-    }
-    const content = getObjectStringContent(obj);
-    if (content === undefined) return obj;
-    const substituted = substituteTemplateMarker(content, name, replacement);
-    if (substituted === content) return obj;
-    changed = true;
-    const props = (obj as { props: object }).props;
-    return { ...obj, props: { ...props, content: substituted } } as LabelObject;
-  });
-  return changed ? next : objects;
-}
-
 export function applyObjectChanges(
   obj: LabelObject,
   changes: ObjectChanges,
@@ -145,16 +79,9 @@ export function applyObjectChanges(
     // tree updates reach them through their own mapObjectById call.
     return { ...obj, ...changes } as LabelObject;
   }
-  const normalize = getEntry(obj.type)?.normalizeChanges;
-  const normalized = normalize ? normalize(obj, changes) : changes;
-  const next = {
-    ...obj,
-    ...normalized,
-    props: normalized.props ? Object.assign({}, obj.props, normalized.props) : obj.props,
-  } as LabelObject;
   // Dirty-tracking is centralized in the dirtyTracking middleware (a state diff),
   // so this mutator no longer stamps dirty itself.
-  return anchorRepin(obj, normalized, next);
+  return applyChanges(obj, changes, probeBarcodeFootprint);
 }
 
 export function detectLocale(): LocaleCode {

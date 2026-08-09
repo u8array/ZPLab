@@ -56,10 +56,13 @@ function intersect(a: BoundingBoxDots, b: BoundingBoxDots): BoundingBoxDots | nu
  *  stop and let the caller flag truncation. */
 export const MAX_OVERLAPS = 500;
 
-/** Index loop (no per-row slice allocation) with an early exit at `cap`. */
+/** Index loop (no per-row slice allocation) with an early exit at `cap`.
+ *  `keep` rejects a pair before it counts against the cap: a caller that
+ *  discards pairs afterwards would let them crowd out real collisions. */
 export function computeOverlaps(
   boxes: readonly LeafBoxDots[],
   cap: number = MAX_OVERLAPS,
+  keep?: (a: LeafBoxDots, b: LeafBoxDots) => boolean,
 ): OverlapDots[] {
   const out: OverlapDots[] = [];
   for (let i = 0; i < boxes.length && out.length < cap; i++) {
@@ -69,7 +72,8 @@ export function computeOverlaps(
       const bj = boxes[j];
       if (!bj) continue;
       const rect = intersect(bi.box, bj.box);
-      if (rect) out.push({ a: bi.id, b: bj.id, ...rect, approx: bi.approx || bj.approx });
+      if (!rect || (keep && !keep(bi, bj))) continue;
+      out.push({ a: bi.id, b: bj.id, ...rect, approx: bi.approx || bj.approx });
     }
   }
   return out;

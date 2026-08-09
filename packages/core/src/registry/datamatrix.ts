@@ -1,6 +1,12 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { fieldPosZ, fdFieldFor } from './zplHelpers';
-import { DATAMATRIX_FD_ESCAPE } from '../lib/dataMatrixFd';
+import {
+  DATAMATRIX_FD_ESCAPE,
+  gs1ContentToDataMatrixFd,
+  typedGs1ToDataMatrixFd,
+} from '../lib/dataMatrixFd';
+import { hasTemplateMarkers } from '../lib/fnTemplate';
+import { isLoneMarker } from '../lib/variableField';
 import { planGs1Fd } from '../lib/gs1Plan';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { type ZplRotation } from './rotation';
@@ -21,6 +27,14 @@ export const DM_RECT_SIZES = [
 ] as const;
 
 const dmGs1Fd = (s: string): string => planGs1Fd(s, 'datamatrix').fd;
+
+/** Markers reach the transform as ^FE embeds the AI catalog cannot read as
+ *  values; typedGs1ToDataMatrixFd owns what stays derivable from them. */
+const dmGs1TemplateFd = (s: string): string =>
+  typedGs1ToDataMatrixFd(s) ?? gs1ContentToDataMatrixFd(s);
+
+const dmGs1Transform = (content: string): ((s: string) => string) =>
+  hasTemplateMarkers(content) && !isLoneMarker(content) ? dmGs1TemplateFd : dmGs1Fd;
 
 export interface DataMatrixProps {
   content: string;
@@ -73,7 +87,7 @@ export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
   // GS1 mode FNC1-escapes the payload; shared with the CSV batch override.
   // Non-GS1 content is arbitrary bytes, emitted verbatim (the printer owns any
   // ^BX escape sequences it contains).
-  fdTransform: (obj) => (obj.props.gs1 ? dmGs1Fd : undefined),
+  fdTransform: (obj) => (obj.props.gs1 ? dmGs1Transform(obj.props.content) : undefined),
 
   toZPL: (obj, ctx) => {
     const p = obj.props;
@@ -94,7 +108,13 @@ export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
     return [
       fieldPosZ(obj),
       `^BX${params.join(',')}`,
-      fdFieldFor(p.content, ctx, p.gs1 ? dmGs1Fd : undefined, undefined, CONTROL_CHARS && !p.gs1),
+      fdFieldFor(
+        p.content,
+        ctx,
+        p.gs1 ? dmGs1Transform(p.content) : undefined,
+        undefined,
+        CONTROL_CHARS && !p.gs1,
+      ),
     ].join('');
   },
 };

@@ -40,8 +40,8 @@ import {
   modelPositionFromRenderedTopLeft,
   renderedTopLeftFromModel,
 } from "../transformPosition";
-import { isBarcode, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
-import { projectMultiResize } from "../../../lib/multiResize";
+import { isBarcode, isRightAnchoredField, rotatedFootprint, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
+import { projectedAnchorXDots, projectMultiResize } from "../../../lib/multiResize";
 import { lineHandlesNodeId, lineRootNodeId } from "../konvaObjectProps";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
 import { getMeasuredSnapshot } from "../measuredBoundsCache";
@@ -313,6 +313,7 @@ export function useKonvaTransformer({
       anchorPxY: number;
       scales: boolean;
       uniform: boolean;
+      frozenX: boolean;
       hide?: Konva.Node;
     }[];
     ids: string[];
@@ -564,15 +565,20 @@ export function useKonvaTransformer({
         // Grips would deform under the group scale; hide for the gesture.
         const hide = leaf.type === "line" ? stage.findOne<Konva.Node>(`#${lineHandlesNodeId(id)}`) : null;
         hide?.visible(false);
+        const projX = projectedAnchorXDots(leaf, getMeasuredSnapshot().get(id)?.width);
         return [
           {
             node,
             startX: node.x(),
             startY: node.y(),
-            // Commit and live both project the MODEL anchor; render-offset
-            // nodes (^FT bar base, ^BQ shift) would jump by off*(f-1) else.
-            anchorPxX: objectsOffsetX + dotsToPx(leaf.x, scale, dpmm),
+            // The quantity the commit projects (projectedAnchorXDots), not the
+            // model anchor: a right-anchored field projects its ink edge, so
+            // projecting x here jumped it by shift*(1-f) on release. Render
+            // offsets (^FT bar base, ^BQ shift) ride along unscaled below.
+            anchorPxX: objectsOffsetX + dotsToPx(projX ?? leaf.x, scale, dpmm),
             anchorPxY: labelOffsetY + dotsToPx(leaf.y, scale, dpmm),
+            // Unmeasured right-anchored leaf: the commit holds x, so must live.
+            frozenX: projX === null,
             scales: SHAPE_PRIMITIVE_TYPES.has(leaf.type),
             // lockAspect commits min(fx, fy); live must match or it snaps back.
             uniform:
@@ -845,7 +851,7 @@ export function useKonvaTransformer({
         } else {
           // Anchor projects, the render offset rides along unscaled.
           n.node.position({
-            x: px + (n.anchorPxX - mr.start.x) * fx + (n.startX - n.anchorPxX),
+            x: n.frozenX ? n.startX : px + (n.anchorPxX - mr.start.x) * fx + (n.startX - n.anchorPxX),
             y: py + (n.anchorPxY - mr.start.y) * fy + (n.startY - n.anchorPxY),
           });
         }
@@ -1354,7 +1360,16 @@ export function useKonvaTransformer({
           y: mr.bboxDots.y + pxToDots(endY - mr.start.y, scale, dpmm),
         };
         // Drop no-op entries so a sub-dot jiggle records no undo step.
-        const changes = projectMultiResize(leafs, mr.bboxDots, origin, fx, fy, snap).filter(
+        const measured = getMeasuredSnapshot();
+        const changes = projectMultiResize(
+          leafs,
+          mr.bboxDots,
+          origin,
+          fx,
+          fy,
+          snap,
+          (id) => measured.get(id)?.width,
+        ).filter(
           (c) => {
             const l = leafById.get(c.id);
             if (!l) return false;
@@ -1435,6 +1450,18 @@ export function useKonvaTransformer({
       );
       committedW = dims.w;
       committedH = dims.h;
+    } else if (!(obj.positionType === "FT" && isBarcode(obj)) && isRightAnchoredField(obj)) {
+      // Right-anchored fields: the inverse adds back the committed width, since the Group node's width()/height() are always 0.
+      const m = getMeasuredSnapshot().get(singleId);
+      if (m && m.width > 0) {
+        const up = rotatedFootprint(m.width * sx, m.height * sy, objectRotation(obj.props));
+        committedW = up.width;
+        committedH = up.height;
+      } else if (obj.type === "symbol") {
+        const sp = obj.props as { width: number; height: number };
+        committedW = sp.width * sx;
+        committedH = sp.height * sy;
+      }
     }
     // Invert per-type render offsets (QR's +10 Y, the rotation-aware FT bar
     // anchor) so the stored model matches the render path. Text renders at

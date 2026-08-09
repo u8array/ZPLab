@@ -203,7 +203,8 @@ describe("mcp-server tools", () => {
     expect(box).toMatchObject({ x: 10, y: 20, width: 200, height: 100, approx: false });
     const bc = created.bounds.find((b) => b.objectId === "c");
     expect(bc?.approx).toBe(false);
-    expect(bc!.height).toBe(80);
+    // 80 bars + the 21-dot HRI line at module width 2 (Labelary-measured).
+    expect(bc!.height).toBe(101);
   });
 
   it("reports probed barcode footprints with the full bar-rect entry", () => {
@@ -274,9 +275,8 @@ describe("mcp-server tools", () => {
       .toMatchObject({ width: 8, height: 4, approx: false });
   });
 
-  it("keeps a preserved foreign header with an empty count slot exportable", () => {
-    // The parser preserves such headers verbatim and always sets heightDots;
-    // the empty count must not read as unusable (silent drop again).
+  it("reports a preserved foreign header with an empty count slot", () => {
+    // Labelary: a ^GF missing c eats the rest of the stream (^XZ included), so the field must drop loudly.
     const gfa = "^GFA,4,,1,00FF00FF";
     const design = {
       schemaVersion: 5,
@@ -286,8 +286,11 @@ describe("mcp-server tools", () => {
         props: { imageId: "gone", widthDots: 8, heightDots: 4, threshold: 128, rotation: "N", _gfaCache: gfa },
       }] }],
     };
-    expect(ok(exportZpl(design)).zpl).toContain(gfa);
-    expect(ok(validateDraft(design)).bounds.find((b) => b.objectId === "img"))
+    expect(ok(exportZpl(design)).zpl).not.toContain(gfa);
+    const report = ok(validateDraft(design));
+    expect(report.warnings.some((w) => w.kind === "imageMissing")).toBe(true);
+    // Bounds still describe the field, from props, so placement stays editable.
+    expect(report.bounds.find((b) => b.objectId === "img"))
       .toMatchObject({ width: 8, height: 4 });
     // Fractional or zero rows stay unusable (malformed header).
     const bad = { ...design, pages: [{ objects: [{ ...design.pages[0]!.objects[0]!,
@@ -305,23 +308,6 @@ describe("mcp-server tools", () => {
         props: { content: "12345", magnification: 10 } }],
     }));
     expect(nearEdge.warnings.some((w) => w.objectId === "q" && w.kind.startsWith("offLabel"))).toBe(true);
-  });
-
-  it("clears a stale ^GFA cache when width or threshold change without fresh bytes", () => {
-    // A prop change on a machine without the source image must invalidate
-    // the cache, not print stale bytes at a new anchor width.
-    const entry = ObjectRegistry.image;
-    const obj = {
-      id: "i", type: "image", x: 0, y: 0, rotation: 0,
-      props: { imageId: "gone", widthDots: 64, threshold: 128, rotation: "N", _gfaCache: "^GFA,8,8,1,00FF00FF00FF00FF" },
-    } as never;
-    const widthOnly = entry.normalizeChanges!(obj, { props: { widthDots: 80 } });
-    expect((widthOnly.props as { _gfaCache?: string })._gfaCache).toBeUndefined();
-    expect("_gfaCache" in (widthOnly.props as object)).toBe(true);
-    const withFresh = entry.normalizeChanges!(obj, { props: { widthDots: 80, _gfaCache: "^GFA,1,1,1,00" } });
-    expect((withFresh.props as { _gfaCache?: string })._gfaCache).toBe("^GFA,1,1,1,00");
-    const unrelated = entry.normalizeChanges!(obj, { props: { rotation: "R" } });
-    expect("_gfaCache" in (unrelated.props as object)).toBe(false);
   });
 
   it("validate_zpl reports the intersection rect of two overlapping boxes", () => {

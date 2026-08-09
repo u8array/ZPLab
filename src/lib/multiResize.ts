@@ -1,6 +1,11 @@
 import type { LeafObject } from "@zplab/core/registry";
 import { getEntry, SHAPE_PRIMITIVE_TYPES } from "@zplab/core/registry";
-import type { BoundingBoxDots } from "@zplab/core/lib/objectBounds";
+import {
+  isRightAnchoredField,
+  rightAnchorBoxWidthDots,
+  rightAnchorShiftDots,
+  type BoundingBoxDots,
+} from "@zplab/core/lib/objectBounds";
 import { makeFree } from "./lineConstrain";
 
 export interface MultiResizeChange {
@@ -8,6 +13,18 @@ export interface MultiResizeChange {
   x: number;
   y: number;
   props?: Record<string, number>;
+}
+
+/** The x a resize projects for this leaf: the ink edge for a right-anchored
+ *  field (the union bbox is ink space while `leaf.x` is the model anchor), else
+ *  its model x. Null when a right-anchored width is unmeasured and the leaf has
+ *  to hold still: projecting its model x would move it in the wrong space and
+ *  persist that. The live preview reads it too, or the two project in different
+ *  spaces and the object jumps by one shift on release. */
+export function projectedAnchorXDots(leaf: LeafObject, measuredWidth?: number): number | null {
+  const boxWidth = rightAnchorBoxWidthDots(leaf, measuredWidth);
+  if (boxWidth === null) return isRightAnchoredField(leaf) ? null : leaf.x;
+  return leaf.x - rightAnchorShiftDots(leaf, boxWidth);
 }
 
 /** Linear reprojection to a resized union: x' = origin.x + (x - bbox.x) * fx.
@@ -21,12 +38,25 @@ export function projectMultiResize(
   fx: number,
   fy: number,
   snap: (v: number) => number,
+  /** Rendered box width (dots) by id, for the right-anchor carry-back below;
+   *  the canvas's measured snapshot, the source the single-resize inverse uses.
+   *  Omitted, only props-derivable widths (symbol, blank text) carry back. */
+  measuredWidthDots?: (id: string) => number | undefined,
 ): MultiResizeChange[] {
   const projectX = (x: number) => origin.x + (x - bbox.x) * fx;
   const projectY = (y: number) => origin.y + (y - bbox.y) * fy;
   const changes: MultiResizeChange[] = [];
   for (const leaf of leafs) {
-    const x = Math.round(projectX(leaf.x));
+    const projX = projectedAnchorXDots(leaf, measuredWidthDots?.(leaf.id));
+    if (projX === null) {
+      changes.push({ id: leaf.id, x: leaf.x, y: Math.round(projectY(leaf.y)) });
+      continue;
+    }
+    const shift = leaf.x - projX;
+    // Rounded once, around the whole expression: re-adding a fractional
+    // measured width after rounding left a non-integer x, and a vertical-only
+    // drag then recorded an undo step for a sub-dot horizontal nudge.
+    const x = Math.round(projectX(projX) + shift);
     const y = Math.round(projectY(leaf.y));
     if (!SHAPE_PRIMITIVE_TYPES.has(leaf.type)) {
       changes.push({ id: leaf.id, x, y });

@@ -9,7 +9,7 @@ import { isLoneMarker } from "./variableField";
 import { markerOf } from "../types/Variable";
 import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
-import { tokenize } from "./zplParser/helpers";
+import { stripLineWrap, stripTrailingSpaces, tokenize } from "./zplParser/helpers";
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
 import { createParserState, deriveUnitScale, resetFormatScopedState, type FnDefaultCandidate } from "./zplParser/context";
 import { createFlushField } from "./zplParser/flushField";
@@ -243,6 +243,8 @@ export function parseZPL(
   // split happens at dispatch via the token's source char. ~JM is not a real
   // command (only caret ^JM sets density), so it routes here as a noop too.
   const tildeDeviceCodes = new Set(["PH", "PP", "JM"]);
+  // Commands whose last param is literal data, where a trailing space is real (^SN, ^SF, ^A@), not line-wrap noise.
+  const LITERAL_TAIL_CMDS = new Set(["SN", "SF", "A@"]);
   Object.assign(handlers, setupScriptHandlers);
   Object.assign(handlers, createLabelConfigHandlers(s, dpmm));
   Object.assign(handlers, createUnitsHandler(s, dpmm));
@@ -432,7 +434,12 @@ export function parseZPL(
   };
 
   for (const { cmd, rest, start } of tokens) {
-    const p = rest.split(s.format.delimiterChar);
+    // Strips trailing break plus indent from the last literal param; LITERAL_TAIL_CMDS keep real trailing spaces.
+    const p = stripLineWrap(rest).split(s.format.delimiterChar);
+    const last = p[p.length - 1];
+    if (!LITERAL_TAIL_CMDS.has(cmd) && last !== undefined && /\S/.test(last)) {
+      p[p.length - 1] = stripTrailingSpaces(last);
+    }
     // Flag printer-config commands: lossless replay re-emits them, so they run
     // on the user's printer at print/export. Recorded by code (deduped later).
     // ~PH/~PP: flagged as device actions AND skipped entirely, or they would

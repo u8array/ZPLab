@@ -26,7 +26,7 @@ import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from '
 import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
-import { inlineGfaFor, imageEmitDims, type ImageProps } from '../registry/image';
+import { imageEmitDims, imageEmitRotation, parseGfHeader, shippableGfa, type ImageProps } from '../registry/image';
 import { formatStoragePath } from './storagePath';
 
 function formatDownloadObject(m: CustomFontMapping): string | undefined {
@@ -173,16 +173,12 @@ function formatSetOffset(
 /** ~DY for a graphic upload. Format letter is preserved so :Z64: stays paired with C. */
 function formatGraphicUpload(p: ImageProps): string | undefined {
   if (!p.storedAs) return undefined;
-  const cache = p._gfaCache ?? inlineGfaFor(p);
-  if (!cache) return undefined;
-  // Byte-count headers are optional in ^GF, hence \d* not \d+.
-  const m = /^\^GF([ABC]),(\d*),(\d*),(\d+),([\s\S]*)$/.exec(cache);
-  if (!m) return undefined;
-  const format = m[1];
-  const total = m[2];
-  const bpr = m[4];
-  const data = m[5];
-  return `~DY${formatStoragePath(p.storedAs, false)},${format},G,${total},${bpr},${data}`;
+  // Same resolver toZPL uses, so an unshippable cache falls back to a fresh
+  // encode here too instead of dropping the upload the ^XG depends on.
+  const cache = shippableGfa(p, imageEmitRotation(p));
+  const h = cache ? parseGfHeader(cache) : null;
+  if (!h) return undefined;
+  return `~DY${formatStoragePath(p.storedAs, false)},${h.format},G,${h.totalBytes},${h.bytesPerRow},${h.payload}`;
 }
 
 /** Head-less replay block, once a density decision is due: self-declares
@@ -713,9 +709,13 @@ function generateZplBlock(
     if (p.storedAs.embedInZpl === false) continue;
     const key = formatStoragePath(p.storedAs, false);
     if (seenGraphics.has(key)) continue;
-    seenGraphics.add(key);
     const dy = formatGraphicUpload(p);
-    if (dy) lines.push(dy);
+    if (!dy) continue;
+    // Claimed only once an upload actually exists: reserving the path first
+    // meant one object whose bytes cannot be written silenced every later
+    // object sharing it, so each emitted its ^XG against a file nobody sent.
+    seenGraphics.add(key);
+    lines.push(dy);
   }
 
   // ~SD is immediate (not EEPROM), emit before ^XA so it applies to this label.

@@ -7,6 +7,8 @@ import { BarcodeObject } from "./BarcodeObject";
 import { LineObject } from "./LineObject";
 import { ImageObject } from "./ImageObject";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
+import { rotatedFootprint } from "@zplab/core/lib/objectBounds";
+import { rightAnchorShift } from "./transformPosition";
 import { measureInkWidthPx } from "@zplab/core/lib/labelGeometry/measureTextDots";
 import { outlineInset } from "../../lib/shapeGeometry";
 import { reverseShapeStyle } from "./reverseShapeStyle";
@@ -539,7 +541,6 @@ function KonvaObjectInner({
         }
       : null;
 
-  const x = offsetX + dotsToPx(obj.x, scale, dpmm);
   const y = offsetY + dotsToPx(obj.y, scale, dpmm);
 
   // Only single-line text needs a measured footprint; block (^FB/^TB) text
@@ -554,6 +555,16 @@ function KonvaObjectInner({
   const blankSingleLine = isSingleLineText && isBlankText(textMetrics?.content ?? "");
   const rotation = obj.type === "text" ? obj.props.rotation : "N";
   const isQuarterTurn = isAxisSwapped(rotation);
+  // A right-justified field's x is the ZPL right edge (see rightAnchorShiftDots),
+  // so the ink starts one rendered box width to the left of it; core resolves
+  // the unmeasured cases (symbol props, blank placeholder).
+  const measuredBoxW =
+    obj.type === "text" && !blankSingleLine
+      ? rotatedFootprint(inkWidthDots, fontHeightDots, rotation).width
+      : undefined;
+  const x =
+    offsetX +
+    dotsToPx(obj.x - rightAnchorShift(obj, measuredBoxW), scale, dpmm);
   useEffect(() => {
     if (!isSingleLineText) return;
     // Blank (empty or whitespace) or zero-height: drop the measured entry so

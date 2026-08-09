@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { CALIBRATION_CLAMP, LAYOUT_LABEL_FIELDS, rescaleDesign, rescaleParamsFor, rescaleWouldChange } from "./densityRescale";
 import { useLabelStore } from "../store/labelStore";
+import { putImage, removeImage } from "@zplab/core/lib/imageCache";
 import type { LabelObject, Page } from "@zplab/core/types/Group";
 import type { LeafObject } from "@zplab/core/registry";
 import type { LabelConfig } from "@zplab/core/types/LabelConfig";
@@ -91,11 +92,21 @@ describe("rescaleDesign", () => {
   });
 
   it("drops the stale GFA cache when an editable image is rescaled", () => {
+    putImage({ id: "a", name: "a.png", dataUrl: "data:image/png;base64,AA", width: 8, height: 8 });
     const img = leaf("i", "image", 0, 0, { imageId: "a", widthDots: 100, threshold: 128, _gfaCache: "^GFA,old" } as never);
     const r = rescaleDesign(page(img), label, 8, 16, { dpmm: 16 }); // factor 2
     const out = r.pages[0]!.objects[0] as typeof img;
     expect((out.props as { widthDots: number }).widthDots).toBe(200);
     expect((out.props as { _gfaCache?: string })._gfaCache).toBeUndefined();
+    removeImage("a");
+  });
+
+  it("locks a cache that has no source image, instead of deleting the only copy", () => {
+    const img = leaf("i", "image", 0, 0, { imageId: "", widthDots: 100, threshold: 128, _gfaCache: "^GFA,8,8,1,00" } as never);
+    const r = rescaleDesign(page(img), label, 8, 16, { dpmm: 16 });
+    const out = r.pages[0]!.objects[0] as typeof img;
+    expect((out.props as { _gfaCache?: string })._gfaCache).toBe("^GFA,8,8,1,00");
+    expect(r.warnings.some((w) => w.reason === "imageFixed")).toBe(true);
   });
 
   it("locks the footprint of a verbatim (rawGf) graphic and warns it cannot rescale", () => {

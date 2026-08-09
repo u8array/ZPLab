@@ -1,10 +1,17 @@
 import {
+  completeTypedGtins,
   GS1_GS,
   parseGs1ToSegments,
   segmentsToElementString,
   segmentsToZplFd,
+  segmentsToContent,
 } from "./gs1";
-import { gs1ContentToDataMatrixFd } from "./dataMatrixFd";
+import {
+  gs1ContentToDataMatrixFd,
+  typedGs1DataRuns,
+  typedGs1ToDataMatrixFd,
+} from "./dataMatrixFd";
+import { hasTemplateMarkers } from "./fnTemplate";
 
 /** GS1 carriers with distinct ^FD grammars: ^BC mode D (parenthesized + >8),
  *  ^BX quality 200 (`_1` escapes), ^BR (raw content; separator grammar is
@@ -50,6 +57,28 @@ export function planGs1Fd(content: string, carrier: Gs1Carrier): Gs1FdPlan {
       losses: [],
     };
   }
+  // The catalog must not segment around a marker (it would read the marker's
+  // own characters as the field); post-substitution emitters pass the resolved
+  // form themselves.
+  if (hasTemplateMarkers(content)) {
+    // Feeds preview only; emit resolves markers separately and never routes template content through .fd.
+    const typed = carrier === "code128" ? completeTypedGtins(content) : null;
+    // The canvas encodes the same runs the ^FD does, or it would size the
+    // symbol from the parens and single FNC1 that never reach the wire.
+    const dmRuns = carrier === "datamatrix" ? typedGs1DataRuns(content) : null;
+    return {
+      // ^BX takes the structural form (parens out, FNC1 by AI).
+      fd:
+        carrier === "datamatrix"
+          ? (typedGs1ToDataMatrixFd(content) ?? gs1ContentToDataMatrixFd(content))
+          : (typed ?? content),
+      bwipText: typed ?? content,
+      bwipParsefncText: dmRuns
+        ? parsefncRuns(dmRuns.join(GS1_GS), "^FNC1")
+        : parsefncRuns(typed ?? content, carrier === "datamatrix" ? "^FNC1" : ""),
+      losses: [],
+    };
+  }
   const segs = parseGs1ToSegments(content);
   if (!segs || segs.length === 0) {
     const fd = carrier === "datamatrix" ? gs1ContentToDataMatrixFd(content) : content;
@@ -66,7 +95,10 @@ export function planGs1Fd(content: string, carrier: Gs1Carrier): Gs1FdPlan {
     case "code128":
       return parsed(segmentsToZplFd(segs));
     case "datamatrix":
-      return parsed(gs1ContentToDataMatrixFd(content));
+      // From the segments: ^BX encodes verbatim, so a typed "(01)" would ship
+      // its parens (only ^BC mode D strips them, spec p.95). Unstructured
+      // remainders stay inside their segment's value.
+      return parsed(gs1ContentToDataMatrixFd(segmentsToContent(segs)));
     case "databar":
       return parsed(content);
   }

@@ -1,9 +1,15 @@
 import { getEntry, gs1StaticUnparsed, isGs1Active, usesPlainCode128Escape, type LeafObject } from "../registry";
-import { objectBoundsDots, offLabelPlacement, type ObjectBoundsCtx } from "./objectBounds";
+import {
+  inkRunsLeftOfAnchor,
+  objectBoundsDots,
+  offLabelPlacement,
+  type ObjectBoundsCtx,
+} from "./objectBounds";
 import { emittedAnchorDots } from "./emittedAnchor";
 import { suspiciousCharDetail } from "./suspiciousChars";
-import { GS1_GS, parseGs1ToSegments, validateGs1Segment, validateGs1SegmentResolved } from "./gs1";
-import { DATAMATRIX_FD_ESCAPE } from "./dataMatrixFd";
+import { GS1_GS, parseGs1ToSegments, typedGs1Parts, typedGs1Shape, validateGs1Segment, validateGs1SegmentResolved } from "./gs1";
+import { DATAMATRIX_FD_ESCAPE, typedGs1ToDataMatrixFd } from "./dataMatrixFd";
+import { gs1CarrierFor, planGs1Fd } from "./gs1Plan";
 import { extractTemplateRefs, hasTemplateMarkers, pickEmbedChar } from "./fnTemplate";
 import { hasClockMarkers, pickClockChars } from "./fcTemplate";
 import { planCode128Fd, planHasLoss } from "./code128Plan";
@@ -346,7 +352,12 @@ export function computePreflight(
     // below owns the blank-field signal.
     const blankText = leaf.type === "text" && content !== undefined && isBlankText(content);
     if (!blankText) {
-      const placement = offLabelPlacement(emittedAnchorDots(leaf, ctx, box), box, ctx.label);
+      const placement = offLabelPlacement(
+        emittedAnchorDots(leaf, ctx, box),
+        box,
+        ctx.label,
+        inkRunsLeftOfAnchor(leaf),
+      );
       const kind =
         placement === "outside" ? "offLabelOutside" : placement === "clipped" ? "offLabelClipped" : null;
       if (kind) findings.push({ objectId: leaf.id, kind, severity: PREFLIGHT_SEVERITY[kind] });
@@ -420,4 +431,91 @@ export function computePreflight(
     }
   }
   return findings;
+}
+
+/** Data characters only: the AI catalog's canonical form differs from the
+ *  caller's in punctuation, never in payload. */
+const gs1DataChars = (s: string): string =>
+  s.replaceAll("(", "").replaceAll(")", "").replaceAll(GS1_GS, "");
+
+/** The catalog silently normalizes what it can parse: a 13-digit GTIN grows a
+ *  computed check digit, stray characters vanish. Rewriting caller data without
+ *  a word is worse than refusing it, so the difference is reported. */
+export function gs1NormalizationFindings(leaves: readonly LeafObject[]): PreflightFinding[] {
+  const out: PreflightFinding[] = [];
+  for (const leaf of leaves) {
+    const carrier = gs1CarrierFor(leaf.type);
+    if (!carrier || (leaf.props as { gs1?: boolean }).gs1 === false) continue;
+    if (leaf.type !== "gs1databar" && !(leaf.props as { gs1?: boolean }).gs1) continue;
+    const content = getObjectStringContent(leaf) ?? "";
+    if (content === "") continue;
+    // ^BR ships the content verbatim on every path (no fd transform), so
+    // neither a rewrite nor a derivability demand ever applies to it; a
+    // canvas-vs-wire GTIN divergence is mirror-drift work.
+    if (carrier === "databar") continue;
+    if (hasTemplateMarkers(content)) {
+      // A whole-field binding is canonical: the row supplies the entire element
+      // string, so there is no structure to derive.
+      if (!isLoneMarker(content)) {
+        const shape = typedGs1Shape(content);
+        // ^BX has to remove the parentheses itself and place every FNC1, so it
+        // needs the catalog; ^BC mode D strips them in firmware and needs it
+        // only to separate one AI from the next.
+        const derivable =
+          carrier === "datamatrix"
+            ? typedGs1ToDataMatrixFd(content) !== null
+            : shape !== null && (shape.length === 1 || typedGs1Parts(content) !== null);
+        if (!derivable) {
+          out.push({
+            objectId: leaf.id,
+            kind: "gs1ValueInvalid",
+            severity: PREFLIGHT_SEVERITY.gs1ValueInvalid,
+            detail:
+              shape === null
+                ? "GS1 content with a variable must be written as (AI)value"
+                : "an AI here is not in the catalog, so the separator after it cannot be placed",
+          });
+        }
+      }
+      continue;
+    }
+    const canonical = planGs1Fd(content, carrier).bwipText;
+    if (gs1DataChars(canonical) === gs1DataChars(content)) continue;
+    out.push({
+      objectId: leaf.id,
+      kind: "gs1ValueInvalid",
+      severity: PREFLIGHT_SEVERITY.gs1ValueInvalid,
+      detail: `the payload was rewritten to ${canonical}`,
+    });
+  }
+  return out;
+}
+
+/** Printers that resolve ^FE, per the ZPL guide (p. 192). A field mixing text
+ *  with markers has no other wire form, so the caller has to know before it
+ *  treats the export as print-ready. */
+const FE_PRINTERS = "ZD421C/D, ZD621D/T, ZT411/421, ZT510, ZT610/620";
+
+/** Fields that mix literal text with variable slots emit ^FE, which most
+ *  firmware ignores; a whole-field binding emits plain ^FN and is unaffected. */
+export function templateFieldFindings(
+  leaves: readonly LeafObject[],
+  variables: readonly Variable[],
+): PreflightFinding[] {
+  const out: PreflightFinding[] = [];
+  for (const leaf of leaves) {
+    const content = getObjectStringContent(leaf);
+    if (content === undefined) continue;
+    const field = classifyField(content, variables);
+    // refs empty means no marker names a variable (clock token, control chip,
+    // orphan): markersToEmbeds arms no ^FE for any of those.
+    if (field.kind !== "template" || field.refs.length === 0) continue;
+    out.push({
+      objectId: leaf.id,
+      kind: "printerSupportLimited",
+      severity: PREFLIGHT_SEVERITY.printerSupportLimited,
+      detail: `mixed text and variables emit ^FE (${FE_PRINTERS} only)`,
+    });
+  }
+  return out;
 }

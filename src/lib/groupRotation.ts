@@ -5,7 +5,7 @@
 
 import type { LabelObject, LeafObject } from "@zplab/core/types/Group";
 import { isGroup } from "@zplab/core/types/Group";
-import { objectBoundsDots, selectionUnionDots, type BoundingBoxDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
+import { rightAnchorShiftDots, objectBoundsDots, selectionUnionDots, type BoundingBoxDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import { ZPL_ROTATIONS, isZplRotation, type ZplRotation } from "@zplab/core/registry/rotation";
 import { barSubRect } from "@zplab/core/lib/bwipConstants";
 import { barcodeTextZoneDots, barcodeZoneAbove } from "@zplab/core/lib/barcodeHri";
@@ -101,7 +101,9 @@ function leafChanges(
   if (leaf.type === "symbol" || leaf.type === "image") {
     const b = objectBoundsDots(leaf, ctx);
     const centre = rotateAbout({ x: b.x + b.width / 2, y: b.y + b.height / 2 }, pivot, steps);
-    const x = Math.round(centre.x - b.width / 2);
+    // The box of a right-justified field sits one width left of its model x, so
+    // the new left edge has to be carried back to the anchor before storing it.
+    const x = Math.round(centre.x - b.width / 2) + rightAnchorShiftDots(leaf, b.width);
     const y = Math.round(centre.y - b.height / 2);
     if (leaf.type === "symbol") {
       const r = advanceRotation((leaf.props as { rotation: string }).rotation, steps);

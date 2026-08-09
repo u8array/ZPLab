@@ -13,9 +13,9 @@
 import type { LabelObject } from "../types/Group";
 import { getAllLeaves, isGroup } from "../types/Group";
 import type { LeafObject } from "../registry";
-import { gfaHeaderDims, type ImageProps } from "../registry/image";
-import { getImage } from "./imageCache";
+import { gfaHeaderDims, headerByteSource, type ImageProps } from "../registry/image";
 import { BARCODE_1D_TYPES, STACKED_2D_TYPES, getEntry } from "../registry";
+import { GRAPHIC_ANCHOR_TYPES } from "../registry/zplHelpers";
 import type { PageLabel } from "../types/LabelConfig";
 import { effectiveDpmm } from "../types/LabelConfig";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "../registry/rotation";
@@ -55,7 +55,7 @@ export interface ObjectBoundsCtx {
 
 /** Swap width/height for the quarter-turn rotations. Mirrors how every
  *  rotation-aware renderer derives its rotated footprint from the upright one. */
-function rotatedFootprint(
+export function rotatedFootprint(
   width: number,
   height: number,
   rotation: ZplRotation,
@@ -178,11 +178,9 @@ export function isBarcode(obj: { type: string }): boolean {
   return BARCODE_TYPES.has(obj.type);
 }
 
-/** Store-less ^GFA header dims (the byte truth objectBoundsDots sizes by);
- *  null whenever the image resolves through any other source. */
+/** Store-less ^GFA header dims, the byte truth objectBoundsDots sizes by (recall fields included). */
 function imageHeaderBounds(p: ImageProps): { width: number; height: number | null } | null {
-  if (p.storedAs || p.rawGf || getImage(p.imageId) || objectRotation(p) !== "N") return null;
-  return gfaHeaderDims(p._gfaCache);
+  return gfaHeaderDims(headerByteSource(p));
 }
 
 /** True when objectBoundsDots estimates this leaf headlessly: barcode registry
@@ -206,6 +204,60 @@ export function boundsAreApprox(
 /** Axis-aligned model-space bbox (dots) for one object. Always the VISUAL
  *  top-left regardless of FO/FT, so align/distribute can use min/max edges. */
 export function objectBoundsDots(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots {
+  const box = objectBoxDots(obj, ctx);
+  const shift = rightAnchorShiftDots(obj, box.width);
+  return shift === 0 ? box : { ...box, x: box.x - shift };
+}
+
+/** Rotated box width for a right-anchored field; null (unmeasurable) is distinct from a real zero shift. */
+export function rightAnchorBoxWidthDots(
+  obj: LeafObject,
+  measuredBoxWidthDots?: number,
+): number | null {
+  if (measuredBoxWidthDots !== undefined && measuredBoxWidthDots > 0) return measuredBoxWidthDots;
+  if (obj.type === "symbol") return (obj.props as { width: number }).width;
+  if (obj.type === "text") {
+    const p = obj.props as { content: string; fontHeight: number; rotation: ZplRotation };
+    if (isBlankText(p.content)) {
+      return rotatedFootprint(p.fontHeight * EMPTY_TEXT_PLACEHOLDER_GLYPHS, p.fontHeight, p.rotation).width;
+    }
+  }
+  return null;
+}
+
+/** Whether the printed box sits left of obj.x; 1D barcodes/graphics convert on emit, text/2D symbols do not. */
+export function isRightAnchoredField(obj: LabelObject): boolean {
+  if (isGroup(obj) || obj.fieldJustify !== "R") return false;
+  if (BARCODE_1D_TYPES.has(obj.type) || GRAPHIC_ANCHOR_TYPES.has(obj.type)) return false;
+  // A block carries its own width and the firmware justifies inside it; that is
+  // a different question from the field anchor. Same mode decision the bounds
+  // use, so a serial field with dormant block props still counts as single line.
+  if (obj.type === "text") {
+    const p = obj.props;
+    if (resolveTextMode(p) !== "normal" && (p.blockWidth ?? 0) > 0) return false;
+  }
+  return true;
+}
+
+/** How far left of `obj.x` the ink starts (see isRightAnchoredField).
+ *  ZD230-measured (^IS preview, all four rotations): the firmware shifts along
+ *  x by the ROTATED box width, never along the field direction. */
+export function rightAnchorShiftDots(obj: LabelObject, widthDots: number): number {
+  return isRightAnchoredField(obj) ? widthDots : 0;
+}
+
+/** True when ink runs left of the emitted anchor (right-justified text/symbol/2D, or right-justified ^FT graphic). */
+export function inkRunsLeftOfAnchor(obj: LabelObject): boolean {
+  if (isRightAnchoredField(obj)) return true;
+  return (
+    !isGroup(obj) &&
+    GRAPHIC_ANCHOR_TYPES.has(obj.type) &&
+    obj.positionType === "FT" &&
+    obj.fieldJustify === "R"
+  );
+}
+
+function objectBoxDots(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots {
   if (isGroup(obj)) return groupBounds(obj, ctx);
 
   switch (obj.type) {
@@ -390,12 +442,23 @@ export function offLabelPlacement(
   anchor: { x: number; y: number },
   box: BoundingBoxDots,
   label: PageLabel,
+  /** Ink runs LEFT of the anchor then, so the anchor tests say nothing about
+   *  it and a field hanging off the home edge would report clean. */
+  rightAnchored = false,
 ): OffLabel | null {
   const r = printableRectDots(label);
   if (anchor.x < r.x - EDGE_EPS || anchor.y < r.y - EDGE_EPS) return "outside";
+  // The home edge is a far edge for a right-anchored field (its ink runs left),
+  // tested alongside right/bottom so a field off the bottom is not downgraded.
+  const overLeft = rightAnchored && box.x < r.x - EDGE_EPS;
   const overRight = box.x + box.width > r.x + r.width + EDGE_EPS;
   const overBottom = box.y + box.height > r.y + r.height + EDGE_EPS;
-  if (!overRight && !overBottom) return null;
-  const onLabel = box.x < r.x + r.width - EDGE_EPS && box.y < r.y + r.height - EDGE_EPS;
+  if (!overLeft && !overRight && !overBottom) return null;
+  // Real overlap in both axes = part still prints (clipped); no overlap = gone.
+  const onLabel =
+    box.x + box.width > r.x + EDGE_EPS &&
+    box.x < r.x + r.width - EDGE_EPS &&
+    box.y + box.height > r.y + EDGE_EPS &&
+    box.y < r.y + r.height - EDGE_EPS;
   return onLabel ? "clipped" : "outside";
 }

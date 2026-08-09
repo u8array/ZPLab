@@ -371,3 +371,19 @@ export function decodeFH(
     return decoder.decode(bytes);
   });
 }
+
+/** Scanned, not regex-matched: the old pattern backtracked cubically on long break runs. */
+export function stripLineWrap(rest: string): string {
+  const kept = rest.trimEnd().length;
+  const nl = rest.slice(kept).search(/[\r\n]/);
+  return nl === -1 ? rest : rest.slice(0, kept + nl);
+}
+
+/** Trailing horizontal whitespace of the last parameter, same reasoning. */
+export function stripTrailingSpaces(value: string): string {
+  let end = value.length;
+  while (end > 0 && WS_NOT_BREAK_RE.test(value[end - 1] ?? "")) end--;
+  return end === value.length ? value : value.slice(0, end);
+}
+
+const WS_NOT_BREAK_RE = /[^\S\r\n]/;

@@ -3,8 +3,10 @@ import { Group, Image as KImage, Path, Rect } from "react-konva";
 import type { LabelObject } from "@zplab/core/types/Group";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
 import { getImage } from "@zplab/core/lib/imageCache";
+import { rasterFromGfa } from "@zplab/core/lib/gfaDecode";
+import { headerByteSource, imageEmitRotation, isImageRotatable } from "@zplab/core/registry/image";
 import { loadImage } from "@zplab/core/lib/loadImage";
-import { monoPreviewCanvas } from "@zplab/core/lib/imageToZpl";
+import { monoPreviewCanvas, rasterPreviewCanvas } from "@zplab/core/lib/imageToZpl";
 import { useColorScheme } from "../../hooks/useColorScheme";
 import { selectionHandlers, type KonvaObjectProps } from "./konvaObjectProps";
 import { setMeasuredBounds, clearMeasuredBounds } from "./measuredBoundsCache";
@@ -14,10 +16,31 @@ import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
 type ImageLabelObject = Extract<LabelObject, { type: "image" }>;
 type Props = Omit<KonvaObjectProps, "obj"> & { obj: ImageLabelObject };
 
-/** Image renderer. Hosted as its own component so hooks (useState/
- *  useEffect for async image loading) can run without violating
- *  rules-of-hooks. The dispatcher in KonvaObject narrows `obj`
- *  before passing; no runtime cast needed here. */
+/** Keyed on the props object (like footprintProber's caches): entries die with
+ *  their design instead of pinning megabyte payload strings for the process
+ *  lifetime, and the canvas on screen can never be evicted from under Konva. */
+const gfaPreviewCache = new WeakMap<object, HTMLCanvasElement | null>();
+
+/** Decode-and-draw for an image the store cannot supply. Memoised per props
+ *  identity (an edit swaps the props object): a re-render must not re-decode,
+ *  and Konva needs a stable image identity. */
+function gfaPreviewCanvas(
+  props: object,
+  gfa: string | undefined,
+  rotation: string,
+): HTMLCanvasElement | null {
+  if (!gfa || rotation !== "N") return null;
+  const hit = gfaPreviewCache.get(props);
+  if (hit !== undefined) return hit;
+  // No visible width: the header is what these bytes print at (headerByteSource).
+  const raster = rasterFromGfa(gfa);
+  const canvas = raster ? rasterPreviewCanvas(raster) : null;
+  gfaPreviewCache.set(props, canvas);
+  return canvas;
+}
+
+/** Own component so the async-decode hooks stay out of KonvaObject's
+ *  dispatcher, which narrows `obj` before passing. */
 export function ImageObject({
   obj,
   scale,
@@ -58,19 +81,21 @@ export function ImageObject({
     };
   }, [cached]);
 
-  // Rotatable only for an inline cached bitmap (see isImageRotatable); reuse
-  // the `cached` lookup already made above.
-  const rotatable = !!cached && !p.storedAs && !p.rawGf;
-  const rotation = rotatable ? objectRotation(p) : "N";
+  // Whether this instance turns, which is not the same question as the rotation
+  // its bytes resolve at (imageEmitRotation).
+  const rotation = isImageRotatable(p) ? objectRotation(p) : "N";
   const swap = isAxisSwapped(rotation);
 
-  const w = dotsToPx(p.widthDots, scale, dpmm);
   // WYSIWYG mono preview (see monoPreviewCanvas), handed to Konva to nearest-
   // neighbour upscale (imageSmoothingEnabled=false, as BarcodeObject). Upright;
   // the inner Group turns it. The colored source is never shown on the label.
   const preview = htmlImg && cached
     ? monoPreviewCanvas(htmlImg, p.widthDots, p.threshold)
-    : null;
+    // Byte-only graphic: headerByteSource is the emit-side precedence, so the
+    // canvas cannot show bytes the print would not use.
+    : gfaPreviewCanvas(p, headerByteSource(p), imageEmitRotation(p));
+  const widthDots = !cached && preview ? preview.width : p.widthDots;
+  const w = dotsToPx(widthDots, scale, dpmm);
   // Height from the raster is dot-quantised, so the box matches the emitted
   // ^GF height exactly. Pre-load, aspect-lock off the cached dimensions
   // (guarding 0-width malformed files: NaN-sized nodes otherwise); recall-only
@@ -107,7 +132,7 @@ export function ImageObject({
   // Gate on `preview`, not `htmlImg`: an image that loaded but can't rasterize
   // (dimensionless SVG, naturalWidth 0) emits a blank ^GF, so showing the color
   // source would lie. Fall through to the placeholder in that case.
-  if (preview && cached) {
+  if (preview) {
     // bwip-style rotation: the upright preview draws inside an inner Group whose
     // rotatedGroupTransform places it for R/I/B; the outer Group keeps the
     // object's x/y and interaction (matches BarcodeObject).
