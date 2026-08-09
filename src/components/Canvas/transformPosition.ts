@@ -131,18 +131,17 @@ function renderedWithAnchor(obj: LeafObject, x: number, y: number): { x: number;
   return { x: x - rightAnchorShift(obj), y };
 }
 
-/** The width a right-justified field's render shifts left by, from the same
- *  measured footprint the renderer and objectBounds use. Without it a resize
- *  would commit the visual left edge into a model x that means the right one. */
-function rightAnchorShift(obj: LeafObject, committedWidth?: number): number {
-  // A resize passes the width it is committing; otherwise the measured
-  // footprint, with core resolving the unmeasured cases.
-  // Null (unmeasured, non-symbol, non-blank) draws unshifted in KonvaObject
-  // too, so forward and inverse stay each other's inverse. It does mean
-  // objectBoundsDots, which sizes from its own estimate, describes a box this
-  // pair does not use until the leaf has been rendered once.
+/** How far left of its model x the CANVAS draws a right-justified field. An
+ *  unmeasurable width draws unshifted, which is the whole policy: the renderer,
+ *  this forward transform and its inverse all read it here, so they stay each
+ *  other's inverse and a resize cannot commit the visual left edge as a model x
+ *  that means the right one. objectBoundsDots sizes from its own estimate
+ *  instead, so it still describes a box this trio does not use until the leaf
+ *  has been rendered once. */
+export function rightAnchorShift(obj: LeafObject, committedWidth?: number): number {
+  // A resize passes the width it is committing; otherwise the measured footprint.
   const width = rightAnchorBoxWidthDots(obj, committedWidth ?? getMeasuredSnapshot().get(obj.id)?.width);
-  return rightAnchorShiftDots(obj, width ?? 0);
+  return width === null ? 0 : rightAnchorShiftDots(obj, width);
 }
 
 /** The HRI-zone offset an ^FO barcode's render applies, zero for everything

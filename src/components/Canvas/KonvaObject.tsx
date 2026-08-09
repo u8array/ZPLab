@@ -7,7 +7,8 @@ import { BarcodeObject } from "./BarcodeObject";
 import { LineObject } from "./LineObject";
 import { ImageObject } from "./ImageObject";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
-import { rightAnchorShiftDots, rightAnchorBoxWidthDots, rotatedFootprint } from "@zplab/core/lib/objectBounds";
+import { rotatedFootprint } from "@zplab/core/lib/objectBounds";
+import { rightAnchorShift } from "./transformPosition";
 import { measureInkWidthPx } from "@zplab/core/lib/labelGeometry/measureTextDots";
 import { outlineInset } from "../../lib/shapeGeometry";
 import { reverseShapeStyle } from "./reverseShapeStyle";
@@ -563,7 +564,7 @@ function KonvaObjectInner({
       : undefined;
   const x =
     offsetX +
-    dotsToPx(obj.x - rightAnchorShiftDots(obj, rightAnchorBoxWidthDots(obj, measuredBoxW) ?? 0), scale, dpmm);
+    dotsToPx(obj.x - rightAnchorShift(obj, measuredBoxW), scale, dpmm);
   useEffect(() => {
     if (!isSingleLineText) return;
     // Blank (empty or whitespace) or zero-height: drop the measured entry so
