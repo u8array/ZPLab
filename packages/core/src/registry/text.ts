@@ -24,11 +24,7 @@ export function resolveTextMode(p: Pick<TextProps, "textMode" | "blockWidth" | "
   // Serial is a plain single-line counter (^A + ^SN/^SF); block props lie
   // dormant while it is active, so the mode resolves to 'normal' regardless.
   if (p.serial) return "normal";
-  // A declared block with no width has no block to lay out, so its props are
-  // dormant the same way. Resolved here rather than re-tested per consumer: the
-  // renderer drew such a field as plain text while the bounds still called it a
-  // block, so the right anchor moved in one and not the other.
-  if (p.textMode) return p.blockWidth ? p.textMode : "normal";
+  if (p.textMode) return p.textMode;
   return p.blockWidth ? "fb" : "normal";
 }
 
