@@ -242,11 +242,25 @@ export function headerByteSource(p: ImageProps): string | undefined {
   if (getImage(p.imageId)) return undefined;
   // Only bytes emit will actually ship: without this the bounds, the ^FT anchor
   // and the canvas all described ink that toZPL replaces with an empty field.
-  if (p.rawGf) return gfShipsSafely(p.rawGf) ? p.rawGf : undefined;
-  return objectRotation(p) === 'N' && p._gfaCache && gfShipsSafely(p._gfaCache)
-    ? p._gfaCache
-    : undefined;
+  // Memoised per props object, because gfShipsSafely scans the whole payload
+  // and objectBoundsDots reaches this several times per leaf per frame (bounds,
+  // approx, selection union, preflight). The props object is replaced on every
+  // edit (applyChanges), which is exactly when the answer can change.
+  const hit = SHIP_SOURCE_CACHE.get(p);
+  if (hit !== undefined) return hit.value;
+  const source = p.rawGf
+    ? gfShipsSafely(p.rawGf)
+      ? p.rawGf
+      : undefined
+    : objectRotation(p) === 'N' && p._gfaCache && gfShipsSafely(p._gfaCache)
+      ? p._gfaCache
+      : undefined;
+  SHIP_SOURCE_CACHE.set(p, { value: source });
+  return source;
 }
+
+/** Boxed so a cached `undefined` is still a hit. */
+const SHIP_SOURCE_CACHE = new WeakMap<ImageProps, { value: string | undefined }>();
 
 /** Fresh upright ^GFA from the image store, for emit sites that need bytes
  *  after a cache-clearing edit (canvas resize regens only via the panel). */
@@ -298,8 +312,12 @@ export const image: ObjectTypeCore<ImageProps> = {
     // was never uploaded. `storedAs` alone made this count as resolvable below,
     // which is why it printed nothing without a word.
     if (p.storedAs && p.storedAs.embedInZpl !== false) {
-      const upload = p._gfaCache ?? inlineGfaFor(p);
-      if (!upload || !gfShipsSafely(upload)) {
+      // Asked, not rasterised: inlineGfaFor decodes the source and runs a full
+      // rasterizeMono, and this hook runs from the canvas render body on every
+      // findings recompute. A store image means emit can re-encode; without one
+      // the cache is the only upload source there is.
+      const canUpload = p._gfaCache ? gfShipsSafely(p._gfaCache) : !!getImage(p.imageId);
+      if (!canUpload) {
         return [{ kind: 'imageMissing', detail: 'this field recalls a stored graphic whose upload cannot be written, so the printer has nothing to recall' }];
       }
     }

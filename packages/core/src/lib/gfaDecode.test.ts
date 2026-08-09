@@ -41,11 +41,11 @@ describe("rasterFromGfa", () => {
     expect(hex(rasterFromGfa("^GFA,4,4,2,MF")!)).toBe("FFFFFFF0");
   });
 
-  it("refuses a wrapped payload rather than reading it as hex", () => {
-    // Every raw-binary import stores its cache as ^GFA,…,:B64:…; decoding that
-    // as hex would draw plausible noise.
-    const wrapped = rasterFromGfa("^GFA,4,4,2,:B64:AP//AA==:1234");
-    expect(wrapped === null || hex(wrapped)).not.toBe("B64AAA");
+  it("decodes a wrapped payload as base64, never as hex", () => {
+    // Every raw-binary import stores its cache as ^GFA,…,:B64:…. Read as hex
+    // the same string yields plausible noise, so assert the actual bytes:
+    // "AP//AA==" is 00 FF FF 00.
+    expect(hex(rasterFromGfa("^GFA,4,4,2,:B64:AP//AA==:1234")!)).toBe("00FFFF00");
   });
 
   it("fills a line with zeros on a comma and with ones on a bang", () => {
