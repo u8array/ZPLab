@@ -79,16 +79,26 @@ export function dataMatrixFdToGs1Content(fd: string, escape: string): string | n
  *  opaque: the AI codes are literal, so parentheses and FNC1 placement are
  *  already decidable. Null when the content is not in the typed form. */
 export function typedGs1ToDataMatrixFd(content: string): string | null {
+  const runs = typedGs1DataRuns(content);
+  if (!runs) return null;
+  const fnc1 = ESC + "1";
+  return fnc1 + runs.map(escapeRun).join(fnc1);
+}
+
+/** The FNC1-separated data runs of a typed `(AI)value…` content: parens out,
+ *  a separator only after a variable-length AI. The one structure the ^FD codec
+ *  and the canvas both encode from, so preview and print cannot size a symbol
+ *  from different data. Null when the content is not in the typed form. */
+export function typedGs1DataRuns(content: string): string[] | null {
   const parts = typedGs1Parts(content);
   if (!parts) return null;
-  const fnc1 = ESC + "1";
-  let out = fnc1;
+  const runs: string[] = [""];
   for (const [index, part] of parts.entries()) {
     // Same completion the literal path applies, or the bound form would carry
     // a different AI-01 payload than the same content written out.
-    out += escapeRun(`${part.ai}${typedSegmentValue(part.ai, part.value)}`);
+    runs[runs.length - 1] += `${part.ai}${typedSegmentValue(part.ai, part.value)}`;
     const spec = aiSpec(part.ai);
-    if (spec && isVariableKind(spec.kind) && index < parts.length - 1) out += fnc1;
+    if (spec && isVariableKind(spec.kind) && index < parts.length - 1) runs.push("");
   }
-  return out;
+  return runs;
 }

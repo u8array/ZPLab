@@ -238,3 +238,22 @@ describe("GS1 content the catalog can only partly segment", () => {
     expect(plan.fd).toContain("TRAILING");
   });
 });
+
+describe("a marked GS1 DataMatrix the canvas has to measure", () => {
+  // The canvas encodes bwipParsefncText while ^BX ships fd. Reading the raw
+  // content for the preview kept the parens and one leading FNC1, so the two
+  // sized the symbol from different data (DM steps up in discrete sizes).
+  it("previews the runs the ^FD ships, not the parenthesized content", () => {
+    const plan = planGs1Fd("(01)«GTIN»(10)ABC", "datamatrix");
+    expect(plan.bwipParsefncText).toBe("^FNC101«GTIN»10ABC");
+    expect(plan.fd).not.toContain("(");
+  });
+
+  it("separates the preview runs wherever the ^FD separates them", () => {
+    // AI 10 is variable-length, so a following AI needs its own FNC1 in both.
+    const plan = planGs1Fd("(10)«LOT»(11)260809", "datamatrix");
+    expect(plan.bwipParsefncText).toBe("^FNC110«LOT»^FNC111260809");
+    // The marker's guillemets are non-printable bytes, hence the _dNNN escapes.
+    expect(plan.fd).toBe("_110_d171LOT_d187_111260809");
+  });
+});

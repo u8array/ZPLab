@@ -6,7 +6,11 @@ import {
   segmentsToZplFd,
   segmentsToContent,
 } from "./gs1";
-import { gs1ContentToDataMatrixFd, typedGs1ToDataMatrixFd } from "./dataMatrixFd";
+import {
+  gs1ContentToDataMatrixFd,
+  typedGs1DataRuns,
+  typedGs1ToDataMatrixFd,
+} from "./dataMatrixFd";
 import { hasTemplateMarkers } from "./fnTemplate";
 
 /** GS1 carriers with distinct ^FD grammars: ^BC mode D (parenthesized + >8),
@@ -59,6 +63,9 @@ export function planGs1Fd(content: string, carrier: Gs1Carrier): Gs1FdPlan {
   if (hasTemplateMarkers(content)) {
     // Feeds preview only; emit resolves markers separately and never routes template content through .fd.
     const typed = carrier === "code128" ? completeTypedGtins(content) : null;
+    // The canvas encodes the same runs the ^FD does, or it would size the
+    // symbol from the parens and single FNC1 that never reach the wire.
+    const dmRuns = carrier === "datamatrix" ? typedGs1DataRuns(content) : null;
     return {
       // ^BX takes the structural form (parens out, FNC1 by AI).
       fd:
@@ -66,7 +73,9 @@ export function planGs1Fd(content: string, carrier: Gs1Carrier): Gs1FdPlan {
           ? (typedGs1ToDataMatrixFd(content) ?? gs1ContentToDataMatrixFd(content))
           : (typed ?? content),
       bwipText: typed ?? content,
-      bwipParsefncText: parsefncRuns(typed ?? content, carrier === "datamatrix" ? "^FNC1" : ""),
+      bwipParsefncText: dmRuns
+        ? parsefncRuns(dmRuns.join(GS1_GS), "^FNC1")
+        : parsefncRuns(typed ?? content, carrier === "datamatrix" ? "^FNC1" : ""),
       losses: [],
     };
   }
