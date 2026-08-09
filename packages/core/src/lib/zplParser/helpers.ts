@@ -371,3 +371,23 @@ export function decodeFH(
     return decoder.decode(bytes);
   });
 }
+
+/** Cut the trailing line break and the next line's indent off a command's
+ *  parameter text. Scanned, not matched: `/[\r\n]+\s*$/` has overlapping
+ *  classes, so a long run of breaks followed by anything else backtracks
+ *  cubically (114 s at 8000 breaks), and a raw-binary ^GF payload carries
+ *  exactly such runs. */
+export function stripLineWrap(rest: string): string {
+  const kept = rest.trimEnd().length;
+  const nl = rest.slice(kept).search(/[\r\n]/);
+  return nl === -1 ? rest : rest.slice(0, kept + nl);
+}
+
+/** Trailing horizontal whitespace of the last parameter, same reasoning. */
+export function stripTrailingSpaces(value: string): string {
+  let end = value.length;
+  while (end > 0 && WS_NOT_BREAK_RE.test(value[end - 1] ?? "")) end--;
+  return end === value.length ? value : value.slice(0, end);
+}
+
+const WS_NOT_BREAK_RE = /[^\S\r\n]/;

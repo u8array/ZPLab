@@ -597,13 +597,7 @@ export function getDisplaySize(
   const w = isQuarter ? upright.h : upright.w;
   const h = isQuarter ? upright.w : upright.h;
 
-  // Upright bar width feeds the GS1 band's shrink-to-fit; without it that band
-  // would be reserved un-shrunk.
-  const textZonePx = dotsToPx(
-    barcodeTextZoneDots(obj, pxToDots(upright.w, scale, dpmm)),
-    scale,
-    dpmm,
-  );
+  const textZonePx = dotsToPx(barcodeTextZoneDots(obj), scale, dpmm);
   const zoneAbove = barcodeZoneAbove(obj);
 
   // Map the upright "below the bars" zone onto the rotated bbox: it travels
@@ -697,7 +691,7 @@ function getUprightDisplaySize(
       const modulePx = dotsToPx(obj.props.moduleWidth, scale, dpmm);
       const bwipSc = get1DBwipScale(obj.props.moduleWidth, scale, dpmm);
       const w = (cw / bwipSc) * modulePx;
-      const zone = barcodeTextZoneDots(obj, pxToDots(w, scale, dpmm));
+      const zone = barcodeTextZoneDots(obj);
       const h = dotsToPx(obj.props.height + zone, scale, dpmm);
       return { w, h };
     }

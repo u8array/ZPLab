@@ -9,7 +9,7 @@ import { isLoneMarker } from "./variableField";
 import { markerOf } from "../types/Variable";
 import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
-import { tokenize } from "./zplParser/helpers";
+import { stripLineWrap, stripTrailingSpaces, tokenize } from "./zplParser/helpers";
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
 import { createParserState, deriveUnitScale, resetFormatScopedState, type FnDefaultCandidate } from "./zplParser/context";
 import { createFlushField } from "./zplParser/flushField";
@@ -444,10 +444,10 @@ export function parseZPL(
     // counts. A whitespace-VALUED parameter survives either way (`^FE `,
     // `^FC%,{, ` keep their space); the delimiter is never whitespace
     // (acceptsPrefixRemap), so this cannot eat one. ^FD keeps `rest` verbatim.
-    const p = rest.replace(/[\r\n]+\s*$/, "").split(s.format.delimiterChar);
+    const p = stripLineWrap(rest).split(s.format.delimiterChar);
     const last = p[p.length - 1];
     if (!LITERAL_TAIL_CMDS.has(cmd) && last !== undefined && /\S/.test(last)) {
-      p[p.length - 1] = last.replace(/[^\S\r\n]+$/, "");
+      p[p.length - 1] = stripTrailingSpaces(last);
     }
     // Flag printer-config commands: lossless replay re-emits them, so they run
     // on the user's printer at print/export. Recorded by code (deduped later).

@@ -51,10 +51,10 @@ describe("HRI zone coverage", () => {
 });
 
 describe("a GS1-128's interpretation band", () => {
-  const leaf = (gs1: boolean, moduleWidth: number) =>
+  const leaf = (gs1: boolean, moduleWidth: number, content = "(01)09501101530003") =>
     ({
       id: "b", type: "code128", x: 0, y: 0, rotation: 0,
-      props: { content: "(01)09501101530003", height: 60, moduleWidth, printInterpretation: true, gs1 },
+      props: { content, height: 60, moduleWidth, printInterpretation: true, gs1 },
     }) as never;
 
   it("is taller than the plain one, because the HRI font is scaled up", () => {
@@ -65,11 +65,21 @@ describe("a GS1-128's interpretation band", () => {
     }
   });
 
-  it("shrinks back toward the plain band once the bars constrain the font", () => {
-    // Same shrink-to-fit the renderer applies: a narrow symbol cannot show the
-    // full-size font, so reserving it un-shrunk would over-report.
-    const unshrunk = barcodeTextZoneDots(leaf(true, 2));
-    expect(barcodeTextZoneDots(leaf(true, 2), 40)).toBeLessThan(unshrunk);
+  it("covers the band Labelary prints, at every measured module width", () => {
+    // Measured at 8 dpmm as ink below the bars: 21 / 34 / 52 / 66 / 82.
+    // The reserved band must never read short, or the HRI runs off the media
+    // while the report calls the field clean.
+    const measured: Record<number, number> = { 1: 21, 2: 34, 3: 52, 4: 66, 5: 82 };
+    for (const [mw, dots] of Object.entries(measured)) {
+      expect(barcodeTextZoneDots(leaf(true, Number(mw))), `mw ${mw}`).toBeGreaterThanOrEqual(dots);
+    }
+  });
+
+  it("does not read the content", () => {
+    // Reading it meant measuring it, and the measure falls back to a per-glyph
+    // estimate without a canvas, so headless and browser reserved differently.
+    const long = leaf(true, 3, "(01)09501101020917(10)ABC123(21)SERIAL987654(11)260101");
+    expect(barcodeTextZoneDots(long)).toBe(barcodeTextZoneDots(leaf(true, 3)));
   });
 
   it("leaves a non-GS1 code128 exactly where it was", () => {

@@ -150,10 +150,7 @@ function rotateMeasured(
   const width = odd ? m.height : m.width;
   const height = odd ? m.width : m.height;
   const next = { ...m, width, height };
-  // The measured upright bar width, so the GS1 band shrinks to fit exactly as
-  // it did in the measurement this entry came from; omitting it would reserve
-  // the un-shrunk band and re-anchor the rotated bars off the canvas.
-  const tz = barcodeTextZoneDots(leaf, m.uprightBarWDots ?? 0);
+  const tz = barcodeTextZoneDots(leaf);
   if (tz > 0) {
     // Same placement the renderer uses; objectBounds only needs the bar's top,
     // left and height for the FT anchor, so barW is dropped here.

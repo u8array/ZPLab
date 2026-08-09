@@ -10,13 +10,14 @@ import {
   GS1_HRI_FONT_SCALE,
   GS1_HRI_WIDTH_RATIO,
   HRI_FONT_0,
-  VERA_MONO_HRI_EM_PER_MODULE,
 } from "./bwipConstants";
 import { measureInkWidthPx } from "./labelGeometry/measureTextDots";
 
 /** GS1-128 HRI font em (dots): the scaled-up base, shrunk to fit the bar width
  *  by measured advance so it matches the print whatever face we use. Falls back
- *  to the un-shrunk size when bars aren't measured yet (`barWidthDots <= 0`). */
+ *  to the un-shrunk size when bars aren't measured yet (`barWidthDots <= 0`).
+ *  CANVAS ONLY: measureInkWidthPx substitutes a per-glyph estimate without a
+ *  DOM, so the headless kernel must never size a reservation by this. */
 export function gs1HriFontDots(
   content: string,
   baseFontDots: number,
@@ -61,10 +62,8 @@ export function hriZoneDots(moduleWidth: number): number {
 
 /** Firmware-reserved HRI text-zone height in dots. ^BS reserves it only when
  *  printInterpretation is on; other EAN/UPC reserve the fixed guard zone always;
- *  the rest reserve a module-scaled line, but only with the line turned on.
- *  `barWidthDots` is the measured bar width, which only the GS1 band below
- *  needs; omitting it over-reserves that band rather than under-reporting it. */
-export function barcodeTextZoneDots(obj: LeafObject, barWidthDots = 0): number {
+ *  the rest reserve a module-scaled line, but only with the line turned on. */
+export function barcodeTextZoneDots(obj: LeafObject): number {
   const p = obj.props as { printInterpretation?: boolean; moduleWidth?: number };
   if (obj.type === "upcEanExtension") {
     return p.printInterpretation ? upcSuppTextZoneDots(p.moduleWidth ?? 2) : 0;
@@ -74,28 +73,19 @@ export function barcodeTextZoneDots(obj: LeafObject, barWidthDots = 0): number {
   const printsHri = HRI_LINE_TYPES.has(obj.type) && p.printInterpretation === true;
   if (!printsHri) return 0;
   const moduleWidth = p.moduleWidth ?? 2;
-  return hriZoneDots(moduleWidth) * gs1ZoneScale(obj, moduleWidth, barWidthDots);
+  // The registry predicate, not a raw props read: a type that cannot carry GS1
+  // must not claim the taller band off a stray flag.
+  return isGs1Active(ObjectRegistry[obj.type], obj.props)
+    ? gs1HriZoneDots(moduleWidth)
+    : hriZoneDots(moduleWidth);
 }
 
-/** GS1-128 draws its interpretation line at gs1HriFontDots, up to
- *  GS1_HRI_FONT_SCALE of the plain em, so the plain band hriZoneDots measures is
- *  too short and the HRI runs outside the published bbox (the off-label bottom
- *  test and the overlap scan then under-report it). The band scales with the em,
- *  so scale it by the same ratio the renderer applies. Estimated, not measured:
- *  like hriZoneDots' own fit this still wants Labelary/ZD230 confirmation, and
- *  it deliberately errs long (a too-tall band over-reports, a too-short one
- *  hides ink running off the media). */
-function gs1ZoneScale(obj: LeafObject, moduleWidth: number, barWidthDots: number): number {
-  // The registry predicate, not a raw props read: a type that cannot carry GS1
-  // must not scale its band off a stray flag.
-  if (!isGs1Active(ObjectRegistry[obj.type], obj.props)) return 1;
-  const hri = ObjectRegistry[obj.type]?.hri;
-  const baseFontDots = hri?.fontDots
-    ? hri.fontDots(moduleWidth)
-    : moduleWidth * VERA_MONO_HRI_EM_PER_MODULE;
-  if (baseFontDots <= 0) return 1;
-  const content = (obj.props as { content?: string }).content ?? "";
-  return gs1HriFontDots(content, baseFontDots, barWidthDots) / baseFontDots;
+/** GS1-128 band, Labelary-measured at 8 dpmm over module widths 1-5
+ *  (21/34/52/66/82 dots) and fitted to never read short: a short band hides HRI
+ *  running off the media. Module width only, so the headless kernel and the
+ *  canvas cannot answer differently for one object. */
+function gs1HriZoneDots(moduleWidth: number): number {
+  return 15 * Math.max(1, Math.round(moduleWidth)) + 7;
 }
 
 /** HRI sits above the bars when the per-object toggle is set or the symbology
