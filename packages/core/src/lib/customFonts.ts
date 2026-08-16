@@ -113,6 +113,26 @@ export function builtinFontFamily(fontId: string | undefined): string | undefine
   return fontId ? BUILTIN_FONT_FAMILY[fontId] : undefined;
 }
 
+export type DeviceFontLabel = Pick<LabelConfig, "customFonts" | "defaultFontId">;
+
+/** Font id whose bitmap cell grid governs a text field, or undefined for a
+ *  scalable face (^A@ TTF, or a ^CW upload aliasing the id). Single resolver
+ *  for render metrics and both anchor boundaries, so they can never disagree
+ *  and anchors round-trip byte-exact. */
+export function resolveDeviceFontId(
+  fieldFontId: string | undefined,
+  printerFontName: string | undefined,
+  label: DeviceFontLabel,
+): string | undefined {
+  if (!fieldFontId && printerFontName) return undefined;
+  const eff = fieldFontId ?? label.defaultFontId;
+  if (!eff) return undefined;
+  // Only a usable mapping shadows a built-in: FontManager's manual rows
+  // start as { alias, path: '' } and the export still emits the built-in
+  // ^A font for those, so preview and anchor must keep it too.
+  return resolvePreviewFontName(label, eff) !== undefined ? undefined : eff;
+}
+
 /** Canvas-only preview TTF name; emit/parse ignore this resolver. */
 export function resolvePreviewFontName(
   label: Pick<LabelConfig, "customFonts">,

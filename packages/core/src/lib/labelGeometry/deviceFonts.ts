@@ -24,9 +24,11 @@ interface DeviceFontSpec {
   capInkPerMag: number; // visible cap-ink height per magnification (Labelary)
   capPerEm: number; // substitute font cap-ink per em
   advPerEm: number; // substitute font advance per em
-  // Canvas position trims vs Labelary, as fraction of fontSizeDots. The
-  // Font-0 em-anchor lands the substitute's cap-top slightly off; these
-  // nudge it back (both positive = down / right). Labelary-calibrated per font.
+  // Labelary-calibrated canvas trims: the Font-0 em-anchor lands the
+  // substitute's cap-top slightly off; these nudge it back (positive =
+  // down / right). yOffEm is a fraction of fontSizeDots; xOffEm also scales
+  // with scaleX because it cancels the substitute glyph's left side bearing,
+  // which is horizontal geometry.
   yOffEm?: number;
   xOffEm?: number;
   // Glyph-shape width multiplier on scaleX: matches a single glyph's width to
@@ -41,18 +43,42 @@ interface DeviceFontSpec {
 const MAX_MAG = 10;
 
 const DEVICE_FONTS: Record<string, DeviceFontSpec> = {
-  A: { magStep: 9, magWidthStep: 5, advancePerMag: 6, capInkPerMag: 7.125, capPerEm: 0.757, advPerEm: 0.602, yOffEm: 0.096, xOffEm: -0.032, widthCorr: 0.964, letterSpacingEm: 0.021 },
+  A: { magStep: 9, magWidthStep: 5, advancePerMag: 6, capInkPerMag: 7.125, capPerEm: 0.757, advPerEm: 0.602, yOffEm: 0.036, xOffEm: -0.032, widthCorr: 0.964, letterSpacingEm: 0.021 },
   B: { magStep: 11, magWidthStep: 7, advancePerMag: 9, capInkPerMag: 11.5, capPerEm: 0.762, advPerEm: 0.602, xOffEm: -0.040 },
   C: { magStep: 18, magWidthStep: 10, advancePerMag: 12, capInkPerMag: 14.75, capPerEm: 0.757, advPerEm: 0.602, yOffEm: 0.026, xOffEm: -0.043 },
   D: { magStep: 18, magWidthStep: 10, advancePerMag: 12, capInkPerMag: 14.75, capPerEm: 0.757, advPerEm: 0.602, yOffEm: 0.026, xOffEm: -0.043 },
-  E: { magStep: 28, magWidthStep: 15, advancePerMag: 20, capInkPerMag: 21.875, capPerEm: 0.787, advPerEm: 0.723, yOffEm: 0.198, xOffEm: -0.189 },
-  F: { magStep: 26, magWidthStep: 13, advancePerMag: 16, capInkPerMag: 22, capPerEm: 0.757, advPerEm: 0.602, yOffEm: 0.034, xOffEm: -0.052 },
-  G: { magStep: 60, magWidthStep: 40, advancePerMag: 48, capInkPerMag: 48, capPerEm: 0.757, advPerEm: 0.602, yOffEm: 0.055, widthCorr: 0.817, letterSpacingEm: 0.142 },
-  H: { magStep: 21, magWidthStep: 13, advancePerMag: 19, capInkPerMag: 21, capPerEm: 0.780, advPerEm: 0.723, yOffEm: -0.030, xOffEm: -0.193 },
+  E: { magStep: 28, magWidthStep: 15, advancePerMag: 20, capInkPerMag: 21.875, capPerEm: 0.787, advPerEm: 0.723, yOffEm: 0.198, xOffEm: -0.114 },
+  F: { magStep: 26, magWidthStep: 13, advancePerMag: 16, capInkPerMag: 22, capPerEm: 0.757, advPerEm: 0.602, yOffEm: 0.034, xOffEm: -0.060 },
+  G: { magStep: 60, magWidthStep: 40, advancePerMag: 48, capInkPerMag: 49, capPerEm: 0.757, advPerEm: 0.602, yOffEm: 0.025, widthCorr: 0.817, letterSpacingEm: 0.142 },
+  H: { magStep: 21, magWidthStep: 13, advancePerMag: 19, capInkPerMag: 21, capPerEm: 0.780, advPerEm: 0.723, yOffEm: -0.030, xOffEm: -0.117 },
 };
 
 const magnify = (requested: number, step: number) =>
   Math.min(MAX_MAG, Math.max(1, Math.round(requested / step)));
+
+/** Cell grid per device font. Exported so fixtures/tests derive their ^A
+ *  heights from the same table the snap uses instead of copying it. */
+export const DEVICE_FONT_CELLS: Readonly<
+  Record<string, { magStep: number; magWidthStep: number }>
+> = Object.fromEntries(
+  Object.entries(DEVICE_FONTS).map(([id, s]) => [
+    id,
+    { magStep: s.magStep, magWidthStep: s.magWidthStep },
+  ]),
+);
+
+/** Requested ^A height snapped to the cell grid, or null for Font 0 /
+ *  unknown ids / non-positive heights. The firmware anchors a bitmap field
+ *  by its snapped cell, so the anchor transform needs this too. */
+export function deviceFontSnappedHeightDots(
+  fontId: string | undefined,
+  heightDots: number,
+): number | null {
+  if (!fontId) return null;
+  const spec = DEVICE_FONTS[fontId];
+  if (!spec || !(heightDots > 0)) return null;
+  return magnify(heightDots, spec.magStep) * spec.magStep;
+}
 
 // Zebra fonts B and H (OCR-A) have no lowercase glyphs: B prints uppercase,
 // H drops lowercase entirely (so "Text" -> "T"). Mirror that on the canvas.
@@ -109,7 +135,7 @@ export function deviceFontMetrics(
     fontSizeDots,
     scaleX,
     yOffsetDots: (spec.yOffEm ?? 0) * fontSizeDots,
-    xOffsetDots: (spec.xOffEm ?? 0) * fontSizeDots,
+    xOffsetDots: (spec.xOffEm ?? 0) * fontSizeDots * scaleX,
     letterSpacingDots: (spec.letterSpacingEm ?? 0) * fontSizeDots,
   };
 }

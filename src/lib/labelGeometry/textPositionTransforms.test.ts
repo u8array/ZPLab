@@ -174,4 +174,31 @@ describe('text position transforms — model ↔ ZPL anchor', () => {
       }
     }
   });
+
+  describe('device font anchor snap', () => {
+    it('off-grid ^A height anchors by the snapped cell, not the request', () => {
+      // ^AGN,84 snaps to mag 1 (60): same delta as an exact 60-dot request.
+      const offGrid = zplAnchorToModel(100, 100, { fontHeight: 84, rotation: 'N', fontId: 'G' }, 'FO');
+      const exact = zplAnchorToModel(100, 100, { fontHeight: 60, rotation: 'N', fontId: 'G' }, 'FO');
+      expect(offGrid.y).toBeCloseTo(exact.y);
+    });
+    it('snapping up mirrors snapping down', () => {
+      // 156 rounds to mag 3 (180).
+      const up = zplAnchorToModel(100, 100, { fontHeight: 156, rotation: 'N', fontId: 'G' }, 'FO');
+      const exact = zplAnchorToModel(100, 100, { fontHeight: 180, rotation: 'N', fontId: 'G' }, 'FO');
+      expect(up.y).toBeCloseTo(exact.y);
+    });
+    it('scalable ids keep the requested height', () => {
+      const dev = zplAnchorToModel(100, 100, { fontHeight: 84, rotation: 'N', fontId: '0' }, 'FO');
+      const plain = zplAnchorToModel(100, 100, { fontHeight: 84, rotation: 'N' }, 'FO');
+      expect(dev.y).toBeCloseTo(plain.y);
+    });
+    it('round-trips at off-grid heights', () => {
+      const props = { fontHeight: 84, rotation: 'N' as const, fontId: 'G' };
+      const anchor = modelToZplAnchor(123, 456, props, 'FO');
+      const back = zplAnchorToModel(anchor.x, anchor.y, props, 'FO');
+      expect(back.x).toBeCloseTo(123);
+      expect(back.y).toBeCloseTo(456);
+    });
+  });
 });

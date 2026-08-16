@@ -12,8 +12,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { textBoxMatchCases } from '../fixtures/textBoxMatchCases';
+import { deviceFontBoxMatchCases } from '../fixtures/deviceFontBoxMatchCases';
+import { font0GlyphCoverageCases } from '../fixtures/font0GlyphCoverageCases';
 
 const FIXTURES_DIR = path.resolve('tests/fixtures/labelary_text_default_images');
+const DEVICE_FIXTURES_DIR = path.resolve(
+  'tests/fixtures/labelary_devicefont_images',
+);
 const RENDER_URL = 'http://api.labelary.com/v1/printers/8dpmm/labels/4x4/0/';
 const RATE_LIMIT_MS = 1000;
 
@@ -32,30 +37,60 @@ async function fetchLabel(zpl: string): Promise<Buffer> {
   return Buffer.from(await res.arrayBuffer());
 }
 
+interface FetchJob {
+  dir: string;
+  id: string;
+  zpl: string;
+}
+
 async function main(): Promise<void> {
   fs.mkdirSync(FIXTURES_DIR, { recursive: true });
+  fs.mkdirSync(DEVICE_FIXTURES_DIR, { recursive: true });
 
-  const missing = textBoxMatchCases.filter(
-    (tc) => !fs.existsSync(path.join(FIXTURES_DIR, `${tc.id}.png`)),
-  );
+  const jobs: FetchJob[] = [
+    ...[...textBoxMatchCases, ...font0GlyphCoverageCases].map((tc) => ({
+      dir: FIXTURES_DIR,
+      id: tc.id,
+      zpl:
+        `^XA^FO${tc.x},${tc.y}` +
+        `^A0${tc.rotation},${tc.fontHeight},${tc.fontWidth || tc.fontHeight}` +
+        `^FD${tc.text}^FS^XZ`,
+    })),
+    // Device fonts: width stays 0 so the firmware derives it from the
+    // cell matrix, matching what deviceFontMetrics does locally.
+    ...deviceFontBoxMatchCases.map((tc) => ({
+      dir: DEVICE_FIXTURES_DIR,
+      id: tc.id,
+      zpl:
+        `^XA^FO${tc.x},${tc.y}` +
+        `^A${tc.fontId}${tc.rotation},${tc.fontHeight},${tc.fontWidth || ''}` +
+        `^FD${tc.text}^FS^XZ`,
+    })),
+  ];
+
+  // The case lists share ids on purpose (see fixtureIdContract).
+  const byFile = new Map<string, FetchJob>();
+  for (const job of jobs) {
+    const file = path.join(job.dir, `${job.id}.png`);
+    if (!byFile.has(file)) byFile.set(file, job);
+  }
+  const missing = [...byFile.entries()]
+    .filter(([file]) => !fs.existsSync(file))
+    .map(([, job]) => job);
   if (missing.length === 0) {
     console.log('All fixtures already present.');
     return;
   }
-  console.log(`Fetching ${missing.length} fixture(s) with default Zebra font...`);
+  console.log(`Fetching ${missing.length} fixture(s) from Labelary...`);
 
-  for (const tc of missing) {
-    const zpl =
-      `^XA^FO${tc.x},${tc.y}` +
-      `^A0${tc.rotation},${tc.fontHeight},${tc.fontWidth || tc.fontHeight}` +
-      `^FD${tc.text}^FS^XZ`;
-    const png = await fetchLabel(zpl);
-    fs.writeFileSync(path.join(FIXTURES_DIR, `${tc.id}.png`), png);
-    console.log(`  ${tc.id}.png`);
+  for (const job of missing) {
+    const png = await fetchLabel(job.zpl);
+    fs.writeFileSync(path.join(job.dir, `${job.id}.png`), png);
+    console.log(`  ${job.id}.png`);
     await new Promise((r) => setTimeout(r, RATE_LIMIT_MS));
   }
 
-  console.log(`\nWrote ${missing.length} fixture(s) to ${FIXTURES_DIR}`);
+  console.log(`\nWrote ${missing.length} fixture(s).`);
 }
 
 main().catch((e: unknown) => {

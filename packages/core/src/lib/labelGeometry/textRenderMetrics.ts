@@ -1,4 +1,4 @@
-import { builtinFontFamily, resolvePreviewFontName } from "../customFonts";
+import { builtinFontFamily, resolveDeviceFontId, resolvePreviewFontName } from "../customFonts";
 import { applyDeviceFontCase, deviceFontMetrics } from "./deviceFonts";
 import { getFontFamily } from "../fontCache";
 import type { LabelObject } from "../../types/Group";
@@ -89,16 +89,11 @@ export function getTextRenderMetrics(
   const defaultPrinterFontName = label
     ? resolvePreviewFontName(label, label.defaultFontId)
     : undefined;
-  // Device fonts (A-H) preview as their substitute face at the snapped
-  // magnification; a custom upload aliased to the same id (the field's, or the
-  // default when the field has none) wins. Canvas-only: gated on `label` so the
-  // emit/parse path keeps PrintLab metrics and the round-trip inkWidth matches.
-  const effectiveFontId = fieldFontId ?? label?.defaultFontId;
-  const effectiveCustomName = label
-    ? resolvePreviewFontName(label, effectiveFontId)
+  // Canvas-only: gated on `label` so the emit/parse path keeps PrintLab
+  // metrics and the round-trip inkWidth matches.
+  const deviceId = label
+    ? resolveDeviceFontId(fieldFontId, fieldPrinterFontName, label)
     : undefined;
-  const deviceId =
-    label && !effectiveCustomName ? effectiveFontId : undefined;
   const fontFamilyOverride = deviceId ? builtinFontFamily(deviceId) : undefined;
   const fontHeight = fontHeightOverride ?? p.fontHeight;
   const device = deviceFontMetrics(deviceId, fontHeight, p.fontWidth);

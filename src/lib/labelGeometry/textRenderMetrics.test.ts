@@ -47,4 +47,30 @@ describe("getTextRenderMetrics — device font resolution", () => {
     expect(m!.fontSizeDots).toBeUndefined();
     expect(m!.letterSpacingDots).toBeUndefined();
   });
+
+  it("keeps the built-in device font when a manual alias row has no file yet", () => {
+    const m = getTextRenderMetrics(
+      textObj("B"),
+      undefined,
+      label({ customFonts: [{ alias: "B", path: "" }] }),
+    );
+    expect(m!.fontSizeDots).toBeDefined();
+    expect(m!.content).toBe("ABC");
+  });
+
+  it("renders an ^A@ TTF field as its printer font, not the device default", () => {
+    const obj = {
+      ...textObj(),
+      props: {
+        content: "Abc",
+        fontHeight: 30,
+        fontWidth: 0,
+        rotation: "N",
+        printerFontName: "ARIAL.TTF",
+      },
+    } as unknown as LabelObject;
+    const m = getTextRenderMetrics(obj, undefined, label({ defaultFontId: "B" }));
+    expect(m!.fontSizeDots).toBeUndefined();
+    expect(m!.content).toBe("Abc");
+  });
 });

@@ -207,7 +207,7 @@ export const text: ObjectTypeCore<TextProps> = {
     // Serial mode: plain ^A field whose ^FD is wrapped by ^SN/^SF. No block,
     // reverse, ^FP or variable binding (those are cleared on switch).
     if (p.serial) {
-      return `${textFieldPos(obj)}${resolveFontCmd(p, ctx)}${serialFieldData(p.content, p.serial)}`;
+      return `${textFieldPos(obj, ctx?.label)}${resolveFontCmd(p, ctx)}${serialFieldData(p.content, p.serial)}`;
     }
     const mode = resolveTextMode(p);
     const fontCmd = resolveFontCmd(p, ctx);
@@ -233,7 +233,7 @@ export const text: ObjectTypeCore<TextProps> = {
     const fpDir = p.fpDirection ?? "H";
     const fpGap = p.fpCharGap ?? 0;
     const fpCmd = fpDir !== "H" || fpGap > 0 ? `^FP${fpDir},${fpGap}` : "";
-    const anchor = textFieldPos(obj);
+    const anchor = textFieldPos(obj, ctx?.label);
     const fd = fdFieldFor(content, ctx, undefined, encodeDefault);
     // ^FR is the spec-true reverse: it knocks the glyph ink out of whatever is
     // already drawn (e.g. a black ^GB placed behind the text), so we emit it as

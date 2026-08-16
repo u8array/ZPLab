@@ -1,9 +1,12 @@
 // EM-top-left <-> ZPL anchor (^FO cap-top / ^FT baseline). Applied only
 // at the zplGenerator/zplParser boundary; editor interactions skip it.
+import { deviceFontSnappedHeightDots } from "./deviceFonts";
 
 interface TextLikeProps {
   fontHeight: number;
   rotation: "N" | "R" | "I" | "B";
+  /** Device font id; the pad terms use its snapped cell height. */
+  fontId?: string;
 }
 
 export const ZPL_FONT_HEIGHT_TO_CSS_RATIO = 1.0;
@@ -21,9 +24,12 @@ function zplAnchorDelta(
   blockExtentDots = 0,
   blockReadingWidthDots = 0,
 ): { dx: number; dy: number } {
-  const h = props.fontHeight / ZPL_FONT_HEIGHT_TO_CSS_RATIO;
-  const pad = props.fontHeight * EM_TOP_ABOVE_CAP;
-  const bias = props.fontHeight * RENDER_Y_BIAS;
+  const effHeight =
+    deviceFontSnappedHeightDots(props.fontId, props.fontHeight) ??
+    props.fontHeight;
+  const h = effHeight / ZPL_FONT_HEIGHT_TO_CSS_RATIO;
+  const pad = effHeight * EM_TOP_ABOVE_CAP;
+  const bias = effHeight * RENDER_Y_BIAS;
   const isFT = positionType === "FT";
   // FO I/B anchor at the far reading end of the field: a single line ends at
   // anchor+inkWidth, but an ^FB block ends at anchor+blockWidth (the frame).
