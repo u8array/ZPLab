@@ -613,7 +613,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const isMultiSelection = selectedIds.length > 1;
   // Snapshot (not the live map) so the frame derivations recompute when a
   // settled footprint changes; the changing snapshot reference is the signal.
-  const frameCtx = { label, measured: measuredSnapshot };
+  const frameCtx = { label, measured: measuredSnapshot, variables };
   // Hidden leaves never render, so the old client-rect path ignored them; keep
   // them out of the model-based bounds too.
   // visibleLeaves carries the cascaded (effective) lock; read it, not the raw

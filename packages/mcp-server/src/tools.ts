@@ -203,9 +203,10 @@ function preflightOf(
   objects: LabelObject[],
   label: PageLabel,
   pageIndex: number,
+  variables: readonly Variable[],
   measured?: ObjectBoundsCtx["measured"],
 ): PreflightWarning[] {
-  return computePreflight(exportableLeaves(objects), { label, measured }, "mm").map((f) => ({
+  return computePreflight(exportableLeaves(objects), { label, measured, variables }, "mm").map((f) => ({
     pageIndex,
     objectId: f.objectId,
     kind: f.kind,
@@ -364,7 +365,7 @@ function boundReport(
     const probed = measuredBarcodes(pages, label, measured);
     return {
       warnings: perPage(pages, label, (objects, pageLabel, i) =>
-        preflightOf(objects, pageLabel, i, probed)),
+        preflightOf(objects, pageLabel, i, variables, probed)),
       ...geometryFor(pages, label, probed),
     };
   });

@@ -17,6 +17,7 @@ import { gfaHeaderDims, headerByteSource, type ImageProps } from "../registry/im
 import { BARCODE_1D_TYPES, STACKED_2D_TYPES, getEntry } from "../registry";
 import { GRAPHIC_ANCHOR_TYPES } from "../registry/zplHelpers";
 import type { PageLabel } from "../types/LabelConfig";
+import type { Variable } from "../types/Variable";
 import { effectiveDpmm } from "../types/LabelConfig";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "../registry/rotation";
 import { resolveTextMode } from "../registry/text";
@@ -34,6 +35,9 @@ export interface BoundingBoxDots {
 
 export interface ObjectBoundsCtx {
   label: PageLabel;
+  /** Lets the emitted-anchor preflight resolve a single-bind marker the way
+   *  emission does; absent, the marker text itself is measured. */
+  variables?: readonly Variable[];
   /** Measured footprints (dots) published by the render layer for types whose
    *  size isn't purely computable (barcodes, single-line text). Keyed by obj.id.
    *  The FT anchor uses uprightBar*Dots; barHeightDots is the legacy fallback. */

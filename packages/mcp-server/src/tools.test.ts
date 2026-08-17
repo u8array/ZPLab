@@ -310,6 +310,11 @@ describe("mcp-server tools", () => {
     expect(nearEdge.warnings.some((w) => w.objectId === "q" && w.kind.startsWith("offLabel"))).toBe(true);
   });
 
+  it("judges off-label for a bound rotated field by its printed default, not its marker", () => {
+    const v = ok(validateZpl("^XA^PW800^LL400^FO10,150^AGI,60,40^FN1^FDM5i^FS^XZ"));
+    expect(v.warnings.filter((w) => w.kind.startsWith("offLabel"))).toEqual([]);
+  });
+
   it("validate_zpl reports the intersection rect of two overlapping boxes", () => {
     const v = ok(validateZpl("^XA^FO0,0^GB100,100,3^FS^FO60,60^GB100,100,3^FS^XZ"));
     expect(v.overlaps).toHaveLength(1);

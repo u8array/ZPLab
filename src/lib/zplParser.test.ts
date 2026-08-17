@@ -158,6 +158,24 @@ describe('parseZPL — ^MU units of measure', () => {
     expect(commandsOf({ findings }, 'partial')).toContain('^MU');
   });
 
+  it('anchors a rotated device-font field by the cell-grid extent', () => {
+    // I anchors at the field's cell edge: the em-box lands one cell-grid
+    // extent (3*48 - gap/2 = 140 for ^AG) past ^FO.
+    const r = parseSingle('^XA^FO300,150^AGI,60,40^FDM5i^FS^XZ', 8);
+    expect(defined(r.objects[0]).x).toBe(300 + 140);
+    const out = generateZPL({ widthMm: 100, heightMm: 50, dpmm: 8 }, r.objects, r.variables);
+    expect(out).toContain('^FO300,150');
+  });
+
+  it('keeps the ^FO anchor stable for an ^FN-bound rotated device-font field', () => {
+    // The wire prints the variable default, so the anchor extent must be
+    // measured from it, not from the «marker» the content holds in-model.
+    const r = parseSingle('^XA^FO300,150^AGI,60,40^FN1^FDM5i^FS^XZ', 8);
+    expect(defined(r.objects[0]).x).toBe(300 + 140);
+    const out = generateZPL({ widthMm: 100, heightMm: 50, dpmm: 8 }, r.objects, r.variables);
+    expect(out).toContain('^FO300,150');
+  });
+
   it('round-trip: ^MUD,b,c parses + generates back symmetrically', () => {
     const original = '^XA^MUD,200,600^PW600^LL400^CI28^XZ';
     const { labelConfig } = parseSingle(original, 8);

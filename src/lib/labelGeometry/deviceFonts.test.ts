@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { applyDeviceFontCase, deviceFontMetrics } from "@zplab/core/lib/labelGeometry/deviceFonts";
+import { applyDeviceFontCase, deviceFontInkWidthDots, deviceFontMetrics } from "@zplab/core/lib/labelGeometry/deviceFonts";
 import { ZPL_BUILTIN_FONT_LETTERS, builtinFontFamily } from "@zplab/core/lib/customFonts";
 
 describe("device-font table parity", () => {
@@ -107,5 +107,22 @@ describe("deviceFontMetrics", () => {
     const wide = deviceFontMetrics("A", 18, 20)!;
     expect(wide.scaleX).toBeGreaterThan(narrow.scaleX);
     expect(wide.fontSizeDots).toBe(narrow.fontSizeDots); // height unchanged
+  });
+});
+
+describe("deviceFontInkWidthDots", () => {
+  it("uses the cell grid: n*advance - gap/2", () => {
+    // Font G: advance 48, cell 40 -> gap 8; Labelary-measured extent.
+    expect(deviceFontInkWidthDots("G", 60, 0, "M5i")).toBe(3 * 48 - 4);
+    expect(deviceFontInkWidthDots("G", 120, 0, "M")).toBe(2 * (48 - 4));
+  });
+  it("counts the case-folded visible content", () => {
+    // H drops lowercase entirely, so "M5i" prints as two glyphs.
+    expect(deviceFontInkWidthDots("H", 21, 0, "M5i")).toBe(2 * 19 - 3);
+    expect(deviceFontInkWidthDots("H", 21, 0, "iii")).toBe(0);
+  });
+  it("returns null for scalable ids", () => {
+    expect(deviceFontInkWidthDots("0", 50, 0, "M")).toBeNull();
+    expect(deviceFontInkWidthDots(undefined, 50, 0, "M")).toBeNull();
   });
 });

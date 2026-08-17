@@ -11,7 +11,7 @@ export interface DeviceFontBoxMatchCase {
   /** Width parameter of `^A{id},h,w`. 0 = derive from height. */
   fontWidth: number;
   text: string;
-  rotation: 'N';
+  rotation: 'N' | 'I' | 'B';
   x: number;
   y: number;
 }
@@ -89,8 +89,29 @@ const sweepCases: DeviceFontBoxMatchCase[] = FONT_PLANS.flatMap((plan) =>
   })),
 );
 
+/** Rotated fields anchor at the cell edge and extend along the reading
+ *  direction, so their position exercises the deterministic cell-grid
+ *  extent (deviceFontInkWidthDots) end to end. */
+const rotatedCases: DeviceFontBoxMatchCase[] = ['A', 'E', 'G'].flatMap((fontId) => {
+  const plan = FONT_PLANS.find((f) => f.fontId === fontId);
+  if (!plan) throw new Error(`no plan for ${fontId}`);
+  return (['I', 'B'] as const).flatMap((rotation) =>
+    [1, 2].map((mag) => ({
+      id: `f${fontId}_rot${rotation}_m${mag}`,
+      fontId,
+      fontHeight: plan.magStep * mag,
+      fontWidth: 0,
+      text: 'M5i',
+      rotation,
+      x: 300,
+      y: 150,
+    })),
+  );
+});
+
 export const deviceFontBoxMatchCases: DeviceFontBoxMatchCase[] = [
   ...magCases,
   ...snapCases,
   ...sweepCases,
+  ...rotatedCases,
 ];

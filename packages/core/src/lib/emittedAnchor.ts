@@ -18,7 +18,7 @@ export function emittedAnchorDots(
   box?: BoundingBoxDots,
 ): { x: number; y: number } {
   if (obj.type === "text") {
-    const { x, y } = textZplAnchorCoords(obj as Parameters<typeof textZplAnchorCoords>[0], ctx.label);
+    const { x, y } = textZplAnchorCoords(obj as Parameters<typeof textZplAnchorCoords>[0], ctx.label, ctx.variables);
     return { x, y };
   }
   if (GRAPHIC_ANCHOR_TYPES.has(obj.type)) {
