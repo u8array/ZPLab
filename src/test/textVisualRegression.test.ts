@@ -1,9 +1,13 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
 import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
+import { inkCanvas, INK_CANVAS_PX } from '../../tests/lib/inkCanvas';
+import {
+  PRINTLAB_FONT_FAMILY,
+  registerPrintLabZpl,
+} from '../../tests/lib/printLabFont';
 import { textTestCases } from '../../tests/fixtures/textTestCases';
 
 /**
@@ -31,10 +35,6 @@ const FIXTURES_DIR = path.resolve(
   'tests/fixtures/labelary_text_images',
 );
 const DIFF_DIR = path.resolve(process.cwd(), 'tests/fixtures/__text_diffs__');
-const FONT_PATH = path.resolve(process.cwd(), 'src/assets/fonts/PrintLabZPL-Bold.ttf');
-
-const CANVAS_PX = 812; // 4x4 inch at 8 dpmm, matches the fixture canvas.
-const FONT_FAMILY = 'PrintLab ZPL';
 
 /** Diff allowance. With both sides loading the same TTF the remaining
  *  delta is anti-aliasing edge variance between the renderers, sized
@@ -52,10 +52,7 @@ if (!fs.existsSync(DIFF_DIR)) {
 
 describe('Text renderer-pair stability (Skia vs Labelary, shared TTF)', () => {
   beforeAll(() => {
-    if (!fs.existsSync(FONT_PATH)) {
-      throw new Error(`Font file missing at ${FONT_PATH}.`);
-    }
-    GlobalFonts.registerFromPath(FONT_PATH, FONT_FAMILY);
+    registerPrintLabZpl();
   });
 
   it('has fixtures (run fetch_labelary_text_fixtures.ts if this fails)', () => {
@@ -71,32 +68,27 @@ describe('Text renderer-pair stability (Skia vs Labelary, shared TTF)', () => {
 
   describe.each(textTestCases)('Text: $id', (tc) => {
     it('matches Labelary within anti-aliasing tolerance', () => {
-      // Local render: PrintLab ZPL at fontSize = fontHeight, anchored
-      // at the same FO origin as the fixture. Production sets
-      // `textBaseline = 'top'` implicitly via Konva.Text's anchor model,
-      // so we mirror that here.
-      const canvas = createCanvas(CANVAS_PX, CANVAS_PX);
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, CANVAS_PX, CANVAS_PX);
-      ctx.fillStyle = 'black';
-      ctx.font = `bold ${tc.fontHeight}px "${FONT_FAMILY}"`;
+      // Deliberately NOT drawKonvaText: this is a pixel diff against
+      // fixtures rendered at textBaseline='top'; the shared helper's
+      // alphabetic-baseline offset would shift the render off them.
+      const { canvas, ctx } = inkCanvas();
+      ctx.font = `bold ${tc.fontHeight}px "${PRINTLAB_FONT_FAMILY}"`;
       ctx.textBaseline = 'top';
       ctx.fillText(tc.text, tc.x, tc.y);
       const localPng = PNG.sync.read(canvas.toBuffer('image/png'));
 
       const fixtureBuf = fs.readFileSync(path.join(FIXTURES_DIR, `${tc.id}.png`));
       const fixturePng = PNG.sync.read(fixtureBuf);
-      expect(fixturePng.width).toBe(CANVAS_PX);
-      expect(fixturePng.height).toBe(CANVAS_PX);
+      expect(fixturePng.width).toBe(INK_CANVAS_PX);
+      expect(fixturePng.height).toBe(INK_CANVAS_PX);
 
-      const diff = new PNG({ width: CANVAS_PX, height: CANVAS_PX });
+      const diff = new PNG({ width: INK_CANVAS_PX, height: INK_CANVAS_PX });
       const diffCount = pixelmatch(
         fixturePng.data,
         localPng.data,
         diff.data,
-        CANVAS_PX,
-        CANVAS_PX,
+        INK_CANVAS_PX,
+        INK_CANVAS_PX,
         { threshold: 0.1 },
       );
 

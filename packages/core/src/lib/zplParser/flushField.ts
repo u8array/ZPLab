@@ -19,6 +19,7 @@ import { decodeTbContent } from "../tbContent";
 import { zplFdToModelContent } from "../gs1";
 import { dataMatrixFdToGs1Content } from "../dataMatrixFd";
 import { zplAnchorToModel } from "../labelGeometry/textPositionTransforms";
+import { resolveDeviceFontId } from "../customFonts";
 import { blockInterLineExtentDots } from "../zebraTextLayout";
 import { computeTextRenderMetrics } from "../labelGeometry/textRenderMetrics";
 import type { TextProps } from "../../registry/text";
@@ -265,10 +266,23 @@ export function createFlushField(
                 blockLineSpacing: s.defaults.fbSpacing,
                 fontHeight: s.field.textH,
               });
+        // Same resolution as the generator so anchors round-trip.
+        const anchorFontId = resolveDeviceFontId(
+          s.field.pendingFontId,
+          s.field.pendingPrinterFontName,
+          {
+            customFonts: s.result.labelConfig.customFonts,
+            defaultFontId: s.defaults.cfFontId,
+          },
+        );
         const modelPos = zplAnchorToModel(
           s.field.x,
           s.field.y,
-          { fontHeight: s.field.textH, rotation: s.field.textRot },
+          {
+            fontHeight: s.field.textH,
+            rotation: s.field.textRot,
+            fontId: anchorFontId,
+          },
           posType,
           inkWidthDots,
           blockExtentDots,

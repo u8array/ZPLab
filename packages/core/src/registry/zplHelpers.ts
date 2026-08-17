@@ -6,6 +6,7 @@ import { hasClockMarkers, markersToTokens } from "../lib/fcTemplate";
 import { hasControlMarkers, resolveControlMarkers } from "../types/controlKey";
 import { classifyField } from "../lib/variableField";
 import { modelToZplAnchor } from "../lib/labelGeometry/textPositionTransforms";
+import { resolveDeviceFontId, type DeviceFontLabel } from "../lib/customFonts";
 import { getTextRenderMetrics } from "../lib/labelGeometry/textRenderMetrics";
 import { blockInterLineExtentDots } from "../lib/zebraTextLayout";
 import type { LabelObject } from "../types/Group";
@@ -117,6 +118,8 @@ interface TextLikeObjForFieldPos extends LabelObjectBase {
   props: {
     fontHeight: number;
     rotation: "N" | "R" | "I" | "B";
+    fontId?: string;
+    printerFontName?: string;
     blockWidth?: number;
     blockLines?: number;
     blockLineSpacing?: number;
@@ -164,8 +167,13 @@ export function resolveFontCmd(
   return `^A0${rotation},${fontHeight},${fontWidth}`;
 }
 
-/** Numeric ZPL anchor (cap-top/baseline) for a text-like field. */
-export function textZplAnchorCoords(obj: TextLikeObjForFieldPos): {
+/** Numeric ZPL anchor (cap-top/baseline) for a text-like field. `label`
+ *  resolves the effective device font (^CF default, ^CW alias override)
+ *  for the anchor snap. */
+export function textZplAnchorCoords(
+  obj: TextLikeObjForFieldPos,
+  label?: DeviceFontLabel,
+): {
   cmd: "FO" | "FT";
   x: number;
   y: number;
@@ -174,10 +182,11 @@ export function textZplAnchorCoords(obj: TextLikeObjForFieldPos): {
   const metrics = getTextRenderMetrics(obj as unknown as LabelObject);
   const p = obj.props;
   const blockExtentDots = blockExtentFor(p);
+  const anchorFontId = resolveDeviceFontId(p.fontId, p.printerFontName, label ?? {});
   const a = modelToZplAnchor(
     obj.x,
     obj.y,
-    obj.props,
+    { ...p, fontId: anchorFontId },
     obj.positionType,
     metrics?.inkWidthDots ?? 0,
     blockExtentDots,
@@ -188,8 +197,11 @@ export function textZplAnchorCoords(obj: TextLikeObjForFieldPos): {
 }
 
 /** Converts EM top-left model coord to ZPL anchor (cap-top/baseline). */
-export function textFieldPos(obj: TextLikeObjForFieldPos): string {
-  const a = textZplAnchorCoords(obj);
+export function textFieldPos(
+  obj: TextLikeObjForFieldPos,
+  label?: DeviceFontLabel,
+): string {
+  const a = textZplAnchorCoords(obj, label);
   // Same echo contract as fieldPosZ (text is never import-normalised).
   const z = obj.fieldJustify === "R" ? ",1" : "";
   return `^${a.cmd}${a.x},${a.y}${z}`;

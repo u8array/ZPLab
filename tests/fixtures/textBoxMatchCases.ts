@@ -13,6 +13,8 @@
  *  Sizes cover the common label range: 20 (small fineprint) through 80
  *  (header text). Skipping intermediate sizes here keeps the fixture
  *  set focused. */
+import { charSlug } from './charSlug';
+
 export interface TextBoxMatchCase {
   id: string;
   fontHeight: number;
@@ -41,17 +43,7 @@ const CHARS = [
   '-', '.', '=',
 ];
 
-/** Build a filesystem-safe id segment for `char`. NTFS / macOS HFS+
- *  default to case-insensitive filenames, so `A` and `a` would collide
- *  as fixture PNGs. Prefix lowercase ASCII letters with `lc` to keep
- *  the test ids one-to-one with their files. */
-function charSlug(c: string): string {
-  if (c === '-') return 'minus';
-  if (c === '.') return 'dot';
-  if (c === '=') return 'eq';
-  if (c >= 'a' && c <= 'z') return `lc${c.toUpperCase()}`;
-  return c;
-}
+
 
 const uniformCases: TextBoxMatchCase[] = SIZES.flatMap((h) =>
   CHARS.map((c) => ({
@@ -76,7 +68,16 @@ const stretchedCases: TextBoxMatchCase[] = [
   { id: 'h30_w60_alpha', fontHeight: 30, fontWidth: 60, text: 'ABC',          rotation: 'N', x: 200, y: 200 },
 ];
 
+/** Long multi-word lines: char x3 cases contain no spaces, so space
+ *  advance drift and per-char accumulation over realistic label text
+ *  only show up here. */
+const longTextCases: TextBoxMatchCase[] = [
+  { id: 'h50_shipto',  fontHeight: 50, fontWidth: 0, text: 'SHIP TO: 123 MAIN STREET',       rotation: 'N', x: 20, y: 200 },
+  { id: 'h30_mixed',   fontHeight: 30, fontWidth: 0, text: 'Artikel: 4711-XL Gewicht 12,5kg', rotation: 'N', x: 20, y: 200 },
+];
+
 export const textBoxMatchCases: TextBoxMatchCase[] = [
   ...uniformCases,
   ...stretchedCases,
+  ...longTextCases,
 ];

@@ -25,19 +25,18 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { textTestCases } from '../fixtures/textTestCases';
-
-const FONT_PATH = path.resolve('src/assets/fonts/PrintLabZPL-Bold.ttf');
+import { PRINTLAB_FONT_PATH } from '../lib/printLabFont';
 const FIXTURES_DIR = path.resolve('tests/fixtures/labelary_text_images');
 const FONT_UPLOAD_URL = 'http://api.labelary.com/v1/fonts';
 const RENDER_URL = 'http://api.labelary.com/v1/printers/8dpmm/labels/4x4/0/';
 const RATE_LIMIT_MS = 1000;
 
 async function uploadFont(): Promise<string> {
-  const file = fs.readFileSync(FONT_PATH);
+  const file = fs.readFileSync(PRINTLAB_FONT_PATH);
   const form = new FormData();
   form.append('file', new Blob([file]), 'PrintLabZPL.ttf');
   form.append('path', 'R:PRINTLAB.TTF');
-  console.log(`Uploading ${FONT_PATH} (${file.length} bytes) to Labelary...`);
+  console.log(`Uploading ${PRINTLAB_FONT_PATH} (${file.length} bytes) to Labelary...`);
   const res = await fetch(FONT_UPLOAD_URL, { method: 'POST', body: form });
   if (!res.ok) {
     throw new Error(`Font upload ${res.status}: ${await res.text()}`);
