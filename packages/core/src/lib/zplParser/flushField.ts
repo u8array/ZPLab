@@ -21,7 +21,7 @@ import { dataMatrixFdToGs1Content } from "../dataMatrixFd";
 import { zplAnchorToModel } from "../labelGeometry/textPositionTransforms";
 import { resolveDeviceFontId } from "../customFonts";
 import { blockInterLineExtentDots } from "../zebraTextLayout";
-import { computeTextRenderMetrics } from "../labelGeometry/textRenderMetrics";
+import { anchorInkWidthDots } from "../labelGeometry/textRenderMetrics";
 import type { TextProps } from "../../registry/text";
 import type { Code128Props } from "../../registry/code128";
 import type { Code39Props } from "../../registry/code39";
@@ -242,17 +242,6 @@ export function createFlushField(
     if (s.field.fieldType !== "text") commitPendingReverseBg();
     switch (s.field.fieldType) {
       case "text": {
-        // ZPL anchors ^FO at cap-top and ^FT at baseline; our internal
-        // model stores the Konva render position (EM-top-left) so editor
-        // interactions stay shift-free. The FO/I and FO/B shifts also
-        // need the rendered ink width; measure it the same way the
-        // renderer does so the round-trip stays exact.
-        const { inkWidthDots } = computeTextRenderMetrics({
-          content: decoded,
-          fontHeight: s.field.textH,
-          fontWidth: s.field.textW,
-          printerFontName: s.field.pendingPrinterFontName,
-        });
         // FT pins the last baseline, so the EM-top sits one block-extent above;
         // FO R/I stack the same way. ^TB is a fixed clip height, ^FB stacks
         // lines. Must match the generator's blockExtentFor for byte-exact
@@ -275,6 +264,16 @@ export function createFlushField(
             defaultFontId: s.defaults.cfFontId,
           },
         );
+        // ZPL anchors ^FO at cap-top and ^FT at baseline; our internal
+        // model stores the Konva render position (EM-top-left) so editor
+        // interactions stay shift-free.
+        const inkWidthDots = anchorInkWidthDots({
+          fontId: anchorFontId,
+          content: decoded,
+          fontHeight: s.field.textH,
+          fontWidth: s.field.textW,
+          printerFontName: s.field.pendingPrinterFontName,
+        });
         const modelPos = zplAnchorToModel(
           s.field.x,
           s.field.y,

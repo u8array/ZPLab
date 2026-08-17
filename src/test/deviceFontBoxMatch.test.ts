@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { GlobalFonts } from '@napi-rs/canvas';
 import { PNG } from 'pngjs';
-import { deviceFontMetrics } from '@zplab/core/lib/labelGeometry/deviceFonts';
+import { deviceFontMetrics, deviceFontInkWidthDots } from '@zplab/core/lib/labelGeometry/deviceFonts';
 import { zplAnchorToModel } from '@zplab/core/lib/labelGeometry/textPositionTransforms';
 import { builtinFontFamily } from '@zplab/core/lib/customFonts';
 import { deviceFontBoxMatchCases } from '../../tests/fixtures/deviceFontBoxMatchCases';
@@ -74,25 +74,33 @@ describe('Device font box-match: substitutes vs. Labelary bitmap fonts', () => {
       if (!metrics) return;
       const face = faceFor(tc.fontId);
 
+      const inkWidth =
+        deviceFontInkWidthDots(tc.fontId, tc.fontHeight, tc.fontWidth, tc.text) ?? 0;
       const model = zplAnchorToModel(
         tc.x,
         tc.y,
         { fontHeight: tc.fontHeight, rotation: tc.rotation, fontId: tc.fontId },
         'FO',
+        inkWidth,
       );
-      const drawX = model.x + metrics.xOffsetDots;
-      const drawY = model.y + metrics.yOffsetDots;
 
       const { canvas, ctx } = inkCanvas();
+      // Konva rotates the node about its position; the device nudges are
+      // node-local, so they apply inside the rotated frame.
+      const deg = { N: 0, I: 180, B: 270 }[tc.rotation];
+      ctx.save();
+      ctx.translate(model.x, model.y);
+      ctx.rotate((deg * Math.PI) / 180);
       drawKonvaText(ctx, {
         text: tc.text,
-        x: drawX,
-        y: drawY,
+        x: metrics.xOffsetDots,
+        y: metrics.yOffsetDots,
         fontSizePx: metrics.fontSizeDots,
         fontFamily: face.family,
         scaleX: metrics.scaleX,
         letterSpacingPx: metrics.letterSpacingDots,
       });
+      ctx.restore();
 
       const localPng = PNG.sync.read(canvas.toBuffer('image/png'));
       const labelaryPng = PNG.sync.read(

@@ -1,13 +1,14 @@
 import type { LabelObjectBase } from "../types/LabelObject";
 import { effectiveDpmm, type JmDensity } from "../types/LabelConfig";
 import type { ZplEmitContext } from "../types/ZplEmit";
+import type { Variable } from "../types/Variable";
 import { hasTemplateMarkers, markersToEmbeds } from "../lib/fnTemplate";
 import { hasClockMarkers, markersToTokens } from "../lib/fcTemplate";
 import { hasControlMarkers, resolveControlMarkers } from "../types/controlKey";
 import { classifyField } from "../lib/variableField";
 import { modelToZplAnchor } from "../lib/labelGeometry/textPositionTransforms";
 import { resolveDeviceFontId, type DeviceFontLabel } from "../lib/customFonts";
-import { getTextRenderMetrics } from "../lib/labelGeometry/textRenderMetrics";
+import { anchorInkWidthDots } from "../lib/labelGeometry/textRenderMetrics";
 import { blockInterLineExtentDots } from "../lib/zebraTextLayout";
 import type { LabelObject } from "../types/Group";
 import { objectRotation } from "./rotation";
@@ -117,6 +118,8 @@ export function wrapReverse(reverse: boolean | undefined, body: string): string 
 interface TextLikeObjForFieldPos extends LabelObjectBase {
   props: {
     fontHeight: number;
+    fontWidth: number;
+    content: string;
     rotation: "N" | "R" | "I" | "B";
     fontId?: string;
     printerFontName?: string;
@@ -169,26 +172,36 @@ export function resolveFontCmd(
 
 /** Numeric ZPL anchor (cap-top/baseline) for a text-like field. `label`
  *  resolves the effective device font (^CF default, ^CW alias override)
- *  for the anchor snap. */
+ *  for the anchor snap; `variables` resolve a single-bind marker to the
+ *  default the wire actually prints (^FN{n}^FD{default}). */
 export function textZplAnchorCoords(
   obj: TextLikeObjForFieldPos,
   label?: DeviceFontLabel,
+  variables?: readonly Variable[],
 ): {
   cmd: "FO" | "FT";
   x: number;
   y: number;
 } {
   const cmd = obj.positionType === "FT" ? "FT" : "FO";
-  const metrics = getTextRenderMetrics(obj as unknown as LabelObject);
   const p = obj.props;
   const blockExtentDots = blockExtentFor(p);
   const anchorFontId = resolveDeviceFontId(p.fontId, p.printerFontName, label ?? {});
+  const cls = variables ? classifyField(p.content, variables) : undefined;
+  const anchorContent = cls?.kind === "single" ? cls.variable.defaultValue : p.content;
+  const inkWidthDots = anchorInkWidthDots({
+    fontId: anchorFontId,
+    content: anchorContent,
+    fontHeight: p.fontHeight,
+    fontWidth: p.fontWidth,
+    printerFontName: p.printerFontName,
+  });
   const a = modelToZplAnchor(
     obj.x,
     obj.y,
     { ...p, fontId: anchorFontId },
     obj.positionType,
-    metrics?.inkWidthDots ?? 0,
+    inkWidthDots,
     blockExtentDots,
     p.blockWidth ?? 0,
   );
@@ -200,8 +213,9 @@ export function textZplAnchorCoords(
 export function textFieldPos(
   obj: TextLikeObjForFieldPos,
   label?: DeviceFontLabel,
+  variables?: readonly Variable[],
 ): string {
-  const a = textZplAnchorCoords(obj, label);
+  const a = textZplAnchorCoords(obj, label, variables);
   // Same echo contract as fieldPosZ (text is never import-normalised).
   const z = obj.fieldJustify === "R" ? ",1" : "";
   return `^${a.cmd}${a.x},${a.y}${z}`;

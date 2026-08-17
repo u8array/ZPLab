@@ -1,5 +1,5 @@
 import { builtinFontFamily, resolveDeviceFontId, resolvePreviewFontName } from "../customFonts";
-import { applyDeviceFontCase, deviceFontMetrics } from "./deviceFonts";
+import { applyDeviceFontCase, deviceFontInkWidthDots, deviceFontMetrics } from "./deviceFonts";
 import { getFontFamily } from "../fontCache";
 import type { LabelObject } from "../../types/Group";
 import type { LabelConfig } from "../../types/LabelConfig";
@@ -69,6 +69,32 @@ export function computeTextRenderMetrics(input: TextMetricsInput): TextRenderMet
     (input.letterSpacingDots ?? 0) * Math.max(0, content.length - 1);
   const inkWidthDots = (glyphWidthDots + spacingDots) * fontScaleX;
   return { content, fontFamily, fontScaleX, inkWidthDots, fontSizeDots: input.fontSizeDots };
+}
+
+/** Ink extent feeding the FO/I and FO/B anchor shift: cell grid for bitmap
+ *  device fonts, measured PrintLab width otherwise. The single derivation
+ *  shared by emit and parse; one-sided drift breaks byte-exact round-trips
+ *  for rotated fields. */
+export function anchorInkWidthDots(input: {
+  fontId: string | undefined;
+  content: string;
+  fontHeight: number;
+  fontWidth: number;
+  printerFontName?: string;
+}): number {
+  const cellGrid = deviceFontInkWidthDots(
+    input.fontId,
+    input.fontHeight,
+    input.fontWidth,
+    input.content,
+  );
+  if (cellGrid !== null) return cellGrid;
+  return computeTextRenderMetrics({
+    content: input.content,
+    fontHeight: input.fontHeight,
+    fontWidth: input.fontWidth,
+    printerFontName: input.printerFontName,
+  }).inkWidthDots;
 }
 
 /** Canvas-only preview font priority: fontId -> printerFontName -> defaultFontId.

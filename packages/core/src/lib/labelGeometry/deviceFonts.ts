@@ -67,6 +67,41 @@ export const DEVICE_FONT_CELLS: Readonly<
   ]),
 );
 
+/** Snapped magnifications for a bitmap font, or null for Font 0 / unknown
+ *  ids / non-positive heights (magnify would otherwise clamp a negative to
+ *  mag 1 or propagate NaN). Width 0 derives from the height mag. */
+function deviceFontMags(
+  fontId: string | undefined,
+  heightDots: number,
+  widthDots: number,
+): { spec: DeviceFontSpec; magH: number; magW: number } | null {
+  if (!fontId) return null;
+  const spec = DEVICE_FONTS[fontId];
+  if (!spec || !(heightDots > 0)) return null;
+  const magH = magnify(heightDots, spec.magStep);
+  const magW = widthDots > 0 ? magnify(widthDots, spec.magWidthStep) : magH;
+  return { spec, magH, magW };
+}
+
+/** Deterministic field extent in dots for the ^FO anchor of rotated (I/B)
+ *  bitmap fields: cells are monospaced, and Labelary measures the printed
+ *  extent at n*advance - gap/2 within 2 dots across fonts. Null for
+ *  Font 0 / unknown ids (measured PrintLab width applies there). */
+export function deviceFontInkWidthDots(
+  fontId: string | undefined,
+  heightDots: number,
+  widthDots: number,
+  content: string,
+): number | null {
+  const mags = deviceFontMags(fontId, heightDots, widthDots);
+  if (!mags) return null;
+  const { spec, magW } = mags;
+  const n = applyDeviceFontCase(fontId, content).length;
+  if (n === 0) return 0;
+  const gap = spec.advancePerMag - spec.magWidthStep;
+  return magW * (n * spec.advancePerMag - gap / 2);
+}
+
 /** Requested ^A height snapped to the cell grid, or null for Font 0 /
  *  unknown ids / non-positive heights. The firmware anchors a bitmap field
  *  by its snapped cell, so the anchor transform needs this too. */
@@ -74,10 +109,8 @@ export function deviceFontSnappedHeightDots(
   fontId: string | undefined,
   heightDots: number,
 ): number | null {
-  if (!fontId) return null;
-  const spec = DEVICE_FONTS[fontId];
-  if (!spec || !(heightDots > 0)) return null;
-  return magnify(heightDots, spec.magStep) * spec.magStep;
+  const mags = deviceFontMags(fontId, heightDots, 0);
+  return mags ? mags.magH * mags.spec.magStep : null;
 }
 
 // Zebra fonts B and H (OCR-A) have no lowercase glyphs: B prints uppercase,
@@ -119,14 +152,9 @@ export function deviceFontMetrics(
   heightDots: number,
   widthDots: number,
 ): DeviceFontMetrics | null {
-  if (!fontId) return null;
-  const spec = DEVICE_FONTS[fontId];
-  if (!spec) return null;
-  // Guard NaN / non-positive height: magnify would otherwise clamp a negative
-  // to mag 1 or propagate NaN through fontSizeDots into every offset.
-  if (!(heightDots > 0)) return null;
-  const magH = magnify(heightDots, spec.magStep);
-  const magW = widthDots > 0 ? magnify(widthDots, spec.magWidthStep) : magH;
+  const mags = deviceFontMags(fontId, heightDots, widthDots);
+  if (!mags) return null;
+  const { spec, magH, magW } = mags;
   const fontSizeDots = (magH * spec.capInkPerMag) / spec.capPerEm;
   const scaleX =
     ((magW * spec.advancePerMag) / (fontSizeDots * spec.advPerEm)) *
