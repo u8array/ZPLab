@@ -334,12 +334,21 @@ export function createFieldHandlers(
     // clip height) so it round-trips as ^TB, unlike the prior lossy collapse
     // to ^FB lines. Justify/spacing/indent are not ^TB params.
     TB(p, rest) {
+      // ^TB always redefines the field as text, but has no font params: a
+      // preceding ^A donates height/width/rotation (spec p.356); anything
+      // else falls back to the ^CF/^FW defaults.
+      const hadTextFont = s.field.fieldType === "text";
       s.field.fieldType = "text";
-      s.field.textRot = readRotation(rest[0], s.defaults.fwRotation);
+      if (!hadTextFont) {
+        s.field.textH = getDefaultTextH(s.defaults);
+        s.field.textW = getDefaultTextW(s.defaults);
+      }
+      s.field.textRot = readRotation(
+        rest[0],
+        hadTextFont ? s.field.textRot : s.defaults.fwRotation,
+      );
       const tbW = dots(p[1]);
       const tbH = dots(p[2]);
-      s.field.textH = getDefaultTextH(s.defaults);
-      s.field.textW = getDefaultTextW(s.defaults);
       // Spec defaults width/height to 1 dot; clamp (never drop) so even a bare
       // ^TB round-trips as ^TB instead of silently degrading to plain text.
       s.defaults.fbWidth = tbW > 0 ? tbW : 1;

@@ -46,6 +46,9 @@ const ALLOWED = [
   // Clock offsets are design-wide and carry no density.
   ".label.secondaryClockOffset",
   ".label.tertiaryClockOffset",
+  // normalizeChanges ctx reads customFonts/defaultFontId, both design-scoped.
+  "applyObjectChanges(obj, changes, ancestorLocked, state.label)",
+  "applyObjectChanges(n, changes, inheritedLocked, state.label)",
 ];
 
 // No /g flag: a global regex keeps lastIndex across .test() calls and would

@@ -2,6 +2,14 @@ import type { LabelObjectBase, ObjectChanges, ObjectGroup } from './LabelObject'
 import type { ContentSpec } from './contentSpec';
 import type { HriBehavior, TransformContext, ZplEmitContext } from './ZplEmit';
 import type { PreflightCtx, PreflightProducerResult } from './preflight';
+import type { DeviceFontLabel } from './LabelConfig';
+
+
+/** Same label slice preflight gets; lets normalizeChanges resolve the
+ *  effective device font (^CF default) where it needs one. */
+export interface NormalizeChangesCtx {
+  label?: DeviceFontLabel;
+}
 
 /** Domain half of a registry entry: emits ZPL, no React deps. */
 export interface ObjectTypeCore<P extends object = object> {
@@ -97,6 +105,7 @@ export interface ObjectTypeCore<P extends object = object> {
   normalizeChanges?: (
     obj: LabelObjectBase & { props: P },
     changes: ObjectChanges,
+    ctx?: NormalizeChangesCtx,
   ) => ObjectChanges;
   /** Pure hook: maps Konva Transformer scale to prop changes on transform end. */
   commitTransform?: (

@@ -113,7 +113,9 @@ export function builtinFontFamily(fontId: string | undefined): string | undefine
   return fontId ? BUILTIN_FONT_FAMILY[fontId] : undefined;
 }
 
-export type DeviceFontLabel = Pick<LabelConfig, "customFonts" | "defaultFontId">;
+import type { DeviceFontLabel } from "../types/LabelConfig";
+
+export type { DeviceFontLabel };
 
 /** Font id whose bitmap cell grid governs a text field, or undefined for a
  *  scalable face (^A@ TTF, or a ^CW upload aliasing the id). Single resolver

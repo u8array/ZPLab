@@ -1,6 +1,6 @@
 // EM-top-left <-> ZPL anchor (^FO cap-top / ^FT baseline). Applied only
 // at the zplGenerator/zplParser boundary; editor interactions skip it.
-import { deviceFontSnappedHeightDots } from "./deviceFonts";
+import { effectiveFontHeightDots } from "./deviceFonts";
 
 interface TextLikeProps {
   fontHeight: number;
@@ -24,9 +24,7 @@ function zplAnchorDelta(
   blockExtentDots = 0,
   blockReadingWidthDots = 0,
 ): { dx: number; dy: number } {
-  const effHeight =
-    deviceFontSnappedHeightDots(props.fontId, props.fontHeight) ??
-    props.fontHeight;
+  const effHeight = effectiveFontHeightDots(props.fontId, props.fontHeight);
   const h = effHeight / ZPL_FONT_HEIGHT_TO_CSS_RATIO;
   const pad = effHeight * EM_TOP_ABOVE_CAP;
   const bias = effHeight * RENDER_Y_BIAS;

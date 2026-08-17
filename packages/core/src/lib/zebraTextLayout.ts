@@ -2,6 +2,8 @@
 // compute against fixed advance to match Labelary.
 
 import { dotsToPx, pxToDots } from "./coordinates";
+import { deviceFontInkWidthDots, deviceFontSnappedHeightDots, deviceFontSnappedWidthDots, effectiveFontHeightDots } from "./labelGeometry/deviceFonts";
+import { EM_TOP_ABOVE_CAP } from "./labelGeometry/textPositionTransforms";
 import { isAxisSwapped, type ZplRotation } from "../registry/rotation";
 
 export type BlockJustify = "L" | "C" | "R" | "J";
@@ -40,14 +42,48 @@ export function zebraGlyphAdvanceDots(fontHeight: number, fontWidth: number): nu
   return fontWidth > 0 ? fontWidth : fontHeight * A0_DEFAULT_ASPECT;
 }
 
-/** ^FB slot a: spec skips print when block is narrower than one glyph
- *  cell (explicit `fontWidth` or `h * 5/9` for A0 default). */
+/** Line width in the basis the firmware advances: device cells for A-H,
+ *  the Font-0 table otherwise. Shared by preflight and the block panel so
+ *  their wrap estimate cannot diverge. */
+export function blockLineWidthDots(
+  line: string,
+  fontHeight: number,
+  fontWidth: number,
+  deviceFontId?: string,
+): number {
+  return (
+    deviceFontInkWidthDots(deviceFontId, fontHeight, fontWidth, line) ??
+    zebraLineWidthDots(line, fontHeight, fontWidth)
+  );
+}
+
+/** ^FB slot a: spec (p.186) says text below the font width does not
+ *  print; Labelary in practice wraps per char and still prints, so this
+ *  is the shared warning threshold (preflight, panel, canvas), not a
+ *  print guarantee. */
 export function isBlockTooNarrow(
   blockWidthDots: number,
   fontHeight: number,
   fontWidth: number,
+  deviceFontId?: string,
 ): boolean {
-  return blockWidthDots > 0 && blockWidthDots < zebraGlyphAdvanceDots(fontHeight, fontWidth);
+  return (
+    blockWidthDots > 0 &&
+    blockWidthDots < blockGlyphCellDots(fontHeight, fontWidth, deviceFontId)
+  );
+}
+
+/** The effective font width (spec's ^FB slot-a threshold): the snapped
+ *  cell width for device fonts, else the Font-0 advance. */
+export function blockGlyphCellDots(
+  fontHeight: number,
+  fontWidth: number,
+  deviceFontId?: string,
+): number {
+  return (
+    deviceFontSnappedWidthDots(deviceFontId, fontHeight, fontWidth) ??
+    zebraGlyphAdvanceDots(fontHeight, fontWidth)
+  );
 }
 
 /** Display-space positions of each word inside one justify=J line. Caller
@@ -92,9 +128,45 @@ export function blockInterLineExtentDots(args: {
   blockLines: number;
   blockLineSpacing: number;
   fontHeight: number;
+  deviceFontId?: string;
 }): number {
   if (args.blockWidthDots <= 0) return 0;
-  return Math.max(0, (args.blockLines - 1) * blockLineStepDots(args.fontHeight, args.blockLineSpacing));
+  return Math.max(
+    0,
+    (args.blockLines - 1) * blockLineStepDots(args.fontHeight, args.blockLineSpacing, args.deviceFontId),
+  );
+}
+
+/** Anchor extent of a ^TB field beyond its first line. The firmware pins
+ *  the block box at the anchor (bottom edge under FT) and lays the first
+ *  line out at the block top exactly like an ^FO field, for Font 0 and
+ *  the bitmap fonts alike (Labelary-measured). */
+export function tbBlockExtentDots(
+  blockHeightDots: number,
+  fontHeight: number,
+  deviceFontId?: string,
+): number {
+  const effH = effectiveFontHeightDots(deviceFontId, fontHeight);
+  return Math.max(0, blockHeightDots - effH * (1 - EM_TOP_ABOVE_CAP));
+}
+
+/** Anchor extent of a block beyond its first line, ^TB or ^FB. The single
+ *  tb-vs-fb dispatch shared by generator, parser and the box-match gate;
+ *  a one-sided change here shifts anchors silently. tbHeightDots > 0
+ *  selects ^TB (the parser's native signal: ^TB is stream state, not a
+ *  stored mode). */
+export function blockAnchorExtentDots(args: {
+  tbHeightDots: number;
+  blockWidthDots: number;
+  blockLines: number;
+  blockLineSpacing: number;
+  fontHeight: number;
+  deviceFontId?: string;
+}): number {
+  if (args.tbHeightDots > 0) {
+    return tbBlockExtentDots(args.tbHeightDots, args.fontHeight, args.deviceFontId);
+  }
+  return blockInterLineExtentDots(args);
 }
 
 // ZplRotation's single source is registry/rotation; re-exported here for the
@@ -252,8 +324,58 @@ export function zebraJustifyGapDots(
   return extra > 0 ? extra / wordGapCount : 0;
 }
 
-export function blockLineStepDots(fontHeight: number, blockLineSpacing: number): number {
-  return fontHeight + blockLineSpacing;
+/** (n-1) steps plus the last line's own cell: the trailing inter-line
+ *  gap doesn't render. */
+const stackDots = (lines: number, stepDots: number, lastLineDots: number) =>
+  Math.max(0, lines - 1) * stepDots + lastLineDots;
+
+/** Vertical span of n stacked ^FB lines. */
+export function blockStackHeightDots(
+  lines: number,
+  fontHeight: number,
+  blockLineSpacing: number,
+  deviceFontId?: string,
+): number {
+  return stackDots(
+    lines,
+    blockLineStepDots(fontHeight, blockLineSpacing, deviceFontId),
+    effectiveFontHeightDots(deviceFontId, fontHeight),
+  );
+}
+
+/** Vertical span of n wrapped ^TB lines; ^TB steps by its own pitch. */
+export function tbStackHeightDots(
+  lines: number,
+  fontHeight: number,
+  deviceFontId?: string,
+): number {
+  return stackDots(
+    lines,
+    tbLineStepDots(fontHeight, deviceFontId),
+    effectiveFontHeightDots(deviceFontId, fontHeight),
+  );
+}
+
+/** Inverse of {@link blockStackHeightDots}: how many lines a given stack
+ *  height holds. */
+export function blockLinesForHeightDots(
+  heightDots: number,
+  fontHeight: number,
+  blockLineSpacing: number,
+  deviceFontId?: string,
+): number {
+  const step = blockLineStepDots(fontHeight, blockLineSpacing, deviceFontId);
+  return Math.max(1, Math.round((heightDots + blockLineSpacing) / step));
+}
+
+/** Firmware line pitch: device fonts stack by the snapped cell height
+ *  (Labelary-measured), Font 0 by the requested height. */
+export function blockLineStepDots(
+  fontHeight: number,
+  blockLineSpacing: number,
+  deviceFontId?: string,
+): number {
+  return effectiveFontHeightDots(deviceFontId, fontHeight) + blockLineSpacing;
 }
 
 /** Width of the empty single-line text placeholder, in fontHeight multiples.
@@ -272,8 +394,12 @@ export function isBlankText(content: string): boolean {
  *  ~1.25x fontHeight (calibrated against Labelary for the default font). */
 export const TB_LINE_HEIGHT_RATIO = 1.25;
 
-export function tbLineStepDots(fontHeight: number): number {
-  return fontHeight * TB_LINE_HEIGHT_RATIO;
+/** Device fonts wrap ^TB lines at exactly the snapped cell height
+ *  (Labelary-measured); the ratio is the Font-0 path. */
+export function tbLineStepDots(fontHeight: number, deviceFontId?: string): number {
+  return (
+    deviceFontSnappedHeightDots(deviceFontId, fontHeight) ?? fontHeight * TB_LINE_HEIGHT_RATIO
+  );
 }
 
 /** FB block bbox in Group-local display coords. Rotates with the
@@ -285,10 +411,13 @@ export function blockBoundsDots(args: {
   blockLineSpacing: number;
   fontHeight: number;
   rotation?: ZplRotation;
+  deviceFontId?: string;
 }): { x: number; y: number; width: number; height: number } {
-  const lineStep = blockLineStepDots(args.fontHeight, args.blockLineSpacing);
   const blockWidth = args.blockWidthDots;
-  const linesExtent = args.blockLines > 0 ? (args.blockLines - 1) * lineStep + args.fontHeight : 0;
+  const linesExtent =
+    args.blockLines > 0
+      ? blockStackHeightDots(args.blockLines, args.fontHeight, args.blockLineSpacing, args.deviceFontId)
+      : 0;
   switch (args.rotation ?? "N") {
     case "N": return { x: 0,           y: 0,           width: blockWidth,  height: linesExtent };
     case "R": return { x: -linesExtent, y: 0,           width: linesExtent, height: blockWidth };
@@ -328,6 +457,7 @@ export function blockReflowGeometry(args: {
   blockLines: number;
   blockLineSpacing: number;
   fontHeight: number;
+  deviceFontId?: string;
   /** Which screen edge the user is dragging; the opposite edge is pinned. */
   activeLeft: boolean;
   activeTop: boolean;
@@ -359,6 +489,7 @@ export function blockReflowGeometry(args: {
     blockLines,
     blockLineSpacing: args.blockLineSpacing,
     fontHeight: args.fontHeight,
+    deviceFontId: args.deviceFontId,
     rotation: args.rotation,
   });
   const bxPx = dotsToPx(b.x, args.scale, args.dpmm);

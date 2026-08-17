@@ -102,6 +102,17 @@ export function deviceFontInkWidthDots(
   return magW * (n * spec.advancePerMag - gap / 2);
 }
 
+/** Snapped character-cell width (the effective ^A font width), or null
+ *  for Font 0 / unknown ids. */
+export function deviceFontSnappedWidthDots(
+  fontId: string | undefined,
+  heightDots: number,
+  widthDots: number,
+): number | null {
+  const mags = deviceFontMags(fontId, heightDots, widthDots);
+  return mags ? mags.magW * mags.spec.magWidthStep : null;
+}
+
 /** Requested ^A height snapped to the cell grid, or null for Font 0 /
  *  unknown ids / non-positive heights. The firmware anchors a bitmap field
  *  by its snapped cell, so the anchor transform needs this too. */
@@ -111,6 +122,17 @@ export function deviceFontSnappedHeightDots(
 ): number | null {
   const mags = deviceFontMags(fontId, heightDots, 0);
   return mags ? mags.magH * mags.spec.magStep : null;
+}
+
+/** The height the firmware actually uses for a text field: bitmap device
+ *  fonts snap to their cell grid, everything else keeps the requested
+ *  height. Feeds the anchor shift and the block line pitch, which Labelary
+ *  both measures at the snapped cell. */
+export function effectiveFontHeightDots(
+  fontId: string | undefined,
+  heightDots: number,
+): number {
+  return deviceFontSnappedHeightDots(fontId, heightDots) ?? heightDots;
 }
 
 // Zebra fonts B and H (OCR-A) have no lowercase glyphs: B prints uppercase,

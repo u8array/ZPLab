@@ -6,27 +6,17 @@ import { encodeTbContent } from "../lib/tbContent";
 import { serialFieldData, type SerialMode } from "./serialField";
 import { deriveBlockTextPatch } from "../lib/textBlock";
 import {
+  blockLineWidthDots,
   isBlockTooNarrow,
   wrapBlockLines,
-  zebraLineWidthDots,
-  tbLineStepDots,
+  tbStackHeightDots,
   type ZplRotation,
 } from "../lib/zebraTextLayout";
 
-/** Text layout mode. 'normal' = plain ^A (no wrap), 'fb' = ^FB field
- *  block (max-lines cap, justify, hanging indent), 'tb' = ^TB text block
- *  (word-wrap clipped at a pixel height). Only 'tb' is stored explicitly;
- *  'normal' vs 'fb' is inferred from blockWidth presence so legacy designs
- *  and ^FB imports keep working. Read it through `resolveTextMode`. */
-export type TextMode = "normal" | "fb" | "tb";
+import { resolveTextMode, type TextMode } from "./textMode";
+import { resolveDeviceFontId } from "../lib/customFonts";
 
-export function resolveTextMode(p: Pick<TextProps, "textMode" | "blockWidth" | "serial">): TextMode {
-  // Serial is a plain single-line counter (^A + ^SN/^SF); block props lie
-  // dormant while it is active, so the mode resolves to 'normal' regardless.
-  if (p.serial) return "normal";
-  if (p.textMode) return p.textMode;
-  return p.blockWidth ? "fb" : "normal";
-}
+export { resolveTextMode, type TextMode };
 
 /** Whether the field's content may contain line breaks. Only text in a block
  *  mode (^FB/^TB) wraps to multiple lines; plain text (^A) and every barcode
@@ -118,23 +108,24 @@ export const text: ObjectTypeCore<TextProps> = {
   // glyph cell prints nothing (error), and content that wraps past the line cap
   // (^FB) or block height (^TB) is clipped (overset warning). Mirrors the wrap
   // the panel/canvas already use (Font-0 metrics), so the badge matches them.
-  preflight: (obj) => {
+  preflight: (obj, ctx) => {
     const p = obj.props;
     const mode = resolveTextMode(p);
     if (mode === "normal") return [];
-    if (isBlockTooNarrow(p.blockWidth ?? 0, p.fontHeight, p.fontWidth ?? 0)) {
+    const deviceFontId = resolveDeviceFontId(p.fontId, p.printerFontName, ctx.label);
+    const lineWidth = (line: string) =>
+      blockLineWidthDots(line, p.fontHeight, p.fontWidth ?? 0, deviceFontId);
+    if (isBlockTooNarrow(p.blockWidth ?? 0, p.fontHeight, p.fontWidth ?? 0, deviceFontId)) {
       return [{ kind: "blockTooNarrow" }];
     }
     // ^FB honours newlines as hard breaks; ^TB collapses them to spaces (mirrors
     // encodeTbContent), so wrap the collapsed form there to avoid false overset.
     const content = mode === "tb" ? (p.content ?? "").replace(/\n/g, " ") : (p.content ?? "");
-    const lines = wrapBlockLines(content, p.blockWidth ?? 0, (line) =>
-      zebraLineWidthDots(line, p.fontHeight, p.fontWidth ?? 0),
-    );
+    const lines = wrapBlockLines(content, p.blockWidth ?? 0, lineWidth);
     // ^TB clips at blockHeight; N lines occupy (N-1) steps plus the last line's
     // own height, not N steps (the trailing 0.25 line-gap doesn't render).
     const tbHeight = (p.blockHeight ?? 0) > 0
-      ? (lines.length - 1) * tbLineStepDots(p.fontHeight) + p.fontHeight
+      ? tbStackHeightDots(lines.length, p.fontHeight, deviceFontId)
       : 0;
     const overset =
       mode === "fb"
@@ -150,7 +141,7 @@ export const text: ObjectTypeCore<TextProps> = {
   // rotations so the user's screen-vertical drag stays attached to
   // fontHeight regardless of how Konva orients the glyphs.
   // Canonical un-emit shape so round-trips stay diff-free.
-  normalizeChanges: (_obj, changes) => {
+  normalizeChanges: (_obj, changes, ctx) => {
     const nextProps = changes.props as Partial<TextProps> | undefined;
     if (!nextProps) return changes;
     let patched = nextProps;
@@ -167,9 +158,16 @@ export const text: ObjectTypeCore<TextProps> = {
           { blockWidth: merged.blockWidth, blockLines: merged.blockLines },
           merged.fontHeight,
           merged.fontWidth,
+          resolveDeviceFontId(merged.fontId, merged.printerFontName, ctx?.label ?? {}),
         );
-        if (grown.blockLines !== undefined && grown.blockLines !== merged.blockLines) {
-          patched = { ...patched, blockLines: grown.blockLines };
+        // Take every field the patch changes (the import-shape activation
+        // backfills width/spacing/justify too, not just the line cap).
+        const { content: _grownContent, ...grownRest } = grown;
+        const changedEntries = Object.entries(grownRest).filter(
+          ([k, v]) => (merged as Record<string, unknown>)[k] !== v,
+        );
+        if (changedEntries.length > 0) {
+          patched = { ...patched, ...Object.fromEntries(changedEntries) };
         }
       }
     }

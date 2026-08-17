@@ -825,6 +825,52 @@ describe('generateZPL — ^TB text block', () => {
     expect(props(reparsed[0]).content).toBe('Text block');
   });
 
+  it('ignores dormant ^TB props for the anchor of a serial field', () => {
+    // Serial suppresses the block (no ^TB in the stream), so the anchor
+    // must not carry a block extent the reparse cannot see.
+    const mk = (extra: object) => [
+      { id: 's', type: 'text', x: 100, y: 137, positionType: 'FT', rotation: 0,
+        props: { content: '001', fontHeight: 40, fontWidth: 0, rotation: 'N',
+          serial: { increment: 1, zplMode: 'SN' }, ...extra } },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any;
+    const plain = generateZPL(BASE_LABEL, mk({}));
+    const dormant = generateZPL(BASE_LABEL, mk({ textMode: 'tb', blockWidth: 200, blockHeight: 40 }));
+    expect(dormant).not.toContain('^TB');
+    expect(dormant).toBe(plain);
+  });
+
+  it('ignores dormant blockWidth for the FO/I anchor of a serial field', () => {
+    // FO I anchors at the far reading end; a dormant ^FB width must not
+    // replace the ink extent when serial suppresses the block.
+    const mk = (extra: object) => [
+      { id: 's', type: 'text', x: 300, y: 150, rotation: 0,
+        props: { content: '001', fontHeight: 40, fontWidth: 0, rotation: 'I',
+          serial: { increment: 1, zplMode: 'SN' }, ...extra } },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any;
+    const plain = generateZPL(BASE_LABEL, mk({}));
+    const dormant = generateZPL(BASE_LABEL, mk({ blockWidth: 400 }));
+    expect(dormant).not.toContain('^FB');
+    expect(dormant).toBe(plain);
+  });
+
+  it('anchors blockHeight 0 like the parser (falls back to fontHeight)', () => {
+    // The parser maps ^TB height 0 to the font height; the emitted anchor
+    // must mirror that or the round-trip shifts by the extent delta.
+    const mk = (blockHeight: number) => [
+      { id: 't', type: 'text', x: 30, y: 100, positionType: 'FT', rotation: 0,
+        props: { content: 'x', fontHeight: 30, fontWidth: 0, rotation: 'N',
+          textMode: 'tb', blockWidth: 200, blockHeight } },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ] as any;
+    const ftY = (zpl: string) => /\^FT\d+,(\d+)/.exec(zpl)?.[1];
+    const zero = generateZPL(BASE_LABEL, mk(0));
+    const fontHigh = generateZPL(BASE_LABEL, mk(30));
+    expect(ftY(zero)).toBeDefined();
+    expect(ftY(zero)).toBe(ftY(fontHigh));
+  });
+
   it('round-trips an FT-anchored ^TB position (extent uses blockHeight)', () => {
     const original = '^XA^A0N,30^FT400,150^TBN,300,90^FDsample^FS^XZ';
     const a = parseSingle(original, 8);

@@ -7,11 +7,12 @@ import { hasClockMarkers, markersToTokens } from "../lib/fcTemplate";
 import { hasControlMarkers, resolveControlMarkers } from "../types/controlKey";
 import { classifyField } from "../lib/variableField";
 import { modelToZplAnchor } from "../lib/labelGeometry/textPositionTransforms";
+import { blockAnchorExtentDots } from "../lib/zebraTextLayout";
 import { resolveDeviceFontId, type DeviceFontLabel } from "../lib/customFonts";
 import { anchorInkWidthDots } from "../lib/labelGeometry/textRenderMetrics";
-import { blockInterLineExtentDots } from "../lib/zebraTextLayout";
 import type { LabelObject } from "../types/Group";
 import { objectRotation } from "./rotation";
+import { resolveTextMode, type TextMode } from "./textMode";
 import { measureFootprintDots } from "../lib/footprintProber";
 
 /** Emit `^FT` or `^FO` depending on how the object was originally positioned.
@@ -126,22 +127,31 @@ interface TextLikeObjForFieldPos extends LabelObjectBase {
     blockWidth?: number;
     blockLines?: number;
     blockLineSpacing?: number;
-    textMode?: "normal" | "fb" | "tb";
+    textMode?: TextMode;
     blockHeight?: number;
+    serial?: object;
   };
 }
 
 /** Vertical extent of a block beyond its first line, in dots. Shifts the
  *  FT baseline / FO-R/I anchor. ^TB is a fixed clip height; ^FB stacks lines. */
-function blockExtentFor(p: TextLikeObjForFieldPos["props"]): number {
-  if (p.textMode === "tb") {
-    return Math.max(0, (p.blockHeight ?? p.fontHeight) - p.fontHeight);
-  }
-  return blockInterLineExtentDots({
+function blockExtentFor(
+  p: TextLikeObjForFieldPos["props"],
+  mode: TextMode,
+  deviceFontId?: string,
+): number {
+  if (mode === "normal") return 0;
+  // blockHeight 0 falls back to the font height, mirroring the parser's
+  // ^TB clamp.
+  const tbHeightDots =
+    mode === "tb" ? (p.blockHeight && p.blockHeight > 0 ? p.blockHeight : p.fontHeight) : 0;
+  return blockAnchorExtentDots({
+    tbHeightDots,
     blockWidthDots: p.blockWidth ?? 0,
     blockLines: p.blockLines ?? 1,
     blockLineSpacing: p.blockLineSpacing ?? 0,
     fontHeight: p.fontHeight,
+    deviceFontId,
   });
 }
 
@@ -185,8 +195,12 @@ export function textZplAnchorCoords(
 } {
   const cmd = obj.positionType === "FT" ? "FT" : "FO";
   const p = obj.props;
-  const blockExtentDots = blockExtentFor(p);
   const anchorFontId = resolveDeviceFontId(p.fontId, p.printerFontName, label ?? {});
+  // Serial suppresses the block on emit, so dormant block props must not
+  // shift the anchor either (extent nor reading width).
+  const mode = resolveTextMode(p);
+  const blockExtentDots = blockExtentFor(p, mode, anchorFontId);
+  const blockReadingWidthDots = mode === "normal" ? 0 : (p.blockWidth ?? 0);
   const cls = variables ? classifyField(p.content, variables) : undefined;
   const anchorContent = cls?.kind === "single" ? cls.variable.defaultValue : p.content;
   const inkWidthDots = anchorInkWidthDots({
@@ -203,7 +217,7 @@ export function textZplAnchorCoords(
     obj.positionType,
     inkWidthDots,
     blockExtentDots,
-    p.blockWidth ?? 0,
+    blockReadingWidthDots,
   );
   // ^FO/^FT take integers; firmware would truncate fractional residue anyway.
   return { cmd, x: Math.round(a.x), y: Math.round(a.y) };

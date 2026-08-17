@@ -25,6 +25,9 @@ export interface TextBoxMatchCase {
   rotation: 'N';
   x: number;
   y: number;
+  posType?: 'FO' | 'FT';
+  /** ^TB block sized so each space-separated word wraps to its own line. */
+  block?: { mode: 'tb'; widthDots: number; heightDots: number };
 }
 
 const SIZES = [20, 30, 50, 80];
@@ -76,8 +79,17 @@ const longTextCases: TextBoxMatchCase[] = [
   { id: 'h30_mixed',   fontHeight: 30, fontWidth: 0, text: 'Artikel: 4711-XL Gewicht 12,5kg', rotation: 'N', x: 20, y: 200 },
 ];
 
+/** Gates the tbBlockExtentDots formula for the scalable path; device
+ *  fonts have their own block gate. */
+const tbAnchorCases: TextBoxMatchCase[] = [
+  { id: 'h84_tb_ft', fontHeight: 84, fontWidth: 0, text: 'MMM MMM MMM',
+    rotation: 'N', x: 50, y: 700, posType: 'FT',
+    block: { mode: 'tb', widthDots: 250, heightDots: 400 } },
+];
+
 export const textBoxMatchCases: TextBoxMatchCase[] = [
   ...uniformCases,
   ...stretchedCases,
   ...longTextCases,
+  ...tbAnchorCases,
 ];

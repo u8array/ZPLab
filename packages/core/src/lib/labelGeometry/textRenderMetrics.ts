@@ -21,6 +21,9 @@ export interface TextRenderMetrics {
   xOffsetDots?: number;
   /** Canvas-only device-font inter-char spacing in dots (positive loosens). */
   letterSpacingDots?: number;
+  /** Canvas-only resolved bitmap device font (A-H); single source for
+   *  consumers that need the id beside the metrics (line pitch, bounds). */
+  deviceFontId?: string;
 }
 
 /** Parser feeds these (no obj at parse time). */
@@ -139,5 +142,6 @@ export function getTextRenderMetrics(
     yOffsetDots: device?.yOffsetDots,
     xOffsetDots: device?.xOffsetDots,
     letterSpacingDots: device?.letterSpacingDots,
+    deviceFontId: deviceId,
   };
 }

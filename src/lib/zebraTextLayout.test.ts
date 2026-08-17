@@ -6,10 +6,13 @@ import {
   zebraHangingIndentOffsetDots,
   zebraJustifyGapDots,
   blockJustifyWordPositions,
+  blockGlyphCellDots,
+  blockLinesForHeightDots,
   isBlockTooNarrow,
   blockBoundsDots,
   blockLineStartDots,
   blockLineStepDots,
+  blockStackHeightDots,
   blockWordAdvanceDots,
   blockReflowGeometry,
   blockGlyphAnchorPoint,
@@ -23,6 +26,41 @@ describe("tbLineStepDots", () => {
   it("uses the 1.25 ratio (looser than ^FB's 1.0)", () => {
     expect(tbLineStepDots(40)).toBe(50);
     expect(tbLineStepDots(80)).toBe(100);
+  });
+  it("stacks device fonts by the snapped cell height, no ratio", () => {
+    // Labelary: ^AG h=84 wraps ^TB lines 60 apart (mag 1), not 84*1.25.
+    expect(tbLineStepDots(84, "G")).toBe(60);
+  });
+});
+
+describe("blockBoundsDots for device fonts", () => {
+  it("stacks the bbox by the snapped pitch and last-line cell", () => {
+    // ^AG h=84 snaps to 60: 3 lines span 2*60+60, not 2*84+84.
+    const b = blockBoundsDots({
+      blockWidthDots: 700, blockLines: 3, blockLineSpacing: 0, fontHeight: 84, deviceFontId: "G",
+    });
+    expect(b.height).toBe(180);
+    expect(blockBoundsDots({
+      blockWidthDots: 700, blockLines: 3, blockLineSpacing: 0, fontHeight: 84,
+    }).height).toBe(252);
+  });
+});
+
+describe("blockLinesForHeightDots", () => {
+  it("inverts blockStackHeightDots for the fb<->tb mode switch", () => {
+    expect(blockLinesForHeightDots(blockStackHeightDots(3, 84, 10, "G"), 84, 10, "G")).toBe(3);
+    expect(blockLinesForHeightDots(252, 84, 0)).toBe(3);
+  });
+});
+
+describe("blockLineStepDots for device fonts", () => {
+  it("stacks by the snapped cell height plus spacing", () => {
+    // Labelary: ^AG h=84 -> pitch 60; h=100 -> 120; ^AA h=20 -> 18.
+    expect(blockLineStepDots(84, 0, "G")).toBe(60);
+    expect(blockLineStepDots(84, 10, "G")).toBe(70);
+    expect(blockLineStepDots(100, 0, "G")).toBe(120);
+    expect(blockLineStepDots(20, 0, "A")).toBe(18);
+    expect(blockLineStepDots(84, 0, "0")).toBe(84);
   });
 });
 
@@ -178,18 +216,27 @@ describe("zebraHangingIndentOffsetDots", () => {
 });
 
 describe("isBlockTooNarrow", () => {
-  it("returns true when block is below explicit fontWidth (Labelary fixture 02)", () => {
-    expect(isBlockTooNarrow(20, 30, 30)).toBe(true);
+  it("gates on the shared cell, fractional widths included", () => {
+    // Font-0 cell at h=30 is 16.67: a width inside the fractional gap must
+    // judge identically everywhere (the panel only ceils for display).
+    expect(isBlockTooNarrow(16.5, 30, 0)).toBe(true);
+    expect(isBlockTooNarrow(17, 30, 0)).toBe(false);
+    expect(isBlockTooNarrow(9, 20, 0, "A")).toBe(true);
+    expect(isBlockTooNarrow(10, 20, 0, "A")).toBe(false);
+    expect(isBlockTooNarrow(0, 30, 0)).toBe(false);
   });
-  it("returns false when block matches explicit fontWidth", () => {
-    expect(isBlockTooNarrow(30, 30, 30)).toBe(false);
+});
+
+describe("blockGlyphCellDots", () => {
+  it("uses the explicit fontWidth as the Font-0 cell (Labelary fixture 02)", () => {
+    expect(blockGlyphCellDots(30, 30)).toBe(30);
   });
   it("uses A0 5/9 aspect for fontWidth=0 (~17 dots for h=30)", () => {
-    expect(isBlockTooNarrow(15, 30, 0)).toBe(true);
-    expect(isBlockTooNarrow(20, 30, 0)).toBe(false);
+    expect(blockGlyphCellDots(30, 0)).toBeCloseTo(30 * (5 / 9), 6);
   });
-  it("returns false when blockWidth is 0 or absent (no block configured)", () => {
-    expect(isBlockTooNarrow(0, 30, 30)).toBe(false);
+  it("uses the snapped cell width for device fonts", () => {
+    // Font A mag 2: cell width 5 per mag (spec font width, not advance).
+    expect(blockGlyphCellDots(20, 0, "A")).toBe(2 * 5);
   });
 });
 

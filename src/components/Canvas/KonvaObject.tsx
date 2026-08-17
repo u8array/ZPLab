@@ -156,8 +156,8 @@ function TextFieldContent({
   scale,
   dpmm,
   fontVersion,
-  placeholderColor,
   emptyColor,
+  deviceFontId,
   isSelected = false,
 }: {
   obj: TextFieldObj;
@@ -166,7 +166,8 @@ function TextFieldContent({
   scale: number;
   dpmm: number;
   fontVersion: number;
-  placeholderColor: string;
+  /** Resolved bitmap device font (A-H); drives the snapped line pitch. */
+  deviceFontId?: string;
   /** Empty-field placeholder stroke: warning orange once the untouched grace
    *  ended, the affordance accent while pristine or on the drop ghost. */
   emptyColor: string;
@@ -202,19 +203,18 @@ function TextFieldContent({
   // that table, so measure the rendered glyphs instead.
   const isDefaultFont0 =
     fontWidth === 0 && Math.abs((base.scaleX ?? 1) - 1) < 1e-3;
+  // Mirrors computeTextRenderMetrics: letter spacing is part of the rendered
+  // advance, so wrap/align/overset must measure it too (font G carries a
+  // large calibrated spacing).
   const measureLinePx = (s: string) =>
     isDefaultFont0
       ? dotsToPx(zebraLineWidthDots(s, fontHeight, fontWidth), scale, dpmm)
-      : measureInkWidthPx(s, base.fontSize, base.fontFamily, base.fontStyle) *
+      : (measureInkWidthPx(s, base.fontSize, base.fontFamily, base.fontStyle) +
+          (base.letterSpacing ?? 0) * Math.max(0, s.length - 1)) *
         (base.scaleX ?? 1);
-  // Skip the field only when not even one rendered char fits (Labelary wraps to
-  // a single char). Soft hyphens are dropped by the wrap, so never gate on one.
-  const firstChar = content.replace(/\u00AD/g, "").trim()[0] ?? "";
-  const tooNarrow =
-    firstChar !== "" &&
-    dotsToPx(blockWidth, scale, dpmm) < measureLinePx(firstChar);
-  const emptyContent = isBlankText(content);
-  if (tooNarrow || emptyContent) {
+  // Labelary keeps printing below the too-narrow threshold (per-char wrap),
+  // so a narrow block renders like it prints; the warning is preflight's job.
+  if (isBlankText(content)) {
     const bounds =
       mode === "tb"
         ? tbBoundsDots(blockWidth, blockHeight ?? fontHeight, obj.props.rotation)
@@ -223,6 +223,7 @@ function TextFieldContent({
             blockLines: blockLines ?? 1,
             blockLineSpacing: blockLineSpacing ?? 0,
             fontHeight,
+            deviceFontId: deviceFontId,
             rotation: obj.props.rotation,
           });
     return (
@@ -233,8 +234,8 @@ function TextFieldContent({
         width={dotsToPx(bounds.width, scale, dpmm)}
         height={dotsToPx(bounds.height, scale, dpmm)}
         // Unconfigured (empty) reads as the warning family, matching the
-        // blank-barcode frame; too-narrow keeps the design-affordance accent.
-        color={emptyContent ? emptyColor : placeholderColor}
+        // blank-barcode frame.
+        color={emptyColor}
       />
     );
   }
@@ -246,7 +247,7 @@ function TextFieldContent({
     // must too or it would show line breaks that won't print.
     const tbText = content.replace(/\n/g, " ");
     const tbLines = wrapBlockLines(tbText, dotsToPx(blockWidth, scale, dpmm), measureLinePx);
-    const tbStep = tbLineStepDots(fontHeight);
+    const tbStep = tbLineStepDots(fontHeight, deviceFontId);
     const clip = tbBoundsDots(blockWidth, blockHeight ?? fontHeight, obj.props.rotation);
     // Lines sit exactly like ^FB (first line at the block top with Konva's cap
     // pad); matches the Labelary preview so toggling it doesn't shift the text.
@@ -289,7 +290,7 @@ function TextFieldContent({
   }
   const justify = blockJustify ?? "L";
   const indent = blockHangingIndent ?? 0;
-  const lineStepDots = blockLineStepDots(fontHeight, blockLineSpacing ?? 0);
+  const lineStepDots = blockLineStepDots(fontHeight, blockLineSpacing ?? 0, deviceFontId);
   // Wrap to the rendered block width; ^FB slot b: text exceeding blockLines
   // overprints onto the last line (matches Labelary), so pin overflow rows to
   // the last index rather than dropping them.
@@ -363,6 +364,7 @@ function BlockWrapGuide({
   blockLineSpacing,
   blockHeightDots,
   fontHeight,
+  fontId,
   rotation,
   scale,
   dpmm,
@@ -375,6 +377,7 @@ function BlockWrapGuide({
   /** Set for ^TB: the frame is the width x clip-height rect, not line-stacked. */
   blockHeightDots?: number;
   fontHeight: number;
+  fontId?: string;
   rotation: ZplRotation;
   scale: number;
   dpmm: number;
@@ -384,7 +387,7 @@ function BlockWrapGuide({
   const bounds =
     blockHeightDots != null
       ? tbBoundsDots(blockWidthDots, blockHeightDots, rotation)
-      : blockBoundsDots({ blockWidthDots, blockLines, blockLineSpacing, fontHeight, rotation });
+      : blockBoundsDots({ blockWidthDots, blockLines, blockLineSpacing, fontHeight, deviceFontId: fontId, rotation });
   const bx = dotsToPx(bounds.x, scale, dpmm);
   const by = dotsToPx(bounds.y, scale, dpmm);
   const bw = dotsToPx(bounds.width, scale, dpmm);
@@ -654,8 +657,8 @@ function KonvaObjectInner({
         <TextFieldContent
           obj={obj as TextFieldObj}
           content={fpContent}
-          placeholderColor={colors.accent}
           emptyColor={emptyPlaceholderColor}
+          deviceFontId={baseMetrics?.deviceFontId}
           base={{
             fontSize: fontSizePx,
             fontFamily,
@@ -682,6 +685,7 @@ function KonvaObjectInner({
             blockLineSpacing={obj.props.blockLineSpacing ?? 0}
             blockHeightDots={resolveTextMode(obj.props) === "tb" ? obj.props.blockHeight ?? obj.props.fontHeight : undefined}
             fontHeight={obj.props.fontHeight}
+            fontId={textMetrics?.deviceFontId}
             rotation={obj.props.rotation}
             scale={scale}
             dpmm={dpmm}

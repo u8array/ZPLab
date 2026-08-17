@@ -5,6 +5,7 @@ import { GlobalFonts } from '@napi-rs/canvas';
 import { PNG } from 'pngjs';
 import { deviceFontMetrics, deviceFontInkWidthDots } from '@zplab/core/lib/labelGeometry/deviceFonts';
 import { zplAnchorToModel } from '@zplab/core/lib/labelGeometry/textPositionTransforms';
+import { blockAnchorExtentDots, blockLineStepDots, tbLineStepDots } from '@zplab/core/lib/zebraTextLayout';
 import { builtinFontFamily } from '@zplab/core/lib/customFonts';
 import { deviceFontBoxMatchCases } from '../../tests/fixtures/deviceFontBoxMatchCases';
 import { darkBBox } from '../../tests/lib/darkBBox';
@@ -76,13 +77,40 @@ describe('Device font box-match: substitutes vs. Labelary bitmap fonts', () => {
 
       const inkWidth =
         deviceFontInkWidthDots(tc.fontId, tc.fontHeight, tc.fontWidth, tc.text) ?? 0;
+      // The gate consumes the production extent, so a parser/generator
+      // divergence fails here instead of shifting user labels silently.
+      const blockExtent =
+        tc.block === undefined
+          ? 0
+          : blockAnchorExtentDots({
+              tbHeightDots: tc.block.mode === 'tb' ? tc.block.heightDots : 0,
+              blockWidthDots: tc.block.widthDots,
+              blockLines: tc.block.mode === 'fb' ? tc.block.lines : 1,
+              blockLineSpacing: tc.block.mode === 'fb' ? tc.block.spacing : 0,
+              fontHeight: tc.fontHeight,
+              deviceFontId: tc.fontId,
+            });
       const model = zplAnchorToModel(
         tc.x,
         tc.y,
         { fontHeight: tc.fontHeight, rotation: tc.rotation, fontId: tc.fontId },
-        'FO',
+        tc.posType ?? 'FO',
         inkWidth,
+        blockExtent,
+        tc.block?.mode === 'fb' ? tc.block.widthDots : 0,
       );
+      // ^FB breaks at \&, the ^TB case is sized to wrap each word; the
+      // wrap algorithm itself is out of scope here.
+      const lines =
+        tc.block === undefined
+          ? [tc.text]
+          : tc.block.mode === 'fb'
+            ? tc.text.split('\\&')
+            : tc.text.split(' ');
+      const step =
+        tc.block?.mode === 'tb'
+          ? tbLineStepDots(tc.fontHeight, tc.fontId)
+          : blockLineStepDots(tc.fontHeight, tc.block?.spacing ?? 0, tc.fontId);
 
       const { canvas, ctx } = inkCanvas();
       // Konva rotates the node about its position; the device nudges are
@@ -91,15 +119,17 @@ describe('Device font box-match: substitutes vs. Labelary bitmap fonts', () => {
       ctx.save();
       ctx.translate(model.x, model.y);
       ctx.rotate((deg * Math.PI) / 180);
-      drawKonvaText(ctx, {
-        text: tc.text,
-        x: metrics.xOffsetDots,
-        y: metrics.yOffsetDots,
-        fontSizePx: metrics.fontSizeDots,
-        fontFamily: face.family,
-        scaleX: metrics.scaleX,
-        letterSpacingPx: metrics.letterSpacingDots,
-      });
+      for (const [i, line] of lines.entries()) {
+        drawKonvaText(ctx, {
+          text: line,
+          x: metrics.xOffsetDots,
+          y: metrics.yOffsetDots + i * step,
+          fontSizePx: metrics.fontSizeDots,
+          fontFamily: face.family,
+          scaleX: metrics.scaleX,
+          letterSpacingPx: metrics.letterSpacingDots,
+        });
+      }
       ctx.restore();
 
       const localPng = PNG.sync.read(canvas.toBuffer('image/png'));

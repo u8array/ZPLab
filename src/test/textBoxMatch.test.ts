@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { PNG } from 'pngjs';
+import { zplAnchorToModel } from '@zplab/core/lib/labelGeometry/textPositionTransforms';
+import { tbBlockExtentDots, tbLineStepDots } from '@zplab/core/lib/zebraTextLayout';
 import { textBoxMatchCases } from '../../tests/fixtures/textBoxMatchCases';
 import { darkBBox } from '../../tests/lib/darkBBox';
 import { drawKonvaText } from '../../tests/lib/drawKonvaText';
@@ -63,15 +65,33 @@ describe('Text Box-Match — PrintLab ZPL vs. Labelary default font', () => {
       // ZPL `^A0,h,w` with w != h stretches each glyph; w = 0 means
       // "match h".
       const { canvas, ctx } = inkCanvas();
-      drawKonvaText(ctx, {
-        text: tc.text,
-        x: tc.x,
-        y: tc.y,
-        fontSizePx: tc.fontHeight,
-        fontFamily: PRINTLAB_FONT_FAMILY,
-        fontStyle: 'bold',
-        scaleX: tc.fontWidth > 0 ? tc.fontWidth / tc.fontHeight : 1,
-      });
+      // Block cases run through the production anchor transform; the ^TB
+      // width is sized so each word wraps to its own line, keeping the
+      // wrap algorithm itself out of scope.
+      const model = tc.block
+        ? zplAnchorToModel(
+            tc.x,
+            tc.y,
+            { fontHeight: tc.fontHeight, rotation: tc.rotation },
+            tc.posType ?? 'FO',
+            0,
+            tbBlockExtentDots(tc.block.heightDots, tc.fontHeight),
+            0,
+          )
+        : { x: tc.x, y: tc.y };
+      const lines = tc.block ? tc.text.split(' ') : [tc.text];
+      const step = tbLineStepDots(tc.fontHeight);
+      for (const [i, line] of lines.entries()) {
+        drawKonvaText(ctx, {
+          text: line,
+          x: model.x,
+          y: model.y + i * step,
+          fontSizePx: tc.fontHeight,
+          fontFamily: PRINTLAB_FONT_FAMILY,
+          fontStyle: 'bold',
+          scaleX: tc.fontWidth > 0 ? tc.fontWidth / tc.fontHeight : 1,
+        });
+      }
 
       const localPng = PNG.sync.read(canvas.toBuffer('image/png'));
       const labelaryPng = PNG.sync.read(
@@ -93,6 +113,13 @@ describe('Text Box-Match — PrintLab ZPL vs. Labelary default font', () => {
       expect(localBox.height).toBeLessThanOrEqual(
         labelaryBox.height + BBOX_TOLERANCE_DOTS,
       );
+      if (tc.block) {
+        // Anchored blocks gate position too, not just the footprint.
+        expect(Math.abs(localBox.y - labelaryBox.y), `y drift for ${tc.id}`)
+          .toBeLessThanOrEqual(BBOX_TOLERANCE_DOTS);
+        expect(Math.abs(localBox.x - labelaryBox.x), `x drift for ${tc.id}`)
+          .toBeLessThanOrEqual(BBOX_TOLERANCE_DOTS);
+      }
     });
   });
 });

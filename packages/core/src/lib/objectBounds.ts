@@ -17,6 +17,7 @@ import { gfaHeaderDims, headerByteSource, type ImageProps } from "../registry/im
 import { BARCODE_1D_TYPES, STACKED_2D_TYPES, getEntry } from "../registry";
 import { GRAPHIC_ANCHOR_TYPES } from "../registry/zplHelpers";
 import type { PageLabel } from "../types/LabelConfig";
+import { resolveDeviceFontId } from "./customFonts";
 import type { Variable } from "../types/Variable";
 import { effectiveDpmm } from "../types/LabelConfig";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "../registry/rotation";
@@ -315,6 +316,7 @@ function objectBoxDots(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots 
                 blockLines: p.blockLines ?? 1,
                 blockLineSpacing: p.blockLineSpacing ?? 0,
                 fontHeight: p.fontHeight,
+                deviceFontId: resolveDeviceFontId(p.fontId, p.printerFontName, ctx.label),
                 rotation: p.rotation,
               });
         // bounds are field-anchor-relative (can be negative for R/I/B);
