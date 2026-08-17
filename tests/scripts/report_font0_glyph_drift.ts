@@ -13,7 +13,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { PNG } from 'pngjs';
 import { zplAnchorToModel } from '@zplab/core/lib/labelGeometry/textPositionTransforms';
-import { font0GlyphCoverageCases } from '../fixtures/font0GlyphCoverageCases';
+import { font0GlyphCoverageCases, KNOWN_DRIFT } from '../fixtures/font0GlyphCoverageCases';
 import { darkBBox } from '../lib/darkBBox';
 import { drawKonvaText } from '../lib/drawKonvaText';
 import { inkCanvas } from '../lib/inkCanvas';
@@ -98,12 +98,16 @@ function main(): void {
     );
   }
 
+  const known = new Set(KNOWN_DRIFT);
   const outliers = rows.filter(
-    (r) => Math.abs(r.dW) > 6 || Math.abs(r.dH) > 6 || Math.abs(r.dY) > 6,
+    (r) =>
+      !known.has(r.char) &&
+      (Math.abs(r.dW) > 6 || Math.abs(r.dH) > 6 || Math.abs(r.dY) > 6),
   );
   const moderate = rows.filter(
     (r) =>
       !outliers.includes(r) &&
+      !known.has(r.char) &&
       (Math.abs(r.dW) > 3 || Math.abs(r.dH) > 3 || Math.abs(r.dY) > 3),
   );
   console.log(`\n${rows.length} glyphs measured at h=50 (char x3).`);

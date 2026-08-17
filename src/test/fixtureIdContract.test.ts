@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import * as fs from 'fs';
+import * as path from 'path';
 import { textBoxMatchCases } from '../../tests/fixtures/textBoxMatchCases';
 import { font0GlyphCoverageCases } from '../../tests/fixtures/font0GlyphCoverageCases';
 
@@ -28,5 +30,14 @@ describe('fixture id contract', () => {
         byId.set(tc.id, params);
       }
     }
+  });
+
+  it('has no orphaned fixture PNGs', () => {
+    const dir = path.resolve(process.cwd(), 'tests/fixtures/labelary_text_default_images');
+    const expected = new Set(
+      [...textBoxMatchCases, ...font0GlyphCoverageCases].map((tc) => `${tc.id}.png`),
+    );
+    const orphans = fs.readdirSync(dir).filter((f) => f.endsWith('.png') && !expected.has(f));
+    expect(orphans, 'unreferenced fixtures').toEqual([]);
   });
 });

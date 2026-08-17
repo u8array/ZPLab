@@ -18,11 +18,10 @@ Relative to upstream Roboto Condensed:
 - GPOS (kerning, capital spacing) dropped and the GSUB `liga` feature
   removed: Zebra's firmware lays out Font 0 with fixed per-glyph
   advances, no kerning and no ligatures.
-- All outlines shifted down ~0.04 em to match Labelary's vertical
-  placement; individual glyphs remapped to CG Triumvirate's measured
-  ink spans, ascenders of `b d k l` trimmed above the x-height and the
-  `: ;` top dots re-anchored, all via a local fonttools pipeline
-  calibrated against Labelary.
+- All outlines shifted down ~0.04 em to match CG Triumvirate's rendered
+  vertical placement.
+- Ink spans, advances and accent anchors of individual glyphs across the
+  printable Latin-1 range remapped to CG Triumvirate's measured metrics.
 - Family and PostScript names renamed from "Roboto Condensed" to
   "PrintLab ZPL".
 

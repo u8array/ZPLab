@@ -49,6 +49,13 @@ Relative to upstream Roboto Condensed:
 - Vertical outlines scaled to align cap heights with the same target.
 - TrueType hinting tables (`prep`, `fpgm`, `cvt`) removed so the
   modified outlines render unhinted.
+- GPOS (kerning, capital spacing) dropped and the GSUB `liga` feature
+  removed: Zebra's firmware lays out Font 0 with fixed per-glyph
+  advances, no kerning and no ligatures.
+- All outlines shifted down ~0.04 em to match CG Triumvirate's rendered
+  vertical placement.
+- Ink spans, advances and accent anchors of individual glyphs across the
+  printable Latin-1 range remapped to CG Triumvirate's measured metrics.
 - Family and PostScript names renamed from "Roboto Condensed" to
   "PrintLab ZPL".
 

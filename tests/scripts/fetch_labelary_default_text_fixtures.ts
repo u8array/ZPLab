@@ -43,19 +43,38 @@ interface FetchJob {
   zpl: string;
 }
 
+/** ^ and ~ terminate ^FD, so such payloads go through ^FH hex escapes;
+ *  non-ASCII needs ^CI28 (UTF-8). */
+function fdFor(text: string): { ci: string; fd: string } {
+  const ci = /[^\x20-\x7e]/.test(text) ? '^CI28' : '';
+  if (!/[\^~\\_]/.test(text)) return { ci, fd: `^FD${text}` };
+  const hex = [...text]
+    .map((c) => {
+      const b = Buffer.from(c, 'utf8');
+      return /[\^~\\_]/.test(c)
+        ? [...b].map((x) => `_${x.toString(16).padStart(2, '0')}`).join('')
+        : c;
+    })
+    .join('');
+  return { ci, fd: `^FH^FD${hex}` };
+}
+
 async function main(): Promise<void> {
   fs.mkdirSync(FIXTURES_DIR, { recursive: true });
   fs.mkdirSync(DEVICE_FIXTURES_DIR, { recursive: true });
 
   const jobs: FetchJob[] = [
-    ...[...textBoxMatchCases, ...font0GlyphCoverageCases].map((tc) => ({
-      dir: FIXTURES_DIR,
-      id: tc.id,
-      zpl:
-        `^XA^FO${tc.x},${tc.y}` +
-        `^A0${tc.rotation},${tc.fontHeight},${tc.fontWidth || tc.fontHeight}` +
-        `^FD${tc.text}^FS^XZ`,
-    })),
+    ...[...textBoxMatchCases, ...font0GlyphCoverageCases].map((tc) => {
+      const { ci, fd } = fdFor(tc.text);
+      return {
+        dir: FIXTURES_DIR,
+        id: tc.id,
+        zpl:
+          `^XA${ci}^FO${tc.x},${tc.y}` +
+          `^A0${tc.rotation},${tc.fontHeight},${tc.fontWidth || tc.fontHeight}` +
+          `${fd}^FS^XZ`,
+      };
+    }),
     // Device fonts: width stays 0 so the firmware derives it from the
     // cell matrix, matching what deviceFontMetrics does locally.
     ...deviceFontBoxMatchCases.map((tc) => ({
