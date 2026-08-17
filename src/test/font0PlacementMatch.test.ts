@@ -31,7 +31,7 @@ const H = 50;
 // also guards the kerning strip ('///' collapses if GSUB/GPOS come
 // back); 'b' guards the global vertical shift; '5' and 'M' pin the
 // chain.
-const GLYPHS = ['_', '<', '>', '@', '*', '$', '(', ')', '/', 'f', 'j', 'Q', 'p', 'b', '5', 'M'];
+const GLYPHS = ['_', '<', '>', '@', '*', '$', '(', ')', '/', 'f', 'j', 'Q', 'p', 'b', '~', '^', '[', 'ß', '©', '°', '§', '×', '–', 'Æ', 'Ç', 'ñ', '5', 'M'];
 
 describe('Font 0 placement match: patched glyphs vs Labelary', () => {
   beforeAll(() => {
