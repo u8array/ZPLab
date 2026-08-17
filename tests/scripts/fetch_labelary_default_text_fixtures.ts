@@ -59,6 +59,18 @@ function fdFor(text: string): { ci: string; fd: string } {
   return { ci, fd: `^FH^FD${hex}` };
 }
 
+function blockCmd(
+  rotation: string,
+  block?:
+    | { mode: 'fb'; widthDots: number; lines: number; spacing: number }
+    | { mode: 'tb'; widthDots: number; heightDots: number },
+): string {
+  if (block === undefined) return '';
+  return block.mode === 'fb'
+    ? `^FB${block.widthDots},${block.lines},${block.spacing},L,0`
+    : `^TB${rotation},${block.widthDots},${block.heightDots}`;
+}
+
 async function main(): Promise<void> {
   fs.mkdirSync(FIXTURES_DIR, { recursive: true });
   fs.mkdirSync(DEVICE_FIXTURES_DIR, { recursive: true });
@@ -66,25 +78,31 @@ async function main(): Promise<void> {
   const jobs: FetchJob[] = [
     ...[...textBoxMatchCases, ...font0GlyphCoverageCases].map((tc) => {
       const { ci, fd } = fdFor(tc.text);
+      const blk = 'block' in tc ? blockCmd(tc.rotation, tc.block) : '';
+      const posType = 'posType' in tc ? (tc.posType ?? 'FO') : 'FO';
       return {
         dir: FIXTURES_DIR,
         id: tc.id,
         zpl:
-          `^XA${ci}^FO${tc.x},${tc.y}` +
+          `^XA${ci}^${posType}${tc.x},${tc.y}` +
           `^A0${tc.rotation},${tc.fontHeight},${tc.fontWidth || tc.fontHeight}` +
-          `${fd}^FS^XZ`,
+          `${blk}${fd}^FS^XZ`,
       };
     }),
     // Device fonts: width stays 0 so the firmware derives it from the
     // cell matrix, matching what deviceFontMetrics does locally.
-    ...deviceFontBoxMatchCases.map((tc) => ({
-      dir: DEVICE_FIXTURES_DIR,
-      id: tc.id,
-      zpl:
-        `^XA^FO${tc.x},${tc.y}` +
-        `^A${tc.fontId}${tc.rotation},${tc.fontHeight},${tc.fontWidth || ''}` +
-        `^FD${tc.text}^FS^XZ`,
-    })),
+    ...deviceFontBoxMatchCases.map((tc) => {
+      const pos = `^${tc.posType ?? 'FO'}${tc.x},${tc.y}`;
+      const blk = blockCmd(tc.rotation, tc.block);
+      return {
+        dir: DEVICE_FIXTURES_DIR,
+        id: tc.id,
+        zpl:
+          `^XA${pos}` +
+          `^A${tc.fontId}${tc.rotation},${tc.fontHeight},${tc.fontWidth || ''}` +
+          `${blk}^FD${tc.text}^FS^XZ`,
+      };
+    }),
   ];
 
   // The case lists share ids on purpose (see fixtureIdContract).

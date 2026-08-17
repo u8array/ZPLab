@@ -167,6 +167,33 @@ describe('parseZPL — ^MU units of measure', () => {
     expect(out).toContain('^FO300,150');
   });
 
+  it('inherits the last ^A rotation for a bare ^TB orientation (spec p.356)', () => {
+    const r = parseSingle('^XA^FO50,50^A0R,30,30^TB,300,200^FDsample^FS^XZ', 8);
+    expect(props(r.objects[0]).rotation).toBe('R');
+  });
+
+  it('lets ^TB reclaim the field as text after a barcode command', () => {
+    const r = parseSingle('^XA^FO10,10^BCN,100,Y,N,N^TBN,300,200^FDdata^FS^XZ', 8);
+    expect(defined(r.objects[0]).type).toBe('text');
+  });
+
+  it('keeps the ^A height for a ^TB field (spec: ^TB renders in the last ^A font)', () => {
+    const r = parseSingle('^XA^FT400,300^A0N,80,80^TBN,300,200^FDsample^FS^XZ', 8);
+    expect(props(r.objects[0]).fontHeight).toBe(80);
+    const out = generateZPL({ widthMm: 100, heightMm: 50, dpmm: 8 }, r.objects, r.variables);
+    expect(out).toContain('^FT400,300');
+  });
+
+  it('stacks a device-font ^FB block by the snapped cell pitch', () => {
+    // Labelary: ^AG h=84 prints lines 60 apart (snapped cell), not 84.
+    // FT pins the last baseline, so 2 extra lines lift the EM-top by 2*60.
+    const single = parseSingle('^XA^FT50,700^AGN,84,^FDMMM^FS^XZ', 8);
+    const block = parseSingle('^XA^FT50,700^AGN,84,^FB700,3,0,L,0^FDMMM\\&MMM\\&MMM^FS^XZ', 8);
+    expect(defined(single.objects[0]).y - defined(block.objects[0]).y).toBeCloseTo(120, 6);
+    const out = generateZPL({ widthMm: 100, heightMm: 50, dpmm: 8 }, block.objects, block.variables);
+    expect(out).toContain('^FT50,700');
+  });
+
   it('keeps the ^FO anchor stable for an ^FN-bound rotated device-font field', () => {
     // The wire prints the variable default, so the anchor extent must be
     // measured from it, not from the «marker» the content holds in-model.

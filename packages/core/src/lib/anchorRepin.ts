@@ -1,6 +1,7 @@
 import type { LabelObject } from "../types/Group";
 import type { ObjectChanges } from "../types/LabelObject";
 import { BARCODE_1D_TYPES, getEntry } from "../registry";
+import type { NormalizeChangesCtx } from "../types/ObjectType";
 import { isAxisSwapped, objectRotation } from "../registry/rotation";
 import { valueAnchorShift } from "./valueAnchor";
 import type { Footprint as BarcodeFootprint } from "./footprintProber";
@@ -53,9 +54,10 @@ export function applyChanges(
   obj: LabelObject,
   changes: ObjectChanges,
   probe: (o: LabelObject) => BarcodeFootprint | null,
+  ctx?: NormalizeChangesCtx,
 ): LabelObject {
   const normalize = getEntry(obj.type)?.normalizeChanges;
-  const normalized = normalize ? normalize(obj as never, changes as never) : changes;
+  const normalized = normalize ? normalize(obj as never, changes as never, ctx) : changes;
   const current = (obj as { props?: object }).props ?? {};
   const next = {
     ...obj,

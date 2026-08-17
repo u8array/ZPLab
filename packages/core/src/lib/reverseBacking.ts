@@ -1,5 +1,5 @@
 import { getTextRenderMetrics, computeTextRenderMetrics } from "./labelGeometry/textRenderMetrics";
-import { rotatedLineOffset } from "./zebraTextLayout";
+import { blockStackHeightDots, rotatedLineOffset } from "./zebraTextLayout";
 import { isAxisSwapped } from "../registry/rotation";
 import { resolveTextMode, type TextProps } from "../registry/text";
 import type { BoxProps } from "../registry/box";
@@ -51,6 +51,8 @@ function finiteOrUndefined(v: unknown): number | undefined {
 export function reverseBackingBoxGeometry(
   text: TextLike,
   label?: FontLabel,
+  /** rawBlockPitch reproduces the pre-snap ^FB stack (legacy backings). */
+  opts?: { rawBlockPitch?: boolean },
 ): { x: number; y: number; props: BoxProps } {
   const p = text.props;
   const mode = resolveTextMode(p);
@@ -59,9 +61,11 @@ export function reverseBackingBoxGeometry(
   // would make font resolution throw; fall back to a label-independent measure
   // so migration degrades to best-effort instead of crashing.
   let inkWidthDots: number;
+  let deviceFontId: string | undefined;
   try {
-    inkWidthDots =
-      getTextRenderMetrics(text as unknown as LabelObject, undefined, label)?.inkWidthDots ?? 0;
+    const metrics = getTextRenderMetrics(text as unknown as LabelObject, undefined, label);
+    inkWidthDots = metrics?.inkWidthDots ?? 0;
+    deviceFontId = metrics?.deviceFontId;
     if (!inkWidthDots) {
       inkWidthDots = computeTextRenderMetrics({
         content: p.content,
@@ -89,7 +93,13 @@ export function reverseBackingBoxGeometry(
   } else if (mode === "fb") {
     const lines = blockLines ?? 1;
     baseW = blockWidth ?? inkW;
-    baseH = p.fontHeight * lines + blockSpacing * Math.max(0, lines - 1);
+    // Snapped pitch for device fonts; identical to h*lines + gaps for Font 0.
+    baseH = blockStackHeightDots(
+      lines,
+      p.fontHeight,
+      blockSpacing,
+      opts?.rawBlockPitch ? undefined : deviceFontId,
+    );
   } else {
     baseW = inkW;
     baseH = p.fontHeight;
@@ -153,8 +163,22 @@ interface Rect {
 }
 
 /** Axis-aligned footprint a backing would need to cover for this text. */
-function expectedBackingFootprint(text: TextLike, label?: FontLabel): Rect {
-  const geo = reverseBackingBoxGeometry(text, label);
+/** Current geometry first, then the pre-snap raw pitch. Ownership and
+ *  removal only: coverage checks stay on the current geometry so the
+ *  migration can resize a stale backing. */
+function expectedBackingFootprints(text: TextLike, label?: FontLabel): Rect[] {
+  return [
+    expectedBackingFootprint(text, label),
+    expectedBackingFootprint(text, label, { rawBlockPitch: true }),
+  ];
+}
+
+function expectedBackingFootprint(
+  text: TextLike,
+  label?: FontLabel,
+  opts?: { rawBlockPitch?: boolean },
+): Rect {
+  const geo = reverseBackingBoxGeometry(text, label, opts);
   return { x: geo.x, y: geo.y, width: geo.props.width, height: geo.props.height };
 }
 
@@ -205,6 +229,8 @@ export function isReverseBackingFor(
   if (!candidate) return false;
   const cf = candidateBackingFootprint(candidate);
   if (!cf) return false;
+  // Current geometry only: a raw-pitch legacy backing under-covers the
+  // snapped print, so the migration resizes it instead of counting it.
   return coverage(expectedBackingFootprint(text, label), cf) >= BACKING_COVERAGE_MIN;
 }
 
@@ -220,14 +246,13 @@ export function isOwnReverseBacking(
   if (!candidate) return false;
   const cf = candidateBackingFootprint(candidate);
   if (!cf) return false;
-  const ef = expectedBackingFootprint(text, label);
   const near = (a: number, b: number) => Math.abs(a - b) <= Math.max(4, b * 0.05);
-  return (
+  const matches = (ef: Rect) =>
     Math.abs(cf.x - ef.x) <= 4 &&
     Math.abs(cf.y - ef.y) <= 4 &&
     near(cf.width, ef.width) &&
-    near(cf.height, ef.height)
-  );
+    near(cf.height, ef.height);
+  return expectedBackingFootprints(text, label).some(matches);
 }
 
 /** True when any sibling before `index` is a black shape covering the text's
@@ -298,7 +323,28 @@ export function insertReverseBackingBoxes(
       canBuildBackingBox(props) &&
       !precedingBackingExists(objects, i, o as unknown as TextLike, label)
     ) {
-      out.push(makeReverseBackingBox(o as unknown as TextLike, label));
+      // The feature's own backing at a stale (pre-snap) geometry migrates in
+      // place; rebuilt from scratch because an owned legacy backing may be
+      // a black line, not a box.
+      const ownIdx = out.findLastIndex((prev) =>
+        isOwnReverseBacking(prev, o as unknown as TextLike, label),
+      );
+      if (ownIdx >= 0) {
+        const own = out[ownIdx] as LabelObject;
+        out[ownIdx] = {
+          ...makeReverseBackingBox(o as unknown as TextLike, label),
+          id: own.id,
+          ...(own.name !== undefined ? { name: own.name } : {}),
+          ...(own.comment !== undefined ? { comment: own.comment } : {}),
+          ...(own.locked !== undefined ? { locked: own.locked } : {}),
+          ...(own.visible !== undefined ? { visible: own.visible } : {}),
+          ...(own.includeInExport !== undefined
+            ? { includeInExport: own.includeInExport }
+            : {}),
+        };
+      } else {
+        out.push(makeReverseBackingBox(o as unknown as TextLike, label));
+      }
     }
     out.push(o);
   }

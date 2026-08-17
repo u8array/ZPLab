@@ -6,10 +6,12 @@ import { UnitNumberInput } from "./UnitNumberInput";
 import { JustifyButtons } from "./JustifyButtons";
 import { BlockDragModeToggle } from "./BlockDragModeToggle";
 import type { TextProps } from "@zplab/core/registry/text";
+import { resolveDeviceFontId } from "@zplab/core/lib/customFonts";
+import { useLabelStore } from "../../store/labelStore";
 import {
+  blockGlyphCellDots,
+  blockLineWidthDots,
   isBlockTooNarrow,
-  zebraGlyphAdvanceDots,
-  zebraLineWidthDots,
   wrapBlockLines,
 } from "@zplab/core/lib/zebraTextLayout";
 
@@ -30,15 +32,17 @@ export function BlockTextSettings({ props: p, onChange }: Props) {
   // line spilling past blockLines) also trips the warning. Uses the printer
   // estimate (same basis as the blockLines cap); the canvas wrap may differ by
   // a line on scaled fonts, but this is an informational hint.
+  const label = useLabelStore((s) => s.label);
+  const deviceFontId = resolveDeviceFontId(p.fontId, p.printerFontName, label);
   const contentLines = wrapBlockLines(
     p.content,
     p.blockWidth ?? 0,
-    (line) => zebraLineWidthDots(line, p.fontHeight, p.fontWidth),
+    (line) => blockLineWidthDots(line, p.fontHeight, p.fontWidth, deviceFontId),
   ).length;
   const maxLines = p.blockLines ?? 1;
   const truncates = contentLines > maxLines;
-  const advance = Math.ceil(zebraGlyphAdvanceDots(p.fontHeight, p.fontWidth));
-  const tooNarrow = isBlockTooNarrow(p.blockWidth ?? 0, p.fontHeight, p.fontWidth);
+  const advance = Math.ceil(blockGlyphCellDots(p.fontHeight, p.fontWidth, deviceFontId));
+  const tooNarrow = isBlockTooNarrow(p.blockWidth ?? 0, p.fontHeight, p.fontWidth, deviceFontId);
   return (
     <div className="flex flex-col gap-3">
       <BlockDragModeToggle />

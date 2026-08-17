@@ -9,6 +9,9 @@ import { Tooltip } from "../ui/Tooltip";
 import { fieldGridCols, fieldGridCell } from "../ui/formStyles";
 import { FB_DEFAULTS } from "@zplab/core/lib/textBlock";
 import { resolveTextMode, type TextMode, type TextProps } from "@zplab/core/registry/text";
+import { resolveDeviceFontId } from "@zplab/core/lib/customFonts";
+import { blockLinesForHeightDots, blockStackHeightDots } from "@zplab/core/lib/zebraTextLayout";
+import { useLabelStore } from "../../store/labelStore";
 
 type IconType = typeof MinusIcon;
 
@@ -30,8 +33,9 @@ export function TextModeSection({
   onChange: (patch: Partial<TextProps>) => void;
 }) {
   const t = useT();
+  const label = useLabelStore((s) => s.label);
   const mode = resolveTextMode(p);
-  const fontH = Math.max(1, p.fontHeight);
+  const deviceFontId = resolveDeviceFontId(p.fontId, p.printerFontName, label);
 
   const setMode = (next: TextMode) => {
     if (next === mode) return;
@@ -46,7 +50,11 @@ export function TextModeSection({
         blockHeight: undefined,
       });
     } else if (next === "fb") {
-      const lines = p.blockHeight ? Math.max(1, Math.round(p.blockHeight / fontH)) : p.blockLines ?? 3;
+      const spacing = p.blockLineSpacing ?? FB_DEFAULTS.blockLineSpacing;
+      // Same pitch the runtime stacks with, so switching preserves the size.
+      const lines = p.blockHeight
+        ? blockLinesForHeightDots(p.blockHeight, p.fontHeight, spacing, deviceFontId)
+        : p.blockLines ?? 3;
       onChange({
         textMode: undefined,
         blockWidth: p.blockWidth ?? FB_DEFAULTS.blockWidth,
@@ -57,7 +65,14 @@ export function TextModeSection({
         blockHeight: undefined,
       });
     } else {
-      const height = p.blockHeight ?? (p.blockLines ?? 3) * fontH;
+      const height =
+        p.blockHeight ??
+        blockStackHeightDots(
+          p.blockLines ?? 3,
+          p.fontHeight,
+          p.blockLineSpacing ?? FB_DEFAULTS.blockLineSpacing,
+          deviceFontId,
+        );
       onChange({
         textMode: "tb",
         blockWidth: p.blockWidth ?? FB_DEFAULTS.blockWidth,

@@ -8,6 +8,7 @@ export {
   substituteTemplateMarkers,
 } from '@zplab/core/lib/templateObjects';
 import { applyChanges } from '@zplab/core/lib/anchorRepin';
+import type { DeviceFontLabel } from '@zplab/core/lib/customFonts';
 import { probeBarcodeFootprint } from './anchorRepin';
 
 import { newId } from "@zplab/core/lib/ids";
@@ -64,6 +65,7 @@ export function applyObjectChanges(
   obj: LabelObject,
   changes: ObjectChanges,
   ancestorLocked = false,
+  label?: DeviceFontLabel,
 ): LabelObject {
   // Lock cascades from any ancestor group: a leaf inside a locked group
   // accepts only bypass keys (locked / visible / includeInExport /
@@ -81,7 +83,7 @@ export function applyObjectChanges(
   }
   // Dirty-tracking is centralized in the dirtyTracking middleware (a state diff),
   // so this mutator no longer stamps dirty itself.
-  return applyChanges(obj, changes, probeBarcodeFootprint);
+  return applyChanges(obj, changes, probeBarcodeFootprint, { label });
 }
 
 export function detectLocale(): LocaleCode {

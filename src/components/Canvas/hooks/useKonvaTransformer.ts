@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import type Konva from "konva";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
 import { blockBoundsDots, blockGlyphAnchorPoint, blockReflowGeometry, tbBoundsDots, tbReflowGeometry, type BlockJustify, type ZplRotation } from "@zplab/core/lib/zebraTextLayout";
+import { resolveDeviceFontId } from "@zplab/core/lib/customFonts";
 import { getCurrentObjects, useLabelStore } from "../../../store/labelStore";
 import {
   SHAPE_PRIMITIVE_TYPES,
@@ -243,6 +244,7 @@ export function useKonvaTransformer({
     rotation: "N" | "R" | "I" | "B";
     lineSpacing: number;
     fontHeight: number;
+    fontId?: string;
     leftX: number;
     topY: number;
     rightX: number;
@@ -659,8 +661,15 @@ export function useKonvaTransformer({
         blockLineSpacing?: number;
         blockHeight?: number;
         fontHeight: number;
+        fontId?: string;
+        printerFontName?: string;
         rotation: string;
       };
+      const deviceFontId = resolveDeviceFontId(
+        bp.fontId,
+        bp.printerFontName,
+        useLabelStore.getState().label,
+      );
       // Alt is sampled once at drag start to pick the mode for the whole
       // gesture; toggling it mid-drag intentionally does not switch frame/glyph.
       blockResizeModeRef.current = resolveBlockResizeMode(
@@ -683,6 +692,7 @@ export function useKonvaTransformer({
               blockLines: bp.blockLines ?? 1,
               blockLineSpacing: bp.blockLineSpacing ?? 0,
               fontHeight: bp.fontHeight,
+              deviceFontId: deviceFontId,
               rotation: rot,
             });
         const x0 = node.x() + dotsToPx(b0.x, scale, dpmm);
@@ -693,6 +703,7 @@ export function useKonvaTransformer({
           rotation: rot,
           lineSpacing: bp.blockLineSpacing ?? 0,
           fontHeight: bp.fontHeight,
+          fontId: deviceFontId,
           leftX: x0,
           topY: y0,
           rightX: x0 + dotsToPx(b0.width, scale, dpmm),
@@ -899,6 +910,7 @@ export function useKonvaTransformer({
                 blockLines: cp.blockLines ?? 1,
                 blockLineSpacing: lr.lineSpacing,
                 fontHeight: lr.fontHeight,
+                deviceFontId: lr.fontId,
               });
               return { ...g, props: { blockWidth: g.blockWidthDots, blockLines: g.blockLines } };
             })();

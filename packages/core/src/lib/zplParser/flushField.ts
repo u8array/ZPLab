@@ -19,8 +19,8 @@ import { decodeTbContent } from "../tbContent";
 import { zplFdToModelContent } from "../gs1";
 import { dataMatrixFdToGs1Content } from "../dataMatrixFd";
 import { zplAnchorToModel } from "../labelGeometry/textPositionTransforms";
+import { blockAnchorExtentDots } from "../zebraTextLayout";
 import { resolveDeviceFontId } from "../customFonts";
-import { blockInterLineExtentDots } from "../zebraTextLayout";
 import { anchorInkWidthDots } from "../labelGeometry/textRenderMetrics";
 import type { TextProps } from "../../registry/text";
 import type { Code128Props } from "../../registry/code128";
@@ -246,15 +246,6 @@ export function createFlushField(
         // FO R/I stack the same way. ^TB is a fixed clip height, ^FB stacks
         // lines. Must match the generator's blockExtentFor for byte-exact
         // round-trips and matching WYSIWYG.
-        const blockExtentDots =
-          s.defaults.tbHeight > 0
-            ? Math.max(0, s.defaults.tbHeight - s.field.textH)
-            : blockInterLineExtentDots({
-                blockWidthDots: s.defaults.fbWidth,
-                blockLines: s.defaults.fbLines,
-                blockLineSpacing: s.defaults.fbSpacing,
-                fontHeight: s.field.textH,
-              });
         // Same resolution as the generator so anchors round-trip.
         const anchorFontId = resolveDeviceFontId(
           s.field.pendingFontId,
@@ -264,6 +255,14 @@ export function createFlushField(
             defaultFontId: s.defaults.cfFontId,
           },
         );
+        const blockExtentDots = blockAnchorExtentDots({
+          tbHeightDots: s.defaults.tbHeight,
+          blockWidthDots: s.defaults.fbWidth,
+          blockLines: s.defaults.fbLines,
+          blockLineSpacing: s.defaults.fbSpacing,
+          fontHeight: s.field.textH,
+          deviceFontId: anchorFontId,
+        });
         // ZPL anchors ^FO at cap-top and ^FT at baseline; our internal
         // model stores the Konva render position (EM-top-left) so editor
         // interactions stay shift-free.

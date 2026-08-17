@@ -44,6 +44,65 @@ describe("reverseBackingBoxGeometry", () => {
     expect(geo.props.color).toBe("B");
   });
 
+  it("sizes an ^FB device-font backing by the snapped pitch", () => {
+    // ^AG h=84 snaps to 60: 3 lines back 2*60+60 = 180 dots, not 252.
+    const geo = reverseBackingBoxGeometry(
+      text({ reverse: true, fontId: "G", fontHeight: 84, blockWidth: 700, blockLines: 3 }) as never,
+      { customFonts: [], defaultFontId: undefined },
+    );
+    expect(geo.props.height).toBe(180);
+  });
+
+  it("still recognizes a backing persisted at the pre-snap raw pitch", () => {
+    const rev = text({ reverse: true, fontId: "G", fontHeight: 84,
+      blockWidth: 700, blockLines: 3 });
+    const legacy = reverseBackingBoxGeometry(rev as never,
+      { customFonts: [], defaultFontId: undefined }, { rawBlockPitch: true });
+    expect(legacy.props.height).toBe(252);
+    const box = { id: "bg", type: "box", x: legacy.x, y: legacy.y, rotation: 0,
+      props: { ...legacy.props } } as unknown as LabelObject;
+    expect(insertReverseBackingBoxes([box, rev],
+      { customFonts: [], defaultFontId: undefined })).toHaveLength(2);
+  });
+
+  it("migrates a raw-pitch legacy backing to the snapped geometry on snap-up", () => {
+    // Font G h=40 snaps UP to 60: the legacy 120-dot backing under-covers
+    // the 180-dot snapped stack. It is the feature's own box, so migration
+    // resizes it in place instead of stacking a second one.
+    const label = { customFonts: [], defaultFontId: undefined };
+    const rev = text({ reverse: true, fontId: "G", fontHeight: 40,
+      blockWidth: 700, blockLines: 3 });
+    const legacy = reverseBackingBoxGeometry(rev as never, label, { rawBlockPitch: true });
+    expect(legacy.props.height).toBe(120);
+    const box = { id: "bg", type: "box", x: legacy.x, y: legacy.y, rotation: 0,
+      props: { ...legacy.props } } as unknown as LabelObject;
+    const out = insertReverseBackingBoxes([box, rev], label);
+    expect(out).toHaveLength(2);
+    // Canonical form for 700x180 is a horizontal line (height == thickness).
+    const migrated = out[0] as { id: string; type: string; props: { thickness: number } };
+    expect(migrated.id).toBe("bg");
+    expect(migrated.type).toBe("line");
+    expect(migrated.props.thickness).toBe(180);
+  });
+
+  it("re-canonicalizes a line-shaped owned legacy backing on migration", () => {
+    // A feature-era backing persisted as a black line matches ownership by
+    // footprint; migration must rebuild the canonical shape instead of
+    // merging box props into the line.
+    const label = { customFonts: [], defaultFontId: undefined };
+    const rev = text({ reverse: true, fontId: "G", fontHeight: 40,
+      blockWidth: 700, blockLines: 3 });
+    const legacy = reverseBackingBoxGeometry(rev as never, label, { rawBlockPitch: true });
+    const line = { id: "bg", type: "line", x: legacy.x, y: legacy.y, rotation: 0,
+      props: { length: legacy.props.width, thickness: legacy.props.height,
+        angle: 0, color: "B" } } as unknown as LabelObject;
+    const out = insertReverseBackingBoxes([line, rev], label);
+    expect(out).toHaveLength(2);
+    const migrated = out[0] as { id: string; type: string; props: { thickness?: number } };
+    expect(migrated.id).toBe("bg");
+    expect(migrated.props.thickness).toBe(180);
+  });
+
   it("swaps width/height for vertical rotations", () => {
     const n = reverseBackingBoxGeometry(text({ reverse: true, rotation: "N" }) as never);
     const r = reverseBackingBoxGeometry(text({ reverse: true, rotation: "R" }) as never);
@@ -143,6 +202,16 @@ describe("insertReverseBackingBoxes", () => {
     const badLabel = { customFonts: "oops", defaultFontId: "A" } as never;
     expect(() => insertReverseBackingBoxes([rev], badLabel)).not.toThrow();
     expect(insertReverseBackingBoxes([rev], badLabel)).toHaveLength(2);
+  });
+
+  it("does not crash on a malformed label for an ^FB device-font text", () => {
+    const rev = {
+      ...(text({ reverse: true }) as unknown as Record<string, unknown>),
+      props: { content: "Hi", fontHeight: 84, fontWidth: 0, rotation: "N",
+        reverse: true, fontId: "G", blockWidth: 700, blockLines: 3 },
+    } as unknown as LabelObject;
+    const badLabel = { customFonts: "oops", defaultFontId: "A" } as never;
+    expect(() => insertReverseBackingBoxes([rev], badLabel)).not.toThrow();
   });
 
   it("recognizes a covering line whose angle is a string (unvalidated json)", () => {

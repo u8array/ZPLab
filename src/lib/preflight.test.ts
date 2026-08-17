@@ -307,6 +307,22 @@ describe("per-type producers (registry preflight capability)", () => {
     expect(getEntry("text")!.preflight!(tb, pctx)).toEqual([{ kind: "textOverset" }]);
   });
 
+  it("text: ^TB overset judges device fonts by the snapped pitch", () => {
+    // Font G h=84 snaps to 60: three 'MMM' lines stack 180 <= 200, so no
+    // overset; the raw pitch (2*105+84 = 294) would falsely warn.
+    const tb = textLeaf({ content: "MMM MMM MMM", fontHeight: 84, fontWidth: 0,
+      blockWidth: 250, blockHeight: 200, textMode: "tb", fontId: "G" });
+    expect(getEntry("text")!.preflight!(tb, pctx)).toEqual([]);
+  });
+
+  it("text: ^FB wrap judges device fonts by cell advances, not Font-0 widths", () => {
+    // Font A h=20 (mag 2): 6 cells of 12 dots fit blockWidth 80 on one
+    // line; the Font-0 table (~90.6 dots) would falsely wrap and warn.
+    const fb = textLeaf({ content: "MMMMMM", fontHeight: 20, fontWidth: 0,
+      blockWidth: 80, blockLines: 1, fontId: "A" });
+    expect(getEntry("text")!.preflight!(fb, pctx)).toEqual([]);
+  });
+
   it("text: a block with room to spare flags nothing", () => {
     const ok = textLeaf({ content: "AAA", fontHeight: 30, fontWidth: 0, blockWidth: 400, blockLines: 5 });
     expect(getEntry("text")!.preflight!(ok, pctx)).toEqual([]);

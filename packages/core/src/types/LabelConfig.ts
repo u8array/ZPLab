@@ -320,6 +320,10 @@ declare const pageResolved: unique symbol;
  *  still accepts a design label unchecked. */
 export type PageLabel = LabelConfig & { readonly [pageResolved]: true };
 
+/** The label slice device-font resolution reads (^CF default + ^CW-style
+ *  custom aliases); design-scoped, so a design label is always valid here. */
+export type DeviceFontLabel = Pick<LabelConfig, "customFonts" | "defaultFontId">;
+
 /** Assert a label is already page-resolved, for the two spots the type cannot
  *  prove it: an absent override (design label == page label) and a public entry
  *  whose caller owns the page scope. Every use must say which at the call site. */

@@ -190,7 +190,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       const ancestorLocked = hasLockedAncestor(objs, id);
       return updateCurrentObjects(state, (curr) =>
         mapObjectById(curr, id, (obj) =>
-          applyObjectChanges(obj, changes, ancestorLocked),
+          applyObjectChanges(obj, changes, ancestorLocked, state.label),
         ),
       );
     }),
@@ -233,7 +233,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
         const next = nodes.map((n) => {
           const changes = updateMap.get(n.id);
           let updated = changes
-            ? applyObjectChanges(n, changes, inheritedLocked)
+            ? applyObjectChanges(n, changes, inheritedLocked, state.label)
             : n;
           if (isGroup(updated)) {
             const childLocked = inheritedLocked || !!updated.locked;

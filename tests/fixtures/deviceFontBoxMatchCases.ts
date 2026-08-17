@@ -14,6 +14,11 @@ export interface DeviceFontBoxMatchCase {
   rotation: 'N' | 'I' | 'B';
   x: number;
   y: number;
+  posType?: 'FO' | 'FT';
+  /** ^FB stacks explicit \& lines; ^TB wraps into a fixed clip box. */
+  block?:
+    | { mode: 'fb'; widthDots: number; lines: number; spacing: number }
+    | { mode: 'tb'; widthDots: number; heightDots: number };
 }
 
 interface FontPlan {
@@ -109,9 +114,33 @@ const rotatedCases: DeviceFontBoxMatchCase[] = ['A', 'E', 'G'].flatMap((fontId) 
   );
 });
 
+/** Multi-line blocks: the firmware stacks device-font lines by the
+ *  snapped cell height (+ ^FB spacing), not the requested height; FT
+ *  pins the block bottom. h=84 snaps to 60, so a wrong pitch basis is
+ *  a 24-dot-per-line error the gate cannot miss. */
+const blockCases: DeviceFontBoxMatchCase[] = [
+  { id: 'fG_fb', fontId: 'G', fontHeight: 84, fontWidth: 0, text: 'MMM\\&MMM\\&MMM',
+    rotation: 'N', x: 50, y: 50, block: { mode: 'fb', widthDots: 700, lines: 3, spacing: 0 } },
+  { id: 'fG_fb_sp10', fontId: 'G', fontHeight: 84, fontWidth: 0, text: 'MMM\\&MMM\\&MMM',
+    rotation: 'N', x: 50, y: 50, block: { mode: 'fb', widthDots: 700, lines: 3, spacing: 10 } },
+  { id: 'fG_fb_ft', fontId: 'G', fontHeight: 84, fontWidth: 0, text: 'MMM\\&MMM\\&MMM',
+    rotation: 'N', x: 50, y: 700, posType: 'FT', block: { mode: 'fb', widthDots: 700, lines: 3, spacing: 0 } },
+  { id: 'fA_fb', fontId: 'A', fontHeight: 20, fontWidth: 0, text: 'MMM\\&MMM\\&MMM',
+    rotation: 'N', x: 50, y: 50, block: { mode: 'fb', widthDots: 700, lines: 3, spacing: 0 } },
+  { id: 'fG_tb', fontId: 'G', fontHeight: 84, fontWidth: 0, text: 'MMM MMM MMM',
+    rotation: 'N', x: 50, y: 50, block: { mode: 'tb', widthDots: 250, heightDots: 400 } },
+  { id: 'fG_tb_ft', fontId: 'G', fontHeight: 84, fontWidth: 0, text: 'MMM MMM MMM',
+    rotation: 'N', x: 50, y: 700, posType: 'FT', block: { mode: 'tb', widthDots: 250, heightDots: 400 } },
+  { id: 'fG_tb_rotI', fontId: 'G', fontHeight: 84, fontWidth: 0, text: 'MMM MMM MMM',
+    rotation: 'I', x: 600, y: 600, block: { mode: 'tb', widthDots: 250, heightDots: 400 } },
+  { id: 'fG_fb_rotI', fontId: 'G', fontHeight: 84, fontWidth: 0, text: 'MMM\\&MMM\\&MMM',
+    rotation: 'I', x: 600, y: 600, block: { mode: 'fb', widthDots: 250, lines: 3, spacing: 0 } },
+];
+
 export const deviceFontBoxMatchCases: DeviceFontBoxMatchCase[] = [
   ...magCases,
   ...snapCases,
   ...sweepCases,
   ...rotatedCases,
+  ...blockCases,
 ];
