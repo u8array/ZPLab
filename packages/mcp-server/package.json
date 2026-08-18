@@ -15,8 +15,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "esbuild": "^0.28.1",
+    "esbuild": "^0.28.2",
     "postject": "^1.0.0-alpha.6",
-    "tsx": "^4.19.2"
+    "tsx": "^4.23.12"
   }
 }
