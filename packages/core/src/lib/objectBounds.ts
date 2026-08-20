@@ -22,7 +22,8 @@ import type { Variable } from "../types/Variable";
 import { effectiveDpmm } from "../types/LabelConfig";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "../registry/rotation";
 import { resolveTextMode } from "../registry/text";
-import { blockBoundsDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isBlankText, rotatedLineOffset, tbBoundsDots, zebraLineWidthDots } from "./zebraTextLayout";
+import { blockBoundsDots, blockLineWidthDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isBlankText, isPrintedBlank, rotatedLineOffset, tbBoundsDots } from "./zebraTextLayout";
+import { effectiveFontHeightDots } from "./labelGeometry/deviceFonts";
 import { resolveDefaultSizeDots } from "./resolveDefaultSize";
 import { mmToDots } from "./coordinates";
 import { QR_FO_Y_OFFSET_DOTS, QR_FT_MODULE_OFFSET } from "./bwipConstants";
@@ -87,12 +88,20 @@ function fallbackSizeDots(
  *  snap) would center on a zero-width box left of what is drawn. */
 function singleLineEstimate(
   obj: LeafObject & { props: { content: string; fontHeight: number; fontWidth: number; rotation: ZplRotation } },
+  deviceFontId?: string,
 ): { width: number; height: number } {
   const { content, fontHeight, fontWidth, rotation } = obj.props;
-  const width = isBlankText(content)
-    ? fontHeight * EMPTY_TEXT_PLACEHOLDER_GLYPHS
-    : zebraLineWidthDots(content, fontHeight, fontWidth);
-  return rotatedFootprint(width, fontHeight, rotation);
+  // Blank keeps the raw-height placeholder the canvas draws (prints nothing,
+  // and the off-label check skips it); printed content uses the effective
+  // cell so device fonts don't over-report by the snap delta.
+  if (isPrintedBlank(content, deviceFontId)) {
+    return rotatedFootprint(fontHeight * EMPTY_TEXT_PLACEHOLDER_GLYPHS, fontHeight, rotation);
+  }
+  return rotatedFootprint(
+    blockLineWidthDots(content, fontHeight, fontWidth, deviceFontId),
+    effectiveFontHeightDots(deviceFontId, fontHeight),
+    rotation,
+  );
 }
 
 /** True when a QR emits as a rotated ^GFA (no ^BQ firmware shifts, plain
@@ -325,7 +334,9 @@ function objectBoxDots(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots 
       }
       // Measured is the already-rotated footprint (the producer rotates it); the
       // fallback estimate computes upright and rotates itself.
-      const fp = ctx.measured?.get(obj.id) ?? singleLineEstimate(obj);
+      const fp =
+        ctx.measured?.get(obj.id) ??
+        singleLineEstimate(obj, resolveDeviceFontId(p.fontId, p.printerFontName, ctx.label));
       const off = rotatedLineOffset(p.rotation, fp.width, fp.height);
       return { x: obj.x + off.x, y: obj.y + off.y, width: fp.width, height: fp.height };
     }

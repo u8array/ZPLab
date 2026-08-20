@@ -44,6 +44,28 @@ describe("computePreflight (off-label producer)", () => {
     ]);
   });
 
+  it("treats a lowercase-only font-H field as printing nothing", () => {
+    // Printed-blank flags emptyContent instead of being judged off-label
+    // by its placeholder box.
+    const t = {
+      id: "h", type: "text", x: 790, y: 10, rotation: 0,
+      props: { content: "abc", fontHeight: 21, fontWidth: 0, rotation: "N", fontId: "H" },
+    } as unknown as LeafObject;
+    const findings = computePreflight([t], ctx, "mm");
+    expect(findings.some((f) => f.kind.startsWith("offLabel"))).toBe(false);
+    expect(findings.some((f) => f.kind === "emptyContent")).toBe(true);
+  });
+
+  it("judges a device-font text by its snapped cell height, not the raw height", () => {
+    // ^AG h=84 prints a 60-dot cell: at y=340 on a 400-dot label the field
+    // fits exactly; the raw height (bottom 424) would falsely flag clipping.
+    const t = {
+      id: "t", type: "text", x: 50, y: 340, rotation: 0,
+      props: { content: "M", fontHeight: 84, fontWidth: 0, rotation: "N", fontId: "G" },
+    } as unknown as LeafObject;
+    expect(computePreflight([t], ctx, "mm")).toEqual([]);
+  });
+
   it("flags a fully-outside leaf as an error", () => {
     expect(computePreflight([box("a", 900, 10, 50, 50)], ctx, "mm")).toEqual([
       { objectId: "a", kind: "offLabelOutside", severity: "error" },

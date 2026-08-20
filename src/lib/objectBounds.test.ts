@@ -100,6 +100,27 @@ describe("objectBoundsDots", () => {
     expect(b.height).toBe(160);
   });
 
+  it("text single-line device font: footprint uses the snapped cell, not the raw height", () => {
+    // ^AG h=84 snaps to 60; 'M5i' width from the cell grid: 3*48 - 4 = 140.
+    const t = leaf("text", 50, 30, {
+      content: "M5i", fontHeight: 84, fontWidth: 0, rotation: "N", fontId: "G",
+    });
+    const b = objectBoundsDots(t, ctx());
+    expect(b.height).toBe(60);
+    expect(b.width).toBe(140);
+  });
+
+  it("text single-line font H, lowercase-only: placeholder footprint like the canvas", () => {
+    // Printed-blank (see isPrintedBlank): bounds must show the placeholder
+    // box the canvas draws, not a 0-width one.
+    const t = leaf("text", 50, 30, {
+      content: "abc", fontHeight: 21, fontWidth: 0, rotation: "N", fontId: "H",
+    });
+    const b = objectBoundsDots(t, ctx());
+    expect(b.width).toBe(21 * 4);
+    expect(b.height).toBe(21);
+  });
+
   it("text ^FB block (N): blockBoundsDots footprint shifted to model space", () => {
     // lineStep = 40 + 10 = 50; linesExtent = (3-1)*50 + 40 = 140.
     const t = leaf("text", 50, 30, {

@@ -22,8 +22,9 @@ import { selectionHandlers, shapeHitProps, useBlankFieldWarns, CAPTURE_CHROME, P
 import { setMeasuredBounds, clearMeasuredBounds } from "./measuredBoundsCache";
 import { DEFAULT_GS_SYMBOL_META, GS_SYMBOLS } from "@zplab/core/registry/symbol";
 import { GS_SYMBOL_PATHS, GS_VECTOR_CODES, type GsVectorCode } from "../../registry/gsSymbolPaths";
-import { blockBoundsDots, blockJustifyWordPositions, blockLineStartDots, blockLineStepDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isBlankText, tbBoundsDots, tbLineStepDots, wrapBlockLines, zebraAlignOffsetDots, zebraHangingIndentOffsetDots, zebraJustifyGapDots, zebraLineWidthDots, type ZplRotation } from "@zplab/core/lib/zebraTextLayout";
+import { isPrintedBlank, blockBoundsDots, blockJustifyWordPositions, blockLineStartDots, blockLineStepDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isBlankText, tbBoundsDots, tbLineStepDots, wrapBlockLines, zebraAlignOffsetDots, zebraHangingIndentOffsetDots, zebraJustifyGapDots, zebraLineWidthDots, type ZplRotation } from "@zplab/core/lib/zebraTextLayout";
 import { resolveTextMode } from "@zplab/core/registry/text";
+import { effectiveFontHeightDots } from "@zplab/core/lib/labelGeometry/deviceFonts";
 import { isAxisSwapped } from "@zplab/core/registry/rotation";
 import { ctrlParityFor, type LeafObject } from "@zplab/core/registry";
 import type { TextProps } from "@zplab/core/registry/text";
@@ -552,10 +553,17 @@ function KonvaObjectInner({
   const isSingleLineText =
     obj.type === "text" && !!textMetrics && resolveTextMode(obj.props) === "normal";
   const inkWidthDots = textMetrics?.inkWidthDots ?? 0;
-  const fontHeightDots = obj.type === "text" ? obj.props.fontHeight : 0;
+  // Footprint height: device fonts occupy their snapped cell, not the
+  // requested height, so bounds/right-anchor math must use the same.
+  const fontHeightDots =
+    obj.type === "text"
+      ? effectiveFontHeightDots(textMetrics?.deviceFontId, obj.props.fontHeight)
+      : 0;
   // Whitespace-only content has a non-zero ink advance but draws the placeholder,
   // so gate on the same blank test the placeholder does, not on inkWidth alone.
-  const blankSingleLine = isSingleLineText && isBlankText(textMetrics?.content ?? "");
+  const blankSingleLine =
+    isSingleLineText &&
+    isPrintedBlank((obj.props as TextProps).content ?? "", textMetrics?.deviceFontId);
   const rotation = obj.type === "text" ? obj.props.rotation : "N";
   const isQuarterTurn = isAxisSwapped(rotation);
   // A right-justified field's x is the ZPL right edge (see rightAnchorShiftDots),

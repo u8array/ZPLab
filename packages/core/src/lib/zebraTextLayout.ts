@@ -2,7 +2,7 @@
 // compute against fixed advance to match Labelary.
 
 import { dotsToPx, pxToDots } from "./coordinates";
-import { deviceFontInkWidthDots, deviceFontSnappedHeightDots, deviceFontSnappedWidthDots, effectiveFontHeightDots } from "./labelGeometry/deviceFonts";
+import { applyDeviceFontCase, deviceFontInkWidthDots, deviceFontSnappedHeightDots, deviceFontSnappedWidthDots, effectiveFontHeightDots } from "./labelGeometry/deviceFonts";
 import { EM_TOP_ABOVE_CAP } from "./labelGeometry/textPositionTransforms";
 import { isAxisSwapped, type ZplRotation } from "../registry/rotation";
 
@@ -40,6 +40,13 @@ const A0_CHAR_ADVANCE: Record<string, number> = {
 
 export function zebraGlyphAdvanceDots(fontHeight: number, fontWidth: number): number {
   return fontWidth > 0 ? fontWidth : fontHeight * A0_DEFAULT_ASPECT;
+}
+
+/** True when a text field prints no glyphs: blank content, or content a
+ *  device font's case folding drops entirely (font H strips lowercase).
+ *  The one blank decision canvas, bounds and preflight share. */
+export function isPrintedBlank(content: string, deviceFontId?: string): boolean {
+  return isBlankText(applyDeviceFontCase(deviceFontId, content));
 }
 
 /** Line width in the basis the firmware advances: device cells for A-H,

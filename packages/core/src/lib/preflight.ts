@@ -6,6 +6,7 @@ import {
   type ObjectBoundsCtx,
 } from "./objectBounds";
 import { emittedAnchorDots } from "./emittedAnchor";
+import { resolveDeviceFontId } from "./customFonts";
 import { suspiciousCharDetail } from "./suspiciousChars";
 import { GS1_GS, parseGs1ToSegments, typedGs1Parts, typedGs1Shape, validateGs1Segment, validateGs1SegmentResolved } from "./gs1";
 import { DATAMATRIX_FD_ESCAPE, typedGs1ToDataMatrixFd } from "./dataMatrixFd";
@@ -18,7 +19,7 @@ import { classifyField, isLoneMarker } from "./variableField";
 import { parseContent, typedContentIncompleteRows, typedContentMarkerFindings } from "./typedContent";
 import { getObjectStringContent, resolveForRow, variableSubstitutions } from "./variableBinding";
 import { fnConsumerBuckets, isModeDLeaf } from "./gs1ModeDFns";
-import { isBlankText } from "./zebraTextLayout";
+import { isPrintedBlank } from "./zebraTextLayout";
 import { resolveTextMode } from "../registry/text";
 import type { ColumnMapping, Variable } from "../types/Variable";
 import type { Unit } from "./units";
@@ -347,10 +348,17 @@ export function computePreflight(
     }
     const content = getObjectStringContent(leaf);
     const box = objectBoundsDots(leaf, ctx);
-    // A blank text field draws a placeholder (its bounds) but emits an empty
-    // ^FD, so it prints nothing: skip off-label here, the emptyContent check
-    // below owns the blank-field signal.
-    const blankText = leaf.type === "text" && content !== undefined && isBlankText(content);
+    const textProps = leaf.type === "text"
+      ? (leaf.props as { fontId?: string; printerFontName?: string })
+      : undefined;
+    const deviceFontId = textProps
+      ? resolveDeviceFontId(textProps.fontId, textProps.printerFontName, ctx.label)
+      : undefined;
+    // A printed-blank text field draws a placeholder but emits nothing
+    // visible: skip off-label here, the emptyContent check below owns the
+    // blank-field signal.
+    const blankText =
+      leaf.type === "text" && content !== undefined && isPrintedBlank(content, deviceFontId);
     if (!blankText) {
       const placement = offLabelPlacement(
         emittedAnchorDots(leaf, ctx, box),
@@ -418,10 +426,12 @@ export function computePreflight(
           severity: PREFLIGHT_SEVERITY.suspiciousChars,
           detail,
         });
-      } else if (content.trim() === "") {
-        // Raw content on purpose: markers make content non-empty, so bound and
-        // template fields never fire here; a blank literal (or serial seed) is
-        // the never-configured state that prints a gap.
+      } else if (
+        leaf.type === "text" ? isPrintedBlank(content, deviceFontId) : content.trim() === ""
+      ) {
+        // Markers survive the check (case folding protects them), so bound and
+        // template fields never fire here; a blank literal, serial seed or a
+        // case-folded-empty device-font field is the state that prints a gap.
         findings.push({
           objectId: leaf.id,
           kind: "emptyContent",
