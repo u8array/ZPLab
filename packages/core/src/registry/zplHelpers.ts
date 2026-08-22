@@ -14,6 +14,7 @@ import type { LabelObject } from "../types/Group";
 import { objectRotation } from "./rotation";
 import { resolveTextMode, type TextMode } from "./textMode";
 import { measureFootprintDots } from "../lib/footprintProber";
+import { stripZplParamChars } from "../lib/zplParams";
 
 /** Emit `^FT` or `^FO` depending on how the object was originally positioned.
  *  1D emitters use this z-less form: their x is import-normalised top-left,
@@ -155,7 +156,9 @@ function blockExtentFor(
   });
 }
 
-/** Priority: fontId -> printerFontName -> ctx defaultFontId -> ^A0. */
+/** Priority: fontId -> printerFontName -> ctx defaultFontId -> ^A0. Every value
+ *  is stripped regardless of source trust: one rule per slot beats a separate
+ *  provenance judgement for each of the three callers. */
 export function resolveFontCmd(
   props: {
     rotation: "N" | "R" | "I" | "B";
@@ -167,13 +170,15 @@ export function resolveFontCmd(
   ctx?: ZplEmitContext,
 ): string {
   const { rotation, fontHeight, fontWidth, fontId, printerFontName } = props;
-  if (fontId) {
-    return `^A${fontId}${rotation},${fontHeight},${fontWidth}`;
+  const safeFontId = fontId ? stripZplParamChars(fontId) : "";
+  if (safeFontId) {
+    return `^A${safeFontId}${rotation},${fontHeight},${fontWidth}`;
   }
-  if (printerFontName) {
-    return `^A@${rotation},${fontHeight},${fontWidth},E:${printerFontName}`;
+  const safePrinterFontName = printerFontName ? stripZplParamChars(printerFontName) : "";
+  if (safePrinterFontName) {
+    return `^A@${rotation},${fontHeight},${fontWidth},E:${safePrinterFontName}`;
   }
-  const defaultId = ctx?.label.defaultFontId;
+  const defaultId = stripZplParamChars(ctx?.label.defaultFontId ?? "");
   if (defaultId) {
     return `^A${defaultId}${rotation},${fontHeight},${fontWidth}`;
   }
@@ -181,9 +186,8 @@ export function resolveFontCmd(
 }
 
 /** Numeric ZPL anchor (cap-top/baseline) for a text-like field. `label`
- *  resolves the effective device font (^CF default, ^CW alias override)
- *  for the anchor snap; `variables` resolve a single-bind marker to the
- *  default the wire actually prints (^FN{n}^FD{default}). */
+ *  resolves the effective device font (^CF/^CW) for the anchor snap;
+ *  `variables` resolve a single-bind marker to the default the wire prints. */
 export function textZplAnchorCoords(
   obj: TextLikeObjForFieldPos,
   label?: DeviceFontLabel,
@@ -255,7 +259,7 @@ function hex(ch: string): string {
 }
 
 /** Hex-escape ^/~ and control bytes via ^FH_ (and _ itself) so user content
- *  can't smuggle commands and nonprintables survive re-emit. `arm` carries
+ *  cannot be read as commands and nonprintables survive re-emit. `arm` carries
  *  per-field ^FC/^FE armings; it sits after a ^FH but flush against ^FD,
  *  because ^FE only applies when it immediately precedes its ^FD (spec p.191). */
 export function fdField(payload: string, arm = ''): string {

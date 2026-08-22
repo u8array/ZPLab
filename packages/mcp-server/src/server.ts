@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { requestCurrentDesign } from "./appBridge.js";
+import { isAppAttached, requestCurrentDesign, requestOpenDraft, requestRaster } from "./appBridge.js";
 import { registerSidecarFootprintMeasurer } from "./footprint.js";
+import { registerPrompts } from "./prompts.js";
 import {
   buildCurrentDesignResult,
   createDraft,
@@ -10,17 +11,28 @@ import {
   getSchema,
   importZpl,
   openInApp,
+  patchDesign,
+  patchDesignShape,
+  rasterImageResult,
+  rasterImageShape,
   validateDraft,
   validateZpl,
   zplInputShape,
 } from "./tools.js";
 
 export interface BuildServerOptions {
-  /** ZPLab spawned this server: registers open_in_app and get_current_design,
-   *  which talk to the app over stdout event lines. Set only in HTTP mode,
-   *  where stdout is free (in stdio mode it is JSON-RPC). */
+  /** This transport can reach a desktop window. HTTP only: the app tools talk
+   *  over stdout event lines, which in stdio mode IS the protocol. */
   hosted?: boolean;
 }
+
+const NO_WINDOW = {
+  ok: false,
+  errors: ["No ZPLab window is connected to this server."],
+};
+
+/** Mid-grey: what the app's own image import uses. */
+const DEFAULT_RASTER_THRESHOLD = 128;
 
 // Compact on purpose: pretty-printing inflates every tool result by ~45%
 // whitespace tokens the model does not need.
@@ -28,23 +40,31 @@ const json = (value: unknown) => ({
   content: [{ type: "text" as const, text: JSON.stringify(value) }],
 });
 
-/** Workflow recipe the host injects into the agent's context at initialize,
- *  so every session starts pre-trained instead of discovering it by trial. */
+/** The three window tools exist only on a hosted transport, so a stdio client
+ *  must not be promised tools its server never registers. */
+const WINDOW_TOOL_INSTRUCTIONS =
+  "Three tools reach the desktop window and answer with a reason when none " +
+  "is connected: open_in_app " +
+  "replaces the design in the editor (confirm with the user first), " +
+  "get_current_design reads it back including the user's own edits, and " +
+  "raster_image turns a data: URL into a placeable 1-bit graphic.";
+
+/** Workflow recipe the host injects at initialize, so a session starts
+ *  pre-trained instead of discovering it by trial. */
 export const SERVER_INSTRUCTIONS =
   "ZPLab builds Zebra ZPL label designs. Call get_schema first to learn the " +
   "object types and their props. Build a label with create_draft (x/y in dots " +
   "from the top-left origin; props merge over defaults), then read the returned " +
   "warnings, bounds, and overlaps and iterate until nothing unintended remains. " +
-  "Barcode bounds are probed with the app's measurement kernel; bounds/overlaps " +
-  "marked approx are headless estimates (single-line text): keep extra " +
+  "Values that differ per printed label belong in `variables`, referenced from " +
+  "content as «name», so one design serves many rows. " +
+  "Bounds marked approx are estimates (unrendered content, marker substitution, " +
+  "unencodable payloads): keep extra " +
   "clearance around those. Overlaps are neutral facts, not errors: a frame or " +
   "reverse box overlaps its contents by design. Bring existing ZPL through " +
-  "import_zpl (editable design file) or validate_zpl (lint only); both split " +
-  "multi-label streams into one page per ^XA block. export_zpl returns the " +
-  "final ZPL; open_in_app (when present) replaces the design in the running " +
-  "ZPLab editor, so confirm with the user before calling it. " +
-  "get_current_design (when present) reads back the design open in the editor " +
-  "with render-exact bounds (no approx), including any edits the user made.";
+  "import_zpl (editable design file) or validate_zpl (lint only). Editing an " +
+  "existing design goes through patch_design rather than a rebuild, so nothing " +
+  "the user made is lost. export_zpl returns the final ZPL.";
 
 /** Single tool definition shared by the stdio and HTTP entry points. */
 export function buildServer(options: BuildServerOptions = {}): McpServer {
@@ -52,17 +72,27 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
   // Display identity the MCP client shows; matches the config-snippet key.
   const server = new McpServer(
     { name: "zplab", version: "0.0.0" },
-    { instructions: SERVER_INSTRUCTIONS },
+    {
+      instructions:
+        options.hosted === true
+          ? `${SERVER_INSTRUCTIONS} ${WINDOW_TOOL_INSTRUCTIONS}`
+          : SERVER_INSTRUCTIONS,
+    },
   );
+
+  registerPrompts(server, options.hosted === true);
 
   server.registerTool(
     "create_draft",
     {
       title: "Create ZPLab draft",
       description:
-        "Build a ZPLab label draft from a size and a list of objects. Returns the " +
-        "parseable design file, preflight warnings, per-object bounds (dots), and " +
-        "bbox overlaps. Call get_schema for object types.",
+        "Build a ZPLab label draft from a size, a list of objects and optional " +
+        "variables. Returns the parseable design file, preflight warnings, " +
+        "per-object bounds (dots), and bbox overlaps. Declare every value that " +
+        "changes per print as a variable and reference it in content as " +
+        "«name»; it becomes a ^FN slot the user can fill from a data " +
+        "source. Call get_schema for object types.",
       inputSchema: createDraftShape,
     },
     async (args) => json(createDraft(args)),
@@ -78,6 +108,25 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
       inputSchema: designFileEnvelopeSchema.shape,
     },
     async ({ designFile }) => json(validateDraft(designFile)),
+  );
+
+  server.registerTool(
+    "patch_design",
+    {
+      title: "Edit a ZPLab design",
+      description:
+        "Change an existing design instead of rebuilding it: update (positions " +
+        "and merged props), remove or add objects by id, and addVariable / " +
+        "updateVariable / removeVariable for the design's variables (a rename " +
+        "rewrites the «markers» that reference it). Ids come from any report's " +
+        "bounds. Adding or removing an object or a variable, or changing a " +
+        "variable's default, drops the affected pages' captured import bytes " +
+        "(a note says so) and the model re-emits them; an " +
+        "update keeps them and replays around the edited field. " +
+        "Returns the edited design file plus fresh warnings, bounds and overlaps.",
+      inputSchema: patchDesignShape,
+    },
+    async ({ designFile, operations }) => json(patchDesign(designFile, operations)),
   );
 
   server.registerTool(
@@ -129,23 +178,65 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
     async () => json(getSchema()),
   );
 
-  // Only when ZPLab spawned the server (HTTP mode): these talk to the app
-  // over the piped stdout (and, for the read-back, its HTTP reply).
+  // Listed whenever the transport could reach a window, not only once one has:
+  // a client that connected during startup would otherwise cache a tool list it
+  // never sees updated (stateless transport, so listChanged reaches nobody).
   if (options.hosted) {
     server.registerTool(
       "open_in_app",
       {
         title: "Open draft in ZPLab",
         description:
-          "Push a design file into the running ZPLab desktop app, replacing the current " +
-          "design. Only available when ZPLab launched this server.",
+          "Push a design file into the running ZPLab desktop app and wait for the " +
+          "app to confirm. This REPLACES whatever the user has open and clears " +
+          "their undo history, so ask before calling it; the reply reports how " +
+          "many objects were displaced.",
         inputSchema: designFileEnvelopeSchema.shape,
       },
       async ({ designFile }) => {
+        if (!isAppAttached()) return json(NO_WINDOW);
         const result = openInApp(designFile);
         if (!result.ok) return json(result);
-        process.stdout.write(result.line + "\n");
-        return json({ ok: true });
+        const receipt = await requestOpenDraft(result.designFile);
+        if (receipt === null) {
+          // The app applies before it confirms (see OPEN_DRAFT_TIMEOUT_MS); a
+          // blind retry on this null could apply the push twice.
+          return json({
+            ok: false,
+            errors: [
+              "The ZPLab app did not confirm the draft. It may still have been applied; check get_current_design before retrying.",
+            ],
+          });
+        }
+        if (!receipt.ok) return json({ ok: false, errors: [receipt.error ?? "rejected"] });
+        // Opening replaces the editor's document and clears its undo history;
+        // say so rather than reporting a bare success.
+        return json({
+          ok: true,
+          replaced: { objects: receipt.replacedObjects ?? 0, undoHistoryCleared: true },
+        });
+      },
+    );
+
+    server.registerTool(
+      "raster_image",
+      {
+        title: "Rasterize an image for a label",
+        description:
+          "Turn an image (data: URL, e.g. a logo you fetched) into a 1-bit ZPL " +
+          "graphic at the given width in dots. Returns an image object to place " +
+          "via create_draft or patch_design. Fetch the bytes yourself and pass " +
+          "them here; the app renders them, it does not download anything.",
+        inputSchema: rasterImageShape,
+      },
+      async ({ dataUrl, widthDots, threshold }) => {
+        if (!isAppAttached()) return json(NO_WINDOW);
+        const used = threshold ?? DEFAULT_RASTER_THRESHOLD;
+        const response = await requestRaster(dataUrl, widthDots, used);
+        if (response === null) {
+          return json({ ok: false, errors: ["The ZPLab app did not answer the raster request."] });
+        }
+        return json(rasterImageResult(response, used));
       },
     );
 
@@ -155,12 +246,13 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         title: "Get current ZPLab design",
         description:
           "Read the design currently open in the ZPLab desktop app: the design file " +
-          "plus bounds and overlaps using the app's render-measured barcode/text sizes " +
-          "(approx only flags anything not rendered yet). Only available when ZPLab " +
-          "launched this server.",
+          "plus print-true bounds and overlaps (barcodes probed at print scale; text " +
+          "and images use the app's render measurements). Only available while a " +
+          "ZPLab window is connected.",
         inputSchema: {},
       },
       async () => {
+        if (!isAppAttached()) return json(NO_WINDOW);
         const response = await requestCurrentDesign();
         if (response === null) {
           return json({ ok: false, errors: ["The ZPLab app did not respond."] });

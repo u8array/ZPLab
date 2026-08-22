@@ -12,7 +12,7 @@ import { defaultPaletteRows } from '../../registry/paletteTypes';
 import { makeCredentialHydrator, setCredential, setLabelaryKeyBound, migrateLabelaryKeyBinding, LABELARY_KEY_CRED } from '../../lib/credentialStore';
 import { isDesktopShell } from '../../lib/platform';
 import { resolveHost } from '../../lib/labelary';
-import { generateMcpToken, stopMcpServer } from '../../lib/mcpServer';
+import { generateMcpToken } from '../../lib/mcpServer';
 import { selectEffectivePreviewProvider } from '../labelStore.selectors';
 
 import { newId } from "@zplab/core/lib/ids";
@@ -429,9 +429,8 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
     });
     // Reset drops Labelary consent; end any live preview so it doesn't linger.
     get().exitPreviewMode();
-    // Reset also drops the MCP opt-in; a running sidecar must not outlive it.
-    // stopMcpServer no-ops in the web build; catch only guards a real invoke failure.
-    void stopMcpServer().catch(() => undefined);
+    // The MCP opt-in flip above is enough: mcpLifecycle follows the store and
+    // stops the sidecar; a direct stop here would run outside its op chain.
   },
   setCanvasSettings: (settings) =>
     set((state) => ({ canvasSettings: { ...state.canvasSettings, ...settings } })),
@@ -464,6 +463,9 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   setMcpServerEnabled: (enabled) => set({ mcpServerEnabled: enabled }),
   setMcpServerPort: (port) => set({ mcpServerPort: port }),
   regenerateMcpToken: () => {
+    // Same clobber guard as ensureMcpToken: unloaded = the hydrate FAILED, so
+    // the user cannot see the stored token this would overwrite.
+    if (!get().mcpServerTokenLoaded) return;
     const token = generateMcpToken();
     persistMcpToken(token);
     set({ mcpServerToken: token, mcpServerTokenLoaded: true });

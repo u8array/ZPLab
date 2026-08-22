@@ -3,7 +3,7 @@
 //! probe it, and the app kills it on exit so it never outlives the window.
 
 use std::process::{Child, Command, Stdio};
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
 use tauri::{AppHandle, Emitter, Manager, State};
 use tokio::sync::oneshot;
@@ -11,9 +11,9 @@ use tokio::sync::oneshot;
 /// Tauri event carrying an openDraft design file to the editor.
 const OPEN_DRAFT_EVENT: &str = "mcp://open-draft";
 
-/// Tauri event carrying a designRequest id; the webview answers the sidecar
-/// directly over its HTTP design-response route.
+/// Tauri event carrying a designRequest id; the webview answers via mcp_reply.
 const DESIGN_REQUEST_EVENT: &str = "mcp://design-request";
+const RASTER_REQUEST_EVENT: &str = "mcp://raster-request";
 
 /// Windows: kill-on-close Job Object that ties the child's cmd/pnpm/node tree
 /// to the app. Closing the handle (explicitly, or when the process dies and the
@@ -85,17 +85,21 @@ enum ChildStatus {
 
 /// A child event held back until the webview has its listeners up.
 enum BufferedEvent {
-  OpenDraft(String),
+  OpenDraft { id: u64, design_file: String },
   DesignRequest(u64),
+  RasterRequest(String),
 }
 
 fn emit_event(app: &AppHandle, ev: &BufferedEvent) {
   match ev {
-    BufferedEvent::OpenDraft(payload) => {
-      let _ = app.emit(OPEN_DRAFT_EVENT, payload.clone());
+    BufferedEvent::OpenDraft { id, design_file } => {
+      let _ = app.emit(OPEN_DRAFT_EVENT, (*id, design_file.clone()));
     }
     BufferedEvent::DesignRequest(id) => {
       let _ = app.emit(DESIGN_REQUEST_EVENT, *id);
+    }
+    BufferedEvent::RasterRequest(line) => {
+      let _ = app.emit(RASTER_REQUEST_EVENT, line.clone());
     }
   }
 }
@@ -110,6 +114,10 @@ pub struct McpState {
   /// server would otherwise emit into the void and silently drop a draft);
   /// mcp_listeners_ready takes it to None and flushes. Webview-reload edge accepted.
   event_buffer: Mutex<Option<Vec<BufferedEvent>>>,
+  /// Port + token of the running child, so mcp_reply can reach it. Published
+  /// only once the child reports `listening`, cleared the moment it is reaped:
+  /// a reply to a port someone else rebound would hand them the token.
+  endpoint: Mutex<Option<(u16, String)>>,
   #[cfg(windows)]
   job: Mutex<Option<job::Job>>,
 }
@@ -120,6 +128,7 @@ impl Default for McpState {
       child: Mutex::new(None),
       start_lock: tokio::sync::Mutex::new(()),
       event_buffer: Mutex::new(Some(Vec::new())),
+      endpoint: Mutex::new(None),
       #[cfg(windows)]
       job: Mutex::new(None),
     }
@@ -139,6 +148,7 @@ impl McpState {
       let _ = child.kill();
       let _ = child.wait();
     }
+    *self.endpoint.lock().unwrap() = None;
     // Drop the job after the child: closing its kill-on-close handle terminates
     // any grandchildren that survived the direct kill. take()->drop is a no-op
     // when already cleared, so kill stays idempotent.
@@ -154,6 +164,7 @@ impl McpState {
       Some(child) => match child.try_wait() {
         Ok(Some(_)) => {
           *guard = None;
+          *self.endpoint.lock().unwrap() = None;
           false
         }
         _ => true,
@@ -167,7 +178,10 @@ impl McpState {
     match guard.as_mut() {
       None => ChildStatus::Absent,
       Some(child) => match child.try_wait() {
-        Ok(Some(_)) => ChildStatus::Exited,
+        Ok(Some(_)) => {
+          *self.endpoint.lock().unwrap() = None;
+          ChildStatus::Exited
+        }
         _ => ChildStatus::Alive,
       },
     }
@@ -175,8 +189,13 @@ impl McpState {
 }
 
 /// How long to await the child's `listening` signal before declaring the spawn
-/// a failure.
-const READY_TIMEOUT: Duration = Duration::from_secs(2);
+/// a failure. Dev runs the package from source through pnpm and tsx, which
+/// needs far longer to bind than the release binary.
+#[cfg(debug_assertions)]
+const READY_TIMEOUT: Duration = Duration::from_secs(30);
+
+#[cfg(not(debug_assertions))]
+const READY_TIMEOUT: Duration = Duration::from_secs(5);
 
 #[cfg(windows)]
 fn suppress_console(cmd: &mut Command) {
@@ -256,15 +275,19 @@ fn mcp_command(port: u16) -> Result<Command, String> {
   Ok(cmd)
 }
 
-/// Extract the design file payload from a child stdout line, or None if the
-/// line is not an openDraft event (dev logging, partial output). The child
+/// Extract the request id and design file from a child stdout line, or None if
+/// the line is not an openDraft event (dev logging, partial output). The child
 /// emits these lines only in HTTP mode, where stdout is not the JSON-RPC channel.
-fn open_draft_payload(line: &str) -> Option<String> {
+/// The id travels with the draft so the webview can post its receipt back.
+fn open_draft_payload(line: &str) -> Option<(u64, String)> {
   let value: serde_json::Value = serde_json::from_str(line).ok()?;
   if value.get("zplabEvent")?.as_str()? != "openDraft" {
     return None;
   }
-  Some(value.get("designFile")?.to_string())
+  Some((
+    value.get("id")?.as_u64()?,
+    value.get("designFile")?.to_string(),
+  ))
 }
 
 /// True for the child's one-shot `{"zplabEvent":"listening"}` line, emitted once
@@ -285,6 +308,17 @@ fn design_request_id(line: &str) -> Option<u64> {
   value.get("id")?.as_u64()
 }
 
+/// A rasterRequest travels as its whole JSON line: the payload is an opaque
+/// image plus its target size, which only the webview reads.
+fn raster_request_line(line: &str) -> Option<String> {
+  let value: serde_json::Value = serde_json::from_str(line).ok()?;
+  if value.get("zplabEvent")?.as_str()? != "rasterRequest" {
+    return None;
+  }
+  value.get("id")?.as_u64()?;
+  Some(line.to_string())
+}
+
 /// Signal readiness on the child's first `listening` stdout line, then forward
 /// openDraft and designRequest events. Ends when stdout closes; dropping an
 /// unused `ready` sender then makes wait_until_ready observe the child as gone.
@@ -303,10 +337,12 @@ fn forward_child_events(
       }
       continue;
     }
-    let ev = if let Some(payload) = open_draft_payload(&line) {
-      BufferedEvent::OpenDraft(payload)
+    let ev = if let Some((id, design_file)) = open_draft_payload(&line) {
+      BufferedEvent::OpenDraft { id, design_file }
     } else if let Some(id) = design_request_id(&line) {
       BufferedEvent::DesignRequest(id)
+    } else if let Some(raw) = raster_request_line(&line) {
+      BufferedEvent::RasterRequest(raw)
     } else {
       continue;
     };
@@ -343,19 +379,33 @@ async fn wait_until_ready(ready: oneshot::Receiver<()>) -> Result<(), String> {
 }
 
 /// Start the MCP server on `port` with bearer `token`; a no-op if already
-/// running. Waits for the child's `listening` signal, killing the child and
-/// returning an error on timeout. The token is never logged.
+/// running on the same port/token, else an error. Returns `true` only for a
+/// freshly spawned child, so the caller forgets its attach session only then.
 #[tauri::command]
 pub async fn mcp_start(
   app: AppHandle,
   state: State<'_, McpState>,
   port: u16,
   token: String,
-) -> Result<(), String> {
-  // Serialize starts: a second concurrent call waits, then sees is_running().
+) -> Result<bool, String> {
+  // Serialize starts. A caller that would rather not wait out the readiness
+  // window asks mcp_status for `starting` first.
   let _start = state.start_lock.lock().await;
   if state.is_running() {
-    return Ok(());
+    // Success for a port the child does not serve would leave the settings
+    // snippet pointing at a port nothing listens on.
+    let bound = state.endpoint.lock().unwrap().clone();
+    if let Some((bound_port, bound_token)) = bound {
+      if bound_port != port {
+        return Err("already running on another port".to_string());
+      }
+      // The child only accepts the token it was spawned with; Ok here would
+      // point the settings snippet at a token nothing accepts.
+      if bound_token != token {
+        return Err("already running with a different token".to_string());
+      }
+    }
+    return Ok(false);
   }
   let mut cmd = mcp_command(port)?;
   suppress_console(&mut cmd);
@@ -388,12 +438,16 @@ pub async fn mcp_start(
   if let Some(stdout) = child.stdout.take() {
     std::thread::spawn(move || forward_child_events(stdout, app, ready_tx));
   }
-  // Store before the wait so a teardown mid-startup still reaps the child.
+  // Store the child before the wait so a teardown mid-startup still reaps it;
+  // the endpoint waits for `listening` (see its field doc).
   *state.child.lock().unwrap() = Some(child);
   match wait_until_ready(ready_rx).await {
     // A concurrent mcp_stop can take our child while we waited; only report
     // success if it is still ours and alive.
-    Ok(()) if matches!(state.child_status(), ChildStatus::Alive) => Ok(()),
+    Ok(()) if matches!(state.child_status(), ChildStatus::Alive) => {
+      *state.endpoint.lock().unwrap() = Some((port, token));
+      Ok(true)
+    }
     // Also clears the job handle on this path so it is not leaked.
     Ok(()) => {
       state.kill();
@@ -411,17 +465,85 @@ pub fn mcp_stop(state: State<'_, McpState>) {
   state.kill();
 }
 
+/// The sidecar routes the webview may answer on. An allowlist keeps the command
+/// from becoming a general loopback POST client for the webview.
+const REPLY_ROUTES: [&str; 5] = [
+  "/app-attach",
+  "/app-detach",
+  "/design-response",
+  "/draft-receipt",
+  "/raster-response",
+];
+
+/// Upper bound on a single loopback POST. Bounds the send itself, not the
+/// sidecar's wait for it: hanging the webview's request forever would be worse
+/// than a wasted round trip.
+const REPLY_TIMEOUT: Duration = Duration::from_secs(10);
+
+fn reply_client() -> Result<&'static reqwest::Client, String> {
+  static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
+  if let Some(c) = CLIENT.get() {
+    return Ok(c);
+  }
+  let built = reqwest::Client::builder()
+    // A configured system proxy must not swallow loopback traffic.
+    .no_proxy()
+    .timeout(REPLY_TIMEOUT)
+    .build()
+    .map_err(|e| e.to_string())?;
+  Ok(CLIENT.get_or_init(|| built))
+}
+
+/// Answer the sidecar from Rust rather than the webview: a fetch out of the
+/// webview is cross-origin, and the bearer gate 401s the CORS preflight.
+#[tauri::command]
+pub async fn mcp_reply(
+  state: State<'_, McpState>,
+  route: String,
+  payload: serde_json::Value,
+) -> Result<(), String> {
+  if !REPLY_ROUTES.contains(&route.as_str()) {
+    return Err(format!("unknown mcp route: {route}"));
+  }
+  // Reap first, so a reply to a dead child fails here (see `endpoint`).
+  if !state.is_running() {
+    return Err("mcp server is not running".to_string());
+  }
+  let (port, token) = state
+    .endpoint
+    .lock()
+    .unwrap()
+    .clone()
+    .ok_or("mcp server is not running")?;
+  reply_client()?
+    .post(format!("http://127.0.0.1:{port}{route}"))
+    .bearer_auth(token)
+    .header("content-type", "application/json")
+    .body(payload.to_string())
+    .send()
+    .await
+    .map_err(|e| e.to_string())?
+    .error_for_status()
+    .map(|_| ())
+    .map_err(|e| e.to_string())
+}
+
 #[derive(serde::Serialize)]
 pub struct McpStatus {
   pub running: bool,
   pub available: bool,
+  /// A start is in flight. Without it `running` is false for the whole
+  /// readiness wait, and a caller cannot tell that from "never started".
+  pub starting: bool,
 }
 
 #[tauri::command]
 pub fn mcp_status(state: State<'_, McpState>) -> McpStatus {
   McpStatus {
-    running: state.is_running(),
+    // Ready, not merely spawned: see `endpoint`'s doc for why is_running() alone is not enough.
+    running: state.is_running() && state.endpoint.lock().unwrap().is_some(),
     available: sidecar_available(),
+    starting: state.start_lock.try_lock().is_err(),
   }
 }
 
@@ -429,14 +551,44 @@ pub fn mcp_status(state: State<'_, McpState>) -> McpStatus {
 mod tests {
   use super::*;
 
+  fn rt() -> tokio::runtime::Runtime {
+    tokio::runtime::Builder::new_current_thread()
+      .enable_all()
+      .build()
+      .unwrap()
+  }
+
+  #[test]
+  fn raster_line_passes_through_only_its_own_event() {
+    let line =
+      r#"{"zplabEvent":"rasterRequest","id":7,"dataUrl":"data:image/png;base64,AA","widthDots":8}"#;
+    assert_eq!(raster_request_line(line), Some(line.to_string()));
+    assert!(raster_request_line(r#"{"zplabEvent":"designRequest","id":7}"#).is_none());
+    assert!(raster_request_line(r#"{"zplabEvent":"rasterRequest"}"#).is_none());
+    assert!(raster_request_line("not json").is_none());
+  }
+
+  #[test]
+  fn reply_routes_are_the_ones_the_app_answers_on() {
+    assert_eq!(REPLY_ROUTES.len(), 5);
+    for route in REPLY_ROUTES {
+      assert!(route.starts_with('/'), "{route} needs its leading slash");
+    }
+    assert!(!REPLY_ROUTES.contains(&"/"));
+  }
+
   #[test]
   fn status_serializes_running_and_available_flags() {
     let json = serde_json::to_string(&McpStatus {
       running: true,
       available: false,
+      starting: false,
     })
     .unwrap();
-    assert_eq!(json, r#"{"running":true,"available":false}"#);
+    assert_eq!(
+      json,
+      r#"{"running":true,"available":false,"starting":false}"#
+    );
   }
 
   #[test]
@@ -449,11 +601,11 @@ mod tests {
   }
 
   #[test]
-  fn open_draft_payload_extracts_design_file() {
-    let line = r#"{"zplabEvent":"openDraft","designFile":{"schemaVersion":3}}"#;
+  fn open_draft_payload_extracts_id_and_design_file() {
+    let line = r#"{"zplabEvent":"openDraft","id":7,"designFile":{"schemaVersion":3}}"#;
     assert_eq!(
       open_draft_payload(line),
-      Some(r#"{"schemaVersion":3}"#.to_string())
+      Some((7, r#"{"schemaVersion":3}"#.to_string()))
     );
   }
 
@@ -462,9 +614,14 @@ mod tests {
     assert_eq!(open_draft_payload("plain dev log line"), None);
     assert_eq!(open_draft_payload(r#"{"other":"json"}"#), None);
     assert_eq!(
-      open_draft_payload(r#"{"zplabEvent":"openDraft"}"#),
+      open_draft_payload(r#"{"zplabEvent":"openDraft","id":1}"#),
       None,
       "missing designFile is not forwardable"
+    );
+    assert_eq!(
+      open_draft_payload(r#"{"zplabEvent":"openDraft","designFile":{}}"#),
+      None,
+      "without an id the webview could not answer"
     );
   }
 
@@ -505,11 +662,7 @@ mod tests {
 
   #[test]
   fn wait_until_ready_succeeds_on_signal() {
-    let rt = tokio::runtime::Builder::new_current_thread()
-      .enable_all()
-      .build()
-      .unwrap();
-    rt.block_on(async {
+    rt().block_on(async {
       let (tx, rx) = oneshot::channel();
       tx.send(()).unwrap();
       assert!(wait_until_ready(rx).await.is_ok());
@@ -518,11 +671,7 @@ mod tests {
 
   #[test]
   fn wait_until_ready_reports_exit_when_sender_dropped() {
-    let rt = tokio::runtime::Builder::new_current_thread()
-      .enable_all()
-      .build()
-      .unwrap();
-    rt.block_on(async {
+    rt().block_on(async {
       // Sender dropped without a value = child's stdout closed = child gone.
       let (tx, rx) = oneshot::channel::<()>();
       drop(tx);
@@ -533,8 +682,10 @@ mod tests {
 
   #[test]
   fn wait_until_ready_times_out_when_never_signaled() {
+    // Paused clock: the debug READY_TIMEOUT is 30s of wall time otherwise.
     let rt = tokio::runtime::Builder::new_current_thread()
       .enable_all()
+      .start_paused(true)
       .build()
       .unwrap();
     rt.block_on(async {
@@ -546,12 +697,8 @@ mod tests {
   }
 
   #[test]
-  fn start_lock_serializes_holders() {
-    let rt = tokio::runtime::Builder::new_current_thread()
-      .enable_all()
-      .build()
-      .unwrap();
-    rt.block_on(async {
+  fn a_held_start_lock_is_what_status_reports_as_starting() {
+    rt().block_on(async {
       let state = McpState::default();
       let held = state.start_lock.lock().await;
       assert!(state.start_lock.try_lock().is_err());

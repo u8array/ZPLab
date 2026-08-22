@@ -9,7 +9,7 @@ import {
   selectionUnionDots,
   type BoundingBoxDots,
 } from "@zplab/core/lib/objectBounds";
-import { measuredBoundsMap } from "../measuredBoundsCache";
+import { measuredBoundsMap } from "../../../lib/measuredBoundsCache";
 import { expandSelection, findObjectById, getAllLeaves } from "@zplab/core/types/Group";
 import { useLabelStore, currentObjects, currentPageLabel, type ObjectChanges } from "../../../store/labelStore";
 

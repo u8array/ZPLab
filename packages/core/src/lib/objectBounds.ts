@@ -43,20 +43,26 @@ export interface ObjectBoundsCtx {
   /** Measured footprints (dots) published by the render layer for types whose
    *  size isn't purely computable (barcodes, single-line text). Keyed by obj.id.
    *  The FT anchor uses uprightBar*Dots; barHeightDots is the legacy fallback. */
-  measured?: ReadonlyMap<
-    string,
-    {
-      width: number;
-      height: number;
-      barHeightDots?: number;
-      barLeftDots?: number;
-      barTopDots?: number;
-      /** Upright (unrotated) bar-rect size in dots, for the rotation-aware ^FT
-       *  anchor. The ^FT origin (bar base, left edge) rotates with the field. */
-      uprightBarWDots?: number;
-      uprightBarHDots?: number;
-    }
-  >;
+  measured?: ReadonlyMap<string, MeasuredFootprint>;
+}
+
+/** One measured footprint, in dots, already rotated. Single shape for every
+ *  producer and carrier (canvas cache, /design-response wire schema), so a field
+ *  one of them learns cannot be dropped by another. */
+export interface MeasuredFootprint {
+  width: number;
+  height: number;
+  /** Rotation-aware bar sub-rect height (barcodes only), mirroring the
+   *  renderer's FT anchor shift for R/B rotations. */
+  barHeightDots?: number;
+  /** Text-zone offset from the bbox top-left to the bars, non-zero when the
+   *  HRI zone sits left of or above the bars. */
+  barLeftDots?: number;
+  barTopDots?: number;
+  /** Upright (unrotated) bar-rect size for the rotation-aware ^FT anchor:
+   *  the ^FT origin (bar base, left edge) rotates with the field. */
+  uprightBarWDots?: number;
+  uprightBarHDots?: number;
 }
 
 /** Swap width/height for the quarter-turn rotations. Mirrors how every

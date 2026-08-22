@@ -1,381 +1,78 @@
 import { z } from "zod";
 import {
-  parseDesignFile,
   serializeDesign,
-  designFileErrors,
-  type DesignFile,
-  type DesignFilePage,
 } from "@zplab/core/lib/designFile";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { importZplText, type ZplImportResult } from "@zplab/core/lib/zplImportService";
-import { measureBoundsEntry, withFootprintBinding } from "./footprint.js";
-import { isBarcode } from "@zplab/core/lib/objectBounds";
+import {
+  withFootprintBinding,
+} from "./footprint.js";
 import type { ImportReport } from "@zplab/core/lib/zplParser";
-import { computePreflight } from "@zplab/core/lib/preflight";
-import type { BoundingBoxDots, ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
-import type { DesignResponse } from "./appBridge.js";
-import { computeOverlaps, leafBoxesDots, MAX_OVERLAPS, type OverlapDots } from "@zplab/core/lib/objectOverlap";
-import { getEntry, ObjectRegistry } from "@zplab/core/registry";
-import { exportableLeaves, pageLabelConfig, type LabelObject, type Page } from "@zplab/core/types/Group";
-import { effectiveDpmm, DPMM_VALUES, isDpmm, type Dpmm, type JmDensity, type LabelConfig, type PageLabel } from "@zplab/core/types/LabelConfig";
-import type { PreflightKind, PreflightSeverity } from "@zplab/core/lib/preflight";
-import type { Variable } from "@zplab/core/types/Variable";
+import type { DesignResponse, RasterResponse } from "./appBridge.js";
+import { ObjectRegistry } from "@zplab/core/registry";
+import { DPMM_VALUES, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
 
-export const objectInputSchema = z.object({
-  type: z.string(),
-  x: z.number(),
-  y: z.number(),
-  id: z.string().optional(),
-  // Anchor semantics: FO = top-left origin, FT = typeset baseline; fieldJustify
-  // right-aligns. Omitted keeps the model default (FO / left).
-  positionType: z.enum(["FO", "FT"]).optional(),
-  fieldJustify: z.enum(["L", "C", "R"]).optional(),
-  props: z.record(z.string(), z.unknown()).optional(),
-});
-export type ObjectInput = z.infer<typeof objectInputSchema>;
 
-const dpmmSchema = z.literal([...DPMM_VALUES]);
-
-export const createDraftShape = {
-  widthMm: z.number().positive(),
-  heightMm: z.number().positive(),
-  dpmm: dpmmSchema,
-  objects: z.array(objectInputSchema),
-};
-export interface CreateDraftInput {
-  widthMm: number;
-  heightMm: number;
-  dpmm: Dpmm;
-  objects: ObjectInput[];
-}
-
-/** Serialised design as the tools exchange it, identical in shape to
- *  serializeDesign's output so create → validate → export round-trip.
- *  serializeDesign stamps the current schemaVersion, so it is not hardcoded. */
-export interface DesignFileJson {
-  schemaVersion: number;
-  label: LabelConfig;
-  pages: DesignFilePage[];
-  // serializeDesign omits variables when empty, so this stays optional.
-  variables?: Variable[];
-}
-
-export const designFileEnvelopeSchema = z.object({ designFile: z.record(z.string(), z.unknown()) });
-
-const errMsg = (e: unknown): string => (e instanceof Error ? e.message : String(e));
-
-export interface ToolError {
-  ok: false;
-  errors: string[];
-}
-
-/** Re-checks the dpmm/dimension bounds on a parsed label: the core design-file
- *  schema is deliberately lenient (app forward-compat), so without this the
- *  envelope tools would emit broken ZPL from garbage create_draft rejects. */
-function labelConfigIssues(label: LabelConfig): string[] {
-  const issues: string[] = [];
-  if (!isDpmm(label.dpmm)) {
-    issues.push(`dpmm must be one of ${DPMM_VALUES.join(", ")} (got ${label.dpmm})`);
-  }
-  if (!(label.widthMm > 0)) issues.push(`widthMm must be positive (got ${label.widthMm})`);
-  if (!(label.heightMm > 0)) issues.push(`heightMm must be positive (got ${label.heightMm})`);
-  return issues;
-}
-
-/** Envelope size limits: the raw-ZPL tools cap the input string, so the
- *  design-file tools cap the parsed shape symmetrically to bound preflight and
- *  emit on a hostile envelope. Well beyond any real label. */
-const MAX_PAGES = 1000;
-const MAX_TOTAL_OBJECTS = 10000;
-
-/** Shared by the envelope and raw-ZPL paths so both bound object/page count.
- *  Counts NODES (descending into group children): a top-level count would let
- *  one group smuggle an unbounded subtree past the cap into preflight. */
-function pagesSizeError(pages: readonly { objects: readonly unknown[] }[]): ToolError | null {
-  if (pages.length > MAX_PAGES) {
-    return { ok: false, errors: [`design exceeds the ${MAX_PAGES}-page limit`] };
-  }
-  let total = 0;
-  const stack: unknown[] = [];
-  for (const p of pages) for (const o of p.objects) stack.push(o);
-  while (stack.length > 0) {
-    const node = stack.pop();
-    total++;
-    if (total > MAX_TOTAL_OBJECTS) {
-      return { ok: false, errors: [`design exceeds the ${MAX_TOTAL_OBJECTS}-object limit`] };
-    }
-    const children = (node as { children?: unknown })?.children;
-    if (Array.isArray(children)) for (const c of children) stack.push(c);
-  }
-  return null;
-}
-
-/** Parse a caller's design file into a validated DesignFile, mapping schema
- *  errors and any throw to the shared ToolError shape. */
-function parseEnvelope(designFile: unknown): { ok: true; value: DesignFile } | ToolError {
-  try {
-    const parsed = parseDesignFile(JSON.stringify(designFile));
-    if (!parsed.ok) return { ok: false, errors: [designFileErrors[parsed.error]] };
-    const issues = labelConfigIssues(parsed.value.label);
-    if (issues.length > 0) return { ok: false, errors: issues };
-    const oversize = pagesSizeError(parsed.value.pages);
-    if (oversize) return oversize;
-    return { ok: true, value: parsed.value };
-  } catch (e) {
-    return { ok: false, errors: [errMsg(e)] };
-  }
-}
-
-/** Merge a caller's sparse object over the registry defaults so an LLM only
- *  needs to supply the props it wants to change. Unknown type keeps empty
- *  defaults; the schema is tolerant, so createDraft guards it up front. */
-function toLabelObject(input: ObjectInput, id: string): LabelObject {
-  const defaults = getEntry(input.type)?.defaultProps ?? {};
-  // 'C' has meaning only on 1D barcodes (editor centre); anywhere else it
-  // would persist as dead metadata, so canonicalize it away here.
-  const justify =
-    input.fieldJustify === "C" && getEntry(input.type)?.barcodeClass !== "1d"
-      ? undefined
-      : input.fieldJustify;
-  return {
-    id,
-    type: input.type,
-    x: input.x,
-    y: input.y,
-    rotation: 0,
-    ...(input.positionType !== undefined ? { positionType: input.positionType } : {}),
-    ...(justify !== undefined ? { fieldJustify: justify } : {}),
-    props: { ...defaults, ...(input.props ?? {}) },
-    // Schema is intentionally loose; createDraft rejects unknown types up front.
-  } as LabelObject;
-}
-
-/** Assign every object its id: reject duplicate explicit ids, and skip
- *  auto-generated ids that collide with ids already taken in this draft. */
-function buildObjects(inputs: ObjectInput[]): { objects: LabelObject[] } | { error: string } {
-  const explicit = inputs.flatMap((o) => (o.id !== undefined ? [o.id] : []));
-  const seen = new Set<string>();
-  const dupes = new Set<string>();
-  for (const id of explicit) {
-    if (seen.has(id)) dupes.add(id);
-    seen.add(id);
-  }
-  if (dupes.size > 0) return { error: `Duplicate object id(s): ${[...dupes].join(", ")}` };
-  const taken = new Set(explicit);
-  let counter = 0;
-  const objects = inputs.map((o) => {
-    let id = o.id;
-    if (id === undefined) {
-      do {
-        id = `${o.type}-${++counter}`;
-      } while (taken.has(id));
-      taken.add(id);
-    }
-    return toLabelObject(o, id);
-  });
-  return { objects };
-}
-
-export interface PreflightWarning {
-  pageIndex: number;
-  objectId: string;
-  kind: PreflightKind;
-  severity: PreflightSeverity;
-  detail?: string;
-}
-
-interface PageLike {
-  objects: LabelObject[];
-  jmDensity?: JmDensity;
-}
-
-/** Run a per-page report over every page of a design. Pages with a ^JM
- *  override get their density folded into the label they are judged against. */
-function perPage<T>(
-  pages: PageLike[],
-  label: LabelConfig,
-  fn: (objects: LabelObject[], label: PageLabel, pageIndex: number) => T[],
-): T[] {
-  return pages.flatMap((page, i) => fn(page.objects, pageLabelConfig(label, page), i));
-}
-
-function preflightOf(
-  objects: LabelObject[],
-  label: PageLabel,
-  pageIndex: number,
-  variables: readonly Variable[],
-  measured?: ObjectBoundsCtx["measured"],
-): PreflightWarning[] {
-  return computePreflight(exportableLeaves(objects), { label, measured, variables }, "mm").map((f) => ({
-    pageIndex,
-    objectId: f.objectId,
-    kind: f.kind,
-    severity: f.severity,
-    ...(f.detail !== undefined ? { detail: f.detail } : {}),
-  }));
-}
-
-/** Per-object geometry so the agent can reason about size/placement without
- *  recomputing it. Dots, visual top-left. `approx` marks headless estimates
- *  (single-line text, unprobed leaves); probed barcode footprints share the
- *  app's measurement kernel and report exact. */
-export interface ObjectBounds extends BoundingBoxDots {
-  pageIndex: number;
-  objectId: string;
-  approx: boolean;
-}
-
-/** Axis-aligned bbox intersections. Neutral facts, not errors: a frame/reverse
- *  box overlaps its contents by design, so the agent judges relevance. */
-export interface ObjectOverlap extends OverlapDots {
-  pageIndex: number;
-}
-
-interface Geometry {
-  bounds: ObjectBounds[];
-  overlaps: ObjectOverlap[];
-  /** Set when a page was too dense to report fully (see the caps below), so the
-   *  agent knows the geometry is partial rather than assuming a clean label. */
-  geometryTruncated?: boolean;
-}
-
-/** Per-page object cap for geometry. The overlap scan is O(n²); past this a
- *  per-object report is noise anyway, so skip the page's geometry. Well beyond
- *  any real label. */
-const MAX_GEOMETRY_OBJECTS = 2000;
-
-/** 0.1-dot precision: parser coordinates carry float tails ("613.37336627…")
- *  that are sub-dot noise in the agent-facing payload. */
-const dot1 = (n: number): number => Math.round(n * 10) / 10;
-const roundRect = (r: BoundingBoxDots): BoundingBoxDots => ({
-  x: dot1(r.x),
-  y: dot1(r.y),
-  width: dot1(r.width),
-  height: dot1(r.height),
-});
-
-/** One box pass per page feeds both reports, so they cannot diverge. Bounded:
- *  dense pages skip geometry, and overlaps are capped, to keep the payload and
- *  the O(n²) scan finite on adversarial input. `measured` (app read-back)
- *  upgrades the affected boxes from estimate to render-exact. */
-function geometryFor(
-  pages: PageLike[],
-  label: LabelConfig,
-  measured?: ObjectBoundsCtx["measured"],
-): Geometry {
-  const bounds: ObjectBounds[] = [];
-  const overlaps: ObjectOverlap[] = [];
-  let truncated = false;
-  pages.forEach((page, pageIndex) => {
-    const leaves = exportableLeaves(page.objects);
-    if (leaves.length > MAX_GEOMETRY_OBJECTS) {
-      truncated = true;
-      return;
-    }
-    const boxes = leafBoxesDots(leaves, { label: pageLabelConfig(label, page), measured });
-    for (const b of boxes) {
-      bounds.push({ pageIndex, objectId: b.id, ...roundRect(b.box), approx: b.approx });
-    }
-    // Over-scan by one so a complete set of exactly MAX_OVERLAPS is not
-    // mistaken for a capped one; keep only MAX_OVERLAPS.
-    const scanned = computeOverlaps(boxes, MAX_OVERLAPS + 1);
-    if (scanned.length > MAX_OVERLAPS) truncated = true;
-    for (const o of scanned.slice(0, MAX_OVERLAPS)) {
-      overlaps.push({ ...o, pageIndex, ...roundRect(o) });
-    }
-  });
-  return truncated ? { bounds, overlaps, geometryTruncated: true } : { bounds, overlaps };
-}
+export * from "./boundary.js";
+export * from "./report.js";
+export * from "./patchOps.js";
+import { buildObjects, buildVariables, pagesSizeError, parseEnvelope, typeIssues, unknownPropNotes, propIssues, type DesignFileJson, type ToolError, type CreateDraftInput, PROP_SUMMARIES } from "./boundary.js";
+import { boundReport, warningReport, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
 
 export type CreateDraftResult =
   | {
       ok: true;
       designFile: DesignFileJson;
       warnings: PreflightWarning[];
+      notes?: string[];
       bounds: ObjectBounds[];
       overlaps: ObjectOverlap[];
       geometryTruncated?: boolean;
     }
   | ToolError;
 
+
 export function createDraft(input: CreateDraftInput): CreateDraftResult {
   const tooMany = pagesSizeError([{ objects: input.objects }]);
   if (tooMany) return tooMany;
-  const unknown = input.objects.filter((o) => getEntry(o.type) === undefined).map((o) => o.type);
-  if (unknown.length > 0) {
-    return { ok: false, errors: [`Unknown object type(s): ${[...new Set(unknown)].join(", ")}`] };
-  }
-  const built = buildObjects(input.objects);
-  if ("error" in built) return { ok: false, errors: [built.error] };
+  const errors = [
+    ...typeIssues(input.objects.map((o) => o.type)),
+    ...input.objects.flatMap((o) => propIssues(o.type, o.props)),
+  ];
+  if (errors.length > 0) return { ok: false, errors };
   const label: LabelConfig = { widthMm: input.widthMm, heightMm: input.heightMm, dpmm: input.dpmm };
-  const serialized = serializeDesign(label, [{ objects: built.objects }]);
+  const built = buildObjects(input.objects, label);
+  if ("error" in built) return { ok: false, errors: [built.error] };
+  const variables = buildVariables(input.variables ?? []);
+  if ("error" in variables) return { ok: false, errors: [variables.error] };
+  const serialized = serializeDesign(label, [{ objects: built.objects }], variables.value);
   const designFile = JSON.parse(serialized) as DesignFileJson;
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;
-  return {
-    ok: true,
-    designFile,
-    ...boundReport(label, parsed.value.variables, parsed.value.pages),
-  };
+  const report = boundReport(label, parsed.value.variables, parsed.value.pages);
+  const notes = [
+    ...built.objects.flatMap((o, i) => unknownPropNotes(o.type, o.id, input.objects[i]?.props)),
+    ...(report.notes ?? []),
+  ];
+  return { ok: true, designFile, ...report, ...(notes.length > 0 ? { notes } : {}) };
 }
 
 export type ValidateDraftResult =
   | {
       ok: true;
       warnings: PreflightWarning[];
+      notes?: string[];
       bounds: ObjectBounds[];
       overlaps: ObjectOverlap[];
       geometryTruncated?: boolean;
     }
   | ToolError;
 
-/** Probe every barcode's real bounds (the bwip kernel the app uses) so
- *  geometry reports true sizes and anchors instead of the registry's
- *  default boxes. Skips pages past the geometry cap. */
-function measuredBarcodes(
-  pages: PageLike[],
-  label: LabelConfig,
-  measured?: ObjectBoundsCtx["measured"],
-): ObjectBoundsCtx["measured"] {
-  const map = new Map(measured ?? []);
-  for (const page of pages) {
-    const leaves = exportableLeaves(page.objects);
-    if (leaves.length > MAX_GEOMETRY_OBJECTS) continue;
-    const dpmm = effectiveDpmm(pageLabelConfig(label, page));
-    for (const leaf of leaves) {
-      if (!isBarcode(leaf) || map.has(leaf.id)) continue;
-      const entry = measureBoundsEntry(leaf, dpmm);
-      if (entry) map.set(leaf.id, entry);
-    }
-  }
-  return map;
-}
-
-/** Preflight + geometry with markers resolved against the design's own
- *  bindings; the one report block every design-shaped tool returns. */
-function boundReport(
-  label: LabelConfig,
-  variables: readonly Variable[],
-  pages: Page[],
-  measured?: ObjectBoundsCtx["measured"],
-) {
-  return withFootprintBinding(label, variables, () => {
-    // One probe pass for both consumers, or the off-label check would judge
-    // clipping with unprobed default boxes while bounds report real sizes.
-    const probed = measuredBarcodes(pages, label, measured);
-    return {
-      warnings: perPage(pages, label, (objects, pageLabel, i) =>
-        preflightOf(objects, pageLabel, i, variables, probed)),
-      ...geometryFor(pages, label, probed),
-    };
-  });
-}
-
 export function validateDraft(designFile: unknown): ValidateDraftResult {
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;
   const { label, pages, variables } = parsed.value;
-  return { ok: true, ...boundReport(label, variables, pages) };
+  return { ok: true, ...boundReport(label, variables, pages, undefined, parsed.value.columnMapping !== null) };
 }
 
 export type GetCurrentDesignResult =
@@ -383,6 +80,7 @@ export type GetCurrentDesignResult =
       ok: true;
       designFile: DesignFileJson;
       warnings: PreflightWarning[];
+      notes?: string[];
       bounds: ObjectBounds[];
       overlaps: ObjectOverlap[];
       geometryTruncated?: boolean;
@@ -390,7 +88,8 @@ export type GetCurrentDesignResult =
   | ToolError;
 
 /** Turn the app's read-back (design + render-measured footprints) into the
- *  standard tool report; measured footprints make the bounds render-exact. */
+ *  standard tool report. Barcodes are re-probed print-true (the app's number
+ *  is its zoom view); the other measurements make text/images render-exact. */
 export function buildCurrentDesignResult(response: DesignResponse): GetCurrentDesignResult {
   const parsed = parseEnvelope(response.designFile);
   if (!parsed.ok) return parsed;
@@ -399,30 +98,79 @@ export function buildCurrentDesignResult(response: DesignResponse): GetCurrentDe
   return {
     ok: true,
     designFile: response.designFile as unknown as DesignFileJson,
-    ...boundReport(label, variables, pages, measured),
+    ...boundReport(label, variables, pages, measured, parsed.value.columnMapping !== null),
   };
 }
 
-export type OpenInAppResult = { ok: true; line: string } | ToolError;
+/** A data URL keeps the fetch on the agent's side: the app only ever renders
+ *  bytes it was handed, so no tool call reaches into the network or the disk. */
+export const rasterImageShape = {
+  dataUrl: z.string().startsWith("data:"),
+  widthDots: z.number().int().positive().max(4000),
+  threshold: z.number().int().min(0).max(255).optional(),
+};
 
-/** Validate the design file and, on success, build the newline-delimited event
- *  line the desktop app reads off this child's stdout to open the draft. */
+export type RasterImageResult =
+  | { ok: true; object: { type: "image"; props: Record<string, unknown> } }
+  | ToolError;
+
+/** Shape the raster into the image object create_draft and patch_design take. */
+export function rasterImageResult(response: RasterResponse, threshold: number): RasterImageResult {
+  if (!response.ok || !response.gfa || response.widthDots === undefined) {
+    return { ok: false, errors: [response.error ?? "The image could not be rasterized."] };
+  }
+  return {
+    ok: true,
+    object: {
+      type: "image",
+      props: {
+        imageId: "",
+        widthDots: response.widthDots,
+        ...(response.heightDots !== undefined ? { heightDots: response.heightDots } : {}),
+        threshold,
+        rotation: "N",
+        _gfaCache: response.gfa,
+      },
+    },
+  };
+}
+
+export type OpenInAppResult = { ok: true; designFile: unknown } | ToolError;
+
+/** Validate the design file the app is asked to open; the bridge owns the
+ *  event line and its receipt. Forwards the PARSED design re-serialized, not
+ *  the raw object: a sparse envelope would emit NaN slots on load, and a migrated file must not re-migrate under its old schemaVersion. */
 export function openInApp(designFile: unknown): OpenInAppResult {
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;
-  return { ok: true, line: JSON.stringify({ zplabEvent: "openDraft", designFile }) };
+  const v = parsed.value;
+  return {
+    ok: true,
+    designFile: JSON.parse(
+      serializeDesign(v.label, v.pages, v.variables, v.columnMapping, v.dataSource),
+    ) as unknown,
+  };
 }
 
-export type ExportZplResult = { ok: true; zpl: string } | ToolError;
+export type ExportZplResult =
+  | { ok: true; zpl: string; warnings: PreflightWarning[]; notes?: string[] }
+  | ToolError;
 
+/** The ZPL plus the warnings that apply to it: an agent that exports straight
+ *  from a design it did not build itself would otherwise never see them. */
 export function exportZpl(designFile: unknown): ExportZplResult {
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;
   const { label, pages, variables } = parsed.value;
+  // Same report the draft tools give, dataset caveat included: an empty warning
+  // list read as a clean bill of health is worst right before printing.
+  const report = warningReport(label, variables, pages, parsed.value.columnMapping !== null);
   // Same path as the app's export: per-page emit replays captured overlays.
   return {
     ok: true,
     zpl: withFootprintBinding(label, variables, () => generateMultiPageZPL(label, pages, variables)),
+    warnings: report.warnings,
+    ...(report.notes && report.notes.length > 0 ? { notes: report.notes } : {}),
   };
 }
 
@@ -447,8 +195,12 @@ function oversizeError(zpl: string): ToolError | null {
 }
 
 /** Reject a parsed stream the single-label draft model can't represent:
- *  divergent per-block ^PW/^LL or ^JM, or too many objects/pages. */
+ *  divergent per-block ^PW/^LL or ^JM, too many objects/pages, or nothing at
+ *  all (a bare stream would otherwise pass as an empty design and fail much later). */
 function importRejection(imported: ZplImportResult): ToolError | null {
+  if (imported.pages.length === 0) {
+    return { ok: false, errors: ["No ZPL label found; a label block runs from ^XA to ^XZ."] };
+  }
   if (imported.mixedPageGeometry) {
     const geo = imported.report.findings.filter((f) => f.kind === "mixedPageGeometry");
     const hasJm = geo.some((f) => f.cause === "jm");
@@ -508,6 +260,7 @@ export type ValidateZplResult =
       label: LabelConfig;
       findings: ZplFindings;
       warnings: PreflightWarning[];
+      notes?: string[];
       bounds: ObjectBounds[];
       overlaps: ObjectOverlap[];
       geometryTruncated?: boolean;
@@ -544,7 +297,11 @@ export type ImportZplResult =
       ok: true;
       designFile: DesignFileJson;
       findings: ZplFindings;
+      /** What the stream itself declared, after the caller's hints and the
+       *  fallback size: ^PW/^LL win, so the result is worth reading back. */
+      label: LabelConfig;
       warnings: PreflightWarning[];
+      notes?: string[];
       bounds: ObjectBounds[];
       overlaps: ObjectOverlap[];
       geometryTruncated?: boolean;
@@ -571,64 +328,11 @@ export function importZpl(
     ok: true,
     designFile: JSON.parse(serialized) as DesignFileJson,
     findings: findingsOf(imported.report),
+    label,
     ...boundReport(label, imported.variables, imported.pages),
   };
 }
 
-/** Hand-written prop summaries for the types an LLM reaches for first. Every
- *  other registered type is listed by name + defaults from the registry. */
-const PROP_SUMMARIES: Record<string, Record<string, string>> = {
-  text: {
-    content: "string, the printed text",
-    fontHeight: "dots, glyph height",
-    fontWidth: "dots, 0 = auto from height",
-    rotation: "N | R | I | B (0/90/180/270)",
-    reverse: "boolean, white-on-black knockout (^FR; needs a dark shape behind)",
-  },
-  code128: {
-    content: "string payload",
-    height: "bar height in dots",
-    moduleWidth: "narrow-bar width in dots",
-    printInterpretation: "boolean, show human-readable text",
-    checkDigit: "boolean",
-    rotation: "N | R | I | B",
-    gs1: "boolean, GS1-128 mode",
-  },
-  qrcode: {
-    content: "string payload",
-    magnification: "module size 1-10",
-    errorCorrection: "L | M | Q | H",
-    model: "1 | 2",
-    rotation: "N | R | I | B",
-  },
-  box: {
-    width: "dots",
-    height: "dots",
-    thickness: "border dots",
-    filled: "boolean",
-    color: "B | W",
-    rounding: "corner rounding 0-8",
-  },
-  line: {
-    angle: "degrees",
-    length: "dots",
-    thickness: "dots",
-    color: "B | W",
-  },
-  ean13: {
-    content: "12 digits (check digit computed)",
-    height: "bar height in dots",
-    printInterpretation: "boolean",
-    rotation: "N | R | I | B",
-  },
-  datamatrix: {
-    content: "string payload",
-    dimension: "module size",
-    quality: "ECC level (200 = ECC200)",
-    rotation: "N | R | I | B",
-    gs1: "boolean, GS1 mode",
-  },
-};
 
 export interface SchemaObjectType {
   type: string;
@@ -649,11 +353,21 @@ const SCHEMA: SchemaResult = {
     "id is optional. Props merge over the type's defaultProps, so only supply " +
     "overrides. Leaf orientation is props.rotation (N | R | I | B for 0/90/180/270), " +
     "not a top-level field. Documented prop summaries cover the common types; the " +
-    "rest are described by their defaultProps.",
+    "rest are described by their defaultProps. Anything that changes per printed " +
+    "label belongs in create_draft's `variables` and is referenced from content " +
+    "as «name», which emits a ^FN slot the user fills from a data source. " +
+    "Reported bounds are the printed ink box, so they can sit a few dots off the " +
+    "^FO the object emits (baseline and quiet-zone compensation). On a " +
+    "right-justified (fieldJustify 'R') text, symbol or 2D field the object's " +
+    "own x is the printed RIGHT edge, a full box width from the reported " +
+    "bounds.x: patch that x, not the reported one. `notes` in a " +
+    "report are remarks about the call itself: props that go nowhere, markers " +
+    "that bind nothing.",
   objectShape: {
     type: "one of the registered types below",
     x: "number, dots from left",
-    y: "number, dots from top",
+    y: "number, dots from top (text: top of the glyph box)",
+    id: "optional; supply one to address the object in patch_design later",
     positionType: "optional FO (top-left origin, default) | FT (typeset baseline)",
     fieldJustify: "optional L (default) | R | C (centre; 1D barcodes only, dropped elsewhere). On non-1D fields R means x IS the ZPL right-edge anchor and re-emits as z=1; on 1D barcodes x stays the top-left and the editor re-pins on value changes",
     props: "object, merged over defaultProps",

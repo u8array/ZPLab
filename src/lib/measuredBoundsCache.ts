@@ -1,36 +1,19 @@
-// Module-level measured-footprint cache, published by the render layer for the
-// object types whose size is not purely computable (barcodes, single-line text,
-// image). Deliberately NOT zustand: writes happen every render and must
-// never trigger a re-render. The align handler reads it as ctx.measured.
+// Module-level measured-footprint cache for object types whose size is not
+// purely computable (barcodes, single-line text, image). Deliberately NOT
+// zustand: writes happen every render and must never trigger a re-render.
 //
-// Convention: store the ALREADY-ROTATED visual footprint in dots, keyed by
-// obj.id. objectBounds.ts consumes it verbatim for these types.
+// Convention: store the ALREADY-ROTATED footprint in dots, keyed by obj.id.
+// objectBounds.ts consumes it verbatim, typed as core's MeasuredFootprint.
+import { type MeasuredFootprint } from "@zplab/core/lib/objectBounds";
 
-export interface MeasuredFootprint {
-  width: number;
-  height: number;
-  /** Rotation-aware bar sub-rect height in dots (barcodes only), mirroring the
-   *  renderer's FT anchor shift. Lets objectBounds place an FT-anchored barcode
-   *  bbox correctly for R/B rotations, where the bar extent is not props.height. */
-  barHeightDots?: number;
-  /** Text-zone offset (dots) from the bbox top-left to the bars, mirroring the
-   *  renderer's `(-barLeftPx, -barTopPx)` shift. Non-zero when the HRI text zone
-   *  sits left of (rotated EAN/UPC) or above (inverted/above-HRI) the bars. */
-  barLeftDots?: number;
-  barTopDots?: number;
-  /** Upright (unrotated) bar-rect size in dots, for the rotation-aware ^FT
-   *  anchor: the ^FT origin (bar base, left edge) rotates with the field, so
-   *  R/I/B place the bbox differently than N. */
-  uprightBarWDots?: number;
-  uprightBarHDots?: number;
-}
+export type { MeasuredFootprint };
+
 
 const cache = new Map<string, MeasuredFootprint>();
 
-// useSyncExternalStore plumbing. The cache stays non-reactive for the hot
-// per-render writes; `snapshot` is rebuilt only when a footprint actually
-// changes, so its identity is stable between renders and changes exactly when a
-// consumer (the selection frame) must recompute.
+// useSyncExternalStore plumbing: the cache stays non-reactive for hot
+// per-render writes; `snapshot` is rebuilt only when a footprint changes, so
+// its identity stays stable until a consumer (the selection frame) must recompute.
 let snapshot: ReadonlyMap<string, MeasuredFootprint> = cache;
 const listeners = new Set<() => void>();
 

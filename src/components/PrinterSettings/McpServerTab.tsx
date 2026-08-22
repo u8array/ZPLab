@@ -7,7 +7,7 @@ import { labelCls, inputCls, buttonCls } from "../ui/formStyles";
  *  the sidecar (gated by TAB_GATES in the modal). */
 export function McpServerTab() {
   const loc = useT().printerSettings.mcp;
-  const { run, enabled, port, token, running, toggle, regenerate, setPort, copy, copied } =
+  const { run, enabled, port, token, tokenLoaded, running, toggle, regenerate, setPort, copy, copied } =
     useMcpServer();
 
   return (
@@ -56,7 +56,7 @@ export function McpServerTab() {
             <button
               type="button"
               className={`${buttonCls} disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-surface-2`}
-              disabled={running}
+              disabled={running || !tokenLoaded}
               onClick={regenerate}
             >
               {loc.regenerate}

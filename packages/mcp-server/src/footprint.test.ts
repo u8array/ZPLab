@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import bwipjs from "bwip-js/generic";
 import { registerSidecarFootprintMeasurer } from "./footprint.js";
-import { importZpl, exportZpl, buildCurrentDesignResult } from "./tools.js";
+import { importZpl, exportZpl, buildCurrentDesignResult, validateDraft } from "./tools.js";
 import { withFootprintBinding } from "./footprint.js";
 import { measureFootprintDots } from "@zplab/core/lib/footprintProber";
 import { registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
@@ -92,6 +92,28 @@ describe("MCP import/export with the sidecar measurer", () => {
     expect(out.ok).toBe(true);
     if (!out.ok) return;
     expect(out.warnings.filter((w) => w.kind.startsWith("offLabel"))).toEqual([]);
+  });
+
+  it("reports the print-true barcode box even when the app measured its zoom view", () => {
+    // Same zoom/kernel shadowing as tools.test.ts's buildCurrentDesignResult
+    // case; here mw 2 and mw 3 both collapse to 1 screen pixel at zoom 1.
+    const r = importZpl("^XA^PW800^FO10,10^BCN,100,Y,N,N^FD12345678901234567890^FS^XZ", 8);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const id = (r.designFile.pages as { objects: { id: string }[] }[])[0]!.objects[0]!.id;
+    const headless = validateDraft(r.designFile);
+    expect(headless.ok).toBe(true);
+    if (!headless.ok) return;
+    const truth = headless.bounds.find((b) => b.objectId === id)!;
+    const out = buildCurrentDesignResult({
+      designFile: r.designFile,
+      measured: { [id]: { width: 539, height: 100 } },
+    } as never);
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    const reported = out.bounds.find((b) => b.objectId === id)!;
+    expect(reported.width).toBe(truth.width);
+    expect(reported.width).not.toBe(539);
   });
 
   it("withFootprintBinding restores an outer binding when a nested scope exits", () => {

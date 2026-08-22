@@ -13,6 +13,7 @@ vi.mock("../../lib/mcpServer", () => ({
   mcpServerStatus: (...args: unknown[]) => mcpServerStatus(...(args as [])),
   startMcpServer: (...args: unknown[]) => startMcpServer(...(args as [])),
   stopMcpServer: (...args: unknown[]) => stopMcpServer(...(args as [])),
+  announceWindow: vi.fn(async () => undefined),
   mcpConfigSnippet: vi.fn(() => "{}"),
   generateMcpToken: vi.fn(() => "tok"),
 }));
@@ -96,5 +97,32 @@ describe("useMcpAvailability", () => {
     await act(() => Promise.resolve());
     expect(mcpServerStatus).not.toHaveBeenCalled();
     expect(useLabelStore.getState().mcpSidecarAvailable).toBe(false);
+  });
+});
+
+describe("a start that fails after the status looked fine", () => {
+  it("shows the error instead of leaving the tab on running", async () => {
+    vi.mocked(mcpServerStatus).mockResolvedValue({ running: false, available: true });
+    vi.mocked(startMcpServer).mockRejectedValueOnce(new Error("port in use"));
+    useLabelStore.setState({ mcpServerEnabled: true });
+    const { result } = renderHook(() => useMcpServer());
+    await act(async () => {
+      await new Promise<void>((r) => setTimeout(r, 0));
+    });
+    expect(result.current.run.kind).toBe("error");
+  });
+});
+
+describe("a stop that failed while the opt-in is off", () => {
+  it("shows the error instead of a grey dot over a live child", async () => {
+    // Masking the error as "stopped" unlocked the port and token controls
+    // while the old child still served the old config.
+    vi.mocked(stopMcpServer).mockRejectedValueOnce(new Error("ipc dead"));
+    useLabelStore.setState({ mcpSidecarAvailable: true, mcpServerEnabled: true });
+    const { result } = renderHook(() => useMcpServer());
+    await act(async () => { await new Promise<void>((r) => setTimeout(r, 0)); });
+    act(() => result.current.toggle(false));
+    await act(async () => { await new Promise<void>((r) => setTimeout(r, 0)); });
+    expect(result.current.run.kind).toBe("error");
   });
 });

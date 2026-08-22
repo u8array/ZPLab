@@ -11,7 +11,8 @@ import '@fontsource/ibm-plex-mono/600.css'
 import './index.css'
 import App from './App.tsx'
 import { useLabelStore } from './store/labelStore'
-import { mcpServerStatus, startMcpServer } from './lib/mcpServer'
+import { mcpServerStatus } from './lib/mcpServer'
+import { initMcpLifecycle } from './lib/mcpLifecycle'
 import { initFootprintMeasurer } from './lib/footprintMeasurer'
 
 initFootprintMeasurer();
@@ -34,9 +35,6 @@ async function bootstrap() {
     applyLocale,
     hydrateLabelaryApiKey,
     migrateLabelaryKey,
-    ensureMcpToken,
-    mcpServerEnabled,
-    mcpServerPort,
   } = useLabelStore.getState();
   // Migrate a legacy unbound key into the host-bound rust-only credential (so
   // an existing key doesn't stay IPC-readable), then load it. Startup, not
@@ -48,15 +46,9 @@ async function bootstrap() {
   void mcpServerStatus()
     .then((s) => useLabelStore.getState().setMcpSidecarAvailable(s.available))
     .catch(() => undefined);
-  // Bring the opt-in MCP server up on launch so an assistant can reach it
-  // without opening settings; swallow errors so a failure never blocks paint
-  // (the settings tab re-attempts when the build has the sidecar). The token
-  // hydrate must land first, so the chain is async but never awaited here.
-  if (mcpServerEnabled) {
-    void ensureMcpToken()
-      .then((token) => startMcpServer({ port: mcpServerPort, token }))
-      .catch(() => undefined);
-  }
+  // Fire-and-forget: a failure here must not block paint, and the settings
+  // tab re-kicks initMcpLifecycle and shows the reason.
+  void initMcpLifecycle();
   let timeoutId: number | undefined;
   await Promise.race([
     applyLocale(locale),

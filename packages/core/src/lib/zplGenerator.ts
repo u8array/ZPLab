@@ -4,6 +4,7 @@ import { unsafeRawFieldSpans } from './zplParser/helpers';
 import { rewriteRawFieldSpans } from './zplParser/decoders/gfa';
 import { getEntry, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
+import { stripZplParamChars } from './zplParams';
 import {
   extractTemplateRefs,
   hasTemplateMarkers,
@@ -819,7 +820,11 @@ function generateZplBlock(
   // ^CW alias->path; skip empty (in-progress UI rows would emit malformed lines).
   if (label.customFonts?.length) {
     for (const f of label.customFonts) {
-      if (f.alias && f.path) lines.push(`^CW${f.alias},${f.path}`);
+      // Free-text settings reaching a parameter slot: without this an alias or
+      // path carrying ^ ~ or , ends the line early and the rest executes.
+      if (f.alias && f.path) {
+        lines.push(`^CW${stripZplParamChars(f.alias)},${stripZplParamChars(f.path)}`);
+      }
     }
   }
 
@@ -830,7 +835,7 @@ function generateZplBlock(
     label.defaultFontWidth !== undefined
   ) {
     const slots = trimTrailingEmptySlots([
-      label.defaultFontId ?? "",
+      stripZplParamChars(label.defaultFontId ?? ""),
       label.defaultFontHeight !== undefined ? String(label.defaultFontHeight) : "",
       label.defaultFontWidth !== undefined ? String(label.defaultFontWidth) : "",
     ]);

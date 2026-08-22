@@ -9,7 +9,7 @@ import {
   rotatedFootprint,
 } from "@zplab/core/lib/objectBounds";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "@zplab/core/registry/rotation";
-import { getMeasuredSnapshot } from "./measuredBoundsCache";
+import { getMeasuredSnapshot } from "../../lib/measuredBoundsCache";
 
 /** Cached upright (unrotated) bar-rect size + HRI zone offsets (dots). Falls
  *  back to props.height for the H of a not-yet-rendered 1D barcode, else 0. */
