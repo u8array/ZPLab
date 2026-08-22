@@ -2845,7 +2845,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### konva 10.3.0
+### konva 10.3.1
 
 - License: MIT
 - Author: Anton Lavrenov
@@ -2876,7 +2876,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### papaparse 5.5.4
+### papaparse 5.6.0
 
 - License: MIT
 - Author: Matthew Holt
@@ -3608,7 +3608,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### zustand 5.0.14
+### zustand 5.0.15
 
 - License: MIT
 - Author: Paul Henschel
