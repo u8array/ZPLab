@@ -501,13 +501,13 @@ export function gs1NormalizationFindings(leaves: readonly LeafObject[]): Preflig
   return out;
 }
 
-/** Printers that resolve ^FE, per the ZPL guide (p. 192). A field mixing text
- *  with markers has no other wire form, so the caller has to know before it
- *  treats the export as print-ready. */
+/** The ZPL guide's ^FE list (p. 192) is a guarantee floor, not proof other
+ *  firmware ignores it: hence "spec-guaranteed", never "only". */
 const FE_PRINTERS = "ZD421C/D, ZD621D/T, ZT411/421, ZT510, ZT610/620";
 
-/** Fields that mix literal text with variable slots emit ^FE, which most
- *  firmware ignores; a whole-field binding emits plain ^FN and is unaffected. */
+/** Fields mixing literal text with variable slots have no wire form other
+ *  than ^FE, which not every firmware resolves; a whole-field binding emits
+ *  plain ^FN and is unaffected. */
 export function templateFieldFindings(
   leaves: readonly LeafObject[],
   variables: readonly Variable[],
@@ -524,7 +524,7 @@ export function templateFieldFindings(
       objectId: leaf.id,
       kind: "printerSupportLimited",
       severity: PREFLIGHT_SEVERITY.printerSupportLimited,
-      detail: `mixed text and variables emit ^FE (${FE_PRINTERS} only)`,
+      detail: `mixed text and variables emit ^FE (spec-guaranteed on ${FE_PRINTERS})`,
     });
   }
   return out;
