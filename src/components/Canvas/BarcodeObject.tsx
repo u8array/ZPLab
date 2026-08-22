@@ -7,7 +7,7 @@ import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
 import { selectionHandlers, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
-import { setMeasuredBounds, clearMeasuredBounds } from "./measuredBoundsCache";
+import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import {
   getDisplaySize,
   stateFrameProps,

@@ -9,7 +9,7 @@ import { loadImage } from "@zplab/core/lib/loadImage";
 import { monoPreviewCanvas, rasterPreviewCanvas } from "@zplab/core/lib/imageToZpl";
 import { useColorScheme } from "../../hooks/useColorScheme";
 import { selectionHandlers, type KonvaObjectProps } from "./konvaObjectProps";
-import { setMeasuredBounds, clearMeasuredBounds } from "./measuredBoundsCache";
+import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import { rotatedGroupTransform } from "./rotatedGroupTransform";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
 

@@ -1,5 +1,6 @@
 import type { CustomFontMapping, LabelConfig } from "../types/LabelConfig";
 import { getFontBytes } from "./fontCache";
+import { stripZplParamChars } from "./zplParams";
 /** Strip-pattern; schema's regex `/^[A-Z0-9]$/` is the inverse. */
 export const ALIAS_CHAR_RE = /[^A-Z0-9]/g;
 
@@ -16,10 +17,10 @@ export function formatFontDownloadFromPath(
 ): string | undefined {
   const colon = path.indexOf(":");
   if (colon < 0) return undefined;
-  const drive = path.slice(0, colon + 1);
+  const drive = stripZplParamChars(path.slice(0, colon + 1));
   const filename = path.slice(colon + 1);
   const dot = filename.lastIndexOf(".");
-  const stem = dot >= 0 ? filename.slice(0, dot) : filename;
+  const stem = stripZplParamChars(dot >= 0 ? filename.slice(0, dot) : filename);
   const ext = dot >= 0 ? filename.slice(dot + 1).toUpperCase() : "";
   if (ext !== "TTF" && ext !== "OTF") return undefined;
   const bytes = getFontBytes(cacheKey ?? filename);

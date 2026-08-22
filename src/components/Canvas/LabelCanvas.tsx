@@ -37,7 +37,7 @@ import { measureBarcodeFootprintDots } from "./bwipHelpers";
 import { copyText } from "../../lib/clipboard";
 import { selectTidyTargets } from "../../lib/tidyClassify";
 import { safeAreaRectDots } from "../../lib/safeArea";
-import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "./measuredBoundsCache";
+import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "../../lib/measuredBoundsCache";
 import { isEditableTarget } from "../../lib/dom";
 import { KonvaObject } from "./KonvaObject";
 import { PreflightOverlay } from "./PreflightOverlay";

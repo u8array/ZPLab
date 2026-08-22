@@ -45,7 +45,7 @@ import { isBarcode, isRightAnchoredField, rotatedFootprint, type BoundingBoxDots
 import { projectedAnchorXDots, projectMultiResize } from "../../../lib/multiResize";
 import { lineHandlesNodeId, lineRootNodeId } from "../konvaObjectProps";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
-import { getMeasuredSnapshot } from "../measuredBoundsCache";
+import { getMeasuredSnapshot } from "../../../lib/measuredBoundsCache";
 import {
   computeResizeSnap,
   deriveActiveEdges,

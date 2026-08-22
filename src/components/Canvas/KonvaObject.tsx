@@ -19,7 +19,7 @@ import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/textPositionTransforms";
 import { getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
 import { selectionHandlers, shapeHitProps, useBlankFieldWarns, CAPTURE_CHROME, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
-import { setMeasuredBounds, clearMeasuredBounds } from "./measuredBoundsCache";
+import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import { DEFAULT_GS_SYMBOL_META, GS_SYMBOLS } from "@zplab/core/registry/symbol";
 import { GS_SYMBOL_PATHS, GS_VECTOR_CODES, type GsVectorCode } from "../../registry/gsSymbolPaths";
 import { isPrintedBlank, blockBoundsDots, blockJustifyWordPositions, blockLineStartDots, blockLineStepDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isBlankText, tbBoundsDots, tbLineStepDots, wrapBlockLines, zebraAlignOffsetDots, zebraHangingIndentOffsetDots, zebraJustifyGapDots, zebraLineWidthDots, type ZplRotation } from "@zplab/core/lib/zebraTextLayout";

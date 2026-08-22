@@ -1,7 +1,13 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { resolveDesignResponse } from "./appBridge.js";
+import {
+  markAppAttached,
+  markAppDetached,
+  resolveDesignResponse,
+  resolveDraftReceipt,
+  resolveRasterResponse,
+} from "./appBridge.js";
 import { buildServer } from "./server.js";
 
 const HOST = "127.0.0.1";
@@ -54,10 +60,14 @@ function hasValidToken(req: IncomingMessage, expected: string): boolean {
   return timingSafeEqual(provided, wanted);
 }
 
-/** The app's reply to a designRequest event. Bypasses the SDK transport (it is
- *  not MCP JSON-RPC), so it re-checks the Host header for loopback itself; the
- *  bearer token was already verified by the shared gate. */
-async function handleDesignResponse(req: IncomingMessage, res: ServerResponse): Promise<void> {
+/** Replies to a pending app request. These bypass the SDK transport, so they
+ *  re-check the Host header themselves; the bearer token was already verified
+ *  by the shared gate. */
+async function handleAppPost(
+  req: IncomingMessage,
+  res: ServerResponse,
+  deliver: (payload: unknown) => boolean,
+): Promise<void> {
   const host = (req.headers.host ?? "").replace(/:\d+$/, "");
   if (req.method !== "POST" || (host !== "127.0.0.1" && host !== "localhost")) {
     res.writeHead(403).end();
@@ -67,12 +77,39 @@ async function handleDesignResponse(req: IncomingMessage, res: ServerResponse): 
   if (body === null) return;
   let delivered = false;
   try {
-    delivered = resolveDesignResponse(JSON.parse(body.toString("utf8")));
+    delivered = deliver(body.length > 0 ? JSON.parse(body.toString("utf8")) : undefined);
   } catch {
     // Malformed JSON falls through to the 400 below.
   }
   if (!res.writableEnded) res.writeHead(delivered ? 204 : 400).end();
 }
+
+const sessionOf = (payload: unknown): string | undefined => {
+  const session = (payload as { session?: unknown } | null)?.session;
+  return typeof session === "string" ? session : undefined;
+};
+
+/** Routes the desktop app posts to, each answering one waiting request (or,
+ *  for the attach announcement, flipping the host gate). */
+const APP_ROUTES: Record<string, (payload: unknown) => boolean> = {
+  "/design-response": resolveDesignResponse,
+  "/draft-receipt": resolveDraftReceipt,
+  "/raster-response": resolveRasterResponse,
+  "/app-attach": (payload) => {
+    const session = sessionOf(payload);
+    // No session, no attach: markAppDetached's ownership guard is only as good
+    // as the value it compares against, and an empty body would disarm it.
+    if (session === undefined) return false;
+    markAppAttached(session);
+    return true;
+  },
+  // The window is going away (reload, teardown): stop offering tools that
+  // would now only run into their timeout.
+  "/app-detach": (payload) => {
+    const session = sessionOf(payload);
+    return session === undefined ? false : markAppDetached(session);
+  },
+};
 
 /** Loopback-only Streamable HTTP server with mandatory bearer auth. A fresh
  *  McpServer + transport is built per request (stateless: our tools are pure
@@ -90,16 +127,26 @@ export async function startHttpServer(options: HttpServerOptions): Promise<Runni
       return;
     }
 
-    if (req.url === "/design-response") {
+    const url = req.url ?? "";
+    // hasOwn: a bracket read dispatches /constructor into Object.prototype.
+    const appRoute = Object.hasOwn(APP_ROUTES, url) ? APP_ROUTES[url] : undefined;
+    if (appRoute) {
       // An unhandled rejection would kill the process (same guard as below).
-      handleDesignResponse(req, res).catch(() => {
+      handleAppPost(req, res, appRoute).catch(() => {
         if (!res.headersSent && res.writable) res.writeHead(500);
         res.end();
       });
       return;
     }
 
-    const boundPort = (httpServer.address() as { port: number }).port;
+    const address = httpServer.address();
+    // Null after close(): a keep-alive socket must not throw out of the handler.
+    if (address === null || typeof address === "string") {
+      res.writeHead(503);
+      res.end();
+      return;
+    }
+    const boundPort = address.port;
     const authority = `${HOST}:${boundPort}`;
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
@@ -108,6 +155,8 @@ export async function startHttpServer(options: HttpServerOptions): Promise<Runni
       allowedHosts: [authority, `localhost:${boundPort}`],
       allowedOrigins: [`http://${authority}`, `http://localhost:${boundPort}`],
     });
+    // HTTP can carry the app tools (stdout is free here); each of them checks
+    // at call time whether a window has actually announced itself.
     const server = buildServer({ hosted: true });
     res.on("close", () => {
       void transport.close();

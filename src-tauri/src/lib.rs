@@ -47,7 +47,8 @@ pub fn run() {
       mcp::mcp_start,
       mcp::mcp_stop,
       mcp::mcp_status,
-      mcp::mcp_listeners_ready
+      mcp::mcp_listeners_ready,
+      mcp::mcp_reply
     ]);
   // On the builder, not in setup(): config windows exist before the setup
   // closure runs, and window-state only restores/tracks via on_window_ready.

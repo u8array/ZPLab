@@ -46,6 +46,13 @@ describe("formatFontDownloadFromPath", () => {
     expect(line?.startsWith("~DYE:BIG,A,T,")).toBe(true);
     removeFont("BIG.TTF");
   });
+
+  it("strips command and slot terminators from the ~DY target", async () => {
+    await loadFontFile(fileOf("safe.ttf", 8), "SAFE.TTF");
+    const line = formatFontDownloadFromPath("E:BAD^FS,NAME.TTF", "SAFE.TTF");
+    expect(line?.startsWith("~DYE:BADFSNAME,A,T,8,,")).toBe(true);
+    removeFont("SAFE.TTF");
+  });
 });
 
 describe("builtinFontFamily", () => {

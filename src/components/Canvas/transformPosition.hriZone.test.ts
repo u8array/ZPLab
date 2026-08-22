@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { modelPositionFromRenderedTopLeft, renderedTopLeftFromModel } from "./transformPosition";
-import { setMeasuredBounds, clearMeasuredBounds } from "./measuredBoundsCache";
+import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import type { LeafObject } from "@zplab/core/registry";
 
 const code128 = (rotation: string): LeafObject =>
