@@ -942,6 +942,8 @@ const da = {
     editSourceConfirmApply: 'Anvend alligevel',
     editSourceUnbalancedFmt: 'Ubalanceret kode: hver {open}-blok mangler sin afsluttende {close}.',
     editSourceTooManyPagesFmt: 'Koden overskrider {max} etiketformater.',
+    replayRiskSetupFmt: 'Afsendelse af denne kode ændrer også printerens indstillinger: {commands}',
+    replayRiskActionsFmt: 'Afsendelse af denne kode udløser også printerhandlinger: {commands}',
   },
   contextMenu: {
     copy: 'Kopiér',

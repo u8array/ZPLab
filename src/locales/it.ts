@@ -942,6 +942,8 @@ const it = {
     editSourceConfirmApply: 'Applica comunque',
     editSourceUnbalancedFmt: 'Codice non bilanciato: ogni blocco {open} richiede il {close} di chiusura.',
     editSourceTooManyPagesFmt: 'Il codice supera {max} formati di etichetta.',
+    replayRiskSetupFmt: "L'invio di questo codice modifica anche le impostazioni della stampante: {commands}",
+    replayRiskActionsFmt: "L'invio di questo codice avvia anche azioni della stampante: {commands}",
   },
   contextMenu: {
     copy: 'Copia',

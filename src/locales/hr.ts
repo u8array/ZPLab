@@ -942,6 +942,8 @@ const hr = {
     editSourceConfirmApply: 'Ipak primijeni',
     editSourceUnbalancedFmt: 'Neuravnotežen kod: svaki blok {open} treba svoj završni {close}.',
     editSourceTooManyPagesFmt: 'Kôd premašuje {max} formata naljepnice.',
+    replayRiskSetupFmt: 'Slanje ovog koda mijenja i postavke pisača: {commands}',
+    replayRiskActionsFmt: 'Slanje ovog koda pokreće i radnje pisača: {commands}',
   },
   contextMenu: {
     copy: 'Kopiraj',

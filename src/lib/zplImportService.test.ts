@@ -101,8 +101,8 @@ describe('importZplText - replay-risk findings', () => {
   it('flags device-action commands (calibration/reset) as a distinct deviceAction kind', () => {
     const r = importZplText('^XA~JC~JR^FO10,10^A0N,30,30^FDx^FS^XZ', 8);
     // Not profile-backed: own kind, so routing never offers to "move" them.
-    expect(r.report.deviceAction).toContain('^JC');
-    expect(r.report.deviceAction).toContain('^JR');
+    expect(r.report.deviceAction).toContain('~JC');
+    expect(r.report.deviceAction).toContain('~JR');
     expect(r.report.replayRisk).toEqual([]);
   });
 
@@ -705,7 +705,7 @@ describe('replay-risk report helpers', () => {
   it('resolveRoutedReport clears a deviceAction finding on a routed (overlay-dropped) page', () => {
     // ^ST and ~JC share page 0; the overlay drop moots the device action too.
     const { report } = importZplText('^XA^ST05,20,2026,12,00,00~JC^FO10,10^A0N,20,0^FDx^FS^XZ', 8);
-    expect(report.deviceAction).toContain('^JC');
+    expect(report.deviceAction).toContain('~JC');
     const stripped = resolveRoutedReport(report, [0]);
     expect(stripped.deviceAction).toEqual([]);
     expect(stripped.findings.some((f) => f.kind === 'deviceAction')).toBe(false);
@@ -718,7 +718,7 @@ describe('replay-risk report helpers', () => {
       '^XA~JC^FO10,10^A0N,20,0^FDp2^FS^XZ';
     const { report } = importZplText(zpl, 8);
     const stripped = resolveRoutedReport(report, [0, 1]);
-    expect(stripped.deviceAction).toContain('^JC');
+    expect(stripped.deviceAction).toContain('~JC');
   });
 
   it('drops findings on a removed page and remaps survivors to the new index', () => {

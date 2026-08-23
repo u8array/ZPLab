@@ -942,6 +942,8 @@ const ar = {
     editSourceConfirmApply: 'تطبيق على أي حال',
     editSourceUnbalancedFmt: 'رمز غير متوازن: كل كتلة {open} تحتاج إلى {close} المقابل لها.',
     editSourceTooManyPagesFmt: 'يتجاوز الرمز {max} تنسيق ملصق.',
+    replayRiskSetupFmt: 'إرسال هذا الرمز يغيّر أيضاً إعدادات الطابعة: {commands}',
+    replayRiskActionsFmt: 'إرسال هذا الرمز يشغّل أيضاً إجراءات على الطابعة: {commands}',
   },
   contextMenu: {
     copy: 'نسخ',

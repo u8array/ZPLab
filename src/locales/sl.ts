@@ -942,6 +942,8 @@ const sl = {
     editSourceConfirmApply: 'Vseeno uporabi',
     editSourceUnbalancedFmt: 'Neuravnotežena koda: vsak blok {open} potrebuje zaključni {close}.',
     editSourceTooManyPagesFmt: 'Koda presega {max} formatov nalepke.',
+    replayRiskSetupFmt: 'Pošiljanje te kode spremeni tudi nastavitve tiskalnika: {commands}',
+    replayRiskActionsFmt: 'Pošiljanje te kode sproži tudi dejanja tiskalnika: {commands}',
   },
   contextMenu: {
     copy: 'Kopiraj',

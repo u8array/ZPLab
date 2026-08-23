@@ -942,6 +942,8 @@ const zhHans = {
     editSourceConfirmApply: '仍然应用',
     editSourceUnbalancedFmt: '代码不配对：每个 {open} 块都需要对应的 {close}。',
     editSourceTooManyPagesFmt: '代码超过 {max} 个标签格式。',
+    replayRiskSetupFmt: '发送此代码还会更改打印机设置：{commands}',
+    replayRiskActionsFmt: '发送此代码还会触发打印机动作：{commands}',
   },
   contextMenu: {
     copy: '复制',

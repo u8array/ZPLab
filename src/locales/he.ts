@@ -942,6 +942,8 @@ const he = {
     editSourceConfirmApply: 'החל בכל זאת',
     editSourceUnbalancedFmt: 'קוד לא מאוזן: לכל בלוק {open} נדרש {close} סוגר.',
     editSourceTooManyPagesFmt: 'הקוד חורג מ-{max} תבניות תווית.',
+    replayRiskSetupFmt: 'שליחת הקוד הזה משנה גם את הגדרות המדפסת: {commands}',
+    replayRiskActionsFmt: 'שליחת הקוד הזה גם מפעילה פעולות במדפסת: {commands}',
   },
   contextMenu: {
     copy: 'העתק',

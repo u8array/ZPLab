@@ -942,6 +942,8 @@ const sk = {
     editSourceConfirmApply: 'Aj tak použiť',
     editSourceUnbalancedFmt: 'Nevyvážený kód: každý blok {open} potrebuje uzatvárajúci {close}.',
     editSourceTooManyPagesFmt: 'Kód prekračuje {max} formátov etikety.',
+    replayRiskSetupFmt: 'Odoslanie tohto kódu zmení aj nastavenia tlačiarne: {commands}',
+    replayRiskActionsFmt: 'Odoslanie tohto kódu spustí aj akcie tlačiarne: {commands}',
   },
   contextMenu: {
     copy: 'Kopírovať',

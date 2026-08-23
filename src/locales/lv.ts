@@ -942,6 +942,8 @@ const lv = {
     editSourceConfirmApply: 'Tomēr lietot',
     editSourceUnbalancedFmt: 'Nesabalansēts kods: katram {open} blokam nepieciešams noslēdzošais {close}.',
     editSourceTooManyPagesFmt: 'Kods pārsniedz {max} uzlīmju formātus.',
+    replayRiskSetupFmt: 'Šī koda nosūtīšana maina arī printera iestatījumus: {commands}',
+    replayRiskActionsFmt: 'Šī koda nosūtīšana sāk arī printera darbības: {commands}',
   },
   contextMenu: {
     copy: 'Kopēt',

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { hasEditorLoss } from '@zplab/core/lib/editorStateDiff';
 import { prepareSourceApply, type SourceApplyOk } from '@zplab/core/lib/zplSourceEdit';
 import { sourceRefusalText } from '../../lib/sourceEditText';
@@ -6,6 +6,8 @@ import { useLabelStore } from '../../store/labelStore';
 import { SourceApplyConfirmDialog } from './SourceApplyConfirmDialog';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useT } from '../../hooks/useT';
+// Eager on purpose: ~10% bundle buys an instant, failure-free editor toggle.
+import ZplCodeMirror from './ZplCodeMirror';
 
 /** One edit session's buffer and apply flow. Mounted only while the session
  *  is live, so plan/error/confirm state dies with it; the session id rides on
@@ -28,11 +30,6 @@ export function ZplSourceEditor({
   const [pendingPlan, setPendingPlan] = useState<SourceApplyOk | null>(null);
   const [applyError, setApplyError] = useState<string | null>(null);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    textareaRef.current?.focus();
-  }, []);
 
   const dirty = draft !== baseline;
   const requestCancel = () => {
@@ -78,17 +75,16 @@ export function ZplSourceEditor({
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      <textarea
-        ref={textareaRef}
-        className="flex-1 min-h-0 bg-surface-2 border-0 border-b border-border px-3 py-2 font-mono text-xs leading-relaxed text-text focus:outline-none resize-none"
-        value={draft}
-        onChange={(e) => {
-          setApplyError(null);
-          setSourceDraft(e.target.value);
-        }}
-        spellCheck={false}
-        aria-label={t.output.editSource}
-      />
+      <div className="flex flex-col flex-1 min-h-0 bg-surface-2 border-b border-border font-mono text-xs text-text">
+        <ZplCodeMirror
+          value={draft}
+          onChange={(value) => {
+            setApplyError(null);
+            setSourceDraft(value);
+          }}
+          ariaLabel={t.output.editSource}
+        />
+      </div>
       <div className="flex items-center justify-between px-3 py-2 shrink-0 gap-3">
         <p className="font-mono text-[10px] text-amber-400 leading-relaxed truncate">{applyError}</p>
         <div className="flex items-center gap-2 shrink-0">

@@ -942,6 +942,8 @@ const zhHant = {
     editSourceConfirmApply: '仍要套用',
     editSourceUnbalancedFmt: '程式碼不配對：每個 {open} 區塊都需要對應的 {close}。',
     editSourceTooManyPagesFmt: '程式碼超過 {max} 個標籤格式。',
+    replayRiskSetupFmt: '傳送此程式碼也會變更印表機設定：{commands}',
+    replayRiskActionsFmt: '傳送此程式碼也會觸發印表機動作：{commands}',
   },
   contextMenu: {
     copy: '複製',

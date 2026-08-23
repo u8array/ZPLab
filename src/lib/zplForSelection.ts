@@ -20,6 +20,6 @@ export function zplForSelection(
     (o) => sel.has(o.id) || (isGroup(o) && getAllLeaves(o.children).some((l) => sel.has(l.id))),
   );
   if (picked.length === 0) return "";
-  const { headerLines, bodyLines } = planFieldEmission(label, picked, variables);
-  return [...headerLines, ...bodyLines].join("\n");
+  const { headerLines, bodies } = planFieldEmission(label, picked, variables);
+  return [...headerLines, ...bodies.map((b) => b.text)].join("\n");
 }

@@ -45,9 +45,9 @@ export interface ImportReport {
   browserLimit: string[];
   /** Commands not recognised at all. */
   unknown: string[];
-  /** Setup-Script commands (^ST, ^KN, …): profile-backed, routable on import. */
+  /** Setup-Script commands in source spelling: profile-backed, routable on import. */
   replayRisk: string[];
-  /** Device actions (^JC, ^JR, …): run on re-emit, no profile field, not routable. */
+  /** Device actions in source spelling: run on re-emit, no profile field, not routable. */
   deviceAction: string[];
 }
 

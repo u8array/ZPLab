@@ -942,6 +942,8 @@ const ja = {
     editSourceConfirmApply: 'それでも適用',
     editSourceUnbalancedFmt: 'コードが対応していません: {open} ブロックには対応する {close} が必要です。',
     editSourceTooManyPagesFmt: 'コードがラベルフォーマット {max} 件を超えています。',
+    replayRiskSetupFmt: 'このコードを送信すると、プリンターの設定も変更されます: {commands}',
+    replayRiskActionsFmt: 'このコードを送信すると、プリンターの動作も実行されます: {commands}',
   },
   contextMenu: {
     copy: 'コピー',

@@ -942,6 +942,8 @@ const bg = {
     editSourceConfirmApply: 'Прилагане въпреки това',
     editSourceUnbalancedFmt: 'Небалансиран код: всеки блок {open} се нуждае от съответния {close}.',
     editSourceTooManyPagesFmt: 'Кодът надхвърля {max} етикетни формата.',
+    replayRiskSetupFmt: 'Изпращането на този код променя и настройките на принтера: {commands}',
+    replayRiskActionsFmt: 'Изпращането на този код задейства и действия на принтера: {commands}',
   },
   contextMenu: {
     copy: 'Копиране',

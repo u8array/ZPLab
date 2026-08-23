@@ -54,7 +54,13 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
-    babel({ presets: [reactCompilerPreset()], include: /\.tsx$/ }),
+    // .ts included: hooks live there too and lose memoization outside the
+    // compiler (the emit re-ran per render). Headless packages stay out.
+    babel({
+      presets: [reactCompilerPreset()],
+      include: /\.tsx?$/,
+      exclude: [/node_modules/, /[\\/]packages[\\/]/],
+    }),
     thirdPartyLicenses(),
   ],
   test: {

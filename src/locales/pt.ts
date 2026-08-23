@@ -942,6 +942,8 @@ const pt = {
     editSourceConfirmApply: 'Aplicar mesmo assim',
     editSourceUnbalancedFmt: 'Código não equilibrado: cada bloco {open} precisa do {close} de fecho.',
     editSourceTooManyPagesFmt: 'O código excede {max} formatos de etiqueta.',
+    replayRiskSetupFmt: 'Enviar este código também altera as definições da impressora: {commands}',
+    replayRiskActionsFmt: 'Enviar este código também executa ações da impressora: {commands}',
   },
   contextMenu: {
     copy: 'Copiar',

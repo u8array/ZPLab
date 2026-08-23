@@ -942,6 +942,8 @@ const sr = {
     editSourceConfirmApply: 'Ипак примени',
     editSourceUnbalancedFmt: 'Неуравнотежен код: сваки блок {open} захтева одговарајући {close}.',
     editSourceTooManyPagesFmt: 'Код премашује {max} формата налепнице.',
+    replayRiskSetupFmt: 'Слање овог кода мења и подешавања штампача: {commands}',
+    replayRiskActionsFmt: 'Слање овог кода покреће и радње штампача: {commands}',
   },
   contextMenu: {
     copy: 'Копирај',

@@ -942,6 +942,8 @@ const hu = {
     editSourceConfirmApply: 'Alkalmazás mindenképp',
     editSourceUnbalancedFmt: 'Kiegyensúlyozatlan kód: minden {open} blokkhoz kell a lezáró {close}.',
     editSourceTooManyPagesFmt: 'A kód meghaladja a(z) {max} címkeformátumot.',
+    replayRiskSetupFmt: 'A kód elküldése a nyomtató beállításait is módosítja: {commands}',
+    replayRiskActionsFmt: 'A kód elküldése nyomtatóműveleteket is elindít: {commands}',
   },
   contextMenu: {
     copy: 'Másolás',

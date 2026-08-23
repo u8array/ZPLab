@@ -942,6 +942,8 @@ const ro = {
     editSourceConfirmApply: 'Aplică oricum',
     editSourceUnbalancedFmt: 'Cod neechilibrat: fiecare bloc {open} necesită {close} de închidere.',
     editSourceTooManyPagesFmt: 'Codul depășește {max} formate de etichetă.',
+    replayRiskSetupFmt: 'Trimiterea acestui cod modifică și setările imprimantei: {commands}',
+    replayRiskActionsFmt: 'Trimiterea acestui cod declanșează și acțiuni ale imprimantei: {commands}',
   },
   contextMenu: {
     copy: 'Copiază',

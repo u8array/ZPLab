@@ -43,5 +43,6 @@ describe("boot wiring before the token hydrate settles", () => {
     releaseHydrate();
     await flush();
     expect(stopMcpServer).toHaveBeenCalledTimes(1);
-  });
+    // resetModules re-evaluates the whole module graph; that alone can exceed 5s.
+  }, 30000);
 });
