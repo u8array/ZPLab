@@ -25,6 +25,26 @@ const mapping = { bindings: { v1: 'sku' }, headerSnapshot: ['sku'] };
 
 const noticeText = () => en.zebraPrint.batchNoticeFmt.replace('{n}', '3');
 
+describe('PrintToZebraDialog printer-impact notice', () => {
+  it('warns when the sent bytes carry printer-setup commands', () => {
+    act(() => {
+      useLabelStore.setState({ zebraPrintSource: 'label', dataset: null, columnMapping: null });
+    });
+    const { container } = render(
+      <PrintToZebraDialog zpl={'^XA^JUS^FO10,10^A0N,30,30^FDX^FS^XZ'} onClose={vi.fn()} />,
+    );
+    expect(container.textContent).toContain('^JU');
+  });
+
+  it('stays silent for the setup-script source', () => {
+    act(() => {
+      useLabelStore.setState({ zebraPrintSource: 'setupScript', dataset: null, columnMapping: null });
+    });
+    const { container } = render(<PrintToZebraDialog zpl={'^XA^JUS^XZ'} onClose={vi.fn()} />);
+    expect(container.textContent).not.toContain('^JU');
+  });
+});
+
 // Regression: the batch send-notice guards against an unaware bulk send, so it
 // must appear iff a mapped dataset drives the label source.
 describe('PrintToZebraDialog batch notice', () => {

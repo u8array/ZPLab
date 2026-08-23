@@ -1552,8 +1552,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                 width={physicalWidthPx}
                 height={labelHeightPx}
                 fill="white"
-                // Frozen editor: amber glow (matches the Labelary-warning palette).
-                shadowColor={editorFrozen ? 'rgba(251, 191, 36, 0.55)' : 'rgba(0,0,0,0.4)'}
+                // Two freeze reasons, two glows: preview amber, source edit the panel's cyan.
+                shadowColor={
+                  editorFrozen
+                    ? previewCoversCanvas
+                      ? 'rgba(251, 191, 36, 0.55)'
+                      : 'rgba(34, 184, 212, 0.55)'
+                    : 'rgba(0,0,0,0.4)'
+                }
                 shadowBlur={editorFrozen ? 28 : 12}
                 shadowOffsetY={editorFrozen ? 0 : 2}
                 onClick={() => selectObjects([])}

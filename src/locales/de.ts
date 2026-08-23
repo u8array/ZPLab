@@ -972,6 +972,8 @@ const de = {
     editSourceConfirmApply: 'Trotzdem übernehmen',
     editSourceUnbalancedFmt: 'Unausgeglichener Code: Jeder {open}-Block braucht sein abschließendes {close}.',
     editSourceTooManyPagesFmt: 'Der Code überschreitet {max} Etikettenformate.',
+    replayRiskSetupFmt: 'Das Senden dieses Codes ändert auch Druckereinstellungen: {commands}',
+    replayRiskActionsFmt: 'Das Senden dieses Codes löst auch Druckeraktionen aus: {commands}',
   },
   contextMenu: {
     copy: 'Kopieren',

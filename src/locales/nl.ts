@@ -942,6 +942,8 @@ const nl = {
     editSourceConfirmApply: 'Toch toepassen',
     editSourceUnbalancedFmt: 'Ongebalanceerde code: elk {open}-blok heeft een afsluitende {close} nodig.',
     editSourceTooManyPagesFmt: 'De code overschrijdt {max} labelformaten.',
+    replayRiskSetupFmt: 'Het verzenden van deze code wijzigt ook printerinstellingen: {commands}',
+    replayRiskActionsFmt: 'Het verzenden van deze code start ook printeracties: {commands}',
   },
   contextMenu: {
     copy: 'Kopiëren',

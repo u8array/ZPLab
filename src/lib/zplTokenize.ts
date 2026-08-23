@@ -36,6 +36,22 @@ const COMMENT_CMDS = new Set(["FX"]);
 // this, pushParams splits a multi-MB payload into millions of tokens.
 const OPAQUE_CMDS = new Set(["DY", "DG", "DB", "DT", "DU", "GF"]);
 
+const OPAQUE_CMD_RE = new RegExp(`[\\^~](?:${[...OPAQUE_CMDS].join("|")})`, "i");
+
+/** [start, end) of the first opaque command's payload at or after `from`, or null.
+ *  Lives here so the scan uses the tokenizer's own set and boundary rules. */
+export function opaquePayloadSpan(
+  line: string,
+  from = 0,
+): { start: number; end: number } | null {
+  const m = OPAQUE_CMD_RE.exec(from === 0 ? line : line.slice(from));
+  if (!m) return null;
+  const start = from + m.index + 3;
+  let end = start;
+  while (end < line.length && !isCmdStartInPayload(line, end)) end++;
+  return { start, end };
+}
+
 // Between commands a tilde before any letter reads as a command; inside a
 // payload run only a real immediate command ends it (see zplImmediate.ts).
 const isCmdStart = (line: string, i: number) =>

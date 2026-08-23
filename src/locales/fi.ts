@@ -942,6 +942,8 @@ const fi = {
     editSourceConfirmApply: 'Ota silti käyttöön',
     editSourceUnbalancedFmt: 'Epätasapainoinen koodi: jokainen {open}-lohko tarvitsee päättävän {close}.',
     editSourceTooManyPagesFmt: 'Koodi ylittää {max} etikettimuotoa.',
+    replayRiskSetupFmt: 'Tämän koodin lähettäminen muuttaa myös tulostimen asetuksia: {commands}',
+    replayRiskActionsFmt: 'Tämän koodin lähettäminen käynnistää myös tulostimen toimintoja: {commands}',
   },
   contextMenu: {
     copy: 'Kopioi',

@@ -942,6 +942,8 @@ const sv = {
     editSourceConfirmApply: 'Använd ändå',
     editSourceUnbalancedFmt: 'Obalanserad kod: varje {open}-block behöver sitt avslutande {close}.',
     editSourceTooManyPagesFmt: 'Koden överskrider {max} etikettformat.',
+    replayRiskSetupFmt: 'Att skicka den här koden ändrar även skrivarinställningar: {commands}',
+    replayRiskActionsFmt: 'Att skicka den här koden utlöser även skrivaråtgärder: {commands}',
   },
   contextMenu: {
     copy: 'Kopiera',

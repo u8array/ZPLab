@@ -454,11 +454,12 @@ export function parseZPL(
     // ~PH/~PP: flagged as device actions AND skipped entirely, or they would
     // fall through to the unknown bucket and surface twice in the summary.
     if (tildeDeviceCodes.has(cmd) && zpl[start] === s.format.tildeChar) {
-      deviceAction.push(`~${cmd}`);
+      deviceAction.push(`${zpl[start]}${cmd}`);
       continue;
     }
-    if (replayRiskCodes.has(cmd)) replayRisk.push(`^${cmd}`);
-    else if (deviceActionCodes.has(cmd)) deviceAction.push(`^${cmd}`);
+    // These findings name bytes that replay verbatim, so report the source prefix.
+    if (replayRiskCodes.has(cmd)) replayRisk.push(`${zpl[start]}${cmd}`);
+    else if (deviceActionCodes.has(cmd)) deviceAction.push(`${zpl[start]}${cmd}`);
     const handler = handlers[cmd] ?? wildcards.find((w) => w.matches(cmd))?.handle;
     if (handler) {
       const reverseBefore = s.reverseBg;

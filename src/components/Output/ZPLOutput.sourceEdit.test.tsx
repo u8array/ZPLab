@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { render, cleanup, fireEvent, screen, act } from "@testing-library/react";
+import { render, cleanup, fireEvent, screen, act, waitFor } from "@testing-library/react";
 
 const copiedTexts: string[] = [];
 vi.mock("../../lib/clipboard", () => ({
@@ -8,6 +8,12 @@ vi.mock("../../lib/clipboard", () => ({
     copiedTexts.push(text);
     return Promise.resolve("copied");
   },
+}));
+// CodeMirror needs layout APIs jsdom lacks; value-in/onChange-out is the whole contract.
+vi.mock("./ZplCodeMirror", () => ({
+  default: ({ value, onChange, ariaLabel }: { value: string; onChange: (v: string) => void; ariaLabel: string }) => (
+    <textarea aria-label={ariaLabel} value={value} onChange={(e) => onChange(e.target.value)} />
+  ),
 }));
 import { ZPLOutput } from "./ZPLOutput";
 import { useLabelStore } from "../../store/labelStore";
@@ -55,6 +61,53 @@ describe("the source-edit toggle", () => {
     expect(s.status).toBe("editing");
     if (s.status === "editing") expect(s.draft).toContain("^XA");
     expect((editButton() as HTMLButtonElement).disabled).toBe(true);
+  });
+});
+
+describe("the selection highlight", () => {
+  beforeEach(() => {
+    // jsdom has no scrollIntoView.
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  it("tints exactly the selected object's emitted lines", () => {
+    useLabelStore.setState({ selectedIds: ["t1"] });
+    const { container } = render(<ZPLOutput />);
+    const tinted = [...container.querySelectorAll("span.block")].filter((el) =>
+      el.className.includes("bg-accent"),
+    );
+    expect(tinted.length).toBeGreaterThan(0);
+    expect(tinted.some((el) => el.textContent?.includes("^FDhello"))).toBe(true);
+  });
+
+  it("tints nothing without a selection", () => {
+    const { container } = render(<ZPLOutput />);
+    expect(
+      [...container.querySelectorAll("span.block")].some((el) =>
+        el.className.includes("bg-accent"),
+      ),
+    ).toBe(false);
+  });
+});
+
+describe("the printer-impact notice", () => {
+  it("names replayed setup commands", async () => {
+    const { importZplText } = await import("@zplab/core/lib/zplImportService");
+    const imported = importZplText("^XA^JUS\n^FO10,10^A0N,30,30^FDX^FS\n^XZ", 8);
+    useLabelStore.setState({ pages: imported.pages, variables: imported.variables });
+    const { container } = render(<ZPLOutput />);
+    await waitFor(() => {
+      expect(
+        [...container.querySelectorAll("p")].some((p) => p.textContent?.includes("^JU")),
+      ).toBe(true);
+    });
+  });
+
+  it("shows nothing for a plain design", () => {
+    const { container } = render(<ZPLOutput />);
+    expect(
+      [...container.querySelectorAll("p")].some((p) => p.textContent?.includes("^JU")),
+    ).toBe(false);
   });
 });
 

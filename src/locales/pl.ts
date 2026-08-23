@@ -942,6 +942,8 @@ const pl = {
     editSourceConfirmApply: 'Zastosuj mimo to',
     editSourceUnbalancedFmt: 'Niezbilansowany kod: każdy blok {open} wymaga zamykającego {close}.',
     editSourceTooManyPagesFmt: 'Kod przekracza {max} formatów etykiet.',
+    replayRiskSetupFmt: 'Wysłanie tego kodu zmienia także ustawienia drukarki: {commands}',
+    replayRiskActionsFmt: 'Wysłanie tego kodu uruchamia także działania drukarki: {commands}',
   },
   contextMenu: {
     copy: 'Kopiuj',

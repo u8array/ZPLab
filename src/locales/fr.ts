@@ -942,6 +942,8 @@ const fr = {
     editSourceConfirmApply: 'Appliquer quand même',
     editSourceUnbalancedFmt: 'Code déséquilibré : chaque bloc {open} doit avoir son {close} de fermeture.',
     editSourceTooManyPagesFmt: 'Le code dépasse {max} formats d’étiquette.',
+    replayRiskSetupFmt: "L'envoi de ce code modifie aussi les paramètres de l'imprimante : {commands}",
+    replayRiskActionsFmt: "L'envoi de ce code déclenche aussi des actions de l'imprimante : {commands}",
   },
   contextMenu: {
     copy: 'Copier',

@@ -942,6 +942,8 @@ const ko = {
     editSourceConfirmApply: '그래도 적용',
     editSourceUnbalancedFmt: '코드가 짝이 맞지 않습니다: 모든 {open} 블록에는 닫는 {close}가 필요합니다.',
     editSourceTooManyPagesFmt: '코드가 라벨 형식 {max}개를 초과합니다.',
+    replayRiskSetupFmt: '이 코드를 전송하면 프린터 설정도 변경됩니다: {commands}',
+    replayRiskActionsFmt: '이 코드를 전송하면 프린터 동작도 실행됩니다: {commands}',
   },
   contextMenu: {
     copy: '복사',

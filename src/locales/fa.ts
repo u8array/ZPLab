@@ -942,6 +942,8 @@ const fa = {
     editSourceConfirmApply: 'با این حال اعمال شود',
     editSourceUnbalancedFmt: 'کد نامتوازن: هر بلوک {open} به {close} پایانی خود نیاز دارد.',
     editSourceTooManyPagesFmt: 'کد از {max} قالب برچسب فراتر می‌رود.',
+    replayRiskSetupFmt: 'ارسال این کد تنظیمات چاپگر را نیز تغییر می‌دهد: {commands}',
+    replayRiskActionsFmt: 'ارسال این کد عملیات چاپگر را نیز اجرا می‌کند: {commands}',
   },
   contextMenu: {
     copy: 'کپی',

@@ -942,6 +942,8 @@ const el = {
     editSourceConfirmApply: 'Εφαρμογή ούτως ή άλλως',
     editSourceUnbalancedFmt: 'Μη ισοσταθμισμένος κώδικας: κάθε μπλοκ {open} χρειάζεται το αντίστοιχο {close}.',
     editSourceTooManyPagesFmt: 'Ο κώδικας υπερβαίνει τις {max} μορφές ετικέτας.',
+    replayRiskSetupFmt: 'Η αποστολή αυτού του κώδικα αλλάζει επίσης ρυθμίσεις του εκτυπωτή: {commands}',
+    replayRiskActionsFmt: 'Η αποστολή αυτού του κώδικα ενεργοποιεί επίσης ενέργειες του εκτυπωτή: {commands}',
   },
   contextMenu: {
     copy: 'Αντιγραφή',

@@ -203,12 +203,32 @@ export function generateMultiPageZPL(
   pages: Page[],
   variables: readonly Variable[] = [],
 ): string {
+  return generateMultiPageZplWithMap(label, pages, variables).text;
+}
+
+/** Document-absolute [start, end) of one leaf's emitted bytes: `text.slice(start, end)`
+ *  is exactly what the export carries for that object (its ^FX comment included). */
+export interface EmitSpan {
+  pageIndex: number;
+  objectId: string;
+  start: number;
+  end: number;
+}
+
+/** The export text plus one span per emitted leaf, from the same emit walk (never a
+ *  re-parse). Ascending, non-overlapping; hidden/excluded/dropped leaves have none. */
+export function generateMultiPageZplWithMap(
+  label: LabelConfig,
+  pages: Page[],
+  variables: readonly Variable[] = [],
+): { text: string; spans: EmitSpan[] } {
   let out = '';
+  const spans: EmitSpan[] = [];
   // ^JM persists on the wire, so a block only declares a density the preceding
   // blocks didn't set. `undefined` means nothing declared one yet, so a block
   // inheriting its ^JM from outside this export gets the declaration back.
   let wireJm: JmDensity | undefined;
-  for (const p of pages) {
+  pages.forEach((p, pageIndex) => {
     const pageLabel = pageLabelConfig(label, p);
     let emitted: PageBlock;
     try {
@@ -244,9 +264,30 @@ export function generateMultiPageZPL(
     // newline when the previous block didn't end with one (a fresh or
     // fallback page), so multi-page round-trips stay byte-identical and stable.
     if (out.length > 0 && !out.endsWith('\n')) out += '\n';
+    const base = out.length;
     out += block;
-  }
-  return out;
+    for (const s of emitted.spans) {
+      // ^JM is legal before the first ^FS, so a recorded splice can sit INSIDE
+      // a field span: such an edit grows the span; one before it shifts it.
+      let startShift = 0;
+      let endShift = 0;
+      for (const e of applied.edits) {
+        if (e.at <= s.start) {
+          startShift += e.delta;
+          endShift += e.delta;
+        } else if (e.at < s.end) {
+          endShift += e.delta;
+        }
+      }
+      spans.push({
+        pageIndex,
+        objectId: s.objectId,
+        start: base + s.start + startShift,
+        end: base + s.end + endShift,
+      });
+    }
+  });
+  return { text: out, spans };
 }
 
 
@@ -254,6 +295,14 @@ export function generateMultiPageZPL(
 interface PageBlock {
   block: string;
   head: FormatHead | undefined;
+  spans: ObjectSpan[];
+}
+
+/** Block-relative [start, end) of one leaf's emitted bytes. */
+interface ObjectSpan {
+  objectId: string;
+  start: number;
+  end: number;
 }
 
 /** Density the head declares: the last VALID `^JM` wins, mirroring the parser
@@ -287,23 +336,29 @@ function headMatches(block: string, head: FormatHead): boolean {
   return true;
 }
 
+interface HeadEdit {
+  at: number;
+  delta: number;
+}
+
 /** Rewrites a block's head to the target density; the model wins over any
  *  existing declaration. `target` folds in the running wire state (undefined = nothing to add). */
 function applyJmDensity(
   emitted: PageBlock,
   pageJm: JmDensity | undefined,
   target: JmDensity | undefined,
-): { block: string; wireJm: JmDensity | undefined } {
+): { block: string; wireJm: JmDensity | undefined; edits: HeadEdit[] } {
   const { block, head } = emitted;
-  if (!head) return { block, wireJm: undefined };
+  if (!head) return { block, wireJm: undefined, edits: [] };
   const declared = declaredJm(block, head);
   if (declared !== undefined) {
     const want = pageJm ?? 'A';
-    if (declared === want) return { block, wireJm: want };
+    if (declared === want) return { block, wireJm: want, edits: [] };
     // Every declaration in the head is rewritten, not just the last: leaving a
     // stale one behind would make the density depend on emit order. Back to
     // front so the earlier spans keep their offsets.
     let rewritten = block;
+    const edits: HeadEdit[] = [];
     for (const s of [...head.jmSpans].reverse()) {
       const params = block.slice(s.start + MIN_JM_SPAN, s.end);
       // ^JM takes one parameter; anything past the delimiter is unmodelled, so
@@ -311,20 +366,24 @@ function applyJmDensity(
       // a ^CD retarget mid-head splits at the right byte.
       const tailAt = params.indexOf(s.delim);
       const tail = tailAt < 0 ? '' : params.slice(tailAt);
-      rewritten = `${rewritten.slice(0, s.start)}${s.caret}JM${want}${tail}${rewritten.slice(s.end)}`;
+      const replacement = `${s.caret}JM${want}${tail}`;
+      edits.push({ at: s.start, delta: replacement.length - (s.end - s.start) });
+      rewritten = `${rewritten.slice(0, s.start)}${replacement}${rewritten.slice(s.end)}`;
     }
-    return { block: rewritten, wireJm: want };
+    return { block: rewritten, wireJm: want, edits };
   }
-  if (!target) return { block, wireJm: undefined };
+  if (!target) return { block, wireJm: undefined, edits: [] };
   // Insert after the head's last ^JM, not before, since an unreadable one would
   // otherwise outrank a fresh declaration; with no spans, the ^XA caret is the
   // injection point.
   const last = head.jmSpans[head.jmSpans.length - 1];
   const at = last ? last.end : head.at;
   const caret = last ? last.caret : head.caret;
+  const injected = `${caret}JM${target}`;
   return {
-    block: `${block.slice(0, at)}${caret}JM${target}${block.slice(at)}`,
+    block: `${block.slice(0, at)}${injected}${block.slice(at)}`,
     wireJm: target,
+    edits: [{ at, delta: injected.length }],
   };
 }
 
@@ -456,49 +515,90 @@ function emitPageBlock(
   const dirtyShiftedById = new Map(dirtyShifted.map((o) => [o.id, o]));
 
   const out: string[] = [];
+  let spans: ObjectSpan[] = [];
+  let offset = 0;
+  const push = (text: string): void => {
+    out.push(text);
+    offset += text.length;
+  };
+  // The block's own separator for every injected line, or a CRLF page exports mixed;
+  // re-joining generated bodies is safe since fields encode line breaks as \&.
+  const sep = overlay.segments.some((s) => s.text.includes('\r\n')) ? '\r\n' : '\n';
   let headerEmitted = false;
   const emitHeaderOnce = () => {
     if (headerEmitted) return;
     headerEmitted = true;
-    if (headerLines.length > 0) out.push(`${headerLines.join('\n')}\n`);
+    if (headerLines.length > 0) push(`${headerLines.join(sep)}${sep}`);
   };
 
   for (const [i, seg] of overlay.segments.entries()) {
     if (seg.kind === 'raw' || seg.kind === 'config') {
-      out.push(rewrittenSegs.get(i) ?? seg.text);
+      push(rewrittenSegs.get(i) ?? seg.text);
       continue;
     }
     // object segment
     const live = exportableById.get(seg.objectId);
     if (!live) continue; // deleted or hidden
     if (!live.dirty && !binarySegIds.has(seg.objectId)) {
-      out.push(seg.text); // untouched -> verbatim
+      const start = offset;
+      push(seg.text);
+      spans.push({ objectId: seg.objectId, start, end: offset });
       continue;
     }
     emitHeaderOnce(); // template/clock header precedes the first regenerated field
     const shifted = dirtyShiftedById.get(seg.objectId);
-    if (shifted && !isGroup(shifted)) out.push(emitFieldBody(shifted, emitCtx));
+    if (shifted && !isGroup(shifted)) {
+      const start = offset;
+      push(emitFieldBody(shifted, emitCtx).replaceAll('\n', sep));
+      spans.push({ objectId: seg.objectId, start, end: offset });
+    }
   }
 
   let result = out.join('');
 
   if (newShifted.length > 0) {
-    const appendLines: string[] = [];
-    if (!headerEmitted && headerLines.length > 0) appendLines.push(...headerLines);
-    for (const o of newShifted) if (!isGroup(o)) appendLines.push(emitFieldBody(o, emitCtx));
-    const block = appendLines.join('\n');
+    const entries: { objectId?: string; text: string }[] = [];
+    if (!headerEmitted && headerLines.length > 0) {
+      entries.push(...headerLines.map((text) => ({ text })));
+    }
+    for (const o of newShifted) {
+      if (!isGroup(o)) {
+        entries.push({ objectId: o.id, text: emitFieldBody(o, emitCtx).replaceAll('\n', sep) });
+      }
+    }
+    const block = entries.map((e) => e.text).join(sep);
     // New fields go inside the block, just before ^XZ. ZPL command letters are
     // case-insensitive; check the common uppercase form first, then a regex on
     // the original for a rare lowercase terminator (matching the original keeps
     // slice indices accurate, unlike toUpperCase which can grow e.g. ß into SS).
     let idx = result.lastIndexOf('^XZ');
     if (idx < 0) idx = [...result.matchAll(/\^[xX][zZ]/g)].pop()?.index ?? -1;
+    const at = idx >= 0 ? idx : result.length + sep.length;
+    const grown = block.length + sep.length;
+    spans = spans.flatMap((s) =>
+      s.start >= at
+        ? [{ ...s, start: s.start + grown, end: s.end + grown }]
+        : // A degenerate stream can carry its last ^XZ inside an object's bytes, so
+          // the splice tears it apart and no contiguous span describes it anymore.
+          s.end > at
+          ? []
+          : [s],
+    );
+    let insOff = at;
+    for (const e of entries) {
+      if (e.objectId !== undefined) {
+        spans.push({ objectId: e.objectId, start: insOff, end: insOff + e.text.length });
+      }
+      insOff += e.text.length + sep.length;
+    }
     result =
-      idx >= 0 ? `${result.slice(0, idx)}${block}\n${result.slice(idx)}` : `${result}\n${block}`;
+      idx >= 0 ? `${result.slice(0, idx)}${block}${sep}${result.slice(idx)}` : `${result}${sep}${block}`;
   }
 
   const head = overlay.head;
-  return { block: result, head: head && headMatches(result, head) ? head : undefined };
+  // Appended spans are pushed last but can precede shifted ones; contract is ascending.
+  spans.sort((a, b) => a.start - b.start);
+  return { block: result, head: head && headMatches(result, head) ? head : undefined, spans };
 }
 
 /** R: is volatile RAM, matches single-run batch scope. */
@@ -641,7 +741,7 @@ export function planFieldEmission(
   label: PageLabel,
   objects: LabelObject[],
   variables: readonly Variable[] = [],
-): { headerLines: string[]; bodyLines: string[] } {
+): { headerLines: string[]; bodies: EmittedBody[] } {
   const homeX = label.labelHomeX ?? 0;
   const homeY = label.labelHomeY ?? 0;
   const top = label.labelTop ?? 0;
@@ -652,12 +752,18 @@ export function planFieldEmission(
   // Groups are structural; includeInExport=false cascades to the subtree.
   // Byte-identical round-trip lives in the overlay path (emitOverlayPage); this
   // model generator always regenerates.
-  const emitLeaf = (obj: LabelObject): string[] => {
+  const emitLeaf = (obj: LabelObject): EmittedBody[] => {
     if (obj.includeInExport === false) return [];
     if (isGroup(obj)) return obj.children.flatMap(emitLeaf);
-    return [emitFieldBody(obj, emitCtx)];
+    return [{ objectId: obj.id, text: emitFieldBody(obj, emitCtx) }];
   };
-  return { headerLines, bodyLines: shifted.flatMap(emitLeaf) };
+  return { headerLines, bodies: shifted.flatMap(emitLeaf) };
+}
+
+/** One leaf's emitted field bytes, id-attributed for the span map. */
+export interface EmittedBody {
+  objectId: string;
+  text: string;
 }
 
 /** Positional-command slots with trailing empties dropped, so unset
@@ -842,8 +948,13 @@ function generateZplBlock(
     lines.push(`^CF${slots.join(",")}`);
   }
 
-  const { headerLines, bodyLines } = planFieldEmission(label, objects, variables);
-  lines.push(...headerLines, ...bodyLines);
+  const { headerLines, bodies } = planFieldEmission(label, objects, variables);
+  lines.push(...headerLines);
+  const bodyIdByLine = new Map<number, string>();
+  for (const b of bodies) {
+    bodyIdByLine.set(lines.length, b.objectId);
+    lines.push(b.text);
+  }
 
   // ^PQ q,p,r,o (defaults q=1 p=0 r=0 o=N); emit if q>1 or any extended set.
   const pq = label.printQuantity ?? 1;
@@ -859,23 +970,38 @@ function generateZplBlock(
 
   lines.push('^XZ');
 
+  // Per-line aliasing so the span offsets stay true against the final bytes;
+  // the ^A@ pattern never crosses a newline, so this matches a whole-text pass.
+  const aliasByPath = fontAliasByPath(label);
+  const aliased =
+    aliasByPath.size === 0 ? lines : lines.map((l) => aliasFontPathsLine(l, aliasByPath));
+  const spans: ObjectSpan[] = [];
+  let off = 0;
+  aliased.forEach((l, i) => {
+    const objectId = bodyIdByLine.get(i);
+    if (objectId !== undefined) spans.push({ objectId, start: off, end: off + l.length });
+    off += l.length + 1;
+  });
+
   return {
-    block: aliasFontPaths(lines.join('\n'), label),
+    block: aliased.join('\n'),
     head: { caret: '^', at: headAt, jmSpans },
+    spans,
   };
 }
 
-/** Rewrite `^A@…PATH` to `^A{alias}` for paths the user registered via `^CW`.
- *  Used only by the full model generator over its whole output; the overlay
- *  export deliberately does NOT alias (a regenerated direct-path ^A@ is valid
- *  and order-independent, avoiding a ^CW forward-reference). */
-function aliasFontPaths(text: string, label: LabelConfig): string {
+function fontAliasByPath(label: LabelConfig): Map<string, string> {
   const aliasByPath = new Map<string, string>();
   for (const m of label.customFonts ?? []) {
     if (m.alias && m.path) aliasByPath.set(m.path, m.alias);
   }
-  if (aliasByPath.size === 0) return text;
-  return text.replace(
+  return aliasByPath;
+}
+
+/** Rewrite `^A@…PATH` to `^A{alias}` for `^CW`-registered paths. Model generator only:
+ *  the overlay keeps direct paths, avoiding a ^CW forward-reference. */
+function aliasFontPathsLine(line: string, aliasByPath: Map<string, string>): string {
+  return line.replace(
     /\^A@([NIRB]),(\d+),(\d+),([A-Z]:[^^\n]+?)(?=\^|\n|$)/g,
     (full, rot, h, w, path) => {
       const alias = aliasByPath.get(path);

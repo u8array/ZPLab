@@ -942,6 +942,8 @@ const lt = {
     editSourceConfirmApply: 'Vis tiek taikyti',
     editSourceUnbalancedFmt: 'Nesubalansuotas kodas: kiekvienam {open} blokui reikia uždarančio {close}.',
     editSourceTooManyPagesFmt: 'Kodas viršija {max} etiketės formatų.',
+    replayRiskSetupFmt: 'Išsiuntus šį kodą taip pat pakeičiami spausdintuvo nustatymai: {commands}',
+    replayRiskActionsFmt: 'Išsiuntus šį kodą taip pat paleidžiami spausdintuvo veiksmai: {commands}',
   },
   contextMenu: {
     copy: 'Kopijuoti',

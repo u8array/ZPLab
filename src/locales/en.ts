@@ -972,6 +972,8 @@ const en = {
     editSourceConfirmApply: 'Apply anyway',
     editSourceUnbalancedFmt: 'Unbalanced code: every {open} block needs its closing {close}.',
     editSourceTooManyPagesFmt: 'The code exceeds {max} label formats.',
+    replayRiskSetupFmt: 'Sending this code also changes printer settings: {commands}',
+    replayRiskActionsFmt: 'Sending this code also triggers printer actions: {commands}',
   },
   contextMenu: {
     copy: 'Copy',

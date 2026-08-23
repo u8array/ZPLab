@@ -1,9 +1,8 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
-import { useLabelStore, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectPreviewLocksEditor, selectDocumentEmits } from '../../store/labelStore';
-import { generateMultiPageZPL } from '@zplab/core/lib/zplGenerator';
-import { sourceEditGate } from '@zplab/core/lib/zplSourceEdit';
+import { useLabelStore, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectPreviewLocksEditor } from '../../store/labelStore';
 import { sourceRefusalText } from '../../lib/sourceEditText';
+import { useZplOutputView } from '../../hooks/useZplOutputView';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import { useT } from '../../hooks/useT';
 import { LabelaryNoticeModal } from './LabelaryNoticeModal';
@@ -19,22 +18,16 @@ interface Props {
 
 export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
   const t = useT();
-  const label = useLabelStore((s) => s.label);
-  const pages = useLabelStore((s) => s.pages);
-  const variables = useLabelStore((s) => s.variables);
   const labelaryEnabled = useLabelStore((s) => s.thirdParty.labelary);
   const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
   const effectiveProvider = useLabelStore(selectEffectivePreviewProvider);
   const previewActive = useLabelStore(selectPreviewLocksEditor);
   const enterPreviewMode = useLabelStore((s) => s.enterPreviewMode);
   const exitPreviewMode = useLabelStore((s) => s.exitPreviewMode);
-  const sourceEdit = useLabelStore((s) => s.sourceEdit);
   const enterSourceEdit = useLabelStore((s) => s.enterSourceEdit);
   const [showNotice, setShowNotice] = useState(false);
 
-  const session = sourceEdit.status === 'editing' ? sourceEdit : null;
-  const documentEmits = useLabelStore(selectDocumentEmits);
-  const zpl = documentEmits ? generateMultiPageZPL(label, pages, variables) : '';
+  const { session, zpl, gate, highlightedLines, notices } = useZplOutputView(collapsed ?? false);
 
   // The button shows when the effective provider can run: Labelary when the
   // gate is on, or the printer path (desktop only). The consent notice only
@@ -53,10 +46,15 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
     void enterPreviewMode();
   };
 
-  const gate = zpl === '' ? null : sourceEditGate(zpl);
-  const editBlocked = !documentEmits || previewActive || (gate !== null && !gate.ok);
+  // gate is null exactly when the document emits nothing.
+  const editBlocked = previewActive || gate === null || !gate.ok;
   const editTooltip =
     gate !== null && !gate.ok ? sourceRefusalText(gate.reason, t) : t.output.editSource;
+
+  const actionCls = (active: boolean) =>
+    `flex items-center gap-1 font-mono text-[10px] disabled:opacity-25 disabled:cursor-not-allowed transition-colors ${
+      active ? 'text-accent hover:text-text' : 'text-muted hover:text-accent'
+    }`;
 
   return (
     <div className="flex flex-col h-full">
@@ -66,6 +64,8 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
         // buffer during an edit, the generated export otherwise.
         content={session ? session.draft : zpl}
         emptyMessage={t.output.noObjects}
+        highlightedLines={highlightedLines}
+        notices={notices}
         collapsed={collapsed}
         // Collapsing the panel mid-edit would hide an unapplied buffer.
         onCollapseToggle={session ? undefined : collapsed ? onExpand : onCollapse}
@@ -92,9 +92,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
                 // either duplicate that flow or dead-click on a dirty buffer.
                 disabled={session !== null || editBlocked}
                 aria-pressed={session !== null}
-                className={`flex items-center gap-1 font-mono text-[10px] disabled:opacity-25 disabled:cursor-not-allowed transition-colors ${
-                  session ? 'text-accent hover:text-text' : 'text-muted hover:text-accent'
-                }`}
+                className={actionCls(session !== null)}
               >
                 <PencilSquareIcon className="w-4 h-4" />
                 {t.output.editSource}
@@ -106,11 +104,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
                   onClick={togglePreview}
                   disabled={(!zpl && !previewActive) || session !== null}
                   aria-pressed={previewActive}
-                  className={`flex items-center gap-1 font-mono text-[10px] disabled:opacity-25 disabled:cursor-not-allowed transition-colors ${
-                    previewActive
-                      ? 'text-accent hover:text-text'
-                      : 'text-muted hover:text-accent'
-                  }`}
+                  className={actionCls(previewActive)}
                 >
                   <EyeIcon className="w-4 h-4" />
                   {t.output.previewHeading}
@@ -141,6 +135,8 @@ function OutputSection({
   heading,
   content,
   emptyMessage,
+  highlightedLines,
+  notices,
   collapsed,
   onCollapseToggle,
   collapseLabel,
@@ -150,6 +146,9 @@ function OutputSection({
   heading: string;
   content: string;
   emptyMessage: string;
+  /** Line indices tinted as the canvas selection's emitted source. */
+  highlightedLines?: ReadonlySet<number>;
+  notices?: readonly string[];
   collapsed?: boolean;
   onCollapseToggle?: () => void;
   collapseLabel?: string;
@@ -158,6 +157,14 @@ function OutputSection({
 }) {
   const t = useT();
   const { copy, copied } = useCopyToClipboard(() => content);
+  const firstHighlighted = highlightedLines?.size
+    ? Math.min(...highlightedLines)
+    : null;
+  const highlightRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    // Nearest, not center: a selection click shouldn't yank a visible pane around.
+    highlightRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [firstHighlighted]);
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -192,12 +199,24 @@ function OutputSection({
         </div>
       </div>
 
+      {notices && notices.length > 0 && (
+        <div role="status" className="shrink-0 border-b border-border px-3 py-1 space-y-0.5 bg-surface">
+          {notices.map((n) => (
+            <p key={n} className="font-mono text-[10px] text-amber-400 leading-relaxed">{n}</p>
+          ))}
+        </div>
+      )}
       {!collapsed && (
         body ?? (
           <pre className="overflow-auto p-3 font-mono text-xs leading-relaxed text-text m-0 bg-surface flex-1">
             {content
               ? content.split('\n').map((line, i) => (
-                  <ZplLine key={i} line={line} />
+                  <ZplLine
+                    key={i}
+                    ref={i === firstHighlighted ? highlightRef : undefined}
+                    line={line}
+                    highlight={highlightedLines?.has(i)}
+                  />
                 ))
               : <span className="text-muted">{emptyMessage}</span>
             }

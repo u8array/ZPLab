@@ -10,7 +10,14 @@ export function dedupCommandsByKind(
   findings: readonly ImportFinding[],
   kind: ImportFindingKind,
 ): string[] {
-  return [...new Set(findings.filter((f) => f.kind === kind).map((f) => f.command))];
+  // Keyed past the prefix glyph: a ^CC/^CT remap spells one command two ways.
+  const byBytes = new Map<string, string>();
+  for (const f of findings) {
+    if (f.kind !== kind) continue;
+    const key = f.command.slice(1);
+    if (!byBytes.has(key)) byBytes.set(key, f.command);
+  }
+  return [...byBytes.values()];
 }
 
 /** Routable setup-script findings; drives the import routing prompt. */

@@ -942,6 +942,8 @@ const no = {
     editSourceConfirmApply: 'Bruk likevel',
     editSourceUnbalancedFmt: 'Ubalansert kode: hver {open}-blokk trenger sin avsluttende {close}.',
     editSourceTooManyPagesFmt: 'Koden overskrider {max} etikettformater.',
+    replayRiskSetupFmt: 'Å sende denne koden endrer også skriverinnstillinger: {commands}',
+    replayRiskActionsFmt: 'Å sende denne koden utløser også skriverhandlinger: {commands}',
   },
   contextMenu: {
     copy: 'Kopier',

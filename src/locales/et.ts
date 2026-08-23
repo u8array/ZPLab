@@ -942,6 +942,8 @@ const et = {
     editSourceConfirmApply: 'Rakenda siiski',
     editSourceUnbalancedFmt: 'Tasakaalustamata kood: iga {open}-plokk vajab lõpetavat {close}.',
     editSourceTooManyPagesFmt: 'Kood ületab {max} sildivormingut.',
+    replayRiskSetupFmt: 'Selle koodi saatmine muudab ka printeri sätteid: {commands}',
+    replayRiskActionsFmt: 'Selle koodi saatmine käivitab ka printeri toiminguid: {commands}',
   },
   contextMenu: {
     copy: 'Kopeeri',

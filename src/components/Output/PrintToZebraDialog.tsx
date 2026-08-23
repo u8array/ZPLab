@@ -14,6 +14,7 @@ import { isDesktopShell } from "../../lib/platform";
 import { getPrinterAddress, setPrinterAddress } from "../../lib/printerAddress";
 import { useLabelStore, selectBatchInputs, selectBatchPrintCount } from "../../store/labelStore";
 import { formatTemplate } from "../../lib/formatTemplate";
+import { exportPrinterImpact, printerImpactNotices } from "../../lib/exportImpact";
 import { listLocalPrinters, sendZplLocal, isLikelyZebra, type LocalPrinter } from "../../lib/localPrint";
 import { sendZplUsb, setupUsbAccess, isLikelyZebra as isUsbZebra } from "../../lib/usbPrint";
 import { printerOptionLabel } from "../../lib/printerLabel";
@@ -76,6 +77,23 @@ function TransportBody({ view, fieldLabel }: { view: TransportView; fieldLabel: 
   );
 }
 
+/** Synchronous on purpose: the banner must exist the moment the send button goes live.
+ *  Split out because the dialog is compiler-hostile (try/finally), so no memo holds there. */
+function ImpactNotices({ zpl }: { zpl: string }) {
+  const t = useT();
+  const notices = printerImpactNotices(exportPrinterImpact(zpl), t);
+  if (notices.length === 0) return null;
+  return (
+    <div role="status">
+      {notices.map((n) => (
+        <p key={n} className="px-3 py-1.5 border-b border-border font-mono text-[10px] text-amber-400">
+          {n}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 interface Props {
   zpl: string;
   onClose: () => void;
@@ -93,6 +111,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
   );
   const printQuantity = useLabelStore((s) => s.label.printQuantity ?? 1);
   const batchCount = useLabelStore(selectBatchPrintCount);
+  const printSource = useLabelStore((s) => s.zebraPrintSource);
 
   // Network tab state; the address is shared with the preview provider.
   const [ip, setIp] = useState(() => getPrinterAddress().host);
@@ -412,6 +431,10 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
             : formatTemplate(t.zebraPrint.batchNoticeFmt, { n: String(batchRows) })}
         </p>
       )}
+
+      {/* These are the exact bytes sent (batch form included), which the panel may never
+          have shown. Source-gated: a setup script changing settings is its purpose. */}
+      {printSource !== "setupScript" && <ImpactNotices zpl={zpl} />}
 
       {/* Tabs */}
       <div className="flex border-b border-border">

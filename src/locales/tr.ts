@@ -942,6 +942,8 @@ const tr = {
     editSourceConfirmApply: 'Yine de uygula',
     editSourceUnbalancedFmt: 'Dengesiz kod: her {open} bloğu kapanış {close} gerektirir.',
     editSourceTooManyPagesFmt: 'Kod {max} etiket biçimini aşıyor.',
+    replayRiskSetupFmt: 'Bu kodu göndermek yazıcı ayarlarını da değiştirir: {commands}',
+    replayRiskActionsFmt: 'Bu kodu göndermek yazıcı işlemlerini de tetikler: {commands}',
   },
   contextMenu: {
     copy: 'Kopyala',
