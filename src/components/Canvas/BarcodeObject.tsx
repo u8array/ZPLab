@@ -340,7 +340,9 @@ export function BarcodeObject({
       printInterpEnabled && BARCODE_1D_TYPES.has(obj.type);
     const isUprightEanUpc = isUpright && isEanUpc;
 
-    if (showHriOverlay) {
+    // EAN/UPC always takes the zone-stretched path (guard tails are HRI-
+    // independent, see renderEanUpcRawCanvas); HRI only adds the text overlay.
+    if (showHriOverlay || isEanUpc) {
       const ub = dim.upright;
       // Inner Group covers the full upright bbox so KImage + text both
       // live inside it at upright bbox-relative coords. The Group's
@@ -352,12 +354,12 @@ export function BarcodeObject({
       // sys/trail digits visible past the bar bbox; the helper returns
       // them alongside the digit nodes, gated by isUprightEanUpc at
       // the parent Group below.
-      let overlayContent: React.ReactNode;
+      let overlayContent: React.ReactNode = null;
       let eanOverlay: ReturnType<typeof buildEanUpcDigitOverlay> | null = null;
       // EAN/UPC above renders a single centered HRI line (Vera, Labelary-
       // validated at all mw), not the split sys/trail fragment layout used
       // below; route it through the generic centered-text path.
-      if (isEanUpc && !isTextAbove) {
+      if (showHriOverlay && isEanUpc && !isTextAbove) {
         // Display px per encoded module = bar width / module count, where
         // the bwip canvas is moduleCount * renderScale px wide.
         const renderScale = get1DBwipScale(moduleWidth, scale, dpmm);
@@ -380,7 +382,7 @@ export function BarcodeObject({
         // helper's bar-relative textY equals the bbox-relative one
         // here; render directly without an offset wrapper.
         overlayContent = eanOverlay.nodes;
-      } else {
+      } else if (showHriOverlay) {
         // Other 1D: centered text, optionally flanked by start/stop glyphs.
         // GS1-128 HRI prints in Font 0, not the generic HRI face.
         const fontFamily = gs1Hri

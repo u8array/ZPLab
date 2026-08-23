@@ -4,7 +4,7 @@
 
 import bwipjs from "bwip-js/browser";
 import { errorMessage } from "../../lib/errorMessage";
-import { getEntry, type LeafObject } from "@zplab/core/registry";
+import { type LeafObject } from "@zplab/core/registry";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
@@ -111,20 +111,17 @@ export interface EanUpcRawCanvasArgs {
   modulePxInt: number;
   barHeightPx: number;
   tailHeightPx: number;
-  /** False matches Zebra's HRI-off render (bars only, tails not drawn). */
-  extendGuards: boolean;
 }
 
-/** Bars + extended guard tails in one fillRect pass via bwip raw
- *  geometry. Canvas always reserves the firmware 13-dot text zone so
- *  the consumer's KImage height stays constant. */
+/** Bars + extended guard tails in one fillRect pass via bwip raw geometry.
+ *  Tails draw unconditionally: ZD230-verified the firmware keeps them with the
+ *  interpretation line off. */
 export function renderEanUpcRawCanvas({
   type,
   text,
   modulePxInt,
   barHeightPx,
   tailHeightPx,
-  extendGuards,
 }: EanUpcRawCanvasArgs): HTMLCanvasElement | null {
   const barH = Math.round(barHeightPx);
   const tailH = Math.max(0, Math.round(tailHeightPx));
@@ -145,7 +142,7 @@ export function renderEanUpcRawCanvas({
   for (const w of g.sbs) {
     const wPx = w * modulePxInt;
     if (isBar) {
-      const isGuard = extendGuards && (g.bbs?.[barIdx] ?? 0) < 0;
+      const isGuard = (g.bbs?.[barIdx] ?? 0) < 0;
       const h = isGuard ? canvas.height : barH;
       ctx.fillRect(cx, 0, wPx + RAW_BAR_SEAM, h);
       barIdx++;
@@ -310,16 +307,12 @@ export function renderBarcodeCanvas(
   }
   if (EAN_UPC_TYPES.has(obj.type)) {
     const moduleWidth = (obj.props as { moduleWidth?: number }).moduleWidth ?? 2;
-    const printInterpEnabled =
-      !getEntry(obj.type)?.interpretationLocked &&
-      !!(obj.props as { printInterpretation?: boolean }).printInterpretation;
     const canvas = renderEanUpcRawCanvas({
       type: obj.type as EanUpcType,
       text: getObjectStringContent(obj) ?? "",
       modulePxInt: get1DBwipScale(moduleWidth, scale, dpmm),
       barHeightPx: dotsToPx((obj.props as { height: number }).height, scale, dpmm),
       tailHeightPx: dotsToPx(EAN_TEXT_ZONE_DOTS, scale, dpmm),
-      extendGuards: printInterpEnabled,
     });
     return { canvas, error: canvas ? null : "EAN/UPC encode failed" };
   }
