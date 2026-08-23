@@ -605,6 +605,15 @@ describe("mcp-server tools", () => {
     expect(obj.fieldJustify).toBe("R");
   });
 
+  it("rejects an unbalanced ^XA/^XZ stream on both raw-ZPL tools", () => {
+    const open = "^XA^FO10,10^A0N,30,30^FDX^FS";
+    const v = validateZpl(open);
+    expect(v.ok).toBe(false);
+    if (v.ok) return;
+    expect(v.errors[0]).toMatch(/\^XA\/\^XZ/);
+    expect(importZpl(open).ok).toBe(false);
+  });
+
   it("rejects a multi-^XA stream whose blocks set different ^PW/^LL sizes", () => {
     const mixed = "^XA^PW400^LL200^FO10,10^FDA^FS^XZ^XA^PW800^LL400^FO10,10^FDB^FS^XZ";
     const v = validateZpl(mixed);

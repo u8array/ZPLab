@@ -164,10 +164,10 @@ interface Options {
    *  Konva's bbox semantics in boundBoxFunc no longer match our axis-aware
    *  snap / pin helpers; we fall back to native Konva resize there. */
   viewRotation: number;
-  /** True while Labelary preview replaces the editor leaves. The selected
-   *  KonvaObject nodes are unmounted during preview, so we re-resolve them
+  /** True while the editor is frozen (preview overlay or source edit). A
+   *  preview unmounts the selected KonvaObject nodes, so we re-resolve them
    *  by id when the flag flips back to false. */
-  previewLocks: boolean;
+  editorFrozen: boolean;
 }
 
 export interface TransformerState {
@@ -208,7 +208,7 @@ export function useKonvaTransformer({
   snapBypassRef,
   setGuides,
   viewRotation,
-  previewLocks,
+  editorFrozen,
 }: Options): TransformerState {
   // Captures the per-type snap reference at drag start so boundBoxFunc uses a
   // fixed step size throughout the entire drag session (row height for stacked
@@ -433,8 +433,8 @@ export function useKonvaTransformer({
     // detect the line/non-line distinction that governs transformer attachment.
     // selectedSignature triggers a re-measure when an object's size or position
     // changes (e.g. after commitTransform finishes a resize).
-    // previewLocks: KonvaObject nodes are unmounted during preview, so the
-    // transformer holds stale node refs until we re-resolve once preview ends.
+    // editorFrozen: a preview unmounts the KonvaObject nodes, so the
+    // transformer holds stale node refs until we re-resolve once it ends.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectedIds,
@@ -443,7 +443,7 @@ export function useKonvaTransformer({
     blockDragMode,
     stageRef,
     transformerRef,
-    previewLocks,
+    editorFrozen,
     multiResizeBboxDots?.x,
     multiResizeBboxDots?.y,
     multiResizeBboxDots?.width,

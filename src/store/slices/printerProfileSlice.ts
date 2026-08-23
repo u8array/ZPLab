@@ -6,7 +6,7 @@ import {
   type PrinterProfile,
 } from '@zplab/core/types/PrinterProfile';
 import { pruneUndefined } from '@zplab/core/lib/pruneUndefined';
-import { selectPreviewLocksEditor } from '../labelStore.selectors';
+import { selectEditorFrozen } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
 export interface PrinterProfileSlice {
@@ -34,7 +34,7 @@ export const createPrinterProfileSlice: StateCreator<
 
   patchPrinterProfile: (patch) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       // Drop keys explicitly set to `undefined` so the profile stays
       // "field absent = printer default" rather than "field present with
       // undefined". Validate the merged result through the schema so the
@@ -64,7 +64,7 @@ export const createPrinterProfileSlice: StateCreator<
 
   resetPrinterProfile: () =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       return { printerProfile: {} };
     }),
 });

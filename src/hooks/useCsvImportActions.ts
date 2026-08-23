@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent } from "react";
-import { useLabelStore } from "../store/labelStore";
+import { useLabelStore, selectSourceEditing } from "../store/labelStore";
 import {
   parseCsvText,
   rememberImport,
@@ -172,6 +172,9 @@ export function useCsvImportActions(onApplied?: () => void) {
 function applyImport(p: ParsedImport, opts: { keepMapping: boolean }): void {
   const { loadDataset, setColumnMapping, openMappingModal, columnMapping, clearUserError } =
     useLabelStore.getState();
+  // All-or-nothing under a source edit: setColumnMapping would be blocked
+  // while loadDataset went through, leaving a dataset under a stale mapping.
+  if (selectSourceEditing(useLabelStore.getState())) return;
   rememberImport(p.bytes);
   const effectiveMapping: ColumnMapping | null = opts.keepMapping ? columnMapping : null;
   if (!opts.keepMapping) setColumnMapping(null);

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect } from "react";
+import { useNodeDraggable } from "./hooks/useNodeDraggable";
 import { Image as KImage, Group, Rect, Shape, Text } from "react-konva";
 import type Konva from "konva";
 import { BARCODE_1D_TYPES, ObjectRegistry, objectResolvesCtrl } from "@zplab/core/registry";
@@ -121,6 +122,7 @@ export function BarcodeObject({
   preBindingContent: string;
 }) {
   const colors = useColorScheme();
+  const draggable = useNodeDraggable(obj);
   // Vera Mono (HRI) loads async; Konva won't repaint on an unchanged
   // fontFamily once the FontFace resolves. Keying the overlay on this
   // version remounts it on `loadingdone` for a fresh paint.
@@ -439,7 +441,7 @@ export function BarcodeObject({
           x={x}
           y={y}
           {...clipProps}
-          draggable={!obj.locked}
+          draggable={draggable}
           {...selectionHandlers(onSelect)}
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
@@ -504,7 +506,7 @@ export function BarcodeObject({
         id={obj.id}
         x={x}
         y={y}
-        draggable={!obj.locked}
+        draggable={draggable}
         {...selectionHandlers(onSelect)}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
@@ -553,7 +555,7 @@ export function BarcodeObject({
       id={obj.id}
       x={x}
       y={y}
-      draggable={!obj.locked}
+      draggable={draggable}
       {...selectionHandlers(onSelect)}
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}

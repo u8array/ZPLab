@@ -41,8 +41,12 @@ const EXPECTED_PUBLIC_SELECTORS = [
   'getCurrentObjects',
   'selectBatchInputs',
   'selectCanBatchExport',
+  'selectDocumentEmits',
+  'selectEditorFrozen',
   'selectLabelaryNoticeRequired',
   'selectPreviewLocksEditor',
+  'selectSourceEditDirty',
+  'selectSourceEditing',
   'useCurrentObjects',
   'useHistory',
 ];
@@ -71,6 +75,8 @@ describe('labelStore tripwires', () => {
     expect(typeof mod.canCallLabelary(state)).toBe('boolean');
     expect(typeof mod.selectLabelaryNoticeRequired(state)).toBe('boolean');
     expect(typeof mod.selectPreviewLocksEditor(state)).toBe('boolean');
+    expect(typeof mod.selectEditorFrozen(state)).toBe('boolean');
+    expect(typeof mod.selectSourceEditing(state)).toBe('boolean');
     expect(mod.selectBatchInputs(state)).toBeDefined();
     expect(typeof mod.selectCanBatchExport(state)).toBe('boolean');
   });

@@ -14,7 +14,7 @@ import { CANVAS_DROPPABLE_ID } from "../../dnd/types";
 import { paletteGhostHandlers } from "./paletteGhostMonitor";
 import { Stage, Layer, Group, Image as KImage, Rect, Transformer } from "react-konva";
 import type Konva from "konva";
-import { useLabelStore, useCurrentObjects, currentObjects, currentPageLabel, getCurrentObjects, selectPreviewLocksEditor } from "../../store/labelStore";
+import { useLabelStore, useCurrentObjects, currentObjects, currentPageLabel, getCurrentObjects, selectEditorFrozen, selectPreviewLocksEditor } from "../../store/labelStore";
 import { isGroup, getAllLeaves, exportableLeaves, expandSelection, selectionTargetId, findObjectById, canDeleteSelection, canGroupSelection, canUngroupSelection, hasLockedAncestor, isSelectionLocked, type LabelObject } from "@zplab/core/types/Group";
 import { pxToDots, dotsToPx, mmToDots, SCREEN_PX_PER_MM } from "@zplab/core/lib/coordinates";
 import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
@@ -269,12 +269,16 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const columnMapping = useLabelStore((s) => s.columnMapping);
   const paletteRows = useLabelStore((s) => s.paletteRows);
   const previewMode = useLabelStore((s) => s.previewMode);
-  const previewLocks = useLabelStore(selectPreviewLocksEditor);
+  const editorFrozen = useLabelStore(selectEditorFrozen);
+  // Overlay question, not freeze question: source-edit freezes the model but
+  // the objects stay on canvas; only a preview replaces them with its render.
+  const previewCoversCanvas = useLabelStore(selectPreviewLocksEditor);
 
   useEffect(() => {
     if (!pickingRfidPosition) return;
-    // A preview covers the canvas, so the pick has nothing left to click.
-    if (previewLocks) {
+    // Frozen editor: a preview covers the canvas, or a source buffer owns the
+    // input; either way the pick cannot land.
+    if (editorFrozen) {
       endRfidPositionPick();
       return;
     }
@@ -283,13 +287,13 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [pickingRfidPosition, previewLocks, endRfidPositionPick]);
+  }, [pickingRfidPosition, editorFrozen, endRfidPositionPick]);
   const exitPreviewMode = useLabelStore((s) => s.exitPreviewMode);
   // Entering preview unmounts the dragged node, so a mid-drag dragend may never
   // fire; clear the flag so off-label marks aren't stranded hidden afterwards.
   useEffect(() => {
-    if (previewLocks) setIsDragging(false);
-  }, [previewLocks]);
+    if (editorFrozen) setIsDragging(false);
+  }, [editorFrozen]);
 
   // Pre-decode so toggling preview on doesn't flash a frame of empty space.
   const [previewImg, setPreviewImg] = useState<HTMLImageElement | null>(null);
@@ -369,7 +373,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   }, []);
 
 
-  // Global binding so user can exit preview from anywhere.
+  // Global binding so user can exit preview from anywhere. Preview-specific
+  // on purpose: Escape must not silently discard a source-edit buffer.
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.code !== 'Escape') return;
@@ -386,8 +391,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.code !== "Delete" && e.code !== "Backspace") return;
       if (isEditableTarget(e.target as HTMLElement)) return;
-      // Preview is a frozen snapshot; editing would drift the comparison.
-      if (selectPreviewLocksEditor(useLabelStore.getState())) return;
+      // The frozen model must not change under the preview snapshot or an
+      // open source buffer.
+      if (selectEditorFrozen(useLabelStore.getState())) return;
       // Deleting mid-resize would destroy the nodes under the active gesture.
       if (transformActiveRef.current) return;
       const { selectedIds: ids } = useLabelStore.getState();
@@ -408,7 +414,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
 
       const state = useLabelStore.getState();
-      if (selectPreviewLocksEditor(state)) return;
+      if (selectEditorFrozen(state)) return;
       const ids = state.selectedIds;
       const objs = currentObjects(state);
       if (ids.length === 0) return;
@@ -638,7 +644,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // Needs >1 visible movable leaf (attachableIds counts hidden ones) and no
   // locked member; either would break the projected union.
   const multiResizeBboxDots =
-    movableSelIds.length > 1 && staticSelIds.length === 0 && !previewLocks
+    movableSelIds.length > 1 && staticSelIds.length === 0 && !editorFrozen
       ? movableUnionDots
       : null;
   const movableFrameBase = toFramePx(movableUnionDots);
@@ -647,7 +653,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // ones, so a hidden-but-exported object is still warned and a visible-but-not-
   // exported one isn't falsely flagged: the warnings track what prints. Suppressed
   // during drag/preview-lock like the rest of the chrome.
-  const preflightSuppressed = previewLocks || isDragging;
+  const preflightSuppressed = editorFrozen || isDragging;
   const preflightLeaves = preflightSuppressed ? [] : exportableLeaves(objects);
   const preflightFindings = preflightSuppressed
     ? []
@@ -963,7 +969,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     snapBypassRef,
     setGuides,
     viewRotation,
-    previewLocks,
+    editorFrozen,
   });
 
   // After useKonvaTransformer: reuses its centeredResizeArmed so the Alt-handle
@@ -1000,7 +1006,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     stageRef,
     attachableIds,
     lockedLeafIds,
-    previewLocks,
+    editorFrozen,
     dragActiveRef,
     actionBarRef,
     lockedFrameRef,
@@ -1044,7 +1050,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // Contextual action bar. Rotate is a 90-degree step (ZPL only stores N/R/I/B,
   // so a button beats the free-rotation drag handle other tools use). Icons rest
   // neutral and accent on hover; delete is set apart (divider) and destructive
-  // (red). The bar itself is gated on !previewLocks at the render site.
+  // (red). The bar itself is gated on !editorFrozen at the render site.
   const actionButtons: {
     key: string;
     iconPath: string;
@@ -1156,24 +1162,24 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   };
 
   const handleStageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (previewLocks) return;
+    if (editorFrozen) return;
     if (consumeDidPan()) return;
     if (consumeDidLasso()) return;
     if (e.target === e.target.getStage()) selectObjects([]);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (previewLocks) return;
+    if (editorFrozen) return;
     onPanMouseMove(e);
     onLassoMouseMove(e);
   };
   const handleMouseUp = () => {
-    if (previewLocks) return;
+    if (editorFrozen) return;
     onPanMouseUp();
     onLassoMouseUp();
   };
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (previewLocks) return;
+    if (editorFrozen) return;
     onPanMouseDown(e);
   };
 
@@ -1218,9 +1224,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
 
   const openContextMenu = (e: Konva.KonvaEventObject<PointerEvent>) => {
     e.evt.preventDefault();
-    // No menu during a preview lock; every action would be disabled anyway and
+    // No menu while the editor is frozen; every action would be disabled anyway and
     // we must not mutate the selection behind it.
-    if (previewLocks) return;
+    if (editorFrozen) return;
     const stage = stageRef.current;
     if (!stage) return;
     // Find the object under the click by walking up to the first node whose id
@@ -1320,7 +1326,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       locked: isSelectionLocked(objects, sel),
       hasClipboard: clipboard.length > 0,
       hasObjects: objects.length > 0,
-      previewLocks,
+      editorFrozen,
       addableGroups,
       switchTypeGroups,
       switchTypeLocked,
@@ -1333,7 +1339,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   useDndMonitor(
     paletteGhostHandlers({
       live: ghostLiveRef,
-      locked: previewLocks,
+      locked: editorFrozen,
       pointerPos: () => pointerToLabelDots(lastPointerRef.current.x, lastPointerRef.current.y),
       setGhost,
       addObject,
@@ -1361,8 +1367,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         background: colors.canvasBg,
         backgroundImage: `radial-gradient(circle, ${colors.canvasDot} 1px, transparent 1px)`,
         backgroundSize: "24px 24px",
-        // Locus-of-attention feedback for preview lock.
-        cursor: previewLocks ? 'not-allowed' : pickingRfidPosition ? 'crosshair' : cursor,
+        // Locus-of-attention feedback for the frozen editor.
+        cursor: editorFrozen ? 'not-allowed' : pickingRfidPosition ? 'crosshair' : cursor,
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -1546,15 +1552,15 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                 width={physicalWidthPx}
                 height={labelHeightPx}
                 fill="white"
-                // Preview: amber glow matches the Labelary-warning palette.
-                shadowColor={previewLocks ? 'rgba(251, 191, 36, 0.55)' : 'rgba(0,0,0,0.4)'}
-                shadowBlur={previewLocks ? 28 : 12}
-                shadowOffsetY={previewLocks ? 0 : 2}
+                // Frozen editor: amber glow (matches the Labelary-warning palette).
+                shadowColor={editorFrozen ? 'rgba(251, 191, 36, 0.55)' : 'rgba(0,0,0,0.4)'}
+                shadowBlur={editorFrozen ? 28 : 12}
+                shadowOffsetY={editorFrozen ? 0 : 2}
                 onClick={() => selectObjects([])}
               />
 
               {/* Safe-area guide: non-interactive dashed inset, accent like the ^FB wrap-guide. */}
-              {!previewLocks && safeAreaPx && (
+              {!editorFrozen && safeAreaPx && (
                 <Rect
                   name={CAPTURE_CHROME}
                   x={safeAreaPx.x}
@@ -1570,7 +1576,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
 
               {/* ^RS programming position: label-config guide, drawn with
                   the safe area rather than as an object. */}
-              {!previewLocks && rfidGuideVisible && (
+              {!editorFrozen && rfidGuideVisible && (
                 <RfidPositionGuide
                   labelX={physicalLabelX}
                   labelY={labelOffsetY}
@@ -1598,7 +1604,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                 </Group>
               )}
 
-              {previewLocks ? (
+              {previewCoversCanvas ? (
                 previewImg && (
                   <>
                     <KImage
@@ -1688,7 +1694,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                 );
               })}
 
-              {!previewLocks && ghost && (
+              {!editorFrozen && ghost && (
                 <Group opacity={0.5} listening={false}>
                   <KonvaObject
                     obj={ghost}
@@ -1706,7 +1712,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
 
               {/* Multi-select/group frame from model bounds (matches snap borders);
                   positioned imperatively in useLayoutEffect + the drag onDelta. */}
-              {!previewLocks && selectionFrameBase && !multiResizeBboxDots && (
+              {!editorFrozen && selectionFrameBase && !multiResizeBboxDots && (
                 <Rect
                   ref={selectionFrameRef}
                   name={CAPTURE_CHROME}
@@ -1718,7 +1724,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               )}
 
               {/* Multi-resize proxy; geometry synced by the transformer hook. */}
-              {!previewLocks && multiResizeBboxDots && (
+              {!editorFrozen && multiResizeBboxDots && (
                 <Rect
                   ref={multiResizeProxyRef}
                   id={MULTI_RESIZE_PROXY_ID}
@@ -1731,7 +1737,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
 
               {/* Box per group member: movable parts (blue) drag; locked parts
                   (amber, the locked convention) stay put. */}
-              {!previewLocks && movableGroupRects.length > 0 && (
+              {!editorFrozen && movableGroupRects.length > 0 && (
                 <Group ref={subOutlineGroupRef} name={CAPTURE_CHROME} listening={false}>
                   {movableGroupRects.map((r, i) => (
                     <Rect
@@ -1747,7 +1753,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                   ))}
                 </Group>
               )}
-              {!previewLocks && staticGroupRects.length > 0 && (
+              {!editorFrozen && staticGroupRects.length > 0 && (
                 <Group name={CAPTURE_CHROME} listening={false}>
                   {staticGroupRects.map((r, i) => (
                     <Rect
@@ -1766,11 +1772,11 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               )}
 
               {/* Drag-snap guides: group-local, so they rotate with the view. */}
-              {!previewLocks && <GuideLines guides={dragGuides} />}
+              {!editorFrozen && <GuideLines guides={dragGuides} />}
             </Group>
 
             {/* Outside the rotation Group; clientRect/Transformer respect parent transforms. */}
-            {!previewLocks && lassoRect && (
+            {!editorFrozen && lassoRect && (
               <Rect
                 x={lassoRect.x}
                 y={lassoRect.y}
@@ -1784,9 +1790,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               />
             )}
 
-            {!previewLocks && <GuideLines guides={guides} />}
+            {!editorFrozen && <GuideLines guides={guides} />}
 
-            {!previewLocks && (
+            {!editorFrozen && (
               <Transformer
                 ref={transformerRef}
                 borderDash={isMultiSelection && multiResizeBboxDots ? [6, 4] : undefined}
@@ -1817,7 +1823,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               />
             )}
 
-            {!previewLocks && lockedLeafIds.length > 0 && (
+            {!editorFrozen && lockedLeafIds.length > 0 && (
               <Group ref={lockedFrameRef}>
                 {lockedLeafIds.map((id) => (
                   <Rect
@@ -1831,7 +1837,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               </Group>
             )}
 
-            {!previewLocks && attachableIds.length > 0 && actionButtons.length > 0 && (
+            {!editorFrozen && attachableIds.length > 0 && actionButtons.length > 0 && (
               <Group ref={actionBarRef}>
                 {(() => {
                   const n = actionButtons.length;

@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import { selectPreviewLocksEditor, currentObjects } from '../labelStore.selectors';
+import { selectEditorFrozen, currentObjects } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 import { updateCurrentObjects } from '../labelStore.internals';
 
@@ -30,8 +30,10 @@ export const createSelectionSlice: StateCreator<LabelState, [], [], SelectionSli
   selectedIds: [],
   pristineEmptyIds: [],
 
+  // Selection freezes with the rest of the editor (see selectEditorFrozen).
   selectObject: (id) =>
     set((state) => {
+      if (selectEditorFrozen(state)) return {};
       const next = id ? [id] : [];
       const same =
         state.selectedIds.length === next.length &&
@@ -41,14 +43,18 @@ export const createSelectionSlice: StateCreator<LabelState, [], [], SelectionSli
     }),
 
   toggleSelectObject: (id) =>
-    set((state) => ({
-      selectedIds: state.selectedIds.includes(id)
-        ? state.selectedIds.filter((s) => s !== id)
-        : [...state.selectedIds, id],
-    })),
+    set((state) => {
+      if (selectEditorFrozen(state)) return {};
+      return {
+        selectedIds: state.selectedIds.includes(id)
+          ? state.selectedIds.filter((s) => s !== id)
+          : [...state.selectedIds, id],
+      };
+    }),
 
   selectObjects: (ids) =>
     set((state) => {
+      if (selectEditorFrozen(state)) return {};
       const same =
         state.selectedIds.length === ids.length &&
         state.selectedIds.every((id, i) => id === ids[i]);
@@ -58,7 +64,7 @@ export const createSelectionSlice: StateCreator<LabelState, [], [], SelectionSli
 
   removeSelectedObjects: () =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const sel = new Set(state.selectedIds);
       const objs = currentObjects(state);
       const lockedIds = objs.flatMap((o) => sel.has(o.id) && o.locked ? [o.id] : []);

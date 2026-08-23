@@ -6,7 +6,7 @@ import type { DbSourceRef } from '@zplab/core/types/DataSource';
 import { forgetImport } from '../../lib/csvImport';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { parseDesignFile, designFileErrors } from '@zplab/core/lib/designFile';
-import { selectPreviewLocksEditor } from '../labelStore.selectors';
+import { selectEditorFrozen } from '../labelStore.selectors';
 import { configPatchAffectsEmit } from '../labelStore.internals';
 import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
 import { rescaleDesign, rescaleParamsFor } from '../../lib/densityRescale';
@@ -58,7 +58,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
 
   setLabelConfig: (config) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const label = { ...state.label, ...config };
       // An emit-affecting config edit invalidates each page overlay's verbatim
       // config bytes; drop overlays so those pages regenerate with the new
@@ -104,6 +104,8 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       printerSettingsTab: null,
       mappingModalOpen: false,
       connectWizardOpen: false,
+      // An open source buffer belongs to the replaced document.
+      sourceEdit: { status: 'off' },
     });
     // A document replacement is not an undoable step back into the previous
     // file; clearing also prevents an undo from stranding the new design's
@@ -130,7 +132,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
 
   appendPages: (pages) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (pages.length === 0) return {};
       // Strip overlays from appended pages: they are recontextualized into the
       // current design (whose label config replaces the imported one), so their
@@ -148,7 +150,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
 
   rescaleDensity: (toDpmm, configPatch) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (toDpmm === state.label.dpmm) return {};
       const p = rescaleParamsFor({ kind: 'dpmm', toDpmm, configPatch }, state.label);
       // Geometry changes, so the captured overlay bytes no longer match; drop
@@ -159,7 +161,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
 
   rescaleJmDensity: (jmDensity) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const p = rescaleParamsFor({ kind: 'jm', toJm: jmDensity }, state.label);
       // Emission changes either way (^JMA vs none), so overlays go stale
       // even without a ratio change; mirror setLabelConfig.

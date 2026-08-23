@@ -2,6 +2,7 @@ import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, MAX_LABEL_LENGTH_RANG
 import { parseIntOrUndef } from "../../inputParse";
 import { isYesNo } from "../../../types/typeHelpers";
 import { dotsToMm } from "../../coordinates";
+import { isPlausibleLabelMm } from "../../zplLabelMeta";
 import { deriveUnitScale, type ParserState } from "../context";
 import { dotsFor, firstChar, inRange, int, intDotsOrUndef, strParam } from "../helpers";
 import type { Handler } from "../types";
@@ -22,13 +23,20 @@ export function createLabelConfigHandlers(
   const physDots = (raw: string | undefined): number | undefined =>
     intDotsOrUndef(raw, deriveUnitScale({ muMode: s.format.muMode }, dpmm));
   return {
+    // Implausible sizes are reported (partialCmds), not adopted; see isPlausibleLabelMm.
     PW(_, rest) {
       const w = physDots(rest);
-      if (w !== undefined && w > 0) labelConfig.widthMm = dotsToMm(w, dpmm);
+      if (w === undefined || w <= 0) return;
+      const mm = dotsToMm(w, dpmm);
+      if (isPlausibleLabelMm(mm)) labelConfig.widthMm = mm;
+      else s.result.partialCmds.add("^PW");
     },
     LL(_, rest) {
       const h = physDots(rest);
-      if (h !== undefined && h > 0) labelConfig.heightMm = dotsToMm(h, dpmm);
+      if (h === undefined || h <= 0) return;
+      const mm = dotsToMm(h, dpmm);
+      if (isPlausibleLabelMm(mm)) labelConfig.heightMm = mm;
+      else s.result.partialCmds.add("^LL");
     },
     PQ(p) {
       const qty = int(p[0], 0);

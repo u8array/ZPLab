@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLabelStore, useHistory, getCurrentObjects, selectPreviewLocksEditor } from "../store/labelStore";
+import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen } from "../store/labelStore";
 import { nextRotation } from "../components/Canvas/rotationGeometry";
 import { isEditableTarget } from "../lib/dom";
 
@@ -17,11 +17,11 @@ export function useGlobalShortcuts() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      // Preview overlay freezes the design at activation time; every
+      // Preview overlay or an open source buffer freezes the design; every
       // shortcut here either edits the model or changes the selection
       // /page, both of which would visibly drift away from the frozen
       // snapshot. Block them wholesale.
-      if (selectPreviewLocksEditor(useLabelStore.getState())) return;
+      if (selectEditorFrozen(useLabelStore.getState())) return;
       const mod = e.metaKey || e.ctrlKey;
 
       // Editable targets keep their native undo/redo, copy/paste and

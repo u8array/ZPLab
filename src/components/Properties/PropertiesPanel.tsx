@@ -1,6 +1,6 @@
 import { useId, useState, type RefObject } from "react";
 import { Cog6ToothIcon, InformationCircleIcon, FolderPlusIcon } from "@heroicons/react/16/solid";
-import { useLabelStore, useCurrentObjects, currentPageLabel, selectPreviewLocksEditor } from "../../store/labelStore";
+import { useLabelStore, useCurrentObjects, currentPageLabel, selectEditorFrozen } from "../../store/labelStore";
 import type { LabelCanvasHandle } from "../Canvas/LabelCanvas";
 import type { AlignOp, DistributeAxis, AlignRef } from "../../lib/align";
 import type { AlignSelectionRef } from "../../store/slices/uiSlice";
@@ -494,7 +494,7 @@ function LabelConfigPanel({
     const s = useLabelStore.getState();
     return rescaleWouldChange(s.pages, s.label, includeCalibrationFields, patch);
   };
-  const locked = useLabelStore(selectPreviewLocksEditor);
+  const locked = useLabelStore(selectEditorFrozen);
   const setPrinterSettingsTab = useLabelStore((s) => s.setPrinterSettingsTab);
   // The select edits the design-wide mode; surface a page's persisted ^JM
   // override so a diverging page is not an invisible no-op target.

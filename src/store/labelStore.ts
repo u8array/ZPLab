@@ -26,6 +26,7 @@ import { createObjectSlice, type ObjectSlice } from './slices/objectSlice';
 import { createAppUpdateSlice, type AppUpdateSlice } from './slices/appUpdateSlice';
 import { createFeedbackSlice, type FeedbackSlice } from './slices/feedbackSlice';
 import { createLifecycleSlice, type LifecycleSlice } from './slices/lifecycleSlice';
+import { createSourceEditSlice, type SourceEditSlice } from './slices/sourceEditSlice';
 import type { Variable, VariableInput } from '@zplab/core/types/Variable';
 
 export { __resetPreviewCacheForTests } from './slices/previewSlice';
@@ -45,7 +46,8 @@ export type LabelState =
   & LabelConfigSlice
   & AppUpdateSlice
   & FeedbackSlice
-  & LifecycleSlice;
+  & LifecycleSlice
+  & SourceEditSlice;
 
 export {
   currentObjects,
@@ -54,12 +56,16 @@ export {
   selectLabelaryNoticeRequired,
   selectEffectivePreviewProvider,
   selectPreviewLocksEditor,
+  selectEditorFrozen,
+  selectSourceEditing,
+  selectSourceEditDirty,
+  selectDocumentEmits,
   selectHasPerLabelOverrides,
   selectBatchInputs,
   selectCanBatchExport,
   selectBatchPrintCount,
 } from './labelStore.selectors';
-import { currentObjects, selectPreviewLocksEditor } from './labelStore.selectors';
+import { currentObjects, selectEditorFrozen } from './labelStore.selectors';
 
 export function migrateLegacy(persistedState: unknown, version: number): unknown {
   if (!persistedState || typeof persistedState !== 'object') return persistedState;
@@ -509,6 +515,7 @@ export const useLabelStore = create<LabelState>()(
       ...createAppUpdateSlice(set, get, store),
       ...createFeedbackSlice(set, get, store),
       ...createLifecycleSlice(set, get, store),
+      ...createSourceEditSlice(set, get, store),
     }),
     {
       name: 'zpl-designer-session',
@@ -546,14 +553,14 @@ export const useCurrentObjects = () => useLabelStore(currentObjects);
 export const getCurrentObjects = (): LabelObject[] =>
   currentObjects(useLabelStore.getState());
 
-// Wraps zundo so undo/redo become no-ops under the preview lock;
+// Wraps zundo so undo/redo become no-ops while the editor is frozen;
 // `canUndo`/`canRedo` still reflect real history for button state.
 const noopHistoryAction = () => {
-  /* preview lock active */
+  /* editor frozen */
 };
 export const useHistory = () => {
   const history = useStore(useLabelStore.temporal);
-  const locked = useLabelStore(selectPreviewLocksEditor);
+  const locked = useLabelStore(selectEditorFrozen);
   if (!locked) return history;
   return { ...history, undo: noopHistoryAction, redo: noopHistoryAction };
 };

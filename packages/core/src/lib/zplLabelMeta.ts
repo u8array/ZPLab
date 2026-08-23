@@ -11,14 +11,17 @@ export const LABEL_META_PREFIX = "ZPLLAB:";
 const MM_MIN = 1;
 const MM_MAX = 5000;
 
+/** The ONE plausibility bound for a label dimension, shared by the sidecar
+ *  meta and the ^PW/^LL fold: firmware clamps to a physical head, our model
+ *  has none. */
+export const isPlausibleLabelMm = (v: unknown): v is number =>
+  typeof v === "number" && Number.isFinite(v) && v >= MM_MIN && v <= MM_MAX;
+
 export interface LabelMeta {
   dpmm: number;
   widthMm: number;
   heightMm: number;
 }
-
-const isMm = (v: unknown): v is number =>
-  typeof v === "number" && Number.isFinite(v) && v >= MM_MIN && v <= MM_MAX;
 
 /** Shared ZPLLAB envelope (label meta, QR props). Body must be free of ^/~
  *  or the ^FX comment terminates mid-payload. */
@@ -57,6 +60,6 @@ export function parseLabelMetaComment(commentBody: string): LabelMeta | null {
   // Emit assumes dpmm ∈ DPMM_VALUES (the only densities the UI produces); keep
   // emit and this guard on the same source of truth.
   if (typeof dpmm !== "number" || !isDpmm(dpmm)) return null;
-  if (!isMm(wMm) || !isMm(hMm)) return null;
+  if (!isPlausibleLabelMm(wMm) || !isPlausibleLabelMm(hMm)) return null;
   return { dpmm, widthMm: wMm, heightMm: hMm };
 }

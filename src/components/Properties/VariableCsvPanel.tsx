@@ -1,6 +1,6 @@
 import { TableCellsIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/16/solid";
 import { useT } from "../../hooks/useT";
-import { useLabelStore, selectPreviewLocksEditor } from "../../store/labelStore";
+import { useLabelStore, selectEditorFrozen } from "../../store/labelStore";
 import { datasetDisplayName } from "@zplab/core/types/DataSource";
 import { isDesktopShell } from "../../lib/platform";
 import {
@@ -29,9 +29,9 @@ export function VariableCsvPanel({
   const setActiveRow = useLabelStore((s) => s.setActiveRow);
   const openMappingModal = useLabelStore((s) => s.openMappingModal);
   const dataSourceRef = useLabelStore((s) => s.dataSourceRef);
-  // setActiveRow no-ops under the preview lock, so match VariablesPanel and
-  // disable the steppers rather than leave a dead affordance.
-  const previewLocked = useLabelStore(selectPreviewLocksEditor);
+  // setActiveRow no-ops while the editor is frozen, so match VariablesPanel
+  // and disable the steppers rather than leave a dead affordance.
+  const editorFrozen = useLabelStore(selectEditorFrozen);
   const setPrinterSettingsTab = useLabelStore((s) => s.setPrinterSettingsTab);
 
   const goManage = () => {
@@ -45,7 +45,7 @@ export function VariableCsvPanel({
   const header = (
     <div className="flex items-center justify-between gap-2">
       <span className="text-[9px] font-mono uppercase tracking-wider text-muted">{tv.dataSourceTitle}</span>
-      <button type="button" className="inline-flex items-center gap-0.5 text-[10px] text-muted hover:text-text transition-colors" onClick={goManage}>
+      <button type="button" disabled={editorFrozen} className="inline-flex items-center gap-0.5 text-[10px] text-muted hover:text-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors" onClick={goManage}>
         {tv.variablesTabLink}
         <ArrowTopRightOnSquareIcon className="w-2.5 h-2.5" />
       </button>
@@ -83,9 +83,9 @@ export function VariableCsvPanel({
       <div className="flex items-center justify-between gap-2 text-[10px] text-muted">
         <span>{mapped} / {variables.length} {tv.mappedLabel}</span>
         <span className="inline-flex items-center gap-1.5">
-          <button type="button" aria-label={tv.prevRow} className="px-1 leading-none hover:text-text disabled:opacity-30" disabled={rowNo <= 1 || previewLocked} onClick={() => setActiveRow(dataset.activeRowIndex - 1)}>‹</button>
+          <button type="button" aria-label={tv.prevRow} className="px-1 leading-none hover:text-text disabled:opacity-30" disabled={rowNo <= 1 || editorFrozen} onClick={() => setActiveRow(dataset.activeRowIndex - 1)}>‹</button>
           <span className="font-mono text-text">{tv.rowLabel} {rowNo}/{total}</span>
-          <button type="button" aria-label={tv.nextRow} className="px-1 leading-none hover:text-text disabled:opacity-30" disabled={rowNo >= total || previewLocked} onClick={() => setActiveRow(dataset.activeRowIndex + 1)}>›</button>
+          <button type="button" aria-label={tv.nextRow} className="px-1 leading-none hover:text-text disabled:opacity-30" disabled={rowNo >= total || editorFrozen} onClick={() => setActiveRow(dataset.activeRowIndex + 1)}>›</button>
         </span>
       </div>
 
@@ -102,7 +102,7 @@ export function VariableCsvPanel({
               </div>
             </>
           ) : (
-            <button type="button" className="text-[10px] text-muted hover:text-text text-left inline-flex items-center gap-1" onClick={goManage}>
+            <button type="button" disabled={editorFrozen} className="text-[10px] text-muted hover:text-text text-left inline-flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed" onClick={goManage}>
               {tv.noColumn} · {tv.assignLink}
               <ArrowTopRightOnSquareIcon className="w-2.5 h-2.5" />
             </button>

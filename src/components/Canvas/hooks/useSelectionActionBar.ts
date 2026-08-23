@@ -32,7 +32,7 @@ interface Options {
   stageRef: React.RefObject<Konva.Stage | null>;
   attachableIds: string[];
   lockedLeafIds: string[];
-  previewLocks: boolean;
+  editorFrozen: boolean;
   /** True while a controller drag is live; the bar is translated by the drag
    *  delta instead. Re-reading client-rects here would lag, since only the
    *  grabbed node's matrices are freshly invalidated, not the siblings'. */
@@ -56,14 +56,14 @@ export function useSelectionActionBar({
   stageRef,
   attachableIds,
   lockedLeafIds,
-  previewLocks,
+  editorFrozen,
   dragActiveRef,
   actionBarRef,
   lockedFrameRef,
   getBarBounds,
 }: Options) {
   useLayoutEffect(() => {
-    if (previewLocks || attachableIds.length === 0) return;
+    if (editorFrozen || attachableIds.length === 0) return;
     const stage = stageRef.current;
     if (!stage) return;
     // Object layer (shared by the bar and the selected nodes); grabbing the
@@ -106,5 +106,5 @@ export function useSelectionActionBar({
     return () => {
       layer?.off(".actionbar");
     };
-  }, [stageRef, attachableIds, lockedLeafIds, previewLocks, dragActiveRef, actionBarRef, lockedFrameRef, getBarBounds]);
+  }, [stageRef, attachableIds, lockedLeafIds, editorFrozen, dragActiveRef, actionBarRef, lockedFrameRef, getBarBounds]);
 }

@@ -41,7 +41,7 @@ import {
   MoonIcon,
   GlobeAltIcon,
 } from "@heroicons/react/16/solid";
-import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectPreviewLocksEditor, selectBatchPrintCount } from "../store/labelStore";
+import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectEditorFrozen, selectSourceEditing, selectDocumentEmits, selectBatchPrintCount } from "../store/labelStore";
 import { datasetTimestamp } from "@zplab/core/types/DataSource";
 import { isCurrentDataContext, settleDatasetReplace } from "../store/datasetActions";
 import { ConfirmDialog } from "./ui/ConfirmDialog";
@@ -154,12 +154,14 @@ export function AppShell() {
   const setCanvasSettings = useLabelStore((s) => s.setCanvasSettings);
   const { showGrid, snapEnabled, snapSizeMm, smartSnapEnabled, unit } = canvasSettings;
 
-  // Preview lock no-ops undo/redo (see useHistory); reflect that on the buttons
-  // so they aren't enabled-but-dead, matching the gated history dropdown.
-  const historyLocked = useLabelStore(selectPreviewLocksEditor);
+  // A frozen editor no-ops undo/redo (see useHistory); reflect that on the
+  // buttons so they aren't enabled-but-dead, matching the gated history dropdown.
+  const historyLocked = useLabelStore(selectEditorFrozen);
   const canUndo = pastStates.length > 0 && !historyLocked;
   const canRedo = futureStates.length > 0 && !historyLocked;
   const hasObjects = pages.some((p) => p.objects.length > 0);
+  const documentEmits = useLabelStore(selectDocumentEmits);
+  const sourceEditing = useLabelStore(selectSourceEditing);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -211,7 +213,7 @@ export function AppShell() {
     batchRowCount,
     handlePrint,
   } = useZplImportExport();
-  const outputPanel = useOutputPanel(OUTPUT_DEFAULT_H);
+  const outputPanel = useOutputPanel(OUTPUT_DEFAULT_H, sourceEditing);
   const leftPanel = useCollapsiblePanel("zpl-panel-left");
   const rightPanel = useCollapsiblePanel("zpl-panel-right");
 
@@ -219,6 +221,8 @@ export function AppShell() {
   // native OS menu (desktop, where the header row is not rendered at all).
   const menuModel = buildMenuModel(t, {
     hasObjects,
+    documentEmits,
+    sourceEditing,
     canBatchExport,
     batchRowCount,
     batchPrintCount,

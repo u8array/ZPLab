@@ -6,5 +6,6 @@
     // Node-only lib fails to type-check even though this server never uses them.
     "types": ["node"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.local.*"]
 }

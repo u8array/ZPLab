@@ -63,6 +63,12 @@ export interface HistorySubmenu {
 
 export interface MenuFlags {
   hasObjects: boolean;
+  /** Overlay pages emit even with zero objects (config-only source apply), so
+   *  export/save gate on this, not on hasObjects. */
+  documentEmits: boolean;
+  /** Live source-edit session: entries that would replace or emit the
+   *  document disable (see selectEditorFrozen). */
+  sourceEditing: boolean;
   canBatchExport: boolean;
   batchRowCount: number;
   /** Physical labels a batch send produces: rows × per-label ^PQ quantity.
@@ -80,40 +86,44 @@ export interface MenuFlags {
 }
 
 export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
+  const live = !f.sourceEditing;
   const file: MenuSection[] = [
     [
-      { id: 'new', label: t.app.newDesign, enabled: true },
-      { id: 'addPage', label: t.app.addPage, enabled: true },
+      { id: 'new', label: t.app.newDesign, enabled: live },
+      { id: 'addPage', label: t.app.addPage, enabled: live },
     ],
-    [{ id: 'importZpl', label: t.app.importZpl, enabled: true }],
+    [{ id: 'importZpl', label: t.app.importZpl, enabled: live }],
     [
       { id: 'settings', label: t.printerSettings.open, enabled: true },
-      { id: 'exportZpl', label: t.app.exportZpl, enabled: f.hasObjects },
+      { id: 'exportZpl', label: t.app.exportZpl, enabled: f.documentEmits && live },
       ...(f.canBatchExport
         ? [{
             id: 'exportBatch' as const,
             label: formatTemplate(t.app.exportBatchZplFmt, { n: String(f.batchRowCount) }),
-            enabled: f.hasObjects,
+            enabled: f.hasObjects && live,
           }]
         : []),
     ],
     [
-      { id: 'openDesign', label: t.app.openDesign, enabled: true },
-      { id: 'saveDesign', label: t.app.saveDesign, enabled: f.hasObjects },
+      { id: 'openDesign', label: t.app.openDesign, enabled: live },
+      { id: 'saveDesign', label: t.app.saveDesign, enabled: f.documentEmits && live },
       f.connectDataWizard
-        ? { id: 'connectData' as const, label: t.connectData.title, enabled: true }
-        : { id: 'importCsv' as const, label: t.app.importCsvData, enabled: true },
+        ? { id: 'connectData' as const, label: t.connectData.title, enabled: live }
+        : { id: 'importCsv' as const, label: t.app.importCsvData, enabled: live },
     ],
     [
       ...(f.labelaryEnabled
-        ? [{ id: 'print' as const, label: t.app.print, enabled: f.hasObjects }]
+        ? [{ id: 'print' as const, label: t.app.print, enabled: f.hasObjects && live }]
         : []),
       {
+        // Sends the full export (a config-only overlay stream is a legitimate
+        // setup job), so it follows documentEmits like exportZpl; the Labelary
+        // print above stays hasObjects (rendering nothing has no value).
         id: 'sendToZebra',
         label: f.canBatchExport
           ? formatTemplate(t.app.sendToZebraBatchFmt, { n: String(f.batchPrintCount) })
           : t.app.sendToZebra,
-        enabled: f.hasObjects,
+        enabled: f.documentEmits && live,
       },
     ],
     ...(f.includeQuit
