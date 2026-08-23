@@ -10,7 +10,7 @@ import {
 import { getPreviewTransport, getPrinterAddress, getUsbPrinterId } from '../../lib/printerAddress';
 import { buildActiveRow } from '@zplab/core/lib/variableBinding';
 import { buildPreviewZpl } from '../../lib/printPreview';
-import { currentObjects, currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint } from '../labelStore.selectors';
+import { currentObjects, currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint, selectSourceEditing } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 import { isDesktopShell } from '../../lib/platform';
 
@@ -100,6 +100,9 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     if (state.previewMode.status === 'loading' || state.previewMode.status === 'active') {
       return;
     }
+    // Mirror of enterSourceEdit's preview guard: the two frozen modes must
+    // never coexist, and the invariant belongs to the store, not a button.
+    if (selectSourceEditing(state)) return;
     // Re-read after the await: switching the provider mid-hydrate exits the
     // preview, so a stale value would render the wrong renderer.
     const provider = selectEffectivePreviewProvider(state);

@@ -1,4 +1,9 @@
 import type { ImportFinding, ImportReport } from '@zplab/core/lib/importReport';
+import {
+  editorLossAxes,
+  type EditorLossAxis,
+  type EditorStateDiff,
+} from '@zplab/core/lib/editorStateDiff';
 import type { Translations } from '../locales';
 import { ZPL_COMMAND_MAP } from './zplCommandSupport';
 
@@ -75,6 +80,25 @@ export function describeFinding(
     };
   }
   return { title: tr.unknownTitle, detail: f.command };
+}
+
+// Exhaustive over EditorLossAxis: a new loss axis in core fails to compile
+// here instead of silently applying without a displayed line.
+const EDITOR_LOSS_KEY: Record<EditorLossAxis, keyof ReportStrings> = {
+  groups: 'editorLossGroupsFmt',
+  names: 'editorLossNamesFmt',
+  flags: 'editorLossFlagsFmt',
+  excluded: 'editorLossExcludedFmt',
+  variables: 'editorLossVariablesFmt',
+  mapping: 'editorLossMappingFmt',
+};
+
+/** The source-apply loss lines; the axes come from the same derivation that
+ *  gates the confirmation, so line list and gate cannot drift. */
+export function describeEditorLoss(loss: EditorStateDiff, tr: ReportStrings): string[] {
+  return editorLossAxes(loss).map(({ axis, n }) =>
+    tr[EDITOR_LOSS_KEY[axis]].replace('{n}', String(n)),
+  );
 }
 
 /** Compact "Page N: " prefix when a finding originates from a multi-page

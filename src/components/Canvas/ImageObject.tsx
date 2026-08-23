@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type ReactElement } from "react";
+import { useNodeDraggable } from "./hooks/useNodeDraggable";
 import { Group, Image as KImage, Path, Rect } from "react-konva";
 import type { LabelObject } from "@zplab/core/types/Group";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
@@ -53,6 +54,7 @@ export function ImageObject({
 }: Props) {
   const p = obj.props;
   const colors = useColorScheme();
+  const draggable = useNodeDraggable(obj);
   const cached = getImage(p.imageId);
 
   const [htmlImg, setHtmlImg] = useState<HTMLImageElement | null>(null);
@@ -142,7 +144,7 @@ export function ImageObject({
         id={obj.id}
         x={x}
         y={y}
-        draggable={!obj.locked}
+        draggable={draggable}
         {...selectionHandlers(onSelect)}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
@@ -167,7 +169,7 @@ export function ImageObject({
       id={obj.id}
       x={x}
       y={y}
-      draggable={!obj.locked}
+      draggable={draggable}
       {...selectionHandlers(onSelect)}
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}

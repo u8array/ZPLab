@@ -25,7 +25,7 @@ import {
   freshPasteCopies,
   updateCurrentObjects,
 } from '../labelStore.internals';
-import { selectPreviewLocksEditor, currentObjects, currentPageLabel } from '../labelStore.selectors';
+import { selectEditorFrozen, currentObjects, currentPageLabel } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
 import { newId } from "@zplab/core/lib/ids";
@@ -99,7 +99,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
   pasteCount: 0,
 
   addObject: (type, position = { x: 50, y: 50 }, propsOverride) => {
-    if (selectPreviewLocksEditor(get())) return;
+    if (selectEditorFrozen(get())) return;
     const definition = getEntry(type);
     if (!definition) return;
 
@@ -129,7 +129,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   addReverseBackground: (textId) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const text = findObjectById(objs, textId);
       if (!text || isGroup(text) || text.type !== 'text') return {};
@@ -158,7 +158,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   removeReverseBackground: (textId) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const text = findObjectById(objs, textId);
       if (!text || isGroup(text) || text.type !== 'text') return {};
@@ -185,7 +185,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   updateObject: (id, changes) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const ancestorLocked = hasLockedAncestor(objs, id);
       return updateCurrentObjects(state, (curr) =>
@@ -197,7 +197,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   convertObjectType: (id, mapper) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const target = findObjectById(objs, id);
       if (!target || isGroup(target) || target.locked) return {};
@@ -220,7 +220,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   updateObjects: (updates) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (updates.length === 0) return {};
       // Single tree walk, identity-preserving; inheritedLocked cascades
       // so leaves in locked groups stay locked without ancestor re-walks.
@@ -252,7 +252,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   removeObject: (id) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const obj = currentObjects(state).find((o) => o.id === id);
       if (obj?.locked) return {};
       return {
@@ -263,7 +263,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   duplicateObject: (id) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const copies = buildOffsetCopies(currentObjects(state), [id]);
       if (copies.length === 0) return {};
       return {
@@ -274,7 +274,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   duplicateSelectedObjects: () =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (state.selectedIds.length === 0) return {};
       const copies = buildOffsetCopies(currentObjects(state), state.selectedIds);
       return {
@@ -285,7 +285,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   copySelectedObjects: () => {
     const state = get();
-    if (selectPreviewLocksEditor(state)) return;
+    if (selectEditorFrozen(state)) return;
     const objs = currentObjects(state);
     const clipboard = state.selectedIds.flatMap((id) => {
       const obj = objs.find((o) => o.id === id);
@@ -300,7 +300,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   pasteObjects: () =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (state.clipboard.length === 0) return {};
       const pasteCount = state.pasteCount + 1;
       const offset = pasteCount * DUPLICATE_OFFSET_DOTS;
@@ -314,7 +314,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   pasteObjectsAt: (xDots, yDots) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (state.clipboard.length === 0) return {};
       // Anchor the clipboard's visual top-left to the point. Groups are
       // structural (x/y 0, absolute children), so the bound must come from the
@@ -336,7 +336,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   groupSelection: () =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const sel = new Set(state.selectedIds);
       // Only top-level objects of the current page; nested children of an
@@ -383,7 +383,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   reparentObjects: (ids, target) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const next = reparentNodes(objs, ids, target);
       if (next === objs) return {};
@@ -392,7 +392,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   addGroup: () =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const group: GroupObject = {
         id: newId(),
         type: 'group',
@@ -411,7 +411,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   ungroupIds: (ids) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const wanted = new Set(ids);
       const objs = currentObjects(state);
       const targets = objs.flatMap((o) =>
@@ -437,7 +437,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   moveObjectToFront: (id) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const idx = objs.findIndex((o) => o.id === id);
       if (idx === -1 || idx === objs.length - 1) return {};
@@ -451,7 +451,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   moveObjectToBack: (id) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const idx = objs.findIndex((o) => o.id === id);
       if (idx <= 0) return {};
@@ -465,7 +465,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   moveObjectForward: (id) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const idx = objs.findIndex((o) => o.id === id);
       if (idx === -1 || idx === objs.length - 1) return {};
@@ -480,7 +480,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   moveObjectBackward: (id) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const idx = objs.findIndex((o) => o.id === id);
       if (idx <= 0) return {};
@@ -495,7 +495,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   reorderObject: (id, toIndex) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const fromIndex = objs.findIndex((o) => o.id === id);
       if (fromIndex === -1 || fromIndex === toIndex) return {};
@@ -509,7 +509,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   reorderSelection: (dir) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       // Lock blocks reordering too, mirroring delete/group/ungroup.
       if (isSelectionLocked(objs, state.selectedIds)) return {};
@@ -520,7 +520,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   addPage: () =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const insertPos = state.currentPageIndex + 1;
       const newPages = [
         ...state.pages.slice(0, insertPos),
@@ -536,7 +536,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   removePage: (index) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (state.pages.length <= 1) return {};
       if (index < 0 || index >= state.pages.length) return {};
       const newPages = state.pages.filter((_, i) => i !== index);
@@ -555,7 +555,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   duplicatePage: (index) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (index < 0 || index >= state.pages.length) return {};
       const source = state.pages[index];
       if (!source) return {};
@@ -579,7 +579,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   setCurrentPage: (index) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (index < 0 || index >= state.pages.length) return {};
       if (index === state.currentPageIndex) return {};
       return { currentPageIndex: index, selectedIds: [] };

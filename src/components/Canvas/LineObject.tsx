@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNodeDraggable } from "./hooks/useNodeDraggable";
 import { Group, Line as KLine, Rect } from "react-konva";
 import type Konva from "konva";
 import type { LabelObject } from "@zplab/core/types/Group";
@@ -82,6 +83,7 @@ export function LineObject({
 }: Props) {
   const p = obj.props;
   const colors = useColorScheme();
+  const draggable = useNodeDraggable(obj);
   // Absolute stage coords; Group has no offset (avoids draggable conflict).
   const x1 = offsetX + dotsToPx(obj.x, scale, dpmm);
   const y1 = offsetY + dotsToPx(obj.y, scale, dpmm);
@@ -413,7 +415,7 @@ export function LineObject({
         stroke="transparent"
         strokeWidth={Math.max(lineStrokeWidth, MIN_HIT_STROKE_PX)}
         strokeScaleEnabled={false}
-        draggable={!obj.locked}
+        draggable={draggable}
         {...selectionHandlers(onSelect)}
         {...dragHandlers}
       />
@@ -427,7 +429,7 @@ export function LineObject({
             height={HANDLE_HIT_SIZE}
             fill="transparent"
             name={LINE_HANDLE_NAME}
-            draggable={!obj.locked}
+            draggable={draggable}
             onDragMove={(e) => {
               const alt = e.evt.altKey;
               const endDotX = pxToDots(x2 - offsetX, scale, dpmm);
@@ -515,7 +517,7 @@ export function LineObject({
             height={HANDLE_HIT_SIZE}
             fill="transparent"
             name={LINE_HANDLE_NAME}
-            draggable={!obj.locked}
+            draggable={draggable}
             onDragMove={(e) => {
               const alt = e.evt.altKey;
               const r = endpointDrag(
@@ -597,7 +599,7 @@ export function LineObject({
             width={HANDLE_HIT_SIZE}
             height={HANDLE_HIT_SIZE}
             fill="transparent"
-            draggable={!obj.locked}
+            draggable={draggable}
             onDragMove={(e) => {
               const cursorX = e.target.x() + HANDLE_HIT_SIZE / 2;
               const cursorY = e.target.y() + HANDLE_HIT_SIZE / 2;

@@ -16,7 +16,7 @@ export interface ContextMenuCtx {
   locked: boolean;
   hasClipboard: boolean;
   hasObjects: boolean;
-  previewLocks: boolean;
+  editorFrozen: boolean;
   /** "Add object here" types, grouped + labelled by the caller (mirrors the
    *  palette categories; first group is favorites when any are pinned). Each
    *  group becomes a submenu, its types the third level. */
@@ -49,11 +49,11 @@ export interface ContextMenuCtx {
 }
 
 /** Build the context-menu sections for a right-click. Empty sections are
- *  dropped, so the caller can render dividers between whatever remains. During
- *  a Labelary preview lock everything is disabled. */
+ *  dropped, so the caller can render dividers between whatever remains. While
+ *  the editor is frozen everything is disabled. */
 export function buildContextMenu(ctx: ContextMenuCtx): MenuSection[] {
   const d = ctx.dispatch;
-  const off = ctx.previewLocks;
+  const off = ctx.editorFrozen;
   const sel = ctx.hasSelection && ctx.onObject;
 
   const sections: MenuSection[] = [];

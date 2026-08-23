@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNodeDraggable } from "./hooks/useNodeDraggable";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
 import { Ellipse, Group, Rect, Shape, Text } from "react-konva";
 import { getObjectStringContent, shouldShowFallbackTint } from "@zplab/core/lib/variableBinding";
@@ -518,6 +519,7 @@ function KonvaObjectInner({
 }: Props) {
   const fontVersion = useFontCacheVersion();
   const colors = useColorScheme();
+  const draggable = useNodeDraggable(obj);
   // Pass label so metrics resolves uploaded-TTF previews. ZPL emit/parse
   // call without `label` so round-trip stays PrintLab-based.
   const label = useLabelStore((s) => s.label);
@@ -655,7 +657,7 @@ function KonvaObjectInner({
         id={obj.id}
         x={x}
         y={y}
-        draggable={!obj.locked}
+        draggable={draggable}
         {...selectionHandlers(onSelect)}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
@@ -721,7 +723,7 @@ function KonvaObjectInner({
         id={obj.id}
         x={x}
         y={y}
-        draggable={!obj.locked}
+        draggable={draggable}
         {...selectionHandlers(onSelect)}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
@@ -841,7 +843,7 @@ function KonvaObjectInner({
         id={obj.id}
         x={x}
         y={y}
-        draggable={!obj.locked}
+        draggable={draggable}
         {...selectionHandlers(onSelect)}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
@@ -893,7 +895,7 @@ function KonvaObjectInner({
         id={obj.id}
         x={x}
         y={y}
-        draggable={!obj.locked}
+        draggable={draggable}
         {...selectionHandlers(onSelect)}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}

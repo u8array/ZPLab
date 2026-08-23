@@ -12,6 +12,7 @@ import { getEntry, ObjectRegistry } from "@zplab/core/registry";
 import { gfShipsSafely, parseGfHeader } from "@zplab/core/registry/image";
 import { isZplRotation } from "@zplab/core/registry/rotation";
 import { ZPL_PARAM_CHARS } from "@zplab/core/lib/zplParams";
+import { MAX_SOURCE_PAGES } from "@zplab/core/lib/zplSourceEdit";
 import {
   getAllLeaves,
   isGroup,
@@ -105,8 +106,9 @@ function labelConfigIssues(label: LabelConfig): string[] {
 
 /** Envelope size limits: the raw-ZPL tools cap the input string, so the
  *  design-file tools cap the parsed shape symmetrically to bound preflight and
- *  emit on an oversized envelope. Well beyond any real label. */
-const MAX_PAGES = 1000;
+ *  emit on an oversized envelope. Well beyond any real label. The page cap is
+ *  the source editor's, one number for one question. */
+const MAX_PAGES = MAX_SOURCE_PAGES;
 const MAX_TOTAL_OBJECTS = 10000;
 const MAX_GROUP_DEPTH = 64;
 

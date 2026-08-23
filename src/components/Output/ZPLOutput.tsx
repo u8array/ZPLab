@@ -1,11 +1,14 @@
 import { useState, type ReactNode } from 'react';
-import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon } from '@heroicons/react/16/solid';
-import { useLabelStore, selectLabelaryNoticeRequired, selectEffectivePreviewProvider } from '../../store/labelStore';
+import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
+import { useLabelStore, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectPreviewLocksEditor, selectDocumentEmits } from '../../store/labelStore';
 import { generateMultiPageZPL } from '@zplab/core/lib/zplGenerator';
+import { sourceEditGate } from '@zplab/core/lib/zplSourceEdit';
+import { sourceRefusalText } from '../../lib/sourceEditText';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import { useT } from '../../hooks/useT';
 import { LabelaryNoticeModal } from './LabelaryNoticeModal';
 import { ZplLine } from './ZplLine';
+import { ZplSourceEditor } from './ZplSourceEditor';
 import { Tooltip } from '../ui/Tooltip';
 
 interface Props {
@@ -22,16 +25,16 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
   const labelaryEnabled = useLabelStore((s) => s.thirdParty.labelary);
   const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
   const effectiveProvider = useLabelStore(selectEffectivePreviewProvider);
-  const previewMode = useLabelStore((s) => s.previewMode);
+  const previewActive = useLabelStore(selectPreviewLocksEditor);
   const enterPreviewMode = useLabelStore((s) => s.enterPreviewMode);
   const exitPreviewMode = useLabelStore((s) => s.exitPreviewMode);
+  const sourceEdit = useLabelStore((s) => s.sourceEdit);
+  const enterSourceEdit = useLabelStore((s) => s.enterSourceEdit);
   const [showNotice, setShowNotice] = useState(false);
 
-  const hasObjects = pages.some((p) => p.objects.length > 0);
-  const zpl = hasObjects ? generateMultiPageZPL(label, pages, variables) : '';
-
-  const previewActive =
-    previewMode.status === 'loading' || previewMode.status === 'active';
+  const session = sourceEdit.status === 'editing' ? sourceEdit : null;
+  const documentEmits = useLabelStore(selectDocumentEmits);
+  const zpl = documentEmits ? generateMultiPageZPL(label, pages, variables) : '';
 
   // The button shows when the effective provider can run: Labelary when the
   // gate is on, or the printer path (desktop only). The consent notice only
@@ -50,32 +53,72 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
     void enterPreviewMode();
   };
 
+  const gate = zpl === '' ? null : sourceEditGate(zpl);
+  const editBlocked = !documentEmits || previewActive || (gate !== null && !gate.ok);
+  const editTooltip =
+    gate !== null && !gate.ok ? sourceRefusalText(gate.reason, t) : t.output.editSource;
+
   return (
     <div className="flex flex-col h-full">
       <OutputSection
         heading={t.output.zplHeading}
-        content={zpl}
+        // The header's copy button must copy what the body shows: the live
+        // buffer during an edit, the generated export otherwise.
+        content={session ? session.draft : zpl}
         emptyMessage={t.output.noObjects}
         collapsed={collapsed}
-        onCollapseToggle={collapsed ? onExpand : onCollapse}
+        // Collapsing the panel mid-edit would hide an unapplied buffer.
+        onCollapseToggle={session ? undefined : collapsed ? onExpand : onCollapse}
         collapseLabel={collapsed ? t.app.expand : t.app.collapse}
-        extraActions={previewAvailable && (
-          <Tooltip content={t.output.previewHeading}>
-            <button
-              onClick={togglePreview}
-              disabled={!zpl && !previewActive}
-              aria-pressed={previewActive}
-              className={`flex items-center gap-1 font-mono text-[10px] disabled:opacity-25 disabled:cursor-not-allowed transition-colors ${
-                previewActive
-                  ? 'text-accent hover:text-text'
-                  : 'text-muted hover:text-accent'
-              }`}
-            >
-              <EyeIcon className="w-4 h-4" />
-              {t.output.previewHeading}
-            </button>
-          </Tooltip>
-        )}
+        body={
+          session ? (
+            <ZplSourceEditor
+              draft={session.draft}
+              baseline={session.baseline}
+              session={session.session}
+            />
+          ) : undefined
+        }
+        extraActions={
+          <>
+            <Tooltip content={editTooltip}>
+              <button
+                onClick={() => {
+                  enterSourceEdit(zpl);
+                  onExpand?.();
+                }}
+                // Disabled during the session: the footer owns every exit
+                // (including the discard confirmation), a header exit would
+                // either duplicate that flow or dead-click on a dirty buffer.
+                disabled={session !== null || editBlocked}
+                aria-pressed={session !== null}
+                className={`flex items-center gap-1 font-mono text-[10px] disabled:opacity-25 disabled:cursor-not-allowed transition-colors ${
+                  session ? 'text-accent hover:text-text' : 'text-muted hover:text-accent'
+                }`}
+              >
+                <PencilSquareIcon className="w-4 h-4" />
+                {t.output.editSource}
+              </button>
+            </Tooltip>
+            {previewAvailable && (
+              <Tooltip content={t.output.previewHeading}>
+                <button
+                  onClick={togglePreview}
+                  disabled={(!zpl && !previewActive) || session !== null}
+                  aria-pressed={previewActive}
+                  className={`flex items-center gap-1 font-mono text-[10px] disabled:opacity-25 disabled:cursor-not-allowed transition-colors ${
+                    previewActive
+                      ? 'text-accent hover:text-text'
+                      : 'text-muted hover:text-accent'
+                  }`}
+                >
+                  <EyeIcon className="w-4 h-4" />
+                  {t.output.previewHeading}
+                </button>
+              </Tooltip>
+            )}
+          </>
+        }
       />
 
       {showNotice && (
@@ -92,10 +135,8 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
 }
 
 /** Single output pane: header (collapse toggle + heading + extra
- *  actions + copy button) and a `<pre>` body. The Setup-Script
- *  output moved into the Printer Settings modal's docked preview
- *  pane, so this component no longer needs to host a secondary
- *  variant; it just shows the per-label ZPL. */
+ *  actions + copy button) and a `<pre>` body, or the caller's `body`
+ *  replacement (the source editor). */
 function OutputSection({
   heading,
   content,
@@ -104,6 +145,7 @@ function OutputSection({
   onCollapseToggle,
   collapseLabel,
   extraActions,
+  body,
 }: {
   heading: string;
   content: string;
@@ -112,6 +154,7 @@ function OutputSection({
   onCollapseToggle?: () => void;
   collapseLabel?: string;
   extraActions?: ReactNode;
+  body?: ReactNode;
 }) {
   const t = useT();
   const { copy, copied } = useCopyToClipboard(() => content);
@@ -150,16 +193,17 @@ function OutputSection({
       </div>
 
       {!collapsed && (
-        <pre className="overflow-auto p-3 font-mono text-xs leading-relaxed text-text m-0 bg-surface flex-1">
-          {content
-            ? content.split('\n').map((line, i) => (
-                <ZplLine key={i} line={line} />
-              ))
-            : <span className="text-muted">{emptyMessage}</span>
-          }
-        </pre>
+        body ?? (
+          <pre className="overflow-auto p-3 font-mono text-xs leading-relaxed text-text m-0 bg-surface flex-1">
+            {content
+              ? content.split('\n').map((line, i) => (
+                  <ZplLine key={i} line={line} />
+                ))
+              : <span className="text-muted">{emptyMessage}</span>
+            }
+          </pre>
+        )
       )}
     </div>
   );
 }
-

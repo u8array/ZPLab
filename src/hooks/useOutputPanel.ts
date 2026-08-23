@@ -23,7 +23,10 @@ function savePanelState(collapsed: boolean, height: number) {
   }
 }
 
-export function useOutputPanel(defaultH = OUTPUT_DEFAULT_H) {
+/** `lockCollapse`: an open source-edit buffer must stay visible, so the drag
+ *  rail clamps at the minimum height instead of collapsing (which would
+ *  unmount the editor with no expand affordance left). */
+export function useOutputPanel(defaultH = OUTPUT_DEFAULT_H, lockCollapse = false) {
   const saved = loadPanelState();
   const [height, setHeight] = useState(saved?.height ?? defaultH);
   const [collapsed, setCollapsed] = useState(saved?.collapsed ?? true);
@@ -43,6 +46,12 @@ export function useOutputPanel(defaultH = OUTPUT_DEFAULT_H) {
         Math.max(OUTPUT_MIN_H, dragRef.current.startH + delta),
       );
       if (next <= OUTPUT_MIN_H) {
+        if (lockCollapse) {
+          setCollapsed(false);
+          setHeight(OUTPUT_MIN_H);
+          savePanelState(false, OUTPUT_MIN_H);
+          return;
+        }
         setCollapsed(true);
         savePanelState(true, height);
         dragRef.current = null;
@@ -63,7 +72,11 @@ export function useOutputPanel(defaultH = OUTPUT_DEFAULT_H) {
     window.addEventListener("mouseup", onUp);
   };
 
-  const collapse = () => { setCollapsed(true); savePanelState(true, height); };
+  const collapse = () => {
+    if (lockCollapse) return;
+    setCollapsed(true);
+    savePanelState(true, height);
+  };
   const expand = () => {
     const h = height < OUTPUT_MIN_H ? OUTPUT_DEFAULT_H : height;
     setHeight(h);

@@ -11,7 +11,7 @@ const dispatch = () => ({
 const ctx = (over: Partial<ContextMenuCtx> = {}): ContextMenuCtx => ({
   onObject: true, hasSelection: true, canGroup: false, canUngroup: false,
   canDelete: true, locked: false, hasClipboard: false, hasObjects: true,
-  previewLocks: false,
+  editorFrozen: false,
   addableGroups: [{ id: "text", label: "Text", types: [{ id: "text", type: "text", label: "Text" }] }],
   switchTypeGroups: [],
   switchTypeLocked: false,
@@ -77,8 +77,8 @@ describe("buildContextMenu", () => {
     expect(lock?.labelKey).toBe("unlock");
   });
 
-  it("disables everything during preview lock", () => {
-    const sections = buildContextMenu(ctx({ previewLocks: true }));
+  it("disables everything while the editor is frozen", () => {
+    const sections = buildContextMenu(ctx({ editorFrozen: true }));
     expect(sections.flatMap((s) => s.items).every((i) => i.disabled)).toBe(true);
   });
 

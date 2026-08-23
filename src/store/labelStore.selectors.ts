@@ -75,6 +75,30 @@ export const selectEffectivePreviewProvider = (s: LabelState): 'labelary' | 'pri
 export const selectPreviewLocksEditor = (s: LabelState): boolean =>
   s.previewMode.status === 'loading' || s.previewMode.status === 'active';
 
+/** True when the document exports non-trivial ZPL: an overlay page replays
+ *  its bytes even with zero objects. Gates panel and export/save entries;
+ *  canvas affordances keep their own objects-only question. */
+export const selectDocumentEmits = (s: LabelState): boolean =>
+  s.pages.some((p) => p.objects.length > 0 || p.overlay !== undefined);
+
+/** True while a source-edit session owns the model. Consumers that block
+ *  ONLY for source edit (the preview conflict resolves by exiting the preview
+ *  instead) read this; everything else reads {@link selectEditorFrozen}. */
+export const selectSourceEditing = (s: LabelState): boolean =>
+  s.sourceEdit.status === 'editing';
+
+/** True while the session holds unapplied text; the guard for every path that
+ *  would destroy the buffer (MCP push refusal, discard confirmation). */
+export const selectSourceEditDirty = (s: LabelState): boolean =>
+  s.sourceEdit.status === 'editing' && s.sourceEdit.draft !== s.sourceEdit.baseline;
+
+/** True while the object model is frozen against editor mutations: the
+ *  preview overlay holds input, or the source buffer is Master. Every
+ *  mutation/history guard reads this; preview-specific UI (the overlay
+ *  itself, Escape-to-exit) keeps {@link selectPreviewLocksEditor}. */
+export const selectEditorFrozen = (s: LabelState): boolean =>
+  selectPreviewLocksEditor(s) || selectSourceEditing(s);
+
 /** The dataset + mapping pair batch emit needs, or null when a batch would be
  *  no different from a single label: needs loaded rows and at least one LIVE
  *  binding (else an all-orphan mapping just prints N identical defaults). */

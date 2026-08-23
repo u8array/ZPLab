@@ -11,7 +11,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from '@heroicons/react/16/solid';
-import { useLabelStore, selectPreviewLocksEditor } from '../../store/labelStore';
+import { useLabelStore, selectEditorFrozen } from '../../store/labelStore';
 import { datasetDisplayName, dbRefDisplayName } from '@zplab/core/types/DataSource';
 import { currentDataContext, isCurrentDataContext } from '../../store/datasetActions';
 import { useDbConnectActions } from '../../hooks/useDbConnectActions';
@@ -58,15 +58,15 @@ export function VariablesPanel() {
   const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
   const setCanvasSettings = useLabelStore((s) => s.setCanvasSettings);
   const dataSourceRef = useLabelStore((s) => s.dataSourceRef);
-  const previewLocked = useLabelStore(selectPreviewLocksEditor);
+  const editorFrozen = useLabelStore(selectEditorFrozen);
   const { reconnect } = useDbConnectActions();
   // The discard confirm is destructive and scoped to the dataset it was opened
   // for; hold the data-context epoch (not a bare bool) so a document swap while
   // it's open can't resurface it and clearDataset a different, newer dataset.
   const [discardToken, setDiscardToken] = useState<number | null>(null);
   const discardOpen = discardToken !== null && isCurrentDataContext(discardToken);
-  // Preview renders one row, so stepping under it would leave a stale image.
-  const rowStepDisabled = dataRenderMode === 'schema' || previewLocked;
+  // setActiveRow no-ops while frozen (see dataSlice); disable the steppers.
+  const rowStepDisabled = dataRenderMode === 'schema' || editorFrozen;
   // A db-linked design with no rows this session offers one-click reconnect
   // (desktop only, the connector is native). The saved-mapping hint is the
   // mutually-exclusive fallback, so both gate on this one rule.
@@ -160,7 +160,8 @@ export function VariablesPanel() {
               but connecting data is exactly then most useful. */}
           <button
             onClick={openConnectWizard}
-            className="shrink-0 flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-text hover:bg-surface-2 border border-border transition-colors"
+            disabled={editorFrozen}
+            className="shrink-0 flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-text hover:bg-surface-2 border border-border disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <TableCellsIcon className="w-3 h-3" />
             {tv.connectData}
@@ -209,7 +210,8 @@ export function VariablesPanel() {
           </p>
           <button
             onClick={reconnect}
-            className="self-start flex items-center gap-1.5 px-2 py-1 rounded text-[10px] border border-border text-text hover:bg-surface-2 transition-colors"
+            disabled={editorFrozen}
+            className="self-start flex items-center gap-1.5 px-2 py-1 rounded text-[10px] border border-border text-text hover:bg-surface-2 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <ArrowPathIcon className="w-3 h-3" />
             {tv.dbReconnectAction}
@@ -235,7 +237,8 @@ export function VariablesPanel() {
               <button
                 onClick={() => setColumnMapping(null)}
                 aria-label={tv.csvSavedMappingDiscard}
-                className="shrink-0 text-muted hover:text-amber-400 transition-colors"
+                disabled={editorFrozen}
+                className="shrink-0 text-muted hover:text-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <XMarkIcon className="w-3 h-3" />
               </button>
@@ -263,7 +266,8 @@ export function VariablesPanel() {
               <button
                 onClick={openMappingModal}
                 aria-label={tv.csvBadgeConfigureMapping}
-                className="shrink-0 text-muted hover:text-text transition-colors"
+                disabled={editorFrozen}
+                className="shrink-0 text-muted hover:text-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <Cog6ToothIcon className="w-3.5 h-3.5" />
               </button>
@@ -335,7 +339,8 @@ export function VariablesPanel() {
           <p className="font-mono text-[10px] text-muted italic">{tv.empty}</p>
           <button
             onClick={openConnectWizard}
-            className="self-start mt-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono bg-accent text-bg hover:opacity-90 transition-opacity"
+            disabled={editorFrozen}
+            className="self-start mt-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono bg-accent text-bg hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
           >
             <TableCellsIcon className="w-3.5 h-3.5" />
             {tv.connectData}
@@ -356,6 +361,7 @@ export function VariablesPanel() {
                 boundCellValue={activeCellValue(entry, activeRow)}
                 error={rowError[entry.id]}
                 showZpl={showZpl}
+                disabled={editorFrozen}
                 tv={tv}
                 onChangeName={(name) =>
                   tryUpdate(
@@ -388,7 +394,7 @@ export function VariablesPanel() {
       <div className="flex items-center gap-1.5">
         <button
           onClick={handleAdd}
-          disabled={allSlotsTaken}
+          disabled={allSlotsTaken || editorFrozen}
           className="flex items-center gap-1.5 px-2 py-1.5 rounded text-xs font-mono border border-dashed border-border text-muted hover:text-text hover:border-border-2 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <PlusIcon className="w-3.5 h-3.5" />
@@ -458,6 +464,8 @@ interface RowProps {
   error?: string;
   /** Power-user flag: reveals the editable ^FN slot field. */
   showZpl: boolean;
+  /** Frozen editor: inputs must not misreport a dead commit as a duplicate/range error. */
+  disabled: boolean;
   tv: Translations['variables'];
   onChangeName: (next: string) => void;
   onChangeFnNumber: (next: number) => void;
@@ -483,6 +491,7 @@ function VariableRow({
   onChangeDefault,
   onRequestDelete,
   onDirtyChange,
+  disabled,
 }: RowProps) {
   // Mirror inputs locally so the user can transiently type invalid values
   // (empty name, mid-edit number) without the store snapping them back on
@@ -533,6 +542,7 @@ function VariableRow({
           // beats `text-text` from inputCls (same specificity, later in sheet).
           className={`${inputCls} flex-1 min-w-0 ${bindings === 0 ? "text-muted!" : "text-indigo!"}`}
           aria-label={tv.nameLabel}
+          disabled={disabled}
           value={name}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setName(e.target.value);
@@ -551,6 +561,7 @@ function VariableRow({
               max={FN_NUMBER_MAX}
               className={`${inputCls} w-12`}
               aria-label={tv.fnLabel}
+              disabled={disabled}
               value={fn}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setFn(e.target.value);
@@ -562,6 +573,7 @@ function VariableRow({
         )}
         <button
           onClick={onRequestDelete}
+          disabled={disabled}
           aria-label={tv.removeAriaFmt.replace('{name}', variable.name)}
           className="p-1.5 rounded text-muted hover:text-amber-400 hover:bg-surface-2 transition-colors shrink-0"
         >
@@ -571,6 +583,7 @@ function VariableRow({
       <input
         className={inputCls}
         aria-label={tv.defaultLabel}
+        disabled={disabled}
         // Empty string (empty cell) is falsy, so it falls back to the generic
         // label; a whitespace-only cell is a real print value and stays shown.
         placeholder={boundCellValue || tv.defaultLabel}

@@ -6,7 +6,7 @@ import {
   type ColumnMapping,
   type Variable,
 } from '@zplab/core/types/Variable';
-import { selectPreviewLocksEditor } from '../labelStore.selectors';
+import { selectEditorFrozen, selectSourceEditing } from '../labelStore.selectors';
 import { rewriteTemplateMarkersMap } from '../labelStore.internals';
 import type { LabelState } from '../labelStore';
 
@@ -128,9 +128,9 @@ export const createDataSlice: StateCreator<LabelState, [], [], DataSlice> = (set
 
   setActiveRow: (index) =>
     set((state) => {
-      // Locked like every other document mutation during preview: the overlay
-      // renders one row, so stepping under it would leave a stale image.
-      if (selectPreviewLocksEditor(state)) return {};
+      // Locked while the editor is frozen: the preview overlay renders one row
+      // (stale image if stepped under), and a source buffer freezes the model.
+      if (selectEditorFrozen(state)) return {};
       const ds = state.dataset;
       if (!ds || ds.rows.length === 0) return {};
       const clamped = Math.max(0, Math.min(index, ds.rows.length - 1));
@@ -139,13 +139,16 @@ export const createDataSlice: StateCreator<LabelState, [], [], DataSlice> = (set
     }),
 
   setColumnMapping: (mapping) => {
-    // Changing the mapping changes the previewed output; exit the stale preview
-    // like the other data mutations rather than mutating under a frozen overlay.
+    // Preview/source asymmetry: see selectSourceEditing's doc.
+    if (selectSourceEditing(get())) return;
     get().exitPreviewMode();
     set({ columnMapping: mapping });
   },
 
   applyMappingDraft: ({ variables: rawVariables, dataset, mapping, activeRowIndex }) => {
+    // Writes variables, mapping AND pages; blocked while a source buffer owns
+    // the model (see setColumnMapping for the preview/source asymmetry).
+    if (selectSourceEditing(get())) return;
     // Applying a mapping changes the previewed data, so exit the (now stale)
     // preview and commit, instead of silently discarding the user's Apply.
     get().exitPreviewMode();
@@ -200,15 +203,22 @@ export const createDataSlice: StateCreator<LabelState, [], [], DataSlice> = (set
     });
   },
 
-  openMappingModal: () => set({ mappingModalOpen: true }),
+  openMappingModal: () => {
+    if (selectSourceEditing(get())) return;
+    set({ mappingModalOpen: true });
+  },
   closeMappingModal: () => set({ mappingModalOpen: false }),
   // Clearing the flag on open dismisses a standalone review explicitly (the
   // wizard's mapping step supersedes it); clearing on close keeps the flag the
   // wizard's own loads set (applyImport -> openMappingModal) from popping after.
-  openConnectWizard: () => set({ connectWizardOpen: true, mappingModalOpen: false }),
+  openConnectWizard: () => {
+    if (selectSourceEditing(get())) return;
+    set({ connectWizardOpen: true, mappingModalOpen: false });
+  },
   closeConnectWizard: () => set({ connectWizardOpen: false, mappingModalOpen: false }),
   setPendingDatasetReplace: (payload) => set({ pendingDatasetReplace: payload }),
   restoreDataSnapshot: (snap) => {
+    if (selectSourceEditing(get())) return;
     get().exitPreviewMode();
     set((s) => ({
       dataset: snap.dataset,

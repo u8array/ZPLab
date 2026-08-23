@@ -4,6 +4,8 @@ import { fallbackTranslations as en } from "../locales";
 
 const FLAGS: MenuFlags = {
   hasObjects: true,
+  documentEmits: true,
+  sourceEditing: false,
   canBatchExport: false,
   batchRowCount: 0,
   batchPrintCount: 0,
@@ -28,12 +30,29 @@ describe("buildMenuModel", () => {
     expect(m.file).toHaveLength(5);
   });
 
-  it("gates object-dependent items on hasObjects", () => {
-    const m = buildMenuModel(en, { ...FLAGS, hasObjects: false });
+  it("gates object-dependent items on hasObjects and export/save on documentEmits", () => {
+    const m = buildMenuModel(en, { ...FLAGS, hasObjects: false, documentEmits: false });
     for (const id of ["exportZpl", "saveDesign", "print", "sendToZebra"]) {
       expect(byId(m, id)?.enabled).toBe(false);
     }
     expect(byId(m, "new")?.enabled).toBe(true);
+    // Overlay pages emit without objects (config-only source apply): export
+    // and save stay reachable, the render-dependent items do not.
+    const emits = buildMenuModel(en, { ...FLAGS, hasObjects: false, documentEmits: true });
+    expect(byId(emits, "exportZpl")?.enabled).toBe(true);
+    expect(byId(emits, "saveDesign")?.enabled).toBe(true);
+    // A config-only overlay stream is a legitimate setup job for the device;
+    // only the Labelary render stays objects-gated.
+    expect(byId(emits, "sendToZebra")?.enabled).toBe(true);
+    expect(byId(emits, "print")?.enabled).toBe(false);
+  });
+
+  it("disables document-replacing and emitting entries during a source-edit session", () => {
+    const m = buildMenuModel(en, { ...FLAGS, sourceEditing: true });
+    for (const id of ["new", "addPage", "importZpl", "openDesign", "saveDesign", "importCsv", "exportZpl", "print", "sendToZebra"]) {
+      expect(byId(m, id)?.enabled, id).toBe(false);
+    }
+    expect(byId(m, "settings")?.enabled).toBe(true);
   });
 
   it("shows the batch export with the row count only when a CSV is mapped", () => {

@@ -227,3 +227,30 @@ export function applyBindingToObject<T extends LabelObject>(
     props: { ...props, content: next },
   } as unknown as T;
 }
+
+/** Bindings survive a source apply by the same ^FN-slot key as
+ *  `variablesRenamed` in editorStateDiff; a renumbered slot loses its
+ *  binding, and the diff says so. */
+export function remapBindingsByFn(
+  prevVariables: readonly Variable[],
+  mapping: ColumnMapping | null,
+  nextVariables: readonly Variable[],
+): { mapping: ColumnMapping | null; remapped: number; lost: number } {
+  if (!mapping) return { mapping: null, remapped: 0, lost: 0 };
+  const prevById = new Map(prevVariables.map((v) => [v.id, v]));
+  const nextByFn = new Map(nextVariables.map((v) => [v.fnNumber, v]));
+  const bindings: Record<string, string> = {};
+  let remapped = 0;
+  let lost = 0;
+  for (const [varId, header] of Object.entries(mapping.bindings)) {
+    const fn = prevById.get(varId)?.fnNumber;
+    const nextVar = fn === undefined ? undefined : nextByFn.get(fn);
+    if (nextVar) {
+      bindings[nextVar.id] = header;
+      remapped++;
+    } else {
+      lost++;
+    }
+  }
+  return { mapping: { ...mapping, bindings }, remapped, lost };
+}

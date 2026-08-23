@@ -83,6 +83,9 @@ export interface ParsedZPL {
    *  only one size, so callers reject or warn. Diverging ^JM densities are
    *  folded into the import service's flag of the same name, not this one. */
   mixedPageGeometry: boolean;
+  /** A ^XA never met its ^XZ (or vice versa): the stream never prints and an
+   *  overlay would replay the broken bytes; interactive callers refuse. */
+  unbalancedFormat: boolean;
   labelConfig: Partial<LabelConfig>;
   /** EEPROM-persistent printer-state extracted from any Setup-Script
    *  commands in the stream (^JZ, ^JT, ~TA, ^ST, ^KD, ^SL, ^KL, ^SE,

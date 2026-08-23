@@ -15,7 +15,7 @@ import {
   postDraftReceipt,
   postRasterResponse,
 } from "./mcpServer";
-import { useLabelStore } from "../store/labelStore";
+import { useLabelStore, selectSourceEditDirty } from "../store/labelStore";
 
 /** Re-measuring after an open_in_app swap is async (React commit + bwip),
  *  so an immediate snapshot could serve the OLD design's footprints. */
@@ -72,6 +72,16 @@ export async function respondToDesignRequest(id: number): Promise<void> {
 /** Apply a pushed draft and tell the sidecar whether it took, so open_in_app
  *  reports what happened instead of assuming it arrived. */
 export async function respondToOpenDraft(id: number, designText: string): Promise<void> {
+  // Refusing loudly beats destruction: a dirty buffer is unsaved work that
+  // exists nowhere else; an untouched session just closes.
+  if (selectSourceEditDirty(useLabelStore.getState())) {
+    await postDraftReceipt({
+      id,
+      ok: false,
+      error: "the user is editing the label's ZPL source; ask them to apply or discard it first",
+    });
+    return;
+  }
   // Counted before the swap: opening a design replaces the editor's document
   // and clears its undo history, so the reply says what was displaced rather
   // than letting the agent report a silent success.

@@ -1,5 +1,5 @@
 import { useLabelStore, temporalPartialize, useHistory } from "./labelStore";
-import { selectPreviewLocksEditor } from "./labelStore.selectors";
+import { selectEditorFrozen } from "./labelStore.selectors";
 import {
   describeHistoryStep,
   buildHistoryTimeline,
@@ -19,8 +19,8 @@ export interface HistoryEntries {
   jumpTo: (index: number) => void;
   clear: () => void;
   canClear: boolean;
-  /** Preview lock active: undo/redo are no-ops, so the UI should render the
-   *  list as inert rather than offering dead controls. */
+  /** Editor frozen (preview or source edit): undo/redo are no-ops, so the UI
+   *  should render the list as inert rather than offering dead controls. */
   locked: boolean;
 }
 
@@ -59,10 +59,10 @@ function describeCached(
 /** Store adapter: projects the zundo timeline into a flat, ordered list of
  *  history entries (oldest first, including the implicit current state) and a
  *  `jumpTo` that translates a target index into the right undo/redo step count.
- *  Composes `useHistory()`, so it inherits the preview-lock no-op on undo/redo. */
+ *  Composes `useHistory()`, so it inherits the editor-frozen no-op on undo/redo. */
 export function useHistoryEntries(): HistoryEntries {
   const history = useHistory();
-  const locked = useLabelStore(selectPreviewLocksEditor);
+  const locked = useLabelStore(selectEditorFrozen);
   const { pastStates, futureStates, undo, redo, clear } = history;
 
   const current = temporalPartialize(useLabelStore.getState()) as HistorySnapshot;

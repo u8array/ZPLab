@@ -212,6 +212,8 @@ export function parseZPL(
   const handlers: Record<string, Handler> = {
     XA: (p, rest, cmd) => {
       commitPendingReverseBg();
+      if (formatOpen) unbalancedFormat = true;
+      formatOpen = true;
       s.format.embedChar = "#";
       s.format.clockChars = { ...DEFAULT_CLOCK_CHARS };
       s.format.inFormatHead = true;
@@ -219,6 +221,8 @@ export function parseZPL(
     },
     XZ(p, rest, cmd) {
       commitPendingReverseBg();
+      if (!formatOpen) unbalancedFormat = true;
+      formatOpen = false;
       // Between formats there is no head: a ^JM out here is neither read by the
       // next format's lookahead nor rewritable, so it must not be taken for one.
       s.format.inFormatHead = false;
@@ -266,6 +270,11 @@ export function parseZPL(
   // replay relies on). Page 0 opens at offset 0 and owns any preamble.
   const pages: ParsedPage[] = [];
   let mixedPageGeometry = false;
+  // Tracked at the dispatch handlers, the only ^CC-aware place: a format left
+  // open never prints (spec p. 375), and an overlay would replay the broken
+  // bytes verbatim, so callers need to know.
+  let formatOpen = false;
+  let unbalancedFormat = false;
   let lastPageW: number | undefined;
   let lastPageH: number | undefined;
 
@@ -397,7 +406,7 @@ export function parseZPL(
       const reason = pg.sawNonUtf8Ci
         ? "a non-UTF-8 ^CI encoding"
         : pg.sawBareBarcode
-          ? "a barcode without an explicit ^BY"
+          ? "a barcode without an in-field ^BY"
           : pg.sawFnDeclaration
             ? "a standalone ^FN declaration"
             : s.bcFdRegenLossy
@@ -631,6 +640,7 @@ export function parseZPL(
   // Close the last page (also the only one for single-block or bare streams);
   // its serial-orphan sweep runs inside.
   closePage(zpl.length);
+  if (formatOpen) unbalancedFormat = true;
 
   // Apply the geometry sidecar last so it wins over ^PW/^LL-derived mm and
   // restores dpmm, which plain ZPL can't carry.
@@ -643,6 +653,7 @@ export function parseZPL(
   return {
     pages,
     mixedPageGeometry,
+    unbalancedFormat,
     labelConfig,
     printerProfile,
     uploadedFontPaths: [...s.fonts.downloadedFontPaths],

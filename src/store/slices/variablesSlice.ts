@@ -14,7 +14,7 @@ import {
   substituteTemplateMarkers,
 } from '../labelStore.internals';
 import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
-import { selectPreviewLocksEditor } from '../labelStore.selectors';
+import { selectEditorFrozen } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
 import { newId } from "@zplab/core/lib/ids";
@@ -46,7 +46,7 @@ export const createVariablesSlice: StateCreator<LabelState, [], [], VariablesSli
 
   addVariable: (input) => {
     const state = get();
-    if (selectPreviewLocksEditor(state)) return null;
+    if (selectEditorFrozen(state)) return null;
     const trimmedName = input.name.trim();
     if (!isValidVariableName(trimmedName)) return null;
     if (state.variables.some((v) => v.name === trimmedName)) return null;
@@ -78,7 +78,7 @@ export const createVariablesSlice: StateCreator<LabelState, [], [], VariablesSli
 
   updateVariable: (id, changes) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const existing = state.variables.find((v) => v.id === id);
       if (!existing) return {};
 
@@ -128,14 +128,14 @@ export const createVariablesSlice: StateCreator<LabelState, [], [], VariablesSli
 
   setVariables: (variables) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       if (!validateVariablesUnique(variables)) return {};
       return { variables };
     }),
 
   removeVariable: (id) =>
     set((state) => {
-      if (selectPreviewLocksEditor(state)) return {};
+      if (selectEditorFrozen(state)) return {};
       const removed = state.variables.find((v) => v.id === id);
       if (!removed) return {};
       let pagesChanged = false;

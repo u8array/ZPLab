@@ -195,9 +195,16 @@ function oversizeError(zpl: string): ToolError | null {
 }
 
 /** Reject a parsed stream the single-label draft model can't represent:
- *  divergent per-block ^PW/^LL or ^JM, too many objects/pages, or nothing at
- *  all (a bare stream would otherwise pass as an empty design and fail much later). */
+ *  unbalanced ^XA/^XZ, divergent per-block ^PW/^LL or ^JM, too many
+ *  objects/pages, or nothing at all (a bare stream would otherwise pass as an
+ *  empty design and fail much later). */
 function importRejection(imported: ZplImportResult): ToolError | null {
+  if (imported.unbalancedFormat) {
+    return {
+      ok: false,
+      errors: ["The stream's ^XA/^XZ do not balance; an unterminated format never prints."],
+    };
+  }
   if (imported.pages.length === 0) {
     return { ok: false, errors: ["No ZPL label found; a label block runs from ^XA to ^XZ."] };
   }

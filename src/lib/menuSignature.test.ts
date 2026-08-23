@@ -6,6 +6,8 @@ import type { HistorySubmenu } from "./menuModel";
 
 const FLAGS: MenuFlags = {
   hasObjects: true,
+  documentEmits: true,
+  sourceEditing: false,
   canBatchExport: false,
   batchRowCount: 0,
   batchPrintCount: 0,

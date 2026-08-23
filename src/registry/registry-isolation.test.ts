@@ -105,9 +105,10 @@ describe("registry isolation baseline", () => {
   // React, store or UI) holds across everything they pull from lib/ too.
   it("emit/parse import closure stays free of react, store and UI imports", () => {
     const srcDir = fileURLToPath(new URL("../../packages/core/src/", import.meta.url));
-    // The lib/ entries beyond the emit/parse pair are MCP-server entry points
-    // sitting ABOVE their closure (nothing in it imports these back), so each
-    // must be listed explicitly or the scan never reaches it.
+    // The lib/ entries beyond the emit/parse pair are headless entry points
+    // (MCP server, source-edit) sitting ABOVE their closure (nothing in it
+    // imports these back), so each must be listed explicitly or the scan
+    // never reaches it.
     const entries = [
       "lib/zplGenerator.ts",
       "lib/zplParser.ts",
@@ -118,6 +119,7 @@ describe("registry isolation baseline", () => {
       "lib/barcodeEncodePreflight.ts",
       "lib/anchorRepin.ts",
       "lib/templateObjects.ts",
+      "lib/zplSourceEdit.ts",
       "registry/index.ts",
     ];
     // A spec that names its extension resolves as written; anything else tries
