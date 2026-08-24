@@ -1,4 +1,4 @@
-import { useLabelStore } from "./labelStore";
+import { useLabelStore, selectRenderVariables, selectRenderDesignLabel, selectRenderColumnMapping } from "./labelStore";
 import {
   buildActiveRow,
   clockCtxFromLabel,
@@ -24,10 +24,10 @@ export interface PreviewBinding {
  *  canvas, preflight) derives the same binding context from the store here
  *  instead of assembling variables/dataset/clock ad hoc per call site. */
 export function usePreviewBinding(): PreviewBinding {
-  const variables = useLabelStore((s) => s.variables);
+  const variables = useLabelStore(selectRenderVariables);
   const dataset = useLabelStore((s) => s.dataset);
-  const columnMapping = useLabelStore((s) => s.columnMapping);
-  const label = useLabelStore((s) => s.label);
+  const columnMapping = useLabelStore(selectRenderColumnMapping);
+  const label = useLabelStore(selectRenderDesignLabel);
   const active = buildActiveRow(dataset, columnMapping);
   const clock = clockCtxFromLabel(label);
   return {

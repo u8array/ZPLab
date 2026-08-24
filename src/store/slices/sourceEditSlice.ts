@@ -1,5 +1,8 @@
 import type { StateCreator } from 'zustand';
-import type { SourceApplyOk } from '@zplab/core/lib/zplSourceEdit';
+import type { SourceApplyPlan, SourceApplyOk } from '@zplab/core/lib/zplSourceEdit';
+import type { LabelConfig } from '@zplab/core/types/LabelConfig';
+import type { Page } from '@zplab/core/types/Group';
+import type { ColumnMapping, Variable } from '@zplab/core/types/Variable';
 import { selectEditorFrozen } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
@@ -7,17 +10,34 @@ export type SourceEditMode =
   | { status: 'off' }
   | { status: 'editing'; draft: string; baseline: string; session: number };
 
+/** The draft parsed for display: what applying the buffer would commit, plus
+ *  the refusal the apply would raise right now (the doc then lags the buffer).
+ *  Volatile view state, session-scoped, never persisted or in the timeline. */
+export interface SourceShadow {
+  doc: {
+    label: LabelConfig;
+    pages: Page[];
+    variables: Variable[];
+    columnMapping: ColumnMapping | null;
+  } | null;
+  refusal: Extract<SourceApplyPlan, { ok: false }>['reason'] | null;
+}
+
 // Session identity, not just status: dialog state and plans hang off the
 // session, so a session ended and re-entered must not resurrect them.
 let nextSession = 1;
 
 export interface SourceEditSlice {
   sourceEdit: SourceEditMode;
+  sourceShadow: SourceShadow | null;
   /** Seeds draft and baseline from the panel's current export text, so the
    *  buffer starts as exactly what the user was looking at. No-op under the
    *  preview lock. */
   enterSourceEdit: (currentZpl: string) => void;
   setSourceDraft: (draft: string) => void;
+  /** Written only by the shadow-parse effect; ignored outside a session so a
+   *  late parse cannot resurrect a preview after the session ended. */
+  setSourceShadow: (shadow: SourceShadow) => void;
   cancelSourceEdit: () => void;
   /** Commits a prepared plan as ONE undo step. Unlike loadDesign this keeps
    *  history and dataset: the document keeps its identity, only its ZPL
@@ -32,6 +52,7 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
   api,
 ) => ({
   sourceEdit: { status: 'off' },
+  sourceShadow: null,
 
   enterSourceEdit: (currentZpl) =>
     set((state) => {
@@ -55,8 +76,13 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
       state.sourceEdit.status === 'editing' ? { sourceEdit: { ...state.sourceEdit, draft } } : {},
     ),
 
+  setSourceShadow: (shadow) =>
+    set((state) => (state.sourceEdit.status === 'editing' ? { sourceShadow: shadow } : {})),
+
   cancelSourceEdit: () =>
-    set((state) => (state.sourceEdit.status === 'off' ? {} : { sourceEdit: { status: 'off' } })),
+    set((state) =>
+      state.sourceEdit.status === 'off' ? {} : { sourceEdit: { status: 'off' }, sourceShadow: null },
+    ),
 
   applyZplSource: (plan, session) => {
     // loadDesign cancels the session, so its stale plan dies here too.
@@ -79,6 +105,7 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
       connectWizardOpen: false,
       printerSettingsTab: null,
       sourceEdit: { status: 'off' },
+      sourceShadow: null,
     });
   },
 });

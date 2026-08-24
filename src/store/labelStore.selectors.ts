@@ -15,24 +15,55 @@ export const currentObjects = (state: PageState): LabelObject[] =>
 // label, density) so subscribers only re-render when one of them changes.
 const overrideCache = new WeakMap<LabelConfig, Map<JmDensity, PageLabel>>();
 
-/** The label as the current page prints it: its ^JM override wins so every
- *  editor-geometry root (mm<->dots, bounds, snap, preflight) and single-page
- *  emit works in this page's density. Design-scope reads keep `state.label`. */
-export const currentPageLabel = (state: LabelState): PageLabel => {
-  const jm = state.pages[state.currentPageIndex]?.jmDensity;
+const resolvedPageLabel = (label: LabelConfig, jm: JmDensity | undefined): PageLabel => {
   // No divergence means the design label already IS this page's resolved label.
-  if (jm === undefined || jm === state.label.jmDensity) return designAsPageLabel(state.label);
-  let byDensity = overrideCache.get(state.label);
+  if (jm === undefined || jm === label.jmDensity) return designAsPageLabel(label);
+  let byDensity = overrideCache.get(label);
   if (!byDensity) {
     byDensity = new Map();
-    overrideCache.set(state.label, byDensity);
+    overrideCache.set(label, byDensity);
   }
   const cached = byDensity.get(jm);
   if (cached) return cached;
-  const built = pageLabelConfig(state.label, { jmDensity: jm });
+  const built = pageLabelConfig(label, { jmDensity: jm });
   byDensity.set(jm, built);
   return built;
 };
+
+/** The label as the current page prints it: its ^JM override wins so every
+ *  editor-geometry root (mm<->dots, bounds, snap, preflight) and single-page
+ *  emit works in this page's density. Design-scope reads keep `state.label`. */
+export const currentPageLabel = (state: LabelState): PageLabel =>
+  resolvedPageLabel(state.label, state.pages[state.currentPageIndex]?.jmDensity);
+
+/* Render source: during a source-edit session the view follows the master
+ * buffer, so every renderer-facing question (objects, page label, variables,
+ * page count) derives from the parsed shadow through this one seam; live
+ * state otherwise. Model-facing reads keep the plain fields. */
+
+export const selectRenderPages = (s: LabelState) => s.sourceShadow?.doc?.pages ?? s.pages;
+
+export const selectRenderVariables = (s: LabelState) =>
+  s.sourceShadow?.doc?.variables ?? s.variables;
+
+export const selectRenderDesignLabel = (s: LabelState): LabelConfig =>
+  s.sourceShadow?.doc?.label ?? s.label;
+
+export const selectRenderColumnMapping = (s: LabelState) =>
+  s.sourceShadow?.doc ? s.sourceShadow.doc.columnMapping : s.columnMapping;
+
+/** The shadow can have fewer pages than the live index points at. */
+export const selectRenderPageIndex = (s: LabelState): number =>
+  Math.min(s.currentPageIndex, selectRenderPages(s).length - 1);
+
+export const selectRenderObjects = (s: LabelState): LabelObject[] =>
+  selectRenderPages(s)[selectRenderPageIndex(s)]?.objects ?? [];
+
+export const selectRenderPageLabel = (s: LabelState): PageLabel =>
+  resolvedPageLabel(
+    selectRenderDesignLabel(s),
+    selectRenderPages(s)[selectRenderPageIndex(s)]?.jmDensity,
+  );
 
 /** True while any per-label print override is set; drives the reset button's
  *  visibility so its disappearance after a reset doubles as feedback. */

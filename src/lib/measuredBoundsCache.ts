@@ -5,6 +5,7 @@
 // Convention: store the ALREADY-ROTATED footprint in dots, keyed by obj.id.
 // objectBounds.ts consumes it verbatim, typed as core's MeasuredFootprint.
 import { type MeasuredFootprint } from "@zplab/core/lib/objectBounds";
+import { useLabelStore } from "../store/labelStore";
 
 export type { MeasuredFootprint };
 
@@ -59,6 +60,10 @@ export function getMeasuredBounds(id: string): MeasuredFootprint | undefined {
 }
 
 export function clearMeasuredBounds(id: string): void {
+  // A source-edit session swaps every live node for its shadow twin; those
+  // unmounts are temporary, and dropping their footprints would blank them for
+  // the whole session (e.g. MCP get_design). Consumers filter stale ids.
+  if (useLabelStore.getState().sourceEdit.status === "editing") return;
   if (cache.delete(id)) emitChange();
 }
 

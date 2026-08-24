@@ -14,7 +14,8 @@ import { CANVAS_DROPPABLE_ID } from "../../dnd/types";
 import { paletteGhostHandlers } from "./paletteGhostMonitor";
 import { Stage, Layer, Group, Image as KImage, Rect, Transformer } from "react-konva";
 import type Konva from "konva";
-import { useLabelStore, useCurrentObjects, currentObjects, currentPageLabel, getCurrentObjects, selectEditorFrozen, selectPreviewLocksEditor } from "../../store/labelStore";
+import { useLabelStore, currentObjects, currentPageLabel, getCurrentObjects, selectEditorFrozen, selectPreviewLocksEditor, selectRenderPageLabel, selectRenderObjects, selectRenderColumnMapping } from "../../store/labelStore";
+import { useSourceShadowSync } from "../../hooks/useSourceEditShadow";
 import { isGroup, getAllLeaves, exportableLeaves, expandSelection, selectionTargetId, findObjectById, canDeleteSelection, canGroupSelection, canUngroupSelection, hasLockedAncestor, isSelectionLocked, type LabelObject } from "@zplab/core/types/Group";
 import { pxToDots, dotsToPx, mmToDots, SCREEN_PX_PER_MM } from "@zplab/core/lib/coordinates";
 import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
@@ -256,17 +257,18 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     variables,
     pages,
   } = useLabelStore();
-  // Everything on canvas is drawn in the current page's dot scale; only the
-  // whole-document emit below still needs the design label.
-  const label = useLabelStore(currentPageLabel);
+  // Everything on canvas is drawn in the current page's dot scale;
+  // designLabel stays the MODEL's design scope for the whole-document emit.
+  useSourceShadowSync();
+  const label = useLabelStore(selectRenderPageLabel);
   const designLabel = useLabelStore((s) => s.label);
+  const objects = useLabelStore(selectRenderObjects);
   const effDpmm = effectiveDpmm(label);
-  const objects = useCurrentObjects();
   const previewBinding = usePreviewBinding();
   // Raw dataset/mapping (not just the active row): markerValueFindings
   // validates marker values across ALL CSV rows, since any row prints.
   const dataset = useLabelStore((s) => s.dataset);
-  const columnMapping = useLabelStore((s) => s.columnMapping);
+  const columnMapping = useLabelStore(selectRenderColumnMapping);
   const paletteRows = useLabelStore((s) => s.paletteRows);
   const previewMode = useLabelStore((s) => s.previewMode);
   const editorFrozen = useLabelStore(selectEditorFrozen);
@@ -652,8 +654,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // Preflight runs over the EXPORTABLE leaves (includeInExport), not the visible
   // ones, so a hidden-but-exported object is still warned and a visible-but-not-
   // exported one isn't falsely flagged: the warnings track what prints. Suppressed
-  // during drag/preview-lock like the rest of the chrome.
-  const preflightSuppressed = editorFrozen || isDragging;
+  // during drag/preview-lock; the source-edit shadow keeps them, so the draft
+  // validates in real time.
+  const preflightSuppressed = previewCoversCanvas || isDragging;
   const preflightLeaves = preflightSuppressed ? [] : exportableLeaves(objects);
   const preflightFindings = preflightSuppressed
     ? []

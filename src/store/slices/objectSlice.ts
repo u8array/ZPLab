@@ -25,7 +25,7 @@ import {
   freshPasteCopies,
   updateCurrentObjects,
 } from '../labelStore.internals';
-import { selectEditorFrozen, currentObjects, currentPageLabel } from '../labelStore.selectors';
+import { selectEditorFrozen, selectPreviewLocksEditor, selectRenderPages, currentObjects, currentPageLabel } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
 import { newId } from "@zplab/core/lib/ids";
@@ -579,8 +579,10 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
 
   setCurrentPage: (index) =>
     set((state) => {
-      if (selectEditorFrozen(state)) return {};
-      if (index < 0 || index >= state.pages.length) return {};
+      // View-only op: allowed during a source-edit session (the shadow can
+      // carry more pages than the model), blocked only under a preview.
+      if (selectPreviewLocksEditor(state)) return {};
+      if (index < 0 || index >= selectRenderPages(state).length) return {};
       if (index === state.currentPageIndex) return {};
       return { currentPageIndex: index, selectedIds: [] };
     }),
