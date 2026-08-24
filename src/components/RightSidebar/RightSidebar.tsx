@@ -10,7 +10,7 @@ import { LayersPanel } from '../Properties/LayersPanel';
 import { FontManager } from '../Fonts/FontManager';
 import { VariablesPanel } from '../Variables/VariablesPanel';
 import { useT } from '../../hooks/useT';
-import { useLabelStore } from '../../store/labelStore';
+import { useLabelStore, selectEditorFrozen } from '../../store/labelStore';
 import type { SidebarTab } from '../../store/slices/uiSlice';
 import type { LabelCanvasHandle } from '../Canvas/LabelCanvas';
 import { AaIcon } from './AaIcon';
@@ -37,6 +37,10 @@ export function RightSidebar({ canvasRef, onCollapse }: Props) {
   // request the content editor's focus in one atomic action.
   const tab = useLabelStore((s) => s.sidebarTab);
   const setTab = useLabelStore((s) => s.setSidebarTab);
+  // Panel edits no-op against the frozen model; `inert` makes them honestly
+  // dead. Tabs and collapse stay live (view-only), as does the scrollbar
+  // (the wrapper sits inside the scroll container).
+  const frozen = useLabelStore(selectEditorFrozen);
 
   // Ordering rule: selection scope first (Properties), then document-wide
   // concerns by usage frequency (Layers, Variables, Fonts).
@@ -89,10 +93,12 @@ export function RightSidebar({ canvasRef, onCollapse }: Props) {
           escaping to the viewport and stretching the document past 100vh (which
           let focus-scroll shift the whole app, leaving a grey strip below). */}
       <div className="relative flex-1 overflow-y-auto">
-        {tab === 'properties' && <PropertiesPanel canvasRef={canvasRef} />}
-        {tab === 'layers' && <LayersPanel />}
-        {tab === 'variables' && <VariablesPanel />}
-        {tab === 'fonts' && <FontManager />}
+        <div inert={frozen} className={frozen ? 'opacity-50' : undefined}>
+          {tab === 'properties' && <PropertiesPanel canvasRef={canvasRef} />}
+          {tab === 'layers' && <LayersPanel />}
+          {tab === 'variables' && <VariablesPanel />}
+          {tab === 'fonts' && <FontManager />}
+        </div>
       </div>
     </aside>
   );

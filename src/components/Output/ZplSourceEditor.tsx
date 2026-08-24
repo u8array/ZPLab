@@ -30,6 +30,9 @@ export function ZplSourceEditor({
   const [pendingPlan, setPendingPlan] = useState<SourceApplyOk | null>(null);
   const [applyError, setApplyError] = useState<string | null>(null);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  // The shadow parse already knows whether applying would refuse; surfacing it
+  // live saves the user the dead Apply click.
+  const liveRefusal = useLabelStore((s) => s.sourceShadow?.refusal ?? null);
 
   const dirty = draft !== baseline;
   const requestCancel = () => {
@@ -86,7 +89,9 @@ export function ZplSourceEditor({
         />
       </div>
       <div className="flex items-center justify-between px-3 py-2 shrink-0 gap-3">
-        <p className="font-mono text-[10px] text-amber-400 leading-relaxed truncate">{applyError}</p>
+        <p className="font-mono text-[10px] text-amber-400 leading-relaxed truncate">
+          {applyError ?? (liveRefusal ? sourceRefusalText(liveRefusal, t) : null)}
+        </p>
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"

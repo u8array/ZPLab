@@ -106,6 +106,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       connectWizardOpen: false,
       // An open source buffer belongs to the replaced document.
       sourceEdit: { status: 'off' },
+      sourceShadow: null,
     });
     // A document replacement is not an undoable step back into the previous
     // file; clearing also prevents an undo from stranding the new design's

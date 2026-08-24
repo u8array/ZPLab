@@ -10,7 +10,7 @@ import { useContextMenu } from '../../hooks/useContextMenu';
 import { resolveAddable, typeLabelFor, type AddableEntry } from '../../registry/palettePresets';
 import { getEntry } from '@zplab/core/registry';
 import { useT } from '../../hooks/useT';
-import { useLabelStore, currentPageLabel } from '../../store/labelStore';
+import { useLabelStore, currentPageLabel, selectEditorFrozen } from '../../store/labelStore';
 import { printableRectDots } from '@zplab/core/lib/objectBounds';
 import { centeredSpawnAnchor } from '../../lib/spawn';
 import { DragHandleIcon } from '../ui/DragHandleIcon';
@@ -214,6 +214,9 @@ export function ObjectPalette() {
   const [activeEntry, setActiveEntry] = useState<AddableEntry | null>(null);
   const [overCanvas, setOverCanvas] = useState(false);
   const { menu, openAtPointer, openBelowAnchor, close } = useContextMenu<MenuSection[]>();
+  // Every spawn path (drag, double-click, context menu) no-ops against the
+  // frozen model; `inert` makes the whole palette honestly dead instead.
+  const frozen = useLabelStore(selectEditorFrozen);
   const q = query.trim().toLowerCase();
 
   const openRowMenu = (e: React.MouseEvent, entry: AddableEntry) => {
@@ -281,7 +284,7 @@ export function ObjectPalette() {
   const resultCount = flatGroups.reduce((n, g) => n + g.entries.length, 0);
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div inert={frozen} className={`flex flex-col flex-1 min-h-0 ${frozen ? 'opacity-50' : ''}`}>
       <div className="shrink-0 bg-surface border-b border-border px-2 pt-3 pb-2 flex flex-col gap-2">
         <div className="relative">
           <MagnifyingGlassIcon className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted" />

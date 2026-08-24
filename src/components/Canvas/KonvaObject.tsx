@@ -14,7 +14,7 @@ import { measureInkWidthPx } from "@zplab/core/lib/labelGeometry/measureTextDots
 import { outlineInset } from "../../lib/shapeGeometry";
 import { reverseShapeStyle } from "./reverseShapeStyle";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
-import { useLabelStore } from "../../store/labelStore";
+import { useLabelStore, selectRenderDesignLabel } from "../../store/labelStore";
 import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/textPositionTransforms";
@@ -522,7 +522,7 @@ function KonvaObjectInner({
   const draggable = useNodeDraggable(obj);
   // Pass label so metrics resolves uploaded-TTF previews. ZPL emit/parse
   // call without `label` so round-trip stays PrintLab-based.
-  const label = useLabelStore((s) => s.label);
+  const label = useLabelStore(selectRenderDesignLabel);
   const requestContentEditorFocus = useLabelStore((s) => s.requestContentEditorFocus);
   const setSidebarTab = useLabelStore((s) => s.setSidebarTab);
   const selectObjects = useLabelStore((s) => s.selectObjects);
