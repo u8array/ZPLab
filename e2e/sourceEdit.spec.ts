@@ -5,14 +5,18 @@ import { test, expect, type Page } from '@playwright/test';
 
 const SAMPLE_ZPL = '^XA\n^FO50,50^A0N,30,0^FDHello World^FS\n^XZ';
 
+const openOutput = async (page: Page) => {
+  await page.getByRole('button', { name: 'Expand' }).click();
+  return page.getByRole('region', { name: 'ZPL' }).getByRole('textbox');
+};
+
 const importSample = async (page: Page) => {
   await page.getByRole('button', { name: 'File', exact: true }).click();
   await page.getByRole('button', { name: 'Import ZPL' }).click();
   await page.getByRole('textbox').fill(SAMPLE_ZPL);
   await page.getByRole('button', { name: 'Import', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeHidden();
-  await page.getByRole('button', { name: 'Expand' }).click();
-  return page.getByRole('region', { name: 'ZPL' }).getByRole('textbox');
+  return openOutput(page);
 };
 
 const retype = async (page: Page, output: ReturnType<Page['locator']>, zpl: string) => {
@@ -20,6 +24,18 @@ const retype = async (page: Page, output: ReturnType<Page['locator']>, zpl: stri
   await page.keyboard.press('ControlOrMeta+a');
   await page.keyboard.type(zpl);
 };
+
+test('a blank document accepts ZPL typed straight into the pane', async ({ page }) => {
+  await page.goto('/');
+  const output = await openOutput(page);
+  await output.click();
+  await page.keyboard.type('^XA^FO10,10^A0N,30,30^FDscratch^FS^XZ');
+  await expect(page.getByRole('button', { name: 'Apply' })).toBeVisible();
+
+  await page.locator('main').click({ position: { x: 20, y: 20 } });
+  await expect(page.getByRole('button', { name: 'Apply' })).toBeHidden();
+  await expect(output).toContainText('^FDscratch');
+});
 
 test('a clean edit applies on the outside click that leaves the panel', async ({ page }) => {
   await page.goto('/');

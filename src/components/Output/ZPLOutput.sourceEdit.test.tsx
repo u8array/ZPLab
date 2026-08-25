@@ -13,10 +13,11 @@ vi.mock("../../lib/clipboard", () => ({
 // CodeMirror needs layout APIs jsdom lacks; the props plus the focus handle
 // are the whole contract (real-CM invariants live in ZplCodeMirror.test.tsx).
 vi.mock("./ZplCodeMirror", () => {
-  function MockCodeMirror({ value, onChange, ariaLabel, readOnly, highlightLines, ref }: {
+  function MockCodeMirror({ value, onChange, ariaLabel, placeholderText, readOnly, highlightLines, ref }: {
     value: string;
     onChange: (v: string) => void;
     ariaLabel: string;
+    placeholderText: string;
     readOnly?: boolean;
     highlightLines?: ReadonlySet<number>;
     ref?: React.Ref<{ focus(): void }>;
@@ -27,6 +28,7 @@ vi.mock("./ZplCodeMirror", () => {
       <textarea
         ref={el}
         aria-label={ariaLabel}
+        placeholder={placeholderText}
         value={value}
         readOnly={readOnly}
         data-highlights={[...(highlightLines ?? [])].sort((a, b) => a - b).join(",")}
@@ -291,6 +293,43 @@ describe("focus leaving the panel", () => {
     typeDraft("^XA^XZ");
     fireEvent.keyDown(panelRoot(container), { key: "Escape" });
     expect(screen.getByRole("button", { name: t().output.editSourceDiscard })).toBeTruthy();
+  });
+});
+
+describe("authoring into an empty document", () => {
+  it("renders the editor and applies a from-scratch buffer on blur", async () => {
+    useLabelStore.setState({ pages: [{ objects: [] }] });
+    const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    expect(editor().value).toBe("");
+    expect(editor().placeholder).toBe(t().output.editSourcePlaceholder);
+    typeDraft("^XA^FO10,10^A0N,30,30^FDfresh^FS^XZ");
+    const s = useLabelStore.getState().sourceEdit;
+    expect(s.status).toBe("editing");
+    if (s.status === "editing") expect(s.baseline).toBe("");
+    await leavePanel(container);
+    expect(useLabelStore.getState().sourceEdit.status).toBe("off");
+    const obj = useLabelStore.getState().pages[0]?.objects[0];
+    expect((obj as { props: { content?: string } }).props.content).toBe("fresh");
+  });
+
+  it("a stray whitespace keystroke authored nothing and exits clean on blur", async () => {
+    useLabelStore.setState({ pages: [{ objects: [] }] });
+    const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft(" ");
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    await leavePanel(container);
+    // Without the nothing-authored short-circuit this held an unappliable
+    // session (Apply disabled, every outside click swallowed).
+    expect(useLabelStore.getState().sourceEdit.status).toBe("off");
+  });
+
+  it("refuses to apply an emptied buffer over a non-empty document", async () => {
+    const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("");
+    await leavePanel(container);
+    // Clearing the text must never read as "delete everything".
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    expect(useLabelStore.getState().pages).toBe(pages);
   });
 });
 

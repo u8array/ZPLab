@@ -5,6 +5,7 @@ import {
   Decoration,
   keymap,
   lineNumbers,
+  placeholder,
   type DecorationSet,
   type ViewUpdate,
 } from '@codemirror/view';
@@ -133,7 +134,11 @@ const NO_LINES: ReadonlySet<number> = new Set();
 const readOnlyExt = (ro: boolean) => [EditorState.readOnly.of(ro), EditorView.editable.of(!ro)];
 const highlightExt = (lines: ReadonlySet<number>) =>
   EditorView.decorations.of((v) => highlightDecorations(v.state, lines));
-const ariaExt = (label: string) => EditorView.contentAttributes.of({ 'aria-label': label });
+// One compartment: both are locale strings that change on the same event.
+const localeExt = (ariaLabel: string, placeholderText: string) => [
+  EditorView.contentAttributes.of({ 'aria-label': ariaLabel }),
+  placeholder(placeholderText),
+];
 
 export interface ZplCodeMirrorHandle {
   focus(): void;
@@ -146,6 +151,7 @@ export default function ZplCodeMirror({
   value,
   onChange,
   ariaLabel,
+  placeholderText,
   readOnly = false,
   highlightLines = NO_LINES,
   historyEpoch = 0,
@@ -154,6 +160,8 @@ export default function ZplCodeMirror({
   value: string;
   onChange: (value: string) => void;
   ariaLabel: string;
+  /** Shown while the doc is empty (authoring a label from scratch). */
+  placeholderText: string;
   readOnly?: boolean;
   /** 0-based doc lines tinted as the canvas selection's emitted source. */
   highlightLines?: ReadonlySet<number>;
@@ -169,7 +177,7 @@ export default function ZplCodeMirror({
     onChangeRef.current = onChange;
   });
   const lastEmitted = useRef(value);
-  const [ariaCompartment] = useState(() => new Compartment());
+  const [localeCompartment] = useState(() => new Compartment());
   const [readOnlyCompartment] = useState(() => new Compartment());
   const [highlightCompartment] = useState(() => new Compartment());
   const [historyCompartment] = useState(() => new Compartment());
@@ -192,7 +200,7 @@ export default function ZplCodeMirror({
         theme,
         readOnlyCompartment.of(readOnlyExt(readOnly)),
         highlightCompartment.of(highlightExt(highlightLines)),
-        ariaCompartment.of(ariaExt(ariaLabel)),
+        localeCompartment.of(localeExt(ariaLabel, placeholderText)),
         keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap]),
         EditorView.updateListener.of((u) => {
           if (!u.docChanged) return;
@@ -229,12 +237,14 @@ export default function ZplCodeMirror({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Live label, so a mid-session locale switch reaches the content element.
+  // Live, so a mid-session locale switch reaches label and placeholder.
   useEffect(() => {
     const view = viewRef.current;
     if (!view) return;
-    view.dispatch({ effects: ariaCompartment.reconfigure(ariaExt(ariaLabel)) });
-  }, [ariaLabel, ariaCompartment]);
+    view.dispatch({
+      effects: localeCompartment.reconfigure(localeExt(ariaLabel, placeholderText)),
+    });
+  }, [ariaLabel, placeholderText, localeCompartment]);
 
   const mountEpoch = useRef(historyEpoch);
   useEffect(() => {
