@@ -123,7 +123,8 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
       }
     : imported.printerProfile;
   let printerProfile = { ...current.printerProfile, ...profilePatch };
-  if (input.baseline !== undefined && input.baseline !== input.text) {
+  // An empty baseline (authoring from scratch) has no keys to strip.
+  if (input.baseline !== undefined && input.baseline !== '' && input.baseline !== input.text) {
     const base = importZplText(input.baseline, current.label.dpmm);
     label = stripDeletedKeys(
       label,

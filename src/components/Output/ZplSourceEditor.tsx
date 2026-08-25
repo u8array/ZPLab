@@ -72,6 +72,7 @@ export function ZplSourceEditor({
           readOnly={readOnly}
           highlightLines={highlightedLines}
           historyEpoch={historyEpoch}
+          placeholderText={t.output.editSourcePlaceholder}
         />
       </div>
       {gateMsg !== null && (
@@ -120,7 +121,11 @@ function SessionChrome({
   const liveRefusal = useLabelStore((s) => s.sourceShadow?.refusal ?? null);
   const liveMsg = liveRefusal !== null ? sourceRefusalText(liveRefusal, t) : null;
 
-  const dirty = session.draft !== session.baseline;
+  // Whitespace over an empty baseline authored nothing: exits treat it as
+  // clean, or a stray Space traps the user in an unappliable held session.
+  const dirty =
+    session.draft !== session.baseline &&
+    !(session.baseline === '' && session.draft.trim() === '');
   const requestCancel = () => {
     if (dirty) {
       setConfirmDiscard(true);

@@ -12,7 +12,7 @@ describe("ZplCodeMirror keyboard surface", () => {
     // Keys from the read-only scroller or the gutter must never fall
     // through to canvas handlers.
     const { container } = render(
-      <ZplCodeMirror value={"^XA\n^XZ"} onChange={vi.fn()} ariaLabel="zpl" readOnly />,
+      <ZplCodeMirror value={"^XA\n^XZ"} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" readOnly />,
     );
     const view = EditorView.findFromDOM(container as HTMLElement);
     expect(view).not.toBeNull();
@@ -27,7 +27,7 @@ describe("ZplCodeMirror line separators", () => {
   it("mounts a CRLF buffer without a write-back", () => {
     const changes: string[] = [];
     const value = "^XA\r\n^PW560\r\n^FO10,10^A0N,30,30^FDHi^FS\r\n^XZ";
-    render(<ZplCodeMirror value={value} onChange={(v) => changes.push(v)} ariaLabel="zpl" />);
+    render(<ZplCodeMirror value={value} onChange={(v) => changes.push(v)} ariaLabel="zpl" placeholderText="ph" />);
     // A separator mismatch surfaced as a mount RangeError or an LF-joined onChange.
     expect(changes).toEqual([]);
   });
@@ -35,7 +35,7 @@ describe("ZplCodeMirror line separators", () => {
   it("mounts a lone-\\r buffer without writing normalized bytes to the store", () => {
     const changes: string[] = [];
     render(
-      <ZplCodeMirror value={"^XA\n^FDa\rb^FS\n^XZ"} onChange={(v) => changes.push(v)} ariaLabel="zpl" />,
+      <ZplCodeMirror value={"^XA\n^FDa\rb^FS\n^XZ"} onChange={(v) => changes.push(v)} ariaLabel="zpl" placeholderText="ph" />,
     );
     expect(changes).toEqual([]);
   });
@@ -44,7 +44,7 @@ describe("ZplCodeMirror line separators", () => {
     const changes: string[] = [];
     const value = "^XA\r\n^FDone^FS\r\n^XZ\n^XA\n^FDtwo^FS\n^XZ";
     const { container } = render(
-      <ZplCodeMirror value={value} onChange={(v) => changes.push(v)} ariaLabel="zpl" />,
+      <ZplCodeMirror value={value} onChange={(v) => changes.push(v)} ariaLabel="zpl" placeholderText="ph" />,
     );
     expect(changes).toEqual([]);
     const lines = container.querySelectorAll(".cm-line");
@@ -54,7 +54,7 @@ describe("ZplCodeMirror line separators", () => {
   it("mounts an LF buffer cleanly", () => {
     const changes: string[] = [];
     render(
-      <ZplCodeMirror value={"^XA\n^FDHi^FS\n^XZ"} onChange={(v) => changes.push(v)} ariaLabel="zpl" />,
+      <ZplCodeMirror value={"^XA\n^FDHi^FS\n^XZ"} onChange={(v) => changes.push(v)} ariaLabel="zpl" placeholderText="ph" />,
     );
     expect(changes).toEqual([]);
   });
@@ -65,10 +65,28 @@ describe("ZplCodeMirror line separators", () => {
     const changes: string[] = [];
     const onChange = (v: string) => changes.push(v);
     const { rerender } = render(
-      <ZplCodeMirror value={"^XA\n^FDone^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" />,
+      <ZplCodeMirror value={"^XA\n^FDone^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" placeholderText="ph" />,
     );
-    rerender(<ZplCodeMirror value={"^XA\n^FDtwo^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" />);
+    rerender(<ZplCodeMirror value={"^XA\n^FDtwo^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" placeholderText="ph" />);
     expect(changes).toEqual([]);
+  });
+});
+
+describe("ZplCodeMirror placeholder", () => {
+  it("shows the placeholder only while the doc is empty, live on a locale switch", () => {
+    const { container, rerender } = render(
+      <ZplCodeMirror value="" onChange={vi.fn()} ariaLabel="zpl" placeholderText="Type ZPL" />,
+    );
+    expect(container.querySelector(".cm-placeholder")?.textContent).toBe("Type ZPL");
+    // Locale switch mid-run must reconfigure, not keep the mount snapshot.
+    rerender(
+      <ZplCodeMirror value="" onChange={vi.fn()} ariaLabel="zpl" placeholderText="ZPL eingeben" />,
+    );
+    expect(container.querySelector(".cm-placeholder")?.textContent).toBe("ZPL eingeben");
+    rerender(
+      <ZplCodeMirror value="^XA^XZ" onChange={vi.fn()} ariaLabel="zpl" placeholderText="ZPL eingeben" />,
+    );
+    expect(container.querySelector(".cm-placeholder")).toBeNull();
   });
 });
 
@@ -79,6 +97,7 @@ describe("ZplCodeMirror history epoch", () => {
       value: "^XA\n^FDone^FS\n^XZ",
       onChange: (v: string) => changes.push(v),
       ariaLabel: "zpl",
+      placeholderText: "ph",
       historyEpoch: epoch,
     });
     const { container, rerender } = render(<ZplCodeMirror {...props(0)} />);
@@ -105,7 +124,7 @@ describe("ZplCodeMirror history epoch", () => {
 describe("ZplCodeMirror payload folding", () => {
   it("auto-folds a payload blob pasted after mount", async () => {
     const { container } = render(
-      <ZplCodeMirror value={"^XA\n^XZ"} onChange={vi.fn()} ariaLabel="zpl" />,
+      <ZplCodeMirror value={"^XA\n^XZ"} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" />,
     );
     const view = EditorView.findFromDOM(container as HTMLElement);
     expect(view).not.toBeNull();
@@ -122,12 +141,12 @@ describe("ZplCodeMirror payload folding", () => {
     const doc = (fd: string) => `^XA\n^GFA,8,8,1,${"F".repeat(3000)}^FS\n^FD${fd}^FS\n^XZ`;
     const onChange = vi.fn();
     const { container, rerender } = render(
-      <ZplCodeMirror value={doc("one")} onChange={onChange} ariaLabel="zpl" />,
+      <ZplCodeMirror value={doc("one")} onChange={onChange} ariaLabel="zpl" placeholderText="ph" />,
     );
     await waitFor(() => {
       expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
     });
-    rerender(<ZplCodeMirror value={doc("two")} onChange={onChange} ariaLabel="zpl" />);
+    rerender(<ZplCodeMirror value={doc("two")} onChange={onChange} ariaLabel="zpl" placeholderText="ph" />);
     // Synchronously, no waitFor: a full replace dropped the fold and only a
     // deferred rescan restored it (visible flicker per drag/resize frame).
     expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
@@ -137,7 +156,7 @@ describe("ZplCodeMirror payload folding", () => {
     const lines = () => new Set([1]);
     const onChange = vi.fn();
     const { container, rerender } = render(
-      <ZplCodeMirror value={"^XA\n^FDx^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" highlightLines={lines()} />,
+      <ZplCodeMirror value={"^XA\n^FDx^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" placeholderText="ph" highlightLines={lines()} />,
     );
     const view = EditorView.findFromDOM(container as HTMLElement);
     expect(view).not.toBeNull();
@@ -145,7 +164,7 @@ describe("ZplCodeMirror payload folding", () => {
     // Fresh Set identity, same content: reacting to identity re-scrolled the
     // pane on every model change while an object was selected.
     rerender(
-      <ZplCodeMirror value={"^XA\n^FDx^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" highlightLines={lines()} />,
+      <ZplCodeMirror value={"^XA\n^FDx^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" placeholderText="ph" highlightLines={lines()} />,
     );
     expect(dispatches).not.toHaveBeenCalled();
   });
@@ -156,12 +175,12 @@ describe("ZplCodeMirror payload folding", () => {
     const blob = (fd: string) => `^XA\n^GFA,8,8,1,${"F".repeat(3000)}^FS\n^FD${fd}^FS\n^XZ`;
     const onChange = vi.fn();
     const { container, rerender } = render(
-      <ZplCodeMirror value={blob("one")} onChange={onChange} ariaLabel="zpl" />,
+      <ZplCodeMirror value={blob("one")} onChange={onChange} ariaLabel="zpl" placeholderText="ph" />,
     );
     await waitFor(() => {
       expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
     });
-    rerender(<ZplCodeMirror value={blob("two")} onChange={onChange} ariaLabel="zpl" />);
+    rerender(<ZplCodeMirror value={blob("two")} onChange={onChange} ariaLabel="zpl" placeholderText="ph" />);
     await waitFor(() => {
       expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
     });
@@ -171,7 +190,7 @@ describe("ZplCodeMirror payload folding", () => {
   it("auto-folds when a small paste pushes an existing blob line over the cap", async () => {
     const nearCap = `^GFA,8,8,1,${"F".repeat(1980)}`;
     const { container } = render(
-      <ZplCodeMirror value={`^XA\n${nearCap}\n^XZ`} onChange={vi.fn()} ariaLabel="zpl" />,
+      <ZplCodeMirror value={`^XA\n${nearCap}\n^XZ`} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" />,
     );
     expect(container.querySelector(".cm-foldPlaceholder")).toBeNull();
     const view = EditorView.findFromDOM(container as HTMLElement);

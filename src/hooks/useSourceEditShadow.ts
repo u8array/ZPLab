@@ -58,6 +58,14 @@ export function useSourceShadowSync(): void {
           },
           refusal: null,
         });
+      } else if (
+        baseline === '' &&
+        (plan.reason === 'empty' || plan.reason === 'noContent' || plan.reason === 'unbalanced')
+      ) {
+        // Authoring from scratch, every prefix of a label is "broken": a live
+        // banner until the closing ^XZ would make error the default state.
+        // An exit attempt still surfaces the reason (synchronous push there).
+        s.setSourceRefusal(null);
       } else {
         s.setSourceRefusal(plan.reason);
       }
