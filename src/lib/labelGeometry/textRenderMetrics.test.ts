@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
+import { computeTextRenderMetrics, getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { LabelConfig } from "@zplab/core/types/LabelConfig";
 
@@ -72,5 +72,23 @@ describe("getTextRenderMetrics — device font resolution", () => {
     const m = getTextRenderMetrics(obj, undefined, label({ defaultFontId: "B" }));
     expect(m!.fontSizeDots).toBeUndefined();
     expect(m!.content).toBe("Abc");
+  });
+});
+
+describe("computeTextRenderMetrics fontStyle", () => {
+  it("derives the style from the font source", () => {
+    // Only the PrintLab substitute is bold; see the fontStyle doc (#356).
+    expect(computeTextRenderMetrics({ content: "X", fontHeight: 30, fontWidth: 0 }).fontStyle)
+      .toBe("bold");
+    expect(
+      computeTextRenderMetrics({
+        content: "X", fontHeight: 30, fontWidth: 0, printerFontName: "DINALTERNATE.TTF",
+      }).fontStyle,
+    ).toBe("normal");
+    expect(
+      computeTextRenderMetrics({
+        content: "X", fontHeight: 30, fontWidth: 0, fontFamilyOverride: "'Vera Mono'",
+      }).fontStyle,
+    ).toBe("normal");
   });
 });
