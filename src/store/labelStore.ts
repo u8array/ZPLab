@@ -67,6 +67,7 @@ export {
   selectRenderPageIndex,
   selectRenderObjects,
   selectRenderPageLabel,
+  selectSourceDocumentState,
   selectHasPerLabelOverrides,
   selectBatchInputs,
   selectCanBatchExport,

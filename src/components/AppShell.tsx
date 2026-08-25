@@ -520,15 +520,12 @@ export function AppShell() {
         className="shrink-0 border-t border-border flex flex-col bg-surface-2"
         style={{ height: outputPanel.collapsed ? "auto" : outputPanel.height }}
       >
-        <div
-          className="h-1.5 shrink-0 cursor-row-resize hover:bg-accent/30 transition-colors"
-          onMouseDown={outputPanel.onMouseDown}
-        />
         <div className="flex-1 overflow-hidden">
           <ZPLOutput
             collapsed={outputPanel.collapsed}
             onCollapse={outputPanel.collapse}
             onExpand={outputPanel.expand}
+            onResizeMouseDown={outputPanel.onMouseDown}
           />
         </div>
       </div>

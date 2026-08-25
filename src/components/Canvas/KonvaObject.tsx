@@ -14,7 +14,7 @@ import { measureInkWidthPx } from "@zplab/core/lib/labelGeometry/measureTextDots
 import { outlineInset } from "../../lib/shapeGeometry";
 import { reverseShapeStyle } from "./reverseShapeStyle";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
-import { useLabelStore, selectRenderDesignLabel } from "../../store/labelStore";
+import { useLabelStore, selectRenderDesignLabel, selectRenderColumnMapping } from "../../store/labelStore";
 import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/textPositionTransforms";
@@ -457,7 +457,9 @@ const BARCODE_TYPES = new Set([
 export function KonvaObject(props_: Props) {
   const { variables, active, clock } = usePreviewBinding();
   const dataset = useLabelStore((s) => s.dataset);
-  const columnMapping = useLabelStore((s) => s.columnMapping);
+  // Render mapping, like the binding above: the tint must classify the same
+  // document the canvas is showing (a shadow remaps onto fresh variable ids).
+  const columnMapping = useLabelStore(selectRenderColumnMapping);
   const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
   const obj = applyBindingToObject(props_.obj, variables, active, dataRenderMode, clock, ctrlParityFor(props_.obj));
   const renderProps = obj === props_.obj ? props_ : { ...props_, obj };

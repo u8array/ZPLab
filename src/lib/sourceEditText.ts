@@ -1,12 +1,12 @@
 import { MAX_SOURCE_PAGES, type SourceApplyPlan } from '@zplab/core/lib/zplSourceEdit';
 import type { Translations } from '../locales';
 
-type Refusal = Extract<SourceApplyPlan, { ok: false }>['reason'];
+export type SourceRefusal = Extract<SourceApplyPlan, { ok: false }>['reason'];
 
-/** The one reason→message mapping, shared by the editor's error line and the
- *  edit toggle's tooltip. ZPL command names stay out of the locale strings
- *  (translator safety) and interpolate here. */
-export function sourceRefusalText(reason: Refusal, t: Translations): string {
+/** The one reason→message mapping for every refusal surface. ZPL command
+ *  names stay out of the locale strings (translator safety) and
+ *  interpolate here. */
+export function sourceRefusalText(reason: SourceRefusal, t: Translations): string {
   switch (reason) {
     case 'empty':
       return t.importModal.errPasteFirst;

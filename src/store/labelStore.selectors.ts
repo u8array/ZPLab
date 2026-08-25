@@ -5,6 +5,7 @@ import type { Dataset } from './slices/dataSlice';
 import type { ColumnMapping } from '@zplab/core/types/Variable';
 import type { LabelState } from './labelStore';
 import type { PageState } from './labelStore.internals';
+import type { SourceDocumentState } from '@zplab/core/lib/zplSourceEdit';
 import { designAsPageLabel, PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig, type PageLabel } from '@zplab/core/types/LabelConfig';
 
 export const currentObjects = (state: PageState): LabelObject[] =>
@@ -52,9 +53,25 @@ export const selectRenderDesignLabel = (s: LabelState): LabelConfig =>
 export const selectRenderColumnMapping = (s: LabelState) =>
   s.sourceShadow?.doc ? s.sourceShadow.doc.columnMapping : s.columnMapping;
 
+/** The document as prepareSourceApply consumes it: shadow parse and apply
+ *  MUST build it identically or the preview drifts from the commit. */
+export const selectSourceDocumentState = (s: LabelState): SourceDocumentState => ({
+  label: s.label,
+  pages: s.pages,
+  variables: s.variables,
+  printerProfile: s.printerProfile,
+  columnMapping: s.columnMapping,
+});
+
+/** THE landing rule when a page set shrinks under a kept index: stay, else
+ *  clamp to the last page. Shared by the shadow render, the source apply and
+ *  page removal, so preview and commit can never land on different pages. */
+export const clampPageIndex = (index: number, pageCount: number): number =>
+  Math.min(index, pageCount - 1);
+
 /** The shadow can have fewer pages than the live index points at. */
 export const selectRenderPageIndex = (s: LabelState): number =>
-  Math.min(s.currentPageIndex, selectRenderPages(s).length - 1);
+  clampPageIndex(s.currentPageIndex, selectRenderPages(s).length);
 
 export const selectRenderObjects = (s: LabelState): LabelObject[] =>
   selectRenderPages(s)[selectRenderPageIndex(s)]?.objects ?? [];

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen } from "../store/labelStore";
+import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen, selectRenderPages } from "../store/labelStore";
 import { nextRotation } from "../components/Canvas/rotationGeometry";
 import { isEditableTarget } from "../lib/dom";
 
@@ -17,17 +17,33 @@ export function useGlobalShortcuts() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      // Preview overlay or an open source buffer freezes the design; every
-      // shortcut here either edits the model or changes the selection
-      // /page, both of which would visibly drift away from the frozen
-      // snapshot. Block them wholesale.
-      if (selectEditorFrozen(useLabelStore.getState())) return;
       const mod = e.metaKey || e.ctrlKey;
 
       // Editable targets keep their native undo/redo, copy/paste and
       // select-all; every document shortcut below (incl. Ctrl+Z) applies only
       // outside text fields, so typing in an input isn't hijacked by the model.
       if (isEditableTarget(e.target as HTMLElement)) return;
+
+      // Paging is view-only, so it mirrors the pager buttons: the store's own
+      // setCurrentPage guard decides (blocked by a preview, open in a session).
+      if (e.code === "PageUp") {
+        e.preventDefault();
+        const { currentPageIndex } = useLabelStore.getState();
+        if (currentPageIndex > 0) setCurrentPage(currentPageIndex - 1);
+        return;
+      }
+      if (e.code === "PageDown") {
+        e.preventDefault();
+        const { currentPageIndex } = useLabelStore.getState();
+        if (currentPageIndex < selectRenderPages(useLabelStore.getState()).length - 1)
+          setCurrentPage(currentPageIndex + 1);
+        return;
+      }
+
+      // Preview overlay or an open source buffer freezes the design; every
+      // shortcut below either edits the model or changes the selection,
+      // which would visibly drift away from the frozen snapshot.
+      if (selectEditorFrozen(useLabelStore.getState())) return;
 
       if (mod && e.code === "KeyZ") {
         e.preventDefault();
@@ -86,16 +102,6 @@ export function useGlobalShortcuts() {
         e.preventDefault();
         const current = useLabelStore.getState().canvasSettings.viewRotation;
         setCanvasSettings({ viewRotation: nextRotation(current) });
-      }
-      if (e.code === "PageUp") {
-        e.preventDefault();
-        const { currentPageIndex } = useLabelStore.getState();
-        if (currentPageIndex > 0) setCurrentPage(currentPageIndex - 1);
-      }
-      if (e.code === "PageDown") {
-        e.preventDefault();
-        const { currentPageIndex, pages } = useLabelStore.getState();
-        if (currentPageIndex < pages.length - 1) setCurrentPage(currentPageIndex + 1);
       }
     };
     window.addEventListener("keydown", onKeyDown);

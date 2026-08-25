@@ -1,21 +1,13 @@
 import { tokenizeZplLine } from "../../lib/zplTokenize";
 import { TOKEN_CLASS, MAX_LINE_RENDER } from "../../lib/zplTokenStyles";
 
-/** One line of rendered ZPL, syntax-highlighted per token. Shared between
- *  the per-label ZPL pane and the Setup-Script preview pane. */
-export function ZplLine({
-  line,
-  highlight,
-  ref,
-}: {
-  line: string;
-  highlight?: boolean;
-  ref?: React.Ref<HTMLSpanElement>;
-}) {
+/** One line of rendered ZPL, syntax-highlighted per token (the Setup-Script
+ *  preview pane; the output panel renders through CodeMirror). */
+export function ZplLine({ line }: { line: string }) {
   const truncated = line.length > MAX_LINE_RENDER;
   const tokens = tokenizeZplLine(truncated ? line.slice(0, MAX_LINE_RENDER) : line);
   return (
-    <span ref={ref} className={highlight ? "block bg-accent/10" : "block"}>
+    <span className="block">
       {/* A blank line collapses to zero height inside <pre>; keep its row. */}
       {tokens.length === 0
         ? "\n"

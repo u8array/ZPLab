@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import {
   EditorView,
   ViewPlugin,
@@ -8,16 +8,20 @@ import {
   type DecorationSet,
   type ViewUpdate,
 } from '@codemirror/view';
-import { Compartment, EditorState, RangeSetBuilder, type StateEffect } from '@codemirror/state';
+import { Annotation, Compartment, EditorState, RangeSetBuilder, Transaction, type StateEffect } from '@codemirror/state';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { codeFolding, foldService, foldGutter, foldKeymap, foldEffect, foldedRanges } from '@codemirror/language';
-import { zplLineHighlights, opaquePayloadFold } from '../../lib/zplCmHighlight';
+import { zplLineHighlights, opaquePayloadFold, isPureCrlf } from '../../lib/zplCmHighlight';
 import { MAX_LINE_RENDER } from '../../lib/zplTokenStyles';
 
 // Text.toString() always joins with LF; only sliceString honours the
 // lineSeparator facet, and the store buffer must get the original separators.
 const docText = (state: EditorState): string =>
   state.doc.sliceString(0, state.doc.length, state.lineBreak);
+
+// Marks prop-sync dispatches: they must not echo through onChange (which
+// would start an edit session) nor land in the undo history.
+const propSync = Annotation.define<boolean>();
 
 function buildDecorations(view: EditorView): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
@@ -104,19 +108,59 @@ const theme = EditorView.theme({
   '.cm-line': { padding: '0 12px' },
   '.cm-gutters': { backgroundColor: 'transparent', border: 'none', color: 'inherit', opacity: '0.4' },
   '.cm-activeLine': { backgroundColor: 'transparent' },
+  '.cm-zplSelectedLine': {
+    backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
+  },
 });
 
-/** CodeMirror host for the source-edit buffer: shared-tokenizer colouring, auto-folded
- *  payload blobs. A bare \r has no CM representation, so the first edit normalizes it
- *  to \n; an untouched buffer stays byte-identical. */
+function highlightDecorations(state: EditorState, lines: ReadonlySet<number>): DecorationSet {
+  const builder = new RangeSetBuilder<Decoration>();
+  for (const idx of [...lines].sort((a, b) => a - b)) {
+    if (idx < 0 || idx >= state.doc.lines) continue;
+    builder.add(
+      state.doc.line(idx + 1).from,
+      state.doc.line(idx + 1).from,
+      Decoration.line({ class: 'cm-zplSelectedLine' }),
+    );
+  }
+  return builder.finish();
+}
+
+const NO_LINES: ReadonlySet<number> = new Set();
+
+// Compartment payloads built in ONE place each, so mount and reconfigure
+// cannot silently drift apart.
+const readOnlyExt = (ro: boolean) => [EditorState.readOnly.of(ro), EditorView.editable.of(!ro)];
+const highlightExt = (lines: ReadonlySet<number>) =>
+  EditorView.decorations.of((v) => highlightDecorations(v.state, lines));
+const ariaExt = (label: string) => EditorView.contentAttributes.of({ 'aria-label': label });
+
+export interface ZplCodeMirrorHandle {
+  focus(): void;
+}
+
+/** CodeMirror host for the source pane: shared-tokenizer colouring, auto-folded
+ *  payload blobs. A bare \r has no CM representation, so the first edit
+ *  normalizes it to \n; an untouched buffer stays byte-identical. */
 export default function ZplCodeMirror({
   value,
   onChange,
   ariaLabel,
+  readOnly = false,
+  highlightLines = NO_LINES,
+  historyEpoch = 0,
+  ref,
 }: {
   value: string;
   onChange: (value: string) => void;
   ariaLabel: string;
+  readOnly?: boolean;
+  /** 0-based doc lines tinted as the canvas selection's emitted source. */
+  highlightLines?: ReadonlySet<number>;
+  /** Bumping clears the undo history (minimal-splice syncs keep old events
+   *  mappable, so without this an undo could resurrect a closed session). */
+  historyEpoch?: number;
+  ref?: Ref<ZplCodeMirrorHandle>;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -126,31 +170,43 @@ export default function ZplCodeMirror({
   });
   const lastEmitted = useRef(value);
   const [ariaCompartment] = useState(() => new Compartment());
+  const [readOnlyCompartment] = useState(() => new Compartment());
+  const [highlightCompartment] = useState(() => new Compartment());
+  const [historyCompartment] = useState(() => new Compartment());
+
+  useImperativeHandle(ref, () => ({ focus: () => viewRef.current?.focus() }), []);
 
   useEffect(() => {
     if (!host.current) return;
-    // Pure-CRLF only: the facet keeps CRLF buffers byte-identical, but under it a bare
-    // \n would not split, collapsing a mixed document's LF pages into one line each.
-    const crlf = /\r\n/.test(value) && !/(?<!\r)\n/.test(value);
+    const crlf = isPureCrlf(value);
     const state = EditorState.create({
       doc: value,
       extensions: [
         ...(crlf ? [EditorState.lineSeparator.of('\r\n')] : []),
         lineNumbers(),
-        history(),
+        historyCompartment.of(history()),
         codeFolding(),
         zplFolding,
         foldGutter(),
         zplHighlighter,
         theme,
-        ariaCompartment.of(EditorView.contentAttributes.of({ 'aria-label': ariaLabel })),
+        readOnlyCompartment.of(readOnlyExt(readOnly)),
+        highlightCompartment.of(highlightExt(highlightLines)),
+        ariaCompartment.of(ariaExt(ariaLabel)),
         keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap]),
         EditorView.updateListener.of((u) => {
           if (!u.docChanged) return;
-          const text = docText(u.state);
-          lastEmitted.current = text;
-          onChangeRef.current(text);
-          const folds = foldsForInsertedBlobs(u);
+          const synced = u.transactions.some((tr) => tr.annotation(propSync));
+          if (!synced) {
+            const text = docText(u.state);
+            lastEmitted.current = text;
+            onChangeRef.current(text);
+          }
+          // A sync is a fresh document, so it re-folds like a mount; the
+          // typed-in-an-unfolded-blob protection only applies to user edits.
+          const folds = synced
+            ? blobFoldEffects(u.state, 0, u.state.doc.length)
+            : foldsForInsertedBlobs(u);
           if (folds.length > 0) {
             // Deferred out of the update cycle.
             setTimeout(() => {
@@ -161,13 +217,10 @@ export default function ZplCodeMirror({
       ],
     });
     const view = new EditorView({ parent: host.current, state });
-    // Doc length, not string length: they differ under a normalized separator.
-    view.dispatch({ selection: { anchor: view.state.doc.length } });
     viewRef.current = view;
     // Fold the payload blobs up front; foldService alone only powers the gutter.
     const folds = blobFoldEffects(view.state, 0, view.state.doc.length);
     if (folds.length > 0) view.dispatch({ effects: folds });
-    view.focus();
     return () => {
       viewRef.current = null;
       view.destroy();
@@ -180,12 +233,18 @@ export default function ZplCodeMirror({
   useEffect(() => {
     const view = viewRef.current;
     if (!view) return;
-    view.dispatch({
-      effects: ariaCompartment.reconfigure(
-        EditorView.contentAttributes.of({ 'aria-label': ariaLabel }),
-      ),
-    });
+    view.dispatch({ effects: ariaCompartment.reconfigure(ariaExt(ariaLabel)) });
   }, [ariaLabel, ariaCompartment]);
+
+  const mountEpoch = useRef(historyEpoch);
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view || historyEpoch === mountEpoch.current) return;
+    mountEpoch.current = historyEpoch;
+    // Removing the extension destroys its state field; re-adding starts fresh.
+    view.dispatch({ effects: historyCompartment.reconfigure([]) });
+    view.dispatch({ effects: historyCompartment.reconfigure(history()) });
+  }, [historyEpoch, historyCompartment]);
 
   useEffect(() => {
     const view = viewRef.current;
@@ -193,12 +252,59 @@ export default function ZplCodeMirror({
     // Echo guard doubling as a cheap identity check on multi-MB buffers: the
     // doc already holds this text (mount value or its own last emit).
     if (value === lastEmitted.current) return;
-    if (docText(view.state) !== value) {
+    // Unconditionally, or a doc-equal value (bare-\r normalization) leaves a
+    // stale guard that later short-circuits a real sync.
+    lastEmitted.current = value;
+    const old = docText(view.state);
+    if (old !== value) {
+      // Minimal splice, not a full replace: folds, selection and scroll then
+      // survive by mapping (a live resize regenerates the export per frame).
+      // String offsets equal doc positions only without the CRLF facet.
+      let from = 0;
+      let oldEnd = old.length;
+      let newEnd = value.length;
+      if (view.state.lineBreak === '\n') {
+        const minLen = Math.min(oldEnd, newEnd);
+        while (from < minLen && old.charCodeAt(from) === value.charCodeAt(from)) from++;
+        while (oldEnd > from && newEnd > from && old.charCodeAt(oldEnd - 1) === value.charCodeAt(newEnd - 1)) {
+          oldEnd--;
+          newEnd--;
+        }
+      }
       view.dispatch({
-        changes: { from: 0, to: view.state.doc.length, insert: value },
+        changes: { from, to: view.state.doc.length - (old.length - oldEnd), insert: value.slice(from, newEnd) },
+        // Undo must not reach back into synced exports.
+        annotations: [propSync.of(true), Transaction.addToHistory.of(false)],
       });
     }
   }, [value]);
 
-  return <div ref={host} className="flex-1 min-h-0 overflow-hidden" />;
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    view.dispatch({ effects: readOnlyCompartment.reconfigure(readOnlyExt(readOnly)) });
+  }, [readOnly, readOnlyCompartment]);
+
+  // After the value sync above, so line positions resolve on the fresh doc.
+  // Compared by CONTENT: the producer hands a fresh Set per model change, and
+  // reacting to identity re-scrolled the pane every drag/resize frame.
+  const shownLines = useRef<ReadonlySet<number>>(NO_LINES);
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    const prev = shownLines.current;
+    if (prev.size === highlightLines.size && [...highlightLines].every((l) => prev.has(l))) return;
+    shownLines.current = highlightLines;
+    const effects: StateEffect<unknown>[] = [highlightCompartment.reconfigure(highlightExt(highlightLines))];
+    const first = highlightLines.size ? Math.min(...highlightLines) : null;
+    if (first !== null && first < view.state.doc.lines) {
+      // Nearest, not center: a selection click shouldn't yank a visible pane around.
+      effects.push(EditorView.scrollIntoView(view.state.doc.line(first + 1).from, { y: 'nearest' }));
+    }
+    view.dispatch({ effects });
+  }, [highlightLines, highlightCompartment]);
+
+  // isEditableTarget's contract; on the HOST because focus/clicks can land
+  // outside .cm-content (see the marker's JSDoc in lib/dom.ts).
+  return <div ref={host} data-text-surface className="flex-1 min-h-0 overflow-hidden" />;
 }

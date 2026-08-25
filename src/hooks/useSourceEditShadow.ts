@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { prepareSourceApply, MAX_SOURCE_CHARS } from "@zplab/core/lib/zplSourceEdit";
 import { walkObjects, type Page } from "@zplab/core/types/Group";
-import { useLabelStore } from "../store/labelStore";
+import { useLabelStore, selectSourceDocumentState } from "../store/labelStore";
 
 const DEBOUNCE_MS = 300;
 
@@ -36,7 +36,7 @@ export function useSourceShadowSync(): void {
     }
     if (draft.length > MAX_SOURCE_CHARS) {
       const id = setTimeout(() => {
-        shadow({ doc: useLabelStore.getState().sourceShadow?.doc ?? null, refusal: "tooLarge" });
+        useLabelStore.getState().setSourceRefusal("tooLarge");
       }, 0);
       return () => clearTimeout(id);
     }
@@ -45,13 +45,7 @@ export function useSourceShadowSync(): void {
       const plan = prepareSourceApply({
         text: draft,
         baseline,
-        current: {
-          label: s.label,
-          pages: s.pages,
-          variables: s.variables,
-          printerProfile: s.printerProfile,
-          columnMapping: s.columnMapping,
-        },
+        current: selectSourceDocumentState(s),
       });
       if (plan.ok) {
         stampShadowIds(plan.next.pages);
@@ -65,7 +59,7 @@ export function useSourceShadowSync(): void {
           refusal: null,
         });
       } else {
-        shadow({ doc: s.sourceShadow?.doc ?? null, refusal: plan.reason });
+        s.setSourceRefusal(plan.reason);
       }
     }, DEBOUNCE_MS);
     return () => clearTimeout(id);

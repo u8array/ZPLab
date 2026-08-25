@@ -145,6 +145,21 @@ describe("deleting a command from the buffer clears its field", () => {
     expect(plan.next.printerProfile.headTestInterval).toBe(5);
   });
 
+  it("keeps the geometry trio when the edit deletes the sidecar (and ^PW/^LL)", () => {
+    const baseline = generateMultiPageZPL(label, pages, []);
+    const without = baseline
+      .split("\n")
+      .filter((l) => !l.includes("ZPLLAB") && !/^\^PW|^\^LL/.test(l))
+      .join("\n");
+    const plan = prepareSourceApply({ text: without, baseline, current: current() });
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return;
+    // Document identity, not a deletable command: the strip must skip it.
+    expect(plan.next.label.widthMm).toBe(70);
+    expect(plan.next.label.heightMm).toBe(40);
+    expect(plan.next.label.dpmm).toBe(8);
+  });
+
   it("keeps inherited fields when no baseline is given", () => {
     const plan = prepareSourceApply({
       text: "^XA^FO10,10^A0N,30,30^FDX^FS^XZ",

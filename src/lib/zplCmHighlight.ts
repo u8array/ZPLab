@@ -46,3 +46,9 @@ export function opaquePayloadFold(
   }
   return null;
 }
+
+/** Pure-CRLF test for the editor's lineSeparator facet: only a buffer with no
+ *  bare \n may pin CRLF, else the LF parts collapse into one editor line. The
+ *  facet is fixed at mount, so the mount key and the mount read MUST agree. */
+export const isPureCrlf = (text: string): boolean =>
+  /\r\n/.test(text) && !/(?<!\r)\n/.test(text);

@@ -68,12 +68,20 @@ Multiple objects can be selected by holding Shift or drawing a lasso. Position c
 
 ### 4. Print or export
 
-The **ZPL output** panel at the bottom shows the generated ZPL. It updates in real time as you edit.
+The **ZPL output** panel at the bottom shows the generated ZPL. It updates in real time as you edit, and the code itself is editable.
 
 - **Copy**: copies the ZPL to the clipboard; paste it into your printer software or send it straight to the printer
 - **Preview**: renders a preview image via [Labelary](https://labelary.com/) or, on desktop, the connected printer's own firmware (see Printer settings)
 - **Export** (File menu): downloads a `.zpl` file
 - **Print** (File menu): opens the Labelary preview and triggers the browser print dialog
+
+### Editing the ZPL source
+
+The panel is a code editor with ZPL syntax highlighting; overlong graphic payloads are folded. Selecting an object on the canvas highlights the lines it emits, and a notice above the code flags printer-persistent setup commands and device actions.
+
+The first change starts an edit session: canvas and panel editing locks (paging still works) while the canvas previews the parsed buffer live. An invalid buffer (unbalanced `^XA`/`^XZ`, too large) shows the refusal reason and is never applied.
+
+Leaving the panel applies the edit; a dialog asks first when the reparse reports findings or would drop designer-only state (groups, names, locked/hidden, export exclusions, variable bindings). `Esc` discards; a changed buffer confirms first. An applied edit counts as a new import, so [Import guarantees](#import-guarantees) apply to the result.
 
 ### Importing existing ZPL
 
@@ -138,6 +146,7 @@ Both `.zpl` and `.json` round-trip cleanly. `.zpl` preserves all printable conte
 
 - Smart alignment and spacing guides
 - Layers panel with reordering
+- Editable ZPL source: type directly in the output panel while the canvas previews the draft live ([editing the ZPL source](#editing-the-zpl-source))
 - Lossless ZPL round-trip: imported ZPL re-exports byte-for-byte, regenerating only what you edit ([import guarantees](#import-guarantees))
 - Variables: bind text and barcode fields to named defaults that emit as `^FN` slots (or `^FE` inline embeds when one field references multiple variables), round-tripping with printer-side templates
 - Batch printing: map columns to Variables from a CSV, an Excel worksheet, or a read-only database (desktop), then print or export with efficient printer-side data merge (template ships once, each row sends only its overrides)

@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
+import { useRef, useState, type ReactNode } from 'react';
+import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon } from '@heroicons/react/16/solid';
 import { useLabelStore, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectPreviewLocksEditor } from '../../store/labelStore';
-import { sourceRefusalText } from '../../lib/sourceEditText';
 import { useZplOutputView } from '../../hooks/useZplOutputView';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import { useT } from '../../hooks/useT';
 import { LabelaryNoticeModal } from './LabelaryNoticeModal';
-import { ZplLine } from './ZplLine';
 import { ZplSourceEditor } from './ZplSourceEditor';
 import { Tooltip } from '../ui/Tooltip';
 
@@ -14,9 +12,12 @@ interface Props {
   collapsed?: boolean;
   onCollapse?: () => void;
   onExpand?: () => void;
+  /** Height-drag handler for the resize rail. The rail renders INSIDE the
+   *  panel root so panel chrome can never read as "leaving" the session. */
+  onResizeMouseDown: (e: React.MouseEvent) => void;
 }
 
-export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
+export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }: Props) {
   const t = useT();
   const labelaryEnabled = useLabelStore((s) => s.thirdParty.labelary);
   const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
@@ -24,10 +25,13 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
   const previewActive = useLabelStore(selectPreviewLocksEditor);
   const enterPreviewMode = useLabelStore((s) => s.enterPreviewMode);
   const exitPreviewMode = useLabelStore((s) => s.exitPreviewMode);
-  const enterSourceEdit = useLabelStore((s) => s.enterSourceEdit);
   const [showNotice, setShowNotice] = useState(false);
+  // The session's focus boundary: leaving this panel applies the buffer, so
+  // header actions (copy) stay inside it and don't count as leaving.
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  const { session, zpl, gate, highlightedLines, notices } = useZplOutputView(collapsed ?? false);
+  const { session, zpl, refusal, highlightedLines, notices, shownText, crlfKey } =
+    useZplOutputView(collapsed ?? false);
 
   // The button shows when the effective provider can run: Labelary when the
   // gate is on, or the printer path (desktop only). The consent notice only
@@ -46,72 +50,52 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
     void enterPreviewMode();
   };
 
-  // gate is null exactly when the document emits nothing.
-  const editBlocked = previewActive || gate === null || !gate.ok;
-  const editTooltip =
-    gate !== null && !gate.ok ? sourceRefusalText(gate.reason, t) : t.output.editSource;
-
-  const actionCls = (active: boolean) =>
-    `flex items-center gap-1 font-mono text-[10px] disabled:opacity-25 disabled:cursor-not-allowed transition-colors ${
-      active ? 'text-accent hover:text-text' : 'text-muted hover:text-accent'
-    }`;
-
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" ref={panelRef} role="region" aria-label={t.output.zplHeading}>
+      {onResizeMouseDown && (
+        <div
+          className="h-1.5 shrink-0 cursor-row-resize hover:bg-accent/30 transition-colors"
+          onMouseDown={onResizeMouseDown}
+        />
+      )}
       <OutputSection
         heading={t.output.zplHeading}
-        // The header's copy button must copy what the body shows: the live
-        // buffer during an edit, the generated export otherwise.
-        content={session ? session.draft : zpl}
+        copyContent={shownText}
         emptyMessage={t.output.noObjects}
-        highlightedLines={highlightedLines}
         notices={notices}
         collapsed={collapsed}
         // Collapsing the panel mid-edit would hide an unapplied buffer.
         onCollapseToggle={session ? undefined : collapsed ? onExpand : onCollapse}
         collapseLabel={collapsed ? t.app.expand : t.app.collapse}
         body={
-          session ? (
+          zpl !== '' || session ? (
             <ZplSourceEditor
-              draft={session.draft}
-              baseline={session.baseline}
-              session={session.session}
+              session={session}
+              zpl={zpl}
+              value={shownText}
+              crlfKey={crlfKey}
+              gateRefusal={session === null ? refusal : null}
+              highlightedLines={highlightedLines}
+              panelRef={panelRef}
             />
           ) : undefined
         }
         extraActions={
-          <>
-            <Tooltip content={editTooltip}>
+          previewAvailable && (
+            <Tooltip content={t.output.previewHeading}>
               <button
-                onClick={() => {
-                  enterSourceEdit(zpl);
-                  onExpand?.();
-                }}
-                // Disabled during the session: the footer owns every exit
-                // (including the discard confirmation), a header exit would
-                // either duplicate that flow or dead-click on a dirty buffer.
-                disabled={session !== null || editBlocked}
-                aria-pressed={session !== null}
-                className={actionCls(session !== null)}
+                onClick={togglePreview}
+                disabled={(!zpl && !previewActive) || session !== null}
+                aria-pressed={previewActive}
+                className={`flex items-center gap-1 font-mono text-[10px] disabled:opacity-25 disabled:cursor-not-allowed transition-colors ${
+                  previewActive ? 'text-accent hover:text-text' : 'text-muted hover:text-accent'
+                }`}
               >
-                <PencilSquareIcon className="w-4 h-4" />
-                {t.output.editSource}
+                <EyeIcon className="w-4 h-4" />
+                {t.output.previewHeading}
               </button>
             </Tooltip>
-            {previewAvailable && (
-              <Tooltip content={t.output.previewHeading}>
-                <button
-                  onClick={togglePreview}
-                  disabled={(!zpl && !previewActive) || session !== null}
-                  aria-pressed={previewActive}
-                  className={actionCls(previewActive)}
-                >
-                  <EyeIcon className="w-4 h-4" />
-                  {t.output.previewHeading}
-                </button>
-              </Tooltip>
-            )}
-          </>
+          )
         }
       />
 
@@ -129,13 +113,12 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand }: Props) {
 }
 
 /** Single output pane: header (collapse toggle + heading + extra
- *  actions + copy button) and a `<pre>` body, or the caller's `body`
- *  replacement (the source editor). */
+ *  actions + copy button) and the caller's `body` (the source pane),
+ *  or an empty-document message. */
 function OutputSection({
   heading,
-  content,
+  copyContent,
   emptyMessage,
-  highlightedLines,
   notices,
   collapsed,
   onCollapseToggle,
@@ -144,10 +127,9 @@ function OutputSection({
   body,
 }: {
   heading: string;
-  content: string;
+  /** Feeds only the header's copy button; the body renders itself. */
+  copyContent: string;
   emptyMessage: string;
-  /** Line indices tinted as the canvas selection's emitted source. */
-  highlightedLines?: ReadonlySet<number>;
   notices?: readonly string[];
   collapsed?: boolean;
   onCollapseToggle?: () => void;
@@ -156,15 +138,7 @@ function OutputSection({
   body?: ReactNode;
 }) {
   const t = useT();
-  const { copy, copied } = useCopyToClipboard(() => content);
-  const firstHighlighted = highlightedLines?.size
-    ? Math.min(...highlightedLines)
-    : null;
-  const highlightRef = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    // Nearest, not center: a selection click shouldn't yank a visible pane around.
-    highlightRef.current?.scrollIntoView({ block: 'nearest' });
-  }, [firstHighlighted]);
+  const { copy, copied } = useCopyToClipboard(() => copyContent);
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -188,7 +162,7 @@ function OutputSection({
           <Tooltip content={t.output.copy}>
             <button
               onClick={copy}
-              disabled={!content}
+              disabled={!copyContent}
               className="flex items-center gap-1 font-mono text-[10px] text-muted hover:text-accent disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
             >
               {copied
@@ -208,18 +182,8 @@ function OutputSection({
       )}
       {!collapsed && (
         body ?? (
-          <pre className="overflow-auto p-3 font-mono text-xs leading-relaxed text-text m-0 bg-surface flex-1">
-            {content
-              ? content.split('\n').map((line, i) => (
-                  <ZplLine
-                    key={i}
-                    ref={i === firstHighlighted ? highlightRef : undefined}
-                    line={line}
-                    highlight={highlightedLines?.has(i)}
-                  />
-                ))
-              : <span className="text-muted">{emptyMessage}</span>
-            }
+          <pre className="overflow-auto p-3 font-mono text-xs leading-relaxed m-0 bg-surface flex-1">
+            <span className="text-muted">{emptyMessage}</span>
           </pre>
         )
       )}
