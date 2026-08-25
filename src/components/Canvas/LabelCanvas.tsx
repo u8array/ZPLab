@@ -265,6 +265,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const objects = useLabelStore(selectRenderObjects);
   const effDpmm = effectiveDpmm(label);
   const previewBinding = usePreviewBinding();
+  const renderVariables = previewBinding.variables;
   // Raw dataset/mapping (not just the active row): markerValueFindings
   // validates marker values across ALL CSV rows, since any row prints.
   const dataset = useLabelStore((s) => s.dataset);
@@ -412,8 +413,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const ARROW = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
     const onKeyDown = (e: KeyboardEvent) => {
       if (!ARROW.has(e.code)) return;
-      const tag = (e.target as HTMLElement).tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (isEditableTarget(e.target as HTMLElement)) return;
 
       const state = useLabelStore.getState();
       if (selectEditorFrozen(state)) return;
@@ -621,7 +621,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const isMultiSelection = selectedIds.length > 1;
   // Snapshot (not the live map) so the frame derivations recompute when a
   // settled footprint changes; the changing snapshot reference is the signal.
-  const frameCtx = { label, measured: measuredSnapshot, variables };
+  // Render variables: anchor/preflight geometry must follow the shadow's
+  // document like the objects do (live `variables` stays for the copy actions).
+  const frameCtx = { label, measured: measuredSnapshot, variables: renderVariables };
   // Hidden leaves never render, so the old client-rect path ignored them; keep
   // them out of the model-based bounds too.
   // visibleLeaves carries the cascaded (effective) lock; read it, not the raw

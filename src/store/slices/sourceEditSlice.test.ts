@@ -75,6 +75,33 @@ describe("applyZplSource", () => {
     expect(useLabelStore.temporal.getState().pastStates.length).toBe(depth + 1);
   });
 
+  it("stays on the user's page (clamped) instead of jumping to page 1", () => {
+    useLabelStore.setState({
+      pages: [basePages[0]!, { objects: [textObject("t2", "p2")] }],
+      currentPageIndex: 1,
+    });
+    applyCurrentZpl();
+    expect(useLabelStore.getState().currentPageIndex).toBe(1);
+    // A draft that dropped pages clamps to the last one, like the shadow.
+    applyCurrentZpl((zpl) => zpl.split("^XZ").slice(0, 1).join("") + "^XZ");
+    expect(useLabelStore.getState().pages).toHaveLength(1);
+    expect(useLabelStore.getState().currentPageIndex).toBe(0);
+  });
+
+  it("cancel clamps a page index that only the shadow had", () => {
+    useLabelStore.getState().enterSourceEdit("^XA^FDone^FS^XZ");
+    // The session allows paging through shadow pages the live doc lacks.
+    useLabelStore.setState({
+      sourceShadow: {
+        doc: { label: { widthMm: 70, heightMm: 40, dpmm: 8 }, pages: [basePages[0]!, { objects: [] }], variables: [], columnMapping: null },
+        refusal: null,
+      },
+      currentPageIndex: 1,
+    });
+    useLabelStore.getState().cancelSourceEdit();
+    expect(useLabelStore.getState().currentPageIndex).toBe(0);
+  });
+
   it("keeps the dataset and remaps the mapping onto the new variable ids", () => {
     const dataset = {
       headers: ["lot"],

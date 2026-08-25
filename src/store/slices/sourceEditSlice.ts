@@ -3,7 +3,7 @@ import type { SourceApplyPlan, SourceApplyOk } from '@zplab/core/lib/zplSourceEd
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { Page } from '@zplab/core/types/Group';
 import type { ColumnMapping, Variable } from '@zplab/core/types/Variable';
-import { selectEditorFrozen } from '../labelStore.selectors';
+import { selectEditorFrozen, clampPageIndex } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
 export type SourceEditMode =
@@ -35,9 +35,11 @@ export interface SourceEditSlice {
    *  preview lock. */
   enterSourceEdit: (currentZpl: string) => void;
   setSourceDraft: (draft: string) => void;
-  /** Written only by the shadow-parse effect; ignored outside a session so a
-   *  late parse cannot resurrect a preview after the session ended. */
+  /** Written by the shadow-parse effect and by a refused apply; ignored
+   *  outside a session so a late parse cannot resurrect a preview. */
   setSourceShadow: (shadow: SourceShadow) => void;
+  /** Refusal only, keeping the last good doc: the one "set a refusal" op. */
+  setSourceRefusal: (refusal: SourceShadow['refusal']) => void;
   cancelSourceEdit: () => void;
   /** Commits a prepared plan as ONE undo step. Unlike loadDesign this keeps
    *  history and dataset: the document keeps its identity, only its ZPL
@@ -79,9 +81,24 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
   setSourceShadow: (shadow) =>
     set((state) => (state.sourceEdit.status === 'editing' ? { sourceShadow: shadow } : {})),
 
+  setSourceRefusal: (refusal) =>
+    set((state) =>
+      state.sourceEdit.status === 'editing'
+        ? { sourceShadow: { doc: state.sourceShadow?.doc ?? null, refusal } }
+        : {},
+    ),
+
   cancelSourceEdit: () =>
     set((state) =>
-      state.sourceEdit.status === 'off' ? {} : { sourceEdit: { status: 'off' }, sourceShadow: null },
+      state.sourceEdit.status === 'off'
+        ? {}
+        : {
+            sourceEdit: { status: 'off' },
+            sourceShadow: null,
+            // The session allowed paging through shadow-only pages; the live
+            // document may not have them.
+            currentPageIndex: clampPageIndex(state.currentPageIndex, state.pages.length),
+          },
     ),
 
   applyZplSource: (plan, session) => {
@@ -96,7 +113,8 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
       variables: plan.next.variables,
       printerProfile: plan.next.printerProfile,
       columnMapping: plan.next.columnMapping,
-      currentPageIndex: 0,
+      // The implicit blur-apply must not yank a multi-page edit to page 1.
+      currentPageIndex: clampPageIndex(get().currentPageIndex, plan.next.pages.length),
       selectedIds: [],
       // Mapping drafts seed from variable ids and the settings modal from the
       // profile, both at mount; the apply replaces both sources. Unlike

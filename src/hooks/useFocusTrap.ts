@@ -87,7 +87,13 @@ export function useFocusTrap(
     container.addEventListener('keydown', handleKey);
     return () => {
       container.removeEventListener('keydown', handleKey);
-      previouslyFocused?.focus?.();
+      // A close handler that already moved focus elsewhere must win, or the
+      // restore re-blurs its target and can re-trigger blur handlers.
+      // Contract: such handlers redirect SYNCHRONOUSLY, or they lose to this.
+      const active = document.activeElement;
+      if (active === null || active === document.body || container.contains(active)) {
+        previouslyFocused?.focus?.();
+      }
     };
   }, [containerRef]);
 }

@@ -3,6 +3,7 @@ import { generateMultiPageZplWithMap } from "@zplab/core/lib/zplGenerator";
 import { sourceEditGate } from "@zplab/core/lib/zplSourceEdit";
 import { useLabelStore, useCurrentObjects, selectDocumentEmits } from "../store/labelStore";
 import { spanCoveredLines } from "../lib/emitSpanHighlight";
+import { isPureCrlf } from "../lib/zplCmHighlight";
 import { printerImpactNotices } from "../lib/exportImpact";
 import { usePrinterImpact } from "./usePrinterImpact";
 import { useT } from "./useT";
@@ -29,6 +30,7 @@ export function useZplOutputView(collapsed: boolean) {
     : { text: "", spans: [] };
   const zpl = emitted.text;
   const gate = zpl === "" ? null : sourceEditGate(zpl);
+  const refusal = gate !== null && !gate.ok ? gate.reason : null;
 
   const viewVisible = !collapsed && session === null;
   const highlightedLines = viewVisible
@@ -43,5 +45,11 @@ export function useZplOutputView(collapsed: boolean) {
   const impact = usePrinterImpact(zpl, viewVisible);
   const notices = impact ? printerImpactNotices(impact, t) : NO_NOTICES;
 
-  return { session, zpl, gate, highlightedLines, notices };
+  // What the pane shows (and copy copies): the live buffer during a session.
+  const shownText = session ? session.draft : zpl;
+  // The separator class pins the editor's CRLF facet at mount; keyed on the
+  // baseline so the class cannot flip mid-session.
+  const crlfKey = isPureCrlf(session ? session.baseline : zpl);
+
+  return { session, zpl, refusal, highlightedLines, notices, shownText, crlfKey };
 }

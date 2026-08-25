@@ -3,8 +3,25 @@ import { describe, it, expect, afterEach, vi } from "vitest";
 import { render, cleanup, act, waitFor } from "@testing-library/react";
 import { EditorView } from "@codemirror/view";
 import ZplCodeMirror from "./ZplCodeMirror";
+import { isEditableTarget } from "../../lib/dom";
 
 afterEach(cleanup);
+
+describe("ZplCodeMirror keyboard surface", () => {
+  it("reads as an editable target from every real focus/click node", () => {
+    // Keys from the read-only scroller or the gutter must never fall
+    // through to canvas handlers.
+    const { container } = render(
+      <ZplCodeMirror value={"^XA\n^XZ"} onChange={vi.fn()} ariaLabel="zpl" readOnly />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement);
+    expect(view).not.toBeNull();
+    expect(isEditableTarget(view!.scrollDOM as HTMLElement)).toBe(true);
+    const gutter = view!.dom.querySelector<HTMLElement>(".cm-gutters");
+    expect(gutter).not.toBeNull();
+    expect(isEditableTarget(gutter)).toBe(true);
+  });
+});
 
 describe("ZplCodeMirror line separators", () => {
   it("mounts a CRLF buffer without a write-back", () => {
@@ -41,6 +58,48 @@ describe("ZplCodeMirror line separators", () => {
     );
     expect(changes).toEqual([]);
   });
+
+  it("does not write back a prop-driven value change", () => {
+    // Regression: with onChange as the session trigger, an echoed prop sync
+    // would turn every canvas edit into a source-edit session (app freeze).
+    const changes: string[] = [];
+    const onChange = (v: string) => changes.push(v);
+    const { rerender } = render(
+      <ZplCodeMirror value={"^XA\n^FDone^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" />,
+    );
+    rerender(<ZplCodeMirror value={"^XA\n^FDtwo^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" />);
+    expect(changes).toEqual([]);
+  });
+});
+
+describe("ZplCodeMirror history epoch", () => {
+  it("clears the undo history when the epoch bumps", async () => {
+    const changes: string[] = [];
+    const props = (epoch: number) => ({
+      value: "^XA\n^FDone^FS\n^XZ",
+      onChange: (v: string) => changes.push(v),
+      ariaLabel: "zpl",
+      historyEpoch: epoch,
+    });
+    const { container, rerender } = render(<ZplCodeMirror {...props(0)} />);
+    const view = EditorView.findFromDOM(container as HTMLElement);
+    expect(view).not.toBeNull();
+    act(() => {
+      view!.dispatch({ changes: { from: 8, insert: "X" } });
+    });
+    expect(changes).toHaveLength(1);
+    // Store echo, then an APPLY ends the session: the new export CONTAINS the
+    // edit (unlike cancel, whose revert-splice annuls the event spatially),
+    // so the history event stays mappable and only the epoch clear kills it.
+    rerender(<ZplCodeMirror {...props(0)} value={changes[0]!} />);
+    rerender(<ZplCodeMirror {...props(1)} value={changes[0]!} />);
+    const { undo } = await import("@codemirror/commands");
+    act(() => {
+      undo(view!);
+    });
+    expect(changes).toHaveLength(1);
+    expect(view!.state.doc.toString()).toBe(changes[0]);
+  });
 });
 
 describe("ZplCodeMirror payload folding", () => {
@@ -57,6 +116,56 @@ describe("ZplCodeMirror payload folding", () => {
     await waitFor(() => {
       expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
     });
+  });
+
+  it("keeps folds through a small prop change (minimal splice, not full replace)", async () => {
+    const doc = (fd: string) => `^XA\n^GFA,8,8,1,${"F".repeat(3000)}^FS\n^FD${fd}^FS\n^XZ`;
+    const onChange = vi.fn();
+    const { container, rerender } = render(
+      <ZplCodeMirror value={doc("one")} onChange={onChange} ariaLabel="zpl" />,
+    );
+    await waitFor(() => {
+      expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
+    });
+    rerender(<ZplCodeMirror value={doc("two")} onChange={onChange} ariaLabel="zpl" />);
+    // Synchronously, no waitFor: a full replace dropped the fold and only a
+    // deferred rescan restored it (visible flicker per drag/resize frame).
+    expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
+  });
+
+  it("skips highlight dispatches when the set content is unchanged", () => {
+    const lines = () => new Set([1]);
+    const onChange = vi.fn();
+    const { container, rerender } = render(
+      <ZplCodeMirror value={"^XA\n^FDx^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" highlightLines={lines()} />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement);
+    expect(view).not.toBeNull();
+    const dispatches = vi.spyOn(view!, "dispatch" as never);
+    // Fresh Set identity, same content: reacting to identity re-scrolled the
+    // pane on every model change while an object was selected.
+    rerender(
+      <ZplCodeMirror value={"^XA\n^FDx^FS\n^XZ"} onChange={onChange} ariaLabel="zpl" highlightLines={lines()} />,
+    );
+    expect(dispatches).not.toHaveBeenCalled();
+  });
+
+  it("re-folds a blob after a prop-driven document replace", async () => {
+    // The full-doc sync drops fold ranges; the typed-in-a-blob protection
+    // must not stop the re-fold (the replaced range contains overlong lines).
+    const blob = (fd: string) => `^XA\n^GFA,8,8,1,${"F".repeat(3000)}^FS\n^FD${fd}^FS\n^XZ`;
+    const onChange = vi.fn();
+    const { container, rerender } = render(
+      <ZplCodeMirror value={blob("one")} onChange={onChange} ariaLabel="zpl" />,
+    );
+    await waitFor(() => {
+      expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
+    });
+    rerender(<ZplCodeMirror value={blob("two")} onChange={onChange} ariaLabel="zpl" />);
+    await waitFor(() => {
+      expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
+    });
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it("auto-folds when a small paste pushes an existing blob line over the cap", async () => {

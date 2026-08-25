@@ -25,7 +25,7 @@ import {
   freshPasteCopies,
   updateCurrentObjects,
 } from '../labelStore.internals';
-import { selectEditorFrozen, selectPreviewLocksEditor, selectRenderPages, currentObjects, currentPageLabel } from '../labelStore.selectors';
+import { selectEditorFrozen, selectPreviewLocksEditor, selectRenderPages, clampPageIndex, currentObjects, currentPageLabel } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
 import { newId } from "@zplab/core/lib/ids";
@@ -544,7 +544,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       if (index < state.currentPageIndex) {
         newIndex = state.currentPageIndex - 1;
       } else if (index === state.currentPageIndex) {
-        newIndex = Math.min(state.currentPageIndex, newPages.length - 1);
+        newIndex = clampPageIndex(state.currentPageIndex, newPages.length);
       }
       return {
         pages: newPages,

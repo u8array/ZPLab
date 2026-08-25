@@ -33,7 +33,7 @@ test('boots, imports ZPL, adds a page, and regenerates output', async ({ page })
 
   // The output panel defaults to collapsed.
   await page.getByRole('button', { name: 'Expand' }).click();
-  const output = page.locator('pre').first();
+  const output = page.getByRole('region', { name: 'ZPL' }).getByRole('textbox');
   await expect(output).toContainText('^FDHello World');
   await expect(output).toContainText('^PW640');
 
@@ -45,7 +45,7 @@ test('boots, imports ZPL, adds a page, and regenerates output', async ({ page })
   await expect(page.getByText('2 / 2')).toBeVisible();
   await expect
     .poll(async () => {
-      const text = (await page.locator('pre').allInnerTexts()).join('');
+      const text = (await output.allInnerTexts()).join('');
       return {
         pages: text.split('^XA').length - 1,
         fields: text.split('^FDHello World').length - 1,
