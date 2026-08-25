@@ -50,12 +50,28 @@ function printerNameToFamily(name: string): string {
   return 'zpl-' + name.replace(/\.[^.]+$/, '').toUpperCase();
 }
 
+/** Base64 payload of a data URL as bytes, or undefined for a malformed URL. */
+function dataUrlBytes(dataUrl: string): Uint8Array | undefined {
+  const commaIdx = dataUrl.indexOf(",");
+  if (commaIdx < 0) return undefined;
+  const binary = atob(dataUrl.slice(commaIdx + 1));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
 /** Resolves true when the face registered, false when the bytes were rejected
  *  (invalid font, unsupported outlines) or the API is unavailable. Callers on
- *  the interactive upload path surface the failure; background paths ignore it. */
+ *  the interactive upload path surface the failure; background paths ignore it.
+ *  Binary source, NOT `url(data:...)`: the url form is a font-src fetch, which
+ *  the desktop CSP blocks (no `data:` there, deliberately). */
 async function registerFontFace(entry: CachedFont): Promise<boolean> {
   try {
-    const face = new FontFace(entry.fontFamily, `url(${entry.dataUrl})`);
+    const bytes = dataUrlBytes(entry.dataUrl);
+    if (!bytes) return false;
+    const face = new FontFace(entry.fontFamily, bytes.buffer as ArrayBuffer);
     await face.load();
     document.fonts.add(face);
     return true;
@@ -104,15 +120,7 @@ export function isEmbedLarge(printerName: string): boolean {
 export function getFontBytes(printerName: string): Uint8Array | undefined {
   const entry = cache.get(printerName.toUpperCase());
   if (!entry) return undefined;
-  const commaIdx = entry.dataUrl.indexOf(",");
-  if (commaIdx < 0) return undefined;
-  const base64 = entry.dataUrl.slice(commaIdx + 1);
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
+  return dataUrlBytes(entry.dataUrl);
 }
 
 /** Uint8Array variant; parser hands these over after decoding ~DY. */

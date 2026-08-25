@@ -40,6 +40,30 @@ describe('fontCache', () => {
 
   // ── loadFontFile ─────────────────────────────────────────────────────────────
 
+  it('registers the FontFace from bytes, never a url() source', async () => {
+    // Regression (#356 comment): a url(data:...) source is a font-src fetch,
+    // which the desktop CSP blocks; every upload failed there.
+    const sources: unknown[] = [];
+    const Original = globalThis.FontFace;
+    class CapturingFontFace {
+      constructor(_family: string, source: unknown) {
+        sources.push(source);
+      }
+      load() {
+        return Promise.resolve(this);
+      }
+    }
+    vi.stubGlobal('FontFace', CapturingFontFace);
+    try {
+      await loadFontFile(makeFakeFile('arial.ttf'), 'ARIAL.TTF');
+    } finally {
+      vi.stubGlobal('FontFace', Original);
+    }
+    expect(sources).toHaveLength(1);
+    expect(sources[0]).toBeInstanceOf(ArrayBuffer);
+    expect(new TextDecoder().decode(sources[0] as ArrayBuffer)).toBe('fake-font-data');
+  });
+
   it('loadFontFile stores font and can be retrieved via getFont', async () => {
     const entry = await loadFontFile(makeFakeFile('arial.ttf'), 'ARIAL.TTF');
     expect(entry.name).toBe('ARIAL.TTF');
