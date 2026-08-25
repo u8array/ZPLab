@@ -72,7 +72,7 @@ importers:
         specifier: workspace:*
         version: link:packages/core
       bwip-js:
-        specifier: 4.11.4
+        specifier: 'catalog:'
         version: 4.11.4
       fflate:
         specifier: 'catalog:'
@@ -223,8 +223,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       bwip-js:
-        specifier: ^4.11.2
-        version: 4.11.2
+        specifier: 'catalog:'
+        version: 4.11.4
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -1501,10 +1501,6 @@ packages:
   browserslist@4.28.2:
     resolution: {integrity: sha512-48xSriZYYg+8qXna9kwqjIVzuQxi+KYWp2+5nCYnYKPTr0LvD89Jqk2Or5ogxz0NUMfIjhh2lIUX/LyX9B4oIg==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
-    hasBin: true
-
-  bwip-js@4.11.2:
-    resolution: {integrity: sha512-gAjZvO0a8n6NmzbtqRY5gLrYO4vNWtbmUXfyWG/NMG8/qJE66ahbzA8J0MvBkWnYY69zx3qfJQq4q9qu3Bm3FQ==}
     hasBin: true
 
   bwip-js@4.11.4:
@@ -3945,8 +3941,6 @@ snapshots:
       electron-to-chromium: 1.5.375
       node-releases: 2.0.47
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
-
-  bwip-js@4.11.2: {}
 
   bwip-js@4.11.4: {}
 
