@@ -64,9 +64,10 @@ export function computeTextRenderMetrics(input: TextMetricsInput): TextRenderMet
     input.scaleXOverride ?? (fontWidth > 0 ? fontWidth / fontHeight : 1);
   const measureSizeDots =
     input.fontSizeDots ?? fontHeight / ZPL_FONT_HEIGHT_TO_CSS_RATIO;
-  // Same signals the family resolution reads, so style and face cannot disagree.
-  const fontStyle: "normal" | "bold" =
-    input.fontFamilyOverride || effectiveFontName ? "normal" : "bold";
+  // Style follows the RESOLVED face, so a referenced-but-unloaded TTF that
+  // falls back to the substitute keeps its calibrated bold (metrics feed the
+  // anchor math); a real face renders and measures at its own weight.
+  const fontStyle: "normal" | "bold" = fontFamily === DEFAULT_FONT_FAMILY ? "bold" : "normal";
   const glyphWidthDots = measureInkWidthPx(
     content,
     measureSizeDots,

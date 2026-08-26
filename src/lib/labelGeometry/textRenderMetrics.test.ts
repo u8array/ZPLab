@@ -76,15 +76,28 @@ describe("getTextRenderMetrics — device font resolution", () => {
 });
 
 describe("computeTextRenderMetrics fontStyle", () => {
-  it("derives the style from the font source", () => {
-    // Only the PrintLab substitute is bold; see the fontStyle doc (#356).
+  it("derives the style from the RESOLVED face", async () => {
+    // Only the PrintLab substitute is bold (calibrated so); see #356.
     expect(computeTextRenderMetrics({ content: "X", fontHeight: 30, fontWidth: 0 }).fontStyle)
       .toBe("bold");
+    // Referenced but NOT loaded: falls back to the substitute, which must
+    // keep its calibrated bold or the anchor metrics measure the wrong face.
     expect(
       computeTextRenderMetrics({
-        content: "X", fontHeight: 30, fontWidth: 0, printerFontName: "DINALTERNATE.TTF",
+        content: "X", fontHeight: 30, fontWidth: 0, printerFontName: "MISSING.TTF",
       }).fontStyle,
-    ).toBe("normal");
+    ).toBe("bold");
+    const { loadFontBytes, removeFont } = await import("@zplab/core/lib/fontCache");
+    await loadFontBytes(new Uint8Array([1, 2, 3]), "DINALTERNATE.TTF");
+    try {
+      expect(
+        computeTextRenderMetrics({
+          content: "X", fontHeight: 30, fontWidth: 0, printerFontName: "DINALTERNATE.TTF",
+        }).fontStyle,
+      ).toBe("normal");
+    } finally {
+      removeFont("DINALTERNATE.TTF");
+    }
     expect(
       computeTextRenderMetrics({
         content: "X", fontHeight: 30, fontWidth: 0, fontFamilyOverride: "'Vera Mono'",
