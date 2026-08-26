@@ -65,8 +65,9 @@ function dataUrlBytes(dataUrl: string): Uint8Array | undefined {
 /** Resolves true when the face registered, false when the bytes were rejected
  *  (invalid font, unsupported outlines) or the API is unavailable. Callers on
  *  the interactive upload path surface the failure; background paths ignore it.
- *  Binary source, NOT `url(data:...)`: the url form is a font-src fetch, which
- *  the desktop CSP blocks (no `data:` there, deliberately). */
+ *  Binary source, NOT `url(data:...)`: WKWebView enforces font-src even on
+ *  FontFace loads, and byte registration plus `font-src data:` is the combo
+ *  that works across engines (#356). */
 async function registerFontFace(entry: CachedFont): Promise<boolean> {
   try {
     const bytes = dataUrlBytes(entry.dataUrl);
