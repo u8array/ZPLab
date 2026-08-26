@@ -199,7 +199,7 @@ function oversizeError(zpl: string): ToolError | null {
  *  objects/pages, or nothing at all (a bare stream would otherwise pass as an
  *  empty design and fail much later). */
 function importRejection(imported: ZplImportResult): ToolError | null {
-  if (imported.unbalancedFormat) {
+  if (imported.unbalanced) {
     return {
       ok: false,
       errors: ["The stream's ^XA/^XZ do not balance; an unterminated format never prints."],

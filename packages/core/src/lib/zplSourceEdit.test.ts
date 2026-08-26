@@ -181,6 +181,37 @@ describe("the current profile survives an apply", () => {
   });
 });
 
+describe("unbalanced position and kind", () => {
+  const refusalOf = (text: string) => {
+    const plan = prepareSourceApply({ text, current: current() });
+    expect(plan.ok).toBe(false);
+    return !plan.ok && plan.reason === "unbalanced" ? plan.unbalanced : undefined;
+  };
+
+  it("stray ^XZ points at the ^XZ", () => {
+    const text = "^XZ^XA^FO10,10^A0N,30,30^FDX^FS^XZ";
+    expect(refusalOf(text)).toEqual({ kind: "strayXz", at: 0, cmd: "^XZ" });
+  });
+
+  it("a second ^XA blames the format it interrupts, not itself", () => {
+    // The user forgot the ^XZ between two labels; deleting the second ^XA
+    // would fuse them, so the marker points at the unterminated opener.
+    const text = "^XA^FDa^FS^XA^FDb^FS^XZ";
+    expect(refusalOf(text)).toEqual({
+      kind: "unclosedXa",
+      at: 0,
+      cmd: "^XA",
+      // Where the missing ^XZ belongs, a whole label away from the opener.
+      related: { at: text.indexOf("^XA", 1), cmd: "^XA" },
+    });
+  });
+
+  it("unclosed format points at its opening ^XA", () => {
+    const text = "^XA^FDx^FS^XZ\n^XA^FO10,10^A0N,30,30^FDy^FS";
+    expect(refusalOf(text)).toEqual({ kind: "unclosedXa", at: text.indexOf("^XA", 3), cmd: "^XA" });
+  });
+});
+
 describe("format balance", () => {
   it("refuses unbalanced ^XA/^XZ instead of baking broken bytes into the overlay", () => {
     const cases = [

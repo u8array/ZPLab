@@ -613,7 +613,10 @@ function KonvaObjectInner({
   if (obj.type === "text" && textMetrics) {
     const p = obj.props;
     const { content, fontFamily, fontScaleX, fontSizePx } = textMetrics;
-    const fontStyle = textMetrics.fontStyle;
+    // Bitmap device fonts (A-H) carry their own weight via the substitute
+    // family (Vera Mono / Bold, OCR); forcing bold there faux-bolds them
+    // thicker than Labelary. Font 0 / custom uploads stay bold.
+    const fontStyle = textMetrics.fontSizeDots != null ? "normal" : "bold";
     // Device-font position trims (cap-top / left-bearing) vs Labelary.
     const deviceXOffPx = dotsToPx(textMetrics.xOffsetDots ?? 0, scale, dpmm);
     const deviceYOffPx = dotsToPx(textMetrics.yOffsetDots ?? 0, scale, dpmm);

@@ -41,7 +41,8 @@ describe('fontCache', () => {
   // ── loadFontFile ─────────────────────────────────────────────────────────────
 
   it('registers the FontFace from bytes, never a url() source', async () => {
-    // Regression #356; the why lives at registerFontFace's doc header.
+    // Regression (#356 comment): a url(data:...) source is a font-src fetch,
+    // which the desktop CSP blocks; every upload failed there.
     const sources: unknown[] = [];
     const Original = globalThis.FontFace;
     class CapturingFontFace {

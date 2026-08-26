@@ -75,6 +75,18 @@ export interface ParsedPage {
   bare?: boolean;
 }
 
+/** First ^XA/^XZ imbalance. `at` is the command's offset in the source
+ *  string; `cmd` its text (the remapped prefix under ^CC), so diagnostics
+ *  never re-lex the buffer. */
+export interface UnbalancedFormat {
+  kind: 'strayXz' | 'unclosedXa';
+  at: number;
+  cmd: string;
+  /** Where the missing ^XZ belongs: the ^XA that interrupts the open format.
+   *  Absent when the format simply runs to the end of the stream. */
+  related?: { at: number; cmd: string };
+}
+
 export interface ParsedZPL {
   /** One entry per ^XA block (single-pass; stream-persistent state like
    *  ^MU/^CC/^CW carries across pages). At least one page, possibly empty. */
@@ -83,9 +95,9 @@ export interface ParsedZPL {
    *  only one size, so callers reject or warn. Diverging ^JM densities are
    *  folded into the import service's flag of the same name, not this one. */
   mixedPageGeometry: boolean;
-  /** A ^XA never met its ^XZ (or vice versa): the stream never prints and an
-   *  overlay would replay the broken bytes; interactive callers refuse. */
-  unbalancedFormat: boolean;
+  /** First ^XA/^XZ imbalance, or null when balanced: such a stream never
+   *  prints and an overlay would replay the broken bytes; callers refuse. */
+  unbalanced: UnbalancedFormat | null;
   labelConfig: Partial<LabelConfig>;
   /** EEPROM-persistent printer-state extracted from any Setup-Script
    *  commands in the stream (^JZ, ^JT, ~TA, ^ST, ^KD, ^SL, ^KL, ^SE,

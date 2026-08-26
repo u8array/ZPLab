@@ -1,4 +1,4 @@
-import { parseZPL, type ImportFinding, type ImportReport } from "./zplParser";
+import { parseZPL, type ImportFinding, type ImportReport, type UnbalancedFormat } from "./zplParser";
 import { replayRiskFindings, dedupCommandsByKind } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
 import { stripDrivePrefix } from "./customFonts";
@@ -28,8 +28,8 @@ export interface ZplImportResult {
    *  single-label design shows only once, so other pages render/preflight
    *  wrong. Interactive import ignores it; the MCP tools reject on it. */
   mixedPageGeometry: boolean;
-  /** Passed through from the parser; the source editor refuses on it. */
-  unbalancedFormat: boolean;
+  /** First imbalance from the parser; the source editor refuses on it. */
+  unbalanced: UnbalancedFormat | null;
 }
 
 export function importZplText(zpl: string, dpmm: number): ZplImportResult {
@@ -261,7 +261,7 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     variables,
     report,
     mixedPageGeometry: r.mixedPageGeometry || jmDiverges,
-    unbalancedFormat: r.unbalancedFormat,
+    unbalanced: r.unbalanced,
   };
 }
 

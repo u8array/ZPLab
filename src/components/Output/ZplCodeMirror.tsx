@@ -12,6 +12,8 @@ import {
 import { Annotation, Compartment, EditorState, RangeSetBuilder, Transaction, type StateEffect } from '@codemirror/state';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { codeFolding, foldService, foldGutter, foldKeymap, foldEffect, foldedRanges } from '@codemirror/language';
+import { setDiagnostics, diagnosticCount, forEachDiagnostic, type Diagnostic } from '@codemirror/lint';
+import type { SourceLint } from '../../lib/sourceDiagnostics';
 import { zplLineHighlights, opaquePayloadFold, isPureCrlf } from '../../lib/zplCmHighlight';
 import { MAX_LINE_RENDER } from '../../lib/zplTokenStyles';
 
@@ -112,7 +114,31 @@ const theme = EditorView.theme({
   '.cm-zplSelectedLine': {
     backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
   },
+  // CM's base theme paints the tooltip for a light host (no `dark` declared
+  // here), and the pane itself is surface-2: without the app's token plus
+  // elevation the popup reads as text pasted onto the code.
+  '.cm-tooltip': {
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border)',
+    borderRadius: '4px',
+    boxShadow: '0 8px 24px rgb(0 0 0 / 0.35)',
+    color: 'var(--color-text)',
+  },
+  '.cm-diagnostic': { color: 'var(--color-text)' },
 });
+
+/** Whether the editor already shows exactly these marks, in this order. */
+function sameDiagnostics(state: EditorState, next: readonly Diagnostic[]): boolean {
+  let i = 0;
+  let same = true;
+  forEachDiagnostic(state, (d, from, to) => {
+    const n = next[i++];
+    if (!n || n.from !== from || n.to !== to || n.severity !== d.severity || n.message !== d.message) {
+      same = false;
+    }
+  });
+  return same && i === next.length;
+}
 
 function highlightDecorations(state: EditorState, lines: ReadonlySet<number>): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
@@ -128,6 +154,12 @@ function highlightDecorations(state: EditorState, lines: ReadonlySet<number>): D
 }
 
 const NO_LINES: ReadonlySet<number> = new Set();
+
+/** Total map, so a new semantic severity cannot silently render as a hint. */
+const CM_SEVERITY: Record<SourceLint['severity'], 'error' | 'hint'> = {
+  error: 'error',
+  related: 'hint',
+};
 
 // Compartment payloads built in ONE place each, so mount and reconfigure
 // cannot silently drift apart.
@@ -155,6 +187,7 @@ export default function ZplCodeMirror({
   readOnly = false,
   highlightLines = NO_LINES,
   historyEpoch = 0,
+  diagnostics = null,
   ref,
 }: {
   value: string;
@@ -168,6 +201,9 @@ export default function ZplCodeMirror({
   /** Bumping clears the undo history (minimal-splice syncs keep old events
    *  mappable, so without this an undo could resurrect a closed session). */
   historyEpoch?: number;
+  /** Framework-neutral lints in STRING offsets of `value`; converted here.
+   *  `null` keeps the previous set, live-mapped through edits. */
+  diagnostics?: readonly SourceLint[] | null;
   ref?: Ref<ZplCodeMirrorHandle>;
 }) {
   const host = useRef<HTMLDivElement>(null);
@@ -288,6 +324,43 @@ export default function ZplCodeMirror({
       });
     }
   }, [value]);
+
+  // After the value sync, so positions land on the fresh doc. Counting CRLFs
+  // is facet-independent: CM collapses each to ONE position either way.
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view || diagnostics == null) return;
+    const lints = diagnostics;
+    // Dispatching installs lint's extensions and rebuilds the CRLF index, so
+    // a clean buffer (the common case) must not pay for an empty set.
+    if (lints.length === 0 && diagnosticCount(view.state) === 0) return;
+    const crlfIdx: number[] = [];
+    for (let i = value.indexOf('\r\n'); i !== -1; i = value.indexOf('\r\n', i + 2)) crlfIdx.push(i);
+    // Binary search, not a running cursor: the mapping must not depend on the
+    // order the lints arrive in, and a scan per lint is quadratic on a
+    // CRLF-heavy buffer.
+    const toDocPos = (offset: number): number => {
+      let lo = 0;
+      let hi = crlfIdx.length;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if ((crlfIdx[mid] ?? 0) < offset) lo = mid + 1;
+        else hi = mid;
+      }
+      return Math.min(offset - lo, view.state.doc.length);
+    };
+    const mapped: Diagnostic[] = lints.map((d) => ({
+      from: toDocPos(d.from),
+      to: toDocPos(d.to),
+      severity: CM_SEVERITY[d.severity],
+      message: d.message,
+    }));
+    // Compared against what the editor HOLDS: a lagging build is skipped and
+    // CM maps its marks through edits, so a remembered key would go stale.
+    // Re-dispatching an unchanged set closes an open tooltip under the pointer.
+    if (sameDiagnostics(view.state, mapped)) return;
+    view.dispatch(setDiagnostics(view.state, mapped));
+  }, [diagnostics, value]);
 
   useEffect(() => {
     const view = viewRef.current;

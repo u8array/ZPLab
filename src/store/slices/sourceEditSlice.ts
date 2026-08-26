@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import type { SourceApplyPlan, SourceApplyOk } from '@zplab/core/lib/zplSourceEdit';
+import type { SourceApplyOk, SourceRefusalInfo } from '@zplab/core/lib/zplSourceEdit';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { Page } from '@zplab/core/types/Group';
 import type { ColumnMapping, Variable } from '@zplab/core/types/Variable';
@@ -20,7 +20,21 @@ export interface SourceShadow {
     variables: Variable[];
     columnMapping: ColumnMapping | null;
   } | null;
-  refusal: Extract<SourceApplyPlan, { ok: false }>['reason'] | null;
+  refusal: SourceRefusalInfo | null;
+  /** The text `refusal` was parsed from; `doc` can be older (it keeps the
+   *  last good parse). The debounced parse lags the live draft, so position
+   *  consumers must check identity first. */
+  draft: string;
+}
+
+/** Canonical stored shape: callers hand in whatever they hold (a plan carries
+ *  its own `ok`), and the slot keeps one object per verdict. */
+function refusalInfo(r: SourceRefusalInfo): SourceRefusalInfo {
+  if (r.reason === 'unbalanced') return { reason: r.reason, unbalanced: r.unbalanced };
+  if (r.reason === 'blobLine') {
+    return r.command === undefined ? { reason: r.reason } : { reason: r.reason, command: r.command };
+  }
+  return { reason: r.reason };
 }
 
 // Session identity, not just status: dialog state and plans hang off the
@@ -38,8 +52,9 @@ export interface SourceEditSlice {
   /** Written by the shadow-parse effect and by a refused apply; ignored
    *  outside a session so a late parse cannot resurrect a preview. */
   setSourceShadow: (shadow: SourceShadow) => void;
-  /** Refusal only, keeping the last good doc: the one "set a refusal" op. */
-  setSourceRefusal: (refusal: SourceShadow['refusal']) => void;
+  /** Refusal only, keeping the last good doc: the one "set a refusal" op.
+   *  `draft` is the text the refusal describes. */
+  setSourceRefusal: (refusal: SourceShadow['refusal'], draft: string) => void;
   cancelSourceEdit: () => void;
   /** Commits a prepared plan as ONE undo step. Unlike loadDesign this keeps
    *  history and dataset: the document keeps its identity, only its ZPL
@@ -81,10 +96,16 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
   setSourceShadow: (shadow) =>
     set((state) => (state.sourceEdit.status === 'editing' ? { sourceShadow: shadow } : {})),
 
-  setSourceRefusal: (refusal) =>
+  setSourceRefusal: (refusal, draft) =>
     set((state) =>
       state.sourceEdit.status === 'editing'
-        ? { sourceShadow: { doc: state.sourceShadow?.doc ?? null, refusal } }
+        ? {
+            sourceShadow: {
+              doc: state.sourceShadow?.doc ?? null,
+              refusal: refusal && refusalInfo(refusal),
+              draft,
+            },
+          }
         : {},
     ),
 

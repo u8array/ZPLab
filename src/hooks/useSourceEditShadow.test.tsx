@@ -139,7 +139,32 @@ describe("useSourceShadowSync", () => {
     rerender();
     await flushParse();
     expect(shadowObjects()).toHaveLength(1);
-    expect(useLabelStore.getState().sourceShadow?.refusal).toBe("unbalanced");
+    const refusal = useLabelStore.getState().sourceShadow?.refusal;
+    expect(refusal?.reason).toBe("unbalanced");
+    // One shape per verdict: the plan's own discriminant must not ride along,
+    // or the slot holds two different objects for the same state.
+    expect(refusal && "ok" in refusal).toBe(false);
+  });
+
+  it("keeps a refusal the exit pushed for this very draft", () => {
+    // The exit reports synchronously and HOLDS the session; the debounce still
+    // armed for the same text must not blank that verdict.
+    const draft = "^XA^FO10,10^A0N,30,30^FDa^FS";
+    const { rerender } = renderHook(() => useSourceShadowSync());
+    act(() => {
+      useLabelStore.setState({ sourceEdit: session(draft, "") });
+    });
+    rerender();
+    act(() => {
+      useLabelStore.getState().setSourceRefusal(
+        { reason: "unbalanced", unbalanced: { kind: "unclosedXa", at: 0, cmd: "^XA" } },
+        draft,
+      );
+    });
+    act(() => {
+      vi.advanceTimersByTime(350);
+    });
+    expect(useLabelStore.getState().sourceShadow?.refusal?.reason).toBe("unbalanced");
   });
 
   it("clears on session end and clamps the render page index", async () => {
