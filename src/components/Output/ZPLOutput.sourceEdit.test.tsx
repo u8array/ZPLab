@@ -13,13 +13,14 @@ vi.mock("../../lib/clipboard", () => ({
 // CodeMirror needs layout APIs jsdom lacks; the props plus the focus handle
 // are the whole contract (real-CM invariants live in ZplCodeMirror.test.tsx).
 vi.mock("./ZplCodeMirror", () => {
-  function MockCodeMirror({ value, onChange, ariaLabel, placeholderText, readOnly, highlightLines, ref }: {
+  function MockCodeMirror({ value, onChange, ariaLabel, placeholderText, readOnly, highlightLines, diagnostics, ref }: {
     value: string;
     onChange: (v: string) => void;
     ariaLabel: string;
     placeholderText: string;
     readOnly?: boolean;
     highlightLines?: ReadonlySet<number>;
+    diagnostics?: readonly { from: number; to: number; message: string }[] | null;
     ref?: React.Ref<{ focus(): void }>;
   }) {
     const el = React.useRef<HTMLTextAreaElement>(null);
@@ -32,6 +33,13 @@ vi.mock("./ZplCodeMirror", () => {
         value={value}
         readOnly={readOnly}
         data-highlights={[...(highlightLines ?? [])].sort((a, b) => a - b).join(",")}
+        // `null` (keep the previous set) and an empty build are opposites in
+        // the real component, so the mock must not collapse them.
+        data-diagnostics={
+          diagnostics == null
+            ? "null"
+            : JSON.stringify(diagnostics.map((d) => ({ from: d.from, to: d.to, message: d.message })))
+        }
         onChange={(e) => onChange(e.target.value)}
       />
     );
@@ -243,7 +251,7 @@ describe("focus leaving the panel", () => {
     await leavePanel(container);
     expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
     // The reason lands synchronously with the click, not 300ms later.
-    expect(useLabelStore.getState().sourceShadow?.refusal).toBe("unbalanced");
+    expect(useLabelStore.getState().sourceShadow?.refusal?.reason).toBe("unbalanced");
     // The refocus is deferred behind the pointerdown's default focus.
     await act(async () => {
       await new Promise((r) => setTimeout(r, 0));
@@ -330,6 +338,68 @@ describe("authoring into an empty document", () => {
     // Clearing the text must never read as "delete everything".
     expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
     expect(useLabelStore.getState().pages).toBe(pages);
+  });
+});
+
+describe("inline diagnostics", () => {
+  it("a stray ^XZ becomes a positioned error naming the command", async () => {
+    const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XZ^XA^FO10,10^A0N,30,30^FDX^FS^XZ");
+    // The held exit pushes the refusal (incl. position) synchronously; the
+    // debounced shadow sync is hosted at the app root and never runs here.
+    await leavePanel(container);
+    const built = JSON.parse(editor().dataset.diagnostics ?? "null") as {
+      from: number; to: number; message: string;
+    }[];
+    expect(built).toHaveLength(1);
+    expect(built[0]).toMatchObject({
+      from: 0,
+      to: 3,
+      message: t().output.lintStrayXzFmt.replace("{cmd}", "^XZ"),
+    });
+  });
+});
+
+describe("stale diagnostics", () => {
+  it("withholds the build while the parse lags the buffer", () => {
+    // The identity check is the only thing keeping offsets from an older
+    // parse off a newer document.
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XZ^XA^FO10,10^A0N,30,30^FDX^FS^XZ");
+    act(() => {
+      useLabelStore.getState().setSourceRefusal(
+        { reason: "unbalanced", unbalanced: { kind: "strayXz", at: 0, cmd: "^XZ" } },
+        "^XZ^XA^FO10,10^A0N,30,30^FDX^FS^XZ",
+      );
+    });
+    expect(editor().dataset.diagnostics).not.toBe("null");
+    // One more keystroke: the shadow now describes the previous text.
+    typeDraft("x^XZ^XA^FO10,10^A0N,30,30^FDX^FS^XZ");
+    expect(editor().dataset.diagnostics).toBe("null");
+  });
+});
+
+describe("the refusal banner", () => {
+  it("drops a located claim while the parse lags, keeps a positionless one", () => {
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XZ^XA^FO10,10^A0N,30,30^FDX^FS^XZ");
+    const stale = "^XZ^XA^FO10,10^A0N,30,30^FDX^FS^XZ";
+    act(() => {
+      useLabelStore.getState().setSourceRefusal(
+        { reason: "unbalanced", unbalanced: { kind: "strayXz", at: 0, cmd: "^XZ" } },
+        stale,
+      );
+    });
+    const named = t().output.lintStrayXzFmt.replace("{cmd}", "^XZ");
+    expect(screen.queryByText(named)).not.toBeNull();
+    // One more keystroke: the sentence names bytes the parse no longer covers.
+    typeDraft("x" + stale);
+    expect(screen.queryByText(named)).toBeNull();
+    // A reason without a position stays readable through the same lag.
+    act(() => {
+      useLabelStore.getState().setSourceRefusal({ reason: "tooLarge" }, stale);
+    });
+    expect(screen.queryByText(t().output.editSourceGateSize)).not.toBeNull();
   });
 });
 

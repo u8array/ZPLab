@@ -25,18 +25,17 @@ export function useSourceShadowSync(): void {
   const sourceEdit = useLabelStore((s) => s.sourceEdit);
   const draft = sourceEdit.status === "editing" ? sourceEdit.draft : null;
   const baseline = sourceEdit.status === "editing" ? sourceEdit.baseline : null;
-
   useEffect(() => {
     // Session-end actions clear the shadow themselves.
     if (draft === null || baseline === null) return;
     const shadow = useLabelStore.getState().setSourceShadow;
     if (draft === baseline) {
-      const id = setTimeout(() => shadow({ doc: null, refusal: null }), 0);
+      const id = setTimeout(() => shadow({ doc: null, refusal: null, draft }), 0);
       return () => clearTimeout(id);
     }
     if (draft.length > MAX_SOURCE_CHARS) {
       const id = setTimeout(() => {
-        useLabelStore.getState().setSourceRefusal("tooLarge");
+        useLabelStore.getState().setSourceRefusal({ reason: "tooLarge" }, draft);
       }, 0);
       return () => clearTimeout(id);
     }
@@ -57,17 +56,20 @@ export function useSourceShadowSync(): void {
             columnMapping: plan.next.columnMapping,
           },
           refusal: null,
+          draft,
         });
       } else if (
         baseline === '' &&
         (plan.reason === 'empty' || plan.reason === 'noContent' || plan.reason === 'unbalanced')
       ) {
-        // Authoring from scratch, every prefix of a label is "broken": a live
-        // banner until the closing ^XZ would make error the default state.
-        // An exit attempt still surfaces the reason (synchronous push there).
-        s.setSourceRefusal(null);
+        // Authoring from scratch, every prefix of a label is "broken": live
+        // complaints would make error the default state. An exit attempt
+        // reports it, and its verdict must survive this branch.
+        if (useLabelStore.getState().sourceShadow?.draft !== draft) {
+          s.setSourceRefusal(null, draft);
+        }
       } else {
-        s.setSourceRefusal(plan.reason);
+        s.setSourceRefusal(plan, draft);
       }
     }, DEBOUNCE_MS);
     return () => clearTimeout(id);

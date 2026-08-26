@@ -42,6 +42,11 @@ export const currentPageLabel = (state: LabelState): PageLabel =>
  * page count) derives from the parsed shadow through this one seam; live
  * state otherwise. Model-facing reads keep the plain fields. */
 
+/** The refusal of the last completed shadow parse, and the text it describes.
+ *  Session-end writers null the whole shadow, so no status guard is needed. */
+export const selectShadowRefusal = (s: LabelState) => s.sourceShadow?.refusal ?? null;
+export const selectShadowDraft = (s: LabelState) => s.sourceShadow?.draft ?? null;
+
 export const selectRenderPages = (s: LabelState) => s.sourceShadow?.doc?.pages ?? s.pages;
 
 export const selectRenderVariables = (s: LabelState) =>

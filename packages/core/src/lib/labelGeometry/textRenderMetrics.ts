@@ -24,11 +24,6 @@ export interface TextRenderMetrics {
   /** Canvas-only resolved bitmap device font (A-H); single source for
    *  consumers that need the id beside the metrics (line pitch, bounds). */
   deviceFontId?: string;
-  /** Style the render and the measure share. Bold only for the PrintLab
-   *  Font-0 substitute (real bold face, calibrated so); device substitutes
-   *  and custom TTFs render at their real weight like the printer, and
-   *  synthetic bold hollows out under WebKit's 'difference' (#356). */
-  fontStyle: "normal" | "bold";
 }
 
 /** Parser feeds these (no obj at parse time). */
@@ -45,6 +40,9 @@ export interface TextMetricsInput {
   /** Canvas-only bitmap device-font size/scale (A-H snap to magnifications). */
   fontSizeDots?: number;
   scaleXOverride?: number;
+  /** Canvas-only: device fonts paint at this weight, so inkWidth must measure
+   *  it too (emit/parse omit it and keep the default bold). */
+  measureFontStyle?: string;
   /** Canvas-only device-font inter-char spacing folded into inkWidth so the
    *  reverse-box / ^FPR width matches the letter-spaced render. */
   letterSpacingDots?: number;
@@ -64,27 +62,16 @@ export function computeTextRenderMetrics(input: TextMetricsInput): TextRenderMet
     input.scaleXOverride ?? (fontWidth > 0 ? fontWidth / fontHeight : 1);
   const measureSizeDots =
     input.fontSizeDots ?? fontHeight / ZPL_FONT_HEIGHT_TO_CSS_RATIO;
-  // Style follows the RESOLVED face, so a referenced-but-unloaded TTF that
-  // falls back to the substitute keeps its calibrated bold (metrics feed the
-  // anchor math); a real face renders and measures at its own weight.
-  const fontStyle: "normal" | "bold" = fontFamily === DEFAULT_FONT_FAMILY ? "bold" : "normal";
   const glyphWidthDots = measureInkWidthPx(
     content,
     measureSizeDots,
     fontFamily,
-    fontStyle,
+    input.measureFontStyle,
   );
   const spacingDots =
     (input.letterSpacingDots ?? 0) * Math.max(0, content.length - 1);
   const inkWidthDots = (glyphWidthDots + spacingDots) * fontScaleX;
-  return {
-    content,
-    fontFamily,
-    fontScaleX,
-    inkWidthDots,
-    fontSizeDots: input.fontSizeDots,
-    fontStyle,
-  };
+  return { content, fontFamily, fontScaleX, inkWidthDots, fontSizeDots: input.fontSizeDots };
 }
 
 /** Ink extent feeding the FO/I and FO/B anchor shift: cell grid for bitmap
@@ -149,6 +136,7 @@ export function getTextRenderMetrics(
       fontFamilyOverride,
       fontSizeDots: device?.fontSizeDots,
       scaleXOverride: device?.scaleX,
+      measureFontStyle: device ? "normal" : undefined,
       letterSpacingDots: device?.letterSpacingDots,
     }),
     yOffsetDots: device?.yOffsetDots,

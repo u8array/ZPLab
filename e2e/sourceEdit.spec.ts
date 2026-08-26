@@ -67,6 +67,15 @@ test('a multi-page edit applied by an outside click stays on the current page', 
   await expect(page.getByText('2 / 2')).toBeVisible();
 });
 
+test('an unbalanced draft shows a positioned lint error while typing', async ({ page }) => {
+  await page.goto('/');
+  const output = await importSample(page);
+  // The stray ^XZ is the TRAILING one, so an implementation anchoring every
+  // kind at offset 0 would mark the opening ^XA and fail here.
+  await retype(page, output, '^XA^FO10,10^A0N,30,30^FDX^FS^XZ^XZ');
+  await expect(page.locator('.cm-lintRange-error')).toHaveText('^XZ');
+});
+
 test('Escape asks to discard and restores the export', async ({ page }) => {
   await page.goto('/');
   const output = await importSample(page);

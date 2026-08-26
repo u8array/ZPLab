@@ -3087,3 +3087,16 @@ describe('parseZPL — ^FT graphic anchors lift to model top-left', () => {
     expect(props(objects[0]).length).toBe(100); // sqrt(80^2 + 60^2)
   });
 });
+
+describe('parseZPL — unbalanced command text', () => {
+  it('carries the source command under a ^CC prefix remap', () => {
+    // The remap makes the second format open with #XA; its dangling open must
+    // label the bytes that are actually in the buffer.
+    const zpl = '^XA^CC#^FDa#FS#XZ\n#XA#FDb#FS';
+    expect(parseZPL(zpl, 8).unbalanced).toEqual({
+      kind: 'unclosedXa',
+      at: zpl.indexOf('#XA'),
+      cmd: '#XA',
+    });
+  });
+});

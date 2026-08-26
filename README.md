@@ -79,7 +79,7 @@ The **ZPL output** panel at the bottom shows the generated ZPL. It updates in re
 
 The panel is a code editor with ZPL syntax highlighting; overlong graphic payloads are folded. Selecting an object on the canvas highlights the lines it emits, and a notice above the code flags printer-persistent setup commands and device actions.
 
-The first change starts an edit session: canvas and panel editing locks (paging still works) while the canvas previews the parsed buffer live. An invalid buffer (unbalanced `^XA`/`^XZ`, too large) shows the refusal reason and is never applied.
+The first change starts an edit session: canvas and panel editing locks (paging still works) while the canvas previews the parsed buffer live. An invalid buffer (unbalanced `^XA`/`^XZ`, too large) shows the refusal reason and is never applied; an imbalance is also marked at the command that caused it.
 
 Leaving the panel applies the edit; a dialog asks first when the reparse reports findings or would drop designer-only state (groups, names, locked/hidden, export exclusions, variable bindings). `Esc` discards; a changed buffer confirms first. An applied edit counts as a new import, so [Import guarantees](#import-guarantees) apply to the result.
 

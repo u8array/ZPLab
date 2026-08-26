@@ -60,6 +60,8 @@ export {
   selectSourceEditing,
   selectSourceEditDirty,
   selectDocumentEmits,
+  selectShadowRefusal,
+  selectShadowDraft,
   selectRenderPages,
   selectRenderVariables,
   selectRenderColumnMapping,

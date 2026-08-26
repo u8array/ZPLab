@@ -90,6 +90,141 @@ describe("ZplCodeMirror placeholder", () => {
   });
 });
 
+describe("ZplCodeMirror diagnostics", () => {
+  it("maps string offsets to doc positions and renders the lint range", async () => {
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    // CRLF buffer: the one CRLF before the range shifts doc positions by one.
+    const value = "^XA^FDx^FS\r\n^XZ^XZ";
+    const strayAt = value.indexOf("^XZ^XZ") + 3;
+    const { container } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[{ from: strayAt, to: strayAt + 3, severity: "error", message: "boom" }]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement);
+    expect(view).not.toBeNull();
+    const seen: { from: number; to: number; message: string }[] = [];
+    forEachDiagnostic(view!.state, (d, from, to) => seen.push({ from, to, message: d.message }));
+    expect(seen).toEqual([{ from: strayAt - 1, to: strayAt + 2, message: "boom" }]);
+    expect(container.querySelector(".cm-lintRange-error")).not.toBeNull();
+  });
+
+  it("clears the marker once a fresh build reports nothing", async () => {
+    // The early-out must skip only the no-op case; skipping the transition
+    // leaves a red squiggle on a buffer the user already repaired.
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    const value = "^XA^FDx^FSstray^XZ";
+    const { container, rerender } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[{ from: 10, to: 15, severity: "error", message: "boom" }]}
+      />,
+    );
+    rerender(
+      <ZplCodeMirror
+        value={value}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const seen: string[] = [];
+    forEachDiagnostic(view.state, (d) => seen.push(d.message));
+    expect(seen).toEqual([]);
+  });
+
+  it("renders the repair site as a weaker second mark", async () => {
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    const value = "^XA^FDa^FS^XA^FDb^FS^XZ";
+    const { container } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[
+          { from: 0, to: 3, severity: "error", message: "never closed" },
+          { from: 10, to: 13, severity: "related", message: "still open here" },
+        ]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const seen: string[] = [];
+    forEachDiagnostic(view.state, (d) => seen.push(d.severity));
+    // One problem stays one problem: the context mark must not read as a
+    // second error.
+    expect(seen).toEqual(["error", "hint"]);
+    expect(container.querySelector(".cm-lintRange-error")?.textContent).toBe("^XA");
+  });
+
+  it("does not re-dispatch an identical set (an open tooltip would close)", () => {
+    const value = "^XA^FDx^FSstray^XZ";
+    const lint = () => [{ from: 10, to: 15, severity: "error" as const, message: "boom" }];
+    const { container, rerender } = render(
+      <ZplCodeMirror value={value} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" diagnostics={lint()} />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const dispatches = vi.spyOn(view, "dispatch" as never);
+    // A settled re-parse hands a fresh but equal array every 300ms.
+    rerender(
+      <ZplCodeMirror value={value} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" diagnostics={lint()} />,
+    );
+    expect(dispatches).not.toHaveBeenCalled();
+  });
+
+  it("does not re-dispatch after the lag, when the settled parse marks the same bytes", () => {
+    // null -> CM maps the mark through the edit -> the fresh build describes
+    // the same bytes at shifted offsets. The editor already shows them.
+    const value = "^XA^FDx^FSstray^XZ";
+    const { container, rerender } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[{ from: 10, to: 15, severity: "error" as const, message: "boom" }]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const shifted = "AB" + value;
+    rerender(
+      <ZplCodeMirror value={shifted} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" diagnostics={null} />,
+    );
+    const dispatches = vi.spyOn(view, "dispatch" as never);
+    rerender(
+      <ZplCodeMirror
+        value={shifted}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[{ from: 12, to: 17, severity: "error" as const, message: "boom" }]}
+      />,
+    );
+    expect(dispatches).not.toHaveBeenCalled();
+  });
+
+  it("keeps the previous set live-mapped while the parse lags (null)", async () => {
+    // Re-dispatching a lagging build would re-anchor its offsets onto the
+    // newer doc and dim live commands.
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    const value = "^XA^FDx^FSstray^XZ";
+    const lints = [{ from: 10, to: 15, severity: "error" as const, message: "ignored" }];
+    const { container, rerender } = render(
+      <ZplCodeMirror value={value} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" diagnostics={lints} />,
+    );
+    rerender(
+      <ZplCodeMirror value={"AB" + value} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" diagnostics={null} />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const seen: string[] = [];
+    forEachDiagnostic(view.state, (_d, from, to) => seen.push(view.state.doc.sliceString(from, to)));
+    expect(seen).toEqual(["stray"]);
+  });
+});
+
 describe("ZplCodeMirror history epoch", () => {
   it("clears the undo history when the epoch bumps", async () => {
     const changes: string[] = [];

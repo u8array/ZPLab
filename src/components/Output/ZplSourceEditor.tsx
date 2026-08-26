@@ -3,15 +3,24 @@ import { hasEditorLoss } from '@zplab/core/lib/editorStateDiff';
 import { prepareSourceApply } from '@zplab/core/lib/zplSourceEdit';
 import type { SourceApplyOk } from '@zplab/core/lib/zplSourceEdit';
 import { sourceRefusalText, type SourceRefusal } from '../../lib/sourceEditText';
-import { useLabelStore, selectPreviewLocksEditor, selectSourceDocumentState } from '../../store/labelStore';
+import {
+  useLabelStore,
+  selectPreviewLocksEditor,
+  selectShadowDraft,
+  selectShadowRefusal,
+  selectSourceDocumentState,
+} from '../../store/labelStore';
 import type { SourceEditMode } from '../../store/slices/sourceEditSlice';
 import { SourceApplyConfirmDialog } from './SourceApplyConfirmDialog';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useSessionExit } from '../../hooks/useSessionExit';
 import { useT } from '../../hooks/useT';
 import ZplCodeMirror, { type ZplCodeMirrorHandle } from './ZplCodeMirror';
+import { buildSourceDiagnostics, type SourceLint } from '../../lib/sourceDiagnostics';
 
 type SessionState = Extract<SourceEditMode, { status: 'editing' }>;
+
+const NO_DIAGNOSTICS: readonly SourceLint[] = [];
 
 /** The always-mounted source pane: the first modifying keystroke seeds a
  *  session from the shown export (focus is the mode: one person either types
@@ -30,7 +39,7 @@ export function ZplSourceEditor({
   value: string;
   crlfKey: boolean;
   /** Gate refusal of the shown export; makes the pane read-only. */
-  gateRefusal: SourceRefusal | null;
+  gateRefusal: Exclude<SourceRefusal, 'unbalanced'> | null;
   highlightedLines: ReadonlySet<number>;
   panelRef: RefObject<HTMLDivElement | null>;
 }) {
@@ -39,6 +48,18 @@ export function ZplSourceEditor({
   const readOnly = previewActive || gateRefusal !== null;
   const editorRef = useRef<ZplCodeMirrorHandle>(null);
   const gateMsg = gateRefusal !== null ? sourceRefusalText(gateRefusal, t) : null;
+
+  const shadowRefusal = useLabelStore(selectShadowRefusal);
+  const shadowDraft = useLabelStore(selectShadowDraft);
+  // Offsets only describe the text they were parsed from, so a lagging shadow
+  // hands null and the editor keeps mapping its previous set; outside a
+  // session there is nothing left to map.
+  const diagnostics: readonly SourceLint[] | null =
+    session === null
+      ? NO_DIAGNOSTICS
+      : shadowDraft === value
+        ? buildSourceDiagnostics(shadowRefusal, t)
+        : null;
 
   // The text history belongs to the session: clear it when one ENDS, or an
   // undo in the still-focused editor could resurrect the closed buffer.
@@ -73,6 +94,7 @@ export function ZplSourceEditor({
           highlightLines={highlightedLines}
           historyEpoch={historyEpoch}
           placeholderText={t.output.editSourcePlaceholder}
+          diagnostics={diagnostics}
         />
       </div>
       {gateMsg !== null && (
@@ -116,10 +138,18 @@ function SessionChrome({
   // in the store, the in-flight plan does not survive its session anyway.
   const [pendingPlan, setPendingPlan] = useState<SourceApplyOk | null>(null);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
-  // The shadow slot is the ONE refusal source; it follows every edit, so it
-  // can never go stale the way a local error state did.
-  const liveRefusal = useLabelStore((s) => s.sourceShadow?.refusal ?? null);
-  const liveMsg = liveRefusal !== null ? sourceRefusalText(liveRefusal, t) : null;
+  const liveRefusal = useLabelStore(selectShadowRefusal);
+  const liveDraft = useLabelStore(selectShadowDraft);
+  // A located imbalance names bytes, so it may only be quoted while the parse
+  // still describes the buffer; the positionless reasons hold either way.
+  const liveMsg =
+    liveRefusal === null
+      ? null
+      : liveRefusal.reason !== 'unbalanced'
+        ? sourceRefusalText(liveRefusal.reason, t)
+        : liveDraft === session.draft
+          ? (buildSourceDiagnostics(liveRefusal, t)[0]?.message ?? null)
+          : null;
 
   // Whitespace over an empty baseline authored nothing: exits treat it as
   // clean, or a stray Space traps the user in an unappliable held session.
@@ -153,7 +183,7 @@ function SessionChrome({
     });
     if (!plan.ok) {
       // The debounced shadow sync would lag the click by up to 300ms.
-      state.setSourceRefusal(plan.reason);
+      state.setSourceRefusal(plan, session.draft);
       // Deferred past the pointerdown's default focus, so Escape keeps working.
       setTimeout(focusEditor, 0);
       return false;

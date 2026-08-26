@@ -26,6 +26,7 @@ import type {
   ImportFinding,
   ParsedPage,
   ParsedZPL,
+  UnbalancedFormat,
   Wildcard,
 } from "./zplParser/types";
 export type {
@@ -34,6 +35,7 @@ export type {
   ImportReport,
   ParsedPage,
   ParsedZPL,
+  UnbalancedFormat,
 } from "./zplParser/types";
 import type { LabelObject } from "../types/Group";
 import type { Variable } from "../types/Variable";
@@ -212,8 +214,6 @@ export function parseZPL(
   const handlers: Record<string, Handler> = {
     XA: (p, rest, cmd) => {
       commitPendingReverseBg();
-      if (formatOpen) unbalancedFormat = true;
-      formatOpen = true;
       s.format.embedChar = "#";
       s.format.clockChars = { ...DEFAULT_CLOCK_CHARS };
       s.format.inFormatHead = true;
@@ -221,8 +221,6 @@ export function parseZPL(
     },
     XZ(p, rest, cmd) {
       commitPendingReverseBg();
-      if (!formatOpen) unbalancedFormat = true;
-      formatOpen = false;
       // Between formats there is no head: a ^JM out here is neither read by the
       // next format's lookahead nor rewritable, so it must not be taken for one.
       s.format.inFormatHead = false;
@@ -270,11 +268,12 @@ export function parseZPL(
   // replay relies on). Page 0 opens at offset 0 and owns any preamble.
   const pages: ParsedPage[] = [];
   let mixedPageGeometry = false;
-  // Tracked at the dispatch handlers, the only ^CC-aware place: a format left
-  // open never prints (spec p. 375), and an overlay would replay the broken
-  // bytes verbatim, so callers need to know.
-  let formatOpen = false;
-  let unbalancedFormat = false;
+  // The open format's ^XA, or null: one variable, so "a format is open" and
+  // "where it opened" cannot disagree. A format left open never prints (spec
+  // p. 375) and its overlay would replay the broken bytes, so callers refuse.
+  let openXa: { at: number; cmd: string } | null = null;
+  // First imbalance only: the best anchor to point the editor at.
+  let unbalanced: UnbalancedFormat | null = null;
   let lastPageW: number | undefined;
   let lastPageH: number | undefined;
 
@@ -460,6 +459,23 @@ export function parseZPL(
     // These findings name bytes that replay verbatim, so report the source prefix.
     if (replayRiskCodes.has(cmd)) replayRisk.push(`${zpl[start]}${cmd}`);
     else if (deviceActionCodes.has(cmd)) deviceAction.push(`${zpl[start]}${cmd}`);
+    // Balance bookkeeping needs the token offset and the state the handler is
+    // about to flip, so it sits here rather than in the two handlers.
+    if (cmd === "XA" || cmd === "XZ") {
+      const cmdText = zpl.slice(start, start + 3);
+      if (cmd === "XZ") {
+        if (!openXa) unbalanced ??= { kind: "strayXz", at: start, cmd: cmdText };
+        openXa = null;
+      } else {
+        // A second ^XA is itself correct; the defect is the format it
+        // interrupts, so the error points at THAT opener and carries this
+        // offset as the place the missing ^XZ belongs.
+        if (openXa) {
+          unbalanced ??= { kind: "unclosedXa", ...openXa, related: { at: start, cmd: cmdText } };
+        }
+        openXa = { at: start, cmd: cmdText };
+      }
+    }
     const handler = handlers[cmd] ?? wildcards.find((w) => w.matches(cmd))?.handle;
     if (handler) {
       const reverseBefore = s.reverseBg;
@@ -641,7 +657,7 @@ export function parseZPL(
   // Close the last page (also the only one for single-block or bare streams);
   // its serial-orphan sweep runs inside.
   closePage(zpl.length);
-  if (formatOpen) unbalancedFormat = true;
+  if (openXa) unbalanced ??= { kind: "unclosedXa", ...openXa };
 
   // Apply the geometry sidecar last so it wins over ^PW/^LL-derived mm and
   // restores dpmm, which plain ZPL can't carry.
@@ -654,7 +670,7 @@ export function parseZPL(
   return {
     pages,
     mixedPageGeometry,
-    unbalancedFormat,
+    unbalanced,
     labelConfig,
     printerProfile,
     uploadedFontPaths: [...s.fonts.downloadedFontPaths],

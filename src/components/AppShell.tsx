@@ -5,6 +5,7 @@ import { ObjectPalette } from "./Palette/ObjectPalette";
 import { PaletteViewToggle } from "./Palette/PaletteViewToggle";
 import { PaletteEditToggle } from "./Palette/PaletteEditToggle";
 import { LabelCanvas } from "./Canvas/LabelCanvas";
+import { SourceShadowSync } from "./SourceShadowSync";
 import type { LabelCanvasHandle } from "./Canvas/LabelCanvas";
 import { RightSidebar } from "./RightSidebar/RightSidebar";
 import { HistoryDropdown } from "./History/HistoryDropdown";
@@ -260,6 +261,7 @@ export function AppShell() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-bg text-text font-sans">
+      <SourceShadowSync />
       {/* Desktop: the menu model renders as the native OS menu; undo/redo and
           the history timeline ride its Edit menu plus the keyboard shortcuts,
           and theme/language live in the settings. */}

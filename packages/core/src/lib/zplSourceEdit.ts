@@ -1,5 +1,5 @@
 import { importZplText, mergeSetupFonts, replaceImportLabel } from "./zplImportService";
-import type { ImportReport } from "./zplParser";
+import type { ImportReport, UnbalancedFormat } from "./zplParser";
 import type { LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
 import type { Page } from "../types/Group";
@@ -55,13 +55,17 @@ export interface SourceApplyInput {
   current: SourceDocumentState;
 }
 
-export type SourceApplyPlan =
-  | {
-      ok: false;
-      reason: "empty" | "noContent" | "blobLine" | "tooLarge" | "unbalanced" | "tooManyPages";
-      command?: string;
-    }
-  | SourceApplyOk;
+/** A refusal plus what the editor needs to point at it. The plan's refusal
+ *  arm IS this shape, so callers store it without re-projecting fields. */
+export type SourceRefusalInfo =
+  | { reason: "empty" | "noContent" | "tooLarge" | "tooManyPages" }
+  | { reason: "blobLine"; command?: string }
+  | { reason: "unbalanced"; unbalanced: UnbalancedFormat };
+
+export type SourceApplyPlan = ({ ok: false } & SourceRefusalInfo) | SourceApplyOk;
+
+/** The refusal vocabulary, shared by every surface that names one. */
+export type SourceRefusal = SourceRefusalInfo['reason'];
 
 export interface SourceApplyOk {
   ok: true;
@@ -101,7 +105,9 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
   const imported = importZplText(input.text, current.label.dpmm);
   // The parser is the only ^CC-aware lexer, so the balance verdict is its: an
   // open format never prints, and its overlay would replay the broken bytes.
-  if (imported.unbalancedFormat) return { ok: false, reason: "unbalanced" };
+  if (imported.unbalanced) {
+    return { ok: false, reason: "unbalanced", unbalanced: imported.unbalanced };
+  }
   if (imported.pages.length > MAX_SOURCE_PAGES) return { ok: false, reason: "tooManyPages" };
   const objectCount = imported.pages.reduce((s, p) => s + p.objects.length, 0);
   if (
