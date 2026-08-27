@@ -51,7 +51,13 @@ import {
 } from "./barcodeRawGeometry";
 import { code11CheckDigits } from "./barcodeCheckDigits";
 import { barcodeTextZoneDots, barcodeZoneAbove } from "./barcodeHri";
+import { code49Module, code49RowMultiplier } from "../registry/code49";
 import { placeholderContentFor, samplePropsFor } from "../registry/placeholderContent";
+
+/** bwip rowheight in modules. Not shared with code49: there the module is
+ *  what the BYTES carry, here it is a render detail (^B7/^BB/^BF h are dots). */
+const bwipRowModules = (rowHeightDots: number, moduleWidth: number, min: number): number =>
+  Math.max(min, Math.round(rowHeightDots / Math.max(moduleWidth, 1)));
 
 /** The bwip-js surface the kernel needs; any build satisfies it. */
 export interface BwipEngine {
@@ -286,10 +292,9 @@ export function buildBwipOptions(
     }
     case "code49": {
       const p = obj.props;
-      const scale = bwipScale1D(p.moduleWidth, renderScale, renderDpmm);
-      // Clamp to bwip's 8..50 range; guards JSON loads that bypass registry.
-      const rawRow = Math.round(p.height / Math.max(p.moduleWidth, 1));
-      const rowheight = Math.min(50, Math.max(8, rawRow));
+      const mw = code49Module(p.moduleWidth);
+      const scale = bwipScale1D(mw, renderScale, renderDpmm);
+      const rowheight = code49RowMultiplier(p.height, mw);
       opts = {
         bcid,
         text: p.content || "0",
@@ -458,10 +463,7 @@ export function buildBwipOptions(
         bcid,
         text: p.content || " ",
         scale: BWIP_SCALE,
-        rowheight: Math.max(
-          1,
-          Math.round(p.rowHeight / Math.max(p.moduleWidth, 1)),
-        ),
+        rowheight: bwipRowModules(p.rowHeight, p.moduleWidth, 1),
         columns,
         // ZPL securityLevel 0 = auto → ECC level 0 (minimum). 1–8 map directly
         // to bwip eclevel 1–8 (empirically validated against Labelary).
@@ -511,10 +513,7 @@ export function buildBwipOptions(
         scale: BWIP_SCALE,
         columns: version.columns,
         rows: version.rows,
-        rowheight: Math.max(
-          1,
-          Math.round(p.rowHeight / Math.max(p.moduleWidth, 1)),
-        ),
+        rowheight: bwipRowModules(p.rowHeight, p.moduleWidth, 1),
       };
       break;
     }
@@ -530,10 +529,7 @@ export function buildBwipOptions(
         // firmware counts characters, so numeric data stacks into fewer rows on
         // the printer (codablock stays "unverified").
         columns: Math.max(CODABLOCK_PREVIEW_COLUMNS_MIN, clampCodablockColumns(p.columns)),
-        rowheight: Math.max(
-          8,
-          Math.round(p.rowHeight / Math.max(p.moduleWidth, 1)),
-        ),
+        rowheight: bwipRowModules(p.rowHeight, p.moduleWidth, 8),
       };
       break;
     }
@@ -730,15 +726,14 @@ function getUprightDisplaySize(
       return { w, h };
     }
     case "code49": {
-      // Labelary only renders HRI for ^B4; bwip is ground truth (same as ^BB).
+      // bwip's canvas already carries the separator rows (ZD230-verified);
+      // the firmware-reserved HRI band rides on top like the other 1Ds.
       const p = obj.props;
-      const rawRow = Math.round(p.height / Math.max(p.moduleWidth, 1));
-      const rowheightUnits = Math.min(50, Math.max(8, rawRow));
-      const modulePx = dotsToPx(p.moduleWidth, scale, dpmm);
-      const bwipSc = get1DBwipScale(p.moduleWidth, scale, dpmm);
-      const numRows = Math.max(1, Math.round(ch / (rowheightUnits * bwipSc)));
+      const mw = code49Module(p.moduleWidth);
+      const modulePx = dotsToPx(mw, scale, dpmm);
+      const bwipSc = get1DBwipScale(mw, scale, dpmm);
       const w = (cw / bwipSc) * modulePx;
-      const h = numRows * dotsToPx(rowheightUnits * p.moduleWidth, scale, dpmm);
+      const h = (ch / bwipSc) * modulePx + dotsToPx(barcodeTextZoneDots(obj), scale, dpmm);
       return { w, h };
     }
     case "code39":
@@ -806,10 +801,7 @@ function getUprightDisplaySize(
     }
     case "codablock": {
       const p = obj.props;
-      const specRowheight = Math.max(
-        8,
-        Math.round(p.rowHeight / Math.max(p.moduleWidth, 1)),
-      );
+      const specRowheight = bwipRowModules(p.rowHeight, p.moduleWidth, 8);
       const w =
         (cw / BWIP_SCALE + CODABLOCK_FIRMWARE_MODULE_OFFSET) *
         dotsToPx(p.moduleWidth, scale, dpmm);

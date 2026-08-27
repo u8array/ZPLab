@@ -186,6 +186,8 @@ export interface FieldState {
   /** ^BC m=D (UCC/EAN) → GS1-128; consumed by the code128 case in flushField. */
   bcGs1: boolean;
   bcCode49Mode: Code49Props["mode"];
+  /** ^B4 h as sent, or null when omitted; resolved at ^FS. */
+  bcCode49Mult: number | null;
   // ^GS symbol pending
   symRot: ZplRotation;
   symH: number;
@@ -433,6 +435,7 @@ export function freshFieldState(): FieldState {
     bcRotation: "N",
     bcGs1: false,
     bcCode49Mode: "A",
+    bcCode49Mult: null,
     symRot: "N",
     symH: 30,
     symW: 30,

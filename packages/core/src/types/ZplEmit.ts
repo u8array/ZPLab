@@ -47,6 +47,9 @@ export interface HriFormatProps {
 export interface HriBehavior {
   /** HRI sits above bars (logmars, ^BS). */
   textAbove?: boolean;
+  /** Firmware-reserved band in dots when the generic module-scaled line does
+   *  not match it (^B4 differs above vs below). */
+  zoneDots?: (moduleWidth: number, above: boolean) => number;
   /** Bar-to-text gap in dots; function form for moduleWidth dependence (^BS). */
   aboveGapDots?: number | ((moduleWidth: number) => number);
   /** Transform raw content for display; default identity. `props` is the

@@ -2,6 +2,7 @@ import { useRef, useEffect, useLayoutEffect } from "react";
 import { flushSync } from "react-dom";
 import type Konva from "konva";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
+import { stackExtentDots, stackRowHeightDots } from "@zplab/core/registry/transformHelpers";
 import { blockBoundsDots, blockGlyphAnchorPoint, blockReflowGeometry, tbBoundsDots, tbReflowGeometry, type BlockJustify, type ZplRotation } from "@zplab/core/lib/zebraTextLayout";
 import { resolveDeviceFontId } from "@zplab/core/lib/customFonts";
 import { getCurrentObjects, useLabelStore } from "../../../store/labelStore";
@@ -121,6 +122,19 @@ function applyResizeObjectSnap(
 /** Invisible rect at the selection's model union; the transformer attaches to
  *  it for multi-resize so member nodes never stretch live. */
 export const MULTI_RESIZE_PROXY_ID = "multi-resize-proxy";
+
+/** The row geometry a stacked 1D symbology drags against; null when the prop
+ *  already IS the bar extent. One drag-start pair serves both axes. */
+function rowStackOf(
+  entry: ReturnType<typeof getEntry>,
+  br: { uprightH0?: number; snapshot: { height?: number } },
+  props: unknown,
+): { rows: number; gapDots: number } | null {
+  const nodeHeight = br.uprightH0 ?? 0;
+  const rowHeight = br.snapshot.height ?? 0;
+  if (!entry?.barStack || !(nodeHeight > 0) || !(rowHeight > 0)) return null;
+  return entry.barStack({ rowHeight, nodeHeight }, props as never);
+}
 
 /** Shapes whose reflow is center-aware (box/ellipse); line resizes via endpoint
  *  handles, not this reflow, so it stays out. One source for both the arming and
@@ -284,6 +298,8 @@ export function useKonvaTransformer({
     | (BarcodeHeightReflowStart & {
         mode: "height";
         uprightW0: number;
+        /** Bar extent at drag start, dots; pairs with snapshot.height. */
+        uprightH0: number;
         snapshot: { x: number; y: number; height: number };
         changed: boolean;
         lastCentered: boolean;
@@ -758,7 +774,9 @@ export function useKonvaTransformer({
           rightX: leftX + dotsToPx(cache.width, scale, dpmm),
           bottomY: topY + dotsToPx(cache.height, scale, dpmm),
         };
-        const uprightH0 = cache.uprightBarHDots ?? p.height ?? 0;
+        // The props fallback would be off by the row count here.
+        const rowStacked = !!getEntry(obj.type)?.barStack;
+        const uprightH0 = cache.uprightBarHDots ?? (rowStacked ? 0 : (p.height ?? 0));
         const mwAxisActive = swapped ? edges.top || edges.bottom : edges.left || edges.right;
         const heightAxisActive = swapped ? edges.left || edges.right : edges.top || edges.bottom;
         if (mwAxisActive && typeof p.moduleWidth === "number" && p.moduleWidth > 0) {
@@ -795,6 +813,7 @@ export function useKonvaTransformer({
             edges,
             ...box,
             zonePx: Math.max(0, dotsToPx(axisFootprintDots - uprightH0, scale, dpmm)),
+            uprightH0,
             uprightW0: cache.uprightBarWDots ?? 0,
             snapshot: { x: obj.x, y: obj.y, height: p.height },
             changed: false,
@@ -999,12 +1018,19 @@ export function useKonvaTransformer({
           // axis keeps its pre-drag model value (mirrors the end commit's
           // snapAxis), else the bar-zone offset (above-HRI, rotated EAN) that
           // the FO inversion ignores would corrupt the stored anchor coordinate.
+          // A row-stacked type re-rounds its rows against the new module, so
+          // its stack extent moves during a WIDTH drag too.
+          const widened = { ...cur.props, moduleWidth: geo.moduleWidth };
+          const mwStack = rowStackOf(getEntry(cur.type), br, widened);
+          const stackH = mwStack
+            ? stackExtentDots(mwStack, br.snapshot.height ?? 0)
+            : br.uprightH0;
           const model = modelPositionFromRenderedTopLeft(
             cur,
             pxToDots(geo.targetXPx - objectsOffsetX, scale, dpmm),
             pxToDots(geo.targetYPx - labelOffsetY, scale, dpmm),
             br.uprightW0 * ratio,
-            br.uprightH0,
+            stackH,
           );
           // TLC39's second module width follows the same ratio so the
           // composite keeps its proportions mid-drag.
@@ -1045,10 +1071,15 @@ export function useKonvaTransformer({
       const frameExtentPx = swapped ? natural.width * sx : natural.height * sy;
       const geo = barcodeHeightReflowGeometry(br, frameExtentPx, centered);
       if (!geo) return;
-      const newHeightDots = pxToDots(geo.barExtentPx, scale, dpmm);
+      const measuredBarDots = pxToDots(geo.barExtentPx, scale, dpmm);
+      const entry = getEntry(cur.type);
+      const stack = rowStackOf(entry, br, cur.props);
+      const newHeightDots = stack
+        ? stackRowHeightDots(stack, measuredBarDots)
+        : measuredBarDots;
       const hCurrent = (cur.props as { height?: number }).height;
       if (!(newHeightDots >= 1)) return;
-      const commitFn = getEntry(cur.type)?.commitTransform;
+      const commitFn = entry?.commitTransform;
       const candidate = { ...cur, props: { ...cur.props, height: newHeightDots } } as typeof cur;
       const committed = commitFn?.(candidate, {
         sx: 1,
@@ -1059,7 +1090,9 @@ export function useKonvaTransformer({
         resizeMode: blockResizeModeRef.current,
       }) as { height?: number } | undefined;
       const hNext = committed?.height ?? newHeightDots;
-      const pin = barcodeHeightReflowGeometry(br, dotsToPx(hNext, scale, dpmm), centered);
+      // Everything below places the BARS, so a per-row height maps back first.
+      const barNext = stack ? stackExtentDots(stack, hNext) : hNext;
+      const pin = barcodeHeightReflowGeometry(br, dotsToPx(barNext, scale, dpmm), centered);
       if (!pin) return;
       if (hNext !== hCurrent || modeFlip) {
         const model = modelPositionFromRenderedTopLeft(
@@ -1067,7 +1100,7 @@ export function useKonvaTransformer({
           pxToDots(pin.targetXPx - objectsOffsetX, scale, dpmm),
           pxToDots(pin.targetYPx - labelOffsetY, scale, dpmm),
           br.uprightW0,
-          hNext,
+          barNext,
         );
         flushSync(() => {
           updateObject(id, {

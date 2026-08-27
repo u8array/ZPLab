@@ -455,3 +455,18 @@ describe("derived label field sets", () => {
     ]);
   });
 });
+
+describe("code49 keeps its module grid across a rescale", () => {
+  it("re-snaps the height the independently scaled module invalidated", () => {
+    // 6->8 dpmm scales 40 dots to 53 and the module to 3: h would emit as 18
+    // and print 54, so state, bytes and re-import each hold a different number.
+    const c49 = leaf("c", "code49", 10, 10, {
+      content: "CODE49", height: 40, moduleWidth: 2, printInterpretation: false,
+      printInterpretationAbove: false, mode: "A", rotation: "N",
+    });
+    const r = rescaleDesign(page(c49), label, 6, 8, { dpmm: 8 });
+    const out = r.pages[0]!.objects[0] as typeof c49;
+    expect(out.props.moduleWidth).toBe(3);
+    expect(out.props.height).toBe(54);
+  });
+});

@@ -12,6 +12,7 @@ import { fieldMode, boundDefaultOrContent, fieldVariableRefs, fieldHasVariable, 
 import { gs1EnablePatch } from '@zplab/core/registry/gs1FieldSpec';
 import { Gs1BuilderButton } from './gs1PanelControls';
 import { CheckboxRow } from '../components/Properties/CheckboxRow';
+import { HriAboveRow } from '../components/Properties/HriAboveRow';
 import { extractClockTokens } from '@zplab/core/lib/fcTemplate';
 import { SectionCard, StaticSectionCard } from '../components/Properties/SectionCard';
 import { FieldLabel } from '../components/Properties/ZplCmd';
@@ -134,10 +135,9 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
             )}
 
             {!config.interpretationLocked && config.hriAboveConfigurable && p.printInterpretation && (
-              <CheckboxRow
-                checked={p.printInterpretationAbove ?? false}
+              <HriAboveRow
+                checked={p.printInterpretationAbove}
                 onChange={(printInterpretationAbove) => onChange({ printInterpretationAbove })}
-                label={t.registry.text.hriAbove}
                 cmd={config.zplCommand}
               />
             )}

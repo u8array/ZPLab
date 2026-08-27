@@ -162,6 +162,10 @@ function rescaleLeaf(leaf: LeafObject, factor: number, warnings: RescaleWarning[
     if (r.clamped) warn(usp.name, usp.name === "dimension" ? "dimensionClamped" : "magnificationClamped");
   }
 
+  // Height and module were scaled independently above, so a type whose props
+  // constrain each other re-establishes that here.
+  Object.assign(next, entry?.constrainProps?.(next as never) ?? {});
+
   // Device fonts A-H render at discrete magnifications, so a non-integer factor
   // makes the printed size snap rather than scale exactly.
   if (leaf.type === "text" && factor !== 1) {
