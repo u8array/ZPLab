@@ -91,6 +91,12 @@ export interface ObjectTypeCore<P extends object = object> {
   /** ^BY moduleWidth lower bound for stacked-2D resize (default 1); CODABLOCK A
    *  requires 2. Drives both the drag-time snap and the release commit. */
   moduleWidthMin?: number;
+  /** Row-stacked 1D (^B4): the height prop holds ONE row, so the reflow
+   *  converts through stackExtentDots. Absent = the prop IS the extent. */
+  barStack?: (
+    start: { rowHeight: number; nodeHeight: number },
+    props: P,
+  ) => { rows: number; gapDots: number };
   /** Further 1-10 module-width props (TLC39's ^BT w2) so the density rescale
    *  scales them like moduleWidth without a per-type special case. */
   extraModuleWidthProps?: readonly (keyof P & string)[];
@@ -101,6 +107,9 @@ export interface ObjectTypeCore<P extends object = object> {
   fdTransform?: (
     obj: LabelObjectBase & { props: P },
   ) => ((payload: string) => string) | undefined;
+  /** Props that constrain each other (^B4 ties the height to the module
+   *  grid), independent of which edit arrived: batch paths call it directly. */
+  constrainProps?: (props: P) => Partial<P>;
   /** Pure hook for type-specific clamp/invariant on incoming changes. */
   normalizeChanges?: (
     obj: LabelObjectBase & { props: P },

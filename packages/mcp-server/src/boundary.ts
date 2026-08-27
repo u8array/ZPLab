@@ -461,6 +461,15 @@ export const PROP_SUMMARIES: Record<string, Record<string, string>> = {
     blockLineSpacing: "dots added between lines",
     blockJustify: "L | C | R | J inside the block",
   },
+  code49: {
+    content: "string payload",
+    height: "height of ONE row in dots; the symbol stacks 2-8 of them",
+    moduleWidth: "narrow-bar width in dots",
+    printInterpretation: "boolean, show human-readable text",
+    printInterpretationAbove: "boolean, put that text above the bars",
+    mode: "A (auto) or 0-5 starting mode",
+    rotation: "N | R | I | B",
+  },
   code128: {
     content: "string payload",
     height: "bar height in dots",

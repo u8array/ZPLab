@@ -96,6 +96,24 @@ export function commitBarcodeWidthHeightTransform<
   return out as Partial<P>;
 }
 
+/** A row stack: `extent = rows x rowHeight + (rows+1) x gapDots`. The three
+ *  directions live together so no consumer re-derives one of them. */
+export const stackExtentDots = (
+  stack: { rows: number; gapDots: number },
+  rowHeightDots: number,
+): number => stack.rows * rowHeightDots + (stack.rows + 1) * stack.gapDots;
+
+export const stackRowHeightDots = (
+  stack: { rows: number; gapDots: number },
+  extentDots: number,
+): number => (extentDots - (stack.rows + 1) * stack.gapDots) / stack.rows;
+
+export const stackRowCount = (
+  extentDots: number,
+  rowHeightDots: number,
+  gapDots: number,
+): number => (extentDots - gapDots) / (rowHeightDots + gapDots);
+
 interface Stacked2DProps {
   rowHeight: number;
   moduleWidth: number;

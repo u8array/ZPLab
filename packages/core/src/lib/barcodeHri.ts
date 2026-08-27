@@ -51,6 +51,7 @@ export const HRI_LINE_TYPES: ReadonlySet<string> = new Set([
   "codabar",
   "industrial2of5",
   "standard2of5",
+  "code49",
 ]);
 
 /** HRI line height in dots, Labelary-measured at 6 and 8 dpmm over module
@@ -73,6 +74,9 @@ export function barcodeTextZoneDots(obj: LeafObject): number {
   const printsHri = HRI_LINE_TYPES.has(obj.type) && p.printInterpretation === true;
   if (!printsHri) return 0;
   const moduleWidth = p.moduleWidth ?? 2;
+  // A measured per-type band wins over the generic module-scaled line.
+  const own = ObjectRegistry[obj.type]?.hri?.zoneDots;
+  if (own) return own(moduleWidth, resolveHriAbove(obj));
   // The registry predicate, not a raw props read: a type that cannot carry GS1
   // must not claim the taller band off a stray flag.
   return isGs1Active(ObjectRegistry[obj.type], obj.props)

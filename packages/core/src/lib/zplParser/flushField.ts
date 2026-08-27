@@ -31,7 +31,7 @@ import type { DataMatrixProps } from "../../registry/datamatrix";
 import type { Barcode1DProps } from "../../registry/barcode1d";
 import type { Gs1DatabarProps } from "../../registry/gs1databar";
 import type { Pdf417Props } from "../../registry/pdf417";
-import type { Code49Props } from "../../registry/code49";
+import { code49Module, code49SnapHeight, type Code49Props } from "../../registry/code49";
 import {
   DEFAULT_GS_SYMBOL,
   GS_SYMBOL_CODES,
@@ -55,6 +55,17 @@ import {
 } from "./context";
 
 import { newId } from "../ids";
+
+/** Resolved at ^FS, where the ^BY module is final. The h-less form sizes the
+ *  WHOLE symbol, so its row count is a content-dependent approximation. */
+function code49HeightDots(s: ParserState): number {
+  const mw = code49Module(s.defaults.byModuleWidth);
+  const mult = s.field.bcCode49Mult;
+  const raw = mult === null ? ((s.defaults.byHeight || 20) - 3 * mw) / 2 : mult * mw;
+  const height = code49SnapHeight(raw, mw);
+  if (mult === null || height !== raw) s.result.partialCmds.add("^B4");
+  return height;
+}
 /** Cross-family deps flushField borrows from graphics (^GB+^FR) and parseZPL (^FX). */
 export interface FlushFieldDeps {
   commitPendingReverseBg: () => void;
@@ -551,9 +562,10 @@ export function createFlushField(
             s.field.y,
             {
               content,
-              height: s.field.bcHeight,
+              height: code49HeightDots(s),
               moduleWidth: s.defaults.byModuleWidth,
               printInterpretation: s.field.bcInterp,
+              printInterpretationAbove: s.field.bcInterpAbove,
               mode: s.field.bcCode49Mode,
               rotation: s.field.bcRotation,
             } satisfies Code49Props,

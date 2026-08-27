@@ -6,6 +6,7 @@ import { NumberInput } from '../components/Properties/NumberInput';
 import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { SectionCard, StaticSectionCard } from '../components/Properties/SectionCard';
 import { CheckboxRow } from '../components/Properties/CheckboxRow';
+import { HriAboveRow } from '../components/Properties/HriAboveRow';
 import { FieldLabel } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
 import { fieldGridCols, fieldGridCell } from '../components/ui/formStyles';
@@ -70,6 +71,14 @@ export const code49Panel: ObjectTypeUi<Code49Props> = {
             label={loc.printInterpretation}
             cmd="^B4"
           />
+
+          {p.printInterpretation && (
+            <HriAboveRow
+              checked={p.printInterpretationAbove}
+              onChange={(printInterpretationAbove) => onChange({ printInterpretationAbove })}
+              cmd="^B4"
+            />
+          )}
 
           <RotationSelect value={p.rotation} onChange={(rotation) => onChange({ rotation })} zplCmd="^B4" />
         </SectionCard>

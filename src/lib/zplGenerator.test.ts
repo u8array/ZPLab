@@ -4,7 +4,7 @@ import { generateZPL, generateMultiPageZPL, generateBatchZpl } from '@zplab/core
 import { parseZPL } from '@zplab/core/lib/zplParser';
 import type { LabelConfig, PageLabel } from '@zplab/core/types/LabelConfig';
 import type { GroupObject, LabelObject } from '@zplab/core/types/Group';
-import { defined, parseSingle, props, serialOf } from '../test/helpers';
+import { defined, parseSingle, props, serialOf, commandsOf } from '../test/helpers';
 import { NON_EMITTING_CONFIG_KEYS } from '../store/labelStore.internals';
 import { putImage } from '@zplab/core/lib/imageCache';
 
@@ -1219,25 +1219,82 @@ describe('generateZPL — parse/generate roundtrip', () => {
   });
 
   it('round-trips a ^B4 Code 49 with default mode A', () => {
-    const original = parseSingle('^XA^FO10,10^B4N,20,Y,A^FDCODE49^FS^XZ', 8);
+    // h=20 at the default ^BY2 module is 40 dots per row; f=Y prints NO line.
+    const original = parseSingle('^XA^FO10,10^B4N,20,B,A^FDCODE49^FS^XZ', 8);
     const regenerated = generateZPL(BASE_LABEL, original.objects);
+    expect(regenerated).toContain('^B4N,20,B,A');
     const reparsed = parseSingle(regenerated, 8);
     const bc = defined(reparsed.objects.find((o) => o.type === 'code49'));
     expect(props(bc).content).toBe('CODE49');
-    expect(props(bc).height).toBe(20);
+    expect(props(bc).height).toBe(40);
     expect(props(bc).printInterpretation).toBe(true);
+    expect(props(bc).printInterpretationAbove).toBe(false);
     expect(props(bc).mode).toBe('A');
+  });
+
+  it('resolves ^B4 height against the ^BY the FIELD closes with', () => {
+    // The module is only settled at ^FS; reading it at ^B4 time built one
+    // object from two different ^BY states.
+    const r = parseSingle('^XA^BY2^FO10,10^B4N,20,B,A^BY4^FDCODE49^FS^XZ', 8);
+    const bc = defined(r.objects.find((o) => o.type === 'code49'));
+    expect(props(bc).moduleWidth).toBe(4);
+    expect(props(bc).height).toBe(80);
+  });
+
+  it('clamps an out-of-range ^B4 h into the window the canvas can draw', () => {
+    // bwip refuses rows outside 8..50 modules; without the clamp the model
+    // held 400 while the canvas drew 100 and the re-emit printed 400.
+    const r = parseSingle('^XA^BY2^FO10,10^B4N,200,B,A^FDCODE49^FS^XZ', 8);
+    const bc = defined(r.objects.find((o) => o.type === 'code49'));
+    expect(props(bc).height).toBe(100);
+    expect(commandsOf(r, 'partial')).toContain('^B4');
+  });
+
+  it('emits a whole module, so a fractional ^BY cannot inflate the height', () => {
+    const zpl = generateZPL(BASE_LABEL, [{
+      id: 'c', type: 'code49', x: 10, y: 10, rotation: 0,
+      props: { content: 'CODE49', height: 20, moduleWidth: 2.5, printInterpretation: false,
+        printInterpretationAbove: false, mode: 'A', rotation: 'N' },
+    }] as never);
+    expect(zpl).toContain('^BY3');
+    const bc = defined(parseSingle(zpl, 8).objects.find((o) => o.type === 'code49'));
+    expect(props(bc).moduleWidth).toBe(3);
+    // 20 dots is below the 8-module floor at mw 3, so it lands on it.
+    expect(props(bc).height).toBe(24);
+  });
+
+  it('reads ^B4 f: A is above, the invalid Y prints no line (ZD230)', () => {
+    const above = parseSingle('^XA^FO10,10^B4N,20,A,A^FDCODE49^FS^XZ', 8);
+    const bcA = defined(above.objects.find((o) => o.type === 'code49'));
+    expect(props(bcA).printInterpretation).toBe(true);
+    expect(props(bcA).printInterpretationAbove).toBe(true);
+    const y = parseSingle('^XA^FO10,10^B4N,20,Y,A^FDCODE49^FS^XZ', 8);
+    const bcY = defined(y.objects.find((o) => o.type === 'code49'));
+    expect(props(bcY).printInterpretation).toBe(false);
   });
 
   it('round-trips ^B4 explicit mode + rotation + moduleWidth', () => {
     const original = parseSingle('^XA^BY3^FO10,10^B4R,30,N,2^FD12345^FS^XZ', 8);
     const regenerated = generateZPL(BASE_LABEL, original.objects);
+    expect(regenerated).toContain('^B4R,30,N,2');
     const reparsed = parseSingle(regenerated, 8);
     const bc = defined(reparsed.objects.find((o) => o.type === 'code49'));
     expect(props(bc).rotation).toBe('R');
     expect(props(bc).moduleWidth).toBe(3);
+    expect(props(bc).height).toBe(90);
     expect(props(bc).mode).toBe('2');
     expect(props(bc).printInterpretation).toBe(false);
+  });
+
+  it('reads a missing ^B4 h as the ^BY TOTAL height, two-row approximation', () => {
+    // ZD230: without h the ^BY height IS the whole symbol (40 -> 40 dots);
+    // the row height lands on the grid so the import survives re-export.
+    const zpl = '^XA^BY2,3,40^FO10,10^B4N,,N,A^FDCODE49^FS^XZ';
+    const r = parseSingle(zpl, 8);
+    const bc = defined(r.objects.find((o) => o.type === 'code49'));
+    expect(props(bc).height).toBe(18);
+    const again = parseSingle(generateZPL(BASE_LABEL, r.objects), 8);
+    expect(props(defined(again.objects.find((o) => o.type === 'code49'))).height).toBe(18);
   });
 
   it('falls back to mode A when ^B4 receives an unknown mode', () => {

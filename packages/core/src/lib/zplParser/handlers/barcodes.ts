@@ -5,7 +5,7 @@ import type { Gs1DatabarProps } from "../../../registry/gs1databar";
 import { clampMaxicodeAppend, type MaxicodeProps } from "../../../registry/maxicode";
 import { GS1_DATABAR_DEFAULT_SEGMENTS } from "../../gs1";
 import type { ParserState } from "../context";
-import { dotsFor, int, readRotation } from "../helpers";
+import { dotsFor, int, readRotation, strParam } from "../helpers";
 import type { Handler } from "../types";
 
 /** ^B* barcode commands + shared ^BY defaults. Touches `field` and `defaults`. */
@@ -77,8 +77,14 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     B4(p) {
       s.field.fieldType = "code49";
       s.field.bcRotation = readRotation(p[0]);
-      s.field.bcHeight = dots(p[1], defaults.byHeight || 20);
-      s.field.bcInterp = (p[2] ?? "N") === "Y";
+      const mult = int(p[1], NaN);
+      s.field.bcCode49Mult = Number.isNaN(mult) ? null : mult;
+      // f knows only N/A/B (ZD230-measured); flag the rest, because our own
+      // pre-fix exports wrote Y for "on" and now read as HRI-off.
+      const f = strParam(p[2]) || "N";
+      s.field.bcInterp = f === "A" || f === "B";
+      s.field.bcInterpAbove = f === "A";
+      if (!["N", "A", "B"].includes(f)) s.result.partialCmds.add("^B4");
       const m = (p[3] ?? "A").toUpperCase();
       s.field.bcCode49Mode = /^[A0-5]$/.test(m)
         ? (m as Code49Props["mode"])

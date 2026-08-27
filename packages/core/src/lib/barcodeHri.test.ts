@@ -22,7 +22,6 @@ const UNMEASURED_HRI_ZONE: ReadonlySet<string> = new Set([
   "plessey",
   "planet",
   "postal",
-  "code49",
   "gs1databar",
 ]);
 
