@@ -1689,6 +1689,17 @@ describe('generateZPL — variable bindings', () => {
     expect(zpl).not.toContain('^FN');
   });
 
+  it('declares the header default although a hidden single-bind claims the slot', () => {
+    const hidden = { id: 'g', type: 'group', includeInExport: false,
+      children: [textObj] } as unknown as LabelObject;
+    const template = { id: 'obj-2', type: 'text', x: 10, y: 10, rotation: 0,
+      props: { content: 'PRE«sku»POST', fontHeight: 30, fontWidth: 0, rotation: 'N' },
+    } as unknown as LabelObject;
+    const zpl = generateZPL(BASE_LABEL, [hidden, template], [variable]);
+    expect(zpl).toContain('^FN7^FDABC-123^FS');
+    expect(zpl).toContain('^FDPRE#7#POST');
+  });
+
   it('emits the marker literally when no variable matches the name (orphan)', () => {
     const zpl = generateZPL(BASE_LABEL, [textObj], [
       { ...variable, name: 'other' },
@@ -1753,6 +1764,19 @@ describe('generateBatchZpl', () => {
     expect(result).toContain('^FN1^FDA1^FS');
     expect(result).toContain('^FN1^FDB2^FS');
     expect(result).toContain('^FN1^FDC3^FS');
+  });
+
+  it('does not source a row transform from a leaf inside an excluded group', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const hiddenQr = {
+      id: 'g', type: 'group', includeInExport: false,
+      children: [{ id: 'q', type: 'qrcode', x: 0, y: 0, rotation: 0,
+        props: { content: '«sku»', magnification: 3, errorCorrection: 'M', model: 2, rotation: 'N' } }],
+    } as unknown as LabelObject;
+    const result = generateBatchZpl(baseLabel, [hiddenQr, textObj('sku')], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    // The hidden QR's EC prefix must not stamp the recall value.
+    expect(result).toContain('^FN1^FDA1^FS');
   });
 
   it('skips variables that are not in the mapping', () => {

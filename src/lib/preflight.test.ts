@@ -535,8 +535,19 @@ describe("markerValueFindings (typed-content marker values)", () => {
   const qr = (id: string, content: string, extra: object = {}): LeafObject =>
     ({ id, type: "qrcode", x: 0, y: 0, rotation: 0,
        props: { content, magnification: 3, errorCorrection: "M", model: 2, rotation: "N", ...extra } } as LabelObject as LeafObject);
+  const plainText = (id: string, extra: object = {}): LeafObject =>
+    ({ id, type: "text", x: 0, y: 100, rotation: 0,
+       props: { content: "«ssid»", fontHeight: 30, fontWidth: 0, rotation: "N", reverse: false, ...extra } } as LabelObject as LeafObject);
+  const bcPlain = (id: string, extra: object = {}): LeafObject =>
+    ({ id, type: "code128", x: 0, y: 200, rotation: 0,
+       props: { content: "«ssid»", height: 80, moduleWidth: 2, rotation: "N",
+         printInterpretation: false, checkDigit: false, ...extra } } as LabelObject as LeafObject);
   const vars = [{ id: "s", name: "ssid", fnNumber: 1, defaultValue: "A;B" }];
   const deps = { variables: vars, dataset: null, columnMapping: null };
+  const withDefault = (dv: string) =>
+    ({ ...deps, variables: [{ id: "s", name: "ssid", fnNumber: 1, defaultValue: dv }] });
+  const conflictOn = (fs: ReturnType<typeof markerValueFindings>) =>
+    fs.filter((f) => f.detail?.includes("encode it differently")).map((f) => f.objectId);
 
   it("flags a WiFi payload whose marker default carries a structural char", () => {
     const out = markerValueFindings([qr("a", "WIFI:T:WPA;S:«ssid»;;")], deps);
@@ -551,6 +562,89 @@ describe("markerValueFindings (typed-content marker values)", () => {
     const columnMapping = { bindings: { s: "net" }, headerSnapshot: ["net"] };
     const out = markerValueFindings([qr("a", "WIFI:T:WPA;S:«ssid»;;")], { variables: clean, dataset, columnMapping });
     expect(out).toHaveLength(1);
+  });
+
+  it("warns when a single-bind QR and a text field share a slot", () => {
+    const shared = markerValueFindings([qr("a", "«ssid»"), plainText("t")], deps);
+    expect(shared.some((f) => f.objectId === "a" && f.kind === "markerValueUnsafe")).toBe(true);
+    expect(conflictOn(markerValueFindings([qr("a", "«ssid»")], deps))).toEqual([]);
+  });
+
+  it("warns when two QRs disagree on the slot encoding (different EC)", () => {
+    const out = markerValueFindings([qr("a", "«ssid»"), qr("b", "«ssid»", { errorCorrection: "L" })], deps);
+    expect(out.some((f) => f.kind === "markerValueUnsafe")).toBe(true);
+  });
+
+  it("stays quiet for a rotated QR: it emits ^GFA and claims no slot", () => {
+    const out = markerValueFindings([qr("a", "«ssid»", { rotation: "R" }), plainText("t")], deps);
+    expect(out.some((f) => f.kind === "markerValueUnsafe")).toBe(false);
+  });
+
+  it("warns for a rotated QR whose empty default falls back to ^BQ+^FN", () => {
+    const out = markerValueFindings([qr("rot", "«ssid»", { rotation: "R" }), plainText("t")], withDefault(""));
+    expect(conflictOn(out)).toContain("rot");
+  });
+
+  it("stays quiet for a template QR sharing its slot (the slot stays raw)", () => {
+    const out = markerValueFindings([qr("a", "WIFI:T:WPA;S:«ssid»;;"), plainText("t")], deps);
+    expect(conflictOn(out)).toEqual([]);
+  });
+
+  it("warns when a single-bind QR and a plain ^BC share a slot", () => {
+    const out = markerValueFindings([qr("a", "«ssid»"), bcPlain("c")], deps);
+    expect(out.some((f) => f.objectId === "a" && f.kind === "markerValueUnsafe")).toBe(true);
+  });
+
+  it("blames only leaves that consume the conflicted slot", () => {
+    // 'rot' ships as ^GFA; the real conflict is between 'n' and 't'.
+    const out = markerValueFindings(
+      [qr("rot", "«ssid»", { rotation: "R" }), qr("n", "«ssid»", { errorCorrection: "L" }), plainText("t")],
+      withDefault("W"));
+    expect(conflictOn(out).sort()).toEqual(["n", "t"]);
+  });
+
+  it("catches a row-dependent conflict the defaults hide (^FB escape on a CSV row)", () => {
+    const fb = plainText("f", { blockWidth: 200 });
+    const columnMapping = { bindings: { s: "net" }, headerSnapshot: ["net"] };
+    const row = (cell: string) => ({
+      variables: [{ id: "s", name: "ssid", fnNumber: 1, defaultValue: "safe" }], columnMapping,
+      dataset: { headers: ["net"], rows: [[cell]] } });
+    expect(conflictOn(markerValueFindings([fb, plainText("t")], row("a\nb")))).not.toEqual([]);
+    // A clean row encodes to itself on both sides.
+    expect(conflictOn(markerValueFindings([fb, plainText("t")], row("also safe")))).toEqual([]);
+  });
+
+  it("no encoding conflict for a shared plain ^BC: the emit degrades it to raw", () => {
+    const out = markerValueFindings([bcPlain("c"), plainText("t")], withDefault("a\x1db"));
+    expect(conflictOn(out)).toEqual([]);
+  });
+
+  it("warns when the degraded ^BC resolves a chip the text ships literally", () => {
+    const out = markerValueFindings([bcPlain("c"), plainText("t")], withDefault("a«ctrl:GS»b"));
+    expect(conflictOn(out).sort()).toEqual(["c", "t"]);
+  });
+
+  it("stays quiet on a chip-only difference both consumers ship literally", () => {
+    const out = markerValueFindings([plainText("f", { blockWidth: 200 }), plainText("t")], withDefault("a«ctrl:LF»b"));
+    expect(conflictOn(out)).toEqual([]);
+  });
+
+  it("same-carrier lone bind and template are emit-coordinated: quiet", () => {
+    const out = markerValueFindings([bcPlain("c"), bcPlain("c2", { content: "PRE«ssid»" })], withDefault("A>B"));
+    expect(conflictOn(out)).toEqual([]);
+  });
+
+  it("a serial field emits ^SN, not ^FN: no phantom conflict", () => {
+    const serial = bcPlain("s", { serial: { start: 1, increment: 1, leadingZeros: true } });
+    const out = markerValueFindings([serial, qr("q", "«ssid»")], deps);
+    expect(conflictOn(out)).toEqual([]);
+  });
+
+  it("an unregistered type consumes no slot", () => {
+    const ghost = { id: "z", type: "doesnotexist", x: 0, y: 0, rotation: 0,
+      props: { content: "«ssid»" } } as unknown as LeafObject;
+    const out = markerValueFindings([qr("a", "«ssid»"), ghost], deps);
+    expect(conflictOn(out)).toEqual([]);
   });
 
   it("stays quiet for text payloads and marker-free content", () => {
