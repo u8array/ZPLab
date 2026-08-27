@@ -19,6 +19,7 @@ import { classifyField, isLoneMarker } from "./variableField";
 import { parseContent, typedContentIncompleteRows, typedContentMarkerFindings } from "./typedContent";
 import { getObjectStringContent, resolveForRow, variableSubstitutions } from "./variableBinding";
 import { fnConsumerBuckets, isModeDLeaf } from "./gs1ModeDFns";
+import { slotEncodingConflicts } from "./slotConflicts";
 import { isPrintedBlank } from "./zebraTextLayout";
 import { resolveTextMode } from "../registry/text";
 import type { ColumnMapping, Variable } from "../types/Variable";
@@ -204,18 +205,20 @@ export function markerValueFindings(
   // shared slots emit raw; exclusive plain-^BC slots still leak `>` before an
   // invocation char, which the escape leaves verbatim by design.
   const byName = new Map(deps.variables.map((v) => [v.name, v]));
-  // One CSV row-walk per variable per run, not per warning channel. Values
-  // are chip-resolved: the emit resolves them too, so the dirty predicates
-  // must see the byte, not the marker text.
-  const subsCache = new Map<string, string[]>();
-  const substitutionsOf = (v: Variable): string[] => {
+  // One CSV row-walk per variable per run, not per warning channel. The dirty
+  // predicates get chip-RESOLVED values (their plans see bytes); the encoding
+  // comparison gets RAW values (the emit transforms unresolved defaults).
+  const subsCache = new Map<string, { raw: string[]; resolved: string[] }>();
+  const subsOf = (v: Variable) => {
     let subs = subsCache.get(v.id);
     if (!subs) {
-      subs = variableSubstitutions(v, deps.dataset, deps.columnMapping).map(resolveControlMarkers);
+      const raw = variableSubstitutions(v, deps.dataset, deps.columnMapping);
+      subs = { raw, resolved: raw.map(resolveControlMarkers) };
       subsCache.set(v.id, subs);
     }
     return subs;
   };
+  const substitutionsOf = (v: Variable): string[] => subsOf(v).resolved;
   const slotValueWarnings = (
     slots: Set<number>,
     leafPred: (leaf: LeafObject) => boolean,
@@ -265,6 +268,14 @@ export function markerValueFindings(
     plainLeaf,
     (val) => planHasLoss(planCode128Fd(val, "sharedRaw"), "controlBytesDropped"),
     c0Message,
+  );
+  // No value predicate: divergence is already decided per value in slotEncodingConflicts.
+  const conflicts = slotEncodingConflicts(leaves, deps.variables, (v) => subsOf(v).raw, buckets);
+  slotValueWarnings(
+    conflicts.fns,
+    (leaf) => conflicts.consumerIds.has(leaf.id),
+    () => true,
+    (names) => `${names} is bound by fields that encode it differently: every consumer prints the encoding of the field that emits the slot`,
   );
   // Exclusive slots: a lone bind is a whole ^FD (invocation form covers
   // control bytes AND protects `>`+invocation sequences by encoding them);

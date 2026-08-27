@@ -22,7 +22,7 @@ import { designAsPageLabel, jmDensityOf } from '../types/LabelConfig';
 import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig, PageLabel } from '../types/LabelConfig';
 import type { ZplEmitContext } from '../types/ZplEmit';
 import type { Variable } from '../types/Variable';
-import { exportableLeaves, isGroup, pageLabelConfig, walkObjects, type LabelObject, type LeafObject, type Page } from '../types/Group';
+import { exportableLeaves, isGroup, pageLabelConfig, type LabelObject, type LeafObject, type Page } from '../types/Group';
 import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from './zplOverlay/overlay';
 import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, type ObjectBoundsCtx } from './objectBounds';
@@ -78,8 +78,9 @@ export function planTemplateHeader(
   // page's templates use.
   const templateVarsByFn = new Map<number, Variable>();
   const singleBindFns = new Set<number>();
-  for (const leaf of flattenObjects(shifted)) {
-    if (leaf.includeInExport === false) continue;
+  // Group exclusion cascades: a hidden single-bind must not suppress the
+  // header default its visible template co-consumer depends on.
+  for (const leaf of exportableLeaves(shifted)) {
     const c = getObjectStringContent(leaf);
     if (c === undefined) continue;
     // Content == exactly one known marker is single-bind: emitted inline as
@@ -629,7 +630,7 @@ export function generateBatchZpl(
   const identity = (s: string) => s;
   // Excluded leaves aren't in the stored template, so don't source a transform
   // from one (it could shadow an exported field sharing the same variable).
-  const leaves = [...walkObjects(objects)].filter((o) => o.includeInExport !== false);
+  const leaves = exportableLeaves(objects);
   const batchBuckets = fnConsumerBuckets(objects, variables);
   const modeDFns = batchBuckets.modeDExclusive;
   const plain128Fns = batchBuckets.plainExclusive;
