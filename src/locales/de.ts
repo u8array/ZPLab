@@ -893,6 +893,7 @@ const de = {
     lossFontFace: 'Schriftart wird nicht importiert; Textinhalt und Punktgröße bleiben mit bestmöglicher Skalierung erhalten',
     lossPrinterComms: 'Erfordert Drucker-Kommunikation; im Browser nicht verfügbar',
     lossGfRawBinary: 'Rohe Binär-Payloads im Format {rawFmts} werden übersprungen; {hexFmt} sowie in {wrapFmts} verpackte Payloads werden dekodiert',
+    lossQrFdMode: 'Teile dieses QR-Felds haben kein bearbeitbares Gegenstück und werden beim erneuten Export des Etiketts neu geschrieben, was den kodierten Inhalt verändern kann; das Symbol vor der Verwendung prüfen',
     lossFileStorage: 'Der Dateispeicher des Druckers ist aus dem Browser nicht zugänglich; das Feld wird vollständig übersprungen',
     lossPrinterStorage: 'Speichert Daten auf dem physischen Drucker; für das Etikettendesign auf der Zeichenfläche nicht relevant',
     browserLimitTitle: 'Übersprungen: erfordert Drucker-Hardware',

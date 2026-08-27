@@ -27,6 +27,7 @@ import type { Code128Props } from "../../registry/code128";
 import type { Code39Props } from "../../registry/code39";
 import type { Ean13Props } from "../../registry/ean13";
 import type { QrCodeProps } from "../../registry/qrcode";
+import { qrFdToModel } from "../qrFd";
 import type { DataMatrixProps } from "../../registry/datamatrix";
 import type { Barcode1DProps } from "../../registry/barcode1d";
 import type { Gs1DatabarProps } from "../../registry/gs1databar";
@@ -48,6 +49,7 @@ import { upceData6FromFd } from "../../registry/hriFormatters";
 import { decodeFH, makeObj, variableNameFromComment } from "./helpers";
 import {
   getPosType,
+  REGEN_LOSSY_REASONS,
   resetFieldBlockDefaults,
   resetSymbologyModeFlags,
   type FnDefaultCandidate,
@@ -76,7 +78,7 @@ export interface FlushFieldDeps {
 /** Adopt a plain-^BC ^FD into model bytes only when the emit plan re-encodes
  *  it byte-identically (an uncatalogued C0 stays a raw byte; a compacted
  *  Subset-C or FNC stream stays verbatim and re-exports unchanged). Payloads
- *  a regen would rewrite flag `bcFdRegenLossy` instead. */
+ *  a regen would rewrite flag `fdRegenLossy` instead. */
 function adoptCode128Fd(content: string, s: ParserState): string {
   if (hasTemplateMarkers(content)) {
     const unescaped = code128DecodeLiterals(content);
@@ -89,26 +91,26 @@ function adoptCode128Fd(content: string, s: ParserState): string {
     // Regen rewrites this field (bare `>` re-escaped, ^FH-imported control
     // bytes become invocations; unencodable bytes keep the identical ^FH
     // path), so byte exactness only holds through the page's overlay.
-    s.bcFdRegenLossy = true;
+    s.fdRegenLossy ??= REGEN_LOSSY_REASONS.code128;
   }
   return content;
 }
 
-/** Slot-scoped: a plain co-consumer prints the raw slot value, so only a
- *  re-encodable decode may be offered. Mode-D/plain ^BC defer to their
- *  page-close normalizers. */
+/** The decoded value is what the printer encodes, so it is what the slot must
+ *  hold; a plain co-consumer that prints the wire form instead disagrees on
+ *  the value and recordFnDefaultCandidate nulls the slot. Mode-D/plain ^BC
+ *  defer to their page-close normalizers. */
 function fnDefaultCandidate(
   leaf: LabelObject,
   varDefault: string,
-  wire: string,
 ): NonNullable<FnDefaultCandidate> {
   if (!isGroup(leaf) && !isModeDLeaf(leaf) && !getEntry(leaf.type)?.ctrlNeedsOwnEscape) {
     const leafContent = getObjectStringContent(leaf);
-    if (leafContent !== undefined && leafContent !== varDefault) {
-      const encode = getEntry(leaf.type)?.fdTransform?.(leaf);
-      if (encode && encode(leafContent) === wire) {
-        return { value: leafContent, decoded: true };
-      }
+    // Resolve the hook against THIS leaf: an optional encoder (plain ^BX) has
+    // none, and its wire form is the slot value.
+    if (leafContent !== undefined && leafContent !== varDefault
+        && getEntry(leaf.type)?.fdTransform?.(leaf)) {
+      return { value: leafContent, decoded: true };
     }
   }
   return { value: varDefault, decoded: false };
@@ -199,7 +201,7 @@ export function createFlushField(
       // Bare `^FN<n>^FD<default>^FS`: Variable declaration, not a field.
       if (s.comment.fnNumber !== null && s.field.pendingFD !== null) {
         const decl = s.format.fhActive
-          ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.fhDecoder)
+          ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.ciDecoder)
           : s.field.pendingFD;
         upsertVariable(s.comment.fnNumber, decl, s.comment.fnComment);
         s.bareDeclaredFns.add(s.comment.fnNumber);
@@ -213,13 +215,17 @@ export function createFlushField(
       return;
     }
     const rawDecoded = s.format.fhActive
-      ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.fhDecoder)
+      ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.ciDecoder)
       : s.field.pendingFD;
     // FN embeds → markers, then ^FC clock tokens (order matters: `%FN#1#%Y`).
     // Both decode only when armed for THIS field: firmware honours ^FE/^FC
     // solely for the next ^FD (spec p.191/p.1614), unarmed data is literal.
-    const afterFn = s.field.feArmed ? applyFnEmbeds(rawDecoded) : rawDecoded;
-    let content = s.field.fcArmed ? tokensToMarkers(afterFn, s.format.clockChars) : afterFn;
+    // Taken as a function because ^BQ replays it on a different string.
+    const expandTokens = (raw: string): string => {
+      const withFn = s.field.feArmed ? applyFnEmbeds(raw) : raw;
+      return s.field.fcArmed ? tokensToMarkers(withFn, s.format.clockChars) : withFn;
+    };
+    let content = expandTokens(rawDecoded);
     // Control bytes chip-tokenise only where the symbology can encode them,
     // and never in GS1 mode: there a raw GS is the AI separator the GS1
     // normalisation in the type cases below must still see. Text keeps raw
@@ -404,20 +410,28 @@ export function createFlushField(
         );
         break;
       case "qrcode": {
-        // content format from toZPL: "{ec}A,{data}"  e.g. "QA,https://example.com"
-        const ec = (content[0] ?? "Q") as QrCodeProps["errorCorrection"];
-        const data = content.slice(3);
+        // `Bdddd` counts wire bytes, so the switches come off the raw field data
+        // before any expansion turns one byte into a whole marker token. Only
+        // the leaf is stripped: `content` stays the wire form the ^FN slot holds.
+        const fd = qrFdToModel(rawDecoded, s.format.ciDecoder.encoding);
+        // Byte exactness then holds only through the overlay, like ^BC's. An
+        // empty ^FD has no value to lose, so it moves the regen axis alone.
+        if (fd.lossy || s.field.qrHeaderLossy) {
+          s.fdRegenLossy ??= REGEN_LOSSY_REASONS.qr;
+        }
+        if (s.field.qrHeaderPartial || (fd.lossy && rawDecoded !== "")) {
+          s.result.partialCmds.add("^BQ");
+        }
         pushLeaf(
           makeObj(
             "qrcode",
             s.field.x,
             s.field.y,
             {
-              content: data,
+              content: controlBytesToMarkers(expandTokens(fd.content)),
               magnification: s.field.qrMag,
-              errorCorrection: ec,
-              // ^BQ b: only 1 and 2 are valid; anything else falls to 2.
-              model: s.field.qrModel === 1 ? 1 : 2,
+              errorCorrection: fd.errorCorrection,
+              model: s.field.qrModel,
               // ^BQ orientation slot is a no-op; rotated QRs arrive as ^GFA + sidecar.
               rotation: "N",
               // Position, not size: the print sinks by this (see QrCodeProps).
@@ -726,7 +740,7 @@ export function createFlushField(
             recordFnDefaultCandidate(
               s.fnDefaultCandidates,
               s.comment.fnNumber,
-              fnDefaultCandidate(justPushed, varDefault, content),
+              fnDefaultCandidate(justPushed, varDefault),
             );
           }
           // Field links to its variable via a single «name» marker (single-bind

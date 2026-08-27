@@ -893,6 +893,7 @@ const zhHant = {
     lossFontFace: '字型不會被匯入；文字內容與字級會以盡可能接近的效果保留',
     lossPrinterComms: '需要與印表機通訊；瀏覽器中無法使用',
     lossGfRawBinary: '原始二進位 {rawFmts} 負載會被略過；{hexFmt} 及以 {wrapFmts} 包裝的負載可解碼',
+    lossQrFdMode: '此 QR 欄位的部分內容沒有可編輯的對應項目，再次匯出標籤時會被重寫，可能改變編碼內容；使用前請檢查符號',
     lossFileStorage: '瀏覽器無法存取印表機的檔案儲存空間；此欄位會被完全略過',
     lossPrinterStorage: '將資料儲存在實體印表機上；與畫布上的標籤設計無關',
     browserLimitTitle: '已略過：需要印表機硬體',

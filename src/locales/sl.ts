@@ -893,6 +893,7 @@ const sl = {
     lossFontFace: 'Pisava se ne uvozi; vsebina besedila in velikost pisave se ohranita z najboljšo možno prilagoditvijo',
     lossPrinterComms: 'Zahteva komunikacijo s tiskalnikom; v brskalniku ni na voljo',
     lossGfRawBinary: 'Neobdelani binarni podatki {rawFmts} so preskočeni; podatki {hexFmt} in tisti, zaviti v {wrapFmts}, se dekodirajo',
+    lossQrFdMode: 'Nekaterih delov tega polja QR ni mogoče urejati in se ob novem izvozu nalepke znova zapišejo, kar lahko spremeni kodirano vsebino; pred uporabo preverite simbol',
     lossFileStorage: 'Do shrambe datotek tiskalnika iz brskalnika ni mogoče dostopati; polje je popolnoma preskočeno',
     lossPrinterStorage: 'Podatke shrani na fizični tiskalnik; ni pomembno za dizajn nalepke na platnu',
     browserLimitTitle: 'Preskočeno: zahteva strojno opremo tiskalnika',

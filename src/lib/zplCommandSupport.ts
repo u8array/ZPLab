@@ -20,6 +20,7 @@ export type ImportLossKey =
   | 'lossFontFace'
   | 'lossPrinterComms'
   | 'lossGfRawBinary'
+  | 'lossQrFdMode'
   | 'lossFileStorage'
   | 'lossPrinterStorage';
 
@@ -116,7 +117,7 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   { cmd: 'BM', status: 'supported', description: 'MSI barcode' },
   { cmd: 'BO', status: 'supported', description: 'Aztec barcode (alternate)' },
   { cmd: 'BP', status: 'supported', description: 'Plessey barcode' },
-  { cmd: 'BQ', status: 'supported', description: 'QR Code' },
+  { cmd: 'BQ', status: 'partial', description: 'QR Code', loss: 'lossQrFdMode' },
   { cmd: 'BR', status: 'supported', description: 'GS1 Databar' },
   { cmd: 'BS', status: 'supported', description: 'UPC/EAN 2- or 5-digit supplement barcode' },
   { cmd: 'BT', status: 'supported', description: 'TLC39 barcode (MicroPDF417 + Code 39)' },

@@ -893,6 +893,7 @@ const it = {
     lossFontFace: 'Il tipo di carattere non viene importato; il contenuto del testo e il corpo vengono mantenuti con il miglior adattamento possibile',
     lossPrinterComms: 'Richiede la comunicazione con la stampante; non disponibile nel browser',
     lossGfRawBinary: 'I payload binari grezzi {rawFmts} vengono saltati; i payload {hexFmt} e quelli racchiusi in {wrapFmts} vengono decodificati',
+    lossQrFdMode: "Alcune parti di questo campo QR non hanno un equivalente modificabile e vengono riscritte quando l'etichetta viene esportata di nuovo, il che può modificare il contenuto codificato; controlla il simbolo prima di utilizzarlo",
     lossFileStorage: "Non è possibile accedere all'archiviazione file della stampante da un browser; il campo viene saltato interamente",
     lossPrinterStorage: "Memorizza i dati sulla stampante fisica; non rilevante per il design dell'etichetta sulla superficie di disegno",
     browserLimitTitle: 'Saltato: richiede hardware della stampante',

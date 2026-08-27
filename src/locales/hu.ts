@@ -893,6 +893,7 @@ const hu = {
     lossFontFace: 'A betűtípus nem kerül importálásra; a szövegtartalom és a pontméret a legjobb közelítéssel megmarad',
     lossPrinterComms: 'Nyomtatóval való kommunikációt igényel; böngészőben nem érhető el',
     lossGfRawBinary: 'A nyers bináris {rawFmts} adatok kimaradnak; a {hexFmt} és a {wrapFmts} formátumba csomagolt adatok dekódolódnak',
+    lossQrFdMode: 'E QR-mező egyes részeinek nincs szerkeszthető megfelelője, és a címke újbóli exportálásakor újraíródnak, ami megváltoztathatja a kódolt tartalmat; használat előtt ellenőrizze a szimbólumot',
     lossFileStorage: 'A nyomtató fájltárolója böngészőből nem érhető el; a mező teljesen kimarad',
     lossPrinterStorage: 'Az adatokat a fizikai nyomtatón tárolja; a vászon címketervezése szempontjából nem releváns',
     browserLimitTitle: 'Kihagyva: nyomtató hardver szükséges',

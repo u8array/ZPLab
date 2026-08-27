@@ -893,6 +893,7 @@ const fi = {
     lossFontFace: 'Fonttia ei tuoda; tekstisisältö ja pistekoko säilyvät parhaalla mahdollisella mitoituksella',
     lossPrinterComms: 'Vaatii yhteyden tulostimeen; ei käytettävissä selaimessa',
     lossGfRawBinary: "Raa'at binääriset {rawFmts}-hyötykuormat ohitetaan; {hexFmt}- ja {wrapFmts}-kääritty hyötykuorma puretaan",
+    lossQrFdMode: 'Osa tämän QR-kentän tiedoista ei ole muokattavissa, ja se kirjoitetaan uudelleen etiketin uudessa viennissä, mikä voi muuttaa koodattua sisältöä; tarkista symboli ennen käyttöä',
     lossFileStorage: 'Tulostimen tiedostotallennukseen ei pääse selaimesta; kenttä ohitetaan kokonaan',
     lossPrinterStorage: 'Tallentaa tiedot fyysiselle tulostimelle; ei liity piirtoalueen rakenteeseen',
     browserLimitTitle: 'Ohitettu: vaatii tulostimen laitteiston',

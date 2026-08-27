@@ -893,6 +893,7 @@ const nl = {
     lossFontFace: 'Lettertype wordt niet geïmporteerd; tekstinhoud en puntgrootte blijven behouden met een zo goed mogelijke schaling',
     lossPrinterComms: 'Vereist communicatie met de printer; niet beschikbaar in de browser',
     lossGfRawBinary: 'Ruwe binaire {rawFmts}-payloads worden overgeslagen; {hexFmt}- en in {wrapFmts} verpakte payloads worden gedecodeerd',
+    lossQrFdMode: 'Sommige delen van dit QR-veld hebben geen bewerkbaar equivalent en worden herschreven bij een nieuwe export van het label, wat de gecodeerde inhoud kan veranderen; controleer het symbool voordat u het gebruikt',
     lossFileStorage: 'De bestandsopslag van de printer is niet toegankelijk vanuit een browser; het veld wordt volledig overgeslagen',
     lossPrinterStorage: 'Slaat gegevens op de fysieke printer op; niet relevant voor het labelontwerp op het canvas',
     browserLimitTitle: 'Overgeslagen: vereist printerhardware',

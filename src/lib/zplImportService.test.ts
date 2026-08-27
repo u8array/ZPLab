@@ -113,6 +113,18 @@ describe('importZplText - replay-risk findings', () => {
   });
 });
 
+describe('importZplText - partial-loss wording', () => {
+  it('gives the QR loss its own wording, not the generic partial fallback', () => {
+    const r = importZplText('^XA^FO10,10^BQN,2,4^FDHM,N12345^FS^XZ', 8);
+    const finding = r.report.findings.find((f) => f.kind === 'partial' && f.command === '^BQ');
+    expect(finding).toBeDefined();
+    const { detail } = describeFinding(finding!, fallbackTranslations.importReport);
+    expect(detail).toBe(fallbackTranslations.importReport.lossQrFdMode);
+    expect(detail).not.toBe(fallbackTranslations.importReport.partialFallback);
+  });
+
+});
+
 describe('importZplText - wrapper-less paste', () => {
   it('imports a bare body without ^XA/^XZ as a page', () => {
     const r = importZplText('^FO50,50^A0N,30,30^FDHello^FS', 8);

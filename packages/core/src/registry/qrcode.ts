@@ -7,23 +7,42 @@ import { formatQrSidecarComment, qrRotatedGfaCached } from '../lib/qrGraphic';
 import { clockCtxFromLabel, resolveContentPreview } from '../lib/markerResolve';
 import { type ZplRotation } from './rotation';
 import { qrByHeight } from '../lib/qrBy';
+import { isQrEcLevel, qrFdWire, QR_EC_DEFAULT, type QrEcLevel } from '../lib/qrFd';
 
-/** ZPL prefixes the QR payload with `{ec}A,` inside ^FD. Shared by toZPL and
- *  the CSV batch override so a per-row value also gets the prefix. */
 const qrFdTransform =
   (obj: LabelObjectBase & { props: QrCodeProps }) =>
   (s: string): string =>
-    `${obj.props.errorCorrection}A,${s}`;
+    qrFdWire(isQrEcLevel(obj.props.errorCorrection) ? obj.props.errorCorrection : QR_EC_DEFAULT, s);
 
+/** Authoring bounds; the panel and the uniform-scale gesture clamp to these. */
 export const MAGNIFICATION_MIN = 1;
 export const MAGNIFICATION_MAX = 10;
 // Re-exported from lib/qrBy (the cycle-free spot) because this is the prop's home.
 export { QR_BY_DEFAULT_HEIGHT, isQrByHeight, qrByHeight } from '../lib/qrBy';
+const DEFAULT_MAGNIFICATION = 4;
+
+/** ^BQ b per spec p.128: only 1 and 2 exist, anything else is the default. */
+export function qrModelFromZpl(b: number): 1 | 2 {
+  return b === 1 ? 1 : 2;
+}
+
+/** The one emitted header form; the parser compares the source against it, so
+ *  canonicalisation is detected by construction instead of per-slot rules. */
+export function qrBqHeader(model: 1 | 2, magnification: number): string {
+  return `^BQN,${model},${magnification}`;
+}
+
+/** ^BQ c is 1-100 (spec p.128); the whole range round-trips, even though the
+ *  panel edits only 1-10. Its printer-dependent default needs a dpmm this pass
+ *  lacks, so an out-of-range value takes the designer default instead. */
+export function qrMagnificationFromZpl(c: number): number {
+  return c >= 1 && c <= 100 ? c : DEFAULT_MAGNIFICATION;
+}
 
 export interface QrCodeProps {
   content: string;
   magnification: number;       // dot size per module
-  errorCorrection: 'H' | 'Q' | 'M' | 'L';
+  errorCorrection: QrEcLevel;
   /** ^BQ b: 1 = original, 2 = enhanced (recommended, default). */
   model: 1 | 2;
   /** ^BQ can't rotate (firmware no-op), so a non-N rotation emits a pre-rotated
@@ -48,7 +67,7 @@ export const qrcode: ObjectTypeCore<QrCodeProps> = {
   typedContent: true,
   defaultProps: {
     content: '',
-    magnification: 4,
+    magnification: DEFAULT_MAGNIFICATION,
     errorCorrection: 'Q',
     model: 2,
     rotation: 'N',
@@ -100,7 +119,7 @@ export const qrcode: ObjectTypeCore<QrCodeProps> = {
     return [
       fieldPosZ(obj),
       obj.positionType !== 'FT' ? `^BY,,${qrByHeight(p)}` : '',
-      `^BQN,${p.model},${p.magnification}`,
+      qrBqHeader(p.model, p.magnification),
       fdFieldFor(p.content, ctx, qrFdTransform(obj), undefined, CONTROL_CHARS),
     ].join('');
   },

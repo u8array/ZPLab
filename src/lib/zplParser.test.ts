@@ -897,6 +897,137 @@ describe('parseZPL — ^BQ QR Code', () => {
     const { objects } = parseSingle('^XA^FO0,0^BQN,,4^FDQA,X^FS^XZ', 8);
     expect(props(objects[0]).model).toBe(2);
   });
+
+  // Spec p.129 fixes the switch order, so the EC is readable even in mixed
+  // mode; only forms the emitter cannot reproduce get flagged.
+  it('recovers the EC from a mixed-mode payload (spec p.134 example)', () => {
+    const { objects, findings } = parseSingle(
+      '^XA^FO20,20^BQ,2,10^FDD03040C,LA,012345678912AABBqrcode^FS^XZ',
+      8,
+    );
+    expect(objects).toHaveLength(1);
+    expect(props(objects[0]).errorCorrection).toBe('L');
+    expect(props(objects[0]).content).toBe('012345678912AABBqrcode');
+    expect(commandsOf({ findings }, 'partial')).toContain('^BQ');
+  });
+
+  // `Bdddd` counts WIRE bytes, but by the time the type cases run, ^FH has
+  // decoded and control bytes have become markers, so the codec has to see the
+  // payload before that or it slices a marker in half.
+  for (const [name, zpl, content] of [
+    ['a control byte', '^XA^FH_^FO0,0^BQN,2,7^FDQM,B0002A_0D,N1^FS^XZ', 'A«ctrl:CR»1'],
+    ['a two-byte character', '^XA^FH_^FO0,0^BQN,2,7^FDQM,B0002_C3_A9,N1^FS^XZ', 'é1'],
+    // ^CI27 is single-byte, so the same two bytes are two characters here.
+    ['a single-byte charset', '^XA^CI27^FH_^FO0,0^BQN,2,7^FDQM,B0002_A4Z^FS^XZ', '¤Z'],
+    ['an ^FE embed', '^XA^FE#^FO0,0^BQN,2,7^FDQM,B0003#1#^FS^XZ', '«field_1»'],
+    ['an ^FC clock token', '^XA^FC%,!,?^FO0,0^BQN,2,7^FDQM,B0002%Y^FS^XZ', '«clock:Y»'],
+  ] as const) {
+    it(`counts wire bytes, not characters, across ${name}`, () => {
+      const { objects } = parseSingle(zpl, 8);
+      expect(props(objects[0]).content).toBe(content);
+    });
+  }
+
+  // An empty ^FD carries no value, so nothing can be lost; only the bytes
+  // differ, which is the regen axis. Covers the ^FN template shape.
+  for (const [name, zpl, content] of [
+    ['a bare empty ^FD', '^XA^FO0,0^BQN,2,7^FD^FS^XZ', ''],
+    ['the ^FN template shape', '^XA^FO0,0^BQN,2,7^FN1^FD^FS^XZ', '«field_1»'],
+  ] as const) {
+    it(`imports ${name} as a blank QR without reporting a loss`, () => {
+      const r = parseSingle(zpl, 8, { captureOverlay: true });
+      expect(r.objects).toHaveLength(1);
+      expect(props(r.objects[0]).content).toBe(content);
+      expect(commandsOf({ findings: r.findings }, 'partial')).not.toContain('^BQ');
+      expect(r.overlay?.regenSafe).toBe(false);
+    });
+  }
+
+  it('leaves a ^BQ header without its ^FD out of the report, like any half-formed field', () => {
+    const r = parseSingle('^XA^FO0,0^BQR,2,7^FS^FO0,50^A0N,30,0^FDx^FS^XZ', 8, {
+      captureOverlay: true,
+    });
+    expect(r.objects.map((o) => o.type)).toEqual(['text']);
+    expect(commandsOf({ findings: r.findings }, 'partial')).not.toContain('^BQ');
+  });
+
+  // One derivation feeds both the regenSafe flag and this wording, and its
+  // order decides which cause a page reports when several apply.
+  for (const [cause, zpl, needle] of [
+    ['a non-UTF-8 ^CI', '^XA^CI27^FO0,0^BQN,2,4^FDQA,X^FS^XZ', 'non-UTF-8'],
+    ['a bare ^FN declaration', '^XA^FN1^FDseed^FS^FO0,0^BY,,10^BQN,2,4^FDQA,X^FS^XZ', 'standalone ^FN'],
+    ['a regen-hostile ^LR', '^XA^LRY^FO0,0^BY,,10^BQ,2,10^FDQA,X^FS^XZ', '^LR'],
+    ['only the QR normalisation', '^XA^FO0,0^BY,,10^BQ,2,10^FDQA,X^FS^XZ', 'QR'],
+  ] as const) {
+    it(`names ${cause} as the reason a regen is not byte-exact`, () => {
+      const r = parseSingle(zpl, 8, { captureOverlay: true });
+      expect(r.overlay?.regenSafe).toBe(false);
+      expect(r.findings.find((f) => f.kind === 'lossyEdit')?.command).toContain(needle);
+    });
+  }
+
+  // Two axes: regen safety asks whether the emit reproduces the BYTES, so any
+  // non-canonical header lowers it; partial asks whether INFORMATION was lost.
+  for (const [name, zpl, losesInfo] of [
+    ['a dropped orientation', '^XA^FO0,0^BY,,10^BQR,2,7^FDQA,X^FS^XZ', true],
+    ['a dropped error-correction', '^XA^FO0,0^BY,,10^BQN,2,7,Q^FDQA,X^FS^XZ', true],
+    ['a dropped mask', '^XA^FO0,0^BY,,10^BQN,2,7,,3^FDQA,X^FS^XZ', true],
+    ['an out-of-range c', '^XA^FO0,0^BY,,10^BQN,2,101^FDQA,X^FS^XZ', true],
+    ['an omitted c', '^XA^FO0,0^BY,,10^BQN,2^FDQA,X^FS^XZ', true],
+    ['an empty c', '^XA^FO0,0^BY,,10^BQN,2,^FDQA,X^FS^XZ', true],
+    ['an empty orientation slot', '^XA^FO0,0^BY,,10^BQ,2,7^FDQA,X^FS^XZ', false],
+    ['empty d/e slots', '^XA^FO0,0^BY,,10^BQN,2,7,,^FDQA,X^FS^XZ', false],
+  ] as const) {
+    it(`lowers regen safety for ${name}${losesInfo ? '' : ' without reporting a loss'}`, () => {
+      const r = parseSingle(zpl, 8, { captureOverlay: true });
+      expect(r.overlay?.regenSafe).toBe(false);
+      expect(r.findings.find((f) => f.kind === 'lossyEdit')?.command).toContain('QR');
+      const partial = commandsOf({ findings: r.findings }, 'partial');
+      if (losesInfo) expect(partial).toContain('^BQ');
+      else expect(partial).not.toContain('^BQ');
+    });
+  }
+
+  it('keeps regen safety for a header the export reproduces', () => {
+    const r = parseSingle('^XA^FO0,0^BY,,10^BQN,2,7^FDQA,X^FS^XZ', 8, { captureOverlay: true });
+    expect(r.overlay?.regenSafe).toBe(true);
+    expect(commandsOf({ findings: r.findings }, 'partial')).not.toContain('^BQ');
+  });
+
+  // ZD230-measured: the render is byte-identical with and without ^BQ d, so the
+  // ^FD switch alone decides, and a payload naming no level falls to M (p.130).
+  it('lets the ^FD switch decide the level, not ^BQ d', () => {
+    const { objects } = parseSingle('^XA^FO0,0^BQN,2,7,H^FDLA,X^FS^XZ', 8);
+    expect(props(objects[0]).errorCorrection).toBe('L');
+  });
+
+  it('falls back to the firmware default when no switch names a level', () => {
+    const { objects } = parseSingle('^XA^FO0,0^BQN,2,7,H^FDXYZ^FS^XZ', 8);
+    expect(props(objects[0]).errorCorrection).toBe('M');
+  });
+
+  it('round-trips the whole spec-legal ^BQ c range, wider than the panel edits', () => {
+    for (const c of [1, 10, 40, 100]) {
+      const { objects, findings } = parseSingle(`^XA^FO0,0^BQN,2,${c}^FDQA,X^FS^XZ`, 8);
+      expect(props(objects[0]).magnification).toBe(c);
+      expect(commandsOf({ findings }, 'partial')).not.toContain('^BQ');
+    }
+  });
+
+  it('normalises a ^BQ c outside the spec range to the designer default', () => {
+    for (const c of ['0', '101']) {
+      const { objects } = parseSingle(`^XA^FO0,0^BQN,2,${c}^FDQA,X^FS^XZ`, 8);
+      expect(props(objects[0]).magnification).toBe(4);
+    }
+  });
+
+  it('does not mistake a lowercase payload byte for a character mode', () => {
+    // Only the switches are case-insensitive (Labelary-verified); matching a
+    // lowercase mode letter here would eat the first payload character.
+    const { objects } = parseSingle('^XA^FO0,0^BQN,2,7^FDQM,nested^FS^XZ', 8);
+    expect(props(objects[0]).content).toBe('nested');
+  });
+
 });
 
 describe('parseZPL — ^BQ ^BY height pinning', () => {
@@ -2130,7 +2261,8 @@ describe('parseZPL — serial wins over a coexisting ^FN binding', () => {
     expect(objects[0]?.type).toBe('qrcode');
     expect(props(objects[0]).content).toBe('«field_1»');
     expect(serialOf(objects[0])).toBeUndefined();
-    expect(variables.find((v) => v.fnNumber === 1)?.defaultValue).toBe('HELLO');
+    // `HELLO` on the wire encodes `LO`: the printer consumes three prefix bytes.
+    expect(variables.find((v) => v.fnNumber === 1)?.defaultValue).toBe('LO');
   });
 
   it('post-^FS ^SN on a previously ^FN-bound field clears the binding', () => {
@@ -2882,8 +3014,20 @@ describe('parseZPL — ^FN defaults decode through the leaf\'s ^FD encoder', () 
     expect(out2).toBe(out1);
   });
 
-  it('keeps a foreign default verbatim when the encoder cannot reproduce it', () => {
-    const { default1 } = cycle('^XA^FO10,10^BQN,2,4^FN1^FDhello^FS^XZ');
+  it('adopts the decoded default even when the encoder cannot reproduce the wire', () => {
+    // The printer eats three prefix bytes and reads the first as the level, so
+    // `hello` encodes `lo` at H; keeping the wire would re-encode `hello`.
+    const { default1, out1 } = cycle('^XA^FO10,10^BQN,2,4^FN1^FDhello^FS^XZ');
+    expect(default1).toBe('lo');
+    expect(out1).toContain('^FDHA,lo^FS');
+  });
+
+  it('keeps the wire verbatim when a foreign field shares the slot', () => {
+    // The text co-consumer prints the slot value, so the two disagree and the
+    // slot stays raw (preflight warns on the combination).
+    const { default1 } = cycle(
+      '^XA^FO10,10^BQN,2,4^FN1^FDhello^FS^FO10,60^A0N,30,0^FN1^FDhello^FS^XZ',
+    );
     expect(default1).toBe('hello');
   });
 
@@ -3072,6 +3216,16 @@ describe('parseZPL — lossyEdit finding for regen-unsafe blocks', () => {
     const zpl = '^XA^FO10,10^A0N,30,0^FDx^FS^XZ';
     const { findings } = parseSingle(zpl, 8, { captureOverlay: true });
     expect(findings.some((x) => x.kind === 'lossyEdit')).toBe(false);
+  });
+
+  it('names the QR field data, not the Code 128 stream, on a QR-only page', () => {
+    // The reason travels with the flag; a shared boolean would report whichever
+    // producer the narration chain happened to name first.
+    const zpl = '^XA^FO10,10^BY,,10^BQN,2,7^FDHM,N1^FS^XZ';
+    const { findings } = parseSingle(zpl, 8, { captureOverlay: true });
+    const f = findings.find((x) => x.kind === 'lossyEdit');
+    expect(f?.command).toContain('QR');
+    expect(f?.command).not.toContain('Code 128');
   });
 
   it('flags a verbatim ^BC stream whose re-emit the plain escape rewrites', () => {

@@ -893,6 +893,7 @@ const tr = {
     lossFontFace: 'Yazı tipi içe aktarılmaz; metin içeriği ve punto boyutu en iyi tahminle korunur',
     lossPrinterComms: 'Yazıcı iletişimi gerektirir; tarayıcıda kullanılamaz',
     lossGfRawBinary: 'Ham ikili {rawFmts} yükleri atlanır; {hexFmt} ve {wrapFmts} ile sarmalanmış yükler çözülür',
+    lossQrFdMode: 'Bu QR alanının bazı bölümlerinin düzenlenebilir bir karşılığı yoktur ve etiket yeniden dışa aktarılırken yeniden yazılır, bu da kodlanmış içeriği değiştirebilir; kullanmadan önce sembolü kontrol edin',
     lossFileStorage: 'Yazıcının dosya deposuna tarayıcıdan erişilemez; alan tamamen atlanır',
     lossPrinterStorage: 'Verileri fiziksel yazıcıda saklar; tuval üzerindeki etiket tasarımıyla ilgisi yoktur',
     browserLimitTitle: 'Atlandı: yazıcı donanımı gerekir',

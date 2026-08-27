@@ -893,6 +893,7 @@ const ko = {
     lossFontFace: '글꼴은 가져오지 않으며, 텍스트 내용과 포인트 크기는 최선의 크기 조정으로 유지됩니다',
     lossPrinterComms: '프린터와의 통신이 필요하며, 브라우저에서는 사용할 수 없습니다',
     lossGfRawBinary: '원시 바이너리 {rawFmts} 페이로드는 건너뛰며, {hexFmt} 및 {wrapFmts}로 래핑된 페이로드는 디코딩됩니다',
+    lossQrFdMode: '이 QR 필드의 일부는 편집 가능한 대응 항목이 없어 라벨을 다시 내보낼 때 다시 작성되며, 이 과정에서 인코딩된 내용이 바뀔 수 있습니다. 사용하기 전에 심볼을 확인하세요',
     lossFileStorage: '브라우저에서는 프린터의 파일 저장소에 접근할 수 없으며, 필드는 완전히 건너뜁니다',
     lossPrinterStorage: '물리적 프린터에 데이터를 저장하며, 캔버스 라벨 디자인과는 관련이 없습니다',
     browserLimitTitle: '건너뜀: 프린터 하드웨어가 필요합니다',

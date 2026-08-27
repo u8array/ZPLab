@@ -3,6 +3,7 @@ import { gfaFromRaster, type MonoRaster } from "./imageToZpl";
 import { formatSidecarComment, sidecarBody } from "./zplLabelMeta";
 import { isZplRotation, type ZplRotation } from "../registry/rotation";
 import { isQrByHeight } from "./qrBy";
+import { isQrEcLevel, type QrEcLevel } from "./qrFd";
 
 // ^BQ cannot rotate (firmware no-op, ZD230-verified), so a rotated QR emits as a
 // ^GFA of the exact module matrix plus a ZPLLAB sidecar for lossless reimport.
@@ -10,7 +11,7 @@ import { isQrByHeight } from "./qrBy";
 export interface QrGraphicInput {
   content: string;
   magnification: number;
-  errorCorrection: "H" | "Q" | "M" | "L";
+  errorCorrection: QrEcLevel;
   model: 1 | 2;
   rotation: ZplRotation;
   /** Pinned ^BY height, kept so a rotate-back re-emits the imported value. */
@@ -129,9 +130,6 @@ export function formatQrSidecarComment(p: QrGraphicInput): string {
   return formatSidecarComment(body);
 }
 
-const isEc = (v: unknown): v is QrGraphicInput["errorCorrection"] =>
-  v === "H" || v === "Q" || v === "M" || v === "L";
-
 /** QR props from a ^FX body; null for a foreign or corrupt comment. */
 export function parseQrSidecarComment(commentBody: string): QrGraphicInput | null {
   const body = sidecarBody(commentBody);
@@ -146,7 +144,7 @@ export function parseQrSidecarComment(commentBody: string): QrGraphicInput | nul
   if (!qr || typeof qr !== "object") return null;
   const q = qr as Record<string, unknown>;
   if (typeof q.content !== "string" || typeof q.mag !== "number") return null;
-  if (!isEc(q.ec) || typeof q.rot !== "string" || !isZplRotation(q.rot)) return null;
+  if (!isQrEcLevel(q.ec) || typeof q.rot !== "string" || !isZplRotation(q.rot)) return null;
   return {
     ...(isQrByHeight(q.byh) ? { byHeight: q.byh } : {}),
     content: q.content,

@@ -893,6 +893,7 @@ const da = {
     lossFontFace: 'Skrifttypen importeres ikke; tekstindhold og punktstørrelse bevares med bedst mulig tilpasning',
     lossPrinterComms: 'Kræver kommunikation med printeren; ikke tilgængeligt i browseren',
     lossGfRawBinary: 'Rå binære {rawFmts}-datapakker springes over; {hexFmt} og {wrapFmts}-indpakkede datapakker afkodes',
+    lossQrFdMode: 'Dele af dette QR-felt har intet redigerbart modstykke og skrives om ved en ny eksport af etiketten, hvilket kan ændre det kodede indhold; kontrollér symbolet før brug',
     lossFileStorage: 'Printerens fillager kan ikke tilgås fra en browser; feltet springes helt over',
     lossPrinterStorage: 'Gemmer data på den fysiske printer; ikke relevant for etiketdesign på lærredet',
     browserLimitTitle: 'Sprunget over: kræver printerhardware',

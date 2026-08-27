@@ -893,6 +893,7 @@ const et = {
     lossFontFace: 'Fondistiili ei impordita; teksti sisu ja punktisuurus säilitatakse parima võimaliku suurusega',
     lossPrinterComms: 'Nõuab printeriga suhtlust; brauseris pole saadaval',
     lossGfRawBinary: 'Toored binaar-{rawFmts} andmed jäetakse vahele; {hexFmt} ja {wrapFmts}-mähitud andmed dekodeeritakse',
+    lossQrFdMode: 'Osal selle QR-välja andmetest pole redigeeritavat vastet ja need kirjutatakse etiketi uuel eksportimisel ümber, mis võib muuta kodeeritud sisu; kontrollige sümbolit enne kasutamist',
     lossFileStorage: 'Printeri failihoidlale ei pääse brauserist ligi; väli jäetakse täielikult vahele',
     lossPrinterStorage: 'Salvestab andmed füüsilisele printerile; ei ole seotud etiketi kujundusega lõuendil',
     browserLimitTitle: 'Vahele jäetud: vajab printeri riistvara',

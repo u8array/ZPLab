@@ -893,6 +893,7 @@ const lv = {
     lossFontFace: 'Fonts netiek importēts; teksta saturs un punktu izmērs tiek saglabāti ar labāko iespējamo izmēra pielāgošanu',
     lossPrinterComms: 'Nepieciešama saziņa ar printeri; nav pieejams pārlūkprogrammā',
     lossGfRawBinary: 'Neapstrādāti bināri {rawFmts} dati tiek izlaisti; {hexFmt} un {wrapFmts} ietvertie dati tiek atkodēti',
+    lossQrFdMode: 'Daļai šī QR lauka datu nav rediģējama ekvivalenta, un, atkārtoti eksportējot etiķeti, tie tiek pārrakstīti, kas var mainīt kodēto saturu; pirms lietošanas pārbaudiet simbolu',
     lossFileStorage: 'No pārlūkprogrammas nevar piekļūt printera failu krātuvei; lauks tiek pilnībā izlaists',
     lossPrinterStorage: 'Saglabā datus fiziskajā printerī; nav saistīts ar etiķetes dizainu darba laukumā',
     browserLimitTitle: 'Izlaists: nepieciešama printera aparatūra',

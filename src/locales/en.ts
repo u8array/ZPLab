@@ -893,6 +893,7 @@ const en = {
     lossFontFace: 'Font face is not imported; text content and point size are preserved with best-effort sizing',
     lossPrinterComms: 'Requires printer communication; not available in the browser',
     lossGfRawBinary: 'Raw binary {rawFmts} payloads are skipped; {hexFmt} and {wrapFmts}-wrapped payloads decode',
+    lossQrFdMode: 'Parts of this QR field have no editable equivalent and are rewritten when the label is exported again, which can change the encoded content; check the symbol before using it',
     lossFileStorage: 'Cannot access printer file storage from a browser; the field is skipped entirely',
     lossPrinterStorage: 'Stores data on the physical printer; not relevant for canvas label design',
     browserLimitTitle: 'Skipped: needs printer hardware',
