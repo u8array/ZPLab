@@ -5756,7 +5756,7 @@ SOFTWARE.
 
 Used by:
 
-- [zplab 0.3.2](https://github.com/u8array/ZPLab)
+- [zplab 0.4.0](https://github.com/u8array/ZPLab)
 - [block2 0.6.2](https://github.com/madsmtm/objc2)
 - [brotli-decompressor 5.0.3](https://github.com/dropbox/rust-brotli-decompressor)
 - [cargo_toml 0.22.3](https://gitlab.com/lib.rs/cargo_toml)
@@ -6072,7 +6072,7 @@ Used by:
 - [futures-lite 2.6.1](https://github.com/smol-rs/futures-lite)
 - [itoa 1.0.18](https://github.com/dtolnay/itoa)
 - [linux-raw-sys 0.12.1](https://github.com/sunfishcode/linux-raw-sys)
-- [nusb 0.2.6](https://github.com/kevinmehall/nusb)
+- [nusb 0.2.7](https://github.com/kevinmehall/nusb)
 - [once_cell 1.21.4](https://github.com/matklad/once_cell)
 - [ordered-stream 0.2.0](https://github.com/danieldg/ordered-stream)
 - [parking 2.2.1](https://github.com/smol-rs/parking)
@@ -6100,9 +6100,9 @@ Used by:
 - [syn 3.0.3](https://github.com/dtolnay/syn)
 - [system-deps 6.2.2](https://github.com/gdesmott/system-deps)
 - [thiserror-impl 1.0.69](https://github.com/dtolnay/thiserror)
-- [thiserror-impl 2.0.19](https://github.com/dtolnay/thiserror)
+- [thiserror-impl 2.0.20](https://github.com/dtolnay/thiserror)
 - [thiserror 1.0.69](https://github.com/dtolnay/thiserror)
-- [thiserror 2.0.19](https://github.com/dtolnay/thiserror)
+- [thiserror 2.0.20](https://github.com/dtolnay/thiserror)
 - [typed-path 0.12.3](https://github.com/chipsenkbeil/typed-path)
 - [typeid 1.0.3](https://github.com/dtolnay/typeid)
 - [unicode-ident 1.0.24](https://github.com/dtolnay/unicode-ident)
@@ -6914,7 +6914,7 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [base64 0.23.0](https://github.com/marshallpierce/rust-base64)
+- [base64 0.23.1](https://github.com/marshallpierce/rust-base64)
 ````
 The MIT License (MIT)
 
