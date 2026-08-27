@@ -5,6 +5,7 @@ import type Konva from "konva";
 import { BARCODE_1D_TYPES, ObjectRegistry, objectResolvesCtrl } from "@zplab/core/registry";
 import { dotsToPx, mmToDots, pxToDots } from "@zplab/core/lib/coordinates";
 import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "@zplab/core/lib/objectBounds";
+import { qrByHeight } from "@zplab/core/registry/qrcode";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
 import { selectionHandlers, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
@@ -42,7 +43,6 @@ import {
   ocrbEanHriGapDots,
   EAN_TEXT_ZONE_DOTS,
   EAN_UPC_TYPES,
-  QR_FO_Y_OFFSET_DOTS,
   QR_FT_MODULE_OFFSET,
 } from "@zplab/core/lib/bwipConstants";
 
@@ -244,14 +244,13 @@ export function BarcodeObject({
   // A rotated QR prints as a shift-free ^GFA, so the ^BQ artifacts below are N-only.
   const graphicQr = qrPrintsAsGraphic(obj);
   const ftOffset = barcodeFtAnchorOffset(graphicQr ? "N" : rotation, uprightBarWDots, ftBarHDots);
-  // Zebra firmware artifact: ^FT for QR shifts the symbol up by exactly 3 modules
-  // (= 3 * magnification dots), independent of dpmm or content; ^FO QR is +10 dots.
-  // Verified against Labelary across magnifications 4-10 at 8 and 12 dpmm.
+  // ^FT QR rises exactly 3 modules above the anchor (^BY-independent, both
+  // renderers agree); ^FO QR sinks by the pinned ^BY height instead.
   const qrFtShiftDots =
     obj.type === "qrcode" && !graphicQr
       ? QR_FT_MODULE_OFFSET * (obj.props as { magnification: number }).magnification
       : 0;
-  const foYShiftDots = obj.type === "qrcode" && !graphicQr ? QR_FO_Y_OFFSET_DOTS : 0;
+  const foYShiftDots = obj.type === "qrcode" && !graphicQr ? qrByHeight(obj.props) : 0;
 
   const displayX = obj.positionType === "FT" ? obj.x + ftOffset.x : obj.x;
   const displayY =

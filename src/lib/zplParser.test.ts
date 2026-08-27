@@ -3,6 +3,7 @@ import { zlibSync } from 'fflate';
 import { parseZPL, BY_CONSUMING_BARCODE_TYPES } from '@zplab/core/lib/zplParser';
 import { generateZPL } from '@zplab/core/lib/zplGenerator';
 import { formatLabelMetaComment } from '@zplab/core/lib/zplLabelMeta';
+import { objectBoundsDots } from '@zplab/core/lib/objectBounds';
 import { ObjectRegistry } from '@zplab/core/registry';
 import { defined, props, serialOf, parseSingle, commandsOf } from '../test/helpers';
 import { parseGfWrapper } from '@zplab/core/lib/zplParser/decoders/crc';
@@ -895,6 +896,56 @@ describe('parseZPL — ^BQ QR Code', () => {
   it('falls back to Model 2 for a missing/invalid ^BQ b', () => {
     const { objects } = parseSingle('^XA^FO0,0^BQN,,4^FDQA,X^FS^XZ', 8);
     expect(props(objects[0]).model).toBe(2);
+  });
+});
+
+describe('parseZPL — ^BQ ^BY height pinning', () => {
+  // Unpinned, the print moves per printer session (see QrCodeProps.byHeight).
+  it('captures the effective ^BY height on an imported ^FO QR', () => {
+    const { objects } = parseSingle('^XA^BY2,3,50^FO10,10^BQN,2,4^FDQA,X^FS^XZ', 8);
+    expect(props(objects[0]).byHeight).toBe(50);
+  });
+
+  it('keeps byHeight through the rotated ^GFA sidecar', () => {
+    const src = '^XA^FO10,10^BY2,3,50^BQN,2,4^FDQA,X^FS^XZ';
+    const first = defined(parseSingle(src, 8).objects[0]);
+    props(first).rotation = 'R';
+    const out = generateZPL(
+      { widthDots: 800, heightDots: 1200, dpmm: 8 } as never,
+      [first] as never,
+      [],
+    );
+    const back = defined(parseSingle(out.includes('^XA') ? out : `^XA${out}^XZ`, 8).objects[0]);
+    expect(back.type).toBe('qrcode');
+    expect(props(back).byHeight).toBe(50);
+  });
+
+  it('keeps an out-of-convention ^BY height verbatim (import is fidelity, not authoring)', () => {
+    const { objects } = parseSingle('^XA^FO10,10^BY,,50000^BQN,2,4^FDQA,X^FS^XZ', 8);
+    expect(props(objects[0]).byHeight).toBe(50000);
+  });
+
+  it('carries a non-default ^BY height from import through to the canvas bounds', () => {
+    // Cross-subsystem pin: parse -> model -> objectBoundsDots, so the render
+    // path is covered beyond the default ^BY,,10 the fixtures use.
+    const { objects } = parseSingle('^XA^FO10,100^BY,,50^BQN,2,4^FDQA,X^FS^XZ', 8);
+    const qr = defined(objects[0]);
+    const measured = new Map([[qr.id, { width: 120, height: 120 }]]);
+    const b = objectBoundsDots(qr, {
+      label: { widthDots: 800, heightDots: 1200, dpmm: 8 } as never,
+      measured,
+    });
+    expect(b.y).toBe(100 + 50);
+  });
+
+  it('inherits the session height past an h-less ^BY, like the firmware', () => {
+    const { objects } = parseSingle('^XA^BY,,50^FO10,10^BY2^BQN,2,4^FDQA,X^FS^XZ', 8);
+    expect(props(objects[0]).byHeight).toBe(50);
+  });
+
+  it('leaves byHeight absent when the source never set ^BY', () => {
+    const { objects } = parseSingle('^XA^FO10,10^BQN,2,4^FDQA,X^FS^XZ', 8);
+    expect(props(objects[0]).byHeight).toBeUndefined();
   });
 });
 

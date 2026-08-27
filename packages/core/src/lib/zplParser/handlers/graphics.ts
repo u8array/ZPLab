@@ -269,6 +269,7 @@ export function createGraphicsHandlers(
             errorCorrection: qr.errorCorrection,
             model: qr.model,
             rotation: qr.rotation,
+            ...(qr.byHeight !== undefined ? { byHeight: qr.byHeight } : {}),
           } satisfies QrCodeProps,
           getPosType(s.field),
           rest,

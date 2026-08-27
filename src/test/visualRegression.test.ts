@@ -30,7 +30,9 @@ import {
   type ZebraWidthBarType,
 } from "@zplab/core/lib/barcodeRawGeometry";
 import { dotsToPx } from "@zplab/core/lib/coordinates";
-import { QR_FO_Y_OFFSET_DOTS, QR_FT_MODULE_OFFSET, upcSuppTextZoneDots } from "@zplab/core/lib/bwipConstants";
+import { QR_FT_MODULE_OFFSET, upcSuppTextZoneDots } from "@zplab/core/lib/bwipConstants";
+import { qrPrintsAsGraphic } from "@zplab/core/lib/objectBounds";
+import { qrByHeight } from "@zplab/core/registry/qrcode";
 import { barcodeFtAnchorOffset, isBarcode } from "@zplab/core/lib/objectBounds";
 
 const FIXTURES_DIR = path.resolve(
@@ -108,13 +110,13 @@ describe("Visual Regression - bwip-js vs Labelary", () => {
         8,
       );
 
-      // Zebra firmware renders ^FO-positioned QR codes with a +10 dot Y offset.
-      // Match production BarcodeObject.tsx behaviour. UPC/EAN supplements
+      // An ^FO QR draws sunk by its effective ^BY height (default 10),
+      // mirroring production BarcodeObject.tsx. UPC/EAN supplements
       // render the human-readable digits ABOVE the bars, so the bitmap's
       // top edge sits text-zone above the FO anchor.
       const drawY =
-        obj.type === "qrcode"
-          ? obj.y + QR_FO_Y_OFFSET_DOTS
+        obj.type === "qrcode" && obj.positionType !== "FT" && !qrPrintsAsGraphic(obj)
+          ? obj.y + qrByHeight(obj.props)
           : obj.type === "upcEanExtension" && obj.props.printInterpretation
             ? obj.y - upcSuppTextZoneDots(obj.props.moduleWidth)
             : obj.y;
@@ -135,12 +137,14 @@ describe("Visual Regression - bwip-js vs Labelary", () => {
       // then apply rotatedGroupTransform-equivalent rotation around that.
       // FT barcodes anchor at the rotation-aware bar base (mirrors the render);
       // FO uses drawY above. px == dots here (getDisplaySize scale 8, dpmm 8).
+      // Mirrors BarcodeObject: a rotated QR prints as a shift-free ^GFA.
+      const gQr = qrPrintsAsGraphic(obj);
       const ftOff =
         obj.positionType === "FT" && isBarcode(obj)
-          ? barcodeFtAnchorOffset(rot, ub.barW, ub.barH)
+          ? barcodeFtAnchorOffset(gQr ? "N" : rot, ub.barW, ub.barH)
           : { x: 0, y: 0 };
       const ftQrShift =
-        obj.positionType === "FT" && obj.type === "qrcode"
+        obj.positionType === "FT" && obj.type === "qrcode" && !gQr
           ? QR_FT_MODULE_OFFSET * (obj.props as { magnification: number }).magnification
           : 0;
       const bboxTopLeftX = obj.x + ftOff.x - displaySize.barLeftPx;

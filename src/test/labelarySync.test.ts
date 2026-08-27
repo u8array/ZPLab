@@ -18,7 +18,8 @@ import {
 import { dotsToPx } from "@zplab/core/lib/coordinates";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { upcSuppTextZoneDots, QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
-import { barcodeFtAnchorOffset } from "@zplab/core/lib/objectBounds";
+import { qrPrintsAsGraphic, barcodeFtAnchorOffset } from "@zplab/core/lib/objectBounds";
+import { qrByHeight } from "@zplab/core/registry/qrcode";
 import { ObjectRegistry } from "@zplab/core/registry";
 import { objectRotation } from "@zplab/core/registry/rotation";
 import { defined } from "./helpers";
@@ -125,21 +126,23 @@ describe("Labelary Sync - Canvas Dimension Logic", () => {
       if (obj.positionType === "FT") {
         // Mirror the real render/bounds anchor (objectBounds.barcodeTopLeft):
         // rotation-aware bar-base offset + HRI text-zone shift (px*8 -> dots).
+        // Mirrors BarcodeObject: a rotated QR prints as a shift-free ^GFA.
+        const gQr = qrPrintsAsGraphic(obj);
         const off = barcodeFtAnchorOffset(
-          rotation,
+          gQr ? "N" : rotation,
           displaySize.upright.barW * 8,
           displaySize.upright.barH * 8,
         );
         visualX += off.x - displaySize.barLeftPx * 8;
         visualY += off.y - displaySize.barTopPx * 8;
-        if (obj.type === "qrcode") {
+        if (obj.type === "qrcode" && !gQr) {
           const mag = (obj.props as { magnification?: number }).magnification ?? 1;
           visualY -= QR_FT_MODULE_OFFSET * mag;
         }
       } else {
         // FO positions relative to top-left, with specific quirks.
-        if (obj.type === "qrcode") {
-          visualY += 10;
+        if (obj.type === "qrcode" && !qrPrintsAsGraphic(obj)) {
+          visualY += qrByHeight(obj.props);
         }
         if (obj.type === "upcEanExtension" && obj.props.printInterpretation) {
           // ^BS bbox top sits above the FO anchor by the supplement

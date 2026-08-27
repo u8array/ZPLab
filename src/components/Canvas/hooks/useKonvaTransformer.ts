@@ -1508,7 +1508,7 @@ export function useKonvaTransformer({
         committedH = sp.height * sy;
       }
     }
-    // Invert per-type render offsets (QR's +10 Y, the rotation-aware FT bar
+    // Invert per-type render offsets (QR's ^BY-height Y, the rotation-aware FT bar
     // anchor) so the stored model matches the render path. Text renders at
     // obj.x/y directly.
     const modelPos = modelPositionFromRenderedTopLeft(

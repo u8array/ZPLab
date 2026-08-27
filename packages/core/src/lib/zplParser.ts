@@ -11,6 +11,7 @@ import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
 import { stripLineWrap, stripTrailingSpaces, tokenize } from "./zplParser/helpers";
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
+import { qrPrintsAsGraphic } from "./objectBounds";
 import { createParserState, deriveUnitScale, resetFormatScopedState, type FnDefaultCandidate } from "./zplParser/context";
 import { createFlushField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
@@ -299,6 +300,10 @@ export function parseZPL(
     // Start of a contiguous ^FX run immediately before a field, so the
     // field's span owns its comment bytes.
     commentStart: null as number | null,
+    // In-span ^BY sightings, from the tokenizer (so ^CC/^CD remaps count):
+    // any form, and one that fills the h slot the ^FO QR position depends on.
+    spanHasBy: false,
+    spanByHasH: false,
     // Format state that would re-interpret a regenerated object's bytes on
     // replay; drives the overlay's regenSafe flag (verbatim replay unaffected).
     regenHostileFormat: false,
@@ -581,23 +586,35 @@ export function parseZPL(
           if (box) linkObject(reverseBefore.span.start, reverseBefore.span.end, box.id);
           if (pg.ovStart !== null) pg.ovBase++;
         }
+        if (cmd === "BY" && pg.ovStart !== null) {
+          pg.spanHasBy = true;
+          // Mirrors the handler's capture: zero is no height (the session
+          // value stays in charge), so it must not count as a pin.
+          pg.spanByHasH ||= s.defaults.byHeight >= 1;
+        }
         if (cmd === "FO" || cmd === "FT") {
           pg.ovStart = pg.commentStart ?? start;
           pg.ovBase = objects.length;
           pg.commentStart = null;
+          pg.spanHasBy = false;
+          pg.spanByHasH = false;
         } else if (cmd === "FS" && pg.ovStart !== null) {
           const fieldEnd = start + 3;
           // A ^BY-consuming barcode whose ^BY sits outside its own field would
           // inherit a regenerated neighbour's inline ^BY on replay; mark the
-          // block unsafe. Classify by the parsed object type (not a regex) so
-          // 2D codes that ignore ^BY (QR/DataMatrix/Aztec/MaxiCode) stay
-          // regenSafe. The field's own object is the last one pushed.
+          // block unsafe. Classify by the parsed object type (not a regex).
+          // Of the 2D codes only ^FO QR consumes ^BY (its print sinks by the
+          // height, ZD230-measured); DataMatrix/Aztec/MaxiCode and ^FT QR are
+          // immune. The field's own object is the last one pushed.
           const own = objects.length > pg.ovBase ? objects[objects.length - 1] : undefined;
-          if (
-            own &&
-            BY_CONSUMING_BARCODE_TYPES.has(own.type) &&
-            !/\^BY/i.test(zpl.slice(pg.ovStart, fieldEnd))
-          ) {
+          // QR consumes only the h slot (position), so its ^BY must fill one;
+          // the 1D families consume w, which every ^BY form sets.
+          const hasNeededBy = own?.type === "qrcode" ? pg.spanByHasH : pg.spanHasBy;
+          const consumesBy = !!own && (
+            BY_CONSUMING_BARCODE_TYPES.has(own.type) ||
+            (own.type === "qrcode" && own.positionType !== "FT" && !qrPrintsAsGraphic(own))
+          );
+          if (consumesBy && !hasNeededBy) {
             pg.sawBareBarcode = true;
           }
           if (s.reverseBg && s.reverseBg.span === undefined && objects.length === pg.ovBase) {

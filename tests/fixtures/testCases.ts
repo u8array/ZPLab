@@ -55,14 +55,14 @@ export const testCases: TestCase[] = [
   },
   {
     id: "barcode_qr_standard",
-    zpl_input: "^XA^FO50,50^BQN,2,4^FDQA,Hello World^FS^XZ",
+    zpl_input: "^XA^FO50,50^BY,,10^BQN,2,4^FDQA,Hello World^FS^XZ",
     expected_bounds: { x: 50, y: 50, width: 100, height: 100 },
     image_ref: "barcode_qr_standard.png",
   },
   {
     id: "barcode_qr_large_high_ec",
     zpl_input:
-      "^XA^FO150,150^BQN,2,8^FDHA,Zebra Print Lab QR Code Testing^FS^XZ",
+      "^XA^FO150,150^BY,,10^BQN,2,8^FDHA,Zebra Print Lab QR Code Testing^FS^XZ",
     expected_bounds: { x: 150, y: 150, width: 250, height: 250 },
     image_ref: "barcode_qr_large_high_ec.png",
   },

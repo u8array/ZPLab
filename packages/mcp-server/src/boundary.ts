@@ -11,6 +11,7 @@ import {
 import { getEntry, ObjectRegistry } from "@zplab/core/registry";
 import { gfShipsSafely, parseGfHeader } from "@zplab/core/registry/image";
 import { isZplRotation } from "@zplab/core/registry/rotation";
+import { isQrByHeight } from "@zplab/core/lib/qrBy";
 import { ZPL_PARAM_CHARS } from "@zplab/core/lib/zplParams";
 import { MAX_SOURCE_PAGES } from "@zplab/core/lib/zplSourceEdit";
 import {
@@ -307,6 +308,7 @@ const OPTIONAL_PROP_TYPES: Record<string, string> = {
   blockJustify: "string",
   blockHangingIndent: "number",
   blockHeight: "number",
+  byHeight: "number",
   textMode: "string",
   fpDirection: "string",
   fpCharGap: "number",
@@ -380,6 +382,13 @@ export function propIssues(
       issues.push(`${type}.${key} must not contain ^ ~ or , (they end the ZPL parameter)`);
       continue;
     }
+    // byHeight is a qrcode prop; on any other type it would silently never
+    // print, and the global OPTIONAL/knownPropNames maps would swallow the
+    // unknown-prop note, so it rejects here explicitly.
+    if (key === "byHeight" && type !== "qrcode") {
+      issues.push(`${type}.byHeight is a qrcode prop`);
+      continue;
+    }
     // hasOwn, not a bracket read: a prop named toString would otherwise resolve
     // Object.prototype's and be rejected for not being a function.
     const fallback = defaults && Object.hasOwn(defaults, key) ? defaults[key] : undefined;
@@ -390,6 +399,9 @@ export function propIssues(
     if (fallback === undefined && optional !== undefined && value !== undefined && value !== null) {
       const got = Array.isArray(value) ? "array" : typeof value;
       if (got !== optional) issues.push(`${type}.${key} must be ${optional} (got ${got})`);
+      else if (key === "byHeight" && !isQrByHeight(value)) {
+        issues.push(`${type}.byHeight must be a positive integer (got ${value})`);
+      }
       continue;
     }
     if (fallback === undefined || fallback === null || value === undefined || value === null) {
@@ -493,6 +505,7 @@ export const PROP_SUMMARIES: Record<string, Record<string, string>> = {
     errorCorrection: "L | M | Q | H",
     model: "1 | 2",
     rotation: "N | R | I | B",
+    byHeight: "optional ^BY height the print position sinks by; omit for the default (10)",
   },
   box: {
     width: "dots",

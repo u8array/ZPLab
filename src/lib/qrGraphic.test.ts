@@ -99,6 +99,23 @@ describe("qr sidecar comment", () => {
     expect(parseQrSidecarComment(body)).toEqual(props);
   });
 
+  it("round-trips the pinned byHeight, and omits it when absent", () => {
+    const withBy = { ...props, byHeight: 50 };
+    expect(parseQrSidecarComment(formatQrSidecarComment(withBy).slice(3, -3))).toEqual(withBy);
+    // Absent stays absent: materialising 10 here would turn every legacy
+    // sidecar lossy on the emit comparison.
+    expect(parseQrSidecarComment(formatQrSidecarComment(props).slice(3, -3))).toEqual(props);
+  });
+
+  it("drops a byh no ^BY could have pinned, keeps any positive integer", () => {
+    for (const byh of [1.5, 0, -3]) {
+      const body = `ZPLLAB:{"qr":{"content":"X","mag":4,"ec":"Q","model":2,"rot":"R","byh":${byh}}}`;
+      expect(parseQrSidecarComment(body)?.byHeight).toBeUndefined();
+    }
+    const big = 'ZPLLAB:{"qr":{"content":"X","mag":4,"ec":"Q","model":2,"rot":"R","byh":50000}}';
+    expect(parseQrSidecarComment(big)?.byHeight).toBe(50000);
+  });
+
   it("rejects foreign and label-meta comments", () => {
     expect(parseQrSidecarComment("just a note")).toBeNull();
     expect(parseQrSidecarComment('ZPLLAB:{"dpmm":8,"wMm":100,"hMm":50}')).toBeNull();

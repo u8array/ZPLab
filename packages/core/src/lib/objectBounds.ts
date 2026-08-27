@@ -26,7 +26,8 @@ import { blockBoundsDots, blockLineWidthDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isB
 import { effectiveFontHeightDots } from "./labelGeometry/deviceFonts";
 import { resolveDefaultSizeDots } from "./resolveDefaultSize";
 import { mmToDots } from "./coordinates";
-import { QR_FO_Y_OFFSET_DOTS, QR_FT_MODULE_OFFSET } from "./bwipConstants";
+import { QR_FT_MODULE_OFFSET } from "./bwipConstants";
+import { qrByHeight } from "./qrBy";
 
 export interface BoundingBoxDots {
   x: number;
@@ -178,7 +179,7 @@ function barcodeTopLeft(
     return { x: obj.x + off.x - barLeft, y: obj.y + off.y - qrShift - barTop };
   }
   if (obj.type === "qrcode" && !qrPrintsAsGraphic(obj)) {
-    return { x: obj.x - barLeft, y: obj.y + QR_FO_Y_OFFSET_DOTS - barTop };
+    return { x: obj.x - barLeft, y: obj.y + qrByHeight(obj.props) - barTop };
   }
   return { x: obj.x - barLeft, y: obj.y - barTop };
 }

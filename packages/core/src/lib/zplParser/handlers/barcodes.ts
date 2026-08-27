@@ -46,7 +46,10 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     // ^BY{moduleWidth},{ratio},{height}
     BY(p) {
       defaults.byModuleWidth = dots(p[0], 2);
-      defaults.byHeight = dots(p[2], 0);
+      // h is session-inherited: an h-less ^BY (or h=0, which firmware refuses)
+      // leaves the previous height in charge instead of resetting it.
+      const h = dots(p[2], 0);
+      if (h >= 1) defaults.byHeight = h;
     },
 
     // ── 1D barcodes via mkBarcode(type, hIdx, iIdx, iDefault?, cIdx?) ─────

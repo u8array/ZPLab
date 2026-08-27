@@ -1,6 +1,5 @@
 import type { ZplRotation } from "../registry/rotation";
 
-export const QR_FO_Y_OFFSET_DOTS = 10;
 export const QR_FT_MODULE_OFFSET = 3;
 
 // Zebra always reserves text zone below EAN/UPC (8 and 12 dpmm: 13 dots).
