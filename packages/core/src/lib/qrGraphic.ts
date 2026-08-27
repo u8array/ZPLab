@@ -2,6 +2,7 @@ import bwipjs from "bwip-js/browser";
 import { gfaFromRaster, type MonoRaster } from "./imageToZpl";
 import { formatSidecarComment, sidecarBody } from "./zplLabelMeta";
 import { isZplRotation, type ZplRotation } from "../registry/rotation";
+import { isQrByHeight } from "./qrBy";
 
 // ^BQ cannot rotate (firmware no-op, ZD230-verified), so a rotated QR emits as a
 // ^GFA of the exact module matrix plus a ZPLLAB sidecar for lossless reimport.
@@ -12,6 +13,8 @@ export interface QrGraphicInput {
   errorCorrection: "H" | "Q" | "M" | "L";
   model: 1 | 2;
   rotation: ZplRotation;
+  /** Pinned ^BY height, kept so a rotate-back re-emits the imported value. */
+  byHeight?: number;
 }
 
 /** Single source for the QR encode settings so canvas, preflight and graphic
@@ -120,6 +123,7 @@ export function formatQrSidecarComment(p: QrGraphicInput): string {
       ec: p.errorCorrection,
       model: p.model,
       rot: p.rotation,
+      ...(p.byHeight !== undefined ? { byh: p.byHeight } : {}),
     },
   });
   return formatSidecarComment(body);
@@ -144,6 +148,7 @@ export function parseQrSidecarComment(commentBody: string): QrGraphicInput | nul
   if (typeof q.content !== "string" || typeof q.mag !== "number") return null;
   if (!isEc(q.ec) || typeof q.rot !== "string" || !isZplRotation(q.rot)) return null;
   return {
+    ...(isQrByHeight(q.byh) ? { byHeight: q.byh } : {}),
     content: q.content,
     magnification: q.mag,
     errorCorrection: q.ec,

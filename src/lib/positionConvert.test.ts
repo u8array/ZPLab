@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { convertPositionType, supportsPositionToggle } from "./positionConvert";
 import { objectBoundsDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
-import { QR_FO_Y_OFFSET_DOTS, QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
+import { QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
+import { QR_BY_DEFAULT_HEIGHT } from "@zplab/core/registry/qrcode";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { LeafObject } from "@zplab/core/registry";
@@ -84,8 +85,8 @@ describe("convertPositionType", () => {
     const before = objectBoundsDots(qr, ctx(measured));
     const ft = flipped(qr, "FT", ctx(measured));
     expect(objectBoundsDots(ft, ctx(measured))).toEqual(before);
-    // FO renders y + QR_FO_Y_OFFSET; FT renders y - uprightH - QR_FT_MODULE_OFFSET*mag.
-    expect(ft.y).toBe(70 + QR_FO_Y_OFFSET_DOTS + 100 + QR_FT_MODULE_OFFSET * 4);
+    // FO renders y + effective ^BY height; FT renders y - uprightH - QR_FT_MODULE_OFFSET*mag.
+    expect(ft.y).toBe(70 + QR_BY_DEFAULT_HEIGHT + 100 + QR_FT_MODULE_OFFSET * 4);
     const back = flipped(ft, "FO", ctx(measured));
     expect({ x: back.x, y: back.y }).toEqual({ x: qr.x, y: qr.y });
   });
@@ -100,6 +101,16 @@ describe("convertPositionType", () => {
     expect(objectBoundsDots(ft, ctx(measured))).toEqual(before);
     const back = flipped(ft, "FO", ctx(measured));
     expect({ x: back.x, y: back.y }).toEqual({ x: bc.x, y: bc.y });
+  });
+
+  it("flips FO<->FT bounds-preserving with a pinned non-default byHeight", () => {
+    const qr = leaf("qrcode", 100, 200, { content: "x", magnification: 5, errorCorrection: "M", model: 2, rotation: "N", byHeight: 50 } as never);
+    const measured = new Map([[qr.id, { width: 120, height: 120 }]]);
+    const before = objectBoundsDots(qr, ctx(measured));
+    const ft = flipped(qr, "FT", ctx(measured));
+    expect(objectBoundsDots(ft, ctx(measured))).toEqual(before);
+    const back = flipped(ft, "FO", ctx(measured));
+    expect({ x: back.x, y: back.y }).toEqual({ x: qr.x, y: qr.y });
   });
 
   it("unmeasured barcode falls back to prop height, matching the bounds fallback", () => {

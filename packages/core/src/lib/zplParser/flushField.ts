@@ -420,6 +420,8 @@ export function createFlushField(
               model: s.field.qrModel === 1 ? 1 : 2,
               // ^BQ orientation slot is a no-op; rotated QRs arrive as ^GFA + sidecar.
               rotation: "N",
+              // Position, not size: the print sinks by this (see QrCodeProps).
+              ...(s.defaults.byHeight >= 1 ? { byHeight: s.defaults.byHeight } : {}),
             } satisfies QrCodeProps,
             posType,
             comment,

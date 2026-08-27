@@ -90,6 +90,7 @@ describe("mcp-server tools", () => {
       // fields raster_image fills that carry no registry default.
       if (t.type === "text") for (const k of ["reverse", "blockWidth", "blockLines", "blockLineSpacing", "blockJustify"]) allowed.add(k);
       if (t.type === "image") for (const k of ["heightDots", "_gfaCache"]) allowed.add(k);
+      if (t.type === "qrcode") allowed.add("byHeight");
       for (const key of Object.keys(t.props)) {
         expect(allowed.has(key), `${t.type}.${key} is not a known prop`).toBe(true);
       }
@@ -791,6 +792,34 @@ describe("agent-facing reporting", () => {
     expect(r.ok).toBe(false);
     if (r.ok) return;
     expect(r.errors[0]).toContain("must be N, R, I or B");
+  });
+
+  it("rejects byHeight on a non-qrcode type instead of swallowing it", () => {
+    // The global optional/known maps would accept it silently on any type.
+    const r = label([
+      { type: "code128", x: 1, y: 1, props: { content: "123", height: 80, moduleWidth: 2, byHeight: 12 } },
+    ]);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.errors[0]).toContain("byHeight is a qrcode prop");
+  });
+
+  it("rejects a byHeight no ^BY could pin, keeps any positive integer", () => {
+    for (const byHeight of [1.5, 0, -3]) {
+      const r = label([
+        { type: "qrcode", x: 1, y: 1, props: { content: "x", byHeight } },
+      ]);
+      expect(r.ok, String(byHeight)).toBe(false);
+      if (r.ok) continue;
+      expect(r.errors[0]).toContain("byHeight must be a positive integer");
+    }
+    // Imported designs may carry any source value; the boundary must not
+    // reject on validate/export what the parser faithfully captured.
+    for (const byHeight of [50, 50000]) {
+      expect(label([
+        { type: "qrcode", x: 1, y: 1, props: { content: "x", byHeight } },
+      ]).ok, String(byHeight)).toBe(true);
+    }
   });
 
   it("remarks on a prop that will never print", () => {

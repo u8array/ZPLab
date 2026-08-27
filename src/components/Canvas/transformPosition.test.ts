@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { committedUprightBarDots, modelPositionFromRenderedTopLeft, renderedTopLeftFromModel } from "./transformPosition";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
-import { QR_FO_Y_OFFSET_DOTS, QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
+import { QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
+import { QR_BY_DEFAULT_HEIGHT } from "@zplab/core/registry/qrcode";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { LeafObject } from "@zplab/core/registry";
 import type { ZplRotation } from "@zplab/core/registry/rotation";
@@ -29,7 +30,7 @@ describe("modelPositionFromRenderedTopLeft", () => {
   it("subtracts QR FO Y offset for QR codes with positionType=FO", () => {
     expect(modelPositionFromRenderedTopLeft(qrFo, 100, 200)).toEqual({
       x: 100,
-      y: 200 - QR_FO_Y_OFFSET_DOTS,
+      y: 200 - QR_BY_DEFAULT_HEIGHT,
     });
   });
 
@@ -37,7 +38,7 @@ describe("modelPositionFromRenderedTopLeft", () => {
     const obj = { ...qrFo, positionType: undefined };
     expect(modelPositionFromRenderedTopLeft(obj, 100, 200)).toEqual({
       x: 100,
-      y: 200 - QR_FO_Y_OFFSET_DOTS,
+      y: 200 - QR_BY_DEFAULT_HEIGHT,
     });
   });
 

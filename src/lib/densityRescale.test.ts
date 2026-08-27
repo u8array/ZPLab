@@ -67,6 +67,45 @@ describe("rescaleDesign", () => {
     expect(r.warnings).toEqual([]);
   });
 
+  it("scales the pinned QR ^BY height like any dot value", () => {
+    const qr = leaf("q", "qrcode", 10, 10, { content: "QA,hi", magnification: 4, errorCorrection: "Q", model: 2, rotation: "N", byHeight: 50 } as never);
+    const r = rescaleDesign(page(qr), label, 8, 12, { dpmm: 12 });
+    const out = r.pages[0]!.objects[0] as typeof qr;
+    expect((out.props as { byHeight?: number }).byHeight).toBe(75);
+  });
+
+  it("materialises and scales the default byHeight for an ^FO QR", () => {
+    const qr = leaf("q", "qrcode", 10, 10, { content: "QA,hi", magnification: 4, errorCorrection: "Q", model: 2, rotation: "N" } as never);
+    const r = rescaleDesign(page(qr), label, 8, 12, { dpmm: 12 });
+    const out = r.pages[0]!.objects[0] as typeof qr;
+    expect((out.props as { byHeight?: number }).byHeight).toBe(15);
+  });
+
+  // Dormant states (rotated, ^FT) scale too: a later toggle back must land
+  // at the new density (see rescaleLeaf).
+  it("materialises the default byHeight for a rotated ^FO QR", () => {
+    const qr = leaf("q", "qrcode", 10, 10, { content: "QA,hi", magnification: 4, errorCorrection: "Q", model: 2, rotation: "R" } as never);
+    const r = rescaleDesign(page(qr), label, 8, 12, { dpmm: 12 });
+    const out = r.pages[0]!.objects[0] as typeof qr;
+    expect((out.props as { byHeight?: number }).byHeight).toBe(15);
+  });
+
+  it("scales a large byHeight proportionally (spec states no ^BY h ceiling)", () => {
+    const qr = leaf("q", "qrcode", 10, 10, { content: "QA,hi", magnification: 4, errorCorrection: "Q", model: 2, rotation: "N", byHeight: 32000 } as never);
+    const r = rescaleDesign(page(qr), label, 8, 12, { dpmm: 12 });
+    const out = r.pages[0]!.objects[0] as typeof qr;
+    expect((out.props as { byHeight?: number }).byHeight).toBe(48000);
+    expect(r.warnings).toEqual([]);
+  });
+
+  it("materialises the default byHeight for an ^FT QR (dormant until a toggle)", () => {
+    const qr = leaf("q", "qrcode", 10, 10, { content: "QA,hi", magnification: 4, errorCorrection: "Q", model: 2, rotation: "N" } as never);
+    qr.positionType = "FT";
+    const r = rescaleDesign(page(qr), label, 8, 12, { dpmm: 12 });
+    const out = r.pages[0]!.objects[0] as typeof qr;
+    expect((out.props as { byHeight?: number }).byHeight).toBe(15);
+  });
+
   it("clamps QR magnification to 10 and warns", () => {
     const qr = leaf("q", "qrcode", 0, 0, { content: "QA,hi", magnification: 5, errorCorrection: "Q", model: 2, rotation: "N" } as never);
     const r = rescaleDesign(page(qr), label, 8, 24, { dpmm: 24 }); // factor 3 -> 15 clamps to 10

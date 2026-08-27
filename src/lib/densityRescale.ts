@@ -2,6 +2,7 @@ import { isGroup, type LabelObject, type LeafObject, type Page } from "@zplab/co
 import { getEntry } from "@zplab/core/registry";
 import { gfaCacheIsOnlyCopy, type ImageProps } from "@zplab/core/registry/image";
 import { effectiveDpmm, labelConfigSpec, scaledLabelConfigFields, type JmDensity, type LabelConfig } from "@zplab/core/types/LabelConfig";
+import { qrByHeight } from "@zplab/core/registry/qrcode";
 
 /** Pending density change: a new head dpmm or a new ^JM mode, both reinterpreting
  *  stored dots under one rescale prompt. `configPatch` carries extra fields (e.g. a
@@ -103,6 +104,13 @@ function rescaleLeaf(leaf: LeafObject, factor: number, warnings: RescaleWarning[
   const warn = (prop: string, reason: RescaleWarning["reason"]) =>
     warnings.push({ id: leaf.id, name: labelOf(leaf), type: leaf.type, prop, reason });
 
+  // Every QR materialises its ^BY height here, dormant states included (^FT,
+  // rotated): the emit pins the power-up default whenever the prop is absent,
+  // and a later rotate-back/anchor-toggle must land at the NEW density, not at
+  // the old default. Floor only (no ceiling exists, see isQrByHeight).
+  if (leaf.type === "qrcode") {
+    next.byHeight = Math.max(1, Math.round(qrByHeight(props as { byHeight?: number }) * factor));
+  }
   for (const k of SCALE_MIN1) {
     const v = props[k];
     if (typeof v === "number" && v > 0) next[k] = Math.max(1, Math.round(v * factor));

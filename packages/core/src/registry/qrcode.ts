@@ -6,6 +6,7 @@ import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { formatQrSidecarComment, qrRotatedGfaCached } from '../lib/qrGraphic';
 import { clockCtxFromLabel, resolveContentPreview } from '../lib/markerResolve';
 import { type ZplRotation } from './rotation';
+import { qrByHeight } from '../lib/qrBy';
 
 /** ZPL prefixes the QR payload with `{ec}A,` inside ^FD. Shared by toZPL and
  *  the CSV batch override so a per-row value also gets the prefix. */
@@ -16,6 +17,8 @@ const qrFdTransform =
 
 export const MAGNIFICATION_MIN = 1;
 export const MAGNIFICATION_MAX = 10;
+// Re-exported from lib/qrBy (the cycle-free spot) because this is the prop's home.
+export { QR_BY_DEFAULT_HEIGHT, isQrByHeight, qrByHeight } from '../lib/qrBy';
 
 export interface QrCodeProps {
   content: string;
@@ -26,6 +29,10 @@ export interface QrCodeProps {
   /** ^BQ can't rotate (firmware no-op), so a non-N rotation emits a pre-rotated
    *  ^GFA graphic + sidecar. */
   rotation: ZplRotation;
+  /** ^BY height in effect at the source field. The firmware sinks an ^FO QR by
+   *  the session's ^BY height (ZD230: h-1, Labelary: h), so an unpinned field
+   *  prints wherever the printer's last ^BY put it; absent = power-up default. */
+  byHeight?: number;
 }
 
 // One switch for the capability flag and the emitter's chip resolution.
@@ -87,8 +94,12 @@ export const qrcode: ObjectTypeCore<QrCodeProps> = {
     // Prefix passed as the fdFieldFor transform (not baked into content) so it
     // composes with the binding: single-bind default / template / CSV override
     // all get the prefix instead of the payload being emitted raw.
+    // ^BY pins the height the ^FO sink depends on (w/r left empty: 1D fields
+    // carry their own ^BY). In-span, i.e. AFTER ^FO, so the overlay's bare-^BY
+    // check sees it and a regen replays it byte-exactly. ^FT anchors are immune.
     return [
       fieldPosZ(obj),
+      obj.positionType !== 'FT' ? `^BY,,${qrByHeight(p)}` : '',
       `^BQN,${p.model},${p.magnification}`,
       fdFieldFor(p.content, ctx, qrFdTransform(obj), undefined, CONTROL_CHARS),
     ].join('');

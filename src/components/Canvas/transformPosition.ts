@@ -1,5 +1,5 @@
 import type { LeafObject } from "@zplab/core/registry";
-import { QR_FO_Y_OFFSET_DOTS, QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
+import { QR_FT_MODULE_OFFSET } from "@zplab/core/lib/bwipConstants";
 import {
   barcodeFtAnchorOffset,
   isBarcode,
@@ -8,6 +8,7 @@ import {
   rightAnchorShiftDots,
   rotatedFootprint,
 } from "@zplab/core/lib/objectBounds";
+import { qrByHeight } from "@zplab/core/registry/qrcode";
 import { isAxisSwapped, objectRotation, type ZplRotation } from "@zplab/core/registry/rotation";
 import { getMeasuredSnapshot } from "../../lib/measuredBoundsCache";
 
@@ -65,7 +66,7 @@ export function committedUprightBarDots(
   return { w: uprightW * (swap ? sy : sx), h: uprightH * (swap ? sx : sy) };
 }
 
-/** Rendered top-left -> stored model position. QR FO subtracts the +10 Y
+/** Rendered top-left -> stored model position. QR FO subtracts the pinned ^BY Y
  *  artifact; FT barcodes invert the rotation-aware bar anchor. On a resize pass
  *  the committed upright bar size (`committedUprightW/H`, in dots) so the inverse
  *  uses the same dimensions the commit stores; omit it elsewhere to use the
@@ -86,7 +87,7 @@ export function modelPositionFromRenderedTopLeft(
       : committedUprightW;
   const anchor = rightAnchorShift(obj, committedBoxW);
   if (obj.type === "qrcode" && obj.positionType !== "FT" && !qrPrintsAsGraphic(obj)) {
-    return { x: renderedXDots + anchor, y: renderedYDots - QR_FO_Y_OFFSET_DOTS };
+    return { x: renderedXDots + anchor, y: renderedYDots - qrByHeight(obj.props) };
   }
   if (isFtBarcode(obj)) {
     const c = cacheBar(obj);
@@ -112,7 +113,7 @@ export function renderedTopLeftFromModel(obj: LeafObject): {
   y: number;
 } {
   if (obj.type === "qrcode" && obj.positionType !== "FT" && !qrPrintsAsGraphic(obj)) {
-    return renderedWithAnchor(obj, obj.x, obj.y + QR_FO_Y_OFFSET_DOTS);
+    return renderedWithAnchor(obj, obj.x, obj.y + qrByHeight(obj.props));
   }
   if (isFtBarcode(obj)) {
     const c = cacheBar(obj);

@@ -154,8 +154,47 @@ describe("parseZPL overlay capture", () => {
     expect(o.regenSafe).toBe(true);
   });
 
-  it("keeps a 2D code (QR) regenSafe even without ^BY (it ignores ^BY)", () => {
-    expect(captured("^XA^FO10,10^BQN,2,5^FDQA,hello^FS^XZ").regenSafe).toBe(true);
+  // An unpinned ^FO QR inherits printer state on replay (see QrCodeProps.byHeight).
+  it("flags an ^FO QR without in-span ^BY as not regenSafe", () => {
+    expect(captured("^XA^FO10,10^BQN,2,5^FDQA,hello^FS^XZ").regenSafe).toBe(false);
+  });
+
+  it("keeps an ^FO QR with in-span ^BY regenSafe (the emit form)", () => {
+    expect(captured("^XA^FO10,10^BY,,10^BQN,2,5^FDQA,hello^FS^XZ").regenSafe).toBe(true);
+  });
+
+  it("flags an ^FO QR whose in-span ^BY sets no height", () => {
+    // ^BY2 pins only the width; the height the position depends on stays
+    // session-inherited, so the regen would move the print.
+    expect(captured("^XA^FO10,10^BY2^BQN,2,5^FDQA,hello^FS^XZ").regenSafe).toBe(false);
+  });
+
+  it("keeps a rotated QR (^GFA + sidecar) regenSafe without ^BY", () => {
+    // The graphic path ignores ^BY; only a live ^BQ consumes it.
+    const zpl = '^XA^FXZPLLAB:{"qr":{"content":"X","mag":4,"ec":"Q","model":2,"rot":"R"}}^FS^FO10,10^GFA,3,3,1,00,00,00^FS^XZ';
+    expect(captured(zpl).regenSafe).toBe(true);
+  });
+
+  it("recognises an in-span ^BY under a remapped ^CD delimiter", () => {
+    // The check reads tokenizer state, not raw bytes, so ^BY;;50 counts. The
+    // page still loses regen safety, but to ^CD's own format-state reason,
+    // not to a phantom missing ^BY.
+    const r = parseSingle("^XA^CD;^FO10,10^BY;;50^BQN,2,5^FDQA,hello^FS^XZ", 8, {
+      captureOverlay: true,
+    });
+    expect(r.overlay?.regenSafe).toBe(false);
+    const reason = r.findings.find((f) => f.kind === "lossyEdit")?.command ?? "";
+    expect(reason).toContain("format state");
+    expect(reason).not.toContain("in-field ^BY");
+  });
+
+  it("treats an in-span ^BY,,0 as not pinning (zero is no height)", () => {
+    // h=0 is no pin: the session height stays in charge.
+    expect(captured("^XA^FO10,10^BY,,0^BQN,2,5^FDQA,hello^FS^XZ").regenSafe).toBe(false);
+  });
+
+  it("keeps an ^FT QR regenSafe without ^BY (anchor is ^BY-independent)", () => {
+    expect(captured("^XA^FT10,200^BQN,2,5^FDQA,hello^FS^XZ").regenSafe).toBe(true);
   });
 
   it("keeps a DataMatrix regenSafe without ^BY", () => {
