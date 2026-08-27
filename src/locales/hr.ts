@@ -893,6 +893,7 @@ const hr = {
     lossFontFace: 'Font se ne uvozi; sadržaj teksta i veličina točke zadržavaju se uz najbolju moguću prilagodbu',
     lossPrinterComms: 'Zahtijeva komunikaciju s pisačem; nije dostupno u pregledniku',
     lossGfRawBinary: 'Sirovi binarni podaci {rawFmts} preskaču se; podaci {hexFmt} i oni omotani u {wrapFmts} se dekodiraju',
+    lossQrFdMode: 'Pojedine dijelove ovog QR polja nije moguće uređivati te se pri novom izvozu naljepnice ponovno zapisuju, što može promijeniti kodirani sadržaj; prije upotrebe provjerite simbol',
     lossFileStorage: 'Pohrani datoteka pisača nije moguće pristupiti iz preglednika; polje se u potpunosti preskače',
     lossPrinterStorage: 'Pohranjuje podatke na fizički pisač; nije relevantno za dizajn naljepnice na platnu',
     browserLimitTitle: 'Preskočeno: zahtijeva hardver pisača',

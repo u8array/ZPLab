@@ -893,6 +893,7 @@ const ro = {
     lossFontFace: 'Fontul nu este importat; conținutul textului și dimensiunea punctului sunt păstrate cu cea mai bună ajustare posibilă',
     lossPrinterComms: 'Necesită comunicare cu imprimanta; nu este disponibil în browser',
     lossGfRawBinary: 'Sarcinile binare brute {rawFmts} sunt omise; sarcinile {hexFmt} și cele împachetate în {wrapFmts} sunt decodificate',
+    lossQrFdMode: 'Unele părți ale acestui câmp QR nu au un echivalent editabil și sunt rescrise la un nou export al etichetei, ceea ce poate modifica conținutul codificat; verificați simbolul înainte de utilizare',
     lossFileStorage: 'Stocarea de fișiere a imprimantei nu poate fi accesată dintr-un browser; câmpul este omis complet',
     lossPrinterStorage: 'Stochează date pe imprimanta fizică; nu este relevant pentru designul etichetei pe suprafața de lucru',
     browserLimitTitle: 'Omis: necesită hardware de imprimantă',

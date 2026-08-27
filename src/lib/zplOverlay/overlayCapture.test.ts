@@ -54,6 +54,25 @@ describe("parseZPL overlay capture", () => {
     expect(o.segments.filter((s) => s.kind === "object")).toHaveLength(1);
   });
 
+  it("links a ^BQ field whose ^FD switch form the emitter cannot reproduce", () => {
+    // Flagged partial, but still an object: the segment must carry its own
+    // bytes, or a neighbour's edit would rewrite this field's source. A regen
+    // would change those bytes, so the page loses its byte-exact guarantee.
+    const zpl = "^XA^FO0,0^GB100,100,100^FS^FO0,200^BQN,2,7^FDHM,N1^FS^XZ";
+    const { overlay, objects } = parseSingle(zpl, 8, { captureOverlay: true });
+    expect(objects).toHaveLength(2);
+    expect(overlayText(overlay!)).toBe(zpl);
+    expect(objSeg(overlay!, objects[0]!.id)?.text).toBe("^FO0,0^GB100,100,100^FS");
+    expect(objSeg(overlay!, objects[1]!.id)?.text).toBe("^FO0,200^BQN,2,7^FDHM,N1^FS");
+    expect(overlay!.regenSafe).toBe(false);
+  });
+
+  it("keeps regenSafe for a ^BQ field the emitter reproduces exactly", () => {
+    const zpl = "^XA^FO0,200^BY,,10^BQN,2,7^FDQA,HELLO^FS^XZ";
+    const { overlay } = parseSingle(zpl, 8, { captureOverlay: true });
+    expect(overlay!.regenSafe).toBe(true);
+  });
+
   it("links two consecutive fields independently", () => {
     const zpl = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^FO10,60^A0N,30,30^FDb^FS\n^XZ";
     const { overlay, objects } = parseSingle(zpl, 8, { captureOverlay: true });

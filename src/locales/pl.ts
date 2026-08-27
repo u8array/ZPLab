@@ -893,6 +893,7 @@ const pl = {
     lossFontFace: 'Krój czcionki nie jest importowany; treść tekstu i rozmiar punktu są zachowywane z możliwie najlepszym dopasowaniem',
     lossPrinterComms: 'Wymaga komunikacji z drukarką; niedostępne w przeglądarce',
     lossGfRawBinary: 'Surowe dane binarne {rawFmts} są pomijane; dane {hexFmt} oraz opakowane w {wrapFmts} są dekodowane',
+    lossQrFdMode: 'Części tego pola QR nie mają edytowalnego odpowiednika i są zapisywane na nowo przy ponownym eksporcie etykiety, co może zmienić zakodowaną treść; przed użyciem sprawdź symbol',
     lossFileStorage: 'Nie ma dostępu do pamięci plików drukarki z przeglądarki; pole jest całkowicie pomijane',
     lossPrinterStorage: 'Zapisuje dane na fizycznej drukarce; nieistotne dla projektu etykiety na płótnie',
     browserLimitTitle: 'Pominięto: wymaga sprzętu drukarki',

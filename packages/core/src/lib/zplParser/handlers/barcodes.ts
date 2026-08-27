@@ -2,6 +2,7 @@ import type { Code49Props } from "../../../registry/code49";
 import { clampCodablockColumns } from "../../../registry/codablock";
 import { isDmRectPair, type DataMatrixProps } from "../../../registry/datamatrix";
 import type { Gs1DatabarProps } from "../../../registry/gs1databar";
+import { qrBqHeader, qrMagnificationFromZpl, qrModelFromZpl } from "../../../registry/qrcode";
 import { clampMaxicodeAppend, type MaxicodeProps } from "../../../registry/maxicode";
 import { GS1_DATABAR_DEFAULT_SEGMENTS } from "../../gs1";
 import type { ParserState } from "../context";
@@ -127,8 +128,18 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     // ^BQ orientation slot is decorative; canonicalized to N on emit.
     BQ(p) {
       s.field.fieldType = "qrcode";
-      s.field.qrModel = int(p[1], 2);
-      s.field.qrMag = int(p[2], 4);
+      s.field.qrModel = qrModelFromZpl(int(p[1], 2));
+      const c = int(p[2], 0);
+      s.field.qrMag = qrMagnificationFromZpl(c);
+      // Two questions. partial = information lost: a dropped a/d/e VALUE (an
+      // empty slot carries none), or a c we invent because the firmware default
+      // is density-dependent (p.128). regen safety = bytes, by comparison.
+      const invented = s.field.qrMag !== c;
+      const droppedValue =
+        (!!p[0] && p[0].toUpperCase() !== "N") || !!p[3] || !!p[4];
+      s.field.qrHeaderPartial = invented || droppedValue;
+      const src = "^BQ" + p.join(s.format.delimiterChar);
+      s.field.qrHeaderLossy = src !== qrBqHeader(s.field.qrModel, s.field.qrMag);
     },
 
     // ^BXo,h,s,c,r,f,g,a; DataMatrix. p[6] = GS1 escape char, p[7] = aspect

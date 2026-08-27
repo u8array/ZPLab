@@ -893,6 +893,7 @@ const zhHans = {
     lossFontFace: '字体不会被导入；文本内容和字号会以尽可能接近的效果保留',
     lossPrinterComms: '需要与打印机通信；在浏览器中不可用',
     lossGfRawBinary: '原始二进制 {rawFmts} 载荷会被跳过；{hexFmt} 及以 {wrapFmts} 封装的载荷可解码',
+    lossQrFdMode: '此 QR 字段的部分内容没有可编辑的对应项，再次导出标签时会被重写，可能改变编码内容；使用前请检查符号',
     lossFileStorage: '浏览器无法访问打印机的文件存储；该字段会被完全跳过',
     lossPrinterStorage: '将数据存储在实体打印机上；与画布上的标签设计无关',
     browserLimitTitle: '已跳过：需要打印机硬件',

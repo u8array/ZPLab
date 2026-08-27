@@ -362,7 +362,7 @@ export function createFieldHandlers(
     // current decoder and surface as a partial import.
     CI(p) {
       const enc = ciToEncoding(int(p[0]));
-      s.format.fhDecoder = getDecoder(enc.label);
+      s.format.ciDecoder = getDecoder(enc.label);
       if (!enc.supported) s.result.partialCmds.add(`^CI${int(p[0])}`);
     },
 

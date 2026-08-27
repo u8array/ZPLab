@@ -893,6 +893,7 @@ const sv = {
     lossFontFace: 'Typsnittet importeras inte; textinnehåll och punktstorlek bevaras med bästa möjliga anpassning',
     lossPrinterComms: 'Kräver kommunikation med skrivaren; inte tillgängligt i webbläsaren',
     lossGfRawBinary: 'Råa binära {rawFmts}-nyttolaster hoppas över; {hexFmt}- och {wrapFmts}-inslagna nyttolaster avkodas',
+    lossQrFdMode: 'Delar av det här QR-fältet saknar redigerbar motsvarighet och skrivs om vid en ny export av etiketten, vilket kan ändra det kodade innehållet; kontrollera symbolen före användning',
     lossFileStorage: 'Skrivarens fillagring går inte att komma åt från en webbläsare; fältet hoppas över helt',
     lossPrinterStorage: 'Lagrar data på den fysiska skrivaren; inte relevant för etikettdesignen på ritytan',
     browserLimitTitle: 'Hoppades över: kräver skrivarhårdvara',

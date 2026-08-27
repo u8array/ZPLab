@@ -893,6 +893,7 @@ const cs = {
     lossFontFace: 'Řez písma se neimportuje; obsah textu a velikost bodu se zachovávají s co nejlepším přiblížením',
     lossPrinterComms: 'Vyžaduje komunikaci s tiskárnou; není k dispozici v prohlížeči',
     lossGfRawBinary: 'Surová binární data {rawFmts} se přeskakují; data {hexFmt} a zabalená v {wrapFmts} se dekódují',
+    lossQrFdMode: 'Části tohoto pole QR nemají editovatelný ekvivalent a při novém exportu štítku se přepíší, což může změnit zakódovaný obsah; před použitím zkontrolujte symbol',
     lossFileStorage: 'Z prohlížeče nelze přistupovat k úložišti souborů tiskárny; pole se zcela přeskočí',
     lossPrinterStorage: 'Ukládá data do fyzické tiskárny; nemá vliv na návrh štítku na plátně',
     browserLimitTitle: 'Přeskočeno: vyžaduje hardware tiskárny',

@@ -893,6 +893,7 @@ const fr = {
     lossFontFace: "La police n'est pas importée ; le contenu du texte et la taille en points sont conservés avec le meilleur ajustement possible",
     lossPrinterComms: "Nécessite une communication avec l'imprimante ; non disponible dans le navigateur",
     lossGfRawBinary: 'Les charges utiles binaires brutes {rawFmts} sont ignorées ; les charges {hexFmt} et celles encapsulées en {wrapFmts} sont décodées',
+    lossQrFdMode: "Certaines parties de ce champ QR n'ont pas d'équivalent modifiable et sont réécrites lors d'un nouvel export de l'étiquette, ce qui peut modifier le contenu encodé ; vérifiez le symbole avant de l'utiliser",
     lossFileStorage: "Le stockage de fichiers de l'imprimante n'est pas accessible depuis un navigateur ; le champ est entièrement ignoré",
     lossPrinterStorage: "Stocke des données sur l'imprimante physique ; sans rapport avec la conception de l'étiquette sur le canevas",
     browserLimitTitle: "Ignoré : nécessite le matériel de l'imprimante",

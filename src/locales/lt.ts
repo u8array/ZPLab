@@ -893,6 +893,7 @@ const lt = {
     lossFontFace: 'Šriftas neimportuojamas; teksto turinys ir taško dydis išsaugomi kuo geriau pritaikant dydį',
     lossPrinterComms: 'Reikalingas ryšys su spausdintuvu; naršyklėje neprieinama',
     lossGfRawBinary: 'Neapdoroti dvejetainiai {rawFmts} duomenys praleidžiami; {hexFmt} ir {wrapFmts} suvynioti duomenys iškoduojami',
+    lossQrFdMode: 'Dalis šio QR lauko duomenų neturi redaguojamo atitikmens ir iš naujo eksportuojant etiketę yra perrašomi, o tai gali pakeisti užkoduotą turinį; prieš naudodami patikrinkite simbolį',
     lossFileStorage: 'Prie spausdintuvo failų saugyklos negalima prisijungti iš naršyklės; laukas visiškai praleidžiamas',
     lossPrinterStorage: 'Saugo duomenis fiziniame spausdintuve; nesusiję su etiketės dizainu drobėje',
     browserLimitTitle: 'Praleista: reikalinga spausdintuvo aparatinė įranga',

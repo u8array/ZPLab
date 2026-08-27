@@ -37,6 +37,15 @@ export interface PendingReverseBg {
   span?: { start: number; end: number };
 }
 
+/** The reasons a field can lower a page's byte-exact promise. One vocabulary,
+ *  so a producer and the import report cannot word the same cause differently. */
+export const REGEN_LOSSY_REASONS = {
+  code128: "a Code 128 escape stream the export re-escapes",
+  qr: "QR field data or settings the export normalises",
+} as const;
+
+export type RegenLossyReason = (typeof REGEN_LOSSY_REASONS)[keyof typeof REGEN_LOSSY_REASONS];
+
 /** Shared parse accumulators; pages slice the arrays via offset marks, the
  *  document-wide fields hand back via `ParsedZPL`. */
 export interface ParserResult {
@@ -77,14 +86,14 @@ export interface CommentState {
 }
 
 /** Command-format state, mixed scope: embedChar/clockChars reset at ^XA and
- *  fhActive at page close; prefix/delimiter chars, unitScale, and fhDecoder
+ *  fhActive at page close; prefix/delimiter chars, unitScale, and ciDecoder
  *  are printer-persistent and carry across pages. */
 export interface FormatState {
   embedChar: string;
   clockChars: ClockChars;
   fhActive: boolean;
   fhDelimiter: string;
-  fhDecoder: TextDecoder;
+  ciDecoder: TextDecoder;
   // Command prefix characters, mutated by ^CC/~CC, ^CT/~CT, ^CD/~CD.
   // The tokenizer reads caretChar/tildeChar on every char scan so mid-stream
   // changes take effect on the very next command.
@@ -201,7 +210,11 @@ export interface FieldState {
   gsMagnification: number | undefined;
   // 2D matrix pending
   qrMag: number;
-  qrModel: number;
+  qrModel: 1 | 2;
+  /** ^BQ header verdicts, applied only if a field flushes: a ^BQ without ^FD
+   *  makes no object and prints nothing, so it reports nothing either. */
+  qrHeaderPartial: boolean;
+  qrHeaderLossy: boolean;
   dmDim: number;
   dmQuality: DataMatrixProps["quality"];
   /** ^BX escape char (g param); set => GS1 DataMatrix field data. */
@@ -265,10 +278,10 @@ export interface ParserState {
    *  head for the lookahead to latch onto, so the ^JM handler reports it partial
    *  instead of silently dropping it. */
   sawXa: boolean;
-  /** A ^BC ^FD kept verbatim whose re-emit the plain escape rewrites (bare
-   *  `>` in an unadopted stream): regen changes bytes, so the page is only
-   *  byte-exact through its overlay. */
-  bcFdRegenLossy: boolean;
+  /** Why a regen would rewrite some field's bytes, so the page is only
+   *  byte-exact through its overlay. Carries the reason, not just the fact:
+   *  the import report names it, and several symbologies can set it. */
+  fdRegenLossy: RegenLossyReason | undefined;
   /** Per ^FN slot: the bound consumers' default candidate. `null` = consumers
    *  disagreed; `decoded` = at least one consumer actually decoded (a bare
    *  wire-form echo must not override a header declaration). */
@@ -296,9 +309,11 @@ export function getPosType(field: FieldState): "FT" | "FO" {
   return field.positionIsFT ? "FT" : "FO";
 }
 
-/** Sticky GS1/^BX mode flags would act on any later field, so every flush
- *  path drops them with the flushed field. */
+/** Sticky per-field symbology state (GS1/^BX modes, the ^BQ header verdicts)
+ *  would act on any later field, so every flush path drops it. */
 export function resetSymbologyModeFlags(field: FieldState): void {
+  field.qrHeaderPartial = false;
+  field.qrHeaderLossy = false;
   field.bcGs1 = false;
   field.dmEscape = undefined;
   field.dmQuality = 200;
@@ -333,7 +348,7 @@ export function resetFormatScopedState(s: ParserState): void {
   // position-less field must inherit it, not the fresh-state 'L'.
   s.field.justify = s.defaults.fwJustify;
   s.format.fhActive = false;
-  s.bcFdRegenLossy = false;
+  s.fdRegenLossy = undefined;
   s.fnDefaultCandidates = new Map();
   resetFieldBlockDefaults(s.defaults);
 }
@@ -368,7 +383,7 @@ export function createParserState(): ParserState {
       clockChars: { ...DEFAULT_CLOCK_CHARS },
       fhActive: false,
       fhDelimiter: "_",
-      fhDecoder: getDecoder("utf-8"),
+      ciDecoder: getDecoder("utf-8"),
       caretChar: "^",
       tildeChar: "~",
       delimiterChar: ",",
@@ -402,7 +417,7 @@ export function createParserState(): ParserState {
     serialStrippedFns: new Set<number>(),
     varScopeStart: 0,
     sawXa: false,
-    bcFdRegenLossy: false,
+    fdRegenLossy: undefined,
     fnDefaultCandidates: new Map(),
     field: freshFieldState(),
   };
@@ -444,6 +459,8 @@ export function freshFieldState(): FieldState {
     gsMagnification: undefined,
     qrMag: 4,
     qrModel: 2,
+    qrHeaderPartial: false,
+    qrHeaderLossy: false,
     dmDim: 5,
     dmQuality: 200,
     dmEscape: undefined,
