@@ -4,6 +4,7 @@ import {
   getFontFamily,
   getAllFonts,
   loadFontFile,
+  loadFontBytes,
   removeFont,
   subscribe,
   fontByteLength,
@@ -41,8 +42,7 @@ describe('fontCache', () => {
   // ── loadFontFile ─────────────────────────────────────────────────────────────
 
   it('registers the FontFace from bytes, never a url() source', async () => {
-    // Regression (#356 comment): a url(data:...) source is a font-src fetch,
-    // which the desktop CSP blocks; every upload failed there.
+    // Regression #356; the why lives at registerFontFace's doc header.
     const sources: unknown[] = [];
     const Original = globalThis.FontFace;
     class CapturingFontFace {
@@ -140,6 +140,23 @@ describe('fontCache', () => {
 
   it('getAllFonts returns empty array when nothing is loaded', () => {
     expect(getAllFonts()).toHaveLength(0);
+  });
+
+  it('drops the cache entry when the engine rejects the bytes', async () => {
+    // The why lives at settleRegistration's doc header.
+    class RejectingFontFace {
+      load() { return Promise.reject(new Error('bad font')); }
+    }
+    const Original = globalThis.FontFace;
+    vi.stubGlobal('FontFace', RejectingFontFace);
+    try {
+      const entry = await loadFontBytes(new Uint8Array([1, 2, 3]), 'BROKEN.TTF');
+      expect(entry.name).toBe('BROKEN.TTF');
+      expect(getFontFamily('BROKEN.TTF')).toBeUndefined();
+      expect(localStorage.getItem('zplab.font.BROKEN.TTF')).toBeNull();
+    } finally {
+      vi.stubGlobal('FontFace', Original);
+    }
   });
 
   // ── removeFont ────────────────────────────────────────────────────────────────

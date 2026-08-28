@@ -65,8 +65,9 @@ function dataUrlBytes(dataUrl: string): Uint8Array | undefined {
 /** Resolves true when the face registered, false when the bytes were rejected
  *  (invalid font, unsupported outlines) or the API is unavailable. Callers on
  *  the interactive upload path surface the failure; background paths ignore it.
- *  Binary source, NOT `url(data:...)`: the url form is a font-src fetch, which
- *  the desktop CSP blocks (no `data:` there, deliberately). */
+ *  Binary source, NOT `url(data:...)`: WKWebView enforces font-src even on
+ *  FontFace loads, and byte registration plus `font-src data:` is the combo
+ *  that works across engines (#356). */
 async function registerFontFace(entry: CachedFont): Promise<boolean> {
   try {
     const bytes = dataUrlBytes(entry.dataUrl);
@@ -80,10 +81,27 @@ async function registerFontFace(entry: CachedFont): Promise<boolean> {
   }
 }
 
+/** Rejected bytes leave the cache entirely (fontStyle and family derive
+ *  from cache membership, so a zombie entry would read as a real face and
+ *  lose the calibrated PrintLab-bold fallback). notify() runs either way:
+ *  consumers measured against the UA fallback until the face landed. */
+function settleRegistration(entry: CachedFont): Promise<void> {
+  return registerFontFace(entry).then((ok) => {
+    if (!ok) rollbackEntry(entry);
+    notify();
+  });
+}
+
+function rollbackEntry(entry: CachedFont): void {
+  cache.delete(entry.name);
+  safeLocalStorageRemove(LS_PREFIX + entry.name);
+}
+
 hydrateLocalStoragePrefix<CachedFont>(LS_PREFIX, (entry) => {
   cache.set(entry.name, entry);
-  // Re-register asynchronously; canvas renders after React mounts.
-  void registerFontFace(entry);
+  // Async re-register; settle bumps the cache version so measurements
+  // re-run once the face is live (or the stale row is dropped).
+  void settleRegistration(entry);
 });
 
 /** Look up a cached font by printer filename (case-insensitive). */
@@ -129,8 +147,7 @@ export async function loadFontBytes(
   printerName: string,
 ): Promise<CachedFont> {
   const entry = registerBytes(bytes, printerName);
-  await registerFontFace(entry);
-  notify();
+  await settleRegistration(entry);
   return entry;
 }
 
@@ -140,7 +157,7 @@ export function loadFontBytesSync(
   printerName: string,
 ): CachedFont {
   const entry = registerBytes(bytes, printerName);
-  void registerFontFace(entry).then(notify);
+  void settleRegistration(entry);
   notify();
   return entry;
 }
@@ -179,12 +196,10 @@ export async function loadFontFile(file: File, printerName: string): Promise<Cac
   const bytes = new Uint8Array(await file.arrayBuffer());
   const entry = registerBytes(bytes, printerName);
   if (!(await registerFontFace(entry))) {
-    // Bytes rejected (e.g. an OTF the engine can't parse): roll back so the
-    // caller shows the upload error instead of a silent no-preview row. Roll
-    // back via the primitives (not removeFont) so a font that never existed
-    // doesn't fire a cache-changed notification before we throw.
-    cache.delete(entry.name);
-    safeLocalStorageRemove(LS_PREFIX + entry.name);
+    // Roll back without notify (unlike settleRegistration): the caller
+    // shows the upload error, and a font that never existed must not fire
+    // a cache-changed notification before we throw.
+    rollbackEntry(entry);
     throw new Error(`Font could not be registered: ${file.name}`);
   }
   notify();
