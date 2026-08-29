@@ -145,15 +145,22 @@ export function resolveTemplateMarkers(
   });
 }
 
-/** Unknown FN numbers stay literal; substring slice args dropped (lossy). */
+/** The one grammar for `#n#` / `#n,a,x,y#` embeds (spec p.191); group 2 is
+ *  the substring-insert range. The parser's bootstrap scan and the marker
+ *  substitution both read it, so they cannot disagree on what an embed is. */
+export function embedPattern(embedChar: string): RegExp {
+  const e = embedChar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`${e}(\\d+)(,[^${e}]*)?${e}`, "g");
+}
+
+/** Unknown FN numbers stay literal; substring slice args dropped (lossy,
+ *  reported by the parser as partial ^FE). */
 export function embedsToMarkers(
   payload: string,
   embedChar: string,
   fnToName: ReadonlyMap<number, string>,
 ): string {
-  const e = embedChar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re = new RegExp(`${e}(\\d+)(?:,[^${e}]*)?${e}`, "g");
-  return payload.replace(re, (full, digits: string) => {
+  return payload.replace(embedPattern(embedChar), (full, digits: string) => {
     const n = parseInt(digits, 10);
     const name = fnToName.get(n);
     return name !== undefined ? markerOf(name) : full;

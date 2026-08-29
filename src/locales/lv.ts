@@ -896,6 +896,7 @@ const lv = {
     lossQrFdMode: 'Daļai šī QR lauka datu nav rediģējama ekvivalenta, un, atkārtoti eksportējot etiķeti, tie tiek pārrakstīti, kas var mainīt kodēto saturu; pirms lietošanas pārbaudiet simbolu',
     lossFileStorage: 'No pārlūkprogrammas nevar piekļūt printera failu krātuvei; lauks tiek pilnībā izlaists',
     lossPrinterStorage: 'Saglabā datus fiziskajā printerī; nav saistīts ar etiķetes dizainu darba laukumā',
+    lossFnPartialInsert: 'Daļējai lauka ievietošanai šeit nav rediģējama ekvivalenta; dizains saglabā visu lauku, tāpēc atkārtota eksportēšana izdrukā vairāk nekā oriģināls. Pirms lietošanas pārbaudiet lauku.',
     browserLimitTitle: 'Izlaists: nepieciešama printera aparatūra',
     replayRiskTitle: 'Printera iestatīšanas komanda: tiek izpildīta printerī eksportējot/drukājot',
     deviceActionTitle: 'Printera ierīces darbība: tiek izpildīta printerī eksportējot/drukājot',

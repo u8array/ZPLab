@@ -896,6 +896,7 @@ const de = {
     lossQrFdMode: 'Teile dieses QR-Felds haben kein bearbeitbares Gegenstück und werden beim erneuten Export des Etiketts neu geschrieben, was den kodierten Inhalt verändern kann; das Symbol vor der Verwendung prüfen',
     lossFileStorage: 'Der Dateispeicher des Druckers ist aus dem Browser nicht zugänglich; das Feld wird vollständig übersprungen',
     lossPrinterStorage: 'Speichert Daten auf dem physischen Drucker; für das Etikettendesign auf der Zeichenfläche nicht relevant',
+    lossFnPartialInsert: 'Eine Teil-Einfügung eines Feldes hat hier keine editierbare Entsprechung; das Design behält das gesamte Feld, wodurch ein erneuter Export mehr druckt als die Quelle. Feld vor der Verwendung prüfen.',
     browserLimitTitle: 'Übersprungen: erfordert Drucker-Hardware',
     replayRiskTitle: 'Drucker-Setup-Befehl: wird beim Export/Druck auf dem Drucker ausgeführt',
     deviceActionTitle: 'Drucker-Geräteaktion: wird beim Export/Druck auf dem Drucker ausgeführt',

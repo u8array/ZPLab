@@ -896,6 +896,7 @@ const sk = {
     lossQrFdMode: 'Časti tohto poľa QR nemajú editovateľný ekvivalent a pri novom exporte štítka sa prepíšu, čo môže zmeniť zakódovaný obsah; pred použitím skontrolujte symbol',
     lossFileStorage: 'Z prehliadača nie je možné pristupovať k úložisku súborov tlačiarne; pole sa úplne preskočí',
     lossPrinterStorage: 'Ukladá dáta do fyzickej tlačiarne; nemá vplyv na návrh štítku na plátne',
+    lossFnPartialInsert: 'Čiastočné vloženie poľa tu nemá upraviteľný ekvivalent; návrh si ponecháva celé pole, takže opakovaný export vytlačí viac než zdroj. Pred použitím pole skontrolujte.',
     browserLimitTitle: 'Preskočené: vyžaduje hardvér tlačiarne',
     replayRiskTitle: 'Nastavovací príkaz tlačiarne: spustí sa na tlačiarni pri exporte/tlači',
     deviceActionTitle: 'Akcia zariadenia tlačiarne: spustí sa na tlačiarni pri exporte/tlači',

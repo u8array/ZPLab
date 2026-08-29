@@ -1080,6 +1080,40 @@ describe('parseZPL — ^BQ ^BY height pinning', () => {
   });
 });
 
+describe('parseZPL — ^FE substring insertion', () => {
+  // The substring form collapses to the whole field (see applyFnEmbeds).
+  it('reports a partial ^FN insert the model cannot carry', () => {
+    const { objects, findings } = parseSingle(
+      '^XA^FN2^FDABCDEFGHIJ^FS^FE#^FO10,10^A0N,30,0^FD#2,f,1,5#^FS^XZ', 8);
+    expect(props(objects[0]).content).toBe('«field_2»');
+    expect(commandsOf({ findings }, 'partial')).toContain('^FE');
+  });
+
+  it('lowers regen safety: the export widens the insert to the whole field', () => {
+    // The slot is field-bound, so the only lossy cause left is the insert.
+    const r = parseSingle(
+      '^XA^FO10,200^A0N,30,0^FN2^FDABCDEFGHIJ^FS^FO10,10^A0N,30,0^FE#^FD#2,f,1,5#^FS^XZ', 8,
+      { captureOverlay: true });
+    expect(r.overlay?.regenSafe).toBe(false);
+    expect(r.findings.find((f) => f.kind === 'lossyEdit')?.command).toContain('embed');
+  });
+
+  it('lowers regen safety for a leading-zero embed the emit normalises', () => {
+    const r = parseSingle(
+      '^XA^FO10,200^A0N,30,0^FN2^FDABCDEF^FS^FO10,10^A0N,30,0^FE#^FD#02#^FS^XZ', 8,
+      { captureOverlay: true });
+    expect(r.overlay?.regenSafe).toBe(false);
+    // No information lost (the whole field still binds): partial stays quiet.
+    expect(commandsOf({ findings: r.findings }, 'partial')).not.toContain('^FE');
+  });
+
+  it('keeps the whole-field form silent', () => {
+    const { findings } = parseSingle(
+      '^XA^FN2^FDABCDEFGHIJ^FS^FE#^FO10,10^A0N,30,0^FD#2#^FS^XZ', 8);
+    expect(commandsOf({ findings }, 'partial')).not.toContain('^FE');
+  });
+});
+
 describe('parseZPL — ^BX DataMatrix', () => {
   it('creates a datamatrix object', () => {
     const { objects } = parseSingle('^XA^FO0,0^BXN,8,200^FD1234567890^FS^XZ', 8);

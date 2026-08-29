@@ -896,6 +896,7 @@ const zhHant = {
     lossQrFdMode: '此 QR 欄位的部分內容沒有可編輯的對應項目，再次匯出標籤時會被重寫，可能改變編碼內容；使用前請檢查符號',
     lossFileStorage: '瀏覽器無法存取印表機的檔案儲存空間；此欄位會被完全略過',
     lossPrinterStorage: '將資料儲存在實體印表機上；與畫布上的標籤設計無關',
+    lossFnPartialInsert: '部分欄位插入在此處沒有可編輯的對應項；設計會保留整個欄位，因此重新匯出會列印出比原始內容更多的內容。使用前請檢查該欄位。',
     browserLimitTitle: '已略過：需要印表機硬體',
     replayRiskTitle: '印表機設定指令：匯出/列印時會在印表機上執行',
     deviceActionTitle: '印表機裝置動作：匯出/列印時會在印表機上執行',

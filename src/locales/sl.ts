@@ -896,6 +896,7 @@ const sl = {
     lossQrFdMode: 'Nekaterih delov tega polja QR ni mogoče urejati in se ob novem izvozu nalepke znova zapišejo, kar lahko spremeni kodirano vsebino; pred uporabo preverite simbol',
     lossFileStorage: 'Do shrambe datotek tiskalnika iz brskalnika ni mogoče dostopati; polje je popolnoma preskočeno',
     lossPrinterStorage: 'Podatke shrani na fizični tiskalnik; ni pomembno za dizajn nalepke na platnu',
+    lossFnPartialInsert: 'Delni vstavek polja tukaj nima urejevalne ustreznice; zasnova ohrani celotno polje, zato ponovni izvoz natisne več kot izvirnik. Pred uporabo preverite polje.',
     browserLimitTitle: 'Preskočeno: zahteva strojno opremo tiskalnika',
     replayRiskTitle: 'Nastavitveni ukaz tiskalnika: izvede se na tiskalniku ob izvozu/tiskanju',
     deviceActionTitle: 'Dejanje naprave tiskalnika: izvede se na tiskalniku ob izvozu/tiskanju',

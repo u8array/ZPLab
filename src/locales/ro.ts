@@ -896,6 +896,7 @@ const ro = {
     lossQrFdMode: 'Unele părți ale acestui câmp QR nu au un echivalent editabil și sunt rescrise la un nou export al etichetei, ceea ce poate modifica conținutul codificat; verificați simbolul înainte de utilizare',
     lossFileStorage: 'Stocarea de fișiere a imprimantei nu poate fi accesată dintr-un browser; câmpul este omis complet',
     lossPrinterStorage: 'Stochează date pe imprimanta fizică; nu este relevant pentru designul etichetei pe suprafața de lucru',
+    lossFnPartialInsert: 'O inserare parțială de câmp nu are aici un echivalent editabil; designul păstrează întregul câmp, astfel încât o nouă exportare imprimă mai mult decât sursa. Verificați câmpul înainte de utilizare.',
     browserLimitTitle: 'Omis: necesită hardware de imprimantă',
     replayRiskTitle: 'Comandă de configurare a imprimantei: rulează pe imprimantă la export/tipărire',
     deviceActionTitle: 'Acțiune a dispozitivului imprimantei: rulează pe imprimantă la export/tipărire',

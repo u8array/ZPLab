@@ -896,6 +896,7 @@ const it = {
     lossQrFdMode: "Alcune parti di questo campo QR non hanno un equivalente modificabile e vengono riscritte quando l'etichetta viene esportata di nuovo, il che può modificare il contenuto codificato; controlla il simbolo prima di utilizzarlo",
     lossFileStorage: "Non è possibile accedere all'archiviazione file della stampante da un browser; il campo viene saltato interamente",
     lossPrinterStorage: "Memorizza i dati sulla stampante fisica; non rilevante per il design dell'etichetta sulla superficie di disegno",
+    lossFnPartialInsert: "Un inserimento parziale di campo non ha un equivalente modificabile qui; il design mantiene l'intero campo, quindi una nuova esportazione stampa più di quanto stampava l'originale. Verificare il campo prima dell'uso.",
     browserLimitTitle: 'Saltato: richiede hardware della stampante',
     replayRiskTitle: 'Comando di setup stampante: viene eseguito sulla stampante in esportazione/stampa',
     deviceActionTitle: 'Azione del dispositivo stampante: viene eseguita sulla stampante in esportazione/stampa',

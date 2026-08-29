@@ -9,7 +9,7 @@ import {
 import { isGroup, type LabelObject } from "../../types/Group";
 import { isModeDLeaf } from "../gs1ModeDFns";
 import { getObjectStringContent } from "../variableBinding";
-import { embedsToMarkers, hasTemplateMarkers } from "../fnTemplate";
+import { embedPattern, embedsToMarkers, hasTemplateMarkers } from "../fnTemplate";
 import { tokensToMarkers } from "../fcTemplate";
 import { controlBytesToMarkers } from "../../types/controlKey";
 import { code128DecodeLiterals, code128FdToBytes } from "../code128Subset";
@@ -169,14 +169,20 @@ export function createFlushField(
   // Bootstrap Variables for FNs referenced by embeds before marker substitution.
   const applyFnEmbeds = (payload: string): string => {
     // Closed `<e><n><e>` only; a naked `<e><digits>` would dangle phantom Variables.
-    const e = s.format.embedChar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const embedRe = new RegExp(`${e}(\\d+)(?:,[^${e}]*)?${e}`, "g");
+    const embedRe = embedPattern(s.format.embedChar);
     let m: RegExpExecArray | null;
     const seen = new Set<number>();
     while ((m = embedRe.exec(payload)) !== null) {
       if (!m[1]) continue;
       const n = parseInt(m[1], 10);
       if (n < FN_NUMBER_MIN || n > FN_NUMBER_MAX) continue;
+      // A range insert takes PART of the slot; the model has no range
+      // vocabulary, so the collapse loses information. Bytes compare against
+      // the canonical emit form, so any variance counts (#02# included).
+      if (m[2]) s.result.partialCmds.add("^FE");
+      if (m[0] !== `${s.format.embedChar}${n}${s.format.embedChar}`) {
+        s.fdRegenLossy ??= REGEN_LOSSY_REASONS.fnEmbed;
+      }
       seen.add(n);
     }
     if (seen.size === 0) return payload;

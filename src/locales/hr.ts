@@ -896,6 +896,7 @@ const hr = {
     lossQrFdMode: 'Pojedine dijelove ovog QR polja nije moguće uređivati te se pri novom izvozu naljepnice ponovno zapisuju, što može promijeniti kodirani sadržaj; prije upotrebe provjerite simbol',
     lossFileStorage: 'Pohrani datoteka pisača nije moguće pristupiti iz preglednika; polje se u potpunosti preskače',
     lossPrinterStorage: 'Pohranjuje podatke na fizički pisač; nije relevantno za dizajn naljepnice na platnu',
+    lossFnPartialInsert: 'Djelomično umetanje polja ovdje nema uređivi ekvivalent; dizajn zadržava cijelo polje, pa ponovni izvoz ispisuje više nego izvornik. Provjerite polje prije upotrebe.',
     browserLimitTitle: 'Preskočeno: zahtijeva hardver pisača',
     replayRiskTitle: 'Naredba za postavljanje pisača: izvodi se na pisaču pri izvozu/ispisu',
     deviceActionTitle: 'Radnja uređaja pisača: izvodi se na pisaču pri izvozu/ispisu',

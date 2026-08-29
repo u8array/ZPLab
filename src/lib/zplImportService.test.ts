@@ -123,6 +123,14 @@ describe('importZplText - partial-loss wording', () => {
     expect(detail).not.toBe(fallbackTranslations.importReport.partialFallback);
   });
 
+  it('gives the partial ^FN insert its own wording, not the generic fallback', () => {
+    const r = importZplText('^XA^FN2^FDABCDEF^FS^FE#^FO10,10^A0N,30,0^FD#2,f,1,3#^FS^XZ', 8);
+    const finding = r.report.findings.find((f) => f.kind === 'partial' && f.command === '^FE');
+    expect(finding).toBeDefined();
+    const { detail } = describeFinding(finding!, fallbackTranslations.importReport);
+    expect(detail).toBe(fallbackTranslations.importReport.lossFnPartialInsert);
+    expect(detail).not.toBe(fallbackTranslations.importReport.partialFallback);
+  });
 });
 
 describe('importZplText - wrapper-less paste', () => {
