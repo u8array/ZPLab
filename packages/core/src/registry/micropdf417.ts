@@ -115,8 +115,8 @@ export const micropdf417: ObjectTypeCore<MicroPdf417Props> = {
     const p = obj.props;
     // ^BF{orientation},{rowHeight},{mode}
     return [
-      `^BY${p.moduleWidth}`,
       fieldPosZ(obj),
+      `^BY${p.moduleWidth}`,
       `^BF${p.rotation},${p.rowHeight},${p.mode}`,
       fdFieldFor(p.content, ctx, undefined, undefined, CONTROL_CHARS),
     ]

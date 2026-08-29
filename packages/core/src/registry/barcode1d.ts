@@ -244,8 +244,10 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
             // the element-string payload).
             config.controlChars === true && !p.gs1);
       return [
-        byCmd,
         fieldPos1d(obj, ctx),
+        // In-span (after the field opener) so the overlay's bare-^BY check sees
+        // it and an own export round-trips regenSafe; mirrors the QR emitter.
+        byCmd,
         config.zplCommand(p),
         fieldData,
       ].filter(Boolean).join('');

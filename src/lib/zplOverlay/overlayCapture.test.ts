@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { generateZPL } from "@zplab/core/lib/zplGenerator";
 import { overlayText, type BlockOverlay } from "@zplab/core/lib/zplOverlay/overlay";
 import { parseSingle } from "../../test/helpers";
+import { ObjectRegistry } from "@zplab/core/registry";
 
 /** Parse with overlay capture and assert the load-bearing invariant:
  *  segment texts always concatenate back to the source. */
@@ -129,6 +130,28 @@ describe("parseZPL overlay capture", () => {
   it("flags a ^LR block as not regenSafe (raw ^LR would double-reverse a regen)", () => {
     const o = captured("^XA^LRY^FO10,10^A0N,30,30^FDx^FS^XZ");
     expect(o.regenSafe).toBe(false);
+  });
+
+  // Every reordered family pinned: reverting one emitter to the pre-commit
+  // ^BY-first shape turns exactly its row red.
+  it.each([
+    ["code128", "123"],
+    ["code49", "AB12"],
+    ["tlc39", "123456,ABC"],
+    ["codablock", "AB12"],
+    ["pdf417", "AB12"],
+    ["micropdf417", "AB12"],
+    ["gs1databar", "0101234567890128"],
+  ] as const)("round-trips an own %s export regenSafe (in-span ^BY)", (type, content) => {
+    // Registry defaults, so a row cannot omit a required prop.
+    const props = { ...ObjectRegistry[type].defaultProps, content };
+    const out = generateZPL(
+      { widthMm: 100, heightMm: 150, dpmm: 8 } as never,
+      [{ id: "b1", type, x: 10, y: 10, props }] as never,
+      [],
+    );
+    expect(out).not.toContain("undefined");
+    expect(captured(out).regenSafe).toBe(true);
   });
 
   it("flags a bare barcode (^BY outside the field) as not regenSafe", () => {

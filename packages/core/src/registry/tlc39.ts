@@ -54,8 +54,8 @@ export const tlc39: ObjectTypeCore<Tlc39Props> = {
   toZPL: (obj, ctx) => {
     const p = obj.props;
     return [
-      `^BY${p.moduleWidth}`,
       fieldPosZ(obj),
+      `^BY${p.moduleWidth}`,
       `^BT${p.rotation},${p.moduleWidth},${p.wideRatio},${p.height},${p.microPdfModuleWidth},${p.microPdfRowHeight}`,
       fdFieldFor(p.content, ctx),
     ]

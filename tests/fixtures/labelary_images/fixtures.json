@@ -2,7 +2,7 @@
   "test_cases": [
     {
       "id": "barcode_code128_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BCN,100,N,N,N^FD123456^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BCN,100,N,N,N^FD123456^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -13,7 +13,7 @@
     },
     {
       "id": "barcode_code128_small_no_text",
-      "zpl_input": "^XA^BY1^FO100,100^BCN,50,N,N,N^FDTEST^FS^XZ",
+      "zpl_input": "^XA^FO100,100^BY1^BCN,50,N,N,N^FDTEST^FS^XZ",
       "expected_bounds": {
         "x": 100,
         "y": 100,
@@ -24,7 +24,7 @@
     },
     {
       "id": "barcode_code128_large_check_digit",
-      "zpl_input": "^XA^BY3^FO20,20^BCN,150,N,N,Y^FD98765^FS^XZ",
+      "zpl_input": "^XA^FO20,20^BY3^BCN,150,N,N,Y^FD98765^FS^XZ",
       "expected_bounds": {
         "x": 20,
         "y": 20,
@@ -57,7 +57,7 @@
     },
     {
       "id": "barcode_ean13_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BEN,100,N,N^FD123456789012^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BEN,100,N,N^FD123456789012^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -79,7 +79,7 @@
     },
     {
       "id": "barcode_code39_standard",
-      "zpl_input": "^XA^BY2^FO50,50^B3N,N,100,N,N^FDCODE39^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B3N,N,100,N,N^FDCODE39^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -90,7 +90,7 @@
     },
     {
       "id": "barcode_pdf417_standard",
-      "zpl_input": "^XA^BY2^FO50,50^B7N,10,1,4,,,^FD1234567890^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B7N,10,1,4,,,^FD1234567890^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -101,7 +101,7 @@
     },
     {
       "id": "barcode_upca_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BUN,100,N,N,Y^FD01234567890^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BUN,100,N,N,Y^FD01234567890^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -112,7 +112,7 @@
     },
     {
       "id": "barcode_ean8_standard",
-      "zpl_input": "^XA^BY2^FO50,50^B8N,100,N,N^FD1234567^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B8N,100,N,N^FD1234567^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -134,7 +134,7 @@
     },
     {
       "id": "barcode_interleaved2of5_standard",
-      "zpl_input": "^XA^BY2^FO50,50^B2N,100,N,N,N^FD12345678^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B2N,100,N,N,N^FD12345678^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -145,7 +145,7 @@
     },
     {
       "id": "barcode_micropdf417_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BFN,2,0^FD1234^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BFN,2,0^FD1234^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -156,7 +156,7 @@
     },
     {
       "id": "barcode_codablock_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BBN,2,Y,6,,F^FD1234567890^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BBN,2,Y,6,,F^FD1234567890^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -167,7 +167,7 @@
     },
     {
       "id": "barcode_pdf417_auto",
-      "zpl_input": "^XA^BY2^FO50,50^B7N,10,1,0,,,^FD1234567890^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B7N,10,1,0,,,^FD1234567890^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -178,7 +178,7 @@
     },
     {
       "id": "barcode_pdf417_auto_ecc",
-      "zpl_input": "^XA^BY2^FO50,50^B7N,4,0,0,,,^FD1234567890^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B7N,4,0,0,,,^FD1234567890^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -189,7 +189,7 @@
     },
     {
       "id": "barcode_code93_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BAN,100,N,N,N^FDCODE93^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BAN,100,N,N,N^FDCODE93^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -200,7 +200,7 @@
     },
     {
       "id": "barcode_code11_standard",
-      "zpl_input": "^XA^BY2^FO50,50^B1N,N,100,N,N^FD12345^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B1N,N,100,N,N^FD12345^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -211,7 +211,7 @@
     },
     {
       "id": "barcode_industrial2of5_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BIN,100,N,N^FD12345678^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BIN,100,N,N^FD12345678^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -222,7 +222,7 @@
     },
     {
       "id": "barcode_standard2of5_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BJN,100,N,N^FD12345678^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BJN,100,N,N^FD12345678^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -233,7 +233,7 @@
     },
     {
       "id": "barcode_codabar_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BKN,N,100,N,N^FDA12345A^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BKN,N,100,N,N^FDA12345A^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -244,7 +244,7 @@
     },
     {
       "id": "barcode_logmars_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BLN,100,N^FDLOGMARS1^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BLN,100,N^FDLOGMARS1^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -255,7 +255,7 @@
     },
     {
       "id": "barcode_logmars_with_text",
-      "zpl_input": "^XA^BY2^FO50,50^BLN,100,Y^FDLOGMARS1^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BLN,100,Y^FDLOGMARS1^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -266,7 +266,7 @@
     },
     {
       "id": "barcode_msi_standard",
-      "zpl_input": "^XA^BY2,2^FO50,50^BMN,A,100,N,N^FD12345678^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2,2^BMN,A,100,N,N^FD12345678^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -277,7 +277,7 @@
     },
     {
       "id": "barcode_plessey_standard",
-      "zpl_input": "^XA^BY2,2^FO50,50^BPN,N,100,N,N^FD12345678^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2,2^BPN,N,100,N,N^FD12345678^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -288,7 +288,7 @@
     },
     {
       "id": "barcode_planet_standard",
-      "zpl_input": "^XA^BY2^FO50,50^B5N,100,N,N^FD12345678901^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B5N,100,N,N^FD12345678901^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -299,7 +299,7 @@
     },
     {
       "id": "barcode_postal_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BZN,100,N,N^FD12345^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BZN,100,N,N^FD12345^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -310,7 +310,7 @@
     },
     {
       "id": "barcode_gs1databar_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BRN,1,2,2,100^FD0112345678901^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BRN,1,2,2,100^FD0112345678901^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -321,7 +321,7 @@
     },
     {
       "id": "barcode_upce_standard",
-      "zpl_input": "^XA^BY2^FO50,50^B9N,100,N,N^FD0012345^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B9N,100,N,N^FD0012345^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -332,7 +332,7 @@
     },
     {
       "id": "barcode_code128_rot_R",
-      "zpl_input": "^XA^BY2^FO100,100^BCR,100,N,N,N^FD123456^FS^XZ",
+      "zpl_input": "^XA^FO100,100^BY2^BCR,100,N,N,N^FD123456^FS^XZ",
       "expected_bounds": {
         "x": 100,
         "y": 100,
@@ -343,7 +343,7 @@
     },
     {
       "id": "barcode_code128_rot_I",
-      "zpl_input": "^XA^BY2^FO100,100^BCI,100,N,N,N^FD123456^FS^XZ",
+      "zpl_input": "^XA^FO100,100^BY2^BCI,100,N,N,N^FD123456^FS^XZ",
       "expected_bounds": {
         "x": 100,
         "y": 100,
@@ -354,7 +354,7 @@
     },
     {
       "id": "barcode_code128_rot_B",
-      "zpl_input": "^XA^BY2^FO100,100^BCB,100,N,N,N^FD123456^FS^XZ",
+      "zpl_input": "^XA^FO100,100^BY2^BCB,100,N,N,N^FD123456^FS^XZ",
       "expected_bounds": {
         "x": 100,
         "y": 100,
@@ -376,7 +376,7 @@
     },
     {
       "id": "barcode_code39_rot_R",
-      "zpl_input": "^XA^BY2^FO100,100^B3R,N,100,N,N^FDCODE39^FS^XZ",
+      "zpl_input": "^XA^FO100,100^BY2^B3R,N,100,N,N^FDCODE39^FS^XZ",
       "expected_bounds": {
         "x": 100,
         "y": 100,
@@ -387,7 +387,7 @@
     },
     {
       "id": "barcode_code39_rot_B",
-      "zpl_input": "^XA^BY2^FO100,100^B3B,N,100,N,N^FDCODE39^FS^XZ",
+      "zpl_input": "^XA^FO100,100^BY2^B3B,N,100,N,N^FDCODE39^FS^XZ",
       "expected_bounds": {
         "x": 100,
         "y": 100,
@@ -398,7 +398,7 @@
     },
     {
       "id": "barcode_ean13_rot_R",
-      "zpl_input": "^XA^BY2^FO100,100^BER,100,N,N^FD123456789012^FS^XZ",
+      "zpl_input": "^XA^FO100,100^BY2^BER,100,N,N^FD123456789012^FS^XZ",
       "expected_bounds": {
         "x": 87,
         "y": 100,
@@ -409,7 +409,7 @@
     },
     {
       "id": "barcode_ean13_rot_B",
-      "zpl_input": "^XA^BY2^FO100,100^BEB,100,N,N^FD123456789012^FS^XZ",
+      "zpl_input": "^XA^FO100,100^BY2^BEB,100,N,N^FD123456789012^FS^XZ",
       "expected_bounds": {
         "x": 100,
         "y": 100,
@@ -420,7 +420,7 @@
     },
     {
       "id": "barcode_gs1databar_truncated",
-      "zpl_input": "^XA^BY2^FO50,50^BRN,2,2,2,100^FD0112345678901^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BRN,2,2,2,100^FD0112345678901^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -431,7 +431,7 @@
     },
     {
       "id": "barcode_gs1databar_stacked",
-      "zpl_input": "^XA^BY2^FO50,50^BRN,3,2,2,100^FD0112345678901^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BRN,3,2,2,100^FD0112345678901^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -442,7 +442,7 @@
     },
     {
       "id": "barcode_gs1databar_stacked_omni",
-      "zpl_input": "^XA^BY2^FO50,50^BRN,4,2,2,100^FD0112345678901^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BRN,4,2,2,100^FD0112345678901^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -453,7 +453,7 @@
     },
     {
       "id": "barcode_gs1databar_limited",
-      "zpl_input": "^XA^BY2^FO50,50^BRN,5,2,2,100^FD0112345678901^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BRN,5,2,2,100^FD0112345678901^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -464,7 +464,7 @@
     },
     {
       "id": "barcode_gs1databar_expanded",
-      "zpl_input": "^XA^BY2^FO50,50^BRN,6,2,2,100^FD0112345678901231^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BRN,6,2,2,100^FD0112345678901231^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -475,7 +475,7 @@
     },
     {
       "id": "barcode_upcean_supp5_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BSN,80,N^FD51999^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BSN,80,N^FD51999^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -486,7 +486,7 @@
     },
     {
       "id": "barcode_upcean_supp2_standard",
-      "zpl_input": "^XA^BY2^FO50,50^BSN,80,N^FD42^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^BSN,80,N^FD42^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -497,7 +497,7 @@
     },
     {
       "id": "barcode_code128_ft_n",
-      "zpl_input": "^XA^BY2^FT300,300^BCN,100,N,N,N^FD123456^FS^XZ",
+      "zpl_input": "^XA^FT300,300^BY2^BCN,100,N,N,N^FD123456^FS^XZ",
       "expected_bounds": {
         "x": 300,
         "y": 200,
@@ -508,7 +508,7 @@
     },
     {
       "id": "barcode_code128_ft_r",
-      "zpl_input": "^XA^BY2^FT300,300^BCR,100,N,N,N^FD123456^FS^XZ",
+      "zpl_input": "^XA^FT300,300^BY2^BCR,100,N,N,N^FD123456^FS^XZ",
       "expected_bounds": {
         "x": 300,
         "y": 300,
@@ -519,7 +519,7 @@
     },
     {
       "id": "barcode_code128_ft_i",
-      "zpl_input": "^XA^BY2^FT300,300^BCI,100,N,N,N^FD123456^FS^XZ",
+      "zpl_input": "^XA^FT300,300^BY2^BCI,100,N,N,N^FD123456^FS^XZ",
       "expected_bounds": {
         "x": 98,
         "y": 300,
@@ -530,7 +530,7 @@
     },
     {
       "id": "barcode_code128_ft_b",
-      "zpl_input": "^XA^BY2^FT300,300^BCB,100,N,N,N^FD123456^FS^XZ",
+      "zpl_input": "^XA^FT300,300^BY2^BCB,100,N,N,N^FD123456^FS^XZ",
       "expected_bounds": {
         "x": 200,
         "y": 98,
@@ -541,7 +541,7 @@
     },
     {
       "id": "barcode_pdf417_auto_long60",
-      "zpl_input": "^XA^BY2^FO50,50^B7N,10,0,0,,,^FDABCDEFGHIJ0123456789ABCDEFGHIJ0123456789ABCDEFGHIJ0123456789^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B7N,10,0,0,,,^FDABCDEFGHIJ0123456789ABCDEFGHIJ0123456789ABCDEFGHIJ0123456789^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -552,7 +552,7 @@
     },
     {
       "id": "barcode_pdf417_auto_long90_sec2",
-      "zpl_input": "^XA^BY2^FO50,50^B7N,10,2,0,,,^FDABCDEFGHIJ0123456789ABCDEFGHIJ0123456789ABCDEFGHIJ0123456789ABCDEFGHIJ0123456789ABCDEFGHIJ^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B7N,10,2,0,,,^FDABCDEFGHIJ0123456789ABCDEFGHIJ0123456789ABCDEFGHIJ0123456789ABCDEFGHIJ0123456789ABCDEFGHIJ^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
@@ -563,7 +563,7 @@
     },
     {
       "id": "barcode_pdf417_auto_long120",
-      "zpl_input": "^XA^BY2^FO50,50^B7N,10,0,0,,,^FD012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789^FS^XZ",
+      "zpl_input": "^XA^FO50,50^BY2^B7N,10,0,0,,,^FD012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789^FS^XZ",
       "expected_bounds": {
         "x": 50,
         "y": 50,
