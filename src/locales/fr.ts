@@ -896,6 +896,7 @@ const fr = {
     lossQrFdMode: "Certaines parties de ce champ QR n'ont pas d'équivalent modifiable et sont réécrites lors d'un nouvel export de l'étiquette, ce qui peut modifier le contenu encodé ; vérifiez le symbole avant de l'utiliser",
     lossFileStorage: "Le stockage de fichiers de l'imprimante n'est pas accessible depuis un navigateur ; le champ est entièrement ignoré",
     lossPrinterStorage: "Stocke des données sur l'imprimante physique ; sans rapport avec la conception de l'étiquette sur le canevas",
+    lossFnPartialInsert: "Une insertion partielle de champ n'a pas d'équivalent modifiable ici ; la conception conserve le champ entier, si bien qu'une nouvelle exportation imprime plus que la source. Vérifiez le champ avant de l'utiliser.",
     browserLimitTitle: "Ignoré : nécessite le matériel de l'imprimante",
     replayRiskTitle: "Commande de configuration imprimante : s'exécute sur l'imprimante à l'export/impression",
     deviceActionTitle: "Action de l'imprimante : s'exécute sur l'imprimante à l'export/impression",

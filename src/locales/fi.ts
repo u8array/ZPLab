@@ -896,6 +896,7 @@ const fi = {
     lossQrFdMode: 'Osa tämän QR-kentän tiedoista ei ole muokattavissa, ja se kirjoitetaan uudelleen etiketin uudessa viennissä, mikä voi muuttaa koodattua sisältöä; tarkista symboli ennen käyttöä',
     lossFileStorage: 'Tulostimen tiedostotallennukseen ei pääse selaimesta; kenttä ohitetaan kokonaan',
     lossPrinterStorage: 'Tallentaa tiedot fyysiselle tulostimelle; ei liity piirtoalueen rakenteeseen',
+    lossFnPartialInsert: 'Osittaisella kentän lisäyksellä ei ole tässä muokattavaa vastinetta; suunnitelma säilyttää koko kentän, joten uudelleenvienti tulostaa enemmän kuin alkuperäinen. Tarkista kenttä ennen käyttöä.',
     browserLimitTitle: 'Ohitettu: vaatii tulostimen laitteiston',
     replayRiskTitle: 'Tulostimen asetuskomento: suoritetaan tulostimella vietäessä/tulostettaessa',
     deviceActionTitle: 'Tulostimen laitetoiminto: suoritetaan tulostimella vietäessä/tulostettaessa',

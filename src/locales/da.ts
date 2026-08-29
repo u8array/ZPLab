@@ -896,6 +896,7 @@ const da = {
     lossQrFdMode: 'Dele af dette QR-felt har intet redigerbart modstykke og skrives om ved en ny eksport af etiketten, hvilket kan ændre det kodede indhold; kontrollér symbolet før brug',
     lossFileStorage: 'Printerens fillager kan ikke tilgås fra en browser; feltet springes helt over',
     lossPrinterStorage: 'Gemmer data på den fysiske printer; ikke relevant for etiketdesign på lærredet',
+    lossFnPartialInsert: 'En delvis felt-indsættelse har ingen redigerbar tilsvarende form her; designet beholder hele feltet, så en gen-eksport udskriver mere end kilden gjorde. Kontrollér feltet, før det bruges.',
     browserLimitTitle: 'Sprunget over: kræver printerhardware',
     replayRiskTitle: 'Printer-opsætningskommando: køres på printeren ved eksport/print',
     deviceActionTitle: 'Printerens enhedshandling: køres på printeren ved eksport/print',

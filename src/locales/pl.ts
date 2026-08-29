@@ -896,6 +896,7 @@ const pl = {
     lossQrFdMode: 'Części tego pola QR nie mają edytowalnego odpowiednika i są zapisywane na nowo przy ponownym eksporcie etykiety, co może zmienić zakodowaną treść; przed użyciem sprawdź symbol',
     lossFileStorage: 'Nie ma dostępu do pamięci plików drukarki z przeglądarki; pole jest całkowicie pomijane',
     lossPrinterStorage: 'Zapisuje dane na fizycznej drukarce; nieistotne dla projektu etykiety na płótnie',
+    lossFnPartialInsert: 'Częściowe wstawienie pola nie ma tu edytowalnego odpowiednika; projekt zachowuje całe pole, więc ponowny eksport wydrukuje więcej niż oryginał. Sprawdź pole przed użyciem.',
     browserLimitTitle: 'Pominięto: wymaga sprzętu drukarki',
     replayRiskTitle: 'Polecenie konfiguracji drukarki: uruchamiane na drukarce przy eksporcie/drukowaniu',
     deviceActionTitle: 'Akcja urządzenia drukarki: uruchamiana na drukarce przy eksporcie/drukowaniu',

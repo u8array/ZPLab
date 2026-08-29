@@ -896,6 +896,7 @@ const es = {
     lossQrFdMode: 'Algunas partes de este campo QR no tienen un equivalente editable y se reescriben al volver a exportar la etiqueta, lo que puede cambiar el contenido codificado; compruebe el símbolo antes de utilizarlo',
     lossFileStorage: 'No se puede acceder al almacenamiento de archivos de la impresora desde un navegador; el campo se omite por completo',
     lossPrinterStorage: 'Almacena datos en la impresora física; no es relevante para el diseño de la etiqueta en el lienzo',
+    lossFnPartialInsert: 'Una inserción parcial de campo no tiene un equivalente editable aquí; el diseño conserva el campo completo, por lo que una nueva exportación imprime más de lo que imprimía el original. Verifique el campo antes de usarlo.',
     browserLimitTitle: 'Omitido: requiere hardware de impresora',
     replayRiskTitle: 'Comando de configuración de impresora: se ejecuta en la impresora al exportar/imprimir',
     deviceActionTitle: 'Acción del dispositivo de impresora: se ejecuta en la impresora al exportar/imprimir',

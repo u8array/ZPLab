@@ -42,6 +42,7 @@ export interface PendingReverseBg {
 export const REGEN_LOSSY_REASONS = {
   code128: "a Code 128 escape stream the export re-escapes",
   qr: "QR field data or settings the export normalises",
+  fnEmbed: "an ^FN embed form the export normalises",
 } as const;
 
 export type RegenLossyReason = (typeof REGEN_LOSSY_REASONS)[keyof typeof REGEN_LOSSY_REASONS];

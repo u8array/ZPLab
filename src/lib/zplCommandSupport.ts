@@ -22,7 +22,8 @@ export type ImportLossKey =
   | 'lossGfRawBinary'
   | 'lossQrFdMode'
   | 'lossFileStorage'
-  | 'lossPrinterStorage';
+  | 'lossPrinterStorage'
+  | 'lossFnPartialInsert';
 
 interface ZplCommandInfo {
   /** 2-character ZPL command code, uppercase, without the leading ^ or ~ */
@@ -61,7 +62,11 @@ const ZPL_COMMANDS: readonly ZplCommandInfo[] = [
   { cmd: 'FW', status: 'supported', description: 'Field orientation: sets default rotation for subsequent fields' },
   { cmd: 'FB', status: 'supported', description: 'Field block: multi-line text with word-wrap and justification' },
   { cmd: 'FC', status: 'supported', description: 'Field clock: redefines the clock chars used for inline date/time tokens inside ^FD. Tokens import as «clock:T» markers; canvas previews the current date, generator round-trips through ^FC + tokens.' },
-  { cmd: 'FE', status: 'supported', description: 'Field-number embed character: redefines the ^FN inline-embed delimiter (default #) used by ^FD. Imported embeds become «name» template markers; round-trips through generate.' },
+  {
+    cmd: 'FE', status: 'partial',
+    description: 'Field-number embed character: redefines the ^FN inline-embed delimiter (default #) used by ^FD. Imported embeds become «name» template markers; round-trips through generate.',
+    loss: 'lossFnPartialInsert',
+  },
   { cmd: 'FM', status: 'unsupported', description: 'Multiple field origin locations' },
   { cmd: 'FN', status: 'supported', description: 'Field number: variable field placeholder, lands in the Variables tab on import and emits as ^FN{slot} on export' },
   { cmd: 'FP', status: 'supported', description: 'Field parameter; sets character-by-character text direction (vertical CJK / reverse RTL layout)' },

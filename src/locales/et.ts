@@ -896,6 +896,7 @@ const et = {
     lossQrFdMode: 'Osal selle QR-välja andmetest pole redigeeritavat vastet ja need kirjutatakse etiketi uuel eksportimisel ümber, mis võib muuta kodeeritud sisu; kontrollige sümbolit enne kasutamist',
     lossFileStorage: 'Printeri failihoidlale ei pääse brauserist ligi; väli jäetakse täielikult vahele',
     lossPrinterStorage: 'Salvestab andmed füüsilisele printerile; ei ole seotud etiketi kujundusega lõuendil',
+    lossFnPartialInsert: 'Osalisel väljasisestusel pole siin redigeeritavat vastet; kujundus säilitab kogu välja, mistõttu uuesti eksportimisel prinditakse rohkem kui algallikas. Kontrollige välja enne kasutamist.',
     browserLimitTitle: 'Vahele jäetud: vajab printeri riistvara',
     replayRiskTitle: 'Printeri seadistuskäsk: käivitub printeril eksportimisel/printimisel',
     deviceActionTitle: 'Printeri seadmetoiming: käivitub printeril eksportimisel/printimisel',

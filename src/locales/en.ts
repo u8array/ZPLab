@@ -896,6 +896,7 @@ const en = {
     lossQrFdMode: 'Parts of this QR field have no editable equivalent and are rewritten when the label is exported again, which can change the encoded content; check the symbol before using it',
     lossFileStorage: 'Cannot access printer file storage from a browser; the field is skipped entirely',
     lossPrinterStorage: 'Stores data on the physical printer; not relevant for canvas label design',
+    lossFnPartialInsert: 'A partial-field insert has no editable equivalent here; the design carries the whole field, so a re-export prints more than the source did. Verify the field before use.',
     browserLimitTitle: 'Skipped: needs printer hardware',
     replayRiskTitle: 'Printer setup command: runs on the printer when exported/printed',
     deviceActionTitle: 'Printer device action: runs on the printer when exported/printed',

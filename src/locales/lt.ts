@@ -896,6 +896,7 @@ const lt = {
     lossQrFdMode: 'Dalis šio QR lauko duomenų neturi redaguojamo atitikmens ir iš naujo eksportuojant etiketę yra perrašomi, o tai gali pakeisti užkoduotą turinį; prieš naudodami patikrinkite simbolį',
     lossFileStorage: 'Prie spausdintuvo failų saugyklos negalima prisijungti iš naršyklės; laukas visiškai praleidžiamas',
     lossPrinterStorage: 'Saugo duomenis fiziniame spausdintuve; nesusiję su etiketės dizainu drobėje',
+    lossFnPartialInsert: 'Dalinis lauko įterpimas čia neturi redaguojamo atitikmens; dizainas išsaugo visą lauką, todėl pakartotinis eksportavimas išspausdina daugiau nei originalas. Prieš naudodami patikrinkite lauką.',
     browserLimitTitle: 'Praleista: reikalinga spausdintuvo aparatinė įranga',
     replayRiskTitle: 'Spausdintuvo nustatymo komanda: vykdoma spausdintuve eksportuojant/spausdinant',
     deviceActionTitle: 'Spausdintuvo įrenginio veiksmas: vykdomas spausdintuve eksportuojant/spausdinant',

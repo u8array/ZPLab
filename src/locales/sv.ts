@@ -896,6 +896,7 @@ const sv = {
     lossQrFdMode: 'Delar av det här QR-fältet saknar redigerbar motsvarighet och skrivs om vid en ny export av etiketten, vilket kan ändra det kodade innehållet; kontrollera symbolen före användning',
     lossFileStorage: 'Skrivarens fillagring går inte att komma åt från en webbläsare; fältet hoppas över helt',
     lossPrinterStorage: 'Lagrar data på den fysiska skrivaren; inte relevant för etikettdesignen på ritytan',
+    lossFnPartialInsert: 'En delvis fältinfogning har ingen redigerbar motsvarighet här; designen behåller hela fältet, så en ny export skriver ut mer än originalet gjorde. Kontrollera fältet före användning.',
     browserLimitTitle: 'Hoppades över: kräver skrivarhårdvara',
     replayRiskTitle: 'Skrivarinställningskommando: körs på skrivaren vid export/utskrift',
     deviceActionTitle: 'Skrivarens enhetsåtgärd: körs på skrivaren vid export/utskrift',

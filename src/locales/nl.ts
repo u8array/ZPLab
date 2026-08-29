@@ -896,6 +896,7 @@ const nl = {
     lossQrFdMode: 'Sommige delen van dit QR-veld hebben geen bewerkbaar equivalent en worden herschreven bij een nieuwe export van het label, wat de gecodeerde inhoud kan veranderen; controleer het symbool voordat u het gebruikt',
     lossFileStorage: 'De bestandsopslag van de printer is niet toegankelijk vanuit een browser; het veld wordt volledig overgeslagen',
     lossPrinterStorage: 'Slaat gegevens op de fysieke printer op; niet relevant voor het labelontwerp op het canvas',
+    lossFnPartialInsert: 'Een gedeeltelijke veldinvoeging heeft hier geen bewerkbaar equivalent; het ontwerp behoudt het hele veld, waardoor een nieuwe export meer afdrukt dan het origineel. Controleer het veld voor gebruik.',
     browserLimitTitle: 'Overgeslagen: vereist printerhardware',
     replayRiskTitle: 'Printer-setupopdracht: wordt op de printer uitgevoerd bij export/afdrukken',
     deviceActionTitle: 'Printer-apparaatactie: wordt op de printer uitgevoerd bij export/afdrukken',

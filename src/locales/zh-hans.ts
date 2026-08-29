@@ -896,6 +896,7 @@ const zhHans = {
     lossQrFdMode: '此 QR 字段的部分内容没有可编辑的对应项，再次导出标签时会被重写，可能改变编码内容；使用前请检查符号',
     lossFileStorage: '浏览器无法访问打印机的文件存储；该字段会被完全跳过',
     lossPrinterStorage: '将数据存储在实体打印机上；与画布上的标签设计无关',
+    lossFnPartialInsert: '部分字段插入在此处没有可编辑的对应项；设计会保留整个字段，因此重新导出会打印出比原始内容更多的内容。使用前请检查该字段。',
     browserLimitTitle: '已跳过：需要打印机硬件',
     replayRiskTitle: '打印机设置命令：导出/打印时会在打印机上执行',
     deviceActionTitle: '打印机设备操作：导出/打印时会在打印机上执行',

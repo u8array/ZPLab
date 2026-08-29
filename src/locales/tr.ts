@@ -896,6 +896,7 @@ const tr = {
     lossQrFdMode: 'Bu QR alanının bazı bölümlerinin düzenlenebilir bir karşılığı yoktur ve etiket yeniden dışa aktarılırken yeniden yazılır, bu da kodlanmış içeriği değiştirebilir; kullanmadan önce sembolü kontrol edin',
     lossFileStorage: 'Yazıcının dosya deposuna tarayıcıdan erişilemez; alan tamamen atlanır',
     lossPrinterStorage: 'Verileri fiziksel yazıcıda saklar; tuval üzerindeki etiket tasarımıyla ilgisi yoktur',
+    lossFnPartialInsert: 'Kısmi alan eklemenin burada düzenlenebilir bir karşılığı yoktur; tasarım alanın tamamını korur, bu nedenle yeniden dışa aktarma kaynaktan daha fazlasını yazdırır. Kullanmadan önce alanı kontrol edin.',
     browserLimitTitle: 'Atlandı: yazıcı donanımı gerekir',
     replayRiskTitle: 'Yazıcı kurulum komutu: dışa aktarıldığında/yazdırıldığında yazıcıda çalışır',
     deviceActionTitle: 'Yazıcı cihaz eylemi: dışa aktarıldığında/yazdırıldığında yazıcıda çalışır',

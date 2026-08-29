@@ -896,6 +896,7 @@ const hu = {
     lossQrFdMode: 'E QR-mező egyes részeinek nincs szerkeszthető megfelelője, és a címke újbóli exportálásakor újraíródnak, ami megváltoztathatja a kódolt tartalmat; használat előtt ellenőrizze a szimbólumot',
     lossFileStorage: 'A nyomtató fájltárolója böngészőből nem érhető el; a mező teljesen kimarad',
     lossPrinterStorage: 'Az adatokat a fizikai nyomtatón tárolja; a vászon címketervezése szempontjából nem releváns',
+    lossFnPartialInsert: 'A részleges mezőbeszúrásnak itt nincs szerkeszthető megfelelője; a terv megtartja a teljes mezőt, így az ismételt exportálás többet nyomtat, mint az eredeti. Használat előtt ellenőrizze a mezőt.',
     browserLimitTitle: 'Kihagyva: nyomtató hardver szükséges',
     replayRiskTitle: 'Nyomtatóbeállító parancs: exportáláskor/nyomtatáskor lefut a nyomtatón',
     deviceActionTitle: 'Nyomtató eszközművelet: exportáláskor/nyomtatáskor lefut a nyomtatón',
