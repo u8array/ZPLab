@@ -106,18 +106,17 @@ describe("setup commands in the buffer", () => {
   });
 });
 
-describe("a value-only edit of the app's own export applies without a dialog", () => {
-  it("carries no lossyEdit caveat for the generator's ^BY-before-^FO shape", () => {
-    // 1D barcode + template field: the generator's own emit shape marks the
-    // block non-regen-safe on re-import; that caveat is about future canvas
-    // edits and must not stop a source apply over a one-value change.
+describe("a value-only edit of a lossy-on-reimport page applies without a dialog", () => {
+  it("keeps the lossyEdit caveat out of the apply plan", () => {
+    // The standalone ^FN declaration is what marks the block non-regen-safe
+    // on re-import (the caveat prepareSourceApply's filter drops).
     const zpl = [
       "^XA",
       '^FXZPLLAB:{"dpmm":8,"wMm":70,"hMm":40}^FS',
       "^PW560",
       "^LL320",
       "^FN1^FDAB1234^FS",
-      "^BY2^FO100,40^BCN,60,Y,N,N^FE#^FD#1#-X^FS",
+      "^FO100,40^BY2^BCN,60,Y,N,N^FE#^FD#1#-X^FS",
       "^XZ",
     ].join("\n");
     const edited = zpl.replace("AB1234", "AB234");

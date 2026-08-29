@@ -156,8 +156,7 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
   );
 
   // lossyEdit describes overlay-replay quality for FUTURE canvas edits, not a
-  // loss of this apply (the generator's own ^BY-before-^FO shape triggers it
-  // on every self round-trip); the import modal keeps it, this dialog not.
+  // loss of this apply; the import modal keeps it, this dialog not.
   const findings = imported.report.findings.filter((f) => f.kind !== "lossyEdit");
   return {
     ok: true,

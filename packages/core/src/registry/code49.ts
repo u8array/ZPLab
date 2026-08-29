@@ -110,8 +110,8 @@ export const code49: ObjectTypeCore<Code49Props> = {
     const h = code49RowMultiplier(p.height, mw);
     const interp = p.printInterpretation ? (p.printInterpretationAbove ? 'A' : 'B') : 'N';
     return [
-      `^BY${mw}`,
       fieldPos1d(obj, ctx),
+      `^BY${mw}`,
       `^B4${p.rotation},${h},${interp},${p.mode}`,
       fdFieldFor(p.content, ctx),
     ]

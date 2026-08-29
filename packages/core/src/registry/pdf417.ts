@@ -45,8 +45,8 @@ export const pdf417: ObjectTypeCore<Pdf417Props> = {
   toZPL: (obj, ctx) => {
     const p = obj.props;
     return [
-      `^BY${p.moduleWidth}`,
       fieldPosZ(obj),
+      `^BY${p.moduleWidth}`,
       `^B7${p.rotation},${p.rowHeight},${p.securityLevel},${p.columns},,,`,
       fdFieldFor(p.content, ctx, undefined, undefined, CONTROL_CHARS),
     ]

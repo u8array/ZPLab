@@ -66,8 +66,8 @@ export const codablock: ObjectTypeCore<CodablockProps> = {
     // count from the data and stacks only when c is present (r alone does not
     // stack, verified on a ZD230). Mode F (Code 128) matches the codablockf preview.
     return [
-      `^BY${p.moduleWidth}`,
       fieldPosZ(obj),
+      `^BY${p.moduleWidth}`,
       `^BB${p.rotation},${p.rowHeight},${p.securityLevel},${clampCodablockColumns(p.columns)},,F`,
       fdFieldFor(p.content, ctx),
     ]
