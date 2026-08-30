@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { createHash } from "crypto";
 import { shapeTestCases } from "../fixtures/shapeTestCases";
 
 const FIXTURES_DIR = path.resolve(
@@ -35,10 +36,17 @@ async function main() {
   fs.mkdirSync(FIXTURES_DIR, { recursive: true });
 
   console.log("Fetching Labelary shape fixtures...");
+  // Hash binding as in fetch_labelary_fixtures.ts.
+  const hashFile = path.join(FIXTURES_DIR, "zpl.hash.json");
+  const hashes: Record<string, string> = fs.existsSync(hashFile)
+    ? JSON.parse(fs.readFileSync(hashFile, "utf8"))
+    : {};
+
   for (const tc of shapeTestCases) {
     const imagePath = path.join(FIXTURES_DIR, tc.image_ref);
+    const sha = createHash("sha1").update(tc.zpl_input).digest("hex");
 
-    if (fs.existsSync(imagePath)) {
+    if (fs.existsSync(imagePath) && hashes[tc.id] === sha) {
       console.log(`⏩ Skipping ${tc.id} - image already exists.`);
       continue;
     }
@@ -48,6 +56,8 @@ async function main() {
     try {
       const buf = await fetchLabelaryImage(tc.zpl_input);
       fs.writeFileSync(imagePath, buf);
+      hashes[tc.id] = sha;
+      fs.writeFileSync(hashFile, JSON.stringify(hashes, null, 2) + "\n", "utf8");
       console.log(`✅ Saved ${tc.image_ref}`);
     } catch (e) {
       console.error(`❌ Failed ${tc.id}:`, e);

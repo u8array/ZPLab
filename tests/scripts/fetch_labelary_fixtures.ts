@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { createHash } from "crypto";
 import { testCases } from "../fixtures/testCases";
 
 const FIXTURES_DIR = path.resolve(
@@ -7,8 +8,12 @@ const FIXTURES_DIR = path.resolve(
   "tests/fixtures/labelary_images",
 );
 
+/** Bounds overlay only; zpl_input/image_ref live in testCases.ts. */
 interface FixtureMapping {
-  test_cases: typeof testCases;
+  test_cases: {
+    id: string;
+    expected_bounds: { x: number; y: number; width: number; height: number };
+  }[];
 }
 
 async function fetchLabelaryImage(zpl: string): Promise<Buffer> {
@@ -38,32 +43,33 @@ async function main() {
   console.log("Ensuring fixtures directory exists...");
   fs.mkdirSync(FIXTURES_DIR, { recursive: true });
 
+  // Read-only here: seeding a placeholder would look Labelary-measured, so
+  // bounds come from tests/scripts/measure_bbox.ts alone. A case without a row
+  // fails the id-symmetry test with "case without bounds".
   const mappingFile = path.join(FIXTURES_DIR, "fixtures.json");
-  // fixtures.json is the source of truth for Labelary-measured bounds. Only
-  // append entries for new test cases — never overwrite existing ones, since
-  // testCases.ts may carry rounded/placeholder bounds that have been refined
-  // by hand or via tests/scripts/measure_bbox.ts.
   const existing: FixtureMapping = fs.existsSync(mappingFile)
     ? JSON.parse(fs.readFileSync(mappingFile, "utf8"))
     : { test_cases: [] };
-  const knownIds = new Set(existing.test_cases.map((c) => c.id));
-  const additions = testCases.filter((c) => !knownIds.has(c.id));
-  if (additions.length > 0) {
-    const merged = { test_cases: [...existing.test_cases, ...additions] };
-    console.log(
-      `Adding ${additions.length} new entr${additions.length === 1 ? "y" : "ies"} to fixtures.json...`,
-    );
-    fs.writeFileSync(mappingFile, JSON.stringify(merged, null, 2), "utf8");
-  } else {
-    console.log("fixtures.json already covers every test case.");
+  const measured = new Set(existing.test_cases.map((c) => c.id));
+  const unmeasured = testCases.filter((c) => !measured.has(c.id)).map((c) => c.id);
+  if (unmeasured.length > 0) {
+    console.log(`⚠️  No bounds yet (run measure_bbox.ts): ${unmeasured.join(", ")}`);
   }
+
+  // zpl.hash.json binds each PNG to the zpl_input it was rendered from; the
+  // labelarySync guard turns red when they diverge.
+  const hashFile = path.join(FIXTURES_DIR, "zpl.hash.json");
+  const hashes: Record<string, string> = fs.existsSync(hashFile)
+    ? JSON.parse(fs.readFileSync(hashFile, "utf8"))
+    : {};
 
   console.log("Fetching images from Labelary API...");
   for (const tc of testCases) {
     const imagePath = path.join(FIXTURES_DIR, tc.image_ref);
+    const sha = createHash("sha1").update(tc.zpl_input).digest("hex");
 
-    // Skip if we already have the image to prevent unnecessary API calls
-    if (fs.existsSync(imagePath)) {
+    // Skip only when the image exists AND still matches its source ZPL.
+    if (fs.existsSync(imagePath) && hashes[tc.id] === sha) {
       console.log(`⏩ Skipping ${tc.id} - Image already exists.`);
       continue;
     }
@@ -72,6 +78,10 @@ async function main() {
     try {
       const imageBuffer = await fetchLabelaryImage(tc.zpl_input);
       fs.writeFileSync(imagePath, imageBuffer);
+      hashes[tc.id] = sha;
+      // Written per fetch, not once at the end: an interrupted run would
+      // otherwise leave fresh PNGs paired with stale hashes.
+      fs.writeFileSync(hashFile, JSON.stringify(hashes, null, 2) + "\n", "utf8");
       console.log(`✅ Saved ${tc.image_ref}`);
     } catch (error) {
       console.error(`❌ Failed to fetch ${tc.id}:`, error);
@@ -82,6 +92,12 @@ async function main() {
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
+  // Prune keys for deleted cases; fixtures.json has its own id-symmetry guard.
+  const live = new Set(testCases.map((c) => c.id));
+  const pruned = Object.fromEntries(
+    Object.entries(hashes).filter(([id]) => live.has(id)),
+  );
+  fs.writeFileSync(hashFile, JSON.stringify(pruned, null, 2) + "\n", "utf8");
   console.log("🎉 All fixtures fetched successfully!");
 }
 

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
+import { createHash } from "crypto";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import { createCanvas } from "@napi-rs/canvas";
@@ -45,6 +46,18 @@ const PIXELMATCH_THRESHOLD = 0.1;
 describe("Visual Regression - shape primitives vs Labelary", () => {
   it("loads shape test cases", () => {
     expect(shapeTestCases.length).toBeGreaterThan(0);
+  });
+
+  // Mirrors the barcode lane's guard (see labelarySync.test.ts).
+  it("every zpl_input matches the hash its fixture image was fetched for", () => {
+    const hashPath = path.join(FIXTURES_DIR, "zpl.hash.json");
+    expect(fs.existsSync(hashPath), "run fetch_labelary_shape_fixtures.ts").toBe(true);
+    const hashes = JSON.parse(fs.readFileSync(hashPath, "utf8")) as Record<string, string>;
+    for (const c of shapeTestCases) {
+      if (!fs.existsSync(path.join(FIXTURES_DIR, c.image_ref))) continue;
+      const sha = createHash("sha1").update(c.zpl_input).digest("hex");
+      expect(hashes[c.id], c.id).toBe(sha);
+    }
   });
 
   describe.each(shapeTestCases)("Shape: $id", (tc) => {

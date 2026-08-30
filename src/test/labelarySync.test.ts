@@ -22,21 +22,23 @@ import { qrPrintsAsGraphic, barcodeFtAnchorOffset } from "@zplab/core/lib/object
 import { qrByHeight } from "@zplab/core/registry/qrcode";
 import { ObjectRegistry } from "@zplab/core/registry";
 import { objectRotation } from "@zplab/core/registry/rotation";
+import { createHash } from "node:crypto";
 import { defined } from "./helpers";
 import { bwipPngWithRetry } from "./bwipPng";
 import { testModels } from "./testModels";
+import { testCases } from "../../tests/fixtures/testCases";
 import { EXPECTED_BOUNDS_DELTA } from "./barcodeFidelity";
 
-interface TestCase {
+// fixtures.json carries ONLY the Labelary-measured bounds overlay; the ZPL
+// and image live in testCases.ts, joined here by id.
+interface FixtureBounds {
   id: string;
-  zpl_input: string;
   expected_bounds: {
     x: number;
     y: number;
     width: number;
     height: number;
   };
-  image_ref: string;
 }
 
 const FIXTURES_DIR = path.resolve(
@@ -53,17 +55,50 @@ function getPngDimensions(buffer: Buffer) {
 }
 
 describe("Labelary Sync - Canvas Dimension Logic", () => {
-  let fixturesData: { test_cases: TestCase[] } = { test_cases: [] };
+  let fixturesData: { test_cases: FixtureBounds[] } = { test_cases: [] };
 
   if (fs.existsSync(fixturesPath)) {
     fixturesData = JSON.parse(fs.readFileSync(fixturesPath, "utf8"));
   }
 
+  const caseById = new Map(testCases.map((c) => [c.id, c]));
+  // Lenient join, strict guard below: a foreign id must fail ONE test, not
+  // kill the whole file's collection.
+  const joined = (fixturesData.test_cases || []).flatMap((fx) => {
+    const c = caseById.get(fx.id);
+    return c ? [{ ...c, expected_bounds: fx.expected_bounds }] : [];
+  });
+
   it("should have loaded fixtures (run fetch_labelary_fixtures.ts if this fails)", () => {
     expect(fixturesData.test_cases.length).toBeGreaterThan(0);
   });
 
-  describe.each(fixturesData.test_cases || [])("Fixture: $id", (tc) => {
+  // Both directions: a stray bounds row and a case that never got measured
+  // are equally silent otherwise (the join would just skip it).
+  it("bounds entries and test cases cover the same ids", () => {
+    for (const fx of fixturesData.test_cases) {
+      expect(caseById.has(fx.id), `bounds without a case: ${fx.id}`).toBe(true);
+    }
+    const measured = new Set(fixturesData.test_cases.map((fx) => fx.id));
+    for (const c of testCases) {
+      expect(measured.has(c.id), `case without bounds: ${c.id}`).toBe(true);
+    }
+  });
+
+  // Binds each zpl_input to the PNG it was rendered from: editing the ZPL
+  // without re-fetching turns this red instead of drifting silently.
+  it("every zpl_input matches the hash its fixture image was fetched for", () => {
+    const hashPath = path.join(FIXTURES_DIR, "zpl.hash.json");
+    expect(fs.existsSync(hashPath), "run fetch_labelary_fixtures.ts").toBe(true);
+    const hashes = JSON.parse(fs.readFileSync(hashPath, "utf8")) as Record<string, string>;
+    for (const c of testCases) {
+      if (!fs.existsSync(path.join(FIXTURES_DIR, c.image_ref))) continue;
+      const sha = createHash("sha1").update(c.zpl_input).digest("hex");
+      expect(hashes[c.id], c.id).toBe(sha);
+    }
+  });
+
+  describe.each(joined)("Fixture: $id", (tc) => {
     it("should generate exact ZPL string matching Labelary input", () => {
       const obj = defined(testModels[tc.id]);
       const generator = ObjectRegistry[obj.type]?.toZPL;
@@ -105,7 +140,9 @@ describe("Labelary Sync - Canvas Dimension Logic", () => {
 
       if (process.env.DEBUG_TESTS) {
         console.log(`[DEBUG] tc.id: ${tc.id}, type: ${obj.type}`);
-        console.log(`[DEBUG] bwip-js raw size: W=${width}, H=${height}`);
+        console.log(
+          `[DEBUG] canvas size: W=${mockCanvas.width}, H=${mockCanvas.height}`,
+        );
         console.log(
           `[DEBUG] displaySize: W=${displaySize.w}, H=${displaySize.h}`,
         );

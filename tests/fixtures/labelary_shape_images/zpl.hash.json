@@ -1,0 +1,23 @@
+{
+  "shape_box_outline_thin": "064e28b0167d8efbfa8ecd30105707e064175ae8",
+  "shape_box_outline_thick": "fc714aa756af630370c3c6174345a51595f65932",
+  "shape_box_filled": "3a63bfbbef049b1131a86442d5f6382b375e5501",
+  "shape_line_horizontal_thick": "df4a4fbdd2a369d7a42253c1a91a5940a7470003",
+  "shape_line_vertical_thick": "011139719892ebb2434f708d50290c4d157c81cc",
+  "shape_ellipse_outline": "805f7a50881479f7be77c5303f7c08f264af5c26",
+  "shape_circle_outline": "9657802aff2df60af9db5dee6cb91d7e0b7618e6",
+  "shape_line_horizontal_left": "df4a4fbdd2a369d7a42253c1a91a5940a7470003",
+  "shape_line_vertical_up": "011139719892ebb2434f708d50290c4d157c81cc",
+  "shape_box_outline_t3": "5cce93563cb1566beefe7bc569f31110de80c3e5",
+  "shape_box_outline_t20": "5b271ea6d340d3e9cc3ee21f227dfaf30826c2a2",
+  "shape_box_outline_near_filled": "4606456b658e6304aa3983a5704172e9260ef3df",
+  "shape_line_horizontal_t1": "527e0e5e5846ca4739b72e2993fffd0d6292decb",
+  "shape_line_horizontal_t3": "05a172531ce6bd69df23291c1bdda33e53725a0d",
+  "shape_line_diag_slash_45": "1945e10b069084879a57221ef82b0fd74594a61a",
+  "shape_line_diag_backslash_45": "51c95910a7be376dd0b97e074eb2fc8151bba1f6",
+  "shape_line_diag_shallow": "74b2de5a0702ed513f3ec3aca0ac69eb949a97ab",
+  "shape_line_diag_steep": "2508385064a25f6f9fafc723ae26cd12cdf6f7c9",
+  "shape_box_thickness_exceeds_height": "8ae50acd00055980ffd3205da3f3236daad0907f",
+  "shape_box_thickness_exceeds_width": "c760137925e07d918a1c4a097f1fd336f4fda043",
+  "shape_box_thickness_exceeds_both": "7c45383084fce2251f8f08c5b35cfac01f10cb7c"
+}
