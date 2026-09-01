@@ -44,6 +44,31 @@ afterEach(() => {
 });
 
 describe("useSourceShadowSync", () => {
+  it("carries spanned import findings for the parsed draft", async () => {
+    const { rerender } = renderHook(() => useSourceShadowSync());
+    const draft = "^XA^FO10,10^A0N,30,30^FDHi^FS^XZ~PH";
+    act(() => {
+      useLabelStore.setState({ sourceEdit: session(draft) });
+    });
+    rerender();
+    await flushParse();
+    const shadow = useLabelStore.getState().sourceShadow;
+    const dev = shadow?.findings.find((f) => f.kind === "deviceAction");
+    expect(dev?.span && draft.slice(dev.span.start, dev.span.end)).toBe("~PH");
+  });
+
+  it("clears findings on the refusal path (offsets would be stale)", async () => {
+    const { rerender } = renderHook(() => useSourceShadowSync());
+    act(() => {
+      useLabelStore.setState({ sourceEdit: session("^XA~PH^FDx^FS") });
+    });
+    rerender();
+    await flushParse();
+    const shadow = useLabelStore.getState().sourceShadow;
+    expect(shadow?.refusal?.reason).toBe("unbalanced");
+    expect(shadow?.findings).toEqual([]);
+  });
+
   it("parses an edited draft into the shadow; an untouched buffer stays live", async () => {
     const { rerender } = renderHook(() => useSourceShadowSync());
     act(() => {

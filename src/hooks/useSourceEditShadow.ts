@@ -30,7 +30,7 @@ export function useSourceShadowSync(): void {
     if (draft === null || baseline === null) return;
     const shadow = useLabelStore.getState().setSourceShadow;
     if (draft === baseline) {
-      const id = setTimeout(() => shadow({ doc: null, refusal: null, draft }), 0);
+      const id = setTimeout(() => shadow({ doc: null, refusal: null, findings: [], draft }), 0);
       return () => clearTimeout(id);
     }
     if (draft.length > MAX_SOURCE_CHARS) {
@@ -56,6 +56,7 @@ export function useSourceShadowSync(): void {
             columnMapping: plan.next.columnMapping,
           },
           refusal: null,
+          findings: plan.report.findings,
           draft,
         });
       } else if (

@@ -162,6 +162,24 @@ describe("ZplCodeMirror diagnostics", () => {
     expect(container.querySelector(".cm-lintRange-error")?.textContent).toBe("^XA");
   });
 
+  it("renders a finding warning as CM warning, not error or hint", async () => {
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    const value = "^XA^FDa^FS^XZ~PH";
+    const { container } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[{ from: 13, to: 16, severity: "warning", message: "device action" }]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const seen: string[] = [];
+    forEachDiagnostic(view.state, (d) => seen.push(d.severity));
+    expect(seen).toEqual(["warning"]);
+    expect(container.querySelector(".cm-lintRange-warning")?.textContent).toBe("~PH");
+  });
+
   it("does not re-dispatch an identical set (an open tooltip would close)", () => {
     const value = "^XA^FDx^FSstray^XZ";
     const lint = () => [{ from: 10, to: 15, severity: "error" as const, message: "boom" }];

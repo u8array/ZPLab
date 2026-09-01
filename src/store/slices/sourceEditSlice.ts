@@ -1,5 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { SourceApplyOk, SourceRefusalInfo } from '@zplab/core/lib/zplSourceEdit';
+import type { ImportFinding } from '@zplab/core/lib/importReport';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { Page } from '@zplab/core/types/Group';
 import type { ColumnMapping, Variable } from '@zplab/core/types/Variable';
@@ -21,6 +22,9 @@ export interface SourceShadow {
     columnMapping: ColumnMapping | null;
   } | null;
   refusal: SourceRefusalInfo | null;
+  /** Spanned import findings of the parse that produced `draft`; empty under
+   *  a refusal (their offsets would describe a text the doc rejected). */
+  findings: readonly ImportFinding[];
   /** The text `refusal` was parsed from; `doc` can be older (it keeps the
    *  last good parse). The debounced parse lags the live draft, so position
    *  consumers must check identity first. */
@@ -103,6 +107,7 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
             sourceShadow: {
               doc: state.sourceShadow?.doc ?? null,
               refusal: refusal && refusalInfo(refusal),
+              findings: [],
               draft,
             },
           }

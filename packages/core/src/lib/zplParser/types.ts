@@ -39,9 +39,9 @@ export interface ImportFinding {
   /** Which divergence a 'mixedPageGeometry' finding reports, so consumers
    *  pick their message without sniffing `command`. */
   cause?: 'size' | 'jm';
-  /** Span of the token whose processing recorded the finding (always
-   *  stamped). A flush-raised finding carries the token that closed the
-   *  field: its ^FS or the next field's opener. Absent for post-parse kinds. */
+  /** Source anchor, always stamped: a partial points at the command it
+   *  names (even when raised later, at field flush); every other bucketed
+   *  kind at the token being processed. Absent for post-parse kinds. */
   span?: SourceSpan;
 }
 

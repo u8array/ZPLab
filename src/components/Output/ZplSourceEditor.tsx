@@ -8,6 +8,7 @@ import {
   selectPreviewLocksEditor,
   selectShadowDraft,
   selectShadowRefusal,
+  selectShadowFindings,
   selectSourceDocumentState,
 } from '../../store/labelStore';
 import type { SourceEditMode } from '../../store/slices/sourceEditSlice';
@@ -50,6 +51,7 @@ export function ZplSourceEditor({
   const gateMsg = gateRefusal !== null ? sourceRefusalText(gateRefusal, t) : null;
 
   const shadowRefusal = useLabelStore(selectShadowRefusal);
+  const shadowFindings = useLabelStore(selectShadowFindings);
   const shadowDraft = useLabelStore(selectShadowDraft);
   // Offsets only describe the text they were parsed from, so a lagging shadow
   // hands null and the editor keeps mapping its previous set; outside a
@@ -58,7 +60,7 @@ export function ZplSourceEditor({
     session === null
       ? NO_DIAGNOSTICS
       : shadowDraft === value
-        ? buildSourceDiagnostics(shadowRefusal, t)
+        ? buildSourceDiagnostics(shadowRefusal, shadowFindings, t)
         : null;
 
   // The text history belongs to the session: clear it when one ENDS, or an
@@ -148,7 +150,8 @@ function SessionChrome({
       : liveRefusal.reason !== 'unbalanced'
         ? sourceRefusalText(liveRefusal.reason, t)
         : liveDraft === session.draft
-          ? (buildSourceDiagnostics(liveRefusal, t)[0]?.message ?? null)
+          ? (buildSourceDiagnostics(liveRefusal, [], t)
+              .find((l) => l.severity === 'error')?.message ?? null)
           : null;
 
   // Whitespace over an empty baseline authored nothing: exits treat it as

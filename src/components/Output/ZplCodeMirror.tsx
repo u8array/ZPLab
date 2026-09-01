@@ -156,9 +156,10 @@ function highlightDecorations(state: EditorState, lines: ReadonlySet<number>): D
 const NO_LINES: ReadonlySet<number> = new Set();
 
 /** Total map, so a new semantic severity cannot silently render as a hint. */
-const CM_SEVERITY: Record<SourceLint['severity'], 'error' | 'hint'> = {
+const CM_SEVERITY: Record<SourceLint['severity'], 'error' | 'hint' | 'warning'> = {
   error: 'error',
   related: 'hint',
+  warning: 'warning',
 };
 
 // Compartment payloads built in ONE place each, so mount and reconfigure

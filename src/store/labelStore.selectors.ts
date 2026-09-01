@@ -1,3 +1,4 @@
+import type { ImportFinding } from '@zplab/core/lib/importReport';
 import { pageLabelConfig, type LabelObject } from '@zplab/core/types/Group';
 import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
 import { isDesktopShell } from '../lib/platform';
@@ -46,6 +47,8 @@ export const currentPageLabel = (state: LabelState): PageLabel =>
  *  Session-end writers null the whole shadow, so no status guard is needed. */
 export const selectShadowRefusal = (s: LabelState) => s.sourceShadow?.refusal ?? null;
 export const selectShadowDraft = (s: LabelState) => s.sourceShadow?.draft ?? null;
+const NO_FINDINGS: readonly ImportFinding[] = [];
+export const selectShadowFindings = (s: LabelState) => s.sourceShadow?.findings ?? NO_FINDINGS;
 
 export const selectRenderPages = (s: LabelState) => s.sourceShadow?.doc?.pages ?? s.pages;
 
