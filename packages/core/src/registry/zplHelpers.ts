@@ -292,6 +292,7 @@ export function fdFieldFor(
     const cls = classifyField(content, ctx.variables);
     if (cls.kind === "single") {
       const v = cls.variable;
+      if (ctx.bareFnSlots?.has(v.fnNumber)) return `^FN${v.fnNumber}^FS`;
       return `^FN${v.fnNumber}${fdField(transform(encodeDefault(v.defaultValue)))}`;
     }
   }

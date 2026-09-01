@@ -34,6 +34,10 @@ export interface ZplEmitContext {
   /** ^FN slots a plain ^BC single-bind must emit RAW (chip-resolved only):
    *  the slot is shared, so the Code 128 escape would corrupt co-consumers. */
   rawFdFns?: ReadonlySet<number>;
+  /** ^FN slots a ^XF recall supplies: the stored format must carry no ^FD
+   *  for them or the template data wins, for placed fields and ^FE embeds
+   *  alike (ZD230-measured, #407; Labelary cannot referee the embed case). */
+  bareFnSlots?: ReadonlySet<number>;
 }
 
 /** The prop slice HRI formatters may read; every leaf props bag satisfies it. */

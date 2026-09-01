@@ -1,5 +1,6 @@
 import type { ImportFinding } from '@zplab/core/lib/importReport';
 import { pageLabelConfig, type LabelObject } from '@zplab/core/types/Group';
+import { boundColumnIndex } from '@zplab/core/lib/variableBinding';
 import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
 import { isDesktopShell } from '../lib/platform';
 import type { Dataset } from './slices/dataSlice';
@@ -164,11 +165,9 @@ export const selectBatchInputs = (
   const { dataset, columnMapping } = s;
   if (!dataset || dataset.rows.length === 0) return null;
   if (!columnMapping) return null;
-  const headers = new Set(dataset.headers);
-  const hasLiveBinding = s.variables.some((v) => {
-    const header = columnMapping.bindings[v.id];
-    return header !== undefined && headers.has(header);
-  });
+  const hasLiveBinding = s.variables.some(
+    (v) => boundColumnIndex(v, dataset, columnMapping) !== -1,
+  );
   if (!hasLiveBinding) return null;
   return { dataset: dataset, mapping: columnMapping };
 };

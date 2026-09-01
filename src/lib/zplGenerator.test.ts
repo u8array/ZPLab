@@ -1732,6 +1732,9 @@ describe('generateZPL — variable bindings', () => {
 
 describe('generateBatchZpl', () => {
   const baseLabel = { widthMm: 50, heightMm: 30, dpmm: 8 } as PageLabel;
+  // Path-anchored: a bare '^XF' prefix match could truncate the template
+  // slice and let the negative ^FD assertions pass vacuously.
+  const batchTemplateOf = (result: string) => result.split('^XFR:LBL.ZPL')[0] ?? '';
   // Single-bind field: content is the variable's lone marker.
   const textObj = (markerName: string): LabelObject =>
     ({
@@ -1764,6 +1767,111 @@ describe('generateBatchZpl', () => {
     expect(result).toContain('^FN1^FDA1^FS');
     expect(result).toContain('^FN1^FDB2^FS');
     expect(result).toContain('^FN1^FDC3^FS');
+  });
+
+  it('leaves a mapped slot bare in the stored format (a template ^FD seals it)', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const result = generateBatchZpl(baseLabel, [textObj('sku')], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    const template = batchTemplateOf(result);
+    expect(template).toContain('^FN1^FS');
+    expect(template).not.toContain('^FN1^FD');
+    expect(result).toContain('^FN1^FDA1^FS');
+  });
+
+  it('keeps the ^FD default for unmapped variables in both binding shapes', () => {
+    const variables = [
+      { id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' },
+      { id: 'v2', name: 'lot', fnNumber: 2, defaultValue: 'FALLBACK' },
+      { id: 'v3', name: 'bin', fnNumber: 3, defaultValue: 'LONE' },
+    ];
+    // 'lot' is template-embedded (header-declaration branch), 'bin' is a
+    // single-bind (inline fdFieldFor branch); the bare-slot skip must take
+    // neither, and must key on the slot, not on the set existing.
+    const embed = {
+      id: 'e', type: 'text', x: 10, y: 30, rotation: 0,
+      props: { content: 'LOT:«lot»', fontHeight: 30, fontWidth: 0, rotation: 'N' },
+    } as unknown as LabelObject;
+    const result = generateBatchZpl(baseLabel, [textObj('sku'), embed, textObj('bin')], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    const template = batchTemplateOf(result);
+    expect(template).toContain('^FN2^FDFALLBACK^FS');
+    expect(template).toContain('^FN3^FDLONE^FS');
+  });
+
+  it('keeps ^JM alive: no ^FS may precede it in the stored template', () => {
+    // ^JM only counts before the first ^FS (spec p.269); a terminator on the
+    // ^DF line would disable the density for every batch export.
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const result = generateBatchZpl({ ...baseLabel, jmDensity: 'B' } as PageLabel,
+      [textObj('sku')], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    const template = batchTemplateOf(result);
+    expect(parseZPL(template, 8).labelConfig.jmDensity).toBe('B');
+  });
+
+  it('imports its own batch template without dropping the bare bound fields', () => {
+    // Roundtrip guarantee: the template is a .zpl the user can re-open.
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const result = generateBatchZpl(baseLabel, [textObj('sku')], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    const template = batchTemplateOf(result);
+    const page = parseZPL(template, 8).pages[0];
+    expect(page?.objects).toHaveLength(1);
+    expect(page?.variables.map((v) => v.fnNumber)).toEqual([1]);
+  });
+
+  it('does not source a recall transform from a home-dropped leaf', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const qr = { id: 'q', type: 'qrcode', x: 5, y: 10, rotation: 0,
+      props: { content: '«sku»', magnification: 3, errorCorrection: 'M', model: 2, rotation: 'N' },
+    } as unknown as LabelObject;
+    const survivor = { ...(textObj('sku') as object), x: 40 } as LabelObject;
+    const result = generateBatchZpl({ ...baseLabel, labelHomeX: 20 } as PageLabel,
+      [qr, survivor], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    const recall = result.split('^XFR:LBL.ZPL').slice(1).join('');
+    expect(recall).toContain('^FN1^FDA1^FS');
+    expect(recall).not.toContain('MA,');
+  });
+
+  it('does not source a recall transform from a QR that ships as ^GFA', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const rotQr = { id: 'q', type: 'qrcode', x: 10, y: 10, rotation: 0,
+      props: { content: '«sku»', magnification: 3, errorCorrection: 'M', model: 2, rotation: 'R' },
+    } as unknown as LabelObject;
+    const result = generateBatchZpl(baseLabel, [rotQr, textObj('sku')], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    const recall = result.split('^XFR:LBL.ZPL').slice(1).join('');
+    expect(recall).toContain('^FN1^FDA1^FS');
+    expect(recall).not.toContain('MA,');
+  });
+
+  it('omits the header declaration of a mapped template-embedded slot', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const embed = {
+      id: 'e', type: 'text', x: 10, y: 10, rotation: 0,
+      props: { content: 'PRE«sku»POST', fontHeight: 30, fontWidth: 0, rotation: 'N' },
+    } as unknown as LabelObject;
+    const result = generateBatchZpl(baseLabel, [embed], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    const template = batchTemplateOf(result);
+    expect(template).toContain('^FDPRE#1#POST');
+    expect(template).not.toContain('^FN1^FD');
+    expect(result).toContain('^FN1^FDA1^FS');
+  });
+
+  it('keeps a mapped QR bare in the template while its recall carries the switches', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const qr = { id: 'q', type: 'qrcode', x: 0, y: 0, rotation: 0,
+      props: { content: '«sku»', magnification: 3, errorCorrection: 'M', model: 2, rotation: 'N' },
+    } as unknown as LabelObject;
+    const result = generateBatchZpl(baseLabel, [qr], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    const template = batchTemplateOf(result);
+    expect(template).toContain('^FN1^FS');
+    expect(template).not.toContain('^FN1^FD');
+    expect(result).toContain('^FN1^FDMA,A1^FS');
   });
 
   it('does not source a row transform from a leaf inside an excluded group', () => {
@@ -2085,6 +2193,23 @@ describe('generateBatchZpl', () => {
     const recall = result.split('^XFR:LBL.ZPL').slice(1).join('');
     expect(recall).toContain('^FN1^FD>9337334^FS');
     expect(recall).not.toContain('^FH_');
+  });
+
+  it('keeps a mapped shared slot bare in the template and raw in the recall', () => {
+    // rawFdFns and bareFnSlots meet here: bare template, sharedRaw recall.
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'X' }];
+    const textLeaf = {
+      id: 't1', type: 'text', x: 0, y: 0, rotation: 0,
+      props: { content: 'A«sku»B', fontHeight: 30, fontWidth: 0, rotation: 'N' },
+    } as unknown as LabelObject;
+    const result = generateBatchZpl(baseLabel, [...code128Chip('«sku»'), textLeaf], variables,
+      { headers: ['sku'], rows: [['X>Y']] }, { bindings: { v1: 'sku' } });
+    const template = batchTemplateOf(result);
+    expect(template).toContain('^FN1^FS');
+    expect(template).not.toContain('^FN1^FD');
+    const recall = result.split('^XFR:LBL.ZPL').slice(1).join('');
+    expect(recall).toContain('^FN1^FDX>Y^FS');
+    expect(recall).not.toContain('>0Y');
   });
 
   it('emits a GS1 field as mode-D data even when a legacy model carries serial', () => {
