@@ -209,7 +209,9 @@ export function* tokenize(
     // mutates it). Generic commands consume rest until the next delimiter.
     if (cmd === "CC" || cmd === "CT" || cmd === "CD") {
       const argChar = zpl[cmdStart + 3] ?? "";
-      pos = cmdStart + 4;
+      // Clamp: the arg slot may be missing at EOF, and `end` must stay a
+      // valid slice index.
+      pos = Math.min(cmdStart + 4, zpl.length);
       yield { cmd, rest: argChar, start: cmdStart, end: pos };
       continue;
     }

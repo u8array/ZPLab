@@ -3339,3 +3339,89 @@ describe('parseZPL — unbalanced command text', () => {
     });
   });
 });
+
+describe('parseZPL — source spans (objectSpans + finding.span)', () => {
+  it('stamps each cleanly linked object with its absolute source span', () => {
+    const f1 = '^FO10,10^A0N,20,0^FDhi^FS';
+    const f2 = '^FO20,40^GB50,50,2^FS';
+    const zpl = `^XA${f1}${f2}^XZ`;
+    const r = parseSingle(zpl, 8, { captureOverlay: true });
+    expect(r.objects).toHaveLength(2);
+    const [a, b] = r.objects;
+    const spanA = defined(r.objectSpans?.get(defined(a).id));
+    const spanB = defined(r.objectSpans?.get(defined(b).id));
+    expect(zpl.slice(spanA.start, spanA.end)).toBe(f1);
+    expect(zpl.slice(spanB.start, spanB.end)).toBe(f2);
+  });
+
+  it('keeps object spans when the all-linked gate refuses the overlay', () => {
+    // Two objects in one field: neither links, the overlay is refused, but
+    // the clean text field keeps its span for editor/linter navigation.
+    const clean = '^FO10,10^A0N,20,0^FDhi^FS';
+    const zpl = `^XA${clean}^FO20,40^GB50,50,2^GB60,60,2^FS^XZ`;
+    const r = parseSingle(zpl, 8, { captureOverlay: true });
+    expect(r.objects.length).toBeGreaterThan(1);
+    expect(r.overlay).toBeUndefined();
+    const textObj = r.objects.find((o) => o.type === 'text');
+    const span = defined(r.objectSpans?.get(defined(textObj).id));
+    expect(zpl.slice(span.start, span.end)).toBe(clean);
+  });
+
+  it('stamps bucketed findings with the span of the recording token', () => {
+    const zpl = '^XA^ZZ9,1^FO10,10^A0N,20,0^FDhi^FS^XZ';
+    const r = parseSingle(zpl, 8, { captureOverlay: true });
+    const unknown = defined(r.findings.find((f) => f.kind === 'unknown'));
+    const span = defined(unknown.span);
+    expect(zpl.slice(span.start, span.end)).toBe('^ZZ9,1');
+  });
+
+  it('spans exclude the line-wrap tail up to the next command', () => {
+    const zpl = '^XA^QQdata ^FO10,10^A0N,20,0^FDhi^FS^XZ';
+    const r = parseSingle(zpl, 8, { captureOverlay: true });
+    const unknown = defined(r.findings.find((f) => f.kind === 'unknown'));
+    expect(unknown.command).toBe('^QQdata');
+    const span = defined(unknown.span);
+    expect(zpl.slice(span.start, span.end)).toBe('^QQdata');
+  });
+
+  it('pretty-printed ZPL: a span covers one command, not the next line indent', () => {
+    const zpl = '^XA\n  ^ZZ1,1\n  ^FO10,10^A0N,20,0^FDhi^FS\n^XZ';
+    const r = parseSingle(zpl, 8, { captureOverlay: true });
+    const unknown = defined(r.findings.find((f) => f.kind === 'unknown'));
+    const span = defined(unknown.span);
+    expect(zpl.slice(span.start, span.end)).toBe('^ZZ1,1');
+  });
+
+  it('a truncated ^CC at EOF keeps the span inside the source', () => {
+    // The prefix-remap tokenizer path consumed its arg slot unconditionally,
+    // pushing end one past EOF; editor ranges past doc length throw.
+    const zpl = '^XA^CC';
+    const r = parseZPL(zpl, 8);
+    const partial = defined(r.pages.flatMap((p) => p.findings).find((f) => f.kind === 'partial'));
+    const span = defined(partial.span);
+    expect(span.end).toBeLessThanOrEqual(zpl.length);
+    expect(zpl.slice(span.start, span.end)).toBe('^CC');
+  });
+
+  it('spans stay document-absolute on pages after the first', () => {
+    const f1 = '^FO10,10^A0N,20,0^FDp1^FS';
+    const f2 = '^FO20,20^A0N,20,0^FDp2^FS';
+    const zpl = `^XA${f1}^XZ^XA^ZZ9,1${f2}^XZ`;
+    const r = parseZPL(zpl, 8, { captureOverlay: true });
+    const page1 = defined(r.pages[1]);
+    const obj = defined(page1.objects[0]);
+    const span = defined(page1.objectSpans?.get(obj.id));
+    expect(zpl.slice(span.start, span.end)).toBe(f2);
+    const unknown = defined(page1.findings.find((f) => f.kind === 'unknown'));
+    const fSpan = defined(unknown.span);
+    expect(zpl.slice(fSpan.start, fSpan.end)).toBe('^ZZ9,1');
+  });
+
+  it('stamps a pre-handler device action with its token span', () => {
+    const zpl = '^XA^FO10,10^A0N,20,0^FDhi^FS^XZ~PH';
+    const r = parseZPL(zpl, 8, { captureOverlay: true });
+    const dev = defined(r.pages.flatMap((p) => p.findings).find((f) => f.kind === 'deviceAction'));
+    const span = defined(dev.span);
+    expect(zpl.slice(span.start, span.end)).toBe('~PH');
+  });
+});

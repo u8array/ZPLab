@@ -3,7 +3,7 @@ import { parseIntOrUndef } from "../../inputParse";
 import { isYesNo } from "../../../types/typeHelpers";
 import { dotsToMm } from "../../coordinates";
 import { isPlausibleLabelMm } from "../../zplLabelMeta";
-import { deriveUnitScale, type ParserState } from "../context";
+import { notePartial, deriveUnitScale, type ParserState } from "../context";
 import { dotsFor, firstChar, inRange, int, intDotsOrUndef, strParam } from "../helpers";
 import type { Handler } from "../types";
 
@@ -29,14 +29,14 @@ export function createLabelConfigHandlers(
       if (w === undefined || w <= 0) return;
       const mm = dotsToMm(w, dpmm);
       if (isPlausibleLabelMm(mm)) labelConfig.widthMm = mm;
-      else s.result.partialCmds.add("^PW");
+      else notePartial(s.result, "^PW");
     },
     LL(_, rest) {
       const h = physDots(rest);
       if (h === undefined || h <= 0) return;
       const mm = dotsToMm(h, dpmm);
       if (isPlausibleLabelMm(mm)) labelConfig.heightMm = mm;
-      else s.result.partialCmds.add("^LL");
+      else notePartial(s.result, "^LL");
     },
     PQ(p) {
       const qty = int(p[0], 0);
@@ -61,7 +61,7 @@ export function createLabelConfigHandlers(
     RS(p) {
       const adopt = (slot: number, take: (raw: string | undefined) => boolean) => {
         if (take(p[slot])) return;
-        if (strParam(p[slot]) !== "") s.result.partialCmds.add("^RS");
+        if (strParam(p[slot]) !== "") notePartial(s.result, "^RS");
       };
       adopt(0, (raw) => {
         if (int(raw, 0) !== 8) return false;
@@ -106,7 +106,7 @@ export function createLabelConfigHandlers(
     RB(p) {
       const bits = inRange(parseIntOrUndef(p[0]), RFID_EPC_BITS_RANGE);
       if (bits === undefined) {
-        s.result.partialCmds.add("^RB");
+        notePartial(s.result, "^RB");
         return;
       }
       // Only a trailing delimiter is noise; an empty slot inside the list is
@@ -125,7 +125,7 @@ export function createLabelConfigHandlers(
         parts.some((x) => x === undefined) ||
         parts.reduce((a, b) => (a ?? 0) + (b ?? 0), 0) !== bits
       ) {
-        s.result.partialCmds.add("^RB");
+        notePartial(s.result, "^RB");
         return;
       }
       labelConfig.rfidEpcBits = bits;
@@ -136,12 +136,12 @@ export function createLabelConfigHandlers(
       const take = (slot: number, set: (v: RfidPower) => void) => {
         const value = parseRfidPower(p[slot]);
         if (value !== undefined) set(value);
-        else if (strParam(p[slot]) !== "") s.result.partialCmds.add("^RW");
+        else if (strParam(p[slot]) !== "") notePartial(s.result, "^RW");
       };
       take(0, (v) => (labelConfig.rfidReadPower = v));
       take(1, (v) => (labelConfig.rfidWritePower = v));
       // The antenna slot is unmodelled, so any value in it is a loss.
-      if (strParam(p[2]) !== "") s.result.partialCmds.add("^RW");
+      if (strParam(p[2]) !== "") notePartial(s.result, "^RW");
     },
     MM(_, rest) {
       const mode = firstChar(rest);

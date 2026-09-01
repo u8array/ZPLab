@@ -1,5 +1,5 @@
 import { isMuDpi, jmDensityOf } from "../../../types/LabelConfig";
-import { deriveUnitScale, type ParserState } from "../context";
+import { notePartial, deriveUnitScale, type ParserState } from "../context";
 import type { Handler } from "../types";
 
 /** ^MU / ^JM handlers. ^MU owns the dot-scale of body values; the ^JM density
@@ -7,7 +7,7 @@ import type { Handler } from "../types";
  *  only validates and surfaces the values the lookahead ignores. */
 export function createUnitsHandler(s: ParserState, dpmm: number): Record<string, Handler> {
   const labelConfig = s.result.labelConfig;
-  const markPartial = () => s.result.partialCmds.add("^MU");
+  const markPartial = () => notePartial(s.result, "^MU");
 
   return {
     // a-slot scales dot-quantities on read so the model stays
@@ -38,7 +38,7 @@ export function createUnitsHandler(s: ParserState, dpmm: number): Record<string,
     // an invalid value, or a ^JM outside any head (post-^FS, preamble, between formats).
     JM(_p, rest) {
       const v = jmDensityOf(rest, s.format.delimiterChar);
-      if (v === undefined || !s.format.inFormatHead) s.result.partialCmds.add("^JM");
+      if (v === undefined || !s.format.inFormatHead) notePartial(s.result, "^JM");
     },
   };
 }

@@ -12,7 +12,7 @@ import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
 import { stripLineWrap, stripTrailingSpaces, tokenize } from "./zplParser/helpers";
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
 import { qrPrintsAsGraphic } from "./objectBounds";
-import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, resetFormatScopedState, type FnDefaultCandidate, type RegenLossyReason } from "./zplParser/context";
+import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, resetFormatScopedState, type FnDefaultCandidate, type RegenLossyReason, type SpannedToken } from "./zplParser/context";
 import { createFlushField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
 import { createDynamicFontAWildcard, createFieldHandlers } from "./zplParser/handlers/fields";
@@ -27,6 +27,7 @@ import type {
   ImportFinding,
   ParsedPage,
   ParsedZPL,
+  SourceSpan,
   UnbalancedFormat,
   Wildcard,
 } from "./zplParser/types";
@@ -355,16 +356,16 @@ export function parseZPL(
   const bucketFindings = (
     pageIndex: number,
     partial: readonly string[],
-    browser: readonly string[],
-    unk: readonly string[],
-    replay: readonly string[],
-    device: readonly string[],
+    browser: readonly SpannedToken[],
+    unk: readonly SpannedToken[],
+    replay: readonly SpannedToken[],
+    device: readonly SpannedToken[],
   ): ImportFinding[] => [
-    ...partial.map((command): ImportFinding => ({ kind: "partial", command, pageIndex })),
-    ...browser.map((command): ImportFinding => ({ kind: "browserLimit", command, pageIndex })),
-    ...unk.map((command): ImportFinding => ({ kind: "unknown", command, pageIndex })),
-    ...replay.map((command): ImportFinding => ({ kind: "replayRisk", command, pageIndex })),
-    ...device.map((command): ImportFinding => ({ kind: "deviceAction", command, pageIndex })),
+    ...partial.map((command): ImportFinding => ({ kind: "partial", command, pageIndex, span: s.result.partialSpans.get(command) })),
+    ...browser.map((t): ImportFinding => ({ kind: "browserLimit", command: t.command, pageIndex, span: t.span })),
+    ...unk.map((t): ImportFinding => ({ kind: "unknown", command: t.command, pageIndex, span: t.span })),
+    ...replay.map((t): ImportFinding => ({ kind: "replayRisk", command: t.command, pageIndex, span: t.span })),
+    ...device.map((t): ImportFinding => ({ kind: "deviceAction", command: t.command, pageIndex, span: t.span })),
   ];
 
   /** Close the current page at source offset `end`: per-format serial-orphan
@@ -441,6 +442,17 @@ export function parseZPL(
     };
     if (pageOverlay) page.overlay = pageOverlay;
     if (!s.sawXa) page.bare = true;
+    if (opts.captureOverlay) {
+      const spanEntries = overlaySpans.slice(pg.span).flatMap(
+        (sp): [string, SourceSpan][] =>
+          sp.link.kind === "object"
+            ? [[sp.link.objectId, { start: sp.start, end: sp.end }]]
+            : [],
+      );
+      if (spanEntries.length > 0) {
+        page.objectSpans = new Map(spanEntries);
+      }
+    }
     pages.push(page);
     // ^PW/^LL persist across ^XA, so only a value CHANGE between page closes is
     // a real divergence the single-label model cannot represent.
@@ -458,7 +470,11 @@ export function parseZPL(
     resetFormatScopedState(s);
   };
 
-  for (const { cmd, rest, start } of tokens) {
+  for (const { cmd, rest, start, end } of tokens) {
+    // Read by the finding push sites (notePartial, pushBrowserLimit). End is
+    // trimmed: the tokenizer's end runs to the next command's prefix, and a
+    // span must not swallow the line break plus following indent.
+    s.result.tokenSpan = { start, end: Math.min(end, start + 3 + rest.trimEnd().length) };
     // Strips trailing break plus indent from the last literal param; LITERAL_TAIL_CMDS keep real trailing spaces.
     const p = stripLineWrap(rest).split(s.format.delimiterChar);
     const last = p[p.length - 1];
@@ -470,12 +486,12 @@ export function parseZPL(
     // ~PH/~PP: flagged as device actions AND skipped entirely, or they would
     // fall through to the unknown bucket and surface twice in the summary.
     if (tildeDeviceCodes.has(cmd) && zpl[start] === s.format.tildeChar) {
-      deviceAction.push(`${zpl[start]}${cmd}`);
+      deviceAction.push({ command: `${zpl[start]}${cmd}`, span: s.result.tokenSpan });
       continue;
     }
     // These findings name bytes that replay verbatim, so report the source prefix.
-    if (replayRiskCodes.has(cmd)) replayRisk.push(`${zpl[start]}${cmd}`);
-    else if (deviceActionCodes.has(cmd)) deviceAction.push(`${zpl[start]}${cmd}`);
+    if (replayRiskCodes.has(cmd)) replayRisk.push({ command: `${zpl[start]}${cmd}`, span: s.result.tokenSpan });
+    else if (deviceActionCodes.has(cmd)) deviceAction.push({ command: `${zpl[start]}${cmd}`, span: s.result.tokenSpan });
     // Balance bookkeeping needs the token offset and the state the handler is
     // about to flip, so it sits here rather than in the two handlers.
     if (cmd === "XA" || cmd === "XZ") {
@@ -679,7 +695,7 @@ export function parseZPL(
       // trimEnd: `rest` runs to the next command, dragging the line break in
       // multi-line ZPL into the surfaced token.
       const token = `${zpl[start] ?? "^"}${cmd}${rest}`.trimEnd();
-      unknown.push(token);
+      unknown.push({ command: token, span: s.result.tokenSpan });
     }
   }
 
