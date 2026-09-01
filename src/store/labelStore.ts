@@ -61,6 +61,7 @@ export {
   selectSourceEditDirty,
   selectDocumentEmits,
   selectShadowRefusal,
+  selectShadowFindings,
   selectShadowDraft,
   selectRenderPages,
   selectRenderVariables,

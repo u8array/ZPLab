@@ -95,6 +95,7 @@ describe("applyZplSource", () => {
       sourceShadow: {
         doc: { label: { widthMm: 70, heightMm: 40, dpmm: 8 }, pages: [basePages[0]!, { objects: [] }], variables: [], columnMapping: null },
         refusal: null,
+        findings: [],
         draft: "^XA^FDone^FS^XZ",
       },
       currentPageIndex: 1,

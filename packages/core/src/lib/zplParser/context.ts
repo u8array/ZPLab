@@ -67,6 +67,8 @@ export interface ParserResult {
   partialSpans: Map<string, SourceSpan>;
   /** Span of the token currently being processed; the loop updates it. */
   tokenSpan?: SourceSpan;
+  /** Last span per bare command code; notePartial anchors partials here. */
+  lastSpanByCmd: Map<string, SourceSpan>;
   browserLimit: SpannedToken[];
   unknown: SpannedToken[];
   /** Setup-Script commands seen (profile-backed, routable on import). */
@@ -309,12 +311,13 @@ export function pushBrowserLimit(result: ParserResult, token: string): void {
 
 /** Partial-command funnel: dedup set plus first-seen span, recorded at the
  *  source instead of a loop-side growth watch (which fails wrong on paths
- *  that skip it). */
+ *  that skip it). A partial names a command code, so it anchors at that
+ *  command's own bytes, not the token that happened to raise it. */
 export function notePartial(result: ParserResult, code: string): void {
   result.partialCmds.add(code);
-  if (result.tokenSpan && !result.partialSpans.has(code)) {
-    result.partialSpans.set(code, result.tokenSpan);
-  }
+  if (result.partialSpans.has(code)) return;
+  const span = result.lastSpanByCmd.get(code.slice(1)) ?? result.tokenSpan;
+  if (span) result.partialSpans.set(code, span);
 }
 
 /** Default text height: ^CF override, else ZPL baseline 30. */
@@ -361,6 +364,7 @@ export function resetFieldBlockDefaults(defaults: DefaultsState): void {
 export function resetFormatScopedState(s: ParserState): void {
   s.result.partialCmds = new Set();
   s.result.partialSpans = new Map();
+  s.result.lastSpanByCmd = new Map();
   s.varScopeStart = s.result.variables.length;
   s.serialStrippedFns.clear();
   s.bareDeclaredFns.clear();
@@ -386,6 +390,7 @@ export function createParserState(): ParserState {
       variables: [],
       partialCmds: new Set<string>(),
       partialSpans: new Map<string, SourceSpan>(),
+      lastSpanByCmd: new Map<string, SourceSpan>(),
       browserLimit: [],
       unknown: [],
       replayRisk: [],

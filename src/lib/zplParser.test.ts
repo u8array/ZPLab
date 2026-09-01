@@ -3425,3 +3425,21 @@ describe('parseZPL — source spans (objectSpans + finding.span)', () => {
     expect(zpl.slice(span.start, span.end)).toBe('~PH');
   });
 });
+
+describe('parseZPL — a partial names its own command', () => {
+  it('spans the command the finding names, not the token that flushed it', () => {
+    const zpl = '^XA^FO10,10^BQN,2,10,Q,7^FDMM,AHello^FS^XZ';
+    const r = parseSingle(zpl, 8, { captureOverlay: true });
+    const partial = defined(r.findings.find((f) => f.kind === 'partial' && f.command === '^BQ'));
+    const span = defined(partial.span);
+    expect(zpl.slice(span.start, span.end)).toBe('^BQN,2,10,Q,7');
+  });
+
+  it('points a remapped-prefix partial at its own source bytes', () => {
+    const zpl = '^XA^CC##FO10,10#BQN,2,10,Q,7#FDMM,AHello#FS#XZ';
+    const r = parseSingle(zpl, 8, { captureOverlay: true });
+    const partial = defined(r.findings.find((f) => f.kind === 'partial' && f.command.endsWith('BQ')));
+    const span = defined(partial.span);
+    expect(zpl.slice(span.start, span.end)).toBe('#BQN,2,10,Q,7');
+  });
+});

@@ -475,6 +475,7 @@ export function parseZPL(
     // trimmed: the tokenizer's end runs to the next command's prefix, and a
     // span must not swallow the line break plus following indent.
     s.result.tokenSpan = { start, end: Math.min(end, start + 3 + rest.trimEnd().length) };
+    s.result.lastSpanByCmd.set(cmd, s.result.tokenSpan);
     // Strips trailing break plus indent from the last literal param; LITERAL_TAIL_CMDS keep real trailing spaces.
     const p = stripLineWrap(rest).split(s.format.delimiterChar);
     const last = p[p.length - 1];

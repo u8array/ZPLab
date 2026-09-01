@@ -76,6 +76,13 @@ test('an unbalanced draft shows a positioned lint error while typing', async ({ 
   await expect(page.locator('.cm-lintRange-error')).toHaveText('^XZ');
 });
 
+test('a device action gets a positioned warning mark while typing', async ({ page }) => {
+  await page.goto('/');
+  const output = await importSample(page);
+  await retype(page, output, '^XA^FO10,10^A0N,30,30^FDX^FS^XZ~PH');
+  await expect(page.locator('.cm-lintRange-warning')).toHaveText('~PH');
+});
+
 test('Escape asks to discard and restores the export', async ({ page }) => {
   await page.goto('/');
   const output = await importSample(page);
