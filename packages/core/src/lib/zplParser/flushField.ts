@@ -47,7 +47,7 @@ import type { CodablockProps } from "../../registry/codablock";
 import type { Tlc39Props } from "../../registry/tlc39";
 import { upceData6FromFd } from "../../registry/hriFormatters";
 import { decodeFH, makeObj, variableNameFromComment } from "./helpers";
-import {
+import { notePartial,
   getPosType,
   REGEN_LOSSY_REASONS,
   resetFieldBlockDefaults,
@@ -65,7 +65,7 @@ function code49HeightDots(s: ParserState): number {
   const mult = s.field.bcCode49Mult;
   const raw = mult === null ? ((s.defaults.byHeight || 20) - 3 * mw) / 2 : mult * mw;
   const height = code49SnapHeight(raw, mw);
-  if (mult === null || height !== raw) s.result.partialCmds.add("^B4");
+  if (mult === null || height !== raw) notePartial(s.result, "^B4");
   return height;
 }
 /** Cross-family deps flushField borrows from graphics (^GB+^FR) and parseZPL (^FX). */
@@ -179,7 +179,7 @@ export function createFlushField(
       // A range insert takes PART of the slot; the model has no range
       // vocabulary, so the collapse loses information. Bytes compare against
       // the canonical emit form, so any variance counts (#02# included).
-      if (m[2]) s.result.partialCmds.add("^FE");
+      if (m[2]) notePartial(s.result, "^FE");
       if (m[0] !== `${s.format.embedChar}${n}${s.format.embedChar}`) {
         s.fdRegenLossy ??= REGEN_LOSSY_REASONS.fnEmbed;
       }
@@ -426,7 +426,7 @@ export function createFlushField(
           s.fdRegenLossy ??= REGEN_LOSSY_REASONS.qr;
         }
         if (s.field.qrHeaderPartial || (fd.lossy && rawDecoded !== "")) {
-          s.result.partialCmds.add("^BQ");
+          notePartial(s.result, "^BQ");
         }
         pushLeaf(
           makeObj(
@@ -722,7 +722,7 @@ export function createFlushField(
       && isGs1Active(getEntry(justPushed.type), justPushed.props);
     const lastSerialisable = !!justPushed && !lastGs1
       && !!getEntry(justPushed.type)?.serialisable;
-    if (s.field.snPending && lastGs1) s.result.partialCmds.add(`^${s.field.snMode}`);
+    if (s.field.snPending && lastGs1) notePartial(s.result, `^${s.field.snMode}`);
 
     // Bind pending ^FN slot; existing Variable for same fnNumber is reused.
     if (s.comment.fnNumber !== null) {

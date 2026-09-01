@@ -4,7 +4,7 @@ import type { ImageProps } from "../../../registry/image";
 import type { LineProps } from "../../../registry/line";
 import { loadFontBytesSync } from "../../fontCache";
 import { formatStoragePath, parseStoragePath } from "../../storagePath";
-import { getPosType, pushBrowserLimit, type ParserState } from "../context";
+import { notePartial, getPosType, pushBrowserLimit, type ParserState } from "../context";
 import { decodeGraphicToImage } from "../decoders/graphic";
 import { preserveGfData } from "../decoders/gfa";
 import { extractQrSidecar } from "../../qrGraphic";
@@ -236,7 +236,7 @@ export function createGraphicsHandlers(
         // falls back to a square so the placeholder stays grabbable.
         const opaqueHeight = gfFieldCount > 0 ? Math.floor(gfFieldCount / gfBytesPerRow) : 0;
         const opaqueH = opaqueHeight > 0 ? opaqueHeight : opaqueWidth;
-        s.result.partialCmds.add("^GF");
+        notePartial(s.result, "^GF");
         pushGraphic(
           "image",
           opaqueWidth,
@@ -252,7 +252,7 @@ export function createGraphicsHandlers(
         );
         return;
       }
-      if (!gfImage.crcOk) s.result.partialCmds.add("^GF");
+      if (!gfImage.crcOk) notePartial(s.result, "^GF");
       const gfComment = takeComment();
       // Rotated-QR sidecar: rebuild the QR object, not an image. The emit anchors
       // via fieldPos, so keep the raw field coords, not pushGraphic's ftTopLeft.
@@ -379,7 +379,7 @@ export function createGraphicsHandlers(
       // printer side is assumed to resolve. Surface as partial so the
       // import report flags the degraded preview. No real dims; the square
       // placeholder doubles as the ^FT footprint.
-      s.result.partialCmds.add("^XG");
+      notePartial(s.result, "^XG");
       pushGraphic(
         "image",
         200,
@@ -467,7 +467,7 @@ export function createGraphicsHandlers(
           pushBrowserLimit(s.result, dySummary);
           return;
         }
-        if (!dyImage.crcOk) s.result.partialCmds.add("~DY");
+        if (!dyImage.crcOk) notePartial(s.result, "~DY");
         // Path normalisation: ~DY uses `device:stem` without extension; the
         // ^XG side resolves `device:stem.GRF`. Store the `.GRF` form so the
         // XG lookup is direct.

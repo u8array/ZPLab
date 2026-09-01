@@ -5,7 +5,7 @@ import { getEntry, isGs1Active } from "../../../registry";
 import { classifyField } from "../../variableField";
 import { isGroup } from "../../../types/Group";
 import { ZPL_BUILTIN_FONT_LETTERS } from "../../customFonts";
-import {
+import { notePartial,
   getDefaultTextH,
   getDefaultTextW,
   resetFieldBlockDefaults,
@@ -45,7 +45,7 @@ export function createDynamicFontAWildcard(s: ParserState): Wildcard {
         !s.fonts.aliases.has(fontChar) &&
         !ZPL_BUILTIN_FONT_LETTERS.includes(fontChar)
       ) {
-        s.result.partialCmds.add(`^${cmd}`);
+        notePartial(s.result, `^${cmd}`);
       }
     },
   };
@@ -227,7 +227,7 @@ export function createFieldHandlers(
       // 2D/stacked field would import a state the emitter drops on export.
       // GS1 fields drop it with a loss note, like the in-field placement.
       if (lastObj && !isGroup(lastObj) && isGs1Active(getEntry(lastObj.type), lastObj.props)) {
-        s.result.partialCmds.add("^SN");
+        notePartial(s.result, "^SN");
         return;
       }
       if (lastObj && getEntry(lastObj.type)?.serialisable) {
@@ -328,7 +328,7 @@ export function createFieldHandlers(
       // record it so the import won't mistake it for a Setup-Script font.
       const fontRefTrimmed = fontRef.trim();
       if (fontRefTrimmed) s.fonts.referencedFontPaths.add(fontRefTrimmed);
-      s.result.partialCmds.add("^A@");
+      notePartial(s.result, "^A@");
     },
     // ^TB{rotation},{width},{height}: text block. Stored natively (width +
     // clip height) so it round-trips as ^TB, unlike the prior lossy collapse
@@ -363,14 +363,14 @@ export function createFieldHandlers(
     CI(p) {
       const enc = ciToEncoding(int(p[0]));
       s.format.ciDecoder = getDecoder(enc.label);
-      if (!enc.supported) s.result.partialCmds.add(`^CI${int(p[0])}`);
+      if (!enc.supported) notePartial(s.result, `^CI${int(p[0])}`);
     },
 
     // ^FN{n}: template slot for the next field's ^FD default. Out-of-range ignored.
     FN(p) {
       const n = int(p[0]);
       if (n < FN_NUMBER_MIN || n > FN_NUMBER_MAX) {
-        s.result.partialCmds.add("^FN");
+        notePartial(s.result, "^FN");
         return;
       }
       s.result.sourceFnNumbers.add(n);
@@ -444,7 +444,7 @@ export function createFieldHandlers(
     CC(_, rest) {
       const c = rest[0];
       if (!acceptsPrefixRemap(c, s.format.tildeChar, s.format.delimiterChar)) {
-        s.result.partialCmds.add("^CC");
+        notePartial(s.result, "^CC");
         return;
       }
       s.format.caretChar = c;
@@ -453,7 +453,7 @@ export function createFieldHandlers(
     CT(_, rest) {
       const c = rest[0];
       if (!acceptsPrefixRemap(c, s.format.caretChar, s.format.delimiterChar)) {
-        s.result.partialCmds.add("^CT");
+        notePartial(s.result, "^CT");
         return;
       }
       s.format.tildeChar = c;
@@ -462,7 +462,7 @@ export function createFieldHandlers(
     CD(_, rest) {
       const c = rest[0];
       if (!acceptsPrefixRemap(c, s.format.caretChar, s.format.tildeChar)) {
-        s.result.partialCmds.add("^CD");
+        notePartial(s.result, "^CD");
         return;
       }
       s.format.delimiterChar = c;

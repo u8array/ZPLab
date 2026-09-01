@@ -15,6 +15,13 @@ export type ImportFindingKind =
   | "fnDefaultDropped"
   | "mixedPageGeometry";
 
+/** Absolute offsets into the parsed source string. Readonly: one span object
+ *  may back several findings of the same token, so no consumer may rebase it. */
+export interface SourceSpan {
+  readonly start: number;
+  readonly end: number;
+}
+
 /**
  * One import finding. Created per-occurrence so each entry can be navigated
  * to its source page in the UI; cross-page dedup happens (if at all) in the
@@ -32,6 +39,10 @@ export interface ImportFinding {
   /** Which divergence a 'mixedPageGeometry' finding reports, so consumers
    *  pick their message without sniffing `command`. */
   cause?: 'size' | 'jm';
+  /** Span of the token whose processing recorded the finding (always
+   *  stamped). A flush-raised finding carries the token that closed the
+   *  field: its ^FS or the next field's opener. Absent for post-parse kinds. */
+  span?: SourceSpan;
 }
 
 export interface ImportReport {
@@ -73,6 +84,10 @@ export interface ParsedPage {
   /** Page 0 only: stream had no ^XA wrapper (bare field paste). Re-export
    *  regenerates the wrapper, so the overlay is suppressed by the caller. */
   bare?: boolean;
+  /** Absolute source span per cleanly linked object; unlinked objects absent.
+   *  Requires `captureOverlay` (reuses the overlay's link pass) but survives
+   *  pages whose overlay the all-linked gate refuses. */
+  objectSpans?: ReadonlyMap<string, SourceSpan>;
 }
 
 /** First ^XA/^XZ imbalance. `at` is the command's offset in the source

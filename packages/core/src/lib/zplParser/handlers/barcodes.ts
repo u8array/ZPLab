@@ -5,6 +5,7 @@ import type { Gs1DatabarProps } from "../../../registry/gs1databar";
 import { qrBqHeader, qrMagnificationFromZpl, qrModelFromZpl } from "../../../registry/qrcode";
 import { clampMaxicodeAppend, type MaxicodeProps } from "../../../registry/maxicode";
 import { GS1_DATABAR_DEFAULT_SEGMENTS } from "../../gs1";
+import { notePartial } from "../context";
 import type { ParserState } from "../context";
 import { dotsFor, int, readRotation, strParam } from "../helpers";
 import type { Handler } from "../types";
@@ -88,7 +89,7 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
       const f = strParam(p[2]) || "N";
       s.field.bcInterp = f === "A" || f === "B";
       s.field.bcInterpAbove = f === "A";
-      if (!["N", "A", "B"].includes(f)) s.result.partialCmds.add("^B4");
+      if (!["N", "A", "B"].includes(f)) notePartial(s.result, "^B4");
       const m = (p[3] ?? "A").toUpperCase();
       s.field.bcCode49Mode = /^[A0-5]$/.test(m)
         ? (m as Code49Props["mode"])

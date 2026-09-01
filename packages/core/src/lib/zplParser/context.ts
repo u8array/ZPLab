@@ -1,4 +1,5 @@
 import type { LabelObject } from "../../types/Group";
+import type { SourceSpan } from "./types";
 import type { LabelConfig } from "../../types/LabelConfig";
 import type { PrinterProfile } from "../../types/PrinterProfile";
 import type { Variable } from "../../types/Variable";
@@ -47,6 +48,13 @@ export const REGEN_LOSSY_REASONS = {
 
 export type RegenLossyReason = (typeof REGEN_LOSSY_REASONS)[keyof typeof REGEN_LOSSY_REASONS];
 
+/** A bucketed command plus the span of the token whose processing recorded
+ *  it, stamped at the push site from `ParserResult.tokenSpan`. */
+export interface SpannedToken {
+  command: string;
+  span?: SourceSpan;
+}
+
 /** Shared parse accumulators; pages slice the arrays via offset marks, the
  *  document-wide fields hand back via `ParsedZPL`. */
 export interface ParserResult {
@@ -55,12 +63,16 @@ export interface ParserResult {
   printerProfile: Partial<PrinterProfile>;
   variables: Variable[];
   partialCmds: Set<string>;
-  browserLimit: string[];
-  unknown: string[];
+  /** First-seen span per partial code; swapped with `partialCmds` per page. */
+  partialSpans: Map<string, SourceSpan>;
+  /** Span of the token currently being processed; the loop updates it. */
+  tokenSpan?: SourceSpan;
+  browserLimit: SpannedToken[];
+  unknown: SpannedToken[];
   /** Setup-Script commands seen (profile-backed, routable on import). */
-  replayRisk: string[];
+  replayRisk: SpannedToken[];
   /** Device-action commands seen (no profile field, not routable). */
-  deviceAction: string[];
+  deviceAction: SpannedToken[];
   /** Every in-range ^FN slot the tokenizer saw, including on fields that end
    *  up passthrough-only (no Variable). Import renumbering must avoid these:
    *  overlays replay the original bytes. */
@@ -292,7 +304,17 @@ export interface ParserState {
 /** trimEnd: `token` carries `rest` up to the next command, which in multi-line
  *  ZPL includes the trailing newline (noise in this diagnostic surface). */
 export function pushBrowserLimit(result: ParserResult, token: string): void {
-  result.browserLimit.push(token.trimEnd());
+  result.browserLimit.push({ command: token.trimEnd(), span: result.tokenSpan });
+}
+
+/** Partial-command funnel: dedup set plus first-seen span, recorded at the
+ *  source instead of a loop-side growth watch (which fails wrong on paths
+ *  that skip it). */
+export function notePartial(result: ParserResult, code: string): void {
+  result.partialCmds.add(code);
+  if (result.tokenSpan && !result.partialSpans.has(code)) {
+    result.partialSpans.set(code, result.tokenSpan);
+  }
 }
 
 /** Default text height: ^CF override, else ZPL baseline 30. */
@@ -338,6 +360,7 @@ export function resetFieldBlockDefaults(defaults: DefaultsState): void {
  *  resets too: a page closing mid-field must not leak a dangling ^FH/^FB. */
 export function resetFormatScopedState(s: ParserState): void {
   s.result.partialCmds = new Set();
+  s.result.partialSpans = new Map();
   s.varScopeStart = s.result.variables.length;
   s.serialStrippedFns.clear();
   s.bareDeclaredFns.clear();
@@ -362,6 +385,7 @@ export function createParserState(): ParserState {
       printerProfile: {},
       variables: [],
       partialCmds: new Set<string>(),
+      partialSpans: new Map<string, SourceSpan>(),
       browserLimit: [],
       unknown: [],
       replayRisk: [],
