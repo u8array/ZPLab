@@ -203,6 +203,12 @@ export function createFlushField(
   };
 
   const flushField = () => {
+    // A positioned `^FN<n>^FS` without ^FD is a stored-format placeholder
+    // (the batch template shape); adopt an empty ^FD so the bound field
+    // imports instead of dropping.
+    if (s.field.fieldType && s.field.pendingFD === null && s.comment.fnNumber !== null) {
+      s.field.pendingFD = "";
+    }
     if (!s.field.fieldType || s.field.pendingFD === null) {
       // Bare `^FN<n>^FD<default>^FS`: Variable declaration, not a field.
       if (s.comment.fnNumber !== null && s.field.pendingFD !== null) {

@@ -17,6 +17,7 @@ import { escapeGs1FdValue } from './gs1';
 import { fnConsumerBuckets } from './gs1ModeDFns';
 import { planCode128Fd } from './code128Plan';
 import { resolveControlMarkers } from '../types/controlKey';
+import { resolveContentPreview } from './markerResolve';
 import { formatLabelMetaComment } from './zplLabelMeta';
 import { designAsPageLabel, jmDensityOf } from '../types/LabelConfig';
 import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig, PageLabel } from '../types/LabelConfig';
@@ -25,7 +26,7 @@ import type { Variable } from '../types/Variable';
 import { exportableLeaves, isGroup, pageLabelConfig, type LabelObject, type LeafObject, type Page } from '../types/Group';
 import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from './zplOverlay/overlay';
 import { reconstructBlockHead } from './zplHeadScan';
-import { objectBoundsDots, type ObjectBoundsCtx } from './objectBounds';
+import { objectBoundsDots, qrPrintsAsGraphic, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
 import { imageEmitDims, imageEmitRotation, parseGfHeader, shippableGfa, type ImageProps } from '../registry/image';
 import { formatStoragePath } from './storagePath';
@@ -64,6 +65,7 @@ export function planTemplateHeader(
   shifted: LabelObject[],
   label: LabelConfig,
   variables: readonly Variable[],
+  bareFnSlots?: ReadonlySet<number>,
 ): { headerLines: string[]; emitCtx: ZplEmitContext } {
   // O(N+V) vs O(N*V) per-marker re-scan.
   const varsByName = new Map(variables.map((v) => [v.name, v]));
@@ -115,10 +117,13 @@ export function planTemplateHeader(
   const headerLines: string[] = [];
   const emitCtx: ZplEmitContext = { label, variables };
   if (plainSharedFns.size > 0) emitCtx.rawFdFns = plainSharedFns;
+  if (bareFnSlots && bareFnSlots.size > 0) emitCtx.bareFnSlots = bareFnSlots;
 
   if (pickedEmbedChar !== null) {
     for (const [fn, v] of [...templateVarsByFn].sort(([a], [b]) => a - b)) {
       if (singleBindFns.has(fn)) continue;
+      // Recall-supplied slots get no declaration (see bareFnSlots).
+      if (emitCtx.bareFnSlots?.has(fn)) continue;
       // Mode-D-exclusive slot: > needs its >0 invocation (parser reverses).
       // Plain-^BC-exclusive slot likewise: >/^/~ need their invocation
       // literals; the ^FH hex fdField would otherwise use is dropped from
@@ -619,19 +624,19 @@ export function generateBatchZpl(
   },
   columnMapping: { bindings: Record<string, string> },
 ): string {
-  const baseZpl = generateZPL(label, objects, variables);
-  // Inject after first ^XA (not at start) because ~DY/~SD preambles
-  // emit before ^XA and would skip a start-anchored match.
-  const templateStored = baseZpl.replace(
-    /\^XA\r?\n/,
-    `^XA\n^DF${BATCH_TEMPLATE_PATH}\n`,
-  );
-
   const identity = (s: string) => s;
-  // Excluded leaves aren't in the stored template, so don't source a transform
-  // from one (it could shadow an exported field sharing the same variable).
-  const leaves = exportableLeaves(objects);
-  const batchBuckets = fnConsumerBuckets(objects, variables);
+  // Only leaves that emit an ^FN in the stored template may donate their
+  // transform: an excluded or home-dropped leaf or a rotated QR shipped as
+  // ^GFA would stamp a foreign encoding onto the surviving co-consumer.
+  const shifted = shiftObjectsByHome(
+    objects, label.labelHomeX ?? 0, label.labelHomeY ?? 0, label.labelTop ?? 0, label,
+  );
+  const leaves = exportableLeaves(shifted).filter(
+    (o) => !(qrPrintsAsGraphic(o) && resolveContentPreview(getObjectStringContent(o) ?? '', variables)),
+  );
+  // Same shifted tree the template's own header pass classifies; the donor
+  // filter above is the narrower "emits an ^FN" question.
+  const batchBuckets = fnConsumerBuckets(shifted, variables);
   const modeDFns = batchBuckets.modeDExclusive;
   const plain128Fns = batchBuckets.plainExclusive;
   const plainSharedFns = batchBuckets.plainShared;
@@ -667,6 +672,17 @@ export function generateBatchZpl(
             : identity);
     overrides.push({ fn: v.fnNumber, colIdx, transform });
   }
+
+  // Mapped slots stay bare in the stored format; the recall supplies them.
+  const mappedFns = new Set(overrides.map((o) => o.fn));
+  const baseZpl = generateZplBlock(label, objects, variables, mappedFns).block;
+  // Inject after first ^XA (not at start) because ~DY/~SD preambles
+  // emit before ^XA and would skip a start-anchored match. No ^FS after the
+  // name: it would precede ^JM and disable the density (p.269).
+  const templateStored = baseZpl.replace(
+    /\^XA\r?\n/,
+    `^XA\n^DF${BATCH_TEMPLATE_PATH}\n`,
+  );
 
   const recallBlocks = dataset.rows.map((row) => {
     const lines: string[] = ['^XA', `^XF${BATCH_TEMPLATE_PATH}`];
@@ -742,13 +758,14 @@ export function planFieldEmission(
   label: PageLabel,
   objects: LabelObject[],
   variables: readonly Variable[] = [],
+  bareFnSlots?: ReadonlySet<number>,
 ): { headerLines: string[]; bodies: EmittedBody[] } {
   const homeX = label.labelHomeX ?? 0;
   const homeY = label.labelHomeY ?? 0;
   const top = label.labelTop ?? 0;
   const shifted = shiftObjectsByHome(objects, homeX, homeY, top, label);
 
-  const { headerLines, emitCtx } = planTemplateHeader(shifted, label, variables);
+  const { headerLines, emitCtx } = planTemplateHeader(shifted, label, variables, bareFnSlots);
 
   // Groups are structural; includeInExport=false cascades to the subtree.
   // Byte-identical round-trip lives in the overlay path (emitOverlayPage); this
@@ -792,6 +809,7 @@ function generateZplBlock(
   label: PageLabel,
   objects: LabelObject[],
   variables: readonly Variable[] = [],
+  bareFnSlots?: ReadonlySet<number>,
 ): PageBlock {
   // ^PW/^LL are consumed in physical head dots (ZD230-verified), even under
   // ^JMB: the body's object dots emit in the effective (halved) scale, but the
@@ -949,7 +967,7 @@ function generateZplBlock(
     lines.push(`^CF${slots.join(",")}`);
   }
 
-  const { headerLines, bodies } = planFieldEmission(label, objects, variables);
+  const { headerLines, bodies } = planFieldEmission(label, objects, variables, bareFnSlots);
   lines.push(...headerLines);
   const bodyIdByLine = new Map<number, string>();
   for (const b of bodies) {
