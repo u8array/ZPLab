@@ -1,3 +1,4 @@
+import { LABEL_META_KEYS } from "./zplLabelMeta";
 import { importZplText, mergeSetupFonts, replaceImportLabel } from "./zplImportService";
 import type { ImportReport, UnbalancedFormat } from "./zplParser";
 import type { LabelConfig } from "../types/LabelConfig";
@@ -136,8 +137,7 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
       label,
       Object.keys(base.labelConfig),
       new Set(Object.keys(imported.labelConfig)),
-      // The sidecar trio is document identity, not a deletable command.
-      ["dpmm", "widthMm", "heightMm"],
+      LABEL_META_KEYS,
     );
     printerProfile = stripDeletedKeys(
       printerProfile,

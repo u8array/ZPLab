@@ -17,10 +17,13 @@ const MM_MAX = 5000;
 export const isPlausibleLabelMm = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v) && v >= MM_MIN && v <= MM_MAX;
 
-export interface LabelMeta {
-  dpmm: number;
-  widthMm: number;
-  heightMm: number;
+/** Document identity: survives a buffer edit that deletes ^PW/^LL and outlives a design. */
+export const LABEL_META_KEYS = ["dpmm", "widthMm", "heightMm"] as const;
+
+export type LabelMeta = Record<(typeof LABEL_META_KEYS)[number], number>;
+
+export function labelMetaOf(label: LabelMeta): LabelMeta {
+  return Object.fromEntries(LABEL_META_KEYS.map((k) => [k, label[k]])) as LabelMeta;
 }
 
 /** Shared ZPLLAB envelope (label meta, QR props). Body must be free of ^/~

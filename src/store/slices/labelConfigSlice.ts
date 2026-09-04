@@ -1,3 +1,4 @@
+import { labelMetaOf } from '@zplab/core/lib/zplLabelMeta';
 import type { StateCreator } from 'zustand';
 import { PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { Page } from '@zplab/core/types/Group';
@@ -6,7 +7,7 @@ import type { DbSourceRef } from '@zplab/core/types/DataSource';
 import { forgetImport } from '../../lib/csvImport';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { parseDesignFile, designFileErrors } from '@zplab/core/lib/designFile';
-import { selectEditorFrozen } from '../labelStore.selectors';
+import { selectEditorFrozen, selectSourceEditing } from '../labelStore.selectors';
 import { configPatchAffectsEmit } from '../labelStore.internals';
 import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
 import { rescaleDesign, rescaleParamsFor } from '../../lib/densityRescale';
@@ -26,6 +27,8 @@ export interface LabelConfigSlice {
   setLabelConfig: (config: Partial<LabelConfig>) => void;
   /** Clear every PER_LABEL_ZPL_FIELDS override back to unset (printer default). */
   resetPerLabelConfig: () => void;
+  /** Empty document on the same media: the label meta trio and the printer profile stay. */
+  newDesign: () => void;
   /** Atomic file-open: resets label, pages, currentPageIndex,
    *  selectedIds, variables, columnMapping, dataset in one set() so
    *  zundo records one undo step and no intermediate state leaks.
@@ -71,6 +74,12 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
     get().setLabelConfig(
       Object.fromEntries(PER_LABEL_ZPL_FIELDS.map((k) => [k, undefined])) as Partial<LabelConfig>,
     ),
+
+  // Like the menu: only a source-edit session blocks; a preview is superseded by loadDesign.
+  newDesign: () => {
+    if (selectSourceEditing(get())) return;
+    get().loadDesign(labelMetaOf(get().label), []);
+  },
 
   loadDesign: (label, pages, variables, columnMapping, dataSource) => {
     // A document replacement supersedes any active preview; exit it and load,
