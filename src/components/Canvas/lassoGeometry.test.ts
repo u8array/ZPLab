@@ -1,13 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { getIdsIntersectingRect, HOLLOW_HIT_NAME, type LassoRect } from "./lassoGeometry";
+import { getIdsIntersectingRect, hollowRingSpec, HOLLOW_HIT_NAME, HOLLOW_INSET_ATTR, HOLLOW_RADIUS_ATTR, type LassoRect } from "./lassoGeometry";
 
 interface FakeShape {
-  className: "Rect" | "Ellipse";
+  className: "Rect" | "Ellipse" | "Shape";
+  hollowInset?: number;
+  hollowRadius?: number;
   /** Mirrors the HOLLOW_HIT_NAME marker shapeHitProps stamps on frames. */
   hollow?: boolean;
   strokeWidth: number;
   hitStrokeWidth?: number;
-  cornerRadius?: number;
 }
 
 interface FakeNode {
@@ -32,7 +33,8 @@ function fakeStage(nodes: Record<string, FakeNode>): {
             className: s.className,
             strokeWidth: () => s.strokeWidth,
             hitStrokeWidth: () => s.hitStrokeWidth ?? s.strokeWidth,
-            cornerRadius: () => s.cornerRadius ?? 0,
+            getAttr: (name: string) =>
+              name === HOLLOW_INSET_ATTR ? s.hollowInset : name === HOLLOW_RADIUS_ATTR ? s.hollowRadius : undefined,
           };
         },
       } as unknown as T;
@@ -150,13 +152,6 @@ describe("getIdsIntersectingRect hollow frames", () => {
 
   // Free interior of a rounded frame is itself a rounded rect (path radius 40
   // minus hit/2 = 33, inset 8), not the central rectangle.
-  it("rounded corners: free area follows the inner rounding", () => {
-    // Diagonal corner zone but inside the r=33 inner rounding: free.
-    expect(hits(frame({ cornerRadius: 40 }), { x: 20, y: 20, w: 30, h: 30 })).toEqual([]);
-    // Tight against the corner: outside the inner rounding, ring hit.
-    expect(hits(frame({ cornerRadius: 40 }), { x: 10, y: 10, w: 20, h: 20 })).toEqual(["frame"]);
-    expect(hits(frame({ cornerRadius: 40 }), { x: 60, y: 60, w: 60, h: 60 })).toEqual([]);
-  });
 
   it("skips a hollow ellipse only when all lasso corners are inside the ring", () => {
     const ellipse: Record<string, FakeNode> = {
@@ -168,5 +163,38 @@ describe("getIdsIntersectingRect hollow frames", () => {
     expect(hits(ellipse, { x: 80, y: 80, w: 40, h: 40 })).toEqual([]);
     // Same size near the bbox corner: corners leave the inner ellipse.
     expect(hits(ellipse, { x: 20, y: 20, w: 40, h: 40 })).toEqual(["ring"]);
+  });
+});
+
+describe("rounded ^GB ring frames", () => {
+  const ring = (over: Partial<FakeShape> = {}): Record<string, FakeNode> => ({
+    frame: {
+      rect: { x: 0, y: 0, width: 200, height: 200 },
+      shapes: [{ className: "Shape", hollow: true, strokeWidth: 40, hollowInset: 40, hollowRadius: 30, ...over }],
+    },
+  });
+  const hits = (nodes: Record<string, FakeNode>, r: LassoRect) =>
+    getIdsIntersectingRect(fakeStage(nodes) as never, Object.keys(nodes), r);
+
+  it("lets a lasso inside the free interior pass, tight to the inner arc", () => {
+    expect(hits(ring(), { x: 60, y: 60, w: 80, h: 80 })).toEqual([]);
+  });
+
+  it("captures the frame when the lasso crosses the ring or its inner corner", () => {
+    expect(hits(ring(), { x: 20, y: 20, w: 80, h: 80 })).toEqual(["frame"]);
+    // Inside the inset square but outside the inner arc (radius 30).
+    expect(hits(ring(), { x: 41, y: 41, w: 10, h: 10 })).toEqual(["frame"]);
+  });
+});
+
+describe("hollowRingSpec", () => {
+  it("offsets the true arcs by the pad instead of recomputing them from the padded box", () => {
+    // ^GB200,200,4,B,4 at 1 px per dot: outer 50, inner 48, hit pad 5.
+    const spec = hollowRingSpec(200, 200, 4, { outer: 50, inner: 48 }, 5);
+    expect(spec).toEqual({ width: 210, height: 210, band: 14, outer: 55, inner: 43, inset: 9 });
+  });
+
+  it("is the plain ring when nothing pads it", () => {
+    expect(hollowRingSpec(200, 200, 40, { outer: 50, inner: 30 }, 0)).toEqual({ width: 200, height: 200, band: 40, outer: 50, inner: 30, inset: 40 });
   });
 });

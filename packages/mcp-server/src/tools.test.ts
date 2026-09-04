@@ -1981,8 +1981,23 @@ describe("a frame with rounded corners", () => {
   });
 
   it("reports an object straddling the corner arc", () => {
-    // Clears every straight edge but crosses the r=100 corner curve.
+    // Clears every straight edge but crosses the inner arc (radius 47 at r=8).
     expect(ok(validateDraft(design(10, 10, 8))).overlaps.length).toBe(1);
+  });
+
+  it("treats a box inside the printer's inner arc as noise, not the doubled canvas radius", () => {
+    // Inner arc 45: the box at (30,30) clears it; the old doubled radius (90) flagged it.
+    const d = {
+      schemaVersion: 5,
+      label: { widthMm: 50, heightMm: 50, dpmm: 8 },
+      pages: [{ objects: [
+        { id: "frame", type: "box", x: 0, y: 0, rotation: 0,
+          props: { width: 200, height: 200, thickness: 10, filled: false, color: "B", rounding: 4 } },
+        { id: "in", type: "box", x: 30, y: 30, rotation: 0,
+          props: { width: 140, height: 140, thickness: 1, filled: true, color: "B", rounding: 0 } },
+      ] }],
+    };
+    expect(ok(validateDraft(d)).overlaps).toEqual([]);
   });
 
   it("still treats a square frame's contents as noise", () => {

@@ -7,7 +7,7 @@
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { LineProps } from "@zplab/core/registry/line";
 import { box, type BoxProps } from "@zplab/core/registry/box";
-import { outlineInset } from "./shapeGeometry";
+import { outlineInset } from "@zplab/core/lib/shapeGeometry";
 
 type LineLeaf = LabelObject & { type: "line"; props: LineProps };
 type BoxLeaf = LabelObject & { type: "box"; props: BoxProps };

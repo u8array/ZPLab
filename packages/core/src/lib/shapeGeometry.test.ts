@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { outlineInset, diagonalPolygonPoints } from "./shapeGeometry";
+import { boxCornerRadii, outlineInset, diagonalPolygonPoints } from "./shapeGeometry";
 
 describe("outlineInset", () => {
   it("returns the unmodified bbox for a filled shape", () => {
@@ -90,5 +90,47 @@ describe("diagonalPolygonPoints", () => {
 
   it("returns 8 numbers (4 vertices × 2 coords)", () => {
     expect(diagonalPolygonPoints(0, 0, 50, 50, 3)).toHaveLength(8);
+  });
+});
+
+describe("boxCornerRadii", () => {
+  // ZD230 and Labelary, diagonal-measured: one pixel step is 3.4 dots of radius.
+  it.each([
+    [200, 200, 4, 1, 13.7, 13.7],
+    [200, 200, 4, 2, 27.3, 23.9],
+    [200, 200, 4, 4, 51.2, 47.8],
+    [200, 200, 4, 6, 75.1, 71.7],
+    [200, 200, 4, 8, 99.0, 95.6],
+    [400, 200, 4, 4, 51.2, 47.8],
+    [200, 200, 40, 2, 27.3, 17.1],
+    [200, 200, 40, 4, 51.2, 30.7],
+    [200, 200, 40, 8, 99.0, 58.0],
+    [10, 200, 50, 8, 23.9, 0],
+  ])("w=%i h=%i t=%i r=%i matches the printer within one step", (w, h, t, r, outer, inner) => {
+    const got = boxCornerRadii(w, h, t, r);
+    expect(Math.abs(got.outer - outer)).toBeLessThan(3.5);
+    expect(Math.abs(got.inner - inner)).toBeLessThan(3.5);
+  });
+
+  it("is the guide's formula outside: rounding/8 of half the shorter side", () => {
+    expect(boxCornerRadii(400, 200, 4, 8).outer).toBe(100);
+    expect(boxCornerRadii(400, 200, 4, 1).outer).toBe(12.5);
+  });
+
+  it("rounds the inner edge from the inset rectangle, not concentrically", () => {
+    // Concentric would give 50 - 40 = 10; the printer draws 30.
+    expect(boxCornerRadii(200, 200, 40, 4).inner).toBe(30);
+    expect(boxCornerRadii(200, 200, 100, 4).inner).toBe(0);
+  });
+
+  it("rounds the box ^GB draws: a side never below the border, the border never below 1", () => {
+    // ^GB10,200,50 prints a 50-wide bar; the radius follows the printed width.
+    expect(boxCornerRadii(10, 200, 50, 8).outer).toBe(25);
+    expect(boxCornerRadii(200, 200, 0, 4).inner).toBe(boxCornerRadii(200, 200, 1, 4).inner);
+  });
+
+  it("clamps the rounding index to 0..8", () => {
+    expect(boxCornerRadii(200, 200, 4, 12).outer).toBe(100);
+    expect(boxCornerRadii(200, 200, 4, -1).outer).toBe(0);
   });
 });

@@ -21,8 +21,8 @@ import type { LabelObject } from "@zplab/core/types/Group";
  * Anti-aliasing-only cases (thickness 1, filled solid) are kept too as a
  * baseline that should match trivially.
  *
- * Diagonal lines (`^GD`) are intentionally absent until `renderShape`
- * covers the Zebra quadrilateral geometry.
+ * Diagonal lines (`^GD`) render through the same parallelogram geometry as
+ * the canvas (`diagonalPolygonPoints`).
  */
 export interface ShapeTestCase {
   id: string;
@@ -32,6 +32,45 @@ export interface ShapeTestCase {
 }
 
 export const shapeTestCases: ShapeTestCase[] = [
+  {
+    id: "shape_box_rounded_thin",
+    obj: {
+      id: "r1",
+      type: "box",
+      x: 100,
+      y: 100,
+      rotation: 0,
+      props: { width: 200, height: 200, thickness: 4, filled: false, color: "B", rounding: 4 },
+    },
+    zpl_input: "^XA^FO100,100^GB200,200,4,B,4^FS^XZ",
+    image_ref: "shape_box_rounded_thin.png",
+  },
+  {
+    id: "shape_box_rounded_thick",
+    obj: {
+      id: "r2",
+      type: "box",
+      x: 100,
+      y: 100,
+      rotation: 0,
+      props: { width: 200, height: 200, thickness: 40, filled: false, color: "B", rounding: 4 },
+    },
+    zpl_input: "^XA^FO100,100^GB200,200,40,B,4^FS^XZ",
+    image_ref: "shape_box_rounded_thick.png",
+  },
+  {
+    id: "shape_box_rounded_wide_r8",
+    obj: {
+      id: "r3",
+      type: "box",
+      x: 100,
+      y: 100,
+      rotation: 0,
+      props: { width: 300, height: 150, thickness: 10, filled: false, color: "B", rounding: 8 },
+    },
+    zpl_input: "^XA^FO100,100^GB300,150,10,B,8^FS^XZ",
+    image_ref: "shape_box_rounded_wide_r8.png",
+  },
   {
     id: "shape_box_outline_thin",
     obj: {
@@ -228,12 +267,7 @@ export const shapeTestCases: ShapeTestCase[] = [
     image_ref: "shape_line_horizontal_t3.png",
   },
 
-  // Diagonal lines (^GD) — Labelary fixtures fetched up front so the
-  // renderer implementation in Phase 2 can iterate offline. Tests for
-  // these IDs are skipped until renderShape supports ^GD geometry; the
-  // skip predicate lives in shapeRegression.test.ts.
-  //
-  // ZPL strings were derived from line.toZPL's diagonal branch
+  // Diagonal lines (^GD). ZPL strings were derived from line.toZPL's diagonal branch
   // (Math.cos/sin → dx/dy → w/h/orientation/boxX/boxY).
   {
     id: "shape_line_diag_slash_45",

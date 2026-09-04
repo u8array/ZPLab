@@ -8,6 +8,7 @@ import {
   withFootprintBinding,
 } from "./footprint.js";
 import { isBarcode, isRightAnchoredField } from "@zplab/core/lib/objectBounds";
+import { boxCornerRadii } from "@zplab/core/lib/shapeGeometry";
 import {
   computePreflight,
   gs1NormalizationFindings,
@@ -163,10 +164,8 @@ function frameNoise(
     if (!(inner.x >= x0 && inner.y >= y0 && inner.x + inner.width <= x1 && inner.y + inner.height <= y1)) {
       return false;
     }
-    // ^GB's rounding 0-8 is a fraction of the shorter side (the canvas draws the
-    // same radius), so a box clear of every straight edge can still cross a corner
-    // arc; ellipses are excluded from this check since their curve differs.
-    const radius = ((props.rounding ?? 0) * Math.min(outer.width, outer.height)) / 8 - ring;
+    // A box clear of every straight edge can still cross the frame's inner arc.
+    const radius = boxCornerRadii(outer.width, outer.height, ring, props.rounding ?? 0).inner;
     if (radius <= 0) return true;
     const corners: [number, number][] = [
       [inner.x, inner.y],
