@@ -2734,3 +2734,45 @@ describe('applyMappingDraft — rename ripple', () => {
     expect(props(state().pages[0]?.objects[0]).content).toBe('«lot» «sku»');
   });
 });
+
+describe('newDesign', () => {
+  const seed = () => {
+    useLabelStore.setState({
+      label: { widthMm: 50, heightMm: 30, dpmm: 12, darkness: 20, printQuantity: 500 },
+      pages: [{ objects: [] }],
+      variables: [{ id: 'v1', name: 'LOT', fnNumber: 1, defaultValue: 'L42' }],
+      printerProfile: { setupFonts: [] },
+      previewMode: { status: 'idle' },
+      sourceEdit: { status: 'off' },
+    });
+    useLabelStore.getState().addObject('text');
+    expect(useLabelStore.getState().pages[0]?.objects).toHaveLength(1);
+  };
+
+  it('starts an empty document on the same media, job settings and content reset', () => {
+    seed();
+    useLabelStore.getState().newDesign();
+    const s = useLabelStore.getState();
+    expect(s.label).toEqual({ widthMm: 50, heightMm: 30, dpmm: 12 });
+    expect(s.printerProfile).toEqual({ setupFonts: [] });
+    expect(s.pages).toEqual([{ objects: [] }]);
+    expect(s.variables).toEqual([]);
+    expect(s.selectedIds).toEqual([]);
+  });
+
+  it('supersedes an active preview, as any document replacement does', () => {
+    // Pins that newDesign grows no preview guard of its own.
+    seed();
+    useLabelStore.setState({ previewMode: { status: 'active', url: 'blob:x' } });
+    useLabelStore.getState().newDesign();
+    expect(useLabelStore.getState().previewMode.status).toBe('idle');
+    expect(useLabelStore.getState().pages).toEqual([{ objects: [] }]);
+  });
+
+  it('is a no-op during a source-edit session, like the menu item', () => {
+    seed();
+    useLabelStore.getState().enterSourceEdit('^XA^XZ');
+    useLabelStore.getState().newDesign();
+    expect(useLabelStore.getState().pages[0]?.objects).toHaveLength(1);
+  });
+});

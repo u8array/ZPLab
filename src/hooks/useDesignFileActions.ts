@@ -10,15 +10,13 @@ export function useDesignFileActions() {
   const variables = useLabelStore((s) => s.variables);
   const columnMapping = useLabelStore((s) => s.columnMapping);
   const dataSourceRef = useLabelStore((s) => s.dataSourceRef);
-  const loadDesign = useLabelStore((s) => s.loadDesign);
+  const newDesign = useLabelStore((s) => s.newDesign);
   const loadDesignText = useLabelStore((s) => s.loadDesignText);
   const setUserError = useLabelStore((s) => s.setUserError);
   const clearUserError = useLabelStore((s) => s.clearUserError);
   const loadInputRef = useRef<HTMLInputElement>(null);
 
-  const handleNew = () => {
-    loadDesign({ widthMm: 100, heightMm: 60, dpmm: 8 }, [{ objects: [] }]);
-  };
+  const handleNew = newDesign;
 
   const handleSave = () => {
     const data = serializeDesign(label, pages, variables, columnMapping, dataSourceRef);

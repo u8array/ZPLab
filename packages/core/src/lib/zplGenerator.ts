@@ -18,7 +18,7 @@ import { fnConsumerBuckets } from './gs1ModeDFns';
 import { planCode128Fd } from './code128Plan';
 import { resolveControlMarkers } from '../types/controlKey';
 import { resolveContentPreview } from './markerResolve';
-import { formatLabelMetaComment } from './zplLabelMeta';
+import { formatLabelMetaComment, labelMetaOf } from './zplLabelMeta';
 import { designAsPageLabel, jmDensityOf } from '../types/LabelConfig';
 import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig, PageLabel } from '../types/LabelConfig';
 import type { ZplEmitContext } from '../types/ZplEmit';
@@ -866,11 +866,7 @@ function generateZplBlock(
   }
   // Leading geometry sidecar: recovers exact width/height/dpmm on re-import,
   // which plain ^PW/^LL (dots, no dpmm) can't. A comment, so print is unaffected.
-  lines.push(formatLabelMetaComment({
-    dpmm: label.dpmm,
-    widthMm: label.widthMm,
-    heightMm: label.heightMm,
-  }));
+  lines.push(formatLabelMetaComment(labelMetaOf(label)));
   // a=D since model is dots-canonical.
   if (label.muResampling) {
     lines.push(`^MUD,${label.muResampling.formatDpi},${label.muResampling.outputDpi}`);
