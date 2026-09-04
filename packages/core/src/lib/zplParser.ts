@@ -21,7 +21,7 @@ import { createLabelConfigHandlers } from "./zplParser/handlers/labelConfig";
 import { createSetupScriptHandlers } from "./zplParser/handlers/setupScript";
 import { createUnitsHandler } from "./zplParser/handlers/units";
 import { createUnsupportedHandlers } from "./zplParser/handlers/unsupported";
-import { buildBlockOverlay, type BlockOverlay, type FormatHead, type JmSpan, type LinkedSpan } from "./zplOverlay/overlay";
+import { buildBlockOverlay, type BlockOverlay, type FormatHead, type OverlayFrame, type JmSpan, type LinkedSpan } from "./zplOverlay/overlay";
 import type {
   Handler,
   ImportFinding,
@@ -214,20 +214,18 @@ export function parseZPL(
   const resetComment: Handler = (_, rest) => {
     s.comment.pending = rest.trim() || undefined;
   };
-  // Our geometry sidecar, consumed (not shown as an object comment) only while
-  // no design object was seen, so a body ^FX can't rewrite the label settings.
-  // Deliberately document-wide, not page-0: a verbatim settings-only block
-  // precedes the regenerated design block (and its sidecar) on re-export.
-  // Holder object so the closure write survives TS flow narrowing.
-  const labelMeta: { value: LabelMeta | null } = { value: null };
+  // Our geometry sidecar heads every exported block, so every block consumes one;
+  // the settings are document-level, so the first wins and later ones are dropped,
+  // never shown as comments. A body ^FX cannot reach this: the block has no object yet.
+  const labelMeta: { value: LabelMeta | null } = { value: null }; // holder: the closure write survives TS narrowing
   // Multi-line ^FX before a field accumulate; XA/XZ reset at label boundaries.
   const appendComment: Handler = (_, rest) => {
     const next = rest.trim();
     if (!next) return;
-    if (!labelMeta.value && objects.length === 0) {
+    if (objects.length === pg.obj) {
       const meta = parseLabelMetaComment(next);
       if (meta) {
-        labelMeta.value = meta;
+        labelMeta.value ??= meta;
         return;
       }
     }
@@ -281,9 +279,11 @@ export function parseZPL(
 
   const overlaySpans: LinkedSpan[] = [];
   const linkedIds = new Set<string>();
+  const linkedFrames = new Map<string, OverlayFrame>();
   const linkObject = (start: number, end: number, objectId: string) => {
     overlaySpans.push({ start, end, link: { kind: "object", objectId } });
     linkedIds.add(objectId);
+    if (pg.ovFrame) linkedFrames.set(objectId, pg.ovFrame);
   };
 
   // Page bookkeeping: one page per ^XA block, closed at the NEXT ^XA (so the
@@ -319,6 +319,8 @@ export function parseZPL(
     // trips the all-linked gate and the block regenerates.
     ovStart: null as number | null,
     ovBase: 0,
+    // The ^LH/^LT the opener folded into the field's coordinates.
+    ovFrame: null as OverlayFrame | null,
     // Start of a contiguous ^FX run immediately before a field, so the
     // field's span owns its comment bytes.
     commentStart: null as number | null,
@@ -439,6 +441,7 @@ export function parseZPL(
       findings,
       labelSize: { widthMm: w, heightMm: h },
       labelConfig: { ...labelConfig },
+      span: { start: pg.start, end },
     };
     if (pageOverlay) page.overlay = pageOverlay;
     if (!s.sawXa) page.bare = true;
@@ -451,6 +454,11 @@ export function parseZPL(
       );
       if (spanEntries.length > 0) {
         page.objectSpans = new Map(spanEntries);
+        const frames = spanEntries.flatMap(([id]): [string, OverlayFrame][] => {
+          const frame = linkedFrames.get(id);
+          return frame ? [[id, frame]] : [];
+        });
+        if (frames.length > 0) page.objectFrames = new Map(frames);
       }
     }
     pages.push(page);
@@ -623,6 +631,7 @@ export function parseZPL(
         }
         if (cmd === "FO" || cmd === "FT") {
           pg.ovStart = pg.commentStart ?? start;
+          pg.ovFrame = s.label.lhX !== 0 || s.label.lhY !== 0 || s.label.ltY !== 0 ? { homeX: s.label.lhX, homeY: s.label.lhY, top: s.label.ltY } : null;
           pg.ovBase = objects.length;
           pg.commentStart = null;
           pg.spanHasBy = false;

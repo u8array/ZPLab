@@ -49,18 +49,22 @@ export function* walkObjects(objects: readonly LabelObject[]): Iterable<LabelObj
   }
 }
 
-/** Leaves that actually export: an `includeInExport=false` node hides its
- *  whole subtree. Also the preflight leaf set, so checks track what prints. */
+export type ExportStep = { leaf: LeafObject } | { excluded: LabelObject };
+
+/** Render-order walk of the export cascade: the leaves that print, and the
+ *  topmost `includeInExport=false` nodes, whose subtrees are not entered. */
+export function* walkExportOrder(objects: readonly LabelObject[]): Iterable<ExportStep> {
+  for (const o of objects) {
+    if (o.includeInExport === false) yield { excluded: o };
+    else if (isGroup(o)) yield* walkExportOrder(o.children);
+    else yield { leaf: o };
+  }
+}
+
+/** The leaves that print; also the preflight leaf set, so checks track what prints. */
 export function exportableLeaves(objects: readonly LabelObject[]): LeafObject[] {
   const out: LeafObject[] = [];
-  const walk = (list: readonly LabelObject[]): void => {
-    for (const o of list) {
-      if (o.includeInExport === false) continue;
-      if (isGroup(o)) walk(o.children);
-      else out.push(o);
-    }
-  };
-  walk(objects);
+  for (const step of walkExportOrder(objects)) if ("leaf" in step) out.push(step.leaf);
   return out;
 }
 

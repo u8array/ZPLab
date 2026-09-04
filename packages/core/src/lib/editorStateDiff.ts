@@ -1,14 +1,14 @@
-import { isGroup, type Page } from "../types/Group";
-import type { Variable } from "../types/Variable";
+import { isGroup, type LabelObject, type Page } from "../types/Group";
+import { matchVariablesByFn, type Variable } from "../types/Variable";
 
-/** What a full-document reparse cannot carry over: ZPL has no wire form for
- *  any of these, so an apply loses them. */
+/** Editor state a full-document reparse loses: ZPL has no wire form for any of it.
+ *  What sourceApplyCarry brings back is not lost, so it never counts. */
 export interface EditorStateDiff {
   groupsDissolved: number;
   namesLost: number;
   lockedLost: number;
   hiddenLost: number;
-  /** Objects the export cascade drops (self or an ancestor excluded). */
+  /** Excluded nodes gone after the apply, subtree included. */
   excludedLost: number;
   /** Variables whose ^FN slot vanished from the stream entirely. */
   variablesLost: string[];
@@ -44,6 +44,17 @@ export interface EditorSnapshot {
   variables: readonly Variable[];
 }
 
+/** The editor-only state a reparse cannot express, as one patch: unset fields are
+ *  omitted so it never clobbers the parse; carrying a field is what keeps `count` from scoring it. */
+export function pickEditorState(o: LabelObject): Partial<LabelObject> {
+  return {
+    ...(o.includeInExport === false ? { includeInExport: false } : {}),
+    ...(o.name !== undefined ? { name: o.name } : {}),
+    ...(o.locked ? { locked: true } : {}),
+    ...(o.visible === false ? { visible: false } : {}),
+  };
+}
+
 /** `mappingLost` comes from the caller's one remapBindingsByFn run, so diff
  *  and committed mapping cannot disagree. */
 export function diffEditorState(
@@ -75,16 +86,11 @@ export function diffEditorState(
   const after = count(next.pages);
   const lostCount = (b: number, a: number) => Math.max(0, b - a);
 
-  const nextByFn = new Map(next.variables.map((v) => [v.fnNumber, v]));
-  const variablesLost: string[] = [];
-  const variablesRenamed: { from: string; to: string; fnNumber: number }[] = [];
-  for (const v of prev.variables) {
-    const kept = nextByFn.get(v.fnNumber);
-    if (!kept) variablesLost.push(v.name);
-    else if (kept.name !== v.name) {
-      variablesRenamed.push({ from: v.name, to: kept.name, fnNumber: v.fnNumber });
-    }
-  }
+  const { kept, dropped } = matchVariablesByFn(prev.variables, next.variables);
+  const variablesLost = dropped.map((v) => v.name);
+  const variablesRenamed = kept
+    .filter((p) => p.from.name !== p.to.name)
+    .map((p) => ({ from: p.from.name, to: p.to.name, fnNumber: p.from.fnNumber }));
 
   return {
     groupsDissolved: lostCount(before.groups, after.groups),

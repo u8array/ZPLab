@@ -33,7 +33,7 @@ export function firstChar(rest: string): string {
 
 /** Accepts a ^CC/^CT/^CD remap char only if it's printable, non-DEL, and
  *  distinct from both other role chars (a collision would collapse a
- *  prefix/delimiter boundary). Shared with the ^JM head scan so both agree on effective remaps. */
+ *  prefix/delimiter boundary). */
 export function acceptsPrefixRemap(
   char: string | undefined,
   roleA: string,
@@ -48,6 +48,18 @@ export interface TokenizerChars {
   caretChar: string;
   tildeChar: string;
   delimiterChar: string;
+}
+
+/** Applies a ^CC/^CT/^CD to the live chars, so every scan remaps as the parser does; true for any of the three, accepted or not. */
+export function applyPrefixRemap(st: TokenizerChars, cmd: string, arg: string | undefined): boolean {
+  if (cmd === "CC") {
+    if (acceptsPrefixRemap(arg, st.tildeChar, st.delimiterChar)) st.caretChar = arg;
+  } else if (cmd === "CT") {
+    if (acceptsPrefixRemap(arg, st.caretChar, st.delimiterChar)) st.tildeChar = arg;
+  } else if (cmd === "CD") {
+    if (acceptsPrefixRemap(arg, st.caretChar, st.tildeChar)) st.delimiterChar = arg;
+  } else return false;
+  return true;
 }
 
 /** Raw-binary payload commands: header slots before data, format/count slot
@@ -78,10 +90,7 @@ export function unsafeRawFieldSpans(text: string): UnsafeRawFieldSpan[] {
   const st: TokenizerChars = { caretChar: "^", tildeChar: "~", delimiterChar: "," };
   const spans: UnsafeRawFieldSpan[] = [];
   for (const t of tokenize(text, st)) {
-    const arg = t.rest[0];
-    if (t.cmd === "CC") { if (acceptsPrefixRemap(arg, st.tildeChar, st.delimiterChar)) st.caretChar = arg; continue; }
-    if (t.cmd === "CT") { if (acceptsPrefixRemap(arg, st.caretChar, st.delimiterChar)) st.tildeChar = arg; continue; }
-    if (t.cmd === "CD") { if (acceptsPrefixRemap(arg, st.caretChar, st.tildeChar)) st.delimiterChar = arg; continue; }
+    if (applyPrefixRemap(st, t.cmd, t.rest[0])) continue;
     if (t.cmd !== "GF" && t.cmd !== "DY") continue;
     const span = binaryPayloadEnd(text, t.cmd, t.start + 3, st.delimiterChar);
     if (!span) continue;
@@ -150,7 +159,7 @@ const NAME_CHAR_RE = /[0-9A-Za-z@]/;
 
 /** Commands whose rest is a free-text payload: a tilde inside it ends the
  *  field only when it opens a real immediate command (see zplImmediate.ts). */
-const PAYLOAD_CMDS = new Set(["FD", "FV", "FX"]);
+export const PAYLOAD_CMDS = new Set(["FD", "FV", "FX"]);
 
 const LETTER_RE = /[A-Za-z]/;
 

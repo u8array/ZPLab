@@ -4,6 +4,7 @@ import type { ImportReport, UnbalancedFormat } from "./zplParser";
 import type { LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
 import type { Page } from "../types/Group";
+import { carryAcrossApply } from "./sourceApplyCarry";
 import type { ColumnMapping, Variable } from "../types/Variable";
 import { diffEditorState, type EditorStateDiff } from "./editorStateDiff";
 import { remapBindingsByFn } from "./variableBinding";
@@ -73,6 +74,7 @@ export interface SourceApplyOk {
   /** The complete post-apply document state, atomically committable. */
   next: SourceDocumentState;
   report: ImportReport;
+  /** Objects the buffer parsed to; carried-over excluded subtrees are not imports. */
   objectCount: number;
   loss: EditorStateDiff;
 }
@@ -148,10 +150,19 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
     );
   }
 
-  const remapped = remapBindingsByFn(current.variables, current.columnMapping, imported.variables);
+  const { pages, variables } = carryAcrossApply({
+    current,
+    baseline: input.baseline,
+    text: input.text,
+    importedLabel: label,
+    imported: imported.pages,
+    importedVariables: imported.variables,
+    pageSources: imported.pageSources,
+  });
+  const remapped = remapBindingsByFn(current.variables, current.columnMapping, variables);
   const loss = diffEditorState(
     { pages: current.pages, variables: current.variables },
-    { pages: imported.pages, variables: imported.variables },
+    { pages, variables },
     remapped.lost,
   );
 
@@ -162,8 +173,8 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
     ok: true,
     next: {
       label,
-      pages: imported.pages.length > 0 ? imported.pages : [{ objects: [] }],
-      variables: imported.variables,
+      pages: pages.length > 0 ? pages : [{ objects: [] }],
+      variables,
       printerProfile,
       columnMapping: remapped.mapping,
     },
