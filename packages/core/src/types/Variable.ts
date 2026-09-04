@@ -90,6 +90,22 @@ export function validateVariablesUnique(variables: readonly Variable[]): boolean
   return true;
 }
 
+/** Pairs variables across a reparse by ^FN slot, the only identity the wire carries. */
+export function matchVariablesByFn(
+  prev: readonly Variable[],
+  next: readonly Variable[],
+): { kept: { from: Variable; to: Variable }[]; dropped: Variable[] } {
+  const nextByFn = new Map(next.map((v) => [v.fnNumber, v]));
+  const kept: { from: Variable; to: Variable }[] = [];
+  const dropped: Variable[] = [];
+  for (const from of prev) {
+    const to = nextByFn.get(from.fnNumber);
+    if (to) kept.push({ from, to });
+    else dropped.push(from);
+  }
+  return { kept, dropped };
+}
+
 /** Append `_2`, `_3`, ... until unique. */
 export function uniqueVariableName(
   base: string,

@@ -1,5 +1,5 @@
 import { jmDensityOf, type JmDensity } from "../types/LabelConfig";
-import { acceptsPrefixRemap, tokenize } from "./zplParser/helpers";
+import { applyPrefixRemap, tokenize } from "./zplParser/helpers";
 import { MIN_JM_SPAN, type FormatHead, type JmSpan } from "./zplOverlay/overlay";
 
 interface HeadToken {
@@ -24,15 +24,11 @@ export interface PrefixState {
   delimiterChar: string;
 }
 
-/** Tokenize from `fromOffset` with the live caret/delimiter per token, applying
- *  ^CC/^CT/^CD via the handlers' own acceptance so scans and the parser never
- *  diverge on remaps. `st` is mutated in place so a caller can thread it onward. */
+/** Tokenize from `fromOffset` with the live caret/delimiter per token; `st` is mutated
+ *  in place so a caller can thread it onward across blocks. */
 function* headTokens(zpl: string, fromOffset: number, st: PrefixState): Generator<HeadToken> {
   for (const t of tokenize(zpl.slice(fromOffset), st)) {
-    const arg = t.rest[0];
-    if (t.cmd === "CC") { if (acceptsPrefixRemap(arg, st.tildeChar, st.delimiterChar)) st.caretChar = arg; continue; }
-    if (t.cmd === "CT") { if (acceptsPrefixRemap(arg, st.caretChar, st.delimiterChar)) st.tildeChar = arg; continue; }
-    if (t.cmd === "CD") { if (acceptsPrefixRemap(arg, st.caretChar, st.tildeChar)) st.delimiterChar = arg; continue; }
+    if (applyPrefixRemap(st, t.cmd, t.rest[0])) continue;
     const start = fromOffset + t.start;
     yield { cmd: t.cmd, rest: t.rest, start, isCaret: zpl[start] === st.caretChar, caret: st.caretChar, delim: st.delimiterChar };
   }

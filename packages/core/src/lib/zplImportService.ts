@@ -1,3 +1,4 @@
+import type { PageSource } from "./zplParser/types";
 import { parseZPL, type ImportFinding, type ImportReport, type UnbalancedFormat } from "./zplParser";
 import { replayRiskFindings, dedupCommandsByKind } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
@@ -22,6 +23,8 @@ export interface ZplImportResult {
    *  reconfigure the user's printer. */
   printerProfile: Partial<PrinterProfile>;
   pages: Page[];
+  /** Per page of `pages` (not the setup-routed list). */
+  pageSources: PageSource[];
   variables: Variable[];
   report: ImportReport;
   /** True when ^XA blocks diverge in ^PW/^LL or ^JM density, which the
@@ -39,6 +42,7 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
   const r = parseZPL(zpl, dpmm, { captureOverlay: true });
 
   const pages: Page[] = [];
+  const pageSources: PageSource[] = [];
   const findings: ImportFinding[] = [];
   // Variables are document-level; pages merge by source fnNumber only when
   // the ^FD defaults agree (^FN is scoped per ^XA format, so a shared slot
@@ -119,10 +123,9 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     // so they aren't silently dropped (no overlay: the wrapper-less source has
     // nothing to replay byte-for-byte, and re-export adds the ^XA/^XZ wrapper).
     const jmDensity = page.labelConfig.jmDensity;
-    if (!page.bare) {
-      pages.push({ objects: page.objects, overlay: page.overlay, jmDensity });
-    } else if (page.objects.length > 0) {
-      pages.push({ objects: page.objects, jmDensity });
+    if (!page.bare || page.objects.length > 0) {
+      pages.push(page.bare ? { objects: page.objects, jmDensity } : { objects: page.objects, overlay: page.overlay, jmDensity });
+      pageSources.push({ span: page.span, objectSpans: page.objectSpans, objectFrames: page.objectFrames });
     }
     for (const f of page.findings) {
       // A bare page replays nothing, so its lossyEdit caveat is moot.
@@ -258,6 +261,7 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     labelConfig,
     printerProfile,
     pages,
+    pageSources,
     variables,
     report,
     mixedPageGeometry: r.mixedPageGeometry || jmDiverges,

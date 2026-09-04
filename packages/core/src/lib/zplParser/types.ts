@@ -2,7 +2,7 @@ import type { LabelConfig } from "../../types/LabelConfig";
 import type { LabelObject } from "../../types/Group";
 import type { Variable } from "../../types/Variable";
 import type { PrinterProfile } from "../../types/PrinterProfile";
-import type { BlockOverlay } from "../zplOverlay/overlay";
+import type { BlockOverlay, OverlayFrame } from "../zplOverlay/overlay";
 
 export type ImportFindingKind =
   | "partial"
@@ -15,7 +15,7 @@ export type ImportFindingKind =
   | "fnDefaultDropped"
   | "mixedPageGeometry";
 
-/** Absolute offsets into the parsed source string. Readonly: one span object
+/** Absolute offsets into a ZPL text, parsed or generated. Readonly: one span object
  *  may back several findings of the same token, so no consumer may rebase it. */
 export interface SourceSpan {
   readonly start: number;
@@ -84,11 +84,18 @@ export interface ParsedPage {
   /** Page 0 only: stream had no ^XA wrapper (bare field paste). Re-export
    *  regenerates the wrapper, so the overlay is suppressed by the caller. */
   bare?: boolean;
+  /** This page's bytes in the source (page 0 owns any preamble). */
+  span: SourceSpan;
   /** Absolute source span per cleanly linked object; unlinked objects absent.
    *  Requires `captureOverlay` (reuses the overlay's link pass) but survives
    *  pages whose overlay the all-linked gate refuses. */
   objectSpans?: ReadonlyMap<string, SourceSpan>;
+  /** The ^LH/^LT in force where a linked object was parsed, folded into its coordinates; absent when zero. */
+  objectFrames?: ReadonlyMap<string, OverlayFrame>;
 }
+
+/** The carry reads a page's positions only, never its parse. */
+export type PageSource = Pick<ParsedPage, "span" | "objectSpans" | "objectFrames">;
 
 /** First ^XA/^XZ imbalance. `at` is the command's offset in the source
  *  string; `cmd` its text (the remapped prefix under ^CC), so diagnostics

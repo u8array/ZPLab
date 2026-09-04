@@ -24,7 +24,8 @@ import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig, PageLabel 
 import type { ZplEmitContext } from '../types/ZplEmit';
 import type { Variable } from '../types/Variable';
 import { exportableLeaves, isGroup, pageLabelConfig, type LabelObject, type LeafObject, type Page } from '../types/Group';
-import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan } from './zplOverlay/overlay';
+import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan, type OverlayFrame } from './zplOverlay/overlay';
+import type { SourceSpan } from './zplParser/types';
 import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, qrPrintsAsGraphic, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
@@ -221,15 +222,17 @@ export interface EmitSpan {
   end: number;
 }
 
-/** The export text plus one span per emitted leaf, from the same emit walk (never a
- *  re-parse). Ascending, non-overlapping; hidden/excluded/dropped leaves have none. */
+/** The export text plus one span per emitted leaf and one block range per page, from
+ *  the same emit walk (never a re-parse). Spans are ascending and non-overlapping;
+ *  hidden/excluded/dropped leaves have none. */
 export function generateMultiPageZplWithMap(
   label: LabelConfig,
   pages: Page[],
   variables: readonly Variable[] = [],
-): { text: string; spans: EmitSpan[] } {
+): { text: string; spans: EmitSpan[]; blocks: SourceSpan[] } {
   let out = '';
   const spans: EmitSpan[] = [];
+  const blocks: SourceSpan[] = [];
   // ^JM persists on the wire, so a block only declares a density the preceding
   // blocks didn't set. `undefined` means nothing declared one yet, so a block
   // inheriting its ^JM from outside this export gets the declaration back.
@@ -272,6 +275,7 @@ export function generateMultiPageZplWithMap(
     if (out.length > 0 && !out.endsWith('\n')) out += '\n';
     const base = out.length;
     out += block;
+    blocks.push({ start: base, end: out.length });
     for (const s of emitted.spans) {
       // ^JM is legal before the first ^FS, so a recorded splice can sit INSIDE
       // a field span: such an edit grows the span; one before it shifts it.
@@ -293,7 +297,7 @@ export function generateMultiPageZplWithMap(
       });
     }
   });
-  return { text: out, spans };
+  return { text: out, spans, blocks };
 }
 
 
@@ -500,14 +504,9 @@ function emitPageBlock(
     return generateZplBlock(label, page.objects, variables);
   }
 
-  const fx = overlay.frame?.homeX ?? 0;
-  const fy = overlay.frame?.homeY ?? 0;
-  const ft = overlay.frame?.top ?? 0;
-  // Regenerated objects must be home-relative so they compose with the raw
-  // ^LH/^LT that still execute on replay (no double-shift). One shared emit
-  // context so a picked ^FE/^FC covers dirty and new fields alike.
-  const dirtyShifted = shiftObjectsByHome(dirtyLeaves, fx, fy, ft, label);
-  const newShifted = shiftObjectsByHome(newLeaves, fx, fy, ft, label);
+  // One shared emit context so a picked ^FE/^FC covers dirty and new fields alike.
+  const dirtyShifted = shiftIntoFrame(dirtyLeaves, overlay.frame, label);
+  const newShifted = shiftIntoFrame(newLeaves, overlay.frame, label);
   const { headerLines, emitCtx } = planTemplateHeader(
     [...dirtyShifted, ...newShifted],
     label,
@@ -703,6 +702,11 @@ export function generateBatchZpl(
 // (the plain check holds); rotated text ^FT uses a baseline anchor, where the
 // top-left check is only approximate (a pre-existing edge, untouched here).
 
+/** Home-relative to a parsed ^LH/^LT frame, not the label's own home/top (see OverlayFrame). */
+export function shiftIntoFrame(objects: LabelObject[], frame: OverlayFrame | undefined, label: PageLabel): LabelObject[] {
+  return frame ? shiftObjectsByHome(objects, frame.homeX, frame.homeY, frame.top, label) : objects;
+}
+
 /** Subtract label home/top from each object so emit matches the editor, the
  *  inverse of the parser folding ^LH/^LT into absolute coords. Leaves whose
  *  emitted origin goes negative are dropped (Zebra rejects negative ^FO/^FT and
@@ -767,15 +771,10 @@ export function planFieldEmission(
 
   const { headerLines, emitCtx } = planTemplateHeader(shifted, label, variables, bareFnSlots);
 
-  // Groups are structural; includeInExport=false cascades to the subtree.
-  // Byte-identical round-trip lives in the overlay path (emitOverlayPage); this
-  // model generator always regenerates.
-  const emitLeaf = (obj: LabelObject): EmittedBody[] => {
-    if (obj.includeInExport === false) return [];
-    if (isGroup(obj)) return obj.children.flatMap(emitLeaf);
-    return [{ objectId: obj.id, text: emitFieldBody(obj, emitCtx) }];
+  return {
+    headerLines,
+    bodies: exportableLeaves(shifted).map((o) => ({ objectId: o.id, text: emitFieldBody(o, emitCtx) })),
   };
-  return { headerLines, bodies: shifted.flatMap(emitLeaf) };
 }
 
 /** One leaf's emitted field bytes, id-attributed for the span map. */
