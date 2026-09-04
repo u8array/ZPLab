@@ -254,3 +254,21 @@ describe("optional core props the tables had drifted from", () => {
     expect(bad.ok).toBe(false);
   });
 });
+
+describe("export_zpl metadata", () => {
+  const design = {
+    schemaVersion: 5,
+    label: { widthMm: 100, heightMm: 50, dpmm: 8 },
+    pages: [{ objects: [{ id: "t", type: "text", x: 10, y: 10, rotation: 0, props: { content: "hi" } }] }],
+  };
+
+  it("returns plain printer bytes by default", () => {
+    const zpl = ok(exportZpl(design)).zpl;
+    expect(zpl).not.toContain("ZPLLAB");
+    expect(zpl).toContain("^FDhi^FS");
+  });
+
+  it("keeps the ZPLLAB metadata when asked for a re-importable export", () => {
+    expect(ok(exportZpl(design, { metadata: true })).zpl).toContain("^FXZPLLAB:");
+  });
+});

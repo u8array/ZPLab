@@ -746,6 +746,8 @@ const sk = {
       theme: 'Motív',
       powerUser: 'Pokročilý režim',
       powerUserHint: 'Zobraziť vygenerovaný ZPL príkaz vedľa každej vlastnosti a odomknúť rozšírené ovládacie prvky',
+      keepExportMetadata: 'Zachovať metadáta ZPLab v exportoch',
+      keepExportMetadataHint: 'Zachovajte metadáta ZPLab (^FX: veľkosť štítku, hustota, vlastnosti QR) v exportovanom, skopírovanom a vytlačenom ZPL, aby ZPLab mohol bezstratovo znova načítať vlastné exporty. V predvolenom nastavení vypnuté: tlačiarne a iné nástroje dostanú obyčajný ZPL.',
       smartSnap: 'Inteligentné prichytávanie',
       smartSnapHint: 'Zarovnanie na ostatné objekty pri presúvaní. Podržte Ctrl/Cmd pre preskočenie.',
       resetHeading: 'Resetovanie',

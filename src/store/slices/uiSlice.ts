@@ -147,6 +147,8 @@ export interface UiSlice {
   /** Power-user opt-in: show the emitted ZPL command next to each properties
    *  field. Persisted UI preference; default off so beginners aren't burdened. */
   showZplCommands: boolean;
+  /** Keep ZPLab's ^FX metadata in exported ZPL so it reads back losslessly; off by default. */
+  keepExportMetadata: boolean;
   /** Desktop-only opt-in for the local MCP loopback server. Off by default so
    *  no port opens unless the user asks; persisted like other prefs. */
   mcpServerEnabled: boolean;
@@ -225,6 +227,7 @@ export interface UiSlice {
   setPaletteView: (view: PaletteView) => void;
   togglePaletteEditing: () => void;
   setShowZplCommands: (show: boolean) => void;
+  setKeepExportMetadata: (on: boolean) => void;
   /** Persist the enable flag; generates a token on first enable so the section
    *  never starts the server tokenless. Does not start/stop the server itself
    *  (that side effect is orchestrated by the useMcpServer hook). */
@@ -283,6 +286,7 @@ type UiPrefs = Pick<
   | 'paletteView'
   | 'paletteEditing'
   | 'showZplCommands'
+  | 'keepExportMetadata'
   | 'mcpServerEnabled'
   | 'mcpServerPort'
 >;
@@ -305,6 +309,7 @@ function defaultUiPrefs(): UiPrefs {
     paletteView: 'flat',
     paletteEditing: false,
     showZplCommands: false,
+    keepExportMetadata: false,
     mcpServerEnabled: false,
     mcpServerPort: DEFAULT_MCP_PORT,
   };
@@ -460,6 +465,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   startRfidPositionPick: () => set({ pickingRfidPosition: true, printerSettingsTab: null }),
   endRfidPositionPick: () => set({ pickingRfidPosition: false, printerSettingsTab: 'rfid' }),
   setShowZplCommands: (show) => set({ showZplCommands: show }),
+  setKeepExportMetadata: (on) => set({ keepExportMetadata: on }),
   setMcpServerEnabled: (enabled) => set({ mcpServerEnabled: enabled }),
   setMcpServerPort: (port) => set({ mcpServerPort: port }),
   regenerateMcpToken: () => {

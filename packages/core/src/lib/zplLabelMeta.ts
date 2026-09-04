@@ -32,6 +32,20 @@ export function formatSidecarComment(body: string): string {
   return `^FX${LABEL_META_PREFIX}${body}^FS`;
 }
 
+/** Exactly the envelope the emitter writes; a foreign comment without the colon survives. */
+const SIDECAR_LINE_RE = /\^[Ff][Xx]ZPLLAB:[^^~]*\^[Ff][Ss](?:\r?\n)?/g;
+
+/** Printer bytes only: a re-import then inherits the density and rebuilds
+ *  ^GFA QR codes as images. */
+export function stripSidecarComments(zpl: string): string {
+  return zpl.replace(SIDECAR_LINE_RE, "");
+}
+
+/** The ZPL that leaves ZPLab: plain unless the caller wants its metadata back. */
+export function zplForExport(zpl: string, keepMetadata = false): string {
+  return keepMetadata ? zpl : stripSidecarComments(zpl);
+}
+
 /** Sidecar payload, or null for a foreign comment. */
 export function sidecarBody(commentBody: string): string | null {
   const trimmed = commentBody.trim();

@@ -746,6 +746,8 @@ const pt = {
       theme: 'Tema',
       powerUser: 'Modo avançado',
       powerUserHint: 'Mostrar o comando ZPL emitido junto de cada propriedade e desbloquear controlos avançados',
+      keepExportMetadata: 'Manter os metadados do ZPLab nas exportações',
+      keepExportMetadataHint: 'Mantenha os metadados do ZPLab (^FX: tamanho da etiqueta, densidade, propriedades QR) no ZPL exportado, copiado e impresso, para que o ZPLab possa reler suas próprias exportações sem perdas. Desativado por padrão: impressoras e outras ferramentas recebem ZPL simples.',
       smartSnap: 'Encaixe inteligente',
       smartSnapHint: 'Alinhar com outros objetos ao arrastar. Segure Ctrl/Cmd para ignorar.',
       resetHeading: 'Repor',

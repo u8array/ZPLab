@@ -9,6 +9,7 @@ const EXPECTED_PERSIST_KEYS = [
   'currentPageIndex',
   'dataSourceRef',
   'dbProfiles',
+  'keepExportMetadata',
   'label',
   'labelaryHost',
   'labelaryNoticeAcknowledged',

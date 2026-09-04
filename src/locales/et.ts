@@ -746,6 +746,8 @@ const et = {
       theme: 'Teema',
       powerUser: 'Power-kasutaja režiim',
       powerUserHint: 'Kuva emiteeritud ZPL käsk iga atribuudi kõrval ja luba täpsemad juhtelemendid',
+      keepExportMetadata: 'Säilita ZPLabi metaandmed eksportides',
+      keepExportMetadataHint: 'Säilita ZPLabi ^FX-metaandmed (sildi suurus, tihedus, QR-i omadused) eksporditud, kopeeritud ja prinditud ZPL-is, et ZPLab saaks oma eksporte kadudeta tagasi lugeda. Vaikimisi väljas: printerid ja teised tööriistad saavad tavalise ZPL-i.',
       smartSnap: 'Nutikas haakimine',
       smartSnapHint: 'Joonda teiste objektidega lohistades. Hoidke Ctrl/Cmd all, et vahele jätta.',
       resetHeading: 'Lähtestamine',

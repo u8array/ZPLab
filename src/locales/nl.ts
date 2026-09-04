@@ -746,6 +746,8 @@ const nl = {
       theme: 'Thema',
       powerUser: 'Geavanceerde gebruikersmodus',
       powerUserHint: 'Toon het geëmitteerde ZPL-commando naast elke eigenschap en ontgrendel geavanceerde bedieningselementen',
+      keepExportMetadata: 'ZPLab-metadata behouden in exports',
+      keepExportMetadataHint: "Bewaar ZPLab's ^FX-metadata (labelformaat, dichtheid, QR-eigenschappen) in geëxporteerde, gekopieerde en afgedrukte ZPL, zodat ZPLab zijn eigen exports verliesvrij kan teruglezen. Standaard uit: printers en andere tools krijgen gewone ZPL.",
       smartSnap: 'Slim uitlijnen',
       smartSnapHint: 'Uitlijnen op andere objecten tijdens slepen. Houd Ctrl/Cmd ingedrukt om te omzeilen.',
       resetHeading: 'Herstellen',

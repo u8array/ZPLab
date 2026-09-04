@@ -746,6 +746,8 @@ const zhHant = {
       theme: '佈景主題',
       powerUser: '進階使用者模式',
       powerUserHint: '在每個屬性旁顯示產生的ZPL指令，並解鎖進階控制項',
+      keepExportMetadata: '匯出時保留 ZPLab 中繼資料',
+      keepExportMetadataHint: '在匯出、複製與列印的 ZPL 中保留 ZPLab 的 ^FX 中繼資料（標籤尺寸、密度、QR 屬性），以便 ZPLab 能夠無損讀回自己的匯出內容。預設關閉：印表機與其他工具將取得純 ZPL。',
       smartSnap: '智慧對齊',
       smartSnapHint: '拖曳時對齊其他物件。按住Ctrl/Cmd可跳過對齊。',
       resetHeading: '重設',

@@ -746,6 +746,8 @@ const de = {
       theme: 'Farbschema',
       powerUser: 'Power-User-Modus',
       powerUserHint: 'Zeigt den erzeugten ZPL-Befehl neben jeder Eigenschaft und schaltet erweiterte Funktionen frei',
+      keepExportMetadata: 'ZPLab-Metadaten im Export behalten',
+      keepExportMetadataHint: 'ZPLab-Metadaten (^FX: Etikettengröße, Dichte, QR-Eigenschaften) im exportierten, kopierten und gedruckten ZPL behalten, damit ZPLab seine eigenen Exporte verlustfrei zurücklesen kann. Standardmäßig aus: Drucker und andere Tools bekommen reines ZPL.',
       smartSnap: 'Intelligentes Einrasten',
       smartSnapHint: 'Beim Ziehen an anderen Objekten ausrichten. Ctrl/Cmd halten zum Überspringen.',
       resetHeading: 'Zurücksetzen',

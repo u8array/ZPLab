@@ -7,6 +7,7 @@ import {
   createDraft,
   createDraftShape,
   designFileEnvelopeSchema,
+  exportZplInputSchema,
   exportZpl,
   getSchema,
   importZpl,
@@ -133,10 +134,12 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
     "export_zpl",
     {
       title: "Export ZPL",
-      description: "Parse a design file and return its generated ZPL.",
-      inputSchema: designFileEnvelopeSchema.shape,
+      description:
+        "Parse a design file and return its generated ZPL: plain printer bytes, or with " +
+        "ZPLab's ^FX metadata when `metadata` is true (lossless re-import).",
+      inputSchema: exportZplInputSchema.shape,
     },
-    async ({ designFile }) => json(exportZpl(designFile)),
+    async ({ designFile, metadata }) => json(exportZpl(designFile, { metadata })),
   );
 
   server.registerTool(

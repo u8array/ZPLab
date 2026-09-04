@@ -746,6 +746,8 @@ const no = {
       theme: 'Tema',
       powerUser: 'Avansert brukermodus',
       powerUserHint: 'Vis den genererte ZPL-kommandoen ved siden av hver egenskap og lås opp avanserte kontroller',
+      keepExportMetadata: 'Behold ZPLab-metadata i eksporter',
+      keepExportMetadataHint: 'Behold ZPLabs ^FX-metadata (etikettstørrelse, tetthet, QR-egenskaper) i eksportert, kopiert og utskrevet ZPL, slik at ZPLab kan lese sine egne eksporter tilbake uten tap. Av som standard: skrivere og andre verktøy får vanlig ZPL.',
       smartSnap: 'Smart snapping',
       smartSnapHint: 'Juster mot andre objekter ved draing. Hold Ctrl/Cmd for å omgå.',
       resetHeading: 'Tilbakestill',

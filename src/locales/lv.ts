@@ -746,6 +746,8 @@ const lv = {
       theme: 'Motīvs',
       powerUser: 'Pieredzējuša lietotāja režīms',
       powerUserHint: 'Rādīt emitēto ZPL komandu blakus katram rekvizītam un atbloķēt papildu vadīklas',
+      keepExportMetadata: 'Saglabāt ZPLab metadatus eksportos',
+      keepExportMetadataHint: 'Saglabājiet ZPLab ^FX metadatus (etiķetes izmērs, blīvums, QR īpašības) eksportētajā, kopētajā un izdrukātajā ZPL, lai ZPLab varētu bezzudumu veidā atkal nolasīt savus eksportus. Pēc noklusējuma izslēgts: printeri un citi rīki saņem parastu ZPL.',
       smartSnap: 'Viedā piestiprināšana',
       smartSnapHint: 'Vilkšanas laikā izlīdzina ar citiem objektiem. Turiet Ctrl/Cmd, lai apietu.',
       resetHeading: 'Atiestatīt',

@@ -11,7 +11,7 @@ import { useT } from "./useT";
 const NO_LINES: ReadonlySet<number> = new Set();
 const NO_NOTICES: readonly string[] = [];
 
-/** Everything the output pane derives from the document: the export text always (header
+/** Everything the output pane derives from the document: the editor text always (header
  *  copy works collapsed), highlight and notices only while the pane is visible. */
 export function useZplOutputView(collapsed: boolean) {
   const t = useT();

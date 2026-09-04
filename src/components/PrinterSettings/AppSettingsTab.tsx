@@ -40,6 +40,8 @@ export function AppSettingsTab() {
 
   const showZplCommands = useLabelStore((s) => s.showZplCommands);
   const setShowZplCommands = useLabelStore((s) => s.setShowZplCommands);
+  const keepExportMetadata = useLabelStore((s) => s.keepExportMetadata);
+  const setKeepExportMetadata = useLabelStore((s) => s.setKeepExportMetadata);
   const smartSnapEnabled = useLabelStore((s) => s.canvasSettings.smartSnapEnabled);
   const setCanvasSettings = useLabelStore((s) => s.setCanvasSettings);
   const resetSettings = useLabelStore((s) => s.resetSettings);
@@ -90,6 +92,12 @@ export function AppSettingsTab() {
           onChange={setShowZplCommands}
           label={loc.powerUser}
           hint={loc.powerUserHint}
+        />
+        <SettingToggle
+          checked={keepExportMetadata}
+          onChange={setKeepExportMetadata}
+          label={loc.keepExportMetadata}
+          hint={loc.keepExportMetadataHint}
         />
         <SettingToggle
           checked={smartSnapEnabled}

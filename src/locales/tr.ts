@@ -746,6 +746,8 @@ const tr = {
       theme: 'Tema',
       powerUser: 'Uzman kullanıcı modu',
       powerUserHint: 'Her özelliğin yanında gönderilen ZPL komutunu göster ve gelişmiş kontrolleri etkinleştir',
+      keepExportMetadata: 'Dışa aktarımlarda ZPLab meta verilerini koru',
+      keepExportMetadataHint: "Dışa aktarılan, kopyalanan ve yazdırılan ZPL'de ZPLab'in ^FX meta verilerini (etiket boyutu, yoğunluk, QR özellikleri) koruyun, böylece ZPLab kendi dışa aktarımlarını kayıpsız şekilde geri okuyabilir. Varsayılan olarak kapalı: yazıcılar ve diğer araçlar sade ZPL alır.",
       smartSnap: 'Akıllı hizalama',
       smartSnapHint: 'Sürükleme sırasında diğer nesnelere hizala. Atlamak için Ctrl/Cmd basılı tutun.',
       resetHeading: 'Sıfırla',
