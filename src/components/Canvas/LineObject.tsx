@@ -15,7 +15,7 @@ import {
   computeResizeSnap,
   type SnapRect,
 } from "../../lib/snapGuides";
-import { diagonalPolygonPoints } from "../../lib/shapeGeometry";
+import { diagonalPolygonPoints } from "@zplab/core/lib/shapeGeometry";
 import { selectionHandlers, type KonvaObjectProps, MIN_HIT_STROKE_PX, lineHandlesNodeId, lineRootNodeId } from "./konvaObjectProps";
 import { LINE_HANDLE_NAME } from "./altClickCycle";
 

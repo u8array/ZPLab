@@ -11,7 +11,8 @@ import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
 import { rotatedFootprint } from "@zplab/core/lib/objectBounds";
 import { rightAnchorShift } from "./transformPosition";
 import { measureInkWidthPx } from "@zplab/core/lib/labelGeometry/measureTextDots";
-import { outlineInset } from "../../lib/shapeGeometry";
+import { boxCornerRadii, outlineInset } from "@zplab/core/lib/shapeGeometry";
+import { RoundedBoxRing } from "./RoundedBoxRing";
 import { reverseShapeStyle } from "./reverseShapeStyle";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useLabelStore, selectRenderDesignLabel, selectRenderColumnMapping } from "../../store/labelStore";
@@ -826,21 +827,17 @@ function KonvaObjectInner({
     const w = dotsToPx(p.width, scale, dpmm);
     const h = dotsToPx(p.height, scale, dpmm);
     const strokeWidth = Math.max(dotsToPx(p.thickness, scale, dpmm), 0.5);
-    const cornerRadius =
-      p.rounding * dotsToPx(Math.min(p.width, p.height) / 8, scale, dpmm);
-    // promoteFilled=true: ^GB extrudes solid to max(w,t) x max(h,t)
-    // (see shapeRender.ts). ^GE/^GC collapse without promotion.
+    const corners = boxCornerRadii(p.width, p.height, p.thickness, p.rounding);
+    const cornerRadius = dotsToPx(corners.outer, scale, dpmm);
     const insetGeom = outlineInset(w, h, strokeWidth, p.filled, true);
     const renderFilled = insetGeom.renderFilled;
-    const insetCornerRadius = renderFilled
-      ? cornerRadius
-      : Math.max(0, cornerRadius - strokeWidth / 2);
 
     const { stroke, fill, globalCompositeOperation } = reverseShapeStyle(
       p.reverse,
       p.color,
       renderFilled,
     );
+    const ring = !renderFilled && p.rounding > 0;
     return (
       <Group
         id={obj.id}
@@ -851,19 +848,34 @@ function KonvaObjectInner({
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
       >
-        <Rect
-          x={insetGeom.offset}
-          y={insetGeom.offset}
-          width={insetGeom.width}
-          height={insetGeom.height}
-          stroke={stroke}
-          strokeWidth={renderFilled ? 0 : strokeWidth}
-          strokeScaleEnabled={false}
-          fill={fill}
-          cornerRadius={insetCornerRadius}
-          globalCompositeOperation={globalCompositeOperation}
-          {...shapeHitProps(renderFilled, strokeWidth, isSelected)}
-        />
+        {ring ? (
+          <RoundedBoxRing
+            w={w}
+            h={h}
+            strokeWidth={strokeWidth}
+            thicknessDots={p.thickness}
+            rounding={p.rounding}
+            scale={scale}
+            dpmm={dpmm}
+            fill={stroke}
+            globalCompositeOperation={globalCompositeOperation}
+            isSelected={isSelected}
+          />
+        ) : (
+          <Rect
+            x={insetGeom.offset}
+            y={insetGeom.offset}
+            width={insetGeom.width}
+            height={insetGeom.height}
+            stroke={stroke}
+            strokeWidth={renderFilled ? 0 : strokeWidth}
+            strokeScaleEnabled={false}
+            fill={fill}
+            cornerRadius={renderFilled ? cornerRadius : 0}
+            globalCompositeOperation={globalCompositeOperation}
+            {...shapeHitProps(renderFilled, strokeWidth, isSelected)}
+          />
+        )}
         {isSelected && (
           <SelectionOverlay
             width={w}

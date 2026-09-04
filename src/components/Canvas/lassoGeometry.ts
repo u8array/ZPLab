@@ -1,7 +1,8 @@
 import type Konva from "konva";
+import type { CornerRadii } from "@zplab/core/lib/shapeGeometry";
 
 /** Konva node name marking a shape whose interior is click-through. Stamped by
- *  shapeHitProps (konvaObjectProps) so both hit rules share one decision;
+ *  shapeHitProps and the rounded-box ring so both hit rules share one decision;
  *  declared here to keep this module free of React/store dependencies. */
 export const HOLLOW_HIT_NAME = "hollow-hit";
 
@@ -24,7 +25,42 @@ interface ShapeLike {
   className?: string;
   strokeWidth?: () => number;
   hitStrokeWidth?: () => number | string;
-  cornerRadius?: () => number;
+  getAttr?: (name: string) => unknown;
+}
+
+/** A rounded ^GB ring publishes its free interior as node attrs. */
+export const HOLLOW_INSET_ATTR = "hollowInset";
+export const HOLLOW_RADIUS_ATTR = "hollowRadius";
+export const hollowRingAttrs = (inset: number, radius: number): Record<string, number> => ({
+  [HOLLOW_INSET_ATTR]: inset,
+  [HOLLOW_RADIUS_ATTR]: radius,
+});
+
+/** The padded ring in px; `inset` is where the free interior starts. */
+export interface HollowRingSpec extends CornerRadii {
+  width: number;
+  height: number;
+  band: number;
+  inset: number;
+}
+
+/** The true arcs offset by `pad`, never recomputed from the padded box, so hit
+ *  path and lasso interior agree. */
+export function hollowRingSpec(
+  w: number,
+  h: number,
+  band: number,
+  radii: CornerRadii,
+  pad: number,
+): HollowRingSpec {
+  return {
+    width: w + 2 * pad,
+    height: h + 2 * pad,
+    band: band + 2 * pad,
+    outer: radii.outer + pad,
+    inner: Math.max(0, radii.inner - pad),
+    inset: band + pad,
+  };
 }
 
 /** Parity with shapeHitProps: a shape it marked with HOLLOW_HIT_NAME is
@@ -47,17 +83,20 @@ function insideHollowFrame(node: Konva.Node, rect: LassoRect, box: ClientBox): b
     [rect.x, rect.y + rect.h],
     [rect.x + rect.w, rect.y + rect.h],
   ];
-  if (shape.className === "Rect") {
-    const x0 = box.x + inset;
-    const y0 = box.y + inset;
-    const x1 = box.x + box.width - inset;
-    const y1 = box.y + box.height - inset;
+  const hollowInset = shape.getAttr?.(HOLLOW_INSET_ATTR);
+  const isRing = typeof hollowInset === "number";
+  // Hollow Rect frames are square-cornered (rounded ones are rings).
+  if (shape.className === "Rect" || isRing) {
+    const frameInset = isRing ? hollowInset : inset;
+    const x0 = box.x + frameInset;
+    const y0 = box.y + frameInset;
+    const x1 = box.x + box.width - frameInset;
+    const y1 = box.y + box.height - frameInset;
     if (!(rect.x > x0 && rect.y > y0 && rect.x + rect.w < x1 && rect.y + rect.h < y1)) {
       return false;
     }
-    // The node's cornerRadius is already the path radius; the free interior
-    // rounds off hitStrokeWidth/2 tighter.
-    const r = (shape.cornerRadius?.() ?? 0) - hitWidth / 2;
+    const hollowRadius = isRing ? shape.getAttr?.(HOLLOW_RADIUS_ATTR) : 0;
+    const r = typeof hollowRadius === "number" ? hollowRadius : 0;
     if (r <= 0) return true;
     // Point-in-rounded-rect via distance to the nearest corner circle.
     return corners.every(([px, py]) => {

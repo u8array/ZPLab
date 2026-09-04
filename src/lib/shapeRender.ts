@@ -1,5 +1,5 @@
 import type { LabelObject } from "@zplab/core/types/Group";
-import { diagonalPolygonPoints, outlineInset } from "./shapeGeometry";
+import { boxCornerRadii, diagonalPolygonPoints, outlineInset, traceRoundedBox, traceRoundedBoxRing } from "@zplab/core/lib/shapeGeometry";
 
 /** Inward-extruded ^GE / ^GC ring or solid disc for the ellipse type
  *  (circles round-trip as ellipse with `lockAspect:true`, sharing the
@@ -66,23 +66,31 @@ export function renderShape(
     case "box": {
       const p = obj.props;
       const color = p.color === "B" ? "#000000" : "#ffffff";
-      // ^GB rounding (r=1..8) not yet rendered here; current Labelary
-      // fixtures all use r=0, so the four-band stroke below is exact.
       const t = Math.max(1, p.thickness);
       // promoteFilled=true: ^GB rects extrude solid fields to
       // max(w,t) × max(h,t) (Zebra "horizontal line" rule). Without it,
       // a 101×92 rect declared with thickness 101 would be drawn 9 dots
       // short along its bottom edge compared to Labelary.
       const geom = outlineInset(p.width, p.height, t, p.filled, true);
+      ctx.fillStyle = color;
+      if (p.rounding > 0) {
+        const radii = boxCornerRadii(p.width, p.height, t, p.rounding);
+        ctx.save();
+        ctx.translate(obj.x, obj.y);
+        ctx.beginPath();
+        if (geom.renderFilled) traceRoundedBox(ctx, geom.width, geom.height, radii.outer);
+        else traceRoundedBoxRing(ctx, p.width, p.height, t, radii);
+        ctx.fill();
+        ctx.restore();
+        return;
+      }
       if (geom.renderFilled) {
-        ctx.fillStyle = color;
         ctx.fillRect(obj.x, obj.y, geom.width, geom.height);
         return;
       }
       // Four filled bands (top, bottom, left, right) avoid the
       // centred-stroke half-pixel artefacts an ellipse-style outline
       // would have for axis-aligned rects.
-      ctx.fillStyle = color;
       ctx.fillRect(obj.x, obj.y, p.width, t);                          // top
       ctx.fillRect(obj.x, obj.y + p.height - t, p.width, t);           // bottom
       ctx.fillRect(obj.x, obj.y + t, t, p.height - t * 2);             // left

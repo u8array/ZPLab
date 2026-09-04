@@ -19,5 +19,8 @@
   "shape_line_diag_steep": "2508385064a25f6f9fafc723ae26cd12cdf6f7c9",
   "shape_box_thickness_exceeds_height": "8ae50acd00055980ffd3205da3f3236daad0907f",
   "shape_box_thickness_exceeds_width": "c760137925e07d918a1c4a097f1fd336f4fda043",
-  "shape_box_thickness_exceeds_both": "7c45383084fce2251f8f08c5b35cfac01f10cb7c"
+  "shape_box_thickness_exceeds_both": "7c45383084fce2251f8f08c5b35cfac01f10cb7c",
+  "shape_box_rounded_thin": "ef1813da6ecac523f15b8e61b7e7435fe31d1f28",
+  "shape_box_rounded_thick": "10da54475f9c02044c7f556f3c1dbd608f1c56a6",
+  "shape_box_rounded_wide_r8": "ed77b03c91c468fccac5b4bbca1ba67810bef989"
 }
