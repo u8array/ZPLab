@@ -746,6 +746,8 @@ const ro = {
       theme: 'Temă',
       powerUser: 'Modul utilizator avansat',
       powerUserHint: 'Afișează comanda ZPL emisă lângă fiecare proprietate și deblochează controalele avansate',
+      keepExportMetadata: 'Păstrează metadatele ZPLab în exporturi',
+      keepExportMetadataHint: 'Păstrează metadatele ZPLab (^FX: dimensiunea etichetei, densitatea, proprietățile QR) în ZPL-ul exportat, copiat și imprimat, astfel încât ZPLab să poată reciti fără pierderi propriile exporturi. Dezactivat implicit: imprimantele și alte instrumente primesc ZPL simplu.',
       smartSnap: 'Fixare inteligentă',
       smartSnapHint: 'Aliniați la alte obiecte în timp ce trageți. Țineți Ctrl/Cmd pentru a ocoli.',
       resetHeading: 'Resetare',

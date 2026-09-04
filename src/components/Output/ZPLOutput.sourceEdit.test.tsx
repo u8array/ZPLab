@@ -498,3 +498,21 @@ describe("keyboard focus after button exits", () => {
     expect(document.activeElement).toBe(editor());
   });
 });
+
+describe("the header copy button and the sidecar setting", () => {
+  it("copies plain ZPL by default while the editor text keeps its sidecars", () => {
+    useLabelStore.setState({ keepExportMetadata: false });
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    expect(editor().value).toContain("^FXZPLLAB:");
+    fireEvent.click(screen.getByRole("button", { name: t().output.copy }));
+    expect(copiedTexts.at(-1)).not.toContain("ZPLLAB");
+    expect(copiedTexts.at(-1)).toContain("^FDhello^FS");
+  });
+
+  it("copies the metadata once the user opted in", () => {
+    useLabelStore.setState({ keepExportMetadata: true });
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: t().output.copy }));
+    expect(copiedTexts.at(-1)).toContain("^FXZPLLAB:");
+  });
+});

@@ -746,6 +746,8 @@ const lt = {
       theme: 'Tema',
       powerUser: 'Pažengusio vartotojo režimas',
       powerUserHint: 'Rodyti sugeneruotą ZPL komandą šalia kiekvienos savybės ir atrakinti išplėstines valdymo parinktis',
+      keepExportMetadata: 'Išsaugoti ZPLab metaduomenis eksportuose',
+      keepExportMetadataHint: 'Išsaugokite ZPLab ^FX metaduomenis (etiketės dydį, tankį, QR savybes) eksportuotame, nukopijuotame ir atspausdintame ZPL, kad ZPLab galėtų be nuostolių perskaityti savo paties eksportus. Pagal numatytuosius nustatymus išjungta: spausdintuvai ir kiti įrankiai gauna paprastą ZPL.',
       smartSnap: 'Išmanusis pritvirtinimas',
       smartSnapHint: 'Lygiuoja su kitais objektais tempiant. Laikykite Ctrl/Cmd, kad praleistumėte.',
       resetHeading: 'Atkurti',

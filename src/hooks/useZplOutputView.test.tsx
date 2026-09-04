@@ -90,3 +90,11 @@ describe("useZplOutputView selection resolution", () => {
     expect(marked.every((l) => l.includes("One"))).toBe(true);
   });
 });
+
+describe("useZplOutputView and the export sidecar setting", () => {
+  it("keeps the sidecars in the source pane even when exports drop them", () => {
+    seed([{ objects: [text("a", "Alpha")] }], { keepExportMetadata: false });
+    const { result } = renderHook(() => useZplOutputView(true));
+    expect(result.current.zpl).toContain("^FXZPLLAB:");
+  });
+});

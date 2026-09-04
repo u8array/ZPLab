@@ -3,6 +3,7 @@ import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIc
 import { useLabelStore, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectPreviewLocksEditor } from '../../store/labelStore';
 import { useZplOutputView } from '../../hooks/useZplOutputView';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
+import { finishZplExport } from '../../lib/exportZpl';
 import { useT } from '../../hooks/useT';
 import { LabelaryNoticeModal } from './LabelaryNoticeModal';
 import { ZplSourceEditor } from './ZplSourceEditor';
@@ -34,8 +35,8 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
 
   const { session, zpl, refusal, highlightedLines, notices, shownText, crlfKey } =
     useZplOutputView(collapsed ?? false);
-  // Copies what the body shows: the live buffer during an edit.
-  const { copy, copied } = useCopyToClipboard(() => shownText);
+  // The body keeps its metadata (the apply reparses it); the button copies the export form.
+  const { copy, copied } = useCopyToClipboard(() => finishZplExport(shownText));
 
   // The button shows when the effective provider can run: Labelary when the
   // gate is on, or the printer path (desktop only). The consent notice only

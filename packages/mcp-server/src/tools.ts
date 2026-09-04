@@ -3,6 +3,7 @@ import {
   serializeDesign,
 } from "@zplab/core/lib/designFile";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
+import { zplForExport } from "@zplab/core/lib/zplLabelMeta";
 import { importZplText, type ZplImportResult } from "@zplab/core/lib/zplImportService";
 import {
   withFootprintBinding,
@@ -158,7 +159,7 @@ export type ExportZplResult =
 
 /** The ZPL plus the warnings that apply to it: an agent that exports straight
  *  from a design it did not build itself would otherwise never see them. */
-export function exportZpl(designFile: unknown): ExportZplResult {
+export function exportZpl(designFile: unknown, opts: { metadata?: boolean } = {}): ExportZplResult {
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;
   const { label, pages, variables } = parsed.value;
@@ -166,9 +167,10 @@ export function exportZpl(designFile: unknown): ExportZplResult {
   // list read as a clean bill of health is worst right before printing.
   const report = warningReport(label, variables, pages, parsed.value.columnMapping !== null);
   // Same path as the app's export: per-page emit replays captured overlays.
+  const zpl = withFootprintBinding(label, variables, () => generateMultiPageZPL(label, pages, variables));
   return {
     ok: true,
-    zpl: withFootprintBinding(label, variables, () => generateMultiPageZPL(label, pages, variables)),
+    zpl: zplForExport(zpl, opts.metadata),
     warnings: report.warnings,
     ...(report.notes && report.notes.length > 0 ? { notes: report.notes } : {}),
   };

@@ -746,6 +746,8 @@ const hr = {
       theme: 'Tema',
       powerUser: 'Napredni korisnički način',
       powerUserHint: 'Prikaži generiranu ZPL naredbu pored svakog svojstva i otključaj napredne kontrole',
+      keepExportMetadata: 'Zadrži ZPLab metapodatke u izvozu',
+      keepExportMetadataHint: 'Zadrži ZPLab metapodatke (^FX: veličina naljepnice, gustoća, QR svojstva) u izvezenom, kopiranom i ispisanom ZPL-u, kako bi ZPLab mogao bez gubitaka ponovno pročitati vlastite izvoze. Prema zadanim postavkama isključeno: pisači i drugi alati dobivaju obični ZPL.',
       smartSnap: 'Pametno prianjanje',
       smartSnapHint: 'Poravnaj s drugim objektima pri povlačenju. Drži Ctrl/Cmd za zaobilaženje.',
       resetHeading: 'Resetiraj',

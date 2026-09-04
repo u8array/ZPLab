@@ -85,6 +85,8 @@ export interface DesignFileJson {
 }
 
 export const designFileEnvelopeSchema = z.object({ designFile: z.record(z.string(), z.unknown()) });
+/** export_zpl: `metadata` keeps ZPLab's ^FX comments for a lossless re-import. */
+export const exportZplInputSchema = designFileEnvelopeSchema.extend({ metadata: z.boolean().optional() });
 
 
 export interface ToolError {

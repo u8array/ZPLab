@@ -83,6 +83,7 @@ import {
 import { CanvasContextMenu } from "./CanvasContextMenu";
 import { buildContextMenu, type MenuSection } from "./canvasActions";
 import { zplForSelection } from "../../lib/zplForSelection";
+import { finishZplExport } from "../../lib/exportZpl";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { nodeToPngBlob, downloadBlob, copyPngToClipboard } from "../../lib/canvasImage";
 import { printerPreviewLayout } from "../../lib/printerPreview";
@@ -1278,10 +1279,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       toggleLock: () => setSelectionLocked(!isSelectionLocked(objects, sel)),
       addHere: (type: string, propsOverride?: object) => addObject(type, click, propsOverride),
       copyZplSelected: () => {
-        void copyText(zplForSelection(label, objects, sel, variables));
+        void copyText(finishZplExport(zplForSelection(label, objects, sel, variables)));
       },
       copyZplLabel: () => {
-        void copyText(generateMultiPageZPL(designLabel, pages, variables));
+        void copyText(finishZplExport(generateMultiPageZPL(designLabel, pages, variables)));
       },
       copyImage: () => {
         // Call write synchronously with the pending blob so the user activation

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { finishZplExport } from "../lib/exportZpl";
 import {
   currentObjects,
   selectBatchInputs,
@@ -34,7 +35,7 @@ export function useZplImportExport() {
 
   const handleDownload = () => {
     const s = useLabelStore.getState();
-    const zpl = generateMultiPageZPL(s.label, s.pages, s.variables);
+    const zpl = finishZplExport(generateMultiPageZPL(s.label, s.pages, s.variables));
     void saveTextFile(zpl, {
       filename: "label.zpl",
       mimeType: "text/plain",
@@ -48,8 +49,8 @@ export function useZplImportExport() {
     const s = useLabelStore.getState();
     const batch = selectBatchInputs(s);
     if (!batch) return;
-    const zpl = generateBatchZpl(
-      currentPageLabel(s), currentObjects(s), s.variables, batch.dataset, batch.mapping,
+    const zpl = finishZplExport(
+      generateBatchZpl(currentPageLabel(s), currentObjects(s), s.variables, batch.dataset, batch.mapping),
     );
     void saveTextFile(zpl, {
       filename: "label-batch.zpl",
@@ -93,11 +94,12 @@ export function useZplImportExport() {
       return generateSetupScript(s.printerProfile);
     }
     const batch = selectBatchInputs(s);
-    return batch
+    const zpl = batch
       ? generateBatchZpl(
           currentPageLabel(s), currentObjects(s), s.variables, batch.dataset, batch.mapping,
         )
       : generateMultiPageZPL(s.label, s.pages, s.variables);
+    return finishZplExport(zpl);
   };
 
   return {

@@ -1,4 +1,5 @@
 import { generateZPL } from "@zplab/core/lib/zplGenerator";
+import { stripSidecarComments } from "@zplab/core/lib/zplLabelMeta";
 import { fetchPreview } from "./labelary";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import { isGroup, type LabelObject } from "@zplab/core/types/Group";
@@ -38,7 +39,8 @@ export function buildPreviewZpl(
 ): string {
   const substituted = applyBindingToTree(objects, variables, active, "preview", clockCtxFromLabel(label), ctrlParityFor);
   const previewed = opts.blankSamples ? withBlankSamples(substituted) : substituted;
-  return generateZPL(label, previewed, []);
+  // A preview is never re-imported, so nothing but printer bytes goes to the renderer.
+  return stripSidecarComments(generateZPL(label, previewed, []));
 }
 
 export function buildLoadingHtml(): string {

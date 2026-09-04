@@ -16,6 +16,7 @@ beforeEach(() => {
   useLabelStore.setState({
     locale: "en",
     showZplCommands: false,
+    keepExportMetadata: false,
     labelaryNoticeAcknowledged: false,
     canvasSettings: { ...DEFAULT_CANVAS_SETTINGS },
     previewMode: { status: "idle" },
@@ -76,6 +77,7 @@ describe("resetSettings (scoped)", () => {
     // Change design + language + prefs.
     s.setLocale("fr");
     s.setShowZplCommands(true);
+    s.setKeepExportMetadata(true);
     s.setCanvasSettings({ smartSnapEnabled: false, snapEnabled: true });
     s.acknowledgeLabelaryNotice();
     s.addPage();
@@ -86,6 +88,7 @@ describe("resetSettings (scoped)", () => {
 
     // Prefs reset:
     expect(after.showZplCommands).toBe(false);
+    expect(after.keepExportMetadata).toBe(false);
     expect(after.canvasSettings.smartSnapEnabled).toBe(true);
     expect(after.canvasSettings.snapEnabled).toBe(false);
     expect(after.labelaryNoticeAcknowledged).toBe(false);
