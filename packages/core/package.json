@@ -14,8 +14,8 @@
     }
   },
   "dependencies": {
-    "bwip-js": "catalog:",
-    "fflate": "catalog:",
-    "zod": "catalog:"
+    "bwip-js": "^4.11.4",
+    "fflate": "^0.8.3",
+    "zod": "^4.5.4"
   }
 }

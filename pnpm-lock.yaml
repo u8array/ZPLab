@@ -4,18 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-catalogs:
-  default:
-    bwip-js:
-      specifier: ^4.11.4
-      version: 4.11.4
-    fflate:
-      specifier: ^0.8.3
-      version: 0.8.3
-    zod:
-      specifier: ^4.5.4
-      version: 4.5.4
-
 importers:
 
   .:
@@ -75,10 +63,10 @@ importers:
         specifier: workspace:*
         version: link:packages/core
       bwip-js:
-        specifier: 'catalog:'
+        specifier: ^4.11.4
         version: 4.11.4
       fflate:
-        specifier: 'catalog:'
+        specifier: ^0.8.3
         version: 0.8.3
       konva:
         specifier: ^10.3.3
@@ -96,7 +84,7 @@ importers:
         specifier: ^19.2.6
         version: 19.2.6(@types/react@19.2.18)(konva@10.3.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.5.4
         version: 4.5.4
       zundo:
         specifier: ^2.3.0
@@ -208,13 +196,13 @@ importers:
   packages/core:
     dependencies:
       bwip-js:
-        specifier: 'catalog:'
+        specifier: ^4.11.4
         version: 4.11.4
       fflate:
-        specifier: 'catalog:'
+        specifier: ^0.8.3
         version: 0.8.3
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.5.4
         version: 4.5.4
 
   packages/mcp-server:
@@ -226,10 +214,10 @@ importers:
         specifier: workspace:*
         version: link:../core
       bwip-js:
-        specifier: 'catalog:'
+        specifier: ^4.11.4
         version: 4.11.4
       zod:
-        specifier: 'catalog:'
+        specifier: ^4.5.4
         version: 4.5.4
     devDependencies:
       esbuild:

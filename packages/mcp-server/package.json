@@ -11,8 +11,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@zplab/core": "workspace:*",
-    "bwip-js": "catalog:",
-    "zod": "catalog:"
+    "bwip-js": "^4.11.4",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
