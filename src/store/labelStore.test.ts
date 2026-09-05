@@ -12,6 +12,7 @@ import { currentPageLabel } from './labelStore.selectors';
 import { importZplText } from '@zplab/core/lib/zplImportService';
 import { dotsToMm } from '@zplab/core/lib/coordinates';
 import { effectiveDpmm } from '@zplab/core/types/LabelConfig';
+import { FN_NUMBER_MAX } from '@zplab/core/types/Variable';
 import { loadFetchedDataset, currentDataContext, isCurrentDataContext } from './datasetActions';
 import { isGroup, getAllLeaves, type LabelObject } from '@zplab/core/types/Group';
 import { DEFAULT_CANVAS_SETTINGS } from './slices/uiSlice';
@@ -2774,5 +2775,54 @@ describe('newDesign', () => {
     useLabelStore.getState().enterSourceEdit('^XA^XZ');
     useLabelStore.getState().newDesign();
     expect(useLabelStore.getState().pages[0]?.objects).toHaveLength(1);
+  });
+});
+
+describe('migrateLegacy: ^FN slot repair', () => {
+  const label = { widthMm: 70, heightMm: 40, dpmm: 8 };
+  const zpl = ['^XA^FO10,10^A0N,30,30^FDa^FS^XZ', '^XA^FO10,10^JMB^A0N,30,30^FDb^FS^XZ'].join('\n');
+  const legacyPages = (firstContent?: string) =>
+    importZplText(zpl, 8).pages.map((p, i) => {
+      const overlay = p.overlay ? { ...p.overlay } : undefined;
+      if (overlay) delete overlay.head;
+      const objects = i === 0 && firstContent ? [{ ...p.objects[0], props: { ...props(defined(p.objects[0])), content: firstContent } }] : p.objects;
+      const legacy = { ...p, overlay, objects };
+      delete legacy.jmDensity;
+      return legacy;
+    });
+  const variable = (id: string, fnNumber?: number, defaultValue = '') => ({ id, name: id, fnNumber, defaultValue });
+  const migrate = (variables: unknown[], extra: Record<string, unknown> = {}) =>
+    migrateLegacy({ label, pages: legacyPages(), variables, printerProfile: {}, ...extra }, 16) as {
+      pages: { overlay?: unknown; jmDensity?: string; objects: { props: { content: string } }[] }[];
+      variables: { id: string; fnNumber: number }[];
+      columnMapping?: { bindings: Record<string, string> };
+    };
+
+  it('moves a duplicate slot and drops the overlays after the legacy ^JM was latched from them', () => {
+    const migrated = migrate([variable('sku', 1), variable('lot', 1)]);
+    expect(migrated.variables.map((v) => v.fnNumber)).toEqual([1, 2]);
+    expect(migrated.pages.every((p) => p.overlay === undefined)).toBe(true);
+    expect(migrated.pages[1]?.jmDensity).toBe('B');
+  });
+
+  it('keeps the overlays when no slot moves', () => {
+    expect(migrate([variable('sku', 1), variable('lot', 2)]).pages.some((p) => p.overlay)).toBe(true);
+  });
+
+  it('slots a variable without a usable one', () => {
+    expect(migrate([variable('sku', 1), variable('lot')]).variables.map((v) => v.fnNumber)).toEqual([1, 2]);
+    expect(migrate([variable('sku', 1), variable('lot', 150)]).variables.map((v) => v.fnNumber)).toEqual([1, 2]);
+  });
+
+  it('removes a variable left without a slot the way removeVariable would: markers to default, binding gone', () => {
+    const full = Array.from({ length: FN_NUMBER_MAX }, (_, i) => variable(`v${i}`, i + 1));
+    const migrated = migrate([...full, variable('x', 5, 'X1'), variable('out', 150), variable('none')], {
+      pages: legacyPages('Lot «x» / «out» / «none»'),
+      columnMapping: { bindings: { v4: 'A', x: 'B' } },
+    });
+    expect(migrated.variables.map((v) => v.id)).toEqual(full.map((v) => v.id));
+    expect(new Set(migrated.variables.map((v) => v.fnNumber)).size).toBe(FN_NUMBER_MAX);
+    expect(migrated.columnMapping?.bindings).toEqual({ v4: 'A' });
+    expect(migrated.pages[0]?.objects[0]?.props.content).toBe('Lot X1 /  / ');
   });
 });

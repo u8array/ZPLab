@@ -4,13 +4,21 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { dirtyTracking } from './dirtyTracking';
 import type { ObjectChanges } from '@zplab/core/types/LabelObject';
 import { PRINTER_PROFILE_FIELDS, printerProfileSchema } from '@zplab/core/types/PrinterProfile';
-import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, sanitiseVariableNames, safeUniqueNameById } from '@zplab/core/lib/objectTree';
+import {
+  visitLeavesInPages,
+  foldSerialLeaf,
+  fixTlc39SlotsLeaf,
+  bindSingleMarkerLeaf,
+  safeUniqueNameById,
+} from '@zplab/core/lib/objectTree';
+import { sanitiseLoadedVariables } from '@zplab/core/lib/loadedVariables';
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from '@zplab/core/lib/reverseBacking';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
+import { removeVariables } from '@zplab/core/lib/variableRemoval';
 import { reconstructLegacyJmDensity } from '@zplab/core/lib/designFile';
 import type { DesignFilePage } from '@zplab/core/lib/designFile';
 import type { CustomFontMapping, JmDensity, LabelConfig } from '@zplab/core/types/LabelConfig';
-import type { LabelObject } from '@zplab/core/types/Group';
+import type { LabelObject, Page } from '@zplab/core/types/Group';
 import {
   createPrinterProfileSlice,
   type PrinterProfileSlice,
@@ -27,7 +35,11 @@ import { createAppUpdateSlice, type AppUpdateSlice } from './slices/appUpdateSli
 import { createFeedbackSlice, type FeedbackSlice } from './slices/feedbackSlice';
 import { createLifecycleSlice, type LifecycleSlice } from './slices/lifecycleSlice';
 import { createSourceEditSlice, type SourceEditSlice } from './slices/sourceEditSlice';
-import type { Variable, VariableInput } from '@zplab/core/types/Variable';
+import {
+  type ColumnMapping,
+  type Variable,
+  type VariableInput,
+} from '@zplab/core/types/Variable';
 
 export { __resetPreviewCacheForTests } from './slices/previewSlice';
 export type { ObjectChanges };
@@ -326,19 +338,25 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     }
   }
 
-  // Enforce the marker-safe variable-name invariant on any rehydrated session
-  // (old data may carry names like `clock:Y` that the content-marker model
-  // can't represent). Renames offenders + rewrites their markers in place.
-  if (Array.isArray(s.variables) && Array.isArray(s.pages)) {
-    sanitiseVariableNames(s.variables as { name?: unknown; fnNumber?: unknown }[], s.pages);
-  }
-
   // Unconditional (not version-gated): main-era sessions persist at the current
   // version but carry legacy overlays whose head ^JM rode only in the bytes, so
   // a full regen would drop it. Latch the density back as a page override.
   if (Array.isArray(s.pages)) {
     const label = s.label as { jmDensity?: JmDensity } | undefined;
     if (label) reconstructLegacyJmDensity(label, s.pages as DesignFilePage[]);
+  }
+
+  // Unconditional like the ^JM latch: marker-safe names and unique ^FN slots on every rehydrate.
+  if (Array.isArray(s.variables) && Array.isArray(s.pages)) {
+    const variables = s.variables as Variable[];
+    const { pages, unplaced } = sanitiseLoadedVariables(variables, s.pages as Page[]);
+    if (pages !== s.pages) s = { ...s, pages };
+    // A session cannot be refused like a file: a variable left without a slot is removed the editor's way.
+    if (unplaced.length > 0) {
+      const mapping = (s.columnMapping as ColumnMapping | null | undefined) ?? null;
+      const doc = removeVariables({ variables, pages, columnMapping: mapping }, new Set(unplaced.map((v) => v.id)));
+      s = { ...s, variables: doc.variables, pages: doc.pages, ...(doc.columnMapping !== mapping ? { columnMapping: doc.columnMapping } : {}) };
+    }
   }
 
   // Re-validate the rehydrated profile so a legacy snapshot that
@@ -532,7 +550,8 @@ export const useLabelStore = create<LabelState>()(
     }),
     {
       name: 'zpl-designer-session',
-      version: 16,
+      // Bumped for every rehydrate repair: persist runs migrate only on a version change.
+      version: 17,
       migrate: (persistedState, version) => migrateLegacy(persistedState, version) as LabelState,
       storage: createJSONStorage(() => localStorage),
       partialize: persistPartialize,

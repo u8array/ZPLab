@@ -1,3 +1,4 @@
+import { FN_NUMBER_MAX } from '@zplab/core/types/Variable';
 import { describe, it, expect } from 'vitest';
 import { ObjectRegistry } from '@zplab/core/registry';
 import { parseDesignFile, serializeDesign, CURRENT_DESIGN_SCHEMA_VERSION } from '@zplab/core/lib/designFile';
@@ -100,6 +101,33 @@ describe('parseDesignFile', () => {
     if (!result.ok) return;
     expect(result.value.pages).toHaveLength(1);
     expect(result.value.pages[0]?.objects).toHaveLength(1);
+  });
+
+  const slotFile = (variables: unknown[], overlay?: unknown) => ({
+    schemaVersion: 5,
+    label: { widthMm: 70, heightMm: 40, dpmm: 8 },
+    pages: [{ objects: [], ...(overlay ? { overlay } : {}) }],
+    variables,
+  });
+  const variable = (name: string, fnNumber: number) => ({ id: name, name, fnNumber, defaultValue: '' });
+  const overlay = { segments: [{ kind: 'raw', text: '^XA^XZ' }], v: 3, regenSafe: true };
+
+  it('moves a variable sharing a ^FN slot to the lowest free slot', () => {
+    const r = parseDesignFile(JSON.stringify(slotFile([variable('sku', 1), variable('lot', 1), variable('qty', 2)])));
+    expect(r.ok && r.value.variables.map((v) => [v.name, v.fnNumber])).toEqual([['sku', 1], ['lot', 3], ['qty', 2]]);
+  });
+
+  it('drops page overlays only when a slot moved', () => {
+    const moved = parseDesignFile(JSON.stringify(slotFile([variable('sku', 1), variable('lot', 1)], overlay)));
+    const kept = parseDesignFile(JSON.stringify(slotFile([variable('sku', 1), variable('lot', 2)], overlay)));
+    expect(moved.ok && moved.value.pages[0]?.overlay).toBeUndefined();
+    expect(kept.ok && kept.value.pages[0]?.overlay).toBeTruthy();
+  });
+
+  it('refuses a file whose duplicate slot has nowhere to go', () => {
+    const full = Array.from({ length: FN_NUMBER_MAX }, (_, i) => variable(`v${i}`, i + 1));
+    const r = parseDesignFile(JSON.stringify(slotFile([...full, variable('x', 5)], overlay)));
+    expect(r).toEqual({ ok: false, error: 'fn_slots_exhausted' });
   });
 
   it('v1->v2: gives a legacy reverse text a black backing object', () => {

@@ -158,9 +158,9 @@ function duplicateIdError(pages: readonly DesignFilePage[]): ToolError | null {
     : null;
 }
 
-/** Variables must stay individually addressable: a duplicate id or ^FN slot
- *  silently merges two fields. Names are excluded: they have a per-path policy
- *  instead (parse renames via sanitiseVariableNames, buildVariables refuses). */
+/** Variables must stay individually addressable: a duplicate id or ^FN slot merges two
+ *  fields silently (names have their own policy: sanitiseVariableNames). parseDesignFile
+ *  resolves duplicate ^FN slots but never dedupes ids, so this still guards both. */
 export function duplicateVariableError(variables: readonly Variable[]): ToolError | null {
   const dup = (key: (v: Variable) => string | number) => {
     const all = variables.map(key);
