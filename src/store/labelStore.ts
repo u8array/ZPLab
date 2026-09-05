@@ -75,6 +75,7 @@ export {
   selectBatchInputs,
   selectCanBatchExport,
   selectBatchPrintCount,
+  selectKeepExportMetadata,
 } from './labelStore.selectors';
 import { currentObjects, selectEditorFrozen } from './labelStore.selectors';
 

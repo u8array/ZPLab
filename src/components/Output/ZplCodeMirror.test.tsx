@@ -2,6 +2,8 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { render, cleanup, act, waitFor } from "@testing-library/react";
 import { EditorView } from "@codemirror/view";
+import { cursorCharRight, deleteCharBackward, deleteCharForward } from "@codemirror/commands";
+import { sidecarRanges, stripSidecarComments } from "@zplab/core/lib/zplLabelMeta";
 import ZplCodeMirror from "./ZplCodeMirror";
 import { isEditableTarget } from "../../lib/dom";
 
@@ -353,5 +355,83 @@ describe("ZplCodeMirror payload folding", () => {
     await waitFor(() => {
       expect(container.querySelector(".cm-foldPlaceholder")).not.toBeNull();
     });
+  });
+});
+
+describe("ZplCodeMirror sidecar lines", () => {
+  const sidecar = '^FXZPLLAB:{"dpmm":8,"wMm":70,"hMm":40}^FS';
+  const qr = '^FXZPLLAB:{"qr":{"content":"A","mag":4}}^FS^FO10,10^GFA,1,1,1,00^FS';
+  const value = ["^XA", sidecar, "^PW560", qr, "^FO10,10^A0N,30,30^FDHi^FS", "^XZ"].join("\n");
+  const mount = (doc = value, hide = true, onChange: (v: string) => void = vi.fn()) => {
+    const { container, rerender } = render(
+      <ZplCodeMirror value={doc} onChange={onChange} ariaLabel="zpl" placeholderText="ph" hideSidecars={hide} />,
+    );
+    return { container, rerender, view: EditorView.findFromDOM(container as HTMLElement)! };
+  };
+  const gutter = (container: HTMLElement) =>
+    [...container.querySelectorAll(".cm-lineNumbers .cm-gutterElement")].map((e) => e.textContent).slice(1);
+
+  it("shows, copies and numbers the export bytes while the buffer keeps every sidecar", () => {
+    const changes: string[] = [];
+    const { container, view } = mount(value, true, (v) => changes.push(v));
+    expect(view.state.doc.toString()).toBe(value);
+    expect(container.textContent).not.toContain("ZPLLAB");
+    expect(container.querySelectorAll(".cm-line").length).toBe(5);
+    const copy = view.state.facet(EditorView.clipboardOutputFilter);
+    expect(copy.reduce((t, f) => f(t, view.state), value)).toBe(stripSidecarComments(value));
+    expect(gutter(container)).toEqual(["1", "2", "3", "4", "5"]);
+    expect(changes).toEqual([]);
+  });
+
+  it("keeps hidden bytes out of reach of the caret and of caret deletions", () => {
+    const changes: string[] = [];
+    const { view } = mount(value, true, (v) => changes.push(v));
+    const hiddenStart = value.indexOf(sidecar);
+    view.dispatch({ selection: { anchor: hiddenStart - 1 } });
+    cursorCharRight(view);
+    expect(view.state.selection.main.head).toBe(value.indexOf("^PW560"));
+    view.dispatch({ selection: { anchor: value.indexOf("^PW560") } });
+    deleteCharBackward(view);
+    view.dispatch({ selection: { anchor: hiddenStart - 1 } });
+    deleteCharForward(view);
+    expect(view.state.doc.toString()).toBe(value);
+    expect(changes).toEqual([]);
+    view.dispatch({ selection: { anchor: 0, head: value.indexOf("^PW560") } });
+    deleteCharBackward(view);
+    expect(view.state.doc.toString().startsWith("^PW560")).toBe(true);
+  });
+
+  it("keeps every sidecar hidden through edits anywhere in the buffer", () => {
+    const inside = (at: number) => sidecarRanges(value).some((r) => r.start < at && at < r.end);
+    for (let at = 0; at <= value.length; at++) {
+      if (inside(at)) continue;
+      const { container, view } = mount();
+      view.dispatch({ changes: { from: at, insert: "x" }, userEvent: "input.type" });
+      expect(container.textContent, `insert at ${at}`).not.toContain("ZPLLAB");
+      cleanup();
+    }
+    const { container, view } = mount();
+    view.dispatch({ changes: { from: view.state.doc.line(1).to, insert: `\n${sidecar}` }, userEvent: "input.paste" });
+    expect(container.querySelectorAll(".cm-line").length).toBe(5);
+    expect([...container.querySelectorAll(".cm-line")].map((l) => l.textContent)).not.toContain("");
+  });
+
+  it("counts a break an inline sidecar swallows", () => {
+    const { container } = mount(["^XA", `^FO1,1^FDx^FS${sidecar}`, "^PW560", "^XZ"].join("\n"));
+    expect(gutter(container)).toEqual(["1", "2", "3"]);
+  });
+
+  it("shows them when metadata is kept and after the setting flips back", () => {
+    const { container, rerender } = mount();
+    expect(container.textContent).not.toContain("ZPLLAB");
+    rerender(<ZplCodeMirror value={value} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" hideSidecars={false} />);
+    expect(container.textContent).toContain("ZPLLAB");
+    expect(container.querySelectorAll(".cm-line").length).toBe(6);
+  });
+
+  it("hides a CRLF sidecar line and its break", () => {
+    const { container } = mount(value.replace(/\n/g, "\r\n"));
+    expect(container.querySelectorAll(".cm-line").length).toBe(5);
+    expect(gutter(container)).toEqual(["1", "2", "3", "4", "5"]);
   });
 });

@@ -747,7 +747,7 @@ const pl = {
       powerUser: 'Tryb zaawansowany',
       powerUserHint: 'Pokaż emitowane polecenie ZPL obok każdej właściwości i odblokuj zaawansowane kontrolki',
       keepExportMetadata: 'Zachowaj metadane ZPLab w eksportach',
-      keepExportMetadataHint: 'Zachowaj metadane ZPLab (^FX: rozmiar etykiety, gęstość, właściwości QR) w wyeksportowanym, skopiowanym i wydrukowanym ZPL, aby ZPLab mógł bezstratnie odczytać z powrotem własne eksporty. Domyślnie wyłączone: drukarki i inne narzędzia otrzymują zwykły ZPL.',
+      keepExportMetadataHint: 'Dodaje komentarze ^FX z rozmiarem etykiety, gęstością i danymi QR, dzięki czemu ZPLab dokładnie otworzy plik ponownie; drukarki je ignorują. Wyłączone: czysty ZPL, także w panelu ZPL.',
       smartSnap: 'Inteligentne przyciąganie',
       smartSnapHint: 'Wyrównuje do innych obiektów podczas przeciągania. Przytrzymaj Ctrl/Cmd, aby pominąć.',
       resetHeading: 'Resetuj',

@@ -16,6 +16,8 @@ import { setDiagnostics, diagnosticCount, forEachDiagnostic, type Diagnostic } f
 import type { SourceLint } from '../../lib/sourceDiagnostics';
 import { zplLineHighlights, opaquePayloadFold, isPureCrlf } from '../../lib/zplCmHighlight';
 import { MAX_LINE_RENDER } from '../../lib/zplTokenStyles';
+import { hideSidecarsExt, visibleLineNumber } from '../../lib/zplCmSidecars';
+import { countBefore } from '@zplab/core/lib/sortedCount';
 
 // Text.toString() always joins with LF; only sliceString honours the
 // lineSeparator facet, and the store buffer must get the original separators.
@@ -189,6 +191,7 @@ export default function ZplCodeMirror({
   highlightLines = NO_LINES,
   historyEpoch = 0,
   diagnostics = null,
+  hideSidecars = false,
   ref,
 }: {
   value: string;
@@ -205,6 +208,8 @@ export default function ZplCodeMirror({
   /** Framework-neutral lints in STRING offsets of `value`; converted here.
    *  `null` keeps the previous set, live-mapped through edits. */
   diagnostics?: readonly SourceLint[] | null;
+  /** See hideSidecarsExt. */
+  hideSidecars?: boolean;
   ref?: Ref<ZplCodeMirrorHandle>;
 }) {
   const host = useRef<HTMLDivElement>(null);
@@ -218,6 +223,7 @@ export default function ZplCodeMirror({
   const [readOnlyCompartment] = useState(() => new Compartment());
   const [highlightCompartment] = useState(() => new Compartment());
   const [historyCompartment] = useState(() => new Compartment());
+  const [sidecarCompartment] = useState(() => new Compartment());
 
   useImperativeHandle(ref, () => ({ focus: () => viewRef.current?.focus() }), []);
 
@@ -228,7 +234,7 @@ export default function ZplCodeMirror({
       doc: value,
       extensions: [
         ...(crlf ? [EditorState.lineSeparator.of('\r\n')] : []),
-        lineNumbers(),
+        lineNumbers({ formatNumber: (n, state) => String(visibleLineNumber(state, n)) }),
         historyCompartment.of(history()),
         codeFolding(),
         zplFolding,
@@ -237,6 +243,7 @@ export default function ZplCodeMirror({
         theme,
         readOnlyCompartment.of(readOnlyExt(readOnly)),
         highlightCompartment.of(highlightExt(highlightLines)),
+        sidecarCompartment.of(hideSidecarsExt(hideSidecars)),
         localeCompartment.of(localeExt(ariaLabel, placeholderText)),
         keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap]),
         EditorView.updateListener.of((u) => {
@@ -337,19 +344,8 @@ export default function ZplCodeMirror({
     if (lints.length === 0 && diagnosticCount(view.state) === 0) return;
     const crlfIdx: number[] = [];
     for (let i = value.indexOf('\r\n'); i !== -1; i = value.indexOf('\r\n', i + 2)) crlfIdx.push(i);
-    // Binary search, not a running cursor: the mapping must not depend on the
-    // order the lints arrive in, and a scan per lint is quadratic on a
-    // CRLF-heavy buffer.
-    const toDocPos = (offset: number): number => {
-      let lo = 0;
-      let hi = crlfIdx.length;
-      while (lo < hi) {
-        const mid = (lo + hi) >> 1;
-        if ((crlfIdx[mid] ?? 0) < offset) lo = mid + 1;
-        else hi = mid;
-      }
-      return Math.min(offset - lo, view.state.doc.length);
-    };
+    // A bisect per lint, not a running cursor: the mapping must not depend on the order the lints arrive in.
+    const toDocPos = (offset: number): number => Math.min(offset - countBefore(crlfIdx, offset), view.state.doc.length);
     const mapped: Diagnostic[] = lints.map((d) => ({
       from: toDocPos(d.from),
       to: toDocPos(d.to),
@@ -368,6 +364,12 @@ export default function ZplCodeMirror({
     if (!view) return;
     view.dispatch({ effects: readOnlyCompartment.reconfigure(readOnlyExt(readOnly)) });
   }, [readOnly, readOnlyCompartment]);
+
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    view.dispatch({ effects: sidecarCompartment.reconfigure(hideSidecarsExt(hideSidecars)) });
+  }, [hideSidecars, sidecarCompartment]);
 
   // After the value sync above, so line positions resolve on the fresh doc.
   // Compared by CONTENT: the producer hands a fresh Set per model change, and

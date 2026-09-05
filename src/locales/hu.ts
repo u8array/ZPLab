@@ -747,7 +747,7 @@ const hu = {
       powerUser: 'Haladó felhasználói mód',
       powerUserHint: 'Mutassa az emittált ZPL parancsot minden tulajdonság mellett, és oldja fel a speciális vezérlőket',
       keepExportMetadata: 'ZPLab metaadatok megtartása az exportokban',
-      keepExportMetadataHint: 'Tartsa meg a ZPLab ^FX metaadatait (címke mérete, sűrűség, QR-tulajdonságok) az exportált, másolt és nyomtatott ZPL-ben, hogy a ZPLab veszteségmentesen visszaolvashassa a saját exportjait. Alapértelmezés szerint kikapcsolva: a nyomtatók és más eszközök egyszerű ZPL-t kapnak.',
+      keepExportMetadataHint: '^FX megjegyzéseket ad hozzá a címke méretével, sűrűségével és QR-adataival, hogy a ZPLab pontosan visszanyissa a fájlt; a nyomtatók figyelmen kívül hagyják őket. Kikapcsolva: egyszerű ZPL, a ZPL panelen is.',
       smartSnap: 'Intelligens illesztés',
       smartSnapHint: 'Igazítás más objektumokhoz húzás közben. Tartsa lenyomva a Ctrl/Cmd billentyűt az átugráshoz.',
       resetHeading: 'Visszaállítás',

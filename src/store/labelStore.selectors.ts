@@ -62,6 +62,9 @@ export const selectRenderDesignLabel = (s: LabelState): LabelConfig =>
 export const selectRenderColumnMapping = (s: LabelState) =>
   s.sourceShadow?.doc ? s.sourceShadow.doc.columnMapping : s.columnMapping;
 
+/** One answer for the pane and the export to what the ZPL carries. */
+export const selectKeepExportMetadata = (s: LabelState): boolean => s.keepExportMetadata;
+
 /** The document as prepareSourceApply consumes it: shadow parse and apply
  *  MUST build it identically or the preview drifts from the commit. */
 export const selectSourceDocumentState = (s: LabelState): SourceDocumentState => ({

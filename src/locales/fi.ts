@@ -747,7 +747,7 @@ const fi = {
       powerUser: 'Tehokäyttäjätila',
       powerUserHint: 'Näytä lähetetty ZPL-komento jokaisen ominaisuuden vieressä ja ota käyttöön lisäasetukset',
       keepExportMetadata: 'Säilytä ZPLabin metatiedot vienneissä',
-      keepExportMetadataHint: 'Säilytä ZPLabin ^FX-metatiedot (tarran koko, tiheys, QR-ominaisuudet) viedyssä, kopioidussa ja tulostetussa ZPL:ssä, jotta ZPLab voi lukea omat vientinsä myöhemmin häviöttömästi. Oletuksena pois päältä: tulostimet ja muut työkalut saavat tavallista ZPL:ää.',
+      keepExportMetadataHint: 'Lisää ^FX-kommentteja, joissa on tarran koko, tiheys ja QR-tiedot, jotta ZPLab avaa tiedoston täsmälleen uudelleen; tulostimet jättävät ne huomiotta. Pois päältä: tavallista ZPL:ää, myös ZPL-paneelissa.',
       smartSnap: 'Älykäs napsautus',
       smartSnapHint: 'Kohdistaa muihin objekteihin vedettäessä. Pidä Ctrl/Cmd ohitusta varten.',
       resetHeading: 'Nollaa',
