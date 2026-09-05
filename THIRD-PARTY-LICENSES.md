@@ -2743,7 +2743,7 @@ SOFTWARE.
    END OF TERMS AND CONDITIONS
 ```
 
-### @tauri-apps/plugin-dialog 2.7.2
+### @tauri-apps/plugin-dialog 2.7.3
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2771,7 +2771,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-fs 2.5.1
+### @tauri-apps/plugin-fs 2.5.2
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2799,7 +2799,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-opener 2.5.4
+### @tauri-apps/plugin-opener 2.5.5
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2855,7 +2855,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-updater 2.10.1
+### @tauri-apps/plugin-updater 2.11.0
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
