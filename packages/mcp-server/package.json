@@ -17,6 +17,6 @@
   "devDependencies": {
     "esbuild": "^0.28.2",
     "postject": "^1.0.0-alpha.6",
-    "tsx": "^4.23.12"
+    "tsx": "^4.23.13"
   }
 }
