@@ -4,6 +4,7 @@
 import { describe, it, expect } from "vitest";
 import { createDraft, exportZpl, openInApp, validateDraft } from "./tools";
 import { patchDesign } from "./patchOps";
+import { FN_NUMBER_MAX } from "@zplab/core/types/Variable";
 
 function ok<T extends { ok: boolean }>(r: T): Extract<T, { ok: true }> {
   expect(r.ok, JSON.stringify(r)).toBe(true);
@@ -44,14 +45,29 @@ describe("variables a design file carries in", () => {
       props: { content: "«sku»", fontSize: 20, fontId: "0" } }] }],
   });
 
-  it("refuses a duplicate ^FN slot, the way create_draft already did", () => {
-    // Two fields on one slot cannot be set independently; the second is lost.
-    const r = validateDraft(design([
-      { id: "var-1", name: "sku", fnNumber: 1, defaultValue: "S1" },
-      { id: "var-2", name: "lot", fnNumber: 1, defaultValue: "L1" },
-    ])) as { ok: boolean; errors?: string[] };
+  // The one accepted case here: a file the loader can repair is not malformed input.
+  it("accepts a file whose variables share a ^FN slot, the loader having moved the duplicate", () => {
+    const twoFields = {
+      ...design([
+        { id: "var-1", name: "sku", fnNumber: 1, defaultValue: "S1" },
+        { id: "var-2", name: "lot", fnNumber: 1, defaultValue: "L1" },
+      ]),
+      pages: [{ objects: [
+        { id: "a", type: "text", x: 10, y: 10, rotation: 0, props: { content: "«sku»", fontSize: 20, fontId: "0" } },
+        { id: "b", type: "text", x: 10, y: 40, rotation: 0, props: { content: "«lot»", fontSize: 20, fontId: "0" } },
+      ] }],
+    };
+    ok(validateDraft(twoFields));
+    const zpl = ok(exportZpl(twoFields)).zpl;
+    expect(zpl).toContain("^FN1");
+    expect(zpl).toContain("^FN2");
+  });
+
+  it("refuses a file whose duplicate slot has nowhere to go", () => {
+    const full = Array.from({ length: FN_NUMBER_MAX }, (_, i) => ({ id: `v${i}`, name: `v${i}`, fnNumber: i + 1, defaultValue: "" }));
+    const r = validateDraft(design([...full, { id: "x", name: "x", fnNumber: 5, defaultValue: "" }])) as { ok: boolean; errors?: string[] };
     expect(r.ok).toBe(false);
-    expect(r.errors?.[0]).toContain("^FN slot");
+    expect(r.errors?.[0]).toContain("no free slot");
   });
 
   it("refuses a duplicate variable id", () => {

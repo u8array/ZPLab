@@ -57,5 +57,16 @@ export function substituteTemplateMarkers(
   name: string,
   replacement: string,
 ): LabelObject[] {
-  return mapLeafContent(objects, (content) => substituteTemplateMarker(content, name, replacement));
+  return substituteTemplateMarkersMap(objects, new Map([[name, replacement]]));
+}
+
+/** Substitute many names in ONE pass per leaf. */
+export function substituteTemplateMarkersMap(
+  objects: LabelObject[],
+  replacements: ReadonlyMap<string, string>,
+): LabelObject[] {
+  if (replacements.size === 0) return objects;
+  return mapLeafContent(objects, (content) =>
+    [...replacements].reduce((text, [name, replacement]) => substituteTemplateMarker(text, name, replacement), content),
+  );
 }

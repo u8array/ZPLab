@@ -2,11 +2,7 @@ import { isGroup, type LabelObject, type Page } from '@zplab/core/types/Group';
 import type { ObjectChanges } from '@zplab/core/types/LabelObject';
 import { NON_EMITTING_CONFIG_FIELDS } from '@zplab/core/types/LabelConfig';
 import { isLocaleCode, type LocaleCode } from '../locales';
-export {
-  rewriteTemplateMarkers,
-  rewriteTemplateMarkersMap,
-  substituteTemplateMarkers,
-} from '@zplab/core/lib/templateObjects';
+export { rewriteTemplateMarkers, rewriteTemplateMarkersMap } from '@zplab/core/lib/templateObjects';
 import { applyChanges } from '@zplab/core/lib/anchorRepin';
 import type { DeviceFontLabel } from '@zplab/core/lib/customFonts';
 import { probeBarcodeFootprint } from './anchorRepin';

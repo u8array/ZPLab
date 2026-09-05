@@ -11,7 +11,8 @@ import { dbSourceRefSchema, type DbSourceRef } from "../types/DataSource";
 import type { LabelObject } from "../types/Group";
 import { blockOverlaySchema, overlayText, type BlockOverlay } from "./zplOverlay/overlay";
 import { reconstructLegacyBlockHeads } from "./zplHeadScan";
-import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, sanitiseVariableNames, safeUniqueNameById } from "./objectTree";
+import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, safeUniqueNameById } from "./objectTree";
+import { sanitiseLoadedVariables } from "./loadedVariables";
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from "./reverseBacking";
 import { ok, err, type Result } from "./result";
 
@@ -22,7 +23,7 @@ import { ok, err, type Result } from "./result";
  *  version for localStorage state; do not conflate. */
 export const CURRENT_DESIGN_SCHEMA_VERSION = 5;
 
-export type DesignFileError = "parse_error" | "invalid_schema";
+export type DesignFileError = "parse_error" | "invalid_schema" | "fn_slots_exhausted";
 export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity }
 export interface DesignFile {
   label: LabelConfig;
@@ -105,12 +106,11 @@ export function parseDesignFile(text: string): Result<DesignFile, DesignFileErro
     reconstructLegacyJmDensity(parsed.data.label, pages);
     sanitizeRfidEpc(parsed.data.label);
     const variables = parsed.data.variables ?? [];
-    // Enforce the marker-safe name invariant: an old/foreign name like `clock:Y`
-    // can't be a single-bind marker, so rename offenders + rewrite their markers.
-    sanitiseVariableNames(variables, pages);
+    const repaired = sanitiseLoadedVariables(variables, pages);
+    if (repaired.unplaced.length > 0) return err("fn_slots_exhausted");
     return ok({
       label: parsed.data.label,
-      pages,
+      pages: repaired.pages,
       variables,
       columnMapping: parsed.data.csvMapping ?? null,
       dataSource: parsed.data.dataSource ?? null,
@@ -253,4 +253,5 @@ export function serializeDesign(
 export const designFileErrors: Record<DesignFileError, string> = {
   parse_error: "Could not read the file. Make sure it is a valid JSON design file.",
   invalid_schema: "The file does not contain a valid label design.",
+  fn_slots_exhausted: "Two variables share a ^FN slot and no free slot is left to move one to.",
 };

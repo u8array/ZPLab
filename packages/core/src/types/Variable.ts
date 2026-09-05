@@ -83,11 +83,36 @@ export function validateVariablesUnique(variables: readonly Variable[]): boolean
     const trimmed = v.name.trim();
     if (!isValidVariableName(trimmed) || names.has(trimmed)) return false;
     names.add(trimmed);
-    if (v.fnNumber < FN_NUMBER_MIN || v.fnNumber > FN_NUMBER_MAX) return false;
-    if (fns.has(v.fnNumber)) return false;
+    if (!isUsableSlot(v.fnNumber) || fns.has(v.fnNumber)) return false;
     fns.add(v.fnNumber);
   }
   return true;
+}
+
+export const isUsableSlot = (fn: unknown): fn is number =>
+  typeof fn === "number" && Number.isInteger(fn) && fn >= FN_NUMBER_MIN && fn <= FN_NUMBER_MAX;
+
+/** A ^FN slot carries one recall value: a variable without a usable slot of its own
+ *  (missing, out of range, or already taken by an earlier one) gets the lowest free
+ *  slot; `unplaced` are those left when the 99 slots are gone. */
+export function sanitiseVariableSlots<V extends { fnNumber?: unknown }>(variables: V[]): { moved: V[]; unplaced: V[] } {
+  const taken = new Set<number>();
+  const unslotted: V[] = [];
+  for (const v of variables) {
+    const fn = v.fnNumber;
+    if (isUsableSlot(fn) && !taken.has(fn)) taken.add(fn);
+    else unslotted.push(v);
+  }
+  const moved: V[] = [];
+  let free = FN_NUMBER_MIN;
+  for (const v of unslotted) {
+    while (taken.has(free)) free++;
+    if (free > FN_NUMBER_MAX) break;
+    v.fnNumber = free;
+    taken.add(free);
+    moved.push(v);
+  }
+  return { moved, unplaced: unslotted.slice(moved.length) };
 }
 
 /** Pairs variables across a reparse by ^FN slot, the only identity the wire carries. */
