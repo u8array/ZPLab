@@ -747,7 +747,7 @@ const zhHans = {
       powerUser: '高级用户模式',
       powerUserHint: '在每个属性旁边显示生成的ZPL命令，并解锁高级控制项',
       keepExportMetadata: '在导出时保留 ZPLab 元数据',
-      keepExportMetadataHint: '在导出、复制和打印的 ZPL 中保留 ZPLab 的 ^FX 元数据（标签尺寸、密度、QR 属性），以便 ZPLab 可以无损地读回自己的导出内容。默认关闭：打印机和其他工具将获得纯 ZPL。',
+      keepExportMetadataHint: '添加包含标签尺寸、密度和二维码详情的 ^FX 注释，以便 ZPLab 精确重新打开文件；打印机会忽略它们。关闭时：纯 ZPL，ZPL 面板中也是如此。',
       smartSnap: '智能吸附',
       smartSnapHint: '拖动时对齐其他对象。按住Ctrl/Cmd可跳过对齐。',
       resetHeading: '重置',

@@ -4,6 +4,7 @@
 // printer and Labelary ignore, and recover them on import.
 
 import { isDpmm } from "../types/LabelConfig";
+import type { SourceSpan } from "./zplParser/types";
 
 /** Namespace so a foreign ^FX comment can't be mistaken for our metadata. */
 export const LABEL_META_PREFIX = "ZPLLAB:";
@@ -34,6 +35,11 @@ export function formatSidecarComment(body: string): string {
 
 /** Exactly the envelope the emitter writes; a foreign comment without the colon survives. */
 const SIDECAR_LINE_RE = /\^[Ff][Xx]ZPLLAB:[^^~]*\^[Ff][Ss](?:\r?\n)?/g;
+
+/** The byte ranges the export strips: each sidecar plus any line break right after it. */
+export function sidecarRanges(zpl: string): SourceSpan[] {
+  return [...zpl.matchAll(SIDECAR_LINE_RE)].map((m) => ({ start: m.index, end: m.index + m[0].length }));
+}
 
 /** Printer bytes only: a re-import then inherits the density and rebuilds
  *  ^GFA QR codes as images. */

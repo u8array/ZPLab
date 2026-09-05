@@ -747,7 +747,7 @@ const ko = {
       powerUser: '고급 사용자 모드',
       powerUserHint: '각 속성 옆에 생성된 ZPL 명령어를 표시하고 고급 컨트롤을 활성화합니다',
       keepExportMetadata: '내보낼 때 ZPLab 메타데이터 유지',
-      keepExportMetadataHint: '내보내거나 복사하거나 인쇄한 ZPL에 ZPLab의 ^FX 메타데이터(라벨 크기, 밀도, QR 속성)를 유지하여 ZPLab이 자신이 내보낸 내용을 손실 없이 다시 읽을 수 있도록 합니다. 기본적으로 꺼짐: 프린터와 다른 도구는 일반 ZPL을 받습니다.',
+      keepExportMetadataHint: '^FX 주석에 라벨 크기, 밀도, QR 세부정보를 담아 ZPLab이 파일을 정확히 다시 열 수 있게 하며, 프린터는 이를 무시합니다. 꺼짐: 일반 ZPL, ZPL 패널에서도 동일합니다.',
       smartSnap: '스마트 스냅',
       smartSnapHint: '드래그하는 동안 다른 오브젝트에 맞춰 정렬합니다. Ctrl/Cmd를 누르면 건너뜁니다.',
       resetHeading: '초기화',

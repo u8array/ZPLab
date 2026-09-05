@@ -747,7 +747,7 @@ const en = {
       powerUser: 'Power-user mode',
       powerUserHint: 'Show the generated ZPL command next to each property and unlock advanced controls',
       keepExportMetadata: 'Keep ZPLab metadata in exports',
-      keepExportMetadataHint: "Keep ZPLab's ^FX metadata (label size, density, QR properties) in exported, copied and printed ZPL, so ZPLab can read its own exports back losslessly. Off by default: printers and other tools get plain ZPL.",
+      keepExportMetadataHint: 'Adds ^FX comments with label size, density and QR details, so ZPLab reopens the file exactly; printers ignore them. Off: plain ZPL, also in the ZPL panel.',
       smartSnap: 'Smart snapping',
       smartSnapHint: 'Align to other objects while dragging. Hold Ctrl/Cmd to bypass.',
       resetHeading: 'Reset',

@@ -747,7 +747,7 @@ const da = {
       powerUser: 'Avanceret brugertilstand',
       powerUserHint: 'Vis den genererede ZPL-kommando ved siden af hver egenskab og lås avancerede indstillinger op',
       keepExportMetadata: 'Behold ZPLab-metadata i eksporter',
-      keepExportMetadataHint: 'Behold ZPLabs ^FX-metadata (etiketstørrelse, densitet, QR-egenskaber) i eksporteret, kopieret og udskrevet ZPL, så ZPLab kan læse sine egne eksporter tilbage uden tab. Deaktiveret som standard: printere og andre værktøjer får almindelig ZPL.',
+      keepExportMetadataHint: 'Tilføjer ^FX-kommentarer med etiketstørrelse, densitet og QR-detaljer, så ZPLab genåbner filen præcist; printere ignorerer dem. Fra: rent ZPL, også i ZPL-panelet.',
       smartSnap: 'Smart snap',
       smartSnapHint: 'Juster mod andre objekter under trækning. Hold Ctrl/Cmd nede for at omgå.',
       resetHeading: 'Nulstil',

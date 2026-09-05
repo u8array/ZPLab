@@ -747,7 +747,7 @@ const ja = {
       powerUser: 'パワーユーザーモード',
       powerUserHint: '各プロパティの横に出力されるZPLコマンドを表示し、高度なコントロールを有効にする',
       keepExportMetadata: 'エクスポート時にZPLabのメタデータを保持',
-      keepExportMetadataHint: 'ZPLabの^FXメタデータ（ラベルサイズ、濃度、QRプロパティ）をエクスポート、コピー、印刷したZPLに保持し、ZPLabが自身のエクスポートを劣化なく読み戻せるようにします。デフォルトではオフ：プリンターや他のツールには通常のZPLが渡されます。',
+      keepExportMetadataHint: '^FXコメントでラベルサイズ・濃度・QR情報を保持し、ZPLabがファイルを正確に再度開けるようにしますが、プリンターはこれを無視します。オフ:通常のZPL、ZPLパネルでも同じです。',
       smartSnap: 'スマートスナップ',
       smartSnapHint: 'ドラッグ中に他のオブジェクトに合わせて整列します。Ctrl/Cmdを押し続けると無効になります。',
       resetHeading: 'リセット',

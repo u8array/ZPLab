@@ -10,6 +10,7 @@ import {
   selectShadowRefusal,
   selectShadowFindings,
   selectSourceDocumentState,
+  selectKeepExportMetadata,
 } from '../../store/labelStore';
 import type { SourceEditMode } from '../../store/slices/sourceEditSlice';
 import { SourceApplyConfirmDialog } from './SourceApplyConfirmDialog';
@@ -47,6 +48,7 @@ export function ZplSourceEditor({
   const t = useT();
   const previewActive = useLabelStore(selectPreviewLocksEditor);
   const readOnly = previewActive || gateRefusal !== null;
+  const hideSidecars = !useLabelStore(selectKeepExportMetadata);
   const editorRef = useRef<ZplCodeMirrorHandle>(null);
   const gateMsg = gateRefusal !== null ? sourceRefusalText(gateRefusal, t) : null;
 
@@ -97,6 +99,7 @@ export function ZplSourceEditor({
           historyEpoch={historyEpoch}
           placeholderText={t.output.editSourcePlaceholder}
           diagnostics={diagnostics}
+          hideSidecars={hideSidecars}
         />
       </div>
       {gateMsg !== null && (

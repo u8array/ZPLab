@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatLabelMetaComment, formatSidecarComment, stripSidecarComments, zplForExport } from "./zplLabelMeta";
+import { formatLabelMetaComment, formatSidecarComment, sidecarRanges, stripSidecarComments, zplForExport } from "./zplLabelMeta";
 
 describe("stripSidecarComments", () => {
   it("removes the label-meta line and its line break, leaving printer bytes intact", () => {
@@ -41,5 +41,21 @@ describe("zplForExport", () => {
   it("strips by default and keeps on request", () => {
     expect(zplForExport(zpl)).toBe("^XA\n^XZ");
     expect(zplForExport(zpl, true)).toBe(zpl);
+  });
+});
+
+describe("sidecarRanges", () => {
+  it("names exactly the bytes stripSidecarComments removes, inline sidecars included", () => {
+    const sidecar = formatLabelMetaComment({ dpmm: 8, widthMm: 70, heightMm: 40 });
+    const text = ["^XA", sidecar, "^FXnote^FS", `${formatSidecarComment('{"qr":1}')}^FO1,2^GFA,1,1,1,00^FS`, "^XZ"].join("\n");
+    const ranges = sidecarRanges(text);
+    let kept = "";
+    let at = 0;
+    for (const r of ranges) {
+      kept += text.slice(at, r.start);
+      at = r.end;
+    }
+    expect(kept + text.slice(at)).toBe(stripSidecarComments(text));
+    expect(ranges).toHaveLength(2);
   });
 });
