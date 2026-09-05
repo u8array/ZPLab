@@ -330,7 +330,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/state 6.7.1
+### @codemirror/state 6.7.4
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -359,7 +359,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/view 6.43.9
+### @codemirror/view 6.43.11
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -508,7 +508,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @floating-ui/core 1.7.5
+### @floating-ui/core 1.8.0
 
 - License: MIT
 - Author: atomiks
@@ -537,7 +537,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### @floating-ui/dom 1.7.6
+### @floating-ui/dom 1.8.0
 
 - License: MIT
 - Author: atomiks
@@ -595,7 +595,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### @floating-ui/react-dom 2.1.8
+### @floating-ui/react-dom 2.1.9
 
 - License: MIT
 - Author: atomiks
@@ -624,7 +624,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### @floating-ui/utils 0.2.11
+### @floating-ui/utils 0.2.12
 
 - License: MIT
 - Author: atomiks
@@ -915,7 +915,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @internationalized/date 3.12.2
+### @internationalized/date 3.12.4
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum/tree/main#readme
@@ -1124,7 +1124,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### @internationalized/number 3.6.7
+### @internationalized/number 3.6.8
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -1333,7 +1333,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### @internationalized/string 3.2.9
+### @internationalized/string 3.2.10
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -2079,7 +2079,7 @@ THE SOFTWARE.
    limitations under the License.
 ```
 
-### @react-types/shared 3.36.0
+### @react-types/shared 3.36.1
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -2498,7 +2498,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-### @tanstack/react-virtual 3.14.3
+### @tanstack/react-virtual 3.14.10
 
 - License: MIT
 - Author: Tanner Linsley
@@ -2528,7 +2528,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @tanstack/virtual-core 3.17.1
+### @tanstack/virtual-core 3.17.8
 
 - License: MIT
 - Author: Tanner Linsley
@@ -3137,11 +3137,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### konva 10.3.1
+### konva 10.3.3
 
 - License: MIT
 - Author: Anton Lavrenov
-- Homepage: http://konvajs.org/
+- Homepage: https://konvajs.org/
 
 ```
 MIT License
@@ -3168,7 +3168,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### papaparse 5.6.0
+### papaparse 5.7.0
 
 - License: MIT
 - Author: Matthew Holt
@@ -3226,7 +3226,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-aria 3.50.0
+### react-aria 3.52.1
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -3464,10 +3464,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-konva 19.2.5
+### react-konva 19.2.6
 
 - License: MIT
-- Homepage: https://github.com/konvajs/react-konva#readme
+- Homepage: https://konvajs.org/docs/react/index.html
 
 ```
 MIT License
@@ -3522,7 +3522,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-stately 3.48.0
+### react-stately 3.50.0
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -3788,7 +3788,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### tabbable 6.4.0
+### tabbable 6.5.0
 
 - License: MIT
 - Author: David Clark
@@ -3896,7 +3896,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### zod 4.4.3
+### zod 4.5.4
 
 - License: MIT
 - Author: Colin McDonnell
