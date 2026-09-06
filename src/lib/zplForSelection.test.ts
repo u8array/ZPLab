@@ -31,7 +31,7 @@ describe("zplForSelection", () => {
     expect(zpl).not.toContain("^XA");
     expect(zpl).not.toContain("^XZ");
     expect(zpl).not.toContain("^PW");
-    expect(zpl).not.toContain("ZPLLAB");
+    expect(zpl).not.toContain("ZPLab:");
     expect(zpl.startsWith("^FO10,10")).toBe(true);
   });
 

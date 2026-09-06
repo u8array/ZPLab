@@ -7,7 +7,10 @@ import { isDpmm } from "../types/LabelConfig";
 import type { SourceSpan } from "./zplParser/types";
 
 /** Namespace so a foreign ^FX comment can't be mistaken for our metadata. */
-export const LABEL_META_PREFIX = "ZPLLAB:";
+const SIDECAR_PREFIX = "ZPLab:";
+/** The 0.4.x envelope, read forever. */
+const LEGACY_SIDECAR_PREFIX = "ZPLLAB:";
+const SIDECAR_PREFIXES = [SIDECAR_PREFIX, LEGACY_SIDECAR_PREFIX];
 
 const MM_MIN = 1;
 const MM_MAX = 5000;
@@ -27,14 +30,14 @@ export function labelMetaOf(label: LabelMeta): LabelMeta {
   return Object.fromEntries(LABEL_META_KEYS.map((k) => [k, label[k]])) as LabelMeta;
 }
 
-/** Shared ZPLLAB envelope (label meta, QR props). Body must be free of ^/~
+/** Shared sidecar envelope (label meta, QR props). Body must be free of ^/~
  *  or the ^FX comment terminates mid-payload. */
 export function formatSidecarComment(body: string): string {
-  return `^FX${LABEL_META_PREFIX}${body}^FS`;
+  return `^FX${SIDECAR_PREFIX}${body}^FS`;
 }
 
-/** Exactly the envelope the emitter writes; a foreign comment without the colon survives. */
-const SIDECAR_LINE_RE = /\^[Ff][Xx]ZPLLAB:[^^~]*\^[Ff][Ss](?:\r?\n)?/g;
+/** Every envelope we ever wrote; a foreign comment without the colon survives. */
+const SIDECAR_LINE_RE = new RegExp(`\\^[Ff][Xx](?:${SIDECAR_PREFIXES.join("|")})[^^~]*\\^[Ff][Ss](?:\\r?\\n)?`, "g");
 
 /** The byte ranges the export strips: each sidecar plus any line break right after it. */
 export function sidecarRanges(zpl: string): SourceSpan[] {
@@ -55,15 +58,14 @@ export function zplForExport(zpl: string, keepMetadata = false): string {
 /** Sidecar payload, or null for a foreign comment. */
 export function sidecarBody(commentBody: string): string | null {
   const trimmed = commentBody.trim();
-  return trimmed.startsWith(LABEL_META_PREFIX) ? trimmed.slice(LABEL_META_PREFIX.length) : null;
+  const prefix = SIDECAR_PREFIXES.find((p) => trimmed.startsWith(p));
+  return prefix === undefined ? null : trimmed.slice(prefix.length);
 }
 
 /** The leading sidecar line. Numbers only, no `^`/`~`, so it is a valid ^FX
  *  comment terminated by ^FS (verified against the ZPL spec and Labelary). */
 export function formatLabelMetaComment(meta: LabelMeta): string {
-  return formatSidecarComment(
-    JSON.stringify({ dpmm: meta.dpmm, wMm: meta.widthMm, hMm: meta.heightMm }),
-  );
+  return formatSidecarComment(JSON.stringify({ dpmm: meta.dpmm, w: meta.widthMm, h: meta.heightMm }));
 }
 
 /** Parse a ^FX comment body (text after `^FX`) into validated label meta, or
@@ -79,10 +81,12 @@ export function parseLabelMetaComment(commentBody: string): LabelMeta | null {
     return null;
   }
   if (!parsed || typeof parsed !== "object") return null;
-  const { dpmm, wMm, hMm } = parsed as Record<string, unknown>;
+  const { dpmm, w, h, wMm, hMm } = parsed as Record<string, unknown>;
   // Emit assumes dpmm ∈ DPMM_VALUES (the only densities the UI produces); keep
   // emit and this guard on the same source of truth.
   if (typeof dpmm !== "number" || !isDpmm(dpmm)) return null;
-  if (!isPlausibleLabelMm(wMm) || !isPlausibleLabelMm(hMm)) return null;
-  return { dpmm, widthMm: wMm, heightMm: hMm };
+  const widthMm = w ?? wMm;
+  const heightMm = h ?? hMm;
+  if (!isPlausibleLabelMm(widthMm) || !isPlausibleLabelMm(heightMm)) return null;
+  return { dpmm, widthMm, heightMm };
 }

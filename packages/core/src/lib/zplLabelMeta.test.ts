@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatLabelMetaComment, formatSidecarComment, sidecarRanges, stripSidecarComments, zplForExport } from "./zplLabelMeta";
+import { formatLabelMetaComment, formatSidecarComment, parseLabelMetaComment, sidecarRanges, stripSidecarComments, zplForExport } from "./zplLabelMeta";
 
 describe("stripSidecarComments", () => {
   it("removes the label-meta line and its line break, leaving printer bytes intact", () => {
@@ -57,5 +57,25 @@ describe("sidecarRanges", () => {
     }
     expect(kept + text.slice(at)).toBe(stripSidecarComments(text));
     expect(ranges).toHaveLength(2);
+  });
+});
+
+describe("sidecar envelope v2", () => {
+  it("writes the ZPLab prefix with mm keys and reads the 0.4.x spelling as well", () => {
+    const meta = { dpmm: 8, widthMm: 100, heightMm: 60 };
+    const line = formatLabelMetaComment(meta);
+    expect(line).toBe('^FXZPLab:{"dpmm":8,"w":100,"h":60}^FS');
+    expect(parseLabelMetaComment(line.slice(3, -3))).toEqual(meta);
+    expect(parseLabelMetaComment('ZPLLAB:{"dpmm":8,"wMm":100,"hMm":60}')).toEqual(meta);
+    expect(parseLabelMetaComment('ZPLLAB:{"dpmm":8,"w":100,"h":60}')).toEqual(meta);
+    expect(parseLabelMetaComment('ZPLab:{"dpmm":8,"wMm":100,"hMm":60}')).toEqual(meta);
+    expect(parseLabelMetaComment('ZPLab:{"dpmm":8,"w":"x","h":60}')).toBeNull();
+    expect(parseLabelMetaComment('{"dpmm":8,"w":100,"h":60}')).toBeNull();
+  });
+
+  it("strips and ranges both envelopes", () => {
+    const text = ["^XA", '^FXZPLab:{"dpmm":8,"w":70,"h":40}^FS', '^FXZPLLAB:{"qr":{"content":"A"}}^FS^FO1,1^GFA,1,1,1,00^FS', "^XZ"].join("\n");
+    expect(stripSidecarComments(text)).toBe(["^XA", "^FO1,1^GFA,1,1,1,00^FS", "^XZ"].join("\n"));
+    expect(sidecarRanges(text)).toHaveLength(2);
   });
 });

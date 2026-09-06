@@ -945,7 +945,7 @@ describe('generateZPL — ^TB text block', () => {
     const zpl = generateZPL(BASE_LABEL, [single, template], vars);
     expect(zpl).toMatchInlineSnapshot(`
       "^XA
-      ^FXZPLLAB:{"dpmm":8,"wMm":100,"hMm":50}^FS
+      ^FXZPLab:{"dpmm":8,"w":100,"h":50}^FS
       ^PW800
       ^LL400
       ^CI28

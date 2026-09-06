@@ -6,7 +6,7 @@ import { isQrByHeight } from "./qrBy";
 import { isQrEcLevel, type QrEcLevel } from "./qrFd";
 
 // ^BQ cannot rotate (firmware no-op, ZD230-verified), so a rotated QR emits as a
-// ^GFA of the exact module matrix plus a ZPLLAB sidecar for lossless reimport.
+// ^GFA of the exact module matrix plus a ZPLab sidecar for lossless reimport.
 
 export interface QrGraphicInput {
   content: string;

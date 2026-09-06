@@ -324,7 +324,7 @@ describe('barcode rotation in ZPL output', () => {
   it('qrcode rotated emits sidecar + ^GFA instead of ^BQ', () => {
     const def = defined(getEntry('qrcode'));
     const zpl = def.toZPL(makeObj('qrcode', { content: 'X', magnification: 4, errorCorrection: 'Q', model: 2, rotation: 'R' }));
-    expect(zpl).toContain('^FXZPLLAB:');
+    expect(zpl).toContain('^FXZPLab:');
     expect(zpl).toContain('^GFA,');
     expect(zpl).not.toContain('^BQ');
   });

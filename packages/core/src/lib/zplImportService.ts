@@ -137,7 +137,7 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
   // Single-label design: block 0 wins where it speaks; other persistent
   // settings fall through to the first block that sets them (driver dumps
   // carry ^PW/^LL/^MM only in the job block). The ^PQ family is block-scoped
-  // and never falls through. Fonts stay document-wide; the ZPLLAB sidecar
+  // and never falls through. Fonts stay document-wide; the ZPLab sidecar
   // (dpmm, which plain ZPL can't carry) is a page-0 preamble overriding size.
   const labelConfig: Partial<LabelConfig> = { ...r.pages[0]?.labelConfig };
   const perFormat = new Set<string>(PER_FORMAT_ZPL_FIELDS);
