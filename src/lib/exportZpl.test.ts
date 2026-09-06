@@ -21,9 +21,9 @@ beforeEach(() => useLabelStore.setState({ keepExportMetadata: false }));
 describe("finishZplExport", () => {
   it("strips the label-meta and QR sidecars by default, keeping the printed fields", () => {
     const full = generateMultiPageZPL(label, pages);
-    expect(full).toContain("^FXZPLLAB:");
+    expect(full).toContain("^FXZPLab:");
     const out = finishZplExport(full);
-    expect(out).not.toContain("ZPLLAB");
+    expect(out).not.toContain("ZPLab:");
     expect(out).toContain("^GFA");
     expect(out).toContain("^PW560");
   });

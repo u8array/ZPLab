@@ -73,7 +73,7 @@ describe("the edit gate", () => {
   });
 });
 
-describe("foreign text without the ZPLLAB sidecar", () => {
+describe("foreign text without the ZPLab sidecar", () => {
   it("inherits the open label's dpmm; a sidecar wins over it", () => {
     const foreign = "^XA^FO10,10^A0N,30,30^FDX^FS^XZ";
     const at12 = prepareSourceApply({
@@ -148,7 +148,7 @@ describe("deleting a command from the buffer clears its field", () => {
     const baseline = generateMultiPageZPL(label, pages, []);
     const without = baseline
       .split("\n")
-      .filter((l) => !l.includes("ZPLLAB") && !/^\^PW|^\^LL/.test(l))
+      .filter((l) => !l.includes("^FXZPLab:") && !/^\^PW|^\^LL/.test(l))
       .join("\n");
     const plan = prepareSourceApply({ text: without, baseline, current: current() });
     expect(plan.ok).toBe(true);

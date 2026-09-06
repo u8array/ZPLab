@@ -725,7 +725,7 @@ describe('round-trip — label geometry sidecar', () => {
   it('recovers dpmm + exact mm even when re-parsed at a different dpmm', () => {
     const label: LabelConfig = { widthMm: 57, heightMm: 32, dpmm: 12 };
     const zpl = generateZPL(label, []);
-    expect(zpl).toContain('^FXZPLLAB:');
+    expect(zpl).toContain('^FXZPLab:');
     // Re-parse at the wrong external dpmm: ^PW/^LL alone would give 85.5×48mm
     // at 8dpmm, but the sidecar restores the authored geometry exactly.
     const parsed = parseSingle(zpl, 8);

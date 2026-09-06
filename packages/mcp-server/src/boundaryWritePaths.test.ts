@@ -280,11 +280,11 @@ describe("export_zpl metadata", () => {
 
   it("returns plain printer bytes by default", () => {
     const zpl = ok(exportZpl(design)).zpl;
-    expect(zpl).not.toContain("ZPLLAB");
+    expect(zpl).not.toContain("ZPLab:");
     expect(zpl).toContain("^FDhi^FS");
   });
 
-  it("keeps the ZPLLAB metadata when asked for a re-importable export", () => {
-    expect(ok(exportZpl(design, { metadata: true })).zpl).toContain("^FXZPLLAB:");
+  it("keeps the ZPLab metadata when asked for a re-importable export", () => {
+    expect(ok(exportZpl(design, { metadata: true })).zpl).toContain("^FXZPLab:");
   });
 });

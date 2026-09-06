@@ -359,7 +359,8 @@ describe("ZplCodeMirror payload folding", () => {
 });
 
 describe("ZplCodeMirror sidecar lines", () => {
-  const sidecar = '^FXZPLLAB:{"dpmm":8,"wMm":70,"hMm":40}^FS';
+  // One envelope of each generation: the pane must hide what any release wrote.
+  const sidecar = '^FXZPLab:{"dpmm":8,"w":70,"h":40}^FS';
   const qr = '^FXZPLLAB:{"qr":{"content":"A","mag":4}}^FS^FO10,10^GFA,1,1,1,00^FS';
   const value = ["^XA", sidecar, "^PW560", qr, "^FO10,10^A0N,30,30^FDHi^FS", "^XZ"].join("\n");
   const mount = (doc = value, hide = true, onChange: (v: string) => void = vi.fn()) => {
@@ -375,7 +376,7 @@ describe("ZplCodeMirror sidecar lines", () => {
     const changes: string[] = [];
     const { container, view } = mount(value, true, (v) => changes.push(v));
     expect(view.state.doc.toString()).toBe(value);
-    expect(container.textContent).not.toContain("ZPLLAB");
+    expect(container.textContent).not.toMatch(/ZPL(ab|LAB):/);
     expect(container.querySelectorAll(".cm-line").length).toBe(5);
     const copy = view.state.facet(EditorView.clipboardOutputFilter);
     expect(copy.reduce((t, f) => f(t, view.state), value)).toBe(stripSidecarComments(value));
@@ -407,7 +408,7 @@ describe("ZplCodeMirror sidecar lines", () => {
       if (inside(at)) continue;
       const { container, view } = mount();
       view.dispatch({ changes: { from: at, insert: "x" }, userEvent: "input.type" });
-      expect(container.textContent, `insert at ${at}`).not.toContain("ZPLLAB");
+      expect(container.textContent, `insert at ${at}`).not.toMatch(/ZPL(ab|LAB):/);
       cleanup();
     }
     const { container, view } = mount();
@@ -423,9 +424,9 @@ describe("ZplCodeMirror sidecar lines", () => {
 
   it("shows them when metadata is kept and after the setting flips back", () => {
     const { container, rerender } = mount();
-    expect(container.textContent).not.toContain("ZPLLAB");
+    expect(container.textContent).not.toMatch(/ZPL(ab|LAB):/);
     rerender(<ZplCodeMirror value={value} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" hideSidecars={false} />);
-    expect(container.textContent).toContain("ZPLLAB");
+    expect(container.textContent).toMatch(/ZPL(ab|LAB):/);
     expect(container.querySelectorAll(".cm-line").length).toBe(6);
   });
 

@@ -103,7 +103,7 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
   const gate = sourceEditGate(input.text);
   if (!gate.ok) return gate;
 
-  // Same dpmm path as the import modal: a ZPLLAB ^FX sidecar in the text wins,
+  // Same dpmm path as the import modal: a ZPLab ^FX sidecar in the text wins,
   // foreign text inherits the open label's density.
   const imported = importZplText(input.text, current.label.dpmm);
   // The parser is the only ^CC-aware lexer, so the balance verdict is its: an

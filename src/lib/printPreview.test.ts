@@ -52,7 +52,7 @@ describe("buildPreviewZpl blank-field samples", () => {
 describe("buildPreviewZpl metadata", () => {
   it("never carries ZPLab metadata: a preview is rendered, not re-imported", () => {
     const zpl = buildPreviewZpl(label, blankBarcode(), [], null);
-    expect(zpl).not.toContain("ZPLLAB");
+    expect(zpl).not.toContain("ZPLab:");
     expect(zpl).toContain("^PW800");
   });
 });

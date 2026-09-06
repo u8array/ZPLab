@@ -503,9 +503,9 @@ describe("the header copy button and the sidecar setting", () => {
   it("copies plain ZPL by default while the editor text keeps its sidecars", () => {
     useLabelStore.setState({ keepExportMetadata: false });
     render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
-    expect(editor().value).toContain("^FXZPLLAB:");
+    expect(editor().value).toContain("^FXZPLab:");
     fireEvent.click(screen.getByRole("button", { name: t().output.copy }));
-    expect(copiedTexts.at(-1)).not.toContain("ZPLLAB");
+    expect(copiedTexts.at(-1)).not.toContain("ZPLab:");
     expect(copiedTexts.at(-1)).toContain("^FDhello^FS");
   });
 
@@ -513,6 +513,6 @@ describe("the header copy button and the sidecar setting", () => {
     useLabelStore.setState({ keepExportMetadata: true });
     render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
     fireEvent.click(screen.getByRole("button", { name: t().output.copy }));
-    expect(copiedTexts.at(-1)).toContain("^FXZPLLAB:");
+    expect(copiedTexts.at(-1)).toContain("^FXZPLab:");
   });
 });
