@@ -278,9 +278,9 @@ export interface ParserState {
   fonts: FontsState;
   reverseBg: PendingReverseBg | null;
   field: FieldState;
-  /** ^FN slots declared bare (`^FN<n>^FD…^FS`, no field): marker-less by
-   *  design, so the post-^FS serial orphan cleanup must not remove them. */
-  bareDeclaredFns: Set<number>;
+  /** ^FN slots declared without a field, positioned or not: marker-less by design,
+   *  so the serial orphan sweep must not remove them, and their raw bytes make regen lossy. */
+  declaredFns: Set<number>;
   /** ^FN slots whose single-bind marker a post-^FS ^SN stripped. Orphan
    *  cleanup runs at page close, not here: the slot is shared, so a later
    *  field or embed may still reference the variable (spec p.200). */
@@ -367,7 +367,7 @@ export function resetFormatScopedState(s: ParserState): void {
   s.result.lastSpanByCmd = new Map();
   s.varScopeStart = s.result.variables.length;
   s.serialStrippedFns.clear();
-  s.bareDeclaredFns.clear();
+  s.declaredFns.clear();
   s.comment.pending = undefined;
   s.comment.fnNumber = null;
   s.comment.fnComment = undefined;
@@ -443,7 +443,7 @@ export function createParserState(): ParserState {
       referencedFontPaths: new Set<string>(),
     },
     reverseBg: null,
-    bareDeclaredFns: new Set<number>(),
+    declaredFns: new Set<number>(),
     serialStrippedFns: new Set<number>(),
     varScopeStart: 0,
     sawXa: false,

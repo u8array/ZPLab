@@ -402,7 +402,7 @@ describe("unchanged printing objects across a source apply", () => {
     const keptName = plan.next.variables.find((v) => v.fnNumber === 1)?.name;
     expect(content(plan.next.pages[0]?.objects.find((o) => o.id === "h"))).toBe(`Hid «${carriedName}»`);
     expect(content(plan.next.pages[0]?.objects[0])).toBe(`Lot «${keptName}»`);
-    expect(generateMultiPageZPL(plan.next.label, plan.next.pages.map((p) => ({ ...p, overlay: undefined })), plan.next.variables)).toContain("^FN1^FDL42^FS");
+    expect(generateMultiPageZPL(plan.next.label, plan.next.pages.map((p) => ({ ...p, overlay: undefined })), plan.next.variables)).toMatch(/^\^FO\d+,\d+\^FN1\^FDL42\^FS$/m);
   });
 
   it("carry through an LF-normalised buffer of a CRLF baseline", () => {

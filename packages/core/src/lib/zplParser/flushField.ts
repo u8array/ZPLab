@@ -210,13 +210,15 @@ export function createFlushField(
       s.field.pendingFD = "";
     }
     if (!s.field.fieldType || s.field.pendingFD === null) {
-      // Bare `^FN<n>^FD<default>^FS`: Variable declaration, not a field.
-      if (s.comment.fnNumber !== null && s.field.pendingFD !== null) {
-        const decl = s.format.fhActive
-          ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.ciDecoder)
-          : s.field.pendingFD;
-        upsertVariable(s.comment.fnNumber, decl, s.comment.fnComment);
-        s.bareDeclaredFns.add(s.comment.fnNumber);
+      // ^FN with no field type declares the slot; a ^FD is its default.
+      if (s.comment.fnNumber !== null) {
+        if (s.field.pendingFD !== null) {
+          const decl = s.format.fhActive
+            ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.ciDecoder)
+            : s.field.pendingFD;
+          upsertVariable(s.comment.fnNumber, decl, s.comment.fnComment);
+        }
+        s.declaredFns.add(s.comment.fnNumber);
         s.comment.fnNumber = null;
         s.comment.fnComment = undefined;
       }

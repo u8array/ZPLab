@@ -949,7 +949,7 @@ describe('generateZPL — ^TB text block', () => {
       ^PW800
       ^LL400
       ^CI28
-      ^FN7^FDL7^FS
+      ^FO32000,32000^FN7^FDL7^FS
       ^FO10,15^A0N,30,0^FN1^FDDEF^FS
       ^FO10,55^A0N,30,0^FE#^FD#1#-#7#^FS
       ^XZ"
@@ -965,6 +965,40 @@ describe('generateZPL — ^TB text block', () => {
     const out = generateZPL(BASE_LABEL, [byContent], vars);
     expect(out).toContain('^FN1^FDDEF^FS');
     expect(out.match(/\^FN1/g)?.length).toBe(1); // inline only, never also in header
+  });
+
+  it('parks template slot declarations at the farthest ^FO point instead of the origin', () => {
+    const vars = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const template = {
+      id: 'a', type: 'text', x: 200, y: 200, rotation: 0,
+      props: { content: 'PRE«sku»POST', fontHeight: 30, fontWidth: 0, rotation: 'N' },
+    } as unknown as LabelObject;
+    const out = generateZPL(BASE_LABEL, [template], vars);
+    expect(out).toMatch(/^\^FO32000,32000\^FN1\^FDDEF\^FS$/m);
+    expect(out).not.toMatch(/^\^FN1/m);
+    // ^MU rescales the format and ^LH adds the home: the point stays inside the ^FO range.
+    const rescaled = generateZPL({ ...BASE_LABEL, muResampling: { formatDpi: 150, outputDpi: 600 } }, [template], vars);
+    expect(rescaled).toMatch(/^\^FO8000,8000\^FN1\^FDDEF\^FS$/m);
+    const homed = generateZPL({ ...BASE_LABEL, labelHomeX: 100 }, [template], vars);
+    expect(homed).toMatch(/^\^FO31900,32000\^FN1\^FDDEF\^FS$/m);
+    // ^LS is not compensated: within its range it cannot pull the park on-label.
+    const shifted = generateZPL({ ...BASE_LABEL, labelShift: 9999 }, [template], vars);
+    expect(shifted).toMatch(/^\^FO32000,32000\^FN1\^FDDEF\^FS$/m);
+    // ^LT adds to y like ^LH.
+    const topped = generateZPL({ ...BASE_LABEL, labelTop: 120 }, [template], vars);
+    expect(topped).toMatch(/^\^FO32000,31880\^FN1\^FDDEF\^FS$/m);
+  });
+
+  it('round-trips the parked declaration through the parser', () => {
+    const vars = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const template = {
+      id: 'a', type: 'text', x: 10, y: 10, rotation: 0,
+      props: { content: 'PRE«sku»POST', fontHeight: 30, fontWidth: 0, rotation: 'N' },
+    } as unknown as LabelObject;
+    const r = parseSingle(generateZPL(BASE_LABEL, [template], vars), 8, { captureOverlay: true });
+    expect(r.variables.map((v) => [v.fnNumber, v.defaultValue])).toEqual([[1, 'DEF']]);
+    expect(r.objects).toHaveLength(1);
+    expect(r.overlay?.regenSafe).toBe(false);
   });
 
   // ZD230-verified (2026-07-10, ^IS/^HY firmware renders): without a ^FE
@@ -1847,7 +1881,7 @@ describe('generateBatchZpl', () => {
     expect(recall).not.toContain('MA,');
   });
 
-  it('omits the header declaration of a mapped template-embedded slot', () => {
+  it('declares a mapped template-embedded slot as a bare off-label field', () => {
     const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
     const embed = {
       id: 'e', type: 'text', x: 10, y: 10, rotation: 0,
@@ -1857,8 +1891,25 @@ describe('generateBatchZpl', () => {
       { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
     const template = batchTemplateOf(result);
     expect(template).toContain('^FDPRE#1#POST');
+    expect(template).toMatch(/^\^FO32000,32000\^FN1\^FS$/m);
     expect(template).not.toContain('^FN1^FD');
     expect(result).toContain('^FN1^FDA1^FS');
+  });
+
+  it('adds no off-label field for a mapped slot that owns a positioned field', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const result = generateBatchZpl(baseLabel, [textObj('sku')], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    expect(batchTemplateOf(result)).toContain('^FN1');
+    expect(batchTemplateOf(result)).not.toContain('^FO32000,32000');
+  });
+
+  it('drops the recall of a mapped slot whose only consumer is excluded from export', () => {
+    const variables = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'DEF' }];
+    const hidden = { ...textObj('sku'), includeInExport: false } as LabelObject;
+    const result = generateBatchZpl(baseLabel, [hidden], variables,
+      { headers: ['sku'], rows: [['A1']] }, { bindings: { v1: 'sku' } });
+    expect(result).not.toContain('^FN1');
   });
 
   it('keeps a mapped QR bare in the template while its recall carries the switches', () => {

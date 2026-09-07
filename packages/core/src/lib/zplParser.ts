@@ -167,13 +167,14 @@ function regenLossReason(
     regenHostileFormat: boolean;
     sawNonUtf8Ci: boolean;
     sawBareBarcode: boolean;
-    sawFnDeclaration: boolean;
   },
+  /** A declaration kept as raw bytes that the scoped header re-emits on regen. */
+  declared: boolean,
   fdRegenLossy: RegenLossyReason | undefined,
 ): string | undefined {
   if (pg.sawNonUtf8Ci) return "a non-UTF-8 ^CI encoding";
   if (pg.sawBareBarcode) return "a barcode without an in-field ^BY";
-  if (pg.sawFnDeclaration) return "a standalone ^FN declaration";
+  if (declared) return "an ^FN declaration without a field";
   if (pg.regenHostileFormat) {
     return "a non-default format state (prefix, delimiter, unit, out-of-field ^FE/^FC, or ^LR)";
   }
@@ -341,7 +342,6 @@ export function parseZPL(
     } satisfies FormatHead,
     sawNonUtf8Ci: false,
     sawBareBarcode: false,
-    sawFnDeclaration: false,
   });
   let pg = freshPageScope(0);
 
@@ -375,11 +375,11 @@ export function parseZPL(
    *  the next page starts clean (printer-persistent state carries on). */
   const closePage = (end: number): void => {
     // ^SN stripped a single-bind marker: drop this format's variables that no
-    // marker in THIS page's objects points at (bare ^FN declarations stay).
+    // marker in THIS page's objects points at (declarations stay).
     for (let i = variables.length - 1; i >= pg.vari; i--) {
       const v = variables[i];
       if (!v || !s.serialStrippedFns.has(v.fnNumber)) continue;
-      if (s.bareDeclaredFns.has(v.fnNumber)) continue;
+      if (s.declaredFns.has(v.fnNumber)) continue;
       const marker = markerOf(v.name);
       let used = false;
       for (let j = pg.obj; j < objects.length && !used; j++) {
@@ -405,7 +405,8 @@ export function parseZPL(
       replayRisk.slice(pg.replay),
       deviceAction.slice(pg.device),
     );
-    const regenLoss = regenLossReason(pg, s.fdRegenLossy);
+    // A ^FN still open at ^XZ is raw bytes the header would re-emit as well.
+    const regenLoss = regenLossReason(pg, s.declaredFns.size > 0 || s.comment.fnNumber !== null, s.fdRegenLossy);
     const pageRegenSafe = regenLoss === undefined;
     let pageOverlay: BlockOverlay | undefined;
     if (opts.captureOverlay && pageObjects.every((o) => linkedIds.has(o.id))) {
@@ -596,9 +597,6 @@ export function parseZPL(
         // bytes that the surviving raw ^CI would mis-decode (the generator emits
         // ^CI28 only on the full-regen fallback, not in the overlay path).
         if (s.format.ciDecoder.encoding !== "utf-8") pg.sawNonUtf8Ci = true;
-        // A bare ^FN declaration (^FN outside an ^FO…^FS field) becomes a raw
-        // segment; the scoped header would re-emit it on regen and duplicate it.
-        if (cmd === "FN" && pg.ovStart === null) pg.sawFnDeclaration = true;
         // Track the leading-comment run; a non-^FX command (other than the field
         // opener) breaks contiguity so the span won't swallow intervening config.
         // Known limitation: when a command separates a ^FX from its field, the

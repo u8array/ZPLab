@@ -955,7 +955,7 @@ describe('parseZPL — ^BQ QR Code', () => {
   // order decides which cause a page reports when several apply.
   for (const [cause, zpl, needle] of [
     ['a non-UTF-8 ^CI', '^XA^CI27^FO0,0^BQN,2,4^FDQA,X^FS^XZ', 'non-UTF-8'],
-    ['a bare ^FN declaration', '^XA^FN1^FDseed^FS^FO0,0^BY,,10^BQN,2,4^FDQA,X^FS^XZ', 'standalone ^FN'],
+    ['a bare ^FN declaration', '^XA^FN1^FDseed^FS^FO0,0^BY,,10^BQN,2,4^FDQA,X^FS^XZ', 'declaration without a field'],
     ['a regen-hostile ^LR', '^XA^LRY^FO0,0^BY,,10^BQ,2,10^FDQA,X^FS^XZ', '^LR'],
     ['only the QR normalisation', '^XA^FO0,0^BY,,10^BQ,2,10^FDQA,X^FS^XZ', 'QR'],
   ] as const) {
@@ -3244,6 +3244,38 @@ describe('parseZPL — lossyEdit finding for regen-unsafe blocks', () => {
     const f = findings.find((x) => x.kind === 'lossyEdit');
     expect(f).toBeDefined();
     expect(f?.command).toContain('^FN');
+  });
+
+  it('flags a declaration parked in an off-label ^FO field like an unpositioned one', () => {
+    const zpl = '^XA^FO32000,0^FN1^FDdefault^FS^FO10,10^A0N,30,0^FE#^FDa#1#b^FS^XZ';
+    const r = parseSingle(zpl, 8, { captureOverlay: true });
+    expect(r.variables.map((v) => [v.fnNumber, v.defaultValue])).toEqual([[1, 'default']]);
+    expect(r.objects).toHaveLength(1);
+    expect(r.overlay?.regenSafe).toBe(false);
+    expect(r.findings.find((x) => x.kind === 'lossyEdit')?.command).toContain('^FN');
+  });
+
+  it('flags a valueless ^FN field the same way, off-label or on-label', () => {
+    for (const decl of ['^FO32000,32000^FN1^FS', '^FO50,50^FN1^FS']) {
+      const r = parseSingle(`^XA${decl}^FO10,10^A0N,30,0^FE#^FDa#1#b^FS^XZ`, 8, { captureOverlay: true });
+      expect(r.variables.map((v) => [v.fnNumber, v.defaultValue])).toEqual([[1, '']]);
+      expect(r.objects).toHaveLength(1);
+      expect(r.overlay?.regenSafe).toBe(false);
+      expect(r.findings.find((x) => x.kind === 'lossyEdit')?.command).toContain('^FN');
+    }
+  });
+
+  it('flags an ^FN left open at ^XZ', () => {
+    const r = parseSingle('^XA^FO10,10^A0N,30,0^FE#^FDa#1#b^FS^FN1^XZ', 8, { captureOverlay: true });
+    expect(r.overlay?.regenSafe).toBe(false);
+    expect(r.findings.find((x) => x.kind === 'lossyEdit')?.command).toContain('^FN');
+  });
+
+  it('does not bind the next field to a valueless declaration', () => {
+    for (const decl of ['^FN1^FS', '^FO32000,0^FN1^FS', '^FO50,50^FN1^FS']) {
+      const r = parseSingle(`^XA${decl}^FO10,10^A0N,30,0^FDplain^FS^XZ`, 8);
+      expect(props(r.objects[0]).content).toBe('plain');
+    }
   });
 
   it('does not flag a clean, regen-safe block', () => {
