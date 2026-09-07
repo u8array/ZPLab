@@ -6,6 +6,7 @@ import { Tooltip } from "../ui/Tooltip";
 import { labelCls, fieldGridCols, fieldGridCell } from "../ui/formStyles";
 import { RegionFocus } from "./printerIllustration";
 import { ZplBoundedIntInput, ZplCheckbox } from "./zplFieldPrimitives";
+import { LABEL_HOME_RANGE, LABEL_SHIFT_RANGE, LABEL_TOP_RANGE } from "@zplab/core/types/LabelConfig";
 
 /** Print-time output settings (offsets, shift, quantities). These are
  *  per-label ZPL (^LH/^LT/^LS/^PQ) and stay in labelConfig; they live here
@@ -30,7 +31,8 @@ export function OutputTab() {
             <UnitNumberInput
               label={t.label.labelHomeX}
               valueDots={label.labelHomeX}
-              minDots={0}
+              minDots={LABEL_HOME_RANGE.min}
+              maxDots={LABEL_HOME_RANGE.max}
               allowUnset
               onChangeDots={(labelHomeX) => setLabelConfig({ labelHomeX })}
               scope="design"
@@ -42,7 +44,8 @@ export function OutputTab() {
             <UnitNumberInput
               label={t.label.labelHomeY}
               valueDots={label.labelHomeY}
-              minDots={0}
+              minDots={LABEL_HOME_RANGE.min}
+              maxDots={LABEL_HOME_RANGE.max}
               allowUnset
               onChangeDots={(labelHomeY) => setLabelConfig({ labelHomeY })}
               scope="design"
@@ -54,8 +57,8 @@ export function OutputTab() {
             <UnitNumberInput
               label={t.label.labelTop}
               valueDots={label.labelTop}
-              minDots={-120}
-              maxDots={120}
+              minDots={LABEL_TOP_RANGE.min}
+              maxDots={LABEL_TOP_RANGE.max}
               allowUnset
               onChangeDots={(labelTop) => setLabelConfig({ labelTop })}
               scope="design"
@@ -74,6 +77,7 @@ export function OutputTab() {
           // shift. Negatives round-trip from import but aren't authored here
           // (spec: "if print position is less than 0, set ^LS to 0").
           minDots={0}
+          maxDots={LABEL_SHIFT_RANGE.max}
           allowUnset
           onChangeDots={(labelShift) => setLabelConfig({ labelShift })}
           scope="design"

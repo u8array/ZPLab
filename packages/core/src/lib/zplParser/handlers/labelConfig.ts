@@ -1,4 +1,4 @@
-import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, MAX_LABEL_LENGTH_RANGE, RFID_EPC_BITS_RANGE, RFID_EPC_MAX_PARTITIONS, RFID_EPC_PARTITION_RANGE, RFID_POSITION_RE, RFID_RETRIES_RANGE, SLEW_DOT_ROWS_RANGE, SPEED_RANGE, isBackfeedPercent, isBackfeedSequence, isMediaFeedMode, isMediaMode, isMediaTracking, isMediaType, isPrintOrientation, isRfidErrorHandling, parseRfidPower, type RfidPower } from "../../../types/LabelConfig";
+import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, LABEL_SHIFT_RANGE, MAX_LABEL_LENGTH_RANGE, RFID_EPC_BITS_RANGE, RFID_EPC_MAX_PARTITIONS, RFID_EPC_PARTITION_RANGE, RFID_POSITION_RE, RFID_RETRIES_RANGE, SLEW_DOT_ROWS_RANGE, SPEED_RANGE, isBackfeedPercent, isBackfeedSequence, isMediaFeedMode, isMediaMode, isMediaTracking, isMediaType, isPrintOrientation, isRfidErrorHandling, parseRfidPower, type RfidPower } from "../../../types/LabelConfig";
 import { parseIntOrUndef } from "../../inputParse";
 import { isYesNo } from "../../../types/typeHelpers";
 import { dotsToMm } from "../../coordinates";
@@ -148,8 +148,12 @@ export function createLabelConfigHandlers(
       if (isMediaMode(mode)) labelConfig.mediaMode = mode;
     },
     LS(_, rest) {
-      const d = dotsOrUndef(rest);
-      if (d !== undefined && d !== 0) labelConfig.labelShift = d;
+      const d = inRange(dotsOrUndef(rest), LABEL_SHIFT_RANGE);
+      if (d === undefined) {
+        if (strParam(rest) !== "") notePartial(s.result, "^LS");
+        return;
+      }
+      if (d !== 0) labelConfig.labelShift = d;
     },
     PR(p) {
       const print = inRange(parseIntOrUndef(p[0]), SPEED_RANGE);

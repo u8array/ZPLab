@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useLabelStore, currentPageLabel } from '../../store/labelStore';
 import { inputCls } from './styles';
 import { FieldLabel } from './ZplCmd';
@@ -46,6 +46,7 @@ export function UnitNumberInput({
   className,
   scope,
 }: UnitNumberInputProps) {
+  const id = useId();
   const unit = useLabelStore((s) => s.canvasSettings.unit);
   const dpmm = useLabelStore((s) => {
     // physical: raw head dpmm, never ^JM-halved effective scale.
@@ -75,8 +76,9 @@ export function UnitNumberInput({
 
   return (
     <div className={className ?? 'flex flex-col gap-1'}>
-      <FieldLabel cmd={zplCmd}>{`${label} (${unitLabel(unit)})`}</FieldLabel>
+      <FieldLabel cmd={zplCmd} htmlFor={id}>{`${label} (${unitLabel(unit)})`}</FieldLabel>
       <input
+        id={id}
         type="number"
         className={inputCls}
         value={display}
