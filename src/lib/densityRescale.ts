@@ -65,11 +65,11 @@ export const CALIBRATION_CLAMP = scaledLabelConfigFields("jmOnly").map((prop) =>
   max: labelConfigSpec(prop).clamp?.max ?? Infinity,
 }));
 
-// Layout-affecting label dot fields (home origin, ^CF default font), always rescaled; `min` is the post-scale floor.
-export const LAYOUT_LABEL_FIELDS = scaledLabelConfigFields("always").map((prop) => ({
-  prop,
-  min: labelConfigSpec(prop).floor ?? 0,
-}));
+// Layout-affecting label dot fields (home origin, ^CF default font), always rescaled and bounded post-scale.
+export const LAYOUT_LABEL_FIELDS = scaledLabelConfigFields("always").map((prop) => {
+  const spec = labelConfigSpec(prop);
+  return { prop, min: spec.clamp?.min ?? 0, max: spec.clamp?.max ?? Infinity };
+});
 
 const CALIBRATION_FIELDS: readonly (keyof LabelConfig)[] = CALIBRATION_CLAMP.map((c) => c.prop);
 
@@ -230,11 +230,11 @@ export function rescaleDesign(
     return f === 1 ? p : { ...p, objects: rescaleObjects(p.objects, f, warnings) };
   });
 
-  for (const { prop, min } of LAYOUT_LABEL_FIELDS) {
+  for (const { prop, min, max } of LAYOUT_LABEL_FIELDS) {
     const v = label[prop];
     // 0 means unset here (no home offset, ^CF default height): scaling it to
     // the floor would invent a value the design never had.
-    if (typeof v === "number" && v !== 0) nextLabel[prop] = Math.max(min, Math.round(v * factor));
+    if (typeof v === "number" && v !== 0) nextLabel[prop] = Math.min(max, Math.max(min, Math.round(v * factor)));
   }
 
   if (includeCalibrationFields) {

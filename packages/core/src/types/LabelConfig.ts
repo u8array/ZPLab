@@ -100,6 +100,13 @@ export const MAX_LABEL_LENGTH_RANGE = { min: 1, max: 32000 } as const;
 export const SLEW_DOT_ROWS_RANGE = { min: 0, max: 32000 } as const;
 /** ^LT y range (Zebra -120..+120); shared with the density rescale clamp. */
 export const LABEL_TOP_RANGE = { min: -120, max: 120 } as const;
+/** ^LS a, in dots (Zebra -9999..9999). */
+export const LABEL_SHIFT_RANGE = { min: -9999, max: 9999 } as const;
+/** ^LH x/y, in dots (Zebra 0..32000). */
+export const LABEL_HOME_RANGE = { min: 0, max: 32000 } as const;
+/** ^CF h/w, in dots (Zebra 0..32000); a zero height is unset, so it floors at 1. */
+export const CF_FONT_HEIGHT_RANGE = { min: 1, max: 32000 } as const;
+export const CF_FONT_WIDTH_RANGE = { min: 0, max: 32000 } as const;
 
 /** ^RS n: encode retries per label before error handling kicks in. */
 export const RFID_RETRIES_RANGE = { min: 1, max: 10 } as const;
@@ -136,7 +143,8 @@ export const RFID_EPC_MAX_PARTITIONS = 16;
  *  partition form is implicitly tighter (16 x 64 via the sum rule). */
 export const RFID_EPC_BITS_RANGE = { min: 1, max: 65535 } as const;
 
-/** ^MU b,c dpi tokens; 200 = 203 dpi; ratio drives resampling. */
+/** ^MU b,c dpi tokens; 200 = 203 dpi; ratio drives resampling. Wider than the spec's
+ *  b (150..300) and c (300/600) domains, so a ratio below 1 is representable. */
 export const MU_DPI_VALUES = [150, 200, 300, 600] as const;
 export type MuDpi = (typeof MU_DPI_VALUES)[number];
 export const isMuDpi = (n: number): n is MuDpi =>
@@ -226,13 +234,14 @@ export const labelConfigSchema = z.object({
   /** ^PQ p4: override pause count (cutter behaviour). */
   overridePauseCount: z.enum(YES_NO_VALUES).optional(),
   mediaMode: z.enum(MEDIA_MODE_VALUES).optional(),
-  labelShift: z.number().optional(),
+  // ^LS/^LH/^LT: out-of-range or fractional values predate the bounds and drop instead of refusing the design.
+  labelShift: intInRange(LABEL_SHIFT_RANGE).optional().catch(undefined),
   /** ^LH x; field FOs shifted at export so screen == print. */
-  labelHomeX: z.number().int().min(0).optional(),
+  labelHomeX: intInRange(LABEL_HOME_RANGE).optional().catch(undefined),
   /** ^LH y; see labelHomeX. */
-  labelHomeY: z.number().int().min(0).optional(),
+  labelHomeY: intInRange(LABEL_HOME_RANGE).optional().catch(undefined),
   /** ^LT y; Zebra -120..+120. */
-  labelTop: intInRange(LABEL_TOP_RANGE).optional(),
+  labelTop: intInRange(LABEL_TOP_RANGE).optional().catch(undefined),
   printSpeed: intInRange(SPEED_RANGE).optional(),
   /** ^PR p2: slew (inter-label) speed. */
   slewSpeed: intInRange(SPEED_RANGE).optional(),
@@ -350,8 +359,6 @@ export interface LabelConfigFieldSpec {
   perFormat?: true;
   /** Spec bounds the scaled value is clamped into. */
   clamp?: { readonly min: number; readonly max: number };
-  /** Post-scale floor. */
-  floor?: number;
 }
 
 /** Non-numeric fields cannot scale, so the table may not claim they do. */
@@ -375,9 +382,9 @@ export const LABEL_CONFIG_FIELDS = {
   replicates: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
   overridePauseCount: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
   mediaMode: { scope: 'perLabel', emits: true, scales: 'never' },
-  labelShift: { scope: 'perLabel', emits: true, scales: 'jmOnly' },
-  labelHomeX: { scope: 'perLabel', emits: true, scales: 'always', floor: 0 },
-  labelHomeY: { scope: 'perLabel', emits: true, scales: 'always', floor: 0 },
+  labelShift: { scope: 'perLabel', emits: true, scales: 'jmOnly', clamp: LABEL_SHIFT_RANGE },
+  labelHomeX: { scope: 'perLabel', emits: true, scales: 'always', clamp: LABEL_HOME_RANGE },
+  labelHomeY: { scope: 'perLabel', emits: true, scales: 'always', clamp: LABEL_HOME_RANGE },
   labelTop: { scope: 'perLabel', emits: true, scales: 'jmOnly', clamp: LABEL_TOP_RANGE },
   printSpeed: { scope: 'perLabel', emits: true, scales: 'never' },
   slewSpeed: { scope: 'perLabel', emits: true, scales: 'never' },
@@ -388,8 +395,8 @@ export const LABEL_CONFIG_FIELDS = {
   printOrientation: { scope: 'perLabel', emits: true, scales: 'never' },
   mirror: { scope: 'perLabel', emits: true, scales: 'never' },
   defaultFontId: { scope: 'design', emits: true, scales: 'never' },
-  defaultFontHeight: { scope: 'design', emits: true, scales: 'always', floor: 1 },
-  defaultFontWidth: { scope: 'design', emits: true, scales: 'always', floor: 0 },
+  defaultFontHeight: { scope: 'design', emits: true, scales: 'always', clamp: CF_FONT_HEIGHT_RANGE },
+  defaultFontWidth: { scope: 'design', emits: true, scales: 'always', clamp: CF_FONT_WIDTH_RANGE },
   customFonts: { scope: 'design', emits: true, scales: 'never' },
   mediaTracking: { scope: 'perLabel', emits: true, scales: 'never' },
   // ZD230-verified physical head dots, so a density change leaves them alone.

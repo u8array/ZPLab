@@ -477,18 +477,23 @@ describe("rescaleJmDensity (store)", () => {
 // Both lists derive from LABEL_CONFIG_FIELDS; pin the shape so a table typo
 // cannot silently drop a field from the rescale or widen its bounds.
 describe("derived label field sets", () => {
-  it("keeps the layout fields and their floors", () => {
+  it("keeps the layout fields and their bounds", () => {
     expect(LAYOUT_LABEL_FIELDS).toEqual([
-      { prop: "labelHomeX", min: 0 },
-      { prop: "labelHomeY", min: 0 },
-      { prop: "defaultFontHeight", min: 1 },
-      { prop: "defaultFontWidth", min: 0 },
+      { prop: "labelHomeX", min: 0, max: 32000 },
+      { prop: "labelHomeY", min: 0, max: 32000 },
+      { prop: "defaultFontHeight", min: 1, max: 32000 },
+      { prop: "defaultFontWidth", min: 0, max: 32000 },
     ]);
+  });
+
+  it("caps a rescaled home at the ^LH maximum", () => {
+    const cfg: LabelConfig = { widthMm: 100, heightMm: 50, dpmm: 8, labelHomeX: 20000 };
+    expect(rescaleDesign(page(), cfg, 8, 24, {}, true).label.labelHomeX).toBe(32000);
   });
 
   it("keeps the calibration fields and their clamps", () => {
     expect(CALIBRATION_CLAMP).toEqual([
-      { prop: "labelShift", min: -Infinity, max: Infinity },
+      { prop: "labelShift", min: -9999, max: 9999 },
       { prop: "labelTop", min: -120, max: 120 },
       { prop: "slewDotRows", min: 0, max: 32000 },
     ]);
