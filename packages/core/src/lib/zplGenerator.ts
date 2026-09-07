@@ -57,6 +57,21 @@ function flattenObjects(objects: LabelObject[]): LabelObject[] {
   return out;
 }
 
+/** ^FO x/y maximum (spec p. 201). */
+const FO_MAX = 32000;
+const ZERO_FRAME: OverlayFrame = { homeX: 0, homeY: 0, top: 0 };
+
+/** An unpositioned ^FN declaration prints as a stray field at the origin (ZD230), so it
+ *  parks at the farthest point ^FO can address and still supplies the ^FE default. What the
+ *  printer adds (^LH, ^LT) or rescales (^MU) is taken out; ^LS pulls x back only, so y parks too. */
+function fnDeclarationOrigin(label: LabelConfig, frame: OverlayFrame = ZERO_FRAME): string {
+  const mu = label.muResampling;
+  const ratio = mu ? mu.outputDpi / mu.formatDpi : 1;
+  const far = Math.min(FO_MAX, Math.floor(FO_MAX / ratio));
+  const park = (n: number): number => Math.min(FO_MAX, Math.max(0, n));
+  return `^FO${park(far - frame.homeX)},${park(far - frame.homeY - frame.top)}`;
+}
+
 /** Plan header `^FN` declarations (+ `^SO` clock offsets) for inline-embed
  *  templates, plus the emit context. embedChar is only set when a safe char
  *  exists, which fdFieldFor uses as the "templates allowed" gate. Firmware
@@ -66,8 +81,10 @@ export function planTemplateHeader(
   shifted: LabelObject[],
   label: LabelConfig,
   variables: readonly Variable[],
+  frame: OverlayFrame | undefined,
   bareFnSlots?: ReadonlySet<number>,
 ): { headerLines: string[]; emitCtx: ZplEmitContext } {
+  const origin = fnDeclarationOrigin(label, frame);
   // O(N+V) vs O(N*V) per-marker re-scan.
   const varsByName = new Map(variables.map((v) => [v.name, v]));
   const buckets = fnConsumerBuckets(shifted, variables);
@@ -123,8 +140,11 @@ export function planTemplateHeader(
   if (pickedEmbedChar !== null) {
     for (const [fn, v] of [...templateVarsByFn].sort(([a], [b]) => a - b)) {
       if (singleBindFns.has(fn)) continue;
-      // Recall-supplied slots get no declaration (see bareFnSlots).
-      if (emitCtx.bareFnSlots?.has(fn)) continue;
+      // A recall-supplied slot still needs a field to land in; a ^FD here would seal it against the recall (ZD230).
+      if (emitCtx.bareFnSlots?.has(fn)) {
+        headerLines.push(`${origin}^FN${fn}^FS`);
+        continue;
+      }
       // Mode-D-exclusive slot: > needs its >0 invocation (parser reverses).
       // Plain-^BC-exclusive slot likewise: >/^/~ need their invocation
       // literals; the ^FH hex fdField would otherwise use is dropped from
@@ -134,7 +154,7 @@ export function planTemplateHeader(
         : plain128Fns.has(fn)
           ? planCode128Fd(v.defaultValue, 'templateValue').fd
           : v.defaultValue;
-      headerLines.push(`^FN${fn}${fdField(def)}`);
+      headerLines.push(`${origin}^FN${fn}${fdField(def)}`);
     }
     emitCtx.embedChar = pickedEmbedChar;
   }
@@ -511,6 +531,7 @@ function emitPageBlock(
     [...dirtyShifted, ...newShifted],
     label,
     variables,
+    overlay.frame,
   );
 
   // No ^A@->^A{alias} rewrite on the regen path: a regenerated direct-path ^A@
@@ -675,6 +696,9 @@ export function generateBatchZpl(
   // Mapped slots stay bare in the stored format; the recall supplies them.
   const mappedFns = new Set(overrides.map((o) => o.fn));
   const baseZpl = generateZplBlock(label, objects, variables, mappedFns).block;
+  // A recall for a slot the stored format never declares prints as a stray field (ZD230).
+  const storedFnSlots = new Set([...baseZpl.matchAll(/\^FN(\d+)/g)].map((m) => Number(m[1])));
+  const recalls = overrides.filter((o) => storedFnSlots.has(o.fn));
   // Inject after first ^XA (not at start) because ~DY/~SD preambles
   // emit before ^XA and would skip a start-anchored match. No ^FS after the
   // name: it would precede ^JM and disable the density (p.269).
@@ -685,7 +709,7 @@ export function generateBatchZpl(
 
   const recallBlocks = dataset.rows.map((row) => {
     const lines: string[] = ['^XA', `^XF${BATCH_TEMPLATE_PATH}`];
-    for (const { fn, colIdx, transform } of overrides) {
+    for (const { fn, colIdx, transform } of recalls) {
       const value = row[colIdx] ?? '';
       // fdField applies ^FH hex-escape for ^/~ so fields don't terminate early.
       lines.push(`^FN${fn}${fdField(transform(value))}`);
@@ -769,7 +793,7 @@ export function planFieldEmission(
   const top = label.labelTop ?? 0;
   const shifted = shiftObjectsByHome(objects, homeX, homeY, top, label);
 
-  const { headerLines, emitCtx } = planTemplateHeader(shifted, label, variables, bareFnSlots);
+  const { headerLines, emitCtx } = planTemplateHeader(shifted, label, variables, { homeX, homeY, top }, bareFnSlots);
 
   return {
     headerLines,
