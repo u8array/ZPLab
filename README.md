@@ -6,7 +6,7 @@
 [![CI](https://github.com/u8array/ZPLab/actions/workflows/pr.yml/badge.svg)](https://github.com/u8array/ZPLab/actions/workflows/pr.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A browser-based editor for Zebra Programming Language (ZPL). Create labels for Zebra printers or import and edit existing ZPL files.
+ZPLab is a visual ZPL label designer for ZPL-compatible printers, available in your browser and as a local desktop app.
 
 Drag objects onto the canvas, adjust their properties, then copy or download the ZPL. You can use the web app without installing software or writing ZPL by hand.
 
