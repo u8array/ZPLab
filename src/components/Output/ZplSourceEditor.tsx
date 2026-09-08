@@ -18,6 +18,8 @@ import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useSessionExit } from '../../hooks/useSessionExit';
 import { useT } from '../../hooks/useT';
 import ZplCodeMirror, { type ZplCodeMirrorHandle } from './ZplCodeMirror';
+import { ZplCatalogPanel } from './ZplCatalogPanel';
+import type { CursorCommand } from '../../lib/zplLanguage';
 import { buildSourceDiagnostics, type SourceLint } from '../../lib/sourceDiagnostics';
 
 type SessionState = Extract<SourceEditMode, { status: 'editing' }>;
@@ -32,6 +34,7 @@ export function ZplSourceEditor({
   zpl,
   value,
   crlfKey,
+  insertPage,
   gateRefusal,
   highlightedLines,
   panelRef,
@@ -40,6 +43,7 @@ export function ZplSourceEditor({
   zpl: string;
   value: string;
   crlfKey: boolean;
+  insertPage: number;
   /** Gate refusal of the shown export; makes the pane read-only. */
   gateRefusal: Exclude<SourceRefusal, 'unbalanced'> | null;
   highlightedLines: ReadonlySet<number>;
@@ -48,8 +52,11 @@ export function ZplSourceEditor({
   const t = useT();
   const previewActive = useLabelStore(selectPreviewLocksEditor);
   const readOnly = previewActive || gateRefusal !== null;
+  // An empty pane has no format to put a command into.
+  const canInsert = !readOnly && value.trim() !== '';
   const hideSidecars = !useLabelStore(selectKeepExportMetadata);
   const editorRef = useRef<ZplCodeMirrorHandle>(null);
+  const [cursorCommand, setCursorCommand] = useState<CursorCommand | null>(null);
   const gateMsg = gateRefusal !== null ? sourceRefusalText(gateRefusal, t) : null;
 
   const shadowRefusal = useLabelStore(selectShadowRefusal);
@@ -82,25 +89,30 @@ export function ZplSourceEditor({
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      <div className="flex flex-col flex-1 min-h-0 bg-surface-2 font-mono text-xs text-text">
-        <ZplCodeMirror
-          key={crlfKey ? 'crlf' : 'lf'}
-          ref={editorRef}
-          value={value}
-          onChange={(text) => {
-            const s = useLabelStore.getState();
-            // First modifying keystroke: the shown export becomes the baseline.
-            if (s.sourceEdit.status !== 'editing') s.enterSourceEdit(zpl);
-            s.setSourceDraft(text);
-          }}
-          ariaLabel={t.output.editSource}
-          readOnly={readOnly}
-          highlightLines={highlightedLines}
-          historyEpoch={historyEpoch}
-          placeholderText={t.output.editSourcePlaceholder}
-          diagnostics={diagnostics}
-          hideSidecars={hideSidecars}
-        />
+      <div className="flex flex-1 min-h-0 min-w-0">
+        <div className="flex flex-col flex-1 min-h-0 min-w-[14rem] bg-surface-2 font-mono text-xs text-text">
+          <ZplCodeMirror
+            key={crlfKey ? 'crlf' : 'lf'}
+            ref={editorRef}
+            value={value}
+            onChange={(text) => {
+              const s = useLabelStore.getState();
+              // First modifying keystroke: the shown export becomes the baseline.
+              if (s.sourceEdit.status !== 'editing') s.enterSourceEdit(zpl);
+              s.setSourceDraft(text);
+            }}
+            ariaLabel={t.output.editSource}
+            readOnly={readOnly}
+            highlightLines={highlightedLines}
+            historyEpoch={historyEpoch}
+            placeholderText={t.output.editSourcePlaceholder}
+            diagnostics={diagnostics}
+            hideSidecars={hideSidecars}
+            insertPage={insertPage}
+            onCursorCommand={setCursorCommand}
+          />
+        </div>
+        <ZplCatalogPanel cursor={cursorCommand} onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined} />
       </div>
       {gateMsg !== null && (
         <p

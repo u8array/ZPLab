@@ -954,6 +954,17 @@ const de = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL-Referenz',
+    catalogSearch: 'Befehle durchsuchen',
+    catalogInsert: 'Einfügen',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Desktop',
+    catalogLint: 'Lint',
+    catalogYes: 'ja',
+    catalogPlanned: 'geplant',
+    catalogNo: 'nein',
+    catalogNoCursor: 'Cursor auf einen Befehl setzen, um seine Funktion zu sehen.',
+    catalogNoMatch: 'Keine Befehle passen zur Suche.',
     copy: 'Kopieren',
     copied: '✓ Kopiert',
     previewHeading: 'Vorschau',

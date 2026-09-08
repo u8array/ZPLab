@@ -924,6 +924,17 @@ const no = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL-referanse',
+    catalogSearch: 'Søk i kommandoer',
+    catalogInsert: 'Sett inn',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Skrivebord',
+    catalogLint: 'Lint',
+    catalogYes: 'ja',
+    catalogPlanned: 'planlagt',
+    catalogNo: 'nei',
+    catalogNoCursor: 'Plasser markøren på en kommando for å se hva den gjør.',
+    catalogNoMatch: 'Ingen kommandoer samsvarer med søket.',
     copy: 'Kopier',
     copied: '✓ Kopiert',
     previewHeading: 'Forhåndsvisning',

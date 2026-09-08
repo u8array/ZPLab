@@ -924,6 +924,17 @@ const zhHans = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL 参考',
+    catalogSearch: '搜索命令',
+    catalogInsert: '插入',
+    catalogWeb: '网页',
+    catalogDesktop: '桌面',
+    catalogLint: 'Lint',
+    catalogYes: '是',
+    catalogPlanned: '计划中',
+    catalogNo: '否',
+    catalogNoCursor: '将光标放在命令上可查看其作用。',
+    catalogNoMatch: '没有匹配搜索的命令。',
     copy: '复制',
     copied: '✓ 已复制',
     previewHeading: '预览',

@@ -924,6 +924,17 @@ const it = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Riferimento ZPL',
+    catalogSearch: 'Cerca comandi',
+    catalogInsert: 'Inserisci',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Desktop',
+    catalogLint: 'Lint',
+    catalogYes: 'sì',
+    catalogPlanned: 'pianificato',
+    catalogNo: 'no',
+    catalogNoCursor: 'Posiziona il cursore su un comando per vedere cosa fa.',
+    catalogNoMatch: 'Nessun comando corrisponde alla ricerca.',
     copy: 'Copia',
     copied: '✓ Copiato',
     previewHeading: 'Anteprima',

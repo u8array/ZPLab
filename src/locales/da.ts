@@ -924,6 +924,17 @@ const da = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL-reference',
+    catalogSearch: 'Søg i kommandoer',
+    catalogInsert: 'Indsæt',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Desktop',
+    catalogLint: 'Lint',
+    catalogYes: 'ja',
+    catalogPlanned: 'planlagt',
+    catalogNo: 'nej',
+    catalogNoCursor: 'Placer markøren på en kommando for at se, hvad den gør.',
+    catalogNoMatch: 'Ingen kommandoer matcher søgningen.',
     copy: 'Kopiér',
     copied: '✓ Kopieret',
     previewHeading: 'Forhåndsvisning',

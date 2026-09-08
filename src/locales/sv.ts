@@ -924,6 +924,17 @@ const sv = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL-referens',
+    catalogSearch: 'Sök kommandon',
+    catalogInsert: 'Infoga',
+    catalogWeb: 'Webb',
+    catalogDesktop: 'Skrivbord',
+    catalogLint: 'Lint',
+    catalogYes: 'ja',
+    catalogPlanned: 'planerad',
+    catalogNo: 'nej',
+    catalogNoCursor: 'Placera markören på ett kommando för att se vad det gör.',
+    catalogNoMatch: 'Inga kommandon matchar sökningen.',
     copy: 'Kopiera',
     copied: '✓ Kopierat',
     previewHeading: 'Förhandsvisning',

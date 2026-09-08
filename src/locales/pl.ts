@@ -924,6 +924,17 @@ const pl = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Dokumentacja ZPL',
+    catalogSearch: 'Szukaj poleceń',
+    catalogInsert: 'Wstaw',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Komputer',
+    catalogLint: 'Lint',
+    catalogYes: 'tak',
+    catalogPlanned: 'planowane',
+    catalogNo: 'nie',
+    catalogNoCursor: 'Ustaw kursor na poleceniu, aby zobaczyć, co ono robi.',
+    catalogNoMatch: 'Żadne polecenie nie pasuje do wyszukiwania.',
     copy: 'Kopiuj',
     copied: '✓ Skopiowano',
     previewHeading: 'Podgląd',

@@ -924,6 +924,17 @@ const ja = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPLリファレンス',
+    catalogSearch: 'コマンドを検索',
+    catalogInsert: '挿入',
+    catalogWeb: 'Web',
+    catalogDesktop: 'デスクトップ',
+    catalogLint: 'Lint',
+    catalogYes: 'はい',
+    catalogPlanned: '予定',
+    catalogNo: 'いいえ',
+    catalogNoCursor: 'コマンドにカーソルを合わせると内容が表示されます。',
+    catalogNoMatch: '検索に一致するコマンドがありません。',
     copy: 'コピー',
     copied: '✓ コピーしました',
     previewHeading: 'プレビュー',

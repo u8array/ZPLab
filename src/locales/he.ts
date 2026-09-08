@@ -924,6 +924,17 @@ const he = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'מדריך ZPL',
+    catalogSearch: 'חיפוש פקודות',
+    catalogInsert: 'הוסף',
+    catalogWeb: 'אינטרנט',
+    catalogDesktop: 'שולחן עבודה',
+    catalogLint: 'Lint',
+    catalogYes: 'כן',
+    catalogPlanned: 'מתוכנן',
+    catalogNo: 'לא',
+    catalogNoCursor: 'הנח את הסמן מעל פקודה כדי לראות מה היא עושה.',
+    catalogNoMatch: 'אין פקודות התואמות את החיפוש.',
     copy: 'העתק',
     copied: '✓ הועתק',
     previewHeading: 'תצוגה מקדימה',

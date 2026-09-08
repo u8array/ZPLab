@@ -924,6 +924,17 @@ const cs = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Reference ZPL',
+    catalogSearch: 'Hledat příkazy',
+    catalogInsert: 'Vložit',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Desktop',
+    catalogLint: 'Lint',
+    catalogYes: 'ano',
+    catalogPlanned: 'plánováno',
+    catalogNo: 'ne',
+    catalogNoCursor: 'Umístěte kurzor na příkaz a zobrazí se jeho popis.',
+    catalogNoMatch: 'Žádné příkazy neodpovídají hledání.',
     copy: 'Kopírovat',
     copied: '✓ Zkopírováno',
     previewHeading: 'Náhled',

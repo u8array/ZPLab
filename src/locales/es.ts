@@ -924,6 +924,17 @@ const es = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Referencia de ZPL',
+    catalogSearch: 'Buscar comandos',
+    catalogInsert: 'Insertar',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Escritorio',
+    catalogLint: 'Lint',
+    catalogYes: 'sí',
+    catalogPlanned: 'planificado',
+    catalogNo: 'no',
+    catalogNoCursor: 'Coloca el cursor sobre un comando para ver qué hace.',
+    catalogNoMatch: 'Ningún comando coincide con la búsqueda.',
     copy: 'Copiar',
     copied: '✓ Copiado',
     previewHeading: 'Vista previa',
