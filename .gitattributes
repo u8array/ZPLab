@@ -15,3 +15,6 @@ src-tauri/Cargo.toml text eol=lf
 
 # Raw printer-capture fixtures: byte-exact, never eol-converted.
 *.prn binary
+
+# Generated from the command catalog; the check compares on LF.
+docs/zpl-coverage.md text eol=lf

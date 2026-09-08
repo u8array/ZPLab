@@ -8,6 +8,10 @@
       "types": "./src/registry/index.ts",
       "default": "./src/registry/index.ts"
     },
+    "./catalog": {
+      "types": "./src/catalog/index.ts",
+      "default": "./src/catalog/index.ts"
+    },
     "./*": {
       "types": "./src/*.ts",
       "default": "./src/*.ts"

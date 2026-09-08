@@ -262,11 +262,12 @@ export function parseZPL(
   const deviceActionCodes = new Set([
     "JA", "JC", "JD", "JE", "JI", "JR",
   ]);
-  // ^PH/^PP are modelled per-format settings, but their tilde twins are
-  // immediate device controls; the handler map keys have no prefix, so the
-  // split happens at dispatch via the token's source char. ~JM is not a real
-  // command (only caret ^JM sets density), so it routes here as a noop too.
-  const tildeDeviceCodes = new Set(["PH", "PP", "JM"]);
+  // Handler map keys carry no prefix, so same-letter commands split at dispatch by the token's
+  // source char: ~PH/~PP are immediate forms of the modelled ^PH/^PP, ~PM/~PR are unrelated
+  // device commands, and ~JM does not exist but must stay out of the ^JM density handler.
+  const tildeDeviceCodes = new Set(["PH", "PP", "PM", "PR", "JM"]);
+  // The mirror case: ~JS (backfeed) is modelled, ^JS selects a media sensor on the device.
+  const caretDeviceCodes = new Set(["JS"]);
   // Commands whose last param is literal data, where a trailing space is real (^SN, ^SF, ^A@), not line-wrap noise.
   const LITERAL_TAIL_CMDS = new Set(["SN", "SF", "A@"]);
   Object.assign(handlers, setupScriptHandlers);
@@ -493,9 +494,9 @@ export function parseZPL(
     }
     // Flag printer-config commands: lossless replay re-emits them, so they run
     // on the user's printer at print/export. Recorded by code (deduped later).
-    // ~PH/~PP: flagged as device actions AND skipped entirely, or they would
-    // fall through to the unknown bucket and surface twice in the summary.
-    if (tildeDeviceCodes.has(cmd) && zpl[start] === s.format.tildeChar) {
+    // A device twin is flagged AND skipped, else it falls through to the unknown bucket and surfaces twice.
+    const deviceTwin = tildeDeviceCodes.has(cmd) ? s.format.tildeChar : caretDeviceCodes.has(cmd) ? s.format.caretChar : null;
+    if (deviceTwin !== null && zpl[start] === deviceTwin) {
       deviceAction.push({ command: `${zpl[start]}${cmd}`, span: s.result.tokenSpan });
       continue;
     }

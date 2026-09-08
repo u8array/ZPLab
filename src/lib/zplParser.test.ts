@@ -1850,6 +1850,14 @@ describe('parseZPL — printer params', () => {
     expect(parseZPL('^XA^PF33000^XZ', 8).labelConfig.slewDotRows).toBeUndefined();
   });
 
+  it('keeps the twins ^JS, ~PM and ~PR off the modelled ~JS, ^PM and ^PR', () => {
+    const r = parseSingle('^XA^JSA~PMY123456,3~PR2^XZ', 8);
+    expect(r.labelConfig.backfeedSequence).toBeUndefined();
+    expect(r.labelConfig.mirror).toBeUndefined();
+    expect(r.labelConfig.printSpeed).toBeUndefined();
+    expect(commandsOf(r, 'deviceAction')).toEqual(expect.arrayContaining(['^JS', '~PM', '~PR']));
+  });
+
   it('routes ~PH/~PP as device actions without touching the model', () => {
     const r = parseSingle('~PH~PP^XA^XZ', 8);
     expect(r.labelConfig.slewToHome).toBeUndefined();

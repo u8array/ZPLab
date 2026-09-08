@@ -79,9 +79,11 @@ The **ZPL output** panel at the bottom shows the generated ZPL. It updates in re
 
 The panel is a code editor with ZPL syntax highlighting; overlong graphic payloads are folded. Selecting an object on the canvas highlights the lines it emits, and a notice above the code flags printer-persistent setup commands and device actions.
 
+A command reference beside the code follows the command under the caret and is searchable; a click pins a row. Insert puts the command at the caret, or before the current page's `^XZ` when no caret is placed.
+
 The first change starts an edit session: canvas and panel editing locks (paging still works) while the canvas previews the parsed buffer live. An invalid buffer (unbalanced `^XA`/`^XZ`, too large) shows the refusal reason and is never applied; an imbalance is also marked at the command that caused it.
 
-Leaving the panel applies the edit; a dialog asks first when the reparse reports findings or would drop designer-only state (groups, names, locked/hidden, export exclusions, variable bindings). `Esc` discards; a changed buffer confirms first. An applied edit counts as a new import, so [Import guarantees](#import-guarantees) apply to the result.
+Leaving the panel applies the edit; a dialog asks first when the reparse reports findings or would drop designer-only state (groups, names, locked/hidden, export exclusions, variable bindings). `Esc` in the editor discards; a changed buffer confirms first. An applied edit counts as a new import, so [Import guarantees](#import-guarantees) apply to the result.
 
 ### Importing existing ZPL
 
@@ -135,6 +137,8 @@ Its **Preview** tab chooses which renderer draws the overlay (Labelary's online 
 | Middle mouse / Space+drag | Pan canvas |
 | Scroll | Pan canvas |
 | `Ctrl/⌘`+Scroll | Zoom |
+| `↑` / `↓` / `Enter` in the command reference | Walk the list / insert the highlighted command |
+| `Esc` in the command reference | Unpin the row |
 
 ### Saving and loading
 
@@ -147,6 +151,7 @@ Both `.zpl` and `.json` round-trip cleanly. `.zpl` preserves all printable conte
 - Smart alignment and spacing guides
 - Layers panel with reordering
 - Editable ZPL source: type directly in the output panel while the canvas previews the draft live ([editing the ZPL source](#editing-the-zpl-source))
+- ZPL command reference beside the source: every ZPL II command with its web, desktop and lint support, following the caret
 - Lossless ZPL round-trip: imported ZPL re-exports byte-for-byte, regenerating only what you edit ([import guarantees](#import-guarantees))
 - Variables: bind text and barcode fields to named defaults that emit as `^FN` slots (or `^FE` inline embeds when one field references multiple variables), round-tripping with printer-side templates
 - Batch printing: map columns to Variables from a CSV, an Excel worksheet, or a read-only database (desktop), then print or export with efficient printer-side data merge (template ships once, each row sends only its overrides)
@@ -161,25 +166,26 @@ Both `.zpl` and `.json` round-trip cleanly. `.zpl` preserves all printable conte
 
 ## Coverage
 
-<!-- coverage:start (generated from docs/zpl-roadmap.md by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-117 of the 225 ZPL II commands tracked in the [roadmap](docs/zpl-roadmap.md) are supported today. Categorical breakdown:
+<!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
+`Web` is the browser build, `Desktop` the app with a connected printer, `Lint` the source editor checking parameters. Counts are commands with a yes, planned ones in brackets; the per-command table is in [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
-| Area | Supported |
-|---|---|
-| Layout & flow | 16 / 16 |
-| Templates & variables | 4 / 4 |
-| Barcodes | 28 / 28 |
-| Fields | 18 / 20 |
-| Serialisation | 2 / 2 |
-| Encoding & language | 3 / 3 |
-| Clock & time | 3 / 3 |
-| Identity & access | 3 / 3 |
-| Graphics | 6 / 12 |
-| Media & feed | 10 / 10 |
-| Text & fonts | 7 / 14 |
-| Print quality | 10 / 18 |
-| Configuration & persistence | 3 / 5 |
-| Hardware / Host comm / RFID / Network | 4 / 87 |
+| Area | Web | Desktop | Lint |
+|---|:-:|:-:|:-:|
+| Layout & flow | 15 / 15 | 15 / 15 | 0 / 15 |
+| Templates & variables | 1 (+2) / 3 | 1 (+2) / 3 | 0 / 3 |
+| Barcodes | 29 / 29 | 29 / 29 | 0 / 29 |
+| Fields | 16 / 17 | 16 / 17 | 0 / 17 |
+| Serialisation | 2 / 2 | 2 / 2 | 0 / 2 |
+| Encoding & language | 3 / 3 | 3 / 3 | 0 / 3 |
+| Clock & time | 4 / 4 | 4 / 4 | 0 / 4 |
+| Identity & access | 2 / 2 | 2 / 2 | 0 / 2 |
+| Graphics | 7 / 14 | 7 (+7) / 14 | 0 / 14 |
+| Media & feed | 9 / 9 | 9 / 9 | 0 / 9 |
+| Text & fonts | 9 / 15 | 9 (+6) / 15 | 0 / 15 |
+| Print quality | 10 / 18 | 10 (+4) / 18 | 0 / 18 |
+| Configuration & persistence | 4 / 5 | 4 (+1) / 5 | 0 / 5 |
+| Hardware / Host comm / RFID / Network | 4 (+2) / 89 | 4 (+68) / 89 | 0 / 89 |
+| **All 225 commands** | 115 (+4) / 225 | 115 (+88) / 225 | 0 / 225 |
 <!-- coverage:end -->
 
 ---
