@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Zahajuje nový formát štítku. Následující příkazy definují pole, zpracování média a chování tiskárny pro tento štítek."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Uzavírá aktuální formát štítku a odesílá jej k tisku."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Nastavuje tisknutelnou šířku v bodech. Obsah přesahující tuto šířku tiskárna ořízne."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Nastavuje délku štítku v bodech a určuje, kde tisknutelný formát končí."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Přesouvá výchozí bod štítku a mění počátek souřadnic pro následující pole."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Aplikuje horizontální posun pozic polí kvůli kompatibilitě se staršími formáty Zebra."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Přidává vertikální posun celého formátu vzhledem k horní hraně média."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Nastavuje jednotky souřadnic na body, palce nebo milimetry a umožňuje přepočet formátu mezi tiskovými rozlišeními."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Nastavuje způsob zpracování média po tisku, včetně režimů odtržení, odlepení, řezání, převíjení a aplikátoru."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Volí režim termotransferu nebo přímého termotisku podle toho, zda vložené médium používá barvicí pásku."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Nastavuje počet vytištěných štítků, seskupení pauzy nebo řezu a počet kopií na jednu sériovou hodnotu."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Obrací tisk následujících polí prohozením popředí a pozadí."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Otáčí celý formát štítku o 180 stupňů."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Zrcadlí tisknutelnou oblast vodorovně."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Nastavuje rychlost tisku, rychlost posuvu a rychlost zpětného posuvu v palcích za sekundu."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Umísťuje následující pole vůči výchozímu bodu štítku podle jeho levého horního rohu."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Umísťuje následující pole podle jeho účaří nebo okraje čárového kódu, což dává otočeným polím stabilní kotvicí bod."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Určuje obsah aktuálního pole, včetně textu, dat čárového kódu nebo dat RFID."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Ukončuje definici aktuálního pole."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Povoluje hexadecimální escape sekvence uvnitř dat pole pro binární bajty a vyhrazené znaky příkazů."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Prohazuje popředí a pozadí pouze pro následující pole."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Přidává komentářové pole. Tiskárna jeho obsah ignoruje až po další oddělovač pole."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Nastavuje výchozí orientaci pole a u novějšího firmwaru také výchozí zarovnání."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Zalamuje data pole do bloku pevné šířky s nastavením počtu řádků, rozestupů, odsazení a zarovnání."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Zalamuje text do rámečku s pevnou šířkou a výškou a přesahující obsah ořezává."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Přiřazuje číslo proměnnému poli v uložených a znovu volaných formátech."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Poskytuje data pro proměnné pole. Na rozdíl od dat ^FD se po vytištění štítku vymažou."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Nastavuje znak, kterým se vkládají hodnoty číslovaných polí do řetězce jiného pole."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Nastavuje značky používané pro tokeny reálného času uvnitř dat pole."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Nastavuje výchozí šířku modulu, poměr širokého a úzkého prvku a výšku pro následující pole čárových kódů."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Umísťuje segmenty PDF417 nebo MicroPDF417 na konkrétní počátky, pokud jedna zpráva zabírá více symbolů."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Nastavuje pořadí znaků aktuálního pole a umožňuje přidat mezeru mezi znaky navíc."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Vybírá rezidentní škálovatelný font 0 pro následující pole v požadované velikosti a orientaci."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Vybírá rezidentní font podle jednoznakového názvu, volitelně s orientací, výškou a šířkou."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Vybírá uložený soubor fontu pro následující pole, volitelně s orientací, výškou a šířkou."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Nastavuje záložní font, výšku a šířku pro textová pole, která je sama neurčují."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Vybírá kódování pro interpretaci dat pole, včetně kódových stránek a UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Zapíná pokročilé rozvržení textu pro následující pole, včetně obousměrného textu, tvarování a funkcí OpenType."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Mapuje jednoznakový název fontu na uložený soubor fontu."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Nastavuje velikost mezipaměti pro vykreslené škálovatelné znaky za účelem zrychlení opakovaného tisku velkých fontů."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Definuje řetězce záložních fontů TrueType použité, když základnímu fontu chybí znak."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Tiskne štítek se seznamem nakonfigurovaných propojení fontů a jejich řetězených záložních řezů."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Stahuje bitmapový font a jeho metriky do paměti tiskárny."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Stahuje zakódovaný škálovatelný font Intellifont do paměti tiskárny."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Stahuje zakódovaný font TrueType s až 256 znaky do paměti tiskárny."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Stahuje zakódovaný font TrueType s více než 256 znaky do paměti tiskárny."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Stahuje tabulku kódování, která mapuje bajty dat pole na hodnoty Unicode pro fonty TrueType."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Kreslí čárový kód Code 128 pro ASCII data proměnné délky, s režimy pro automatické přepínání podmnožin a data UCC/EAN."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Kreslí čárový kód Code 39 s volitelnou kontrolní číslicí Mod 43."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Kreslí čárový kód Code 93, který reprezentuje plná ASCII data pomocí přepínacích znaků."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Kreslí čárový kód Code 11 pro číslice a spojovníky, s volitelnými kontrolními číslicemi."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Kreslí čárový kód Interleaved 2 of 5 pro číselná data sudé délky, s volitelnou kontrolní číslicí."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Kreslí čárový kód Industrial 2 of 5, číselný kód s daty kódovanými pouze v čarách."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Kreslí čárový kód Standard 2 of 5, samokontrolní číselný kód s daty kódovanými pouze v čarách."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Kreslí čárový kód ANSI Codabar, známý také jako USD-4, pro štítky v knihovnách, zdravotnictví a kurýrních službách."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Kreslí čárový kód LOGMARS, variantu Code 39 používanou americkým ministerstvem obrany, a malá písmena v datech převádí na velká."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Kreslí čárový kód MSI, číselný kód odvozený od Plessey s volitelnými schématy kontrolní číslice."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Kreslí čárový kód Plessey, starší číselný kód s volitelnými kontrolními číslicemi."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Kreslí čárový kód EAN-13 pro maloobchodní čísla položek a odvozuje kontrolní číslici z dvanácti datových číslic."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Kreslí čárový kód EAN-8 pro malá maloobchodní balení a odvozuje kontrolní číslici ze sedmi datových číslic."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Kreslí čárový kód UPC-A pro maloobchodní balení z jedenácti datových číslic, s volitelným tiskem kontrolní číslice."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Kreslí čárový kód UPC-E, zkrácenou formu UPC-A. Data pole tvoří úplný desetimístný kód výrobce a produktu."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Kreslí symbol GS1 DataBar s volitelným podtypem, zvětšením, výškou a šířkou segmentu."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Kreslí poštovní čárový kód Planet Code z číslic kódovaných jako vysoké a krátké čáry."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Kreslí POSTNET, Planet Code nebo USPS Intelligent Mail podle zvoleného typu poštovního kódu."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Kreslí dvoumístný nebo pětimístný doplňkový symbol UPC/EAN vedle hlavního čárového kódu."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Kreslí vrstvený čárový kód Code 49 s dvěma až osmi řádky plných ASCII dat."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Kreslí symbol QR Code. Parametry příkazu určují model, zvětšení a masku, data pole pak úroveň korekce chyb a znakový režim."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Kreslí symbol Data Matrix s nastavitelnou velikostí prvku, úrovní kvality a zpracováním escape sekvencí."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Kreslí vrstvený dvourozměrný symbol PDF417 pro velké objemy textových nebo binárních dat."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Kreslí symbol MicroPDF417, kompaktní variantu PDF417 se vzory adresování řádků."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Kreslí maticový symbol Aztec s nastavitelným zvětšením a korekcí chyb."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Kreslí symbol CODABLOCK v režimu A, E nebo F pro větší objemy dat."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Kreslí symbol UPS MaxiCode s režimem pro strukturované zprávy přepravce nebo obecná data."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Kreslí symbol TLC39 pro telekomunikační štítky, který kombinuje Code 39 se složkou MicroPDF417."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Po zapnutí ověřuje data a parametry čárového kódu a místo chybného symbolu vytiskne INVALID."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Kreslí vyplněný nebo obrysový obdélník. Shoduje-li se strana s tloušťkou okraje, vznikne čára."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Kreslí diagonální čáru přes zadanou šířku a výšku, nakloněnou doprava nebo doleva."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Kreslí elipsu podle šířky a výšky v bodech, s tloušťkou okraje směrem dovnitř a černým nebo bílým výstupem."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Kreslí kruh o zadaném průměru v bodech, s tloušťkou okraje směrem dovnitř a černým nebo bílým výstupem."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Umísťuje monochromatickou bitmapu na aktuální pozici pole pomocí dat ve formátu ASCII hex, binárním nebo komprimovaném."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Tiskne rezidentní symbol zvolený daty pole, například copyright nebo registrovanou ochrannou známku."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Načítá uložený obrázek na začátku formátu a ukotvuje jej v počátku štítku."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Umísťuje uložený obrázek na aktuální pozici pole bez změny velikosti."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Maže uložené grafiky, fonty nebo formáty z paměti tiskárny, s podporou zástupných znaků pro skupiny."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Ukládá aktuální formát jako grafický obrázek pro rychlé vyvolání a překrytí proměnnými daty."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Stahuje grafiku ve formátu ASCII hex do paměti tiskárny pod znovupoužitelným názvem."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Zastavuje přerušený přenos grafiky a vrací tiskárnu do normálního provozu."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Stahuje grafiku, font nebo certifikát do paměti tiskárny pod znovupoužitelným názvem."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Maže všechny stažené grafiky z paměti tiskárny. Pro mazání vybraných objektů použijte ^ID."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Sérializuje data textového nebo čárového pole napříč štítky pomocí počáteční hodnoty, směru a kroku."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Sérializuje vybrané pozice v datech pole pomocí masky a znakových sad."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Ukládá následující příkazy jako znovupoužitelný formát místo jejich okamžitého vytištění."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Vyvolává uložený formát a dosazuje hodnoty do jeho číslovaných zástupných polí."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Vyvolává uloženou grafiku na aktuální pozici s nezávislým vodorovným a svislým měřítkem."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Volí způsob, jakým tiskárna rozpoznává hranice štítků, pomocí mezer, značek nebo nekonečného média."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Nastavuje maximální délku štítku, kterou tiskárna prohledává při kalibraci nesouvislého média."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Nastavuje akci prováděnou při zapnutí a zavření tiskové hlavy, včetně kalibrace, posuvu nebo měření délky."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Potlačuje zpětný posuv u aktuálního štítku, pokud není nutný přesun do pozice pro odtržení."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Konfiguruje tištěná upozornění na údržbu týkající se čištění nebo výměny tiskové hlavy."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Určuje, zda se bitmapa štítku po vytištění smaže, nebo zůstane uchována pro opětovné použití u dalších štítků."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Nastavuje text zobrazený na štítcích s upozorněním na údržbu při čištění nebo výměně tiskové hlavy."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Uzamyká nastavení ovládacího panelu, například sytost nebo kalibraci, dokud není znovu odemčeno."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Zapíná nebo vypíná indikátor upozorňující na studenou tiskovou hlavu."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Upravuje sytost tisku relativně vůči aktuálně nastavené sytosti tiskárny."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Nastavuje absolutní sytost tisku okamžitě, odpovídající nastavení sytosti na předním panelu."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Určuje, zda se štítek přerušený chybou média, pásky nebo tiskové hlavy po obnovení znovu vytiskne."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Plánuje periodické testy prvků tiskové hlavy podle počtu vytištěných štítků a volitelného rozsahu prvků."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Upravuje klidovou pozici pro odtržení nebo řez o malý posun v bodech po vytištění."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Konfiguruje prahové hodnoty pro včasná upozornění na údržbu média, pásky a tiskové hlavy."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Řídí časování zpětného posuvu kolem tisku a řezání, nebo jej zcela vypíná."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Posouvá zadaný počet prázdných řádků bodů rychlostí posuvu."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Posouvá jeden prázdný štítek po vytištění aktuálního formátu."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Posouvá jeden prázdný štítek, jakmile je tiskárna volná, ať už po aktuálním formátu nebo během pauzy."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Pozastavuje tisk po vytištění aktuálního formátu. Štítky již ve frontě se ještě vytisknou."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Pozastavuje tisk po dokončení aktuálního štítku. Tisk pokračuje po zrušení stavu pauzy."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Znovu vytiskne předchozí štítek, je-li zapnut režim opakovaného tisku pro aplikátor."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Ruší režim pauzy a obnovuje tisk."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Okamžitě spouští řezačku u tiskáren KR403 v režimu kioskového tisku."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Přidává délku navíc při vysunutí u kioskového podavače KR403, aby se vytištěné médium snáze odebíralo."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Spouští cyklus podavače KR403, který nabízí vytištěné médium k ručnímu odebrání."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Nastavuje napětí přívodu pásky u tiskáren řady PAX."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Nastavuje datum a čas hodin reálného času tiskárny."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Volí formát data a času zobrazený na konfiguračním štítku a ovládacím panelu."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Definuje sekundární posuny hodin vůči reálnému času. Tyto posuny se po vypnutí tiskárny ztratí."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Nastavuje, kdy se časová pole razítkují, a volí jazyk pro názvy dnů a měsíců."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Volí jazyk zobrazení ovládacího panelu tiskárny ze seznamu, který se liší podle modelu."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Volí uloženou tabulku kódování používanou k mapování dat pole před tiskem."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Volí interpretaci příkazů podle původního ZPL nebo ZPL II kvůli kompatibilitě se staršími formáty."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Přiřazuje tiskárně síťový název a volný textový popis, oba zobrazené na konfiguračním štítku a vestavěné webové stránce."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Nastavuje čtyřmístné heslo pro nastavovací menu ovládacího panelu."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Ukládá, obnovuje nebo resetuje konfigurační nastavení tiskárny."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Mění prefixový znak formátovacích příkazů, běžně stříšku, buď globálně, nebo jen pro aktuální formát."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Mění oddělovací znak parametrů, běžně čárku, buď globálně, nebo jen pro aktuální formát."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Mění prefixový znak okamžitých příkazů, běžně vlnovku, buď globálně, nebo jen pro aktuální formát."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Přemapovává písmena pamětí tiskárny, aby si uložené objekty mohly zachovat stávající názvy."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Ruší formáty ve frontě a aktuální dávku. Štítek, který se právě tiskne, se dokončí."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Maže a znovu inicializuje jedno paměťové zařízení flash. Výpadek napájení během této operace může poškodit úložiště."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Znovu inicializuje paměťovou kartu se zálohovací baterií po instalaci nebo výměně baterie."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Spouští kalibraci média za účelem změření délky štítku a nastavení senzorů média a pásky."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Tiskne příchozí bajty a jejich hexadecimální hodnoty místo jejich provedení, pro diagnostiku komunikace s hostitelem."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Opouští diagnostický režim komunikace a vrací tiskárnu do normálního tisku štítků."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Určuje, zda nízké napětí baterie pozastaví mobilní tiskárnu, nebo zda tisk může pokračovat."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Spouští kalibraci média a tiskne graf profilu senzoru pro přechod mezery mezi štítky."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Spouští Zebra BASIC Interpreter na tiskárně, volitelně se spuštěním uloženého programu."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Konfiguruje pomocný port pro signály aplikátoru nebo verifikátoru a zpracování chyb."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Volí senzor média používaný pro sledování, obvykle reflexní nebo průsvitový."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Měří a ukládá délku štítku, přičemž během procesu posouvá prázdné štítky."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Nastavuje normální nebo sníženou hustotu bodů na milimetr. Snížená hustota zdvojnásobuje fyzickou velikost souřadnic formátu."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Způsobuje, že neúspěšné testy prvků tiskové hlavy zastaví tisk, dokud se tiskárna neresetuje nebo se neobnoví tolerantní režim."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Umožňuje pokračovat v tisku i po neúspěšném testu prvku tiskové hlavy."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Ruší další formát ve frontě a pozastavuje tiskárnu, vždy jeden bufferovaný formát na příkaz."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Ukončuje aktivní relaci Zebra BASIC Interpreter a vrací port ke zpracování ZPL."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Restartuje firmware tiskárny a znovu načítá uložené výchozí hodnoty komunikace a konfigurace."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Ruší právě přijímaný formát, aniž by zrušil štítky, které se již tisknou."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Resetuje vybraný počítadlo využití tiskárny, včetně uživatelských nebo RFID počítadel."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Konfiguruje všechny komunikační parametry sériového portu jedním příkazem."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Přepisuje intenzitu nebo výchozí hodnoty průsvitového senzoru, které se běžně nastavují kalibrací."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Zahajuje tisk dříve, než dorazí celý formát, aby se zvýšila propustnost u složitých štítků."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Vypíná konkrétní podmínku a cíl upozornění ZebraNet."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Nastavuje hodnotu odporu tiskové hlavy použitou pro výpočty tepelné energie."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Nastavuje prahové hodnoty senzoru média, délku štítku a intenzity LED, které se běžně určují kalibrací."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Zapíná upozornění ZebraNet pro konkrétní podmínku a cíl."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopíruje uložené objekty mezi paměťovými zařízeními tiskárny, s podporou zástupných znaků pro skupiny."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Tiskne konfigurační štítek s informacemi o senzorech, síti, firmwaru a paměti."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Tiskne štítek s adresářem uložených objektů, rezidentních fontů nebo dostupných čárových kódů."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Tiskne na štítek požadované servisní informace, například stav počítadla nebo historii tiskové hlavy."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Konfiguruje nastavení kioskového podavače KR403, včetně délky řezu, okraje řezu, časového limitu zatažení a délky smyčky."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Řídí dynamickou rekalibraci délky štítku a prahu senzoru po zapnutí nebo otevření prostoru pro médium."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Spouští režim vyřazení z provozu k přípravě tiskárny na další prodej nebo recyklaci."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Nastavuje automatický přechod do úsporného režimu po období nečinnosti, s volbami pro štítky ve frontě."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Vysouvá nebo zatahuje médium již nabídnuté kioskovým podavačem KR403."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Spouští režim vybíjení baterie u mobilních tiskáren za účelem kondiciování baterie."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Vrací hodnoty napájení baterie a tiskové hlavy z mobilních tiskáren."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Vrací diagnostická data tiskové hlavy, včetně teplot, výsledků testů prvků, sytosti a rychlosti."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Vrací hostiteli uložený formát ZPL z paměti tiskárny."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Vrací hostiteli uložený grafický obrázek z paměti tiskárny."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Vrací aktuální konfiguraci tiskárny jako čitelný text přes hostitelský port."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Vrací identifikační data tiskárny, včetně modelu, firmwaru, rozlišení, paměti a nainstalovaných doplňků."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Vrací celkovou, maximálně dostupnou a aktuálně volnou paměť tiskárny v kilobajtech."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Vrací hostiteli požadovaná data o stavu, identitě, počítadle nebo údržbě."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Vrací hostiteli stavové řetězce pro rozhraní, médium, stav pauzy, délku štítku a bufferované formáty."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Vrací hostiteli tabulku propojení fontů se seznamem základních fontů a záložních řezů."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Vrací nakonfigurovaná upozornění ZebraNet, včetně podmínek, cílů a příznaků nastavení nebo vymazání."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Vrací hostiteli data z číslovaného pole, s volitelným omezením počtu bajtů."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Vrací výpis adresáře paměťového zařízení, včetně zbývajícího volného místa."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Vrací hostiteli uloženou grafiku ve stažitelném formátu souboru."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Vrací popisné XML tiskárny pro nastavení, adresář objektů nebo stav."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Čte nebo zapisuje do RFID tagu, včetně formátu dat, paměťové banky a přístupového hesla."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Čte aktuální ID RFID tagu pro použití v datech štítku nebo v odpovědi hostiteli."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Řídí pohyb média během starších RFID operací. Formáty Link-OS namísto toho používají ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Detekuje více než jeden RFID tag v kódovacím poli a může zneplatnit štítky s bludnými tagy v blízkosti."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Nastavuje počet opakování pro starší RFID čtení nebo zápis. Formáty Link-OS namísto toho používají ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Definuje bitové rozvržení použité pro kódování polí RFID EPC na tagu."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Nastavuje RFID volby pro následující štítky, včetně typu tagu, pozice programování, zpracování selhání a délky pruhu VOID."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Čte data tagu do pole štítku ve starších RFID formátech."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Zapisuje data tagu ve starších RFID formátech. Čtení, zápis a práci s heslem pokrývá ^RF."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Sestavuje sériové číslo EPC z ID tagu a zapisuje jej do nižších bitů EPC."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Vrací hostiteli výsledek každého RFID kódování, což softwaru umožňuje rozlišit dobré tagy od zneplatněných štítků."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Nastavuje výkon RFID čtení a zápisu, pokud kalibrace nedává použitelné hodnoty."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Uzamyká paměť RFID tagu, buď vratně, nebo trvale, aby zabránila pozdějším zápisům."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Spouští RFID kalibraci a vrací hostiteli nastavení pozice, antény a výkonu."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Vrací protokol RFID operací, včetně pozice, antény, úrovně výkonu a výsledku."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Určuje, zda tiskárna při startu kontroluje přítomnost drátového tiskového serveru."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Volí primární síťové zařízení, drátové nebo bezdrátové."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresuje jednu tiskárnu na starší sběrnicové lince RS-485 podle síťového ID."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Přiřazuje síťové ID použité k adresování tiskárny na starší sběrnicové lince RS-485."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Nastavuje identitu SNMP a community řetězce tiskárny."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Určuje, zda síťové nastavení při startu pochází z tiskárny, nebo z připojeného tiskového serveru."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Přepíná všechny tiskárny na starší sběrnicové lince do transparentního přijímacího režimu."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Konfiguruje nastavení SMTP serveru a domény pro e-mailová upozornění tiskového serveru."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Přepíná adresovanou starší sběrnicovou tiskárnu do transparentního přijímacího režimu."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Nastavuje, jak dlouho může ověřená IP adresa přistupovat k webovým stránkám tiskárny před opětovným ověřením."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Nastavuje formu a hodnotu identifikátoru DHCP klienta pro tiskový server."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Konfiguruje IP adresu, masku podsítě a bránu pro síťové rozhraní tiskárny."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Konfiguruje IP nastavení drátového tiskového serveru, časové limity a raw port pro starší firmware."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Volí přijímací a vysílací antény pro bezdrátový modul."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Konfiguruje zastaralé zabezpečení WEP a klíčový materiál pro starší bezdrátový firmware."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Konfiguruje zastaralé ověřování Cisco LEAP pro starší bezdrátový firmware."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Nastavuje heslo pro bezdrátová nastavení na ovládacím panelu tiskárny."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Konfiguruje přenosové rychlosti 802.11b a vysílací výkon u starších bezdrátových tiskových serverů."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Konfiguruje název bezdrátové sítě, režim rádia, délku preambule a chování keep-alive."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Konfiguruje bezdrátový režim zabezpečení, klíče a přihlašovací údaje jedním příkazem."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Tiskne štítek se síťovou konfigurací, zatímco je tiskárna nečinná."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Restartuje bezdrátovou rádiovou kartu a tiskový server, což způsobí opětovné připojení rádia k síti."
+  }
+}

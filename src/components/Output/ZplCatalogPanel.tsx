@@ -10,6 +10,7 @@ import {
   type SupportLevel,
 } from "@zplab/core/catalog";
 import { useT } from "../../hooks/useT";
+import { useCatalogSummaries } from "../../hooks/useCatalogSummaries";
 import type { Translations } from "../../locales";
 import type { CursorCommand } from "../../lib/zplLanguage";
 import { inputCls } from "../Properties/styles";
@@ -37,6 +38,7 @@ const domId = (listId: string, key: string): string =>
 /** Command reference beside the source pane; no `onInsert` means inserting is unavailable. */
 export function ZplCatalogPanel({ cursor, onInsert }: { cursor: CursorCommand | null; onInsert?: (text: string) => void }) {
   const t = useT();
+  const summaries = useCatalogSummaries();
   const listId = useId();
   const listRef = useRef<HTMLUListElement>(null);
   const [query, setQuery] = useState("");
@@ -107,7 +109,7 @@ export function ZplCatalogPanel({ cursor, onInsert }: { cursor: CursorCommand | 
                   <span className="font-mono text-accent font-semibold shrink-0">{commandLabel(entry)}</span>
                   <span className="text-text font-medium truncate">{entry.title}</span>
                 </div>
-                <p className="text-text leading-relaxed">{entry.summary}</p>
+                <p className="text-text leading-relaxed">{summaries[commandId(entry)]?.summary ?? entry.summary}</p>
                 <dl className="flex flex-wrap gap-x-3 font-mono text-[10px]">
                   {CAPABILITY.map(({ cap, key }) => (
                     <div key={cap} className="flex gap-1">

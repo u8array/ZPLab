@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Startar ett nytt etikettformat. Kommandona som följer definierar fält, mediehantering och skrivarbeteende för etiketten."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Avslutar det aktuella etikettformatet och skickar det för utskrift."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Anger den utskrivbara bredden i punkter. Innehåll som sträcker sig utanför bredden beskärs av skrivaren."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Anger etikettens längd i punkter och avgör var det utskrivbara formatet slutar."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Flyttar etikettens hempunkt och ändrar därmed origo som används av efterföljande fältkoordinater."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Tillämpar en horisontell förskjutning på fältpositioner för kompatibilitet med äldre Zebra-format."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Lägger till en vertikal förskjutning för hela formatet i förhållande till mediets överkant."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Anger koordinatenheten till punkter, tum eller millimeter och kan skala format mellan olika utskriftsupplösningar."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Anger medielägena efter utskrift, inklusive avriv, avskalning, klippning, upprullning och applikatorläge."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Väljer termotransfer- eller direkttermoläge beroende på om det laddade mediet använder färgband."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Anger antal utskrifter, gruppering för paus eller klippning samt antal kopior per serienummervärde."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Vänder utskriften för efterföljande fält genom att byta plats på förgrund och bakgrund."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Roterar hela etikettformatet 180 grader."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Speglar det utskrivbara området horisontellt."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Anger utskriftshastighet, matningshastighet och backmatningshastighet i tum per sekund."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Positionerar nästa fält från etikettens origo med fältets övre vänstra hörn som referens."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Positionerar nästa fält från dess baslinje eller streckkodskant, vilket ger roterade fält en stabil ankarpunkt."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Anger innehållet för det aktuella fältet, till exempel text, streckkodsdata eller RFID-data."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Avslutar den aktuella fältdefinitionen."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Aktiverar hexadecimala escape-sekvenser i fältdata för binära byte och reserverade kommandotecken."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Byter plats på förgrund och bakgrund enbart för nästa fält."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Lägger till ett kommentarfält. Skrivaren ignorerar innehållet fram till nästa fältavgränsare."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Anger standardorienteringen för fält och, på nyare firmware, standardjusteringen."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Radbryter fältdata inom ett block med fast bredd, med kontroll över antal rader, radavstånd, indrag och justering."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Radbryter text inom en ruta med fast bredd och höjd och trunkerar text som inte får plats."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Tilldelar ett nummer till ett variabelt fält i lagrade och återkallade format."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Anger data för ett variabelt fält. Till skillnad från data via ^FD rensas denna efter att etiketten har skrivits ut."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Anger tecknet som används för att bädda in numrerade fältvärden i en annan fältsträng."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Anger markörerna som används för realtidsklockans platshållare i fältdata."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Anger standardvärden för streckkodens modulbredd, förhållandet mellan breda och smala streck samt höjd för efterföljande streckkodsfält."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Placerar PDF417- eller MicroPDF417-segment vid specifika origon när ett meddelande sträcker sig över flera symboler."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Anger teckenordningen för det aktuella fältet och kan lägga till extra teckenmellanrum."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Väljer det inbyggda skalbara typsnittet 0 för nästa fält med angiven storlek och orientering."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Väljer ett inbyggt typsnitt med ett enbokstavsnamn, med valfri orientering, höjd och bredd."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Väljer en lagrad typsnittsfil för nästa fält, med valfri orientering, höjd och bredd."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Anger reservtypsnitt, höjd och bredd som används av textfält som inte anger egna värden."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Väljer teckenkodningen som används för att tolka fältdata, inklusive kodsidor och UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Aktiverar avancerad textlayout för efterföljande fält, inklusive dubbelriktad text, formning av glyfer och OpenType-funktioner."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Kopplar ett enbokstavsnamn för typsnitt till en lagrad typsnittsfil."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Anger cachestorleken för renderade skalbara glyfer för att snabba upp upprepad utskrift med stora typsnitt."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Definierar reservkedjor av TrueType-typsnitt som används när bastypsnittet saknar en glyf."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Skriver ut en etikett som listar konfigurerade typsnittslänkar och deras kedjade reservtypsnitt."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Laddar ned ett bitmapptypsnitt och dess mått till skrivarens minne."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Laddar ned ett kodat skalbart Intellifont-typsnitt till skrivarens minne."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Laddar ned ett kodat TrueType-typsnitt med upp till 256 tecken till skrivarens minne."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Laddar ned ett kodat TrueType-typsnitt med fler än 256 glyfer till skrivarens minne."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Laddar ned en kodningstabell som kopplar byte i fältdata till Unicode-värden för TrueType-typsnitt."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Ritar en Code 128-streckkod för ASCII-data med varierande längd, med lägen för automatiskt byte av delmängd och UCC/EAN-data."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Ritar en Code 39-streckkod med en valfri kontrollsiffra enligt Mod 43."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Ritar en Code 93-streckkod som representerar fullständig ASCII-data med hjälp av skifttecken."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Ritar en Code 11-streckkod för siffror och bindestreck, med valfria kontrollsiffror."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Ritar en Interleaved 2 of 5-streckkod för numerisk data med jämn längd, med en valfri kontrollsiffra."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Ritar en Industrial 2 of 5-streckkod, en numerisk kod där data kodas enbart i streck."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Ritar en Standard 2 of 5-streckkod, en självkontrollerande numerisk kod där data kodas enbart i streck."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Ritar en ANSI Codabar-streckkod, även känd som USD-4, för etiketter inom bibliotek, sjukvård och budtransport."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Ritar en LOGMARS-streckkod, försvarsdepartementets variant av Code 39, och omvandlar gemener i data till versaler."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Ritar en MSI-streckkod, en numerisk kod härledd från Plessey, med valbara scheman för kontrollsiffror."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Ritar en Plessey-streckkod, en äldre numerisk kod med valfria kontrollsiffror."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Ritar en EAN-13-streckkod för artikelnummer inom detaljhandel och beräknar kontrollsiffran från tolv datasiffror."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Ritar en EAN-8-streckkod för mindre detaljhandelsförpackningar och beräknar kontrollsiffran från sju datasiffror."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Ritar en UPC-A-streckkod för detaljhandelsförpackningar från elva datasiffror, med valfri utskrift av kontrollsiffran."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Ritar en UPC-E-streckkod, den korta formen av UPC-A. Fältdata utgörs av den fullständiga tiosiffriga tillverkar- och produktkoden."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Ritar en GS1 DataBar-symbol med valbar undertyp, förstoring, höjd och segmentbredd."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Ritar en postal Planet Code-streckkod från siffror kodade som höga och korta streck."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Ritar POSTNET, Planet Code eller USPS Intelligent Mail beroende på vald posttyp."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Ritar en tvåsiffrig eller femsiffrig UPC/EAN-tilläggssymbol bredvid en huvudstreckkod."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Ritar en staplad Code 49-streckkod med två till åtta rader fullständig ASCII-data."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Ritar en QR Code-symbol. Kommandots parametrar anger modell, förstoring och mask, medan fältdata anger felkorrigering och teckenläge."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Ritar en Data Matrix-symbol med konfigurerbar elementstorlek, kvalitetsnivå och hantering av escape-sekvenser."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Ritar en staplad tvådimensionell PDF417-symbol för stora mängder text eller binär data."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Ritar en MicroPDF417-symbol, en kompakt variant av PDF417 med radadressmönster."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Ritar en Aztec-matrissymbol med konfigurerbar förstoring och felkorrigering."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Ritar en CODABLOCK-symbol i läge A, E eller F för större datamängder."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Ritar en UPS MaxiCode-symbol med ett läge för strukturerade transportörsmeddelanden eller allmän data."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Ritar en TLC39-symbol för telekometiketter som kombinerar Code 39 med en MicroPDF417-komponent."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "När kommandot är aktiverat valideras streckkodens data och parametrar, och texten INVALID skrivs ut istället för en felaktig symbol."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Ritar en fylld eller konturerad rektangel. Om en sida görs lika med kantlinjens tjocklek bildas en linje."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Ritar en diagonal linje över en angiven bredd och höjd, lutande åt höger eller vänster."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Ritar en ellips utifrån bredd och höjd i punkter, med inåtgående kantlinjetjocklek och svart eller vitt utseende."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Ritar en cirkel med angiven diameter i punkter, med inåtgående kantlinjetjocklek och svart eller vitt utseende."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Placerar en monokrom bitmapp vid den aktuella fältpositionen med hjälp av ASCII-hex, binär eller komprimerad data."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Skriver ut en inbyggd symbol som valts via fältdata, till exempel copyright eller registrerat varumärke."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Laddar en lagrad bild i början av ett format och förankrar den vid etikettens origo."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Placerar en lagrad bild vid den aktuella fältpositionen utan att skala om den."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Tar bort lagrad grafik, typsnitt eller format från skrivarens minne, med stöd för jokertecken vid gruppborttagning."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Sparar det aktuella formatet som en grafisk bild för snabb återkallning och överlägg med variabel data."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Laddar ned en grafik i ASCII-hex-format till skrivarens minne under ett återanvändbart namn."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Avbryter en grafiköverföring som stannade halvvägs och återställer skrivaren till normal drift."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Laddar ned grafik, ett typsnitt eller ett certifikat till skrivarens minne under ett återanvändbart namn."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Raderar all nedladdad grafik från skrivarens minne. Använd ^ID för att ta bort enskilda objekt."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serialiserar text- eller streckkodsdata över flera etiketter med hjälp av ett startvärde, en riktning och ett stegvärde."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serialiserar utvalda positioner i fältdata med hjälp av en mask och teckenuppsättningar."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Lagrar de efterföljande kommandona som ett återanvändbart format istället för att skriva ut dem direkt."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Återkallar ett lagrat format och fyller i värden för dess numrerade platshållarfält."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Återkallar en lagrad grafik vid den aktuella positionen med oberoende horisontell och vertikal skalning."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Väljer hur skrivaren känner av etikettgränser, med hjälp av mellanrum, markeringar eller kontinuerligt media."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Anger den maximala etikettlängd skrivaren söker efter vid kalibrering av icke-kontinuerligt media."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Anger åtgärden vid uppstart och stängning av skrivhuvudet, till exempel kalibrering, matning eller längdmätning."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Undertrycker backmatning för den aktuella etiketten när det är onödigt att flytta till avrivningspositionen."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Konfigurerar utskrivna underhållsvarningar för rengöring eller byte av skrivhuvud."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Styr om etikettens bitmapp rensas efter utskrift eller behålls för återanvändning av senare etiketter."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Anger texten som visas på underhållsvarningsetiketter för rengöring eller byte av skrivhuvud."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Låser en inställning på kontrollpanelen, till exempel mörkhet eller kalibrering, tills den låses upp."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Aktiverar eller inaktiverar varningsindikatorn för kallt skrivhuvud."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Justerar utskriftens mörkhet i förhållande till skrivarens aktuellt konfigurerade mörkhet."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Anger utskriftens mörkhet till ett absolut värde omedelbart, motsvarande inställningen på frontpanelen."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Styr om en etikett som avbrutits av media-, färgbands- eller skrivhuvudsfel skrivs ut igen efter återhämtning."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Schemalägger periodiska tester av skrivhuvudets element baserat på antal utskrivna etiketter och ett valfritt elementintervall."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Justerar vilopositionen för avrivning eller klippning med en liten punktförskjutning efter utskrift."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Konfigurerar tröskelvärden för tidiga varningar om underhåll av media, färgband och skrivhuvud."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Styr tidpunkten för backmatning kring utskrift och klippning, eller stänger av backmatning helt."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Matar ett angivet antal tomma punktrader med matningshastighet."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Matar fram en tom etikett efter att det aktuella formatet har skrivits ut."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Matar fram en tom etikett så snart skrivaren är ledig, antingen efter det aktuella formatet eller medan skrivaren är pausad."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Pausar efter att det aktuella formatet skrivits ut. Etiketter som redan finns i bufferten kan fortfarande skrivas ut först."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Pausar efter att den aktuella etiketten är klar. Utskriften fortsätter när pausläget upphävs."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Skriver ut föregående etikett igen när applikatorns omtrycksläge är aktiverat."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Upphäver pausläget och återupptar utskriften."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Kör klipparen omedelbart på KR403-skrivare i kiosk-utskriftsläge."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Lägger till extra utmatningslängd på en KR403-kioskpresentatör, vilket gör det lättare att ta det utskrivna mediet."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Kör en presentationscykel på en KR403 som erbjuder det utskrivna mediet för manuell borttagning."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Anger färgbandets matningsspänning på skrivare i PAX-serien."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Anger datum och tid för skrivarens realtidsklocka."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Väljer formatet för datum och tid som visas på konfigurationsetiketten och kontrollpanelen."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Definierar sekundära klockförskjutningar från realtidsklockan. Förskjutningarna går förlorade när skrivaren stängs av."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Anger när tidsfält stämplas och väljer språket för dag- och månadsnamn."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Väljer visningsspråket för skrivarens kontrollpanel från en lista som varierar beroende på modell."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Väljer en lagrad kodningstabell som används för att omvandla fältdata före utskrift."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Väljer tolkning enligt ursprungliga ZPL eller ZPL II för kompatibilitet med äldre format."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Tilldelar skrivaren ett nätverksnamn och en fritextbeskrivning, som båda visas på konfigurationsetiketten och skrivarens inbyggda webbsida."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Anger det fyrsiffriga lösenordet för kontrollpanelens inställningsmenyer."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Sparar, återställer eller nollställer skrivarens konfigurationsinställningar."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Ändrar prefixtecknet för formatkommandon, normalt cirkumflex, antingen globalt eller för det aktuella formatet."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Ändrar avgränsartecknet för parametrar, normalt kommatecken, antingen globalt eller för det aktuella formatet."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Ändrar prefixtecknet för direktkommandon, normalt tilde, antingen globalt eller för det aktuella formatet."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Omkopplar skrivarens minnesbokstäver så att lagrade objekt kan behålla sina befintliga namn."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Avbryter köade format och den aktuella satsen. Etiketten som redan skrivs ut kan slutföras."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Raderar och initierar om en flashminnesenhet. Strömavbrott under åtgärden kan skada lagringen."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Initierar om det batteribackade minneskortet efter installation eller batteribyte."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Kör mediekalibrering för att mäta etikettlängden och justera media- och färgbandssensorerna."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Skriver ut inkommande byte och deras hexadecimala värden istället för att exekvera dem, för diagnostik av värdkommunikationen."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Lämnar diagnostikläget för kommunikation och återställer skrivaren till normal etikettutskrift."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Anger om låg batterispänning pausar en bärbar skrivare eller tillåter att utskriften fortsätter."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Kör mediekalibrering och skriver ut en sensorprofilgraf för övergången vid etikettmellanrummet."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Startar Zebra BASIC Interpreter på skrivaren och kan valfritt starta ett lagrat program."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Konfigurerar hjälpporten för applikator- eller verifieringssignaler samt felhantering."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Väljer mediesensorn som används för spårning, vanligtvis reflektiv eller genomlysande."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Mäter och lagrar etikettlängden, samtidigt som tomma etiketter matas fram under processen."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Anger normal eller reducerad upplösning i punkter per millimeter. Reducerad densitet fördubblar den fysiska storleken på formatets koordinater."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Gör att misslyckade tester av skrivhuvudets element stoppar utskriften tills skrivaren startas om eller toleransläget återställs."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Tillåter att utskriften fortsätter efter ett misslyckat test av skrivhuvudets element."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Avbryter nästa köade format och pausar skrivaren, ett buffrat format per kommando."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Avslutar en aktiv session i Zebra BASIC Interpreter och återställer porten till ZPL-bearbetning."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Startar om skrivarens firmware och laddar om sparade standardinställningar för kommunikation och konfiguration."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Avbryter formatet som för närvarande tas emot utan att avbryta etiketter som redan skrivs ut."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Återställer en vald användningsräknare i skrivaren, till exempel användar- eller RFID-räknare."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Konfigurerar alla kommunikationsparametrar för serieporten i ett och samma kommando."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Åsidosätter intensitets- eller baslinjevärden för den genomlysande sensorn som normalt anges vid kalibrering."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Startar utskriften innan hela formatet har tagits emot för att förbättra genomströmningen vid komplexa etiketter."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Inaktiverar ett specifikt ZebraNet-larmvillkor och dess mottagare."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Anger skrivhuvudets resistansvärde som används för beräkning av brännenergi."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Anger tröskelvärden för mediesensorn, etikettlängd och LED-intensiteter som normalt bestäms vid kalibrering."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Aktiverar ett ZebraNet-larm för ett specifikt villkor och en specifik mottagare."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopierar lagrade objekt mellan skrivarens minnesenheter, med stöd för jokertecken vid gruppkopiering."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Skriver ut en konfigurationsetikett med information om sensorer, nätverk, firmware och minne."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Skriver ut en katalogetikett för lagrade objekt, inbyggda typsnitt eller tillgängliga streckkoder."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Skriver ut begärd serviceinformation, till exempel räkneverk eller skrivhuvudets historik, på en etikett."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Konfigurerar inställningar för KR403-kioskpresentatören, inklusive klipplängd, klippmarginal, indragningstid och slinglängd."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Styr dynamisk omkalibrering av etikettlängd och sensortröskelvärde efter start eller när medielocket öppnats."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Startar avvecklingsläget för att förbereda skrivaren inför återförsäljning eller återvinning."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Anger automatisk vänteläges-avstängning efter en period av inaktivitet, med alternativ för köade etiketter."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Matar ut eller drar in media som redan presenterats av en KR403-kioskpresentatör."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Kör batteriurladdningsläge på bärbara skrivare för batterikonditionering."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Returnerar mätvärden för batteri- och skrivhuvudseffekt från mobila skrivare."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Returnerar diagnostikdata för skrivhuvudet, inklusive temperaturer, resultat av elementtester, mörkhet och hastighet."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Returnerar ett lagrat ZPL-format från skrivarens minne till värddatorn."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Returnerar en lagrad grafisk bild från skrivarens minne till värddatorn."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Returnerar skrivarens aktuella konfiguration som läsbar text via värdporten."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Returnerar skrivarens identitetsdata, inklusive modell, firmware, upplösning, minne och installerade tillval."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Returnerar totalt, maximalt tillgängligt och för närvarande ledigt minne i skrivaren, angivet i kilobyte."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Returnerar begärd status-, identitets-, räkneverks- eller underhållsdata till värddatorn."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Returnerar statussträngar till värddatorn för gränssnitt, media, pausläge, etikettlängd och buffrade format."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Returnerar typsnittslänktabellen till värddatorn, med en lista över bastypsnitt och reservtypsnitt."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Returnerar de konfigurerade ZebraNet-larmen, inklusive villkor, mottagare och flaggor för aktiverat eller avaktiverat läge."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Returnerar data från ett numrerat fält till värddatorn, med en valfri gräns för antal byte."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Returnerar en kataloglistning för en minnesenhet, inklusive återstående ledigt utrymme."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Returnerar en lagrad grafik till värddatorn i ett nedladdningsbart filformat."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Returnerar skrivarens beskrivning som XML för inställningar, objektkatalog eller status."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Läser från eller skriver till en RFID-tagg, inklusive dataformat, minnesbank och åtkomstlösenord."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Läser den aktuella RFID-taggens id för användning i etikettdata eller ett svar till värddatorn."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Styr mediets rörelse under äldre RFID-åtgärder. Link-OS-format använder istället ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Upptäcker fler än en RFID-tagg i kodningsfältet och kan makulera etiketter med felaktigt placerade taggar i närheten."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Anger antalet omförsök för äldre RFID-läsning eller RFID-skrivning. Link-OS-format använder istället ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Definierar bitlayouten som används för att koda RFID-EPC-fält på en tagg."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Anger RFID-alternativ för efterföljande etiketter, inklusive taggtyp, programmeringsposition, felhantering och längden på VOID-stapeln."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Läser taggdata till ett etikettfält i äldre RFID-format."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Skriver taggdata i äldre RFID-format. ^RF hanterar läsning, skrivning och lösenordshantering."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Bygger ett EPC-serienummer från taggens id och skriver in det i EPC-fältets lägsta bitar."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Returnerar resultatet av varje RFID-kodning till värddatorn, vilket gör att mjukvaran kan skilja godkända taggar från makulerade etiketter."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Anger effekten för RFID-läsning och RFID-skrivning när kalibreringen inte ger användbara värden."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Låser RFID-taggens minne, antingen reversibelt eller permanent, för att förhindra senare skrivningar."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Kör RFID-kalibrering och returnerar inställningar för position, antenn och effekt till värddatorn."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Returnerar loggen för RFID-åtgärder, inklusive position, antenn, effektnivå och resultat."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Väljer om skrivaren söker efter en trådbunden skrivarserver vid uppstart."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Väljer den primära nätverksenheten, trådbunden eller trådlös."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresserar en skrivare på en äldre RS-485-multidrop-linje med hjälp av dess nätverks-id."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Tilldelar det nätverks-id som används för att adressera en skrivare på en äldre RS-485-multidrop-linje."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Anger SNMP-identitet och community-strängar för skrivaren."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Väljer om nätverksinställningarna vid start hämtas från skrivaren eller från en ansluten skrivarserver."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Växlar alla skrivare på en äldre multidrop-linje till transparent mottagningsläge."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Konfigurerar SMTP-server och domäninställningar för skrivarserverns e-postlarm."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Växlar den adresserade äldre multidrop-skrivaren till transparent mottagningsläge."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Anger hur länge en autentiserad IP-adress kan komma åt skrivarens webbsidor innan ny autentisering krävs."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Anger formen och värdet för DHCP-klientidentifieraren för skrivarservern."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Konfigurerar IP-adress, nätmask och gateway för skrivarens nätverksgränssnitt."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Konfigurerar IP-inställningar, timeout-värden och raw-port för den trådbundna skrivarservern på äldre firmware."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Väljer mottagnings- och sändningsantenner för den trådlösa radion."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Konfigurerar den föråldrade säkerhetsmetoden WEP och tillhörande nyckelmaterial för äldre trådlös firmware."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Konfigurerar den föråldrade autentiseringsmetoden Cisco LEAP för äldre trådlös firmware."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Anger lösenordet för de trådlösa inställningarna på skrivarens kontrollpanel."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Konfigurerar dataöverföringshastigheter för 802.11b och sändningseffekt på äldre trådlösa skrivarservrar."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Konfigurerar namnet på det trådlösa nätverket, radioläge, preambellängd och keep-alive-beteende."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Konfigurerar trådlöst säkerhetsläge, nycklar och autentiseringsuppgifter i ett och samma kommando."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Skriver ut en nätverkskonfigurationsetikett medan skrivaren är inaktiv."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Startar om det trådlösa radiokortet och skrivarservern, vilket gör att radion ansluter till nätverket på nytt."
+  }
+}

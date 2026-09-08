@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Inicia um novo formato de etiqueta. Os comandos seguintes definem campos, o tratamento do suporte e o comportamento da impressora para essa etiqueta."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Fecha o formato de etiqueta atual e envia-o para impressão."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Define a largura imprimível em pontos. O conteúdo que ultrapassa essa largura é cortado pela impressora."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Define o comprimento da etiqueta em pontos, determinando onde termina o formato imprimível."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Desloca a posição de origem da etiqueta, alterando o ponto de referência usado pelas coordenadas dos campos seguintes."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Aplica um deslocamento horizontal às posições dos campos, por compatibilidade com formatos Zebra mais antigos."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Adiciona um deslocamento vertical a todo o formato em relação à margem superior do suporte."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Define a unidade das coordenadas em pontos, polegadas ou milímetros, e pode escalar formatos entre resoluções de impressão diferentes."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Define o modo de tratamento do suporte após a impressão, incluindo os modos de destacar, descolar, corte, rebobinagem e aplicador."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Seleciona o modo de transferência térmica ou térmico direto, conforme o suporte carregado use ou não ribbon."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Define a quantidade de impressão, o agrupamento de pausa ou corte e o número de cópias por valor de série."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Inverte a impressão dos campos seguintes trocando o primeiro plano com o fundo."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Roda o formato completo da etiqueta 180 graus."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Espelha a área imprimível na horizontal."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Define a velocidade de impressão, a velocidade de avanço rápido e a velocidade de retrocesso, em polegadas por segundo."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Posiciona o campo seguinte a partir da origem da etiqueta, usando o seu canto superior esquerdo."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Posiciona o campo seguinte a partir da sua linha de base ou da margem do código de barras, dando aos campos rodados um ponto de ancoragem estável."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Fornece o conteúdo do campo atual, incluindo texto, dados de código de barras ou dados RFID."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Termina a definição do campo atual."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Ativa sequências de escape hexadecimais dentro dos dados do campo, para bytes binários e caracteres de comando reservados."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Inverte o primeiro plano e o fundo apenas para o campo seguinte."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Adiciona um campo de comentário. A impressora ignora o seu conteúdo até ao separador de campo seguinte."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Define a orientação predefinida dos campos e, em firmware mais recente, o alinhamento predefinido."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Envolve os dados do campo num bloco de largura fixa, com controlo do número de linhas, espaçamento, avanço e alinhamento."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Envolve o texto numa caixa de largura e altura fixas, truncando o excesso."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Atribui um número a um campo variável em formatos armazenados e recuperados."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Fornece dados para um campo variável. Ao contrário dos dados de ^FD, estes são limpos depois de a etiqueta ser impressa."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Define o caractere usado para incorporar valores de campos numerados dentro de outra cadeia de campo."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Define os marcadores usados para os tokens do relógio em tempo real dentro dos dados do campo."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Define a largura predefinida do módulo do código de barras, a proporção entre barra larga e estreita, e a altura para os campos de código de barras seguintes."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Posiciona segmentos PDF417 ou MicroPDF417 em origens específicas quando uma mensagem se estende por vários símbolos."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Define a ordem dos caracteres do campo atual e pode acrescentar espaçamento extra entre caracteres."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Seleciona a fonte escalável residente 0 para o campo seguinte, no tamanho e orientação pedidos."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Seleciona uma fonte residente por um nome de um único caractere, com orientação, altura e largura opcionais."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Seleciona um ficheiro de fonte armazenado para o campo seguinte, com orientação, altura e largura opcionais."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Define a fonte, altura e largura de recurso usadas pelos campos de texto que não especificam as suas próprias."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Seleciona a codificação usada para interpretar os dados dos campos, incluindo páginas de código e UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Ativa o layout de texto avançado para os campos seguintes, incluindo texto bidirecional, formação de glifos e funcionalidades OpenType."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Associa um nome de fonte de um único caractere a um ficheiro de fonte armazenado."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Define o tamanho da cache para glifos escaláveis renderizados, acelerando a impressão repetida de fontes grandes."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Define cadeias de fontes TrueType de recurso, usadas quando a fonte base não tem um determinado glifo."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Imprime uma etiqueta com a lista das associações de fontes configuradas e das respetivas fontes de recurso encadeadas."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Transfere uma fonte de mapa de bits e as suas métricas para a memória da impressora."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Transfere uma fonte Intellifont escalável codificada para a memória da impressora."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Transfere uma fonte TrueType codificada, com até 256 caracteres, para a memória da impressora."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Transfere uma fonte TrueType codificada, com mais de 256 glifos, para a memória da impressora."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Transfere uma tabela de codificação que associa bytes dos dados do campo a valores Unicode, para fontes TrueType."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Desenha um código de barras Code 128 para dados ASCII de comprimento variável, com modos de comutação automática de subconjunto e de dados UCC/EAN."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Desenha um código de barras Code 39, com dígito de verificação Mod 43 opcional."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Desenha um código de barras Code 93, representando dados ASCII completos através de caracteres de mudança."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Desenha um código de barras Code 11 para dígitos e hífenes, com dígitos de verificação opcionais."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Desenha um código de barras Interleaved 2 of 5 para dados numéricos de comprimento par, com dígito de verificação opcional."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Desenha um código de barras Industrial 2 of 5, um código numérico em que os dados são codificados apenas nas barras."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Desenha um código de barras Standard 2 of 5, um código numérico autoverificável em que os dados são codificados apenas nas barras."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Desenha um código de barras ANSI Codabar, também conhecido como USD-4, usado em etiquetas de bibliotecas, saúde e transportadoras."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Desenha um código de barras LOGMARS, a variante do Code 39 usada pelo Department of Defense, convertendo os dados em minúsculas para maiúsculas."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Desenha um código de barras MSI, um código numérico derivado do Plessey, com esquemas de dígito de verificação selecionáveis."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Desenha um código de barras Plessey, um código numérico mais antigo, com dígitos de verificação opcionais."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Desenha um código de barras EAN-13 para números de artigo de retalho, derivando o dígito de verificação a partir de doze dígitos de dados."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Desenha um código de barras EAN-8 para embalagens de retalho pequenas, derivando o dígito de verificação a partir de sete dígitos de dados."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Desenha um código de barras UPC-A para embalagens de retalho a partir de onze dígitos de dados, com impressão opcional do dígito de verificação."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Desenha um código de barras UPC-E, a forma reduzida do UPC-A. Os dados do campo correspondem ao código completo de dez dígitos do fabricante e do produto."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Desenha um símbolo GS1 DataBar, com subtipo, ampliação, altura e largura de segmento selecionáveis."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Desenha um código de barras postal Planet Code, a partir de dígitos codificados em barras altas e curtas."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Desenha POSTNET, Planet Code ou USPS Intelligent Mail, conforme o tipo de código postal selecionado."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Desenha um símbolo adicional UPC/EAN de dois ou cinco dígitos ao lado de um código de barras principal."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Desenha um código de barras empilhado Code 49, com duas a oito linhas de dados ASCII completos."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Desenha um símbolo QR Code. Os parâmetros do comando definem o modelo, a ampliação e a máscara. Os dados do campo definem a correção de erros e o modo de caracteres."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Desenha um símbolo Data Matrix, com tamanho de elemento, nível de qualidade e tratamento de sequências de escape configuráveis."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Desenha um símbolo bidimensional empilhado PDF417, para grandes quantidades de texto ou dados binários."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Desenha um símbolo MicroPDF417, uma variante compacta do PDF417 com padrões de endereço de linha."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Desenha um símbolo matricial Aztec, com ampliação e correção de erros configuráveis."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Desenha um símbolo CODABLOCK no modo A, E ou F, para volumes de dados maiores."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Desenha um símbolo UPS MaxiCode, com um modo para mensagens estruturadas de transportadora ou dados gerais."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Desenha um símbolo TLC39 para etiquetas de telecomunicações, combinando o Code 39 com um componente MicroPDF417."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Quando ativado, valida os dados e os parâmetros do código de barras, imprimindo INVALID em vez de um símbolo incorreto."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Desenha um retângulo preenchido ou apenas com contorno. Igualar um lado à espessura do contorno produz uma linha."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Desenha uma linha diagonal ao longo de uma largura e altura dadas, inclinada para a direita ou para a esquerda."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Desenha uma elipse a partir de uma largura e altura em pontos, com espessura de contorno para dentro e resultado a preto ou branco."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Desenha um círculo com o diâmetro indicado em pontos, com espessura de contorno para dentro e resultado a preto ou branco."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Coloca um mapa de bits monocromático na posição atual do campo, usando dados em hexadecimal ASCII, binários ou comprimidos."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Imprime um símbolo residente selecionado pelos dados do campo, como copyright ou marca registada."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Carrega uma imagem armazenada no início de um formato e fixa-a na origem da etiqueta."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Coloca uma imagem armazenada na posição atual do campo, sem a redimensionar."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Elimina gráficos, fontes ou formatos armazenados na memória da impressora, com suporte para caracteres universais na eliminação de grupos."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Guarda o formato atual como uma imagem gráfica, para recuperação rápida e sobreposição de dados variáveis."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Transfere um gráfico em hexadecimal ASCII para a memória da impressora, sob um nome reutilizável."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Interrompe um carregamento de gráfico deixado a meio e devolve a impressora ao funcionamento normal."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Transfere um gráfico, uma fonte ou um certificado para a memória da impressora, sob um nome reutilizável."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Apaga todos os gráficos transferidos da memória da impressora. Use ^ID para eliminar objetos específicos."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serializa dados de campos de texto ou código de barras ao longo das etiquetas, usando um valor inicial, uma direção e um incremento."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serializa posições selecionadas dos dados do campo, usando uma máscara e conjuntos de caracteres."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Armazena os comandos seguintes como um formato reutilizável, em vez de os imprimir de imediato."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Recupera um formato armazenado e fornece valores para os seus campos de substituição numerados."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Recupera um gráfico armazenado na posição atual, com escala horizontal e vertical independentes."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Seleciona o modo como a impressora deteta os limites da etiqueta, usando intervalos, marcas ou suporte contínuo."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Define o comprimento máximo de etiqueta que a impressora procura ao calibrar suporte não contínuo."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Define a ação ao ligar a impressora e ao fechar a cabeça de impressão, incluindo calibração, avanço ou medição do comprimento."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Suprime o retrocesso para a etiqueta atual, quando não é necessário mover para a posição de destacar."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Configura alertas de manutenção impressos, relativos à limpeza ou substituição da cabeça de impressão."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Controla se o mapa de bits da etiqueta é limpo após a impressão ou mantido para reutilização em etiquetas seguintes."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Define o texto apresentado nas etiquetas de alerta de manutenção, relativas à limpeza ou substituição da cabeça de impressão."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Bloqueia uma definição do painel de controlo, como a densidade ou a calibração, até ser desbloqueada."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Ativa ou desativa o indicador de aviso de cabeça de impressão fria."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Ajusta a densidade de impressão em relação à densidade atualmente configurada na impressora."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Define de imediato a densidade de impressão em valor absoluto, correspondendo à definição de densidade do painel frontal."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Controla se uma etiqueta interrompida por falhas de suporte, ribbon ou cabeça de impressão é reimpressa após a recuperação."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Agenda testes periódicos aos elementos da cabeça de impressão, por número de etiquetas impressas e intervalo de elementos opcional."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Ajusta a posição de repouso de destacar ou de corte com um pequeno deslocamento em pontos, após a impressão."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Configura limiares de aviso antecipado para a manutenção do suporte, do ribbon e da cabeça de impressão."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Controla o momento do retrocesso em torno da impressão e do corte, ou desativa o retrocesso."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Avança um número especificado de linhas de pontos em branco, à velocidade de avanço rápido."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Avança uma etiqueta em branco depois de o formato atual ter sido impresso."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Avança uma etiqueta em branco assim que a impressora fica livre, depois do formato atual ou durante a pausa."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Pausa após a impressão do formato atual. As etiquetas já em memória intermédia ainda podem ser impressas antes."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Pausa depois de a etiqueta atual terminar. A impressão é retomada quando o estado de pausa é removido."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Reimprime a etiqueta anterior quando o modo de reimpressão do aplicador está ativado."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Remove o modo de pausa e retoma a impressão."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Aciona de imediato o cortador em impressoras KR403 no modo de impressão em quiosque."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Acrescenta comprimento extra à ejeção num apresentador de quiosque KR403, facilitando a retirada do suporte impresso."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Executa um ciclo do apresentador KR403, disponibilizando o suporte impresso para remoção manual."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Define a tensão de alimentação do ribbon em impressoras da série PAX."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Define a data e a hora do relógio em tempo real da impressora."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Seleciona o formato de data e hora apresentado na etiqueta de configuração e no painel de controlo."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Define desvios de relógio secundários em relação ao relógio em tempo real. Esses desvios perdem-se quando a impressora é desligada."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Define o momento em que os campos de hora são marcados e seleciona o idioma dos nomes dos dias e dos meses."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Seleciona o idioma de apresentação do painel de controlo da impressora, a partir de uma lista que varia consoante o modelo."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Seleciona uma tabela de codificação armazenada, usada para converter os dados do campo antes da impressão."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Seleciona a interpretação de comandos do ZPL original ou do ZPL II, por compatibilidade com formatos mais antigos."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Atribui à impressora um nome de rede e uma descrição de texto livre, ambos apresentados na etiqueta de configuração e na sua página web integrada."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Define a palavra-passe de quatro dígitos para os menus de configuração do painel de controlo."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Guarda, restaura ou repõe as definições de configuração da impressora."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Altera o carácter de prefixo dos comandos de formato, normalmente o circunflexo, de forma global ou apenas para o formato atual."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Altera o carácter delimitador de parâmetros, normalmente a vírgula, de forma global ou apenas para o formato atual."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Altera o carácter de prefixo dos comandos imediatos, normalmente o til, de forma global ou apenas para o formato atual."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Reatribui as letras de memória da impressora, para que os objetos armazenados possam manter os seus nomes existentes."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Cancela os formatos em fila de espera e o lote atual. A etiqueta que já está a ser impressa pode terminar."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Apaga e reinicializa um dispositivo de memória flash. A perda de energia durante esta operação pode corromper o armazenamento."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Reinicializa o cartão de memória com backup de bateria, após a instalação ou a substituição da bateria."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Executa a calibração do suporte, para medir o comprimento da etiqueta e ajustar os sensores de suporte e de ribbon."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Imprime os bytes recebidos e os seus valores hexadecimais em vez de os executar, para diagnóstico da comunicação com o anfitrião."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Sai do modo de diagnóstico de comunicações e devolve a impressora à impressão normal de etiquetas."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Define se uma tensão de bateria baixa pausa uma impressora portátil ou permite que a impressão continue."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Executa a calibração do suporte e imprime um gráfico de perfil do sensor, relativo à transição do intervalo entre etiquetas."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Inicia o Zebra BASIC Interpreter na impressora, podendo opcionalmente iniciar um programa armazenado."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Configura a porta auxiliar para sinais de aplicador ou verificador, e o tratamento de erros."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Seleciona o sensor de suporte usado para o seguimento, normalmente refletivo ou de transmissão."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Mede e armazena o comprimento da etiqueta, avançando etiquetas em branco durante o processo."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Define a densidade normal ou reduzida em pontos por milímetro. A densidade reduzida duplica o tamanho físico das coordenadas do formato."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Faz com que testes falhados aos elementos da cabeça de impressão interrompam a impressão, até a impressora ser reiniciada ou o modo tolerante ser restaurado."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Permite que a impressão continue após um teste falhado a um elemento da cabeça de impressão."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Cancela o próximo formato em fila de espera e pausa a impressora, um formato em memória intermédia por comando."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Sai de uma sessão ativa do Zebra BASIC Interpreter e devolve a porta ao processamento de ZPL."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Reinicia o firmware da impressora e recarrega as predefinições de comunicação e configuração guardadas."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Cancela o formato que está a ser recebido no momento, sem cancelar as etiquetas já em impressão."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Repõe um contador de utilização selecionado da impressora, incluindo contadores de utilizador ou de RFID."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Configura todos os parâmetros de comunicação da porta série num único comando."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Substitui a intensidade do sensor de transmissão ou os valores de referência normalmente definidos pela calibração."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Inicia a impressão antes de o formato completo ter chegado, para melhorar o rendimento em etiquetas complexas."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Desativa uma condição e destino específicos de alerta ZebraNet."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Define o valor de resistência da cabeça de impressão usado nos cálculos de energia de queima."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Define os limiares do sensor de suporte, o comprimento da etiqueta e as intensidades dos LED, normalmente determinados pela calibração."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Ativa um alerta ZebraNet para uma condição e destino específicos."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Copia objetos armazenados entre dispositivos de memória da impressora, com suporte para caracteres universais na cópia de grupos."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Imprime uma etiqueta de configuração com informação sobre sensores, rede, firmware e memória."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Imprime uma etiqueta de diretório dos objetos armazenados, das fontes residentes ou dos códigos de barras disponíveis."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Imprime numa etiqueta a informação de assistência solicitada, como o odómetro ou o histórico da cabeça de impressão."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Configura as definições do apresentador de quiosque KR403, incluindo o comprimento de corte, a margem de corte, o tempo limite de retração e o comprimento de laço."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Controla a recalibração dinâmica do comprimento da etiqueta e do limiar do sensor, após ligar a impressora ou abrir o compartimento do suporte."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Inicia o modo de desativação, para preparar a impressora para revenda ou reciclagem."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Define o encerramento automático em suspensão após um período de inatividade, com opções para etiquetas em fila de espera."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Ejeta ou retrai o suporte já apresentado por um apresentador de quiosque KR403."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Executa o modo de descarga da bateria em impressoras portáteis, para condicionamento da bateria."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Devolve leituras de energia da bateria e da cabeça de impressão de impressoras móveis."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Devolve dados de diagnóstico da cabeça de impressão, incluindo temperaturas, resultados dos testes aos elementos, densidade e velocidade."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Devolve ao anfitrião um formato ZPL armazenado na memória da impressora."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Devolve ao anfitrião uma imagem gráfica armazenada na memória da impressora."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Devolve a configuração atual da impressora como texto legível, através da porta do anfitrião."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Devolve dados de identidade da impressora, incluindo modelo, firmware, resolução, memória e opções instaladas."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Devolve a memória total, máxima disponível e atualmente livre da impressora, em kilobytes."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Devolve ao anfitrião os dados de estado, identidade, odómetro ou manutenção solicitados."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Devolve cadeias de estado do anfitrião relativas à interface, ao suporte, ao estado de pausa, ao comprimento da etiqueta e aos formatos em memória intermédia."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Devolve ao anfitrião a tabela de associações de fontes, listando as fontes base e as fontes de recurso."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Devolve os alertas ZebraNet configurados, incluindo condições, destinos e indicadores de ativação ou desativação."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Devolve ao anfitrião os dados de um campo numerado, com um limite de bytes opcional."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Devolve a listagem do diretório de um dispositivo de memória, incluindo o espaço livre restante."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Devolve ao anfitrião um gráfico armazenado, num formato de ficheiro transferível."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Devolve XML de descrição da impressora, relativo a definições, diretório de objetos ou estado."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Lê ou escreve numa etiqueta RFID, incluindo o formato dos dados, o banco de memória e a palavra-passe de acesso."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Lê o ID da etiqueta RFID atual, para uso nos dados da etiqueta ou numa resposta ao anfitrião."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Controla o movimento do suporte durante operações RFID de formatos legados. Os formatos Link-OS usam ^RS em vez disto."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Deteta mais do que uma etiqueta RFID no campo de codificação, podendo anular etiquetas com etiquetas soltas nas proximidades."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Define o número de tentativas para leituras ou escritas RFID em formatos legados. Os formatos Link-OS usam ^RS em vez disto."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Define o esquema de bits usado para codificar os campos EPC de RFID numa etiqueta."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Define opções de RFID para as etiquetas seguintes, incluindo o tipo de tag RFID, a posição de programação, o tratamento de falhas e o comprimento da barra VOID."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Lê dados da etiqueta RFID para um campo da etiqueta, em formatos RFID legados."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Escreve dados na etiqueta RFID, em formatos legados. O ^RF cobre a leitura, a escrita e o tratamento de palavras-passe."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Constrói um número de série EPC a partir do ID da etiqueta e escreve-o nos bits menos significativos do EPC."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Devolve ao anfitrião o resultado de cada codificação RFID, permitindo ao software distinguir etiquetas válidas de etiquetas anuladas."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Define a potência de leitura e escrita RFID, quando a calibração não produz valores utilizáveis."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Bloqueia a memória da etiqueta RFID, de forma reversível ou permanente, para impedir escritas posteriores."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Executa a calibração RFID e devolve ao anfitrião as definições de posição, antena e potência."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Devolve o registo de operações RFID, incluindo posição, antena, nível de potência e resultado."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Seleciona se a impressora procura um servidor de impressão com fios durante o arranque."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Seleciona o dispositivo de rede principal, com ou sem fios."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Endereça uma impressora numa linha RS-485 multiponto legada, através do ID de rede."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Atribui o ID de rede usado para endereçar uma impressora numa linha RS-485 multiponto legada."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Define a identidade SNMP e as cadeias de comunidade da impressora."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Seleciona se as definições de rede no arranque provêm da impressora ou do servidor de impressão ligado."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Coloca todas as impressoras de uma linha multiponto legada no modo de receção transparente."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Configura o servidor SMTP e as definições de domínio para os alertas de correio eletrónico do servidor de impressão."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Coloca a impressora endereçada numa linha multiponto legada no modo de receção transparente."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Define durante quanto tempo um endereço IP autenticado pode aceder às páginas web da impressora antes de ser exigida nova autenticação."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Define a forma e o valor do identificador de cliente DHCP do servidor de impressão."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Configura o endereço IP, a máscara de sub-rede e a gateway de uma interface de rede da impressora."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Configura as definições de IP, os tempos limite e a porta raw do servidor de impressão com fios, em firmware mais antigo."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Seleciona as antenas de receção e transmissão do rádio sem fios."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Configura a segurança WEP obsoleta e o respetivo material de chaves, em firmware sem fios mais antigo."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Configura a autenticação Cisco LEAP obsoleta, em firmware sem fios mais antigo."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Define a palavra-passe para as definições sem fios no painel de controlo da impressora."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Configura as taxas de dados 802.11b e a potência de transmissão em servidores de impressão sem fios mais antigos."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Configura o nome da rede sem fios, o modo de rádio, o comprimento do preâmbulo e o comportamento de keep-alive."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Configura o modo de segurança sem fios, as chaves e as credenciais num único comando."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Imprime uma etiqueta de configuração de rede enquanto a impressora está inativa."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Reinicia a placa de rádio sem fios e o servidor de impressão, fazendo com que o rádio volte a associar-se à rede."
+  }
+}

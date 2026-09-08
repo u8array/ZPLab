@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Alustab uut sildivormingut. Sellele järgnevad käsud määravad väljad, kandja käsitluse ja printeri käitumise selle sildi jaoks."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Lõpetab praeguse sildivormingu ja saadab selle printimiseks."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Määrab prinditava laiuse punktides. Printer lõikab sellest laiusest väljuva sisu ära."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Määrab sildi pikkuse punktides, mis määrab prinditava vormingu lõpu."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Nihutab sildi lähtepositsiooni, muutes hilisemate väljakoordinaatide lähtepunkti."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Rakendab väljade positsioonidele horisontaalse nihke ühilduvuseks vanemate Zebra vormingutega."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Lisab kogu vormingule vertikaalse nihke kandja ülaserva suhtes."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Määrab koordinaatide ühikuks punktid, tollid või millimeetrid ning saab vorminguid eri prindieraldusvõimete vahel skaleerida."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Määrab kandja käsitlemise režiimi pärast printimist, sealhulgas ärarebimise, mahakoorimise, lõikuri, tagasikerimise ja rakendaja režiimid."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Valib termotransfeer- või otsetermorežiimi vastavalt sellele, kas laaditud kandja kasutab värvilinti."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Määrab printimiskoguse, pausi- või lõikerühmituse ning koopiate arvu seerianumbri kohta."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Pöörab järgnevate väljade printimise, vahetades esi- ja tagaplaani värvid."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Pöörab kogu sildivormingu 180 kraadi võrra."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Peegeldab prinditava ala horisontaalselt."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Määrab printimiskiiruse, edasikerimiskiiruse ja tagasisöödukiiruse tollides sekundis."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Positsioneerib järgmise välja sildi lähtepositsioonist, kasutades selle ülemist vasakut nurka."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Positsioneerib järgmise välja selle baasjoonest või vöötkoodi servast, andes pööratud väljadele stabiilse ankru."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Määrab praeguse välja sisu, sealhulgas teksti, vöötkoodi andmed või RFID-andmed."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Lõpetab praeguse välja definitsiooni."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Lubab välja andmetes kasutada kuueteistkümnendsüsteemi paojadasid binaarsete baitide ja reserveeritud käsumärkide jaoks."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Vahetab esi- ja tagaplaani värvid ainult järgmise välja jaoks."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Lisab kommentaariväli. Printer eirab selle sisu kuni järgmise väljaeraldajani."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Määrab väljade vaikimisi suuna ja uuemas püsivaras ka vaikimisi joondamise."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Murrab välja andmed fikseeritud laiusega ploki sisse, kus saab määrata ridade arvu, reavahe, taande ja joondamise."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Murrab teksti fikseeritud laiuse ja kõrgusega kasti sisse, kärpides üleliigse sisu."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Omistab muutuja väljale numbri salvestatud ja taaskutsutud vormingutes."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Sisaldab muutuja välja andmed. Erinevalt ^FD andmetest kustutatakse need pärast sildi printimist."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Määrab märgi, mida kasutatakse nummerdatud väljaväärtuste sisestamiseks teise välja sisusse."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Määrab reaalajakella tähiste jaoks kasutatavad markerid välja andmetes."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Määrab järgnevate vöötkoodiväljade vaikimisi mooduli laiuse, laia ja kitsa riba suhte ning kõrguse."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Paigutab PDF417 või MicroPDF417 segmendid kindlatesse asukohtadesse, kui üks sõnum jaguneb mitme sümboli vahel."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Määrab praeguse välja märkide järjekorra ja võib lisada tähemärkidevahelist ruumi."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Valib järgmise välja jaoks residentse skaleeritava fondi 0 soovitud suuruse ja suunaga."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Valib residentse fondi ühetähelise nime järgi, valikuliste suuna, kõrguse ja laiusega."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Valib järgmise välja jaoks salvestatud fondifaili, valikuliste suuna, kõrguse ja laiusega."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Määrab varufondi, kõrguse ja laiuse, mida kasutavad tekstiväljad, mis ei määra ühtegi neist ise."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Valib kodeeringu, mida kasutatakse välja andmete tõlgendamiseks, sealhulgas koodilehed ja UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Lubab järgnevate väljade jaoks täiustatud tekstipaigutuse, sealhulgas kahesuunalise teksti, kujunduse ja OpenType-funktsioonid."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Seob ühetähelise fondinime salvestatud fondifailiga."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Määrab renderdatud skaleeritavate glüüfide vahemälu suuruse, et kiirendada korduvat suure fondi väljundit."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Määrab TrueType varuahelad, mida kasutatakse, kui baasfondil puudub vajalik glüüf."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Prindib sildi, mis loetleb seadistatud fondiseosed ja nende ahelasse ühendatud varufondid."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Laadib printeri mällu bitmap-fondi ja selle mõõdud."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Laadib printeri mällu kodeeritud skaleeritava Intellifont-fondi."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Laadib printeri mällu kodeeritud TrueType fondi kuni 256 märgiga."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Laadib printeri mällu kodeeritud TrueType fondi, milles on üle 256 glüüfi."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Laadib alla kodeerimistabeli, mis seob välja andmete baidid TrueType fontide jaoks Unicode väärtustega."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Joonistab Code 128 vöötkoodi muutuva pikkusega ASCII andmete jaoks, koos automaatse alamhulga vahetuse ja UCC/EAN andmete režiimidega."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Joonistab Code 39 vöötkoodi valikulise Mod 43 kontrollnumbriga."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Joonistab Code 93 vöötkoodi, mis esitab täielikke ASCII andmeid nihkemärkide abil."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Joonistab Code 11 vöötkoodi numbrite ja sidekriipsude jaoks, valikuliste kontrollnumbritega."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Joonistab Interleaved 2 of 5 vöötkoodi paarisarvulise numbriliste andmete jaoks, valikulise kontrollnumbriga."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Joonistab Industrial 2 of 5 vöötkoodi, numbrilise koodi, mille andmed on kodeeritud ainult ribadesse."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Joonistab Standard 2 of 5 vöötkoodi, ise kontrolliva numbrilise koodi, mille andmed on kodeeritud ainult ribadesse."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Joonistab ANSI Codabar vöötkoodi, tuntud ka kui USD-4, raamatukogu-, tervishoiu- ja kulleriteenuse siltide jaoks."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Joonistab LOGMARS vöötkoodi, Code 39 kaitseministeeriumi variandi, ja teisendab väiketähelised andmed suurtähtedeks."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Joonistab MSI vöötkoodi, Plessey koodilt tuletatud numbrilise koodi, valitava kontrollnumbriskeemiga."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Joonistab Plessey vöötkoodi, vanema numbrilise koodi, valikulise kontrollnumbriga."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Joonistab EAN-13 vöötkoodi jaemüügi artiklinumbrite jaoks ja tuletab kontrollnumbri kaheteistkümnest andmenumbrist."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Joonistab EAN-8 vöötkoodi väikeste jaemüügipakendite jaoks ja tuletab kontrollnumbri seitsmest andmenumbrist."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Joonistab UPC-A vöötkoodi jaemüügipakendite jaoks üheteistkümnest andmenumbrist, valikulise kontrollnumbri printimisega."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Joonistab UPC-E vöötkoodi, UPC-A lühivormi. Välja andmed on täielik kümnekohaline tootja- ja tootekood."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Joonistab GS1 DataBar sümboli valitava alamtüübi, suurendustaseme, kõrguse ja segmendi laiusega."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Joonistab Planet Code postivöötkoodi numbritest, mis on kodeeritud kõrgete ja madalate ribadena."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Joonistab POSTNET, Planet Code või USPS Intelligent Mail vöötkoodi vastavalt valitud postikoodi tüübile."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Joonistab kahe- või viiekohalise UPC/EAN lisasümboli peavöötkoodi kõrvale."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Joonistab Code 49 virnastatud vöötkoodi kahe kuni kaheksa reaga täielikke ASCII andmeid."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Joonistab QR Code sümboli. Käsuparameetrid määravad mudeli, suurendustaseme ja maski. Välja andmed määravad veaparanduse ja märgirežiimi."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Joonistab Data Matrix sümboli seadistatava elemendisuuruse, kvaliteeditaseme ja paojadade käsitlemisega."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Joonistab PDF417 virnastatud kahemõõtmelise sümboli suure teksti- või binaarsisu jaoks."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Joonistab MicroPDF417 sümboli, kompaktse PDF417 variandi reaaadressimustritega."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Joonistab Aztec maatrikssümboli seadistatava suurendustaseme ja veaparandusega."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Joonistab CODABLOCK sümboli režiimis A, E või F suuremate andmemahtude jaoks."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Joonistab UPS MaxiCode sümboli, mille režiim sobib nii struktureeritud saatjateadete kui üldiste andmete jaoks."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Joonistab TLC39 telekomisildisümboli, mis ühendab Code 39 MicroPDF417 komponendiga."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Kui lubatud, kontrollib vöötkoodi andmeid ja parameetreid ning prindib vigase sümboli asemel teksti INVALID."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Joonistab täidetud või kontuuriga ristküliku. Külje sobitamine äärise paksusega loob joone."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Joonistab diagonaaljoone antud laiuse ja kõrguse ulatuses, kaldudes paremale või vasakule."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Joonistab ellipsi punktides antud laiuse ja kõrguse järgi, sissepoole jääva äärisepaksuse ning musta või valge väljundiga."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Joonistab antud läbimõõduga ringi punktides, sissepoole jääva äärisepaksuse ning musta või valge väljundiga."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Paigutab praegusesse väljapositsiooni monokroomse bitmapi, kasutades ASCII-kuueteistkümnend-, binaar- või pakitud andmeid."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Prindib välja andmetega valitud residentse sümboli, näiteks autoriõiguse või registreeritud kaubamärgi märgi."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Laadib salvestatud pildi vormingu alguses ja ankurdab selle sildi lähtepositsiooni."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Paigutab salvestatud pildi praegusesse väljapositsiooni ilma seda skaleerimata."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Kustutab printeri mälust salvestatud graafika, fondid või vormingud, toetades gruppide jaoks metamärke."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Salvestab praeguse vormingu graafilise pildina kiireks taaskutsumiseks ja muutuvate andmete pealekattumiseks."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Laadib printeri mällu ASCII-kuueteistkümnendkoodis graafika taaskasutatava nime all."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Peatab poolelijäänud graafikaüleslaadimise ja viib printeri tavapärasesse töörežiimi tagasi."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Laadib printeri mällu graafika, fondi või sertifikaadi taaskasutatava nime all."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Kustutab printeri mälust kõik allalaaditud graafikad. Valitud objektide kustutamiseks kasuta ^ID."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Seerianumbriseerib teksti- või vöötkoodivälja andmed siltide vahel, kasutades algväärtust, suunda ja sammu."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Seerianumbriseerib välja andmetes valitud positsioonid, kasutades maski ja märgikomplekte."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Salvestab järgnevad käsud taaskasutatava vormingu, mitte ei prindi neid koheselt."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Kutsub esile salvestatud vormingu ja edastab väärtused selle nummerdatud kohatäitjaväljadele."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Kutsub esile salvestatud graafika praegusesse asukohta, võimaldades sõltumatut horisontaal- ja vertikaalskaleerimist."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Valib, kuidas printer tuvastab sildi piirid, kasutades vahesid, märke või pidevat kandjat."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Määrab maksimaalse sildipikkuse, mida printer otsib mittepideva kandja kalibreerimisel."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Määrab printeri sisselülitamisel ja prindipea sulgemisel tehtava toimingu, sealhulgas kalibreerimise, edastuse või pikkuse mõõtmise."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Jätab praeguse sildi puhul tagasisöödu ära, kui liikumine ärarebimisasendisse pole vajalik."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Seadistab prinditavad hooldushoiatused prindipea puhastamiseks või vahetamiseks."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Määrab, kas sildi bittkaart kustutatakse pärast printimist või säilitatakse järgnevate siltide jaoks taaskasutamiseks."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Määrab hooldushoiatussiltidel kuvatava teksti prindipea puhastamiseks või vahetamiseks."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Lukustab juhtpaneeli seadistuse, näiteks tumeduse või kalibreerimise, kuni see avatakse."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Lubab või keelab prindipea külmumise hoiatusnäidiku."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Reguleerib printimise tumedust printeri praeguse seadistatud tumeduse suhtes."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Määrab printimise absoluutse tumeduse koheselt, vastavalt esipaneeli tumeduse seadistusele."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Määrab, kas kandja, värvilindi või prindipea vea tõttu katkestatud silt trükitakse pärast taastumist uuesti."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Ajastab perioodilisi prindipea elementide teste prinditud siltide arvu ja valikulise elemendivahemiku alusel."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Reguleerib pärast printimist ärarebimis- või lõikeasendi puhkeasendit väikese punktinihke võrra."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Seadistab varajase hoiatuse lävendid kandja, värvilindi ja prindipea hoolduse jaoks."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Määrab tagasisöödu ajastuse printimise ja lõikamise ümber või lülitab tagasisöödu välja."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Söödab läbi määratud arvu tühje punktiridu kiirkerimiskiirusel."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Söödab pärast praeguse vormingu printimist ühe tühja sildi."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Söödab ühe tühja sildi kohe, kui printer on vaba, kas pärast praegust vormingut või pausi ajal."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Peatub pärast praeguse vormingu printimist. Juba puhverdatud sildid saab siiski enne välja printida."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Peatub pärast praeguse sildi valmimist. Printimine jätkub, kui pausi olek tühistatakse."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Trükib eelmise sildi uuesti, kui rakendaja korduva printimise režiim on lubatud."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Tühistab pausi režiimi ja jätkab printimist."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Käivitab KR403 printeril kiosk-printimisrežiimis kohe lõikuri."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Lisab KR403 kiosk-esitajale täiendava väljutuspikkuse, et prinditud kandjat oleks kergem kätte võtta."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Käivitab KR403 esitaja tsükli, pakkudes prinditud kandjat käsitsi eemaldamiseks."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Määrab PAX-seeria printeritel värvilindi varu pinge."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Määrab printeri reaalaja kella kuupäeva ja kellaaja."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Valib konfiguratsioonisildil ja juhtpaneelil kuvatava kuupäeva ja kellaaja vormingu."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Määrab reaalajakellast tuletatud teisese kella nihked. Nihked lähevad kaotsi, kui printer välja lülitatakse."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Määrab, millal ajaväljad tembeldatakse, ja valib päeva- ning kuunimede keele."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Valib printeri juhtpaneeli kuvakeele mudelipõhisest loendist."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Valib salvestatud kodeerimistabeli, mida kasutatakse välja andmete teisendamiseks enne printimist."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Valib algupärase ZPL või ZPL II käsutõlgenduse, ühilduvuseks vanemate vormingutega."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Omistab printerile võrgunime ja vabas vormis kirjelduse, mida mõlemat kuvatakse konfiguratsioonisildil ja printeri sisseehitatud veebilehel."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Määrab juhtpaneeli seadistusmenüüde neljakohalise parooli."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Salvestab, taastab või lähtestab printeri konfiguratsiooniseaded."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Muudab vormingukäsu prefiksmärgi, tavaliselt katusmärgi, kas globaalselt või ainult praeguse vormingu jaoks."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Muudab parameetri eraldusmärgi, tavaliselt koma, kas globaalselt või ainult praeguse vormingu jaoks."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Muudab kohese käsu prefiksmärgi, tavaliselt tilde, kas globaalselt või ainult praeguse vormingu jaoks."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Kaardistab printeri mälutähed ümber, et salvestatud objektid saaksid säilitada oma senised nimed."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Tühistab järjekorras olevad vormingud ja praeguse partii. Juba prinditav silt saab valmis."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Kustutab ja lähtestab ühe välkmäluseadme. Voolukatkestus selle toimingu ajal võib salvestuse rikkuda."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Lähtestab akutoitel mälukaardi pärast paigaldamist või aku vahetamist."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Käivitab kandja kalibreerimise, et mõõta sildipikkust ning häälestada kandja- ja värvilindianduri."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Prindib saabuvad baidid ja nende kuueteistkümnendväärtused nende täitmise asemel, hostisidevusdiagnostika jaoks."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Väljub sidediagnostikarežiimist ja viib printeri tavapärase sildi printimise juurde tagasi."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Määrab, kas madal akupinge peatab kaasaskantava printeri või lubab printimist jätkata."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Käivitab kandja kalibreerimise ja prindib kandjavahe üleminekukoha anduriprofiili graafiku."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Käivitab printeril Zebra BASIC Interpreteri, valikuliselt käivitades salvestatud programmi."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Seadistab lisapordi rakendaja või verifitseerija signaalide ja veakäsitluse jaoks."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Valib jälgimiseks kasutatava kandjaanduri, tavaliselt peegeldava või läbivalgustava."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Mõõdab ja salvestab sildipikkuse, söötes protsessi käigus tühje silte."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Määrab tavalise või vähendatud punktitiheduse millimeetri kohta. Vähendatud tihedus kahekordistab vormingukoordinaatide füüsilise suuruse."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Muudab nii, et ebaõnnestunud prindipea elemendi testid peatavad printimise, kuni printer lähtestatakse või taluv režiim taastatakse."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Lubab printimist jätkata pärast ebaõnnestunud prindipea elemendi testi."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Tühistab järgmise järjekorras oleva vormingu ja peatab printeri, ühe puhverdatud vormingu käsu kohta."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Väljub aktiivsest Zebra BASIC Interpreteri seansist ja viib pordi tagasi ZPL töötlusesse."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Taaskäivitab printeri püsivara ja laadib uuesti salvestatud side- ja konfiguratsioonivaikeväärtused."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Tühistab hetkel vastuvõetava vormingu, tühistamata juba prinditavaid silte."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Lähtestab valitud printerikasutuse loenduri, sealhulgas kasutaja- või RFID-loendurid."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Seadistab kõik jadapordi sideparameetrid ühe käsuga."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Tühistab läbivalgustava anduri tundlikkuse või lähteväärtused, mille tavaliselt määrab kalibreerimine."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Alustab printimist enne, kui kogu vorming on saabunud, et parandada läbilaskvust keerukate siltide korral."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Keelab kindla ZebraNet hoiatustingimuse ja sihtkoha."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Määrab põletusenergia arvutustes kasutatava prindipea takistuse väärtuse."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Määrab kandjaanduri lävendid, sildipikkuse ja LED-tugevused, mille tavaliselt määrab kalibreerimine."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Lubab kindla ZebraNet hoiatustingimuse ja sihtkoha."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopeerib salvestatud objektid printeri mäluseadmete vahel, toetades gruppide jaoks metamärke."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Prindib konfiguratsioonisildi anduri-, võrgu-, püsivara- ja mäluteabega."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Prindib kataloogisildi salvestatud objektide, residentsete fontide või saadaolevate vöötkoodide kohta."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Prindib sildile soovitud hooldusteabe, näiteks läbisõidu- või prindipea ajaloo."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Seadistab KR403 kiosk-esitaja sätted, sealhulgas lõikepikkuse, lõikeäärise, tagasitõmbe ooteaja ja aasa pikkuse."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Määrab sildipikkuse ja anduri läve dünaamilise ümberkalibreerimise pärast sisselülitamist või kandjaosakonna avamist."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Käivitab utiliseerimisrežiimi, et valmistada printer ette edasimüügiks või ringlussevõtuks."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Määrab automaatse uinaku pärast jõudeperioodi, koos suvanditega järjekorras olevate siltide jaoks."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Väljutab või tõmbab tagasi KR403 kiosk-esitaja poolt juba esitatud kandja."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Käivitab kaasaskantavatel printeritel aku tühjenemisrežiimi aku vormistamiseks."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Tagastab mobiilsete printerite akupinge ja prindipea toitenäidud."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Tagastab prindipea diagnostikaandmed, sealhulgas temperatuurid, elemenditesti tulemused, tumeduse ja kiiruse."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Tagastab printeri mälust salvestatud ZPL vormingu hostile."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Tagastab printeri mälust salvestatud graafilise pildi hostile."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Tagastab printeri praeguse konfiguratsiooni loetava tekstina hostipordi kaudu."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Tagastab printeri identifitseerimisandmed, sealhulgas mudeli, püsivara, resolutsiooni, mälu ja paigaldatud lisad."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Tagastab printeri kogumälu, maksimaalse kasutatava mälu ja hetkel vaba mälu kilobaitides."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Tagastab hostile soovitud oleku-, identifitseerimis-, läbisõidu- või hooldusandmed."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Tagastab hosti olekusõnesid liidese, kandja, pausioleku, sildipikkuse ja puhverdatud vormingute kohta."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Tagastab hostile fondiseoste tabeli, loetledes baasfondid ja nende varufondid."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Tagastab seadistatud ZebraNet hoiatused, sealhulgas tingimused, sihtkohad ning määramis- või kustutuslipud."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Tagastab hostile andmed nummerdatud väljast, valikulise baidilimiidiga."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Tagastab mäluseadme kataloogiloendi, sealhulgas allesjäänud vaba ruumi."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Tagastab salvestatud graafika hostile allalaaditavas failivormingus."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Tagastab printeri kirjelduse XML-kujul seadete, objektide kataloogi või oleku jaoks."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Loeb või kirjutab RFID-silti, sealhulgas andmevormingu, mälupanga ja juurdepääsuparooli."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Loeb praeguse RFID-sildi ID kasutamiseks sildi andmetes või hosti vastuses."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Kontrollib kandja liikumist vanemate RFID-toimingute ajal. Link-OS vormingud kasutavad selle asemel käsku ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Tuvastab kodeerimisväljas rohkem kui ühe RFID-sildi ja võib tühistada sildid, kui läheduses on kõrvalisi silte."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Määrab vanemate RFID lugemis- või kirjutamiskatsete kordusarvu. Link-OS vormingud kasutavad selle asemel käsku ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Määrab RFID EPC väljade sildile kodeerimiseks kasutatava bitipaigutuse."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Määrab järgnevate siltide RFID sätted, sealhulgas sildi tüübi, programmeerimispositsiooni, veakäsitluse ja VOID-riba pikkuse."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Loeb sildiandmed sildiväljale vanemates RFID vormingutes."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Kirjutab sildiandmed vanemates RFID vormingutes. Käsk ^RF katab lugemise, kirjutamise ja parooli käsitluse."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Koostab EPC seerianumbri sildi ID põhjal ja kirjutab selle EPC madalatesse bittidesse."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Tagastab hostile iga RFID kodeerimistulemuse, mis võimaldab tarkvaral eristada korras silte tühistatud siltidest."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Määrab RFID lugemis- ja kirjutamisvõimsuse, kui kalibreerimine ei anna kasutatavaid väärtusi."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Lukustab RFID-sildi mälu, kas tühistatavalt või jäädavalt, et vältida hilisemaid kirjutamisi."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Käivitab RFID kalibreerimise ja tagastab hostile positsiooni, antenni ja võimsuse seaded."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Tagastab RFID-toimingute logi, sealhulgas positsiooni, antenni, võimsustaseme ja tulemuse."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Valib, kas printer kontrollib käivitumisel juhtmega prindiserveri olemasolu."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Valib peamise võrguseadme, juhtmega või juhtmevaba."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresseerib ühe printeri vanemal RS-485 mitmepunktiliinil võrgu-ID järgi."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Omistab võrgu-ID, mida kasutatakse printeri adresseerimiseks vanemal RS-485 mitmepunktiliinil."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Määrab printeri SNMP identiteedi ja kogukonnastringid."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Valib, kas käivitusaegsed võrguseaded tulevad printerist või ühendatud prindiserverist."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Lülitab kõik vanemal mitmepunktiliinil olevad printerid läbipaistvasse vastuvõturežiimi."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Seadistab prindiserveri e-posti hoiatuste jaoks SMTP-serveri ja domeeni sätted."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Lülitab adresseeritud vanema mitmepunktiliini printeri läbipaistvasse vastuvõturežiimi."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Määrab, kui kaua autenditud IP-aadress pääseb printeri veebilehtedele ligi enne uut autentimist."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Määrab prindiserveri DHCP kliendiidentifikaatori vormi ja väärtuse."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Seadistab printeri võrguliidesele IP-aadressi, alamvõrgumaski ja lüüsi."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Seadistab vanemale püsivarale juhtmega prindiserveri IP sätted, ajapiirangud ja toorpordi."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Valib juhtmevaba raadio vastuvõtu- ja saateantennid."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Seadistab vananenud WEP turbe ja võtmematerjali vanemale juhtmevabale püsivarale."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Seadistab vananenud Cisco LEAP autentimise vanemale juhtmevabale püsivarale."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Määrab printeri juhtpaneeli juhtmevabade sätete parooli."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Seadistab 802.11b andmekiirused ja saatevõimsuse vanematel juhtmevaba prindiserveritel."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Seadistab juhtmevaba võrgu nime, raadiorežiimi, preambuli pikkuse ja keep-alive käitumise."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Seadistab juhtmevaba turberežiimi, võtmed ja mandaadid ühe käsuga."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Prindib võrgukonfiguratsiooni sildi, kui printer on jõude."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Taaskäivitab juhtmevaba raadiokaardi ja prindiserveri, mistõttu raadio liitub uuesti võrguga."
+  }
+}

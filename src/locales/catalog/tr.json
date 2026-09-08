@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Yeni bir etiket biçimi başlatır. Bundan sonraki komutlar, o etiket için alanları, medya işlemeyi ve yazıcı davranışını tanımlar."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Geçerli etiket biçimini kapatır ve yazdırılmak üzere gönderir."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Yazdırılabilir genişliği nokta cinsinden belirler. Bu genişliği aşan içerik yazıcı tarafından kırpılır."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Etiket uzunluğunu nokta cinsinden belirler ve yazdırılabilir biçimin nerede sona erdiğini tanımlar."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Etiketin başlangıç konumunu taşır ve sonraki alan koordinatlarında kullanılan orijini değiştirir."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Eski Zebra biçimleriyle uyumluluk için alan konumlarına yatay bir kaydırma uygular."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Medyanın üst kenarına göre tüm biçime dikey bir kaydırma ekler."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Koordinat birimlerini nokta, inç veya milimetre olarak ayarlar ve biçimleri farklı baskı çözünürlükleri arasında ölçekleyebilir."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Yazdırma sonrası medya işleme modunu ayarlar. Yırtma, soyma, kesme, geri sarma ve uygulayıcı modları dahildir."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Yüklü medyanın şerit kullanıp kullanmadığına göre termal transfer veya doğrudan termal modu seçer."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Baskı adedini, duraklatma veya kesme gruplamasını ve seri değer başına kopya sayısını ayarlar."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Ön plan ve arka plan renklerini değiştirerek sonraki alanların baskısını tersine çevirir."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Tüm etiket biçimini 180 derece döndürür."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Yazdırılabilir alanı yatay olarak aynalar."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Baskı hızını, tarama hızını ve geri besleme hızını saniyede inç cinsinden ayarlar."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Sonraki alanı, sol üst köşesini kullanarak etiketin başlangıç noktasına göre konumlandırır."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Sonraki alanı taban çizgisine veya barkod kenarına göre konumlandırır ve döndürülmüş alanlara sabit bir çıpa noktası sağlar."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Geçerli alan için metin, barkod verisi veya RFID verisi dahil içeriği sağlar."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Geçerli alan tanımını sonlandırır."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Alan verisi içinde ikili baytlar ve ayrılmış komut karakterleri için onaltılık kaçış dizilerini etkinleştirir."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Yalnızca sonraki alan için ön plan ve arka planı tersine çevirir."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Bir açıklama alanı ekler. Yazıcı, içeriğini bir sonraki alan ayırıcısına kadar yok sayar."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Varsayılan alan yönünü ve daha yeni yazılımlarda varsayılan hizalamayı ayarlar."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Alan verisini satır sayısı, satır aralığı, girinti ve hizalama denetimleriyle sabit genişlikli bir blok içine sarar."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Metni sabit genişlikte ve yükseklikte bir kutu içine sarar ve taşan kısmı keser."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Depolanan ve geri çağrılan biçimlerde değişken bir alana bir numara atar."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Değişken bir alan için veri sağlar. ^FD verisinin aksine, etiket yazdırıldıktan sonra temizlenir."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Başka bir alan dizesi içine numaralandırılmış alan değerlerini gömmek için kullanılan karakteri ayarlar."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Alan verisi içindeki gerçek zamanlı saat belirteçleri için kullanılan işaretleri ayarlar."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Sonraki barkod alanları için varsayılan barkod modül genişliğini, geniş-dar oranını ve yüksekliği ayarlar."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Bir mesaj birden çok sembole yayıldığında PDF417 veya MicroPDF417 bölümlerini belirli başlangıç noktalarına yerleştirir."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Geçerli alan için karakter sırasını ayarlar ve ek karakter aralığı ekleyebilir."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Sonraki alan için istenen boyut ve yönde dahili ölçeklenebilir 0 numaralı yazı tipini seçer."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Tek karakterli bir adla dahili bir yazı tipi seçer, isteğe bağlı yön, yükseklik ve genişlikle."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Sonraki alan için isteğe bağlı yön, yükseklik ve genişlikle depolanmış bir yazı tipi dosyası seçer."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Kendi yazı tipini belirtmeyen metin alanlarının kullandığı yedek yazı tipini, yüksekliğini ve genişliğini ayarlar."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Kod sayfaları ve UTF-8 dahil olmak üzere alan verisini yorumlamak için kullanılan kodlamayı seçer."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Sonraki alanlar için çift yönlü metin, şekillendirme ve OpenType özellikleri dahil gelişmiş metin düzenini etkinleştirir."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Tek karakterli bir yazı tipi adını depolanmış bir yazı tipi dosyasına eşler."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Tekrarlanan büyük yazı tipi çıktısını hızlandırmak için işlenmiş ölçeklenebilir glif önbelleğinin boyutunu ayarlar."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Temel yazı tipinde bir glif eksik olduğunda kullanılan TrueType yedek zincirlerini tanımlar."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Yapılandırılmış yazı tipi bağlantılarını ve bunların zincirlenmiş yedek yüzlerini listeleyen bir etiket yazdırır."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Bir bit eşlem yazı tipini ve metriklerini yazıcı belleğine indirir."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Kodlanmış ölçeklenebilir bir Intellifont yazı tipini yazıcı belleğine indirir."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "En fazla 256 karakterli, kodlanmış bir TrueType yazı tipini yazıcı belleğine indirir."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "256'dan fazla glife sahip, kodlanmış bir TrueType yazı tipini yazıcı belleğine indirir."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "TrueType yazı tipleri için alan verisi baytlarını Unicode değerleriyle eşleştiren bir kodlama tablosunu indirir."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Değişken uzunluklu ASCII verisi için, otomatik alt küme geçişi ve UCC/EAN verisi modlarıyla bir Code 128 barkodu çizer."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "İsteğe bağlı bir Mod 43 kontrol basamağıyla bir Code 39 barkodu çizer."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Kaydırma karakterleri aracılığıyla tam ASCII verisini temsil eden bir Code 93 barkodu çizer."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Rakamlar ve tireler için, isteğe bağlı kontrol basamaklarıyla bir Code 11 barkodu çizer."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Çift uzunluklu sayısal veri için, isteğe bağlı bir kontrol basamağıyla bir Interleaved 2 of 5 barkodu çizer."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Verinin yalnızca çubuklarla kodlandığı sayısal bir kod olan Industrial 2 of 5 barkodunu çizer."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Verinin yalnızca çubuklarla kodlandığı, kendi kendini denetleyen sayısal bir kod olan Standard 2 of 5 barkodunu çizer."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Kütüphane, sağlık ve kurye etiketleri için, USD-4 olarak da bilinen bir ANSI Codabar barkodu çizer."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Code 39'un Savunma Bakanlığı varyantı olan bir LOGMARS barkodu çizer ve küçük harfli verileri büyük harfe dönüştürür."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Seçilebilir kontrol basamağı düzenlerine sahip, Plessey'den türetilmiş sayısal bir kod olan MSI barkodu çizer."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "İsteğe bağlı kontrol basamaklarına sahip, daha eski sayısal bir kod olan Plessey barkodunu çizer."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Perakende ürün numaraları için bir EAN-13 barkodu çizer ve kontrol basamağını on iki veri basamağından türetir."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Küçük perakende paketleri için bir EAN-8 barkodu çizer ve kontrol basamağını yedi veri basamağından türetir."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "On bir veri basamağından, isteğe bağlı kontrol basamağı yazdırmayla perakende paketleme için bir UPC-A barkodu çizer."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "UPC-A'nın kısa biçimi olan bir UPC-E barkodu çizer. Alan verisi, tam on basamaklı üretici ve ürün kodudur."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Seçilebilir alt tür, büyütme, yükseklik ve segment genişliğiyle bir GS1 DataBar sembolü çizer."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Uzun ve kısa çubuklar olarak kodlanmış rakamlardan bir Planet Code posta barkodu çizer."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Seçilen posta kodu türüne göre POSTNET, Planet Code veya USPS Intelligent Mail çizer."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Ana bir barkodun yanında iki basamaklı veya beş basamaklı bir UPC/EAN ek sembolü çizer."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "İki ile sekiz satır arasında tam ASCII verisi içeren, istiflenmiş bir Code 49 barkodu çizer."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Bir QR Code sembolü çizer. Komut parametreleri model, büyütme ve maskeyi ayarlar. Alan verisi hata düzeltmeyi ve karakter modunu ayarlar."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Ayarlanabilir eleman boyutu, kalite düzeyi ve kaçış dizilerinin işlenmesiyle bir Data Matrix sembolü çizer."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Büyük metin veya ikili yükler için istiflenmiş, iki boyutlu bir PDF417 sembolü çizer."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Satır adresleme desenlerine sahip, kompakt bir PDF417 varyantı olan MicroPDF417 sembolü çizer."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Ayarlanabilir büyütme ve hata düzeltmeyle bir Aztec matris sembolü çizer."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Daha büyük veri yükleri için A, E veya F modunda bir CODABLOCK sembolü çizer."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Yapılandırılmış taşıyıcı mesajları veya genel veri için bir modu olan UPS MaxiCode sembolü çizer."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Code 39'u bir MicroPDF417 bileşeniyle birleştiren bir TLC39 telekom etiket sembolü çizer."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Etkinleştirildiğinde barkod verisini ve parametrelerini doğrular, hatalı bir sembol yerine INVALID yazdırır."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Dolu veya çerçeveli bir dikdörtgen çizer. Bir kenarı çerçeve kalınlığına eşitlemek bir çizgi oluşturur."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Belirli bir genişlik ve yükseklikte, sağa veya sola eğimli bir diyagonal çizgi çizer."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Nokta cinsinden genişlik ve yükseklikten, içe dönük çerçeve kalınlığı ve siyah veya beyaz çıktıyla bir elips çizer."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Nokta cinsinden verilen çapta, içe dönük çerçeve kalınlığı ve siyah veya beyaz çıktıyla bir çember çizer."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "ASCII onaltılık, ikili veya sıkıştırılmış veri kullanarak geçerli alan konumuna tek renkli bir bit eşlem yerleştirir."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Telif hakkı veya tescilli ticari marka gibi, alan verisiyle seçilen dahili bir sembol yazdırır."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Depolanmış bir görüntüyü bir biçimin başında yükler ve etiketin başlangıç noktasına sabitler."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Depolanmış bir görüntüyü ölçeklemeden geçerli alan konumuna yerleştirir."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Yazıcı belleğinden depolanmış grafikleri, yazı tiplerini veya biçimleri, gruplar için joker karakter desteğiyle siler."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Geçerli biçimi, hızlı geri çağırma ve değişken veri kaplamaları için bir grafik görüntü olarak kaydeder."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Yeniden kullanılabilir bir ad altında yazıcı belleğine bir ASCII-onaltılık grafik indirir."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Yarıda kesintiye uğrayan bir grafik yüklemesini durdurur ve yazıcıyı normal çalışmaya döndürür."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Yeniden kullanılabilir bir ad altında yazıcı belleğine bir grafik, yazı tipi veya sertifika indirir."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Yazıcı belleğinden indirilmiş tüm grafikleri siler. Seçili nesneleri silmek için ^ID kullanın."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Başlangıç değeri, yön ve artış kullanarak metni veya barkod alan verisini etiketler arasında sıralı numaralandırır."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Bir maske ve karakter kümeleri kullanarak alan verisindeki seçili konumları sıralı numaralandırır."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Sonraki komutları hemen yazdırmak yerine yeniden kullanılabilir bir biçim olarak depolar."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Depolanmış bir biçimi geri çağırır ve numaralandırılmış yer tutucu alanları için değerler sağlar."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Bağımsız yatay ve dikey ölçeklendirmeyle geçerli konumda depolanmış bir grafiği geri çağırır."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Yazıcının, boşluklar, işaretler veya sürekli medya kullanarak etiket sınırlarını nasıl algıladığını seçer."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Süreksiz medyayı kalibre ederken yazıcının aradığı azami etiket uzunluğunu ayarlar."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Kalibrasyon, besleme veya uzunluk ölçümü dahil olmak üzere, açılış ve baskı kafası kapatma eylemini ayarlar."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Yırtma konumuna geçmenin gereksiz olduğu durumlarda geçerli etiket için geri beslemeyi bastırır."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Baskı kafası temizliği veya değişimi için yazdırılan bakım uyarılarını yapılandırır."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Etiket bit eşleminin baskı sonrası temizlenip temizlenmeyeceğini veya sonraki etiketlerce yeniden kullanılmak üzere tutulup tutulmayacağını denetler."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Baskı kafası temizliği veya değişimi için bakım uyarı etiketlerinde gösterilen metni ayarlar."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Karartma veya kalibrasyon gibi bir kontrol paneli ayarını, kilidi açılana kadar kilitler."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Baskı kafası soğuk uyarı göstergesini etkinleştirir veya devre dışı bırakır."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Baskı yoğunluğunu, yazıcının geçerli yapılandırılmış yoğunluğuna göre ayarlar."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Ön panel yoğunluk ayarına eşleşecek şekilde mutlak baskı yoğunluğunu anında ayarlar."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Medya, şerit veya baskı kafası hatasıyla kesintiye uğrayan bir etiketin, kurtarma sonrası yeniden yazdırılıp yazdırılmayacağını denetler."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Yazdırılan etiket sayısına ve isteğe bağlı eleman aralığına göre periyodik baskı kafası eleman testleri planlar."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Yazdırmadan sonra bekleme yırtma veya kesim konumunu küçük bir nokta kaydırmasıyla ayarlar."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Medya, şerit ve baskı kafası bakımı için erken uyarı eşiklerini yapılandırır."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Yazdırma ve kesim çevresindeki geri besleme zamanlamasını denetler veya geri beslemeyi kapatır."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Tarama hızında belirli sayıda boş nokta satırı besler."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Geçerli biçim yazdırıldıktan sonra boş bir etiket besler."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Yazıcı serbest kalır kalmaz, geçerli biçimden sonra veya duraklatılmışken boş bir etiket besler."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Geçerli biçim yazdırıldıktan sonra duraklatır. Zaten arabellekte olan etiketler önce yazdırılabilir."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Geçerli etiket bittikten sonra duraklatır. Duraklatma durumu kaldırıldığında yazdırma devam eder."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Uygulayıcı yeniden yazdırma modu etkinleştirildiğinde önceki etiketi yeniden yazdırır."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Duraklatma modunu kaldırır ve yazdırmayı sürdürür."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Kiosk yazdırma modundaki KR403 yazıcılarda kesiciyi hemen çalıştırır."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Yazdırılan medyanın alınmasını kolaylaştırmak için bir KR403 kiosk sunucusuna ek çıkış uzunluğu ekler."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Yazdırılan medyayı manuel çıkarma için sunan bir KR403 sunucu döngüsü çalıştırır."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "PAX serisi yazıcılarda şerit besleme gerginliğini ayarlar."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Yazıcının gerçek zamanlı saatinin tarih ve saatini ayarlar."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Yapılandırma etiketinde ve kontrol panelinde gösterilen tarih ve saat biçimini seçer."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Gerçek zamanlı saatten ikincil saat kaymalarını tanımlar. Yazıcı kapandığında kaymalar kaybolur."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Zaman alanlarının ne zaman damgalanacağını ayarlar ve gün ile ay adları için dili seçer."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Modele göre değişen bir listeden yazıcının kontrol paneli görüntüleme dilini seçer."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Yazdırmadan önce alan verisini eşlemek için kullanılan, depolanmış bir kodlama tablosu seçer."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Eski biçimlerle uyumluluk için orijinal ZPL veya ZPL II komut yorumlamasını seçer."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Yazıcıya, hem yapılandırma etiketinde hem de dahili web sayfasında gösterilen bir ağ adı ve serbest metin açıklaması atar."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Kontrol paneli kurulum menüleri için dört basamaklı parolayı ayarlar."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Yazıcı yapılandırma ayarlarını kaydeder, geri yükler veya sıfırlar."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Normalde şapka işareti olan biçim komutu önek karakterini, genel olarak veya geçerli biçim için değiştirir."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Normalde virgül olan parametre ayırıcı karakterini, genel olarak veya geçerli biçim için değiştirir."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Normalde tilde olan anlık komut önek karakterini, genel olarak veya geçerli biçim için değiştirir."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Depolanmış nesnelerin mevcut adlarını koruyabilmesi için yazıcı bellek harflerini yeniden eşler."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Sıradaki biçimleri ve geçerli grubu iptal eder. Zaten yazdırılmakta olan etiket tamamlanabilir."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Bir flash bellek aygıtını siler ve yeniden ilklendirir. Bu işlem sırasında elektrik kesilmesi depolamayı bozabilir."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Kurulum veya pil değişiminden sonra pille desteklenen bellek kartını yeniden ilklendirir."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Etiket uzunluğunu ölçmek ve medya ile şerit sensörlerini ayarlamak için medya kalibrasyonu çalıştırır."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Ana bilgisayar iletişimi tanılaması için, gelen baytları yürütmek yerine bunları ve onaltılık değerlerini yazdırır."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "İletişim tanılama modundan çıkar ve yazıcıyı normal etiket yazdırmaya döndürür."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Düşük pil voltajının taşınabilir bir yazıcıyı duraklatıp duraklatmayacağını veya yazdırmanın devam etmesine izin verilip verilmeyeceğini ayarlar."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Medya kalibrasyonu çalıştırır ve medya boşluğu geçişi için bir sensör profil grafiği yazdırır."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "İsteğe bağlı olarak depolanmış bir programı başlatarak yazıcıda Zebra BASIC Yorumlayıcısını başlatır."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Yardımcı bağlantı noktasını uygulayıcı veya doğrulayıcı sinyalleri ve hata işleme için yapılandırır."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "İzleme için kullanılan, genellikle yansıtıcı veya geçirgen olan medya sensörünü seçer."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Süreç sırasında boş etiketler besleyerek etiket uzunluğunu ölçer ve depolar."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Normal veya azaltılmış milimetre başına nokta sayısını ayarlar. Azaltılmış yoğunluk, biçim koordinatlarının fiziksel boyutunu ikiye katlar."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Başarısız baskı kafası eleman testlerinin, yazıcı sıfırlanana veya tolerans modu geri yüklenene kadar yazdırmayı durdurmasını sağlar."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Başarısız bir baskı kafası eleman testinden sonra yazdırmanın devam etmesine izin verir."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Komut başına bir arabellek biçimi olmak üzere, sıradaki bir sonraki biçimi iptal eder ve yazıcıyı duraklatır."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Etkin bir Zebra BASIC Yorumlayıcısı oturumundan çıkar ve bağlantı noktasını ZPL işlemeye döndürür."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Yazıcı yazılımını yeniden başlatır ve kaydedilmiş iletişim ile yapılandırma varsayılanlarını yeniden yükler."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Zaten yazdırılmakta olan etiketleri iptal etmeden, o anda alınmakta olan biçimi iptal eder."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Kullanıcı veya RFID sayaçları dahil, seçilen bir yazıcı kullanım sayacını sıfırlar."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Tüm seri bağlantı noktası iletişim parametrelerini tek bir komutta yapılandırır."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Normalde kalibrasyonla belirlenen geçirgen sensör yoğunluğunu veya temel değerlerini geçersiz kılar."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Karmaşık etiketlerde verimi artırmak için, biçim tam olarak alınmadan yazdırmayı başlatır."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Belirli bir ZebraNet uyarı koşulunu ve hedefini devre dışı bırakır."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Yanma enerjisi hesaplamalarında kullanılan baskı kafası direnç değerini ayarlar."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Normalde kalibrasyonla belirlenen medya sensör eşiklerini, etiket uzunluğunu ve LED yoğunluklarını ayarlar."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Belirli bir koşul ve hedef için bir ZebraNet uyarısını etkinleştirir."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Yazıcı bellek aygıtları arasında, gruplar için joker karakter desteğiyle depolanmış nesneleri kopyalar."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Sensör, ağ, yazılım ve bellek bilgilerini içeren bir yapılandırma etiketi yazdırır."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Depolanmış nesneler, dahili yazı tipleri veya kullanılabilir barkodlar için bir dizin etiketi yazdırır."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Kilometre sayacı veya baskı kafası geçmişi gibi istenen servis bilgilerini bir etikette yazdırır."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Kesim uzunluğu, kesim payı, geri çekme zaman aşımı ve döngü uzunluğu dahil KR403 kiosk sunucu ayarlarını yapılandırır."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Açılış veya medya bölmesi açıldıktan sonra etiket uzunluğunun ve sensör eşiğinin dinamik yeniden kalibrasyonunu denetler."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Bir yazıcıyı yeniden satış veya geri dönüşüm için hazırlamak üzere devreden çıkarma modunu başlatır."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Bekleyen etiketler için seçeneklerle birlikte, boşta kalma süresinden sonra otomatik uyku kapanışını ayarlar."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Bir KR403 kiosk sunucusu tarafından zaten sunulmuş medyayı çıkarır veya geri çeker."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Pil kondisyonlama için taşınabilir yazıcılarda pil deşarj modunu çalıştırır."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Mobil yazıcılardan pil ve baskı kafası güç okumalarını döndürür."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Sıcaklıklar, eleman testi sonuçları, yoğunluk ve hız dahil baskı kafası tanılama verilerini döndürür."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Yazıcı belleğinden depolanmış bir ZPL biçimini ana bilgisayara döndürür."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Yazıcı belleğinden depolanmış bir grafik görüntüyü ana bilgisayara döndürür."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Yazıcının geçerli yapılandırmasını, ana bilgisayar bağlantı noktası üzerinden okunabilir metin olarak döndürür."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Model, yazılım, çözünürlük, bellek ve yüklü seçenekler dahil yazıcı kimlik verilerini döndürür."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Yazıcının toplam, azami kullanılabilir ve o anda boş belleğini kilobayt cinsinden döndürür."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "İstenen durum, kimlik, kilometre sayacı veya bakım verilerini ana bilgisayara döndürür."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Arabirim, medya, duraklatma durumu, etiket uzunluğu ve arabelleğe alınmış biçimler için ana bilgisayar durum dizelerini döndürür."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Temel yazı tiplerini ve yedek yüzlerini listeleyerek yazı tipi bağlantı tablosunu ana bilgisayara döndürür."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Koşullar, hedefler ve ayarlama veya temizleme bayrakları dahil yapılandırılmış ZebraNet uyarılarını döndürür."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "İsteğe bağlı bir bayt sınırıyla, numaralandırılmış bir alandan gelen verileri ana bilgisayara döndürür."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Kalan boş alan dahil bir bellek aygıtı için bir dizin listesi döndürür."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Depolanmış bir grafiği ana bilgisayara indirilebilir bir dosya biçiminde döndürür."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Ayarlar, nesne dizini veya durum için yazıcı açıklama XML'ini döndürür."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Veri biçimi, bellek bankası ve erişim parolası dahil olmak üzere bir RFID etiketinden okur veya etikete yazar."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Etiket verisinde veya ana bilgisayara verilen bir yanıtta kullanılmak üzere geçerli RFID etiketi kimliğini okur."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Eski RFID işlemleri sırasında medya hareketini denetler. Link-OS biçimleri bunun yerine ^RS kullanır."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Kodlama alanında birden fazla RFID etiketi algılar ve yakınında beklenmeyen etiketler bulunan etiketleri geçersiz kılabilir."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Eski RFID okuma veya yazma işlemleri için yeniden deneme sayısını ayarlar. Link-OS biçimleri bunun yerine ^RS kullanır."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Bir etiket üzerinde RFID EPC alanlarını kodlamak için kullanılan bit düzenini tanımlar."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Etiket türü, programlama konumu, hata işleme ve VOID çubuk uzunluğu dahil, sonraki etiketler için RFID seçeneklerini ayarlar."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Eski RFID biçimlerinde etiket verisini bir etiket alanına okur."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Eski RFID biçimlerinde etiket verisi yazar. ^RF okuma, yazma ve parola işlemeyi kapsar."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Etiket kimliğinden bir EPC seri numarası oluşturur ve bunu EPC'nin düşük bitlerine yazar."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Yazılımın iyi etiketleri geçersiz kılınanlardan ayırt edebilmesi için, her RFID kodlama sonucunu ana bilgisayara döndürür."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Kalibrasyon kullanılabilir değerler üretmediğinde RFID okuma ve yazma gücünü ayarlar."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Sonraki yazmaları önlemek için RFID etiket belleğini geri alınabilir veya kalıcı olarak kilitler."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "RFID kalibrasyonu çalıştırır ve konum, anten ve güç ayarlarını ana bilgisayara döndürür."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Konum, anten, güç düzeyi ve sonuç dahil RFID işlem günlüğünü döndürür."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Yazıcının açılış sırasında kablolu bir yazdırma sunucusunu kontrol edip etmeyeceğini seçer."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Kablolu veya kablosuz olarak birincil ağ aygıtını seçer."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Eski bir RS-485 çoklu hat üzerinde bir yazıcıya ağ kimliğiyle hitap eder."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Eski bir RS-485 çoklu hatta bir yazıcıya hitap etmek için kullanılan ağ kimliğini atar."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Yazıcı için SNMP kimliğini ve topluluk dizelerini ayarlar."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Açılış ağ ayarlarının yazıcıdan mı yoksa bağlı yazdırma sunucusundan mı geldiğini seçer."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Eski bir çoklu hattaki tüm yazıcıları saydam alma moduna geçirir."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Yazdırma sunucusu e-posta uyarıları için SMTP sunucusu ve etki alanı ayarlarını yapılandırır."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Hitap edilen eski çoklu hat yazıcısını saydam alma moduna geçirir."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Kimliği doğrulanmış bir IP adresinin, yeniden kimlik doğrulamadan önce yazıcı web sayfalarına ne kadar süre erişebileceğini ayarlar."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Yazdırma sunucusu için DHCP istemci tanımlayıcısının biçimini ve değerini ayarlar."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Bir yazıcı ağ arabirimi için IP adresini, alt ağ maskesini ve ağ geçidini yapılandırır."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Daha eski yazılımlar için kablolu yazdırma sunucusu IP ayarlarını, zaman aşımlarını ve ham bağlantı noktasını yapılandırır."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Kablosuz radyo için alış ve gönderim antenlerini seçer."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Daha eski kablosuz yazılım için kullanımdan kaldırılmış WEP güvenliğini ve anahtar malzemesini yapılandırır."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Daha eski kablosuz yazılım için kullanımdan kaldırılmış Cisco LEAP kimlik doğrulamasını yapılandırır."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Yazıcı kontrol panelindeki kablosuz ayarları için parolayı ayarlar."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Daha eski kablosuz yazdırma sunucularında 802.11b veri hızlarını ve iletim gücünü yapılandırır."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Kablosuz ağ adını, radyo modunu, önsöz uzunluğunu ve keep-alive davranışını yapılandırır."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Kablosuz güvenlik modunu, anahtarları ve kimlik bilgilerini tek bir komutta yapılandırır."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Yazıcı boştayken bir ağ yapılandırma etiketi yazdırır."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Kablosuz radyo kartını ve yazdırma sunucusunu yeniden başlatarak radyonun ağa yeniden katılmasını sağlar."
+  }
+}

@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Sāk jaunu etiķetes formātu. Tam sekojošās komandas nosaka laukus, materiāla apstrādi un printera darbību šai etiķetei."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Aizver pašreizējo etiķetes formātu un nosūta to drukāšanai."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Iestata apdrukājamo platumu punktos. Saturu, kas pārsniedz šo platumu, printeris nogriež."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Iestata etiķetes garumu punktos, nosakot, kur beidzas apdrukājamais formāts."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Pārvieto etiķetes sākumpunktu, mainot atskaites punktu, ko izmanto turpmāko lauku koordinātas."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Pielieto horizontālu nobīdi lauku pozīcijām saderībai ar vecākiem Zebra formātiem."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Pievieno vertikālu nobīdi visam formātam attiecībā pret materiāla augšējo malu."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Iestata koordinātu mērvienības punktos, collās vai milimetros un var mērogot formātus starp drukas izšķirtspējām."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Iestata materiāla apstrādes režīmu pēc drukāšanas, tostarp atplēšanas, atlīmēšanas, griešanas, uztīšanas un aplikatora režīmus."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Izvēlas termopārneses vai tiešās termodrukas režīmu atbilstoši tam, vai ievietotais materiāls izmanto lenti."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Iestata drukājamo daudzumu, pauzes vai griešanas grupēšanu un kopiju skaitu katrai sērijas vērtībai."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Apgriež drukāšanu turpmākajiem laukiem, samainot vietām priekšplānu un fonu."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Pagriež visu etiķetes formātu par 180 grādiem."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Spoguļo apdrukājamo laukumu horizontāli."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Iestata drukas ātrumu, pārvietošanas ātrumu un atpakaļpadeves ātrumu collās sekundē."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Novieto nākamo lauku no etiķetes sākumpunkta, izmantojot lauka augšējo kreiso stūri."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Novieto nākamo lauku pēc tā bāzes līnijas vai svītrkoda malas, nodrošinot pagrieztiem laukiem stabilu piesaisti."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Nodrošina pašreizējā lauka saturu, tostarp tekstu, svītrkoda datus vai RFID datus."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Noslēdz pašreizējā lauka definīciju."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Iespējo heksadecimālas izvades sekvences lauka datos bināriem baitiem un rezervētām komandu rakstzīmēm."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Apmaina vietām priekšplānu un fonu tikai nākamajam laukam."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Pievieno komentāra lauku. Printeris ignorē tā saturu līdz nākamajam lauka atdalītājam."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Iestata lauka noklusējuma orientāciju un jaunākā programmaparatūrā arī noklusējuma līdzinājumu."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Ietver lauka datus fiksēta platuma blokā ar rindu skaita, atstarpes, atkāpes un līdzinājuma vadību."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Ietver tekstu fiksēta platuma un fiksēta augstuma rāmī, apgriežot pārpalikumu."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Piešķir numuru mainīgajam laukam saglabātos un atsauktos formātos."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Nodrošina datus mainīgajam laukam. Atšķirībā no ^FD datiem tie tiek dzēsti pēc etiķetes izdrukāšanas."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Iestata rakstzīmi, ko izmanto, lai iegultu numurētu lauku vērtības cita lauka virknē."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Iestata marķierus, ko izmanto reāllaika pulksteņa marķieriem lauka datos."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Iestata svītrkoda moduļa noklusējuma platumu, plato-šaurā attiecību un augstumu turpmākajiem svītrkoda laukiem."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Novieto PDF417 vai MicroPDF417 segmentus konkrētos sākumpunktos, ja viens ziņojums aptver vairākus simbolus."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Iestata rakstzīmju secību pašreizējam laukam un var pievienot papildu rakstzīmju atstarpi."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Izvēlas iebūvēto mērogojamo fontu 0 nākamajam laukam pieprasītajā izmērā un orientācijā."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Izvēlas iebūvētu fontu pēc viena rakstzīmes nosaukuma, opcionāli norādot orientāciju, augstumu un platumu."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Izvēlas saglabātu fonta failu nākamajam laukam, opcionāli norādot orientāciju, augstumu un platumu."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Iestata rezerves fontu, augstumu un platumu, ko izmanto teksta lauki, kuri paši šos parametrus nenorāda."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Izvēlas kodējumu, ko izmanto lauka datu interpretācijai, tostarp koda lapas un UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Iespējo uzlabotu teksta izkārtojumu turpmākajiem laukiem, tostarp divvirzienu tekstu, formu veidošanu un OpenType funkcijas."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Piesaista viena rakstzīmes fonta nosaukumu saglabātam fonta failam."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Iestata kešatmiņas apjomu renderētiem mērogojamiem glifiem, lai paātrinātu atkārtotu liela fonta izvadi."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Definē TrueType rezerves fontu ķēdes, ko izmanto, ja bāzes fontam trūkst glifa."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Izdrukā etiķeti ar konfigurēto fontu saišu sarakstu un to ķēdē sasaistītajiem rezerves fontiem."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Ielādē rastra fontu un tā metriku printera atmiņā."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Ielādē kodētu mērogojamu Intellifont fontu printera atmiņā."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Ielādē kodētu TrueType fontu ar līdz 256 rakstzīmēm printera atmiņā."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Ielādē kodētu TrueType fontu ar vairāk nekā 256 glifiem printera atmiņā."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Ielādē kodējuma tabulu, kas piesaista lauka datu baitus Unicode vērtībām TrueType fontiem."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Zīmē Code 128 svītrkodu mainīga garuma ASCII datiem, ar režīmiem automātiskai apakškopu pārslēgšanai un UCC/EAN datiem."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Zīmē Code 39 svītrkodu ar neobligātu Mod 43 kontrolciparu."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Zīmē Code 93 svītrkodu, kas ar nobīdes rakstzīmēm attēlo pilnu ASCII datu kopu."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Zīmē Code 11 svītrkodu cipariem un defisēm, ar iespējamiem kontrolcipariem."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Zīmē Interleaved 2 of 5 svītrkodu pāra garuma skaitliskiem datiem, ar iespējamu kontrolciparu."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Zīmē Industrial 2 of 5 svītrkodu, skaitlisku kodu, kurā dati kodēti tikai svītrās."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Zīmē Standard 2 of 5 svītrkodu, pašpārbaudošu skaitlisku kodu, kurā dati kodēti tikai svītrās."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Zīmē ANSI Codabar svītrkodu, pazīstamu arī kā USD-4, bibliotēku, veselības aprūpes un kurjeru etiķetēm."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Zīmē LOGMARS svītrkodu, ASV Aizsardzības departamenta Code 39 variantu, un pārveido mazos burtus datos par lielajiem."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Zīmē MSI svītrkodu, no Plessey atvasinātu skaitlisku kodu ar izvēlamām kontrolciparu shēmām."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Zīmē Plessey svītrkodu, vecāku skaitlisku kodu ar iespējamiem kontrolcipariem."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Zīmē EAN-13 svītrkodu mazumtirdzniecības preču numuriem un aprēķina kontrolciparu no divpadsmit datu cipariem."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Zīmē EAN-8 svītrkodu maziem mazumtirdzniecības iepakojumiem un aprēķina kontrolciparu no septiņiem datu cipariem."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Zīmē UPC-A svītrkodu mazumtirdzniecības iepakojumam no vienpadsmit datu cipariem, ar iespējamu kontrolcipara drukāšanu."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Zīmē UPC-E svītrkodu, UPC-A saīsināto formu. Lauka dati ir pilns desmit ciparu ražotāja un produkta kods."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Zīmē GS1 DataBar simbolu ar izvēlamu apakštipu, palielinājumu, augstumu un segmenta platumu."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Zīmē Planet Code pasta svītrkodu no cipariem, kas kodēti kā garas un īsas svītras."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Zīmē POSTNET, Planet Code vai USPS Intelligent Mail atbilstoši izvēlētajam pasta koda tipam."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Zīmē divciparu vai piecciparu UPC/EAN papildsimbolu blakus galvenajam svītrkodam."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Zīmē Code 49 kārtoto svītrkodu ar divām līdz astoņām pilna ASCII datu rindām."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Zīmē QR Code simbolu. Komandas parametri iestata modeli, palielinājumu un masku, savukārt lauka dati nosaka kļūdu labošanas līmeni un rakstzīmju režīmu."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Zīmē Data Matrix simbolu ar konfigurējamu elementa izmēru, kvalitātes līmeni un atsoļa sekvenču apstrādi."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Zīmē PDF417 kārtoto divdimensiju simbolu lieliem teksta vai bināriem datu apjomiem."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Zīmē MicroPDF417 simbolu, kompaktu PDF417 variantu ar rindu adrešu rakstiem."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Zīmē Aztec matricas simbolu ar konfigurējamu palielinājumu un kļūdu labošanu."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Zīmē CODABLOCK simbolu A, E vai F režīmā lielākiem datu apjomiem."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Zīmē UPS MaxiCode simbolu ar režīmu strukturētiem pārvadātāja ziņojumiem vai vispārīgiem datiem."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Zīmē TLC39 telekomunikāciju etiķetes simbolu, kas apvieno Code 39 ar MicroPDF417 komponenti."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Kad iespējots, validē svītrkoda datus un parametrus un neatbilstoša simbola vietā izdrukā INVALID."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Zīmē aizpildītu vai kontūrētu taisnstūri. Ja malas garums sakrīt ar apmales biezumu, iegūst līniju."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Zīmē diagonālu līniju norādītā platumā un augstumā, sasveroties pa labi vai pa kreisi."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Zīmē elipsi no platuma un augstuma punktos, ar uz iekšu vērstu apmales biezumu un melnu vai baltu izvadi."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Zīmē apli ar norādīto diametru punktos, ar uz iekšu vērstu apmales biezumu un melnu vai baltu izvadi."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Novieto vienkrāsainu rastra attēlu pašreizējā lauka pozīcijā, izmantojot ASCII heksadecimālus, binārus vai saspiestus datus."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Izdrukā iebūvētu simbolu, kas izvēlēts pēc lauka datiem, piemēram, autortiesību vai reģistrētas preču zīmes zīmi."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Ielādē saglabātu attēlu formāta sākumā un piesaista to etiķetes sākumpunktam."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Novieto saglabātu attēlu pašreizējā lauka pozīcijā, to nemērogojot."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Dzēš saglabātu grafiku, fontus vai formātus no printera atmiņas, ar aizstājējzīmju atbalstu grupām."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Saglabā pašreizējo formātu kā grafisku attēlu ātrai atsaukšanai un mainīgo datu pārklājumiem."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Ielādē ASCII heksadecimālu grafiku printera atmiņā ar atkārtoti izmantojamu nosaukumu."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Aptur pusceļā pārtrauktu grafikas augšupielādi un atgriež printeri normālā darbībā."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Ielādē grafiku, fontu vai sertifikātu printera atmiņā ar atkārtoti izmantojamu nosaukumu."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Dzēš visu ielādēto grafiku no printera atmiņas. Atsevišķu objektu dzēšanai izmanto ^ID."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Sērijveido teksta vai svītrkoda lauka datus vairākās etiķetēs, izmantojot sākuma vērtību, virzienu un soli."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Sērijveido izvēlētas pozīcijas lauka datos, izmantojot masku un rakstzīmju kopas."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Saglabā turpmākās komandas kā atkārtoti izmantojamu formātu, nevis tās uzreiz izdrukājot."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Atsauc saglabātu formātu un nodrošina vērtības tā numurētajiem vietturu laukiem."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Atsauc saglabātu grafiku pašreizējā pozīcijā ar neatkarīgu horizontālu un vertikālu mērogošanu."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Izvēlas, kā printeris nosaka etiķešu robežas, izmantojot spraugas, atzīmes vai nepārtrauktu materiālu."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Iestata maksimālo etiķetes garumu, kādu printeris meklē, kalibrējot materiālu ar atdalītām etiķetēm."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Iestata darbību ieslēdzot printeri un aizverot drukas galviņu, tostarp kalibrēšanu, padevi vai garuma mērīšanu."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Nomāc atpakaļpadevi pašreizējai etiķetei, ja pārvietošanās uz atplēšanas pozīciju nav nepieciešama."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Konfigurē drukātus apkopes brīdinājumus drukas galviņas tīrīšanai vai nomaiņai."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Kontrolē, vai etiķetes rastra attēls tiek dzēsts pēc drukāšanas vai saglabāts atkārtotai izmantošanai turpmākajās etiķetēs."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Iestata tekstu, kas tiek rādīts apkopes brīdinājuma etiķetēs drukas galviņas tīrīšanai vai nomaiņai."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Bloķē vadības paneļa iestatījumu, piemēram, tumšumu vai kalibrēšanu, līdz tas tiek atbloķēts."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Iespējo vai atspējo drukas galviņas zemas temperatūras brīdinājuma indikatoru."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Pielāgo drukas tumšumu attiecībā pret printera pašreiz konfigurēto tumšumu."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Nekavējoties iestata absolūtu drukas tumšumu atbilstoši priekšējā paneļa tumšuma iestatījumam."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Kontrolē, vai etiķete, kuras drukāšanu pārtraukusi materiāla, lentes vai drukas galviņas kļūda, tiek pārdrukāta pēc atjaunošanās."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Ieplāno periodiskas drukas galviņas elementu pārbaudes pēc izdrukāto etiķešu skaita un opcionāla elementu diapazona."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Pēc drukāšanas pielāgo miera stāvokļa atplēšanas vai griešanas pozīciju ar nelielu punktu nobīdi."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Konfigurē agrīnas brīdināšanas robežvērtības materiāla, lentes un drukas galviņas apkopei."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Kontrolē atpakaļpadeves laiku ap drukāšanu un griešanu vai izslēdz atpakaļpadevi."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Padod norādītu skaitu tukšu punktu rindu ar pārvietošanas ātrumu."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Padod vienu tukšu etiķeti pēc tam, kad pašreizējais formāts ir izdrukāts."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Padod vienu tukšu etiķeti, tiklīdz printeris ir brīvs, pēc pašreizējā formāta vai pauzes laikā."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Pārtrauc darbu pauzē pēc pašreizējā formāta izdrukāšanas. Jau buferī esošās etiķetes vēl var tikt izdrukātas vispirms."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Pārtrauc darbu pauzē pēc pašreizējās etiķetes pabeigšanas. Drukāšana turpinās, kad pauzes stāvoklis tiek atcelts."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Pārdrukā iepriekšējo etiķeti, ja iespējots aplikatora pārdrukāšanas režīms."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Atceļ pauzes režīmu un atsāk drukāšanu."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Nekavējoties iedarbina griezēju KR403 printeros kioska drukas režīmā."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Pievieno papildu izgrūšanas garumu KR403 kioska padevējam, atvieglojot izdrukātā materiāla paņemšanu."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Palaiž KR403 padevēja ciklu, piedāvājot izdrukāto materiālu manuālai izņemšanai."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Iestata lentes padeves spriegojumu PAX sērijas printeros."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Iestata printera reāllaika pulksteņa datumu un laiku."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Izvēlas datuma un laika formātu, kas tiek rādīts konfigurācijas etiķetē un vadības panelī."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Definē sekundārā pulksteņa nobīdes no reāllaika pulksteņa. Nobīdes tiek zaudētas, printerim izslēdzoties."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Iestata, kad laika lauki tiek zīmogoti, un izvēlas valodu dienu un mēnešu nosaukumiem."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Izvēlas printera vadības paneļa displeja valodu no saraksta, kas atšķiras atkarībā no modeļa."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Izvēlas saglabātu kodējuma tabulu, ko izmanto lauka datu pārveidošanai pirms drukāšanas."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Izvēlas oriģinālā ZPL vai ZPL II komandu interpretāciju saderībai ar vecākiem formātiem."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Piešķir printerim tīkla nosaukumu un brīvā teksta aprakstu, kas abi redzami konfigurācijas etiķetē un printera iebūvētajā tīmekļa lapā."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Iestata četrciparu paroli vadības paneļa iestatījumu izvēlnēm."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Saglabā, atjauno vai atiestata printera konfigurācijas iestatījumus."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Maina formāta komandu prefiksa rakstzīmi, parasti jumtiņu, globāli vai tikai pašreizējam formātam."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Maina parametru atdalītāja rakstzīmi, parasti komatu, globāli vai tikai pašreizējam formātam."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Maina tūlītējo komandu prefiksa rakstzīmi, parasti tildi, globāli vai tikai pašreizējam formātam."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Pārkārto printera atmiņas apzīmējumu burtus, lai saglabātie objekti varētu paturēt esošos nosaukumus."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Atceļ rindā esošos formātus un pašreizējo partiju. Etiķete, kas jau tiek drukāta, var tikt pabeigta."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Dzēš un no jauna inicializē vienu flash atmiņas ierīci. Strāvas zudums šīs darbības laikā var sabojāt atmiņu."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "No jauna inicializē ar akumulatoru barotu atmiņas karti pēc uzstādīšanas vai akumulatora nomaiņas."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Palaiž materiāla kalibrēšanu, lai izmērītu etiķetes garumu un pielāgotu materiāla un lentes sensorus."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Ienākošo baitu izpildes vietā izdrukā tos kopā ar to heksadecimālajām vērtībām saimniekdatora saziņas diagnostikai."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Iziet no saziņas diagnostikas režīma un atgriež printeri normālā etiķešu drukāšanā."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Iestata, vai zems akumulatora spriegums aptur pārnēsājamu printeri vai ļauj drukāšanai turpināties."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Palaiž materiāla kalibrēšanu un izdrukā sensora profila grafiku materiāla spraugas pārejai."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Palaiž Zebra BASIC Interpreter printerī, opcionāli startējot saglabātu programmu."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Konfigurē papildporta signālus aplikatoram vai verificētājam un kļūdu apstrādi."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Izvēlas materiāla izsekošanai izmantoto sensoru, parasti atstarojošo vai caurlaidības sensoru."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Izmēra un saglabā etiķetes garumu, procesa laikā padodot tukšas etiķetes."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Iestata normālu vai samazinātu punktu skaitu milimetrā. Samazināts blīvums divkāršo formāta koordinātu fizisko izmēru."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Panāk, ka neveiksmīgs drukas galviņas elementa tests aptur drukāšanu, līdz printeris tiek restartēts vai atjaunots iecietīgais režīms."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Ļauj drukāšanai turpināties pēc neveiksmīga drukas galviņas elementa testa."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Atceļ nākamo rindā esošo formātu un aptur printeri, katrai komandai vienu buferētu formātu."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Iziet no aktīvas Zebra BASIC Interpreter sesijas un atgriež portu ZPL apstrādei."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Pārstartē printera programmaparatūru un no jauna ielādē saglabātos saziņas un konfigurācijas noklusējumus."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Atceļ pašlaik saņemamo formātu, neatceļot etiķetes, kas jau tiek drukātas."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Atiestata izvēlēto printera lietojuma skaitītāju, tostarp lietotāja vai RFID skaitītājus."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Konfigurē visus seriālā porta saziņas parametrus vienā komandā."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Ignorē caurlaidības sensora intensitātes vai bāzes vērtības, kuras parasti iestata kalibrēšana."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Sāk drukāšanu, pirms pilns formāts ir saņemts, lai uzlabotu caurlaidību sarežģītām etiķetēm."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Atspējo konkrētu ZebraNet brīdinājuma nosacījumu un mērķi."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Iestata drukas galviņas pretestības vērtību, ko izmanto dedzināšanas enerģijas aprēķinos."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Iestata materiāla sensora robežvērtības, etiķetes garumu un LED intensitāti, kurus parasti nosaka kalibrēšana."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Iespējo ZebraNet brīdinājumu konkrētam nosacījumam un mērķim."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopē saglabātus objektus starp printera atmiņas ierīcēm, ar aizstājējzīmju atbalstu grupām."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Izdrukā konfigurācijas etiķeti ar informāciju par sensoriem, tīklu, programmaparatūru un atmiņu."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Izdrukā direktorijas etiķeti saglabātiem objektiem, iebūvētiem fontiem vai pieejamiem svītrkodiem."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Izdrukā etiķetē pieprasīto servisa informāciju, piemēram, odometra rādījumu vai drukas galviņas vēsturi."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Konfigurē KR403 kioska padevēja iestatījumus, tostarp griešanas garumu, griešanas atkāpi, ievilkšanas noildzi un cilpas garumu."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Kontrolē etiķetes garuma un sensora robežvērtības dinamisku pārkalibrēšanu pēc ieslēgšanas vai materiāla nodalījuma atvēršanas."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Sāk printera izņemšanas no ekspluatācijas režīmu, lai sagatavotu to tālākpārdošanai vai otrreizējai pārstrādei."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Iestata automātisku pāreju miega režīmā pēc dīkstāves perioda, ar opcijām rindā esošām etiķetēm."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Izgrūž vai ievelk materiālu, ko jau piedāvājis KR403 kioska padevējs."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Palaiž akumulatora izlādes režīmu pārnēsājamos printeros akumulatora bloka kondicionēšanai."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Atgriež akumulatora un drukas galviņas jaudas rādījumus no mobilajiem printeriem."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Atgriež drukas galviņas diagnostikas datus, tostarp temperatūras, elementu testu rezultātus, tumšumu un ātrumu."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Atgriež saglabātu ZPL formātu no printera atmiņas saimniekdatoram."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Atgriež saglabātu grafisku attēlu no printera atmiņas saimniekdatoram."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Atgriež printera pašreizējo konfigurāciju kā lasāmu tekstu caur saimniekdatora portu."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Atgriež printera identifikācijas datus, tostarp modeli, programmaparatūru, izšķirtspēju, atmiņu un uzstādītās opcijas."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Atgriež printera kopējo, maksimāli pieejamo un pašlaik brīvo atmiņu kilobaitos."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Atgriež saimniekdatoram pieprasīto statusa, identifikācijas, odometra vai apkopes informāciju."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Atgriež statusa virknes saimniekdatoram par interfeisu, materiālu, pauzes stāvokli, etiķetes garumu un buferētajiem formātiem."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Atgriež saimniekdatoram fontu saišu tabulu ar bāzes fontu un rezerves fontu sarakstu."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Atgriež konfigurētos ZebraNet brīdinājumus, tostarp nosacījumus, mērķus un iestatīšanas vai dzēšanas karodziņus."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Atgriež saimniekdatoram datus no numurēta lauka, ar iespējamu baitu skaita ierobežojumu."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Atgriež atmiņas ierīces direktorijas sarakstu, tostarp atlikušo brīvo vietu."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Atgriež saimniekdatoram saglabātu grafiku lejupielādējama faila formātā."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Atgriež printera apraksta XML iestatījumiem, objektu direktorijai vai statusam."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Lasa no RFID birkas vai raksta tajā, tostarp nosaka datu formātu, atmiņas banku un piekļuves paroli."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Nolasa pašreizējās RFID birkas ID izmantošanai etiķetes datos vai atbildē saimniekdatoram."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Kontrolē materiāla kustību novecojušu RFID operāciju laikā. Link-OS formāti tā vietā izmanto ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Konstatē vairāk nekā vienu RFID birku kodēšanas laukā un var anulēt etiķetes, kurām tuvumā ir svešas birkas."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Iestata atkārtotu mēģinājumu skaitu novecojušām RFID lasīšanas vai rakstīšanas operācijām. Link-OS formāti tā vietā izmanto ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Definē bitu izkārtojumu, ko izmanto RFID EPC lauku kodēšanai birkā."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Iestata RFID opcijas turpmākajām etiķetēm, tostarp birkas tipu, programmēšanas pozīciju, kļūdu apstrādi un VOID joslas garumu."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Nolasa birkas datus etiķetes laukā novecojušos RFID formātos."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Raksta birkas datus novecojušos RFID formātos. ^RF nodrošina gan lasīšanu, gan rakstīšanu, gan paroļu apstrādi."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Izveido EPC sērijas numuru no birkas ID un ieraksta to EPC zemākajos bitos."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Atgriež saimniekdatoram katras RFID kodēšanas rezultātu, ļaujot programmatūrai atšķirt derīgas birkas no anulētām etiķetēm."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Iestata RFID lasīšanas un rakstīšanas jaudu, ja kalibrēšana nedod izmantojamas vērtības."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Bloķē RFID birkas atmiņu, atgriezeniski vai neatgriezeniski, lai novērstu turpmāku rakstīšanu."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Palaiž RFID kalibrēšanu un atgriež saimniekdatoram pozīcijas, antenas un jaudas iestatījumus."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Atgriež RFID darbību žurnālu, tostarp pozīciju, antenu, jaudas līmeni un rezultātu."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Izvēlas, vai printeris palaišanas laikā pārbauda vadu drukas servera klātbūtni."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Izvēlas primāro tīkla ierīci, vadu vai bezvadu."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresē vienu printeri novecojušā RS-485 daudzpunktu līnijā pēc tīkla ID."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Piešķir tīkla ID, ko izmanto printera adresēšanai novecojušā RS-485 daudzpunktu līnijā."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Iestata printera SNMP identitāti un kopienas virknes."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Izvēlas, vai ielādes brīža tīkla iestatījumi tiek ņemti no printera vai pievienotā drukas servera."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Pārslēdz visus printerus novecojušā daudzpunktu līnijā caurspīdīgā uztveršanas režīmā."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Konfigurē SMTP servera un domēna iestatījumus drukas servera e-pasta brīdinājumiem."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Pārslēdz adresēto novecojušo daudzpunktu printeri caurspīdīgā uztveršanas režīmā."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Iestata, cik ilgi autentificēta IP adrese var piekļūt printera tīmekļa lapām pirms atkārtotas autentifikācijas."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Iestata drukas servera DHCP klienta identifikatora formu un vērtību."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Konfigurē IP adresi, apakštīkla masku un vārteju printera tīkla saskarnei."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Konfigurē vadu drukas servera IP iestatījumus, noildzes un raw portu vecākai programmaparatūrai."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Izvēlas uztveršanas un raidīšanas antenas bezvadu radio modulim."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Konfigurē novecojušu WEP drošību un atslēgu materiālu vecākai bezvadu programmaparatūrai."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Konfigurē novecojušu Cisco LEAP autentifikāciju vecākai bezvadu programmaparatūrai."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Iestata paroli bezvadu iestatījumiem printera vadības panelī."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Konfigurē 802.11b datu pārraides ātrumus un raidīšanas jaudu vecākos bezvadu drukas serveros."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Konfigurē bezvadu tīkla nosaukumu, radio režīmu, preambulas garumu un keep-alive darbību."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Konfigurē bezvadu drošības režīmu, atslēgas un piekļuves datus vienā komandā."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Izdrukā tīkla konfigurācijas etiķeti, kamēr printeris ir dīkstāvē."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Restartē bezvadu radio karti un drukas serveri, liekot radio modulim no jauna pievienoties tīklam."
+  }
+}

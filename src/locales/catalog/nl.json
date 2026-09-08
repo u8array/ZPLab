@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Start een nieuwe labelindeling. De commando's die erna volgen definiëren velden, mediaverwerking en printergedrag voor dat label."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Sluit de huidige labelindeling af en biedt deze aan om te printen."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Stelt de bedrukbare breedte in dots in. Inhoud buiten die breedte wordt door de printer afgekapt."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Stelt de labellengte in dots in en bepaalt daarmee waar de bedrukbare indeling eindigt."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Verplaatst de thuispositie van het label, waardoor de oorsprong voor latere veldcoördinaten verandert."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Past een horizontale verschuiving toe op veldposities, voor compatibiliteit met oudere Zebra-indelingen."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Voegt een verticale verschuiving toe aan de hele indeling, ten opzichte van de bovenrand van de media."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Stelt de coördinaateenheden in op dots, inches of millimeters en kan indelingen schalen tussen printresoluties."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Stelt de mediaverwerkingsmodus na het printen in, waaronder tear-off, peel-off, cutter, rewind en applicatormodi."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Selecteert thermal transfer of direct thermal, afgestemd op of de geladen media een lint gebruikt."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Stelt het aantal afdrukken in, groepering voor pauzeren of snijden, en het aantal exemplaren per seriewaarde."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Keert het printen voor volgende velden om door voor- en achtergrond te verwisselen."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Draait de volledige labelindeling 180 graden."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Spiegelt het bedrukbare gebied horizontaal."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Stelt printsnelheid, slew-snelheid en backfeed-snelheid in, in inch per seconde."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Positioneert het volgende veld vanaf het nulpunt van het label, aan de hand van de linkerbovenhoek."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Positioneert het volgende veld vanaf zijn basislijn of barcoderand, wat geroteerde velden een stabiel ankerpunt geeft."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Levert de inhoud voor het huidige veld, waaronder tekst, barcodegegevens of RFID-gegevens."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Beëindigt de huidige velddefinitie."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Schakelt hexadecimale escapecodes in veldgegevens in, voor binaire bytes en gereserveerde commandotekens."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Wisselt voor- en achtergrond om, alleen voor het volgende veld."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Voegt een commentaarveld toe. De printer negeert de inhoud ervan tot aan de volgende veldscheiding."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Stelt de standaardoriëntatie van velden in en, op nieuwere firmware, de standaarduitlijning."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Verpakt veldgegevens in een blok met vaste breedte, met regeling van regelaantal, regelafstand, inspringing en uitlijning."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Verpakt tekst in een kader met vaste breedte en vaste hoogte, waarbij overtollige tekst wordt afgekapt."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Kent een nummer toe aan een variabel veld in opgeslagen en opgeroepen indelingen."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Levert gegevens voor een variabel veld. In tegenstelling tot ^FD-gegevens wordt dit gewist nadat het label is geprint."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Stelt het teken in waarmee genummerde veldwaarden worden ingebed in een andere veldstring."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Stelt de markeringen in die worden gebruikt voor real-time-klok-tokens binnen veldgegevens."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Stelt de standaard modulebreedte, de breed-smalverhouding en de hoogte in voor volgende barcodevelden."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Plaatst PDF417- of MicroPDF417-segmenten op specifieke oorsprongen wanneer één bericht over meerdere symbolen verdeeld is."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Stelt de tekenvolgorde voor het huidige veld in en kan extra tekenafstand toevoegen."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Selecteert het residente schaalbare lettertype 0 voor het volgende veld, op de gevraagde grootte en oriëntatie."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Selecteert een resident lettertype via een naam van één teken, met optionele oriëntatie, hoogte en breedte."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Selecteert een opgeslagen lettertypebestand voor het volgende veld, met optionele oriëntatie, hoogte en breedte."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Stelt het reservelettertype, de hoogte en de breedte in die worden gebruikt door tekstvelden die zelf niets opgeven."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Selecteert de codering waarmee veldgegevens worden geïnterpreteerd, waaronder codepagina's en UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Schakelt geavanceerde tekstopmaak in voor volgende velden, waaronder bidirectionele tekst, vormgeving van tekens en OpenType-functies."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Koppelt een lettertypenaam van één teken aan een opgeslagen lettertypebestand."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Stelt de cachegrootte voor gerenderde schaalbare glyphs in, om herhaalde uitvoer van grote lettertypen te versnellen."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Definieert TrueType-reserveketens die worden gebruikt wanneer het basislettertype een glyph mist."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Print een label met een overzicht van geconfigureerde lettertypekoppelingen en hun gekoppelde reservelettertypen."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Downloadt een bitmaplettertype en de bijbehorende metrieken naar het printergeheugen."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Downloadt een gecodeerd schaalbaar Intellifont-lettertype naar het printergeheugen."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Downloadt een gecodeerd TrueType-lettertype met maximaal 256 tekens naar het printergeheugen."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Downloadt een gecodeerd TrueType-lettertype met meer dan 256 glyphs naar het printergeheugen."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Downloadt een coderingstabel die bytes uit veldgegevens koppelt aan Unicode-waarden voor TrueType-lettertypen."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Tekent een Code 128-barcode voor ASCII-gegevens van variabele lengte, met modi voor automatisch wisselen van subsets en UCC/EAN-gegevens."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Tekent een Code 39-barcode met een optioneel Mod 43-controlecijfer."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Tekent een Code 93-barcode, die volledige ASCII-gegevens weergeeft via shift-tekens."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Tekent een Code 11-barcode voor cijfers en koppeltekens, met optionele controlecijfers."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Tekent een Interleaved 2 of 5-barcode voor numerieke gegevens van even lengte, met een optioneel controlecijfer."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Tekent een Industrial 2 of 5-barcode, een numerieke code waarbij de gegevens uitsluitend in de balken zijn gecodeerd."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Tekent een Standard 2 of 5-barcode, een zelfcontrolerende numerieke code waarbij de gegevens uitsluitend in de balken zijn gecodeerd."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Tekent een ANSI Codabar-barcode, ook bekend als USD-4, voor labels in bibliotheken, de zorg en koeriersdiensten."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Tekent een LOGMARS-barcode, de Department of Defense-variant van Code 39, en zet kleine letters in de gegevens om naar hoofdletters."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Tekent een MSI-barcode, een van Plessey afgeleide numerieke code met instelbare controlecijferschema's."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Tekent een Plessey-barcode, een oudere numerieke code met optionele controlecijfers."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Tekent een EAN-13-barcode voor retailartikelnummers en leidt het controlecijfer af uit twaalf gegevenscijfers."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Tekent een EAN-8-barcode voor kleine retailverpakkingen en leidt het controlecijfer af uit zeven gegevenscijfers."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Tekent een UPC-A-barcode voor retailverpakkingen uit elf gegevenscijfers, met optioneel afdrukken van het controlecijfer."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Tekent een UPC-E-barcode, de verkorte vorm van UPC-A. De veldgegevens vormen de volledige tiencijferige fabrikant- en productcode."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Tekent een GS1 DataBar-symbool met instelbaar subtype, vergroting, hoogte en segmentbreedte."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Tekent een postale Planet Code-barcode, waarbij cijfers worden gecodeerd als lange en korte balken."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Tekent POSTNET, Planet Code of USPS Intelligent Mail, afhankelijk van het geselecteerde postcodetype."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Tekent een tweecijferig of vijfcijferig UPC/EAN-aanvullingssymbool naast een hoofdbarcode."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Tekent een gestapelde Code 49-barcode met twee tot acht rijen volledige ASCII-gegevens."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Tekent een QR Code-symbool. De commandoparameters stellen model, vergroting en masker in. De veldgegevens stellen de foutcorrectie en de tekenmodus in."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Tekent een Data Matrix-symbool met instelbare elementgrootte, kwaliteitsniveau en verwerking van escapecodes."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Tekent een gestapeld tweedimensionaal PDF417-symbool voor grote hoeveelheden tekst of binaire gegevens."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Tekent een MicroPDF417-symbool, een compacte PDF417-variant met rijadrespatronen."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Tekent een Aztec-matrixsymbool met instelbare vergroting en foutcorrectie."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Tekent een CODABLOCK-symbool in modus A, E of F, voor grotere hoeveelheden gegevens."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Tekent een UPS MaxiCode-symbool, met een modus voor gestructureerde vervoerdersberichten of algemene gegevens."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Tekent een TLC39-telecomlabelsymbool, dat Code 39 combineert met een MicroPDF417-component."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Valideert, indien ingeschakeld, barcodegegevens en -parameters en print INVALID in plaats van een onjuist symbool."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Tekent een gevulde of omlijnde rechthoek. Wanneer een zijde gelijk is aan de randdikte, ontstaat een lijn."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Tekent een diagonale lijn over een opgegeven breedte en hoogte, hellend naar rechts of naar links."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Tekent een ellips op basis van een breedte en hoogte in dots, met naar binnen gerichte randdikte en zwarte of witte uitvoer."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Tekent een cirkel met de opgegeven diameter in dots, met naar binnen gerichte randdikte en zwarte of witte uitvoer."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Plaatst een monochrome bitmap op de huidige veldpositie, met gegevens in ASCII-hex, binair of gecomprimeerd formaat."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Print een resident symbool dat via de veldgegevens wordt geselecteerd, zoals copyright of geregistreerd handelsmerk."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Laadt een opgeslagen afbeelding aan het begin van een indeling en verankert deze op de oorsprong van het label."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Plaatst een opgeslagen afbeelding op de huidige veldpositie, zonder deze te schalen."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Verwijdert opgeslagen afbeeldingen, lettertypen of indelingen uit het printergeheugen, met ondersteuning voor wildcards bij groepen."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Slaat de huidige indeling op als afbeelding, voor snel oproepen en overlays met variabele gegevens."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Downloadt een ASCII-hex-afbeelding naar het printergeheugen onder een herbruikbare naam."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Stopt een halverwege onderbroken upload van een afbeelding en brengt de printer terug naar normale werking."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Downloadt een afbeelding, lettertype of certificaat naar het printergeheugen onder een herbruikbare naam."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Wist alle gedownloade afbeeldingen uit het printergeheugen. Gebruik ^ID om geselecteerde objecten te verwijderen."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serialiseert tekst- of barcodeveldgegevens over labels heen, met een startwaarde, richting en stapgrootte."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serialiseert geselecteerde posities in veldgegevens met behulp van een masker en tekensets."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Slaat de volgende commando's op als een herbruikbare indeling, in plaats van ze meteen te printen."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Roept een opgeslagen indeling op en levert waarden voor de genummerde tijdelijke velden ervan."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Roept een opgeslagen afbeelding op de huidige positie op, met onafhankelijke horizontale en verticale schaling."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Selecteert hoe de printer labelgrenzen detecteert, via tussenruimtes, markeringen of doorlopende media."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Stelt de maximale labellengte in waarnaar de printer zoekt tijdens het kalibreren van niet-doorlopende media."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Stelt de actie in bij opstarten en bij sluiten van de printkop, waaronder kalibratie, doorvoer of lengtemeting."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Onderdrukt backfeed voor het huidige label wanneer verplaatsen naar de tear-off-positie niet nodig is."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Configureert geprinte onderhoudsmeldingen voor het reinigen of vervangen van de printkop."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Bepaalt of de labelbitmap na het printen wordt gewist of bewaard blijft voor hergebruik door latere labels."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Stelt de tekst in die wordt getoond op onderhoudsmeldingslabels voor het reinigen of vervangen van de printkop."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Vergrendelt een instelling van het bedieningspaneel, zoals afdrukdichtheid of kalibratie, tot deze weer wordt ontgrendeld."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Schakelt de waarschuwingsindicator voor een koude printkop in of uit."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Past de afdrukdichtheid aan ten opzichte van de huidige geconfigureerde afdrukdichtheid van de printer."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Stelt de absolute afdrukdichtheid direct in, overeenkomstig de instelling op het bedieningspaneel."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Bepaalt of een label dat onderbroken werd door een storing in media, lint of printkop, na herstel opnieuw wordt geprint."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Plant periodieke tests van printkopelementen op basis van het aantal geprinte labels en een optioneel elementbereik."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Past de rustpositie voor tear-off of snijden aan met een kleine verschuiving in dots na het printen."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Configureert vroege waarschuwingsdrempels voor onderhoud aan media, lint en printkop."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Regelt de timing van backfeed rond het printen en snijden, of schakelt backfeed uit."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Voert een opgegeven aantal blanco dotrijen door op slew-snelheid."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Voert één blanco label door nadat de huidige indeling is geprint."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Voert één blanco label door zodra de printer vrij is, na de huidige indeling of tijdens een pauze."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Pauzeert nadat de huidige indeling is geprint. Reeds gebufferde labels kunnen eerst nog worden geprint."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Pauzeert nadat het huidige label klaar is. Het printen gaat verder zodra de pauzestatus wordt opgeheven."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Print het vorige label opnieuw wanneer de reprint-modus voor de applicator is ingeschakeld."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Heft de pauzemodus op en hervat het printen."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Activeert direct de snijder op KR403-printers in kiosk-printmodus."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Voegt extra uitwerplengte toe aan een KR403-kioskpresenter, zodat geprinte media makkelijker te pakken is."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Doorloopt een presentatiecyclus op de KR403, waarbij geprinte media wordt aangeboden voor handmatige verwijdering."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Stelt de lintaanvoerspanning in op printers uit de PAX-serie."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Stelt de datum en tijd van de real-time klok van de printer in."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Selecteert de notatie voor datum en tijd die wordt getoond op het configuratielabel en het bedieningspaneel."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Definieert secundaire tijdsverschuivingen ten opzichte van de real-time klok. Deze verschuivingen gaan verloren wanneer de printer wordt uitgeschakeld."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Stelt in wanneer tijdvelden worden gestempeld en selecteert de taal voor de namen van dagen en maanden."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Selecteert de weergavetaal van het bedieningspaneel van de printer uit een lijst die per model verschilt."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Selecteert een opgeslagen coderingstabel waarmee veldgegevens vóór het printen worden omgezet."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Selecteert interpretatie van commando's volgens het oorspronkelijke ZPL of ZPL II, voor compatibiliteit met oudere indelingen."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Kent de printer een netwerknaam en een vrije tekstbeschrijving toe, beide zichtbaar op het configuratielabel en de ingebouwde webpagina."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Stelt het viercijferige wachtwoord in voor de configuratiemenu's van het bedieningspaneel."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Slaat printerconfiguratie-instellingen op, herstelt ze of zet ze terug naar de standaardwaarden."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Wijzigt het voorvoegselteken voor indelingscommando's, normaal het dakje, hetzij globaal, hetzij voor de huidige indeling."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Wijzigt het scheidingsteken voor parameters, normaal de komma, hetzij globaal, hetzij voor de huidige indeling."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Wijzigt het voorvoegselteken voor directe commando's, normaal de tilde, hetzij globaal, hetzij voor de huidige indeling."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Wijst printergeheugenletters opnieuw toe, zodat opgeslagen objecten hun bestaande namen kunnen behouden."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Annuleert wachtende indelingen en de huidige batch. Het label dat al wordt geprint, kan nog worden afgerond."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Wist en herinitialiseert één flashgeheugenapparaat. Stroomverlies tijdens deze bewerking kan de opslag beschadigen."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Herinitialiseert de batterijgebufferde geheugenkaart na installatie of vervanging van de batterij."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Voert mediakalibratie uit om de labellengte te meten en de media- en lintsensoren af te stellen."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Print binnenkomende bytes en hun hexadecimale waarden in plaats van ze uit te voeren, voor diagnose van de hostcommunicatie."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Verlaat de diagnosemodus voor communicatie en brengt de printer terug naar normaal labels printen."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Bepaalt of een lage batterijspanning een draagbare printer pauzeert, of dat het printen mag doorgaan."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Voert mediakalibratie uit en print een sensorprofielgrafiek voor de overgang bij de mediatussenruimte."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Start de Zebra BASIC Interpreter op de printer, optioneel met het starten van een opgeslagen programma."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Configureert de hulppoort voor applicator- of verifierseinen en foutafhandeling."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Selecteert de mediasensor die voor het volgen wordt gebruikt, meestal reflectief of doorlichtend."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Meet en slaat de labellengte op, waarbij tijdens het proces blanco labels worden doorgevoerd."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Stelt normale of verlaagde dots per millimeter in. Bij verlaagde dichtheid verdubbelt de fysieke grootte van indelingscoördinaten."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Zorgt dat mislukte tests van printkopelementen het printen stopzetten, totdat de printer wordt gereset of de tolerante modus wordt hersteld."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Staat toe dat het printen doorgaat na een mislukte test van een printkopelement."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Annuleert de volgende wachtende indeling en pauzeert de printer, één gebufferde indeling per commando."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Sluit een actieve sessie van de Zebra BASIC Interpreter af en brengt de poort terug naar ZPL-verwerking."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Herstart de printerfirmware en herlaadt de opgeslagen standaardinstellingen voor communicatie en configuratie."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Annuleert de indeling die op dat moment wordt ontvangen, zonder labels te annuleren die al worden geprint."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Zet een geselecteerde gebruiksteller van de printer terug, waaronder gebruikers- of RFID-tellers."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Configureert alle communicatieparameters van de seriële poort in één commando."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Overschrijft de intensiteit of basiswaarden van de doorlichtende sensor, die normaal door kalibratie worden ingesteld."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Start het printen voordat de volledige indeling is ontvangen, om de doorvoer bij complexe labels te verbeteren."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Schakelt een specifieke ZebraNet-waarschuwingsconditie en bijbehorende bestemming uit."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Stelt de weerstandswaarde van de printkop in, die wordt gebruikt voor berekeningen van de brandenergie."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Stelt drempelwaarden van de mediasensor, de labellengte en de led-intensiteiten in, die normaal door kalibratie worden bepaald."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Schakelt een ZebraNet-waarschuwing in voor een specifieke conditie en bestemming."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopieert opgeslagen objecten tussen printergeheugenapparaten, met ondersteuning voor wildcards bij groepen."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Print een configuratielabel met informatie over sensoren, netwerk, firmware en geheugen."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Print een overzichtslabel voor opgeslagen objecten, residente lettertypen of beschikbare barcodes."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Print gevraagde service-informatie, zoals de kilometerteller of de geschiedenis van de printkop, op een label."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Configureert de instellingen van de KR403-kioskpresenter, waaronder snijlengte, snijmarge, time-out voor terugtrekken en luslengte."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Regelt dynamische herkalibratie van labellengte en sensordrempel na het inschakelen of het openen van het mediacompartiment."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Start de buitengebruikstellingsmodus om een printer voor te bereiden op doorverkoop of recycling."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Stelt automatische slaapstand in na een periode van inactiviteit, met opties voor wachtende labels."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Werpt uit of trekt terug media die al door een KR403-kioskpresenter is aangeboden."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Voert de batterij-ontlaadmodus uit op draagbare printers, voor het conditioneren van het batterijpack."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Geeft metingen van batterij- en printkopvermogen terug van mobiele printers."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Geeft diagnostische gegevens van de printkop terug, waaronder temperaturen, resultaten van elementtests, afdrukdichtheid en snelheid."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Stuurt een opgeslagen ZPL-indeling uit het printergeheugen terug naar de host."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Stuurt een opgeslagen afbeelding uit het printergeheugen terug naar de host."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Stuurt de huidige configuratie van de printer als leesbare tekst terug via de hostpoort."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Geeft identiteitsgegevens van de printer terug, waaronder model, firmware, resolutie, geheugen en geïnstalleerde opties."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Geeft het totale, het maximaal beschikbare en het momenteel vrije printergeheugen terug, in kilobytes."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Stuurt gevraagde status-, identiteits-, kilometerteller- of onderhoudsgegevens terug naar de host."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Geeft hoststatusstrings terug voor interface, media, pauzestatus, labellengte en gebufferde indelingen."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Stuurt de tabel met lettertypekoppelingen terug naar de host, met een overzicht van basislettertypen en reservelettertypen."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Geeft de geconfigureerde ZebraNet-waarschuwingen terug, waaronder condities, bestemmingen en set- of clear-vlaggen."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Stuurt gegevens uit een genummerd veld terug naar de host, met een optionele bytelimiet."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Geeft een overzicht van de inhoud van een geheugenapparaat terug, inclusief de resterende vrije ruimte."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Stuurt een opgeslagen afbeelding terug naar de host in een downloadbaar bestandsformaat."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Stuurt beschrijvende XML van de printer terug voor instellingen, objectoverzicht of status."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Leest van of schrijft naar een RFID-tag, inclusief gegevensformaat, geheugenbank en toegangswachtwoord."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Leest de huidige RFID-tag-ID voor gebruik in labelgegevens of een antwoord naar de host."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Regelt de mediabeweging tijdens verouderde RFID-bewerkingen. Link-OS-indelingen gebruiken in plaats daarvan ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Detecteert meer dan één RFID-tag in het coderingsveld en kan labels ongeldig maken bij loszwevende tags in de buurt."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Stelt het aantal pogingen in voor verouderde RFID-lees- of schrijfacties. Link-OS-indelingen gebruiken in plaats daarvan ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Definieert de bitindeling waarmee RFID EPC-velden op een tag worden gecodeerd."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Stelt RFID-opties in voor volgende labels, waaronder het tagtype, de programmeerpositie, foutafhandeling en de lengte van de VOID-balk."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Leest taggegevens in een labelveld, bij verouderde RFID-indelingen."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Schrijft taggegevens bij verouderde RFID-indelingen. ^RF dekt lezen, schrijven en wachtwoordafhandeling."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Bouwt een EPC-serienummer op uit de tag-ID en schrijft dit in de lage bits van de EPC."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Stuurt het resultaat van elke RFID-codering terug naar de host, zodat software goede tags kan onderscheiden van ongeldig gemaakte labels."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Stelt het RFID-lees- en schrijfvermogen in wanneer kalibratie geen bruikbare waarden oplevert."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Vergrendelt het geheugen van een RFID-tag, omkeerbaar of permanent, om latere schrijfacties te voorkomen."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Voert RFID-kalibratie uit en stuurt positie-, antenne- en vermogensinstellingen terug naar de host."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Stuurt het logboek van RFID-bewerkingen terug, inclusief positie, antenne, vermogensniveau en resultaat."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Bepaalt of de printer tijdens het opstarten controleert op een bekabelde printserver."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Selecteert het primaire netwerkapparaat, bekabeld of draadloos."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresseert één printer op een verouderde RS-485-multidroplijn via het netwerk-ID."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Kent het netwerk-ID toe waarmee een printer op een verouderde RS-485-multidroplijn wordt geadresseerd."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Stelt de SNMP-identiteit en community-strings van de printer in."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Bepaalt of de netwerkinstellingen bij het opstarten van de printer zelf komen of van de aangesloten printserver."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Zet alle printers op een verouderde multidroplijn in transparante ontvangstmodus."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Configureert de SMTP-server en domeininstellingen voor e-mailwaarschuwingen van de printserver."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Zet de geadresseerde, verouderde multidropprinter in transparante ontvangstmodus."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Stelt in hoe lang een geauthenticeerd IP-adres toegang heeft tot de webpagina's van de printer voordat opnieuw authenticatie nodig is."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Stelt de vorm en waarde van de DHCP-clientidentifier voor de printserver in."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Configureert IP-adres, subnetmasker en gateway voor een netwerkinterface van de printer."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Configureert IP-instellingen, time-outs en de raw-poort van de bekabelde printserver, voor oudere firmware."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Selecteert de ontvangst- en zendantennes voor de draadloze radio."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Configureert verouderde WEP-beveiliging en bijbehorend sleutelmateriaal voor oudere draadloze firmware."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Configureert verouderde Cisco LEAP-authenticatie voor oudere draadloze firmware."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Stelt het wachtwoord in voor de draadloze instellingen op het bedieningspaneel van de printer."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Configureert 802.11b-datasnelheden en zendvermogen op oudere draadloze printservers."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Configureert de naam van het draadloze netwerk, de radiomodus, de preamble-lengte en het keep-alive-gedrag."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Configureert de draadloze beveiligingsmodus, sleutels en inloggegevens in één commando."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Print een netwerkconfiguratielabel terwijl de printer inactief is."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Herstart de draadloze radiokaart en printserver, waardoor de radio opnieuw verbinding maakt met het netwerk."
+  }
+}

@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Începe un nou format de etichetă. Comenzile care urmează definesc câmpurile, gestionarea suportului și comportamentul imprimantei pentru acea etichetă."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Închide formatul de etichetă curent și îl trimite la imprimare."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Setează lățimea imprimabilă în puncte. Conținutul care depășește această lățime este decupat de imprimantă."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Setează lungimea etichetei în puncte, definind unde se termină formatul imprimabil."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Mută poziția de origine a etichetei, schimbând originea folosită de coordonatele câmpurilor ulterioare."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Aplică un decalaj orizontal pozițiilor câmpurilor pentru compatibilitate cu formatele Zebra mai vechi."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Adaugă un decalaj vertical întregului format, relativ la marginea superioară a suportului."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Setează unitățile de coordonate în puncte, inch sau milimetri și poate scala formatele între rezoluții de imprimare diferite."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Setează modul de gestionare a suportului după imprimare, inclusiv modurile tear-off, peel-off, tăiere, rebobinare și aplicator."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Selectează modul de transfer termic sau termic direct, în funcție de faptul că suportul încărcat folosește sau nu panglică."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Setează cantitatea de imprimare, gruparea pentru pauză sau tăiere și numărul de copii pentru fiecare valoare serializată."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Inversează imprimarea pentru câmpurile următoare, interschimbând culoarea de prim-plan cu cea de fundal."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Rotește întregul format de etichetă cu 180 de grade."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Oglindește zona imprimabilă pe orizontală."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Setează viteza de imprimare, viteza de deplasare rapidă și viteza de derulare inversă, în inch pe secundă."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Poziționează următorul câmp față de originea etichetei, folosind colțul din stânga sus al câmpului."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Poziționează următorul câmp în funcție de linia de bază sau de marginea codului de bare, oferind câmpurilor rotite un punct de ancorare stabil."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Furnizează conținutul câmpului curent, inclusiv text, date pentru cod de bare sau date RFID."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Încheie definiția câmpului curent."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Activează secvențele de eludare hexazecimale în datele câmpului, pentru octeți binari și caractere rezervate de comandă."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Inversează prim-planul și fundalul numai pentru câmpul următor."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Adaugă un câmp de comentariu. Imprimanta îi ignoră conținutul până la următorul separator de câmp."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Setează orientarea implicită a câmpului și, pe firmware-urile mai noi, alinierea implicită."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Încadrează datele câmpului într-un bloc de lățime fixă, cu control asupra numărului de linii, spațierii, indentării și alinierii."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Încadrează textul într-o casetă de lățime și înălțime fixe, trunchiind conținutul care depășește spațiul."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Atribuie un număr unui câmp variabil în formatele stocate și recuperate."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Furnizează date pentru un câmp variabil. Spre deosebire de datele ^FD, acestea sunt șterse după imprimarea etichetei."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Setează caracterul folosit pentru a încorpora valorile câmpurilor numerotate în interiorul șirului altui câmp."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Setează marcatorii folosiți pentru identificatorii de ceas în timp real din datele câmpului."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Setează lățimea implicită a modulului codului de bare, raportul dintre bara lată și cea îngustă și înălțimea pentru câmpurile de coduri de bare următoare."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Plasează segmente PDF417 sau MicroPDF417 la origini specifice, atunci când un mesaj se întinde pe mai multe simboluri."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Setează ordinea caracterelor pentru câmpul curent și poate adăuga spațiere suplimentară între caractere."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Selectează fontul scalabil rezident 0 pentru câmpul următor, la dimensiunea și orientarea solicitate."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Selectează un font rezident printr-un nume de un singur caracter, cu orientare, înălțime și lățime opționale."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Selectează un fișier de font stocat pentru câmpul următor, cu orientare, înălțime și lățime opționale."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Setează fontul, înălțimea și lățimea de rezervă folosite de câmpurile de text care nu specifică propriile valori."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Selectează codificarea folosită pentru interpretarea datelor câmpului, inclusiv pagini de coduri și UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Activează așezarea avansată a textului pentru câmpurile următoare, inclusiv text bidirecțional, shaping și funcții OpenType."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Asociază un nume de font de un singur caracter cu un fișier de font stocat."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Setează dimensiunea memoriei cache pentru glifele scalabile randate, pentru a accelera generarea repetată a textului cu fonturi mari."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Definește lanțuri de fonturi TrueType de rezervă, folosite atunci când fontului de bază îi lipsește o glifă."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Imprimă o etichetă cu lista legăturilor de fonturi configurate și a fețelor de rezervă înlănțuite ale acestora."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Descarcă un font bitmap și metricele sale în memoria imprimantei."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Descarcă un font scalabil Intellifont codificat în memoria imprimantei."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Descarcă un font TrueType codificat, cu până la 256 de caractere, în memoria imprimantei."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Descarcă un font TrueType codificat, cu mai mult de 256 de glife, în memoria imprimantei."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Descarcă o tabelă de codificare ce asociază octeții din datele câmpului cu valori Unicode, pentru fonturile TrueType."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Desenează un cod de bare Code 128 pentru date ASCII de lungime variabilă, cu moduri pentru comutarea automată a subseturilor și pentru date UCC/EAN."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Desenează un cod de bare Code 39, cu o cifră de control Mod 43 opțională."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Desenează un cod de bare Code 93, reprezentând date ASCII complete prin caractere de shift."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Desenează un cod de bare Code 11 pentru cifre și cratime, cu cifre de control opționale."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Desenează un cod de bare Interleaved 2 of 5 pentru date numerice de lungime pară, cu o cifră de control opțională."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Desenează un cod de bare Industrial 2 of 5, un cod numeric ale cărui date sunt codificate numai prin bare."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Desenează un cod de bare Standard 2 of 5, un cod numeric autoverificabil ale cărui date sunt codificate numai prin bare."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Desenează un cod de bare ANSI Codabar, cunoscut și ca USD-4, pentru etichete din domeniul bibliotecilor, sănătății și curierat."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Desenează un cod de bare LOGMARS, varianta Code 39 folosită de Departamentul Apărării al SUA, și convertește datele scrise cu litere mici în litere mari."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Desenează un cod de bare MSI, un cod numeric derivat din Plessey, cu scheme de cifre de control selectabile."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Desenează un cod de bare Plessey, un cod numeric mai vechi, cu cifre de control opționale."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Desenează un cod de bare EAN-13 pentru numere de articol din comerțul cu amănuntul și calculează cifra de control din douăsprezece cifre de date."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Desenează un cod de bare EAN-8 pentru ambalaje mici din comerțul cu amănuntul și calculează cifra de control din șapte cifre de date."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Desenează un cod de bare UPC-A pentru ambalaje din comerțul cu amănuntul, pe baza a unsprezece cifre de date, cu imprimare opțională a cifrei de control."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Desenează un cod de bare UPC-E, forma scurtă a UPC-A. Datele câmpului reprezintă codul complet de producător și produs, format din zece cifre."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Desenează un simbol GS1 DataBar cu subtip, mărire, înălțime și lățime a segmentului selectabile."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Desenează un cod de bare poștal Planet Code din cifre codificate ca bare înalte și scurte."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Desenează POSTNET, Planet Code sau USPS Intelligent Mail, în funcție de tipul de cod poștal selectat."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Desenează un simbol suplimentar UPC/EAN de două sau cinci cifre, alături de un cod de bare principal."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Desenează un cod de bare stivuit Code 49, cu două până la opt rânduri de date ASCII complete."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Desenează un simbol QR Code. Parametrii comenzii setează modelul, mărirea și masca. Datele câmpului setează nivelul de corecție a erorilor și modul de caractere."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Desenează un simbol Data Matrix cu dimensiune configurabilă a elementului, nivel de calitate și gestionare a secvențelor de evadare."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Desenează un simbol bidimensional stivuit PDF417, pentru volume mari de text sau date binare."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Desenează un simbol MicroPDF417, o variantă compactă de PDF417 cu modele de adresare a rândurilor."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Desenează un simbol matricial Aztec, cu mărire și corecție a erorilor configurabile."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Desenează un simbol CODABLOCK în modul A, E sau F, pentru volume mai mari de date."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Desenează un simbol UPS MaxiCode, cu un mod pentru mesaje structurate de curierat sau date generale."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Desenează un simbol TLC39 pentru etichete din telecomunicații, combinând Code 39 cu o componentă MicroPDF417."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Când este activată, validează datele și parametrii codului de bare și imprimă INVALID în locul unui simbol incorect."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Desenează un dreptunghi plin sau conturat. Dacă o latură este egală cu grosimea marginii, rezultă o linie."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Desenează o linie diagonală pe o lățime și înălțime date, înclinată spre dreapta sau spre stânga."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Desenează o elipsă pe baza unei lățimi și înălțimi în puncte, cu grosimea marginii spre interior și ieșire în negru sau alb."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Desenează un cerc cu diametrul dat în puncte, cu grosimea marginii spre interior și ieșire în negru sau alb."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Plasează o imagine bitmap monocromă la poziția curentă a câmpului, folosind date ASCII hex, binare sau comprimate."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Imprimă un simbol rezident selectat prin datele câmpului, precum copyright sau marcă înregistrată."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Încarcă o imagine stocată la începutul unui format și o ancorează la originea etichetei."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Plasează o imagine stocată la poziția curentă a câmpului, fără a o scala."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Șterge grafica, fonturile sau formatele stocate din memoria imprimantei, cu suport pentru caractere joker la ștergerea în grup."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Salvează formatul curent ca imagine grafică, pentru recuperare rapidă și suprapunerea datelor variabile."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Descarcă o imagine grafică în format ASCII hex în memoria imprimantei, sub un nume reutilizabil."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Oprește o încărcare de imagine grafică întreruptă la jumătate și readuce imprimanta la funcționarea normală."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Descarcă o imagine grafică, un font sau un certificat în memoria imprimantei, sub un nume reutilizabil."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Șterge toată grafica descărcată din memoria imprimantei. Folosiți ^ID pentru a șterge obiecte selectate."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serializează datele câmpurilor de text sau de coduri de bare pe mai multe etichete, folosind o valoare de start, o direcție și un increment."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serializează poziții selectate din datele câmpului, folosind o mască și seturi de caractere."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Stochează comenzile următoare ca format reutilizabil, în loc să le imprime imediat."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Recuperează un format stocat și furnizează valori pentru câmpurile sale numerotate de tip placeholder."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Recuperează o imagine grafică stocată la poziția curentă, cu scalare independentă pe orizontală și verticală."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Selectează modul în care imprimanta detectează limitele etichetei, folosind spații, marcaje sau suport continuu."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Setează lungimea maximă de etichetă pe care o caută imprimanta la calibrarea suportului necontinuu."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Setează acțiunea la pornire și la închiderea capului de imprimare, incluzând calibrare, avans sau măsurarea lungimii."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Suprimă derularea inversă pentru eticheta curentă, atunci când deplasarea în poziția tear-off nu este necesară."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Configurează alertele de întreținere imprimate, pentru curățarea sau înlocuirea capului de imprimare."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Controlează dacă imaginea bitmap a etichetei este ștearsă după imprimare sau păstrată pentru reutilizare de etichetele următoare."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Setează textul afișat pe etichetele de alertă de întreținere, pentru curățarea sau înlocuirea capului de imprimare."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Blochează o setare din panoul de control, precum intensitatea sau calibrarea, până când este deblocată."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Activează sau dezactivează indicatorul de avertizare pentru capul de imprimare rece."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Ajustează intensitatea de imprimare relativ la intensitatea configurată curent a imprimantei."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Setează imediat intensitatea de imprimare în valoare absolută, corespunzătoare setării din panoul frontal."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Controlează dacă o etichetă întreruptă din cauza unei defecțiuni de suport, panglică sau cap de imprimare este reimprimată după remediere."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Programează teste periodice ale elementelor capului de imprimare, în funcție de numărul de etichete imprimate și un interval opțional de elemente."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Ajustează poziția de repaus pentru tear-off sau tăiere, cu un mic decalaj în puncte, după imprimare."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Configurează pragurile de avertizare timpurie pentru întreținerea suportului, panglicii și capului de imprimare."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Controlează momentul derulării inverse în jurul operațiilor de imprimare și tăiere sau o dezactivează."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Avansează un număr specificat de rânduri de puncte goale, la viteza de deplasare rapidă."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Avansează o etichetă goală după ce formatul curent a fost imprimat."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Avansează o etichetă goală de îndată ce imprimanta este liberă, după formatul curent sau în timpul unei pauze."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Pune imprimanta în pauză după imprimarea formatului curent. Etichetele deja aflate în buffer pot fi imprimate mai întâi."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Pune imprimanta în pauză după finalizarea etichetei curente. Imprimarea se reia la ștergerea stării de pauză."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Reimprimă eticheta anterioară atunci când este activat modul de reimprimare pentru aplicator."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Șterge modul de pauză și reia imprimarea."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Acționează imediat tăietorul pe imprimantele KR403 aflate în modul de imprimare kiosc."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Adaugă o lungime suplimentară de ejectare la presenterul kiosc KR403, astfel încât suportul imprimat să fie mai ușor de luat."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Rulează un ciclu al presenterului KR403, oferind suportul imprimat pentru scoatere manuală."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Setează tensiunea rolei de alimentare cu panglică pe imprimantele din seria PAX."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Setează data și ora ceasului în timp real al imprimantei."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Selectează formatul de dată și oră afișat pe eticheta de configurare și pe panoul de control."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Definește decalaje secundare de ceas față de ceasul în timp real. Decalajele se pierd la oprirea imprimantei."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Setează momentul la care sunt marcate câmpurile de timp și selectează limba pentru numele zilelor și lunilor."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Selectează limba de afișare a panoului de control al imprimantei, dintr-o listă care variază în funcție de model."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Selectează o tabelă de codificare stocată, folosită pentru a converti datele câmpului înainte de imprimare."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Selectează interpretarea comenzilor conform ZPL original sau ZPL II, pentru compatibilitate cu formatele mai vechi."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Atribuie imprimantei un nume de rețea și o descriere text liber, ambele afișate pe eticheta de configurare și pe pagina web integrată."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Setează parola din patru cifre pentru meniurile de configurare din panoul de control."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Salvează, restaurează sau resetează setările de configurare ale imprimantei."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Schimbă caracterul prefix pentru comenzile de format, în mod normal accentul circumflex, la nivel global sau doar pentru formatul curent."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Schimbă caracterul delimitator de parametri, în mod normal virgula, la nivel global sau doar pentru formatul curent."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Schimbă caracterul prefix pentru comenzile imediate, în mod normal tilda, la nivel global sau doar pentru formatul curent."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Remapează literele de memorie ale imprimantei, astfel încât obiectele stocate să își poată păstra numele existente."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Anulează formatele din coadă și lotul curent. Eticheta aflată deja în curs de imprimare se poate finaliza."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Șterge și reinițializează un dispozitiv de memorie flash. Pierderea alimentării în timpul acestei operații poate corupe stocarea."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Reinițializează cardul de memorie cu baterie de rezervă, după instalare sau după înlocuirea bateriei."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Rulează calibrarea suportului pentru a măsura lungimea etichetei și a ajusta senzorii de suport și panglică."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Imprimă octeții primiți și valorile lor hexazecimale, în loc să îi execute, pentru diagnosticarea comunicării cu hostul."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Părăsește modul de diagnosticare a comunicării și readuce imprimanta la imprimarea normală a etichetelor."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Setează dacă o tensiune scăzută a bateriei pune în pauză o imprimantă portabilă sau permite continuarea imprimării."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Rulează calibrarea suportului și imprimă un grafic al profilului senzorului pentru tranziția dintre etichete."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Pornește interpretorul Zebra BASIC Interpreter pe imprimantă, lansând opțional un program stocat."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Configurează portul auxiliar pentru semnalele de aplicator sau verificator și pentru gestionarea erorilor."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Selectează senzorul de suport folosit pentru urmărire, de obicei reflectiv sau transmisiv."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Măsoară și stochează lungimea etichetei, avansând etichete goale în timpul procesului."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Setează densitatea de puncte pe milimetru, normală sau redusă. Densitatea redusă dublează dimensiunea fizică a coordonatelor formatului."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Face ca testele eșuate ale elementelor capului de imprimare să oprească imprimarea, până la resetarea imprimantei sau la restabilirea modului tolerant."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Permite continuarea imprimării după eșuarea unui test al unui element al capului de imprimare."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Anulează următorul format din coadă și pune imprimanta în pauză, câte un format din buffer pentru fiecare comandă."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Închide o sesiune activă a Zebra BASIC Interpreter și readuce portul la procesarea ZPL."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Repornește firmware-ul imprimantei și reîncarcă valorile implicite salvate pentru comunicare și configurare."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Anulează formatul aflat în curs de recepție, fără a anula etichetele deja în curs de imprimare."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Resetează un contor de utilizare selectat al imprimantei, inclusiv contoare de utilizator sau RFID."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Configurează toți parametrii de comunicare ai portului serial într-o singură comandă."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Suprascrie intensitatea senzorului transmisiv sau valorile de referință setate în mod normal de calibrare."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Începe imprimarea înainte ca formatul complet să fi ajuns, pentru a îmbunătăți debitul la etichetele complexe."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Dezactivează o anumită condiție și destinație de alertă ZebraNet."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Setează valoarea rezistenței capului de imprimare, folosită la calculul energiei de ardere."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Setează pragurile senzorului de suport, lungimea etichetei și intensitățile LED, determinate în mod normal prin calibrare."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Activează o alertă ZebraNet pentru o anumită condiție și destinație."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Copiază obiecte stocate între dispozitivele de memorie ale imprimantei, cu suport pentru caractere joker la copierea în grup."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Imprimă o etichetă de configurare cu informații despre senzori, rețea, firmware și memorie."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Imprimă o etichetă cu directorul obiectelor stocate, al fonturilor rezidente sau al codurilor de bare disponibile."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Imprimă pe o etichetă informațiile de service solicitate, precum odometrul sau istoricul capului de imprimare."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Configurează setările presenterului kiosc KR403, inclusiv lungimea de tăiere, marja de tăiere, timeout-ul de retragere și lungimea buclei."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Controlează recalibrarea dinamică a lungimii etichetei și a pragului senzorului, după pornire sau după deschiderea compartimentului de suport."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Pornește modul de dezafectare, pentru a pregăti imprimanta în vederea revânzării sau reciclării."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Setează oprirea automată în modul sleep după o perioadă de inactivitate, cu opțiuni pentru etichetele aflate în coadă."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Ejectează sau retrage suportul deja prezentat de presenterul kiosc KR403."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Rulează modul de descărcare a bateriei pe imprimantele portabile, pentru condiționarea acumulatorului."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Returnează valorile de putere ale bateriei și ale capului de imprimare, de la imprimantele mobile."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Returnează date de diagnosticare a capului de imprimare, inclusiv temperaturi, rezultatele testelor elementelor, intensitate și viteză."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Returnează către host un format ZPL stocat în memoria imprimantei."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Returnează către host o imagine grafică stocată în memoria imprimantei."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Returnează configurația curentă a imprimantei ca text lizibil, prin portul de comunicare cu hostul."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Returnează datele de identitate ale imprimantei, inclusiv model, firmware, rezoluție, memorie și opțiuni instalate."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Returnează memoria totală, maximă disponibilă și liberă în prezent a imprimantei, în kilobytes."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Returnează către host datele de stare, identitate, odometru sau întreținere solicitate."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Returnează șiruri de stare pentru host, referitoare la interfață, suport, starea de pauză, lungimea etichetei și formatele din buffer."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Returnează către host tabela legăturilor de fonturi, listând fonturile de bază și fețele de rezervă."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Returnează alertele ZebraNet configurate, inclusiv condițiile, destinațiile și indicatorii de activare sau dezactivare."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Returnează către host datele dintr-un câmp numerotat, cu o limită opțională de octeți."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Returnează lista directorului unui dispozitiv de memorie, inclusiv spațiul liber rămas."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Returnează către host o imagine grafică stocată, într-un format de fișier descărcabil."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Returnează un XML de descriere a imprimantei pentru setări, directorul de obiecte sau stare."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Citește sau scrie pe o etichetă RFID, incluzând formatul datelor, banca de memorie și parola de acces."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Citește ID-ul curent al etichetei RFID, pentru a fi folosit în datele etichetei sau într-un răspuns către host."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Controlează deplasarea suportului în timpul operațiilor RFID de tip legacy. Formatele Link-OS folosesc în schimb ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Detectează mai mult de o etichetă RFID în câmpul de codificare și poate anula etichetele care au etichete RFID rătăcite în apropiere."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Setează numărul de reîncercări pentru citirile sau scrierile RFID de tip legacy. Formatele Link-OS folosesc în schimb ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Definește structura de biți folosită pentru codificarea câmpurilor EPC RFID pe o etichetă."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Setează opțiunile RFID pentru etichetele următoare, incluzând tipul de etichetă RFID, poziția de programare, gestionarea eșecurilor și lungimea barei VOID."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Citește datele etichetei RFID într-un câmp al etichetei, în formatele RFID de tip legacy."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Scrie date pe etichetă în formatele RFID de tip legacy. ^RF acoperă citirea, scrierea și gestionarea parolelor."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Construiește un număr serial EPC pe baza ID-ului etichetei și îl scrie în biții inferiori ai EPC."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Returnează către host rezultatul fiecărei codificări RFID, permițând software-ului să distingă etichetele bune de cele anulate."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Setează puterea de citire și scriere RFID, atunci când calibrarea nu produce valori utilizabile."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Blochează memoria etichetei RFID, reversibil sau permanent, pentru a preveni scrierile ulterioare."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Rulează calibrarea RFID și returnează către host setările de poziție, antenă și putere."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Returnează jurnalul operațiilor RFID, incluzând poziția, antena, nivelul de putere și rezultatul."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Selectează dacă imprimanta verifică prezența unui server de imprimare cu fir la pornire."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Selectează dispozitivul de rețea principal, cu fir sau wireless."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresează o imprimantă de pe o linie RS-485 multidrop de tip legacy, pe baza ID-ului de rețea."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Atribuie ID-ul de rețea folosit pentru a adresa o imprimantă de pe o linie RS-485 multidrop de tip legacy."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Setează identitatea SNMP și șirurile de comunitate ale imprimantei."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Selectează dacă setările de rețea de la pornire provin de la imprimantă sau de la serverul de imprimare atașat."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Comută toate imprimantele de pe o linie multidrop de tip legacy în modul de recepție transparentă."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Configurează serverul SMTP și setările de domeniu pentru alertele prin e-mail ale serverului de imprimare."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Comută imprimanta multidrop de tip legacy adresată în modul de recepție transparentă."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Setează durata pentru care o adresă IP autentificată poate accesa paginile web ale imprimantei, înainte de o nouă autentificare."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Setează forma și valoarea identificatorului de client DHCP pentru serverul de imprimare."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Configurează adresa IP, masca de subrețea și gateway-ul pentru o interfață de rețea a imprimantei."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Configurează setările IP ale serverului de imprimare cu fir, timeout-urile și portul raw, pentru firmware-urile mai vechi."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Selectează antenele de recepție și transmisie pentru radioul wireless."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Configurează securitatea WEP, învechită, și materialul de chei, pentru firmware-urile wireless mai vechi."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Configurează autentificarea Cisco LEAP, învechită, pentru firmware-urile wireless mai vechi."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Setează parola pentru setările wireless din panoul de control al imprimantei."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Configurează ratele de date 802.11b și puterea de transmisie pe serverele de imprimare wireless mai vechi."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Configurează numele rețelei wireless, modul radio, lungimea preambulului și comportamentul keep-alive."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Configurează modul de securitate wireless, cheile și acreditările, într-o singură comandă."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Imprimă o etichetă de configurare a rețelei, în timp ce imprimanta este inactivă."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Repornește placa radio wireless și serverul de imprimare, determinând radioul să se reconecteze la rețea."
+  }
+}

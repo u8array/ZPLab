@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Pradeda naują etiketės formatą. Po jos einančios komandos apibrėžia laukus, medijos tvarkymą ir spausdintuvo elgseną šiai etiketei."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Užbaigia esamą etiketės formatą ir pateikia jį spausdinimui."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Nustato spausdinamą plotį taškais. Spausdintuvas nukerpa turinį, išeinantį už šio pločio."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Nustato etiketės ilgį taškais, taip apibrėžiant, kur baigiasi spausdinamas formatas."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Perkelia etiketės pradžios tašką, pakeisdama koordinačių pradžią, naudojamą vėlesnių laukų koordinatėms."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Pritaiko horizontalų poslinkį laukų pozicijoms, siekiant suderinamumo su senesniais Zebra formatais."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Prideda vertikalų poslinkį visam formatui medijos viršutinio krašto atžvilgiu."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Nustato koordinačių matavimo vienetus taškais, coliais arba milimetrais ir gali perskaičiuoti formatus tarp skirtingų spausdinimo skiriamųjų gebų."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Nustato medijos tvarkymo režimą po spausdinimo, įskaitant nuplėšimo, atplėšimo, pjoviklio, atsukimo ir aplikatoriaus režimus."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Pasirenka terminio perdavimo arba tiesioginio terminio spausdinimo režimą, priklausomai nuo to, ar įdėta medija naudoja juostelę."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Nustato spausdinamų kopijų kiekį, pauzės arba pjovimo grupavimą ir kopijų skaičių kiekvienai serijos reikšmei."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Apverčia vėlesnių laukų spausdinimą, sukeisdama pirmo plano ir fono spalvas."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Pasuka visą etiketės formatą 180 laipsnių kampu."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Horizontaliai apverčia spausdinamą sritį veidrodiniu būdu."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Nustato spausdinimo, pastūmimo ir atgalinio padavimo greitį coliais per sekundę."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Nustato kito lauko poziciją nuo etiketės pradžios taško, remiantis lauko viršutiniu kairiuoju kampu."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Nustato kito lauko poziciją nuo jo bazinės linijos arba brūkšninio kodo krašto, suteikdama pasuktiems laukams stabilų atskaitos tašką."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Pateikia esamo lauko turinį, įskaitant tekstą, brūkšninio kodo duomenis arba RFID duomenis."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Užbaigia esamo lauko apibrėžimą."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Įjungia šešioliktainius pabėgimo simbolius lauko duomenyse, skirtus dvejetainiams baitams ir rezervuotiems komandų simboliams."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Sukeičia pirmo plano ir fono spalvas tik kitam laukui."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Prideda komentaro lauką. Spausdintuvas ignoruoja jo turinį iki kito lauko skirtuko."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Nustato numatytąją lauko orientaciją, o naujesnėje programinėje aparatinėje įrangoje ir numatytąjį lygiavimą."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Sutalpina lauko duomenis fiksuoto pločio bloke, valdant eilučių skaičių, tarpus, įtrauką ir lygiavimą."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Sutalpina tekstą fiksuoto pločio ir aukščio dėžutėje, o netelpantį tekstą nukerpa."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Priskiria numerį kintamajam laukui saugomuose ir vėliau iškviečiamuose formatuose."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Pateikia duomenis kintamajam laukui. Skirtingai nei ^FD duomenys, jie išvalomi po etiketės atspausdinimo."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Nustato simbolį, naudojamą sunumeruotų laukų reikšmėms įterpti į kito lauko eilutę."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Nustato žymes, naudojamas realaus laiko laikrodžio žymenims lauko duomenyse."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Nustato numatytąjį brūkšninio kodo modulio plotį, plataus ir siauro brūkšnio santykį bei aukštį vėlesniems brūkšninio kodo laukams."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Išdėsto PDF417 arba MicroPDF417 segmentus nurodytose pradžios pozicijose, kai viena žinutė apima kelis simbolius."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Nustato simbolių tvarką esamame lauke ir gali pridėti papildomą tarpą tarp simbolių."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Pasirenka rezidentinį keičiamo dydžio šriftą 0 kitam laukui nurodytu dydžiu ir orientacija."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Pasirenka rezidentinį šriftą pagal vieno simbolio pavadinimą, su pasirenkama orientacija, aukščiu ir pločiu."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Pasirenka saugomą šrifto failą kitam laukui, su pasirenkama orientacija, aukščiu ir pločiu."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Nustato atsarginį šriftą, aukštį ir plotį, naudojamus teksto laukams, kurie savo šrifto nenurodo."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Pasirenka koduotę, naudojamą lauko duomenims interpretuoti, įskaitant kodų puslapius ir UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Įjungia išplėstinį teksto maketavimą vėlesniems laukams, įskaitant dvikryptį tekstą, formavimą ir OpenType funkcijas."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Susieja vieno simbolio šrifto pavadinimą su saugomu šrifto failu."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Nustato atvaizduotų keičiamo dydžio glifų talpyklos dydį, kad pagreitintų kartotinį didelio šrifto spausdinimą."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Apibrėžia TrueType atsarginių šriftų grandines, naudojamas, kai pagrindiniam šriftui trūksta glifo."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Atspausdina etiketę, kurioje išvardyti sukonfigūruoti šriftų ryšiai ir jų atsarginių šriftų grandinės."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Įkelia taškinį šriftą ir jo metrikas į spausdintuvo atmintį."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Įkelia užkoduotą keičiamo dydžio Intellifont šriftą į spausdintuvo atmintį."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Įkelia užkoduotą TrueType šriftą su ne daugiau kaip 256 simboliais į spausdintuvo atmintį."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Įkelia užkoduotą TrueType šriftą su daugiau kaip 256 glifais į spausdintuvo atmintį."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Įkelia koduočių lentelę, kuri susieja lauko duomenų baitus su Unicode reikšmėmis TrueType šriftams."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Nubraižo Code 128 brūkšninį kodą kintamo ilgio ASCII duomenims, su režimais automatiniam poaibio perjungimui ir UCC/EAN duomenims."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Nubraižo Code 39 brūkšninį kodą su pasirenkamu Mod 43 kontroliniu skaitmeniu."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Nubraižo Code 93 brūkšninį kodą, perteikiantį pilnus ASCII duomenis per poslinkio simbolius."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Nubraižo Code 11 brūkšninį kodą skaitmenims ir brūkšneliams, su pasirenkamais kontroliniais skaitmenimis."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Nubraižo Interleaved 2 of 5 brūkšninį kodą lyginio ilgio skaitiniams duomenims, su pasirenkamu kontroliniu skaitmeniu."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Nubraižo Industrial 2 of 5 brūkšninį kodą, skaitinį kodą, kuriame duomenys užkoduoti tik brūkšniais."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Nubraižo Standard 2 of 5 brūkšninį kodą, save tikrinantį skaitinį kodą, kuriame duomenys užkoduoti tik brūkšniais."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Nubraižo ANSI Codabar brūkšninį kodą, taip pat žinomą kaip USD-4, naudojamą bibliotekų, sveikatos priežiūros ir kurjerių etiketėse."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Nubraižo LOGMARS brūkšninį kodą, JAV gynybos departamento Code 39 variantą, ir mažąsias raides duomenyse paverčia didžiosiomis."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Nubraižo MSI brūkšninį kodą, iš Plessey kilusį skaitinį kodą su pasirenkamomis kontrolinio skaitmens schemomis."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Nubraižo Plessey brūkšninį kodą, senesnį skaitinį kodą su pasirenkamais kontroliniais skaitmenimis."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Nubraižo EAN-13 brūkšninį kodą mažmeninės prekybos prekių numeriams ir kontrolinį skaitmenį apskaičiuoja iš dvylikos duomenų skaitmenų."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Nubraižo EAN-8 brūkšninį kodą mažoms mažmeninės prekybos pakuotėms ir kontrolinį skaitmenį apskaičiuoja iš septynių duomenų skaitmenų."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Nubraižo UPC-A brūkšninį kodą mažmeninės prekybos pakuotėms iš vienuolikos duomenų skaitmenų, su pasirenkamu kontrolinio skaitmens spausdinimu."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Nubraižo UPC-E brūkšninį kodą, trumpąją UPC-A formą. Lauko duomenys yra pilnas dešimties skaitmenų gamintojo ir gaminio kodas."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Nubraižo GS1 DataBar simbolį su pasirenkamu potipiu, mastelio didinimu, aukščiu ir segmento pločiu."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Nubraižo Planet Code pašto brūkšninį kodą iš skaitmenų, užkoduotų aukštais ir žemais brūkšniais."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Nubraižo POSTNET, Planet Code arba USPS Intelligent Mail kodą, priklausomai nuo pasirinkto pašto kodo tipo."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Nubraižo dviejų arba penkių skaitmenų UPC/EAN papildomą simbolį šalia pagrindinio brūkšninio kodo."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Nubraižo sluoksniuotą Code 49 brūkšninį kodą su dviem iki aštuonių eilučių pilnų ASCII duomenų."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Nubraižo QR Code simbolį. Komandos parametrai nustato modelį, mastelio didinimą ir kaukę. Lauko duomenys nustato klaidų taisymo lygį ir simbolių režimą."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Nubraižo Data Matrix simbolį su konfigūruojamu elemento dydžiu, kokybės lygiu ir kaitos sekų apdorojimu."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Nubraižo sluoksniuotą PDF417 dvimatį simbolį didelės apimties teksto arba dvejetainiams duomenims."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Nubraižo MicroPDF417 simbolį, kompaktišką PDF417 variantą su eilučių adresavimo raštais."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Nubraižo Aztec matricinį simbolį su konfigūruojamu mastelio didinimu ir klaidų taisymu."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Nubraižo CODABLOCK simbolį A, E arba F režimu didesnės apimties duomenims."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Nubraižo UPS MaxiCode simbolį su režimu struktūrizuotoms vežėjo žinutėms arba bendriems duomenims."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Nubraižo TLC39 telekomunikacijų etiketės simbolį, sujungiantį Code 39 su MicroPDF417 komponentu."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Kai įjungta, patikrina brūkšninio kodo duomenis ir parametrus ir vietoje neteisingo simbolio atspausdina INVALID."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Nubraižo užpildytą arba kontūrinį stačiakampį. Kai kraštinės ilgis sutampa su rėmelio storiu, gaunama linija."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Nubraižo įstrižą liniją nurodytame plotyje ir aukštyje, pasvirusią į dešinę arba į kairę."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Nubraižo elipsę pagal plotį ir aukštį taškais, su į vidų einančiu rėmelio storiu ir juoda arba balta spalva."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Nubraižo apskritimą pagal nurodytą skersmenį taškais, su į vidų einančiu rėmelio storiu ir juoda arba balta spalva."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Įterpia monochrominį taškinį vaizdą esamoje lauko pozicijoje, naudojant ASCII šešioliktainius, dvejetainius arba suglaudintus duomenis."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Atspausdina rezidentinį simbolį, pasirinktą pagal lauko duomenis, pavyzdžiui, autorių teisių arba registruoto prekės ženklo ženklą."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Įkelia saugomą vaizdą formato pradžioje ir pritvirtina jį prie etiketės pradžios taško."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Įterpia saugomą vaizdą esamoje lauko pozicijoje jo nekeisdama mastelio."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Ištrina saugomus grafinius vaizdus, šriftus arba formatus iš spausdintuvo atminties, su pakaitos simbolių palaikymu grupėms."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Išsaugo esamą formatą kaip grafinį vaizdą greitam iškvietimui ir kintamųjų duomenų perdengimui."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Įkelia ASCII šešioliktainį grafinį vaizdą į spausdintuvo atmintį pakartotinai naudojamu pavadinimu."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Sustabdo grafinio vaizdo įkėlimą, nutrūkusį per vidurį, ir grąžina spausdintuvą į įprastą veikimo režimą."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Įkelia grafinį vaizdą, šriftą arba sertifikatą į spausdintuvo atmintį pakartotinai naudojamu pavadinimu."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Ištrina visus įkeltus grafinius vaizdus iš spausdintuvo atminties. Norint ištrinti pasirinktus objektus, naudokite ^ID."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serializuoja teksto arba brūkšninio kodo lauko duomenis skirtingose etiketėse, naudodama pradinę reikšmę, kryptį ir žingsnį."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serializuoja pasirinktas pozicijas lauko duomenyse, naudodama kaukę ir simbolių rinkinius."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Išsaugo po jos einančias komandas kaip pakartotinai naudojamą formatą, o ne jas iškart atspausdina."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Iškviečia saugomą formatą ir pateikia reikšmes jo sunumeruotiems vietaženklio laukams."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Iškviečia saugomą grafinį vaizdą esamoje pozicijoje su nepriklausomu horizontaliu ir vertikaliu mastelio keitimu."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Pasirenka, kaip spausdintuvas aptinka etikečių ribas, naudodamas tarpelius, žymes arba nepertraukiamą mediją."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Nustato maksimalų etiketės ilgį, kurio spausdintuvas ieško kalibruodamas pertraukiamą mediją."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Nustato veiksmą įjungimo metu ir uždarius spausdinimo galvutę, įskaitant kalibravimą, pastūmimą arba ilgio matavimą."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Slopina atgalinį padavimą esamai etiketei, kai judėjimas į nuplėšimo poziciją nereikalingas."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Sukonfigūruoja spausdinamus techninės priežiūros įspėjimus dėl spausdinimo galvutės valymo arba keitimo."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Valdo, ar etiketės taškinis vaizdas išvalomas po spausdinimo, ar išsaugomas pakartotiniam naudojimui vėlesnėse etiketėse."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Nustato tekstą, rodomą techninės priežiūros įspėjimo etiketėse dėl spausdinimo galvutės valymo arba keitimo."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Užrakina valdymo pulto nustatymą, pavyzdžiui, tamsumą arba kalibravimą, kol jis atrakinamas."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Įjungia arba išjungia spausdinimo galvutės atšalimo įspėjimo indikatorių."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Koreguoja spausdinimo tamsumą, palyginti su esamu spausdintuvo sukonfigūruotu tamsumu."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Nedelsiant nustato absoliutų spausdinimo tamsumą, atitinkantį priekinio pulto tamsumo nustatymą."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Valdo, ar etiketė, kurios spausdinimą nutraukė medijos, juostelės arba spausdinimo galvutės gedimas, atspausdinama iš naujo po atsigavimo."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Suplanuoja periodinius spausdinimo galvutės elementų testus pagal atspausdintų etikečių skaičių ir pasirenkamą elementų diapazoną."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Koreguoja poilsio nuplėšimo arba pjovimo poziciją nedideliu taškų poslinkiu po spausdinimo."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Sukonfigūruoja ankstyvo įspėjimo ribas medijos, juostelės ir spausdinimo galvutės techninei priežiūrai."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Valdo atgalinio padavimo laiką aplink spausdinimą ir pjovimą arba jį visai išjungia."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Pastumia nurodytą tuščių taškų eilučių skaičių pastūmimo greičiu."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Pastumia vieną tuščią etiketę po to, kai atspausdinamas esamas formatas."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Pastumia vieną tuščią etiketę, kai tik spausdintuvas tampa laisvas, po esamo formato arba pauzės metu."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Sustabdo spausdinimą po esamo formato atspausdinimo. Jau buferyje esančios etiketės vis tiek gali būti atspausdintos pirmiau."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Sustabdo spausdinimą po esamos etiketės pabaigos. Spausdinimas tęsiamas, kai pauzės būsena panaikinama."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Iš naujo atspausdina ankstesnę etiketę, kai įjungtas aplikatoriaus pakartotinio spausdinimo režimas."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Panaikina pauzės režimą ir atnaujina spausdinimą."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Nedelsiant suveikia pjoviklį KR403 spausdintuvuose kiosko spausdinimo režimu."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Prideda papildomą išstūmimo ilgį KR403 kiosko pateikimo įrenginiui, kad atspausdintą mediją būtų lengviau paimti."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Vykdo KR403 pateikimo įrenginio ciklą, pasiūlydamas atspausdintą mediją rankiniam paėmimui."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Nustato juostelės tiekimo įtempimą PAX serijos spausdintuvuose."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Nustato spausdintuvo realaus laiko laikrodžio datą ir laiką."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Pasirenka datos ir laiko formatą, rodomą konfigūracijos etiketėje ir valdymo pulte."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Apibrėžia antrinio laikrodžio poslinkius nuo realaus laiko laikrodžio. Poslinkiai prarandami, kai spausdintuvas išjungiamas."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Nustato, kada laiko laukai žymimi laiko žyma, ir pasirenka kalbą dienų bei mėnesių pavadinimams."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Pasirenka spausdintuvo valdymo pulto ekrano kalbą iš sąrašo, kuris priklauso nuo modelio."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Pasirenka saugomą koduočių lentelę, naudojamą lauko duomenims susieti prieš spausdinimą."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Pasirenka pradinės ZPL arba ZPL II versijos komandų interpretaciją suderinamumui su senesniais formatais."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Priskiria spausdintuvui tinklo pavadinimą ir laisvo teksto aprašymą, kurie abu rodomi konfigūracijos etiketėje ir jo integruotame tinklalapyje."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Nustato keturių skaitmenų slaptažodį valdymo pulto nustatymų meniu."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Išsaugo, atkuria arba atstato spausdintuvo konfigūracijos nustatymus."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Pakeičia formato komandų priešdėlio simbolį, paprastai stogelį, globaliai arba tik esamam formatui."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Pakeičia parametrų skirtuko simbolį, paprastai kablelį, globaliai arba tik esamam formatui."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Pakeičia tiesioginių komandų priešdėlio simbolį, paprastai tildę, globaliai arba tik esamam formatui."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Iš naujo susieja spausdintuvo atminties raides, kad saugomi objektai galėtų išlaikyti savo esamus pavadinimus."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Atšaukia eilėje esančius formatus ir esamą partiją. Jau spausdinama etiketė gali būti baigta."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Ištrina ir iš naujo inicializuoja vieną flash atminties įrenginį. Maitinimo dingimas šios operacijos metu gali sugadinti saugyklą."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Iš naujo inicializuoja baterija palaikomą atminties kortelę po įdiegimo arba baterijos pakeitimo."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Vykdo medijos kalibravimą, kad išmatuotų etiketės ilgį ir sureguliuotų medijos bei juostelės jutiklius."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Vietoje vykdymo atspausdina gaunamus baitus ir jų šešioliktaines reikšmes, skirta ryšio su pagrindiniu kompiuteriu diagnostikai."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Palieka ryšio diagnostikos režimą ir grąžina spausdintuvą į įprastą etikečių spausdinimą."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Nustato, ar žema baterijos įtampa sustabdo nešiojamą spausdintuvą, ar leidžia spausdinimui tęstis."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Vykdo medijos kalibravimą ir atspausdina jutiklio profilio grafiką medijos tarpelio perėjimui."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Paleidžia Zebra BASIC Interpreter spausdintuve, pasirenkamai paleisdama saugomą programą."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Sukonfigūruoja papildomą prievadą aplikatoriaus arba tikrintuvo signalams ir klaidų apdorojimui."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Pasirenka medijos jutiklį, naudojamą sekimui, paprastai atspindintį arba pralaidumo tipo."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Išmatuoja ir išsaugo etiketės ilgį, proceso metu pastumdama tuščias etiketes."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Nustato normalų arba sumažintą taškų skaičių milimetre. Sumažintas tankis padvigubina formato koordinačių fizinį dydį."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Priverčia nepavykusius spausdinimo galvutės elementų testus sustabdyti spausdinimą, kol spausdintuvas perkraunamas arba atkuriamas tolerantiškas režimas."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Leidžia spausdinimui tęstis po nepavykusio spausdinimo galvutės elemento testo."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Atšaukia kitą eilėje laukiantį formatą ir sustabdo spausdintuvą, po vieną buferyje esantį formatą kiekvienai komandai."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Uždaro aktyvią Zebra BASIC Interpreter sesiją ir grąžina prievadą į ZPL apdorojimą."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Perkrauna spausdintuvo programinę aparatinę įrangą ir iš naujo įkelia išsaugotus ryšio bei konfigūracijos numatytuosius nustatymus."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Atšaukia šiuo metu gaunamą formatą, neatšaukdama jau spausdinamų etikečių."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Atstato pasirinktą spausdintuvo naudojimo skaitiklį, įskaitant naudotojo arba RFID skaitiklius."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Sukonfigūruoja visus nuosekliojo prievado ryšio parametrus viena komanda."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Pakeičia pralaidumo jutiklio intensyvumo arba bazinės linijos reikšmes, paprastai nustatomas kalibravimo metu."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Pradeda spausdinti dar nesulaukus viso formato, kad pagerintų sudėtingų etikečių spausdinimo našumą."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Išjungia konkrečią ZebraNet įspėjimo sąlygą ir paskirties vietą."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Nustato spausdinimo galvutės varžos reikšmę, naudojamą degimo energijos skaičiavimams."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Nustato medijos jutiklio ribas, etiketės ilgį ir LED intensyvumą, paprastai nustatomus kalibravimo metu."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Įjungia ZebraNet įspėjimą konkrečiai sąlygai ir paskirties vietai."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopijuoja saugomus objektus tarp spausdintuvo atminties įrenginių, su pakaitos simbolių palaikymu grupėms."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Atspausdina konfigūracijos etiketę su jutiklio, tinklo, programinės aparatinės įrangos ir atminties informacija."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Atspausdina katalogo etiketę saugomiems objektams, rezidentiniams šriftams arba galimiems brūkšniniams kodams."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Atspausdina etiketėje prašomą techninės priežiūros informaciją, pavyzdžiui, ridos skaitiklį arba spausdinimo galvutės istoriją."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Sukonfigūruoja KR403 kiosko pateikimo įrenginio nustatymus, įskaitant pjovimo ilgį, pjovimo paraštę, įtraukimo laiko limitą ir kilpos ilgį."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Valdo dinaminį etiketės ilgio ir jutiklio ribos perkalibravimą po įjungimo arba medijos skyriaus atidarymo."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Paleidžia eksploatavimo nutraukimo režimą, ruošiant spausdintuvą perpardavimui arba perdirbimui."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Nustato automatinį miego režimo išjungimą po neveiklumo periodo, su parinktimis eilėje laukiančioms etiketėms."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Išstumia arba įtraukia mediją, jau pateiktą KR403 kiosko pateikimo įrenginio."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Vykdo baterijos iškrovimo režimą nešiojamuose spausdintuvuose baterijos paketo kondicionavimui."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Grąžina baterijos ir spausdinimo galvutės galios rodmenis iš mobiliųjų spausdintuvų."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Grąžina spausdinimo galvutės diagnostikos duomenis, įskaitant temperatūras, elementų testų rezultatus, tamsumą ir greitį."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Grąžina saugomą ZPL formatą iš spausdintuvo atminties pagrindiniam kompiuteriui."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Grąžina saugomą grafinį vaizdą iš spausdintuvo atminties pagrindiniam kompiuteriui."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Grąžina esamą spausdintuvo konfigūraciją kaip skaitomą tekstą per pagrindinio kompiuterio prievadą."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Grąžina spausdintuvo identifikacijos duomenis, įskaitant modelį, programinę aparatinę įrangą, skiriamąją gebą, atmintį ir įdiegtas parinktis."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Grąžina bendrą, maksimalią galimą ir šiuo metu laisvą spausdintuvo atmintį kilobaitais."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Grąžina prašomus būsenos, identifikacijos, ridos skaitiklio arba techninės priežiūros duomenis pagrindiniam kompiuteriui."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Grąžina būsenos eilutes pagrindiniam kompiuteriui apie sąsają, mediją, pauzės būseną, etiketės ilgį ir buferyje esančius formatus."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Grąžina šriftų ryšių lentelę pagrindiniam kompiuteriui, išvardydama pagrindinius šriftus ir atsarginius šriftus."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Grąžina sukonfigūruotus ZebraNet įspėjimus, įskaitant sąlygas, paskirties vietas ir nustatytas arba išvalytas vėliavėles."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Grąžina duomenis iš sunumeruoto lauko pagrindiniam kompiuteriui, su pasirenkama baitų riba."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Grąžina atminties įrenginio katalogo sąrašą, įskaitant likusią laisvą vietą."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Grąžina saugomą grafinį vaizdą pagrindiniam kompiuteriui atsisiunčiamo failo formatu."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Grąžina spausdintuvo aprašo XML nustatymams, objektų katalogui arba būsenai."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Skaito iš RFID žymos arba rašo į ją, įskaitant duomenų formatą, atminties banką ir prieigos slaptažodį."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Nuskaito esamos RFID žymos identifikatorių, kad jį būtų galima naudoti etiketės duomenyse arba atsakyme pagrindiniam kompiuteriui."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Valdo medijos judėjimą pasenusio tipo RFID operacijų metu. Link-OS formatai vietoj to naudoja ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Aptinka daugiau nei vieną RFID žymą kodavimo lauke ir gali anuliuoti etiketes, kai šalia yra pašalinių žymų."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Nustato pakartotinių bandymų skaičių pasenusio tipo RFID skaitymui ar rašymui. Link-OS formatai vietoj to naudoja ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Apibrėžia bitų išdėstymą, naudojamą RFID EPC laukams užkoduoti žymoje."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Nustato RFID parinktis vėlesnėms etiketėms, įskaitant žymos tipą, programavimo poziciją, klaidų apdorojimą ir VOID juostos ilgį."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Nuskaito žymos duomenis į etiketės lauką pasenusio tipo RFID formatuose."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Rašo žymos duomenis pasenusio tipo RFID formatuose. ^RF apima skaitymą, rašymą ir slaptažodžių tvarkymą."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Sudaro EPC serijos numerį iš žymos identifikatoriaus ir įrašo jį į žemesniuosius EPC bitus."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Grąžina kiekvieno RFID kodavimo rezultatą pagrindiniam kompiuteriui, leisdama programinei įrangai atskirti tinkamas žymas nuo anuliuotų etikečių."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Nustato RFID skaitymo ir rašymo galią, kai kalibravimas nepateikia tinkamų reikšmių."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Užrakina RFID žymos atmintį, grįžtamai arba negrįžtamai, kad būtų užkirstas kelias vėlesniam rašymui."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Vykdo RFID kalibravimą ir grąžina padėties, antenos ir galios nustatymus pagrindiniam kompiuteriui."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Grąžina RFID operacijų žurnalą, įskaitant padėtį, anteną, galios lygį ir rezultatą."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Pasirenka, ar spausdintuvas paleidimo metu tikrina laidinį spausdinimo serverį."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Pasirenka pagrindinį tinklo įrenginį, laidinį arba belaidį."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresuoja vieną spausdintuvą pasenusio tipo RS-485 daugiataškėje linijoje pagal tinklo identifikatorių."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Priskiria tinklo identifikatorių, naudojamą spausdintuvui adresuoti pasenusio tipo RS-485 daugiataškėje linijoje."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Nustato spausdintuvo SNMP identitetą ir bendruomenės eilutes."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Pasirenka, ar įkrovimo metu tinklo nustatymai gaunami iš spausdintuvo, ar iš prijungto spausdinimo serverio."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Perjungia visus spausdintuvus pasenusio tipo daugiataškėje linijoje į skaidraus priėmimo režimą."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Sukonfigūruoja SMTP serverio ir domeno nustatymus spausdinimo serverio el. pašto įspėjimams."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Perjungia adresuotą pasenusio tipo daugiataškės linijos spausdintuvą į skaidraus priėmimo režimą."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Nustato, kiek laiko autentifikuotas IP adresas gali pasiekti spausdintuvo tinklalapius prieš pakartotinę autentifikaciją."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Nustato DHCP kliento identifikatoriaus formą ir reikšmę spausdinimo serveriui."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Sukonfigūruoja IP adresą, potinklio kaukę ir tinklų sietuvą spausdintuvo tinklo sąsajai."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Sukonfigūruoja laidinio spausdinimo serverio IP nustatymus, laiko limitus ir žaliavinį prievadą senesnei programinei aparatinei įrangai."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Pasirenka priėmimo ir siuntimo antenas belaidžiam radijo moduliui."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Sukonfigūruoja pasenusį WEP saugumą ir rakto medžiagą senesnei belaidžio ryšio programinei aparatinei įrangai."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Sukonfigūruoja pasenusią Cisco LEAP autentifikaciją senesnei belaidžio ryšio programinei aparatinei įrangai."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Nustato slaptažodį belaidžio ryšio nustatymams spausdintuvo valdymo pulte."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Sukonfigūruoja 802.11b duomenų perdavimo spartas ir siuntimo galią senesniuose belaidžiuose spausdinimo serveriuose."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Sukonfigūruoja belaidžio tinklo pavadinimą, radijo režimą, preambulės ilgį ir ryšio palaikymo elgseną."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Sukonfigūruoja belaidžio ryšio saugumo režimą, raktus ir prisijungimo duomenis viena komanda."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Atspausdina tinklo konfigūracijos etiketę, kai spausdintuvas neveikia."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Iš naujo paleidžia belaidžio ryšio plokštę ir spausdinimo serverį, todėl radijo modulis iš naujo prisijungia prie tinklo."
+  }
+}

@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Rozpoczyna nowy format etykiety. Kolejne polecenia definiują pola, obsługę nośnika i zachowanie drukarki dla tej etykiety."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Zamyka bieżący format etykiety i przekazuje go do druku."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Ustawia szerokość obszaru druku w punktach. Treść wykraczająca poza tę szerokość jest przez drukarkę obcinana."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Ustawia długość etykiety w punktach, określając miejsce zakończenia drukowanego formatu."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Przesuwa pozycję zerową etykiety, zmieniając punkt odniesienia dla współrzędnych kolejnych pól."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Stosuje poziome przesunięcie pozycji pól dla zgodności ze starszymi formatami Zebra."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Dodaje pionowe przesunięcie całego formatu względem górnej krawędzi nośnika."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Ustawia jednostki współrzędnych na punkty, cale lub milimetry i pozwala skalować formaty między różnymi rozdzielczościami druku."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Ustawia tryb obsługi nośnika po wydruku, w tym odrywanie, odklejanie, cięcie, przewijanie oraz tryb aplikatora."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Wybiera tryb termotransferowy lub termiczny bezpośredni, odpowiednio do tego, czy załadowany nośnik wymaga taśmy barwiącej."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Ustawia liczbę wydruków, grupowanie pauzy lub cięcia oraz liczbę kopii przypadających na każdą wartość serializacji."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Odwraca druk kolejnych pól, zamieniając miejscami kolor pierwszego planu i tła."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Obraca cały format etykiety o 180 stopni."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Odbija obszar druku w poziomie."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Ustawia prędkość druku, prędkość przesuwu i prędkość cofania nośnika w calach na sekundę."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Pozycjonuje kolejne pole względem punktu zerowego etykiety, wykorzystując jego lewy górny róg."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Pozycjonuje kolejne pole względem jego linii bazowej lub krawędzi kodu kreskowego, zapewniając obróconym polom stabilny punkt zaczepienia."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Podaje zawartość bieżącego pola, w tym tekst, dane kodu kreskowego lub dane RFID."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Kończy definicję bieżącego pola."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Włącza sekwencje szesnastkowe w danych pola dla bajtów binarnych i zarezerwowanych znaków poleceń."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Odwraca kolor pierwszego planu i tła wyłącznie dla kolejnego pola."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Dodaje pole komentarza. Drukarka ignoruje jego zawartość aż do kolejnego separatora pola."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Ustawia domyślną orientację pola, a w nowszym firmware także domyślne wyrównanie."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Zawija dane pola w blok o stałej szerokości z kontrolą liczby wierszy, odstępów, wcięcia i wyrównania."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Zawija tekst w polu o stałej szerokości i wysokości, obcinając nadmiar."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Przypisuje numer polu zmiennemu w zapisanych i przywoływanych formatach."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Podaje dane dla pola zmiennego. W przeciwieństwie do danych ^FD są one czyszczone po wydrukowaniu etykiety."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Ustawia znak używany do osadzania wartości numerowanych pól wewnątrz łańcucha innego pola."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Ustawia znaczniki używane dla tokenów zegara czasu rzeczywistego wewnątrz danych pola."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Ustawia domyślną szerokość modułu kodu kreskowego, proporcję szerokiego do wąskiego elementu oraz wysokość dla kolejnych pól kodów kreskowych."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Umieszcza segmenty PDF417 lub MicroPDF417 w określonych punktach, gdy jedna wiadomość rozciąga się na wiele symboli."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Ustawia kolejność znaków w bieżącym polu i pozwala dodać dodatkowy odstęp między znakami."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Wybiera rezydentną czcionkę skalowalną 0 dla kolejnego pola, w żądanym rozmiarze i orientacji."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Wybiera czcionkę rezydentną po jednoznakowej nazwie, z opcjonalną orientacją, wysokością i szerokością."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Wybiera zapisany plik czcionki dla kolejnego pola, z opcjonalną orientacją, wysokością i szerokością."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Ustawia domyślną czcionkę, wysokość i szerokość stosowaną w polach tekstowych, które nie określają własnych wartości."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Wybiera kodowanie używane do interpretacji danych pola, w tym strony kodowe i UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Włącza zaawansowany układ tekstu dla kolejnych pól, w tym tekst dwukierunkowy, kształtowanie glifów oraz funkcje OpenType."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Mapuje jednoznakową nazwę czcionki na zapisany plik czcionki."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Ustawia rozmiar bufora renderowanych glifów skalowalnych, przyspieszając powtarzający się wydruk dużych czcionek."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Definiuje łańcuchy czcionek zapasowych TrueType, stosowanych gdy czcionka bazowa nie zawiera danego glifu."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Drukuje etykietę z listą skonfigurowanych powiązań czcionek i ich łańcuchowych czcionek zapasowych."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Pobiera czcionkę bitmapową wraz z jej metrykami do pamięci drukarki."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Pobiera zakodowaną skalowalną czcionkę Intellifont do pamięci drukarki."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Pobiera zakodowaną czcionkę TrueType zawierającą do 256 znaków do pamięci drukarki."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Pobiera zakodowaną czcionkę TrueType zawierającą więcej niż 256 glifów do pamięci drukarki."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Pobiera tabelę kodowania mapującą bajty danych pola na wartości Unicode dla czcionek TrueType."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Rysuje kod kreskowy Code 128 dla danych ASCII o zmiennej długości, z trybami automatycznego przełączania podzbiorów oraz obsługą danych UCC/EAN."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Rysuje kod kreskowy Code 39 z opcjonalną cyfrą kontrolną Mod 43."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Rysuje kod kreskowy Code 93, przedstawiający pełne dane ASCII za pomocą znaków przesunięcia."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Rysuje kod kreskowy Code 11 dla cyfr i myślników, z opcjonalnymi cyframi kontrolnymi."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Rysuje kod kreskowy Interleaved 2 of 5 dla danych liczbowych o parzystej długości, z opcjonalną cyfrą kontrolną."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Rysuje kod kreskowy Industrial 2 of 5, kod liczbowy kodujący dane wyłącznie w kreskach."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Rysuje kod kreskowy Standard 2 of 5, samokontrolujący kod liczbowy kodujący dane wyłącznie w kreskach."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Rysuje kod kreskowy ANSI Codabar, znany również jako USD-4, stosowany na etykietach bibliotecznych, medycznych i kurierskich."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Rysuje kod kreskowy LOGMARS, wariant Code 39 stosowany przez Departament Obrony USA, i konwertuje małe litery danych na wielkie."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Rysuje kod kreskowy MSI, kod liczbowy wywodzący się z Plessey, z wyborem schematu cyfry kontrolnej."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Rysuje kod kreskowy Plessey, starszy kod liczbowy z opcjonalnymi cyframi kontrolnymi."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Rysuje kod kreskowy EAN-13 dla numerów artykułów detalicznych i wylicza cyfrę kontrolną z dwunastu cyfr danych."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Rysuje kod kreskowy EAN-8 dla małych opakowań detalicznych i wylicza cyfrę kontrolną z siedmiu cyfr danych."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Rysuje kod kreskowy UPC-A dla opakowań detalicznych na podstawie jedenastu cyfr danych, z opcjonalnym drukiem cyfry kontrolnej."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Rysuje kod kreskowy UPC-E, skróconą formę UPC-A. Dane pola stanowią pełny dziesięciocyfrowy kod producenta i produktu."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Rysuje symbol GS1 DataBar z wyborem podtypu, powiększenia, wysokości i szerokości segmentu."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Rysuje pocztowy kod kreskowy Planet Code z cyfr kodowanych jako kreski wysokie i niskie."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Rysuje POSTNET, Planet Code lub USPS Intelligent Mail, zależnie od wybranego typu kodu pocztowego."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Rysuje dwu- lub pięciocyfrowy symbol dodatkowy UPC/EAN obok głównego kodu kreskowego."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Rysuje wielorzędowy kod kreskowy Code 49 z dwoma do ośmiu wierszami pełnych danych ASCII."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Rysuje symbol QR Code. Parametry polecenia określają model, powiększenie i maskę. Dane pola określają poziom korekcji błędów i tryb znaków."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Rysuje symbol Data Matrix z konfigurowalnym rozmiarem elementu, poziomem jakości i obsługą sekwencji ucieczki."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Rysuje wielorzędowy dwuwymiarowy symbol PDF417 dla dużych ładunków tekstowych lub binarnych."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Rysuje symbol MicroPDF417, kompaktowy wariant PDF417 ze wzorami adresowania wierszy."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Rysuje symbol matrycowy Aztec z konfigurowalnym powiększeniem i korekcją błędów."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Rysuje symbol CODABLOCK w trybie A, E lub F dla większych ładunków danych."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Rysuje symbol UPS MaxiCode z trybem dla ustrukturyzowanych wiadomości przewoźnika lub danych ogólnych."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Rysuje symbol etykiety telekomunikacyjnej TLC39, łączący Code 39 z komponentem MicroPDF417."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Po włączeniu waliduje dane i parametry kodu kreskowego, drukując INVALID zamiast błędnego symbolu."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Rysuje wypełniony lub obrysowany prostokąt. Ustawienie boku równego grubości obramowania daje linię."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Rysuje linię ukośną na zadanej szerokości i wysokości, nachyloną w prawo lub w lewo."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Rysuje elipsę na podstawie szerokości i wysokości w punktach, z obramowaniem o grubości mierzonej do wewnątrz oraz kolorem czarnym lub białym."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Rysuje okrąg o zadanej średnicy w punktach, z obramowaniem o grubości mierzonej do wewnątrz oraz kolorem czarnym lub białym."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Umieszcza monochromatyczną bitmapę w bieżącej pozycji pola, wykorzystując dane w formacie ASCII hex, binarnym lub skompresowanym."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Drukuje symbol rezydentny wybrany danymi pola, na przykład symbol praw autorskich lub zastrzeżonego znaku towarowego."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Ładuje zapisany obraz na początku formatu i zakotwicza go w punkcie zerowym etykiety."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Umieszcza zapisany obraz w bieżącej pozycji pola bez skalowania."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Usuwa zapisane grafiki, czcionki lub formaty z pamięci drukarki, z obsługą znaków wieloznacznych dla grup."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Zapisuje bieżący format jako obraz graficzny do szybkiego przywołania i nakładania danych zmiennych."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Pobiera grafikę w formacie ASCII hex do pamięci drukarki pod nazwą wielokrotnego użytku."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Zatrzymuje przesyłanie grafiki przerwane w połowie i przywraca drukarkę do normalnej pracy."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Pobiera grafikę, czcionkę lub certyfikat do pamięci drukarki pod nazwą wielokrotnego użytku."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Usuwa wszystkie pobrane grafiki z pamięci drukarki. Do usuwania wybranych obiektów służy ^ID."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serializuje dane pola tekstowego lub kodu kreskowego na kolejnych etykietach, na podstawie wartości początkowej, kierunku i przyrostu."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serializuje wybrane pozycje w danych pola za pomocą maski i zestawów znaków."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Zapisuje kolejne polecenia jako format wielokrotnego użytku zamiast drukować je od razu."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Przywołuje zapisany format i podaje wartości dla jego numerowanych pól zastępczych."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Przywołuje zapisaną grafikę w bieżącej pozycji z niezależnym skalowaniem poziomym i pionowym."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Wybiera sposób wykrywania granic etykiet przez drukarkę, za pomocą przerw, znaczników lub nośnika ciągłego."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Ustawia maksymalną długość etykiety, jakiej drukarka szuka podczas kalibracji nośnika nieciągłego."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Ustawia czynność wykonywaną po włączeniu zasilania i zamknięciu głowicy, w tym kalibrację, przesuw nośnika lub pomiar długości."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Pomija cofanie nośnika dla bieżącej etykiety, gdy przesunięcie do pozycji odrywania nie jest potrzebne."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Konfiguruje drukowane alerty serwisowe dotyczące czyszczenia lub wymiany głowicy."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Określa, czy bitmapa etykiety jest czyszczona po wydruku, czy zachowywana do ponownego wykorzystania przez kolejne etykiety."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Ustawia tekst wyświetlany na etykietach alertów serwisowych dotyczących czyszczenia lub wymiany głowicy."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Blokuje ustawienie panelu sterowania, na przykład zaciemnienie lub kalibrację, aż do jego odblokowania."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Włącza lub wyłącza wskaźnik ostrzeżenia o zbyt zimnej głowicy."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Reguluje zaciemnienie druku względem aktualnie skonfigurowanego poziomu zaciemnienia drukarki."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Ustawia bezwzględne zaciemnienie druku natychmiast, zgodnie z ustawieniem zaciemnienia z panelu przedniego."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Określa, czy etykieta przerwana przez błąd nośnika, taśmy barwiącej lub głowicy jest ponownie drukowana po usunięciu usterki."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Planuje okresowe testy elementów głowicy na podstawie liczby wydrukowanych etykiet oraz opcjonalnego zakresu elementów."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Reguluje spoczynkową pozycję odrywania lub cięcia o niewielkie przesunięcie w punktach po wydruku."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Konfiguruje progi wczesnego ostrzegania dla konserwacji nośnika, taśmy barwiącej i głowicy."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Steruje momentem cofania nośnika wokół druku i cięcia albo całkowicie je wyłącza."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Przesuwa nośnik o podaną liczbę pustych wierszy punktów z prędkością przesuwu."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Przesuwa jedną pustą etykietę po wydrukowaniu bieżącego formatu."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Przesuwa jedną pustą etykietę, gdy tylko drukarka jest wolna, po bieżącym formacie lub podczas pauzy."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Wstrzymuje pracę po wydrukowaniu bieżącego formatu. Etykiety już znajdujące się w buforze mogą zostać wydrukowane wcześniej."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Wstrzymuje pracę po zakończeniu bieżącej etykiety. Druk wznawia się po zniesieniu stanu pauzy."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Drukuje ponownie poprzednią etykietę, gdy włączony jest tryb ponownego druku aplikatora."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Znosi tryb pauzy i wznawia druk."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Natychmiast uruchamia nóż w drukarkach KR403 pracujących w trybie druku kioskowego."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Dodaje dodatkową długość wysuwu w prezenterze kioskowym KR403, ułatwiając odebranie wydrukowanego nośnika."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Uruchamia cykl prezentera KR403, podając wydrukowany nośnik do ręcznego odebrania."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Ustawia naciąg podawania taśmy barwiącej w drukarkach serii PAX."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Ustawia datę i godzinę zegara czasu rzeczywistego drukarki."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Wybiera format daty i godziny wyświetlany na etykiecie konfiguracyjnej i panelu sterowania."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Definiuje przesunięcia zegarów pomocniczych względem zegara czasu rzeczywistego. Przesunięcia są tracone po wyłączeniu zasilania drukarki."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Ustawia moment znakowania pól czasu i wybiera język nazw dni i miesięcy."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Wybiera język wyświetlacza panelu sterowania drukarki z listy zależnej od modelu."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Wybiera zapisaną tabelę kodowania używaną do mapowania danych pola przed wydrukiem."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Wybiera interpretację poleceń zgodną z oryginalnym ZPL lub ZPL II dla zgodności ze starszymi formatami."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Przypisuje drukarce nazwę sieciową i dowolny opis tekstowy, widoczne zarówno na etykiecie konfiguracyjnej, jak i na wbudowanej stronie internetowej."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Ustawia czterocyfrowe hasło dostępu do menu konfiguracyjnych panelu sterowania."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Zapisuje, przywraca lub resetuje ustawienia konfiguracyjne drukarki."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Zmienia znak prefiksu poleceń formatujących, domyślnie daszek, globalnie lub tylko dla bieżącego formatu."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Zmienia znak rozdzielający parametry, domyślnie przecinek, globalnie lub tylko dla bieżącego formatu."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Zmienia znak prefiksu poleceń natychmiastowych, domyślnie tyldę, globalnie lub tylko dla bieżącego formatu."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Przemapowuje litery oznaczające pamięć drukarki, dzięki czemu zapisane obiekty mogą zachować dotychczasowe nazwy."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Anuluje kolejkowane formaty oraz bieżącą partię. Etykieta aktualnie drukowana może zostać dokończona."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Kasuje i ponownie inicjalizuje jedno urządzenie pamięci flash. Utrata zasilania w trakcie tej operacji może uszkodzić zawartość pamięci."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Ponownie inicjalizuje kartę pamięci podtrzymywanej baterią po jej instalacji lub wymianie baterii."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Uruchamia kalibrację nośnika, mierząc długość etykiety i dostosowując czujniki nośnika oraz taśmy barwiącej."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Drukuje przychodzące bajty wraz z ich wartościami szesnastkowymi zamiast je wykonywać, do celów diagnostyki komunikacji z hostem."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Kończy tryb diagnostyki komunikacji i przywraca drukarkę do normalnego drukowania etykiet."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Określa, czy niskie napięcie baterii wstrzymuje pracę drukarki przenośnej, czy pozwala kontynuować druk."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Uruchamia kalibrację nośnika i drukuje wykres profilu czujnika dla przejścia przerwy między etykietami."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Uruchamia interpreter Zebra BASIC Interpreter na drukarce, opcjonalnie od razu ze wskazanym zapisanym programem."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Konfiguruje port pomocniczy dla sygnałów aplikatora lub weryfikatora oraz obsługi błędów."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Wybiera czujnik nośnika używany do śledzenia, zwykle odbiciowy lub transmisyjny."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Mierzy i zapisuje długość etykiety, przesuwając w trakcie procesu puste etykiety."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Ustawia normalną lub obniżoną rozdzielczość w punktach na milimetr. Obniżona gęstość podwaja fizyczny rozmiar współrzędnych formatu."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Sprawia, że nieudany test elementu głowicy zatrzymuje druk aż do zresetowania drukarki lub przywrócenia trybu tolerancyjnego."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Pozwala kontynuować druk po nieudanym teście elementu głowicy."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Anuluje kolejny format oczekujący w kolejce i wstrzymuje drukarkę, po jednym buforowanym formacie na polecenie."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Kończy aktywną sesję Zebra BASIC Interpreter i przywraca port do przetwarzania ZPL."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Uruchamia ponownie firmware drukarki i wczytuje zapisane domyślne ustawienia komunikacji oraz konfiguracji."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Anuluje aktualnie odbierany format, nie przerywając etykiet już drukowanych."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Zeruje wybrany licznik użycia drukarki, w tym liczniki użytkownika lub RFID."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Konfiguruje wszystkie parametry komunikacji portu szeregowego jednym poleceniem."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Nadpisuje wartości intensywności lub linii bazowej czujnika transmisyjnego, zwykle ustawiane podczas kalibracji."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Rozpoczyna druk przed odebraniem pełnego formatu, zwiększając przepustowość przy złożonych etykietach."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Wyłącza określony warunek alertu ZebraNet i jego adresata."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Ustawia wartość rezystancji głowicy używaną do obliczeń energii grzania."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Ustawia progi czujnika nośnika, długość etykiety i intensywność diod LED, zwykle wyznaczane podczas kalibracji."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Włącza alert ZebraNet dla określonego warunku i adresata."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopiuje zapisane obiekty między urządzeniami pamięci drukarki, z obsługą znaków wieloznacznych dla grup."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Drukuje etykietę konfiguracyjną z informacjami o czujnikach, sieci, firmware i pamięci."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Drukuje etykietę zawartości katalogu dla zapisanych obiektów, czcionek rezydentnych lub dostępnych kodów kreskowych."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Drukuje na etykiecie żądane informacje serwisowe, takie jak licznik przebiegu lub historia głowicy."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Konfiguruje ustawienia prezentera kioskowego KR403, w tym długość cięcia, margines cięcia, czas wycofania i długość pętli."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Steruje dynamiczną rekalibracją długości etykiety i progu czujnika po włączeniu zasilania lub otwarciu komory nośnika."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Uruchamia tryb wycofania z eksploatacji, przygotowując drukarkę do odsprzedaży lub recyklingu."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Ustawia automatyczne przejście w stan uśpienia po okresie bezczynności, z opcjami dotyczącymi etykiet w kolejce."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Wysuwa lub wycofuje nośnik już podany przez prezenter kioskowy KR403."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Uruchamia tryb rozładowania baterii w drukarkach przenośnych, w celu jej kondycjonowania."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Zwraca odczyty poziomu baterii i mocy głowicy z drukarek mobilnych."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Zwraca dane diagnostyczne głowicy, w tym temperatury, wyniki testów elementów, zaciemnienie i prędkość."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Zwraca hostowi zapisany format ZPL z pamięci drukarki."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Zwraca hostowi zapisany obraz graficzny z pamięci drukarki."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Zwraca bieżącą konfigurację drukarki jako czytelny tekst przez port hosta."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Zwraca dane identyfikacyjne drukarki, w tym model, firmware, rozdzielczość, pamięć i zainstalowane opcje."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Zwraca całkowitą, maksymalnie dostępną i aktualnie wolną pamięć drukarki w kilobajtach."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Zwraca hostowi żądane dane statusu, identyfikacyjne, licznika przebiegu lub konserwacji."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Zwraca łańcuchy statusu hosta dotyczące interfejsu, nośnika, stanu pauzy, długości etykiety i buforowanych formatów."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Zwraca hostowi tabelę powiązań czcionek, z listą czcionek bazowych i ich czcionek zapasowych."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Zwraca skonfigurowane alerty ZebraNet, w tym warunki, adresatów oraz flagi ustawienia lub wyczyszczenia."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Zwraca hostowi dane z numerowanego pola, z opcjonalnym limitem bajtów."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Zwraca listę zawartości katalogu dla urządzenia pamięci, wraz z pozostałą wolną przestrzenią."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Zwraca hostowi zapisaną grafikę w formacie pliku do pobrania."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Zwraca opis drukarki w formacie XML dla ustawień, katalogu obiektów lub statusu."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Odczytuje z tagu RFID lub zapisuje do niego, obejmując format danych, bank pamięci i hasło dostępu."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Odczytuje bieżący identyfikator tagu RFID do wykorzystania w danych etykiety lub odpowiedzi do hosta."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Steruje przesuwem nośnika podczas starszych operacji RFID. Formaty Link-OS wykorzystują w tym celu ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Wykrywa więcej niż jeden tag RFID w polu kodowania i może unieważniać etykiety, gdy w pobliżu znajdują się przypadkowe tagi."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Ustawia liczbę ponowień dla starszych odczytów lub zapisów RFID. Formaty Link-OS wykorzystują w tym celu ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Definiuje układ bitowy używany do kodowania pól EPC RFID na tagu."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Ustawia opcje RFID dla kolejnych etykiet, w tym typ tagu, pozycję programowania, obsługę błędów i długość paska VOID."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Odczytuje dane tagu do pola etykiety w starszych formatach RFID."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Zapisuje dane tagu w starszych formatach RFID. Odczyt, zapis i obsługę haseł zapewnia ^RF."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Buduje numer seryjny EPC na podstawie identyfikatora tagu i zapisuje go w młodszych bitach EPC."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Zwraca hostowi wynik każdego kodowania RFID, pozwalając oprogramowaniu odróżnić poprawne tagi od unieważnionych etykiet."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Ustawia moc odczytu i zapisu RFID, gdy kalibracja nie daje wartości nadających się do użycia."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Blokuje pamięć tagu RFID, odwracalnie lub trwale, uniemożliwiając późniejsze zapisy."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Uruchamia kalibrację RFID i zwraca hostowi ustawienia pozycji, anteny i mocy."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Zwraca dziennik operacji RFID, w tym pozycję, antenę, poziom mocy i wynik."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Określa, czy drukarka przy uruchomieniu sprawdza obecność przewodowego serwera druku."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Wybiera podstawowe urządzenie sieciowe, przewodowe lub bezprzewodowe."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresuje jedną drukarkę na starszej magistrali wielopunktowej RS-485 za pomocą identyfikatora sieciowego."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Przypisuje identyfikator sieciowy używany do adresowania drukarki na starszej magistrali wielopunktowej RS-485."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Ustawia dane identyfikacyjne SNMP oraz ciągi community drukarki."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Określa, czy ustawienia sieciowe przy rozruchu pochodzą z drukarki, czy z podłączonego serwera druku."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Przełącza wszystkie drukarki na starszej magistrali wielopunktowej w tryb odbioru przezroczystego."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Konfiguruje ustawienia serwera SMTP i domeny dla alertów e-mail serwera druku."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Przełącza zaadresowaną starszą drukarkę wielopunktową w tryb odbioru przezroczystego."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Ustawia czas, przez jaki uwierzytelniony adres IP może korzystać ze stron internetowych drukarki przed ponownym uwierzytelnieniem."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Ustawia formę i wartość identyfikatora klienta DHCP dla serwera druku."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Konfiguruje adres IP, maskę podsieci i bramę dla interfejsu sieciowego drukarki."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Konfiguruje ustawienia IP przewodowego serwera druku, limity czasu i port raw dla starszego firmware."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Wybiera anteny odbiorczą i nadawczą modułu radiowego."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Konfiguruje przestarzałe zabezpieczenie WEP i materiał kluczowy dla starszego firmware bezprzewodowego."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Konfiguruje przestarzałe uwierzytelnianie Cisco LEAP dla starszego firmware bezprzewodowego."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Ustawia hasło do ustawień bezprzewodowych w panelu sterowania drukarki."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Konfiguruje szybkości transmisji 802.11b i moc nadawania w starszych bezprzewodowych serwerach druku."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Konfiguruje nazwę sieci bezprzewodowej, tryb radiowy, długość preambuły i zachowanie keep-alive."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Konfiguruje tryb zabezpieczeń bezprzewodowych, klucze i dane uwierzytelniające jednym poleceniem."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Drukuje etykietę konfiguracji sieciowej, gdy drukarka jest bezczynna."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Ponownie uruchamia kartę radiową i serwer druku, powodując ponowne dołączenie modułu radiowego do sieci."
+  }
+}
