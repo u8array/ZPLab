@@ -15,7 +15,8 @@ const README = join(ROOT, 'README.md');
 const SRC_ROOTS = [join(ROOT, 'src'), join(ROOT, 'packages', 'core', 'src')];
 const MARK = { yes: '[x]', planned: '[~]', no: '[ ]' };
 const CAPABILITY_LABEL = { web: 'Web', desktop: 'Desktop', lint: 'Lint' };
-const README_INTRO = '`Web` is the browser build, `Desktop` the app with a connected printer, `Lint` the source editor checking parameters. Counts are commands with a yes, planned ones in brackets; the per-command table is in [docs/zpl-coverage.md](docs/zpl-coverage.md).';
+/** README shows one figure per area: web-modelled commands, which the desktop build always covers too. */
+const README_COLUMN = 'web';
 
 // README row order and how each maps onto catalog sections; a row without a label
 // takes its single section's name. The hardware bucket collapses four sections.
@@ -76,27 +77,29 @@ function renderDocTables(catalog) {
   return out.join('\n');
 }
 
-/** `115 / 225`, or `4 (+52) / 89` when some of the rest are planned. */
-function countCell(entries, cap) {
-  const yes = entries.filter((e) => e.support[cap] === 'yes').length;
-  const planned = entries.filter((e) => e.support[cap] === 'planned').length;
-  return `${yes}${planned ? ` (+${planned})` : ''} / ${entries.length}`;
+const count = (entries, cap, level) => entries.filter((e) => e.support[cap] === level).length;
+
+/** Compact README summary; the per-area table below carries the web figure only. */
+function readmeIntro(commands) {
+  const total = commands.length;
+  const web = count(commands, 'web', 'yes');
+  const desktopExtra = count(commands, 'desktop', 'yes') - web;
+  const desktopPlanned = count(commands, 'desktop', 'planned');
+  const lint = count(commands, 'lint', 'yes');
+  const modelled = desktopExtra
+    ? `${web} of the ${total} ZPL II commands are modelled in the browser; desktop covers ${desktopExtra} more with a connected printer.`
+    : `${web} of the ${total} ZPL II commands are modelled in both the web and desktop builds.`;
+  const planned = desktopPlanned ? `Another ${desktopPlanned} printer-side commands are planned for desktop.` : '';
+  const linting = lint ? `The source editor checks parameters for ${lint} commands.` : 'The source editor does not lint command parameters yet.';
+  return [modelled, planned, linting, 'See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).'].filter(Boolean).join(' ');
 }
 
 function renderReadmeBlock(catalog) {
   const rows = README_ROWS.map((row) => {
     const entries = catalog.commands.filter((e) => row.sections.includes(e.section));
-    return `| ${row.label ?? row.sections[0]} | ${CAPABILITIES.map((cap) => countCell(entries, cap)).join(' | ')} |`;
+    return `| ${row.label ?? row.sections[0]} | ${count(entries, README_COLUMN, 'yes')} / ${entries.length} |`;
   });
-  const total = catalog.commands.length;
-  return [
-    README_INTRO,
-    '',
-    ...capabilityHeader('Area'),
-    ...rows,
-    `| **All ${total} commands** | ${CAPABILITIES.map((cap) => countCell(catalog.commands, cap)).join(' | ')} |`,
-    '',
-  ].join('\n');
+  return [readmeIntro(catalog.commands), '', '| Area | Modelled |', '|---|---|', ...rows, ''].join('\n');
 }
 
 /** Replace the lines between the coverage markers of `text`; both marker lines stay. */
