@@ -3,8 +3,10 @@ import { describe, it, expect, afterEach, vi } from "vitest";
 import { render, cleanup, act, waitFor } from "@testing-library/react";
 import { EditorView } from "@codemirror/view";
 import { cursorCharRight, deleteCharBackward, deleteCharForward } from "@codemirror/commands";
+import { foldedRanges, unfoldEffect } from "@codemirror/language";
 import { sidecarRanges, stripSidecarComments } from "@zplab/core/lib/zplLabelMeta";
-import ZplCodeMirror from "./ZplCodeMirror";
+import { createRef } from "react";
+import ZplCodeMirror, { type ZplCodeMirrorHandle } from "./ZplCodeMirror";
 import { isEditableTarget } from "../../lib/dom";
 
 afterEach(cleanup);
@@ -22,6 +24,74 @@ describe("ZplCodeMirror keyboard surface", () => {
     const gutter = view!.dom.querySelector<HTMLElement>(".cm-gutters");
     expect(gutter).not.toBeNull();
     expect(isEditableTarget(gutter)).toBe(true);
+  });
+});
+
+describe("ZplCodeMirror caret across syncs", () => {
+  const mount = (value: string, insertPage = 0) => {
+    const changes: string[] = [];
+    const onChange = (v: string) => changes.push(v);
+    const ref = createRef<ZplCodeMirrorHandle>();
+    const r = render(<ZplCodeMirror ref={ref} value={value} onChange={onChange} ariaLabel="zpl" placeholderText="ph" insertPage={insertPage} />);
+    const view = EditorView.findFromDOM(r.container as HTMLElement)!;
+    const placeCaretAt = (needle: string) => {
+      const pos = view.state.doc.toString().indexOf(needle);
+      act(() => {
+        view.focus();
+        view.dispatch({ selection: { anchor: pos }, userEvent: "select.pointer" });
+      });
+      return pos;
+    };
+    const rerender = (next: string, page = insertPage) =>
+      r.rerender(<ZplCodeMirror ref={ref} value={next} onChange={onChange} ariaLabel="zpl" placeholderText="ph" insertPage={page} />);
+    return { view, ref, changes, placeCaretAt, rerender };
+  };
+
+  it("keeps a placed caret through a CRLF prop sync and inserts there", () => {
+    const { view, ref, changes, placeCaretAt, rerender } = mount("^XA\r\n^FO10,10^FS\r\n^XZ");
+    const pos = placeCaretAt("^FS");
+    rerender("^XA\r\n^FO20,10^FS\r\n^XZ");
+    expect(view.state.selection.main.head).toBe(pos);
+    act(() => ref.current!.insertCommand("^LL"));
+    expect(changes.at(-1)).toBe("^XA\r\n^FO20,10^LL^FS\r\n^XZ");
+  });
+
+  it("forgets a caret whose spot a sync overwrote, so the insert goes to the block instead", () => {
+    const { ref, changes, placeCaretAt, rerender } = mount("^XA\n^FO1,1^FDa^FS\n^FO2,2^FDb^FS\n^XZ");
+    placeCaretAt("^FDb");
+    // The canvas deleted the second object; the minimal splice maps the old caret somewhere inside ^XZ.
+    rerender("^XA\n^FO1,1^FDa^FS\n^XZ");
+    act(() => ref.current!.insertCommand("^LL"));
+    expect(changes.at(-1)).toBe("^XA\n^FO1,1^FDa^FS\n^LL\n^XZ");
+  });
+
+  it("leaves a deliberately unfolded blob open across a sync elsewhere", async () => {
+    const blob = "~DYE:X.GRF,B,G,1,," + "F".repeat(2500);
+    const { view, rerender } = mount(`^XA\n${blob}\n^FO10,10^FS\n^XZ`);
+    const folded = () => {
+      const out: { from: number; to: number }[] = [];
+      foldedRanges(view.state).between(0, view.state.doc.length, (from, to) => {
+        out.push({ from, to });
+      });
+      return out;
+    };
+    const first = folded()[0];
+    if (!first) throw new Error("the blob was not auto-folded at mount");
+    act(() => view.dispatch({ effects: unfoldEffect.of(first) }));
+    expect(folded()).toHaveLength(0);
+    rerender(`^XA\n${blob}\n^FO20,20^FS\n^XZ`);
+    // Fold effects of a sync are dispatched a tick later.
+    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+    expect(folded()).toHaveLength(0);
+  });
+
+  it("forgets the caret when the insert page changes", () => {
+    const doc = "^XA\r\n^FDa^FS\r\n^XZ\r\n^XA\r\n^FDb^FS\r\n^XZ";
+    const { ref, changes, placeCaretAt, rerender } = mount(doc);
+    placeCaretAt("^FDa");
+    rerender(doc, 1);
+    act(() => ref.current!.insertCommand("^LL"));
+    expect(changes.at(-1)).toBe("^XA\r\n^FDa^FS\r\n^XZ\r\n^XA\r\n^FDb^FS\r\n^LL\r\n^XZ");
   });
 });
 

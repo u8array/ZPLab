@@ -50,6 +50,14 @@ Object.defineProperty(globalThis, 'FontFace', {
   value: FakeFontFace,
 });
 
+// ── Range geometry ────────────────────────────────────────────────────────────
+// jsdom has no layout; CodeMirror's scrollIntoView measures ranges and would
+// otherwise fail asynchronously (an unhandled error, not a test failure).
+if (typeof Range !== 'undefined' && typeof Range.prototype.getClientRects !== 'function') {
+  Range.prototype.getClientRects = () => [] as unknown as DOMRectList;
+  Range.prototype.getBoundingClientRect = () => new DOMRect(0, 0, 0, 0);
+}
+
 // ── ResizeObserver ────────────────────────────────────────────────────────────
 
 // jsdom ships none, and the headless-ui popovers the settings dialog uses

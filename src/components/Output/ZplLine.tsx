@@ -1,19 +1,28 @@
-import { tokenizeZplLine } from "../../lib/zplTokenize";
-import { TOKEN_CLASS, MAX_LINE_RENDER } from "../../lib/zplTokenStyles";
+import { highlightCode } from "@lezer/highlight";
+import { buildZplTree, zplHighlightStyle, MAX_LINE_RENDER } from "../../lib/zplLanguage";
 
-/** One line of rendered ZPL, syntax-highlighted per token (the Setup-Script
- *  preview pane; the output panel renders through CodeMirror). */
+/** One line of rendered ZPL, coloured by the same language the editor uses
+ *  (the Setup-Script preview pane; the output panel renders through CodeMirror). */
 export function ZplLine({ line }: { line: string }) {
   const truncated = line.length > MAX_LINE_RENDER;
-  const tokens = tokenizeZplLine(truncated ? line.slice(0, MAX_LINE_RENDER) : line);
+  const text = truncated ? line.slice(0, MAX_LINE_RENDER) : line;
+  const spans: { text: string; cls: string }[] = [];
+  // One line in, so the break callback never fires.
+  highlightCode(
+    text,
+    buildZplTree(text),
+    zplHighlightStyle,
+    (code, cls) => spans.push({ text: code, cls }),
+    () => undefined,
+  );
   return (
     <span className="block">
       {/* A blank line collapses to zero height inside <pre>; keep its row. */}
-      {tokens.length === 0
+      {spans.length === 0
         ? "\n"
-        : tokens.map((tok, i) => (
-            <span key={i} className={TOKEN_CLASS[tok.type]}>
-              {tok.value}
+        : spans.map((s, i) => (
+            <span key={i} className={s.cls}>
+              {s.text}
             </span>
           ))}
       {truncated && (

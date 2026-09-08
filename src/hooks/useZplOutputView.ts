@@ -3,7 +3,7 @@ import { generateMultiPageZplWithMap } from "@zplab/core/lib/zplGenerator";
 import { sourceEditGate } from "@zplab/core/lib/zplSourceEdit";
 import { useLabelStore, useCurrentObjects, selectDocumentEmits } from "../store/labelStore";
 import { spanCoveredLines } from "../lib/emitSpanHighlight";
-import { isPureCrlf } from "../lib/zplCmHighlight";
+import { isPureCrlf } from "../lib/sourceOffsets";
 import { printerImpactNotices } from "../lib/exportImpact";
 import { usePrinterImpact } from "./usePrinterImpact";
 import { useT } from "./useT";
@@ -51,5 +51,5 @@ export function useZplOutputView(collapsed: boolean) {
   // baseline so the class cannot flip mid-session.
   const crlfKey = isPureCrlf(session ? session.baseline : zpl);
 
-  return { session, zpl, refusal, highlightedLines, notices, shownText, crlfKey };
+  return { session, zpl, refusal, highlightedLines, notices, shownText, crlfKey, currentPageIndex };
 }
