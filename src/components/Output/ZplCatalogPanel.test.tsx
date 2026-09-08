@@ -8,10 +8,11 @@ afterEach(cleanup);
 describe("ZplCatalogPanel", () => {
   const detail = (getByTestId: (id: string) => HTMLElement) => within(getByTestId("catalog-detail"));
 
-  it("shows the command under the caret and inserts it on request", () => {
+  it("shows the command under the caret with its description and inserts it on request", () => {
     const onInsert = vi.fn();
     const { getByTestId, getByRole } = render(<ZplCatalogPanel cursor={{ id: "^LL" }} onInsert={onInsert} />);
     expect(detail(getByTestId).getByText("label length")).toBeTruthy();
+    expect(getByTestId("catalog-detail").querySelector("p")?.textContent).toMatch(/\w+\.$/);
     fireEvent.click(getByRole("button", { name: /^Insert$/ }));
     expect(onInsert).toHaveBeenCalledWith("^LL");
   });

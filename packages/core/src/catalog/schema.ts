@@ -21,6 +21,8 @@ const commandSchema = z.object({
   section: z.string().min(1),
   /** The one-line name the coverage doc and the panel show; no sentences, no parentheses. */
   title: z.string().min(1),
+  /** Human-facing command explanation shown in the panel; one or two short sentences. */
+  summary: z.string().min(1),
   support: supportSchema,
   loss: z.enum(IMPORT_LOSS_CAUSES).optional(),
 }).strict();

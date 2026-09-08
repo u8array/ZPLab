@@ -69,6 +69,7 @@
       ],
       "section": "Layout & flow",
       "title": "start label",
+      "summary": "Starts a new label format. Commands after it define fields, media handling and printer behavior for that label.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -82,6 +83,7 @@
       ],
       "section": "Layout & flow",
       "title": "end label",
+      "summary": "Closes the current label format and submits it for printing.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -95,6 +97,7 @@
       ],
       "section": "Layout & flow",
       "title": "print width",
+      "summary": "Sets the printable width in dots. Content beyond that width is clipped by the printer.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -108,6 +111,7 @@
       ],
       "section": "Layout & flow",
       "title": "label length",
+      "summary": "Sets the label length in dots, defining where the printable format ends.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -121,6 +125,7 @@
       ],
       "section": "Layout & flow",
       "title": "label home origin",
+      "summary": "Moves the label home position, changing the origin used by later field coordinates.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -134,6 +139,7 @@
       ],
       "section": "Layout & flow",
       "title": "label shift",
+      "summary": "Applies a horizontal offset to field positions for compatibility with older Zebra formats.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -147,6 +153,7 @@
       ],
       "section": "Layout & flow",
       "title": "label top offset",
+      "summary": "Adds a vertical offset to the entire format relative to the top edge of the media.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -160,6 +167,7 @@
       ],
       "section": "Layout & flow",
       "title": "units of measure",
+      "summary": "Sets coordinate units to dots, inches or millimeters, and can scale formats between print resolutions.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -173,6 +181,7 @@
       ],
       "section": "Layout & flow",
       "title": "print mode",
+      "summary": "Sets the media handling mode after printing, including tear-off, peel-off, cutter, rewind and applicator modes.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -186,6 +195,7 @@
       ],
       "section": "Layout & flow",
       "title": "media type",
+      "summary": "Selects thermal transfer or direct thermal mode, matching whether the loaded media uses a ribbon.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -199,6 +209,7 @@
       ],
       "section": "Layout & flow",
       "title": "print quantity",
+      "summary": "Sets print quantity, pause or cut grouping, and copies per serial value.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -212,6 +223,7 @@
       ],
       "section": "Layout & flow",
       "title": "label reverse",
+      "summary": "Reverses printing for following fields by swapping foreground and background.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -225,6 +237,7 @@
       ],
       "section": "Layout & flow",
       "title": "print orientation",
+      "summary": "Rotates the complete label format by 180 degrees.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -238,6 +251,7 @@
       ],
       "section": "Layout & flow",
       "title": "print mirror",
+      "summary": "Mirrors the printable area horizontally.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -251,6 +265,7 @@
       ],
       "section": "Layout & flow",
       "title": "print rate",
+      "summary": "Sets print speed, slew speed and backfeed speed in inches per second.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -264,6 +279,7 @@
       ],
       "section": "Fields",
       "title": "field origin",
+      "summary": "Positions the next field from the label home origin using its upper-left corner.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -277,6 +293,7 @@
       ],
       "section": "Fields",
       "title": "field top",
+      "summary": "Positions the next field from its baseline or barcode edge, giving rotated fields a stable anchor.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -290,6 +307,7 @@
       ],
       "section": "Fields",
       "title": "field data",
+      "summary": "Provides the content for the current field, including text, barcode data or RFID data.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -303,6 +321,7 @@
       ],
       "section": "Fields",
       "title": "field separator",
+      "summary": "Terminates the current field definition.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -316,6 +335,7 @@
       ],
       "section": "Fields",
       "title": "field hex indicator",
+      "summary": "Enables hexadecimal escapes inside field data for binary bytes and reserved command characters.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -329,6 +349,7 @@
       ],
       "section": "Fields",
       "title": "field reverse",
+      "summary": "Reverses foreground and background for the next field only.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -342,6 +363,7 @@
       ],
       "section": "Fields",
       "title": "field comment",
+      "summary": "Adds a comment field. The printer ignores its contents through the next field separator.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -355,6 +377,7 @@
       ],
       "section": "Fields",
       "title": "default field rotation",
+      "summary": "Sets the default field orientation and, on newer firmware, the default justification.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -368,6 +391,7 @@
       ],
       "section": "Fields",
       "title": "multi line text block",
+      "summary": "Wraps field data inside a fixed-width block with line count, spacing, indent and justification controls.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -381,6 +405,7 @@
       ],
       "section": "Fields",
       "title": "text block",
+      "summary": "Wraps text inside a fixed-width and fixed-height box, truncating overflow.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -394,6 +419,7 @@
       ],
       "section": "Fields",
       "title": "variable placeholder",
+      "summary": "Assigns a number to a variable field in stored and recalled formats.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -407,6 +433,7 @@
       ],
       "section": "Fields",
       "title": "variable data",
+      "summary": "Provides data for a variable field. Unlike ^FD data, it is cleared after the label prints.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -420,6 +447,7 @@
       ],
       "section": "Fields",
       "title": "field number embed character",
+      "summary": "Sets the character used to embed numbered field values inside another field string.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -434,6 +462,7 @@
       ],
       "section": "Fields",
       "title": "field clock",
+      "summary": "Sets the markers used for real-time clock tokens inside field data.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -447,6 +476,7 @@
       ],
       "section": "Fields",
       "title": "barcode field default",
+      "summary": "Sets default barcode module width, wide-to-narrow ratio and height for following barcode fields.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -460,6 +490,7 @@
       ],
       "section": "Fields",
       "title": "PDF417 structured-append origins, ignored elsewhere",
+      "summary": "Places PDF417 or MicroPDF417 segments at specific origins when one message spans multiple symbols.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -473,6 +504,7 @@
       ],
       "section": "Fields",
       "title": "vertical / reverse field layout",
+      "summary": "Sets character order for the current field and can add extra character spacing.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -486,6 +518,7 @@
       ],
       "section": "Text & fonts",
       "title": "scalable font 0",
+      "summary": "Selects resident scalable font 0 for the next field at the requested size and orientation.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -499,6 +532,7 @@
       ],
       "section": "Text & fonts",
       "title": "fonts A to Z and 0 to 9",
+      "summary": "Selects a resident font by one-character name, with optional orientation, height and width.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -513,6 +547,7 @@
       ],
       "section": "Text & fonts",
       "title": "TrueType reference",
+      "summary": "Selects a stored font file for the next field, with optional orientation, height and width.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -527,6 +562,7 @@
       ],
       "section": "Text & fonts",
       "title": "change default font",
+      "summary": "Sets the fallback font, height and width used by text fields that specify none of their own.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -540,6 +576,7 @@
       ],
       "section": "Text & fonts",
       "title": "international encoding",
+      "summary": "Selects the encoding used to interpret field data, including code pages and UTF-8.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -553,6 +590,7 @@
       ],
       "section": "Text & fonts",
       "title": "advanced text properties",
+      "summary": "Enables advanced text layout for following fields, including bidirectional text, shaping and OpenType features.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -566,6 +604,7 @@
       ],
       "section": "Text & fonts",
       "title": "font alias",
+      "summary": "Maps a one-character font name to a stored font file.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -579,6 +618,7 @@
       ],
       "section": "Text & fonts",
       "title": "font cache size",
+      "summary": "Sets the cache size for rendered scalable glyphs to speed repeated large-font output.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -592,6 +632,7 @@
       ],
       "section": "Text & fonts",
       "title": "font linking",
+      "summary": "Defines TrueType fallback chains used when the base font lacks a glyph.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -605,6 +646,7 @@
       ],
       "section": "Text & fonts",
       "title": "list font links",
+      "summary": "Prints a label listing configured font links and their chained fallback faces.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -619,6 +661,7 @@
       ],
       "section": "Text & fonts",
       "title": "download bitmap font",
+      "summary": "Downloads a bitmap font and its metrics into printer memory.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -632,6 +675,7 @@
       ],
       "section": "Text & fonts",
       "title": "download scalable font",
+      "summary": "Downloads an encoded scalable Intellifont into printer memory.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -645,6 +689,7 @@
       ],
       "section": "Text & fonts",
       "title": "download TrueType font",
+      "summary": "Downloads an encoded TrueType font with up to 256 characters into printer memory.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -658,6 +703,7 @@
       ],
       "section": "Text & fonts",
       "title": "download unbounded TrueType",
+      "summary": "Downloads an encoded TrueType font with more than 256 glyphs into printer memory.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -671,6 +717,7 @@
       ],
       "section": "Text & fonts",
       "title": "download encoding",
+      "summary": "Downloads an encoding table that maps field-data bytes to Unicode values for TrueType fonts.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -684,6 +731,7 @@
       ],
       "section": "Barcodes",
       "title": "Code 128",
+      "summary": "Draws a Code 128 barcode for variable-length ASCII data, with modes for automatic subset switching and UCC/EAN data.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -697,6 +745,7 @@
       ],
       "section": "Barcodes",
       "title": "Code 39",
+      "summary": "Draws a Code 39 barcode with an optional Mod 43 check digit.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -710,6 +759,7 @@
       ],
       "section": "Barcodes",
       "title": "Code 93",
+      "summary": "Draws a Code 93 barcode, representing full ASCII data through shift characters.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -723,6 +773,7 @@
       ],
       "section": "Barcodes",
       "title": "Code 11",
+      "summary": "Draws a Code 11 barcode for digits and hyphens, with optional check digits.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -736,6 +787,7 @@
       ],
       "section": "Barcodes",
       "title": "Interleaved 2 of 5",
+      "summary": "Draws an Interleaved 2 of 5 barcode for even-length numeric data, with an optional check digit.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -749,6 +801,7 @@
       ],
       "section": "Barcodes",
       "title": "Industrial 2 of 5",
+      "summary": "Draws an Industrial 2 of 5 barcode, a numeric code with data encoded in bars only.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -762,6 +815,7 @@
       ],
       "section": "Barcodes",
       "title": "Standard 2 of 5",
+      "summary": "Draws a Standard 2 of 5 barcode, a self-checking numeric code with data encoded in bars only.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -775,6 +829,7 @@
       ],
       "section": "Barcodes",
       "title": "ANSI Codabar",
+      "summary": "Draws an ANSI Codabar barcode, also known as USD-4, for library, healthcare and courier labels.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -788,6 +843,7 @@
       ],
       "section": "Barcodes",
       "title": "LOGMARS",
+      "summary": "Draws a LOGMARS barcode, the Department of Defense variant of Code 39, and folds lowercase data to uppercase.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -801,6 +857,7 @@
       ],
       "section": "Barcodes",
       "title": "MSI",
+      "summary": "Draws an MSI barcode, a Plessey-derived numeric code with selectable check digit schemes.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -814,6 +871,7 @@
       ],
       "section": "Barcodes",
       "title": "Plessey",
+      "summary": "Draws a Plessey barcode, an older numeric code with optional check digits.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -827,6 +885,7 @@
       ],
       "section": "Barcodes",
       "title": "EAN-13",
+      "summary": "Draws an EAN-13 barcode for retail article numbers and derives the check digit from twelve data digits.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -840,6 +899,7 @@
       ],
       "section": "Barcodes",
       "title": "EAN-8",
+      "summary": "Draws an EAN-8 barcode for small retail packages and derives the check digit from seven data digits.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -853,6 +913,7 @@
       ],
       "section": "Barcodes",
       "title": "UPC-A",
+      "summary": "Draws a UPC-A barcode for retail packaging from eleven data digits, with optional check digit printing.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -866,6 +927,7 @@
       ],
       "section": "Barcodes",
       "title": "UPC-E",
+      "summary": "Draws a UPC-E barcode, the short form of UPC-A. Field data is the full ten-digit manufacturer and product code.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -879,6 +941,7 @@
       ],
       "section": "Barcodes",
       "title": "GS1 DataBar",
+      "summary": "Draws a GS1 DataBar symbol with selectable subtype, magnification, height and segment width.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -892,6 +955,7 @@
       ],
       "section": "Barcodes",
       "title": "Planet Code",
+      "summary": "Draws a Planet Code postal barcode from digits encoded as tall and short bars.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -905,6 +969,7 @@
       ],
       "section": "Barcodes",
       "title": "POSTNET / Planet Code / Intelligent Mail",
+      "summary": "Draws POSTNET, Planet Code or USPS Intelligent Mail as selected by the postal code type.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -918,6 +983,7 @@
       ],
       "section": "Barcodes",
       "title": "UPC/EAN 2 or 5 digit add-on",
+      "summary": "Draws a two-digit or five-digit UPC/EAN add-on symbol beside a main barcode.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -931,6 +997,7 @@
       ],
       "section": "Barcodes",
       "title": "Code 49",
+      "summary": "Draws a Code 49 stacked barcode with two to eight rows of full ASCII data.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -944,6 +1011,7 @@
       ],
       "section": "Barcodes",
       "title": "QR Code",
+      "summary": "Draws a QR Code symbol. Command parameters set model, magnification and mask. Field data sets error correction and character mode.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -958,6 +1026,7 @@
       ],
       "section": "Barcodes",
       "title": "Data Matrix",
+      "summary": "Draws a Data Matrix symbol with configurable element size, quality level and escape handling.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -971,6 +1040,7 @@
       ],
       "section": "Barcodes",
       "title": "PDF417",
+      "summary": "Draws a PDF417 stacked two-dimensional symbol for large text or binary payloads.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -984,6 +1054,7 @@
       ],
       "section": "Barcodes",
       "title": "MicroPDF417",
+      "summary": "Draws a MicroPDF417 symbol, a compact PDF417 variant with row-address patterns.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1000,6 +1071,7 @@
       ],
       "section": "Barcodes",
       "title": "Aztec",
+      "summary": "Draws an Aztec matrix symbol with configurable magnification and error correction.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1013,6 +1085,7 @@
       ],
       "section": "Barcodes",
       "title": "CODABLOCK F",
+      "summary": "Draws a CODABLOCK symbol in mode A, E or F for larger data payloads.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1026,6 +1099,7 @@
       ],
       "section": "Barcodes",
       "title": "UPS MaxiCode",
+      "summary": "Draws a UPS MaxiCode symbol with a mode for structured carrier messages or general data.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1039,6 +1113,7 @@
       ],
       "section": "Barcodes",
       "title": "TLC39",
+      "summary": "Draws a TLC39 telecom label symbol combining Code 39 with a MicroPDF417 component.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1052,6 +1127,7 @@
       ],
       "section": "Barcodes",
       "title": "code validation",
+      "summary": "When enabled, validates barcode data and parameters and prints INVALID instead of a bad symbol.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1065,6 +1141,7 @@
       ],
       "section": "Graphics",
       "title": "graphic box",
+      "summary": "Draws a filled or outlined rectangle. Matching a side to border thickness produces a line.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1078,6 +1155,7 @@
       ],
       "section": "Graphics",
       "title": "diagonal line",
+      "summary": "Draws a diagonal line across a given width and height, leaning right or left.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1091,6 +1169,7 @@
       ],
       "section": "Graphics",
       "title": "ellipse",
+      "summary": "Draws an ellipse from a width and height in dots, with inward border thickness and black or white output.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1104,6 +1183,7 @@
       ],
       "section": "Graphics",
       "title": "circle",
+      "summary": "Draws a circle of the given diameter in dots, with inward border thickness and black or white output.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1117,6 +1197,7 @@
       ],
       "section": "Graphics",
       "title": "monochrome bitmap",
+      "summary": "Places a monochrome bitmap at the current field position using ASCII hex, binary or compressed data.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1131,6 +1212,7 @@
       ],
       "section": "Graphics",
       "title": "graphic symbol",
+      "summary": "Prints a resident symbol selected by field data, such as copyright or registered trademark.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1144,6 +1226,7 @@
       ],
       "section": "Graphics",
       "title": "image load",
+      "summary": "Loads a stored image at the start of a format and anchors it at the label origin.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1157,6 +1240,7 @@
       ],
       "section": "Graphics",
       "title": "image move",
+      "summary": "Places a stored image at the current field position without scaling it.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1171,6 +1255,7 @@
       ],
       "section": "Graphics",
       "title": "delete stored graphics, fonts and formats",
+      "summary": "Deletes stored graphics, fonts or formats from printer memory, with wildcard support for groups.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1184,6 +1269,7 @@
       ],
       "section": "Graphics",
       "title": "image save",
+      "summary": "Saves the current format as a graphic image for fast recall and variable-data overlays.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1197,6 +1283,7 @@
       ],
       "section": "Graphics",
       "title": "download graphic",
+      "summary": "Downloads an ASCII-hex graphic into printer memory under a reusable name.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1211,6 +1298,7 @@
       ],
       "section": "Graphics",
       "title": "abort download",
+      "summary": "Stops a graphic upload that was interrupted midway and returns the printer to normal operation.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1224,6 +1312,7 @@
       ],
       "section": "Graphics",
       "title": "download font / graphic",
+      "summary": "Downloads a graphic, font or certificate into printer memory under a reusable name.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1237,6 +1326,7 @@
       ],
       "section": "Graphics",
       "title": "erase download graphics",
+      "summary": "Erases all downloaded graphics from printer memory. Use ^ID to delete selected objects.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1250,6 +1340,7 @@
       ],
       "section": "Serialisation",
       "title": "serial counter with its own start value",
+      "summary": "Serializes text or barcode field data across labels, using a start value, direction and increment.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1263,6 +1354,7 @@
       ],
       "section": "Serialisation",
       "title": "serial mask over ^FD data",
+      "summary": "Serializes selected positions in field data using a mask and character sets.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1276,6 +1368,7 @@
       ],
       "section": "Templates & variables",
       "title": "store template",
+      "summary": "Stores the following commands as a reusable format rather than printing them immediately.",
       "support": {
         "web": "planned",
         "desktop": "planned",
@@ -1289,6 +1382,7 @@
       ],
       "section": "Templates & variables",
       "title": "recall template",
+      "summary": "Recalls a stored format and supplies values for its numbered placeholder fields.",
       "support": {
         "web": "planned",
         "desktop": "planned",
@@ -1302,6 +1396,7 @@
       ],
       "section": "Templates & variables",
       "title": "recall graphic",
+      "summary": "Recalls a stored graphic at the current position with independent horizontal and vertical scaling.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1315,6 +1410,7 @@
       ],
       "section": "Media & feed",
       "title": "media tracking",
+      "summary": "Selects how the printer detects label boundaries, using gaps, marks or continuous media.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1328,6 +1424,7 @@
       ],
       "section": "Media & feed",
       "title": "maximum label length",
+      "summary": "Sets the maximum label length the printer searches while calibrating non-continuous media.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1341,6 +1438,7 @@
       ],
       "section": "Media & feed",
       "title": "media feed",
+      "summary": "Sets the power-up and printhead-close action, including calibration, feed or length measurement.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1354,6 +1452,7 @@
       ],
       "section": "Media & feed",
       "title": "suppress backfeed",
+      "summary": "Suppresses backfeed for the current label when moving to the tear-off position is unnecessary.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1367,6 +1466,7 @@
       ],
       "section": "Media & feed",
       "title": "maintenance alert",
+      "summary": "Configures printed maintenance alerts for printhead cleaning or replacement.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1380,6 +1480,7 @@
       ],
       "section": "Media & feed",
       "title": "map clear",
+      "summary": "Controls whether the label bitmap is cleared after printing or kept for reuse by later labels.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1393,6 +1494,7 @@
       ],
       "section": "Media & feed",
       "title": "maintenance information message",
+      "summary": "Sets the text shown on maintenance alert labels for printhead cleaning or replacement.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1406,6 +1508,7 @@
       ],
       "section": "Media & feed",
       "title": "mode protection",
+      "summary": "Locks a control panel setting, such as darkness or calibration, until it is unlocked.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1419,6 +1522,7 @@
       ],
       "section": "Media & feed",
       "title": "printhead cold warning",
+      "summary": "Enables or disables the printhead-cold warning indicator.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1432,6 +1536,7 @@
       ],
       "section": "Print quality",
       "title": "media darkness",
+      "summary": "Adjusts print darkness relative to the printer's current configured darkness.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1445,6 +1550,7 @@
       ],
       "section": "Print quality",
       "title": "set darkness",
+      "summary": "Sets absolute print darkness immediately, matching the front-panel darkness setting.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1458,6 +1564,7 @@
       ],
       "section": "Print quality",
       "title": "reprint after error",
+      "summary": "Controls whether a label interrupted by media, ribbon or printhead faults is reprinted after recovery.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1471,6 +1578,7 @@
       ],
       "section": "Print quality",
       "title": "printhead test interval",
+      "summary": "Schedules periodic printhead element tests by printed-label count and optional element range.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1484,6 +1592,7 @@
       ],
       "section": "Print quality",
       "title": "tear off adjust",
+      "summary": "Adjusts the resting tear-off or cut position by a small dot offset after printing.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1497,6 +1606,7 @@
       ],
       "section": "Print quality",
       "title": "early warning settings",
+      "summary": "Configures early warning thresholds for media, ribbon and printhead maintenance.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1510,6 +1620,7 @@
       ],
       "section": "Print quality",
       "title": "change backfeed sequence",
+      "summary": "Controls backfeed timing around printing and cutting, or turns backfeed off.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1523,6 +1634,7 @@
       ],
       "section": "Print quality",
       "title": "slew given number of dot rows",
+      "summary": "Feeds a specified number of blank dot rows at slew speed.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1536,6 +1648,7 @@
       ],
       "section": "Print quality",
       "title": "slew home",
+      "summary": "Feeds one blank label after the current format has printed.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1549,6 +1662,7 @@
       ],
       "section": "Print quality",
       "title": "slew home, immediate",
+      "summary": "Feeds one blank label as soon as the printer is free, after the current format or while paused.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1562,6 +1676,7 @@
       ],
       "section": "Print quality",
       "title": "programmable pause",
+      "summary": "Pauses after the current format prints. Already buffered labels can still print first.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1575,6 +1690,7 @@
       ],
       "section": "Print quality",
       "title": "pause, immediate",
+      "summary": "Pauses after the current label finishes. Printing resumes when the pause state is cleared.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1588,6 +1704,7 @@
       ],
       "section": "Print quality",
       "title": "applicator reprint",
+      "summary": "Reprints the previous label when applicator reprint mode is enabled.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1601,6 +1718,7 @@
       ],
       "section": "Print quality",
       "title": "print start",
+      "summary": "Clears pause mode and resumes printing.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1614,6 +1732,7 @@
       ],
       "section": "Print quality",
       "title": "cut now, KR403 kiosk only",
+      "summary": "Runs the cutter immediately on KR403 printers in kiosk print mode.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -1627,6 +1746,7 @@
       ],
       "section": "Print quality",
       "title": "present length addition, KR403 kiosk only",
+      "summary": "Adds extra eject length to a KR403 kiosk presenter, making printed media easier to take.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -1640,6 +1760,7 @@
       ],
       "section": "Print quality",
       "title": "presenter cycle, KR403 kiosk only",
+      "summary": "Runs a KR403 presenter cycle, offering printed media for manual removal.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -1653,6 +1774,7 @@
       ],
       "section": "Print quality",
       "title": "set ribbon tension, PAX only",
+      "summary": "Sets ribbon supply tension on PAX-series printers.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -1666,6 +1788,7 @@
       ],
       "section": "Clock & time",
       "title": "set date and time",
+      "summary": "Sets the printer's real-time clock date and time.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1679,6 +1802,7 @@
       ],
       "section": "Clock & time",
       "title": "date and time format",
+      "summary": "Selects the date and time format shown on the configuration label and control panel.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1692,6 +1816,7 @@
       ],
       "section": "Clock & time",
       "title": "real-time clock offset",
+      "summary": "Defines secondary clock offsets from the real-time clock. The offsets are lost when the printer powers off.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1705,6 +1830,7 @@
       ],
       "section": "Clock & time",
       "title": "clock mode and language",
+      "summary": "Sets when time fields are stamped and selects the language for day and month names.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1718,6 +1844,7 @@
       ],
       "section": "Encoding & language",
       "title": "define language",
+      "summary": "Selects the display language of the printer's control panel from a list that varies by model.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1731,6 +1858,7 @@
       ],
       "section": "Encoding & language",
       "title": "encoding table",
+      "summary": "Selects a stored encoding table used to map field data before printing.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1744,6 +1872,7 @@
       ],
       "section": "Encoding & language",
       "title": "set ZPL mode",
+      "summary": "Selects original ZPL or ZPL II command interpretation for compatibility with older formats.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1757,6 +1886,7 @@
       ],
       "section": "Identity & access",
       "title": "printer name and description",
+      "summary": "Assigns the printer a network name and a free-text description, both shown on the configuration label and its built-in web page.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1770,6 +1900,7 @@
       ],
       "section": "Identity & access",
       "title": "set password",
+      "summary": "Sets the four-digit password for the control panel setup menus.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1783,6 +1914,7 @@
       ],
       "section": "Configuration & persistence",
       "title": "configuration update",
+      "summary": "Saves, restores or resets printer configuration settings.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1797,6 +1929,7 @@
       ],
       "section": "Configuration & persistence",
       "title": "change caret",
+      "summary": "Changes the format-command prefix character, normally the caret, either globally or for the current format.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1811,6 +1944,7 @@
       ],
       "section": "Configuration & persistence",
       "title": "change delimiter",
+      "summary": "Changes the parameter delimiter character, normally the comma, either globally or for the current format.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1825,6 +1959,7 @@
       ],
       "section": "Configuration & persistence",
       "title": "change tilde",
+      "summary": "Changes the immediate-command prefix character, normally the tilde, either globally or for the current format.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -1838,6 +1973,7 @@
       ],
       "section": "Configuration & persistence",
       "title": "change memory letter assignment",
+      "summary": "Remaps printer memory letters so stored objects can keep their existing names.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1851,6 +1987,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "cancel all",
+      "summary": "Cancels queued formats and the current batch. The label already printing can finish.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1864,6 +2001,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "initialize flash memory",
+      "summary": "Erases and reinitializes one flash memory device. Losing power during this operation can corrupt storage.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1877,6 +2015,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "reset optional memory",
+      "summary": "Reinitializes the battery-backed memory card after installation or battery replacement.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1890,6 +2029,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "media sensor calibration",
+      "summary": "Runs media calibration to measure label length and adjust media and ribbon sensors.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1903,6 +2043,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "enable communications diagnostics",
+      "summary": "Prints incoming bytes and their hexadecimal values instead of executing them, for host communication diagnostics.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1916,6 +2057,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "disable communications diagnostics",
+      "summary": "Leaves communications diagnostic mode and returns the printer to normal label printing.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1929,6 +2071,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set battery condition, PA400 and PT400 only",
+      "summary": "Sets whether low battery voltage pauses a portable printer or allows printing to continue.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -1942,6 +2085,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "graphing sensor calibration",
+      "summary": "Runs media calibration and prints a sensor profile graph for the media-gap transition.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1956,6 +2100,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "start ZBI",
+      "summary": "Starts the Zebra BASIC Interpreter on the printer, optionally launching a stored program.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1969,6 +2114,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set auxiliary port",
+      "summary": "Configures the auxiliary port for applicator or verifier signals and error handling.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1982,6 +2128,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "sensor select",
+      "summary": "Selects the media sensor used for tracking, usually reflective or transmissive.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -1995,6 +2142,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set label length",
+      "summary": "Measures and stores label length, feeding blank labels during the process.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2007,7 +2155,8 @@
         "^"
       ],
       "section": "Hardware control & calibration",
-      "title": "dots per millimetre",
+      "title": "dots per millimeter",
+      "summary": "Sets normal or reduced dots per millimeter. Reduced density doubles the physical size of format coordinates.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -2021,6 +2170,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "printhead test fatal",
+      "summary": "Makes failed printhead element tests halt printing until the printer is reset or tolerant mode is restored.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2034,6 +2184,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "printhead test non-fatal",
+      "summary": "Allows printing to continue after a failed printhead element test.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2047,6 +2198,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "pause and cancel format",
+      "summary": "Cancels the next queued format and pauses the printer, one buffered format per command.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2060,6 +2212,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "terminate ZBI",
+      "summary": "Exits an active Zebra BASIC Interpreter session and returns the port to ZPL processing.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2073,6 +2226,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "power on reset",
+      "summary": "Reboots the printer firmware and reloads saved communication and configuration defaults.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2086,6 +2240,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "cancel partial format",
+      "summary": "Cancels the format currently being received without canceling labels already printing.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2099,6 +2254,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "reset advanced counter",
+      "summary": "Resets a selected printer usage counter, including user or RFID counters.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2112,6 +2268,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set serial communications",
+      "summary": "Configures all serial-port communication parameters in one command.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2125,6 +2282,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set sensor intensity",
+      "summary": "Overrides transmissive sensor intensity or baseline values normally set by calibration.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2138,6 +2296,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "start print at dot row, throughput hint only",
+      "summary": "Starts printing before the full format has arrived to improve throughput on complex labels.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2151,6 +2310,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "halt ZebraNet alert",
+      "summary": "Disables a specific ZebraNet alert condition and destination.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2164,6 +2324,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set printhead resistance",
+      "summary": "Sets the printhead resistance value used for burn-energy calculations.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2177,6 +2338,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set media sensors",
+      "summary": "Sets media sensor thresholds, label length and LED intensities normally determined by calibration.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2190,6 +2352,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set ZebraNet alert",
+      "summary": "Enables a ZebraNet alert for a specific condition and destination.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2203,6 +2366,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "transfer object",
+      "summary": "Copies stored objects between printer memory devices, with wildcard support for groups.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2216,6 +2380,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "print configuration label",
+      "summary": "Prints a configuration label with sensor, network, firmware and memory information.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2229,6 +2394,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "print directory label",
+      "summary": "Prints a directory label for stored objects, resident fonts or available barcodes.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2242,6 +2408,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "write query",
+      "summary": "Prints requested service information, such as odometer or printhead history, on a label.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2255,6 +2422,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "cutter and presenter settings, KR403 only",
+      "summary": "Configures KR403 kiosk presenter settings, including cut length, cut margin, retract timeout and loop length.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2268,6 +2436,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set dynamic media calibration",
+      "summary": "Controls dynamic recalibration of label length and sensor threshold after power-up or media-compartment open.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2281,6 +2450,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "decommissioning mode",
+      "summary": "Starts decommissioning mode to prepare a printer for resale or recycling.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2294,6 +2464,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "printer sleep, PA400 and PT400 only",
+      "summary": "Sets automatic sleep shutdown after an idle period, with options for queued labels.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2307,6 +2478,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "eject or retract a presented page, KR403 only",
+      "summary": "Ejects or retracts media already presented by a KR403 kiosk presenter.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2320,6 +2492,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "kill battery",
+      "summary": "Runs battery discharge mode on portable printers for pack conditioning.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2333,6 +2506,7 @@
       ],
       "section": "Host communication",
       "title": "battery status, mobile printers only",
+      "summary": "Returns battery and printhead power readings from mobile printers.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2346,6 +2520,7 @@
       ],
       "section": "Host communication",
       "title": "printhead diagnostic",
+      "summary": "Returns printhead diagnostic data, including temperatures, element test results, darkness and speed.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2359,6 +2534,7 @@
       ],
       "section": "Host communication",
       "title": "host format",
+      "summary": "Returns a stored ZPL format from printer memory to the host.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2372,6 +2548,7 @@
       ],
       "section": "Host communication",
       "title": "host graphic",
+      "summary": "Returns a stored graphic image from printer memory to the host.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2385,6 +2562,7 @@
       ],
       "section": "Host communication",
       "title": "configuration label return",
+      "summary": "Returns the printer's current configuration as readable text over the host port.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2398,6 +2576,7 @@
       ],
       "section": "Host communication",
       "title": "host identification",
+      "summary": "Returns printer identity data, including model, firmware, resolution, memory and installed options.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2411,6 +2590,7 @@
       ],
       "section": "Host communication",
       "title": "host RAM status",
+      "summary": "Returns total, maximum available and currently free printer memory in kilobytes.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2424,6 +2604,7 @@
       ],
       "section": "Host communication",
       "title": "host query",
+      "summary": "Returns requested status, identity, odometer or maintenance data to the host.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2437,6 +2618,7 @@
       ],
       "section": "Host communication",
       "title": "host status return",
+      "summary": "Returns host-status strings for interface, media, pause state, label length and buffered formats.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2450,6 +2632,7 @@
       ],
       "section": "Host communication",
       "title": "host linked fonts list",
+      "summary": "Returns the font link table to the host, listing base fonts and fallback faces.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2464,6 +2647,7 @@
       ],
       "section": "Host communication",
       "title": "ZebraNet alert configuration",
+      "summary": "Returns the configured ZebraNet alerts, including conditions, destinations and set or clear flags.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2477,6 +2661,7 @@
       ],
       "section": "Host communication",
       "title": "host verification",
+      "summary": "Returns data from a numbered field to the host, with an optional byte limit.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2490,6 +2675,7 @@
       ],
       "section": "Host communication",
       "title": "host directory",
+      "summary": "Returns a directory listing for a memory device, including remaining free space.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2503,6 +2689,7 @@
       ],
       "section": "Host communication",
       "title": "upload graphics",
+      "summary": "Returns a stored graphic to the host in a downloadable file format.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2516,6 +2703,7 @@
       ],
       "section": "Host communication",
       "title": "display description information",
+      "summary": "Returns printer description XML for settings, object directory or status.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2529,6 +2717,7 @@
       ],
       "section": "RFID",
       "title": "read / write RFID",
+      "summary": "Reads from or writes to an RFID tag, including data format, memory bank and access password.",
       "support": {
         "web": "planned",
         "desktop": "planned",
@@ -2542,6 +2731,7 @@
       ],
       "section": "RFID",
       "title": "get tag ID",
+      "summary": "Reads the current RFID tag ID for use in label data or a host reply.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2555,6 +2745,7 @@
       ],
       "section": "RFID",
       "title": "enable motion, pre-Link-OS, folded into ^RS",
+      "summary": "Controls media movement during legacy RFID operations. Link-OS formats use ^RS instead.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2568,6 +2759,7 @@
       ],
       "section": "RFID",
       "title": "detect multiple tags, pre-Link-OS, absent from guide",
+      "summary": "Detects more than one RFID tag in the encoding field and can void labels with stray tags nearby.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2581,6 +2773,7 @@
       ],
       "section": "RFID",
       "title": "RFID retries, pre-Link-OS, folded into ^RS",
+      "summary": "Sets retry count for legacy RFID reads or writes. Link-OS formats use ^RS instead.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2594,6 +2787,7 @@
       ],
       "section": "RFID",
       "title": "define EPC data structure",
+      "summary": "Defines the bit layout used to encode RFID EPC fields on a tag.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -2607,6 +2801,7 @@
       ],
       "section": "RFID",
       "title": "RFID setup",
+      "summary": "Sets RFID options for following labels, including tag type, programming position, failure handling and VOID bar length.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -2620,6 +2815,7 @@
       ],
       "section": "RFID",
       "title": "read tag",
+      "summary": "Reads tag data into a label field in legacy RFID formats.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2633,6 +2829,7 @@
       ],
       "section": "RFID",
       "title": "legacy RFID write, superseded by ^RF",
+      "summary": "Writes tag data in legacy RFID formats. ^RF covers read, write and password handling.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2646,6 +2843,7 @@
       ],
       "section": "RFID",
       "title": "read unique chip serialisation",
+      "summary": "Builds an EPC serial number from the tag ID and writes it into the EPC low bits.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2659,6 +2857,7 @@
       ],
       "section": "RFID",
       "title": "report encoding result, pre-Link-OS, absent from guide",
+      "summary": "Returns each RFID encoding outcome to the host, letting software distinguish good tags from voided labels.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2672,6 +2871,7 @@
       ],
       "section": "RFID",
       "title": "set read and write power",
+      "summary": "Sets RFID read and write power when calibration does not produce usable values.",
       "support": {
         "web": "yes",
         "desktop": "yes",
@@ -2685,6 +2885,7 @@
       ],
       "section": "RFID",
       "title": "lock / permalock tag memory",
+      "summary": "Locks RFID tag memory, either reversibly or permanently, to prevent later writes.",
       "support": {
         "web": "planned",
         "desktop": "planned",
@@ -2698,6 +2899,7 @@
       ],
       "section": "RFID",
       "title": "calibrate RFID tag position",
+      "summary": "Runs RFID calibration and returns position, antenna and power settings to the host.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2712,6 +2914,7 @@
       ],
       "section": "RFID",
       "title": "RFID data log",
+      "summary": "Returns the RFID operation log, including position, antenna, power level and outcome.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2725,6 +2928,7 @@
       ],
       "section": "Network",
       "title": "check for wired print server at boot",
+      "summary": "Selects whether the printer checks for a wired print server during startup.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2738,6 +2942,7 @@
       ],
       "section": "Network",
       "title": "select wired / wireless primary device",
+      "summary": "Selects the primary network device, wired or wireless.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2751,6 +2956,7 @@
       ],
       "section": "Network",
       "title": "network connect, legacy RS-485 only",
+      "summary": "Addresses one printer on a legacy RS-485 multidrop line by network ID.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2764,6 +2970,7 @@
       ],
       "section": "Network",
       "title": "network ID, legacy RS-485 only",
+      "summary": "Assigns the network ID used to address a printer on a legacy RS-485 multidrop line.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2777,6 +2984,7 @@
       ],
       "section": "Network",
       "title": "set SNMP",
+      "summary": "Sets SNMP identity and community strings for the printer.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2790,6 +2998,7 @@
       ],
       "section": "Network",
       "title": "boot settings source: printer vs print server",
+      "summary": "Selects whether boot-time network settings come from the printer or attached print server.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2803,6 +3012,7 @@
       ],
       "section": "Network",
       "title": "set all transparent, legacy RS-485 only",
+      "summary": "Switches all printers on a legacy multidrop line into transparent receive mode.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2816,6 +3026,7 @@
       ],
       "section": "Network",
       "title": "set SMTP",
+      "summary": "Configures SMTP server and domain settings for print-server email alerts.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2829,6 +3040,7 @@
       ],
       "section": "Network",
       "title": "set connected printer transparent, legacy RS-485 only",
+      "summary": "Switches the addressed legacy multidrop printer into transparent receive mode.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2842,6 +3054,7 @@
       ],
       "section": "Network",
       "title": "web auth timeout",
+      "summary": "Sets how long an authenticated IP address can access printer web pages before reauthentication.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2855,6 +3068,7 @@
       ],
       "section": "Network",
       "title": "set client identifier",
+      "summary": "Sets the DHCP client identifier form and value for the print server.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2868,6 +3082,7 @@
       ],
       "section": "Network",
       "title": "change network settings",
+      "summary": "Configures IP address, subnet mask and gateway for a printer network interface.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2881,6 +3096,7 @@
       ],
       "section": "Network",
       "title": "change wired network settings",
+      "summary": "Configures wired print-server IP settings, timeouts and raw port for older firmware.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2894,6 +3110,7 @@
       ],
       "section": "Network",
       "title": "set antenna parameters",
+      "summary": "Selects receive and transmit antennas for the wireless radio.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2907,6 +3124,7 @@
       ],
       "section": "Network",
       "title": "set WEP mode, obsolete, use ^WX",
+      "summary": "Configures obsolete WEP security and key material for older wireless firmware.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2920,6 +3138,7 @@
       ],
       "section": "Network",
       "title": "set LEAP, obsolete, use ^WX",
+      "summary": "Configures obsolete Cisco LEAP authentication for older wireless firmware.",
       "support": {
         "web": "no",
         "desktop": "no",
@@ -2933,6 +3152,7 @@
       ],
       "section": "Network",
       "title": "set wireless password",
+      "summary": "Sets the password for wireless settings on the printer control panel.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2946,6 +3166,7 @@
       ],
       "section": "Network",
       "title": "set transmit rate",
+      "summary": "Configures 802.11b data rates and transmit power on older wireless print servers.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2959,6 +3180,7 @@
       ],
       "section": "Network",
       "title": "set wireless radio card values",
+      "summary": "Configures wireless network name, radio mode, preamble length and keep-alive behavior.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2972,6 +3194,7 @@
       ],
       "section": "Network",
       "title": "configure wireless security",
+      "summary": "Configures wireless security mode, keys and credentials in one command.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2985,6 +3208,7 @@
       ],
       "section": "Network",
       "title": "print network configuration label",
+      "summary": "Prints a network configuration label while the printer is idle.",
       "support": {
         "web": "no",
         "desktop": "planned",
@@ -2998,6 +3222,7 @@
       ],
       "section": "Network",
       "title": "reset wireless radio card",
+      "summary": "Restarts the wireless radio card and print server, causing the radio to rejoin the network.",
       "support": {
         "web": "no",
         "desktop": "planned",

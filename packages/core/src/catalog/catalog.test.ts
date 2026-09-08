@@ -32,6 +32,19 @@ describe("zpl command catalog", () => {
     }
   });
 
+  it("keeps every summary a short plain explanation", () => {
+    // One or two plain sentences that say what the command does and what it is for.
+    const SUMMARY_WORD_CAP = 25;
+    for (const c of ZPL_COMMANDS) {
+      expect(c.summary.split(/\s+/).length, c.cmd).toBeLessThanOrEqual(SUMMARY_WORD_CAP);
+      // Full sentences only: no clause chains by semicolon, no list colons, no parentheses.
+      expect(c.summary, c.cmd).toMatch(/\.$/);
+      expect(c.summary, c.cmd).not.toMatch(/[();:]/);
+      expect(c.summary, c.cmd).not.toMatch(/[^\x20-\x7E]/);
+      expect(c.summary, c.cmd).not.toMatch(/ZPLab|supported/i);
+    }
+  });
+
   it("never claims less on desktop than on the web, and names why a row is out of scope", () => {
     const rank = { no: 0, planned: 1, yes: 2 } as const;
     for (const c of ZPL_COMMANDS) {
