@@ -84,14 +84,18 @@ function readmeIntro(commands) {
   const total = commands.length;
   const web = count(commands, 'web', 'yes');
   const desktopExtra = count(commands, 'desktop', 'yes') - web;
-  const desktopPlanned = count(commands, 'desktop', 'planned');
+  const bothPlanned = count(commands, 'web', 'planned');
+  const printerPlanned = commands.filter((e) => e.support.web === 'no' && e.support.desktop === 'planned').length;
   const lint = count(commands, 'lint', 'yes');
   const modelled = desktopExtra
     ? `${web} of the ${total} ZPL II commands are modelled in the browser; desktop covers ${desktopExtra} more with a connected printer.`
     : `${web} of the ${total} ZPL II commands are modelled in both the web and desktop builds.`;
-  const planned = desktopPlanned ? `Another ${desktopPlanned} printer-side commands are planned for desktop.` : '';
+  const planned = [
+    bothPlanned ? `${bothPlanned} more are planned for both builds.` : '',
+    printerPlanned ? `${printerPlanned} need a connected printer and are planned for desktop.` : '',
+  ];
   const linting = lint ? `The source editor checks parameters for ${lint} commands.` : 'The source editor does not lint command parameters yet.';
-  return [modelled, planned, linting, 'See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).'].filter(Boolean).join(' ');
+  return [modelled, ...planned, linting, 'See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).'].filter(Boolean).join(' ');
 }
 
 function renderReadmeBlock(catalog) {
