@@ -924,6 +924,17 @@ const sl = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Referenca ZPL',
+    catalogSearch: 'Iskanje ukazov',
+    catalogInsert: 'Vstavi',
+    catalogWeb: 'Splet',
+    catalogDesktop: 'Namizje',
+    catalogLint: 'Lint',
+    catalogYes: 'da',
+    catalogPlanned: 'načrtovano',
+    catalogNo: 'ne',
+    catalogNoCursor: 'Postavite kazalec na ukaz, da vidite, kaj počne.',
+    catalogNoMatch: 'Noben ukaz ne ustreza iskanju.',
     copy: 'Kopiraj',
     copied: '✓ Kopirano',
     previewHeading: 'Predogled',

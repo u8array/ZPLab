@@ -33,7 +33,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
   // header actions (copy) stay inside it and don't count as leaving.
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const { session, zpl, refusal, highlightedLines, notices, shownText, crlfKey } =
+  const { session, zpl, refusal, highlightedLines, notices, shownText, crlfKey, currentPageIndex } =
     useZplOutputView(collapsed ?? false);
   // The body keeps its metadata (the apply reparses it); the button copies the export form.
   const { copy, copied } = useCopyToClipboard(() => finishZplExport(shownText));
@@ -126,6 +126,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
             zpl={zpl}
             value={shownText}
             crlfKey={crlfKey}
+            insertPage={currentPageIndex}
             gateRefusal={session === null ? refusal : null}
             highlightedLines={highlightedLines}
             panelRef={panelRef}

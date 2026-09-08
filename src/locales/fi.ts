@@ -924,6 +924,17 @@ const fi = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL-viiteopas',
+    catalogSearch: 'Hae komentoja',
+    catalogInsert: 'Lisää',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Työpöytä',
+    catalogLint: 'Lint',
+    catalogYes: 'kyllä',
+    catalogPlanned: 'suunniteltu',
+    catalogNo: 'ei',
+    catalogNoCursor: 'Aseta kohdistin komentoon nähdäksesi, mitä se tekee.',
+    catalogNoMatch: 'Mikään komento ei vastaa hakua.',
     copy: 'Kopioi',
     copied: '✓ Kopioitu',
     previewHeading: 'Esikatselu',

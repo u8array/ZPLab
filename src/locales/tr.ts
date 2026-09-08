@@ -924,6 +924,17 @@ const tr = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL referansı',
+    catalogSearch: 'Komut ara',
+    catalogInsert: 'Ekle',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Masaüstü',
+    catalogLint: 'Lint',
+    catalogYes: 'evet',
+    catalogPlanned: 'planlandı',
+    catalogNo: 'hayır',
+    catalogNoCursor: 'Ne yaptığını görmek için imleci bir komutun üzerine getirin.',
+    catalogNoMatch: 'Aramayla eşleşen komut yok.',
     copy: 'Kopyala',
     copied: '✓ Kopyalandı',
     previewHeading: 'Önizleme',

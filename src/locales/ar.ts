@@ -924,6 +924,17 @@ const ar = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'مرجع ZPL',
+    catalogSearch: 'بحث عن الأوامر',
+    catalogInsert: 'إدراج',
+    catalogWeb: 'الويب',
+    catalogDesktop: 'سطح المكتب',
+    catalogLint: 'Lint',
+    catalogYes: 'نعم',
+    catalogPlanned: 'مخطط',
+    catalogNo: 'لا',
+    catalogNoCursor: 'ضع المؤشر على أمر لمعرفة وظيفته.',
+    catalogNoMatch: 'لا توجد أوامر تطابق البحث.',
     copy: 'نسخ',
     copied: '✓ تم النسخ',
     previewHeading: 'معاينة',

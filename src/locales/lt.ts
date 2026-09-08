@@ -924,6 +924,17 @@ const lt = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL žinynas',
+    catalogSearch: 'Ieškoti komandų',
+    catalogInsert: 'Įterpti',
+    catalogWeb: 'Žiniatinklis',
+    catalogDesktop: 'Darbalaukis',
+    catalogLint: 'Lint',
+    catalogYes: 'taip',
+    catalogPlanned: 'planuojama',
+    catalogNo: 'ne',
+    catalogNoCursor: 'Užveskite žymeklį ant komandos, kad pamatytumėte, ką ji daro.',
+    catalogNoMatch: 'Nė viena komanda neatitinka paieškos.',
     copy: 'Kopijuoti',
     copied: '✓ Nukopijuota',
     previewHeading: 'Peržiūra',

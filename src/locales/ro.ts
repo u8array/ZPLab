@@ -924,6 +924,17 @@ const ro = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Referință ZPL',
+    catalogSearch: 'Căutare comenzi',
+    catalogInsert: 'Inserați',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Desktop',
+    catalogLint: 'Lint',
+    catalogYes: 'da',
+    catalogPlanned: 'planificat',
+    catalogNo: 'nu',
+    catalogNoCursor: 'Poziționați cursorul pe o comandă pentru a vedea ce face.',
+    catalogNoMatch: 'Nicio comandă nu corespunde căutării.',
     copy: 'Copiați',
     copied: '✓ Copiat',
     previewHeading: 'Previzualizare',

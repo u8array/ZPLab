@@ -924,6 +924,17 @@ const zhHant = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL 參考',
+    catalogSearch: '搜尋命令',
+    catalogInsert: '插入',
+    catalogWeb: '網頁',
+    catalogDesktop: '桌面',
+    catalogLint: 'Lint',
+    catalogYes: '是',
+    catalogPlanned: '計畫中',
+    catalogNo: '否',
+    catalogNoCursor: '將游標放在命令上可查看其作用。',
+    catalogNoMatch: '沒有符合搜尋的指令。',
     copy: '複製',
     copied: '✓ 已複製',
     previewHeading: '預覽',

@@ -924,6 +924,17 @@ const hr = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL referenca',
+    catalogSearch: 'Pretraži naredbe',
+    catalogInsert: 'Umetni',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Radna površina',
+    catalogLint: 'Lint',
+    catalogYes: 'da',
+    catalogPlanned: 'planirano',
+    catalogNo: 'ne',
+    catalogNoCursor: 'Postavite pokazivač na naredbu da vidite što radi.',
+    catalogNoMatch: 'Nijedna naredba ne odgovara pretrazi.',
     copy: 'Kopiraj',
     copied: '✓ Kopirano',
     previewHeading: 'Pregled',

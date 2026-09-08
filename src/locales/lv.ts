@@ -924,6 +924,17 @@ const lv = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL uzziņas',
+    catalogSearch: 'Meklēt komandas',
+    catalogInsert: 'Ievietot',
+    catalogWeb: 'Tīmeklis',
+    catalogDesktop: 'Darbvirsma',
+    catalogLint: 'Lint',
+    catalogYes: 'jā',
+    catalogPlanned: 'plānots',
+    catalogNo: 'nē',
+    catalogNoCursor: 'Novietojiet kursoru uz komandas, lai redzētu, ko tā dara.',
+    catalogNoMatch: 'Neviena komanda neatbilst meklēšanai.',
     copy: 'Kopēt',
     copied: '✓ Nokopēts',
     previewHeading: 'Priekšskatījums',

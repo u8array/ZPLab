@@ -954,6 +954,17 @@ const en = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL reference',
+    catalogSearch: 'Search commands',
+    catalogInsert: 'Insert',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Desktop',
+    catalogLint: 'Lint',
+    catalogYes: 'yes',
+    catalogPlanned: 'planned',
+    catalogNo: 'no',
+    catalogNoCursor: 'Place the cursor on a command to see what it does.',
+    catalogNoMatch: 'No commands match the search.',
     copy: 'Copy',
     copied: '✓ Copied',
     previewHeading: 'Preview',

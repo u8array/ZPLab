@@ -924,6 +924,17 @@ const sk = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Referencia ZPL',
+    catalogSearch: 'Hľadať príkazy',
+    catalogInsert: 'Vložiť',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Desktop',
+    catalogLint: 'Lint',
+    catalogYes: 'áno',
+    catalogPlanned: 'plánované',
+    catalogNo: 'nie',
+    catalogNoCursor: 'Umiestnite kurzor na príkaz a zobrazí sa jeho popis.',
+    catalogNoMatch: 'Žiadne príkazy nezodpovedajú vyhľadávaniu.',
     copy: 'Kopírovať',
     copied: '✓ Skopírované',
     previewHeading: 'Náhľad',

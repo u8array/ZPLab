@@ -924,6 +924,17 @@ const et = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL-i teatmik',
+    catalogSearch: 'Otsi käske',
+    catalogInsert: 'Lisa',
+    catalogWeb: 'Veeb',
+    catalogDesktop: 'Töölaud',
+    catalogLint: 'Lint',
+    catalogYes: 'jah',
+    catalogPlanned: 'planeeritud',
+    catalogNo: 'ei',
+    catalogNoCursor: 'Aseta kursor käsule, et näha, mida see teeb.',
+    catalogNoMatch: 'Otsingule ei vasta ükski käsk.',
     copy: 'Kopeeri',
     copied: '✓ Kopeeritud',
     previewHeading: 'Eelvaade',

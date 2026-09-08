@@ -924,6 +924,17 @@ const hu = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL-referencia',
+    catalogSearch: 'Parancsok keresése',
+    catalogInsert: 'Beszúrás',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Asztali',
+    catalogLint: 'Lint',
+    catalogYes: 'igen',
+    catalogPlanned: 'tervezett',
+    catalogNo: 'nem',
+    catalogNoCursor: 'Helyezze a kurzort egy parancsra, hogy lássa, mit csinál.',
+    catalogNoMatch: 'Nincs a keresésnek megfelelő parancs.',
     copy: 'Másolás',
     copied: '✓ Másolva',
     previewHeading: 'Előnézet',

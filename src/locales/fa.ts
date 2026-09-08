@@ -924,6 +924,17 @@ const fa = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'مرجع ZPL',
+    catalogSearch: 'جستجوی دستورها',
+    catalogInsert: 'درج',
+    catalogWeb: 'وب',
+    catalogDesktop: 'دسکتاپ',
+    catalogLint: 'Lint',
+    catalogYes: 'بله',
+    catalogPlanned: 'برنامه‌ریزی‌شده',
+    catalogNo: 'خیر',
+    catalogNoCursor: 'مکان‌نما را روی یک دستور قرار دهید تا عملکرد آن را ببینید.',
+    catalogNoMatch: 'هیچ دستوری با جستجو مطابقت ندارد.',
     copy: 'کپی',
     copied: '✓ کپی شد',
     previewHeading: 'پیش‌نمایش',

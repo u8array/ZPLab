@@ -924,6 +924,17 @@ const sr = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL referenca',
+    catalogSearch: 'Pretraga komandi',
+    catalogInsert: 'Umetni',
+    catalogWeb: 'Веб',
+    catalogDesktop: 'Десктоп',
+    catalogLint: 'Lint',
+    catalogYes: 'да',
+    catalogPlanned: 'планирано',
+    catalogNo: 'не',
+    catalogNoCursor: 'Postavite kursor na komandu da vidite šta ona radi.',
+    catalogNoMatch: 'Nijedna komanda ne odgovara pretrazi.',
     copy: 'Kopiraj',
     copied: '✓ Kopirano',
     previewHeading: 'Pregled',

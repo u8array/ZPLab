@@ -61,7 +61,11 @@ export function useSessionExit(
     const onKeyDown = (e: KeyboardEvent) => {
       // CM's simplifySelection consumes Escape for ANY non-empty selection,
       // so discarding then takes a second press (standard editor behavior).
-      if (e.key === 'Escape' && !e.defaultPrevented) handlersRef.current.onEscape();
+      // The reference panel owns Escape for itself (unpin) and runs after this
+      // native listener, so it opts out by attribute rather than preventDefault.
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      const target = e.target instanceof Element ? e.target : null;
+      if (!target?.closest('[data-session-exit-ignore]')) handlersRef.current.onEscape();
     };
     document.addEventListener('pointerdown', onPointerDown, true);
     root.addEventListener('focusout', onFocusOut);

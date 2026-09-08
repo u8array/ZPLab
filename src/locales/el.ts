@@ -924,6 +924,17 @@ const el = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Αναφορά ZPL',
+    catalogSearch: 'Αναζήτηση εντολών',
+    catalogInsert: 'Εισαγωγή',
+    catalogWeb: 'Ιστός',
+    catalogDesktop: 'Επιτραπέζιο',
+    catalogLint: 'Lint',
+    catalogYes: 'ναι',
+    catalogPlanned: 'προγραμματισμένο',
+    catalogNo: 'όχι',
+    catalogNoCursor: 'Τοποθετήστε τον δρομέα σε μια εντολή για να δείτε τι κάνει.',
+    catalogNoMatch: 'Καμία εντολή δεν ταιριάζει με την αναζήτηση.',
     copy: 'Αντιγραφή',
     copied: '✓ Αντιγράφηκε',
     previewHeading: 'Προεπισκόπηση',

@@ -924,6 +924,17 @@ const ko = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL 참조',
+    catalogSearch: '명령어 검색',
+    catalogInsert: '삽입',
+    catalogWeb: '웹',
+    catalogDesktop: '데스크톱',
+    catalogLint: 'Lint',
+    catalogYes: '예',
+    catalogPlanned: '예정',
+    catalogNo: '아니요',
+    catalogNoCursor: '명령어에 커서를 놓으면 기능을 확인할 수 있습니다.',
+    catalogNoMatch: '검색과 일치하는 명령이 없습니다.',
     copy: '복사',
     copied: '✓ 복사됨',
     previewHeading: '미리보기',

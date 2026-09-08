@@ -924,6 +924,17 @@ const nl = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'ZPL-referentie',
+    catalogSearch: 'Opdrachten zoeken',
+    catalogInsert: 'Invoegen',
+    catalogWeb: 'Web',
+    catalogDesktop: 'Desktop',
+    catalogLint: 'Lint',
+    catalogYes: 'ja',
+    catalogPlanned: 'gepland',
+    catalogNo: 'nee',
+    catalogNoCursor: 'Plaats de cursor op een opdracht om te zien wat deze doet.',
+    catalogNoMatch: 'Geen opdrachten komen overeen met de zoekopdracht.',
     copy: 'Kopiëren',
     copied: '✓ Gekopieerd',
     previewHeading: 'Voorbeeld',

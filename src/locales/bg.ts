@@ -924,6 +924,17 @@ const bg = {
 
   output: {
     zplHeading: 'ZPL',
+    catalogHeading: 'Справка за ZPL',
+    catalogSearch: 'Търсене на команди',
+    catalogInsert: 'Вмъкни',
+    catalogWeb: 'Уеб',
+    catalogDesktop: 'Настолно приложение',
+    catalogLint: 'Lint',
+    catalogYes: 'да',
+    catalogPlanned: 'планирано',
+    catalogNo: 'не',
+    catalogNoCursor: 'Поставете курсора върху команда, за да видите какво прави.',
+    catalogNoMatch: 'Няма команди, отговарящи на търсенето.',
     copy: 'Копирай',
     copied: '✓ Копирано',
     previewHeading: 'Преглед',
