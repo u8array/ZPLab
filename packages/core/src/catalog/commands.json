@@ -1272,7 +1272,7 @@
       "summary": "Saves the current format as a graphic image for fast recall and variable-data overlays.",
       "support": {
         "web": "no",
-        "desktop": "planned",
+        "desktop": "yes",
         "lint": "no"
       }
     },
@@ -2692,7 +2692,7 @@
       "summary": "Returns a stored graphic to the host in a downloadable file format.",
       "support": {
         "web": "no",
-        "desktop": "planned",
+        "desktop": "yes",
         "lint": "no"
       }
     },

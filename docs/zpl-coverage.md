@@ -133,7 +133,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^IL` | image load | `[ ]` | `[~]` | `[ ]` |
 | `^IM` | image move | `[ ]` | `[~]` | `[ ]` |
 | `^ID` | delete stored graphics, fonts and formats | `[ ]` | `[~]` | `[ ]` |
-| `^IS` | image save | `[ ]` | `[~]` | `[ ]` |
+| `^IS` | image save | `[ ]` | `[x]` | `[ ]` |
 | `~DG` | download graphic | `[ ]` | `[~]` | `[ ]` |
 | `~DN` | abort download | `[ ]` | `[~]` | `[ ]` |
 | `~DY` | download font / graphic | `[x]` | `[x]` | `[ ]` |
@@ -286,7 +286,7 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `~HU` | ZebraNet alert configuration | `[ ]` | `[~]` | `[ ]` |
 | `^HV` | host verification | `[ ]` | `[~]` | `[ ]` |
 | `^HW` | host directory | `[ ]` | `[~]` | `[ ]` |
-| `^HY` | upload graphics | `[ ]` | `[~]` | `[ ]` |
+| `^HY` | upload graphics | `[ ]` | `[x]` | `[ ]` |
 | `^HZ` | display description information | `[ ]` | `[~]` | `[ ]` |
 
 ## RFID

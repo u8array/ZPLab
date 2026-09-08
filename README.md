@@ -169,7 +169,7 @@ Both `.zpl` and `.json` files round-trip cleanly. `.zpl` preserves printable con
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-115 of the 225 ZPL II commands are modelled in both the web and desktop builds. 4 more are planned for both builds. 84 need a connected printer and are planned for desktop. The source editor does not lint command parameters yet. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+115 of the 225 ZPL II commands are modelled in the browser; desktop covers 2 more with a connected printer. 4 more are planned for both builds. 82 need a connected printer and are planned for desktop. The source editor does not lint command parameters yet. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|
