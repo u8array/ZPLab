@@ -6,11 +6,11 @@
 [![CI](https://github.com/u8array/ZPLab/actions/workflows/pr.yml/badge.svg)](https://github.com/u8array/ZPLab/actions/workflows/pr.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A browser-based ZPL editor for Zebra printers. Design labels visually, import existing ZPL, edit it, and export it again without changing untouched bytes.
+A browser-based editor for Zebra Programming Language (ZPL). Create labels for Zebra printers or import and edit existing ZPL files.
 
-Hand-written ZPL (Zebra Programming Language) is tedious: cryptic commands, dot coordinates, and no useful visual feedback until the printer runs. ZPLab lets you build labels visually. Drag elements onto the canvas, edit them in the properties panel, then copy or download the ZPL. No installation or ZPL knowledge required.
+Drag objects onto the canvas, adjust their properties, then copy or download the ZPL. You can use the web app without installing software or writing ZPL by hand.
 
-Existing ZPL files remain editable source, not one-way imports: export preserves untouched bytes and regenerates only edited objects (see [Import guarantees](#import-guarantees)). GS1 and EAN/UPC content is validated field by field.
+When editing imported ZPL, the editor preserves unchanged source where possible. Some changes require it to regenerate the label (see [Import guarantees](#import-guarantees)). GS1 and EAN/UPC fields include content validation.
 
 **[Try it](https://zplab.org/)** · [Download the desktop app](#download) · [Report an issue](https://github.com/u8array/ZPLab/issues)
 
@@ -37,11 +37,13 @@ Existing ZPL files remain editable source, not one-way imports: export preserves
 
 On macOS, the first launch may be blocked. Allow ZPLab under *System Settings > Privacy & Security*.
 
+On Windows, SmartScreen warns when you first run the unsigned installer. Choose **More info** and then **Run anyway** to continue.
+
 ## Usage
 
 ### 1. Set up the label
 
-Label dimensions and print resolution are shown in the header (`width × height mm · dpmm`). Deselect everything by clicking the empty canvas, then edit them in the **Properties** panel.
+Label dimensions and print resolution are shown in the header of the web build (`width × height mm · dpmm`). Deselect everything by clicking the empty canvas, then edit them in the **Properties** panel.
 
 Set the print resolution (dpmm = dots per millimeter) to match your printer. Common values are 6 dpmm (152 dpi), 8 dpmm (203 dpi), 12 dpmm (300 dpi) and 24 dpmm (600 dpi). Check your printer's manual if unsure; 8 dpmm is the most common.
 
@@ -64,60 +66,60 @@ Objects include text, serial counters, barcodes (28 symbologies including Code 1
 
 Select an object to configure its content, size, font and barcode options in the **Properties** panel on the right.
 
-Select multiple objects with Shift-click or by drawing a lasso. Position changes apply to all selected objects; resizing works one object at a time.
+Select multiple objects with Shift-click or by drawing a lasso. Position and size changes apply to all selected objects; a locked object disables resizing for the selection.
 
 ### 4. Print or export
 
-The **ZPL output** panel at the bottom shows the generated ZPL. It updates in real time, and the code itself is editable.
+The **ZPL** panel at the bottom shows the generated ZPL. It updates in real time, and the code itself is editable.
 
-- **Copy:** copies the ZPL to the clipboard for printer software or direct printer output
+- **Copy:** copies the ZPL to the clipboard so you can paste it into your printer software
 - **Preview:** renders an image via [Labelary](https://labelary.com/) or, on desktop, the connected printer's own firmware (see [Printer settings](#printer-settings))
-- **Export** (File menu): downloads a `.zpl` file
-- **Print** (File menu): opens the Labelary preview and then the browser print dialog
+- **Export ZPL** (File menu): downloads a `.zpl` file
+- **Print as Image (browser)** (File menu): opens the Labelary preview and then the browser print dialog. Hidden when Labelary is disabled.
 
 ### Editing the ZPL source
 
-The panel is a code editor with ZPL syntax highlighting; long graphic payloads are folded. Selecting a canvas object highlights its generated ZPL lines. A notice above the code flags setup commands that persist on the printer and commands that act on the device.
+The panel provides ZPL syntax highlighting and collapses long blocks of image data. Selecting a canvas object highlights its generated ZPL lines. A notice above the code identifies commands that change persistent printer settings or perform device operations.
 
-The command reference beside the code follows the caret. Search filters the list, clicking a row pins it, and **Insert** adds the command at the caret or before the current page's `^XZ` when no caret is active.
+The command reference beside the code shows details for the command at the cursor. Search to filter the list, or click a command to keep its details open as you move the cursor. **Insert** adds the command at the cursor, or before the current page's `^XZ` if there is no active cursor.
 
-The first edit starts an edit session: the canvas and **Properties** panel lock, page navigation stays available, and the canvas previews the parsed source live. Invalid source (unbalanced `^XA`/`^XZ`, too large) shows a reason and is not applied; imbalances are marked at the command that caused them.
+While you edit the source, the canvas shows a live preview. Canvas editing and the **Properties** panel are disabled, but you can still switch pages. If the source is too large or has mismatched `^XA`/`^XZ` commands, the editor explains the error and does not apply the changes. Mismatched commands are marked in the source.
 
-Leaving the panel applies the edit. A dialog asks first if reparsing reports findings or would drop designer-only state (groups, names, locked/hidden, export exclusions, variable bindings). `Esc` discards the edit; if the source changed, ZPLab asks for confirmation. Applied source edits count as a new import, so [Import guarantees](#import-guarantees) apply to the result.
+Leave the panel or press **Apply** to apply your changes. ZPLab asks for confirmation if parsing finds problems or would discard editor settings such as groups, object names, lock and visibility settings, export exclusions or variable bindings. Press `Esc` or **Cancel** to discard your changes; ZPLab asks for confirmation if you have changed the source. Applying source edits imports the revised ZPL again, so the [Import guarantees](#import-guarantees) apply.
 
 ### Importing existing ZPL
 
-Use File menu → **Import ZPL** to paste ZPL code directly or open a `.zpl` file.
+Choose **File → Import ZPL** to paste ZPL code or open a `.zpl` or `.prn` file.
 
 Import handles text, barcodes, shapes, images (including printer-stored and compressed graphics), label-header settings and template fields. `^FN` slots appear in the **Variables** tab; `^FE` inline embeds such as `^FD#1#-#2#` import as `«name»` markers in the field content.
 
-Commands the parser does not recognize are listed in the import report. They do not appear on the canvas, but they are preserved in exported ZPL.
+Commands the parser does not recognize are listed in the import report and do not appear on the canvas. Commands between fields survive export. Commands inside a field are preserved until you edit that object. Regenerating the whole label drops all unrecognized commands on that label.
 
 ### Import guarantees
 
-Edit an imported label and export it again:
+Export uses the original source where it can safely preserve it:
 
-- **Preserved:** everything you do not touch is exported byte-for-byte, including fields, label settings, comments, whitespace and commands the editor does not model. A zero-edit import/export cycle reproduces the file exactly.
-- **Regenerated:** edited, added and deleted objects are emitted from the model. Unchanged parts are spliced back from the original file.
-- **Full-regeneration fallback:** some constructs make per-object patching unsafe: `^MU` unit scaling, non-default `^CC`/`^CT`/`^CD` command prefixes, non-UTF-8 `^CI` encoding, non-default `^FE` embed delimiters, an `^FN` declared without a field, an in-span `^JM` density switch, and a barcode relying on a previous `^BY`. If one is present, the first edit regenerates the whole label; with no edits the export stays byte-for-byte.
+- **Unchanged source:** when the original source can be preserved, importing and exporting without edits reproduces it byte-for-byte, including fields, label settings, comments, whitespace and unsupported commands.
+- **Object edits:** the editor generates ZPL for added or changed objects and removes deleted objects. It keeps the remaining source unchanged unless the whole label needs to be regenerated. Changing a label setting regenerates every page if it changes the emitted ZPL. Changing a variable's `^FN` slot number or default value also regenerates every page. Renaming a variable does not.
+- **Whole-label regeneration:** some commands affect other fields or need to be rewritten on export. For these labels, the first object edit regenerates the whole page. Examples include `^MU` unit scaling, non-default `^CC`/`^CT` prefixes or a `^CD` delimiter, non-UTF-8 `^CI` encoding, `^FE` or `^FC` outside its field, an `^FN` without a field, `^JM` density switches or `^CF`/`^FW`/`^CW`/`^SO`/`^LH`/`^LT` definitions within an object's source, `^LR`, and barcodes relying on a previous `^BY`. The same applies to Code 128 escape sequences, QR data or settings, and `^FN` embed forms that export normalises. Further triggers are an unused `^FE` or `^FC` at the field's closing `^FS`, an in-field `^FC` with an omitted parameter, and an `^LH` or `^LT` change after the page's first field. Reordering objects also regenerates the label.
 
-Byte capture is deliberately conservative. If a field cannot be mapped cleanly to one object, the whole label falls back to model regeneration; content stays intact, but exact bytes may change. Captured bytes are stored in `.json` designs. Designs from older capture formats are detected and rebuilt.
+If the parser cannot reliably match source fields to objects, export regenerates the label from the imported objects and settings. This can change formatting and omit unsupported commands. The original source is also stored in `.json` designs. If that source was saved in an older, incompatible format, the editor discards it and generates ZPL from the saved objects and settings.
 
 ### Multiple labels (pages)
 
-Use File menu → **Add page** to create another page. With multiple pages, the bottom-center page control switches between pages and removes them. All pages share the same dimensions; export and import handle each page as a separate label.
+Choose **File → Add page** to create another page. Use the page controls at the bottom of the canvas to switch between pages or remove them. All pages share the same dimensions; export and import handle each page as a separate label.
 
 ### Batch printing from data
 
-Use File menu → **Import CSV data** to load a CSV. The mapping dialog pairs variables with columns and saves that mapping in the design. **Export batch ZPL** or **Send to Zebra Printer** then outputs one label per row.
+Choose **File → Import CSV data** (web) or **File → Connect data** (desktop) to load a CSV. In the mapping dialog, assign a column to each variable. The design saves these assignments. **Export batch ZPL** or **Send to Zebra Printer** then produces one label per row.
 
-On desktop, **Import Excel data** reads a worksheet. **Printer settings… → Data sources** can also load rows from a read-only SQLite, PostgreSQL or MySQL database, with the password stored in the OS keychain. The same mapping and batch output apply, and a design remembers its database link for one-click reload.
+On desktop, **Connect data** also reads an Excel worksheet. **Settings… → Database connection** loads rows from a read-only SQLite, PostgreSQL or MySQL database, with the password stored in the OS keychain. Assign columns to variables as you would for a CSV. The design saves the database connection so you can reload the data later.
 
 ### Printer settings
 
-Use File menu → **Printer settings…** to configure label-level media and print quality. The Setup Script covers clock, locale, encoding and printer identity, and is meant to be sent once when setting up a printer. Setup Script values stay out of saved designs so sharing a `.zpl` or `.json` does not leak your printer name or locale.
+Choose **File → Settings… → Per Label** to configure media, print quality, output and RFID. Use the **Setup Script** to configure clock, encoding, fonts, printer identity and maintenance when setting up a printer. Saved designs and label exports do not include Setup Script values such as your printer name or locale.
 
-The **Preview** tab selects the preview renderer: Labelary's online service, or on desktop the connected printer's own firmware. It can also store a premium Labelary endpoint and API key; the key is stored in the OS keychain on desktop and in browser storage on the web.
+In the **Preview** tab, choose Labelary's online service or, on desktop, the connected printer's firmware. You can also enter a premium Labelary endpoint and API key. The key is stored in the OS keychain on desktop and in browser storage on the web.
 
 ### Keyboard shortcuts
 
@@ -130,7 +132,7 @@ The **Preview** tab selects the preview renderer: Labelary's online service, or 
 | `Ctrl/⌘+G` / `Ctrl/⌘+Shift+G` | Group / Ungroup selection |
 | `Ctrl/⌘+L` / `Ctrl/⌘+Shift+L` | Lock / Unlock selection |
 | `Del` / `Backspace` | Delete selection |
-| Arrow keys / `Shift`+Arrow | Nudge selection (snap step / 10 mm) |
+| Arrow keys / `Shift`+Arrow | Move by the snap step (1 dot with snap off); hold Shift to move by 10 mm |
 | `G` | Toggle grid |
 | `S` | Toggle snap |
 | `R` | Rotate view (0° → 90° → 180° → 270°) |
@@ -140,29 +142,30 @@ The **Preview** tab selects the preview renderer: Labelary's online service, or 
 | Scroll | Pan canvas |
 | `Ctrl/⌘`+Scroll | Zoom |
 | `↑` / `↓` / `Enter` in the command reference | Navigate the list / insert the highlighted command |
-| `Esc` in the command reference | Unpin the row |
+| `Esc` in the command reference | Return to following the command at the cursor |
 
 ### Saving and loading
 
-Both `.zpl` and `.json` files round-trip cleanly. `.zpl` preserves printable content and remains editable: re-import it and keep working. `.json` (File → Save Design) also stores designer-only state with no ZPL representation, including locked/hidden objects, items excluded from export, custom object names and group structure.
+Export a `.zpl` file to print or edit again later. To keep editor settings as well, use **File → Save Design** to save a `.json` file. This also stores locked and hidden objects, items excluded from export, custom object names and groups.
 
 ---
 
 ## Features
 
-- Smart alignment and spacing guides
+- Alignment and spacing guides
 - Layers panel with reordering
 - Editable ZPL source: type directly in the output panel while the canvas previews the draft live ([editing the ZPL source](#editing-the-zpl-source))
-- ZPL command reference: searchable details for every ZPL II command, following the caret and showing concise explanations plus support status
-- Lossless ZPL round-trip: imported ZPL re-exports byte-for-byte, regenerating only edited objects ([import guarantees](#import-guarantees))
-- Variables: bind text and barcode fields to named defaults that emit as `^FN` slots, or `^FE` inline embeds when one field references multiple variables
+- ZPL command reference: search all 225 catalogued ZPL II commands or view the command at the cursor, with translated explanations and support status
+- ZPL source preservation: keep unchanged source when editing imported labels, subject to the [import guarantees](#import-guarantees)
+- Variables: define names and default values for text and barcode fields. A field containing only one variable uses `^FN`; variables combined with other content use `^FE`
 - Batch printing: map variables to CSV, Excel or read-only database columns, then print or export one label per row
 - GS1 content builder: assemble DataBar Expanded, GS1-128 and GS1 DataMatrix content from Application Identifiers, with field and combination validation
-- Content builder: generate QR, Data Matrix and Aztec payloads for URLs, WiFi, contacts, email, phone, SMS and geo coordinates
-- EAN/UPC inline validation: live length counter, computed check-digit preview, and a GS1 prefix hint below the content field
-- Printer settings: label-level hardware tuning plus a Setup Script for clock, locale, encoding and printer identity
-- 32 UI languages (auto-detected from browser)
-- Light / dark mode (follows OS setting)
+- Content builder: create QR, Data Matrix and Aztec codes for plain text, URLs, WiFi, contacts, email, phone, SMS and geographic coordinates
+- EAN/UPC inline validation: live length counter, computed check-digit preview, and a GS1 prefix hint for EAN-13
+- Printer settings: media, print quality, output and RFID per label, plus a Setup Script for clock, encoding, fonts, identity and maintenance
+- 32 UI languages, detected automatically. Change the language in settings or in the web app's header.
+- Light / dark mode starts from the OS setting. Change the theme in settings or in the web app's header.
+- MCP server (desktop): lets a local AI assistant read and edit the label
 
 ---
 
@@ -193,10 +196,10 @@ Both `.zpl` and `.json` files round-trip cleanly. `.zpl` preserves printable con
 
 ## Limitations
 
-- The canvas is a design preview, not a pixel-perfect simulation. Shapes, spacing and positions match the print; text approximates Zebra's built-in font to within a few dots, but exact letterforms and anti-aliasing differ. For a faithful render, use **Preview** in the bottom-right panel.
-- The default preview renderer is Labelary; the web build calls `api.labelary.com`. Self-hosters can configure a private endpoint or disable online previews. The desktop app can preview on the connected printer instead.
-- The Labelary preview does not render every ZPL feature. Some less common elements, such as CODABLOCK F or MaxiCode, may be missing or inaccurate in the preview even when the actual print is correct.
-- The preview shows only the current page with either renderer; the printed/exported ZPL still contains every page.
+- The canvas approximates the printed label. Fonts and rendering can differ from the printer's output. Use **Preview** in the **ZPL** panel to view an image rendered by Labelary or the connected printer over the canvas.
+- The default preview renderer is Labelary; the web build calls `api.labelary.com`. Self-hosters can configure a private endpoint or disable online previews at build time (`VITE_THIRD_PARTY_LABELARY=false`). The desktop app can preview on the connected printer instead.
+- The Labelary preview does not render every ZPL feature. It ignores CODABLOCK F's `^BB` command and displays the field content as plain text. MaxiCode renders slightly smaller than on a Zebra ZD230.
+- **Preview** and **Print as Image (browser)** render only the current page. **Export ZPL** and **Send to Zebra Printer** include every page.
 
 ---
 
@@ -207,13 +210,13 @@ pnpm install
 pnpm dev
 ```
 
-Requires Node.js ≥ 24 and pnpm. Alternatively use `npm install` / `npm run dev`.
+Requires Node.js ≥ 24 and pnpm (the workspace uses `workspace:*` dependencies that npm cannot resolve).
 
 ```bash
 pnpm build   # output goes to dist/
 ```
 
-The web build output is entirely static and can be served from any web server or file host. The desktop app is a separate [Tauri](https://tauri.app/) shell (`src-tauri/`) with native printer I/O.
+The web build output is entirely static and can be served from any web server or file host. The desktop app is a [Tauri](https://tauri.app/) shell (`src-tauri/`) that prints over raw TCP or the system spooler on all supported platforms. Direct USB printing is available on Linux and macOS.
 
 ### Tech stack
 
@@ -235,7 +238,7 @@ The editor stores the label as a list of objects in Zustand. On every change, ZP
 
 Issues and pull requests are welcome.
 
-If you find a ZPL file that imports incorrectly, attaching the `.zpl` file to the issue is the most useful thing you can do.
+If a ZPL file imports incorrectly, attach it to the issue and describe the expected result.
 
 ---
 
