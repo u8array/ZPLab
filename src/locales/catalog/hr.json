@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Pokreće novi format naljepnice. Naredbe koje slijede definiraju polja, rukovanje medijem i ponašanje pisača za tu naljepnicu."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Zatvara trenutni format naljepnice i šalje ga na ispis."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Postavlja širinu ispisa u točkama. Sadržaj izvan te širine pisač odsijeca."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Postavlja duljinu naljepnice u točkama i time određuje gdje završava format ispisa."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Pomiče polazišnu točku naljepnice i time mijenja ishodište koje koriste koordinate kasnijih polja."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Primjenjuje vodoravni pomak na položaje polja radi kompatibilnosti sa starijim Zebra formatima."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Dodaje okomiti pomak cijelom formatu u odnosu na gornji rub medija."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Postavlja jedinice koordinata na točke, inče ili milimetre, a može i skalirati formate između različitih rezolucija ispisa."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Postavlja način rukovanja medijem nakon ispisa, uključujući trganje, guljenje, rezanje, namotavanje i način rada s aplikatorom."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Odabire termalni transfer ili direktni termalni način rada, ovisno o tome koristi li umetnuti medij vrpcu."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Postavlja količinu ispisa, grupiranje pauza ili rezanja te broj kopija po serijskoj vrijednosti."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Obrće ispis sljedećih polja zamjenom boje ispisa i pozadine."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Rotira cijeli format naljepnice za 180 stupnjeva."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Zrcali područje ispisa vodoravno."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Postavlja brzinu ispisa, brzinu pomicanja i brzinu povratnog uvlačenja medija u inčima po sekundi."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Pozicionira sljedeće polje od polazišne točke naljepnice, koristeći njegov gornji lijevi kut."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Pozicionira sljedeće polje prema njegovoj osnovnoj liniji ili rubu crtičnog koda, čime rotirana polja dobivaju stabilno uporište."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Zadaje sadržaj trenutnog polja, uključujući tekst, podatke crtičnog koda ili RFID podatke."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Završava definiciju trenutnog polja."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Omogućuje heksadecimalne escape sekvence unutar podataka polja za binarne bajtove i rezervirane znakove naredbi."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Obrće boju ispisa i pozadine samo za sljedeće polje."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Dodaje polje s komentarom. Pisač zanemaruje njegov sadržaj sve do sljedećeg razdjelnika polja."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Postavlja zadanu orijentaciju polja, a na novijem firmveru i zadano poravnanje."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Prelama podatke polja unutar bloka fiksne širine, uz kontrolu broja redaka, razmaka, uvlake i poravnanja."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Prelama tekst unutar okvira fiksne širine i visine, pri čemu se višak teksta odsijeca."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Dodjeljuje broj varijabilnom polju u spremljenim i kasnije pozvanim formatima."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Zadaje podatke za varijabilno polje. Za razliku od podataka iz ^FD, ti se podaci brišu nakon ispisa naljepnice."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Postavlja znak koji se koristi za umetanje vrijednosti numeriranih polja unutar niza znakova drugog polja."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Postavlja oznake koje se koriste za tokene sata u stvarnom vremenu unutar podataka polja."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Postavlja zadanu širinu modula crtičnog koda, omjer širokih i uskih elemenata te visinu za sljedeća polja s crtičnim kodom."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Postavlja segmente PDF417 ili MicroPDF417 na određena ishodišta kada se jedna poruka proteže kroz više simbola."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Postavlja redoslijed znakova za trenutno polje, a može dodati i dodatni razmak između znakova."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Odabire ugrađeni skalabilni font 0 za sljedeće polje, u traženoj veličini i orijentaciji."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Odabire ugrađeni font prema jednoslovnom nazivu, s neobaveznom orijentacijom, visinom i širinom."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Odabire spremljenu datoteku fonta za sljedeće polje, s neobaveznom orijentacijom, visinom i širinom."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Postavlja zamjenski font, visinu i širinu koje koriste tekstualna polja bez vlastito zadanih vrijednosti."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Odabire kodiranje za tumačenje podataka polja, uključujući kodne stranice i UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Omogućuje napredni prijelom teksta za sljedeća polja, uključujući dvosmjerni tekst, oblikovanje znakova i OpenType značajke."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Mapira jednoslovni naziv fonta na spremljenu datoteku fonta."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Postavlja veličinu predmemorije za iscrtane skalabilne znakove radi bržeg ponovljenog ispisa velikih fontova."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Definira lance zamjenskih TrueType fontova koji se koriste kada osnovnom fontu nedostaje znak."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Ispisuje naljepnicu s popisom konfiguriranih poveznica fontova i njihovih ulančanih zamjenskih fontova."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Prenosi bitmap font i njegove metrike u memoriju pisača."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Prenosi kodirani skalabilni Intellifont u memoriju pisača."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Prenosi kodirani TrueType font s najviše 256 znakova u memoriju pisača."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Prenosi kodirani TrueType font s više od 256 znakova u memoriju pisača."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Prenosi tablicu kodiranja koja preslikava bajtove podataka polja u Unicode vrijednosti za TrueType fontove."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Iscrtava crtični kod Code 128 za ASCII podatke promjenjive duljine, s načinima rada za automatsko prebacivanje podskupova i UCC/EAN podatke."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Iscrtava crtični kod Code 39 s neobaveznom kontrolnom znamenkom Mod 43."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Iscrtava crtični kod Code 93, koji puni ASCII skup podataka predstavlja pomoću shift znakova."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Iscrtava crtični kod Code 11 za znamenke i crtice, s neobaveznim kontrolnim znamenkama."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Iscrtava crtični kod Interleaved 2 of 5 za numeričke podatke parne duljine, s neobaveznom kontrolnom znamenkom."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Iscrtava crtični kod Industrial 2 of 5, numerički kod kod kojeg su podaci kodirani samo crtama."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Iscrtava crtični kod Standard 2 of 5, samoprovjeravajući numerički kod kod kojeg su podaci kodirani samo crtama."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Iscrtava crtični kod ANSI Codabar, poznat i kao USD-4, za naljepnice u knjižnicama, zdravstvu i dostavnim službama."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Iscrtava crtični kod LOGMARS, inačicu Code 39 koju koristi američko Ministarstvo obrane, pri čemu mala slova pretvara u velika."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Iscrtava crtični kod MSI, numerički kod izveden iz Plessey koda, s odabirom sheme kontrolnih znamenki."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Iscrtava crtični kod Plessey, stariji numerički kod s neobaveznim kontrolnim znamenkama."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Iscrtava crtični kod EAN-13 za maloprodajne brojeve artikala i izračunava kontrolnu znamenku iz dvanaest podatkovnih znamenki."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Iscrtava crtični kod EAN-8 za male maloprodajne pakete i izračunava kontrolnu znamenku iz sedam podatkovnih znamenki."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Iscrtava crtični kod UPC-A za maloprodajnu ambalažu na temelju jedanaest podatkovnih znamenki, s neobaveznim ispisom kontrolne znamenke."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Iscrtava crtični kod UPC-E, skraćeni oblik UPC-A. Podaci polja predstavljaju puni deseteroznamenkasti kod proizvođača i proizvoda."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Iscrtava simbol GS1 DataBar s mogućnošću odabira podtipa, uvećanja, visine i širine segmenta."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Iscrtava poštanski crtični kod Planet Code od znamenki kodiranih visokim i niskim crtama."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Iscrtava POSTNET, Planet Code ili USPS Intelligent Mail, ovisno o odabranom tipu poštanskog koda."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Iscrtava dvoznamenkasti ili peteroznamenkasti dodatni simbol UPC/EAN uz glavni crtični kod."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Iscrtava slagani crtični kod Code 49 s dva do osam redaka punog ASCII skupa podataka."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Iscrtava simbol QR Code. Parametri naredbe postavljaju model, uvećanje i masku, dok podaci polja određuju razinu ispravka pogrešaka i način kodiranja znakova."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Iscrtava simbol Data Matrix s podesivom veličinom elementa, razinom kvalitete i obradom escape sekvenci."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Iscrtava slagani dvodimenzionalni simbol PDF417 za velike tekstualne ili binarne podatke."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Iscrtava simbol MicroPDF417, kompaktnu inačicu PDF417 s uzorcima adresiranja redaka."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Iscrtava matrični simbol Aztec s podesivim uvećanjem i razinom ispravka pogrešaka."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Iscrtava simbol CODABLOCK u načinu A, E ili F za veće količine podataka."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Iscrtava simbol UPS MaxiCode, s načinom rada za strukturirane poruke prijevoznika ili opće podatke."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Iscrtava simbol TLC39 za telekomunikacijske naljepnice, koji kombinira Code 39 s komponentom MicroPDF417."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Kada je uključena, provjerava podatke i parametre crtičnog koda te umjesto neispravnog simbola ispisuje INVALID."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Iscrtava ispunjeni ili obrubljeni pravokutnik. Ako se stranica izjednači s debljinom obruba, nastaje linija."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Iscrtava dijagonalnu liniju unutar zadane širine i visine, nagnutu udesno ili ulijevo."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Iscrtava elipsu prema zadanoj širini i visini u točkama, s obrubom debljine usmjerene prema unutra i crnim ili bijelim ispisom."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Iscrtava krug zadanog promjera u točkama, s obrubom debljine usmjerene prema unutra i crnim ili bijelim ispisom."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Postavlja monokromatsku bitmap sliku na trenutni položaj polja koristeći ASCII heksadecimalne, binarne ili komprimirane podatke."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Ispisuje ugrađeni simbol odabran podacima polja, primjerice znak autorskog prava ili registriranog zaštitnog znaka."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Učitava spremljenu sliku na početku formata i sidri je na ishodištu naljepnice."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Postavlja spremljenu sliku na trenutni položaj polja bez promjene mjerila."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Briše spremljene grafike, fontove ili formate iz memorije pisača, uz podršku za zamjenske znakove pri brisanju skupina."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Sprema trenutni format kao grafičku sliku radi bržeg ponovnog pozivanja i preklapanja varijabilnih podataka."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Prenosi grafiku u ASCII heksadecimalnom obliku u memoriju pisača pod nazivom koji se može ponovno koristiti."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Zaustavlja prekinuto prenošenje grafike i vraća pisač u normalan rad."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Prenosi grafiku, font ili certifikat u memoriju pisača pod nazivom koji se može ponovno koristiti."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Briše sve preuzete grafike iz memorije pisača. Za brisanje pojedinačnih objekata koristi se ^ID."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serijski broji podatke tekstualnog polja ili crtičnog koda kroz naljepnice, koristeći početnu vrijednost, smjer i korak povećanja."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serijski broji odabrane pozicije u podacima polja koristeći masku i skupove znakova."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Sprema sljedeće naredbe kao format za ponovnu upotrebu, umjesto da ih odmah ispisuje."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Poziva spremljeni format i zadaje vrijednosti za njegova numerirana rezervirana polja."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Poziva spremljenu grafiku na trenutnu poziciju s neovisnim vodoravnim i okomitim skaliranjem."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Određuje način na koji pisač prepoznaje granice naljepnica, koristeći razmake, oznake ili kontinuirani medij."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Postavlja najveću duljinu naljepnice koju pisač pretražuje pri kalibraciji nekontinuiranog medija."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Postavlja radnju pri uključivanju i zatvaranju glave za ispis, uključujući kalibraciju, uvlačenje medija ili mjerenje duljine."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Onemogućuje povratno uvlačenje medija za trenutnu naljepnicu kada pomicanje u poziciju za trganje nije potrebno."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Konfigurira ispisana upozorenja o održavanju za čišćenje ili zamjenu glave za ispis."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Određuje briše li se bitmap naljepnice nakon ispisa ili se zadržava za ponovnu upotrebu kod kasnijih naljepnica."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Postavlja tekst prikazan na naljepnicama s upozorenjem o održavanju za čišćenje ili zamjenu glave za ispis."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Zaključava postavku na upravljačkoj ploči, primjerice tamnoću ili kalibraciju, dok se ponovno ne otključa."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Uključuje ili isključuje indikator upozorenja o hladnoj glavi za ispis."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Prilagođava tamnoću ispisa u odnosu na trenutno konfiguriranu tamnoću pisača."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Odmah postavlja apsolutnu tamnoću ispisa, u skladu s postavkom tamnoće na upravljačkoj ploči."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Određuje ponovno ispisuje li se, nakon otklanjanja greške, naljepnica prekinuta kvarom medija, vrpce ili glave za ispis."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Raspoređuje periodično testiranje elemenata glave za ispis prema broju ispisanih naljepnica i neobaveznom rasponu elemenata."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Prilagođava mirujuću poziciju trganja ili rezanja malim pomakom u točkama nakon ispisa."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Konfigurira pragove ranog upozorenja za održavanje medija, vrpce i glave za ispis."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Kontrolira vrijeme povratnog uvlačenja medija oko ispisa i rezanja, ili ga potpuno isključuje."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Uvlači zadani broj praznih redaka točaka brzinom pomicanja."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Uvlači jednu praznu naljepnicu nakon što se trenutni format ispiše."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Uvlači jednu praznu naljepnicu čim se pisač oslobodi, bilo nakon trenutnog formata ili tijekom pauze."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Pauzira nakon ispisa trenutnog formata. Naljepnice koje su već u međuspremniku i dalje se mogu ispisati prije pauze."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Pauzira nakon dovršetka trenutne naljepnice. Ispis se nastavlja kada se stanje pauze poništi."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Ponovno ispisuje prethodnu naljepnicu kada je uključen način ponovnog ispisa za aplikator."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Poništava stanje pauze i nastavlja ispis."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Odmah pokreće rezač na pisačima KR403 u kiosk načinu ispisa."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Dodaje dodatnu duljinu izbacivanja na KR403 kiosk podavaču, čime je ispisani medij lakše preuzeti."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Pokreće ciklus KR403 podavača, koji ispisani medij ponudi za ručno preuzimanje."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Postavlja napetost dovoda vrpce na pisačima serije PAX."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Postavlja datum i vrijeme sata u stvarnom vremenu na pisaču."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Odabire format datuma i vremena prikazan na konfiguracijskoj naljepnici i upravljačkoj ploči."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Definira pomake sekundarnog sata u odnosu na sat u stvarnom vremenu. Ti se pomaci gube pri isključivanju pisača."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Postavlja trenutak kada se vremenska polja žigosuju i odabire jezik za nazive dana i mjeseci."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Odabire jezik prikaza na upravljačkoj ploči pisača s popisa koji ovisi o modelu."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Odabire spremljenu tablicu kodiranja koja se koristi za preslikavanje podataka polja prije ispisa."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Odabire tumačenje naredbi izvornog ZPL-a ili ZPL II radi kompatibilnosti sa starijim formatima."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Dodjeljuje pisaču mrežni naziv i slobodan opis, koji se oba prikazuju na konfiguracijskoj naljepnici i njegovoj ugrađenoj web stranici."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Postavlja četveroznamenkastu lozinku za izborne izbornike postavki na upravljačkoj ploči."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Sprema, vraća ili resetira konfiguracijske postavke pisača."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Mijenja prefiksni znak naredbi formata, uobičajeno kvačicu, globalno ili samo za trenutni format."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Mijenja znak razdjelnika parametara, uobičajeno zarez, globalno ili samo za trenutni format."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Mijenja prefiksni znak trenutačnih naredbi, uobičajeno tildu, globalno ili samo za trenutni format."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Preraspoređuje slovne oznake memorija pisača tako da spremljeni objekti mogu zadržati postojeće nazive."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Otkazuje formate u redu čekanja i trenutnu seriju. Naljepnica koja se već ispisuje može se dovršiti."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Briše i ponovno inicijalizira jedan flash memorijski uređaj. Gubitak napajanja tijekom te operacije može oštetiti pohranu."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Ponovno inicijalizira memorijsku karticu s baterijskim napajanjem nakon ugradnje ili zamjene baterije."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Pokreće kalibraciju medija radi mjerenja duljine naljepnice i podešavanja senzora medija i vrpce."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Ispisuje dolazne bajtove i njihove heksadecimalne vrijednosti umjesto da ih izvršava, radi dijagnostike komunikacije s računalom."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Napušta dijagnostički način komunikacije i vraća pisač u normalan ispis naljepnica."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Postavlja hoće li nizak napon baterije pauzirati prijenosni pisač ili dopustiti nastavak ispisa."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Pokreće kalibraciju medija i ispisuje grafikon profila senzora za prijelaz razmaka između naljepnica."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Pokreće Zebra BASIC Interpreter na pisaču, uz mogućnost pokretanja spremljenog programa."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Konfigurira pomoćni priključak za signale aplikatora ili verifikatora te obradu grešaka."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Odabire senzor medija koji se koristi za praćenje, obično refleksivni ili transmisivni."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Mjeri i sprema duljinu naljepnice, pri čemu tijekom postupka uvlači prazne naljepnice."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Postavlja normalnu ili smanjenu gustoću točaka po milimetru. Smanjena gustoća udvostručuje fizičku veličinu koordinata formata."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Postavlja da neuspjeli testovi elemenata glave za ispis zaustave ispis dok se pisač ne resetira ili ne vrati tolerantni način rada."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Dopušta nastavak ispisa nakon neuspjelog testa elementa glave za ispis."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Otkazuje sljedeći format u redu čekanja i pauzira pisač, jedan format iz međuspremnika po naredbi."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Napušta aktivnu sesiju Zebra BASIC Interpreter i vraća priključak na obradu ZPL-a."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Ponovno pokreće firmver pisača i učitava spremljene zadane postavke komunikacije i konfiguracije."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Otkazuje format koji se trenutno prima, bez otkazivanja naljepnica koje se već ispisuju."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Resetira odabrani brojač korištenja pisača, uključujući korisničke ili RFID brojače."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Konfigurira sve parametre komunikacije serijskog priključka jednom naredbom."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Nadjačava intenzitet transmisivnog senzora ili osnovne vrijednosti koje inače postavlja kalibracija."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Pokreće ispis prije nego što cijeli format stigne, radi veće propusnosti kod složenih naljepnica."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Isključuje određeni uvjet i odredište upozorenja ZebraNet."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Postavlja vrijednost otpora glave za ispis koja se koristi za izračun energije zagrijavanja."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Postavlja pragove senzora medija, duljinu naljepnice i intenzitet LED dioda koje inače određuje kalibracija."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Uključuje upozorenje ZebraNet za određeni uvjet i odredište."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopira spremljene objekte između memorijskih uređaja pisača, uz podršku za zamjenske znakove pri kopiranju skupina."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Ispisuje konfiguracijsku naljepnicu s podacima o senzorima, mreži, firmveru i memoriji."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Ispisuje naljepnicu s popisom spremljenih objekata, ugrađenih fontova ili dostupnih crtičnih kodova."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Ispisuje na naljepnici tražene servisne podatke, primjerice stanje brojača ili povijest glave za ispis."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Konfigurira postavke KR403 kiosk podavača, uključujući duljinu rezanja, marginu rezanja, vrijeme za uvlačenje i duljinu petlje."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Kontrolira dinamičku ponovnu kalibraciju duljine naljepnice i praga senzora nakon uključivanja ili otvaranja odjeljka za medij."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Pokreće način stavljanja izvan pogona radi pripreme pisača za preprodaju ili recikliranje."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Postavlja automatski prelazak u stanje mirovanja nakon razdoblja neaktivnosti, s opcijama za naljepnice u redu čekanja."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Izbacuje ili uvlači medij koji je već ponuđen putem KR403 kiosk podavača."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Pokreće način pražnjenja baterije na prijenosnim pisačima radi kondicioniranja baterijskog paketa."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Vraća očitanja napona baterije i glave za ispis s mobilnih pisača."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Vraća dijagnostičke podatke o glavi za ispis, uključujući temperature, rezultate testova elemenata, tamnoću i brzinu."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Vraća spremljeni ZPL format iz memorije pisača na računalo."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Vraća spremljenu grafičku sliku iz memorije pisača na računalo."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Vraća trenutnu konfiguraciju pisača kao čitljiv tekst putem priključka prema računalu."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Vraća identifikacijske podatke pisača, uključujući model, firmver, rezoluciju, memoriju i instalirane opcije."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Vraća ukupnu, najveću dostupnu i trenutno slobodnu memoriju pisača u kilobajtima."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Vraća tražene podatke o statusu, identitetu, brojaču ili održavanju na računalo."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Vraća nizove stanja domaćina za sučelje, medij, stanje pauze, duljinu naljepnice i formate u međuspremniku."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Vraća tablicu poveznica fontova na računalo, s popisom osnovnih fontova i zamjenskih fontova."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Vraća konfigurirana upozorenja ZebraNet, uključujući uvjete, odredišta te oznake postavljeno ili poništeno."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Vraća podatke numeriranog polja na računalo, uz neobavezno ograničenje broja bajtova."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Vraća popis sadržaja memorijskog uređaja, uključujući preostali slobodni prostor."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Vraća spremljenu grafiku na računalo u formatu datoteke pogodnom za preuzimanje."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Vraća opisni XML pisača za postavke, popis objekata ili status."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Čita s RFID oznake ili piše na nju, uključujući format podataka, memorijsku banku i lozinku za pristup."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Čita ID trenutne RFID oznake za upotrebu u podacima naljepnice ili u odgovoru računalu."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Kontrolira kretanje medija tijekom starijih RFID operacija. Link-OS formati umjesto toga koriste ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Otkriva prisutnost više od jedne RFID oznake u polju za kodiranje i može poništiti naljepnice s nezavisnim oznakama u blizini."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Postavlja broj ponovnih pokušaja za starije RFID čitanja ili pisanja. Link-OS formati umjesto toga koriste ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Definira raspored bitova koji se koristi za kodiranje RFID EPC polja na oznaci."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Postavlja RFID opcije za sljedeće naljepnice, uključujući tip oznake, poziciju programiranja, obradu grešaka i duljinu VOID trake."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Čita podatke oznake u polje naljepnice kod starijih RFID formata."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Piše podatke oznake kod starijih RFID formata. Naredba ^RF obuhvaća čitanje, pisanje i rukovanje lozinkama."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Gradi EPC serijski broj iz ID-a oznake i upisuje ga u niže bitove EPC-a."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Vraća rezultat svakog RFID kodiranja na računalo, čime softver može razlikovati ispravne oznake od poništenih naljepnica."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Postavlja snagu RFID čitanja i pisanja kada kalibracija ne daje upotrebljive vrijednosti."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Zaključava memoriju RFID oznake, reverzibilno ili trajno, kako bi se spriječilo kasnije pisanje."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Pokreće RFID kalibraciju i vraća postavke pozicije, antene i snage na računalo."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Vraća zapisnik RFID operacija, uključujući poziciju, antenu, razinu snage i ishod."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Određuje provjerava li pisač prisutnost žičnog print servera prilikom pokretanja."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Odabire primarni mrežni uređaj, žični ili bežični."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Adresira jedan pisač na starijoj RS-485 multidrop liniji prema mrežnom ID-u."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Dodjeljuje mrežni ID koji se koristi za adresiranje pisača na starijoj RS-485 multidrop liniji."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Postavlja SNMP identitet i community nizove za pisač."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Određuje dolaze li mrežne postavke pri pokretanju iz pisača ili iz priključenog print servera."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Prebacuje sve pisače na starijoj multidrop liniji u transparentni način primanja."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Konfigurira postavke SMTP servera i domene za e-mail upozorenja print servera."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Prebacuje adresirani pisač na starijoj multidrop liniji u transparentni način primanja."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Postavlja koliko dugo autenticirana IP adresa može pristupati web stranicama pisača prije ponovne autentikacije."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Postavlja oblik i vrijednost DHCP identifikatora klijenta za print server."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Konfigurira IP adresu, masku podmreže i pristupnik za mrežno sučelje pisača."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Konfigurira IP postavke žičnog print servera, vremenska ograničenja i raw priključak za starije firmvere."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Odabire prijemnu i predajnu antenu za bežični radio modul."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Konfigurira zastarjelu WEP sigurnost i ključni materijal za starije bežične firmvere."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Konfigurira zastarjelu Cisco LEAP autentikaciju za starije bežične firmvere."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Postavlja lozinku za bežične postavke na upravljačkoj ploči pisača."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Konfigurira brzine prijenosa podataka 802.11b i predajnu snagu na starijim bežičnim print serverima."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Konfigurira naziv bežične mreže, način rada radija, duljinu preambule i ponašanje keep-alive signala."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Konfigurira bežični sigurnosni način rada, ključeve i vjerodajnice jednom naredbom."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Ispisuje naljepnicu s mrežnom konfiguracijom dok je pisač neaktivan."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Ponovno pokreće bežičnu radio karticu i print server, uslijed čega se radio ponovno pridružuje mreži."
+  }
+}

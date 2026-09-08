@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Új címkeformátumot kezd. Az utána következő parancsok határozzák meg a mezőket, a média kezelését és a nyomtató viselkedését az adott címkén."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Lezárja az aktuális címkeformátumot és nyomtatásra küldi."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Beállítja a nyomtatható szélességet pontban. Az ezen túlnyúló tartalmat a nyomtató levágja."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Beállítja a címke hosszát pontban, meghatározva a nyomtatható formátum végét."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Áthelyezi a címke kezdőpontját, megváltoztatva a későbbi mezőkoordináták viszonyítási pontját."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Vízszintes eltolást alkalmaz a mezők pozícióira a régebbi Zebra formátumokkal való kompatibilitás érdekében."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Függőleges eltolást ad a teljes formátumhoz a média felső széléhez viszonyítva."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Beállítja a koordináták mértékegységét pontra, hüvelykre vagy milliméterre, és skálázhatja a formátumokat különböző nyomtatási felbontások között."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Beállítja a média kezelési módját nyomtatás után, beleértve a letépő, leválasztó, vágó, visszatekerő és applikátor üzemmódot."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Kiválasztja a termotranszfer vagy a direkt termikus üzemmódot, attól függően, hogy a betöltött média használ-e festékszalagot."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Beállítja a nyomtatandó példányszámot, a szüneteltetés vagy vágás csoportosítását, valamint a soronkénti másolatok számát."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Megfordítja a nyomtatást a következő mezőknél az előtér és a háttér felcserélésével."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "180 fokkal elforgatja a teljes címkeformátumot."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Vízszintesen tükrözi a nyomtatható területet."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Beállítja a nyomtatási, a gyorsmozgási és a visszahúzási sebességet hüvelyk per másodpercben."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "A következő mezőt a címke kezdőpontjához viszonyítva pozicionálja, a mező bal felső sarka alapján."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "A következő mezőt az alapvonala vagy a vonalkód széle alapján pozicionálja, stabil rögzítési pontot adva elforgatott mezőknek."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Megadja az aktuális mező tartalmát, amely lehet szöveg, vonalkódadat vagy RFID-adat."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Lezárja az aktuális meződefiníciót."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Engedélyezi a hexadecimális escape-szekvenciák használatát a mezőadatban bináris bájtokhoz és fenntartott parancskarakterekhez."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Csak a következő mezőnél cseréli fel az előteret és a hátteret."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Megjegyzésmezőt ad hozzá. A nyomtató figyelmen kívül hagyja a tartalmát a következő mezőelválasztóig."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Beállítja a mezők alapértelmezett tájolását, újabb firmware-eken pedig az alapértelmezett igazítást is."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Rögzített szélességű blokkba tördeli a mezőadatot, sorszám-, sorköz-, behúzás- és igazításbeállításokkal."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Rögzített szélességű és magasságú dobozba tördeli a szöveget, a túlcsordulást levágva."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Számot rendel egy változó mezőhöz tárolt és visszahívott formátumokban."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Adatot ad meg egy változó mezőhöz. A ^FD adattól eltérően ez a nyomtatás után törlődik."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Beállítja azt a karaktert, amellyel számozott mezőértékek ágyazhatók be egy másik mező szövegébe."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Beállítja a valós idejű órajelölők jelzőit a mezőadaton belül."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Beállítja a következő vonalkódmezők alapértelmezett modulszélességét, keskeny-széles arányát és magasságát."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "PDF417 vagy MicroPDF417 szegmenseket helyez el megadott kezdőpontokon, ha egy üzenet több szimbólumra oszlik el."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Beállítja az aktuális mező karaktersorrendjét, és extra karakterközt is hozzáadhat."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "A következő mezőhöz a 0-s rezidens skálázható betűtípust választja, a kért mérettel és tájolással."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Egykarakteres néven kiválaszt egy rezidens betűtípust, opcionálisan megadható tájolással, magassággal és szélességgel."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "A következő mezőhöz egy tárolt betűtípusfájlt választ, opcionálisan megadható tájolással, magassággal és szélességgel."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Beállítja azt az alapértelmezett betűtípust, magasságot és szélességet, amelyet azok a szövegmezők használnak, amelyek maguk nem adnak meg ilyet."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Kiválasztja a mezőadat értelmezéséhez használt kódolást, beleértve a kódlapokat és az UTF-8-at."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Engedélyezi a fejlett szövegelrendezést a következő mezőknél, beleértve a kétirányú szöveget, a betűalak-illesztést és az OpenType funkciókat."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Egykarakteres betűtípusnevet rendel hozzá egy tárolt betűtípusfájlhoz."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Beállítja a renderelt skálázható glifek gyorsítótárának méretét, ami felgyorsítja a nagy betűméretek ismételt kiírását."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Meghatározza a TrueType tartalék betűtípusláncokat, amelyeket akkor használ a rendszer, ha az alap betűtípusból hiányzik egy glif."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Olyan címkét nyomtat, amely felsorolja a beállított betűtípus-hivatkozásokat és az azokhoz láncolt tartalék betűtípusokat."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Letölt egy bitmap betűtípust és annak metrikáit a nyomtató memóriájába."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Letölt egy kódolt skálázható Intellifont betűtípust a nyomtató memóriájába."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Letölt egy kódolt, legfeljebb 256 karaktert tartalmazó TrueType betűtípust a nyomtató memóriájába."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Letölt egy kódolt, 256-nál több glifet tartalmazó TrueType betűtípust a nyomtató memóriájába."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Letölt egy kódolási táblát, amely a mezőadat bájtjait Unicode-értékekre képezi le a TrueType betűtípusokhoz."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Code 128 vonalkódot rajzol változó hosszúságú ASCII adathoz, automatikus alkészletváltási és UCC/EAN adatmódokkal."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Code 39 vonalkódot rajzol, opcionális Mod 43 ellenőrző számjeggyel."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Code 93 vonalkódot rajzol, amely shift karaktereken keresztül a teljes ASCII adatkészletet képes ábrázolni."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Code 11 vonalkódot rajzol számjegyekhez és kötőjelekhez, opcionális ellenőrző számjegyekkel."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Interleaved 2 of 5 vonalkódot rajzol páros hosszúságú numerikus adathoz, opcionális ellenőrző számjeggyel."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Industrial 2 of 5 vonalkódot rajzol, amely numerikus kód, és az adatot kizárólag a vonalak kódolják."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Standard 2 of 5 vonalkódot rajzol, amely önellenőrző numerikus kód, és az adatot kizárólag a vonalak kódolják."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "ANSI Codabar vonalkódot rajzol, amelyet USD-4 néven is ismernek, könyvtári, egészségügyi és futárszolgálati címkékhez."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "LOGMARS vonalkódot rajzol, amely a Code 39 amerikai védelmi minisztériumi változata, és a kisbetűs adatot nagybetűssé alakítja."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "MSI vonalkódot rajzol, amely a Plessey kódból származó numerikus kód, választható ellenőrzőszám-sémákkal."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Plessey vonalkódot rajzol, amely egy régebbi numerikus kód, opcionális ellenőrző számjegyekkel."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "EAN-13 vonalkódot rajzol kiskereskedelmi cikkszámokhoz, és az ellenőrző számjegyet tizenkét adatszámjegyből számítja ki."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "EAN-8 vonalkódot rajzol kis kiskereskedelmi csomagolásokhoz, és az ellenőrző számjegyet hét adatszámjegyből számítja ki."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "UPC-A vonalkódot rajzol kiskereskedelmi csomagoláshoz tizenegy adatszámjegyből, opcionális ellenőrző számjegy nyomtatásával."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "UPC-E vonalkódot rajzol, amely az UPC-A rövidített formája. A mezőadat a teljes, tízjegyű gyártói és termékkódot tartalmazza."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "GS1 DataBar szimbólumot rajzol, választható altípussal, nagyítással, magassággal és szegmensszélességgel."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Planet Code postai vonalkódot rajzol, amely a számjegyeket magas és rövid vonalakként kódolja."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "A megadott postai kódtípustól függően POSTNET, Planet Code vagy USPS Intelligent Mail szimbólumot rajzol."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Kétjegyű vagy ötjegyű UPC/EAN kiegészítő szimbólumot rajzol egy fő vonalkód mellé."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Code 49 többsoros vonalkódot rajzol, két és nyolc sor közötti, teljes ASCII adattal."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "QR Code szimbólumot rajzol. A parancsparaméterek határozzák meg a modellt, a nagyítást és a maszkot, a mezőadat pedig a hibajavítást és a karaktermódot."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Data Matrix szimbólumot rajzol, beállítható elemmérettel, minőségi szinttel és escape-kezeléssel."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "PDF417 többsoros kétdimenziós szimbólumot rajzol nagy méretű szöveges vagy bináris adathoz."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "MicroPDF417 szimbólumot rajzol, amely a PDF417 kompakt változata, sorcím-mintázatokkal."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Aztec mátrixszimbólumot rajzol, beállítható nagyítással és hibajavítással."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "CODABLOCK szimbólumot rajzol A, E vagy F módban, nagyobb adatmennyiséghez."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "UPS MaxiCode szimbólumot rajzol, strukturált szállítói üzenetekhez vagy általános adathoz választható móddal."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "TLC39 telekommunikációs címkeszimbólumot rajzol, amely a Code 39 kódot egy MicroPDF417 komponenssel kombinálja."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Bekapcsolt állapotban ellenőrzi a vonalkódadatot és a paramétereket, és hibás szimbólum helyett az INVALID szöveget nyomtatja."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Kitöltött vagy körvonalas téglalapot rajzol. Ha az egyik oldal megegyezik a keretvastagsággal, vonal keletkezik."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Átlós vonalat rajzol egy megadott szélesség és magasság mentén, jobbra vagy balra dőlve."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Ellipszist rajzol szélesség és magasság alapján pontban, befelé eső keretvastagsággal és fekete vagy fehér kimenettel."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Kört rajzol a megadott átmérővel pontban, befelé eső keretvastagsággal és fekete vagy fehér kimenettel."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Monokróm bitmapet helyez el az aktuális mezőpozícióban ASCII hex, bináris vagy tömörített adat formájában."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "A mezőadat által kiválasztott rezidens szimbólumot nyomtat, például a copyright vagy a bejegyzett védjegy jelét."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "A formátum elején betölt egy tárolt képet, és a címke kezdőpontjához rögzíti."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Egy tárolt képet helyez el az aktuális mezőpozícióban skálázás nélkül."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Töröl tárolt grafikákat, betűtípusokat vagy formátumokat a nyomtató memóriájából, helyettesítő karakterekkel csoportos törléshez."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Az aktuális formátumot grafikus képként menti el, gyors visszahíváshoz és változóadat-rétegek használatához."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Letölt egy ASCII-hex grafikát a nyomtató memóriájába, újrafelhasználható néven."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Leállít egy félbeszakadt grafikafeltöltést, és visszaállítja a nyomtatót normál működésre."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Letölt egy grafikát, betűtípust vagy tanúsítványt a nyomtató memóriájába, újrafelhasználható néven."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Törli az összes letöltött grafikát a nyomtató memóriájából. Egyedi objektumok törléséhez a ^ID parancsot kell használni."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Sorosítja a szöveges vagy vonalkód mezőadatot a címkék között, kezdőérték, irány és növekmény alapján."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "A mezőadat kijelölt pozícióit sorosítja egy maszk és karakterkészletek segítségével."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Az utána következő parancsokat újrafelhasználható formátumként tárolja, ahelyett hogy azonnal nyomtatná őket."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Visszahív egy tárolt formátumot, és értékeket ad meg a benne lévő számozott helykitöltő mezőkhöz."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Visszahív egy tárolt grafikát az aktuális pozícióban, egymástól független vízszintes és függőleges skálázással."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Kiválasztja, hogyan érzékeli a nyomtató a címkehatárokat: rés, jel vagy folytonos média alapján."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Beállítja a maximális címkehosszt, amelyet a nyomtató a nem folytonos média kalibrálásakor keres."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Beállítja a bekapcsoláskor és a nyomtatófej bezárásakor végrehajtott műveletet, például a kalibrálást, az adagolást vagy a hosszmérést."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Elnyomja a visszahúzást az aktuális címkénél, ha a letépési pozícióba mozgatás szükségtelen."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Beállítja a nyomtatott karbantartási figyelmeztetéseket a nyomtatófej tisztításához vagy cseréjéhez."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Vezérli, hogy a nyomtatás után törlődik-e a címke bitmapje, vagy megmarad a későbbi címkék általi újrafelhasználáshoz."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Beállítja a nyomtatófej tisztítására vagy cseréjére figyelmeztető karbantartási címkéken megjelenő szöveget."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Zárol egy kezelőpanel-beállítást, például a sötétséget vagy a kalibrálást, amíg fel nem oldják."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Be- vagy kikapcsolja a hideg nyomtatófejre figyelmeztető jelzést."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "A nyomtató jelenleg beállított sötétségéhez viszonyítva módosítja a nyomtatási sötétséget."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Azonnal beállítja az abszolút nyomtatási sötétséget, megegyezően a kezelőpanel sötétségbeállításával."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Vezérli, hogy egy média-, szalag- vagy nyomtatófejhiba miatt megszakadt címke a hiba elhárítása után újranyomtatásra kerül-e."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Időszakos nyomtatófej-elem teszteket ütemez a kinyomtatott címkék száma és opcionálisan megadott elemtartomány alapján."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Nyomtatás után kis pontnyi eltolással módosítja a nyugalmi letépési vagy vágási pozíciót."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Beállítja a média, a szalag és a nyomtatófej karbantartásához tartozó korai figyelmeztetési küszöbértékeket."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Vezérli a visszahúzás időzítését a nyomtatás és a vágás körül, vagy teljesen kikapcsolja azt."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Megadott számú üres pontsort adagol gyorsmozgási sebességgel."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Egy üres címkét adagol az aktuális formátum kinyomtatása után."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Egy üres címkét adagol, amint a nyomtató szabaddá válik, akár az aktuális formátum után, akár szüneteltetés közben."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Az aktuális formátum kinyomtatása után szünetelteti a nyomtatást. A már pufferelt címkék előbb még kinyomtatásra kerülhetnek."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Az aktuális címke befejezése után szünetelteti a nyomtatást. A nyomtatás a szünet feloldásakor folytatódik."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Újranyomtatja az előző címkét, ha az applikátor újranyomtatási módja engedélyezve van."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Feloldja a szünet módot és folytatja a nyomtatást."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Azonnal működteti a vágót KR403 nyomtatókon kioszk nyomtatási módban."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Extra kiadási hosszt ad a KR403 kioszk átadóhoz, így a kinyomtatott média könnyebben kivehető."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Lefuttat egy KR403 átadóciklust, amely kézi kivételre kínálja fel a kinyomtatott médiát."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Beállítja a szalagadagoló feszességét a PAX sorozatú nyomtatókon."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Beállítja a nyomtató valós idejű órájának dátumát és idejét."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Kiválasztja a konfigurációs címkén és a kezelőpanelen megjelenő dátum- és időformátumot."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Meghatározza a valós idejű órától mért másodlagos óraeltolásokat. Ezek az eltolások a nyomtató kikapcsolásakor elvesznek."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Beállítja, hogy az időmezők mikor kapnak időbélyeget, és kiválasztja a nap- és hónapnevek nyelvét."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Kiválasztja a nyomtató kezelőpaneljének kijelzési nyelvét egy modellenként eltérő listából."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Kiválaszt egy tárolt kódolási táblát, amely a mezőadatot nyomtatás előtt képezi le."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Kiválasztja az eredeti ZPL vagy a ZPL II parancsértelmezést a régebbi formátumokkal való kompatibilitás érdekében."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Hálózati nevet és szabad szöveges leírást rendel a nyomtatóhoz, mindkettő megjelenik a konfigurációs címkén és a beépített weboldalán."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Beállítja a négyjegyű jelszót a kezelőpanel beállítási menüihez."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Menti, visszaállítja vagy alaphelyzetbe állítja a nyomtató konfigurációs beállításait."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Megváltoztatja a formátumparancsok előtagkarakterét, amely alapesetben a kalapjel, globálisan vagy csak az aktuális formátumra."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Megváltoztatja a paraméterek elválasztókarakterét, amely alapesetben a vessző, globálisan vagy csak az aktuális formátumra."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Megváltoztatja az azonnali parancsok előtagkarakterét, amely alapesetben a hullámjel, globálisan vagy csak az aktuális formátumra."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Átrendeli a nyomtató memóriabetűjeleit, hogy a tárolt objektumok megtarthassák meglévő nevüket."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Törli a sorban álló formátumokat és az aktuális köteget. A már nyomtatás alatt álló címke még befejeződhet."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Törli és újrainicializálja egy flash memóriaeszközt. Ha a művelet közben megszakad a tápellátás, a tárhely megsérülhet."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Újrainicializálja az akkumulátorral táplált memóriakártyát a beszerelés vagy az akkumulátorcsere után."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Lefuttatja a média kalibrálását a címkehossz méréséhez és a média- és szalagérzékelők beállításához."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Végrehajtás helyett kinyomtatja a beérkező bájtokat és azok hexadecimális értékét, a gazdagéppel folytatott kommunikáció diagnosztizálásához."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Kilép a kommunikációs diagnosztikai módból, és visszaállítja a nyomtatót normál címkenyomtatásra."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Beállítja, hogy az alacsony akkumulátorfeszültség szünetelteti-e a hordozható nyomtatót, vagy engedi a nyomtatás folytatását."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Lefuttatja a média kalibrálását, és kinyomtat egy érzékelőprofil-grafikont a médiarés-átmenethez."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Elindítja a Zebra BASIC Interpretert a nyomtatón, opcionálisan egy tárolt program futtatásával."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Beállítja a kiegészítő portot az applikátor vagy az ellenőrző eszköz jeleihez és a hibakezeléshez."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Kiválasztja a média követésére használt érzékelőt, jellemzően reflexiós vagy áteresztéses típust."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Megméri és eltárolja a címkehosszt, a folyamat közben üres címkéket adagolva."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Beállítja a normál vagy csökkentett pont per milliméter értéket. A csökkentett sűrűség megduplázza a formátumkoordináták fizikai méretét."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "A sikertelen nyomtatófej-elem teszt leállítja a nyomtatást, amíg a nyomtatót újra nem indítják, vagy vissza nem állítják a tűrő módot."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Engedélyezi a nyomtatás folytatását egy sikertelen nyomtatófej-elem teszt után."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Törli a sorban következő formátumot és szünetelteti a nyomtatót, parancsonként egy pufferelt formátumot."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Kilép egy aktív Zebra BASIC Interpreter munkamenetből, és visszaállítja a portot ZPL-feldolgozásra."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Újraindítja a nyomtató firmware-ét, és újratölti a mentett kommunikációs és konfigurációs alapértékeket."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Törli az éppen fogadás alatt álló formátumot, anélkül hogy megszakítaná a már nyomtatás alatt álló címkéket."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Alaphelyzetbe állítja a nyomtató kiválasztott használati számlálóját, beleértve a felhasználói vagy RFID-számlálókat."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Egyetlen paranccsal beállítja a soros port összes kommunikációs paraméterét."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Felülírja az áteresztéses érzékelő intenzitás- vagy alapszintértékeit, amelyeket normál esetben a kalibrálás állít be."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Megkezdi a nyomtatást, mielőtt a teljes formátum megérkezne, ezzel növelve az áteresztést összetett címkéknél."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Letilt egy adott ZebraNet figyelmeztetési feltételt és célt."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Beállítja a nyomtatófej ellenállásértékét, amelyet az égetési energia számításához használ a rendszer."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Beállítja a médiaérzékelő küszöbértékeit, a címkehosszt és a LED-intenzitásokat, amelyeket normál esetben a kalibrálás határoz meg."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Engedélyez egy ZebraNet figyelmeztetést egy adott feltételhez és célhoz."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Tárolt objektumokat másol a nyomtató memóriaeszközei között, helyettesítő karakterekkel csoportos másoláshoz."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Konfigurációs címkét nyomtat, amely érzékelő-, hálózati, firmware- és memóriainformációkat tartalmaz."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Könyvtárcímkét nyomtat a tárolt objektumokról, a rezidens betűtípusokról vagy az elérhető vonalkódokról."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Kért szervizinformációt nyomtat egy címkére, például az üzemóra-számlálót vagy a nyomtatófej előzményeit."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Beállítja a KR403 kioszk átadó paramétereit, beleértve a vágási hosszt, a vágási margót, a visszahúzási időtúllépést és a huroknagyságot."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Vezérli a címkehossz és az érzékelő küszöbértékének dinamikus újrakalibrálását bekapcsolás vagy a médiarekesz kinyitása után."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Elindítja az üzemből kivonási módot, hogy a nyomtatót felkészítse továbbértékesítésre vagy újrahasznosításra."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Beállítja az automatikus alvó üzemmódba kapcsolást egy tétlenségi időszak után, a sorban álló címkékre vonatkozó opciókkal."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Kiadja vagy visszahúzza a KR403 kioszk átadó által már felkínált médiát."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Lefuttatja az akkumulátor-kisütési módot hordozható nyomtatókon az akkumulátorcsomag kondicionálásához."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Visszaadja az akkumulátor és a nyomtatófej teljesítményértékeit mobil nyomtatóktól."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Visszaadja a nyomtatófej diagnosztikai adatait, beleértve a hőmérsékleteket, az elemteszt-eredményeket, a sötétséget és a sebességet."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Visszaküld egy tárolt ZPL-formátumot a nyomtató memóriájából a gazdagépnek."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Visszaküld egy tárolt grafikus képet a nyomtató memóriájából a gazdagépnek."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Visszaadja a nyomtató aktuális konfigurációját olvasható szövegként a gazdagép portján keresztül."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Visszaadja a nyomtató azonosító adatait, beleértve a modellt, a firmware-t, a felbontást, a memóriát és a telepített opciókat."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Visszaadja a nyomtató teljes, maximálisan elérhető és jelenleg szabad memóriáját kilobájtban."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Visszaküldi a kért állapot-, azonosító-, üzemóra- vagy karbantartási adatot a gazdagépnek."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Visszaadja a gazdagép-állapot karakterláncokat az interfészről, a médiáról, a szünet állapotáról, a címkehosszról és a pufferelt formátumokról."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Visszaküldi a betűtípus-hivatkozási táblát a gazdagépnek, felsorolva az alap betűtípusokat és a tartalék betűtípusokat."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Visszaadja a beállított ZebraNet figyelmeztetéseket, beleértve a feltételeket, a célokat, valamint a beállított vagy törölt jelzőket."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Visszaküldi egy számozott mező adatát a gazdagépnek, opcionális bájtkorláttal."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Visszaadja egy memóriaeszköz könyvtárlistáját, beleértve a fennmaradó szabad helyet."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Visszaküld egy tárolt grafikát a gazdagépnek letölthető fájlformátumban."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Visszaadja a nyomtatóleíró XML-t a beállításokról, az objektumkönyvtárról vagy az állapotról."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Olvas vagy ír egy RFID-címkét, beleértve az adatformátumot, a memóriabankot és a hozzáférési jelszót."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Beolvassa az aktuális RFID-címke azonosítóját, hogy felhasználható legyen a címkeadatban vagy a gazdagépnek küldött válaszban."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Vezérli a médiamozgást a régi típusú RFID-műveletek során. A Link-OS formátumok helyette a ^RS parancsot használják."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Egynél több RFID-címkét érzékel a kódolási mezőben, és érvénytelenítheti a címkéket, ha a közelben idegen címkék vannak."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Beállítja az újrapróbálkozások számát a régi típusú RFID olvasási vagy írási műveleteknél. A Link-OS formátumok helyette a ^RS parancsot használják."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Meghatározza az RFID EPC-mezők kódolásához használt bitkiosztást a címkén."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Beállítja a következő címkékre vonatkozó RFID-opciókat, beleértve a címketípust, a programozási pozíciót, a hibakezelést és a VOID sáv hosszát."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Beolvassa a címkeadatot egy címkemezőbe a régi típusú RFID-formátumokban."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Ír a címkeadatba a régi típusú RFID-formátumokban. Az olvasást, az írást és a jelszókezelést a ^RF parancs fedi le."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "EPC-sorozatszámot épít fel a címke azonosítójából, és az EPC alsó bitjeibe írja azt."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Visszaküldi minden RFID-kódolás eredményét a gazdagépnek, így a szoftver meg tudja különböztetni a jó címkéket az érvénytelenített címkéktől."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Beállítja az RFID olvasási és írási teljesítményt, ha a kalibrálás nem ad használható értékeket."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Zárolja az RFID-címke memóriáját, visszafordíthatóan vagy véglegesen, hogy megakadályozza a későbbi írásokat."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Lefuttatja az RFID-kalibrálást, és visszaküldi a pozíció-, antenna- és teljesítménybeállításokat a gazdagépnek."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Visszaadja az RFID-műveletek naplóját, beleértve a pozíciót, az antennát, a teljesítményszintet és az eredményt."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Kiválasztja, hogy a nyomtató indításkor keres-e vezetékes nyomtatókiszolgálót."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Kiválasztja az elsődleges hálózati eszközt, vezetékeset vagy vezeték nélkülit."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Hálózati azonosító alapján megszólít egy nyomtatót egy régi típusú RS-485 többpontos vonalon."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Hozzárendeli azt a hálózati azonosítót, amellyel a nyomtató megszólítható egy régi típusú RS-485 többpontos vonalon."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Beállítja a nyomtató SNMP-azonosítóját és közösségi karakterláncait."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Kiválasztja, hogy az indításkori hálózati beállítások a nyomtatótól vagy a csatlakoztatott nyomtatókiszolgálótól származnak-e."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Átkapcsolja egy régi típusú többpontos vonal összes nyomtatóját átlátszó fogadási módba."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Beállítja az SMTP-kiszolgáló és a tartomány paramétereit a nyomtatókiszolgáló e-mail figyelmeztetéseihez."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Átkapcsolja a megszólított, régi típusú többpontos vonalon lévő nyomtatót átlátszó fogadási módba."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Beállítja, meddig férhet hozzá egy hitelesített IP-cím a nyomtató weboldalaihoz újbóli hitelesítés nélkül."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Beállítja a nyomtatókiszolgáló DHCP-ügyfélazonosítójának formáját és értékét."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Beállítja az IP-címet, az alhálózati maszkot és az átjárót a nyomtató hálózati interfészéhez."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Beállítja a vezetékes nyomtatókiszolgáló IP-paramétereit, időtúllépéseit és raw portját régebbi firmware-eknél."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Kiválasztja a vezeték nélküli rádió fogadó- és adóantennáit."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Beállítja az elavult WEP biztonsági beállításokat és kulcsanyagot régebbi vezeték nélküli firmware-eknél."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Beállítja az elavult Cisco LEAP hitelesítést régebbi vezeték nélküli firmware-eknél."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Beállítja a vezeték nélküli beállítások jelszavát a nyomtató kezelőpanelén."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Beállítja a 802.11b adatátviteli sebességeket és az adóteljesítményt régebbi vezeték nélküli nyomtatókiszolgálókon."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Beállítja a vezeték nélküli hálózat nevét, a rádiómódot, a preambulum hosszát és a kapcsolatfenntartás viselkedését."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Egyetlen paranccsal beállítja a vezeték nélküli biztonsági módot, a kulcsokat és a hitelesítő adatokat."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Hálózati konfigurációs címkét nyomtat, amíg a nyomtató tétlen állapotban van."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Újraindítja a vezeték nélküli rádiókártyát és a nyomtatókiszolgálót, amitől a rádió újra csatlakozik a hálózathoz."
+  }
+}

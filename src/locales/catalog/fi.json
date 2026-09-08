@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Aloittaa uuden etikettimuodon. Sen jälkeiset komennot määrittävät kentät, materiaalinkäsittelyn ja tulostimen toiminnan kyseiselle etiketille."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Sulkee nykyisen etikettimuodon ja lähettää sen tulostettavaksi."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Asettaa tulostettavan leveyden pisteinä. Tulostin rajaa tämän leveyden ylittävän sisällön."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Asettaa etiketin pituuden pisteinä ja määrittää, mihin tulostettava muoto päättyy."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Siirtää etiketin kotipaikan, mikä muuttaa myöhempien kenttäkoordinaattien lähtökohtaa."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Kohdistaa kenttien sijainteihin vaakasuoran siirtymän yhteensopivuuden vuoksi vanhempien Zebra-muotojen kanssa."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Lisää koko muotoon pystysuoran siirtymän materiaalin yläreunaan nähden."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Asettaa koordinaattiyksiköt pisteiksi, tuumiksi tai millimetreiksi ja voi skaalata muotoja eri tulostustarkkuuksien välillä."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Asettaa materiaalin käsittelytilan tulostuksen jälkeen, mukaan lukien irrotus-, kuorinta-, leikkuri-, kelaus- ja applikaattoritilat."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Valitsee lämpösiirto- tai suorat lämpötulostustilan sen mukaan, käyttääkö ladattu materiaali värinauhaa."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Asettaa tulostusmäärän, tauko- tai leikkuuryhmittelyn sekä kopiot sarjanumeroarvoa kohti."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Kääntää seuraavien kenttien tulostuksen vaihtamalla etu- ja taustavärin keskenään."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Kääntää koko etikettimuodon 180 astetta."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Peilaa tulostettavan alueen vaakasuunnassa."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Asettaa tulostusnopeuden, syöttönopeuden ja takaisinsyöttönopeuden tuumina sekunnissa."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Sijoittaa seuraavan kentän etiketin nollakohdasta käyttäen kentän vasenta yläkulmaa."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Sijoittaa seuraavan kentän sen perusviivan tai viivakoodin reunan mukaan, mikä antaa käännetyille kentille vakaan ankkuripisteen."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Antaa nykyisen kentän sisällön, joka voi olla tekstiä, viivakooditietoa tai RFID-tietoa."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Päättää nykyisen kentän määrittelyn."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Ottaa käyttöön heksadesimaaliset ohjaussarjat kenttätiedon sisällä binääritavuja ja varattuja komentomerkkejä varten."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Kääntää etu- ja taustavärin vain seuraavaa kenttää varten."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Lisää kommenttikentän. Tulostin ohittaa sen sisällön seuraavaan kenttäerottimeen asti."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Asettaa oletuskentän suunnan ja uudemmassa laiteohjelmistossa myös oletustasauksen."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Rivittää kenttätiedon kiinteän leveyden lohkoon, jossa on rivimäärän, riviväliuksen, sisennyksen ja tasauksen hallinta."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Rivittää tekstin kiinteän leveyden ja korkeuden laatikkoon ja katkaisee ylivuotavan osan."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Antaa numeron muuttuvalle kentälle tallennetuissa ja palautetuissa muodoissa."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Antaa tiedot muuttuvalle kentälle. Toisin kuin ^FD-tieto, se tyhjennetään etiketin tulostuksen jälkeen."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Asettaa merkin, jota käytetään numeroitujen kenttäarvojen upottamiseen toisen kentän merkkijonon sisään."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Asettaa kenttätiedon sisällä käytettävät merkit reaaliaikakellon tunnuksille."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Asettaa seuraaville viivakoodikentille oletusmoduulin leveyden, leveän ja kapean suhteen sekä korkeuden."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Sijoittaa PDF417- tai MicroPDF417-segmentit tiettyihin lähtöpisteisiin, kun yksi viesti jakautuu useaan symboliin."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Asettaa merkkijärjestyksen nykyiselle kentälle ja voi lisätä merkkien väliin ylimääräistä tilaa."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Valitsee sisäänrakennetun skaalautuvan fontin 0 seuraavalle kentälle halutulla koolla ja suunnalla."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Valitsee sisäänrakennetun fontin yksimerkkisellä nimellä, valinnaisella suunnalla, korkeudella ja leveydellä."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Valitsee tallennetun fonttitiedoston seuraavalle kentälle, valinnaisella suunnalla, korkeudella ja leveydellä."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Asettaa varafontin, korkeuden ja leveyden, joita käyttävät tekstikentät, jotka eivät määritä omaa fonttiaan."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Valitsee koodauksen, jota käytetään kenttätiedon tulkitsemiseen, mukaan lukien koodisivut ja UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Ottaa käyttöön edistyneen tekstiasettelun seuraaville kentille, mukaan lukien kaksisuuntaisen tekstin, muotoilun ja OpenType-ominaisuudet."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Yhdistää yksimerkkisen fonttinimen tallennettuun fonttitiedostoon."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Asettaa renderöityjen skaalautuvien merkkien välimuistin koon nopeuttamaan toistuvaa suurten fonttien tulostusta."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Määrittää TrueType-varaketjut, joita käytetään, kun perusfontista puuttuu merkki."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Tulostaa etiketin, jossa luetellaan määritetyt fonttilinkit ja niiden ketjutetut varafontit."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Lataa bittikarttafontin ja sen mitat tulostimen muistiin."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Lataa koodatun skaalautuvan Intellifont-fontin tulostimen muistiin."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Lataa koodatun TrueType-fontin, jossa on enintään 256 merkkiä, tulostimen muistiin."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Lataa koodatun TrueType-fontin, jossa on yli 256 merkkiä, tulostimen muistiin."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Lataa koodaustaulukon, joka yhdistää kenttätiedon tavut Unicode-arvoihin TrueType-fontteja varten."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Piirtää Code 128 -viivakoodin vaihtuvamittaiselle ASCII-tiedolle, ja tukee automaattista osajoukon vaihtoa sekä UCC/EAN-tietoa."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Piirtää Code 39 -viivakoodin valinnaisella Mod 43 -tarkistusnumerolla."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Piirtää Code 93 -viivakoodin, joka esittää täyttä ASCII-tietoa vaihtomerkkien avulla."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Piirtää Code 11 -viivakoodin numeroille ja yhdysmerkeille, valinnaisilla tarkistusnumeroilla."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Piirtää Interleaved 2 of 5 -viivakoodin parillisen pituiselle numeeriselle tiedolle, valinnaisella tarkistusnumerolla."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Piirtää Industrial 2 of 5 -viivakoodin, numeerisen koodin, jonka tieto on koodattu pelkkinä palkkeina."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Piirtää Standard 2 of 5 -viivakoodin, itsetarkistavan numeerisen koodin, jonka tieto on koodattu pelkkinä palkkeina."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Piirtää ANSI Codabar -viivakoodin, joka tunnetaan myös nimellä USD-4, kirjasto-, terveydenhuolto- ja kuriirietikettejä varten."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Piirtää LOGMARS-viivakoodin, Code 39:n puolustusministeriön muunnelman, ja muuntaa pienet kirjaimet suuriksi."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Piirtää MSI-viivakoodin, Plesseystä johdetun numeerisen koodin, jossa on valittavissa olevia tarkistusnumerokaavoja."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Piirtää Plessey-viivakoodin, vanhemman numeerisen koodin valinnaisilla tarkistusnumeroilla."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Piirtää EAN-13-viivakoodin vähittäismyyntituotteiden numeroille ja johtaa tarkistusnumeron kahdestatoista tietonumerosta."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Piirtää EAN-8-viivakoodin pienille vähittäismyyntipakkauksille ja johtaa tarkistusnumeron seitsemästä tietonumerosta."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Piirtää UPC-A-viivakoodin vähittäismyyntipakkauksille yhdestätoista tietonumerosta, valinnaisella tarkistusnumeron tulostuksella."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Piirtää UPC-E-viivakoodin, UPC-A:n lyhennetyn muodon. Kenttätieto on täysi kymmenmerkkinen valmistajan ja tuotteen koodi."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Piirtää GS1 DataBar -symbolin valittavalla alatyypillä, suurennuksella, korkeudella ja segmenttileveydellä."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Piirtää Planet Code -postiviivakoodin numeroista, jotka on koodattu pitkinä ja lyhyinä palkkeina."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Piirtää valitun postikoodityypin mukaan POSTNET-, Planet Code- tai USPS Intelligent Mail -symbolin."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Piirtää kaksi- tai viisinumeroisen UPC/EAN-lisäsymbolin pääviivakoodin viereen."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Piirtää pinotun Code 49 -viivakoodin, jossa on kahdesta kahdeksaan riviä täyttä ASCII-tietoa."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Piirtää QR Code -symbolin. Komennon parametrit asettavat mallin, suurennuksen ja maskin. Kenttätieto asettaa virheenkorjauksen ja merkkitilan."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Piirtää Data Matrix -symbolin säädettävällä elementtikoolla, laatutasolla ja ohjaussarjojen käsittelyllä."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Piirtää pinotun kaksiulotteisen PDF417-symbolin suurille teksti- tai binäärikuormille."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Piirtää MicroPDF417-symbolin, kompaktin PDF417-muunnelman, jossa on rivinosoituskuvioita."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Piirtää Aztec-matriisisymbolin säädettävällä suurennuksella ja virheenkorjauksella."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Piirtää CODABLOCK-symbolin tilassa A, E tai F suuremmille tietokuormille."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Piirtää UPS MaxiCode -symbolin, jossa on tila jäsennellyille kuljetusviesteille tai yleiselle tiedolle."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Piirtää TLC39-teleetikettisymbolin, joka yhdistää Code 39:n MicroPDF417-komponenttiin."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Kun käytössä, tarkistaa viivakooditiedon ja parametrit ja tulostaa INVALID viallisen symbolin sijaan."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Piirtää täytetyn tai ääriviivoilla varustetun suorakulmion. Sivun asettaminen reunan paksuutta vastaavaksi tuottaa viivan."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Piirtää vinoviivan annetun leveyden ja korkeuden yli, kallistuen oikealle tai vasemmalle."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Piirtää ellipsin annetusta leveydestä ja korkeudesta pisteinä, sisäänpäin suuntautuvalla reunan paksuudella sekä mustalla tai valkoisella tulosteella."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Piirtää annetun halkaisijan mukaisen ympyrän pisteinä, sisäänpäin suuntautuvalla reunan paksuudella sekä mustalla tai valkoisella tulosteella."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Sijoittaa yksivärisen bittikartan nykyiseen kenttäasentoon käyttäen ASCII-heksadesimaali-, binääri- tai pakattua tietoa."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Tulostaa kenttätiedolla valitun sisäänrakennetun symbolin, kuten tekijänoikeus- tai rekisteröidyn tavaramerkin merkin."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Lataa tallennetun kuvan muodon alkuun ja ankkuroi sen etiketin lähtöpisteeseen."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Sijoittaa tallennetun kuvan nykyiseen kenttäasentoon skaalaamatta sitä."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Poistaa tallennettuja grafiikoita, fontteja tai muotoja tulostimen muistista, ja tukee jokerimerkkejä ryhmille."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Tallentaa nykyisen muodon graafisena kuvana nopeaa palautusta ja muuttuvan tiedon peittokuvia varten."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Lataa ASCII-heksadesimaaligrafiikan tulostimen muistiin uudelleenkäytettävällä nimellä."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Pysäyttää kesken jääneen grafiikan latauksen ja palauttaa tulostimen normaaliin toimintaan."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Lataa grafiikan, fontin tai varmenteen tulostimen muistiin uudelleenkäytettävällä nimellä."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Poistaa kaikki ladatut grafiikat tulostimen muistista. Valittujen kohteiden poistamiseen käytetään komentoa ^ID."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Sarjoittaa teksti- tai viivakoodikenttätiedon etikettien yli käyttäen aloitusarvoa, suuntaa ja lisäystä."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Sarjoittaa valitut kohdat kenttätiedossa maskin ja merkistöjen avulla."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Tallentaa seuraavat komennot uudelleenkäytettäväksi muodoksi sen sijaan, että ne tulostettaisiin heti."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Palauttaa tallennetun muodon ja antaa arvot sen numeroiduille paikkamerkkikentille."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Palauttaa tallennetun grafiikan nykyiseen asentoon riippumattomalla vaaka- ja pystysuuntaisella skaalauksella."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Valitsee, miten tulostin havaitsee etiketin rajat väli-, merkki- tai jatkuvaa materiaalia käyttäen."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Asettaa enimmäisetiketinpituuden, jota tulostin etsii kalibroidessaan epäjatkuvaa materiaalia."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Asettaa käynnistys- ja tulostuspään sulkemistoiminnon, mukaan lukien kalibroinnin, syötön tai pituuden mittauksen."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Estää takaisinsyötön nykyiselle etiketille, kun siirtymistä irrotuskohtaan ei tarvita."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Määrittää tulostetut huoltohälytykset tulostuspään puhdistusta tai vaihtoa varten."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Määrää, tyhjennetäänkö etiketin bittikartta tulostuksen jälkeen vai säilytetäänkö se myöhempien etikettien uudelleenkäyttöä varten."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Asettaa huoltohälytysetiketeissä näytettävän tekstin tulostuspään puhdistusta tai vaihtoa varten."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Lukitsee ohjauspaneelin asetuksen, kuten tummuuden tai kalibroinnin, kunnes se avataan."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Ottaa käyttöön tai poistaa käytöstä tulostuspään kylmyysvaroituksen ilmaisimen."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Säätää tulostustummuutta suhteessa tulostimen nykyiseen määritettyyn tummuuteen."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Asettaa absoluuttisen tulostustummuuden välittömästi vastaamaan etupaneelin tummuusasetusta."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Määrää, tulostetaanko materiaali-, nauha- tai tulostuspäävian keskeyttämä etiketti uudelleen palautumisen jälkeen."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Ajastaa säännölliset tulostuspään elementtitestit tulostettujen etikettien määrän ja valinnaisen elementtialueen mukaan."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Säätää lepäävää irrotus- tai leikkuukohtaa pienellä pistesiirtymällä tulostuksen jälkeen."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Määrittää varhaiset varoituskynnykset materiaalin, nauhan ja tulostuspään huoltoa varten."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Ohjaa takaisinsyötön ajoitusta tulostuksen ja leikkuun ympärillä, tai poistaa takaisinsyötön käytöstä."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Syöttää määritetyn määrän tyhjiä pisteriviä syöttönopeudella."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Syöttää yhden tyhjän etiketin nykyisen muodon tulostuksen jälkeen."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Syöttää yhden tyhjän etiketin heti kun tulostin on vapaa, joko nykyisen muodon jälkeen tai tauon aikana."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Keskeyttää nykyisen muodon tulostuksen jälkeen. Jo puskuroidut etiketit voidaan tulostaa ensin."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Keskeyttää nykyisen etiketin valmistumisen jälkeen. Tulostus jatkuu, kun tauko poistetaan."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Tulostaa edellisen etiketin uudelleen, kun applikaattorin uudelleentulostustila on käytössä."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Poistaa taukotilan ja jatkaa tulostusta."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Käynnistää leikkurin välittömästi KR403-tulostimissa kioskitulostustilassa."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Lisää ylimääräisen ulostulopituuden KR403-kioskiesittelijälle, jotta tulostettu materiaali on helpompi ottaa pois."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Käynnistää KR403-esittelijän jakson, joka tarjoaa tulostetun materiaalin manuaalista poistoa varten."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Asettaa nauhan syötön kireyden PAX-sarjan tulostimissa."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Asettaa tulostimen reaaliaikakellon päivämäärän ja ajan."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Valitsee kokoonpanoetiketissä ja ohjauspaneelissa näytettävän päivämäärän ja ajan muodon."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Määrittää toissijaiset kellopoikkeamat reaaliaikakellosta. Poikkeamat menetetään tulostimen sammuessa."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Asettaa, milloin aikakentät leimataan, ja valitsee kielen viikonpäivien ja kuukausien nimille."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Valitsee tulostimen ohjauspaneelin näyttökielen luettelosta, joka vaihtelee mallin mukaan."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Valitsee tallennetun koodaustaulukon, jota käytetään kenttätiedon yhdistämiseen ennen tulostusta."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Valitsee alkuperäisen ZPL- tai ZPL II -komentotulkinnan yhteensopivuutta varten vanhempien muotojen kanssa."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Antaa tulostimelle verkkonimen ja vapaamuotoisen kuvauksen, jotka näkyvät sekä kokoonpanoetiketissä että sen sisäänrakennetulla verkkosivulla."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Asettaa nelinumeroisen salasanan ohjauspaneelin asetusvalikoita varten."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Tallentaa, palauttaa tai nollaa tulostimen kokoonpanoasetukset."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Vaihtaa muotokomennon etuliitemerkin, joka on normaalisti sirkumfleksi, joko yleisesti tai nykyistä muotoa varten."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Vaihtaa parametrien erotinmerkin, joka on normaalisti pilkku, joko yleisesti tai nykyistä muotoa varten."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Vaihtaa välittömän komennon etuliitemerkin, joka on normaalisti tilde, joko yleisesti tai nykyistä muotoa varten."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Uudelleenmäärittää tulostimen muistikirjaimet, jotta tallennetut kohteet voivat säilyttää nykyiset nimensä."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Peruuttaa jonossa olevat muodot ja nykyisen erän. Jo tulostuva etiketti voi valmistua."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Tyhjentää ja alustaa uudelleen yhden flash-muistilaitteen. Virran katkeaminen tämän toiminnon aikana voi vioittaa tallennustilaa."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Alustaa akkuvarmennetun muistikortin uudelleen asennuksen tai akun vaihdon jälkeen."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Suorittaa materiaalikalibroinnin etiketin pituuden mittaamiseksi ja materiaali- sekä nauha-antureiden säätämiseksi."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Tulostaa saapuvat tavut ja niiden heksadesimaaliarvot suorittamisen sijaan isäntäjärjestelmän tietoliikenteen diagnostiikkaa varten."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Poistuu tietoliikenteen diagnostiikkatilasta ja palauttaa tulostimen normaaliin etikettitulostukseen."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Asettaa, keskeyttääkö matala akkujännite kannettavan tulostimen vai sallitaanko tulostuksen jatkua."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Suorittaa materiaalikalibroinnin ja tulostaa anturiprofiilikaavion materiaalivälin siirtymälle."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Käynnistää Zebra BASIC -tulkin tulostimessa, valinnaisesti käynnistäen tallennetun ohjelman."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Määrittää lisäportin applikaattorin tai tarkistimen signaaleja ja virheenkäsittelyä varten."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Valitsee seurantaan käytettävän materiaalianturin, yleensä heijastavan tai läpäisevän."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Mittaa ja tallentaa etiketin pituuden syöttäen tyhjiä etikettejä prosessin aikana."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Asettaa normaalin tai vähennetyn pisteiden määrän millimetriä kohti. Vähennetty tiheys kaksinkertaistaa muodon koordinaattien fyysisen koon."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Saa epäonnistuneet tulostuspään elementtitestit pysäyttämään tulostuksen, kunnes tulostin nollataan tai sietotila palautetaan."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Sallii tulostuksen jatkua epäonnistuneen tulostuspään elementtitestin jälkeen."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Peruuttaa seuraavan jonossa olevan muodon ja keskeyttää tulostimen, yhden puskuroidun muodon per komento."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Poistuu aktiivisesta Zebra BASIC -tulkkiistunnosta ja palauttaa portin ZPL-käsittelyyn."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Käynnistää tulostimen laiteohjelmiston uudelleen ja lataa uudelleen tallennetut tietoliikenne- ja kokoonpanooletukset."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Peruuttaa parhaillaan vastaanotettavan muodon peruuttamatta jo tulostuvia etikettejä."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Nollaa valitun tulostimen käyttölaskurin, mukaan lukien käyttäjä- tai RFID-laskurit."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Määrittää kaikki sarjaportin tietoliikenneparametrit yhdellä komennolla."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Ohittaa normaalisti kalibroinnilla asetetut läpäisevän anturin intensiteetti- tai perusarvot."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Aloittaa tulostuksen ennen kuin koko muoto on saapunut, mikä parantaa suorituskykyä monimutkaisissa etiketeissä."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Poistaa käytöstä tietyn ZebraNet-hälytysehdon ja -kohteen."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Asettaa palamisenergialaskelmissa käytettävän tulostuspään resistanssiarvon."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Asettaa materiaalianturin kynnysarvot, etiketin pituuden ja LED-intensiteetit, jotka normaalisti määritetään kalibroinnilla."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Ottaa käyttöön ZebraNet-hälytyksen tietylle ehdolle ja kohteelle."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopioi tallennettuja kohteita tulostimen muistilaitteiden välillä, ja tukee jokerimerkkejä ryhmille."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Tulostaa kokoonpanoetiketin, jossa on anturi-, verkko-, laiteohjelmisto- ja muistitietoja."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Tulostaa hakemistoetiketin tallennetuille kohteille, sisäänrakennetuille fonteille tai käytettävissä oleville viivakoodeille."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Tulostaa pyydetyt huoltotiedot, kuten mittarilukeman tai tulostuspään historian, etikettiin."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Määrittää KR403-kioskiesittelijän asetukset, mukaan lukien leikkuupituuden, leikkuumarginaalin, vetäytymisen aikakatkaisun ja silmukan pituuden."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Ohjaa etiketin pituuden ja anturikynnyksen dynaamista uudelleenkalibrointia käynnistyksen tai materiaalilokeron avaamisen jälkeen."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Käynnistää käytöstäpoistotilan, joka valmistelee tulostimen jälleenmyyntiä tai kierrätystä varten."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Asettaa automaattisen unitilan sammutuksen joutokäynnin jälkeen, ja vaihtoehtoja jonossa oleville etiketeille."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Työntää ulos tai vetää takaisin materiaalin, jonka KR403-kioskiesittelijä on jo tarjonnut."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Suorittaa akun purkutilan kannettavissa tulostimissa akun kunnostusta varten."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Palauttaa akun ja tulostuspään tehon lukemat mobiilitulostimista."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Palauttaa tulostuspään diagnostiikkatiedot, mukaan lukien lämpötilat, elementtitestitulokset, tummuuden ja nopeuden."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Palauttaa tallennetun ZPL-muodon tulostimen muistista isäntäjärjestelmälle."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Palauttaa tallennetun graafisen kuvan tulostimen muistista isäntäjärjestelmälle."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Palauttaa tulostimen nykyisen kokoonpanon luettavana tekstinä isäntäportin kautta."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Palauttaa tulostimen tunnistetiedot, mukaan lukien mallin, laiteohjelmiston, tarkkuuden, muistin ja asennetut lisäominaisuudet."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Palauttaa tulostimen kokonais-, enimmäiskäytettävissä olevan ja tällä hetkellä vapaan muistin kilotavuina."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Palauttaa pyydetyt tila-, tunniste-, mittarilukema- tai huoltotiedot isäntäjärjestelmälle."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Palauttaa isännän tilamerkkijonot liitännälle, materiaalille, taukotilalle, etiketin pituudelle ja puskuroiduille muodoille."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Palauttaa fonttilinkkitaulukon isäntäjärjestelmälle, luetellen peruskirjasimet ja niiden varafontit."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Palauttaa määritetyt ZebraNet-hälytykset, mukaan lukien ehdot, kohteet sekä asetus- tai tyhjennyslippujen tilan."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Palauttaa tiedot numeroidusta kentästä isäntäjärjestelmälle, valinnaisella tavurajalla."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Palauttaa hakemistoluettelon muistilaitteelle, mukaan lukien jäljellä olevan vapaan tilan."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Palauttaa tallennetun grafiikan isäntäjärjestelmälle ladattavassa tiedostomuodossa."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Palauttaa tulostimen kuvaus-XML:n asetuksia, objektihakemistoa tai tilaa varten."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Lukee tai kirjoittaa RFID-tunnisteen, mukaan lukien tietomuodon, muistipankin ja käyttösalasanan."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Lukee nykyisen RFID-tunnisteen tunnuksen käytettäväksi etikettitiedossa tai isäntäjärjestelmälle annettavassa vastauksessa."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Ohjaa materiaalin liikettä vanhoissa RFID-toiminnoissa. Link-OS-muodot käyttävät sen sijaan komentoa ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Havaitsee useamman kuin yhden RFID-tunnisteen koodauskentässä ja voi mitätöidä etikettejä, joiden lähellä on ylimääräisiä tunnisteita."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Asettaa uudelleenyritysten määrän vanhoille RFID-luku- tai kirjoitustoiminnoille. Link-OS-muodot käyttävät sen sijaan komentoa ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Määrittää bittiasettelun, jota käytetään RFID EPC -kenttien koodaamiseen tunnisteelle."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Asettaa RFID-asetukset seuraaville etiketeille, mukaan lukien tunnistetyypin, ohjelmointiasennon, virheenkäsittelyn ja VOID-palkin pituuden."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Lukee tunnistetiedon etikettikenttään vanhoissa RFID-muodoissa."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Kirjoittaa tunnistetiedon vanhoissa RFID-muodoissa. ^RF kattaa lukemisen, kirjoittamisen ja salasanan käsittelyn."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Muodostaa EPC-sarjanumeron tunnisteen ID:stä ja kirjoittaa sen EPC:n alempiin bitteihin."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Palauttaa jokaisen RFID-koodauksen tuloksen isäntäjärjestelmälle, jotta ohjelmisto voi erottaa kelvolliset tunnisteet mitätöidyistä etiketeistä."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Asettaa RFID-luku- ja kirjoitustehon, kun kalibrointi ei tuota käyttökelpoisia arvoja."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Lukitsee RFID-tunnisteen muistin joko palautuvasti tai pysyvästi estääkseen myöhemmät kirjoitukset."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Suorittaa RFID-kalibroinnin ja palauttaa asento-, antenni- ja tehoasetukset isäntäjärjestelmälle."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Palauttaa RFID-toimintolokin, mukaan lukien asennon, antennin, tehotason ja tuloksen."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Valitsee, tarkistaako tulostin langallisen tulostuspalvelimen käynnistyksen aikana."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Valitsee ensisijaisen verkkolaitteen, langallisen tai langattoman."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Osoittaa yhtä tulostinta vanhalla RS-485-monipisteyhteydellä verkkotunnuksen perusteella."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Määrittää verkkotunnuksen, jota käytetään tulostimen osoittamiseen vanhalla RS-485-monipisteyhteydellä."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Asettaa tulostimen SNMP-tunnuksen ja yhteisömerkkijonot."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Valitsee, tulevatko käynnistyksen verkkoasetukset tulostimelta vai liitetyltä tulostuspalvelimelta."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Siirtää kaikki vanhan monipisteyhteyden tulostimet läpinäkyvään vastaanottotilaan."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Määrittää SMTP-palvelimen ja verkkotunnusasetukset tulostuspalvelimen sähköpostihälytyksiä varten."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Siirtää osoitetun vanhan monipisteyhteystulostimen läpinäkyvään vastaanottotilaan."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Asettaa, kuinka kauan todennettu IP-osoite voi käyttää tulostimen verkkosivuja ennen uudelleentodennusta."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Asettaa DHCP-asiakastunnisteen muodon ja arvon tulostuspalvelimelle."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Määrittää IP-osoitteen, aliverkon peitteen ja yhdyskäytävän tulostimen verkkoliitäntää varten."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Määrittää langallisen tulostuspalvelimen IP-asetukset, aikakatkaisut ja raakaportin vanhempaa laiteohjelmistoa varten."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Valitsee langattoman radion vastaanotto- ja lähetysantennit."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Määrittää vanhentuneen WEP-suojauksen ja avainmateriaalin vanhemmalle langattomalle laiteohjelmistolle."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Määrittää vanhentuneen Cisco LEAP -todennuksen vanhemmalle langattomalle laiteohjelmistolle."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Asettaa salasanan tulostimen ohjauspaneelin langattomille asetuksille."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Määrittää 802.11b-tiedonsiirtonopeudet ja lähetystehon vanhemmilla langattomilla tulostuspalvelimilla."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Määrittää langattoman verkon nimen, radion tilan, preamblen pituuden ja keep-alive-toiminnan."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Määrittää langattoman suojaustilan, avaimet ja tunnistetiedot yhdellä komennolla."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Tulostaa verkon kokoonpanoetiketin, kun tulostin on joutokäynnillä."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Käynnistää langattoman radiokortin ja tulostuspalvelimen uudelleen, jolloin radio liittyy verkkoon uudelleen."
+  }
+}

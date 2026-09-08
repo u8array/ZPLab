@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Avvia un nuovo formato etichetta. I comandi successivi definiscono i campi, la gestione del supporto e il comportamento della stampante per quell'etichetta."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Chiude il formato etichetta corrente e lo invia alla stampa."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Imposta la larghezza stampabile in punti. Il contenuto oltre questa larghezza viene tagliato dalla stampante."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Imposta la lunghezza dell'etichetta in punti, definendo dove termina il formato stampabile."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Sposta la posizione home dell'etichetta, modificando l'origine usata dalle coordinate dei campi successivi."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Applica uno scostamento orizzontale alle posizioni dei campi per compatibilità con i formati Zebra più vecchi."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Aggiunge uno scostamento verticale all'intero formato rispetto al bordo superiore del supporto."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Imposta le unità di coordinate in punti, pollici o millimetri e può riscalare i formati tra risoluzioni di stampa diverse."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Imposta la modalità di gestione del supporto dopo la stampa, incluse le modalità strappo, sbucciatura, taglio, riavvolgimento e applicatore."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Seleziona la modalità a trasferimento termico o termica diretta, in base al fatto che il supporto caricato usi o meno un nastro."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Imposta la quantità di stampa, la pausa o il raggruppamento del taglio e le copie per valore seriale."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Inverte la stampa dei campi successivi scambiando primo piano e sfondo."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Ruota l'intero formato etichetta di 180 gradi."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Rispecchia orizzontalmente l'area stampabile."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Imposta la velocità di stampa, la velocità di scorrimento e la velocità di ritorno del supporto in pollici al secondo."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Posiziona il campo successivo rispetto all'origine dell'etichetta usando il suo angolo superiore sinistro."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Posiziona il campo successivo rispetto alla sua linea di base o al bordo del codice a barre, offrendo un ancoraggio stabile ai campi ruotati."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Fornisce il contenuto del campo corrente, inclusi testo, dati di codice a barre o dati RFID."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Termina la definizione del campo corrente."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Abilita le sequenze di escape esadecimali all'interno dei dati di campo per byte binari e caratteri riservati ai comandi."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Inverte primo piano e sfondo solo per il campo successivo."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Aggiunge un campo di commento. La stampante ne ignora il contenuto fino al separatore di campo successivo."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Imposta l'orientamento predefinito del campo e, sui firmware più recenti, la giustificazione predefinita."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Racchiude i dati di campo in un blocco a larghezza fissa con controlli su numero di righe, spaziatura, rientro e giustificazione."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Racchiude il testo in un riquadro a larghezza e altezza fisse, troncando l'eccedenza."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Assegna un numero a un campo variabile nei formati memorizzati e richiamati."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Fornisce i dati per un campo variabile. A differenza dei dati ^FD, viene cancellato dopo la stampa dell'etichetta."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Imposta il carattere usato per incorporare i valori dei campi numerati all'interno di un'altra stringa di campo."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Imposta i marcatori usati per i token dell'orologio in tempo reale all'interno dei dati di campo."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Imposta larghezza modulo predefinita del codice a barre, rapporto largo-stretto e altezza per i campi codice a barre successivi."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Posiziona i segmenti PDF417 o MicroPDF417 in origini specifiche quando un messaggio si estende su più simboli."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Imposta l'ordine dei caratteri per il campo corrente e può aggiungere spaziatura extra tra i caratteri."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Seleziona il font scalabile residente 0 per il campo successivo, con dimensione e orientamento richiesti."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Seleziona un font residente tramite un nome a un carattere, con orientamento, altezza e larghezza opzionali."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Seleziona un file di font memorizzato per il campo successivo, con orientamento, altezza e larghezza opzionali."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Imposta il font, l'altezza e la larghezza di riserva usati dai campi di testo che non specificano valori propri."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Seleziona la codifica usata per interpretare i dati di campo, incluse le code page e UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Abilita il layout di testo avanzato per i campi successivi, incluso testo bidirezionale, shaping e funzionalità OpenType."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Associa un nome di font a un carattere a un file di font memorizzato."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Imposta la dimensione della cache per i glifi scalabili renderizzati, per velocizzare l'output ripetuto con font grandi."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Definisce le catene di fallback TrueType usate quando il font base non ha un glifo."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Stampa un'etichetta che elenca i collegamenti di font configurati e le relative facce di fallback concatenate."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Scarica un font bitmap e le sue metriche nella memoria della stampante."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Scarica un Intellifont scalabile codificato nella memoria della stampante."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Scarica un font TrueType codificato con fino a 256 caratteri nella memoria della stampante."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Scarica un font TrueType codificato con più di 256 glifi nella memoria della stampante."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Scarica una tabella di codifica che mappa i byte dei dati di campo su valori Unicode per i font TrueType."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Disegna un codice a barre Code 128 per dati ASCII a lunghezza variabile, con modalità per il cambio automatico di subset e i dati UCC/EAN."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Disegna un codice a barre Code 39 con cifra di controllo Mod 43 opzionale."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Disegna un codice a barre Code 93, che rappresenta dati ASCII completi tramite caratteri di shift."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Disegna un codice a barre Code 11 per cifre e trattini, con cifre di controllo opzionali."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Disegna un codice a barre Interleaved 2 of 5 per dati numerici di lunghezza pari, con cifra di controllo opzionale."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Disegna un codice a barre Industrial 2 of 5, un codice numerico con i dati codificati solo nelle barre."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Disegna un codice a barre Standard 2 of 5, un codice numerico autoverificante con i dati codificati solo nelle barre."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Disegna un codice a barre ANSI Codabar, noto anche come USD-4, per etichette di biblioteche, sanità e corrieri."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Disegna un codice a barre LOGMARS, la variante Code 39 del Dipartimento della Difesa statunitense, e converte i dati minuscoli in maiuscolo."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Disegna un codice a barre MSI, un codice numerico derivato da Plessey con schemi di cifra di controllo selezionabili."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Disegna un codice a barre Plessey, un codice numerico più datato con cifre di controllo opzionali."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Disegna un codice a barre EAN-13 per numeri di articolo retail e deriva la cifra di controllo da dodici cifre di dati."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Disegna un codice a barre EAN-8 per piccole confezioni retail e deriva la cifra di controllo da sette cifre di dati."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Disegna un codice a barre UPC-A per imballaggi retail a partire da undici cifre di dati, con stampa opzionale della cifra di controllo."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Disegna un codice a barre UPC-E, la forma abbreviata di UPC-A. I dati di campo sono il codice completo a dieci cifre di produttore e prodotto."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Disegna un simbolo GS1 DataBar con sottotipo, ingrandimento, altezza e larghezza del segmento selezionabili."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Disegna un codice a barre postale Planet Code a partire da cifre codificate come barre alte e corte."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Disegna POSTNET, Planet Code o USPS Intelligent Mail in base al tipo di codice postale selezionato."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Disegna un simbolo aggiuntivo UPC/EAN a due o cinque cifre accanto a un codice a barre principale."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Disegna un codice a barre impilato Code 49 con da due a otto righe di dati ASCII completi."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Disegna un simbolo QR Code. I parametri del comando impostano modello, ingrandimento e maschera. I dati di campo impostano correzione d'errore e modalità carattere."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Disegna un simbolo Data Matrix con dimensione dell'elemento, livello di qualità e gestione degli escape configurabili."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Disegna un simbolo bidimensionale impilato PDF417 per payload di testo o binari di grandi dimensioni."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Disegna un simbolo MicroPDF417, una variante compatta di PDF417 con pattern di indirizzo riga."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Disegna un simbolo a matrice Aztec con ingrandimento e correzione d'errore configurabili."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Disegna un simbolo CODABLOCK in modalità A, E o F per payload di dati più grandi."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Disegna un simbolo UPS MaxiCode con una modalità per messaggi corriere strutturati o dati generici."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Disegna un simbolo TLC39 per etichette telecom, combinando Code 39 con un componente MicroPDF417."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Se abilitato, convalida dati e parametri del codice a barre e stampa INVALID invece di un simbolo errato."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Disegna un rettangolo pieno o con contorno. Facendo coincidere un lato con lo spessore del bordo si ottiene una linea."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Disegna una linea diagonale su una data larghezza e altezza, inclinata a destra o a sinistra."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Disegna un'ellisse a partire da larghezza e altezza in punti, con spessore del bordo verso l'interno e output nero o bianco."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Disegna un cerchio del diametro dato in punti, con spessore del bordo verso l'interno e output nero o bianco."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Posiziona un'immagine bitmap monocromatica alla posizione di campo corrente usando dati in esadecimale ASCII, binari o compressi."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Stampa un simbolo residente selezionato dai dati di campo, come copyright o marchio registrato."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Carica un'immagine memorizzata all'inizio di un formato e la ancora all'origine dell'etichetta."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Posiziona un'immagine memorizzata alla posizione di campo corrente senza ridimensionarla."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Elimina grafiche, font o formati memorizzati dalla memoria della stampante, con supporto ai caratteri jolly per i gruppi."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Salva il formato corrente come immagine grafica per un richiamo rapido e sovrapposizioni con dati variabili."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Scarica una grafica in esadecimale ASCII nella memoria della stampante con un nome riutilizzabile."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Interrompe un caricamento di grafica rimasto a metà e riporta la stampante al funzionamento normale."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Scarica una grafica, un font o un certificato nella memoria della stampante con un nome riutilizzabile."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Cancella tutte le grafiche scaricate dalla memoria della stampante. Usare ^ID per eliminare oggetti selezionati."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serializza i dati di campo di testo o codice a barre tra le etichette, usando un valore iniziale, una direzione e un incremento."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serializza posizioni selezionate nei dati di campo usando una maschera e set di caratteri."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Memorizza i comandi successivi come formato riutilizzabile invece di stamparli immediatamente."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Richiama un formato memorizzato e fornisce i valori per i suoi campi segnaposto numerati."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Richiama una grafica memorizzata alla posizione corrente con scalatura orizzontale e verticale indipendenti."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Seleziona come la stampante rileva i confini dell'etichetta, usando gap, tacche o supporto continuo."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Imposta la lunghezza massima dell'etichetta che la stampante ricerca durante la calibrazione del supporto non continuo."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Imposta l'azione all'accensione e alla chiusura della testina, inclusi calibrazione, avanzamento o misurazione della lunghezza."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Sopprime il ritorno del supporto per l'etichetta corrente quando spostarsi in posizione di strappo non è necessario."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Configura gli avvisi di manutenzione stampati per la pulizia o la sostituzione della testina."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Controlla se la bitmap dell'etichetta viene cancellata dopo la stampa o mantenuta per il riutilizzo da etichette successive."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Imposta il testo mostrato sulle etichette di avviso di manutenzione per la pulizia o la sostituzione della testina."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Blocca un'impostazione del pannello di controllo, come la densità di stampa o la calibrazione, finché non viene sbloccata."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Abilita o disabilita l'indicatore di avviso testina fredda."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Regola la densità di stampa rispetto alla densità attualmente configurata sulla stampante."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Imposta immediatamente la densità di stampa assoluta, corrispondente all'impostazione di densità del pannello frontale."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Controlla se un'etichetta interrotta da guasti del supporto, del nastro o della testina viene ristampata dopo il ripristino."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Pianifica test periodici degli elementi della testina in base al conteggio delle etichette stampate e a un intervallo di elementi opzionale."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Regola la posizione di riposo di strappo o taglio con un piccolo scostamento in punti dopo la stampa."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Configura le soglie di preavviso per la manutenzione del supporto, del nastro e della testina."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Controlla i tempi di ritorno del supporto attorno alla stampa e al taglio, oppure disattiva il ritorno del supporto."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Fa avanzare un numero specificato di righe di punti vuote alla velocità di scorrimento."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Fa avanzare un'etichetta vuota dopo che il formato corrente è stato stampato."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Fa avanzare un'etichetta vuota non appena la stampante è libera, dopo il formato corrente o mentre è in pausa."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Mette in pausa dopo la stampa del formato corrente. Le etichette già bufferizzate possono comunque essere stampate prima."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Mette in pausa al termine dell'etichetta corrente. La stampa riprende quando lo stato di pausa viene cancellato."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Ristampa l'etichetta precedente quando la modalità di ristampa per applicatore è abilitata."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Cancella la modalità di pausa e riprende la stampa."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Attiva subito il taglierino sulle stampanti KR403 in modalità stampa da chiosco."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Aggiunge lunghezza di espulsione extra a un presentatore per chiosco KR403, rendendo più facile prelevare il supporto stampato."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Esegue un ciclo del presentatore KR403, offrendo il supporto stampato per la rimozione manuale."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Imposta la tensione dell'alimentazione del nastro sulle stampanti della serie PAX."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Imposta la data e l'ora dell'orologio in tempo reale della stampante."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Seleziona il formato di data e ora mostrato sull'etichetta di configurazione e sul pannello di controllo."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Definisce scostamenti di orologio secondari rispetto all'orologio in tempo reale. Gli scostamenti vengono persi allo spegnimento della stampante."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Imposta quando i campi orario vengono marcati e seleziona la lingua per i nomi di giorni e mesi."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Seleziona la lingua di visualizzazione del pannello di controllo della stampante da un elenco che varia in base al modello."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Seleziona una tabella di codifica memorizzata usata per mappare i dati di campo prima della stampa."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Seleziona l'interpretazione dei comandi ZPL originale o ZPL II per la compatibilità con i formati più vecchi."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Assegna alla stampante un nome di rete e una descrizione in testo libero, entrambi mostrati sull'etichetta di configurazione e sulla sua pagina web integrata."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Imposta la password a quattro cifre per i menu di configurazione del pannello di controllo."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Salva, ripristina o azzera le impostazioni di configurazione della stampante."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Cambia il carattere prefisso dei comandi di formato, normalmente il circonflesso, a livello globale o per il formato corrente."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Cambia il carattere delimitatore dei parametri, normalmente la virgola, a livello globale o per il formato corrente."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Cambia il carattere prefisso dei comandi immediati, normalmente la tilde, a livello globale o per il formato corrente."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Rimappa le lettere della memoria della stampante in modo che gli oggetti memorizzati mantengano i propri nomi esistenti."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Annulla i formati in coda e il batch corrente. L'etichetta già in stampa può terminare."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Cancella e reinizializza un dispositivo di memoria flash. Un'interruzione di corrente durante questa operazione può danneggiare la memoria."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Reinizializza la scheda di memoria con batteria tampone dopo l'installazione o la sostituzione della batteria."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Esegue la calibrazione del supporto per misurare la lunghezza dell'etichetta e regolare i sensori di supporto e nastro."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Stampa i byte in arrivo e i loro valori esadecimali invece di eseguirli, per la diagnostica della comunicazione con l'host."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Esce dalla modalità di diagnostica delle comunicazioni e riporta la stampante alla stampa normale delle etichette."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Imposta se una tensione di batteria bassa mette in pausa una stampante portatile o consente alla stampa di continuare."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Esegue la calibrazione del supporto e stampa un grafico del profilo del sensore per la transizione del gap del supporto."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Avvia l'interprete Zebra BASIC sulla stampante, eventualmente lanciando un programma memorizzato."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Configura la porta ausiliaria per i segnali di applicatore o verificatore e la gestione degli errori."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Seleziona il sensore del supporto usato per il tracciamento, di solito riflettente o trasmissivo."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Misura e memorizza la lunghezza dell'etichetta, facendo avanzare etichette vuote durante il processo."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Imposta punti per millimetro normali o ridotti. La densità ridotta raddoppia la dimensione fisica delle coordinate del formato."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Fa sì che i test falliti sugli elementi della testina blocchino la stampa finché la stampante non viene riavviata o ripristinata in modalità tollerante."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Consente alla stampa di continuare dopo un test fallito su un elemento della testina."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Annulla il prossimo formato in coda e mette in pausa la stampante, un formato bufferizzato per comando."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Esce da una sessione attiva dell'interprete Zebra BASIC e riporta la porta all'elaborazione ZPL."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Riavvia il firmware della stampante e ricarica le impostazioni predefinite salvate di comunicazione e configurazione."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Annulla il formato attualmente in ricezione senza annullare le etichette già in stampa."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Azzera un contatore di utilizzo selezionato della stampante, inclusi i contatori utente o RFID."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Configura tutti i parametri di comunicazione della porta seriale in un unico comando."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Sovrascrive l'intensità o i valori di base del sensore trasmissivo normalmente impostati dalla calibrazione."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Avvia la stampa prima che il formato completo sia arrivato, per migliorare la produttività su etichette complesse."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Disabilita una condizione e una destinazione specifiche di avviso ZebraNet."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Imposta il valore di resistenza della testina usato per i calcoli dell'energia di stampa."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Imposta soglie del sensore del supporto, lunghezza dell'etichetta e intensità dei LED normalmente determinate dalla calibrazione."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Abilita un avviso ZebraNet per una condizione e una destinazione specifiche."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Copia oggetti memorizzati tra i dispositivi di memoria della stampante, con supporto ai caratteri jolly per i gruppi."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Stampa un'etichetta di configurazione con informazioni su sensori, rete, firmware e memoria."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Stampa un'etichetta di directory per oggetti memorizzati, font residenti o codici a barre disponibili."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Stampa su un'etichetta le informazioni di servizio richieste, come il contachilometri o la cronologia della testina."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Configura le impostazioni del presentatore per chiosco KR403, inclusi lunghezza di taglio, margine di taglio, timeout di ritrazione e lunghezza dell'anello."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Controlla la ricalibrazione dinamica della lunghezza dell'etichetta e della soglia del sensore dopo l'accensione o l'apertura del vano supporto."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Avvia la modalità di dismissione per preparare una stampante alla rivendita o al riciclo."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Imposta lo spegnimento automatico per inattività dopo un periodo di inattività, con opzioni per le etichette in coda."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Espelle o ritrae il supporto già presentato da un presentatore per chiosco KR403."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Esegue la modalità di scarica della batteria sulle stampanti portatili per il condizionamento del pacco batteria."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Restituisce le letture di alimentazione della batteria e della testina dalle stampanti mobili."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Restituisce i dati diagnostici della testina, incluse temperature, risultati dei test degli elementi, densità e velocità."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Restituisce all'host un formato ZPL memorizzato nella memoria della stampante."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Restituisce all'host un'immagine grafica memorizzata nella memoria della stampante."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Restituisce la configurazione attuale della stampante come testo leggibile tramite la porta host."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Restituisce i dati identificativi della stampante, inclusi modello, firmware, risoluzione, memoria e opzioni installate."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Restituisce la memoria totale, massima disponibile e attualmente libera della stampante in kilobyte."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Restituisce all'host lo stato, l'identità, il contachilometri o i dati di manutenzione richiesti."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Restituisce stringhe di stato host per interfaccia, supporto, stato di pausa, lunghezza dell'etichetta e formati bufferizzati."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Restituisce all'host la tabella dei collegamenti di font, elencando i font base e le facce di fallback."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Restituisce gli avvisi ZebraNet configurati, incluse condizioni, destinazioni e flag di impostazione o cancellazione."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Restituisce all'host i dati di un campo numerato, con un limite di byte opzionale."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Restituisce un elenco di directory per un dispositivo di memoria, incluso lo spazio libero rimanente."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Restituisce all'host una grafica memorizzata in un formato di file scaricabile."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Restituisce l'XML di descrizione della stampante per impostazioni, directory degli oggetti o stato."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Legge o scrive su un tag RFID, incluso formato dati, banco di memoria e password di accesso."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Legge l'ID del tag RFID corrente per l'uso nei dati dell'etichetta o in una risposta all'host."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Controlla il movimento del supporto durante le operazioni RFID legacy. I formati Link-OS usano invece ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Rileva più di un tag RFID nel campo di codifica e può annullare le etichette con tag estranei nelle vicinanze."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Imposta il numero di tentativi per le letture o scritture RFID legacy. I formati Link-OS usano invece ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Definisce il layout dei bit usato per codificare i campi EPC RFID su un tag."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Imposta le opzioni RFID per le etichette successive, inclusi tipo di tag, posizione di programmazione, gestione degli errori e lunghezza della barra VOID."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Legge i dati del tag in un campo dell'etichetta nei formati RFID legacy."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Scrive i dati del tag nei formati RFID legacy. ^RF copre lettura, scrittura e gestione della password."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Costruisce un numero seriale EPC a partire dall'ID del tag e lo scrive nei bit bassi dell'EPC."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Restituisce all'host l'esito di ogni codifica RFID, permettendo al software di distinguere i tag validi dalle etichette annullate."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Imposta la potenza di lettura e scrittura RFID quando la calibrazione non produce valori utilizzabili."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Blocca la memoria del tag RFID, in modo reversibile o permanente, per impedire scritture successive."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Esegue la calibrazione RFID e restituisce all'host posizione, antenna e impostazioni di potenza."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Restituisce il log delle operazioni RFID, inclusi posizione, antenna, livello di potenza ed esito."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Seleziona se la stampante verifica la presenza di un print server cablato all'avvio."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Seleziona il dispositivo di rete primario, cablato o wireless."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Indirizza una singola stampante su una linea multidrop RS-485 legacy tramite ID di rete."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Assegna l'ID di rete usato per indirizzare una stampante su una linea multidrop RS-485 legacy."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Imposta l'identità SNMP e le stringhe di community per la stampante."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Seleziona se le impostazioni di rete all'avvio provengono dalla stampante o dal print server collegato."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Commuta tutte le stampanti su una linea multidrop legacy in modalità di ricezione trasparente."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Configura le impostazioni del server SMTP e del dominio per gli avvisi email del print server."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Commuta la stampante multidrop legacy indirizzata in modalità di ricezione trasparente."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Imposta per quanto tempo un indirizzo IP autenticato può accedere alle pagine web della stampante prima di una nuova autenticazione."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Imposta la forma e il valore dell'identificatore client DHCP per il print server."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Configura indirizzo IP, subnet mask e gateway per un'interfaccia di rete della stampante."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Configura impostazioni IP, timeout e porta raw del print server cablato per i firmware più vecchi."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Seleziona le antenne di ricezione e trasmissione per la radio wireless."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Configura la sicurezza WEP obsoleta e il materiale delle chiavi per i firmware wireless più vecchi."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Configura l'autenticazione Cisco LEAP obsoleta per i firmware wireless più vecchi."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Imposta la password per le impostazioni wireless sul pannello di controllo della stampante."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Configura le velocità dati 802.11b e la potenza di trasmissione sui print server wireless più vecchi."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Configura nome della rete wireless, modalità radio, lunghezza del preambolo e comportamento keep-alive."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Configura modalità di sicurezza wireless, chiavi e credenziali in un unico comando."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Stampa un'etichetta di configurazione di rete mentre la stampante è inattiva."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Riavvia la scheda radio wireless e il print server, facendo sì che la radio si ricolleghi alla rete."
+  }
+}

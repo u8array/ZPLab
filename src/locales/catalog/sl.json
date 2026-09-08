@@ -1,0 +1,902 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Začne nov format etikete. Ukazi za njim določajo polja, ravnanje z mediji in obnašanje tiskalnika za to etiketo."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Zaključi trenutni format etikete in ga odda za tiskanje."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Nastavi tiskalno širino v pikah. Vsebino, ki presega to širino, tiskalnik obreže."
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Nastavi dolžino etikete v pikah in s tem določi, kje se format etikete konča."
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Premakne izhodiščno točko etikete in s tem spremeni izhodišče, ki ga uporabljajo koordinate poznejših polj."
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Uporabi vodoravni zamik pri položajih polj zaradi združljivosti s starejšimi formati Zebra."
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Doda navpični zamik celotnemu formatu etikete glede na zgornji rob medija."
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Nastavi merske enote koordinat na pike, palce ali milimetre in lahko formate skalira med različnimi tiskalnimi ločljivostmi."
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Nastavi način ravnanja z mediji po tiskanju, med drugim odtrganje, odlepljanje, rezanje, previjanje in nanašanje z aplikatorjem."
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Izbere način termalnega prenosa ali direktnega termalnega tiska glede na to, ali naloženi medij uporablja trak."
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Nastavi število natisov, združevanje s premorom ali rezanjem ter število kopij na posamezno serijsko vrednost."
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Obrne tiskanje za naslednja polja tako, da zamenja ospredje in ozadje."
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Zavrti celoten format etikete za 180 stopinj."
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Vodoravno zrcali tiskalno območje."
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Nastavi hitrost tiskanja, hitrost premikanja in hitrost povratnega podajanja v palcih na sekundo."
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Umesti naslednje polje glede na izhodiščno točko etikete, izhajajoč iz njegovega zgornjega levega kota."
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Umesti naslednje polje glede na njegovo osnovno črto ali rob črtne kode, kar zasukanim poljem zagotavlja stabilno sidrišče."
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Poda vsebino trenutnega polja, na primer besedilo, podatke črtne kode ali podatke RFID."
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Zaključi definicijo trenutnega polja."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Omogoči šestnajstiška ubežna zaporedja znotraj podatkov polja za binarne bajte in rezervirane ukazne znake."
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Zamenja ospredje in ozadje samo za naslednje polje."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Doda komentarsko polje. Tiskalnik njegovo vsebino prezre do naslednjega ločila polja."
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Nastavi privzeto usmerjenost polja, pri novejši strojni programski opremi pa tudi privzeto poravnavo."
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Prelomi podatke polja v blok s fiksno širino, kjer se nadzorujejo število vrstic, razmik, zamik in poravnava."
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Prelomi besedilo v okvir s fiksno širino in fiksno višino, presežek pa odreže."
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Dodeli številko spremenljivemu polju v shranjenih in ponovno priklicanih formatih."
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Poda podatke za spremenljivo polje. Za razliko od podatkov ^FD se po natisu etikete počistijo."
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Nastavi znak, ki se uporablja za vstavljanje vrednosti oštevilčenih polj v niz drugega polja."
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Nastavi oznake, ki se uporabljajo za žetone realnočasovne ure znotraj podatkov polja."
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Nastavi privzeto širino modula črtne kode, razmerje med širokimi in ozkimi črtami ter višino za naslednja polja s črtno kodo."
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Umesti segmente PDF417 ali MicroPDF417 na določena izhodišča, kadar eno sporočilo obsega več simbolov."
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Nastavi vrstni red znakov za trenutno polje in lahko doda dodaten razmik med znaki."
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Izbere vgrajeno skalabilno pisavo 0 za naslednje polje v zahtevani velikosti in usmerjenosti."
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Izbere vgrajeno pisavo po enočrkovnem imenu, z izbirno usmerjenostjo, višino in širino."
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Izbere shranjeno datoteko pisave za naslednje polje, z izbirno usmerjenostjo, višino in širino."
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Nastavi nadomestno pisavo, višino in širino, ki jo uporabijo besedilna polja brez lastnih nastavitev."
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Izbere kodiranje za tolmačenje podatkov polja, med drugim kodne strani in UTF-8."
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Omogoči napredno postavitev besedila za naslednja polja, vključno z dvosmernim besedilom, oblikovanjem znakov in funkcijami OpenType."
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Priredi enočrkovno ime pisave shranjeni datoteki pisave."
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Nastavi velikost predpomnilnika za izrisane skalabilne znake in s tem pospeši ponavljajoče se izpisovanje velikih pisav."
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Določi verige nadomestnih pisav TrueType, ki se uporabijo, kadar osnovni pisavi manjka znak."
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Natisne etiketo s seznamom nastavljenih povezav pisav in njihovih veriženih nadomestnih oblik."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Prenese bitno pisavo in njene mere v pomnilnik tiskalnika."
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Prenese kodirano skalabilno pisavo Intellifont v pomnilnik tiskalnika."
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Prenese kodirano pisavo TrueType z največ 256 znaki v pomnilnik tiskalnika."
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Prenese kodirano pisavo TrueType z več kot 256 znaki v pomnilnik tiskalnika."
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Prenese tabelo kodiranja, ki bajte podatkov polja preslika v vrednosti Unicode za pisave TrueType."
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Nariše črtno kodo Code 128 za ASCII-podatke spremenljive dolžine, z načini za samodejni preklop podnaborov in podatke UCC/EAN."
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Nariše črtno kodo Code 39 z izbirno kontrolno števko po metodi Mod 43."
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Nariše črtno kodo Code 93, ki celoten nabor znakov ASCII predstavi s pomočjo preklopnih znakov."
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Nariše črtno kodo Code 11 za števke in vezaje, z izbirnimi kontrolnimi števkami."
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Nariše črtno kodo Interleaved 2 of 5 za številske podatke sode dolžine, z izbirno kontrolno števko."
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Nariše črtno kodo Industrial 2 of 5, številsko kodo, pri kateri so podatki kodirani samo s črtami."
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Nariše črtno kodo Standard 2 of 5, samopreverjajočo številsko kodo, pri kateri so podatki kodirani samo s črtami."
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Nariše črtno kodo ANSI Codabar, znano tudi kot USD-4, za etikete v knjižnicah, zdravstvu in kurirskih storitvah."
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Nariše črtno kodo LOGMARS, različico Code 39, ki jo uporablja ameriško obrambno ministrstvo, in male črke v podatkih pretvori v velike."
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Nariše črtno kodo MSI, številsko kodo izpeljano iz Plessey, z izbirnimi shemami kontrolnih števk."
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Nariše črtno kodo Plessey, starejšo številsko kodo z izbirnimi kontrolnimi števkami."
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Nariše črtno kodo EAN-13 za trgovske številke artiklov in kontrolno števko izračuna iz dvanajstih podatkovnih števk."
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Nariše črtno kodo EAN-8 za majhna trgovska pakiranja in kontrolno števko izračuna iz sedmih podatkovnih števk."
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Nariše črtno kodo UPC-A za trgovsko pakiranje iz enajstih podatkovnih števk, z izbirnim tiskom kontrolne števke."
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Nariše črtno kodo UPC-E, skrajšano obliko UPC-A. Podatki polja so celotna desetmestna koda proizvajalca in izdelka."
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Nariše simbol GS1 DataBar z izbirnim podtipom, povečavo, višino in širino segmenta."
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Nariše poštno črtno kodo Planet Code iz števk, kodiranih kot visoke in nizke črte."
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Nariše POSTNET, Planet Code ali USPS Intelligent Mail glede na izbrano vrsto poštne kode."
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Nariše dvo- ali petmestni dodatni simbol UPC/EAN ob glavni črtni kodi."
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Nariše zloženo črtno kodo Code 49 z dvema do osmimi vrsticami podatkov s celotnim naborom ASCII."
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Nariše simbol QR Code. Parametri ukaza določajo model, povečavo in masko, podatki polja pa raven popravljanja napak in način znakov."
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Nariše simbol Data Matrix z nastavljivo velikostjo elementa, ravnjo kakovosti in ravnanjem z ubežnimi zaporedji."
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Nariše zloženi dvorazsežni simbol PDF417 za obsežna besedilna ali binarna sporočila."
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Nariše simbol MicroPDF417, kompaktno različico PDF417 z vzorci naslavljanja vrstic."
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Nariše matrični simbol Aztec z nastavljivo povečavo in popravljanjem napak."
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Nariše simbol CODABLOCK v načinu A, E ali F za obsežnejše podatke."
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Nariše simbol UPS MaxiCode z načinom za strukturirana sporočila prevoznika ali splošne podatke."
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Nariše simbol telekomunikacijske etikete TLC39, ki združuje Code 39 s komponento MicroPDF417."
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Kadar je omogočen, preveri podatke in parametre črtne kode ter namesto neveljavnega simbola natisne INVALID."
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Nariše zapolnjen ali obrobljen pravokotnik. Če se stranica ujema z debelino obrobe, nastane črta."
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Nariše diagonalno črto čez podano širino in višino, nagnjeno v desno ali levo."
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Nariše elipso iz širine in višine v pikah, z obrobo, ki se debeli navznoter, ter črnim ali belim izpisom."
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Nariše krog s podanim premerom v pikah, z obrobo, ki se debeli navznoter, ter črnim ali belim izpisom."
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Umesti enobarvno bitno sliko na trenutni položaj polja z uporabo šestnajstiških ASCII, binarnih ali stisnjenih podatkov."
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Natisne vgrajeni simbol, izbran s podatki polja, na primer znak avtorskih pravic ali registrirane blagovne znamke."
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Naloži shranjeno sliko na začetku formata etikete in jo zasidra na izhodišče etikete."
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Umesti shranjeno sliko na trenutni položaj polja, ne da bi jo spremenil po velikosti."
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Izbriše shranjene grafike, pisave ali formate iz pomnilnika tiskalnika, s podporo nadomestnim znakom za skupine."
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Shrani trenutni format etikete kot grafično sliko za hiter priklic in prekrivanje s spremenljivimi podatki."
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Prenese grafiko v šestnajstiškem zapisu ASCII v pomnilnik tiskalnika pod imenom za ponovno uporabo."
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Ustavi na polovici prekinjeno nalaganje grafike in tiskalnik vrne v običajno delovanje."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Prenese grafiko, pisavo ali certifikat v pomnilnik tiskalnika pod imenom za ponovno uporabo."
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Izbriše vse prenesene grafike iz pomnilnika tiskalnika. Za brisanje izbranih objektov uporabite ^ID."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serijsko oštevilči podatke besedilnega ali črtnokodnega polja med etiketami, z začetno vrednostjo, smerjo in korakom."
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serijsko oštevilči izbrane položaje v podatkih polja z uporabo maske in naborov znakov."
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Shrani naslednje ukaze kot format etikete za ponovno uporabo, namesto da bi jih takoj natisnil."
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Prikliče shranjeni format etikete in vanj vstavi vrednosti za njegova oštevilčena rezervirana polja."
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Prikliče shranjeno grafiko na trenutnem položaju z neodvisnim vodoravnim in navpičnim spreminjanjem velikosti."
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Izbere način zaznavanja mej etiket, in sicer z vrzelmi, oznakami ali neprekinjenim medijem."
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Nastavi največjo dolžino etikete, ki jo tiskalnik preišče pri umerjanju medija, ki ni neprekinjen."
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Nastavi dejanje ob vklopu in zaprtju tiskalne glave, na primer umerjanje, podajanje ali merjenje dolžine."
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Zavre povratno podajanje za trenutno etiketo, kadar premik v položaj za odtrganje ni potreben."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Nastavi natisnjena vzdrževalna opozorila za čiščenje ali menjavo tiskalne glave."
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Nadzoruje, ali se bitna slika etikete po tiskanju počisti ali ohrani za ponovno uporabo pri poznejših etiketah."
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Nastavi besedilo, prikazano na vzdrževalnih opozorilnih etiketah za čiščenje ali menjavo tiskalne glave."
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Zaklene nastavitev na nadzorni plošči, na primer temnost ali umerjanje, dokler je ne odklenete."
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Omogoči ali onemogoči opozorilni indikator za hladno tiskalno glavo."
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Prilagodi temnost tiska glede na trenutno nastavljeno temnost tiskalnika."
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Takoj nastavi absolutno temnost tiska, skladno z nastavitvijo temnosti na sprednji plošči."
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Nadzoruje, ali se etiketa, prekinjena zaradi napake medija, traku ali tiskalne glave, po odpravi napake ponovno natisne."
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Razporedi periodična preverjanja elementov tiskalne glave glede na število natisnjenih etiket in izbirno območje elementov."
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Po tiskanju prilagodi mirovni položaj za odtrganje ali rezanje z majhnim zamikom v pikah."
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Nastavi pragove za zgodnja opozorila glede vzdrževanja medija, traku in tiskalne glave."
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Nadzoruje časovni potek povratnega podajanja ob tiskanju in rezanju ali ga izklopi."
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Poda določeno število praznih vrstic pik s hitrostjo premikanja."
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Po natisu trenutnega formata etikete poda eno prazno etiketo."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Poda eno prazno etiketo takoj, ko je tiskalnik prost, bodisi po trenutnem formatu etikete bodisi med premorom."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Po natisu trenutnega formata etikete vklopi premor. Etikete, ki so že v medpomnilniku, se lahko natisnejo pred tem."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Po zaključku trenutne etikete vklopi premor. Tiskanje se nadaljuje, ko je stanje premora preklicano."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Ponovno natisne prejšnjo etiketo, kadar je omogočen način ponovnega tiska za aplikator."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Prekliče način premora in nadaljuje s tiskanjem."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Takoj sproži rezalnik na tiskalnikih KR403 v kioškem načinu tiskanja."
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Doda dodatno dolžino izmeta na predstavitveni mehanizem kioska KR403, kar olajša jemanje natisnjenega medija."
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Sproži cikel predstavitvenega mehanizma KR403 in ponudi natisnjeni medij za ročni odvzem."
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Nastavi napetost dovoda traku na tiskalnikih serije PAX."
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Nastavi datum in čas realnočasovne ure tiskalnika."
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Izbere obliko zapisa datuma in časa, prikazano na konfiguracijski etiketi in nadzorni plošči."
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Določi sekundarne zamike ure glede na realnočasovno uro. Zamiki se ob izklopu tiskalnika izgubijo."
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Nastavi, kdaj se časovna polja žigosajo, ter izbere jezik imen dni in mesecev."
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Izbere jezik prikaza na nadzorni plošči tiskalnika s seznama, ki se razlikuje glede na model."
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Izbere shranjeno tabelo kodiranja, ki pred tiskanjem preslika podatke polja."
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Izbere razlago ukazov po izvirnem ZPL ali ZPL II zaradi združljivosti s starejšimi formati."
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Tiskalniku dodeli omrežno ime in poljubni opis, oba prikazana na konfiguracijski etiketi in vgrajeni spletni strani."
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Nastavi štirimestno geslo za nastavitvene menije nadzorne plošče."
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Shrani, obnovi ali ponastavi konfiguracijske nastavitve tiskalnika."
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Spremeni predznak ukazov formata, običajno strešico, bodisi globalno bodisi samo za trenutni format etikete."
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Spremeni ločilo parametrov, običajno vejico, bodisi globalno bodisi samo za trenutni format etikete."
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Spremeni predznak takojšnjih ukazov, običajno tildo, bodisi globalno bodisi samo za trenutni format etikete."
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Preslika črke pomnilniških naprav tiskalnika, tako da shranjeni objekti ohranijo svoja obstoječa imena."
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Prekliče čakajoče formate in trenutni paket. Etiketa, ki se že tiska, se lahko dokonča."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Izbriše in ponovno inicializira eno pomnilniško napravo flash. Izpad napajanja med tem postopkom lahko poškoduje pomnilnik."
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Ponovno inicializira pomnilniško kartico z baterijskim napajanjem po vgradnji ali menjavi baterije."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Izvede umerjanje medija za merjenje dolžine etikete ter prilagoditev senzorjev medija in traku."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Natisne prihajajoče bajte in njihove šestnajstiške vrednosti namesto njihove izvedbe, za diagnostiko komunikacije z gostiteljem."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Zapusti diagnostični način komunikacije in tiskalnik vrne v običajno tiskanje etiket."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Nastavi, ali nizka napetost baterije prenosni tiskalnik ustavi v premor ali dovoli nadaljevanje tiskanja."
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Izvede umerjanje medija in natisne grafikon profila senzorja za prehod vrzeli med etiketami."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Zažene Zebra BASIC Interpreter na tiskalniku, po izbiri z zagonom shranjenega programa."
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Nastavi pomožna vrata za signale aplikatorja ali preverjalnika ter ravnanje z napakami."
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Izbere senzor medija za sledenje, običajno odbojnega ali prepustnega tipa."
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Izmeri in shrani dolžino etikete, med postopkom pa podaja prazne etikete."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Nastavi normalno ali zmanjšano gostoto pik na milimeter. Zmanjšana gostota podvoji fizično velikost koordinat formata etikete."
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Poskrbi, da neuspešna preverjanja elementov tiskalne glave ustavijo tiskanje, dokler se tiskalnik ne ponastavi ali ne povrne v toleranten način."
+  },
+  "~JO": {
+    "hash": "1a5843a5",
+    "summary": "Dovoli nadaljevanje tiskanja po neuspešnem preverjanju elementa tiskalne glave."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Prekliče naslednji čakajoči format etikete in tiskalnik postavi v premor, pri čemer en ukaz prekliče en format etikete v medpomnilniku."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Zapusti dejavno sejo Zebra BASIC Interpreter in vrata vrne v obdelavo ZPL."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Znova zažene strojno programsko opremo tiskalnika in znova naloži shranjene privzete nastavitve komunikacije in konfiguracije."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Prekliče format etikete, ki se trenutno sprejema, ne da bi preklical etikete, ki se že tiskajo."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Ponastavi izbrani števec uporabe tiskalnika, med drugim uporabniške ali RFID-števce."
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "V enem ukazu nastavi vse komunikacijske parametre serijskih vrat."
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Prepiše vrednosti intenzitete ali izhodiščne vrednosti prepustnega senzorja, ki jih sicer določi umerjanje."
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Začne tiskanje, še preden je prispel celoten format etikete, kar poveča pretočnost pri zapletenih etiketah."
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Onemogoči določen pogoj in cilj opozorila ZebraNet."
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Nastavi vrednost upornosti tiskalne glave, ki se uporablja pri izračunih energije žarjenja."
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Nastavi pragove senzorja medija, dolžino etikete in intenzitete LED, ki jih sicer določi umerjanje."
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Omogoči opozorilo ZebraNet za določen pogoj in cilj."
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Kopira shranjene objekte med pomnilniškimi napravami tiskalnika, s podporo nadomestnim znakom za skupine."
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Natisne konfiguracijsko etiketo s podatki o senzorjih, omrežju, strojni programski opremi in pomnilniku."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Natisne etiketo z imenikom shranjenih objektov, vgrajenih pisav ali razpoložljivih črtnih kod."
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Na etiketi natisne zahtevane servisne podatke, na primer stanje števca ali zgodovino tiskalne glave."
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Nastavi predstavitveni mehanizem kioska KR403, med drugim dolžino reza, rob reza, časovno omejitev umika in dolžino zanke."
+  },
+  "^XS": {
+    "hash": "69f3838a",
+    "summary": "Nadzoruje dinamično ponovno umerjanje dolžine etikete in praga senzorja po vklopu ali odprtju predala za medij."
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Zažene način razgradnje za pripravo tiskalnika na nadaljnjo prodajo ali recikliranje."
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Nastavi samodejni preklop v mirovanje po obdobju nedejavnosti, z možnostmi za čakajoče etikete."
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Izvrže ali umakne medij, ki ga je predstavitveni mehanizem kioska KR403 že ponudil."
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Izvede način praznjenja baterije na prenosnih tiskalnikih za kondicioniranje baterijskega paketa."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Vrne meritve moči baterije in tiskalne glave iz mobilnih tiskalnikov."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Vrne diagnostične podatke tiskalne glave, med drugim temperature, rezultate preverjanja elementov, temnost in hitrost."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Vrne shranjeni format ZPL iz pomnilnika tiskalnika gostitelju."
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Vrne shranjeno grafično sliko iz pomnilnika tiskalnika gostitelju."
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Vrne trenutno konfiguracijo tiskalnika kot berljivo besedilo prek vrat za gostitelja."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Vrne identifikacijske podatke tiskalnika, med drugim model, strojno programsko opremo, ločljivost, pomnilnik in nameščene možnosti."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Vrne skupni, največji razpoložljivi in trenutno prosti pomnilnik tiskalnika v kilobajtih."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Gostitelju vrne zahtevane podatke o stanju, identiteti, števcu ali vzdrževanju."
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Vrne nize stanja za gostitelja glede vmesnika, medija, stanja premora, dolžine etikete in formatov v medpomnilniku."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Gostitelju vrne tabelo povezav pisav s seznamom osnovnih pisav in nadomestnih oblik."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Vrne nastavljena opozorila ZebraNet, med drugim pogoje, cilje ter zastavice za nastavitev ali počistitev."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Gostitelju vrne podatke iz oštevilčenega polja, z izbirno omejitvijo števila bajtov."
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Vrne izpis imenika za pomnilniško napravo, med drugim preostali prosti prostor."
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Gostitelju vrne shranjeno grafiko v obliki datoteke, primerni za prenos."
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Vrne opisni XML tiskalnika za nastavitve, imenik objektov ali stanje."
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Bere iz oznake RFID ali vanjo piše, pri čemer določa obliko podatkov, pomnilniško banko in dostopno geslo."
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Prebere ID trenutne oznake RFID za uporabo v podatkih etikete ali odgovoru gostitelju."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Nadzoruje premikanje medija med starejšimi operacijami RFID. Formati Link-OS namesto tega uporabljajo ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Zazna več kot eno oznako RFID v polju kodiranja in lahko razveljavi etikete z bližnjimi tujimi oznakami."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Nastavi število ponovnih poskusov pri starejšem branju ali pisanju RFID. Formati Link-OS namesto tega uporabljajo ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Določi razporeditev bitov, ki se uporablja za kodiranje polj RFID EPC na oznaki."
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Nastavi možnosti RFID za naslednje etikete, med drugim vrsto oznake, položaj programiranja, ravnanje z napakami in dolžino črte VOID."
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Prebere podatke oznake v polje etikete pri starejših formatih RFID."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Zapiše podatke oznake pri starejših formatih RFID. ^RF pokriva branje, pisanje in ravnanje z gesli."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Iz ID-ja oznake sestavi serijsko številko EPC in jo zapiše v spodnje bite EPC."
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Gostitelju vrne izid vsakega kodiranja RFID, kar programski opremi omogoča razlikovanje veljavnih oznak od razveljavljenih etiket."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Nastavi moč branja in pisanja RFID, kadar umerjanje ne da uporabnih vrednosti."
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Zaklene pomnilnik oznake RFID, bodisi povratno bodisi trajno, da prepreči poznejše pisanje."
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Izvede umerjanje RFID in gostitelju vrne nastavitve položaja, antene in moči."
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Vrne dnevnik operacij RFID, med drugim položaj, anteno, raven moči in izid."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Izbere, ali tiskalnik ob zagonu preveri prisotnost žičnega tiskalnega strežnika."
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Izbere primarno omrežno napravo, žično ali brezžično."
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "Naslovi en tiskalnik na starejši večtočkovni liniji RS-485 po omrežnem ID-ju."
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Dodeli omrežni ID, ki se uporablja za naslavljanje tiskalnika na starejši večtočkovni liniji RS-485."
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Nastavi identiteto SNMP in nize skupnosti za tiskalnik."
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Izbere, ali omrežne nastavitve ob zagonu izvirajo iz tiskalnika ali priključenega tiskalnega strežnika."
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Vse tiskalnike na starejši večtočkovni liniji preklopi v prozorni sprejemni način."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Nastavi strežnik SMTP in domenske nastavitve za e-poštna opozorila tiskalnega strežnika."
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Naslovljeni starejši večtočkovni tiskalnik preklopi v prozorni sprejemni način."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Nastavi, kako dolgo lahko avtenticiran naslov IP dostopa do spletnih strani tiskalnika, preden je potrebna ponovna avtentikacija."
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Nastavi obliko in vrednost identifikatorja odjemalca DHCP za tiskalni strežnik."
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Nastavi naslov IP, masko podomrežja in prehod za omrežni vmesnik tiskalnika."
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Nastavi nastavitve IP žičnega tiskalnega strežnika, časovne omejitve in surova vrata za starejšo strojno programsko opremo."
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Izbere sprejemno in oddajno anteno za brezžični radijski modul."
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Nastavi zastarelo varnost WEP in ključni material za starejšo brezžično strojno programsko opremo."
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Nastavi zastarelo avtentikacijo Cisco LEAP za starejšo brezžično strojno programsko opremo."
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Nastavi geslo za brezžične nastavitve na nadzorni plošči tiskalnika."
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Nastavi podatkovne hitrosti 802.11b in oddajno moč na starejših brezžičnih tiskalnih strežnikih."
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Nastavi ime brezžičnega omrežja, radijski način, dolžino preambule in obnašanje ohranjanja povezave."
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "V enem ukazu nastavi način brezžične varnosti, ključe in poverilnice."
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Natisne etiketo z omrežno konfiguracijo, kadar je tiskalnik nedejaven."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Znova zažene brezžično radijsko kartico in tiskalni strežnik, kar povzroči, da se radio znova pridruži omrežju."
+  }
+}
