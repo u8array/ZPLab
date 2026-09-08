@@ -38,11 +38,11 @@ export function catalogEntry(command: string): ZplCommandEntry | undefined {
   return byId.get(`^${key}`) ?? byId.get(`~${key}`);
 }
 
-/** Queries of one or two characters are command names, never title words. */
+/** Queries of one or two characters are command names, never prose words. */
 const PROSE_MIN_CHARS = 3;
 
-/** Search by name (with or without prefix), alias and title; the empty query lists everything.
- *  A typed prefix is a command search and picks the twin (`^JS` vs `~JS`): titles are not consulted then. */
+/** Search by name (with or without prefix), alias, title and summary; the empty query lists everything.
+ *  A typed prefix is a command search and picks the twin (`^JS` vs `~JS`): prose is not consulted then. */
 export function filterCatalog(query: string): ZplCommandEntry[] {
   const q = query.trim().toLowerCase();
   if (!q) return [...ZPL_COMMANDS];
@@ -54,6 +54,6 @@ export function filterCatalog(query: string): ZplCommandEntry[] {
     (prefix === null || e.prefixes.includes(prefix)) &&
     (e.cmd.toLowerCase().startsWith(bare) || (deviceFont && e.cmd === "A") || (e.aliases ?? []).some((a) => a.toLowerCase().startsWith(bare)));
   const byProse = (e: ZplCommandEntry): boolean =>
-    prefix === null && q.length >= PROSE_MIN_CHARS && e.title.toLowerCase().includes(q);
+    prefix === null && q.length >= PROSE_MIN_CHARS && (e.title.toLowerCase().includes(q) || e.summary.toLowerCase().includes(q));
   return ZPL_COMMANDS.filter((e) => byName(e) || byProse(e));
 }

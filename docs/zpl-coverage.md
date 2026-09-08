@@ -243,7 +243,7 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `^JJ` | set auxiliary port | `[ ]` | `[~]` | `[ ]` |
 | `^JS` | sensor select | `[ ]` | `[~]` | `[ ]` |
 | `~JL` | set label length | `[ ]` | `[~]` | `[ ]` |
-| `^JM` | dots per millimetre | `[x]` | `[x]` | `[ ]` |
+| `^JM` | dots per millimeter | `[x]` | `[x]` | `[ ]` |
 | `~JN` | printhead test fatal | `[ ]` | `[~]` | `[ ]` |
 | `~JO` | printhead test non-fatal | `[ ]` | `[~]` | `[ ]` |
 | `~JP` | pause and cancel format | `[ ]` | `[~]` | `[ ]` |

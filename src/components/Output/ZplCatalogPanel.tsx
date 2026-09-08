@@ -107,6 +107,7 @@ export function ZplCatalogPanel({ cursor, onInsert }: { cursor: CursorCommand | 
                   <span className="font-mono text-accent font-semibold shrink-0">{commandLabel(entry)}</span>
                   <span className="text-text font-medium truncate">{entry.title}</span>
                 </div>
+                <p className="text-text leading-relaxed">{entry.summary}</p>
                 <dl className="flex flex-wrap gap-x-3 font-mono text-[10px]">
                   {CAPABILITY.map(({ cap, key }) => (
                     <div key={cap} className="flex gap-1">
