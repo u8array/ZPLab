@@ -1,0 +1,3008 @@
+{
+  "sections": [
+    {
+      "name": "Layout & flow"
+    },
+    {
+      "name": "Fields"
+    },
+    {
+      "name": "Text & fonts"
+    },
+    {
+      "name": "Barcodes"
+    },
+    {
+      "name": "Graphics"
+    },
+    {
+      "name": "Serialisation"
+    },
+    {
+      "name": "Templates & variables"
+    },
+    {
+      "name": "Media & feed"
+    },
+    {
+      "name": "Print quality"
+    },
+    {
+      "name": "Clock & time"
+    },
+    {
+      "name": "Encoding & language"
+    },
+    {
+      "name": "Identity & access"
+    },
+    {
+      "name": "Configuration & persistence"
+    },
+    {
+      "name": "Hardware control & calibration",
+      "intro": [
+        "Printer-side control, calibration and device actions; most need a connection or feedback from the device."
+      ]
+    },
+    {
+      "name": "Host communication"
+    },
+    {
+      "name": "RFID",
+      "intro": [
+        "Needs an R-series printer, which no test device covers; modelled rows are",
+        "spec-only. Stage A: ^RS/^RB/^RW settings. Stage B: ^RF write element plus its",
+        "password-coupled ^RL. Read-back stays native. ^RM/^RR folded into ^RS,",
+        "^RN/~RV dropped from the current guide; all four passthrough only."
+      ]
+    },
+    {
+      "name": "Network"
+    }
+  ],
+  "commands": [
+    {
+      "cmd": "XA",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "start label",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "XZ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "end label",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PW",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "print width",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "LL",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "label length",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "LH",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "label home origin",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "LS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "label shift",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "LT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "label top offset",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MU",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "units of measure",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MM",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "print mode",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "media type",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PQ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "print quantity",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "LR",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "label reverse",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PO",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "print orientation",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PM",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "print mirror",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PR",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Layout & flow",
+      "title": "print rate",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FO",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field origin",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field top",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FD",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field data",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field separator",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FH",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field hex indicator",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FR",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field reverse",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FX",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field comment",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FW",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "default field rotation",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FB",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "multi line text block",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "TB",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "text block",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FN",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "variable placeholder",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FV",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "variable data",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FE",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field number embed character",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      },
+      "loss": "fnPartialInsert"
+    },
+    {
+      "cmd": "FC",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "field clock",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BY",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "barcode field default",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FM",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "PDF417 structured-append origins, ignored elsewhere",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Fields",
+      "title": "vertical / reverse field layout",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "A0",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "scalable font 0",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "A",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "fonts A to Z and 0 to 9",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      },
+      "loss": "fontFace"
+    },
+    {
+      "cmd": "A@",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "TrueType reference",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      },
+      "loss": "fontFace"
+    },
+    {
+      "cmd": "CF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "change default font",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CI",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "international encoding",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PA",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "advanced text properties",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CW",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "font alias",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CO",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "font cache size",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "FL",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "font linking",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "LF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Text & fonts",
+      "title": "list font links",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      },
+      "loss": "printerComms"
+    },
+    {
+      "cmd": "DB",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Text & fonts",
+      "title": "download bitmap font",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "DS",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Text & fonts",
+      "title": "download scalable font",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "DT",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Text & fonts",
+      "title": "download TrueType font",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "DU",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Text & fonts",
+      "title": "download unbounded TrueType",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "DE",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Text & fonts",
+      "title": "download encoding",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BC",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Code 128",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B3",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Code 39",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BA",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Code 93",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B1",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Code 11",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B2",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Interleaved 2 of 5",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BI",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Industrial 2 of 5",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BJ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Standard 2 of 5",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BK",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "ANSI Codabar",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BL",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "LOGMARS",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BM",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "MSI",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Plessey",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BE",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "EAN-13",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B8",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "EAN-8",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BU",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "UPC-A",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B9",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "UPC-E",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BR",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "GS1 DataBar",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B5",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Planet Code",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BZ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "POSTNET / Planet Code / Intelligent Mail",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "UPC/EAN 2 or 5 digit add-on",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B4",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Code 49",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BQ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "QR Code",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      },
+      "loss": "qrFdMode"
+    },
+    {
+      "cmd": "BX",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "Data Matrix",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B7",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "PDF417",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "MicroPDF417",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "B0",
+      "prefixes": [
+        "^"
+      ],
+      "aliases": [
+        "BO"
+      ],
+      "section": "Barcodes",
+      "title": "Aztec",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BB",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "CODABLOCK F",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BD",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "UPS MaxiCode",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "BT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "TLC39",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CV",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Barcodes",
+      "title": "code validation",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "GB",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "graphic box",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "GD",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "diagonal line",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "GE",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "ellipse",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "GC",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "circle",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "GF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "monochrome bitmap",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      },
+      "loss": "gfRawBinary"
+    },
+    {
+      "cmd": "GS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "graphic symbol",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "IL",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "image load",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "IM",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "image move",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      },
+      "loss": "fileStorage"
+    },
+    {
+      "cmd": "ID",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "delete stored graphics, fonts and formats",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "IS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Graphics",
+      "title": "image save",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "DG",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Graphics",
+      "title": "download graphic",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      },
+      "loss": "printerStorage"
+    },
+    {
+      "cmd": "DN",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Graphics",
+      "title": "abort download",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "DY",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Graphics",
+      "title": "download font / graphic",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "EG",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Graphics",
+      "title": "erase download graphics",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SN",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Serialisation",
+      "title": "serial counter with its own start value",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Serialisation",
+      "title": "serial mask over ^FD data",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "DF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Templates & variables",
+      "title": "store template",
+      "support": {
+        "web": "planned",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "XF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Templates & variables",
+      "title": "recall template",
+      "support": {
+        "web": "planned",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "XG",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Templates & variables",
+      "title": "recall graphic",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MN",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "media tracking",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "ML",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "maximum label length",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "media feed",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "XB",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "suppress backfeed",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MA",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "maintenance alert",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MC",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "map clear",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MI",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "maintenance information message",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "mode protection",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MW",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Media & feed",
+      "title": "printhead cold warning",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "MD",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "media darkness",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SD",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Print quality",
+      "title": "set darkness",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JZ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "reprint after error",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "printhead test interval",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "TA",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Print quality",
+      "title": "tear off adjust",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JH",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "early warning settings",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JS",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Print quality",
+      "title": "change backfeed sequence",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "slew given number of dot rows",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PH",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "slew home",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PH",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Print quality",
+      "title": "slew home, immediate",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "programmable pause",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PP",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Print quality",
+      "title": "pause, immediate",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PR",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Print quality",
+      "title": "applicator reprint",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PS",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Print quality",
+      "title": "print start",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CN",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "cut now, KR403 kiosk only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PL",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Print quality",
+      "title": "present length addition, KR403 kiosk only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PN",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "presenter cycle, KR403 kiosk only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JW",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Print quality",
+      "title": "set ribbon tension, PAX only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "ST",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Clock & time",
+      "title": "set date and time",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "KD",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Clock & time",
+      "title": "date and time format",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SO",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Clock & time",
+      "title": "real-time clock offset",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SL",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Clock & time",
+      "title": "clock mode and language",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "KL",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Encoding & language",
+      "title": "define language",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SE",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Encoding & language",
+      "title": "encoding table",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SZ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Encoding & language",
+      "title": "set ZPL mode",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "KN",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Identity & access",
+      "title": "printer name and description",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "KP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Identity & access",
+      "title": "set password",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JU",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Configuration & persistence",
+      "title": "configuration update",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CC",
+      "prefixes": [
+        "^",
+        "~"
+      ],
+      "section": "Configuration & persistence",
+      "title": "change caret",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CD",
+      "prefixes": [
+        "^",
+        "~"
+      ],
+      "section": "Configuration & persistence",
+      "title": "change delimiter",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CT",
+      "prefixes": [
+        "^",
+        "~"
+      ],
+      "section": "Configuration & persistence",
+      "title": "change tilde",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CM",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Configuration & persistence",
+      "title": "change memory letter assignment",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JA",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "cancel all",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JB",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "initialize flash memory",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JB",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "reset optional memory",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JC",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "media sensor calibration",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JD",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "enable communications diagnostics",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JE",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "disable communications diagnostics",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JF",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set battery condition, PA400 and PT400 only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JG",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "graphing sensor calibration",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JI",
+      "prefixes": [
+        "^",
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "start ZBI",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JJ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set auxiliary port",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "sensor select",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JL",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set label length",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JM",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "dots per millimetre",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JN",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "printhead test fatal",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JO",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "printhead test non-fatal",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JP",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "pause and cancel format",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JQ",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "terminate ZBI",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JR",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "power on reset",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "JX",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "cancel partial format",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RO",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "reset advanced counter",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SC",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set serial communications",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SI",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set sensor intensity",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "start print at dot row, throughput hint only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SQ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "halt ZebraNet alert",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SR",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set printhead resistance",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set media sensors",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "SX",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set ZebraNet alert",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "TO",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "transfer object",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WC",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "print configuration label",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WD",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "print directory label",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WQ",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "write query",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "KV",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "cutter and presenter settings, KR403 only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "XS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "set dynamic media calibration",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "PM",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "decommissioning mode",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "ZZ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "printer sleep, PA400 and PT400 only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "CP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "eject or retract a presented page, KR403 only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "KB",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Hardware control & calibration",
+      "title": "kill battery",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HB",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Host communication",
+      "title": "battery status, mobile printers only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HD",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Host communication",
+      "title": "printhead diagnostic",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Host communication",
+      "title": "host format",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HG",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Host communication",
+      "title": "host graphic",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HH",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Host communication",
+      "title": "configuration label return",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HI",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Host communication",
+      "title": "host identification",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HM",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Host communication",
+      "title": "host RAM status",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HQ",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Host communication",
+      "title": "host query",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HS",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Host communication",
+      "title": "host status return",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Host communication",
+      "title": "host linked fonts list",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      },
+      "loss": "printerComms"
+    },
+    {
+      "cmd": "HU",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Host communication",
+      "title": "ZebraNet alert configuration",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HV",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Host communication",
+      "title": "host verification",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HW",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Host communication",
+      "title": "host directory",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HY",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Host communication",
+      "title": "upload graphics",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HZ",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Host communication",
+      "title": "display description information",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RF",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "read / write RFID",
+      "support": {
+        "web": "planned",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RI",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "get tag ID",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RM",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "enable motion, pre-Link-OS, folded into ^RS",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RN",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "detect multiple tags, pre-Link-OS, absent from guide",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RR",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "RFID retries, pre-Link-OS, folded into ^RS",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RB",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "define EPC data structure",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "RFID setup",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "read tag",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "legacy RFID write, superseded by ^RF",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RU",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "read unique chip serialisation",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RV",
+      "prefixes": [
+        "~"
+      ],
+      "section": "RFID",
+      "title": "report encoding result, pre-Link-OS, absent from guide",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RW",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "set read and write power",
+      "support": {
+        "web": "yes",
+        "desktop": "yes",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "RL",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "lock / permalock tag memory",
+      "support": {
+        "web": "planned",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HR",
+      "prefixes": [
+        "^"
+      ],
+      "section": "RFID",
+      "title": "calibrate RFID tag position",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "HL",
+      "prefixes": [
+        "^",
+        "~"
+      ],
+      "section": "RFID",
+      "title": "RFID data log",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NB",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "check for wired print server at boot",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NC",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "select wired / wireless primary device",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NC",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Network",
+      "title": "network connect, legacy RS-485 only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NI",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "network ID, legacy RS-485 only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NN",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set SNMP",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "boot settings source: printer vs print server",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NR",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Network",
+      "title": "set all transparent, legacy RS-485 only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NT",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set SMTP",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NT",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Network",
+      "title": "set connected printer transparent, legacy RS-485 only",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NW",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "web auth timeout",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "KC",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set client identifier",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "ND",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "change network settings",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "NS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "change wired network settings",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WA",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set antenna parameters",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WE",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set WEP mode, obsolete, use ^WX",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WL",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set LEAP, obsolete, use ^WX",
+      "support": {
+        "web": "no",
+        "desktop": "no",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WP",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set wireless password",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WR",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set transmit rate",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WS",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "set wireless radio card values",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WX",
+      "prefixes": [
+        "^"
+      ],
+      "section": "Network",
+      "title": "configure wireless security",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WL",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Network",
+      "title": "print network configuration label",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    },
+    {
+      "cmd": "WR",
+      "prefixes": [
+        "~"
+      ],
+      "section": "Network",
+      "title": "reset wireless radio card",
+      "support": {
+        "web": "no",
+        "desktop": "planned",
+        "lint": "no"
+      }
+    }
+  ]
+}

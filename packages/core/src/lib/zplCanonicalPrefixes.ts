@@ -20,3 +20,14 @@ export function canonicalPrefixes(zpl: string): string {
   }
   return out ? out.join("") : zpl;
 }
+
+/** Prefix characters in force after `zpl`: every ^CC/^CT/^CD replayed on the tokenizer. */
+export function prefixCharsAt(zpl: string): TokenizerChars {
+  const st: TokenizerChars = { caretChar: "^", tildeChar: "~", delimiterChar: "," };
+  for (const t of tokenize(zpl, st)) applyPrefixRemap(st, t.cmd, t.rest[0]);
+  return st;
+}
+
+/** A canonical id like `^LL`/`~JA` spelled with the prefixes in force. */
+export const spellPrefix = (id: string, chars: TokenizerChars): string =>
+  id.replace(/^[\^~]/, (c) => (c === "^" ? chars.caretChar : chars.tildeChar));

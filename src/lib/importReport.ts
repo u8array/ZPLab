@@ -5,7 +5,7 @@ import {
   type EditorStateDiff,
 } from '@zplab/core/lib/editorStateDiff';
 import type { Translations } from '../locales';
-import { ZPL_COMMAND_MAP } from './zplCommandSupport';
+import { catalogEntry, type ImportLossCause } from '@zplab/core/catalog';
 
 export interface ImportResult {
   objectCount: number;
@@ -22,12 +22,22 @@ const LOSS_SUBSTITUTIONS: readonly [string, string][] = [
   ['{wrapFmts}', ':B64:/:Z64:'],
 ];
 
+/** Report wording per catalog loss cause; exhaustive, so a new cause in core fails to compile here. */
+const LOSS_KEY: Record<ImportLossCause, keyof ReportStrings> = {
+  fontFace: 'lossFontFace',
+  printerComms: 'lossPrinterComms',
+  gfRawBinary: 'lossGfRawBinary',
+  qrFdMode: 'lossQrFdMode',
+  fileStorage: 'lossFileStorage',
+  printerStorage: 'lossPrinterStorage',
+  fnPartialInsert: 'lossFnPartialInsert',
+};
+
 /** Returns the loss description for a partial command code, e.g. "^A@" → font face note. */
 function partialLoss(cmd: string, tr: ReportStrings): string {
-  const key = cmd.slice(1);
-  const entry = ZPL_COMMAND_MAP.get(key) ?? (key[0] === 'A' ? ZPL_COMMAND_MAP.get('A@') : undefined);
+  const entry = catalogEntry(cmd);
   if (!entry?.loss) return tr.partialFallback;
-  return LOSS_SUBSTITUTIONS.reduce((s, [m, v]) => s.replace(m, v), tr[entry.loss]);
+  return LOSS_SUBSTITUTIONS.reduce((s, [m, v]) => s.replace(m, v), tr[LOSS_KEY[entry.loss]]);
 }
 
 /**

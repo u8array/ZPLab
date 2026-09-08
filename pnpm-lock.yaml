@@ -41,6 +41,12 @@ importers:
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.8)
+      '@lezer/common':
+        specifier: ^1.5.2
+        version: 1.5.2
+      '@lezer/highlight':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@tauri-apps/api':
         specifier: ^2.11.1
         version: 2.11.1

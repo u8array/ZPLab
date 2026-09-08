@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { canonicalPrefixes } from "./zplCanonicalPrefixes";
+import { canonicalPrefixes, prefixCharsAt, spellPrefix } from "./zplCanonicalPrefixes";
 
 const NL = String.fromCharCode(10);
 const j = (...lines: string[]) => lines.join(NL);
@@ -27,5 +27,15 @@ describe("canonicalPrefixes", () => {
     expect(canonicalPrefixes(plain)).toBe(plain);
     const mid = j("^XA", "^FO1,2^FDa^FS", "^CC!", "!FO3,4!FDb!FS", "!XZ");
     expect(canonicalPrefixes(mid)).toBe(j("^XA", "^FO1,2^FDa^FS", "^CC!", "^FO3,4^FDb^FS", "^XZ"));
+  });
+});
+
+describe("prefixCharsAt / spellPrefix", () => {
+  it("replays the remaps in force and spells a canonical id with them", () => {
+    expect(prefixCharsAt("^XA^CC#")).toMatchObject({ caretChar: "#", tildeChar: "~" });
+    expect(prefixCharsAt("^XA^CT!")).toMatchObject({ caretChar: "^", tildeChar: "!" });
+    expect(spellPrefix("^LL", prefixCharsAt("^XA^CC#"))).toBe("#LL");
+    expect(spellPrefix("~JA", prefixCharsAt("^XA^CT!"))).toBe("!JA");
+    expect(spellPrefix("^LL", prefixCharsAt("^XA"))).toBe("^LL");
   });
 });
