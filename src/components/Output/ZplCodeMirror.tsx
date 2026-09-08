@@ -1,7 +1,6 @@
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import {
   EditorView,
-  ViewPlugin,
   Decoration,
   keymap,
   lineNumbers,
@@ -11,13 +10,12 @@ import {
 } from '@codemirror/view';
 import { Annotation, Compartment, EditorState, RangeSetBuilder, Transaction, type StateEffect } from '@codemirror/state';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { codeFolding, foldService, foldGutter, foldKeymap, foldEffect, foldedRanges } from '@codemirror/language';
+import { codeFolding, foldable, foldGutter, foldKeymap, foldEffect, foldedRanges } from '@codemirror/language';
 import { setDiagnostics, diagnosticCount, forEachDiagnostic, type Diagnostic } from '@codemirror/lint';
 import type { SourceLint } from '../../lib/sourceDiagnostics';
-import { zplLineHighlights, opaquePayloadFold, isPureCrlf } from '../../lib/zplCmHighlight';
-import { MAX_LINE_RENDER } from '../../lib/zplTokenStyles';
+import { zpl, blobRanges, commandAtCursor, commandInsertion, placesCaret, type CursorCommand } from '../../lib/zplLanguage';
 import { hideSidecarsExt, visibleLineNumber } from '../../lib/zplCmSidecars';
-import { countBefore } from '@zplab/core/lib/sortedCount';
+import { crlfIndex, isPureCrlf, minimalSplice, toDocPos } from '../../lib/sourceOffsets';
 
 // Text.toString() always joins with LF; only sliceString honours the
 // lineSeparator facet, and the store buffer must get the original separators.
@@ -27,45 +25,6 @@ const docText = (state: EditorState): string =>
 // Marks prop-sync dispatches: they must not echo through onChange (which
 // would start an edit session) nor land in the undo history.
 const propSync = Annotation.define<boolean>();
-
-function buildDecorations(view: EditorView): DecorationSet {
-  const builder = new RangeSetBuilder<Decoration>();
-  // A folded payload splits its line across two visible ranges; decorate each
-  // line once or the builder rejects the duplicate ranges.
-  let lastLine = -1;
-  for (const { from, to } of view.visibleRanges) {
-    let pos = from;
-    while (pos <= to) {
-      const line = view.state.doc.lineAt(pos);
-      if (line.number !== lastLine) {
-        lastLine = line.number;
-        for (const r of zplLineHighlights(line.text, line.from)) {
-          builder.add(r.from, r.to, Decoration.mark({ class: r.cls }));
-        }
-      }
-      pos = line.to + 1;
-    }
-  }
-  return builder.finish();
-}
-
-const zplHighlighter = ViewPlugin.fromClass(
-  class {
-    decorations: DecorationSet;
-    constructor(view: EditorView) {
-      this.decorations = buildDecorations(view);
-    }
-    update(u: ViewUpdate) {
-      if (u.docChanged || u.viewportChanged) this.decorations = buildDecorations(u.view);
-    }
-  },
-  { decorations: (v) => v.decorations },
-);
-
-const zplFolding = foldService.of((state, lineStart) => {
-  const line = state.doc.lineAt(lineStart);
-  return opaquePayloadFold(line.text, line.from);
-});
 
 function isFolded(state: EditorState, from: number, to: number): boolean {
   let hit = false;
@@ -77,29 +36,23 @@ function isFolded(state: EditorState, from: number, to: number): boolean {
 
 function blobFoldEffects(state: EditorState, from: number, to: number): StateEffect<unknown>[] {
   const effects: StateEffect<unknown>[] = [];
-  let pos = from;
-  const end = Math.min(to, state.doc.length);
-  while (pos <= end) {
-    const line = state.doc.lineAt(pos);
-    const fold = line.length > MAX_LINE_RENDER ? opaquePayloadFold(line.text, line.from) : null;
+  const seen = new Set<number>();
+  for (const blob of blobRanges(state, from, to)) {
+    const line = state.doc.lineAt(blob.from);
+    if (seen.has(line.from)) continue;
+    seen.add(line.from);
+    const fold = foldable(state, line.from, line.to);
     if (fold && !isFolded(state, fold.from, fold.to)) effects.push(foldEffect.of(fold));
-    pos = line.to + 1;
   }
   return effects;
 }
 
-/** Folds for blobs a change just made foldable: only lines not already overlong
- *  before it, so typing inside a deliberately unfolded blob never re-folds it. */
+/** Folds for blobs a change just made foldable: only where no blob existed before,
+ *  so typing inside a deliberately unfolded blob never re-folds it. */
 function foldsForInsertedBlobs(u: ViewUpdate): StateEffect<unknown>[] {
   const effects: StateEffect<unknown>[] = [];
   u.changes.iterChanges((fromA, toA, fromB, toB) => {
-    let posA = fromA;
-    const endA = Math.min(toA, u.startState.doc.length);
-    while (posA <= endA) {
-      const line = u.startState.doc.lineAt(posA);
-      if (line.length > MAX_LINE_RENDER) return;
-      posA = line.to + 1;
-    }
+    if (blobRanges(u.startState, fromA, toA).length > 0) return;
     effects.push(...blobFoldEffects(u.state, fromB, toB));
   });
   return effects;
@@ -175,8 +128,38 @@ const localeExt = (ariaLabel: string, placeholderText: string) => [
   placeholder(placeholderText),
 ];
 
+/** Whether the user's caret counts, and the command last reported for it; one state for inserts and the panel. */
+interface CaretState {
+  placed: boolean;
+  reportedId: string | null;
+}
+
+type CursorReport = ((cmd: CursorCommand | null) => void) | undefined;
+
+/** Re-armed by the next selection; the panel is told there is no command. */
+function forgetCaret(caret: CaretState, report: CursorReport): void {
+  caret.placed = false;
+  if (caret.reportedId === null) return;
+  caret.reportedId = null;
+  report?.(null);
+}
+
+function trackCaret(u: ViewUpdate, caret: CaretState, report: CursorReport): void {
+  for (const tr of u.transactions) {
+    if (tr.annotation(propSync)) {
+      // A regenerated export that overwrote the caret's spot maps it anywhere, mid-command included.
+      const { from, to } = tr.startState.selection.main;
+      if (tr.changes.touchesRange(from, to)) forgetCaret(caret, report);
+    } else if (placesCaret(tr)) {
+      caret.placed = true;
+    }
+  }
+}
+
 export interface ZplCodeMirrorHandle {
   focus(): void;
+  /** See commandInsertion. */
+  insertCommand(text: string): void;
 }
 
 /** CodeMirror host for the source pane: shared-tokenizer colouring, auto-folded
@@ -192,6 +175,8 @@ export default function ZplCodeMirror({
   historyEpoch = 0,
   diagnostics = null,
   hideSidecars = false,
+  insertPage = 0,
+  onCursorCommand,
   ref,
 }: {
   value: string;
@@ -210,14 +195,27 @@ export default function ZplCodeMirror({
   diagnostics?: readonly SourceLint[] | null;
   /** See hideSidecarsExt. */
   hideSidecars?: boolean;
+  /** Page whose block takes an insert while no caret is placed; changing it forgets the caret. */
+  insertPage?: number;
+  /** Command under the caret, reported whenever it changes. */
+  onCursorCommand?: (cmd: CursorCommand | null) => void;
   ref?: Ref<ZplCodeMirrorHandle>;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
+  const onCursorRef = useRef(onCursorCommand);
+  const caret = useRef<CaretState>({ placed: false, reportedId: null });
+  const insertPageRef = useRef(insertPage);
   useEffect(() => {
     onChangeRef.current = onChange;
+    onCursorRef.current = onCursorCommand;
+    insertPageRef.current = insertPage;
   });
+  // A page switch is a later, explicit choice of block; the caret from before it is stale.
+  useEffect(() => {
+    forgetCaret(caret.current, onCursorRef.current);
+  }, [insertPage]);
   const lastEmitted = useRef(value);
   const [localeCompartment] = useState(() => new Compartment());
   const [readOnlyCompartment] = useState(() => new Compartment());
@@ -225,7 +223,19 @@ export default function ZplCodeMirror({
   const [historyCompartment] = useState(() => new Compartment());
   const [sidecarCompartment] = useState(() => new Compartment());
 
-  useImperativeHandle(ref, () => ({ focus: () => viewRef.current?.focus() }), []);
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => viewRef.current?.focus(),
+      insertCommand: (text) => {
+        const view = viewRef.current;
+        if (!view || view.state.readOnly) return;
+        view.dispatch(commandInsertion(view.state, text, caret.current.placed ? 'caret' : { page: insertPageRef.current }));
+        view.focus();
+      },
+    }),
+    [],
+  );
 
   useEffect(() => {
     if (!host.current) return;
@@ -236,10 +246,9 @@ export default function ZplCodeMirror({
         ...(crlf ? [EditorState.lineSeparator.of('\r\n')] : []),
         lineNumbers({ formatNumber: (n, state) => String(visibleLineNumber(state, n)) }),
         historyCompartment.of(history()),
+        zpl(),
         codeFolding(),
-        zplFolding,
         foldGutter(),
-        zplHighlighter,
         theme,
         readOnlyCompartment.of(readOnlyExt(readOnly)),
         highlightCompartment.of(highlightExt(highlightLines)),
@@ -247,6 +256,15 @@ export default function ZplCodeMirror({
         localeCompartment.of(localeExt(ariaLabel, placeholderText)),
         keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap]),
         EditorView.updateListener.of((u) => {
+          trackCaret(u, caret.current, onCursorRef.current);
+          // Selections only: a synced doc change elsewhere leaves the caret's command as it was.
+          if (u.selectionSet) {
+            const cmd = commandAtCursor(u.state, u.state.selection.main.head);
+            if (cmd?.id !== caret.current.reportedId) {
+              caret.current.reportedId = cmd?.id ?? null;
+              onCursorRef.current?.(cmd);
+            }
+          }
           if (!u.docChanged) return;
           const synced = u.transactions.some((tr) => tr.annotation(propSync));
           if (!synced) {
@@ -254,13 +272,10 @@ export default function ZplCodeMirror({
             lastEmitted.current = text;
             onChangeRef.current(text);
           }
-          // A sync is a fresh document, so it re-folds like a mount; the
-          // typed-in-an-unfolded-blob protection only applies to user edits.
-          const folds = synced
-            ? blobFoldEffects(u.state, 0, u.state.doc.length)
-            : foldsForInsertedBlobs(u);
+          // Syncs included: the export regenerates per drag frame, so a deliberately unfolded blob must not snap shut.
+          const folds = foldsForInsertedBlobs(u);
           if (folds.length > 0) {
-            // Deferred out of the update cycle.
+            // CodeMirror forbids dispatching from inside an update listener.
             setTimeout(() => {
               if (viewRef.current === u.view) u.view.dispatch({ effects: folds });
             }, 0);
@@ -270,6 +285,9 @@ export default function ZplCodeMirror({
     });
     const view = new EditorView({ parent: host.current, state });
     viewRef.current = view;
+    // A remount (line-ending key) starts with no caret; the parent must not keep the old one.
+    caret.current = { placed: false, reportedId: null };
+    onCursorRef.current?.(null);
     // Fold the payload blobs up front; foldService alone only powers the gutter.
     const folds = blobFoldEffects(view.state, 0, view.state.doc.length);
     if (folds.length > 0) view.dispatch({ effects: folds });
@@ -313,20 +331,8 @@ export default function ZplCodeMirror({
     if (old !== value) {
       // Minimal splice, not a full replace: folds, selection and scroll then
       // survive by mapping (a live resize regenerates the export per frame).
-      // String offsets equal doc positions only without the CRLF facet.
-      let from = 0;
-      let oldEnd = old.length;
-      let newEnd = value.length;
-      if (view.state.lineBreak === '\n') {
-        const minLen = Math.min(oldEnd, newEnd);
-        while (from < minLen && old.charCodeAt(from) === value.charCodeAt(from)) from++;
-        while (oldEnd > from && newEnd > from && old.charCodeAt(oldEnd - 1) === value.charCodeAt(newEnd - 1)) {
-          oldEnd--;
-          newEnd--;
-        }
-      }
       view.dispatch({
-        changes: { from, to: view.state.doc.length - (old.length - oldEnd), insert: value.slice(from, newEnd) },
+        changes: minimalSplice(old, value, view.state.lineBreak),
         // Undo must not reach back into synced exports.
         annotations: [propSync.of(true), Transaction.addToHistory.of(false)],
       });
@@ -342,13 +348,11 @@ export default function ZplCodeMirror({
     // Dispatching installs lint's extensions and rebuilds the CRLF index, so
     // a clean buffer (the common case) must not pay for an empty set.
     if (lints.length === 0 && diagnosticCount(view.state) === 0) return;
-    const crlfIdx: number[] = [];
-    for (let i = value.indexOf('\r\n'); i !== -1; i = value.indexOf('\r\n', i + 2)) crlfIdx.push(i);
-    // A bisect per lint, not a running cursor: the mapping must not depend on the order the lints arrive in.
-    const toDocPos = (offset: number): number => Math.min(offset - countBefore(crlfIdx, offset), view.state.doc.length);
+    const crlfIdx = crlfIndex(value);
+    const clampedDocPos = (offset: number): number => Math.min(toDocPos(crlfIdx, offset), view.state.doc.length);
     const mapped: Diagnostic[] = lints.map((d) => ({
-      from: toDocPos(d.from),
-      to: toDocPos(d.to),
+      from: clampedDocPos(d.from),
+      to: clampedDocPos(d.to),
       severity: CM_SEVERITY[d.severity],
       message: d.message,
     }));
