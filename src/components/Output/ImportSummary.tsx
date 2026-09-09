@@ -24,6 +24,8 @@ const TONE: Record<ImportFindingKind, string> = {
   fnDefaultDropped: 'text-red-400',
   // Higher severity: later pages render at the wrong size (single-label model).
   mixedPageGeometry: 'text-red-400',
+  // Content loss: the printer discards the field, so the canvas omits it too.
+  unterminatedField: 'text-amber-400',
 };
 
 export function FindingRow({ finding, showPage }: { finding: ImportFinding; showPage: boolean }) {

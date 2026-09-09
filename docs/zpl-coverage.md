@@ -51,7 +51,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^FO` | field origin | `[x]` | `[x]` | `[ ]` |
 | `^FT` | field top | `[x]` | `[x]` | `[ ]` |
 | `^FD` | field data | `[x]` | `[x]` | `[ ]` |
-| `^FS` | field separator | `[x]` | `[x]` | `[ ]` |
+| `^FS` | field separator | `[x]` | `[x]` | `[x]` |
 | `^FH` | field hex indicator | `[x]` | `[x]` | `[ ]` |
 | `^FR` | field reverse | `[x]` | `[x]` | `[ ]` |
 | `^FX` | field comment | `[x]` | `[x]` | `[ ]` |

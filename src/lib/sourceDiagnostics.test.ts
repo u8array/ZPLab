@@ -40,6 +40,16 @@ describe("buildSourceDiagnostics", () => {
     ]);
   });
 
+  it("offers the ^FS repair only on a dropped field, at the field's last byte", () => {
+    const dropped: ImportFinding = { kind: "unterminatedField", command: "^FO40,40", pageIndex: 0, span: { start: 3, end: 29 } };
+    const other: ImportFinding = { kind: "deviceAction", command: "~PH", pageIndex: 0, span: { start: 40, end: 43 } };
+    const [a, b] = buildSourceDiagnostics(null, [dropped, other], en);
+    expect(a?.to).toBe(29);
+    expect(a?.message).toContain(en.importReport.unterminatedFieldTitleFmt.replace("{fs}", "^FS"));
+    expect(a?.fix).toEqual({ command: "^FS", label: formatTemplate(en.output.lintInsertCmdFmt, { cmd: "^FS" }) });
+    expect(b?.fix).toBeUndefined();
+  });
+
   it("drops findings without a span instead of guessing a position", () => {
     const f: ImportFinding = { kind: "lossyEdit", command: "some reason", pageIndex: 0 };
     expect(buildSourceDiagnostics(null, [f], en)).toEqual([]);

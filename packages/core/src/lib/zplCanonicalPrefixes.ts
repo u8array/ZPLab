@@ -28,6 +28,17 @@ export function prefixCharsAt(zpl: string): TokenizerChars {
   return st;
 }
 
+/** Where the first command at or after `at` begins, with the prefixes in force there.
+ *  Replays from 0: a payload byte or an earlier remap decides what counts as a command. */
+export function commandBoundaryAt(zpl: string, at: number): { pos: number; chars: TokenizerChars } {
+  const st: TokenizerChars = { caretChar: "^", tildeChar: "~", delimiterChar: "," };
+  for (const t of tokenize(zpl, st)) {
+    if (t.start >= at) return { pos: t.start, chars: st };
+    applyPrefixRemap(st, t.cmd, t.rest[0]);
+  }
+  return { pos: zpl.length, chars: st };
+}
+
 /** A canonical id like `^LL`/`~JA` spelled with the prefixes in force. */
 export const spellPrefix = (id: string, chars: TokenizerChars): string =>
   id.replace(/^[\^~]/, (c) => (c === "^" ? chars.caretChar : chars.tildeChar));

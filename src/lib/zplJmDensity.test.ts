@@ -402,8 +402,8 @@ describe('^JM format-head lookahead', () => {
   });
 
   it('applies a mid-field-flush ^JMB to the surviving field, lead==trail', () => {
-    // The second ^FO flushes the first (dataless) field; ^JMB still precedes the
-    // format's first ^FS, so it applies to the whole format. FO3in = 3*4*25.4=305.
+    // The second ^FO leaves the first (dataless) field's state armed. ^JMB still
+    // precedes the format's first ^FS, so it applies to the whole format. FO3in = 3*4*25.4=305.
     expect(x0(parseZPL('^XA^JMB^MUI^FO2,0^FO3,0^A0N,1,1^FDx^FS^XZ', 8))).toBe(305);
     expect(x0(parseZPL('^XA^MUI^FO2,0^FO3,0^JMB^A0N,1,1^FDx^FS^XZ', 8))).toBe(305);
   });

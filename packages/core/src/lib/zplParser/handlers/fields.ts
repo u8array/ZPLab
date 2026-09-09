@@ -6,6 +6,8 @@ import { classifyField } from "../../variableField";
 import { isGroup } from "../../../types/Group";
 import { ZPL_BUILTIN_FONT_LETTERS } from "../../customFonts";
 import { notePartial,
+  consumeOneShotArms,
+  fieldHasContent,
   getDefaultTextH,
   getDefaultTextW,
   resetFieldBlockDefaults,
@@ -14,9 +16,9 @@ import { notePartial,
 import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, int, readJustify, readRotation } from "../helpers";
 import type { Handler, Wildcard } from "../types";
 
-/** flushField + appendComment are shared with the orchestrator. */
+/** closeField + appendComment are shared with the orchestrator. */
 export interface FieldHelpers {
-  flushField: () => void;
+  closeField: () => void;
   appendComment: Handler;
 }
 
@@ -57,7 +59,7 @@ export function createFieldHandlers(
   s: ParserState,
   helpers: FieldHelpers,
 ): Record<string, Handler> {
-  const { flushField, appendComment } = helpers;
+  const { closeField, appendComment } = helpers;
   const { labelConfig } = s.result;
   const { dots, dotsOrUndef } = dotsFor(s);
 
@@ -73,21 +75,44 @@ export function createFieldHandlers(
     s.field.pendingFD = rest;
   };
 
+  // ZD230-measured: an opener before ^FS discards the content since the previous
+  // opener, text and graphics alike, while font, ^FH and the other field state
+  // stay armed until ^FS. The model drops the content and reports its bytes.
+  // Model state rolls back; findings the dropped commands raised stay, as their bytes do.
+  const discardOpenField = () => {
+    const opener = s.field.openedAt;
+    if (opener === null || !fieldHasContent(s)) return;
+    s.result.objects.length = s.field.objBase;
+    if (s.reverseBg !== s.field.bgAtOpen) s.reverseBg = null;
+    // A ^FX run right before the next opener is that field's, not the dropped one's.
+    const trailingRun = s.comment.run;
+    s.result.unterminated.push({ opener, end: trailingRun?.start ?? s.result.prevTokenEnd });
+    if (s.field.pendingFD !== null) consumeOneShotArms(s);
+    s.field.pendingFD = null;
+    // The dropped field's own comment stays in its bytes; only the trailing run rides on.
+    s.comment.pending = trailingRun?.text || undefined;
+  };
+
+  // ZD230-measured: an opener never closes a field, so nothing flushes here.
+  const openField = (p: string[], posType: "FO" | "FT") => {
+    discardOpenField();
+    s.field.x = dots(p[0]) + s.label.lhX;
+    s.field.y = dots(p[1]) + s.label.lhY + s.label.ltY;
+    s.field.justify = readJustify(p[2], s.defaults.fwJustify);
+    s.field.positionIsFT = posType === "FT";
+    s.field.openedAt = s.result.tokenSpan ?? null;
+    s.field.objBase = s.result.objects.length;
+    s.field.bgAtOpen = s.reverseBg;
+    s.field.inkWithoutObject = false;
+  };
+
   return {
     // ── Field origin ──────────────────────────────────────────────────────
     FO(p) {
-      flushField();
-      s.field.x = dots(p[0]) + s.label.lhX;
-      s.field.y = dots(p[1]) + s.label.lhY + s.label.ltY;
-      s.field.justify = readJustify(p[2], s.defaults.fwJustify);
-      s.field.positionIsFT = false;
+      openField(p, "FO");
     },
     FT(p) {
-      flushField();
-      s.field.x = dots(p[0]) + s.label.lhX;
-      s.field.y = dots(p[1]) + s.label.lhY + s.label.ltY;
-      s.field.justify = readJustify(p[2], s.defaults.fwJustify);
-      s.field.positionIsFT = true;
+      openField(p, "FT");
     },
 
     // ── Text ──────────────────────────────────────────────────────────────
@@ -171,16 +196,14 @@ export function createFieldHandlers(
       if (rest) setFieldData(rest);
     },
     FS() {
-      flushField();
+      closeField();
       s.format.fhActive = false;
       s.field.positionIsFT = false;
-      // Drop any per-field pending state that flushField left intact.
+      // Drop any per-field pending state that the flush left intact.
       // Each of these binds only to the field this ^FS closes; without
       // an explicit reset at the boundary a bare ^XX^FS (no ^FD) would
       // leak the pending value into the next real field.
-      s.field.feArmed = false;
-      s.field.fcArmed = false;
-      s.field.snPending = false;
+      consumeOneShotArms(s);
       s.field.snIncrement = 1;
       s.field.snMode = "SN";
       s.field.pendingPrinterFontName = undefined;
@@ -193,8 +216,6 @@ export function createFieldHandlers(
       // a position-command-less follow field must not inherit the leaked R.
       s.field.justify = s.defaults.fwJustify;
       resetFieldBlockDefaults(s.defaults);
-      s.comment.fnNumber = null;
-      s.comment.fnComment = undefined;
     },
 
     // ── Serialization ─────────────────────────────────────────────────────

@@ -127,8 +127,8 @@ function recordFnDefaultCandidate(
   else if (cand.decoded) rec.decoded = true;
 }
 
-/** Field-emit closure: turns cached s.field into a pushed LabelObject at ^FS. */
-export function createFlushField(
+/** Field-close closure: turns cached s.field into a pushed LabelObject when ^FS or ^XZ closes it. */
+export function createCloseField(
   s: ParserState,
   deps: FlushFieldDeps,
 ): () => void {
@@ -791,5 +791,9 @@ export function createFlushField(
     resetSymbologyModeFlags(s.field);
   };
 
-  return flushField;
+  return () => {
+    flushField();
+    s.field.openedAt = null;
+    s.field.bgAtOpen = null;
+  };
 }

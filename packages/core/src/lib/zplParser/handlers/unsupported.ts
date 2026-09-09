@@ -1,14 +1,12 @@
-import { pushBrowserLimit, type ParserResult } from "../context";
+import { noteFieldInk, pushBrowserLimit, type ParserState } from "../context";
 import type { Handler } from "../types";
 
 /** Intentionally-dropped commands: noops + browser-limit (needs printer hardware). */
-export function createUnsupportedHandlers(
-  result: ParserResult,
-): Record<string, Handler> {
+export function createUnsupportedHandlers(s: ParserState): Record<string, Handler> {
   const noop: Handler = () => void 0;
   const mkBrowserLimit =
     (prefix: string, delimiter = "^"): Handler =>
-    (_, rest) => pushBrowserLimit(result, `${delimiter}${prefix}${rest}`);
+    (_, rest) => pushBrowserLimit(s.result, `${delimiter}${prefix}${rest}`);
 
   return {
     // Noops, present in stream, no design impact.
@@ -22,7 +20,11 @@ export function createUnsupportedHandlers(
     // Browser-limit factories, surface as "not loaded" findings.
     HT: mkBrowserLimit("HT"),
     LF: mkBrowserLimit("LF"),
-    IM: mkBrowserLimit("IM"),
+    // ^IM prints a stored image: field content the model cannot carry.
+    IM: (_, rest) => {
+      noteFieldInk(s);
+      pushBrowserLimit(s.result, `^IM${rest}`);
+    },
     DG: mkBrowserLimit("DG", "~"),
   };
 }

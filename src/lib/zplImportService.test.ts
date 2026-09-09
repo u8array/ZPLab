@@ -722,6 +722,11 @@ describe('replay-risk report helpers', () => {
     expect(stripped.partial).toEqual(report.partial);
   });
 
+  it('resolveRoutedReport keeps the dropped-field bucket', () => {
+    const { report } = importZplText('^XA^FO10,10^A0N,30,30^FDa^FO10,60^A0N,30,30^FDb^FS^XZ', 8);
+    expect(resolveRoutedReport(report, [0]).unterminatedField).toEqual(['^FO10,10']);
+  });
+
   it('resolveRoutedReport clears a deviceAction finding on a routed (overlay-dropped) page', () => {
     // ^ST and ~JC share page 0; the overlay drop moots the device action too.
     const { report } = importZplText('^XA^ST05,20,2026,12,00,00~JC^FO10,10^A0N,20,0^FDx^FS^XZ', 8);

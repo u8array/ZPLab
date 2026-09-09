@@ -12,6 +12,8 @@ import {
   zpl,
   zplHighlightStyle,
   CATALOG_USER_EVENT,
+  LINTFIX_USER_EVENT,
+  fixInsertion,
   FOLD_HEAD_CHARS,
   MAX_LINE_RENDER,
   type InsertTarget,
@@ -270,7 +272,20 @@ describe("placesCaret", () => {
     expect(placesCaret(tr({ selection: { anchor: 0, head: 3 }, userEvent: "select" }))).toBe(false);
     expect(placesCaret(tr({ changes: { from: 3, insert: "x" }, userEvent: "input.type" }))).toBe(true);
     expect(placesCaret(tr({ changes: { from: 3, insert: "^LL" }, userEvent: CATALOG_USER_EVENT }))).toBe(false);
+    // A repair click moves no caret either: the next insert must not adopt its spot.
+    expect(placesCaret(tr({ changes: { from: 3, insert: "^FS" }, userEvent: LINTFIX_USER_EVENT }))).toBe(false);
     expect(placesCaret(tr({ changes: { from: 2, to: 3 }, userEvent: "delete.backward" }))).toBe(true);
+  });
+});
+
+describe("fixInsertion", () => {
+  it("lands before the next command as the tokenizer sees it, not before a payload tilde", () => {
+    // ^BX escapes like ~1 are data; only a tilde that opens a command ends the field.
+    const doc = "^XA^FO1,1^BXN,5,200,,,,~^FDab~1x^FO2,2^FDb^FS^XZ";
+    const state = EditorState.create({ doc, extensions: [zpl()] });
+    const at = doc.indexOf("~1x");
+    const spec = fixInsertion(state, "^FS", at);
+    expect(state.update(spec).state.doc.toString()).toBe("^XA^FO1,1^BXN,5,200,,,,~^FDab~1x^FS^FO2,2^FDb^FS^XZ");
   });
 });
 

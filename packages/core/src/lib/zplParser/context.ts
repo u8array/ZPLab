@@ -48,6 +48,12 @@ export const REGEN_LOSSY_REASONS = {
 
 export type RegenLossyReason = (typeof REGEN_LOSSY_REASONS)[keyof typeof REGEN_LOSSY_REASONS];
 
+/** A dropped field: its opener token and where its bytes end (before a trailing ^FX run). */
+export interface UnterminatedField {
+  opener: SourceSpan;
+  end: number;
+}
+
 /** A bucketed command plus the span of the token whose processing recorded
  *  it, stamped at the push site from `ParserResult.tokenSpan`. */
 export interface SpannedToken {
@@ -69,6 +75,11 @@ export interface ParserResult {
   tokenSpan?: SourceSpan;
   /** Last span per bare command code; notePartial anchors partials here. */
   lastSpanByCmd: Map<string, SourceSpan>;
+  /** Trimmed end of the token before the current one: where an open field's
+   *  bytes stop when the next opener or ^XZ arrives. */
+  prevTokenEnd: number;
+  /** Fields the printer discards: content after ^FO/^FT with no ^FS before the next opener. */
+  unterminated: UnterminatedField[];
   browserLimit: SpannedToken[];
   unknown: SpannedToken[];
   /** Setup-Script commands seen (profile-backed, routable on import). */
@@ -96,6 +107,9 @@ export interface LabelFrameState {
  *  ^FN and ^FS doesn't pollute the variable's auto-name. */
 export interface CommentState {
   pending: string | undefined;
+  /** The ^FX run right before the current token: any other token ends it. An
+   *  opener takes its start as the field's start; a discard hands its text on. */
+  run: { start: number; text: string } | null;
   fnNumber: number | null;
   fnComment: string | undefined;
 }
@@ -174,7 +188,9 @@ export interface FontsState {
   referencedFontPaths: Set<string>;
 }
 
-/** Per-field accumulator, consumed and reset by flushField at ^FS. */
+/** Per-field accumulator, consumed and reset when ^FS or ^XZ closes the field.
+ *  The handler modules maintain it; the orchestrator's page scope keeps what
+ *  only the token loop can see (source offsets for the overlay). */
 export interface FieldState {
   // Position (^FO / ^FT, pre-shift, before label.lh*/lt* offsets)
   x: number;
@@ -185,11 +201,19 @@ export interface FieldState {
   // Type discriminator + pending ^FD payload
   fieldType: string | null;
   pendingFD: string | null;
+  /** The opener token's span, null until ^FO/^FT; content since it is what a missing ^FS loses. */
+  openedAt: SourceSpan | null;
+  /** objects.length at the opener: graphics push at their command, so a discard truncates back to it. */
+  objBase: number;
+  /** The reverse-bg stash pending at the opener, so a discard tells its own stash from an inherited one. */
+  bgAtOpen: PendingReverseBg | null;
+  /** Content with no object to count: ^IM, or a ^GF/^XG whose object push was skipped. */
+  inkWithoutObject: boolean;
   /** ^FE armed for the next ^FD only (spec p.191); reset at ^FS. */
   feArmed: boolean;
   /** ^FC armed for the next ^FD only (spec p.1614); reset at ^FS. */
   fcArmed: boolean;
-  /** ^FR: single-field reverse, reset on ^FS / new ^FO / ^FT. */
+  /** ^FR: single-field reverse, reset at ^FS. */
   frActive: boolean;
   /** ^FP direction (H/V/R); per-field, reset to 'H' at ^FS. */
   fpDirection: "H" | "V" | "R";
@@ -277,6 +301,8 @@ export interface ParserState {
   defaults: DefaultsState;
   fonts: FontsState;
   reverseBg: PendingReverseBg | null;
+  /** Stash boxes committed during the current token; the loop resets it. */
+  reverseBgCommits: number;
   field: FieldState;
   /** ^FN slots declared without a field, positioned or not: marker-less by design,
    *  so the serial orphan sweep must not remove them, and their raw bytes make regen lossy. */
@@ -318,6 +344,31 @@ export function notePartial(result: ParserResult, code: string): void {
   if (result.partialSpans.has(code)) return;
   const span = result.lastSpanByCmd.get(code.slice(1)) ?? result.tokenSpan;
   if (span) result.partialSpans.set(code, span);
+}
+
+/** Something the printer would put on the label for the open field: data, an
+ *  object pushed at its command, a reverse-bg stash of its own, or ink with no object. */
+export function fieldHasContent(s: ParserState): boolean {
+  return (
+    s.field.pendingFD !== null ||
+    s.result.objects.length > s.field.objBase ||
+    s.reverseBg !== s.field.bgAtOpen ||
+    s.field.inkWithoutObject
+  );
+}
+
+/** Marks the open field as printing something the model has no object for. */
+export function noteFieldInk(s: ParserState): void {
+  s.field.inkWithoutObject = true;
+}
+
+/** The arms that bind to the next ^FD only (spec p.191, p.1614): ^FN, ^FE, ^FC, ^SN/^SF. */
+export function consumeOneShotArms(s: ParserState): void {
+  s.comment.fnNumber = null;
+  s.comment.fnComment = undefined;
+  s.field.feArmed = false;
+  s.field.fcArmed = false;
+  s.field.snPending = false;
 }
 
 /** Default text height: ^CF override, else ZPL baseline 30. */
@@ -369,9 +420,12 @@ export function resetFormatScopedState(s: ParserState): void {
   s.serialStrippedFns.clear();
   s.declaredFns.clear();
   s.comment.pending = undefined;
+  s.comment.run = null;
   s.comment.fnNumber = null;
   s.comment.fnComment = undefined;
+  // A field still open here belongs to an unclosed format, which the unbalanced marker reports.
   s.field = freshFieldState();
+  s.field.objBase = s.result.objects.length;
   // ^FW justify persists across ^XA (like fwRotation); a later page's first
   // position-less field must inherit it, not the fresh-state 'L'.
   s.field.justify = s.defaults.fwJustify;
@@ -391,6 +445,8 @@ export function createParserState(): ParserState {
       partialCmds: new Set<string>(),
       partialSpans: new Map<string, SourceSpan>(),
       lastSpanByCmd: new Map<string, SourceSpan>(),
+      prevTokenEnd: 0,
+      unterminated: [],
       browserLimit: [],
       unknown: [],
       replayRisk: [],
@@ -405,6 +461,7 @@ export function createParserState(): ParserState {
     },
     comment: {
       pending: undefined,
+      run: null,
       fnNumber: null,
       fnComment: undefined,
     },
@@ -443,6 +500,7 @@ export function createParserState(): ParserState {
       referencedFontPaths: new Set<string>(),
     },
     reverseBg: null,
+    reverseBgCommits: 0,
     declaredFns: new Set<number>(),
     serialStrippedFns: new Set<number>(),
     varScopeStart: 0,
@@ -463,6 +521,10 @@ export function freshFieldState(): FieldState {
     justify: "L",
     fieldType: null,
     pendingFD: null,
+    openedAt: null,
+    objBase: 0,
+    bgAtOpen: null,
+    inkWithoutObject: false,
     feArmed: false,
     fcArmed: false,
     frActive: false,

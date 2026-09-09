@@ -93,6 +93,7 @@ describe("generateMultiPageZplWithMap robustness", () => {
 });
 
 describe("generateMultiPageZplWithMap on overlay pages", () => {
+  const fresh = () => text("new", "Fresh", { y: 200 } as never);
   const source = [
     "^XA",
     "^PW560",
@@ -215,20 +216,125 @@ describe("generateMultiPageZplWithMap on overlay pages", () => {
     expect(/(?<!\r)\n/.test(out.text)).toBe(false);
   });
 
-  it("drops the span of an object the append splice tears apart", () => {
-    // Degenerate but importable: the last ^XZ sits inside the second object's bytes.
+  it("terminates a verbatim field ^XZ closed before appending behind it", () => {
+    // Without the ^FS the printer would drop "b" once "Fresh" follows it.
+    const src = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^FO10,60^A0N,30,30^FDb\n^XZ";
+    const page = importZplText(src, label.dpmm).pages[0];
+    if (!page?.overlay) throw new Error("fixture");
+    const out = generateMultiPageZplWithMap(label, [
+      { ...page, objects: [...page.objects, fresh()] } as Page,
+    ]);
+    expectWellFormed(out);
+    expect(out.text).toMatch(/\^FDb\n\^FS\n\^FO[^\n]*\^FDFresh\^FS\n\^XZ$/);
+    expect(sliceOf(out, "new")).toMatch(/^\^FO.*\^FDFresh\^FS$/);
+    expect(out.spans).toHaveLength(page.objects.length + 1);
+  });
+
+  it("keeps the overlay when a reverse-bg pair's field is ^XZ closed", () => {
+    // The stash commits inside the closing flush; that token owns box and text.
+    const src = "^XA\n^FO40,40^GB200,60,60^FS\n^FO40,40^A0N,40,40^FDx\n^XZ";
+    const page = importZplText(src, label.dpmm).pages[0];
+    expect(page?.overlay).toBeDefined();
+    expect(generateMultiPageZplWithMap(label, [page as Page]).text).toBe(src);
+  });
+
+  it("links a stash ^XZ commits to its own bytes, not to the data-less tail field", () => {
+    const src = "^XA\n^FO40,40^GB200,60,60^FS\n^FO40,200^A0N,40,40\n^XZ";
+    const page = importZplText(src, label.dpmm).pages[0];
+    if (!page?.overlay) throw new Error("fixture");
+    const [box] = page.objects;
+    if (!box) throw new Error("fixture");
+    const out = generateMultiPageZplWithMap(label, [{ ...page, objects: [{ ...box, dirty: true, y: box.y + 10 }] } as Page]);
+    expect(out.text.match(/\^GB/g)).toHaveLength(1);
+    expect(out.text).toContain("^FO40,200^A0N,40,40");
+  });
+
+  it("regenerates when a removed field would let a dropped field's bytes print", () => {
+    const src = "^XA\n^FO40,40^A0N,60,60^FDalpha\n^FO40,200^A0N,60,60^FDbeta^FS\n^XZ";
+    const page = importZplText(src, label.dpmm).pages[0];
+    if (!page?.overlay) throw new Error("fixture");
+    expect(page.overlay.droppedField).toBe(true);
+    expect(generateMultiPageZplWithMap(label, [page as Page]).text).toBe(src);
+    const deleted = generateMultiPageZplWithMap(label, [{ ...page, objects: [] } as Page]);
+    expect(deleted.text).not.toContain("alpha");
+    const excluded = generateMultiPageZplWithMap(label, [
+      { ...page, objects: page.objects.map((o) => ({ ...o, includeInExport: false })) } as Page,
+    ]);
+    expect(excluded.text).not.toContain("alpha");
+  });
+
+  it("reads the terminator case-insensitively before adding one", () => {
+    const src = "^XA\n^FO10,10^A0N,30,30^FDa^fs\n^FO10,60^A0N,30,30^FDb\n^XZ";
+    const page = importZplText(src, label.dpmm).pages[0];
+    if (!page?.overlay) throw new Error("fixture");
+    const [a] = page.objects;
+    if (!a) throw new Error("fixture");
+    const out = generateMultiPageZplWithMap(label, [{ ...page, objects: [a, fresh()] } as Page]);
+    expect(out.text).not.toMatch(/\^fs\s*\^FS/i);
+  });
+
+  it("adds no second ^FS once the open tail was regenerated or deleted", () => {
+    const src = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^FO10,60^A0N,30,30^FDb\n^XZ";
+    const page = importZplText(src, label.dpmm).pages[0];
+    if (!page?.overlay) throw new Error("fixture");
+    const [a, b] = page.objects;
+    if (!a || !b || b.type !== "text") throw new Error("fixture");
+    const edited = generateMultiPageZplWithMap(label, [
+      { ...page, objects: [a, { ...b, dirty: true, props: { ...b.props, content: "EDIT" } }, fresh()] } as Page,
+    ]);
+    expect(edited.text).not.toMatch(/\^FS\s*\^FS/);
+    const deleted = generateMultiPageZplWithMap(label, [{ ...page, objects: [a, fresh()] } as Page]);
+    expect(deleted.text).not.toMatch(/\^FS\s*\^FS/);
+  });
+
+  it("terminates an unmodelled field ^XZ closed as well", () => {
+    // No object span marks the ^IM field, so the guard must read the bytes.
+    const src = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^FO10,60^IMR:LOGO.GRF\n^XZ";
+    const page = importZplText(src, label.dpmm).pages[0];
+    if (!page?.overlay) throw new Error("fixture");
+    const out = generateMultiPageZplWithMap(label, [
+      { ...page, objects: [...page.objects, fresh()] } as Page,
+    ]);
+    expect(out.text).toMatch(/\^IMR:LOGO\.GRF\n\^FS\n\^FO[^\n]*\^FDFresh\^FS\n\^XZ$/);
+    // An overlay saved before the flag existed appends as it always did.
+    const { openTail: _legacy, ...legacy } = page.overlay;
+    const old = generateMultiPageZplWithMap(label, [
+      { ...page, overlay: legacy, objects: [...page.objects, fresh()] } as Page,
+    ]);
+    expect(old.text).toMatch(/\^IMR:LOGO\.GRF\n\^FO[^\n]*\^FDFresh\^FS\n\^XZ$/);
+  });
+
+  const tornImport = () => {
     const src = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^XZ\n^FO10,60^A0N,30,30^FDb^XZ^FS";
     const r = importZplText(src, label.dpmm);
-    const withNew: Page[] = r.pages.map((p, i) =>
-      i === r.pages.length - 1
-        ? ({ ...p, objects: [...p.objects, text("new", "Fresh", { y: 200 } as never)] } as Page)
-        : p,
-    );
-    const out = generateMultiPageZplWithMap(label, withNew);
+    const last = r.pages[r.pages.length - 1];
+    if (!last?.overlay) throw new Error("fixture");
+    const appended = (p: Page): Page => ({ ...p, objects: [...p.objects, fresh()] }) as Page;
+    return { last, overlay: last.overlay, appended };
+  };
+
+  it("keeps every span when the last ^XZ sits right after the second object's bytes", () => {
+    // The parser closes a field at ^XZ, so a fresh import has no torn span.
+    const { last, appended } = tornImport();
+    const clean = generateMultiPageZplWithMap(label, [appended(last)]);
+    expectWellFormed(clean);
+    expect(clean.spans).toHaveLength(last.objects.length + 1);
+  });
+
+  it("drops the span of an object the append splice tears apart", () => {
+    // A design saved before this parser change can still carry the ^XZ inside
+    // the object's segment. No contiguous span describes that object after the
+    // splice, so the torn overlay is built here to cover it.
+    const { last, overlay, appended } = tornImport();
+    const segs = overlay.segments;
+    const i = segs.findIndex((s) => s.kind === "object" && s.objectId === last.objects[1]?.id);
+    const head = segs[i];
+    if (!head) throw new Error("fixture");
+    const torn = [...segs.slice(0, i), { ...head, text: segs.slice(i).map((s) => s.text).join("") }];
+    const out = generateMultiPageZplWithMap(label, [appended({ ...last, overlay: { ...overlay, segments: torn, regenSafe: true } })]);
     expectWellFormed(out);
     expect(out.spans.some((s) => s.objectId === "new")).toBe(true);
-    const allIds = withNew.flatMap((p) => p.objects.map((o) => o.id));
-    expect(out.spans).toHaveLength(allIds.length - 1);
+    expect(out.spans).toHaveLength(last.objects.length);
   });
 
   it("emits no span for a deleted object and keeps the survivor anchored", () => {

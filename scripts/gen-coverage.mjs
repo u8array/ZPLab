@@ -94,7 +94,7 @@ function readmeIntro(commands) {
     bothPlanned ? `${bothPlanned} more are planned for both builds.` : '',
     printerPlanned ? `${printerPlanned} need a connected printer and are planned for desktop.` : '',
   ];
-  const linting = lint ? `The source editor checks parameters for ${lint} commands.` : 'The source editor does not lint command parameters yet.';
+  const linting = lint ? `The source editor checks parameters for ${lint} command${lint === 1 ? '' : 's'}.` : 'The source editor does not lint command parameters yet.';
   return [modelled, ...planned, linting, 'See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).'].filter(Boolean).join(' ');
 }
 

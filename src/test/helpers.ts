@@ -11,12 +11,18 @@ export function parseSingle(zpl: string, dpmm = 8, opts?: { captureOverlay?: boo
   return { ...r, ...defined(r.pages[0]), labelConfig: r.labelConfig };
 }
 
+/** Findings of one kind, in occurrence order. */
+export const findingsOf = <F extends { kind: ImportFindingKind }>(
+  parsed: { findings: F[] },
+  kind: ImportFindingKind,
+): F[] => parsed.findings.filter((f) => f.kind === kind);
+
 /** Commands of one finding kind, in occurrence order (per-page findings
  *  replaced the old document-wide report buckets). */
 export const commandsOf = (
   parsed: { findings: { kind: ImportFindingKind; command: string }[] },
   kind: ImportFindingKind,
-): string[] => parsed.findings.filter((f) => f.kind === kind).map((f) => f.command);
+): string[] => findingsOf(parsed, kind).map((f) => f.command);
 
 /** Read the serial-mode prop off a parsed leaf for assertions. */
 export const serialOf = (

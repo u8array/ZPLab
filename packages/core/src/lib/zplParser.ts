@@ -9,11 +9,11 @@ import { isLoneMarker } from "./variableField";
 import { markerOf } from "../types/Variable";
 import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
-import { stripLineWrap, stripTrailingSpaces, tokenize } from "./zplParser/helpers";
+import { stripLineWrap, stripTrailingSpaces, tokenize, trimmedSpanEnd } from "./zplParser/helpers";
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
 import { qrPrintsAsGraphic } from "./objectBounds";
-import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, resetFormatScopedState, type FnDefaultCandidate, type RegenLossyReason, type SpannedToken } from "./zplParser/context";
-import { createFlushField } from "./zplParser/flushField";
+import { createParserState, deriveUnitScale, fieldHasContent, REGEN_LOSSY_REASONS, resetFormatScopedState, type FnDefaultCandidate, type RegenLossyReason, type SpannedToken, type UnterminatedField } from "./zplParser/context";
+import { createCloseField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
 import { createDynamicFontAWildcard, createFieldHandlers } from "./zplParser/handlers/fields";
 import { createGraphicsHandlers } from "./zplParser/handlers/graphics";
@@ -195,7 +195,7 @@ export function parseZPL(
   // so per-format repeats of a command are re-reported on their own page.
   const {
     objects, labelConfig, printerProfile, variables,
-    browserLimit, unknown, replayRisk, deviceAction,
+    browserLimit, unknown, replayRisk, deviceAction, unterminated,
   } = s.result;
 
   const takeComment = (): string | undefined => {
@@ -204,9 +204,19 @@ export function parseZPL(
     return c;
   };
 
-  const graphicsFamily = createGraphicsHandlers(s, takeComment);
+  const overlaySpans: LinkedSpan[] = [];
+  const linkedIds = new Set<string>();
+  const linkedFrames = new Map<string, OverlayFrame>();
+  const linkObject = (start: number, end: number, objectId: string) => {
+    overlaySpans.push({ start, end, link: { kind: "object", objectId } });
+    linkedIds.add(objectId);
+    if (pg.ovFrame) linkedFrames.set(objectId, pg.ovFrame);
+  };
+  const graphicsFamily = createGraphicsHandlers(s, takeComment, (bg, box) => {
+    if (bg.span) linkObject(bg.span.start, bg.span.end, box.id);
+  });
   const { commitPendingReverseBg, getReverseFlag } = graphicsFamily.helpers;
-  const flushField = createFlushField(s, {
+  const closeField = createCloseField(s, {
     commitPendingReverseBg,
     getReverseFlag,
     takeComment,
@@ -217,13 +227,16 @@ export function parseZPL(
   };
   // Our geometry sidecar heads every exported block, so every block consumes one;
   // the settings are document-level, so the first wins and later ones are dropped,
-  // never shown as comments. A body ^FX cannot reach this: the block has no object yet.
+  // never shown as comments. A body ^FX reaches an empty block only after a
+  // discard emptied it, hence the second guard.
   const labelMeta: { value: LabelMeta | null } = { value: null }; // holder: the closure write survives TS narrowing
   // Multi-line ^FX before a field accumulate; XA/XZ reset at label boundaries.
   const appendComment: Handler = (_, rest) => {
+    const run = s.comment.run ?? { start: s.result.tokenSpan?.start ?? 0, text: "" };
+    s.comment.run = run;
     const next = rest.trim();
     if (!next) return;
-    if (objects.length === pg.obj) {
+    if (objects.length === pg.obj && unterminated.length === pg.unterminated) {
       const meta = parseLabelMetaComment(next);
       if (meta) {
         labelMeta.value ??= meta;
@@ -231,6 +244,7 @@ export function parseZPL(
       }
     }
     s.comment.pending = s.comment.pending ? `${s.comment.pending}\n${next}` : next;
+    run.text = run.text ? `${run.text}\n${next}` : next;
   };
 
   const handlers: Record<string, Handler> = {
@@ -242,6 +256,8 @@ export function parseZPL(
       resetComment(p, rest, cmd);
     },
     XZ(p, rest, cmd) {
+      // ZD230-measured: a field still open at ^XZ prints, so it is modelled.
+      closeField();
       commitPendingReverseBg();
       // Between formats there is no head: a ^JM out here is neither read by the
       // next format's lookahead nor rewritable, so it must not be taken for one.
@@ -251,7 +267,7 @@ export function parseZPL(
   };
 
   Object.assign(handlers, createBarcodeHandlers(s));
-  Object.assign(handlers, createFieldHandlers(s, { flushField, appendComment }));
+  Object.assign(handlers, createFieldHandlers(s, { closeField, appendComment }));
   Object.assign(handlers, graphicsFamily.handlers);
   const setupScriptHandlers = createSetupScriptHandlers(s);
   // Setup-Script codes are profile-backed (routable on import); device actions
@@ -273,20 +289,11 @@ export function parseZPL(
   Object.assign(handlers, setupScriptHandlers);
   Object.assign(handlers, createLabelConfigHandlers(s, dpmm));
   Object.assign(handlers, createUnitsHandler(s, dpmm));
-  Object.assign(handlers, createUnsupportedHandlers(s.result));
+  Object.assign(handlers, createUnsupportedHandlers(s));
 
   // Wildcard handlers are tried only after exact-match dispatch fails,
   // so a handler-table entry always wins over a pattern-match.
   const wildcards: Wildcard[] = [createDynamicFontAWildcard(s)];
-
-  const overlaySpans: LinkedSpan[] = [];
-  const linkedIds = new Set<string>();
-  const linkedFrames = new Map<string, OverlayFrame>();
-  const linkObject = (start: number, end: number, objectId: string) => {
-    overlaySpans.push({ start, end, link: { kind: "object", objectId } });
-    linkedIds.add(objectId);
-    if (pg.ovFrame) linkedFrames.set(objectId, pg.ovFrame);
-  };
 
   // Page bookkeeping: one page per ^XA block, closed at the NEXT ^XA (so the
   // inter-block separator stays with the preceding page, which the overlay
@@ -314,18 +321,16 @@ export function parseZPL(
     unknown: unknown.length,
     replay: replayRisk.length,
     device: deviceAction.length,
+    unterminated: unterminated.length,
     span: overlaySpans.length,
-    // Open field's source start (^FO/^FT or its leading ^FX run) and object
-    // count at open; a mid-field reverse-bg commit bumps `ovBase`. Only clean
+    // Open field's source start (^FO/^FT or its leading ^FX run). Only clean
     // single-object fields and deferred reverse-bg boxes link; anything else
     // trips the all-linked gate and the block regenerates.
     ovStart: null as number | null,
-    ovBase: 0,
+    // Stamped at ^XZ with a field still open, so export can terminate it.
+    openTail: false,
     // The ^LH/^LT the opener folded into the field's coordinates.
     ovFrame: null as OverlayFrame | null,
-    // Start of a contiguous ^FX run immediately before a field, so the
-    // field's span owns its comment bytes.
-    commentStart: null as number | null,
     // In-span ^BY sightings, from the tokenizer (so ^CC/^CD remaps count):
     // any form, and one that fills the h slot the ^FO QR position depends on.
     spanHasBy: false,
@@ -363,8 +368,10 @@ export function parseZPL(
     unk: readonly SpannedToken[],
     replay: readonly SpannedToken[],
     device: readonly SpannedToken[],
+    dropped: readonly UnterminatedField[],
   ): ImportFinding[] => [
     ...partial.map((command): ImportFinding => ({ kind: "partial", command, pageIndex, span: s.result.partialSpans.get(command) })),
+    ...dropped.map((u): ImportFinding => ({ kind: "unterminatedField", command: zpl.slice(u.opener.start, u.opener.end), pageIndex, span: { start: u.opener.start, end: trimmedSpanEnd(zpl, u.opener.start, u.end) } })),
     ...browser.map((t): ImportFinding => ({ kind: "browserLimit", command: t.command, pageIndex, span: t.span })),
     ...unk.map((t): ImportFinding => ({ kind: "unknown", command: t.command, pageIndex, span: t.span })),
     ...replay.map((t): ImportFinding => ({ kind: "replayRisk", command: t.command, pageIndex, span: t.span })),
@@ -405,6 +412,7 @@ export function parseZPL(
       unknown.slice(pg.unknown),
       replayRisk.slice(pg.replay),
       deviceAction.slice(pg.device),
+      unterminated.slice(pg.unterminated),
     );
     // A ^FN still open at ^XZ is raw bytes the header would re-emit as well.
     const regenLoss = regenLossReason(pg, s.declaredFns.size > 0 || s.comment.fnNumber !== null, s.fdRegenLossy);
@@ -423,7 +431,8 @@ export function parseZPL(
           overlaySpans
             .slice(pg.span)
             .map((sp) => ({ ...sp, start: sp.start - pg.start, end: sp.end - pg.start })),
-          { regenSafe: pageRegenSafe, frame, head: pg.head },
+          // A dropped field's bytes would print again once the field behind them is gone.
+          { regenSafe: pageRegenSafe, frame, head: pg.head, openTail: pg.openTail, droppedField: unterminated.length > pg.unterminated },
         );
       } catch (err) {
         console.warn("buildBlockOverlay failed, dropping overlay for this page", err);
@@ -484,7 +493,8 @@ export function parseZPL(
     // Read by the finding push sites (notePartial, pushBrowserLimit). End is
     // trimmed: the tokenizer's end runs to the next command's prefix, and a
     // span must not swallow the line break plus following indent.
-    s.result.tokenSpan = { start, end: Math.min(end, start + 3 + rest.trimEnd().length) };
+    s.result.prevTokenEnd = s.result.tokenSpan?.end ?? 0;
+    s.result.tokenSpan = { start, end: trimmedSpanEnd(zpl, start, end) };
     s.result.lastSpanByCmd.set(cmd, s.result.tokenSpan);
     // Strips trailing break plus indent from the last literal param; LITERAL_TAIL_CMDS keep real trailing spaces.
     const p = stripLineWrap(rest).split(s.format.delimiterChar);
@@ -498,6 +508,7 @@ export function parseZPL(
     const deviceTwin = tildeDeviceCodes.has(cmd) ? s.format.tildeChar : caretDeviceCodes.has(cmd) ? s.format.caretChar : null;
     if (deviceTwin !== null && zpl[start] === deviceTwin) {
       deviceAction.push({ command: `${zpl[start]}${cmd}`, span: s.result.tokenSpan });
+      s.comment.run = null;
       continue;
     }
     // These findings name bytes that replay verbatim, so report the source prefix.
@@ -522,8 +533,12 @@ export function parseZPL(
     }
     const handler = handlers[cmd] ?? wildcards.find((w) => w.matches(cmd))?.handle;
     if (handler) {
-      const reverseBefore = s.reverseBg;
-      const beforeLen = objects.length;
+      // The field's object base as this token found it: a stash the closing
+      // flush commits must not count as this field's own object.
+      const base = s.field.objBase;
+      s.reverseBgCommits = 0;
+      // Read before the flush pushes the object: a bare opener at ^XZ has nothing to terminate.
+      const tailHasContent = cmd === "XZ" && fieldHasContent(s);
       // Arming unconsumed at ^FS MAY ride to the next ^FD on firmware
       // (cross-^FS carry unverified; the parser drops it per the spec's
       // in-field wording), so regen must not run under it. Read pre-^FS.
@@ -598,30 +613,10 @@ export function parseZPL(
         // bytes that the surviving raw ^CI would mis-decode (the generator emits
         // ^CI28 only on the full-regen fallback, not in the overlay path).
         if (s.format.ciDecoder.encoding !== "utf-8") pg.sawNonUtf8Ci = true;
-        // Track the leading-comment run; a non-^FX command (other than the field
-        // opener) breaks contiguity so the span won't swallow intervening config.
-        // Known limitation: when a command separates a ^FX from its field, the
-        // ^FX stays in a raw segment; editing that field re-emits the comment,
-        // producing a duplicate ^FX in the output. Harmless (comments do not
-        // print) and rare, so accepted rather than tracked per-object.
-        if (cmd === "FX") {
-          if (pg.commentStart === null) pg.commentStart = start;
-        } else if (cmd !== "FO" && cmd !== "FT") {
-          pg.commentStart = null;
-        }
-        // A prior stashed reverse-bg committed standalone on this (non-^FS)
-        // token (graphics command, ^XA/^XZ): commitPendingReverseBg pushes the
-        // box first, so objects[beforeLen] is it. ^FS is handled below instead.
-        if (
-          cmd !== "FS" &&
-          reverseBefore?.span &&
-          s.reverseBg !== reverseBefore &&
-          objects.length > beforeLen
-        ) {
-          const box = objects[beforeLen];
-          if (box) linkObject(reverseBefore.span.start, reverseBefore.span.end, box.id);
-          if (pg.ovStart !== null) pg.ovBase++;
-        }
+        // A token closing an open field (^FS, or ^XZ with a field open) owns
+        // the object its flush pushed; a stash committed on the way is linked
+        // by the commit itself and sits below that object.
+        const closing = cmd === "FS" || cmd === "XZ" ? pg.ovStart : null;
         if (cmd === "BY" && pg.ovStart !== null) {
           pg.spanHasBy = true;
           // Mirrors the handler's capture: zero is no height (the session
@@ -629,21 +624,23 @@ export function parseZPL(
           pg.spanByHasH ||= s.defaults.byHeight >= 1;
         }
         if (cmd === "FO" || cmd === "FT") {
-          pg.ovStart = pg.commentStart ?? start;
+          pg.ovStart = s.comment.run?.start ?? start;
           pg.ovFrame = s.label.lhX !== 0 || s.label.lhY !== 0 || s.label.ltY !== 0 ? { homeX: s.label.lhX, homeY: s.label.lhY, top: s.label.ltY } : null;
-          pg.ovBase = objects.length;
-          pg.commentStart = null;
           pg.spanHasBy = false;
           pg.spanByHasH = false;
-        } else if (cmd === "FS" && pg.ovStart !== null) {
-          const fieldEnd = start + 3;
+        } else if (closing !== null) {
+          // A field ^XZ closes owns the bytes up to the token before ^XZ, as an
+          // ^FS-closed one owns everything up to its ^FS.
+          const fieldEnd = cmd === "FS" ? start + 3 : s.result.prevTokenEnd;
+          if (tailHasContent) pg.openTail = true;
+          const ownAt = base + s.reverseBgCommits;
+          const own = objects.length === ownAt + 1 ? objects[ownAt] : undefined;
           // A ^BY-consuming barcode whose ^BY sits outside its own field would
           // inherit a regenerated neighbour's inline ^BY on replay; mark the
           // block unsafe. Classify by the parsed object type (not a regex).
           // Of the 2D codes only ^FO QR consumes ^BY (its print sinks by the
           // height, ZD230-measured); DataMatrix/Aztec/MaxiCode and ^FT QR are
-          // immune. The field's own object is the last one pushed.
-          const own = objects.length > pg.ovBase ? objects[objects.length - 1] : undefined;
+          // immune.
           // QR consumes only the h slot (position), so its ^BY must fill one;
           // the 1D families consume w, which every ^BY form sets.
           const hasNeededBy = own?.type === "qrcode" ? pg.spanByHasH : pg.spanHasBy;
@@ -654,25 +651,20 @@ export function parseZPL(
           if (consumesBy && !hasNeededBy) {
             pg.sawBareBarcode = true;
           }
-          if (s.reverseBg && s.reverseBg.span === undefined && objects.length === pg.ovBase) {
+          if (s.reverseBg && s.reverseBg.span === undefined && objects.length === ownAt) {
             // This field stashed a reverse-bg (no object yet); record its span
             // so the box can be linked when it commits later.
-            s.reverseBg.span = { start: pg.ovStart, end: fieldEnd };
-          } else if (reverseBefore?.span && s.reverseBg === null && objects.length === pg.ovBase + 2) {
-            // Stashed box committed standalone during this flush (box at pg.ovBase),
-            // then the field's own object (text/barcode) at pg.ovBase+1.
-            const box = objects[pg.ovBase];
-            const own = objects[pg.ovBase + 1];
-            if (box) linkObject(reverseBefore.span.start, reverseBefore.span.end, box.id);
-            if (own) linkObject(pg.ovStart, fieldEnd, own.id);
-          } else if (objects.length === pg.ovBase + 1) {
-            // Clean single-object field.
-            const obj = objects[pg.ovBase];
-            if (obj) linkObject(pg.ovStart, fieldEnd, obj.id);
+            s.reverseBg.span = { start: closing, end: fieldEnd };
+          } else if (own) {
+            linkObject(closing, fieldEnd, own.id);
           }
           pg.ovStart = null;
         }
       }
+      // A ^FX run survives only up to the next command, and the opener has read it by
+      // now. A command between a ^FX and its field leaves the ^FX raw; editing that
+      // field re-emits the comment, a harmless duplicate.
+      if (cmd !== "FX") s.comment.run = null;
       // Page boundary: the FIRST ^XA continues page 0 (which owns any
       // preamble); every further ^XA closes the page at its own offset, after
       // this token's capture block so a boundary-committed reverse-bg span
@@ -706,6 +698,7 @@ export function parseZPL(
       const token = `${zpl[start] ?? "^"}${cmd}${rest}`.trimEnd();
       unknown.push({ command: token, span: s.result.tokenSpan });
     }
+    s.comment.run = null;
   }
 
   // Close the last page (also the only one for single-block or bare streams);

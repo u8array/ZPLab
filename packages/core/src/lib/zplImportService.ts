@@ -1,6 +1,6 @@
 import type { PageSource } from "./zplParser/types";
 import { parseZPL, type ImportFinding, type ImportReport, type UnbalancedFormat } from "./zplParser";
-import { replayRiskFindings, dedupCommandsByKind } from "./importReport";
+import { replayRiskFindings, reportOf } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
 import { stripDrivePrefix } from "./customFonts";
 import { renameTemplateMarkers } from "./fnTemplate";
@@ -243,19 +243,7 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     }
   }
 
-  // Bucket views deduplicate by command code to match the JSDoc contract on
-  // ImportReport (zplParser/types.ts). The per-occurrence model lives in
-  // `findings`; consumers that only need the set of distinct affected commands
-  // read these buckets unchanged. Only command-based kinds get a bucket; a
-  // block-level kind like 'lossyEdit' stays in `findings` by design.
-  const report: ImportReport = {
-    findings,
-    partial: dedupCommandsByKind(findings, 'partial'),
-    browserLimit: dedupCommandsByKind(findings, 'browserLimit'),
-    unknown: dedupCommandsByKind(findings, 'unknown'),
-    replayRisk: dedupCommandsByKind(findings, 'replayRisk'),
-    deviceAction: dedupCommandsByKind(findings, 'deviceAction'),
-  };
+  const report = reportOf(findings);
 
   return {
     labelConfig,

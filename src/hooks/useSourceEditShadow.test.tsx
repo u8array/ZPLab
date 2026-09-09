@@ -57,6 +57,20 @@ describe("useSourceShadowSync", () => {
     expect(dev?.span && draft.slice(dev.span.start, dev.span.end)).toBe("~PH");
   });
 
+  it("carries a dropped field's finding over its bytes, with the shadow omitting the field", async () => {
+    const { rerender } = renderHook(() => useSourceShadowSync());
+    const dropped = "^FO10,10^A0N,30,30^FDgone";
+    const draft = `^XA${dropped}^FO10,60^A0N,30,30^FDkept^FS^XZ`;
+    act(() => {
+      useLabelStore.setState({ sourceEdit: session(draft) });
+    });
+    rerender();
+    await flushParse();
+    const f = useLabelStore.getState().sourceShadow?.findings.find((x) => x.kind === "unterminatedField");
+    expect(f?.span && draft.slice(f.span.start, f.span.end)).toBe(dropped);
+    expect(shadowObjects()).toHaveLength(1);
+  });
+
   it("clears findings on the refusal path (offsets would be stale)", async () => {
     const { rerender } = renderHook(() => useSourceShadowSync());
     act(() => {
