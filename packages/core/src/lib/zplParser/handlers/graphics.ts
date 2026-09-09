@@ -4,7 +4,8 @@ import type { ImageProps } from "../../../registry/image";
 import type { LineProps } from "../../../registry/line";
 import { loadFontBytesSync } from "../../fontCache";
 import { formatStoragePath, parseStoragePath } from "../../storagePath";
-import { notePartial, getPosType, pushBrowserLimit, type ParserState } from "../context";
+import { notePartial, getPosType, noteFieldInk, pushBrowserLimit, type ParserState, type PendingReverseBg } from "../context";
+import type { LabelObject } from "../../../types/Group";
 import { decodeGraphicToImage } from "../decoders/graphic";
 import { preserveGfData } from "../decoders/gfa";
 import { extractQrSidecar } from "../../qrGraphic";
@@ -18,23 +19,10 @@ import { newId } from "../../ids";
  *  doesn't drown out the import report. */
 const IMPORT_FINDING_PAYLOAD_LIMIT = 80;
 
-/** Helpers re-exported to parseZPL so flushField can commit a stashed reverse-bg
- *  box just before the field that follows it. */
+/** Helpers re-exported to parseZPL so the field flush can commit a stashed
+ *  reverse-bg box just before the field that follows it. */
 export interface GraphicsExports {
   commitPendingReverseBg: () => void;
-  pushGBObject: (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    t: number,
-    color: "B" | "W",
-    rounding: number,
-    reverseFlag: boolean | undefined,
-    comment: string | undefined,
-    positionType: "FO" | "FT",
-    justify: "L" | "R",
-  ) => void;
   /** ^LR | ^FR; returns `undefined` (not `false`) when off. */
   getReverseFlag: () => boolean | undefined;
 }
@@ -48,13 +36,17 @@ export interface GraphicsFamily {
 export function createGraphicsHandlers(
   s: ParserState,
   takeComment: () => string | undefined,
+  /** The stash's box just pushed: the one place that knows which bytes it came from. */
+  onReverseBgCommitted: (bg: PendingReverseBg, box: LabelObject) => void,
 ): GraphicsFamily {
   const getReverseFlag = () => s.label.lrActive || s.field.frActive || undefined;
   const { dots } = dotsFor(s);
 
-  const pushGBObject: GraphicsExports["pushGBObject"] = (
-    gx, gy, w, h, t, color, rounding, reverseFlag, comment, positionType, justify,
-  ) => {
+  const pushGBObject = (
+    gx: number, gy: number, w: number, h: number, t: number,
+    color: "B" | "W", rounding: number, reverseFlag: boolean | undefined,
+    comment: string | undefined, positionType: "FO" | "FT", justify: "L" | "R",
+  ): LabelObject => {
     // ^FT graphic origin is a bottom corner (spec p.205): bottom-left, or
     // bottom-right when z=1 (justify R). The model stores the top-left, so
     // lift by the height and, for R, shift left by the width. ^FO is top-left.
@@ -83,6 +75,7 @@ export function createGraphicsHandlers(
     }
     if (justify === "R") obj.fieldJustify = "R";
     s.result.objects.push(obj);
+    return obj;
   };
 
   /** Push a graphic of footprint w x h, converting the current ^FO/^FT field
@@ -107,7 +100,11 @@ export function createGraphicsHandlers(
     if (!s.reverseBg) return;
     const bg = s.reverseBg;
     s.reverseBg = null;
-    pushGBObject(bg.x, bg.y, bg.w, bg.h, bg.t, bg.color, bg.rounding, bg.reverseFlag, bg.comment, bg.positionType ?? "FO", bg.justify ?? "L");
+    // A stash inherited from the previous field is not this field's content.
+    if (bg === s.field.bgAtOpen) s.field.objBase++;
+    s.reverseBgCommits++;
+    const box = pushGBObject(bg.x, bg.y, bg.w, bg.h, bg.t, bg.color, bg.rounding, bg.reverseFlag, bg.comment, bg.positionType ?? "FO", bg.justify ?? "L");
+    onReverseBgCommitted(bg, box);
   };
 
   const handlers: Record<string, Handler> = {
@@ -188,6 +185,7 @@ export function createGraphicsHandlers(
       // ^GF{A|B|C},{totalBytes},{totalBytes},{bytesPerRow},{payload}
       const format = rest[0]?.toUpperCase();
       if (format !== "A" && format !== "B" && format !== "C") {
+        noteFieldInk(s);
         pushBrowserLimit(s.result, gfSummary);
         return;
       }
@@ -202,6 +200,7 @@ export function createGraphicsHandlers(
         if (commaPos === -1) break;
       }
       if (commaPos === -1) {
+        noteFieldInk(s);
         pushBrowserLimit(s.result, gfSummary);
         return;
       }
@@ -212,6 +211,7 @@ export function createGraphicsHandlers(
       const gfRawData = gfRest.slice(commaPos + 1);
 
       if (gfBytesPerRow <= 0) {
+        noteFieldInk(s);
         pushBrowserLimit(s.result, gfSummary);
         return;
       }
@@ -354,6 +354,7 @@ export function createGraphicsHandlers(
       const xgPath = firstComma === -1 ? rest : rest.slice(0, firstComma);
       const parsed = parseStoragePath(xgPath);
       if (!parsed) {
+        noteFieldInk(s);
         pushBrowserLimit(s.result, `^XG${rest}`);
         return;
       }
@@ -525,6 +526,6 @@ export function createGraphicsHandlers(
 
   return {
     handlers,
-    helpers: { commitPendingReverseBg, pushGBObject, getReverseFlag },
+    helpers: { commitPendingReverseBg, getReverseFlag },
   };
 }

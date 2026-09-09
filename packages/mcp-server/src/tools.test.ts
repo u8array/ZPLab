@@ -286,6 +286,12 @@ describe("mcp-server tools", () => {
     expect(v.findings.replayRisk).toContain("^JU");
   });
 
+  it("validate_zpl names the field the printer discards for a missing ^FS", () => {
+    const v = ok(validateZpl("^XA^FO10,10^A0N,30,30^FDgone^FO10,60^A0N,30,30^FDkept^FS^XZ"));
+    expect(v.objectCount).toBe(1);
+    expect(v.findings.unterminatedField).toEqual(["^FO10,10"]);
+  });
+
   it("create_draft reports per-object bounds; barcodes are kernel-probed exact", () => {
     const created = createDraft({
       widthMm: 100,
@@ -468,7 +474,7 @@ describe("mcp-server tools", () => {
     const v = ok(validateZpl("^XA^FO10,10^FDX^FS^XZ"));
     expect(v.findings).not.toHaveProperty("findings");
     expect(Object.keys(v.findings).sort()).toEqual(
-      ["browserLimit", "deviceAction", "partial", "replayRisk", "unknown"],
+      ["browserLimit", "deviceAction", "partial", "replayRisk", "unknown", "unterminatedField"],
     );
   });
 

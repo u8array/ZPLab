@@ -78,6 +78,9 @@ export function describeFinding(
   if (f.kind === 'fnDefaultDropped') {
     return { title: tr.fnDefaultDroppedTitleFmt.replace('{fn}', '^FN'), detail: f.command };
   }
+  if (f.kind === 'unterminatedField') {
+    return { title: tr.unterminatedFieldTitleFmt.replace('{fs}', '^FS'), detail: f.command };
+  }
   if (f.kind === 'mixedPageGeometry') {
     // ^JM divergence is a mode conflict, not a size one, so it gets its own
     // headline; the command token alone is the detail (title carries meaning).
@@ -89,6 +92,8 @@ export function describeFinding(
       detail: tr.mixedGeoDetailFmt.replace('{cmds}', '^PW/^LL').replace('{detail}', f.command),
     };
   }
+  // Exhaustive: a new kind in core fails to compile here instead of rendering as unknown.
+  f.kind satisfies 'unknown';
   return { title: tr.unknownTitle, detail: f.command };
 }
 

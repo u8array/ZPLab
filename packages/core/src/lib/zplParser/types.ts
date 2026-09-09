@@ -13,7 +13,8 @@ export type ImportFindingKind =
   | "lossyEdit"
   | "fnRenumbered"
   | "fnDefaultDropped"
-  | "mixedPageGeometry";
+  | "mixedPageGeometry"
+  | "unterminatedField";
 
 /** Absolute offsets into a ZPL text, parsed or generated. Readonly: one span object
  *  may back several findings of the same token, so no consumer may rebase it. */
@@ -29,9 +30,10 @@ export interface SourceSpan {
  */
 export interface ImportFinding {
   kind: ImportFindingKind;
-  /** Command token. For 'partial' the bare code (e.g. "^A@"); for
+  /** Command token. For 'partial' the bare code (e.g. "^A@"). For
    *  'browserLimit' / 'unknown' the full token including parameters
-   *  (e.g. "^IM,R:LOGO.GRF"); for 'lossyEdit' a human-readable reason. */
+   *  (e.g. "^IM,R:LOGO.GRF"). For 'lossyEdit' a human-readable reason.
+   *  For 'unterminatedField' the ^FO/^FT token that opened the dropped field. */
   command: string;
   /** Page index (^XA block) this finding originated from, stamped by the
    *  single-pass parser. */
@@ -47,9 +49,9 @@ export interface ImportFinding {
 
 export interface ImportReport {
   findings: ImportFinding[];
-  // The buckets below are command-code dedup views for these five kinds only.
-  // Every other kind (lossyEdit, fnRenumbered, fnDefaultDropped) lives solely
-  // in `findings`; iterate `findings` for a kind-complete view.
+  // The buckets below are command-code dedup views for these six kinds only.
+  // Every other kind (lossyEdit, fnRenumbered, fnDefaultDropped, mixedPageGeometry)
+  // lives solely in `findings`; iterate `findings` for a kind-complete view.
   /** Commands imported with known loss. Deduplicated by command code. */
   partial: string[];
   /** Commands skipped because they require printer hardware or file storage. */
@@ -60,6 +62,9 @@ export interface ImportReport {
   replayRisk: string[];
   /** Device actions in source spelling: run on re-emit, no profile field, not routable. */
   deviceAction: string[];
+  /** Openers of fields the printer discards: no ^FS before the next ^FO/^FT.
+   *  Deduplicated by opener token, so two dropped fields at the same coordinates collapse. */
+  unterminatedField: string[];
 }
 
 /** One ^XA…^XZ format from a single-pass parse. Slices reference the same

@@ -15,7 +15,7 @@ import {
 } from "@codemirror/language";
 import type { EditorState, Transaction, TransactionSpec } from "@codemirror/state";
 import { applyPrefixRemap, PAYLOAD_CMDS, tokenize, type TokenizerChars } from "@zplab/core/lib/zplParser/helpers";
-import { prefixCharsAt, spellPrefix } from "@zplab/core/lib/zplCanonicalPrefixes";
+import { commandBoundaryAt, prefixCharsAt, spellPrefix } from "@zplab/core/lib/zplCanonicalPrefixes";
 
 // A ~DY/~DG payload can be megabytes on one line; folding keeps the editor
 // responsive, and the read-only preview truncates at the same length.
@@ -296,6 +296,8 @@ export function formatCloseFor(state: EditorState, page: number): number | null 
 
 /** User-event tag of a catalog insert, so the editor can tell it from typing. */
 export const CATALOG_USER_EVENT = "input.catalog";
+/** A lint repair is not the user choosing a spot: the caret rules must not adopt it. */
+export const LINTFIX_USER_EVENT = "input.lintfix";
 
 /** Whether a transaction counts as the user choosing a spot for later inserts. */
 export function placesCaret(tr: Transaction): boolean {
@@ -303,11 +305,19 @@ export function placesCaret(tr: Transaction): boolean {
   // A keyboard range (select all) is not a spot; a Tab focus dispatches nothing and leaves the caret at 0.
   if (tr.isUserEvent("select") && tr.state.selection.main.empty) return true;
   // The catalog's own insert must not count, or a second insert glues onto the first.
-  return tr.isUserEvent("input") && !tr.isUserEvent(CATALOG_USER_EVENT);
+  return tr.isUserEvent("input") && !tr.isUserEvent(CATALOG_USER_EVENT) && !tr.isUserEvent(LINTFIX_USER_EVENT);
 }
 
 /** The tree keeps only spelled names, so the head up to `pos` is replayed for the prefix in force. */
 const spellAt = (state: EditorState, text: string, pos: number): string => spellPrefix(text, prefixCharsAt(state.doc.sliceString(0, pos)));
+
+/** Transaction for a lint's repair: `command` in front of the first command at or after `at`,
+ *  spelled with the prefix in force. Data runs up to that prefix, trailing whitespace included,
+ *  so the lint's trimmed end would cut it short. */
+export function fixInsertion(state: EditorState, command: string, at: number): TransactionSpec {
+  const { pos, chars } = commandBoundaryAt(state.doc.toString(), at);
+  return { changes: { from: pos, insert: spellPrefix(command, chars) }, userEvent: LINTFIX_USER_EVENT };
+}
 
 /** Where a catalog insert goes: the user's caret, or a page's block. */
 export type InsertTarget = "caret" | { page: number };

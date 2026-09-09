@@ -68,6 +68,20 @@ describe("round-trip integration (real import -> store -> export)", () => {
     expect(exportZpl()).toBe(REAL_LABEL);
   });
 
+  it("keeps the bytes of a field the printer drops (no ^FS before the next ^FO)", () => {
+    const src = "^XA\n^FO40,40^A0N,60,60^FDalpha\n^FO40,200^A0N,60,60^FDbeta^FS\n^XZ";
+    importInto(src);
+    expect(store().pages[0]?.objects.map(getObjectStringContent)).toEqual(["beta"]);
+    expect(exportZpl()).toBe(src);
+  });
+
+  it("keeps the bytes of a field ^XZ closes", () => {
+    const src = "^XA\n^FO40,40^A0N,60,60^FDgamma^XZ";
+    importInto(src);
+    expect(store().pages[0]?.objects.map(getObjectStringContent)).toEqual(["gamma"]);
+    expect(exportZpl()).toBe(src);
+  });
+
   it("replace-import without ^JM clears the open document's density mode", () => {
     // Inheriting the old ^JMB would reinterpret every imported dot at half
     // density; an import without ^JM declares full density.

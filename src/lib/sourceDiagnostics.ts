@@ -5,9 +5,15 @@ import { describeFinding } from './importReport';
 import { formatTemplate } from './formatTemplate';
 import type { Translations } from '../locales';
 
-/** Editor-framework-neutral lint in STRING offsets of its build's text.
- *  Diagnosis only: a repair would need state the parse does not model
- *  (command channels, prefix scope, control-character boundaries). */
+/** One-click repair: the command the editor inserts at the first command boundary at
+ *  or after the lint, spelled with the prefix in force there; the label stays canonical,
+ *  as in the catalog. The imbalance kinds get none, as no single byte is the right spot. */
+export interface SourceFix {
+  command: string;
+  label: string;
+}
+
+/** Editor-framework-neutral lint in STRING offsets of its build's text. */
 export interface SourceLint {
   from: number;
   to: number;
@@ -15,6 +21,7 @@ export interface SourceLint {
    *  weaker so one problem still reads as one problem. */
   severity: 'error' | 'related' | 'warning';
   message: string;
+  fix?: SourceFix;
 }
 
 /** A pasted garbage stream can raise a finding per token; past this the
@@ -59,12 +66,17 @@ export function buildSourceDiagnostics(
   for (const f of findings) {
     if (!f.span) continue;
     const { title, detail } = describeFinding(f, t.importReport);
-    warnings.push({
+    const lint: SourceLint = {
       from: f.span.start,
       to: f.span.end,
       severity: 'warning',
       message: `${title}: ${detail}`,
-    });
+    };
+    // The field ends where the next command begins, which is where ^FS belongs.
+    if (f.kind === 'unterminatedField') {
+      lint.fix = { command: '^FS', label: formatTemplate(t.output.lintInsertCmdFmt, { cmd: '^FS' }) };
+    }
+    warnings.push(lint);
   }
   // Document order, then cap: kind-grouped input never matches what the
   // editor holds (it iterates by position), and capping in arrival order

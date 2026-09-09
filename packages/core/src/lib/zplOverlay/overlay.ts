@@ -64,6 +64,15 @@ export interface BlockOverlay {
    *  non-default ^FE embed). Export then falls back to full regeneration the
    *  moment any edit exists; a zero-edit verbatim replay stays safe regardless. */
   regenSafe: boolean;
+  /** The block's last field has no ^FS before ^XZ (the printer still prints it).
+   *  Export adds one before appending behind it. Absent on older overlays, which
+   *  never linked such a field, so no version bump. */
+  openTail?: true;
+  /** The block holds a field the printer discards for a missing ^FS (the parser
+   *  reports it as unterminated; this names the model effect). Its raw bytes
+   *  print again once the field behind them is removed, so export regenerates
+   *  the block when any object is gone. */
+  droppedField?: true;
   /** Present only when ^LH/^LT moved the origin; absent means no shift. */
   frame?: OverlayFrame;
   /** Absent on overlays predating the ^JM pass; export then regenerates the
@@ -90,7 +99,7 @@ export interface LinkedSpan {
 export function buildBlockOverlay(
   source: string,
   spans: readonly LinkedSpan[],
-  opts: { regenSafe: boolean; frame?: OverlayFrame; head?: FormatHead },
+  opts: { regenSafe: boolean; frame?: OverlayFrame; head?: FormatHead; openTail?: boolean; droppedField?: boolean },
 ): BlockOverlay {
   const sorted = [...spans].sort((a, b) => a.start - b.start);
   const segments: OverlaySegment[] = [];
@@ -112,6 +121,8 @@ export function buildBlockOverlay(
   const overlay: BlockOverlay = { segments, v: OVERLAY_VERSION, regenSafe: opts.regenSafe };
   if (opts.frame) overlay.frame = opts.frame;
   if (opts.head) overlay.head = opts.head;
+  if (opts.openTail) overlay.openTail = true;
+  if (opts.droppedField) overlay.droppedField = true;
   return overlay;
 }
 
@@ -140,6 +151,8 @@ export const blockOverlaySchema = z
     segments: z.array(overlaySegmentSchema),
     v: z.number(),
     regenSafe: z.boolean(),
+    openTail: z.literal(true).optional(),
+    droppedField: z.literal(true).optional(),
     frame: z
       .object({ homeX: z.number(), homeY: z.number(), top: z.number() })
       .optional(),

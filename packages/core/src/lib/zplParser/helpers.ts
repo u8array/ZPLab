@@ -384,6 +384,12 @@ export function decodeFH(
 }
 
 /** Scanned, not regex-matched: the old pattern backtracked cubically on long break runs. */
+/** End of `[start, end)` without its trailing whitespace: a span must not
+ *  swallow the line break plus following indent. */
+export function trimmedSpanEnd(zpl: string, start: number, end: number): number {
+  return start + zpl.slice(start, end).trimEnd().length;
+}
+
 export function stripLineWrap(rest: string): string {
   const kept = rest.trimEnd().length;
   const nl = rest.slice(kept).search(/[\r\n]/);

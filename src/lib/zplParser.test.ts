@@ -2228,9 +2228,9 @@ describe('parseZPL — ^SF serialization', () => {
     expect(serialOf(objects[0])?.increment).toBe(3);
   });
 
-  it('does not leak snPending to a sibling field inside the same ^FS block', () => {
+  it('does not leak snPending to the next field', () => {
     const zpl =
-      '^XA^SFddd,3^FO10,10^A0N,30,0^FD001^FO20,20^A0N,30,0^FD002^FS^XZ';
+      '^XA^SFddd,3^FO10,10^A0N,30,0^FD001^FS^FO20,20^A0N,30,0^FD002^FS^XZ';
     const { objects } = parseSingle(zpl, 8);
     expect(objects).toHaveLength(2);
     expect(serialOf(objects[0])?.increment).toBe(3);
@@ -3109,12 +3109,12 @@ describe('parseZPL — ^FN defaults decode through the leaf\'s ^FD encoder', () 
   });
 
   it('tokenises control chips after an unrelated mode-D field', () => {
-    // The mode flags must fall with the flushed field on EVERY flush path,
-    // including the half-formed early return and the ^BX escape flag.
+    // The mode flags must fall with the closed field on EVERY path: ^FS, the
+    // discard at the next opener, the half-formed early return, the ^BX escape flag.
     const chipTail = '^FH^FO10,300^BQN,2,4^FDQA,A_0DB^FS^XZ';
     const shapes: [name: string, zpl: string, objIdx: number][] = [
       ['fs', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231^FS${chipTail}`, 1],
-      ['fo', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231${chipTail}`, 1],
+      ['fo', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231${chipTail}`, 0],
       ['ft', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D^FD(01)12345678901231^FS^FH^FT10,300^BQN,2,4^FDQA,A_0DB^FS^XZ`, 1],
       ['half-formed', `^XA^FO10,10^BY2^BCN,100,Y,N,N,D${chipTail}`, 0],
       ['bx-escape', `^XA^FO10,10^BXN,5,200,,,,_^FD_101234567890123^FS${chipTail}`, 1],

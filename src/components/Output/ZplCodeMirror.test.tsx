@@ -2,6 +2,7 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { render, cleanup, act, waitFor } from "@testing-library/react";
 import { EditorView } from "@codemirror/view";
+import type { Diagnostic } from "@codemirror/lint";
 import { cursorCharRight, deleteCharBackward, deleteCharForward } from "@codemirror/commands";
 import { foldedRanges, unfoldEffect } from "@codemirror/language";
 import { sidecarRanges, stripSidecarComments } from "@zplab/core/lib/zplLabelMeta";
@@ -250,6 +251,70 @@ describe("ZplCodeMirror diagnostics", () => {
     forEachDiagnostic(view.state, (d) => seen.push(d.severity));
     expect(seen).toEqual(["warning"]);
     expect(container.querySelector(".cm-lintRange-warning")?.textContent).toBe("~PH");
+  });
+
+  it("applies a lint's repair at its live end, spelled with the prefix in force", async () => {
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    // ^CC remaps the prefix, so the inserted ^FS must read #FS here.
+    const dropped = "#FO10,10#A0N,30,30#FDa";
+    const value = `^XA^CC#\n${dropped}#FO10,60#A0N,30,30#FDb#FS#XZ`;
+    const from = value.indexOf(dropped);
+    const onChange = vi.fn();
+    const { container } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={onChange}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[{ from, to: from + dropped.length, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS" } }]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const seen: { d: Diagnostic; to: number }[] = [];
+    forEachDiagnostic(view.state, (d, _from, to) => seen.push({ d, to }));
+    expect(seen[0]?.d.actions?.map((a) => a.name)).toEqual(["Insert ^FS"]);
+    act(() => seen[0]?.d.actions?.[0]?.apply(view, from, seen[0].to));
+    expect(view.state.doc.toString()).toContain(`${dropped}#FS#FO10,60`);
+    expect(onChange).toHaveBeenCalledWith(expect.stringContaining(`${dropped}#FS#FO10,60`));
+  });
+
+  it("keeps the field's trailing data when the lint's end was trimmed", async () => {
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    // The parser trims the span for the underline, but "ab   " is the data.
+    const value = "^XA^FO10,10^A0N,30,30^FDab   \n^FO10,60^A0N,30,30^FDb^FS^XZ";
+    const to = value.indexOf("^FDab") + 5;
+    const { container } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[{ from: 3, to, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS" } }]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const seen: { d: Diagnostic; to: number }[] = [];
+    forEachDiagnostic(view.state, (d, _from, end) => seen.push({ d, to: end }));
+    act(() => seen[0]?.d.actions?.[0]?.apply(view, 3, seen[0].to));
+    expect(view.state.doc.toString()).toContain("^FDab   \n^FS^FO10,60");
+  });
+
+  it("leaves a read-only pane alone when its repair is applied", async () => {
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    const value = "^XA^FO1,1^FDa^FO2,2^FDb^FS^XZ";
+    const onChange = vi.fn();
+    const { container } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={onChange}
+        ariaLabel="zpl" placeholderText="ph" readOnly
+        diagnostics={[{ from: 3, to: 12, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS" } }]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const seen: { d: Diagnostic; to: number }[] = [];
+    forEachDiagnostic(view.state, (d, _from, to) => seen.push({ d, to }));
+    act(() => seen[0]?.d.actions?.[0]?.apply(view, 3, seen[0].to));
+    expect(view.state.doc.toString()).toBe(value);
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it("does not re-dispatch an identical set (an open tooltip would close)", () => {

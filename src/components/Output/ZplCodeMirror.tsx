@@ -11,9 +11,10 @@ import {
 import { Annotation, Compartment, EditorState, RangeSetBuilder, Transaction, type StateEffect } from '@codemirror/state';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { codeFolding, foldable, foldGutter, foldKeymap, foldEffect, foldedRanges } from '@codemirror/language';
-import { setDiagnostics, diagnosticCount, forEachDiagnostic, type Diagnostic } from '@codemirror/lint';
+import { setDiagnostics, diagnosticCount, forEachDiagnostic, lintKeymap, type Diagnostic } from '@codemirror/lint';
 import type { SourceLint } from '../../lib/sourceDiagnostics';
 import { zpl, blobRanges, commandAtCursor, commandInsertion, placesCaret, type CursorCommand } from '../../lib/zplLanguage';
+import { toDiagnostic } from '../../lib/zplCmLint';
 import { hideSidecarsExt, visibleLineNumber } from '../../lib/zplCmSidecars';
 import { crlfIndex, isPureCrlf, minimalSplice, toDocPos } from '../../lib/sourceOffsets';
 
@@ -82,7 +83,8 @@ const theme = EditorView.theme({
   '.cm-diagnostic': { color: 'var(--color-text)' },
 });
 
-/** Whether the editor already shows exactly these marks, in this order. */
+/** Whether the editor already shows exactly these marks, in this order. Actions
+ *  need no compare: message and repair both follow from the finding's kind. */
 function sameDiagnostics(state: EditorState, next: readonly Diagnostic[]): boolean {
   let i = 0;
   let same = true;
@@ -109,13 +111,6 @@ function highlightDecorations(state: EditorState, lines: ReadonlySet<number>): D
 }
 
 const NO_LINES: ReadonlySet<number> = new Set();
-
-/** Total map, so a new semantic severity cannot silently render as a hint. */
-const CM_SEVERITY: Record<SourceLint['severity'], 'error' | 'hint' | 'warning'> = {
-  error: 'error',
-  related: 'hint',
-  warning: 'warning',
-};
 
 // Compartment payloads built in ONE place each, so mount and reconfigure
 // cannot silently drift apart.
@@ -254,7 +249,8 @@ export default function ZplCodeMirror({
         highlightCompartment.of(highlightExt(highlightLines)),
         sidecarCompartment.of(hideSidecarsExt(hideSidecars)),
         localeCompartment.of(localeExt(ariaLabel, placeholderText)),
-        keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap]),
+        // lintKeymap opens the diagnostics panel, the keyboard's only route to a repair action.
+        keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap, ...lintKeymap]),
         EditorView.updateListener.of((u) => {
           trackCaret(u, caret.current, onCursorRef.current);
           // Selections only: a synced doc change elsewhere leaves the caret's command as it was.
@@ -350,12 +346,7 @@ export default function ZplCodeMirror({
     if (lints.length === 0 && diagnosticCount(view.state) === 0) return;
     const crlfIdx = crlfIndex(value);
     const clampedDocPos = (offset: number): number => Math.min(toDocPos(crlfIdx, offset), view.state.doc.length);
-    const mapped: Diagnostic[] = lints.map((d) => ({
-      from: clampedDocPos(d.from),
-      to: clampedDocPos(d.to),
-      severity: CM_SEVERITY[d.severity],
-      message: d.message,
-    }));
+    const mapped = lints.map((d) => toDiagnostic(d, clampedDocPos));
     // Compared against what the editor HOLDS: a lagging build is skipped and
     // CM maps its marks through edits, so a remembered key would go stale.
     // Re-dispatching an unchanged set closes an open tooltip under the pointer.

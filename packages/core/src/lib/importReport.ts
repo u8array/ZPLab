@@ -47,6 +47,11 @@ export function resolveRoutedReport(
     const newIndex = newIndexOf.get(f.pageIndex);
     return newIndex === undefined ? [] : [{ ...f, pageIndex: newIndex }];
   });
+  return reportOf(findings);
+}
+
+/** The report over its findings: the bucket views deduplicate by command code. */
+export function reportOf(findings: ImportFinding[]): ImportReport {
   return {
     findings,
     partial: dedupCommandsByKind(findings, 'partial'),
@@ -54,5 +59,6 @@ export function resolveRoutedReport(
     unknown: dedupCommandsByKind(findings, 'unknown'),
     replayRisk: dedupCommandsByKind(findings, 'replayRisk'),
     deviceAction: dedupCommandsByKind(findings, 'deviceAction'),
+    unterminatedField: dedupCommandsByKind(findings, 'unterminatedField'),
   };
 }

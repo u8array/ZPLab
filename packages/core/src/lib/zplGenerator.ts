@@ -523,6 +523,11 @@ function emitPageBlock(
   if ((dirtyLeaves.length > 0 || newLeaves.length > 0) && !overlay.regenSafe) {
     return generateZplBlock(label, page.objects, variables);
   }
+  // A delete is neither dirty nor new, so the edit gate above misses it.
+  // Removing a segment can expose a dropped field's raw bytes, which then print.
+  if (overlay.droppedField && segmentLiveOrder.length < segmentObjectOrder.length) {
+    return generateZplBlock(label, page.objects, variables);
+  }
 
   // One shared emit context so a picked ^FE/^FC covers dirty and new fields alike.
   const dirtyShifted = shiftIntoFrame(dirtyLeaves, overlay.frame, label);
@@ -600,7 +605,10 @@ function emitPageBlock(
     let idx = result.lastIndexOf('^XZ');
     if (idx < 0) idx = [...result.matchAll(/\^[xX][zZ]/g)].pop()?.index ?? -1;
     const at = idx >= 0 ? idx : result.length + sep.length;
-    const grown = block.length + sep.length;
+    // Appending straight behind a field ^XZ closed would make the printer drop it.
+    // A regenerated or deleted tail already ends in ^FS, so the bytes decide, not the flag.
+    const lead = overlay.openTail && !/\^FS\s*$/i.test(result.slice(0, at)) ? `^FS${sep}` : '';
+    const grown = lead.length + block.length + sep.length;
     spans = spans.flatMap((s) =>
       s.start >= at
         ? [{ ...s, start: s.start + grown, end: s.end + grown }]
@@ -610,7 +618,7 @@ function emitPageBlock(
           ? []
           : [s],
     );
-    let insOff = at;
+    let insOff = at + lead.length;
     for (const e of entries) {
       if (e.objectId !== undefined) {
         spans.push({ objectId: e.objectId, start: insOff, end: insOff + e.text.length });
@@ -618,7 +626,7 @@ function emitPageBlock(
       insOff += e.text.length + sep.length;
     }
     result =
-      idx >= 0 ? `${result.slice(0, idx)}${block}${sep}${result.slice(idx)}` : `${result}${sep}${block}`;
+      idx >= 0 ? `${result.slice(0, idx)}${lead}${block}${sep}${result.slice(idx)}` : `${result}${sep}${lead}${block}`;
   }
 
   const head = overlay.head;
