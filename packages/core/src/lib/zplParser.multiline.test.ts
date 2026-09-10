@@ -12,10 +12,10 @@ describe("line-oriented ZPL", () => {
     expect(importZplText(lines, 8).labelConfig.overridePauseCount).toBe("N");
   });
 
-  it("leaves field data verbatim, unlike the parameter list", () => {
+  it("keeps field data's trailing space, unlike the parameter list, but drops the line break", () => {
     const r = importZplText("^XA\n^FO10,10^A0N,20,20^FDkeep me \n^FS\n^XZ", 8);
     const text = r.pages[0]?.objects[0] as { props: { content: string } };
-    expect(text.props.content).toBe("keep me \n");
+    expect(text.props.content).toBe("keep me ");
   });
 });
 
@@ -77,7 +77,7 @@ describe("a whitespace character parameter at line end", () => {
 });
 
 describe("a command whose parameters carry a long run of line breaks", () => {
-  // Regression pin: the old strip regex backtracked cubically (114s at 8000 breaks) on raw-binary ^GF payloads.
+  // Regression pin: an earlier strip regex backtracked cubically, 114s at 8000 breaks.
   it("parses in linear time instead of backtracking", () => {
     const zpl = `^XA^FO10,10^A0N,20,20^FD${"\n".repeat(8000)}x^FS^XZ`;
     const started = Date.now();

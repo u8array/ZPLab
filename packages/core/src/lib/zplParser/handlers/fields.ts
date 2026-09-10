@@ -13,7 +13,7 @@ import { notePartial,
   resetFieldBlockDefaults,
   type ParserState,
 } from "../context";
-import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, int, readJustify, readRotation } from "../helpers";
+import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, int, readJustify, readRotation, stripDataLineBreaks } from "../helpers";
 import type { Handler, Wildcard } from "../types";
 
 /** closeField + appendComment are shared with the orchestrator. */
@@ -187,13 +187,14 @@ export function createFieldHandlers(
 
     // ── Field data / separator ────────────────────────────────────────────
     FD(_, rest) {
-      setFieldData(rest);
+      setFieldData(stripDataLineBreaks(rest));
     },
     // ^FV: data-equivalent of ^FD for variable fields (spec p.207; the only
     // delta is print-time clearing under ^MC reuse, which we don't model).
     // Re-emits as ^FD. An empty ^FV is ignored per spec.
     FV(_, rest) {
-      if (rest) setFieldData(rest);
+      const data = stripDataLineBreaks(rest);
+      if (data) setFieldData(data);
     },
     FS() {
       closeField();
