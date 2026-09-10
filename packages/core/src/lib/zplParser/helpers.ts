@@ -383,13 +383,19 @@ export function decodeFH(
   });
 }
 
-/** Scanned, not regex-matched: the old pattern backtracked cubically on long break runs. */
+/** Field data without raw line breaks: the printer drops them and prints the rest,
+ *  measured on the ZD230. Spec p.82 names \& as the escape for a line feed. */
+export function stripDataLineBreaks(data: string): string {
+  return data.replace(/[\r\n]/g, "");
+}
+
 /** End of `[start, end)` without its trailing whitespace: a span must not
  *  swallow the line break plus following indent. */
 export function trimmedSpanEnd(zpl: string, start: number, end: number): number {
   return start + zpl.slice(start, end).trimEnd().length;
 }
 
+/** Scanned, not regex-matched: the old pattern backtracked cubically on long break runs. */
 export function stripLineWrap(rest: string): string {
   const kept = rest.trimEnd().length;
   const nl = rest.slice(kept).search(/[\r\n]/);

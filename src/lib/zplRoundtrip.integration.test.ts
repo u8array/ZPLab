@@ -75,6 +75,17 @@ describe("round-trip integration (real import -> store -> export)", () => {
     expect(exportZpl()).toBe(src);
   });
 
+  it("keeps a line-wrapped field's bytes verbatim and regenerates it without the wrap", () => {
+    const src = "^XA\n^FO40,40^A0N,60,60^FDalpha\n^FS\n^XZ";
+    importInto(src);
+    expect(store().pages[0]?.objects.map(getObjectStringContent)).toEqual(["alpha"]);
+    expect(exportZpl()).toBe(src);
+    const obj = store().pages[0]?.objects[0];
+    if (!obj || obj.type !== "text") throw new Error("fixture");
+    store().updateObject(obj.id, { props: { ...obj.props, content: "beta" } });
+    expect(exportZpl()).toContain("^FDbeta^FS");
+  });
+
   it("keeps the bytes of a field ^XZ closes", () => {
     const src = "^XA\n^FO40,40^A0N,60,60^FDgamma^XZ";
     importInto(src);
