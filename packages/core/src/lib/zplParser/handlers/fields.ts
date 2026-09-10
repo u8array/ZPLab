@@ -7,6 +7,7 @@ import { isGroup } from "../../../types/Group";
 import { ZPL_BUILTIN_FONT_LETTERS } from "../../customFonts";
 import { notePartial,
   consumeOneShotArms,
+  dropArmedSlot,
   fieldHasContent,
   getDefaultTextH,
   getDefaultTextW,
@@ -75,19 +76,20 @@ export function createFieldHandlers(
     s.field.pendingFD = rest;
   };
 
-  // ZD230-measured: an opener before ^FS discards the content since the previous
-  // opener, text and graphics alike, while font, ^FH and the other field state
-  // stay armed until ^FS. The model drops the content and reports its bytes.
-  // Model state rolls back; findings the dropped commands raised stay, as their bytes do.
+  // ZD230-measured: an opener before ^FS discards the content since the previous one,
+  // text and graphics alike, while font, ^FH and the arms for the next ^FD stay armed.
+  // Only a slot armed since the opener dies with it. Findings on dropped bytes stay.
   const discardOpenField = () => {
     const opener = s.field.openedAt;
-    if (opener === null || !fieldHasContent(s)) return;
+    if (opener === null || !(fieldHasContent(s) || s.field.fnArmedSinceOpener)) return;
     s.result.objects.length = s.field.objBase;
     if (s.reverseBg !== s.field.bgAtOpen) s.reverseBg = null;
     // A ^FX run right before the next opener is that field's, not the dropped one's.
     const trailingRun = s.comment.run;
     s.result.unterminated.push({ opener, end: trailingRun?.start ?? s.result.prevTokenEnd });
+    // The ^FD wins where both apply: it consumed the arms before the field died.
     if (s.field.pendingFD !== null) consumeOneShotArms(s);
+    else if (s.field.fnArmedSinceOpener) dropArmedSlot(s);
     s.field.pendingFD = null;
     // The dropped field's own comment stays in its bytes; only the trailing run rides on.
     s.comment.pending = trailingRun?.text || undefined;
@@ -104,6 +106,7 @@ export function createFieldHandlers(
     s.field.objBase = s.result.objects.length;
     s.field.bgAtOpen = s.reverseBg;
     s.field.inkWithoutObject = false;
+    s.field.fnArmedSinceOpener = false;
   };
 
   return {
@@ -398,6 +401,7 @@ export function createFieldHandlers(
       s.result.sourceFnNumbers.add(n);
       s.comment.fnNumber = n;
       s.comment.fnComment = s.comment.pending;
+      s.field.fnArmedSinceOpener = true;
     },
     FC(p) {
       // ^FC<a>,<b>,<c>: redefine clock chars. Missing/empty slots

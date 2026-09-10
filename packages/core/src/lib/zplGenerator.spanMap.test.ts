@@ -287,6 +287,17 @@ describe("generateMultiPageZplWithMap on overlay pages", () => {
     expect(deleted.text).not.toMatch(/\^FS\s*\^FS/);
   });
 
+  it("terminates a slot field ^XZ closed, which prints once a value is recalled", () => {
+    // ZD230-measured: the recalled value prints where the ^FN sits.
+    const src = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^FO10,60^A0N,30,30^FN1\n^XZ";
+    const page = importZplText(src, label.dpmm).pages[0];
+    if (!page?.overlay) throw new Error("fixture");
+    const out = generateMultiPageZplWithMap(label, [
+      { ...page, objects: [...page.objects, fresh()] } as Page,
+    ]);
+    expect(out.text).toMatch(/\^FN1\n\^FS\n\^FO[^\n]*\^FDFresh\^FS\n\^XZ$/);
+  });
+
   it("terminates an unmodelled field ^XZ closed as well", () => {
     // No object span marks the ^IM field, so the guard must read the bytes.
     const src = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^FO10,60^IMR:LOGO.GRF\n^XZ";
