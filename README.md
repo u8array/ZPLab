@@ -12,7 +12,7 @@ Writing ZPL by hand means cryptic commands, dot coordinates and little visual fe
 
 Existing ZPL remains editable source rather than becoming a one-way import. ZPLab preserves unchanged source where it can safely do so and regenerates the affected objects, or the whole label, when required (see [Import guarantees](#import-guarantees)). GS1 and EAN/UPC fields include content validation.
 
-**[Try it](https://zplab.org/)** · [Download the desktop app](#download) · [Report an issue](https://github.com/u8array/ZPLab/issues)
+**[Try it](https://app.zplab.org/)** · [Download the desktop app](#download) · [Report an issue](https://github.com/u8array/ZPLab/issues)
 
 > **Disclaimer:** This is an independent open-source tool, not affiliated with, endorsed by, or associated with Zebra Technologies Corp. Zebra is a trademark of Zebra Technologies Corp.; all other trademarks are the property of their respective owners.
 
