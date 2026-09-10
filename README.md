@@ -21,7 +21,7 @@ When editing imported ZPL, the editor preserves unchanged source where possible.
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
   <source media="(prefers-color-scheme: light)" srcset="docs/screenshot-light.png">
-  <img alt="ZPLab: designer with a sample label" src="docs/screenshot-light.png">
+  <img alt="ZPLab desktop app with a sample label, ZPL source panel and command reference" src="docs/screenshot-light.png">
 </picture>
 
 ---
