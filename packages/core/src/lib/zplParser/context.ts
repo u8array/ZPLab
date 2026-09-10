@@ -209,6 +209,9 @@ export interface FieldState {
   bgAtOpen: PendingReverseBg | null;
   /** Content with no object to count: ^IM, or a ^GF/^XG whose object push was skipped. */
   inkWithoutObject: boolean;
+  /** ^FN seen since this opener. Such a slot dies with the field, while a slot
+   *  armed before the opener survives it, measured on a format recalled by ^XF. */
+  fnArmedSinceOpener: boolean;
   /** ^FE armed for the next ^FD only (spec p.191); reset at ^FS. */
   feArmed: boolean;
   /** ^FC armed for the next ^FD only (spec p.1614); reset at ^FS. */
@@ -357,15 +360,32 @@ export function fieldHasContent(s: ParserState): boolean {
   );
 }
 
+/** A positioned ^FN without its own ^FD is the batch template's stored-format
+ *  placeholder, so the flush adopts an empty ^FD instead of dropping the field. */
+export function slotAdoptsEmptyFd(s: ParserState): boolean {
+  return s.field.fieldType !== null && s.field.pendingFD === null && s.comment.fnNumber !== null;
+}
+
+/** Whether the field ^XZ closes puts something on the label, an adopted slot
+ *  included. Such a field prints, so appending behind it needs an ^FS first. */
+export function openTailHasContent(s: ParserState): boolean {
+  return fieldHasContent(s) || slotAdoptsEmptyFd(s);
+}
+
 /** Marks the open field as printing something the model has no object for. */
 export function noteFieldInk(s: ParserState): void {
   s.field.inkWithoutObject = true;
 }
 
-/** The arms that bind to the next ^FD only (spec p.191, p.1614): ^FN, ^FE, ^FC, ^SN/^SF. */
-export function consumeOneShotArms(s: ParserState): void {
+/** Drops the armed slot alone, for the field that dies without ever reaching a ^FD. */
+export function dropArmedSlot(s: ParserState): void {
   s.comment.fnNumber = null;
   s.comment.fnComment = undefined;
+}
+
+/** The arms that bind to the next ^FD only (spec p.191, p.1614): ^FN, ^FE, ^FC, ^SN/^SF. */
+export function consumeOneShotArms(s: ParserState): void {
+  dropArmedSlot(s);
   s.field.feArmed = false;
   s.field.fcArmed = false;
   s.field.snPending = false;
@@ -525,6 +545,7 @@ export function freshFieldState(): FieldState {
     objBase: 0,
     bgAtOpen: null,
     inkWithoutObject: false,
+    fnArmedSinceOpener: false,
     feArmed: false,
     fcArmed: false,
     frActive: false,

@@ -74,6 +74,42 @@ describe('parseZPL — field without ^FS before the next ^FO/^FT', () => {
     expect(fc.objects.map(getObjectStringContent)).toEqual(['%Y']);
   });
 
+  it('lets a slot armed without data die with the field, as the printer does', () => {
+    // Measured with ^XF: the recalled value prints unpositioned at the origin.
+    const r = parseSingle(`${HEAD}^FO40,40^A0N,60,60^FN1^FO40,200^A0N,60,60^FDx^FS^XZ`, 8);
+    expect(r.objects.map(getObjectStringContent)).toEqual(['x']);
+    expect(r.variables).toEqual([]);
+    expect(commandsOf(r, 'unterminatedField')).toEqual(['^FO40,40']);
+  });
+
+  it('keeps a slot armed before the opener, which the printer binds to the next field', () => {
+    const r = parseSingle(`${HEAD}^FN1^FO40,40^FO40,200^A0N,60,60^FDa^FS^XZ`, 8);
+    expect(r.objects.map(getObjectStringContent)).toEqual(['«field_1»']);
+    expect(r.variables.map((v) => v.fnNumber)).toEqual([1]);
+    expect(unterminated(r)).toEqual([]);
+  });
+
+  it('keeps a slot armed before the opener when ink kills the field', () => {
+    // Both rules meet here, so a fix that drops every arm at the discard fails.
+    const r = parseSingle(`${HEAD}^FN1^FO40,40^GB200,60,60^FO40,200^A0N,60,60^FS^XZ`, 8);
+    expect(r.objects.map(getObjectStringContent)).toEqual(['«field_1»']);
+    expect(r.variables.map((v) => v.fnNumber)).toEqual([1]);
+    expect(commandsOf(r, 'unterminatedField')).toEqual(['^FO40,40']);
+  });
+
+  it('leaves ^FC armed across a discard that put ink on the label', () => {
+    const r = parseSingle(`${HEAD}^FO40,40^FC%^GB200,60,60^FO40,200^A0N,60,60^FD%Y^FS^XZ`, 8);
+    expect(r.objects.map(getObjectStringContent)).toEqual(['«clock:Y»']);
+    expect(commandsOf(r, 'unterminatedField')).toEqual(['^FO40,40']);
+  });
+
+  it('keeps the slot the printer keeps: the same field closed by ^FS', () => {
+    const r = parseSingle(`${HEAD}^FO40,40^A0N,60,60^FN1^FS^FO40,200^A0N,60,60^FDx^FS^XZ`, 8);
+    expect(r.objects.map(getObjectStringContent)).toEqual(['«field_1»', 'x']);
+    expect(r.variables.map((v) => v.fnNumber)).toEqual([1]);
+    expect(unterminated(r)).toEqual([]);
+  });
+
   it('keeps a previous field whose reverse-bg stash commits inside the dropped field', () => {
     const r = parseSingle(`${HEAD}^FO10,10^GB200,60,60^FS^FO20,20^GC50,3^FO30,30^A0N,30,30^FDb^FS^XZ`, 8);
     expect(r.objects.map((o) => o.type)).toEqual(['line', 'text']);

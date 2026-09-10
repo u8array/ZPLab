@@ -52,6 +52,7 @@ import { notePartial,
   REGEN_LOSSY_REASONS,
   resetFieldBlockDefaults,
   resetSymbologyModeFlags,
+  slotAdoptsEmptyFd,
   type FnDefaultCandidate,
   type ParserState,
 } from "./context";
@@ -203,10 +204,7 @@ export function createCloseField(
   };
 
   const flushField = () => {
-    // A positioned `^FN<n>^FS` without ^FD is a stored-format placeholder
-    // (the batch template shape); adopt an empty ^FD so the bound field
-    // imports instead of dropping.
-    if (s.field.fieldType && s.field.pendingFD === null && s.comment.fnNumber !== null) {
+    if (slotAdoptsEmptyFd(s)) {
       s.field.pendingFD = "";
     }
     if (!s.field.fieldType || s.field.pendingFD === null) {

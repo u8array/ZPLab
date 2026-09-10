@@ -12,7 +12,7 @@ import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
 import { stripLineWrap, stripTrailingSpaces, tokenize, trimmedSpanEnd } from "./zplParser/helpers";
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
 import { qrPrintsAsGraphic } from "./objectBounds";
-import { createParserState, deriveUnitScale, fieldHasContent, REGEN_LOSSY_REASONS, resetFormatScopedState, type FnDefaultCandidate, type RegenLossyReason, type SpannedToken, type UnterminatedField } from "./zplParser/context";
+import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, openTailHasContent, resetFormatScopedState, type FnDefaultCandidate, type RegenLossyReason, type SpannedToken, type UnterminatedField } from "./zplParser/context";
 import { createCloseField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
 import { createDynamicFontAWildcard, createFieldHandlers } from "./zplParser/handlers/fields";
@@ -538,7 +538,7 @@ export function parseZPL(
       const base = s.field.objBase;
       s.reverseBgCommits = 0;
       // Read before the flush pushes the object: a bare opener at ^XZ has nothing to terminate.
-      const tailHasContent = cmd === "XZ" && fieldHasContent(s);
+      const tailHasContent = cmd === "XZ" && openTailHasContent(s);
       // Arming unconsumed at ^FS MAY ride to the next ^FD on firmware
       // (cross-^FS carry unverified; the parser drops it per the spec's
       // in-field wording), so regen must not run under it. Read pre-^FS.
