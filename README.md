@@ -21,7 +21,7 @@ Existing ZPL remains editable source rather than becoming a one-way import. ZPLa
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
   <source media="(prefers-color-scheme: light)" srcset="docs/screenshot-light.png">
-  <img alt="ZPLab desktop app with a sample label, ZPL source panel and command reference" src="docs/screenshot-light.png">
+  <img alt="ZPLab with a release label on the canvas, the object catalog on the left and the label format panel on the right" src="docs/screenshot-light.png">
 </picture>
 
 ---
