@@ -1,18 +1,10 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import {
-  CATALOG_SECTIONS,
-  catalogEntry,
-  commandId,
-  commandLabel,
-  filterCatalog,
-  type CommandSupport,
-  type SupportLevel,
-} from "@zplab/core/catalog";
+import { CATALOG_SECTIONS, commandId, commandLabel, type CommandSupport, type SupportLevel } from "@zplab/core/catalog";
 import { useT } from "../../hooks/useT";
 import { useCatalogSummaries } from "../../hooks/useCatalogSummaries";
+import type { CatalogSelection } from "../../hooks/useCatalogSelection";
 import type { Translations } from "../../locales";
-import type { CursorCommand } from "../../lib/zplLanguage";
 import { inputCls } from "../Properties/styles";
 
 type OutputKey = keyof Translations["output"];
@@ -36,44 +28,17 @@ const domId = (listId: string, key: string): string =>
   `${listId}-${key.replace(/^\^/, "c").replace(/^~/, "t").replace(/[^A-Za-z0-9]/g, "_")}`;
 
 /** Command reference beside the source pane; no `onInsert` means inserting is unavailable. */
-export function ZplCatalogPanel({ cursor, onInsert }: { cursor: CursorCommand | null; onInsert?: (text: string) => void }) {
+export function ZplCatalogPanel({ selection, onInsert }: { selection: CatalogSelection; onInsert?: (text: string) => void }) {
   const t = useT();
   const summaries = useCatalogSummaries();
   const listId = useId();
   const listRef = useRef<HTMLUListElement>(null);
-  const [query, setQuery] = useState("");
-  // The panel's own choice over the caret: a pinned row, or the empty state on purpose.
-  const [pinned, setPinned] = useState<string | null>(null);
-  const [dismissed, setDismissed] = useState(false);
-  // State derived from props, React's prev-vs-current guard at render time as in
-  // useCollapsibleState. A new cursor object is the user asking again: the editor
-  // reports one on a pointer gesture or a change of command, never while typing.
-  const [prevCursor, setPrevCursor] = useState(cursor);
-  if (prevCursor !== cursor) {
-    setPrevCursor(cursor);
-    setPinned(null);
-    setDismissed(false);
-  }
-  const results = filterCatalog(query);
-  // Headings only: the catalog is stored in section order, so the arrow walk reads `results` as is.
+  const { query, setQuery, results, ids, entry, shownId, activeIndex, caretVisible, choose, toggle, stepBack, insertTextFor } = selection;
+  // Headings only: the catalog is stored in section order, so the arrow walk reads `ids` as is.
   const groups = CATALOG_SECTIONS.map((section) => ({ section, rows: results.filter((e) => e.section === section.name) })).filter(
     (g) => g.rows.length > 0,
   );
-  const ids = results.map(commandId);
-  // A pin the search hides is inert and returns when the filter clears.
-  const visiblePin = pinned !== null && ids.includes(pinned) ? pinned : null;
-  const asked = visiblePin ?? (dismissed ? undefined : cursor?.id);
-  const entry = asked ? catalogEntry(asked) : undefined;
-  // A twin row is one entry whichever prefix the caret sits on; the row id is the entry's.
-  const shownId = entry ? commandId(entry) : null;
-  const activeIndex = shownId ? ids.indexOf(shownId) : -1;
-  const caretEntry = cursor ? catalogEntry(cursor.id) : undefined;
-  const caretRow = caretEntry ? commandId(caretEntry) : null;
-  const caretVisible = caretRow && ids.includes(caretRow) ? caretRow : null;
   const empty = ids.length === 0;
-  // The caret's own row inserts the spelling under the caret: ~HL and ^HL share a
-  // row but differ on the printer. Any other row inserts its id.
-  const insertTextFor = (rowId: string): string => (cursor && rowId === caretRow ? cursor.id : rowId);
   const requestInsert = onInsert && shownId ? () => onInsert(insertTextFor(shownId)) : undefined;
 
   useEffect(() => {
@@ -83,11 +48,6 @@ export function ZplCatalogPanel({ cursor, onInsert }: { cursor: CursorCommand | 
     // `query` re-runs this when a cleared filter re-mounts the active row.
   }, [shownId, listId, query]);
 
-  // Choosing a row is a wish to see it, so it also ends a dismissal.
-  const choose = (id: string | null): void => {
-    setDismissed(false);
-    setPinned(id);
-  };
   const onListKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
@@ -107,12 +67,8 @@ export function ZplCatalogPanel({ cursor, onInsert }: { cursor: CursorCommand | 
       else if (caretVisible) choose(caretVisible);
     }
   };
-  // Escape steps back by what shows: the caret's own row goes to the empty state, any
-  // other pin to the caret. With nothing shown there is nothing to step back from.
   const onPanelKeyDown = (e: React.KeyboardEvent): void => {
-    if (e.key !== "Escape" || shownId === null) return;
-    setPinned(null);
-    if (shownId === caretRow) setDismissed(true);
+    if (e.key === "Escape") stepBack();
   };
 
   return (
@@ -221,7 +177,7 @@ export function ZplCatalogPanel({ cursor, onInsert }: { cursor: CursorCommand | 
                           aria-selected={active}
                           // The clicks of a double-click must not toggle the pin twice.
                           onClick={(e) => {
-                            if (e.detail <= 1) choose(pinned === id ? null : id);
+                            if (e.detail <= 1) toggle(id);
                           }}
                           onDoubleClick={() => onInsert?.(insertTextFor(id))}
                           className={`flex items-baseline gap-2 px-3 py-0.5 cursor-default select-none hover:bg-border/60 ${active ? "bg-border/60" : ""}`}

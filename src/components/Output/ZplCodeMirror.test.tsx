@@ -57,6 +57,58 @@ describe("ZplCodeMirror cursor reports", () => {
   });
 });
 
+describe("ZplCodeMirror command marks", () => {
+  const marks = (container: HTMLElement) => [...container.querySelectorAll(".cm-zplCommandMatch")].map((m) => m.textContent);
+  const mount = (catalogRow: string | null) => {
+    const props = { value: "^XA\n^FO10,10^FS\n^FO20,20^FS\n^HL~HL^ABN,20^BON^QQ\n^XZ", onChange: vi.fn(), ariaLabel: "zpl", placeholderText: "ph" };
+    const { container, rerender } = render(<ZplCodeMirror {...props} catalogRow={catalogRow} />);
+    return { container, show: (row: string | null) => rerender(<ZplCodeMirror {...props} catalogRow={row} />) };
+  };
+
+  it("marks every occurrence of the shown row, twins included, and follows the prop", () => {
+    const { container, show } = mount("^FO");
+    expect(marks(container)).toEqual(["^FO", "^FO"]);
+    show("^HL");
+    expect(marks(container)).toEqual(["^HL", "~HL"]);
+    show("~HL");
+    expect(marks(container)).toEqual(["^HL", "~HL"]);
+    show(null);
+    expect(marks(container)).toEqual([]);
+  });
+
+  it("marks a device font on the ^A row and an alias spelling on its row, and nothing for a row the catalog lacks", () => {
+    const { container, show } = mount("^A");
+    expect(marks(container)).toEqual(["^AB"]);
+    show("^B0");
+    expect(marks(container)).toEqual(["^BO"]);
+    show("^QQ");
+    expect(marks(container)).toEqual([]);
+  });
+
+  it("builds marks for the viewport only", () => {
+    // The far occurrence sits beyond any plausible viewport, so the assertion pins the range loop, not the layout.
+    const far = "^FS" + "\n".repeat(100000) + "^FO9,9^FS";
+    const { container } = render(
+      <ZplCodeMirror value={"^XA\n^FO1,1" + far} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" catalogRow="^FO" />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const marked: number[] = [];
+    for (const deco of view.state.facet(EditorView.decorations)) {
+      (typeof deco === "function" ? deco(view) : deco).between(0, view.state.doc.length, (from, _to, value) => {
+        if (value.spec.class === "cm-zplCommandMatch") marked.push(from);
+      });
+    }
+    expect(marked).toEqual([4]);
+  });
+
+  it("keeps the marks in step with the text", () => {
+    const { container } = mount("^FO");
+    const view = EditorView.findFromDOM(container)!;
+    act(() => view.dispatch({ changes: { from: 4, insert: "^FO5,5^FS\n" }, userEvent: "input.type" }));
+    expect(marks(container)).toEqual(["^FO", "^FO", "^FO"]);
+  });
+});
+
 describe("ZplCodeMirror keyboard surface", () => {
   it("reads as an editable target from every real focus/click node", () => {
     // Keys from the read-only scroller or the gutter must never fall

@@ -268,6 +268,12 @@ export function sameCursorCommand(a: CursorCommand | null, b: CursorCommand | nu
 
 const NAME_NODES = new Set(["CmdName", "TildeCmdName", "FormatCmd"]);
 
+/** A name token's canonical id and bare name: the prefix kind normalised back from any ^CC/^CT remap. */
+function readCommandName(state: EditorState, token: SyntaxNodeRef): { id: string; name: string } {
+  const name = state.doc.sliceString(token.from + PREFIX_LEN, token.to).toUpperCase();
+  return { id: `${token.name === "TildeCmdName" ? "~" : "^"}${name}`, name };
+}
+
 /** The command whose bytes surround `pos`, or null between commands; the command
  *  starting at the caret wins over the one ending there. */
 export function commandAtCursor(state: EditorState, pos: number): CursorCommand | null {
@@ -280,8 +286,30 @@ export function commandAtCursor(state: EditorState, pos: number): CursorCommand 
   const node = commandOf(1) ?? commandOf(-1);
   const name = node?.firstChild;
   if (!node || !name || !NAME_NODES.has(name.name)) return null;
-  const prefix = name.name === "TildeCmdName" ? "~" : "^";
-  return { id: `${prefix}${state.doc.sliceString(name.from + PREFIX_LEN, name.to).toUpperCase()}`, from: node.from };
+  return { id: readCommandName(state, name).id, from: node.from };
+}
+
+/** A command name's canonical id and the token's span, prefix included. */
+export interface CommandOccurrence {
+  id: string;
+  from: number;
+  to: number;
+}
+
+/** Command names touching [from, to] on the tree parsed so far: a range past the parse
+ *  budget yields nothing now, and the parser's next step revisits it. */
+export function commandOccurrences(state: EditorState, from: number, to: number): CommandOccurrence[] {
+  const out: CommandOccurrence[] = [];
+  syntaxTree(state).iterate({
+    from,
+    to,
+    enter: (n) => {
+      if (!NAME_NODES.has(n.name)) return undefined;
+      out.push({ id: readCommandName(state, n).id, from: n.from, to: n.to });
+      return false;
+    },
+  });
+  return out;
 }
 
 /** Positional: the page-th ^XZ of the live document (the export emits one block per page),
@@ -293,7 +321,7 @@ export function formatCloseFor(state: EditorState, page: number): number | null 
   tree.iterate({
     enter: (n) => {
       // ~XZ closes too: the core parser reads XA/XZ prefix-blind, and the apply follows it.
-      if (!NAME_NODES.has(n.name) || state.doc.sliceString(n.from + PREFIX_LEN, n.to).toUpperCase() !== "XZ") return undefined;
+      if (!NAME_NODES.has(n.name) || readCommandName(state, n).name !== "XZ") return undefined;
       closes.push(n.from);
       return false;
     },

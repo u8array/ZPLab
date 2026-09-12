@@ -38,6 +38,12 @@ export function catalogEntry(command: string): ZplCommandEntry | undefined {
   return byId.get(`^${key}`) ?? byId.get(`~${key}`);
 }
 
+/** Row id of a spelled command, so `~HL` gives `^HL` and `^AB` gives `^A`, or undefined off the catalog. */
+export function catalogRow(command: string): string | undefined {
+  const entry = catalogEntry(command);
+  return entry && commandId(entry);
+}
+
 /** Queries of one or two characters are command names, never prose words. */
 const PROSE_MIN_CHARS = 3;
 

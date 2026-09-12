@@ -16,6 +16,7 @@ import type { SourceEditMode } from '../../store/slices/sourceEditSlice';
 import { SourceApplyConfirmDialog } from './SourceApplyConfirmDialog';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useSessionExit } from '../../hooks/useSessionExit';
+import { useCatalogSelection } from '../../hooks/useCatalogSelection';
 import { useT } from '../../hooks/useT';
 import ZplCodeMirror, { type ZplCodeMirrorHandle } from './ZplCodeMirror';
 import { ZplCatalogPanel } from './ZplCatalogPanel';
@@ -57,6 +58,7 @@ export function ZplSourceEditor({
   const hideSidecars = !useLabelStore(selectKeepExportMetadata);
   const editorRef = useRef<ZplCodeMirrorHandle>(null);
   const [cursorCommand, setCursorCommand] = useState<CursorCommand | null>(null);
+  const catalog = useCatalogSelection(cursorCommand);
   const gateMsg = gateRefusal !== null ? sourceRefusalText(gateRefusal, t) : null;
 
   const shadowRefusal = useLabelStore(selectShadowRefusal);
@@ -109,10 +111,11 @@ export function ZplSourceEditor({
             diagnostics={diagnostics}
             hideSidecars={hideSidecars}
             insertPage={insertPage}
+            catalogRow={catalog.pinVisible}
             onCursorCommand={setCursorCommand}
           />
         </div>
-        <ZplCatalogPanel cursor={cursorCommand} onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined} />
+        <ZplCatalogPanel selection={catalog} onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined} />
       </div>
       {gateMsg !== null && (
         <p

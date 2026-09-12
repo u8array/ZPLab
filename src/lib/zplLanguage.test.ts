@@ -7,6 +7,7 @@ import {
   buildZplTree,
   commandAtCursor,
   commandInsertion,
+  commandOccurrences,
   formatCloseFor,
   placesCaret,
   zpl,
@@ -189,6 +190,24 @@ describe("commandAtCursor", () => {
   it("answers null between commands", () => {
     expect(at("junk ^XA", 2)).toBeNull();
     expect(at("", 0)).toBeNull();
+  });
+});
+
+describe("commandOccurrences", () => {
+  const occurrences = (doc: string, from = 0, to = doc.length) =>
+    commandOccurrences(EditorState.create({ doc, extensions: [zpl()] }), from, to);
+
+  it("lists each command name touching the range with its canonical id and the name's span", () => {
+    const doc = "^XA\n^FO10,10^FS\n^fo20,20^FS\n^XZ";
+    expect(occurrences(doc).map((o) => o.id)).toEqual(["^XA", "^FO", "^FS", "^FO", "^FS", "^XZ"]);
+    expect(occurrences(doc, 16, 27)).toEqual([
+      { id: "^FO", from: 16, to: 19 },
+      { id: "^FS", from: 24, to: 27 },
+    ]);
+  });
+
+  it("keeps the canonical prefix under a ^CC remap and for tilde commands", () => {
+    expect(occurrences("^CC//FO1,1/FS~JA").map((o) => o.id)).toEqual(["^CC", "^FO", "^FS", "~JA"]);
   });
 });
 

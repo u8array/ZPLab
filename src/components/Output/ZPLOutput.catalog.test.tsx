@@ -113,6 +113,34 @@ describe("reference panel wiring", () => {
     expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
   });
 
+  it("marks the occurrences of a row chosen in the catalog, not of the command the caret merely sits on", () => {
+    const view = mount();
+    const marks = () => [...view.dom.querySelectorAll(".cm-zplCommandMatch")].map((m) => m.textContent);
+    placePointerCaret(view, "hello");
+    expect(marks()).toEqual([]);
+    const row = screen.getByRole("option", { name: /\^LL/ });
+    fireEvent.click(row);
+    expect(marks()).toEqual(["^LL"]);
+    fireEvent.keyDown(row, { key: "Escape" });
+    expect(marks()).toEqual([]);
+    // Out of the empty state, the arrow walk picks the caret's own row: a choice too.
+    fireEvent.keyDown(row, { key: "Escape" });
+    fireEvent.keyDown(screen.getByRole("listbox"), { key: "ArrowDown" });
+    expect(marks()).toEqual(["^FD"]);
+  });
+
+  it("drops the marks while the search hides the chosen row, and brings them back", () => {
+    const view = mount();
+    const marks = () => [...view.dom.querySelectorAll(".cm-zplCommandMatch")].map((m) => m.textContent);
+    fireEvent.click(screen.getByRole("option", { name: /\^PW/ }));
+    expect(marks()).toEqual(["^PW"]);
+    const search = screen.getByRole("searchbox");
+    fireEvent.change(search, { target: { value: "^LL" } });
+    expect(marks()).toEqual([]);
+    fireEvent.change(search, { target: { value: "" } });
+    expect(marks()).toEqual(["^PW"]);
+  });
+
   it("replaces a pointer-made range selection instead of inserting before ^XZ", () => {
     const view = mount();
     const pos = placePointerCaret(view, "hello", 5);

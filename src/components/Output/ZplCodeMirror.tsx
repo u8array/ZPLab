@@ -16,6 +16,7 @@ import type { SourceLint } from '../../lib/sourceDiagnostics';
 import { zpl, blobRanges, commandAtCursor, commandInsertion, placesCaret, pointsAtCaret, sameCursorCommand, type CursorCommand } from '../../lib/zplLanguage';
 import { toDiagnostic } from '../../lib/zplCmLint';
 import { hideSidecarsExt, visibleLineNumber } from '../../lib/zplCmSidecars';
+import { commandMarksExt } from '../../lib/zplCmCommandMarks';
 import { crlfIndex, isPureCrlf, minimalSplice, toDocPos } from '../../lib/sourceOffsets';
 
 // Text.toString() always joins with LF; only sliceString honours the
@@ -69,6 +70,13 @@ const theme = EditorView.theme({
   '.cm-activeLine': { backgroundColor: 'transparent' },
   '.cm-zplSelectedLine': {
     backgroundColor: 'color-mix(in srgb, var(--color-accent) 10%, transparent)',
+  },
+  // An outline, not a fill: the glyphs are accent-coloured themselves, and a fill would
+  // paint over the selection layer and the lint underline on the same token.
+  '.cm-zplCommandMatch': {
+    outline: '1px solid color-mix(in srgb, var(--color-accent) 70%, transparent)',
+    outlineOffset: '-1px',
+    borderRadius: '2px',
   },
   // CM's base theme paints the tooltip for a light host (no `dark` declared
   // here), and the pane itself is surface-2: without the app's token plus
@@ -176,6 +184,7 @@ export default function ZplCodeMirror({
   diagnostics = null,
   hideSidecars = false,
   insertPage = 0,
+  catalogRow = null,
   onCursorCommand,
   ref,
 }: {
@@ -197,6 +206,8 @@ export default function ZplCodeMirror({
   hideSidecars?: boolean;
   /** Page whose block takes an insert while no caret is placed; changing it forgets the caret. */
   insertPage?: number;
+  /** Catalog row whose occurrences are marked in the text, in any of its spellings. */
+  catalogRow?: string | null;
   /** Command under the caret, reported whenever it changes. */
   onCursorCommand?: (cmd: CursorCommand | null) => void;
   ref?: Ref<ZplCodeMirrorHandle>;
@@ -222,6 +233,7 @@ export default function ZplCodeMirror({
   const [highlightCompartment] = useState(() => new Compartment());
   const [historyCompartment] = useState(() => new Compartment());
   const [sidecarCompartment] = useState(() => new Compartment());
+  const [commandMarksCompartment] = useState(() => new Compartment());
 
   useImperativeHandle(
     ref,
@@ -253,6 +265,7 @@ export default function ZplCodeMirror({
         readOnlyCompartment.of(readOnlyExt(readOnly)),
         highlightCompartment.of(highlightExt(highlightLines)),
         sidecarCompartment.of(hideSidecarsExt(hideSidecars)),
+        commandMarksCompartment.of(commandMarksExt(catalogRow)),
         localeCompartment.of(localeExt(ariaLabel, placeholderText)),
         // lintKeymap opens the diagnostics panel, the keyboard's only route to a repair action.
         keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap, ...lintKeymap]),
@@ -372,6 +385,12 @@ export default function ZplCodeMirror({
     if (!view) return;
     view.dispatch({ effects: sidecarCompartment.reconfigure(hideSidecarsExt(hideSidecars)) });
   }, [hideSidecars, sidecarCompartment]);
+
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    view.dispatch({ effects: commandMarksCompartment.reconfigure(commandMarksExt(catalogRow)) });
+  }, [catalogRow, commandMarksCompartment]);
 
   // After the value sync above, so line positions resolve on the fresh doc.
   // Compared by CONTENT: the producer hands a fresh Set per model change, and
