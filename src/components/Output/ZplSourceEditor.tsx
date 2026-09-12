@@ -112,7 +112,11 @@ export function ZplSourceEditor({
             onCursorCommand={setCursorCommand}
           />
         </div>
-        <ZplCatalogPanel cursor={cursorCommand} onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined} />
+        <ZplCatalogPanel
+          cursor={cursorCommand}
+          sessionId={session?.session}
+          onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined}
+        />
       </div>
       {gateMsg !== null && (
         <p

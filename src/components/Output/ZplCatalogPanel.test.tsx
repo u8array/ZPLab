@@ -31,7 +31,8 @@ describe("ZplCatalogPanel", () => {
 
   it("disables the insert button when inserting is unavailable", () => {
     const { getByRole } = render(<ZplCatalogPanel cursor={{ id: "^LL", from: 0 }} />);
-    expect((getByRole("button", { name: /^Insert$/ }) as HTMLButtonElement).disabled).toBe(true);
+    // Pins aria-disabled: a disabled button would drop its focus to body.
+    expect(getByRole("button", { name: /^Insert$/ }).getAttribute("aria-disabled")).toBe("true");
   });
 
   it("shows the three support levels in web, desktop, lint order", () => {
@@ -59,14 +60,64 @@ describe("ZplCatalogPanel", () => {
     expect(getByText(/Place the cursor/)).toBeTruthy();
   });
 
-  it("keeps a pinned row across caret moves until it is unpinned", () => {
-    const { getByRole, getByTestId, rerender } = render(<ZplCatalogPanel cursor={{ id: "^LL", from: 0 }} onInsert={vi.fn()} />);
+  it("releases the pin when the caret moves, and does not revive it on the way back", () => {
+    // A pin keyed on the command id alone came back for every later ^FO.
+    const { getByRole, getByTestId, rerender } = render(<ZplCatalogPanel cursor={{ id: "^FO", from: 4 }} onInsert={vi.fn()} />);
     fireEvent.click(getByRole("option", { name: /\^PW/ }));
     expect(detail(getByTestId).getByText("print width")).toBeTruthy();
-    rerender(<ZplCatalogPanel cursor={{ id: "^FO", from: 0 }} onInsert={vi.fn()} />);
-    expect(detail(getByTestId).getByText("print width")).toBeTruthy();
-    fireEvent.click(getByRole("option", { name: /\^PW/ }));
+    rerender(<ZplCatalogPanel cursor={{ id: "^LL", from: 20 }} onInsert={vi.fn()} />);
+    expect(detail(getByTestId).getByText("label length")).toBeTruthy();
+    rerender(<ZplCatalogPanel cursor={{ id: "^FO", from: 4 }} onInsert={vi.fn()} />);
     expect(detail(getByTestId).getByText("field origin")).toBeTruthy();
+  });
+
+  it("dismisses on Escape without letting focus leave the panel", () => {
+    const { getByRole, getByTestId } = render(<ZplCatalogPanel cursor={{ id: "^FO", from: 4 }} onInsert={vi.fn()} />);
+    const button = getByRole("button", { name: /^Insert$/ });
+    button.focus();
+    fireEvent.keyDown(button, { key: "Escape" });
+    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    expect(document.activeElement).toBe(button);
+  });
+
+  it("clears the search on Escape instead of dismissing the detail", () => {
+    const { getByRole, getByLabelText, getByTestId } = render(<ZplCatalogPanel cursor={{ id: "^FO", from: 4 }} onInsert={vi.fn()} />);
+    const search = getByLabelText("Search commands") as HTMLInputElement;
+    fireEvent.change(search, { target: { value: "^LL" } });
+    fireEvent.keyDown(search, { key: "Escape" });
+    expect(search.value).toBe("");
+    expect(detail(getByTestId).getByText("field origin")).toBeTruthy();
+    expect(getByRole("listbox")).toBeTruthy();
+  });
+
+  it("leaves the empty state on ArrowDown at the caret's command, not at the first row", () => {
+    const { getByRole, getByTestId } = render(<ZplCatalogPanel cursor={{ id: "^FO", from: 4 }} onInsert={vi.fn()} />);
+    const list = getByRole("listbox");
+    fireEvent.keyDown(list, { key: "Escape" });
+    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    fireEvent.keyDown(list, { key: "ArrowDown" });
+    expect(detail(getByTestId).getByText("field origin")).toBeTruthy();
+  });
+
+  it("ends a dismissal when a row is chosen, so the next Escape returns to the caret", () => {
+    const { getByRole, getAllByRole, getByTestId } = render(<ZplCatalogPanel cursor={{ id: "^FO", from: 4 }} onInsert={vi.fn()} />);
+    const list = getByRole("listbox");
+    fireEvent.keyDown(list, { key: "Escape" });
+    const pw = getAllByRole("option").find((o) => o.textContent?.startsWith("^PW"));
+    if (!pw) throw new Error("fixture");
+    fireEvent.click(pw);
+    expect(detail(getByTestId).getByText("print width")).toBeTruthy();
+    fireEvent.keyDown(list, { key: "Escape" });
+    expect(detail(getByTestId).getByText("field origin")).toBeTruthy();
+  });
+
+  it("steps back from a pin the search hides straight to the empty state", () => {
+    // Pins the ladder on what shows: a hidden pin must not cost an extra press.
+    const { getByRole, getByLabelText, getByTestId } = render(<ZplCatalogPanel cursor={{ id: "^FO", from: 4 }} onInsert={vi.fn()} />);
+    fireEvent.click(getByRole("option", { name: /\^PW/ }));
+    fireEvent.change(getByLabelText("Search commands"), { target: { value: "^LL" } });
+    fireEvent.keyDown(getByRole("listbox"), { key: "Escape" });
+    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
   });
 
   it("walks the list with the arrow keys, inserts on Enter and unpins on Escape", () => {
