@@ -126,20 +126,30 @@ const localeExt = (ariaLabel: string, placeholderText: string) => [
 /** Whether the user's caret counts, and the command last reported for it; one state for inserts and the panel. */
 interface CaretState {
   placed: boolean;
-  reportedId: string | null;
+  reported: CursorCommand | null;
 }
 
 type CursorReport = ((cmd: CursorCommand | null) => void) | undefined;
 
+/** The same command, not merely the same name: two ^FO fields differ by offset. */
+function sameCommand(a: CursorCommand | null, b: CursorCommand | null): boolean {
+  return a === b || (a !== null && b !== null && a.id === b.id && a.from === b.from);
+}
+
 /** Re-armed by the next selection; the panel is told there is no command. */
 function forgetCaret(caret: CaretState, report: CursorReport): void {
   caret.placed = false;
-  if (caret.reportedId === null) return;
-  caret.reportedId = null;
+  if (caret.reported === null) return;
+  caret.reported = null;
   report?.(null);
 }
 
 function trackCaret(u: ViewUpdate, caret: CaretState, report: CursorReport): void {
+  // The stored offset follows the edit, or typing in front of the caret's command
+  // would read as a move to another one.
+  if (u.docChanged && caret.reported !== null) {
+    caret.reported = { ...caret.reported, from: u.changes.mapPos(caret.reported.from, 1) };
+  }
   for (const tr of u.transactions) {
     if (tr.annotation(propSync)) {
       // A regenerated export that overwrote the caret's spot maps it anywhere, mid-command included.
@@ -200,7 +210,7 @@ export default function ZplCodeMirror({
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   const onCursorRef = useRef(onCursorCommand);
-  const caret = useRef<CaretState>({ placed: false, reportedId: null });
+  const caret = useRef<CaretState>({ placed: false, reported: null });
   const insertPageRef = useRef(insertPage);
   useEffect(() => {
     onChangeRef.current = onChange;
@@ -256,8 +266,8 @@ export default function ZplCodeMirror({
           // Selections only: a synced doc change elsewhere leaves the caret's command as it was.
           if (u.selectionSet) {
             const cmd = commandAtCursor(u.state, u.state.selection.main.head);
-            if (cmd?.id !== caret.current.reportedId) {
-              caret.current.reportedId = cmd?.id ?? null;
+            if (!sameCommand(cmd, caret.current.reported)) {
+              caret.current.reported = cmd;
               onCursorRef.current?.(cmd);
             }
           }
@@ -282,7 +292,7 @@ export default function ZplCodeMirror({
     const view = new EditorView({ parent: host.current, state });
     viewRef.current = view;
     // A remount (line-ending key) starts with no caret; the parent must not keep the old one.
-    caret.current = { placed: false, reportedId: null };
+    caret.current = { placed: false, reported: null };
     onCursorRef.current?.(null);
     // Fold the payload blobs up front; foldService alone only powers the gutter.
     const folds = blobFoldEffects(view.state, 0, view.state.doc.length);

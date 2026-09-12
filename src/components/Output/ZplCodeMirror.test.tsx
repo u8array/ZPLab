@@ -12,6 +12,36 @@ import { isEditableTarget } from "../../lib/dom";
 
 afterEach(cleanup);
 
+describe("ZplCodeMirror cursor reports", () => {
+  const mount = () => {
+    const onCursorCommand = vi.fn();
+    const { container } = render(
+      <ZplCodeMirror value={"^XA\n^FO10,10^FS\n^FO20,20^FS\n^XZ"} onChange={vi.fn()} onCursorCommand={onCursorCommand} ariaLabel="zpl" placeholderText="ph" />,
+    );
+    // Mounting reports the caret-less state once, so the cases count only what follows.
+    onCursorCommand.mockClear();
+    return { view: EditorView.findFromDOM(container as HTMLElement)!, onCursorCommand };
+  };
+
+  it("reports a move between two commands of the same name", () => {
+    const { view, onCursorCommand } = mount();
+    act(() => view.dispatch({ selection: { anchor: 6 }, userEvent: "select.pointer" }));
+    act(() => view.dispatch({ selection: { anchor: 18 }, userEvent: "select.pointer" }));
+    expect(onCursorCommand.mock.calls.map(([c]) => c)).toEqual([
+      { id: "^FO", from: 4 },
+      { id: "^FO", from: 16 },
+    ]);
+  });
+
+  it("stays silent while typing in front of the command the caret sits on", () => {
+    // Pins the offset mapping: compared raw, the shifted start would count as a move.
+    const { view, onCursorCommand } = mount();
+    act(() => view.dispatch({ selection: { anchor: 16 }, userEvent: "select.pointer" }));
+    act(() => view.dispatch({ changes: { from: 16, insert: " " }, selection: { anchor: 17 }, userEvent: "input.type" }));
+    expect(onCursorCommand).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("ZplCodeMirror keyboard surface", () => {
   it("reads as an editable target from every real focus/click node", () => {
     // Keys from the read-only scroller or the gutter must never fall

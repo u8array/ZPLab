@@ -257,6 +257,8 @@ export function zpl(): LanguageSupport {
 export interface CursorCommand {
   /** `^LL` or `~JA`: the prefix kind the source used, normalised back from any ^CC/^CT remap. */
   id: string;
+  /** Start offset, so a move between two commands of the same name still counts as a move. */
+  from: number;
 }
 
 const NAME_NODES = new Set(["CmdName", "TildeCmdName", "FormatCmd"]);
@@ -272,9 +274,9 @@ export function commandAtCursor(state: EditorState, pos: number): CursorCommand 
   };
   const node = commandOf(1) ?? commandOf(-1);
   const name = node?.firstChild;
-  if (!name || !NAME_NODES.has(name.name)) return null;
+  if (!node || !name || !NAME_NODES.has(name.name)) return null;
   const prefix = name.name === "TildeCmdName" ? "~" : "^";
-  return { id: `${prefix}${state.doc.sliceString(name.from + PREFIX_LEN, name.to).toUpperCase()}` };
+  return { id: `${prefix}${state.doc.sliceString(name.from + PREFIX_LEN, name.to).toUpperCase()}`, from: node.from };
 }
 
 /** Positional: the page-th ^XZ of the live document (the export emits one block per page),

@@ -166,24 +166,24 @@ describe("commandAtCursor", () => {
 
   it("reports the command around the caret", () => {
     const doc = "^XA^FO100,200^FDhi^FS^XZ";
-    expect(at(doc, 4)).toEqual({ id: "^FO" });
-    expect(at(doc, 11)).toEqual({ id: "^FO" });
-    expect(at(doc, 16)).toEqual({ id: "^FD" });
-    expect(at(doc, 1)).toEqual({ id: "^XA" });
+    expect(at(doc, 4)).toEqual({ id: "^FO", from: 3 });
+    expect(at(doc, 11)).toEqual({ id: "^FO", from: 3 });
+    expect(at(doc, 16)).toEqual({ id: "^FD", from: 13 });
+    expect(at(doc, 1)).toEqual({ id: "^XA", from: 0 });
   });
 
   it("looks right from whitespace, so a caret at a line start names that line's command", () => {
     const doc = "^XA\n^FO10,10^FS\n^XZ";
-    expect(at(doc, 4)).toEqual({ id: "^FO" });
-    expect(at(doc, 3)).toEqual({ id: "^XA" });
+    expect(at(doc, 4)).toEqual({ id: "^FO", from: 4 });
+    expect(at(doc, 3)).toEqual({ id: "^XA", from: 0 });
   });
 
   it("keeps the canonical prefix under a ^CC/^CT remap and for tilde commands", () => {
-    expect(at("^CC//FO1,1/FS", 7)).toEqual({ id: "^FO" });
-    expect(at("^CT!!JA", 6)).toEqual({ id: "~JA" });
+    expect(at("^CC//FO1,1/FS", 7)).toEqual({ id: "^FO", from: 4 });
+    expect(at("^CT!!JA", 6)).toEqual({ id: "~JA", from: 4 });
     // Tilde-spelled format commands keep their prefix; they are not block delimiters.
-    expect(at("~XA^FO1,1", 1)).toEqual({ id: "~XA" });
-    expect(at("~DYE:X.PNG,P,P,1,,00", 8)).toEqual({ id: "~DY" });
+    expect(at("~XA^FO1,1", 1)).toEqual({ id: "~XA", from: 0 });
+    expect(at("~DYE:X.PNG,P,P,1,,00", 8)).toEqual({ id: "~DY", from: 0 });
   });
 
   it("answers null between commands", () => {
