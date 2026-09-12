@@ -13,7 +13,7 @@ import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { codeFolding, foldable, foldGutter, foldKeymap, foldEffect, foldedRanges } from '@codemirror/language';
 import { setDiagnostics, diagnosticCount, forEachDiagnostic, lintKeymap, type Diagnostic } from '@codemirror/lint';
 import type { SourceLint } from '../../lib/sourceDiagnostics';
-import { zpl, blobRanges, commandAtCursor, commandInsertion, placesCaret, type CursorCommand } from '../../lib/zplLanguage';
+import { zpl, blobRanges, commandAtCursor, commandInsertion, placesCaret, pointsAtCaret, sameCursorCommand, type CursorCommand } from '../../lib/zplLanguage';
 import { toDiagnostic } from '../../lib/zplCmLint';
 import { hideSidecarsExt, visibleLineNumber } from '../../lib/zplCmSidecars';
 import { crlfIndex, isPureCrlf, minimalSplice, toDocPos } from '../../lib/sourceOffsets';
@@ -130,11 +130,6 @@ interface CaretState {
 }
 
 type CursorReport = ((cmd: CursorCommand | null) => void) | undefined;
-
-/** The same command, not merely the same name: two ^FO fields differ by offset. */
-function sameCommand(a: CursorCommand | null, b: CursorCommand | null): boolean {
-  return a === b || (a !== null && b !== null && a.id === b.id && a.from === b.from);
-}
 
 /** Re-armed by the next selection; the panel is told there is no command. */
 function forgetCaret(caret: CaretState, report: CursorReport): void {
@@ -263,10 +258,12 @@ export default function ZplCodeMirror({
         keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap, ...lintKeymap]),
         EditorView.updateListener.of((u) => {
           trackCaret(u, caret.current, onCursorRef.current);
-          // Selections only: a synced doc change elsewhere leaves the caret's command as it was.
+          // Only a transaction that set a selection can report. A synced doc change
+          // remaps the stored offset above and reports nothing. A pointer gesture
+          // reports even the same command, so the panel hears the user ask again.
           if (u.selectionSet) {
             const cmd = commandAtCursor(u.state, u.state.selection.main.head);
-            if (!sameCommand(cmd, caret.current.reported)) {
+            if (u.transactions.some(pointsAtCaret) || !sameCursorCommand(cmd, caret.current.reported)) {
               caret.current.reported = cmd;
               onCursorRef.current?.(cmd);
             }

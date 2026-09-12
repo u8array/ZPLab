@@ -33,6 +33,21 @@ describe("ZplCodeMirror cursor reports", () => {
     ]);
   });
 
+  it("reports again when the pointer re-places the caret in the same command", () => {
+    // A click is the user asking again, so the panel can return from its empty state.
+    const { view, onCursorCommand } = mount();
+    act(() => view.dispatch({ selection: { anchor: 6 }, userEvent: "select.pointer" }));
+    act(() => view.dispatch({ selection: { anchor: 8 }, userEvent: "select.pointer" }));
+    expect(onCursorCommand).toHaveBeenCalledTimes(2);
+  });
+
+  it("stays silent on a keyboard move within the command", () => {
+    const { view, onCursorCommand } = mount();
+    act(() => view.dispatch({ selection: { anchor: 6 }, userEvent: "select.pointer" }));
+    act(() => view.dispatch({ selection: { anchor: 8 }, userEvent: "select" }));
+    expect(onCursorCommand).toHaveBeenCalledTimes(1);
+  });
+
   it("stays silent while typing in front of the command the caret sits on", () => {
     // Pins the offset mapping: compared raw, the shifted start would count as a move.
     const { view, onCursorCommand } = mount();

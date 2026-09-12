@@ -36,16 +36,7 @@ const domId = (listId: string, key: string): string =>
   `${listId}-${key.replace(/^\^/, "c").replace(/^~/, "t").replace(/[^A-Za-z0-9]/g, "_")}`;
 
 /** Command reference beside the source pane; no `onInsert` means inserting is unavailable. */
-export function ZplCatalogPanel({
-  cursor,
-  onInsert,
-  sessionId,
-}: {
-  cursor: CursorCommand | null;
-  onInsert?: (text: string) => void;
-  /** A choice made during a source-edit session dies with that session. */
-  sessionId?: number;
-}) {
+export function ZplCatalogPanel({ cursor, onInsert }: { cursor: CursorCommand | null; onInsert?: (text: string) => void }) {
   const t = useT();
   const summaries = useCatalogSummaries();
   const listId = useId();
@@ -55,11 +46,11 @@ export function ZplCatalogPanel({
   const [pinned, setPinned] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
   // State derived from props, React's prev-vs-current guard at render time as in
-  // useCollapsibleState. A new cursor object is a real move: the editor dedupes on
-  // id and offset before it reports one.
-  const [prev, setPrev] = useState({ cursor, sessionId });
-  if (prev.cursor !== cursor || prev.sessionId !== sessionId) {
-    setPrev({ cursor, sessionId });
+  // useCollapsibleState. A new cursor object is the user asking again: the editor
+  // reports one on a pointer gesture or a change of command, never while typing.
+  const [prevCursor, setPrevCursor] = useState(cursor);
+  if (prevCursor !== cursor) {
+    setPrevCursor(cursor);
     setPinned(null);
     setDismissed(false);
   }
@@ -71,17 +62,19 @@ export function ZplCatalogPanel({
   const ids = results.map(commandId);
   // A pin the search hides is inert and returns when the filter clears.
   const visiblePin = pinned !== null && ids.includes(pinned) ? pinned : null;
-  const requestedId = visiblePin ?? (dismissed ? undefined : cursor?.id);
-  const entry = requestedId ? catalogEntry(requestedId) : undefined;
+  const asked = visiblePin ?? (dismissed ? undefined : cursor?.id);
+  const entry = asked ? catalogEntry(asked) : undefined;
   // A twin row is one entry whichever prefix the caret sits on; the row id is the entry's.
   const shownId = entry ? commandId(entry) : null;
   const activeIndex = shownId ? ids.indexOf(shownId) : -1;
   const caretEntry = cursor ? catalogEntry(cursor.id) : undefined;
   const caretRow = caretEntry ? commandId(caretEntry) : null;
-  const caretIndex = caretRow ? ids.indexOf(caretRow) : -1;
+  const caretVisible = caretRow && ids.includes(caretRow) ? caretRow : null;
   const empty = ids.length === 0;
-  // The spelling under the caret or on the row: ~HL and ^HL share a row but differ on the printer.
-  const insertRequested = onInsert && entry && requestedId ? () => onInsert(requestedId) : undefined;
+  // The caret's own row inserts the spelling under the caret: ~HL and ^HL share a
+  // row but differ on the printer. Any other row inserts its id.
+  const insertTextFor = (rowId: string): string => (cursor && rowId === caretRow ? cursor.id : rowId);
+  const requestInsert = onInsert && shownId ? () => onInsert(insertTextFor(shownId)) : undefined;
 
   useEffect(() => {
     if (!shownId) return;
@@ -91,39 +84,35 @@ export function ZplCatalogPanel({
   }, [shownId, listId, query]);
 
   // Choosing a row is a wish to see it, so it also ends a dismissal.
-  const showRow = (id: string): void => {
+  const choose = (id: string | null): void => {
     setDismissed(false);
     setPinned(id);
-  };
-  const togglePin = (id: string): void => {
-    setDismissed(false);
-    setPinned((p) => (p === id ? null : id));
   };
   const onListKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       // Out of the empty state the walk resumes at the caret's command, not at row one.
-      if (activeIndex < 0 && caretRow && caretIndex >= 0) {
-        showRow(caretRow);
+      if (activeIndex < 0 && caretVisible) {
+        choose(caretVisible);
         return;
       }
       const step = e.key === "ArrowDown" ? 1 : -1;
       const enterFrom = step > 0 ? 0 : ids.length - 1;
       const next = ids[Math.min(ids.length - 1, Math.max(0, activeIndex < 0 ? enterFrom : activeIndex + step))];
-      if (next) showRow(next);
+      if (next) choose(next);
     } else if (e.key === "Enter") {
-      // The listbox activates its highlighted row; the detail's button is the way to insert anything else.
+      // Enter inserts only the highlighted row. Anything else goes through the detail's button.
       const activeId = ids[activeIndex];
-      if (activeId) onInsert?.(activeId);
-      else if (caretRow && caretIndex >= 0) showRow(caretRow);
+      if (activeId) onInsert?.(insertTextFor(activeId));
+      else if (caretVisible) choose(caretVisible);
     }
   };
-  // Escape steps back by what shows, not by the raw pin: a pin the search hides
-  // already shows the caret, so that press goes straight to the empty state.
+  // Escape steps back by what shows: the caret's own row goes to the empty state, any
+  // other pin to the caret. With nothing shown there is nothing to step back from.
   const onPanelKeyDown = (e: React.KeyboardEvent): void => {
-    if (e.key !== "Escape") return;
+    if (e.key !== "Escape" || shownId === null) return;
     setPinned(null);
-    if (requestedId === undefined || requestedId === cursor?.id) setDismissed(true);
+    if (shownId === caretRow) setDismissed(true);
   };
 
   return (
@@ -145,8 +134,9 @@ export function ZplCatalogPanel({
           data-testid="catalog-detail"
         >
           <div className="space-y-1 min-w-0">
+            {/* The prompt stays outside the live region: it would be read out after every Escape. */}
             <div aria-live="polite" className="space-y-1 min-w-0">
-              {entry ? (
+              {entry && (
                 <>
                   <div className="flex items-baseline gap-2 min-w-0">
                     <span className="font-mono text-accent font-semibold shrink-0">{commandLabel(entry)}</span>
@@ -162,17 +152,16 @@ export function ZplCatalogPanel({
                     ))}
                   </dl>
                 </>
-              ) : (
-                <p className="text-muted leading-relaxed">{t.output.catalogNoCursor}</p>
               )}
             </div>
+            {!entry && <p className="text-muted leading-relaxed">{t.output.catalogNoCursor}</p>}
             <div className="flex justify-end">
               <button
                 type="button"
                 // Stays mounted and focusable: a focused button that unmounts or turns disabled
                 // drops focus to body, and the session's focusout fallback would then apply a dirty edit.
-                aria-disabled={!insertRequested}
-                onClick={insertRequested}
+                aria-disabled={!requestInsert}
+                onClick={requestInsert}
                 className="font-mono text-[10px] text-muted hover:text-accent aria-disabled:opacity-25 aria-disabled:cursor-not-allowed transition-colors"
               >
                 {t.output.catalogInsert}
@@ -189,9 +178,10 @@ export function ZplCatalogPanel({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 // Cleared here on purpose: only some browsers clear a search field natively,
-                // and the panel's own Escape must not take the detail with it.
+                // and the panel's own Escape must not take the detail with it. An empty
+                // field has nothing to clear, so Escape falls through to the step-back.
                 onKeyDown={(e) => {
-                  if (e.key !== "Escape") return;
+                  if (e.key !== "Escape" || query === "") return;
                   e.stopPropagation();
                   setQuery("");
                 }}
@@ -231,9 +221,9 @@ export function ZplCatalogPanel({
                           aria-selected={active}
                           // The clicks of a double-click must not toggle the pin twice.
                           onClick={(e) => {
-                            if (e.detail <= 1) togglePin(id);
+                            if (e.detail <= 1) choose(pinned === id ? null : id);
                           }}
-                          onDoubleClick={() => onInsert?.(id)}
+                          onDoubleClick={() => onInsert?.(insertTextFor(id))}
                           className={`flex items-baseline gap-2 px-3 py-0.5 cursor-default select-none hover:bg-border/60 ${active ? "bg-border/60" : ""}`}
                         >
                           {/* Coloured by web support: the answer most users need at a glance. */}

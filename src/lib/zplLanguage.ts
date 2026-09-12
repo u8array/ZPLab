@@ -261,6 +261,11 @@ export interface CursorCommand {
   from: number;
 }
 
+/** The same command, not merely the same name: two ^FO fields differ by offset. */
+export function sameCursorCommand(a: CursorCommand | null, b: CursorCommand | null): boolean {
+  return a === b || (a !== null && b !== null && a.id === b.id && a.from === b.from);
+}
+
 const NAME_NODES = new Set(["CmdName", "TildeCmdName", "FormatCmd"]);
 
 /** The command whose bytes surround `pos`, or null between commands; the command
@@ -300,6 +305,12 @@ export function formatCloseFor(state: EditorState, page: number): number | null 
 export const CATALOG_USER_EVENT = "input.catalog";
 /** A lint repair is not the user choosing a spot: the caret rules must not adopt it. */
 export const LINTFIX_USER_EVENT = "input.lintfix";
+
+/** A pointer gesture is the user asking for the command again, unlike typing or an
+ *  arrow move, which also place the caret but must not disturb the reference panel. */
+export function pointsAtCaret(tr: Transaction): boolean {
+  return tr.isUserEvent("select.pointer");
+}
 
 /** Whether a transaction counts as the user choosing a spot for later inserts. */
 export function placesCaret(tr: Transaction): boolean {
