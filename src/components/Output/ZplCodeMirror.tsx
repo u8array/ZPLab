@@ -1,4 +1,4 @@
-import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState, type Ref, type RefObject } from 'react';
 import {
   EditorView,
   Decoration,
@@ -8,7 +8,7 @@ import {
   type DecorationSet,
   type ViewUpdate,
 } from '@codemirror/view';
-import { Annotation, Compartment, EditorState, RangeSetBuilder, Transaction, type StateEffect } from '@codemirror/state';
+import { Annotation, Compartment, EditorState, RangeSetBuilder, Transaction, type Extension, type StateEffect } from '@codemirror/state';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { codeFolding, foldable, foldGutter, foldKeymap, foldEffect, foldedRanges } from '@codemirror/language';
 import { setDiagnostics, diagnosticCount, forEachDiagnostic, lintKeymap, type Diagnostic } from '@codemirror/lint';
@@ -130,6 +130,14 @@ const localeExt = (ariaLabel: string, placeholderText: string) => [
   EditorView.contentAttributes.of({ 'aria-label': ariaLabel }),
   placeholder(placeholderText),
 ];
+
+function useCompartmentSync<T>(viewRef: RefObject<EditorView | null>, compartment: Compartment, build: (value: T) => Extension, value: T): void {
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    view.dispatch({ effects: compartment.reconfigure(build(value)) });
+  }, [viewRef, compartment, build, value]);
+}
 
 /** Whether the user's caret counts, and the command last reported for it; one state for inserts and the panel. */
 interface CaretState {
@@ -374,23 +382,9 @@ export default function ZplCodeMirror({
     view.dispatch(setDiagnostics(view.state, mapped));
   }, [diagnostics, value]);
 
-  useEffect(() => {
-    const view = viewRef.current;
-    if (!view) return;
-    view.dispatch({ effects: readOnlyCompartment.reconfigure(readOnlyExt(readOnly)) });
-  }, [readOnly, readOnlyCompartment]);
-
-  useEffect(() => {
-    const view = viewRef.current;
-    if (!view) return;
-    view.dispatch({ effects: sidecarCompartment.reconfigure(hideSidecarsExt(hideSidecars)) });
-  }, [hideSidecars, sidecarCompartment]);
-
-  useEffect(() => {
-    const view = viewRef.current;
-    if (!view) return;
-    view.dispatch({ effects: commandMarksCompartment.reconfigure(commandMarksExt(catalogRow)) });
-  }, [catalogRow, commandMarksCompartment]);
+  useCompartmentSync(viewRef, readOnlyCompartment, readOnlyExt, readOnly);
+  useCompartmentSync(viewRef, sidecarCompartment, hideSidecarsExt, hideSidecars);
+  useCompartmentSync(viewRef, commandMarksCompartment, commandMarksExt, catalogRow);
 
   // After the value sync above, so line positions resolve on the fresh doc.
   // Compared by CONTENT: the producer hands a fresh Set per model change, and
