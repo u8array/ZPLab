@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 
 /** Tab-able elements per the WAI-ARIA dialog pattern. The selector
@@ -38,11 +38,13 @@ export function useFocusTrap(
     onEscapeRef.current = onEscape;
   });
 
+  // Captured during render: a child's autoFocus lands in the commit phase, before any
+  // effect runs, so an effect would remember the dialog's own button.
+  const [previouslyFocused] = useState(() => document.activeElement as HTMLElement | null);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-
-    const previouslyFocused = document.activeElement as HTMLElement | null;
 
     // Move focus into the dialog. Falling back to the container itself
     // ensures Esc/Tab handlers receive keys even when the dialog has
@@ -95,5 +97,5 @@ export function useFocusTrap(
         previouslyFocused?.focus?.();
       }
     };
-  }, [containerRef]);
+  }, [containerRef, previouslyFocused]);
 }
