@@ -936,6 +936,8 @@ const ko = {
     catalogNo: '아니요',
     catalogNoCursor: '명령어에 커서를 놓으면 기능을 확인할 수 있습니다.',
     catalogNoMatch: '검색과 일치하는 명령이 없습니다.',
+    catalogDismissed: '참조를 숨겼습니다. 코드에서 명령어를 클릭하면 다시 표시됩니다.',
+    catalogNoEntryFmt: '{cmd} 명령은 참조에 없습니다.',
     copy: '복사',
     copied: '✓ 복사됨',
     previewHeading: '미리보기',

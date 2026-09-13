@@ -936,6 +936,8 @@ const he = {
     catalogNo: 'לא',
     catalogNoCursor: 'הנח את הסמן מעל פקודה כדי לראות מה היא עושה.',
     catalogNoMatch: 'אין פקודות התואמות את החיפוש.',
+    catalogDismissed: 'המדריך מוסתר. לחץ על הפקודה בקוד כדי להציג אותו שוב.',
+    catalogNoEntryFmt: '{cmd} לא נמצא במדריך.',
     copy: 'העתק',
     copied: '✓ הועתק',
     previewHeading: 'תצוגה מקדימה',

@@ -4,6 +4,7 @@ import { CATALOG_SECTIONS, commandId, commandLabel, type CommandSupport, type Su
 import { useT } from "../../hooks/useT";
 import { useCatalogSummaries } from "../../hooks/useCatalogSummaries";
 import type { CatalogSelection } from "../../hooks/useCatalogSelection";
+import { catalogEmptyText } from "../../lib/catalogText";
 import type { Translations } from "../../locales";
 import { inputCls } from "../Properties/styles";
 
@@ -42,13 +43,16 @@ export function ZplCatalogPanel({
   const summaries = useCatalogSummaries();
   const listId = useId();
   const listRef = useRef<HTMLUListElement>(null);
-  const { query, setQuery, results, ids, entry, shownId, activeIndex, caretVisible, choose, toggle, stepBack, insertTextFor } = selection;
+  const { query, setQuery, results, ids, entry, emptyReason, shownId, activeIndex, caretVisible, choose, toggle, stepBack, insertTextFor } = selection;
   // Headings only: the catalog is stored in section order, so the arrow walk reads `ids` as is.
   const groups = CATALOG_SECTIONS.map((section) => ({ section, rows: results.filter((e) => e.section === section.name) })).filter(
     (g) => g.rows.length > 0,
   );
   const empty = ids.length === 0;
   const requestInsert = onInsert && shownId ? () => onInsert(insertTextFor(shownId)) : undefined;
+  const emptyLine = emptyReason && <p className="text-muted leading-relaxed">{catalogEmptyText(emptyReason, t)}</p>;
+  // Only the caret-driven lines are announced. The no-cursor line would be read on every step through plain text.
+  const announced = emptyReason?.kind !== "noCursor";
   // A caret is only worth keeping while there is one: from elsewhere the catalog takes focus as any panel.
   const keepEditorFocus = (e: React.MouseEvent): void => {
     if (editorHasFocus?.()) e.preventDefault();
@@ -103,7 +107,6 @@ export function ZplCatalogPanel({
           data-testid="catalog-detail"
         >
           <div className="space-y-1 min-w-0">
-            {/* The prompt stays outside the live region: it would be read out after every Escape. */}
             <div aria-live="polite" className="space-y-1 min-w-0">
               {entry && (
                 <>
@@ -122,8 +125,9 @@ export function ZplCatalogPanel({
                   </dl>
                 </>
               )}
+              {announced && emptyLine}
             </div>
-            {!entry && <p className="text-muted leading-relaxed">{t.output.catalogNoCursor}</p>}
+            {!announced && emptyLine}
             <div className="flex justify-end">
               <button
                 type="button"

@@ -936,6 +936,8 @@ const fi = {
     catalogNo: 'ei',
     catalogNoCursor: 'Aseta kohdistin komentoon nähdäksesi, mitä se tekee.',
     catalogNoMatch: 'Mikään komento ei vastaa hakua.',
+    catalogDismissed: 'Viiteopas on piilotettu. Napsauta komentoa koodissa, niin se tulee taas näkyviin.',
+    catalogNoEntryFmt: '{cmd} ei ole viiteoppaassa.',
     copy: 'Kopioi',
     copied: '✓ Kopioitu',
     previewHeading: 'Esikatselu',

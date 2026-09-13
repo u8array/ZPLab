@@ -936,6 +936,8 @@ const da = {
     catalogNo: 'nej',
     catalogNoCursor: 'Placer markøren på en kommando for at se, hvad den gør.',
     catalogNoMatch: 'Ingen kommandoer matcher søgningen.',
+    catalogDismissed: 'Referencen er skjult. Klik på kommandoen i koden for at vise den igen.',
+    catalogNoEntryFmt: '{cmd} findes ikke i referencen.',
     copy: 'Kopiér',
     copied: '✓ Kopieret',
     previewHeading: 'Forhåndsvisning',

@@ -936,6 +936,8 @@ const fa = {
     catalogNo: 'خیر',
     catalogNoCursor: 'مکان‌نما را روی یک دستور قرار دهید تا عملکرد آن را ببینید.',
     catalogNoMatch: 'هیچ دستوری با جستجو مطابقت ندارد.',
+    catalogDismissed: 'مرجع پنهان شد. در کد روی دستور کلیک کنید تا دوباره نمایش داده شود.',
+    catalogNoEntryFmt: '{cmd} در مرجع نیست.',
     copy: 'کپی',
     copied: '✓ کپی شد',
     previewHeading: 'پیش‌نمایش',

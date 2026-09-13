@@ -83,7 +83,7 @@ describe("ZplCatalogPanel", () => {
     const button = getByRole("button", { name: /^Insert$/ });
     button.focus();
     fireEvent.keyDown(button, { key: "Escape" });
-    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
     expect(document.activeElement).toBe(button);
   });
 
@@ -100,14 +100,14 @@ describe("ZplCatalogPanel", () => {
   it("lets Escape in an empty search field fall through to the panel's step-back", () => {
     const { getByLabelText, getByTestId } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
     fireEvent.keyDown(getByLabelText("Search commands"), { key: "Escape" });
-    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
   });
 
   it("leaves the empty state on ArrowDown at the caret's command, not at the first row", () => {
     const { getByRole, getByTestId } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
     const list = getByRole("listbox");
     fireEvent.keyDown(list, { key: "Escape" });
-    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
     fireEvent.keyDown(list, { key: "ArrowDown" });
     expect(detail(getByTestId).getByText("field origin")).toBeTruthy();
   });
@@ -130,7 +130,7 @@ describe("ZplCatalogPanel", () => {
     fireEvent.click(getByRole("option", { name: /\^PW/ }));
     fireEvent.change(getByLabelText("Search commands"), { target: { value: "^LL" } });
     fireEvent.keyDown(getByRole("listbox"), { key: "Escape" });
-    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
   });
 
   it("resets on a fresh cursor report even for the same command and offset", () => {
@@ -163,7 +163,7 @@ describe("ZplCatalogPanel", () => {
   it("lets a dismissal lapse when the caret travels to another command", () => {
     const { getByRole, getByTestId, rerender } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
     fireEvent.keyDown(getByRole("listbox"), { key: "Escape" });
-    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
     rerender(<Panel cursor={{ id: "^LL", from: 20, pointed: false }} onInsert={vi.fn()} />);
     expect(detail(getByTestId).getByText("label length")).toBeTruthy();
   });
@@ -179,7 +179,7 @@ describe("ZplCatalogPanel", () => {
     const { getByRole, getByTestId } = render(<Panel cursor={{ id: "~HL", from: 0, pointed: true }} onInsert={vi.fn()} />);
     fireEvent.click(getByRole("option", { name: /\^HL/ }));
     fireEvent.keyDown(getByRole("listbox"), { key: "Escape" });
-    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
   });
 
   it("keeps the caret's spelling for Insert after ArrowDown out of the empty state", () => {
@@ -192,12 +192,31 @@ describe("ZplCatalogPanel", () => {
     expect(onInsert).toHaveBeenCalledWith("~HL");
   });
 
-  it("keeps the prompt out of the live region", () => {
-    const { getByRole, getByTestId } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
+  it("announces a dismissal and a missing entry, but not the no-cursor line", () => {
+    const { getByRole, getByTestId, rerender } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
+    const live = () => getByTestId("catalog-detail").querySelector("[aria-live]")?.textContent ?? "";
     fireEvent.keyDown(getByRole("listbox"), { key: "Escape" });
-    const live = getByTestId("catalog-detail").querySelector("[aria-live]");
-    expect(live?.textContent ?? "").not.toMatch(/Place the cursor/);
+    expect(live()).toMatch(/Reference hidden/);
+    rerender(<Panel cursor={{ id: "~ZQ", from: 3, pointed: true }} onInsert={vi.fn()} />);
+    expect(live()).toBe("~ZQ is not in the reference.");
+    rerender(<Panel cursor={null} onInsert={vi.fn()} />);
+    expect(live()).toBe("");
     expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+  });
+
+  it("shows no empty line beside a pin that outlived the caret", () => {
+    const { getByRole, getByTestId, rerender } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
+    fireEvent.click(getByRole("option", { name: /\^PW/ }));
+    rerender(<Panel cursor={null} onInsert={vi.fn()} />);
+    expect(detail(getByTestId).getByText("print width")).toBeTruthy();
+    expect(detail(getByTestId).queryByText(/Place the cursor/)).toBeNull();
+  });
+
+  it("lets a lapsed dismissal say nothing for the next command without an entry", () => {
+    const { getByRole, getByTestId, rerender } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
+    fireEvent.keyDown(getByRole("listbox"), { key: "Escape" });
+    rerender(<Panel cursor={{ id: "^ZQ", from: 20, pointed: false }} onInsert={vi.fn()} />);
+    expect(detail(getByTestId).getByText("^ZQ is not in the reference.")).toBeTruthy();
   });
 
   it("changes nothing on Escape for a command without a catalog entry", () => {
@@ -206,6 +225,7 @@ describe("ZplCatalogPanel", () => {
     fireEvent.keyDown(getByRole("listbox"), { key: "Escape" });
     const after = [getByTestId("catalog-detail").textContent, queryAllByRole("option", { selected: true }).length];
     expect(after).toEqual(before);
+    expect(detail(getByTestId).getByText("^ZQ is not in the reference.")).toBeTruthy();
     expect(getByRole("button", { name: /^Insert$/ }).getAttribute("aria-disabled")).toBe("true");
   });
 
@@ -224,7 +244,7 @@ describe("ZplCatalogPanel", () => {
     // Characterises a surviving mutant: the cursor guard must clear the dismissal, not only the pin.
     const { getByRole, getByTestId, rerender } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
     fireEvent.keyDown(getByRole("listbox"), { key: "Escape" });
-    expect(detail(getByTestId).getByText(/Place the cursor/)).toBeTruthy();
+    expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
     rerender(<Panel cursor={{ id: "^LL", from: 20, pointed: true }} onInsert={vi.fn()} />);
     expect(detail(getByTestId).getByText("label length")).toBeTruthy();
   });

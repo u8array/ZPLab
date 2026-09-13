@@ -936,6 +936,8 @@ const nl = {
     catalogNo: 'nee',
     catalogNoCursor: 'Plaats de cursor op een opdracht om te zien wat deze doet.',
     catalogNoMatch: 'Geen opdrachten komen overeen met de zoekopdracht.',
+    catalogDismissed: 'Referentie verborgen. Klik op de opdracht in de code om deze weer te tonen.',
+    catalogNoEntryFmt: '{cmd} staat niet in de referentie.',
     copy: 'Kopiëren',
     copied: '✓ Gekopieerd',
     previewHeading: 'Voorbeeld',

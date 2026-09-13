@@ -936,6 +936,8 @@ const hr = {
     catalogNo: 'ne',
     catalogNoCursor: 'Postavite pokazivač na naredbu da vidite što radi.',
     catalogNoMatch: 'Nijedna naredba ne odgovara pretrazi.',
+    catalogDismissed: 'Referenca je skrivena. Kliknite naredbu u kodu da je ponovno prikažete.',
+    catalogNoEntryFmt: '{cmd} nije u referenci.',
     copy: 'Kopiraj',
     copied: '✓ Kopirano',
     previewHeading: 'Pregled',

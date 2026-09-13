@@ -936,6 +936,8 @@ const pl = {
     catalogNo: 'nie',
     catalogNoCursor: 'Ustaw kursor na poleceniu, aby zobaczyć, co ono robi.',
     catalogNoMatch: 'Żadne polecenie nie pasuje do wyszukiwania.',
+    catalogDismissed: 'Dokumentacja jest ukryta. Kliknij polecenie w kodzie, aby wyświetlić ją ponownie.',
+    catalogNoEntryFmt: 'Polecenia {cmd} nie ma w dokumentacji.',
     copy: 'Kopiuj',
     copied: '✓ Skopiowano',
     previewHeading: 'Podgląd',

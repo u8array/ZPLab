@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { catalogEntry, catalogRow, commandId, filterCatalog, type ZplCommandEntry } from "@zplab/core/catalog";
 import { sameCursorCommand, type CursorCommand } from "../lib/zplLanguage";
+import type { CatalogEmptyReason } from "../lib/catalogText";
 
 export interface CatalogSelection {
   query: string;
@@ -8,6 +9,7 @@ export interface CatalogSelection {
   results: ZplCommandEntry[];
   ids: string[];
   entry: ZplCommandEntry | undefined;
+  emptyReason: CatalogEmptyReason | null;
   shownId: string | null;
   activeIndex: number;
   pinVisible: string | null;
@@ -45,6 +47,13 @@ export function useCatalogSelection(cursor: CursorCommand | null): CatalogSelect
   const asked = pinVisible ?? (dismissed ? undefined : cursor?.id);
   const entry = asked ? catalogEntry(asked) : undefined;
   const shownId = entry ? commandId(entry) : null;
+  const emptyReason: CatalogEmptyReason | null = entry
+    ? null
+    : cursor === null
+      ? { kind: "noCursor" }
+      : dismissed
+        ? { kind: "dismissed" }
+        : { kind: "noEntry", cmd: cursor.id };
   const caretRow = cursor ? (catalogRow(cursor.id) ?? null) : null;
 
   const choose = (id: string | null): void => {
@@ -57,6 +66,7 @@ export function useCatalogSelection(cursor: CursorCommand | null): CatalogSelect
     results,
     ids,
     entry,
+    emptyReason,
     shownId,
     activeIndex: shownId ? ids.indexOf(shownId) : -1,
     pinVisible,

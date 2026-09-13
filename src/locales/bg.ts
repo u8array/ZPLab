@@ -936,6 +936,8 @@ const bg = {
     catalogNo: 'не',
     catalogNoCursor: 'Поставете курсора върху команда, за да видите какво прави.',
     catalogNoMatch: 'Няма команди, отговарящи на търсенето.',
+    catalogDismissed: 'Справката е скрита. Щракнете върху командата в кода, за да я покажете отново.',
+    catalogNoEntryFmt: '{cmd} не е в справката.',
     copy: 'Копирай',
     copied: '✓ Копирано',
     previewHeading: 'Преглед',

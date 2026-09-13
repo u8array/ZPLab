@@ -936,6 +936,8 @@ const et = {
     catalogNo: 'ei',
     catalogNoCursor: 'Aseta kursor käsule, et näha, mida see teeb.',
     catalogNoMatch: 'Otsingule ei vasta ükski käsk.',
+    catalogDismissed: 'Teatmik on peidetud. Klõpsa koodis käsul, et seda uuesti näidata.',
+    catalogNoEntryFmt: '{cmd} ei ole teatmikus.',
     copy: 'Kopeeri',
     copied: '✓ Kopeeritud',
     previewHeading: 'Eelvaade',

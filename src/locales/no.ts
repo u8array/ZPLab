@@ -936,6 +936,8 @@ const no = {
     catalogNo: 'nei',
     catalogNoCursor: 'Plasser markøren på en kommando for å se hva den gjør.',
     catalogNoMatch: 'Ingen kommandoer samsvarer med søket.',
+    catalogDismissed: 'Referansen er skjult. Klikk på kommandoen i koden for å vise den igjen.',
+    catalogNoEntryFmt: '{cmd} finnes ikke i referansen.',
     copy: 'Kopier',
     copied: '✓ Kopiert',
     previewHeading: 'Forhåndsvisning',

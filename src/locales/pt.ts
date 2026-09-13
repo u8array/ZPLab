@@ -936,6 +936,8 @@ const pt = {
     catalogNo: 'não',
     catalogNoCursor: 'Posicione o cursor sobre um comando para ver o que ele faz.',
     catalogNoMatch: 'Nenhum comando corresponde à pesquisa.',
+    catalogDismissed: 'Referência oculta. Clique no comando do código para mostrá-la novamente.',
+    catalogNoEntryFmt: '{cmd} não está na referência.',
     copy: 'Copiar',
     copied: '✓ Copiado',
     previewHeading: 'Pré-visualização',

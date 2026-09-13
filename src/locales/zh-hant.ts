@@ -936,6 +936,8 @@ const zhHant = {
     catalogNo: '否',
     catalogNoCursor: '將游標放在命令上可查看其作用。',
     catalogNoMatch: '沒有符合搜尋的指令。',
+    catalogDismissed: '參考已隱藏。點選程式碼中的指令可再次顯示。',
+    catalogNoEntryFmt: '{cmd} 不在參考中。',
     copy: '複製',
     copied: '✓ 已複製',
     previewHeading: '預覽',

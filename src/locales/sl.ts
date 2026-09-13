@@ -936,6 +936,8 @@ const sl = {
     catalogNo: 'ne',
     catalogNoCursor: 'Postavite kazalec na ukaz, da vidite, kaj počne.',
     catalogNoMatch: 'Noben ukaz ne ustreza iskanju.',
+    catalogDismissed: 'Referenca je skrita. Kliknite ukaz v kodi, da jo znova prikažete.',
+    catalogNoEntryFmt: '{cmd} ni v referenci.',
     copy: 'Kopiraj',
     copied: '✓ Kopirano',
     previewHeading: 'Predogled',

@@ -936,6 +936,8 @@ const sv = {
     catalogNo: 'nej',
     catalogNoCursor: 'Placera markören på ett kommando för att se vad det gör.',
     catalogNoMatch: 'Inga kommandon matchar sökningen.',
+    catalogDismissed: 'Referensen är dold. Klicka på kommandot i koden för att visa den igen.',
+    catalogNoEntryFmt: '{cmd} finns inte i referensen.',
     copy: 'Kopiera',
     copied: '✓ Kopierat',
     previewHeading: 'Förhandsvisning',

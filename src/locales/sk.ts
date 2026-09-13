@@ -936,6 +936,8 @@ const sk = {
     catalogNo: 'nie',
     catalogNoCursor: 'Umiestnite kurzor na príkaz a zobrazí sa jeho popis.',
     catalogNoMatch: 'Žiadne príkazy nezodpovedajú vyhľadávaniu.',
+    catalogDismissed: 'Referencia je skrytá. Kliknite na príkaz v kóde a znova sa zobrazí.',
+    catalogNoEntryFmt: '{cmd} nie je v referencii.',
     copy: 'Kopírovať',
     copied: '✓ Skopírované',
     previewHeading: 'Náhľad',

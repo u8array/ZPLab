@@ -936,6 +936,8 @@ const fr = {
     catalogNo: 'non',
     catalogNoCursor: "Placez le curseur sur une commande pour voir ce qu'elle fait.",
     catalogNoMatch: 'Aucune commande ne correspond à la recherche.',
+    catalogDismissed: "Référence masquée. Cliquez sur la commande dans le code pour l'afficher à nouveau.",
+    catalogNoEntryFmt: '{cmd} ne figure pas dans la référence.',
     copy: 'Copier',
     copied: '✓ Copié',
     previewHeading: 'Aperçu',

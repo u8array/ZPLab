@@ -966,6 +966,8 @@ const en = {
     catalogNo: 'no',
     catalogNoCursor: 'Place the cursor on a command to see what it does.',
     catalogNoMatch: 'No commands match the search.',
+    catalogDismissed: 'Reference hidden. Click the command in the code to show it again.',
+    catalogNoEntryFmt: '{cmd} is not in the reference.',
     copy: 'Copy',
     copied: '✓ Copied',
     previewHeading: 'Preview',

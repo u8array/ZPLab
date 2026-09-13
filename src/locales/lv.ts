@@ -936,6 +936,8 @@ const lv = {
     catalogNo: 'nē',
     catalogNoCursor: 'Novietojiet kursoru uz komandas, lai redzētu, ko tā dara.',
     catalogNoMatch: 'Neviena komanda neatbilst meklēšanai.',
+    catalogDismissed: 'Uzziņas ir paslēptas. Noklikšķiniet uz komandas kodā, lai tās atkal parādītu.',
+    catalogNoEntryFmt: 'Komanda {cmd} uzziņās nav atrodama.',
     copy: 'Kopēt',
     copied: '✓ Nokopēts',
     previewHeading: 'Priekšskatījums',

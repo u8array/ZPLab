@@ -966,6 +966,8 @@ const de = {
     catalogNo: 'nein',
     catalogNoCursor: 'Cursor auf einen Befehl setzen, um seine Funktion zu sehen.',
     catalogNoMatch: 'Keine Befehle passen zur Suche.',
+    catalogDismissed: 'Referenz ausgeblendet. Auf den Befehl im Code klicken, um sie wieder einzublenden.',
+    catalogNoEntryFmt: '{cmd} steht nicht in der Referenz.',
     copy: 'Kopieren',
     copied: '✓ Kopiert',
     previewHeading: 'Vorschau',

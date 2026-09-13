@@ -936,6 +936,8 @@ const sr = {
     catalogNo: 'не',
     catalogNoCursor: 'Postavite kursor na komandu da vidite šta ona radi.',
     catalogNoMatch: 'Nijedna komanda ne odgovara pretrazi.',
+    catalogDismissed: 'Referenca je sakrivena. Kliknite komandu u kodu da je ponovo prikažete.',
+    catalogNoEntryFmt: '{cmd} nije u referenci.',
     copy: 'Kopiraj',
     copied: '✓ Kopirano',
     previewHeading: 'Pregled',

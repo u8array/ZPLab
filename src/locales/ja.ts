@@ -936,6 +936,8 @@ const ja = {
     catalogNo: 'いいえ',
     catalogNoCursor: 'コマンドにカーソルを合わせると内容が表示されます。',
     catalogNoMatch: '検索に一致するコマンドがありません。',
+    catalogDismissed: 'リファレンスを非表示にしました。コード内のコマンドをクリックすると再表示されます。',
+    catalogNoEntryFmt: '{cmd} はリファレンスにありません。',
     copy: 'コピー',
     copied: '✓ コピーしました',
     previewHeading: 'プレビュー',

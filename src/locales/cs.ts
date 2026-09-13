@@ -936,6 +936,8 @@ const cs = {
     catalogNo: 'ne',
     catalogNoCursor: 'Umístěte kurzor na příkaz a zobrazí se jeho popis.',
     catalogNoMatch: 'Žádné příkazy neodpovídají hledání.',
+    catalogDismissed: 'Reference je skrytá. Klikněte na příkaz v kódu a znovu se zobrazí.',
+    catalogNoEntryFmt: '{cmd} není v referenci.',
     copy: 'Kopírovat',
     copied: '✓ Zkopírováno',
     previewHeading: 'Náhled',
