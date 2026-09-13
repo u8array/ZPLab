@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from "react";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { render, cleanup, fireEvent, screen, act, waitFor } from "@testing-library/react";
+import { render, cleanup, fireEvent, screen, act, waitFor, within } from "@testing-library/react";
 
 const copiedTexts: string[] = [];
 vi.mock("../../lib/clipboard", () => ({
@@ -196,6 +196,43 @@ describe("leaving the editor", () => {
     expect(screen.queryByRole("button", { name: t().output.editSourceConfirmApply })).toBeNull();
   });
 
+  it("discards from the review through the usual confirmation stacked on top of it", async () => {
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    const before = useLabelStore.getState().pages;
+    typeDraft("^XA^JZY^FO10,10^A0N,30,30^FDX^FS^XZ");
+    fireEvent.click(screen.getByRole("button", { name: t().output.editSourceApply }));
+    const review = () => within(screen.getByRole("dialog"));
+    const discard = review().getByRole("button", { name: t().output.editSourceDiscard });
+    discard.focus();
+    fireEvent.click(discard);
+    const confirm = () => within(screen.getByRole("alertdialog"));
+    expect(confirm().getByText(t().output.editSourceDiscardBody)).toBeTruthy();
+    expect(review().getByRole("button", { name: t().output.editSourceConfirmApply })).toBeTruthy();
+    // The deferred blur apply stays suspended across the handover. No apply, no second review.
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    expect(screen.getAllByRole("dialog")).toHaveLength(1);
+    fireEvent.click(confirm().getByRole("button", { name: t().app.cancel }));
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(document.activeElement).toBe(discard);
+    fireEvent.click(discard);
+    fireEvent.click(confirm().getByRole("button", { name: t().output.editSourceDiscard }));
+    expect(useLabelStore.getState().sourceEdit.status).toBe("off");
+    expect(useLabelStore.getState().pages).toBe(before);
+  });
+
+  it("returns to editing on Escape in the review, without asking to discard", () => {
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XA^JZY^FO10,10^A0N,30,30^FDX^FS^XZ");
+    fireEvent.click(screen.getByRole("button", { name: t().output.editSourceApply }));
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByText(t().output.editSourceDiscardBody)).toBeNull();
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+  });
+
   it("copies the live buffer, not the pre-edit export", () => {
     render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
     typeDraft("^XA^FDedited^FS^XZ");
@@ -203,10 +240,14 @@ describe("leaving the editor", () => {
     expect(copiedTexts).toEqual(["^XA^FDedited^FS^XZ"]);
   });
 
-  it("asks before discarding a modified buffer", () => {
-    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
-    typeDraft("^XA^XZ");
+  it("asks before discarding a modified buffer, and the question suspends the blur apply", async () => {
+    const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XA^JZY^FO10,10^A0N,30,30^FDX^FS^XZ");
     fireEvent.click(screen.getByRole("button", { name: t().app.cancel }));
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    // Focus moving into the portaled question must not apply, which here would open a review under it.
+    await leavePanel(container);
+    expect(screen.queryByRole("dialog")).toBeNull();
     expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
     fireEvent.click(screen.getByRole("button", { name: t().output.editSourceDiscard }));
     expect(useLabelStore.getState().sourceEdit.status).toBe("off");

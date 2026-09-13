@@ -276,6 +276,8 @@ function SessionChrome({
             setPendingPlan(null);
             focusEditor();
           }}
+          // The review stays open underneath, so a declined confirmation returns to it.
+          onDiscard={requestCancel}
         />
       )}
 
@@ -291,7 +293,8 @@ function SessionChrome({
           }}
           onCancel={() => {
             setConfirmDiscard(false);
-            focusEditor();
+            // Under an open review the trap returns focus to its Discard button instead.
+            if (pendingPlan === null) focusEditor();
           }}
         />
       )}

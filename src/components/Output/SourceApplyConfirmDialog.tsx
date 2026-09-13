@@ -11,10 +11,13 @@ export function SourceApplyConfirmDialog({
   plan,
   onApply,
   onCancel,
+  onDiscard,
 }: {
   plan: SourceApplyOk;
   onApply: () => void;
   onCancel: () => void;
+  /** Discards the edit. The caller owns the confirmation. */
+  onDiscard: () => void;
 }) {
   const t = useT();
   const lossLines = describeEditorLoss(plan.loss, t.importReport);
@@ -61,6 +64,14 @@ export function SourceApplyConfirmDialog({
           className="px-3 py-1.5 rounded text-xs font-mono border border-border text-text hover:bg-surface-2 transition-colors"
         >
           {t.app.cancel}
+        </button>
+        {/* Bordered like Cancel. The red fill belongs to the confirmation this button opens. */}
+        <button
+          type="button"
+          onClick={onDiscard}
+          className="px-3 py-1.5 rounded text-xs font-mono border border-border text-text hover:text-red-400 hover:bg-surface-2 transition-colors"
+        >
+          {t.output.editSourceDiscard}
         </button>
         <button
           type="button"
