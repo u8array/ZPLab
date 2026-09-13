@@ -99,6 +99,18 @@ describe("reference panel wiring", () => {
     expect(blocks[1]).toMatch(/\n\^LL\n\^XZ/);
   });
 
+  it("keeps the chosen row and its marks through a page switch", () => {
+    act(() => setPages(2, 0));
+    const view = mount();
+    const marks = () => [...view.dom.querySelectorAll(".cm-zplCommandMatch")].map((m) => m.textContent);
+    placePointerCaret(view, "^FO");
+    fireEvent.click(screen.getByRole("option", { name: /\^LL/ }));
+    expect(marks()).toEqual(["^LL", "^LL"]);
+    act(() => useLabelStore.setState({ currentPageIndex: 1 }));
+    expect(marks()).toEqual(["^LL", "^LL"]);
+    expect(detail().getByText("label length")).toBeTruthy();
+  });
+
   it("keeps Escape inside the panel from discarding an edit session", () => {
     mount();
     fireEvent.doubleClick(screen.getByRole("option", { name: /\^LL/ }));

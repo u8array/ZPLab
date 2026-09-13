@@ -23,21 +23,21 @@ export interface CatalogSelection {
 
 export function useCatalogSelection(cursor: CursorCommand | null): CatalogSelection {
   const [query, setQuery] = useState("");
-  // The panel's own choice over the caret: a pinned row, or the empty state on purpose.
   const [pinned, setPinned] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
-  // State derived from props, React's prev-vs-current guard at render time as in
-  // useCollapsibleState. A new cursor object is the user asking again: the editor
-  // reports one on a pointer gesture or when the command under the caret changes.
+  // Render-time reset as in useCollapsibleState. A new cursor object is the user asking
+  // again: a pointer gesture, or the command under the caret changed. A null report only
+  // says the caret is gone, as after a regenerated export or a page switch.
   const [prevCursor, setPrevCursor] = useState(cursor);
   if (prevCursor !== cursor) {
     setPrevCursor(cursor);
-    setPinned(null);
-    setDismissed(false);
+    if (cursor !== null) {
+      setPinned(null);
+      setDismissed(false);
+    }
   }
   const results = filterCatalog(query);
   const ids = results.map(commandId);
-  // A pin the search hides is inert and returns when the filter clears.
   const pinVisible = pinned !== null && ids.includes(pinned) ? pinned : null;
   const asked = pinVisible ?? (dismissed ? undefined : cursor?.id);
   const entry = asked ? catalogEntry(asked) : undefined;

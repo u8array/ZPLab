@@ -141,6 +141,16 @@ describe("ZplCatalogPanel", () => {
     expect(detail(getByTestId).getByText("field origin")).toBeTruthy();
   });
 
+  it("keeps a pin through a report that the caret is gone", () => {
+    // A regenerated export or a page switch reports null.
+    const { getByRole, getByTestId, rerender } = render(<Panel cursor={{ id: "^FO", from: 4 }} onInsert={vi.fn()} />);
+    fireEvent.click(getByRole("option", { name: /\^PW/ }));
+    rerender(<Panel cursor={null} onInsert={vi.fn()} />);
+    expect(detail(getByTestId).getByText("print width")).toBeTruthy();
+    rerender(<Panel cursor={{ id: "^LL", from: 20 }} onInsert={vi.fn()} />);
+    expect(detail(getByTestId).getByText("label length")).toBeTruthy();
+  });
+
   it("inserts the caret's spelling from Enter on the caret's own row", () => {
     const onInsert = vi.fn();
     const { getByRole } = render(<Panel cursor={{ id: "~HL", from: 0 }} onInsert={onInsert} />);
