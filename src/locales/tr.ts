@@ -910,6 +910,7 @@ const tr = {
     mixedJmTitle: 'Baskı yoğunluğu modu bloklar arasında farklılık gösteriyor: sonraki sayfalar kendi modlarını korur, ancak yalnızca ilki düzenlenebilir',
     unknownTitle: 'Atlandı: komut tanınmadı',
     unterminatedFieldTitleFmt: 'Alan {fs} ile kapatılmadı: yazıcı onu yok sayar',
+    hexControlTitle: 'Alan verisinde kontrol karakteri: yazıcı alanın geri kalanını yok sayar',
     reportHeader: 'ZPL içe aktarma raporu',
     reportObjectsFmt: 'İçe aktarılan nesneler: {n}',
     reportClean: 'Tüm komutlar tanındı. Hiçbir tasarım bilgisi kaybolmadı.',

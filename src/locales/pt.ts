@@ -910,6 +910,7 @@ const pt = {
     mixedJmTitle: 'O modo de densidade de impressão difere entre blocos: as páginas seguintes mantêm o seu próprio modo, mas apenas a primeira é editável',
     unknownTitle: 'Ignorado: comando não reconhecido',
     unterminatedFieldTitleFmt: 'Campo não fechado com {fs}: a impressora o descarta',
+    hexControlTitle: 'Caractere de controle nos dados do campo: a impressora descarta o resto do campo',
     reportHeader: 'Relatório de importação ZPL',
     reportObjectsFmt: 'Objetos importados: {n}',
     reportClean: 'Todos os comandos foram reconhecidos. Nenhuma informação de design foi perdida.',

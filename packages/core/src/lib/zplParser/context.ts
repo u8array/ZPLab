@@ -13,7 +13,7 @@ import { CODABLOCK_DEFAULT_COLUMNS, type CodablockProps } from "../../registry/c
 import type { ZplRotation } from "../../registry/rotation";
 import { DEFAULT_CLOCK_CHARS, type ClockChars } from "../fcTemplate";
 import { effectiveDpmm } from "../../types/LabelConfig";
-import { getDecoder } from "./helpers";
+import { CMD_HEAD_LEN, getDecoder, hasTruncatingByte } from "./helpers";
 import type { UploadedGraphic } from "./types";
 
 /** Pending ^GB stash so a filled-black box commits just before the following
@@ -54,8 +54,7 @@ export interface UnterminatedField {
   end: number;
 }
 
-/** A bucketed command plus the span of the token whose processing recorded
- *  it, stamped at the push site from `ParserResult.tokenSpan`. */
+/** A bucketed token's text, or the escape it holds, with the span it was located at. */
 export interface SpannedToken {
   command: string;
   span?: SourceSpan;
@@ -80,6 +79,8 @@ export interface ParserResult {
   prevTokenEnd: number;
   /** Fields the printer discards: content after ^FO/^FT with no ^FS before the next opener. */
   unterminated: UnterminatedField[];
+  /** ^FH escapes of a byte the printer ends the text field at. */
+  hexControl: SpannedToken[];
   browserLimit: SpannedToken[];
   unknown: SpannedToken[];
   /** Setup-Script commands seen (profile-backed, routable on import). */
@@ -201,6 +202,8 @@ export interface FieldState {
   // Type discriminator + pending ^FD payload
   fieldType: string | null;
   pendingFD: string | null;
+  /** First truncating ^FH escape in the pending data, judged at flush. */
+  pendingHexControl: SpannedToken | null;
   /** The opener token's span, null until ^FO/^FT; content since it is what a missing ^FS loses. */
   openedAt: SourceSpan | null;
   /** objects.length at the opener: graphics push at their command, so a discard truncates back to it. */
@@ -372,6 +375,25 @@ export function openTailHasContent(s: ParserState): boolean {
   return fieldHasContent(s) || slotAdoptsEmptyFd(s);
 }
 
+/** Span of `rest[index..index+length)` of the token being processed. Absent before any token. */
+export function spanInRest(s: ParserState, index: number, length: number): SourceSpan | undefined {
+  const token = s.result.tokenSpan;
+  if (!token) return undefined;
+  const start = token.start + CMD_HEAD_LEN + index;
+  return { start, end: start + length };
+}
+
+/** ^TB rides on a text field. A later barcode flips the type but leaves tbHeight set. */
+export function isTbField(s: ParserState): boolean {
+  return s.defaults.tbHeight > 0 && s.field.fieldType === "text";
+}
+
+/** Text only: a barcode takes control bytes as payload, spec p.146, and ^TB breaks the line at
+ *  them. The decoded data must carry the byte, as ^SN may have replaced the escaped data. */
+export function truncatesAtHexControl(s: ParserState, decoded: string): boolean {
+  return s.field.fieldType === "text" && !isTbField(s) && hasTruncatingByte(decoded);
+}
+
 /** Marks the open field as printing something the model has no object for. */
 export function noteFieldInk(s: ParserState): void {
   s.field.inkWithoutObject = true;
@@ -467,6 +489,7 @@ export function createParserState(): ParserState {
       lastSpanByCmd: new Map<string, SourceSpan>(),
       prevTokenEnd: 0,
       unterminated: [],
+      hexControl: [],
       browserLimit: [],
       unknown: [],
       replayRisk: [],
@@ -541,6 +564,7 @@ export function freshFieldState(): FieldState {
     justify: "L",
     fieldType: null,
     pendingFD: null,
+    pendingHexControl: null,
     openedAt: null,
     objBase: 0,
     bgAtOpen: null,

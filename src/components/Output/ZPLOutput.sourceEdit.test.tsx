@@ -401,6 +401,21 @@ describe("inline diagnostics", () => {
   });
 });
 
+describe("inline warnings", () => {
+  it("marks a truncating hex escape on its bytes with the report's wording", async () => {
+    const { importZplText } = await import("@zplab/core/lib/zplImportService");
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    const draft = "^XA^FO10,10^A0N,30,30^FH^FDal_0Apha^FS^XZ";
+    typeDraft(draft);
+    // The shadow parse is hosted at the app root; its result is handed to the store as it would be.
+    act(() => {
+      useLabelStore.getState().setSourceShadow({ doc: null, refusal: null, findings: importZplText(draft, 8).report.findings, draft });
+    });
+    const built = JSON.parse(editor().dataset.diagnostics ?? "null") as { from: number; to: number; message: string }[];
+    expect(built).toEqual([{ from: draft.indexOf("_0A"), to: draft.indexOf("_0A") + 3, message: `${t().importReport.hexControlTitle}: _0A` }]);
+  });
+});
+
 describe("stale diagnostics", () => {
   it("withholds the build while the parse lags the buffer", () => {
     // The identity check is the only thing keeping offsets from an older

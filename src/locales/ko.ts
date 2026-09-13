@@ -910,6 +910,7 @@ const ko = {
     mixedJmTitle: '블록마다 인쇄 농도 모드가 다릅니다. 이후 페이지는 각자의 모드를 유지하지만, 편집할 수 있는 것은 첫 번째 블록뿐입니다',
     unknownTitle: '건너뜀: 인식되지 않은 명령',
     unterminatedFieldTitleFmt: '{fs}(으)로 닫히지 않은 필드: 프린터가 폐기합니다',
+    hexControlTitle: '필드 데이터의 제어 문자: 프린터가 필드의 나머지를 폐기합니다',
     reportHeader: 'ZPL 가져오기 보고서',
     reportObjectsFmt: '가져온 객체: {n}개',
     reportClean: '모든 명령이 인식되었습니다. 디자인 정보가 손실되지 않았습니다.',

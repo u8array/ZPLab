@@ -26,6 +26,8 @@ const TONE: Record<ImportFindingKind, string> = {
   mixedPageGeometry: 'text-red-400',
   // Content loss: the printer discards the field, so the canvas omits it too.
   unterminatedField: 'text-amber-400',
+  // Content loss: the printer ends the field at the byte, so the canvas shows more than prints.
+  hexControl: 'text-amber-400',
 };
 
 export function FindingRow({ finding, showPage }: { finding: ImportFinding; showPage: boolean }) {

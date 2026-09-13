@@ -910,6 +910,7 @@ const zhHant = {
     mixedJmTitle: '各區塊之間的列印濃度模式不同：後續頁面保留各自的模式，但只有第一個區塊可編輯',
     unknownTitle: '已略過：無法辨識指令',
     unterminatedFieldTitleFmt: '欄位未以 {fs} 結束：印表機會捨棄它',
+    hexControlTitle: '欄位資料中含控制字元：印表機會捨棄該欄位的其餘內容',
     reportHeader: 'ZPL 匯入報告',
     reportObjectsFmt: '已匯入物件：{n}',
     reportClean: '所有指令均已辨識，未遺失任何設計資訊。',

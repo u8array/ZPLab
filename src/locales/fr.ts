@@ -910,6 +910,7 @@ const fr = {
     mixedJmTitle: "Le mode de densité d'impression diffère entre les blocs : les pages suivantes conservent leur propre mode, mais seul le premier est modifiable",
     unknownTitle: 'Ignoré : commande non reconnue',
     unterminatedFieldTitleFmt: "Champ non fermé par {fs} : l'imprimante l'ignore",
+    hexControlTitle: "Caractère de contrôle dans les données du champ : l'imprimante ignore le reste du champ",
     reportHeader: "Rapport d'import ZPL",
     reportObjectsFmt: 'Objets importés : {n}',
     reportClean: "Toutes les commandes ont été reconnues. Aucune information de design n'a été perdue.",

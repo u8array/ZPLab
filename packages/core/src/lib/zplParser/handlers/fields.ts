@@ -13,8 +13,10 @@ import { notePartial,
   getDefaultTextW,
   resetFieldBlockDefaults,
   type ParserState,
+  spanInRest,
 } from "../context";
-import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, int, readJustify, readRotation, stripDataLineBreaks } from "../helpers";
+import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, hexControlEscape, int, readJustify, readRotation, stripDataLineBreaks } from "../helpers";
+import type { SpannedToken } from "../context";
 import type { Handler, Wildcard } from "../types";
 
 /** closeField + appendComment are shared with the orchestrator. */
@@ -65,7 +67,15 @@ export function createFieldHandlers(
   const { dots, dotsOrUndef } = dotsFor(s);
 
   // Shared by ^FD and ^FV (data-equivalent per spec).
-  const setFieldData = (rest: string) => {
+  // Only under ^FH, which the spec puts ahead of the data it decodes.
+  const locateHexControl = (raw: string): SpannedToken | null => {
+    if (!s.format.fhActive) return null;
+    const escape = hexControlEscape(raw, s.format.fhDelimiter);
+    if (!escape) return null;
+    return { command: stripDataLineBreaks(escape.text), span: spanInRest(s, escape.index, escape.text.length) };
+  };
+
+  const setFieldData = (raw: string) => {
     // Implicit text field unless we're inside a bare `^FN^FD^FS` declaration.
     if (!s.field.fieldType && s.comment.fnNumber === null) {
       s.field.fieldType = "text";
@@ -73,7 +83,9 @@ export function createFieldHandlers(
       s.field.textW = getDefaultTextW(s.defaults);
       s.field.textRot = s.defaults.fwRotation;
     }
-    s.field.pendingFD = rest;
+    s.field.pendingFD = stripDataLineBreaks(raw);
+    // Located on the raw bytes, before stripping, so the finding lands on the source.
+    s.field.pendingHexControl = locateHexControl(raw);
   };
 
   // ZD230-measured: an opener before ^FS discards the content since the previous one,
@@ -103,6 +115,7 @@ export function createFieldHandlers(
     s.field.justify = readJustify(p[2], s.defaults.fwJustify);
     s.field.positionIsFT = posType === "FT";
     s.field.openedAt = s.result.tokenSpan ?? null;
+    s.field.pendingHexControl = null;
     s.field.objBase = s.result.objects.length;
     s.field.bgAtOpen = s.reverseBg;
     s.field.inkWithoutObject = false;
@@ -190,14 +203,13 @@ export function createFieldHandlers(
 
     // ── Field data / separator ────────────────────────────────────────────
     FD(_, rest) {
-      setFieldData(stripDataLineBreaks(rest));
+      setFieldData(rest);
     },
     // ^FV: data-equivalent of ^FD for variable fields (spec p.207; the only
     // delta is print-time clearing under ^MC reuse, which we don't model).
     // Re-emits as ^FD. An empty ^FV is ignored per spec.
     FV(_, rest) {
-      const data = stripDataLineBreaks(rest);
-      if (data) setFieldData(data);
+      if (stripDataLineBreaks(rest)) setFieldData(rest);
     },
     FS() {
       closeField();
@@ -223,7 +235,7 @@ export function createFieldHandlers(
     },
 
     // ── Serialization ─────────────────────────────────────────────────────
-    SN(p) {
+    SN(p, rest) {
       // ^SN{start},{increment},{leadZero} appears in two placements: inside the
       // field (our generator's shape and the spec's ^FO..^A..^SN..^FS, where
       // ^SN both seeds and serializes), or after ^FS (upgrades the just-flushed
@@ -243,8 +255,12 @@ export function createFieldHandlers(
         // GS1 fields drop the ^SN at flush, so the seed must not replace
         // their ^FD either.
         const serialisable = !!getEntry(s.field.fieldType)?.serialisable && !s.field.bcGs1;
-        if (snStart && serialisable) s.field.pendingFD = snStart;
-        else if (s.field.pendingFD === null) s.field.pendingFD = snStart;
+        if (snStart && serialisable) {
+          s.field.pendingFD = snStart;
+          // The seed is the token's first parameter. A later parameter cannot decode, so the
+          // decoded check at flush keeps an escape found there from raising.
+          s.field.pendingHexControl = locateHexControl(rest);
+        } else if (s.field.pendingFD === null) s.field.pendingFD = snStart;
         return;
       }
       const lastObj = s.result.objects[s.result.objects.length - 1];

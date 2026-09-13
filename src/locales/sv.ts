@@ -910,6 +910,7 @@ const sv = {
     mixedJmTitle: 'Utskriftstäthetsläget skiljer sig mellan block: senare sidor behåller sitt eget läge, men endast det första är redigerbart',
     unknownTitle: 'Hoppades över: kommandot kändes inte igen',
     unterminatedFieldTitleFmt: 'Fältet är inte stängt med {fs}: skrivaren kasserar det',
+    hexControlTitle: 'Kontrolltecken i fältets data: skrivaren kasserar resten av fältet',
     reportHeader: 'ZPL-importrapport',
     reportObjectsFmt: 'Importerade objekt: {n}',
     reportClean: 'Alla kommandon kändes igen. Ingen designinformation gick förlorad.',

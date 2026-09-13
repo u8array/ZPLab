@@ -910,6 +910,7 @@ const da = {
     mixedJmTitle: 'Udskriftstæthedstilstanden er forskellig mellem blokke: senere sider beholder deres egen tilstand, men kun den første kan redigeres',
     unknownTitle: 'Sprunget over: kommando ikke genkendt',
     unterminatedFieldTitleFmt: 'Feltet er ikke lukket med {fs}: printeren kasserer det',
+    hexControlTitle: 'Kontroltegn i feltets data: printeren kasserer resten af feltet',
     reportHeader: 'ZPL-importrapport',
     reportObjectsFmt: 'Importerede objekter: {n}',
     reportClean: 'Alle kommandoer blev genkendt. Ingen designinformation gik tabt.',

@@ -910,6 +910,7 @@ const et = {
     mixedJmTitle: 'Prindi tiheduse režiim erineb plokkide vahel: hilisemad leheküljed säilitavad oma režiimi, kuid muudetav on ainult esimene',
     unknownTitle: 'Vahele jäetud: käsku ei tuntud ära',
     unterminatedFieldTitleFmt: 'Väli ei ole suletud käsuga {fs}: printer jätab selle kõrvale',
+    hexControlTitle: 'Juhtmärk välja andmetes: printer jätab ülejäänud välja kõrvale',
     reportHeader: 'ZPL-i importimise aruanne',
     reportObjectsFmt: 'Imporditud objektid: {n}',
     reportClean: 'Kõik käsud tunti ära. Ühtegi kujundusinfot ei kadunud.',

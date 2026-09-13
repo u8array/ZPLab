@@ -14,7 +14,8 @@ export type ImportFindingKind =
   | "fnRenumbered"
   | "fnDefaultDropped"
   | "mixedPageGeometry"
-  | "unterminatedField";
+  | "unterminatedField"
+  | "hexControl";
 
 /** Absolute offsets into a ZPL text, parsed or generated. Readonly: one span object
  *  may back several findings of the same token, so no consumer may rebase it. */
@@ -33,7 +34,8 @@ export interface ImportFinding {
   /** Command token. For 'partial' the bare code (e.g. "^A@"). For
    *  'browserLimit' / 'unknown' the full token including parameters
    *  (e.g. "^IM,R:LOGO.GRF"). For 'lossyEdit' a human-readable reason.
-   *  For 'unterminatedField' the ^FO/^FT token that opened the dropped field. */
+   *  For 'unterminatedField' the ^FO/^FT token that opened the dropped field. For
+   *  'hexControl' the hex escape as written. */
   command: string;
   /** Page index (^XA block) this finding originated from, stamped by the
    *  single-pass parser. */
@@ -49,7 +51,7 @@ export interface ImportFinding {
 
 export interface ImportReport {
   findings: ImportFinding[];
-  // The buckets below are command-code dedup views for these six kinds only.
+  // The buckets below are dedup views for these seven kinds only.
   // Every other kind (lossyEdit, fnRenumbered, fnDefaultDropped, mixedPageGeometry)
   // lives solely in `findings`; iterate `findings` for a kind-complete view.
   /** Commands imported with known loss. Deduplicated by command code. */
@@ -65,6 +67,8 @@ export interface ImportReport {
   /** Openers of fields the printer discards: no ^FS before the next ^FO/^FT.
    *  Deduplicated by opener token, so two dropped fields at the same coordinates collapse. */
   unterminatedField: string[];
+  /** ^FH escapes the printer ends a text field at, as written. Deduplicated by escape. */
+  hexControl: string[];
 }
 
 /** One ^XA…^XZ format from a single-pass parse. Slices reference the same

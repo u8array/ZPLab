@@ -910,6 +910,7 @@ const zhHans = {
     mixedJmTitle: '各区块之间的打印浓度模式不同：后续页面保留各自的模式，但只有第一个区块可编辑',
     unknownTitle: '已跳过：命令无法识别',
     unterminatedFieldTitleFmt: '字段未以 {fs} 闭合：打印机会将其丢弃',
+    hexControlTitle: '字段数据中含控制字符：打印机会丢弃该字段的其余内容',
     reportHeader: 'ZPL 导入报告',
     reportObjectsFmt: '已导入对象：{n}',
     reportClean: '所有命令均已识别，未丢失任何设计信息。',

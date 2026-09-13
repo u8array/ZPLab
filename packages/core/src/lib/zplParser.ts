@@ -195,7 +195,7 @@ export function parseZPL(
   // so per-format repeats of a command are re-reported on their own page.
   const {
     objects, labelConfig, printerProfile, variables,
-    browserLimit, unknown, replayRisk, deviceAction, unterminated,
+    browserLimit, unknown, replayRisk, deviceAction, unterminated, hexControl,
   } = s.result;
 
   const takeComment = (): string | undefined => {
@@ -322,6 +322,7 @@ export function parseZPL(
     replay: replayRisk.length,
     device: deviceAction.length,
     unterminated: unterminated.length,
+    hexControl: hexControl.length,
     span: overlaySpans.length,
     // Open field's source start (^FO/^FT or its leading ^FX run). Only clean
     // single-object fields and deferred reverse-bg boxes link; anything else
@@ -369,6 +370,7 @@ export function parseZPL(
     replay: readonly SpannedToken[],
     device: readonly SpannedToken[],
     dropped: readonly UnterminatedField[],
+    hexControl: readonly SpannedToken[],
   ): ImportFinding[] => [
     ...partial.map((command): ImportFinding => ({ kind: "partial", command, pageIndex, span: s.result.partialSpans.get(command) })),
     ...dropped.map((u): ImportFinding => ({ kind: "unterminatedField", command: zpl.slice(u.opener.start, u.opener.end), pageIndex, span: { start: u.opener.start, end: trimmedSpanEnd(zpl, u.opener.start, u.end) } })),
@@ -376,6 +378,7 @@ export function parseZPL(
     ...unk.map((t): ImportFinding => ({ kind: "unknown", command: t.command, pageIndex, span: t.span })),
     ...replay.map((t): ImportFinding => ({ kind: "replayRisk", command: t.command, pageIndex, span: t.span })),
     ...device.map((t): ImportFinding => ({ kind: "deviceAction", command: t.command, pageIndex, span: t.span })),
+    ...hexControl.map((t): ImportFinding => ({ kind: "hexControl", command: t.command, pageIndex, span: t.span })),
   ];
 
   /** Close the current page at source offset `end`: per-format serial-orphan
@@ -413,6 +416,7 @@ export function parseZPL(
       replayRisk.slice(pg.replay),
       deviceAction.slice(pg.device),
       unterminated.slice(pg.unterminated),
+      hexControl.slice(pg.hexControl),
     );
     // A ^FN still open at ^XZ is raw bytes the header would re-emit as well.
     const regenLoss = regenLossReason(pg, s.declaredFns.size > 0 || s.comment.fnNumber !== null, s.fdRegenLossy);

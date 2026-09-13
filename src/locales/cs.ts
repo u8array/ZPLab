@@ -910,6 +910,7 @@ const cs = {
     mixedJmTitle: 'Režim hustoty tisku se mezi bloky liší: pozdější stránky si zachovávají svůj vlastní režim, ale upravitelný je pouze první',
     unknownTitle: 'Přeskočeno: příkaz nerozpoznán',
     unterminatedFieldTitleFmt: 'Pole není uzavřeno pomocí {fs}: tiskárna ho zahodí',
+    hexControlTitle: 'Řídicí znak v datech pole: tiskárna zahodí zbytek pole',
     reportHeader: 'Zpráva o importu ZPL',
     reportObjectsFmt: 'Importované objekty: {n}',
     reportClean: 'Všechny příkazy byly rozpoznány. Žádné informace o návrhu se neztratily.',

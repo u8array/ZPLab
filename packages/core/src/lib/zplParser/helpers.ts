@@ -1,6 +1,7 @@
 import type { LabelObject } from "../../types/Group";
 import { isZplRotation, type ZplRotation } from "../../registry/rotation";
 import { opensImmediateCommand } from "../zplImmediate";
+import { escapeRegExp } from "../escapeRegExp";
 
 import { newId } from "../ids";
 import { NON_LATIN1_RE } from "../binaryText";
@@ -195,7 +196,7 @@ export function* tokenize(
         break;
       }
     }
-    if (cmdStart === -1 || cmdStart + 3 > zpl.length) return;
+    if (cmdStart === -1 || cmdStart + CMD_HEAD_LEN > zpl.length) return;
     // A non-name prefix char inside the two-char command name means the
     // command is incomplete: discard the fragment and resync at that prefix.
     // The +1 shape is what ZebraDesigner's `CT~~CD,` preamble relies on;
@@ -212,27 +213,27 @@ export function* tokenize(
       pos = cmdStart + 2;
       continue;
     }
-    const cmd = zpl.slice(cmdStart + 1, cmdStart + 3).toUpperCase();
+    const cmd = zpl.slice(cmdStart + 1, cmdStart + CMD_HEAD_LEN).toUpperCase();
     // ^CC/^CT/^CD take exactly one argument character; everything after
     // it belongs to the next command (using the new prefix if the handler
     // mutates it). Generic commands consume rest until the next delimiter.
     if (cmd === "CC" || cmd === "CT" || cmd === "CD") {
-      const argChar = zpl[cmdStart + 3] ?? "";
+      const argChar = zpl[cmdStart + CMD_HEAD_LEN] ?? "";
       // Clamp: the arg slot may be missing at EOF, and `end` must stay a
       // valid slice index.
       pos = Math.min(cmdStart + 4, zpl.length);
       yield { cmd, rest: argChar, start: cmdStart, end: pos };
       continue;
     }
-    const bin = binaryPayloadEnd(zpl, cmd, cmdStart + 3, chars.delimiterChar);
+    const bin = binaryPayloadEnd(zpl, cmd, cmdStart + CMD_HEAD_LEN, chars.delimiterChar);
     if (bin !== null) {
       pos = bin.end;
-      yield { cmd, rest: zpl.slice(cmdStart + 3, bin.end), start: cmdStart, end: bin.end };
+      yield { cmd, rest: zpl.slice(cmdStart + CMD_HEAD_LEN, bin.end), start: cmdStart, end: bin.end };
       continue;
     }
     const boundary = PAYLOAD_CMDS.has(cmd) ? isCmdStartInPayload : isCmdStart;
     let endPos = zpl.length;
-    for (let i = cmdStart + 3; i < zpl.length; i++) {
+    for (let i = cmdStart + CMD_HEAD_LEN; i < zpl.length; i++) {
       if (boundary(i)) {
         endPos = i;
         break;
@@ -241,7 +242,7 @@ export function* tokenize(
     pos = endPos;
     // `end` is exclusive: the index where the next command's prefix begins (or
     // end of input), so source.slice(start, end) is this token's verbatim text.
-    yield { cmd, rest: zpl.slice(cmdStart + 3, endPos), start: cmdStart, end: endPos };
+    yield { cmd, rest: zpl.slice(cmdStart + CMD_HEAD_LEN, endPos), start: cmdStart, end: endPos };
   }
 }
 
@@ -365,13 +366,34 @@ export function getDecoder(label: string): TextDecoder {
   return dec;
 }
 
+/** Prefix plus the two name letters: where a command's parameters start. */
+export const CMD_HEAD_LEN = 3;
+
+/** Bytes the printer ends a text field at when ^FH decodes them, ZD230-measured over all of
+ *  C0 and DEL: every other control byte vanishes and 09 prints as a gap. */
+const TRUNCATING_BYTES = [0x00, 0x0a, 0x0c, 0x0d];
+const TRUNCATING_CHAR_RE = new RegExp(`[${TRUNCATING_BYTES.map((b) => String.fromCharCode(b)).join("")}]`);
+if (TRUNCATING_BYTES.some((b) => b > 0x0f)) throw new Error("hexControlEscape assumes a zero high nibble");
+const TRUNCATING_LOW_NIBBLES = TRUNCATING_BYTES.map((b) => b.toString(16)).join("");
+
+export function hasTruncatingByte(text: string): boolean {
+  return TRUNCATING_CHAR_RE.test(text);
+}
+
+/** The first ^FH escape of a truncating byte. A line break torn through the escape still
+ *  counts, as the firmware strips raw breaks before decoding. */
+export function hexControlEscape(text: string, delimiter: string): { text: string; index: number } | null {
+  const m = new RegExp(`${escapeRegExp(delimiter)}[\\r\\n]*0[\\r\\n]*[${TRUNCATING_LOW_NIBBLES}]`, "i").exec(text);
+  return m ? { text: m[0], index: m.index } : null;
+}
+
 /** ^FH hex escapes → decoded string; contiguous pairs collect for multi-byte glyphs. */
 export function decodeFH(
   text: string,
   delimiter: string,
   decoder: TextDecoder,
 ): string {
-  const escaped = delimiter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escaped = escapeRegExp(delimiter);
   const runRe = new RegExp(`(?:${escaped}[0-9A-Fa-f]{2})+`, "g");
   const stride = delimiter.length + 2;
   return text.replace(runRe, (run) => {

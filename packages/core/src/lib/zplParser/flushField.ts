@@ -55,6 +55,8 @@ import { notePartial,
   slotAdoptsEmptyFd,
   type FnDefaultCandidate,
   type ParserState,
+  isTbField,
+  truncatesAtHexControl,
 } from "./context";
 
 import { newId } from "../ids";
@@ -229,6 +231,8 @@ export function createCloseField(
     const rawDecoded = s.format.fhActive
       ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.ciDecoder)
       : s.field.pendingFD;
+    const hexControl = s.field.pendingHexControl;
+    if (hexControl && truncatesAtHexControl(s, rawDecoded)) s.result.hexControl.push(hexControl);
     // FN embeds → markers, then ^FC clock tokens (order matters: `%FN#1#%Y`).
     // Both decode only when armed for THIS field: firmware honours ^FE/^FC
     // solely for the next ^FD (spec p.191/p.1614), unarmed data is literal.
@@ -260,8 +264,7 @@ export function createCloseField(
     // Gated on the field actually being text: a malformed field that mixes ^TB
     // with a later barcode command leaves tbHeight set but flips fieldType, and
     // the bind block must then use raw content, not the tb-decoded value.
-    const isTbField = s.defaults.tbHeight > 0 && s.field.fieldType === "text";
-    const decoded = isTbField
+    const decoded = isTbField(s)
       ? decodeTbContent(content)
       : s.defaults.fbWidth > 0
         ? decodeFbContent(content)
@@ -735,7 +738,7 @@ export function createCloseField(
       if (justPushed) {
         // ^TB decodes here: its wire form (`<<>`) is not stable under a
         // second encode, so the generic candidate path cannot recover it.
-        const varDefault = isTbField ? decoded : content;
+        const varDefault = isTbField(s) ? decoded : content;
         const variable = upsertVariable(s.comment.fnNumber, varDefault, s.comment.fnComment);
         // Serial wins over the binding, but only when actually applied
         // (serialisable type); else a 2D field's ^FN binding would be silently

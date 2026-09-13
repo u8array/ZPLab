@@ -910,6 +910,7 @@ const ro = {
     mixedJmTitle: 'Modul de densitate a imprimării diferă între blocuri: paginile ulterioare își păstrează propriul mod, dar numai primul este editabil',
     unknownTitle: 'Omis: comandă nerecunoscută',
     unterminatedFieldTitleFmt: 'Câmp neînchis cu {fs}: imprimanta îl elimină',
+    hexControlTitle: 'Caracter de control în datele câmpului: imprimanta elimină restul câmpului',
     reportHeader: 'Raport de import ZPL',
     reportObjectsFmt: 'Obiecte importate: {n}',
     reportClean: 'Toate comenzile au fost recunoscute. Nu s-a pierdut nicio informație de design.',

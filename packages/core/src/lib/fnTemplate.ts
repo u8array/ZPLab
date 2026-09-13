@@ -1,6 +1,7 @@
 import { markerOf, markerRe, type Variable } from "../types/Variable";
 import { isControlBody } from "../types/controlKey";
 import { clockBodyLength } from "./fcTemplate";
+import { escapeRegExp } from "./escapeRegExp";
 
 // ^FE embeds (#n#) <-> «name» markers. Recognition grammar lives in
 // types/Variable next to markerOf so the two can't drift.
@@ -149,7 +150,7 @@ export function resolveTemplateMarkers(
  *  the substring-insert range. The parser's bootstrap scan and the marker
  *  substitution both read it, so they cannot disagree on what an embed is. */
 export function embedPattern(embedChar: string): RegExp {
-  const e = embedChar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const e = escapeRegExp(embedChar);
   return new RegExp(`${e}(\\d+)(,[^${e}]*)?${e}`, "g");
 }
 

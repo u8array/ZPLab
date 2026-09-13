@@ -910,6 +910,7 @@ const pl = {
     mixedJmTitle: 'Tryb gęstości wydruku różni się między blokami: kolejne strony zachowują własny tryb, ale tylko pierwszy jest edytowalny',
     unknownTitle: 'Pominięto: nierozpoznane polecenie',
     unterminatedFieldTitleFmt: 'Pole niezamknięte za pomocą {fs}: drukarka je odrzuca',
+    hexControlTitle: 'Znak sterujący w danych pola: drukarka odrzuca resztę pola',
     reportHeader: 'Raport importu ZPL',
     reportObjectsFmt: 'Zaimportowane obiekty: {n}',
     reportClean: 'Wszystkie polecenia zostały rozpoznane. Żadne informacje o projekcie nie zostały utracone.',

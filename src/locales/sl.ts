@@ -910,6 +910,7 @@ const sl = {
     mixedJmTitle: 'Način gostote tiskanja se med bloki razlikuje: poznejše strani ohranijo svoj lastni način, vendar je urejljiv samo prvi',
     unknownTitle: 'Preskočeno: ukaz ni prepoznan',
     unterminatedFieldTitleFmt: 'Polje ni zaprto z {fs}: tiskalnik ga zavrže',
+    hexControlTitle: 'Krmilni znak v podatkih polja: tiskalnik zavrže preostanek polja',
     reportHeader: 'Poročilo o uvozu ZPL',
     reportObjectsFmt: 'Uvoženi predmeti: {n}',
     reportClean: 'Vsi ukazi so bili prepoznani. Noben podatek o dizajnu ni bil izgubljen.',

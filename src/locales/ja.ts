@@ -910,6 +910,7 @@ const ja = {
     mixedJmTitle: 'ブロック間で印字濃度モードが異なります。後続のページはそれぞれ自身のモードを保持しますが、編集できるのは最初のブロックのみです',
     unknownTitle: 'スキップ: コマンドが認識されません',
     unterminatedFieldTitleFmt: '{fs} で閉じられていないフィールド: プリンターが破棄します',
+    hexControlTitle: 'フィールドデータ内の制御文字: プリンターがフィールドの残りを破棄します',
     reportHeader: 'ZPLインポートレポート',
     reportObjectsFmt: 'インポートされたオブジェクト: {n}',
     reportClean: 'すべてのコマンドが認識されました。デザイン情報の損失はありません。',

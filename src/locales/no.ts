@@ -910,6 +910,7 @@ const no = {
     mixedJmTitle: 'Utskriftstetthetsmodus er forskjellig mellom blokker: senere sider beholder sin egen modus, men kun den første kan redigeres',
     unknownTitle: 'Hoppet over: kommandoen ble ikke gjenkjent',
     unterminatedFieldTitleFmt: 'Feltet er ikke lukket med {fs}: skriveren forkaster det',
+    hexControlTitle: 'Kontrolltegn i feltets data: skriveren forkaster resten av feltet',
     reportHeader: 'ZPL-importrapport',
     reportObjectsFmt: 'Importerte objekter: {n}',
     reportClean: 'Alle kommandoer ble gjenkjent. Ingen designinformasjon gikk tapt.',

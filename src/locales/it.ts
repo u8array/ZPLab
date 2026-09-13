@@ -910,6 +910,7 @@ const it = {
     mixedJmTitle: 'La modalità di densità di stampa differisce tra i blocchi: le pagine successive mantengono la propria modalità, ma solo la prima è modificabile',
     unknownTitle: 'Saltato: comando non riconosciuto',
     unterminatedFieldTitleFmt: 'Campo non chiuso con {fs}: la stampante lo scarta',
+    hexControlTitle: 'Carattere di controllo nei dati del campo: la stampante scarta il resto del campo',
     reportHeader: 'Rapporto di importazione ZPL',
     reportObjectsFmt: 'Oggetti importati: {n}',
     reportClean: 'Tutti i comandi sono stati riconosciuti. Nessuna informazione di design è andata persa.',

@@ -910,6 +910,7 @@ const fi = {
     mixedJmTitle: 'Tulostustiheyden tila vaihtelee lohkojen välillä: myöhemmät sivut säilyttävät oman tilansa, mutta vain ensimmäistä voi muokata',
     unknownTitle: 'Ohitettu: komentoa ei tunnistettu',
     unterminatedFieldTitleFmt: 'Kenttä ei sulkeutunut komennolla {fs}: tulostin hylkää sen',
+    hexControlTitle: 'Ohjausmerkki kentän tiedoissa: tulostin hylkää kentän loppuosan',
     reportHeader: 'ZPL-tuontiraportti',
     reportObjectsFmt: 'Tuodut objektit: {n}',
     reportClean: 'Kaikki komennot tunnistettiin. Suunnittelutietoa ei menetetty.',

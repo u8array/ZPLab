@@ -9,12 +9,13 @@ export type { ImportFinding, ImportFindingKind, ImportReport };
 export function dedupCommandsByKind(
   findings: readonly ImportFinding[],
   kind: ImportFindingKind,
+  keyFrom = 1,
 ): string[] {
-  // Keyed past the prefix glyph: a ^CC/^CT remap spells one command two ways.
+  // Keyed past the prefix glyph: a ^CC/^CT remap spells one command two ways. An escape has none.
   const byBytes = new Map<string, string>();
   for (const f of findings) {
     if (f.kind !== kind) continue;
-    const key = f.command.slice(1);
+    const key = f.command.slice(keyFrom);
     if (!byBytes.has(key)) byBytes.set(key, f.command);
   }
   return [...byBytes.values()];
@@ -60,5 +61,6 @@ export function reportOf(findings: ImportFinding[]): ImportReport {
     replayRisk: dedupCommandsByKind(findings, 'replayRisk'),
     deviceAction: dedupCommandsByKind(findings, 'deviceAction'),
     unterminatedField: dedupCommandsByKind(findings, 'unterminatedField'),
+    hexControl: dedupCommandsByKind(findings, 'hexControl', 0),
   };
 }

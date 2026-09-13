@@ -910,6 +910,7 @@ const en = {
     mixedJmTitle: 'Density mode differs between blocks: later pages keep their own mode, but only the first is editable',
     unknownTitle: 'Skipped: command not recognised',
     unterminatedFieldTitleFmt: 'Field not closed with {fs}: the printer discards it',
+    hexControlTitle: 'Control character in the field data: the printer drops the rest of the field',
     reportHeader: 'ZPL Import Report',
     reportObjectsFmt: 'Objects imported: {n}',
     reportClean: 'All commands recognised. No design information was lost.',

@@ -910,6 +910,7 @@ const sk = {
     mixedJmTitle: 'Režim hustoty tlače sa medzi blokmi líši: neskoršie stránky si zachovávajú svoj vlastný režim, ale upraviteľný je iba prvý',
     unknownTitle: 'Preskočené: príkaz nerozpoznaný',
     unterminatedFieldTitleFmt: 'Pole nie je uzavreté pomocou {fs}: tlačiareň ho zahodí',
+    hexControlTitle: 'Riadiaci znak v údajoch poľa: tlačiareň zahodí zvyšok poľa',
     reportHeader: 'Správa o importe ZPL',
     reportObjectsFmt: 'Importované objekty: {n}',
     reportClean: 'Všetky príkazy boli rozpoznané. Žiadne informácie o návrhu sa nestratili.',

@@ -40,6 +40,13 @@ describe("buildSourceDiagnostics", () => {
     ]);
   });
 
+  it("names a truncating hex escape by its own bytes", () => {
+    const f: ImportFinding = { kind: "hexControl", command: "_0A", pageIndex: 0, span: { start: 20, end: 23 } };
+    expect(buildSourceDiagnostics(null, [f], en)).toEqual([
+      { from: 20, to: 23, severity: "warning", message: `${en.importReport.hexControlTitle}: _0A` },
+    ]);
+  });
+
   it("offers the ^FS repair only on a dropped field, at the field's last byte", () => {
     const dropped: ImportFinding = { kind: "unterminatedField", command: "^FO40,40", pageIndex: 0, span: { start: 3, end: 29 } };
     const other: ImportFinding = { kind: "deviceAction", command: "~PH", pageIndex: 0, span: { start: 40, end: 43 } };

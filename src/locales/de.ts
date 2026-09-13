@@ -910,6 +910,7 @@ const de = {
     mixedJmTitle: 'Der Druckdichte-Modus unterscheidet sich zwischen den Blöcken: spätere Seiten behalten ihren eigenen Modus, aber nur der erste ist bearbeitbar',
     unknownTitle: 'Übersprungen: Befehl nicht erkannt',
     unterminatedFieldTitleFmt: 'Feld nicht mit {fs} geschlossen: der Drucker verwirft es',
+    hexControlTitle: 'Steuerzeichen in den Felddaten: der Drucker verwirft den Rest des Felds',
     reportHeader: 'ZPL-Importbericht',
     reportObjectsFmt: 'Importierte Objekte: {n}',
     reportClean: 'Alle Befehle erkannt. Es gingen keine Designinformationen verloren.',

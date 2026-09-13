@@ -910,6 +910,7 @@ const hu = {
     mixedJmTitle: 'A nyomtatási sűrűség módja eltér a blokkok között: a későbbi oldalak megtartják saját módjukat, de csak az első szerkeszthető',
     unknownTitle: 'Kihagyva: ismeretlen parancs',
     unterminatedFieldTitleFmt: 'A mező nincs a {fs} paranccsal lezárva: a nyomtató eldobja',
+    hexControlTitle: 'Vezérlőkarakter a mező adataiban: a nyomtató eldobja a mező többi részét',
     reportHeader: 'ZPL importjelentés',
     reportObjectsFmt: 'Importált objektumok: {n}',
     reportClean: 'Minden parancs felismerve. Nem veszett el tervezési információ.',

@@ -474,7 +474,7 @@ describe("mcp-server tools", () => {
     const v = ok(validateZpl("^XA^FO10,10^FDX^FS^XZ"));
     expect(v.findings).not.toHaveProperty("findings");
     expect(Object.keys(v.findings).sort()).toEqual(
-      ["browserLimit", "deviceAction", "partial", "replayRisk", "unknown", "unterminatedField"],
+      ["browserLimit", "deviceAction", "hexControl", "partial", "replayRisk", "unknown", "unterminatedField"],
     );
   });
 

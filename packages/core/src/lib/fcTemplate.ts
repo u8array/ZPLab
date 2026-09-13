@@ -3,6 +3,7 @@
 // Preview uses new Date(); printer RTC is authoritative at print time.
 import { applyClockOffset, type ClockOffset } from "../types/LabelConfig";
 import { CLOCK_BODY_RE, CLOCK_MARKER_RE, clockMarkerReGlobal } from "../types/clockMarker";
+import { escapeRegExp } from "./escapeRegExp";
 
 const TOKEN_FORMATTERS: Record<string, (d: Date) => string> = {
   Y: (d) => String(d.getFullYear()),
@@ -168,7 +169,7 @@ export function tokensToMarkers(payload: string, chars: ClockChars): string {
   const tokenLetters = Object.keys(TOKEN_FORMATTERS).join("");
   const reFor = (c: string) =>
     new RegExp(
-      `${c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([${tokenLetters}])`,
+      `${escapeRegExp(c)}([${tokenLetters}])`,
       "g",
     );
   let out = payload;

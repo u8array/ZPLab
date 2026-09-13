@@ -910,6 +910,7 @@ const lv = {
     mixedJmTitle: 'Drukas blīvuma režīms atšķiras starp blokiem: vēlākās lapas saglabā savu režīmu, bet rediģējams ir tikai pirmais',
     unknownTitle: 'Izlaists: komanda nav atpazīta',
     unterminatedFieldTitleFmt: 'Lauks nav aizvērts ar {fs}: printeris to atmet',
+    hexControlTitle: 'Vadības rakstzīme lauka datos: printeris atmet atlikušo lauka daļu',
     reportHeader: 'ZPL importēšanas atskaite',
     reportObjectsFmt: 'Importēti objekti: {n}',
     reportClean: 'Visas komandas tika atpazītas. Neviena dizaina informācija nav zudusi.',

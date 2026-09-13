@@ -81,6 +81,9 @@ export function describeFinding(
   if (f.kind === 'unterminatedField') {
     return { title: tr.unterminatedFieldTitleFmt.replace('{fs}', '^FS'), detail: f.command };
   }
+  if (f.kind === 'hexControl') {
+    return { title: tr.hexControlTitle, detail: f.command };
+  }
   if (f.kind === 'mixedPageGeometry') {
     // ^JM divergence is a mode conflict, not a size one, so it gets its own
     // headline; the command token alone is the detail (title carries meaning).

@@ -910,6 +910,7 @@ const lt = {
     mixedJmTitle: 'Spausdinimo tankio režimas skiriasi tarp blokų: vėlesni puslapiai išlaiko savo režimą, tačiau redaguoti galima tik pirmąjį',
     unknownTitle: 'Praleista: komanda neatpažinta',
     unterminatedFieldTitleFmt: 'Laukas neuždarytas naudojant {fs}: spausdintuvas jį atmeta',
+    hexControlTitle: 'Valdymo simbolis lauko duomenyse: spausdintuvas atmeta likusią lauko dalį',
     reportHeader: 'ZPL importo ataskaita',
     reportObjectsFmt: 'Importuoti objektai: {n}',
     reportClean: 'Visos komandos atpažintos. Jokia dizaino informacija nebuvo prarasta.',

@@ -910,6 +910,7 @@ const nl = {
     mixedJmTitle: "De afdrukdichtheidsmodus verschilt tussen blokken: latere pagina's behouden hun eigen modus, maar alleen de eerste is bewerkbaar",
     unknownTitle: 'Overgeslagen: opdracht niet herkend',
     unterminatedFieldTitleFmt: 'Veld niet gesloten met {fs}: de printer negeert het',
+    hexControlTitle: 'Stuurteken in de veldgegevens: de printer negeert de rest van het veld',
     reportHeader: 'ZPL-importrapport',
     reportObjectsFmt: 'Geïmporteerde objecten: {n}',
     reportClean: 'Alle opdrachten herkend. Er is geen ontwerpinformatie verloren gegaan.',

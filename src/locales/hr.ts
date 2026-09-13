@@ -910,6 +910,7 @@ const hr = {
     mixedJmTitle: 'Način gustoće ispisa razlikuje se između blokova: kasnije stranice zadržavaju svoj vlastiti način, ali samo je prvi uredljiv',
     unknownTitle: 'Preskočeno: naredba nije prepoznata',
     unterminatedFieldTitleFmt: 'Polje nije zatvoreno s {fs}: pisač ga odbacuje',
+    hexControlTitle: 'Kontrolni znak u podacima polja: pisač odbacuje ostatak polja',
     reportHeader: 'Izvještaj o uvozu ZPL-a',
     reportObjectsFmt: 'Uvezeni objekti: {n}',
     reportClean: 'Sve naredbe prepoznate. Nijedna informacija o dizajnu nije izgubljena.',
