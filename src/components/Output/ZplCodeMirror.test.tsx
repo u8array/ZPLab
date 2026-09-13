@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { render, cleanup, act, waitFor } from "@testing-library/react";
+import { render, cleanup, act, fireEvent, waitFor } from "@testing-library/react";
 import { EditorView } from "@codemirror/view";
 import type { Diagnostic } from "@codemirror/lint";
 import { cursorCharRight, deleteCharBackward, deleteCharForward } from "@codemirror/commands";
@@ -28,8 +28,8 @@ describe("ZplCodeMirror cursor reports", () => {
     act(() => view.dispatch({ selection: { anchor: 6 }, userEvent: "select.pointer" }));
     act(() => view.dispatch({ selection: { anchor: 18 }, userEvent: "select.pointer" }));
     expect(onCursorCommand.mock.calls.map(([c]) => c)).toEqual([
-      { id: "^FO", from: 4 },
-      { id: "^FO", from: 16 },
+      { id: "^FO", from: 4, pointed: true },
+      { id: "^FO", from: 16, pointed: true },
     ]);
   });
 
@@ -110,6 +110,12 @@ describe("ZplCodeMirror command marks", () => {
 });
 
 describe("ZplCodeMirror keyboard surface", () => {
+  it("lets Escape through when no one claims it", () => {
+    const { container } = render(<ZplCodeMirror value={"^XA\n^XZ"} onChange={vi.fn()} ariaLabel="zpl" placeholderText="ph" />);
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    expect(fireEvent.keyDown(view.contentDOM, { key: "Escape" })).toBe(true);
+  });
+
   it("reads as an editable target from every real focus/click node", () => {
     // Keys from the read-only scroller or the gutter must never fall
     // through to canvas handlers.

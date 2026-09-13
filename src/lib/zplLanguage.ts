@@ -259,10 +259,15 @@ export interface CursorCommand {
   id: string;
   /** Start offset, so a move between two commands of the same name still counts as a move. */
   from: number;
+  /** Placed by a pointer gesture: the user asking again, unlike keyboard travel. */
+  pointed: boolean;
 }
 
+/** The command under the caret, before the editor knows how the caret got there. */
+export type CaretCommand = Omit<CursorCommand, "pointed">;
+
 /** The same command, not merely the same name: two ^FO fields differ by offset. */
-export function sameCursorCommand(a: CursorCommand | null, b: CursorCommand | null): boolean {
+export function sameCursorCommand(a: CaretCommand | null, b: CaretCommand | null): boolean {
   return a === b || (a !== null && b !== null && a.id === b.id && a.from === b.from);
 }
 
@@ -276,7 +281,7 @@ function readCommandName(state: EditorState, token: SyntaxNodeRef): { id: string
 
 /** The command whose bytes surround `pos`, or null between commands; the command
  *  starting at the caret wins over the one ending there. */
-export function commandAtCursor(state: EditorState, pos: number): CursorCommand | null {
+export function commandAtCursor(state: EditorState, pos: number): CaretCommand | null {
   const tree = treeUpTo(state, pos, CARET_PARSE_MS);
   const commandOf = (side: -1 | 1) => {
     let node: ReturnType<typeof tree.resolveInner> | null = tree.resolveInner(pos, side);

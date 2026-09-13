@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { catalogEntry, catalogRow, commandId, filterCatalog, type ZplCommandEntry } from "@zplab/core/catalog";
-import type { CursorCommand } from "../lib/zplLanguage";
+import { sameCursorCommand, type CursorCommand } from "../lib/zplLanguage";
 
 export interface CatalogSelection {
   query: string;
@@ -16,6 +16,8 @@ export interface CatalogSelection {
   toggle: (id: string) => void;
   /** Escape: the caret's own row goes to the empty state, any other pin to the caret. */
   stepBack: () => void;
+  /** Escape from the editor: drops a visible pin and says whether there was one. */
+  unpin: () => boolean;
   /** The caret's own row inserts the spelling under the caret: ~HL and ^HL share a
    *  row but differ on the printer. Any other row inserts its id. */
   insertTextFor: (rowId: string) => string;
@@ -24,18 +26,19 @@ export interface CatalogSelection {
 export function useCatalogSelection(cursor: CursorCommand | null): CatalogSelection {
   const [query, setQuery] = useState("");
   const [pinned, setPinned] = useState<string | null>(null);
-  const [dismissed, setDismissed] = useState(false);
-  // Render-time reset as in useCollapsibleState. A new cursor object is the user asking
-  // again: a pointer gesture, or the command under the caret changed. A null report only
-  // says the caret is gone, as after a regenerated export or a page switch.
+  // Kept per command, so a dismissal lapses when the caret leaves it.
+  const [dismissedFor, setDismissedFor] = useState<CursorCommand | null>(null);
+  // Render-time reset as in useCollapsibleState. Only a pointer gesture in the editor asks
+  // again: keyboard travel, typing and a null report after a regenerated export keep the choice.
   const [prevCursor, setPrevCursor] = useState(cursor);
   if (prevCursor !== cursor) {
     setPrevCursor(cursor);
-    if (cursor !== null) {
+    if (cursor?.pointed) {
       setPinned(null);
-      setDismissed(false);
+      setDismissedFor(null);
     }
   }
+  const dismissed = dismissedFor !== null && sameCursorCommand(cursor, dismissedFor);
   const results = filterCatalog(query);
   const ids = results.map(commandId);
   const pinVisible = pinned !== null && ids.includes(pinned) ? pinned : null;
@@ -45,7 +48,7 @@ export function useCatalogSelection(cursor: CursorCommand | null): CatalogSelect
   const caretRow = cursor ? (catalogRow(cursor.id) ?? null) : null;
 
   const choose = (id: string | null): void => {
-    setDismissed(false);
+    setDismissedFor(null);
     setPinned(id);
   };
   return {
@@ -63,7 +66,12 @@ export function useCatalogSelection(cursor: CursorCommand | null): CatalogSelect
     stepBack: () => {
       if (shownId === null) return;
       setPinned(null);
-      if (shownId === caretRow) setDismissed(true);
+      if (shownId === caretRow) setDismissedFor(cursor);
+    },
+    unpin: () => {
+      if (pinVisible === null) return false;
+      setPinned(null);
+      return true;
     },
     insertTextFor: (rowId) => (cursor && rowId === caretRow ? cursor.id : rowId),
   };

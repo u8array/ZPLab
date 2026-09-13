@@ -13,7 +13,7 @@ import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { codeFolding, foldable, foldGutter, foldKeymap, foldEffect, foldedRanges } from '@codemirror/language';
 import { setDiagnostics, diagnosticCount, forEachDiagnostic, lintKeymap, type Diagnostic } from '@codemirror/lint';
 import type { SourceLint } from '../../lib/sourceDiagnostics';
-import { zpl, blobRanges, commandAtCursor, commandInsertion, placesCaret, pointsAtCaret, sameCursorCommand, type CursorCommand } from '../../lib/zplLanguage';
+import { zpl, blobRanges, commandAtCursor, commandInsertion, placesCaret, pointsAtCaret, sameCursorCommand, type CaretCommand, type CursorCommand } from '../../lib/zplLanguage';
 import { toDiagnostic } from '../../lib/zplCmLint';
 import { hideSidecarsExt, visibleLineNumber } from '../../lib/zplCmSidecars';
 import { commandMarksExt } from '../../lib/zplCmCommandMarks';
@@ -142,7 +142,7 @@ function useCompartmentSync<T>(viewRef: RefObject<EditorView | null>, compartmen
 /** Whether the user's caret counts, and the command last reported for it; one state for inserts and the panel. */
 interface CaretState {
   placed: boolean;
-  reported: CursorCommand | null;
+  reported: CaretCommand | null;
 }
 
 type CursorReport = ((cmd: CursorCommand | null) => void) | undefined;
@@ -174,6 +174,7 @@ function trackCaret(u: ViewUpdate, caret: CaretState, report: CursorReport): voi
 
 export interface ZplCodeMirrorHandle {
   focus(): void;
+  hasFocus(): boolean;
   /** See commandInsertion. */
   insertCommand(text: string): void;
 }
@@ -194,6 +195,7 @@ export default function ZplCodeMirror({
   insertPage = 0,
   catalogRow = null,
   onCursorCommand,
+  onEscape,
   ref,
 }: {
   value: string;
@@ -218,17 +220,21 @@ export default function ZplCodeMirror({
   catalogRow?: string | null;
   /** Command under the caret, reported whenever it changes. */
   onCursorCommand?: (cmd: CursorCommand | null) => void;
+  /** First claim on Escape, ahead of the editor's own and the session's. True when it took the key. */
+  onEscape?: () => boolean;
   ref?: Ref<ZplCodeMirrorHandle>;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   const onCursorRef = useRef(onCursorCommand);
+  const onEscapeRef = useRef(onEscape);
   const caret = useRef<CaretState>({ placed: false, reported: null });
   const insertPageRef = useRef(insertPage);
   useEffect(() => {
     onChangeRef.current = onChange;
     onCursorRef.current = onCursorCommand;
+    onEscapeRef.current = onEscape;
     insertPageRef.current = insertPage;
   });
   // A page switch is a later, explicit choice of block; the caret from before it is stale.
@@ -247,6 +253,7 @@ export default function ZplCodeMirror({
     ref,
     () => ({
       focus: () => viewRef.current?.focus(),
+      hasFocus: () => viewRef.current?.hasFocus ?? false,
       insertCommand: (text) => {
         const view = viewRef.current;
         if (!view || view.state.readOnly) return;
@@ -276,7 +283,7 @@ export default function ZplCodeMirror({
         commandMarksCompartment.of(commandMarksExt(catalogRow)),
         localeCompartment.of(localeExt(ariaLabel, placeholderText)),
         // lintKeymap opens the diagnostics panel, the keyboard's only route to a repair action.
-        keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap, ...lintKeymap]),
+        keymap.of([{ key: 'Escape', run: () => onEscapeRef.current?.() ?? false }, ...defaultKeymap, ...historyKeymap, ...foldKeymap, ...lintKeymap]),
         EditorView.updateListener.of((u) => {
           trackCaret(u, caret.current, onCursorRef.current);
           // Only a transaction that set a selection can report. A synced doc change
@@ -284,9 +291,10 @@ export default function ZplCodeMirror({
           // reports even the same command, so the panel hears the user ask again.
           if (u.selectionSet) {
             const cmd = commandAtCursor(u.state, u.state.selection.main.head);
-            if (u.transactions.some(pointsAtCaret) || !sameCursorCommand(cmd, caret.current.reported)) {
+            const pointed = u.transactions.some(pointsAtCaret);
+            if (pointed || !sameCursorCommand(cmd, caret.current.reported)) {
               caret.current.reported = cmd;
-              onCursorRef.current?.(cmd);
+              onCursorRef.current?.(cmd && { ...cmd, pointed });
             }
           }
           if (!u.docChanged) return;

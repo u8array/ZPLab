@@ -59,10 +59,9 @@ export function useSessionExit(
       }, 0);
     };
     const onKeyDown = (e: KeyboardEvent) => {
-      // CM's simplifySelection consumes Escape for ANY non-empty selection,
-      // so discarding then takes a second press (standard editor behavior).
-      // The reference panel owns Escape for its own step-back and runs after this
-      // native listener, so it opts out by attribute rather than preventDefault.
+      // Each layer takes a press: a visible catalog pin and a non-empty selection are
+      // consumed by the editor's keymap before the session sees Escape. The reference
+      // panel itself runs after this native listener, so it opts out by attribute.
       if (e.key !== 'Escape' || e.defaultPrevented) return;
       const target = e.target instanceof Element ? e.target : null;
       if (!target?.closest('[data-session-exit-ignore]')) handlersRef.current.onEscape();

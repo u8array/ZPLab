@@ -111,6 +111,96 @@ describe("reference panel wiring", () => {
     expect(detail().getByText("label length")).toBeTruthy();
   });
 
+  it("refuses pointer focus for rows and the Insert button while the editor holds it, never for search or prose", () => {
+    const view = mount();
+    placePointerCaret(view, "hello");
+    // fireEvent returns false when a handler called preventDefault. Here that default is the focus move.
+    expect(fireEvent.mouseDown(screen.getByRole("option", { name: /\^LL/ }))).toBe(false);
+    expect(fireEvent.mouseDown(detail().getByRole("button", { name: /^Insert$/ }))).toBe(false);
+    expect(fireEvent.mouseDown(screen.getByRole("searchbox"))).toBe(true);
+    expect(fireEvent.mouseDown(detail().getByText("field data"))).toBe(true);
+  });
+
+  it("takes pointer focus as before while the editor does not hold it, or no longer holds it", () => {
+    const view = mount();
+    expect(fireEvent.mouseDown(screen.getByRole("option", { name: /\^LL/ }))).toBe(true);
+    expect(fireEvent.mouseDown(detail().getByRole("button", { name: /^Insert$/ }))).toBe(true);
+    placePointerCaret(view, "hello");
+    act(() => view.contentDOM.blur());
+    expect(fireEvent.mouseDown(screen.getByRole("option", { name: /\^LL/ }))).toBe(true);
+  });
+
+  it("refuses the press wherever it lands inside a row", () => {
+    const view = mount();
+    placePointerCaret(view, "hello");
+    const row = screen.getByRole("option", { name: /\^LL/ });
+    expect(fireEvent.mouseDown(within(row).getByText("^LL"))).toBe(false);
+  });
+
+  it("keeps a pin and its marks while the caret travels by keyboard, and drops them on a click", () => {
+    const view = mount();
+    const marks = () => [...view.dom.querySelectorAll(".cm-zplCommandMatch")].map((m) => m.textContent);
+    placePointerCaret(view, "hello");
+    fireEvent.click(screen.getByRole("option", { name: /\^LL/ }));
+    expect(marks()).toEqual(["^LL"]);
+    act(() => view.dispatch({ selection: { anchor: view.state.doc.toString().indexOf("^FO") + 1 }, userEvent: "select" }));
+    expect(marks()).toEqual(["^LL"]);
+    expect(detail().getByText("label length")).toBeTruthy();
+    placePointerCaret(view, "^FO");
+    expect(marks()).toEqual([]);
+    expect(detail().getByText("field origin")).toBeTruthy();
+  });
+
+  it("unpins on Escape with a range selected, and on the caret's own row keeps the detail", () => {
+    const view = mount();
+    const marks = () => [...view.dom.querySelectorAll(".cm-zplCommandMatch")].map((m) => m.textContent);
+    placePointerCaret(view, "hello", 3);
+    fireEvent.click(screen.getByRole("option", { name: /\^PW/ }));
+    fireEvent.keyDown(view.contentDOM, { key: "Escape" });
+    expect(detail().getByText("field data")).toBeTruthy();
+    placePointerCaret(view, "^FO");
+    fireEvent.click(screen.getByRole("option", { name: /\^FO/ }));
+    expect(marks()).toEqual(["^FO"]);
+    fireEvent.keyDown(view.contentDOM, { key: "Escape" });
+    expect(marks()).toEqual([]);
+    expect(detail().getByText("field origin")).toBeTruthy();
+  });
+
+  it("inserts at the caret through a double-click whose two presses left the focus alone", () => {
+    const view = mount();
+    const pos = placePointerCaret(view, "hello");
+    const row = screen.getByRole("option", { name: /\^LL/ });
+    expect(fireEvent.mouseDown(row, { detail: 1 })).toBe(false);
+    expect(fireEvent.mouseDown(row, { detail: 2 })).toBe(false);
+    fireEvent.doubleClick(row);
+    expect(view.state.doc.toString().slice(pos, pos + 8)).toBe("^LLhello");
+  });
+
+  it("lets Escape in the focused editor undo a pin before it reaches the session", () => {
+    const view = mount();
+    fireEvent.doubleClick(screen.getByRole("option", { name: /\^LL/ }));
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    placePointerCaret(view, "hello");
+    fireEvent.click(screen.getByRole("option", { name: /\^PW/ }));
+    expect(detail().getByText("print width")).toBeTruthy();
+    fireEvent.keyDown(view.contentDOM, { key: "Escape" });
+    expect(detail().getByText("field data")).toBeTruthy();
+    expect(screen.queryByText(/Discard the edited code/)).toBeNull();
+    fireEvent.keyDown(view.contentDOM, { key: "Escape" });
+    expect(screen.getByText(/Discard the edited code/)).toBeTruthy();
+  });
+
+  it("lets Escape in the editor pass while the search hides the pin, which then survives", () => {
+    const view = mount();
+    placePointerCaret(view, "hello");
+    fireEvent.click(screen.getByRole("option", { name: /\^PW/ }));
+    const search = screen.getByRole("searchbox");
+    fireEvent.change(search, { target: { value: "^LL" } });
+    expect(fireEvent.keyDown(view.contentDOM, { key: "Escape" })).toBe(true);
+    fireEvent.change(search, { target: { value: "" } });
+    expect(detail().getByText("print width")).toBeTruthy();
+  });
+
   it("keeps Escape inside the panel from discarding an edit session", () => {
     mount();
     fireEvent.doubleClick(screen.getByRole("option", { name: /\^LL/ }));

@@ -28,7 +28,16 @@ const domId = (listId: string, key: string): string =>
   `${listId}-${key.replace(/^\^/, "c").replace(/^~/, "t").replace(/[^A-Za-z0-9]/g, "_")}`;
 
 /** Command reference beside the source pane; no `onInsert` means inserting is unavailable. */
-export function ZplCatalogPanel({ selection, onInsert }: { selection: CatalogSelection; onInsert?: (text: string) => void }) {
+export function ZplCatalogPanel({
+  selection,
+  onInsert,
+  editorHasFocus,
+}: {
+  selection: CatalogSelection;
+  onInsert?: (text: string) => void;
+  /** Absent, the panel takes pointer focus like any other. */
+  editorHasFocus?: () => boolean;
+}) {
   const t = useT();
   const summaries = useCatalogSummaries();
   const listId = useId();
@@ -40,6 +49,10 @@ export function ZplCatalogPanel({ selection, onInsert }: { selection: CatalogSel
   );
   const empty = ids.length === 0;
   const requestInsert = onInsert && shownId ? () => onInsert(insertTextFor(shownId)) : undefined;
+  // A caret is only worth keeping while there is one: from elsewhere the catalog takes focus as any panel.
+  const keepEditorFocus = (e: React.MouseEvent): void => {
+    if (editorHasFocus?.()) e.preventDefault();
+  };
 
   useEffect(() => {
     if (!shownId) return;
@@ -117,6 +130,7 @@ export function ZplCatalogPanel({ selection, onInsert }: { selection: CatalogSel
                 // Stays mounted and focusable: a focused button that unmounts or turns disabled
                 // drops focus to body, and the session's focusout fallback would then apply a dirty edit.
                 aria-disabled={!requestInsert}
+                onMouseDown={keepEditorFocus}
                 onClick={requestInsert}
                 className="font-mono text-[10px] text-muted hover:text-accent aria-disabled:opacity-25 aria-disabled:cursor-not-allowed transition-colors"
               >
@@ -175,6 +189,7 @@ export function ZplCatalogPanel({ selection, onInsert }: { selection: CatalogSel
                           id={domId(listId, id)}
                           role="option"
                           aria-selected={active}
+                          onMouseDown={keepEditorFocus}
                           // The clicks of a double-click must not toggle the pin twice.
                           onClick={(e) => {
                             if (e.detail <= 1) toggle(id);

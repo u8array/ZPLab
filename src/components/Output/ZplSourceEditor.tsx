@@ -113,9 +113,14 @@ export function ZplSourceEditor({
             insertPage={insertPage}
             catalogRow={catalog.pinVisible}
             onCursorCommand={setCursorCommand}
+            onEscape={catalog.unpin}
           />
         </div>
-        <ZplCatalogPanel selection={catalog} onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined} />
+        <ZplCatalogPanel
+          selection={catalog}
+          onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined}
+          editorHasFocus={() => editorRef.current?.hasFocus() ?? false}
+        />
       </div>
       {gateMsg !== null && (
         <p
