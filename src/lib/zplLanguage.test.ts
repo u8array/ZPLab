@@ -222,11 +222,10 @@ describe("formatCloseFor", () => {
     expect(closeAt(doc, 5)).toBe(doc.lastIndexOf("^XZ"));
   });
 
-  it("follows a ^CC remap, counts a tilde ~XZ like the core parser, and yields null without a close", () => {
+  it("follows a ^CC remap, ignores a tilde ~XZ like the core parser, and yields null without a close", () => {
     const remapped = "^XA\n^CC#\n#FDx#FS\n#XZ";
     expect(closeAt(remapped, 0)).toBe(remapped.indexOf("#XZ"));
-    const tilde = "^XA\n^FDa^FS\n~XZ";
-    expect(closeAt(tilde, 0)).toBe(tilde.indexOf("~XZ"));
+    expect(closeAt("^XA\n^FDa^FS\n~XZ", 0)).toBeNull();
     expect(closeAt("^XA\n^FDa^FS", 0)).toBeNull();
     expect(closeAt("", 0)).toBeNull();
   });

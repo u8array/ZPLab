@@ -23,7 +23,7 @@ export function createLabelConfigHandlers(
   const physDots = (raw: string | undefined): number | undefined =>
     intDotsOrUndef(raw, deriveUnitScale({ muMode: s.format.muMode }, dpmm));
   return {
-    // Implausible sizes are reported (partialCmds), not adopted; see isPlausibleLabelMm.
+    // Implausible sizes are reported (partials), not adopted; see isPlausibleLabelMm.
     PW(_, rest) {
       const w = physDots(rest);
       if (w === undefined || w <= 0) return;

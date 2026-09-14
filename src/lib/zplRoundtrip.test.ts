@@ -4,7 +4,7 @@ import { stampDirtyLeaves } from "../store/dirtyTracking";
 import type { LabelObject, Page } from "@zplab/core/types/Group";
 import { labelObjectBaseSchema } from "@zplab/core/types/LabelObject";
 
-// Byte-identical round-trip lives in zplOverlay/* (capture + emitOverlayPage).
+// Byte-identical round-trip lives in zplOverlay/* (capture + overlay replay).
 // This file guards the `dirty` model that drives it. Dirty is stamped centrally
 // by the dirtyTracking middleware (stampDirtyLeaves), not by individual mutators,
 // so an emit-affecting object change flips dirty and the overlay regenerates it.

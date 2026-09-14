@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { importZplText } from "@zplab/core/lib/zplImportService";
-import { emitOverlayPage, generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
+import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import type { LabelConfig } from "@zplab/core/types/LabelConfig";
 import type { LabelObject, Page } from "@zplab/core/types/Group";
 
@@ -20,18 +20,18 @@ function edit(page: Page, predicate: (o: LabelObject) => boolean, patch: Partial
   return leaf;
 }
 
-describe("emitOverlayPage", () => {
+describe("overlay replay of one page", () => {
   it("replays an untouched block byte-identically", () => {
     const src = "^XA\n^PW800\n^LL400\n^FXnote\n^FO50,50^A0N,30,30^FDHello^FS\n^FO50,120^GB200,80,3^FS\n^XZ";
     const page = importedPage(src);
-    expect(emitOverlayPage(LABEL, page)).toBe(src);
+    expect(generateMultiPageZPL(LABEL, [page])).toBe(src);
   });
 
   it("regenerates only the edited field, neighbours stay verbatim", () => {
     const src = "^XA\n^FO50,50^A0N,30,30^FDHello^FS\n^FO50,120^GB200,80,3^FS\n^XZ";
     const page = importedPage(src);
     edit(page, (o) => o.type === "text", { x: 99 });
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     expect(out).not.toContain("^FO50,50^A0N,30,30^FDHello^FS");
     expect(out).toContain("^FO99,");
     expect(out).toContain("^FO50,120^GB200,80,3^FS"); // box untouched
@@ -41,7 +41,7 @@ describe("emitOverlayPage", () => {
     const src = "^XA\n^FO50,50^A0N,30,30^FDHello^FS\n^FO50,120^GB200,80,3^FS\n^XZ";
     const page = importedPage(src);
     page.objects = page.objects.filter((o) => o.type !== "text");
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     expect(out).not.toContain("^FDHello");
     expect(out).toContain("^FO50,120^GB200,80,3^FS");
     expect(out.endsWith("^XZ")).toBe(true);
@@ -59,7 +59,7 @@ describe("emitOverlayPage", () => {
       props: { content: "NEW", fontHeight: 30, fontWidth: 0, rotation: "N" },
     } as unknown as LabelObject;
     page.objects = [...page.objects, added];
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     expect(out).toContain("^FO50,50^A0N,30,30^FDHello^FS"); // original verbatim
     expect(out).toContain("^FDNEW");
     expect(out.indexOf("^FDNEW")).toBeLessThan(out.lastIndexOf("^XZ"));
@@ -77,7 +77,7 @@ describe("emitOverlayPage", () => {
       props: { content: "NEW", fontHeight: 30, fontWidth: 0, rotation: "N" },
     } as unknown as LabelObject;
     page.objects = [...page.objects, added];
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     // The new field must land inside the block, before the lowercase terminator.
     expect(out.indexOf("^FDNEW")).toBeLessThan(out.toUpperCase().lastIndexOf("^XZ"));
   });
@@ -96,7 +96,7 @@ describe("emitOverlayPage", () => {
       props: { content: "NEW", fontHeight: 30, fontWidth: 0, rotation: "N" },
     } as unknown as LabelObject;
     page.objects = [...page.objects, added];
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     expect(out).toContain("^FDStraße^FS"); // original verbatim, not mangled
     expect(out.trimEnd().endsWith("^xz")).toBe(true); // terminator intact
     expect(out.indexOf("^FDNEW")).toBeLessThan(out.lastIndexOf("^xz"));
@@ -109,7 +109,7 @@ describe("emitOverlayPage", () => {
     // Model coords are absolute (home folded); editing y forces regen.
     const text = page.objects.find((o) => o.type === "text")!;
     Object.assign(text, { y: text.y + 5, dirty: true });
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     // The regenerated ^FO stays home-relative (x back near 10, not 60).
     expect(out).toContain("^LH50,20"); // raw ^LH preserved
     expect(out).toMatch(/\^FO10,/);
@@ -121,7 +121,7 @@ describe("emitOverlayPage", () => {
     edit(page, (o) => o.type === "text", { includeInExport: false });
     // includeInExport is not emit-affecting, so undo the dirty the helper set.
     page.objects.find((o) => o.type === "text")!.dirty = undefined;
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     expect(out).not.toContain("^FDHello");
     expect(out).toContain("^FO50,120^GB200,80,3^FS");
   });
@@ -135,7 +135,7 @@ describe("emitOverlayPage", () => {
     const label = { ...LABEL, ...r.labelConfig }; // carries the ^CWQ alias
     const text = page.objects.find((o) => o.type === "text")!;
     Object.assign(text, { x: 40, dirty: true });
-    const out = emitOverlayPage(label, page);
+    const out = generateMultiPageZPL(label, [page]);
     expect(out).toContain("^A@N,30,30,E:MYFONT.TTF"); // direct path kept
     expect(out).not.toContain("^AQ"); // not aliased (would be a forward reference)
   });
@@ -143,7 +143,7 @@ describe("emitOverlayPage", () => {
   it("falls back to full regeneration when the overlay is a stale version", () => {
     const page = importedPage("^XA^FO10,10^A0N,30,30^FDx^FS^XZ");
     page.overlay!.v = 1; // older schema version, no longer trusted
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     expect(out).toContain("^XA");
     expect(out).toContain("^FDx");
   });
@@ -152,7 +152,7 @@ describe("emitOverlayPage", () => {
     const page = importedPage("^XA^MUi^FO10,10^A0N,30,30^FDx^FS^MUd^XZ");
     expect(page.overlay?.regenSafe).toBe(false);
     edit(page, (o) => o.type === "text", { x: 99 });
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     // Full regeneration path: model-canonical block, not the raw ^MU replay.
     expect(out).not.toContain("^MUi");
   });
@@ -171,7 +171,7 @@ describe("emitOverlayPage", () => {
     // Model order: aa, MID(new), bb. The new object sits BETWEEN imported ones,
     // so appending at ^XZ would misplace it -> must fall back to model order.
     page.objects = [page.objects[0]!, added, page.objects[1]!];
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     expect(out.indexOf("FDaa")).toBeLessThan(out.indexOf("MID"));
     expect(out.indexOf("MID")).toBeLessThan(out.indexOf("FDbb"));
   });
@@ -181,7 +181,7 @@ describe("emitOverlayPage", () => {
     const page = importedPage(src);
     // Reverse z-order; the overlay pins source order, so this must fall back.
     page.objects = [...page.objects].reverse();
-    const out = emitOverlayPage(LABEL, page);
+    const out = generateMultiPageZPL(LABEL, [page]);
     expect(out.indexOf("second")).toBeLessThan(out.indexOf("first"));
   });
 

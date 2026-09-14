@@ -2,7 +2,7 @@ import type { ObjectTypeCore } from '../types/ObjectType';
 import { graphicFieldPos } from './zplHelpers';
 import { getImage } from '../lib/imageCache';
 import { gfaFromRaster, rasterizeMono, scaledHeightDots } from '../lib/imageToZpl';
-import { formatStoragePath } from '../lib/storagePath';
+import { formatStoragePath, uploadedGraphicPath, type StoragePath } from '../lib/storagePath';
 import { isAxisSwapped, objectRotation, type ZplRotation } from './rotation';
 
 /** ^GF rows are byte-packed, so the emitted (and re-parsed) width is the next
@@ -89,9 +89,15 @@ export interface ImageProps {
    *  emits inline `^GF` as before. */
   storedAs?: {
     /** Storage device prefix without trailing colon: "R", "E", "B", or "A". */
-    device: string;
+    device?: string;
     /** Filename stem (no extension); paired with `.GRF` for graphics. */
     name: string;
+    /** Extension a recall named when it is not `.GRF`; re-emitted as written while no upload ships. */
+    ext?: string;
+    /** The source recalled with ^IM or ^IL rather than ^XG. */
+    recall?: 'IM';
+    /** ^XG magnification as written, 1-10 per axis (spec p.373); the preview stays at stored size. */
+    magnify?: { x: number; y: number };
     /** Ship the bitmap bytes via `~DY` alongside the `^XG` reference.
      *  Default true on first toggle so a single-job ZPL is self-contained.
      *  False = recall-only: assume the file is already on printer storage,
@@ -261,6 +267,50 @@ export function shippableGfa(p: ImageProps, rotation: ZplRotation = 'N'): string
   return inlineGfaFor(p, rotation);
 }
 
+/** Whether a ~DY goes out for this object. Never encodes, since every findings recompute and panel render asks it. */
+export function storedGraphicShips(p: ImageProps): boolean {
+  if (!p.storedAs || p.storedAs.embedInZpl === false) return false;
+  return !!getImage(p.imageId) || (!!p._gfaCache && gfShipsSafely(p._gfaCache));
+}
+
+/** Header of the ~DY this object ships, null when no upload goes out. */
+export function storedGraphicUpload(p: ImageProps): GfHeader | null {
+  return storedGraphicShips(p) ? parseGfHeader(shippableGfa(p, imageEmitRotation(p))) : null;
+}
+
+/** The path a recall names: the upload's when one ships, else the reference as written. */
+export function recallStoragePath(p: ImageProps): StoragePath | undefined {
+  if (!p.storedAs) return undefined;
+  return storedGraphicShips(p) ? { device: p.storedAs.device, name: p.storedAs.name } : p.storedAs;
+}
+
+/** ~DY for a graphic upload. Format letter is preserved so :Z64: stays paired with C. */
+export function graphicUploadLine(p: ImageProps): string | undefined {
+  const h = storedGraphicUpload(p);
+  return h && p.storedAs ? `~DY${formatStoragePath(p.storedAs, false)},${h.format},G,${h.totalBytes},${h.bytesPerRow},${h.payload}` : undefined;
+}
+
+/** Storage key of the ~DG/~DY upload a stored reference resolves to; none for a recall of a file such uploads never write (.PNG). */
+export function uploadKey(p: ImageProps): string | undefined {
+  if (!p.storedAs) return undefined;
+  const ext = p.storedAs.ext;
+  if (!storedGraphicShips(p) && ext && ext.toUpperCase() !== 'GRF') return undefined;
+  return uploadedGraphicPath(p.storedAs);
+}
+
+/** ^XG magnification the export writes: the stored factors inside the spec range 1-10, else 1. */
+export function recallMagnification(p: ImageProps): { x: number; y: number } {
+  const inRange = (v: number | undefined) => (Number.isInteger(v) && (v as number) >= 1 && (v as number) <= 10 ? (v as number) : 1);
+  return { x: inRange(p.storedAs?.magnify?.x), y: inRange(p.storedAs?.magnify?.y) };
+}
+
+/** The command a recall is written with: the source's own, since ^XG fixes .GRF (spec p.373) while ^IM also
+ *  takes .PNG (p.248), so respelling could turn a stream that prints nothing into one that prints. */
+export function recallCommand(p: ImageProps): '^XG' | '^IM' | undefined {
+  if (!p.storedAs) return undefined;
+  return p.storedAs.recall === 'IM' ? '^IM' : '^XG';
+}
+
 export const image: ObjectTypeCore<ImageProps> = {
   label: 'Image',
   icon: 'img',
@@ -298,13 +348,9 @@ export const image: ObjectTypeCore<ImageProps> = {
     if (p.rawGf && !gfShipsSafely(p.rawGf)) {
       return [{ kind: 'imageMissing', detail: 'the stored ^GF bytes carry ^ or ~ outside their declared byte count, so they cannot be printed' }];
     }
-    // A recall field whose ~DY got dropped still keeps its ^XG, so storedAs alone cannot mark it resolvable.
-    if (p.storedAs && p.storedAs.embedInZpl !== false) {
-      // Asked, not rasterised: this runs on every findings recompute, so it must not force a full re-encode.
-      const canUpload = p._gfaCache ? gfShipsSafely(p._gfaCache) : !!getImage(p.imageId);
-      if (!canUpload) {
-        return [{ kind: 'imageMissing', detail: 'this field recalls a stored graphic whose upload cannot be written, so the printer has nothing to recall' }];
-      }
+    // A recall field whose ~DY got dropped still keeps its recall, so storedAs alone cannot mark it resolvable.
+    if (p.storedAs && p.storedAs.embedInZpl !== false && !storedGraphicShips(p)) {
+      return [{ kind: 'imageMissing', detail: 'this field expects its graphic to ship with the job, but no upload can be written, so the printer has nothing to recall' }];
     }
     const resolvable =
       !!p.rawGf || !!p.storedAs || !!getImage(p.imageId) || gfaCacheUsable(p);
@@ -364,12 +410,11 @@ export const image: ObjectTypeCore<ImageProps> = {
     if (p.rawGf) {
       return gfShipsSafely(p.rawGf) ? `${anchor}${p.rawGf}^FS` : `${anchor}^FD^FS`;
     }
-    // Recall path: upload happened in the preamble; here we just reference
-    // it via ^XG. The `.GRF` extension is implicit on `~DY{path},A,G,…`;
-    // Zebra firmware persists the file as `path.GRF` and `^XG` resolves
-    // the dot-suffixed form.
-    if (p.storedAs) {
-      return `${anchor}^XG${formatStoragePath(p.storedAs, true)},1,1^FS`;
+    const recall = recallStoragePath(p);
+    if (recall) {
+      const path = formatStoragePath(recall, true);
+      const m = recallMagnification(p);
+      return `${anchor}${recallCommand(p) === '^IM' ? `^IM${path}` : `^XG${path},${m.x},${m.y}`}^FS`;
     }
     if (!cached) {
       // Headless host (MCP sidecar) has no image store; the imported ^GFA

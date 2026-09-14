@@ -299,20 +299,20 @@ describe("generateMultiPageZplWithMap on overlay pages", () => {
   });
 
   it("terminates an unmodelled field ^XZ closed as well", () => {
-    // No object span marks the ^IM field, so the guard must read the bytes.
-    const src = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^FO10,60^IMR:LOGO.GRF\n^XZ";
+    // No object span marks the undecodable ^GF field, so the guard must read the bytes.
+    const src = "^XA\n^FO10,10^A0N,30,30^FDa^FS\n^FO10,60^GFA,4,4,0,00FFFF00\n^XZ";
     const page = importZplText(src, label.dpmm).pages[0];
     if (!page?.overlay) throw new Error("fixture");
     const out = generateMultiPageZplWithMap(label, [
       { ...page, objects: [...page.objects, fresh()] } as Page,
     ]);
-    expect(out.text).toMatch(/\^IMR:LOGO\.GRF\n\^FS\n\^FO[^\n]*\^FDFresh\^FS\n\^XZ$/);
+    expect(out.text).toMatch(/\^GFA,4,4,0,00FFFF00\n\^FS\n\^FO[^\n]*\^FDFresh\^FS\n\^XZ$/);
     // An overlay saved before the flag existed appends as it always did.
     const { openTail: _legacy, ...legacy } = page.overlay;
     const old = generateMultiPageZplWithMap(label, [
       { ...page, overlay: legacy, objects: [...page.objects, fresh()] } as Page,
     ]);
-    expect(old.text).toMatch(/\^IMR:LOGO\.GRF\n\^FO[^\n]*\^FDFresh\^FS\n\^XZ$/);
+    expect(old.text).toMatch(/\^GFA,4,4,0,00FFFF00\n\^FO[^\n]*\^FDFresh\^FS\n\^XZ$/);
   });
 
   const tornImport = () => {

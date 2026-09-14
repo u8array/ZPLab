@@ -5,6 +5,8 @@
 // stays byte-identical. The source is not stored: it equals the segment texts
 // joined (see overlayText), so keeping it would duplicate every byte (including
 // large ^GF/~DY graphic payloads) in persistence and every undo snapshot.
+// An upload segment's entity is its storage key: it replays only while the model
+// still ships exactly those bytes, else it drops and the model re-emits them.
 
 import { z } from "zod";
 
@@ -15,7 +17,17 @@ export type ConfigFieldKey = string;
 export type OverlaySegment =
   | { kind: "raw"; text: string }
   | { kind: "object"; objectId: string; text: string }
-  | { kind: "config"; field: ConfigFieldKey; text: string };
+  | { kind: "config"; field: ConfigFieldKey; text: string }
+  | UploadSegment;
+
+/** A ~DG/~DY graphic upload; `short` when its payload is shorter than declared, so replaying it would
+ *  make the printer read the following commands as graphic data. */
+export interface UploadSegment {
+  kind: "upload";
+  key: string;
+  short?: true;
+  text: string;
+}
 
 /** Folded label-home/top (^LH/^LT) of the block. Regenerated objects must be
  *  emitted relative to this, because the raw ^LH/^LT commands still execute on
@@ -81,15 +93,18 @@ export interface BlockOverlay {
   head?: FormatHead;
 }
 
-/** Overlay schema version; bump when segmentation changes so a stale persisted
- *  overlay can be detected and rebuilt instead of mis-replayed. */
+/** Overlay schema version; bump when the shape of existing segments changes so a stale persisted
+ *  overlay is rebuilt instead of mis-replayed. A new kind leaves older overlays valid: their bytes stay raw. */
 export const OVERLAY_VERSION = 3;
 
 /** A model-linked source span `[start, end)` within a block. */
 export interface LinkedSpan {
   start: number;
   end: number;
-  link: { kind: "object"; objectId: string } | { kind: "config"; field: ConfigFieldKey };
+  link:
+    | { kind: "object"; objectId: string }
+    | { kind: "config"; field: ConfigFieldKey }
+    | { kind: "upload"; key: string; short?: true };
 }
 
 /** Slice `source` into segments: each linked span becomes an object/config
@@ -110,10 +125,13 @@ export function buildBlockOverlay(
     if (span.start < cursor) throw new Error(`overlapping overlay span at ${span.start}`);
     if (span.start > cursor) segments.push({ kind: "raw", text: source.slice(cursor, span.start) });
     const text = source.slice(span.start, span.end);
+    const link = span.link;
     segments.push(
-      span.link.kind === "object"
-        ? { kind: "object", objectId: span.link.objectId, text }
-        : { kind: "config", field: span.link.field, text },
+      link.kind === "object"
+        ? { kind: "object", objectId: link.objectId, text }
+        : link.kind === "config"
+          ? { kind: "config", field: link.field, text }
+          : { kind: "upload", key: link.key, ...(link.short ? { short: true as const } : {}), text },
     );
     cursor = span.end;
   }
@@ -142,6 +160,7 @@ const overlaySegmentSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("raw"), text: z.string() }),
   z.object({ kind: z.literal("object"), objectId: z.string(), text: z.string() }),
   z.object({ kind: z.literal("config"), field: z.string(), text: z.string() }),
+  z.object({ kind: z.literal("upload"), key: z.string(), short: z.literal(true).optional(), text: z.string() }),
 ]);
 
 /** Validates a persisted overlay. A stale-version or malformed value is rejected

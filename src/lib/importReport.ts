@@ -28,16 +28,18 @@ const LOSS_KEY: Record<ImportLossCause, keyof ReportStrings> = {
   printerComms: 'lossPrinterComms',
   gfRawBinary: 'lossGfRawBinary',
   qrFdMode: 'lossQrFdMode',
-  fileStorage: 'lossFileStorage',
-  printerStorage: 'lossPrinterStorage',
+  storedGraphic: 'lossStoredGraphic',
+  shortPayload: 'lossShortPayload',
+  recallMagnification: 'lossRecallMagnification',
+  checksumMismatch: 'lossChecksumMismatch',
   fnPartialInsert: 'lossFnPartialInsert',
 };
 
-/** Returns the loss description for a partial command code, e.g. "^A@" → font face note. */
-function partialLoss(cmd: string, tr: ReportStrings): string {
-  const entry = catalogEntry(cmd);
-  if (!entry?.loss) return tr.partialFallback;
-  return LOSS_SUBSTITUTIONS.reduce((s, [m, v]) => s.replace(m, v), tr[LOSS_KEY[entry.loss]]);
+/** Loss description of a partial: the finding's own cause, else the catalog row's. */
+function partialLoss(f: ImportFinding, tr: ReportStrings): string {
+  const loss = f.loss ?? catalogEntry(f.command)?.loss;
+  if (!loss) return tr.partialFallback;
+  return LOSS_SUBSTITUTIONS.reduce((s, [m, v]) => s.replace(m, v), tr[LOSS_KEY[loss]]);
 }
 
 /**
@@ -57,7 +59,7 @@ export function describeFinding(
   if (f.kind === 'partial') {
     return {
       title: tr.partialTitleFmt.replace('{cmd}', f.command),
-      detail: partialLoss(f.command, tr),
+      detail: partialLoss(f, tr),
     };
   }
   if (f.kind === 'browserLimit') {

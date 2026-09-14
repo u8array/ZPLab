@@ -3,6 +3,7 @@ import type { LabelObject } from "../../types/Group";
 import type { Variable } from "../../types/Variable";
 import type { PrinterProfile } from "../../types/PrinterProfile";
 import type { BlockOverlay, OverlayFrame } from "../zplOverlay/overlay";
+import type { ImportLossCause } from "../../catalog/schema";
 
 export type ImportFindingKind =
   | "partial"
@@ -33,7 +34,7 @@ export interface ImportFinding {
   kind: ImportFindingKind;
   /** Command token. For 'partial' the bare code (e.g. "^A@"). For
    *  'browserLimit' / 'unknown' the full token including parameters
-   *  (e.g. "^IM,R:LOGO.GRF"). For 'lossyEdit' a human-readable reason.
+   *  (e.g. "^GFA,8,8,0,…"). For 'lossyEdit' a human-readable reason.
    *  For 'unterminatedField' the ^FO/^FT token that opened the dropped field. For
    *  'hexControl' the hex escape as written. */
   command: string;
@@ -43,6 +44,8 @@ export interface ImportFinding {
   /** Which divergence a 'mixedPageGeometry' finding reports, so consumers
    *  pick their message without sniffing `command`. */
   cause?: 'size' | 'jm';
+  /** Why a 'partial' lost something when it is not the catalog row's usual loss. */
+  loss?: ImportLossCause;
   /** Source anchor, always stamped: a partial points at the command it
    *  names (even when raised later, at field flush); every other bucketed
    *  kind at the token being processed. Absent for post-parse kinds. */
@@ -170,9 +173,10 @@ export interface DecodedGraphic {
    *  into either `^GF` (inline) or `~DY` (preamble) without re-encoding. */
   gfaCache: string;
   crcOk: boolean;
+  /** Fewer bytes than the header declared. */
+  truncated: boolean;
 }
 
-/** Entry in the `~DY → ^XG` lookup map: a graphic uploaded earlier in the
- *  stream. Structurally a `DecodedGraphic` without the per-decode CRC flag;
- *  that lives on the partialCmds set instead of on every map entry. */
-export type UploadedGraphic = Omit<DecodedGraphic, "crcOk">;
+/** Entry in the upload → recall lookup map. A `DecodedGraphic` without the per-decode
+ *  verdicts, which live on the partials map instead of on every map entry. */
+export type UploadedGraphic = Omit<DecodedGraphic, "crcOk" | "truncated">;

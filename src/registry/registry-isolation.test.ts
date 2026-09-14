@@ -122,12 +122,12 @@ describe("registry isolation baseline", () => {
       "lib/zplSourceEdit.ts",
       "registry/index.ts",
     ];
-    // A spec that names its extension resolves as written; anything else tries
-    // ts/tsx and directory-index forms. Returning null is NOT a skip: the
+    // A spec that names its extension (ts, tsx, json data) resolves as written; anything
+    // else tries ts/tsx and directory-index forms. Returning null is NOT a skip: the
     // caller flags it, so the walk can never silently shrink the closure.
     const resolveRel = (fromFile: string, spec: string): string | null => {
       const base = join(dirname(fromFile), spec);
-      const cands = /\.tsx?$/.test(spec)
+      const cands = /\.(tsx?|json)$/.test(spec)
         ? [base]
         : [`${base}.ts`, `${base}.tsx`, join(base, "index.ts"), join(base, "index.tsx")];
       for (const cand of cands) {

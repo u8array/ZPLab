@@ -290,11 +290,11 @@ describe('importZplText: findings.pageIndex', () => {
   });
 
   it('stamps the correct page index across multiple blocks', () => {
-    // Page 0: clean. Page 1: ^A@ partial. Page 2: ^IM browser-limit + ^XX unknown.
+    // Page 0: clean. Page 1: ^A@ partial. Page 2: ^HT browser-limit + ^XX unknown.
     const zpl = [
       '^XA^FO0,0^A0N,30,0^FDclean^FS^XZ',
       '^XA^FO0,0^A@N,30,0,E:A.TTF^FDfont^FS^XZ',
-      '^XA^IMR:LOGO.GRF^XX99^XZ',
+      '^XA^HT^XX99^XZ',
     ].join('\n');
     const { report } = importZplText(zpl, 8);
     const byPage = (idx: number) =>
@@ -747,16 +747,16 @@ describe('replay-risk report helpers', () => {
   });
 
   it('drops findings on a removed page and remaps survivors to the new index', () => {
-    // Page 0 (setup-only, ^IM finding) is routed away; page 1 has an ^A@ partial.
+    // Page 0 (setup-only, ^HT finding) is routed away; page 1 has an ^A@ partial.
     const zpl =
-      '^XA^ST05,20,2026,12,00,00^IMR:LOGO.GRF^XZ\n' +
+      '^XA^ST05,20,2026,12,00,00^HT^XZ\n' +
       '^XA^FO0,0^A@N,20,0,E:A.TTF^FDx^FS^XZ';
     const imported = importZplText(zpl, 8);
     const { pages, keptPageIndexes } = routeSetupCommands('remove', imported);
     expect(pages).toHaveLength(1); // the setup-only page 0 is dropped
     expect(keptPageIndexes).toEqual([1]);
     const stripped = resolveRoutedReport(imported.report, keptPageIndexes);
-    // The removed page's ^IM finding is gone; the survivor is remapped to page 0.
+    // The removed page's ^HT finding is gone; the survivor is remapped to page 0.
     expect(stripped.browserLimit).toEqual([]);
     expect(stripped.findings.some((f) => f.kind === 'browserLimit')).toBe(false);
     const partial = stripped.findings.filter((f) => f.kind === 'partial');

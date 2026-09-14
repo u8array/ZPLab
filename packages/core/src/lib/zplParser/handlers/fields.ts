@@ -15,6 +15,7 @@ import { notePartial,
   type ParserState,
   spanInRest,
 } from "../context";
+import { storageKey } from "../../storagePath";
 import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, hexControlEscape, int, readJustify, readRotation, stripDataLineBreaks, stripLineWrap } from "../helpers";
 import type { SpannedToken } from "../context";
 import type { Handler, Wildcard } from "../types";
@@ -344,7 +345,7 @@ export function createFieldHandlers(
         (m) => m.alias !== alias,
       );
       const entry: CustomFontMapping = { alias, path };
-      if (s.fonts.downloadedFontPaths.has(path)) {
+      if (s.fonts.downloadedFontPaths.has(storageKey(path))) {
         // Bytes shipped via ~DY earlier, mark for re-emit and link the fontCache key.
         entry.embedInZpl = true;
         const colonIdx = path.indexOf(":");

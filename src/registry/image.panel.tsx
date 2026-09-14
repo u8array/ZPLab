@@ -19,7 +19,7 @@ import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { RotationSelect } from '../components/Properties/RotationSelect';
 import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
-import { isImageRotatable, type ImageProps } from '@zplab/core/registry/image';
+import { isImageRotatable, recallCommand, recallStoragePath, type ImageProps } from '@zplab/core/registry/image';
 
 export const imagePanel: ObjectTypeUi<ImageProps> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -88,7 +88,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
 
     return (
       <>
-        <StaticSectionCard title={t.properties.contentSection} cmd={p.storedAs ? "^XG" : "^GF"}>
+        <StaticSectionCard title={t.properties.contentSection} cmd={recallCommand(p) ?? "^GF"}>
           {/* Image select / upload */}
           <div className="flex flex-col gap-1">
             <label className={labelCls}>{t.registry.image.source}</label>
@@ -219,7 +219,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
               <>
                 <div className="grid grid-cols-[auto_1fr] gap-2">
                   <Select<string>
-                    value={storedAs.device}
+                    value={storedAs.device ?? 'R'}
                     aria-label={t.registry.image.storage}
                     onChange={(device) =>
                       onChange({ storedAs: { ...storedAs, device } })
@@ -247,7 +247,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
                   />
                 </div>
                 <span className="text-[10px] text-muted font-mono">
-                  {formatStoragePath(storedAs, true)}
+                  {formatStoragePath(recallStoragePath(p) ?? storedAs, true)}
                 </span>
                 <label className="flex items-center gap-2 cursor-pointer mt-1">
                   <input

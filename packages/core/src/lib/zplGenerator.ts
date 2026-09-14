@@ -24,13 +24,12 @@ import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig, PageLabel 
 import type { ZplEmitContext } from '../types/ZplEmit';
 import type { Variable } from '../types/Variable';
 import { exportableLeaves, isGroup, pageLabelConfig, type LabelObject, type LeafObject, type Page } from '../types/Group';
-import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan, type OverlayFrame } from './zplOverlay/overlay';
+import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan, type OverlayFrame, type UploadSegment } from './zplOverlay/overlay';
 import type { SourceSpan } from './zplParser/types';
 import { reconstructBlockHead } from './zplHeadScan';
 import { objectBoundsDots, qrPrintsAsGraphic, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
-import { imageEmitDims, imageEmitRotation, parseGfHeader, shippableGfa, type ImageProps } from '../registry/image';
-import { formatStoragePath } from './storagePath';
+import { graphicUploadLine, imageEmitDims, storedGraphicShips, uploadKey, type ImageProps } from '../registry/image';
 
 function formatDownloadObject(m: CustomFontMapping): string | undefined {
   if (!m.embedInZpl || !m.path || !m.previewFontName) return undefined;
@@ -43,18 +42,6 @@ function formatDownloadObject(m: CustomFontMapping): string | undefined {
 function emitFieldBody(obj: LeafObject, emitCtx: ZplEmitContext): string {
   const zpl = getEntry(obj.type)?.toZPL(obj, emitCtx) ?? '';
   return obj.comment ? `^FX${stripZplCommandChars(obj.comment)}\n${zpl}` : zpl;
-}
-
-function flattenObjects(objects: LabelObject[]): LabelObject[] {
-  const out: LabelObject[] = [];
-  const walk = (list: LabelObject[]): void => {
-    for (const o of list) {
-      if (isGroup(o)) walk(o.children);
-      else out.push(o);
-    }
-  };
-  walk(objects);
-  return out;
 }
 
 /** ^FO x/y maximum (spec p. 201). */
@@ -198,17 +185,6 @@ function formatSetOffset(
   return `^SO${clock},${slots.join(',')}`;
 }
 
-/** ~DY for a graphic upload. Format letter is preserved so :Z64: stays paired with C. */
-function formatGraphicUpload(p: ImageProps): string | undefined {
-  if (!p.storedAs) return undefined;
-  // Same resolver toZPL uses, so an unshippable cache falls back to a fresh
-  // encode here too instead of dropping the upload the ^XG depends on.
-  const cache = shippableGfa(p, imageEmitRotation(p));
-  const h = cache ? parseGfHeader(cache) : null;
-  if (!h) return undefined;
-  return `~DY${formatStoragePath(p.storedAs, false)},${h.format},G,${h.totalBytes},${h.bytesPerRow},${h.payload}`;
-}
-
 /** Head-less replay block, once a density decision is due: self-declares
  *  target -> keep, latch wire; contradiction, or due with no self-declaration
  *  -> regenerate; nothing due (target === wire) -> replay as-is. */
@@ -257,16 +233,20 @@ export function generateMultiPageZplWithMap(
   // blocks didn't set. `undefined` means nothing declared one yet, so a block
   // inheriting its ^JM from outside this export gets the declaration back.
   let wireJm: JmDensity | undefined;
+  const ledger = uploadLedger(pages);
   pages.forEach((p, pageIndex) => {
     const pageLabel = pageLabelConfig(label, p);
+    const carried = new Set((p.overlay?.segments ?? []).flatMap((seg) => (seg.kind === 'upload' ? [seg.key] : [])));
+    const policy = ledger.policyFor(carried);
+    const regenPage = () => generateZplBlock(pageLabel, p.objects, variables, undefined, policy.omit);
     let emitted: PageBlock;
     try {
-      emitted = emitPageBlock(pageLabel, p, variables);
+      emitted = emitPageBlock(pageLabel, p, variables, policy);
     } catch (err) {
       // A throw here is an unexpected bug, not an expected inconsistency (those
       // are handled internally); warn instead of failing silently, then regenerate.
       console.warn('emitPageBlock failed, regenerating page from model', err);
-      emitted = generateZplBlock(pageLabel, p.objects, variables);
+      emitted = regenPage();
     }
     // Unset means full density, so a page after a ^JMB page resets the wire;
     // while nothing is declared yet there is nothing to reset.
@@ -277,7 +257,7 @@ export function generateMultiPageZplWithMap(
     if (!emitted.head && target !== undefined) {
       const action = headlessAction(reconstructBlockHead(emitted.block).density, target, wireJm);
       if (action === 'regenerate') {
-        emitted = generateZplBlock(pageLabel, p.objects, variables);
+        emitted = regenPage();
       } else if (action === 'keep') {
         // applyJmDensity can't read a head-less block, so latch the wire here.
         wireJm = target;
@@ -294,7 +274,10 @@ export function generateMultiPageZplWithMap(
     // fallback page), so multi-page round-trips stay byte-identical and stable.
     if (out.length > 0 && !out.endsWith('\n')) out += '\n';
     const base = out.length;
-    out += block;
+    const sep = block.includes('\r\n') ? '\r\n' : '\n';
+    ledger.settle(carried, emitted.uploads ?? []);
+    const preamble = emitted.replayed ? ledger.shipFor(p.objects).map((l) => `${l}${sep}`).join('') : '';
+    out += preamble + block;
     blocks.push({ start: base, end: out.length });
     for (const s of emitted.spans) {
       // ^JM is legal before the first ^FS, so a recorded splice can sit INSIDE
@@ -312,8 +295,8 @@ export function generateMultiPageZplWithMap(
       spans.push({
         pageIndex,
         objectId: s.objectId,
-        start: base + s.start + startShift,
-        end: base + s.end + endShift,
+        start: base + preamble.length + s.start + startShift,
+        end: base + preamble.length + s.end + endShift,
       });
     }
   });
@@ -326,6 +309,47 @@ interface PageBlock {
   block: string;
   head: FormatHead | undefined;
   spans: ObjectSpan[];
+  replayed?: true;
+  /** Keys of the graphic uploads the block's bytes ship, replayed or emitted. */
+  uploads?: readonly string[];
+}
+
+/** How a replayed block treats its upload segments: `omit` names keys the wire already holds. */
+interface UploadPolicy {
+  omit: ReadonlySet<string>;
+  keep: (seg: UploadSegment) => boolean;
+}
+
+/** Tracks, block by block, which upload keys the wire holds and which a block carried but dropped. */
+function uploadLedger(pages: readonly Page[]) {
+  const edited = pages.some(pageEdited);
+  const state = edited ? classifyUploads(pages) : undefined;
+  const held = new Set<string>();
+  const lost = new Set<string>();
+  const hold = (keys: readonly string[]) => {
+    for (const key of keys) if (!state?.divergent.has(key)) held.add(key);
+  };
+  return {
+    /** A block never omits its own keys, since it may drop its upload bytes and then has to ship them. */
+    policyFor(carried: ReadonlySet<string>): UploadPolicy {
+      const omit = new Set([...held].filter((key) => !carried.has(key)));
+      return {
+        omit,
+        keep: (seg) => !omit.has(seg.key) && !seg.short && (!state || state.replayable.has(seg.key)),
+      };
+    },
+    /** Records what a block shipped. Keys it carried but dropped fall due for a later recall. */
+    settle(carried: ReadonlySet<string>, shipped: readonly string[]): void {
+      hold(shipped);
+      for (const key of carried) if (!held.has(key)) lost.add(key);
+    },
+    /** ~DY lines a replayed block owes the wire. Untouched, only what a regenerated block lost. */
+    shipFor(objects: LabelObject[]): string[] {
+      const shipped = graphicUploadLines(objects, (key) => !held.has(key) && (edited || lost.has(key)));
+      hold(shipped.keys);
+      return shipped.lines;
+    },
+  };
 }
 
 /** Block-relative [start, end) of one leaf's emitted bytes. */
@@ -417,20 +441,69 @@ function applyJmDensity(
   };
 }
 
-/** Emit one page from its overlay: verbatim segments for untouched objects,
- *  in-place regeneration for dirty ones, appended fields for new ones, raw
- *  segments (config/comments/unmodeled commands/whitespace) replayed as-is.
- *  Falls back to full regeneration when the overlay is missing/inconsistent,
- *  or when an edit exists in a block whose running state (^MU/prefix/^CI/^FE)
- *  would re-interpret a regenerated field.
- *  Single-block only: skips the wire-state ^JM pass, so it won't declare an
- *  inherited or head-less density; real exports use generateMultiPageZPL. */
-export function emitOverlayPage(
-  design: LabelConfig,
-  page: Page,
-  variables: readonly Variable[] = [],
-): string {
-  return emitPageBlock(pageLabelConfig(design, page), page, variables).block;
+/** `replayable`: keys still recalled by unchanged exported objects that agree on the raster, so their imported
+ *  upload bytes may replay. `divergent`: keys whose shipping objects disagree, so every recall page ships its own. */
+function classifyUploads(pages: readonly Page[]): { replayable: ReadonlySet<string>; divergent: ReadonlySet<string> } {
+  const recalled = new Set<string>();
+  const bytesByKey = new Map<string, string | undefined>();
+  const changed = new Set<string>();
+  const divergent = new Set<string>();
+  for (const page of pages) {
+    for (const obj of exportableLeaves(page.objects)) {
+      if (obj.type !== 'image') continue;
+      const p = obj.props as ImageProps;
+      const key = uploadKey(p);
+      if (!key) continue;
+      recalled.add(key);
+      if (obj.dirty) changed.add(key);
+      if (!storedGraphicShips(p)) continue;
+      if (bytesByKey.has(key) && bytesByKey.get(key) !== p._gfaCache) divergent.add(key);
+      bytesByKey.set(key, p._gfaCache);
+    }
+  }
+  return { replayable: new Set([...recalled].filter((key) => !changed.has(key) && !divergent.has(key))), divergent };
+}
+
+/** ~DY lines for the exported stored graphics, one per file; `wanted` narrows them to keys the wire lacks. */
+function graphicUploadLines(objects: LabelObject[], wanted?: (key: string) => boolean): { lines: string[]; keys: string[] } {
+  const lines: string[] = [];
+  const keys: string[] = [];
+  for (const obj of exportableLeaves(objects)) {
+    if (obj.type !== 'image') continue;
+    const p = obj.props as ImageProps;
+    const key = uploadKey(p);
+    if (!key || keys.includes(key) || (wanted && !wanted(key))) continue;
+    const dy = graphicUploadLine(p);
+    if (!dy) continue;
+    // Claimed only once the ~DY exists, else objects sharing the key recall a file nobody sent.
+    keys.push(key);
+    lines.push(dy);
+  }
+  return { lines, keys };
+}
+
+/** Whether any exported object of the page was changed, added, removed, hidden or reordered since
+ *  import; a page without an overlay is regenerated, so it counts as changed. */
+function pageEdited(page: Page): boolean {
+  const overlay = page.overlay;
+  if (!overlay) return true;
+  const segmentObjectOrder = overlay.segments.flatMap((s) => (s.kind === 'object' ? [s.objectId] : []));
+  const linked = new Set(segmentObjectOrder);
+  const exportable = exportableLeaves(page.objects);
+  const live = exportable.filter((l) => linked.has(l.id)).length;
+  return (
+    exportable.some((l) => l.dirty || !linked.has(l.id)) ||
+    live < linked.size ||
+    linkedOrderChanged(segmentObjectOrder, exportable)
+  );
+}
+
+function linkedOrderChanged(segmentObjectOrder: readonly string[], exportable: readonly LabelObject[]): boolean {
+  const exportableIds = new Set(exportable.map((l) => l.id));
+  const segmentIds = new Set(segmentObjectOrder);
+  const liveLinkedOrder = exportable.filter((l) => segmentIds.has(l.id)).map((l) => l.id);
+  const segmentLiveOrder = segmentObjectOrder.filter((id) => exportableIds.has(id));
+  return liveLinkedOrder.some((id, i) => id !== segmentLiveOrder[i]);
 }
 
 /** Overlay replay plus the head those bytes carry, so the ^JM pass patches a
@@ -439,11 +512,12 @@ function emitPageBlock(
   label: PageLabel,
   page: Page,
   variables: readonly Variable[] = [],
+  /** Absent for a lone block, which then replays every upload it holds. */
+  policy?: UploadPolicy,
 ): PageBlock {
+  const regen = () => generateZplBlock(label, page.objects, variables, undefined, policy?.omit);
   const overlay = page.overlay;
-  if (!overlay || !isOverlayConsistent(overlay)) {
-    return generateZplBlock(label, page.objects, variables);
-  }
+  if (!overlay || !isOverlayConsistent(overlay)) return regen();
 
   const exportable = exportableLeaves(page.objects);
   const exportableById = new Map(exportable.map((l) => [l.id, l]));
@@ -454,21 +528,16 @@ function emitPageBlock(
 
   // Order guard: segments are pinned to source order, so a reorder/reparent
   // (z-order, group, ungroup) that changes the relative order of segment-linked
-  // objects can't be expressed by per-segment patching. Detect it by comparing
-  // the live order of still-present linked objects against their segment order,
-  // and fall back to full regeneration (which emits in model order).
-  const liveLinkedOrder = exportable.filter((l) => segmentIds.has(l.id)).map((l) => l.id);
+  // objects can't be expressed by per-segment patching; regenerate in model order.
+  if (linkedOrderChanged(segmentObjectOrder, exportable)) return regen();
   const segmentLiveOrder = segmentObjectOrder.filter((id) => exportableById.has(id));
-  if (liveLinkedOrder.some((id, i) => id !== segmentLiveOrder[i])) {
-    return generateZplBlock(label, page.objects, variables);
-  }
   // New objects are appended after all segments, so they must sit at the model
   // tail. If a segment-linked object follows a new one in model order, appending
   // would reorder it; fall back to full regeneration (model order).
   let sawNew = false;
   for (const l of exportable) {
     if (!segmentIds.has(l.id)) sawNew = true;
-    else if (sawNew) return generateZplBlock(label, page.objects, variables);
+    else if (sawNew) return regen();
   }
 
   // Unsafe counted spans: linked segments re-emit from their wrapped model
@@ -510,7 +579,7 @@ function emitPageBlock(
     }
     rewrittenSegs.set(i, rewritten);
   });
-  if (fullRegen) return generateZplBlock(label, page.objects, variables);
+  if (fullRegen) return regen();
 
   const dirtyLeaves = exportable.filter(
     (l) => segmentIds.has(l.id) && (l.dirty || binarySegIds.has(l.id)),
@@ -521,12 +590,13 @@ function emitPageBlock(
   // non-regenSafe block is not, so fall back wholesale the moment an edit
   // (dirty or new) exists there.
   if ((dirtyLeaves.length > 0 || newLeaves.length > 0) && !overlay.regenSafe) {
-    return generateZplBlock(label, page.objects, variables);
+    return regen();
   }
-  // A delete is neither dirty nor new, so the edit gate above misses it.
-  // Removing a segment can expose a dropped field's raw bytes, which then print.
-  if (overlay.droppedField && segmentLiveOrder.length < segmentObjectOrder.length) {
-    return generateZplBlock(label, page.objects, variables);
+  // A delete or hide is neither dirty nor new, so the gate above misses it.
+  // It is still an edit of a non-regenSafe block, and it can expose a dropped field's raw bytes.
+  const removedFromExport = segmentLiveOrder.length < segmentObjectOrder.length;
+  if (removedFromExport && (overlay.droppedField || !overlay.regenSafe)) {
+    return regen();
   }
 
   // One shared emit context so a picked ^FE/^FC covers dirty and new fields alike.
@@ -562,8 +632,13 @@ function emitPageBlock(
     if (headerLines.length > 0) push(`${headerLines.join(sep)}${sep}`);
   };
 
+  const replayedUploads: string[] = [];
   for (const [i, seg] of overlay.segments.entries()) {
-    if (seg.kind === 'raw' || seg.kind === 'config') {
+    if (seg.kind !== 'object') {
+      if (seg.kind === 'upload') {
+        if (policy && !policy.keep(seg)) continue;
+        replayedUploads.push(seg.key);
+      }
       push(rewrittenSegs.get(i) ?? seg.text);
       continue;
     }
@@ -632,7 +707,7 @@ function emitPageBlock(
   const head = overlay.head;
   // Appended spans are pushed last but can precede shifted ones; contract is ascending.
   spans.sort((a, b) => a.start - b.start);
-  return { block: result, head: head && headMatches(result, head) ? head : undefined, spans };
+  return { block: result, head: head && headMatches(result, head) ? head : undefined, spans, replayed: true, uploads: replayedUploads };
 }
 
 /** R: is volatile RAM, matches single-run batch scope. */
@@ -841,6 +916,7 @@ function generateZplBlock(
   objects: LabelObject[],
   variables: readonly Variable[] = [],
   bareFnSlots?: ReadonlySet<number>,
+  omitUploads?: ReadonlySet<string>,
 ): PageBlock {
   // ^PW/^LL are consumed in physical head dots (ZD230-verified), even under
   // ^JMB: the body's object dots emit in the effective (halved) scale, but the
@@ -856,24 +932,8 @@ function generateZplBlock(
     if (line) lines.push(line);
   }
 
-  // ~DY graphic uploads deduped by path; body ^XG recalls them.
-  const seenGraphics = new Set<string>();
-  for (const obj of flattenObjects(objects)) {
-    if (obj.type !== 'image') continue;
-    const p = obj.props as ImageProps;
-    if (!p.storedAs) continue;
-    // Recall-only: bytes uploaded out-of-band; ZPL only emits ^XG references.
-    if (p.storedAs.embedInZpl === false) continue;
-    const key = formatStoragePath(p.storedAs, false);
-    if (seenGraphics.has(key)) continue;
-    const dy = formatGraphicUpload(p);
-    if (!dy) continue;
-    // Claimed only once an upload actually exists: reserving the path first
-    // meant one object whose bytes cannot be written silenced every later
-    // object sharing it, so each emitted its ^XG against a file nobody sent.
-    seenGraphics.add(key);
-    lines.push(dy);
-  }
+  const uploads = graphicUploadLines(objects, omitUploads && ((key) => !omitUploads.has(key)));
+  lines.push(...uploads.lines);
 
   // ~SD is immediate (not EEPROM), emit before ^XA so it applies to this label.
   if (label.instantDarkness !== undefined) {
@@ -1033,6 +1093,7 @@ function generateZplBlock(
     block: aliased.join('\n'),
     head: { caret: '^', at: headAt, jmSpans },
     spans,
+    uploads: uploads.keys,
   };
 }
 

@@ -1,4 +1,5 @@
 import { expect } from 'vitest';
+import { zlibSync } from 'fflate';
 import type { SerialMode } from '@zplab/core/registry/serialField';
 import { parseZPL, type ImportFindingKind } from '@zplab/core/lib/zplParser';
 
@@ -45,3 +46,23 @@ export const props = (
   obj: { type?: string; props?: unknown } | undefined,
 ): Record<string, unknown> =>
   (obj?.props ?? {}) as Record<string, unknown>;
+
+/** CRC-16/XMODEM over the base64 text, the checksum a :Z64: wrapper carries. */
+export function testCrc16(s: string): string {
+  let crc = 0;
+  for (const ch of s) {
+    crc ^= ch.charCodeAt(0) << 8;
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xffff : (crc << 1) & 0xffff;
+    }
+  }
+  return crc.toString(16).padStart(4, '0').toUpperCase();
+}
+
+export function makeZ64Field(bytes: Uint8Array): string {
+  const deflated = zlibSync(bytes);
+  let bin = '';
+  for (const b of deflated) bin += String.fromCharCode(b);
+  const b64 = btoa(bin);
+  return `:Z64:${b64}:${testCrc16(b64)}`;
+}

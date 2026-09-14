@@ -325,8 +325,8 @@ export function formatCloseFor(state: EditorState, page: number): number | null 
   const closes: number[] = [];
   tree.iterate({
     enter: (n) => {
-      // ~XZ closes too: the core parser reads XA/XZ prefix-blind, and the apply follows it.
-      if (!NAME_NODES.has(n.name) || readCommandName(state, n).name !== "XZ") return undefined;
+      // Only the caret form closes a format; the core parser reports ~XZ as unknown.
+      if (!NAME_NODES.has(n.name) || readCommandName(state, n).id !== "^XZ") return undefined;
       closes.push(n.from);
       return false;
     },

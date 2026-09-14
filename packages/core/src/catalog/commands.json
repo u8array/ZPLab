@@ -1228,10 +1228,11 @@
       "title": "image load",
       "summary": "Loads a stored image at the start of a format and anchors it at the label origin.",
       "support": {
-        "web": "no",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
-      }
+      },
+      "loss": "storedGraphic"
     },
     {
       "cmd": "IM",
@@ -1242,11 +1243,11 @@
       "title": "image move",
       "summary": "Places a stored image at the current field position without scaling it.",
       "support": {
-        "web": "no",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
       },
-      "loss": "fileStorage"
+      "loss": "storedGraphic"
     },
     {
       "cmd": "ID",
@@ -1285,11 +1286,10 @@
       "title": "download graphic",
       "summary": "Downloads an ASCII-hex graphic into printer memory under a reusable name.",
       "support": {
-        "web": "no",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
-      },
-      "loss": "printerStorage"
+      }
     },
     {
       "cmd": "DN",
@@ -1401,7 +1401,8 @@
         "web": "yes",
         "desktop": "yes",
         "lint": "no"
-      }
+      },
+      "loss": "storedGraphic"
     },
     {
       "cmd": "MN",

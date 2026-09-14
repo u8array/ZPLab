@@ -280,9 +280,9 @@ describe("mcp-server tools", () => {
   });
 
   it("validate_zpl surfaces commands it could not fully model", () => {
-    // ^IM needs printer storage (browserLimit); ^JU is a setup command (replayRisk).
-    const v = ok(validateZpl("^XA^FO10,10^FDX^FS^IMR:LOGO.GRF^JUS^XZ"));
-    expect(v.findings.browserLimit.some((c) => c.startsWith("^IM"))).toBe(true);
+    // ^HT needs a printer to answer (browserLimit); ^JU is a setup command (replayRisk).
+    const v = ok(validateZpl("^XA^FO10,10^FDX^FS^HT^JUS^XZ"));
+    expect(v.findings.browserLimit).toEqual(["^HT"]);
     expect(v.findings.replayRisk).toContain("^JU");
   });
 
@@ -456,12 +456,12 @@ describe("mcp-server tools", () => {
   // Roundtrip guarantee: unmodeled commands survive import → export via the
   // captured overlay instead of being silently dropped.
   it("re-exports unmodeled commands verbatim after import_zpl", () => {
-    const imported = ok(importZpl("^XA^FO10,10^A0N,30,30^FDX^FS^IMR:LOGO.GRF^JUS^XZ"));
-    expect(imported.findings.browserLimit.some((c) => c.startsWith("^IM"))).toBe(true);
+    const imported = ok(importZpl("^XA^FO10,10^A0N,30,30^FDX^FS^HT^JUS^XZ"));
+    expect(imported.findings.browserLimit).toEqual(["^HT"]);
     const back = exportZpl(imported.designFile);
     expect(back.ok).toBe(true);
     if (!back.ok) return;
-    expect(back.zpl).toContain("^IMR:LOGO.GRF");
+    expect(back.zpl).toContain("^HT");
     expect(back.zpl).toContain("^JUS");
   });
 
@@ -1034,12 +1034,12 @@ describe("what a patch must not touch", () => {
   });
 
   it("keeps the import overlay when the call changes nothing", () => {
-    const imported = importZpl("^XA^FN1^FDA^FS^FO10,10^A0N,30,30^FE#^FDx #1#^FS^IMR:LOGO.GRF^XZ", 8);
+    const imported = importZpl("^XA^FN1^FDA^FS^FO10,10^A0N,30,30^FE#^FDx #1#^FS^HT^XZ", 8);
     expect(imported.ok).toBe(true);
     if (!imported.ok) return;
     const name = imported.designFile.variables?.[0]?.name ?? "";
     const r = ok(patchDesign(imported.designFile, [{ op: "updateVariable", name, newName: name }]));
-    expect(ok(exportZpl(r.designFile)).zpl).toContain("^IMR:LOGO.GRF");
+    expect(ok(exportZpl(r.designFile)).zpl).toContain("^HT");
   });
 
   it("never hands out an id the design already holds", () => {

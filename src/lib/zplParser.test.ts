@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { zlibSync } from 'fflate';
 import { parseZPL, BY_CONSUMING_BARCODE_TYPES } from '@zplab/core/lib/zplParser';
 import { generateZPL } from '@zplab/core/lib/zplGenerator';
 import { formatLabelMetaComment } from '@zplab/core/lib/zplLabelMeta';
 import { objectBoundsDots } from '@zplab/core/lib/objectBounds';
 import { ObjectRegistry } from '@zplab/core/registry';
-import { defined, props, serialOf, parseSingle, commandsOf } from '../test/helpers';
+import { defined, props, serialOf, parseSingle, commandsOf, makeZ64Field, testCrc16 } from '../test/helpers';
 import { parseGfWrapper } from '@zplab/core/lib/zplParser/decoders/crc';
 
 // Drift guard for the bare-^BY hazard set. Every 1D and postal barcode emits a
@@ -35,29 +34,6 @@ describe('BY_CONSUMING_BARCODE_TYPES drift guard', () => {
     }
   });
 });
-
-/** CRC-16/XMODEM; same variant used by the parser to validate
- *  :B64:/:Z64: wrappers (poly 0x1021, init 0x0000). Duplicated here so
- *  tests can build valid CRC values without exporting the parser's
- *  internal helper. */
-function testCrc16(s: string): string {
-  let crc = 0;
-  for (const ch of s) {
-    crc ^= ch.charCodeAt(0) << 8;
-    for (let j = 0; j < 8; j++) {
-      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xffff : (crc << 1) & 0xffff;
-    }
-  }
-  return crc.toString(16).padStart(4, '0').toUpperCase();
-}
-
-function makeZ64Field(bytes: Uint8Array): string {
-  const deflated = zlibSync(bytes);
-  let bin = '';
-  for (const b of deflated) bin += String.fromCharCode(b);
-  const b64 = btoa(bin);
-  return `:Z64:${b64}:${testCrc16(b64)}`;
-}
 
 // ── label config ──────────────────────────────────────────────────────────────
 
@@ -1698,66 +1674,6 @@ describe('parseZPL — raw binary ^GF payloads', () => {
   });
 });
 
-// ── ~DY graphic upload + ^XG recall ──────────────────────────────────────────
-
-describe('parseZPL — ~DY + ^XG graphic upload/recall', () => {
-  // 1 byte per row × 4 rows → pattern [0x00, 0xFF, 0xFF, 0x00] (horizontal stripe).
-  const HEX = '00FFFF00';
-  const PATH = 'R:LOGO';
-
-  it('registers a ~DY graphic upload and ^XG instantiates it as an image', () => {
-    const zpl =
-      `~DY${PATH},A,G,4,1,${HEX}\n` +
-      `^XA^FO50,80^XG${PATH}.GRF,1,1^FS^XZ`;
-    const { objects, findings } = parseSingle(zpl, 8);
-    expect(objects).toHaveLength(1);
-    expect(objects[0]?.type).toBe('image');
-    expect(props(objects[0]).widthDots).toBe(8);
-    expect(props(objects[0]).storedAs).toEqual({ device: 'R', name: 'LOGO', embedInZpl: true });
-    expect(objects[0]?.x).toBe(50);
-    expect(objects[0]?.y).toBe(80);
-    expect(commandsOf({ findings }, 'browserLimit')).toHaveLength(0);
-  });
-
-  it('resolves ^XG even when the .GRF suffix is omitted', () => {
-    // Labelary accepts `^XGR:LOGO,1,1` for an upload stored as
-    // `R:LOGO.GRF`; the map lookup must normalise both forms.
-    const zpl =
-      `~DYR:LOGO,A,G,4,1,00FFFF00\n` +
-      `^XA^FO50,80^XGR:LOGO,1,1^FS^XZ`;
-    const { objects, findings } = parseSingle(zpl, 8);
-    expect(objects).toHaveLength(1);
-    expect(props(objects[0]).storedAs).toEqual({ device: 'R', name: 'LOGO', embedInZpl: true });
-    expect(commandsOf({ findings }, 'browserLimit')).toHaveLength(0);
-  });
-
-  it('^XG without a preceding ~DY imports as recall-only image', () => {
-    // Admin pre-loaded the file on the printer; we just emit the ^XG
-    // reference without ~DY bytes. Object is created so the user can
-    // position/edit it; embedInZpl=false stops the emitter from
-    // re-uploading bytes we never received.
-    const zpl = `^XA^FO0,0^XGR:MISSING.GRF,1,1^FS^XZ`;
-    const { objects, findings } = parseSingle(zpl, 8);
-    expect(objects).toHaveLength(1);
-    expect(props(objects[0]).storedAs).toEqual({
-      device: 'R', name: 'MISSING', embedInZpl: false,
-    });
-    expect(commandsOf({ findings }, 'partial')).toContain('^XG');
-  });
-
-  it('accepts :Z64:-wrapped graphic payloads in ~DY (format C)', () => {
-    const bytes = new Uint8Array([0, 0xff, 0xff, 0]);
-    const field = makeZ64Field(bytes);
-    const zpl =
-      `~DY${PATH},C,G,4,1,${field}\n` +
-      `^XA^FO0,0^XG${PATH}.GRF,1,1^FS^XZ`;
-    const { objects, findings } = parseSingle(zpl, 8);
-    expect(objects).toHaveLength(1);
-    expect(props(objects[0]).storedAs).toEqual({ device: 'R', name: 'LOGO', embedInZpl: true });
-    expect(commandsOf({ findings }, 'partial')).not.toContain('~DY');
-  });
-});
-
 // ── ^LR label reverse ─────────────────────────────────────────────────────────
 
 describe('parseZPL — ^LR label reverse', () => {
@@ -1855,7 +1771,7 @@ describe('parseZPL — printer params', () => {
     expect(r.labelConfig.backfeedSequence).toBeUndefined();
     expect(r.labelConfig.mirror).toBeUndefined();
     expect(r.labelConfig.printSpeed).toBeUndefined();
-    expect(commandsOf(r, 'deviceAction')).toEqual(expect.arrayContaining(['^JS', '~PM', '~PR']));
+    expect(commandsOf(r, 'deviceAction')).toEqual(expect.arrayContaining(['^JSA', '~PMY123456,3', '~PR2']));
   });
 
   it('routes ~PH/~PP as device actions without touching the model', () => {
@@ -2575,23 +2491,16 @@ describe('parseZPL — pending field state cleared at ^FS', () => {
 // ── ~ commands (tilde) ────────────────────────────────────────────────────────
 
 describe('parseZPL — ~ tilde commands', () => {
-  it('tokenizes ~DG as a known command (skipped)', () => {
-    const parsed = parseSingle('^XA~DGR:LOGO.GRF,1024,10,FF^XZ', 8);
-    const skipped = [...commandsOf(parsed, 'browserLimit'), ...commandsOf(parsed, 'unknown')];
-    expect(skipped.some((s) => s.startsWith('~DG'))).toBe(true);
-  });
-
-  it('does not create objects for ~DG', () => {
-    const { objects } = parseSingle('^XA~DGR:LOGO.GRF,1024,10,FF^XZ', 8);
+  it('registers ~DG as an upload without creating an object', () => {
+    const { objects, findings } = parseSingle('^XA~DGR:LOGO.GRF,1,1,FF^XZ', 8);
     expect(objects).toHaveLength(0);
+    expect(findings).toEqual([]);
   });
 
   it('handles mixed ^ and ~ commands', () => {
-    const parsed = parseSingle('^XA~DGR:TEST.GRF,10,1,FF^FO10,20^A0N,30,0^FDHello^FS^XZ', 8);
-    const skipped = [...commandsOf(parsed, 'browserLimit'), ...commandsOf(parsed, 'unknown')];
-    expect(parsed.objects).toHaveLength(1);
-    expect(parsed.objects[0]?.type).toBe('text');
-    expect(skipped.some((s) => s.startsWith('~DG'))).toBe(true);
+    const parsed = parseSingle('^XA~DGR:TEST.GRF,1,1,FF^FO10,20^A0N,30,0^FDHello^FS^XZ', 8);
+    expect(parsed.objects.map((o) => o.type)).toEqual(['text']);
+    expect(parsed.findings).toEqual([]);
   });
 });
 
@@ -2614,10 +2523,11 @@ describe('parseZPL — change caret / tilde / delimiter (^CC ^CT ^CD)', () => {
   });
 
   it('^CT switches the tilde prefix without affecting ^ commands', () => {
-    const zpl = '^XA^CT!^FO10,10^A0N,30,0^FDhello^FS!DGR:LOGO.GRF,10,1,FF^XZ';
+    const zpl = '^XA^CT!^FO10,10^A0N,30,0^FDhello^FS!DGR:LOGO.GRF,4,1,00FFFF00^FO0,0^XGR:LOGO.GRF,1,1^FS^XZ';
     const { objects, findings } = parseSingle(zpl, 8);
-    expect(objects).toHaveLength(1);
-    expect(commandsOf({ findings }, 'browserLimit').some((s) => s.startsWith('~DG'))).toBe(true);
+    expect(objects.map((o) => o.type)).toEqual(['text', 'image']);
+    expect(props(objects[1]).widthDots).toBe(8);
+    expect(findings).toEqual([]);
   });
 
   it('^CD switches the parameter delimiter', () => {
@@ -2684,7 +2594,7 @@ describe('parseZPL — change caret / tilde / delimiter (^CC ^CT ^CD)', () => {
   it('rejects ^CC / ^CT / ^CD args that would collapse role boundaries', () => {
     // ^CC~ would make caret == tilde (tokenizer cannot distinguish);
     // ^CD^ would make delimiter == caret (param-split eats command chars).
-    // Invalid args land in partialCmds and the prefix stays unchanged.
+    // Invalid args land in partials and the prefix stays unchanged.
     const zpl = '^XA^CC~^CD^^FO10,10^A0N,30,0^FDhello^FS^XZ';
     const { objects, findings } = parseSingle(zpl, 8);
     expect(objects).toHaveLength(1);
@@ -2828,17 +2738,6 @@ describe('splitTlc39Content', () => {
   });
 });
 
-// ── ^IM image reference ───────────────────────────────────────────────────────
-
-describe('parseZPL — ^IM image reference', () => {
-  it('adds ^IM to skipped (cannot load printer images)', () => {
-    const parsed = parseSingle('^XA^FO0,0^IMR:LOGO.GRF^FS^XZ', 8);
-    const skipped = [...commandsOf(parsed, 'browserLimit'), ...commandsOf(parsed, 'unknown')];
-    expect(parsed.objects).toHaveLength(0);
-    expect(skipped.some((s) => s.startsWith('^IM'))).toBe(true);
-  });
-});
-
 // ── \\& line break in ^FB ─────────────────────────────────────────────────────
 
 describe('parseZPL — \\& line break in ^FB', () => {
@@ -2912,14 +2811,14 @@ describe('parseZPL — partial findings', () => {
 });
 
 describe('parseZPL — browserLimit findings', () => {
-  it('records ^IM as browserLimit', () => {
-    const { findings } = parseSingle('^XA^FO0,0^IMR:LOGO.GRF^FS^XZ', 8);
-    expect(commandsOf({ findings }, 'browserLimit').some((s) => s.startsWith('^IM'))).toBe(true);
+  it('records ^HT as browserLimit', () => {
+    const { findings } = parseSingle('^XA^HT^XZ', 8);
+    expect(commandsOf({ findings }, 'browserLimit')).toEqual(['^HT']);
   });
 
-  it('records ~DG as browserLimit', () => {
-    const { findings } = parseSingle('^XA~DGR:LOGO.GRF,1024,10,FF^XZ', 8);
-    expect(commandsOf({ findings }, 'browserLimit').some((s) => s.startsWith('~DG'))).toBe(true);
+  it('records an upload in a format it cannot decode as browserLimit', () => {
+    const { findings } = parseSingle('^XA~DYR:LOGO,P,P,4,1,00FFFF00^XZ', 8);
+    expect(commandsOf({ findings }, 'browserLimit').some((s) => s.startsWith('~DY'))).toBe(true);
   });
 });
 
@@ -2937,10 +2836,10 @@ describe('parseZPL — unknown findings', () => {
   });
 
   it('surfaces unknown/browserLimit tokens without a trailing newline', () => {
-    const parsed = parseSingle('^XA\n^XX99\n^IMR:LOGO.GRF\n^XZ', 8);
+    const parsed = parseSingle('^XA\n^XX99\n^HT\n^XZ', 8);
     const skipped = [...commandsOf(parsed, 'browserLimit'), ...commandsOf(parsed, 'unknown')];
     expect(commandsOf(parsed, 'unknown')).toContain('^XX99');
-    expect(commandsOf(parsed, 'browserLimit')).toContain('^IMR:LOGO.GRF');
+    expect(commandsOf(parsed, 'browserLimit')).toContain('^HT');
     for (const s of [...commandsOf(parsed, 'unknown'), ...commandsOf(parsed, 'browserLimit'), ...skipped]) {
       expect(s).toBe(s.trimEnd());
     }
@@ -2951,11 +2850,16 @@ describe('parseZPL — unknown findings', () => {
     expect(commandsOf({ findings }, 'unknown')).toContain('~QQ1,2');
   });
 
-  it('does not bake a line break into a truncated ~DY summary token', () => {
-    // Short malformed ~DY: rest ended with \n before the appended ellipsis,
-    // where the push-site trim cannot reach.
+  it('reports a short malformed ~DY as written, without its line break', () => {
     const { findings } = parseSingle('^XA\n~DYR:X,Q,G,10,2,ZZ\n^XZ', 8);
-    expect(commandsOf({ findings }, 'browserLimit')).toContain('~DYR:X,Q,G,10,2,ZZ…');
+    expect(commandsOf({ findings }, 'browserLimit')).toContain('~DYR:X,Q,G,10,2,ZZ');
+  });
+
+  it('truncates a long malformed ~DY payload with an ellipsis', () => {
+    const { findings } = parseSingle(`^XA\n~DYR:X,Q,G,10,2,${'Z'.repeat(200)}\n^XZ`, 8);
+    const [token] = commandsOf({ findings }, 'browserLimit');
+    expect(token?.endsWith('…')).toBe(true);
+    expect(defined(token).length).toBeLessThan(100);
   });
 
   it('preserves an undecodable ^GFB format as an opaque verbatim image', () => {
@@ -2981,7 +2885,7 @@ describe('parseZPL — unknown findings', () => {
 
 describe('parseZPL: page findings', () => {
   it('emits one finding per kind with the page index stamped', () => {
-    const zpl = '^XA^FO0,0^A@N,30,0,E:ARIAL.TTF^FDText^FS^IMR:LOGO.GRF^XX99^XZ';
+    const zpl = '^XA^FO0,0^A@N,30,0,E:ARIAL.TTF^FDText^FS^HT^XX99^XZ';
     const { findings } = parseSingle(zpl, 8);
     const kinds = findings.map((f) => f.kind);
     expect(kinds).toContain('partial');
@@ -2990,10 +2894,10 @@ describe('parseZPL: page findings', () => {
     expect(findings.every((f) => f.pageIndex === 0)).toBe(true);
     // Tripwire: findings emit in source order. A pipeline split that
     // collects unknowns / browser-limits in a separate pass would
-    // reorder these. Order: ^A@ (L1 partial) → ^IM (L1 browserLimit) →
+    // reorder these. Order: ^A@ (L1 partial) → ^HT (L1 browserLimit) →
     // ^XX (L1 unknown).
     expect(findings.map((f) => f.command)).toEqual([
-      '^A@', '^IMR:LOGO.GRF', '^XX99',
+      '^A@', '^HT', '^XX99',
     ]);
   });
 

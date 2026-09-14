@@ -38,6 +38,12 @@ export function catalogEntry(command: string): ZplCommandEntry | undefined {
   return byId.get(`^${key}`) ?? byId.get(`~${key}`);
 }
 
+/** False only when the catalog knows the name under the other prefix alone: `^DG` is not `~DG`. */
+export function commandTakesPrefix(name: string, prefix: "^" | "~"): boolean {
+  if (catalogEntry(`${prefix}${name}`)) return true;
+  return catalogEntry(`${prefix === "^" ? "~" : "^"}${name}`) === undefined;
+}
+
 /** Row id of a spelled command, so `~HL` gives `^HL` and `^AB` gives `^A`, or undefined off the catalog. */
 export function catalogRow(command: string): string | undefined {
   const entry = catalogEntry(command);

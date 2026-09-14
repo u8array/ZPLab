@@ -172,7 +172,7 @@ Export a `.zpl` file to print or edit again later. To keep editor settings as we
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-115 of the 225 ZPL II commands are modelled in the browser; desktop covers 2 more with a connected printer. 4 more are planned for both builds. 82 need a connected printer and are planned for desktop. The source editor checks parameters for 1 command. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+118 of the 225 ZPL II commands are modelled in the browser; desktop covers 2 more with a connected printer. 4 more are planned for both builds. 79 need a connected printer and are planned for desktop. The source editor checks parameters for 1 command. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|
@@ -184,7 +184,7 @@ Export a `.zpl` file to print or edit again later. To keep editor settings as we
 | Encoding & language | 3 / 3 |
 | Clock & time | 4 / 4 |
 | Identity & access | 2 / 2 |
-| Graphics | 7 / 14 |
+| Graphics | 10 / 14 |
 | Media & feed | 9 / 9 |
 | Text & fonts | 9 / 15 |
 | Print quality | 10 / 18 |

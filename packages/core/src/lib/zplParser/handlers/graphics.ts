@@ -3,8 +3,8 @@ import type { EllipseProps } from "../../../registry/ellipse";
 import type { ImageProps } from "../../../registry/image";
 import type { LineProps } from "../../../registry/line";
 import { loadFontBytesSync } from "../../fontCache";
-import { formatStoragePath, parseStoragePath } from "../../storagePath";
-import { notePartial, getPosType, noteFieldInk, pushBrowserLimit, type ParserState, type PendingReverseBg } from "../context";
+import { parseStoragePath, recallCandidates, storageKey, uploadedGraphicPath, type StoragePath } from "../../storagePath";
+import { notePartial, getPosType, noteFieldInk, payloadSummary, pushBrowserLimit, REGEN_LOSSY_REASONS, type ParserState, type PendingReverseBg } from "../context";
 import type { LabelObject } from "../../../types/Group";
 import { decodeGraphicToImage } from "../decoders/graphic";
 import { preserveGfData } from "../decoders/gfa";
@@ -14,11 +14,6 @@ import { dotsFor, ftTopLeft, int, makeObj, readColor, readRotation } from "../he
 import type { Handler } from "../types";
 
 import { newId } from "../../ids";
-/** Characters of a `^GF`/`~DY` payload retained in browserLimit findings;
- *  rest is replaced with an ellipsis so a single multi-KB base64 blob
- *  doesn't drown out the import report. */
-const IMPORT_FINDING_PAYLOAD_LIMIT = 80;
-
 /** Helpers re-exported to parseZPL so the field flush can commit a stashed
  *  reverse-bg box just before the field that follows it. */
 export interface GraphicsExports {
@@ -32,13 +27,19 @@ export interface GraphicsFamily {
   helpers: GraphicsExports;
 }
 
-/** Graphic primitives (^GB/^GC/^GD/^GE/^GF/^GS/^XG/~DY) + reverse-bg commit. */
-export function createGraphicsHandlers(
-  s: ParserState,
-  takeComment: () => string | undefined,
+/** Graphic primitives (^GB/^GC/^GD/^GE/^GF/^GS), stored graphics (^XG/^IM/^IL/~DY/~DG) + reverse-bg commit. */
+export interface GraphicsHelpers {
+  takeComment: () => string | undefined;
   /** The stash's box just pushed: the one place that knows which bytes it came from. */
-  onReverseBgCommitted: (bg: PendingReverseBg, box: LabelObject) => void,
-): GraphicsFamily {
+  onReverseBgCommitted: (bg: PendingReverseBg, box: LabelObject) => void;
+  /** An object placed by its own command outside any field, so it owns that token's bytes. */
+  onStandaloneObject: (obj: LabelObject) => void;
+  /** A graphic upload registered under `key`; its token bytes become an upload segment. */
+  onUpload: (key: string, short: boolean) => void;
+}
+
+export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers): GraphicsFamily {
+  const { takeComment, onReverseBgCommitted, onStandaloneObject, onUpload } = helpers;
   const getReverseFlag = () => s.label.lrActive || s.field.frActive || undefined;
   const { dots } = dotsFor(s);
 
@@ -94,6 +95,99 @@ export function createGraphicsHandlers(
     const obj = makeObj(type, x, y, props, positionType, comment);
     if (justify === "R") obj.fieldJustify = "R";
     s.result.objects.push(obj);
+  };
+
+  /** Places the recall at the field position, or at `origin` for ^IL; true when an upload in the stream backed it. */
+  const recallStoredGraphic = (
+    code: "^XG" | "^IM" | "^IL",
+    parsed: StoragePath,
+    origin?: { x: number; y: number },
+    magnify?: { x: number; y: number },
+  ): boolean => {
+    commitPendingReverseBg();
+    const place = (w: number, h: number, props: ImageProps) => {
+      if (!origin) {
+        pushGraphic("image", w, h, props, takeComment());
+        return;
+      }
+      const obj = makeObj("image", origin.x, origin.y, props, "FO", takeComment());
+      s.result.objects.push(obj);
+      if (s.field.openedAt === null) onStandaloneObject(obj);
+    };
+    // ^IL moves as ^IM, which shares its extension range.
+    const source = code === "^XG" ? { ...(magnify ? { magnify } : {}) } : { recall: "IM" as const };
+    // Looked up as named, so a .PNG recall stays unresolved rather than guessed.
+    const uploaded = recallCandidates(parsed).map((key) => s.fonts.downloadedGraphics.get(key)).find(Boolean);
+    if (uploaded) {
+      place(uploaded.widthDots, uploaded.heightDots, {
+        imageId: uploaded.imageId,
+        widthDots: uploaded.widthDots,
+        heightDots: uploaded.heightDots,
+        threshold: 128,
+        _gfaCache: uploaded.gfaCache,
+        storedAs: { ...parsed, ...source, embedInZpl: true },
+      });
+      return true;
+    }
+    // Recall-only: embedInZpl=false keeps the reference without inventing bytes, and the placeholder square doubles as the ^FT footprint.
+    notePartial(s.result, code);
+    place(200, 200, {
+      imageId: "",
+      widthDots: 200,
+      threshold: 128,
+      storedAs: { ...parsed, ...source, embedInZpl: false },
+    });
+    return false;
+  };
+
+  /** The recall's path; null after reporting a browserLimit when it names none. */
+  const parseRecallPath = (code: "^XG" | "^IM" | "^IL", rest: string, raw: string, defaultDevice?: string): StoragePath | null => {
+    const parsed = parseStoragePath(raw, defaultDevice);
+    if (!parsed) {
+      noteFieldInk(s);
+      pushBrowserLimit(s.result, `${code}${rest}`);
+    }
+    return parsed;
+  };
+
+  const registerGraphicUpload = (
+    code: "~DY" | "~DG",
+    path: string,
+    fmt: "A" | "B" | "C",
+    size: number,
+    bytesPerRow: number,
+    data: string,
+    summary: string,
+  ) => {
+    const parsed = parseStoragePath(path, "R");
+    // Both counts are mandatory on the device: without them the download is ignored.
+    if (!parsed || !(bytesPerRow > 0) || !(size > 0)) {
+      pushBrowserLimit(s.result, summary);
+      return;
+    }
+    // Text payloads drag the stream terminator along; a counted binary one ends where the tokenizer cut it.
+    const image = decodeGraphicToImage(
+      fmt === "B" ? data : data.trimEnd(),
+      fmt,
+      bytesPerRow,
+      String(size),
+      String(size),
+      `uploaded_${path.replace(/[:.]/g, "_")}.png`,
+    );
+    if (!image) {
+      pushBrowserLimit(s.result, summary);
+      return;
+    }
+    if (!image.crcOk) notePartial(s.result, code, "checksumMismatch");
+    if (image.truncated) notePartial(s.result, code, "shortPayload");
+    const key = uploadedGraphicPath(parsed);
+    onUpload(key, image.truncated);
+    s.fonts.downloadedGraphics.set(key, {
+      imageId: image.imageId,
+      widthDots: image.widthDots,
+      heightDots: image.heightDots,
+      gfaCache: image.gfaCache,
+    });
   };
 
   const commitPendingReverseBg = () => {
@@ -177,11 +271,7 @@ export function createGraphicsHandlers(
     },
     GF(_, rest) {
       commitPendingReverseBg();
-      // Byte-counted payloads can be multi-KB binary; cap the finding text.
-      const gfSummary =
-        rest.length > IMPORT_FINDING_PAYLOAD_LIMIT
-          ? `^GF${rest.trimEnd().slice(0, IMPORT_FINDING_PAYLOAD_LIMIT)}…`
-          : `^GF${rest}`;
+      const gfSummary = payloadSummary("^GF", rest);
       // ^GF{A|B|C},{totalBytes},{totalBytes},{bytesPerRow},{payload}
       const format = rest[0]?.toUpperCase();
       if (format !== "A" && format !== "B" && format !== "C") {
@@ -252,7 +342,12 @@ export function createGraphicsHandlers(
         );
         return;
       }
-      if (!gfImage.crcOk) notePartial(s.result, "^GF");
+      if (!gfImage.crcOk) notePartial(s.result, "^GF", "checksumMismatch");
+      if (gfImage.truncated) {
+        notePartial(s.result, "^GF", "shortPayload");
+        // Replayed as written, the short field would swallow its neighbour.
+        s.fdRegenLossy ??= REGEN_LOSSY_REASONS.shortGraphic;
+      }
       const gfComment = takeComment();
       // Rotated-QR sidecar: rebuild the QR object, not an image. The emit anchors
       // via fieldPos, so keep the raw field coords, not pushGraphic's ftTopLeft.
@@ -340,59 +435,29 @@ export function createGraphicsHandlers(
     },
 
     // ── Recall stored graphic ──────────────────────────────────────────────
-    XG(_, rest) {
-      commitPendingReverseBg();
-      // ^XGd:f.x,mx,my, references a graphic uploaded earlier via ~DY.
-      // Two valid imports:
-      //  - With preceding ~DY in the stream: full image (bytes + storedAs
-      //    with embedInZpl=true) so re-emit produces the same upload+recall.
-      //  - Without ~DY: the printer is assumed to host the file out-of-band
-      //    (admin pre-loaded). Object gets storedAs.embedInZpl=false and
-      //    no cached bitmap; the canvas falls back to a placeholder, the
-      //    emitter skips the ~DY preamble but keeps the ^XG reference.
-      const firstComma = rest.indexOf(s.format.delimiterChar);
-      const xgPath = firstComma === -1 ? rest : rest.slice(0, firstComma);
-      const parsed = parseStoragePath(xgPath);
-      if (!parsed) {
-        noteFieldInk(s);
-        pushBrowserLimit(s.result, `^XG${rest}`);
-        return;
-      }
-      const uploaded = s.fonts.downloadedGraphics.get(formatStoragePath(parsed, true));
-      if (uploaded) {
-        pushGraphic(
-          "image",
-          uploaded.widthDots,
-          uploaded.heightDots,
-          {
-            imageId: uploaded.imageId,
-            widthDots: uploaded.widthDots,
-            heightDots: uploaded.heightDots,
-            threshold: 128,
-            _gfaCache: uploaded.gfaCache,
-            storedAs: { ...parsed, embedInZpl: true },
-          } satisfies ImageProps,
-          takeComment(),
-        );
-        return;
-      }
-      // Recall-only: no bytes available, but the ZPL is valid and the
-      // printer side is assumed to resolve. Surface as partial so the
-      // import report flags the degraded preview. No real dims; the square
-      // placeholder doubles as the ^FT footprint.
-      notePartial(s.result, "^XG");
-      pushGraphic(
-        "image",
-        200,
-        200,
-        {
-          imageId: "",
-          widthDots: 200,
-          threshold: 128,
-          storedAs: { ...parsed, embedInZpl: false },
-        } satisfies ImageProps,
-        takeComment(),
-      );
+    // ^XGd:o.x,mx,my references a graphic uploaded earlier via ~DY or ~DG.
+    XG(p, rest) {
+      const parsed = parseRecallPath("^XG", rest, p[0] ?? "");
+      if (!parsed) return;
+      // Magnification (spec p.373, 1-10) rides along for the export; the preview ignores it, hence the partial.
+      // A slot outside the range is not a factor the device honours, so it is read as 1.
+      const factor = (raw: string | undefined) => { const v = int(raw, 1); return v >= 1 && v <= 10 ? v : 1; };
+      const magnify = { x: factor(p[1]), y: factor(p[2]) };
+      const magnified = [p[1], p[2]].some((raw) => raw !== undefined && raw !== "" && raw !== "1");
+      const scaled = magnify.x !== 1 || magnify.y !== 1;
+      const resolved = recallStoredGraphic("^XG", parsed, undefined, scaled ? magnify : undefined);
+      if (resolved && magnified) notePartial(s.result, "^XG", "recallMagnification");
+    },
+    // ^IMd:o.x is ^XG without the magnification slots.
+    IM(p, rest) {
+      const parsed = parseRecallPath("^IM", rest, p[0] ?? "");
+      if (parsed) recallStoredGraphic("^IM", parsed);
+    },
+    // ^ILd:o.x merges a saved format at ^FO0,0 without a field of its own (spec p.247, p.183-184);
+    // it defaults to R: where ^XG/^IM search the devices.
+    IL(p, rest) {
+      const parsed = parseRecallPath("^IL", rest, p[0] ?? "", "R");
+      if (parsed) recallStoredGraphic("^IL", parsed, { x: s.label.lhX, y: s.label.lhY + s.label.ltY });
     },
 
     // ^GS{rotation},{height},{width}: selects the internal-font
@@ -417,14 +482,11 @@ export function createGraphicsHandlers(
       // KB of hex; we want to avoid splitting that into the rest of
       // the params array. Param layout up to and including bytes-per-
       // row is fixed-arity, so we walk commas until we've found 5.
+      const dySummary = payloadSummary("~DY", rest);
       const delim = s.format.delimiterChar;
       const c: number[] = [];
       for (let i = 0; i < rest.length && c.length < 5; i++) {
         if (rest[i] === delim) c.push(i);
-      }
-      if (c.length < 5) {
-        pushBrowserLimit(s.result, `~DY${rest}`);
-        return;
       }
       const [c0, c1, c2, c3, c4] = c;
       if (
@@ -434,7 +496,7 @@ export function createGraphicsHandlers(
         c3 === undefined ||
         c4 === undefined
       ) {
-        pushBrowserLimit(s.result, `~DY${rest}`);
+        pushBrowserLimit(s.result, dySummary);
         return;
       }
       const path = rest.slice(0, c0);
@@ -443,46 +505,9 @@ export function createGraphicsHandlers(
       const size = parseInt(rest.slice(c2 + 1, c3), 10);
       const dyBytesPerRow = parseInt(rest.slice(c3 + 1, c4), 10);
       const data = rest.slice(c4 + 1);
-      // trimEnd before slicing: a short rest ends with the line break, which
-      // would land mid-token where pushBrowserLimit's trim cannot reach.
-      const dySummary = `~DY${rest.trimEnd().slice(0, IMPORT_FINDING_PAYLOAD_LIMIT)}…`;
 
-      // Graphic uploads (~DY ...,A/B/C,G,...): decode via the same payload
-      // pipeline as ^GF, register the resulting image under the full
-      // device:stem.GRF path. A subsequent ^XG can then instantiate it.
       if (extCode === "G" && (fmt === "A" || fmt === "B" || fmt === "C")) {
-        if (!path || isNaN(dyBytesPerRow) || dyBytesPerRow <= 0) {
-          pushBrowserLimit(s.result, dySummary);
-          return;
-        }
-        const sizeStr = size > 0 ? String(size) : "";
-        const dyImage = decodeGraphicToImage(
-          data,
-          fmt,
-          dyBytesPerRow,
-          sizeStr,
-          sizeStr,
-          `uploaded_${path.replace(/[:.]/g, "_")}.png`,
-        );
-        if (!dyImage) {
-          pushBrowserLimit(s.result, dySummary);
-          return;
-        }
-        if (!dyImage.crcOk) notePartial(s.result, "~DY");
-        // Path normalisation: ~DY uses `device:stem` without extension; the
-        // ^XG side resolves `device:stem.GRF`. Store the `.GRF` form so the
-        // XG lookup is direct.
-        const parsedDyPath = parseStoragePath(path);
-        if (!parsedDyPath) {
-          pushBrowserLimit(s.result, dySummary);
-          return;
-        }
-        s.fonts.downloadedGraphics.set(formatStoragePath(parsedDyPath, true), {
-          imageId: dyImage.imageId,
-          widthDots: dyImage.widthDots,
-          heightDots: dyImage.heightDots,
-          gfaCache: dyImage.gfaCache,
-        });
+        registerGraphicUpload("~DY", path, fmt, size, dyBytesPerRow, data, dySummary);
         return;
       }
 
@@ -516,11 +541,29 @@ export function createGraphicsHandlers(
       const fullPath = path.includes(".") ? path : `${path}${ext}`;
       try {
         loadFontBytesSync(bytes, filename);
-        s.fonts.downloadedFontPaths.add(fullPath);
+        s.fonts.downloadedFontPaths.add(storageKey(fullPath));
       } catch {
         // Oversized or otherwise unloadable, surface as browser-limit.
         pushBrowserLimit(s.result, `~DY${path}`);
       }
+    },
+
+    // ~DGd:o.x,t,w,data: ASCII-hex twin of ~DY,A,G with the same total-bytes and bytes-per-row header.
+    DG(_p, rest) {
+      const delim = s.format.delimiterChar;
+      const c: number[] = [];
+      for (let i = 0; i < rest.length && c.length < 3; i++) {
+        if (rest[i] === delim) c.push(i);
+      }
+      const [c0, c1, c2] = c;
+      const dgSummary = payloadSummary("~DG", rest);
+      if (c0 === undefined || c1 === undefined || c2 === undefined) {
+        pushBrowserLimit(s.result, dgSummary);
+        return;
+      }
+      const size = parseInt(rest.slice(c0 + 1, c1), 10);
+      const bytesPerRow = parseInt(rest.slice(c1 + 1, c2), 10);
+      registerGraphicUpload("~DG", rest.slice(0, c0), "A", size, bytesPerRow, rest.slice(c2 + 1), dgSummary);
     },
   };
 

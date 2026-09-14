@@ -23,15 +23,19 @@ export function decodeGraphicToImage(
   // Headless (Node/MCP): no canvas to paint the bitmap; degrade to the same
   // browserLimit path as an undecodable payload.
   if (typeof document === "undefined") return null;
+  // b is the transmitted length, c the bitmap size (spec p.215); an omitted b falls back to c, as gfaDecode does.
   const decoded = gfPayloadToBytes(
     rawData,
     format,
     bytesPerRow,
-    Number.parseInt(totalBytesHeader, 10),
+    Number.parseInt(totalBytesHeader || dataBytesHeader, 10),
   );
   if (!decoded) return null;
   const widthDots = bytesPerRow * BITS_PER_BYTE;
-  const heightDots = Math.floor(decoded.data.length / bytesPerRow);
+  // Rows past c are not part of the image.
+  const bitmapBytes = Number.parseInt(dataBytesHeader, 10);
+  const budget = bitmapBytes > 0 ? Math.min(decoded.data.length, bitmapBytes) : decoded.data.length;
+  const heightDots = Math.floor(budget / bytesPerRow);
   if (heightDots <= 0) return null;
   const canvas = document.createElement("canvas");
   canvas.width = widthDots;
@@ -64,6 +68,11 @@ export function decodeGraphicToImage(
     width: widthDots,
     height: heightDots,
   });
+  const truncated = bitmapBytes > 0 && decoded.data.length < bitmapBytes;
+  // A short payload re-emits with the rows it really painted. Plain hex carries b equal to c.
+  const dataBytes = truncated ? String(heightDots * bytesPerRow) : dataBytesHeader;
+  const plainHex = format === "A" && !/^\s*:[ZB]64:/.test(rawData);
+  const totalBytes = truncated && plainHex ? dataBytes : totalBytesHeader;
   return {
     imageId,
     widthDots,
@@ -72,7 +81,8 @@ export function decodeGraphicToImage(
     // spec form, p.1602); b then equals c per the uncompressed convention.
     gfaCache: decoded.raw
       ? `^GFA,${decoded.data.length},${decoded.data.length},${bytesPerRow},${wrapGfB64(decoded.data)}`
-      : `^GF${format},${totalBytesHeader},${dataBytesHeader},${bytesPerRow},${rawData}`,
+      : `^GF${format},${totalBytes},${dataBytes},${bytesPerRow},${rawData}`,
     crcOk: decoded.crcOk,
+    truncated,
   };
 }

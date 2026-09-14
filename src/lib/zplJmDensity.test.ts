@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parseZPL } from '@zplab/core/lib/zplParser';
-import { emitOverlayPage, generateMultiPageZPL, generateZPL } from '@zplab/core/lib/zplGenerator';
+import { generateMultiPageZPL, generateZPL } from '@zplab/core/lib/zplGenerator';
 import { importZplText, rebaseAppendedPageDensity } from '@zplab/core/lib/zplImportService';
 import { parseDesignFile, serializeDesign } from '@zplab/core/lib/designFile';
 import { effectiveDpmm, type JmDensity, type LabelConfig, type PageLabel } from "@zplab/core/types/LabelConfig";
@@ -302,7 +302,7 @@ describe('^JM density', () => {
       ...page,
       objects: page.objects.map((o, i) => (i === 0 ? { ...o, x: first.x + 5, dirty: true } : o)),
     };
-    const out = emitOverlayPage({ widthMm: 100, heightMm: 50, dpmm: 8, ...r.labelConfig }, edited, r.variables);
+    const out = generateMultiPageZPL({ widthMm: 100, heightMm: 50, dpmm: 8, ...r.labelConfig }, [edited], r.variables);
     expect(out).toContain('^JMB');
   });
 
@@ -462,7 +462,7 @@ describe('^JM format-head lookahead', () => {
   it('ignores ~JM (not a real command): no density, routed as a device action', () => {
     const r = parseZPL('^XA~JMB^PW400^XZ', 8);
     expect(r.labelConfig.jmDensity).toBeUndefined();
-    expect(r.pages[0]?.findings.some((f) => f.kind === 'deviceAction' && f.command === '~JM')).toBe(true);
+    expect(r.pages[0]?.findings.some((f) => f.kind === 'deviceAction' && f.command === '~JMB')).toBe(true);
   });
 
   it('a post-first-^FS in-span ^JM is a no-op, so it does not force a lossy regen', () => {

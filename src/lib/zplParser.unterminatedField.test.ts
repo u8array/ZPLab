@@ -131,9 +131,9 @@ describe('parseZPL — field without ^FS before the next ^FO/^FT', () => {
     expect(zpl.slice(next.start, next.end)).toMatch(/^\^FXnote/);
   });
 
-  it('counts content the model cannot carry: ^IM, a filled ^GB stash', () => {
-    const im = parseSingle(`${HEAD}^FO10,10^IMR:LOGO.GRF^FO10,60^A0N,30,30^FDb^FS^XZ`, 8);
-    expect(commandsOf(im, 'unterminatedField')).toEqual(['^FO10,10']);
+  it('counts content the model cannot carry: an undecodable ^GF, a filled ^GB stash', () => {
+    const gf = parseSingle(`${HEAD}^FO10,10^GFA,4,4,0,00FFFF00^FO10,60^A0N,30,30^FDb^FS^XZ`, 8);
+    expect(commandsOf(gf, 'unterminatedField')).toEqual(['^FO10,10']);
     const stash = parseSingle(`${HEAD}^FO10,10^GB200,60,60^FO40,40^A0N,30,30^FDb^FS^XZ`, 8);
     expect(stash.objects.map((o) => o.type)).toEqual(['text']);
     expect(commandsOf(stash, 'unterminatedField')).toEqual(['^FO10,10']);

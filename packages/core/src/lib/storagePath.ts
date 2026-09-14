@@ -1,5 +1,6 @@
-// Zebra storage paths: bare `device:name` (~DY) vs `device:name.ext` (^XG).
+// Zebra storage paths: bare `device:name` on upload, `device:name.ext` on recall.
 
+import { escapeRegExp } from "./escapeRegExp";
 import { newId } from "./ids";
 
 /** R volatile RAM, E flash, B alt flash, A alias. */
@@ -16,27 +17,59 @@ export function defaultStorageName(): string {
 }
 
 export interface StoragePath {
-  device: string;
+  /** Absent when the source named none. */
+  device?: string;
   name: string;
+  /** Only when the reference names something other than the implicit `.GRF`, e.g. a `.PNG` recall. */
+  ext?: string;
 }
 
-/** ^GF uploads persist as `{path}.GRF` on the device. */
 const GRAPHIC_EXT = "GRF";
 
-/** Drops extension; null on missing `:`. */
-export function parseStoragePath(raw: string): StoragePath | null {
+/** Drops the implicit `.GRF` and keeps other extensions. A missing device takes `defaultDevice`, an empty name gives null. */
+export function parseStoragePath(raw: string, defaultDevice?: string): StoragePath | null {
   const colonAt = raw.indexOf(":");
-  if (colonAt <= 0) return null;
-  const device = raw.slice(0, colonAt);
+  const device = colonAt > 0 ? raw.slice(0, colonAt) : defaultDevice;
   const stemWithExt = raw.slice(colonAt + 1);
   // dotAt === 0 means stem starts with `.`; treated as malformed via empty-name guard.
   const dotAt = stemWithExt.lastIndexOf(".");
   const name = dotAt === -1 ? stemWithExt : stemWithExt.slice(0, dotAt);
   if (!name) return null;
-  return { device, name };
+  const ext = dotAt === -1 ? "" : stemWithExt.slice(dotAt + 1);
+  const path: StoragePath = { name };
+  if (device) path.device = device;
+  if (ext && ext.toUpperCase() !== GRAPHIC_EXT) path.ext = ext;
+  return path;
 }
 
-/** withExt true: `device:name.GRF` (^XG); false: bare `device:name` (~DY). */
+/** Writes the recall spelling `device:name.ext`, or the bare `device:name` a ~DY names. */
 export function formatStoragePath(p: StoragePath, withExt: boolean): string {
-  return withExt ? `${p.device}:${p.name}.${GRAPHIC_EXT}` : `${p.device}:${p.name}`;
+  const device = p.device ? `${p.device}:` : "";
+  return withExt ? `${device}${p.name}.${p.ext || GRAPHIC_EXT}` : `${device}${p.name}`;
+}
+
+/** Object names are case-insensitive on the device and R: is where a path without a device lives. */
+export function storageKey(path: string): string {
+  const colonAt = path.indexOf(":");
+  const device = colonAt > 0 ? path.slice(0, colonAt) : "R";
+  return `${device}:${colonAt === -1 ? path : path.slice(colonAt + 1)}`.toUpperCase();
+}
+
+/** Keys a recall may resolve under: the named device, else the search order (spec p.373). */
+export function recallCandidates(p: StoragePath): string[] {
+  const devices = p.device ? [p.device] : STORAGE_DEVICES;
+  return devices.map((device) => storageKey(formatStoragePath({ ...p, device }, true)));
+}
+
+/** ^ID pattern as a test over `device:name.ext`: `*` is the only wildcard, device defaults to R: and extension to .GRF (spec p.245). */
+export function storagePathMatcher(pattern: string): (path: string) => boolean {
+  const withDevice = storageKey(pattern);
+  const full = withDevice.includes(".") ? withDevice : `${withDevice}.${GRAPHIC_EXT}`;
+  const re = new RegExp(`^${escapeRegExp(full).replace(/\\\*/g, ".*")}$`);
+  return (path) => re.test(storageKey(path));
+}
+
+/** The file a ~DG/~DY upload persists: R: unless named, `.GRF` whatever the path said (spec p.175, p.181). */
+export function uploadedGraphicPath(p: StoragePath): string {
+  return storageKey(formatStoragePath({ device: p.device, name: p.name }, true));
 }

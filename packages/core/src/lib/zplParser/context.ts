@@ -1,5 +1,6 @@
 import type { LabelObject } from "../../types/Group";
 import type { SourceSpan } from "./types";
+import type { ImportLossCause } from "../../catalog/schema";
 import type { LabelConfig } from "../../types/LabelConfig";
 import type { PrinterProfile } from "../../types/PrinterProfile";
 import type { Variable } from "../../types/Variable";
@@ -14,7 +15,15 @@ import type { ZplRotation } from "../../registry/rotation";
 import { DEFAULT_CLOCK_CHARS, type ClockChars } from "../fcTemplate";
 import { effectiveDpmm } from "../../types/LabelConfig";
 import { CMD_HEAD_LEN, getDecoder, hasTruncatingByte } from "./helpers";
+import { storagePathMatcher } from "../storagePath";
 import type { UploadedGraphic } from "./types";
+
+/** A partial import of one command for one cause, anchored at that command's own bytes. */
+export interface PartialNote {
+  command: string;
+  loss?: ImportLossCause;
+  span?: SourceSpan;
+}
 
 /** Pending ^GB stash so a filled-black box commits just before the following
  *  field, sitting behind it (e.g. the black box an ^FR text knocks out of). */
@@ -44,6 +53,7 @@ export const REGEN_LOSSY_REASONS = {
   code128: "a Code 128 escape stream the export re-escapes",
   qr: "QR field data or settings the export normalises",
   fnEmbed: "an ^FN embed form the export normalises",
+  shortGraphic: "a graphic payload shorter than its declared count, which the export re-emits at its real length",
 } as const;
 
 export type RegenLossyReason = (typeof REGEN_LOSSY_REASONS)[keyof typeof REGEN_LOSSY_REASONS];
@@ -67,11 +77,12 @@ export interface ParserResult {
   labelConfig: Partial<LabelConfig>;
   printerProfile: Partial<PrinterProfile>;
   variables: Variable[];
-  partialCmds: Set<string>;
-  /** First-seen span per partial code; swapped with `partialCmds` per page. */
-  partialSpans: Map<string, SourceSpan>;
+  /** One entry per command and cause, first-seen span; swapped per page. */
+  partials: Map<string, PartialNote>;
   /** Span of the token currently being processed; the loop updates it. */
   tokenSpan?: SourceSpan;
+  /** Untrimmed end of that token: a counted payload may end in bytes that read as whitespace. */
+  tokenEnd?: number;
   /** Last span per bare command code; notePartial anchors partials here. */
   lastSpanByCmd: Map<string, SourceSpan>;
   /** Trimmed end of the token before the current one: where an open field's
@@ -210,7 +221,7 @@ export interface FieldState {
   objBase: number;
   /** The reverse-bg stash pending at the opener, so a discard tells its own stash from an inherited one. */
   bgAtOpen: PendingReverseBg | null;
-  /** Content with no object to count: ^IM, or a ^GF/^XG whose object push was skipped. */
+  /** Content with no object to count: a ^GF or recall whose object push was skipped. */
   inkWithoutObject: boolean;
   /** ^FN seen since this opener. Such a slot dies with the field, while a slot
    *  armed before the opener survives it, measured on a format recalled by ^XF. */
@@ -335,21 +346,48 @@ export interface ParserState {
   fnDefaultCandidates: Map<number, FnDefaultCandidate>;
 }
 
+/** Payload chars kept in a finding; the rest becomes an ellipsis so one multi-KB blob does not drown out the import report. */
+export const IMPORT_FINDING_PAYLOAD_LIMIT = 80;
+
+// Trim first so a trailing line break cannot push a short payload over the limit.
+export function payloadSummary(prefix: string, rest: string): string {
+  const text = rest.trimEnd();
+  return text.length > IMPORT_FINDING_PAYLOAD_LIMIT
+    ? `${prefix}${text.slice(0, IMPORT_FINDING_PAYLOAD_LIMIT)}…`
+    : `${prefix}${text}`;
+}
+
 /** trimEnd: `token` carries `rest` up to the next command, which in multi-line
  *  ZPL includes the trailing newline (noise in this diagnostic surface). */
 export function pushBrowserLimit(result: ParserResult, token: string): void {
   result.browserLimit.push({ command: token.trimEnd(), span: result.tokenSpan });
 }
 
+/** ^ID runs in stream order, so a later recall of a deleted upload must miss like on the printer. */
+export function deleteStoredObjects(s: ParserState, pattern: string): void {
+  if (!pattern) return;
+  const matches = storagePathMatcher(pattern);
+  for (const path of [...s.fonts.downloadedGraphics.keys()]) {
+    if (matches(path)) s.fonts.downloadedGraphics.delete(path);
+  }
+  for (const path of [...s.fonts.downloadedFontPaths]) {
+    if (matches(path)) s.fonts.downloadedFontPaths.delete(path);
+  }
+  // The alias stops resolving for later fields; customFonts stays, earlier fields still map through it.
+  for (const [alias, path] of [...s.fonts.aliases]) {
+    if (matches(path)) s.fonts.aliases.delete(alias);
+  }
+}
+
 /** Partial-command funnel: dedup set plus first-seen span, recorded at the
  *  source instead of a loop-side growth watch (which fails wrong on paths
  *  that skip it). A partial names a command code, so it anchors at that
  *  command's own bytes, not the token that happened to raise it. */
-export function notePartial(result: ParserResult, code: string): void {
-  result.partialCmds.add(code);
-  if (result.partialSpans.has(code)) return;
+export function notePartial(result: ParserResult, code: string, loss?: ImportLossCause): void {
+  const key = `${code} ${loss ?? ""}`;
+  if (result.partials.has(key)) return;
   const span = result.lastSpanByCmd.get(code.slice(1)) ?? result.tokenSpan;
-  if (span) result.partialSpans.set(code, span);
+  result.partials.set(key, { command: code, loss, span });
 }
 
 /** Something the printer would put on the label for the open field: data, an
@@ -455,8 +493,7 @@ export function resetFieldBlockDefaults(defaults: DefaultsState): void {
  *  ^CC/^CT/^CD, ^CI, ^CW/fonts, ^CF/^BY, ^LH/^LT/^LR) carries on. Field state
  *  resets too: a page closing mid-field must not leak a dangling ^FH/^FB. */
 export function resetFormatScopedState(s: ParserState): void {
-  s.result.partialCmds = new Set();
-  s.result.partialSpans = new Map();
+  s.result.partials = new Map();
   s.result.lastSpanByCmd = new Map();
   s.varScopeStart = s.result.variables.length;
   s.serialStrippedFns.clear();
@@ -484,8 +521,7 @@ export function createParserState(): ParserState {
       labelConfig: {},
       printerProfile: {},
       variables: [],
-      partialCmds: new Set<string>(),
-      partialSpans: new Map<string, SourceSpan>(),
+      partials: new Map<string, PartialNote>(),
       lastSpanByCmd: new Map<string, SourceSpan>(),
       prevTokenEnd: 0,
       unterminated: [],

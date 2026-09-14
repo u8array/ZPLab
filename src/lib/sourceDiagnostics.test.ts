@@ -40,6 +40,18 @@ describe("buildSourceDiagnostics", () => {
     ]);
   });
 
+  it("explains a recall-only graphic with the stored-graphic loss", () => {
+    for (const command of ["^XG", "^IM", "^IL"]) {
+      const f: ImportFinding = { kind: "partial", command, pageIndex: 0 };
+      expect(describeFinding(f, en.importReport).detail).toBe(en.importReport.lossStoredGraphic);
+    }
+  });
+
+  it("prefers a finding's own loss cause over the catalog row", () => {
+    const f: ImportFinding = { kind: "partial", command: "^GF", pageIndex: 0, loss: "shortPayload" };
+    expect(describeFinding(f, en.importReport).detail).toBe(en.importReport.lossShortPayload);
+  });
+
   it("names a truncating hex escape by its own bytes", () => {
     const f: ImportFinding = { kind: "hexControl", command: "_0A", pageIndex: 0, span: { start: 20, end: 23 } };
     expect(buildSourceDiagnostics(null, [f], en)).toEqual([

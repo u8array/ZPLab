@@ -130,11 +130,11 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^GC` | circle | `[x]` | `[x]` | `[ ]` |
 | `^GF` | monochrome bitmap | `[x]` | `[x]` | `[ ]` |
 | `^GS` | graphic symbol | `[x]` | `[x]` | `[ ]` |
-| `^IL` | image load | `[ ]` | `[~]` | `[ ]` |
-| `^IM` | image move | `[ ]` | `[~]` | `[ ]` |
+| `^IL` | image load | `[x]` | `[x]` | `[ ]` |
+| `^IM` | image move | `[x]` | `[x]` | `[ ]` |
 | `^ID` | delete stored graphics, fonts and formats | `[ ]` | `[~]` | `[ ]` |
 | `^IS` | image save | `[ ]` | `[x]` | `[ ]` |
-| `~DG` | download graphic | `[ ]` | `[~]` | `[ ]` |
+| `~DG` | download graphic | `[x]` | `[x]` | `[ ]` |
 | `~DN` | abort download | `[ ]` | `[~]` | `[ ]` |
 | `~DY` | download font / graphic | `[x]` | `[x]` | `[ ]` |
 | `~EG` | erase download graphics | `[ ]` | `[~]` | `[ ]` |
