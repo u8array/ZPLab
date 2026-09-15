@@ -12,7 +12,7 @@ import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
 import { stripLineWrap, stripTrailingSpaces, tokenize, trimmedSpanEnd } from "./zplParser/helpers";
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
 import { qrPrintsAsGraphic } from "./objectBounds";
-import { commandTakesPrefix } from "../catalog";
+import { commandTakesPrefix, commandTwinSplit } from "../catalog";
 import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, openTailHasContent, payloadSummary, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField } from "./zplParser/context";
 import { createCloseField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
@@ -154,6 +154,13 @@ export const BY_CONSUMING_BARCODE_TYPES = new Set<string>([
   "pdf417", "code49", "micropdf417", "codablock", "tlc39",
 ]);
 
+/** Commands whose replay acts on the device, not the design. A catalog rule cannot stand in: web
+ *  support "no" plus a handler also holds for ^FM, ^HT and ^LF. */
+export const DEVICE_ACTION_IDS: ReadonlySet<string> = new Set([
+  "~JA", "~JC", "~JD", "~JE", "^JI", "~JI", "~JR", "^ID", "^IS", "~EG",
+  "~PH", "~PP", "~PM", "~PR", "^JS",
+]);
+
 /** Commands defining persistent state a later field may consume implicitly;
  *  in-span they make single-field regen unsafe (the span replace drops the
  *  definition). ^BY absent: consumers self-flag via sawBareBarcode; ^JM is
@@ -289,20 +296,7 @@ export function parseZPL(
   Object.assign(handlers, createFieldHandlers(s, { closeField, appendComment }));
   Object.assign(handlers, graphicsFamily.handlers);
   const setupScriptHandlers = createSetupScriptHandlers(s);
-  // Setup-Script codes are profile-backed (routable on import); device actions
-  // are not, hence a separate finding kind, listed explicitly because their
-  // handlers sit among the design noops (^FM). Label settings (^MD/^PR/…) and
-  // ~DY font uploads are intentionally not flagged.
   const replayRiskCodes = new Set(Object.keys(setupScriptHandlers));
-  const deviceActionCodes = new Set([
-    "JA", "JC", "JD", "JE", "JI", "JR", "ID", "IS", "EG",
-  ]);
-  // Handler map keys carry no prefix, so same-letter commands split at dispatch by the token's
-  // source char: ~PH/~PP are immediate forms of the modelled ^PH/^PP, ~PM/~PR are unrelated
-  // device commands, and ~JM does not exist but must stay out of the ^JM density handler.
-  const tildeDeviceCodes = new Set(["PH", "PP", "PM", "PR", "JM"]);
-  // The mirror case: ~JS (backfeed) is modelled, ^JS selects a media sensor on the device.
-  const caretDeviceCodes = new Set(["JS"]);
   // Commands whose last param is literal data, where a trailing space is real (^SN, ^SF, ^A@), not line-wrap noise.
   const LITERAL_TAIL_CMDS = new Set(["SN", "SF", "A@"]);
   Object.assign(handlers, setupScriptHandlers);
@@ -523,30 +517,23 @@ export function parseZPL(
     s.result.prevTokenEnd = s.result.tokenSpan?.end ?? 0;
     s.result.tokenSpan = { start, end: trimmedSpanEnd(zpl, start, end) };
     s.result.tokenEnd = end;
+    s.result.tokenCommand = `${zpl[start]}${cmd}`;
     s.result.lastSpanByCmd.set(cmd, s.result.tokenSpan);
     // Strips trailing break plus indent from the last literal param; LITERAL_TAIL_CMDS keep real trailing spaces.
     const unwrapped = stripLineWrap(rest);
     const p = unwrapped.split(s.format.delimiterChar);
-    // Device findings name bytes that replay verbatim, so they carry the source spelling with its target, capped.
-    const sourceToken = payloadSummary(`${zpl[start]}${cmd}`, unwrapped);
+    const sourceToken = payloadSummary(s.result.tokenCommand, unwrapped);
     const last = p[p.length - 1];
     if (!LITERAL_TAIL_CMDS.has(cmd) && last !== undefined && /\S/.test(last)) {
       p[p.length - 1] = stripTrailingSpaces(last);
     }
-    // Flag printer-config commands: lossless replay re-emits them, so they run
-    // on the user's printer at print/export. Recorded by code (deduped later).
-    // A device twin is flagged AND skipped, else it falls through to the unknown bucket and surfaces twice.
-    const deviceTwin = tildeDeviceCodes.has(cmd) ? s.format.tildeChar : caretDeviceCodes.has(cmd) ? s.format.caretChar : null;
-    if (deviceTwin !== null && zpl[start] === deviceTwin) {
-      deviceAction.push({ command: sourceToken, span: s.result.tokenSpan });
-      s.comment.run = null;
-      continue;
-    }
+    // Lossless replay re-emits these, so they run on the user's printer at print or export.
     const prefix = zpl[start] === s.format.tildeChar ? "~" : "^";
+    const canonical = `${prefix}${cmd}`;
     const takesPrefix = commandTakesPrefix(cmd, prefix);
-    // Setup-Script findings are keyed by code for routing; device actions keep their target.
-    if (takesPrefix && replayRiskCodes.has(cmd)) replayRisk.push({ command: `${zpl[start]}${cmd}`, span: s.result.tokenSpan });
-    else if (takesPrefix && deviceActionCodes.has(cmd)) deviceAction.push({ command: sourceToken, span: s.result.tokenSpan });
+    // The device action quotes its payload: the report must name the bytes that will run.
+    if (takesPrefix && replayRiskCodes.has(cmd)) replayRisk.push({ command: s.result.tokenCommand, span: s.result.tokenSpan });
+    else if (takesPrefix && DEVICE_ACTION_IDS.has(canonical)) deviceAction.push({ command: sourceToken, span: s.result.tokenSpan });
     // Balance bookkeeping needs the token offset and the state the handler is
     // about to flip, so it sits here rather than in the two handlers.
     if (takesPrefix && (cmd === "XA" || cmd === "XZ")) {
@@ -564,7 +551,9 @@ export function parseZPL(
         openXa = { at: start, cmd: cmdText };
       }
     }
-    const handler = takesPrefix ? handlers[cmd] ?? wildcards.find((w) => w.matches(cmd))?.handle : undefined;
+    const handler = takesPrefix
+      ? handlers[canonical] ?? (commandTwinSplit(cmd) ? undefined : handlers[cmd]) ?? wildcards.find((w) => w.matches(cmd))?.handle
+      : undefined;
     if (handler) {
       // The field's object base as this token found it: a stash the closing
       // flush commits must not count as this field's own object.

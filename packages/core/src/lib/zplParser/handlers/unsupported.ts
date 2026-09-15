@@ -4,12 +4,9 @@ import type { Handler } from "../types";
 /** Commands with no model: noops, storage actions, and the ones needing printer hardware. */
 export function createUnsupportedHandlers(s: ParserState): Record<string, Handler> {
   const noop: Handler = () => void 0;
-  const mkBrowserLimit =
-    (prefix: string, delimiter = "^"): Handler =>
-    (_, rest) => pushBrowserLimit(s.result, `${delimiter}${prefix}${rest}`);
+  const browserLimit: Handler = (_, rest) => pushBrowserLimit(s.result, `${s.result.tokenCommand}${rest}`);
 
   return {
-    // Noops, present in stream, no design impact.
     FM: noop,
     JA: noop,
     JC: noop,
@@ -17,13 +14,17 @@ export function createUnsupportedHandlers(s: ParserState): Record<string, Handle
     JE: noop,
     JI: noop,
     JR: noop,
-    // Storage writes are reported by the loop as device actions; a delete also decides what a later recall resolves.
+    "~PH": noop,
+    "~PP": noop,
+    "~PM": noop,
+    "~PR": noop,
+    "^JS": noop,
+    // A delete decides what a later recall resolves.
     ID: (p) => deleteStoredObjects(s, p[0] ?? ""),
     IS: noop,
     // Spec p.185 only refers ~EG to ^ID, so its reach is taken from ^ID's defaults: R: and .GRF (p.245).
     EG: () => deleteStoredObjects(s, "R:*.GRF"),
-    // Browser-limit factories, surface as "not loaded" findings.
-    HT: mkBrowserLimit("HT"),
-    LF: mkBrowserLimit("LF"),
+    HT: browserLimit,
+    LF: browserLimit,
   };
 }

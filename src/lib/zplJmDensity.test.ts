@@ -459,10 +459,10 @@ describe('^JM format-head lookahead', () => {
     expect(postFs.pages[0]?.findings.some((f) => f.kind === 'partial' && f.command === '^JM')).toBe(true);
   });
 
-  it('ignores ~JM (not a real command): no density, routed as a device action', () => {
+  it('ignores ~JM (not a real command): no density, reported as unknown', () => {
     const r = parseZPL('^XA~JMB^PW400^XZ', 8);
     expect(r.labelConfig.jmDensity).toBeUndefined();
-    expect(r.pages[0]?.findings.some((f) => f.kind === 'deviceAction' && f.command === '~JMB')).toBe(true);
+    expect(r.pages[0]?.findings.some((f) => f.kind === 'unknown' && f.command === '~JMB')).toBe(true);
   });
 
   it('a post-first-^FS in-span ^JM is a no-op, so it does not force a lossy regen', () => {

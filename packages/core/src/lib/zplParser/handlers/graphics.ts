@@ -1,6 +1,6 @@
 import type { BoxProps } from "../../../registry/box";
 import type { EllipseProps } from "../../../registry/ellipse";
-import type { ImageProps } from "../../../registry/image";
+import { clampMagnification, type ImageProps } from "../../../registry/image";
 import type { LineProps } from "../../../registry/line";
 import { loadFontBytesSync } from "../../fontCache";
 import { parseStoragePath, recallCandidates, storageKey, uploadedGraphicPath, type StoragePath } from "../../storagePath";
@@ -140,12 +140,12 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     return false;
   };
 
-  /** The recall's path; null after reporting a browserLimit when it names none. */
-  const parseRecallPath = (code: "^XG" | "^IM" | "^IL", rest: string, raw: string, defaultDevice?: string): StoragePath | null => {
+  /** The recall's path, or null after pushing a browserLimit for a missing name. */
+  const parseRecallPath = (rest: string, raw: string, defaultDevice?: string): StoragePath | null => {
     const parsed = parseStoragePath(raw, defaultDevice);
     if (!parsed) {
       noteFieldInk(s);
-      pushBrowserLimit(s.result, `${code}${rest}`);
+      pushBrowserLimit(s.result, `${s.result.tokenCommand}${rest}`);
     }
     return parsed;
   };
@@ -271,7 +271,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     },
     GF(_, rest) {
       commitPendingReverseBg();
-      const gfSummary = payloadSummary("^GF", rest);
+      const gfSummary = payloadSummary(s.result.tokenCommand, rest);
       // ^GF{A|B|C},{totalBytes},{totalBytes},{bytesPerRow},{payload}
       const format = rest[0]?.toUpperCase();
       if (format !== "A" && format !== "B" && format !== "C") {
@@ -437,11 +437,9 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     // ── Recall stored graphic ──────────────────────────────────────────────
     // ^XGd:o.x,mx,my references a graphic uploaded earlier via ~DY or ~DG.
     XG(p, rest) {
-      const parsed = parseRecallPath("^XG", rest, p[0] ?? "");
+      const parsed = parseRecallPath(rest, p[0] ?? "");
       if (!parsed) return;
-      // Magnification (spec p.373, 1-10) rides along for the export; the preview ignores it, hence the partial.
-      // A slot outside the range is not a factor the device honours, so it is read as 1.
-      const factor = (raw: string | undefined) => { const v = int(raw, 1); return v >= 1 && v <= 10 ? v : 1; };
+      const factor = (raw: string | undefined) => clampMagnification(int(raw, 1));
       const magnify = { x: factor(p[1]), y: factor(p[2]) };
       const magnified = [p[1], p[2]].some((raw) => raw !== undefined && raw !== "" && raw !== "1");
       const scaled = magnify.x !== 1 || magnify.y !== 1;
@@ -450,13 +448,13 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     },
     // ^IMd:o.x is ^XG without the magnification slots.
     IM(p, rest) {
-      const parsed = parseRecallPath("^IM", rest, p[0] ?? "");
+      const parsed = parseRecallPath(rest, p[0] ?? "");
       if (parsed) recallStoredGraphic("^IM", parsed);
     },
     // ^ILd:o.x merges a saved format at ^FO0,0 without a field of its own (spec p.247, p.183-184);
     // it defaults to R: where ^XG/^IM search the devices.
     IL(p, rest) {
-      const parsed = parseRecallPath("^IL", rest, p[0] ?? "", "R");
+      const parsed = parseRecallPath(rest, p[0] ?? "", "R");
       if (parsed) recallStoredGraphic("^IL", parsed, { x: s.label.lhX, y: s.label.lhY + s.label.ltY });
     },
 
@@ -471,18 +469,10 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
 
     // ── ~DY downloaded TrueType / graphic payload ──────────────────────────
     // ~DY{drive}:{name},{fmt},{ext},{size},{bpr},{data}
-    // Decodes ASCII hex (format 'A') TTF/OTF bytes into the font cache
-    // so the canvas can preview the embedded font without a separate
-    // upload. The path reconstruction (stem + extension code) round-
-    // trips the same form the generator emits. Non-TTF extensions and
-    // non-hex formats are left untouched and fall through to the
-    // browser-limit bucket so the user sees what was dropped.
+    // Hex-decoded into the font cache so the canvas previews an embedded font without a separate upload.
     DY(_p, rest) {
-      // Parse manually because the data segment can be hundreds of
-      // KB of hex; we want to avoid splitting that into the rest of
-      // the params array. Param layout up to and including bytes-per-
-      // row is fixed-arity, so we walk commas until we've found 5.
-      const dySummary = payloadSummary("~DY", rest);
+      // Parsed by hand: the data segment can be hundreds of KB, too big to split into the params array.
+      const dySummary = payloadSummary(s.result.tokenCommand, rest);
       const delim = s.format.delimiterChar;
       const c: number[] = [];
       for (let i = 0; i < rest.length && c.length < 5; i++) {
@@ -531,9 +521,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         }
         bytes[i] = b;
       }
-      // Reconstruct the full filename with extension so the registered
-      // name matches what ^CW points at. Generator emits "{stem}" with
-      // the extension stripped, so we re-attach based on the code.
+      // The generator emits the stem without the extension, so ^CW lookups need it re-attached.
       const ext = extCode === "T" ? ".TTF" : ".BIN";
       const filename = path.includes(".")
         ? path.slice(path.lastIndexOf(":") + 1)
@@ -543,8 +531,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         loadFontBytesSync(bytes, filename);
         s.fonts.downloadedFontPaths.add(storageKey(fullPath));
       } catch {
-        // Oversized or otherwise unloadable, surface as browser-limit.
-        pushBrowserLimit(s.result, `~DY${path}`);
+        pushBrowserLimit(s.result, `${s.result.tokenCommand}${path}`);
       }
     },
 
@@ -556,7 +543,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         if (rest[i] === delim) c.push(i);
       }
       const [c0, c1, c2] = c;
-      const dgSummary = payloadSummary("~DG", rest);
+      const dgSummary = payloadSummary(s.result.tokenCommand, rest);
       if (c0 === undefined || c1 === undefined || c2 === undefined) {
         pushBrowserLimit(s.result, dgSummary);
         return;

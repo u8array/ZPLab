@@ -83,6 +83,8 @@ export interface ParserResult {
   tokenSpan?: SourceSpan;
   /** Untrimmed end of that token: a counted payload may end in bytes that read as whitespace. */
   tokenEnd?: number;
+  /** The current token's command as the source wrote it, live prefix char included. */
+  tokenCommand: string;
   /** Last span per bare command code; notePartial anchors partials here. */
   lastSpanByCmd: Map<string, SourceSpan>;
   /** Trimmed end of the token before the current one: where an open field's
@@ -94,9 +96,7 @@ export interface ParserResult {
   hexControl: SpannedToken[];
   browserLimit: SpannedToken[];
   unknown: SpannedToken[];
-  /** Setup-Script commands seen (profile-backed, routable on import). */
   replayRisk: SpannedToken[];
-  /** Device-action commands seen (no profile field, not routable). */
   deviceAction: SpannedToken[];
   /** Every in-range ^FN slot the tokenizer saw, including on fields that end
    *  up passthrough-only (no Variable). Import renumbering must avoid these:
@@ -524,6 +524,7 @@ export function createParserState(): ParserState {
       partials: new Map<string, PartialNote>(),
       lastSpanByCmd: new Map<string, SourceSpan>(),
       prevTokenEnd: 0,
+      tokenCommand: "",
       unterminated: [],
       hexControl: [],
       browserLimit: [],

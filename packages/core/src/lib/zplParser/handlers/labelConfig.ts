@@ -155,7 +155,7 @@ export function createLabelConfigHandlers(
       }
       if (d !== 0) labelConfig.labelShift = d;
     },
-    PR(p) {
+    "^PR"(p) {
       const print = inRange(parseIntOrUndef(p[0]), SPEED_RANGE);
       if (print !== undefined) labelConfig.printSpeed = print;
       const slew = inRange(parseIntOrUndef(p[1]), SPEED_RANGE);
@@ -180,19 +180,14 @@ export function createLabelConfigHandlers(
       const v = inRange(dotsOrUndef(p[0]), SLEW_DOT_ROWS_RANGE);
       if (v !== undefined) labelConfig.slewDotRows = v;
     },
-    // ^PH/^PP take no parameters; the tilde forms never reach these handlers
-    // (dispatch routes them as device actions).
-    PH() {
+    "^PH"() {
       labelConfig.slewToHome = true;
     },
-    PP() {
+    "^PP"() {
       labelConfig.programmablePause = true;
     },
     MN(p) {
-      // ^MNa,b: b is an optional black-mark offset for W/M modes,
-      // which we don't model. Reading p[0] instead of the raw rest
-      // string keeps `^MNY,10` from being mis-read as the single
-      // token "Y,10" and silently dropped.
+      // Read p[0], not rest: ^MNY,10 would otherwise be taken as the single token "Y,10" and dropped.
       const v = strParam(p[0]);
       if (isMediaTracking(v)) labelConfig.mediaTracking = v;
     },
@@ -215,19 +210,16 @@ export function createLabelConfigHandlers(
       const po = firstChar(rest);
       if (isPrintOrientation(po)) labelConfig.printOrientation = po;
     },
-    PM(_, rest) {
+    "^PM"(_, rest) {
       const m = firstChar(rest);
       if (isYesNo(m)) labelConfig.mirror = m;
     },
-    // ~SD: instant darkness set (00..30). Tilde-prefix, so the tokenizer
-    // drops the delimiter and this is the canonical SD handler.
     SD(_, rest) {
       const v = inRange(parseIntOrUndef(rest), DARKNESS_INSTANT_RANGE);
       if (v !== undefined) labelConfig.instantDarkness = v;
     },
-    // ~JS: change backfeed sequence. Percent forms round to the nearest
-    // ten like the printer does (~JS55 -> 60, p276).
-    JS(_, rest) {
+    // Percent forms round to the nearest ten like the printer does (~JS55 -> 60, p276).
+    "~JS"(_, rest) {
       const v = firstChar(rest);
       if (isBackfeedSequence(v)) {
         labelConfig.backfeedSequence = v;

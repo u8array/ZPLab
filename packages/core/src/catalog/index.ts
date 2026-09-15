@@ -44,6 +44,13 @@ export function commandTakesPrefix(name: string, prefix: "^" | "~"): boolean {
   return catalogEntry(`${prefix === "^" ? "~" : "^"}${name}`) === undefined;
 }
 
+/** True when `^X` and `~X` are two different commands, so a handler must be registered under its spelled id. */
+export function commandTwinSplit(name: string): boolean {
+  const caret = catalogEntry(`^${name}`);
+  const tilde = catalogEntry(`~${name}`);
+  return caret !== undefined && tilde !== undefined && caret !== tilde;
+}
+
 /** Row id of a spelled command, so `~HL` gives `^HL` and `^AB` gives `^A`, or undefined off the catalog. */
 export function catalogRow(command: string): string | undefined {
   const entry = catalogEntry(command);

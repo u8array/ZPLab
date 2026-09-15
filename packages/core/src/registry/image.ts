@@ -298,10 +298,13 @@ export function uploadKey(p: ImageProps): string | undefined {
   return uploadedGraphicPath(p.storedAs);
 }
 
-/** ^XG magnification the export writes: the stored factors inside the spec range 1-10, else 1. */
+/** Out of range reads as 1, not as the nearest bound: the device honours no other factor. */
+export function clampMagnification(v: number | undefined): number {
+  return Number.isInteger(v) && (v as number) >= 1 && (v as number) <= 10 ? (v as number) : 1;
+}
+
 export function recallMagnification(p: ImageProps): { x: number; y: number } {
-  const inRange = (v: number | undefined) => (Number.isInteger(v) && (v as number) >= 1 && (v as number) <= 10 ? (v as number) : 1);
-  return { x: inRange(p.storedAs?.magnify?.x), y: inRange(p.storedAs?.magnify?.y) };
+  return { x: clampMagnification(p.storedAs?.magnify?.x), y: clampMagnification(p.storedAs?.magnify?.y) };
 }
 
 /** The command a recall is written with: the source's own, since ^XG fixes .GRF (spec p.373) while ^IM also
