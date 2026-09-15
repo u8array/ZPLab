@@ -139,8 +139,8 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@types/pixelmatch':
-        specifier: ^5.2.6
-        version: 5.2.6
+        specifier: ^7.1.0
+        version: 7.1.0
       '@types/pngjs':
         specifier: ^6.0.5
         version: 6.0.5
@@ -1272,8 +1272,9 @@ packages:
   '@types/papaparse@5.5.2':
     resolution: {integrity: sha512-gFnFp/JMzLHCwRf7tQHrNnfhN4eYBVYYI897CGX4MY1tzY9l2aLkVyx2IlKZ/SAqDbB3I1AOZW5gTMGGsqWliA==}
 
-  '@types/pixelmatch@5.2.6':
-    resolution: {integrity: sha512-wC83uexE5KGuUODn6zkm9gMzTwdY5L0chiK+VrKcDfEjzxh1uadlWTvOmAbCpnM9zx/Ww3f8uKlYQVnO/TrqVg==}
+  '@types/pixelmatch@7.1.0':
+    resolution: {integrity: sha512-0QezS/yQirZ++KVOHu3a49ZB3zeRxGh3PRd9z9+FUNO+14N3oL0vibN3ADEaIvSeY8hsdChi09U6fjTcTcqowQ==}
+    deprecated: This is a stub types definition. pixelmatch provides its own type definitions, so you do not need this installed.
 
   '@types/pngjs@6.0.5':
     resolution: {integrity: sha512-0k5eKfrA83JOZPppLtS2C7OUtyNAl2wKNxfyYl9Q5g9lPkgBl/9hNyAu6HuEH2J4XmIv2znEpkDd0SaZVxW6iQ==}
@@ -3655,9 +3656,9 @@ snapshots:
     dependencies:
       '@types/node': 26.4.1
 
-  '@types/pixelmatch@5.2.6':
+  '@types/pixelmatch@7.1.0':
     dependencies:
-      '@types/node': 26.4.1
+      pixelmatch: 7.2.0
 
   '@types/pngjs@6.0.5':
     dependencies:
