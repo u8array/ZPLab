@@ -6,11 +6,7 @@
 [advisories]
 unmaintained = "workspace"
 yanked = "deny"
-ignore = [
-    # sqlx-mysql pulls rsa for the auth handshake; no fixed release exists
-    # (Marvin timing side channel). Revisit when sqlx drops the rsa crate.
-    { id = "RUSTSEC-2023-0071", reason = "no upstream fix; local-network DB auth only" },
-]
+ignore = []
 
 [licenses]
 allow = [
