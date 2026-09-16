@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  encodeGraphicFile,
   packMonoBits,
   monoRasterToRgba,
   gfaFromRaster,
@@ -144,5 +145,9 @@ describe("rasterizeMono guards", () => {
 
   it("returns null for a 0-width image (dimensionless SVG)", () => {
     expect(rasterizeMono({ naturalWidth: 0, naturalHeight: 0 } as HTMLImageElement, 100, 128)).toBeNull();
+  });
+
+  it("refuses a file that is not an image before reading it", async () => {
+    await expect(encodeGraphicFile(new File(["x"], "notes.txt", { type: "text/plain" }))).rejects.toThrow("Not an image: notes.txt");
   });
 });

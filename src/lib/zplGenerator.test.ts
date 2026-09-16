@@ -4,7 +4,7 @@ import { generateZPL, generateMultiPageZPL, generateBatchZpl } from '@zplab/core
 import { parseZPL } from '@zplab/core/lib/zplParser';
 import type { LabelConfig, PageLabel } from '@zplab/core/types/LabelConfig';
 import type { GroupObject, LabelObject } from '@zplab/core/types/Group';
-import { defined, parseSingle, props, serialOf, commandsOf } from '../test/helpers';
+import { defined, parseSingle, props, serialOf, commandsOf, makeZ64Field } from '../test/helpers';
 import { NON_EMITTING_CONFIG_KEYS } from '../store/labelStore.internals';
 import { putImage } from '@zplab/core/lib/imageCache';
 
@@ -1083,6 +1083,18 @@ describe('generateZPL — line object', () => {
 });
 
 describe('generateZPL — ~DY graphic upload + ^XG recall', () => {
+  it('writes the bitmap size as the ~DY total when the cached ^GF transmits a different count', () => {
+    const field = makeZ64Field(new Uint8Array(16).fill(0xff));
+    const image: LabelObject = {
+      id: 'im', type: 'image', x: 0, y: 0, rotation: 0,
+      props: { imageId: '', widthDots: 16, heightDots: 8, threshold: 128, _gfaCache: `^GFC,${field.length},16,2,${field}`,
+        storedAs: { device: 'R', name: 'LOGO', embedInZpl: true } },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
+    const zpl = generateZPL(BASE_LABEL, [image]);
+    expect(zpl).toContain(`~DYR:LOGO,C,G,16,2,${field}`);
+  });
+
   it('round-trips a ~DY+^XG label: parse → generate emits both back', () => {
     const HEX = '00FFFF00';
     const zpl =

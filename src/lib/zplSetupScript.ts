@@ -6,6 +6,8 @@ import {
   type PrinterProfile,
 } from '@zplab/core/types/PrinterProfile';
 import { formatFontDownloadFromPath } from '@zplab/core/lib/customFonts';
+import { graphicUploadLineFor } from '@zplab/core/registry/image';
+import { parseStoragePath } from '@zplab/core/lib/storagePath';
 import { trimTrailingEmptySlots } from '@zplab/core/lib/zplGenerator';
 import { formatRealtimeClockForZpl, toLocalIsoString } from '@zplab/core/lib/realtimeClock';
 
@@ -34,6 +36,18 @@ const SETUP_SCRIPT_EMITTERS = {
     emit: (p) => {
       const lines = p.setupFonts?.flatMap((f) => {
         const line = formatFontDownloadFromPath(f.path);
+        return line ? [line] : [];
+      }) ?? [];
+      return lines.length > 0 ? lines.join('\n') : null;
+    },
+  },
+  setupGraphics: {
+    kind: 'emit',
+    channel: 'tilde',
+    emit: (p) => {
+      const lines = p.setupGraphics?.flatMap((g) => {
+        const target = parseStoragePath(g.path, 'R');
+        const line = target ? graphicUploadLineFor(target, g.gfa) : undefined;
         return line ? [line] : [];
       }) ?? [];
       return lines.length > 0 ? lines.join('\n') : null;

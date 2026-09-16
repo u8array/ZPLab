@@ -19,3 +19,19 @@ export function loadImage(src: string, message = 'Failed to load image'): Promis
     img.src = src;
   });
 }
+
+/** A File as data URL plus its decoded image. Rejects a non-image MIME before the read. */
+export function decodeImageFile(file: File): Promise<{ dataUrl: string; img: HTMLImageElement }> {
+  if (!file.type.startsWith('image/')) return Promise.reject(new Error(`Not an image: ${file.name}`));
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      loadImage(dataUrl, `Failed to decode image: ${file.name}`)
+        .then((img) => resolve({ dataUrl, img }))
+        .catch(reject);
+    };
+    reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+    reader.readAsDataURL(file);
+  });
+}

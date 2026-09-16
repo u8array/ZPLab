@@ -5,6 +5,7 @@ import {
   __SETUP_SCRIPT_EMITTERS_FOR_TESTS,
 } from "./zplSetupScript";
 import { parseZPL } from "@zplab/core/lib/zplParser";
+import { makeZ64Field } from "../test/helpers";
 import {
   MAINTENANCE_ALERT_DEFAULTS,
   MAINTENANCE_DISTANCE_MAX_BY_TYPE,
@@ -401,6 +402,7 @@ describe("generateSetupScript — output shape", () => {
     // must be updated together.
     expect([...SETUP_SCRIPT_FIELDS]).toEqual([
       "setupFonts",
+      "setupGraphics",
       "tearOffAdjust",
       "reprintAfterError",
       "headTestInterval",
@@ -601,6 +603,28 @@ describe("generateSetupScript — maintenance commands", () => {
     expect(script).toBe(
       "~DYE:TESTSU,A,T,4,,01020304\n^XA\n^FLE:TESTSU.TTF,E:LATIN.TTF,1\n^XZ",
     );
+  });
+
+  it("emits ~DY,A,G for each setupGraphics entry from its own bytes, before the block", () => {
+    const script = generateSetupScript({
+      ...base,
+      setupGraphics: [{ path: "R:LOGO.GRF", gfa: "^GFA,4,4,1,00FFFF00" }],
+      tearOffAdjust: 5,
+    });
+    expect(script).toBe("~DYR:LOGO,A,G,4,1,00FFFF00\n~TA005");
+  });
+
+  it("writes the bitmap size as the ~DY total, whatever the ^GF's transmitted count says", () => {
+    const hexOnly = generateSetupScript({ ...base, setupGraphics: [{ path: "R:LOGO.GRF", gfa: "^GFA,,4,1,00FFFF00" }] });
+    expect(hexOnly).toBe("~DYR:LOGO,A,G,4,1,00FFFF00");
+    const field = makeZ64Field(new Uint8Array(16).fill(0xff));
+    const wrapped = generateSetupScript({ ...base, setupGraphics: [{ path: "R:LOGO.GRF", gfa: `^GFC,${field.length},16,2,${field}` }] });
+    expect(wrapped).toBe(`~DYR:LOGO,C,G,16,2,${field}`);
+  });
+
+  it("skips a setupGraphics entry whose bytes carry no ^GF header", () => {
+    const script = generateSetupScript({ ...base, setupGraphics: [{ path: "R:LOGO.GRF", gfa: "garbage" }] });
+    expect(script).not.toContain("~DY");
   });
 
   it("skips setupFonts entries whose bytes are missing", () => {

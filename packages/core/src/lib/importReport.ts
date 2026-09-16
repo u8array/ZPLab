@@ -31,6 +31,9 @@ export function printerCommandFindings(report: ImportReport): ImportFinding[] {
   return report.findings.filter((f) => f.kind === 'replayRisk' || f.kind === 'deviceAction');
 }
 
+/** `pageIndex` of a finding about the stream as a whole, which no page routing may drop. */
+export const DOCUMENT_FINDING = -1;
+
 /** Report after routing setup commands out of the label: replayRisk resolved,
  *  overlay-dependent findings on routed pages moot, findings on dropped pages
  *  removed and survivors remapped to `keptPageIndexes` order. */
@@ -45,6 +48,7 @@ export function resolveRoutedReport(
     if ((f.kind === 'lossyEdit' || f.kind === 'deviceAction') && riskPages.has(f.pageIndex)) {
       return [];
     }
+    if (f.pageIndex === DOCUMENT_FINDING) return [f];
     const newIndex = newIndexOf.get(f.pageIndex);
     return newIndex === undefined ? [] : [{ ...f, pageIndex: newIndex }];
   });

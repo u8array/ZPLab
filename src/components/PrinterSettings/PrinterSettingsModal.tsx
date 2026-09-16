@@ -17,6 +17,7 @@ import { ClockAndTimeTab } from "./ClockAndTimeTab";
 import { DataSourcesTab } from "./DataSourcesTab";
 import { EncodingAndLanguageTab } from "./EncodingAndLanguageTab";
 import { FontsTab } from "./FontsTab";
+import { ObjectsTab } from "./ObjectsTab";
 import { IdentityTab } from "./IdentityTab";
 import { MaintenanceTab } from "./MaintenanceTab";
 import { McpServerTab } from "./McpServerTab";
@@ -44,6 +45,7 @@ const TOP_TAB_OF = {
   clockTime: 'setupScript',
   encodingLanguage: 'setupScript',
   fonts: 'setupScript',
+  objects: 'setupScript',
   identity: 'setupScript',
   maintenance: 'setupScript',
 } as const satisfies Record<PrinterSettingsTab, TopTabId>;
@@ -79,6 +81,7 @@ const TAB_COMPONENTS: Partial<Record<PrinterSettingsTab, FC>> = {
   clockTime: ClockAndTimeTab,
   encodingLanguage: EncodingAndLanguageTab,
   fonts: FontsTab,
+  objects: ObjectsTab,
   identity: IdentityTab,
   maintenance: MaintenanceTab,
 };

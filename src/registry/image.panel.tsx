@@ -5,13 +5,7 @@ import { useT } from '../hooks/useT';
 import { buttonCls, inputCls, labelCls } from '../components/Properties/styles';
 import { loadImageFile, getImage, getAllImages, removeImage } from '@zplab/core/lib/imageCache';
 import { imageToGFA } from '@zplab/core/lib/imageToZpl';
-import {
-  defaultStorageName,
-  formatStoragePath,
-  MAX_STORAGE_NAME_LEN,
-  STORAGE_DEVICES,
-  STORAGE_NAME_FILTER_RE,
-} from '@zplab/core/lib/storagePath';
+import { defaultStorageName, formatStoragePath, MAX_STORAGE_NAME_LEN, sanitizeStorageName, STORAGE_DEVICES } from '@zplab/core/lib/storagePath';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { Tooltip } from '../components/ui/Tooltip';
 import { SectionCard, StaticSectionCard } from '../components/Properties/SectionCard';
@@ -19,7 +13,9 @@ import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { RotationSelect } from '../components/Properties/RotationSelect';
 import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
-import { isImageRotatable, recallCommand, recallStoragePath, type ImageProps } from '@zplab/core/registry/image';
+import { canSendSetupGraphic, isImageRotatable, recallCommand, recallStoragePath, setupGraphicOf, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
+import { mergeSetupEntries } from '@zplab/core/lib/zplImportService';
+import { useLabelStore } from '../store/labelStore';
 
 export const imagePanel: ObjectTypeUi<ImageProps> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -85,6 +81,21 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
     // re-widens `p.storedAs` to `... | undefined` inside the handlers
     // and we'd need `?.`-fallbacks for every field access.
     const storedAs = p.storedAs;
+    const setupGraphics = useLabelStore((s) => s.printerProfile.setupGraphics);
+    const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
+    const setupState = setupGraphicState(p, setupGraphics);
+    const canSend = canSendSetupGraphic(p);
+    // Remembered here, not in the object: caching a refused encode would dirty the design for nothing.
+    const [setupRefusal, setSetupRefusal] = useState<{ imageId: string; cache: string | undefined; fit: 'tooLarge' | 'unshippable' } | null>(null);
+    const refusal = setupRefusal?.imageId === p.imageId && setupRefusal.cache === p._gfaCache ? setupRefusal.fit : null;
+    const uploadAtSetup = () => {
+      const verdict = setupGraphicOf(p);
+      if (!verdict || !storedAs) return;
+      if (verdict.fit !== 'ok') return setSetupRefusal({ imageId: p.imageId, cache: p._gfaCache, fit: verdict.fit });
+      patchPrinterProfile({ setupGraphics: mergeSetupEntries(useLabelStore.getState().printerProfile.setupGraphics, [verdict.entry]) });
+      // The cache holds what was just sent, so the state reads current without a fresh encode.
+      onChange({ storedAs: { ...storedAs, embedInZpl: false }, _gfaCache: verdict.entry.gfa });
+    };
 
     return (
       <>
@@ -231,10 +242,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
                     value={storedAs.name}
                     maxLength={MAX_STORAGE_NAME_LEN}
                     onChange={(e) => {
-                      const next = e.target.value
-                        .toUpperCase()
-                        .replace(STORAGE_NAME_FILTER_RE, '')
-                        .slice(0, MAX_STORAGE_NAME_LEN);
+                      const next = sanitizeStorageName(e.target.value);
                       // Silently ignore keystrokes that would empty the name:
                       // an empty stem produces broken ZPL (`~DYR:,A,G,...`),
                       // and a controlled-component "refuses-to-delete-last-char"
@@ -265,6 +273,17 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
                     <InformationCircleIcon className="w-3.5 h-3.5 text-muted/60 cursor-help shrink-0" />
                   </Tooltip>
                 </label>
+                {setupState === 'current' ? (
+                  <span className="text-[10px] text-muted">{t.registry.image.inSetupScript}</span>
+                ) : setupState === 'tooLarge' || refusal === 'tooLarge' ? (
+                  <span className="text-[10px] text-warning">{t.printerSettings.objects.tooLarge}</span>
+                ) : refusal === 'unshippable' ? (
+                  <span className="text-[10px] text-warning">{t.printerSettings.objects.tooWide}</span>
+                ) : canSend ? (
+                  <button type="button" className={buttonCls} onClick={uploadAtSetup}>
+                    {t.registry.image.addToSetup}
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   className={buttonCls}

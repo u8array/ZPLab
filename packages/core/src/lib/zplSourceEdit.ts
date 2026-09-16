@@ -1,5 +1,5 @@
 import { LABEL_META_KEYS } from "./zplLabelMeta";
-import { importZplText, mergeSetupFonts, replaceImportLabel } from "./zplImportService";
+import { importZplText, mergeSetupUploads, replaceImportLabel, SETUP_UPLOAD_FIELDS } from "./zplImportService";
 import type { ImportReport, UnbalancedFormat } from "./zplParser";
 import type { LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
@@ -122,16 +122,7 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
   }
 
   let label = replaceImportLabel(current.label, imported.labelConfig);
-  const profilePatch = imported.printerProfile.setupFonts
-    ? {
-        ...imported.printerProfile,
-        setupFonts: mergeSetupFonts(
-          current.printerProfile.setupFonts,
-          imported.printerProfile.setupFonts,
-        ),
-      }
-    : imported.printerProfile;
-  let printerProfile = { ...current.printerProfile, ...profilePatch };
+  let printerProfile = { ...current.printerProfile, ...mergeSetupUploads(current.printerProfile, imported.printerProfile) };
   // An empty baseline (authoring from scratch) has no keys to strip.
   if (input.baseline !== undefined && input.baseline !== '' && input.baseline !== input.text) {
     const base = importZplText(input.baseline, current.label.dpmm);
@@ -145,8 +136,7 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
       printerProfile,
       Object.keys(base.printerProfile),
       new Set(Object.keys(imported.printerProfile)),
-      // setupFonts merge additively by contract (a stream expresses no deletion).
-      ["setupFonts"],
+      SETUP_UPLOAD_FIELDS,
     );
   }
 

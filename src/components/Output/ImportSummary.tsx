@@ -35,7 +35,7 @@ export function FindingRow({ finding, showPage }: { finding: ImportFinding; show
   const { title, detail } = describeFinding(finding, t.importReport);
   return (
     <div className="flex items-start gap-2 px-3 py-2">
-      {showPage && (
+      {showPage && finding.pageIndex >= 0 && (
         <span className="font-mono text-[9px] uppercase tracking-wider text-muted shrink-0 mt-0.5">
           {t.importReport.pageFmt.replace('{n}', String(finding.pageIndex + 1))}
         </span>

@@ -1,7 +1,7 @@
 import type { LabelConfig } from "../../types/LabelConfig";
 import type { LabelObject } from "../../types/Group";
 import type { Variable } from "../../types/Variable";
-import type { PrinterProfile } from "../../types/PrinterProfile";
+import type { PrinterProfile, SetupGraphic } from "../../types/PrinterProfile";
 import type { BlockOverlay, OverlayFrame } from "../zplOverlay/overlay";
 import type { ImportLossCause } from "../../catalog/schema";
 
@@ -143,6 +143,8 @@ export interface ParsedZPL {
    *  the design objects); an unclaimed path is a Setup-Script font.
    *  The service derives `printerProfile.setupFonts` from this set. */
   uploadedFontPaths: string[];
+  /** Uploaded graphics with their ^GF bytes. A ^ID in the stream drops its targets. */
+  uploadedGraphics: (SetupGraphic & { via: "~DG" | "~DY" })[];
   /** Full device paths referenced by a `^A@` direct-path font. The
    *  service treats these as design fonts so an uploaded font used
    *  without a `^CW` alias is not misclassified as a Setup-Script font. */
@@ -179,4 +181,4 @@ export interface DecodedGraphic {
 
 /** Entry in the upload → recall lookup map. A `DecodedGraphic` without the per-decode
  *  verdicts, which live on the partials map instead of on every map entry. */
-export type UploadedGraphic = Omit<DecodedGraphic, "crcOk" | "truncated">;
+export type UploadedGraphic = Omit<DecodedGraphic, "crcOk" | "truncated"> & { via: "~DG" | "~DY" };

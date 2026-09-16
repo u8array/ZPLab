@@ -11,7 +11,7 @@
  * so what the editor shows is bit-identical to what the printer receives.
  */
 import { isAxisSwapped, type ZplRotation } from '../registry/rotation';
-import { loadImage } from './loadImage';
+import { decodeImageFile, loadImage } from './loadImage';
 
 export interface GfaResult {
   /** Complete ^GFA command string */
@@ -214,4 +214,10 @@ export function gfaFromImage(
     widthDots: raster.paddedWidth,
     heightDots: raster.heightDots,
   };
+}
+
+/** ^GF for an image file at its own size, one pixel per dot, without touching the image cache. */
+export async function encodeGraphicFile(file: File, threshold = 128): Promise<GfaResult> {
+  const { img } = await decodeImageFile(file);
+  return gfaFromImage(img, img.naturalWidth, threshold);
 }

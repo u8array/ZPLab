@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { importZplText, routeSetupCommands, mergeSetupFonts } from '@zplab/core/lib/zplImportService';
+import { importZplText, routeSetupCommands, mergeSetupEntries } from '@zplab/core/lib/zplImportService';
 import { generateSetupScript } from './zplSetupScript';
 import { generateMultiPageZPL } from '@zplab/core/lib/zplGenerator';
-import { describeFinding } from './importReport';
+import { describeFinding, formatReportAsText } from './importReport';
 import { fallbackTranslations } from '../locales';
 import { replayRiskFindings, printerCommandFindings, resolveRoutedReport } from '@zplab/core/lib/importReport';
-import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
+import { printerProfileSchema, type PrinterProfile } from '@zplab/core/types/PrinterProfile';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
 
 describe('importZplText - cross-block parser state (parser-owned pages)', () => {
@@ -370,6 +370,65 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
     expect(labelConfig.customFonts).toEqual([
       expect.objectContaining({ alias: 'M', path: 'E:DSGN.TTF', embedInZpl: true }),
     ]);
+  });
+
+  it('routes a ~DG no design object recalls into printerProfile.setupGraphics with its bytes', () => {
+    const zpl = `~DGR:LOGO.GRF,4,1,00FFFF00\n^XA^FO0,0^GB10,10,1^FS^XZ`;
+    const { printerProfile, pages } = importZplText(zpl, 8);
+    expect(printerProfile.setupGraphics).toEqual([{ path: 'R:LOGO.GRF', gfa: '^GFA,4,4,1,00FFFF00' }]);
+    expect(pages[0]?.objects).toHaveLength(1);
+  });
+
+  it('keeps a ~DG a design object recalls out of setupGraphics, and drops one the stream deletes', () => {
+    const recalled = importZplText(`~DGR:LOGO.GRF,4,1,00FFFF00\n^XA^FO0,0^XGR:LOGO.GRF,1,1^FS^XZ`, 8);
+    expect(recalled.printerProfile.setupGraphics).toBeUndefined();
+    const deleted = importZplText(`~DGR:LOGO.GRF,4,1,00FFFF00\n^XA^IDR:LOGO.GRF^FS^XZ`, 8);
+    expect(deleted.printerProfile.setupGraphics).toBeUndefined();
+  });
+
+  it('routes an upload that only an earlier recall names into the profile, since the label ships nothing for it', () => {
+    const { printerProfile, pages } = importZplText(`^XA^FO0,0^XGR:LOGO.GRF,1,1^FS^XZ\n~DGR:LOGO.GRF,4,1,00FFFF00`, 8);
+    expect(printerProfile.setupGraphics).toEqual([{ path: 'R:LOGO.GRF', gfa: '^GFA,4,4,1,00FFFF00' }]);
+    expect(pages[0]?.objects).toHaveLength(1);
+  });
+
+  it('routes a later upload under a path the label ships with other bytes into the profile', () => {
+    const zpl = `~DGR:LOGO.GRF,4,1,00FFFF00\n^XA^FO0,0^XGR:LOGO.GRF,1,1^FS^XZ\n~DGR:LOGO.GRF,4,1,FF0000FF`;
+    const { printerProfile, pages } = importZplText(zpl, 8);
+    expect(printerProfile.setupGraphics).toEqual([{ path: 'R:LOGO.GRF', gfa: '^GFA,4,4,1,FF0000FF' }]);
+    expect(pages[0]?.objects).toHaveLength(1);
+  });
+
+  it('reports an unclaimed upload the profile cannot keep instead of handing it on', () => {
+    const rows = 600_000;
+    const zpl = `~DGR:BIG.GRF,${rows},1,${'F'.repeat(rows * 2)}\n^XA^FO0,0^GB10,10,1^FS^XZ`;
+    const { printerProfile, report } = importZplText(zpl, 8);
+    expect(printerProfile.setupGraphics).toBeUndefined();
+    expect(printerProfileSchema.safeParse(printerProfile).success).toBe(true);
+    const finding = report.findings.find((f) => f.loss === 'oversizeUpload');
+    expect(finding).toMatchObject({ kind: 'partial', command: '~DG' });
+    expect(describeFinding(finding!, fallbackTranslations.importReport).detail).toContain('printer profile');
+    const only = importZplText(`~DGR:BIG.GRF,${rows},1,${'F'.repeat(rows * 2)}`, 8);
+    expect(only.pages).toHaveLength(0);
+    expect(resolveRoutedReport(only.report, []).findings.map((f) => f.loss)).toEqual(['oversizeUpload']);
+  });
+
+  it('reports an unclaimed upload the emitter would refuse, and prints neither without a page', () => {
+    const zpl = `~DGR:WIDE.GRF,4000,2000,${'F'.repeat(8000)}\n^XA^FO0,0^GB10,10,1^FS^XZ\n^XA^FO0,0^GB10,10,1^FS^QQ1^XZ`;
+    const { printerProfile, report, pages } = importZplText(zpl, 8);
+    expect(printerProfile.setupGraphics).toBeUndefined();
+    expect(report.findings).toContainEqual(expect.objectContaining({ kind: 'partial', command: '~DG', loss: 'unshippableUpload' }));
+    const text = formatReportAsText({ objectCount: pages.flatMap((p) => p.objects).length, report }, fallbackTranslations.importReport);
+    const rows = text.split('\n').filter((line) => line.includes(':'));
+    expect(rows.some((line) => line.startsWith('Page 2: '))).toBe(true);
+    expect(rows.some((line) => line.startsWith('Page 0'))).toBe(false);
+    expect(rows.some((line) => !line.startsWith('Page ') && line.includes('wider'))).toBe(true);
+  });
+
+  it('validates setupGraphics like the other setup-script paths', () => {
+    expect(printerProfileSchema.safeParse({ setupGraphics: [{ path: 'R:LOGO.GRF', gfa: '^GFA,4,4,1,00FFFF00' }] }).success).toBe(true);
+    expect(printerProfileSchema.safeParse({ setupGraphics: [{ path: 'R:LO^GO.GRF', gfa: '^GFA,4,4,1,00FFFF00' }] }).success).toBe(false);
+    expect(printerProfileSchema.safeParse({ setupGraphics: [{ path: 'R:LOGO.GRF', gfa: '' }] }).success).toBe(false);
   });
 
   it('splits a mixed stream: ^CW-claimed is design, unclaimed is setup', () => {
@@ -773,11 +832,11 @@ describe('printerCommandFindings', () => {
   });
 });
 
-describe('mergeSetupFonts', () => {
+describe('mergeSetupEntries', () => {
   it('unions incoming onto existing, deduped by normalized path', () => {
     const existing = [{ path: 'E:OLD.TTF' }, { path: 'E:SHARED.TTF' }];
     const incoming = [{ path: 'e:shared.ttf' }, { path: 'E:NEW.TTF' }];
-    expect(mergeSetupFonts(existing, incoming)).toEqual([
+    expect(mergeSetupEntries(existing, incoming)).toEqual([
       { path: 'E:OLD.TTF' },
       { path: 'E:SHARED.TTF' },
       { path: 'E:NEW.TTF' },
@@ -785,7 +844,15 @@ describe('mergeSetupFonts', () => {
   });
 
   it('returns the incoming set when there is no existing profile', () => {
-    expect(mergeSetupFonts(undefined, [{ path: 'E:A.TTF' }])).toEqual([{ path: 'E:A.TTF' }]);
+    expect(mergeSetupEntries(undefined, [{ path: 'E:A.TTF' }])).toEqual([{ path: 'E:A.TTF' }]);
+  });
+
+  it('replaces an entry whose bytes changed under the same path, in place', () => {
+    const merged = mergeSetupEntries(
+      [{ path: 'R:A.GRF', gfa: '^GFA,4,4,1,00000000' }, { path: 'R:B.GRF', gfa: '^GFA,4,4,1,11111111' }],
+      [{ path: 'r:a.grf', gfa: '^GFA,4,4,1,FFFFFFFF' }],
+    );
+    expect(merged).toEqual([{ path: 'R:A.GRF', gfa: '^GFA,4,4,1,FFFFFFFF' }, { path: 'R:B.GRF', gfa: '^GFA,4,4,1,11111111' }]);
   });
 });
 

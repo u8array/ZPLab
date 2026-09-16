@@ -178,6 +178,16 @@ describe("the current profile survives an apply", () => {
     expect(plan.ok).toBe(true);
     if (plan.ok) expect(plan.next.printerProfile.setupFonts).toEqual([{ path: "E:LOGO.TTF" }]);
   });
+
+  it("adds imported setup graphics to the profile and keeps the ones the source never named", () => {
+    const kept = { path: "R:OLD.GRF", gfa: "^GFA,4,4,1,00FFFF00" };
+    const plan = prepareSourceApply({
+      text: "~DGR:NEW.GRF,4,1,FF0000FF\n^XA^FO10,10^A0N,30,30^FDX^FS^XZ",
+      current: current({ printerProfile: { setupGraphics: [kept] } }),
+    });
+    expect(plan.ok).toBe(true);
+    if (plan.ok) expect(plan.next.printerProfile.setupGraphics).toEqual([kept, { path: "R:NEW.GRF", gfa: "^GFA,4,4,1,FF0000FF" }]);
+  });
 });
 
 describe("unbalanced position and kind", () => {

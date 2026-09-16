@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseStoragePath, formatStoragePath, recallCandidates, storagePathMatcher, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
+import { parseStoragePath, formatStoragePath, recallCandidates, sanitizeStorageName, storagePathMatcher, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
 
 describe("storagePath", () => {
   it("parses device:name without extension", () => {
@@ -76,5 +76,11 @@ describe("storagePath", () => {
     const parsed = parseStoragePath(original);
     expect(parsed).not.toBeNull();
     if (parsed) expect(formatStoragePath(parsed, true)).toBe(original);
+  });
+
+  it("reduces a free-form name to the 8-character stem the printer keeps, or nothing", () => {
+    expect(sanitizeStorageName("my logo_2!")).toBe("MYLOGO_2");
+    expect(sanitizeStorageName("very-long-name")).toBe("VERYLONG");
+    expect(sanitizeStorageName("äöü")).toBe("");
   });
 });

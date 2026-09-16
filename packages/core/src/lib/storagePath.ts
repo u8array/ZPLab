@@ -11,6 +11,11 @@ export type StorageDevice = (typeof STORAGE_DEVICES)[number];
 export const MAX_STORAGE_NAME_LEN = 8;
 export const STORAGE_NAME_FILTER_RE = /[^A-Z0-9_]/g;
 
+/** Empty when nothing survives the filter, so a caller must reject that. */
+export function sanitizeStorageName(raw: string): string {
+  return raw.toUpperCase().replace(STORAGE_NAME_FILTER_RE, "").slice(0, MAX_STORAGE_NAME_LEN);
+}
+
 /** Short UUID slice avoids collisions without forcing user-chosen name. */
 export function defaultStorageName(): string {
   return `IMG_${newId().slice(0, 4).toUpperCase()}`;

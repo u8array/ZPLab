@@ -1,4 +1,5 @@
 import type { ObjectTypeCore } from '../types/ObjectType';
+import { SETUP_GRAPHIC_GFA_MAX_CHARS, type SetupGraphic } from '../types/PrinterProfile';
 import { graphicFieldPos } from './zplHelpers';
 import { getImage } from '../lib/imageCache';
 import { gfaFromRaster, rasterizeMono, scaledHeightDots } from '../lib/imageToZpl';
@@ -273,11 +274,6 @@ export function storedGraphicShips(p: ImageProps): boolean {
   return !!getImage(p.imageId) || (!!p._gfaCache && gfShipsSafely(p._gfaCache));
 }
 
-/** Header of the ~DY this object ships, null when no upload goes out. */
-export function storedGraphicUpload(p: ImageProps): GfHeader | null {
-  return storedGraphicShips(p) ? parseGfHeader(shippableGfa(p, imageEmitRotation(p))) : null;
-}
-
 /** The path a recall names: the upload's when one ships, else the reference as written. */
 export function recallStoragePath(p: ImageProps): StoragePath | undefined {
   if (!p.storedAs) return undefined;
@@ -286,8 +282,64 @@ export function recallStoragePath(p: ImageProps): StoragePath | undefined {
 
 /** ~DY for a graphic upload. Format letter is preserved so :Z64: stays paired with C. */
 export function graphicUploadLine(p: ImageProps): string | undefined {
-  const h = storedGraphicUpload(p);
-  return h && p.storedAs ? `~DY${formatStoragePath(p.storedAs, false)},${h.format},G,${h.totalBytes},${h.bytesPerRow},${h.payload}` : undefined;
+  const gfa = storedGraphicShips(p) ? shippableGfa(p, 'N') : undefined;
+  return gfa && p.storedAs ? graphicUploadLineFor(p.storedAs, gfa) : undefined;
+}
+
+/** The ~DY total is the bitmap size (spec p.182), which is ^GF's c, since b may be omitted. */
+export function graphicUploadLineFor(path: StoragePath, gfa: string): string | undefined {
+  const h = gfShipsSafely(gfa) ? parseGfHeader(gfa) : null;
+  return h ? `~DY${formatStoragePath(path, false)},${h.format},G,${h.dataBytes || h.totalBytes},${h.bytesPerRow},${h.payload}` : undefined;
+}
+
+/** Filtered exactly like a stored entry, so a state comparison is like for like. */
+function shippableCache(p: ImageProps): string | undefined {
+  return p._gfaCache && gfShipsSafely(p._gfaCache) ? p._gfaCache : undefined;
+}
+
+function cacheTooLarge(p: ImageProps): boolean {
+  const cached = shippableCache(p);
+  return cached !== undefined && setupGraphicFits(cached) === 'tooLarge';
+}
+
+export type SetupGraphicVerdict = { fit: 'ok'; entry: SetupGraphic } | { fit: 'unshippable' | 'tooLarge' };
+
+/** Encodes when the cache cannot ship, so call it from a handler and never from a render. */
+export function setupGraphicOf(p: ImageProps): SetupGraphicVerdict | undefined {
+  const path = uploadKey(p);
+  const gfa = path ? shippableGfa(p, 'N') : undefined;
+  if (!path || !gfa) return undefined;
+  const fit = setupGraphicFits(gfa);
+  return fit === 'ok' ? { fit, entry: { path, gfa } } : { fit };
+}
+
+/** Names which of the emitter's ship test and the profile's cap refuses. */
+export function setupGraphicFits(gfa: string): 'ok' | 'unshippable' | 'tooLarge' {
+  if (!gfShipsSafely(gfa)) return 'unshippable';
+  return gfa.length > SETUP_GRAPHIC_GFA_MAX_CHARS ? 'tooLarge' : 'ok';
+}
+
+/** The profile entry for this object, weighed against its cached bytes. */
+export function setupGraphicState(
+  p: ImageProps,
+  entries: readonly SetupGraphic[] | undefined,
+): 'none' | 'current' | 'stale' | 'unknown' | 'tooLarge' {
+  const path = uploadKey(p);
+  if (!path) return 'none';
+  // Past the cap nothing can be sent, whatever an existing entry holds.
+  if (cacheTooLarge(p)) return 'tooLarge';
+  const cached = shippableCache(p);
+  const entry = entries?.find((g) => g.path === path);
+  if (!entry) return 'none';
+  // A resize clears the cache, so its absence says nothing about the entry either way.
+  if (!cached) return 'unknown';
+  return entry.gfa === cached ? 'current' : 'stale';
+}
+
+/** Whether an encode is worth attempting. The encode itself may still refuse its result. */
+export function canSendSetupGraphic(p: ImageProps): boolean {
+  if (uploadKey(p) === undefined || cacheTooLarge(p)) return false;
+  return shippableCache(p) !== undefined || getImage(p.imageId) !== undefined;
 }
 
 /** Storage key of the ~DG/~DY upload a stored reference resolves to; none for a recall of a file such uploads never write (.PNG). */

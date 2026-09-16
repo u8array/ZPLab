@@ -1,14 +1,15 @@
 import type { PageSource } from "./zplParser/types";
 import { parseZPL, type ImportFinding, type ImportReport, type UnbalancedFormat } from "./zplParser";
-import { replayRiskFindings, reportOf } from "./importReport";
+import { DOCUMENT_FINDING, replayRiskFindings, reportOf } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
 import { stripDrivePrefix } from "./customFonts";
 import { renameTemplateMarkers } from "./fnTemplate";
 import { PER_FORMAT_ZPL_FIELDS, effectiveDpmm, type CustomFontMapping, type JmDensity, type LabelConfig } from "../types/LabelConfig";
-import type { PrinterProfile } from "../types/PrinterProfile";
-import type { LabelObject, Page } from "../types/Group";
+import type { PrinterProfile, SetupGraphic } from "../types/PrinterProfile";
+import { exportableLeaves, type LabelObject, type Page } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type Variable } from "../types/Variable";
 import { BARCODE_1D_TYPES } from "../registry";
+import { setupGraphicFits, storedGraphicShips, uploadKey, type ImageProps } from "../registry/image";
 import { verifiedZJustifyCombo } from "../registry/zplHelpers";
 import { resolveForMeasure } from "./barcodeDims";
 import { clockCtxFromLabel } from "./variableBinding";
@@ -190,6 +191,26 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
   if (setupFontPaths.length > 0) {
     printerProfile.setupFonts = setupFontPaths.map((path) => ({ path }));
   }
+  // A shipping object claims only the bytes it ships. Anything else stays provisioning.
+  const shipped = new Set(
+    r.pages.flatMap((page) => exportableLeaves(page.objects)).flatMap((leaf) => {
+      const props = leaf.props as ImageProps;
+      const key = leaf.type === "image" && storedGraphicShips(props) ? uploadKey(props) : undefined;
+      return key ? [`${key}\n${props._gfaCache ?? ""}`] : [];
+    }),
+  );
+  const setupGraphics: SetupGraphic[] = [];
+  for (const g of r.uploadedGraphics) {
+    if (shipped.has(`${g.path}\n${g.gfa}`)) continue;
+    // Refused here with a finding, or the profile patch fails and the emitter drops it in silence.
+    const fit = setupGraphicFits(g.gfa);
+    if (fit !== "ok") {
+      findings.push({ kind: "partial", command: g.via, pageIndex: DOCUMENT_FINDING, loss: fit === "tooLarge" ? "oversizeUpload" : "unshippableUpload" });
+      continue;
+    }
+    setupGraphics.push({ path: g.path, gfa: g.gfa });
+  }
+  if (setupGraphics.length > 0) printerProfile.setupGraphics = setupGraphics;
 
   // Backfill embedInZpl + previewFontName on entries whose path matches an
   // uploaded font: covers a ^CW that precedes its ~DY upload, which the
@@ -285,20 +306,35 @@ export function rebaseAppendedPageDensity(
   });
 }
 
-/** Additive setup-font merge (dedupe by normalized path): a stream lists only
- *  its own uploads and expresses no deletion. */
-export function mergeSetupFonts(
-  existing: readonly { path: string }[] | undefined,
-  incoming: readonly { path: string }[],
-): { path: string }[] {
-  const base = existing ?? [];
-  const seen = new Set(base.map((f) => f.path.trim().toUpperCase()));
-  const added = incoming.filter((f) => !seen.has(f.path.trim().toUpperCase()));
-  return [...base, ...added];
+/** A stream states the current bytes and never a deletion, so an incoming entry adds or replaces, never removes. */
+export function mergeSetupEntries<T extends { path: string }>(
+  existing: readonly T[] | undefined,
+  incoming: readonly T[],
+): T[] {
+  const key = (entry: T) => entry.path.trim().toUpperCase();
+  const merged = [...(existing ?? [])];
+  for (const entry of incoming) {
+    const at = merged.findIndex((e) => key(e) === key(entry));
+    if (at < 0) merged.push(entry);
+    else merged[at] = { ...entry, path: (merged[at] as T).path };
+  }
+  return merged;
 }
 
-/** Routing for imported setup commands: keep in label, keep only in the
- *  setup-script channel (profile), or drop entirely (setup fonts stay). */
+export function mergeSetupUploads(
+  current: Partial<PrinterProfile>,
+  imported: Partial<PrinterProfile>,
+): Partial<PrinterProfile> {
+  const patch = { ...imported };
+  if (imported.setupFonts) patch.setupFonts = mergeSetupEntries(current.setupFonts, imported.setupFonts);
+  if (imported.setupGraphics) patch.setupGraphics = mergeSetupEntries(current.setupGraphics, imported.setupGraphics);
+  return patch;
+}
+
+/** Fields a source edit never strips, see `mergeSetupEntries`. */
+export const SETUP_UPLOAD_FIELDS = ["setupFonts", "setupGraphics"] as const;
+
+/** Routing for imported setup commands. */
 export type SetupCommandChoice = "keep" | "setupScript" | "remove";
 
 /** Apply a SetupCommandChoice to a parsed import (pure). The label re-emits
@@ -330,11 +366,12 @@ export function routeSetupCommands(
   if (choice === "setupScript") {
     return { printerProfile: result.printerProfile, pages, keptPageIndexes };
   }
-  // remove: every profile field except setupFonts is replayRisk-derived, so
-  // keeping only setupFonts strips exactly those.
-  const printerProfile: Partial<PrinterProfile> = result.printerProfile.setupFonts
-    ? { setupFonts: result.printerProfile.setupFonts }
-    : {};
+  // remove: every other profile field is replayRisk-derived, so keeping only the uploads strips exactly those.
+  const { setupFonts, setupGraphics } = result.printerProfile;
+  const printerProfile: Partial<PrinterProfile> = {
+    ...(setupFonts ? { setupFonts } : {}),
+    ...(setupGraphics ? { setupGraphics } : {}),
+  };
   return { printerProfile, pages, keptPageIndexes };
 }
 

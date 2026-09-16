@@ -741,6 +741,7 @@ export function parseZPL(
     labelConfig,
     printerProfile,
     uploadedFontPaths: [...s.fonts.downloadedFontPaths],
+    uploadedGraphics: [...s.fonts.downloadedGraphics].map(([path, g]) => ({ path, gfa: g.gfaCache, via: g.via })),
     referencedFontPaths: [...s.fonts.referencedFontPaths],
     sourceFnNumbers: s.result.sourceFnNumbers,
   };

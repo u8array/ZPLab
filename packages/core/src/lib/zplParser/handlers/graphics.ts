@@ -183,6 +183,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     const key = uploadedGraphicPath(parsed);
     onUpload(key, image.truncated);
     s.fonts.downloadedGraphics.set(key, {
+      via: code,
       imageId: image.imageId,
       widthDots: image.widthDots,
       heightDots: image.heightDots,

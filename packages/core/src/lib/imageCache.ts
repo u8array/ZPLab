@@ -5,7 +5,7 @@
  */
 
 import { hydrateLocalStoragePrefix, safeLocalStorageRemove, safeLocalStorageSet } from "./localStorageBucket";
-import { loadImage } from "./loadImage";
+import { decodeImageFile } from "./loadImage";
 
 import { newId } from "./ids";
 export interface CachedImage {
@@ -54,31 +54,17 @@ export function removeImage(id: string): void {
 /** Load a File into the cache. Returns the CachedImage entry. Rejects on
  *  non-image MIME type, oversized files, or decode failures. */
 export async function loadImageFile(file: File): Promise<CachedImage> {
-  if (!file.type.startsWith('image/')) {
-    throw new Error(`Not an image: ${file.name}`);
-  }
   if (file.size > MAX_IMAGE_BYTES) {
     throw new Error(`Image too large: ${file.name} (${file.size} bytes, max ${MAX_IMAGE_BYTES})`);
   }
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      loadImage(dataUrl, `Failed to decode image: ${file.name}`)
-        .then((img) => {
-          const entry: CachedImage = {
-            id: newId(),
-            name: file.name,
-            dataUrl,
-            width: img.naturalWidth,
-            height: img.naturalHeight,
-          };
-          putImage(entry);
-          resolve(entry);
-        })
-        .catch(reject);
-    };
-    reader.onerror = () => reject(new Error(`Failed to read file: ${file.name}`));
-    reader.readAsDataURL(file);
-  });
+  const { dataUrl, img } = await decodeImageFile(file);
+  const entry: CachedImage = {
+    id: newId(),
+    name: file.name,
+    dataUrl,
+    width: img.naturalWidth,
+    height: img.naturalHeight,
+  };
+  putImage(entry);
+  return entry;
 }

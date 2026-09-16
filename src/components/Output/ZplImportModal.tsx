@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { XMarkIcon, ClipboardDocumentIcon, CheckIcon, FolderOpenIcon } from '@heroicons/react/16/solid';
-import { importZplText, routeSetupCommands, mergeSetupFonts, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
+import { importZplText, routeSetupCommands, mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
 import { readFileAsZplText } from '../../lib/readFile';
 import { useLabelStore } from '../../store/labelStore';
 import type { Page } from '@zplab/core/types/Group';
@@ -65,18 +65,8 @@ export function ZplImportModal({ onClose }: Props) {
         loadDesign(replaceImportLabel(label, labelConfig), importedPages, importedVariables);
       }
     }
-    // Profile fields are per-installation state, applied regardless of
-    // append/replace. Setup fonts merge additively: a stream expresses no
-    // deletion.
-    const profileToPatch = printerProfile.setupFonts
-      ? {
-          ...printerProfile,
-          setupFonts: mergeSetupFonts(
-            useLabelStore.getState().printerProfile.setupFonts,
-            printerProfile.setupFonts,
-          ),
-        }
-      : printerProfile;
+    // Profile fields are per-installation state, applied regardless of append/replace.
+    const profileToPatch = mergeSetupUploads(useLabelStore.getState().printerProfile, printerProfile);
     if (Object.keys(profileToPatch).length > 0) {
       patchPrinterProfile(profileToPatch);
     }
@@ -113,7 +103,8 @@ export function ZplImportModal({ onClose }: Props) {
     if (
       totalObjects === 0 &&
       Object.keys(labelConfig).length === 0 &&
-      Object.keys(printerProfile).length === 0
+      Object.keys(printerProfile).length === 0 &&
+      imported.report.findings.length === 0
     ) {
       setError(t.importModal.errNoObjects);
       return;

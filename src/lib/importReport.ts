@@ -1,4 +1,4 @@
-import type { ImportFinding, ImportReport } from '@zplab/core/lib/importReport';
+import { DOCUMENT_FINDING, type ImportFinding, type ImportReport } from '@zplab/core/lib/importReport';
 import {
   editorLossAxes,
   type EditorLossAxis,
@@ -30,6 +30,8 @@ const LOSS_KEY: Record<ImportLossCause, keyof ReportStrings> = {
   qrFdMode: 'lossQrFdMode',
   storedGraphic: 'lossStoredGraphic',
   shortPayload: 'lossShortPayload',
+  oversizeUpload: 'lossOversizeUpload',
+  unshippableUpload: 'lossUnshippableUpload',
   recallMagnification: 'lossRecallMagnification',
   checksumMismatch: 'lossChecksumMismatch',
   fnPartialInsert: 'lossFnPartialInsert',
@@ -124,7 +126,7 @@ export function describeEditorLoss(loss: EditorStateDiff, tr: ReportStrings): st
 /** Compact "Page N: " prefix when a finding originates from a multi-page
  *  import. Single-page reports omit it to stay terse. */
 function pagePrefix(f: ImportFinding, multiPage: boolean, pageFmt: string): string {
-  return multiPage ? `${pageFmt.replace('{n}', String(f.pageIndex + 1))}: ` : '';
+  return multiPage && f.pageIndex !== DOCUMENT_FINDING ? `${pageFmt.replace('{n}', String(f.pageIndex + 1))}: ` : '';
 }
 
 export function formatReportAsText(result: ImportResult, tr: ReportStrings): string {

@@ -112,6 +112,8 @@ export const MAINTENANCE_MESSAGE_MAX_LEN = 63;
 export const FONT_LINKS_MAX_PER_BASE = 5;
 /** ^FL ext/base path length cap (defensive; covers full Zebra device-path forms). */
 export const FONT_LINKS_PATH_MAX_LEN = 128;
+/** The profile rides the one localStorage session blob beside the design, so a logo fits and a photo does not. */
+export const SETUP_GRAPHIC_GFA_MAX_CHARS = 1_048_576;
 
 /** Indexed table 0..16; wire value is the index. */
 export const HEAD_CLEANING_INTERVAL_METERS = [
@@ -207,6 +209,11 @@ export const printerProfileSchema = z.object({
   setupFonts: z.array(z.object({
     path: z.string().min(1).max(FONT_LINKS_PATH_MAX_LEN).regex(setupScriptSafeStringRegex),
   })).optional(),
+  /** Each entry carries its own ^GF bytes: a profile outlives the design whose image store held the raster. */
+  setupGraphics: z.array(z.object({
+    path: z.string().min(1).max(FONT_LINKS_PATH_MAX_LEN).regex(setupScriptSafeStringRegex),
+    gfa: z.string().min(1).max(SETUP_GRAPHIC_GFA_MAX_CHARS),
+  })).optional(),
   /** ^JH f master gate; without `E` ^MA sits dormant. */
   earlyWarningMaintenance: z.enum(['E', 'D']).optional(),
   /** ^JH g; stored as meters for UX, wire is index into table. */
@@ -262,6 +269,7 @@ export const printerProfileSchema = z.object({
 });
 
 export type PrinterProfile = z.infer<typeof printerProfileSchema>;
+export type SetupGraphic = NonNullable<PrinterProfile['setupGraphics']>[number];
 
 /** Cascade direction follows whichever side the patch touches:
  *  alert-touched rewrites message.type, message-touched rewrites
