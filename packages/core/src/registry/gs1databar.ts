@@ -1,8 +1,10 @@
+import type { PropSpecs } from '../types/propSpec';
+import { moduleWidthSpec } from './transformHelpers';
 import type { LabelObjectBase } from '../types/LabelObject';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { fieldPos1d, fdFieldFor } from './zplHelpers';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
-import { type ZplRotation } from './rotation';
+import { type ZplRotation, ROTATION_SPEC } from './rotation';
 import {
   GS1_DATABAR_DEFAULT_SEGMENTS,
   GS1_DATABAR_EXPANDED_SYMBOLOGIES,
@@ -46,6 +48,14 @@ export const SYMBOLOGY_LABELS: Record<Gs1DatabarProps['symbology'], string> = {
   7: 'Expanded Stacked',
 };
 
+export const GS1DATABAR_PROP_SPECS: PropSpecs<Gs1DatabarProps> = {
+  content: { type: 'string' },
+  magnification: moduleWidthSpec(),
+  symbology: { type: 'number', integer: true, min: 1, max: 7, scale: 'never' },
+  segments: { type: 'number', integer: true, min: 2, max: 22, scale: 'never' },
+  rotation: ROTATION_SPEC,
+};
+
 export const gs1databar: ObjectTypeCore<Gs1DatabarProps> = {
   label: 'GS1 Databar',
   icon: 'GS1',
@@ -54,6 +64,7 @@ export const gs1databar: ObjectTypeCore<Gs1DatabarProps> = {
   barcodeClass: '1d',
   bindable: true,
   preflight: moduleTooSmallPreflight<Gs1DatabarProps>('magnification'),
+  propSpecs: GS1DATABAR_PROP_SPECS,
   defaultProps: {
     content: '',
     magnification: 2,

@@ -9,7 +9,7 @@ import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
 import { fieldGridCols, fieldGridCell } from '../components/ui/formStyles';
 import { ShapeModeToggle } from '../components/Properties/ShapeModeToggle';
-import { type LineProps, pickAngle, lineZplCmd } from '@zplab/core/registry/line';
+import { LINE_PROP_SPECS, type LineProps, pickAngle, lineZplCmd } from '@zplab/core/registry/line';
 
 /**
  * Quick-orientation picker.
@@ -72,8 +72,8 @@ export const linePanel: ObjectTypeUi<LineProps> = {
           <NumberInput
             label={t.registry.line.angle}
             value={p.angle}
-            min={-359}
-            max={359}
+            min={LINE_PROP_SPECS.angle.min}
+            max={LINE_PROP_SPECS.angle.max}
             onChange={(angle) => onChange({ angle })}
             zplCmd={cmd}
             className={fieldGridCell}

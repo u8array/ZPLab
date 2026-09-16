@@ -1,8 +1,10 @@
+import type { PropSpecs } from '../types/propSpec';
+import { YES_NO_VALUES } from '../types/typeHelpers';
 import type { ObjectTypeCore } from "../types/ObjectType";
 import { fieldPosZ, fdFieldFor } from "./zplHelpers";
-import { clamp, commitStacked2DTransform } from "./transformHelpers";
+import { clamp, commitStacked2DTransform, moduleWidthSpec } from "./transformHelpers";
 import { moduleTooSmallPreflight } from "../lib/barcodeScannability";
-import { type ZplRotation } from "./rotation";
+import { type ZplRotation, ROTATION_SPEC } from "./rotation";
 
 /** CODABLOCK A requires ^BY module width >= 2 (spec). */
 const CODABLOCK_MODULE_WIDTH_MIN = 2;
@@ -11,8 +13,8 @@ const CODABLOCK_MODULE_WIDTH_MIN = 2;
  *  imported c is preserved on re-emit. Row count derives from data length ÷ c;
  *  the firmware collapses to one row unless c is given (verified on a ZD230: r
  *  alone does not stack). */
-export const CODABLOCK_COLUMNS_MIN = 2;
-export const CODABLOCK_COLUMNS_MAX = 62;
+const CODABLOCK_COLUMNS_MIN = 2;
+const CODABLOCK_COLUMNS_MAX = 62;
 export const CODABLOCK_DEFAULT_COLUMNS = 6;
 /** bwip-js codablockf rejects columns below 4, so the on-canvas preview (and the
  *  panel input that steers new values) floor here; the model/emit still carry
@@ -35,6 +37,15 @@ export interface CodablockProps {
   rotation: ZplRotation;
 }
 
+export const CODABLOCK_PROP_SPECS: PropSpecs<CodablockProps> = {
+  content: { type: 'string' },
+  moduleWidth: moduleWidthSpec(CODABLOCK_MODULE_WIDTH_MIN),
+  rowHeight: { type: 'number', scale: 'dots' },
+  columns: { type: 'number', integer: true, min: CODABLOCK_COLUMNS_MIN, max: CODABLOCK_COLUMNS_MAX, scale: 'never' },
+  securityLevel: { type: 'string', values: YES_NO_VALUES },
+  rotation: ROTATION_SPEC,
+};
+
 export const codablock: ObjectTypeCore<CodablockProps> = {
   label: "CODABLOCK",
   icon: "▥B",
@@ -43,6 +54,7 @@ export const codablock: ObjectTypeCore<CodablockProps> = {
   barcodeClass: 'stacked2d',
   bindable: true,
   preflight: moduleTooSmallPreflight<CodablockProps>('moduleWidth'),
+  propSpecs: CODABLOCK_PROP_SPECS,
   defaultProps: {
     content: '',
     moduleWidth: 2,
@@ -56,8 +68,7 @@ export const codablock: ObjectTypeCore<CodablockProps> = {
   placeholderContent: 'CODABLOCK',
   defaultSize: { width: 250, height: 120 },
 
-  moduleWidthMin: CODABLOCK_MODULE_WIDTH_MIN,
-  commitTransform: (obj, ctx) => commitStacked2DTransform(obj, ctx, CODABLOCK_MODULE_WIDTH_MIN),
+  commitTransform: (obj, ctx) => commitStacked2DTransform(obj, ctx, CODABLOCK_PROP_SPECS),
 
   toZPL: (obj, ctx) => {
     const p = obj.props;

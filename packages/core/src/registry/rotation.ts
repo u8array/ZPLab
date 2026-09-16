@@ -1,3 +1,5 @@
+import type { StringPropSpec } from '../types/propSpec';
+
 /**
  * ZPL field orientation. The single letter that follows a barcode/text
  * command in ZPL: N (normal, 0°), R (rotated 90° CW), I (inverted 180°),
@@ -6,6 +8,8 @@
 export type ZplRotation = 'N' | 'R' | 'I' | 'B';
 
 export const ZPL_ROTATIONS: readonly ZplRotation[] = ['N', 'R', 'I', 'B'] as const;
+
+export const ROTATION_SPEC: StringPropSpec<ZplRotation> = { type: 'string', values: ZPL_ROTATIONS };
 
 /** Canvas view rotation in degrees CW. Distinct from a field's ZplRotation:
  *  this turns the whole viewport, not one object. */

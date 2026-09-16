@@ -318,3 +318,6 @@ export function fdFieldFor(
   if (resolveCtrl && hasControlMarkers(payload)) payload = resolveControlMarkers(payload);
   return fdField(transform(payload), arm);
 }
+
+export const ZPL_COLORS = ['B', 'W'] as const;
+export type ZplColor = (typeof ZPL_COLORS)[number];

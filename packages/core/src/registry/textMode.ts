@@ -7,6 +7,7 @@
  *  Own leaf module (not text.ts) so emit helpers can consult the mode
  *  without a registry cycle. */
 export type TextMode = "normal" | "fb" | "tb";
+export const TEXT_MODES: readonly TextMode[] = ["normal", "fb", "tb"];
 
 export function resolveTextMode(p: {
   textMode?: TextMode;

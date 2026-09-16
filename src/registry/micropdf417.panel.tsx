@@ -6,7 +6,7 @@ import { NumberInput } from "../components/Properties/NumberInput";
 import { UnitNumberInput } from "../components/Properties/UnitNumberInput";
 import { SectionCard, StaticSectionCard } from "../components/Properties/SectionCard";
 import { fieldGridCols, fieldGridCell } from "../components/ui/formStyles";
-import type { MicroPdf417Props } from "@zplab/core/registry/micropdf417";
+import { MICROPDF417_PROP_SPECS, type MicroPdf417Props } from '@zplab/core/registry/micropdf417';
 
 export const micropdf417Panel: ObjectTypeUi<MicroPdf417Props> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -33,8 +33,8 @@ export const micropdf417Panel: ObjectTypeUi<MicroPdf417Props> = {
             <NumberInput
               label={loc.moduleWidth}
               value={p.moduleWidth}
-              min={1}
-              max={10}
+              min={MICROPDF417_PROP_SPECS.moduleWidth.min}
+              max={MICROPDF417_PROP_SPECS.moduleWidth.max}
               onChange={(moduleWidth) => onChange({ moduleWidth })}
               zplCmd="^BY"
               className={fieldGridCell}
@@ -44,8 +44,8 @@ export const micropdf417Panel: ObjectTypeUi<MicroPdf417Props> = {
           <NumberInput
             label={loc.mode}
             value={p.mode}
-            min={0}
-            max={33}
+            min={MICROPDF417_PROP_SPECS.mode.min}
+            max={MICROPDF417_PROP_SPECS.mode.max}
             onChange={(mode) => onChange({ mode })}
             zplCmd="^BF"
           />

@@ -514,3 +514,12 @@ describe("code49 keeps its module grid across a rescale", () => {
     expect(out.props.height).toBe(54);
   });
 });
+
+describe("rescale scaling set", () => {
+  it("scales a GS1 DataBar magnification like a module width, which the lists never did", () => {
+    const pages = page(leaf("g", "gs1databar", 0, 0, { content: "0112345678901231", magnification: 4, symbology: 1, rotation: "N" }));
+    const r = rescaleDesign(pages, label, 8, 24, { dpmm: 24 });
+    expect((r.pages[0]?.objects[0] as LeafObject).props).toMatchObject({ magnification: 10 });
+    expect(r.warnings).toContainEqual(expect.objectContaining({ prop: "magnification", reason: "moduleClamped" }));
+  });
+});

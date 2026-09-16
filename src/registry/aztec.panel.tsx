@@ -4,13 +4,7 @@ import { RotationSelect } from "../components/Properties/RotationSelect";
 import { NumberInput } from "../components/Properties/NumberInput";
 import { SectionCard } from "../components/Properties/SectionCard";
 import { TypedContentSection } from "./typedContentSection";
-import {
-  type AztecProps,
-  MAGNIFICATION_MIN,
-  MAGNIFICATION_MAX,
-  EC_LEVEL_MIN,
-  EC_LEVEL_MAX,
-} from "@zplab/core/registry/aztec";
+import { AZTEC_PROP_SPECS, type AztecProps } from '@zplab/core/registry/aztec';
 
 export const aztecPanel: ObjectTypeUi<AztecProps> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -25,8 +19,8 @@ export const aztecPanel: ObjectTypeUi<AztecProps> = {
           <NumberInput
             label={loc.magnification}
             value={p.magnification}
-            min={MAGNIFICATION_MIN}
-            max={MAGNIFICATION_MAX}
+            min={AZTEC_PROP_SPECS.magnification.min}
+            max={AZTEC_PROP_SPECS.magnification.max}
             onChange={(magnification) => onChange({ magnification })}
             zplCmd="^B0"
           />
@@ -34,8 +28,8 @@ export const aztecPanel: ObjectTypeUi<AztecProps> = {
           <NumberInput
             label={loc.ecLevel}
             value={p.ecLevel}
-            min={EC_LEVEL_MIN}
-            max={EC_LEVEL_MAX}
+            min={AZTEC_PROP_SPECS.ecLevel.min}
+            max={AZTEC_PROP_SPECS.ecLevel.max}
             onChange={(ecLevel) => onChange({ ecLevel })}
             zplCmd="^B0"
           />

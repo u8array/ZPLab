@@ -1,5 +1,6 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { graphicFieldPos, wrapReverse } from './zplHelpers';
+import { graphicFieldPos, wrapReverse, ZPL_COLORS, type ZplColor } from './zplHelpers';
 import { commitWidthHeightTransform } from './transformHelpers';
 
 export interface EllipseProps {
@@ -7,7 +8,7 @@ export interface EllipseProps {
   height: number;
   thickness: number;
   filled: boolean;
-  color: 'B' | 'W';
+  color: ZplColor;
   /** When true, resize keeps width === height. Set by the parser when
    *  an object round-trips through ^GC, by the "Circle" Properties-
    *  Panel toggle, or by the user. The transformer reads this to
@@ -19,11 +20,22 @@ export interface EllipseProps {
   reverse?: boolean;
 }
 
+export const ELLIPSE_PROP_SPECS: PropSpecs<EllipseProps> = {
+  width: { type: 'number', scale: 'dots' },
+  height: { type: 'number', scale: 'dots' },
+  thickness: { type: 'number', scale: 'dots' },
+  filled: { type: 'boolean' },
+  color: { type: 'string', values: ZPL_COLORS },
+  lockAspect: { type: 'boolean' },
+  reverse: { type: 'boolean' },
+};
+
 export const ellipse: ObjectTypeCore<EllipseProps> = {
   label: 'Ellipse',
   icon: '○',
   zplCmd: '^GE',
   group: 'shape',
+  propSpecs: ELLIPSE_PROP_SPECS,
   defaultProps: {
     width: 150,
     height: 100,

@@ -10,8 +10,7 @@ import {
 } from "@zplab/core/lib/designFile";
 import { getEntry, ObjectRegistry } from "@zplab/core/registry";
 import { gfShipsSafely, parseGfHeader } from "@zplab/core/registry/image";
-import { isZplRotation } from "@zplab/core/registry/rotation";
-import { isQrByHeight } from "@zplab/core/lib/qrBy";
+import { propDomainIssue, propTypeIssue, type PropSpec } from "@zplab/core/types/propSpec";
 import { ZPL_PARAM_CHARS } from "@zplab/core/lib/zplParams";
 import { MAX_SOURCE_PAGES } from "@zplab/core/lib/zplSourceEdit";
 import {
@@ -299,39 +298,6 @@ function hasControlString(value: unknown, depth = 0): boolean {
   return Object.values(value).some((v) => hasControlString(v, depth + 1));
 }
 
-/** Emitted props with no registry default, so type-checking has nothing to
- *  compare against; listed here instead of defaulted (a default would change
- *  what every new object persists), e.g. the parser's own printerFontName/storedAs. */
-const OPTIONAL_PROP_TYPES: Record<string, string> = {
-  heightDots: "number",
-  blockWidth: "number",
-  blockLines: "number",
-  blockLineSpacing: "number",
-  blockJustify: "string",
-  blockHangingIndent: "number",
-  blockHeight: "number",
-  byHeight: "number",
-  textMode: "string",
-  fpDirection: "string",
-  fpCharGap: "number",
-  printerFontName: "string",
-  fontId: "string",
-  serial: "object",
-  storedAs: "object",
-  reverse: "boolean",
-  gs1: "boolean",
-  msiCheckMode: "string",
-  msiHriCheck: "boolean",
-  aspectRatio: "number",
-  rows: "number",
-  columns: "number",
-  segments: "number",
-  symbolNumber: "number",
-  symbolTotal: "number",
-  lockAspect: "boolean",
-  preSerialContent: "string",
-};
-
 /** Props emitted as written, so the boundary must prove they're graphic data
  *  before the printer reads them as commands. rawGf ships the string verbatim
  *  (empty payload is fatal); _gfaCache passes gfaCacheUsable first and degrades to an empty field plus a warning. */
@@ -340,19 +306,17 @@ const RAW_GRAPHIC_PROPS = new Map<string, boolean>([
   ["_gfaCache", false],
 ]);
 
-/** Registry defaults are the only runtime prop contract, so a supplied prop
- *  must match its default's type; unchecked, a string reaches the emitted ZPL
- *  ("^A0N,gross,0"). Props the defaults omit are optional extras: finite check only. */
+/** Unchecked, a caller's string reaches the emitted ZPL ("^A0N,gross,0"). */
 export function propIssues(
   type: string,
   props: Record<string, unknown> | undefined,
-  /** `caller`: props this call supplied, checked down to the graphic payload.
-   *  `design`: a whole design file (may carry an importer's preserved bytes);
-   *  judged by emit instead (gfShipsSafely), so reading a design back never fails wholesale over one object. */
+  /** `caller`: this call's props, held to payload, ownership and domain.
+   *  `design`: a whole file read back, held to types only, so one preserved
+   *  import value never fails the design wholesale. */
   origin: "caller" | "design" = "caller",
 ): string[] {
   if (!props) return [];
-  const defaults = getEntry(type)?.defaultProps as Record<string, unknown> | undefined;
+  const specs = getEntry(type)?.propSpecs as Record<string, PropSpec> | undefined;
   const issues: string[] = [];
   for (const [key, value] of Object.entries(props)) {
     const shipsVerbatim = RAW_GRAPHIC_PROPS.get(key);
@@ -378,47 +342,20 @@ export function propIssues(
       continue;
     }
     // Every string leaf, nested included: storedAs.name and the serial fields
-    // reach parameter slots (^XG, ^SN) just like a top-level prop does. Props
-    // the defaults omit carry no type either way ("^FB1,1,0,L,0^FS^XZ~JB").
+    // reach parameter slots (^XG, ^SN) just like a top-level prop does.
     if (!FREE_TEXT_PROPS.has(key) && hasControlString(value)) {
       issues.push(`${type}.${key} must not contain ^ ~ or , (they end the ZPL parameter)`);
       continue;
     }
-    // byHeight is a qrcode prop; on any other type it would silently never
-    // print, and the global OPTIONAL/knownPropNames maps would swallow the
-    // unknown-prop note, so it rejects here explicitly.
-    if (key === "byHeight" && type !== "qrcode") {
-      issues.push(`${type}.byHeight is a qrcode prop`);
+    if (!specs) continue;
+    const spec = Object.hasOwn(specs, key) ? specs[key] : undefined;
+    if (!spec) {
+      if (origin === "caller" && registryReadsProp(key)) issues.push(`${type}.${key} is not a ${type} prop`);
       continue;
     }
-    // hasOwn, not a bracket read: a prop named toString would otherwise resolve
-    // Object.prototype's and be rejected for not being a function.
-    const fallback = defaults && Object.hasOwn(defaults, key) ? defaults[key] : undefined;
-    // Documented optional props carry no default but still reach a parameter
-    // slot: heightDots as "300" made ^FT string-concatenate into ^FT100,100300.
-    // hasOwn, same reason as the defaults read above (toString collision).
-    const optional = Object.hasOwn(OPTIONAL_PROP_TYPES, key) ? OPTIONAL_PROP_TYPES[key] : undefined;
-    if (fallback === undefined && optional !== undefined && value !== undefined && value !== null) {
-      const got = Array.isArray(value) ? "array" : typeof value;
-      if (got !== optional) issues.push(`${type}.${key} must be ${optional} (got ${got})`);
-      else if (key === "byHeight" && !isQrByHeight(value)) {
-        issues.push(`${type}.byHeight must be a positive integer (got ${value})`);
-      }
-      continue;
-    }
-    if (fallback === undefined || fallback === null || value === undefined || value === null) {
-      continue;
-    }
-    const wanted = Array.isArray(fallback) ? "array" : typeof fallback;
-    const got = Array.isArray(value) ? "array" : typeof value;
-    if (wanted !== got) {
-      issues.push(`${type}.${key} must be ${wanted} (got ${got})`);
-      continue;
-    }
-    // Right type, wrong value: "90" would emit ^A090, which no firmware reads.
-    if (key === "rotation" && typeof value === "string" && !isZplRotation(value)) {
-      issues.push(`${type}.rotation must be N, R, I or B (got ${JSON.stringify(value)})`);
-    }
+    if (value === undefined) continue;
+    const issue = propTypeIssue(spec, value) ?? (origin === "caller" ? propDomainIssue(spec, value) : null);
+    if (issue) issues.push(`${type}.${key} ${issue}`);
   }
   return issues;
 }
@@ -497,13 +434,13 @@ export const PROP_SUMMARIES: Record<string, Record<string, string>> = {
     imageId: "string, id of an image the app holds; empty for a pure ZPL graphic",
     widthDots: "printed width in dots",
     heightDots: "printed height in dots; follows the aspect ratio when omitted",
-    threshold: "0-255 luminance cut for the 1-bit conversion",
+    threshold: "1-255 luminance cut for the 1-bit conversion",
     rotation: "N | R | I | B",
     _gfaCache: "the encoded ^GFA graphic; raster_image fills this",
   },
   qrcode: {
     content: "string payload",
-    magnification: "module size 1-10",
+    magnification: "module size in dots",
     errorCorrection: "L | M | Q | H",
     model: "1 | 2",
     rotation: "N | R | I | B",
@@ -539,42 +476,21 @@ export const PROP_SUMMARIES: Record<string, Record<string, string>> = {
 };
 
 /** A prop nobody knows is kept in the model but never emitted, so a typo prints
- *  nothing and explains nothing. Known means defaulted OR documented: calling an
- *  undefaulted optional (code128.gs1) unknown would condemn correct labels. */
+ *  nothing and explains nothing. */
 export function unknownPropNotes(type: string, id: string, props: Record<string, unknown> | undefined): string[] {
-  const defaults = getEntry(type)?.defaultProps as Record<string, unknown> | undefined;
-  if (!props || !defaults) return [];
+  const specs = getEntry(type)?.propSpecs as Record<string, PropSpec> | undefined;
+  if (!props || !specs) return [];
   const documented = PROP_SUMMARIES[type] ?? {};
   return Object.keys(props)
     // hasOwn, not `in`: a prop literally named __proto__ is on every object's
     // prototype chain and would slip past unremarked.
-    .filter(
-      (key) =>
-        !Object.hasOwn(defaults, key) &&
-        !Object.hasOwn(documented, key) &&
-        !RAW_GRAPHIC_PROPS.has(key) &&
-        !knownPropNames().has(key),
-    )
+    .filter((key) => !Object.hasOwn(specs, key) && !Object.hasOwn(documented, key) && !RAW_GRAPHIC_PROPS.has(key))
     .map((key) => `${id}: ${key} is not a known ${type} prop (see get_schema)`);
 }
 
-/** Every prop name any type defaults or documents. Optional props exist that do
- *  neither, so only a name nobody owns counts as a typo: a false accusation
- *  costs more than a missed one (it once argued an agent out of correct GS1). */
-function knownPropNames(): ReadonlySet<string> {
-  if (KNOWN_PROPS === null) {
-    KNOWN_PROPS = new Set([
-      ...Object.values(ObjectRegistry).flatMap((e) =>
-        Object.keys((e as { defaultProps?: object }).defaultProps ?? {}),
-      ),
-      ...Object.values(PROP_SUMMARIES).flatMap((p) => Object.keys(p)),
-      ...Object.keys(OPTIONAL_PROP_TYPES),
-    ]);
-  }
-  return KNOWN_PROPS;
+function registryReadsProp(key: string): boolean {
+  return Object.values(ObjectRegistry).some((e) => Object.hasOwn(e.propSpecs, key));
 }
-
-let KNOWN_PROPS: Set<string> | null = null;
 
 /** First `type-n` nobody holds. A count-derived id collides as soon as the
  *  design skips or reuses the sequence (an explicit id, a removed object). */

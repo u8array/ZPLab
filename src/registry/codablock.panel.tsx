@@ -7,12 +7,7 @@ import { SectionCard, StaticSectionCard } from "../components/Properties/Section
 import { ContentEditorButton } from "../components/Properties/ContentEditorButton";
 import { CheckboxRow } from "../components/Properties/CheckboxRow";
 import { fieldGridCols, fieldGridCell } from "../components/ui/formStyles";
-import {
-  CODABLOCK_COLUMNS_MAX,
-  CODABLOCK_DEFAULT_COLUMNS,
-  CODABLOCK_PREVIEW_COLUMNS_MIN,
-  type CodablockProps,
-} from "@zplab/core/registry/codablock";
+import { CODABLOCK_PROP_SPECS, CODABLOCK_DEFAULT_COLUMNS, CODABLOCK_PREVIEW_COLUMNS_MIN, type CodablockProps } from '@zplab/core/registry/codablock';
 
 export const codablockPanel: ObjectTypeUi<CodablockProps> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -39,8 +34,8 @@ export const codablockPanel: ObjectTypeUi<CodablockProps> = {
             <NumberInput
               label={loc.moduleWidth}
               value={p.moduleWidth}
-              min={1}
-              max={10}
+              min={CODABLOCK_PROP_SPECS.moduleWidth.min}
+              max={CODABLOCK_PROP_SPECS.moduleWidth.max}
               onChange={(moduleWidth) => onChange({ moduleWidth })}
               zplCmd="^BY"
               className={fieldGridCell}
@@ -49,7 +44,7 @@ export const codablockPanel: ObjectTypeUi<CodablockProps> = {
               label={loc.columns}
               value={p.columns ?? CODABLOCK_DEFAULT_COLUMNS}
               min={CODABLOCK_PREVIEW_COLUMNS_MIN}
-              max={CODABLOCK_COLUMNS_MAX}
+              max={CODABLOCK_PROP_SPECS.columns.max}
               onChange={(columns) => onChange({ columns })}
               zplCmd="^BB"
               className={fieldGridCell}

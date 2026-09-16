@@ -14,18 +14,18 @@ describe("stacked-2D ^BY moduleWidth minimum on resize commit", () => {
   it("PDF417 clamps moduleWidth to 2", () => {
     const obj = leaf("pdf417", { content: "x", rowHeight: 2, securityLevel: 0, columns: 0, moduleWidth: 4, rotation: "N" });
     expect(mw(pdf417.commitTransform?.(obj, ctx))).toBe(2);
-    expect(pdf417.moduleWidthMin).toBe(2);
+    expect(pdf417.propSpecs.moduleWidth.min).toBe(2);
   });
 
   it("CODABLOCK clamps moduleWidth to 2", () => {
     const obj = leaf("codablock", { content: "x", moduleWidth: 4, rowHeight: 2, securityLevel: "Y", rotation: "N" });
     expect(mw(codablock.commitTransform?.(obj, ctx))).toBe(2);
-    expect(codablock.moduleWidthMin).toBe(2);
+    expect(codablock.propSpecs.moduleWidth.min).toBe(2);
   });
 
   it("MicroPDF417 keeps the general floor of 1", () => {
     const obj = leaf("micropdf417", { content: "x", rowHeight: 2, mode: 0, moduleWidth: 4, rotation: "N" });
     expect(mw(micropdf417.commitTransform?.(obj, ctx))).toBe(1);
-    expect(micropdf417.moduleWidthMin).toBeUndefined();
+    expect(micropdf417.propSpecs.moduleWidth.min).toBe(1);
   });
 });

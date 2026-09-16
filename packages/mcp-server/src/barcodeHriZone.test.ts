@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { HRI_LINE_TYPES, barcodeTextZoneDots, hriZoneDots } from "@zplab/core/lib/barcodeHri";
 import { registerSidecarFootprintMeasurer } from "./footprint";
-import { createDraft } from "./tools";
+import { createDraft, validateDraft } from "./tools";
 
 registerSidecarFootprintMeasurer();
 
@@ -47,7 +47,26 @@ describe("HRI zone", () => {
     }
   });
 
-  it("leaves a type outside the set alone", () => {
-    expect(height("pdf417", true)).toBe(height("pdf417", false));
+  it("leaves a type outside the set alone, even when a design file carries the flag", () => {
+    const base = createDraft({
+      widthMm: 100, heightMm: 60, dpmm: 8,
+      objects: [{ type: "pdf417", x: 10, y: 10, props: { content: "12345", moduleWidth: 2 } }],
+    });
+    if (!base.ok) throw new Error(base.errors.join());
+    const poisoned = JSON.parse(JSON.stringify(base.designFile)) as { pages: { objects: { props: Record<string, unknown> }[] }[] };
+    poisoned.pages[0]!.objects[0]!.props.printInterpretation = true;
+    const r = validateDraft(poisoned);
+    if (!r.ok) throw new Error(r.errors.join());
+    expect(r.bounds[0]!.height).toBe(base.bounds[0]!.height);
+  });
+
+  it("refuses the interpretation flag on a type whose contract has none", () => {
+    const r = createDraft({
+      widthMm: 100, heightMm: 60, dpmm: 8,
+      objects: [{ type: "pdf417", x: 10, y: 10, props: { content: "12345", printInterpretation: true } }],
+    });
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.errors[0]).toContain("pdf417.printInterpretation is not a pdf417 prop");
   });
 });

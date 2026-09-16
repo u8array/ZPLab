@@ -1,3 +1,4 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { fieldPosZ, fdFieldFor } from './zplHelpers';
 import {
@@ -9,11 +10,8 @@ import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { isLoneMarker } from '../lib/variableField';
 import { planGs1Fd } from '../lib/gs1Plan';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
-import { type ZplRotation } from './rotation';
+import { type ZplRotation, ROTATION_SPEC } from './rotation';
 import { GS1_CONTENT_SPEC } from './gs1FieldSpec';
-
-export const DIMENSION_MIN = 1;
-export const DIMENSION_MAX = 12;
 
 /** ECC 200 square symbol sizes (rows = columns) the firmware accepts for ^BX c/r. */
 export const DM_SQUARE_SIZES = [
@@ -55,6 +53,18 @@ export interface DataMatrixProps {
 // One switch for the capability flag and the emitter's chip resolution.
 const CONTROL_CHARS = true;
 
+export const DATAMATRIX_PROP_SPECS: PropSpecs<DataMatrixProps> = {
+  content: { type: 'string' },
+  // ^BX h runs to the label width (spec p.144).
+  dimension: { type: 'number', integer: true, min: 1, scale: 'uniform', clamp: { min: 1, max: 12 } },
+  quality: { type: 'number', values: [0, 50, 80, 100, 140, 200], scale: 'never' },
+  rotation: ROTATION_SPEC,
+  gs1: { type: 'boolean' },
+  aspectRatio: { type: 'number', values: [1, 2], scale: 'never' },
+  columns: { type: 'number', scale: 'never' },
+  rows: { type: 'number', scale: 'never' },
+};
+
 export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
   label: 'DataMatrix',
   icon: '▦',
@@ -63,6 +73,7 @@ export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
   bindable: true,
   controlChars: CONTROL_CHARS,
   typedContent: true,
+  propSpecs: DATAMATRIX_PROP_SPECS,
   defaultProps: {
     content: '',
     dimension: 5,
@@ -75,7 +86,7 @@ export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
   sampleProps: { columns: undefined, rows: undefined },
   defaultSize: { width: 150, height: 150 },
 
-  uniformScaleProp: { name: 'dimension', min: DIMENSION_MIN, max: DIMENSION_MAX },
+  uniformScaleProp: 'dimension',
 
   preflight: moduleTooSmallPreflight<DataMatrixProps>('dimension'),
 

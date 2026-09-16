@@ -1,8 +1,9 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { fieldPos1d, fdFieldFor } from './zplHelpers';
-import { commitBarcodeWidthHeightTransform, stackRowCount } from './transformHelpers';
+import { commitBarcodeWidthHeightTransform, moduleWidthSpec, stackRowCount } from './transformHelpers';
 import { limitedSupportPreflight } from '../lib/barcodeScannability';
-import { type ZplRotation } from './rotation';
+import { type ZplRotation, ROTATION_SPEC } from './rotation';
 
 /** ZPL ^B4 m: 'A' = auto subset. 0-5 force a specific subset. */
 export type Code49Mode = 'A' | '0' | '1' | '2' | '3' | '4' | '5';
@@ -45,6 +46,16 @@ export interface Code49Props {
   rotation: ZplRotation;
 }
 
+export const CODE49_PROP_SPECS: PropSpecs<Code49Props> = {
+  content: { type: 'string' },
+  height: { type: 'number', scale: 'dots' },
+  moduleWidth: moduleWidthSpec(),
+  printInterpretation: { type: 'boolean' },
+  printInterpretationAbove: { type: 'boolean' },
+  mode: { type: 'string', values: CODE49_MODES },
+  rotation: ROTATION_SPEC,
+};
+
 export const code49: ObjectTypeCore<Code49Props> = {
   label: 'Code 49',
   icon: 'C49',
@@ -55,6 +66,7 @@ export const code49: ObjectTypeCore<Code49Props> = {
   preflight: limitedSupportPreflight<Code49Props>('moduleWidth'),
   // ZD230-measured at module widths 2/3/4: 26/35/44 above, 20/27/34 below.
   hri: { zoneDots: (mw, above) => (above ? 9 : 7) * code49Module(mw) + (above ? 8 : 6) },
+  propSpecs: CODE49_PROP_SPECS,
   defaultProps: {
     content: '',
     height: 20,
@@ -69,7 +81,7 @@ export const code49: ObjectTypeCore<Code49Props> = {
 
   // Snap so a drag past the limit lands in props, not just in the render.
   commitTransform: (obj, ctx) => {
-    const next = commitBarcodeWidthHeightTransform(obj, ctx);
+    const next = commitBarcodeWidthHeightTransform(obj, ctx, CODE49_PROP_SPECS);
     const mw = next.moduleWidth ?? obj.props.moduleWidth;
     const rawH = next.height ?? obj.props.height;
     return { ...next, height: code49SnapHeight(rawH, mw) };

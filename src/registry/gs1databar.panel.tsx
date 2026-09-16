@@ -15,7 +15,7 @@ import { FieldLabel } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
 import { builderButtonCls } from '../components/ui/formStyles';
 import { fieldHasVariable, asLabelObject } from '@zplab/core/lib/variableField';
-import { type Gs1DatabarProps, SYMBOLOGY_LABELS } from '@zplab/core/registry/gs1databar';
+import { GS1DATABAR_PROP_SPECS, type Gs1DatabarProps, SYMBOLOGY_LABELS } from '@zplab/core/registry/gs1databar';
 
 export const gs1databarPanel: ObjectTypeUi<Gs1DatabarProps> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -44,8 +44,8 @@ export const gs1databarPanel: ObjectTypeUi<Gs1DatabarProps> = {
           <NumberInput
             label={loc.magnification}
             value={p.magnification}
-            min={1}
-            max={10}
+            min={GS1DATABAR_PROP_SPECS.magnification.min}
+            max={GS1DATABAR_PROP_SPECS.magnification.max}
             onChange={(magnification) => onChange({ magnification })}
             zplCmd="^BR"
           />
@@ -76,8 +76,8 @@ export const gs1databarPanel: ObjectTypeUi<Gs1DatabarProps> = {
                 type="number"
                 className={inputCls}
                 value={p.segments ?? GS1_DATABAR_DEFAULT_SEGMENTS}
-                min={2}
-                max={22}
+                min={GS1DATABAR_PROP_SPECS.segments.min}
+                max={GS1DATABAR_PROP_SPECS.segments.max}
                 step={2}
                 onChange={(e) => {
                   const v = Number(e.target.value);

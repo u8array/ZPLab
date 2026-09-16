@@ -103,6 +103,26 @@ describe('parseDesignFile', () => {
     expect(result.value.pages[0]?.objects).toHaveLength(1);
   });
 
+  it('repairs a string outside its set on load and leaves every number as written', () => {
+    const file = {
+      schemaVersion: 5,
+      label: { widthMm: 70, heightMm: 40, dpmm: 8 },
+      pages: [{ objects: [
+        { id: 'b', type: 'box', x: 0, y: 0, rotation: 0, props: { width: 10, height: 10, thickness: 1, filled: false, color: 'B', rounding: 12 } },
+        { id: 'q', type: 'qrcode', x: 0, y: 0, rotation: 0, props: { content: 'x', magnification: 99.4, errorCorrection: 'Z', model: 2, rotation: '90' } },
+        { id: 't', type: 'text', x: 0, y: 0, rotation: 0, props: { content: 'x', fontHeight: 30, fontWidth: 0, rotation: 'N', blockJustify: 'X' } },
+      ] }],
+      variables: [],
+    };
+    const result = parseDesignFile(JSON.stringify(file));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const props = result.value.pages[0]!.objects.map((o) => (o as unknown as { props: Record<string, unknown> }).props);
+    expect(props[0]).toMatchObject({ rounding: 12 });
+    expect(props[1]).toMatchObject({ magnification: 99.4, errorCorrection: 'Q', rotation: 'N' });
+    expect(props[2]).not.toHaveProperty('blockJustify');
+  });
+
   const slotFile = (variables: unknown[], overlay?: unknown) => ({
     schemaVersion: 5,
     label: { widthMm: 70, heightMm: 40, dpmm: 8 },

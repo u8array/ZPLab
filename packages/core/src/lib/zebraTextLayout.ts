@@ -6,7 +6,8 @@ import { applyDeviceFontCase, deviceFontInkWidthDots, deviceFontSnappedHeightDot
 import { EM_TOP_ABOVE_CAP } from "./labelGeometry/textPositionTransforms";
 import { isAxisSwapped, type ZplRotation } from "../registry/rotation";
 
-export type BlockJustify = "L" | "C" | "R" | "J";
+export const BLOCK_JUSTIFY_VALUES = ["L", "C", "R", "J"] as const;
+export type BlockJustify = (typeof BLOCK_JUSTIFY_VALUES)[number];
 
 /** A0 default 9x5 dot matrix; fontWidth=0 advances by h*5/9. */
 const A0_DEFAULT_ASPECT = 5 / 9;

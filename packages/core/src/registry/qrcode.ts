@@ -1,3 +1,4 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import type { LabelObjectBase } from '../types/LabelObject';
 import { fieldPosZ, fdFieldFor } from './zplHelpers';
@@ -5,18 +6,15 @@ import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { formatQrSidecarComment, qrRotatedGfaCached } from '../lib/qrGraphic';
 import { clockCtxFromLabel, resolveContentPreview } from '../lib/markerResolve';
-import { type ZplRotation } from './rotation';
+import { type ZplRotation, ROTATION_SPEC } from './rotation';
 import { qrByHeight } from '../lib/qrBy';
-import { isQrEcLevel, qrFdWire, QR_EC_DEFAULT, type QrEcLevel } from '../lib/qrFd';
+import { isQrEcLevel, qrFdWire, QR_EC_DEFAULT, QR_EC_LEVELS, type QrEcLevel } from '../lib/qrFd';
 
 const qrFdTransform =
   (obj: LabelObjectBase & { props: QrCodeProps }) =>
   (s: string): string =>
     qrFdWire(isQrEcLevel(obj.props.errorCorrection) ? obj.props.errorCorrection : QR_EC_DEFAULT, s);
 
-/** Authoring bounds; the panel and the uniform-scale gesture clamp to these. */
-export const MAGNIFICATION_MIN = 1;
-export const MAGNIFICATION_MAX = 10;
 // Re-exported from lib/qrBy (the cycle-free spot) because this is the prop's home.
 export { QR_BY_DEFAULT_HEIGHT, isQrByHeight, qrByHeight } from '../lib/qrBy';
 const DEFAULT_MAGNIFICATION = 4;
@@ -57,6 +55,15 @@ export interface QrCodeProps {
 // One switch for the capability flag and the emitter's chip resolution.
 const CONTROL_CHARS = true;
 
+export const QRCODE_PROP_SPECS: PropSpecs<QrCodeProps> = {
+  content: { type: 'string' },
+  magnification: { type: 'number', integer: true, min: 1, max: 100, scale: 'uniform', clamp: { min: 1, max: 10 } },
+  errorCorrection: { type: 'string', values: QR_EC_LEVELS },
+  model: { type: 'number', integer: true, min: 1, max: 2, scale: 'never' },
+  rotation: ROTATION_SPEC,
+  byHeight: { type: 'number', integer: true, min: 1, scale: 'dots' },
+};
+
 export const qrcode: ObjectTypeCore<QrCodeProps> = {
   label: 'QR Code',
   icon: '⬚',
@@ -65,6 +72,7 @@ export const qrcode: ObjectTypeCore<QrCodeProps> = {
   bindable: true,
   controlChars: CONTROL_CHARS,
   typedContent: true,
+  propSpecs: QRCODE_PROP_SPECS,
   defaultProps: {
     content: '',
     magnification: DEFAULT_MAGNIFICATION,
@@ -75,7 +83,7 @@ export const qrcode: ObjectTypeCore<QrCodeProps> = {
   placeholderContent: 'https://example.com',
   defaultSize: { width: 200, height: 200 },
 
-  uniformScaleProp: { name: 'magnification', min: MAGNIFICATION_MIN, max: MAGNIFICATION_MAX },
+  uniformScaleProp: 'magnification',
 
   preflight: (obj, ctx) => [
     ...moduleTooSmallPreflight<QrCodeProps>('magnification')(obj, ctx),

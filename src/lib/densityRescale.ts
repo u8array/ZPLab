@@ -1,3 +1,4 @@
+import { editBounds, type PropSpec } from "@zplab/core/types/propSpec";
 import { isGroup, type LabelObject, type LeafObject, type Page } from "@zplab/core/types/Group";
 import { getEntry } from "@zplab/core/registry";
 import { gfaCacheIsOnlyCopy, type ImageProps } from "@zplab/core/registry/image";
@@ -54,7 +55,6 @@ export interface RescaleResult {
   warnings: RescaleWarning[];
 }
 
-const MODULE_MAX = 10; // ^BY module-width ceiling (no per-type SSOT for the max).
 const IMAGE_MIN_DOTS = 8;
 
 // Effective-space printer-persistent dot fields (^LS/^LT/^PF), scaled only on a
@@ -72,16 +72,6 @@ export const LAYOUT_LABEL_FIELDS = scaledLabelConfigFields("always").map((prop) 
 });
 
 const CALIBRATION_FIELDS: readonly (keyof LabelConfig)[] = CALIBRATION_CLAMP.map((c) => c.prop);
-
-// Dot-valued props scaled proportionally; absent or 0 (unset block dims) stay 0.
-// `rounding` is excluded on purpose: ^GB's corner param is a 0-8 index, not
-// dots, and the radius already scales because width/height do.
-const SCALE_MIN1 = ["width", "height", "length", "thickness", "blockWidth", "blockHeight", "fontHeight", "rowHeight", "microPdfRowHeight"] as const;
-// Dot-valued props that are legitimately 0 (auto width, no gap/indent).
-const SCALE_MIN0 = ["fontWidth", "blockHangingIndent", "fpCharGap"] as const;
-// Signed dot-valued props: ^FB line spacing can be negative (tighter leading,
-// spec -9999..9999), so scale preserving sign rather than flooring at 0.
-const SCALE_SIGNED = ["blockLineSpacing"] as const;
 
 const clamp = (min: number, max: number, v: number) => Math.min(max, Math.max(min, v));
 // Math.round(-12.5) = -12 biases negatives toward zero, so round the magnitude
@@ -111,17 +101,29 @@ function rescaleLeaf(leaf: LeafObject, factor: number, warnings: RescaleWarning[
   if (leaf.type === "qrcode") {
     next.byHeight = Math.max(1, Math.round(qrByHeight(props as { byHeight?: number }) * factor));
   }
-  for (const k of SCALE_MIN1) {
+  const entry = getEntry(leaf.type);
+  for (const [k, spec] of Object.entries((entry?.propSpecs ?? {}) as Record<string, PropSpec>)) {
     const v = props[k];
-    if (typeof v === "number" && v > 0) next[k] = Math.max(1, Math.round(v * factor));
-  }
-  for (const k of SCALE_MIN0) {
-    const v = props[k];
-    if (typeof v === "number") next[k] = Math.max(0, Math.round(v * factor));
-  }
-  for (const k of SCALE_SIGNED) {
-    const v = props[k];
-    if (typeof v === "number") next[k] = roundSymmetric(v * factor);
+    if (typeof v !== "number" || spec.type !== "number") continue;
+    switch (spec.scale) {
+      case "dots":
+        if (v > 0) next[k] = Math.max(1, Math.round(v * factor));
+        break;
+      case "dotsMin0":
+        next[k] = Math.max(0, Math.round(v * factor));
+        break;
+      case "dotsSigned":
+        next[k] = roundSymmetric(v * factor);
+        break;
+      case "module":
+      case "uniform": {
+        const { min, max } = editBounds(spec);
+        const r = scaleClamped(v, factor, min, max);
+        next[k] = r.value;
+        if (r.clamped) warn(k, spec.scale === "module" ? "moduleClamped" : k === "dimension" ? "dimensionClamped" : "magnificationClamped");
+        break;
+      }
+    }
   }
 
   // Editable bitmaps scale their box and drop the stale GFA cache so it
@@ -145,29 +147,6 @@ function rescaleLeaf(leaf: LeafObject, factor: number, warnings: RescaleWarning[
       }
       if (typeof props._gfaCache === "string") next._gfaCache = undefined;
     }
-  }
-
-  // Clamp bounds come from the registry so a new symbology can't silently skip
-  // them: module width via moduleWidthMin (^BY max 10), the single integer
-  // module/magnification prop via uniformScaleProp.
-  const entry = getEntry(leaf.type);
-  if (typeof props.moduleWidth === "number") {
-    const r = scaleClamped(props.moduleWidth, factor, entry?.moduleWidthMin ?? 1, MODULE_MAX);
-    next.moduleWidth = r.value;
-    if (r.clamped) warn("moduleWidth", "moduleClamped");
-  }
-  for (const name of entry?.extraModuleWidthProps ?? []) {
-    const v = props[name];
-    if (typeof v !== "number") continue;
-    const r = scaleClamped(v, factor, 1, MODULE_MAX);
-    next[name] = r.value;
-    if (r.clamped) warn(name, "moduleClamped");
-  }
-  const usp = entry?.uniformScaleProp;
-  if (usp && typeof props[usp.name] === "number") {
-    const r = scaleClamped(props[usp.name] as number, factor, usp.min, usp.max);
-    next[usp.name] = r.value;
-    if (r.clamped) warn(usp.name, usp.name === "dimension" ? "dimensionClamped" : "magnificationClamped");
   }
 
   // Height and module were scaled independently above, so a type whose props

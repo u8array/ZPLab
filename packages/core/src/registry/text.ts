@@ -1,3 +1,7 @@
+import { BLOCK_JUSTIFY_VALUES, type BlockJustify } from '../lib/zebraTextLayout';
+import type { PropSpecs } from '../types/propSpec';
+import { ROTATION_SPEC } from './rotation';
+import { TEXT_MODES } from './textMode';
 import type { ObjectTypeCore } from "../types/ObjectType";
 import { textFieldPos, fdFieldFor, resolveFontCmd } from "./zplHelpers";
 import { effectiveScale } from "./transformHelpers";
@@ -33,6 +37,8 @@ export function textZplCmd(p: Pick<TextProps, "textMode" | "blockWidth" | "seria
   return mode === "fb" ? "^FB" : mode === "tb" ? "^TB" : "^A";
 }
 
+export const FP_DIRECTIONS = ['H', 'V', 'R'] as const;
+
 export interface TextProps {
   content: string;
   fontHeight: number;
@@ -56,7 +62,7 @@ export interface TextProps {
   blockWidth?: number;
   blockLines?: number;
   blockLineSpacing?: number;
-  blockJustify?: "L" | "C" | "R" | "J";
+  blockJustify?: BlockJustify;
   /** ^FB hanging indent (dots) applied to lines 2+. Spec range 0..9999,
    *  negatives are clamped to 0 to match Labelary's observed behavior. */
   blockHangingIndent?: number;
@@ -66,7 +72,7 @@ export interface TextProps {
   /** ^FP field-direction modifier. 'H' = horizontal advance (default,
    *  omitted on emit), 'V' = stack glyphs along the field's
    *  perpendicular axis, 'R' = reverse glyph order (RTL languages). */
-  fpDirection?: "H" | "V" | "R";
+  fpDirection?: (typeof FP_DIRECTIONS)[number];
   /** ^FP inter-character gap in dots, added on top of the font's
    *  natural advance. Omitted on emit when 0. */
   fpCharGap?: number;
@@ -80,6 +86,27 @@ export interface TextProps {
    *  seed; consumed by the serial-off restore. Never emitted. */
   preSerialContent?: string;
 }
+
+export const TEXT_PROP_SPECS: PropSpecs<TextProps> = {
+  content: { type: 'string' },
+  fontHeight: { type: 'number', scale: 'dots' },
+  fontWidth: { type: 'number', scale: 'dotsMin0' },
+  rotation: ROTATION_SPEC,
+  reverse: { type: 'boolean' },
+  textMode: { type: 'string', values: TEXT_MODES },
+  printerFontName: { type: 'string' },
+  fontId: { type: 'string' },
+  blockWidth: { type: 'number', scale: 'dots' },
+  blockLines: { type: 'number', scale: 'never' },
+  blockLineSpacing: { type: 'number', scale: 'dotsSigned' },
+  blockJustify: { type: 'string', values: BLOCK_JUSTIFY_VALUES },
+  blockHangingIndent: { type: 'number', scale: 'dotsMin0' },
+  blockHeight: { type: 'number', scale: 'dots' },
+  fpDirection: { type: 'string', values: FP_DIRECTIONS },
+  fpCharGap: { type: 'number', scale: 'dotsMin0' },
+  serial: { type: 'object' },
+  preSerialContent: { type: 'string' },
+};
 
 export const text: ObjectTypeCore<TextProps> = {
   label: "Text",
@@ -97,6 +124,7 @@ export const text: ObjectTypeCore<TextProps> = {
     const mode = resolveTextMode(obj.props);
     return mode === "fb" ? encodeFbContent : mode === "tb" ? encodeTbContent : undefined;
   },
+  propSpecs: TEXT_PROP_SPECS,
   defaultProps: {
     content: '',
     fontHeight: 30,

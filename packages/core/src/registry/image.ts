@@ -1,10 +1,11 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { SETUP_GRAPHIC_GFA_MAX_CHARS, type SetupGraphic } from '../types/PrinterProfile';
 import { graphicFieldPos } from './zplHelpers';
 import { getImage } from '../lib/imageCache';
 import { gfaFromRaster, rasterizeMono, scaledHeightDots } from '../lib/imageToZpl';
 import { formatStoragePath, uploadedGraphicPath, type StoragePath } from '../lib/storagePath';
-import { isAxisSwapped, objectRotation, type ZplRotation } from './rotation';
+import { isAxisSwapped, objectRotation, type ZplRotation, ROTATION_SPEC } from './rotation';
 
 /** ^GF rows are byte-packed, so the emitted (and re-parsed) width is the next
  *  multiple of 8. Shared by the emitter and the home-shift drop check so a
@@ -76,7 +77,6 @@ export interface ImageProps {
    *  and ignore the user's drag. Only consulted when `imageId` does
    *  not resolve to a cached image. */
   heightDots?: number;
-  /** Luminance threshold for mono conversion (0-255) */
   threshold: number;
   /** Cached GFA ZPL string; regenerated when image/width/threshold changes */
   _gfaCache?: string;
@@ -366,11 +366,24 @@ export function recallCommand(p: ImageProps): '^XG' | '^IM' | undefined {
   return p.storedAs.recall === 'IM' ? '^IM' : '^XG';
 }
 
+export const IMAGE_PROP_SPECS: PropSpecs<ImageProps> = {
+  imageId: { type: 'string' },
+  rotation: ROTATION_SPEC,
+  // Never: the image branch in densityRescale decides.
+  widthDots: { type: 'number', scale: 'never' },
+  heightDots: { type: 'number', scale: 'never' },
+  threshold: { type: 'number', integer: true, min: 1, max: 255, scale: 'never' },
+  _gfaCache: { type: 'string' },
+  rawGf: { type: 'string' },
+  storedAs: { type: 'object' },
+};
+
 export const image: ObjectTypeCore<ImageProps> = {
   label: 'Image',
   icon: 'img',
   zplCmd: '^GF',
   group: 'shape',
+  propSpecs: IMAGE_PROP_SPECS,
   defaultProps: {
     imageId: '',
     widthDots: 200,

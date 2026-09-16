@@ -13,7 +13,7 @@ import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { RotationSelect } from '../components/Properties/RotationSelect';
 import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
-import { canSendSetupGraphic, isImageRotatable, recallCommand, recallStoragePath, setupGraphicOf, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
+import { IMAGE_PROP_SPECS, canSendSetupGraphic, isImageRotatable, recallCommand, recallStoragePath, setupGraphicOf, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
 import { mergeSetupEntries } from '@zplab/core/lib/zplImportService';
 import { useLabelStore } from '../store/labelStore';
 
@@ -192,8 +192,8 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
             <FieldLabel cmd={p.storedAs ? "~DY" : "^GF"}>{t.registry.image.threshold}</FieldLabel>
             <input
               type="range"
-              min={1}
-              max={255}
+              min={IMAGE_PROP_SPECS.threshold.min}
+              max={IMAGE_PROP_SPECS.threshold.max}
               value={p.threshold}
               onChange={(e) => handleThresholdChange(Number(e.target.value))}
               className="accent-accent"

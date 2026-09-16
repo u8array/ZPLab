@@ -1,15 +1,14 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from "../types/ObjectType";
 import type { PreflightProducerResult } from "../types/preflight";
 import { fieldPosZ, fdFieldFor } from "./zplHelpers";
 import { moduleTooSmallPreflight } from "../lib/barcodeScannability";
-import { type ZplRotation } from "./rotation";
+import { type ZplRotation, ROTATION_SPEC } from "./rotation";
 
-export const MAGNIFICATION_MIN = 1;
-export const MAGNIFICATION_MAX = 10;
-export const EC_LEVEL_MIN = 0;
+const EC_LEVEL_MIN = 0;
 // NumberInput can't express the discontinuous AztecProps domain; use the
 // highest valid value (Rune = 300) as the upper bound.
-export const EC_LEVEL_MAX = 300;
+const EC_LEVEL_MAX = 300;
 // Encoder-accepted error-correction percent band; values in the percent range
 // but outside this (1-4, 96-99) reject at encode.
 export const EC_PERCENT_MIN = 5;
@@ -44,6 +43,13 @@ const CONTROL_CHARS = true;
 
 const magnificationTooSmall = moduleTooSmallPreflight<AztecProps>('magnification');
 
+export const AZTEC_PROP_SPECS: PropSpecs<AztecProps> = {
+  content: { type: 'string' },
+  magnification: { type: 'number', integer: true, min: 1, max: 10, scale: 'uniform' },
+  ecLevel: { type: 'number', integer: true, min: EC_LEVEL_MIN, max: EC_LEVEL_MAX, scale: 'never' },
+  rotation: ROTATION_SPEC,
+};
+
 export const aztec: ObjectTypeCore<AztecProps> = {
   label: "Aztec",
   icon: "◇",
@@ -52,6 +58,7 @@ export const aztec: ObjectTypeCore<AztecProps> = {
   bindable: true,
   controlChars: CONTROL_CHARS,
   typedContent: true,
+  propSpecs: AZTEC_PROP_SPECS,
   defaultProps: {
     content: '',
     magnification: 4,
@@ -61,7 +68,7 @@ export const aztec: ObjectTypeCore<AztecProps> = {
   placeholderContent: '1234567890',
   defaultSize: { width: 200, height: 200 },
 
-  uniformScaleProp: { name: 'magnification', min: MAGNIFICATION_MIN, max: MAGNIFICATION_MAX },
+  uniformScaleProp: 'magnification',
 
   preflight: (obj, ctx) => [
     ...magnificationTooSmall(obj, ctx),

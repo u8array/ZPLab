@@ -1,3 +1,4 @@
+import { editBounds, moduleScaledProps, wireBounds, type Range } from "@zplab/core/types/propSpec";
 import { useRef, useEffect, useLayoutEffect } from "react";
 import { flushSync } from "react-dom";
 import type Konva from "konva";
@@ -290,8 +291,8 @@ export function useKonvaTransformer({
         uprightW0: number;
         uprightH0: number;
         snapshot: { x: number; y: number; moduleWidth: number; height?: number };
-        /** Gesture-start values of extraModuleWidthProps (TLC39 ^BT w2). */
-        extraWidths0?: Record<string, number>;
+        extraWidths0: Record<string, number>;
+        extraBounds: Record<string, Range>;
         changed: boolean;
         lastCentered: boolean;
       })
@@ -636,7 +637,7 @@ export function useKonvaTransformer({
           rowHeight: (obj.props as { rowHeight: number }).rowHeight,
           nodeWidth: rect.width,
           moduleWidth: (obj.props as { moduleWidth: number }).moduleWidth,
-          moduleWidthMin: getEntry(obj.type)?.moduleWidthMin ?? 1,
+          moduleWidthBounds: editBounds(getEntry(obj.type)?.propSpecs.moduleWidth),
           rotation: objectRotation(obj.props),
         };
       }
@@ -649,6 +650,7 @@ export function useKonvaTransformer({
         const rect = naturalRect(node);
         return {
           kind: "moduleWidth",
+          moduleWidthBounds: editBounds(getEntry(obj.type)?.propSpecs.moduleWidth),
           nodeWidth: rect.width,
           nodeHeight: rect.height,
           moduleWidth: (obj.props as { moduleWidth: number }).moduleWidth,
@@ -780,24 +782,27 @@ export function useKonvaTransformer({
         const mwAxisActive = swapped ? edges.top || edges.bottom : edges.left || edges.right;
         const heightAxisActive = swapped ? edges.left || edges.right : edges.top || edges.bottom;
         if (mwAxisActive && typeof p.moduleWidth === "number" && p.moduleWidth > 0) {
+          const extraWidths = moduleScaledProps(getEntry(obj.type)?.propSpecs ?? {})
+            .filter((name) => name !== "moduleWidth")
+            .flatMap((name): [string, number][] => {
+              const v = (p as Record<string, unknown>)[name];
+              return typeof v === "number" ? [[name, v]] : [];
+            });
           barcodeReflowRef.current = {
             mode: "mw",
             rotation: rot,
             edges,
             ...box,
             mw0: p.moduleWidth,
+            mwBounds: editBounds(getEntry(obj.type)?.propSpecs.moduleWidth),
             uprightW0: cache.uprightBarWDots ?? 0,
             uprightH0,
             // height rides along: normalizeChanges may re-clamp it as a side
             // effect of the per-tick moduleWidth writes (code49), and the undo
             // baseline must restore that too.
             snapshot: { x: obj.x, y: obj.y, moduleWidth: p.moduleWidth, height: p.height },
-            extraWidths0: Object.fromEntries(
-              (getEntry(obj.type)?.extraModuleWidthProps ?? []).flatMap((name) => {
-                const v = (p as Record<string, unknown>)[name];
-                return typeof v === "number" ? [[name, v]] : [];
-              }),
-            ),
+            extraWidths0: Object.fromEntries(extraWidths.map(([name, v]) => [name, v])),
+            extraBounds: Object.fromEntries(extraWidths.map(([name]) => [name, editBounds(getEntry(obj.type)?.propSpecs[name])])),
             changed: false,
             lastCentered: altKeyRef.current,
           };
@@ -825,10 +830,12 @@ export function useKonvaTransformer({
     }
     // Uniform 2D (QR/Aztec/DataMatrix): arm the reflow so the per-tick pin,
     // not boundBoxFunc, drives quantise and aspect (see the bail below).
-    const uniformProp = obj && !isGroup(obj) ? getEntry(obj.type)?.uniformScaleProp : undefined;
-    if (obj && uniformProp) {
+    const uniformEntry = obj && !isGroup(obj) ? getEntry(obj.type) : undefined;
+    const uniformProp = uniformEntry?.uniformScaleProp;
+    if (obj && uniformEntry && uniformProp) {
       const edges = activeEdgesRef.current;
-      const modules = (obj.props as unknown as Record<string, number>)[uniformProp.name];
+      const modules = (obj.props as unknown as Record<string, number>)[uniformProp];
+      const bounds = editBounds(uniformEntry.propSpecs[uniformProp]);
       const box = parentRect(node);
       if (edges && typeof modules === "number" && modules > 0 && box.width > 0 && box.height > 0) {
         const cache = getMeasuredSnapshot().get(singleId);
@@ -836,13 +843,13 @@ export function useKonvaTransformer({
           mode: "uniform",
           edges,
           modules0: modules,
-          min: uniformProp.min,
-          max: uniformProp.max,
+          min: bounds.min,
+          max: bounds.max,
           leftX: box.x,
           topY: box.y,
           rightX: box.x + box.width,
           bottomY: box.y + box.height,
-          propName: uniformProp.name,
+          propName: uniformProp,
           uprightW0: cache?.uprightBarWDots,
           uprightH0: cache?.uprightBarHDots,
           snapshot: { x: obj.x, y: obj.y, modules },
@@ -1032,11 +1039,12 @@ export function useKonvaTransformer({
             br.uprightW0 * ratio,
             stackH,
           );
-          // TLC39's second module width follows the same ratio so the
-          // composite keeps its proportions mid-drag.
+          // A second module width follows the same ratio so the composite
+          // keeps its proportions mid-drag.
           const extraWidths: Record<string, number> = {};
-          for (const [name, v0] of Object.entries(br.extraWidths0 ?? {})) {
-            extraWidths[name] = Math.min(10, Math.max(1, Math.round(v0 * ratio)));
+          for (const [name, v0] of Object.entries(br.extraWidths0)) {
+            const { min, max } = br.extraBounds[name] ?? wireBounds(undefined);
+            extraWidths[name] = Math.min(max, Math.max(min, Math.round(v0 * ratio)));
           }
           flushSync(() => {
             updateObject(id, {

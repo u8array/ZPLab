@@ -1,8 +1,9 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from "../types/ObjectType";
 import { fieldPosZ, fdFieldFor } from "./zplHelpers";
-import { commitBarcodeWidthHeightTransform } from "./transformHelpers";
+import { commitBarcodeWidthHeightTransform, moduleWidthSpec } from "./transformHelpers";
 import { limitedSupportPreflight } from "../lib/barcodeScannability";
-import { type ZplRotation } from "./rotation";
+import { type ZplRotation, ROTATION_SPEC } from "./rotation";
 
 export interface Tlc39Props {
   /** TLC39 data: `<ECI>,<serial>`. ECI is 6 digits; serial is up to
@@ -25,8 +26,15 @@ export interface Tlc39Props {
   rotation: ZplRotation;
 }
 
-// Single list for metadata, preflight and resize; one place to grow.
-const EXTRA_MODULE_WIDTH_PROPS = ['microPdfModuleWidth'] as const;
+export const TLC39_PROP_SPECS: PropSpecs<Tlc39Props> = {
+  content: { type: 'string' },
+  moduleWidth: moduleWidthSpec(),
+  wideRatio: { type: 'number', min: 2, max: 3, scale: 'never' },
+  height: { type: 'number', scale: 'dots' },
+  microPdfModuleWidth: moduleWidthSpec(),
+  microPdfRowHeight: { type: 'number', scale: 'dots' },
+  rotation: ROTATION_SPEC,
+};
 
 export const tlc39: ObjectTypeCore<Tlc39Props> = {
   label: "TLC39",
@@ -34,8 +42,8 @@ export const tlc39: ObjectTypeCore<Tlc39Props> = {
   zplCmd: "^BT",
   group: "legacy",
   bindable: true,
-  extraModuleWidthProps: EXTRA_MODULE_WIDTH_PROPS,
   preflight: limitedSupportPreflight<Tlc39Props>(['moduleWidth', 'w1'], ['microPdfModuleWidth', 'w2']),
+  propSpecs: TLC39_PROP_SPECS,
   defaultProps: {
     content: '',
     moduleWidth: 2,
@@ -49,7 +57,7 @@ export const tlc39: ObjectTypeCore<Tlc39Props> = {
   defaultSize: { width: 200, height: 80 },
 
   commitTransform: (obj, ctx) =>
-    commitBarcodeWidthHeightTransform(obj, ctx, EXTRA_MODULE_WIDTH_PROPS),
+    commitBarcodeWidthHeightTransform(obj, ctx, TLC39_PROP_SPECS),
 
   toZPL: (obj, ctx) => {
     const p = obj.props;

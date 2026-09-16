@@ -4,7 +4,10 @@
 // who opens only this file sees why the values look the way they do.
 import { describe, it, expect } from "vitest";
 import { z } from "zod";
-import { buildCurrentDesignResult, createDraft, patchDesign, patchDesignShape, rasterImageResult, createDraftShape, validateDraft, exportZpl, getSchema, importZpl, validateZpl } from "./tools";
+import { rasterImageShape, buildCurrentDesignResult, createDraft, patchDesign, patchDesignShape, rasterImageResult, createDraftShape, validateDraft, exportZpl, getSchema, importZpl, validateZpl } from "./tools";
+import { parseEnvelope } from "./boundary.js";
+import { wireBounds } from "@zplab/core/types/propSpec";
+import { IMAGE_PROP_SPECS } from "@zplab/core/registry/image";
 import { ObjectRegistry } from "@zplab/core/registry";
 import { textObject } from "./testFixtures";
 import { serializeDesign } from "@zplab/core/lib/designFile";
@@ -81,16 +84,7 @@ describe("mcp-server tools", () => {
   it("every prop summary key is a real prop of its type (drift guard)", () => {
     for (const t of getSchema().types) {
       if (!t.props) continue;
-      const allowed = new Set([...Object.keys(t.defaultProps), "content", "rotation"]);
-      // `gs1` is an optional mode flag on gs1Capable types, not a defaultProp.
-      if ((ObjectRegistry as Record<string, { gs1Capable?: boolean }>)[t.type]?.gs1Capable) {
-        allowed.add("gs1");
-      }
-      // Optional props documented on purpose: ^FR reverse, and the image
-      // fields raster_image fills that carry no registry default.
-      if (t.type === "text") for (const k of ["reverse", "blockWidth", "blockLines", "blockLineSpacing", "blockJustify"]) allowed.add(k);
-      if (t.type === "image") for (const k of ["heightDots", "_gfaCache"]) allowed.add(k);
-      if (t.type === "qrcode") allowed.add("byHeight");
+      const allowed = new Set(Object.keys(ObjectRegistry[t.type as keyof typeof ObjectRegistry].propSpecs));
       for (const key of Object.keys(t.props)) {
         expect(allowed.has(key), `${t.type}.${key} is not a known prop`).toBe(true);
       }
@@ -797,7 +791,39 @@ describe("agent-facing reporting", () => {
     const r = label([{ type: "text", x: 1, y: 1, props: { content: "x", rotation: "90" } }]);
     expect(r.ok).toBe(false);
     if (r.ok) return;
-    expect(r.errors[0]).toContain("must be N, R, I or B");
+    expect(r.errors[0]).toContain("must be N, R, I, B");
+  });
+
+  it("holds a caller's value to the wire domain, which is wider than the editor's", () => {
+    expect(label([{ type: "qrcode", x: 1, y: 1, props: { content: "x", magnification: 40 } }]).ok).toBe(true);
+    const r = label([{ type: "qrcode", x: 1, y: 1, props: { content: "x", magnification: 101 } }]);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.errors[0]).toContain("qrcode.magnification must be between 1 and 100 (got 101)");
+  });
+
+  it("takes a raster threshold only where the image contract will accept it back", () => {
+    const shape = z.object(rasterImageShape);
+    const { min, max } = wireBounds(IMAGE_PROP_SPECS.threshold);
+    expect(shape.safeParse({ dataUrl: "data:,", widthDots: 8, threshold: min - 1 }).success).toBe(false);
+    expect(shape.safeParse({ dataUrl: "data:,", widthDots: 8, threshold: max + 1 }).success).toBe(false);
+    for (const threshold of [min, max]) {
+      expect(shape.safeParse({ dataUrl: "data:,", widthDots: 8, threshold }).success).toBe(true);
+      const r = label([{ type: "image", x: 1, y: 1, props: { imageId: "", widthDots: 8, threshold, rotation: "N" } }]);
+      expect(r.ok, String(threshold)).toBe(true);
+    }
+  });
+
+  it("publishes each bounded domain in get_schema", () => {
+    const qr = getSchema().types.find((t) => t.type === "qrcode");
+    expect(qr?.domains).toMatchObject({ magnification: "integer 1..100", errorCorrection: "H | Q | M | L" });
+  });
+
+  it("leaves an unknown type's props alone on read-back, since a newer app may own them", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [{ type: "text", x: 1, y: 1, props: { content: "x" } }] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { pages: { objects: unknown[] }[] };
+    file.pages[0]!.objects.push({ id: "r", type: "rfid", x: 1, y: 1, rotation: 0, props: { content: "E200", rotation: "N", memoryBank: "E" } });
+    expect(parseEnvelope(file).ok).toBe(true);
   });
 
   it("rejects byHeight on a non-qrcode type instead of swallowing it", () => {
@@ -807,17 +833,17 @@ describe("agent-facing reporting", () => {
     ]);
     expect(r.ok).toBe(false);
     if (r.ok) return;
-    expect(r.errors[0]).toContain("byHeight is a qrcode prop");
+    expect(r.errors[0]).toContain("code128.byHeight is not a code128 prop");
   });
 
   it("rejects a byHeight no ^BY could pin, keeps any positive integer", () => {
-    for (const byHeight of [1.5, 0, -3]) {
+    for (const [byHeight, why] of [[1.5, "must be an integer"], [0, "must be at least 1"], [-3, "must be at least 1"]] as const) {
       const r = label([
         { type: "qrcode", x: 1, y: 1, props: { content: "x", byHeight } },
       ]);
       expect(r.ok, String(byHeight)).toBe(false);
       if (r.ok) continue;
-      expect(r.errors[0]).toContain("byHeight must be a positive integer");
+      expect(r.errors[0]).toContain(`byHeight ${why}`);
     }
     // Imported designs may carry any source value; the boundary must not
     // reject on validate/export what the parser faithfully captured.
@@ -855,10 +881,11 @@ describe("agent-facing reporting", () => {
     expect(r.notes).toBeUndefined();
   });
 
-  it("does not call a prop a typo when some other type owns the name", () => {
-    // gs1databar documents no props of its own; `gs1` belongs to code128.
-    const r = ok(label([{ type: "gs1databar", x: 1, y: 1, props: { content: "(01)04012345123456", gs1: true } }]));
-    expect(r.notes).toBeUndefined();
+  it("refuses a prop another type owns instead of calling it a typo", () => {
+    const r = label([{ type: "gs1databar", x: 1, y: 1, props: { content: "(01)04012345123456", gs1: true } }]);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.errors[0]).toContain("gs1databar.gs1 is not a gs1databar prop");
   });
 
   it("stays quiet when every marker binds", () => {
@@ -1215,7 +1242,7 @@ describe("a variable inside GS1 content", () => {
       createDraft({
         widthMm: 70, heightMm: 40, dpmm: 8,
         variables: [{ name: "GTIN", defaultValue: "04150123456782" }],
-        objects: [{ type, id: "s", x: 10, y: 10, props: { content: "(01)«GTIN»", gs1: true, height: 60, dimension: 6 } }],
+        objects: [{ type, id: "s", x: 10, y: 10, props: { content: "(01)«GTIN»", gs1: true, ...(type === "code128" ? { height: 60 } : { dimension: 6 }) } }],
       }),
     );
 

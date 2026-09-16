@@ -3,6 +3,7 @@ import type { ContentSpec } from './contentSpec';
 import type { HriBehavior, TransformContext, ZplEmitContext } from './ZplEmit';
 import type { PreflightCtx, PreflightProducerResult } from './preflight';
 import type { DeviceFontLabel } from './LabelConfig';
+import type { PropSpecs } from './propSpec';
 
 
 /** Same label slice preflight gets; lets normalizeChanges resolve the
@@ -24,6 +25,8 @@ export interface ObjectTypeCore<P extends object = object> {
   zplCmdFor?: (obj: LabelObjectBase & { props: P }) => string;
   group: ObjectGroup;
   defaultProps: P;
+  /** Per-prop contract: the single source for type, bounds, enum and rescale. */
+  propSpecs: PropSpecs<P>;
   /** Sample the canvas and the preview overlay render while the field is
    *  blank, so an unconfigured barcode keeps its true symbology footprint.
    *  Never reaches emit or print; the blank field's ^FD stays empty. */
@@ -84,22 +87,15 @@ export interface ObjectTypeCore<P extends object = object> {
   /** 1:1 aspect-locked free resize (ellipse with lockAspect). For
    *  integer-module 2D symbologies use uniformScaleProp instead. */
   uniformScale?: boolean | ((props: P) => boolean);
-  /** Integer-module 2D symbology (QR/Aztec/DataMatrix): drives drag-time
-   *  module snap and release-time commit from one prop spec; implies
-   *  uniformScale (the canvas is square by construction). */
-  uniformScaleProp?: { name: keyof P & string; min: number; max: number };
-  /** ^BY moduleWidth lower bound for stacked-2D resize (default 1); CODABLOCK A
-   *  requires 2. Drives both the drag-time snap and the release commit. */
-  moduleWidthMin?: number;
+  /** Integer-module 2D symbology (QR/Aztec/DataMatrix): the prop a resize
+   *  snaps and commits. Implies uniformScale. */
+  uniformScaleProp?: keyof P & string;
   /** Row-stacked 1D (^B4): the height prop holds ONE row, so the reflow
    *  converts through stackExtentDots. Absent = the prop IS the extent. */
   barStack?: (
     start: { rowHeight: number; nodeHeight: number },
     props: P,
   ) => { rows: number; gapDots: number };
-  /** Further 1-10 module-width props (TLC39's ^BT w2) so the density rescale
-   *  scales them like moduleWidth without a per-type special case. */
-  extraModuleWidthProps?: readonly (keyof P & string)[];
   toZPL: (obj: LabelObjectBase & { props: P }, ctx?: ZplEmitContext) => string;
   /** Optional ^FD payload transform (QR `{ec}A,` prefix, UPC-E compaction, GS1
    *  FNC1 escaping). Returned per object so the single emit AND the CSV batch

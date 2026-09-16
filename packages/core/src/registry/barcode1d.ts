@@ -1,9 +1,10 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { LabelObjectBase, ObjectGroup } from '../types/LabelObject';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import type { HriBehavior } from '../types/ZplEmit';
 import { fieldPos1d, fdFieldFor } from './zplHelpers';
 import { serialFieldData, type SerialMode } from './serialField';
-import { commitBarcodeWidthHeightTransform } from './transformHelpers';
+import { commitBarcodeWidthHeightTransform, moduleWidthSpec } from './transformHelpers';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { classifyField, isLoneMarker } from '../lib/variableField';
@@ -13,7 +14,9 @@ import { parseGs1ToSegments, segmentsToZplFd } from '../lib/gs1';
 import { planGs1Fd } from '../lib/gs1Plan';
 import { GS1_CONTENT_SPEC } from './gs1FieldSpec';
 import type { ContentSpec } from '../types/contentSpec';
-import { type ZplRotation } from './rotation';
+import { ROTATION_SPEC, type ZplRotation } from './rotation';
+
+export const MSI_CHECK_MODES = ['C', 'D'] as const;
 
 export interface Barcode1DProps {
   content: string;
@@ -34,7 +37,7 @@ export interface Barcode1DProps {
   gs1?: boolean;
   /** MSI multi-check ^BM e beyond the boolean (C = 2x Mod 10, D = Mod 11 +
    *  Mod 10); set by import, not the panel. */
-  msiCheckMode?: 'C' | 'D';
+  msiCheckMode?: (typeof MSI_CHECK_MODES)[number];
   /** ^BM e2: HRI includes the check digits. Set by import, not the panel. */
   msiHriCheck?: boolean;
 }
@@ -84,6 +87,21 @@ export interface Barcode1DCoreConfig {
 }
 
 const gs1ModeDFd = (s: string): string => planGs1Fd(s, 'code128').fd;
+
+export const BARCODE_1D_PROP_SPECS: PropSpecs<Barcode1DProps> = {
+  content: { type: 'string' },
+  height: { type: 'number', scale: 'dots' },
+  moduleWidth: moduleWidthSpec(),
+  printInterpretation: { type: 'boolean' },
+  printInterpretationAbove: { type: 'boolean' },
+  checkDigit: { type: 'boolean' },
+  rotation: ROTATION_SPEC,
+  serial: { type: 'object' },
+  preSerialContent: { type: 'string' },
+  gs1: { type: 'boolean' },
+  msiCheckMode: { type: 'string', values: MSI_CHECK_MODES },
+  msiHriCheck: { type: 'boolean' },
+};
 
 export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore<Barcode1DProps> {
   const defaultProps: Barcode1DProps = {
@@ -142,6 +160,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
     bindable: true,
     // EAN/UPC opt out (fixed-length check digit); every other 1D serializes cleanly.
     serialisable: config.serialisable ?? true,
+    propSpecs: BARCODE_1D_PROP_SPECS,
     defaultProps,
     placeholderContent: config.placeholderContent,
     defaultSize: { width: 300, height: 120 },
@@ -163,7 +182,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
     // bar height with sy and module width with sx (clamped in the helper).
     commitTransform: config.heightLocked
       ? undefined
-      : commitBarcodeWidthHeightTransform,
+      : (obj, ctx) => commitBarcodeWidthHeightTransform(obj, ctx, BARCODE_1D_PROP_SPECS),
 
     // e.g. UPC-E compaction; shared with the CSV batch override so a per-row
     // value is compacted the same way as the single-format default. A template

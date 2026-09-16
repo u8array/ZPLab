@@ -1,14 +1,18 @@
 import type { Code49Props } from "../../../registry/code49";
 import { clampCodablockColumns } from "../../../registry/codablock";
 import { isDmRectPair, type DataMatrixProps } from "../../../registry/datamatrix";
-import type { Gs1DatabarProps } from "../../../registry/gs1databar";
+import { GS1DATABAR_PROP_SPECS, type Gs1DatabarProps } from "../../../registry/gs1databar";
+import { MICROPDF417_PROP_SPECS } from "../../../registry/micropdf417";
+import { propDomainIssue, type PropSpec } from "../../../types/propSpec";
 import { qrBqHeader, qrMagnificationFromZpl, qrModelFromZpl } from "../../../registry/qrcode";
-import { clampMaxicodeAppend, type MaxicodeProps } from "../../../registry/maxicode";
+import { clampMaxicodeAppend, MAXICODE_PROP_SPECS, type MaxicodeProps } from "../../../registry/maxicode";
 import { GS1_DATABAR_DEFAULT_SEGMENTS } from "../../gs1";
 import { notePartial } from "../context";
 import type { ParserState } from "../context";
 import { dotsFor, int, readRotation, strParam } from "../helpers";
 import type { Handler } from "../types";
+
+const inDomain = (spec: PropSpec, v: number) => propDomainIssue(spec, v) === null;
 
 /** ^B* barcode commands + shared ^BY defaults. Touches `field` and `defaults`. */
 export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
@@ -115,10 +119,10 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     BR(p) {
       s.field.fieldType = "gs1databar";
       s.field.bcRotation = readRotation(p[0]);
-      // p[2] is the ^BR magnification multiplier (1-10), not a dot
-      // quantity. Out-of-range falls back to ^BY at flush time.
+      // p[2] is the ^BR magnification multiplier, not a dot quantity.
+      // Out-of-range falls back to ^BY at flush time.
       const mag = int(p[2]);
-      s.field.gsMagnification = mag >= 1 && mag <= 10 ? mag : undefined;
+      s.field.gsMagnification = inDomain(GS1DATABAR_PROP_SPECS.magnification, mag) ? mag : undefined;
       s.field.gsSymbology = (int(p[1], 1) as Gs1DatabarProps["symbology"]) || 1;
       s.field.gsSegments =
         p[5] !== undefined
@@ -186,7 +190,7 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     BD(p) {
       s.field.fieldType = "maxicode";
       const m = int(p[0], 2);
-      s.field.maxicodeMode = (m >= 2 && m <= 6 ? m : 2) as MaxicodeProps["mode"];
+      s.field.maxicodeMode = (inDomain(MAXICODE_PROP_SPECS.mode, m) ? m : 2) as MaxicodeProps["mode"];
       s.field.maxicodeNumber = clampMaxicodeAppend(int(p[1], 1));
       s.field.maxicodeTotal = clampMaxicodeAppend(int(p[2], 1));
     },
@@ -198,7 +202,7 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
       s.field.bcRotation = readRotation(p[0]);
       s.field.mpdfRowHeight = dots(p[1], 10);
       const mode = int(p[2], 0);
-      s.field.mpdfMode = mode >= 0 && mode <= 33 ? mode : 0;
+      s.field.mpdfMode = inDomain(MICROPDF417_PROP_SPECS.mode, mode) ? mode : 0;
     },
 
     // ^BBN,{rowHeight},{security},{numCharsPerRow},{numRows},{mode}: CODABLOCK.

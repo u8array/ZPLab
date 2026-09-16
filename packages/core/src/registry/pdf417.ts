@@ -1,8 +1,9 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from "../types/ObjectType";
 import { fieldPosZ, fdFieldFor } from "./zplHelpers";
-import { commitStacked2DTransform } from "./transformHelpers";
+import { commitStacked2DTransform, moduleWidthSpec } from "./transformHelpers";
 import { moduleTooSmallPreflight } from "../lib/barcodeScannability";
-import { type ZplRotation } from "./rotation";
+import { type ZplRotation, ROTATION_SPEC } from "./rotation";
 
 /** ^BY module width with ^B7 is 2 to 10 (spec p.82), unlike the general 1. */
 const PDF417_MODULE_WIDTH_MIN = 2;
@@ -19,6 +20,15 @@ export interface Pdf417Props {
 // One switch for the capability flag and the emitter's chip resolution.
 const CONTROL_CHARS = true;
 
+export const PDF417_PROP_SPECS: PropSpecs<Pdf417Props> = {
+  content: { type: 'string' },
+  rowHeight: { type: 'number', scale: 'dots' },
+  securityLevel: { type: 'number', integer: true, min: 0, max: 8, scale: 'never' },
+  columns: { type: 'number', integer: true, min: 0, max: 30, scale: 'never' },
+  moduleWidth: moduleWidthSpec(PDF417_MODULE_WIDTH_MIN),
+  rotation: ROTATION_SPEC,
+};
+
 export const pdf417: ObjectTypeCore<Pdf417Props> = {
   label: "PDF417",
   icon: "▥",
@@ -27,6 +37,7 @@ export const pdf417: ObjectTypeCore<Pdf417Props> = {
   barcodeClass: 'stacked2d',
   bindable: true,
   controlChars: CONTROL_CHARS,
+  propSpecs: PDF417_PROP_SPECS,
   defaultProps: {
     content: '',
     rowHeight: 2,
@@ -38,9 +49,8 @@ export const pdf417: ObjectTypeCore<Pdf417Props> = {
   placeholderContent: '1234567890',
   defaultSize: { width: 300, height: 150 },
 
-  moduleWidthMin: PDF417_MODULE_WIDTH_MIN,
   preflight: moduleTooSmallPreflight<Pdf417Props>('moduleWidth'),
-  commitTransform: (obj, ctx) => commitStacked2DTransform(obj, ctx, PDF417_MODULE_WIDTH_MIN),
+  commitTransform: (obj, ctx) => commitStacked2DTransform(obj, ctx, PDF417_PROP_SPECS),
 
   toZPL: (obj, ctx) => {
     const p = obj.props;

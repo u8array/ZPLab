@@ -6,7 +6,7 @@ import { NumberInput } from "../components/Properties/NumberInput";
 import { UnitNumberInput } from "../components/Properties/UnitNumberInput";
 import { SectionCard, StaticSectionCard } from "../components/Properties/SectionCard";
 import { fieldGridCols, fieldGridCell } from "../components/ui/formStyles";
-import type { Tlc39Props } from "@zplab/core/registry/tlc39";
+import { TLC39_PROP_SPECS, type Tlc39Props } from '@zplab/core/registry/tlc39';
 
 export const tlc39Panel: ObjectTypeUi<Tlc39Props> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -33,8 +33,8 @@ export const tlc39Panel: ObjectTypeUi<Tlc39Props> = {
             <NumberInput
               label={loc.moduleWidth}
               value={p.moduleWidth}
-              min={1}
-              max={10}
+              min={TLC39_PROP_SPECS.moduleWidth.min}
+              max={TLC39_PROP_SPECS.moduleWidth.max}
               onChange={(moduleWidth) => onChange({ moduleWidth })}
               zplCmd="^BY"
               className={fieldGridCell}
@@ -55,8 +55,8 @@ export const tlc39Panel: ObjectTypeUi<Tlc39Props> = {
             <NumberInput
               label={loc.microPdfModuleWidth}
               value={p.microPdfModuleWidth}
-              min={1}
-              max={10}
+              min={TLC39_PROP_SPECS.microPdfModuleWidth.min}
+              max={TLC39_PROP_SPECS.microPdfModuleWidth.max}
               onChange={(microPdfModuleWidth) => onChange({ microPdfModuleWidth })}
               zplCmd="^BT"
               className={fieldGridCell}
@@ -67,8 +67,8 @@ export const tlc39Panel: ObjectTypeUi<Tlc39Props> = {
             <NumberInput
               label={loc.wideRatio}
               value={p.wideRatio}
-              min={2}
-              max={3}
+              min={TLC39_PROP_SPECS.wideRatio.min}
+              max={TLC39_PROP_SPECS.wideRatio.max}
               step={0.1}
               onChange={(wideRatio) => onChange({ wideRatio })}
               zplCmd="^BT"

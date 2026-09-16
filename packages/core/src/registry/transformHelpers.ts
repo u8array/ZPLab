@@ -1,7 +1,15 @@
+import { editBounds, moduleScaledProps, type NumberPropSpec, type PropSpecs } from "../types/propSpec";
 import type { LabelObjectBase } from "../types/LabelObject";
 import type { TransformContext } from "../types/ZplEmit";
 import { isAxisSwapped } from "./rotation";
-/** Clamp a value into [min, max]. */
+
+/** ^BY w range (spec p.148). */
+export const MODULE_WIDTH_RANGE = { min: 1, max: 10 } as const;
+
+export function moduleWidthSpec(min: number = MODULE_WIDTH_RANGE.min): NumberPropSpec {
+  return { type: "number", integer: true, min, max: MODULE_WIDTH_RANGE.max, scale: "module" };
+}
+
 export function clamp(min: number, max: number, value: number): number {
   return Math.max(min, Math.min(max, value));
 }
@@ -73,25 +81,20 @@ function commitRotatedSizeTransform<
   } as Partial<P>;
 }
 
-/** moduleWidth clamped to ^BY [1,10]; bitmap stretches mid-drag, rounded on
- *  release. `extraModuleWidthProps` (TLC39's ^BT w2) scale with the same
- *  factor so a horizontal resize keeps the composite proportions. */
 export function commitBarcodeWidthHeightTransform<
   P extends { height: number; moduleWidth: number; rotation: "N" | "R" | "I" | "B" },
 >(
   obj: LabelObjectBase & { props: P },
   ctx: TransformContext,
-  extraModuleWidthProps?: readonly (keyof P & string)[],
+  specs: PropSpecs<P>,
 ): Partial<P> {
   const { snap } = ctx;
   const { esx, esy } = effectiveScale(obj.props.rotation, ctx);
-  const out = {
-    height: Math.max(1, snap(Math.round(obj.props.height * esy))),
-    moduleWidth: clamp(1, 10, Math.round(obj.props.moduleWidth * esx)),
-  } as Record<string, number>;
-  for (const name of extraModuleWidthProps ?? []) {
+  const out = { height: Math.max(1, snap(Math.round(obj.props.height * esy))) } as Record<string, number>;
+  for (const name of moduleScaledProps(specs)) {
     const v = obj.props[name];
-    if (typeof v === "number") out[name] = clamp(1, 10, Math.round(v * esx));
+    const { min, max } = editBounds(specs[name]);
+    if (typeof v === "number") out[name] = clamp(min, max, Math.round(v * esx));
   }
   return out as Partial<P>;
 }
@@ -119,15 +122,15 @@ interface Stacked2DProps {
   moduleWidth: number;
 }
 
-/** Drag-start anchor pins the rowHeight grid so commit matches the in-drag snap.
- *  `moduleWidthMin` defaults to the ^BY floor of 1; CODABLOCK A passes 2. */
+/** Drag-start anchor pins the rowHeight grid so commit matches the in-drag snap. */
 export function commitStacked2DTransform<
   P extends Stacked2DProps & { rotation: "N" | "R" | "I" | "B" },
 >(
   obj: LabelObjectBase & { props: P },
   ctx: TransformContext,
-  moduleWidthMin = 1,
+  specs: PropSpecs<P>,
 ): Partial<P> {
+  const { min, max } = editBounds(specs.moduleWidth);
   const { snap, anchor } = ctx;
   const { esx, esy } = effectiveScale(obj.props.rotation, ctx);
   const rowAnchor = anchor?.kind === "row" ? anchor : null;
@@ -140,6 +143,6 @@ export function commitStacked2DTransform<
       : Math.max(1, snap(Math.round(obj.props.rowHeight * esy)));
   return {
     rowHeight: newRowHeight,
-    moduleWidth: clamp(moduleWidthMin, 10, Math.round(obj.props.moduleWidth * esx)),
+    moduleWidth: clamp(min, max, Math.round(obj.props.moduleWidth * esx)),
   } as Partial<P>;
 }

@@ -1,12 +1,13 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { wrapReverse, graphicAnchor } from './zplHelpers';
+import { wrapReverse, graphicAnchor, ZPL_COLORS, type ZplColor } from './zplHelpers';
 
 export interface LineProps {
   /** Angle in degrees, 0 = rightward horizontal, clockwise positive (screen coords). */
   angle: number;
   length: number;
   thickness: number;
-  color: 'B' | 'W';
+  color: ZplColor;
   reverse?: boolean;
 }
 
@@ -49,12 +50,21 @@ export function lineZplCmd(angle: number): '^GB' | '^GD' {
   return norm === 0 || norm === 90 ? '^GB' : '^GD';
 }
 
+export const LINE_PROP_SPECS: PropSpecs<LineProps> = {
+  angle: { type: 'number', min: -359, max: 359, scale: 'never' },
+  length: { type: 'number', scale: 'dots' },
+  thickness: { type: 'number', scale: 'dots' },
+  color: { type: 'string', values: ZPL_COLORS },
+  reverse: { type: 'boolean' },
+};
+
 export const line: ObjectTypeCore<LineProps> = {
   label: 'Line',
   icon: '—',
   zplCmd: '^GB',
   zplCmdFor: (obj) => lineZplCmd(obj.props.angle),
   group: 'shape',
+  propSpecs: LINE_PROP_SPECS,
   defaultProps: {
     angle: 0,
     length: 200,

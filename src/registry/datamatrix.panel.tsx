@@ -1,3 +1,4 @@
+import { editBounds } from '@zplab/core/types/propSpec';
 import type { ObjectTypeUi } from './panelTypes';
 import { useT } from '../hooks/useT';
 import { dataMatrixMinFitIndex } from '../components/Canvas/bwipHelpers';
@@ -11,14 +12,7 @@ import { Select } from '../components/ui/Select';
 import { fieldHasVariable, asLabelObject } from '@zplab/core/lib/variableField';
 import { gs1EnablePatch } from '@zplab/core/registry/gs1FieldSpec';
 import { CheckboxRow } from '../components/Properties/CheckboxRow';
-import {
-  type DataMatrixProps,
-  DIMENSION_MIN,
-  DIMENSION_MAX,
-  dmSizePairs,
-  isRectangular,
-  qualityPatch,
-} from '@zplab/core/registry/datamatrix';
+import { DATAMATRIX_PROP_SPECS, type DataMatrixProps, dmSizePairs, isRectangular, qualityPatch } from '@zplab/core/registry/datamatrix';
 
 /** ^BX c/r symbol-size options: firmware-valid ECC 200 sizes for the shape,
  *  plus a verbatim entry for an imported pair outside the list so it
@@ -68,8 +62,7 @@ export const datamatrixPanel: ObjectTypeUi<DataMatrixProps> = {
           <NumberInput
             label={loc.dimension}
             value={p.dimension}
-            min={DIMENSION_MIN}
-            max={DIMENSION_MAX}
+            {...editBounds(DATAMATRIX_PROP_SPECS.dimension)}
             onChange={(dimension) => onChange({ dimension })}
             zplCmd="^BX"
           />

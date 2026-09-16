@@ -19,7 +19,7 @@ import { FieldLabel } from '../components/Properties/ZplCmd';
 import { EanInlineStatus } from '../components/Properties/EanInlineStatus';
 import { SerialModeCheckbox, SerialParts } from '../components/Properties/SerialModeSection';
 import type { EanUpcType } from '../lib/eanUpcValidate';
-import type { Barcode1DProps } from '@zplab/core/registry/barcode1d';
+import { BARCODE_1D_PROP_SPECS, type Barcode1DProps } from '@zplab/core/registry/barcode1d';
 
 /** Per-symbology locale block: labels rendered by the panel. */
 export interface BarcodeLocale {
@@ -119,8 +119,8 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
             <NumberInput
               label={loc.moduleWidth}
               value={p.moduleWidth}
-              min={1}
-              max={10}
+              min={BARCODE_1D_PROP_SPECS.moduleWidth.min}
+              max={BARCODE_1D_PROP_SPECS.moduleWidth.max}
               onChange={(moduleWidth) => onChange({ moduleWidth })}
               zplCmd="^BY"
             />

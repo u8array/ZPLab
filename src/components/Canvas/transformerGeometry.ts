@@ -1,3 +1,4 @@
+import type { Range } from "@zplab/core/types/propSpec";
 import { isAxisSwapped, type ZplRotation } from "@zplab/core/registry/rotation";
 
 export interface BoundingBox {
@@ -22,6 +23,7 @@ export interface BarcodeMwReflowStart {
   rotation: ZplRotation;
   edges: ActiveEdgeFlags;
   mw0: number;
+  mwBounds: Range;
   leftX: number;
   topY: number;
   rightX: number;
@@ -46,7 +48,7 @@ export function barcodeMwReflowGeometry(
   const swapped = isAxisSwapped(start.rotation);
   const startExtent = swapped ? start.bottomY - start.topY : start.rightX - start.leftX;
   if (!(startExtent > 0) || !(frameExtentPx > 0)) return null;
-  const moduleWidth = computeNewModules(start.mw0, frameExtentPx / startExtent, 1, 10);
+  const moduleWidth = computeNewModules(start.mw0, frameExtentPx / startExtent, start.mwBounds.min, start.mwBounds.max);
   const linearExtentPx = startExtent * (moduleWidth / start.mw0);
   if (!swapped) {
     return {
@@ -163,15 +165,15 @@ export function forceAspectBox(oldBox: BoundingBox, newBox: BoundingBox): Boundi
 
 /** Stacked-2D (PDF417/MicroPDF417/Codablock): height steps by rowHeight,
  *  width by moduleWidth. Both axes must snap in lock-step with the commit so
- *  the dropped bbox matches the post-render bitmap. R/B swap the screen axes;
- *  CODABLOCK A's ^BY min is 2, so the min is carried per anchor. */
+ *  the dropped bbox matches the post-render bitmap. R/B swap the screen axes,
+ *  and the module-width bounds are carried per anchor. */
 export interface RowAnchor {
   kind: "row";
   nodeHeight: number;
   rowHeight: number;
   nodeWidth: number;
   moduleWidth: number;
-  moduleWidthMin: number;
+  moduleWidthBounds: Range;
   rotation: ZplRotation;
 }
 
@@ -180,6 +182,7 @@ export interface RowAnchor {
  *  the snap needs both extents plus the rotation to pick the axis. */
 export interface ModuleWidthAnchor {
   kind: "moduleWidth";
+  moduleWidthBounds: Range;
   nodeWidth: number;
   nodeHeight: number;
   moduleWidth: number;
@@ -284,15 +287,13 @@ function snapModuleExtent(
   extent: number,
   anchorExtent: number,
   moduleWidth: number,
-  min: number,
+  bounds: Range,
 ): number {
-  const nextMw = computeNewModules(moduleWidth, extent / anchorExtent, min, 10);
+  const nextMw = computeNewModules(moduleWidth, extent / anchorExtent, bounds.min, bounds.max);
   return anchorExtent * (nextMw / moduleWidth);
 }
 
-/** Shared by 1D and stacked-2D since both commit width via the same ^BY
- *  moduleWidth [min,10] rounding. The moduleWidth axis is the screen width for
- *  N/I and the screen height for R/B (the bars turn a quarter). */
+/** Shared by 1D and stacked-2D since both commit width via the same ^BY moduleWidth rounding. */
 export function applyModuleWidthSnap(
   oldBox: BoundingBox,
   newBox: BoundingBox,
@@ -303,12 +304,11 @@ export function applyModuleWidthSnap(
   const swapped = isAxisSwapped(anchor.rotation);
   const axisNode = swapped ? anchor.nodeHeight : anchor.nodeWidth;
   if (axisNode <= 0) return newBox;
-  const min = anchor.kind === "row" ? anchor.moduleWidthMin : 1;
   const snapped = snapModuleExtent(
     swapped ? newBox.height : newBox.width,
     axisNode,
     anchor.moduleWidth,
-    min,
+    anchor.moduleWidthBounds,
   );
   return pinSnappedAxis(oldBox, newBox, swapped ? "y" : "x", snapped, HANDLE_MOVE_EPS);
 }

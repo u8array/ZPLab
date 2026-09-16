@@ -181,7 +181,7 @@ export function rasterPreviewCanvas(raster: MonoRaster): HTMLCanvasElement | nul
 /**
  * @param dataUrl   The image as a data-URL
  * @param widthDots Target width in dots (height derived from aspect ratio)
- * @param threshold Luminance threshold 0-255 for black (default 128)
+ * @param threshold Luminance cut for black (default 128)
  * @param rotation  Baked-in orientation (default 'N')
  */
 export async function imageToGFA(

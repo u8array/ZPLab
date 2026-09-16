@@ -1,3 +1,6 @@
+import { describePropDomain, wireBounds, type PropSpec } from "@zplab/core/types/propSpec";
+import { intInRange } from "@zplab/core/types/typeHelpers";
+import { IMAGE_PROP_SPECS } from "@zplab/core/registry/image";
 import { z } from "zod";
 import {
   serializeDesign,
@@ -108,7 +111,7 @@ export function buildCurrentDesignResult(response: DesignResponse): GetCurrentDe
 export const rasterImageShape = {
   dataUrl: z.string().startsWith("data:"),
   widthDots: z.number().int().positive().max(4000),
-  threshold: z.number().int().min(0).max(255).optional(),
+  threshold: intInRange(wireBounds(IMAGE_PROP_SPECS.threshold)).optional(),
 };
 
 export type RasterImageResult =
@@ -348,6 +351,8 @@ export interface SchemaObjectType {
   label: string;
   defaultProps: Record<string, unknown>;
   props?: Record<string, string>;
+  /** Wire domain per bounded prop. */
+  domains?: Record<string, string>;
 }
 
 export interface SchemaResult {
@@ -390,6 +395,11 @@ const SCHEMA: SchemaResult = {
     };
     const summary = PROP_SUMMARIES[String(type)];
     if (summary) out.props = summary;
+    const domains = Object.entries(entry.propSpecs as Record<string, PropSpec>).flatMap(([key, spec]) => {
+      const text = describePropDomain(spec);
+      return text ? [[key, text] as const] : [];
+    });
+    if (domains.length > 0) out.domains = Object.fromEntries(domains);
     return out;
   }),
 };

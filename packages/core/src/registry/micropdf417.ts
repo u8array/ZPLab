@@ -1,8 +1,9 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from "../types/ObjectType";
 import { fieldPosZ, fdFieldFor } from "./zplHelpers";
-import { commitStacked2DTransform } from "./transformHelpers";
+import { commitStacked2DTransform, moduleWidthSpec } from "./transformHelpers";
 import { moduleTooSmallPreflight } from "../lib/barcodeScannability";
-import { type ZplRotation } from "./rotation";
+import { type ZplRotation, ROTATION_SPEC } from "./rotation";
 
 export interface MicroPdf417Props {
   content: string;
@@ -89,6 +90,14 @@ export function micropdf417ModeFits(columns: number, rows: number, text: string)
   return text.length <= (micropdf417ByteCapacity(columns, rows) ?? m.maxAlpha);
 }
 
+export const MICROPDF417_PROP_SPECS: PropSpecs<MicroPdf417Props> = {
+  content: { type: 'string' },
+  moduleWidth: moduleWidthSpec(),
+  rowHeight: { type: 'number', scale: 'dots' },
+  mode: { type: 'number', integer: true, min: 0, max: 33, scale: 'never' },
+  rotation: ROTATION_SPEC,
+};
+
 export const micropdf417: ObjectTypeCore<MicroPdf417Props> = {
   label: "MicroPDF417",
   icon: "▤",
@@ -97,6 +106,7 @@ export const micropdf417: ObjectTypeCore<MicroPdf417Props> = {
   barcodeClass: 'stacked2d',
   bindable: true,
   controlChars: CONTROL_CHARS,
+  propSpecs: MICROPDF417_PROP_SPECS,
   defaultProps: {
     content: '',
     moduleWidth: 2,
@@ -109,7 +119,7 @@ export const micropdf417: ObjectTypeCore<MicroPdf417Props> = {
 
   preflight: moduleTooSmallPreflight<MicroPdf417Props>('moduleWidth'),
 
-  commitTransform: commitStacked2DTransform,
+  commitTransform: (obj, ctx) => commitStacked2DTransform(obj, ctx, MICROPDF417_PROP_SPECS),
 
   toZPL: (obj, ctx) => {
     const p = obj.props;

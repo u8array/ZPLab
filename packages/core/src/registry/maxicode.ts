@@ -1,3 +1,4 @@
+import { wireBounds, type PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from "../types/ObjectType";
 import type { PreflightProducerResult } from "../types/preflight";
 import { fieldPosZ, fdFieldFor } from "./zplHelpers";
@@ -30,9 +31,9 @@ export interface MaxicodeProps {
   symbolTotal?: number;
 }
 
-/** Clamp a ^BD n/t slot into the spec's 1-8 range (p106). */
 export function clampMaxicodeAppend(v: number): number {
-  return clamp(1, 8, v);
+  const { min, max } = wireBounds(MAXICODE_PROP_SPECS.symbolNumber);
+  return clamp(min, max, v);
 }
 
 // bwip's mode 2/3 SCM parser splits the postcode/country/service fields on GS
@@ -53,12 +54,20 @@ export function maxicodeScmOwnedByPreflight(rawContent: string, resolved: Maxico
   return !hasTemplateMarkers(rawContent) && maxicodeMissingScm(resolved);
 }
 
+export const MAXICODE_PROP_SPECS: PropSpecs<MaxicodeProps> = {
+  content: { type: 'string' },
+  mode: { type: 'number', integer: true, min: 2, max: 6, scale: 'never' },
+  symbolNumber: { type: 'number', integer: true, min: 1, max: 8, scale: 'never' },
+  symbolTotal: { type: 'number', integer: true, min: 1, max: 8, scale: 'never' },
+};
+
 export const maxicode: ObjectTypeCore<MaxicodeProps> = {
   label: "Maxicode",
   icon: "⬡",
   zplCmd: "^BD",
   group: "code-2d",
   bindable: true,
+  propSpecs: MAXICODE_PROP_SPECS,
   defaultProps: {
     content: '',
     mode: MAXICODE_DEFAULT_MODE,

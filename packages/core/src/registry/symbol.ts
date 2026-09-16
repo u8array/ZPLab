@@ -1,3 +1,5 @@
+import type { PropSpecs } from '../types/propSpec';
+import { ROTATION_SPEC } from './rotation';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { fieldPosZ } from './zplHelpers';
 import { commitRotatedWidthHeightTransform } from './transformHelpers';
@@ -49,11 +51,19 @@ export interface SymbolProps {
   rotation: ZplRotation;
 }
 
+export const SYMBOL_PROP_SPECS: PropSpecs<SymbolProps> = {
+  symbol: { type: 'string', values: GS_SYMBOLS.map((s) => s.code) },
+  height: { type: 'number', scale: 'dots' },
+  width: { type: 'number', scale: 'dots' },
+  rotation: ROTATION_SPEC,
+};
+
 export const symbol: ObjectTypeCore<SymbolProps> = {
   label: 'Symbol',
   icon: '©',
   zplCmd: '^GS',
   group: 'text' as const,
+  propSpecs: SYMBOL_PROP_SPECS,
   defaultProps: {
     symbol: 'B',
     height: 30,

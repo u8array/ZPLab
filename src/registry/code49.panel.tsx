@@ -10,13 +10,7 @@ import { HriAboveRow } from '../components/Properties/HriAboveRow';
 import { FieldLabel } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
 import { fieldGridCols, fieldGridCell } from '../components/ui/formStyles';
-import {
-  type Code49Props,
-  type Code49Mode,
-  CODE49_MODES,
-  code49MinHeight,
-  code49MaxHeight,
-} from '@zplab/core/registry/code49';
+import { CODE49_PROP_SPECS, type Code49Props, type Code49Mode, CODE49_MODES, code49MinHeight, code49MaxHeight } from '@zplab/core/registry/code49';
 
 export const code49Panel: ObjectTypeUi<Code49Props> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -44,8 +38,8 @@ export const code49Panel: ObjectTypeUi<Code49Props> = {
             <NumberInput
               label={loc.moduleWidth}
               value={p.moduleWidth}
-              min={1}
-              max={10}
+              min={CODE49_PROP_SPECS.moduleWidth.min}
+              max={CODE49_PROP_SPECS.moduleWidth.max}
               onChange={(moduleWidth) => onChange({ moduleWidth })}
               zplCmd="^BY"
               className={fieldGridCell}

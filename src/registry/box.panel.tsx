@@ -9,7 +9,7 @@ import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
 import { fieldGridCols, fieldGridCell } from '../components/ui/formStyles';
 import { ShapeModeToggle } from '../components/Properties/ShapeModeToggle';
-import type { BoxProps } from '@zplab/core/registry/box';
+import { BOX_PROP_SPECS, type BoxProps } from '@zplab/core/registry/box';
 
 export const boxPanel: ObjectTypeUi<BoxProps> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -83,8 +83,8 @@ export const boxPanel: ObjectTypeUi<BoxProps> = {
           <NumberInput
             label={t.registry.box.rounding}
             value={p.rounding}
-            min={0}
-            max={8}
+            min={BOX_PROP_SPECS.rounding.min}
+            max={BOX_PROP_SPECS.rounding.max}
             onChange={(rounding) => onChange({ rounding })}
             zplCmd="^GB"
             className={fieldGridCell}

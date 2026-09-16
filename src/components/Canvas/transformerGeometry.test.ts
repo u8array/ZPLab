@@ -25,7 +25,7 @@ describe("barcodeMwReflowGeometry", () => {
   const start = (over: Partial<BarcodeMwReflowStart> = {}): BarcodeMwReflowStart => ({
     rotation: "N",
     edges: edges({ right: true }),
-    mw0: 2,
+    mw0: 2, mwBounds: { min: 1, max: 10 },
     leftX: 100,
     topY: 50,
     rightX: 300,
@@ -253,7 +253,7 @@ describe("applyHeightSnap", () => {
 
   it("row-quantises the height for stacked-2D barcodes with a row anchor", () => {
     // anchor: nodeHeight=100, rowHeight=20 → stepPx = 5
-    const anchor = { kind: "row" as const, nodeHeight: 100, rowHeight: 20, nodeWidth: 50, moduleWidth: 2, moduleWidthMin: 1, rotation: "N" as const };
+    const anchor = { kind: "row" as const, nodeHeight: 100, rowHeight: 20, nodeWidth: 50, moduleWidth: 2, moduleWidthBounds: { min: 1, max: 10 }, rotation: "N" as const };
     const oldBox = { x: 0, y: 0, width: 50, height: 100, rotation: 0 };
     const newBox = { x: 0, y: 0, width: 50, height: 113, rotation: 0 };
     const result = applyHeightSnap(oldBox, newBox, 1, anchor);
@@ -262,7 +262,7 @@ describe("applyHeightSnap", () => {
   });
 
   it("pins the bottom edge for stacked-2D top-anchor resize", () => {
-    const anchor = { kind: "row" as const, nodeHeight: 100, rowHeight: 20, nodeWidth: 50, moduleWidth: 2, moduleWidthMin: 1, rotation: "N" as const };
+    const anchor = { kind: "row" as const, nodeHeight: 100, rowHeight: 20, nodeWidth: 50, moduleWidth: 2, moduleWidthBounds: { min: 1, max: 10 }, rotation: "N" as const };
     const oldBox = { x: 0, y: 0, width: 50, height: 100, rotation: 0 };
     // Top moves UP by 30 → top-anchor resize
     const newBox = { x: 0, y: -30, width: 50, height: 130, rotation: 0 };
@@ -275,7 +275,7 @@ describe("applyHeightSnap", () => {
   it("R/B quantise the rowHeight axis on screen WIDTH, leaving height", () => {
     // Rotated stacked: rowHeight axis = screen width. nodeWidth=100, rowHeight=20
     // → stepPx = 5; width 113 -> 115, height untouched.
-    const anchor = { kind: "row" as const, nodeHeight: 50, rowHeight: 20, nodeWidth: 100, moduleWidth: 2, moduleWidthMin: 1, rotation: "R" as const };
+    const anchor = { kind: "row" as const, nodeHeight: 50, rowHeight: 20, nodeWidth: 100, moduleWidth: 2, moduleWidthBounds: { min: 1, max: 10 }, rotation: "R" as const };
     const oldBox = { x: 0, y: 0, width: 100, height: 50, rotation: 0 };
     const newBox = { x: 0, y: 0, width: 113, height: 50, rotation: 0 };
     const result = applyHeightSnap(oldBox, newBox, 1, anchor);
@@ -407,7 +407,7 @@ describe("computeNewModules", () => {
 });
 
 describe("applyModuleWidthSnap", () => {
-  const anchor = { kind: "moduleWidth" as const, nodeWidth: 100, nodeHeight: 40, moduleWidth: 2, rotation: "N" as const };
+  const anchor = { kind: "moduleWidth" as const, moduleWidthBounds: { min: 1, max: 10 }, nodeWidth: 100, nodeHeight: 40, moduleWidth: 2, rotation: "N" as const };
   const oldBox: BoundingBox = { x: 50, y: 0, width: 100, height: 40, rotation: 0 };
 
   it("snaps width to the next integer moduleWidth multiple", () => {
@@ -434,7 +434,7 @@ describe("applyModuleWidthSnap", () => {
   // R/B put the moduleWidth axis on the screen height (bars turn a quarter):
   // the snap quantises height and pins the vertical edge, not width.
   describe("rotated R/B (height axis)", () => {
-    const rot = { kind: "moduleWidth" as const, nodeWidth: 40, nodeHeight: 100, moduleWidth: 2, rotation: "B" as const };
+    const rot = { kind: "moduleWidth" as const, moduleWidthBounds: { min: 1, max: 10 }, nodeWidth: 40, nodeHeight: 100, moduleWidth: 2, rotation: "B" as const };
     const oldRot: BoundingBox = { x: 0, y: 50, width: 40, height: 100, rotation: 0 };
 
     it("snaps height to the next integer moduleWidth multiple, leaves width", () => {
@@ -456,9 +456,9 @@ describe("applyModuleWidthSnap", () => {
     });
   });
 
-  it("honours a row anchor's moduleWidthMin (CODABLOCK A = 2)", () => {
+  it("honours a row anchor's module-width floor (CODABLOCK A = 2)", () => {
     // nodeWidth=100, moduleWidth=2 → 50px/module; shrink hard, min 2 holds at 100px.
-    const row = { kind: "row" as const, nodeHeight: 40, rowHeight: 20, nodeWidth: 100, moduleWidth: 2, moduleWidthMin: 2, rotation: "N" as const };
+    const row = { kind: "row" as const, nodeHeight: 40, rowHeight: 20, nodeWidth: 100, moduleWidth: 2, moduleWidthBounds: { min: 2, max: 10 }, rotation: "N" as const };
     const out = applyModuleWidthSnap(oldBox, { ...oldBox, width: 10 }, row);
     expect(out.width).toBe(100); // 2 modules * 50px, not 1
   });

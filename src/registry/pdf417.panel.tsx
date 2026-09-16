@@ -6,7 +6,7 @@ import { NumberInput } from "../components/Properties/NumberInput";
 import { UnitNumberInput } from "../components/Properties/UnitNumberInput";
 import { SectionCard, StaticSectionCard } from "../components/Properties/SectionCard";
 import { fieldGridCols, fieldGridCell } from "../components/ui/formStyles";
-import type { Pdf417Props } from "@zplab/core/registry/pdf417";
+import { PDF417_PROP_SPECS, type Pdf417Props } from '@zplab/core/registry/pdf417';
 
 export const pdf417Panel: ObjectTypeUi<Pdf417Props> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -33,8 +33,8 @@ export const pdf417Panel: ObjectTypeUi<Pdf417Props> = {
             <NumberInput
               label={loc.moduleWidth}
               value={p.moduleWidth}
-              min={1}
-              max={10}
+              min={PDF417_PROP_SPECS.moduleWidth.min}
+              max={PDF417_PROP_SPECS.moduleWidth.max}
               onChange={(moduleWidth) => onChange({ moduleWidth })}
               zplCmd="^BY"
               className={fieldGridCell}
@@ -45,8 +45,8 @@ export const pdf417Panel: ObjectTypeUi<Pdf417Props> = {
             <NumberInput
               label={loc.securityLevel}
               value={p.securityLevel}
-              min={0}
-              max={8}
+              min={PDF417_PROP_SPECS.securityLevel.min}
+              max={PDF417_PROP_SPECS.securityLevel.max}
               onChange={(securityLevel) => onChange({ securityLevel })}
               zplCmd="^B7"
               className={fieldGridCell}
@@ -54,8 +54,8 @@ export const pdf417Panel: ObjectTypeUi<Pdf417Props> = {
             <NumberInput
               label={loc.columns}
               value={p.columns}
-              min={0}
-              max={30}
+              min={PDF417_PROP_SPECS.columns.min}
+              max={PDF417_PROP_SPECS.columns.max}
               onChange={(columns) => onChange({ columns })}
               zplCmd="^B7"
               className={fieldGridCell}

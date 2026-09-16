@@ -1,5 +1,6 @@
+import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { wrapReverse, graphicFieldPos } from './zplHelpers';
+import { wrapReverse, graphicFieldPos, ZPL_COLORS, type ZplColor } from './zplHelpers';
 import { commitWidthHeightTransform } from './transformHelpers';
 
 export interface BoxProps {
@@ -7,16 +8,28 @@ export interface BoxProps {
   height: number;
   thickness: number;
   filled: boolean;
-  color: 'B' | 'W';
+  color: ZplColor;
   rounding: number;
   reverse?: boolean;
 }
+
+export const BOX_PROP_SPECS: PropSpecs<BoxProps> = {
+  width: { type: 'number', scale: 'dots' },
+  height: { type: 'number', scale: 'dots' },
+  thickness: { type: 'number', scale: 'dots' },
+  filled: { type: 'boolean' },
+  color: { type: 'string', values: ZPL_COLORS },
+  // Not dots: the radius already scales because width and height do.
+  rounding: { type: 'number', integer: true, min: 0, max: 8, scale: 'never' },
+  reverse: { type: 'boolean' },
+};
 
 export const box: ObjectTypeCore<BoxProps> = {
   label: 'Box',
   icon: '□',
   zplCmd: '^GB',
   group: 'shape',
+  propSpecs: BOX_PROP_SPECS,
   defaultProps: {
     width: 200,
     height: 100,

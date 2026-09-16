@@ -1,3 +1,4 @@
+import { editBounds } from '@zplab/core/types/propSpec';
 import type { ObjectTypeUi } from './panelTypes';
 import { useT } from '../hooks/useT';
 import { useLabelStore } from '../store/labelStore';
@@ -7,7 +8,7 @@ import { SectionCard } from '../components/Properties/SectionCard';
 import { TypedContentSection } from './typedContentSection';
 import { FieldLabel } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
-import { type QrCodeProps, MAGNIFICATION_MIN, MAGNIFICATION_MAX } from '@zplab/core/registry/qrcode';
+import { QRCODE_PROP_SPECS, type QrCodeProps } from '@zplab/core/registry/qrcode';
 
 export const qrcodePanel: ObjectTypeUi<QrCodeProps> = {
   PropertiesPanel: ({ obj, onChange }) => {
@@ -22,8 +23,7 @@ export const qrcodePanel: ObjectTypeUi<QrCodeProps> = {
           <NumberInput
             label={t.registry.qrcode.magnification}
             value={p.magnification}
-            min={MAGNIFICATION_MIN}
-            max={MAGNIFICATION_MAX}
+            {...editBounds(QRCODE_PROP_SPECS.magnification)}
             onChange={(magnification) => onChange({ magnification })}
             zplCmd="^BQ"
           />

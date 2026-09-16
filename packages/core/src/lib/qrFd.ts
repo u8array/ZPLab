@@ -2,7 +2,7 @@
 // the payload, in a fixed order. This module owns both directions, so the
 // emitted form and the parsed form cannot drift apart. Pure, no UI.
 
-const QR_EC_LEVELS = ['H', 'Q', 'M', 'L'] as const;
+export const QR_EC_LEVELS = ['H', 'Q', 'M', 'L'] as const;
 export type QrEcLevel = (typeof QR_EC_LEVELS)[number];
 
 /** The level the firmware falls back to when the ^FD switch names none
