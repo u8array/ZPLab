@@ -3,6 +3,8 @@ import { XMarkIcon, ClipboardDocumentIcon, CheckIcon, FolderOpenIcon } from '@he
 import { importZplText, routeSetupCommands, mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
 import { readFileAsZplText } from '../../lib/readFile';
 import { useLabelStore } from '../../store/labelStore';
+import type { CachedImage } from '@zplab/core/lib/imageCache';
+import { commitUsedImages } from '@zplab/core/lib/imageUsage';
 import type { Page } from '@zplab/core/types/Group';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
@@ -47,7 +49,9 @@ export function ZplImportModal({ onClose }: Props) {
     printerProfile: Partial<PrinterProfile>,
     importedPages: Page[],
     importedVariables: Variable[],
+    images: readonly CachedImage[],
   ) => {
+    commitUsedImages(importedPages, images);
     // No pages (setup-only import): loading would blank the document.
     if (importedPages.length > 0) {
       if (appendMode && hasExistingContent) {
@@ -86,7 +90,7 @@ export function ZplImportModal({ onClose }: Props) {
 
   const commitImport = (imported: ZplImportResult, choice: SetupCommandChoice) => {
     const { printerProfile, pages, keptPageIndexes } = routeSetupCommands(choice, imported);
-    applyImport(imported.labelConfig, printerProfile, pages, imported.variables);
+    applyImport(imported.labelConfig, printerProfile, pages, imported.variables, imported.decodedImages);
     const totalObjects = pages.reduce((s, p) => s + p.objects.length, 0);
     // The summary must not warn about findings the routing just resolved.
     const report =

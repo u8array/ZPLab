@@ -1,8 +1,10 @@
 import type { PageSource, SourceSpan } from "./zplParser/types";
-import { parseZPL, type FontLossReason, type ImportFinding, type ImportReport, type UnbalancedFormat } from "./zplParser";
+import { parseZPL, type FontLossReason, type ImportFinding, type ImportReport, type ParsedZPL, type UnbalancedFormat } from "./zplParser";
 import { DOCUMENT_FINDING, replayRiskFindings, reportOf } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
 import { setupEntryKey } from "./storagePath";
+import { releaseStaged, stageImages, type CachedImage } from "./imageCache";
+import { newId } from "./ids";
 import type { ImportLossCause } from "../catalog";
 import { renameTemplateMarkers } from "./fnTemplate";
 import { PER_FORMAT_ZPL_FIELDS, effectiveDpmm, type CustomFontMapping, type JmDensity, type LabelConfig } from "../types/LabelConfig";
@@ -35,6 +37,7 @@ export interface ZplImportResult {
   mixedPageGeometry: boolean;
   /** First imbalance from the parser; the source editor refuses on it. */
   unbalanced: UnbalancedFormat | null;
+  decodedImages: readonly CachedImage[];
 }
 
 const FONT_LOSS = {
@@ -54,7 +57,17 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
   // ^CF/^BY, ^LH/^LT/^LR) carries across ^XA blocks, and the parser owns the
   // page boundaries (prefix-aware, unlike a literal ^XA split).
   const r = parseZPL(zpl, dpmm, { captureOverlay: true });
+  // storedGraphicShips below reads the cache.
+  const imageOwner = newId();
+  stageImages(imageOwner, r.decodedImages);
+  try {
+    return assembleImport(r, dpmm);
+  } finally {
+    releaseStaged(imageOwner);
+  }
+}
 
+function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
   const pages: Page[] = [];
   const pageSources: PageSource[] = [];
   const findings: ImportFinding[] = [];
@@ -269,6 +282,7 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     report,
     mixedPageGeometry: r.mixedPageGeometry || jmDiverges,
     unbalanced: r.unbalanced,
+    decodedImages: r.decodedImages,
   };
 }
 

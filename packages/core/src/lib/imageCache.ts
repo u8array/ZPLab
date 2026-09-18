@@ -33,8 +33,29 @@ hydrateLocalStoragePrefix<CachedImage>(LS_PREFIX, (entry) => {
   cache.set(entry.id, entry);
 });
 
+/** Keyed by owner so one release cannot drop another owner's rows. */
+const staged = new Map<string, Map<string, CachedImage>>();
+
 export function getImage(id: string): CachedImage | undefined {
-  return cache.get(id);
+  const persistent = cache.get(id);
+  if (persistent) return persistent;
+  for (const rows of staged.values()) {
+    const row = rows.get(id);
+    if (row) return row;
+  }
+  return undefined;
+}
+
+export function stageImages(owner: string, images: readonly CachedImage[]): void {
+  staged.set(owner, new Map(images.map((img) => [img.id, img])));
+}
+
+export function releaseStaged(owner: string): void {
+  staged.delete(owner);
+}
+
+export function commitImages(images: readonly CachedImage[]): void {
+  for (const img of images) putImage(img);
 }
 
 export function getAllImages(): CachedImage[] {

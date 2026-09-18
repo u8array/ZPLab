@@ -1,4 +1,5 @@
 import { LABEL_META_KEYS } from "./zplLabelMeta";
+import type { CachedImage } from "./imageCache";
 import { importZplText, mergeSetupUploads, replaceImportLabel, SETUP_UPLOAD_FIELDS } from "./zplImportService";
 import type { ImportReport, UnbalancedFormat } from "./zplParser";
 import type { LabelConfig } from "../types/LabelConfig";
@@ -77,6 +78,8 @@ export interface SourceApplyOk {
   /** Objects the buffer parsed to; carried-over excluded subtrees are not imports. */
   objectCount: number;
   loss: EditorStateDiff;
+  /** From the text parse, not the baseline parse. */
+  images: readonly CachedImage[];
 }
 
 /** Keys the baseline stream set that the edited stream dropped were deleted
@@ -171,5 +174,6 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
     report: { ...imported.report, findings },
     objectCount,
     loss,
+    images: imported.decodedImages,
   };
 }

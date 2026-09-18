@@ -749,6 +749,7 @@ export function parseZPL(
     unbalanced,
     labelConfig,
     printerProfile,
+    decodedImages: s.result.decodedImages,
     uploadedFontPaths: liveFontPaths,
     embeddedFontPaths,
     fontLosses: [...s.fonts.fontLosses],

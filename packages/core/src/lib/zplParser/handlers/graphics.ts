@@ -15,7 +15,6 @@ import type { QrCodeProps } from "../../../registry/qrcode";
 import { dotsFor, ftTopLeft, int, makeObj, readColor, readRotation } from "../helpers";
 import type { Handler } from "../types";
 
-import { newId } from "../../ids";
 /** Helpers re-exported to parseZPL so the field flush can commit a stashed
  *  reverse-bg box just before the field that follows it. */
 export interface GraphicsExports {
@@ -180,6 +179,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       pushBrowserLimit(s.result, summary);
       return;
     }
+    s.result.decodedImages.push(image.image);
     if (!image.crcOk) notePartial(s.result, code, "checksumMismatch");
     if (image.truncated) notePartial(s.result, code, "shortPayload");
     const key = uploadedGraphicPath(parsed);
@@ -316,7 +316,6 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         gfBytesPerRow,
         gfParams[0] ?? "",
         gfParams[1] ?? "",
-        `imported_${newId().slice(0, 8)}.png`,
       );
       if (!gfImage) {
         // Undecodable, but the header still describes the bitmap, so preserve
@@ -345,6 +344,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         );
         return;
       }
+      s.result.decodedImages.push(gfImage.image);
       if (!gfImage.crcOk) notePartial(s.result, "^GF", "checksumMismatch");
       if (gfImage.truncated) {
         notePartial(s.result, "^GF", "shortPayload");

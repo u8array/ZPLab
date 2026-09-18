@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { getAllImages, getImage, removeImage, stageImages } from "@zplab/core/lib/imageCache";
+import { SHADOW_IMAGE_OWNER } from "./sourceEditSlice";
 import { useLabelStore } from "../labelStore";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { prepareSourceApply } from "@zplab/core/lib/zplSourceEdit";
@@ -200,5 +202,50 @@ describe("the source-edit freeze", () => {
       .getState()
       .loadDesign({ widthMm: 50, heightMm: 30, dpmm: 8 }, [{ objects: [] }], []);
     expect(useLabelStore.getState().sourceEdit.status).toBe("off");
+  });
+});
+
+describe("the shadow's image rows", () => {
+  afterEach(() => {
+    for (const img of getAllImages()) removeImage(img.id);
+  });
+
+  it("persist on apply only when the applied pages name them", () => {
+    const s = useLabelStore.getState();
+    s.enterSourceEdit("^XA^XZ");
+    const text = "~DGR:SPARE.GRF,4,1,00FFFF00\n^XA^FO0,0^GFA,4,4,1,FF00FF00^FS^XZ";
+    const plan = prepareSourceApply({ text, current: currentSnapshot() });
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return;
+    expect(plan.images).toHaveLength(2);
+    useLabelStore.getState().applyZplSource(plan, liveSession());
+    const named = (useLabelStore.getState().pages[0]!.objects[0] as { props: { imageId: string } }).props.imageId;
+    expect(getAllImages().map((i) => i.id)).toEqual([named]);
+  });
+
+  it("leave the cache with the shadow document, and stay through a refusal", () => {
+    const row = { id: "shadow-row", name: "s.png", dataUrl: "data:,", width: 8, height: 4 };
+    const doc = { label: { widthMm: 70, heightMm: 40, dpmm: 8 }, pages: [{ objects: [] }], variables: [], columnMapping: null };
+    useLabelStore.getState().enterSourceEdit("^XA^XZ");
+    useLabelStore.getState().setSourceShadow({ doc, refusal: null, findings: [], draft: "^XA^FS^XZ" }, [row]);
+    useLabelStore.getState().setSourceRefusal({ reason: "tooLarge" }, "^XA^XZ");
+    expect(getImage("shadow-row")).toBeTruthy();
+    useLabelStore.getState().setSourceShadow({ doc: null, refusal: null, findings: [], draft: "^XA^XZ" });
+    expect(getImage("shadow-row")).toBeUndefined();
+    useLabelStore.getState().cancelSourceEdit();
+  });
+
+  it("leave the cache with the session, on cancel and on a document load alike", () => {
+    const row = { id: "shadow-row", name: "s.png", dataUrl: "data:,", width: 8, height: 4 };
+    const s = useLabelStore.getState();
+    s.enterSourceEdit("^XA^XZ");
+    stageImages(SHADOW_IMAGE_OWNER, [row]);
+    expect(getImage("shadow-row")).toBeTruthy();
+    useLabelStore.getState().cancelSourceEdit();
+    expect(getImage("shadow-row")).toBeUndefined();
+    useLabelStore.getState().enterSourceEdit("^XA^XZ");
+    stageImages(SHADOW_IMAGE_OWNER, [row]);
+    useLabelStore.getState().loadDesign({ widthMm: 70, heightMm: 40, dpmm: 8 }, [{ objects: [] }], []);
+    expect(getImage("shadow-row")).toBeUndefined();
   });
 });

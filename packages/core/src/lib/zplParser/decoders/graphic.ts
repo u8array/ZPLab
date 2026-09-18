@@ -1,24 +1,19 @@
-import { putImage } from "../../imageCache";
+import type { CachedImage } from "../../imageCache";
 import { BITS_PER_BYTE } from "./constants";
 import { gfPayloadToBytes } from "./gfa";
 import { wrapGfB64 } from "./crc";
 import type { DecodedGraphic } from "../types";
 
 import { newId } from "../../ids";
-/**
- * Decode a GF-shaped payload into an image-cache entry. Shared between
- * the `^GF` inline path and the `~DY` graphic-upload preamble; both
- * have the same payload shape and need the same decoded bitmap, canvas
- * paint, and cache write. Returns `null` when the payload can't be
- * decoded (caller surfaces as browserLimit).
- */
+/** Decode a GF-shaped payload into a cache row, shared by inline `^GF` and the `~DG`/`~DY` uploads.
+ *  Returns `null` when the payload cannot be decoded, which the caller surfaces as browserLimit. */
 export function decodeGraphicToImage(
   rawData: string,
   format: "A" | "B" | "C",
   bytesPerRow: number,
   totalBytesHeader: string,
   dataBytesHeader: string,
-  nameHint: string,
+  nameHint?: string,
 ): DecodedGraphic | null {
   // Headless (Node/MCP): no canvas to paint the bitmap; degrade to the same
   // browserLimit path as an undecodable payload.
@@ -61,13 +56,13 @@ export function decodeGraphicToImage(
   }
   ctx.putImageData(imgData, 0, 0);
   const imageId = newId();
-  putImage({
+  const image: CachedImage = {
     id: imageId,
-    name: nameHint,
+    name: nameHint ?? `imported_${imageId.slice(0, 8)}.png`,
     dataUrl: canvas.toDataURL("image/png"),
     width: widthDots,
     height: heightDots,
-  });
+  };
   const truncated = bitmapBytes > 0 && decoded.data.length < bitmapBytes;
   // A short payload re-emits with the rows it really painted. Plain hex carries b equal to c.
   const dataBytes = truncated ? String(heightDots * bytesPerRow) : dataBytesHeader;
@@ -75,6 +70,7 @@ export function decodeGraphicToImage(
   const totalBytes = truncated && plainHex ? dataBytes : totalBytesHeader;
   return {
     imageId,
+    image,
     widthDots,
     heightDots,
     // Raw binary re-encodes as A + :B64: of the raster (the ZDesigner-proven

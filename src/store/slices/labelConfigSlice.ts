@@ -8,6 +8,7 @@ import { forgetImport } from '../../lib/csvImport';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { parseDesignFile, designFileErrors } from '@zplab/core/lib/designFile';
 import { selectEditorFrozen, selectSourceEditing } from '../labelStore.selectors';
+import { endSourceSession } from './sourceEditSlice';
 import { configPatchAffectsEmit } from '../labelStore.internals';
 import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
 import { rescaleDesign, rescaleParamsFor } from '../../lib/densityRescale';
@@ -114,8 +115,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       mappingModalOpen: false,
       connectWizardOpen: false,
       // An open source buffer belongs to the replaced document.
-      sourceEdit: { status: 'off' },
-      sourceShadow: null,
+      ...endSourceSession(),
     });
     // A document replacement is not an undoable step back into the previous
     // file; clearing also prevents an undo from stranding the new design's

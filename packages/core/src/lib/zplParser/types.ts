@@ -4,6 +4,7 @@ import type { Variable } from "../../types/Variable";
 import type { PrinterProfile, SetupGraphic } from "../../types/PrinterProfile";
 import type { BlockOverlay, OverlayFrame } from "../zplOverlay/overlay";
 import type { ImportLossCause } from "../../catalog/schema";
+import type { CachedImage } from "../imageCache";
 
 export type ImportFindingKind =
   | "partial"
@@ -146,6 +147,8 @@ export interface ParsedZPL {
    *  commands in the stream (^JZ, ^JT, ~TA, ^ST, ^KD, ^SL, ^KL, ^SE,
    *  ^SZ, ^KN). Caller decides whether to merge into the active profile. */
   printerProfile: Partial<PrinterProfile>;
+  /** Rows the decode produced. The caller commits them, so a parse stays a query. */
+  decodedImages: readonly CachedImage[];
   /** Uploads the finished design can still ship. */
   uploadedFontPaths: string[];
   /** The subset a design font embeds; the rest is provisioning. */
@@ -169,9 +172,10 @@ export interface Wildcard {
   handle: Handler;
 }
 
-/** Result of decoding any GF-shaped graphic into an image-cache entry. */
+/** Result of decoding any GF-shaped graphic into a cache row. */
 export interface DecodedGraphic {
   imageId: string;
+  image: CachedImage;
   widthDots: number;
   heightDots: number;
   /** Verbatim `^GF{format},total,data,bpr,DATA` reconstruction kept on
@@ -183,6 +187,5 @@ export interface DecodedGraphic {
   truncated: boolean;
 }
 
-/** Entry in the upload → recall lookup map. A `DecodedGraphic` without the per-decode
- *  verdicts, which live on the partials map instead of on every map entry. */
-export type UploadedGraphic = Omit<DecodedGraphic, "crcOk" | "truncated"> & { via: "~DG" | "~DY" };
+/** Entry in the upload → recall lookup map. The partials map and `decodedImages` own the omitted verdicts and row. */
+export type UploadedGraphic = Omit<DecodedGraphic, "crcOk" | "truncated" | "image"> & { via: "~DG" | "~DY" };

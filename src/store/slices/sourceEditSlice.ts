@@ -1,4 +1,7 @@
 import type { StateCreator } from 'zustand';
+import { releaseStaged, stageImages, type CachedImage } from '@zplab/core/lib/imageCache';
+import { commitUsedImages } from '@zplab/core/lib/imageUsage';
+
 import type { SourceApplyOk, SourceRefusalInfo } from '@zplab/core/lib/zplSourceEdit';
 import type { ImportFinding } from '@zplab/core/lib/importReport';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
@@ -6,6 +9,14 @@ import type { Page } from '@zplab/core/types/Group';
 import type { ColumnMapping, Variable } from '@zplab/core/types/Variable';
 import { selectEditorFrozen, clampPageIndex } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
+
+export const SHADOW_IMAGE_OWNER = 'sourceShadow';
+
+/** Every session end passes through here, so the shadow's staged rows never outlive it. */
+export function endSourceSession(): Pick<LabelState, 'sourceEdit' | 'sourceShadow'> {
+  releaseStaged(SHADOW_IMAGE_OWNER);
+  return { sourceEdit: { status: 'off' }, sourceShadow: null };
+}
 
 export type SourceEditMode =
   | { status: 'off' }
@@ -54,8 +65,9 @@ export interface SourceEditSlice {
   enterSourceEdit: (currentZpl: string) => void;
   setSourceDraft: (draft: string) => void;
   /** Written by the shadow-parse effect and by a refused apply; ignored
-   *  outside a session so a late parse cannot resurrect a preview. */
-  setSourceShadow: (shadow: SourceShadow) => void;
+   *  outside a session so a late parse cannot resurrect a preview.
+   *  `images` stay staged until the next shadow or the session end. */
+  setSourceShadow: (shadow: SourceShadow, images?: readonly CachedImage[]) => void;
   /** Refusal only, keeping the last good doc: the one "set a refusal" op.
    *  `draft` is the text the refusal describes. */
   setSourceRefusal: (refusal: SourceShadow['refusal'], draft: string) => void;
@@ -97,8 +109,13 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
       state.sourceEdit.status === 'editing' ? { sourceEdit: { ...state.sourceEdit, draft } } : {},
     ),
 
-  setSourceShadow: (shadow) =>
-    set((state) => (state.sourceEdit.status === 'editing' ? { sourceShadow: shadow } : {})),
+  setSourceShadow: (shadow, images = []) => {
+    if (get().sourceEdit.status !== 'editing') return;
+    // No shadow document means the live model is the buffer again, and its rows are persistent.
+    if (shadow.doc === null) releaseStaged(SHADOW_IMAGE_OWNER);
+    else stageImages(SHADOW_IMAGE_OWNER, images);
+    set({ sourceShadow: shadow });
+  },
 
   setSourceRefusal: (refusal, draft) =>
     set((state) =>
@@ -114,23 +131,22 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
         : {},
     ),
 
-  cancelSourceEdit: () =>
-    set((state) =>
-      state.sourceEdit.status === 'off'
-        ? {}
-        : {
-            sourceEdit: { status: 'off' },
-            sourceShadow: null,
-            // The session allowed paging through shadow-only pages; the live
-            // document may not have them.
-            currentPageIndex: clampPageIndex(state.currentPageIndex, state.pages.length),
-          },
-    ),
+  cancelSourceEdit: () => {
+    if (get().sourceEdit.status === 'off') return;
+    const ended = endSourceSession();
+    set((state) => ({
+      ...ended,
+      // The session allowed paging through shadow-only pages; the live
+      // document may not have them.
+      currentPageIndex: clampPageIndex(state.currentPageIndex, state.pages.length),
+    }));
+  },
 
   applyZplSource: (plan, session) => {
     // loadDesign cancels the session, so its stale plan dies here too.
     const current = get().sourceEdit;
     if (current.status !== 'editing' || current.session !== session) return;
+    commitUsedImages(plan.next.pages, plan.images);
     // Raw setState: the freshly parsed dirty flags and overlays are
     // authoritative, so the dirty-tracking diff must not restamp them.
     api.setState({
@@ -148,8 +164,7 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
       mappingModalOpen: false,
       connectWizardOpen: false,
       printerSettingsTab: null,
-      sourceEdit: { status: 'off' },
-      sourceShadow: null,
+      ...endSourceSession(),
     });
   },
 });

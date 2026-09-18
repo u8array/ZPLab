@@ -25,6 +25,7 @@ export function useSourceShadowSync(): void {
   const sourceEdit = useLabelStore((s) => s.sourceEdit);
   const draft = sourceEdit.status === "editing" ? sourceEdit.draft : null;
   const baseline = sourceEdit.status === "editing" ? sourceEdit.baseline : null;
+  const session = sourceEdit.status === "editing" ? sourceEdit.session : null;
   useEffect(() => {
     // Session-end actions clear the shadow themselves.
     if (draft === null || baseline === null) return;
@@ -41,6 +42,8 @@ export function useSourceShadowSync(): void {
     }
     const id = setTimeout(() => {
       const s = useLabelStore.getState();
+      // The cleanup runs after the commit, so a session end can leave this timer live.
+      if (s.sourceEdit.status !== "editing" || s.sourceEdit.session !== session) return;
       const plan = prepareSourceApply({
         text: draft,
         baseline,
@@ -48,17 +51,20 @@ export function useSourceShadowSync(): void {
       });
       if (plan.ok) {
         stampShadowIds(plan.next.pages);
-        shadow({
-          doc: {
-            label: plan.next.label,
-            pages: plan.next.pages,
-            variables: plan.next.variables,
-            columnMapping: plan.next.columnMapping,
+        shadow(
+          {
+            doc: {
+              label: plan.next.label,
+              pages: plan.next.pages,
+              variables: plan.next.variables,
+              columnMapping: plan.next.columnMapping,
+            },
+            refusal: null,
+            findings: plan.report.findings,
+            draft,
           },
-          refusal: null,
-          findings: plan.report.findings,
-          draft,
-        });
+          plan.images,
+        );
       } else if (
         baseline === '' &&
         (plan.reason === 'empty' || plan.reason === 'noContent' || plan.reason === 'unbalanced')
@@ -74,5 +80,5 @@ export function useSourceShadowSync(): void {
       }
     }, DEBOUNCE_MS);
     return () => clearTimeout(id);
-  }, [draft, baseline]);
+  }, [draft, baseline, session]);
 }

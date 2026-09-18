@@ -4,6 +4,9 @@ import {
   getAllImages,
   putImage,
   removeImage,
+  stageImages,
+  releaseStaged,
+  commitImages,
   loadImageFile,
   MAX_IMAGE_BYTES,
 } from '@zplab/core/lib/imageCache';
@@ -24,6 +27,7 @@ describe('imageCache', () => {
     for (const img of getAllImages()) {
       removeImage(img.id);
     }
+    for (const owner of ['shadow', 'modal']) releaseStaged(owner);
   });
 
   it('putImage stores and getImage retrieves an image', () => {
@@ -72,6 +76,39 @@ describe('imageCache', () => {
     expect(img.name).toBe('overwrite.png');
     expect(img.width).toBe(50);
     expect(getAllImages()).toHaveLength(1);
+  });
+
+  it('finds a staged row without listing or persisting it, until the commit', () => {
+    const row = makeFakeImage('draft');
+    stageImages('shadow', [row]);
+    expect(getImage('draft')).toBeTruthy();
+    expect(getAllImages()).toHaveLength(0);
+    expect(localStorage.getItem('zpl-img-draft')).toBeNull();
+    commitImages([row]);
+    expect(getAllImages().map((i) => i.id)).toEqual(['draft']);
+    expect(localStorage.getItem('zpl-img-draft')).not.toBeNull();
+  });
+
+  it('lets each owner replace or release only its own rows', () => {
+    stageImages('shadow', [makeFakeImage('a')]);
+    stageImages('modal', [makeFakeImage('b')]);
+    stageImages('shadow', [makeFakeImage('c')]);
+    expect(getImage('a')).toBeUndefined();
+    expect(getImage('b')).toBeTruthy();
+    expect(getImage('c')).toBeTruthy();
+    releaseStaged('modal');
+    expect(getImage('b')).toBeUndefined();
+    expect(getImage('c')).toBeTruthy();
+    releaseStaged('shadow');
+  });
+
+  it('commits the rows a caller holds even after the owner restaged', () => {
+    const planRow = makeFakeImage('plan');
+    stageImages('shadow', [planRow]);
+    stageImages('shadow', [makeFakeImage('later')]);
+    commitImages([planRow]);
+    expect(getAllImages().map((i) => i.id)).toEqual(['plan']);
+    releaseStaged('shadow');
   });
 
   it('loadImageFile rejects non-image MIME types', async () => {

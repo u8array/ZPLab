@@ -3,6 +3,7 @@ import { getAllLeaves, type LabelObject } from "../../types/Group";
 import type { SourceSpan, FontLoss } from "./types";
 import type { ImportLossCause } from "../../catalog/schema";
 import type { LabelConfig } from "../../types/LabelConfig";
+import type { CachedImage } from "../imageCache";
 import type { PrinterProfile } from "../../types/PrinterProfile";
 import type { Variable } from "../../types/Variable";
 import type { TextProps } from "../../registry/text";
@@ -96,6 +97,7 @@ export interface ParserResult {
   /** ^FH escapes of a byte the printer ends the text field at. */
   hexControl: SpannedToken[];
   browserLimit: SpannedToken[];
+  decodedImages: CachedImage[];
   unknown: SpannedToken[];
   replayRisk: SpannedToken[];
   deviceAction: SpannedToken[];
@@ -576,6 +578,7 @@ export function createParserState(): ParserState {
       unterminated: [],
       hexControl: [],
       browserLimit: [],
+      decodedImages: [],
       unknown: [],
       replayRisk: [],
       deviceAction: [],
