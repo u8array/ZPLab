@@ -66,8 +66,7 @@ export interface MenuFlags {
   /** Overlay pages emit even with zero objects (config-only source apply), so
    *  export/save gate on this, not on hasObjects. */
   documentEmits: boolean;
-  /** Live source-edit session: entries that would replace or emit the
-   *  document disable (see selectEditorFrozen). */
+  /** Live source-edit session: entries that would replace or emit the document disable. */
   sourceEditing: boolean;
   canBatchExport: boolean;
   batchRowCount: number;

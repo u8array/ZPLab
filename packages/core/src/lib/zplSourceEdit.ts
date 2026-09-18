@@ -1,6 +1,7 @@
 import { LABEL_META_KEYS } from "./zplLabelMeta";
 import type { CachedImage } from "./imageCache";
-import { importZplText, mergeSetupUploads, replaceImportLabel, SETUP_UPLOAD_FIELDS } from "./zplImportService";
+import { importZplText, mergeSetupUploads, replaceImportLabel } from "./zplImportService";
+import { repairPrinterProfile, SETUP_UPLOAD_FIELDS } from "../types/PrinterProfile";
 import type { ImportReport, UnbalancedFormat } from "./zplParser";
 import type { LabelConfig } from "../types/LabelConfig";
 import type { PrinterProfile } from "../types/PrinterProfile";
@@ -80,6 +81,8 @@ export interface SourceApplyOk {
   loss: EditorStateDiff;
   /** From the text parse, not the baseline parse. */
   images: readonly CachedImage[];
+  /** Uploads the apply adds to the printer profile, which the canvas cannot show. */
+  profileUploads: { fonts: number; graphics: number };
 }
 
 /** Keys the baseline stream set that the edited stream dropped were deleted
@@ -125,7 +128,8 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
   }
 
   let label = replaceImportLabel(current.label, imported.labelConfig);
-  let printerProfile = { ...current.printerProfile, ...mergeSetupUploads(current.printerProfile, imported.printerProfile) };
+  const uploads = mergeSetupUploads(current.printerProfile, imported.printerProfile);
+  let printerProfile = { ...current.printerProfile, ...uploads.patch };
   // An empty baseline (authoring from scratch) has no keys to strip.
   if (input.baseline !== undefined && input.baseline !== '' && input.baseline !== input.text) {
     const base = importZplText(input.baseline, current.label.dpmm);
@@ -142,6 +146,9 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
       SETUP_UPLOAD_FIELDS,
     );
   }
+
+  // The merge re-adds keys a handler deleted and can pair fields the schema forbids.
+  printerProfile = repairPrinterProfile(printerProfile, imported.printerProfile);
 
   const { pages, variables } = carryAcrossApply({
     current,
@@ -175,5 +182,6 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
     objectCount,
     loss,
     images: imported.decodedImages,
+    profileUploads: uploads.changed,
   };
 }

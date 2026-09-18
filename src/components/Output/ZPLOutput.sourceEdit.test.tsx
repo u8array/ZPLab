@@ -176,6 +176,14 @@ describe("leaving the editor", () => {
     expect(useLabelStore.temporal.getState().pastStates).toHaveLength(0);
   });
 
+  it("stops on the dialog for an upload the apply would park in the profile", () => {
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("~DYE:PARKED.TTF,A,T,4,,00112233\n^XA^FO10,10^A0N,30,30^FDX^FS^XZ");
+    fireEvent.click(screen.getByRole("button", { name: t().output.editSourceApply }));
+    expect(screen.getByRole("button", { name: t().output.editSourceConfirmApply })).toBeTruthy();
+    expect(screen.getByText(/Uploads kept in the printer profile: 1/)).toBeTruthy();
+  });
+
   it("cannot resurrect a stale confirm dialog in a new session", () => {
     render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
     // replayRisk finding forces the confirm dialog.

@@ -304,10 +304,18 @@ export type SetupScriptField = keyof typeof SETUP_SCRIPT_EMITTERS;
  *  targets without re-implementing the registry shape. */
 export const __SETUP_SCRIPT_EMITTERS_FOR_TESTS = SETUP_SCRIPT_EMITTERS;
 
-export function generateSetupScript(profile: PrinterProfile): string {
-  const tildeLines: string[] = [];
-  const persistentBlock: string[] = [];
-  const sessionBlock: string[] = [];
+export interface SetupScriptLine {
+  /** The profile field behind the line, null for the ^XA/^XZ frame. */
+  field: SetupScriptField | null;
+  line: string;
+}
+
+const tagged = (field: SetupScriptField, text: string): SetupScriptLine[] => text.split('\n').map((line) => ({ field, line }));
+
+export function setupScriptLines(profile: PrinterProfile): SetupScriptLine[] {
+  const tildeLines: SetupScriptLine[] = [];
+  const persistentBlock: SetupScriptLine[] = [];
+  const sessionBlock: SetupScriptLine[] = [];
 
   for (const field of SETUP_SCRIPT_FIELDS) {
     const e = SETUP_SCRIPT_EMITTERS[field];
@@ -315,14 +323,14 @@ export function generateSetupScript(profile: PrinterProfile): string {
     const line = e.emit(profile);
     if (line === null) continue;
     if (e.channel === 'tilde') {
-      tildeLines.push(line);
+      tildeLines.push(...tagged(field, line));
       continue;
     }
     // Exhaustive on scope: a future variant forces a case here at
     // compile time instead of silently falling through to persistent.
     switch (e.scope) {
-      case 'persistent': persistentBlock.push(line); break;
-      case 'session': sessionBlock.push(line); break;
+      case 'persistent': persistentBlock.push(...tagged(field, line)); break;
+      case 'session': sessionBlock.push(...tagged(field, line)); break;
       default: {
         const _exhaustive: never = e;
         throw new Error(`unhandled scope on emit entry: ${JSON.stringify(_exhaustive)}`);
@@ -333,11 +341,15 @@ export function generateSetupScript(profile: PrinterProfile): string {
   // never tries to persist them.
   const blockLines = [...persistentBlock, ...sessionBlock];
 
-  if (tildeLines.length === 0 && blockLines.length === 0) return '';
+  if (tildeLines.length === 0 && blockLines.length === 0) return [];
 
   const out = [...tildeLines];
   if (blockLines.length > 0) {
-    out.push('^XA', ...blockLines, '^XZ');
+    out.push({ field: null, line: '^XA' }, ...blockLines, { field: null, line: '^XZ' });
   }
-  return out.join('\n');
+  return out;
+}
+
+export function generateSetupScript(profile: PrinterProfile): string {
+  return setupScriptLines(profile).map((l) => l.line).join('\n');
 }

@@ -302,3 +302,34 @@ export const EMPTY_PRINTER_PROFILE: PrinterProfile = {};
 
 /** The schema's rule for a setup-list path, for callers that gate one entry instead of losing the whole profile. */
 export const isSetupPath = (path: string): boolean => path.length <= FONT_LINKS_PATH_MAX_LEN && setupScriptSafeStringRegex.test(path);
+
+/** Fields with their own Objects group: a source edit never strips them and Clear keeps them. */
+export const SETUP_UPLOAD_FIELDS = ["setupFonts", "setupGraphics"] as const;
+
+/** Fields whose value differs. By value: four fields hold objects. */
+export function changedProfileFields(before: PrinterProfile, after: PrinterProfile): PrinterProfileField[] {
+  return PRINTER_PROFILE_FIELDS.filter((field) => JSON.stringify(after[field]) !== JSON.stringify(before[field]));
+}
+
+/** Settings that differ, the upload lists aside. */
+export function countChangedProfileSettings(before: PrinterProfile, after: PrinterProfile): number {
+  const uploads: readonly string[] = SETUP_UPLOAD_FIELDS;
+  return changedProfileFields(before, after).filter((field) => !uploads.includes(field)).length;
+}
+
+/** The profile the schema accepts, dropping the top-level keys its issues name. A cross-field
+ *  rule can name a key that is already absent, so the drop repeats until the parse passes. */
+export function repairPrinterProfile(candidate: Record<string, unknown>, patch?: Partial<PrinterProfile>): PrinterProfile {
+  let next: Record<string, unknown> = patch ? normalizeMaintenanceTypes(candidate as PrinterProfile, patch) : candidate;
+  for (;;) {
+    const validation = printerProfileSchema.safeParse(next);
+    if (validation.success) return validation.data;
+    const drop = new Set<string>();
+    for (const issue of validation.error.issues) {
+      const topKey = issue.path[0];
+      if (typeof topKey === "string" && topKey in next) drop.add(topKey);
+    }
+    if (drop.size === 0) return {};
+    next = Object.fromEntries(Object.entries(next).filter(([k]) => !drop.has(k)));
+  }
+}

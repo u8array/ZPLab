@@ -250,6 +250,27 @@ describe("format balance", () => {
   });
 });
 
+describe("the profile the plan carries", () => {
+  it("drops the tolerance a mode change leaves behind", () => {
+    const plan = prepareSourceApply({ text: "^XA^SLS,1^XZ", current: current({ printerProfile: { clockMode: "TOL", clockTolerance: 30 } }) });
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return;
+    expect(plan.next.printerProfile).toEqual({ clockMode: "S", clockLanguage: "1" });
+  });
+
+  it("aligns the maintenance message with the alert type the buffer sets", () => {
+    const printerProfile: PrinterProfile = {
+      maintenanceAlert: { type: "C", print: "Y", threshold: 200, frequency: 100, units: "C" },
+      maintenanceMessage: { type: "C", text: "Clean me" },
+    };
+    const plan = prepareSourceApply({ text: "^XA^MAR,Y,200,100,C^XZ", current: current({ printerProfile }) });
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return;
+    expect(plan.next.printerProfile.maintenanceAlert?.type).toBe("R");
+    expect(plan.next.printerProfile.maintenanceMessage?.type).toBe("R");
+  });
+});
+
 describe("the page cap", () => {
   it("refuses past the MCP boundary's limit", () => {
     const many = "^XA^FO10,10^A0N,30,30^FDX^FS^XZ\n".repeat(MAX_SOURCE_PAGES + 1);

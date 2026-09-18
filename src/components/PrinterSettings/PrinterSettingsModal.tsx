@@ -3,8 +3,10 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon, ClipboardDocumentIcon, Trash
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { useMcpAvailability } from "../../hooks/useMcpServer";
 import { useT } from "../../hooks/useT";
-import { generateSetupScript } from "../../lib/zplSetupScript";
-import { useLabelStore, selectHasPerLabelOverrides } from "../../store/labelStore";
+import { generateSetupScript, setupScriptLines, type SetupScriptField } from "../../lib/zplSetupScript";
+import type { SETUP_UPLOAD_FIELDS } from "@zplab/core/types/PrinterProfile";
+import type { Translations } from "../../locales";
+import { useLabelStore, selectEditorFrozen, selectHasPerLabelOverrides } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import type { PrinterSettingsTab } from "../../store/slices/uiSlice";
 import { TAB_GATES, type TabGateCtx } from "./tabVisibility";
@@ -17,7 +19,8 @@ import { ClockAndTimeTab } from "./ClockAndTimeTab";
 import { DataSourcesTab } from "./DataSourcesTab";
 import { EncodingAndLanguageTab } from "./EncodingAndLanguageTab";
 import { FontsTab } from "./FontsTab";
-import { ObjectsTab } from "./ObjectsTab";
+import { StoredFontsTab } from "./StoredFontsTab";
+import { StoredGraphicsTab } from "./StoredGraphicsTab";
 import { IdentityTab } from "./IdentityTab";
 import { MaintenanceTab } from "./MaintenanceTab";
 import { McpServerTab } from "./McpServerTab";
@@ -27,8 +30,6 @@ import { OutputTab } from "./OutputTab";
 import { PreviewSettingsTab } from "./PreviewSettingsTab";
 import { PrintQualityTab } from "./PrintQualityTab";
 import { IllustrationFocusProvider, PrinterIllustration } from "./printerIllustration";
-
-type TopTabId = 'app' | 'perLabel' | 'setupScript';
 
 /** Sub-tab → top-tab. `satisfies` flags any PrinterSettingsTab union
  *  literal that gets added but forgotten here at compile time. */
@@ -45,18 +46,23 @@ const TOP_TAB_OF = {
   clockTime: 'setupScript',
   encodingLanguage: 'setupScript',
   fonts: 'setupScript',
-  objects: 'setupScript',
   identity: 'setupScript',
   maintenance: 'setupScript',
+  storedFonts: 'objects',
+  storedGraphics: 'objects',
 } as const satisfies Record<PrinterSettingsTab, TopTabId>;
 
-const TOP_TAB_ORDER: readonly TopTabId[] = ['app', 'perLabel', 'setupScript'];
+const TOP_TAB_ORDER = ['app', 'perLabel', 'setupScript', 'objects'] as const;
+type TopTabId = (typeof TOP_TAB_ORDER)[number];
+// Stored objects change the setup script too, so the dock stays visible there.
+const SCRIPT_TOP_TABS: ReadonlySet<TopTabId> = new Set(['setupScript', 'objects']);
 
 const TOP_TAB_LABEL_KEY = {
   app: 'railGroupApp',
   perLabel: 'railGroupPerLabel',
   setupScript: 'railGroupSetupScript',
-} as const satisfies Record<TopTabId, 'railGroupApp' | 'railGroupPerLabel' | 'railGroupSetupScript'>;
+  objects: 'railGroupObjects',
+} as const satisfies Record<TopTabId, `railGroup${Capitalize<TopTabId>}` & keyof Translations['printerSettings']>;
 
 const TABS_BY_TOP_TAB: Record<TopTabId, readonly PrinterSettingsTab[]> = (() => {
   const acc = Object.fromEntries(
@@ -81,7 +87,8 @@ const TAB_COMPONENTS: Partial<Record<PrinterSettingsTab, FC>> = {
   clockTime: ClockAndTimeTab,
   encodingLanguage: EncodingAndLanguageTab,
   fonts: FontsTab,
-  objects: ObjectsTab,
+  storedFonts: StoredFontsTab,
+  storedGraphics: StoredGraphicsTab,
   identity: IdentityTab,
   maintenance: MaintenanceTab,
 };
@@ -166,7 +173,7 @@ export function PrinterSettingsModal() {
   // renders its body (the tab component then needs no self-guard).
   const ActiveTab = isVisible(tab) ? TAB_COMPONENTS[tab] : undefined;
 
-  const setupScript = generateSetupScript(printerProfile);
+  const scriptLines = setupScriptLines(printerProfile);
 
   return (
     <DialogShell
@@ -261,11 +268,12 @@ export function PrinterSettingsModal() {
         </div>
       </IllustrationFocusProvider>
 
-      {activeTopTab === 'setupScript' && (
+      {SCRIPT_TOP_TABS.has(activeTopTab) && (
         <PreviewDock
-          setupScript={setupScript}
+          lines={scriptLines}
           printerProfile={printerProfile}
-          onClear={resetPrinterProfile}
+          onClear={activeTopTab === 'setupScript' ? resetPrinterProfile : undefined}
+          onJump={setTab}
           onSend={() => {
             setTab(null);
             openZebraPrint('setupScript');
@@ -289,18 +297,33 @@ export function PrinterSettingsModal() {
   );
 }
 
-/** Docked preview pane on the Setup-Script top-tab. Per-Label has no
- *  preview here; its ZPL still lives in the editor's main output. */
+/** The aria-label takes only the head: a ~DY line is megabytes long. */
+function lineHead(line: string): string {
+  const comma = line.indexOf(',');
+  return comma < 0 ? line : line.slice(0, comma);
+}
+
+/** The `satisfies` keeps a third upload field from slipping past the dock and past Clear. */
+const UPLOAD_FIELD_TAB: Partial<Record<SetupScriptField, PrinterSettingsTab>> = {
+  setupFonts: 'storedFonts',
+  setupGraphics: 'storedGraphics',
+} satisfies Record<(typeof SETUP_UPLOAD_FIELDS)[number], PrinterSettingsTab>;
+
+const uploadTab = (field: SetupScriptField): PrinterSettingsTab | undefined => UPLOAD_FIELD_TAB[field];
+
 function PreviewDock({
-  setupScript,
+  lines,
   printerProfile,
   onClear,
   onSend,
+  onJump,
 }: {
-  setupScript: string;
+  lines: readonly { field: SetupScriptField | null; line: string }[];
   printerProfile: PrinterProfile;
-  onClear: () => void;
+  /** Absent on the Objects group, where "clear the profile" would read as "clear the objects". */
+  onClear?: () => void;
   onSend: () => void;
+  onJump: (tab: PrinterSettingsTab) => void;
 }) {
   const t = useT();
   // Live-clock mode needs the payload generated at click-time.
@@ -308,7 +331,10 @@ function PreviewDock({
   // Collapse frees vertical space on short screens; no animation/persistence by design.
   const [collapsed, setCollapsed] = useState(false);
 
-  const hasScript = !!setupScript;
+  const hasScript = lines.length > 0;
+  // Clear keeps the provisioned uploads, so it has nothing to do while only their lines remain.
+  const canClear = lines.some((l) => l.field !== null && uploadTab(l.field) === undefined);
+  const frozen = useLabelStore(selectEditorFrozen);
   const collapseLabel = collapsed ? t.app.expand : t.app.collapse;
 
   return (
@@ -334,11 +360,12 @@ function PreviewDock({
           {/* Clear: separated from Send by a divider; red hover +
               red focus-visible ring so destructive intent is visible
               to both pointer and keyboard users. */}
-          <Tooltip content={t.printerSettings.previewClear}>
+          {onClear && (<>
+          <Tooltip content={frozen ? t.printerSettings.frozenHint : t.printerSettings.previewClear}>
             <button
               type="button"
               onClick={onClear}
-              disabled={!hasScript}
+              disabled={!canClear || frozen}
               className="flex items-center gap-1 font-mono text-[10px] text-muted hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40 rounded disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
             >
               <TrashIcon className="w-4 h-4" />
@@ -346,6 +373,7 @@ function PreviewDock({
             </button>
           </Tooltip>
           <span aria-hidden="true" className="w-px h-4 bg-border" />
+          </>)}
           <Tooltip content={t.output.copy}>
             <button
               type="button"
@@ -371,10 +399,22 @@ function PreviewDock({
 
       {!collapsed && (
         <pre className="flex-1 overflow-auto p-3 font-mono text-xs leading-relaxed text-text m-0">
-          {hasScript
-            ? setupScript.split('\n').map((line, i) => <ZplLine key={i} line={line} />)
-            : null
-          }
+          {lines.map(({ field, line }, i) => {
+            const target = field ? uploadTab(field) : undefined;
+            return target ? (
+              <button
+                key={i}
+                type="button"
+                aria-label={`${t.printerSettings.tabs[target]}: ${lineHead(line)}`}
+                className="block w-full text-left hover:bg-surface-2/60"
+                onClick={() => onJump(target)}
+              >
+                <ZplLine line={line} />
+              </button>
+            ) : (
+              <ZplLine key={i} line={line} />
+            );
+          })}
         </pre>
       )}
     </div>

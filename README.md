@@ -117,7 +117,7 @@ On desktop, **Connect data** also reads an Excel worksheet. **Settings… → Da
 
 ### Printer settings
 
-Choose **File → Settings… → Per Label** to configure media, print quality, output and RFID. Use the **Setup Script** to configure clock, encoding, fonts, printer identity and maintenance when setting up a printer. Saved designs and label exports do not include Setup Script values such as your printer name or locale.
+Choose **File → Settings… → Per Label** to configure media, print quality, output and RFID. Use the **Setup Script** to configure clock, encoding, fonts, printer identity and maintenance when setting up a printer. In the **Objects** group you pick the fonts and graphics the setup script uploads to the printer. The same group lists the images this browser cached. You can delete the ones nothing uses any more. Saved designs and label exports do not include Setup Script values such as your printer name or locale. **Clear** resets the Setup Script values and keeps these uploads.
 
 In the **Preview** tab, choose Labelary's online service or, on desktop, the connected printer's firmware. You can also enter a premium Labelary endpoint and API key. The key is stored in the OS keychain on desktop and in browser storage on the web.
 
@@ -162,7 +162,7 @@ Export a `.zpl` file to print or edit again later. To keep editor settings as we
 - GS1 content builder: assemble DataBar Expanded, GS1-128 and GS1 DataMatrix content from Application Identifiers, with field and combination validation
 - Content builder: create QR, Data Matrix and Aztec codes for plain text, URLs, WiFi, contacts, email, phone, SMS and geographic coordinates
 - EAN/UPC inline validation: live length counter, computed check-digit preview, and a GS1 prefix hint for EAN-13
-- Printer settings: media, print quality, output and RFID per label, plus a Setup Script for clock, encoding, fonts, identity and maintenance
+- Printer settings: media, print quality, output and RFID per label, a Setup Script for clock, encoding, fonts, identity and maintenance, and an Objects group for the fonts and graphics the printer stores
 - 32 UI languages, detected automatically. Change the language in settings or in the web app's header.
 - Light / dark mode starts from the OS setting. Change the theme in settings or in the web app's header.
 - MCP server (desktop): lets a local AI assistant read and edit the label

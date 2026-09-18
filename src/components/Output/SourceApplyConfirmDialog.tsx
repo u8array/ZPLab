@@ -41,8 +41,8 @@ export function SourceApplyConfirmDialog({
         </button>
       </div>
       <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
-        {plan.report.findings.length > 0 && (
-          <ImportSummaryBody result={{ objectCount: plan.objectCount, report: plan.report }} />
+        {(plan.report.findings.length > 0 || plan.profileUploads.fonts + plan.profileUploads.graphics > 0) && (
+          <ImportSummaryBody result={{ objectCount: plan.objectCount, report: plan.report, profileUploads: plan.profileUploads }} />
         )}
         {lossLines.length > 0 && (
           <div className="flex flex-col gap-1 px-4 pb-4 pt-2">

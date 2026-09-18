@@ -3,6 +3,7 @@ import {
   generateSetupScript,
   SETUP_SCRIPT_FIELDS,
   __SETUP_SCRIPT_EMITTERS_FOR_TESTS,
+  setupScriptLines,
 } from "./zplSetupScript";
 import { parseZPL } from "@zplab/core/lib/zplParser";
 import { makeZ64Field } from "../test/helpers";
@@ -16,6 +17,17 @@ import {
 const base: PrinterProfile = {};
 
 describe("generateSetupScript — output shape", () => {
+  it("splits an emitter that returns several lines, each keeping its field", () => {
+    const lines = setupScriptLines({ ...base, setupGraphics: [{ path: "R:A.GRF", gfa: "^GFA,,4,1,00FFFF00" }, { path: "R:B.GRF", gfa: "^GFA,,4,1,00FFFF00" }] });
+    expect(lines.map((l) => [l.field, l.line.slice(0, 7)])).toEqual([["setupGraphics", "~DYR:A,"], ["setupGraphics", "~DYR:B,"]]);
+  });
+
+  it("names the profile field behind every line, and none behind the frame", () => {
+    const lines = setupScriptLines({ ...base, setupGraphics: [{ path: "R:LOGO.GRF", gfa: "^GFA,,4,1,00FFFF00" }], printerName: "P1" });
+    expect(lines.map((l) => l.field)).toEqual(["setupGraphics", null, "printerName", null]);
+    expect(lines.map((l) => l.line).join("\n")).toBe(generateSetupScript({ ...base, setupGraphics: [{ path: "R:LOGO.GRF", gfa: "^GFA,,4,1,00FFFF00" }], printerName: "P1" }));
+  });
+
   it("returns empty string when no Setup-Script field is set", () => {
     expect(generateSetupScript(base)).toBe("");
   });

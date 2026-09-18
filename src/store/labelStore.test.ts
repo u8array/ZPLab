@@ -14,7 +14,7 @@ import { dotsToMm } from '@zplab/core/lib/coordinates';
 import { effectiveDpmm } from '@zplab/core/types/LabelConfig';
 import { FN_NUMBER_MAX } from '@zplab/core/types/Variable';
 import { loadFetchedDataset, currentDataContext, isCurrentDataContext } from './datasetActions';
-import { isGroup, getAllLeaves, type LabelObject } from '@zplab/core/types/Group';
+import { isGroup, getAllLeaves, type LabelObject, type Page } from '@zplab/core/types/Group';
 import { DEFAULT_CANVAS_SETTINGS } from './slices/uiSlice';
 import { toggleShapeMode } from '../lib/lineBoxConvert';
 import { defined, props } from '../test/helpers';
@@ -844,9 +844,12 @@ describe('loadDesign', () => {
   });
 });
 
-// ── appendPages ───────────────────────────────────────────────────────────────
+// ── applyZplImport, append ────────────────────────────────────────────────────
 
-describe('appendPages', () => {
+describe('applyZplImport append', () => {
+  const append = (pages: Page[]) =>
+    state().applyZplImport({ mode: 'append', imported: { labelConfig: { widthMm: 999, heightMm: 999 }, pages, variables: [] }, profile: {} });
+
   const sampleObject: LabelObject = {
     id: 'imp1',
     type: 'box',
@@ -861,7 +864,7 @@ describe('appendPages', () => {
     const originalLabel = state().label;
     state().selectObject(defined(objs()[0]).id);
 
-    state().appendPages([{ objects: [sampleObject] }, { objects: [] }]);
+    append([{ objects: [sampleObject] }, { objects: [] }]);
 
     expect(state().label).toEqual(originalLabel);
     expect(state().pages).toHaveLength(3);
@@ -869,10 +872,10 @@ describe('appendPages', () => {
     expect(state().selectedIds).toEqual([]);
   });
 
-  it('is a no-op when given an empty pages array', () => {
+  it('leaves the pages alone when given none', () => {
     state().addObject('text');
     const before = state().pages;
-    state().appendPages([]);
+    append([]);
     expect(state().pages).toBe(before);
   });
 });
@@ -2624,15 +2627,122 @@ describe('printerProfile actions', () => {
     expect(state().printerProfile).toEqual({ headTestInterval: 250 });
   });
 
-  it('resetPrinterProfile clears all profile fields', () => {
+  it('resetPrinterProfile clears the settings and keeps the provisioned uploads', () => {
     state().patchPrinterProfile({
       reprintAfterError: 'Y',
       headTestInterval: 250,
       printerName: 'lab-zpl-01',
+      setupFonts: [{ path: 'E:A.TTF' }],
+      setupGraphics: [{ path: 'R:LOGO.GRF', gfa: '^GFA,4,4,1,00FFFF00' }],
     });
-    expect(Object.keys(state().printerProfile).length).toBeGreaterThan(0);
     state().resetPrinterProfile();
-    expect(state().printerProfile).toEqual({});
+    expect(state().printerProfile).toEqual({
+      setupFonts: [{ path: 'E:A.TTF' }],
+      setupGraphics: [{ path: 'R:LOGO.GRF', gfa: '^GFA,4,4,1,00FFFF00' }],
+    });
+  });
+
+  it('applyZplImport ends a preview and lands pages and profile together', () => {
+    useLabelStore.setState({ previewMode: { status: 'active', url: 'blob:x' } });
+    const changed = state().applyZplImport({
+      mode: 'replace',
+      imported: { labelConfig: { widthMm: 50, heightMm: 30 }, pages: [{ objects: [] }], variables: [] },
+      profile: { setupFonts: [{ path: 'E:A.TTF' }] },
+    });
+    expect(changed).toEqual({ fonts: 1, graphics: 0, settings: 0 });
+    expect(state().label.widthMm).toBe(50);
+    expect(state().printerProfile.setupFonts).toEqual([{ path: 'E:A.TTF' }]);
+    expect(state().previewMode.status).toBe('idle');
+  });
+
+  it('applyZplImport keeps the open document when a replace carries no pages', () => {
+    state().addObject('text');
+    const before = state().pages;
+    const changed = state().applyZplImport({
+      mode: 'replace',
+      imported: { labelConfig: { widthMm: 50 }, pages: [], variables: [] },
+      profile: { setupFonts: [{ path: 'E:A.TTF' }] },
+    });
+    expect(changed).toEqual({ fonts: 1, graphics: 0, settings: 0 });
+    expect(state().pages).toBe(before);
+    expect(state().label.widthMm).not.toBe(50);
+  });
+
+  it('applyZplImport with no pages lands the profile and leaves a clean session alone', () => {
+    useLabelStore.setState({ sourceEdit: { status: 'editing', draft: '^XA^XZ', baseline: '^XA^XZ', session: 9 } });
+    const changed = state().applyZplImport({
+      mode: 'replace',
+      imported: { labelConfig: {}, pages: [], variables: [] },
+      profile: { setupFonts: [{ path: 'E:A.TTF' }] },
+    });
+    expect(changed).toEqual({ fonts: 1, graphics: 0, settings: 0 });
+    expect(state().sourceEdit.status).toBe('editing');
+    expect(state().printerProfile.setupFonts).toEqual([{ path: 'E:A.TTF' }]);
+    useLabelStore.setState({ sourceEdit: { status: 'off' } });
+  });
+
+  it('applyZplImport counts the settings a setup-only import changed, once', () => {
+    const first = state().applyZplImport({
+      mode: 'replace',
+      imported: { labelConfig: {}, pages: [], variables: [] },
+      profile: { printerName: 'P1' },
+    });
+    expect(first).toEqual({ fonts: 0, graphics: 0, settings: 1 });
+    const again = state().applyZplImport({
+      mode: 'replace',
+      imported: { labelConfig: {}, pages: [], variables: [] },
+      profile: { printerName: 'P1' },
+    });
+    expect(again).toEqual({ fonts: 0, graphics: 0, settings: 0 });
+    expect(state().printerProfile.printerName).toBe('P1');
+  });
+
+  it('keeps the profile identity when a write changes nothing, so no undo step is logged', () => {
+    const steps = () => useLabelStore.temporal.getState().pastStates.length;
+    state().patchPrinterProfile({ printerName: 'P1' });
+    useLabelStore.temporal.getState().clear();
+    const before = state().printerProfile;
+    expect(state().patchPrinterProfile({ printerName: 'P1' })).toBe(true);
+    expect(state().printerProfile).toBe(before);
+    state().applyZplImport({ mode: 'replace', imported: { labelConfig: {}, pages: [], variables: [] }, profile: { printerName: 'P1' } });
+    expect(steps()).toBe(0);
+    state().resetPrinterProfile();
+    useLabelStore.temporal.getState().clear();
+    state().resetPrinterProfile();
+    expect(steps()).toBe(0);
+  });
+
+  it('applyZplImport under a clean source session appends and ends the session', () => {
+    useLabelStore.setState({ sourceEdit: { status: 'editing', draft: '^XA^XZ', baseline: '^XA^XZ', session: 8 } });
+    const changed = state().applyZplImport({
+      mode: 'append',
+      imported: { labelConfig: {}, pages: [{ objects: [] }], variables: [] },
+      profile: {},
+    });
+    expect(changed).toEqual({ fonts: 0, graphics: 0, settings: 0 });
+    expect(state().pages).toHaveLength(2);
+    expect(state().sourceEdit.status).toBe('off');
+  });
+
+  it('applyZplImport refuses under a dirty source session and touches nothing', () => {
+    useLabelStore.setState({ sourceEdit: { status: 'editing', draft: '^XA^FO1,1^XZ', baseline: '^XA^XZ', session: 7 } });
+    const before = state().pages;
+    const changed = state().applyZplImport({
+      mode: 'replace',
+      imported: { labelConfig: { widthMm: 50, heightMm: 30 }, pages: [{ objects: [] }], variables: [] },
+      profile: { setupFonts: [{ path: 'E:A.TTF' }] },
+    });
+    expect(changed).toBeNull();
+    expect(state().pages).toBe(before);
+    expect(state().printerProfile.setupFonts).toBeUndefined();
+    useLabelStore.setState({ sourceEdit: { status: 'off' } });
+  });
+
+  it('patchPrinterProfile reports whether the store took the patch', () => {
+    expect(state().patchPrinterProfile({ reprintAfterError: 'Y' })).toBe(true);
+    useLabelStore.setState({ previewMode: { status: 'active', url: 'blob:x' } });
+    expect(state().patchPrinterProfile({ reprintAfterError: 'N' })).toBe(false);
+    expect(state().printerProfile).toEqual({ reprintAfterError: 'Y' });
   });
 
   it('resetPrinterProfile is a no-op while preview locks the editor', () => {

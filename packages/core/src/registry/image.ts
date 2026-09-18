@@ -4,7 +4,8 @@ import { SETUP_GRAPHIC_GFA_MAX_CHARS, type SetupGraphic } from '../types/Printer
 import { graphicFieldPos } from './zplHelpers';
 import { getImage } from '../lib/imageCache';
 import { gfaFromRaster, rasterizeMono, scaledHeightDots } from '../lib/imageToZpl';
-import { formatStoragePath, storageRefMatchesPath, uploadedGraphicPath, type StoragePath } from '../lib/storagePath';
+import { formatStoragePath, uploadedGraphicPath, type StoragePath } from '../lib/storagePath';
+import { findSetupEntry } from '../lib/setupEntries';
 import { isAxisSwapped, objectRotation, type ZplRotation, ROTATION_SPEC } from './rotation';
 
 /** ^GF rows are byte-packed, so the emitted (and re-parsed) width is the next
@@ -329,7 +330,7 @@ export function setupGraphicState(
   // Past the cap nothing can be sent, whatever an existing entry holds.
   if (cacheTooLarge(p)) return 'tooLarge';
   const cached = shippableCache(p);
-  const entry = entries?.find((g) => storageRefMatchesPath(g.path, path));
+  const entry = findSetupEntry(entries, path);
   if (!entry) return 'none';
   // A resize clears the cache, so its absence says nothing about the entry either way.
   if (!cached) return 'unknown';

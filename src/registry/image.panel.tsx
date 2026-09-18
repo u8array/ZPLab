@@ -1,12 +1,12 @@
 import { useState, useRef, useCallback } from 'react';
-import { InformationCircleIcon, TrashIcon } from '@heroicons/react/16/solid';
+import { InformationCircleIcon } from '@heroicons/react/16/solid';
 import type { ObjectTypeUi } from './panelTypes';
 import { useT } from '../hooks/useT';
 import { buttonCls, inputCls, labelCls } from '../components/Properties/styles';
-import { loadImageFile, getImage, getAllImages, removeImage } from '@zplab/core/lib/imageCache';
+import { disabledCls } from '../components/ui/formStyles';
+import { loadImageFile, getImage } from '@zplab/core/lib/imageCache';
 import { imageToGFA } from '@zplab/core/lib/imageToZpl';
 import { defaultStorageName, formatStoragePath, MAX_STORAGE_NAME_LEN, sanitizeStorageName, STORAGE_DEVICES } from '@zplab/core/lib/storagePath';
-import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { Tooltip } from '../components/ui/Tooltip';
 import { SectionCard, StaticSectionCard } from '../components/Properties/SectionCard';
 import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
@@ -14,7 +14,8 @@ import { RotationSelect } from '../components/Properties/RotationSelect';
 import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
 import { IMAGE_PROP_SPECS, canSendSetupGraphic, isImageRotatable, recallCommand, recallStoragePath, setupGraphicOf, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
-import { mergeSetupEntries } from '@zplab/core/lib/zplImportService';
+import { withSetupEntry } from '@zplab/core/lib/setupEntries';
+import { useCachedImages } from '../hooks/useCachedImages';
 import { useLabelStore } from '../store/labelStore';
 
 export const imagePanel: ObjectTypeUi<ImageProps> = {
@@ -24,10 +25,9 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
     const fileRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadFailed, setUploadFailed] = useState(false);
-    const [pendingCacheDelete, setPendingCacheDelete] = useState(false);
 
     const cached = getImage(p.imageId);
-    const allImages = getAllImages();
+    const allImages = useCachedImages();
 
     const handleUpload = useCallback(async (file: File) => {
       setUploading(true);
@@ -82,7 +82,8 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
     // and we'd need `?.`-fallbacks for every field access.
     const storedAs = p.storedAs;
     const setupGraphics = useLabelStore((s) => s.printerProfile.setupGraphics);
-    const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
+    const patchPrinterProfileWith = useLabelStore((s) => s.patchPrinterProfileWith);
+    const openObjects = useLabelStore((s) => s.setPrinterSettingsTab);
     const setupState = setupGraphicState(p, setupGraphics);
     const canSend = canSendSetupGraphic(p);
     // Remembered here, not in the object: caching a refused encode would dirty the design for nothing.
@@ -92,7 +93,8 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
       const verdict = setupGraphicOf(p);
       if (!verdict || !storedAs) return;
       if (verdict.fit !== 'ok') return setSetupRefusal({ imageId: p.imageId, cache: p._gfaCache, fit: verdict.fit });
-      patchPrinterProfile({ setupGraphics: mergeSetupEntries(useLabelStore.getState().printerProfile.setupGraphics, [verdict.entry]) });
+      const applied = patchPrinterProfileWith((profile) => ({ setupGraphics: withSetupEntry(profile.setupGraphics, verdict.entry) }));
+      if (!applied) return;
       // The cache holds what was just sent, so the state reads current without a fresh encode.
       onChange({ storedAs: { ...storedAs, embedInZpl: false }, _gfaCache: verdict.entry.gfa });
     };
@@ -116,23 +118,6 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
                     ] }]}
                   />
                 </div>
-                {/* Delete the *cached* file (data-URL) from imageCache +
-                    localStorage. Different from removing the image-object
-                    via Del: this clears the bytes shared across all
-                    objects referencing the same imageId. Skip when the
-                    current image-object has no source selected. */}
-                {p.imageId && (
-                  <Tooltip content={t.registry.image.removeFromCache}>
-                    <button
-                      type="button"
-                      className="p-1.5 rounded text-muted hover:text-text hover:bg-surface-2 transition-colors shrink-0"
-                      aria-label={t.registry.image.removeFromCache}
-                      onClick={() => setPendingCacheDelete(true)}
-                    >
-                      <TrashIcon className="w-3.5 h-3.5" />
-                    </button>
-                  </Tooltip>
-                )}
               </div>
             )}
             <input
@@ -148,7 +133,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
             />
             <button
               type="button"
-              className={buttonCls}
+              className={`${buttonCls} ${disabledCls}`}
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
             >
@@ -274,7 +259,12 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
                   </Tooltip>
                 </label>
                 {setupState === 'current' ? (
-                  <span className="text-[10px] text-muted">{t.registry.image.inSetupScript}</span>
+                  <span className="flex items-center gap-2 text-[10px] text-muted">
+                    {t.registry.image.inSetupScript}
+                    <button type="button" className="text-accent hover:underline" onClick={() => openObjects('storedGraphics')}>
+                      {t.registry.image.openObjects}
+                    </button>
+                  </span>
                 ) : setupState === 'tooLarge' || refusal === 'tooLarge' ? (
                   <span className="text-[10px] text-warning">{t.printerSettings.objects.tooLarge}</span>
                 ) : refusal === 'unshippable' ? (
@@ -306,20 +296,6 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
           </div>
         </SectionCard>
 
-        {pendingCacheDelete && (
-          <ConfirmDialog
-            message={t.registry.image.removeFromCacheConfirm}
-            confirmLabel={t.registry.image.removeFromCache}
-            cancelLabel={t.app.cancel}
-            destructive
-            onConfirm={() => {
-              removeImage(p.imageId);
-              onChange({ imageId: '', _gfaCache: undefined });
-              setPendingCacheDelete(false);
-            }}
-            onCancel={() => setPendingCacheDelete(false)}
-          />
-        )}
       </>
     );
   },

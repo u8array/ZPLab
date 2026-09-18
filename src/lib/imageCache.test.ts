@@ -8,6 +8,7 @@ import {
   releaseStaged,
   commitImages,
   loadImageFile,
+  subscribe,
   MAX_IMAGE_BYTES,
 } from '@zplab/core/lib/imageCache';
 import type { CachedImage } from '@zplab/core/lib/imageCache';
@@ -114,6 +115,20 @@ describe('imageCache', () => {
   it('loadImageFile rejects non-image MIME types', async () => {
     const file = new File(['hello'], 'bad.txt', { type: 'text/plain' });
     await expect(loadImageFile(file)).rejects.toThrow(/Not an image/);
+  });
+
+  it('notifies subscribers on a persistent put and remove, and not on staging', () => {
+    let hits = 0;
+    const stop = subscribe(() => { hits += 1; });
+    try {
+      stageImages('shadow', [makeFakeImage('staged')]);
+      expect(hits).toBe(0);
+      putImage(makeFakeImage('kept'));
+      removeImage('kept');
+      expect(hits).toBe(2);
+    } finally {
+      stop();
+    }
   });
 
   it('loadImageFile rejects files above the byte cap', async () => {

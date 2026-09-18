@@ -2,7 +2,7 @@ import type { PageSource, SourceSpan } from "./zplParser/types";
 import { parseZPL, type FontLossReason, type ImportFinding, type ImportReport, type ParsedZPL, type UnbalancedFormat } from "./zplParser";
 import { DOCUMENT_FINDING, replayRiskFindings, reportOf } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
-import { setupEntryKey } from "./storagePath";
+import { mergeSetupEntries } from "./setupEntries";
 import { releaseStaged, stageImages, type CachedImage } from "./imageCache";
 import { newId } from "./ids";
 import type { ImportLossCause } from "../catalog";
@@ -314,32 +314,24 @@ export function rebaseAppendedPageDensity(
   });
 }
 
-/** A stream states the current bytes and never a deletion, so an incoming entry adds or replaces, never removes. */
-export function mergeSetupEntries<T extends { path: string }>(
-  existing: readonly T[] | undefined,
-  incoming: readonly T[],
-): T[] {
-  const merged = [...(existing ?? [])];
-  for (const entry of incoming) {
-    const at = merged.findIndex((e) => setupEntryKey(e) === setupEntryKey(entry));
-    if (at < 0) merged.push(entry);
-    else merged[at] = { ...entry, path: (merged[at] as T).path };
-  }
-  return merged;
-}
-
 export function mergeSetupUploads(
   current: Partial<PrinterProfile>,
   imported: Partial<PrinterProfile>,
-): Partial<PrinterProfile> {
+): { patch: Partial<PrinterProfile>; changed: { fonts: number; graphics: number } } {
   const patch = { ...imported };
-  if (imported.setupFonts) patch.setupFonts = mergeSetupEntries(current.setupFonts, imported.setupFonts);
-  if (imported.setupGraphics) patch.setupGraphics = mergeSetupEntries(current.setupGraphics, imported.setupGraphics);
-  return patch;
+  const changed = { fonts: 0, graphics: 0 };
+  if (imported.setupFonts) {
+    const r = mergeSetupEntries(current.setupFonts, imported.setupFonts);
+    patch.setupFonts = r.merged;
+    changed.fonts = r.changed;
+  }
+  if (imported.setupGraphics) {
+    const r = mergeSetupEntries(current.setupGraphics, imported.setupGraphics);
+    patch.setupGraphics = r.merged;
+    changed.graphics = r.changed;
+  }
+  return { patch, changed };
 }
-
-/** Fields a source edit never strips, see `mergeSetupEntries`. */
-export const SETUP_UPLOAD_FIELDS = ["setupFonts", "setupGraphics"] as const;
 
 /** Routing for imported setup commands. */
 export type SetupCommandChoice = "keep" | "setupScript" | "remove";

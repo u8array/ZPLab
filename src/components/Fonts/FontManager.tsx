@@ -1,7 +1,6 @@
-import { useRef, useState, useCallback, type FocusEvent } from 'react';
+import { useRef, useState, type FocusEvent } from 'react';
 import { PlusIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/16/solid';
 import {
-  getAllFonts,
   hasFontBytes,
   loadFontBytes,
   removeFont,
@@ -9,10 +8,12 @@ import {
   isEmbedLarge,
   cachedFontPath,
 } from '@zplab/core/lib/fontCache';
-import { useFontCacheVersion } from '../../hooks/useFontCacheVersion';
-import { useLabelStore } from '../../store/labelStore';
+import { useCachedFonts } from '../../hooks/useCachedFonts';
+import { useLabelStore, useLiveUsage } from '../../store/labelStore';
+import type { LiveReason } from '@zplab/core/lib/liveUsage';
 import { useT } from '../../hooks/useT';
-import { storageRefMatchesPath } from '@zplab/core/lib/storagePath';
+import { useUpload } from '../../hooks/useUpload';
+import { storageKey, storageRefMatchesPath } from '@zplab/core/lib/storagePath';
 import {
   ZPL_DRIVE_PREFIXES,
   isBuiltinFontId,
@@ -34,11 +35,11 @@ const addBtnCls =
 
 export function FontManager() {
   const t = useT();
-  useFontCacheVersion();
+  const fonts = useCachedFonts();
   const customFonts = useLabelStore((s) => s.label.customFonts);
   const setLabelConfig = useLabelStore((s) => s.setLabelConfig);
+  const live = useLiveUsage().fonts;
 
-  const fonts = getAllFonts();
   const [adding, setAdding] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
@@ -142,6 +143,7 @@ export function FontManager() {
               embedInZpl={entry?.embedInZpl ?? false}
               embedLarge={isEmbedLarge(path)}
               previewMissing={!getFontFamily(path)}
+              inUse={live.get(storageKey(path))}
               onAliasChange={(v) => setAliasForPath(path, v)}
               onEmbedChange={(v) => toggleEmbedForPath(path, v)}
               onRequestDelete={() => setPendingDelete(path)}
@@ -229,6 +231,8 @@ interface FontEntryProps {
   embedLarge: boolean;
   /** Bytes are cached, but no browser face draws them. */
   previewMissing: boolean;
+  /** Why the delete is off: who still names the file. */
+  inUse: LiveReason | undefined;
   onAliasChange: (next: string) => void;
   onEmbedChange: (next: boolean) => void;
   onRequestDelete: () => void;
@@ -241,6 +245,7 @@ function FontEntry({
   embedInZpl,
   embedLarge,
   previewMissing,
+  inUse,
   onAliasChange,
   onEmbedChange,
   onRequestDelete,
@@ -313,11 +318,12 @@ function FontEntry({
             {t.fonts.embedInZpl}
           </label>
         </Tooltip>
-        <Tooltip content={t.fonts.delete}>
+        <Tooltip content={inUse ? { document: t.fonts.inUse, profile: t.fonts.inProfile, history: t.fonts.inHistory, clipboard: t.fonts.inClipboard }[inUse] : t.fonts.delete}>
           <button
             type="button"
             onClick={onRequestDelete}
-            className="p-1 text-muted hover:text-red-400 transition-colors"
+            disabled={inUse !== undefined}
+            className="p-1 text-muted hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             aria-label={t.fonts.delete}
           >
             <TrashIcon className="w-3.5 h-3.5" />
@@ -462,25 +468,14 @@ function AddFontForm({ onDone }: AddFontFormProps) {
   const t = useT();
   const fileRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [uploadIssue, setUploadIssue] = useState<'error' | Exclude<FontUploadIssue, 'notAFont'> | null>(null);
-
-  const handleFileChange = useCallback(async (file: File) => {
-    setUploading(true);
-    setUploadIssue(null);
-    try {
-      // The typed name wins; a freshly picked file is almost always the intended name otherwise.
-      const prepared = await prepareFontUpload(file, name);
-      if (!prepared.ok) return setUploadIssue(prepared.reason === 'notAFont' ? 'error' : prepared.reason);
-      await loadFontBytes(prepared.bytes, prepared.path);
-      onDone(prepared.path);
-    } catch {
-      // No logging path in this app, so the inline hint is the only signal.
-      setUploadIssue('error');
-    } finally {
-      setUploading(false);
-    }
-  }, [name, onDone]);
+  const { busy: uploading, issue: uploadIssue, start: uploadFile } = useUpload<'error' | Exclude<FontUploadIssue, 'notAFont'>>(async (file) => {
+    // The typed name wins. Otherwise the picked file's own name is almost always the intended one.
+    const prepared = await prepareFontUpload(file, name);
+    if (!prepared.ok) return prepared.reason === 'notAFont' ? 'error' : prepared.reason;
+    await loadFontBytes(prepared.bytes, prepared.path);
+    onDone(prepared.path);
+    return null;
+  }, 'error');
 
   return (
     <div className="flex flex-col gap-2 p-2 rounded border border-border bg-surface-2">
@@ -502,7 +497,7 @@ function AddFontForm({ onDone }: AddFontFormProps) {
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) void handleFileChange(file);
+          if (file) uploadFile(file);
           e.target.value = '';
         }}
       />

@@ -26,6 +26,9 @@ export default defineConfig([
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       // Omit-via-rest (`const { drop, ...keep } = obj`) is the intended pattern.
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+      // Syntax the compiler cannot lower, so the enclosing function silently loses its memoization.
+      // Warn, not error: the hooks that predate the rule are their own cleanup scope.
+      'react-hooks/todo': 'warn',
     },
   },
   {

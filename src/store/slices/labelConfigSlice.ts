@@ -7,8 +7,12 @@ import type { DbSourceRef } from '@zplab/core/types/DataSource';
 import { forgetImport } from '../../lib/csvImport';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { parseDesignFile, designFileErrors } from '@zplab/core/lib/designFile';
-import { selectEditorFrozen, selectSourceEditing } from '../labelStore.selectors';
+import { selectEditorFrozen, selectSourceEditDirty, selectSourceEditing } from '../labelStore.selectors';
 import { endSourceSession } from './sourceEditSlice';
+import { mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel } from '@zplab/core/lib/zplImportService';
+import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
+import { countChangedProfileSettings } from '@zplab/core/types/PrinterProfile';
+import { applyProfilePatch } from './printerProfileSlice';
 import { configPatchAffectsEmit } from '../labelStore.internals';
 import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
 import { rescaleDesign, rescaleParamsFor } from '../../lib/densityRescale';
@@ -45,9 +49,9 @@ export interface LabelConfigSlice {
    *  userError; every text source (file open, MCP push) shares this path. False
    *  on a text that is no design file, so the MCP bridge can report it back. */
   loadDesignText: (text: string) => boolean;
-  /** Append pages to the current design without touching label config.
-   *  Switches focus to the first appended page. */
-  appendPages: (pages: Page[]) => void;
+  /** Lands imported pages and profile in one step, like opening a file.
+   *  Null when refused, else what the profile merge changed. */
+  applyZplImport: (input: ImportInput) => { fonts: number; graphics: number; settings: number } | null;
   /** Change print density and proportionally rescale every dot-valued field so
    *  the physical size is preserved (one undo step). `configPatch` stamps extra
    *  label fields with the same commit (a preset also carries the new size). */
@@ -55,6 +59,19 @@ export interface LabelConfigSlice {
   /** Switch the ^JM mode and rescale dots by the effective-density ratio so
    *  the physical size is preserved; a no-ratio switch (A vs unset) just sets. */
   rescaleJmDensity: (jmDensity: JmDensity | undefined) => void;
+}
+
+export interface ImportInput {
+  mode: 'replace' | 'append';
+  imported: { labelConfig: Partial<LabelConfig>; pages: Page[]; variables: Variable[] };
+  profile: Partial<PrinterProfile>;
+}
+
+/** Appended pages join the current label config, so the imported overlays and emit1dZJustify stay out.
+ *  Flipping that gate would change how existing R fields grow. */
+function appendPagesPatch(state: LabelState, pages: Page[]): Partial<LabelState> {
+  if (pages.length === 0) return {};
+  return { pages: [...state.pages, ...dropPageOverlays(pages)], currentPageIndex: state.pages.length, selectedIds: [] };
 }
 
 export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfigSlice> = (set, get, api) => ({
@@ -140,23 +157,32 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
     return true;
   },
 
-  appendPages: (pages) =>
-    set((state) => {
-      if (selectEditorFrozen(state)) return {};
-      if (pages.length === 0) return {};
-      // Strip overlays from appended pages: they are recontextualized into the
-      // current design (whose label config replaces the imported one), so their
-      // captured source config/^FN bytes no longer apply and must regenerate.
-      // The imported emit1dZJustify is discarded with the rest of the config:
-      // flipping it globally would silently change how EXISTING R fields grow
-      // under variable data. Appended normalised fields keep placement z-less.
-      const newPages = [...state.pages, ...dropPageOverlays(pages)];
-      return {
-        pages: newPages,
-        currentPageIndex: state.pages.length,
-        selectedIds: [],
-      };
-    }),
+  applyZplImport: ({ mode, imported, profile }) => {
+    // A dirty buffer is unsaved work that exists nowhere else, so refusing beats destroying it.
+    if (selectSourceEditDirty(get())) return null;
+    get().exitPreviewMode();
+    const merge = mergeSetupUploads(get().printerProfile, profile);
+    const profilePatch = applyProfilePatch(get(), () => merge.patch);
+    const settings = profilePatch ? countChangedProfileSettings(get().printerProfile, profilePatch.printerProfile) : 0;
+    // A setup-only import lands only the profile: nothing replaces the document, nothing ends a session.
+    if (imported.pages.length === 0) {
+      if (profilePatch) set(profilePatch);
+    } else if (mode === 'replace') {
+      get().loadDesign(replaceImportLabel(get().label, imported.labelConfig), imported.pages, imported.variables);
+      if (profilePatch) api.setState(profilePatch);
+      // The profile belongs to the same replacement as loadDesign, not to a step after it.
+      (api as unknown as WithTemporal).temporal.getState().clear();
+    } else {
+      // The current config stays, variables included. The imported ^JM re-pins each page's density first.
+      const ended = endSourceSession();
+      set((state) => ({
+        ...appendPagesPatch(state, rebaseAppendedPageDensity(imported.pages, imported.labelConfig.jmDensity, state.label.jmDensity)),
+        ...(profilePatch ?? {}),
+        ...ended,
+      }));
+    }
+    return profilePatch ? { ...merge.changed, settings } : { fonts: 0, graphics: 0, settings: 0 };
+  },
 
   rescaleDensity: (toDpmm, configPatch) =>
     set((state) => {

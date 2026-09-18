@@ -205,6 +205,17 @@ describe("the source-edit freeze", () => {
   });
 });
 
+describe("the plan's profile uploads", () => {
+  it("count what the apply adds to the profile", () => {
+    useLabelStore.getState().enterSourceEdit("^XA^XZ");
+    const plan = prepareSourceApply({ text: "~DYE:MYFONT.TTF,A,T,4,,00112233\n^XA^XZ", current: currentSnapshot() });
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return;
+    expect(plan.profileUploads).toEqual({ fonts: 1, graphics: 0 });
+    useLabelStore.getState().cancelSourceEdit();
+  });
+});
+
 describe("the shadow's image rows", () => {
   afterEach(() => {
     for (const img of getAllImages()) removeImage(img.id);

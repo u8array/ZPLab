@@ -77,8 +77,7 @@ function TransportBody({ view, fieldLabel }: { view: TransportView; fieldLabel: 
   );
 }
 
-/** Synchronous on purpose: the banner must exist the moment the send button goes live.
- *  Split out because the dialog is compiler-hostile (try/finally), so no memo holds there. */
+/** Synchronous on purpose: the banner must exist the moment the send button goes live. */
 function ImpactNotices({ zpl }: { zpl: string }) {
   const t = useT();
   const notices = printerImpactNotices(exportPrinterImpact(zpl), t);
@@ -227,19 +226,17 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
   async function handleDiscover() {
     setDiscovering(true);
     setBpStatus({ type: "idle" });
-    try {
-      const found = await discoverBrowserPrintDevices();
-      setDevices(found);
-      const first = found[0];
-      if (first && !found.find((d) => d.uid === selectedUid)) {
-        setSelectedUid(first.uid);
-        localStorage.setItem(LS_PRINTER_UID, first.uid);
-      }
-    } catch {
-      setBpStatus({ type: "error", message: t.zebraPrint.agentNotFound });
-    } finally {
-      setDiscovering(false);
-    }
+    await discoverBrowserPrintDevices()
+      .then((found) => {
+        setDevices(found);
+        const first = found[0];
+        if (first && !found.find((d) => d.uid === selectedUid)) {
+          setSelectedUid(first.uid);
+          localStorage.setItem(LS_PRINTER_UID, first.uid);
+        }
+      })
+      .catch(() => setBpStatus({ type: "error", message: t.zebraPrint.agentNotFound }));
+    setDiscovering(false);
   }
 
   async function handleBrowserPrintSend() {

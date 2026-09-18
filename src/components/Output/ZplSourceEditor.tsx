@@ -216,7 +216,7 @@ function SessionChrome({
     }
     // Feedback through state change, like the import modal: only stop on a
     // dialog when there is something the user could not otherwise see.
-    if (plan.report.findings.length === 0 && !hasEditorLoss(plan.loss)) {
+    if (plan.report.findings.length === 0 && !hasEditorLoss(plan.loss) && plan.profileUploads.fonts + plan.profileUploads.graphics === 0) {
       applyZplSource(plan, session.session);
       return true;
     }

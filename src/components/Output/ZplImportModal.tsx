@@ -1,14 +1,9 @@
 import { useRef, useState } from 'react';
 import { XMarkIcon, ClipboardDocumentIcon, CheckIcon, FolderOpenIcon } from '@heroicons/react/16/solid';
-import { importZplText, routeSetupCommands, mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
+import { importZplText, routeSetupCommands, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
 import { readFileAsZplText } from '../../lib/readFile';
 import { useLabelStore } from '../../store/labelStore';
-import type { CachedImage } from '@zplab/core/lib/imageCache';
 import { commitUsedImages } from '@zplab/core/lib/imageUsage';
-import type { Page } from '@zplab/core/types/Group';
-import type { LabelConfig } from '@zplab/core/types/LabelConfig';
-import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
-import type { Variable } from '@zplab/core/types/Variable';
 import { formatReportAsText, type ImportResult } from '../../lib/importReport';
 import { replayRiskFindings, printerCommandFindings, resolveRoutedReport, type ImportReport } from '@zplab/core/lib/importReport';
 import { ImportSummaryBody } from './ImportSummary';
@@ -31,10 +26,9 @@ export function ZplImportModal({ onClose }: Props) {
   const [copied, setCopied] = useState(false);
   const [appendMode, setAppendMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const loadDesign = useLabelStore((s) => s.loadDesign);
-  const appendPages = useLabelStore((s) => s.appendPages);
-  const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
-  const label = useLabelStore((s) => s.label);
+  const applyZplImport = useLabelStore((s) => s.applyZplImport);
+  const setPrinterSettingsTab = useLabelStore((s) => s.setPrinterSettingsTab);
+  const dpmm = useLabelStore((s) => s.label.dpmm);
   const pages = useLabelStore((s) => s.pages);
 
   // Append-mode only makes sense when there is something to append *to*.
@@ -44,64 +38,36 @@ export function ZplImportModal({ onClose }: Props) {
   const hasExistingContent =
     pages.length > 1 || (pages[0]?.objects.length ?? 0) > 0;
 
-  const applyImport = (
-    labelConfig: Partial<LabelConfig>,
-    printerProfile: Partial<PrinterProfile>,
-    importedPages: Page[],
-    importedVariables: Variable[],
-    images: readonly CachedImage[],
-  ) => {
-    commitUsedImages(importedPages, images);
-    // No pages (setup-only import): loading would blank the document.
-    if (importedPages.length > 0) {
-      if (appendMode && hasExistingContent) {
-        // Keep the current label config: the user opted to keep the
-        // existing design's dimensions, so any imported ^PW/^LL is
-        // intentionally discarded. Imported variables are dropped too:
-        // append-mode preserves the current Variables tab; merging here
-        // would risk name/fnNumber collisions the user can't see in the
-        // dialog. Round-trip from a saved design uses Save/Load, not Append.
-        // The imported ^JM was folded into the discarded config, so re-pin each
-        // page's density against the design it joins or a diverging block reprints
-        // at the wrong density.
-        appendPages(rebaseAppendedPageDensity(importedPages, labelConfig.jmDensity, label.jmDensity));
-      } else {
-        loadDesign(replaceImportLabel(label, labelConfig), importedPages, importedVariables);
-      }
-    }
-    // Profile fields are per-installation state, applied regardless of append/replace.
-    const profileToPatch = mergeSetupUploads(useLabelStore.getState().printerProfile, printerProfile);
-    if (Object.keys(profileToPatch).length > 0) {
-      patchPrinterProfile(profileToPatch);
-    }
-  };
-
-  // Feedback through state change: when the import has no findings the
-  // changed canvas is confirmation enough. We only stop on the result
-  // view when there is something the user could not otherwise see, i.e.
-  // one or more findings to review.
-  const finishImport = (totalObjects: number, report: ImportReport) => {
-    if (report.findings.length === 0) {
+  // Stop on the result view only for what the changed canvas cannot show: findings, or uploads parked in the profile.
+  const finishImport = (totalObjects: number, report: ImportReport, changed: { fonts: number; graphics: number; settings: number }) => {
+    const { settings, ...profileUploads } = changed;
+    if (report.findings.length === 0 && profileUploads.fonts + profileUploads.graphics + settings === 0) {
       onClose();
     } else {
-      setResult({ objectCount: totalObjects, report });
+      setResult({ objectCount: totalObjects, report, profileUploads, profileSettings: settings });
     }
   };
 
   const commitImport = (imported: ZplImportResult, choice: SetupCommandChoice) => {
     const { printerProfile, pages, keptPageIndexes } = routeSetupCommands(choice, imported);
-    applyImport(imported.labelConfig, printerProfile, pages, imported.variables, imported.decodedImages);
+    const changed = applyZplImport({
+      mode: appendMode && hasExistingContent ? 'append' : 'replace',
+      imported: { labelConfig: imported.labelConfig, pages, variables: imported.variables },
+      profile: printerProfile,
+    });
+    if (changed === null) return onClose();
+    commitUsedImages(pages, imported.decodedImages);
     const totalObjects = pages.reduce((s, p) => s + p.objects.length, 0);
     // The summary must not warn about findings the routing just resolved.
     const report =
       choice === 'keep' ? imported.report : resolveRoutedReport(imported.report, keptPageIndexes);
-    finishImport(totalObjects, report);
+    finishImport(totalObjects, report, changed);
   };
 
   // Shared by both entry points (paste, file picker); they differ only in how
   // they obtain the text.
   const processImport = (text: string) => {
-    const imported = importZplText(text, label.dpmm);
+    const imported = importZplText(text, dpmm);
     const { labelConfig, printerProfile, pages } = imported;
     const totalObjects = pages.reduce((s, p) => s + p.objects.length, 0);
     if (
@@ -188,7 +154,7 @@ export function ZplImportModal({ onClose }: Props) {
         />
       ) : result ? (
         <>
-          <ImportSummaryBody result={result} />
+          <ImportSummaryBody result={result} onOpenObjects={(tab) => { onClose(); setPrinterSettingsTab(tab); }} />
           <div className="flex justify-between items-center px-4 py-3 border-t border-border shrink-0">
             <button
               onClick={handleCopy}

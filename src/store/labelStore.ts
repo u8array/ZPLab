@@ -3,7 +3,7 @@ import { temporal } from 'zundo';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { dirtyTracking } from './dirtyTracking';
 import type { ObjectChanges } from '@zplab/core/types/LabelObject';
-import { PRINTER_PROFILE_FIELDS, printerProfileSchema } from '@zplab/core/types/PrinterProfile';
+import { PRINTER_PROFILE_FIELDS, repairPrinterProfile } from '@zplab/core/types/PrinterProfile';
 import {
   visitLeavesInPages,
   foldSerialLeaf,
@@ -19,6 +19,7 @@ import { pinBareFontDriveLeaf, reconstructLegacyJmDensity } from '@zplab/core/li
 import type { DesignFilePage } from '@zplab/core/lib/designFile';
 import type { CustomFontMapping, JmDensity, LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { LabelObject, Page } from '@zplab/core/types/Group';
+import { documentUsage, liveUsage, ownerUsage, type LiveUsage, type Usage } from '@zplab/core/lib/liveUsage';
 import {
   createPrinterProfileSlice,
   type PrinterProfileSlice,
@@ -364,32 +365,10 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     }
   }
 
-  // Re-validate the rehydrated profile so a legacy snapshot that
-  // violates the schema or a cross-field rule can't crash the slice's
-  // safeParse on the next patch. Cross-field issues report a path
-  // that may already be absent (clockMode='TOL' without
-  // clockTolerance: path is ['clockTolerance']), so a single delete
-  // pass is not enough. Fixpoint-loop until stable.
+  // A legacy snapshot that breaks the schema would crash the slice's safeParse on the next patch.
   const profile = (s as Record<string, unknown>).printerProfile;
   if (profile && typeof profile === 'object') {
-    let next = { ...(profile as Record<string, unknown>) };
-    for (let i = 0; i < 8; i++) {
-      const validation = printerProfileSchema.safeParse(next);
-      if (validation.success) break;
-      const drop = new Set<string>();
-      for (const issue of validation.error.issues) {
-        const topKey = issue.path[0];
-        if (typeof topKey === 'string' && topKey in next) drop.add(topKey);
-      }
-      // No present top-key to drop means the residual violation isn't
-      // something the loop can resolve; bail to {} rather than spin.
-      if (drop.size === 0) {
-        next = {};
-        break;
-      }
-      next = Object.fromEntries(Object.entries(next).filter(([k]) => !drop.has(k)));
-    }
-    s = { ...s, printerProfile: next };
+    s = { ...s, printerProfile: repairPrinterProfile(profile as Record<string, unknown>) };
   }
 
   return s;
@@ -595,6 +574,33 @@ export const getCurrentObjects = (): LabelObject[] =>
 const noopHistoryAction = () => {
   /* editor frozen */
 };
+/** What an undo or redo step still names. Cached per snapshot object: zundo mutates its
+ *  pastStates and futureStates arrays in place, so only the snapshots are stable keys. */
+const historyUsage = new WeakMap<object, Usage>();
+
+function usageOfSnapshot(snapshot: Partial<LabelState>): Usage {
+  const cached = historyUsage.get(snapshot);
+  if (cached) return cached;
+  const usage = ownerUsage(snapshot.pages ?? [], snapshot.label ?? {}, snapshot.printerProfile ?? {});
+  historyUsage.set(snapshot, usage);
+  return usage;
+}
+
+/** Everything that still names a cached file: the open pages, the profile, the undo history, the clipboard. */
+export const useLiveUsage = (): LiveUsage => {
+  const { pastStates, futureStates } = useHistory();
+  const pages = useLabelStore((s) => s.pages);
+  const label = useLabelStore((s) => s.label);
+  const printerProfile = useLabelStore((s) => s.printerProfile);
+  const clipboard = useLabelStore((s) => s.clipboard);
+  return liveUsage({
+    document: documentUsage(pages, label),
+    profile: printerProfile,
+    history: [...pastStates, ...futureStates].map(usageOfSnapshot),
+    clipboard: documentUsage([{ objects: clipboard }], {}),
+  });
+};
+
 export const useHistory = () => {
   const history = useStore(useLabelStore.temporal);
   const locked = useLabelStore(selectEditorFrozen);

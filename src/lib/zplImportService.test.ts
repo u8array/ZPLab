@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { importZplText, routeSetupCommands, mergeSetupEntries } from '@zplab/core/lib/zplImportService';
+import { importZplText, routeSetupCommands } from '@zplab/core/lib/zplImportService';
+import { mergeSetupEntries } from '@zplab/core/lib/setupEntries';
 import { generateSetupScript } from './zplSetupScript';
 import { generateMultiPageZPL, generateZPL } from '@zplab/core/lib/zplGenerator';
 import { parseZPL } from '@zplab/core/lib/zplParser';
@@ -413,6 +414,18 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
     const only = importZplText(`~DGR:BIG.GRF,${rows},1,${'F'.repeat(rows * 2)}`, 8);
     expect(only.pages).toHaveLength(0);
     expect(resolveRoutedReport(only.report, []).findings.map((f) => f.loss)).toEqual(['oversizeUpload']);
+  });
+
+  it('lists the uploads the profile kept in the copied report', () => {
+    const { report } = importZplText('^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    const text = formatReportAsText({ objectCount: 1, report, profileUploads: { fonts: 1, graphics: 1 } }, fallbackTranslations.importReport);
+    expect(text).toContain('Uploads kept in the printer profile: 2');
+  });
+
+  it('lists the settings the profile kept in the copied report', () => {
+    const { report } = importZplText('^XA^KNP1^XZ', 8);
+    const text = formatReportAsText({ objectCount: 0, report, profileSettings: 1 }, fallbackTranslations.importReport);
+    expect(text).toContain('Printer settings kept in the profile: 1');
   });
 
   it('keeps both uploads of one file name on two drives, as the printer does', () => {
@@ -1132,23 +1145,27 @@ describe('mergeSetupEntries', () => {
   it('unions incoming onto existing, deduped by normalized path', () => {
     const existing = [{ path: 'E:OLD.TTF' }, { path: 'E:SHARED.TTF' }];
     const incoming = [{ path: 'e:shared.ttf' }, { path: 'E:NEW.TTF' }];
-    expect(mergeSetupEntries(existing, incoming)).toEqual([
+    const { merged, changed } = mergeSetupEntries(existing, incoming);
+    expect(merged).toEqual([
       { path: 'E:OLD.TTF' },
       { path: 'E:SHARED.TTF' },
       { path: 'E:NEW.TTF' },
     ]);
+    expect(changed).toBe(1);
   });
 
   it('returns the incoming set when there is no existing profile', () => {
-    expect(mergeSetupEntries(undefined, [{ path: 'E:A.TTF' }])).toEqual([{ path: 'E:A.TTF' }]);
+    expect(mergeSetupEntries(undefined, [{ path: 'E:A.TTF' }]).merged).toEqual([{ path: 'E:A.TTF' }]);
   });
 
   it('replaces an entry whose bytes changed under the same path, in place', () => {
-    const merged = mergeSetupEntries(
+    const { merged, changed } = mergeSetupEntries(
       [{ path: 'R:A.GRF', gfa: '^GFA,4,4,1,00000000' }, { path: 'R:B.GRF', gfa: '^GFA,4,4,1,11111111' }],
       [{ path: 'r:a.grf', gfa: '^GFA,4,4,1,FFFFFFFF' }],
     );
     expect(merged).toEqual([{ path: 'R:A.GRF', gfa: '^GFA,4,4,1,FFFFFFFF' }, { path: 'R:B.GRF', gfa: '^GFA,4,4,1,11111111' }]);
+    // Replaced bytes are news, or the summary would close without naming a changed profile.
+    expect(changed).toBe(1);
   });
 });
 

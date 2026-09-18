@@ -30,6 +30,13 @@ describe("buildMenuModel", () => {
     expect(m.file).toHaveLength(5);
   });
 
+  it("disables the import under a source session, like opening a file", () => {
+    const m = buildMenuModel(en, { ...FLAGS, sourceEditing: true });
+    expect(byId(m, "importZpl")?.enabled).toBe(false);
+    expect(byId(m, "openDesign")?.enabled).toBe(false);
+    expect(byId(m, "settings")?.enabled).toBe(true);
+  });
+
   it("gates object-dependent items on hasObjects and export/save on documentEmits", () => {
     const m = buildMenuModel(en, { ...FLAGS, hasObjects: false, documentEmits: false });
     for (const id of ["exportZpl", "saveDesign", "print", "sendToZebra"]) {

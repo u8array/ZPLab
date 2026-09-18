@@ -62,14 +62,35 @@ export function getAllImages(): CachedImage[] {
   return [...cache.values()];
 }
 
+const listeners = new Set<() => void>();
+let snapshot: readonly CachedImage[] | undefined;
+
+/** Same contract as getFontsSnapshot. */
+export function getImagesSnapshot(): readonly CachedImage[] {
+  return (snapshot ??= getAllImages());
+}
+
+function notify(): void {
+  snapshot = undefined;
+  listeners.forEach((fn) => fn());
+}
+
+/** Persistent rows only. The staged tier belongs to one rendered document, so it needs no listener. */
+export function subscribe(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
 export function putImage(img: CachedImage): void {
   cache.set(img.id, img);
   safeLocalStorageSet(LS_PREFIX + img.id, JSON.stringify(img));
+  notify();
 }
 
 export function removeImage(id: string): void {
   cache.delete(id);
   safeLocalStorageRemove(LS_PREFIX + id);
+  notify();
 }
 
 /** Load a File into the cache. Returns the CachedImage entry. Rejects on

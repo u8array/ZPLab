@@ -73,7 +73,8 @@ export type PrinterSettingsTab =
   | 'clockTime'
   | 'encodingLanguage'
   | 'fonts'
-  | 'objects'
+  | 'storedFonts'
+  | 'storedGraphics'
   | 'identity'
   | 'maintenance';
 

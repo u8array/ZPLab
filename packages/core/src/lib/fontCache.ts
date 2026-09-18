@@ -38,6 +38,7 @@ function fontMime(name: string): string {
 
 const cache = new Map<string, CachedFont>();
 const listeners = new Set<() => void>();
+let snapshot: readonly CachedFont[] | undefined;
 
 /** A row saved before keys carried a device reads as E:, the drive the app of that time named its uploads with. */
 export function cachedFontPath(entry: CachedFont): string {
@@ -45,6 +46,7 @@ export function cachedFontPath(entry: CachedFont): string {
 }
 
 function notify(): void {
+  snapshot = undefined;
   listeners.forEach(fn => fn());
 }
 
@@ -182,6 +184,11 @@ export function getFontFamily(ref: string): string | undefined {
 
 export function getAllFonts(): CachedFont[] {
   return [...cache.values()];
+}
+
+/** Stable between two changes, as useSyncExternalStore requires. */
+export function getFontsSnapshot(): readonly CachedFont[] {
+  return (snapshot ??= getAllFonts());
 }
 
 /** Byte length from the persisted data URL without a full base64 decode. */

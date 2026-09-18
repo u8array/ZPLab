@@ -10,6 +10,10 @@ import { catalogEntry, type ImportLossCause } from '@zplab/core/catalog';
 export interface ImportResult {
   objectCount: number;
   report: ImportReport;
+  /** Uploads this import added to the printer profile. */
+  profileUploads?: { fonts: number; graphics: number };
+  /** Settings this import changed in the printer profile. */
+  profileSettings?: number;
 }
 
 type ReportStrings = Translations['importReport'];
@@ -135,13 +139,16 @@ function pagePrefix(f: ImportFinding, multiPage: boolean, pageFmt: string): stri
 }
 
 export function formatReportAsText(result: ImportResult, tr: ReportStrings): string {
-  const { objectCount, report } = result;
+  const { objectCount, report, profileUploads, profileSettings = 0 } = result;
   const findings = report.findings;
   const multiPage = findings.some((f) => f.pageIndex > 0);
+  const uploads = (profileUploads?.fonts ?? 0) + (profileUploads?.graphics ?? 0);
 
   const lines: string[] = [
     tr.reportHeader,
     tr.reportObjectsFmt.replace('{n}', String(objectCount)),
+    ...(uploads > 0 ? [tr.reportUploadsFmt.replace('{n}', String(uploads))] : []),
+    ...(profileSettings > 0 ? [tr.reportSettingsFmt.replace('{n}', String(profileSettings))] : []),
     '',
   ];
 

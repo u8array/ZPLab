@@ -52,9 +52,15 @@ export function FindingRow({ finding, showPage }: { finding: ImportFinding; show
   );
 }
 
-export function ImportSummaryBody({ result }: { result: ImportResult }) {
+export function ImportSummaryBody({ result, onOpenObjects }: { result: ImportResult; onOpenObjects?: (tab: 'storedFonts' | 'storedGraphics') => void }) {
   const t = useT();
-  const { objectCount, report } = result;
+  const { objectCount, report, profileSettings = 0 } = result;
+  const profileUploads = result.profileUploads ?? { fonts: 0, graphics: 0 };
+  const uploads = profileUploads.fonts + profileUploads.graphics;
+  const uploadTabs = [
+    ...(profileUploads.fonts > 0 ? ['storedFonts' as const] : []),
+    ...(profileUploads.graphics > 0 ? ['storedGraphics' as const] : []),
+  ];
   const { findings } = report;
   // Only show per-row page badges when the import actually spanned multiple
   // pages. Single-page reports don't need the badge clutter.
@@ -67,6 +73,21 @@ export function ImportSummaryBody({ result }: { result: ImportResult }) {
           .replace('{n}', String(objectCount))
           .replace('{m}', String(findings.length))}
       </p>
+      {uploads > 0 && (
+        <p className="font-mono text-[10px] text-muted leading-relaxed flex items-center gap-2">
+          {t.importModal.profileUploadsFmt.replace('{n}', String(uploads))}
+          {onOpenObjects && uploadTabs.map((tab) => (
+            <button key={tab} type="button" className="text-accent hover:underline" onClick={() => onOpenObjects(tab)}>
+              {uploadTabs.length === 1 ? t.importModal.openObjects : t.printerSettings.tabs[tab]}
+            </button>
+          ))}
+        </p>
+      )}
+      {profileSettings > 0 && (
+        <p className="font-mono text-[10px] text-muted leading-relaxed">
+          {t.importModal.profileSettingsFmt.replace('{n}', String(profileSettings))}
+        </p>
+      )}
       <div className="flex flex-col">
         {findings.map((f, i) => (
           <FindingRow

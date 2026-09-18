@@ -320,7 +320,7 @@ describe("round-trip integration (real import -> store -> export)", () => {
     importInto("^XA^FO10,10^A0N,30,30^FDbase^FS^XZ");
     const r = importZplText("^XA^PW999^FO20,20^A0N,30,30^FDapp^FS^XZ", store().label.dpmm);
     expect(r.pages[0]!.overlay).toBeDefined();
-    store().appendPages(r.pages);
+    store().applyZplImport({ mode: "append", imported: { labelConfig: r.labelConfig, pages: r.pages, variables: r.variables }, profile: r.printerProfile });
     const appended = store().pages[store().pages.length - 1]!;
     expect(appended.overlay).toBeUndefined();
   });
@@ -331,9 +331,8 @@ describe("round-trip integration (real import -> store -> export)", () => {
       importInto("^XA^FO10,10^A0N,30,30^FDbase^FS^XZ");
       const r = importZplText("^XA^FT100,150,1^BCN,100,Y,N,N^FD123^FS^XZ", store().label.dpmm);
       expect(r.labelConfig.emit1dZJustify).toBe(true);
-      store().appendPages(r.pages);
-      // Append keeps the current gate (see labelConfigSlice); placement
-      // survives as a normalised left edge, z-less.
+      store().applyZplImport({ mode: "append", imported: { labelConfig: r.labelConfig, pages: r.pages, variables: r.variables }, profile: r.printerProfile });
+      // Append keeps the current gate, see appendPagesPatch. Placement survives as a normalised left edge, z-less.
       expect(store().label.emit1dZJustify).toBeUndefined();
       expect(store().pages[1]!.overlay).toBeUndefined();
       const out = exportZpl();

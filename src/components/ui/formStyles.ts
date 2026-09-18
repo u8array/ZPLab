@@ -5,9 +5,11 @@ export const labelCls = 'font-mono text-[10px] text-muted uppercase tracking-wid
  *  surface-2 + border styling used by `inputCls` so buttons sit naturally
  *  next to form fields without dominating the visual hierarchy. */
 export const buttonCls = 'px-3 py-1.5 rounded text-xs font-mono bg-surface-2 border border-border text-text hover:bg-border transition-colors';
+/** `buttonCls` hovers, so a disabled button needs its hover taken back too. */
+export const disabledCls = 'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-surface-2';
 /** Content-builder launch button under a token field. Disabled while a variable
  *  is present, since the builder writes a literal that can't coexist with chips. */
-export const builderButtonCls = 'self-start text-xs px-2 py-1 rounded border border-border bg-surface-2 hover:bg-border transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-surface-2';
+export const builderButtonCls = `self-start text-xs px-2 py-1 rounded border border-border bg-surface-2 hover:bg-border transition-colors ${disabledCls}`;
 /** Read-only ZPL command tag shown next to a field, e.g. `^A`. One style
  *  across the app (properties fields + Printer Settings tabs) so the command
  *  hint reads the same everywhere. */

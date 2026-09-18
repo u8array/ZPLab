@@ -26,6 +26,7 @@ const stored = (extra: Partial<ImageProps["storedAs"]> = {}): LabelObjectBase & 
 const Panel = imagePanel.PropertiesPanel;
 
 beforeEach(() => {
+  useLabelStore.temporal.getState().clear();
   act(() => useLabelStore.setState({ printerProfile: {} }));
 });
 afterEach(() => {
@@ -42,6 +43,16 @@ describe("image panel setup-script handoff", () => {
     });
     expect(useLabelStore.getState().printerProfile.setupGraphics).toEqual([{ path: "R:LOGO.GRF", gfa: GFA }]);
     expect(onChange).toHaveBeenCalledWith({ storedAs: { device: "R", name: "LOGO", embedInZpl: false }, _gfaCache: GFA });
+  });
+
+  it("hands off from the setup-script hint to the stored graphics tab", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+    const { getByText } = render(<Panel obj={stored({ embedInZpl: false })} onChange={() => undefined} />);
+    act(() => {
+      fireEvent.click(getByText(/Manage stored objects/));
+    });
+    expect(useLabelStore.getState().printerSettingsTab).toBe("storedGraphics");
+    act(() => useLabelStore.setState({ printerSettingsTab: null }));
   });
 
   it("shows a refused encode until the object's bytes change", () => {
