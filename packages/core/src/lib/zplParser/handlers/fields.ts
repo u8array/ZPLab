@@ -1,4 +1,3 @@
-import type { CustomFontMapping } from "../../../types/LabelConfig";
 import { FN_NUMBER_MAX, FN_NUMBER_MIN } from "../../../types/Variable";
 import { applySerialToLeaf } from "../../../registry/serialField";
 import { getEntry, isGs1Active } from "../../../registry";
@@ -15,7 +14,6 @@ import { notePartial,
   type ParserState,
   spanInRest,
 } from "../context";
-import { storageKey } from "../../storagePath";
 import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, hexControlEscape, int, readJustify, readRotation, stripDataLineBreaks, stripLineWrap } from "../helpers";
 import type { SpannedToken } from "../context";
 import type { Handler, Wildcard } from "../types";
@@ -344,15 +342,8 @@ export function createFieldHandlers(
       const list = (labelConfig.customFonts ?? []).filter(
         (m) => m.alias !== alias,
       );
-      const entry: CustomFontMapping = { alias, path };
-      if (s.fonts.downloadedFontPaths.has(storageKey(path))) {
-        // Bytes shipped via ~DY earlier, mark for re-emit and link the fontCache key.
-        entry.embedInZpl = true;
-        const colonIdx = path.indexOf(":");
-        const filename = colonIdx >= 0 ? path.slice(colonIdx + 1) : path;
-        if (filename) entry.previewFontName = filename;
-      }
-      labelConfig.customFonts = [...list, entry];
+      // Whether these bytes re-emit is `bindFontEmbeds`' answer, once every ~DY in the stream is in.
+      labelConfig.customFonts = [...list, { alias, path }];
     },
 
     // ── TrueType font / text block ────────────────────────────────────────
@@ -364,12 +355,9 @@ export function createFieldHandlers(
       s.field.textH = dots(p[1]) || getDefaultTextH(s.defaults);
       s.field.textW = dots(p[2]) || getDefaultTextW(s.defaults);
       const fontRef = p[3] ?? "";
-      const colonIdx = fontRef.indexOf(":");
-      s.field.pendingPrinterFontName =
-        (colonIdx >= 0 ? fontRef.slice(colonIdx + 1) : fontRef) || undefined;
-      // A direct path here claims an uploaded font without a ^CW alias;
-      // record it so the import won't mistake it for a Setup-Script font.
       const fontRefTrimmed = fontRef.trim();
+      // Drive kept: it pins the file on the printer.
+      s.field.pendingPrinterFontName = fontRefTrimmed || undefined;
       if (fontRefTrimmed) s.fonts.referencedFontPaths.add(fontRefTrimmed);
       notePartial(s.result, "^A@");
     },

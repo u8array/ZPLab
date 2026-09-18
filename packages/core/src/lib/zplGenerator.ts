@@ -5,6 +5,7 @@ import { rewriteRawFieldSpans } from './zplParser/decoders/gfa';
 import { getEntry, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import { stripZplParamChars } from './zplParams';
+import { storageKey, storageRefMatchesPath } from './storagePath';
 import {
   extractTemplateRefs,
   hasTemplateMarkers,
@@ -32,8 +33,8 @@ import { formatFontDownloadFromPath } from './customFonts';
 import { graphicUploadLine, imageEmitDims, storedGraphicShips, uploadKey, type ImageProps } from '../registry/image';
 
 function formatDownloadObject(m: CustomFontMapping): string | undefined {
-  if (!m.embedInZpl || !m.path || !m.previewFontName) return undefined;
-  return formatFontDownloadFromPath(m.path, m.previewFontName);
+  if (!m.embedInZpl || !m.path) return undefined;
+  return formatFontDownloadFromPath(m.path);
 }
 
 /** Render a leaf to its field bytes, prefixed with its ^FX comment when set.
@@ -234,14 +235,15 @@ export function generateMultiPageZplWithMap(
   // inheriting its ^JM from outside this export gets the declaration back.
   let wireJm: JmDensity | undefined;
   const ledger = uploadLedger(pages);
+  const shippedFonts = new Set<string>();
   pages.forEach((p, pageIndex) => {
     const pageLabel = pageLabelConfig(label, p);
     const carried = new Set((p.overlay?.segments ?? []).flatMap((seg) => (seg.kind === 'upload' ? [seg.key] : [])));
     const policy = ledger.policyFor(carried);
-    const regenPage = () => generateZplBlock(pageLabel, p.objects, variables, undefined, policy.omit);
+    const regenPage = () => generateZplBlock(pageLabel, p.objects, variables, undefined, policy.omit, shippedFonts);
     let emitted: PageBlock;
     try {
-      emitted = emitPageBlock(pageLabel, p, variables, policy);
+      emitted = emitPageBlock(pageLabel, p, variables, policy, shippedFonts);
     } catch (err) {
       // A throw here is an unexpected bug, not an expected inconsistency (those
       // are handled internally); warn instead of failing silently, then regenerate.
@@ -514,8 +516,9 @@ function emitPageBlock(
   variables: readonly Variable[] = [],
   /** Absent for a lone block, which then replays every upload it holds. */
   policy?: UploadPolicy,
+  shippedFonts?: Set<string>,
 ): PageBlock {
-  const regen = () => generateZplBlock(label, page.objects, variables, undefined, policy?.omit);
+  const regen = () => generateZplBlock(label, page.objects, variables, undefined, policy?.omit, shippedFonts);
   const overlay = page.overlay;
   if (!overlay || !isOverlayConsistent(overlay)) return regen();
 
@@ -917,6 +920,8 @@ function generateZplBlock(
   variables: readonly Variable[] = [],
   bareFnSlots?: ReadonlySet<number>,
   omitUploads?: ReadonlySet<string>,
+  /** Shared across a document's blocks so a font ships once. A replayed block's own ~DY stays invisible to it, which costs size only. */
+  shippedFonts = new Set<string>(),
 ): PageBlock {
   // ^PW/^LL are consumed in physical head dots (ZD230-verified), even under
   // ^JMB: the body's object dots emit in the effective (halved) scale, but the
@@ -928,8 +933,11 @@ function generateZplBlock(
 
   // ~DY ships font bytes before ^XA so ^CW/^A resolve against them.
   for (const m of label.customFonts ?? []) {
+    if (!m.path || !m.embedInZpl || shippedFonts.has(storageKey(m.path))) continue;
     const line = formatDownloadObject(m);
-    if (line) lines.push(line);
+    if (!line) continue;
+    lines.push(line);
+    shippedFonts.add(storageKey(m.path));
   }
 
   const uploads = graphicUploadLines(objects, omitUploads && ((key) => !omitUploads.has(key)));
@@ -1035,7 +1043,7 @@ function generateZplBlock(
       // Free-text settings reaching a parameter slot: without this an alias or
       // path carrying ^ ~ or , ends the line early and the rest executes.
       if (f.alias && f.path) {
-        lines.push(`^CW${stripZplParamChars(f.alias)},${stripZplParamChars(f.path)}`);
+        lines.push(`^CW${stripZplParamChars(f.alias)},${stripZplParamChars(f.path.trim())}`);
       }
     }
   }
@@ -1078,9 +1086,9 @@ function generateZplBlock(
 
   // Per-line aliasing so the span offsets stay true against the final bytes;
   // the ^A@ pattern never crosses a newline, so this matches a whole-text pass.
-  const aliasByPath = fontAliasByPath(label);
+  const fonts = designFonts(label);
   const aliased =
-    aliasByPath.size === 0 ? lines : lines.map((l) => aliasFontPathsLine(l, aliasByPath));
+    fonts.paths.length === 0 ? lines : lines.map((l) => aliasFontPathsLine(l, fonts));
   const spans: ObjectSpan[] = [];
   let off = 0;
   aliased.forEach((l, i) => {
@@ -1097,21 +1105,29 @@ function generateZplBlock(
   };
 }
 
-function fontAliasByPath(label: LabelConfig): Map<string, string> {
-  const aliasByPath = new Map<string, string>();
-  for (const m of label.customFonts ?? []) {
-    if (m.alias && m.path) aliasByPath.set(m.path, m.alias);
-  }
-  return aliasByPath;
+interface DesignFonts {
+  aliasByPath: Map<string, string>;
+  paths: string[];
 }
 
-/** Rewrite `^A@…PATH` to `^A{alias}` for `^CW`-registered paths. Model generator only:
- *  the overlay keeps direct paths, avoiding a ^CW forward-reference. */
-function aliasFontPathsLine(line: string, aliasByPath: Map<string, string>): string {
+function designFonts(label: LabelConfig): DesignFonts {
+  const aliasByPath = new Map<string, string>();
+  const paths: string[] = [];
+  for (const m of label.customFonts ?? []) {
+    if (!m.path) continue;
+    paths.push(m.path);
+    if (m.alias) aliasByPath.set(storageKey(m.path), m.alias);
+  }
+  return { aliasByPath, paths };
+}
+
+/** Model generator only: the overlay keeps direct paths, or a ^A would point at a ^CW not yet sent. */
+function aliasFontPathsLine(line: string, fonts: DesignFonts): string {
   return line.replace(
-    /\^A@([NIRB]),(\d+),(\d+),([A-Z]:[^^\n]+?)(?=\^|\n|$)/g,
-    (full, rot, h, w, path) => {
-      const alias = aliasByPath.get(path);
+    /\^A@([NIRB]),(\d+),(\d+),([^^\n]+?)(?=\^|\n|$)/g,
+    (full, rot, h, w, ref) => {
+      const path = fonts.paths.find((p) => storageRefMatchesPath(ref, p));
+      const alias = path && fonts.aliasByPath.get(storageKey(path));
       return alias ? `^A${alias}${rot},${h},${w}` : full;
     },
   );

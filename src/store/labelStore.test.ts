@@ -1618,6 +1618,14 @@ describe('migrateLegacy — v2→v3 circle→ellipse', () => {
   });
 });
 
+describe('migrateLegacy — v17→v18 bare font drive', () => {
+  it('pins a bare printerFontName to E:, the drive the old emitter invented', () => {
+    const persisted = { pages: [{ objects: [{ id: 't', type: 'text', x: 0, y: 0, rotation: 0, props: { printerFontName: 'ARIAL.TTF' } }, { id: 'u', type: 'text', x: 0, y: 0, rotation: 0, props: { printerFontName: 'R:X.TTF' } }] }] };
+    const migrated = migrateLegacy(persisted, 17) as typeof persisted;
+    expect(migrated.pages[0]!.objects.map((o) => o.props.printerFontName)).toEqual(['E:ARIAL.TTF', 'R:X.TTF']);
+  });
+});
+
 describe('migrateLegacy — v13→v14 smartSnapEnabled', () => {
   it('backfills smartSnapEnabled=true so old sessions keep object snapping', () => {
     const persisted = {

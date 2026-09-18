@@ -10,12 +10,13 @@ export const customFontMappingSchema = z
   .object({
     alias: z.string().regex(/^[A-Z0-9]$/),
     path: z.string().optional(),
+    // Kept so files written before v6 still parse; the path is a font's identity now.
     previewFontName: z.string().optional(),
     embedInZpl: z.boolean().optional(),
   })
-  .refine((m) => !m.embedInZpl || (!!m.path && !!m.previewFontName), {
+  .refine((m) => !m.embedInZpl || !!m.path, {
     message:
-      "embedInZpl requires both a printer path (~DY target) and a preview TTF (~DY bytes)",
+      "embedInZpl requires a printer path (~DY target)",
   });
 export type CustomFontMapping = z.infer<typeof customFontMappingSchema>;
 

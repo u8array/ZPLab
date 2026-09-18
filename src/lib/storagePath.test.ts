@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseStoragePath, formatStoragePath, recallCandidates, sanitizeStorageName, storagePathMatcher, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
+import { parseStoragePath, formatStoragePath, recallCandidates, sanitizeStorageName, storageKey, storagePathMatcher, storageRefMatchesPath, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
 
 describe("storagePath", () => {
   it("parses device:name without extension", () => {
@@ -82,5 +82,20 @@ describe("storagePath", () => {
     expect(sanitizeStorageName("my logo_2!")).toBe("MYLOGO_2");
     expect(sanitizeStorageName("very-long-name")).toBe("VERYLONG");
     expect(sanitizeStorageName("äöü")).toBe("");
+  });
+});
+
+describe("storage identity", () => {
+  it("storageKey is idempotent, trims, and files a bare name under R:", () => {
+    expect(storageKey(storageKey("E:AB:CD.TTF"))).toBe("E:AB:CD.TTF");
+    expect(storageKey(" e:x.ttf ")).toBe("E:X.TTF");
+    expect(storageKey("X.TTF")).toBe("R:X.TTF");
+  });
+
+  it("a font reference names one file, and one without a device names it on R:", () => {
+    expect(storageRefMatchesPath("E:X.TTF", "e:x.ttf")).toBe(true);
+    expect(storageRefMatchesPath("E:X.TTF", "R:X.TTF")).toBe(false);
+    expect(storageRefMatchesPath("X.TTF", "R:X.TTF")).toBe(true);
+    expect(storageRefMatchesPath("X.TTF", "B:X.TTF")).toBe(false);
   });
 });

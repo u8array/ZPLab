@@ -1,5 +1,6 @@
 import type { CustomFontMapping, LabelConfig } from "../types/LabelConfig";
-import { getFontBytes } from "./fontCache";
+import { getFontBytes, holdsOtherBytes, isFontFile } from "./fontCache";
+import { DEFAULT_FONT_DEVICE, sanitizeStorageName, STORAGE_DEVICES, storageRefMatchesPath } from "./storagePath";
 import { stripZplParamChars } from "./zplParams";
 /** Strip-pattern; schema's regex `/^[A-Z0-9]$/` is the inverse. */
 export const ALIAS_CHAR_RE = /[^A-Z0-9]/g;
@@ -8,31 +9,42 @@ const BYTE_HEX = Array.from({ length: 256 }, (_, i) =>
   i.toString(16).padStart(2, "0").toUpperCase(),
 );
 
-/** Build the `~DY` upload line for a `E:NAME.TTF` style path, bytes
- *  from fontCache. `cacheKey` overrides the filename used for byte
- *  lookup when the on-printer name differs from the upload name. */
-export function formatFontDownloadFromPath(
-  path: string,
-  cacheKey?: string,
-): string | undefined {
-  const colon = path.indexOf(":");
-  if (colon < 0) return undefined;
-  const drive = stripZplParamChars(path.slice(0, colon + 1));
-  const filename = path.slice(colon + 1);
-  const dot = filename.lastIndexOf(".");
-  const stem = stripZplParamChars(dot >= 0 ? filename.slice(0, dot) : filename);
-  const ext = dot >= 0 ? filename.slice(dot + 1).toUpperCase() : "";
-  if (ext !== "TTF" && ext !== "OTF") return undefined;
-  const bytes = getFontBytes(cacheKey ?? filename);
+/** The ~DY upload line for a device path. The name carries its extension, as Zebra's own example spells it (spec p.183). */
+export function formatFontDownloadFromPath(path: string): string | undefined {
+  const trimmed = path.trim();
+  if (!isTrueTypeFileName(trimmed)) return undefined;
+  const bytes = getFontBytes(trimmed);
   if (!bytes) return undefined;
+  const colon = trimmed.indexOf(":");
+  const drive = stripZplParamChars(trimmed.slice(0, colon + 1));
+  const filename = trimmed.slice(colon + 1);
+  const dot = filename.lastIndexOf(".");
+  const stem = stripZplParamChars(filename.slice(0, dot));
+  const ext = filename.slice(dot + 1).toUpperCase();
+  const code = fontFormatOf(trimmed);
   // Lookup table avoids per-byte toString/padStart allocations on
   // multi-MB TTFs.
   let hex = "";
   for (const b of bytes) hex += BYTE_HEX[b];
-  return `~DY${drive}${stem},A,T,${bytes.length},,${hex}`;
+  return `~DY${drive}${stem}.${ext},A,${code},${bytes.length},,${hex}`;
 }
 
-export const DEFAULT_FONT_DRIVE = "E:";
+/** ~DY format code per font extension (spec p.182); the parser and the emitter read the same pairs. */
+export const FONT_FORMAT_BY_EXT = { TTF: "T", OTF: "T", TTE: "E", FNT: "B" } as const;
+export const FONT_EXT_BY_FORMAT = { T: "TTF", E: "TTE", B: "FNT" } as const;
+export type FontFormatCode = keyof typeof FONT_EXT_BY_FORMAT;
+
+function fontFormatOf(path: string): FontFormatCode | undefined {
+  if (!path.includes(".")) return undefined;
+  const ext = path.slice(path.lastIndexOf(".") + 1).toUpperCase();
+  return (FONT_FORMAT_BY_EXT as Record<string, FontFormatCode>)[ext];
+}
+
+/** Whether the bytes re-ship as a TrueType upload: TrueType, OpenType or TrueType Extension (spec p.182). */
+export function isTrueTypeFileName(path: string): boolean {
+  const code = fontFormatOf(path);
+  return code === "T" || code === "E";
+}
 
 /** E=flash, R=RAM, A=removable, B=on-board flash. */
 export const ZPL_DRIVE_PREFIXES = ["E:", "R:", "A:", "B:"] as const;
@@ -50,12 +62,33 @@ export const ZPL_BUILTIN_FONT_IDS = [
   "H",
 ] as const;
 
-export function uploadedFontPath(name: string): string {
-  return `${DEFAULT_FONT_DRIVE}${name}`;
+/** The printer path for a locally picked file: a real device, up to 8 name chars, and an extension
+ *  ^A@ and ^CW can reference (spec p.63, p.168): .TTE stays, everything else is .TTF. */
+export function printerFontFileName(fileName: string): string | undefined {
+  const first = fileName[0]?.toUpperCase() ?? "";
+  const typedDevice = fileName[1] === ":" && (STORAGE_DEVICES as readonly string[]).includes(first) ? `${first}:` : undefined;
+  const rest = typedDevice ? fileName.slice(2) : fileName;
+  const device = typedDevice ?? `${DEFAULT_FONT_DEVICE}:`;
+  const dot = rest.lastIndexOf(".");
+  const stem = sanitizeStorageName(dot >= 0 ? rest.slice(0, dot) : rest);
+  const ext = fontFormatOf(rest) === "E" ? "TTE" : "TTF";
+  return stem ? `${device}${stem}.${ext}` : undefined;
 }
 
-export function stripDrivePrefix(path: string): string {
-  return path.replace(/^[A-Z]:/, "");
+export type FontUploadIssue = "notAFont" | "nameUnusable" | "nameTaken";
+
+/** The gate a picked file passes before its bytes enter the cache; reads the file once. */
+export async function prepareFontUpload(
+  file: File,
+  typedName = "",
+): Promise<{ ok: true; path: string; bytes: Uint8Array } | { ok: false; reason: FontUploadIssue }> {
+  if (!isFontFile(file)) return { ok: false, reason: "notAFont" };
+  const path = printerFontFileName(typedName.trim() || file.name);
+  if (!path) return { ok: false, reason: "nameUnusable" };
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  // Two picked files can fold onto one printer name; a different file must not take the first one's row.
+  if (holdsOtherBytes(path, bytes)) return { ok: false, reason: "nameTaken" };
+  return { ok: true, path, bytes };
 }
 
 /** First valid ^CW char, or empty when none present. */
@@ -69,9 +102,12 @@ export function upsertCustomFontMapping(
   path: string,
   alias: string,
 ): CustomFontMapping[] {
-  const withoutPath = (list ?? []).filter((m) => m.path !== path);
-  if (!alias) return withoutPath;
-  return [...withoutPath, { alias, path }];
+  const entries = list ?? [];
+  const matches = (m: CustomFontMapping) => m.path !== undefined && storageRefMatchesPath(m.path, path);
+  // An empty alias removes the entry: the schema has no representation for it.
+  if (!alias) return entries.filter((m) => !matches(m));
+  const prior = entries.find(matches);
+  return prior ? entries.map((m) => (m === prior ? { ...m, alias } : m)) : [...entries, { alias, path }];
 }
 
 /** Drop path-less canvas-only bindings left by the removed built-in
@@ -136,7 +172,7 @@ export function resolveDeviceFontId(
   return resolvePreviewFontName(label, eff) !== undefined ? undefined : eff;
 }
 
-/** Canvas-only preview TTF name; emit/parse ignore this resolver. */
+/** The file the canvas draws an alias with: its printer path, or the local face of a path-less alias. */
 export function resolvePreviewFontName(
   label: Pick<LabelConfig, "customFonts">,
   fontId: string | undefined,
@@ -144,9 +180,7 @@ export function resolvePreviewFontName(
   if (!fontId) return undefined;
   const entry = label.customFonts?.find((m) => m.alias === fontId);
   if (!entry) return undefined;
-  if (entry.previewFontName) return entry.previewFontName;
-  if (entry.path) return stripDrivePrefix(entry.path);
-  return undefined;
+  return entry.path || entry.previewFontName || undefined;
 }
 
 export function resolveDefaultPrinterFontName(
@@ -192,4 +226,20 @@ export function getAvailableFontIds(
     });
   }
   return [...byId.values()];
+}
+
+/** Marks every mapping whose path an upload matched, so a ^CW that precedes its ~DY still embeds. */
+export function bindFontEmbeds(
+  fonts: CustomFontMapping[] | undefined,
+  uploadedPaths: readonly string[],
+): { fonts: CustomFontMapping[] | undefined; embedded: Set<string> } {
+  const embedded = new Set<string>();
+  const bound = fonts?.map((m) => {
+    const ref = m.path;
+    const upload = ref ? uploadedPaths.find((p) => storageRefMatchesPath(ref, p)) : undefined;
+    if (!upload) return m;
+    embedded.add(upload);
+    return { ...m, embedInZpl: true };
+  });
+  return { fonts: bound, embedded };
 }

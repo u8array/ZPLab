@@ -1,3 +1,4 @@
+import { bindFontEmbeds } from "./customFonts";
 import { DEFAULT_CLOCK_CHARS } from "./fcTemplate";
 import { unescapeGs1FdValue, zplFdToModelContent } from "./gs1";
 import { code128PlainExclusiveFns, gs1ModeDExclusiveFns } from "./gs1ModeDFns";
@@ -13,7 +14,7 @@ import { stripLineWrap, stripTrailingSpaces, tokenize, trimmedSpanEnd } from "./
 import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
 import { qrPrintsAsGraphic } from "./objectBounds";
 import { commandTakesPrefix, commandTwinSplit } from "../catalog";
-import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, openTailHasContent, payloadSummary, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField } from "./zplParser/context";
+import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, openTailHasContent, payloadSummary, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField, resolveLiveFonts } from "./zplParser/context";
 import { createCloseField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
 import { createDynamicFontAWildcard, createFieldHandlers } from "./zplParser/handlers/fields";
@@ -38,6 +39,7 @@ export type {
   ImportReport,
   ParsedPage,
   ParsedZPL,
+  FontLossReason,
   UnbalancedFormat,
 } from "./zplParser/types";
 import type { LabelObject } from "../types/Group";
@@ -467,12 +469,14 @@ export function parseZPL(
     }
     const w = labelConfig.widthMm;
     const h = labelConfig.heightMm;
+    // customFonts is document-wide and bound at the pass end, so a page carries none.
+    const { customFonts: _fonts, ...pageConfig } = labelConfig;
     const page: ParsedPage = {
       objects: pageObjects,
       variables: pageVariables,
       findings,
       labelSize: { widthMm: w, heightMm: h },
-      labelConfig: { ...labelConfig },
+      labelConfig: pageConfig,
       span: { start: pg.start, end },
     };
     if (pageOverlay) page.overlay = pageOverlay;
@@ -734,15 +738,21 @@ export function parseZPL(
     labelConfig.heightMm = labelMeta.value.heightMm;
   }
 
+  const liveFontPaths = resolveLiveFonts(s);
+  const bound = bindFontEmbeds(labelConfig.customFonts, liveFontPaths);
+  if (bound.fonts) labelConfig.customFonts = bound.fonts;
+  const embeddedFontPaths = bound.embedded;
+
   return {
     pages,
     mixedPageGeometry,
     unbalanced,
     labelConfig,
     printerProfile,
-    uploadedFontPaths: [...s.fonts.downloadedFontPaths],
+    uploadedFontPaths: liveFontPaths,
+    embeddedFontPaths,
+    fontLosses: [...s.fonts.fontLosses],
     uploadedGraphics: [...s.fonts.downloadedGraphics].map(([path, g]) => ({ path, gfa: g.gfaCache, via: g.via })),
-    referencedFontPaths: [...s.fonts.referencedFontPaths],
     sourceFnNumbers: s.result.sourceFnNumbers,
   };
 }

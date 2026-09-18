@@ -1,10 +1,12 @@
+import { FONT_EXT_BY_FORMAT, isTrueTypeFileName, type FontFormatCode } from "../../customFonts";
+import { byteDigest } from "../../byteDigest";
 import type { BoxProps } from "../../../registry/box";
 import type { EllipseProps } from "../../../registry/ellipse";
 import { clampMagnification, type ImageProps } from "../../../registry/image";
 import type { LineProps } from "../../../registry/line";
 import { loadFontBytesSync } from "../../fontCache";
 import { parseStoragePath, recallCandidates, storageKey, uploadedGraphicPath, type StoragePath } from "../../storagePath";
-import { notePartial, getPosType, noteFieldInk, payloadSummary, pushBrowserLimit, REGEN_LOSSY_REASONS, type ParserState, type PendingReverseBg } from "../context";
+import { fontNamedSoFar, notePartial, getPosType, noteFieldInk, payloadSummary, pushBrowserLimit, REGEN_LOSSY_REASONS, type ParserState, type PendingReverseBg } from "../context";
 import type { LabelObject } from "../../../types/Group";
 import { decodeGraphicToImage } from "../decoders/graphic";
 import { preserveGfData } from "../decoders/gfa";
@@ -490,7 +492,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         pushBrowserLimit(s.result, dySummary);
         return;
       }
-      const path = rest.slice(0, c0);
+      const path = rest.slice(0, c0).trim();
       const fmt = rest.slice(c0 + 1, c1).toUpperCase();
       const extCode = rest.slice(c1 + 1, c2).toUpperCase();
       const size = parseInt(rest.slice(c2 + 1, c3), 10);
@@ -502,9 +504,9 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         return;
       }
 
-      // Only ASCII-hex TTF/OTF imports are supported. Z64 / compressed
+      // Only ASCII-hex font imports are supported. Z64 / compressed
       // payloads need a CRC-checked decoder and stay out of scope.
-      if (fmt !== "A" || (extCode !== "T" && extCode !== "B")) {
+      if (fmt !== "A" || !(extCode in FONT_EXT_BY_FORMAT)) {
         pushBrowserLimit(s.result, dySummary);
         return;
       }
@@ -522,15 +524,28 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         }
         bytes[i] = b;
       }
-      // The generator emits the stem without the extension, so ^CW lookups need it re-attached.
-      const ext = extCode === "T" ? ".TTF" : ".BIN";
-      const filename = path.includes(".")
-        ? path.slice(path.lastIndexOf(":") + 1)
-        : `${path.slice(path.indexOf(":") + 1)}${ext}`;
-      const fullPath = path.includes(".") ? path : `${path}${ext}`;
+      // ^A@ and ^CW name the file with an extension (p.63, p.168). A foreign upload may omit it. A named
+      // extension wins over the code, since that name is what the stream's own ^CW references.
+      const kind = extCode === "B" ? "bitmap" : "truetype";
+      const fullPath = path.includes(".") ? path : `${path}.${FONT_EXT_BY_FORMAT[extCode as FontFormatCode]}`;
+      const span = s.result.tokenSpan;
+      // The format code decides, not the name: a bitmap under X.TTF must never be re-sent as TrueType.
+      if (kind === "truetype" && !isTrueTypeFileName(fullPath)) {
+        s.fonts.fontLosses.push({ reason: "notTrueTypeName", span });
+        return;
+      }
       try {
-        loadFontBytesSync(bytes, filename);
-        s.fonts.downloadedFontPaths.add(storageKey(fullPath));
+        // The ledger still records the file for ^CW and ^ID.
+        if (kind === "truetype") loadFontBytesSync(bytes, fullPath);
+        else s.fonts.fontLosses.push({ reason: "bitmapFont", span });
+        const key = storageKey(fullPath);
+        const digest = byteDigest(bytes);
+        const prior = s.fonts.downloadedFonts.get(key);
+        // Only a page that already printed with the old bytes loses something.
+        if (prior && prior.digest !== digest && fontNamedSoFar(s, fullPath)) {
+          s.fonts.fontLosses.push({ reason: "versionReplaced", span });
+        }
+        s.fonts.downloadedFonts.set(key, { digest, status: "live", kind });
       } catch {
         pushBrowserLimit(s.result, `${s.result.tokenCommand}${path}`);
       }

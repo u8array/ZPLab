@@ -1,11 +1,12 @@
-import type { PageSource } from "./zplParser/types";
-import { parseZPL, type ImportFinding, type ImportReport, type UnbalancedFormat } from "./zplParser";
+import type { PageSource, SourceSpan } from "./zplParser/types";
+import { parseZPL, type FontLossReason, type ImportFinding, type ImportReport, type UnbalancedFormat } from "./zplParser";
 import { DOCUMENT_FINDING, replayRiskFindings, reportOf } from "./importReport";
 import { dropPageOverlays } from "./pageOverlay";
-import { stripDrivePrefix } from "./customFonts";
+import { setupEntryKey } from "./storagePath";
+import type { ImportLossCause } from "../catalog";
 import { renameTemplateMarkers } from "./fnTemplate";
 import { PER_FORMAT_ZPL_FIELDS, effectiveDpmm, type CustomFontMapping, type JmDensity, type LabelConfig } from "../types/LabelConfig";
-import type { PrinterProfile, SetupGraphic } from "../types/PrinterProfile";
+import { isSetupPath, type PrinterProfile, type SetupGraphic } from "../types/PrinterProfile";
 import { exportableLeaves, type LabelObject, type Page } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type Variable } from "../types/Variable";
 import { BARCODE_1D_TYPES } from "../registry";
@@ -34,6 +35,18 @@ export interface ZplImportResult {
   mixedPageGeometry: boolean;
   /** First imbalance from the parser; the source editor refuses on it. */
   unbalanced: UnbalancedFormat | null;
+}
+
+const FONT_LOSS = {
+  versionReplaced: "fontVersionReplaced",
+  bitmapFont: "bitmapFont",
+  notTrueTypeName: "fontNameNotTrueType",
+} as const satisfies Record<FontLossReason, ImportLossCause>;
+
+/** Document findings have no page, so the parser's partials map cannot dedup them. */
+function noteDocumentLoss(findings: ImportFinding[], command: string, loss: ImportLossCause, span?: SourceSpan): void {
+  if (findings.some((f) => f.pageIndex === DOCUMENT_FINDING && f.command === command && f.loss === loss)) return;
+  findings.push({ kind: "partial", command, pageIndex: DOCUMENT_FINDING, loss, span });
 }
 
 export function importZplText(zpl: string, dpmm: number): ZplImportResult {
@@ -170,28 +183,20 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
     labelConfig.customFonts = [...byAlias.values()];
   }
 
-  // Uploaded fonts not claimed as design fonts are Setup-Script fonts.
-  // Case-insensitive compare since external streams vary in casing.
-  const normPath = (p: string) => p.trim().toUpperCase();
-  // Strip only the uploaded side: driveless refs match any drive on the
-  // printer, but two drived refs on different drives stay distinct.
-  const strippedNorm = (p: string) => stripDrivePrefix(normPath(p));
-  const designFontPaths = new Set<string>();
-  for (const m of fontEntries) {
-    if (m.path) designFontPaths.add(normPath(m.path));
-  }
-  for (const p of r.referencedFontPaths) designFontPaths.add(normPath(p));
   const uploadedUnique = [...new Set(r.uploadedFontPaths)];
-  const uploadedNormed = new Map(uploadedUnique.map((p) => [normPath(p), p]));
-  const uploadedStripped = new Map(uploadedUnique.map((p) => [strippedNorm(p), p]));
   const printerProfile: Partial<PrinterProfile> = { ...r.printerProfile };
-  const setupFontPaths = uploadedUnique.filter(
-    (p) => !designFontPaths.has(normPath(p)) && !designFontPaths.has(strippedNorm(p)),
-  );
-  if (setupFontPaths.length > 0) {
-    printerProfile.setupFonts = setupFontPaths.map((path) => ({ path }));
+  // A design font claims only the upload it ships. An upload it merely references stays provisioning.
+  const setupFontPaths = uploadedUnique.filter((p) => !r.embeddedFontPaths.has(p));
+  for (const f of r.fontLosses) noteDocumentLoss(findings, "~DY", FONT_LOSS[f.reason], f.span);
+  // Refused here with a finding, or the whole profile patch fails and every field it carried drops in silence.
+  const carriedFontPaths = setupFontPaths.filter((path) => {
+    if (isSetupPath(path)) return true;
+    noteDocumentLoss(findings, "~DY", "unshippableFontName");
+    return false;
+  });
+  if (carriedFontPaths.length > 0) {
+    printerProfile.setupFonts = carriedFontPaths.map((path) => ({ path }));
   }
-  // A shipping object claims only the bytes it ships. Anything else stays provisioning.
   const shipped = new Set(
     r.pages.flatMap((page) => exportableLeaves(page.objects)).flatMap((leaf) => {
       const props = leaf.props as ImageProps;
@@ -202,29 +207,18 @@ export function importZplText(zpl: string, dpmm: number): ZplImportResult {
   const setupGraphics: SetupGraphic[] = [];
   for (const g of r.uploadedGraphics) {
     if (shipped.has(`${g.path}\n${g.gfa}`)) continue;
-    // Refused here with a finding, or the profile patch fails and the emitter drops it in silence.
+    if (!isSetupPath(g.path)) {
+      noteDocumentLoss(findings, g.via, "unshippableGraphicName");
+      continue;
+    }
     const fit = setupGraphicFits(g.gfa);
     if (fit !== "ok") {
-      findings.push({ kind: "partial", command: g.via, pageIndex: DOCUMENT_FINDING, loss: fit === "tooLarge" ? "oversizeUpload" : "unshippableUpload" });
+      noteDocumentLoss(findings, g.via, fit === "tooLarge" ? "oversizeUpload" : "unshippableUpload");
       continue;
     }
     setupGraphics.push({ path: g.path, gfa: g.gfa });
   }
   if (setupGraphics.length > 0) printerProfile.setupGraphics = setupGraphics;
-
-  // Backfill embedInZpl + previewFontName on entries whose path matches an
-  // uploaded font: covers a ^CW that precedes its ~DY upload, which the
-  // in-pass handler cannot see.
-  for (const m of labelConfig.customFonts ?? []) {
-    if (!m.path) continue;
-    const upload = uploadedNormed.get(normPath(m.path))
-      ?? uploadedStripped.get(strippedNorm(m.path));
-    if (!upload || m.embedInZpl) continue;
-    m.embedInZpl = true;
-    const colon = upload.indexOf(":");
-    const filename = colon >= 0 ? upload.slice(colon + 1) : upload;
-    if (filename && !m.previewFontName) m.previewFontName = filename;
-  }
 
   if (r.mixedPageGeometry) {
     const sizes = [
@@ -311,10 +305,9 @@ export function mergeSetupEntries<T extends { path: string }>(
   existing: readonly T[] | undefined,
   incoming: readonly T[],
 ): T[] {
-  const key = (entry: T) => entry.path.trim().toUpperCase();
   const merged = [...(existing ?? [])];
   for (const entry of incoming) {
-    const at = merged.findIndex((e) => key(e) === key(entry));
+    const at = merged.findIndex((e) => setupEntryKey(e) === setupEntryKey(entry));
     if (at < 0) merged.push(entry);
     else merged[at] = { ...entry, path: (merged[at] as T).path };
   }

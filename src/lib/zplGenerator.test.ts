@@ -455,7 +455,7 @@ describe('generateZPL — printer params', () => {
     // Tiny fake TTF; content does not need to be valid for the emit
     // path to pick up the bytes; the formatter just hex-encodes them.
     const bytes = new Uint8Array([0x00, 0x01, 0xff, 0xab]);
-    await loadFontBytes(bytes, 'EMBED.TTF');
+    await loadFontBytes(bytes, 'E:EMBED.TTF');
     try {
       const zpl = generateZPL(
         {
@@ -464,7 +464,7 @@ describe('generateZPL — printer params', () => {
             {
               alias: 'M',
               path: 'E:EMBED.TTF',
-              previewFontName: 'EMBED.TTF',
+              previewFontName: 'E:EMBED.TTF',
               embedInZpl: true,
             },
           ],
@@ -475,11 +475,9 @@ describe('generateZPL — printer params', () => {
       const xaIdx = zpl.indexOf('^XA');
       expect(dyIdx).toBeGreaterThanOrEqual(0);
       expect(dyIdx).toBeLessThan(xaIdx);
-      // ~DYE:EMBED,A,T,4,,0001FFAB: stem strips the extension, ext code
-      // is T (TTF), bytes count is the original length, hex is uppercase.
-      expect(zpl).toContain('~DYE:EMBED,A,T,4,,0001FFAB');
+      expect(zpl).toContain('~DYE:EMBED.TTF,A,T,4,,0001FFAB');
     } finally {
-      removeFont('EMBED.TTF');
+      removeFont('E:EMBED.TTF');
     }
   });
 
@@ -496,10 +494,61 @@ describe('generateZPL — printer params', () => {
     expect(zpl).not.toContain('~DY');
   });
 
+  it('ships one ~DY for a file two aliases point at, and a ^CW for each', async () => {
+    const { loadFontBytes, removeFont } = await import('@zplab/core/lib/fontCache');
+    await loadFontBytes(new Uint8Array([0xab, 0xcd, 0xef, 0x12]), 'E:TWICE.TTF');
+    try {
+      const zpl = generateZPL(
+        {
+          ...BASE_LABEL,
+          customFonts: [
+            { alias: 'M', path: 'E:TWICE.TTF', previewFontName: 'E:TWICE.TTF', embedInZpl: true },
+            { alias: 'N', path: 'E:TWICE.TTF', previewFontName: 'E:TWICE.TTF', embedInZpl: true },
+          ],
+        },
+        [],
+      );
+      expect(zpl.split('~DYE:TWICE').length - 1).toBe(1);
+      expect(zpl).toContain('^CWM,E:TWICE.TTF');
+      expect(zpl).toContain('^CWN,E:TWICE.TTF');
+    } finally {
+      removeFont('E:TWICE.TTF');
+    }
+  });
+
+  it('ships an embed whose legacy previewFontName no longer spells the cache row', async () => {
+    const { loadFontBytes, removeFont } = await import('@zplab/core/lib/fontCache');
+    await loadFontBytes(new Uint8Array([1, 2, 3, 4]), 'E:LEGACY.TTF');
+    try {
+      const zpl = generateZPL(
+        { ...BASE_LABEL, customFonts: [{ alias: 'M', path: 'E:LEGACY.TTF', previewFontName: 'LEGACY.TTF', embedInZpl: true }] },
+        [],
+      );
+      expect(zpl).toContain('~DYE:LEGACY.TTF,A,T,4,,');
+    } finally {
+      removeFont('E:LEGACY.TTF');
+    }
+  });
+
+  it('ships an embedded font once per document, not once per page', async () => {
+    const { loadFontBytes, removeFont } = await import('@zplab/core/lib/fontCache');
+    await loadFontBytes(new Uint8Array([1, 2, 3, 4]), 'E:ONCE.TTF');
+    try {
+      const zpl = generateMultiPageZPL(
+        { ...BASE_LABEL, customFonts: [{ alias: 'M', path: 'E:ONCE.TTF', previewFontName: 'E:ONCE.TTF', embedInZpl: true }] },
+        [{ objects: [] }, { objects: [] }],
+        [],
+      );
+      expect(zpl.split('~DYE:ONCE').length - 1).toBe(1);
+    } finally {
+      removeFont('E:ONCE.TTF');
+    }
+  });
+
   it('round-trips embedInZpl: ~DY emit → ~DY parse preserves the flag', async () => {
     const { loadFontBytes, removeFont } = await import('@zplab/core/lib/fontCache');
     const bytes = new Uint8Array([0xab, 0xcd, 0xef, 0x12]);
-    await loadFontBytes(bytes, 'ROUND.TTF');
+    await loadFontBytes(bytes, 'E:ROUND.TTF');
     try {
       const zpl = generateZPL(
         {
@@ -508,7 +557,7 @@ describe('generateZPL — printer params', () => {
             {
               alias: 'M',
               path: 'E:ROUND.TTF',
-              previewFontName: 'ROUND.TTF',
+              previewFontName: 'E:ROUND.TTF',
               embedInZpl: true,
             },
           ],
@@ -520,9 +569,8 @@ describe('generateZPL — printer params', () => {
       expect(m?.alias).toBe('M');
       expect(m?.path).toBe('E:ROUND.TTF');
       expect(m?.embedInZpl).toBe(true);
-      expect(m?.previewFontName).toBe('ROUND.TTF');
     } finally {
-      removeFont('ROUND.TTF');
+      removeFont('E:ROUND.TTF');
     }
   });
 
@@ -542,6 +590,27 @@ describe('generateZPL — printer params', () => {
       [],
     );
     expect(zpl).not.toContain('~DY');
+    // A printer-resident font is the legitimate reading of an alias without bytes.
+    expect(zpl).toContain('^CWM,E:MISSING.TTF');
+  });
+
+  it('spells ~DY and ^CW from one trimmed path, whatever spacing the mapping carries', async () => {
+    const { loadFontBytes, removeFont } = await import('@zplab/core/lib/fontCache');
+    await loadFontBytes(new Uint8Array([1, 2, 3]), 'E:ARIAL.TTF');
+    try {
+      for (const path of ['E:ARIAL.TTF ', ' E:ARIAL.TTF']) {
+        const zpl = generateZPL({ ...BASE_LABEL, customFonts: [{ alias: 'M', path, embedInZpl: true }] }, []);
+        expect(zpl).toContain('~DYE:ARIAL.TTF,A,T,3,,010203');
+        expect(zpl).toContain('^CWM,E:ARIAL.TTF\n');
+      }
+      const both = generateZPL(
+        { ...BASE_LABEL, customFonts: [{ alias: 'M', path: 'E:ARIAL.TTF ', embedInZpl: true }, { alias: 'N', path: ' e:arial.ttf', embedInZpl: true }] },
+        [],
+      );
+      expect(both.split('~DY').length - 1).toBe(1);
+    } finally {
+      removeFont('E:ARIAL.TTF');
+    }
   });
 
   it('skips ^CW entries with empty alias or path', () => {
@@ -575,7 +644,7 @@ describe('generateZPL — printer params', () => {
           rotation,
           fontHeight: 30,
           fontWidth: 0,
-          printerFontName: 'ARIAL.TTF',
+          printerFontName: 'E:ARIAL.TTF',
         },
       };
       const zpl = generateZPL(
@@ -630,7 +699,7 @@ describe('generateZPL — printer params', () => {
       },
       [text],
     );
-    expect(zpl).toContain('^A@N,30,0,E:ORPHAN.TTF');
+    expect(zpl).toContain('^A@N,30,0,ORPHAN.TTF');
     expect(zpl).not.toContain('^AMN,30,0');
   });
 

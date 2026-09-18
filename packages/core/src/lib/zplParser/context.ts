@@ -1,5 +1,6 @@
-import type { LabelObject } from "../../types/Group";
-import type { SourceSpan } from "./types";
+import { storageRefMatchesPath } from "../storagePath";
+import { getAllLeaves, type LabelObject } from "../../types/Group";
+import type { SourceSpan, FontLoss } from "./types";
 import type { ImportLossCause } from "../../catalog/schema";
 import type { LabelConfig } from "../../types/LabelConfig";
 import type { PrinterProfile } from "../../types/PrinterProfile";
@@ -189,14 +190,26 @@ export interface DefaultsState {
   byHeight: number;
 }
 
+/** `deletedWhileNamed` is provisional: the pass end decides whether the finished design still wants it. */
+type DownloadedFontStatus = "live" | "deleted" | "deletedWhileNamed";
+
+export interface DownloadedFont {
+  digest: string;
+  status: DownloadedFontStatus;
+  /** From the ~DY format code, the only place the stream states it. */
+  kind: "truetype" | "bitmap";
+}
+
 /** ^CW aliases + ~DY uploads; span the whole parse across ^XA blocks. */
 export interface FontsState {
   aliases: Map<string, string>;
-  downloadedFontPaths: Set<string>;
+  /** storageKey -> what this stream put there. A ^ID keeps the digest, so a later
+   *  upload to the same path is still a replacement. */
+  downloadedFonts: Map<string, DownloadedFont>;
+  fontLosses: FontLoss[];
   downloadedGraphics: Map<string, UploadedGraphic>;
-  /** Full device paths referenced by a ^A@ direct-path font (no ^CW
-   *  alias). Lets the import classify such an uploaded font as a design
-   *  font rather than a Setup-Script font. */
+  /** Paths a ^A@ named directly, with or without a drive, so a later upload there
+   *  reads as a replacement. */
   referencedFontPaths: Set<string>;
 }
 
@@ -363,6 +376,41 @@ export function pushBrowserLimit(result: ParserResult, token: string): void {
   result.browserLimit.push({ command: token.trimEnd(), span: result.tokenSpan });
 }
 
+/** Whether the stream has named this file so far. A ^ID clears the alias map, so it cannot answer this. */
+export function fontNamedSoFar(s: ParserState, uploadPath: string): boolean {
+  const refs = [
+    ...(s.result.labelConfig.customFonts ?? []).flatMap((m) => (m.path ? [m.path] : [])),
+    ...s.fonts.referencedFontPaths,
+  ];
+  return refs.some((ref) => storageRefMatchesPath(ref, uploadPath));
+}
+
+/** What the finished design names: aliases plus the paths its fields carry. */
+function finalFontRefs(s: ParserState): string[] {
+  return [
+    ...(s.result.labelConfig.customFonts ?? []).flatMap((m) => (m.path ? [m.path] : [])),
+    ...getAllLeaves(s.result.objects).flatMap((leaf) => {
+      const ref = (leaf.props as { printerFontName?: string }).printerFontName;
+      return ref ? [ref] : [];
+    }),
+  ];
+}
+
+/** The uploads the finished design can still ship.
+ *  A ^ID drops an upload unless the design named it before the delete and still names it now. */
+export function resolveLiveFonts(s: ParserState): string[] {
+  const refs = finalFontRefs(s);
+  const live: string[] = [];
+  for (const [path, font] of s.fonts.downloadedFonts) {
+    if (font.status === "deleted") continue;
+    if (font.status === "deletedWhileNamed" && !refs.some((r) => storageRefMatchesPath(r, path))) continue;
+    // A bitmap font has no web face and no ~DY format this emitter can send.
+    if (font.kind === "bitmap") continue;
+    live.push(path);
+  }
+  return live;
+}
+
 /** ^ID runs in stream order, so a later recall of a deleted upload must miss like on the printer. */
 export function deleteStoredObjects(s: ParserState, pattern: string): void {
   if (!pattern) return;
@@ -370,8 +418,8 @@ export function deleteStoredObjects(s: ParserState, pattern: string): void {
   for (const path of [...s.fonts.downloadedGraphics.keys()]) {
     if (matches(path)) s.fonts.downloadedGraphics.delete(path);
   }
-  for (const path of [...s.fonts.downloadedFontPaths]) {
-    if (matches(path)) s.fonts.downloadedFontPaths.delete(path);
+  for (const [path, font] of s.fonts.downloadedFonts) {
+    if (matches(path)) font.status = fontNamedSoFar(s, path) ? "deletedWhileNamed" : "deleted";
   }
   // The alias stops resolving for later fields; customFonts stays, earlier fields still map through it.
   for (const [alias, path] of [...s.fonts.aliases]) {
@@ -575,7 +623,8 @@ export function createParserState(): ParserState {
     },
     fonts: {
       aliases: new Map<string, string>(),
-      downloadedFontPaths: new Set<string>(),
+      downloadedFonts: new Map<string, DownloadedFont>(),
+      fontLosses: [],
       downloadedGraphics: new Map<string, UploadedGraphic>(),
       referencedFontPaths: new Set<string>(),
     },

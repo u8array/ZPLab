@@ -52,6 +52,15 @@ export interface ImportFinding {
   span?: SourceSpan;
 }
 
+/** Why a ~DY font never reaches the model as a shippable file. */
+export type FontLossReason = "versionReplaced" | "bitmapFont" | "notTrueTypeName";
+
+/** Anchored at the ~DY that caused the loss. */
+export interface FontLoss {
+  reason: FontLossReason;
+  span?: SourceSpan;
+}
+
 export interface ImportReport {
   findings: ImportFinding[];
   // The buckets below are dedup views for these seven kinds only.
@@ -137,18 +146,13 @@ export interface ParsedZPL {
    *  commands in the stream (^JZ, ^JT, ~TA, ^ST, ^KD, ^SL, ^KL, ^SE,
    *  ^SZ, ^KN). Caller decides whether to merge into the active profile. */
   printerProfile: Partial<PrinterProfile>;
-  /** Full device paths of fonts uploaded via `~DY` (TTF/OTF) in this
-   *  stream. A path also claimed by a `^CW` alias or referenced by a
-   *  `^A@` direct path is a design font (in `labelConfig.customFonts` or
-   *  the design objects); an unclaimed path is a Setup-Script font.
-   *  The service derives `printerProfile.setupFonts` from this set. */
+  /** Uploads the finished design can still ship. */
   uploadedFontPaths: string[];
+  /** The subset a design font embeds; the rest is provisioning. */
+  embeddedFontPaths: ReadonlySet<string>;
+  fontLosses: FontLoss[];
   /** Uploaded graphics with their ^GF bytes. A ^ID in the stream drops its targets. */
   uploadedGraphics: (SetupGraphic & { via: "~DG" | "~DY" })[];
-  /** Full device paths referenced by a `^A@` direct-path font. The
-   *  service treats these as design fonts so an uploaded font used
-   *  without a `^CW` alias is not misclassified as a Setup-Script font. */
-  referencedFontPaths: string[];
   /** Every in-range ^FN slot the tokenizer saw, including on passthrough-only
    *  fields; import renumbering must avoid these (overlays replay the bytes). */
   sourceFnNumbers: ReadonlySet<number>;

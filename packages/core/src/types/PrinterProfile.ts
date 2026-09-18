@@ -299,3 +299,6 @@ export const PRINTER_PROFILE_FIELDS = Object.keys(
 export type PrinterProfileField = (typeof PRINTER_PROFILE_FIELDS)[number];
 
 export const EMPTY_PRINTER_PROFILE: PrinterProfile = {};
+
+/** The schema's rule for a setup-list path, for callers that gate one entry instead of losing the whole profile. */
+export const isSetupPath = (path: string): boolean => path.length <= FONT_LINKS_PATH_MAX_LEN && setupScriptSafeStringRegex.test(path);

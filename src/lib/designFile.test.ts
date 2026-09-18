@@ -527,9 +527,30 @@ describe('parseDesignFile', () => {
     expect(result.value.pages[0]?.jmDensity).toBe('A');
   });
 
-  it('writes schemaVersion 5 on save', () => {
+  it('v5 → v6 pins a bare printerFontName to E:, and leaves a v6 file alone', () => {
+    const file = (schemaVersion: number) =>
+      JSON.stringify({
+        schemaVersion,
+        label: { widthMm: 100, heightMm: 60, dpmm: 8 },
+        pages: [{ objects: [{ id: 't', type: 'text', x: 0, y: 0, rotation: 0, props: { content: 'x', fontHeight: 30, fontWidth: 0, rotation: 'N', printerFontName: 'ARIAL.TTF' } }] }],
+      });
+    const read = (v: number) => {
+      const r = parseDesignFile(file(v));
+      if (!r.ok) throw new Error(r.error);
+      return (r.value.pages[0]!.objects[0] as { props: { printerFontName?: string } }).props.printerFontName;
+    };
+    expect(read(5)).toBe('E:ARIAL.TTF');
+    expect(read(3)).toBe('E:ARIAL.TTF');
+    expect(read(6)).toBe('ARIAL.TTF');
+    expect(parseDesignFile(file(2.5)).ok).toBe(false);
+    // A leaf without props is a schema error, not a crash before the schema runs.
+    const broken = JSON.stringify({ schemaVersion: 5, label: { widthMm: 100, heightMm: 60, dpmm: 8 }, pages: [{ objects: [{ id: 'x', type: 'text' }] }] });
+    expect(parseDesignFile(broken).ok).toBe(false);
+  });
+
+  it('writes schemaVersion 6 on save', () => {
     const json = serializeDesign({ widthMm: 100, heightMm: 60, dpmm: 8 }, [{ objects: SAMPLE_OBJECTS }]);
-    expect((JSON.parse(json) as { schemaVersion: number }).schemaVersion).toBe(5);
+    expect((JSON.parse(json) as { schemaVersion: number }).schemaVersion).toBe(6);
   });
 
   it('rejects valid JSON that is not an object instead of throwing', () => {

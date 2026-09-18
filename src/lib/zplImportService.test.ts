@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { importZplText, routeSetupCommands, mergeSetupEntries } from '@zplab/core/lib/zplImportService';
 import { generateSetupScript } from './zplSetupScript';
-import { generateMultiPageZPL } from '@zplab/core/lib/zplGenerator';
+import { generateMultiPageZPL, generateZPL } from '@zplab/core/lib/zplGenerator';
+import { parseZPL } from '@zplab/core/lib/zplParser';
+import { hasFontBytes, loadFontBytesSync } from '@zplab/core/lib/fontCache';
 import { describeFinding, formatReportAsText } from './importReport';
 import { fallbackTranslations } from '../locales';
-import { replayRiskFindings, printerCommandFindings, resolveRoutedReport } from '@zplab/core/lib/importReport';
-import { printerProfileSchema, type PrinterProfile } from '@zplab/core/types/PrinterProfile';
+import { DOCUMENT_FINDING, replayRiskFindings, printerCommandFindings, resolveRoutedReport } from '@zplab/core/lib/importReport';
+import { isSetupPath, printerProfileSchema, type PrinterProfile } from '@zplab/core/types/PrinterProfile';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
 
 describe('importZplText - cross-block parser state (parser-owned pages)', () => {
@@ -413,6 +415,297 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
     expect(resolveRoutedReport(only.report, []).findings.map((f) => f.loss)).toEqual(['oversizeUpload']);
   });
 
+  it('keeps both uploads of one file name on two drives, as the printer does', () => {
+    const { printerProfile, report } = importZplText('~DYE:SAME,A,T,4,,0001FFAB\n~DYR:SAME,A,T,4,,0001FFAC\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:SAME.TTF' }, { path: 'R:SAME.TTF' }]);
+    expect(report.findings.filter((f) => f.command === '~DY')).toHaveLength(0);
+  });
+
+  it('keeps an alias bound to its own drive when another drive receives the same name', () => {
+    const zpl = '~DYE:SAME,A,T,4,,0001FFAB\n^XA^CWM,E:SAME.TTF^FO0,0^AMN,30,30^FDX^FS^XZ\n~DYR:SAME,A,T,4,,0001FFAC';
+    const { labelConfig, printerProfile } = importZplText(zpl, 8);
+    expect(labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBe(true);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'R:SAME.TTF' }]);
+  });
+
+  it('keeps the bytes of a font the design still names when the stream deletes it', () => {
+    const zpl = '~DYR:DEL,A,T,4,,0001FFAB\n^XA^CWM,R:DEL.TTF^FO0,0^AMN,30,30^FDX^FS^IDR:DEL.TTF^FS^XZ';
+    const { labelConfig, printerProfile, report } = importZplText(zpl, 8);
+    // Earlier fields printed with these bytes, so the regenerated label has to carry them.
+    const label = generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, []);
+    expect(label).toContain('~DYR:DEL.TTF,A,T,4,,0001FFAB');
+    expect(label).toContain('^CWM,R:DEL.TTF');
+    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(report.findings.some((f) => f.kind === 'deviceAction' && f.command.startsWith('^ID'))).toBe(true);
+  });
+
+  it('drops a font deleted before anything named it, and one whose alias moved on', () => {
+    const never = importZplText('~DYE:GONE,A,T,4,,0001FFAB\n^XA^IDE:GONE.TTF^FS^CWM,E:GONE.TTF^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    expect(never.printerProfile.setupFonts).toBeUndefined();
+    expect(never.labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBeUndefined();
+    // The alias is restated, so by the end of the stream nothing names the deleted file.
+    const moved = importZplText('~DYE:AA,A,T,4,,0001FFAB\n^XA^CWM,E:AA.TTF^FO0,0^AMN,30,30^FDX^FS^IDE:AA.TTF^FS^CWM,E:BB.TTF^XZ', 8);
+    expect(moved.printerProfile.setupFonts).toBeUndefined();
+  });
+
+  it('drops a font deleted before the page that names it, as no field ever printed with those bytes', () => {
+    const zpl = '~DYE:LATE,A,T,4,,0001FFAB\n^XA^IDE:LATE.TTF^FS^XZ\n^XA^CWM,E:LATE.TTF^FO0,0^AMN,30,30^FDX^FS^XZ';
+    const { labelConfig, printerProfile } = importZplText(zpl, 8);
+    expect(labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBeUndefined();
+    expect(printerProfile.setupFonts).toBeUndefined();
+  });
+
+  it('keeps only the named upload when a wildcard delete sweeps several', () => {
+    const zpl = '~DYE:KEPT,A,T,4,,0001FFAB\n~DYE:SWEPT,A,T,4,,0001FFAC\n^XA^CWM,E:KEPT.TTF^FO0,0^AMN,30,30^FDX^FS^IDE:*.*^FS^XZ';
+    const { labelConfig, printerProfile } = importZplText(zpl, 8);
+    expect(labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBe(true);
+    expect(printerProfile.setupFonts).toBeUndefined();
+  });
+
+  it('keeps a bare field reference bare, it already means R: to the printer', () => {
+    const { printerProfile, pages, labelConfig } = importZplText('~DYR:DIR,A,T,4,,0001FFAB\n^XA^FO0,0^A@N,30,30,DIR.TTF^FDX^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'R:DIR.TTF' }]);
+    expect(generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, pages[0]!.objects)).toContain('^A@N,30,30,DIR.TTF');
+  });
+
+  it('keeps a deleted font only while the finished design carries the reference', () => {
+    // The field yields no object, so nothing in the design names the file once the pass is over.
+    const zpl = '~DYR:GH,A,T,4,,0001FFAB\n^XA^FO0,0^A@N,30,30,R:GH.TTF^FS^IDR:GH.TTF^FS^XZ';
+    const { printerProfile } = importZplText(zpl, 8);
+    expect(printerProfile.setupFonts).toBeUndefined();
+  });
+
+  it('keeps the drive a direct font reference named, so the profile and the label agree', () => {
+    const { printerProfile, pages, labelConfig } = importZplText('~DYR:DIR,A,T,4,,0001FFAB\n^XA^FO0,0^A@N,30,30,R:DIR.TTF^FDX^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'R:DIR.TTF' }]);
+    expect(generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, pages[0]!.objects)).toContain('^A@N,30,30,R:DIR.TTF');
+  });
+
+  it('provisions a deleted font only a field names, since no alias can ship it', () => {
+    const zpl = '~DYR:DIR,A,T,4,,0001FFAB\n^XA^FO0,0^A@N,30,30,R:DIR.TTF^FDX^FS^IDR:DIR.TTF^FS^XZ';
+    const { printerProfile } = importZplText(zpl, 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'R:DIR.TTF' }]);
+  });
+
+  it('reports no collision when the design let go of the deleted font before the stream ended', () => {
+    const zpl = '~DYR:CC,A,T,4,,0001FFAB\n^XA^CWM,R:CC.TTF^FO0,0^AMN,30,30^FDX^FS^IDR:CC.TTF^FS^CWM,E:BB.TTF^XZ\n~DYE:CC,A,T,4,,0001FFAC';
+    const { report, printerProfile } = importZplText(zpl, 8);
+    expect(report.findings.filter((f) => f.command === '~DY')).toHaveLength(0);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:CC.TTF' }]);
+  });
+
+  it('keeps a deleted but still named font next to a later upload of the same name on another drive', () => {
+    const zpl = '~DYR:CC,A,T,4,,0001FFAB\n^XA^CWM,R:CC.TTF^FO0,0^AMN,30,30^FDX^FS^IDR:CC.TTF^FS^XZ\n~DYE:CC,A,T,4,,0001FFAC';
+    const { labelConfig, printerProfile } = importZplText(zpl, 8);
+    expect(labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBe(true);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:CC.TTF' }]);
+  });
+
+  it('reports a replacement after a ^ID deleted the file, since the design still names it', () => {
+    const zpl = '~DYE:SAME,A,T,4,,0001FFAB\n^XA^CWM,E:SAME.TTF^FO0,0^AMN,30,30^FDX^FS^XZ\n^XA^IDE:SAME.TTF^FS^XZ\n~DYE:SAME,A,T,4,,0001FFAC';
+    const { report } = importZplText(zpl, 8);
+    expect(report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(1);
+  });
+
+  it('keeps the later version when a font path is uploaded twice, and says so', () => {
+    const zpl = '~DYE:SAME,A,T,4,,0001FFAB\n^XA^CWM,E:SAME.TTF^FO0,0^AMN,30,30^FDX^FS^XZ\n~DYE:SAME,A,T,4,,0001FFAC';
+    const { labelConfig, printerProfile, report } = importZplText(zpl, 8);
+    // The label stays self-contained; only the model cannot hold both versions.
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', path: 'E:SAME.TTF', embedInZpl: true }));
+    expect(generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, [])).toContain('~DYE:SAME.TTF,A,T,4,,0001FFAC');
+    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(1);
+  });
+
+  it('reads the earlier bytes from this stream, not from whatever the font cache held', () => {
+    loadFontBytesSync(new Uint8Array([9, 9, 9, 9]), 'STALE.TTF');
+    const { labelConfig, report } = importZplText('^XA^CWM,E:STALE.TTF^FO0,0^AMN,30,30^FDX^FS^XZ\n~DYE:STALE,A,T,4,,0001FFAB', 8);
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', embedInZpl: true }));
+    expect(report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(0);
+  });
+
+  it('binds a bare alias to the R: upload only, whatever else carries the name', () => {
+    const zpl = '~DYE:SAME,A,T,4,,0001FFAB\n^XA^CWM,SAME.TTF^FO0,0^AMN,30,30^FDX^FS^XZ\n~DYR:SAME,A,T,4,,0001FFAC';
+    const { labelConfig, printerProfile } = importZplText(zpl, 8);
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', path: 'SAME.TTF', embedInZpl: true }));
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:SAME.TTF' }]);
+  });
+
+  it('says nothing when the replacement lands before anything resolved the path', () => {
+    const zpl = '~DYE:SAME,A,T,4,,0001FFAB\n~DYE:SAME,A,T,4,,0001FFAC\n^XA^CWM,E:SAME.TTF^FO0,0^AMN,30,30^FDX^FS^XZ';
+    const { labelConfig, report } = importZplText(zpl, 8);
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', embedInZpl: true }));
+    expect(report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(0);
+  });
+
+  it('says nothing when the same bytes are uploaded again', () => {
+    const zpl = '~DYE:SAME,A,T,4,,0001FFAB\n^XA^CWM,E:SAME.TTF^FO0,0^AMN,30,30^FDX^FS^XZ\n~DYE:SAME,A,T,4,,0001FFAB';
+    const { report } = importZplText(zpl, 8);
+    expect(report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(0);
+  });
+
+  it('leaves an upload the label embeds out of the profile, so it never ships twice', () => {
+    const { printerProfile, labelConfig } = importZplText('~DYE:ONE,A,T,4,,0001FFAB\n^XA^CWM,E:ONE.TTF^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ embedInZpl: true }));
+    expect(printerProfile.setupFonts).toBeUndefined();
+  });
+
+  it('keeps the first bytes pinned when the second upload is refused', () => {
+    const zpl = '~DYE:SAME,A,T,4,,0001FFAB\n^XA^CWM,E:SAME.TTF^FO0,0^AMN,30,30^FDX^FS^XZ\n~DYE:SAME,A,T,4,,ZZZZ';
+    const { labelConfig, report } = importZplText(zpl, 8);
+    expect(generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, [])).toContain('~DYE:SAME.TTF,A,T,4,,0001FFAB');
+    expect(report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(0);
+  });
+
+  it('keeps the path the stream named, and still finds the bytes the cache used to sanitize', () => {
+    const { printerProfile } = importZplText('~DYE:MY-FONT.TTF,A,T,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:MY-FONT.TTF' }]);
+    expect(generateSetupScript({ ...printerProfile })).toContain('~DYE:MY-FONT.TTF,A,T,4,,0001FFAB');
+  });
+
+  it('lets an alias claim an upload whose name carries a character outside the 8.3 set', () => {
+    const { labelConfig, printerProfile } = importZplText('~DYE:MY-FONT.TTF,A,T,4,,0001FFAB\n^XA^CWM,E:MY-FONT.TTF^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', path: 'E:MY-FONT.TTF', embedInZpl: true }));
+    expect(printerProfile.setupFonts).toBeUndefined();
+    const label = generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, []);
+    expect(label).toContain('~DYE:MY-FONT.TTF,A,T,4,,0001FFAB');
+    expect(label).toContain('^CWM,E:MY-FONT.TTF');
+  });
+
+  it('deletes an upload by the exact path the stream named', () => {
+    const { printerProfile } = importZplText('~DYE:MY-FONT.TTF,A,T,4,,0001FFAB\n^XA^IDE:MY-FONT.TTF^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toBeUndefined();
+  });
+
+  it('does not let an alias claim an upload that used to fold onto the same cache row', () => {
+    const { labelConfig, printerProfile } = importZplText('~DYE:MY_FONT.TTF,A,T,4,,0001FFAB\n^XA^CWM,MY-FONT.TTF^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    expect(labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBeUndefined();
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:MY_FONT.TTF' }]);
+  });
+
+  it('keeps an upload whose name carries a second colon, which the cache used to file elsewhere', () => {
+    const { printerProfile } = importZplText('~DYE:AB:CD.TTF,A,T,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:AB:CD.TTF' }]);
+  });
+
+  it('keeps two uploads whose names differ only in a character the cache used to fold away', () => {
+    const { printerProfile, report } = importZplText('~DYE:MY-FONT.TTF,A,T,4,,0001FFAB\n~DYE:MY_FONT.TTF,A,T,4,,0001FFAC\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:MY-FONT.TTF' }, { path: 'E:MY_FONT.TTF' }]);
+    expect(report.findings.filter((f) => f.command === '~DY')).toHaveLength(0);
+  });
+
+  it('binds a bare alias to a bare upload and ships it as written, both mean R:', () => {
+    const { labelConfig } = importZplText('~DYOLD,A,T,4,,0001FFAB\n^XA^CWM,OLD.TTF^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', path: 'OLD.TTF', embedInZpl: true }));
+    expect(generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, [])).toContain('~DYOLD.TTF,A,T,4,,0001FFAB');
+  });
+
+  it('leaves a bare alias unbound when the upload went to another drive, as the printer would', () => {
+    const { labelConfig, printerProfile } = importZplText('~DYE:SAME,A,T,4,,0001FFAB\n^XA^CWM,SAME.TTF^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', path: 'SAME.TTF' }));
+    expect(labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBeUndefined();
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:SAME.TTF' }]);
+  });
+
+  it('leaves a bitmap font alias unembedded and reports the upload', () => {
+    const { labelConfig, report } = importZplText('~DYE:OLD,A,B,4,,0001FFAB\n^XA^CWM,E:OLD.FNT^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    const alias = labelConfig.customFonts?.find((m) => m.alias === 'M');
+    expect(alias?.path).toBe('E:OLD.FNT');
+    expect(alias?.embedInZpl).toBeUndefined();
+    expect(report.findings.filter((f) => f.loss === 'bitmapFont')).toHaveLength(1);
+  });
+
+  it('names a bitmap font the way ^CW does, so a replacement the design saw is still reported', () => {
+    const zpl = '~DYE:OLD,A,B,4,,0001FFAB\n^XA^CWM,E:OLD.FNT^FO0,0^AMN,30,30^FDX^FS^XZ\n~DYE:OLD,A,B,4,,0001FFAC';
+    const { report } = importZplText(zpl, 8);
+    expect(report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(1);
+  });
+
+  it('binds the design fonts once, on the document config, with no page snapshot to disagree', () => {
+    const r = parseZPL('~DYE:ONE,A,T,4,,0001FFAB\n^XA^CWM,E:ONE.TTF^FO0,0^AMN,30,30^FDX^FS^XZ', 8, { captureOverlay: true });
+    expect(r.labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', embedInZpl: true }));
+    expect(r.pages[0]?.labelConfig.customFonts).toBeUndefined();
+  });
+
+  it('refuses a setup path the profile schema would reject, instead of losing the whole profile', () => {
+    const long = 'A'.repeat(200);
+    const font = importZplText(`~DYE:${long},A,T,4,,0001FFAB\n^XA^KNMYPRN^XZ`, 8);
+    expect(font.printerProfile.printerName).toBe('MYPRN');
+    expect(font.printerProfile.setupFonts).toBeUndefined();
+    expect(printerProfileSchema.safeParse(font.printerProfile).success).toBe(true);
+    expect(font.report.findings.filter((f) => f.loss === 'unshippableFontName')).toHaveLength(1);
+    const graphic = importZplText(`~DGR:${long}.GRF,4,1,00FFFF00\n^XA^KNMYPRN^XZ`, 8);
+    expect(graphic.printerProfile.printerName).toBe('MYPRN');
+    expect(graphic.printerProfile.setupGraphics).toBeUndefined();
+    expect(graphic.report.findings.filter((f) => f.loss === 'unshippableGraphicName')).toHaveLength(1);
+  });
+
+  it('isSetupPath is the schema rule: 128 fits, 129 does not, a command char never', () => {
+    expect(isSetupPath('E:' + 'A'.repeat(126))).toBe(true);
+    expect(isSetupPath('E:' + 'A'.repeat(127))).toBe(false);
+    expect(isSetupPath('E:A^B.TTF')).toBe(false);
+  });
+
+  it('carries a TrueType Extension upload through import and export under its own format code', () => {
+    const zpl = '~DYE:BIG,A,E,4,,0001FFAB\n^XA^CWM,E:BIG.TTE^FO0,0^AMN,30,30^FDX^FS^XZ';
+    const { labelConfig, printerProfile } = importZplText(zpl, 8);
+    expect(labelConfig.customFonts).toContainEqual(expect.objectContaining({ alias: 'M', path: 'E:BIG.TTE', embedInZpl: true }));
+    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(hasFontBytes('E:BIG.TTE')).toBe(true);
+    const out = generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, []);
+    expect(out).toContain('~DYE:BIG.TTE,A,E,4,,0001FFAB');
+    expect(importZplText(out, 8).labelConfig.customFonts?.[0]?.embedInZpl).toBe(true);
+    expect(generateSetupScript({ setupFonts: [{ path: 'E:BIG.TTE' }] } as PrinterProfile)).toContain('~DYE:BIG.TTE,A,E,');
+  });
+
+  it('lets a named extension win over the format code, since the stream references that name', () => {
+    const { labelConfig } = importZplText('~DYE:MIX.TTF,A,E,4,,0001FFAB\n^XA^CWM,E:MIX.TTF^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    expect(labelConfig.customFonts?.[0]?.embedInZpl).toBe(true);
+    expect(generateZPL({ ...labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, [])).toContain('~DYE:MIX.TTF,A,T,');
+  });
+
+  it('trims the ~DY operand before naming the file, as ^A@ does', () => {
+    const { printerProfile } = importZplText('~DYE:F ,A,T,4,,0001FFAB\n^XA^FO0,0^A@N,30,30,E:F.TTF^FDX^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:F.TTF' }]);
+  });
+
+  it('reports one row for two graphic uploads that hit the same refusal', () => {
+    const wide = (name: string) => `~DGR:${name}.GRF,4000,2000,${'F'.repeat(8000)}`;
+    const { report } = importZplText(`${wide('A')}\n${wide('B')}\n^XA^FO0,0^GB10,10,1^FS^XZ`, 8);
+    expect(report.findings.filter((f) => f.loss === 'unshippableUpload')).toHaveLength(1);
+  });
+
+  it('reports one row for three uploads that hit the same refusal, since the row names no file', () => {
+    const zpl = '~DYE:A,A,B,4,,0001FFAB\n~DYE:B,A,B,4,,0001FFAC\n~DYE:C,A,B,4,,0001FFAD\n^XA^FO0,0^GB10,10,1^FS^XZ';
+    const { report } = importZplText(zpl, 8);
+    expect(report.findings.filter((f) => f.loss === 'bitmapFont')).toHaveLength(1);
+  });
+
+  it('trusts the ~DY format code over the file name: bitmap bytes under X.TTF never ship as TrueType', () => {
+    const { printerProfile, report } = importZplText('~DYE:X.TTF,A,B,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(report.findings).toContainEqual(expect.objectContaining({ loss: 'bitmapFont', pageIndex: DOCUMENT_FINDING }));
+    expect(hasFontBytes('E:X.TTF')).toBe(false);
+  });
+
+  it('drops a TrueType upload under a name the label cannot send it again as, and says which', () => {
+    const { printerProfile, report } = importZplText('~DYE:FONT.V2,A,T,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(report.findings.map((f) => f.loss)).toEqual(['fontNameNotTrueType']);
+  });
+
+  it('reports one document row for bitmap uploads spread over three preambles', () => {
+    const zpl = '~DYE:A,A,B,4,,0001FFAB\n^XA^XZ\n~DYE:B,A,B,4,,0001FFAC\n^XA^XZ\n~DYE:C,A,B,4,,0001FFAD\n^XA^FO0,0^GB10,10,1^FS^XZ';
+    const { report } = importZplText(zpl, 8);
+    expect(report.findings.filter((f) => f.loss === 'bitmapFont')).toEqual([expect.objectContaining({ pageIndex: DOCUMENT_FINDING })]);
+  });
+
+  it('reports a bitmap font upload instead of parking it where the setup script drops it', () => {
+    const { printerProfile, report } = importZplText('~DYE:OLD,A,B,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(report.findings).toContainEqual(expect.objectContaining({ kind: 'partial', command: '~DY', loss: 'bitmapFont' }));
+  });
+
   it('reports an unclaimed upload the emitter would refuse, and prints neither without a page', () => {
     const zpl = `~DGR:WIDE.GRF,4000,2000,${'F'.repeat(8000)}\n^XA^FO0,0^GB10,10,1^FS^XZ\n^XA^FO0,0^GB10,10,1^FS^QQ1^XZ`;
     const { printerProfile, report, pages } = importZplText(zpl, 8);
@@ -446,28 +739,27 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
     expect(printerProfile.setupFonts).toBeUndefined();
   });
 
-  it('treats a ^A@ direct-path uploaded font (no ^CW) as a design font', () => {
+  it('provisions a ^A@ direct-path upload, since the field names the file but ships nothing', () => {
     const zpl =
       `~DYE:DIRECT,A,T,4,,${HEX}\n` +
       `^XA^FO10,10^A@N,20,0,E:DIRECT.TTF^FDhi^FS^XZ`;
     const { printerProfile, pages } = importZplText(zpl, 8);
-    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:DIRECT.TTF' }]);
     expect(pages[0]?.objects).toHaveLength(1);
   });
 
-  it('matches a driveless ^A@ ref against a drived ~DY upload by filename', () => {
+  it('provisions a drived upload a driveless ^A@ ref names, since the field ships nothing', () => {
     const zpl =
       `~DYE:FONT,A,T,4,,${HEX}\n` +
       `^XA^FO10,10^A@N,20,0,FONT.TTF^FDhi^FS^XZ`;
     const { printerProfile } = importZplText(zpl, 8);
-    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:FONT.TTF' }]);
   });
 
-  it('keeps a drived ~DY upload as setup when only a different drive is referenced', () => {
-    // R:FONT referenced but E:FONT uploaded: distinct drives are distinct
-    // files, so the upload stays a setup font (no filename over-match).
-    const zpl = `~DYE:FONT,A,T,4,,${HEX}\n^XA^FO0,0^A@N,20,0,R:FONT.TTF^FDx^FS^XZ`;
-    const { printerProfile } = importZplText(zpl, 8);
+  it('leaves a ^CW on another drive unbound, since distinct drives are distinct files', () => {
+    const zpl = `~DYE:FONT,A,T,4,,${HEX}\n^XA^CWM,R:FONT.TTF^FO0,0^AMN,20,0^FDx^FS^XZ`;
+    const { printerProfile, labelConfig } = importZplText(zpl, 8);
+    expect(labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBeUndefined();
     expect(printerProfile.setupFonts).toEqual([{ path: 'E:FONT.TTF' }]);
   });
 
@@ -480,29 +772,33 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
     expect(printerProfile.setupFonts).toBeUndefined();
   });
 
-  it('backfills embedInZpl on a driveless ^CW alias against a drived ~DY upload', () => {
-    const zpl = `~DYE:DSGN,A,T,4,,${HEX}\n^XA^CWM,DSGN.TTF^XZ`;
-    const { labelConfig, printerProfile } = importZplText(zpl, 8);
-    expect(printerProfile.setupFonts).toBeUndefined();
-    expect(labelConfig.customFonts).toEqual([
-      expect.objectContaining({ alias: 'M', path: 'DSGN.TTF', embedInZpl: true, previewFontName: 'DSGN.TTF' }),
+  it('backfills embedInZpl on a ^CW alias only for the upload on its own drive', () => {
+    const drived = importZplText(`~DYE:DSGN,A,T,4,,${HEX}
+^XA^CWM,E:DSGN.TTF^XZ`, 8);
+    expect(drived.printerProfile.setupFonts).toBeUndefined();
+    expect(drived.labelConfig.customFonts).toEqual([
+      expect.objectContaining({ alias: 'M', path: 'E:DSGN.TTF', embedInZpl: true }),
     ]);
+    const bare = importZplText(`~DYE:DSGN,A,T,4,,${HEX}
+^XA^CWM,DSGN.TTF^XZ`, 8);
+    expect(bare.printerProfile.setupFonts).toEqual([{ path: 'E:DSGN.TTF' }]);
+    expect(bare.labelConfig.customFonts?.[0]?.embedInZpl).toBeUndefined();
   });
 
-  it('cross-block ^CW backfills embedInZpl and previewFontName from the preamble upload', () => {
+  it('cross-block ^CW backfills embedInZpl from the preamble upload', () => {
     const zpl = [
       `~DYE:LATE,A,T,${HEX.length / 2},,${HEX}\n^XA^FO0,0^A0N,20,0^FDa^FS^XZ`,
       `^XA^CWM,E:LATE.TTF^XZ`,
     ].join('\n');
     const { labelConfig } = importZplText(zpl, 8);
     expect(labelConfig.customFonts).toEqual([
-      { alias: 'M', path: 'E:LATE.TTF', embedInZpl: true, previewFontName: 'LATE.TTF' },
+      { alias: 'M', path: 'E:LATE.TTF', embedInZpl: true },
     ]);
   });
 
   it('round-trips generateSetupScript setupFonts back into the profile', async () => {
     const { loadFontBytes } = await import('@zplab/core/lib/fontCache');
-    await loadFontBytes(new Uint8Array([1, 2, 3, 4]), 'RTFONT.TTF');
+    await loadFontBytes(new Uint8Array([1, 2, 3, 4]), 'E:RTFONT.TTF');
     const script = generateSetupScript({
       setupFonts: [{ path: 'E:RTFONT.TTF' }],
     } as PrinterProfile);

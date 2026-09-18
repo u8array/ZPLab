@@ -113,6 +113,14 @@ if (!hasRealDom) {
   })) as unknown as typeof window.matchMedia;
 }
 
+// jsdom ships no FontFaceSet; the font cache registers faces through it.
+if (typeof document !== 'undefined' && !('fonts' in document)) {
+  Object.defineProperty(document, 'fonts', {
+    value: { add() { /* noop */ }, delete() { return true; }, addEventListener() { /* noop */ }, removeEventListener() { /* noop */ }, ready: Promise.resolve() } as unknown as FontFaceSet,
+    configurable: true,
+  });
+}
+
 // Canvas stub for the ^GFA parser path.
 
 /** Minimal ImageData stub for canvas operations in Node. */
@@ -167,7 +175,7 @@ if (!hasRealDom) {
         if (tag === 'canvas') return createFakeCanvas();
         return {};
       },
-      fonts: { add() { /* noop */ } } as unknown as FontFaceSet,
+      fonts: { add() { /* noop */ }, delete() { return true; } } as unknown as FontFaceSet,
     } as Partial<Document>,
   });
 }

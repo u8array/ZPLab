@@ -48,10 +48,8 @@ export interface TextProps {
   /** Stored only for 'tb' (the one mode blockWidth can't disambiguate from
    *  ^FB). See `resolveTextMode`. */
   textMode?: TextMode;
-  /** Printer-stored TrueType font filename. Round-trips with the
-   *  `^A@{rot},{h},{w},E:NAME.TTF` form when the field references a
-   *  printer-resident font directly by path. Mutually exclusive with
-   *  `fontId`; if both happen to be set, `fontId` wins at emit. */
+  /** The `DEVICE:NAME.EXT` operand of a direct `^A@` reference, device included where the
+   *  stream named one. `fontId` wins at emit. */
   printerFontName?: string;
   /** Single-character font identifier ([0-9A-Z]) referencing a built-in
    *  Zebra font (0, A-H) or a ^CW alias registered on the label. Emits

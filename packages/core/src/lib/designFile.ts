@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEFAULT_FONT_DEVICE } from "./storagePath";
 import { JM_DENSITY_VALUES, labelConfigSchema, sanitizeRfidEpc, type JmDensity, type LabelConfig } from "../types/LabelConfig";
 import { labelObjectBaseSchema } from "../types/LabelObject";
 import {
@@ -23,7 +24,7 @@ import { propDomainIssue, type PropSpec } from "../types/propSpec";
  *  migrator below and dispatch on `schemaVersion` in `parseDesignFile`.
  *  The persist middleware in `labelStore` has its own independent
  *  version for localStorage state; do not conflate. */
-export const CURRENT_DESIGN_SCHEMA_VERSION = 5;
+export const CURRENT_DESIGN_SCHEMA_VERSION = 6;
 
 export type DesignFileError = "parse_error" | "invalid_schema" | "fn_slots_exhausted";
 export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity }
@@ -76,7 +77,7 @@ const designFileSchema = z.object({
   // the persisted density fields; both are read, anything else is rejected.
   // v5: tlc39 props remapped to the real ^BT slots (microPdfModuleWidth /
   // microPdfRowHeight semantics, wideRatio; microPdfRows gone).
-  schemaVersion: z.union([z.literal(3), z.literal(4), z.literal(5)]),
+  schemaVersion: z.union([z.literal(3), z.literal(4), z.literal(5), z.literal(6)]),
   label: labelConfigSchema,
   pages: z.array(pageSchema),
   variables: z.array(variableSchema).optional(),
@@ -119,6 +120,7 @@ export function parseDesignFile(text: string): Result<DesignFile, DesignFileErro
   migrateReverseTextBackground(json);
   migrateSerialToTextMode(json);
   migrateSingleBindToMarker(json);
+  migrateBareFontDrive(json);
   visitLeavesInPages((json as { pages?: unknown }).pages, conformEnumProps);
 
   const parsed = designFileSchema.safeParse(json);
@@ -217,6 +219,25 @@ function migrateSingleBindToMarker(json: unknown): void {
   const nameById = safeUniqueNameById(vars);
   visitLeavesInPages(j.pages, (leaf) => bindSingleMarkerLeaf(leaf, nameById));
   j.schemaVersion = 3;
+}
+
+/** The parser used to strip the drive from a ^A@ operand and the emitter put `E:` back, so a bare
+ *  `printerFontName` from before schema v6 printed as E:. A bare operand now means R: (spec p.62). */
+export function pinBareFontDriveLeaf(leaf: { props?: unknown }): void {
+  if (!leaf.props || typeof leaf.props !== "object") return;
+  const props = leaf.props as { printerFontName?: unknown };
+  if (typeof props.printerFontName === "string" && props.printerFontName !== "" && !props.printerFontName.includes(":")) {
+    props.printerFontName = `${DEFAULT_FONT_DEVICE}:${props.printerFontName}`;
+  }
+}
+
+function migrateBareFontDrive(json: unknown): void {
+  if (!json || typeof json !== "object") return;
+  const j = json as Record<string, unknown>;
+  // v1 and v2 files arrive here already lifted to 3; any other number is no version this file format had.
+  if (j.schemaVersion !== 3 && j.schemaVersion !== 4 && j.schemaVersion !== 5) return;
+  visitLeavesInPages(j.pages, pinBareFontDriveLeaf);
+  j.schemaVersion = 6;
 }
 
 /** Payloads without ^JM modeling carried a head ^JM only in the raw overlay

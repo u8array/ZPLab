@@ -2,20 +2,24 @@ import { useRef, useState, useCallback, type FocusEvent } from 'react';
 import { PlusIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/16/solid';
 import {
   getAllFonts,
-  loadFontFile,
+  hasFontBytes,
+  loadFontBytes,
   removeFont,
+  getFontFamily,
   isEmbedLarge,
+  cachedFontPath,
 } from '@zplab/core/lib/fontCache';
 import { useFontCacheVersion } from '../../hooks/useFontCacheVersion';
 import { useLabelStore } from '../../store/labelStore';
 import { useT } from '../../hooks/useT';
+import { storageRefMatchesPath } from '@zplab/core/lib/storagePath';
 import {
-  DEFAULT_FONT_DRIVE,
   ZPL_DRIVE_PREFIXES,
   isBuiltinFontId,
   nextFreeAlias,
   normalizeAlias,
-  uploadedFontPath,
+  prepareFontUpload,
+  type FontUploadIssue,
   upsertCustomFontMapping,
 } from '@zplab/core/lib/customFonts';
 import { inputCls, labelCls } from '../Properties/styles';
@@ -38,29 +42,18 @@ export function FontManager() {
   const [adding, setAdding] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
-  const uploadedNames = new Set(fonts.map((f) => f.name));
+  const uploadedPaths = fonts.map(cachedFontPath);
 
-  // Partition customFonts into upload-row vs manual-mapping rows.
-  // Discriminator is the *presence* of the `path` property: a manual
-  // mapping freshly added carries an empty-string path while the user
-  // types, so we key on `path === undefined` to drop legacy canvas-only
-  // bindings (the old built-in preview entries) from the UI instead of
-  // mis-routing them into the manual section. The data layer scrubs them
-  // at load; this render-level drop guards against any in-session
-  // remnant. We remember each manual entry's index in the full
-  // `customFonts` array so the section's update / remove handlers can
-  // target a specific row even when two rows transiently share the same
-  // (empty) path.
-  const aliasByPath = new Map<string, string>();
+  // A fresh manual row carries an empty path while the user types, so only `path === undefined`
+  // separates a legacy canvas-only binding from one.
   const manualMappings: { entry: CustomFontMapping; index: number }[] = [];
   (customFonts ?? []).forEach((m, index) => {
     if (m.path === undefined) return;
-    if (m.path) aliasByPath.set(m.path, m.alias);
-    const isUploadedPath =
-      m.path.startsWith(DEFAULT_FONT_DRIVE) &&
-      uploadedNames.has(m.path.slice(DEFAULT_FONT_DRIVE.length));
-    if (!isUploadedPath) manualMappings.push({ entry: m, index });
+    // Same rule the import binds by, so a row never appears twice under two spellings of one path.
+    const uploaded = uploadedPaths.some((p) => storageRefMatchesPath(m.path as string, p));
+    if (!uploaded) manualMappings.push({ entry: m, index });
   });
+  const entryForPath = (path: string) => (customFonts ?? []).find((m) => m.path && storageRefMatchesPath(m.path, path));
 
   const aliasCounts = new Map<string, number>();
   for (const m of customFonts ?? []) {
@@ -74,38 +67,16 @@ export function FontManager() {
   };
 
   const setAliasForPath = (path: string, rawAlias: string) => {
-    // For uploaded fonts the entry should also bind the local TTF for
-    // canvas preview: derive `previewFontName` from the path so the
-    // generator / parser / renderer all share one source of truth.
-    // upsertCustomFontMapping already handles the alias upsert; we
-    // augment the resulting entry with the preview-binding here.
     const alias = normalizeAlias(rawAlias);
-    const next = upsertCustomFontMapping(customFonts, path, alias);
-    if (alias) {
-      const entry = next.find((m) => m.path === path);
-      if (entry && uploadedNames.has(path.slice(DEFAULT_FONT_DRIVE.length))) {
-        entry.previewFontName = path.slice(DEFAULT_FONT_DRIVE.length);
-      }
-    }
-    replaceList(next);
+    replaceList(upsertCustomFontMapping(customFonts, path, alias));
   };
 
   const toggleEmbedForPath = (path: string, embed: boolean) => {
     const list = customFonts ?? [];
     replaceList(
       list.map((m) =>
-        m.path === path
-          ? embed
-            ? {
-                ...m,
-                embedInZpl: true,
-                // ~DY needs the TTF bytes from fontCache; the upload
-                // row implies the binding, so pin previewFontName too
-                // (idempotent when already set).
-                previewFontName:
-                  m.previewFontName ?? path.slice(DEFAULT_FONT_DRIVE.length),
-              }
-            : { ...m, embedInZpl: undefined }
+        m.path !== undefined && storageRefMatchesPath(m.path, path)
+          ? { ...m, embedInZpl: embed || undefined }
           : m,
       ),
     );
@@ -147,8 +118,6 @@ export function FontManager() {
     ]);
   };
 
-  const uploadedPaths = fonts.map((f) => uploadedFontPath(f.name));
-
   return (
     <div className="p-3 flex flex-col gap-3">
       <p className="font-mono text-[10px] font-medium text-muted uppercase tracking-widest px-1 pt-1">
@@ -161,20 +130,21 @@ export function FontManager() {
 
       <div className="flex flex-col gap-1">
         {fonts.map((font) => {
-          const path = uploadedFontPath(font.name);
-          const alias = aliasByPath.get(path) ?? '';
-          const entry = (customFonts ?? []).find((m) => m.path === path);
+          const path = cachedFontPath(font);
+          const entry = entryForPath(path);
+          const alias = entry?.alias ?? '';
           return (
             <FontEntry
-              key={font.name}
-              name={font.name}
+              key={path}
+              name={path}
               alias={alias}
               duplicate={isDuplicateAlias(alias)}
               embedInZpl={entry?.embedInZpl ?? false}
-              embedLarge={isEmbedLarge(font.name)}
+              embedLarge={isEmbedLarge(path)}
+              previewMissing={!getFontFamily(path)}
               onAliasChange={(v) => setAliasForPath(path, v)}
               onEmbedChange={(v) => toggleEmbedForPath(path, v)}
-              onRequestDelete={() => setPendingDelete(font.name)}
+              onRequestDelete={() => setPendingDelete(path)}
             />
           );
         })}
@@ -182,14 +152,14 @@ export function FontManager() {
 
       {adding ? (
         <AddFontForm
-          onDone={(uploadedName) => {
+          onDone={(uploadedPath) => {
             // Auto-assign the next free alias when the upload succeeds.
             // Closes the "what now?" gap between the upload finishing
             // and the embed toggle becoming usable: the user lands on
             // a row that is already wired through to ^CW + canvas, with
             // an editable alias if they want to override the default.
-            if (uploadedName) {
-              const path = uploadedFontPath(uploadedName);
+            if (uploadedPath) {
+              const path = uploadedPath;
               const taken = (customFonts ?? [])
                 .map((m) => m.alias)
                 .filter(Boolean);
@@ -257,6 +227,8 @@ interface FontEntryProps {
   embedInZpl: boolean;
   /** Font is large; embedding still works but warns (bigger job, slower view). */
   embedLarge: boolean;
+  /** Bytes are cached, but no browser face draws them. */
+  previewMissing: boolean;
   onAliasChange: (next: string) => void;
   onEmbedChange: (next: boolean) => void;
   onRequestDelete: () => void;
@@ -268,6 +240,7 @@ function FontEntry({
   duplicate,
   embedInZpl,
   embedLarge,
+  previewMissing,
   onAliasChange,
   onEmbedChange,
   onRequestDelete,
@@ -355,6 +328,9 @@ function FontEntry({
         <p className="text-[10px] text-amber-500 leading-snug pl-1">
           {t.fonts.builtinAliasWarning}
         </p>
+      )}
+      {previewMissing && (
+        <p className="text-[10px] font-mono text-warning">{t.fonts.faceRejected}</p>
       )}
       {embedLarge && embedActive && (
         <p className="text-[10px] text-amber-500 leading-snug pl-1">
@@ -454,6 +430,9 @@ function ManualMappingsSection({
             >
               <TrashIcon className="w-3.5 h-3.5" />
             </button>
+            {m.embedInZpl && !hasFontBytes(path) && (
+              <p className="col-span-3 text-[10px] text-warning">{t.printerSettings.fonts.missingBytes}</p>
+            )}
           </div>
         );
       })}
@@ -475,10 +454,8 @@ function ManualMappingsSection({
 // ── AddFontForm ────────────────────────────────────────────────────────────────
 
 interface AddFontFormProps {
-  /** Called when the form closes. `uploadedName` is the printer-storage
-   *  name of the freshly-loaded font when the upload succeeded, or
-   *  undefined for cancel / upload-failed. */
-  onDone: (uploadedName?: string) => void;
+  /** `uploadedPath` is the stored printer path on success, undefined on cancel or failure. */
+  onDone: (uploadedPath?: string) => void;
 }
 
 function AddFontForm({ onDone }: AddFontFormProps) {
@@ -486,23 +463,20 @@ function AddFontForm({ onDone }: AddFontFormProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [uploadFailed, setUploadFailed] = useState(false);
+  const [uploadIssue, setUploadIssue] = useState<'error' | Exclude<FontUploadIssue, 'notAFont'> | null>(null);
 
   const handleFileChange = useCallback(async (file: File) => {
-    // Default to the source filename uppercased; Zebra printer storage
-    // conventionally uses uppercase ALL.TTF style identifiers, and a
-    // freshly-picked file is almost always the user's intended name.
-    const printerName = name.trim() || file.name.toUpperCase();
     setUploading(true);
-    setUploadFailed(false);
+    setUploadIssue(null);
     try {
-      await loadFontFile(file, printerName);
-      onDone(printerName);
+      // The typed name wins; a freshly picked file is almost always the intended name otherwise.
+      const prepared = await prepareFontUpload(file, name);
+      if (!prepared.ok) return setUploadIssue(prepared.reason === 'notAFont' ? 'error' : prepared.reason);
+      await loadFontBytes(prepared.bytes, prepared.path);
+      onDone(prepared.path);
     } catch {
-      // Inline hint is the only signal (non-TTF/OTF, oversized, FileReader
-      // failure). Codebase has no production logging path; specific causes
-      // are debugged with a devtools breakpoint on this catch.
-      setUploadFailed(true);
+      // No logging path in this app, so the inline hint is the only signal.
+      setUploadIssue('error');
     } finally {
       setUploading(false);
     }
@@ -524,7 +498,7 @@ function AddFontForm({ onDone }: AddFontFormProps) {
       <input
         ref={fileRef}
         type="file"
-        accept=".ttf,.otf,.TTF,.OTF"
+        accept=".ttf,.otf,.tte,.TTF,.OTF,.TTE"
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
@@ -533,8 +507,8 @@ function AddFontForm({ onDone }: AddFontFormProps) {
         }}
       />
 
-      {uploadFailed && (
-        <p className="text-[10px] font-mono text-red-400">{t.fonts.uploadError}</p>
+      {uploadIssue && (
+        <p className="text-[10px] font-mono text-red-400">{{ error: t.fonts.uploadError, nameTaken: t.fonts.nameTaken, nameUnusable: t.fonts.nameUnusable }[uploadIssue]}</p>
       )}
 
       <div className="flex gap-2">

@@ -1,15 +1,17 @@
-// ^A@ printer TTF cache; data-URL + FontFace registration + localStorage persistence.
+// Printer font cache; data-URL + FontFace registration + localStorage persistence.
 
 import { hydrateLocalStoragePrefix, safeLocalStorageRemove, safeLocalStorageSet } from "./localStorageBucket";
+import { DEFAULT_FONT_DEVICE, splitStorageKey, storageKey } from "./storagePath";
 
 import { newId } from "./ids";
 export interface CachedFont {
   id: string;
-  /** Uppercase printer filename. */
+  /** The printer file, `DEVICE:NAME`. A row from before keys carried a device keeps its bare name,
+   *  which is no reference: address every row through `cachedFontPath`. */
   name: string;
   /** data:font/ttf;base64,... (or font/otf for OpenType) */
   dataUrl: string;
-  /** CSS font-family, e.g. "zpl-ARIAL". */
+  /** CSS font-family, unique per row. */
   fontFamily: string;
 }
 
@@ -23,17 +25,24 @@ export const MAX_FONT_BYTES = 4 * 1024 * 1024;
  *  grows, and the live ZPL view rebuilds the payload on every edit. */
 export const EMBED_WARN_FONT_BYTES = 1024 * 1024;
 
-const FONT_EXT_RE = /\.(ttf|otf)$/i;
+const FONT_EXT_RE = /\.(ttf|otf|tte)$/i;
 
-/** Deterministic font MIME by extension. The OS-provided File.type is empty
- *  for .otf on many systems, and an empty/octet-stream data-URL MIME makes
- *  some browsers reject the FontFace, so never trust it; derive from the name. */
+/** What `loadFontFile` will take, answerable before a byte is read. */
+export const isFontFile = (file: File): boolean => FONT_EXT_RE.test(file.name) && file.size <= MAX_FONT_BYTES;
+
+/** Deterministic by extension; the OS File.type is empty for .otf on many systems. A new MIME for an
+ *  extension would make `holdsOtherBytes` refuse every row already stored under it. */
 function fontMime(name: string): string {
   return /\.otf$/i.test(name) ? 'font/otf' : 'font/ttf';
 }
 
 const cache = new Map<string, CachedFont>();
 const listeners = new Set<() => void>();
+
+/** A row saved before keys carried a device reads as E:, the drive the app of that time named its uploads with. */
+export function cachedFontPath(entry: CachedFont): string {
+  return entry.name.includes(":") ? entry.name : `${DEFAULT_FONT_DEVICE}:${entry.name}`;
+}
 
 function notify(): void {
   listeners.forEach(fn => fn());
@@ -43,11 +52,6 @@ function notify(): void {
 export function subscribe(fn: () => void): () => void {
   listeners.add(fn);
   return () => listeners.delete(fn);
-}
-
-function printerNameToFamily(name: string): string {
-  // Strip extension, prefix with "zpl-" to avoid collisions with system fonts
-  return 'zpl-' + name.replace(/\.[^.]+$/, '').toUpperCase();
 }
 
 /** Base64 payload of a data URL as bytes, or undefined for a malformed URL. */
@@ -62,56 +66,118 @@ function dataUrlBytes(dataUrl: string): Uint8Array | undefined {
   return bytes;
 }
 
-/** Resolves true when the face registered, false when the bytes were rejected
- *  (invalid font, unsupported outlines) or the API is unavailable. Callers on
- *  the interactive upload path surface the failure; background paths ignore it.
- *  Binary source, NOT `url(data:...)`: WKWebView enforces font-src even on
- *  FontFace loads, and byte registration plus `font-src data:` is the combo
- *  that works across engines (#356). */
-async function registerFontFace(entry: CachedFont): Promise<boolean> {
+/** Two registrations of one key resolve in any order; only the latest started one wins. */
+const faces = new Map<string, FontFace>();
+const faceGeneration = new Map<string, number>();
+
+function dropFontFace(name: string): void {
+  const face = faces.get(name);
+  if (!face) return;
+  faces.delete(name);
+  document.fonts.delete?.(face);
+}
+
+/** False when the engine rejects the bytes, the API is missing, or a newer registration of the
+ *  same row overtook this one. */
+async function registerFontFace(entry: CachedFont, generation: number): Promise<boolean> {
   try {
     const bytes = dataUrlBytes(entry.dataUrl);
     if (!bytes) return false;
+    // Bytes, not `url(data:...)`: WKWebView enforces font-src even on FontFace loads (#356).
     const face = new FontFace(entry.fontFamily, bytes.buffer as ArrayBuffer);
     await face.load();
+    if (faceGeneration.get(entry.name) !== generation) return false;
+    dropFontFace(entry.name);
     document.fonts.add(face);
+    faces.set(entry.name, face);
     return true;
   } catch {
     return false;
   }
 }
 
-/** Rejected bytes leave the cache entirely (fontStyle and family derive
- *  from cache membership, so a zombie entry would read as a real face and
- *  lose the calibrated PrintLab-bold fallback). notify() runs either way:
- *  consumers measured against the UA fallback until the face landed. */
-function settleRegistration(entry: CachedFont): Promise<void> {
-  return registerFontFace(entry).then((ok) => {
-    if (!ok) rollbackEntry(entry);
-    notify();
-  });
+/** notify() even for a rejected face: consumers measured against the fallback until now. */
+function settleRegistration(entry: CachedFont, generation: number): Promise<void> {
+  return registerFontFace(entry, generation).then(() => notify());
 }
 
-function rollbackEntry(entry: CachedFont): void {
-  cache.delete(entry.name);
-  safeLocalStorageRemove(LS_PREFIX + entry.name);
+function nextGeneration(name: string): number {
+  const generation = (faceGeneration.get(name) ?? 0) + 1;
+  faceGeneration.set(name, generation);
+  return generation;
 }
 
-hydrateLocalStoragePrefix<CachedFont>(LS_PREFIX, (entry) => {
-  cache.set(entry.name, entry);
-  // Async re-register; settle bumps the cache version so measurements
-  // re-run once the face is live (or the stale row is dropped).
-  void settleRegistration(entry);
+/** localStorage is writable by anything on the origin, so a row is taken only in the shape this module writes. */
+function isCachedFont(entry: Record<string, unknown>): entry is Record<string, unknown> & CachedFont {
+  const { id, name, dataUrl, fontFamily } = entry;
+  if (![id, name, dataUrl, fontFamily].every((v) => typeof v === "string" && v !== "")) return false;
+  return name === storageKey(name as string) || !(name as string).includes(":");
+}
+
+/** A bare row beside a qualified row for the same file is the older write. */
+function dropSupersededBareRows(): void {
+  for (const name of [...cache.keys()]) {
+    if (name.includes(":")) continue;
+    if ([...cache.keys()].some((key) => key.includes(":") && splitStorageKey(key).name === name)) {
+      cache.delete(name);
+      safeLocalStorageRemove(LS_PREFIX + name);
+    }
+  }
+}
+
+hydrateLocalStoragePrefix<Record<string, unknown>>(LS_PREFIX, (entry) => {
+  if (isCachedFont(entry)) cache.set(entry.name, entry);
 });
+dropSupersededBareRows();
+for (const entry of cache.values()) void settleRegistration(entry, nextGeneration(entry.name));
 
-/** Look up a cached font by printer filename (case-insensitive). */
-export function getFont(printerName: string): CachedFont | undefined {
-  return cache.get(printerName.toUpperCase());
+function findEntry(ref: string): CachedFont | undefined {
+  const key = storageKey(ref);
+  const exact = cache.get(key);
+  const { device, name } = splitStorageKey(key);
+  if (exact || device !== DEFAULT_FONT_DEVICE) return exact;
+  return name.includes(":") ? undefined : cache.get(name);
 }
 
-/** Return the CSS font-family for a printer font name, or undefined if not loaded. */
-export function getFontFamily(printerName: string): string | undefined {
-  return cache.get(printerName.toUpperCase())?.fontFamily;
+export function holdsOtherBytes(path: string, bytes: Uint8Array): boolean {
+  const entry = findEntry(path);
+  return entry !== undefined && entry.dataUrl !== toDataUrl(entry.name, bytes);
+}
+
+/** The first device that writes a file claims its bare row: same id and family, keys moved. */
+function adoptLegacyRow(key: string): boolean {
+  const bare = splitStorageKey(key).name;
+  if (bare.includes(":")) return false;
+  const row = cache.get(bare);
+  if (!row) return false;
+  cache.delete(bare);
+  safeLocalStorageRemove(LS_PREFIX + bare);
+  cache.set(key, { ...row, name: key });
+  const face = faces.get(bare);
+  if (face) {
+    faces.delete(bare);
+    faces.set(key, face);
+  }
+  const generation = faceGeneration.get(bare);
+  if (generation !== undefined) {
+    faceGeneration.delete(bare);
+    faceGeneration.set(key, generation);
+  }
+  return true;
+}
+
+export function hasFontBytes(ref: string): boolean {
+  return findEntry(ref) !== undefined;
+}
+
+export function getFont(ref: string): CachedFont | undefined {
+  return findEntry(ref);
+}
+
+/** Only with a face the engine accepted; the canvas falls back to the calibrated face otherwise. */
+export function getFontFamily(ref: string): string | undefined {
+  const entry = findEntry(ref);
+  return entry && faces.has(entry.name) ? entry.fontFamily : undefined;
 }
 
 export function getAllFonts(): CachedFont[] {
@@ -119,8 +185,8 @@ export function getAllFonts(): CachedFont[] {
 }
 
 /** Byte length from the persisted data URL without a full base64 decode. */
-export function fontByteLength(printerName: string): number | undefined {
-  const entry = cache.get(printerName.toUpperCase());
+export function fontByteLength(ref: string): number | undefined {
+  const entry = findEntry(ref);
   if (!entry) return undefined;
   const commaIdx = entry.dataUrl.indexOf(",");
   if (commaIdx < 0) return undefined;
@@ -130,85 +196,89 @@ export function fontByteLength(printerName: string): number | undefined {
 }
 
 /** Whether embedding this font warrants a size warning (still allowed). */
-export function isEmbedLarge(printerName: string): boolean {
-  return (fontByteLength(printerName) ?? 0) > EMBED_WARN_FONT_BYTES;
+export function isEmbedLarge(ref: string): boolean {
+  return (fontByteLength(ref) ?? 0) > EMBED_WARN_FONT_BYTES;
 }
 
 /** Decoded on demand from the persisted data URL. */
-export function getFontBytes(printerName: string): Uint8Array | undefined {
-  const entry = cache.get(printerName.toUpperCase());
+export function getFontBytes(ref: string): Uint8Array | undefined {
+  const entry = findEntry(ref);
   if (!entry) return undefined;
   return dataUrlBytes(entry.dataUrl);
+}
+
+function toDataUrl(name: string, bytes: Uint8Array): string {
+  let binary = "";
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return `data:${fontMime(name)};base64,${btoa(binary)}`;
 }
 
 /** Uint8Array variant; parser hands these over after decoding ~DY. */
 export async function loadFontBytes(
   bytes: Uint8Array,
-  printerName: string,
+  path: string,
 ): Promise<CachedFont> {
-  const entry = registerBytes(bytes, printerName);
-  await settleRegistration(entry);
+  const { entry, fresh } = registerBytes(bytes, path);
+  if (fresh) await settleRegistration(entry, nextGeneration(entry.name));
   return entry;
 }
 
 /** Sync; parser can't await per-token. FontFace.load runs in background. */
 export function loadFontBytesSync(
   bytes: Uint8Array,
-  printerName: string,
+  path: string,
 ): CachedFont {
-  const entry = registerBytes(bytes, printerName);
-  void settleRegistration(entry);
-  notify();
+  const { entry, fresh } = registerBytes(bytes, path);
+  if (fresh) {
+    void settleRegistration(entry, nextGeneration(entry.name));
+    notify();
+  }
   return entry;
 }
 
-function registerBytes(bytes: Uint8Array, printerName: string): CachedFont {
+/** `fresh` is false when the row already held these bytes: a re-parse must not rewrite localStorage or add a face.
+ *  A changed file keeps its row id, so its family stays stable and the face is replaced, not shadowed. */
+function registerBytes(bytes: Uint8Array, path: string): { entry: CachedFont; fresh: boolean } {
   if (bytes.length > MAX_FONT_BYTES) {
     throw new Error(
-      `Font too large: ${printerName} (${bytes.length} bytes, max ${MAX_FONT_BYTES})`,
+      `Font too large: ${path} (${bytes.length} bytes, max ${MAX_FONT_BYTES})`,
     );
   }
-  const name = printerName.toUpperCase().replace(/[^A-Z0-9._]/g, "_");
-  let binary = "";
-  for (const b of bytes) binary += String.fromCharCode(b);
-  const dataUrl = `data:${fontMime(name)};base64,${btoa(binary)}`;
-  const fontFamily = printerNameToFamily(name);
-  const entry: CachedFont = {
-    id: newId(),
-    name,
-    dataUrl,
-    fontFamily,
-  };
+  const name = storageKey(path);
+  const dataUrl = toDataUrl(name, bytes);
+  // An adopted row moved keys, so it is written and announced like a new one.
+  const adopted = !cache.has(name) && adoptLegacyRow(name);
+  const prior = cache.get(name);
+  if (prior && !adopted && prior.dataUrl === dataUrl) return { entry: prior, fresh: false };
+  const id = prior?.id ?? newId();
+  const entry: CachedFont = { id, name, dataUrl, fontFamily: `zpl-${id}` };
   cache.set(name, entry);
   safeLocalStorageSet(LS_PREFIX + name, JSON.stringify(entry));
-  return entry;
+  return { entry, fresh: true };
 }
 
-export async function loadFontFile(file: File, printerName: string): Promise<CachedFont> {
+/** Rejects only what can never be a font file; whether a face draws is `getFontFamily`'s answer. */
+export async function loadFontFile(file: File, path: string): Promise<CachedFont> {
   if (!FONT_EXT_RE.test(file.name)) {
-    throw new Error(`Not a TTF/OTF font: ${file.name}`);
+    throw new Error(`Not a TTF/OTF/TTE font: ${file.name}`);
   }
   if (file.size > MAX_FONT_BYTES) {
     throw new Error(`Font too large: ${file.name} (${file.size} bytes, max ${MAX_FONT_BYTES})`);
   }
-  // Read bytes (not readAsDataURL) so the data URL carries a deterministic,
-  // extension-correct MIME instead of the unreliable OS File.type.
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const entry = registerBytes(bytes, printerName);
-  if (!(await registerFontFace(entry))) {
-    // Roll back without notify (unlike settleRegistration): the caller
-    // shows the upload error, and a font that never existed must not fire
-    // a cache-changed notification before we throw.
-    rollbackEntry(entry);
-    throw new Error(`Font could not be registered: ${file.name}`);
-  }
+  const { entry, fresh } = registerBytes(bytes, path);
+  if (fresh) await registerFontFace(entry, nextGeneration(entry.name));
   notify();
   return entry;
 }
 
-export function removeFont(printerName: string): void {
-  const name = printerName.toUpperCase();
-  cache.delete(name);
-  safeLocalStorageRemove(LS_PREFIX + name);
+export function removeFont(ref: string): void {
+  const entry = findEntry(ref);
+  if (entry) {
+    dropFontFace(entry.name);
+    faceGeneration.delete(entry.name);
+    cache.delete(entry.name);
+    safeLocalStorageRemove(LS_PREFIX + entry.name);
+  }
   notify();
 }

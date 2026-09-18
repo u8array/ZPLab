@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import type { ObjectTypeUi } from "./panelTypes";
 import { useT } from "../hooks/useT";
 import { buttonCls, inputCls, labelCls } from "../components/Properties/styles";
-import { getFont, loadFontFile } from "@zplab/core/lib/fontCache";
+import { getFontFamily, hasFontBytes, loadFontFile } from "@zplab/core/lib/fontCache";
 import { useFontCacheVersion } from "../hooks/useFontCacheVersion";
 import { useLabelStore } from "../store/labelStore";
 import { currentObjects, currentPageLabel } from "../store/labelStore.selectors";
@@ -37,16 +37,10 @@ export const textPanel: ObjectTypeUi<TextProps> = {
       reverseTextHasOwnBacking(currentObjects(s), obj.id, currentPageLabel(s)),
     );
 
-    // Font picker options: every alias the user can reference from this
-    // field, in this order; "(use label default)" → built-ins (0, A-H)
-    // → custom ^CW aliases. The selected fontId pins a specific ID on
-    // the field via the ^A{id} short form. The legacy filename-based
-    // override (printerFontName, ^A@…E:NAME.TTF) lives behind the
-    // advanced reveal because round-trip-imported labels still rely on
-    // it, but the alias dropdown covers every fresh design.
     const fontGroups = fontSelectGroups(label, t, t.registry.text.useLabelDefault);
-    const fontLoaded = !!p.printerFontName && !!getFont(p.printerFontName);
-    const fontAssignedButMissing = !!p.printerFontName && !fontLoaded;
+    const fontHasBytes = !!p.printerFontName && hasFontBytes(p.printerFontName);
+    const fontLoaded = fontHasBytes && !!getFontFamily(p.printerFontName as string);
+    const fontAssignedButMissing = !!p.printerFontName && !fontHasBytes;
     // One "Advanced" reveal for both the legacy font-filename override and
     // the niche ^FP direction/gap (CJK / RTL); auto-open when either is in use.
     const fpInUse = p.fpDirection !== undefined || (p.fpCharGap ?? 0) > 0;
@@ -185,6 +179,9 @@ export const textPanel: ObjectTypeUi<TextProps> = {
                       {t.registry.text.fontLoaded}
                     </span>
                   )}
+                  {fontHasBytes && !fontLoaded && (
+                    <span className="text-[10px] text-warning font-mono">{t.fonts.faceRejected}</span>
+                  )}
                   {fontAssignedButMissing && (
                     <>
                       <span className="text-[10px] text-muted font-mono">
@@ -193,7 +190,7 @@ export const textPanel: ObjectTypeUi<TextProps> = {
                       <input
                         ref={fileRef}
                         type="file"
-                        accept=".ttf,.otf,.TTF,.OTF"
+                        accept=".ttf,.otf,.tte,.TTF,.OTF,.TTE"
                         className="hidden"
                         onChange={(e) => {
                           const file = e.target.files?.[0];

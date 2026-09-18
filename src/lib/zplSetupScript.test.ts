@@ -594,14 +594,14 @@ describe("generateSetupScript — maintenance commands", () => {
 
   it("emits ~DY for each setupFonts entry with bytes in fontCache, before ^FL", async () => {
     const { loadFontBytes } = await import("@zplab/core/lib/fontCache");
-    await loadFontBytes(new Uint8Array([1, 2, 3, 4]), "TESTSU.TTF");
+    await loadFontBytes(new Uint8Array([1, 2, 3, 4]), "E:TESTSU.TTF");
     const script = generateSetupScript({
       ...base,
       setupFonts: [{ path: "E:TESTSU.TTF" }],
       fontLinks: [{ ext: "E:TESTSU.TTF", base: "E:LATIN.TTF" }],
     });
     expect(script).toBe(
-      "~DYE:TESTSU,A,T,4,,01020304\n^XA\n^FLE:TESTSU.TTF,E:LATIN.TTF,1\n^XZ",
+      "~DYE:TESTSU.TTF,A,T,4,,01020304\n^XA\n^FLE:TESTSU.TTF,E:LATIN.TTF,1\n^XZ",
     );
   });
 
@@ -635,7 +635,7 @@ describe("generateSetupScript — maintenance commands", () => {
     expect(script).not.toContain("~DY");
   });
 
-  it("skips setupFonts entries with non-TTF/OTF extensions or missing drive", () => {
+  it("skips setupFonts entries without a font extension or a drive", () => {
     expect(generateSetupScript({ ...base, setupFonts: [{ path: "E:LOGO.BMP" }] }))
       .not.toContain("~DY");
     expect(generateSetupScript({ ...base, setupFonts: [{ path: "NOCOLON.TTF" }] }))

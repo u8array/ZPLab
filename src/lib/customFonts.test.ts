@@ -7,11 +7,13 @@ import {
   isBuiltinFontId,
   nextFreeAlias,
   normalizeAlias,
+  printerFontFileName,
   resolveDefaultPrinterFontName,
   resolvePreviewFontName,
   upsertCustomFontMapping,
 } from "@zplab/core/lib/customFonts";
 import { loadFontFile, removeFont, EMBED_WARN_FONT_BYTES } from "@zplab/core/lib/fontCache";
+import { customFontMappingSchema } from "@zplab/core/types/LabelConfig";
 
 describe("dropLegacyFontBindings", () => {
   it("returns undefined for undefined or empty input", () => {
@@ -34,24 +36,41 @@ describe("formatFontDownloadFromPath", () => {
     new File([new Uint8Array(bytes)], name, { type: "font/ttf" });
 
   it("emits a ~DY line with the byte count", async () => {
-    await loadFontFile(fileOf("small.ttf", 64), "SMALL.TTF");
+    await loadFontFile(fileOf("small.ttf", 64), "E:SMALL.TTF");
     const line = formatFontDownloadFromPath("E:SMALL.TTF");
-    expect(line?.startsWith("~DYE:SMALL,A,T,64,,")).toBe(true);
-    removeFont("SMALL.TTF");
+    expect(line?.startsWith("~DYE:SMALL.TTF,A,T,64,,")).toBe(true);
+    removeFont("E:SMALL.TTF");
   });
 
   it("still emits a large font (printer is the target; size only warns in the UI)", async () => {
-    await loadFontFile(fileOf("big.ttf", EMBED_WARN_FONT_BYTES + 1), "BIG.TTF");
+    await loadFontFile(fileOf("big.ttf", EMBED_WARN_FONT_BYTES + 1), "E:BIG.TTF");
     const line = formatFontDownloadFromPath("E:BIG.TTF");
-    expect(line?.startsWith("~DYE:BIG,A,T,")).toBe(true);
-    removeFont("BIG.TTF");
+    expect(line?.startsWith("~DYE:BIG.TTF,A,T,")).toBe(true);
+    removeFont("E:BIG.TTF");
   });
 
   it("strips command and slot terminators from the ~DY target", async () => {
-    await loadFontFile(fileOf("safe.ttf", 8), "SAFE.TTF");
-    const line = formatFontDownloadFromPath("E:BAD^FS,NAME.TTF", "SAFE.TTF");
-    expect(line?.startsWith("~DYE:BADFSNAME,A,T,8,,")).toBe(true);
-    removeFont("SAFE.TTF");
+    await loadFontFile(fileOf("safe.ttf", 8), "E:BAD^FS,NAME.TTF");
+    const line = formatFontDownloadFromPath("E:BAD^FS,NAME.TTF");
+    expect(line?.startsWith("~DYE:BADFSNAME.TTF,A,T,8,,")).toBe(true);
+    removeFont("E:BAD^FS,NAME.TTF");
+  });
+});
+
+describe("printerFontFileName", () => {
+  it("builds a path ^CW can name: a real device, up to 8 name chars, .TTF unless the file is a .TTE", () => {
+    expect(printerFontFileName("e:my logo.ttf")).toBe("E:MYLOGO.TTF");
+    expect(printerFontFileName("e:e:x.ttf")).toBe("E:EX.TTF");
+    expect(printerFontFileName("plain.otf")).toBe("E:PLAIN.TTF");
+    expect(printerFontFileName("cjk.tte")).toBe("E:CJK.TTE");
+    expect(printerFontFileName("a^b:evil.ttf")).toBe("E:ABEVIL.TTF");
+    expect(printerFontFileName(":x.ttf")).toBe("E:X.TTF");
+    expect(printerFontFileName("z:x.ttf")).toBe("E:ZX.TTF");
+    expect(printerFontFileName("COMPANYLOGO1.ttf")).toBe("E:COMPANYL.TTF");
+    expect(printerFontFileName("COMPANYLOGO2.ttf")).toBe("E:COMPANYL.TTF");
+    expect(printerFontFileName("日本.ttf")).toBeUndefined();
+    expect(printerFontFileName("e:")).toBeUndefined();
+    expect(printerFontFileName(".ttf")).toBeUndefined();
   });
 });
 
@@ -115,6 +134,17 @@ describe("upsertCustomFontMapping", () => {
         "M",
       ),
     ).toEqual([{ alias: "M", path: "E:FOO.TTF" }]);
+  });
+
+  it("edits the mapping the reader would have found: alias only, spelling, flags and order kept", () => {
+    expect(
+      upsertCustomFontMapping([{ alias: "A", path: "e:foo.ttf", embedInZpl: true }, { alias: "B", path: "E:BAR.TTF" }], "E:FOO.TTF", "M"),
+    ).toEqual([{ alias: "M", path: "e:foo.ttf", embedInZpl: true }, { alias: "B", path: "E:BAR.TTF" }]);
+  });
+
+  it("removes the entry rather than store an alias the schema rejects", () => {
+    expect(customFontMappingSchema.safeParse({ alias: "", path: "E:X.TTF", embedInZpl: true }).success).toBe(false);
+    expect(upsertCustomFontMapping([{ alias: "A", path: "E:X.TTF", embedInZpl: true }], "E:X.TTF", "")).toEqual([]);
   });
 
   it("removes the mapping when alias is empty", () => {
@@ -181,7 +211,7 @@ describe("isBuiltinFontId", () => {
 });
 
 describe("resolvePreviewFontName", () => {
-  it("returns the explicit previewFontName when set", () => {
+  it("draws with the printer path even when a legacy previewFontName spells it differently", () => {
     expect(
       resolvePreviewFontName(
         {
@@ -191,16 +221,16 @@ describe("resolvePreviewFontName", () => {
         },
         "M",
       ),
-    ).toBe("CUSTOM.TTF");
+    ).toBe("E:MYFONT.TTF");
   });
 
-  it("falls back to the path filename when previewFontName is unset", () => {
+  it("returns the path when no previewFontName is set, since the cache keys by path", () => {
     expect(
       resolvePreviewFontName(
         { customFonts: [{ alias: "M", path: "E:MYFONT.TTF" }] },
         "M",
       ),
-    ).toBe("MYFONT.TTF");
+    ).toBe("E:MYFONT.TTF");
   });
 
   it("returns previewFontName for built-in aliases (path-less binding)", () => {
@@ -271,22 +301,22 @@ describe("getAvailableFontIds", () => {
 });
 
 describe("resolveDefaultPrinterFontName", () => {
-  it("returns the filename for a default alias that maps to a custom font", () => {
+  it("returns the path for a default alias that maps to a custom font", () => {
     expect(
       resolveDefaultPrinterFontName({
         defaultFontId: "M",
         customFonts: [{ alias: "M", path: "E:MYFONT.TTF" }],
       }),
-    ).toBe("MYFONT.TTF");
+    ).toBe("E:MYFONT.TTF");
   });
 
-  it("strips any single-letter drive prefix, not just E:", () => {
+  it("keeps whatever drive the path names, so the lookup stays exact", () => {
     expect(
       resolveDefaultPrinterFontName({
         defaultFontId: "M",
         customFonts: [{ alias: "M", path: "R:RAMFONT.TTF" }],
       }),
-    ).toBe("RAMFONT.TTF");
+    ).toBe("R:RAMFONT.TTF");
   });
 
   it("returns undefined for a built-in font id with no matching mapping", () => {

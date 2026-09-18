@@ -78,12 +78,12 @@ describe('text.toZPL', () => {
     expect(zpl).not.toContain('^FB');
   });
 
-  it('emits ^A@ with printer font name instead of ^A0', () => {
+  it('emits ^A@ with the printer font name as given, no drive invented', () => {
     const zpl = def.toZPL(makeObj('text', {
       content: 'Custom', fontHeight: 40, fontWidth: 20, rotation: 'N',
       printerFontName: 'ARIAL.TTF',
     }));
-    expect(zpl).toContain('^A@N,40,20,E:ARIAL.TTF');
+    expect(zpl).toContain('^A@N,40,20,ARIAL.TTF');
     expect(zpl).not.toContain('^A0');
   });
 
@@ -92,7 +92,7 @@ describe('text.toZPL', () => {
       content: 'Rot', fontHeight: 30, fontWidth: 0, rotation: 'R',
       printerFontName: 'HELVETICA.TTF',
     }));
-    expect(zpl).toContain('^A@R,30,0,E:HELVETICA.TTF');
+    expect(zpl).toContain('^A@R,30,0,HELVETICA.TTF');
   });
 
   it('emits ^A{fontId} short form when fontId is set', () => {

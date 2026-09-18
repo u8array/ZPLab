@@ -5,7 +5,7 @@ import { useT } from "../../hooks/useT";
 import { useLabelStore } from "../../store/labelStore";
 import { buttonCls } from "../Properties/styles";
 import { encodeGraphicFile } from "@zplab/core/lib/imageToZpl";
-import { sanitizeStorageName, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
+import { sanitizeStorageName, storageRefMatchesPath, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
 import { zplCommandTagCls } from "../ui/formStyles";
 import { exportableLeaves } from "@zplab/core/types/Group";
 import { canSendSetupGraphic, setupGraphicFits, setupGraphicOf, setupGraphicState, uploadKey, type ImageProps } from "@zplab/core/registry/image";
@@ -28,13 +28,14 @@ export function ObjectsTab() {
       if (key && !rows.has(key)) rows.set(key, props);
     }
   }
-  const profileOnly = (setupGraphics ?? []).filter((g) => !rows.has(g.path));
+  const rowKeys = [...rows.keys()];
+  const profileOnly = (setupGraphics ?? []).filter((g) => !rowKeys.some((key) => storageRefMatchesPath(g.path, key)));
 
   // Read at write time: an upload resolves after the render that created it.
   const put = (entry: SetupGraphic) =>
     patchPrinterProfile({ setupGraphics: mergeSetupEntries(useLabelStore.getState().printerProfile.setupGraphics, [entry]) });
   const drop = (path: string) => {
-    const next = (setupGraphics ?? []).filter((g) => g.path !== path);
+    const next = (setupGraphics ?? []).filter((g) => !storageRefMatchesPath(g.path, path));
     patchPrinterProfile({ setupGraphics: next.length > 0 ? next : undefined });
   };
   const [sendIssue, setSendIssue] = useState<{ path: string; cache: string | undefined; fit: "tooLarge" | "unshippable" } | null>(null);
@@ -108,7 +109,7 @@ export function ObjectsTab() {
           <ul className="flex flex-col gap-1">
             {[...rows.entries()].map(([path, props]) => {
               const state = setupGraphicState(props, setupGraphics);
-              const hasEntry = (setupGraphics ?? []).some((g) => g.path === path);
+              const hasEntry = (setupGraphics ?? []).some((g) => storageRefMatchesPath(g.path, path));
               const orphan = state === "none" && props.storedAs?.embedInZpl === false;
               const resend = state === "stale" ? loc.staleEntry : state === "unknown" ? loc.unverifiedEntry : null;
               const refused = sendIssue?.path === path && sendIssue.cache === props._gfaCache ? sendIssue.fit : null;

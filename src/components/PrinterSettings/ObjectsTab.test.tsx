@@ -49,6 +49,17 @@ describe("ObjectsTab", () => {
     expect(useLabelStore.getState().printerProfile.setupGraphics).toBeUndefined();
   });
 
+  it("finds a profile entry spelled differently from the object's key, as the state derivation does", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "r:logo.grf", gfa: GFA }] } }));
+    const { getByLabelText, queryByTitle } = render(<ObjectsTab />);
+    expect((getByLabelText(/Send at setup/) as HTMLInputElement).checked).toBe(true);
+    expect(queryByTitle("r:logo.grf")).toBeNull();
+    act(() => {
+      fireEvent.click(getByLabelText(/Send at setup/));
+    });
+    expect(useLabelStore.getState().printerProfile.setupGraphics).toBeUndefined();
+  });
+
   it("keeps a stale entry checked, names it, and re-sends the current bytes on request", () => {
     act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: "^GFA,4,4,1,FF0000FF" }] } }));
     const { getByLabelText, getByText } = render(<ObjectsTab />);

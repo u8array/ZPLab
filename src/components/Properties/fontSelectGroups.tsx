@@ -1,7 +1,6 @@
 import { DocumentIcon } from '@heroicons/react/16/solid';
 import {
   getAvailableFontIds,
-  stripDrivePrefix,
   type FontIdOption,
 } from '@zplab/core/lib/customFonts';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
@@ -27,8 +26,7 @@ function builtinFontName(id: string, t: Translations): string {
   }
 }
 
-const uploadName = (o: FontIdOption): string | undefined =>
-  o.previewFontName ?? (o.path ? stripDrivePrefix(o.path) : undefined);
+const uploadName = (o: FontIdOption): string | undefined => o.path || o.previewFontName;
 
 /**
  * Build the grouped option list for the font Select, shared by the field-font

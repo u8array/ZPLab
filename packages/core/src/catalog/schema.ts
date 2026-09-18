@@ -6,7 +6,7 @@ const SUPPORT_LEVELS = ["yes", "planned", "no"] as const;
 export type SupportLevel = (typeof SUPPORT_LEVELS)[number];
 
 /** What a partial import drops; the app maps each cause to its report wording. */
-const IMPORT_LOSS_CAUSES = ["fontFace", "printerComms", "gfRawBinary", "qrFdMode", "storedGraphic", "shortPayload", "recallMagnification", "checksumMismatch", "oversizeUpload", "unshippableUpload", "fnPartialInsert"] as const;
+const IMPORT_LOSS_CAUSES = ["fontFace", "printerComms", "gfRawBinary", "qrFdMode", "storedGraphic", "shortPayload", "recallMagnification", "checksumMismatch", "oversizeUpload", "unshippableUpload", "bitmapFont", "unshippableFontName", "unshippableGraphicName", "fontNameNotTrueType", "fontVersionReplaced", "fnPartialInsert"] as const;
 export type ImportLossCause = (typeof IMPORT_LOSS_CAUSES)[number];
 
 /** Support per axis; docs/zpl-coverage.md defines the three. */

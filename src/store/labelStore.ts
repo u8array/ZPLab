@@ -15,7 +15,7 @@ import { sanitiseLoadedVariables } from '@zplab/core/lib/loadedVariables';
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from '@zplab/core/lib/reverseBacking';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { removeVariables } from '@zplab/core/lib/variableRemoval';
-import { reconstructLegacyJmDensity } from '@zplab/core/lib/designFile';
+import { pinBareFontDriveLeaf, reconstructLegacyJmDensity } from '@zplab/core/lib/designFile';
 import type { DesignFilePage } from '@zplab/core/lib/designFile';
 import type { CustomFontMapping, JmDensity, LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { LabelObject, Page } from '@zplab/core/types/Group';
@@ -222,6 +222,11 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
   // emit and canvas read the new shape unguarded.
   if (version < 16 && Array.isArray(s.pages)) {
     visitLeavesInPages(s.pages, fixTlc39SlotsLeaf);
+  }
+
+  // v17→v18: the same drive pin the .zpld lane applies at schema v6.
+  if (version < 18 && Array.isArray(s.pages)) {
+    visitLeavesInPages(s.pages, pinBareFontDriveLeaf);
   }
 
   // v9→v10: reverse text dropped its synthesized self-background ^GB for a
@@ -551,7 +556,7 @@ export const useLabelStore = create<LabelState>()(
     {
       name: 'zpl-designer-session',
       // Bumped for every rehydrate repair: persist runs migrate only on a version change.
-      version: 17,
+      version: 18,
       migrate: (persistedState, version) => migrateLegacy(persistedState, version) as LabelState,
       storage: createJSONStorage(() => localStorage),
       partialize: persistPartialize,

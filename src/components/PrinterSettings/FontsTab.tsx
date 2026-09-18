@@ -1,7 +1,7 @@
 import { useT } from "../../hooks/useT";
-import { getAllFonts } from "@zplab/core/lib/fontCache";
+import { cachedFontPath, getAllFonts, hasFontBytes } from "@zplab/core/lib/fontCache";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
-import { uploadedFontPath } from "@zplab/core/lib/customFonts";
+import { storageRefMatchesPath } from "@zplab/core/lib/storagePath";
 import { useLabelStore } from "../../store/labelStore";
 import { zplCommandTagCls } from "../ui/formStyles";
 import { FONT_CACHE_KB_RANGE, FONT_CACHE_TYPE_VALUES } from "@zplab/core/types/PrinterProfile";
@@ -21,18 +21,15 @@ export function FontsTab() {
   const loc = t.printerSettings.fonts;
 
   const fonts = getAllFonts();
-  const uploadedPaths = new Set(fonts.map((f) => uploadedFontPath(f.name)));
-  // setupFonts entries whose bytes never made it into fontCache (re-imported profile).
-  const orphanPaths = [...new Set((setupFonts ?? [])
-    .map((f) => f.path)
-    .filter((p) => !uploadedPaths.has(p)))];
-  const setupPaths = new Set((setupFonts ?? []).map((f) => f.path));
+  const listed = (path: string) => (setupFonts ?? []).some((f) => storageRefMatchesPath(f.path, path));
+  // A re-imported profile names fonts whose bytes this browser never held.
+  const orphanPaths = [...new Set((setupFonts ?? []).map((f) => f.path).filter((p) => !hasFontBytes(p)))];
 
   const toggle = (path: string, on: boolean) => {
     const list = setupFonts ?? [];
     const next = on
-      ? list.some((f) => f.path === path) ? list : [...list, { path }]
-      : list.filter((f) => f.path !== path);
+      ? listed(path) ? list : [...list, { path }]
+      : list.filter((f) => !storageRefMatchesPath(f.path, path));
     patchPrinterProfile({ setupFonts: next.length > 0 ? next : undefined });
   };
 
@@ -51,10 +48,10 @@ export function FontsTab() {
         ) : (
           <ul className="flex flex-col gap-1">
             {fonts.map((font) => {
-              const path = uploadedFontPath(font.name);
+              const path = cachedFontPath(font);
               return (
                 <li
-                  key={font.name}
+                  key={path}
                   className="flex items-center justify-between gap-3 px-2 py-1.5 rounded border border-transparent hover:border-border-2 hover:bg-surface-2/40 transition-colors"
                 >
                   <span className="font-mono text-xs text-text truncate" title={path}>
@@ -64,7 +61,7 @@ export function FontsTab() {
                     <input
                       type="checkbox"
                       className="accent-accent"
-                      checked={setupPaths.has(path)}
+                      checked={listed(path)}
                       onChange={(e) => toggle(path, e.target.checked)}
                     />
                     {loc.uploadToggle}

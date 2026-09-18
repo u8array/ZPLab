@@ -176,7 +176,8 @@ export function resolveFontCmd(
   }
   const safePrinterFontName = printerFontName ? stripZplParamChars(printerFontName) : "";
   if (safePrinterFontName) {
-    return `^A@${rotation},${fontHeight},${fontWidth},E:${safePrinterFontName}`;
+    // No invented drive: the printer resolves a bare name itself.
+    return `^A@${rotation},${fontHeight},${fontWidth},${safePrinterFontName}`;
   }
   const defaultId = stripZplParamChars(ctx?.label.defaultFontId ?? "");
   if (defaultId) {

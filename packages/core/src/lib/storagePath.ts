@@ -6,6 +6,8 @@ import { newId } from "./ids";
 /** R volatile RAM, E flash, B alt flash, A alias. */
 export const STORAGE_DEVICES = ["R", "E", "B", "A"] as const;
 export type StorageDevice = (typeof STORAGE_DEVICES)[number];
+/** Where a locally picked font goes. */
+export const DEFAULT_FONT_DEVICE = "E";
 
 /** DOS-style 8.3 (8-char uppercase alnum + underscore). */
 export const MAX_STORAGE_NAME_LEN = 8;
@@ -53,11 +55,25 @@ export function formatStoragePath(p: StoragePath, withExt: boolean): string {
   return withExt ? `${device}${p.name}.${p.ext || GRAPHIC_EXT}` : `${device}${p.name}`;
 }
 
-/** Object names are case-insensitive on the device and R: is where a path without a device lives. */
+/** Object names are case-insensitive on the device and R: is where a path without a device lives.
+ *  Trimmed, so a padded spelling of a path keys the same file as the bare one. */
 export function storageKey(path: string): string {
-  const colonAt = path.indexOf(":");
-  const device = colonAt > 0 ? path.slice(0, colonAt) : "R";
-  return `${device}:${colonAt === -1 ? path : path.slice(colonAt + 1)}`.toUpperCase();
+  const trimmed = path.trim();
+  const colonAt = trimmed.indexOf(":");
+  const device = colonAt > 0 ? trimmed.slice(0, colonAt) : "R";
+  return `${device}:${colonAt === -1 ? trimmed : trimmed.slice(colonAt + 1)}`.toUpperCase();
+}
+
+export const setupEntryKey = (entry: { path: string }): string => storageKey(entry.path);
+
+/** The two halves of a `storageKey` result, the name with its extension. */
+export function splitStorageKey(key: string): { device: string; name: string } {
+  const colonAt = key.indexOf(":");
+  return { device: key.slice(0, colonAt), name: key.slice(colonAt + 1) };
+}
+
+export function storageRefMatchesPath(ref: string, path: string): boolean {
+  return storageKey(ref) === storageKey(path);
 }
 
 /** Keys a recall may resolve under: the named device, else the search order (spec p.373). */
