@@ -8,31 +8,29 @@ import {
   type DesignFile,
   type DesignFilePage,
 } from "@zplab/core/lib/designFile";
-import { getEntry, ObjectRegistry } from "@zplab/core/registry";
-import { gfShipsSafely, parseGfHeader } from "@zplab/core/registry/image";
-import { propDomainIssue, propTypeIssue, type PropSpec } from "@zplab/core/types/propSpec";
-import { ZPL_PARAM_CHARS } from "@zplab/core/lib/zplParams";
-import { MAX_SOURCE_PAGES } from "@zplab/core/lib/zplSourceEdit";
 import {
-  getAllLeaves,
-  isGroup,
-  walkObjects,
-  type LabelObject,
-} from "@zplab/core/types/Group";
-import { NON_EMITTING_PROP_KEYS } from "@zplab/core/types/LabelObject";
+  buildVariables,
+  duplicateVariableIssue,
+  freeId,
+  normalizeLeaves,
+  propIssues,
+  RAW_GRAPHIC_PROPS,
+  toLabelObject,
+  typeIssues,
+  type ObjectInput,
+} from "@zplab/core/lib/designInput";
+import { getEntry } from "@zplab/core/registry";
+import type { PropSpec } from "@zplab/core/types/propSpec";
+import { MAX_SOURCE_PAGES } from "@zplab/core/lib/zplSourceEdit";
+import { getAllLeaves, walkObjects, type LabelObject } from "@zplab/core/types/Group";
 import { errorMessage } from "@zplab/core/lib/errorMessage";
 import { DPMM_VALUES, isDpmm, type DeviceFontLabel, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
-import {
-  FN_NUMBER_MAX,
-  FN_NUMBER_MIN,
-  isValidVariableName,
-  nextFreeFnNumber,
-  stripMarkerDelimiters,
-  type Variable,
-} from "@zplab/core/types/Variable";
+import type { Variable, VariableInput } from "@zplab/core/types/Variable";
 
+// Re-exported so the tools keep their names.
+export { buildVariables, propIssues, typeIssues };
 
-export const objectInputSchema = z.object({
+export const objectInputSchema: z.ZodType<ObjectInput> = z.object({
   type: z.string(),
   x: z.number(),
   y: z.number(),
@@ -43,19 +41,18 @@ export const objectInputSchema = z.object({
   fieldJustify: z.enum(["L", "C", "R"]).optional(),
   props: z.record(z.string(), z.unknown()).optional(),
 });
-export type ObjectInput = z.infer<typeof objectInputSchema>;
 
 const dpmmSchema = z.literal([...DPMM_VALUES]);
 
 /** A reusable slot: content referencing it as `«name»` emits ^FN, so the
  *  same design prints many rows. Slot numbers are assigned when omitted. */
-export const variableInputSchema = z.object({
+export const variableInputSchema: z.ZodType<VariableInput> = z.object({
   name: z.string().min(1),
   defaultValue: z.string().optional(),
   fnNumber: z.number().int().optional(),
   comment: z.string().optional(),
 });
-export type VariableInputJson = z.infer<typeof variableInputSchema>;
+export type VariableInputJson = VariableInput;
 
 export const createDraftShape = {
   widthMm: z.number().positive(),
@@ -157,19 +154,9 @@ function duplicateIdError(pages: readonly DesignFilePage[]): ToolError | null {
     : null;
 }
 
-/** Variables must stay individually addressable: a duplicate id or ^FN slot merges two
- *  fields silently (names have their own policy: sanitiseVariableNames). parseDesignFile
- *  resolves duplicate ^FN slots but never dedupes ids, so this still guards both. */
 export function duplicateVariableError(variables: readonly Variable[]): ToolError | null {
-  const dup = (key: (v: Variable) => string | number) => {
-    const all = variables.map(key);
-    return all.find((k, i) => all.indexOf(k) !== i);
-  };
-  const id = dup((v) => v.id);
-  if (id !== undefined) return { ok: false, errors: [`Duplicate variable id: ${id}`] };
-  const slot = dup((v) => v.fnNumber);
-  if (slot !== undefined) return { ok: false, errors: [`Duplicate ^FN slot: ${slot}`] };
-  return null;
+  const issue = duplicateVariableIssue(variables);
+  return issue === null ? null : { ok: false, errors: [issue] };
 }
 
 /** The model addresses variables by name, so a missing id is filled in. Object ids stay
@@ -227,194 +214,6 @@ export function parseEnvelope(designFile: unknown): { ok: true; value: DesignFil
   } catch (e) {
     return { ok: false, errors: [errorMessage(e)] };
   }
-}
-
-/** 'C' is the editor's centre control, which only 1D barcodes expose. Anywhere
- *  else it persists as metadata no UI can show or clear, so every write path
- *  canonicalizes it here rather than just the one that creates objects. */
-export function canonicalFieldJustify(
-  type: string,
-  justify: LabelObject["fieldJustify"],
-): LabelObject["fieldJustify"] {
-  return justify === "C" && getEntry(type)?.barcodeClass !== "1d" ? undefined : justify;
-}
-
-/** Registry defaults under the leaf's props plus the same fieldJustify
- *  canonicalization every other write path applies. */
-function normalizeLeaves(objects: LabelObject[]): LabelObject[] {
-  return objects.map((o) =>
-    isGroup(o)
-      ? { ...o, children: normalizeLeaves(o.children) }
-      : {
-          ...o,
-          ...(o.fieldJustify !== undefined
-            ? { fieldJustify: canonicalFieldJustify(o.type, o.fieldJustify) }
-            : {}),
-          props: { ...(getEntry(o.type)?.defaultProps ?? {}), ...o.props },
-        },
-  ) as LabelObject[];
-}
-
-/** Merge a caller's sparse object over the registry defaults so an LLM only
- *  needs to supply the props it wants to change. Unknown type keeps empty
- *  defaults; the schema is tolerant, so createDraft guards it up front. */
-export function toLabelObject(
-  input: ObjectInput,
-  id: string,
-  label?: DeviceFontLabel,
-): LabelObject {
-  const defaults = getEntry(input.type)?.defaultProps ?? {};
-  const justify = canonicalFieldJustify(input.type, input.fieldJustify);
-  const base = {
-    id,
-    type: input.type,
-    x: input.x,
-    y: input.y,
-    rotation: 0,
-    ...(input.positionType !== undefined ? { positionType: input.positionType } : {}),
-    ...(justify !== undefined ? { fieldJustify: justify } : {}),
-    props: { ...defaults, ...(input.props ?? {}) },
-    // Schema is intentionally loose; createDraft rejects unknown types up front.
-  } as LabelObject;
-  // Same registry hook every editor edit runs (labelStore.internals): over MCP,
-  // add/create is the primary way to deliver full props, so an ^BF height or
-  // ^FB line count must be clamped/grown here too, not only on update.
-  const normalize = getEntry(input.type)?.normalizeChanges;
-  if (!normalize || input.props === undefined) return base;
-  // Same device-font ctx the editor passes, or the hook resolves font 0 here.
-  const normalized = normalize(base as never, { props: input.props } as never, { label: label ?? {} });
-  return { ...base, ...normalized, props: { ...(base as { props: object }).props, ...normalized.props } } as LabelObject;
-}
-
-/** Caller-supplied graphic bytes, rejected up front so a bad payload fails the
- *  call instead of printing nothing silently. Delegates to gfShipsSafely (the
- *  emit-side guard); `shipsVerbatim` marks the prop whose string reaches the wire untouched. */
-function graphicPropIssue(name: string, value: unknown, shipsVerbatim: boolean): string | null {
-  // A non-string reaches the emitted stream through the same interpolation,
-  // string-coerced: an array of header and command joins to a valid-looking
-  // graphic that carries whatever the second element says.
-  if (typeof value !== "string") return `${name} must be a string`;
-  const head = parseGfHeader(value);
-  if (!head) return `${name} must start with a ^GF header (the format letter is required)`;
-  // A header carrying no data would emit `^GFB,8,8,1,` and the firmware eats the
-  // following ^FS/^XZ as graphic data (spec p.215). Only fatal for the verbatim
-  // prop; a cache degrades through gfaCacheUsable to an empty field + warning.
-  if (shipsVerbatim && head.payload.trim() === "") return `${name} carries no graphic data`;
-  return gfShipsSafely(value) ? null : `${name} carries characters that are not graphic data`;
-}
-
-/** Props whose value is user text the app lets through verbatim; every other
- *  prop reaches a ZPL parameter slot, where a control prefix starts a command
- *  instead of filling it. Non-emitting props carry the same verbatim text but reach no slot. */
-const FREE_TEXT_PROPS = new Set(["content", "comment", ...NON_EMITTING_PROP_KEYS]);
-
-/** Flags ^, ~ or comma anywhere in a string, walked into object values. Comma
- *  matters because these values land in comma-delimited ZPL slots (storedAs.name
- *  reaches ~DY/^XG); depth-bounded against a self-referential object's stack overflow. */
-function hasControlString(value: unknown, depth = 0): boolean {
-  if (typeof value === "string") return ZPL_PARAM_CHARS.test(value);
-  if (depth > 8 || value === null || typeof value !== "object") return false;
-  return Object.values(value).some((v) => hasControlString(v, depth + 1));
-}
-
-/** Props emitted as written, so the boundary must prove they're graphic data
- *  before the printer reads them as commands. rawGf ships the string verbatim
- *  (empty payload is fatal); _gfaCache passes gfaCacheUsable first and degrades to an empty field plus a warning. */
-const RAW_GRAPHIC_PROPS = new Map<string, boolean>([
-  ["rawGf", true],
-  ["_gfaCache", false],
-]);
-
-/** Unchecked, a caller's string reaches the emitted ZPL ("^A0N,gross,0"). */
-export function propIssues(
-  type: string,
-  props: Record<string, unknown> | undefined,
-  /** `caller`: this call's props, held to payload, ownership and domain.
-   *  `design`: a whole file read back, held to types only, so one preserved
-   *  import value never fails the design wholesale. */
-  origin: "caller" | "design" = "caller",
-): string[] {
-  if (!props) return [];
-  const specs = getEntry(type)?.propSpecs as Record<string, PropSpec> | undefined;
-  const issues: string[] = [];
-  for (const [key, value] of Object.entries(props)) {
-    const shipsVerbatim = RAW_GRAPHIC_PROPS.get(key);
-    if (shipsVerbatim !== undefined) {
-      // Type contract holds for BOTH origins: core reads these as strings
-      // (parseGfHeader coerces via RegExp.exec), so a non-string would throw a
-      // TypeError out of emit/canvas render instead of a clean ToolError here.
-      if (typeof value !== "string") issues.push(`${type}.${key} must be a string`);
-      else if (origin === "caller") {
-        const issue = graphicPropIssue(key, value, shipsVerbatim);
-        if (issue) issues.push(issue);
-      }
-      continue;
-    }
-    if (typeof value === "number" && !Number.isFinite(value)) {
-      issues.push(`${type}.${key} must be a finite number`);
-      continue;
-    }
-    // No prop holds null, and a null merged over a default stringifies into
-    // its parameter slot ("^A0N,null,0").
-    if (value === null) {
-      issues.push(`${type}.${key} must not be null (drop the key to keep the current value)`);
-      continue;
-    }
-    // Every string leaf, nested included: storedAs.name and the serial fields
-    // reach parameter slots (^XG, ^SN) just like a top-level prop does.
-    if (!FREE_TEXT_PROPS.has(key) && hasControlString(value)) {
-      issues.push(`${type}.${key} must not contain ^ ~ or , (they end the ZPL parameter)`);
-      continue;
-    }
-    if (!specs) continue;
-    const spec = Object.hasOwn(specs, key) ? specs[key] : undefined;
-    if (!spec) {
-      if (origin === "caller" && registryReadsProp(key)) issues.push(`${type}.${key} is not a ${type} prop`);
-      continue;
-    }
-    if (value === undefined) continue;
-    const issue = propTypeIssue(spec, value) ?? (origin === "caller" ? propDomainIssue(spec, value) : null);
-    if (issue) issues.push(`${type}.${key} ${issue}`);
-  }
-  return issues;
-}
-
-/** Closest registered type within one edit per three characters, so `code128`
- *  surfaces for `code127` but not for anything unrelated. */
-function nearestType(type: string): string | null {
-  const budget = Math.max(1, Math.floor(type.length / 3));
-  let best: { name: string; distance: number } | null = null;
-  for (const name of Object.keys(ObjectRegistry)) {
-    const distance = editDistance(type.toLowerCase(), name.toLowerCase());
-    if (distance <= budget && (best === null || distance < best.distance)) {
-      best = { name, distance };
-    }
-  }
-  return best?.name ?? null;
-}
-
-function editDistance(a: string, b: string): number {
-  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
-  for (let i = 1; i <= a.length; i++) {
-    const row = [i];
-    for (let j = 1; j <= b.length; j++) {
-      row[j] = Math.min(
-        (prev[j] ?? 0) + 1,
-        (row[j - 1] ?? 0) + 1,
-        (prev[j - 1] ?? 0) + (a[i - 1] === b[j - 1] ? 0 : 1),
-      );
-    }
-    prev = row;
-  }
-  return prev[b.length] ?? 0;
-}
-
-/** Unregistered types, each with a suggestion when one is close enough. */
-export function typeIssues(types: readonly string[]): string[] {
-  return [...new Set(types.filter((t) => getEntry(t) === undefined))].map((type) => {
-    const near = nearestType(type);
-    return `Unknown object type: ${type}${near ? ` (did you mean ${near}?)` : ""}`;
-  });
 }
 
 /** Hand-written prop summaries for the types an LLM reaches for first. Every
@@ -507,18 +306,6 @@ export function unknownPropNotes(type: string, id: string, props: Record<string,
     .map((key) => `${id}: ${key} is not a known ${type} prop (see get_schema)`);
 }
 
-function registryReadsProp(key: string): boolean {
-  return Object.values(ObjectRegistry).some((e) => Object.hasOwn(e.propSpecs, key));
-}
-
-/** First `type-n` nobody holds. A count-derived id collides as soon as the
- *  design skips or reuses the sequence (an explicit id, a removed object). */
-export function freeId(type: string, taken: ReadonlySet<string>): string {
-  let n = taken.size + 1;
-  while (taken.has(`${type}-${n}`)) n++;
-  return `${type}-${n}`;
-}
-
 export function buildObjects(
   inputs: ObjectInput[],
   label?: DeviceFontLabel,
@@ -545,56 +332,3 @@ export function buildObjects(
   });
   return { objects };
 }
-
-
-/** Give each variable an id and a free ^FN slot, so the caller only has to
- *  name it. Duplicate names or slots would silently merge fields, so they are
- *  rejected instead. */
-export function buildVariables(
-  inputs: readonly VariableInputJson[],
-  existing: readonly Variable[] = [],
-): { value: Variable[] } | { error: string } {
-  const names = new Set(existing.map((v) => v.name));
-  const taken: number[] = [
-    ...existing.map((v) => v.fnNumber),
-    ...inputs.flatMap((v) => (v.fnNumber === undefined ? [] : [v.fnNumber])),
-  ];
-  const usedIds = new Set(existing.map((v) => v.id));
-  const out: Variable[] = [];
-  for (const input of inputs) {
-    // Trimmed before it is stored, the way parseDesignFile and the editor's
-    // addVariable both store it: keeping the caller's spacing handed back a
-    // name that no later call could address, because every reader trims first.
-    const name = input.name.trim();
-    if (!isValidVariableName(name)) {
-      return { error: `Invalid variable name: ${JSON.stringify(input.name)}` };
-    }
-    if (names.has(name)) return { error: `Duplicate variable name: ${name}` };
-    names.add(name);
-    if (input.fnNumber !== undefined && (input.fnNumber < FN_NUMBER_MIN || input.fnNumber > FN_NUMBER_MAX)) {
-      return { error: `^FN slot must be ${FN_NUMBER_MIN}-${FN_NUMBER_MAX} (got ${input.fnNumber})` };
-    }
-    let fnNumber = input.fnNumber;
-    if (fnNumber === undefined) {
-      const free = nextFreeFnNumber(taken);
-      if (free === null) return { error: "No free ^FN slot left (1-99)" };
-      fnNumber = free;
-      taken.push(free);
-    }
-    let idIndex = existing.length + out.length + 1;
-    while (usedIds.has(`var-${idIndex}`)) idIndex++;
-    usedIds.add(`var-${idIndex}`);
-    out.push({
-      id: `var-${idIndex}`,
-      name,
-      fnNumber,
-      // A default carrying its own «…» would resolve in preview and emit
-      // verbatim (see stripMarkerDelimiters); every mutator strips it.
-      defaultValue: stripMarkerDelimiters(input.defaultValue ?? ""),
-      ...(input.comment !== undefined ? { comment: input.comment } : {}),
-    });
-  }
-  const dup = duplicateVariableError([...existing, ...out]);
-  return dup === null ? { value: out } : { error: dup.errors[0]! };
-}
-
