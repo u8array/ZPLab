@@ -826,6 +826,39 @@ describe("agent-facing reporting", () => {
     expect(parseEnvelope(file).ok).toBe(true);
   });
 
+  it("fills missing variable ids without touching the ones given", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { variables?: unknown[] };
+    file.variables = [
+      { id: "var-1", name: "LOT", fnNumber: 1, defaultValue: "" },
+      { name: "QTY", fnNumber: 2, defaultValue: "1" },
+    ];
+    const parsed = parseEnvelope(file);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.value.variables.map((v) => v.id)).toEqual(["var-1", "var-2"]);
+  });
+
+  it("reports a wrongly typed variable id instead of replacing it", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { variables?: unknown[] };
+    file.variables = [{ id: 7, name: "LOT", fnNumber: 1, defaultValue: "" }];
+    const parsed = parseEnvelope(file);
+    expect(parsed.ok).toBe(false);
+    if (parsed.ok) return;
+    expect(parsed.errors[1]).toMatch(/^variables\.0\.id: /);
+  });
+
+  it("names the field an envelope fails on instead of the generic sentence alone", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [{ type: "text", x: 1, y: 1, props: { content: "x" } }] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { pages: { objects: { id?: string }[] }[] };
+    delete file.pages[0]!.objects[0]!.id;
+    const parsed = parseEnvelope(file);
+    expect(parsed.ok).toBe(false);
+    if (parsed.ok) return;
+    expect(parsed.errors).toEqual([expect.stringContaining("valid label design"), expect.stringMatching(/^pages\.0\.objects\.0\.id: /)]);
+  });
+
   it("rejects byHeight on a non-qrcode type instead of swallowing it", () => {
     // The global optional/known maps would accept it silently on any type.
     const r = label([

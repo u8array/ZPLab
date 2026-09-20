@@ -172,10 +172,29 @@ export function duplicateVariableError(variables: readonly Variable[]): ToolErro
   return null;
 }
 
+/** The model addresses variables by name, so a missing id is filled in. Object ids stay
+ *  required: patch_design addresses objects by id. */
+function withVariableIds(designFile: unknown): unknown {
+  if (!designFile || typeof designFile !== "object") return designFile;
+  const { variables } = designFile as { variables?: unknown };
+  if (!Array.isArray(variables)) return designFile;
+  const taken = new Set<string>();
+  for (const v of variables) {
+    if (v && typeof v === "object" && typeof (v as { id?: unknown }).id === "string") taken.add((v as { id: string }).id);
+  }
+  const filled = variables.map((v) => {
+    if (!v || typeof v !== "object" || (v as { id?: unknown }).id !== undefined) return v;
+    const id = freeId("var", taken);
+    taken.add(id);
+    return { ...(v as object), id };
+  });
+  return { ...(designFile as object), variables: filled };
+}
+
 export function parseEnvelope(designFile: unknown): { ok: true; value: DesignFile } | ToolError {
   try {
-    const parsed = parseDesignFile(JSON.stringify(designFile));
-    if (!parsed.ok) return { ok: false, errors: [designFileErrors[parsed.error]] };
+    const parsed = parseDesignFile(JSON.stringify(withVariableIds(designFile)));
+    if (!parsed.ok) return { ok: false, errors: [designFileErrors[parsed.error], ...(parsed.issues ?? [])] };
     const issues = labelConfigIssues(parsed.value.label);
     if (issues.length > 0) return { ok: false, errors: issues };
     const oversize = pagesSizeError(parsed.value.pages);

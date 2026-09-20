@@ -15,7 +15,8 @@ import { reconstructLegacyBlockHeads } from "./zplHeadScan";
 import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, safeUniqueNameById } from "./objectTree";
 import { sanitiseLoadedVariables } from "./loadedVariables";
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from "./reverseBacking";
-import { ok, err, type Result } from "./result";
+import { ok, err } from "./result";
+import { schemaIssues } from "./schemaIssues";
 import { getEntry } from "../registry";
 import { propDomainIssue, type PropSpec } from "../types/propSpec";
 
@@ -27,6 +28,16 @@ import { propDomainIssue, type PropSpec } from "../types/propSpec";
 export const CURRENT_DESIGN_SCHEMA_VERSION = 6;
 
 export type DesignFileError = "parse_error" | "invalid_schema" | "fn_slots_exhausted";
+
+export interface DesignFileFailure {
+  ok: false;
+  error: DesignFileError;
+  /** Schema issues as "path: reason", capped. Only a schema failure carries them. */
+  issues?: string[];
+}
+
+export type DesignFileResult = { ok: true; value: DesignFile } | DesignFileFailure;
+
 export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity }
 export interface DesignFile {
   label: LabelConfig;
@@ -77,7 +88,7 @@ const designFileSchema = z.object({
   // the persisted density fields; both are read, anything else is rejected.
   // v5: tlc39 props remapped to the real ^BT slots (microPdfModuleWidth /
   // microPdfRowHeight semantics, wideRatio; microPdfRows gone).
-  schemaVersion: z.union([z.literal(3), z.literal(4), z.literal(5), z.literal(6)]),
+  schemaVersion: z.literal([3, 4, 5, 6]),
   label: labelConfigSchema,
   pages: z.array(pageSchema),
   variables: z.array(variableSchema).optional(),
@@ -105,7 +116,7 @@ function conformEnumProps(leaf: { type?: unknown; props?: unknown }): void {
   );
 }
 
-export function parseDesignFile(text: string): Result<DesignFile, DesignFileError> {
+export function parseDesignFile(text: string): DesignFileResult {
   let json: unknown;
   try {
     json = JSON.parse(text);
@@ -140,7 +151,7 @@ export function parseDesignFile(text: string): Result<DesignFile, DesignFileErro
     });
   }
 
-  return err("invalid_schema");
+  return { ok: false, error: "invalid_schema", issues: schemaIssues(parsed.error, "design") };
 }
 
 /** v1→v2: reverse text dropped its synthesized self-background ^GB for a

@@ -488,6 +488,7 @@ describe('parseDesignFile', () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.error).toBe('invalid_schema');
+    expect(result.issues).toEqual([expect.stringMatching(/^schemaVersion: .*3.*4.*5.*6/)]);
   });
 
   // A main-era v3 save predates the persisted ^JM fields; it loads through the
@@ -573,6 +574,30 @@ describe('parseDesignFile', () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.error).toBe('invalid_schema');
+  });
+
+  it('names the bad child of a group, however many children are bad', () => {
+    const child = (i: number) => ({ id: `c${i}`, type: 'text', x: 0, y: 0, rotation: 0 });
+    const result = parseDesignFile(JSON.stringify({
+      schemaVersion: 6,
+      label: { widthMm: 100, heightMm: 60, dpmm: 8 },
+      pages: [{ objects: [{ id: 'g', type: 'group', x: 0, y: 0, rotation: 0, children: [child(1), child(2), child(3)] }] }],
+    }));
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.issues?.[0]).toMatch(/^pages\.0\.objects\.0\.children\.0\.props: /);
+  });
+
+  it('names the field a schema failure is about', () => {
+    const result = parseDesignFile(JSON.stringify({
+      schemaVersion: 6,
+      label: { widthMm: 100, heightMm: 60, dpmm: 8 },
+      pages: [{ objects: [] }],
+      variables: [{ name: 'LOT', fnNumber: 1, defaultValue: '' }],
+    }));
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.issues).toEqual([expect.stringMatching(/^variables\.0\.id: /)]);
   });
 
   it('roundtrips through serialize/parse without loss', () => {
