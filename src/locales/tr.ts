@@ -857,6 +857,8 @@ const tr = {
     updateRestart: 'Şimdi yeniden başlat',
     replacedByAgentFmt: 'Bir ajan etiketi değiştirdi. Öncekindeki nesneler: {n}',
     restoreReplaced: 'Önceki etiketi geri yükle',
+    restoredFromAgentFmt: 'Önceki etiket geri döndü. Ajanın tasarımındaki nesneler: {n}',
+    restoreAgentDesign: 'Ajanın tasarımını geri getir',
     chooseFile: 'Dosya seç',
     insertVariable: 'Değişken ekle',
     clockYear4: 'Yıl (4 haneli)',

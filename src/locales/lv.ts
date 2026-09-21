@@ -857,6 +857,8 @@ const lv = {
     updateRestart: 'Restartēt tagad',
     replacedByAgentFmt: 'Aģents aizstāja etiķeti. Objekti iepriekšējā: {n}',
     restoreReplaced: 'Atjaunot iepriekšējo etiķeti',
+    restoredFromAgentFmt: 'Iepriekšējā etiķete ir atgriezta. Objekti aģenta dizainā: {n}',
+    restoreAgentDesign: 'Atjaunot aģenta dizainu',
     chooseFile: 'Izvēlēties failu',
     insertVariable: 'Ievietot mainīgo',
     clockYear4: 'Gads (4 cipari)',

@@ -857,6 +857,8 @@ const pl = {
     updateRestart: 'Uruchom ponownie teraz',
     replacedByAgentFmt: 'Agent zastąpił etykietę. Obiekty w poprzedniej: {n}',
     restoreReplaced: 'Przywróć poprzednią etykietę',
+    restoredFromAgentFmt: 'Poprzednia etykieta wróciła. Obiekty w projekcie agenta: {n}',
+    restoreAgentDesign: 'Przywróć projekt agenta',
     chooseFile: 'Wybierz plik',
     insertVariable: 'Wstaw zmienną',
     clockYear4: 'Rok (4-cyfrowy)',

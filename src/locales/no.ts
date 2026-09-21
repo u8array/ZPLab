@@ -857,6 +857,8 @@ const no = {
     updateRestart: 'Start på nytt nå',
     replacedByAgentFmt: 'En agent erstattet etiketten. Objekter i den forrige: {n}',
     restoreReplaced: 'Gjenopprett forrige etikett',
+    restoredFromAgentFmt: 'Den forrige etiketten er tilbake. Objekter i agentens design: {n}',
+    restoreAgentDesign: 'Gjenopprett agentens design',
     chooseFile: 'Velg fil',
     insertVariable: 'Sett inn variabel',
     clockYear4: 'År (4 siffer)',

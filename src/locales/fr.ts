@@ -857,6 +857,8 @@ const fr = {
     updateRestart: 'Redémarrer maintenant',
     replacedByAgentFmt: "Un agent a remplacé l'étiquette. Objets dans la précédente : {n}",
     restoreReplaced: "Restaurer l'étiquette précédente",
+    restoredFromAgentFmt: "L'étiquette précédente est de retour. Objets dans la création de l'agent : {n}",
+    restoreAgentDesign: "Restaurer la création de l'agent",
     chooseFile: 'Choisir un fichier',
     insertVariable: 'Insérer une variable',
     clockYear4: 'Année (4 chiffres)',

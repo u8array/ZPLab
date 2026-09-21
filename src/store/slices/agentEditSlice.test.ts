@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useLabelStore } from "../labelStore";
+import { registerBarcodeWidthProber, unregisterBarcodeWidthProber, type ProbeCtx } from "../anchorRepin";
+import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
+import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 import type { LabelObject, Page } from "@zplab/core/types/Group";
 
 const text = (id: string, content: string): LabelObject =>
@@ -40,6 +43,32 @@ describe("an agent's op list on the live document", () => {
     useLabelStore.temporal.getState().undo();
     expect(state().pages[1]?.objects.map((o) => o.id)).toEqual(["b"]);
     expect(state().variables[0]?.defaultValue).toBe("L1");
+  });
+
+  it("repins under the edited page's density and the variables the op list added", () => {
+    // One dot per resolved character at the page's density: a probe whose answer exposes both ctx fields.
+    const probe = (o: LabelObject, ctx?: ProbeCtx) => {
+      const content = (resolveForMeasure(o, ctx?.variables ?? []) as { props: { content: string } }).props.content;
+      return { w: content.length * effectiveDpmm(ctx?.label ?? { dpmm: 8 }), h: 10 };
+    };
+    registerBarcodeWidthProber(probe);
+    try {
+      useLabelStore.setState({
+        pages: [
+          { objects: [] },
+          { objects: [{ id: "bc", type: "code128", x: 400, y: 50, rotation: 0, fieldJustify: "R", props: { content: "12345", height: 60, moduleWidth: 2 } } as never], jmDensity: "B" },
+        ],
+      });
+      const result = state().applyAgentOps([
+        { op: "addVariable", variable: { name: "qty", defaultValue: "1234567890" } },
+        { op: "update", id: "bc", props: { content: "«qty»" } },
+      ]);
+      expect(result.ok).toBe(true);
+      // Five more characters at 4 dpmm: 20 dots of growth, kept to the left of the right anchor.
+      expect(state().pages[1]?.objects[0]?.x).toBe(380);
+    } finally {
+      unregisterBarcodeWidthProber(probe);
+    }
   });
 
   it("keeps a rename from marking the object dirty", () => {

@@ -857,6 +857,8 @@ const fa = {
     updateRestart: 'اکنون راه‌اندازی مجدد کنید',
     replacedByAgentFmt: 'یک عامل برچسب را جایگزین کرد. اشیاء در برچسب قبلی: {n}',
     restoreReplaced: 'بازگردانی برچسب قبلی',
+    restoredFromAgentFmt: 'برچسب قبلی بازگشت. اشیاء در طرح عامل: {n}',
+    restoreAgentDesign: 'بازگرداندن طرح عامل',
     chooseFile: 'انتخاب فایل',
     insertVariable: 'درج متغیر',
     clockYear4: 'سال (4 رقمی)',

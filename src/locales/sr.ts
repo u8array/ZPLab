@@ -857,6 +857,8 @@ const sr = {
     updateRestart: 'Рестартуј сада',
     replacedByAgentFmt: 'Агент је заменио налепницу. Објекти у претходној: {n}',
     restoreReplaced: 'Врати претходну налепницу',
+    restoredFromAgentFmt: 'Претходна налепница је враћена. Објекти у дизајну агента: {n}',
+    restoreAgentDesign: 'Врати дизајн агента',
     chooseFile: 'Изабери датотеку',
     insertVariable: 'Уметни променљиву',
     clockYear4: 'Година (4 цифре)',

@@ -857,6 +857,8 @@ const sl = {
     updateRestart: 'Znova zaženi zdaj',
     replacedByAgentFmt: 'Agent je zamenjal nalepko. Predmeti v prejšnji: {n}',
     restoreReplaced: 'Obnovi prejšnjo nalepko',
+    restoredFromAgentFmt: 'Prejšnja nalepka je nazaj. Predmeti v zasnovi agenta: {n}',
+    restoreAgentDesign: 'Obnovi zasnovo agenta',
     chooseFile: 'Izberi datoteko',
     insertVariable: 'Vstavi spremenljivko',
     clockYear4: 'Leto (4-mestno)',

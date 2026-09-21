@@ -857,6 +857,8 @@ const en = {
     updateRestart: 'Restart now',
     replacedByAgentFmt: 'An agent replaced the label. Objects in the previous one: {n}',
     restoreReplaced: 'Restore previous label',
+    restoredFromAgentFmt: "The previous label is back. Objects in the agent's design: {n}",
+    restoreAgentDesign: "Bring back the agent's design",
     chooseFile: 'Choose file',
     insertVariable: 'Insert variable',
     clockYear4: 'Year (4-digit)',

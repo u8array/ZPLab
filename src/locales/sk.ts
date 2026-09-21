@@ -857,6 +857,8 @@ const sk = {
     updateRestart: 'Reštartovať teraz',
     replacedByAgentFmt: 'Agent nahradil štítok. Objekty v predchádzajúcom: {n}',
     restoreReplaced: 'Obnoviť predchádzajúci štítok',
+    restoredFromAgentFmt: 'Predchádzajúci štítok je späť. Objekty v návrhu agenta: {n}',
+    restoreAgentDesign: 'Obnoviť návrh agenta',
     chooseFile: 'Vybrať súbor',
     insertVariable: 'Vložiť premennú',
     clockYear4: 'Rok (4-miestny)',

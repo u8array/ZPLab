@@ -66,13 +66,13 @@ export function registerPrompts(server: McpServer, hosted: boolean): void {
   server.registerPrompt(
     "edit_open_label",
     {
-      title: "Edit the open label",
+      title: "Edit the open design",
       description: "Change the design currently open in ZPLab, in place.",
       argsSchema: { change: optional("what should change") },
     },
     ({ change }) =>
       user(
-        `Change the label open in ZPLab${change ? `: ${change}` : ""}. ` +
+        `Change the design open in ZPLab${change ? `: ${change}` : ""}. ` +
           "Take the object ids from get_current_design's bounds, then send the " +
           "smallest edit_design call that does it.",
       ),
@@ -82,12 +82,12 @@ export function registerPrompts(server: McpServer, hosted: boolean): void {
     "label_with_logo",
     {
       title: "Place a logo",
-      description: "Put an image on a label as a printable 1-bit graphic.",
+      description: "Put an image on the open design as a printable 1-bit graphic.",
       argsSchema: { source: optional("URL or path of the image") },
     },
     ({ source }) =>
       user(
-        `Place a logo${source ? ` from ${source}` : ""} on the label. Fetch the ` +
+        `Place a logo${source ? ` from ${source}` : ""} on the open design. Fetch the ` +
           "bytes yourself and hand them to raster_image as a data: URL; the tool " +
           "renders, it does not download. The height follows the aspect ratio, so " +
           "check it against the space you have before placing the returned object.",

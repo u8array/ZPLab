@@ -857,6 +857,8 @@ const ja = {
     updateRestart: '今すぐ再起動',
     replacedByAgentFmt: 'エージェントがラベルを置き換えました。以前のラベルのオブジェクト: {n}',
     restoreReplaced: '以前のラベルを復元',
+    restoredFromAgentFmt: '以前のラベルに戻りました。エージェントのデザインのオブジェクト: {n}',
+    restoreAgentDesign: 'エージェントのデザインに戻す',
     chooseFile: 'ファイルを選択',
     insertVariable: '変数を挿入',
     clockYear4: '年 (4桁)',

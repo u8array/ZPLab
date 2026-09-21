@@ -857,6 +857,8 @@ const pt = {
     updateRestart: 'Reiniciar agora',
     replacedByAgentFmt: 'Um agente substituiu a etiqueta. Objetos na anterior: {n}',
     restoreReplaced: 'Restaurar etiqueta anterior',
+    restoredFromAgentFmt: 'A etiqueta anterior está de volta. Objetos no design do agente: {n}',
+    restoreAgentDesign: 'Restaurar o design do agente',
     chooseFile: 'Escolher ficheiro',
     insertVariable: 'Inserir variável',
     clockYear4: 'Ano (4 dígitos)',

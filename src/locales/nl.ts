@@ -857,6 +857,8 @@ const nl = {
     updateRestart: 'Nu opnieuw opstarten',
     replacedByAgentFmt: 'Een agent heeft het label vervangen. Objecten in het vorige: {n}',
     restoreReplaced: 'Vorig label herstellen',
+    restoredFromAgentFmt: 'Het vorige label is terug. Objecten in het ontwerp van de agent: {n}',
+    restoreAgentDesign: 'Ontwerp van de agent terughalen',
     chooseFile: 'Bestand kiezen',
     insertVariable: 'Variabele invoegen',
     clockYear4: 'Jaar (4 cijfers)',

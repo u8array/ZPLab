@@ -449,14 +449,16 @@ export function AppShell() {
       )}
       {replacedDesign && (
         <div className="shrink-0 flex items-center gap-3 px-4 py-2 bg-warning/10 border-b border-warning/40 font-mono text-[10px] text-warning">
-          <span className="flex-1">{formatTemplate(t.app.replacedByAgentFmt, { n: String(replacedDesign.objects) })}</span>
+          <span className="flex-1">
+            {formatTemplate(replacedDesign.source === 'agent' ? t.app.replacedByAgentFmt : t.app.restoredFromAgentFmt, { n: String(replacedDesign.objects) })}
+          </span>
           <Tooltip content={sourceEditDirty ? t.printerSettings.frozenHint : undefined}>
             <button
               onClick={restoreReplacedDesign}
               disabled={sourceEditDirty}
               className="text-warning hover:text-text disabled:opacity-40 transition-colors shrink-0"
             >
-              {t.app.restoreReplaced}
+              {replacedDesign.source === 'agent' ? t.app.restoreReplaced : t.app.restoreAgentDesign}
             </button>
           </Tooltip>
           <button

@@ -857,6 +857,8 @@ const zhHans = {
     updateRestart: '立即重启',
     replacedByAgentFmt: 'AI 代理替换了标签。之前标签中的对象：{n}',
     restoreReplaced: '恢复之前的标签',
+    restoredFromAgentFmt: '之前的标签已恢复。AI 代理设计中的对象：{n}',
+    restoreAgentDesign: '恢复 AI 代理的设计',
     chooseFile: '选择文件',
     insertVariable: '插入变量',
     clockYear4: '年 (4位)',

@@ -857,6 +857,8 @@ const cs = {
     updateRestart: 'Restartovat nyní',
     replacedByAgentFmt: 'Agent nahradil štítek. Objekty v předchozím: {n}',
     restoreReplaced: 'Obnovit předchozí štítek',
+    restoredFromAgentFmt: 'Předchozí štítek je zpět. Objekty v návrhu agenta: {n}',
+    restoreAgentDesign: 'Obnovit návrh agenta',
     chooseFile: 'Vybrat soubor',
     insertVariable: 'Vložit proměnnou',
     clockYear4: 'Rok (4místný)',

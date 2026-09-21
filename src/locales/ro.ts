@@ -857,6 +857,8 @@ const ro = {
     updateRestart: 'Repornește acum',
     replacedByAgentFmt: 'Un agent a înlocuit eticheta. Obiecte în cea anterioară: {n}',
     restoreReplaced: 'Restabilește etichetă anterioară',
+    restoredFromAgentFmt: 'Eticheta anterioară a revenit. Obiecte în designul agentului: {n}',
+    restoreAgentDesign: 'Restabilește designul agentului',
     chooseFile: 'Alege fișier',
     insertVariable: 'Inserează variabilă',
     clockYear4: 'An (4 cifre)',

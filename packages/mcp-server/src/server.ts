@@ -58,14 +58,14 @@ const WINDOW_TOOL_INSTRUCTIONS =
   "Offer once to edit that design or to start a new one. " +
   "From then on apply every change to the open design with edit_design, without asking " +
   "again, because each call is one undo step the user can reverse. " +
-  "Ask before open_in_app, because it discards the open design. " +
+  "Ask before open_in_app, because it replaces the open design. " +
   "A user who chose to start a new one in that first offer has already confirmed it.";
 
 /** Workflow recipe the host injects at initialize, so a session starts
  *  pre-trained instead of discovering it by trial. */
 export const SERVER_INSTRUCTIONS =
   "ZPLab builds Zebra ZPL label designs. Call get_schema before you build or edit " +
-  "anything, to learn the object types and their props. Build a label with create_draft (x/y in dots " +
+  "anything, to learn the object types and their props. Build a design with create_draft (x/y in dots " +
   "from the top-left origin; props merge over defaults), then read the returned " +
   "warnings, bounds, and overlaps and iterate until nothing unintended remains. " +
   "Values that differ per printed label belong in `variables`, referenced from " +
@@ -99,7 +99,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
     {
       title: "Create ZPLab draft",
       description:
-        "Build a ZPLab label draft from a size, a list of objects and optional " +
+        "Build a ZPLab design from a size, a list of objects and optional " +
         "variables. Returns the parseable design file, preflight warnings, " +
         "per-object bounds (dots), and bbox overlaps. Declare every value that " +
         "changes per print as a variable and reference it in content as " +

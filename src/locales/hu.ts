@@ -857,6 +857,8 @@ const hu = {
     updateRestart: 'Újraindítás most',
     replacedByAgentFmt: 'Egy ügynök lecserélte a címkét. Az előző objektumai: {n}',
     restoreReplaced: 'Előző címke visszaállítása',
+    restoredFromAgentFmt: 'Az előző címke visszatért. Objektumok az ügynök tervében: {n}',
+    restoreAgentDesign: 'Ügynök tervének visszaállítása',
     chooseFile: 'Fájl kiválasztása',
     insertVariable: 'Változó beszúrása',
     clockYear4: 'Év (4 jegyű)',

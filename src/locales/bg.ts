@@ -857,6 +857,8 @@ const bg = {
     updateRestart: 'Рестартиране сега',
     replacedByAgentFmt: 'Агент замени етикета. Обекти в предишния: {n}',
     restoreReplaced: 'Възстановяване на предишен етикет',
+    restoredFromAgentFmt: 'Предишният етикет се върна. Обекти в дизайна на агента: {n}',
+    restoreAgentDesign: 'Възстановяване на дизайна на агента',
     chooseFile: 'Избор на файл',
     insertVariable: 'Вмъкване на променлива',
     clockYear4: 'Година (4-цифрена)',

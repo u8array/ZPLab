@@ -857,6 +857,8 @@ const zhHant = {
     updateRestart: '立即重新啟動',
     replacedByAgentFmt: 'AI 代理取代了標籤。先前標籤中的物件：{n}',
     restoreReplaced: '還原先前的標籤',
+    restoredFromAgentFmt: '先前的標籤已還原。AI 代理設計中的物件：{n}',
+    restoreAgentDesign: '還原 AI 代理的設計',
     chooseFile: '選擇檔案',
     insertVariable: '插入變數',
     clockYear4: '年 (4位)',

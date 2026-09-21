@@ -857,6 +857,8 @@ const sv = {
     updateRestart: 'Starta om nu',
     replacedByAgentFmt: 'En agent ersatte etiketten. Objekt i den förra: {n}',
     restoreReplaced: 'Återställ föregående etikett',
+    restoredFromAgentFmt: 'Den föregående etiketten är tillbaka. Objekt i agentens design: {n}',
+    restoreAgentDesign: 'Återställ agentens design',
     chooseFile: 'Välj fil',
     insertVariable: 'Infoga variabel',
     clockYear4: 'År (4 siffror)',

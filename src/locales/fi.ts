@@ -857,6 +857,8 @@ const fi = {
     updateRestart: 'Käynnistä uudelleen nyt',
     replacedByAgentFmt: 'Agentti korvasi tarran. Objekteja edellisessä: {n}',
     restoreReplaced: 'Palauta edellinen tarra',
+    restoredFromAgentFmt: 'Edellinen tarra on palautettu. Objekteja agentin suunnittelussa: {n}',
+    restoreAgentDesign: 'Palauta agentin suunnittelu',
     chooseFile: 'Valitse tiedosto',
     insertVariable: 'Lisää muuttuja',
     clockYear4: 'Vuosi (4-numeroinen)',

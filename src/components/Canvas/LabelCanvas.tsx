@@ -31,7 +31,7 @@ import { barcodeEncodeFindings } from "./barcodePreflight";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { useContextMenu } from "../../hooks/useContextMenu";
 import { rotateSelectionChanges } from "../../lib/groupRotation";
-import { registerBarcodeWidthProber, unregisterBarcodeWidthProber } from "../../store/anchorRepin";
+import { registerBarcodeWidthProber, unregisterBarcodeWidthProber, type ProbeCtx } from "../../store/anchorRepin";
 import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
 import { measureBarcodeFootprintDots } from "./bwipHelpers";
 import { copyText } from "../../lib/clipboard";
@@ -493,10 +493,12 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // Probes variable DEFAULTS, not the previewed row, so a preview toggle cannot move the persisted anchor x.
   useEffect(() => {
     const { variables: vars, clock } = previewBinding;
-    const probe = (o: LabelObject) => {
+    const probe = (o: LabelObject, ctx?: ProbeCtx) => {
       if (isGroup(o)) return null;
-      const resolved = resolveForMeasure(o, vars, clock);
-      return measureBarcodeFootprintDots(resolved as LeafObject, scale, effDpmm);
+      const resolved = resolveForMeasure(o, ctx?.variables ?? vars, clock);
+      // A ctx measures print-true at one pixel per dot, like the sidecar. The zoom view quantizes modules to whole pixels.
+      const dpmm = ctx ? effectiveDpmm(ctx.label) : effDpmm;
+      return measureBarcodeFootprintDots(resolved as LeafObject, ctx ? dpmm : scale, dpmm);
     };
     registerBarcodeWidthProber(probe);
     return () => unregisterBarcodeWidthProber(probe);

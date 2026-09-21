@@ -857,6 +857,8 @@ const de = {
     updateRestart: 'Jetzt neu starten',
     replacedByAgentFmt: 'Ein Agent hat das Etikett ersetzt. Objekte im vorherigen: {n}',
     restoreReplaced: 'Vorheriges Etikett wiederherstellen',
+    restoredFromAgentFmt: 'Das vorherige Etikett ist zurück. Objekte im Design des Agenten: {n}',
+    restoreAgentDesign: 'Design des Agenten zurückholen',
     chooseFile: 'Datei wählen',
     insertVariable: 'Variable einfügen',
     clockYear4: 'Jahr (4-stellig)',

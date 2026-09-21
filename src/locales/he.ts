@@ -857,6 +857,8 @@ const he = {
     updateRestart: 'הפעל מחדש כעת',
     replacedByAgentFmt: 'סוכן החליף את התווית. אובייקטים בקודמת: {n}',
     restoreReplaced: 'שחזר תווית קודמת',
+    restoredFromAgentFmt: 'התווית הקודמת חזרה. אובייקטים בעיצוב הסוכן: {n}',
+    restoreAgentDesign: 'שחזר את עיצוב הסוכן',
     chooseFile: 'בחר קובץ',
     insertVariable: 'הכנס משתנה',
     clockYear4: 'שנה (4 ספרות)',

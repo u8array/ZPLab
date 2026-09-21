@@ -857,6 +857,8 @@ const ar = {
     updateRestart: 'أعد التشغيل الآن',
     replacedByAgentFmt: 'استبدل وكيل الملصق. الكائنات في السابق: {n}',
     restoreReplaced: 'استعادة ملصق سابق',
+    restoredFromAgentFmt: 'عاد الملصق السابق. الكائنات في تصميم الوكيل: {n}',
+    restoreAgentDesign: 'استعادة تصميم الوكيل',
     chooseFile: 'اختيار ملف',
     insertVariable: 'إدراج متغير',
     clockYear4: 'السنة (4 أرقام)',

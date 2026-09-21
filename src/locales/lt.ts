@@ -857,6 +857,8 @@ const lt = {
     updateRestart: 'Paleisti iš naujo dabar',
     replacedByAgentFmt: 'Agentas pakeitė etiketę. Objektai ankstesnėje: {n}',
     restoreReplaced: 'Atkurti ankstesnę etiketę',
+    restoredFromAgentFmt: 'Ankstesnė etiketė grąžinta. Objektai agento dizaine: {n}',
+    restoreAgentDesign: 'Atkurti agento dizainą',
     chooseFile: 'Pasirinkti failą',
     insertVariable: 'Įterpti kintamąjį',
     clockYear4: 'Metai (4 skaitmenys)',

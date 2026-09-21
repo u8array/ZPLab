@@ -857,6 +857,8 @@ const ko = {
     updateRestart: '지금 재시작',
     replacedByAgentFmt: '에이전트가 라벨을 교체했습니다. 이전 라벨의 개체 수: {n}',
     restoreReplaced: '이전 라벨 복원',
+    restoredFromAgentFmt: '이전 라벨로 돌아왔습니다. 에이전트 디자인의 개체 수: {n}',
+    restoreAgentDesign: '에이전트 디자인 복원',
     chooseFile: '파일 선택',
     insertVariable: '변수 삽입',
     clockYear4: '연도 (4자리)',

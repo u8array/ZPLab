@@ -857,6 +857,8 @@ const et = {
     updateRestart: 'Taaskäivita kohe',
     replacedByAgentFmt: 'Agent asendas etiketi. Objekte eelmises: {n}',
     restoreReplaced: 'Taasta eelmine etikett',
+    restoredFromAgentFmt: 'Eelmine etikett on tagasi. Objekte agendi kujunduses: {n}',
+    restoreAgentDesign: 'Too agendi kujundus tagasi',
     chooseFile: 'Vali fail',
     insertVariable: 'Lisa muutuja',
     clockYear4: 'Aasta (4 numbrit)',

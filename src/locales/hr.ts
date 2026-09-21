@@ -857,6 +857,8 @@ const hr = {
     updateRestart: 'Ponovno pokreni sada',
     replacedByAgentFmt: 'Agent je zamijenio naljepnicu. Objekti u prethodnoj: {n}',
     restoreReplaced: 'Vrati prethodnu naljepnicu',
+    restoredFromAgentFmt: 'Prethodna naljepnica je vraćena. Objekti u dizajnu agenta: {n}',
+    restoreAgentDesign: 'Vrati dizajn agenta',
     chooseFile: 'Odaberi datoteku',
     insertVariable: 'Umetni varijablu',
     clockYear4: 'Godina (4 znamenke)',

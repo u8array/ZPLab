@@ -28,11 +28,19 @@ describe("a pushed design keeps the one it displaced", () => {
   it("applies the push, keeps the displaced design and restores it on request", () => {
     expect(state().openPushedDesign(pushed("agent"))).toEqual({ ok: true, replacedObjects: 2, restorable: true });
     expect(state().pages[0]?.objects.map((o) => o.id)).toEqual(["p"]);
-    expect(state().replacedDesign?.objects).toBe(2);
+    expect(state().replacedDesign).toMatchObject({ objects: 2, source: "agent" });
     expect(state().restoreReplacedDesign()).toBe(true);
     expect(state().pages[0]?.objects.map((o) => o.id)).toEqual(["a", "b"]);
     expect(state().label.widthMm).toBe(100);
-    expect(state().replacedDesign).toBeNull();
+    expect(state().replacedDesign).toMatchObject({ objects: 1, source: "restore" });
+  });
+
+  it("restores by swapping", () => {
+    state().openPushedDesign(pushed("agent"));
+    state().restoreReplacedDesign();
+    expect(state().restoreReplacedDesign()).toBe(true);
+    expect(state().pages[0]?.objects.map((o) => o.id)).toEqual(["p"]);
+    expect(state().replacedDesign).toMatchObject({ objects: 2, source: "agent" });
   });
 
   it("keeps nothing when the push is refused, and the next document replacement clears the slot", () => {
@@ -46,7 +54,7 @@ describe("a pushed design keeps the one it displaced", () => {
 
   it("skips the slot past the size cap and says so", () => {
     useLabelStore.setState({ pages: [{ objects: [text("big", "x".repeat(MAX_REPLACED_DESIGN_CHARS))] }] });
-    expect(state().openPushedDesign(pushed("agent")).restorable).toBe(false);
+    expect(state().openPushedDesign(pushed("agent"))).toEqual({ ok: true, replacedObjects: 1, restorable: false });
     expect(state().replacedDesign).toBeNull();
   });
 

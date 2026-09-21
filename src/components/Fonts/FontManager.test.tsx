@@ -83,7 +83,7 @@ describe("FontManager delete owners", () => {
   });
 
   it("keeps a font only the replaced design names, and says so", () => {
-    act(() => useLabelStore.setState({ replacedDesign: { text: serializeDesign({ widthMm: 50, heightMm: 30, dpmm: 8 }, [{ objects: [text("E:ARIAL.TTF")] }]), objects: 1 } }));
+    act(() => useLabelStore.setState({ replacedDesign: { text: serializeDesign({ widthMm: 50, heightMm: 30, dpmm: 8 }, [{ objects: [text("E:ARIAL.TTF")] }]), objects: 1, source: "agent" } }));
     const r = render(<FontManager />);
     expect(deleteButton(r).disabled).toBe(true);
     expect(deleteReason(r)).toMatch(/agent replaced/);
