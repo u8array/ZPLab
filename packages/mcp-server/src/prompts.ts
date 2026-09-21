@@ -73,9 +73,8 @@ export function registerPrompts(server: McpServer, hosted: boolean): void {
     ({ change }) =>
       user(
         `Change the label open in ZPLab${change ? `: ${change}` : ""}. ` +
-          "Start with get_current_design, take the object ids from its bounds, " +
-          "then send the smallest edit_design call that does it. Do not use open_in_app " +
-          "for this: it replaces what is on my screen.",
+          "Take the object ids from get_current_design's bounds, then send the " +
+          "smallest edit_design call that does it.",
       ),
   );
 

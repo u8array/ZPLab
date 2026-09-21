@@ -52,8 +52,9 @@ describe("prepared workflows", () => {
 
 describe("a stdio server", () => {
   it("does not promise the window tools it never registers", () => {
-    expect(SERVER_INSTRUCTIONS).not.toContain("get_current_design");
-    expect(SERVER_INSTRUCTIONS).not.toContain("edit_design");
+    for (const tool of ["get_current_design", "edit_design", "open_in_app", "raster_image"]) {
+      expect(SERVER_INSTRUCTIONS).not.toContain(tool);
+    }
   });
 });
 
@@ -61,5 +62,14 @@ describe("a hosted server", () => {
   it("names every window tool in its instructions", async () => {
     const instructions = (await connect(true)).getInstructions() ?? "";
     for (const tool of ["get_current_design", "edit_design", "open_in_app", "raster_image"]) expect(instructions).toContain(tool);
+  });
+
+  it("opens the session by reading the screen once and stops asking after that", async () => {
+    const instructions = (await connect(true)).getInstructions() ?? "";
+    expect(instructions).toContain("Open the session with get_current_design");
+    expect(instructions).toContain("bounds rows");
+    expect(instructions).toContain("Offer once");
+    expect(instructions).toContain("without asking again");
+    expect(instructions).toContain("Ask before open_in_app");
   });
 });

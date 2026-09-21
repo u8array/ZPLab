@@ -49,14 +49,23 @@ const WINDOW_TOOL_INSTRUCTIONS =
   "These tools reach the desktop window and answer with a reason when none " +
   "is connected: get_current_design reads the open design including the user's " +
   "own edits, edit_design changes it in place with operations, open_in_app " +
-  "replaces it with a design file (confirm with the user first), and " +
-  "raster_image turns a data: URL into a placeable 1-bit graphic.";
+  "replaces it with a design file, and " +
+  "raster_image turns a data: URL into a placeable 1-bit graphic. " +
+  "Open the session with get_current_design. " +
+  "Tell the user the label size and dpmm, which the reply carries in designFile.label. " +
+  "The object count is the number of bounds rows, and those cover the printing objects only. " +
+  "If no window is connected, tell the user and keep to the design-file tools. " +
+  "Offer once to edit that design or to start a new one. " +
+  "From then on apply every change to the open design with edit_design, without asking " +
+  "again, because each call is one undo step the user can reverse. " +
+  "Ask before open_in_app, because it discards the open design. " +
+  "A user who chose to start a new one in that first offer has already confirmed it.";
 
 /** Workflow recipe the host injects at initialize, so a session starts
  *  pre-trained instead of discovering it by trial. */
 export const SERVER_INSTRUCTIONS =
-  "ZPLab builds Zebra ZPL label designs. Call get_schema first to learn the " +
-  "object types and their props. Build a label with create_draft (x/y in dots " +
+  "ZPLab builds Zebra ZPL label designs. Call get_schema before you build or edit " +
+  "anything, to learn the object types and their props. Build a label with create_draft (x/y in dots " +
   "from the top-left origin; props merge over defaults), then read the returned " +
   "warnings, bounds, and overlaps and iterate until nothing unintended remains. " +
   "Values that differ per printed label belong in `variables`, referenced from " +
