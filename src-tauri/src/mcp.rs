@@ -570,11 +570,22 @@ mod tests {
     let raster =
       r#"{"zplabEvent":"rasterRequest","id":7,"dataUrl":"data:image/png;base64,AA","widthDots":8}"#;
     let edit = r#"{"zplabEvent":"editRequest","id":9,"operations":[{"op":"remove","id":"a"}]}"#;
-    assert_eq!(passthrough_request_line(raster, "rasterRequest"), Some(raster.to_string()));
-    assert_eq!(passthrough_request_line(edit, "editRequest"), Some(edit.to_string()));
+    assert_eq!(
+      passthrough_request_line(raster, "rasterRequest"),
+      Some(raster.to_string())
+    );
+    assert_eq!(
+      passthrough_request_line(edit, "editRequest"),
+      Some(edit.to_string())
+    );
     assert!(passthrough_request_line(edit, "rasterRequest").is_none());
-    assert!(passthrough_request_line(r#"{"zplabEvent":"designRequest","id":7}"#, "rasterRequest").is_none());
-    assert!(passthrough_request_line(r#"{"zplabEvent":"rasterRequest"}"#, "rasterRequest").is_none());
+    assert!(
+      passthrough_request_line(r#"{"zplabEvent":"designRequest","id":7}"#, "rasterRequest")
+        .is_none()
+    );
+    assert!(
+      passthrough_request_line(r#"{"zplabEvent":"rasterRequest"}"#, "rasterRequest").is_none()
+    );
     assert!(passthrough_request_line("not json", "editRequest").is_none());
   }
 
@@ -582,7 +593,12 @@ mod tests {
   fn reply_routes_are_the_ones_the_app_answers_on() {
     assert_eq!(REPLY_ROUTES.len(), 6);
     // Every reply the webview posts needs its route here, or mcp_reply refuses it.
-    for route in ["/design-response", "/draft-receipt", "/raster-response", "/edit-receipt"] {
+    for route in [
+      "/design-response",
+      "/draft-receipt",
+      "/raster-response",
+      "/edit-receipt",
+    ] {
       assert!(REPLY_ROUTES.contains(&route), "{route} is not allowlisted");
     }
     for route in REPLY_ROUTES {
