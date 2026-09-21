@@ -1,11 +1,10 @@
 // The window side of the sidecar bridge: assemble and post the replies the
 // MCP app tools wait on. React-free; useMcpBridge only wires the listeners.
 
-import { serializeDesign } from "@zplab/core/lib/designFile";
 import { gfaFromImage, scaledHeightDots } from "@zplab/core/lib/imageToZpl";
 import { GF_MAX_BYTES_PER_ROW, GF_MAX_ROWS, gfByteWidth } from "@zplab/core/registry/image";
 import { loadImage } from "@zplab/core/lib/loadImage";
-import { exportableLeaves, getAllLeaves } from "@zplab/core/types/Group";
+import { exportableLeaves } from "@zplab/core/types/Group";
 import {
   measuredBoundsMap,
   subscribeMeasuredBounds,
@@ -16,6 +15,7 @@ import {
   postRasterResponse,
 } from "./mcpServer";
 import { useLabelStore, selectSourceEditDirty } from "../store/labelStore";
+import { selectDesignText } from "../store/labelStore.selectors";
 
 /** Re-measuring after an open_in_app swap is async (React commit + bwip),
  *  so an immediate snapshot could serve the OLD design's footprints. */
@@ -57,10 +57,9 @@ function measuredSettled(): Promise<void> {
  *  surfaces via the sidecar's own request timeout. */
 export async function respondToDesignRequest(id: number): Promise<void> {
   await measuredSettled();
-  const { label, pages, variables, columnMapping, dataSourceRef } = useLabelStore.getState();
-  const designFile: unknown = JSON.parse(
-    serializeDesign(label, pages, variables, columnMapping, dataSourceRef),
-  );
+  const state = useLabelStore.getState();
+  const designFile: unknown = JSON.parse(selectDesignText(state));
+  const { pages } = state;
   // A deleted object's leftover footprint must not ride along.
   const liveIds = new Set(pages.flatMap((p) => exportableLeaves(p.objects)).map((o) => o.id));
   const measured = Object.fromEntries(
@@ -82,21 +81,17 @@ export async function respondToOpenDraft(id: number, designText: string): Promis
     });
     return;
   }
-  // Counted before the swap: opening a design replaces the editor's document
-  // and clears its undo history, so the reply says what was displaced rather
-  // than letting the agent report a silent success.
-  const before = useLabelStore
-    .getState()
-    .pages.reduce((n, p) => n + getAllLeaves(p.objects).length, 0);
   // Answered even on a throw: without a receipt the tool waits out its timeout
   // and reports "no answer" for a document that may already have been swapped.
   let receipt: Parameters<typeof postDraftReceipt>[0];
   try {
-    const applied = useLabelStore.getState().loadDesignText(designText);
+    const result = useLabelStore.getState().openPushedDesign(designText);
     receipt = {
       id,
-      ok: applied,
-      ...(applied ? { replacedObjects: before } : { error: "ZPLab could not open the design file" }),
+      ok: result.ok,
+      ...(result.ok
+        ? { replacedObjects: result.replacedObjects, restorable: result.restorable }
+        : { error: "ZPLab could not open the design file" }),
     };
   } catch (e) {
     receipt = { id, ok: false, error: e instanceof Error ? e.message : "ZPLab could not open the design file" };

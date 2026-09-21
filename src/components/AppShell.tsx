@@ -42,7 +42,7 @@ import {
   MoonIcon,
   GlobeAltIcon,
 } from "@heroicons/react/16/solid";
-import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectEditorFrozen, selectSourceEditing, selectDocumentEmits, selectBatchPrintCount } from "../store/labelStore";
+import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectEditorFrozen, selectSourceEditing, selectSourceEditDirty, selectDocumentEmits, selectBatchPrintCount } from "../store/labelStore";
 import { datasetTimestamp } from "@zplab/core/types/DataSource";
 import { isCurrentDataContext, settleDatasetReplace } from "../store/datasetActions";
 import { ConfirmDialog } from "./ui/ConfirmDialog";
@@ -130,6 +130,10 @@ export function AppShell() {
   const setLocale = useLabelStore((s) => s.setLocale);
   const userError = useLabelStore((s) => s.userError);
   const clearUserError = useLabelStore((s) => s.clearUserError);
+  const replacedDesign = useLabelStore((s) => s.replacedDesign);
+  const restoreReplacedDesign = useLabelStore((s) => s.restoreReplacedDesign);
+  const dismissReplacedDesign = useLabelStore((s) => s.dismissReplacedDesign);
+  const sourceEditDirty = useLabelStore(selectSourceEditDirty);
   const labelaryEnabled = useLabelStore((s) => s.thirdParty.labelary);
   const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
   const [showPrintNotice, setShowPrintNotice] = useState(false);
@@ -441,6 +445,27 @@ export function AppShell() {
               <XMarkIcon className="w-3.5 h-3.5" />
             </button>
           )}
+        </div>
+      )}
+      {replacedDesign && (
+        <div className="shrink-0 flex items-center gap-3 px-4 py-2 bg-warning/10 border-b border-warning/40 font-mono text-[10px] text-warning">
+          <span className="flex-1">{formatTemplate(t.app.replacedByAgentFmt, { n: String(replacedDesign.objects) })}</span>
+          <Tooltip content={sourceEditDirty ? t.printerSettings.frozenHint : undefined}>
+            <button
+              onClick={restoreReplacedDesign}
+              disabled={sourceEditDirty}
+              className="text-warning hover:text-text disabled:opacity-40 transition-colors shrink-0"
+            >
+              {t.app.restoreReplaced}
+            </button>
+          </Tooltip>
+          <button
+            onClick={dismissReplacedDesign}
+            className="text-warning/70 hover:text-warning transition-colors"
+            aria-label={t.app.dismiss}
+          >
+            <XMarkIcon className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
       {userError && (

@@ -19,7 +19,7 @@ import { pinBareFontDriveLeaf, reconstructLegacyJmDensity } from '@zplab/core/li
 import type { DesignFilePage } from '@zplab/core/lib/designFile';
 import type { CustomFontMapping, JmDensity, LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { LabelObject, Page } from '@zplab/core/types/Group';
-import { documentUsage, liveUsage, ownerUsage, type LiveUsage, type Usage } from '@zplab/core/lib/liveUsage';
+import { documentUsage, liveUsage, ownerUsage, usageOfDesignText, type LiveUsage, type Usage } from '@zplab/core/lib/liveUsage';
 import {
   createPrinterProfileSlice,
   type PrinterProfileSlice,
@@ -36,6 +36,7 @@ import { createAppUpdateSlice, type AppUpdateSlice } from './slices/appUpdateSli
 import { createFeedbackSlice, type FeedbackSlice } from './slices/feedbackSlice';
 import { createLifecycleSlice, type LifecycleSlice } from './slices/lifecycleSlice';
 import { createSourceEditSlice, type SourceEditSlice } from './slices/sourceEditSlice';
+import { createRestoreSlice, type ReplacedDesign, type RestoreSlice } from './slices/restoreSlice';
 import {
   type ColumnMapping,
   type Variable,
@@ -60,7 +61,8 @@ export type LabelState =
   & AppUpdateSlice
   & FeedbackSlice
   & LifecycleSlice
-  & SourceEditSlice;
+  & SourceEditSlice
+  & RestoreSlice;
 
 export {
   currentObjects,
@@ -531,6 +533,7 @@ export const useLabelStore = create<LabelState>()(
       ...createFeedbackSlice(set, get, store),
       ...createLifecycleSlice(set, get, store),
       ...createSourceEditSlice(set, get, store),
+      ...createRestoreSlice(set, get, store),
     }),
     {
       name: 'zpl-designer-session',
@@ -586,17 +589,30 @@ function usageOfSnapshot(snapshot: Partial<LabelState>): Usage {
   return usage;
 }
 
-/** Everything that still names a cached file: the open pages, the profile, the undo history, the clipboard. */
+const replacedUsage = new WeakMap<ReplacedDesign, Usage>();
+
+/** The slot holds serialized text, so its claim is parsed once per slot. */
+function usageOfReplaced(slot: ReplacedDesign): Usage {
+  const cached = replacedUsage.get(slot);
+  if (cached) return cached;
+  const usage = usageOfDesignText(slot.text);
+  replacedUsage.set(slot, usage);
+  return usage;
+}
+
+/** Everything that still names a cached file: the open pages, the profile, the undo history, the replaced design, the clipboard. */
 export const useLiveUsage = (): LiveUsage => {
   const { pastStates, futureStates } = useHistory();
   const pages = useLabelStore((s) => s.pages);
   const label = useLabelStore((s) => s.label);
   const printerProfile = useLabelStore((s) => s.printerProfile);
   const clipboard = useLabelStore((s) => s.clipboard);
+  const replaced = useLabelStore((s) => s.replacedDesign);
   return liveUsage({
     document: documentUsage(pages, label),
     profile: printerProfile,
     history: [...pastStates, ...futureStates].map(usageOfSnapshot),
+    restore: replaced ? usageOfReplaced(replaced) : undefined,
     clipboard: documentUsage([{ objects: clipboard }], {}),
   });
 };

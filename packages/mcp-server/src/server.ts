@@ -195,7 +195,9 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
           "Push a design file into the running ZPLab desktop app and wait for the " +
           "app to confirm. This REPLACES whatever the user has open and clears " +
           "their undo history, so ask before calling it; the reply reports how " +
-          "many objects were displaced.",
+          "many objects were displaced. The app keeps the displaced design so the user can " +
+          "restore it. When `replaced.restorable` is false it could not keep it, so tell the " +
+          "user the replace is final.",
         inputSchema: designFileEnvelopeSchema.shape,
       },
       async ({ designFile }) => {
@@ -214,11 +216,10 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
           });
         }
         if (!receipt.ok) return json({ ok: false, errors: [receipt.error ?? "rejected"] });
-        // Opening replaces the editor's document and clears its undo history;
-        // say so rather than reporting a bare success.
+        // A bare success would hide that a document was displaced.
         return json({
           ok: true,
-          replaced: { objects: receipt.replacedObjects ?? 0, undoHistoryCleared: true },
+          replaced: { objects: receipt.replacedObjects ?? 0, undoHistoryCleared: true, restorable: receipt.restorable ?? false },
         });
       },
     );

@@ -6,6 +6,7 @@ import { isDesktopShell } from '../lib/platform';
 import type { Dataset } from './slices/dataSlice';
 import type { ColumnMapping } from '@zplab/core/types/Variable';
 import type { LabelState } from './labelStore';
+import { serializeDesign } from '@zplab/core/lib/designFile';
 import type { PageState } from './labelStore.internals';
 import type { SourceDocumentState } from '@zplab/core/lib/zplSourceEdit';
 import { designAsPageLabel, PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig, type PageLabel } from '@zplab/core/types/LabelConfig';
@@ -151,6 +152,10 @@ export const selectSourceEditing = (s: LabelState): boolean =>
  *  would destroy the buffer (MCP push refusal, discard confirmation). */
 export const selectSourceEditDirty = (s: LabelState): boolean =>
   s.sourceEdit.status === 'editing' && s.sourceEdit.draft !== s.sourceEdit.baseline;
+
+/** The open document as a design file, the shape every save, push and restore exchanges. */
+export const selectDesignText = (s: LabelState): string =>
+  serializeDesign(s.label, s.pages, s.variables, s.columnMapping, s.dataSourceRef);
 
 /** True while the object model is frozen against editor mutations: the
  *  preview overlay holds input, or the source buffer is Master. Every

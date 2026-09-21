@@ -35,6 +35,8 @@ export const draftReceiptSchema = z.object({
   error: z.string().optional(),
   /** Objects the push displaced, so the caller can say what it overwrote. */
   replacedObjects: z.number().int().optional(),
+  /** The app kept the displaced design for the user to restore. */
+  restorable: z.boolean().optional(),
 });
 export type DraftReceipt = z.infer<typeof draftReceiptSchema>;
 

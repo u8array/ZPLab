@@ -4,9 +4,10 @@ import type { PrinterProfile } from "../types/PrinterProfile";
 import { fontUsage } from "./fontUsage";
 import { imageUsage } from "./imageUsage";
 import { setupEntryKey } from "./storagePath";
+import { parseDesignFile } from "./designFile";
 
 /** Who still names a cached file. */
-export type LiveReason = "document" | "profile" | "history" | "clipboard";
+export type LiveReason = "document" | "profile" | "history" | "restore" | "clipboard";
 
 export interface Usage {
   images: ReadonlySet<string>;
@@ -28,10 +29,17 @@ export function ownerUsage(pages: readonly Page[], label: Pick<LabelConfig, "cus
   return { images: document.images, fonts: new Set([...document.fonts, ...profileFontKeys(profile)]) };
 }
 
+/** A serialized design's claim. A text that no longer parses claims nothing. */
+export function usageOfDesignText(text: string): Usage {
+  const parsed = parseDesignFile(text);
+  return parsed.ok ? documentUsage(parsed.value.pages, parsed.value.label) : { images: new Set(), fonts: new Set() };
+}
+
 export interface LiveOwners {
   document: Usage;
   profile: Pick<PrinterProfile, "setupFonts">;
   history: readonly Usage[];
+  restore: Usage | undefined;
   clipboard: Usage;
 }
 
@@ -53,6 +61,10 @@ export function liveUsage(owners: LiveOwners): LiveUsage {
   for (const snapshot of owners.history) {
     claim(images, snapshot.images, "history");
     claim(fonts, snapshot.fonts, "history");
+  }
+  if (owners.restore) {
+    claim(images, owners.restore.images, "restore");
+    claim(fonts, owners.restore.fonts, "restore");
   }
   claim(images, owners.clipboard.images, "clipboard");
   claim(fonts, owners.clipboard.fonts, "clipboard");

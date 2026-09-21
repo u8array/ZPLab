@@ -227,7 +227,7 @@ export function StoredGraphicsTab() {
                       </span>
                     </span>
                   </span>
-                  <Tooltip content={reason ? (({ document: loc.cacheInUse, history: loc.cacheInHistory, clipboard: loc.cacheInClipboard }) as Partial<Record<LiveReason, string>>)[reason] ?? loc.cacheInUse : frozen ? loc.cacheFrozen : loc.removeCached}>
+                  <Tooltip content={reason ? (({ document: loc.cacheInUse, history: loc.cacheInHistory, restore: loc.cacheInRestore, clipboard: loc.cacheInClipboard }) as Partial<Record<LiveReason, string>>)[reason] ?? loc.cacheInUse : frozen ? loc.cacheFrozen : loc.removeCached}>
                     <button
                       type="button"
                       disabled={held.has(img.id) || frozen}

@@ -131,8 +131,9 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       printerSettingsTab: null,
       mappingModalOpen: false,
       connectWizardOpen: false,
-      // An open source buffer belongs to the replaced document.
+      // An open source buffer and a kept restore both belong to the displaced document.
       ...endSourceSession(),
+      replacedDesign: null,
     });
     // A document replacement is not an undoable step back into the previous
     // file; clearing also prevents an undo from stranding the new design's

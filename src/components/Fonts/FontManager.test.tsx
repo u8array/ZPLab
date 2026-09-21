@@ -5,6 +5,7 @@ import { FontManager } from "./FontManager";
 import { useLabelStore } from "../../store/labelStore";
 import { cachedFontPath, getAllFonts, loadFontBytes, removeFont } from "@zplab/core/lib/fontCache";
 import { withoutSetupEntry } from "@zplab/core/lib/setupEntries";
+import { serializeDesign } from "@zplab/core/lib/designFile";
 import type { LabelObject } from "@zplab/core/types/Group";
 
 const text = (printerFontName: string): LabelObject =>
@@ -79,6 +80,14 @@ describe("FontManager delete owners", () => {
     dropped.unmount();
     act(() => useLabelStore.temporal.getState().clear());
     expect(deleteButton(render(<FontManager />)).disabled).toBe(false);
+  });
+
+  it("keeps a font only the replaced design names, and says so", () => {
+    act(() => useLabelStore.setState({ replacedDesign: { text: serializeDesign({ widthMm: 50, heightMm: 30, dpmm: 8 }, [{ objects: [text("E:ARIAL.TTF")] }]), objects: 1 } }));
+    const r = render(<FontManager />);
+    expect(deleteButton(r).disabled).toBe(true);
+    expect(deleteReason(r)).toMatch(/agent replaced/);
+    act(() => useLabelStore.setState({ replacedDesign: null }));
   });
 
   it("keeps a font only the clipboard names, and says so", () => {

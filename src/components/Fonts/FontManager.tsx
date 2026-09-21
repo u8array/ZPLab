@@ -318,7 +318,7 @@ function FontEntry({
             {t.fonts.embedInZpl}
           </label>
         </Tooltip>
-        <Tooltip content={inUse ? { document: t.fonts.inUse, profile: t.fonts.inProfile, history: t.fonts.inHistory, clipboard: t.fonts.inClipboard }[inUse] : t.fonts.delete}>
+        <Tooltip content={inUse ? { document: t.fonts.inUse, profile: t.fonts.inProfile, history: t.fonts.inHistory, restore: t.fonts.inRestore, clipboard: t.fonts.inClipboard }[inUse] : t.fonts.delete}>
           <button
             type="button"
             onClick={onRequestDelete}

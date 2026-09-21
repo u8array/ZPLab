@@ -50,7 +50,7 @@ describe("open_in_app gating", () => {
       expect(resolveDraftReceipt({ id: parsed.id, ok: true })).toBe(true);
 
       const res = await call;
-      expect(JSON.parse(res.content[0]?.text ?? "{}")).toEqual({ ok: true, replaced: { objects: 0, undoHistoryCleared: true } });
+      expect(JSON.parse(res.content[0]?.text ?? "{}")).toEqual({ ok: true, replaced: { objects: 0, undoHistoryCleared: true, restorable: false } });
     } finally {
       spy.mockRestore();
     }

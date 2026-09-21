@@ -13,14 +13,16 @@ describe("liveUsage", () => {
       document: documentUsage([{ objects: [image("i", "doc"), text("t", "e:doc.ttf")] }], { customFonts: [{ alias: "M", path: "E:ALIAS.TTF" }] }),
       profile: { setupFonts: [{ path: "e:doc.ttf" }, { path: "E:PROV.TTF" }] },
       history: [documentUsage([{ objects: [image("h", "hist"), text("u", "E:HIST.TTF"), image("i2", "doc")] }], {})],
-      clipboard: documentUsage([{ objects: [image("c", "clip"), text("v", "E:CLIP.TTF"), image("c2", "hist")] }], {}),
+      restore: documentUsage([{ objects: [image("r", "kept"), text("w", "E:KEPT.TTF"), image("r2", "hist")] }], {}),
+      clipboard: documentUsage([{ objects: [image("c", "clip"), text("v", "E:CLIP.TTF"), image("c2", "kept")] }], {}),
     });
-    expect([...live.images.entries()]).toEqual([["doc", "document"], ["hist", "history"], ["clip", "clipboard"]]);
+    expect([...live.images.entries()]).toEqual([["doc", "document"], ["hist", "history"], ["kept", "restore"], ["clip", "clipboard"]]);
     expect([...live.fonts.entries()]).toEqual([
       ["E:ALIAS.TTF", "document"],
       ["E:DOC.TTF", "document"],
       ["E:PROV.TTF", "profile"],
       ["E:HIST.TTF", "history"],
+      ["E:KEPT.TTF", "restore"],
       ["E:CLIP.TTF", "clipboard"],
     ]);
   });

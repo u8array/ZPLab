@@ -79,6 +79,7 @@ describe("respondToOpenDraft", () => {
       id: 3,
       ok: true,
       replacedObjects: 0,
+      restorable: false,
     });
   });
 

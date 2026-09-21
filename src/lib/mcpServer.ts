@@ -119,6 +119,7 @@ export async function postDraftReceipt(receipt: {
   ok: boolean;
   error?: string;
   replacedObjects?: number;
+  restorable?: boolean;
 }): Promise<void> {
   await postToSidecar("draft-receipt", receipt);
 }
