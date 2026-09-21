@@ -2883,7 +2883,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @types/react 19.2.18
+### @types/react 19.3.0
 
 - License: MIT
 - Homepage: https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react
@@ -3137,7 +3137,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### konva 10.3.3
+### konva 10.5.0
 
 - License: MIT
 - Author: Anton Lavrenov
@@ -3197,7 +3197,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### react 19.2.8
+### react 19.3.0
 
 - License: MIT
 - Homepage: https://react.dev/
@@ -3435,7 +3435,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### react-dom 19.2.8
+### react-dom 19.3.0
 
 - License: MIT
 - Homepage: https://react.dev/
@@ -3464,7 +3464,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-konva 19.2.6
+### react-konva 19.2.7
 
 - License: MIT
 - Homepage: https://konvajs.org/docs/react/index.html
@@ -3731,7 +3731,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### scheduler 0.27.0
+### scheduler 0.27.0, 0.28.0
 
 - License: MIT
 - Homepage: https://react.dev/
@@ -3896,7 +3896,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### zod 4.5.4
+### zod 4.6.2
 
 - License: MIT
 - Author: Colin McDonnell
