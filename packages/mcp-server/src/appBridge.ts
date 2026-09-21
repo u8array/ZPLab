@@ -51,6 +51,20 @@ export const rasterResponseSchema = z.object({
 });
 export type RasterResponse = z.infer<typeof rasterResponseSchema>;
 
+/** The app applied an op list, or names the op it refused. */
+export const editReceiptSchema = z.object({
+  id: z.number().int(),
+  ok: z.boolean(),
+  errors: z.array(z.string()).optional(),
+  opIndex: z.number().int().optional(),
+  designFile: z.record(z.string(), z.unknown()).optional(),
+  measured: z.record(z.string(), measuredFootprintSchema).optional(),
+  assignedIds: z.record(z.string(), z.string()).optional(),
+  capturesLost: z.array(z.number().int()).optional(),
+  capturesAtRisk: z.array(z.number().int()).optional(),
+});
+export type EditReceipt = z.infer<typeof editReceiptSchema>;
+
 /** The app answers via its Tauri event loop plus one local fetch; anything
  *  slower means no app, no listener yet (boot), or no desktop at all. Only for
  *  receipts; a design read-back does real work first (see below). */
@@ -71,10 +85,13 @@ export const RASTER_TIMEOUT_MS = 20_000;
  *  would apply it twice). Sized like the sibling 20s budgets above. */
 export const OPEN_DRAFT_TIMEOUT_MS = 20_000;
 
+/** Waits for the canvas to settle like a design read-back. */
+export const EDIT_DESIGN_TIMEOUT_MS = DESIGN_RESPONSE_TIMEOUT_MS;
+
 /** The event a pending entry is waiting on. Kept per request because the
- *  reply schemas are mutually satisfiable: a draft receipt and a raster
- *  response both parse as `{id, ok}`, so an id alone cannot tell them apart. */
-type RequestKind = "designRequest" | "openDraft" | "rasterRequest";
+ *  reply schemas are mutually satisfiable: a draft receipt, a raster response
+ *  and an edit receipt all parse as `{id, ok}`, so an id alone cannot tell them apart. */
+type RequestKind = "designRequest" | "openDraft" | "rasterRequest" | "editRequest";
 
 interface Pending {
   kind: RequestKind;
@@ -188,4 +205,13 @@ export function resolveRasterResponse(payload: unknown): boolean {
 export function resolveDraftReceipt(payload: unknown): boolean {
   const parsed = draftReceiptSchema.safeParse(payload);
   return parsed.success && deliver("openDraft", parsed.data.id, parsed.data);
+}
+
+export function requestEditDesign(operations: readonly unknown[]): Promise<EditReceipt | null> {
+  return ask<EditReceipt>("editRequest", { operations }, EDIT_DESIGN_TIMEOUT_MS);
+}
+
+export function resolveEditReceipt(payload: unknown): boolean {
+  const parsed = editReceiptSchema.safeParse(payload);
+  return parsed.success && deliver("editRequest", parsed.data.id, parsed.data);
 }

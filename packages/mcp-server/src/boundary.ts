@@ -21,7 +21,7 @@ import {
 } from "@zplab/core/lib/designInput";
 import { getEntry } from "@zplab/core/registry";
 import type { PropSpec } from "@zplab/core/types/propSpec";
-import { MAX_SOURCE_PAGES } from "@zplab/core/lib/zplSourceEdit";
+import { designSizeIssue } from "@zplab/core/lib/designLimits";
 import { getAllLeaves, walkObjects, type LabelObject } from "@zplab/core/types/Group";
 import { errorMessage } from "@zplab/core/lib/errorMessage";
 import { DPMM_VALUES, isDpmm, type DeviceFontLabel, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
@@ -103,38 +103,9 @@ function labelConfigIssues(label: LabelConfig): string[] {
   return issues;
 }
 
-/** Envelope size limits: the raw-ZPL tools cap the input string, so the
- *  design-file tools cap the parsed shape symmetrically to bound preflight and
- *  emit on an oversized envelope. Well beyond any real label. The page cap is
- *  the source editor's, one number for one question. */
-const MAX_PAGES = MAX_SOURCE_PAGES;
-const MAX_TOTAL_OBJECTS = 10000;
-const MAX_GROUP_DEPTH = 64;
-
-/** Counts NODES, descending into group children: a top-level count would let
- *  one group carry an unbounded subtree past the cap into preflight. */
 export function pagesSizeError(pages: readonly { objects: readonly unknown[] }[]): ToolError | null {
-  if (pages.length > MAX_PAGES) {
-    return { ok: false, errors: [`design exceeds the ${MAX_PAGES}-page limit`] };
-  }
-  let total = 0;
-  const stack: [unknown, number][] = [];
-  for (const p of pages) for (const o of p.objects) stack.push([o, 1]);
-  for (let next = stack.pop(); next !== undefined; next = stack.pop()) {
-    const [node, depth] = next;
-    total++;
-    if (total > MAX_TOTAL_OBJECTS) {
-      return { ok: false, errors: [`design exceeds the ${MAX_TOTAL_OBJECTS}-object limit`] };
-    }
-    // This iterative walk is the gate for every recursive one after it, which
-    // would otherwise answer a deep chain with a bare stack overflow.
-    if (depth > MAX_GROUP_DEPTH) {
-      return { ok: false, errors: [`design exceeds the ${MAX_GROUP_DEPTH}-level group nesting limit`] };
-    }
-    const children = (node as { children?: unknown })?.children;
-    if (Array.isArray(children)) for (const c of children) stack.push([c, depth + 1]);
-  }
-  return null;
+  const issue = designSizeIssue(pages);
+  return issue === null ? null : { ok: false, errors: [issue] };
 }
 
 /** Every producer keeps ids design-unique (editor/parser: UUIDs; the draft

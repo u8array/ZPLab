@@ -18,7 +18,8 @@ import {
 } from "@zplab/core/lib/preflight";
 import { barcodeEncodeFindingsCore } from "@zplab/core/lib/barcodeEncodePreflight";
 import { clockCtxFromLabel } from "@zplab/core/lib/variableBinding";
-import { objectBoundsDots, type BoundingBoxDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
+import { objectBoundsDots, type BoundingBoxDots, type MeasuredFootprint, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
+import type { DesignFile } from "@zplab/core/lib/designFile";
 import { computeOverlaps, leafBoxesDots, MAX_OVERLAPS, type OverlapDots } from "@zplab/core/lib/objectOverlap";
 import { type LeafObject } from "@zplab/core/registry";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
@@ -404,6 +405,17 @@ function reportCore(
     warnings.filter((w) => w.kind === "renderFailed").map((w) => w.objectId),
   );
   return { probed, notes, estimated, warnings, unencodable };
+}
+
+/** boundReport over a parsed design, with the app's footprints as the wire carries them. */
+export function reportFor(design: DesignFile, measured?: Record<string, MeasuredFootprint>) {
+  return boundReport(
+    design.label,
+    design.variables,
+    design.pages,
+    measured ? new Map(Object.entries(measured)) : undefined,
+    design.columnMapping !== null,
+  );
 }
 
 /** Preflight + geometry with markers resolved against the design's own

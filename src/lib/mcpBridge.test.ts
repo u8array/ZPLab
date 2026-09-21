@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { respondToDesignRequest, respondToOpenDraft, respondToRasterRequest } from "./mcpBridge";
-import { postDesignResponse, postDraftReceipt, postRasterResponse } from "./mcpServer";
+import { respondToDesignRequest, respondToEditDesign, respondToOpenDraft, respondToRasterRequest } from "./mcpBridge";
+import { postDesignResponse, postDraftReceipt, postEditReceipt, postRasterResponse } from "./mcpServer";
 import { useLabelStore } from "../store/labelStore";
 import { setMeasuredBounds, clearMeasuredBounds } from "./measuredBoundsCache";
 
@@ -17,6 +17,7 @@ vi.mock("@zplab/core/lib/loadImage", () => ({
 vi.mock("./mcpServer", () => ({
   postDesignResponse: vi.fn(async () => undefined),
   postDraftReceipt: vi.fn(async () => undefined),
+  postEditReceipt: vi.fn(async () => undefined),
   postRasterResponse: vi.fn(async () => undefined),
   attachAppToSidecar: vi.fn(async () => undefined),
   mcpServerStatus: vi.fn(async () => ({ running: false, available: false })),
@@ -90,6 +91,31 @@ describe("respondToOpenDraft", () => {
     expect(body?.id).toBe(4);
     expect(body?.ok).toBe(false);
     expect(body?.error).toBeTruthy();
+  });
+});
+
+describe("respondToEditDesign", () => {
+  it("applies the ops and answers with the design it now holds", async () => {
+    useLabelStore.setState({
+      label: { widthMm: 50, heightMm: 30, dpmm: 8 },
+      pages: [{ objects: [{ id: "t1", type: "text", x: 1, y: 1, rotation: 0, props: { content: "a", fontHeight: 30, fontWidth: 0, rotation: "N" } } as never] }],
+      sourceEdit: { status: "off" },
+      previewMode: { status: "idle" },
+    });
+    await respondToEditDesign(JSON.stringify({ id: 11, operations: [{ op: "update", id: "t1", props: { content: "b" } }] }));
+    const body = vi.mocked(postEditReceipt).mock.calls[0]?.[0] as { id: number; ok: boolean; designFile: { pages: { objects: { props: { content: string } }[] }[] } };
+    expect(body.id).toBe(11);
+    expect(body.ok).toBe(true);
+    expect(body.designFile.pages[0]?.objects[0]?.props.content).toBe("b");
+  });
+
+  it("names the lock instead of confirming an edit that never landed", async () => {
+    useLabelStore.setState({ sourceEdit: { status: "editing", draft: "^XA^XZ", baseline: "^XA^XZ", session: 3 } });
+    await respondToEditDesign(JSON.stringify({ id: 12, operations: [{ op: "remove", id: "t1" }] }));
+    const body = vi.mocked(postEditReceipt).mock.calls[0]?.[0] as { ok: boolean; errors?: string[] };
+    expect(body.ok).toBe(false);
+    expect(body.errors?.[0]).toMatch(/source session/);
+    useLabelStore.setState({ sourceEdit: { status: "off" } });
   });
 });
 

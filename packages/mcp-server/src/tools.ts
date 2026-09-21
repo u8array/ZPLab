@@ -12,7 +12,7 @@ import {
   withFootprintBinding,
 } from "./footprint.js";
 import type { ImportReport } from "@zplab/core/lib/zplParser";
-import type { DesignResponse, RasterResponse } from "./appBridge.js";
+import type { DesignResponse, EditReceipt, RasterResponse } from "./appBridge.js";
 import { ObjectRegistry } from "@zplab/core/registry";
 import { DPMM_VALUES, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
 
@@ -21,7 +21,8 @@ export * from "./boundary.js";
 export * from "./report.js";
 export * from "./patchOps.js";
 import { buildObjects, buildVariables, pagesSizeError, parseEnvelope, typeIssues, unknownPropNotes, propIssues, type DesignFileJson, type ToolError, type CreateDraftInput, PROP_SUMMARIES } from "./boundary.js";
-import { boundReport, warningReport, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
+import { captureNotes, editNotes, type PatchOp } from "./patchOps.js";
+import { boundReport, reportFor, warningReport, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
 
 export type CreateDraftResult =
   | {
@@ -97,12 +98,38 @@ export type GetCurrentDesignResult =
 export function buildCurrentDesignResult(response: DesignResponse): GetCurrentDesignResult {
   const parsed = parseEnvelope(response.designFile);
   if (!parsed.ok) return parsed;
-  const { label, pages, variables } = parsed.value;
-  const measured = response.measured ? new Map(Object.entries(response.measured)) : undefined;
   return {
     ok: true,
     designFile: response.designFile as unknown as DesignFileJson,
-    ...boundReport(label, variables, pages, measured, parsed.value.columnMapping !== null),
+    ...reportFor(parsed.value, response.measured),
+  };
+}
+
+export type EditDesignResult =
+  | ({ ok: true; applied: number; added: { opIndex: number; id: string }[] } & ReturnType<typeof boundReport>)
+  | (ToolError & { opIndex?: number });
+
+/** The report for an edit the app applied. Bounds are render-measured like get_current_design's. */
+export function buildEditDesignResult(receipt: EditReceipt, operations: readonly PatchOp[]): EditDesignResult {
+  if (!receipt.ok) {
+    return { ok: false, errors: receipt.errors ?? ["the app refused the edit"], ...(receipt.opIndex !== undefined ? { opIndex: receipt.opIndex } : {}) };
+  }
+  const parsed = parseEnvelope(receipt.designFile);
+  // The edit landed before the report failed, so a retry would apply it twice.
+  if (!parsed.ok) return { ok: false, errors: ["The edit was applied but the design could not be reported. Do not retry. Read it back with get_current_design.", ...parsed.errors] };
+  const report = reportFor(parsed.value, receipt.measured);
+  const assignedIds = new Map(Object.entries(receipt.assignedIds ?? {}).map(([i, id]) => [Number(i), id]));
+  const notes = [
+    ...editNotes(operations, parsed.value.pages, assignedIds),
+    ...captureNotes({ lost: receipt.capturesLost ?? [], atRisk: receipt.capturesAtRisk ?? [] }),
+    ...(report.notes ?? []),
+  ];
+  return {
+    ok: true,
+    applied: operations.length,
+    added: [...assignedIds].map(([opIndex, id]) => ({ opIndex, id })),
+    ...report,
+    ...(notes.length > 0 ? { notes } : {}),
   };
 }
 

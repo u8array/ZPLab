@@ -1,9 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { isAppAttached, requestCurrentDesign, requestOpenDraft, requestRaster } from "./appBridge.js";
+import { isAppAttached, requestCurrentDesign, requestEditDesign, requestOpenDraft, requestRaster } from "./appBridge.js";
 import { registerSidecarFootprintMeasurer } from "./footprint.js";
 import { registerPrompts } from "./prompts.js";
 import {
   buildCurrentDesignResult,
+  buildEditDesignResult,
   createDraft,
   createDraftShape,
   designFileEnvelopeSchema,
@@ -14,6 +15,7 @@ import {
   openInApp,
   patchDesign,
   patchDesignShape,
+  patchOperationsSchema,
   rasterImageResult,
   rasterImageShape,
   validateDraft,
@@ -41,13 +43,13 @@ const json = (value: unknown) => ({
   content: [{ type: "text" as const, text: JSON.stringify(value) }],
 });
 
-/** The three window tools exist only on a hosted transport, so a stdio client
+/** The window tools exist only on a hosted transport, so a stdio client
  *  must not be promised tools its server never registers. */
 const WINDOW_TOOL_INSTRUCTIONS =
-  "Three tools reach the desktop window and answer with a reason when none " +
-  "is connected: open_in_app " +
-  "replaces the design in the editor (confirm with the user first), " +
-  "get_current_design reads it back including the user's own edits, and " +
+  "These tools reach the desktop window and answer with a reason when none " +
+  "is connected: get_current_design reads the open design including the user's " +
+  "own edits, edit_design changes it in place with operations, open_in_app " +
+  "replaces it with a design file (confirm with the user first), and " +
   "raster_image turns a data: URL into a placeable 1-bit graphic.";
 
 /** Workflow recipe the host injects at initialize, so a session starts
@@ -63,9 +65,9 @@ export const SERVER_INSTRUCTIONS =
   "unencodable payloads): keep extra " +
   "clearance around those. Overlaps are neutral facts, not errors: a frame or " +
   "reverse box overlaps its contents by design. Bring existing ZPL through " +
-  "import_zpl (editable design file) or validate_zpl (lint only). Editing an " +
-  "existing design goes through patch_design rather than a rebuild, so nothing " +
-  "the user made is lost. export_zpl returns the final ZPL.";
+  "import_zpl (editable design file) or validate_zpl (lint only). Editing a " +
+  "design file you hold goes through patch_design rather than a rebuild, so the " +
+  "parts you are not changing stay as they are. export_zpl returns the final ZPL.";
 
 /** Single tool definition shared by the stdio and HTTP entry points. */
 export function buildServer(options: BuildServerOptions = {}): McpServer {
@@ -221,6 +223,32 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
           ok: true,
           replaced: { objects: receipt.replacedObjects ?? 0, undoHistoryCleared: true, restorable: receipt.restorable ?? false },
         });
+      },
+    );
+
+    server.registerTool(
+      "edit_design",
+      {
+        title: "Edit the open design in ZPLab",
+        description:
+          "Apply operations to the design the user has open in the ZPLab desktop app. " +
+          "The operations are patch_design's, but no design file travels: the app edits " +
+          "its live document. The user's undo history survives and the whole call is one " +
+          "undo step. All or nothing: a refused operation leaves the design untouched. " +
+          "The reply is the bounds report the app measured, not a design file. Use this " +
+          "for every change to an open design, and open_in_app only when replacing it wholesale.",
+        inputSchema: { operations: patchOperationsSchema },
+      },
+      async ({ operations }) => {
+        if (!isAppAttached()) return json(NO_WINDOW);
+        const receipt = await requestEditDesign(operations);
+        if (receipt === null) {
+          return json({
+            ok: false,
+            errors: ["The ZPLab app did not confirm the edit. It may still have been applied; check get_current_design before retrying."],
+          });
+        }
+        return json(buildEditDesignResult(receipt, operations));
       },
     );
 

@@ -37,6 +37,7 @@ import { createFeedbackSlice, type FeedbackSlice } from './slices/feedbackSlice'
 import { createLifecycleSlice, type LifecycleSlice } from './slices/lifecycleSlice';
 import { createSourceEditSlice, type SourceEditSlice } from './slices/sourceEditSlice';
 import { createRestoreSlice, type ReplacedDesign, type RestoreSlice } from './slices/restoreSlice';
+import { createAgentEditSlice, type AgentEditSlice } from './slices/agentEditSlice';
 import {
   type ColumnMapping,
   type Variable,
@@ -62,7 +63,8 @@ export type LabelState =
   & FeedbackSlice
   & LifecycleSlice
   & SourceEditSlice
-  & RestoreSlice;
+  & RestoreSlice
+  & AgentEditSlice;
 
 export {
   currentObjects,
@@ -534,6 +536,7 @@ export const useLabelStore = create<LabelState>()(
       ...createLifecycleSlice(set, get, store),
       ...createSourceEditSlice(set, get, store),
       ...createRestoreSlice(set, get, store),
+      ...createAgentEditSlice(set, get, store),
     }),
     {
       name: 'zpl-designer-session',

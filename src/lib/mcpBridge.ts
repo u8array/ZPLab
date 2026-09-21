@@ -8,12 +8,15 @@ import { exportableLeaves } from "@zplab/core/types/Group";
 import {
   measuredBoundsMap,
   subscribeMeasuredBounds,
+  type MeasuredFootprint,
 } from "./measuredBoundsCache";
 import {
   postDesignResponse,
   postDraftReceipt,
+  postEditReceipt,
   postRasterResponse,
 } from "./mcpServer";
+import type { DesignOp } from "@zplab/core/lib/designOps";
 import { useLabelStore, selectSourceEditDirty } from "../store/labelStore";
 import { selectDesignText } from "../store/labelStore.selectors";
 
@@ -57,15 +60,48 @@ function measuredSettled(): Promise<void> {
  *  surfaces via the sidecar's own request timeout. */
 export async function respondToDesignRequest(id: number): Promise<void> {
   await measuredSettled();
+  await postDesignResponse({ id, ...currentDesignPayload() });
+}
+
+/** The open design plus its render-measured footprints, the shape every read-back reply carries. */
+function currentDesignPayload(): { designFile: unknown; measured: Record<string, MeasuredFootprint> } {
   const state = useLabelStore.getState();
   const designFile: unknown = JSON.parse(selectDesignText(state));
-  const { pages } = state;
   // A deleted object's leftover footprint must not ride along.
-  const liveIds = new Set(pages.flatMap((p) => exportableLeaves(p.objects)).map((o) => o.id));
+  const liveIds = new Set(state.pages.flatMap((p) => exportableLeaves(p.objects)).map((o) => o.id));
   const measured = Object.fromEntries(
     [...measuredBoundsMap()].filter(([objectId]) => liveIds.has(objectId)),
   );
-  await postDesignResponse({ id, designFile, measured });
+  return { designFile, measured };
+}
+
+const FROZEN_FOR_AGENT = "The editor is locked by the ZPL source session or the print preview. Ask the user to close it, then retry.";
+
+export async function respondToEditDesign(line: string): Promise<void> {
+  const { id, operations } = JSON.parse(line) as { id: number; operations: DesignOp[] };
+  let receipt: Parameters<typeof postEditReceipt>[0];
+  try {
+    const result = useLabelStore.getState().applyAgentOps(operations);
+    if (!result.ok) {
+      receipt =
+        result.reason === "frozen"
+          ? { id, ok: false, errors: [FROZEN_FOR_AGENT] }
+          : { id, ok: false, errors: result.errors, ...(result.opIndex !== undefined ? { opIndex: result.opIndex } : {}) };
+    } else {
+      await measuredSettled();
+      receipt = {
+        id,
+        ok: true,
+        ...currentDesignPayload(),
+        assignedIds: result.assignedIds,
+        capturesLost: result.capturesLost,
+        capturesAtRisk: result.capturesAtRisk,
+      };
+    }
+  } catch (e) {
+    receipt = { id, ok: false, errors: [e instanceof Error ? e.message : "ZPLab could not apply the edit"] };
+  }
+  await postEditReceipt(receipt);
 }
 
 /** Apply a pushed draft and tell the sidecar whether it took, so open_in_app

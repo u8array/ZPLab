@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import {
   respondToDesignRequest,
+  respondToEditDesign,
   respondToOpenDraft,
   respondToRasterRequest,
 } from "../lib/mcpBridge";
@@ -36,6 +37,9 @@ export function useMcpBridge(): void {
         }),
         listen<string>("mcp://raster-request", (e) => {
           void respondToRasterRequest(e.payload).catch(() => undefined);
+        }),
+        listen<string>("mcp://edit-request", (e) => {
+          void respondToEditDesign(e.payload).catch(() => undefined);
         }),
       ]);
       if (cancelled) {

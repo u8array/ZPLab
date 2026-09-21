@@ -7,6 +7,7 @@ import {
   resolveDesignResponse,
   resolveDraftReceipt,
   resolveRasterResponse,
+  resolveEditReceipt,
 } from "./appBridge.js";
 import { buildServer } from "./server.js";
 
@@ -95,6 +96,7 @@ const APP_ROUTES: Record<string, (payload: unknown) => boolean> = {
   "/design-response": resolveDesignResponse,
   "/draft-receipt": resolveDraftReceipt,
   "/raster-response": resolveRasterResponse,
+  "/edit-receipt": resolveEditReceipt,
   "/app-attach": (payload) => {
     const session = sessionOf(payload);
     // No session, no attach: markAppDetached's ownership guard is only as good

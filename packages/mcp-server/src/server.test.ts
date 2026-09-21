@@ -53,5 +53,13 @@ describe("prepared workflows", () => {
 describe("a stdio server", () => {
   it("does not promise the window tools it never registers", () => {
     expect(SERVER_INSTRUCTIONS).not.toContain("get_current_design");
+    expect(SERVER_INSTRUCTIONS).not.toContain("edit_design");
+  });
+});
+
+describe("a hosted server", () => {
+  it("names every window tool in its instructions", async () => {
+    const instructions = (await connect(true)).getInstructions() ?? "";
+    for (const tool of ["get_current_design", "edit_design", "open_in_app", "raster_image"]) expect(instructions).toContain(tool);
   });
 });

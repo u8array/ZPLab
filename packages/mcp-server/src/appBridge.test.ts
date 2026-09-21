@@ -11,6 +11,10 @@ import {
   resolveDesignResponse,
   resolveDraftReceipt,
   resolveRasterResponse,
+  resolveEditReceipt,
+  requestEditDesign,
+  markAppAttached,
+  markAppDetached,
 } from "./appBridge";
 import { designFile } from "./testFixtures";
 
@@ -111,10 +115,25 @@ describe("a reply on the wrong route", () => {
     try {
       const pending = requestRaster("data:image/png;base64,AA", 200, 128);
       const { id } = JSON.parse(writes[0] ?? "{}") as { id: number };
-      // Both schemas are satisfied by {id, ok}, so only the route tells them apart.
+      // The schemas are satisfied by {id, ok}, so only the route tells them apart.
       expect(resolveDraftReceipt({ id, ok: true })).toBe(false);
+      expect(resolveEditReceipt({ id, ok: true })).toBe(false);
       expect(resolveRasterResponse({ id, ok: true, gfa: "^GFA,1,1,1,00" })).toBe(true);
       expect((await pending)?.gfa).toBe("^GFA,1,1,1,00");
+    } finally {
+      restore();
+    }
+  });
+});
+
+describe("a window going away", () => {
+  it("settles a pending edit request with null instead of its timeout", async () => {
+    const { restore } = spyStdout();
+    try {
+      markAppAttached("s-edit");
+      const pending = requestEditDesign([{ op: "remove", id: "a" }]);
+      expect(markAppDetached("s-edit")).toBe(true);
+      expect(await pending).toBeNull();
     } finally {
       restore();
     }

@@ -1,16 +1,17 @@
 // patch_design: the envelope around the core op reducer, plus the report the agent reads.
 
 import { objectInputSchema, pagesSizeError, parseEnvelope, unknownPropNotes, variableInputSchema, type DesignFileJson, type ToolError } from "./boundary.js";
-import { boundReport, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
+import { reportFor, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
 
 import { z } from "zod";
 import {
   parseDesignFile,
   serializeDesign,
 } from "@zplab/core/lib/designFile";
-import { applyDesignOps, nodesById, type DesignOp } from "@zplab/core/lib/designOps";
+import { applyDesignOps, captureLoss, nodesById, type DesignOp } from "@zplab/core/lib/designOps";
 import { withFootprintBinding } from "./footprint.js";
 import { gfaCacheIsOnlyCopy, type ImageProps } from "@zplab/core/registry/image";
+import type { Page } from "@zplab/core/types/Group";
 import { measureFootprintDots } from "@zplab/core/lib/footprintProber";
 import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 
@@ -54,9 +55,11 @@ export type PatchOp = DesignOp;
 /** Unbounded ops on a 10k-object design would wedge the single-threaded sidecar, which also serves the app's reply routes. */
 export const MAX_PATCH_OPS = 1000;
 
+export const patchOperationsSchema = z.array(patchOpSchema).min(1).max(MAX_PATCH_OPS);
+
 export const patchDesignShape = {
   designFile: z.record(z.string(), z.unknown()),
-  operations: z.array(patchOpSchema).min(1).max(MAX_PATCH_OPS),
+  operations: patchOperationsSchema,
 };
 
 export type PatchDesignResult =
@@ -87,18 +90,7 @@ export function patchDesign(designFile: unknown, operations: readonly PatchOp[])
   );
   if (!applied.ok) return { ok: false, errors: applied.errors };
   const { doc, touched, edited, assignedIds } = applied;
-
-  // Losing a capture is allowed, losing it silently is not. Read from the input, the result already lost the overlay.
-  const captureLost = parsed.value.pages.flatMap((p, i) => {
-    if (!p.overlay) return [];
-    if (touched.has(i)) {
-      return [`page ${i + 1}: the imported commands this page carried cannot be replayed around a structural edit (an added or removed object, or a changed variable), so export regenerates the block from the model`];
-    }
-    if (!p.overlay.regenSafe && edited.has(i)) {
-      return [`page ${i + 1}: the imported commands this page carried cannot be replayed around an edit, so export regenerates the block from the model`];
-    }
-    return [];
-  });
+  const captureLost = captureNotes(captureLoss(parsed.value.pages, touched, edited));
   // Add ops can grow the object count past the cap. Checked before the expensive serialize.
   const oversize = pagesSizeError(doc.pages);
   if (oversize) return oversize;
@@ -107,14 +99,35 @@ export function patchDesign(designFile: unknown, operations: readonly PatchOp[])
   // Schema-parse only: the tree was built from validated ops, and the bounds are read from this canonical parse.
   const parsedNext = parseDesignFile(serialized);
   if (!parsedNext.ok) return { ok: false, errors: ["internal: the patched design did not re-parse"] };
-  const report = boundReport(
-    label,
-    parsedNext.value.variables,
-    parsedNext.value.pages,
-    undefined,
-    parsedNext.value.columnMapping !== null,
-  );
-  const finalNodes = new Map(doc.pages.flatMap((p) => [...nodesById(p.objects)]));
+  const report = reportFor(parsedNext.value);
+  const notes = [...editNotes(operations, doc.pages, assignedIds), ...captureLost, ...(report.notes ?? [])];
+  return {
+    ok: true,
+    designFile: next,
+    ...report,
+    ...(notes.length > 0 ? { notes } : {}),
+  };
+}
+
+/** Losing a capture is allowed, losing it silently is not. */
+export function captureNotes(loss: { lost: readonly number[]; atRisk: readonly number[] }): string[] {
+  const atRisk = new Set(loss.atRisk);
+  return [...loss.lost, ...loss.atRisk]
+    .sort((a, b) => a - b)
+    .map((i) =>
+      atRisk.has(i)
+        ? `page ${i + 1}: the imported commands this page carried cannot be replayed around an edit, so export regenerates the block from the model`
+        : `page ${i + 1}: the imported commands this page carried cannot be replayed around a structural edit (an added or removed object, or a changed variable), so export regenerates the block from the model`,
+    );
+}
+
+/** What an op changed in the model but not on paper. */
+export function editNotes(
+  operations: readonly PatchOp[],
+  pages: readonly Page[],
+  assignedIds: ReadonlyMap<number, string>,
+): string[] {
+  const finalNodes = new Map(pages.flatMap((p) => [...nodesById(p.objects)]));
   const ignoredByBytes = operations.flatMap((op) => {
     if (op.op !== "update" || !op.props) return [];
     const target = finalNodes.get(op.id);
@@ -134,11 +147,5 @@ export function patchDesign(designFile: unknown, operations: readonly PatchOp[])
         ? unknownPropNotes(finalNodes.get(op.id)?.type ?? "", op.id, op.props)
         : [],
   );
-  const notes = [...opNotes, ...ignoredByBytes, ...captureLost, ...(report.notes ?? [])];
-  return {
-    ok: true,
-    designFile: next,
-    ...report,
-    ...(notes.length > 0 ? { notes } : {}),
-  };
+  return [...opNotes, ...ignoredByBytes];
 }

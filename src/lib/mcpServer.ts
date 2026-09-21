@@ -1,4 +1,5 @@
 import { isDesktopShell } from "./platform";
+import type { MeasuredFootprint } from "@zplab/core/lib/objectBounds";
 
 /** Mirrors the Rust McpStatus DTO. `available` is the build capability: false
  *  in a release shipped without the bundled sidecar. */
@@ -136,10 +137,25 @@ export async function postRasterResponse(response: {
   await postToSidecar("raster-response", response);
 }
 
+/** Confirm an applied edit with the design the app now holds, or name the refusal. */
+export async function postEditReceipt(receipt: {
+  id: number;
+  ok: boolean;
+  errors?: string[];
+  opIndex?: number;
+  designFile?: unknown;
+  measured?: Record<string, MeasuredFootprint>;
+  assignedIds?: Record<number, string>;
+  capturesLost?: number[];
+  capturesAtRisk?: number[];
+}): Promise<void> {
+  await postToSidecar("edit-receipt", receipt);
+}
+
 export async function postDesignResponse(body: {
   id: number;
   designFile: unknown;
-  measured: Record<string, unknown>;
+  measured: Record<string, MeasuredFootprint>;
 }): Promise<void> {
   await postToSidecar("design-response", body);
 }

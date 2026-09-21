@@ -14,6 +14,7 @@ const OPEN_DRAFT_EVENT: &str = "mcp://open-draft";
 /// Tauri event carrying a designRequest id; the webview answers via mcp_reply.
 const DESIGN_REQUEST_EVENT: &str = "mcp://design-request";
 const RASTER_REQUEST_EVENT: &str = "mcp://raster-request";
+const EDIT_REQUEST_EVENT: &str = "mcp://edit-request";
 
 /// Windows: kill-on-close Job Object that ties the child's cmd/pnpm/node tree
 /// to the app. Closing the handle (explicitly, or when the process dies and the
@@ -88,6 +89,7 @@ enum BufferedEvent {
   OpenDraft { id: u64, design_file: String },
   DesignRequest(u64),
   RasterRequest(String),
+  EditRequest(String),
 }
 
 fn emit_event(app: &AppHandle, ev: &BufferedEvent) {
@@ -100,6 +102,9 @@ fn emit_event(app: &AppHandle, ev: &BufferedEvent) {
     }
     BufferedEvent::RasterRequest(line) => {
       let _ = app.emit(RASTER_REQUEST_EVENT, line.clone());
+    }
+    BufferedEvent::EditRequest(line) => {
+      let _ = app.emit(EDIT_REQUEST_EVENT, line.clone());
     }
   }
 }
@@ -308,20 +313,19 @@ fn design_request_id(line: &str) -> Option<u64> {
   value.get("id")?.as_u64()
 }
 
-/// A rasterRequest travels as its whole JSON line: the payload is an opaque
-/// image plus its target size, which only the webview reads.
-fn raster_request_line(line: &str) -> Option<String> {
+/// A request whose payload only the webview reads travels as its whole JSON line.
+fn passthrough_request_line(line: &str, event: &str) -> Option<String> {
   let value: serde_json::Value = serde_json::from_str(line).ok()?;
-  if value.get("zplabEvent")?.as_str()? != "rasterRequest" {
+  if value.get("zplabEvent")?.as_str()? != event {
     return None;
   }
   value.get("id")?.as_u64()?;
   Some(line.to_string())
 }
 
-/// Signal readiness on the child's first `listening` stdout line, then forward
-/// openDraft and designRequest events. Ends when stdout closes; dropping an
-/// unused `ready` sender then makes wait_until_ready observe the child as gone.
+/// Signal readiness on the child's first `listening` stdout line, then forward the
+/// app-request events. Ends when stdout closes. Dropping the unused `ready` sender then
+/// makes wait_until_ready observe the child as gone.
 fn forward_child_events(
   stdout: std::process::ChildStdout,
   app: AppHandle,
@@ -341,8 +345,10 @@ fn forward_child_events(
       BufferedEvent::OpenDraft { id, design_file }
     } else if let Some(id) = design_request_id(&line) {
       BufferedEvent::DesignRequest(id)
-    } else if let Some(raw) = raster_request_line(&line) {
+    } else if let Some(raw) = passthrough_request_line(&line, "rasterRequest") {
       BufferedEvent::RasterRequest(raw)
+    } else if let Some(raw) = passthrough_request_line(&line, "editRequest") {
+      BufferedEvent::EditRequest(raw)
     } else {
       continue;
     };
@@ -467,12 +473,13 @@ pub fn mcp_stop(state: State<'_, McpState>) {
 
 /// The sidecar routes the webview may answer on. An allowlist keeps the command
 /// from becoming a general loopback POST client for the webview.
-const REPLY_ROUTES: [&str; 5] = [
+const REPLY_ROUTES: [&str; 6] = [
   "/app-attach",
   "/app-detach",
   "/design-response",
   "/draft-receipt",
   "/raster-response",
+  "/edit-receipt",
 ];
 
 /// Upper bound on a single loopback POST. Bounds the send itself, not the
@@ -559,18 +566,25 @@ mod tests {
   }
 
   #[test]
-  fn raster_line_passes_through_only_its_own_event() {
-    let line =
+  fn passthrough_line_matches_only_its_own_event_with_an_id() {
+    let raster =
       r#"{"zplabEvent":"rasterRequest","id":7,"dataUrl":"data:image/png;base64,AA","widthDots":8}"#;
-    assert_eq!(raster_request_line(line), Some(line.to_string()));
-    assert!(raster_request_line(r#"{"zplabEvent":"designRequest","id":7}"#).is_none());
-    assert!(raster_request_line(r#"{"zplabEvent":"rasterRequest"}"#).is_none());
-    assert!(raster_request_line("not json").is_none());
+    let edit = r#"{"zplabEvent":"editRequest","id":9,"operations":[{"op":"remove","id":"a"}]}"#;
+    assert_eq!(passthrough_request_line(raster, "rasterRequest"), Some(raster.to_string()));
+    assert_eq!(passthrough_request_line(edit, "editRequest"), Some(edit.to_string()));
+    assert!(passthrough_request_line(edit, "rasterRequest").is_none());
+    assert!(passthrough_request_line(r#"{"zplabEvent":"designRequest","id":7}"#, "rasterRequest").is_none());
+    assert!(passthrough_request_line(r#"{"zplabEvent":"rasterRequest"}"#, "rasterRequest").is_none());
+    assert!(passthrough_request_line("not json", "editRequest").is_none());
   }
 
   #[test]
   fn reply_routes_are_the_ones_the_app_answers_on() {
-    assert_eq!(REPLY_ROUTES.len(), 5);
+    assert_eq!(REPLY_ROUTES.len(), 6);
+    // Every reply the webview posts needs its route here, or mcp_reply refuses it.
+    for route in ["/design-response", "/draft-receipt", "/raster-response", "/edit-receipt"] {
+      assert!(REPLY_ROUTES.contains(&route), "{route} is not allowlisted");
+    }
     for route in REPLY_ROUTES {
       assert!(route.starts_with('/'), "{route} needs its leading slash");
     }

@@ -170,6 +170,22 @@ export function applyDesignOps(doc: DesignDoc, ops: readonly DesignOp[], probe: 
   return { ok: true, doc: { label, pages: nextPages, variables, columnMapping }, touched, edited, assignedIds };
 }
 
+/** Pages whose capture the ops dropped, and pages whose capture export can no longer replay around an edit. */
+export function captureLoss(
+  before: readonly Page[],
+  touched: ReadonlySet<number>,
+  edited: ReadonlySet<number>,
+): { lost: number[]; atRisk: number[] } {
+  const lost: number[] = [];
+  const atRisk: number[] = [];
+  before.forEach((p, i) => {
+    if (!p.overlay) return;
+    if (touched.has(i)) lost.push(i);
+    else if (!p.overlay.regenSafe && edited.has(i)) atRisk.push(i);
+  });
+  return { lost, atRisk };
+}
+
 type VariableOp = Extract<DesignOp, { op: `${string}Variable` }>;
 
 interface VariableDoc {

@@ -1,5 +1,6 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { applyObjectChanges } from "./labelStore.internals";
+import { useLabelStore } from "./labelStore";
 import { registerBarcodeWidthProber, unregisterBarcodeWidthProber } from "./anchorRepin";
 import { measureFootprintDots } from "@zplab/core/lib/footprintProber";
 import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
@@ -83,9 +84,21 @@ describe("an update edits the same object the same way on both paths", () => {
       const patched = (viaPatch.designFile as { pages: { objects: LabelObject[] }[] })
         .pages[0]!.objects[0]!;
 
+      useLabelStore.setState({
+        label: { widthMm: 100, heightMm: 50, dpmm: 8 },
+        pages: [{ objects: [stored] }],
+        variables: declared,
+        columnMapping: null,
+        sourceEdit: { status: "off" },
+        previewMode: { status: "idle" },
+      });
+      expect(useLabelStore.getState().applyAgentOps([{ op: "update", id: "o", props: c.props }]).ok).toBe(true);
+      const viaAgent = useLabelStore.getState().pages[0]!.objects[0]!;
+
       // dirty is provenance, not content.
       const strip = (o: LabelObject) => ({ ...o, dirty: undefined });
       expect(strip(patched)).toEqual(strip(viaStore));
+      expect(strip(viaAgent)).toEqual(strip(viaStore));
     });
   }
 });
