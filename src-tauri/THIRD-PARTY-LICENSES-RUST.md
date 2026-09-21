@@ -1195,7 +1195,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 Used by:
 
-- [rustls-webpki 0.103.13](https://github.com/rustls/webpki)
+- [rustls-webpki 0.103.15](https://github.com/rustls/webpki)
 ````
 Except as otherwise noted, this project is licensed under the following
 (ISC-style) terms:
@@ -2459,7 +2459,7 @@ Used by:
 
 - [hyper-rustls 0.27.9](https://github.com/rustls/hyper-rustls)
 - [rustls-native-certs 0.8.4](https://github.com/rustls/rustls-native-certs)
-- [rustls 0.23.41](https://github.com/rustls/rustls)
+- [rustls 0.23.45](https://github.com/rustls/rustls)
 ````
 Copyright (c) 2016 Joseph Birr-Pixton <jpixton@gmail.com>
 
@@ -5792,7 +5792,7 @@ SOFTWARE.
 
 Used by:
 
-- [zplab 0.5.0](https://github.com/u8array/ZPLab)
+- [zplab 0.6.0](https://github.com/u8array/ZPLab)
 - [block2 0.6.2](https://github.com/madsmtm/objc2)
 - [brotli-decompressor 5.0.3](https://github.com/dropbox/rust-brotli-decompressor)
 - [cargo_toml 0.22.3](https://gitlab.com/lib.rs/cargo_toml)
