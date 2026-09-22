@@ -243,7 +243,7 @@ the same license). Source: https://github.com/gs1/gs1-syntax-dictionary
 63 production packages ship in the bundle, each listed with its
 SPDX license and the verbatim license text from its package.
 
-### @codemirror/commands 6.11.0
+### @codemirror/commands 6.11.1
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -330,7 +330,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/state 6.7.4
+### @codemirror/state 6.7.5
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -359,7 +359,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/view 6.43.11
+### @codemirror/view 6.43.12
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -3137,7 +3137,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### konva 10.5.0
+### konva 10.6.0
 
 - License: MIT
 - Author: Anton Lavrenov
@@ -3464,7 +3464,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-konva 19.2.7
+### react-konva 19.3.0
 
 - License: MIT
 - Homepage: https://konvajs.org/docs/react/index.html
@@ -3493,7 +3493,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-reconciler 0.33.0
+### react-reconciler 0.34.0
 
 - License: MIT
 - Homepage: https://react.dev/
@@ -3731,7 +3731,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### scheduler 0.27.0, 0.28.0
+### scheduler 0.28.0
 
 - License: MIT
 - Homepage: https://react.dev/
@@ -3760,11 +3760,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### style-mod 4.1.3
+### style-mod 4.1.3, 4.1.4
 
 - License: MIT
 - Author: Marijn Haverbeke
-- Homepage: https://github.com/marijnh/style-mod#readme
+- Homepage: https://code.haverbeke.berlin/marijn/style-mod
 
 ```
 Copyright (C) 2018 by Marijn Haverbeke <marijn@haverbeke.berlin> and others
@@ -3896,7 +3896,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### zod 4.6.2
+### zod 4.6.5
 
 - License: MIT
 - Author: Colin McDonnell
