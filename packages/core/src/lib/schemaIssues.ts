@@ -16,9 +16,26 @@ function flattenIssues(issues: readonly z.core.$ZodIssue[], prefix: readonly Pro
   });
 }
 
-/** Schema issues as "path: reason", the first few. `root` names a failure at the top level. */
+/** The containing array element, else the parent object, so a broken one costs one slot, not one per field. */
+function issueKey(path: readonly PropertyKey[]): string {
+  const lastIndex = path.reduce<number>((last, seg, i) => (typeof seg === "number" ? i : last), -1);
+  return (lastIndex >= 0 ? path.slice(0, lastIndex + 1) : path.slice(0, -1)).map(String).join(".");
+}
+
+/** Schema issues as "path: reason", the first few, one per element first. A cut list ends with how many it hides. */
 export function schemaIssues(error: z.ZodError, root: string): string[] {
-  return flattenIssues(error.issues)
-    .slice(0, MAX_ISSUES)
-    .map(({ path, message }) => `${path.map(String).join(".") || root}: ${message}`);
+  const all = flattenIssues(error.issues);
+  const seen = new Set<string>();
+  const firsts: typeof all = [];
+  const rest: typeof all = [];
+  for (const issue of all) {
+    const key = issueKey(issue.path);
+    (seen.has(key) ? rest : firsts).push(issue);
+    seen.add(key);
+  }
+  const ordered = [...firsts, ...rest];
+  const shown = ordered.slice(0, MAX_ISSUES).map(({ path, message }) => `${path.map(String).join(".") || root}: ${message}`);
+  const hidden = all.length - shown.length;
+  if (hidden === 0) return shown;
+  return [...shown, hidden === 1 ? "and 1 more issue" : `and ${hidden} more issues`];
 }

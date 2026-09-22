@@ -654,6 +654,23 @@ describe('parseDesignFile', () => {
     expect(result.value.pages[0]?.objects).toEqual(designWithGroups);
   });
 
+  it('opens an object whose top-level rotation is missing or mangled, as 0', () => {
+    const text = JSON.stringify({
+      schemaVersion: 6,
+      label: { widthMm: 100, heightMm: 60, dpmm: 8 },
+      pages: [{ objects: [
+        { id: 'a', type: 'text', x: 0, y: 0, props: { content: 'x', fontHeight: 30, fontWidth: 0, rotation: 'R' } },
+        { id: 'b', type: 'text', x: 0, y: 0, rotation: 'N', props: { content: 'y', fontHeight: 30, fontWidth: 0, rotation: 'N' } },
+      ] }],
+    });
+    const result = parseDesignFile(text);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.pages[0]?.objects.map((o) => o.rotation)).toEqual([0, 0]);
+    expect((result.value.pages[0]?.objects[0] as { props: { rotation: string } }).props.rotation).toBe('R');
+    expect(JSON.parse(serializeDesign(result.value.label, result.value.pages)).pages[0].objects[0].rotation).toBe(0);
+  });
+
   it('rejects a leaf object that is missing its props', () => {
     const malformed = JSON.stringify({
       label: { widthMm: 100, heightMm: 60, dpmm: 8 },

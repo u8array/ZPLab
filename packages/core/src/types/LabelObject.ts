@@ -6,7 +6,8 @@ export const labelObjectBaseSchema = z.object({
   type: z.string(),
   x: z.number(),
   y: z.number(),
-  rotation: z.number(),
+  // props.rotation drives orientation, so a file that omits or mangles this still opens.
+  rotation: z.number().default(0).catch(0),
   /** 'FT' = field typeset (baseline), 'FO' = field origin (top-left). Defaults to 'FO'. */
   positionType: z.enum(['FO', 'FT']).optional(),
   /** ^FO/^FT z-justification (spec p.201/205): 'R' = right edge (z=1), absent

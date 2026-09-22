@@ -5,7 +5,7 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { buildServer } from "./server";
 import { openInApp } from "./tools";
 import { resolveDraftReceipt } from "./appBridge";
-import { designFile } from "./testFixtures";
+import { designFile, textObject } from "./testFixtures";
 import { CURRENT_DESIGN_SCHEMA_VERSION } from "@zplab/core/lib/designFile";
 
 async function connect(server: ReturnType<typeof buildServer>): Promise<Client> {
@@ -92,6 +92,13 @@ describe("openInApp validation", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.designFile).toEqual({ ...designFile, schemaVersion: CURRENT_DESIGN_SCHEMA_VERSION });
+  });
+
+  it("accepts an envelope built the way get_schema describes, without a top-level rotation", () => {
+    const withoutRotation = JSON.parse(JSON.stringify(designFile)) as { pages: { objects: { rotation?: unknown }[] }[] };
+    for (const o of withoutRotation.pages[0]!.objects) delete o.rotation;
+    withoutRotation.pages[0]!.objects.push({ ...textObject("n", "north"), rotation: "N" });
+    expect(openInApp(withoutRotation).ok).toBe(true);
   });
 
   it("returns errors for a malformed design file", () => {

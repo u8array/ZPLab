@@ -32,7 +32,7 @@ export type DesignFileError = "parse_error" | "invalid_schema" | "fn_slots_exhau
 export interface DesignFileFailure {
   ok: false;
   error: DesignFileError;
-  /** Schema issues as "path: reason", capped. Only a schema failure carries them. */
+  /** From schemaIssues. Only a schema failure carries them. */
   issues?: string[];
 }
 
