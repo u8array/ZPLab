@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { buildServer, SERVER_INSTRUCTIONS } from "./server";
+import { demoLabel } from "./testFixtures";
 
 async function connect(hosted = false): Promise<Client> {
   const [clientT, serverT] = InMemoryTransport.createLinkedPair();
@@ -26,6 +27,32 @@ describe("server handshake", () => {
     const text = res.content[0]?.text ?? "";
     expect(text.length).toBeGreaterThan(0);
     expect(text).not.toMatch(/\n\s+/);
+  });
+});
+
+describe("the designFile argument", () => {
+  const envelopeTools = ["validate_draft", "patch_design", "export_zpl", "open_in_app"];
+
+  it("is listed as object or string on every envelope tool", async () => {
+    const { tools } = await (await connect(true)).listTools();
+    for (const name of envelopeTools) {
+      const tool = tools.find((t) => t.name === name);
+      expect(tool, name).toBeDefined();
+      const schema = tool?.inputSchema as { properties: Record<string, { anyOf?: { type: string }[] }> };
+      expect(schema.properties.designFile?.anyOf?.map((v) => v.type), name).toEqual(["object", "string"]);
+    }
+  });
+
+  it("passes the MCP input check as a string and reads the design", async () => {
+    const client = await connect();
+    const res = (await client.callTool({
+      name: "validate_draft",
+      arguments: { designFile: JSON.stringify(demoLabel) },
+    })) as { isError?: boolean; content: { text: string }[] };
+    expect(res.isError).toBeFalsy();
+    const body = JSON.parse(res.content[0]?.text ?? "{}") as { ok: boolean; bounds: { objectId: string }[] };
+    expect(body.ok).toBe(true);
+    expect(body.bounds.map((b) => b.objectId)).toEqual(["titel", "preis", "hinweis", "ean", "rueck"]);
   });
 });
 

@@ -4,12 +4,12 @@
 // who opens only this file sees why the values look the way they do.
 import { describe, it, expect } from "vitest";
 import { z } from "zod";
-import { rasterImageShape, buildCurrentDesignResult, createDraft, patchDesign, patchDesignShape, rasterImageResult, createDraftShape, validateDraft, exportZpl, getSchema, importZpl, validateZpl } from "./tools";
+import { rasterImageShape, buildCurrentDesignResult, createDraft, patchDesign, patchDesignShape, rasterImageResult, createDraftShape, validateDraft, exportZpl, getSchema, importZpl, validateZpl, openInApp } from "./tools";
 import { parseEnvelope } from "./boundary.js";
 import { wireBounds } from "@zplab/core/types/propSpec";
 import { IMAGE_PROP_SPECS } from "@zplab/core/registry/image";
 import { ObjectRegistry } from "@zplab/core/registry";
-import { textObject } from "./testFixtures";
+import { demoLabel, textObject } from "./testFixtures";
 import { serializeDesign } from "@zplab/core/lib/designFile";
 
 /** Assert a tool succeeded and narrow away the ToolError branch. */
@@ -837,6 +837,66 @@ describe("agent-facing reporting", () => {
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) return;
     expect(parsed.value.variables.map((v) => v.id)).toEqual(["var-1", "var-2"]);
+  });
+
+  it("completes a partial variable like create_draft, around the complete ones", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { variables?: unknown[] };
+    file.variables = [
+      { name: "LOT", defaultValue: "\u00abx\u00bb" },
+      { id: "var-9", name: "QTY", fnNumber: 1, defaultValue: "1" },
+      { id: "keep", name: "BATCH" },
+    ];
+    const parsed = parseEnvelope(file);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.value.variables.map((v) => [v.id, v.fnNumber, v.defaultValue])).toEqual([["var-2", 2, "x"], ["var-9", 1, "1"], ["keep", 3, ""]]);
+  });
+
+  it("keeps a partial variable's id, so its column binding stays attached", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { variables?: unknown[]; csvMapping?: unknown };
+    file.variables = [{ id: "mine", name: "LOT" }];
+    file.csvMapping = { bindings: { mine: "Lot" }, headerSnapshot: ["Lot"] };
+    const parsed = parseEnvelope(file);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.value.variables[0]?.id).toBe("mine");
+    expect(parsed.value.columnMapping).toMatchObject({ bindings: { mine: "Lot" } });
+  });
+
+  it("repairs duplicate slots among partial variables like the loader does for complete ones", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { variables?: unknown[] };
+    file.variables = [{ name: "A", fnNumber: 1 }, { name: "B", fnNumber: 1 }];
+    const parsed = parseEnvelope(file);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.value.variables.map((v) => v.fnNumber)).toEqual([1, 2]);
+  });
+
+  it("lets the schema name a mistyped field, and nothing else", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { variables?: unknown[] };
+    file.variables = [{ name: "P", fnNumber: "1" }];
+    const result = parseEnvelope(file);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors.slice(1)).toEqual([expect.stringMatching(/^variables\.0\.fnNumber: /)]);
+    file.variables = [{ name: "P", comment: null }];
+    const nulled = parseEnvelope(file);
+    expect(nulled.ok).toBe(false);
+    if (nulled.ok) return;
+    expect(nulled.errors.slice(1)).toEqual([expect.stringMatching(/^variables\.0\.comment: /)]);
+  });
+
+  it("refuses a partial variable with create_draft's words", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { variables?: unknown[] };
+    file.variables = [{ name: "" }];
+    expect(parseEnvelope(file)).toEqual({ ok: false, errors: ['Invalid variable name: ""'] });
+    file.variables = [...Array.from({ length: 99 }, (_, i) => ({ id: `v${i}`, name: `v${i}`, fnNumber: i + 1, defaultValue: "" })), { name: "more" }];
+    expect(parseEnvelope(file)).toEqual({ ok: false, errors: ["No free ^FN slot left (1-99)"] });
   });
 
   it("reports a wrongly typed variable id instead of replacing it", () => {
@@ -1840,6 +1900,42 @@ describe("a graphic header past the shared bytes-per-row cap", () => {
     };
     expect(ok(validateDraft(design)).warnings.some((w) => w.kind === "imageMissing")).toBe(true);
     expect(ok(exportZpl(design)).zpl).not.toContain("^GFA,1200");
+  });
+});
+
+describe("a design file handed over as a JSON string", () => {
+  const text = JSON.stringify(demoLabel);
+
+  it("reads the same as the object on every envelope tool", () => {
+    expect(validateDraft(text)).toEqual(validateDraft(demoLabel));
+    expect(exportZpl(text)).toEqual(exportZpl(demoLabel));
+    expect(openInApp(text)).toEqual(openInApp(demoLabel));
+    const move = [{ op: "update", id: "preis", y: 70 }] as const;
+    expect(patchDesign(text, move)).toEqual(patchDesign(demoLabel, move));
+    expect(ok(exportZpl(text)).zpl).toContain("Äpfel");
+    expect(ok(exportZpl(text)).zpl).toContain("4,99 €");
+  });
+
+  it("names a design encoded as a string twice", () => {
+    const result = validateDraft(JSON.stringify(text));
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors).toEqual(["designFile: the JSON decodes to another string, send the design once"]);
+  });
+
+  it("names broken JSON instead of a schema failure", () => {
+    const result = validateDraft(text.slice(0, -1));
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors).toHaveLength(1);
+    expect(result.errors[0]).toMatch(/^designFile: not valid JSON, /);
+  });
+
+  it("refuses any other shape at the input schema with both accepted forms named", () => {
+    const parsed = z.object(patchDesignShape).safeParse({ designFile: 5, operations: [{ op: "remove", id: "x" }] });
+    expect(parsed.success).toBe(false);
+    if (parsed.success) return;
+    expect(parsed.error.issues.map((i) => i.message)).toEqual(["designFile must be the design object or its JSON as a string"]);
   });
 });
 

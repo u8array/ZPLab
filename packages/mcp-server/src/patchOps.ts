@@ -1,6 +1,6 @@
 // patch_design: the envelope around the core op reducer, plus the report the agent reads.
 
-import { objectInputSchema, pagesSizeError, parseEnvelope, unknownPropNotes, variableInputSchema, type DesignFileJson, type ToolError } from "./boundary.js";
+import { designFileInputSchema, objectInputSchema, pagesSizeError, parseEnvelope, unknownPropNotes, variableInputSchema, type DesignFileJson, type ToolError } from "./boundary.js";
 import { reportFor, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
 
 import { z } from "zod";
@@ -58,7 +58,7 @@ export const MAX_PATCH_OPS = 1000;
 export const patchOperationsSchema = z.array(patchOpSchema).min(1).max(MAX_PATCH_OPS);
 
 export const patchDesignShape = {
-  designFile: z.record(z.string(), z.unknown()),
+  designFile: designFileInputSchema,
   operations: patchOperationsSchema,
 };
 

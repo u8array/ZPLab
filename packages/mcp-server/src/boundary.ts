@@ -10,8 +10,8 @@ import {
 } from "@zplab/core/lib/designFile";
 import {
   buildVariables,
+  completeVariables,
   duplicateVariableIssue,
-  freeId,
   normalizeLeaves,
   propIssues,
   RAW_GRAPHIC_PROPS,
@@ -25,7 +25,7 @@ import { designSizeIssue } from "@zplab/core/lib/designLimits";
 import { getAllLeaves, walkObjects, type LabelObject } from "@zplab/core/types/Group";
 import { errorMessage } from "@zplab/core/lib/errorMessage";
 import { DPMM_VALUES, isDpmm, type DeviceFontLabel, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
-import type { Variable, VariableInput } from "@zplab/core/types/Variable";
+import { variableSchema, type Variable, type VariableInput } from "@zplab/core/types/Variable";
 
 // Re-exported so the tools keep their names.
 export { buildVariables, propIssues, typeIssues };
@@ -52,7 +52,7 @@ export const variableInputSchema: z.ZodType<VariableInput> = z.object({
   fnNumber: z.number().int().optional(),
   comment: z.string().optional(),
 });
-export type VariableInputJson = VariableInput;
+export type VariableInputJson = Omit<VariableInput, "id">;
 
 export const createDraftShape = {
   widthMm: z.number().positive(),
@@ -80,7 +80,12 @@ export interface DesignFileJson {
   variables?: Variable[];
 }
 
-export const designFileEnvelopeSchema = z.object({ designFile: z.record(z.string(), z.unknown()) });
+/** Smaller models tend to hand nested JSON over as a string, so both forms are the same design. */
+export const designFileInputSchema = z
+  .union([z.record(z.string(), z.unknown()), z.string()], { error: "designFile must be the design object or its JSON as a string" })
+  .describe("The design file as an object, or the same JSON as a string.");
+
+export const designFileEnvelopeSchema = z.object({ designFile: designFileInputSchema });
 /** export_zpl: `metadata` keeps ZPLab's ^FX comments for a lossless re-import. */
 export const exportZplInputSchema = designFileEnvelopeSchema.extend({ metadata: z.boolean().optional() });
 
@@ -130,28 +135,56 @@ export function duplicateVariableError(variables: readonly Variable[]): ToolErro
   return issue === null ? null : { ok: false, errors: [issue] };
 }
 
-/** The model addresses variables by name, so a missing id is filled in. Object ids stay
- *  required: patch_design addresses objects by id. */
-function withVariableIds(designFile: unknown): unknown {
-  if (!designFile || typeof designFile !== "object") return designFile;
-  const { variables } = designFile as { variables?: unknown };
-  if (!Array.isArray(variables)) return designFile;
-  const taken = new Set<string>();
-  for (const v of variables) {
-    if (v && typeof v === "object" && typeof (v as { id?: unknown }).id === "string") taken.add((v as { id: string }).id);
-  }
-  const filled = variables.map((v) => {
-    if (!v || typeof v !== "object" || (v as { id?: unknown }).id !== undefined) return v;
-    const id = freeId("var", taken);
-    taken.add(id);
-    return { ...(v as object), id };
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
+const isComplete = (v: unknown): v is Variable => variableSchema.safeParse(v).success;
+const isPartial = (v: unknown): v is Record<string, unknown> & { name: string } =>
+  isRecord(v) && typeof v.name === "string" && !isComplete(v);
+const typed = <T>(v: unknown, type: "string" | "number"): T | undefined => (typeof v === type ? (v as T) : undefined);
+
+/** A partial variable is completed like create_draft's. A mistyped field comes back as sent, so the
+ *  schema names it alone. Duplicates go to the loader's repair. */
+function withCompleteVariables(designFile: unknown): { ok: true; value: unknown } | ToolError {
+  if (!isRecord(designFile) || !Array.isArray(designFile.variables)) return { ok: true, value: designFile };
+  const { variables } = designFile;
+  const partial = variables.filter(isPartial);
+  if (partial.length === 0) return { ok: true, value: designFile };
+  const inputs = partial.map((v) => ({
+    name: v.name,
+    id: typed<string>(v.id, "string"),
+    fnNumber: typed<number>(v.fnNumber, "number"),
+    defaultValue: typed<string>(v.defaultValue, "string"),
+    comment: typed<string>(v.comment, "string"),
+  }));
+  const built = completeVariables(inputs, variables.filter(isComplete));
+  if ("error" in built) return { ok: false, errors: [built.error] };
+  let next = 0;
+  const completed = variables.map((v) => {
+    if (!isPartial(v)) return v;
+    const full = built.value[next++] as unknown as Record<string, unknown>;
+    const mistyped = Object.entries(v).filter(([k, x]) => x !== undefined && typeof x !== typeof full[k]);
+    return { ...full, ...Object.fromEntries(mistyped) };
   });
-  return { ...(designFile as object), variables: filled };
+  return { ok: true, value: { ...designFile, variables: completed } };
+}
+
+function decodeDesignFile(designFile: unknown): { ok: true; value: unknown } | ToolError {
+  if (typeof designFile !== "string") return { ok: true, value: designFile };
+  try {
+    const value: unknown = JSON.parse(designFile);
+    if (typeof value === "string") return { ok: false, errors: ["designFile: the JSON decodes to another string, send the design once"] };
+    return { ok: true, value };
+  } catch (e) {
+    return { ok: false, errors: [`designFile: not valid JSON, ${errorMessage(e)}`] };
+  }
 }
 
 export function parseEnvelope(designFile: unknown): { ok: true; value: DesignFile } | ToolError {
+  const input = decodeDesignFile(designFile);
+  if (!input.ok) return input;
+  const completed = withCompleteVariables(input.value);
+  if (!completed.ok) return completed;
   try {
-    const parsed = parseDesignFile(JSON.stringify(withVariableIds(designFile)));
+    const parsed = parseDesignFile(JSON.stringify(completed.value));
     if (!parsed.ok) return { ok: false, errors: [designFileErrors[parsed.error], ...(parsed.issues ?? [])] };
     const issues = labelConfigIssues(parsed.value.label);
     if (issues.length > 0) return { ok: false, errors: issues };

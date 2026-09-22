@@ -213,17 +213,16 @@ export function duplicateVariableIssue(variables: readonly Variable[]): string |
   return null;
 }
 
-/** Ids and free ^FN slots for named inputs. Duplicates would merge fields silently, so they are refused. */
-export function buildVariables(
+/** Ids, free ^FN slots and stripped defaults for named inputs. Duplicates are the caller's policy. */
+export function completeVariables(
   inputs: readonly VariableInput[],
   existing: readonly Variable[] = [],
 ): { value: Variable[] } | { error: string } {
-  const names = new Set(existing.map((v) => v.name));
   const taken: number[] = [
     ...existing.map((v) => v.fnNumber),
     ...inputs.flatMap((v) => (v.fnNumber === undefined ? [] : [v.fnNumber])),
   ];
-  const usedIds = new Set(existing.map((v) => v.id));
+  const usedIds = new Set([...existing.map((v) => v.id), ...inputs.flatMap((v) => (v.id === undefined ? [] : [v.id]))]);
   const out: Variable[] = [];
   for (const input of inputs) {
     // Trimmed like every reader trims, or the stored name could never be addressed again.
@@ -231,8 +230,6 @@ export function buildVariables(
     if (!isValidVariableName(name)) {
       return { error: `Invalid variable name: ${JSON.stringify(input.name)}` };
     }
-    if (names.has(name)) return { error: `Duplicate variable name: ${name}` };
-    names.add(name);
     if (input.fnNumber !== undefined && (input.fnNumber < FN_NUMBER_MIN || input.fnNumber > FN_NUMBER_MAX)) {
       return { error: `^FN slot must be ${FN_NUMBER_MIN}-${FN_NUMBER_MAX} (got ${input.fnNumber})` };
     }
@@ -243,11 +240,15 @@ export function buildVariables(
       fnNumber = free;
       taken.push(free);
     }
-    let idIndex = existing.length + out.length + 1;
-    while (usedIds.has(`var-${idIndex}`)) idIndex++;
-    usedIds.add(`var-${idIndex}`);
+    let id = input.id;
+    if (id === undefined) {
+      let idIndex = existing.length + out.length + 1;
+      while (usedIds.has(`var-${idIndex}`)) idIndex++;
+      id = `var-${idIndex}`;
+      usedIds.add(id);
+    }
     out.push({
-      id: `var-${idIndex}`,
+      id,
       name,
       fnNumber,
       // A default carrying its own «…» would resolve in preview and emit verbatim, see stripMarkerDelimiters.
@@ -255,6 +256,19 @@ export function buildVariables(
       ...(input.comment !== undefined ? { comment: input.comment } : {}),
     });
   }
-  const dup = duplicateVariableIssue([...existing, ...out]);
-  return dup === null ? { value: out } : { error: dup };
+  return { value: out };
+}
+
+/** create_draft's variables: completed, then duplicates refused, since they would merge fields silently. */
+export function buildVariables(
+  inputs: readonly VariableInput[],
+  existing: readonly Variable[] = [],
+): { value: Variable[] } | { error: string } {
+  const built = completeVariables(inputs, existing);
+  if ("error" in built) return built;
+  const all = [...existing, ...built.value];
+  const name = all.map((v) => v.name).find((n, i, names) => names.indexOf(n) !== i);
+  if (name !== undefined) return { error: `Duplicate variable name: ${name}` };
+  const dup = duplicateVariableIssue(all);
+  return dup === null ? built : { error: dup };
 }

@@ -17,6 +17,8 @@ export const variableSchema = z.object({
 export type Variable = z.infer<typeof variableSchema>;
 
 export interface VariableInput {
+  /** Kept when given: a file's column mapping addresses the variable by it. */
+  id?: string;
   name: string;
   defaultValue?: string;
   /** Explicit slot. When omitted, the store assigns the next free number. */
