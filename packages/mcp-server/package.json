@@ -12,7 +12,7 @@
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@zplab/core": "workspace:*",
     "bwip-js": "^4.11.4",
-    "zod": "^4.6.2"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
