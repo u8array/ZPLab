@@ -17,6 +17,7 @@ import { zpl, blobRanges, commandAtCursor, commandInsertion, placesCaret, points
 import { toDiagnostic } from '../../lib/zplCmLint';
 import { hideSidecarsExt, visibleLineNumber } from '../../lib/zplCmSidecars';
 import { commandMarksExt } from '../../lib/zplCmCommandMarks';
+import { blankFieldsExt } from '../../lib/zplCmBlankFields';
 import { crlfIndex, isPureCrlf, minimalSplice, toDocPos } from '../../lib/sourceOffsets';
 
 // Text.toString() always joins with LF; only sliceString honours the
@@ -78,6 +79,7 @@ const theme = EditorView.theme({
     outlineOffset: '-1px',
     borderRadius: '2px',
   },
+  '.cm-zplBlankHint': { opacity: '0.45', fontStyle: 'italic', userSelect: 'none', WebkitUserSelect: 'none' },
   // CM's base theme paints the tooltip for a light host (no `dark` declared
   // here), and the pane itself is surface-2: without the app's token plus
   // elevation the popup reads as text pasted onto the code.
@@ -125,10 +127,11 @@ const NO_LINES: ReadonlySet<number> = new Set();
 const readOnlyExt = (ro: boolean) => [EditorState.readOnly.of(ro), EditorView.editable.of(!ro)];
 const highlightExt = (lines: ReadonlySet<number>) =>
   EditorView.decorations.of((v) => highlightDecorations(v.state, lines));
-// One compartment: both are locale strings that change on the same event.
-const localeExt = (ariaLabel: string, placeholderText: string) => [
+// One compartment: the three strings change together, on a locale switch or the preview lock.
+const localeExt = (ariaLabel: string, placeholderText: string, blankFieldHint: string | undefined) => [
   EditorView.contentAttributes.of({ 'aria-label': ariaLabel }),
   placeholder(placeholderText),
+  blankFieldsExt(blankFieldHint),
 ];
 
 function useCompartmentSync<T>(viewRef: RefObject<EditorView | null>, compartment: Compartment, build: (value: T) => Extension, value: T): void {
@@ -187,6 +190,7 @@ export default function ZplCodeMirror({
   onChange,
   ariaLabel,
   placeholderText,
+  blankFieldHint,
   readOnly = false,
   highlightLines = NO_LINES,
   historyEpoch = 0,
@@ -203,6 +207,8 @@ export default function ZplCodeMirror({
   ariaLabel: string;
   /** Shown while the doc is empty (authoring a label from scratch). */
   placeholderText: string;
+  /** Inlay label on every empty ^FD or ^FV slot, none when absent. */
+  blankFieldHint?: string;
   readOnly?: boolean;
   /** 0-based doc lines tinted as the canvas selection's emitted source. */
   highlightLines?: ReadonlySet<number>;
@@ -281,7 +287,7 @@ export default function ZplCodeMirror({
         highlightCompartment.of(highlightExt(highlightLines)),
         sidecarCompartment.of(hideSidecarsExt(hideSidecars)),
         commandMarksCompartment.of(commandMarksExt(catalogRow)),
-        localeCompartment.of(localeExt(ariaLabel, placeholderText)),
+        localeCompartment.of(localeExt(ariaLabel, placeholderText, blankFieldHint)),
         // lintKeymap opens the diagnostics panel, the keyboard's only route to a repair action.
         keymap.of([{ key: 'Escape', run: () => onEscapeRef.current?.() ?? false }, ...defaultKeymap, ...historyKeymap, ...foldKeymap, ...lintKeymap]),
         EditorView.updateListener.of((u) => {
@@ -336,9 +342,9 @@ export default function ZplCodeMirror({
     const view = viewRef.current;
     if (!view) return;
     view.dispatch({
-      effects: localeCompartment.reconfigure(localeExt(ariaLabel, placeholderText)),
+      effects: localeCompartment.reconfigure(localeExt(ariaLabel, placeholderText, blankFieldHint)),
     });
-  }, [ariaLabel, placeholderText, localeCompartment]);
+  }, [ariaLabel, placeholderText, blankFieldHint, localeCompartment]);
 
   const mountEpoch = useRef(historyEpoch);
   useEffect(() => {

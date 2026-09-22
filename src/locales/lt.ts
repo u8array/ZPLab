@@ -994,6 +994,7 @@ const lt = {
     catalogNo: 'ne',
     catalogNoCursor: 'Užveskite žymeklį ant komandos, kad pamatytumėte, ką ji daro.',
     catalogNoMatch: 'Nė viena komanda neatitinka paieškos.',
+    blankFieldHint: 'vietaženklis',
     catalogDismissed: 'Žinynas paslėptas. Spustelėkite komandą kode, kad jis vėl būtų rodomas.',
     catalogNoEntryFmt: 'Komandos {cmd} žinyne nėra.',
     copy: 'Kopijuoti',

@@ -108,6 +108,7 @@ export function ZplSourceEditor({
             highlightLines={highlightedLines}
             historyEpoch={historyEpoch}
             placeholderText={t.output.editSourcePlaceholder}
+            blankFieldHint={readOnly ? undefined : t.output.blankFieldHint}
             diagnostics={diagnostics}
             hideSidecars={hideSidecars}
             insertPage={insertPage}

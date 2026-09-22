@@ -994,6 +994,7 @@ const ro = {
     catalogNo: 'nu',
     catalogNoCursor: 'Poziționați cursorul pe o comandă pentru a vedea ce face.',
     catalogNoMatch: 'Nicio comandă nu corespunde căutării.',
+    blankFieldHint: 'substituent',
     catalogDismissed: 'Referința este ascunsă. Faceți clic pe comanda din cod pentru a o afișa din nou.',
     catalogNoEntryFmt: '{cmd} nu se află în referință.',
     copy: 'Copiați',

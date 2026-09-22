@@ -994,6 +994,7 @@ const es = {
     catalogNo: 'no',
     catalogNoCursor: 'Coloca el cursor sobre un comando para ver qué hace.',
     catalogNoMatch: 'Ningún comando coincide con la búsqueda.',
+    blankFieldHint: 'marcador de posición',
     catalogDismissed: 'Referencia oculta. Haz clic en el comando del código para volver a mostrarla.',
     catalogNoEntryFmt: '{cmd} no está en la referencia.',
     copy: 'Copiar',

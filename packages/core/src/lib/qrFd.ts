@@ -77,6 +77,12 @@ function joinSegments(payload: string, manual: boolean, mixed: boolean, utf8: bo
   return out.join('');
 }
 
+/** Payload start in a ^BQ field, after the switch or the three bytes qrFdToModel drops. Manual-mode segments count as payload. */
+export function qrFdPayloadStart(fd: string): number {
+  const m = QR_FD_SWITCHES.exec(fd);
+  return m ? m[0].length - (m[4]?.length ?? 0) : Math.min(3, fd.length);
+}
+
 export interface QrFdParse {
   errorCorrection: QrEcLevel;
   content: string;

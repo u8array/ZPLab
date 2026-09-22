@@ -994,6 +994,7 @@ const tr = {
     catalogNo: 'hayır',
     catalogNoCursor: 'Ne yaptığını görmek için imleci bir komutun üzerine getirin.',
     catalogNoMatch: 'Aramayla eşleşen komut yok.',
+    blankFieldHint: 'yer tutucu',
     catalogDismissed: 'Referans gizlendi. Tekrar göstermek için kodda komuta tıklayın.',
     catalogNoEntryFmt: '{cmd} referansta yok.',
     copy: 'Kopyala',

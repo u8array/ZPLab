@@ -994,6 +994,7 @@ const ar = {
     catalogNo: 'لا',
     catalogNoCursor: 'ضع المؤشر على أمر لمعرفة وظيفته.',
     catalogNoMatch: 'لا توجد أوامر تطابق البحث.',
+    blankFieldHint: 'عنصر نائب',
     catalogDismissed: 'تم إخفاء المرجع. انقر على الأمر في الكود لإظهاره مرة أخرى.',
     catalogNoEntryFmt: '{cmd} غير موجود في المرجع.',
     copy: 'نسخ',

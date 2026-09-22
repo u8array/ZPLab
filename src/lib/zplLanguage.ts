@@ -279,6 +279,11 @@ function readCommandName(state: EditorState, token: SyntaxNodeRef): { id: string
   return { id: `${token.name === "TildeCmdName" ? "~" : "^"}${name}`, name };
 }
 
+/** The canonical id of a command's name node, or null for any other node. */
+export function commandName(state: EditorState, node: SyntaxNodeRef | null): string | null {
+  return node && NAME_NODES.has(node.name) ? readCommandName(state, node).id : null;
+}
+
 /** The command whose bytes surround `pos`, or null between commands; the command
  *  starting at the caret wins over the one ending there. */
 export function commandAtCursor(state: EditorState, pos: number): CaretCommand | null {

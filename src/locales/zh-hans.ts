@@ -994,6 +994,7 @@ const zhHans = {
     catalogNo: '否',
     catalogNoCursor: '将光标放在命令上可查看其作用。',
     catalogNoMatch: '没有匹配搜索的命令。',
+    blankFieldHint: '占位符',
     catalogDismissed: '参考已隐藏。点击代码中的命令可再次显示。',
     catalogNoEntryFmt: '{cmd} 不在参考中。',
     copy: '复制',

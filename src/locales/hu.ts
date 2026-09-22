@@ -994,6 +994,7 @@ const hu = {
     catalogNo: 'nem',
     catalogNoCursor: 'Helyezze a kurzort egy parancsra, hogy lássa, mit csinál.',
     catalogNoMatch: 'Nincs a keresésnek megfelelő parancs.',
+    blankFieldHint: 'helyőrző',
     catalogDismissed: 'A referencia rejtve van. Kattintson a parancsra a kódban, hogy újra megjelenjen.',
     catalogNoEntryFmt: '{cmd} nincs a referenciában.',
     copy: 'Másolás',
