@@ -11,7 +11,7 @@ import { findObjectById } from "@zplab/core/types/Group";
 import { objectResolvesCtrl } from "@zplab/core/registry";
 import { encodeContent, parseContent, recommendedEc, isContentComplete, typedContentMarkerFindings, CONTENT_TYPES, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
 
-type FieldKind = "text" | "password" | "textarea" | "checkbox" | "auth";
+type FieldKind = "text" | "textarea" | "checkbox" | "auth";
 
 
 interface FieldDef {
@@ -28,7 +28,8 @@ const FORM_FIELDS: Record<ContentType, FieldDef[]> = {
   text: [{ key: "text", labelKey: "fText", kind: "textarea" }],
   wifi: [
     { key: "ssid", labelKey: "fSsid", kind: "text" },
-    { key: "password", labelKey: "fPassword", kind: "password" },
+    // Prints in the code and shows in the panel, so nothing to mask.
+    { key: "password", labelKey: "fPassword", kind: "text" },
     { key: "auth", labelKey: "fAuth", kind: "auth" },
     { key: "hidden", labelKey: "fHidden", kind: "checkbox" },
   ],
@@ -164,8 +165,8 @@ function ContentBuilder({ objectId }: { objectId: string }) {
               <>
                 {/* The chip editor is a contenteditable div (not labelable), so
                     it gets an aria-label; htmlFor only works for the real
-                    controls (auth select, masked password input). */}
-                {f.kind === "auth" || f.kind === "password" ? (
+                    control, the auth select. */}
+                {f.kind === "auth" ? (
                   <label className="text-[10px] text-muted" htmlFor={`content-${f.key}`}>{L(f.labelKey)}</label>
                 ) : (
                   <span className="text-[10px] text-muted">{L(f.labelKey)}</span>
@@ -187,11 +188,9 @@ function ContentBuilder({ objectId }: { objectId: string }) {
                   />
                 ) : (
                   <MarkerTextField
-                    id={`content-${f.key}`}
                     value={fields[f.key] ?? ""}
                     onChange={(next) => setField(f.key, next)}
                     multiline={f.kind === "textarea"}
-                    password={f.kind === "password"}
                     ariaLabel={L(f.labelKey)}
                     hasError={markerErrors[f.key] !== undefined}
                   />
