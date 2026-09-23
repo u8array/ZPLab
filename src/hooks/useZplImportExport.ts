@@ -9,7 +9,7 @@ import {
 import { generateMultiPageZPL, generateBatchZpl } from "@zplab/core/lib/zplGenerator";
 import { generateSetupScript } from "../lib/zplSetupScript";
 import { printLabel } from "../lib/printPreview";
-import { saveTextFile, saveErrorMessage, ZPL_FILTER } from "../lib/fileDialogs";
+import { saveTextFile, saveErrorMessage, ZPL_SAVE_FILTERS } from "../lib/fileDialogs";
 import { labelaryErrorMessage } from "../lib/labelary";
 import { currentPageLabel, selectLabelaryEndpoint } from "../store/labelStore.selectors";
 import { buildActiveRow } from "@zplab/core/lib/variableBinding";
@@ -36,11 +36,7 @@ export function useZplImportExport() {
   const handleDownload = () => {
     const s = useLabelStore.getState();
     const zpl = finishZplExport(generateMultiPageZPL(s.label, s.pages, s.variables));
-    void saveTextFile(zpl, {
-      filename: "label.zpl",
-      mimeType: "text/plain",
-      filter: ZPL_FILTER,
-    })
+    void saveTextFile(zpl, { filename: "label.zpl", filters: ZPL_SAVE_FILTERS })
       .then((wrote) => wrote && clearUserError())
       .catch(() => setUserError(saveErrorMessage));
   };
@@ -52,11 +48,7 @@ export function useZplImportExport() {
     const zpl = finishZplExport(
       generateBatchZpl(currentPageLabel(s), currentObjects(s), s.variables, batch.dataset, batch.mapping),
     );
-    void saveTextFile(zpl, {
-      filename: "label-batch.zpl",
-      mimeType: "text/plain",
-      filter: ZPL_FILTER,
-    })
+    void saveTextFile(zpl, { filename: "label-batch.zpl", filters: ZPL_SAVE_FILTERS })
       .then((wrote) => wrote && clearUserError())
       .catch(() => setUserError(saveErrorMessage));
   };

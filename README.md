@@ -80,7 +80,7 @@ Select several objects with Shift-click or a lasso. Position and size changes ap
 
 The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. The canvas is an approximation. **Preview** renders the label through [Labelary](https://labelary.com/) or, on desktop, the connected printer.
 
-- **File → Export ZPL:** saves a `.zpl` file
+- **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
 - **File → Send to Zebra Printer:** opens the send dialog. It sends over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop.
 - **File → Print as Image (browser):** opens the Labelary preview, then the browser print dialog
 
@@ -220,9 +220,13 @@ Extract the web release zip and serve its contents from your web server's root, 
 docker run -p 8080:8080 ghcr.io/u8array/zplab:latest
 ```
 
-Then open `http://localhost:8080`.
+Then open `http://localhost:8080`. The image is published with each release from v0.7.0. To build it yourself:
 
-- The container serves static files only. Printing and previews run in the browser.
+```sh
+docker build -t zplab .
+```
+
+- The container serves static files only. Printing and previews run in the browser. Server-side features are planned but not scheduled.
 - Outbound calls go to `api.labelary.com` for previews and to the printer or Zebra Browser Print agent a user configures.
 - `VITE_THIRD_PARTY_LABELARY=false` switches Labelary previews off for every user of that build. `VITE_LABELARY_API_URL` only sets the default endpoint, which a user can still change in Settings.
 - Both are read at build time. Rebuild the image to change them, see the [build options](docs/development.md#build-options).

@@ -15,6 +15,7 @@ import { useSqliteConnectActions } from '../../hooks/useSqliteConnectActions';
 import { useDbConnectActions } from '../../hooks/useDbConnectActions';
 import { isCurrentDataContext, settleDatasetReplace } from '../../store/datasetActions';
 import { isDesktopShell } from '../../lib/platform';
+import { acceptAttr, CSV_FILTER } from '../../lib/fileDialogs';
 import { DialogShell } from '../ui/DialogShell';
 import { CsvImportConfirmDialog } from './CsvImportConfirmDialog';
 import { SourcePickModal } from './SourcePickModal';
@@ -114,7 +115,7 @@ export function ConnectDataWizard() {
       <input
         ref={csvInputRef}
         type="file"
-        accept=".csv,text/csv"
+        accept={acceptAttr(CSV_FILTER)}
         className="hidden"
         onChange={handleCsvImport}
       />

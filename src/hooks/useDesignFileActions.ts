@@ -20,11 +20,7 @@ export function useDesignFileActions() {
 
   const handleSave = () => {
     const data = serializeDesign(label, pages, variables, columnMapping, dataSourceRef);
-    void saveTextFile(data, {
-      filename: "label.json",
-      mimeType: "application/json",
-      filter: DESIGN_FILTER,
-    })
+    void saveTextFile(data, { filename: "label.json", filters: [DESIGN_FILTER] })
       .then((wrote) => wrote && clearUserError())
       .catch(() => setUserError(saveErrorMessage));
   };

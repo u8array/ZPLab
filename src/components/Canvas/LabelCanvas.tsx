@@ -85,7 +85,8 @@ import { buildContextMenu, type MenuSection } from "./canvasActions";
 import { zplForSelection } from "../../lib/zplForSelection";
 import { finishZplExport } from "../../lib/exportZpl";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
-import { nodeToPngBlob, downloadBlob, copyPngToClipboard } from "../../lib/canvasImage";
+import { nodeToPngBlob, copyPngToClipboard } from "../../lib/canvasImage";
+import { saveFile, saveErrorMessage, PNG_FILTER } from "../../lib/fileDialogs";
 import { printerPreviewLayout } from "../../lib/printerPreview";
 
 /** Object types offered by the context menu's "Add object here". */
@@ -256,6 +257,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     clipboard,
     variables,
     pages,
+    setUserError,
+    clearUserError,
   } = useLabelStore();
   // Everything on canvas is drawn in the current page's dot scale;
   // designLabel stays the MODEL's design scope for the whole-document emit.
@@ -1297,7 +1300,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       },
       exportImage: async () => {
         const blob = await captureLabelImage();
-        if (blob) downloadBlob(blob, "label.png");
+        if (!blob) return;
+        await saveFile(blob, { filename: "label.png", filters: [PNG_FILTER] })
+          .then((wrote) => wrote && clearUserError())
+          .catch(() => setUserError(saveErrorMessage));
       },
       selectAll: () => selectObjects(objects.map((o) => o.id)),
       switchType: (type: string) => {
