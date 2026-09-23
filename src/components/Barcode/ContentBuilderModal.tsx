@@ -9,7 +9,7 @@ import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { MarkerTextField } from "../Properties/MarkerTextField";
 import { findObjectById } from "@zplab/core/types/Group";
 import { objectResolvesCtrl } from "@zplab/core/registry";
-import { encodeContent, parseContent, recommendedEc, isContentComplete, typedContentMarkerFindings, CONTENT_TYPES, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
+import { encodeContent, parseContent, recommendedEc, isContentComplete, isVcardDate, markerStandIn, typedContentMarkerFindings, CONTENT_TYPES, VCARD_FIELDS, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
 
 type FieldKind = "text" | "textarea" | "checkbox" | "auth";
 
@@ -19,6 +19,8 @@ interface FieldDef {
   labelKey: string;
   kind: FieldKind;
 }
+
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // Per-type form fields; `key` matches typedContent field keys, `labelKey` a
 // t.contentBuilder.* string. Order = display order. Every value field accepts
@@ -33,15 +35,8 @@ const FORM_FIELDS: Record<ContentType, FieldDef[]> = {
     { key: "auth", labelKey: "fAuth", kind: "auth" },
     { key: "hidden", labelKey: "fHidden", kind: "checkbox" },
   ],
-  vcard: [
-    { key: "firstName", labelKey: "fFirstName", kind: "text" },
-    { key: "lastName", labelKey: "fLastName", kind: "text" },
-    { key: "org", labelKey: "fOrg", kind: "text" },
-    { key: "title", labelKey: "fTitle", kind: "text" },
-    { key: "tel", labelKey: "fTel", kind: "text" },
-    { key: "email", labelKey: "fEmail", kind: "text" },
-    { key: "url", labelKey: "fUrl", kind: "text" },
-  ],
+  // Derived from the encoder's list, as the escaper table is, so a field cannot lack a rule.
+  vcard: VCARD_FIELDS.map((key) => ({ key, labelKey: `f${cap(key)}`, kind: key === "note" ? "textarea" : "text" })),
   email: [
     { key: "to", labelKey: "fTo", kind: "text" },
     { key: "subject", labelKey: "fSubject", kind: "text" },
@@ -57,8 +52,6 @@ const FORM_FIELDS: Record<ContentType, FieldDef[]> = {
     { key: "lng", labelKey: "fLng", kind: "text" },
   ],
 };
-
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export function ContentBuilderModal() {
   const objectId = useLabelStore((s) => s.contentBuilderObjectId);
@@ -90,15 +83,16 @@ function ContentBuilder({ objectId }: { objectId: string }) {
   const content = encodeContent(type, fields);
   // Validate fields as their preview substitution (GS1-builder precedent): a
   // marker is checked as the text it prints. A marker resolving to "" is
-  // runtime-valued (CSV/prompt fills it later), so it stands in as "0", a
-  // value passing every per-type check, instead of blocking Apply on an
-  // empty default.
+  // runtime-valued (CSV/prompt fills it later), so it stands in as a value
+  // passing every per-type check, instead of blocking Apply on an empty default.
   const validationFields = Object.fromEntries(
     Object.entries(fields).map(([k, v]) => {
       const resolved = resolveDefaults(v);
-      return [k, resolved === "" && hasTemplateMarkers(v) ? "0" : resolved];
+      return [k, resolved === "" && hasTemplateMarkers(v) ? markerStandIn(type, k) : resolved];
     }),
   );
+  // The one field whose shape a scanner silently discards, so the gate says why it holds.
+  const badDate = type === "vcard" && !isVcardDate((validationFields.birthday ?? "").trim());
   // A marker's print-time value is inserted as-is (no escaping); block Apply
   // when any substituted value (variable default or a bound CSV cell, all
   // rows) carries chars this field's encoding can't take. Authoring-time gate
@@ -192,7 +186,7 @@ function ContentBuilder({ objectId }: { objectId: string }) {
                     onChange={(next) => setField(f.key, next)}
                     multiline={f.kind === "textarea"}
                     ariaLabel={L(f.labelKey)}
-                    hasError={markerErrors[f.key] !== undefined}
+                    hasError={markerErrors[f.key] !== undefined || (f.key === "birthday" && badDate)}
                   />
                 )}
                 {markerErrors[f.key] !== undefined && (
@@ -200,6 +194,7 @@ function ContentBuilder({ objectId }: { objectId: string }) {
                     {tc.errMarkerUnsafeChars.replace("{chars}", markerErrors[f.key] ?? "")}
                   </span>
                 )}
+                {f.key === "birthday" && badDate && <span className="text-[10px] text-error">{tc.errBirthday}</span>}
               </>
             )}
           </div>
