@@ -11,6 +11,7 @@ import { ImportSetupChoice } from './ImportSetupChoice';
 import { useT } from '../../hooks/useT';
 import { DialogShell } from '../ui/DialogShell';
 import { copyText } from '../../lib/clipboard';
+import { acceptAttr, ZPL_SAVE_FILTERS } from '../../lib/fileDialogs';
 
 interface Props {
   onClose: () => void;
@@ -196,7 +197,7 @@ export function ZplImportModal({ onClose }: Props) {
             <input
               ref={fileInputRef}
               type="file"
-              accept=".zpl,.prn,text/plain"
+              accept={acceptAttr(...ZPL_SAVE_FILTERS)}
               className="hidden"
               onChange={handleFileSelect}
             />

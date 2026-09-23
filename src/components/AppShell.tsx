@@ -51,6 +51,7 @@ import { buildMenuModel, type MenuItemId } from "../lib/menuModel";
 import { NativeMenuBridge } from "./NativeMenuBridge";
 import type { MenuHandlers } from "../hooks/useNativeMenu";
 import { isDesktopShell, isMacDesktop } from "../lib/platform";
+import { acceptAttr, DESIGN_FILTER, CSV_FILTER } from "../lib/fileDialogs";
 import { openExternal, REPO_URL } from "../lib/openExternal";
 import { LabelaryNoticeModal } from "./Output/LabelaryNoticeModal";
 import { PrinterSettingsModal } from "./PrinterSettings/PrinterSettingsModal";
@@ -394,14 +395,14 @@ export function AppShell() {
           <input
             ref={loadInputRef}
             type="file"
-            accept=".json,application/json"
+            accept={acceptAttr(DESIGN_FILTER)}
             className="hidden"
             onChange={handleLoad}
           />
           <input
             ref={csvInputRef}
             type="file"
-            accept=".csv,text/csv"
+            accept={acceptAttr(CSV_FILTER)}
             className="hidden"
             onChange={handleCsvImport}
           />

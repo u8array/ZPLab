@@ -15,19 +15,6 @@ export async function nodeToPngBlob(
   }
 }
 
-/** Trigger a browser download of a blob under `filename`. */
-export function downloadBlob(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  // Revoke after the click has been dispatched.
-  setTimeout(() => URL.revokeObjectURL(url), 0);
-}
-
 /** Copy a PNG to the clipboard. Takes a Blob promise so the caller can call this
  *  synchronously in the click handler: a pending blob keeps the user activation
  *  Safari/Firefox drop after an await. Throws on failure so the caller can react. */
