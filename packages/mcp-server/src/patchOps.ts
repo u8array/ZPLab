@@ -1,6 +1,6 @@
 // patch_design: the envelope around the core op reducer, plus the report the agent reads.
 
-import { designFileInputSchema, objectInputSchema, pagesSizeError, parseEnvelope, unknownPropNotes, variableInputSchema, type DesignFileJson, type ToolError } from "./boundary.js";
+import { designFileInputSchema, INSIDE_PROPS, objectInputSchema, pagesSizeError, parseEnvelope, strictEntry, unknownPropNotes, variableInputSchema, type DesignFileJson, type ToolError } from "./boundary.js";
 import { reportFor, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
 
 import { z } from "zod";
@@ -17,7 +17,7 @@ import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 
 
 export const patchOpSchema: z.ZodType<DesignOp> = z.discriminatedUnion("op", [
-  z.object({
+  strictEntry({
     op: z.literal("update"),
     id: z.string(),
     x: z
@@ -33,22 +33,22 @@ export const patchOpSchema: z.ZodType<DesignOp> = z.discriminatedUnion("op", [
     positionType: z.enum(["FO", "FT"]).optional(),
     fieldJustify: z.enum(["L", "C", "R"]).optional(),
     props: z.record(z.string(), z.unknown()).optional(),
-  }),
-  z.object({ op: z.literal("remove"), id: z.string() }),
-  z.object({
+  }, "An update op", INSIDE_PROPS),
+  strictEntry({ op: z.literal("remove"), id: z.string() }, "A remove op"),
+  strictEntry({
     op: z.literal("add"),
     pageIndex: z.number().int().nonnegative().optional(),
     object: objectInputSchema,
-  }),
-  z.object({ op: z.literal("addVariable"), variable: variableInputSchema }),
-  z.object({
+  }, "An add op", "The object's fields go inside object."),
+  strictEntry({ op: z.literal("addVariable"), variable: variableInputSchema }, "An addVariable op", "The variable's fields go inside variable."),
+  strictEntry({
     op: z.literal("updateVariable"),
     name: z.string().min(1),
     newName: z.string().min(1).optional(),
     defaultValue: z.string().optional(),
     comment: z.string().optional(),
-  }),
-  z.object({ op: z.literal("removeVariable"), name: z.string().min(1) }),
+  }, "An updateVariable op"),
+  strictEntry({ op: z.literal("removeVariable"), name: z.string().min(1) }, "A removeVariable op"),
 ]);
 export type PatchOp = DesignOp;
 

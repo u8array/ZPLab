@@ -12,12 +12,15 @@ import {
   exportZpl,
   getSchema,
   importZpl,
+  INSIDE_DESIGN_FILE,
+  INSIDE_OBJECT_ENTRY,
   openInApp,
   patchDesign,
   patchDesignShape,
   patchOperationsSchema,
   rasterImageResult,
   rasterImageShape,
+  strictInput,
   validateDraft,
   validateZpl,
   zplInputShape,
@@ -105,7 +108,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "changes per print as a variable and reference it in content as " +
         "«name»; it becomes a ^FN slot the user can fill from a data " +
         "source. Call get_schema for object types.",
-      inputSchema: createDraftShape,
+      inputSchema: strictInput(createDraftShape, INSIDE_OBJECT_ENTRY),
     },
     async (args) => json(createDraft(args)),
   );
@@ -117,7 +120,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
       description:
         "Parse a design file and return schema errors, preflight warnings, per-object " +
         "bounds (dots), and bbox overlaps.",
-      inputSchema: designFileEnvelopeSchema.shape,
+      inputSchema: strictInput(designFileEnvelopeSchema.shape, INSIDE_DESIGN_FILE),
     },
     async ({ designFile }) => json(validateDraft(designFile)),
   );
@@ -136,7 +139,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "(a note says so) and the model re-emits them; an " +
         "update keeps them and replays around the edited field. " +
         "Returns the edited design file plus fresh warnings, bounds and overlaps.",
-      inputSchema: patchDesignShape,
+      inputSchema: strictInput(patchDesignShape, INSIDE_DESIGN_FILE),
     },
     async ({ designFile, operations }) => json(patchDesign(designFile, operations)),
   );
@@ -148,7 +151,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
       description:
         "Parse a design file and return its generated ZPL: plain printer bytes, or with " +
         "ZPLab's ^FX metadata when `metadata` is true (lossless re-import).",
-      inputSchema: exportZplInputSchema.shape,
+      inputSchema: strictInput(exportZplInputSchema.shape, INSIDE_DESIGN_FILE),
     },
     async ({ designFile, metadata }) => json(exportZpl(designFile, { metadata })),
   );
@@ -163,7 +166,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "commands, fields the printer discards for a missing ^FS), preflight warnings, " +
         "per-object bounds (dots), and bbox overlaps. " +
         "widthMm/heightMm are fallbacks for streams without ^PW/^LL.",
-      inputSchema: zplInputShape,
+      inputSchema: strictInput(zplInputShape),
     },
     async ({ zpl, dpmm, widthMm, heightMm }) => json(validateZpl(zpl, dpmm, widthMm, heightMm)),
   );
@@ -179,7 +182,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "(dots), and bbox overlaps. Size falls back to the caller's hints then 100x50mm. " +
         "Right-justified z=1 1D barcodes (^FO/^FT) are normalised to top-left x (bwip-" +
         "measured, same as the app import) and enable the label's emit1dZJustify gate.",
-      inputSchema: zplInputShape,
+      inputSchema: strictInput(zplInputShape),
     },
     async ({ zpl, dpmm, widthMm, heightMm }) => json(importZpl(zpl, dpmm, widthMm, heightMm)),
   );
@@ -189,7 +192,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
     {
       title: "Get object schema",
       description: "List supported object types and their props for building a draft.",
-      inputSchema: {},
+      inputSchema: strictInput({}),
     },
     async () => json(getSchema()),
   );
@@ -209,7 +212,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
           "many objects were displaced. The app keeps the displaced design so the user can " +
           "restore it. When `replaced.restorable` is false it could not keep it, so tell the " +
           "user the replace is final.",
-        inputSchema: designFileEnvelopeSchema.shape,
+        inputSchema: strictInput(designFileEnvelopeSchema.shape, INSIDE_DESIGN_FILE),
       },
       async ({ designFile }) => {
         if (!isAppAttached()) return json(NO_WINDOW);
@@ -246,7 +249,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
           "undo step. All or nothing: a refused operation leaves the design untouched. " +
           "The reply is the bounds report the app measured, not a design file. Use this " +
           "for every change to an open design, and open_in_app only when replacing it wholesale.",
-        inputSchema: { operations: patchOperationsSchema },
+        inputSchema: strictInput({ operations: patchOperationsSchema }),
       },
       async ({ operations }) => {
         if (!isAppAttached()) return json(NO_WINDOW);
@@ -270,7 +273,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
           "graphic at the given width in dots. Returns an image object to place " +
           "via create_draft or patch_design. Fetch the bytes yourself and pass " +
           "them here; the app renders them, it does not download anything.",
-        inputSchema: rasterImageShape,
+        inputSchema: strictInput(rasterImageShape),
       },
       async ({ dataUrl, widthDots, threshold }) => {
         if (!isAppAttached()) return json(NO_WINDOW);
@@ -292,7 +295,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
           "plus print-true bounds and overlaps (barcodes probed at print scale; text " +
           "and images use the app's render measurements). Only available while a " +
           "ZPLab window is connected.",
-        inputSchema: {},
+        inputSchema: strictInput({}),
       },
       async () => {
         if (!isAppAttached()) return json(NO_WINDOW);
