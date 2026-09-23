@@ -3,6 +3,8 @@ import { describe, it, expect, afterEach, beforeEach } from "vitest";
 import { render, cleanup, screen } from "@testing-library/react";
 import { ContentBuilderModal } from "./ContentBuilderModal";
 import { useLabelStore } from "../../store/labelStore";
+import { VCARD_FIELDS } from "@zplab/core/lib/typedContent";
+import en from "../../locales/en";
 
 afterEach(cleanup);
 
@@ -22,6 +24,21 @@ beforeEach(() => {
     variables: [{ id: "v1", name: "pw", fnNumber: 1, defaultValue: "s3cret" }],
     contentBuilderObjectId: "q",
   } as never);
+});
+
+describe("ContentBuilderModal contact fields", () => {
+  it("offers every contact field with a real label", () => {
+    useLabelStore.setState({
+      pages: [{ objects: [{ ...(qr as { props: object }), props: { ...(qr as { props: object }).props, content: "BEGIN:VCARD\nVERSION:3.0\nN:B;A;;;\nEND:VCARD" } }] }],
+    } as never);
+    render(<ContentBuilderModal />);
+    const labels = en.contentBuilder as Record<string, string>;
+    for (const key of VCARD_FIELDS) {
+      const label = labels[`f${key.charAt(0).toUpperCase()}${key.slice(1)}`];
+      expect(label, key).toBeDefined();
+      expect(screen.getByRole("textbox", { name: label })).toBeTruthy();
+    }
+  });
 });
 
 describe("ContentBuilderModal WiFi password", () => {

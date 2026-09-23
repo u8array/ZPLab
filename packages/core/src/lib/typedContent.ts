@@ -24,6 +24,21 @@ export type ContentType = (typeof CONTENT_TYPES)[number];
 
 export type ContentFields = Record<string, string>;
 
+/** The ADR components the form offers, in the line's order from component 3 (RFC 2426 3.2.1). */
+export const ADR_FIELDS = ["street", "city", "region", "postalCode", "country"] as const;
+/** The contact fields in encode order. The escaper table and the form derive from it. */
+export const VCARD_FIELDS = [
+  "firstName", "lastName", "org", "title", "tel", "mobile", "email", "url", ...ADR_FIELDS, "note", "birthday",
+] as const;
+
+/** A date a scanner keeps: ZXing drops any BDAY that is not 4-2-2 digits, dashes optional. */
+export const isVcardDate = (s: string): boolean => s === "" || /^\d{4}-?\d{2}-?\d{2}$/.test(s);
+
+/** What the builder checks a marker as while its value is unknown: something every rule of the field accepts. */
+export function markerStandIn(type: ContentType, key: string): string {
+  return type === "vcard" && key === "birthday" ? "0000-00-00" : "0";
+}
+
 // One structural-char class per format, shared by the literal ESCAPER and the
 // marker-value VALIDATION (MARKER_UNSAFE below) so the two can't drift: a char
 // the escaper protects is exactly a char a raw print-time value corrupts.
@@ -63,10 +78,7 @@ function normalizeTel(s: string): string {
 const MAILTO_UNSAFE = /[&#%\s]/g;
 const MARKER_UNSAFE: Partial<Record<ContentType, Record<string, RegExp>>> = {
   wifi: { ssid: WIFI_STRUCTURAL, password: WIFI_STRUCTURAL },
-  vcard: {
-    firstName: VCARD_STRUCTURAL, lastName: VCARD_STRUCTURAL, org: VCARD_STRUCTURAL,
-    title: VCARD_STRUCTURAL, tel: VCARD_STRUCTURAL, email: VCARD_STRUCTURAL, url: VCARD_STRUCTURAL,
-  },
+  vcard: Object.fromEntries(VCARD_FIELDS.map((key) => [key, VCARD_STRUCTURAL])),
   email: { subject: MAILTO_UNSAFE, body: MAILTO_UNSAFE },
 };
 
@@ -149,7 +161,7 @@ export function isContentComplete(type: ContentType, f: ContentFields): boolean 
     case "url": return !!f.url?.trim();
     case "text": return !!f.text;
     case "wifi": return !!f.ssid?.trim();
-    case "vcard": return !!(f.firstName?.trim() || f.lastName?.trim());
+    case "vcard": return !!(f.firstName?.trim() || f.lastName?.trim()) && isVcardDate((f.birthday ?? "").trim());
     case "email": return !!f.to?.trim();
     case "tel":
     case "sms": return /\d/.test(f.number ?? "");
@@ -183,15 +195,24 @@ export function encodeContent(type: ContentType, f: ContentFields): string {
       return out + ";";
     }
     case "vcard": {
-      const last = f.lastName ?? "";
-      const first = f.firstName ?? "";
-      const fn = `${first} ${last}`.trim() || last || first;
-      const lines = ["BEGIN:VCARD", "VERSION:3.0", `N:${escVcard(last)};${escVcard(first)};;;`, `FN:${escVcard(fn)}`];
-      if (f.org) lines.push(`ORG:${escVcard(f.org)}`);
-      if (f.title) lines.push(`TITLE:${escVcard(f.title)}`);
-      if (f.tel) lines.push(`TEL:${escVcard(normalizeTel(f.tel))}`);
-      if (f.email) lines.push(`EMAIL:${escVcard(f.email)}`);
-      if (f.url) lines.push(`URL:${escVcard(f.url)}`);
+      const v = (key: string) => escVcard((f[key] ?? "").trim());
+      const fn = `${(f.firstName ?? "").trim()} ${(f.lastName ?? "").trim()}`.trim();
+      const lines = ["BEGIN:VCARD", "VERSION:3.0", `N:${v("lastName")};${v("firstName")};;;`, `FN:${escVcard(fn)}`];
+      const property = (tag: string, key: string) => {
+        const value = v(key);
+        if (value) lines.push(`${tag}:${value}`);
+      };
+      property("ORG", "org");
+      property("TITLE", "title");
+      // As typed: the spec's own TEL example carries separators, and a scanner keeps the grouping.
+      property("TEL", "tel");
+      property("TEL;TYPE=CELL", "mobile");
+      property("EMAIL", "email");
+      property("URL", "url");
+      const adr = ADR_FIELDS.map(v);
+      if (adr.some(Boolean)) lines.push(`ADR:;;${adr.join(";")}`);
+      property("NOTE", "note");
+      property("BDAY", "birthday");
       lines.push("END:VCARD");
       return lines.join("\n");
     }
@@ -268,22 +289,34 @@ function parseWifi(content: string): ContentFields {
   return f;
 }
 
+/** The first non-empty value of a repeated property wins, as ZXing's primary does. Later ones have no field. */
 function parseVcard(content: string): ContentFields {
   const f: ContentFields = {};
-  for (const line of content.split(/\r?\n/)) {
+  const take = (key: string, value: string) => {
+    if (value !== "") f[key] ??= value;
+  };
+  // A folded line (RFC 2425) continues with a leading space or tab.
+  for (const line of content.replace(/\r?\n[ \t]/g, "").split(/\r?\n/)) {
     const idx = line.indexOf(":");
     if (idx < 0) continue;
-    const tag = (line.slice(0, idx).split(";")[0] ?? "").toUpperCase();
+    const [tag = "", ...params] = line.slice(0, idx).toUpperCase().split(";");
     const val = line.slice(idx + 1);
     if (tag === "N") {
       const parts = splitUnescaped(val, ";").map(unescape);
-      f.lastName = parts[0] ?? "";
-      f.firstName = parts[1] ?? "";
-    } else if (tag === "ORG") f.org = unescape(val);
-    else if (tag === "TITLE") f.title = unescape(val);
-    else if (tag === "TEL") f.tel = unescape(val);
-    else if (tag === "EMAIL") f.email = unescape(val);
-    else if (tag === "URL") f.url = unescape(val);
+      take("lastName", parts[0] ?? "");
+      take("firstName", parts[1] ?? "");
+    } else if (tag === "ORG") take("org", unescape(val));
+    else if (tag === "TITLE") take("title", unescape(val));
+    else if (tag === "TEL") {
+      // vCard 2.1 writes the type bare, 3.0 as TYPE=.
+      take(params.some((p) => p === "CELL" || /^TYPE=.*CELL/.test(p)) ? "mobile" : "tel", unescape(val));
+    } else if (tag === "EMAIL") take("email", unescape(val));
+    else if (tag === "URL") take("url", unescape(val));
+    else if (tag === "ADR" && f.street === undefined) {
+      const parts = splitUnescaped(val, ";").map(unescape).slice(2, 2 + ADR_FIELDS.length);
+      if (parts.some(Boolean)) for (const [i, key] of ADR_FIELDS.entries()) f[key] = parts[i] ?? "";
+    } else if (tag === "NOTE") take("note", unescape(val));
+    else if (tag === "BDAY") take("birthday", unescape(val));
   }
   return f;
 }

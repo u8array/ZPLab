@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { encodeContent, markerUnsafeChars, parseContent, recommendedEc, isContentComplete, typedContentIncompleteRows, typedContentMarkerFindings, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
+import { encodeContent, markerUnsafeChars, markerStandIn, parseContent, recommendedEc, isContentComplete, typedContentIncompleteRows, typedContentMarkerFindings, type ContentType, type ContentFields, VCARD_FIELDS } from "@zplab/core/lib/typedContent";
 
 function roundtrip(type: ContentType, fields: ContentFields) {
   const parsed = parseContent(encodeContent(type, fields));
@@ -45,6 +45,34 @@ describe("encodeContent", () => {
     expect(encodeContent("vcard", { firstName: "Sean", lastName: "Owen", email: "s@x.io" })).toBe(
       "BEGIN:VCARD\nVERSION:3.0\nN:Owen;Sean;;;\nFN:Sean Owen\nEMAIL:s@x.io\nEND:VCARD",
     );
+  });
+
+  it("vcard: emits every field of the form, the phone as typed, the address as one ADR line", () => {
+    const all = Object.fromEntries(VCARD_FIELDS.map((k) => [k, k]));
+    const out = encodeContent("vcard", { ...all, tel: "+49 30 123", mobile: "+49 171 9", birthday: "1990-05-04" });
+    expect(out).toBe(
+      [
+        "BEGIN:VCARD", "VERSION:3.0", "N:lastName;firstName;;;", "FN:firstName lastName", "ORG:org", "TITLE:title",
+        "TEL:+49 30 123", "TEL;TYPE=CELL:+49 171 9", "EMAIL:email", "URL:url",
+        "ADR:;;street;city;region;postalCode;country", "NOTE:note", "BDAY:1990-05-04", "END:VCARD",
+      ].join("\n"),
+    );
+    for (const key of VCARD_FIELDS) {
+      expect(out, key).toContain(key === "birthday" ? "1990-05-04" : key === "tel" ? "+49 30 123" : key === "mobile" ? "+49 171 9" : key);
+      expect(markerUnsafeChars("vcard", key, "a;b"), key).toBe(";");
+    }
+    expect(encodeContent("vcard", { lastName: "O", city: "Wien" })).toContain("ADR:;;;Wien;;;");
+    // Blank means absent, for every field alike.
+    expect(encodeContent("vcard", { lastName: " O ", firstName: " ", tel: "  ", mobile: " ", birthday: " ", org: " A " })).toBe(
+      "BEGIN:VCARD\nVERSION:3.0\nN:O;;;;\nFN:O\nORG:A\nEND:VCARD",
+    );
+  });
+
+  it("vcard: the birthday must be a date a scanner keeps", () => {
+    expect(isContentComplete("vcard", { lastName: "O", birthday: "1990-05-04" })).toBe(true);
+    expect(isContentComplete("vcard", { lastName: "O", birthday: "19900504" })).toBe(true);
+    expect(isContentComplete("vcard", { lastName: "O", birthday: markerStandIn("vcard", "birthday") })).toBe(true);
+    for (const bad of ["0", "4.5.1990", "1990-05-04T10:00:00Z"]) expect(isContentComplete("vcard", { lastName: "O", birthday: bad }), bad).toBe(false);
   });
 });
 
@@ -183,6 +211,15 @@ describe("parseContent round-trips", () => {
     expect(roundtrip("vcard", { firstName: "Sean", lastName: "Owen", org: "ACME", email: "s@x.io" })).toMatchObject({
       firstName: "Sean", lastName: "Owen", org: "ACME", email: "s@x.io",
     });
+    const full = { firstName: "A", lastName: "B", tel: "+49 30 1", mobile: "+49 171 2", street: "Weg 1, Hof", city: "Wien", region: "W", postalCode: "1010", country: "AT", note: "x;y", birthday: "1990-05-04" };
+    expect(roundtrip("vcard", full)).toMatchObject(full);
+    const card = (...lines: string[]) => parseContent(["BEGIN:VCARD", "VERSION:3.0", "N:B;A;;;", ...lines, "END:VCARD"].join("\n")).fields;
+    expect(card("TEL;TYPE=WORK,VOICE:1", "TEL;type=cell:2", "TEL;CELL:3", "TEL:4")).toMatchObject({ tel: "1", mobile: "2" });
+    // The first non-empty repeated property is the one the form shows, as a scanner's primary.
+    expect(card("EMAIL:a@b.c", "EMAIL:d@e.f", "ADR;TYPE=WORK:;;W St;;;;", "ADR;TYPE=HOME:;;H St;;;;")).toMatchObject({ email: "a@b.c", street: "W St" });
+    expect(card("EMAIL:", "EMAIL:real@x.io", "ADR;TYPE=HOME:;;;;;;", "ADR;TYPE=WORK:;;H St;Graz;;;AT", "TEL:", "TEL:1")).toMatchObject({ email: "real@x.io", street: "H St", city: "Graz", country: "AT", tel: "1" });
+    // Unfolding drops the line break and the one space after it (RFC 2425), so the fold sat inside a word.
+    expect(card("NOTE:a long note that an exp", " orter folds")).toMatchObject({ note: "a long note that an exporter folds" });
     expect(roundtrip("email", { to: "a@b.c", subject: "Hi", body: "l1\nl2" })).toEqual({
       to: "a@b.c", subject: "Hi", body: "l1\nl2",
     });
