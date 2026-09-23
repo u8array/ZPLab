@@ -30,7 +30,30 @@ import { variableSchema, type Variable, type VariableInput } from "@zplab/core/t
 // Re-exported so the tools keep their names.
 export { buildVariables, propIssues, typeIssues };
 
-export const objectInputSchema: z.ZodType<ObjectInput> = z.object({
+/** A key at the wrong level is refused by name, since a plain object would strip it and the
+ *  model would chase the symptoms elsewhere. `props` stays open because the notes report it. */
+function strictShape<T extends z.ZodRawShape>(shape: T, noun: string, of: string, belongs: string): z.ZodObject<T, z.core.$strict> {
+  const takes = Object.keys(shape);
+  return z.strictObject(shape, {
+    error: (issue) => {
+      if (issue.code !== "unrecognized_keys") return undefined;
+      const keys = issue.keys.map((k) => `"${k}"`).join(", ");
+      const list = takes.length > 0 ? `${of} takes ${takes.join(", ")}.` : `${of} takes no arguments.`;
+      return `unknown ${noun}${issue.keys.length > 1 ? "s" : ""} ${keys}. ${list}${belongs ? ` ${belongs}` : ""}`;
+    },
+  });
+}
+/** A tool's top-level arguments. */
+export const strictInput = <T extends z.ZodRawShape>(shape: T, belongs = "") => strictShape(shape, "argument", "This tool", belongs);
+/** An entry inside an argument, named by what it is. */
+export const strictEntry = <T extends z.ZodRawShape>(shape: T, of: string, belongs = "") => strictShape(shape, "key", of, belongs);
+
+/** Where a misplaced field belongs, so the refusal points the model there. */
+export const INSIDE_DESIGN_FILE = "A design's own fields (schemaVersion, label, pages, variables) go inside designFile.";
+export const INSIDE_OBJECT_ENTRY = "An object's fields go inside its entry in objects.";
+export const INSIDE_PROPS = "Its printable settings go inside props.";
+
+export const objectInputSchema: z.ZodType<ObjectInput> = strictEntry({
   type: z.string(),
   x: z.number(),
   y: z.number(),
@@ -40,18 +63,18 @@ export const objectInputSchema: z.ZodType<ObjectInput> = z.object({
   positionType: z.enum(["FO", "FT"]).optional(),
   fieldJustify: z.enum(["L", "C", "R"]).optional(),
   props: z.record(z.string(), z.unknown()).optional(),
-});
+}, "An object entry", INSIDE_PROPS);
 
 const dpmmSchema = z.literal([...DPMM_VALUES]);
 
 /** A reusable slot: content referencing it as `«name»` emits ^FN, so the
  *  same design prints many rows. Slot numbers are assigned when omitted. */
-export const variableInputSchema: z.ZodType<VariableInput> = z.object({
+export const variableInputSchema: z.ZodType<VariableInput> = strictEntry({
   name: z.string().min(1),
   defaultValue: z.string().optional(),
   fnNumber: z.number().int().optional(),
   comment: z.string().optional(),
-});
+}, "A variable");
 export type VariableInputJson = Omit<VariableInput, "id">;
 
 export const createDraftShape = {
@@ -86,6 +109,7 @@ export const designFileInputSchema = z
   .describe("The design file as an object, or the same JSON as a string.");
 
 export const designFileEnvelopeSchema = z.object({ designFile: designFileInputSchema });
+
 /** export_zpl: `metadata` keeps ZPLab's ^FX comments for a lossless re-import. */
 export const exportZplInputSchema = designFileEnvelopeSchema.extend({ metadata: z.boolean().optional() });
 
