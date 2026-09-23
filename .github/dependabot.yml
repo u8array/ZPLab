@@ -41,3 +41,16 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+
+  # Base images of the Docker web build
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+    ignore:
+      # Node 25 dropped corepack, which the Dockerfile relies on.
+      - dependency-name: node
+        update-types: ["version-update:semver-major"]
