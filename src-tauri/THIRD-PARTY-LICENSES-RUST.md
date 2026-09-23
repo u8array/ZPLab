@@ -5824,7 +5824,7 @@ Used by:
 - [tauri-plugin-fs 2.5.2](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-opener 2.5.5](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-process 2.3.1](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-updater 2.11.0](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-updater 2.12.0](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-window-state 2.4.1](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin 2.6.3](https://github.com/tauri-apps/tauri)
 - [tauri-runtime-wry 2.11.4](https://github.com/tauri-apps/tauri)
