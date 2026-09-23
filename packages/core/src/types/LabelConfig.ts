@@ -328,7 +328,11 @@ declare const pageResolved: unique symbol;
  *  raw design label cannot reach a dots<->mm boundary on a diverging page.
  *  Consumer-side only: a helper declared with a plain LabelConfig param
  *  still accepts a design label unchecked. */
-export type PageLabel = LabelConfig & { readonly [pageResolved]: true };
+export type PageLabel = LabelConfig & {
+  readonly [pageResolved]: true;
+  /** The page's ^DF, folded in like its ^JM; a design has none, since each block stores under its own name. */
+  storedFormatPath?: string;
+};
 
 /** The label slice device-font resolution reads (^CF default + ^CW-style
  *  custom aliases); design-scoped, so a design label is always valid here. */

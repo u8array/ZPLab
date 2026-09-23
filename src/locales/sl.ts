@@ -397,6 +397,9 @@ const sl = {
     jmPageOverrideHintFmt: 'Ta stran ohrani svoj uvoženi način gostote {mode}; izbira spremeni način za celotno zasnovo',
     jmDensityA: 'Polna gostota (eksplicitno)',
     jmDensityB: 'Polovična gostota (podvoji merilo formata)',
+    storedFormat: 'Shranjena oblika',
+    storedFormatName: 'Ime',
+    storedFormatHint: 'Tiskalnik shrani obliko zapisa te strani na to pot, namesto da bi jo natisnil. Tiskalna in paketna opravila pošljejo ta ukaz za shranjevanje. Predogledi se še naprej izrisujejo. Paket prikliče samo imena do 8 znakov.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Sidranje črtne kode na strani tiskalnika',
@@ -1024,6 +1027,8 @@ const sl = {
     editSourceTooManyPagesFmt: 'Koda presega {max} formatov nalepke.',
     replayRiskSetupFmt: 'Pošiljanje te kode spremeni tudi nastavitve tiskalnika: {commands}',
     replayRiskActionsFmt: 'Pošiljanje te kode sproži tudi dejanja tiskalnika: {commands}',
+    storesFormatFmt: 'Pošiljanje te kode shrani obliko zapisa kot {path} in ne natisne ničesar.',
+    storesSomeFormatFmt: 'Pošiljanje te kode shrani tudi obliko zapisa kot {path}.',
   },
   contextMenu: {
     copy: 'Kopiraj',

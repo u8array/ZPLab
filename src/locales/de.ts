@@ -397,6 +397,9 @@ const de = {
     jmPageOverrideHintFmt: 'Diese Seite behält ihren importierten Druckdichte-Modus {mode} bei; die Auswahl ändert den design-weiten Modus',
     jmDensityA: 'Volle Dichte (explizit)',
     jmDensityB: 'Halbe Dichte (verdoppelt den Format-Maßstab)',
+    storedFormat: 'Gespeichertes Format',
+    storedFormatName: 'Name',
+    storedFormatHint: 'Der Drucker speichert das Format dieser Seite unter diesem Pfad, statt es zu drucken. Drucken und Stapelaufträge senden diesen Speicherbefehl. Vorschauen werden weiter gerendert. Ein Stapel ruft nur Namen mit bis zu 8 Zeichen ab.',
     safeArea: 'Sicherheitsabstand',
     safeAreaHint: 'Gleichmäßiger Rand zu allen Kanten. Zeigt eine Hilfslinie und richtet "An Etikett ausrichten" am Rand aus.',
     emitZJustify: 'Druckerseitige Barcode-Verankerung',
@@ -1054,6 +1057,8 @@ const de = {
     editSourceTooManyPagesFmt: 'Der Code überschreitet {max} Etikettenformate.',
     replayRiskSetupFmt: 'Das Senden dieses Codes ändert auch Druckereinstellungen: {commands}',
     replayRiskActionsFmt: 'Das Senden dieses Codes löst auch Druckeraktionen aus: {commands}',
+    storesFormatFmt: 'Das Senden speichert das Format als {path} und druckt nichts.',
+    storesSomeFormatFmt: 'Das Senden speichert auch das Format als {path}.',
   },
   contextMenu: {
     copy: 'Kopieren',

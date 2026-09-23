@@ -397,6 +397,9 @@ const da = {
     jmPageOverrideHintFmt: 'Denne side beholder sin importerede densitetstilstand {mode}; valget ændrer den designbrede tilstand',
     jmDensityA: 'Fuld densitet (eksplicit)',
     jmDensityB: 'Halv densitet (fordobler formatets skala)',
+    storedFormat: 'Gemt format',
+    storedFormatName: 'Navn',
+    storedFormatHint: 'Printeren gemmer denne sides format under denne sti i stedet for at udskrive det. Udskrifts- og batchjob sender denne gemmekommando. Eksempler bliver ved med at blive vist. En batch henter kun navne på op til 8 tegn.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Printersidet stregkodefastgørelse',
@@ -1024,6 +1027,8 @@ const da = {
     editSourceTooManyPagesFmt: 'Koden overskrider {max} etiketformater.',
     replayRiskSetupFmt: 'Afsendelse af denne kode ændrer også printerens indstillinger: {commands}',
     replayRiskActionsFmt: 'Afsendelse af denne kode udløser også printerhandlinger: {commands}',
+    storesFormatFmt: 'Afsendelse af denne kode gemmer formatet som {path} og udskriver ikke noget.',
+    storesSomeFormatFmt: 'Afsendelse af denne kode gemmer også formatet som {path}.',
   },
   contextMenu: {
     copy: 'Kopiér',

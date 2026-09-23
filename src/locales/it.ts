@@ -397,6 +397,9 @@ const it = {
     jmPageOverrideHintFmt: "Questa pagina mantiene la propria modalità di densità importata {mode}; la selezione modifica la modalità a livello dell'intero progetto",
     jmDensityA: 'Densità piena (esplicita)',
     jmDensityB: 'Mezza densità (raddoppia la scala del formato)',
+    storedFormat: 'Formato memorizzato',
+    storedFormatName: 'Nome',
+    storedFormatHint: 'La stampante memorizza il formato di questa pagina in questo percorso invece di stamparlo. I lavori di stampa e batch inviano questo comando di memorizzazione. Le anteprime continuano a essere renderizzate. Un batch richiama solo nomi fino a 8 caratteri.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Ancoraggio del codice a barre lato stampante',
@@ -1024,6 +1027,8 @@ const it = {
     editSourceTooManyPagesFmt: 'Il codice supera {max} formati di etichetta.',
     replayRiskSetupFmt: "L'invio di questo codice modifica anche le impostazioni della stampante: {commands}",
     replayRiskActionsFmt: "L'invio di questo codice avvia anche azioni della stampante: {commands}",
+    storesFormatFmt: "L'invio di questo codice memorizza il formato come {path} e non stampa nulla.",
+    storesSomeFormatFmt: "L'invio di questo codice memorizza anche il formato come {path}.",
   },
   contextMenu: {
     copy: 'Copia',

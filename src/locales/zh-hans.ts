@@ -397,6 +397,9 @@ const zhHans = {
     jmPageOverrideHintFmt: '此页面保留其导入的密度模式 {mode};该选择将更改整个设计的模式',
     jmDensityA: '全密度（显式）',
     jmDensityB: '半密度（格式比例加倍）',
+    storedFormat: '已存储的格式',
+    storedFormatName: '名称',
+    storedFormatHint: '打印机会将此页面的格式存储在此路径下，而不是打印它。打印和批量任务会发送该存储命令。预览会继续渲染。批量任务仅能调用最多8个字符的名称。',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: '打印机端条码锚定',
@@ -1024,6 +1027,8 @@ const zhHans = {
     editSourceTooManyPagesFmt: '代码超过 {max} 个标签格式。',
     replayRiskSetupFmt: '发送此代码还会更改打印机设置：{commands}',
     replayRiskActionsFmt: '发送此代码还会触发打印机动作：{commands}',
+    storesFormatFmt: '发送此代码会将格式存储为 {path}，且不会打印任何内容。',
+    storesSomeFormatFmt: '发送此代码还会将格式存储为 {path}。',
   },
   contextMenu: {
     copy: '复制',

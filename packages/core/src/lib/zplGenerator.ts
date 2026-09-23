@@ -5,7 +5,7 @@ import { rewriteRawFieldSpans } from './zplParser/decoders/gfa';
 import { getEntry, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import { stripZplParamChars } from './zplParams';
-import { storageKey, storageRefMatchesPath } from './storagePath';
+import { isRecallableFormatPath, storageKey, storageRefMatchesPath } from './storagePath';
 import {
   extractTemplateRefs,
   hasTemplateMarkers,
@@ -25,9 +25,9 @@ import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig, PageLabel 
 import type { ZplEmitContext } from '../types/ZplEmit';
 import type { Variable } from '../types/Variable';
 import { exportableLeaves, isGroup, pageLabelConfig, type LabelObject, type LeafObject, type Page } from '../types/Group';
-import { isOverlayConsistent, MIN_JM_SPAN, type FormatHead, type JmSpan, type OverlayFrame, type UploadSegment } from './zplOverlay/overlay';
+import { isOverlayConsistent, MIN_DF_SPAN, MIN_JM_SPAN, type DfSpan, type FormatHead, type JmSpan, type OverlayFrame, type UploadSegment } from './zplOverlay/overlay';
 import type { SourceSpan } from './zplParser/types';
-import { reconstructBlockHead } from './zplHeadScan';
+import { reconstructBlockHead, storedFormatSpanOf } from './zplHeadScan';
 import { objectBoundsDots, qrPrintsAsGraphic, type ObjectBoundsCtx } from './objectBounds';
 import { formatFontDownloadFromPath } from './customFonts';
 import { graphicUploadLine, imageEmitDims, storedGraphicShips, uploadKey, type ImageProps } from '../registry/image';
@@ -256,15 +256,19 @@ export function generateMultiPageZplWithMap(
     // A replayed block whose head the parser never recorded (or whose bytes
     // moved) has no place to splice a declaration; a density-only scan of its
     // bytes (cold path) decides instead of always regenerating.
-    if (!emitted.head && target !== undefined) {
-      const action = headlessAction(reconstructBlockHead(emitted.block).density, target, wireJm);
-      if (action === 'regenerate') {
+    if (!emitted.head) {
+      const cold = reconstructBlockHead(emitted.block);
+      const action = target === undefined ? 'keep' : headlessAction(cold.density, target, wireJm);
+      // Bytes that disagree on the ^DF regenerate too: there is no head to splice.
+      if (action === 'regenerate' || cold.storedFormat?.path !== pageLabel.storedFormatPath) {
         emitted = regenPage();
-      } else if (action === 'keep') {
+      } else if (action === 'keep' && target !== undefined) {
         // applyJmDensity can't read a head-less block, so latch the wire here.
         wireJm = target;
       }
     }
+    const stored = applyStoredFormat(emitted, pageLabel.storedFormatPath);
+    emitted = { ...emitted, block: stored.block, head: stored.head };
     const applied = applyJmDensity(emitted, pageLabel.jmDensity, target === wireJm ? undefined : target);
     const block = applied.block;
     // Track what the block actually carries, not the intent: an unreachable
@@ -282,23 +286,13 @@ export function generateMultiPageZplWithMap(
     out += preamble + block;
     blocks.push({ start: base, end: out.length });
     for (const s of emitted.spans) {
-      // ^JM is legal before the first ^FS, so a recorded splice can sit INSIDE
-      // a field span: such an edit grows the span; one before it shifts it.
-      let startShift = 0;
-      let endShift = 0;
-      for (const e of applied.edits) {
-        if (e.at <= s.start) {
-          startShift += e.delta;
-          endShift += e.delta;
-        } else if (e.at < s.end) {
-          endShift += e.delta;
-        }
-      }
+      // The ^JM edits are in the bytes the ^DF edits left, so they apply second.
+      const moved = shiftSpan(shiftSpan(s, stored.edits), applied.edits);
       spans.push({
         pageIndex,
         objectId: s.objectId,
-        start: base + preamble.length + s.start + startShift,
-        end: base + preamble.length + s.end + endShift,
+        start: base + preamble.length + moved.start,
+        end: base + preamble.length + moved.end,
       });
     }
   });
@@ -389,7 +383,80 @@ function headMatches(block: string, head: FormatHead): boolean {
     if (block[s.start] !== (s.caret) || nameAt(s.start) !== 'JM') return false;
     cursor = s.end;
   }
+  cursor = 0;
+  for (const s of head.dfSpans ?? []) {
+    if (s.start < cursor || s.end < s.start + MIN_DF_SPAN || s.end > block.length) return false;
+    if (block[s.start] !== s.caret || nameAt(s.start) !== 'DF') return false;
+    // The payload is re-read too: a span stretched past its line would cut the bytes behind it.
+    const payload = block.slice(s.start + MIN_DF_SPAN, s.end);
+    if (payload.includes(s.caret) || /[\r\n]/.test(payload)) return false;
+    cursor = s.end;
+  }
   return true;
+}
+
+/** A span after `edits` (all in the span's own offsets): an edit before it moves it, one inside it grows it. */
+function shiftSpan<S extends { start: number; end: number }>(span: S, edits: readonly HeadEdit[]): S {
+  let start = span.start;
+  let end = span.end;
+  for (const e of edits) {
+    if (e.at <= span.start) {
+      start += e.delta;
+      end += e.delta;
+    } else if (e.at < span.end) {
+      end += e.delta;
+    }
+  }
+  return { ...span, start, end };
+}
+
+/** The head after `edits`; `at` sits just past the ^XA, which no edit touches. */
+function shiftHead(head: FormatHead, edits: readonly HeadEdit[], dfSpans: readonly DfSpan[] | undefined): FormatHead {
+  return {
+    ...head,
+    jmSpans: head.jmSpans.map((s) => shiftSpan(s, edits)),
+    dfSpans,
+  };
+}
+
+/** Rewrites, cuts or inserts the block's ^DF so it names `path`. Untouched bytes replay as they are;
+ *  once the model differs it owns the head, and a second declaration is cut with the first rewritten. */
+function applyStoredFormat(
+  emitted: PageBlock,
+  path: string | undefined,
+): { block: string; head: FormatHead | undefined; edits: HeadEdit[] } {
+  const { block, head } = emitted;
+  if (!head) return { block, head, edits: [] };
+  const spans = head.dfSpans ?? [];
+  const first = spans[0];
+  if (!first) {
+    if (path === undefined) return { block, head, edits: [] };
+    // Right after the ^XA (p.174); a ^JM inserted later lands behind it.
+    const injected = `${head.caret}DF${path}`;
+    const edits = [{ at: head.at, delta: injected.length }];
+    return {
+      block: `${block.slice(0, head.at)}${injected}${block.slice(head.at)}`,
+      head: shiftHead(head, edits, [{ start: head.at, end: head.at + injected.length, caret: head.caret, path }]),
+      edits,
+    };
+  }
+  const named = storedFormatSpanOf(spans);
+  if (path !== undefined && named?.path === path) return { block, head, edits: [] };
+  // Spans the model never took (unusable paths) are not the user clearing the field.
+  if (path === undefined && !named) return { block, head, edits: [] };
+  let out = block;
+  const edits: HeadEdit[] = [];
+  // Back to front, so the earlier offsets stay valid; a cut takes the line break with it.
+  for (const [i, s] of [...spans.entries()].reverse()) {
+    const keep = i === 0 && path !== undefined;
+    const lineBreak = block.startsWith('\r\n', s.end) ? 2 : block.startsWith('\n', s.end) ? 1 : 0;
+    const cutEnd = keep ? s.end : s.end + lineBreak;
+    const replacement = keep ? `${s.caret}DF${path}` : '';
+    out = `${out.slice(0, s.start)}${replacement}${out.slice(cutEnd)}`;
+    edits.unshift({ at: s.start, delta: replacement.length - (cutEnd - s.start) });
+  }
+  const next = path === undefined ? undefined : [{ start: first.start, end: first.start + MIN_DF_SPAN + path.length, caret: first.caret, path }];
+  return { block: out, head: shiftHead(head, edits, next), edits };
 }
 
 interface HeadEdit {
@@ -429,12 +496,13 @@ function applyJmDensity(
     return { block: rewritten, wireJm: want, edits };
   }
   if (!target) return { block, wireJm: undefined, edits: [] };
-  // Insert after the head's last ^JM, not before, since an unreadable one would
-  // otherwise outrank a fresh declaration; with no spans, the ^XA caret is the
-  // injection point.
-  const last = head.jmSpans[head.jmSpans.length - 1];
-  const at = last ? last.end : head.at;
-  const caret = last ? last.caret : head.caret;
+  // Behind the head's last ^JM or ^DF, whichever comes later, since an unreadable ^JM must not
+  // outrank a fresh one and a density ahead of the ^DF would sit outside the stored format.
+  // With no spans, the ^XA caret is the injection point.
+  const lastDf = head.dfSpans?.[head.dfSpans.length - 1];
+  const tail = [head.jmSpans[head.jmSpans.length - 1], lastDf].filter((s) => s !== undefined).sort((a, b) => a.end - b.end).pop();
+  const at = tail?.end ?? head.at;
+  const caret = tail?.caret ?? head.caret;
   const injected = `${caret}JM${target}`;
   return {
     block: `${block.slice(0, at)}${injected}${block.slice(at)}`,
@@ -713,7 +781,7 @@ function emitPageBlock(
   return { block: result, head: head && headMatches(result, head) ? head : undefined, spans, replayed: true, uploads: replayedUploads };
 }
 
-/** R: is volatile RAM, matches single-run batch scope. */
+/** Where a batch stores its template when the design names none ^XF could recall: R: is volatile RAM, matching a single run. */
 const BATCH_TEMPLATE_PATH = 'R:LBL.ZPL';
 
 /** Store template via ^DF then emit one ^XA^XF...^XZ recall block per
@@ -781,20 +849,14 @@ export function generateBatchZpl(
 
   // Mapped slots stay bare in the stored format; the recall supplies them.
   const mappedFns = new Set(overrides.map((o) => o.fn));
-  const baseZpl = generateZplBlock(label, objects, variables, mappedFns).block;
+  const templatePath = label.storedFormatPath && isRecallableFormatPath(label.storedFormatPath) ? label.storedFormatPath : BATCH_TEMPLATE_PATH;
+  const templateStored = generateZplBlock({ ...label, storedFormatPath: templatePath }, objects, variables, mappedFns).block;
   // A recall for a slot the stored format never declares prints as a stray field (ZD230).
-  const storedFnSlots = new Set([...baseZpl.matchAll(/\^FN(\d+)/g)].map((m) => Number(m[1])));
+  const storedFnSlots = new Set([...templateStored.matchAll(/\^FN(\d+)/g)].map((m) => Number(m[1])));
   const recalls = overrides.filter((o) => storedFnSlots.has(o.fn));
-  // Inject after first ^XA (not at start) because ~DY/~SD preambles
-  // emit before ^XA and would skip a start-anchored match. No ^FS after the
-  // name: it would precede ^JM and disable the density (p.269).
-  const templateStored = baseZpl.replace(
-    /\^XA\r?\n/,
-    `^XA\n^DF${BATCH_TEMPLATE_PATH}\n`,
-  );
 
   const recallBlocks = dataset.rows.map((row) => {
-    const lines: string[] = ['^XA', `^XF${BATCH_TEMPLATE_PATH}`];
+    const lines: string[] = ['^XA', `^XF${templatePath}`];
     for (const { fn, colIdx, transform } of recalls) {
       const value = row[colIdx] ?? '';
       // fdField applies ^FH hex-escape for ^/~ so fields don't terminate early.
@@ -953,14 +1015,23 @@ function generateZplBlock(
   if (label.backfeedSequence) lines.push(`~JS${label.backfeedSequence}`);
 
   lines.push('^XA');
+  const lineStart = () => lines.reduce((n, l) => n + l.length + 1, 0);
   // Offset just past the ^XA: every preceding line plus its newline.
-  const headAt = lines.reduce((n, l) => n + l.length + 1, 0) - 1;
+  const headAt = lineStart() - 1;
+  // ^DF stores everything after it, so it comes first (p.174), and without ^FS
+  // (p.269: a terminator ahead of ^JM disables the density).
+  let dfSpans: DfSpan[] | undefined;
+  if (label.storedFormatPath) {
+    const df = `^DF${label.storedFormatPath}`;
+    dfSpans = [{ start: lineStart(), end: lineStart() + df.length, caret: '^', path: label.storedFormatPath }];
+    lines.push(df);
+  }
   // ^JM must precede the first ^FS (p269), and the sidecar comment below
   // already closes with one; emit it first.
   const jmSpans: JmSpan[] = [];
   if (label.jmDensity) {
     const jm = `^JM${label.jmDensity}`;
-    jmSpans.push({ start: headAt + 1, end: headAt + 1 + jm.length, delim: ',', caret: '^' });
+    jmSpans.push({ start: lineStart(), end: lineStart() + jm.length, delim: ',', caret: '^' });
     lines.push(jm);
   }
   // Leading geometry sidecar: recovers exact width/height/dpmm on re-import,
@@ -1099,7 +1170,7 @@ function generateZplBlock(
 
   return {
     block: aliased.join('\n'),
-    head: { caret: '^', at: headAt, jmSpans },
+    head: { caret: '^', at: headAt, jmSpans, ...(dfSpans ? { dfSpans } : {}) },
     spans,
     uploads: uploads.keys,
   };

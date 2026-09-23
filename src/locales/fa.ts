@@ -397,6 +397,9 @@ const fa = {
     jmPageOverrideHintFmt: 'این صفحه حالت تراکم وارد‌شده‌ی خود {mode} را حفظ می‌کند؛ انتخاب، حالت کل طرح را تغییر می‌دهد',
     jmDensityA: 'تراکم کامل (صریح)',
     jmDensityB: 'نصف تراکم (مقیاس فرمت را دو برابر می‌کند)',
+    storedFormat: 'قالب ذخیره‌شده',
+    storedFormatName: 'نام',
+    storedFormatHint: 'چاپگر قالب این صفحه را در این مسیر ذخیره می‌کند به‌جای چاپ آن. کارهای چاپ و دسته‌ای این دستور ذخیره را ارسال می‌کنند. پیش‌نمایش‌ها همچنان نمایش داده می‌شوند. یک دسته فقط نام‌های تا 8 کاراکتر را فراخوانی می‌کند.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'لنگرسازی بارکد در سمت چاپگر',
@@ -1024,6 +1027,8 @@ const fa = {
     editSourceTooManyPagesFmt: 'کد از {max} قالب برچسب فراتر می‌رود.',
     replayRiskSetupFmt: 'ارسال این کد تنظیمات چاپگر را نیز تغییر می‌دهد: {commands}',
     replayRiskActionsFmt: 'ارسال این کد عملیات چاپگر را نیز اجرا می‌کند: {commands}',
+    storesFormatFmt: 'ارسال این کد قالب را به‌صورت {path} ذخیره می‌کند و چیزی چاپ نمی‌شود.',
+    storesSomeFormatFmt: 'ارسال این کد قالب را نیز به‌صورت {path} ذخیره می‌کند.',
   },
   contextMenu: {
     copy: 'کپی',

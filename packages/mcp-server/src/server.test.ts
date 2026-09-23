@@ -53,7 +53,7 @@ describe("an argument at the wrong level", () => {
     const client = await connect(true);
     const draft = await call(client, "create_draft", { widthMm: 50, heightMm: 30, dpmm: 8, objects: [], content: "hi" });
     expect(draft.refused).toBe(true);
-    expect(draft.text).toContain('unknown argument "content". This tool takes widthMm, heightMm, dpmm, objects, variables. An object\'s fields go inside its entry in objects.');
+    expect(draft.text).toContain('unknown argument "content". This tool takes widthMm, heightMm, dpmm, storedFormatPath, objects, variables. An object\'s fields go inside its entry in objects.');
     const bare = await call(client, "get_schema", { verbose: true });
     expect(bare.refused).toBe(true);
     expect(bare.text).toContain("takes no arguments");

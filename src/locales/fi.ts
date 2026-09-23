@@ -397,6 +397,9 @@ const fi = {
     jmPageOverrideHintFmt: 'Tämä sivu säilyttää tuodun tiheystilansa {mode}; valinta muuttaa koko suunnitelman laajuista tilaa',
     jmDensityA: 'Täysi tiheys (eksplisiittinen)',
     jmDensityB: 'Puolitiheys (kaksinkertaistaa muodon mittakaavan)',
+    storedFormat: 'Tallennettu muoto',
+    storedFormatName: 'Nimi',
+    storedFormatHint: 'Tulostin tallentaa tämän sivun muodon tähän polkuun sen tulostamisen sijaan. Tulostus- ja erätehtävät lähettävät tämän tallennuskomennon. Esikatselut jatkavat renderöintiä. Erä hakee vain enintään 8 merkin nimiä.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Tulostimen puoleinen viivakoodin ankkurointi',
@@ -1024,6 +1027,8 @@ const fi = {
     editSourceTooManyPagesFmt: 'Koodi ylittää {max} etikettimuotoa.',
     replayRiskSetupFmt: 'Tämän koodin lähettäminen muuttaa myös tulostimen asetuksia: {commands}',
     replayRiskActionsFmt: 'Tämän koodin lähettäminen käynnistää myös tulostimen toimintoja: {commands}',
+    storesFormatFmt: 'Tämän koodin lähettäminen tallentaa muodon nimellä {path} eikä tulosta mitään.',
+    storesSomeFormatFmt: 'Tämän koodin lähettäminen tallentaa myös muodon nimellä {path}.',
   },
   contextMenu: {
     copy: 'Kopioi',

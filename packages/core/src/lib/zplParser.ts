@@ -11,7 +11,7 @@ import { markerOf } from "../types/Variable";
 import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
 import { stripLineWrap, stripTrailingSpaces, tokenize, trimmedSpanEnd } from "./zplParser/helpers";
-import { lookaheadJmDensity, scanBareStream } from "./zplHeadScan";
+import { lookaheadJmDensity, lookaheadStoredFormat, scanBareStream } from "./zplHeadScan";
 import { qrPrintsAsGraphic } from "./objectBounds";
 import { commandTakesPrefix, commandTwinSplit } from "../catalog";
 import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, openTailHasContent, payloadSummary, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField, resolveLiveFonts } from "./zplParser/context";
@@ -23,7 +23,7 @@ import { createLabelConfigHandlers } from "./zplParser/handlers/labelConfig";
 import { createSetupScriptHandlers } from "./zplParser/handlers/setupScript";
 import { createUnitsHandler } from "./zplParser/handlers/units";
 import { createUnsupportedHandlers } from "./zplParser/handlers/unsupported";
-import { buildBlockOverlay, type BlockOverlay, type FormatHead, type OverlayFrame, type JmSpan, type LinkedSpan } from "./zplOverlay/overlay";
+import { buildBlockOverlay, type BlockOverlay, type DfSpan, type FormatHead, type OverlayFrame, type JmSpan, type LinkedSpan } from "./zplOverlay/overlay";
 import type {
   Handler,
   ImportFinding,
@@ -361,9 +361,11 @@ export function parseZPL(
       caret: s.format.caretChar,
       at: 0,
       jmSpans: [] as JmSpan[],
+      dfSpans: undefined as DfSpan[] | undefined,
     } satisfies FormatHead,
     sawNonUtf8Ci: false,
     sawBareBarcode: false,
+    storedFormatPath: undefined as string | undefined,
   });
   let pg = freshPageScope(0);
 
@@ -376,6 +378,8 @@ export function parseZPL(
     labelConfig.jmDensity = bare.density;
     s.format.unitScale = deriveUnitScale(s.format, dpmm);
   }
+  // No head to record spans in: the wrapper-less source regenerates anyway.
+  pg.storedFormatPath = bare.storedFormat?.path;
 
   const bucketFindings = (
     pageIndex: number,
@@ -480,6 +484,7 @@ export function parseZPL(
       span: { start: pg.start, end },
     };
     if (pageOverlay) page.overlay = pageOverlay;
+    if (pg.storedFormatPath !== undefined) page.storedFormatPath = pg.storedFormatPath;
     if (!s.sawXa) page.bare = true;
     if (opts.captureOverlay) {
       const spanEntries = overlaySpans.slice(pg.span).flatMap(
@@ -705,6 +710,7 @@ export function parseZPL(
           caret: s.format.caretChar,
           at: start - pg.start + 3,
           jmSpans: [],
+          dfSpans: undefined,
         };
         // Resolve this format's ^JM density up front so ^MU-scaled reads see
         // the final density; absent ^JM leaves the persistent density.
@@ -713,6 +719,10 @@ export function parseZPL(
           s.format.jmDensity = jm;
           labelConfig.jmDensity = jm;
         }
+        // Unlike ^JM, a ^DF does not persist: a block without one stores nothing.
+        const df = lookaheadStoredFormat(zpl, start, s.format, s.format.delimiterChar);
+        pg.storedFormatPath = df?.path;
+        if (df) pg.head.dfSpans = df.spans.map((sp) => ({ ...sp, start: sp.start - pg.start, end: sp.end - pg.start }));
         s.format.unitScale = deriveUnitScale(s.format, dpmm);
       }
       continue;

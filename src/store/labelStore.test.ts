@@ -893,6 +893,46 @@ describe('setLabelConfig', () => {
 
 // ── pages ─────────────────────────────────────────────────────────────────────
 
+describe('setPageStoredFormatPath', () => {
+  it('names the current page only, keeps its overlay, and undoes as one step', () => {
+    const imported = importZplText(['^XA', '^FO10,10^A0N,30,30^FDa^FS', '^XZ', '^XA', '^FO10,10^A0N,30,30^FDb^FS', '^XZ'].join('\n'), 8);
+    useLabelStore.setState({ pages: imported.pages, currentPageIndex: 1 });
+    state().setPageStoredFormatPath('E:JOB.ZPL');
+    expect(state().pages.map((p) => p.storedFormatPath)).toEqual([undefined, 'E:JOB.ZPL']);
+    expect(state().pages[1]?.overlay).toBeDefined();
+    expect(currentPageLabel(state()).storedFormatPath).toBe('E:JOB.ZPL');
+    state().setPageStoredFormatPath(undefined);
+    expect(state().pages[1]).not.toHaveProperty('storedFormatPath');
+    useLabelStore.temporal.getState().undo();
+    expect(state().pages[1]?.storedFormatPath).toBe('E:JOB.ZPL');
+  });
+});
+
+describe('migrateLegacy: a main-era ^DF that only the overlay bytes carried', () => {
+  it('lands on the page and its head, so naming the page rewrites instead of doubling', () => {
+    const imported = importZplText(['^XA', '^DFE:OLD.ZPL', '^FO10,10^A0N,30,30^FDa^FS', '^XZ'].join('\n'), 8);
+    const persisted = JSON.parse(JSON.stringify({ label: { widthMm: 50, heightMm: 30, dpmm: 8 }, pages: imported.pages, variables: [] })) as {
+      pages: { storedFormatPath?: string; overlay?: { head?: { dfSpans?: unknown } } }[];
+    };
+    delete persisted.pages[0]?.storedFormatPath;
+    delete persisted.pages[0]?.overlay?.head?.dfSpans;
+    const migrated = migrateLegacy(persisted, 18) as typeof persisted;
+    expect(migrated.pages[0]?.storedFormatPath).toBe('E:OLD.ZPL');
+    expect(migrated.pages[0]?.overlay?.head?.dfSpans).toBeDefined();
+  });
+
+  it('lands as well when the session predates every head fold', () => {
+    const imported = importZplText(['^XA', '^DFE:OLD.ZPL', '^FO10,10^A0N,30,30^FDa^FS', '^XZ'].join('\n'), 8);
+    const persisted = JSON.parse(JSON.stringify({ label: { widthMm: 50, heightMm: 30, dpmm: 8 }, pages: imported.pages, variables: [] })) as {
+      pages: { storedFormatPath?: string; overlay?: { head?: unknown } }[];
+    };
+    delete persisted.pages[0]?.storedFormatPath;
+    delete persisted.pages[0]?.overlay?.head;
+    const migrated = migrateLegacy(persisted, 18) as typeof persisted;
+    expect(migrated.pages[0]?.storedFormatPath).toBe('E:OLD.ZPL');
+  });
+});
+
 describe('addPage', () => {
   it('inserts a blank page after the current and switches to it', () => {
     expect(state().pages).toHaveLength(1);

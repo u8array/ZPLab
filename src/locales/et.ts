@@ -397,6 +397,9 @@ const et = {
     jmPageOverrideHintFmt: 'See leht säilitab oma imporditud tiheduse režiimi {mode}; valik muudab kogu kujunduse režiimi',
     jmDensityA: 'Täistihedus (selgesõnaline)',
     jmDensityB: 'Pool tihedust (kahekordistab vormingu mõõtkava)',
+    storedFormat: 'Salvestatud vorming',
+    storedFormatName: 'Nimi',
+    storedFormatHint: 'Printer salvestab selle lehe vormingu selle tee alla, selle asemel et seda printida. Printimis- ja partiitööd saadavad selle salvestuskäsu. Eelvaated jäävad kuvatama. Partii kutsub välja ainult kuni 8 tähemärgiga nimesid.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Triipkoodi ankurdamine printeri poolel',
@@ -1024,6 +1027,8 @@ const et = {
     editSourceTooManyPagesFmt: 'Kood ületab {max} sildivormingut.',
     replayRiskSetupFmt: 'Selle koodi saatmine muudab ka printeri sätteid: {commands}',
     replayRiskActionsFmt: 'Selle koodi saatmine käivitab ka printeri toiminguid: {commands}',
+    storesFormatFmt: 'Selle koodi saatmine salvestab vormingu kui {path} ega prindi midagi.',
+    storesSomeFormatFmt: 'Selle koodi saatmine salvestab ka vormingu kui {path}.',
   },
   contextMenu: {
     copy: 'Kopeeri',

@@ -397,6 +397,9 @@ const es = {
     jmPageOverrideHintFmt: 'Esta página mantiene su modo de densidad importado {mode}; la selección cambia el modo global del diseño',
     jmDensityA: 'Densidad completa (explícita)',
     jmDensityB: 'Media densidad (duplica la escala del formato)',
+    storedFormat: 'Formato almacenado',
+    storedFormatName: 'Nombre',
+    storedFormatHint: 'La impresora almacena el formato de esta página en esta ruta en lugar de imprimirlo. Los trabajos de impresión y por lotes envían ese comando de almacenamiento. Las vistas previas siguen renderizándose. Un lote solo invoca nombres de hasta 8 caracteres.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Anclaje del código de barras en la impresora',
@@ -1024,6 +1027,8 @@ const es = {
     editSourceTooManyPagesFmt: 'El código supera {max} formatos de etiqueta.',
     replayRiskSetupFmt: 'Enviar este código también cambia la configuración de la impresora: {commands}',
     replayRiskActionsFmt: 'Enviar este código también ejecuta acciones de la impresora: {commands}',
+    storesFormatFmt: 'Enviar este código almacena el formato como {path} y no imprime nada.',
+    storesSomeFormatFmt: 'Enviar este código también almacena el formato como {path}.',
   },
   contextMenu: {
     copy: 'Copiar',

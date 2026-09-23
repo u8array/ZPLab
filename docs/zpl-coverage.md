@@ -150,7 +150,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 | Command | Name | Web | Desktop | Lint |
 |---|---|:-:|:-:|:-:|
-| `^DF` | store template | `[~]` | `[~]` | `[ ]` |
+| `^DF` | store template | `[x]` | `[x]` | `[ ]` |
 | `^XF` | recall template | `[~]` | `[~]` | `[ ]` |
 | `^XG` | recall graphic | `[x]` | `[x]` | `[ ]` |
 

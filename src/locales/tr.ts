@@ -397,6 +397,9 @@ const tr = {
     jmPageOverrideHintFmt: 'Bu sayfa içe aktarılan yoğunluk modunu {mode} korur; seçim, tasarımın tamamı için geçerli modu değiştirir',
     jmDensityA: 'Tam yoğunluk (açık)',
     jmDensityB: 'Yarım yoğunluk (format ölçeğini iki katına çıkarır)',
+    storedFormat: 'Kaydedilmiş format',
+    storedFormatName: 'Ad',
+    storedFormatHint: 'Yazıcı, bu sayfanın biçimini yazdırmak yerine bu yol altında saklar. Yazdırma ve toplu işler bu saklama komutunu gönderir. Önizlemeler görüntülenmeye devam eder. Bir toplu iş yalnızca en fazla 8 karakterlik adları çağırır.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Yazıcı taraflı barkod sabitleme',
@@ -1024,6 +1027,8 @@ const tr = {
     editSourceTooManyPagesFmt: 'Kod {max} etiket biçimini aşıyor.',
     replayRiskSetupFmt: 'Bu kodu göndermek yazıcı ayarlarını da değiştirir: {commands}',
     replayRiskActionsFmt: 'Bu kodu göndermek yazıcı işlemlerini de tetikler: {commands}',
+    storesFormatFmt: 'Bu kodu göndermek, biçimi {path} olarak saklar ve hiçbir şey yazdırmaz.',
+    storesSomeFormatFmt: 'Bu kodu göndermek, biçimi de {path} olarak saklar.',
   },
   contextMenu: {
     copy: 'Kopyala',

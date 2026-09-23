@@ -20,6 +20,8 @@ export interface Page {
    *  diverges from the design's; export falls back to `label.jmDensity`, so a
    *  density change in the UI still reaches every non-diverging page. */
   jmDensity?: JmDensity;
+  /** ^DF: the printer stores this page's block under the path instead of printing it. */
+  storedFormatPath?: string;
   /** Source-patch overlay of the ^XA…^XZ block this page was imported from,
    *  letting export replay untouched bytes verbatim. Absent on fresh designs
    *  and on pages the parser couldn't fully link; those regenerate from the
@@ -30,9 +32,18 @@ export interface Page {
 /** The label as this page prints it: its own ^JM wins, so a block imported at
  *  a diverging density keeps that density through export (coordinates included,
  *  since every dots<->mm boundary reads it through effectiveDpmm). */
-export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity'>): PageLabel {
-  // The only mint backed by a real resolution: folding the page's ^JM in.
-  return withJmDensity(label, page.jmDensity) as PageLabel;
+export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity' | 'storedFormatPath'>): PageLabel {
+  // The only mint backed by a real resolution: folding the page's ^JM and ^DF in.
+  const folded = withJmDensity(label, page.jmDensity) as PageLabel;
+  if (page.storedFormatPath === undefined && folded.storedFormatPath === undefined) return folded;
+  // A label handed in with another page's ^DF is not this page's.
+  const { storedFormatPath: _other, ...base } = folded;
+  return (page.storedFormatPath === undefined ? base : { ...base, storedFormatPath: page.storedFormatPath }) as PageLabel;
+}
+
+/** The label for a render that must print: a preview never stores. */
+export function withoutStoredFormat(label: LabelConfig): PageLabel {
+  return pageLabelConfig(label, {});
 }
 
 export function isGroup(obj: LabelObject): obj is GroupObject {

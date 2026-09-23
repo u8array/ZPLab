@@ -397,6 +397,9 @@ const no = {
     jmPageOverrideHintFmt: 'Denne siden beholder sin importerte tetthetsmodus {mode}; valget endrer den designomfattende modusen',
     jmDensityA: 'Full tetthet (eksplisitt)',
     jmDensityB: 'Halv tetthet (dobler formatskalaen)',
+    storedFormat: 'Lagret format',
+    storedFormatName: 'Navn',
+    storedFormatHint: 'Skriveren lagrer denne sidens format under denne banen i stedet for å skrive det ut. Utskrifts- og batchjobber sender denne lagringskommandoen. Forhåndsvisninger fortsetter å bli vist. En batch henter bare frem navn på opptil 8 tegn.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Skriverbasert strekkodeforankring',
@@ -1024,6 +1027,8 @@ const no = {
     editSourceTooManyPagesFmt: 'Koden overskrider {max} etikettformater.',
     replayRiskSetupFmt: 'Å sende denne koden endrer også skriverinnstillinger: {commands}',
     replayRiskActionsFmt: 'Å sende denne koden utløser også skriverhandlinger: {commands}',
+    storesFormatFmt: 'Sending av denne koden lagrer formatet som {path} og skriver ikke ut noe.',
+    storesSomeFormatFmt: 'Sending av denne koden lagrer også formatet som {path}.',
   },
   contextMenu: {
     copy: 'Kopier',

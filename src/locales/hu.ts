@@ -397,6 +397,9 @@ const hu = {
     jmPageOverrideHintFmt: 'Ez az oldal megtartja az importált sűrűség módját {mode}; a kiválasztás a teljes tervre vonatkozó módot módosítja',
     jmDensityA: 'Teljes sűrűség (explicit)',
     jmDensityB: 'Fél sűrűség (megduplázza a formátum méretarányát)',
+    storedFormat: 'Tárolt formátum',
+    storedFormatName: 'Név',
+    storedFormatHint: 'A nyomtató ezen az elérési úton tárolja ennek az oldalnak a formátumát nyomtatás helyett. A nyomtatási és kötegelt feladatok elküldik ezt a tárolási parancsot. Az előnézetek továbbra is megjelennek. Egy köteg csak legfeljebb 8 karakteres neveket hív elő.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Nyomtató oldali vonalkód-rögzítés',
@@ -1024,6 +1027,8 @@ const hu = {
     editSourceTooManyPagesFmt: 'A kód meghaladja a(z) {max} címkeformátumot.',
     replayRiskSetupFmt: 'A kód elküldése a nyomtató beállításait is módosítja: {commands}',
     replayRiskActionsFmt: 'A kód elküldése nyomtatóműveleteket is elindít: {commands}',
+    storesFormatFmt: 'A kód elküldése {path} néven tárolja a formátumot, és semmit sem nyomtat.',
+    storesSomeFormatFmt: 'A kód elküldése a formátumot is tárolja {path} néven.',
   },
   contextMenu: {
     copy: 'Másolás',

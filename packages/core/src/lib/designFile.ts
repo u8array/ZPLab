@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DEFAULT_FONT_DEVICE } from "./storagePath";
+import { DEFAULT_FONT_DEVICE, storedFormatPathSchema } from "./storagePath";
 import { JM_DENSITY_VALUES, labelConfigSchema, sanitizeRfidEpc, type JmDensity, type LabelConfig } from "../types/LabelConfig";
 import { labelObjectBaseSchema } from "../types/LabelObject";
 import {
@@ -11,7 +11,7 @@ import {
 import { dbSourceRefSchema, type DbSourceRef } from "../types/DataSource";
 import type { LabelObject } from "../types/Group";
 import { blockOverlaySchema, overlayText, type BlockOverlay } from "./zplOverlay/overlay";
-import { reconstructLegacyBlockHeads } from "./zplHeadScan";
+import { reconstructLegacyBlockHeads, storedFormatPathOf } from "./zplHeadScan";
 import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, safeUniqueNameById } from "./objectTree";
 import { sanitiseLoadedVariables } from "./loadedVariables";
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from "./reverseBacking";
@@ -38,7 +38,7 @@ export interface DesignFileFailure {
 
 export type DesignFileResult = { ok: true; value: DesignFile } | DesignFileFailure;
 
-export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity }
+export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity; storedFormatPath?: string }
 export interface DesignFile {
   label: LabelConfig;
   pages: DesignFilePage[];
@@ -81,6 +81,7 @@ const pageSchema = z.object({
   objects: z.array(labelObjectSchema),
   overlay: blockOverlaySchema.optional().catch(undefined),
   jmDensity: z.enum(JM_DENSITY_VALUES).optional(),
+  storedFormatPath: storedFormatPathSchema().optional(),
 });
 
 const designFileSchema = z.object({
@@ -137,7 +138,7 @@ export function parseDesignFile(text: string): DesignFileResult {
   const parsed = designFileSchema.safeParse(json);
   if (parsed.success) {
     const pages = parsed.data.pages as unknown as DesignFilePage[];
-    reconstructLegacyJmDensity(parsed.data.label, pages);
+    reconstructLegacyHeads(pages, parsed.data.label);
     sanitizeRfidEpc(parsed.data.label);
     const variables = parsed.data.variables ?? [];
     const repaired = sanitiseLoadedVariables(variables, pages);
@@ -251,28 +252,35 @@ function migrateBareFontDrive(json: unknown): void {
   j.schemaVersion = 6;
 }
 
-/** Payloads without ^JM modeling carried a head ^JM only in the raw overlay
- *  bytes, which a full regen would drop. Reconstructs the fold a fresh import
- *  would yield; no-op once any label/page density or recorded head is present. */
-export function reconstructLegacyJmDensity(
-  label: { jmDensity?: JmDensity },
-  pages: DesignFilePage[],
-): void {
-  if (label.jmDensity !== undefined) return;
-  for (const page of pages) {
-    if (page.jmDensity !== undefined || page.overlay?.head) return;
-  }
+/** Files saved before ^JM or ^DF modeling carried them only in the raw overlay bytes, which a
+ *  full regen would drop. One scan folds both back the way an import does. Each facet is a
+ *  no-op once any page or head records it, so a cleared path stays cleared on reload. */
+export function reconstructLegacyHeads(pages: DesignFilePage[], label?: { jmDensity?: JmDensity }): void {
+  const foldDensity = !!label && label.jmDensity === undefined && pages.every((p) => p.jmDensity === undefined && !p.overlay?.head);
+  // The ^DF is a page fact, so each page folds on its own: a cleared path keeps its spans as the era mark.
+  // Decided before the density fold writes heads that carry the spans.
+  const foldStored = pages.map((p) => p.storedFormatPath === undefined && !p.overlay?.head?.dfSpans);
+  if (!foldDensity && !foldStored.some(Boolean)) return;
   const heads = reconstructLegacyBlockHeads(
     pages.map((page) => (page.overlay ? overlayText(page.overlay) : undefined)),
   );
-  const anchorIndex = pages.findIndex((p) => p.objects.length > 0);
-  if (anchorIndex >= 0) label.jmDensity = heads[anchorIndex]?.density;
-  const designJm: JmDensity = label.jmDensity ?? "A";
+  if (foldDensity) {
+    const anchorIndex = pages.findIndex((p) => p.objects.length > 0);
+    if (anchorIndex >= 0) label.jmDensity = heads[anchorIndex]?.density;
+    const designJm: JmDensity = label.jmDensity ?? "A";
+    pages.forEach((page, i) => {
+      const { density, head } = heads[i] ?? {};
+      const blockJm: JmDensity = density ?? "A";
+      if (blockJm !== designJm) page.jmDensity = blockJm;
+      if (head && page.overlay) page.overlay.head = head;
+    });
+  }
   pages.forEach((page, i) => {
-    const { density, head } = heads[i] ?? {};
-    const blockJm: JmDensity = density ?? "A";
-    if (blockJm !== designJm) page.jmDensity = blockJm;
-    if (head && page.overlay) page.overlay.head = head;
+    const spans = heads[i]?.storedFormat?.spans;
+    if (!foldStored[i] || !spans) return;
+    const path = storedFormatPathOf(spans);
+    if (path !== undefined) page.storedFormatPath = path;
+    if (page.overlay?.head) page.overlay.head = { ...page.overlay.head, dfSpans: spans };
   });
 }
 

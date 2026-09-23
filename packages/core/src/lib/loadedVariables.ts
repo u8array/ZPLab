@@ -3,7 +3,7 @@ import { sanitiseVariableNames } from "./objectTree";
 import { dropPageOverlays } from "./pageOverlay";
 
 /** The variable invariants every loader restores: marker-safe unique names and unique
- *  ^FN slots. Run after reconstructLegacyJmDensity: a slot move drops the overlays
+ *  ^FN slots. Run after reconstructLegacyHeads: a slot move drops the overlays
  *  (they replay the old ^FN slots), and the ^JM latch reads those overlays. */
 export function sanitiseLoadedVariables<P extends { overlay?: unknown }>(
   variables: { name?: unknown; fnNumber?: unknown }[],

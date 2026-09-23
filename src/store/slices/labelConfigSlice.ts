@@ -59,6 +59,8 @@ export interface LabelConfigSlice {
   /** Switch the ^JM mode and rescale dots by the effective-density ratio so
    *  the physical size is preserved; a no-ratio switch (A vs unset) just sets. */
   rescaleJmDensity: (jmDensity: JmDensity | undefined) => void;
+  /** ^DF of the current page, undefined stores nothing. The page overlay stays: export splices the head. */
+  setPageStoredFormatPath: (path: string | undefined) => void;
 }
 
 export interface ImportInput {
@@ -207,5 +209,16 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       }
       const { pages, label } = rescaleDesign(state.pages, state.label, p.fromEff, p.toEff, p.patch, p.includeCalibrationFields);
       return { label, pages: dropPageOverlays(pages) };
+    }),
+
+  setPageStoredFormatPath: (path) =>
+    set((state) => {
+      if (selectEditorFrozen(state)) return {};
+      const pages = state.pages.map((p, i) => {
+        if (i !== state.currentPageIndex || p.storedFormatPath === path) return p;
+        const { storedFormatPath: _old, ...rest } = p;
+        return path === undefined ? rest : { ...rest, storedFormatPath: path };
+      });
+      return { pages };
     }),
 });
