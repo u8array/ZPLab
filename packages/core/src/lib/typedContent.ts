@@ -17,7 +17,7 @@ import type { ColumnMapping, Variable } from "../types/Variable";
 // drift (the encode/complete switches and the modal's field Record stay
 // compiler-exhaustive against it).
 export const CONTENT_TYPES = [
-  "url", "text", "wifi", "vcard", "email", "tel", "sms", "geo",
+  "url", "text", "wifi", "vcard", "mecard", "email", "tel", "sms", "geo",
 ] as const;
 
 export type ContentType = (typeof CONTENT_TYPES)[number];
@@ -31,12 +31,17 @@ export const VCARD_FIELDS = [
   "firstName", "lastName", "org", "title", "tel", "mobile", "email", "url", ...ADR_FIELDS, "note", "birthday",
 ] as const;
 
-/** A date a scanner keeps: ZXing drops any BDAY that is not 4-2-2 digits, dashes optional. */
-export const isVcardDate = (s: string): boolean => s === "" || /^\d{4}-?\d{2}-?\d{2}$/.test(s);
+/** A date a scanner keeps: the dashes vCard allows and the MECARD encoder strips are optional. */
+export const isContactDate = (s: string): boolean => s === "" || /^\d{4}-?\d{2}-?\d{2}$/.test(s);
+
+/** The MECARD contact fields in encode order. One address value, not the vCard's five components. */
+export const MECARD_FIELDS = ["firstName", "lastName", "org", "tel", "email", "url", "address", "note", "birthday"] as const;
+/** Tag to field for the properties both the encoder and the parser treat as plain values. */
+const MECARD_PROPERTIES = [["ORG", "org"], ["TEL", "tel"], ["EMAIL", "email"], ["URL", "url"], ["ADR", "address"], ["NOTE", "note"]] as const;
 
 /** What the builder checks a marker as while its value is unknown: something every rule of the field accepts. */
-export function markerStandIn(type: ContentType, key: string): string {
-  return type === "vcard" && key === "birthday" ? "0000-00-00" : "0";
+export function markerStandIn(key: string): string {
+  return key === "birthday" ? "0000-00-00" : "0";
 }
 
 // One structural-char class per format, shared by the literal ESCAPER and the
@@ -45,14 +50,23 @@ export function markerStandIn(type: ContentType, key: string): string {
 // mailto has no shared class: its literals go through encodeURIComponent, so
 // its validation set below is a deliberate structural subset.
 const WIFI_STRUCTURAL = /[\\;,":]/g;
+// Without the quote that only WiFi's hex rule needs.
+const MECARD_STRUCTURAL = /[\\;,:]/g;
+// The encoder strips dashes from literals only, so a substituted date keeps them and loses its BDAY.
+const MECARD_DATE_UNSAFE = /[\\;,:-]/g;
 const VCARD_STRUCTURAL = /[\\,;\n]/g;
 
-/** WiFi/MECARD value escaping (single pass, so ordering can't double-escape).
- *  An all-hex value is wrapped in quotes so a scanner doesn't read it as hex
- *  (undecidable with markers, so skipped: the resolved value isn't known at
- *  build time). */
+/** Escapes the structural chars in one pass, so ordering can't double-escape. */
+function escBackslash(s: string, structural: RegExp): string {
+  return mapLiteralSpans(s, (lit) => lit.replace(structural, (c) => `\\${c}`));
+}
+
+const escMecard = (s: string) => escBackslash(s, MECARD_STRUCTURAL);
+
+/** WiFi additionally quotes an all-hex value so a scanner doesn't read it as hex.
+ *  Undecidable with markers, so skipped: the resolved value isn't known at build time. */
 function escWifi(s: string): string {
-  const e = mapLiteralSpans(s, (lit) => lit.replace(WIFI_STRUCTURAL, (c) => `\\${c}`));
+  const e = escBackslash(s, WIFI_STRUCTURAL);
   return s.length > 0 && !hasTemplateMarkers(s) && /^[0-9A-Fa-f]+$/.test(s) ? `"${e}"` : e;
 }
 
@@ -79,6 +93,10 @@ const MAILTO_UNSAFE = /[&#%\s]/g;
 const MARKER_UNSAFE: Partial<Record<ContentType, Record<string, RegExp>>> = {
   wifi: { ssid: WIFI_STRUCTURAL, password: WIFI_STRUCTURAL },
   vcard: Object.fromEntries(VCARD_FIELDS.map((key) => [key, VCARD_STRUCTURAL])),
+  mecard: {
+    ...Object.fromEntries(MECARD_FIELDS.map((key) => [key, MECARD_STRUCTURAL])),
+    birthday: MECARD_DATE_UNSAFE,
+  },
   email: { subject: MAILTO_UNSAFE, body: MAILTO_UNSAFE },
 };
 
@@ -161,7 +179,8 @@ export function isContentComplete(type: ContentType, f: ContentFields): boolean 
     case "url": return !!f.url?.trim();
     case "text": return !!f.text;
     case "wifi": return !!f.ssid?.trim();
-    case "vcard": return !!(f.firstName?.trim() || f.lastName?.trim()) && isVcardDate((f.birthday ?? "").trim());
+    case "vcard":
+    case "mecard": return !!(f.firstName?.trim() || f.lastName?.trim()) && isContactDate((f.birthday ?? "").trim());
     case "email": return !!f.to?.trim();
     case "tel":
     case "sms": return /\d/.test(f.number ?? "");
@@ -215,6 +234,19 @@ export function encodeContent(type: ContentType, f: ContentFields): string {
       property("BDAY", "birthday");
       lines.push("END:VCARD");
       return lines.join("\n");
+    }
+    case "mecard": {
+      const v = (key: string) => escMecard((f[key] ?? "").trim());
+      // A lone half stands without the comma: ZXing shows "Doe," as " Doe".
+      const parts = [`N:${[v("lastName"), v("firstName")].filter(Boolean).join(",")}`];
+      for (const [tag, key] of MECARD_PROPERTIES) {
+        const value = v(key);
+        if (value) parts.push(`${tag}:${value}`);
+      }
+      // The form's entry is the vCard's YYYY-MM-DD, but MECARD wants bare digits.
+      const birthday = mapLiteralSpans(v("birthday"), (lit) => lit.replaceAll("-", ""));
+      if (birthday) parts.push(`BDAY:${birthday}`);
+      return `MECARD:${parts.join(";")};;`;
     }
     case "email": {
       const to = (f.to ?? "").trim();
@@ -290,11 +322,39 @@ function parseWifi(content: string): ContentFields {
 }
 
 /** The first non-empty value of a repeated property wins, as ZXing's primary does. Later ones have no field. */
-function parseVcard(content: string): ContentFields {
-  const f: ContentFields = {};
-  const take = (key: string, value: string) => {
+function firstValueInto(f: ContentFields) {
+  return (key: string, value: string) => {
     if (value !== "") f[key] ??= value;
   };
+}
+
+function parseMecard(content: string): ContentFields {
+  const body = content.slice(content.indexOf(":") + 1);
+  const f: ContentFields = {};
+  const take = firstValueInto(f);
+  for (const field of splitUnescaped(body, ";")) {
+    const c = field.indexOf(":");
+    if (c < 0) continue;
+    const k = field.slice(0, c).toUpperCase();
+    const v = field.slice(c + 1);
+    if (k === "N") {
+      const [last = "", first = ""] = splitUnescaped(v, ",").map(unescape);
+      take("lastName", last);
+      take("firstName", first);
+    } else if (k === "BDAY") {
+      const d = unescape(v);
+      take("birthday", /^\d{8}$/.test(d) ? `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6)}` : d);
+    } else {
+      const key = MECARD_PROPERTIES.find(([tag]) => tag === k)?.[1];
+      if (key) take(key, unescape(v));
+    }
+  }
+  return f;
+}
+
+function parseVcard(content: string): ContentFields {
+  const f: ContentFields = {};
+  const take = firstValueInto(f);
   // A folded line (RFC 2425) continues with a leading space or tab.
   for (const line of content.replace(/\r?\n[ \t]/g, "").split(/\r?\n/)) {
     const idx = line.indexOf(":");
@@ -345,6 +405,7 @@ export function parseContent(content: string): { type: ContentType; fields: Cont
   const t = content.trimStart();
   if (/^wifi:/i.test(t)) return { type: "wifi", fields: parseWifi(t) };
   if (/^begin:vcard/i.test(t)) return { type: "vcard", fields: parseVcard(t) };
+  if (/^mecard:/i.test(t)) return { type: "mecard", fields: parseMecard(t) };
   if (/^mailto:/i.test(t)) return { type: "email", fields: parseEmail(t) };
   if (/^tel:/i.test(t)) return { type: "tel", fields: { number: t.slice(4) } };
   if (/^smsto:/i.test(t)) {

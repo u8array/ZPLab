@@ -9,7 +9,7 @@ import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { MarkerTextField } from "../Properties/MarkerTextField";
 import { findObjectById } from "@zplab/core/types/Group";
 import { objectResolvesCtrl } from "@zplab/core/registry";
-import { encodeContent, parseContent, recommendedEc, isContentComplete, isVcardDate, markerStandIn, typedContentMarkerFindings, CONTENT_TYPES, VCARD_FIELDS, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
+import { encodeContent, parseContent, recommendedEc, isContentComplete, isContactDate, markerStandIn, typedContentMarkerFindings, CONTENT_TYPES, MECARD_FIELDS, VCARD_FIELDS, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
 
 type FieldKind = "text" | "textarea" | "checkbox" | "auth";
 
@@ -35,8 +35,9 @@ const FORM_FIELDS: Record<ContentType, FieldDef[]> = {
     { key: "auth", labelKey: "fAuth", kind: "auth" },
     { key: "hidden", labelKey: "fHidden", kind: "checkbox" },
   ],
-  // Derived from the encoder's list, as the escaper table is, so a field cannot lack a rule.
+  // Derived from the encoder's lists, as the escaper table is, so a field cannot lack a rule.
   vcard: VCARD_FIELDS.map((key) => ({ key, labelKey: `f${cap(key)}`, kind: key === "note" ? "textarea" : "text" })),
+  mecard: MECARD_FIELDS.map((key) => ({ key, labelKey: `f${cap(key)}`, kind: key === "note" ? "textarea" : "text" })),
   email: [
     { key: "to", labelKey: "fTo", kind: "text" },
     { key: "subject", labelKey: "fSubject", kind: "text" },
@@ -88,11 +89,11 @@ function ContentBuilder({ objectId }: { objectId: string }) {
   const validationFields = Object.fromEntries(
     Object.entries(fields).map(([k, v]) => {
       const resolved = resolveDefaults(v);
-      return [k, resolved === "" && hasTemplateMarkers(v) ? markerStandIn(type, k) : resolved];
+      return [k, resolved === "" && hasTemplateMarkers(v) ? markerStandIn(k) : resolved];
     }),
   );
   // The one field whose shape a scanner silently discards, so the gate says why it holds.
-  const badDate = type === "vcard" && !isVcardDate((validationFields.birthday ?? "").trim());
+  const badDate = !isContactDate((validationFields.birthday ?? "").trim());
   // A marker's print-time value is inserted as-is (no escaping); block Apply
   // when any substituted value (variable default or a bound CSV cell, all
   // rows) carries chars this field's encoding can't take. Authoring-time gate

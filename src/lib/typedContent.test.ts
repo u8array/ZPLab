@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { encodeContent, markerUnsafeChars, markerStandIn, parseContent, recommendedEc, isContentComplete, typedContentIncompleteRows, typedContentMarkerFindings, type ContentType, type ContentFields, VCARD_FIELDS } from "@zplab/core/lib/typedContent";
+import { encodeContent, markerUnsafeChars, markerStandIn, parseContent, recommendedEc, isContentComplete, typedContentIncompleteRows, typedContentMarkerFindings, type ContentType, type ContentFields, MECARD_FIELDS, VCARD_FIELDS } from "@zplab/core/lib/typedContent";
 
 function roundtrip(type: ContentType, fields: ContentFields) {
   const parsed = parseContent(encodeContent(type, fields));
@@ -68,10 +68,25 @@ describe("encodeContent", () => {
     );
   });
 
+  it("mecard: every field, structural chars escaped, the birthday as digits", () => {
+    const all = Object.fromEntries(MECARD_FIELDS.map((k) => [k, k]));
+    expect(encodeContent("mecard", { ...all, lastName: "Do;e", birthday: "1990-05-04" })).toBe(
+      "MECARD:N:Do\\;e,firstName;ORG:org;TEL:tel;EMAIL:email;URL:url;ADR:address;NOTE:note;BDAY:19900504;;",
+    );
+    expect(encodeContent("mecard", { lastName: "O", tel: "«num»", address: "a,b" })).toBe("MECARD:N:O;TEL:«num»;ADR:a\\,b;;");
+    expect(encodeContent("mecard", { firstName: "J", birthday: "«birth-date»" })).toBe("MECARD:N:J;BDAY:«birth-date»;;");
+    for (const key of MECARD_FIELDS) expect(markerUnsafeChars("mecard", key, "a;b"), key).toBe(";");
+    expect(markerUnsafeChars("mecard", "birthday", "1990-05-04")).toBe("-");
+    expect(markerUnsafeChars("mecard", "note", 'a"b')).toBeNull();
+    expect(markerUnsafeChars("wifi", "ssid", 'a"b')).toBe('"');
+    expect(markerUnsafeChars("vcard", "birthday", "1990-05-04")).toBeNull();
+    expect(isContentComplete("mecard", { firstName: "A", birthday: "4.5.1990" })).toBe(false);
+  });
+
   it("vcard: the birthday must be a date a scanner keeps", () => {
     expect(isContentComplete("vcard", { lastName: "O", birthday: "1990-05-04" })).toBe(true);
     expect(isContentComplete("vcard", { lastName: "O", birthday: "19900504" })).toBe(true);
-    expect(isContentComplete("vcard", { lastName: "O", birthday: markerStandIn("vcard", "birthday") })).toBe(true);
+    expect(isContentComplete("vcard", { lastName: "O", birthday: markerStandIn("birthday") })).toBe(true);
     for (const bad of ["0", "4.5.1990", "1990-05-04T10:00:00Z"]) expect(isContentComplete("vcard", { lastName: "O", birthday: bad }), bad).toBe(false);
   });
 });
@@ -228,6 +243,12 @@ describe("parseContent round-trips", () => {
     });
     expect(roundtrip("geo", { lat: "48.2", lng: "16.37" })).toEqual({ lat: "48.2", lng: "16.37" });
   });
+  it("mecard, including repeated and unknown properties", () => {
+    const full = { firstName: "A", lastName: "B;C", org: "ACME", tel: "+49 1", email: "a@b.c", url: "https://x.io", address: "Weg 1, Wien", note: "n:1", birthday: "1990-05-04" };
+    expect(roundtrip("mecard", full)).toEqual(full);
+    expect(parseContent("mecard:N:Doe,John;TEL:;TEL:1;TEL:2;NICKNAME:JD;BDAY:19900504;BDAY:Mai;;").fields).toEqual({ lastName: "Doe", firstName: "John", tel: "1", birthday: "1990-05-04" });
+    expect(roundtrip("mecard", { lastName: "Doe" })).toEqual({ lastName: "Doe" });
+  });
 });
 
 describe("parseContent never throws on malformed input", () => {
@@ -251,6 +272,7 @@ describe("parseContent classification", () => {
     expect(parseContent("MAILTO:a@b.c").type).toBe("email");
     expect(parseContent("Wifi:T:WPA;S:x;;").type).toBe("wifi");
     expect(parseContent("just some text").type).toBe("text");
+    expect(parseContent("MECARD:N:Doe,John;;").type).toBe("mecard");
     expect(parseContent("geo:1,2").type).toBe("geo");
   });
 });
