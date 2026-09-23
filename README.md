@@ -33,11 +33,13 @@ Existing ZPL remains editable source rather than becoming a one-way import. ZPLa
 | Windows | [x64 installer](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_x64-setup.exe) |
 | macOS | [Apple Silicon](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_aarch64.dmg) · [Intel](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_x64.dmg) |
 | Linux | [AppImage](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_amd64.AppImage) · [deb](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_amd64.deb) · [rpm](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab-0.6.0-1.x86_64.rpm) |
-| Web (self-hosted) | [zip](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_web.zip) |
+| Web (self-hosted) | [zip](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_web.zip) · Docker image, see below |
 
 On macOS, the first launch may be blocked. Allow ZPLab under *System Settings > Privacy & Security*.
 
 On Windows, SmartScreen warns when you first run the unsigned installer. Choose **More info** and then **Run anyway** to continue.
+
+The Docker image runs the same web build on your own host. Start it with `docker run -p 8080:8080 ghcr.io/u8array/zplab:latest`. It serves static files only, so printing and previews run in the browser as on the hosted app.
 
 ## Usage
 
@@ -197,7 +199,7 @@ Export a `.zpl` file to print or edit again later. To keep editor settings as we
 ## Limitations
 
 - The canvas approximates the printed label. Fonts and rendering can differ from the printer's output. Use **Preview** in the **ZPL** panel to view an image rendered by Labelary or the connected printer over the canvas.
-- The default preview renderer is Labelary; the web build calls `api.labelary.com`. Self-hosters can configure a private endpoint or disable online previews at build time (`VITE_THIRD_PARTY_LABELARY=false`). The desktop app can preview on the connected printer instead.
+- The default preview renderer is Labelary; the web build calls `api.labelary.com`. Self-hosters can configure a private endpoint or disable online previews at build time (`VITE_THIRD_PARTY_LABELARY=false`). For the Docker image, pass the same values as build args. For example, `docker build --build-arg VITE_THIRD_PARTY_LABELARY=false --build-arg VITE_LABELARY_API_URL=https://labelary.internal .`. The desktop app can preview on the connected printer instead.
 - The Labelary preview does not render every ZPL feature. It ignores CODABLOCK F's `^BB` command and displays the field content as plain text. MaxiCode renders slightly smaller than on a Zebra ZD230.
 - **Preview** and **Print as Image (browser)** render only the current page. **Export ZPL** and **Send to Zebra Printer** include every page.
 - A page with a stored format (`^DF`) is stored on the printer instead of printed. **Send to Zebra Printer** says so before sending. Previews keep rendering the page.
