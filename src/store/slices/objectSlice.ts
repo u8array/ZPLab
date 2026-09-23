@@ -564,6 +564,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       // The ^JM override travels along: the cloned dots are in its density.
       const cloned: Page = { objects: cloneChildrenFresh(source.objects) };
       if (source.jmDensity !== undefined) cloned.jmDensity = source.jmDensity;
+      // The ^DF does not: two blocks under one name would overwrite each other on the printer.
       const insertPos = index + 1;
       const newPages = [
         ...state.pages.slice(0, insertPos),

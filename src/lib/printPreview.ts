@@ -2,7 +2,7 @@ import { generateZPL } from "@zplab/core/lib/zplGenerator";
 import { stripSidecarComments } from "@zplab/core/lib/zplLabelMeta";
 import { fetchPreview } from "./labelary";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
-import { isGroup, type LabelObject } from "@zplab/core/types/Group";
+import { isGroup, withoutStoredFormat, type LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
 import { applyBindingToTree, clockCtxFromLabel, getObjectStringContent, type ActiveRow } from "@zplab/core/lib/variableBinding";
 import { ctrlParityFor } from "@zplab/core/registry";
@@ -39,8 +39,9 @@ export function buildPreviewZpl(
 ): string {
   const substituted = applyBindingToTree(objects, variables, active, "preview", clockCtxFromLabel(label), ctrlParityFor);
   const previewed = opts.blankSamples ? withBlankSamples(substituted) : substituted;
-  // A preview is never re-imported, so nothing but printer bytes goes to the renderer.
-  return stripSidecarComments(generateZPL(label, previewed, []));
+  // A preview is never re-imported, so nothing but printer bytes goes to the renderer,
+  // and a render must print, so the format is not stored (^DF prints nothing, p.1704).
+  return stripSidecarComments(generateZPL(withoutStoredFormat(label), previewed, []));
 }
 
 export function buildLoadingHtml(): string {

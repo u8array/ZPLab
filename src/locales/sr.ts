@@ -397,6 +397,9 @@ const sr = {
     jmPageOverrideHintFmt: 'Ова страница задржава свој увезени режим густине {mode}; избор мења режим за читав дизајн',
     jmDensityA: 'Пуна густина (експлицитно)',
     jmDensityB: 'Половина густине (удвостручује размеру формата)',
+    storedFormat: 'Сачувани формат',
+    storedFormatName: 'Назив',
+    storedFormatHint: 'Штампач чува формат ове странице под овом путањом уместо да га одштампа. Послови штампе и групне обраде шаљу ту команду за чување. Прегледи се и даље приказују. Групна обрада позива само називе до 8 знакова.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Usidravanje bar koda na strani štampača',
@@ -1024,6 +1027,8 @@ const sr = {
     editSourceTooManyPagesFmt: 'Код премашује {max} формата налепнице.',
     replayRiskSetupFmt: 'Слање овог кода мења и подешавања штампача: {commands}',
     replayRiskActionsFmt: 'Слање овог кода покреће и радње штампача: {commands}',
+    storesFormatFmt: 'Слање овог кода чува формат као {path} и не штампа ништа.',
+    storesSomeFormatFmt: 'Слање овог кода чува и формат као {path}.',
   },
   contextMenu: {
     copy: 'Копирај',

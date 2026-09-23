@@ -1370,8 +1370,8 @@
       "title": "store template",
       "summary": "Stores the following commands as a reusable format rather than printing them immediately.",
       "support": {
-        "web": "planned",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
       }
     },

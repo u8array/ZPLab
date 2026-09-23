@@ -24,7 +24,7 @@ test('boots, imports ZPL, adds a page, and regenerates output', async ({ page })
 
   await openFileMenu(page);
   await page.getByRole('button', { name: 'Import ZPL' }).click();
-  await page.getByRole('textbox').fill(SAMPLE_ZPL);
+  await page.getByRole('dialog').getByRole('textbox').fill(SAMPLE_ZPL);
   await page.getByRole('button', { name: 'Import', exact: true }).click();
   // A clean import closes the dialog; a summary/choice view staying open
   // would mean the sample produced findings.

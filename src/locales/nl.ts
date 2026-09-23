@@ -397,6 +397,9 @@ const nl = {
     jmPageOverrideHintFmt: 'Deze pagina behoudt zijn geïmporteerde dichtheidsmodus {mode}; de selectie wijzigt de ontwerpbrede modus',
     jmDensityA: 'Volledige dichtheid (expliciet)',
     jmDensityB: 'Halve dichtheid (verdubbelt de formaatschaal)',
+    storedFormat: 'Opgeslagen indeling',
+    storedFormatName: 'Naam',
+    storedFormatHint: 'De printer slaat het formaat van deze pagina op onder dit pad in plaats van het af te drukken. Afdruk- en batchtaken sturen dit opslagcommando. Voorbeelden blijven gerenderd worden. Een batch roept alleen namen van maximaal 8 tekens op.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Barcode-verankering aan printerzijde',
@@ -1024,6 +1027,8 @@ const nl = {
     editSourceTooManyPagesFmt: 'De code overschrijdt {max} labelformaten.',
     replayRiskSetupFmt: 'Het verzenden van deze code wijzigt ook printerinstellingen: {commands}',
     replayRiskActionsFmt: 'Het verzenden van deze code start ook printeracties: {commands}',
+    storesFormatFmt: 'Het verzenden van deze code slaat het formaat op als {path} en drukt niets af.',
+    storesSomeFormatFmt: 'Het verzenden van deze code slaat ook het formaat op als {path}.',
   },
   contextMenu: {
     copy: 'Kopiëren',

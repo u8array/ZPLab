@@ -103,6 +103,8 @@ export interface ParsedPage {
    *  reset): page 0 equals block 0's config, which the single-label import
    *  reads so block-scoped fields like ^PQ can't leak from later blocks. */
   labelConfig: Partial<LabelConfig>;
+  /** The block's ^DF path, canonical; absent when it stores nothing. */
+  storedFormatPath?: string;
   /** Page 0 only: stream had no ^XA wrapper (bare field paste). Re-export
    *  regenerates the wrapper, so the overlay is suppressed by the caller. */
   bare?: boolean;

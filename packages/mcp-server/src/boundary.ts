@@ -25,6 +25,7 @@ import { designSizeIssue } from "@zplab/core/lib/designLimits";
 import { getAllLeaves, walkObjects, type LabelObject } from "@zplab/core/types/Group";
 import { errorMessage } from "@zplab/core/lib/errorMessage";
 import { DPMM_VALUES, isDpmm, type DeviceFontLabel, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
+import { storedFormatPathSchema } from "@zplab/core/lib/storagePath";
 import { variableSchema, type Variable, type VariableInput } from "@zplab/core/types/Variable";
 
 // Re-exported so the tools keep their names.
@@ -81,6 +82,9 @@ export const createDraftShape = {
   widthMm: z.number().positive(),
   heightMm: z.number().positive(),
   dpmm: dpmmSchema,
+  storedFormatPath: storedFormatPathSchema("storedFormatPath must be drive:NAME.ZPL, drive R, E, B or A, name of 1-16 letters, digits or _")
+    .describe("^DF: the printer stores the format under this path instead of printing it. A batch recall (^XF) reads names of 8 chars at most.")
+    .optional(),
   objects: z.array(objectInputSchema),
   variables: z.array(variableInputSchema).optional(),
 };
@@ -88,6 +92,7 @@ export interface CreateDraftInput {
   widthMm: number;
   heightMm: number;
   dpmm: Dpmm;
+  storedFormatPath?: string;
   objects: ObjectInput[];
   variables?: VariableInputJson[];
 }

@@ -397,6 +397,9 @@ const lv = {
     jmPageOverrideHintFmt: 'Šī lapa saglabā savu importēto blīvuma režīmu {mode}; izvēle maina visam dizainam kopīgo režīmu',
     jmDensityA: 'Pilns blīvums (skaidri norādīts)',
     jmDensityB: 'Puse blīvuma (dubulto formāta mērogu)',
+    storedFormat: 'Saglabātais formāts',
+    storedFormatName: 'Nosaukums',
+    storedFormatHint: 'Printeris saglabā šīs lapas formātu šajā ceļā, nevis to izdrukā. Drukas un pakešu darbi sūta šo saglabāšanas komandu. Priekšskatījumi turpina tikt attēloti. Pakete izsauc tikai nosaukumus līdz 8 rakstzīmēm.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Svītrkoda enkurošana printera pusē',
@@ -1024,6 +1027,8 @@ const lv = {
     editSourceTooManyPagesFmt: 'Kods pārsniedz {max} uzlīmju formātus.',
     replayRiskSetupFmt: 'Šī koda nosūtīšana maina arī printera iestatījumus: {commands}',
     replayRiskActionsFmt: 'Šī koda nosūtīšana sāk arī printera darbības: {commands}',
+    storesFormatFmt: 'Šī koda nosūtīšana saglabā formātu kā {path} un neko neizdrukā.',
+    storesSomeFormatFmt: 'Šī koda nosūtīšana arī saglabā formātu kā {path}.',
   },
   contextMenu: {
     copy: 'Kopēt',

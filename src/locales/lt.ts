@@ -397,6 +397,9 @@ const lt = {
     jmPageOverrideHintFmt: 'Šis puslapis išlaiko savo importuotą tankio režimą {mode}; pasirinkimas keičia viso dizaino režimą',
     jmDensityA: 'Pilnas tankis (aiškiai nurodytas)',
     jmDensityB: 'Pusinis tankis (padvigubina formato mastelį)',
+    storedFormat: 'Išsaugotas formatas',
+    storedFormatName: 'Pavadinimas',
+    storedFormatHint: 'Spausdintuvas išsaugo šio puslapio formatą šiuo keliu vietoj to, kad jį atspausdintų. Spausdinimo ir paketinės užduotys siunčia šią išsaugojimo komandą. Peržiūros toliau atvaizduojamos. Paketas iškviečia tik iki 8 simbolių pavadinimus.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Brūkšninio kodo tvirtinimas spausdintuvo pusėje',
@@ -1024,6 +1027,8 @@ const lt = {
     editSourceTooManyPagesFmt: 'Kodas viršija {max} etiketės formatų.',
     replayRiskSetupFmt: 'Išsiuntus šį kodą taip pat pakeičiami spausdintuvo nustatymai: {commands}',
     replayRiskActionsFmt: 'Išsiuntus šį kodą taip pat paleidžiami spausdintuvo veiksmai: {commands}',
+    storesFormatFmt: 'Šio kodo siuntimas išsaugo formatą kaip {path} ir nieko neatspausdina.',
+    storesSomeFormatFmt: 'Šio kodo siuntimas taip pat išsaugo formatą kaip {path}.',
   },
   contextMenu: {
     copy: 'Kopijuoti',

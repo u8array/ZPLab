@@ -397,6 +397,9 @@ const hr = {
     jmPageOverrideHintFmt: 'Ova stranica zadržava svoj uvezeni način gustoće {mode}; odabir mijenja način za cijeli dizajn',
     jmDensityA: 'Puna gustoća (eksplicitno)',
     jmDensityB: 'Polovična gustoća (udvostručuje mjerilo formata)',
+    storedFormat: 'Pohranjeni format',
+    storedFormatName: 'Naziv',
+    storedFormatHint: 'Pisač pohranjuje format ove stranice na ovu putanju umjesto da ga ispiše. Zadaci ispisa i skupnog ispisa šalju tu naredbu pohrane. Pretpregledi se i dalje prikazuju. Skupni ispis poziva samo nazive do 8 znakova.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Sidrenje crtičnog koda na strani pisača',
@@ -1024,6 +1027,8 @@ const hr = {
     editSourceTooManyPagesFmt: 'Kôd premašuje {max} formata naljepnice.',
     replayRiskSetupFmt: 'Slanje ovog koda mijenja i postavke pisača: {commands}',
     replayRiskActionsFmt: 'Slanje ovog koda pokreće i radnje pisača: {commands}',
+    storesFormatFmt: 'Slanje ovog koda pohranjuje format kao {path} i ne ispisuje ništa.',
+    storesSomeFormatFmt: 'Slanje ovog koda pohranjuje i format kao {path}.',
   },
   contextMenu: {
     copy: 'Kopiraj',

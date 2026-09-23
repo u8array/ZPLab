@@ -56,3 +56,11 @@ describe("buildPreviewZpl metadata", () => {
     expect(zpl).toContain("^PW800");
   });
 });
+
+describe("buildPreviewZpl and a stored format", () => {
+  it("never emits ^DF, since a render must print", () => {
+    const zpl = buildPreviewZpl({ ...label, storedFormatPath: "E:LBL.ZPL" } as PageLabel, blankBarcode(), [], null);
+    expect(zpl).not.toContain("^DF");
+    expect(zpl.startsWith("^XA")).toBe(true);
+  });
+});

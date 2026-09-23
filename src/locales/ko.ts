@@ -397,6 +397,9 @@ const ko = {
     jmPageOverrideHintFmt: '이 페이지는 가져온 밀도 모드 {mode}를 유지합니다. 선택하면 디자인 전체 모드가 변경됩니다',
     jmDensityA: '전체 밀도(명시적)',
     jmDensityB: '절반 밀도(포맷 배율을 두 배로 늘림)',
+    storedFormat: '저장된 포맷',
+    storedFormatName: '이름',
+    storedFormatHint: '프린터는 이 페이지의 포맷을 이 경로에 저장하며 인쇄하지 않습니다. 인쇄 및 배치 작업이 이 저장 명령을 전송합니다. 미리보기는 계속 렌더링됩니다. 배치는 최대 8자의 이름만 호출합니다.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: '프린터 측 바코드 고정',
@@ -1024,6 +1027,8 @@ const ko = {
     editSourceTooManyPagesFmt: '코드가 라벨 형식 {max}개를 초과합니다.',
     replayRiskSetupFmt: '이 코드를 전송하면 프린터 설정도 변경됩니다: {commands}',
     replayRiskActionsFmt: '이 코드를 전송하면 프린터 동작도 실행됩니다: {commands}',
+    storesFormatFmt: '이 코드를 전송하면 포맷이 {path}로 저장되고 아무것도 인쇄되지 않습니다.',
+    storesSomeFormatFmt: '이 코드를 전송하면 포맷도 {path}로 저장됩니다.',
   },
   contextMenu: {
     copy: '복사',

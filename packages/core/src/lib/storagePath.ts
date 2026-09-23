@@ -1,5 +1,6 @@
 // Zebra storage paths: bare `device:name` on upload, `device:name.ext` on recall.
 
+import { z } from "zod";
 import { escapeRegExp } from "./escapeRegExp";
 import { newId } from "./ids";
 
@@ -17,6 +18,26 @@ export const STORAGE_NAME_FILTER_RE = /[^A-Z0-9_]/g;
 export function sanitizeStorageName(raw: string): string {
   return raw.toUpperCase().replace(STORAGE_NAME_FILTER_RE, "").slice(0, MAX_STORAGE_NAME_LEN);
 }
+
+/** ^DF stores under a name of up to 16 chars; a missing device means R: (p.174). */
+export const MAX_STORED_FORMAT_NAME_LEN = 16;
+const storedFormatPathRe = (maxLen: number) =>
+  new RegExp(`^(?:[${STORAGE_DEVICES.join("")}]:)?[A-Z0-9_]{1,${maxLen}}(?:\\.ZPL)?$`, "i");
+export const STORED_FORMAT_PATH_RE = storedFormatPathRe(MAX_STORED_FORMAT_NAME_LEN);
+export const isStoredFormatPath = (raw: string): boolean => STORED_FORMAT_PATH_RE.test(raw);
+/** ^XF recalls a name of 8 chars at most (p.372). */
+const RECALLABLE_FORMAT_PATH_RE = storedFormatPathRe(MAX_STORAGE_NAME_LEN);
+export const isRecallableFormatPath = (path: string): boolean => RECALLABLE_FORMAT_PATH_RE.test(path);
+export function sanitizeStoredFormatName(raw: string): string {
+  return raw.toUpperCase().replace(STORAGE_NAME_FILTER_RE, "").slice(0, MAX_STORED_FORMAT_NAME_LEN);
+}
+/** The storage key plus the extension ^DF fixes (p.174), so a bare name and its .ZPL spelling are one file. */
+export function canonicalStoredFormatPath(raw: string): string {
+  const key = storageKey(raw);
+  return key.endsWith(".ZPL") ? key : `${key}.ZPL`;
+}
+export const storedFormatPathSchema = (message?: string) =>
+  z.string().regex(STORED_FORMAT_PATH_RE, message).transform(canonicalStoredFormatPath);
 
 /** Short UUID slice avoids collisions without forcing user-chosen name. */
 export function defaultStorageName(): string {

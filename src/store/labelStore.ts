@@ -15,7 +15,7 @@ import { sanitiseLoadedVariables } from '@zplab/core/lib/loadedVariables';
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from '@zplab/core/lib/reverseBacking';
 import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { removeVariables } from '@zplab/core/lib/variableRemoval';
-import { pinBareFontDriveLeaf, reconstructLegacyJmDensity } from '@zplab/core/lib/designFile';
+import { pinBareFontDriveLeaf, reconstructLegacyHeads } from '@zplab/core/lib/designFile';
 import type { DesignFilePage } from '@zplab/core/lib/designFile';
 import type { CustomFontMapping, JmDensity, LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { LabelObject, Page } from '@zplab/core/types/Group';
@@ -348,15 +348,15 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     }
   }
 
-  // Unconditional (not version-gated): main-era sessions persist at the current
-  // version but carry legacy overlays whose head ^JM rode only in the bytes, so
-  // a full regen would drop it. Latch the density back as a page override.
+  // Unconditional rather than version-gated: main-era sessions persist at the current
+  // version but carry legacy overlays whose head ^JM or ^DF rode only in the bytes, so
+  // a full regen would drop them. Latch both back the way a load does.
   if (Array.isArray(s.pages)) {
     const label = s.label as { jmDensity?: JmDensity } | undefined;
-    if (label) reconstructLegacyJmDensity(label, s.pages as DesignFilePage[]);
+    reconstructLegacyHeads(s.pages as DesignFilePage[], label);
   }
 
-  // Unconditional like the ^JM latch: marker-safe names and unique ^FN slots on every rehydrate.
+  // Unconditional like the head latch: marker-safe names and unique ^FN slots on every rehydrate.
   if (Array.isArray(s.variables) && Array.isArray(s.pages)) {
     const variables = s.variables as Variable[];
     const { pages, unplaced } = sanitiseLoadedVariables(variables, s.pages as Page[]);

@@ -397,6 +397,9 @@ const he = {
     jmPageOverrideHintFmt: 'עמוד זה שומר על מצב הצפיפות המיובא שלו {mode}; הבחירה משנה את המצב עבור כל העיצוב',
     jmDensityA: 'צפיפות מלאה (מפורש)',
     jmDensityB: 'חצי צפיפות (מכפילה את קנה המידה של הפורמט)',
+    storedFormat: 'פורמט מאוחסן',
+    storedFormatName: 'שם',
+    storedFormatHint: 'המדפסת שומרת את הפורמט של עמוד זה בנתיב הזה במקום להדפיס אותו. עבודות הדפסה ואצווה שולחות את פקודת השמירה הזו. התצוגות המקדימות ממשיכות להיות מוצגות. אצווה קוראת רק לשמות באורך של עד 8 תווים.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'עיגון ברקוד בצד המדפסת',
@@ -1024,6 +1027,8 @@ const he = {
     editSourceTooManyPagesFmt: 'הקוד חורג מ-{max} תבניות תווית.',
     replayRiskSetupFmt: 'שליחת הקוד הזה משנה גם את הגדרות המדפסת: {commands}',
     replayRiskActionsFmt: 'שליחת הקוד הזה גם מפעילה פעולות במדפסת: {commands}',
+    storesFormatFmt: 'שליחת הקוד הזה שומרת את הפורמט בשם {path} ולא מדפיסה דבר.',
+    storesSomeFormatFmt: 'שליחת הקוד הזה שומרת גם את הפורמט בשם {path}.',
   },
   contextMenu: {
     copy: 'העתק',

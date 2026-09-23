@@ -397,6 +397,9 @@ const sv = {
     jmPageOverrideHintFmt: 'Den här sidan behåller sitt importerade densitetsläge {mode}; valet ändrar det designomfattande läget',
     jmDensityA: 'Full densitet (explicit)',
     jmDensityB: 'Halv densitet (dubblar formatskalan)',
+    storedFormat: 'Sparat format',
+    storedFormatName: 'Namn',
+    storedFormatHint: 'Skrivaren lagrar den här sidans format under denna sökväg i stället för att skriva ut det. Utskrifts- och batchjobb skickar detta lagringskommando. Förhandsgranskningar fortsätter att renderas. En batch hämtar bara fram namn på upp till 8 tecken.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Skrivarsidig streckkodsförankring',
@@ -1024,6 +1027,8 @@ const sv = {
     editSourceTooManyPagesFmt: 'Koden överskrider {max} etikettformat.',
     replayRiskSetupFmt: 'Att skicka den här koden ändrar även skrivarinställningar: {commands}',
     replayRiskActionsFmt: 'Att skicka den här koden utlöser även skrivaråtgärder: {commands}',
+    storesFormatFmt: 'Att skicka den här koden lagrar formatet som {path} och skriver inte ut något.',
+    storesSomeFormatFmt: 'Att skicka den här koden lagrar även formatet som {path}.',
   },
   contextMenu: {
     copy: 'Kopiera',

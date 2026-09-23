@@ -397,6 +397,9 @@ const ja = {
     jmPageOverrideHintFmt: 'このページはインポートされた密度モード {mode} を保持します。選択するとデザイン全体のモードが変更されます',
     jmDensityA: 'フル密度（明示指定）',
     jmDensityB: '半密度（フォーマットの縮尺が2倍になります）',
+    storedFormat: '保存済みフォーマット',
+    storedFormatName: '名前',
+    storedFormatHint: 'プリンターはこのページの書式をこのパスに保存し、印刷は行いません。印刷とバッチジョブはこの保存コマンドを送信します。プレビューは引き続き描画されます。バッチが呼び出せるのは8文字までの名前のみです。',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'プリンター側でのバーコード位置固定',
@@ -1024,6 +1027,8 @@ const ja = {
     editSourceTooManyPagesFmt: 'コードがラベルフォーマット {max} 件を超えています。',
     replayRiskSetupFmt: 'このコードを送信すると、プリンターの設定も変更されます: {commands}',
     replayRiskActionsFmt: 'このコードを送信すると、プリンターの動作も実行されます: {commands}',
+    storesFormatFmt: 'このコードを送信すると書式が {path} として保存され、印刷は行われません。',
+    storesSomeFormatFmt: 'このコードを送信すると書式も {path} として保存されます。',
   },
   contextMenu: {
     copy: 'コピー',

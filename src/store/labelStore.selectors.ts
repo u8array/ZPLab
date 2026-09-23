@@ -1,5 +1,5 @@
 import type { ImportFinding } from '@zplab/core/lib/importReport';
-import { pageLabelConfig, type LabelObject } from '@zplab/core/types/Group';
+import { pageLabelConfig, type LabelObject, type Page } from '@zplab/core/types/Group';
 import { boundColumnIndex } from '@zplab/core/lib/variableBinding';
 import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
 import { isDesktopShell } from '../lib/platform';
@@ -9,7 +9,7 @@ import type { LabelState } from './labelStore';
 import { serializeDesign } from '@zplab/core/lib/designFile';
 import type { PageState } from './labelStore.internals';
 import type { SourceDocumentState } from '@zplab/core/lib/zplSourceEdit';
-import { designAsPageLabel, PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig, type PageLabel } from '@zplab/core/types/LabelConfig';
+import { designAsPageLabel, PER_LABEL_ZPL_FIELDS, type LabelConfig, type PageLabel } from '@zplab/core/types/LabelConfig';
 
 export const currentObjects = (state: PageState): LabelObject[] =>
   state.pages[state.currentPageIndex]?.objects ?? [];
@@ -17,20 +17,25 @@ export const currentObjects = (state: PageState): LabelObject[] =>
 // pageLabelConfig builds a fresh object per override, which a zustand selector
 // would hand back as a new reference on every store read. Cache per (design
 // label, density) so subscribers only re-render when one of them changes.
-const overrideCache = new WeakMap<LabelConfig, Map<JmDensity, PageLabel>>();
+const overrideCache = new WeakMap<LabelConfig, Map<string, PageLabel>>();
 
-const resolvedPageLabel = (label: LabelConfig, jm: JmDensity | undefined): PageLabel => {
+type PageOverrides = Pick<Page, 'jmDensity' | 'storedFormatPath'>;
+
+const resolvedPageLabel = (label: LabelConfig, page: PageOverrides | undefined): PageLabel => {
+  const jm = page?.jmDensity;
+  const stored = page?.storedFormatPath;
   // No divergence means the design label already IS this page's resolved label.
-  if (jm === undefined || jm === label.jmDensity) return designAsPageLabel(label);
-  let byDensity = overrideCache.get(label);
-  if (!byDensity) {
-    byDensity = new Map();
-    overrideCache.set(label, byDensity);
+  if ((jm === undefined || jm === label.jmDensity) && stored === undefined) return designAsPageLabel(label);
+  let byOverride = overrideCache.get(label);
+  if (!byOverride) {
+    byOverride = new Map();
+    overrideCache.set(label, byOverride);
   }
-  const cached = byDensity.get(jm);
+  const key = JSON.stringify([jm ?? null, stored ?? null]);
+  const cached = byOverride.get(key);
   if (cached) return cached;
-  const built = pageLabelConfig(label, { jmDensity: jm });
-  byDensity.set(jm, built);
+  const built = pageLabelConfig(label, { jmDensity: jm, storedFormatPath: stored });
+  byOverride.set(key, built);
   return built;
 };
 
@@ -38,7 +43,7 @@ const resolvedPageLabel = (label: LabelConfig, jm: JmDensity | undefined): PageL
  *  editor-geometry root (mm<->dots, bounds, snap, preflight) and single-page
  *  emit works in this page's density. Design-scope reads keep `state.label`. */
 export const currentPageLabel = (state: LabelState): PageLabel =>
-  resolvedPageLabel(state.label, state.pages[state.currentPageIndex]?.jmDensity);
+  resolvedPageLabel(state.label, state.pages[state.currentPageIndex]);
 
 /* Render source: during a source-edit session the view follows the master
  * buffer, so every renderer-facing question (objects, page label, variables,
@@ -90,10 +95,7 @@ export const selectRenderObjects = (s: LabelState): LabelObject[] =>
   selectRenderPages(s)[selectRenderPageIndex(s)]?.objects ?? [];
 
 export const selectRenderPageLabel = (s: LabelState): PageLabel =>
-  resolvedPageLabel(
-    selectRenderDesignLabel(s),
-    selectRenderPages(s)[selectRenderPageIndex(s)]?.jmDensity,
-  );
+  resolvedPageLabel(selectRenderDesignLabel(s), selectRenderPages(s)[selectRenderPageIndex(s)]);
 
 /** True while any per-label print override is set; drives the reset button's
  *  visibility so its disappearance after a reset doubles as feedback. */

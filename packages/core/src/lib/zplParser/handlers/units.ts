@@ -1,3 +1,4 @@
+import { isStoredFormatPath } from "../../storagePath";
 import { isMuDpi, jmDensityOf } from "../../../types/LabelConfig";
 import { notePartial, deriveUnitScale, type ParserState } from "../context";
 import type { Handler } from "../types";
@@ -39,6 +40,10 @@ export function createUnitsHandler(s: ParserState, dpmm: number): Record<string,
     JM(_p, rest) {
       const v = jmDensityOf(rest, s.format.delimiterChar);
       if (v === undefined || !s.format.inFormatHead) notePartial(s.result, "^JM");
+    },
+    // Read by the format-head lookahead; outside a head the model does not take it, and an unusable path stays raw.
+    DF(_p, rest) {
+      if (!s.format.inFormatHead || !isStoredFormatPath(rest.trimEnd())) notePartial(s.result, "^DF");
     },
   };
 }

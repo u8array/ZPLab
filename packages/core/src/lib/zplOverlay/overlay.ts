@@ -50,6 +50,17 @@ export interface FormatHead {
    *  are included: export must place its declaration behind them, since the
    *  printer may still read the trailing one. */
   jmSpans: readonly JmSpan[];
+  /** Spans of the head's `^DF` commands, in source order: export rewrites the first and cuts the rest. */
+  dfSpans?: readonly DfSpan[];
+}
+
+/** `caret` is the prefix live at this `^DF`, as for a JmSpan. */
+export interface DfSpan {
+  start: number;
+  end: number;
+  caret: string;
+  /** The canonical path this ^DF names, absent when the bytes name none the model takes. */
+  path?: string;
 }
 
 /** `delim`/`caret` are the chars live at this `^JM`: a ^CD/^CC retarget
@@ -64,6 +75,8 @@ export interface JmSpan {
 
 /** Byte length of the shortest `^JM` (prefix + name, value optional). */
 export const MIN_JM_SPAN = 3;
+/** Byte length of a `^DF` prefix plus name. */
+export const MIN_DF_SPAN = 3;
 
 export interface BlockOverlay {
   /** Ordered segments covering the whole block; their texts joined reproduce
@@ -180,15 +193,24 @@ export const blockOverlaySchema = z
         caret: z.string().length(1),
         at: z.number().int().min(0),
         jmSpans: z.array(z.object({ start: z.number().int().min(0), end: z.number().int().min(0), delim: z.string().length(1), caret: z.string().length(1) })),
+        dfSpans: z.array(z.object({ start: z.number().int().min(0), end: z.number().int().min(0), caret: z.string().length(1), path: z.string().optional() })).optional(),
       })
       .superRefine((head, ctx) => {
         // Export patches these offsets into the block, so a span that is
-        // reversed, too short for a `^JM`, or out of order would splice bytes
+        // reversed, too short for its command, or out of order would splice bytes
         // the head never owned. In-bounds is checked at emit against the block.
         let cursor = 0;
         for (const s of head.jmSpans) {
           if (s.start < cursor || s.end < s.start + MIN_JM_SPAN) {
             ctx.addIssue({ code: "custom", message: "invalid ^JM span in head" });
+            return;
+          }
+          cursor = s.end;
+        }
+        cursor = 0;
+        for (const s of head.dfSpans ?? []) {
+          if (s.start < cursor || s.end < s.start + MIN_DF_SPAN) {
+            ctx.addIssue({ code: "custom", message: "invalid ^DF span in head" });
             return;
           }
           cursor = s.end;

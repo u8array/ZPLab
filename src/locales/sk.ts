@@ -397,6 +397,9 @@ const sk = {
     jmPageOverrideHintFmt: 'Táto stránka si zachováva svoj importovaný režim hustoty {mode}; výber mení režim platný pre celý návrh',
     jmDensityA: 'Plná hustota (explicitne)',
     jmDensityB: 'Polovičná hustota (zdvojnásobí mierku formátu)',
+    storedFormat: 'Uložený formát',
+    storedFormatName: 'Názov',
+    storedFormatHint: 'Tlačiareň uloží formát tejto stránky pod touto cestou namiesto jeho vytlačenia. Tlačové a dávkové úlohy odosielajú tento ukladací príkaz. Náhľady sa naďalej vykresľujú. Dávka vyvoláva len názvy do 8 znakov.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Ukotvenie čiarového kódu na strane tlačiarne',
@@ -1024,6 +1027,8 @@ const sk = {
     editSourceTooManyPagesFmt: 'Kód prekračuje {max} formátov etikety.',
     replayRiskSetupFmt: 'Odoslanie tohto kódu zmení aj nastavenia tlačiarne: {commands}',
     replayRiskActionsFmt: 'Odoslanie tohto kódu spustí aj akcie tlačiarne: {commands}',
+    storesFormatFmt: 'Odoslanie tohto kódu uloží formát ako {path} a nič nevytlačí.',
+    storesSomeFormatFmt: 'Odoslanie tohto kódu uloží aj formát ako {path}.',
   },
   contextMenu: {
     copy: 'Kopírovať',

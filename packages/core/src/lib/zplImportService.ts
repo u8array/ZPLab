@@ -150,8 +150,9 @@ function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
     // so they aren't silently dropped (no overlay: the wrapper-less source has
     // nothing to replay byte-for-byte, and re-export adds the ^XA/^XZ wrapper).
     const jmDensity = page.labelConfig.jmDensity;
+    const storedFormatPath = page.storedFormatPath;
     if (!page.bare || page.objects.length > 0) {
-      pages.push(page.bare ? { objects: page.objects, jmDensity } : { objects: page.objects, overlay: page.overlay, jmDensity });
+      pages.push(page.bare ? { objects: page.objects, jmDensity, storedFormatPath } : { objects: page.objects, overlay: page.overlay, jmDensity, storedFormatPath });
       pageSources.push({ span: page.span, objectSpans: page.objectSpans, objectFrames: page.objectFrames });
     }
     for (const f of page.findings) {

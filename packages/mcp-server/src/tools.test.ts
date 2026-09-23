@@ -1939,6 +1939,37 @@ describe("a design file handed over as a JSON string", () => {
   });
 });
 
+describe("a stored format on the wire", () => {
+  it("rides create_draft into export_zpl as the head's ^DF", () => {
+    const draft = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, storedFormatPath: "E:JOB.ZPL", objects: [{ type: "text", id: "t", x: 1, y: 1, props: { content: "hi" } }] }));
+    expect(draft.designFile.pages[0]?.storedFormatPath).toBe("E:JOB.ZPL");
+    expect(ok(exportZpl(draft.designFile)).zpl.startsWith("^XA\n^DFE:JOB.ZPL\n")).toBe(true);
+    expect(ok(validateDraft(draft.designFile)).ok).toBe(true);
+  });
+
+  it("refuses a path that is not a printer object name, at the input and in an envelope", () => {
+    const shape = z.object(createDraftShape);
+    expect(shape.safeParse({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [], storedFormatPath: "E:X.ZPL\n^FO0,0^GB500,500,20^FS" }).success).toBe(false);
+    expect(shape.safeParse({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [], storedFormatPath: "R:LBL" }).success).toBe(true);
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { pages: Record<string, unknown>[] };
+    file.pages[0]!.storedFormatPath = "E:X.ZPL\n^XZ";
+    const result = validateDraft(file);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors.some((e) => e.startsWith("pages.0.storedFormatPath"))).toBe(true);
+  });
+
+  it("carries a page's own path through export_zpl", () => {
+    const base = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, storedFormatPath: "E:A.ZPL", objects: [{ type: "text", id: "t", x: 1, y: 1, props: { content: "hi" } }] }));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { pages: { objects: { id: string }[] }[] };
+    const first = file.pages[0]!;
+    file.pages.push({ objects: first.objects.map((o) => ({ ...o, id: `${o.id}2` })), storedFormatPath: "R:B.ZPL" } as never);
+    const zpl = ok(exportZpl(file)).zpl;
+    expect(zpl.split("\n").filter((l) => l.startsWith("^DF"))).toEqual(["^DFE:A.ZPL", "^DFR:B.ZPL"]);
+  });
+});
+
 describe("the patch operations array", () => {
   it("is capped by the input schema", () => {
     const schema = z.object(patchDesignShape);

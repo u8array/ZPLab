@@ -13,7 +13,7 @@ const openOutput = async (page: Page) => {
 const importSample = async (page: Page) => {
   await page.getByRole('button', { name: 'File', exact: true }).click();
   await page.getByRole('button', { name: 'Import ZPL' }).click();
-  await page.getByRole('textbox').fill(SAMPLE_ZPL);
+  await page.getByRole('dialog').getByRole('textbox').fill(SAMPLE_ZPL);
   await page.getByRole('button', { name: 'Import', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeHidden();
   return openOutput(page);

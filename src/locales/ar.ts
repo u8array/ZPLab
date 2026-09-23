@@ -397,6 +397,9 @@ const ar = {
     jmPageOverrideHintFmt: 'تحافظ هذه الصفحة على وضع الكثافة المستورد {mode}؛ يغيّر التحديد الوضع على مستوى التصميم بالكامل',
     jmDensityA: 'كثافة كاملة (صريحة)',
     jmDensityB: 'نصف الكثافة (يضاعف مقياس التنسيق)',
+    storedFormat: 'تنسيق مخزَّن',
+    storedFormatName: 'الاسم',
+    storedFormatHint: 'يخزّن الطابعة تنسيق هذه الصفحة تحت هذا المسار بدلاً من طباعته. تُرسل مهام الطباعة والدفعات أمر التخزين هذا. تستمر المعاينات في العرض. تستدعي الدفعة أسماء يصل طولها إلى 8 أحرف فقط.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'تثبيت الباركود من جهة الطابعة',
@@ -1024,6 +1027,8 @@ const ar = {
     editSourceTooManyPagesFmt: 'يتجاوز الرمز {max} تنسيق ملصق.',
     replayRiskSetupFmt: 'إرسال هذا الرمز يغيّر أيضاً إعدادات الطابعة: {commands}',
     replayRiskActionsFmt: 'إرسال هذا الرمز يشغّل أيضاً إجراءات على الطابعة: {commands}',
+    storesFormatFmt: 'إرسال هذا الكود يخزّن التنسيق باسم {path} ولا يطبع شيئاً.',
+    storesSomeFormatFmt: 'إرسال هذا الرمز يخزّن أيضاً التنسيق باسم {path}.',
   },
   contextMenu: {
     copy: 'نسخ',

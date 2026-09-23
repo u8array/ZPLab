@@ -397,6 +397,9 @@ const pl = {
     jmPageOverrideHintFmt: 'Ta strona zachowuje zaimportowany tryb gęstości {mode}; wybór zmienia tryb obowiązujący dla całego projektu',
     jmDensityA: 'Pełna gęstość (jawnie)',
     jmDensityB: 'Połowa gęstości (podwaja skalę formatu)',
+    storedFormat: 'Zapisany format',
+    storedFormatName: 'Nazwa',
+    storedFormatHint: 'Drukarka zapisuje format tej strony pod tą ścieżką zamiast go wydrukować. Zadania drukowania i wsadowe wysyłają to polecenie zapisu. Podglądy nadal są renderowane. Zadanie wsadowe przywołuje tylko nazwy do 8 znaków.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Zakotwiczenie kodu kreskowego po stronie drukarki',
@@ -1024,6 +1027,8 @@ const pl = {
     editSourceTooManyPagesFmt: 'Kod przekracza {max} formatów etykiet.',
     replayRiskSetupFmt: 'Wysłanie tego kodu zmienia także ustawienia drukarki: {commands}',
     replayRiskActionsFmt: 'Wysłanie tego kodu uruchamia także działania drukarki: {commands}',
+    storesFormatFmt: 'Wysłanie tego kodu zapisuje format jako {path} i niczego nie drukuje.',
+    storesSomeFormatFmt: 'Wysłanie tego kodu zapisuje także format jako {path}.',
   },
   contextMenu: {
     copy: 'Kopiuj',

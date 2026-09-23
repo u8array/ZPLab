@@ -111,7 +111,7 @@ Choose **File → Add page** to create another page. Use the page controls at th
 
 ### Batch printing from data
 
-Choose **File → Import CSV data** (web) or **File → Connect data** (desktop) to load a CSV. In the mapping dialog, assign a column to each variable. The design saves these assignments. **Export batch ZPL** or **Send to Zebra Printer** then produces one label per row.
+Choose **File → Import CSV data** (web) or **File → Connect data** (desktop) to load a CSV. In the mapping dialog, assign a column to each variable. The design saves these assignments. **Export batch ZPL** or **Send to Zebra Printer** then produces one label per row. The batch stores the label as a format on the printer and recalls it per row. When the page names a stored format with a name of up to 8 characters, the batch stores it under that name. A longer name cannot be recalled per row, so the batch falls back to `R:LBL.ZPL`.
 
 On desktop, **Connect data** also reads an Excel worksheet. **Settings… → Database connection** loads rows from a read-only SQLite, PostgreSQL or MySQL database, with the password stored in the OS keychain. Assign columns to variables as you would for a CSV. The design saves the database connection so you can reload the data later.
 
@@ -172,12 +172,12 @@ Export a `.zpl` file to print or edit again later. To keep editor settings as we
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-118 of the 225 ZPL II commands are modelled in the browser; desktop covers 2 more with a connected printer. 4 more are planned for both builds. 79 need a connected printer and are planned for desktop. The source editor checks parameters for 1 command. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+119 of the 225 ZPL II commands are modelled in the browser; desktop covers 2 more with a connected printer. 3 more are planned for both builds. 79 need a connected printer and are planned for desktop. The source editor checks parameters for 1 command. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|
 | Layout & flow | 15 / 15 |
-| Templates & variables | 1 / 3 |
+| Templates & variables | 2 / 3 |
 | Barcodes | 29 / 29 |
 | Fields | 16 / 17 |
 | Serialisation | 2 / 2 |
@@ -200,6 +200,7 @@ Export a `.zpl` file to print or edit again later. To keep editor settings as we
 - The default preview renderer is Labelary; the web build calls `api.labelary.com`. Self-hosters can configure a private endpoint or disable online previews at build time (`VITE_THIRD_PARTY_LABELARY=false`). The desktop app can preview on the connected printer instead.
 - The Labelary preview does not render every ZPL feature. It ignores CODABLOCK F's `^BB` command and displays the field content as plain text. MaxiCode renders slightly smaller than on a Zebra ZD230.
 - **Preview** and **Print as Image (browser)** render only the current page. **Export ZPL** and **Send to Zebra Printer** include every page.
+- A page with a stored format (`^DF`) is stored on the printer instead of printed. **Send to Zebra Printer** says so before sending. Previews keep rendering the page.
 
 ---
 

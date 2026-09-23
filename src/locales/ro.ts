@@ -397,6 +397,9 @@ const ro = {
     jmPageOverrideHintFmt: 'Această pagină își păstrează modul de densitate importat {mode}; selecția modifică modul pentru întregul design',
     jmDensityA: 'Densitate completă (explicită)',
     jmDensityB: 'Densitate redusă la jumătate (dublează scara formatului)',
+    storedFormat: 'Format stocat',
+    storedFormatName: 'Nume',
+    storedFormatHint: 'Imprimanta stochează formatul acestei pagini la această cale în loc să îl tipărească. Sarcinile de tipărire și cele în lot trimit această comandă de stocare. Previzualizările continuă să fie randate. Un lot apelează doar nume de până la 8 caractere.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Ancorarea codului de bare pe partea imprimantei',
@@ -1024,6 +1027,8 @@ const ro = {
     editSourceTooManyPagesFmt: 'Codul depășește {max} formate de etichetă.',
     replayRiskSetupFmt: 'Trimiterea acestui cod modifică și setările imprimantei: {commands}',
     replayRiskActionsFmt: 'Trimiterea acestui cod declanșează și acțiuni ale imprimantei: {commands}',
+    storesFormatFmt: 'Trimiterea acestui cod stochează formatul ca {path} și nu tipărește nimic.',
+    storesSomeFormatFmt: 'Trimiterea acestui cod stochează și formatul ca {path}.',
   },
   contextMenu: {
     copy: 'Copiază',

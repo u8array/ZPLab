@@ -397,6 +397,9 @@ const zhHant = {
     jmPageOverrideHintFmt: '此頁面保留其匯入的密度模式 {mode};該選擇會變更整個設計的模式',
     jmDensityA: '全密度（明確指定）',
     jmDensityB: '半密度（格式比例加倍）',
+    storedFormat: '已儲存的格式',
+    storedFormatName: '名稱',
+    storedFormatHint: '印表機會將此頁面的格式儲存在此路徑下，而不是列印它。列印與批次工作會傳送該儲存命令。預覽會持續渲染。批次工作僅能呼叫最多8個字元的名稱。',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: '印表機端條碼錨定',
@@ -1024,6 +1027,8 @@ const zhHant = {
     editSourceTooManyPagesFmt: '程式碼超過 {max} 個標籤格式。',
     replayRiskSetupFmt: '傳送此程式碼也會變更印表機設定：{commands}',
     replayRiskActionsFmt: '傳送此程式碼也會觸發印表機動作：{commands}',
+    storesFormatFmt: '傳送此代碼會將格式儲存為 {path}，且不會列印任何內容。',
+    storesSomeFormatFmt: '傳送此代碼也會將格式儲存為 {path}。',
   },
   contextMenu: {
     copy: '複製',

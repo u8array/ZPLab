@@ -397,6 +397,9 @@ const bg = {
     jmPageOverrideHintFmt: 'Тази страница запазва своя импортиран режим на плътност {mode}; изборът променя режима за целия дизайн',
     jmDensityA: 'Пълна плътност (изрично)',
     jmDensityB: 'Половин плътност (удвоява мащаба на формата)',
+    storedFormat: 'Съхранен формат',
+    storedFormatName: 'Име',
+    storedFormatHint: 'Принтерът съхранява формата на тази страница под този път, вместо да го отпечата. Заданията за печат и партидния износ изпращат тази команда за съхранение. Визуализациите продължават да се показват. Партидата извиква само имена до 8 знака.',
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Закотвяне на баркода от страна на принтера',
@@ -1024,6 +1027,8 @@ const bg = {
     editSourceTooManyPagesFmt: 'Кодът надхвърля {max} етикетни формата.',
     replayRiskSetupFmt: 'Изпращането на този код променя и настройките на принтера: {commands}',
     replayRiskActionsFmt: 'Изпращането на този код задейства и действия на принтера: {commands}',
+    storesFormatFmt: 'Изпращането на този код съхранява формата като {path} и не отпечатва нищо.',
+    storesSomeFormatFmt: 'Изпращането на този код съхранява и формата като {path}.',
   },
   contextMenu: {
     copy: 'Копиране',

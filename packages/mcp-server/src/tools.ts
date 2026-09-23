@@ -50,7 +50,8 @@ export function createDraft(input: CreateDraftInput): CreateDraftResult {
   if ("error" in built) return { ok: false, errors: [built.error] };
   const variables = buildVariables(input.variables ?? []);
   if ("error" in variables) return { ok: false, errors: [variables.error] };
-  const serialized = serializeDesign(label, [{ objects: built.objects }], variables.value);
+  const page = input.storedFormatPath === undefined ? { objects: built.objects } : { objects: built.objects, storedFormatPath: input.storedFormatPath };
+  const serialized = serializeDesign(label, [page], variables.value);
   const designFile = JSON.parse(serialized) as DesignFileJson;
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;

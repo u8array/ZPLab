@@ -513,6 +513,22 @@ describe('parseDesignFile', () => {
     expect(result.value.pages[0]?.overlay?.head).toBeDefined();
   });
 
+  it('loads a v3 file whose head carries ^JM and ^DF only in the overlay bytes', () => {
+    const v3 = importZplText('^XA^JMB^DFE:OLD.ZPL^FS^FO10,10^A0N,30,30^FDa^FS^XZ', 8);
+    const legacyPages = v3.pages.map((p) => {
+      const overlay = p.overlay ? { ...p.overlay } : undefined;
+      if (overlay) delete overlay.head;
+      return { objects: p.objects, overlay };
+    });
+    const json = JSON.stringify({ schemaVersion: 3, label: { widthMm: 100, heightMm: 50, dpmm: 8 }, pages: legacyPages });
+    const result = parseDesignFile(json);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.label.jmDensity).toBe('B');
+    expect(result.value.pages[0]?.storedFormatPath).toBe('E:OLD.ZPL');
+    expect(result.value.pages[0]?.overlay?.head?.dfSpans).toHaveLength(1);
+  });
+
   // A v4 file already carries the density fields; it loads unchanged, the legacy
   // reconstruction sees the label density and skips.
   it('loads a v4 file and leaves its ^JM density untouched', () => {

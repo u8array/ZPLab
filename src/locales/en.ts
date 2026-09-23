@@ -397,6 +397,9 @@ const en = {
     jmPageOverrideHintFmt: 'This page keeps its imported density mode {mode}; the selection changes the design-wide mode',
     jmDensityA: 'Full density (explicit)',
     jmDensityB: 'Half density (doubles the format scale)',
+    storedFormat: 'Stored format',
+    storedFormatName: 'Name',
+    storedFormatHint: "The printer stores this page's format under this path instead of printing it. Print and batch jobs send that store command. Previews keep rendering. A batch recalls names of up to 8 characters only.",
     safeArea: 'Safe area',
     safeAreaHint: 'Uniform margin inset from every edge. Shows a guide and pins "Align to label" to the margin.',
     emitZJustify: 'Printer-side barcode anchoring',
@@ -1054,6 +1057,8 @@ const en = {
     editSourceTooManyPagesFmt: 'The code exceeds {max} label formats.',
     replayRiskSetupFmt: 'Sending this code also changes printer settings: {commands}',
     replayRiskActionsFmt: 'Sending this code also triggers printer actions: {commands}',
+    storesFormatFmt: 'Sending this code stores the format as {path} and prints nothing.',
+    storesSomeFormatFmt: 'Sending this code also stores the format as {path}.',
   },
   contextMenu: {
     copy: 'Copy',
