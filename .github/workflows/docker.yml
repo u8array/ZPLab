@@ -41,7 +41,7 @@ jobs:
 
       - uses: docker/setup-qemu-action@v3
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       # GitHub's pre-release flag only guards the desktop updater, so a plain semver tag still gets latest.
       - uses: docker/metadata-action@v5
