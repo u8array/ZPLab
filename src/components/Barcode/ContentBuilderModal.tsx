@@ -18,9 +18,19 @@ interface FieldDef {
   key: string;
   labelKey: string;
   kind: FieldKind;
+  autoComplete?: string;
 }
 
+type ContactKey = (typeof VCARD_FIELDS)[number] | (typeof MECARD_FIELDS)[number];
+const CONTACT_AUTOCOMPLETE: Partial<Record<ContactKey, string>> = {
+  firstName: "given-name", lastName: "family-name", org: "organization", title: "organization-title",
+  tel: "tel", mobile: "mobile tel", email: "email", url: "url", street: "address-line1", address: "street-address",
+  city: "address-level2", region: "address-level1", postalCode: "postal-code", country: "country-name", birthday: "bday",
+};
+
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const contactRows = (keys: readonly ContactKey[]): FieldDef[] =>
+  keys.map((key) => ({ key, labelKey: `f${cap(key)}`, kind: key === "note" ? "textarea" : "text", autoComplete: CONTACT_AUTOCOMPLETE[key] }));
 
 // Per-type form fields; `key` matches typedContent field keys, `labelKey` a
 // t.contentBuilder.* string. Order = display order. Every value field accepts
@@ -36,8 +46,8 @@ const FORM_FIELDS: Record<ContentType, FieldDef[]> = {
     { key: "hidden", labelKey: "fHidden", kind: "checkbox" },
   ],
   // Derived from the encoder's lists, as the escaper table is, so a field cannot lack a rule.
-  vcard: VCARD_FIELDS.map((key) => ({ key, labelKey: `f${cap(key)}`, kind: key === "note" ? "textarea" : "text" })),
-  mecard: MECARD_FIELDS.map((key) => ({ key, labelKey: `f${cap(key)}`, kind: key === "note" ? "textarea" : "text" })),
+  vcard: contactRows(VCARD_FIELDS),
+  mecard: contactRows(MECARD_FIELDS),
   email: [
     { key: "to", labelKey: "fTo", kind: "text" },
     { key: "subject", labelKey: "fSubject", kind: "text" },
@@ -145,7 +155,8 @@ function ContentBuilder({ objectId }: { objectId: string }) {
 
       <section className="flex flex-col gap-2">
         {FORM_FIELDS[type].map((f) => (
-          <div key={f.key} className="flex flex-col gap-1">
+          // Type in the key: the field seeds its native-or-chips mode on mount.
+          <div key={`${type}:${f.key}`} className="flex flex-col gap-1">
             {f.kind === "checkbox" ? (
               <label className="flex items-center gap-2 cursor-pointer text-xs text-text">
                 <input
@@ -158,9 +169,7 @@ function ContentBuilder({ objectId }: { objectId: string }) {
               </label>
             ) : (
               <>
-                {/* The chip editor is a contenteditable div (not labelable), so
-                    it gets an aria-label; htmlFor only works for the real
-                    control, the auth select. */}
+                {/* Only the auth select is labelable, so the other kinds take an aria-label. */}
                 {f.kind === "auth" ? (
                   <label className="text-[10px] text-muted" htmlFor={`content-${f.key}`}>{L(f.labelKey)}</label>
                 ) : (
@@ -186,6 +195,7 @@ function ContentBuilder({ objectId }: { objectId: string }) {
                     value={fields[f.key] ?? ""}
                     onChange={(next) => setField(f.key, next)}
                     multiline={f.kind === "textarea"}
+                    autoComplete={f.autoComplete}
                     ariaLabel={L(f.labelKey)}
                     hasError={markerErrors[f.key] !== undefined || (f.key === "birthday" && badDate)}
                   />
