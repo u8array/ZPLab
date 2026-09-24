@@ -35,11 +35,10 @@ export interface SelectedMarker {
   index: number;
 }
 
-/** Imperative surface so an external palette can insert a token at the
- *  editor's last caret position. */
+/** Imperative surface so code outside the editor can insert a token or place the caret. */
 export interface TemplateEditorHandle {
   insertMarker: (markerBody: string) => void;
-  focus: () => void;
+  focus: (at?: number) => void;
 }
 
 /** Caret offset within `editor`, or null when selection isn't inside it. */
@@ -236,7 +235,14 @@ export const TemplateContentInput = forwardRef<TemplateEditorHandle, Props>(
 
     useImperativeHandle(ref, () => ({
       insertMarker,
-      focus: () => editorRef.current?.focus(),
+      focus: (at?: number) => {
+        if (at === undefined) {
+          editorRef.current?.focus();
+          return;
+        }
+        lastCaretRef.current = at;
+        restoreCaret(at);
+      },
     }));
 
     // Skip rebuild when DOM plain text already matches; avoids clobbering caret.
