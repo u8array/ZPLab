@@ -36,13 +36,26 @@ function segmentBadge(spec: Gs1AiSpec | undefined, resolved: string, err: string
   return { label: `✓ ${formatHint(spec)}`, tone: "text-muted" };
 }
 
-export function Gs1SegmentList({ draft, variables }: { draft: Gs1SegmentDraft; variables: Variables }) {
+/** A row hint of the carrier's own, undefined to keep the element string's. */
+export type RowHint = (seg: Gs1Segment, resolved: string, err: string | null) => string | undefined;
+
+export function Gs1SegmentList({
+  draft,
+  variables,
+  showFnc1 = true,
+  rowHint,
+}: {
+  draft: Gs1SegmentDraft;
+  variables: Variables;
+  showFnc1?: boolean;
+  rowHint?: RowHint;
+}) {
   const tg = useT().gs1builder;
   // FNC1 follows a variable AI that is not the last segment.
   const fnc1After = (i: number): boolean => {
     const seg = draft.segments[i];
     const spec = seg ? aiSpec(seg.ai) : undefined;
-    return !!spec && isVariableKind(spec.kind) && i < draft.segments.length - 1;
+    return showFnc1 && !!spec && isVariableKind(spec.kind) && i < draft.segments.length - 1;
   };
   return (
     <ul className="flex flex-col gap-2">
@@ -55,6 +68,7 @@ export function Gs1SegmentList({ draft, variables }: { draft: Gs1SegmentDraft; v
           resolved={draft.resolvedValues[i] ?? ""}
           variables={variables}
           fnc1After={fnc1After(i)}
+          rowHint={rowHint}
           autoFocusValue={seg.key === draft.focusKey}
           onChange={(v) => draft.setValue(i, v)}
           onRemove={() => draft.removeAt(i)}
@@ -71,6 +85,7 @@ function SegmentRow({
   resolved,
   variables,
   fnc1After,
+  rowHint,
   autoFocusValue,
   onChange,
   onRemove,
@@ -81,6 +96,7 @@ function SegmentRow({
   resolved: string;
   variables: Variables;
   fnc1After: boolean;
+  rowHint?: RowHint;
   autoFocusValue: boolean;
   onChange: (value: string) => void;
   onRemove: () => void;
@@ -92,7 +108,9 @@ function SegmentRow({
   // A marker width mismatch names the variable's default as the fix. A clock token's width cannot change, so it keeps the generic message.
   const actionable =
     err === "exactLength" && isMarker && spec && extractTemplateRefs(seg.value).some((n) => variables.some((v) => v.name === n));
-  const hint = err
+  const own = rowHint?.(seg, resolved, err);
+  const hint = own !== undefined ? own
+    : err
     ? actionable && spec
       ? tg.errMarkerLengthFmt.replace("{have}", String(resolved.length)).replace("{need}", String(spec.len))
       : fieldErrMsg(tg, err)

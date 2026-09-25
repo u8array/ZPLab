@@ -54,6 +54,8 @@ export interface Gs1AiSpec {
   req?: readonly (readonly string[])[];
   /** AIs / 'n'-wildcard patterns invalid alongside this AI in one symbol. */
   ex?: readonly string[];
+  /** Digital Link primary key with its ordered qualifier alternatives. */
+  dlKey?: readonly (readonly string[])[];
 }
 
 /** A built GS1 element: an AI plus its (unwrapped) data value. */
@@ -80,6 +82,7 @@ const AI_BY_CODE: ReadonlyMap<string, Gs1AiSpec> = (() => {
       ...(e.day00 ? { day00: true } : {}),
       ...(e.req ? { req: e.req } : {}),
       ...(e.ex ? { ex: e.ex } : {}),
+      ...(e.dlKey ? { dlKey: e.dlKey } : {}),
       ...(decimalPlaces !== undefined ? { decimalPlaces } : {}),
     });
   };

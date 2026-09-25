@@ -29,14 +29,19 @@ export interface Gs1SegmentDraft {
 }
 
 /** Reads `seed` once on mount. */
-export function useGs1SegmentDraft(seed: readonly Gs1Segment[], enforceReq: boolean, resolveDefaults: ResolveDefaults): Gs1SegmentDraft {
+export function useGs1SegmentDraft(
+  seed: readonly Gs1Segment[],
+  enforceReq: boolean,
+  resolveDefaults: ResolveDefaults,
+  validateSegment: (ai: string, raw: string, resolved: string) => string | null = validateGs1SegmentResolved,
+): Gs1SegmentDraft {
   const [segments, setSegments] = useState(() => seed.map(draftSegment));
   // Stored instead of focused directly: the control that triggered the add may already be unmounted, which would drop focus to body and mute the dialog's key trap.
   const [focusKey, setFocusKey] = useState<string | null>(null);
 
   // resolveCtrl: false for emitter parity, GS1 keeps a stray chip literal.
   const resolvedValues = segments.map((s) => resolveDefaults(s.value, { resolveCtrl: false }));
-  const errors = segments.map((s, i) => validateGs1SegmentResolved(s.ai, s.value, resolvedValues[i] ?? ""));
+  const errors = segments.map((s, i) => validateSegment(s.ai, s.value, resolvedValues[i] ?? ""));
 
   return {
     segments,

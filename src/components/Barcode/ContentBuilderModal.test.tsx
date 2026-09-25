@@ -30,6 +30,7 @@ const seedContent = (content: string) =>
   useLabelStore.setState({
     pages: [{ objects: [{ ...(qr as { props: object }), props: { ...(qr as { props: object }).props, content } }] }],
   } as never);
+const objectContent = () => (useLabelStore.getState().pages[0]?.objects[0] as { props: { content: string } }).props.content;
 const fieldLabel = (key: string) => (en.contentBuilder as Record<string, string>)[`f${key.charAt(0).toUpperCase()}${key.slice(1)}`];
 
 describe("ContentBuilderModal contact fields", () => {
@@ -81,6 +82,100 @@ describe("ContentBuilderModal contact fields", () => {
     expect(screen.getByRole("textbox", { name: "Last name" }).tagName).toBe("INPUT");
     fireEvent.click(screen.getByRole("button", { name: "URL" }));
     expect(screen.getByRole("textbox", { name: "URL" }).getAttribute("contenteditable")).toBe("true");
+  });
+
+  it("seeds the GS1 Digital Link editor from a link and writes the link back", () => {
+    seedContent("https://id.gs1.org/01/09506000134352/10/ABC?17=250101");
+    render(<ContentBuilderModal />);
+    expect(screen.getByRole("button", { name: en.contentBuilder.typeGs1link, pressed: true })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: fieldLabel("domain") })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "Batch / lot" }).textContent).toBe("ABC");
+    expect(screen.getByRole("textbox", { name: "Expiry date" }).textContent).toBe("250101");
+    expect(screen.queryByText("FNC1")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "(21)Serial number" }));
+    const serial = screen.getByRole("textbox", { name: "Serial number" });
+    serial.textContent = "S1";
+    fireEvent.input(serial);
+    fireEvent.click(screen.getByRole("button", { name: "Apply" }));
+    expect(objectContent()).toBe("https://id.gs1.org/01/09506000134352/10/ABC/21/S1?17=250101");
+  });
+
+  it("names the AI rule a link row breaks and refuses a second key in the palette", () => {
+    seedContent("https://id.gs1.org/01/09506000134352?3103=12");
+    render(<ContentBuilderModal />);
+    expect(screen.getByRole("textbox", { name: "Net weight (kg)" }).textContent).toBe("12");
+    expect(screen.getAllByText(new RegExp(en.gs1builder.errExactLength)).length).toBeGreaterThan(0);
+    expect((screen.getByRole("button", { name: "Apply" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "(00)SSCC" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "(10)Batch / lot" }) as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it("keeps an invalid row across a type switch and names the missing key", () => {
+    seedContent("https://id.gs1.org/01/09506000134352/10/ABC");
+    render(<ContentBuilderModal />);
+    const lot = screen.getByRole("textbox", { name: "Batch / lot" });
+    lot.textContent = "A(B";
+    fireEvent.input(lot);
+    fireEvent.click(screen.getByRole("button", { name: "URL" }));
+    fireEvent.click(screen.getByRole("button", { name: en.contentBuilder.typeGs1link }));
+    expect(screen.getByRole("textbox", { name: "GTIN" }).textContent).toBe("09506000134352");
+    expect(screen.getByRole("textbox", { name: "Batch / lot" }).textContent).toBe("A(B");
+    expect((screen.getByRole("button", { name: "Apply" }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getAllByRole("button", { name: "Remove" })[0]!);
+    const kept = screen.getByRole("textbox", { name: "Batch / lot" });
+    kept.textContent = "ABC";
+    fireEvent.input(kept);
+    expect(screen.getByText(en.contentBuilder.errGs1NoKey)).toBeTruthy();
+    expect((screen.getByRole("button", { name: "Apply" }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("keeps a marker in the domain through Apply and reopen", () => {
+    seedContent("https://«pw»/01/09506000134352");
+    for (let i = 0; i < 2; i++) {
+      useLabelStore.setState({ contentBuilderObjectId: "q" } as never);
+      render(<ContentBuilderModal />);
+      expect(screen.getByRole("textbox", { name: fieldLabel("domain") }).querySelector('[data-m="«pw»"]')).not.toBeNull();
+      fireEvent.click(screen.getByRole("button", { name: "Apply" }));
+      expect(objectContent()).toBe("https://«pw»/01/09506000134352");
+      cleanup();
+    }
+  });
+
+  it("keeps a link's text one tab away on the URL type", () => {
+    seedContent("https://id.gs1.org/01/09506000134352");
+    render(<ContentBuilderModal />);
+    fireEvent.click(screen.getByRole("button", { name: "URL" }));
+    expect(screen.getByRole("textbox", { name: "URL" }).textContent).toBe("https://id.gs1.org/01/09506000134352");
+  });
+
+  it("shows the default resolver as the domain's placeholder", () => {
+    seedContent("https://id.gs1.org/01/09506000134352");
+    render(<ContentBuilderModal />);
+    expect(screen.getByRole("textbox", { name: fieldLabel("domain") }).getAttribute("data-placeholder")).toBe("https://id.gs1.org");
+  });
+
+  it("keeps a complete link GTIN at its own length and shows its printed form", () => {
+    seedContent("https://id.gs1.org/01/9506000134352");
+    render(<ContentBuilderModal />);
+    expect(screen.getByRole("textbox", { name: "GTIN" }).textContent).toBe("9506000134352");
+    expect(screen.queryByText(en.gs1builder.gtinAutocomplete)).toBeNull();
+    expect(screen.getByText("= 09506000134352")).toBeTruthy();
+    expect((screen.getByRole("button", { name: "Apply" }) as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it("holds Apply on a value that looks like a tag and names a pasted second key", () => {
+    seedContent("https://id.gs1.org/01/09506000134352/10/ABC");
+    render(<ContentBuilderModal />);
+    const lot = screen.getByRole("textbox", { name: "Batch / lot" });
+    lot.textContent = "A(11)250101";
+    fireEvent.input(lot);
+    expect(screen.getAllByText(new RegExp(en.gs1builder.errCharset)).length).toBeGreaterThan(0);
+    expect((screen.getByRole("button", { name: "Apply" }) as HTMLButtonElement).disabled).toBe(true);
+    cleanup();
+    seedContent("https://id.gs1.org/01/09506000134352?00=123456789012345675");
+    render(<ContentBuilderModal />);
+    expect(screen.getByText(en.contentBuilder.errGs1TwoKeys)).toBeTruthy();
+    expect((screen.getByRole("button", { name: "Apply" }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("seeds the MECARD form from parsed content", () => {

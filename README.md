@@ -30,7 +30,7 @@ Drag objects onto the canvas, edit their properties, then copy or export the ZPL
 - Editable ZPL source and a reference for every ZPL II command
 - Variables, CSV, Excel and database batches
 - GS1 and EAN/UPC content builders with validation
-- Content builder for QR, Data Matrix and Aztec: URLs, Wi-Fi, contacts, email, phone, SMS and coordinates
+- Content builder for QR, Data Matrix and Aztec: URLs, Wi-Fi, contacts, GS1 Digital Links, email, phone, SMS and coordinates
 - 32 interface languages, light and dark theme
 - MCP server on desktop for a local AI assistant
 
@@ -211,6 +211,7 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 - Labelary ignores CODABLOCK's `^BB` and shows the field content as plain text. It renders Maxicode slightly smaller than a Zebra ZD230.
 - **Preview** and **Print as Image (browser)** render only the current page. **Export ZPL** and **Send to Zebra Printer** include every page.
 - A page with a stored format (`^DF`) is stored on the printer instead of printed. **Send to Zebra Printer** says so before sending.
+- The GS1 builders skip the multi-part identifiers GDTI (253), GCN (255), GRAI (8003) and ITIP (8006), as barcode data and as Digital Link keys.
 
 ## Self-hosting
 

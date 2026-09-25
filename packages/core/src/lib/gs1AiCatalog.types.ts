@@ -31,6 +31,9 @@ export interface Gs1AiCatalogEntry {
   req?: readonly (readonly string[])[];
   /** AIs (or 'n'-wildcard patterns) invalid alongside this one in a symbol. */
   ex?: readonly string[];
+  /** Digital Link primary key: the ordered qualifier sequences it accepts, one
+   *  alternative per inner array, an empty one for a key without qualifiers. */
+  dlKey?: readonly (readonly string[])[];
   /** AI carries more than one data field; only the primary component is modeled. */
   multiComponent?: boolean;
   group: Gs1AiGroup;
