@@ -76,12 +76,18 @@ for (const raw of src.split('\n')) {
   else kind = c.type === 'N' ? 'fixedNum' : 'fixedAlnum';
   const reqTok = tokens.find((t) => t.startsWith('req='));
   const exTok = tokens.find((t) => t.startsWith('ex='));
+  // A bare 'dlpkey' has no qualifiers, while 'dlpkey=22,10,21|235' lists ordered alternatives.
+  const dlTok = tokens.find((t) => t === 'dlpkey' || t.startsWith('dlpkey='));
+  const dlKey = dlTok === undefined ? undefined
+    : dlTok === 'dlpkey' ? [[]]
+    : dlTok.slice(7).split('|').map((alt) => alt.split(','));
   out.push({ ai, kind, len: c.len,
     ...(c.csum ? { checkDigit: true } : {}),
     ...(c.linters.length ? { linters: c.linters } : {}),
     ...(c.day00 ? { day00: true } : {}),
     ...(reqTok ? { req: parseReq(reqTok) } : {}),
     ...(exTok ? { ex: parseEx(exTok) } : {}),
+    ...(dlKey ? { dlKey } : {}),
     ...(c.multi ? { multiComponent: true } : {}),
     group: groupFor(isRange ? ai.split('-')[0] : ai), title });
 }
@@ -97,6 +103,7 @@ const toLine = (e) => {
   if (e.day00) p.push('day00: true');
   if (e.req) p.push(`req: [${e.req.map((alt) => `[${alt.map((m) => `'${m}'`).join(', ')}]`).join(', ')}]`);
   if (e.ex) p.push(`ex: [${e.ex.map((m) => `'${m}'`).join(', ')}]`);
+  if (e.dlKey) p.push(`dlKey: [${e.dlKey.map((alt) => `[${alt.map((m) => `'${m}'`).join(', ')}]`).join(', ')}]`);
   if (e.multiComponent) p.push('multiComponent: true');
   // Title is free text from the dictionary; JSON.stringify escapes quotes so a
   // future title containing ' cannot break the generated module.

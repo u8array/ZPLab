@@ -10,6 +10,8 @@
  */
 
 import { extractTemplateRefs, hasTemplateMarkers, mapLiteralSpans } from "./fnTemplate";
+import { validateGs1Segments, type Gs1SetError } from "./gs1";
+import { DL_DEFAULT_DOMAIN, DL_DOMAIN_UNSAFE, DL_UNSAFE, digitalLinkIssue, digitalLinkUri, isLinkDomain, linkAis, linkAisSegments, linkSegmentIssue, normalizeDomain, parseDigitalLink, type DigitalLinkIssue } from "./gs1DigitalLink";
 import { resolveForRow, variableSubstitutions } from "./variableBinding";
 import type { ColumnMapping, Variable } from "../types/Variable";
 
@@ -17,7 +19,7 @@ import type { ColumnMapping, Variable } from "../types/Variable";
 // drift (the encode/complete switches and the modal's field Record stay
 // compiler-exhaustive against it).
 export const CONTENT_TYPES = [
-  "url", "text", "wifi", "vcard", "mecard", "email", "tel", "sms", "geo",
+  "url", "text", "wifi", "vcard", "mecard", "gs1link", "email", "tel", "sms", "geo",
 ] as const;
 
 export type ContentType = (typeof CONTENT_TYPES)[number];
@@ -32,7 +34,7 @@ export const VCARD_FIELDS = [
 ] as const;
 
 /** A date a scanner keeps: the dashes vCard allows and the MECARD encoder strips are optional. */
-export const isContactDate = (s: string): boolean => s === "" || /^\d{4}-?\d{2}-?\d{2}$/.test(s);
+const isContactDate = (s: string): boolean => s === "" || /^\d{4}-?\d{2}-?\d{2}$/.test(s);
 
 /** The MECARD contact fields in encode order. One address value, not the vCard's five components. */
 export const MECARD_FIELDS = ["firstName", "lastName", "org", "tel", "email", "url", "address", "note", "birthday"] as const;
@@ -42,6 +44,48 @@ const MECARD_PROPERTIES = [["ORG", "org"], ["TEL", "tel"], ["EMAIL", "email"], [
 /** What the builder checks a marker as while its value is unknown: something every rule of the field accepts. */
 export function markerStandIn(key: string): string {
   return key === "birthday" ? "0000-00-00" : "0";
+}
+
+/** The form fields of a link whose query holds only AIs, else null. */
+function parseGs1Link(content: string): ContentFields | null {
+  const link = parseDigitalLink(content);
+  if (!link || link.foreignQuery.length > 0) return null;
+  // The builder's GS1 charset excludes parens, so a value with one is not GS1 data.
+  if (link.segments.some((s) => /[()]/.test(s.value))) return null;
+  return { domain: link.domain === DL_DEFAULT_DOMAIN ? "" : link.domain, ais: linkAis(link.segments) };
+}
+
+export type ContentFieldIssue =
+  | { kind: "date" }
+  | { kind: "domain" }
+  | { kind: "gs1"; ai: string; reason: string }
+  | { kind: "gs1Link"; issue: DigitalLinkIssue }
+  | { kind: "gs1Set"; error: Gs1SetError };
+
+/** Per-field rule violations on the values as they print, so the form can say why Apply holds.
+ *  `raw` is the same form before substitution, which decides how a marker's value is judged. */
+export function typedContentFieldIssues(type: ContentType, f: ContentFields, raw: ContentFields = f, emptyIsRuntimeValued = true): Record<string, ContentFieldIssue> {
+  const out: Record<string, ContentFieldIssue> = {};
+  if ((type === "vcard" || type === "mecard") && !isContactDate((f.birthday ?? "").trim())) out.birthday = { kind: "date" };
+  if (type !== "gs1link") return out;
+  const domain = (f.domain ?? "").trim();
+  // Empty means the default resolver, unless a marker printed empty on this row.
+  const domainBlank = domain === "" && !emptyIsRuntimeValued && hasTemplateMarkers(raw.domain ?? "");
+  if ((domain !== "" && !isLinkDomain(domain)) || domainBlank) out.domain = { kind: "domain" };
+  const segments = linkAisSegments(f.ais ?? "");
+  const rawSegments = linkAisSegments(raw.ais ?? "");
+  // A substituted paren or backslash shifts the split, which the marker findings already refuse.
+  if (segments.length !== rawSegments.length) return out;
+  const row = segments
+    .map((s, i) => ({ ai: s.ai, reason: linkSegmentIssue(s.ai, rawSegments[i]?.value ?? s.value, s.value, emptyIsRuntimeValued) }))
+    .find((r) => r.reason !== null);
+  const linkIssue = digitalLinkIssue(segments);
+  // Required associations stay off: a link has no encoder that enforces them, and many name a second key.
+  const setError = segments.length === 0 ? null : validateGs1Segments(segments, false);
+  if (row?.reason) out.ais = { kind: "gs1", ai: row.ai, reason: row.reason };
+  else if (linkIssue) out.ais = { kind: "gs1Link", issue: linkIssue };
+  else if (setError && setError.key !== "empty") out.ais = { kind: "gs1Set", error: setError };
+  return out;
 }
 
 // One structural-char class per format, shared by the literal ESCAPER and the
@@ -97,6 +141,7 @@ const MARKER_UNSAFE: Partial<Record<ContentType, Record<string, RegExp>>> = {
     ...Object.fromEntries(MECARD_FIELDS.map((key) => [key, MECARD_STRUCTURAL])),
     birthday: MECARD_DATE_UNSAFE,
   },
+  gs1link: { domain: DL_DOMAIN_UNSAFE, ais: DL_UNSAFE },
   email: { subject: MAILTO_UNSAFE, body: MAILTO_UNSAFE },
 };
 
@@ -167,24 +212,26 @@ export function typedContentIncompleteRows(
         hasTemplateMarkers(v) ? resolveForRow(v, rowIdx, variables, dataset, columnMapping) : v,
       ]),
     );
-    if (!isContentComplete(type, resolved)) bad.push(rowIdx + 1);
+    if (!isContentComplete(type, resolved, fields, false)) bad.push(rowIdx + 1);
   }
   return bad;
 }
 
 /** Whether `f` has enough valid input for `type` to produce a sound payload.
  *  Gates the modal's Apply: tel/sms need a digit, geo needs in-range numbers. */
-export function isContentComplete(type: ContentType, f: ContentFields): boolean {
+export function isContentComplete(type: ContentType, f: ContentFields, raw: ContentFields = f, emptyIsRuntimeValued = true): boolean {
+  if (Object.keys(typedContentFieldIssues(type, f, raw, emptyIsRuntimeValued)).length > 0) return false;
   switch (type) {
     case "url": return !!f.url?.trim();
     case "text": return !!f.text;
     case "wifi": return !!f.ssid?.trim();
     case "vcard":
-    case "mecard": return !!(f.firstName?.trim() || f.lastName?.trim()) && isContactDate((f.birthday ?? "").trim());
+    case "mecard": return !!(f.firstName?.trim() || f.lastName?.trim());
     case "email": return !!f.to?.trim();
     case "tel":
     case "sms": return /\d/.test(f.number ?? "");
     case "geo": return inRange(f.lat, -90, 90) && inRange(f.lng, -180, 180);
+    case "gs1link": return true;
   }
 }
 
@@ -248,6 +295,8 @@ export function encodeContent(type: ContentType, f: ContentFields): string {
       if (birthday) parts.push(`BDAY:${birthday}`);
       return `MECARD:${parts.join(";")};;`;
     }
+    case "gs1link":
+      return digitalLinkUri(f.domain ?? "", linkAisSegments(f.ais ?? "")) ?? normalizeDomain(f.domain ?? "");
     case "email": {
       const to = (f.to ?? "").trim();
       const params: string[] = [];
@@ -420,6 +469,8 @@ export function parseContent(content: string): { type: ContentType; fields: Cont
     const [lat = "", lng = ""] = t.slice(4).split(",");
     return { type: "geo", fields: { lat, lng } };
   }
+  const link = parseGs1Link(t);
+  if (link) return { type: "gs1link", fields: link };
   if (/^https?:\/\//i.test(t)) return { type: "url", fields: { url: content } };
   return { type: "text", fields: { text: content } };
 }

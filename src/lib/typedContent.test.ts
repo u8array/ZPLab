@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { encodeContent, markerUnsafeChars, markerStandIn, parseContent, recommendedEc, isContentComplete, typedContentIncompleteRows, typedContentMarkerFindings, type ContentType, type ContentFields, MECARD_FIELDS, VCARD_FIELDS } from "@zplab/core/lib/typedContent";
+import { encodeContent, markerUnsafeChars, markerStandIn, parseContent, recommendedEc, isContentComplete, typedContentFieldIssues, typedContentIncompleteRows, typedContentMarkerFindings, type ContentType, type ContentFields, CONTENT_TYPES, MECARD_FIELDS, VCARD_FIELDS } from "@zplab/core/lib/typedContent";
 
 function roundtrip(type: ContentType, fields: ContentFields) {
   const parsed = parseContent(encodeContent(type, fields));
@@ -81,6 +81,64 @@ describe("encodeContent", () => {
     expect(markerUnsafeChars("wifi", "ssid", 'a"b')).toBe('"');
     expect(markerUnsafeChars("vcard", "birthday", "1990-05-04")).toBeNull();
     expect(isContentComplete("mecard", { firstName: "A", birthday: "4.5.1990" })).toBe(false);
+  });
+
+  it("gs1link: the AIs encode to a Digital Link, both fields have a marker rule, and Apply needs a key", () => {
+    const f = { ais: "(01)09506000134352(10)ABC(17)250101(3103)000123" };
+    expect(encodeContent("gs1link", f)).toBe("https://id.gs1.org/01/09506000134352/10/ABC?17=250101&3103=000123");
+    expect(encodeContent("gs1link", { domain: "brand.example.com", ais: "(01)«g»(21)S/1" })).toBe("https://brand.example.com/01/«g»/21/S%2F1");
+    expect(markerUnsafeChars("gs1link", "ais", "a/b(")).toBe("/ (");
+    expect(markerUnsafeChars("gs1link", "domain", "a b?")).toBe("␣ ?");
+    expect(markerUnsafeChars("gs1link", "domain", "https://brand.example.com/p")).toBe("://");
+    expect(markerUnsafeChars("gs1link", "domain", "brand.example.com:8080/p")).toBeNull();
+    expect(encodeContent("gs1link", { domain: "«host»", ais: "(01)09506000134352" })).toBe("https://«host»/01/09506000134352");
+    expect(isContentComplete("gs1link", f)).toBe(true);
+    expect(isContentComplete("gs1link", { ais: "(10)ABC" })).toBe(false);
+    expect(isContentComplete("gs1link", { ais: "(01)09506000134353" })).toBe(false);
+    expect(isContentComplete("gs1link", { ais: "(00)123456789012345675" })).toBe(true);
+    expect(isContentComplete("gs1link", { ais: "garbage" })).toBe(false);
+    expect(isContentComplete("gs1link", { ais: "(01)09506000134352(10)A(B" })).toBe(false);
+    expect(encodeContent("gs1link", { ais: "(01)9506000134352" })).toBe("https://id.gs1.org/01/09506000134352");
+    expect(isContentComplete("gs1link", { ais: "(01)9506000134352" }, { ais: "(01)«g»" })).toBe(false);
+    expect(isContentComplete("gs1link", { ais: "(01)09506000134352" }, { ais: "(01)«g»" })).toBe(true);
+    expect(isContentComplete("gs1link", { ais: "(01)09506000134352(10)" }, { ais: "(01)09506000134352(10)«lot»" })).toBe(true);
+    expect(isContentComplete("gs1link", { ais: "(01)09506000134352(10)" }, { ais: "(01)09506000134352(10)«lot»" }, false)).toBe(false);
+    expect(isContentComplete("gs1link", { ais: "(01)(10)L" }, { ais: "(01)«g»(10)L" })).toBe(false);
+    expect(parseContent("https://«host»/01/09506000134352").fields).toEqual({ domain: "https://«host»", ais: "(01)09506000134352" });
+    expect(isContentComplete("gs1link", { domain: "", ais: "(01)09506000134352" }, { domain: "«host»", ais: "(01)09506000134352" })).toBe(true);
+    expect(isContentComplete("gs1link", { domain: "", ais: "(01)09506000134352" }, { domain: "«host»", ais: "(01)09506000134352" }, false)).toBe(false);
+    // A tag inside a value stays in that value, so the row's own rule refuses it.
+    expect(isContentComplete("gs1link", { ais: "(01)09506000134352(10)A\\(11\\)250101" })).toBe(false);
+    expect(encodeContent("gs1link", { ais: "(01)09506000134352(10)«a(11)b»" })).toBe("https://id.gs1.org/01/09506000134352/10/«a(11)b»");
+  });
+
+  it("gs1link: field issues name the AI rule, the link's shape and the set", () => {
+    const gtin = "(01)09506000134352";
+    expect(typedContentFieldIssues("gs1link", { ais: "(01)123A(17)251345" })).toEqual({ ais: { kind: "gs1", ai: "01", reason: "digitsOnly" } });
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(17)251345` })).toEqual({ ais: { kind: "gs1", ai: "17", reason: "dateMonth" } });
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(00)123456789012345675` })).toEqual({ ais: { kind: "gs1Link", issue: { kind: "twoPrimaryKeys" } } });
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(10)L1(10)L2` })).toEqual({ ais: { kind: "gs1Link", issue: { kind: "duplicateAi", ai: "10" } } });
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(10)L1(235)X` })).toEqual({ ais: { kind: "gs1Link", issue: { kind: "mixedQualifiers", ai: "235" } } });
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(37)10` })).toMatchObject({ ais: { kind: "gs1Set", error: { key: "exclusiveAis" } } });
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(4300)Acme` })).toEqual({});
+    expect(typedContentFieldIssues("gs1link", { ais: gtin, domain: "https://x.com/?a=b" })).toEqual({ domain: { kind: "domain" } });
+    expect(typedContentFieldIssues("gs1link", { ais: "(01)9506000134353" })).toEqual({ ais: { kind: "gs1", ai: "01", reason: "checkDigit" } });
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(3103)12` })).toMatchObject({ ais: { kind: "gs1", ai: "3103" } });
+    expect(typedContentFieldIssues("gs1link", { ais: "(10)ABC" })).toEqual({ ais: { kind: "gs1Link", issue: { kind: "noPrimaryKey" } } });
+    expect(typedContentFieldIssues("gs1link", { ais: "" })).toEqual({ ais: { kind: "gs1Link", issue: { kind: "noPrimaryKey" } } });
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(10)A(B` })).toEqual({ ais: { kind: "gs1", ai: "10", reason: "charset" } });
+    // A pasted link can carry what the palette refuses.
+    expect(parseContent("https://id.gs1.org/01/09506000134352?00=123456789012345675").fields.ais).toBe(`${gtin}(00)123456789012345675`);
+    expect(parseContent("https://id.gs1.org/01/09506000134352?235=X&10=L").fields.ais).toBe(`${gtin}(235)X(10)L`);
+    expect(typedContentFieldIssues("gs1link", { ais: `${gtin}(235)X(10)L` })).toEqual({ ais: { kind: "gs1Link", issue: { kind: "mixedQualifiers", ai: "235" } } });
+  });
+
+  it("field issues reach the other types only through the birthday", () => {
+    expect(typedContentFieldIssues("vcard", { birthday: "4.5.1990" })).toEqual({ birthday: { kind: "date" } });
+    for (const type of CONTENT_TYPES) {
+      if (type === "vcard" || type === "mecard" || type === "gs1link") continue;
+      expect(typedContentFieldIssues(type, { url: "x", birthday: "4.5.1990", ais: "x" }), type).toEqual({});
+    }
   });
 
   it("vcard: the birthday must be a date a scanner keeps", () => {
@@ -273,6 +331,23 @@ describe("parseContent classification", () => {
     expect(parseContent("Wifi:T:WPA;S:x;;").type).toBe("wifi");
     expect(parseContent("just some text").type).toBe("text");
     expect(parseContent("MECARD:N:Doe,John;;").type).toBe("mecard");
+    expect(parseContent("https://id.gs1.org/01/09506000134352/10/ABC?17=250101")).toEqual({
+      type: "gs1link",
+      fields: { domain: "", ais: "(01)09506000134352(10)ABC(17)250101" },
+    });
+    expect(parseContent("https://brand.example.com/p/01/09506000134352/21/S1?3103=000123&10=L2").fields).toEqual({
+      domain: "https://brand.example.com/p", ais: "(01)09506000134352(21)S1(3103)000123(10)L2",
+    });
+    expect(parseContent("https://id.gs1.org/01/9506000134352").fields).toEqual({ domain: "", ais: "(01)9506000134352" });
+    expect(parseContent("https://id.gs1.org/00/123456789012345675").type).toBe("gs1link");
+    expect(parseContent("https://id.gs1.org/01/3234234234").type).toBe("url");
+    expect(parseContent("https://example.com/01/12").type).toBe("url");
+    expect(typedContentFieldIssues("gs1link", { ais: "(01)x" })).toEqual({ ais: { kind: "gs1", ai: "01", reason: "digitsOnly" } });
+    expect(encodeContent("gs1link", { ais: "(01)3234234234" })).toBe("https://id.gs1.org/01/00032342342340");
+    expect(parseContent("https://id.gs1.org/01/09506000134352?linkType=gs1:pip").type).toBe("url");
+    expect(parseContent("https://blog.example.com/2024/01/12").type).toBe("url");
+    expect(parseContent("https://example.com/01/09506000134352?4300=A%28B").type).toBe("url");
+    expect(parseContent("https://example.com/01/09506000134352/10/A%28B").type).toBe("url");
     expect(parseContent("geo:1,2").type).toBe("geo");
   });
 });

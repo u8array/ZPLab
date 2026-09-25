@@ -3,9 +3,8 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { useT } from "../../hooks/useT";
 import { inputCls } from "../ui/formStyles";
 import { Tooltip } from "../ui/Tooltip";
-import { gs1AddBlockReason } from "@zplab/core/lib/gs1";
 import { AI_BY_GROUP, GS1_GROUP_ORDER, GS1_COMMON_AIS, reqSatisfiableInBuilder } from "../../lib/gs1BuilderPalette";
-import { aiName } from "./gs1Text";
+import { addBlockText, aiName } from "./gs1Text";
 import type { Gs1SegmentDraft } from "./useGs1SegmentDraft";
 
 /** Long-tail count for the palette hint: offerable catalog minus the curated set, disjoint by test. */
@@ -16,9 +15,13 @@ function hiddenAiCount(enforceReq: boolean): number {
   return total - GS1_COMMON_AIS.size;
 }
 
-export function Gs1AiPalette({ draft, className }: { draft: Gs1SegmentDraft; className?: string }) {
+/** The localized reason an identifier cannot be added, null when it can. */
+export type AddBlock = (ai: string, presentAis: readonly string[]) => string | null;
+
+export function Gs1AiPalette({ draft, addBlock, className }: { draft: Gs1SegmentDraft; addBlock?: AddBlock; className?: string }) {
   const tg = useT().gs1builder;
   const { enforceReq } = draft;
+  const block = addBlock ?? ((ai: string, present: readonly string[]) => addBlockText(tg, ai, present));
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
 
@@ -54,28 +57,17 @@ export function Gs1AiPalette({ draft, className }: { draft: Gs1SegmentDraft; cla
               </span>
               <div className="flex flex-col gap-1">
                 {matches.map((spec) => {
-                  // Preventive gate over the same rules the validator
-                  // enforces: an AI already in the set or excluded by one
-                  // is not addable, the tooltip names why.
-                  const block = gs1AddBlockReason(spec.ai, draft.presentAis);
+                  // Preventive gate: the validator refuses the same AI if this is bypassed.
+                  const reason = block(spec.ai, draft.presentAis);
                   return (
-                    <Tooltip
-                      key={spec.ai}
-                      content={
-                        block
-                          ? block.kind === "duplicate"
-                            ? tg.aiAlreadyAdded
-                            : tg.aiExcludedByFmt.replace("{ai}", block.other)
-                          : undefined
-                      }
-                    >
+                    <Tooltip key={spec.ai} content={reason ?? undefined}>
                       <button
                         type="button"
                         onClick={() => draft.addSegment(spec.ai)}
-                        disabled={!!block}
+                        disabled={reason !== null}
                         className="group w-full flex items-center gap-2 px-2 py-1 rounded border border-transparent enabled:hover:border-border enabled:hover:bg-surface-2 disabled:opacity-40 disabled:cursor-not-allowed text-xs text-left transition-colors"
                       >
-                        <PlusIcon className={`w-3 h-3 text-muted shrink-0 opacity-0 ${block ? "" : "group-hover:opacity-100 group-focus-visible:opacity-100"}`} />
+                        <PlusIcon className={`w-3 h-3 text-muted shrink-0 opacity-0 ${reason !== null ? "" : "group-hover:opacity-100 group-focus-visible:opacity-100"}`} />
                         <span className="font-mono text-[10px] text-accent shrink-0">({spec.ai})</span>
                         <span className="text-text truncate min-w-0">{aiName(tg, spec.ai)}</span>
                       </button>

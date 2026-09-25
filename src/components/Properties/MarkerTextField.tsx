@@ -13,12 +13,14 @@ export function MarkerTextField({
   hasError,
   autoFocus = false,
   autoComplete,
+  placeholder,
 }: {
   value: string;
   onChange: (next: string) => void;
   multiline?: boolean;
   ariaLabel?: string;
   hasError?: boolean;
+  placeholder?: string;
   /** Focus the field on mount, for rows created by a user action. */
   autoFocus?: boolean;
   /** HTML autofill token. A single-line field with one starts native so the browser can fill it. */
@@ -69,6 +71,7 @@ export function MarkerTextField({
             onChange={onChange}
             multiline={multiline}
             ariaLabel={ariaLabel}
+            placeholder={placeholder}
             boxClassName={`w-full bg-transparent px-2 py-1 text-xs font-mono leading-6 break-words focus:outline-none ${
               multiline ? "min-h-16 whitespace-pre-wrap" : ""
             }`}
@@ -78,6 +81,7 @@ export function MarkerTextField({
         <input
           ref={nativeRef}
           autoComplete={autoComplete}
+          placeholder={placeholder}
           spellCheck={false}
           className={`flex-1 min-w-0 bg-surface-2 border rounded-md px-2 py-1 text-xs font-mono leading-6 focus:border-accent focus:outline-none ${borderCls}`}
           value={value}

@@ -9,7 +9,10 @@ import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { MarkerTextField } from "../Properties/MarkerTextField";
 import { findObjectById } from "@zplab/core/types/Group";
 import { objectResolvesCtrl } from "@zplab/core/registry";
-import { encodeContent, parseContent, recommendedEc, isContentComplete, isContactDate, markerStandIn, typedContentMarkerFindings, CONTENT_TYPES, MECARD_FIELDS, VCARD_FIELDS, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
+import { encodeContent, parseContent, recommendedEc, isContentComplete, markerStandIn, typedContentFieldIssues, typedContentMarkerFindings, CONTENT_TYPES, MECARD_FIELDS, VCARD_FIELDS, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
+import { DL_DEFAULT_DOMAIN } from "@zplab/core/lib/gs1DigitalLink";
+import { contentIssueText } from "./gs1Text";
+import { DigitalLinkAis } from "./DigitalLinkAis";
 
 type FieldKind = "text" | "textarea" | "checkbox" | "auth";
 
@@ -19,6 +22,7 @@ interface FieldDef {
   labelKey: string;
   kind: FieldKind;
   autoComplete?: string;
+  placeholder?: string;
 }
 
 type ContactKey = (typeof VCARD_FIELDS)[number] | (typeof MECARD_FIELDS)[number];
@@ -48,6 +52,8 @@ const FORM_FIELDS: Record<ContentType, FieldDef[]> = {
   // Derived from the encoder's lists, as the escaper table is, so a field cannot lack a rule.
   vcard: contactRows(VCARD_FIELDS),
   mecard: contactRows(MECARD_FIELDS),
+  // The link's AIs are edited as segments below the fields, not as a field.
+  gs1link: [{ key: "domain", labelKey: "fDomain", kind: "text", placeholder: DL_DEFAULT_DOMAIN }],
   email: [
     { key: "to", labelKey: "fTo", kind: "text" },
     { key: "subject", labelKey: "fSubject", kind: "text" },
@@ -82,10 +88,15 @@ function ContentBuilder({ objectId }: { objectId: string }) {
   // Parse the object's current content once (lazy) to seed the draft.
   const [seed] = useState(() => {
     const obj = findObjectById(getCurrentObjects(), objectId);
-    return parseContent((obj && getObjectStringContent(obj)) || "");
+    const content = (obj && getObjectStringContent(obj)) || "";
+    return { ...parseContent(content), content };
   });
   const [type, setType] = useState<ContentType>(seed.type);
-  const [byType, setByType] = useState<Record<string, ContentFields>>({ [seed.type]: seed.fields });
+  // A web address the parser read as something else stays one tab away as typed.
+  const [byType, setByType] = useState<Record<string, ContentFields>>({
+    ...(/^https?:\/\//i.test(seed.content.trim()) ? { url: { url: seed.content } } : {}),
+    [seed.type]: seed.fields,
+  });
 
   const fields = byType[type] ?? {};
   const setField = (key: string, value: string) =>
@@ -102,8 +113,11 @@ function ContentBuilder({ objectId }: { objectId: string }) {
       return [k, resolved === "" && hasTemplateMarkers(v) ? markerStandIn(k) : resolved];
     }),
   );
-  // The one field whose shape a scanner silently discards, so the gate says why it holds.
-  const badDate = !isContactDate((validationFields.birthday ?? "").trim());
+  const fieldIssues = typedContentFieldIssues(type, validationFields, fields);
+  const issueLine = (key: string) => {
+    const issue = fieldIssues[key];
+    return issue === undefined ? null : <span className="text-[10px] text-error">{contentIssueText(t, issue)}</span>;
+  };
   // A marker's print-time value is inserted as-is (no escaping); block Apply
   // when any substituted value (variable default or a bound CSV cell, all
   // rows) carries chars this field's encoding can't take. Authoring-time gate
@@ -111,7 +125,7 @@ function ContentBuilder({ objectId }: { objectId: string }) {
   const dataset = useLabelStore((s) => s.dataset);
   const columnMapping = useLabelStore((s) => s.columnMapping);
   const markerErrors = typedContentMarkerFindings(type, fields, variables, dataset, columnMapping);
-  const valid = isContentComplete(type, validationFields) && Object.keys(markerErrors).length === 0;
+  const valid = isContentComplete(type, validationFields, fields) && Object.keys(markerErrors).length === 0;
   const ec = recommendedEc(resolveDefaults(content));
   // EC recommendation is QR-only; DataMatrix uses fixed ECC200.
   const objects = useCurrentObjects();
@@ -196,8 +210,9 @@ function ContentBuilder({ objectId }: { objectId: string }) {
                     onChange={(next) => setField(f.key, next)}
                     multiline={f.kind === "textarea"}
                     autoComplete={f.autoComplete}
+                    placeholder={f.placeholder}
                     ariaLabel={L(f.labelKey)}
-                    hasError={markerErrors[f.key] !== undefined || (f.key === "birthday" && badDate)}
+                    hasError={markerErrors[f.key] !== undefined || fieldIssues[f.key] !== undefined}
                   />
                 )}
                 {markerErrors[f.key] !== undefined && (
@@ -205,11 +220,25 @@ function ContentBuilder({ objectId }: { objectId: string }) {
                     {tc.errMarkerUnsafeChars.replace("{chars}", markerErrors[f.key] ?? "")}
                   </span>
                 )}
-                {f.key === "birthday" && badDate && <span className="text-[10px] text-error">{tc.errBirthday}</span>}
+                {issueLine(f.key)}
               </>
             )}
           </div>
         ))}
+        {type === "gs1link" && (
+          <DigitalLinkAis
+            ais={fields.ais ?? ""}
+            onChange={(ais) => setField("ais", ais)}
+            feedback={
+              <>
+                {markerErrors.ais !== undefined && (
+                  <span className="text-[10px] text-error">{tc.errMarkerUnsafeChars.replace("{chars}", markerErrors.ais)}</span>
+                )}
+                {issueLine("ais")}
+              </>
+            }
+          />
+        )}
       </section>
 
       {valid && (
