@@ -72,6 +72,7 @@ export const qrcode: ObjectTypeCore<QrCodeProps> = {
   bindable: true,
   controlChars: CONTROL_CHARS,
   typedContent: true,
+  digitalLinkCarrier: true,
   propSpecs: QRCODE_PROP_SPECS,
   defaultProps: {
     content: '',

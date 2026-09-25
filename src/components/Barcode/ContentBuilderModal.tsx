@@ -8,7 +8,7 @@ import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 import { MarkerTextField } from "../Properties/MarkerTextField";
 import { findObjectById } from "@zplab/core/types/Group";
-import { objectResolvesCtrl } from "@zplab/core/registry";
+import { getEntry, isGs1Active, objectResolvesCtrl } from "@zplab/core/registry";
 import { encodeContent, parseContent, recommendedEc, isContentComplete, markerStandIn, typedContentFieldIssues, typedContentMarkerFindings, CONTENT_TYPES, MECARD_FIELDS, VCARD_FIELDS, type ContentType, type ContentFields } from "@zplab/core/lib/typedContent";
 import { DL_DEFAULT_DOMAIN } from "@zplab/core/lib/gs1DigitalLink";
 import { contentIssueText } from "./gs1Text";
@@ -33,6 +33,7 @@ const CONTACT_AUTOCOMPLETE: Partial<Record<ContactKey, string>> = {
 };
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const LINK_FREE_TYPES: readonly ContentType[] = CONTENT_TYPES.filter((t) => t !== "gs1link");
 const contactRows = (keys: readonly ContactKey[]): FieldDef[] =>
   keys.map((key) => ({ key, labelKey: `f${cap(key)}`, kind: key === "note" ? "textarea" : "text", autoComplete: CONTACT_AUTOCOMPLETE[key] }));
 
@@ -91,7 +92,15 @@ function ContentBuilder({ objectId }: { objectId: string }) {
     const content = (obj && getObjectStringContent(obj)) || "";
     return { ...parseContent(content), content };
   });
-  const [type, setType] = useState<ContentType>(seed.type);
+  const [chosen, setType] = useState<ContentType>(seed.type);
+  const objects = useCurrentObjects();
+  const target = findObjectById(objects, objectId);
+  const entry = target && getEntry(target.type);
+  // A GS1-mode carrier emits its content as GS1 data, where a link URI has no place.
+  const offersLink = !!entry?.digitalLinkCarrier && !isGs1Active(entry, (target as { props?: object }).props ?? {});
+  const types = offersLink ? CONTENT_TYPES : LINK_FREE_TYPES;
+  // The carrier may not offer the seeded or chosen type, so it falls back to the URL tab.
+  const type: ContentType = types.includes(chosen) ? chosen : "url";
   // A web address the parser read as something else stays one tab away as typed.
   const [byType, setByType] = useState<Record<string, ContentFields>>({
     ...(/^https?:\/\//i.test(seed.content.trim()) ? { url: { url: seed.content } } : {}),
@@ -128,8 +137,6 @@ function ContentBuilder({ objectId }: { objectId: string }) {
   const valid = isContentComplete(type, validationFields, fields) && Object.keys(markerErrors).length === 0;
   const ec = recommendedEc(resolveDefaults(content));
   // EC recommendation is QR-only; DataMatrix uses fixed ECC200.
-  const objects = useCurrentObjects();
-  const target = findObjectById(objects, objectId);
   const isQr = target?.type === "qrcode";
   const currentEc =
     target && "props" in target ? (target.props as { errorCorrection?: string }).errorCorrection : undefined;
@@ -152,7 +159,7 @@ function ContentBuilder({ objectId }: { objectId: string }) {
       closeLabel={tc.close}
     >
       <div className="flex flex-wrap gap-1.5">
-        {CONTENT_TYPES.map((ct) => (
+        {types.map((ct) => (
           <button
             key={ct}
             type="button"

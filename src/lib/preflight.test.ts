@@ -549,6 +549,17 @@ describe("markerValueFindings (typed-content marker values)", () => {
   const conflictOn = (fs: ReturnType<typeof markerValueFindings>) =>
     fs.filter((f) => f.detail?.includes("encode it differently")).map((f) => f.objectId);
 
+  it("warns about an unsafe link value on every carrier, an Aztec included", () => {
+    const lot = { ...deps, variables: [{ id: "l", name: "lot", fnNumber: 1, defaultValue: "A/B?C" }] };
+    const link = "https://id.gs1.org/01/09506000134352/10/«lot»";
+    const aztec = { ...qr("a", link), type: "aztec" } as LeafObject;
+    for (const leaf of [qr("a", link), aztec]) {
+      expect(markerValueFindings([leaf], lot)).toEqual([
+        { objectId: "a", kind: "markerValueUnsafe", severity: "warning", detail: "ais: / ?" },
+      ]);
+    }
+  });
+
   it("flags a WiFi payload whose marker default carries a structural char", () => {
     const out = markerValueFindings([qr("a", "WIFI:T:WPA;S:«ssid»;;")], deps);
     expect(out).toEqual([

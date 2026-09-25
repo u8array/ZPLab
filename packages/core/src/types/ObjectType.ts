@@ -59,6 +59,8 @@ export interface ObjectTypeCore<P extends object = object> {
    *  keep their own builder buttons. DataMatrix in GS1 mode carries GS1 data
    *  instead, which consumers exclude via the registry's isGs1Active. */
   typedContent?: boolean;
+  /** GS1 approves the carrier for a Digital Link URI. Excluded while the carrier is in GS1 mode, as typedContent is. */
+  digitalLinkCarrier?: boolean;
   /** Emitter honours `props.serial` (^SN/^SF). Only text and the free-data 1D
    *  family do; 2D/stacked emitters and fixed-check EAN/UPC do not, so the
    *  Variable-Builder hides the serial option there. */
