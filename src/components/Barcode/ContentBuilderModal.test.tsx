@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach } from "vitest";
-import { render, cleanup, screen, fireEvent, within } from "@testing-library/react";
+import { render, cleanup, screen, fireEvent, within, act } from "@testing-library/react";
 import { ContentBuilderModal } from "./ContentBuilderModal";
 import { useLabelStore } from "../../store/labelStore";
 import { MECARD_FIELDS, VCARD_FIELDS } from "@zplab/core/lib/typedContent";
@@ -145,6 +145,35 @@ describe("ContentBuilderModal contact fields", () => {
     seedContent("https://id.gs1.org/01/09506000134352");
     render(<ContentBuilderModal />);
     fireEvent.click(screen.getByRole("button", { name: "URL" }));
+    expect(screen.getByRole("textbox", { name: "URL" }).textContent).toBe("https://id.gs1.org/01/09506000134352");
+  });
+
+  it("offers no Digital Link on an Aztec and keeps a pasted link there as URL, bytes unchanged", () => {
+    const link = "https://id.gs1.org/01/09506000134352";
+    useLabelStore.setState({ pages: [{ objects: [{ ...(qr as object), type: "aztec", props: { content: link, magnification: 4 } }] }] } as never);
+    render(<ContentBuilderModal />);
+    expect(screen.queryByRole("button", { name: en.contentBuilder.typeGs1link })).toBeNull();
+    expect(screen.getByRole("button", { name: "URL", pressed: true })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "URL" }).textContent).toBe(link);
+    fireEvent.click(screen.getByRole("button", { name: "Apply" }));
+    expect(objectContent()).toBe(link);
+  });
+
+  it("offers no Digital Link on a Data Matrix in GS1 mode", () => {
+    useLabelStore.setState({ pages: [{ objects: [{ ...(qr as object), type: "datamatrix", props: { content: "https://id.gs1.org/01/09506000134352", gs1: true } }] }] } as never);
+    render(<ContentBuilderModal />);
+    expect(screen.queryByRole("button", { name: en.contentBuilder.typeGs1link })).toBeNull();
+    expect(screen.getByRole("button", { name: "URL", pressed: true })).toBeTruthy();
+  });
+
+  it("falls back to the URL tab when the carrier stops offering the chosen type under the open dialog", () => {
+    seedContent("https://id.gs1.org/01/09506000134352");
+    render(<ContentBuilderModal />);
+    expect(screen.getByRole("button", { name: en.contentBuilder.typeGs1link, pressed: true })).toBeTruthy();
+    act(() => useLabelStore.setState({ pages: [{ objects: [{ ...(qr as object), type: "aztec", props: { content: "https://id.gs1.org/01/09506000134352", magnification: 4 } }] }] } as never));
+    expect(screen.queryByRole("button", { name: en.contentBuilder.typeGs1link })).toBeNull();
+    expect(screen.getByRole("button", { name: "URL", pressed: true })).toBeTruthy();
+    expect(screen.queryByRole("textbox", { name: "GTIN" })).toBeNull();
     expect(screen.getByRole("textbox", { name: "URL" }).textContent).toBe("https://id.gs1.org/01/09506000134352");
   });
 

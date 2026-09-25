@@ -30,7 +30,7 @@ Drag objects onto the canvas, edit their properties, then copy or export the ZPL
 - Editable ZPL source and a reference for every ZPL II command
 - Variables, CSV, Excel and database batches
 - GS1 and EAN/UPC content builders with validation
-- Content builder for QR, Data Matrix and Aztec: URLs, Wi-Fi, contacts, GS1 Digital Links, email, phone, SMS and coordinates
+- Content builder for QR, Data Matrix and Aztec: URLs, Wi-Fi, contacts, email, phone, SMS and coordinates, plus GS1 Digital Links on QR and Data Matrix
 - 32 interface languages, light and dark theme
 - MCP server on desktop for a local AI assistant
 

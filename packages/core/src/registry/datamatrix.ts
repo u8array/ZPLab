@@ -73,6 +73,7 @@ export const datamatrix: ObjectTypeCore<DataMatrixProps> = {
   bindable: true,
   controlChars: CONTROL_CHARS,
   typedContent: true,
+  digitalLinkCarrier: true,
   propSpecs: DATAMATRIX_PROP_SPECS,
   defaultProps: {
     content: '',
