@@ -10,6 +10,7 @@ import { notePartial,
   fieldHasContent,
   getDefaultTextH,
   getDefaultTextW,
+  openDefaultText,
   resetFieldBlockDefaults,
   type ParserState,
   spanInRest,
@@ -76,12 +77,7 @@ export function createFieldHandlers(
 
   const setFieldData = (raw: string) => {
     // Implicit text field unless we're inside a bare `^FN^FD^FS` declaration.
-    if (!s.field.fieldType && s.comment.fnNumber === null) {
-      s.field.fieldType = "text";
-      s.field.textH = getDefaultTextH(s.defaults);
-      s.field.textW = getDefaultTextW(s.defaults);
-      s.field.textRot = s.defaults.fwRotation;
-    }
+    if (!s.field.fieldType && s.comment.fnNumber === null) openDefaultText(s.field, s.defaults);
     s.field.pendingFD = stripDataLineBreaks(raw);
     // Located on the raw bytes, before stripping, so the finding lands on the source.
     s.field.pendingHexControl = locateHexControl(raw);
@@ -186,12 +182,7 @@ export function createFieldHandlers(
       // Negative indent observed to clamp to 0 on Labelary; mirror that.
       s.defaults.fbHangingIndent = Math.max(0, dots(p[4]));
       // ^FB also implies text if no ^A was specified.
-      if (!s.field.fieldType) {
-        s.field.fieldType = "text";
-        s.field.textH = getDefaultTextH(s.defaults);
-        s.field.textW = getDefaultTextW(s.defaults);
-        s.field.textRot = s.defaults.fwRotation;
-      }
+      if (!s.field.fieldType) openDefaultText(s.field, s.defaults);
     },
 
     // ── Field hex indicator ───────────────────────────────────────────────

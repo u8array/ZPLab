@@ -103,6 +103,8 @@ export const SLEW_DOT_ROWS_RANGE = { min: 0, max: 32000 } as const;
 export const LABEL_TOP_RANGE = { min: -120, max: 120 } as const;
 /** ^LS a, in dots (Zebra -9999..9999). */
 export const LABEL_SHIFT_RANGE = { min: -9999, max: 9999 } as const;
+/** Where the generator parks ^FN declarations off-label: its 32000-dot park rescaled by the smallest ^MU ratio. */
+export const PARKED_FIELD_MIN_DOTS = 8000;
 /** ^LH x/y, in dots (Zebra 0..32000). */
 export const LABEL_HOME_RANGE = { min: 0, max: 32000 } as const;
 /** ^CF h/w, in dots (Zebra 0..32000); a zero height is unset, so it floors at 1. */

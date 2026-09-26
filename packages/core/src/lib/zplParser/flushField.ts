@@ -53,6 +53,7 @@ import { notePartial,
   resetFieldBlockDefaults,
   resetSymbologyModeFlags,
   slotAdoptsEmptyFd,
+  openDefaultText,
   type FnDefaultCandidate,
   type ParserState,
   isTbField,
@@ -60,6 +61,7 @@ import { notePartial,
 } from "./context";
 
 import { newId } from "../ids";
+import { PARKED_FIELD_MIN_DOTS } from "../../types/LabelConfig";
 
 /** Resolved at ^FS, where the ^BY module is final. The h-less form sizes the
  *  WHOLE symbol, so its row count is a content-dependent approximation. */
@@ -206,6 +208,10 @@ export function createCloseField(
   };
 
   const flushField = () => {
+    // ZD230-measured: a positioned ^FN without a font command prints in the ^CF default font. Only a
+    // field parked off-label is the declaration the generator hides there.
+    if (!s.field.fieldType && s.comment.fnNumber !== null && s.field.openedAt !== null
+        && s.field.x < PARKED_FIELD_MIN_DOTS && s.field.y < PARKED_FIELD_MIN_DOTS) openDefaultText(s.field, s.defaults);
     if (slotAdoptsEmptyFd(s)) {
       s.field.pendingFD = "";
     }
