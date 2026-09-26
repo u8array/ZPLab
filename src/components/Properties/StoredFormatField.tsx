@@ -1,5 +1,6 @@
 import { useT } from "../../hooks/useT";
 import { Select } from "../ui/Select";
+import { Tooltip } from "../ui/Tooltip";
 import { FieldLabel } from "./ZplCmd";
 import { SafeStringInput } from "../PrinterSettings/zplFieldPrimitives";
 import { canonicalStoredFormatPath, MAX_STORED_FORMAT_NAME_LEN, parseStoragePath, sanitizeStoredFormatName, STORAGE_DEVICES } from "@zplab/core/lib/storagePath";
@@ -22,7 +23,11 @@ export function StoredFormatField({
   const pathOf = (d: string, n: string) => (n === "" ? undefined : canonicalStoredFormatPath(`${d}:${n}`));
   return (
     <div className="flex flex-col gap-1">
-      <FieldLabel cmd="^DF">{t.label.storedFormat}</FieldLabel>
+      <FieldLabel cmd="^DF">
+        <Tooltip content={t.label.storedFormatHint}>
+          <span>{t.label.storedFormat}</span>
+        </Tooltip>
+      </FieldLabel>
       <div className="grid grid-cols-[auto_1fr_auto] gap-1 items-center">
         <Select<string>
           value={device}
@@ -42,7 +47,6 @@ export function StoredFormatField({
         />
         <span className="font-mono text-[10px] text-muted">.ZPL</span>
       </div>
-      <p className="text-[10px] text-muted leading-snug">{t.label.storedFormatHint}</p>
     </div>
   );
 }
