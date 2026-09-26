@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach } from "vitest";
 import { useState } from "react";
-import { render, cleanup, fireEvent } from "@testing-library/react";
+import { render, cleanup, fireEvent, act } from "@testing-library/react";
 import { StoredFormatField } from "./StoredFormatField";
+import { fallbackTranslations as en } from "../../locales";
 
 afterEach(cleanup);
 
@@ -38,5 +39,14 @@ describe("StoredFormatField", () => {
     fireEvent.change(nameInput(r), { target: { value: "ABCDEFGHIJKLMNOPQ" } });
     fireEvent.change(nameInput(r), { target: { value: "" } });
     expect(log).toEqual(["R:ABCDEFGHIJKLMNOP.ZPL", undefined]);
+  });
+
+  it("explains the field in a tooltip on the label, not in a paragraph", () => {
+    const r = render(<Spy log={[]} />);
+    expect(r.queryByText(en.label.storedFormatHint)).toBeNull();
+    act(() => {
+      fireEvent.focus(r.getByText(en.label.storedFormat));
+    });
+    expect(r.getByRole("tooltip").textContent).toBe(en.label.storedFormatHint);
   });
 });
