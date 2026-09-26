@@ -58,6 +58,7 @@ export function useSourceShadowSync(): void {
               pages: plan.next.pages,
               variables: plan.next.variables,
               columnMapping: plan.next.columnMapping,
+              ...(plan.batch ? { dataset: { ...plan.batch.dataset, activeRowIndex: 0 } } : {}),
             },
             refusal: null,
             findings: plan.report.findings,

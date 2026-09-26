@@ -9,6 +9,8 @@ import type { Page } from '@zplab/core/types/Group';
 import type { ColumnMapping, Variable } from '@zplab/core/types/Variable';
 import { selectEditorFrozen, clampPageIndex } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
+import type { WithTemporal } from '../labelStore.internals';
+import type { Dataset } from './dataSlice';
 
 export const SHADOW_IMAGE_OWNER = 'sourceShadow';
 
@@ -31,6 +33,8 @@ export interface SourceShadow {
     pages: Page[];
     variables: Variable[];
     columnMapping: ColumnMapping | null;
+    /** The buffer's recall rows, which the apply would load in place of the live dataset. */
+    dataset?: Dataset;
   } | null;
   refusal: SourceRefusalInfo | null;
   /** Spanned import findings of the parse that produced `draft`; empty under
@@ -160,11 +164,16 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
       selectedIds: [],
       // Mapping drafts seed from variable ids and the settings modal from the
       // profile, both at mount; the apply replaces both sources. Unlike
-      // loadDesign, datasetFetchToken stays: the dataset survives on purpose.
+      // loadDesign, an apply without recall rows keeps the dataset and its fetch token.
       mappingModalOpen: false,
       connectWizardOpen: false,
       printerSettingsTab: null,
       ...endSourceSession(),
     });
+    if (plan.batch) {
+      get().loadDataset(plan.batch.dataset);
+      // The rows sit outside the timeline, so an undo would pair the old mapping with them.
+      (api as unknown as WithTemporal).temporal.getState().clear();
+    }
   },
 });

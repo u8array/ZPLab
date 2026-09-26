@@ -86,3 +86,31 @@ describe("symbol panel certification-mark gate", () => {
     expect(queryByText(/certification mark/)).toBeNull();
   });
 });
+
+describe("symbol panel with a bound slot", () => {
+  const bound = { ...makeObj("A"), props: { ...makeObj("A").props, content: "«mark»" } } as LabelObjectBase & { props: SymbolProps };
+  beforeEach(() => {
+    act(() => {
+      useLabelStore.setState({ variables: [{ id: "v1", name: "mark", fnNumber: 1, defaultValue: "c" }] } as never);
+    });
+  });
+
+  it("shows the slot's default as the printer reads it and names the variable", () => {
+    const { getByRole, getByText } = render(<Panel obj={bound} onChange={() => undefined} />);
+    expect(getByRole("button", { name: en.registry.symbol.symbol }).textContent).toContain("™");
+    expect(getByText(en.variables.badgeBoundFmt.replace("{name}", "mark"))).toBeTruthy();
+  });
+
+  it("writes a new choice to the variable's default, not to the symbol prop", () => {
+    const changes: object[] = [];
+    const { getByRole, getAllByRole } = render(<Panel obj={bound} onChange={(c) => changes.push(c)} />);
+    act(() => {
+      getByRole("button", { name: en.registry.symbol.symbol }).click();
+    });
+    act(() => {
+      getAllByRole("option").find((o) => o.textContent?.includes("®"))?.click();
+    });
+    expect(changes).toEqual([]);
+    expect(useLabelStore.getState().variables[0]?.defaultValue).toBe("A");
+  });
+});

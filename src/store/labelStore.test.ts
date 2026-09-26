@@ -10,6 +10,8 @@ import {
 } from './labelStore';
 import { currentPageLabel } from './labelStore.selectors';
 import { importZplText } from '@zplab/core/lib/zplImportService';
+import { prepareSourceApply } from '@zplab/core/lib/zplSourceEdit';
+import { selectSourceDocumentState } from './labelStore.selectors';
 import { dotsToMm } from '@zplab/core/lib/coordinates';
 import { effectiveDpmm } from '@zplab/core/types/LabelConfig';
 import { FN_NUMBER_MAX } from '@zplab/core/types/Variable';
@@ -841,6 +843,41 @@ describe('loadDesign', () => {
       [{ objects: [] }],
     );
     expect(state().label.customFonts).toEqual([{ alias: 'B', path: 'E:MY.TTF' }]);
+  });
+});
+
+describe('applyZplImport with recall rows', () => {
+  const stream = ['^XA^DFR:A.ZPL^FS^FO10,10^A0N,30,30^FN1^FS^XZ', '^XA^XFR:A.ZPL^FS^FN1^FDone^FS^XZ', '^XA^XFR:A.ZPL^FS^FN1^FDtwo^FS^XZ'].join('\n');
+
+  it('replace loads the rows and their mapping together', () => {
+    const imported = importZplText(stream, 8);
+    state().applyZplImport({ mode: 'replace', imported, profile: {} });
+    expect(state().dataset?.rows).toEqual([['one'], ['two']]);
+    expect(state().columnMapping).toEqual(imported.batch?.columnMapping);
+    expect(state().dataset?.source.kind).toBe('zpl');
+  });
+
+  it('a source apply with recall rows loads them and starts the history afresh', () => {
+    state().addObject('text');
+    state().loadDataset({ headers: ['name'], rows: [['old']], source: { kind: 'csv', filename: 'a.csv', importedAt: '', encoding: 'utf-8', delimiter: ',', rowCount: 1 } });
+    state().enterSourceEdit('');
+    const edit = state().sourceEdit;
+    const session = edit.status === 'editing' ? edit.session : -1;
+    const plan = prepareSourceApply({ text: stream, baseline: '', current: selectSourceDocumentState(state()) });
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return;
+    state().applyZplSource(plan, session);
+    expect(state().dataset?.rows).toEqual([['one'], ['two']]);
+    expect(useLabelStore.temporal.getState().pastStates).toHaveLength(0);
+  });
+
+  it('append keeps the open document\'s data', () => {
+    state().addObject('text');
+    state().loadDataset({ headers: ['name'], rows: [['old']], source: { kind: 'csv', filename: 'a.csv', importedAt: '', encoding: 'utf-8', delimiter: ',', rowCount: 1 } });
+    const imported = importZplText(stream, 8);
+    state().applyZplImport({ mode: 'append', imported, profile: {} });
+    expect(state().dataset?.rows).toEqual([['old']]);
+    expect(state().pages).toHaveLength(2);
   });
 });
 

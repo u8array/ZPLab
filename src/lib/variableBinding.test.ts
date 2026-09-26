@@ -11,6 +11,7 @@ import {
   type ActiveRow,
 } from '@zplab/core/lib/variableBinding';
 import { objectResolvesCtrl } from '@zplab/core/registry';
+import { symbolCodeOf, type SymbolProps } from '@zplab/core/registry/symbol';
 import type { ColumnMapping, Variable } from '@zplab/core/types/Variable';
 import type { LabelObject } from '@zplab/core/types/Group';
 
@@ -479,5 +480,25 @@ describe('resolveContentPreview', () => {
     });
     const plain = resolveContentPreview('«clock:Y»', []);
     expect(Number(shifted)).toBe(Number(plain) + 1);
+  });
+});
+
+describe('symbolCodeOf', () => {
+  const sym = { id: 's', type: 'symbol', x: 0, y: 0, rotation: 0, props: { symbol: 'A', content: '«sku»', height: 30, width: 30, rotation: 'N' } } as unknown as LabelObject;
+  const codeOf = (o: LabelObject) => symbolCodeOf((o as unknown as { props: SymbolProps }).props);
+  it('shows the active row, the default without a row, and the chosen symbol without a slot', () => {
+    const vars = [variable({ defaultValue: 'A' })];
+    const row = active(['sku'], ['C'], { v1: 'sku' });
+    expect(codeOf(applyBindingToObject(sym, vars, row))).toBe('C');
+    expect(codeOf(applyBindingToObject(sym, vars, null))).toBe('A');
+    expect(codeOf({ ...sym, props: { symbol: 'B', height: 30, width: 30, rotation: 'N' } } as unknown as LabelObject)).toBe('B');
+    expect(codeOf(applyBindingToObject(sym, vars, active(['sku'], ['Z'], { v1: 'sku' })))).toBe('B');
+  });
+
+  it('reads a row value as the firmware does: first letter, case-blind, blanks trimmed', () => {
+    const vars = [variable({ defaultValue: 'A' })];
+    for (const [raw, code] of [['c', 'C'], ['  C', 'C'], ['AB', 'A'], ['', 'B']]) {
+      expect(codeOf(applyBindingToObject(sym, vars, active(['sku'], [raw ?? ''], { v1: 'sku' })))).toBe(code);
+    }
   });
 });

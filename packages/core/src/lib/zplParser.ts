@@ -10,11 +10,13 @@ import { isLoneMarker } from "./variableField";
 import { markerOf } from "../types/Variable";
 import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
-import { stripLineWrap, stripTrailingSpaces, tokenize, trimmedSpanEnd } from "./zplParser/helpers";
+import { stripLineWrap, stripTrailingSpaces, tokenize, trimmedSpanEnd, type ZplToken } from "./zplParser/helpers";
 import { lookaheadJmDensity, lookaheadStoredFormat, scanBareStream } from "./zplHeadScan";
+import { parseStoragePath, recallCandidates, storageKey } from "./storagePath";
+import { printShape } from "./payloadProps";
 import { qrPrintsAsGraphic } from "./objectBounds";
 import { commandTakesPrefix, commandTwinSplit } from "../catalog";
-import { createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, openTailHasContent, payloadSummary, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField, resolveLiveFonts } from "./zplParser/context";
+import { claimVariableName, createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, notePartial, openTailHasContent, payloadSummary, releaseVariableName, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField, resolveLiveFonts } from "./zplParser/context";
 import { createCloseField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
 import { createDynamicFontAWildcard, createFieldHandlers } from "./zplParser/handlers/fields";
@@ -234,12 +236,12 @@ export function parseZPL(
     onStandaloneObject: (obj) => {
       const span = s.result.tokenSpan;
       // The ^FX run the object took as its comment is part of its bytes, or an edit re-emits it twice.
-      if (span) linkObject(s.comment.run?.start ?? span.start, span.end, obj.id, currentFrame());
+      if (span && s.recall === null) linkObject(s.comment.run?.start ?? span.start, span.end, obj.id, currentFrame());
     },
     onUpload: (key, short) => {
       const span = s.result.tokenSpan;
       // Inside an open field the bytes belong to that field's span, which PERSISTENT_DEF_CODES makes regen-hostile.
-      if (!span || pg.ovStart !== null) return;
+      if (!span || pg.ovStart !== null || s.recall !== null) return;
       overlaySpans.push({ start: span.start, end: s.result.tokenEnd ?? span.end, link: { kind: "upload", key, ...(short ? { short: true } : {}) } });
     },
   });
@@ -366,6 +368,7 @@ export function parseZPL(
     sawNonUtf8Ci: false,
     sawBareBarcode: false,
     storedFormatPath: undefined as string | undefined,
+    recallOnly: false,
   });
   let pg = freshPageScope(0);
 
@@ -403,6 +406,8 @@ export function parseZPL(
   /** Close the current page at source offset `end`: per-format serial-orphan
    *  sweep, per-page findings/overlay, then reset the format-scoped state so
    *  the next page starts clean (printer-persistent state carries on). */
+  // Judged at page close, once bytes behind the ^XZ have had their say.
+  let pendingClose: { kind: "store"; template: Template } | { kind: "recall"; template: Template; carried: Set<string>; atRecall: string | null } | null = null;
   const closePage = (end: number): void => {
     // ^SN stripped a single-bind marker: drop this format's variables that no
     // marker in THIS page's objects points at (declarations stay).
@@ -416,7 +421,10 @@ export function parseZPL(
         const o = objects[j];
         used = o !== undefined && (getObjectStringContent(o)?.includes(marker) ?? false);
       }
-      if (!used) variables.splice(i, 1);
+      if (!used) {
+        variables.splice(i, 1);
+        releaseVariableName(s, v.name);
+      }
     }
     const pagePartial = [...s.result.partials.values()];
     const pageObjects = objects.slice(pg.obj);
@@ -445,7 +453,10 @@ export function parseZPL(
     );
     const pageRegenSafe = regenLoss === undefined;
     let pageOverlay: BlockOverlay | undefined;
-    if (opts.captureOverlay && pageObjects.every((o) => linkedIds.has(o.id))) {
+    // Replayed objects live in the template's bytes, so they cannot count toward this page's overlay.
+    const rc = s.result.recall;
+    const ownObjects = rc ? pageObjects.filter((_o, k) => k < rc.objects[0] - pg.obj || k >= rc.objects[1] - pg.obj) : pageObjects;
+    if (opts.captureOverlay && ownObjects.every((o) => linkedIds.has(o.id))) {
       const frame =
         s.label.lhX !== 0 || s.label.lhY !== 0 || s.label.ltY !== 0
           ? { homeX: s.label.lhX, homeY: s.label.lhY, top: s.label.ltY }
@@ -485,6 +496,31 @@ export function parseZPL(
     };
     if (pageOverlay) page.overlay = pageOverlay;
     if (pg.storedFormatPath !== undefined) page.storedFormatPath = pg.storedFormatPath;
+    if (s.result.recallFormatPath !== undefined) page.recallFormatPath = s.result.recallFormatPath;
+    if (s.result.recallFormatSpan !== undefined) page.recallFormatSpan = s.result.recallFormatSpan;
+    const closing = pendingClose;
+    pendingClose = null;
+    if (closing?.kind === "store") closing.template.state = streamState();
+    if (rc !== undefined) {
+      const replayed: [number, number] = [rc.objects[0] - pg.obj, rc.objects[1] - pg.obj];
+      const row = closing?.kind === "recall" ? closing : undefined;
+      // A row prints the replay and nothing else: no object, finding or state of its own. A control byte in a
+      // row value is the row's data, a device action prints nothing anywhere, and the edit loss is the template's.
+      const ownFinding = findings.some((f) => f.kind !== "partial" && f.kind !== "hexControl" && f.kind !== "deviceAction" && f.kind !== "lossyEdit")
+        || [...s.result.partials.keys()].some((key) => !row?.carried.has(key));
+      const ownObject = replayed[0] !== 0 || replayed[1] !== pageObjects.length;
+      // ZD230-measured: the recalled fields form under the state at ^XF, so the replay at ^XZ is
+      // only true to the print while nothing behind the ^XF changed that state.
+      const moved = row?.atRecall !== JSON.stringify(fieldState());
+      if (pg.recallOnly && (!row || ownFinding || ownObject || moved || !stateAgrees(row.template, streamState()))) pg.recallOnly = false;
+      page.recall = {
+        pageIndex: rc.pageIndex,
+        slotsOnly: pg.recallOnly,
+        objects: replayed,
+        variables: [rc.variables[0] - pg.vari, rc.variables[1] - pg.vari],
+        declarations: rc.declarations,
+      };
+    }
     if (!s.sawXa) page.bare = true;
     if (opts.captureOverlay) {
       const spanEntries = overlaySpans.slice(pg.span).flatMap(
@@ -519,7 +555,7 @@ export function parseZPL(
     resetFormatScopedState(s);
   };
 
-  for (const { cmd, rest, start, end } of tokens) {
+  const dispatch = ({ cmd, rest, start, end }: ZplToken): void => {
     // Read by the finding push sites (notePartial, pushBrowserLimit). End is
     // trimmed: the tokenizer's end runs to the next command's prefix, and a
     // span must not swallow the line break plus following indent.
@@ -584,7 +620,7 @@ export function parseZPL(
       // Every ^JM in the head is recorded, invalid values included: export
       // rewrites the valid ones and must place a new declaration behind the
       // last of them either way.
-      if (cmd === "JM" && s.format.inFormatHead) {
+      if (cmd === "JM" && s.format.inFormatHead && s.recall === null) {
         // trimEnd: `rest` runs to the next command, so it drags the line break
         // of multi-line ZPL into the span.
         const from = start - pg.start;
@@ -592,7 +628,7 @@ export function parseZPL(
         // carries the caret and delimiter live at its own ^JM, not the opener's.
         pg.head.jmSpans.push({ start: from, end: from + 3 + rest.trimEnd().length, delim: s.format.delimiterChar, caret: s.format.caretChar });
       }
-      if (opts.captureOverlay) {
+      if (opts.captureOverlay && s.recall === null) {
         if (
           s.format.caretChar !== "^" ||
           s.format.tildeChar !== "~" ||
@@ -725,7 +761,7 @@ export function parseZPL(
         if (df) pg.head.dfSpans = df.spans.map((sp) => ({ ...sp, start: sp.start - pg.start, end: sp.end - pg.start }));
         s.format.unitScale = deriveUnitScale(s.format, dpmm);
       }
-      continue;
+      return;
     }
 
     if (rest.trim() || cmd.trim()) {
@@ -733,12 +769,146 @@ export function parseZPL(
       unknown.push({ command: payloadSummary(`${zpl[start] ?? "^"}${cmd}`, rest), span: s.result.tokenSpan });
     }
     s.comment.run = null;
+  };
+
+  // The printer keeps a stored format as text and re-runs it at recall with the
+  // block's ^FN data, so a recall replays the template's tokens into its own page.
+  interface Template { tokens: ZplToken[]; slots: Set<number>; partialKeys: Set<string>; state?: Record<string, unknown>; decided?: boolean; pageIndex: number }
+  const templates = new Map<string, Template>();
+  // The persistent stream state every field forms under.
+  const fieldState = (): Record<string, unknown> => {
+    const { ciDecoder, caretChar, tildeChar, delimiterChar, unitScale, muMode, embedChar, clockChars } = s.format;
+    return { label: { ...s.label }, defaults: { ...s.defaults }, format: { encoding: ciDecoder.encoding, caretChar, tildeChar, delimiterChar, unitScale, muMode, embedChar, clockChars: { ...clockChars } } };
+  };
+  // What a block leaves behind for the blocks after it: the design's document state, the font
+  // alias table and the field state. A folded row must leave it as the template page did.
+  const streamState = (): Record<string, unknown> => ({ ...labelConfig, ...fieldState() });
+  // What the template left unset, the first row decides, the standing value included. A later row
+  // that disagrees prints something other than what the design shows.
+  const stateAgrees = (template: Template, now: Record<string, unknown>): boolean => {
+    const fixed = template.state;
+    if (!fixed) return false;
+    const keys = [...new Set([...Object.keys(fixed), ...Object.keys(now)])];
+    if (keys.some((key) => (template.decided || fixed[key] !== undefined) && JSON.stringify(fixed[key]) !== JSON.stringify(now[key]))) return false;
+    template.state = now;
+    template.decided = true;
+    return true;
+  };
+  let blockTokens: ZplToken[] = [];
+  let atRecall: string | null = null;
+  const replayRecall = (): void => {
+    const path = s.result.recallFormatPath;
+    if (path === undefined) return;
+    const ref = parseStoragePath(path);
+    if (!ref) return;
+    const template = recallCandidates({ ...ref, ext: ref.ext ?? "ZPL" }).map((key) => templates.get(key)).find((t) => t !== undefined);
+    if (!template) return;
+    // Slot declarations feed the replay. A variable bound by one of the block's own fields stays.
+    const own = variables.slice(pg.vari);
+    const values = new Map(own.map((v) => [v.fnNumber, v.defaultValue] as const));
+    const bound = new Set(objects.slice(pg.obj).flatMap((o) => extractTemplateRefs(getObjectStringContent(o) ?? "")));
+    variables.splice(pg.vari, own.length, ...own.filter((v) => bound.has(v.name)));
+    for (const v of own) if (!bound.has(v.name)) releaseVariableName(s, v.name);
+    const objectsFrom = objects.length;
+    const variablesFrom = variables.length;
+    const replayFrom = { objects: objectsFrom, variables: variablesFrom };
+    // The template's findings were reported on its own page.
+    const marks = { unknown: unknown.length, browser: browserLimit.length, replay: replayRisk.length, device: deviceAction.length, unterminated: unterminated.length, hexControl: hexControl.length };
+    const partials = s.result.partials;
+    s.result.partials = new Map();
+    const replayPartials = s.result.partials;
+    const { tokenSpan, tokenEnd, tokenCommand, prevTokenEnd, lastSpanByCmd } = s.result;
+    s.result.lastSpanByCmd = new Map(lastSpanByCmd);
+    s.recall = values;
+    // The stored text starts with its own head, whose ^JM the template's lookahead already applied.
+    s.format.inFormatHead = true;
+    for (const token of template.tokens) dispatch(token);
+    s.format.inFormatHead = false;
+    // The template's ^XZ is not replayed, and it may have closed its last field or stashed a box.
+    closeField();
+    commitPendingReverseBg();
+    s.recall = null;
+    unknown.length = marks.unknown;
+    browserLimit.length = marks.browser;
+    replayRisk.length = marks.replay;
+    deviceAction.length = marks.device;
+    unterminated.length = marks.unterminated;
+    // A control byte in a row value truncates that row, so its finding stays with the block.
+    const rowHexControl = hexControl.slice(marks.hexControl).filter((t, i, all) => t.span !== undefined && t.span.start >= pg.start && all.findIndex((o) => o.span?.start === t.span?.start) === i);
+    hexControl.length = marks.hexControl;
+    hexControl.push(...rowHexControl);
+    s.result.partials = partials;
+    // A partial the template's own page never raised comes from the row's value.
+    const carried = new Set<string>();
+    for (const [key, note] of replayPartials) {
+      if (template.partialKeys.has(key) || partials.has(key)) continue;
+      partials.set(key, note);
+      carried.add(key);
+    }
+    Object.assign(s.result, { tokenSpan, tokenEnd, tokenCommand, prevTokenEnd, lastSpanByCmd });
+    // A slot the template reaches only through an embed keeps the block's bytes.
+    const replayed = variables.slice(replayFrom.variables);
+    for (const v of replayed) if (v.defaultValue === "") v.defaultValue = values.get(v.fnNumber) ?? "";
+    const consumed = new Set(replayed.map((v) => v.fnNumber));
+    for (const v of own) {
+      if (bound.has(v.name) || consumed.has(v.fnNumber)) continue;
+      // The format names the slot but fills nothing, so the block's declaration stays, renamed if the replay took its name.
+      if (template.slots.has(v.fnNumber)) {
+        v.name = claimVariableName(s, v.name);
+        variables.push(v);
+        continue;
+      }
+      // ZD230-measured: a slot the format never names prints as a stray field, which no page can show.
+      notePartial(s.result, `^FN${v.fnNumber}`, "recallSlot");
+    }
+    // Stream state that persists across blocks, such as ^MU, ^BY, ^CF or ^LH, shapes every replayed field.
+    // Only a replay that prints as the template page did is a plain row of it.
+    const replayedObjects = objects.slice(replayFrom.objects);
+    // The stored text starts after ^DF, so the replay pairs with the template page's last objects.
+    const stored = pages[template.pageIndex]?.objects ?? [];
+    const asStored = stored.slice(stored.length - replayedObjects.length);
+    const shape = (o: LabelObject): string => printShape(o, s.anchorById.get(o.id));
+    if (asStored.length !== replayedObjects.length || replayedObjects.some((o, k) => shape(o) !== shape(asStored[k] as LabelObject))) pg.recallOnly = false;
+    pendingClose = { kind: "recall", template, carried, atRecall };
+    s.result.recall = {
+      pageIndex: template.pageIndex,
+      objects: [replayFrom.objects, objects.length],
+      variables: [replayFrom.variables, variables.length],
+      declarations: own.filter((v) => !bound.has(v.name)),
+    };
+  };
+
+  // Wrapped in a call, since flow narrowing cannot see the dispatch closure reassign openXa.
+  const openFormat = (): { at: number; cmd: string } | null => openXa;
+  for (const token of tokens) {
+    const wasOpen = openFormat() !== null;
+    dispatch(token);
+    const open = openFormat();
+    if (open !== null && open.at === token.start) {
+      blockTokens = [];
+      atRecall = null;
+      pg.recallOnly = true;
+    } else if (open !== null) {
+      blockTokens.push(token);
+      if (token.cmd === "XF") atRecall ??= JSON.stringify(fieldState());
+    } else if (wasOpen) {
+      // A block that stores a format prints nothing, its own ^XF included.
+      if (pg.storedFormatPath !== undefined) {
+        // Only what follows ^DF is stored, so the head before it is the block's own.
+        const tokens = blockTokens.slice(blockTokens.findIndex((t) => t.cmd === "DF") + 1);
+        const slots = new Set(tokens.filter((t) => t.cmd === "FN").map((t) => parseInt(t.rest, 10)).filter((n) => Number.isFinite(n)));
+        const template: Template = { tokens, slots, partialKeys: new Set(s.result.partials.keys()), pageIndex: pages.length };
+        templates.set(storageKey(pg.storedFormatPath), template);
+        pendingClose = { kind: "store", template };
+      } else replayRecall();
+    }
   }
 
   // Close the last page (also the only one for single-block or bare streams);
   // its serial-orphan sweep runs inside.
   closePage(zpl.length);
-  if (openXa) unbalanced ??= { kind: "unclosedXa", ...openXa };
+  const stillOpen = openFormat();
+  if (stillOpen) unbalanced ??= { kind: "unclosedXa", ...stillOpen };
 
   // Apply the geometry sidecar last so it wins over ^PW/^LL-derived mm and
   // restores dpmm, which plain ZPL can't carry.

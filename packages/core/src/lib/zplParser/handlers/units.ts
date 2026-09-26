@@ -1,6 +1,6 @@
-import { isStoredFormatPath } from "../../storagePath";
+import { isRecallableFormatPath, isStoredFormatPath } from "../../storagePath";
 import { isMuDpi, jmDensityOf } from "../../../types/LabelConfig";
-import { notePartial, deriveUnitScale, type ParserState } from "../context";
+import { notePartial, deriveUnitScale, type ParserState, payloadSummary } from "../context";
 import type { Handler } from "../types";
 
 /** ^MU / ^JM handlers. ^MU owns the dot-scale of body values; the ^JM density
@@ -44,6 +44,16 @@ export function createUnitsHandler(s: ParserState, dpmm: number): Record<string,
     // Read by the format-head lookahead; outside a head the model does not take it, and an unusable path stays raw.
     DF(_p, rest) {
       if (!s.format.inFormatHead || !isStoredFormatPath(rest.trimEnd())) notePartial(s.result, "^DF");
+    },
+    // Only the path is read here. The block's ^XZ replays the template it names.
+    XF(_p, rest) {
+      const raw = rest.trim();
+      if (!isRecallableFormatPath(raw) || s.result.recallFormatPath !== undefined) {
+        notePartial(s.result, payloadSummary("^XF", raw));
+        return;
+      }
+      s.result.recallFormatPath = raw;
+      s.result.recallFormatSpan = s.result.tokenSpan;
     },
   };
 }

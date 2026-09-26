@@ -73,7 +73,7 @@ export function VariableInsertPalette({
   const previewFor = (v: Variable): { text: string; cls: string } => {
     if (getVariableSource(v, dataset, columnMapping) === "bound") {
       const tag =
-        dataset?.source.kind === "db" ? "DB" : dataset?.source.kind === "excel" ? "Excel" : "CSV";
+        dataset?.source.kind === "db" ? "DB" : dataset?.source.kind === "excel" ? "Excel" : dataset?.source.kind === "zpl" ? "ZPL" : "CSV";
       return { text: `${columnMapping?.bindings[v.id]} · ${tag}`, cls: "text-accent" };
     }
     return { text: v.defaultValue ? `"${v.defaultValue}"` : "", cls: "text-muted" };

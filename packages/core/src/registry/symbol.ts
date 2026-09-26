@@ -1,7 +1,7 @@
 import type { PropSpecs } from '../types/propSpec';
 import { ROTATION_SPEC } from './rotation';
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { fieldPosZ } from './zplHelpers';
+import { fieldPosZ, fdFieldFor } from './zplHelpers';
 import { commitRotatedWidthHeightTransform } from './transformHelpers';
 import type { ZplRotation } from './rotation';
 
@@ -58,6 +58,18 @@ export const SYMBOL_PROP_SPECS: PropSpecs<SymbolProps> = {
   rotation: ROTATION_SPEC,
 };
 
+/** The firmware reads the first letter of the ^FD payload. Anything unknown prints the default. */
+export function symbolCodeFromPayload(raw: string): SymbolCode {
+  const code = raw.trim().charAt(0).toUpperCase();
+  return (GS_SYMBOL_CODES.has(code) ? code : DEFAULT_GS_SYMBOL) as SymbolCode;
+}
+
+/** The code that prints: a slot's resolved value when one fills the field, else the chosen symbol. */
+export function symbolCodeOf(p: SymbolProps): SymbolCode {
+  const { content } = p as { content?: string };
+  return content === undefined ? p.symbol : symbolCodeFromPayload(content);
+}
+
 export const symbol: ObjectTypeCore<SymbolProps> = {
   label: 'Symbol',
   icon: '©',
@@ -72,9 +84,11 @@ export const symbol: ObjectTypeCore<SymbolProps> = {
   },
   defaultSize: { width: 30, height: 30 },
 
-  toZPL: (obj) => {
+  toZPL: (obj, ctx) => {
     const p = obj.props;
-    return `${fieldPosZ(obj)}^GS${p.rotation},${p.height},${p.width}^FD${p.symbol}^FS`;
+    // A ^FN the parser bound to the field rides in `content` as its marker, so the slot round-trips.
+    const { content } = p as { content?: string };
+    return `${fieldPosZ(obj)}^GS${p.rotation},${p.height},${p.width}${fdFieldFor(content ?? p.symbol, ctx)}`;
   },
 
   commitTransform: commitRotatedWidthHeightTransform,

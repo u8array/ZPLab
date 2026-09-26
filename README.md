@@ -107,7 +107,7 @@ While you edit, the canvas shows a live preview. Canvas editing and the **Proper
 
 **File → Import ZPL** takes pasted ZPL, a `.zpl` file or a `.prn` file.
 
-Import covers text, barcodes, shapes, label settings and `^FN` fields. Images include printer-stored and compressed graphics. `^FN` slots appear in the **Variables** tab. `^FE` embeds such as `^FD#1#-#2#` import as `«name»` markers.
+Import covers text, barcodes, shapes, label settings and `^FN` fields. Images include printer-stored and compressed graphics. `^FN` slots appear in the **Variables** tab. `^FE` embeds such as `^FD#1#-#2#` import as `«name»` markers. A stream that stores a format with `^DF` and declares `^FN` fields in it opens as that page. Its `^XF` recall blocks that carry only field data become the rows of a dataset, one row per block.
 
 - Unrecognised commands are listed in the import report and do not appear on the canvas.
 - Commands between fields survive export.
@@ -186,12 +186,12 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-119 of the 225 ZPL II commands are modelled in the browser; desktop covers 2 more with a connected printer. 3 more are planned for both builds. 79 need a connected printer and are planned for desktop. The source editor checks parameters for 1 command. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+120 of the 225 ZPL II commands are modelled in the browser; desktop covers 2 more with a connected printer. 2 more are planned for both builds. 79 need a connected printer and are planned for desktop. The source editor checks parameters for 1 command. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|
 | Layout & flow | 15 / 15 |
-| Templates & variables | 2 / 3 |
+| Templates & variables | 3 / 3 |
 | Barcodes | 29 / 29 |
 | Fields | 16 / 17 |
 | Serialisation | 2 / 2 |

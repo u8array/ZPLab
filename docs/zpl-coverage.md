@@ -151,7 +151,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | Command | Name | Web | Desktop | Lint |
 |---|---|:-:|:-:|:-:|
 | `^DF` | store template | `[x]` | `[x]` | `[ ]` |
-| `^XF` | recall template | `[~]` | `[~]` | `[ ]` |
+| `^XF` | recall template | `[x]` | `[x]` | `[ ]` |
 | `^XG` | recall graphic | `[x]` | `[x]` | `[ ]` |
 
 ## Media & feed

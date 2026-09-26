@@ -150,10 +150,13 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
       title: "Export ZPL",
       description:
         "Parse a design file and return its generated ZPL: plain printer bytes, or with " +
-        "ZPLab's ^FX metadata when `metadata` is true (lossless re-import).",
+        "ZPLab's ^FX metadata when `metadata` is true (lossless re-import). With `batch`, one page " +
+        "is stored as a format and recalled once per row, bound by the file's csvMapping: the page " +
+        "batch.formatPath names, else the sole page with storedFormatPath, else the only page. " +
+        "Other pages are left out and noted.",
       inputSchema: strictInput(exportZplInputSchema.shape, INSIDE_DESIGN_FILE),
     },
-    async ({ designFile, metadata }) => json(exportZpl(designFile, { metadata })),
+    async ({ designFile, metadata, batch }) => json(exportZpl(designFile, { metadata, batch })),
   );
 
   server.registerTool(
@@ -164,7 +167,8 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "Parse a raw ZPL stream (one page per ^XA block) and report it: object/page " +
         "count, detected label, parser findings (unknown/partial/hardware-bound " +
         "commands, fields the printer discards for a missing ^FS), preflight warnings, " +
-        "per-object bounds (dots), and bbox overlaps. " +
+        "per-object bounds (dots), and bbox overlaps. A stream that stores a format with ^DF, declares " +
+        "^FN fields in it and recalls it with ^XF once per row reports the rows' headers and count as `batch`. " +
         "widthMm/heightMm are fallbacks for streams without ^PW/^LL.",
       inputSchema: strictInput(zplInputShape),
     },
@@ -181,7 +185,10 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "printer discards for a missing ^FS, which the design omits), per-object bounds " +
         "(dots), and bbox overlaps. Size falls back to the caller's hints then 100x50mm. " +
         "Right-justified z=1 1D barcodes (^FO/^FT) are normalised to top-left x (bwip-" +
-        "measured, same as the app import) and enable the label's emit1dZJustify gate.",
+        "measured, same as the app import) and enable the label's emit1dZJustify gate. " +
+        "A stream that stores a format with ^DF, declares ^FN fields in it and recalls it with ^XF " +
+        "once per row folds those rows into `batch` bound by a csvMapping. Other pages stay pages. " +
+        "Hand batch to export_zpl.",
       inputSchema: strictInput(zplInputShape),
     },
     async ({ zpl, dpmm, widthMm, heightMm }) => json(importZpl(zpl, dpmm, widthMm, heightMm)),

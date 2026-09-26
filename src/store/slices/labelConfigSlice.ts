@@ -9,21 +9,14 @@ import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { parseDesignFile, designFileErrors } from '@zplab/core/lib/designFile';
 import { selectEditorFrozen, selectSourceEditDirty, selectSourceEditing } from '../labelStore.selectors';
 import { endSourceSession } from './sourceEditSlice';
-import { mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel } from '@zplab/core/lib/zplImportService';
+import { mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult } from '@zplab/core/lib/zplImportService';
 import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
 import { countChangedProfileSettings } from '@zplab/core/types/PrinterProfile';
 import { applyProfilePatch } from './printerProfileSlice';
-import { configPatchAffectsEmit } from '../labelStore.internals';
+import { configPatchAffectsEmit, type WithTemporal } from '../labelStore.internals';
 import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
 import { rescaleDesign, rescaleParamsFor } from '../../lib/densityRescale';
 import type { LabelState } from '../labelStore';
-
-/** zundo attaches `.temporal` to the store api; reach it through the injected
- *  `api` rather than importing the store module (which would create a
- *  labelStore <-> slice import cycle). */
-interface WithTemporal {
-  temporal: { getState(): { clear(): void } };
-}
 
 export interface LabelConfigSlice {
   label: LabelConfig;
@@ -65,7 +58,7 @@ export interface LabelConfigSlice {
 
 export interface ImportInput {
   mode: 'replace' | 'append';
-  imported: { labelConfig: Partial<LabelConfig>; pages: Page[]; variables: Variable[] };
+  imported: { labelConfig: Partial<LabelConfig>; pages: Page[]; variables: Variable[]; batch?: ZplImportResult['batch'] };
   profile: Partial<PrinterProfile>;
 }
 
@@ -171,14 +164,16 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
     if (imported.pages.length === 0) {
       if (profilePatch) set(profilePatch);
     } else if (mode === 'replace') {
-      get().loadDesign(replaceImportLabel(get().label, imported.labelConfig), imported.pages, imported.variables);
+      get().loadDesign(replaceImportLabel(get().label, imported.labelConfig), imported.pages, imported.variables, imported.batch?.columnMapping);
+      if (imported.batch) get().loadDataset(imported.batch.dataset);
       if (profilePatch) api.setState(profilePatch);
-      // The profile belongs to the same replacement as loadDesign, not to a step after it.
+      // The profile and the rows belong to the same replacement as loadDesign, not to a step after it.
       (api as unknown as WithTemporal).temporal.getState().clear();
     } else {
-      // The current config stays, variables included. The imported ^JM re-pins each page's density first.
+      // The current config, variables and dataset all stay unchanged: recall rows belong to the template they came with.
       const ended = endSourceSession();
       set((state) => ({
+        // The imported ^JM re-pins each page's density before the pages append.
         ...appendPagesPatch(state, rebaseAppendedPageDensity(imported.pages, imported.labelConfig.jmDensity, state.label.jmDensity)),
         ...(profilePatch ?? {}),
         ...ended,

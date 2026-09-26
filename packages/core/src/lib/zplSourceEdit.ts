@@ -1,6 +1,6 @@
 import { LABEL_META_KEYS } from "./zplLabelMeta";
 import type { CachedImage } from "./imageCache";
-import { importZplText, mergeSetupUploads, replaceImportLabel } from "./zplImportService";
+import { importZplText, type ZplImportResult, mergeSetupUploads, replaceImportLabel } from "./zplImportService";
 import { repairPrinterProfile, SETUP_UPLOAD_FIELDS } from "../types/PrinterProfile";
 import type { ImportReport, UnbalancedFormat } from "./zplParser";
 import type { LabelConfig } from "../types/LabelConfig";
@@ -83,6 +83,8 @@ export interface SourceApplyOk {
   images: readonly CachedImage[];
   /** Uploads the apply adds to the printer profile, which the canvas cannot show. */
   profileUploads: { fonts: number; graphics: number };
+  /** Rows the buffer's ^XF recall blocks folded into, replacing the document's data. */
+  batch?: ZplImportResult["batch"];
 }
 
 /** Keys the baseline stream set that the edited stream dropped were deleted
@@ -160,10 +162,12 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
     pageSources: imported.pageSources,
   });
   const remapped = remapBindingsByFn(current.variables, current.columnMapping, variables);
+  // Recall rows bring their own mapping, so every saved binding goes.
+  const mappingLost = imported.batch ? Object.keys(current.columnMapping?.bindings ?? {}).length : remapped.lost;
   const loss = diffEditorState(
     { pages: current.pages, variables: current.variables },
     { pages, variables },
-    remapped.lost,
+    mappingLost,
   );
 
   // lossyEdit describes overlay-replay quality for FUTURE canvas edits, not a
@@ -176,12 +180,13 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
       pages: pages.length > 0 ? pages : [{ objects: [] }],
       variables,
       printerProfile,
-      columnMapping: remapped.mapping,
+      columnMapping: imported.batch?.columnMapping ?? remapped.mapping,
     },
     report: { ...imported.report, findings },
     objectCount,
     loss,
     images: imported.decodedImages,
     profileUploads: uploads.changed,
+    ...(imported.batch ? { batch: imported.batch } : {}),
   };
 }

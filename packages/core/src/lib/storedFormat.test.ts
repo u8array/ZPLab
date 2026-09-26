@@ -37,10 +37,12 @@ describe("^DF on import", () => {
     expect(imported.report.findings.filter((f) => f.kind === "unknown")).toEqual([]);
   });
 
-  it("reports a ^DF outside the head or with an unusable path, replays it, and leaves ^XF to the unknown list", () => {
+  it("reports a ^DF outside the head or with an unusable path, replays it, and reads ^XF as the block's recall", () => {
     const r = parseZPL(`^XA${NL}${field}${NL}^DFE:LATE.ZPL${NL}^XZ${NL}^XA${NL}^DFE:MY LABEL.ZPL${NL}^XFE:X.ZPL^FS${NL}^XZ`, 8);
     expect(r.pages.map((p) => p.storedFormatPath)).toEqual([undefined, undefined]);
-    expect(r.pages.flatMap((p) => p.findings).map((f) => `${f.kind}:${f.command}`)).toEqual(expect.arrayContaining(["partial:^DF", "unknown:^XFE:X.ZPL"]));
+    expect(r.pages.map((p) => p.recallFormatPath)).toEqual([undefined, "E:X.ZPL"]);
+    expect(r.pages.flatMap((p) => p.findings).map((f) => `${f.kind}:${f.command}`)).toEqual(expect.arrayContaining(["partial:^DF"]));
+    expect(r.pages.flatMap((p) => p.findings).some((f) => f.kind === "unknown")).toBe(false);
     const imported = importZplText(block("E:MY LABEL.ZPL", field), 8);
     expect(generateMultiPageZPL(withLabel(imported), imported.pages)).toBe(block("E:MY LABEL.ZPL", field));
   });

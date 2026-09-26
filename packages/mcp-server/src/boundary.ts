@@ -115,8 +115,13 @@ export const designFileInputSchema = z
 
 export const designFileEnvelopeSchema = z.object({ designFile: designFileInputSchema });
 
-/** export_zpl: `metadata` keeps ZPLab's ^FX comments for a lossless re-import. */
-export const exportZplInputSchema = designFileEnvelopeSchema.extend({ metadata: z.boolean().optional() });
+/** export_zpl: `metadata` keeps ZPLab's ^FX comments for a lossless re-import. `batch` prints the stored page once per row. */
+export const exportZplInputSchema = designFileEnvelopeSchema.extend({
+  metadata: z.boolean().optional(),
+  batch: strictEntry({ headers: z.array(z.string()), rows: z.array(z.array(z.string())), formatPath: z.string().optional() }, "batch")
+    .optional()
+    .describe("Rows bound to the variables by the design file's csvMapping, as import_zpl returns them. formatPath names the stored page to recall."),
+});
 
 
 export interface ToolError {
