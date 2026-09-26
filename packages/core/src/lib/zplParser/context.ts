@@ -511,6 +511,14 @@ export function getDefaultTextW(defaults: DefaultsState): number {
   return defaults.cfWidth || 0;
 }
 
+/** A field the stream gave data but no field type prints as text in the ^CF defaults. */
+export function openDefaultText(field: FieldState, defaults: DefaultsState): void {
+  field.fieldType = "text";
+  field.textH = getDefaultTextH(defaults);
+  field.textW = getDefaultTextW(defaults);
+  field.textRot = defaults.fwRotation;
+}
+
 /** ^FO vs ^FT discriminator for emit sites. */
 export function getPosType(field: FieldState): "FT" | "FO" {
   return field.positionIsFT ? "FT" : "FO";

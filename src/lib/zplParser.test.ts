@@ -3167,14 +3167,26 @@ describe('parseZPL — lossyEdit finding for regen-unsafe blocks', () => {
     expect(r.findings.find((x) => x.kind === 'lossyEdit')?.command).toContain('^FN');
   });
 
-  it('flags a valueless ^FN field the same way, off-label or on-label', () => {
-    for (const decl of ['^FO32000,32000^FN1^FS', '^FO50,50^FN1^FS']) {
-      const r = parseSingle(`^XA${decl}^FO10,10^A0N,30,0^FE#^FDa#1#b^FS^XZ`, 8, { captureOverlay: true });
-      expect(r.variables.map((v) => [v.fnNumber, v.defaultValue])).toEqual([[1, '']]);
+  it('flags a valueless ^FN field parked off-label the same way', () => {
+    const r = parseSingle('^XA^FO32000,32000^FN1^FS^FO10,10^A0N,30,0^FE#^FDa#1#b^FS^XZ', 8, { captureOverlay: true });
+    expect(r.variables.map((v) => [v.fnNumber, v.defaultValue])).toEqual([[1, '']]);
+    expect(r.objects).toHaveLength(1);
+    expect(r.overlay?.regenSafe).toBe(false);
+    expect(r.findings.find((x) => x.kind === 'lossyEdit')?.command).toContain('^FN');
+  });
+
+  it('prints a positioned ^FN without a font in the ^CF default font, as the ZD230 does', () => {
+    // Measured 2026-09-26: `^FO50,50^FN1^FS` printed the slot value in the default font. `^CF0,60,60` enlarged it.
+    for (const [zpl, h, w] of [['^XA^FO50,50^FN1^FDab^FS^XZ', 30, 0], ['^XA^CF0,60,60^FO50,50^FN1^FS^XZ', 60, 60]] as const) {
+      const r = parseSingle(zpl, 8);
       expect(r.objects).toHaveLength(1);
-      expect(r.overlay?.regenSafe).toBe(false);
-      expect(r.findings.find((x) => x.kind === 'lossyEdit')?.command).toContain('^FN');
+      expect(r.objects[0]?.type).toBe('text');
+      expect(props(r.objects[0])).toMatchObject({ fontHeight: h, fontWidth: w });
+      expect(r.variables.map((v) => v.fnNumber)).toEqual([1]);
     }
+    const bound = parseSingle('^XA^FO50,50^FN1^FDab^FS^XZ', 8);
+    expect(props(bound.objects[0]).content).toBe(`«${bound.variables[0]?.name}»`);
+    expect(bound.variables[0]?.defaultValue).toBe('ab');
   });
 
   it('flags an ^FN left open at ^XZ', () => {
@@ -3184,7 +3196,7 @@ describe('parseZPL — lossyEdit finding for regen-unsafe blocks', () => {
   });
 
   it('does not bind the next field to a valueless declaration', () => {
-    for (const decl of ['^FN1^FS', '^FO32000,0^FN1^FS', '^FO50,50^FN1^FS']) {
+    for (const decl of ['^FN1^FS', '^FO32000,0^FN1^FS']) {
       const r = parseSingle(`^XA${decl}^FO10,10^A0N,30,0^FDplain^FS^XZ`, 8);
       expect(props(r.objects[0]).content).toBe('plain');
     }
