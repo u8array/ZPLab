@@ -3,6 +3,7 @@ import type { SourceApplyOk } from '@zplab/core/lib/zplSourceEdit';
 import { DialogShell } from '../ui/DialogShell';
 import { ImportSummaryBody } from './ImportSummary';
 import { describeEditorLoss } from '../../lib/importReport';
+import { useLabelStore, sourceApplyRowReplacement } from '../../store/labelStore';
 import { useT } from '../../hooks/useT';
 
 /** Pre-commit review: import findings plus the editor-only loss the apply
@@ -21,6 +22,8 @@ export function SourceApplyConfirmDialog({
 }) {
   const t = useT();
   const lossLines = describeEditorLoss(plan.loss, t.importReport);
+  const dataset = useLabelStore((s) => s.dataset);
+  const replacedRows = sourceApplyRowReplacement(dataset, plan);
   return (
     <DialogShell
       onClose={onCancel}
@@ -55,6 +58,13 @@ export function SourceApplyConfirmDialog({
               </span>
             ))}
           </div>
+        )}
+        {plan.batch && (
+          <span className="px-4 pb-4 pt-2 font-mono text-[10px] text-amber-400">
+            {replacedRows
+              ? t.output.editSourceReplacesRowsFmt.replace('{name}', replacedRows.oldName).replace('{n}', String(replacedRows.rows))
+              : t.output.editSourceLoadsRowsFmt.replace('{n}', String(plan.batch.dataset.rows.length))}
+          </span>
         )}
       </div>
       <div className="flex justify-end gap-2 px-4 py-3 border-t border-border shrink-0">

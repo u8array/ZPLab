@@ -105,6 +105,12 @@ export interface ParsedPage {
   labelConfig: Partial<LabelConfig>;
   /** The block's ^DF path, canonical; absent when it stores nothing. */
   storedFormatPath?: string;
+  /** The block's first ^XF path as written. Absent when it recalls nothing. */
+  recallFormatPath?: string;
+  recallFormatSpan?: SourceSpan;
+  /** The parser's recall record, its ranges made page-relative.
+   *  `slotsOnly`: the block held nothing but the recall and slot data, so it prints only that format. */
+  recall?: { pageIndex: number; slotsOnly: boolean; objects: [number, number]; variables: [number, number]; declarations: Variable[] };
   /** Page 0 only: stream had no ^XA wrapper (bare field paste). Re-export
    *  regenerates the wrapper, so the overlay is suppressed by the caller. */
   bare?: boolean;

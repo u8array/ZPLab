@@ -5,7 +5,10 @@ import { z } from "zod";
 import {
   serializeDesign,
 } from "@zplab/core/lib/designFile";
-import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
+import { generateBatchZpl, generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
+import { pageLabelConfig } from "@zplab/core/types/Group";
+import { boundColumnIndex } from "@zplab/core/lib/variableBinding";
+import { isRecallableFormatPath, parseStoragePath, recallCandidates, storageKey } from "@zplab/core/lib/storagePath";
 import { zplForExport } from "@zplab/core/lib/zplLabelMeta";
 import { importZplText, type ZplImportResult } from "@zplab/core/lib/zplImportService";
 import {
@@ -190,20 +193,48 @@ export type ExportZplResult =
 
 /** The ZPL plus the warnings that apply to it: an agent that exports straight
  *  from a design it did not build itself would otherwise never see them. */
-export function exportZpl(designFile: unknown, opts: { metadata?: boolean } = {}): ExportZplResult {
+export function exportZpl(
+  designFile: unknown,
+  opts: { metadata?: boolean; batch?: { headers: string[]; rows: string[][]; formatPath?: string } } = {},
+): ExportZplResult {
   const parsed = parseEnvelope(designFile);
   if (!parsed.ok) return parsed;
-  const { label, pages, variables } = parsed.value;
+  const { label, pages, variables, columnMapping } = parsed.value;
+  // A batch recalls one page: the one its formatPath names, else the one stored as a format, else the only page.
+  const named = opts.batch?.formatPath;
+  const namedRef = named === undefined ? undefined : isRecallableFormatPath(named) ? parseStoragePath(named) : null;
+  if (named !== undefined && !namedRef) return { ok: false, errors: ["batch.formatPath is not a name ^XF could recall"] };
+  // A bare name resolves through the printer's device search, as ^XF does.
+  const namedKeys = namedRef ? recallCandidates({ ...namedRef, ext: namedRef.ext ?? "ZPL" }) : undefined;
+  const stored = pages.filter((p) => p.storedFormatPath !== undefined && (namedKeys === undefined || namedKeys.includes(storageKey(p.storedFormatPath))));
+  const page = stored.length === 1 ? stored[0] : stored.length === 0 && named === undefined && pages.length === 1 ? pages[0] : undefined;
+  if (opts.batch && !page) return { ok: false, errors: ["batch needs the page its formatPath names, exactly one page with storedFormatPath, or a single-page design"] };
+  if (opts.batch && opts.batch.rows.length === 0) return { ok: false, errors: ["batch has no rows, so nothing would print"] };
+  if (opts.batch && opts.batch.rows.some((row) => row.length !== opts.batch?.headers.length)) {
+    return { ok: false, errors: ["batch rows must have one value per header"] };
+  }
+  if (opts.batch && !variables.some((v) => boundColumnIndex(v, opts.batch ?? null, columnMapping) !== -1)) {
+    return { ok: false, errors: ["batch binds no variable: the design file's csvMapping must map variables to the batch headers"] };
+  }
+  const printed = opts.batch && page ? [page] : pages;
   // Same report the draft tools give, dataset caveat included: an empty warning
   // list read as a clean bill of health is worst right before printing.
-  const report = warningReport(label, variables, pages, parsed.value.columnMapping !== null);
-  // Same path as the app's export: per-page emit replays captured overlays.
-  const zpl = withFootprintBinding(label, variables, () => generateMultiPageZPL(label, pages, variables));
+  const report = warningReport(label, variables, printed, columnMapping !== null);
+  // Same paths as the app's exports: per-page emit replays captured overlays.
+  const zpl = withFootprintBinding(label, variables, () =>
+    opts.batch && columnMapping && page
+      ? generateBatchZpl(pageLabelConfig(label, page), page.objects, variables, opts.batch, columnMapping)
+      : generateMultiPageZPL(label, pages, variables),
+  );
+  const notes = [
+    ...(report.notes ?? []),
+    ...(opts.batch && page && pages.length > 1 ? [`batch printed page ${pages.indexOf(page) + 1} of ${pages.length}; the other pages are not in the ZPL`] : []),
+  ];
   return {
     ok: true,
     zpl: zplForExport(zpl, opts.metadata),
     warnings: report.warnings,
-    ...(report.notes && report.notes.length > 0 ? { notes: report.notes } : {}),
+    ...(notes.length > 0 ? { notes } : {}),
   };
 }
 
@@ -298,6 +329,8 @@ export type ValidateZplResult =
       objectCount: number;
       pageCount: number;
       label: LabelConfig;
+      /** Row count of the stream's ^XF recall blocks for its ^DF template. */
+      batch?: { headers: string[]; rowCount: number };
       findings: ZplFindings;
       warnings: PreflightWarning[];
       notes?: string[];
@@ -327,6 +360,7 @@ export function validateZpl(
     objectCount: imported.pages.reduce((n, p) => n + p.objects.length, 0),
     pageCount: imported.pages.length,
     label,
+    ...(imported.batch ? { batch: { headers: imported.batch.dataset.headers, rowCount: imported.batch.dataset.rows.length } } : {}),
     findings: findingsOf(imported.report),
     ...boundReport(label, imported.variables, imported.pages),
   };
@@ -336,6 +370,8 @@ export type ImportZplResult =
   | {
       ok: true;
       designFile: DesignFileJson;
+      /** Rows the stream's ^XF recall blocks carry for its ^DF template, bound to the variables by the design file's csvMapping. */
+      batch?: { headers: string[]; rows: string[][]; formatPath?: string };
       findings: ZplFindings;
       /** What the stream itself declared, after the caller's hints and the
        *  fallback size: ^PW/^LL win, so the result is worth reading back. */
@@ -363,10 +399,11 @@ export function importZpl(
   const rejected = importRejection(imported);
   if (rejected) return rejected;
   const label = completeLabel(imported.labelConfig, dpmm, widthMm, heightMm);
-  const serialized = serializeDesign(label, imported.pages, imported.variables);
+  const serialized = serializeDesign(label, imported.pages, imported.variables, imported.batch?.columnMapping ?? null);
   return {
     ok: true,
     designFile: JSON.parse(serialized) as DesignFileJson,
+    ...(imported.batch ? { batch: { headers: imported.batch.dataset.headers, rows: imported.batch.dataset.rows, ...(imported.batch.dataset.source.kind === "zpl" ? { formatPath: imported.batch.dataset.source.formatPath } : {}) } } : {}),
     findings: findingsOf(imported.report),
     label,
     ...boundReport(label, imported.variables, imported.pages),

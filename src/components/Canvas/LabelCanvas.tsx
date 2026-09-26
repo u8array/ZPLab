@@ -14,7 +14,7 @@ import { CANVAS_DROPPABLE_ID } from "../../dnd/types";
 import { paletteGhostHandlers } from "./paletteGhostMonitor";
 import { Stage, Layer, Group, Image as KImage, Rect, Transformer } from "react-konva";
 import type Konva from "konva";
-import { useLabelStore, currentObjects, currentPageLabel, getCurrentObjects, selectEditorFrozen, selectPreviewLocksEditor, selectRenderPageLabel, selectRenderObjects, selectRenderColumnMapping } from "../../store/labelStore";
+import { useLabelStore, currentObjects, currentPageLabel, getCurrentObjects, selectEditorFrozen, selectPreviewLocksEditor, selectRenderPageLabel, selectRenderObjects, selectRenderColumnMapping, selectRenderDataset } from "../../store/labelStore";
 import { isGroup, getAllLeaves, exportableLeaves, expandSelection, selectionTargetId, findObjectById, canDeleteSelection, canGroupSelection, canUngroupSelection, hasLockedAncestor, isSelectionLocked, type LabelObject } from "@zplab/core/types/Group";
 import { pxToDots, dotsToPx, mmToDots, SCREEN_PX_PER_MM } from "@zplab/core/lib/coordinates";
 import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
@@ -269,8 +269,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const previewBinding = usePreviewBinding();
   const renderVariables = previewBinding.variables;
   // Raw dataset/mapping (not just the active row): markerValueFindings
-  // validates marker values across ALL CSV rows, since any row prints.
-  const dataset = useLabelStore((s) => s.dataset);
+  // validates marker values across ALL rows, since any row prints.
+  const dataset = useLabelStore(selectRenderDataset);
   const columnMapping = useLabelStore(selectRenderColumnMapping);
   const paletteRows = useLabelStore((s) => s.paletteRows);
   const previewMode = useLabelStore((s) => s.previewMode);

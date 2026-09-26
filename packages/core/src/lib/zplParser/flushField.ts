@@ -1,7 +1,6 @@
 import {
   FN_NUMBER_MIN,
   FN_NUMBER_MAX,
-  uniqueVariableName,
   isValidVariableName,
   markerOf,
   type Variable,
@@ -34,8 +33,7 @@ import type { Gs1DatabarProps } from "../../registry/gs1databar";
 import type { Pdf417Props } from "../../registry/pdf417";
 import { code49Module, code49SnapHeight, type Code49Props } from "../../registry/code49";
 import {
-  DEFAULT_GS_SYMBOL,
-  GS_SYMBOL_CODES,
+  symbolCodeFromPayload,
   type SymbolProps,
 } from "../../registry/symbol";
 import { applySerialToLeaf } from "../../registry/serialField";
@@ -54,6 +52,7 @@ import { notePartial,
   resetSymbologyModeFlags,
   slotAdoptsEmptyFd,
   openDefaultText,
+  claimVariableName,
   type FnDefaultCandidate,
   type ParserState,
   isTbField,
@@ -163,7 +162,7 @@ export function createCloseField(
     const base = hinted && isValidVariableName(hinted) ? hinted : `field_${fnNumber}`;
     const v: Variable = {
       id: newId(),
-      name: uniqueVariableName(base, variables),
+      name: claimVariableName(s, base),
       fnNumber,
       defaultValue,
     };
@@ -204,6 +203,7 @@ export function createCloseField(
   // ^FO/^FT z rides onto the leaf like the graphics handlers do; L is implicit.
   const pushLeaf = (o: LabelObject) => {
     if (s.field.justify === "R") o.fieldJustify = "R";
+    s.anchorById.set(o.id, [s.field.x, s.field.y]);
     objects.push(o);
   };
 
@@ -215,14 +215,21 @@ export function createCloseField(
     if (slotAdoptsEmptyFd(s)) {
       s.field.pendingFD = "";
     }
+    // Decoded once under the recall block's own ^FH, so it replaces the decoded bytes, not the raw ^FD.
+    const recallValue = s.comment.fnNumber === null ? undefined : s.recall?.get(s.comment.fnNumber);
     if (!s.field.fieldType || s.field.pendingFD === null) {
       // ^FN with no field type declares the slot; a ^FD is its default.
       if (s.comment.fnNumber !== null) {
-        if (s.field.pendingFD !== null) {
-          const decl = s.format.fhActive
+        const own = s.field.pendingFD === null
+          ? undefined
+          : s.format.fhActive
             ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.ciDecoder)
             : s.field.pendingFD;
+        // The block's value fills a slot the format only declares, as it fills a typed field.
+        const decl = recallValue ?? own;
+        if (decl !== undefined) {
           upsertVariable(s.comment.fnNumber, decl, s.comment.fnComment);
+          if (recallValue === undefined && s.field.pendingHexControl) s.declaredHexControl.set(s.comment.fnNumber, s.field.pendingHexControl);
         }
         s.declaredFns.add(s.comment.fnNumber);
         s.comment.fnNumber = null;
@@ -234,10 +241,10 @@ export function createCloseField(
       resetSymbologyModeFlags(s.field);
       return;
     }
-    const rawDecoded = s.format.fhActive
+    const rawDecoded = recallValue ?? (s.format.fhActive
       ? decodeFH(s.field.pendingFD, s.format.fhDelimiter, s.format.ciDecoder)
-      : s.field.pendingFD;
-    const hexControl = s.field.pendingHexControl;
+      : s.field.pendingFD);
+    const hexControl = recallValue === undefined ? s.field.pendingHexControl : (s.declaredHexControl.get(s.comment.fnNumber ?? -1) ?? null);
     if (hexControl && truncatesAtHexControl(s, rawDecoded)) s.result.hexControl.push(hexControl);
     // FN embeds → markers, then ^FC clock tokens (order matters: `%FN#1#%Y`).
     // Both decode only when armed for THIS field: firmware honours ^FE/^FC
@@ -703,11 +710,7 @@ export function createCloseField(
         );
         break;
       case "symbol": {
-        // ^GS payload is a single letter A..E selecting the glyph.
-        // Anything else falls back to DEFAULT_GS_SYMBOL so a malformed
-        // import still produces a sensible visible object.
-        const raw = content.trim().charAt(0).toUpperCase();
-        const code = (GS_SYMBOL_CODES.has(raw) ? raw : DEFAULT_GS_SYMBOL) as SymbolProps["symbol"];
+        const code = symbolCodeFromPayload(content);
         pushLeaf(
           makeObj(
             "symbol",

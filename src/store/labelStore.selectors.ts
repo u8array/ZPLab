@@ -8,7 +8,8 @@ import type { ColumnMapping } from '@zplab/core/types/Variable';
 import type { LabelState } from './labelStore';
 import { serializeDesign } from '@zplab/core/lib/designFile';
 import type { PageState } from './labelStore.internals';
-import type { SourceDocumentState } from '@zplab/core/lib/zplSourceEdit';
+import type { SourceApplyOk, SourceDocumentState } from '@zplab/core/lib/zplSourceEdit';
+import { datasetDisplayName } from '@zplab/core/types/DataSource';
 import { designAsPageLabel, PER_LABEL_ZPL_FIELDS, type LabelConfig, type PageLabel } from '@zplab/core/types/LabelConfig';
 
 export const currentObjects = (state: PageState): LabelObject[] =>
@@ -68,8 +69,20 @@ export const selectRenderDesignLabel = (s: LabelState): LabelConfig =>
 export const selectRenderColumnMapping = (s: LabelState) =>
   s.sourceShadow?.doc ? s.sourceShadow.doc.columnMapping : s.columnMapping;
 
+/** The rows the preview binds: the shadow's own when the buffer carries recall rows, else the live dataset. */
+export const selectRenderDataset = (s: LabelState): Dataset | null =>
+  s.sourceShadow?.doc?.dataset ?? s.dataset;
+
 /** One answer for the pane and the export to what the ZPL carries. */
 export const selectKeepExportMetadata = (s: LabelState): boolean => s.keepExportMetadata;
+
+/** The loaded rows a source apply would replace with the buffer's recall rows, null when it replaces none.
+ *  A dataset an earlier recall stream loaded counts too, since the buffer text never carries rows. */
+export const sourceApplyRowReplacement = (
+  dataset: Dataset | null,
+  plan: SourceApplyOk,
+): { oldName: string; rows: number } | null =>
+  plan.batch && dataset ? { oldName: datasetDisplayName(dataset.source), rows: plan.batch.dataset.rows.length } : null;
 
 /** The document as prepareSourceApply consumes it: shadow parse and apply
  *  MUST build it identically or the preview drifts from the commit. */

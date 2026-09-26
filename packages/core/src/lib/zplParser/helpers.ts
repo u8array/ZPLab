@@ -168,10 +168,17 @@ const LETTER_RE = /[A-Za-z]/;
  *  subsequent commands. The caller passes a live ref (typically
  *  `s.format`) whose `caretChar`/`tildeChar` may be mutated between
  *  iterations. */
+export interface ZplToken {
+  cmd: string;
+  rest: string;
+  start: number;
+  end: number;
+}
+
 export function* tokenize(
   zpl: string,
   chars: TokenizerChars,
-): Generator<{ cmd: string; rest: string; start: number; end: number }> {
+): Generator<ZplToken> {
   // Between commands, any letter after a tilde is read as a command name so
   // unknown ~XX junk still surfaces in the import report; a tilde before a
   // non-letter is data (e.g. `~1`, a ^BX FNC1 escape).

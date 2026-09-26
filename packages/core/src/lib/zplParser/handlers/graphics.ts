@@ -6,6 +6,7 @@ import { clampMagnification, type ImageProps } from "../../../registry/image";
 import type { LineProps } from "../../../registry/line";
 import { loadFontBytesSync } from "../../fontCache";
 import { parseStoragePath, recallCandidates, storageKey, uploadedGraphicPath, type StoragePath } from "../../storagePath";
+import type { DecodedGraphic } from "../types";
 import { fontNamedSoFar, notePartial, getPosType, noteFieldInk, payloadSummary, pushBrowserLimit, REGEN_LOSSY_REASONS, type ParserState, type PendingReverseBg } from "../context";
 import type { LabelObject } from "../../../types/Group";
 import { decodeGraphicToImage } from "../decoders/graphic";
@@ -39,7 +40,21 @@ export interface GraphicsHelpers {
   onUpload: (key: string, short: boolean) => void;
 }
 
+/** The same bytes decode once: a replayed template re-dispatches its graphic per recall row. */
+function decodeGraphicOnce(s: ParserState, decode: () => DecodedGraphic | null): DecodedGraphic | null {
+  const key = s.result.tokenSpan?.start ?? -1;
+  const hit = s.graphicMemo.get(key);
+  if (hit) return hit;
+  const decoded = decode();
+  if (decoded) {
+    s.graphicMemo.set(key, decoded);
+    s.result.decodedImages.push(decoded.image);
+  }
+  return decoded;
+}
+
 export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers): GraphicsFamily {
+  const decodeOnce = (decode: () => DecodedGraphic | null): DecodedGraphic | null => decodeGraphicOnce(s, decode);
   const { takeComment, onReverseBgCommitted, onStandaloneObject, onUpload } = helpers;
   const getReverseFlag = () => s.label.lrActive || s.field.frActive || undefined;
   const { dots } = dotsFor(s);
@@ -167,19 +182,18 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       return;
     }
     // Text payloads drag the stream terminator along; a counted binary one ends where the tokenizer cut it.
-    const image = decodeGraphicToImage(
+    const image = decodeOnce(() => decodeGraphicToImage(
       fmt === "B" ? data : data.trimEnd(),
       fmt,
       bytesPerRow,
       String(size),
       String(size),
       `uploaded_${path.replace(/[:.]/g, "_")}.png`,
-    );
+    ));
     if (!image) {
       pushBrowserLimit(s.result, summary);
       return;
     }
-    s.result.decodedImages.push(image.image);
     if (!image.crcOk) notePartial(s.result, code, "checksumMismatch");
     if (image.truncated) notePartial(s.result, code, "shortPayload");
     const key = uploadedGraphicPath(parsed);
@@ -310,13 +324,13 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       }
 
       // Pass bytes-headers verbatim so re-export keeps the firmware buffer hint.
-      const gfImage = decodeGraphicToImage(
+      const gfImage = decodeOnce(() => decodeGraphicToImage(
         gfRawData,
         format,
         gfBytesPerRow,
         gfParams[0] ?? "",
         gfParams[1] ?? "",
-      );
+      ));
       if (!gfImage) {
         // Undecodable, but the header still describes the bitmap, so preserve
         // the field verbatim instead of dropping it. Height is param c (field
@@ -344,7 +358,6 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         );
         return;
       }
-      s.result.decodedImages.push(gfImage.image);
       if (!gfImage.crcOk) notePartial(s.result, "^GF", "checksumMismatch");
       if (gfImage.truncated) {
         notePartial(s.result, "^GF", "shortPayload");

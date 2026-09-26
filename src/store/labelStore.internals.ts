@@ -197,3 +197,8 @@ export function updateCurrentObjects(
     ),
   };
 }
+
+/** zundo attaches `.temporal` to the store api. Slices reach it through the injected api, since importing the store module would cycle. */
+export interface WithTemporal {
+  temporal: { getState(): { clear(): void } };
+}

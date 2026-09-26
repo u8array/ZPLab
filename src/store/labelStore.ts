@@ -88,6 +88,8 @@ export {
   selectRenderObjects,
   selectRenderPageLabel,
   selectSourceDocumentState,
+  sourceApplyRowReplacement,
+  selectRenderDataset,
   selectHasPerLabelOverrides,
   selectBatchInputs,
   selectCanBatchExport,

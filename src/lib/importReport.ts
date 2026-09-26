@@ -14,6 +14,8 @@ export interface ImportResult {
   profileUploads?: { fonts: number; graphics: number };
   /** Settings this import changed in the printer profile. */
   profileSettings?: number;
+  /** Recall rows an append import did not load. */
+  droppedRows?: number;
 }
 
 type ReportStrings = Translations['importReport'];
@@ -44,6 +46,9 @@ const LOSS_KEY: Record<ImportLossCause, keyof ReportStrings> = {
   recallMagnification: 'lossRecallMagnification',
   checksumMismatch: 'lossChecksumMismatch',
   fnPartialInsert: 'lossFnPartialInsert',
+  recallFormat: 'lossRecallFormat',
+  recallSlot: 'lossRecallSlot',
+  recallSettings: 'lossRecallSettings',
 };
 
 /** Loss description of a partial: the finding's own cause, else the catalog row's. */

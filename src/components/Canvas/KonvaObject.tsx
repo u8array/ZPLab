@@ -15,14 +15,14 @@ import { boxCornerRadii, outlineInset } from "@zplab/core/lib/shapeGeometry";
 import { RoundedBoxRing } from "./RoundedBoxRing";
 import { reverseShapeStyle } from "./reverseShapeStyle";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
-import { useLabelStore, selectRenderDesignLabel, selectRenderColumnMapping } from "../../store/labelStore";
+import { useLabelStore, selectRenderDesignLabel, selectRenderColumnMapping, selectRenderDataset } from "../../store/labelStore";
 import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/textPositionTransforms";
 import { getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
 import { selectionHandlers, shapeHitProps, useBlankFieldWarns, CAPTURE_CHROME, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
-import { DEFAULT_GS_SYMBOL_META, GS_SYMBOLS } from "@zplab/core/registry/symbol";
+import { DEFAULT_GS_SYMBOL_META, GS_SYMBOLS, symbolCodeOf } from "@zplab/core/registry/symbol";
 import { GS_SYMBOL_PATHS, GS_VECTOR_CODES, type GsVectorCode } from "../../registry/gsSymbolPaths";
 import { isPrintedBlank, blockBoundsDots, blockJustifyWordPositions, blockLineStartDots, blockLineStepDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isBlankText, tbBoundsDots, tbLineStepDots, wrapBlockLines, zebraAlignOffsetDots, zebraHangingIndentOffsetDots, zebraJustifyGapDots, zebraLineWidthDots, type ZplRotation } from "@zplab/core/lib/zebraTextLayout";
 import { resolveTextMode } from "@zplab/core/registry/text";
@@ -457,9 +457,9 @@ const BARCODE_TYPES = new Set([
 
 export function KonvaObject(props_: Props) {
   const { variables, active, clock } = usePreviewBinding();
-  const dataset = useLabelStore((s) => s.dataset);
-  // Render mapping, like the binding above: the tint must classify the same
+  // Render dataset and mapping, like the binding above: the tint must classify the same
   // document the canvas is showing (a shadow remaps onto fresh variable ids).
+  const dataset = useLabelStore(selectRenderDataset);
   const columnMapping = useLabelStore(selectRenderColumnMapping);
   const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
   const obj = applyBindingToObject(props_.obj, variables, active, dataRenderMode, clock, ctrlParityFor(props_.obj));
@@ -717,8 +717,9 @@ function KonvaObjectInner({
     const h = dotsToPx(p.height, scale, dpmm);
     // A/B/C: vector paths from Labelary. D/E (trademarked UL/CSA) and
     // unknown codes fall to the placeholder branch.
-    const vectorPath = GS_VECTOR_CODES.has(p.symbol)
-      ? GS_SYMBOL_PATHS[p.symbol as GsVectorCode]
+    const code = symbolCodeOf(p);
+    const vectorPath = GS_VECTOR_CODES.has(code)
+      ? GS_SYMBOL_PATHS[code as GsVectorCode]
       : null;
     // Zebra rotates only the glyph; bbox stays at (w, h). sceneFunc bakes
     // rotation into rel + canvas rotate.
@@ -798,7 +799,7 @@ function KonvaObjectInner({
                 height={h}
                 align="center"
                 verticalAlign="middle"
-                text={(GS_SYMBOLS.find((s) => s.code === p.symbol) ?? DEFAULT_GS_SYMBOL_META).glyph}
+                text={(GS_SYMBOLS.find((s) => s.code === code) ?? DEFAULT_GS_SYMBOL_META).glyph}
                 fontSize={Math.min(h, w) * 0.5}
                 fontFamily="'Courier New', monospace"
                 fontStyle="bold"

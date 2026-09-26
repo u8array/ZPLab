@@ -396,6 +396,8 @@ export function createFieldHandlers(
         return;
       }
       s.result.sourceFnNumbers.add(n);
+      // Keyed by slot so a finding about this slot can point at its ^FN.
+      if (s.result.tokenSpan) s.result.lastSpanByCmd.set(`FN${n}`, s.result.tokenSpan);
       s.comment.fnNumber = n;
       s.comment.fnComment = s.comment.pending;
       s.field.fnArmedSinceOpener = true;

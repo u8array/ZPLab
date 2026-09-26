@@ -1,4 +1,4 @@
-import { useLabelStore, selectRenderVariables, selectRenderDesignLabel, selectRenderColumnMapping } from "./labelStore";
+import { useLabelStore, selectRenderVariables, selectRenderDesignLabel, selectRenderColumnMapping, selectRenderDataset } from "./labelStore";
 import {
   buildActiveRow,
   clockCtxFromLabel,
@@ -25,7 +25,7 @@ export interface PreviewBinding {
  *  instead of assembling variables/dataset/clock ad hoc per call site. */
 export function usePreviewBinding(): PreviewBinding {
   const variables = useLabelStore(selectRenderVariables);
-  const dataset = useLabelStore((s) => s.dataset);
+  const dataset = useLabelStore(selectRenderDataset);
   const columnMapping = useLabelStore(selectRenderColumnMapping);
   const label = useLabelStore(selectRenderDesignLabel);
   const active = buildActiveRow(dataset, columnMapping);

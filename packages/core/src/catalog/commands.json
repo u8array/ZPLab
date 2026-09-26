@@ -1384,8 +1384,8 @@
       "title": "recall template",
       "summary": "Recalls a stored format and supplies values for its numbered placeholder fields.",
       "support": {
-        "web": "planned",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
       }
     },

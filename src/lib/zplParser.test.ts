@@ -1711,6 +1711,11 @@ describe('parseZPL — ^MM and ^LS', () => {
     const { labelConfig } = parseSingle('^XA^LS10^XZ', 8);
     expect(labelConfig.labelShift).toBe(10);
   });
+
+  it('drops the shift at ^LS0, which ends the persistent setting', () => {
+    const { labelConfig } = parseSingle('^XA^LS50^FO10,10^A0N,30,30^FDa^FS^LS0^XZ', 8);
+    expect(labelConfig.labelShift).toBeUndefined();
+  });
 });
 
 describe('parseZPL — printer params', () => {

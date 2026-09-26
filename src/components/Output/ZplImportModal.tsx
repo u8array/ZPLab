@@ -39,30 +39,32 @@ export function ZplImportModal({ onClose }: Props) {
   const hasExistingContent =
     pages.length > 1 || (pages[0]?.objects.length ?? 0) > 0;
 
-  // Stop on the result view only for what the changed canvas cannot show: findings, or uploads parked in the profile.
-  const finishImport = (totalObjects: number, report: ImportReport, changed: { fonts: number; graphics: number; settings: number }) => {
+  // Stop on the result view only for what the changed canvas cannot show: findings, uploads parked in the profile, rows left behind.
+  const finishImport = (totalObjects: number, report: ImportReport, changed: { fonts: number; graphics: number; settings: number }, droppedRows: number) => {
     const { settings, ...profileUploads } = changed;
-    if (report.findings.length === 0 && profileUploads.fonts + profileUploads.graphics + settings === 0) {
+    if (report.findings.length === 0 && profileUploads.fonts + profileUploads.graphics + settings + droppedRows === 0) {
       onClose();
     } else {
-      setResult({ objectCount: totalObjects, report, profileUploads, profileSettings: settings });
+      setResult({ objectCount: totalObjects, report, profileUploads, profileSettings: settings, droppedRows });
     }
   };
 
   const commitImport = (imported: ZplImportResult, choice: SetupCommandChoice) => {
     const { printerProfile, pages, keptPageIndexes } = routeSetupCommands(choice, imported);
+    const mode = appendMode && hasExistingContent ? 'append' : 'replace';
     const changed = applyZplImport({
-      mode: appendMode && hasExistingContent ? 'append' : 'replace',
-      imported: { labelConfig: imported.labelConfig, pages, variables: imported.variables },
+      mode,
+      imported: { labelConfig: imported.labelConfig, pages, variables: imported.variables, batch: imported.batch },
       profile: printerProfile,
     });
     if (changed === null) return onClose();
+    const droppedRows = mode === 'append' ? (imported.batch?.dataset.rows.length ?? 0) : 0;
     commitUsedImages(pages, imported.decodedImages);
     const totalObjects = pages.reduce((s, p) => s + p.objects.length, 0);
     // The summary must not warn about findings the routing just resolved.
     const report =
       choice === 'keep' ? imported.report : resolveRoutedReport(imported.report, keptPageIndexes);
-    finishImport(totalObjects, report, changed);
+    finishImport(totalObjects, report, changed, droppedRows);
   };
 
   // Shared by both entry points (paste, file picker); they differ only in how

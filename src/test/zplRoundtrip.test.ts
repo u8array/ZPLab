@@ -679,7 +679,7 @@ describe('parseZPL — real-world structural commands are silently ignored', () 
     '^MNY',           // media handling
     '^MTT',           // media type
     '^JMA',           // applicator / configuration recall
-    '^XF',            // genuinely unknown – will test it IS in unknown
+    '^QQ1',           // genuinely unknown, so it must land in the unknown list
     '^PW600',
     '^LL400',
     '^FO50,50^A0N,30,0^FDReal Label^FS',
@@ -703,7 +703,7 @@ describe('parseZPL — real-world structural commands are silently ignored', () 
 
   it('genuinely unknown commands still surface as unknown findings', () => {
     const parsed = parseSingle(ZEBRA_HEADER_ZPL, 8);
-    expect(commandsOf(parsed, 'unknown').some((s) => s.startsWith('^XF'))).toBe(true);
+    expect(commandsOf(parsed, 'unknown').some((s) => s.startsWith('^QQ'))).toBe(true);
   });
 });
 

@@ -54,7 +54,7 @@ export function FindingRow({ finding, showPage }: { finding: ImportFinding; show
 
 export function ImportSummaryBody({ result, onOpenObjects }: { result: ImportResult; onOpenObjects?: (tab: 'storedFonts' | 'storedGraphics') => void }) {
   const t = useT();
-  const { objectCount, report, profileSettings = 0 } = result;
+  const { objectCount, report, profileSettings = 0, droppedRows = 0 } = result;
   const profileUploads = result.profileUploads ?? { fonts: 0, graphics: 0 };
   const uploads = profileUploads.fonts + profileUploads.graphics;
   const uploadTabs = [
@@ -86,6 +86,11 @@ export function ImportSummaryBody({ result, onOpenObjects }: { result: ImportRes
       {profileSettings > 0 && (
         <p className="font-mono text-[10px] text-muted leading-relaxed">
           {t.importModal.profileSettingsFmt.replace('{n}', String(profileSettings))}
+        </p>
+      )}
+      {droppedRows > 0 && (
+        <p className="font-mono text-[10px] text-amber-400 leading-relaxed">
+          {t.importModal.appendDroppedRowsFmt.replace('{n}', String(droppedRows))}
         </p>
       )}
       <div className="flex flex-col">

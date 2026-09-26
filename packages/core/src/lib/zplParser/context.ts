@@ -4,6 +4,7 @@ import type { SourceSpan, FontLoss } from "./types";
 import type { ImportLossCause } from "../../catalog/schema";
 import type { LabelConfig } from "../../types/LabelConfig";
 import type { CachedImage } from "../imageCache";
+import type { DecodedGraphic } from "./types";
 import type { PrinterProfile } from "../../types/PrinterProfile";
 import type { Variable } from "../../types/Variable";
 import type { TextProps } from "../../registry/text";
@@ -81,6 +82,12 @@ export interface ParserResult {
   variables: Variable[];
   /** One entry per command and cause, first-seen span; swapped per page. */
   partials: Map<string, PartialNote>;
+  /** The block's first ^XF path as written. Reset per page. */
+  recallFormatPath?: string;
+  recallFormatSpan?: SourceSpan;
+  /** The ^DF page whose tokens this block's recall replayed at its ^XZ, the replay's object and
+   *  variable ranges in the result arrays, and the block's own bare slot values. */
+  recall?: { pageIndex: number; objects: [number, number]; variables: [number, number]; declarations: Variable[] };
   /** Span of the token currently being processed; the loop updates it. */
   tokenSpan?: SourceSpan;
   /** Untrimmed end of that token: a counted payload may end in bytes that read as whitespace. */
@@ -359,6 +366,19 @@ export interface ParserState {
    *  disagreed; `decoded` = at least one consumer actually decoded (a bare
    *  wire-form echo must not override a header declaration). */
   fnDefaultCandidates: Map<number, FnDefaultCandidate>;
+  /** Slot values of the recall block whose template is replaying, each standing in for its field's own ^FD.
+   *  Non-null while replaying, when a token's bytes lie in the template block and must not link to this page. */
+  recall: ReadonlyMap<number, string> | null;
+  /** Control byte a slot declaration carried, checked once the replay types the field it fills. */
+  declaredHexControl: Map<number, SpannedToken>;
+  /** Each field's ^FO/^FT anchor in dots, since an I or B rotated ^FO field folds its data's ink width into its model position. */
+  anchorById: Map<string, [number, number]>;
+  /** Decoded graphics by token offset, filled by decodeGraphicOnce. */
+  graphicMemo: Map<number, DecodedGraphic>;
+  /** Names in result.variables, kept in step so a stream of thousands of slots names each in constant time. */
+  variableNames: Set<string>;
+  /** Next suffix to try per base name, so a stream of thousands of pages does not probe from 2 on each. */
+  nameSuffix: Map<string, number>;
 }
 
 /** Payload chars kept in a finding; the rest becomes an ellipsis so one multi-KB blob does not drown out the import report. */
@@ -449,6 +469,30 @@ export function fieldHasContent(s: ParserState): boolean {
     s.reverseBg !== s.field.bgAtOpen ||
     s.field.inkWithoutObject
   );
+}
+
+/** Reserves the lowest free name for `base`, probing from the remembered suffix. */
+export function claimVariableName(s: ParserState, base: string): string {
+  let name = base;
+  if (s.variableNames.has(base)) {
+    let i = s.nameSuffix.get(base) ?? 2;
+    while (s.variableNames.has(`${base}_${i}`)) i++;
+    s.nameSuffix.set(base, i + 1);
+    name = `${base}_${i}`;
+  }
+  s.variableNames.add(name);
+  return name;
+}
+
+/** Frees a variable name so the lowest free suffix is handed out again, as a linear probe would. */
+export function releaseVariableName(s: ParserState, name: string): void {
+  s.variableNames.delete(name);
+  const m = /^(.*)_(\d+)$/.exec(name);
+  if (!m || m[1] === undefined || m[2] === undefined) return;
+  const hint = s.nameSuffix.get(m[1]);
+  const freed = Number(m[2]);
+  // Suffixes start at 2, so a lower number is part of the base name.
+  if (hint !== undefined && freed >= 2 && freed < hint) s.nameSuffix.set(m[1], freed);
 }
 
 /** A positioned ^FN without its own ^FD is the batch template's stored-format
@@ -553,9 +597,13 @@ export function resetFieldBlockDefaults(defaults: DefaultsState): void {
 export function resetFormatScopedState(s: ParserState): void {
   s.result.partials = new Map();
   s.result.lastSpanByCmd = new Map();
+  s.result.recallFormatPath = undefined;
+  s.result.recallFormatSpan = undefined;
+  s.result.recall = undefined;
   s.varScopeStart = s.result.variables.length;
   s.serialStrippedFns.clear();
   s.declaredFns.clear();
+  s.declaredHexControl.clear();
   s.comment.pending = undefined;
   s.comment.run = null;
   s.comment.fnNumber = null;
@@ -647,6 +695,12 @@ export function createParserState(): ParserState {
     sawXa: false,
     fdRegenLossy: undefined,
     fnDefaultCandidates: new Map(),
+    recall: null,
+    declaredHexControl: new Map(),
+    variableNames: new Set(),
+    graphicMemo: new Map(),
+    anchorById: new Map(),
+    nameSuffix: new Map(),
     field: freshFieldState(),
   };
 }

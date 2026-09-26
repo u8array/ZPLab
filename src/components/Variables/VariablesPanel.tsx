@@ -288,7 +288,8 @@ export function VariablesPanel() {
               .replace('{mapped}', String(mappedCount))
               .replace('{total}', String(variables.length))}
           </p>
-          {dataset.source.kind !== 'csv' && dataset.source.truncated && (
+          {/* Narrowed by shape: a zpl source carries no truncation flag. */}
+          {'truncated' in dataset.source && dataset.source.truncated && (
             <p className="text-amber-400">
               {formatTemplate(tv.dbTruncatedFmt, { n: String(dataset.source.rowCount) })}
             </p>
@@ -436,7 +437,9 @@ export function VariablesPanel() {
               ? tv.dbDiscardConfirmFmt
               : dataset.source.kind === 'excel'
                 ? tv.excelDiscardConfirm
-                : tv.csvDiscardConfirmFmt.replace('{filename}', dataset.source.filename)
+                : dataset.source.kind === 'zpl'
+                  ? tv.zplDiscardConfirm
+                  : tv.csvDiscardConfirmFmt.replace('{filename}', dataset.source.filename)
           }
           confirmLabel={tv.csvDiscardConfirmAction}
           cancelLabel={tv.cancel}

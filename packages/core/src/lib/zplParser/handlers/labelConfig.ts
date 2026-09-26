@@ -153,7 +153,9 @@ export function createLabelConfigHandlers(
         if (strParam(rest) !== "") notePartial(s.result, "^LS");
         return;
       }
+      // Zero is the default, so the design carries no shift rather than a shift of none.
       if (d !== 0) labelConfig.labelShift = d;
+      else delete labelConfig.labelShift;
     },
     "^PR"(p) {
       const print = inRange(parseIntOrUndef(p[0]), SPEED_RANGE);
