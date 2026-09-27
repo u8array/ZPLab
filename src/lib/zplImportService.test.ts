@@ -1210,3 +1210,71 @@ describe('routeSetupCommands - setup-only pages', () => {
     expect(imported.mixedPageGeometry).toBe(false);
   });
 });
+
+describe('importZplText - ~DT, ~DU, ~DS and ~DB font downloads', () => {
+  const HEX = '01020304';
+  const DB = '~DBR:TIMES.FNT,N,5,24,3,10,2,ZEBRA 1992,\n#0025.5.16.2.5.18.\nOOFF OOFF FFOO FFOO FFFF\n';
+  const AM = '^FO0,0^AMN,30,30^FDX^FS';
+
+  it('files a ~DT under .DAT and a ~DU under .FNT as the guide spells them, so the stream\'s own ^CW binds', () => {
+    for (const [upload, path] of [[`~DTR:FONT,4,${HEX}`, 'R:FONT.DAT'], [`~DUE:KANJI,4,${HEX}`, 'E:KANJI.FNT']] as const) {
+      const r = importZplText(`${upload}\n^XA^CWM,${path}${AM}^XZ`, 8);
+      const alias = r.labelConfig.customFonts?.find((m) => m.alias === 'M');
+      expect(alias?.path).toBe(path);
+      expect(alias?.embedInZpl).toBeUndefined();
+      expect(hasFontBytes(path)).toBe(false);
+      expect(r.printerProfile.setupFonts).toBeUndefined();
+      expect(r.report.findings.map((f) => [f.command, f.loss])).toEqual([[upload.slice(0, 3), 'scalableFont']]);
+    }
+  });
+
+  it('rejects a ZB64 payload and a short payload with a finding', () => {
+    const zb64 = importZplText('~DTR:ARIAL,59494,:Z64:H4sICMB8:a1b2', 8);
+    expect(zb64.report.findings.map((f) => [f.kind, f.command.slice(0, 3)])).toEqual([['browserLimit', '~DT']]);
+    const short = importZplText('~DTR:FONT,8,0102', 8);
+    expect(short.report.findings.map((f) => f.kind)).toEqual(['browserLimit']);
+  });
+
+  it('leaves a caret ^DT unknown, since the catalog knows only the tilde form', () => {
+    const caret = importZplText('^XA^DTR:FONT,4,01020304^XZ', 8);
+    expect(caret.report.findings.map((f) => f.kind)).toEqual(['unknown']);
+  });
+
+  it('keeps an Intellifont or bitmap font in the ledger for ^CW, though the setup script cannot send it', () => {
+    const scalable = importZplText(`~DSR:INTEL,4,${HEX}\n^XA^CWM,R:INTEL.FNT${AM}^XZ`, 8);
+    const alias = scalable.labelConfig.customFonts?.find((m) => m.alias === 'M');
+    expect(alias?.path).toBe('R:INTEL.FNT');
+    expect(alias?.embedInZpl).toBeUndefined();
+    expect(scalable.report.findings.filter((f) => f.loss === 'scalableFont')).toHaveLength(1);
+    expect(describeFinding(scalable.report.findings[0] as never, fallbackTranslations.importReport).detail).toContain('scalable format');
+    const bitmap = importZplText(`${DB}^XA^CWM,R:TIMES.FNT${AM}^XZ`, 8);
+    expect(bitmap.labelConfig.customFonts?.find((m) => m.alias === 'M')?.path).toBe('R:TIMES.FNT');
+    expect(bitmap.report.findings.filter((f) => f.loss === 'bitmapFont')).toHaveLength(1);
+    expect(bitmap.printerProfile.setupFonts).toBeUndefined();
+  });
+
+  it('treats a second upload under the same name as a replacement once a page printed with the first', () => {
+    const r = importZplText(`~DTE:SAME,4,0001FFAB\n^XA^CWM,E:SAME.DAT${AM}^XZ\n~DTE:SAME,4,0001FFAC`, 8);
+    expect(r.report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(1);
+  });
+
+  it('decodes a line-wrapped hex payload as the printer does', () => {
+    const wrapped = importZplText(`~DTR:WRAP,4,0102\n0304\n^XA^CWM,R:WRAP.DAT${AM}^XZ`, 8);
+    expect(wrapped.report.findings.map((f) => [f.kind, f.loss])).toEqual([['partial', 'scalableFont']]);
+    for (const upload of ['~DYR:WRAP,A,T,4,,0102\n0304', '~DYR:WRAP,A,T,4,,0102\r\n0304']) {
+      const r = importZplText(`${upload}\n^XA^CWM,R:WRAP.TTF${AM}^XZ`, 8);
+      expect(r.report.findings).toEqual([]);
+      expect(generateZPL({ ...r.labelConfig, widthMm: 50, heightMm: 30, dpmm: 8 }, r.pages[0]!.objects)).toContain('~DYR:WRAP.TTF,A,T,4,,01020304');
+    }
+  });
+
+  it('names the command that lost a font, one finding per command', () => {
+    const r = importZplText('~DYE:BX,A,B,4,,01020304\n~DBR:T8.FNT,N,5,24,3,10,2,C,\n#0025.\nOO\n~DSR:I9,4,01020304', 8);
+    expect(r.report.findings.map((f) => [f.command, f.loss])).toEqual([['~DY', 'bitmapFont'], ['~DB', 'bitmapFont'], ['~DS', 'scalableFont']]);
+  });
+
+  it('drops a cached TrueType face when a printer-native font replaces it under the same name', () => {
+    importZplText('~DYR:MIX,A,T,4,,01020304\n~DSR:MIX.TTF,4,05060708', 8);
+    expect(hasFontBytes('R:MIX.TTF')).toBe(false);
+  });
+});

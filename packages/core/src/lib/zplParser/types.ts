@@ -53,12 +53,14 @@ export interface ImportFinding {
   span?: SourceSpan;
 }
 
-/** Why a ~DY font never reaches the model as a shippable file. */
-export type FontLossReason = "versionReplaced" | "bitmapFont" | "notTrueTypeName";
+/** Why a downloaded font never reaches the model as a shippable file. */
+export type FontLossReason = "versionReplaced" | "bitmapFont" | "scalableFont" | "notTrueTypeName";
 
-/** Anchored at the ~DY that caused the loss. */
+/** Anchored at the download command that caused the loss. */
 export interface FontLoss {
   reason: FontLossReason;
+  /** The source token, so the finding names ~DT or ~DS and not only ~DY. */
+  command: string;
   span?: SourceSpan;
 }
 

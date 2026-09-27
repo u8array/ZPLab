@@ -1,7 +1,7 @@
 import { applyPrefixRemap, PAYLOAD_CMDS, tokenize, type TokenizerChars } from "./zplParser/helpers";
 
 /** Image and font payloads carry any byte, hex or binary, so their lines stay as typed. */
-const BYTE_PAYLOAD_CMDS = new Set(["GF", "DY"]);
+const BYTE_PAYLOAD_CMDS = new Set(["GF", "DY", "DG", "DT", "DU", "DS", "DB"]);
 
 /** The same bytes with ^CC/^CT/^CD undone: every live prefix back to ^ or ~ and every
  *  parameter delimiter to a comma, data left alone, so texts compare across a remap.

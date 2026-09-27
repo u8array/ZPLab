@@ -205,8 +205,8 @@ type DownloadedFontStatus = "live" | "deleted" | "deletedWhileNamed";
 export interface DownloadedFont {
   digest: string;
   status: DownloadedFontStatus;
-  /** From the ~DY format code, the only place the stream states it. */
-  kind: "truetype" | "bitmap";
+  /** From the download command or the ~DY format code, the only places the stream states it. */
+  kind: "truetype" | "bitmap" | "scalable";
 }
 
 /** ^CW aliases + ~DY uploads; span the whole parse across ^XA blocks. */
@@ -426,8 +426,8 @@ export function resolveLiveFonts(s: ParserState): string[] {
   for (const [path, font] of s.fonts.downloadedFonts) {
     if (font.status === "deleted") continue;
     if (font.status === "deletedWhileNamed" && !refs.some((r) => storageRefMatchesPath(r, path))) continue;
-    // A bitmap font has no web face and no ~DY format this emitter can send.
-    if (font.kind === "bitmap") continue;
+    // A printer-native font has no web face and no ~DY format this emitter can send.
+    if (font.kind !== "truetype") continue;
     live.push(path);
   }
   return live;

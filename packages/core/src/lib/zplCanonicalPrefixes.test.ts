@@ -22,6 +22,11 @@ describe("canonicalPrefixes", () => {
     expect(canonicalPrefixes(j("^XA", "^CD;", "^FO1;2^FDa;b^FS", "~DYR:X;B;PNG;3;;a;b", "^GFA;8;8;1;FF;0^FS", "^XZ"))).toBe(j("^XA", "^CD;", "^FO1,2^FDa;b^FS", "~DYR:X;B;PNG;3;;a;b", "^GFA;8;8;1;FF;0^FS", "^XZ"));
   });
 
+  it("leaves hex font and graphic payloads alone when the delimiter is a hex digit", () => {
+    const zpl = j("^CDA", "~DGR:L.GRF,4,1,00AAFF00", "~DTR:F,4,0A0B0C0D", "^FO1A2");
+    expect(canonicalPrefixes(zpl)).toBe(j("^CDA", "~DGR:L.GRF,4,1,00AAFF00", "~DTR:F,4,0A0B0C0D", "^FO1,2"));
+  });
+
   it("leaves a text without remaps alone and applies a remap only from where it lands", () => {
     const plain = j("^XA", "^FO1,2^FDx,y^FS", "^XZ");
     expect(canonicalPrefixes(plain)).toBe(plain);

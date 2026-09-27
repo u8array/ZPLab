@@ -39,6 +39,7 @@ const LOSS_KEY: Record<ImportLossCause, keyof ReportStrings> = {
   oversizeUpload: 'lossOversizeUpload',
   unshippableUpload: 'lossUnshippableUpload',
   bitmapFont: 'lossBitmapFont',
+  scalableFont: 'lossScalableFont',
   unshippableFontName: 'lossUnshippableFontName',
   unshippableGraphicName: 'lossUnshippableGraphicName',
   fontNameNotTrueType: 'lossFontNameNotTrueType',

@@ -47,6 +47,7 @@ export interface ZplImportResult {
 const FONT_LOSS = {
   versionReplaced: "fontVersionReplaced",
   bitmapFont: "bitmapFont",
+  scalableFont: "scalableFont",
   notTrueTypeName: "fontNameNotTrueType",
 } as const satisfies Record<FontLossReason, ImportLossCause>;
 
@@ -308,7 +309,7 @@ function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
   const printerProfile: Partial<PrinterProfile> = { ...r.printerProfile };
   // A design font claims only the upload it ships. An upload it merely references stays provisioning.
   const setupFontPaths = uploadedUnique.filter((p) => !r.embeddedFontPaths.has(p));
-  for (const f of r.fontLosses) noteDocumentLoss(findings, "~DY", FONT_LOSS[f.reason], f.span);
+  for (const f of r.fontLosses) noteDocumentLoss(findings, f.command, FONT_LOSS[f.reason], f.span);
   // Refused here with a finding, or the whole profile patch fails and every field it carried drops in silence.
   const carriedFontPaths = setupFontPaths.filter((path) => {
     if (isSetupPath(path)) return true;
