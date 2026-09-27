@@ -4,7 +4,7 @@ import { sourceEditGate } from "@zplab/core/lib/zplSourceEdit";
 import { useLabelStore, useCurrentObjects, selectDocumentEmits } from "../store/labelStore";
 import { spanCoveredLines } from "../lib/emitSpanHighlight";
 import { isPureCrlf } from "../lib/sourceOffsets";
-import { printerImpactNotices } from "../lib/exportImpact";
+import { deliveryNotices, printerImpactNotices } from "../lib/exportImpact";
 import { usePrinterImpact } from "./usePrinterImpact";
 import { useT } from "./useT";
 
@@ -29,7 +29,7 @@ export function useZplOutputView(collapsed: boolean) {
     ? generateMultiPageZplWithMap(label, pages, variables)
     : { text: "", spans: [] };
   const zpl = emitted.text;
-  const gate = zpl === "" ? null : sourceEditGate(zpl);
+  const gate = zpl === "" ? null : sourceEditGate(zpl, pages);
   const refusal = gate !== null && !gate.ok ? gate.reason : null;
 
   const viewVisible = !collapsed && session === null;
@@ -43,7 +43,7 @@ export function useZplOutputView(collapsed: boolean) {
     : NO_LINES;
 
   const impact = usePrinterImpact(zpl, viewVisible);
-  const notices = impact ? printerImpactNotices(impact, t) : NO_NOTICES;
+  const notices = impact ? [...printerImpactNotices(impact, t), ...deliveryNotices(pages, t)] : NO_NOTICES;
 
   // What the pane shows (and copy copies): the live buffer during a session.
   const shownText = session ? session.draft : zpl;

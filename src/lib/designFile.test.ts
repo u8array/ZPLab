@@ -513,6 +513,14 @@ describe('parseDesignFile', () => {
     expect(result.value.pages[0]?.overlay?.head).toBeDefined();
   });
 
+  it("keeps a page's stored format delivery through save and load", () => {
+    const json = serializeDesign({ widthMm: 100, heightMm: 50, dpmm: 8 }, [{ objects: [], storedFormatPath: 'E:JOB.ZPL', storedFormatDelivery: 'setup' }], []);
+    const result = parseDesignFile(json);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.pages[0]?.storedFormatDelivery).toBe('setup');
+  });
+
   it('loads a v3 file whose head carries ^JM and ^DF only in the overlay bytes', () => {
     const v3 = importZplText('^XA^JMB^DFE:OLD.ZPL^FS^FO10,10^A0N,30,30^FDa^FS^XZ', 8);
     const legacyPages = v3.pages.map((p) => {

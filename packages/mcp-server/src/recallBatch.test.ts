@@ -22,6 +22,23 @@ describe("recall blocks travel through the tools as batch rows", () => {
     expect(exported.zpl).toContain("^FN2^FDA1B^FS");
   });
 
+  it("notes a page whose format the printer already holds, and sends only its recalls", () => {
+    const imported = importZpl(stream, 8);
+    expect(imported.ok).toBe(true);
+    if (!imported.ok) return;
+    const pages = imported.designFile.pages.map((p) => ({ ...p, storedFormatDelivery: "printer" as const }));
+    const exported = exportZpl({ ...imported.designFile, pages }, { batch: imported.batch });
+    expect(exported.ok).toBe(true);
+    if (!exported.ok) return;
+    expect(exported.zpl).not.toContain("^DF");
+    expect(exported.zpl.match(/\^XFE:JOB\.ZPL/g)).toHaveLength(2);
+    expect(exported.notes).toContain("page 1 recalls E:JOB.ZPL with data only; the format must already be on the printer");
+    const twice = exportZpl({ ...imported.designFile, pages: [...pages, { ...pages[0], objects: [] }] }, {});
+    expect(twice.ok).toBe(true);
+    if (!twice.ok) return;
+    expect(twice.notes).toContain("other pages also store a format under E:JOB.ZPL; the printer keeps one format per name, so the recall may print another page");
+  });
+
   it("refuses a batch with ragged rows, no mapping, or headers that bind nothing", () => {
     const imported = importZpl(stream, 8);
     expect(imported.ok).toBe(true);

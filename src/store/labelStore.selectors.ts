@@ -20,7 +20,7 @@ export const currentObjects = (state: PageState): LabelObject[] =>
 // label, density) so subscribers only re-render when one of them changes.
 const overrideCache = new WeakMap<LabelConfig, Map<string, PageLabel>>();
 
-type PageOverrides = Pick<Page, 'jmDensity' | 'storedFormatPath'>;
+type PageOverrides = Pick<Page, 'jmDensity' | 'storedFormatPath' | 'storedFormatDelivery'>;
 
 const resolvedPageLabel = (label: LabelConfig, page: PageOverrides | undefined): PageLabel => {
   const jm = page?.jmDensity;
@@ -32,10 +32,10 @@ const resolvedPageLabel = (label: LabelConfig, page: PageOverrides | undefined):
     byOverride = new Map();
     overrideCache.set(label, byOverride);
   }
-  const key = JSON.stringify([jm ?? null, stored ?? null]);
+  const key = JSON.stringify([jm ?? null, stored ?? null, page?.storedFormatDelivery ?? null]);
   const cached = byOverride.get(key);
   if (cached) return cached;
-  const built = pageLabelConfig(label, { jmDensity: jm, storedFormatPath: stored });
+  const built = pageLabelConfig(label, { jmDensity: jm, storedFormatPath: stored, storedFormatDelivery: page?.storedFormatDelivery });
   byOverride.set(key, built);
   return built;
 };

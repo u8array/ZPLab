@@ -943,6 +943,40 @@ describe('setPageStoredFormatPath', () => {
     useLabelStore.temporal.getState().undo();
     expect(state().pages[1]?.storedFormatPath).toBe('E:JOB.ZPL');
   });
+
+  it('sets the delivery of the current page only, and reads it back through the page label', () => {
+    useLabelStore.setState({ pages: [{ objects: [] }, { objects: [], storedFormatPath: 'E:JOB.ZPL' }], currentPageIndex: 1 });
+    state().setPageStoredFormatDelivery('setup');
+    expect(state().pages.map((p) => p.storedFormatDelivery)).toEqual([undefined, 'setup']);
+    expect(currentPageLabel(state()).storedFormatDelivery).toBe('setup');
+    state().setPageStoredFormatDelivery(undefined);
+    expect(state().pages[1]).not.toHaveProperty('storedFormatDelivery');
+  });
+
+  it('drops the delivery when the name goes, and for a name ^XF cannot read', () => {
+    useLabelStore.setState({ pages: [{ objects: [], storedFormatPath: 'E:JOB.ZPL', storedFormatDelivery: 'setup' }], currentPageIndex: 0 });
+    state().setPageStoredFormatPath('E:NEW.ZPL');
+    expect(state().pages[0]?.storedFormatDelivery).toBe('setup');
+    state().setPageStoredFormatPath('E:VERYLONGNAME12.ZPL');
+    expect(state().pages[0]).not.toHaveProperty('storedFormatDelivery');
+    state().setPageStoredFormatDelivery('printer');
+    state().setPageStoredFormatPath(undefined);
+    expect(state().pages[0]).not.toHaveProperty('storedFormatDelivery');
+  });
+
+  it('keeps no delivery on a name two pages store under, and refuses one while they do', () => {
+    const first = { objects: [], storedFormatPath: 'E:JOB.ZPL', storedFormatDelivery: 'setup' as const };
+    useLabelStore.setState({ pages: [first, { objects: [], storedFormatPath: 'E:OTHER.ZPL' }], currentPageIndex: 1 });
+    state().setPageStoredFormatPath('e:job.zpl');
+    expect(state().pages[0]).not.toHaveProperty('storedFormatDelivery');
+    state().setPageStoredFormatDelivery('printer');
+    expect(state().pages[1]).not.toHaveProperty('storedFormatDelivery');
+    const untouched = state().pages[0];
+    state().setPageStoredFormatPath('E:OTHER.ZPL');
+    expect(state().pages[0]).toBe(untouched);
+    state().setPageStoredFormatDelivery('printer');
+    expect(state().pages[1]?.storedFormatDelivery).toBe('printer');
+  });
 });
 
 describe('migrateLegacy: a main-era ^DF that only the overlay bytes carried', () => {

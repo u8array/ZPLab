@@ -12,9 +12,9 @@ import {
 } from "../../lib/zebraPrint";
 import { isDesktopShell } from "../../lib/platform";
 import { getPrinterAddress, setPrinterAddress } from "../../lib/printerAddress";
-import { useLabelStore, selectBatchInputs, selectBatchPrintCount } from "../../store/labelStore";
+import { useLabelStore, selectBatchInputs, selectCanBatchExport, selectBatchPrintCount } from "../../store/labelStore";
 import { formatTemplate } from "../../lib/formatTemplate";
-import { exportPrinterImpact, printerImpactNotices } from "../../lib/exportImpact";
+import { deliveryNotices, exportPrinterImpact, printerImpactNotices } from "../../lib/exportImpact";
 import { listLocalPrinters, sendZplLocal, isLikelyZebra, type LocalPrinter } from "../../lib/localPrint";
 import { sendZplUsb, setupUsbAccess, isLikelyZebra as isUsbZebra } from "../../lib/usbPrint";
 import { printerOptionLabel } from "../../lib/printerLabel";
@@ -80,7 +80,11 @@ function TransportBody({ view, fieldLabel }: { view: TransportView; fieldLabel: 
 /** Synchronous on purpose: the banner must exist the moment the send button goes live. */
 function ImpactNotices({ zpl }: { zpl: string }) {
   const t = useT();
-  const notices = printerImpactNotices(exportPrinterImpact(zpl), t);
+  const pages = useLabelStore((s) => s.pages);
+  const currentPageIndex = useLabelStore((s) => s.currentPageIndex);
+  const batch = useLabelStore(selectCanBatchExport);
+  const printed = batch ? pages.slice(currentPageIndex, currentPageIndex + 1) : pages;
+  const notices = [...printerImpactNotices(exportPrinterImpact(zpl), t), ...deliveryNotices(printed, t)];
   if (notices.length === 0) return null;
   return (
     <div role="status">

@@ -61,6 +61,8 @@ describe("the edit gate", () => {
     expect(sourceEditGate(blob)).toEqual({ ok: false, reason: "blobLine", command: "^GF" });
     const under = `^XA\n^FD${"a".repeat(MAX_SOURCE_LINE_CHARS - 10)}^FS\n^XZ`;
     expect(sourceEditGate(under).ok).toBe(true);
+    expect(sourceEditGate(under, [{ storedFormatPath: "E:JOB.ZPL", storedFormatDelivery: "printer" }])).toEqual({ ok: false, reason: "recallOnly" });
+    expect(sourceEditGate(under, [{ storedFormatPath: "E:VERYLONGNAME12.ZPL", storedFormatDelivery: "printer" }]).ok).toBe(true);
   });
 
   it("refuses an oversized document", () => {
@@ -70,6 +72,8 @@ describe("the edit gate", () => {
       ok: false,
       reason: "tooLarge",
     });
+    const recall = current({ pages: [{ objects: [], storedFormatPath: "E:JOB.ZPL", storedFormatDelivery: "setup" }] });
+    expect(prepareSourceApply({ text: "^XA^XFE:JOB.ZPL^FS^XZ", current: recall })).toMatchObject({ ok: false, reason: "recallOnly" });
   });
 });
 

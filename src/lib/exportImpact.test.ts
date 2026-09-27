@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { exportPrinterImpact, printerImpactNotices } from "./exportImpact";
+import { deliveryNotices, exportPrinterImpact, printerImpactNotices } from "./exportImpact";
 import en from "../locales/en";
 
 describe("exportPrinterImpact", () => {
@@ -31,5 +31,30 @@ describe("exportPrinterImpact", () => {
     expect(printerImpactNotices(batch, en)).toEqual(["Sending this code also stores the format as E:JOB.ZPL."]);
     const mixed = exportPrinterImpact("^XA^DFE:A.ZPL^FO1,1^FDx^FS^XZ\n^XA^DFLBL.ZPL^FO1,1^FDy^FS^XZ\n^XA^FO1,1^FDz^FS^XZ");
     expect(mixed).toMatchObject({ stores: ["E:A.ZPL", "R:LBL.ZPL"], printsNothing: false });
+  });
+
+  it("names a recall-only page from the model, once per format", () => {
+    const pages = [
+      { storedFormatPath: "E:JOB.ZPL", storedFormatDelivery: "printer" as const },
+      { storedFormatPath: "E:SET.ZPL", storedFormatDelivery: "setup" as const },
+      { storedFormatPath: "E:STORE.ZPL" },
+      { storedFormatPath: "E:VERYLONGNAME12.ZPL", storedFormatDelivery: "printer" as const },
+    ];
+    expect(deliveryNotices(pages, en)).toEqual([
+      "Sending this code recalls E:JOB.ZPL with data only. Whether the format is on the printer is unknown.",
+      "Sending this code recalls E:SET.ZPL with data only. The setup script stores the format.",
+    ]);
+  });
+
+  it("warns once when another page stores under the name a recall reads", () => {
+    const pages = [
+      { storedFormatPath: "E:JOB.ZPL", storedFormatDelivery: "setup" as const },
+      { storedFormatPath: "E:JOB.ZPL", storedFormatDelivery: "setup" as const },
+      { storedFormatPath: "E:JOB.ZPL" },
+    ];
+    expect(deliveryNotices(pages, en)).toEqual([
+      "Sending this code recalls E:JOB.ZPL with data only. The setup script stores the format.",
+      "Several pages store a format under E:JOB.ZPL. The printer keeps one format per name, so a recall may print another page.",
+    ]);
   });
 });

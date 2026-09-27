@@ -153,7 +153,8 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "ZPLab's ^FX metadata when `metadata` is true (lossless re-import). With `batch`, one page " +
         "is stored as a format and recalled once per row, bound by the file's csvMapping: the page " +
         "batch.formatPath names, else the sole page with storedFormatPath, else the only page. " +
-        "Other pages are left out and noted.",
+        "Other pages are left out and noted. A page whose storedFormatDelivery is setup or printer " +
+        "is recalled instead of stored, as the app's own export does; the field is set in the app, not by create_draft.",
       inputSchema: strictInput(exportZplInputSchema.shape, INSIDE_DESIGN_FILE),
     },
     async ({ designFile, metadata, batch }) => json(exportZpl(designFile, { metadata, batch })),

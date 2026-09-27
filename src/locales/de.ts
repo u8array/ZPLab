@@ -1072,6 +1072,7 @@ const de = {
     editSourceApply: 'Übernehmen',
     editSourceGateBlob: 'Nicht verfügbar: Eine Zeile des Codes ist zu lang, um sie als Text zu bearbeiten (meist eine eingebettete Grafik).',
     editSourceGateSize: 'Nicht verfügbar: Der erzeugte Code ist zu groß, um ihn als Text zu bearbeiten.',
+    editSourceGateRecall: 'Nicht verfügbar: Eine Seite ruft ihr gespeichertes Format auf, statt es zu speichern, daher enthält der Code kein Layout zum Bearbeiten. Stelle zuerst die Bereitstellung dieser Seite auf jeden Druckjob um.',
     editSourceDiscardBody: 'Bearbeiteten Code verwerfen? Er wurde noch nicht übernommen.',
     editSourceDiscard: 'Verwerfen',
     editSourceConfirmTitle: 'Vor dem Übernehmen prüfen',
@@ -1083,6 +1084,9 @@ const de = {
     replayRiskActionsFmt: 'Das Senden dieses Codes löst auch Druckeraktionen aus: {commands}',
     storesFormatFmt: 'Das Senden speichert das Format als {path} und druckt nichts.',
     storesSomeFormatFmt: 'Das Senden speichert auch das Format als {path}.',
+    recallOnlySetupFmt: 'Das Senden dieses Codes ruft {path} nur mit Daten ab. Das Setup-Skript speichert das Format.',
+    recallOnlyPrinterFmt: 'Das Senden dieses Codes ruft {path} nur mit Daten ab. Ob das Format auf dem Drucker liegt, ist unbekannt.',
+    recallContestedFmt: 'Mehrere Seiten speichern ein Format unter {path}. Der Drucker behält je Name nur ein Format, daher kann ein Abruf eine andere Seite drucken.',
   },
   contextMenu: {
     copy: 'Kopieren',
@@ -1741,6 +1745,11 @@ const de = {
     printerGraphicHint: 'Jobs referenzieren nur die Grafik. Fehlt sie auf dem Drucker, wird an ihrer Stelle nichts gedruckt.',
     jobNeedsAlias: 'Braucht einen Alias, damit ein ^CW die Datei benennen kann.',
     setupNeedsBytes: 'Braucht die Bilddaten, um den Upload zu kodieren.',
+    formatJobHint: 'Jeder Druckjob speichert das Format erneut und druckt es mit den Zeilen eines Datensatzes.',
+    formatSetupHint: 'Das Setup-Skript dieses Druckerprofils speichert das Format einmalig. Jobs senden nur die Daten.',
+    formatPrinterHint: 'Jobs senden nur die Daten. Fehlt das Format auf dem Drucker, wird nichts gedruckt.',
+    formatNeedsShortName: 'Der Abruf liest Namen mit bis zu 8 Zeichen.',
+    formatNameContested: 'Eine andere Seite speichert ihr Format bereits unter diesem Namen.',
   },
 } as const;
 

@@ -1,7 +1,7 @@
 import type { LeafObject } from '../registry/leafObject';
 import type { LabelObjectBase } from './LabelObject';
 import type { BlockOverlay } from '../lib/zplOverlay/overlay';
-import { withJmDensity, type JmDensity, type LabelConfig, type PageLabel } from './LabelConfig';
+import { withJmDensity, type JmDensity, type LabelConfig, type PageLabel, type StoredFormatDelivery } from './LabelConfig';
 export type { LeafObject };
 /** Non-leaf container; cascades lock/visibility/inclusion. Intentionally
  *  outside the registry (no toZPL/defaultSize/PropertiesPanel). */
@@ -22,6 +22,8 @@ export interface Page {
   jmDensity?: JmDensity;
   /** ^DF: the printer stores this page's block under the path instead of printing it. */
   storedFormatPath?: string;
+  /** How this page's ^DF reaches the printer without this design storing it again. */
+  storedFormatDelivery?: StoredFormatDelivery;
   /** Source-patch overlay of the ^XA…^XZ block this page was imported from,
    *  letting export replay untouched bytes verbatim. Absent on fresh designs
    *  and on pages the parser couldn't fully link; those regenerate from the
@@ -32,13 +34,15 @@ export interface Page {
 /** The label as this page prints it: its own ^JM wins, so a block imported at
  *  a diverging density keeps that density through export (coordinates included,
  *  since every dots<->mm boundary reads it through effectiveDpmm). */
-export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity' | 'storedFormatPath'>): PageLabel {
+export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity' | 'storedFormatPath' | 'storedFormatDelivery'>): PageLabel {
   // The only mint backed by a real resolution: folding the page's ^JM and ^DF in.
   const folded = withJmDensity(label, page.jmDensity) as PageLabel;
   if (page.storedFormatPath === undefined && folded.storedFormatPath === undefined) return folded;
   // A label handed in with another page's ^DF is not this page's.
-  const { storedFormatPath: _other, ...base } = folded;
-  return (page.storedFormatPath === undefined ? base : { ...base, storedFormatPath: page.storedFormatPath }) as PageLabel;
+  const { storedFormatPath: _other, storedFormatDelivery: _way, ...base } = folded;
+  if (page.storedFormatPath === undefined) return base as PageLabel;
+  const way = page.storedFormatDelivery === undefined ? {} : { storedFormatDelivery: page.storedFormatDelivery };
+  return { ...base, storedFormatPath: page.storedFormatPath, ...way } as PageLabel;
 }
 
 /** The label for a render that must print: a preview never stores. */

@@ -6,8 +6,8 @@ import { Select } from '../ui/Select';
 interface Props {
   value: ResourceDelivery;
   onChange: (next: ResourceDelivery) => void;
-  /** The printer-side fallback differs: a missing font substitutes, a missing graphic prints nothing. */
-  resource: 'font' | 'graphic';
+  /** The printer-side fallback differs: a missing font substitutes, a missing graphic or format prints nothing. */
+  resource: 'font' | 'graphic' | 'format';
   /** Names the file in the accessible name, since a list shows one select per row. */
   subject: string;
   /** Why a way cannot be chosen right now, shown on the disabled option. */
@@ -21,7 +21,10 @@ interface Props {
 /** One control for every file the printer needs, so job, setup and printer cannot diverge across two widgets. */
 export function DeliverySelect({ value, onChange, resource, subject, blocked, issue, onOpenSetup }: Props) {
   const t = useT();
-  const hint = value === 'job' ? t.delivery.jobHint : value === 'setup' ? t.delivery.setupHint : resource === 'font' ? t.delivery.printerFontHint : t.delivery.printerGraphicHint;
+  const hints: Record<ResourceDelivery, string> = resource === 'format'
+    ? { job: t.delivery.formatJobHint, setup: t.delivery.formatSetupHint, printer: t.delivery.formatPrinterHint }
+    : { job: t.delivery.jobHint, setup: t.delivery.setupHint, printer: resource === 'font' ? t.delivery.printerFontHint : t.delivery.printerGraphicHint };
+  const warn = resource === 'format' && value === 'printer';
   return (
     <div className="flex flex-col gap-1">
       <FieldLabel>{t.delivery.label}</FieldLabel>
@@ -38,7 +41,7 @@ export function DeliverySelect({ value, onChange, resource, subject, blocked, is
           tooltip: blocked?.[way],
         })) }]}
       />
-      <p className="text-[10px] leading-snug text-muted">{hint}</p>
+      <p className={`text-[10px] leading-snug ${warn ? 'text-warning' : 'text-muted'}`}>{hints[value]}</p>
       {issue && <p className="text-[10px] text-warning">{issue}</p>}
       {value === 'setup' && onOpenSetup && (
         <button type="button" className="self-start text-[10px] text-accent hover:underline" onClick={onOpenSetup.open}>

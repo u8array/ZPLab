@@ -5,7 +5,7 @@ import { z } from "zod";
 import {
   serializeDesign,
 } from "@zplab/core/lib/designFile";
-import { generateBatchZpl, generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
+import { contestedFormatKeys, recallOnlyPath, generateBatchZpl, generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { pageLabelConfig } from "@zplab/core/types/Group";
 import { boundColumnIndex } from "@zplab/core/lib/variableBinding";
 import { isRecallableFormatPath, parseStoragePath, recallCandidates, storageKey } from "@zplab/core/lib/storagePath";
@@ -229,6 +229,15 @@ export function exportZpl(
   const notes = [
     ...(report.notes ?? []),
     ...(opts.batch && page && pages.length > 1 ? [`batch printed page ${pages.indexOf(page) + 1} of ${pages.length}; the other pages are not in the ZPL`] : []),
+    ...printed.flatMap((p) => {
+      const path = recallOnlyPath(p);
+      return path === undefined
+        ? []
+        : [
+            `page ${pages.indexOf(p) + 1} recalls ${path} with data only; ${p.storedFormatDelivery === "setup" ? "the setup script stores the format" : "the format must already be on the printer"}`,
+            ...(contestedFormatKeys(pages).has(storageKey(path)) ? [`other pages also store a format under ${path}; the printer keeps one format per name, so the recall may print another page`] : []),
+          ];
+    }),
   ];
   return {
     ok: true,

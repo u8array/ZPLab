@@ -3,6 +3,7 @@ import {
   generateSetupScript,
   SETUP_SCRIPT_FIELDS,
   __SETUP_SCRIPT_EMITTERS_FOR_TESTS,
+  setupFormatBlocks,
   setupScriptLines,
 } from "./zplSetupScript";
 import { parseZPL } from "@zplab/core/lib/zplParser";
@@ -30,6 +31,24 @@ describe("generateSetupScript — output shape", () => {
 
   it("returns empty string when no Setup-Script field is set", () => {
     expect(generateSetupScript(base)).toBe("");
+  });
+
+  it("appends one ^DF frame per page the script provisions, after the profile's own frame", () => {
+    const label = { widthMm: 50, heightMm: 30, dpmm: 8 };
+    const objects = [{ id: "t", type: "text", x: 10, y: 10, rotation: 0, props: { content: "x", fontHeight: 30, fontWidth: 0, rotation: "N" } }] as never;
+    const pages = [
+      { objects, storedFormatPath: "E:A.ZPL", storedFormatDelivery: "setup" as const },
+      { objects, storedFormatPath: "E:B.ZPL", storedFormatDelivery: "printer" as const },
+      { objects, storedFormatPath: "E:C.ZPL" },
+      { objects, storedFormatPath: "e:a.zpl", storedFormatDelivery: "setup" as const },
+      { objects, storedFormatPath: "E:VERYLONGNAME12.ZPL", storedFormatDelivery: "setup" as const },
+    ];
+    const formats = setupFormatBlocks(label, pages, []);
+    expect(formats).toHaveLength(1);
+    expect(formats[0]?.startsWith("^XA\n^DFE:A.ZPL")).toBe(true);
+    const script = generateSetupScript({ ...base, printerName: "P1" }, formats);
+    expect(script.indexOf("^KN")).toBeLessThan(script.indexOf("^DFE:A.ZPL"));
+    expect(generateSetupScript(base, formats)).toBe(formats[0]);
   });
 
   it("emits tilde-prefix commands standalone (no wrapper block) with 3-digit ~TA padding", () => {

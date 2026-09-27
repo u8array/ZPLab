@@ -3,7 +3,7 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon, ClipboardDocumentIcon, Trash
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { useMcpAvailability } from "../../hooks/useMcpServer";
 import { useT } from "../../hooks/useT";
-import { generateSetupScript, setupScriptLines, type SetupScriptField } from "../../lib/zplSetupScript";
+import { generateSetupScript, setupFormatBlocks, setupScriptLines, type SetupScriptField } from "../../lib/zplSetupScript";
 import type { SETUP_UPLOAD_FIELDS } from "@zplab/core/types/PrinterProfile";
 import type { Translations } from "../../locales";
 import { useLabelStore, selectEditorFrozen, selectHasPerLabelOverrides } from "../../store/labelStore";
@@ -157,6 +157,9 @@ export function PrinterSettingsModal() {
   const mcpSidecarAvailable = useLabelStore((s) => s.mcpSidecarAvailable);
   const gateCtx: TabGateCtx = { mcpSidecarAvailable, isDesktop: isDesktopShell };
   const openZebraPrint = useLabelStore((s) => s.openZebraPrint);
+  const label = useLabelStore((s) => s.label);
+  const pages = useLabelStore((s) => s.pages);
+  const variables = useLabelStore((s) => s.variables);
   const titleId = useId();
   const subtitleId = useId();
   // Recover the capability stamp if the boot ping never landed, so the MCP tab
@@ -173,7 +176,10 @@ export function PrinterSettingsModal() {
   // renders its body (the tab component then needs no self-guard).
   const ActiveTab = isVisible(tab) ? TAB_COMPONENTS[tab] : undefined;
 
-  const scriptLines = setupScriptLines(printerProfile);
+  const scriptLines = [
+    ...setupScriptLines(printerProfile),
+    ...setupFormatBlocks(label, pages, variables).flatMap((block) => block.split("\n").map((line) => ({ field: null, line }))),
+  ];
 
   return (
     <DialogShell
@@ -327,7 +333,10 @@ function PreviewDock({
 }) {
   const t = useT();
   // Live-clock mode needs the payload generated at click-time.
-  const { copy, copied } = useCopyToClipboard(() => generateSetupScript(printerProfile));
+  const { copy, copied } = useCopyToClipboard(() => {
+    const s = useLabelStore.getState();
+    return generateSetupScript(printerProfile, setupFormatBlocks(s.label, s.pages, s.variables));
+  });
   // Collapse frees vertical space on short screens; no animation/persistence by design.
   const [collapsed, setCollapsed] = useState(false);
 

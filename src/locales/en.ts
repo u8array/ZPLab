@@ -1072,6 +1072,7 @@ const en = {
     editSourceApply: 'Apply',
     editSourceGateBlob: 'Unavailable: one line of the code is too long to edit as text (usually an embedded graphic).',
     editSourceGateSize: 'Unavailable: the generated code is too large to edit as text.',
+    editSourceGateRecall: "Unavailable: a page recalls its stored format instead of storing it, so the code holds no layout to edit. Set that page's delivery to every job first.",
     editSourceDiscardBody: 'Discard the edited code? It has not been applied.',
     editSourceDiscard: 'Discard',
     editSourceConfirmTitle: 'Review before applying',
@@ -1083,6 +1084,9 @@ const en = {
     replayRiskActionsFmt: 'Sending this code also triggers printer actions: {commands}',
     storesFormatFmt: 'Sending this code stores the format as {path} and prints nothing.',
     storesSomeFormatFmt: 'Sending this code also stores the format as {path}.',
+    recallOnlySetupFmt: 'Sending this code recalls {path} with data only. The setup script stores the format.',
+    recallOnlyPrinterFmt: 'Sending this code recalls {path} with data only. Whether the format is on the printer is unknown.',
+    recallContestedFmt: 'Several pages store a format under {path}. The printer keeps one format per name, so a recall may print another page.',
   },
   contextMenu: {
     copy: 'Copy',
@@ -1741,6 +1745,11 @@ const en = {
     printerGraphicHint: 'Jobs only reference the graphic. If the printer lacks it, nothing prints in its place.',
     jobNeedsAlias: 'Needs an alias, so that a ^CW can name the file.',
     setupNeedsBytes: 'Needs the image data to encode the upload.',
+    formatJobHint: 'Every job stores the format again and prints it with the rows of a dataset.',
+    formatSetupHint: 'The setup script of this printer profile stores the format once. Jobs only send the data.',
+    formatPrinterHint: 'Jobs only send the data. If the format is missing on the printer, nothing prints.',
+    formatNeedsShortName: 'A recall reads names of up to 8 characters.',
+    formatNameContested: 'Another page already stores its format under this name.',
   },
 } as const;
 

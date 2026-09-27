@@ -325,6 +325,10 @@ export type LabelConfig = z.infer<typeof labelConfigSchema>;
 
 declare const pageResolved: unique symbol;
 
+/** Where a job finds the stored format when it does not store it itself: the setup script put it there, or it is assumed there. */
+export const STORED_FORMAT_DELIVERIES = ['setup', 'printer'] as const;
+export type StoredFormatDelivery = (typeof STORED_FORMAT_DELIVERIES)[number];
+
 /** A LabelConfig resolved against one page's ^JM override (phantom brand,
  *  compile-time only). Editor geometry and single-page emit demand it, so a
  *  raw design label cannot reach a dots<->mm boundary on a diverging page.
@@ -334,6 +338,8 @@ export type PageLabel = LabelConfig & {
   readonly [pageResolved]: true;
   /** The page's ^DF, folded in like its ^JM; a design has none, since each block stores under its own name. */
   storedFormatPath?: string;
+  /** Absent means every job stores the format again. */
+  storedFormatDelivery?: StoredFormatDelivery;
 };
 
 /** The label slice device-font resolution reads (^CF default + ^CW-style

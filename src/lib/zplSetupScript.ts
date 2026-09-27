@@ -6,6 +6,11 @@ import {
   type PrinterProfile,
 } from '@zplab/core/types/PrinterProfile';
 import { formatFontDownloadFromPath } from '@zplab/core/lib/customFonts';
+import { generateStoredFormatBlock, recallOnlyPath } from '@zplab/core/lib/zplGenerator';
+import { storageKey } from '@zplab/core/lib/storagePath';
+import { pageLabelConfig, type Page } from '@zplab/core/types/Group';
+import type { LabelConfig } from '@zplab/core/types/LabelConfig';
+import type { Variable } from '@zplab/core/types/Variable';
 import { graphicUploadLineFor } from '@zplab/core/registry/image';
 import { parseStoragePath } from '@zplab/core/lib/storagePath';
 import { trimTrailingEmptySlots } from '@zplab/core/lib/zplGenerator';
@@ -350,6 +355,19 @@ export function setupScriptLines(profile: PrinterProfile): SetupScriptLine[] {
   return out;
 }
 
-export function generateSetupScript(profile: PrinterProfile): string {
-  return setupScriptLines(profile).map((l) => l.line).join('\n');
+/** The profile's frame, then one ^DF frame per format the script provisions. */
+export function generateSetupScript(profile: PrinterProfile, formats: readonly string[] = []): string {
+  const script = setupScriptLines(profile).map((l) => l.line).join('\n');
+  return [...(script === '' ? [] : [script]), ...formats].join('\n');
+}
+
+/** The ^DF frames of the pages whose format the setup script delivers, one per printer file. */
+export function setupFormatBlocks(label: LabelConfig, pages: readonly Page[], variables: readonly Variable[]): string[] {
+  const seen = new Set<string>();
+  return pages.flatMap((p) => {
+    const path = p.storedFormatDelivery === 'setup' ? recallOnlyPath(p) : undefined;
+    if (path === undefined || seen.has(storageKey(path))) return [];
+    seen.add(storageKey(path));
+    return [generateStoredFormatBlock(pageLabelConfig(label, p), p.objects, variables)];
+  });
 }

@@ -1,6 +1,7 @@
 import { labelMetaOf } from '@zplab/core/lib/zplLabelMeta';
 import type { StateCreator } from 'zustand';
-import { PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig } from '@zplab/core/types/LabelConfig';
+import { PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig, type StoredFormatDelivery } from '@zplab/core/types/LabelConfig';
+import { recallWayIssue } from '@zplab/core/lib/zplGenerator';
 import type { Page } from '@zplab/core/types/Group';
 import type { Variable, ColumnMapping } from '@zplab/core/types/Variable';
 import type { DbSourceRef } from '@zplab/core/types/DataSource';
@@ -54,6 +55,7 @@ export interface LabelConfigSlice {
   rescaleJmDensity: (jmDensity: JmDensity | undefined) => void;
   /** ^DF of the current page, undefined stores nothing. The page overlay stays: export splices the head. */
   setPageStoredFormatPath: (path: string | undefined) => void;
+  setPageStoredFormatDelivery: (way: StoredFormatDelivery | undefined) => void;
 }
 
 export interface ImportInput {
@@ -209,10 +211,28 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
   setPageStoredFormatPath: (path) =>
     set((state) => {
       if (selectEditorFrozen(state)) return {};
-      const pages = state.pages.map((p, i) => {
+      const renamed: Page[] = state.pages.map((p, i) => {
         if (i !== state.currentPageIndex || p.storedFormatPath === path) return p;
-        const { storedFormatPath: _old, ...rest } = p;
-        return path === undefined ? rest : { ...rest, storedFormatPath: path };
+        const { storedFormatPath: _old, storedFormatDelivery: way, ...rest } = p;
+        return path === undefined ? rest : { ...rest, ...(way === undefined ? {} : { storedFormatDelivery: way }), storedFormatPath: path };
+      });
+      // A delivery describes the name it was chosen for, so a name no recall can serve drops it.
+      const pages = renamed.map((p) => {
+        if (p.storedFormatDelivery === undefined || recallWayIssue(p, renamed) === undefined) return p;
+        const { storedFormatDelivery: _way, ...rest } = p;
+        return rest;
+      });
+      return { pages };
+    }),
+
+  setPageStoredFormatDelivery: (way) =>
+    set((state) => {
+      if (selectEditorFrozen(state)) return {};
+      const pages = state.pages.map((p, i) => {
+        if (i !== state.currentPageIndex || p.storedFormatDelivery === way) return p;
+        if (way !== undefined && recallWayIssue(p, state.pages) !== undefined) return p;
+        const { storedFormatDelivery: _old, ...rest } = p;
+        return way === undefined ? rest : { ...rest, storedFormatDelivery: way };
       });
       return { pages };
     }),

@@ -7,7 +7,7 @@ import {
   useLabelStore,
 } from "../store/labelStore";
 import { generateMultiPageZPL, generateBatchZpl } from "@zplab/core/lib/zplGenerator";
-import { generateSetupScript } from "../lib/zplSetupScript";
+import { generateSetupScript, setupFormatBlocks } from "../lib/zplSetupScript";
 import { printLabel } from "../lib/printPreview";
 import { saveTextFile, saveErrorMessage, ZPL_SAVE_FILTERS } from "../lib/fileDialogs";
 import { labelaryErrorMessage } from "../lib/labelary";
@@ -83,7 +83,7 @@ export function useZplImportExport() {
   const currentZpl = () => {
     const s = useLabelStore.getState();
     if (zebraPrintSource === 'setupScript') {
-      return generateSetupScript(s.printerProfile);
+      return generateSetupScript(s.printerProfile, setupFormatBlocks(s.label, s.pages, s.variables));
     }
     const batch = selectBatchInputs(s);
     const zpl = batch

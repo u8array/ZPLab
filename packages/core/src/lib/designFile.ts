@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { DEFAULT_FONT_DEVICE, storedFormatPathSchema } from "./storagePath";
-import { JM_DENSITY_VALUES, labelConfigSchema, sanitizeRfidEpc, type JmDensity, type LabelConfig } from "../types/LabelConfig";
+import { JM_DENSITY_VALUES, STORED_FORMAT_DELIVERIES, labelConfigSchema, sanitizeRfidEpc, type JmDensity, type LabelConfig, type StoredFormatDelivery } from "../types/LabelConfig";
 import { labelObjectBaseSchema } from "../types/LabelObject";
 import {
   variableSchema,
@@ -38,7 +38,7 @@ export interface DesignFileFailure {
 
 export type DesignFileResult = { ok: true; value: DesignFile } | DesignFileFailure;
 
-export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity; storedFormatPath?: string }
+export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity; storedFormatPath?: string; storedFormatDelivery?: StoredFormatDelivery }
 export interface DesignFile {
   label: LabelConfig;
   pages: DesignFilePage[];
@@ -82,6 +82,7 @@ const pageSchema = z.object({
   overlay: blockOverlaySchema.optional().catch(undefined),
   jmDensity: z.enum(JM_DENSITY_VALUES).optional(),
   storedFormatPath: storedFormatPathSchema().optional(),
+  storedFormatDelivery: z.enum(STORED_FORMAT_DELIVERIES).optional(),
 });
 
 const designFileSchema = z.object({

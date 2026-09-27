@@ -10,6 +10,7 @@ import { carryAcrossApply } from "./sourceApplyCarry";
 import type { ColumnMapping, Variable } from "../types/Variable";
 import { diffEditorState, type EditorStateDiff } from "./editorStateDiff";
 import { remapBindingsByFn } from "./variableBinding";
+import { recallOnlyPath } from "./zplGenerator";
 
 /** A textarea freezes on one megabyte-scale ^GF/~DY payload line long before
  *  the parser would mind. Sized well above a whole single-line foreign label
@@ -23,9 +24,11 @@ export const MAX_SOURCE_PAGES = 1000;
 
 export type SourceGate =
   | { ok: true }
-  | { ok: false; reason: "blobLine" | "tooLarge"; command?: string };
+  | { ok: false; reason: "blobLine" | "tooLarge" | "recallOnly"; command?: string };
 
-export function sourceEditGate(zpl: string): SourceGate {
+export function sourceEditGate(zpl: string, pages: readonly Pick<Page, "storedFormatPath" | "storedFormatDelivery">[] = []): SourceGate {
+  // The recall carries no layout, so an apply would empty the page it came from.
+  if (pages.some((p) => recallOnlyPath(p) !== undefined)) return { ok: false, reason: "recallOnly" };
   if (zpl.length > MAX_SOURCE_CHARS) return { ok: false, reason: "tooLarge" };
   let start = 0;
   while (start < zpl.length) {
@@ -62,7 +65,7 @@ export interface SourceApplyInput {
 /** A refusal plus what the editor needs to point at it. The plan's refusal
  *  arm IS this shape, so callers store it without re-projecting fields. */
 export type SourceRefusalInfo =
-  | { reason: "empty" | "noContent" | "tooLarge" | "tooManyPages" }
+  | { reason: "empty" | "noContent" | "tooLarge" | "tooManyPages" | "recallOnly" }
   | { reason: "blobLine"; command?: string }
   | { reason: "unbalanced"; unbalanced: UnbalancedFormat };
 
@@ -108,7 +111,7 @@ function stripDeletedKeys<T extends object>(
 export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
   const { current } = input;
   if (input.text.trim() === "") return { ok: false, reason: "empty" };
-  const gate = sourceEditGate(input.text);
+  const gate = sourceEditGate(input.text, current.pages);
   if (!gate.ok) return gate;
 
   // Same dpmm path as the import modal: a ZPLab ^FX sidecar in the text wins,

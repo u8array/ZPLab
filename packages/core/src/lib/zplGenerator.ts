@@ -234,6 +234,8 @@ export function generateMultiPageZplWithMap(
   // blocks didn't set. `undefined` means nothing declared one yet, so a block
   // inheriting its ^JM from outside this export gets the declaration back.
   let wireJm: JmDensity | undefined;
+  // A recalled format sets whatever density it stored, so the block after it declares its own.
+  let wireUnknown = false;
   const ledger = uploadLedger(pages);
   const shippedFonts = new Set<string>();
   pages.forEach((p, pageIndex) => {
@@ -241,6 +243,19 @@ export function generateMultiPageZplWithMap(
     const carried = new Set((p.overlay?.segments ?? []).flatMap((seg) => (seg.kind === 'upload' ? [seg.key] : [])));
     const policy = ledger.policyFor(carried);
     const regenPage = () => generateZplBlock(pageLabel, p.objects, variables, undefined, policy.omit, shippedFonts);
+    const recallPath = recallOnlyPath(pageLabel);
+    if (recallPath !== undefined) {
+      // The printer holds the format, so the job keeps only the uploads it still ships and fills every slot.
+      const regen = regenPage();
+      ledger.settle(carried, regen.uploads ?? []);
+      if (out.length > 0 && !out.endsWith('\n')) out += '\n';
+      const base = out.length;
+      const { recalls } = planRecalls(pageLabel, p.objects, variables, NO_ROWS, NO_BINDINGS);
+      out += `${regen.preamble ?? ''}${recallBlock(recallPath, recallFields(recalls))}`;
+      blocks.push({ start: base, end: out.length });
+      wireUnknown = true;
+      return;
+    }
     let emitted: PageBlock;
     try {
       emitted = emitPageBlock(pageLabel, p, variables, policy, shippedFonts);
@@ -252,13 +267,13 @@ export function generateMultiPageZplWithMap(
     }
     // Unset means full density, so a page after a ^JMB page resets the wire;
     // while nothing is declared yet there is nothing to reset.
-    const target = pageLabel.jmDensity ?? (wireJm ? 'A' : undefined);
+    const target = pageLabel.jmDensity ?? (wireJm || wireUnknown ? 'A' : undefined);
     // A replayed block whose head the parser never recorded (or whose bytes
     // moved) has no place to splice a declaration; a density-only scan of its
     // bytes (cold path) decides instead of always regenerating.
     if (!emitted.head) {
       const cold = reconstructBlockHead(emitted.block);
-      const action = target === undefined ? 'keep' : headlessAction(cold.density, target, wireJm);
+      const action = target === undefined ? 'keep' : headlessAction(cold.density, target, wireUnknown ? undefined : wireJm);
       // Bytes that disagree on the ^DF regenerate too: there is no head to splice.
       if (action === 'regenerate' || cold.storedFormat?.path !== pageLabel.storedFormatPath) {
         emitted = regenPage();
@@ -269,11 +284,12 @@ export function generateMultiPageZplWithMap(
     }
     const stored = applyStoredFormat(emitted, pageLabel.storedFormatPath);
     emitted = { ...emitted, block: stored.block, head: stored.head };
-    const applied = applyJmDensity(emitted, pageLabel.jmDensity, target === wireJm ? undefined : target);
+    const applied = applyJmDensity(emitted, pageLabel.jmDensity, !wireUnknown && target === wireJm ? undefined : target);
     const block = applied.block;
     // Track what the block actually carries, not the intent: an unreachable
     // head would leave the next block believing a density the wire never got.
     wireJm = applied.wireJm ?? wireJm;
+    wireUnknown = false;
     // An overlay page already carries the inter-block separator captured at
     // import (the splitter folds it into the preceding block). Only insert a
     // newline when the previous block didn't end with one (a fresh or
@@ -305,6 +321,8 @@ interface PageBlock {
   block: string;
   head: FormatHead | undefined;
   spans: ObjectSpan[];
+  /** Every line ahead of ^XA, each with its newline, so a recall job can keep them and drop the rest. */
+  preamble?: string;
   replayed?: true;
   /** Keys of the graphic uploads the block's bytes ship, replayed or emitted. */
   uploads?: readonly string[];
@@ -784,21 +802,60 @@ function emitPageBlock(
 /** Where a batch stores its template when the design names none ^XF could recall: R: is volatile RAM, matching a single run. */
 const BATCH_TEMPLATE_PATH = 'R:LBL.ZPL';
 
-/** Store template via ^DF then emit one ^XA^XF...^XZ recall block per
- *  CSV row. Unmapped variables fall back to the template's ^FD default. */
-export function generateBatchZpl(
-  // Page-resolved: batch recalls one page's objects, so the caller must hand
-  // in the label that page prints at.
+/** The path a job recalls instead of storing, once the page says so and ^XF can read the name. */
+export function recallOnlyPath(page: Pick<PageLabel, 'storedFormatPath' | 'storedFormatDelivery'>): string | undefined {
+  const path = page.storedFormatPath;
+  return page.storedFormatDelivery !== undefined && path !== undefined && isRecallableFormatPath(path) ? path : undefined;
+}
+
+/** Storage keys more than one page stores its format under, since the printer keeps one format per name. */
+export function contestedFormatKeys(pages: readonly Pick<PageLabel, 'storedFormatPath'>[]): Set<string> {
+  const seen = new Set<string>();
+  const contested = new Set<string>();
+  for (const p of pages) {
+    if (p.storedFormatPath === undefined) continue;
+    const key = storageKey(p.storedFormatPath);
+    if (seen.has(key)) contested.add(key);
+    seen.add(key);
+  }
+  return contested;
+}
+
+export type RecallWayIssue = 'longName' | 'contested';
+
+/** Why a page may not recall its format: ^XF cannot read the name, or another page stores under it. */
+export function recallWayIssue(page: Pick<PageLabel, 'storedFormatPath'>, pages: readonly Pick<PageLabel, 'storedFormatPath'>[]): RecallWayIssue | undefined {
+  const path = page.storedFormatPath;
+  if (path === undefined) return undefined;
+  if (!isRecallableFormatPath(path)) return 'longName';
+  return contestedFormatKeys(pages).has(storageKey(path)) ? 'contested' : undefined;
+}
+
+function recallBlock(path: string, fields: readonly string[]): string {
+  return ['^XA', `^XF${path}`, ...fields, '^XZ'].join('\n');
+}
+
+interface RecallEntry {
+  fn: number;
+  colIdx: number;
+  transform: (s: string) => string;
+  defaultValue: string;
+}
+
+const NO_ROWS = { headers: [] as readonly string[], rows: [] as readonly (readonly string[])[] };
+const NO_BINDINGS = { bindings: {} as Record<string, string> };
+
+/** The stored template and the slots a recall supplies: the mapped ones while the job stores the format itself,
+ *  every slot once the printer holds it, since a stored ^FD seals its slot against the recall (ZD230). */
+function planRecalls(
   label: PageLabel,
   objects: LabelObject[],
   variables: readonly Variable[],
-  dataset: {
-    headers: readonly string[];
-    rows: readonly (readonly string[])[];
-  },
+  dataset: { headers: readonly string[]; rows: readonly (readonly string[])[] },
   columnMapping: { bindings: Record<string, string> },
-): string {
+): { template: PageBlock; path: string; recalls: RecallEntry[] } {
   const identity = (s: string) => s;
+  const recallOnly = recallOnlyPath(label) !== undefined;
   // Only leaves that emit an ^FN in the stored template may donate their
   // transform: an excluded or home-dropped leaf or a rotated QR shipped as
   // ^GFA would stamp a foreign encoding onto the surviving co-consumer.
@@ -814,10 +871,10 @@ export function generateBatchZpl(
   const modeDFns = batchBuckets.modeDExclusive;
   const plain128Fns = batchBuckets.plainExclusive;
   const plainSharedFns = batchBuckets.plainShared;
-  const overrides: { fn: number; colIdx: number; transform: (s: string) => string }[] = [];
+  const entries: RecallEntry[] = [];
   for (const v of variables) {
     const colIdx = boundColumnIndex(v, dataset, columnMapping);
-    if (colIdx === -1) continue;
+    if (colIdx === -1 && !recallOnly) continue;
     // Apply the bound field's ^FD transform (QR prefix, UPC-E compaction, GS1
     // escaping) to each row value, matching the single-format export so the
     // recall doesn't overwrite ^FN with an untransformed payload. The bound
@@ -844,29 +901,48 @@ export function generateBatchZpl(
           : plain128Fns.has(v.fnNumber)
             ? (s: string) => planCode128Fd(s, 'templateValue').fd
             : identity);
-    overrides.push({ fn: v.fnNumber, colIdx, transform });
+    entries.push({ fn: v.fnNumber, colIdx, transform, defaultValue: v.defaultValue });
   }
 
-  // Mapped slots stay bare in the stored format; the recall supplies them.
-  const mappedFns = new Set(overrides.map((o) => o.fn));
-  const templatePath = label.storedFormatPath && isRecallableFormatPath(label.storedFormatPath) ? label.storedFormatPath : BATCH_TEMPLATE_PATH;
-  const templateStored = generateZplBlock({ ...label, storedFormatPath: templatePath }, objects, variables, mappedFns).block;
+  // Supplied slots stay bare in the stored format; the recall fills them.
+  const bareFns = new Set(entries.map((e) => e.fn));
+  const path = recallOnlyPath(label) ?? (label.storedFormatPath && isRecallableFormatPath(label.storedFormatPath) ? label.storedFormatPath : BATCH_TEMPLATE_PATH);
+  const template = generateZplBlock({ ...label, storedFormatPath: path }, objects, variables, bareFns);
   // A recall for a slot the stored format never declares prints as a stray field (ZD230).
-  const storedFnSlots = new Set([...templateStored.matchAll(/\^FN(\d+)/g)].map((m) => Number(m[1])));
-  const recalls = overrides.filter((o) => storedFnSlots.has(o.fn));
+  const storedFnSlots = new Set([...template.block.matchAll(/\^FN(\d+)/g)].map((m) => Number(m[1])));
+  return { template, path, recalls: entries.filter((e) => storedFnSlots.has(e.fn)) };
+}
 
-  const recallBlocks = dataset.rows.map((row) => {
-    const lines: string[] = ['^XA', `^XF${templatePath}`];
-    for (const { fn, colIdx, transform } of recalls) {
-      const value = row[colIdx] ?? '';
-      // fdField applies ^FH hex-escape for ^/~ so fields don't terminate early.
-      lines.push(`^FN${fn}${fdField(transform(value))}`);
-    }
-    lines.push('^XZ');
-    return lines.join('\n');
-  });
+/** A slot takes its row value, or its default when no row or no column supplies one. */
+function recallFields(recalls: readonly RecallEntry[], row?: readonly string[]): string[] {
+  // fdField applies ^FH hex-escape for ^/~ so fields don't terminate early.
+  return recalls.map(({ fn, colIdx, transform, defaultValue }) =>
+    `^FN${fn}${fdField(transform(row !== undefined && colIdx !== -1 ? row[colIdx] ?? '' : defaultValue))}`);
+}
 
-  return [templateStored, ...recallBlocks].join('\n');
+/** The ^DF frame the setup script stores for a page, every slot bare and the preamble stripped. */
+export function generateStoredFormatBlock(label: PageLabel, objects: LabelObject[], variables: readonly Variable[] = []): string {
+  const { template } = planRecalls(label, objects, variables, NO_ROWS, NO_BINDINGS);
+  return template.block.slice(template.preamble?.length ?? 0);
+}
+
+/** One ^XA^XF...^XZ recall block per CSV row, led by the ^DF template unless the page says the printer holds it. */
+export function generateBatchZpl(
+  // Page-resolved: batch recalls one page's objects, so the caller must hand
+  // in the label that page prints at.
+  label: PageLabel,
+  objects: LabelObject[],
+  variables: readonly Variable[],
+  dataset: {
+    headers: readonly string[];
+    rows: readonly (readonly string[])[];
+  },
+  columnMapping: { bindings: Record<string, string> },
+): string {
+  const { template, path, recalls } = planRecalls(label, objects, variables, dataset, columnMapping);
+  const recallBlocks = dataset.rows.map((row) => recallBlock(path, recallFields(recalls, row)));
+  const lead = recallOnlyPath(label) === undefined ? template.block : (template.preamble ?? '').trimEnd();
+  return [...(lead === '' ? [] : [lead]), ...recallBlocks].join('\n');
 }
 
 // ^FT graphics anchor at a bottom corner (spec p.205), so the drop test uses
@@ -1014,6 +1090,7 @@ function generateZplBlock(
   // ~JS is immediate/transient like ~SD; emit before ^XA.
   if (label.backfeedSequence) lines.push(`~JS${label.backfeedSequence}`);
 
+  const preambleLines = lines.length;
   lines.push('^XA');
   const lineStart = () => lines.reduce((n, l) => n + l.length + 1, 0);
   // Offset just past the ^XA: every preceding line plus its newline.
@@ -1172,6 +1249,7 @@ function generateZplBlock(
     block: aliased.join('\n'),
     head: { caret: '^', at: headAt, jmSpans, ...(dfSpans ? { dfSpans } : {}) },
     spans,
+    preamble: aliased.slice(0, preambleLines).map((l) => `${l}\n`).join(''),
     uploads: uploads.keys,
   };
 }

@@ -20,6 +20,8 @@ export function sourceRefusalText(
       return t.output.editSourceGateBlob;
     case 'tooLarge':
       return t.output.editSourceGateSize;
+    case 'recallOnly':
+      return t.output.editSourceGateRecall;
     case 'tooManyPages':
       return t.output.editSourceTooManyPagesFmt.replace('{max}', String(MAX_SOURCE_PAGES));
   }
