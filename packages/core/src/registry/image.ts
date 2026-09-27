@@ -100,10 +100,8 @@ export interface ImageProps {
     recall?: 'IM';
     /** ^XG magnification as written, 1-10 per axis (spec p.373); the preview stays at stored size. */
     magnify?: { x: number; y: number };
-    /** Ship the bitmap bytes via `~DY` alongside the `^XG` reference.
-     *  Default true on first toggle so a single-job ZPL is self-contained.
-     *  False = recall-only: assume the file is already on printer storage,
-     *  emit only `^XG`. Mirrors the customFonts `embedInZpl` pattern. */
+    /** Ship the bitmap bytes via `~DY` alongside `^XG`. Undefined reads as true, so a fresh entry ships by default.
+     *  False is recall-only, assuming the file is already on printer storage. */
     embedInZpl?: boolean;
   };
 }

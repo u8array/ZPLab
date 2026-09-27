@@ -108,14 +108,70 @@ describe("FontManager manual mappings", () => {
   });
 });
 
-describe("FontManager embed toggle", () => {
+const choose = (r: ReturnType<typeof render>, option: string) => {
+  act(() => {
+    fireEvent.click(r.getAllByRole("button", { name: /^Delivery/ })[0] as HTMLElement);
+  });
+  act(() => {
+    r.getByRole("option", { name: option }).click();
+  });
+};
+
+describe("FontManager delivery", () => {
   it("writes only the flag on the mapping, the path being the identity", () => {
     act(() => useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8, customFonts: [{ alias: "M", path: "e:arial.ttf" }] } }));
     const r = render(<FontManager />);
-    act(() => {
-      fireEvent.click(r.getByLabelText("Send with print job"));
-    });
+    choose(r, "With every job");
     expect(useLabelStore.getState().label.customFonts).toEqual([{ alias: "M", path: "e:arial.ttf", embedInZpl: true }]);
+  });
+
+  it("moves a font from the job into the setup script and back out to the printer, the profile following each step", () => {
+    act(() => useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8, customFonts: [{ alias: "M", path: "E:ARIAL.TTF", embedInZpl: true }] } }));
+    const r = render(<FontManager />);
+    choose(r, "Once in the setup script");
+    expect(useLabelStore.getState().printerProfile.setupFonts).toEqual([{ path: "E:ARIAL.TTF" }]);
+    expect(useLabelStore.getState().label.customFonts).toEqual([{ alias: "M", path: "E:ARIAL.TTF", embedInZpl: undefined }]);
+    expect(r.getByText(/setup script of this printer profile/)).toBeTruthy();
+    choose(r, "Already on the printer");
+    expect(useLabelStore.getState().printerProfile.setupFonts).toBeUndefined();
+    expect(r.getByText(/default font/)).toBeTruthy();
+  });
+
+  it("keeps the profile entry when the job takes the font back", () => {
+    act(() => useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8, customFonts: [{ alias: "M", path: "E:ARIAL.TTF" }] }, printerProfile: { setupFonts: [{ path: "E:ARIAL.TTF" }] } }));
+    const r = render(<FontManager />);
+    choose(r, "With every job");
+    expect(useLabelStore.getState().printerProfile.setupFonts).toEqual([{ path: "E:ARIAL.TTF" }]);
+    expect(useLabelStore.getState().label.customFonts?.[0]?.embedInZpl).toBe(true);
+  });
+
+  it("blocks the job for a font without an alias, since no ^CW could name it", () => {
+    act(() => useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8 } }));
+    const r = render(<FontManager />);
+    act(() => {
+      fireEvent.click(r.getAllByRole("button", { name: /^Delivery/ })[0] as HTMLElement);
+    });
+    expect((r.getByRole("option", { name: "With every job" }) as HTMLElement).getAttribute("aria-disabled")).toBe("true");
+  });
+
+  it("steps the design back first on undo, spends nothing on a re-pick, and leaves the design still when only the profile moves", () => {
+    act(() => useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8, customFonts: [{ alias: "M", path: "E:ARIAL.TTF", embedInZpl: true }] } }));
+    const temporal = useLabelStore.temporal.getState();
+    const steps = () => useLabelStore.temporal.getState().pastStates.length;
+    const before = steps();
+    const r = render(<FontManager />);
+    choose(r, "With every job");
+    expect(steps()).toBe(before);
+    choose(r, "Once in the setup script");
+    // The design steps back first, and with the entry still in the profile the derivation reads job again.
+    act(() => temporal.undo());
+    expect(useLabelStore.getState().label.customFonts?.[0]?.embedInZpl).toBe(true);
+    expect(useLabelStore.getState().printerProfile.setupFonts).toEqual([{ path: "E:ARIAL.TTF" }]);
+    act(() => temporal.redo());
+    const label = useLabelStore.getState().label;
+    choose(r, "Already on the printer");
+    expect(useLabelStore.getState().label).toBe(label);
+    expect(useLabelStore.getState().printerProfile.setupFonts).toBeUndefined();
   });
 });
 

@@ -28,6 +28,8 @@ import { CollapsibleSection } from '../ui/CollapsibleSection';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { Tooltip } from '../ui/Tooltip';
 import type { CustomFontMapping } from '@zplab/core/types/LabelConfig';
+import { applyFontDelivery, fontDelivery, type ResourceDelivery } from '@zplab/core/lib/resourceDelivery';
+import { DeliverySelect } from '../Properties/DeliverySelect';
 const PATHS_DATALIST_ID = 'zpl-custom-font-paths';
 
 const addBtnCls =
@@ -38,6 +40,8 @@ export function FontManager() {
   const fonts = useCachedFonts();
   const customFonts = useLabelStore((s) => s.label.customFonts);
   const setLabelConfig = useLabelStore((s) => s.setLabelConfig);
+  const setupFonts = useLabelStore((s) => s.printerProfile.setupFonts);
+  const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
   const live = useLiveUsage().fonts;
 
   const [adding, setAdding] = useState(false);
@@ -72,12 +76,15 @@ export function FontManager() {
     replaceList(upsertCustomFontMapping(customFonts, path, alias));
   };
 
-  const toggleEmbedForPath = (path: string, embed: boolean) => {
+  const deliverPath = (path: string, next: ResourceDelivery) => {
+    const result = applyFontDelivery(next, entryForPath(path), path, setupFonts);
+    if (result.setupFonts !== setupFonts && !patchPrinterProfile({ setupFonts: result.setupFonts ? [...result.setupFonts] : undefined })) return;
+    if (!result.patch) return;
     const list = customFonts ?? [];
     replaceList(
       list.map((m) =>
         m.path !== undefined && storageRefMatchesPath(m.path, path)
-          ? { ...m, embedInZpl: embed || undefined }
+          ? { ...m, ...result.patch }
           : m,
       ),
     );
@@ -140,12 +147,12 @@ export function FontManager() {
               name={path}
               alias={alias}
               duplicate={isDuplicateAlias(alias)}
-              embedInZpl={entry?.embedInZpl ?? false}
+              delivery={fontDelivery(entry, path, setupFonts)}
               embedLarge={isEmbedLarge(path)}
               previewMissing={!getFontFamily(path)}
               inUse={live.get(storageKey(path))}
               onAliasChange={(v) => setAliasForPath(path, v)}
-              onEmbedChange={(v) => toggleEmbedForPath(path, v)}
+              onDeliveryChange={(v) => deliverPath(path, v)}
               onRequestDelete={() => setPendingDelete(path)}
             />
           );
@@ -157,7 +164,7 @@ export function FontManager() {
           onDone={(uploadedPath) => {
             // Auto-assign the next free alias when the upload succeeds.
             // Closes the "what now?" gap between the upload finishing
-            // and the embed toggle becoming usable: the user lands on
+            // and the delivery select becoming usable: the user lands on
             // a row that is already wired through to ^CW + canvas, with
             // an editable alias if they want to override the default.
             if (uploadedPath) {
@@ -226,7 +233,7 @@ interface FontEntryProps {
   name: string;
   alias: string;
   duplicate: boolean;
-  embedInZpl: boolean;
+  delivery: ResourceDelivery;
   /** Font is large; embedding still works but warns (bigger job, slower view). */
   embedLarge: boolean;
   /** Bytes are cached, but no browser face draws them. */
@@ -234,7 +241,7 @@ interface FontEntryProps {
   /** Why the delete is off: who still names the file. */
   inUse: LiveReason | undefined;
   onAliasChange: (next: string) => void;
-  onEmbedChange: (next: boolean) => void;
+  onDeliveryChange: (next: ResourceDelivery) => void;
   onRequestDelete: () => void;
 }
 
@@ -242,23 +249,17 @@ function FontEntry({
   name,
   alias,
   duplicate,
-  embedInZpl,
+  delivery,
   embedLarge,
   previewMissing,
   inUse,
   onAliasChange,
-  onEmbedChange,
+  onDeliveryChange,
   onRequestDelete,
 }: FontEntryProps) {
   const t = useT();
-  // The embed toggle is only meaningful once an alias is in place;
-  // ~DY without a matching ^CW would dump bytes onto the printer that
-  // no field can reference. Disable + tooltip when alias is empty so
-  // the constraint is visible instead of silently failing at emit.
-  const embedDisabled = !alias;
-  // "Embedding is actually active": gates both the checkbox state and the
-  // large-font warning so they never disagree.
-  const embedActive = embedInZpl && !embedDisabled;
+  // ~DY without a matching ^CW would dump bytes onto the printer that no field can reference.
+  const jobBlocked = alias ? undefined : t.delivery.jobNeedsAlias;
   // Heads-up when the user picks a built-in letter (0, A-H): ^CW with
   // a built-in alias overrides the factory font on the printer. That is
   // the intended way to both override and preview a built-in here, but
@@ -267,7 +268,7 @@ function FontEntry({
 
   return (
     <div className="flex flex-col gap-0.5 px-2 py-1.5 rounded border border-transparent hover:border-border-2 hover:bg-surface-2 transition-colors">
-      <div className="grid grid-cols-[1fr_3rem_auto_auto] items-center gap-2">
+      <div className="grid grid-cols-[1fr_3rem_auto] items-center gap-2">
         <span
           className="font-mono text-xs text-text truncate"
           title={name}
@@ -300,24 +301,6 @@ function FontEntry({
             onChange={(e) => onAliasChange(e.target.value)}
           />
         </Tooltip>
-        <Tooltip content={t.fonts.embedInZplHint}>
-          <label
-            className={`flex items-center gap-1 text-[10px] font-mono ${
-              embedDisabled
-                ? 'text-muted opacity-40 cursor-not-allowed'
-                : 'text-muted hover:text-text cursor-pointer'
-            }`}
-          >
-            <input
-              type="checkbox"
-              className="accent-accent"
-              checked={embedActive}
-              disabled={embedDisabled}
-              onChange={(e) => onEmbedChange(e.target.checked)}
-            />
-            {t.fonts.embedInZpl}
-          </label>
-        </Tooltip>
         <Tooltip content={inUse ? { document: t.fonts.inUse, profile: t.fonts.inProfile, history: t.fonts.inHistory, restore: t.fonts.inRestore, clipboard: t.fonts.inClipboard }[inUse] : t.fonts.delete}>
           <button
             type="button"
@@ -330,6 +313,13 @@ function FontEntry({
           </button>
         </Tooltip>
       </div>
+      <DeliverySelect
+        resource="font"
+        subject={name}
+        value={delivery}
+        onChange={onDeliveryChange}
+        blocked={jobBlocked === undefined ? undefined : { job: jobBlocked }}
+      />
       {overridesBuiltin && (
         <p className="text-[10px] text-amber-500 leading-snug pl-1">
           {t.fonts.builtinAliasWarning}
@@ -338,7 +328,7 @@ function FontEntry({
       {previewMissing && (
         <p className="text-[10px] font-mono text-warning">{t.fonts.faceRejected}</p>
       )}
-      {embedLarge && embedActive && (
+      {embedLarge && delivery === 'job' && (
         <p className="text-[10px] text-amber-500 leading-snug pl-1">
           {t.fonts.embedLargeWarning}
         </p>

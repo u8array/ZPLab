@@ -27,6 +27,8 @@ export function StoredFontsTab() {
   const t = useT();
   const fonts = useCachedFonts();
   const setupFonts = useLabelStore((s) => s.printerProfile.setupFonts);
+  const customFonts = useLabelStore((s) => s.label.customFonts);
+  const shipsToo = (path: string) => customFonts?.some((m) => m.embedInZpl && m.path !== undefined && storageRefMatchesPath(m.path, path)) ?? false;
   const patchPrinterProfileWith = useLabelStore((s) => s.patchPrinterProfileWith);
   const loc = t.printerSettings.fonts;
   const frozen = useLabelStore(selectEditorFrozen);
@@ -98,8 +100,11 @@ export function StoredFontsTab() {
                   key={path}
                   className="flex items-center justify-between gap-3 px-2 py-1.5 rounded border border-transparent hover:border-border-2 hover:bg-surface-2/40 transition-colors"
                 >
-                  <span className="font-mono text-xs text-text truncate" title={path}>
-                    {path}
+                  <span className="flex flex-col gap-0.5 min-w-0">
+                    <span className="font-mono text-xs text-text truncate" title={path}>
+                      {path}
+                    </span>
+                    {inProfile && shipsToo(path) && <span className="text-[10px] text-muted">{t.delivery.job}</span>}
                   </span>
                   <Tooltip content={frozen ? t.printerSettings.frozenHint : undefined}>
                     <label className="flex items-center gap-1.5 text-[10px] font-mono text-muted hover:text-text cursor-pointer">

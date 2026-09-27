@@ -24,6 +24,14 @@ const stored = (extra: Partial<ImageProps["storedAs"]> = {}): LabelObjectBase & 
 });
 
 const Panel = imagePanel.PropertiesPanel;
+const choose = (r: ReturnType<typeof render>, option: string) => {
+  act(() => {
+    fireEvent.click(r.getByRole("button", { name: /^Delivery/ }));
+  });
+  act(() => {
+    r.getByRole("option", { name: option }).click();
+  });
+};
 
 beforeEach(() => {
   useLabelStore.temporal.getState().clear();
@@ -34,15 +42,55 @@ afterEach(() => {
   act(() => useLabelStore.setState({ printerProfile: {} }));
 });
 
-describe("image panel setup-script handoff", () => {
-  it("copies the bytes into the profile and leaves the label recall-only", () => {
+const option = (r: ReturnType<typeof render>, name: string) => {
+  act(() => {
+    fireEvent.click(r.getByRole("button", { name: /^Delivery/ }));
+  });
+  return r.getByRole("option", { name }) as HTMLElement;
+};
+
+describe("image panel delivery", () => {
+  it("copies the bytes into the profile and leaves the label recall-only when setup is chosen", () => {
     const onChange = vi.fn();
-    const { getByText } = render(<Panel obj={stored()} onChange={onChange} />);
-    act(() => {
-      fireEvent.click(getByText(/Upload at setup instead/));
-    });
+    const r = render(<Panel obj={stored()} onChange={onChange} />);
+    choose(r, "Once in the setup script");
     expect(useLabelStore.getState().printerProfile.setupGraphics).toEqual([{ path: "R:LOGO.GRF", gfa: GFA }]);
     expect(onChange).toHaveBeenCalledWith({ storedAs: { device: "R", name: "LOGO", embedInZpl: false }, _gfaCache: GFA });
+  });
+
+  it("reads the printer for a recall nothing provisions, and drops the entry when the printer is chosen", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+    const onChange = vi.fn();
+    const r = render(<Panel obj={stored({ embedInZpl: false })} onChange={onChange} />);
+    expect(r.getByRole("button", { name: /^Delivery/ }).textContent).toContain("Once in the setup script");
+    choose(r, "Already on the printer");
+    expect(useLabelStore.getState().printerProfile.setupGraphics).toBeUndefined();
+    expect(onChange).not.toHaveBeenCalled();
+    expect(r.getByText(/nothing prints in its place/)).toBeTruthy();
+  });
+
+  it("keeps the select for a recall spelled .PNG", () => {
+    const onChange = vi.fn();
+    const r = render(<Panel obj={stored({ embedInZpl: false, ext: "PNG" })} onChange={onChange} />);
+    expect(r.getByRole("button", { name: /^Delivery/ }).textContent).toContain("Already on the printer");
+    choose(r, "Once in the setup script");
+    expect(useLabelStore.getState().printerProfile.setupGraphics).toEqual([{ path: "R:LOGO.GRF", gfa: GFA }]);
+    expect(onChange).toHaveBeenCalledWith({ storedAs: { device: "R", name: "LOGO", embedInZpl: false }, _gfaCache: GFA });
+  });
+
+  it("blocks the job and says so when no bytes could ship, whatever the flag says", () => {
+    const obj = stored();
+    const r = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: undefined } }} onChange={() => undefined} />);
+    expect(r.getByText(/Needs the image data/)).toBeTruthy();
+    expect(option(r, "With every job").getAttribute("aria-disabled")).toBe("true");
+  });
+
+  it("writes nothing on a re-pick of the current way", () => {
+    const onChange = vi.fn();
+    const r = render(<Panel obj={stored()} onChange={onChange} />);
+    choose(r, "With every job");
+    expect(onChange).not.toHaveBeenCalled();
+    expect(useLabelStore.getState().printerProfile.setupGraphics).toBeUndefined();
   });
 
   it("hands off from the setup-script hint to the stored graphics tab", () => {
@@ -57,46 +105,36 @@ describe("image panel setup-script handoff", () => {
 
   it("shows a refused encode until the object's bytes change", () => {
     const obj = stored();
-    const { getByText, queryByText, rerender } = render(<Panel obj={obj} onChange={() => undefined} />);
+    const r = render(<Panel obj={obj} onChange={() => undefined} />);
     verdict.mockReturnValueOnce({ fit: "unshippable" });
-    act(() => {
-      fireEvent.click(getByText(/Upload at setup instead/));
-    });
-    expect(getByText(/Too wide/)).toBeTruthy();
+    choose(r, "Once in the setup script");
+    expect(r.getByText(/Too wide/)).toBeTruthy();
     expect(useLabelStore.getState().printerProfile.setupGraphics).toBeUndefined();
-    rerender(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: "^GFA,4,4,1,FFFFFFFF" } }} onChange={() => undefined} />);
-    expect(queryByText(/Too wide/)).toBeNull();
-    expect(getByText(/Upload at setup instead/)).toBeTruthy();
+    r.rerender(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: "^GFA,4,4,1,FFFFFFFF" } }} onChange={() => undefined} />);
+    expect(r.queryByText(/Too wide/)).toBeNull();
+    expect(option(r, "Once in the setup script").getAttribute("aria-disabled")).toBeNull();
   });
 
-  it("neither vouches for the entry nor offers a dead button once the cache is gone without image data", () => {
+  it("keeps setup selectable while an entry exists, names its state, and blocks setup only when an encode is due", () => {
     act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
     const obj = stored({ embedInZpl: false });
-    const { queryByText } = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: undefined } }} onChange={() => undefined} />);
-    expect(queryByText(/Uploaded once by the setup script/)).toBeNull();
-    expect(queryByText(/Upload at setup instead/)).toBeNull();
-  });
-
-  it("names bytes past the cap as too large instead of offering a re-send that cannot run", () => {
-    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
-    const obj = stored({ embedInZpl: false });
+    const gone = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: undefined } }} onChange={() => undefined} />);
+    expect(gone.getByText(/not verifiable/)).toBeTruthy();
+    expect(option(gone, "Once in the setup script").getAttribute("aria-disabled")).toBeNull();
+    cleanup();
     const huge = `^GFA,600000,600000,1,${"F".repeat(1_200_000)}`;
-    const { getByText, queryByText } = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: huge } }} onChange={() => undefined} />);
-    expect(getByText(/Too large/)).toBeTruthy();
-    expect(queryByText(/Upload at setup instead/)).toBeNull();
-    expect(queryByText(/Uploaded once by the setup script/)).toBeNull();
+    const big = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: huge } }} onChange={() => undefined} />);
+    expect(big.getByText(/Too large/)).toBeTruthy();
+    expect(option(big, "Once in the setup script").getAttribute("aria-disabled")).toBeNull();
+    cleanup();
+    act(() => useLabelStore.setState({ printerProfile: {} }));
+    const fresh = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: huge } }} onChange={() => undefined} />);
+    expect(option(fresh, "Once in the setup script").getAttribute("aria-disabled")).toBe("true");
   });
 
-  it("hides the button when the cache cannot ship and no image backs it", () => {
+  it("blocks setup when the cache cannot ship and no image backs it", () => {
     const obj = stored();
-    const { queryByText } = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: "^GFA,4,4,1," } }} onChange={() => undefined} />);
-    expect(queryByText(/Upload at setup instead/)).toBeNull();
-  });
-
-  it("names an entry the setup script already carries instead of offering the button", () => {
-    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
-    const { getByText, queryByText } = render(<Panel obj={stored({ embedInZpl: false })} onChange={() => undefined} />);
-    expect(getByText(/Uploaded once by the setup script/)).toBeTruthy();
-    expect(queryByText(/Upload at setup instead/)).toBeNull();
+    const r = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: "^GFA,4,4,1," } }} onChange={() => undefined} />);
+    expect(option(r, "Once in the setup script").getAttribute("aria-disabled")).toBe("true");
   });
 });

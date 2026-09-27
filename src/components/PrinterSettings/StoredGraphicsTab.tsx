@@ -118,6 +118,8 @@ export function StoredGraphicsTab() {
               const state = setupGraphicState(props, setupGraphics);
               const hasEntry = findSetupEntry(setupGraphics, path) !== undefined;
               const orphan = state === "none" && props.storedAs?.embedInZpl === false;
+              // Bytes double up when the entry and the job both ship, so the row names it.
+              const shipsToo = hasEntry && props.storedAs?.embedInZpl !== false;
               const resend = state === "stale" ? loc.staleEntry : state === "unknown" ? loc.unverifiedEntry : null;
               const refused = sendIssue?.path === path && sendIssue.cache === props._gfaCache ? sendIssue.fit : null;
               return (
@@ -141,6 +143,8 @@ export function StoredGraphicsTab() {
                       <span className="text-[10px] text-warning">{loc.tooLarge}</span>
                     ) : orphan ? (
                       <span className="text-[10px] text-warning">{loc.orphanRecall}</span>
+                    ) : shipsToo ? (
+                      <span className="text-[10px] text-muted">{t.delivery.job}</span>
                     ) : null}
                   </span>
                   <Tooltip content={frozen ? t.printerSettings.frozenHint : undefined}>

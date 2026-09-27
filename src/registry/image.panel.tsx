@@ -13,8 +13,11 @@ import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { RotationSelect } from '../components/Properties/RotationSelect';
 import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
-import { IMAGE_PROP_SPECS, canSendSetupGraphic, isImageRotatable, recallCommand, recallStoragePath, setupGraphicOf, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
-import { withSetupEntry } from '@zplab/core/lib/setupEntries';
+import { IMAGE_PROP_SPECS, canSendSetupGraphic, isImageRotatable, recallCommand, recallStoragePath, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
+import { applyGraphicDelivery, graphicDelivery, graphicJobShips, providedGraphic, type ResourceDelivery } from '@zplab/core/lib/resourceDelivery';
+import { findSetupEntry } from '@zplab/core/lib/setupEntries';
+import { uploadedGraphicPath } from '@zplab/core/lib/storagePath';
+import { DeliverySelect } from '../components/Properties/DeliverySelect';
 import { useCachedImages } from '../hooks/useCachedImages';
 import { useLabelStore } from '../store/labelStore';
 
@@ -82,21 +85,39 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
     // and we'd need `?.`-fallbacks for every field access.
     const storedAs = p.storedAs;
     const setupGraphics = useLabelStore((s) => s.printerProfile.setupGraphics);
-    const patchPrinterProfileWith = useLabelStore((s) => s.patchPrinterProfileWith);
+    const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
     const openObjects = useLabelStore((s) => s.setPrinterSettingsTab);
-    const setupState = setupGraphicState(p, setupGraphics);
-    const canSend = canSendSetupGraphic(p);
+    const setupState = setupGraphicState(providedGraphic(p), setupGraphics);
+    const canSend = canSendSetupGraphic(providedGraphic(p));
     // Remembered here, not in the object: caching a refused encode would dirty the design for nothing.
     const [setupRefusal, setSetupRefusal] = useState<{ imageId: string; cache: string | undefined; fit: 'tooLarge' | 'unshippable' } | null>(null);
     const refusal = setupRefusal?.imageId === p.imageId && setupRefusal.cache === p._gfaCache ? setupRefusal.fit : null;
-    const uploadAtSetup = () => {
-      const verdict = setupGraphicOf(p);
-      if (!verdict || !storedAs) return;
-      if (verdict.fit !== 'ok') return setSetupRefusal({ imageId: p.imageId, cache: p._gfaCache, fit: verdict.fit });
-      const applied = patchPrinterProfileWith((profile) => ({ setupGraphics: withSetupEntry(profile.setupGraphics, verdict.entry) }));
-      if (!applied) return;
-      // The cache holds what was just sent, so the state reads current without a fresh encode.
-      onChange({ storedAs: { ...storedAs, embedInZpl: false }, _gfaCache: verdict.entry.gfa });
+    const delivery = graphicDelivery(p, setupGraphics);
+    // Only a missing entry needs an encode, so only then do the bytes decide whether setup can be chosen.
+    const entryMissing = storedAs !== undefined && findSetupEntry(setupGraphics, uploadedGraphicPath(storedAs)) === undefined;
+    const setupBlocked = !entryMissing
+      ? undefined
+      : setupState === 'tooLarge' || refusal === 'tooLarge'
+        ? t.printerSettings.objects.tooLarge
+        : refusal === 'unshippable'
+          ? t.printerSettings.objects.tooWide
+          : !canSend
+            ? t.delivery.setupNeedsBytes
+            : undefined;
+    const jobBlocked = graphicJobShips(p) ? undefined : t.delivery.setupNeedsBytes;
+    const issue = delivery === 'job'
+      ? jobBlocked
+      : delivery === 'setup' && setupState === 'stale'
+        ? t.printerSettings.objects.staleEntry
+        : delivery === 'setup' && setupState === 'unknown'
+          ? t.printerSettings.objects.unverifiedEntry
+          : undefined;
+    const deliver = (next: ResourceDelivery) => {
+      const result = applyGraphicDelivery(next, p, setupGraphics);
+      if (!result) return;
+      if ('refused' in result) return setSetupRefusal({ imageId: p.imageId, cache: p._gfaCache, fit: result.refused });
+      if (result.setupGraphics !== setupGraphics && !patchPrinterProfile({ setupGraphics: result.setupGraphics ? [...result.setupGraphics] : undefined })) return;
+      if (result.patch) onChange(result.patch);
     };
 
     return (
@@ -242,38 +263,20 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
                 <span className="text-[10px] text-muted font-mono">
                   {formatStoragePath(recallStoragePath(p) ?? storedAs, true)}
                 </span>
-                <label className="flex items-center gap-2 cursor-pointer mt-1">
-                  <input
-                    type="checkbox"
-                    className="accent-accent"
-                    checked={storedAs.embedInZpl !== false}
-                    onChange={(e) =>
-                      onChange({
-                        storedAs: { ...storedAs, embedInZpl: e.target.checked },
-                      })
-                    }
+                {delivery && (
+                  <DeliverySelect
+                    resource="graphic"
+                    subject={formatStoragePath(storedAs, true)}
+                    value={delivery}
+                    onChange={deliver}
+                    blocked={{ ...(jobBlocked === undefined ? {} : { job: jobBlocked }), ...(setupBlocked === undefined ? {} : { setup: setupBlocked }) }}
+                    issue={issue}
+                    onOpenSetup={{ label: t.registry.image.openObjects, open: () => openObjects('storedGraphics') }}
                   />
-                  <span className={labelCls}>{t.registry.image.embedInZpl}</span>
-                  <Tooltip content={t.registry.image.embedInZplHint}>
-                    <InformationCircleIcon className="w-3.5 h-3.5 text-muted/60 cursor-help shrink-0" />
-                  </Tooltip>
-                </label>
-                {setupState === 'current' ? (
-                  <span className="flex items-center gap-2 text-[10px] text-muted">
-                    {t.registry.image.inSetupScript}
-                    <button type="button" className="text-accent hover:underline" onClick={() => openObjects('storedGraphics')}>
-                      {t.registry.image.openObjects}
-                    </button>
-                  </span>
-                ) : setupState === 'tooLarge' || refusal === 'tooLarge' ? (
-                  <span className="text-[10px] text-warning">{t.printerSettings.objects.tooLarge}</span>
-                ) : refusal === 'unshippable' ? (
-                  <span className="text-[10px] text-warning">{t.printerSettings.objects.tooWide}</span>
-                ) : canSend ? (
-                  <button type="button" className={buttonCls} onClick={uploadAtSetup}>
-                    {t.registry.image.addToSetup}
-                  </button>
-                ) : null}
+                )}
+                {(refusal || setupState === 'tooLarge') && (
+                  <span className="text-[10px] text-warning">{refusal === 'unshippable' ? t.printerSettings.objects.tooWide : t.printerSettings.objects.tooLarge}</span>
+                )}
                 <button
                   type="button"
                   className={buttonCls}
