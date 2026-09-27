@@ -75,7 +75,7 @@ function previewTargetKey(target: PreviewTarget): string {
 
 export interface PreviewSlice {
   previewMode: PreviewMode;
-  /** Caller-checked: only call when `previewMode.status` is `idle` or `error`. */
+  /** Caller-checked: only call when `previewMode.status` is `idle` or `error`. A no-op without a renderer. */
   enterPreviewMode: () => Promise<void>;
   /** Reset to `idle`; blob URL stays cached for re-toggle. */
   exitPreviewMode: () => void;
@@ -100,6 +100,8 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     if (state.previewMode.status === 'loading' || state.previewMode.status === 'active') {
       return;
     }
+    // Without a renderer there is nothing to overlay, so a stray call is a no-op rather than an error.
+    if (selectEffectivePreviewProvider(state) === 'none') return;
     // Mirror of enterSourceEdit's preview guard: the two frozen modes must
     // never coexist, and the invariant belongs to the store, not a button.
     if (selectSourceEditing(state)) return;

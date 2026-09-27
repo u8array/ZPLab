@@ -8,7 +8,7 @@ import {
   __resetPreviewCacheForTests,
   migrateLegacy,
 } from './labelStore';
-import { currentPageLabel } from './labelStore.selectors';
+import { currentPageLabel, selectEffectivePreviewProvider } from './labelStore.selectors';
 import { importZplText } from '@zplab/core/lib/zplImportService';
 import { prepareSourceApply } from '@zplab/core/lib/zplSourceEdit';
 import { selectSourceDocumentState } from './labelStore.selectors';
@@ -61,6 +61,7 @@ function reset() {
     mappingModalOpen: false,
     previewMode: { status: 'idle' },
     previewProvider: 'labelary',
+    thirdParty: { labelary: true },
     canvasSettings: { ...DEFAULT_CANVAS_SETTINGS },
     pristineEmptyIds: [],
     // Pre-load so enterPreviewMode skips the one-shot keychain-hydrate await;
@@ -1651,6 +1652,32 @@ describe('ungroup', () => {
 
       expect(state().previewMode.status).toBe('active');
       expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('has no rendered preview once the renderer is off, and when no Labelary build allows one', async () => {
+      const labelary = await import('../lib/labelary');
+      const fetchSpy = vi.mocked(labelary.fetchPreview);
+      fetchSpy.mockClear();
+
+      useLabelStore.setState({ previewProvider: 'none' });
+      expect(selectEffectivePreviewProvider(state())).toBe('none');
+      await state().enterPreviewMode();
+      expect(state().previewMode.status).toBe('idle');
+
+      useLabelStore.setState({ previewProvider: 'labelary', thirdParty: { labelary: false } });
+      expect(selectEffectivePreviewProvider(state())).toBe('none');
+      await state().enterPreviewMode();
+      expect(state().previewMode.status).toBe('idle');
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it('tears down a live or failed overlay when the renderer is switched off', () => {
+      useLabelStore.setState({ previewMode: { status: 'active', url: 'blob:live' } });
+      state().setPreviewProvider('none');
+      expect(state().previewMode.status).toBe('idle');
+      useLabelStore.setState({ previewProvider: 'labelary', previewMode: { status: 'error', error: 'x' } });
+      state().setPreviewProvider('none');
+      expect(state().previewMode.status).toBe('idle');
     });
   });
 });

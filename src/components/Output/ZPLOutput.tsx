@@ -22,7 +22,6 @@ interface Props {
  *  always-mounted source pane. */
 export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }: Props) {
   const t = useT();
-  const labelaryEnabled = useLabelStore((s) => s.thirdParty.labelary);
   const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
   const effectiveProvider = useLabelStore(selectEffectivePreviewProvider);
   const previewActive = useLabelStore(selectPreviewLocksEditor);
@@ -38,10 +37,8 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
   // The body keeps its metadata (the apply reparses it); the button copies the export form.
   const { copy, copied } = useCopyToClipboard(() => finishZplExport(shownText));
 
-  // The button shows when the effective provider can run: Labelary when the
-  // gate is on, or the printer path (desktop only). The consent notice only
-  // guards Labelary; the printer talks to the user's own device.
-  const previewAvailable = effectiveProvider === 'printer' || labelaryEnabled;
+  // The printer talks to the user's own device, so only Labelary needs the consent notice.
+  const previewAvailable = effectiveProvider !== 'none';
 
   const togglePreview = () => {
     if (previewActive) {

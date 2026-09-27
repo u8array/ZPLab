@@ -15,6 +15,7 @@ import { printerOptionLabel } from "../../lib/printerLabel";
 import { useUsbPrinters } from "../../hooks/useUsbPrinters";
 import { labelCls, inputCls, buttonCls } from "../ui/formStyles";
 import { Select } from "../ui/Select";
+import { formatTemplate } from "../../lib/formatTemplate";
 
 function RadioOption<T extends string>({ name, value, current, onSelect, label, hint, disabled }: {
   name: string;
@@ -43,15 +44,13 @@ function RadioOption<T extends string>({ name, value, current, onSelect, label, 
   );
 }
 
-/** Preview configuration: which renderer draws the overlay (Labelary's
- *  software approximation vs the connected printer's own firmware) plus the
- *  Labelary privacy consent and the printer's network address. */
+/** Preview configuration: which renderer draws the overlay, the Labelary privacy consent and the printer's network address. */
 export function PreviewSettingsTab() {
   const t = useT();
   const loc = t.printerSettings.preview;
 
-  // Effective (not raw) provider: a persisted 'printer' choice degrades to
-  // Labelary in the web build, so the radio reflects what actually renders.
+  // The radio shows the stored choice, so a click always commits. A degraded build names what renders instead.
+  const chosen = useLabelStore((s) => s.previewProvider);
   const provider = useLabelStore(selectEffectivePreviewProvider);
   const setProvider = useLabelStore((s) => s.setPreviewProvider);
   const labelaryAvailable = useLabelStore((s) => s.thirdParty.labelary);
@@ -144,7 +143,7 @@ export function PreviewSettingsTab() {
         <RadioOption
           name="preview-provider"
           value="labelary"
-          current={provider}
+          current={chosen}
           onSelect={setProvider}
           label={loc.providerLabelary}
           disabled={!labelaryAvailable}
@@ -152,12 +151,25 @@ export function PreviewSettingsTab() {
         <RadioOption
           name="preview-provider"
           value="printer"
-          current={provider}
+          current={chosen}
           onSelect={setProvider}
           label={loc.providerPrinter}
           hint={isDesktopShell ? loc.providerPrinterHint : loc.providerPrinterDesktopOnly}
           disabled={!isDesktopShell}
         />
+        <RadioOption
+          name="preview-provider"
+          value="none"
+          current={chosen}
+          onSelect={setProvider}
+          label={loc.providerNone}
+          hint={loc.providerNoneHint}
+        />
+        {provider !== chosen && (
+          <span className="text-[10px] text-muted">
+            {formatTemplate(loc.providerInUseFmt, { provider: { labelary: loc.providerLabelary, printer: loc.providerPrinter, none: loc.providerNone }[provider] })}
+          </span>
+        )}
       </section>
 
       {provider === "printer" && usbAvailable && (
@@ -237,7 +249,7 @@ export function PreviewSettingsTab() {
         </section>
       )}
 
-      {labelaryAvailable && provider === "labelary" && (
+      {labelaryAvailable && chosen === "labelary" && (
         <section className="flex flex-col gap-2">
           <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.apiHeading}</h3>
           <div className="flex flex-col gap-2 max-w-md">
@@ -286,7 +298,8 @@ export function PreviewSettingsTab() {
         </section>
       )}
 
-      {labelaryAvailable && provider === "labelary" && (
+      {/* Consent is a standing grant for every Labelary action, printing included, so it never hides behind the renderer. */}
+      {labelaryAvailable && (
         <section className="flex flex-col gap-2">
           <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.privacyHeading}</h3>
           {publicHost && (

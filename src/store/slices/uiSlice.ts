@@ -55,9 +55,9 @@ export interface CanvasSettings {
 
 export type ThemePreference = 'light' | 'dark';
 
-/** Which renderer the label preview asks: Labelary (software approximation)
- *  or the connected printer's own firmware (^IS/^HY, desktop only). */
-export type PreviewProvider = 'labelary' | 'printer';
+/** Which renderer the preview asks: the Labelary service, the connected printer's own firmware
+ *  via ^IS and ^HY on the desktop, or none, which leaves the canvas as the only view. */
+export type PreviewProvider = 'labelary' | 'printer' | 'none';
 
 /** Tab IDs for the Printer Settings modal. Adding a tab is a one-line
  *  union extension plus the matching locale-key + content component. */
@@ -366,7 +366,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   setThirdPartyEnabled: (service, enabled) =>
     set((state) => ({ thirdParty: { ...state.thirdParty, [service]: enabled } })),
   // Tear down a live overlay on switch so one provider's render can't linger
-  // while the toggle already names the other.
+  // while the toggle already names another.
   setPreviewProvider: (provider) => {
     set({ previewProvider: provider });
     get().exitPreviewMode();

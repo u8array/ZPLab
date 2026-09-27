@@ -4,6 +4,7 @@ import { boundColumnIndex } from '@zplab/core/lib/variableBinding';
 import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
 import { isDesktopShell } from '../lib/platform';
 import type { Dataset } from './slices/dataSlice';
+import type { PreviewProvider } from './slices/uiSlice';
 import type { ColumnMapping } from '@zplab/core/types/Variable';
 import type { LabelState } from './labelStore';
 import { serializeDesign } from '@zplab/core/lib/designFile';
@@ -138,11 +139,12 @@ export const selectLabelaryEndpoint = (s: LabelState): { host: string; apiKey?: 
   apiKey: resolveApiKey(s.labelaryApiKey),
 });
 
-/** The provider the preview will actually use: the printer path needs the
- *  desktop shell's raw sockets, so a persisted 'printer' choice degrades to
- *  Labelary in the web build instead of dead-ending the preview button. */
-export const selectEffectivePreviewProvider = (s: LabelState): 'labelary' | 'printer' =>
-  s.previewProvider === 'printer' && isDesktopShell ? 'printer' : 'labelary';
+/** The provider a preview will actually use: the printer path needs the desktop shell's raw
+ *  sockets, and a build without Labelary leaves none. */
+export const selectEffectivePreviewProvider = (s: LabelState): PreviewProvider => {
+  if (s.previewProvider === 'printer' && isDesktopShell) return 'printer';
+  return s.previewProvider === 'none' || !s.thirdParty.labelary ? 'none' : 'labelary';
+};
 
 /** True while the preview overlay is taking input away from the editor.
  *  Loading and active both qualify (loading blocks edits so the snapshot
