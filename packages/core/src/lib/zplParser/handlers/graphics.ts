@@ -1,4 +1,4 @@
-import { FONT_EXT_BY_FORMAT, isTrueTypeFileName, type FontFormatCode } from "../../customFonts";
+import { FONT_EXT_BY_FORMAT, type FontFormatCode } from "../../customFonts";
 import { byteDigest } from "../../byteDigest";
 import type { BoxProps } from "../../../registry/box";
 import type { EllipseProps } from "../../../registry/ellipse";
@@ -7,7 +7,7 @@ import type { LineProps } from "../../../registry/line";
 import { hasFontBytes, loadFontBytesSync, removeFont } from "../../fontCache";
 import { parseStoragePath, recallCandidates, storageKey, uploadedGraphicPath, type StoragePath } from "../../storagePath";
 import type { DecodedGraphic } from "../types";
-import { fontNamedSoFar, notePartial, getPosType, noteFieldInk, payloadSummary, pushBrowserLimit, REGEN_LOSSY_REASONS, type DownloadedFont, type ParserState, type PendingReverseBg } from "../context";
+import { cacheServes, fontNamedSoFar, notePartial, getPosType, noteFieldInk, payloadSummary, pushBrowserLimit, REGEN_LOSSY_REASONS, type DownloadedFont, type ParserState, type PendingReverseBg } from "../context";
 import type { LabelObject } from "../../../types/Group";
 import { decodeGraphicToImage } from "../decoders/graphic";
 import { preserveGfData } from "../decoders/gfa";
@@ -52,6 +52,12 @@ function decodeGraphicOnce(s: ParserState, decode: () => DecodedGraphic | null):
   }
   return decoded;
 }
+
+const hexOf = (bytes: Uint8Array): string => Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+
+const DB_HEADER_FIELD_RE = /^[A-Za-z0-9 _]{0,63}$/;
+/** The ~DB glyph segment: `#code.h.w.x.y.i.` lines and hex rows, which the guide's own example spells with O for zero, spec p.171. */
+const DB_DATA_RE = /^[0-9A-Fa-fOo#.\s]*$/;
 
 // Dumps wrap the hex at line ends, and parseInt would read past a bare LF into the next pair.
 function hexBytes(data: string, size: number): Uint8Array | null {
@@ -216,23 +222,19 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     });
   };
 
-  // The ledger records every downloaded font for ^CW and ^ID, even one whose format the model cannot carry.
-  const registerFontUpload = (path: string, kind: DownloadedFont["kind"], defaultExt: string, bytes: Uint8Array) => {
+  // The ledger records every downloaded font for ^CW and ^ID.
+  const registerFontUpload = (cmd: string, path: string, kind: DownloadedFont["kind"], defaultExt: string, bytes: Uint8Array, download: (fullPath: string) => string) => {
     // ^A@ and ^CW name the file with an extension, spec p.63 and p.168. A foreign upload may omit it. A named
     // extension wins over the command's default, since that name is what the stream's own ^CW references.
     const fullPath = path.includes(".") ? path : `${path}.${defaultExt}`;
     const loss = { command: s.result.tokenCommand, span: s.result.tokenSpan };
-    // The emitter re-sends a font under the format its name carries, so a TrueType face under another name is lost.
-    if (kind === "truetype" && !isTrueTypeFileName(fullPath)) {
-      s.fonts.fontLosses.push({ ...loss, reason: "notTrueTypeName" });
-      return;
-    }
+    const cached = cacheServes(kind, fullPath);
     try {
-      if (kind === "truetype") loadFontBytesSync(bytes, fullPath);
-      else {
-        s.fonts.fontLosses.push({ ...loss, reason: kind === "bitmap" ? "bitmapFont" : "scalableFont" });
+      if (cached) loadFontBytesSync(bytes, fullPath);
+      else if (hasFontBytes(fullPath)) {
         // The printer now holds a face the canvas cannot draw, so a TrueType cached under the name is stale.
-        if (hasFontBytes(fullPath)) removeFont(fullPath);
+        removeFont(fullPath);
+        s.fonts.fontLosses.push({ ...loss, reason: "faceDropped" });
       }
       const key = storageKey(fullPath);
       const digest = byteDigest(bytes);
@@ -241,14 +243,14 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       if (prior && prior.digest !== digest && fontNamedSoFar(s, fullPath)) {
         s.fonts.fontLosses.push({ ...loss, reason: "versionReplaced" });
       }
-      s.fonts.downloadedFonts.set(key, { digest, status: "live", kind });
+      s.fonts.downloadedFonts.set(key, { digest, status: "live", kind, via: `~${cmd}`, ...(cached ? {} : { download: download(fullPath) }) });
     } catch {
       pushBrowserLimit(s.result, `${s.result.tokenCommand}${path}`);
     }
   };
 
-  // ~DT, ~DU and ~DS share `d:o.x,s,data` with a hex payload of s bytes, spec p.178 to 180.
-  const downloadHexFont = (rest: string, kind: DownloadedFont["kind"], defaultExt: string) => {
+  // ~DT, ~DU, ~DS and ~DE share `d:o.x,s,data` with a hex payload of s bytes, spec p.172 to 180.
+  const downloadHexFont = (cmd: string, rest: string, kind: DownloadedFont["kind"], defaultExt: string) => {
     const summary = payloadSummary(s.result.tokenCommand, rest);
     const delim = s.format.delimiterChar;
     const c0 = rest.indexOf(delim);
@@ -263,7 +265,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       pushBrowserLimit(s.result, summary);
       return;
     }
-    registerFontUpload(path, kind, defaultExt, bytes);
+    registerFontUpload(cmd, path, kind, defaultExt, bytes, (fullPath) => `~${cmd}${fullPath},${bytes.length},${hexOf(bytes)}`);
   };
 
   const commitPendingReverseBg = () => {
@@ -544,7 +546,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
 
     // ── ~DY downloaded TrueType / graphic payload ──────────────────────────
     // ~DY{drive}:{name},{fmt},{ext},{size},{bpr},{data}
-    // Hex-decoded into the font cache so the canvas previews an embedded font without a separate upload.
+    // A TrueType face lands in the font cache so the canvas previews it without a separate upload.
     DY(_p, rest) {
       // Parsed by hand: the data segment can be hundreds of KB, too big to split into the params array.
       const dySummary = payloadSummary(s.result.tokenCommand, rest);
@@ -587,27 +589,38 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         pushBrowserLimit(s.result, dySummary);
         return;
       }
-      registerFontUpload(path, extCode === "B" ? "bitmap" : "truetype", FONT_EXT_BY_FORMAT[extCode as FontFormatCode], bytes);
+      const bpr = rest.slice(c3 + 1, c4).trim();
+      registerFontUpload("DY", path, extCode === "B" ? "bitmap" : "truetype", FONT_EXT_BY_FORMAT[extCode as FontFormatCode], bytes, (fullPath) => `~DY${fullPath},A,${extCode},${bytes.length},${/^\d*$/.test(bpr) ? bpr : ""},${hexOf(bytes)}`);
     },
     // ~DT and ~DU carry a face the ZTools converter produced, spec p.179 and 180, so only the printer can read it.
     DT(_p, rest) {
-      downloadHexFont(rest, "scalable", "DAT");
+      downloadHexFont("DT", rest, "scalable", "DAT");
     },
     DU(_p, rest) {
-      downloadHexFont(rest, "scalable", "FNT");
+      downloadHexFont("DU", rest, "scalable", "FNT");
     },
     DS(_p, rest) {
-      downloadHexFont(rest, "scalable", "FNT");
+      downloadHexFont("DS", rest, "scalable", "FNT");
+    },
+    DE(_p, rest) {
+      downloadHexFont("DE", rest, "encoding", "DAT");
     },
     // ~DB: `d:o.x,a,h,w,base,space,#char,©,data`, the glyphs as structured ASCII, spec p.170.
     DB(_p, rest) {
-      const c0 = rest.indexOf(s.format.delimiterChar);
-      const path = c0 < 0 ? "" : rest.slice(0, c0).trim();
-      if (!path) {
+      const delim = s.format.delimiterChar;
+      const cuts: number[] = [];
+      for (let i = 0; i < rest.length && cuts.length < 8; i++) if (rest[i] === delim) cuts.push(i);
+      const dataStart = cuts[7];
+      const path = dataStart === undefined ? "" : rest.slice(0, cuts[0]).trim();
+      const header = cuts.slice(0, 7).map((c, i) => rest.slice(c + 1, cuts[i + 1]).trim());
+      const data = dataStart === undefined ? "" : rest.slice(dataStart + 1).trimEnd();
+      if (!path || !header.every((f) => DB_HEADER_FIELD_RE.test(f)) || !DB_DATA_RE.test(data)) {
         pushBrowserLimit(s.result, payloadSummary(s.result.tokenCommand, rest));
         return;
       }
-      registerFontUpload(path, "bitmap", "FNT", new TextEncoder().encode(rest));
+      // Cell metrics change the print as much as the glyphs, so a replacement is judged on both.
+      const font = `${header.join(",")},${data}`;
+      registerFontUpload("DB", path, "bitmap", "FNT", new TextEncoder().encode(font), (fullPath) => `~DB${fullPath},${font}`);
     },
 
     // ~DGd:o.x,t,w,data: ASCII-hex twin of ~DY,A,G with the same total-bytes and bytes-per-row header.

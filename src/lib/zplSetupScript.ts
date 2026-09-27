@@ -41,7 +41,7 @@ const SETUP_SCRIPT_EMITTERS = {
     channel: 'tilde',
     emit: (p) => {
       const lines = p.setupFonts?.flatMap((f) => {
-        const line = formatFontDownloadFromPath(f.path);
+        const line = f.download ?? formatFontDownloadFromPath(f.path);
         return line ? [line] : [];
       }) ?? [];
       return lines.length > 0 ? lines.join('\n') : null;

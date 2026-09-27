@@ -607,7 +607,7 @@ describe('generateMultiPageZPL — upload ledger', () => {
     const lower = parseSingle(`~DGR:logo,4,1,${HEX}\n^XA^FO0,0^XGR:LOGO.GRF,1,1^FS^XZ`, 8);
     expect(props(lower.objects[0]).widthDots).toBe(8);
     const font = parseSingle('~DYFNT,A,T,4,,01020304\n^XA^IDR:*.*^FS^XZ', 8);
-    expect(font.uploadedFontPaths).toEqual([]);
+    expect(font.uploadedFonts).toEqual([]);
   });
 
   it('names a failed checksum as its own cause', () => {

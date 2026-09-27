@@ -8,7 +8,8 @@ import { storageKey, storageRefMatchesPath } from "@zplab/core/lib/storagePath";
 import { useCachedFonts } from "../../hooks/useCachedFonts";
 import { useUpload } from "../../hooks/useUpload";
 import { useLabelStore, selectEditorFrozen } from "../../store/labelStore";
-import { buttonCls, disabledCls, zplCommandTagCls } from "../ui/formStyles";
+import { buttonCls, disabledCls } from "../ui/formStyles";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 
 /** Why a profile row cannot be provisioned. */
 function rowIssue(path: string, cachedKeys: ReadonlySet<string>): "unshippable" | "missingBytes" | undefined {
@@ -37,10 +38,10 @@ export function StoredFontsTab() {
   const cachedPaths = fonts.map(cachedFontPath);
   const cachedKeys = new Set(cachedPaths.map(storageKey));
   const rows = [
-    ...(setupFonts ?? []).map((f) => ({ path: f.path, inProfile: true, issue: rowIssue(f.path, cachedKeys) })),
+    ...(setupFonts ?? []).map((f) => ({ path: f.path, inProfile: true, replayed: f.download !== undefined, issue: f.download === undefined ? rowIssue(f.path, cachedKeys) : undefined })),
     ...cachedPaths
       .filter((path) => isTrueTypeFileName(path) && !findSetupEntry(setupFonts, path))
-      .map((path) => ({ path, inProfile: false, issue: undefined })),
+      .map((path) => ({ path, inProfile: false, replayed: false, issue: undefined })),
   ];
 
   const toggle = (path: string, on: boolean) =>
@@ -48,6 +49,8 @@ export function StoredFontsTab() {
 
   const fileRef = useRef<HTMLInputElement>(null);
   const [repairTarget, setRepairTarget] = useState<string>();
+  // A replayed upload lives in the profile only, so removing it is a delete, not a toggle.
+  const [pendingRemove, setPendingRemove] = useState<string>();
   const pick = (target?: string) => {
     setRepairTarget(target);
     fileRef.current?.click();
@@ -67,7 +70,6 @@ export function StoredFontsTab() {
           <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">
             {loc.uploadHeading}
           </h3>
-          <span className={zplCommandTagCls}>~DY</span>
         </div>
         <p className="text-[11px] text-muted">{loc.uploadHint}</p>
         <div className="flex items-center gap-2">
@@ -94,7 +96,7 @@ export function StoredFontsTab() {
           <p className="text-xs text-muted/70">{loc.noFonts}</p>
         ) : (
           <ul className="flex flex-col gap-1">
-            {rows.map(({ path, inProfile, issue }) =>
+            {rows.map(({ path, inProfile, replayed, issue }) =>
               !issue ? (
                 <li
                   key={path}
@@ -105,19 +107,36 @@ export function StoredFontsTab() {
                       {path}
                     </span>
                     {inProfile && shipsToo(path) && <span className="text-[10px] text-muted">{t.delivery.job}</span>}
+                    {replayed && (
+                      <Tooltip content={loc.printerFormatHint}>
+                        <span className="text-[10px] text-muted">{loc.printerFormat}</span>
+                      </Tooltip>
+                    )}
                   </span>
-                  <Tooltip content={frozen ? t.printerSettings.frozenHint : undefined}>
-                    <label className="flex items-center gap-1.5 text-[10px] font-mono text-muted hover:text-text cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="accent-accent"
-                        checked={inProfile}
-                        disabled={frozen}
-                        onChange={(e) => toggle(path, e.target.checked)}
-                      />
-                      {loc.uploadToggle}
-                    </label>
-                  </Tooltip>
+                  {replayed ? (
+                    <button
+                      type="button"
+                      disabled={frozen}
+                      onClick={() => setPendingRemove(path)}
+                      className="font-mono text-[10px] text-muted hover:text-red-400 px-1 disabled:opacity-30"
+                      aria-label={loc.removeReplayed}
+                    >
+                      ✕
+                    </button>
+                  ) : (
+                    <Tooltip content={frozen ? t.printerSettings.frozenHint : undefined}>
+                      <label className="flex items-center gap-1.5 text-[10px] font-mono text-muted hover:text-text cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="accent-accent"
+                          checked={inProfile}
+                          disabled={frozen}
+                          onChange={(e) => toggle(path, e.target.checked)}
+                        />
+                        {loc.uploadToggle}
+                      </label>
+                    </Tooltip>
+                  )}
                 </li>
               ) : (
                 <li
@@ -154,6 +173,19 @@ export function StoredFontsTab() {
           </ul>
         )}
       </section>
+      {pendingRemove !== undefined && (
+        <ConfirmDialog
+          message={loc.removeReplayedConfirm}
+          confirmLabel={loc.removeReplayed}
+          cancelLabel={t.variables.cancel}
+          destructive
+          onConfirm={() => {
+            toggle(pendingRemove, false);
+            setPendingRemove(undefined);
+          }}
+          onCancel={() => setPendingRemove(undefined)}
+        />
+      )}
     </div>
   );
 }

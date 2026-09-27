@@ -9,7 +9,7 @@ import { newId } from "./ids";
 import type { ImportLossCause } from "../catalog";
 import { renameTemplateMarkers } from "./fnTemplate";
 import { PER_FORMAT_ZPL_FIELDS, effectiveDpmm, type CustomFontMapping, type JmDensity, type LabelConfig } from "../types/LabelConfig";
-import { isSetupPath, type PrinterProfile, type SetupGraphic } from "../types/PrinterProfile";
+import { isSetupDownload, isSetupPath, SETUP_UPLOAD_MAX_CHARS, type PrinterProfile, type SetupGraphic } from "../types/PrinterProfile";
 import { exportableLeaves, type LabelObject, type Page, isGroup } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type ColumnMapping, type Variable } from "../types/Variable";
 import type { DatasetInput } from "../types/DataSource";
@@ -46,10 +46,15 @@ export interface ZplImportResult {
 
 const FONT_LOSS = {
   versionReplaced: "fontVersionReplaced",
-  bitmapFont: "bitmapFont",
-  scalableFont: "scalableFont",
-  notTrueTypeName: "fontNameNotTrueType",
+  faceDropped: "cachedFaceDropped",
 } as const satisfies Record<FontLossReason, ImportLossCause>;
+
+function fontRefusal(f: { path: string; download?: string }): ImportLossCause | undefined {
+  if (!isSetupPath(f.path)) return "unshippableFontName";
+  if (f.download === undefined) return undefined;
+  if (f.download.length > SETUP_UPLOAD_MAX_CHARS) return "oversizeFontUpload";
+  return isSetupDownload(f.download) ? undefined : "unreplayableUpload";
+}
 
 /** Document findings have no page, so the parser's partials map cannot dedup them. */
 function noteDocumentLoss(findings: ImportFinding[], command: string, loss: ImportLossCause, span?: SourceSpan): void {
@@ -305,20 +310,18 @@ function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
         }
       : undefined;
 
-  const uploadedUnique = [...new Set(r.uploadedFontPaths)];
   const printerProfile: Partial<PrinterProfile> = { ...r.printerProfile };
   // A design font claims only the upload it ships. An upload it merely references stays provisioning.
-  const setupFontPaths = uploadedUnique.filter((p) => !r.embeddedFontPaths.has(p));
+  const setupFonts = r.uploadedFonts.filter((f) => !r.embeddedFontPaths.has(f.path));
   for (const f of r.fontLosses) noteDocumentLoss(findings, f.command, FONT_LOSS[f.reason], f.span);
   // Refused here with a finding, or the whole profile patch fails and every field it carried drops in silence.
-  const carriedFontPaths = setupFontPaths.filter((path) => {
-    if (isSetupPath(path)) return true;
-    noteDocumentLoss(findings, "~DY", "unshippableFontName");
-    return false;
+  const carriedFonts = setupFonts.flatMap(({ via, ...f }) => {
+    const refusal = fontRefusal(f);
+    if (refusal === undefined) return [f];
+    noteDocumentLoss(findings, via, refusal);
+    return [];
   });
-  if (carriedFontPaths.length > 0) {
-    printerProfile.setupFonts = carriedFontPaths.map((path) => ({ path }));
-  }
+  if (carriedFonts.length > 0) printerProfile.setupFonts = carriedFonts;
   const shipped = new Set(
     r.pages.flatMap((page) => exportableLeaves(page.objects)).flatMap((leaf) => {
       const props = leaf.props as ImageProps;

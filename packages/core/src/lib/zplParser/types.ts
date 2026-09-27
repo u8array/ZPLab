@@ -1,7 +1,7 @@
 import type { LabelConfig } from "../../types/LabelConfig";
 import type { LabelObject } from "../../types/Group";
 import type { Variable } from "../../types/Variable";
-import type { PrinterProfile, SetupGraphic } from "../../types/PrinterProfile";
+import type { PrinterProfile, SetupFont, SetupGraphic } from "../../types/PrinterProfile";
 import type { BlockOverlay, OverlayFrame } from "../zplOverlay/overlay";
 import type { ImportLossCause } from "../../catalog/schema";
 import type { CachedImage } from "../imageCache";
@@ -53,8 +53,8 @@ export interface ImportFinding {
   span?: SourceSpan;
 }
 
-/** Why a downloaded font never reaches the model as a shippable file. */
-export type FontLossReason = "versionReplaced" | "bitmapFont" | "scalableFont" | "notTrueTypeName";
+/** What a font download took away from the design. */
+export type FontLossReason = "versionReplaced" | "faceDropped";
 
 /** Anchored at the download command that caused the loss. */
 export interface FontLoss {
@@ -159,8 +159,8 @@ export interface ParsedZPL {
   printerProfile: Partial<PrinterProfile>;
   /** Rows the decode produced. The caller commits them, so a parse stays a query. */
   decodedImages: readonly CachedImage[];
-  /** Uploads the finished design can still ship. */
-  uploadedFontPaths: string[];
+  /** Every upload the setup script can carry. */
+  uploadedFonts: (SetupFont & { via: string })[];
   /** The subset a design font embeds; the rest is provisioning. */
   embeddedFontPaths: ReadonlySet<string>;
   fontLosses: FontLoss[];

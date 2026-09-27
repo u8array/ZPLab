@@ -663,8 +663,8 @@
       "title": "download bitmap font",
       "summary": "Downloads a bitmap font and its metrics into printer memory.",
       "support": {
-        "web": "no",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
       }
     },
@@ -677,8 +677,8 @@
       "title": "download scalable font",
       "summary": "Downloads an encoded scalable Intellifont into printer memory.",
       "support": {
-        "web": "no",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
       }
     },
@@ -691,8 +691,8 @@
       "title": "download TrueType font",
       "summary": "Downloads an encoded TrueType font with up to 256 characters into printer memory.",
       "support": {
-        "web": "no",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
       }
     },
@@ -705,8 +705,8 @@
       "title": "download unbounded TrueType",
       "summary": "Downloads an encoded TrueType font with more than 256 glyphs into printer memory.",
       "support": {
-        "web": "no",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
       }
     },
@@ -719,8 +719,8 @@
       "title": "download encoding",
       "summary": "Downloads an encoding table that maps field-data bytes to Unicode values for TrueType fonts.",
       "support": {
-        "web": "no",
-        "desktop": "planned",
+        "web": "yes",
+        "desktop": "yes",
         "lint": "no"
       }
     },

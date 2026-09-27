@@ -59,6 +59,30 @@ describe("StoredFontsTab", () => {
     expect(getAllByLabelText(/Send at setup/)).toHaveLength(1);
   });
 
+  it("shows a replayed download as ready in the printer's own format, and removes it only after a confirm", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupFonts: [{ path: "R:KANJI.FNT", download: "~DUR:KANJI.FNT,4,01020304" }] } }));
+    const { getByTitle, getByText, queryByText, getByLabelText, getByRole, getAllByRole } = render(<StoredFontsTab />);
+    expect(getByTitle("R:KANJI.FNT")).toBeTruthy();
+    expect(getByText("Printer format. The setup script sends it exactly as it was uploaded.")).toBeTruthy();
+    expect(queryByText(/Font missing/)).toBeNull();
+    expect(getByLabelText(/Send at setup/)).toBeTruthy();
+    act(() => {
+      fireEvent.click(getByLabelText("Remove from the setup script"));
+    });
+    expect(useLabelStore.getState().printerProfile.setupFonts).toHaveLength(1);
+    act(() => {
+      fireEvent.click(getByRole("button", { name: "Cancel" }));
+    });
+    expect(useLabelStore.getState().printerProfile.setupFonts).toHaveLength(1);
+    act(() => {
+      fireEvent.click(getByLabelText("Remove from the setup script"));
+    });
+    act(() => {
+      fireEvent.click(getAllByRole("button", { name: "Remove from the setup script" })[1]!);
+    });
+    expect(useLabelStore.getState().printerProfile.setupFonts).toBeUndefined();
+  });
+
   it("names a profile entry the setup script could never send", () => {
     act(() => useLabelStore.setState({ printerProfile: { setupFonts: [{ path: "E:OLD.BIN" }] } }));
     const { getByText } = render(<StoredFontsTab />);

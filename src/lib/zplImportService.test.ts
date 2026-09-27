@@ -620,12 +620,13 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
     expect(printerProfile.setupFonts).toEqual([{ path: 'E:SAME.TTF' }]);
   });
 
-  it('leaves a bitmap font alias unembedded and reports the upload', () => {
-    const { labelConfig, report } = importZplText('~DYE:OLD,A,B,4,,0001FFAB\n^XA^CWM,E:OLD.FNT^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+  it('leaves a bitmap font alias unembedded and carries the upload as sent', () => {
+    const { labelConfig, printerProfile, report } = importZplText('~DYE:OLD,A,B,4,,0001FFAB\n^XA^CWM,E:OLD.FNT^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
     const alias = labelConfig.customFonts?.find((m) => m.alias === 'M');
     expect(alias?.path).toBe('E:OLD.FNT');
     expect(alias?.embedInZpl).toBeUndefined();
-    expect(report.findings.filter((f) => f.loss === 'bitmapFont')).toHaveLength(1);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:OLD.FNT', download: '~DYE:OLD.FNT,A,B,4,,0001FFAB' }]);
+    expect(report.findings).toEqual([]);
   });
 
   it('names a bitmap font the way ^CW does, so a replacement the design saw is still reported', () => {
@@ -689,34 +690,43 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
   });
 
   it('reports one row for three uploads that hit the same refusal, since the row names no file', () => {
-    const zpl = '~DYE:A,A,B,4,,0001FFAB\n~DYE:B,A,B,4,,0001FFAC\n~DYE:C,A,B,4,,0001FFAD\n^XA^FO0,0^GB10,10,1^FS^XZ';
-    const { report } = importZplText(zpl, 8);
-    expect(report.findings.filter((f) => f.loss === 'bitmapFont')).toHaveLength(1);
+    const big = (name: string) => `~DYE:${name},A,B,600000,,${'AB'.repeat(600000)}`;
+    const { printerProfile, report } = importZplText(`${big('A')}\n${big('B')}\n${big('C')}\n^XA^FO0,0^GB10,10,1^FS^XZ`, 8);
+    expect(printerProfile.setupFonts).toBeUndefined();
+    expect(report.findings.filter((f) => f.loss === 'oversizeFontUpload')).toEqual([expect.objectContaining({ command: '~DY', pageIndex: DOCUMENT_FINDING })]);
+    expect(describeFinding(report.findings[0] as never, fallbackTranslations.importReport).detail).toContain('font');
   });
 
-  it('trusts the ~DY format code over the file name: bitmap bytes under X.TTF never ship as TrueType', () => {
+  it('trusts the ~DY format code over the file name: bitmap bytes under X.TTF replay as bitmap, never as TrueType', () => {
     const { printerProfile, report } = importZplText('~DYE:X.TTF,A,B,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
-    expect(printerProfile.setupFonts).toBeUndefined();
-    expect(report.findings).toContainEqual(expect.objectContaining({ loss: 'bitmapFont', pageIndex: DOCUMENT_FINDING }));
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:X.TTF', download: '~DYE:X.TTF,A,B,4,,0001FFAB' }]);
+    expect(report.findings).toEqual([]);
     expect(hasFontBytes('E:X.TTF')).toBe(false);
   });
 
-  it('drops a TrueType upload under a name the label cannot send it again as, and says which', () => {
-    const { printerProfile, report } = importZplText('~DYE:FONT.V2,A,T,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
-    expect(printerProfile.setupFonts).toBeUndefined();
-    expect(report.findings.map((f) => f.loss)).toEqual(['fontNameNotTrueType']);
+  it('reports a cached face the upload dropped under the same name', () => {
+    loadFontBytesSync(new Uint8Array([0, 1, 0, 0]), 'R:DROP.TTF');
+    const { report } = importZplText('~DYR:DROP.TTF,A,B,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
+    expect(hasFontBytes('R:DROP.TTF')).toBe(false);
+    expect(report.findings.map((f) => [f.command, f.loss])).toEqual([['~DY', 'cachedFaceDropped']]);
   });
 
-  it('reports one document row for bitmap uploads spread over three preambles', () => {
+  it('replays a TrueType upload under a name the cache cannot serve, instead of dropping it', () => {
+    const { printerProfile, report } = importZplText('~DYE:FONT.V2,A,T,4,,0001FFAB\n^XA^CWM,E:FONT.V2^FO0,0^AMN,30,30^FDX^FS^XZ', 8);
+    expect(printerProfile.setupFonts).toEqual([{ path: 'E:FONT.V2', download: '~DYE:FONT.V2,A,T,4,,0001FFAB' }]);
+    expect(hasFontBytes('E:FONT.V2')).toBe(false);
+    expect(report.findings).toEqual([]);
+  });
+
+  it('carries bitmap uploads spread over three preambles, one entry each', () => {
     const zpl = '~DYE:A,A,B,4,,0001FFAB\n^XA^XZ\n~DYE:B,A,B,4,,0001FFAC\n^XA^XZ\n~DYE:C,A,B,4,,0001FFAD\n^XA^FO0,0^GB10,10,1^FS^XZ';
-    const { report } = importZplText(zpl, 8);
-    expect(report.findings.filter((f) => f.loss === 'bitmapFont')).toEqual([expect.objectContaining({ pageIndex: DOCUMENT_FINDING })]);
+    const { printerProfile } = importZplText(zpl, 8);
+    expect(printerProfile.setupFonts?.map((f) => f.path)).toEqual(['E:A.FNT', 'E:B.FNT', 'E:C.FNT']);
   });
 
-  it('reports a bitmap font upload instead of parking it where the setup script drops it', () => {
-    const { printerProfile, report } = importZplText('~DYE:OLD,A,B,4,,0001FFAB\n^XA^FO0,0^GB10,10,1^FS^XZ', 8);
-    expect(printerProfile.setupFonts).toBeUndefined();
-    expect(report.findings).toContainEqual(expect.objectContaining({ kind: 'partial', command: '~DY', loss: 'bitmapFont' }));
+  it('puts a replayed upload into the setup script as sent, ahead of the block', () => {
+    const { printerProfile } = importZplText('~DYE:OLD,A,B,4,,0001FFAB\n^XA^JUS^XZ', 8);
+    expect(generateSetupScript(printerProfile as PrinterProfile)).toBe('~DYE:OLD.FNT,A,B,4,,0001FFAB\n^XA\n^JUS\n^XZ');
   });
 
   it('reports an unclaimed upload the emitter would refuse, and prints neither without a page', () => {
@@ -1211,21 +1221,71 @@ describe('routeSetupCommands - setup-only pages', () => {
   });
 });
 
-describe('importZplText - ~DT, ~DU, ~DS and ~DB font downloads', () => {
+describe('importZplText - ~DT, ~DU, ~DS, ~DB and ~DE downloads replay from their parsed header and counted payload', () => {
   const HEX = '01020304';
-  const DB = '~DBR:TIMES.FNT,N,5,24,3,10,2,ZEBRA 1992,\n#0025.5.16.2.5.18.\nOOFF OOFF FFOO FFOO FFFF\n';
+  const DB_DATA = '#0025.5.16.2.5.18.\nOOFF OOFF FFOO FFOO FFFF';
+  const DB = `~DBR:TIMES.FNT,N,5,24,3,10,2,ZEBRA 1992,\n${DB_DATA}\n`;
   const AM = '^FO0,0^AMN,30,30^FDX^FS';
 
-  it('files a ~DT under .DAT and a ~DU under .FNT as the guide spells them, so the stream\'s own ^CW binds', () => {
-    for (const [upload, path] of [[`~DTR:FONT,4,${HEX}`, 'R:FONT.DAT'], [`~DUE:KANJI,4,${HEX}`, 'E:KANJI.FNT']] as const) {
+  it('files each download under the name the guide spells, binds the stream\'s own ^CW and carries the rebuilt command', () => {
+    const cases = [
+      [`~DTR:FONT,4,${HEX}`, 'R:FONT.DAT', `~DTR:FONT.DAT,4,${HEX}`],
+      [`~DUE:KANJI,4,${HEX}`, 'E:KANJI.FNT', `~DUE:KANJI.FNT,4,${HEX}`],
+      [`~DSR:INTEL,4,${HEX}`, 'R:INTEL.FNT', `~DSR:INTEL.FNT,4,${HEX}`],
+      [DB, 'R:TIMES.FNT', `~DBR:TIMES.FNT,N,5,24,3,10,2,ZEBRA 1992,\n${DB_DATA}`],
+      [`~DER:JIS,4,${HEX}`, 'R:JIS.DAT', `~DER:JIS.DAT,4,${HEX}`],
+    ] as const;
+    for (const [upload, path, download] of cases) {
       const r = importZplText(`${upload}\n^XA^CWM,${path}${AM}^XZ`, 8);
-      const alias = r.labelConfig.customFonts?.find((m) => m.alias === 'M');
-      expect(alias?.path).toBe(path);
-      expect(alias?.embedInZpl).toBeUndefined();
+      expect(r.labelConfig.customFonts?.find((m) => m.alias === 'M')).toEqual(expect.objectContaining({ path }));
+      expect(r.labelConfig.customFonts?.find((m) => m.alias === 'M')?.embedInZpl).toBeUndefined();
       expect(hasFontBytes(path)).toBe(false);
-      expect(r.printerProfile.setupFonts).toBeUndefined();
-      expect(r.report.findings.map((f) => [f.command, f.loss])).toEqual([[upload.slice(0, 3), 'scalableFont']]);
+      expect(r.printerProfile.setupFonts).toEqual([{ path, download }]);
+      expect(r.report.findings).toEqual([]);
     }
+  });
+
+  it('carries exactly the counted payload, so a line the printer would read as a command never enters the script', () => {
+    const sgd = importZplText(`~DSR:X,4,${HEX}\n! U1 setvar "ip.dhcp.enable" "off"\n^XA^CWM,R:X.FNT${AM}^XZ`, 8);
+    expect(sgd.printerProfile.setupFonts).toEqual([{ path: 'R:X.FNT', download: `~DSR:X.FNT,4,${HEX}` }]);
+    expect(generateSetupScript(sgd.printerProfile as PrinterProfile)).not.toContain('setvar');
+    const dataCaret = importZplText(`^XA^CC#^XZ\n~DSR:Y,4,${HEX}^XZeaten\n#XA#XZ`, 8);
+    expect(dataCaret.printerProfile.setupFonts).toEqual([{ path: 'R:Y.FNT', download: `~DSR:Y.FNT,4,${HEX}` }]);
+    const wrapped = importZplText(`~DTR:WRAP,4,01\r\n02 03\n04\n^XA^CWM,R:WRAP.DAT${AM}^XZ`, 8);
+    expect(wrapped.printerProfile.setupFonts).toEqual([{ path: 'R:WRAP.DAT', download: `~DTR:WRAP.DAT,4,${HEX}` }]);
+  });
+
+  it('speaks ZPL in the rebuilt header whatever ^CT and ^CD the stream used', () => {
+    const r = importZplText(`^XA^CT#^CD;^XZ\n#DTR:FONT;4;${HEX}\n^XA^CWM;R:FONT.DAT${AM.split(',').join(';')}^XZ`, 8);
+    expect(r.printerProfile.setupFonts).toEqual([{ path: 'R:FONT.DAT', download: `~DTR:FONT.DAT,4,${HEX}` }]);
+    const db = importZplText(`^XA^CD;^XZ\n~DBR:T8.FNT;N;5;24;3;10;2;C;\n#0025.\n00FF\n`, 8);
+    expect(db.printerProfile.setupFonts).toEqual([{ path: 'R:T8.FNT', download: '~DBR:T8.FNT,N,5,24,3,10,2,C,\n#0025.\n00FF' }]);
+  });
+
+  it('refuses a ~DB whose header or glyph segment holds what no replay could carry, and keeps its file out of the profile', () => {
+    for (const bad of [
+      '^XA^CD;^XZ\n~DBR:T.FNT;N;5;24;3;10;2;ZEBRA, INC;\n#0025.\n00FF',
+      '~DBR:T.FNT,N,5,24\n#0025.\n00FF',
+      '~DBR:T.FNT,N,5,24,3,10,2,ZEBRA~1992,\n#0025.\n00FF',
+      '~DBR:T.FNT,N,5,24,3,10,2,C,\n#0025.\n00FF\n! U1 setvar "a" "b"',
+    ]) {
+      const r = importZplText(`${bad}\n^XA^FO0,0^GB10,10,1^FS^XZ`, 8);
+      expect(r.printerProfile.setupFonts, bad).toBeUndefined();
+      expect(r.report.findings.filter((f) => f.kind === 'browserLimit'), bad).toHaveLength(1);
+    }
+  });
+
+  it('keeps a download past the profile cap in the ledger only, with a finding that names the command', () => {
+    const r = importZplText(`~DUR:BIG,600000,${'AB'.repeat(600000)}\n^XA^CWM,R:BIG.FNT${AM}^XZ`, 8);
+    expect(r.labelConfig.customFonts?.find((m) => m.alias === 'M')?.path).toBe('R:BIG.FNT');
+    expect(r.printerProfile.setupFonts).toBeUndefined();
+    expect(r.report.findings.map((f) => [f.command, f.loss])).toEqual([['~DU', 'oversizeFontUpload']]);
+  });
+
+  it('names the command of a font whose file name the profile refuses', () => {
+    const r = importZplText(`~DUR:${'A'.repeat(130)},4,${HEX}\n^XA^FO0,0^GB10,10,1^FS^XZ`, 8);
+    expect(r.printerProfile.setupFonts).toBeUndefined();
+    expect(r.report.findings.map((f) => [f.command, f.loss])).toEqual([['~DU', 'unshippableFontName']]);
   });
 
   it('rejects a ZB64 payload and a short payload with a finding', () => {
@@ -1240,27 +1300,25 @@ describe('importZplText - ~DT, ~DU, ~DS and ~DB font downloads', () => {
     expect(caret.report.findings.map((f) => f.kind)).toEqual(['unknown']);
   });
 
-  it('keeps an Intellifont or bitmap font in the ledger for ^CW, though the setup script cannot send it', () => {
-    const scalable = importZplText(`~DSR:INTEL,4,${HEX}\n^XA^CWM,R:INTEL.FNT${AM}^XZ`, 8);
-    const alias = scalable.labelConfig.customFonts?.find((m) => m.alias === 'M');
-    expect(alias?.path).toBe('R:INTEL.FNT');
-    expect(alias?.embedInZpl).toBeUndefined();
-    expect(scalable.report.findings.filter((f) => f.loss === 'scalableFont')).toHaveLength(1);
-    expect(describeFinding(scalable.report.findings[0] as never, fallbackTranslations.importReport).detail).toContain('scalable format');
-    const bitmap = importZplText(`${DB}^XA^CWM,R:TIMES.FNT${AM}^XZ`, 8);
-    expect(bitmap.labelConfig.customFonts?.find((m) => m.alias === 'M')?.path).toBe('R:TIMES.FNT');
-    expect(bitmap.report.findings.filter((f) => f.loss === 'bitmapFont')).toHaveLength(1);
-    expect(bitmap.printerProfile.setupFonts).toBeUndefined();
-  });
-
   it('treats a second upload under the same name as a replacement once a page printed with the first', () => {
     const r = importZplText(`~DTE:SAME,4,0001FFAB\n^XA^CWM,E:SAME.DAT${AM}^XZ\n~DTE:SAME,4,0001FFAC`, 8);
     expect(r.report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(1);
+    expect(r.printerProfile.setupFonts).toEqual([{ path: 'E:SAME.DAT', download: '~DTE:SAME.DAT,4,0001FFAC' }]);
   });
 
-  it('decodes a line-wrapped hex payload as the printer does', () => {
-    const wrapped = importZplText(`~DTR:WRAP,4,0102\n0304\n^XA^CWM,R:WRAP.DAT${AM}^XZ`, 8);
-    expect(wrapped.report.findings.map((f) => [f.kind, f.loss])).toEqual([['partial', 'scalableFont']]);
+  it('judges a ~DB replacement on its cell metrics as well as its glyphs', () => {
+    const glyphs = `\n#0025.5.16.2.5.18.\nOOFF FFOO`;
+    const r = importZplText(`~DBR:M.FNT,N,5,24,3,10,2,C,${glyphs}\n^XA^CWM,R:M.FNT${AM}^XZ\n~DBR:M.FNT,N,6,24,3,10,2,C,${glyphs}`, 8);
+    expect(r.report.findings.filter((f) => f.loss === 'fontVersionReplaced')).toHaveLength(1);
+    expect(r.printerProfile.setupFonts?.[0]?.download).toContain(',N,6,24,');
+  });
+
+  it('drops a replayed download the stream deleted again with ^ID', () => {
+    const r = importZplText(`~DSR:GONE,4,${HEX}\n^XA^IDR:GONE.FNT^FS^XZ`, 8);
+    expect(r.printerProfile.setupFonts).toBeUndefined();
+  });
+
+  it('decodes a line-wrapped hex payload as the printer does, for ~DY too', () => {
     for (const upload of ['~DYR:WRAP,A,T,4,,0102\n0304', '~DYR:WRAP,A,T,4,,0102\r\n0304']) {
       const r = importZplText(`${upload}\n^XA^CWM,R:WRAP.TTF${AM}^XZ`, 8);
       expect(r.report.findings).toEqual([]);
@@ -1268,13 +1326,12 @@ describe('importZplText - ~DT, ~DU, ~DS and ~DB font downloads', () => {
     }
   });
 
-  it('names the command that lost a font, one finding per command', () => {
-    const r = importZplText('~DYE:BX,A,B,4,,01020304\n~DBR:T8.FNT,N,5,24,3,10,2,C,\n#0025.\nOO\n~DSR:I9,4,01020304', 8);
-    expect(r.report.findings.map((f) => [f.command, f.loss])).toEqual([['~DY', 'bitmapFont'], ['~DB', 'bitmapFont'], ['~DS', 'scalableFont']]);
-  });
-
-  it('drops a cached TrueType face when a printer-native font replaces it under the same name', () => {
-    importZplText('~DYR:MIX,A,T,4,,01020304\n~DSR:MIX.TTF,4,05060708', 8);
-    expect(hasFontBytes('R:MIX.TTF')).toBe(false);
+  it('replaces a setup font by path when its download changed, and keeps one that did not', () => {
+    const one = { path: 'R:X.FNT', download: '~DSR:X.FNT,4,01020304' };
+    const same = mergeSetupEntries([one], [{ ...one }]);
+    expect(same.changed).toBe(0);
+    const other = mergeSetupEntries([one], [{ path: 'R:X.FNT', download: '~DSR:X.FNT,4,05060708' }]);
+    expect(other.merged).toEqual([{ path: 'R:X.FNT', download: '~DSR:X.FNT,4,05060708' }]);
+    expect(other.changed).toBe(1);
   });
 });

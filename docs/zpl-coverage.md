@@ -80,11 +80,11 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^CO` | font cache size | `[x]` | `[x]` | `[ ]` |
 | `^FL` | font linking | `[x]` | `[x]` | `[ ]` |
 | `^LF` | list font links | `[ ]` | `[~]` | `[ ]` |
-| `~DB` | download bitmap font | `[ ]` | `[~]` | `[ ]` |
-| `~DS` | download scalable font | `[ ]` | `[~]` | `[ ]` |
-| `~DT` | download TrueType font | `[ ]` | `[~]` | `[ ]` |
-| `~DU` | download unbounded TrueType | `[ ]` | `[~]` | `[ ]` |
-| `~DE` | download encoding | `[ ]` | `[~]` | `[ ]` |
+| `~DB` | download bitmap font | `[x]` | `[x]` | `[ ]` |
+| `~DS` | download scalable font | `[x]` | `[x]` | `[ ]` |
+| `~DT` | download TrueType font | `[x]` | `[x]` | `[ ]` |
+| `~DU` | download unbounded TrueType | `[x]` | `[x]` | `[ ]` |
+| `~DE` | download encoding | `[x]` | `[x]` | `[ ]` |
 
 ## Barcodes
 

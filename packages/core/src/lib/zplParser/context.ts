@@ -5,7 +5,8 @@ import type { ImportLossCause } from "../../catalog/schema";
 import type { LabelConfig } from "../../types/LabelConfig";
 import type { CachedImage } from "../imageCache";
 import type { DecodedGraphic } from "./types";
-import type { PrinterProfile } from "../../types/PrinterProfile";
+import type { PrinterProfile, SetupFont } from "../../types/PrinterProfile";
+import { isTrueTypeFileName } from "../customFonts";
 import type { Variable } from "../../types/Variable";
 import type { TextProps } from "../../registry/text";
 import type { SerialMode } from "../../registry/serialField";
@@ -206,8 +207,15 @@ export interface DownloadedFont {
   digest: string;
   status: DownloadedFontStatus;
   /** From the download command or the ~DY format code, the only places the stream states it. */
-  kind: "truetype" | "bitmap" | "scalable";
+  kind: "truetype" | "bitmap" | "scalable" | "encoding";
+  /** The download command, for the findings the profile boundary raises. */
+  via: string;
+  /** The download rebuilt from its parsed header and payload, kept when the cache holds no face the emitter could rebuild it from. */
+  download?: string;
 }
+
+/** The cache serves a TrueType face only, and only under a name ^A@ accepts, spec p.63. */
+export const cacheServes = (kind: DownloadedFont["kind"], path: string): boolean => kind === "truetype" && isTrueTypeFileName(path);
 
 /** ^CW aliases + ~DY uploads; span the whole parse across ^XA blocks. */
 export interface FontsState {
@@ -420,15 +428,14 @@ function finalFontRefs(s: ParserState): string[] {
 
 /** The uploads the finished design can still ship.
  *  A ^ID drops an upload unless the design named it before the delete and still names it now. */
-export function resolveLiveFonts(s: ParserState): string[] {
+export function resolveLiveFonts(s: ParserState): (SetupFont & { via: string })[] {
   const refs = finalFontRefs(s);
-  const live: string[] = [];
+  const live: (SetupFont & { via: string })[] = [];
   for (const [path, font] of s.fonts.downloadedFonts) {
     if (font.status === "deleted") continue;
     if (font.status === "deletedWhileNamed" && !refs.some((r) => storageRefMatchesPath(r, path))) continue;
-    // A printer-native font has no web face and no ~DY format this emitter can send.
-    if (font.kind !== "truetype") continue;
-    live.push(path);
+    if (font.download !== undefined) live.push({ path, via: font.via, download: font.download });
+    else if (cacheServes(font.kind, path)) live.push({ path, via: font.via });
   }
   return live;
 }

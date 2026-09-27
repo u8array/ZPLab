@@ -113,7 +113,14 @@ export const FONT_LINKS_MAX_PER_BASE = 5;
 /** ^FL ext/base path length cap (defensive; covers full Zebra device-path forms). */
 export const FONT_LINKS_PATH_MAX_LEN = 128;
 /** The profile rides the one localStorage session blob beside the design, so a logo fits and a photo does not. */
-export const SETUP_GRAPHIC_GFA_MAX_CHARS = 1_048_576;
+export const SETUP_UPLOAD_MAX_CHARS = 1_048_576;
+/** Exactly the shapes the parser rebuilds from a parsed header and the counted payload, so a replayed
+ *  upload can carry no second command, not even one the printer reads without a prefix. */
+const DOWNLOAD_PATH = '(?:[A-Za-z]:)?[A-Za-z0-9_]{1,16}(?:\\.[A-Za-z0-9]{1,3})?';
+export const SETUP_DOWNLOAD_RE = new RegExp(
+  `^(?:~D[TUSE]${DOWNLOAD_PATH},\\d+,(?:[0-9A-F]{2})+|~DY${DOWNLOAD_PATH},A,[TEB],\\d+,\\d*,(?:[0-9A-F]{2})+|~DB${DOWNLOAD_PATH}(?:,[A-Za-z0-9 _]{0,63}){7},[0-9A-Fa-fOo#.\\s]*)$`,
+);
+export const isSetupDownload = (download: string): boolean => download.length <= SETUP_UPLOAD_MAX_CHARS && SETUP_DOWNLOAD_RE.test(download);
 
 /** Indexed table 0..16; wire value is the index. */
 export const HEAD_CLEANING_INTERVAL_METERS = [
@@ -203,16 +210,16 @@ export const printerProfileSchema = z.object({
     ext: z.string().max(FONT_LINKS_PATH_MAX_LEN).regex(setupScriptOptionalSafeStringRegex),
     base: z.string().max(FONT_LINKS_PATH_MAX_LEN).regex(setupScriptOptionalSafeStringRegex),
   })).optional(),
-  /** Fonts to upload once via `~DY,A,T` ahead of the setup-script block
-   *  (analogue to {@link LabelConfig.customFonts} but per-printer). Paths
-   *  only; bytes are pulled from the shared fontCache at emit time. */
+  /** Fonts to upload once ahead of the setup-script block, per printer. A TrueType face rebuilds its ~DY
+   *  from the shared fontCache at emit time. A font in the printer's own format carries its download. */
   setupFonts: z.array(z.object({
     path: z.string().min(1).max(FONT_LINKS_PATH_MAX_LEN).regex(setupScriptSafeStringRegex),
+    download: z.string().refine(isSetupDownload, 'must be one font download the parser rebuilt').optional(),
   })).optional(),
   /** Each entry carries its own ^GF bytes: a profile outlives the design whose image store held the raster. */
   setupGraphics: z.array(z.object({
     path: z.string().min(1).max(FONT_LINKS_PATH_MAX_LEN).regex(setupScriptSafeStringRegex),
-    gfa: z.string().min(1).max(SETUP_GRAPHIC_GFA_MAX_CHARS),
+    gfa: z.string().min(1).max(SETUP_UPLOAD_MAX_CHARS),
   })).optional(),
   /** ^JH f master gate; without `E` ^MA sits dormant. */
   earlyWarningMaintenance: z.enum(['E', 'D']).optional(),
@@ -270,6 +277,7 @@ export const printerProfileSchema = z.object({
 
 export type PrinterProfile = z.infer<typeof printerProfileSchema>;
 export type SetupGraphic = NonNullable<PrinterProfile['setupGraphics']>[number];
+export type SetupFont = NonNullable<PrinterProfile['setupFonts']>[number];
 
 /** Cascade direction follows whichever side the patch touches:
  *  alert-touched rewrites message.type, message-touched rewrites

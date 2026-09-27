@@ -658,6 +658,15 @@ describe("generateSetupScript — maintenance commands", () => {
     expect(script).not.toContain("~DY");
   });
 
+  it("replays a setupFonts download as sent, ahead of the block, and needs no cached bytes for it", () => {
+    const script = generateSetupScript({
+      ...base,
+      setupFonts: [{ path: "R:KANJI.FNT", download: "~DUR:KANJI.FNT,4,01020304" }],
+      fontLinks: [{ ext: "R:KANJI.FNT", base: "E:LATIN.TTF" }],
+    });
+    expect(script).toBe("~DUR:KANJI.FNT,4,01020304\n^XA\n^FLR:KANJI.FNT,E:LATIN.TTF,1\n^XZ");
+  });
+
   it("skips setupFonts entries whose bytes are missing", () => {
     const script = generateSetupScript({
       ...base,

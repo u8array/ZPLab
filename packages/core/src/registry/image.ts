@@ -1,6 +1,6 @@
 import type { PropSpecs } from '../types/propSpec';
 import type { ObjectTypeCore } from '../types/ObjectType';
-import { SETUP_GRAPHIC_GFA_MAX_CHARS, type SetupGraphic } from '../types/PrinterProfile';
+import { SETUP_UPLOAD_MAX_CHARS, type SetupGraphic } from '../types/PrinterProfile';
 import { graphicFieldPos } from './zplHelpers';
 import { getImage } from '../lib/imageCache';
 import { gfaFromRaster, rasterizeMono, scaledHeightDots } from '../lib/imageToZpl';
@@ -315,7 +315,7 @@ export function setupGraphicOf(p: ImageProps): SetupGraphicVerdict | undefined {
 /** Names which of the emitter's ship test and the profile's cap refuses. */
 export function setupGraphicFits(gfa: string): 'ok' | 'unshippable' | 'tooLarge' {
   if (!gfShipsSafely(gfa)) return 'unshippable';
-  return gfa.length > SETUP_GRAPHIC_GFA_MAX_CHARS ? 'tooLarge' : 'ok';
+  return gfa.length > SETUP_UPLOAD_MAX_CHARS ? 'tooLarge' : 'ok';
 }
 
 /** The profile entry for this object, weighed against its cached bytes. */
