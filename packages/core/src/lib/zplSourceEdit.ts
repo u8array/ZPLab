@@ -10,7 +10,7 @@ import { carryAcrossApply } from "./sourceApplyCarry";
 import type { ColumnMapping, Variable } from "../types/Variable";
 import { diffEditorState, type EditorStateDiff } from "./editorStateDiff";
 import { remapBindingsByFn } from "./variableBinding";
-import { recallOnlyPath } from "./zplGenerator";
+import { recallOnlyPath } from "./storedFormat";
 
 /** A textarea freezes on one megabyte-scale ^GF/~DY payload line long before
  *  the parser would mind. Sized well above a whole single-line foreign label

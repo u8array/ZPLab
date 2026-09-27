@@ -6,7 +6,8 @@ import {
   type PrinterProfile,
 } from '@zplab/core/types/PrinterProfile';
 import { formatFontDownloadFromPath } from '@zplab/core/lib/customFonts';
-import { generateStoredFormatBlock, recallOnlyPath } from '@zplab/core/lib/zplGenerator';
+import { generateStoredFormatBlock } from '@zplab/core/lib/zplGenerator';
+import { recallOnlyPath } from '@zplab/core/lib/storedFormat';
 import { storageKey } from '@zplab/core/lib/storagePath';
 import { pageLabelConfig, type Page } from '@zplab/core/types/Group';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';

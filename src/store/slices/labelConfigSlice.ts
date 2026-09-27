@@ -1,7 +1,7 @@
 import { labelMetaOf } from '@zplab/core/lib/zplLabelMeta';
 import type { StateCreator } from 'zustand';
 import { PER_LABEL_ZPL_FIELDS, type JmDensity, type LabelConfig, type StoredFormatDelivery } from '@zplab/core/types/LabelConfig';
-import { recallWayIssue } from '@zplab/core/lib/zplGenerator';
+import { recallWayIssue } from '@zplab/core/lib/storedFormat';
 import type { Page } from '@zplab/core/types/Group';
 import type { Variable, ColumnMapping } from '@zplab/core/types/Variable';
 import type { DbSourceRef } from '@zplab/core/types/DataSource';
@@ -222,7 +222,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
         const { storedFormatDelivery: _way, ...rest } = p;
         return rest;
       });
-      return { pages };
+      return pages.every((p, i) => p === state.pages[i]) ? {} : { pages };
     }),
 
   setPageStoredFormatDelivery: (way) =>
@@ -234,6 +234,6 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
         const { storedFormatDelivery: _old, ...rest } = p;
         return way === undefined ? rest : { ...rest, storedFormatDelivery: way };
       });
-      return { pages };
+      return pages.every((p, i) => p === state.pages[i]) ? {} : { pages };
     }),
 });

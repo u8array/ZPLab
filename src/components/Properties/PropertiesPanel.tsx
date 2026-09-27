@@ -37,8 +37,7 @@ import { DensityRescaleModal } from "./DensityRescaleModal";
 import { inputCls, labelCls } from "./styles";
 import { fieldGridCols, fieldGridCell } from "../ui/formStyles";
 import type { JmDensity, LabelConfig } from "@zplab/core/types/LabelConfig";
-import { StoredFormatField } from "./StoredFormatField";
-import { recallWayIssue } from "@zplab/core/lib/zplGenerator";
+import { TemplateSection } from "./TemplateSection";
 import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 import type { LabelObjectBase } from "@zplab/core/types/LabelObject";
 
@@ -501,11 +500,6 @@ function LabelConfigPanel({
   // The select edits the design-wide mode; surface a page's persisted ^JM
   // override so a diverging page is not an invisible no-op target.
   const pageJm = useLabelStore((s) => currentPageLabel(s).jmDensity);
-  const pageStored = useLabelStore((s) => currentPageLabel(s).storedFormatPath);
-  const pageDelivery = useLabelStore((s) => currentPageLabel(s).storedFormatDelivery);
-  const pageWayIssue = useLabelStore((s) => recallWayIssue({ storedFormatPath: pageStored }, s.pages));
-  const setPageStoredFormatPath = useLabelStore((s) => s.setPageStoredFormatPath);
-  const setPageStoredFormatDelivery = useLabelStore((s) => s.setPageStoredFormatDelivery);
   const matchedPreset = PRESETS.find(
     (p) =>
       p.widthMm === label.widthMm &&
@@ -671,7 +665,6 @@ function LabelConfigPanel({
             </p>
           )}
         </div>
-        <StoredFormatField path={pageStored} delivery={pageDelivery} issue={pageWayIssue} locked={locked} onChange={setPageStoredFormatPath} onDeliveryChange={setPageStoredFormatDelivery} />
         {pendingDpmm !== null && (
           <DensityRescaleModal
             pending={{ kind: 'dpmm', toDpmm: pendingDpmm.toDpmm, configPatch: pendingDpmm.configPatch }}
@@ -720,6 +713,8 @@ function LabelConfigPanel({
           </span>
         </label>
         </StaticSectionCard>
+
+        <TemplateSection locked={locked} />
 
         <SectionCard
           id="label-fonts"

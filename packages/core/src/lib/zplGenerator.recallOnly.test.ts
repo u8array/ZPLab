@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contestedFormatKeys, generateBatchZpl, generateMultiPageZPL, generateStoredFormatBlock, recallWayIssue } from "./zplGenerator";
+import { generateBatchZpl, generateMultiPageZPL, generateStoredFormatBlock, storedFormatSlots } from "./zplGenerator";
 import { pageLabelConfig } from "../types/Group";
 import type { LabelObject } from "../types/Group";
 import type { LabelConfig, PageLabel } from "../types/LabelConfig";
@@ -60,11 +60,9 @@ describe("a page that does not store its own format", () => {
     expect(generateBatchZpl(pageLabelConfig(label, long), long.objects, variables, dataset, mapping)).toContain("^DFR:LBL.ZPL");
   });
 
-  it("names the printer files more than one page stores under, however each page spells them", () => {
-    const keys = contestedFormatKeys([{ storedFormatPath: "E:JOB.ZPL" }, {}, { storedFormatPath: "e:job.zpl" }, { storedFormatPath: "E:OTHER.ZPL" }]);
-    expect([...keys]).toEqual(["E:JOB.ZPL"]);
-    const pages = [{ storedFormatPath: "E:JOB.ZPL" }, { storedFormatPath: "e:job.zpl" }, { storedFormatPath: "E:VERYLONGNAME12.ZPL" }, { storedFormatPath: "E:FREE.ZPL" }, {}];
-    expect(pages.map((p) => recallWayIssue(p, pages))).toEqual(["contested", "contested", "longName", undefined, undefined]);
+  it("reads the declared slots off the stored block, so a field the export skips declares none", () => {
+    const hidden = { ...text("lot"), includeInExport: false } as LabelObject;
+    expect([...storedFormatSlots(pageLabelConfig(label, page("setup")), [text("sku"), hidden], variables)]).toEqual([1]);
   });
 
   it("stores the format for the setup script with every slot bare and without the uploads a job ships", () => {

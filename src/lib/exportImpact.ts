@@ -3,7 +3,7 @@ import { dedupCommandsByKind } from "@zplab/core/lib/importReport";
 import { formatTemplate } from "./formatTemplate";
 import type { Translations } from "../locales";
 import type { Page } from "@zplab/core/types/Group";
-import { contestedFormatKeys, recallOnlyPath } from "@zplab/core/lib/zplGenerator";
+import { contestedFormatKeys, recallOnlyPath } from "@zplab/core/lib/storedFormat";
 import { storageKey } from "@zplab/core/lib/storagePath";
 
 export interface PrinterImpact {

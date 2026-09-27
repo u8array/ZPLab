@@ -5,7 +5,8 @@ import { z } from "zod";
 import {
   serializeDesign,
 } from "@zplab/core/lib/designFile";
-import { contestedFormatKeys, recallOnlyPath, generateBatchZpl, generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
+import { generateBatchZpl, generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
+import { contestedFormatKeys, recallOnlyPath } from "@zplab/core/lib/storedFormat";
 import { pageLabelConfig } from "@zplab/core/types/Group";
 import { boundColumnIndex } from "@zplab/core/lib/variableBinding";
 import { isRecallableFormatPath, parseStoragePath, recallCandidates, storageKey } from "@zplab/core/lib/storagePath";

@@ -11,7 +11,8 @@ import {
   TrashIcon,
   XMarkIcon,
 } from '@heroicons/react/16/solid';
-import { useLabelStore, selectEditorFrozen } from '../../store/labelStore';
+import { useLabelStore, selectEditorFrozen, currentPageLabel } from '../../store/labelStore';
+import { formatDelivery } from '@zplab/core/lib/storedFormat';
 import { datasetDisplayName, dbRefDisplayName } from '@zplab/core/types/DataSource';
 import { currentDataContext, isCurrentDataContext } from '../../store/datasetActions';
 import { useDbConnectActions } from '../../hooks/useDbConnectActions';
@@ -58,6 +59,10 @@ export function VariablesPanel() {
   const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
   const setCanvasSettings = useLabelStore((s) => s.setCanvasSettings);
   const dataSourceRef = useLabelStore((s) => s.dataSourceRef);
+  const pageTemplate = useLabelStore((s) => currentPageLabel(s).storedFormatPath);
+  const pageWay = useLabelStore((s) => formatDelivery(currentPageLabel(s)));
+  const setSidebarTab = useLabelStore((s) => s.setSidebarTab);
+  const selectObjects = useLabelStore((s) => s.selectObjects);
   const editorFrozen = useLabelStore(selectEditorFrozen);
   const { reconnect } = useDbConnectActions();
   // The discard confirm is destructive and scoped to the dataset it was opened
@@ -154,6 +159,22 @@ export function VariablesPanel() {
 
   return (
     <div className="flex flex-col gap-3 p-3">
+      {pageTemplate !== undefined && (
+        <div className="flex items-center justify-between gap-2 text-[10px] font-mono text-muted">
+          <span className="truncate">{formatTemplate(t.template.pageTemplateFmt, { path: pageTemplate, way: t.delivery[pageWay] })}</span>
+          <button
+            type="button"
+            onClick={() => {
+              // The template card sits in the page block, which shows only while nothing is selected.
+              selectObjects([]);
+              setSidebarTab('properties');
+            }}
+            className="shrink-0 text-accent hover:underline"
+          >
+            {t.template.openPage}
+          </button>
+        </div>
+      )}
       {variables.length > 0 && (
         <div className="flex items-start justify-between gap-2">
           {/* Persistent entry: the empty-state CTA is gone once variables exist,

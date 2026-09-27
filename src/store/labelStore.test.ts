@@ -964,6 +964,14 @@ describe('setPageStoredFormatPath', () => {
     expect(state().pages[0]).not.toHaveProperty('storedFormatDelivery');
   });
 
+  it('leaves the pages alone when neither the name nor the way moves', () => {
+    useLabelStore.setState({ pages: [{ objects: [] }], currentPageIndex: 0 });
+    const before = state().pages;
+    state().setPageStoredFormatPath(undefined);
+    state().setPageStoredFormatDelivery(undefined);
+    expect(state().pages).toBe(before);
+  });
+
   it('keeps no delivery on a name two pages store under, and refuses one while they do', () => {
     const first = { objects: [], storedFormatPath: 'E:JOB.ZPL', storedFormatDelivery: 'setup' as const };
     useLabelStore.setState({ pages: [first, { objects: [], storedFormatPath: 'E:OTHER.ZPL' }], currentPageIndex: 1 });

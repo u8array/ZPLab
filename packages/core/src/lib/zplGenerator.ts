@@ -6,6 +6,7 @@ import { getEntry, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry'
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import { stripZplParamChars } from './zplParams';
 import { isRecallableFormatPath, storageKey, storageRefMatchesPath } from './storagePath';
+import { recallOnlyPath } from './storedFormat';
 import {
   extractTemplateRefs,
   hasTemplateMarkers,
@@ -802,35 +803,6 @@ function emitPageBlock(
 /** Where a batch stores its template when the design names none ^XF could recall: R: is volatile RAM, matching a single run. */
 const BATCH_TEMPLATE_PATH = 'R:LBL.ZPL';
 
-/** The path a job recalls instead of storing, once the page says so and ^XF can read the name. */
-export function recallOnlyPath(page: Pick<PageLabel, 'storedFormatPath' | 'storedFormatDelivery'>): string | undefined {
-  const path = page.storedFormatPath;
-  return page.storedFormatDelivery !== undefined && path !== undefined && isRecallableFormatPath(path) ? path : undefined;
-}
-
-/** Storage keys more than one page stores its format under, since the printer keeps one format per name. */
-export function contestedFormatKeys(pages: readonly Pick<PageLabel, 'storedFormatPath'>[]): Set<string> {
-  const seen = new Set<string>();
-  const contested = new Set<string>();
-  for (const p of pages) {
-    if (p.storedFormatPath === undefined) continue;
-    const key = storageKey(p.storedFormatPath);
-    if (seen.has(key)) contested.add(key);
-    seen.add(key);
-  }
-  return contested;
-}
-
-export type RecallWayIssue = 'longName' | 'contested';
-
-/** Why a page may not recall its format: ^XF cannot read the name, or another page stores under it. */
-export function recallWayIssue(page: Pick<PageLabel, 'storedFormatPath'>, pages: readonly Pick<PageLabel, 'storedFormatPath'>[]): RecallWayIssue | undefined {
-  const path = page.storedFormatPath;
-  if (path === undefined) return undefined;
-  if (!isRecallableFormatPath(path)) return 'longName';
-  return contestedFormatKeys(pages).has(storageKey(path)) ? 'contested' : undefined;
-}
-
 function recallBlock(path: string, fields: readonly string[]): string {
   return ['^XA', `^XF${path}`, ...fields, '^XZ'].join('\n');
 }
@@ -909,8 +881,17 @@ function planRecalls(
   const path = recallOnlyPath(label) ?? (label.storedFormatPath && isRecallableFormatPath(label.storedFormatPath) ? label.storedFormatPath : BATCH_TEMPLATE_PATH);
   const template = generateZplBlock({ ...label, storedFormatPath: path }, objects, variables, bareFns);
   // A recall for a slot the stored format never declares prints as a stray field (ZD230).
-  const storedFnSlots = new Set([...template.block.matchAll(/\^FN(\d+)/g)].map((m) => Number(m[1])));
-  return { template, path, recalls: entries.filter((e) => storedFnSlots.has(e.fn)) };
+  const stored = declaredSlots(template.block);
+  return { template, path, recalls: entries.filter((e) => stored.has(e.fn)) };
+}
+
+function declaredSlots(block: string): Set<number> {
+  return new Set([...block.matchAll(/\^FN(\d+)/g)].map((m) => Number(m[1])));
+}
+
+/** The ^FN slots the page's stored format declares, read off the emitted block so no walk can disagree with it. */
+export function storedFormatSlots(label: PageLabel, objects: LabelObject[], variables: readonly Variable[]): Set<number> {
+  return declaredSlots(planRecalls(label, objects, variables, NO_ROWS, NO_BINDINGS).template.block);
 }
 
 /** A slot takes its row value, or its default when no row or no column supplies one. */
