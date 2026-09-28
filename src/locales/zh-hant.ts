@@ -920,6 +920,9 @@ const zhHant = {
     importCsvData: '匯入 CSV 資料',
     sendToZebraBatchFmt: '傳送至 Zebra（{n} 個標籤）',
     exportBatchZplFmt: '匯出批次 ZPL ({n} 個標籤)',
+    exportPdf: '匯出 PDF',
+    exportBatchPdfFmt: '匯出批次 PDF ({n} 個標籤)',
+    exportPdfCurrentPage: '匯出 PDF (目前頁面)',
     newDesign: '新增設計',
     addPage: '新增頁面',
     cancel: '取消',
@@ -1772,6 +1775,14 @@ const zhHant = {
     usbPermissionDenied: '無法存取 USB 印表機。點按「設定存取權限」以授予權限。',
     usbSetupAccess: '設定存取權限',
     usbNotFound: '找不到 USB 印表機，請重新插入並重新整理。',
+  },
+  pdfExport: {
+    title: '匯出 PDF',
+    progressFmt: '正在渲染標籤 {i}/{n}…',
+    cancel: '取消',
+    failedFmt: '標籤 {i} 渲染失敗: {error}',
+    saving: '正在儲存檔案…',
+    renderedWithFmt: '使用 {renderer} 渲染',
   },
 } as const;
 

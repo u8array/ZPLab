@@ -85,7 +85,7 @@ import { buildContextMenu, type MenuSection } from "./canvasActions";
 import { zplForSelection } from "../../lib/zplForSelection";
 import { finishZplExport } from "../../lib/exportZpl";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
-import { nodeToPngBlob, copyPngToClipboard } from "../../lib/canvasImage";
+import { captureLabelBlob, copyPngToClipboard } from "../../lib/canvasImage";
 import { saveFile, saveErrorMessage, PNG_FILTER } from "../../lib/fileDialogs";
 import { printerPreviewLayout } from "../../lib/printerPreview";
 
@@ -162,6 +162,8 @@ export interface LabelCanvasHandle {
   distributeSelection: (axis: DistributeAxis) => void;
   tidySelection: () => void;
   convertObjectPositionType: (id: string, target: "FO" | "FT") => void;
+  /** The label paper as drawn, at exactly the given dots, so a raster of it lines up with a printer render. */
+  captureLabelDots: (dots: { width: number; height: number }) => Promise<Blob | null>;
 }
 
 export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCanvas({
@@ -188,8 +190,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // coords), so its rest bounds map through this group's transform when rotated;
   // image export also captures it to exclude the transformer / action-bar chrome.
   const rotationGroupRef = useRef<Konva.Group>(null);
-  // The white label paper; its drop shadow is dropped during image capture so
-  // the PNG is the label rect, not a shadow-padded box.
+  // The white label paper, which the image capture crops to.
   const labelPaperRef = useRef<Konva.Rect>(null);
   const ctxMenu = useContextMenu<MenuSection[]>();
   const lockedFrameRef = useRef<Konva.Group>(null);
@@ -826,6 +827,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     },
   });
 
+
   useImperativeHandle(
     ref,
     () => {
@@ -943,9 +945,13 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
           });
           if (patch) updateObject(id, patch);
         },
+        captureLabelDots: (dots) => {
+          const group = rotationGroupRef.current;
+          return group ? captureLabelBlob(group, labelPaperRef.current, CAPTURE_CHROME, { pixelRatio: label.dpmm / scale, dots }) : Promise.resolve(null);
+        },
       };
     },
-    [updateObjects, updateObject],
+    [updateObjects, updateObject, label.dpmm, scale],
   );
 
   const {
@@ -1209,27 +1215,6 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     };
   };
 
-  // PNG of the label paper and its objects only: hide editor chrome (grid,
-  // safe-area, selection frames) and drop the view rotation so the image is the
-  // canonical label, not the rotated viewport. Restore both afterwards.
-  const captureLabelImage = async (): Promise<Blob | null> => {
-    const group = rotationGroupRef.current;
-    if (!group) return null;
-    const chrome = group.find(`.${CAPTURE_CHROME}`);
-    const rotation = group.rotation();
-    const paper = labelPaperRef.current;
-    chrome.forEach((n) => n.visible(false));
-    // The paper shadow pads the node bbox; drop it so the PNG crops to the label.
-    paper?.shadowEnabled(false);
-    group.rotation(0);
-    try {
-      return await nodeToPngBlob(group);
-    } finally {
-      chrome.forEach((n) => n.visible(true));
-      paper?.shadowEnabled(true);
-      group.rotation(rotation);
-    }
-  };
 
   const openContextMenu = (e: Konva.KonvaEventObject<PointerEvent>) => {
     e.evt.preventDefault();
@@ -1292,14 +1277,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       copyImage: () => {
         // Call write synchronously with the pending blob so the user activation
         // survives the async capture. Unsupported / failure stays a silent no-op.
-        const blob = captureLabelImage().then((b) => {
+        const blob = (rotationGroupRef.current ? captureLabelBlob(rotationGroupRef.current, labelPaperRef.current, CAPTURE_CHROME) : Promise.resolve(null)).then((b) => {
           if (!b) throw new Error("capture-failed");
           return b;
         });
         void copyPngToClipboard(blob).catch(() => undefined);
       },
       exportImage: async () => {
-        const blob = await captureLabelImage();
+        const blob = await (rotationGroupRef.current ? captureLabelBlob(rotationGroupRef.current, labelPaperRef.current, CAPTURE_CHROME) : Promise.resolve(null));
         if (!blob) return;
         await saveFile(blob, { filename: "label.png", filters: [PNG_FILTER] })
           .then((wrote) => wrote && clearUserError())

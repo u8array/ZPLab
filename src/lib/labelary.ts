@@ -33,13 +33,21 @@ export function isDefaultHost(runtimeHost: string): boolean {
   return resolveHost(runtimeHost) === DEFAULT_HOST;
 }
 
-class LabelaryError extends Error {
+export class LabelaryError extends Error {
   readonly kind: 'api' | 'timeout' | 'network';
-  constructor(kind: 'api' | 'timeout' | 'network', message: string) {
+  /** The HTTP status of an 'api' failure, so a caller can tell a rate limit from a rejected label. */
+  readonly status?: number;
+  constructor(kind: 'api' | 'timeout' | 'network', message: string, status?: number) {
     super(message);
     this.name = 'LabelaryError';
     this.kind = kind;
+    this.status = status;
   }
+}
+
+/** A failure a later try can cure: the service was busy or unreachable, not the label rejected. */
+export function isTransientLabelaryError(e: unknown): boolean {
+  return e instanceof LabelaryError && (e.kind !== 'api' || e.status === 429 || e.status === 503);
 }
 
 /** The labelary print route for `label`; the desktop proxy validates it
@@ -76,7 +84,7 @@ async function fetchPreviewDesktop(zpl: string, label: LabelConfig, host: string
     case 'png':
       return `data:image/png;base64,${r.base64}`;
     case 'api':
-      throw new LabelaryError('api', `Labelary API error: ${r.status}`);
+      throw new LabelaryError('api', `Labelary API error: ${r.status}`, r.status);
     case 'timeout':
       throw new LabelaryError('timeout', 'Request timed out.');
     default:
@@ -112,7 +120,7 @@ export async function fetchPreview(
   }
 
   if (!res.ok) {
-    throw new LabelaryError('api', `Labelary API error: ${res.status} ${res.statusText}`);
+    throw new LabelaryError('api', `Labelary API error: ${res.status} ${res.statusText}`, res.status);
   }
 
   const blob = await res.blob();

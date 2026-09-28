@@ -920,6 +920,9 @@ const hr = {
     importCsvData: 'Uvoz CSV podataka',
     sendToZebraBatchFmt: 'Pošalji na Zebra ({n} etiketa)',
     exportBatchZplFmt: 'Izvoz skupnog ZPL-a ({n} etiketa)',
+    exportPdf: 'Izvoz PDF-a',
+    exportBatchPdfFmt: 'Izvoz skupnog PDF-a ({n} etiketa)',
+    exportPdfCurrentPage: 'Izvoz PDF-a (trenutna stranica)',
     newDesign: 'Novi dizajn',
     addPage: 'Dodaj stranicu',
     cancel: 'Odustani',
@@ -1772,6 +1775,14 @@ const hr = {
     usbPermissionDenied: 'Nema pristupa USB pisaču. Kliknite Postavi pristup da biste ga odobrili.',
     usbSetupAccess: 'Postavi pristup',
     usbNotFound: 'USB pisač nije pronađen. Ponovno ga priključite i osvježite.',
+  },
+  pdfExport: {
+    title: 'Izvoz PDF-a',
+    progressFmt: 'Renderiranje naljepnice {i} od {n}…',
+    cancel: 'Odustani',
+    failedFmt: 'Naljepnicu {i} nije moguće renderirati: {error}',
+    saving: 'Spremanje datoteke…',
+    renderedWithFmt: 'Renderirano pomoću {renderer}',
   },
 } as const;
 

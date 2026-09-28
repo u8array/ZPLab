@@ -7,8 +7,9 @@ import {
   type PreviewTarget,
   type PrinterRenderDims,
 } from '../../lib/printerPreview';
-import { getPreviewTransport, getPrinterAddress, getUsbPrinterId } from '../../lib/printerAddress';
+import { getPrinterAddress } from '../../lib/printerAddress';
 import { buildActiveRow } from '@zplab/core/lib/variableBinding';
+import { printerFailureMessage, resolvePreviewTarget } from '../../lib/printerPreview';
 import { buildPreviewZpl } from '../../lib/printPreview';
 import { currentObjects, currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint, selectSourceEditing } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
@@ -50,22 +51,6 @@ const previewCache = (() => {
 
 /** Test-only handle to clear the preview cache between test cases. */
 export const __resetPreviewCacheForTests = (): void => previewCache._resetForTests();
-
-/** The configured preview target, or the message telling the user what to
- *  configure. */
-function resolvePreviewTarget(): { target: PreviewTarget } | { error: string } {
-  // Keep a persisted 'usb' choice even if the device is gone: enterPreviewMode
-  // falls back to network at fetch time, so a re-plug restores it. An empty
-  // selection falls through to network.
-  if (getPreviewTransport() === 'usb') {
-    const id = getUsbPrinterId();
-    if (id) return { target: { kind: 'usb', id } };
-  }
-  const { host, port } = getPrinterAddress();
-  return host
-    ? { target: { kind: 'network', host, port } }
-    : { error: 'No printer configured. Set a USB device or IP under Settings, Preview.' };
-}
 
 /** Cache-key part identifying the device, so switching the preview transport
  *  or printer invalidates the cached render (different dpi, different label). */
@@ -186,25 +171,12 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
           set({ previewMode: { status: 'active', ...render } });
           return;
         }
-        case 'refused': {
-          // 'refused' is network-only (USB has no such kind), so gate the port
-          // hint on a network target.
-          const hint =
-            target.kind === 'network' ? ` Check that port ${target.port} is open.` : '';
-          fail(`The printer refused the connection.${hint}`);
-          return;
-        }
+        case 'refused':
         case 'unreachable':
-          fail('Could not reach the printer. Check the IP address and network.');
-          return;
         case 'not_found':
-          fail('USB printer not found. Re-plug it and check Settings, Preview.');
-          return;
         case 'permission_denied':
-          fail('No access to the USB printer. Grant it in the print dialog, USB tab.');
-          return;
         case 'error':
-          fail(result.message);
+          fail(printerFailureMessage(result, target));
           return;
         default: {
           // Exhaustive: a new result kind must be handled here, not silently

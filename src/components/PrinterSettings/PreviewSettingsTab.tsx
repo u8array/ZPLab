@@ -16,6 +16,7 @@ import { useUsbPrinters } from "../../hooks/useUsbPrinters";
 import { labelCls, inputCls, buttonCls } from "../ui/formStyles";
 import { Select } from "../ui/Select";
 import { formatTemplate } from "../../lib/formatTemplate";
+import { previewProviderLabel } from "../../lib/previewProviderLabel";
 
 function RadioOption<T extends string>({ name, value, current, onSelect, label, hint, disabled }: {
   name: string;
@@ -167,7 +168,7 @@ export function PreviewSettingsTab() {
         />
         {provider !== chosen && (
           <span className="text-[10px] text-muted">
-            {formatTemplate(loc.providerInUseFmt, { provider: { labelary: loc.providerLabelary, printer: loc.providerPrinter, none: loc.providerNone }[provider] })}
+            {formatTemplate(loc.providerInUseFmt, { provider: previewProviderLabel(t, provider) })}
           </span>
         )}
       </section>

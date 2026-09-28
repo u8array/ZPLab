@@ -920,6 +920,9 @@ const hu = {
     importCsvData: 'CSV-adatok importálása',
     sendToZebraBatchFmt: 'Küldés Zebrára ({n} címke)',
     exportBatchZplFmt: 'Köteg ZPL exportálása ({n} címke)',
+    exportPdf: 'PDF exportálása',
+    exportBatchPdfFmt: 'Köteg PDF exportálása ({n} címke)',
+    exportPdfCurrentPage: 'PDF exportálása (aktuális oldal)',
     newDesign: 'Új terv',
     addPage: 'Oldal hozzáadása',
     cancel: 'Mégse',
@@ -1772,6 +1775,14 @@ const hu = {
     usbPermissionDenied: 'Nincs hozzáférés az USB-nyomtatóhoz. Kattintson a Hozzáférés beállítása gombra az engedélyezéshez.',
     usbSetupAccess: 'Hozzáférés beállítása',
     usbNotFound: 'Az USB-nyomtató nem található. Csatlakoztassa újra, és frissítsen.',
+  },
+  pdfExport: {
+    title: 'PDF exportálása',
+    progressFmt: '{i}. címke renderelése {n}-ből…',
+    cancel: 'Mégse',
+    failedFmt: '{i}. címke renderelése sikertelen: {error}',
+    saving: 'Fájl mentése…',
+    renderedWithFmt: 'Renderelve ezzel: {renderer}',
   },
 } as const;
 

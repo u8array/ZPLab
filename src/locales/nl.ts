@@ -920,6 +920,9 @@ const nl = {
     importCsvData: 'CSV-gegevens importeren',
     sendToZebraBatchFmt: 'Verzenden naar Zebra ({n} etiketten)',
     exportBatchZplFmt: 'Batch-ZPL exporteren ({n} etiketten)',
+    exportPdf: 'PDF exporteren',
+    exportBatchPdfFmt: 'Batch-PDF exporteren ({n} etiketten)',
+    exportPdfCurrentPage: 'PDF exporteren (huidige pagina)',
     newDesign: 'Nieuw ontwerp',
     addPage: 'Pagina toevoegen',
     cancel: 'Annuleren',
@@ -1772,6 +1775,14 @@ const nl = {
     usbPermissionDenied: 'Geen toegang tot de USB-printer. Klik op Toegang instellen om toegang te verlenen.',
     usbSetupAccess: 'Toegang instellen',
     usbNotFound: 'USB-printer niet gevonden. Sluit deze opnieuw aan en vernieuw.',
+  },
+  pdfExport: {
+    title: 'PDF exporteren',
+    progressFmt: 'Label {i} van {n} wordt gerenderd…',
+    cancel: 'Annuleren',
+    failedFmt: 'Label {i} kon niet worden gerenderd: {error}',
+    saving: 'Bestand wordt opgeslagen…',
+    renderedWithFmt: 'Gerenderd met {renderer}',
   },
 } as const;
 

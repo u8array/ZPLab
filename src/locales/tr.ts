@@ -920,6 +920,9 @@ const tr = {
     importCsvData: 'CSV verisi içe aktar',
     sendToZebraBatchFmt: "Zebra'ya gönder ({n} etiket)",
     exportBatchZplFmt: 'Toplu ZPL dışa aktar ({n} etiket)',
+    exportPdf: 'PDF Dışa Aktar',
+    exportBatchPdfFmt: 'Toplu PDF dışa aktar ({n} etiket)',
+    exportPdfCurrentPage: 'PDF Dışa Aktar (geçerli sayfa)',
     newDesign: 'Yeni Tasarım',
     addPage: 'Sayfa ekle',
     cancel: 'İptal',
@@ -1772,6 +1775,14 @@ const tr = {
     usbPermissionDenied: "USB yazıcıya erişilemiyor. İzin vermek için Erişimi ayarla'ya tıklayın.",
     usbSetupAccess: 'Erişimi ayarla',
     usbNotFound: 'USB yazıcı bulunamadı, yeniden takıp yenileyin.',
+  },
+  pdfExport: {
+    title: 'PDF Dışa Aktar',
+    progressFmt: '{i}/{n} etiket render ediliyor…',
+    cancel: 'İptal',
+    failedFmt: '{i} numaralı etiket render edilemedi: {error}',
+    saving: 'Dosya kaydediliyor…',
+    renderedWithFmt: '{renderer} ile render edildi',
   },
 } as const;
 

@@ -1,6 +1,5 @@
 import { generateZPL } from "@zplab/core/lib/zplGenerator";
 import { stripSidecarComments } from "@zplab/core/lib/zplLabelMeta";
-import { fetchPreview } from "./labelary";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import { isGroup, withoutStoredFormat, type LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
@@ -22,14 +21,9 @@ function withBlankSamples(objects: LabelObject[]): LabelObject[] {
   });
 }
 
-/** Generate the ZPL we hand to Labelary: row-substituted + flat
- *  (no ^FN), so the rendered preview matches what would print for
- *  the active CSV row (or the variable defaults when no row is
- *  loaded). Shared by `printLabel` (new window with image) and
- *  `enterPreviewMode` (canvas overlay) so the two stay in lockstep;
- *  only the overlay opts into blank-field samples, printing must
- *  never put sample data on paper. `label` is the page's label (its ^JM
- *  override included), since the emitted dots live in that density. */
+/** The ZPL Labelary and the printer render: row-substituted and flat without ^FN, so the render matches
+ *  the print. Only the preview overlay opts into blank-field samples, a print never puts sample data on
+ *  paper. `label` carries the page's ^JM override, because the emitted dots live in that density. */
 export function buildPreviewZpl(
   label: PageLabel,
   objects: LabelObject[],
@@ -61,24 +55,20 @@ export function buildPrintHtml(imageUrl: string): string {
   </html>`;
 }
 
-export async function printLabel(
-  label: PageLabel,
-  objects: LabelObject[],
-  host: string,
-  apiKey: string | undefined,
-  variables: readonly Variable[] = [],
-  active: ActiveRow | null = null,
-): Promise<void> {
+export async function printLabel(image: Promise<string>): Promise<void> {
   // Open the window synchronously (inside the user-click call stack) so browsers
-  // don't treat it as a popup. Fill it in once the Labelary preview arrives.
+  // don't treat it as a popup. Fill it in once the render arrives.
   const win = window.open("", "_blank");
-  if (!win) return;
+  if (!win) {
+    // The render is already under way. Settle it, so nothing rejects unhandled and no blob URL leaks.
+    void image.then((url) => URL.revokeObjectURL(url), () => undefined);
+    return;
+  }
   win.document.write(buildLoadingHtml());
   win.document.close();
 
   try {
-    const zpl = buildPreviewZpl(label, objects, variables, active);
-    const url = await fetchPreview(zpl, label, host, apiKey);
+    const url = await image;
     win.document.open();
     win.document.write(buildPrintHtml(url));
     win.document.close();

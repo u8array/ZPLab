@@ -920,6 +920,9 @@ const de = {
     importCsvData: 'CSV-Daten importieren',
     sendToZebraBatchFmt: 'An Zebra senden ({n} Etiketten)',
     exportBatchZplFmt: 'Batch-ZPL exportieren ({n} Etiketten)',
+    exportPdf: 'PDF exportieren',
+    exportBatchPdfFmt: 'Batch-PDF exportieren ({n} Etiketten)',
+    exportPdfCurrentPage: 'PDF exportieren (aktuelle Seite)',
     newDesign: 'Neues Design',
     addPage: 'Seite hinzufügen',
     cancel: 'Abbrechen',
@@ -1042,6 +1045,14 @@ const de = {
     usbPermissionDenied: 'Kein Zugriff auf den USB-Drucker. Klicke auf Zugriff einrichten.',
     usbSetupAccess: 'Zugriff einrichten',
     usbNotFound: 'USB-Drucker nicht gefunden, neu einstecken und aktualisieren.',
+  },
+  pdfExport: {
+    title: 'PDF exportieren',
+    progressFmt: 'Rendert Etikett {i} von {n}…',
+    cancel: 'Abbrechen',
+    failedFmt: 'Etikett {i} konnte nicht gerendert werden: {error}',
+    saving: 'Speichert die Datei…',
+    renderedWithFmt: 'Gerendert mit {renderer}',
   },
 
   output: {

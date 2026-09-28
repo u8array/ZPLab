@@ -16,6 +16,8 @@ export type MenuItemId =
   | 'settings'
   | 'exportZpl'
   | 'exportBatch'
+  | 'exportPdf'
+  | 'exportBatchPdf'
   | 'openDesign'
   | 'saveDesign'
   | 'importCsv'
@@ -76,8 +78,10 @@ export interface MenuFlags {
   /** Desktop routes every data source through the connect-data wizard (one File
    *  entry); web keeps the direct CSV import as its only supported source. */
   connectDataWizard: boolean;
-  /** Labelary gate off hides the print item entirely (matches the dropdown). */
-  labelaryEnabled: boolean;
+  /** A batch PDF needs a renderer for every row. */
+  canBatchPdf: boolean;
+  /** Without a renderer the PDF holds the current page only. */
+  pdfCurrentPageOnly: boolean;
   canUndo: boolean;
   canRedo: boolean;
   /** Desktop convention only; a browser tab has no app-quit. */
@@ -102,6 +106,14 @@ export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
             enabled: f.hasObjects && live,
           }]
         : []),
+      { id: 'exportPdf', label: f.pdfCurrentPageOnly ? t.app.exportPdfCurrentPage : t.app.exportPdf, enabled: f.hasObjects && live },
+      ...(f.canBatchExport && f.canBatchPdf
+        ? [{
+            id: 'exportBatchPdf' as const,
+            label: formatTemplate(t.app.exportBatchPdfFmt, { n: String(f.batchRowCount) }),
+            enabled: f.hasObjects && live,
+          }]
+        : []),
     ],
     [
       { id: 'openDesign', label: t.app.openDesign, enabled: live },
@@ -111,12 +123,10 @@ export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
         : { id: 'importCsv' as const, label: t.app.importCsvData, enabled: live },
     ],
     [
-      ...(f.labelaryEnabled
-        ? [{ id: 'print' as const, label: t.app.print, enabled: f.hasObjects && live }]
-        : []),
+      { id: 'print', label: t.app.print, enabled: f.hasObjects && live },
       {
         // Sends the full export (a config-only overlay stream is a legitimate
-        // setup job), so it follows documentEmits like exportZpl; the Labelary
+        // setup job), so it follows documentEmits like exportZpl; the rendered
         // print above stays hasObjects (rendering nothing has no value).
         id: 'sendToZebra',
         label: f.canBatchExport

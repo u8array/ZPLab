@@ -42,7 +42,7 @@ import {
   MoonIcon,
   GlobeAltIcon,
 } from "@heroicons/react/16/solid";
-import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectEditorFrozen, selectSourceEditing, selectSourceEditDirty, selectDocumentEmits, selectBatchPrintCount } from "../store/labelStore";
+import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectEditorFrozen, selectSourceEditing, selectSourceEditDirty, selectDocumentEmits, selectBatchPrintCount } from "../store/labelStore";
 import { datasetTimestamp } from "@zplab/core/types/DataSource";
 import { isCurrentDataContext, settleDatasetReplace } from "../store/datasetActions";
 import { ConfirmDialog } from "./ui/ConfirmDialog";
@@ -54,6 +54,8 @@ import { isDesktopShell, isMacDesktop } from "../lib/platform";
 import { acceptAttr, DESIGN_FILTER, CSV_FILTER } from "../lib/fileDialogs";
 import { openExternal, REPO_URL } from "../lib/openExternal";
 import { LabelaryNoticeModal } from "./Output/LabelaryNoticeModal";
+import { PdfExportDialog } from "./Output/PdfExportDialog";
+import { usePdfExport } from "../hooks/usePdfExport";
 import { PrinterSettingsModal } from "./PrinterSettings/PrinterSettingsModal";
 import { Gs1ContentModal } from "./Barcode/Gs1ContentModal";
 import { ContentBuilderModal } from "./Barcode/ContentBuilderModal";
@@ -106,6 +108,8 @@ const MENU_ICONS: Partial<Record<MenuItemId, ComponentType<SVGProps<SVGSVGElemen
   settings: Cog6ToothIcon,
   exportZpl: ArrowDownTrayIcon,
   exportBatch: ArrowDownTrayIcon,
+  exportPdf: ArrowDownTrayIcon,
+  exportBatchPdf: ArrowDownTrayIcon,
   openDesign: FolderOpenIcon,
   saveDesign: DocumentArrowDownIcon,
   importCsv: TableCellsIcon,
@@ -135,9 +139,12 @@ export function AppShell() {
   const restoreReplacedDesign = useLabelStore((s) => s.restoreReplacedDesign);
   const dismissReplacedDesign = useLabelStore((s) => s.dismissReplacedDesign);
   const sourceEditDirty = useLabelStore(selectSourceEditDirty);
-  const labelaryEnabled = useLabelStore((s) => s.thirdParty.labelary);
   const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
-  const [showPrintNotice, setShowPrintNotice] = useState(false);
+  const renderer = useLabelStore(selectEffectivePreviewProvider);
+  const pageCount = useLabelStore((s) => s.pages.length);
+  // The Labelary notice gates every Labelary render, so the action waits here until the user continues.
+  const [afterNotice, setAfterNotice] = useState<(() => void) | null>(null);
+  const withNotice = (action: () => void) => (renderer === "labelary" && noticeRequired ? setAfterNotice(() => action) : action());
   const appUpdate = useLabelStore((s) => s.appUpdate);
   const checkForAppUpdate = useLabelStore((s) => s.checkForAppUpdate);
   const installAppUpdate = useLabelStore((s) => s.installAppUpdate);
@@ -205,6 +212,9 @@ export function AppShell() {
   // timestamp is unique per import/fetch, so it also catches re-loading the
   // same file or table (which a name key would miss).
   const datasetKey = useLabelStore((s) => s.dataset && datasetTimestamp(s.dataset.source));
+  // Imperative handle to the canvas: live render bboxes for the properties panel and the label capture for print and PDF.
+  const canvasRef = useRef<LabelCanvasHandle>(null);
+  const { progress: pdfProgress, exportPdf, exportBatchPdf, cancel: cancelPdfExport } = usePdfExport(canvasRef);
   const {
     showZplImport,
     openZplImport,
@@ -218,7 +228,7 @@ export function AppShell() {
     canBatchExport,
     batchRowCount,
     handlePrint,
-  } = useZplImportExport();
+  } = useZplImportExport(canvasRef);
   const outputPanel = useOutputPanel(OUTPUT_DEFAULT_H, sourceEditing);
   const leftPanel = useCollapsiblePanel("zpl-panel-left");
   const rightPanel = useCollapsiblePanel("zpl-panel-right");
@@ -233,7 +243,8 @@ export function AppShell() {
     batchRowCount,
     batchPrintCount,
     connectDataWizard: isDesktopShell,
-    labelaryEnabled,
+    canBatchPdf: renderer !== "none",
+    pdfCurrentPageOnly: renderer === "none" && pageCount > 1,
     canUndo,
     canRedo,
     // On macOS quit lives in the app submenu (Cmd+Q), not the File section.
@@ -246,13 +257,13 @@ export function AppShell() {
     settings: () => setPrinterSettingsTab("appSettings"),
     exportZpl: handleDownload,
     exportBatch: handleExportBatch,
+    exportPdf: () => withNotice(exportPdf),
+    exportBatchPdf: () => withNotice(exportBatchPdf),
     openDesign: handleOpen,
     saveDesign: handleSave,
     importCsv: openCsvPicker,
     connectData: openConnectWizard,
-    // Print routes through Labelary; clicking before the notice has been
-    // acknowledged opens the disclosure first, then prints.
-    print: () => (noticeRequired ? setShowPrintNotice(true) : void handlePrint()),
+    print: () => withNotice(() => void handlePrint()),
     sendToZebra: openZebraPrint,
     undo: () => undo(),
     redo: () => redo(),
@@ -260,10 +271,6 @@ export function AppShell() {
     // Desktop-only item (includeQuit); never reached on web.
     quit: () => void quitApp(),
   };
-  // Imperative handle to the canvas for actions PropertiesPanel needs live
-  // render bboxes for (e.g. align-to-label centring).
-  const canvasRef = useRef<LabelCanvasHandle>(null);
-
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-bg text-text font-sans">
       <SourceShadowSync />
@@ -595,15 +602,16 @@ export function AppShell() {
       {showZebraPrint && (
         <PrintToZebraDialog zpl={currentZpl()} onClose={closeZebraPrint} />
       )}
-      {showPrintNotice && (
+      {afterNotice && (
         <LabelaryNoticeModal
-          onClose={() => setShowPrintNotice(false)}
+          onClose={() => setAfterNotice(null)}
           onContinue={() => {
-            setShowPrintNotice(false);
-            handlePrint();
+            setAfterNotice(null);
+            afterNotice();
           }}
         />
       )}
+      {pdfProgress && <PdfExportDialog progress={pdfProgress} onCancel={cancelPdfExport} />}
       <PrinterSettingsModal />
       <Gs1ContentModal />
       <ContentBuilderModal />

@@ -920,6 +920,9 @@ const he = {
     importCsvData: 'ייבוא נתוני CSV',
     sendToZebraBatchFmt: 'שלח ל-Zebra ({n} תוויות)',
     exportBatchZplFmt: 'ייצוא ZPL באצווה ({n} תוויות)',
+    exportPdf: 'ייצוא PDF',
+    exportBatchPdfFmt: 'ייצוא PDF באצווה ({n} תוויות)',
+    exportPdfCurrentPage: 'ייצוא PDF (העמוד הנוכחי)',
     newDesign: 'עיצוב חדש',
     addPage: 'הוסף דף',
     cancel: 'ביטול',
@@ -1772,6 +1775,14 @@ const he = {
     usbPermissionDenied: "אין גישה למדפסת ה-USB. לחץ על 'הגדרת גישה' כדי להעניק אותה.",
     usbSetupAccess: 'הגדרת גישה',
     usbNotFound: 'מדפסת ה-USB לא נמצאה, חבר אותה מחדש ורענן.',
+  },
+  pdfExport: {
+    title: 'ייצוא PDF',
+    progressFmt: 'מעבד תווית {i} מתוך {n}…',
+    cancel: 'ביטול',
+    failedFmt: 'לא ניתן היה לעבד את התווית {i}: {error}',
+    saving: 'שומר את הקובץ…',
+    renderedWithFmt: 'עובד באמצעות {renderer}',
   },
 } as const;
 

@@ -920,6 +920,9 @@ const et = {
     importCsvData: 'Impordi CSV-andmed',
     sendToZebraBatchFmt: 'Saada Zebrale ({n} silti)',
     exportBatchZplFmt: 'Ekspordi partii-ZPL ({n} silti)',
+    exportPdf: 'Ekspordi PDF',
+    exportBatchPdfFmt: 'Ekspordi partii-PDF ({n} silti)',
+    exportPdfCurrentPage: 'Ekspordi PDF (praegune leht)',
     newDesign: 'Uus kujundus',
     addPage: 'Lisa leht',
     cancel: 'Loobu',
@@ -1772,6 +1775,14 @@ const et = {
     usbPermissionDenied: 'USB-printerile puudub juurdepääs. Klõpsa Seadista juurdepääs, et see anda.',
     usbSetupAccess: 'Seadista juurdepääs',
     usbNotFound: 'USB-printerit ei leitud. Ühenda see uuesti ja värskenda.',
+  },
+  pdfExport: {
+    title: 'Ekspordi PDF',
+    progressFmt: 'Renderdan silti {i} {n}-st…',
+    cancel: 'Loobu',
+    failedFmt: 'Silti {i} ei õnnestunud renderdada: {error}',
+    saving: 'Salvestan faili…',
+    renderedWithFmt: 'Renderdatud tarkvaraga {renderer}',
   },
 } as const;
 

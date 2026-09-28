@@ -920,6 +920,9 @@ const el = {
     importCsvData: 'Εισαγωγή δεδομένων CSV',
     sendToZebraBatchFmt: 'Αποστολή σε Zebra ({n} ετικέτες)',
     exportBatchZplFmt: 'Εξαγωγή παρτίδας ZPL ({n} ετικέτες)',
+    exportPdf: 'Εξαγωγή PDF',
+    exportBatchPdfFmt: 'Εξαγωγή παρτίδας PDF ({n} ετικέτες)',
+    exportPdfCurrentPage: 'Εξαγωγή PDF (τρέχουσα σελίδα)',
     newDesign: 'Νέο σχέδιο',
     addPage: 'Προσθήκη σελίδας',
     cancel: 'Ακύρωση',
@@ -1772,6 +1775,14 @@ const el = {
     usbPermissionDenied: 'Δεν υπάρχει πρόσβαση στον εκτυπωτή USB. Κάντε κλικ στο Ρύθμιση πρόσβασης για να την παραχωρήσετε.',
     usbSetupAccess: 'Ρύθμιση πρόσβασης',
     usbNotFound: 'Ο εκτυπωτής USB δεν βρέθηκε. Συνδέστε τον ξανά και ανανεώστε.',
+  },
+  pdfExport: {
+    title: 'Εξαγωγή PDF',
+    progressFmt: 'Απόδοση ετικέτας {i} από {n}…',
+    cancel: 'Ακύρωση',
+    failedFmt: 'Η ετικέτα {i} δεν ήταν δυνατό να αποδοθεί: {error}',
+    saving: 'Αποθήκευση του αρχείου…',
+    renderedWithFmt: 'Αποδόθηκε με {renderer}',
   },
 } as const;
 

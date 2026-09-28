@@ -920,6 +920,9 @@ const sl = {
     importCsvData: 'Uvozi podatke CSV',
     sendToZebraBatchFmt: 'Pošlji na Zebra ({n} etiket)',
     exportBatchZplFmt: 'Izvozi paketni ZPL ({n} etiket)',
+    exportPdf: 'Izvozi PDF',
+    exportBatchPdfFmt: 'Izvozi paketni PDF ({n} etiket)',
+    exportPdfCurrentPage: 'Izvozi PDF (trenutna stran)',
     newDesign: 'Nov dizajn',
     addPage: 'Dodaj stran',
     cancel: 'Prekliči',
@@ -1772,6 +1775,14 @@ const sl = {
     usbPermissionDenied: 'Ni dostopa do tiskalnika USB. Za dodelitev kliknite Nastavi dostop.',
     usbSetupAccess: 'Nastavi dostop',
     usbNotFound: 'Tiskalnika USB ni mogoče najti, znova ga priključite in osvežite.',
+  },
+  pdfExport: {
+    title: 'Izvozi PDF',
+    progressFmt: 'Izrisujem nalepko {i} od {n}…',
+    cancel: 'Prekliči',
+    failedFmt: 'Nalepke {i} ni bilo mogoče izrisati: {error}',
+    saving: 'Shranjujem datoteko…',
+    renderedWithFmt: 'Izrisano z {renderer}',
   },
 } as const;
 

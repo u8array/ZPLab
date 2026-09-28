@@ -35,7 +35,7 @@ afterEach(cleanup);
 
 describe("direct-print ZPL and the sidecar setting", () => {
   it("hands the printer plain ZPL by default", () => {
-    const { result } = renderHook(() => useZplImportExport());
+    const { result } = renderHook(() => useZplImportExport({ current: null }));
     const zpl = result.current.currentZpl();
     expect(zpl).not.toContain("ZPLab:");
     expect(zpl).toContain("^GFA");
@@ -43,7 +43,7 @@ describe("direct-print ZPL and the sidecar setting", () => {
 
   it("keeps the metadata once the user opted in", () => {
     useLabelStore.setState({ keepExportMetadata: true });
-    const { result } = renderHook(() => useZplImportExport());
+    const { result } = renderHook(() => useZplImportExport({ current: null }));
     expect(result.current.currentZpl()).toContain("^FXZPLab:");
   });
 });

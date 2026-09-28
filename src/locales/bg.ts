@@ -920,6 +920,9 @@ const bg = {
     importCsvData: 'Импортиране на CSV данни',
     sendToZebraBatchFmt: 'Изпрати към Zebra ({n} етикета)',
     exportBatchZplFmt: 'Експорт на пакетен ZPL ({n} етикета)',
+    exportPdf: 'Експорт на PDF',
+    exportBatchPdfFmt: 'Експорт на пакетен PDF ({n} етикета)',
+    exportPdfCurrentPage: 'Експорт на PDF (текущата страница)',
     newDesign: 'Нов дизайн',
     addPage: 'Добавяне на страница',
     cancel: 'Отказ',
@@ -1772,6 +1775,14 @@ const bg = {
     usbPermissionDenied: 'Няма достъп до USB принтера. Щракнете върху Настройване на достъп, за да го предоставите.',
     usbSetupAccess: 'Настройване на достъп',
     usbNotFound: 'USB принтерът не е намерен, включете го отново и обновете.',
+  },
+  pdfExport: {
+    title: 'Експорт на PDF',
+    progressFmt: 'Рендиране на етикет {i} от {n}…',
+    cancel: 'Отказ',
+    failedFmt: 'Етикет {i} не можа да бъде рендиран: {error}',
+    saving: 'Запазване на файла…',
+    renderedWithFmt: 'Рендирано с {renderer}',
   },
 } as const;
 

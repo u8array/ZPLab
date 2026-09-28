@@ -920,6 +920,9 @@ const it = {
     importCsvData: 'Importa dati CSV',
     sendToZebraBatchFmt: 'Invia a Zebra ({n} etichette)',
     exportBatchZplFmt: 'Esporta ZPL in batch ({n} etichette)',
+    exportPdf: 'Esporta PDF',
+    exportBatchPdfFmt: 'Esporta PDF in batch ({n} etichette)',
+    exportPdfCurrentPage: 'Esporta PDF (pagina corrente)',
     newDesign: 'Nuovo design',
     addPage: 'Aggiungi pagina',
     cancel: 'Annulla',
@@ -1772,6 +1775,14 @@ const it = {
     usbPermissionDenied: 'Nessun accesso alla stampante USB. Fai clic su Configura accesso per concederlo.',
     usbSetupAccess: 'Configura accesso',
     usbNotFound: 'Stampante USB non trovata, ricollegala e aggiorna.',
+  },
+  pdfExport: {
+    title: 'Esporta PDF',
+    progressFmt: "Rendering dell'etichetta {i} di {n}…",
+    cancel: 'Annulla',
+    failedFmt: "Impossibile eseguire il rendering dell'etichetta {i}: {error}",
+    saving: 'Salvataggio del file…',
+    renderedWithFmt: 'Renderizzato con {renderer}',
   },
 } as const;
 

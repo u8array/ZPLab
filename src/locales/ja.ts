@@ -920,6 +920,9 @@ const ja = {
     importCsvData: 'CSVデータをインポート',
     sendToZebraBatchFmt: 'Zebra へ送信 ({n} ラベル)',
     exportBatchZplFmt: 'バッチZPLをエクスポート ({n} ラベル)',
+    exportPdf: 'PDF エクスポート',
+    exportBatchPdfFmt: 'バッチPDFをエクスポート ({n} ラベル)',
+    exportPdfCurrentPage: 'PDF エクスポート (現在のページ)',
     newDesign: '新しいデザイン',
     addPage: 'ページを追加',
     cancel: 'キャンセル',
@@ -1772,6 +1775,14 @@ const ja = {
     usbPermissionDenied: 'USBプリンターにアクセスできません。「アクセスを設定」をクリックして許可してください。',
     usbSetupAccess: 'アクセスを設定',
     usbNotFound: 'USBプリンターが見つかりません。再接続して更新してください。',
+  },
+  pdfExport: {
+    title: 'PDF エクスポート',
+    progressFmt: 'ラベル {i}/{n} をレンダリング中…',
+    cancel: 'キャンセル',
+    failedFmt: 'ラベル {i} をレンダリングできませんでした: {error}',
+    saving: 'ファイルを保存中…',
+    renderedWithFmt: '{renderer} でレンダリング',
   },
 } as const;
 

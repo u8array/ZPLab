@@ -920,6 +920,9 @@ const ro = {
     importCsvData: 'Importă date CSV',
     sendToZebraBatchFmt: 'Trimite la Zebra ({n} etichete)',
     exportBatchZplFmt: 'Exportă ZPL în lot ({n} etichete)',
+    exportPdf: 'Exportă PDF',
+    exportBatchPdfFmt: 'Exportă PDF în lot ({n} etichete)',
+    exportPdfCurrentPage: 'Exportă PDF (pagina curentă)',
     newDesign: 'Design nou',
     addPage: 'Adaugă pagină',
     cancel: 'Anulează',
@@ -1772,6 +1775,14 @@ const ro = {
     usbPermissionDenied: 'Fără acces la imprimanta USB. Fă clic pe Configurează accesul pentru a-l acorda.',
     usbSetupAccess: 'Configurează accesul',
     usbNotFound: 'Imprimanta USB nu a fost găsită, reconecteaz-o și reîmprospătează.',
+  },
+  pdfExport: {
+    title: 'Exportă PDF',
+    progressFmt: 'Se randează eticheta {i} din {n}…',
+    cancel: 'Anulează',
+    failedFmt: 'Eticheta {i} nu a putut fi randată: {error}',
+    saving: 'Se salvează fișierul…',
+    renderedWithFmt: 'Randat cu {renderer}',
   },
 } as const;
 

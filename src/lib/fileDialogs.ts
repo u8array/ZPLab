@@ -18,6 +18,7 @@ export const ZPL_FILTER: FileFilter = { name: 'ZPL', extensions: ['zpl'], mimeTy
 // Zebra tools and print spoolers expect the same bytes under a .prn name.
 export const PRN_FILTER: FileFilter = { name: 'PRN', extensions: ['prn'], mimeType: 'text/plain' };
 export const PNG_FILTER: FileFilter = { name: 'PNG', extensions: ['png'], mimeType: 'image/png' };
+export const PDF_FILTER: FileFilter = { name: 'PDF', extensions: ['pdf'], mimeType: 'application/pdf' };
 export const ZPL_SAVE_FILTERS: [FileFilter, ...FileFilter[]] = [ZPL_FILTER, PRN_FILTER];
 
 /** The `accept` attribute of a web file input for the same filters. */

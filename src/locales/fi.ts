@@ -920,6 +920,9 @@ const fi = {
     importCsvData: 'Tuo CSV-tiedot',
     sendToZebraBatchFmt: 'Lähetä Zebralle ({n} etikettiä)',
     exportBatchZplFmt: 'Vie erä-ZPL ({n} etikettiä)',
+    exportPdf: 'Vie PDF',
+    exportBatchPdfFmt: 'Vie erä-PDF ({n} etikettiä)',
+    exportPdfCurrentPage: 'Vie PDF (nykyinen sivu)',
     newDesign: 'Uusi rakenne',
     addPage: 'Lisää sivu',
     cancel: 'Peruuta',
@@ -1772,6 +1775,14 @@ const fi = {
     usbPermissionDenied: 'Ei käyttöoikeutta USB-tulostimeen. Napsauta Määritä käyttöoikeus myöntääksesi sen.',
     usbSetupAccess: 'Määritä käyttöoikeus',
     usbNotFound: 'USB-tulostinta ei löytynyt. Kytke se uudelleen ja päivitä.',
+  },
+  pdfExport: {
+    title: 'Vie PDF',
+    progressFmt: 'Piirretään tarraa {i}/{n}…',
+    cancel: 'Peruuta',
+    failedFmt: 'Tarraa {i} ei voitu piirtää: {error}',
+    saving: 'Tallennetaan tiedostoa…',
+    renderedWithFmt: 'Piirretty käyttäen {renderer}',
   },
 } as const;
 

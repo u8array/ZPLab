@@ -82,7 +82,8 @@ The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the
 
 - **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
 - **File → Send to Zebra Printer:** opens the send dialog. It sends over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop.
-- **File → Print as Image (browser):** opens the Labelary preview, then the browser print dialog
+- **File → Export PDF:** saves one PDF page per label page, rendered by the preview renderer. With the renderer off it holds the current page only. A batch PDF holds one page per data row.
+- **File → Print as Image (browser):** opens the rendered label, then the browser print dialog
 
 ### 5. Save the design
 

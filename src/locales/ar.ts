@@ -920,6 +920,9 @@ const ar = {
     importCsvData: 'استيراد بيانات CSV',
     sendToZebraBatchFmt: 'إرسال إلى Zebra ({n} ملصقات)',
     exportBatchZplFmt: 'تصدير ZPL دفعي ({n} ملصقات)',
+    exportPdf: 'تصدير PDF',
+    exportBatchPdfFmt: 'تصدير PDF دفعي ({n} ملصقات)',
+    exportPdfCurrentPage: 'تصدير PDF (الصفحة الحالية)',
     newDesign: 'تصميم جديد',
     addPage: 'إضافة صفحة',
     cancel: 'إلغاء',
@@ -1772,6 +1775,14 @@ const ar = {
     usbPermissionDenied: 'لا يمكن الوصول إلى طابعة USB. انقر على «إعداد الوصول» لمنح الإذن.',
     usbSetupAccess: 'إعداد الوصول',
     usbNotFound: 'لم يتم العثور على طابعة USB، أعد توصيلها وقم بالتحديث.',
+  },
+  pdfExport: {
+    title: 'تصدير PDF',
+    progressFmt: 'جارٍ عرض الملصق {i} من {n}…',
+    cancel: 'إلغاء',
+    failedFmt: 'تعذر عرض الملصق {i}: {error}',
+    saving: 'جارٍ حفظ الملف…',
+    renderedWithFmt: 'تم العرض باستخدام {renderer}',
   },
 } as const;
 

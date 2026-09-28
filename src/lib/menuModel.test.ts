@@ -10,7 +10,8 @@ const FLAGS: MenuFlags = {
   batchRowCount: 0,
   batchPrintCount: 0,
   connectDataWizard: false,
-  labelaryEnabled: true,
+  canBatchPdf: true,
+  pdfCurrentPageOnly: false,
   canUndo: true,
   canRedo: false,
   includeQuit: false,
@@ -24,7 +25,7 @@ describe("buildMenuModel", () => {
   it("keeps the dropdown's item order and sections", () => {
     const m = buildMenuModel(en, FLAGS);
     expect(ids(m)).toEqual([
-      "new", "addPage", "importZpl", "settings", "exportZpl",
+      "new", "addPage", "importZpl", "settings", "exportZpl", "exportPdf",
       "openDesign", "saveDesign", "importCsv", "print", "sendToZebra",
     ]);
     expect(m.file).toHaveLength(5);
@@ -91,10 +92,12 @@ describe("buildMenuModel", () => {
     expect(ids(desktop).indexOf("connectData")).toBe(ids(desktop).indexOf("saveDesign") + 1);
   });
 
-  it("hides print entirely when the Labelary gate is off", () => {
-    const m = buildMenuModel(en, { ...FLAGS, labelaryEnabled: false });
-    expect(byId(m, "print")).toBeUndefined();
-    expect(byId(m, "sendToZebra")).toBeDefined();
+  it("offers the batch PDF only while a renderer can draw every row", () => {
+    const batch = { ...FLAGS, canBatchExport: true, batchRowCount: 3 };
+    expect(byId(buildMenuModel(en, batch), "exportBatchPdf")?.label).toBe("Export batch PDF (3 labels)");
+    expect(byId(buildMenuModel(en, { ...batch, canBatchPdf: false }), "exportBatchPdf")).toBeUndefined();
+    expect(byId(buildMenuModel(en, batch), "print")?.enabled).toBe(true);
+    expect(byId(buildMenuModel(en, { ...FLAGS, pdfCurrentPageOnly: true }), "exportPdf")?.label).toBe("Export PDF (current page)");
   });
 
   it("appends the quit section only on desktop", () => {

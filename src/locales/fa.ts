@@ -920,6 +920,9 @@ const fa = {
     importCsvData: 'وارد کردن داده‌های CSV',
     sendToZebraBatchFmt: 'ارسال به Zebra ({n} برچسب)',
     exportBatchZplFmt: 'خروجی ZPL دسته‌ای ({n} برچسب)',
+    exportPdf: 'خروجی PDF',
+    exportBatchPdfFmt: 'خروجی PDF دسته‌ای ({n} برچسب)',
+    exportPdfCurrentPage: 'خروجی PDF (صفحه فعلی)',
     newDesign: 'طرح جدید',
     addPage: 'افزودن صفحه',
     cancel: 'لغو',
@@ -1772,6 +1775,14 @@ const fa = {
     usbPermissionDenied: 'دسترسی به چاپگر USB وجود ندارد. برای اعطای دسترسی روی «تنظیم دسترسی» کلیک کنید.',
     usbSetupAccess: 'تنظیم دسترسی',
     usbNotFound: 'چاپگر USB یافت نشد، آن را دوباره وصل کنید و به‌روزرسانی کنید.',
+  },
+  pdfExport: {
+    title: 'خروجی PDF',
+    progressFmt: 'در حال رندر برچسب {i} از {n}…',
+    cancel: 'لغو',
+    failedFmt: 'برچسب {i} رندر نشد: {error}',
+    saving: 'در حال ذخیره فایل…',
+    renderedWithFmt: 'رندر شده با {renderer}',
   },
 } as const;
 

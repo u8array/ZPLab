@@ -133,6 +133,7 @@ function PlaceholderRect({
   return (
     <Rect
       key={fontVersion}
+      name={CAPTURE_CHROME}
       x={x}
       y={y}
       width={width}

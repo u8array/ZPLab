@@ -8,7 +8,7 @@ import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "
 import { qrByHeight } from "@zplab/core/registry/qrcode";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
-import { selectionHandlers, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
+import { selectionHandlers, useBlankFieldWarns, CAPTURE_CHROME, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import {
   getDisplaySize,
@@ -82,6 +82,7 @@ export function StateFrame({
 }) {
   return (
     <Shape
+      name={CAPTURE_CHROME}
       listening={false}
       sceneFunc={(ctx) => {
         // Scale by the inherited alpha (a plain Rect would); the drop ghost
@@ -447,7 +448,7 @@ export function BarcodeObject({
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
         >
-          <Group x={innerTr.x} y={innerTr.y} rotation={innerTr.rotation}>
+          <Group x={innerTr.x} y={innerTr.y} rotation={innerTr.rotation} name={showSample ? CAPTURE_CHROME : undefined}>
             <KImage
               x={ub.barLeftPx}
               y={ub.barTopPx}
@@ -512,7 +513,7 @@ export function BarcodeObject({
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
       >
-        <Group x={defaultInnerTr.x} y={defaultInnerTr.y} rotation={defaultInnerTr.rotation}>
+        <Group x={defaultInnerTr.x} y={defaultInnerTr.y} rotation={defaultInnerTr.rotation} name={showSample ? CAPTURE_CHROME : undefined}>
           <KImage
             x={ub.barLeftPx}
             y={ub.barTopPx}

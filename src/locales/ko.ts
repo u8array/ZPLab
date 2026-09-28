@@ -920,6 +920,9 @@ const ko = {
     importCsvData: 'CSV 데이터 가져오기',
     sendToZebraBatchFmt: 'Zebra로 전송 ({n}개 라벨)',
     exportBatchZplFmt: '일괄 ZPL 내보내기 ({n}개 라벨)',
+    exportPdf: 'PDF 내보내기',
+    exportBatchPdfFmt: '일괄 PDF 내보내기 ({n}개 라벨)',
+    exportPdfCurrentPage: 'PDF 내보내기 (현재 페이지)',
     newDesign: '새 디자인',
     addPage: '페이지 추가',
     cancel: '취소',
@@ -1772,6 +1775,14 @@ const ko = {
     usbPermissionDenied: "USB 프린터에 액세스할 수 없습니다. '액세스 설정'을 클릭하여 권한을 부여하세요.",
     usbSetupAccess: '액세스 설정',
     usbNotFound: 'USB 프린터를 찾을 수 없습니다. 다시 연결한 후 새로 고침하세요.',
+  },
+  pdfExport: {
+    title: 'PDF 내보내기',
+    progressFmt: '라벨 {i}/{n} 렌더링 중…',
+    cancel: '취소',
+    failedFmt: '라벨 {i}을(를) 렌더링하지 못했습니다: {error}',
+    saving: '파일 저장 중…',
+    renderedWithFmt: '{renderer}(으)로 렌더링됨',
   },
 } as const;
 

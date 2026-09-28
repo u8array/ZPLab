@@ -920,6 +920,9 @@ const no = {
     importCsvData: 'Importer CSV-data',
     sendToZebraBatchFmt: 'Send til Zebra ({n} etiketter)',
     exportBatchZplFmt: 'Eksporter batch-ZPL ({n} etiketter)',
+    exportPdf: 'Eksporter PDF',
+    exportBatchPdfFmt: 'Eksporter batch-PDF ({n} etiketter)',
+    exportPdfCurrentPage: 'Eksporter PDF (gjeldende side)',
     newDesign: 'Nytt design',
     addPage: 'Legg til side',
     cancel: 'Avbryt',
@@ -1772,6 +1775,14 @@ const no = {
     usbPermissionDenied: 'Ingen tilgang til USB-skriveren. Klikk på Konfigurer tilgang for å gi den.',
     usbSetupAccess: 'Konfigurer tilgang',
     usbNotFound: 'Fant ikke USB-skriveren. Koble den til på nytt, og oppdater.',
+  },
+  pdfExport: {
+    title: 'Eksporter PDF',
+    progressFmt: 'Rendrer etikett {i} av {n}…',
+    cancel: 'Avbryt',
+    failedFmt: 'Etikett {i} kunne ikke rendres: {error}',
+    saving: 'Lagrer filen…',
+    renderedWithFmt: 'Rendret med {renderer}',
   },
 } as const;
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type RefObject } from "react";
 import { finishZplExport } from "../lib/exportZpl";
 import {
   currentObjects,
@@ -11,10 +11,13 @@ import { generateSetupScript, setupFormatBlocks } from "../lib/zplSetupScript";
 import { printLabel } from "../lib/printPreview";
 import { saveTextFile, saveErrorMessage, ZPL_SAVE_FILTERS } from "../lib/fileDialogs";
 import { labelaryErrorMessage } from "../lib/labelary";
-import { currentPageLabel, selectLabelaryEndpoint } from "../store/labelStore.selectors";
+import { currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint } from "../store/labelStore.selectors";
 import { buildActiveRow } from "@zplab/core/lib/variableBinding";
+import { renderLabelImageUrl } from "../lib/labelImage";
+import { errorMessage } from "../lib/errorMessage";
+import type { LabelCanvasHandle } from "../components/Canvas/LabelCanvas";
 
-export function useZplImportExport() {
+export function useZplImportExport(canvasRef: RefObject<LabelCanvasHandle | null>) {
   // Reactive: only what the UI rendering needs (menu enable +
   // label-count text). Event handlers below all read a fresh
   // snapshot via `useLabelStore.getState()` so generator inputs
@@ -53,25 +56,26 @@ export function useZplImportExport() {
       .catch(() => setUserError(saveErrorMessage));
   };
 
-  // Print previews via Labelary, which renders one image at a time. We send
-  // only the current page so the preview matches what the user sees. The
-  // active CSV row (if any) is substituted into bound fields so the
-  // preview reflects what would actually print for the selected row.
+  // Prints the current page as the preview renderer draws it, with the active row substituted.
   const handlePrint = async () => {
-    try {
-      // Ensure the keychain key is loaded before printing to a premium host,
-      // then snapshot once so the design, endpoint, and key are consistent
-      // (the await could otherwise let the design change under a stale copy).
-      if (!useLabelStore.getState().labelaryApiKeyLoaded) {
+    const renderer = selectEffectivePreviewProvider(useLabelStore.getState());
+    const image = (async () => {
+      // A premium host needs the keychain key before the request goes out.
+      if (renderer === "labelary" && !useLabelStore.getState().labelaryApiKeyLoaded) {
         await useLabelStore.getState().hydrateLabelaryApiKey();
       }
       const s = useLabelStore.getState();
-      const active = buildActiveRow(s.dataset, s.columnMapping);
-      const { host, apiKey } = selectLabelaryEndpoint(s);
-      await printLabel(currentPageLabel(s), currentObjects(s), host, apiKey, s.variables, active);
+      const job = { label: currentPageLabel(s), objects: currentObjects(s), variables: s.variables, active: buildActiveRow(s.dataset, s.columnMapping) };
+      return renderLabelImageUrl(renderer, job, {
+        labelary: selectLabelaryEndpoint(s),
+        captureCanvas: async (dots) => (await canvasRef.current?.captureLabelDots(dots)) ?? null,
+      });
+    })();
+    try {
+      await printLabel(image);
       clearUserError();
     } catch (e) {
-      setUserError(labelaryErrorMessage(e), { retryExport: true });
+      setUserError(renderer === "labelary" ? labelaryErrorMessage(e) : errorMessage(e), { retryExport: renderer === "labelary" });
     }
   };
 

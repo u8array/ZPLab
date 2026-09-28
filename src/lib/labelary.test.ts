@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { resolveHost, resolveApiKey, isDefaultHost, fetchPreview, labelaryPath } from "./labelary";
+import { resolveHost, resolveApiKey, isDefaultHost, fetchPreview, labelaryPath, isTransientLabelaryError, LabelaryError } from "./labelary";
 
 const LABEL = { dpmm: 8, widthMm: 101.6, heightMm: 50.8 } as const;
 const DEFAULT_HOST = "https://api.labelary.com";
@@ -83,5 +83,16 @@ describe("fetchPreview headers", () => {
     const init = spy.mock.calls[0]?.[1] as RequestInit;
     expect(url.startsWith("https://onprem.example.com/v1/")).toBe(true);
     expect((init.headers as Record<string, string>)["X-API-Key"]).toBe("secret-123");
+  });
+});
+
+describe("isTransientLabelaryError", () => {
+  it("retries a busy or unreachable service, never a rejected label", () => {
+    expect(isTransientLabelaryError(new LabelaryError("timeout", "t"))).toBe(true);
+    expect(isTransientLabelaryError(new LabelaryError("network", "n"))).toBe(true);
+    expect(isTransientLabelaryError(new LabelaryError("api", "busy", 429))).toBe(true);
+    expect(isTransientLabelaryError(new LabelaryError("api", "bad", 400))).toBe(false);
+    expect(isTransientLabelaryError(new LabelaryError("api", "big", 413))).toBe(false);
+    expect(isTransientLabelaryError(new Error("x"))).toBe(false);
   });
 });

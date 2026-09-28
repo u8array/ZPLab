@@ -920,6 +920,9 @@ const lt = {
     importCsvData: 'Importuoti CSV duomenis',
     sendToZebraBatchFmt: 'Siųsti į Zebra ({n} etikečių)',
     exportBatchZplFmt: 'Eksportuoti paketinį ZPL ({n} etikečių)',
+    exportPdf: 'Eksportuoti PDF',
+    exportBatchPdfFmt: 'Eksportuoti paketinį PDF ({n} etikečių)',
+    exportPdfCurrentPage: 'Eksportuoti PDF (dabartinis puslapis)',
     newDesign: 'Naujas dizainas',
     addPage: 'Pridėti puslapį',
     cancel: 'Atšaukti',
@@ -1772,6 +1775,14 @@ const lt = {
     usbPermissionDenied: 'Nėra prieigos prie USB spausdintuvo. Spustelėkite Nustatyti prieigą, kad ją suteiktumėte.',
     usbSetupAccess: 'Nustatyti prieigą',
     usbNotFound: 'USB spausdintuvas nerastas. Prijunkite jį iš naujo ir atnaujinkite.',
+  },
+  pdfExport: {
+    title: 'Eksportuoti PDF',
+    progressFmt: 'Piešiama etiketė {i} iš {n}…',
+    cancel: 'Atšaukti',
+    failedFmt: 'Nepavyko atvaizduoti etiketės {i}: {error}',
+    saving: 'Įrašomas failas…',
+    renderedWithFmt: 'Atvaizduota naudojant {renderer}',
   },
 } as const;
 

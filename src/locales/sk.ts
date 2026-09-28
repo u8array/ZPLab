@@ -920,6 +920,9 @@ const sk = {
     importCsvData: 'Importovať údaje CSV',
     sendToZebraBatchFmt: 'Odoslať na Zebra ({n} etikiet)',
     exportBatchZplFmt: 'Exportovať dávkové ZPL ({n} etikiet)',
+    exportPdf: 'Exportovať PDF',
+    exportBatchPdfFmt: 'Exportovať dávkové PDF ({n} etikiet)',
+    exportPdfCurrentPage: 'Exportovať PDF (aktuálna stránka)',
     newDesign: 'Nový návrh',
     addPage: 'Pridať stránku',
     cancel: 'Zrušiť',
@@ -1772,6 +1775,14 @@ const sk = {
     usbPermissionDenied: 'Žiadny prístup k tlačiarni USB. Prístup udelíte kliknutím na Nastaviť prístup.',
     usbSetupAccess: 'Nastaviť prístup',
     usbNotFound: 'Tlačiareň USB sa nenašla, znova ju zapojte a obnovte.',
+  },
+  pdfExport: {
+    title: 'Exportovať PDF',
+    progressFmt: 'Vykresľuje sa štítok {i} z {n}…',
+    cancel: 'Zrušiť',
+    failedFmt: 'Štítok {i} sa nepodarilo vykresliť: {error}',
+    saving: 'Ukladá sa súbor…',
+    renderedWithFmt: 'Vykreslené pomocou {renderer}',
   },
 } as const;
 

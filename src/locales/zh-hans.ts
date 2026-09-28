@@ -920,6 +920,9 @@ const zhHans = {
     importCsvData: '导入 CSV 数据',
     sendToZebraBatchFmt: '发送到 Zebra（{n} 个标签）',
     exportBatchZplFmt: '导出批量 ZPL ({n} 个标签)',
+    exportPdf: '导出 PDF',
+    exportBatchPdfFmt: '导出批量 PDF ({n} 个标签)',
+    exportPdfCurrentPage: '导出 PDF (当前页)',
     newDesign: '新建设计',
     addPage: '添加页面',
     cancel: '取消',
@@ -1772,6 +1775,14 @@ const zhHans = {
     usbPermissionDenied: '无法访问 USB 打印机。点击「设置访问权限」以授予权限。',
     usbSetupAccess: '设置访问权限',
     usbNotFound: '未找到 USB 打印机，请重新插入并刷新。',
+  },
+  pdfExport: {
+    title: '导出 PDF',
+    progressFmt: '正在渲染标签 {i}/{n}…',
+    cancel: '取消',
+    failedFmt: '标签 {i} 渲染失败: {error}',
+    saving: '正在保存文件…',
+    renderedWithFmt: '使用 {renderer} 渲染',
   },
 } as const;
 

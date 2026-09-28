@@ -12,7 +12,8 @@ const FLAGS: MenuFlags = {
   batchRowCount: 0,
   batchPrintCount: 0,
   connectDataWizard: false,
-  labelaryEnabled: true,
+  canBatchPdf: true,
+  pdfCurrentPageOnly: false,
   canUndo: true,
   canRedo: false,
   includeQuit: true,
@@ -54,7 +55,7 @@ describe("menuStructureKey", () => {
   it("changes when the item set changes (add/remove forces a rebuild)", () => {
     const base = menuStructureKey(false, buildMenuModel(en, FLAGS));
     expect(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, canBatchExport: true, batchRowCount: 1 }))).not.toBe(base);
-    expect(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, labelaryEnabled: false }))).not.toBe(base);
+    expect(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, canBatchExport: true, batchRowCount: 1, canBatchPdf: false }))).not.toBe(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, canBatchExport: true, batchRowCount: 1 })));
     expect(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, includeQuit: false }))).not.toBe(base);
   });
 

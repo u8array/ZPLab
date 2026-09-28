@@ -920,6 +920,9 @@ const en = {
     importCsvData: 'Import CSV data',
     sendToZebraBatchFmt: 'Send to Zebra ({n} labels)',
     exportBatchZplFmt: 'Export batch ZPL ({n} labels)',
+    exportPdf: 'Export PDF',
+    exportBatchPdfFmt: 'Export batch PDF ({n} labels)',
+    exportPdfCurrentPage: 'Export PDF (current page)',
     newDesign: 'New design',
     addPage: 'Add page',
     cancel: 'Cancel',
@@ -1042,6 +1045,14 @@ const en = {
     usbPermissionDenied: 'No access to the USB printer. Click Set up access to grant it.',
     usbSetupAccess: 'Set up access',
     usbNotFound: 'USB printer not found, re-plug it and refresh.',
+  },
+  pdfExport: {
+    title: 'Export PDF',
+    progressFmt: 'Rendering label {i} of {n}…',
+    cancel: 'Cancel',
+    failedFmt: 'Label {i} could not be rendered: {error}',
+    saving: 'Saving the file…',
+    renderedWithFmt: 'Rendered with {renderer}',
   },
 
   output: {

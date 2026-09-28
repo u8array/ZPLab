@@ -920,6 +920,9 @@ const lv = {
     importCsvData: 'Importēt CSV datus',
     sendToZebraBatchFmt: 'Sūtīt uz Zebra ({n} etiķetes)',
     exportBatchZplFmt: 'Eksportēt pakešu ZPL ({n} etiķetes)',
+    exportPdf: 'Eksportēt PDF',
+    exportBatchPdfFmt: 'Eksportēt pakešu PDF ({n} etiķetes)',
+    exportPdfCurrentPage: 'Eksportēt PDF (pašreizējā lapa)',
     newDesign: 'Jauns dizains',
     addPage: 'Pievienot lapu',
     cancel: 'Atcelt',
@@ -1772,6 +1775,14 @@ const lv = {
     usbPermissionDenied: 'Nav piekļuves USB printerim. Noklikšķiniet uz Iestatīt piekļuvi, lai to piešķirtu.',
     usbSetupAccess: 'Iestatīt piekļuvi',
     usbNotFound: 'USB printeris nav atrasts. Pievienojiet to atkārtoti un atsvaidziniet.',
+  },
+  pdfExport: {
+    title: 'Eksportēt PDF',
+    progressFmt: 'Renderē etiķeti {i} no {n}…',
+    cancel: 'Atcelt',
+    failedFmt: 'Neizdevās renderēt etiķeti {i}: {error}',
+    saving: 'Saglabā failu…',
+    renderedWithFmt: 'Renderēts ar {renderer}',
   },
 } as const;
 
