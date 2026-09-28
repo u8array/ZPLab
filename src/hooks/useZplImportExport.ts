@@ -68,6 +68,7 @@ export function useZplImportExport(canvasRef: RefObject<LabelCanvasHandle | null
       const job = { label: currentPageLabel(s), objects: currentObjects(s), variables: s.variables, active: buildActiveRow(s.dataset, s.columnMapping) };
       return renderLabelImageUrl(renderer, job, {
         labelary: selectLabelaryEndpoint(s),
+        printTarget: s.printTarget,
         captureCanvas: async (dots) => (await canvasRef.current?.captureLabelDots(dots)) ?? null,
       });
     })();

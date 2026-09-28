@@ -64,6 +64,7 @@ export type PreviewProvider = 'labelary' | 'printer' | 'none';
 export type PrinterSettingsTab =
   | 'appSettings'
   | 'previewSettings'
+  | 'printTarget'
   | 'mcpServer'
   | 'dataSources'
   | 'mediaFeed'

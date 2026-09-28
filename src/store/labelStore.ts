@@ -25,6 +25,8 @@ import {
   type PrinterProfileSlice,
 } from './slices/printerProfileSlice';
 import { createUiSlice, type UiSlice } from './slices/uiSlice';
+import { createPrintTargetSlice, type PrintTargetSlice } from './slices/printTargetSlice';
+import { readLegacyPrintTarget } from '../lib/printTarget';
 import { createSelectionSlice, type SelectionSlice } from './slices/selectionSlice';
 import { createPreviewSlice, type PreviewSlice } from './slices/previewSlice';
 import { createDataSlice, type DataSlice } from './slices/dataSlice';
@@ -52,6 +54,7 @@ export type { Variable, VariableInput };
 export type LabelState =
   & ObjectSlice
   & PrinterProfileSlice
+  & PrintTargetSlice
   & UiSlice
   & SelectionSlice
   & PreviewSlice
@@ -350,6 +353,12 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     }
   }
 
+  // v18→v19: the print target moves from loose browser keys into the session. Persist writes the
+  // merged state back only after a migration, so the takeover has to run here and not at slice init.
+  if (version < 19 && !('printTarget' in s)) {
+    s = { ...s, printTarget: readLegacyPrintTarget() };
+  }
+
   // Unconditional rather than version-gated: main-era sessions persist at the current
   // version but carry legacy overlays whose head ^JM or ^DF rode only in the bytes, so
   // a full regen would drop them. Latch both back the way a load does.
@@ -465,6 +474,7 @@ function migrateCircleObject(obj: unknown): unknown {
 export const persistPartialize = (state: LabelState) => ({
   label: state.label,
   printerProfile: state.printerProfile,
+  printTarget: state.printTarget,
   pages: state.pages,
   currentPageIndex: state.currentPageIndex,
   locale: state.locale,
@@ -519,6 +529,9 @@ const temporalEquality = (a: TemporalSlice, b: TemporalSlice) =>
     (k) => TEMPORAL_VIEW_KEYS.has(k) || a[k] === b[k],
   );
 
+// Undefined where the browser blocks storage, and persist then exposes no api to hydrate through.
+const sessionStore = createJSONStorage(() => localStorage);
+
 export const useLabelStore = create<LabelState>()(
   temporal(
     dirtyTracking(
@@ -526,6 +539,7 @@ export const useLabelStore = create<LabelState>()(
     (set, get, store) => ({
       ...createObjectSlice(set, get, store),
       ...createPrinterProfileSlice(set, get, store),
+      ...createPrintTargetSlice(set, get, store),
       ...createUiSlice(set, get, store),
       ...createSelectionSlice(set, get, store),
       ...createPreviewSlice(set, get, store),
@@ -543,10 +557,11 @@ export const useLabelStore = create<LabelState>()(
     {
       name: 'zpl-designer-session',
       // Bumped for every rehydrate repair: persist runs migrate only on a version change.
-      version: 18,
+      version: 19,
       migrate: (persistedState, version) => migrateLegacy(persistedState, version) as LabelState,
-      storage: createJSONStorage(() => localStorage),
+      storage: sessionStore,
       partialize: persistPartialize,
+      skipHydration: true,
     }
     )
     ),
@@ -557,6 +572,14 @@ export const useLabelStore = create<LabelState>()(
     }
   )
 );
+
+// During create() the wrappers' get() is still undefined, so persist's own hydration threw inside the undo and
+// dirty wrappers and never wrote a migration back. Hydrating here lands in a finished store.
+if (sessionStore) {
+  void useLabelStore.persist.rehydrate();
+  // The hydrating set is not an undo step.
+  useLabelStore.temporal.getState().clear();
+}
 
 // First-deselect latch for pristineEmptyIds: one subscription instead of a
 // prune in each of the dozen actions that write selectedIds. Dropping out of

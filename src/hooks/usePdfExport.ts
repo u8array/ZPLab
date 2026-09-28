@@ -94,6 +94,7 @@ export function usePdfExport(canvasRef: RefObject<LabelCanvasHandle | null>) {
       t,
       deps: {
         labelary: selectLabelaryEndpoint(useLabelStore.getState()),
+        printTarget: useLabelStore.getState().printTarget,
         captureCanvas: async (dots) => (await canvasRef.current?.captureLabelDots(dots)) ?? null,
       },
       cancelled: () => cancelled.current,

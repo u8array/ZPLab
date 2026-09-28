@@ -1,7 +1,6 @@
 import { isDesktopShell } from "./platform";
 import { errorMessage } from "./errorMessage";
 import { queryZplUsb } from "./usbPrint";
-import { getPreviewTransport, getPrinterAddress, getUsbPrinterId } from "./printerAddress";
 import {
   buildPrinterPreviewZpl,
   contentBounds,
@@ -14,22 +13,6 @@ import {
 export type PreviewTarget =
   | { kind: "network"; host: string; port: number }
   | { kind: "usb"; id: string };
-
-/** The configured preview target, or the message telling the user what to
- *  configure. */
-export function resolvePreviewTarget(): { target: PreviewTarget } | { error: string } {
-  // Keep a persisted "usb" choice even if the device is gone: enterPreviewMode
-  // falls back to network at fetch time, so a re-plug restores it. An empty
-  // selection falls through to network.
-  if (getPreviewTransport() === "usb") {
-    const id = getUsbPrinterId();
-    if (id) return { target: { kind: "usb", id } };
-  }
-  const { host, port } = getPrinterAddress();
-  return host
-    ? { target: { kind: "network", host, port } }
-    : { error: "No printer configured. Set a USB device or IP under Settings, Preview." };
-}
 
 /** Failure kinds the query dispatch and the final result share, so
  *  fetchPrinterPreview forwards them to the caller unchanged. */
@@ -51,7 +34,7 @@ export function printerFailureMessage(failure: PrinterQueryFailure, target: Prev
     case "unreachable":
       return "Could not reach the printer. Check the IP address and network.";
     case "not_found":
-      return "USB printer not found. Re-plug it and check Settings, Preview.";
+      return "USB printer not found. Re-plug it and check Settings, Printer.";
     case "permission_denied":
       return "No access to the USB printer. Grant it in the print dialog, USB tab.";
     case "error":

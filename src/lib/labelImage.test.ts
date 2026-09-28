@@ -3,21 +3,22 @@ import type * as Labelary from "./labelary";
 import type * as PrinterPreview from "./printerPreview";
 import type * as LabelRaster from "./labelRaster";
 
-const { fetchPreview, fetchPrinterPreview, resolvePreviewTarget, monoFromImageUrl } = vi.hoisted(() => ({
+const { fetchPreview, fetchPrinterPreview, monoFromImageUrl } = vi.hoisted(() => ({
   fetchPreview: vi.fn(async () => "blob:labelary"),
   fetchPrinterPreview: vi.fn(),
-  resolvePreviewTarget: vi.fn(() => ({ target: { kind: "network" as const, host: "172.17.17.175", port: 9100 } })),
   monoFromImageUrl: vi.fn(async (_url: string, dots: { width: number; height: number }) => ({ ...dots, mono: new Uint8Array(Math.ceil(dots.width / 8) * dots.height) })),
 }));
 vi.mock("./labelary", async (importOriginal) => ({ ...(await importOriginal<typeof Labelary>()), fetchPreview }));
-vi.mock("./printerPreview", async (importOriginal) => ({ ...(await importOriginal<typeof PrinterPreview>()), fetchPrinterPreview, resolvePreviewTarget }));
+vi.mock("./printerPreview", async (importOriginal) => ({ ...(await importOriginal<typeof PrinterPreview>()), fetchPrinterPreview }));
 vi.mock("./labelRaster", async (importOriginal) => ({ ...(await importOriginal<typeof LabelRaster>()), monoFromImageUrl }));
 
 import { renderLabelImageUrl, renderLabelMono } from "./labelImage";
 import { pageLabelConfig } from "@zplab/core/types/Group";
+import { DEFAULT_PRINT_TARGET } from "./printTarget";
 
 const job = { label: pageLabelConfig({ widthMm: 4, heightMm: 1, dpmm: 8 }, {}), objects: [], variables: [], active: null };
-const deps = { labelary: { host: "https://api.labelary.com" }, captureCanvas: vi.fn(async () => new Blob(["png"])) };
+const printTarget = { ...DEFAULT_PRINT_TARGET, host: "172.17.17.175" };
+const deps = { labelary: { host: "https://api.labelary.com" }, printTarget, captureCanvas: vi.fn(async () => new Blob(["png"])) };
 
 describe("labelImage", () => {
   it("brings every renderer to the label's dot raster and hands a print window the same image", async () => {
@@ -43,8 +44,7 @@ describe("labelImage", () => {
     expect(raster.mono[0]).toBe(0b00001111);
     fetchPrinterPreview.mockResolvedValueOnce({ kind: "refused" });
     await expect(renderLabelMono("printer", job, deps)).rejects.toThrow("The printer refused the connection. Check that port 9100 is open.");
-    resolvePreviewTarget.mockReturnValueOnce({ error: "No printer configured." } as never);
-    await expect(renderLabelImageUrl("printer", job, deps)).rejects.toThrow("No printer configured.");
+    await expect(renderLabelImageUrl("printer", job, { ...deps, printTarget: DEFAULT_PRINT_TARGET })).rejects.toThrow("No printer configured.");
   });
 
   it("refuses when the canvas cannot be captured", async () => {

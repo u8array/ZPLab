@@ -154,7 +154,7 @@ On desktop, **Connect data** also reads an Excel worksheet. **File → Settings�
 - Saved designs and label exports exclude **Setup Script** values such as printer name and locale.
 - **Clear** resets the **Setup Script** values and keeps the uploads.
 
-The **App → Preview** tab selects the renderer: Labelary, the connected printer, or off. It takes a premium Labelary endpoint and API key. The key is stored in the OS keychain on desktop and in browser storage on the web.
+The **App → Printer** tab sets how labels are sent and to which printer. **Send to Zebra Printer** opens with that method selected. The **App → Preview** tab selects the renderer: Labelary, the connected printer, or off. It takes a premium Labelary endpoint and API key. The key is stored in the OS keychain on desktop and in browser storage on the web.
 
 ### MCP server
 

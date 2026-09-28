@@ -7,9 +7,9 @@ import {
   type PreviewTarget,
   type PrinterRenderDims,
 } from '../../lib/printerPreview';
-import { getPrinterAddress } from '../../lib/printerAddress';
 import { buildActiveRow } from '@zplab/core/lib/variableBinding';
-import { printerFailureMessage, resolvePreviewTarget } from '../../lib/printerPreview';
+import { printerFailureMessage } from '../../lib/printerPreview';
+import { resolvePreviewTarget } from '../../lib/printTarget';
 import { buildPreviewZpl } from '../../lib/printPreview';
 import { currentObjects, currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint, selectSourceEditing } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
@@ -101,7 +101,7 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     // the device in; an unconfigured target fails here, before 'loading'.
     let printerTarget: PreviewTarget | null = null;
     if (provider === 'printer') {
-      const resolved = resolvePreviewTarget();
+      const resolved = resolvePreviewTarget(state.printTarget);
       if ('error' in resolved) {
         set({ previewMode: { status: 'error', error: resolved.error } });
         return;
@@ -144,10 +144,9 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
       let key = cacheKey;
       let result = await fetchPrinterPreview(target, zpl);
       if (isStale()) return;
-      // USB device gone: preview over network without touching the persisted
-      // USB choice (resolvePreviewTarget explains why).
+      // USB device gone: preview over network without touching the persisted USB choice.
       if (target.kind === 'usb' && result.kind === 'not_found') {
-        const net = getPrinterAddress();
+        const net = get().printTarget;
         if (net.host) {
           target = { kind: 'network', host: net.host, port: net.port };
           key = printerKey(target);

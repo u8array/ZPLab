@@ -22,6 +22,7 @@ const EXPECTED_PERSIST_KEYS = [
   'paletteView',
   'previewProvider',
   'printerProfile',
+  'printTarget',
   'showZplCommands',
   'theme',
   'variables',

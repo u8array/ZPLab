@@ -28,6 +28,7 @@ import { MediaFeedTab } from "./MediaFeedTab";
 import { RfidTab } from "./RfidTab";
 import { OutputTab } from "./OutputTab";
 import { PreviewSettingsTab } from "./PreviewSettingsTab";
+import { PrintTargetTab } from "./PrintTargetTab";
 import { PrintQualityTab } from "./PrintQualityTab";
 import { IllustrationFocusProvider, PrinterIllustration } from "./printerIllustration";
 
@@ -36,6 +37,7 @@ import { IllustrationFocusProvider, PrinterIllustration } from "./printerIllustr
 const TOP_TAB_OF = {
   appSettings: 'app',
   previewSettings: 'app',
+  printTarget: 'app',
   mcpServer: 'app',
   dataSources: 'app',
   mediaFeed: 'perLabel',
@@ -78,6 +80,7 @@ const TABS_BY_TOP_TAB: Record<TopTabId, readonly PrinterSettingsTab[]> = (() => 
 const TAB_COMPONENTS: Partial<Record<PrinterSettingsTab, FC>> = {
   appSettings: AppSettingsTab,
   previewSettings: PreviewSettingsTab,
+  printTarget: PrintTargetTab,
   mcpServer: McpServerTab,
   dataSources: DataSourcesTab,
   mediaFeed: MediaFeedTab,

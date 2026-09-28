@@ -1,29 +1,21 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { errorMessage } from "../../lib/errorMessage";
 import { XMarkIcon } from "@heroicons/react/16/solid";
 import { useT } from "../../hooks/useT";
 import { DialogShell } from "../ui/DialogShell";
 import { Select } from "../ui/Select";
-import {
-  discoverBrowserPrintDevices,
-  sendViaBrowserPrint,
-  sendViaNetwork,
-  type BrowserPrintDevice,
-} from "../../lib/zebraPrint";
+import { sendViaBrowserPrint, sendViaNetwork } from "../../lib/zebraPrint";
 import { isDesktopShell } from "../../lib/platform";
-import { getPrinterAddress, setPrinterAddress } from "../../lib/printerAddress";
+import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
 import { useLabelStore, selectBatchInputs, selectCanBatchExport, selectBatchPrintCount } from "../../store/labelStore";
 import { formatTemplate } from "../../lib/formatTemplate";
 import { deliveryNotices, exportPrinterImpact, printerImpactNotices } from "../../lib/exportImpact";
-import { listLocalPrinters, sendZplLocal, isLikelyZebra, type LocalPrinter } from "../../lib/localPrint";
-import { sendZplUsb, setupUsbAccess, isLikelyZebra as isUsbZebra } from "../../lib/usbPrint";
-import { printerOptionLabel } from "../../lib/printerLabel";
-import { useUsbPrinters } from "../../hooks/useUsbPrinters";
+import { sendZplLocal } from "../../lib/localPrint";
+import { sendZplUsb, setupUsbAccess } from "../../lib/usbPrint";
+import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useUsbPrinters } from "../../hooks/usePrintDevices";
+import { PrinterAddressFields } from "../PrinterSettings/PrinterAddressFields";
 
-const LS_PRINTER_UID = "zebra_print_uid";
-const LS_LOCAL_PRINTER = "zebra_print_local";
-
-type Tab = "network" | "browserprint" | "local" | "usb";
+type Tab = PrintTransport;
 interface Status { type: "idle" | "sending" | "success" | "error"; message?: string }
 
 function StatusMessage({ status }: { status: Status }) {
@@ -104,7 +96,9 @@ interface Props {
 
 export function PrintToZebraDialog({ zpl, onClose }: Props) {
   const t = useT();
-  const [tab, setTab] = useState<Tab>("network");
+  // The way last used is the tab the dialog opens on, so a repeat print is one click.
+  const transport = useLabelStore((s) => s.printTarget.transport);
+  const setPrintTarget = useLabelStore((s) => s.setPrintTarget);
   // The label source silently switches to batch form when a dataset is
   // mapped; surface the count so nobody sends 10k labels unaware. A per-label
   // ^PQ rides the stored template and multiplies EVERY recall, so the honest
@@ -116,83 +110,29 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
   const batchCount = useLabelStore(selectBatchPrintCount);
   const printSource = useLabelStore((s) => s.zebraPrintSource);
 
-  // Network tab state; the address is shared with the preview provider.
-  const [ip, setIp] = useState(() => getPrinterAddress().host);
-  const [port, setPort] = useState(() => String(getPrinterAddress().port));
+  const host = useLabelStore((s) => s.printTarget.host);
   const [netStatus, setNetStatus] = useState<Status>({ type: "idle" });
 
-  // Browser Print tab state
-  const [devices, setDevices] = useState<BrowserPrintDevice[]>([]);
-  const [selectedUid, setSelectedUid] = useState<string>(
-    () => localStorage.getItem(LS_PRINTER_UID) ?? "",
-  );
+  const bp = useBrowserPrintDevices();
   const [bpStatus, setBpStatus] = useState<Status>({ type: "idle" });
-  const [discovering, setDiscovering] = useState(false);
-
-  // Local printer (OS spooler) tab state; desktop shell only.
-  const [localPrinters, setLocalPrinters] = useState<LocalPrinter[]>([]);
-  const [selectedLocal, setSelectedLocal] = useState<string>(
-    () => localStorage.getItem(LS_LOCAL_PRINTER) ?? "",
-  );
+  const local = useLocalPrinters(isDesktopShell);
   const [localStatus, setLocalStatus] = useState<Status>({ type: "idle" });
-  // Starts loading on desktop (the effect enumerates on mount); false on web.
-  const [loadingLocal, setLoadingLocal] = useState(isDesktopShell);
-
-  // USB tab; desktop shell only. Device enumeration/selection is shared with
-  // the preview settings via the hook; send status and setup stay local.
   const usb = useUsbPrinters(isDesktopShell);
   const [usbStatus, setUsbStatus] = useState<Status>({ type: "idle" });
   // Tracks the last USB send being permission-denied, so the setup affordance
   // survives locale changes and a cancelled polkit prompt.
   const [usbNeedsSetup, setUsbNeedsSetup] = useState(false);
-  // Enumeration failures surface in the tab's status area, unless a send status
-  // is already showing.
-  const usbViewStatus: Status =
-    usb.error && usbStatus.type === "idle" ? { type: "error", message: usb.error } : usbStatus;
-
-  // Enumerate OS print queues once on mount; the web build has no spooler.
-  useEffect(() => {
-    if (!isDesktopShell) return;
-    let cancelled = false;
-    listLocalPrinters()
-      .then((printers) => {
-        if (cancelled) return;
-        setLocalPrinters(printers);
-        setSelectedLocal((cur) =>
-          cur && printers.some((p) => p.system_name === cur) ? cur : printers[0]?.system_name ?? "",
-        );
-      })
-      .catch((e: unknown) => {
-        // A failed enumeration must be visible, not a silent empty list.
-        if (!cancelled) {
-          setLocalStatus({ type: "error", message: errorMessage(e) });
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingLocal(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Unplugging the printer hides the USB tab button; correct the stranded tab
-  // during render (React's derived-state pattern) so there is no empty-tab flash.
-  if (tab === "usb" && usb.printers.length === 0) setTab("network");
-
-  function persistNetwork() {
-    setPrinterAddress(ip, port);
-  }
+  // Enumeration failures surface in the tab's status area, unless a send status is already showing.
+  const withListError = (status: Status, error: string | null): Status =>
+    error && status.type === "idle" ? { type: "error", message: error } : status;
+  const usbViewStatus = withListError(usbStatus, usb.error);
+  const localViewStatus = withListError(localStatus, local.error);
+  const bpViewStatus = withListError(bpStatus, bp.error && t.zebraPrint.agentNotFound);
 
   async function handleNetworkSend() {
-    const portNum = port.trim() === "" ? 9100 : Number(port);
-    if (!Number.isInteger(portNum) || portNum < 1 || portNum > 65535) {
-      setNetStatus({ type: "error", message: t.zebraPrint.errorInvalidPort });
-      return;
-    }
-    persistNetwork();
+    const target = useLabelStore.getState().printTarget;
     setNetStatus({ type: "sending" });
-    const result = await sendViaNetwork(ip.trim(), portNum, zpl);
+    const result = await sendViaNetwork(target.host, target.port, zpl);
     switch (result.kind) {
       case "sent":
         setNetStatus({ type: "success", message: t.zebraPrint.success });
@@ -227,24 +167,8 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
     }
   }
 
-  async function handleDiscover() {
-    setDiscovering(true);
-    setBpStatus({ type: "idle" });
-    await discoverBrowserPrintDevices()
-      .then((found) => {
-        setDevices(found);
-        const first = found[0];
-        if (first && !found.find((d) => d.uid === selectedUid)) {
-          setSelectedUid(first.uid);
-          localStorage.setItem(LS_PRINTER_UID, first.uid);
-        }
-      })
-      .catch(() => setBpStatus({ type: "error", message: t.zebraPrint.agentNotFound }));
-    setDiscovering(false);
-  }
-
   async function handleBrowserPrintSend() {
-    const device = devices.find((d) => d.uid === selectedUid);
+    const device = bp.devices.find((d) => d.uid === bp.selectedId);
     if (!device) return;
     setBpStatus({ type: "sending" });
     try {
@@ -259,10 +183,9 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
   }
 
   async function handleLocalSend() {
-    if (!selectedLocal) return;
-    localStorage.setItem(LS_LOCAL_PRINTER, selectedLocal);
+    if (!local.selectedId) return;
     setLocalStatus({ type: "sending" });
-    const result = await sendZplLocal(selectedLocal, zpl);
+    const result = await sendZplLocal(local.selectedId, zpl);
     if (result.kind === "sent") {
       setLocalStatus({ type: "success", message: t.zebraPrint.success });
     } else {
@@ -318,76 +241,54 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
         : "text-muted hover:text-text"
     }`;
 
-  const tabs: { key: Tab; label: string; enabled: boolean }[] = [
-    { key: "network", label: t.zebraPrint.tabNetwork, enabled: true },
-    { key: "browserprint", label: t.zebraPrint.tabBrowserPrint, enabled: !isDesktopShell },
-    { key: "local", label: t.zebraPrint.tabLocal, enabled: isDesktopShell },
-    { key: "usb", label: t.zebraPrint.tabUsb, enabled: isDesktopShell && usb.printers.length > 0 },
-  ];
+  const offered = offeredTransports(isDesktopShell, { local: local.present, usb: usb.present });
+  const tabLabels: Record<Tab, string> = { network: t.zebraPrint.tabNetwork, browserprint: t.zebraPrint.tabBrowserPrint, local: t.zebraPrint.tabLocal, usb: t.zebraPrint.tabUsb };
+  const tab = effectiveTransport(transport, offered);
 
   const views: TransportView[] = [
     {
       key: "browserprint",
-      selected: selectedUid,
-      onSelect: (uid) => {
-        setSelectedUid(uid);
-        localStorage.setItem(LS_PRINTER_UID, uid);
-      },
-      options:
-        devices.length === 0
-          ? [{ value: "", label: t.zebraPrint.noPrinters }]
-          : devices.map((d) => ({ value: d.uid, label: d.name || d.manufacturer || d.uid })),
-      selectDisabled: devices.length === 0,
+      selected: bp.selectedId,
+      onSelect: bp.select,
+      options: pickerOptions(t, bp),
+      selectDisabled: bp.options.length === 0,
       onSend: handleBrowserPrintSend,
       sendLabel: bpStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send,
-      sendDisabled: !selectedUid || devices.length === 0 || bpStatus.type === "sending",
-      status: bpStatus,
+      sendDisabled: !bp.selectedId || bp.options.length === 0 || bpStatus.type === "sending",
+      status: bpViewStatus,
       extra: (
         <button
-          onClick={handleDiscover}
-          disabled={discovering}
+          onClick={() => {
+            setBpStatus({ type: "idle" });
+            void bp.refresh();
+          }}
+          disabled={bp.loading}
           className="px-3 py-1.5 text-xs font-mono rounded border border-border text-muted hover:text-text hover:bg-surface-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {discovering ? t.zebraPrint.discovering : t.zebraPrint.discover}
+          {bp.loading ? t.zebraPrint.discovering : t.zebraPrint.discover}
         </button>
       ),
     },
     {
       key: "local",
-      selected: selectedLocal,
-      onSelect: (name) => {
-        setSelectedLocal(name);
-        localStorage.setItem(LS_LOCAL_PRINTER, name);
-      },
-      options:
-        localPrinters.length === 0
-          ? [{ value: "", label: loadingLocal ? t.zebraPrint.discovering : t.zebraPrint.noPrinters }]
-          : localPrinters.map((p) => ({
-              value: p.system_name,
-              label: printerOptionLabel(p.name, isLikelyZebra(p)),
-            })),
-      selectDisabled: localPrinters.length === 0,
+      selected: local.selectedId,
+      onSelect: local.select,
+      options: pickerOptions(t, local),
+      selectDisabled: local.options.length === 0,
       onSend: handleLocalSend,
       sendLabel: localStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send,
-      sendDisabled:
-        !selectedLocal || localPrinters.length === 0 || loadingLocal || localStatus.type === "sending",
-      status: localStatus,
+      sendDisabled: !local.selectedId || local.options.length === 0 || local.loading || localStatus.type === "sending",
+      status: localViewStatus,
     },
     {
       key: "usb",
       selected: usb.selectedId,
       onSelect: usb.select,
-      options:
-        usb.printers.length === 0
-          ? [{ value: "", label: usb.loading ? t.zebraPrint.discovering : t.zebraPrint.noPrinters }]
-          : usb.printers.map((p) => ({
-              value: p.id,
-              label: printerOptionLabel(p.name, isUsbZebra(p)),
-            })),
-      selectDisabled: usb.printers.length === 0,
+      options: pickerOptions(t, usb),
+      selectDisabled: usb.options.length === 0,
       onSend: handleUsbSend,
       sendLabel: usbStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send,
-      sendDisabled: !usb.selectedId || usb.printers.length === 0 || usb.loading || usbStatus.type === "sending",
+      sendDisabled: !usb.selectedId || usb.options.length === 0 || usb.loading || usbStatus.type === "sending",
       status: usbViewStatus,
       extra: usbNeedsSetup ? (
         <button
@@ -439,13 +340,11 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
 
       {/* Tabs */}
       <div className="flex border-b border-border">
-        {tabs
-          .filter((tb) => tb.enabled)
-          .map((tb) => (
-            <button key={tb.key} className={tabClass(tab === tb.key)} onClick={() => setTab(tb.key)}>
-              {tb.label}
-            </button>
-          ))}
+        {offered.map((key) => (
+          <button key={key} className={tabClass(tab === key)} onClick={() => setPrintTarget({ transport: key })}>
+            {tabLabels[key]}
+          </button>
+        ))}
       </div>
 
       {/* Network tab */}
@@ -456,39 +355,11 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
               {t.zebraPrint.httpsWarning}
             </p>
           )}
-          <div className="flex gap-2">
-            <div className="flex-1 flex flex-col gap-1">
-              <label className="font-mono text-[10px] text-muted uppercase tracking-widest">
-                {t.zebraPrint.ipAddress}
-              </label>
-              <input
-                type="text"
-                value={ip}
-                onChange={(e) => setIp(e.target.value)}
-                onBlur={persistNetwork}
-                placeholder="192.168.1.100"
-                className="bg-bg border border-border rounded px-2 py-1 text-xs font-mono text-text focus:outline-none focus:border-accent"
-              />
-            </div>
-            <div className="w-20 flex flex-col gap-1">
-              <label className="font-mono text-[10px] text-muted uppercase tracking-widest">
-                {t.zebraPrint.port}
-              </label>
-              <input
-                type="number"
-                min={1}
-                max={65535}
-                value={port}
-                onChange={(e) => setPort(e.target.value)}
-                onBlur={persistNetwork}
-                className="bg-bg border border-border rounded px-2 py-1 text-xs font-mono text-text focus:outline-none focus:border-accent"
-              />
-            </div>
-          </div>
+          <PrinterAddressFields />
 
           <button
             onClick={handleNetworkSend}
-            disabled={!ip.trim() || netStatus.type === "sending"}
+            disabled={!host || netStatus.type === "sending"}
             className="self-end px-3 py-1.5 text-xs font-mono rounded bg-accent text-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
           >
             {netStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send}
