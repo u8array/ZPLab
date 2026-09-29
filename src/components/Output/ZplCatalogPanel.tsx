@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { CATALOG_SECTIONS, commandId, commandLabel, type CommandSupport, type SupportLevel } from "@zplab/core/catalog";
 import { useT } from "../../hooks/useT";
@@ -7,6 +7,8 @@ import type { CatalogSelection } from "../../hooks/useCatalogSelection";
 import { catalogEmptyText } from "../../lib/catalogText";
 import type { Translations } from "../../locales";
 import { inputCls } from "../Properties/styles";
+import { ContextMenu, type MenuSection } from "../ui/ContextMenu";
+import { useContextMenu } from "../../hooks/useContextMenu";
 
 type OutputKey = keyof Translations["output"];
 
@@ -28,6 +30,11 @@ const LEVEL: Record<SupportLevel, { cls: string; key: OutputKey }> = {
 const domId = (listId: string, key: string): string =>
   `${listId}-${key.replace(/^\^/, "c").replace(/^~/, "t").replace(/[^A-Za-z0-9]/g, "_")}`;
 
+/** One entry: the same insert the row's button and double-click already trigger. */
+function buildCatalogRowMenu(label: string, run: (() => void) | undefined): MenuSection[] {
+  return [{ id: "row", items: [{ id: "insert", label, run, disabled: run === undefined }] }];
+}
+
 /** Command reference beside the source pane; no `onInsert` means inserting is unavailable. */
 export function ZplCatalogPanel({
   selection,
@@ -43,7 +50,12 @@ export function ZplCatalogPanel({
   const summaries = useCatalogSummaries();
   const listId = useId();
   const listRef = useRef<HTMLUListElement>(null);
+  // State, not a ref: the menu's container is read during render.
+  const [panelEl, setPanelEl] = useState<HTMLElement | null>(null);
+  // A row chosen under the pointer is in view already, and scrolling would close the menu that opens with it.
+  const chosenByPointer = useRef<string | null>(null);
   const { query, setQuery, results, ids, entry, emptyReason, shownId, activeIndex, caretVisible, choose, toggle, stepBack, insertTextFor } = selection;
+  const { menu, openAtPointer, close } = useContextMenu<MenuSection[]>();
   // Headings only: the catalog is stored in section order, so the arrow walk reads `ids` as is.
   const groups = CATALOG_SECTIONS.map((section) => ({ section, rows: results.filter((e) => e.section === section.name) })).filter(
     (g) => g.rows.length > 0,
@@ -57,9 +69,18 @@ export function ZplCatalogPanel({
   const keepEditorFocus = (e: React.MouseEvent): void => {
     if (editorHasFocus?.()) e.preventDefault();
   };
+  // A right-click selects the row like a click does, then offers the insert that double-click hides.
+  const openRowMenu = (e: React.MouseEvent, id: string): void => {
+    e.preventDefault();
+    chosenByPointer.current = id;
+    choose(id);
+    openAtPointer(e, buildCatalogRowMenu(t.output.catalogInsert, onInsert ? () => onInsert(insertTextFor(id)) : undefined));
+  };
 
   useEffect(() => {
-    if (!shownId) return;
+    const justChosen = chosenByPointer.current;
+    chosenByPointer.current = null;
+    if (!shownId || shownId === justChosen) return;
     const row = listRef.current?.querySelector(`#${CSS.escape(domId(listId, shownId))}`);
     row?.scrollIntoView?.({ block: "nearest" });
     // `query` re-runs this when a cleared filter re-mounts the active row.
@@ -78,7 +99,7 @@ export function ZplCatalogPanel({
       const next = ids[Math.min(ids.length - 1, Math.max(0, activeIndex < 0 ? enterFrom : activeIndex + step))];
       if (next) choose(next);
     } else if (e.key === "Enter") {
-      // Enter inserts only the highlighted row. Anything else goes through the detail's button.
+      // Enter inserts only the highlighted row. Without one, it only selects the caret.
       const activeId = ids[activeIndex];
       if (activeId) onInsert?.(insertTextFor(activeId));
       else if (caretVisible) choose(caretVisible);
@@ -92,6 +113,7 @@ export function ZplCatalogPanel({
     // tabIndex -1 keeps a description click's focus inside the pane, else the session exit's focusout fires.
     // The data attributes keep the canvas shortcuts and the session's Escape away from the panel's own keys.
     <aside
+      ref={setPanelEl}
       tabIndex={-1}
       onKeyDown={onPanelKeyDown}
       data-text-surface
@@ -196,9 +218,12 @@ export function ZplCatalogPanel({
                           onMouseDown={keepEditorFocus}
                           // The clicks of a double-click must not toggle the pin twice.
                           onClick={(e) => {
-                            if (e.detail <= 1) toggle(id);
+                            if (e.detail > 1) return;
+                            chosenByPointer.current = id;
+                            toggle(id);
                           }}
                           onDoubleClick={() => onInsert?.(insertTextFor(id))}
+                          onContextMenu={(e) => openRowMenu(e, id)}
                           className={`flex items-baseline gap-2 px-3 py-0.5 cursor-default select-none hover:bg-border/60 ${active ? "bg-border/60" : ""}`}
                         >
                           {/* Coloured by web support: the answer most users need at a glance. */}
@@ -214,6 +239,8 @@ export function ZplCatalogPanel({
           </ul>
         </div>
       </div>
+      {/* Mounted inside the panel: the session exit reads a pointerdown outside it as leaving the edit. */}
+      {menu && <ContextMenu sections={menu.data} x={menu.x} y={menu.y} onClose={close} container={panelEl} />}
     </aside>
   );
 }

@@ -21,10 +21,11 @@ vi.mock("./ZplCodeMirror", () => {
     readOnly?: boolean;
     highlightLines?: ReadonlySet<number>;
     diagnostics?: readonly { from: number; to: number; message: string }[] | null;
-    ref?: React.Ref<{ focus(): void }>;
+    ref?: React.Ref<{ focus(): void; insertCommand(text: string): void }>;
   }) {
     const el = React.useRef<HTMLTextAreaElement>(null);
-    React.useImperativeHandle(ref, () => ({ focus: () => el.current?.focus() }), []);
+    // Appends and refocuses like the real insert. Enough to prove a command reached the buffer.
+    React.useImperativeHandle(ref, () => ({ focus: () => el.current?.focus(), insertCommand: (text: string) => { onChange(value + text); el.current?.focus(); } }), [onChange, value]);
     return (
       <textarea
         ref={el}
@@ -522,6 +523,23 @@ describe("outside pointerdown", () => {
     fireEvent.pointerDown(screen.getByTestId("outside"));
     expect(useLabelStore.getState().sourceEdit.status).toBe("off");
     expect(outsideAction).toHaveBeenCalledTimes(1);
+  });
+
+  it("holds the session on the reference's context menu and inserts the command", async () => {
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XA^FO10,10^A0N,30,30^FDedited^FS^XZ");
+    fireEvent.contextMenu(screen.getByRole("option", { name: /\^PW/ }), { clientX: 10, clientY: 10 });
+    const insert = within(screen.getByRole("menu")).getByRole("button", { name: t().output.catalogInsert });
+    fireEvent.pointerDown(insert);
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    fireEvent.click(insert);
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    expect(editor().value).toContain("^PW");
+    fireEvent.contextMenu(screen.getByRole("option", { name: /\^PW/ }), { clientX: 10, clientY: 10 });
+    await act(() => new Promise((r) => setTimeout(r, 0)));
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.queryByRole("menu")).toBeNull();
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
   });
 
   it("holds the session on panel chrome (the resize rail lives inside the root)", () => {

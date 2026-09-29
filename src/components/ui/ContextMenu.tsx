@@ -36,6 +36,8 @@ interface Props {
   /** Icon per action; consumer-owned so the menu model stays pure data. */
   iconFor?: (item: MenuAction) => IconType | undefined;
   onClose: () => void;
+  /** Where the menu mounts. A panel that watches for pointer events leaving it passes itself. */
+  container?: Element | null;
 }
 
 // Close-grace for submenu hover: long enough to survive a diagonal pointer
@@ -184,7 +186,7 @@ function Row({
 }
 
 /** Pure view over `MenuSection[]`; builders stay data-only. */
-export function ContextMenu({ sections, x, y, labels, iconFor, onClose }: Props) {
+export function ContextMenu({ sections, x, y, labels, iconFor, onClose, container }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x, y });
   // One open submenu across the whole root level (sections included).
@@ -243,6 +245,6 @@ export function ContextMenu({ sections, x, y, labels, iconFor, onClose }: Props)
         </div>
       ))}
     </div>,
-    document.body,
+    container ?? document.body,
   );
 }

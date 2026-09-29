@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { render, cleanup, fireEvent, within } from "@testing-library/react";
+import { render, cleanup, fireEvent, within, act } from "@testing-library/react";
 import { ZplCatalogPanel } from "./ZplCatalogPanel";
 import { useCatalogSelection } from "../../hooks/useCatalogSelection";
 import type { CursorCommand } from "../../lib/zplLanguage";
@@ -34,6 +34,31 @@ describe("ZplCatalogPanel", () => {
     fireEvent.doubleClick(row);
     expect(onInsert).toHaveBeenCalledWith("^PW");
     expect(detail(getByTestId).getByText("print width")).toBeTruthy();
+  });
+
+  it("shows a context menu that selects the row and offers insert", () => {
+    const onInsert = vi.fn();
+    const { getByRole, getByTestId } = render(<Panel cursor={{ id: "^LL", from: 0, pointed: true }} onInsert={onInsert} />);
+    fireEvent.contextMenu(getByRole("option", { name: /\^PW/ }), { clientX: 10, clientY: 10 });
+    expect(detail(getByTestId).getByText("print width")).toBeTruthy();
+    fireEvent.click(within(getByRole("menu")).getByRole("button", { name: /^Insert$/ }));
+    expect(onInsert).toHaveBeenCalledWith("^PW");
+  });
+
+  it("closes the menu on Escape and keeps the row it selected", async () => {
+    const { getByRole, queryByRole, getByTestId } = render(<Panel cursor={{ id: "^LL", from: 0, pointed: true }} onInsert={vi.fn()} />);
+    fireEvent.contextMenu(getByRole("option", { name: /\^PW/ }), { clientX: 10, clientY: 10 });
+    // The menu's listeners attach a tick after the opening gesture.
+    await act(() => new Promise((r) => setTimeout(r, 0)));
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(queryByRole("menu")).toBeNull();
+    expect(detail(getByTestId).getByText("print width")).toBeTruthy();
+  });
+
+  it("disables the menu's insert when inserting is unavailable", () => {
+    const { getByRole } = render(<Panel cursor={{ id: "^LL", from: 0, pointed: true }} />);
+    fireEvent.contextMenu(getByRole("option", { name: /\^PW/ }), { clientX: 10, clientY: 10 });
+    expect((within(getByRole("menu")).getByRole("button", { name: /^Insert$/ }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("marks the insert button aria-disabled when inserting is unavailable", () => {

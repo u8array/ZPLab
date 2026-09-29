@@ -25,12 +25,16 @@ export function useDismiss(
     const onPointer = (e: PointerEvent) => {
       if (!ref.current?.contains(e.target as Node)) onDismissRef.current();
     };
+    // Capture phase and consumed: the open popover is the top layer, so its Escape reaches nothing beneath.
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onDismissRef.current();
+      if (e.key !== "Escape") return;
+      e.preventDefault();
+      e.stopPropagation();
+      onDismissRef.current();
     };
     const attach = () => {
       window.addEventListener("pointerdown", onPointer);
-      window.addEventListener("keydown", onKey);
+      window.addEventListener("keydown", onKey, true);
     };
     let timer: number | undefined;
     if (defer) timer = window.setTimeout(attach, 0);
@@ -38,7 +42,7 @@ export function useDismiss(
     return () => {
       if (timer !== undefined) window.clearTimeout(timer);
       window.removeEventListener("pointerdown", onPointer);
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keydown", onKey, true);
     };
   }, [ref, active, defer]);
 }
