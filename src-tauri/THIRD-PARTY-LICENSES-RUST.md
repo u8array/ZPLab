@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (452)
+- MIT License (453)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -674,7 +674,7 @@ limitations under the License.
 Used by:
 
 - [dpi 0.1.2](https://github.com/rust-windowing/winit)
-- [tao 0.35.3](https://github.com/tauri-apps/tao)
+- [tao 0.37.1](https://github.com/tauri-apps/tao)
 ````
 Apache License
                            Version 2.0, January 2004
@@ -966,8 +966,8 @@ limitations under the License.
 
 Used by:
 
-- [alloc-no-stdlib 2.0.4](https://github.com/dropbox/rust-alloc-no-stdlib)
-- [brotli 8.0.4](https://github.com/dropbox/rust-brotli)
+- [alloc-no-stdlib 3.0.0](https://github.com/dropbox/rust-alloc-no-stdlib)
+- [brotli 9.0.0](https://github.com/dropbox/rust-brotli)
 ````
 Copyright (c) 2016 Dropbox, Inc.
 All rights reserved.
@@ -1026,7 +1026,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Used by:
 
-- [alloc-stdlib 0.2.4](https://github.com/dropbox/rust-alloc-no-stdlib)
+- [alloc-stdlib 0.3.0](https://github.com/dropbox/rust-alloc-no-stdlib)
 ````
 Copyright (c) <year> <owner>. 
 
@@ -1384,7 +1384,7 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [brotli 8.0.4](https://github.com/dropbox/rust-brotli)
+- [brotli 9.0.0](https://github.com/dropbox/rust-brotli)
 ````
 Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
 
@@ -1759,8 +1759,8 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [html5ever 0.38.0](https://github.com/servo/html5ever)
-- [markup5ever 0.38.0](https://github.com/servo/html5ever)
+- [html5ever 0.39.0](https://github.com/servo/html5ever)
+- [markup5ever 0.39.0](https://github.com/servo/html5ever)
 - [web_atoms 0.2.5](https://github.com/servo/html5ever)
 ````
 Copyright (c) 2014 The html5ever Project Developers
@@ -2963,7 +2963,7 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [keyboard-types 0.7.0](https://github.com/pyfisch/keyboard-types)
+- [keyboard-types 0.8.3](https://github.com/rust-windowing/keyboard-types)
 ````
 Copyright (c) 2017 Pyfisch
 
@@ -3499,6 +3499,7 @@ Used by:
 
 - [dirs-sys 0.5.0](https://github.com/dirs-dev/dirs-sys-rs)
 - [dirs 6.0.0](https://github.com/soc/dirs-rs)
+- [dirs 7.0.0](https://codeberg.org/dirs/dirs-rs)
 ````
 Copyright (c) 2018-2019 dirs-rs contributors
 
@@ -4411,7 +4412,7 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [swift-rs 1.0.7](https://github.com/Brendonovich/swift-rs)
+- [swift-rs 1.0.8](https://github.com/Brendonovich/swift-rs)
 ````
 Copyright (c) 2023 The swift-rs Developers
 
@@ -4673,9 +4674,7 @@ Used by:
 - [serde_spanned 0.6.9](https://github.com/toml-rs/toml)
 - [serde_spanned 1.1.1](https://github.com/toml-rs/toml)
 - [toml 0.8.2](https://github.com/toml-rs/toml)
-- [toml 0.9.12+spec-1.1.0](https://github.com/toml-rs/toml)
 - [toml 1.1.2+spec-1.1.0](https://github.com/toml-rs/toml)
-- [toml_datetime 0.7.5+spec-1.1.0](https://github.com/toml-rs/toml)
 - [toml_datetime 1.1.1+spec-1.1.0](https://github.com/toml-rs/toml)
 - [toml_edit 0.19.15](https://github.com/toml-rs/toml)
 - [toml_edit 0.20.2](https://github.com/toml-rs/toml)
@@ -5061,6 +5060,42 @@ SOFTWARE.
 
 Used by:
 
+- [tauri-build 2.7.0](https://github.com/tauri-apps/tauri)
+- [tauri-codegen 2.7.0](https://github.com/tauri-apps/tauri)
+- [tauri-macros 2.7.0](https://github.com/tauri-apps/tauri)
+- [tauri-runtime-wry 2.12.0](https://github.com/tauri-apps/tauri)
+- [tauri-runtime 2.12.0](https://github.com/tauri-apps/tauri)
+- [tauri-utils 2.10.0](https://github.com/tauri-apps/tauri)
+- [tauri 2.12.0](https://github.com/tauri-apps/tauri)
+````
+MIT License
+
+Copyright (c) 2017 - Present Tauri Apps Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+````
+
+### MIT License
+
+Used by:
+
 - [precomputed-hash 0.1.1](https://github.com/emilio/precomputed-hash)
 ````
 MIT License
@@ -5091,7 +5126,7 @@ SOFTWARE.
 
 Used by:
 
-- [json-patch 3.0.1](https://github.com/idubrov/json-patch)
+- [json-patch 4.2.0](https://github.com/idubrov/json-patch)
 ````
 MIT License
 
@@ -5121,6 +5156,7 @@ SOFTWARE.
 
 Used by:
 
+- [cfb 0.14.0](https://github.com/mdsteele/rust-cfb)
 - [cfb 0.7.3](https://github.com/mdsteele/rust-cfb)
 ````
 MIT License
@@ -5304,6 +5340,7 @@ SOFTWARE.
 Used by:
 
 - [infer 0.19.0](https://github.com/bojand/infer)
+- [infer 0.22.0](https://github.com/bojand/infer)
 ````
 MIT License
 
@@ -5485,7 +5522,7 @@ SOFTWARE.
 
 Used by:
 
-- [window-vibrancy 0.6.0](https://github.com/tauri-apps/tauri-plugin-vibrancy)
+- [window-vibrancy 0.8.1](https://github.com/tauri-apps/tauri-plugin-vibrancy)
 ````
 MIT License
 
@@ -5515,7 +5552,7 @@ SOFTWARE.
 
 Used by:
 
-- [wry 0.55.1](https://github.com/tauri-apps/wry)
+- [wry 0.57.0](https://github.com/tauri-apps/wry)
 ````
 MIT License
 
@@ -5576,7 +5613,7 @@ SOFTWARE.
 
 Used by:
 
-- [urlpattern 0.3.0](https://github.com/denoland/rust-urlpattern)
+- [urlpattern 0.6.0](https://github.com/denoland/rust-urlpattern)
 ````
 MIT License
 
@@ -5666,7 +5703,7 @@ SOFTWARE.
 
 Used by:
 
-- [jsonptr 0.6.3](https://github.com/chanced/jsonptr)
+- [jsonptr 0.7.1](https://github.com/chanced/jsonptr)
 ````
 MIT License
 
@@ -5696,7 +5733,7 @@ SOFTWARE.
 
 Used by:
 
-- [muda 0.19.3](https://github.com/tauri-apps/muda)
+- [muda 0.20.0](https://github.com/tauri-apps/muda)
 ````
 MIT License
 
@@ -5726,7 +5763,7 @@ SOFTWARE.
 
 Used by:
 
-- [dom_query 0.27.0](https://github.com/niklak/dom_query)
+- [dom_query 0.28.0](https://github.com/niklak/dom_query)
 ````
 MIT License
 
@@ -5792,10 +5829,40 @@ SOFTWARE.
 
 Used by:
 
-- [zplab 0.6.0](https://github.com/u8array/ZPLab)
+- [web-time 1.1.0](https://github.com/daxpedda/web-time)
+````
+MIT License
+
+Copyright (c) 2023 dAxpeDDa
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+````
+
+### MIT License
+
+Used by:
+
+- [zplab 0.7.0](https://github.com/u8array/ZPLab)
 - [block2 0.6.2](https://github.com/madsmtm/objc2)
-- [brotli-decompressor 5.0.3](https://github.com/dropbox/rust-brotli-decompressor)
-- [cargo_toml 0.22.3](https://gitlab.com/lib.rs/cargo_toml)
+- [brotli-decompressor 6.0.1](https://github.com/dropbox/rust-brotli-decompressor)
+- [cargo_toml 1.0.1](https://gitlab.com/lib.rs/cargo_toml)
 - [chrono 0.4.45](https://github.com/chronotope/chrono)
 - [dispatch2 0.3.1](https://github.com/madsmtm/objc2)
 - [dlopen2 0.8.2](https://github.com/OpenByteDev/dlopen2)
@@ -5817,9 +5884,6 @@ Used by:
 - [sqlx-mysql 0.9.0](https://github.com/launchbadge/sqlx)
 - [sqlx-postgres 0.9.0](https://github.com/launchbadge/sqlx)
 - [sqlx-sqlite 0.9.0](https://github.com/launchbadge/sqlx)
-- [tauri-build 2.6.3](https://github.com/tauri-apps/tauri)
-- [tauri-codegen 2.6.3](https://github.com/tauri-apps/tauri)
-- [tauri-macros 2.6.3](https://github.com/tauri-apps/tauri)
 - [tauri-plugin-dialog 2.7.3](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-fs 2.5.2](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-opener 2.5.5](https://github.com/tauri-apps/plugins-workspace)
@@ -5827,27 +5891,22 @@ Used by:
 - [tauri-plugin-updater 2.12.0](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-window-state 2.4.1](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin 2.6.3](https://github.com/tauri-apps/tauri)
-- [tauri-runtime-wry 2.11.4](https://github.com/tauri-apps/tauri)
-- [tauri-runtime 2.11.3](https://github.com/tauri-apps/tauri)
-- [tauri-utils 2.9.3](https://github.com/tauri-apps/tauri)
-- [tauri 2.11.5](https://github.com/tauri-apps/tauri)
-- [unic-char-property 0.9.0](https://github.com/open-i18n/rust-unic/)
-- [unic-char-range 0.9.0](https://github.com/open-i18n/rust-unic/)
-- [unic-common 0.9.0](https://github.com/open-i18n/rust-unic/)
-- [unic-ucd-ident 0.9.0](https://github.com/open-i18n/rust-unic/)
-- [unic-ucd-version 0.9.0](https://github.com/open-i18n/rust-unic/)
 - [webview2-com-macros 0.8.1](https://github.com/wravery/webview2-rs)
-- [webview2-com-sys 0.38.2](https://github.com/wravery/webview2-rs)
-- [webview2-com 0.38.2](https://github.com/wravery/webview2-rs)
+- [webview2-com-sys 0.39.1](https://github.com/wravery/webview2-rs)
+- [webview2-com 0.39.1](https://github.com/wravery/webview2-rs)
 - [whoami 2.1.2](https://github.com/ardaku/whoami)
 - [windows-collections 0.2.0](https://github.com/microsoft/windows-rs)
+- [windows-collections 0.3.2](https://github.com/microsoft/windows-rs)
 - [windows-core 0.61.2](https://github.com/microsoft/windows-rs)
+- [windows-core 0.62.2](https://github.com/microsoft/windows-rs)
 - [windows-future 0.2.1](https://github.com/microsoft/windows-rs)
+- [windows-future 0.3.2](https://github.com/microsoft/windows-rs)
 - [windows-implement 0.60.2](https://github.com/microsoft/windows-rs)
 - [windows-interface 0.59.3](https://github.com/microsoft/windows-rs)
 - [windows-link 0.1.3](https://github.com/microsoft/windows-rs)
 - [windows-link 0.2.1](https://github.com/microsoft/windows-rs)
 - [windows-numerics 0.2.0](https://github.com/microsoft/windows-rs)
+- [windows-numerics 0.3.1](https://github.com/microsoft/windows-rs)
 - [windows-registry 0.6.1](https://github.com/microsoft/windows-rs)
 - [windows-result 0.3.4](https://github.com/microsoft/windows-rs)
 - [windows-result 0.4.1](https://github.com/microsoft/windows-rs)
@@ -5859,8 +5918,10 @@ Used by:
 - [windows-targets 0.52.6](https://github.com/microsoft/windows-rs)
 - [windows-targets 0.53.5](https://github.com/microsoft/windows-rs)
 - [windows-threading 0.1.0](https://github.com/microsoft/windows-rs)
+- [windows-threading 0.2.1](https://github.com/microsoft/windows-rs)
 - [windows-version 0.1.7](https://github.com/microsoft/windows-rs)
 - [windows 0.61.3](https://github.com/microsoft/windows-rs)
+- [windows 0.62.2](https://github.com/microsoft/windows-rs)
 - [windows_x86_64_gnu 0.52.6](https://github.com/microsoft/windows-rs)
 - [windows_x86_64_gnu 0.53.1](https://github.com/microsoft/windows-rs)
 - [windows_x86_64_msvc 0.52.6](https://github.com/microsoft/windows-rs)
@@ -6138,9 +6199,9 @@ Used by:
 - [syn 3.0.3](https://github.com/dtolnay/syn)
 - [system-deps 6.2.2](https://github.com/gdesmott/system-deps)
 - [thiserror-impl 1.0.69](https://github.com/dtolnay/thiserror)
-- [thiserror-impl 2.0.20](https://github.com/dtolnay/thiserror)
+- [thiserror-impl 2.0.21](https://github.com/dtolnay/thiserror)
 - [thiserror 1.0.69](https://github.com/dtolnay/thiserror)
-- [thiserror 2.0.20](https://github.com/dtolnay/thiserror)
+- [thiserror 2.0.21](https://github.com/dtolnay/thiserror)
 - [typed-path 0.12.3](https://github.com/chipsenkbeil/typed-path)
 - [typeid 1.0.3](https://github.com/dtolnay/typeid)
 - [unicode-ident 1.0.24](https://github.com/dtolnay/unicode-ident)
@@ -6212,7 +6273,6 @@ DEALINGS IN THE SOFTWARE.
 Used by:
 
 - [winnow 0.5.40](https://github.com/winnow-rs/winnow)
-- [winnow 0.7.15](https://github.com/winnow-rs/winnow)
 - [winnow 1.0.3](https://github.com/winnow-rs/winnow)
 ````
 Permission is hereby granted, free of charge, to any person obtaining
@@ -6288,8 +6348,7 @@ SOFTWARE.
 
 Used by:
 
-- [ctor-proc-macro 0.0.7](https://github.com/mmastrac/rust-ctor)
-- [ctor 0.8.0](https://github.com/mmastrac/rust-ctor)
+- [ctor 1.0.13](https://github.com/mmastrac/linktime)
 ````
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -7546,8 +7605,8 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 
 Used by:
 
-- [cssparser-macros 0.6.1](https://github.com/servo/rust-cssparser)
-- [cssparser 0.36.0](https://github.com/servo/rust-cssparser)
+- [cssparser-macros 0.7.1](https://github.com/servo/rust-cssparser)
+- [cssparser 0.37.0](https://github.com/servo/rust-cssparser)
 ````
 Mozilla Public License Version 2.0
 ==================================
@@ -7930,7 +7989,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 Used by:
 
 - [option-ext 0.2.0](https://github.com/soc/option-ext.git)
-- [selectors 0.36.1](https://github.com/servo/stylo)
+- [selectors 0.38.0](https://github.com/servo/stylo)
 ````
 Mozilla Public License Version 2.0
 ==================================
