@@ -10,6 +10,7 @@ import { loadImage } from "@zplab/core/lib/loadImage";
 import { monoPreviewCanvas, rasterPreviewCanvas } from "@zplab/core/lib/imageToZpl";
 import { useColorScheme } from "../../hooks/useColorScheme";
 import { selectionHandlers, type KonvaObjectProps } from "./konvaObjectProps";
+import { CAPTURE_CHROME, CAPTURE_SELECTION } from "../../lib/canvasImage";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import { rotatedGroupTransform } from "./rotatedGroupTransform";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
@@ -158,6 +159,7 @@ export function ImageObject({
             stroke={isSelected ? colors.selection : undefined}
             strokeWidth={isSelected ? 2 : 0}
             strokeScaleEnabled={false}
+            name={isSelected ? CAPTURE_SELECTION : undefined}
           />
         </Group>
       </Group>
@@ -166,6 +168,8 @@ export function ImageObject({
 
   return (
     <Group
+      // The card is editor chrome: an image that cannot rasterize prints as nothing.
+      name={CAPTURE_CHROME}
       id={obj.id}
       x={x}
       y={y}

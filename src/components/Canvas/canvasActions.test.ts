@@ -5,7 +5,7 @@ const dispatch = () => ({
   copy: vi.fn(), cut: vi.fn(), duplicate: vi.fn(), remove: vi.fn(),
   pasteHere: vi.fn(), reorder: vi.fn(), group: vi.fn(), ungroup: vi.fn(),
   toggleLock: vi.fn(), addHere: vi.fn(), switchType: vi.fn(), copyZplSelected: vi.fn(),
-  copyZplLabel: vi.fn(), copyImage: vi.fn(), exportImage: vi.fn(), selectAll: vi.fn(),
+  copyZplLabel: vi.fn(), copyImageSelected: vi.fn(), exportImageSelected: vi.fn(), copyImageLabel: vi.fn(), exportImageLabel: vi.fn(), selectAll: vi.fn(),
 });
 
 const ctx = (over: Partial<ContextMenuCtx> = {}): ContextMenuCtx => ({
@@ -31,7 +31,8 @@ const ids = (sections: ReturnType<typeof buildContextMenu>) =>
 describe("buildContextMenu", () => {
   it("object menu has clipboard, order, arrange, export sections", () => {
     const got = ids(buildContextMenu(ctx()));
-    expect(got).toEqual(expect.arrayContaining(["copy", "cut", "duplicate", "delete", "toFront", "toBack", "lock", "copyZplSelected", "copyImage", "exportImage"]));
+    expect(got).toEqual(expect.arrayContaining(["copy", "cut", "duplicate", "delete", "toFront", "toBack", "lock", "copyZplSelected", "copyImageSelected", "exportImageSelected"]));
+    expect(got).not.toContain("copyImageLabel");
   });
 
   it("empty menu offers paste-here, add-here submenu, select-all, label export", () => {

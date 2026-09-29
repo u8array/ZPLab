@@ -37,8 +37,10 @@ const ICONS: Record<string, IconType> = {
   ungroup: RectangleStackIcon,
   copyZplSelected: CodeBracketIcon,
   copyZplLabel: CodeBracketIcon,
-  copyImage: PhotoIcon,
-  exportImage: ArrowDownTrayIcon,
+  copyImageSelected: PhotoIcon,
+  exportImageSelected: ArrowDownTrayIcon,
+  copyImageLabel: PhotoIcon,
+  exportImageLabel: ArrowDownTrayIcon,
   addHere: PlusIcon,
   selectAll: Squares2X2Icon,
 };

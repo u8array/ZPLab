@@ -20,7 +20,8 @@ import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/textPositionTransforms";
 import { getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
-import { selectionHandlers, shapeHitProps, useBlankFieldWarns, CAPTURE_CHROME, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
+import { selectionHandlers, shapeHitProps, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
+import { CAPTURE_CHROME, CAPTURE_SELECTION } from "../../lib/canvasImage";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import { DEFAULT_GS_SYMBOL_META, GS_SYMBOLS, symbolCodeOf } from "@zplab/core/registry/symbol";
 import { GS_SYMBOL_PATHS, GS_VECTOR_CODES, type GsVectorCode } from "../../registry/gsSymbolPaths";
@@ -50,6 +51,7 @@ function SelectionOverlay({
 }) {
   return (
     <Rect
+      name={CAPTURE_CHROME}
       x={0}
       y={0}
       width={width}
@@ -76,6 +78,7 @@ function EllipseSelectionOverlay({
 }) {
   return (
     <Ellipse
+      name={CAPTURE_CHROME}
       x={rx}
       y={ry}
       radiusX={rx}
@@ -109,6 +112,8 @@ interface BaseTextProps {
   fill: string;
   stroke: string | undefined;
   strokeWidth: number;
+  /** Set with a selection stroke, so a capture can zero it. */
+  name?: string;
   letterSpacing?: number;
   /** Horizontal shift (^FPR, and device-font left-bearing trim). */
   offsetXPx?: number;
@@ -400,9 +405,10 @@ function BlockWrapGuide({
   // invisible measure rect is needed. Glyph mode: handles hug the text, so draw
   // the dashed wrap frame (hidden during the drag, see below).
   return frameMeasured ? (
-    <Rect x={bx} y={by} width={bw} height={bh} fill="transparent" listening={false} />
+    <Rect name={CAPTURE_CHROME} x={bx} y={by} width={bw} height={bh} fill="transparent" listening={false} />
   ) : (
     <Shape
+      name={CAPTURE_CHROME}
       listening={false}
       sceneFunc={(ctx, shape) => {
         // The frame is drawn relative to the group, which Konva scales during a
@@ -495,6 +501,7 @@ export function KonvaObject(props_: Props) {
   return (
     <Group>
       <Rect
+        name={CAPTURE_CHROME}
         x={tintX}
         y={tintY}
         width={tintW}
@@ -508,9 +515,8 @@ export function KonvaObject(props_: Props) {
   );
 }
 
-/** New shape types: put `id={obj.id}` on the outermost Group (stage
- *  lookups walk up to it) and use the selection-overlay components
- *  rather than re-tracing the body's stroke. */
+/** New shape types: put `id={obj.id}` on the outermost Group, since stage lookups walk up to it. Mark the
+ *  selection with the overlay components or with a body stroke named CAPTURE_SELECTION, so a capture strips it. */
 function KonvaObjectInner({
   obj,
   scale,
@@ -684,6 +690,7 @@ function KonvaObjectInner({
             // for filled shapes.
             stroke: isSelected && !reverseText ? colors.selection : undefined,
             strokeWidth: isSelected && !reverseText ? 1 : 0,
+            name: isSelected && !reverseText ? CAPTURE_SELECTION : undefined,
             letterSpacing: fpLetterSpacingPx + deviceLetterSpacingPx,
             offsetXPx: fpShiftXPx + deviceXOffPx,
             offsetYPx: deviceYOffPx,
@@ -811,6 +818,7 @@ function KonvaObjectInner({
           )}
         {isSelected && (
           <Rect
+            name={CAPTURE_CHROME}
             width={w}
             height={h}
             stroke={colors.selection}

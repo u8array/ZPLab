@@ -41,7 +41,6 @@ import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from 
 import { isEditableTarget } from "../../lib/dom";
 import { KonvaObject } from "./KonvaObject";
 import { PreflightOverlay } from "./PreflightOverlay";
-import { CAPTURE_CHROME } from "./konvaObjectProps";
 import { RfidPositionGuide } from "./RfidPositionGuide";
 import { Grid } from "./Grid";
 import { GuideLines } from "./GuideLines";
@@ -85,7 +84,7 @@ import { buildContextMenu, type MenuSection } from "./canvasActions";
 import { zplForSelection } from "../../lib/zplForSelection";
 import { finishZplExport } from "../../lib/exportZpl";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
-import { captureLabelBlob, copyPngToClipboard } from "../../lib/canvasImage";
+import { captureLabelBlob, captureRegionBlob, copyPngToClipboard, CAPTURE_CHROME } from "../../lib/canvasImage";
 import { saveFile, saveErrorMessage, PNG_FILTER } from "../../lib/fileDialogs";
 import { printerPreviewLayout } from "../../lib/printerPreview";
 
@@ -646,6 +645,12 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       width: dotsToPx(b.width, scale, effDpmm),
       height: dotsToPx(b.height, scale, effDpmm),
     };
+  // A menu action runs after the render that built it, so it reads the frame through a ref.
+  const dotRatio = label.dpmm / scale;
+  const frameRef = useRef({ toFramePx, frameCtx, visibleLeafById, dotRatio });
+  useLayoutEffect(() => {
+    frameRef.current = { toFramePx, frameCtx, visibleLeafById, dotRatio };
+  });
   // Frame Rect is multi-only; the movable/static bases also drive the action bar
   // (single drags too), so compute them for any selection.
   const hasSelection = visibleSelIds.length > 0;
@@ -948,7 +953,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         },
         captureLabelDots: (dots) => {
           const group = rotationGroupRef.current;
-          return group ? captureLabelBlob(group, labelPaperRef.current, CAPTURE_CHROME, { pixelRatio: label.dpmm / scale, dots }) : Promise.resolve(null);
+          return group ? captureLabelBlob(group, labelPaperRef.current, { pixelRatio: label.dpmm / scale, dots }) : Promise.resolve(null);
         },
       };
     },
@@ -1255,6 +1260,32 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const switchTypeLocked =
       !!singleForSwitch &&
       (!!singleForSwitch.locked || hasLockedAncestor(objects, singleForSwitch.id));
+    const captureLabel = () => (rotationGroupRef.current ? captureLabelBlob(rotationGroupRef.current, labelPaperRef.current) : Promise.resolve(null));
+    // The region comes from the model like the selection frame: groups have no node, a sample barcode's
+    // node is chrome, and a line's node is its hit stroke. Frame px are stage px once the view rotation is 0.
+    const captureSelection = () => {
+      const group = rotationGroupRef.current;
+      const frame = frameRef.current;
+      const now = getCurrentObjects();
+      const ids = expandSelection(now, sel).filter((id) => frame.visibleLeafById.has(id));
+      const rect = frame.toFramePx(selectionUnionDots(now, ids, frame.frameCtx));
+      return group && rect ? captureRegionBlob(group, labelPaperRef.current, rect, frame.dotRatio) : Promise.resolve(null);
+    };
+    const copyImage = (pending: Promise<Blob | null>) => {
+      // Unsupported or failed clipboard writes stay a silent no-op.
+      const blob = pending.then((b) => {
+        if (!b) throw new Error("capture-failed");
+        return b;
+      });
+      void copyPngToClipboard(blob).catch(() => undefined);
+    };
+    const exportImage = async (pending: Promise<Blob | null>, filename: string) => {
+      const blob = await pending;
+      if (!blob) return;
+      await saveFile(blob, { filename, filters: [PNG_FILTER] })
+        .then((wrote) => wrote && clearUserError())
+        .catch(() => setUserError(saveErrorMessage));
+    };
     const dispatch = {
       copy: copySelectedObjects,
       cut: () => {
@@ -1275,22 +1306,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       copyZplLabel: () => {
         void copyText(finishZplExport(generateMultiPageZPL(designLabel, pages, variables)));
       },
-      copyImage: () => {
-        // Call write synchronously with the pending blob so the user activation
-        // survives the async capture. Unsupported / failure stays a silent no-op.
-        const blob = (rotationGroupRef.current ? captureLabelBlob(rotationGroupRef.current, labelPaperRef.current, CAPTURE_CHROME) : Promise.resolve(null)).then((b) => {
-          if (!b) throw new Error("capture-failed");
-          return b;
-        });
-        void copyPngToClipboard(blob).catch(() => undefined);
-      },
-      exportImage: async () => {
-        const blob = await (rotationGroupRef.current ? captureLabelBlob(rotationGroupRef.current, labelPaperRef.current, CAPTURE_CHROME) : Promise.resolve(null));
-        if (!blob) return;
-        await saveFile(blob, { filename: "label.png", filters: [PNG_FILTER] })
-          .then((wrote) => wrote && clearUserError())
-          .catch(() => setUserError(saveErrorMessage));
-      },
+      copyImageSelected: () => copyImage(captureSelection()),
+      exportImageSelected: () => exportImage(captureSelection(), `${(sel.length === 1 ? findObjectById(objects, sel[0] ?? "")?.type : undefined) ?? "selection"}.png`),
+      copyImageLabel: () => copyImage(captureLabel()),
+      exportImageLabel: () => exportImage(captureLabel(), "label.png"),
       selectAll: () => selectObjects(objects.map((o) => o.id)),
       switchType: (type: string) => {
         if (singleForSwitch) {

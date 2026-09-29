@@ -17,6 +17,7 @@ import {
 } from "../../lib/snapGuides";
 import { diagonalPolygonPoints } from "@zplab/core/lib/shapeGeometry";
 import { selectionHandlers, type KonvaObjectProps, MIN_HIT_STROKE_PX, lineHandlesNodeId, lineRootNodeId } from "./konvaObjectProps";
+import { CAPTURE_CHROME } from "../../lib/canvasImage";
 import { LINE_HANDLE_NAME } from "./altClickCycle";
 
 
@@ -42,7 +43,7 @@ function LineSelectionOutline({
   const px = (-dy / len) * off;
   const py = (dx / len) * off;
   return (
-    <>
+    <Group name={CAPTURE_CHROME}>
       <KLine
         points={[x1 + px, y1 + py, x2 + px, y2 + py]}
         stroke={color}
@@ -57,7 +58,7 @@ function LineSelectionOutline({
         lineCap="butt"
         listening={false}
       />
-    </>
+    </Group>
   );
 }
 
@@ -392,6 +393,7 @@ export function LineObject({
           />
           {isSelected && (
             <KLine
+              name={CAPTURE_CHROME}
               points={diagPoints}
               closed
               stroke={colors.selection}
@@ -420,7 +422,7 @@ export function LineObject({
         {...dragHandlers}
       />
       {isSelected && (
-        <Group id={lineHandlesNodeId(obj.id)}>
+        <Group id={lineHandlesNodeId(obj.id)} name={CAPTURE_CHROME}>
           {/* Start point: dragging moves origin; end stays fixed. */}
           <Rect
             x={(livePt1?.x ?? x1 + dx) - HANDLE_HIT_SIZE / 2}

@@ -7,7 +7,7 @@ import {
   rfidPositionValue,
 } from "@zplab/core/lib/rfidPosition";
 import { useLabelStore } from "../../store/labelStore";
-import { CAPTURE_CHROME } from "./konvaObjectProps";
+import { CAPTURE_CHROME } from "../../lib/canvasImage";
 
 const HANDLE_W = 34;
 const HANDLE_H = 14;

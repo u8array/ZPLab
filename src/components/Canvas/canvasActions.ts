@@ -42,8 +42,10 @@ export interface ContextMenuCtx {
     switchType: (type: string) => void;
     copyZplSelected: () => void;
     copyZplLabel: () => void;
-    copyImage: () => void;
-    exportImage: () => void;
+    copyImageSelected: () => void;
+    exportImageSelected: () => void;
+    copyImageLabel: () => void;
+    exportImageLabel: () => void;
     selectAll: () => void;
   };
 }
@@ -122,8 +124,8 @@ export function buildContextMenu(ctx: ContextMenuCtx): MenuSection[] {
       id: "export-sel",
       items: [
         { id: "copyZplSelected", labelKey: "copyZplSelected", run: d.copyZplSelected, disabled: off },
-        { id: "copyImage", labelKey: "copyImage", run: d.copyImage, disabled: off },
-        { id: "exportImage", labelKey: "exportImage", run: d.exportImage, disabled: off },
+        { id: "copyImageSelected", labelKey: "copyImageSelected", run: d.copyImageSelected, disabled: off },
+        { id: "exportImageSelected", labelKey: "exportImageSelected", run: d.exportImageSelected, disabled: off },
       ],
     });
   } else {
@@ -155,8 +157,8 @@ export function buildContextMenu(ctx: ContextMenuCtx): MenuSection[] {
       id: "export-label",
       items: [
         { id: "copyZplLabel", labelKey: "copyZplLabel", run: d.copyZplLabel, disabled: off || !ctx.hasObjects },
-        { id: "copyImage", labelKey: "copyImage", run: d.copyImage, disabled: off || !ctx.hasObjects },
-        { id: "exportImage", labelKey: "exportImage", run: d.exportImage, disabled: off || !ctx.hasObjects },
+        { id: "copyImageLabel", labelKey: "copyImageLabel", run: d.copyImageLabel, disabled: off || !ctx.hasObjects },
+        { id: "exportImageLabel", labelKey: "exportImageLabel", run: d.exportImageLabel, disabled: off || !ctx.hasObjects },
       ],
     });
   }

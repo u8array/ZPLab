@@ -8,7 +8,8 @@ import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "
 import { qrByHeight } from "@zplab/core/registry/qrcode";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
-import { selectionHandlers, useBlankFieldWarns, CAPTURE_CHROME, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
+import { selectionHandlers, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
+import { CAPTURE_CHROME, CAPTURE_SELECTION } from "../../lib/canvasImage";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import {
   getDisplaySize,
@@ -477,9 +478,11 @@ export function BarcodeObject({
               stroke={!isEanUpc && isSelected ? colors.selection : undefined}
               strokeWidth={!isEanUpc && isSelected ? 2 : 0}
               strokeScaleEnabled={false}
+              name={!isEanUpc && isSelected ? CAPTURE_SELECTION : undefined}
             />
             {isEanUpc && isSelected && (
               <Rect
+                name={CAPTURE_CHROME}
                 x={ub.barLeftPx}
                 y={ub.barTopPx}
                 width={ub.barW}
@@ -526,6 +529,7 @@ export function BarcodeObject({
             stroke={isSelected ? colors.selection : undefined}
             strokeWidth={isSelected ? 2 : 0}
             strokeScaleEnabled={false}
+            name={isSelected ? CAPTURE_SELECTION : undefined}
           />
           {showStateFrame && (
             <StateFrame {...stateFrameProps(ub)} color={stateFrameColor} />
@@ -554,6 +558,8 @@ export function BarcodeObject({
   const fbH = dotsToPx(fbDots.h, scale, dpmm);
   return (
     <Group
+      // The card is editor chrome: a barcode that cannot render prints as nothing.
+      name={CAPTURE_CHROME}
       id={obj.id}
       x={x}
       y={y}

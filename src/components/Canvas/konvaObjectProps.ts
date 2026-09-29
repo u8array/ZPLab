@@ -6,10 +6,6 @@ import type { SnapGuide, SnapRect } from "../../lib/snapGuides";
 import { PALETTE_GHOST_ID } from "./paletteGhostMonitor";
 import { HOLLOW_HIT_NAME } from "./lassoGeometry";
 
-/** Konva `name` on editor-only chrome (grid, safe-area, overset ghost, …) so
- *  image capture can hide it. Shared by LabelCanvas and the renderers. */
-export const CAPTURE_CHROME = "capture-chrome";
-
 /** Dotted outline shared by every unconfigured-field placeholder (empty-text
  *  rect, blank-barcode frame) so "not configured yet" reads as one style. */
 export const PLACEHOLDER_STROKE_PX = 3;
