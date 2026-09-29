@@ -60,13 +60,15 @@
     "linux": {
       "deb": {
         "files": {
-          "/usr/lib/udev/rules.d/70-zplab.rules": "packaging/udev/70-zplab.rules"
+          "/usr/lib/udev/rules.d/70-zplab.rules": "packaging/udev/70-zplab.rules",
+          "/usr/share/metainfo/de.u8array.zplab.metainfo.xml": "packaging/linux/de.u8array.zplab.metainfo.xml"
         },
         "postInstallScript": "packaging/linux/postinst"
       },
       "rpm": {
         "files": {
-          "/usr/lib/udev/rules.d/70-zplab.rules": "packaging/udev/70-zplab.rules"
+          "/usr/lib/udev/rules.d/70-zplab.rules": "packaging/udev/70-zplab.rules",
+          "/usr/share/metainfo/de.u8array.zplab.metainfo.xml": "packaging/linux/de.u8array.zplab.metainfo.xml"
         },
         "postInstallScript": "packaging/linux/postinst"
       }

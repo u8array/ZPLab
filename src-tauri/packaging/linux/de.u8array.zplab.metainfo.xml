@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>de.u8array.zplab</id>
+
+  <name>ZPLab</name>
+  <summary>Design labels for ZPL-compatible printers</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <developer id="de.u8array">
+    <name>u8array</name>
+  </developer>
+
+  <description>
+    <p>
+      ZPLab is a visual label designer and ZPL editor for ZPL-compatible
+      printers. Drag text, barcodes, shapes and images onto the canvas while the
+      generated ZPL updates beside it and stays editable, with syntax
+      highlighting and a reference for every ZPL II command.
+    </p>
+    <p>
+      Existing ZPL comes in as editable source rather than a one-way import:
+      untouched commands, whitespace and comments survive the round trip, and an
+      edit regenerates only what it affects, from a single object up to every
+      page.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Visual canvas with layers, alignment guides, serial counters, shapes, images and graphic symbols</li>
+      <li>28 barcode symbologies, with dedicated GS1-128 and GS1 DataMatrix modes</li>
+      <li>GS1 content assembled from Application Identifiers, checked per field and against the combination rules</li>
+      <li>EAN/UPC fields validated as you type, with a live length counter and the computed check digit</li>
+      <li>Typed payloads for QR Code, Data Matrix and Aztec: URLs, Wi-Fi, contacts, email, phone, SMS and coordinates, plus GS1 Digital Links</li>
+      <li>Batch printing: map label variables to CSV, Excel or database columns and print one label per row</li>
+      <li>Printing over raw TCP, the system print queue, or USB</li>
+      <li>Previews rendered through Labelary, or by the connected printer's own firmware</li>
+      <li>An MCP server that lets a local AI assistant read, build and validate labels, and edit the open design directly</li>
+      <li>32 interface languages, light and dark theme</li>
+      <li>MIT-licensed, with no account and no backend</li>
+    </ul>
+    <p>
+      ZPLab is an independent project, not affiliated with or endorsed by Zebra
+      Technologies Corp. Zebra is a trademark of Zebra Technologies Corp.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">ZPLab.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/u8array/ZPLab/main/docs/screenshot-light.png</image>
+      <caption>Designing a label in the visual editor</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/u8array/ZPLab/main/docs/screenshot-dark.png</image>
+      <caption>The same label in dark mode</caption>
+    </screenshot>
+  </screenshots>
+
+  <categories>
+    <category>Office</category>
+    <category>Graphics</category>
+  </categories>
+
+  <keywords>
+    <keyword>ZPL</keyword>
+    <keyword>Zebra</keyword>
+    <keyword>label</keyword>
+    <keyword>barcode</keyword>
+    <keyword>QR</keyword>
+    <keyword>GS1</keyword>
+    <keyword>thermal printer</keyword>
+  </keywords>
+
+  <url type="homepage">https://zplab.org/</url>
+  <url type="bugtracker">https://github.com/u8array/ZPLab/issues</url>
+  <url type="vcs-browser">https://github.com/u8array/ZPLab</url>
+
+  <content_rating type="oars-1.1" />
+</component>
