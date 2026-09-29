@@ -504,7 +504,7 @@ export function AppShell() {
 
       {/* Main area: 3 columns */}
       <DndContext sensors={sensors} collisionDetection={collisionDetection}>
-      <div ref={mainRowRef} className="flex flex-1 min-h-0">
+      <div ref={mainRowRef} className="flex flex-1 min-h-0 overflow-hidden">
         {leftPanel.collapsed ? (
           <ExpandStrip side="left" onExpand={leftPanel.expand} title={t.app.expand} />
         ) : (
