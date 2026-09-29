@@ -41,6 +41,14 @@ describe("useOutputPanel drag", () => {
     });
   });
 
+  it("lets the panel grow up to the ceiling the layout reports", () => {
+    const { result } = renderHook(() => useOutputPanel(undefined, false, () => 44));
+    rail(result.current);
+    moveTo(heightFor(window.innerHeight + 200));
+    expect(result.current.height).toBe(window.innerHeight - 44);
+    release();
+  });
+
   it("re-expands within the same gesture", () => {
     const { result } = renderHook(() => useOutputPanel());
     rail(result.current);

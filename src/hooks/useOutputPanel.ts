@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 const OUTPUT_MIN_H = 80;
-const OUTPUT_MAX_H = 600;
 export const OUTPUT_DEFAULT_H = 208;
 const LS_KEY = "zpl-output-panel";
 
@@ -30,8 +29,9 @@ function savePanelState(state: PanelState) {
 
 /** `lockCollapse`: an open source-edit buffer must stay visible, so the drag
  *  rail clamps at the minimum height instead of collapsing (which would
- *  unmount the editor with no expand affordance left). */
-export function useOutputPanel(defaultH = OUTPUT_DEFAULT_H, lockCollapse = false) {
+ *  unmount the editor with no expand affordance left). `ceiling` is the viewport
+ *  y the panel may grow up to, so the stored height is one the layout renders. */
+export function useOutputPanel(defaultH = OUTPUT_DEFAULT_H, lockCollapse = false, ceiling: () => number = () => 0) {
   const [saved] = useState(loadPanelState);
   const [height, setHeight] = useState(saved?.height ?? defaultH);
   const [collapsed, setCollapsed] = useState(saved?.collapsed ?? true);
@@ -45,6 +45,7 @@ export function useOutputPanel(defaultH = OUTPUT_DEFAULT_H, lockCollapse = false
     const grabOffset = e.clientY - e.currentTarget.getBoundingClientRect().top;
     // Gesture-local: one gesture can resize AND collapse; the height must reach storage.
     let liveHeight = height;
+    const maxHeight = window.innerHeight - ceiling();
     const onMove = (ev: MouseEvent) => {
       const desired = window.innerHeight - ev.clientY + grabOffset;
       if (desired <= OUTPUT_MIN_H) {
@@ -61,7 +62,7 @@ export function useOutputPanel(defaultH = OUTPUT_DEFAULT_H, lockCollapse = false
         }
         return;
       }
-      const next = Math.min(OUTPUT_MAX_H, desired);
+      const next = Math.min(maxHeight, desired);
       isCollapsed = false;
       liveHeight = next;
       setCollapsed(false);

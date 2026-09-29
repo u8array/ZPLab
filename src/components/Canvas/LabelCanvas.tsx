@@ -471,13 +471,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       )
     : 1;
 
-  // Init zoom to fit once container is sized so label is immediately visible.
+  // Init zoom to fit once container is sized so label is immediately visible. Both axes: a full-height
+  // output panel leaves the canvas measured at zero height at startup, which must not latch zoom 1.
   const didInitRef = useRef(false);
   useEffect(() => {
-    if (didInitRef.current || usableWidth <= 0) return;
+    if (didInitRef.current || usableWidth <= 0 || usableHeight <= 0) return;
     didInitRef.current = true;
     onZoomChange(fitZoom);
-  }, [usableWidth, fitZoom, onZoomChange]);
+  }, [usableWidth, usableHeight, fitZoom, onZoomChange]);
 
   const {
     panOffset,
