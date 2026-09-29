@@ -330,7 +330,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/state 6.7.5
+### @codemirror/state 6.7.6
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -359,7 +359,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/view 6.43.12
+### @codemirror/view 6.43.13
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -1542,11 +1542,10 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### @lezer/common 1.5.2
+### @lezer/common 1.5.3
 
 - License: MIT
 - Author: Marijn Haverbeke
-- Homepage: https://github.com/lezer-parser/common#readme
 
 ```
 MIT License
@@ -1572,11 +1571,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @lezer/highlight 1.2.3
+### @lezer/highlight 1.2.4
 
 - License: MIT
 - Author: Marijn Haverbeke
-- Homepage: https://github.com/lezer-parser/highlight#readme
 
 ```
 MIT License
@@ -2558,7 +2556,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @tauri-apps/api 2.11.1
+### @tauri-apps/api 2.12.0
 
 - License: Apache-2.0 OR MIT
 - Homepage: https://github.com/tauri-apps/tauri#readme
@@ -3137,7 +3135,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### konva 10.6.0
+### konva 10.7.0
 
 - License: MIT
 - Author: Anton Lavrenov
