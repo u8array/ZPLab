@@ -36,12 +36,12 @@ Drag objects onto the canvas, edit their properties, then copy or export the ZPL
 
 ## Download
 
-| Platform | [v0.6.0](https://github.com/u8array/ZPLab/releases/tag/v0.6.0) |
+| Platform | [v0.7.0](https://github.com/u8array/ZPLab/releases/tag/v0.7.0) |
 |---|---|
-| Windows | [x64 installer](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_x64-setup.exe) |
-| macOS | [Apple Silicon](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_aarch64.dmg) · [Intel](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_x64.dmg) |
-| Linux | [AppImage](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_amd64.AppImage) · [deb](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_amd64.deb) · [rpm](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab-0.6.0-1.x86_64.rpm) |
-| Web (self-hosted) | [zip](https://github.com/u8array/ZPLab/releases/download/v0.6.0/ZPLab_0.6.0_web.zip) · [Docker](#self-hosting) |
+| Windows | [x64 installer](https://github.com/u8array/ZPLab/releases/download/v0.7.0/ZPLab_0.7.0_x64-setup.exe) |
+| macOS | [Apple Silicon](https://github.com/u8array/ZPLab/releases/download/v0.7.0/ZPLab_0.7.0_aarch64.dmg) · [Intel](https://github.com/u8array/ZPLab/releases/download/v0.7.0/ZPLab_0.7.0_x64.dmg) |
+| Linux | [AppImage](https://github.com/u8array/ZPLab/releases/download/v0.7.0/ZPLab_0.7.0_amd64.AppImage) · [deb](https://github.com/u8array/ZPLab/releases/download/v0.7.0/ZPLab_0.7.0_amd64.deb) · [rpm](https://github.com/u8array/ZPLab/releases/download/v0.7.0/ZPLab-0.7.0-1.x86_64.rpm) |
+| Web (self-hosted) | [zip](https://github.com/u8array/ZPLab/releases/download/v0.7.0/ZPLab_0.7.0_web.zip) · [Docker](#self-hosting) |
 
 On macOS, the first launch may be blocked. Allow ZPLab under **System Settings → Privacy & Security**.
 
