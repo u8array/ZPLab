@@ -5859,7 +5859,7 @@ SOFTWARE.
 
 Used by:
 
-- [zplab 0.7.0](https://github.com/u8array/ZPLab)
+- [zplab 0.7.1](https://github.com/u8array/ZPLab)
 - [block2 0.6.2](https://github.com/madsmtm/objc2)
 - [brotli-decompressor 6.0.1](https://github.com/dropbox/rust-brotli-decompressor)
 - [cargo_toml 1.0.1](https://gitlab.com/lib.rs/cargo_toml)
