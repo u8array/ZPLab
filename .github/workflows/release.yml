@@ -108,7 +108,10 @@ jobs:
             args: '--target aarch64-apple-darwin'
           - platform: macos-latest # Intel, cross-compiled on the arm64 runner
             args: '--target x86_64-apple-darwin'
-          - platform: ubuntu-24.04
+          # Oldest LTS with webkit2gtk-4.1. glibc is forward compatible only, so this runner sets
+          # the floor for every Linux artifact and a newer one drops Debian 12 and Ubuntu 22.04.
+          # 22.04 leaves standard support in April 2027. Moving the floor is a release decision.
+          - platform: ubuntu-22.04
             args: ''
           - platform: windows-latest
             args: ''
@@ -158,6 +161,16 @@ jobs:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           updaterJsonPreferNsis: true
           args: ${{ matrix.args }}
+
+      # deb, rpm and AppImage all package this same binary.
+      - name: glibc floor
+        if: startsWith(matrix.platform, 'ubuntu')
+        run: |
+          FLOOR=GLIBC_2.35
+          BIN="src-tauri/target/release/$(jq -r .mainBinaryName src-tauri/tauri.conf.json)"
+          MAX=$(objdump -T "$BIN" | grep -o 'GLIBC_[0-9.]*' | sort -Vu | tail -1)
+          echo "$BIN requires ${MAX:?no glibc symbols found}, floor $FLOOR"
+          [ "$(printf '%s\n%s\n' "$MAX" "$FLOOR" | sort -V | tail -1)" = "$FLOOR" ] || { echo "built against a too-new glibc"; exit 1; }
 
   upload-web-dist:
     needs: [gates, create-release]
