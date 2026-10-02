@@ -825,6 +825,7 @@ const lt = {
       checkUpdates: 'Tikrinti atnaujinimus',
       checkingUpdates: 'Tikrinama…',
       upToDate: 'Turite naujausią versiją.',
+      updatesViaStore: 'Atnaujinimai pasiekia per Microsoft Store.',
     },
     preview: {
       providerHeading: 'Peržiūros atvaizdavimo įrankis',

@@ -825,6 +825,7 @@ const da = {
       checkUpdates: 'Søg efter opdateringer',
       checkingUpdates: 'Søger…',
       upToDate: 'Du har den nyeste version.',
+      updatesViaStore: 'Opdateringer kommer via Microsoft Store.',
     },
     preview: {
       providerHeading: 'Forhåndsvisningsrenderer',

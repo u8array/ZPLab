@@ -825,6 +825,7 @@ const en = {
       checkUpdates: 'Check for updates',
       checkingUpdates: 'Checking…',
       upToDate: 'You are up to date.',
+      updatesViaStore: 'Updates arrive through the Microsoft Store.',
     },
     preview: {
       providerHeading: 'Preview renderer',

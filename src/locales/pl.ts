@@ -825,6 +825,7 @@ const pl = {
       checkUpdates: 'Sprawdź aktualizacje',
       checkingUpdates: 'Sprawdzanie…',
       upToDate: 'Masz najnowszą wersję.',
+      updatesViaStore: 'Aktualizacje docierają przez Microsoft Store.',
     },
     preview: {
       providerHeading: 'Silnik podglądu',

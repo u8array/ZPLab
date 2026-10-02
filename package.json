@@ -18,6 +18,7 @@
     "licenses:check": "node scripts/check-licenses.mjs",
     "attribution:gen": "node scripts/gen-attribution.mjs",
     "attribution:check": "node scripts/gen-attribution.mjs --check",
+    "msix:build": "node scripts/build-msix.mjs",
     "coverage:gen": "node scripts/gen-coverage.mjs",
     "coverage:check": "node scripts/gen-coverage.mjs --check",
     "preview": "vite preview",

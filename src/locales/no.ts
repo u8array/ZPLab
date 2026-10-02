@@ -825,6 +825,7 @@ const no = {
       checkUpdates: 'Se etter oppdateringer',
       checkingUpdates: 'Søker…',
       upToDate: 'Du har den nyeste versjonen.',
+      updatesViaStore: 'Oppdateringer kommer via Microsoft Store.',
     },
     preview: {
       providerHeading: 'Forhåndsvisningsmotor',

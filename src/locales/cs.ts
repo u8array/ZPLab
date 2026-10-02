@@ -825,6 +825,7 @@ const cs = {
       checkUpdates: 'Zkontrolovat aktualizace',
       checkingUpdates: 'Kontrola…',
       upToDate: 'Máte nejnovější verzi.',
+      updatesViaStore: 'Aktualizace přicházejí přes Microsoft Store.',
     },
     preview: {
       providerHeading: 'Vykreslovač náhledu',

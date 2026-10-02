@@ -825,6 +825,7 @@ const hr = {
       checkUpdates: 'Provjeri ažuriranja',
       checkingUpdates: 'Provjeravam…',
       upToDate: 'Imate najnoviju verziju.',
+      updatesViaStore: 'Ažuriranja stižu putem Microsoft Storea.',
     },
     preview: {
       providerHeading: 'Prikaz pregleda',

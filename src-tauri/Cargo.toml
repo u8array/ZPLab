@@ -60,9 +60,11 @@ libc = "0.2"
 
 [target.'cfg(windows)'.dependencies]
 # Kill-on-close Job Object so the MCP child's cmd/pnpm/node tree dies with the
-# app, including on crash (the OS closes the handle on process exit).
+# app, including on crash. The OS closes the handle on process exit.
+# Win32_Storage_Packaging_Appx reads the package identity that marks a packaged install.
 windows-sys = { version = "0.61", features = [
   "Win32_Foundation",
+  "Win32_Storage_Packaging_Appx",
   "Win32_System_JobObjects",
 ] }
 

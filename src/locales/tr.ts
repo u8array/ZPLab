@@ -825,6 +825,7 @@ const tr = {
       checkUpdates: 'Güncellemeleri denetle',
       checkingUpdates: 'Denetleniyor…',
       upToDate: 'En güncel sürümü kullanıyorsunuz.',
+      updatesViaStore: 'Güncellemeler Microsoft Store üzerinden gelir.',
     },
     preview: {
       providerHeading: 'Önizleme oluşturucu',

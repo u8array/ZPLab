@@ -825,6 +825,7 @@ const zhHant = {
       checkUpdates: '檢查更新',
       checkingUpdates: '檢查中…',
       upToDate: '已是最新版本。',
+      updatesViaStore: '更新透過 Microsoft Store 提供。',
     },
     preview: {
       providerHeading: '預覽算繪方式',

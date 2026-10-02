@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "identifier": "de.u8array.zplab.msix",
+  "bundle": {
+    "active": false
+  },
+  "plugins": {
+    "updater": null
+  }
+}

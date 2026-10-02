@@ -825,6 +825,7 @@ const sv = {
       checkUpdates: 'Sök efter uppdateringar',
       checkingUpdates: 'Söker…',
       upToDate: 'Du har den senaste versionen.',
+      updatesViaStore: 'Uppdateringar kommer via Microsoft Store.',
     },
     preview: {
       providerHeading: 'Förhandsgranskningsrenderare',

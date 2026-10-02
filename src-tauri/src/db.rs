@@ -827,16 +827,11 @@ mod tests {
       "{}\n{value}",
       endpoint_id("127.0.0.1", port, SslMode::Prefer, user, "zpltest")
     );
-    keyring::Entry::new("ZPLab", &password_cred(profile_id))
-      .unwrap()
-      .set_password(&blob)
-      .unwrap();
+    crate::credentials::write_password(&password_cred(profile_id), &blob).unwrap();
   }
 
   fn keychain_drop(profile_id: &str) {
-    let _ = keyring::Entry::new("ZPLab", &password_cred(profile_id))
-      .unwrap()
-      .delete_credential();
+    let _ = crate::credentials::delete_password(&password_cred(profile_id));
   }
 
   fn assert_live_rows(spec: &DbSpec) {

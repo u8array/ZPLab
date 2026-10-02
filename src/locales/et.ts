@@ -825,6 +825,7 @@ const et = {
       checkUpdates: 'Otsi uuendusi',
       checkingUpdates: 'Otsin…',
       upToDate: 'Teil on uusim versioon.',
+      updatesViaStore: 'Uuendused tulevad Microsoft Store kaudu.',
     },
     preview: {
       providerHeading: 'Eelvaate renderdaja',

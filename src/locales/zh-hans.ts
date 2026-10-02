@@ -825,6 +825,7 @@ const zhHans = {
       checkUpdates: '检查更新',
       checkingUpdates: '正在检查…',
       upToDate: '已是最新版本。',
+      updatesViaStore: '更新通过 Microsoft Store 提供。',
     },
     preview: {
       providerHeading: '预览渲染方式',

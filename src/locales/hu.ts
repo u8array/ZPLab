@@ -825,6 +825,7 @@ const hu = {
       checkUpdates: 'Frissítések keresése',
       checkingUpdates: 'Keresés…',
       upToDate: 'A legújabb verziót használja.',
+      updatesViaStore: 'A frissítéseket a Microsoft Store kézbesíti.',
     },
     preview: {
       providerHeading: 'Előnézet-megjelenítő',

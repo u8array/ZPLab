@@ -825,6 +825,7 @@ const fr = {
       checkUpdates: 'Rechercher des mises à jour',
       checkingUpdates: 'Vérification…',
       upToDate: 'Vous êtes à jour.',
+      updatesViaStore: 'Les mises à jour arrivent via le Microsoft Store.',
     },
     preview: {
       providerHeading: "Moteur d'aperçu",

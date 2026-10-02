@@ -825,6 +825,7 @@ const lv = {
       checkUpdates: 'Meklēt atjauninājumus',
       checkingUpdates: 'Pārbauda…',
       upToDate: 'Jums ir jaunākā versija.',
+      updatesViaStore: 'Atjauninājumus nodrošina Microsoft Store.',
     },
     preview: {
       providerHeading: 'Priekšskatījuma renderētājs',

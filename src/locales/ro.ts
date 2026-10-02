@@ -825,6 +825,7 @@ const ro = {
       checkUpdates: 'Caută actualizări',
       checkingUpdates: 'Se verifică…',
       upToDate: 'Aveți cea mai recentă versiune.',
+      updatesViaStore: 'Actualizările ajung prin Microsoft Store.',
     },
     preview: {
       providerHeading: 'Motor de previzualizare',

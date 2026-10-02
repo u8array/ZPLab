@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Identity comes from the Partner Center product identity.
+     build-msix.mjs stamps Version from package.json. -->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+  <Identity
+    Name="u8array.ZPLab"
+    Publisher="CN=A10112AA-798A-4AA4-9DA8-62D37845A2C4"
+    Version="0.0.0.0"
+    ProcessorArchitecture="x64" />
+  <Properties>
+    <DisplayName>ZPLab</DisplayName>
+    <PublisherDisplayName>u8array</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+  <!-- One per UI language in src/locales, the package default first. -->
+  <Resources>
+    <Resource Language="en-US" />
+    <Resource Language="de" />
+    <Resource Language="fr" />
+    <Resource Language="es" />
+    <Resource Language="pt" />
+    <Resource Language="it" />
+    <Resource Language="nl" />
+    <Resource Language="pl" />
+    <Resource Language="cs" />
+    <Resource Language="sk" />
+    <Resource Language="hu" />
+    <Resource Language="ro" />
+    <Resource Language="sv" />
+    <Resource Language="nb" />
+    <Resource Language="da" />
+    <Resource Language="fi" />
+    <Resource Language="el" />
+    <Resource Language="bg" />
+    <Resource Language="hr" />
+    <Resource Language="sr-Cyrl" />
+    <Resource Language="sl" />
+    <Resource Language="et" />
+    <Resource Language="lv" />
+    <Resource Language="lt" />
+    <Resource Language="ar" />
+    <Resource Language="he" />
+    <Resource Language="fa" />
+    <Resource Language="tr" />
+    <Resource Language="zh-Hans" />
+    <Resource Language="zh-Hant" />
+    <Resource Language="ja" />
+    <Resource Language="ko" />
+  </Resources>
+  <Applications>
+    <Application Id="ZPLab" Executable="ZPLab.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="ZPLab"
+        Description="Visual designer for Zebra ZPL printer labels"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png" />
+    </Application>
+  </Applications>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

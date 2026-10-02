@@ -825,6 +825,7 @@ const sr = {
       checkUpdates: 'Провери ажурирања',
       checkingUpdates: 'Провера…',
       upToDate: 'Имате најновију верзију.',
+      updatesViaStore: 'Ажурирања стижу путем Microsoft Storea.',
     },
     preview: {
       providerHeading: 'Prikazivač pregleda',

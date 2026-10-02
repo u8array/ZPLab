@@ -825,6 +825,7 @@ const ko = {
       checkUpdates: '업데이트 확인',
       checkingUpdates: '확인 중…',
       upToDate: '최신 상태입니다.',
+      updatesViaStore: '업데이트는 Microsoft Store를 통해 제공됩니다.',
     },
     preview: {
       providerHeading: '미리보기 렌더러',

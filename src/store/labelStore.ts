@@ -98,6 +98,8 @@ export {
   selectCanBatchExport,
   selectBatchPrintCount,
   selectKeepExportMetadata,
+  selectAppUpdateBusy,
+  selectAppUpdateSettled,
 } from './labelStore.selectors';
 import { currentObjects, selectEditorFrozen } from './labelStore.selectors';
 

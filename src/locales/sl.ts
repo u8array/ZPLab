@@ -825,6 +825,7 @@ const sl = {
       checkUpdates: 'Preveri posodobitve',
       checkingUpdates: 'Preverjanje…',
       upToDate: 'Imate najnovejšo različico.',
+      updatesViaStore: 'Posodobitve prihajajo prek Microsoft Store.',
     },
     preview: {
       providerHeading: 'Izrisovalnik predogleda',

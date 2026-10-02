@@ -207,3 +207,10 @@ export const selectBatchPrintCount = (s: LabelState): number => {
   const batch = selectBatchInputs(s);
   return batch ? batch.dataset.rows.length * (s.label.printQuantity ?? 1) : 0;
 };
+
+export const selectAppUpdateBusy = ({ appUpdate: { phase } }: LabelState) =>
+  phase === 'checking' || phase === 'installing';
+
+/** Nothing left to check: a restart is pending, or self-update is unavailable. */
+export const selectAppUpdateSettled = ({ appUpdate: { phase } }: LabelState) =>
+  phase === 'installed' || phase === 'unsupported';

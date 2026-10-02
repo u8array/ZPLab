@@ -172,6 +172,10 @@ jobs:
           echo "$BIN requires ${MAX:?no glibc symbols found}, floor $FLOOR"
           [ "$(printf '%s\n%s\n' "$MAX" "$FLOOR" | sort -V | tail -1)" = "$FLOOR" ] || { echo "built against a too-new glibc"; exit 1; }
 
+  msix:
+    needs: gates
+    uses: ./.github/workflows/msix.yml
+
   upload-web-dist:
     needs: [gates, create-release]
     runs-on: ubuntu-latest

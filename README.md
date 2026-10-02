@@ -250,4 +250,4 @@ Issues and pull requests are welcome. If a ZPL file imports incorrectly, attach 
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE). The app sends no data to the developer, see [PRIVACY.md](PRIVACY.md).

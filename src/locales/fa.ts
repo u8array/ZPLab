@@ -825,6 +825,7 @@ const fa = {
       checkUpdates: 'بررسی به‌روزرسانی‌ها',
       checkingUpdates: 'در حال بررسی…',
       upToDate: 'شما از آخرین نسخه استفاده می‌کنید.',
+      updatesViaStore: 'به‌روزرسانی‌ها از طریق Microsoft Store می‌رسند.',
     },
     preview: {
       providerHeading: 'موتور پیش‌نمایش',

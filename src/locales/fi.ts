@@ -825,6 +825,7 @@ const fi = {
       checkUpdates: 'Tarkista päivitykset',
       checkingUpdates: 'Tarkistetaan…',
       upToDate: 'Sinulla on uusin versio.',
+      updatesViaStore: 'Päivitykset saapuvat Microsoft Storen kautta.',
     },
     preview: {
       providerHeading: 'Esikatselun renderöijä',

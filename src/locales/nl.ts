@@ -825,6 +825,7 @@ const nl = {
       checkUpdates: 'Controleren op updates',
       checkingUpdates: 'Controleren…',
       upToDate: 'Je hebt de nieuwste versie.',
+      updatesViaStore: 'Updates komen via de Microsoft Store.',
     },
     preview: {
       providerHeading: 'Voorbeeldrenderer',

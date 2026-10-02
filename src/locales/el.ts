@@ -825,6 +825,7 @@ const el = {
       checkUpdates: 'Έλεγχος για ενημερώσεις',
       checkingUpdates: 'Έλεγχος…',
       upToDate: 'Έχετε την πιο πρόσφατη έκδοση.',
+      updatesViaStore: 'Οι ενημερώσεις έρχονται μέσω του Microsoft Store.',
     },
     preview: {
       providerHeading: 'Μηχανή απόδοσης προεπισκόπησης',

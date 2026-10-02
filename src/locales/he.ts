@@ -825,6 +825,7 @@ const he = {
       checkUpdates: 'בדיקת עדכונים',
       checkingUpdates: 'בודק…',
       upToDate: 'אתה מעודכן.',
+      updatesViaStore: 'העדכונים מגיעים דרך Microsoft Store.',
     },
     preview: {
       providerHeading: 'מנוע תצוגה מקדימה',

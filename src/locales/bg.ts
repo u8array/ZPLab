@@ -825,6 +825,7 @@ const bg = {
       checkUpdates: 'Проверка за актуализации',
       checkingUpdates: 'Проверка…',
       upToDate: 'Използвате най-новата версия.',
+      updatesViaStore: 'Актуализациите пристигат през Microsoft Store.',
     },
     preview: {
       providerHeading: 'Визуализатор за преглед',

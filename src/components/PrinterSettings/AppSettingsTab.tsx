@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { useT } from "../../hooks/useT";
-import { useLabelStore } from "../../store/labelStore";
+import { useLabelStore, selectAppUpdateBusy, selectAppUpdateSettled } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { formatTemplate } from "../../lib/formatTemplate";
 import { labelCls } from "../ui/formStyles";
@@ -46,6 +46,8 @@ export function AppSettingsTab() {
   const setCanvasSettings = useLabelStore((s) => s.setCanvasSettings);
   const resetSettings = useLabelStore((s) => s.resetSettings);
   const appUpdate = useLabelStore((s) => s.appUpdate);
+  const updateBusy = useLabelStore(selectAppUpdateBusy);
+  const updateSettled = useLabelStore(selectAppUpdateSettled);
   const checkForAppUpdate = useLabelStore((s) => s.checkForAppUpdate);
   const installAppUpdate = useLabelStore((s) => s.installAppUpdate);
   const relaunchApp = useLabelStore((s) => s.relaunchApp);
@@ -134,10 +136,10 @@ export function AppSettingsTab() {
               {t.app.updateRestart}
             </button>
           )}
-          {isDesktopShell && appUpdate.phase !== "available" && appUpdate.phase !== "installed" && (
+          {isDesktopShell && appUpdate.phase !== "available" && !updateSettled && (
             <button
               onClick={() => void checkForAppUpdate(true)}
-              disabled={appUpdate.phase === "checking" || appUpdate.phase === "installing"}
+              disabled={updateBusy}
               className="px-2 py-1 rounded text-[10px] font-mono border border-border bg-surface-2 hover:bg-border text-text transition-colors disabled:opacity-40"
             >
               {appUpdate.phase === "checking" ? loc.checkingUpdates : loc.checkUpdates}
@@ -146,6 +148,9 @@ export function AppSettingsTab() {
         </div>
         {appUpdate.phase === "upToDate" && (
           <span className="text-[10px] text-muted">{loc.upToDate}</span>
+        )}
+        {appUpdate.phase === "unsupported" && (
+          <span className="text-[10px] text-muted">{loc.updatesViaStore}</span>
         )}
         {appUpdate.phase === "installing" && (
           <span className="text-[10px] text-muted">{t.app.updateInstalling}</span>

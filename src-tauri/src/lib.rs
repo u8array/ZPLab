@@ -3,10 +3,12 @@ mod dataset;
 mod db;
 mod excel;
 mod mcp;
+mod package;
 mod preview;
 mod print;
 mod scope;
 mod transport;
+mod updates;
 mod usb;
 
 use tauri::Manager;
@@ -48,20 +50,28 @@ pub fn run() {
       mcp::mcp_stop,
       mcp::mcp_status,
       mcp::mcp_listeners_ready,
-      mcp::mcp_reply
+      mcp::mcp_reply,
+      updates::app_update_supported
     ]);
   // On the builder, not in setup(): config windows exist before the setup
   // closure runs, and window-state only restores/tracks via on_window_ready.
   #[cfg(desktop)]
   let builder = builder
     .plugin(tauri_plugin_window_state::Builder::default().build())
-    .plugin(tauri_plugin_updater::Builder::new().build())
     .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_opener::init())
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_fs::init());
+  let context = tauri::generate_context!();
+  credentials::init_service(&context.config().identifier);
+  #[cfg(desktop)]
+  let builder = if updates::self_update_enabled(context.config()) {
+    builder.plugin(tauri_plugin_updater::Builder::new().build())
+  } else {
+    builder
+  };
   builder
-    .build(tauri::generate_context!())
+    .build(context)
     .expect("error while building tauri application")
     .run(|app, event| {
       // Kill the MCP child on exit so it never outlives the app window.

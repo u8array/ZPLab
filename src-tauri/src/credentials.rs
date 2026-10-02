@@ -2,13 +2,34 @@
 //! Linux Secret Service). Keeps API keys out of localStorage/app-data JSON,
 //! which live as plaintext on disk.
 
+use std::sync::OnceLock;
+
 use keyring::Entry;
 
 use crate::transport::blocking;
 
-/// Keychain service name; the credential name (e.g. "labelary-api-key") is
-/// the account under it.
-const SERVICE: &str = "ZPLab";
+/// The GitHub build's service name. Renaming it would orphan every key its users already stored.
+const GITHUB_SERVICE: &str = "ZPLab";
+const GITHUB_IDENTIFIER: &str = "de.u8array.zplab";
+
+static SERVICE: OnceLock<String> = OnceLock::new();
+
+/// Keyed by app identifier, since Credential Manager is per user and the variants would collide.
+pub(crate) fn init_service(identifier: &str) {
+  let _ = SERVICE.set(service_for(identifier));
+}
+
+fn service_for(identifier: &str) -> String {
+  if identifier == GITHUB_IDENTIFIER {
+    GITHUB_SERVICE.to_string()
+  } else {
+    format!("{GITHUB_SERVICE} {identifier}")
+  }
+}
+
+fn service() -> &'static str {
+  SERVICE.get().map_or(GITHUB_SERVICE, String::as_str)
+}
 
 /// Typed credential error; the db connector consumes it via `#[from]`, the IPC
 /// commands stringify it at the edge.
@@ -23,7 +44,7 @@ pub(crate) enum CredError {
 }
 
 fn entry(name: &str) -> Result<Entry, CredError> {
-  Ok(Entry::new(SERVICE, name)?)
+  Ok(Entry::new(service(), name)?)
 }
 
 /// Rust-internal read (db connector), unlike the IPC `credential_get`
@@ -95,20 +116,27 @@ pub async fn credential_set(name: String, value: String) -> Result<(), String> {
 
 #[tauri::command]
 pub async fn credential_delete(name: String) -> Result<(), String> {
-  blocking(move || -> Result<(), CredError> {
-    match entry(&name)?.delete_credential() {
-      // Deleting a missing entry is the caller's desired end state, not an error.
-      Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
-      Err(e) => Err(e.into()),
-    }
-  })
-  .await?
-  .map_err(|e| e.to_string())
+  blocking(move || delete_password(&name))
+    .await?
+    .map_err(|e| e.to_string())
 }
 
 #[cfg(test)]
 mod tests {
   use super::*;
+
+  #[test]
+  fn github_build_keeps_its_service_and_the_store_variant_gets_its_own() {
+    let base: serde_json::Value = serde_json::from_str(include_str!("../tauri.conf.json")).unwrap();
+    let msix: serde_json::Value =
+      serde_json::from_str(include_str!("../tauri.msix.conf.json")).unwrap();
+    assert_eq!(base["identifier"], GITHUB_IDENTIFIER);
+    assert_eq!(service_for(GITHUB_IDENTIFIER), "ZPLab");
+    assert_eq!(
+      service_for(msix["identifier"].as_str().unwrap()),
+      "ZPLab de.u8array.zplab.msix"
+    );
+  }
 
   #[test]
   fn db_profile_credentials_are_not_readable_over_ipc() {

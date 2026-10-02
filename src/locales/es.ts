@@ -825,6 +825,7 @@ const es = {
       checkUpdates: 'Buscar actualizaciones',
       checkingUpdates: 'Comprobando…',
       upToDate: 'Ya tienes la última versión.',
+      updatesViaStore: 'Las actualizaciones llegan a través de Microsoft Store.',
     },
     preview: {
       providerHeading: 'Renderizador de vista previa',

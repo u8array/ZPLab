@@ -825,6 +825,7 @@ const ja = {
       checkUpdates: 'アップデートを確認',
       checkingUpdates: '確認中…',
       upToDate: '最新の状態です。',
+      updatesViaStore: 'アップデートはMicrosoft Store経由で届きます。',
     },
     preview: {
       providerHeading: 'プレビューのレンダラー',

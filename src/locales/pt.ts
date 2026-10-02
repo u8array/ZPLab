@@ -825,6 +825,7 @@ const pt = {
       checkUpdates: 'Verificar atualizações',
       checkingUpdates: 'Verificando…',
       upToDate: 'Você está atualizado.',
+      updatesViaStore: 'As atualizações chegam através da Microsoft Store.',
     },
     preview: {
       providerHeading: 'Renderizador de pré-visualização',

@@ -825,6 +825,7 @@ const sk = {
       checkUpdates: 'Skontrolovať aktualizácie',
       checkingUpdates: 'Kontrola…',
       upToDate: 'Máte najnovšiu verziu.',
+      updatesViaStore: 'Aktualizácie prichádzajú cez Microsoft Store.',
     },
     preview: {
       providerHeading: 'Vykresľovač náhľadu',

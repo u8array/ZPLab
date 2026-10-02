@@ -1,0 +1,116 @@
+name: MSIX (Microsoft Store)
+
+# The package for Partner Center comes from release.yml, behind its gates.
+# Pull requests run this only to keep the packaging buildable.
+on:
+  workflow_call:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src-tauri/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'scripts/build-msix.mjs'
+      - 'scripts/msix.mjs'
+      - '.github/workflows/msix.yml'
+
+concurrency:
+  group: msix-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  msix:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - run: pnpm install --frozen-lockfile
+
+      # LTO buys nothing on a pull request but time.
+      - name: fast release profile for pull requests
+        if: github.event_name == 'pull_request'
+        shell: pwsh
+        run: |
+          "CARGO_PROFILE_RELEASE_LTO=off" >> $env:GITHUB_ENV
+          "CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16" >> $env:GITHUB_ENV
+
+      - run: pnpm msix:build
+
+      # Launched through its package identity, as a Store install runs.
+      - name: smoke-launch the packaged app
+        # Windows PowerShell, since the UI Automation assemblies are .NET Framework only.
+        shell: powershell
+        run: |
+          # Registering an unsigned layout needs developer mode.
+          reg add 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' /t REG_DWORD /f /v AllowDevelopmentWithoutDevLicense /d 1
+          Add-AppxPackage -Register "$env:MSIX_DIR\layout\AppxManifest.xml"
+          # The manifest names the package and the app, so the launch cannot drift from it.
+          $manifest = [xml](Get-Content "$env:MSIX_DIR\layout\AppxManifest.xml")
+          $pkg = Get-AppxPackage $manifest.Package.Identity.Name
+          Start-Process "shell:AppsFolder\$($pkg.PackageFamilyName)!$($manifest.Package.Applications.Application.Id)"
+
+          $deadline = (Get-Date).AddSeconds(90)
+          do {
+            if ((Get-Date) -gt $deadline) { throw 'ZPLab did not start' }
+            Start-Sleep -Seconds 2
+            $proc = Get-Process ZPLab -ErrorAction Ignore | Select-Object -First 1
+          } until ($proc)
+          # The handle must be open before the process exits for ExitCode to stay readable.
+          $null = $proc.Handle
+          # The render gets its own time, so a slow launch is not blamed on the frontend.
+          $deadline = (Get-Date).AddSeconds(90)
+
+          Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
+          $ae = [System.Windows.Automation.AutomationElement]
+          $scope = [System.Windows.Automation.TreeScope]
+          $mainWindow = [System.Windows.Automation.AndCondition]::new([System.Windows.Automation.Condition[]]@(
+            [System.Windows.Automation.PropertyCondition]::new($ae::ProcessIdProperty, $proc.Id),
+            [System.Windows.Automation.PropertyCondition]::new($ae::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window),
+            [System.Windows.Automation.PropertyCondition]::new($ae::NameProperty, 'ZPLab')))
+          # en.ts palette.searchPlaceholder. The runner's UI language is English.
+          $search = [System.Windows.Automation.PropertyCondition]::new($ae::NameProperty, "Search objects$([char]0x2026)")
+          $lastError = $null
+          do {
+            if ($proc.HasExited) { throw "ZPLab exited with code $($proc.ExitCode)" }
+            if ((Get-Date) -gt $deadline) { throw "no palette search field, the frontend did not render. Last UIA error: $lastError" }
+            Start-Sleep -Seconds 2
+            # The tree is rebuilt while WebView2 mounts.
+            try {
+              $window = $ae::RootElement.FindFirst($scope::Children, $mainWindow)
+              $rendered = $window -and $window.FindFirst($scope::Descendants, $search)
+            } catch {
+              $lastError = $_.Exception.Message
+              $rendered = $false
+            }
+          } until ($rendered)
+
+          # The Store variant must not share the GitHub build's WebView2 profile.
+          $identifier = (Get-Content src-tauri/tauri.msix.conf.json -Raw | ConvertFrom-Json).identifier
+          $webviewData = "$env:LOCALAPPDATA\Packages\$($pkg.PackageFamilyName)\LocalCache\Local\$identifier\EBWebView"
+          if (-not (Test-Path $webviewData)) { throw "WebView2 profile missing at $webviewData" }
+          Stop-Process -Id $proc.Id
+
+      # A failed smoke test is when the package is wanted for inspection.
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: zplab-msix
+          path: ${{ env.MSIX_DIR }}/*.msix
+          if-no-files-found: error
+          # An MSIX is already a zip.
+          compression-level: 0

@@ -825,6 +825,7 @@ const ar = {
       checkUpdates: 'التحقق من التحديثات',
       checkingUpdates: 'جارٍ التحقق…',
       upToDate: 'أنت على أحدث إصدار.',
+      updatesViaStore: 'التحديثات تصل عبر Microsoft Store.',
     },
     preview: {
       providerHeading: 'عارض المعاينة',
