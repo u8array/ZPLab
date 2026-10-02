@@ -16,10 +16,11 @@ interface Props {
   issue?: string;
   /** Jumps to the printer tab that provisions the file, offered once the file is delivered at setup. */
   onOpenSetup?: { label: string; open: () => void };
+  disabled?: boolean;
 }
 
 /** One control for every file the printer needs, so job, setup and printer cannot diverge across two widgets. */
-export function DeliverySelect({ value, onChange, resource, subject, blocked, issue, onOpenSetup }: Props) {
+export function DeliverySelect({ value, onChange, resource, subject, blocked, issue, onOpenSetup, disabled }: Props) {
   const t = useT();
   const hints: Record<ResourceDelivery, string> = resource === 'format'
     ? { job: t.delivery.formatJobHint, setup: t.delivery.formatSetupHint, printer: t.delivery.formatPrinterHint }
@@ -34,6 +35,7 @@ export function DeliverySelect({ value, onChange, resource, subject, blocked, is
           if (next !== value) onChange(next);
         }}
         aria-label={`${t.delivery.label}: ${subject}`}
+        disabled={disabled}
         groups={[{ options: RESOURCE_DELIVERIES.map((way) => ({
           value: way,
           label: t.delivery[way],

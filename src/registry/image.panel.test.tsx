@@ -49,7 +49,40 @@ const option = (r: ReturnType<typeof render>, name: string) => {
   return r.getByRole("option", { name }) as HTMLElement;
 };
 
+const inline = (): LabelObjectBase & { props: ImageProps } => {
+  const { storedAs: _storedAs, ...props } = stored().props;
+  return { ...stored(), props };
+};
+
 describe("image panel delivery", () => {
+  it("names an inline graphic on the printer when a way off the job is chosen", () => {
+    const onChange = vi.fn();
+    const r = render(<Panel obj={inline()} onChange={onChange} />);
+    expect(r.getByRole("button", { name: /^Delivery/ }).textContent).toContain("With every job");
+    expect(r.queryByRole("button", { name: /Embed inline/ })).toBeNull();
+    choose(r, "Already on the printer");
+    expect(onChange).toHaveBeenCalledWith({ storedAs: { device: "R", name: expect.stringMatching(/^IMG_[0-9A-F]{4}$/), embedInZpl: false } });
+    expect(useLabelStore.getState().printerProfile.setupGraphics).toBeUndefined();
+  });
+
+  it("keeps opaque bytes off the printer and the setup script", () => {
+    const obj = inline();
+    const r = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: undefined, rawGf: GFA } }} onChange={vi.fn()} />);
+    expect(option(r, "Already on the printer").getAttribute("aria-disabled")).toBe("true");
+    expect(r.getByRole("option", { name: "Once in the setup script" }).getAttribute("aria-disabled")).toBe("true");
+    expect(r.getByRole("option", { name: "With every job" }).getAttribute("aria-disabled")).toBeNull();
+  });
+
+  it("copies an inline graphic into the profile under its drafted name when setup is chosen", () => {
+    const onChange = vi.fn();
+    const r = render(<Panel obj={inline()} onChange={onChange} />);
+    choose(r, "Once in the setup script");
+    const entries = useLabelStore.getState().printerProfile.setupGraphics ?? [];
+    expect(entries).toHaveLength(1);
+    expect(entries[0]).toMatchObject({ path: expect.stringMatching(/^R:IMG_[0-9A-F]{4}\.GRF$/), gfa: GFA });
+    expect(onChange).toHaveBeenCalledWith({ storedAs: { device: "R", name: entries[0]?.path.slice(2, -4), embedInZpl: false }, _gfaCache: GFA });
+  });
+
   it("copies the bytes into the profile and leaves the label recall-only when setup is chosen", () => {
     const onChange = vi.fn();
     const r = render(<Panel obj={stored()} onChange={onChange} />);
@@ -82,6 +115,39 @@ describe("image panel delivery", () => {
     const obj = stored();
     const r = render(<Panel obj={{ ...obj, props: { ...obj.props, _gfaCache: undefined } }} onChange={() => undefined} />);
     expect(r.getByText(/Needs the image data/)).toBeTruthy();
+    expect(option(r, "With every job").getAttribute("aria-disabled")).toBe("true");
+  });
+
+  it("keeps the select shut for a locked object, so no orphan upload lands in the profile", () => {
+    const onChange = vi.fn();
+    const r = render(<Panel obj={inline()} onChange={onChange} locked />);
+    const trigger = r.getByRole("button", { name: /^Delivery/ }) as HTMLButtonElement;
+    expect(trigger.disabled).toBe(true);
+    act(() => {
+      fireEvent.click(trigger);
+    });
+    expect(r.queryByRole("option", { name: "Once in the setup script" })).toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+    expect(useLabelStore.getState().printerProfile.setupGraphics).toBeUndefined();
+  });
+
+  it("drafts a fresh name once the profile took the last one", () => {
+    const onChange = vi.fn();
+    const r = render(<Panel obj={inline()} onChange={onChange} />);
+    choose(r, "Once in the setup script");
+    const first = (onChange.mock.calls[0]?.[0] as ImageProps).storedAs?.name;
+    expect(useLabelStore.getState().printerProfile.setupGraphics?.[0]?.path).toBe(`R:${first}.GRF`);
+    r.rerender(<Panel obj={inline()} onChange={onChange} />);
+    choose(r, "Already on the printer");
+    const second = (onChange.mock.calls[1]?.[0] as ImageProps).storedAs?.name;
+    expect(second).toMatch(/^IMG_[0-9A-F]{4}$/);
+    expect(second).not.toBe(first);
+  });
+
+  it("blocks the job for a rotated inline graphic", () => {
+    const obj = inline();
+    const r = render(<Panel obj={{ ...obj, props: { ...obj.props, rotation: "R" } }} onChange={() => undefined} />);
+    expect(r.getByText(/Needs image data to send/)).toBeTruthy();
     expect(option(r, "With every job").getAttribute("aria-disabled")).toBe("true");
   });
 

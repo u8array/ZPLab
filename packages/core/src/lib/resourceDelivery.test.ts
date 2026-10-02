@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyFontDelivery, applyGraphicDelivery, fontDelivery, graphicDelivery, graphicJobShips } from "./resourceDelivery";
+import { applyFontDelivery, applyGraphicDelivery, draftGraphicIdentity, fontDelivery, graphicDelivery, graphicJobShips, graphicWayBlocks } from "./resourceDelivery";
 import type { ImageProps } from "../registry/image";
 
 const GFA = "^GFA,4,4,1,00FFFF00";
@@ -42,8 +42,8 @@ describe("fontDelivery", () => {
 });
 
 describe("graphicDelivery", () => {
-  it("has no way to choose for an inline ^GF, and reads job while the design ships the bytes", () => {
-    expect(graphicDelivery(image(null), [entry])).toBeUndefined();
+  it("reads job for an inline ^GF and for a design that ships the bytes", () => {
+    expect(graphicDelivery(image(null), [entry])).toBe("job");
     expect(graphicDelivery(image(), [entry])).toBe("job");
     expect(graphicDelivery(image({ embedInZpl: false }), [entry])).toBe("setup");
     expect(graphicDelivery(image({ embedInZpl: false }), undefined)).toBe("printer");
@@ -80,7 +80,39 @@ describe("graphicDelivery", () => {
     expect(graphicJobShips(image({ embedInZpl: false }))).toBe(true);
     expect(graphicJobShips({ ...image(), _gfaCache: undefined })).toBe(false);
     expect(graphicJobShips({ ...image(), _gfaCache: "^GFA,4,4,1," })).toBe(false);
-    expect(graphicJobShips(image(null))).toBe(false);
+  });
+
+  it("names an inline graphic only on the way off the job, and never opaque bytes", () => {
+    const identity = { device: "R", name: "IMG_1" };
+    expect(applyGraphicDelivery("job", image(null), undefined, identity)).toEqual({ patch: null, setupGraphics: undefined });
+    expect(applyGraphicDelivery("printer", image(null), undefined, identity)).toEqual({ patch: { storedAs: { ...identity, embedInZpl: false } }, setupGraphics: undefined });
+    const provided = applyGraphicDelivery("setup", image(null), undefined, identity);
+    expect(provided).toMatchObject({ patch: { storedAs: { ...identity, embedInZpl: false }, _gfaCache: expect.stringContaining("^GFA") }, setupGraphics: [{ path: "R:IMG_1.GRF", gfa: expect.stringContaining("^GFA") }] });
+    expect(applyGraphicDelivery("printer", { ...image(null), rawGf: "^GFA,4,4,1,00FFFF00" }, undefined, identity)).toBeUndefined();
+  });
+
+  it("names why a way is shut, in the order the delivery would refuse it", () => {
+    const identity = { device: "R", name: "IMG_1" };
+    expect(graphicWayBlocks(image(null), identity, undefined, null)).toEqual({ job: undefined, setup: undefined });
+    expect(graphicWayBlocks({ ...image(null), _gfaCache: undefined }, identity, undefined, null)).toEqual({ job: "noJobBytes", setup: "noUploadBytes" });
+    expect(graphicWayBlocks({ ...image(), _gfaCache: undefined }, identity, undefined, null)).toEqual({ job: "noUploadBytes", setup: "noUploadBytes" });
+    expect(graphicWayBlocks({ ...image(null), _gfaCache: undefined, rawGf: GFA }, identity, undefined, null)).toEqual({ job: undefined, setup: "opaque", printer: "opaque" });
+    expect(graphicWayBlocks(image(null), identity, [{ path: "R:IMG_1.GRF", gfa: GFA }], null)).toEqual({ job: undefined });
+    expect(graphicWayBlocks(image(null), identity, undefined, "unshippable")).toEqual({ job: undefined, setup: "tooWide" });
+    expect(graphicWayBlocks(image(null), identity, undefined, "tooLarge")).toEqual({ job: undefined, setup: "tooLarge" });
+  });
+
+  it("drafts a printer name no profile entry holds", () => {
+    const names = ["IMG_0000", "IMG_1111"];
+    const taken = names.map((n) => ({ path: `R:${n}.GRF`, gfa: GFA }));
+    for (let i = 0; i < 50; i++) expect(names).not.toContain(draftGraphicIdentity(taken).name);
+  });
+
+  it("ships an inline job from an upright cache or a raw ^GF and from nothing else", () => {
+    expect(graphicJobShips(image(null))).toBe(true);
+    expect(graphicJobShips({ ...image(null), rotation: "R" })).toBe(false);
+    expect(graphicJobShips({ ...image(null), _gfaCache: undefined })).toBe(false);
+    expect(graphicJobShips({ ...image(null), _gfaCache: undefined, rawGf: "^GFA,4,4,1,00FFFF00" })).toBe(true);
   });
 
   it("refuses setup for bytes the script cannot carry, and does nothing without a printer name", () => {

@@ -6,15 +6,15 @@ import { buttonCls, inputCls, labelCls } from '../components/Properties/styles';
 import { disabledCls } from '../components/ui/formStyles';
 import { loadImageFile, getImage } from '@zplab/core/lib/imageCache';
 import { imageToGFA } from '@zplab/core/lib/imageToZpl';
-import { defaultStorageName, formatStoragePath, MAX_STORAGE_NAME_LEN, sanitizeStorageName, STORAGE_DEVICES } from '@zplab/core/lib/storagePath';
+import { formatStoragePath, MAX_STORAGE_NAME_LEN, sanitizeStorageName, STORAGE_DEVICES } from '@zplab/core/lib/storagePath';
 import { Tooltip } from '../components/ui/Tooltip';
 import { SectionCard, StaticSectionCard } from '../components/Properties/SectionCard';
 import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { RotationSelect } from '../components/Properties/RotationSelect';
 import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
-import { IMAGE_PROP_SPECS, canSendSetupGraphic, isImageRotatable, recallCommand, recallStoragePath, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
-import { applyGraphicDelivery, graphicDelivery, graphicJobShips, providedGraphic, type ResourceDelivery } from '@zplab/core/lib/resourceDelivery';
+import { IMAGE_PROP_SPECS, isImageRotatable, recallCommand, recallStoragePath, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
+import { applyGraphicDelivery, draftGraphicIdentity, graphicDelivery, graphicWayBlocks, providedGraphic, type GraphicWayBlock, type ResourceDelivery } from '@zplab/core/lib/resourceDelivery';
 import { findSetupEntry } from '@zplab/core/lib/setupEntries';
 import { uploadedGraphicPath } from '@zplab/core/lib/storagePath';
 import { DeliverySelect } from '../components/Properties/DeliverySelect';
@@ -22,7 +22,7 @@ import { useCachedImages } from '../hooks/useCachedImages';
 import { useLabelStore } from '../store/labelStore';
 
 export const imagePanel: ObjectTypeUi<ImageProps> = {
-  PropertiesPanel: ({ obj, onChange }) => {
+  PropertiesPanel: ({ obj, onChange, locked }) => {
     const t = useT();
     const p = obj.props;
     const fileRef = useRef<HTMLInputElement>(null);
@@ -79,41 +79,39 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
       onChange(result ? { threshold, _gfaCache: result.zpl } : { threshold });
     }, [onChange, p.imageId, p.widthDots]);
 
-    // Lifted local const so the storage-section closures get a narrowed
-    // reference that survives into onChange callbacks. Without it TS
-    // re-widens `p.storedAs` to `... | undefined` inside the handlers
-    // and we'd need `?.`-fallbacks for every field access.
     const storedAs = p.storedAs;
     const setupGraphics = useLabelStore((s) => s.printerProfile.setupGraphics);
     const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
     const openObjects = useLabelStore((s) => s.setPrinterSettingsTab);
-    const setupState = setupGraphicState(providedGraphic(p), setupGraphics);
-    const canSend = canSendSetupGraphic(providedGraphic(p));
+    // Held in state so the drafted name does not churn across renders.
+    const [draft, setDraft] = useState(() => draftGraphicIdentity(setupGraphics));
+    // A draft the profile already holds would adopt that entry's bytes, so redraft before the checks read it.
+    if (!storedAs && findSetupEntry(setupGraphics, uploadedGraphicPath(draft))) setDraft(draftGraphicIdentity(setupGraphics));
+    const identity = storedAs ?? draft;
+    const identified = providedGraphic({ ...p, storedAs: identity });
+    const setupState = setupGraphicState(identified, setupGraphics);
     // Remembered here, not in the object: caching a refused encode would dirty the design for nothing.
     const [setupRefusal, setSetupRefusal] = useState<{ imageId: string; cache: string | undefined; fit: 'tooLarge' | 'unshippable' } | null>(null);
     const refusal = setupRefusal?.imageId === p.imageId && setupRefusal.cache === p._gfaCache ? setupRefusal.fit : null;
     const delivery = graphicDelivery(p, setupGraphics);
-    // Only a missing entry needs an encode, so only then do the bytes decide whether setup can be chosen.
-    const entryMissing = storedAs !== undefined && findSetupEntry(setupGraphics, uploadedGraphicPath(storedAs)) === undefined;
-    const setupBlocked = !entryMissing
-      ? undefined
-      : setupState === 'tooLarge' || refusal === 'tooLarge'
-        ? t.printerSettings.objects.tooLarge
-        : refusal === 'unshippable'
-          ? t.printerSettings.objects.tooWide
-          : !canSend
-            ? t.delivery.setupNeedsBytes
-            : undefined;
-    const jobBlocked = graphicJobShips(p) ? undefined : t.delivery.setupNeedsBytes;
+    const blockText: Record<GraphicWayBlock, string> = {
+      opaque: t.delivery.opaqueBytes,
+      tooLarge: t.printerSettings.objects.tooLarge,
+      tooWide: t.printerSettings.objects.tooWide,
+      noUploadBytes: t.delivery.setupNeedsBytes,
+      noJobBytes: t.delivery.jobNeedsBytes,
+    };
+    const blocks = graphicWayBlocks(p, draft, setupGraphics, refusal);
+    const blocked = (way: ResourceDelivery) => (blocks[way] === undefined ? undefined : blockText[blocks[way]]);
     const issue = delivery === 'job'
-      ? jobBlocked
+      ? blocked('job')
       : delivery === 'setup' && setupState === 'stale'
         ? t.printerSettings.objects.staleEntry
         : delivery === 'setup' && setupState === 'unknown'
           ? t.printerSettings.objects.unverifiedEntry
           : undefined;
     const deliver = (next: ResourceDelivery) => {
-      const result = applyGraphicDelivery(next, p, setupGraphics);
+      const result = applyGraphicDelivery(next, p, setupGraphics, draft);
       if (!result) return;
       if ('refused' in result) return setSetupRefusal({ imageId: p.imageId, cache: p._gfaCache, fit: result.refused });
       if (result.setupGraphics !== setupGraphics && !patchPrinterProfile({ setupGraphics: result.setupGraphics ? [...result.setupGraphics] : undefined })) return;
@@ -217,11 +215,6 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
             />
           )}
 
-          {/* Printer storage (~DY + ^XG). Section label + info icon are
-              always visible so the feature is discoverable in both states;
-              the body switches between an Activate-button (off) and the
-              device/name editor (on). Border-top separates it visually
-              from the rendering properties above. */}
           <div className="flex flex-col gap-1 mt-1 pt-3 border-t border-border">
             <div className="flex items-center gap-2">
               <label className={labelCls}>{t.registry.image.storage}</label>
@@ -263,37 +256,28 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
                 <span className="text-[10px] text-muted font-mono">
                   {formatStoragePath(recallStoragePath(p) ?? storedAs, true)}
                 </span>
-                {delivery && (
-                  <DeliverySelect
-                    resource="graphic"
-                    subject={formatStoragePath(storedAs, true)}
-                    value={delivery}
-                    onChange={deliver}
-                    blocked={{ ...(jobBlocked === undefined ? {} : { job: jobBlocked }), ...(setupBlocked === undefined ? {} : { setup: setupBlocked }) }}
-                    issue={issue}
-                    onOpenSetup={{ label: t.registry.image.openObjects, open: () => openObjects('storedGraphics') }}
-                  />
-                )}
-                {(refusal || setupState === 'tooLarge') && (
-                  <span className="text-[10px] text-warning">{refusal === 'unshippable' ? t.printerSettings.objects.tooWide : t.printerSettings.objects.tooLarge}</span>
-                )}
-                <button
-                  type="button"
-                  className={buttonCls}
-                  onClick={() => onChange({ storedAs: undefined })}
-                >
-                  {t.registry.image.storeInline}
-                </button>
               </>
-            ) : (
+            ) : null}
+            <DeliverySelect
+              resource="graphic"
+              subject={storedAs ? formatStoragePath(storedAs, true) : cached?.name ?? t.registry.image.source}
+              value={delivery}
+              onChange={deliver}
+              blocked={{ job: blocked('job'), setup: blocked('setup'), printer: blocked('printer') }}
+              disabled={locked}
+              issue={issue}
+              onOpenSetup={{ label: t.registry.image.openObjects, open: () => openObjects('storedGraphics') }}
+            />
+            {(refusal || (storedAs && setupState === 'tooLarge')) && (
+              <span className="text-[10px] text-warning">{refusal === 'unshippable' ? t.printerSettings.objects.tooWide : t.printerSettings.objects.tooLarge}</span>
+            )}
+            {storedAs && (
               <button
                 type="button"
                 className={buttonCls}
-                onClick={() =>
-                  onChange({ storedAs: { device: 'R', name: defaultStorageName() } })
-                }
+                onClick={() => onChange({ storedAs: undefined })}
               >
-                {t.registry.image.storeOnPrinter}
+                {t.registry.image.storeInline}
               </button>
             )}
           </div>

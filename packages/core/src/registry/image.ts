@@ -273,6 +273,12 @@ export function storedGraphicShips(p: ImageProps): boolean {
   return !!getImage(p.imageId) || (!!p._gfaCache && gfShipsSafely(p._gfaCache));
 }
 
+/** Whether an inline ^GF ships bytes, the counterpart of storedGraphicShips. */
+export function inlineGraphicShips(p: ImageProps): boolean {
+  if (p.rawGf) return gfShipsSafely(p.rawGf);
+  return !!getImage(p.imageId) || gfaCacheUsable(p);
+}
+
 /** The path a recall names: the upload's when one ships, else the reference as written. */
 export function recallStoragePath(p: ImageProps): StoragePath | undefined {
   if (!p.storedAs) return undefined;

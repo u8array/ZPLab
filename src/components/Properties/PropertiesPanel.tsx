@@ -262,6 +262,7 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
             key={obj.id}
             obj={obj}
             onChange={(props: object) => updateObject(obj.id, { props })}
+            locked={switchLocked}
           />
         )}
 

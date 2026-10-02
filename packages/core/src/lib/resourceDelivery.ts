@@ -1,7 +1,7 @@
 import type { CustomFontMapping } from "../types/LabelConfig";
 import type { PrinterProfile, SetupGraphic } from "../types/PrinterProfile";
-import { setupGraphicOf, storedGraphicShips, type ImageProps } from "../registry/image";
-import { uploadedGraphicPath } from "./storagePath";
+import { canSendSetupGraphic, inlineGraphicShips, setupGraphicOf, setupGraphicState, storedGraphicShips, type ImageProps } from "../registry/image";
+import { defaultStorageName, uploadedGraphicPath } from "./storagePath";
 import { findSetupEntry, withSetupEntry, withoutSetupEntry } from "./setupEntries";
 
 /** How a file reaches the printer: with every job, once through the setup script, or assumed to be there. */
@@ -22,10 +22,9 @@ export function fontDelivery(mapping: FontShip, path: string, setupFonts: readon
   return findSetupEntry(setupFonts, path) ? "setup" : "printer";
 }
 
-/** Undefined for an image without a printer name, which prints as inline ^GF and has no way to choose. */
-export function graphicDelivery(p: ImageProps, setupGraphics: readonly SetupGraphic[] | undefined): ResourceDelivery | undefined {
-  if (!p.storedAs) return undefined;
-  if (p.storedAs.embedInZpl !== false) return "job";
+/** Job while the design ships the bytes, else setup or printer by the profile entry. */
+export function graphicDelivery(p: ImageProps, setupGraphics: readonly SetupGraphic[] | undefined): ResourceDelivery {
+  if (!p.storedAs || p.storedAs.embedInZpl !== false) return "job";
   return findSetupEntry(setupGraphics, uploadedGraphicPath(p.storedAs)) ? "setup" : "printer";
 }
 
@@ -45,7 +44,8 @@ export function applyFontDelivery(
 
 /** Whether "job" would put bytes into the stream, so the choice never claims what the emit cannot send. */
 export function graphicJobShips(p: ImageProps): boolean {
-  return p.storedAs !== undefined && storedGraphicShips({ ...p, storedAs: { ...p.storedAs, embedInZpl: true } });
+  if (!p.storedAs) return inlineGraphicShips(p);
+  return storedGraphicShips({ ...p, storedAs: { ...p.storedAs, embedInZpl: true } });
 }
 
 /** A delivery that provides the file names it as the upload does, so a recall spelled with another
@@ -56,17 +56,53 @@ export function providedGraphic(p: ImageProps): ImageProps {
   return { ...p, storedAs };
 }
 
+export type GraphicIdentity = Pick<NonNullable<ImageProps["storedAs"]>, "device" | "name">;
+
+/** A printer name no profile entry holds yet, so sending the graphic cannot adopt another one's bytes. */
+export function draftGraphicIdentity(setupGraphics: readonly SetupGraphic[] | undefined): GraphicIdentity {
+  let identity: GraphicIdentity;
+  do identity = { device: "R", name: defaultStorageName() };
+  while (findSetupEntry(setupGraphics, uploadedGraphicPath(identity)));
+  return identity;
+}
+
 type GraphicDeliveryPatch =
   | { patch: Partial<ImageProps> | null; setupGraphics: readonly SetupGraphic[] | undefined }
   | { refused: "tooLarge" | "unshippable" };
 
-/** A profile entry the design already has stays as it is, so choosing "setup" encodes only when none exists. */
+export type GraphicWayBlock = "opaque" | "tooLarge" | "tooWide" | "noUploadBytes" | "noJobBytes";
+
+/** Why a way cannot be chosen, so the select and its reasons never disagree with the delivery that follows. */
+export function graphicWayBlocks(
+  p: ImageProps,
+  identity: GraphicIdentity,
+  setupGraphics: readonly SetupGraphic[] | undefined,
+  refusal: "tooLarge" | "unshippable" | null,
+): Partial<Record<ResourceDelivery, GraphicWayBlock>> {
+  const job = graphicJobShips(p) ? undefined : p.storedAs ? "noUploadBytes" : "noJobBytes";
+  if (p.rawGf) return { job, setup: "opaque", printer: "opaque" };
+  const identified = providedGraphic({ ...p, storedAs: p.storedAs ?? identity });
+  // An existing entry needs no encode, so only a missing one lets the bytes decide.
+  if (findSetupEntry(setupGraphics, uploadedGraphicPath(identified.storedAs ?? identity))) return { job };
+  const setup = setupGraphicState(identified, setupGraphics) === "tooLarge" || refusal === "tooLarge"
+    ? "tooLarge"
+    : refusal === "unshippable"
+      ? "tooWide"
+      : canSendSetupGraphic(identified)
+        ? undefined
+        : "noUploadBytes";
+  return { job, setup };
+}
+
+/** An existing profile entry stays, and an inline graphic takes `identity` only on the way off the job. */
 export function applyGraphicDelivery(
   next: ResourceDelivery,
   p: ImageProps,
   setupGraphics: readonly SetupGraphic[] | undefined,
+  identity?: GraphicIdentity,
 ): GraphicDeliveryPatch | undefined {
-  const storedAs = p.storedAs;
+  // Opaque bytes emit before any recall, so a printer name could never replace them.
+  const storedAs: ImageProps["storedAs"] = p.storedAs ?? (p.rawGf ? undefined : identity);
   if (!storedAs) return undefined;
   const path = uploadedGraphicPath(storedAs);
   const ships = storedAs.embedInZpl !== false;

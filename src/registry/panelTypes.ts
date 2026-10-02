@@ -8,6 +8,8 @@ export interface ObjectTypeUi<P extends object = object> {
   PropertiesPanel: React.ComponentType<{
     obj: LabelObjectBase & { props: P };
     onChange: (props: Partial<P>) => void;
+    /** The object or a group above it is locked, so the store refuses every props write. */
+    locked?: boolean;
   }>;
 }
 
