@@ -1271,6 +1271,8 @@ const hr = {
     image: {
       source: 'Izvor slike',
       selectImage: 'Odaberite sliku…',
+      cachedGroup: 'U ovom pregledniku',
+      profileGroup: 'U profilu pisača',
       upload: 'Prenesi sliku',
       uploading: 'Prenošenje…',
       uploadError: 'Sliku nije moguće učitati',

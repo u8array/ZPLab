@@ -1271,6 +1271,8 @@ const no = {
     image: {
       source: 'Bildekilde',
       selectImage: 'Velg bilde…',
+      cachedGroup: 'I denne nettleseren',
+      profileGroup: 'I skriverprofilen',
       upload: 'Last opp bilde',
       uploading: 'Laster opp…',
       uploadError: 'Kunne ikke laste bilde',

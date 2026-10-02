@@ -1,11 +1,16 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
-import { render, cleanup, act, fireEvent } from "@testing-library/react";
+import { render, cleanup, act, fireEvent, waitFor } from "@testing-library/react";
+import { putImage, removeImage } from "@zplab/core/lib/imageCache";
+
+// jsdom loads no image, so a real encode would sit out the 15 s decode timeout.
+vi.mock("@zplab/core/lib/imageToZpl", () => ({ imageToGFA: vi.fn(async () => ({ zpl: "^GFA,4,4,1,00FFFF00" })) }));
 import { imagePanel } from "./image.panel";
 import { useLabelStore } from "../store/labelStore";
 import type { ImageProps } from "@zplab/core/registry/image";
 import type { LabelObjectBase } from "@zplab/core/types/LabelObject";
 import type * as ImageRegistry from "@zplab/core/registry/image";
+import { ObjectRegistry } from "@zplab/core/registry";
 
 const { verdict } = vi.hoisted(() => ({ verdict: vi.fn<() => { fit: "tooLarge" | "unshippable" } | undefined>(() => undefined) }));
 vi.mock("@zplab/core/registry/image", async (importOriginal) => {
@@ -39,6 +44,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  removeImage("cat");
   act(() => useLabelStore.setState({ printerProfile: {} }));
 });
 
@@ -53,6 +59,116 @@ const inline = (): LabelObjectBase & { props: ImageProps } => {
   const { storedAs: _storedAs, ...props } = stored().props;
   return { ...stored(), props };
 };
+
+describe("image source", () => {
+  it("places a graphic the profile holds as a recall with the profile's bytes and size", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+    const onChange = vi.fn();
+    const r = render(<Panel obj={inline()} onChange={onChange} />);
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: /^Image source/ }));
+    });
+    act(() => {
+      r.getByRole("option", { name: "R:LOGO.GRF" }).click();
+    });
+    expect(onChange).toHaveBeenCalledWith({ imageId: "", storedAs: { device: "R", name: "LOGO", embedInZpl: false }, _gfaCache: GFA, rawGf: undefined, widthDots: 8, heightDots: 4 });
+  });
+
+  it("retires opaque bytes when a profile graphic is picked, so the recall is what prints", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+    const onChange = vi.fn();
+    const obj = inline();
+    const opaque = { ...obj, props: { ...obj.props, _gfaCache: undefined, rawGf: "^GFA,4,4,1,FFFFFFFF" } };
+    const r = render(<Panel obj={opaque} onChange={onChange} />);
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: /^Image source/ }));
+    });
+    act(() => {
+      r.getByRole("option", { name: "R:LOGO.GRF" }).click();
+    });
+    const patch = onChange.mock.calls[0]?.[0] as Partial<ImageProps>;
+    const picked = { ...opaque, props: { ...opaque.props, ...patch } };
+    const zpl = ObjectRegistry.image!.toZPL?.(picked as never, {} as never) ?? "";
+    expect(zpl).toContain("^XGR:LOGO.GRF");
+    expect(zpl).not.toContain("FFFFFFFF");
+  });
+
+  it("shows no profile entry chosen for a recall spelled .PNG", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+    const png = stored({ ext: "PNG", recall: "IM", embedInZpl: false });
+    const r = render(<Panel obj={png} onChange={vi.fn()} />);
+    expect(r.getByRole("button", { name: /^Image source/ }).textContent).toMatch(/Select image/);
+  });
+
+  it("retires a recall-only name when a browser image is picked, so the picked bytes print", async () => {
+    putImage({ id: "cat", name: "cat.png", dataUrl: "data:image/png;base64,", width: 1, height: 1 });
+    const onChange = vi.fn();
+    const r = render(<Panel obj={stored({ embedInZpl: false })} onChange={onChange} />);
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: /^Image source/ }));
+    });
+    act(() => {
+      r.getByRole("option", { name: "cat.png" }).click();
+    });
+    await waitFor(() => expect(onChange).toHaveBeenCalled());
+    const patch = onChange.mock.calls[0]?.[0] as Partial<ImageProps>;
+    expect(patch).toMatchObject({ imageId: "cat", rawGf: undefined, storedAs: undefined });
+    expect("storedAs" in patch).toBe(true);
+  });
+
+  it("shows the profile's own spelling of a recalled path", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "r:logo.grf", gfa: GFA }] } }));
+    const r = render(<Panel obj={stored({ embedInZpl: false })} onChange={vi.fn()} />);
+    expect(r.getByRole("button", { name: /^Image source/ }).textContent).toContain("r:logo.grf");
+  });
+
+  it("offers the profile entry to a graphic that still ships its own bytes", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+    const onChange = vi.fn();
+    const r = render(<Panel obj={stored()} onChange={onChange} />);
+    expect(r.getByRole("button", { name: /^Image source/ }).textContent).toMatch(/Select image/);
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: /^Image source/ }));
+    });
+    act(() => {
+      r.getByRole("option", { name: "R:LOGO.GRF" }).click();
+    });
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ storedAs: { device: "R", name: "LOGO", embedInZpl: false } }));
+  });
+
+  it("refreshes a recall whose bytes the profile has replaced on a re-pick", () => {
+    const fresh = "^GFA,4,4,1,FFFFFFFF";
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: fresh }] } }));
+    const onChange = vi.fn();
+    const r = render(<Panel obj={stored({ embedInZpl: false })} onChange={onChange} />);
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: /^Image source/ }));
+    });
+    act(() => {
+      r.getByRole("option", { name: "R:LOGO.GRF" }).click();
+    });
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ _gfaCache: fresh }));
+  });
+
+  it("writes nothing on a re-pick of the current source", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+    const onChange = vi.fn();
+    const r = render(<Panel obj={stored({ embedInZpl: false })} onChange={onChange} />);
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: /^Image source/ }));
+    });
+    act(() => {
+      r.getByRole("option", { name: "R:LOGO.GRF" }).click();
+    });
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("shows the recalled path as the chosen source", () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+    const r = render(<Panel obj={stored({ embedInZpl: false })} onChange={vi.fn()} />);
+    expect(r.getByRole("button", { name: /^Image source/ }).textContent).toContain("R:LOGO.GRF");
+  });
+});
 
 describe("image panel delivery", () => {
   it("names an inline graphic on the printer when a way off the job is chosen", () => {

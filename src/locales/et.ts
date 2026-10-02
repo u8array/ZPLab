@@ -1271,6 +1271,8 @@ const et = {
     image: {
       source: 'Pildi allikas',
       selectImage: 'Vali pilt…',
+      cachedGroup: 'Selles brauseris',
+      profileGroup: 'Printeriprofiilis',
       upload: 'Laadi pilt üles',
       uploading: 'Üleslaadimine…',
       uploadError: 'Pildi laadimine ebaõnnestus',

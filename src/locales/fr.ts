@@ -1271,6 +1271,8 @@ const fr = {
     image: {
       source: 'Source de l\'image',
       selectImage: 'Sélectionner une image…',
+      cachedGroup: 'Dans ce navigateur',
+      profileGroup: "Dans le profil d'imprimante",
       upload: 'Télécharger une image',
       uploading: 'Téléchargement…',
       uploadError: 'Impossible de charger l\'image',

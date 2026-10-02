@@ -1271,6 +1271,8 @@ const sr = {
     image: {
       source: 'Извор слике',
       selectImage: 'Изаберите слику…',
+      cachedGroup: 'У овом претраживачу',
+      profileGroup: 'У профилу штампача',
       upload: 'Отпремите слику',
       uploading: 'Отпремање…',
       uploadError: 'Слика није могла да се учита',

@@ -1271,6 +1271,8 @@ const pl = {
     image: {
       source: 'Źródło obrazu',
       selectImage: 'Wybierz obraz…',
+      cachedGroup: 'W tej przeglądarce',
+      profileGroup: 'W profilu drukarki',
       upload: 'Prześlij obraz',
       uploading: 'Przesyłanie…',
       uploadError: 'Nie można załadować obrazu',

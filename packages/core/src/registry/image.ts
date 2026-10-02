@@ -4,7 +4,7 @@ import { SETUP_UPLOAD_MAX_CHARS, type SetupGraphic } from '../types/PrinterProfi
 import { graphicFieldPos } from './zplHelpers';
 import { getImage } from '../lib/imageCache';
 import { gfaFromRaster, rasterizeMono, scaledHeightDots } from '../lib/imageToZpl';
-import { formatStoragePath, uploadedGraphicPath, type StoragePath } from '../lib/storagePath';
+import { formatStoragePath, parseStoragePath, uploadedGraphicPath, type StoragePath } from '../lib/storagePath';
 import { findSetupEntry } from '../lib/setupEntries';
 import { isAxisSwapped, objectRotation, type ZplRotation, ROTATION_SPEC } from './rotation';
 
@@ -55,7 +55,7 @@ export function imageEmitDims(p: ImageProps): { width: number; height: number } 
   }
   const header = gfaHeaderDims(headerByteSource(p));
   if (header) {
-    return { width: header.width, height: header.height ?? (p.heightDots ?? p.widthDots) };
+    return { width: header.width, height: header.height };
   }
   return { width: gfByteWidth(p.widthDots), height: imageEmitHeight(p) };
 }
@@ -190,13 +190,9 @@ export function gfShipsSafely(value: string): boolean {
   return !wire.subarray(byteCount).some((b) => b === 0x5e || b === 0x7e);
 }
 
-/** Printed size from a ^GF header (spec p.215: width = bytes per row x 8,
- *  lines = count / bytes per row); the header, not the props, is the byte truth
- *  for store-less emit and bounds. Empty count slot: height null, callers fall
- *  back to model dims; null on fractional rows or a runaway width. */
-export function gfaHeaderDims(
-  cache: string | undefined,
-): { width: number; height: number | null } | null {
+/** Spec p.215 printed size of a ^GF header: width is bytes per row x 8, height is count divided by bytes per row.
+ *  The header outranks the props wherever store-less bytes are emitted or sized. */
+export function gfaHeaderDims(cache: string | undefined): { width: number; height: number } | null {
   const h = parseGfHeader(cache);
   // A payload-less header (^GFA,8,8,1 with no data) is not a usable graphic:
   // emit would ship the bare header and firmware would read past it into ^FS.
@@ -224,6 +220,32 @@ function gfaCacheUsable(p: ImageProps): boolean {
     gfaHeaderDims(p._gfaCache) !== null &&
     gfShipsSafely(p._gfaCache)
   );
+}
+
+/** Opaque bytes and a recall-only name would print instead of a freshly picked raster, so a pick retires both. */
+export function retiredSources(storedAs: ImageProps['storedAs']): Pick<ImageProps, 'rawGf' | 'storedAs'> {
+  return storedAs?.embedInZpl === false ? { rawGf: undefined, storedAs: undefined } : { rawGf: undefined };
+}
+
+/** The profile entry whose bytes this object prints, under the profile's own spelling of the path. */
+export function recalledSetupEntry(p: ImageProps, entries: readonly SetupGraphic[] | undefined): SetupGraphic | undefined {
+  if (p.imageId || p.storedAs?.embedInZpl !== false) return undefined;
+  const key = uploadKey(p);
+  return key === undefined ? undefined : findSetupEntry(entries, key);
+}
+
+/** Recall of a profile entry, sized by its header when that parses and undefined when its path names no file. */
+export function profileGraphicRecall(entry: SetupGraphic): Partial<ImageProps> | undefined {
+  const parsed = parseStoragePath(entry.path);
+  if (!parsed) return undefined;
+  const dims = gfaHeaderDims(entry.gfa);
+  return {
+    imageId: '',
+    storedAs: { device: parsed.device, name: parsed.name, embedInZpl: false },
+    _gfaCache: entry.gfa,
+    rawGf: undefined,
+    ...(dims ? { widthDots: dims.width, heightDots: dims.height } : {}),
+  };
 }
 
 /** Bytes with no source image are the graphic's only copy: no edit may clear or re-encode them, at any rotation. */

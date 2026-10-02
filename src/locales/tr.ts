@@ -1271,6 +1271,8 @@ const tr = {
     image: {
       source: 'Görsel kaynağı',
       selectImage: 'Görsel seçin…',
+      cachedGroup: 'Bu tarayıcıda',
+      profileGroup: 'Yazıcı profilinde',
       upload: 'Görsel yükle',
       uploading: 'Yükleniyor…',
       uploadError: 'Görsel yüklenemedi',

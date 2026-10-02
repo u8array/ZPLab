@@ -1271,6 +1271,8 @@ const zhHans = {
     image: {
       source: '图片来源',
       selectImage: '选择图片…',
+      cachedGroup: '在此浏览器中',
+      profileGroup: '在打印机配置文件中',
       upload: '上传图片',
       uploading: '上传中…',
       uploadError: '无法加载图像',

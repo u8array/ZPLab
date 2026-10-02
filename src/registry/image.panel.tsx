@@ -6,17 +6,16 @@ import { buttonCls, inputCls, labelCls } from '../components/Properties/styles';
 import { disabledCls } from '../components/ui/formStyles';
 import { loadImageFile, getImage } from '@zplab/core/lib/imageCache';
 import { imageToGFA } from '@zplab/core/lib/imageToZpl';
-import { formatStoragePath, MAX_STORAGE_NAME_LEN, sanitizeStorageName, STORAGE_DEVICES } from '@zplab/core/lib/storagePath';
+import { formatStoragePath, MAX_STORAGE_NAME_LEN, sanitizeStorageName, STORAGE_DEVICES, uploadedGraphicPath } from '@zplab/core/lib/storagePath';
 import { Tooltip } from '../components/ui/Tooltip';
 import { SectionCard, StaticSectionCard } from '../components/Properties/SectionCard';
 import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { RotationSelect } from '../components/Properties/RotationSelect';
 import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
-import { IMAGE_PROP_SPECS, isImageRotatable, recallCommand, recallStoragePath, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
+import { IMAGE_PROP_SPECS, isImageRotatable, profileGraphicRecall, recallCommand, recalledSetupEntry, recallStoragePath, retiredSources, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
 import { applyGraphicDelivery, draftGraphicIdentity, graphicDelivery, graphicWayBlocks, providedGraphic, type GraphicWayBlock, type ResourceDelivery } from '@zplab/core/lib/resourceDelivery';
 import { findSetupEntry } from '@zplab/core/lib/setupEntries';
-import { uploadedGraphicPath } from '@zplab/core/lib/storagePath';
 import { DeliverySelect } from '../components/Properties/DeliverySelect';
 import { useCachedImages } from '../hooks/useCachedImages';
 import { useLabelStore } from '../store/labelStore';
@@ -37,22 +36,18 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
       setUploadFailed(false);
       try {
         const entry = await loadImageFile(file);
-        // Pre-generate GFA cache
         const result = await imageToGFA(entry.dataUrl, p.widthDots, p.threshold);
-        onChange({ imageId: entry.id, _gfaCache: result.zpl });
+        onChange({ imageId: entry.id, _gfaCache: result.zpl, ...retiredSources(p.storedAs) });
       } catch {
         // Surface the failure inline (non-image MIME, oversized, decode error).
         setUploadFailed(true);
       } finally {
         setUploading(false);
       }
-    }, [onChange, p.widthDots, p.threshold]);
+    }, [onChange, p.widthDots, p.threshold, p.storedAs]);
 
     const handleImageSelect = useCallback(async (imageId: string) => {
-      // Empty selection = "no image bytes". Legitimate when the user is
-      // setting up a recall-only reference (storedAs without a local
-      // preview image). Clear the cache pointer + ^GFA cache so the
-      // ZPL emitter doesn't carry stale bytes from the previous source.
+      // An empty pick sets up a recall-only reference, so it must keep storedAs rather than retire it like a real pick.
       if (!imageId) {
         onChange({ imageId: '', _gfaCache: undefined });
         return;
@@ -62,8 +57,8 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
       // A width-0 image (dimensionless SVG) rejects; still select it, just with
       // no cache, so the emit stays blank instead of leaving stale bytes.
       const result = await imageToGFA(img.dataUrl, p.widthDots, p.threshold).catch(() => null);
-      onChange({ imageId, _gfaCache: result?.zpl });
-    }, [onChange, p.widthDots, p.threshold]);
+      onChange({ imageId, _gfaCache: result?.zpl, ...retiredSources(p.storedAs) });
+    }, [onChange, p.widthDots, p.threshold, p.storedAs]);
 
     const handleWidthChange = useCallback(async (widthDots: number) => {
       const img = getImage(p.imageId);
@@ -94,6 +89,17 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
     const [setupRefusal, setSetupRefusal] = useState<{ imageId: string; cache: string | undefined; fit: 'tooLarge' | 'unshippable' } | null>(null);
     const refusal = setupRefusal?.imageId === p.imageId && setupRefusal.cache === p._gfaCache ? setupRefusal.fit : null;
     const delivery = graphicDelivery(p, setupGraphics);
+    const profileGraphics = setupGraphics ?? [];
+    const recalled = recalledSetupEntry(p, setupGraphics);
+    const sourceValue = p.imageId || recalled?.path || '';
+    const handleSourceSelect = (value: string) => {
+      // A re-pick of a recall still refreshes bytes the profile has since replaced.
+      if (value === sourceValue && (!recalled || recalled.gfa === p._gfaCache)) return;
+      const entry = findSetupEntry(profileGraphics, value);
+      const recall = entry && profileGraphicRecall(entry);
+      if (recall) onChange(recall);
+      else if (!entry) void handleImageSelect(value);
+    };
     const blockText: Record<GraphicWayBlock, string> = {
       opaque: t.delivery.opaqueBytes,
       tooLarge: t.printerSettings.objects.tooLarge,
@@ -121,20 +127,20 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
     return (
       <>
         <StaticSectionCard title={t.properties.contentSection} cmd={recallCommand(p) ?? "^GF"}>
-          {/* Image select / upload */}
           <div className="flex flex-col gap-1">
             <label className={labelCls}>{t.registry.image.source}</label>
-            {allImages.length > 0 && (
+            {(allImages.length > 0 || profileGraphics.length > 0) && (
               <div className="flex items-center gap-1">
                 <div className="flex-1 min-w-0">
                   <Select<string>
-                    value={p.imageId}
-                    onChange={handleImageSelect}
+                    value={sourceValue}
+                    onChange={handleSourceSelect}
                     aria-label={t.registry.image.source}
-                    groups={[{ options: [
-                      { value: '', label: t.registry.image.selectImage },
-                      ...allImages.map((img) => ({ value: img.id, label: img.name })),
-                    ] }]}
+                    groups={[
+                      { options: [{ value: '', label: t.registry.image.selectImage }] },
+                      ...(allImages.length > 0 ? [{ label: t.registry.image.cachedGroup, options: allImages.map((img) => ({ value: img.id, label: img.name })) }] : []),
+                      ...(profileGraphics.length > 0 ? [{ label: t.registry.image.profileGroup, options: profileGraphics.map((e) => ({ value: e.path, label: e.path })) }] : []),
+                    ]}
                   />
                 </div>
               </div>

@@ -1271,6 +1271,8 @@ const nl = {
     image: {
       source: 'Afbeeldingsbron',
       selectImage: 'Afbeelding selecteren…',
+      cachedGroup: 'In deze browser',
+      profileGroup: 'In het printerprofiel',
       upload: 'Afbeelding uploaden',
       uploading: 'Uploaden…',
       uploadError: 'Kon afbeelding niet laden',

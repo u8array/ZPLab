@@ -1271,6 +1271,8 @@ const ja = {
     image: {
       source: '画像ソース',
       selectImage: '画像を選択…',
+      cachedGroup: 'このブラウザ内',
+      profileGroup: 'プリンタープロファイル内',
       upload: '画像をアップロード',
       uploading: 'アップロード中…',
       uploadError: '画像を読み込めませんでした',

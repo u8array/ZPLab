@@ -1271,6 +1271,8 @@ const hu = {
     image: {
       source: 'Képforrás',
       selectImage: 'Kép kiválasztása…',
+      cachedGroup: 'Ebben a böngészőben',
+      profileGroup: 'A nyomtatóprofilban',
       upload: 'Kép feltöltése',
       uploading: 'Feltöltés…',
       uploadError: 'A kép nem tölthető be',

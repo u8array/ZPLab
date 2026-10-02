@@ -1271,6 +1271,8 @@ const it = {
     image: {
       source: 'Origine immagine',
       selectImage: 'Seleziona immagine…',
+      cachedGroup: 'In questo browser',
+      profileGroup: 'Nel profilo stampante',
       upload: 'Carica immagine',
       uploading: 'Caricamento…',
       uploadError: 'Impossibile caricare l\'immagine',

@@ -1271,6 +1271,8 @@ const es = {
     image: {
       source: 'Fuente de imagen',
       selectImage: 'Seleccionar imagen…',
+      cachedGroup: 'En este navegador',
+      profileGroup: 'En el perfil de impresora',
       upload: 'Subir imagen',
       uploading: 'Subiendo…',
       uploadError: 'No se pudo cargar la imagen',

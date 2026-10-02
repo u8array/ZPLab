@@ -1271,6 +1271,8 @@ const da = {
     image: {
       source: 'Billedkilde',
       selectImage: 'Vælg billede…',
+      cachedGroup: 'I denne browser',
+      profileGroup: 'I printerprofilen',
       upload: 'Upload billede',
       uploading: 'Uploader…',
       uploadError: 'Kunne ikke indlæse billede',

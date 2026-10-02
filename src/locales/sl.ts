@@ -1271,6 +1271,8 @@ const sl = {
     image: {
       source: 'Vir slike',
       selectImage: 'Izberite sliko…',
+      cachedGroup: 'V tem brskalniku',
+      profileGroup: 'V profilu tiskalnika',
       upload: 'Naloži sliko',
       uploading: 'Nalaganje…',
       uploadError: 'Slike ni bilo mogoče naložiti',

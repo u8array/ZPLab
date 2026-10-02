@@ -1271,6 +1271,8 @@ const sk = {
     image: {
       source: 'Zdroj obrázka',
       selectImage: 'Vybrať obrázok…',
+      cachedGroup: 'V tomto prehliadači',
+      profileGroup: 'V profile tlačiarne',
       upload: 'Nahrať obrázok',
       uploading: 'Nahrávanie…',
       uploadError: 'Obrázok sa nedá načítať',

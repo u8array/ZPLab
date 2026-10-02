@@ -1271,6 +1271,8 @@ const ro = {
     image: {
       source: 'Sursă imagine',
       selectImage: 'Selectați imaginea…',
+      cachedGroup: 'În acest browser',
+      profileGroup: 'În profilul de imprimantă',
       upload: 'Încărcați imaginea',
       uploading: 'Se încarcă…',
       uploadError: 'Imaginea nu a putut fi încărcată',

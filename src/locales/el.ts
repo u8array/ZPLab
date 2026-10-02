@@ -1271,6 +1271,8 @@ const el = {
     image: {
       source: 'Πηγή εικόνας',
       selectImage: 'Επιλογή εικόνας…',
+      cachedGroup: 'Σε αυτόν τον φυλλομετρητή',
+      profileGroup: 'Στο προφίλ εκτυπωτή',
       upload: 'Μεταφόρτωση εικόνας',
       uploading: 'Μεταφόρτωση…',
       uploadError: 'Αδυναμία φόρτωσης εικόνας',

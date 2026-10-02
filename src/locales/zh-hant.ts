@@ -1271,6 +1271,8 @@ const zhHant = {
     image: {
       source: '圖片來源',
       selectImage: '選擇圖片…',
+      cachedGroup: '在此瀏覽器中',
+      profileGroup: '在印表機設定檔中',
       upload: '上傳圖片',
       uploading: '上傳中…',
       uploadError: '無法載入圖片',

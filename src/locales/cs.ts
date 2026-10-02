@@ -1271,6 +1271,8 @@ const cs = {
     image: {
       source: 'Zdroj obrázku',
       selectImage: 'Vybrat obrázek…',
+      cachedGroup: 'V tomto prohlížeči',
+      profileGroup: 'V profilu tiskárny',
       upload: 'Nahrát obrázek',
       uploading: 'Nahrávání…',
       uploadError: 'Obrázek nelze načíst',

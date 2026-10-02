@@ -199,8 +199,7 @@ export function isBarcode(obj: { type: string }): boolean {
   return BARCODE_TYPES.has(obj.type);
 }
 
-/** Store-less ^GFA header dims, the byte truth objectBoundsDots sizes by (recall fields included). */
-function imageHeaderBounds(p: ImageProps): { width: number; height: number | null } | null {
+function imageHeaderBounds(p: ImageProps): { width: number; height: number } | null {
   return gfaHeaderDims(headerByteSource(p));
 }
 
@@ -299,7 +298,7 @@ function objectBoxDots(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots 
         return {
           x: obj.x, y: obj.y,
           width: header.width,
-          height: header.height ?? (p.heightDots ?? p.widthDots),
+          height: header.height,
         };
       }
       // storedAs/rawGf stay upright (rot='N'), so their fallback footprint isn't

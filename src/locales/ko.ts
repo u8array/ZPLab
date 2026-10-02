@@ -1271,6 +1271,8 @@ const ko = {
     image: {
       source: '이미지 소스',
       selectImage: '이미지 선택…',
+      cachedGroup: '이 브라우저에서',
+      profileGroup: '프린터 프로필에서',
       upload: '이미지 업로드',
       uploading: '업로드 중…',
       uploadError: '이미지를 불러올 수 없습니다',

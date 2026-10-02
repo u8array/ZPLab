@@ -1271,6 +1271,8 @@ const lv = {
     image: {
       source: 'Attēla avots',
       selectImage: 'Izvēlēties attēlu…',
+      cachedGroup: 'Šajā pārlūkprogrammā',
+      profileGroup: 'Printera profilā',
       upload: 'Augšupielādēt attēlu',
       uploading: 'Augšupielāde…',
       uploadError: 'Neizdevās ielādēt attēlu',

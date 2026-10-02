@@ -1271,6 +1271,8 @@ const sv = {
     image: {
       source: 'Bildkälla',
       selectImage: 'Välj bild…',
+      cachedGroup: 'I den här webbläsaren',
+      profileGroup: 'I skrivarprofilen',
       upload: 'Ladda upp bild',
       uploading: 'Laddar upp…',
       uploadError: 'Kunde inte ladda bilden',

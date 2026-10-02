@@ -1271,6 +1271,8 @@ const lt = {
     image: {
       source: 'Vaizdo šaltinis',
       selectImage: 'Pasirinkite vaizdą…',
+      cachedGroup: 'Šioje naršyklėje',
+      profileGroup: 'Spausdintuvo profilyje',
       upload: 'Įkelti vaizdą',
       uploading: 'Įkeliama…',
       uploadError: 'Nepavyko įkelti vaizdo',

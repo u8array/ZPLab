@@ -1271,6 +1271,8 @@ const fa = {
     image: {
       source: 'منبع تصویر',
       selectImage: 'انتخاب تصویر…',
+      cachedGroup: 'در این مرورگر',
+      profileGroup: 'در نمایه چاپگر',
       upload: 'بارگذاری تصویر',
       uploading: 'در حال بارگذاری…',
       uploadError: 'بارگذاری تصویر ممکن نشد',

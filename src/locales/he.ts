@@ -1271,6 +1271,8 @@ const he = {
     image: {
       source: 'מקור תמונה',
       selectImage: 'בחר תמונה…',
+      cachedGroup: 'בדפדפן הזה',
+      profileGroup: 'בפרופיל המדפסת',
       upload: 'העלאת תמונה',
       uploading: 'מעלה…',
       uploadError: 'לא ניתן לטעון את התמונה',

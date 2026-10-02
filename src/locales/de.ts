@@ -1308,6 +1308,8 @@ const de = {
     image: {
       source: 'Bildquelle',
       selectImage: 'Bild auswählen…',
+      cachedGroup: 'In diesem Browser',
+      profileGroup: 'Im Druckerprofil',
       upload: 'Bild hochladen',
       uploading: 'Hochladen…',
       uploadError: 'Bild konnte nicht geladen werden',

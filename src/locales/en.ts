@@ -1308,6 +1308,8 @@ const en = {
     image: {
       source: 'Image source',
       selectImage: 'Select image…',
+      cachedGroup: 'In this browser',
+      profileGroup: 'In the printer profile',
       upload: 'Upload image',
       uploading: 'Uploading…',
       uploadError: 'Could not load image',

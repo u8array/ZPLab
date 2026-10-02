@@ -1271,6 +1271,8 @@ const pt = {
     image: {
       source: 'Fonte da imagem',
       selectImage: 'Selecionar imagem…',
+      cachedGroup: 'Neste browser',
+      profileGroup: 'No perfil de impressora',
       upload: 'Carregar imagem',
       uploading: 'Carregando…',
       uploadError: 'Não foi possível carregar a imagem',

@@ -1271,6 +1271,8 @@ const fi = {
     image: {
       source: 'Kuvan lähde',
       selectImage: 'Valitse kuva…',
+      cachedGroup: 'Tässä selaimessa',
+      profileGroup: 'Tulostinprofiilissa',
       upload: 'Lataa kuva',
       uploading: 'Ladataan…',
       uploadError: 'Kuvaa ei voitu ladata',

@@ -1271,6 +1271,8 @@ const ar = {
     image: {
       source: 'مصدر الصورة',
       selectImage: 'اختر صورة…',
+      cachedGroup: 'في هذا المتصفح',
+      profileGroup: 'في ملف الطابعة',
       upload: 'رفع صورة',
       uploading: 'جارٍ الرفع…',
       uploadError: 'تعذر تحميل الصورة',
