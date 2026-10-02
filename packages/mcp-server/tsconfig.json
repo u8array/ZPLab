@@ -1,6 +1,8 @@
 {
   "extends": "../../tsconfig.app.json",
   "compilerOptions": {
+    // Own build info, since the inherited path is the app project's.
+    "tsBuildInfoFile": "../../node_modules/.tmp/tsconfig.mcp-server.tsbuildinfo",
     // DOM lib inherited from tsconfig.app.json: @zplab/core's type graph
     // references DOM types (HTMLImageElement, Canvas, document, FontFace), so a
     // Node-only lib fails to type-check even though this server never uses them.

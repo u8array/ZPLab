@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && tsc -p tsconfig.test.json --noEmit && tsc -p tsconfig.e2e.json && tsc -p packages/mcp-server/tsconfig.json --noEmit && vite build",
+    "build": "tsc -b && vite build",
     "typecheck:test": "tsc -p tsconfig.test.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
