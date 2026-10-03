@@ -1319,7 +1319,6 @@ const de = {
       storage: 'Drucker-Speicher',
       storeOnPrinterHint: 'Referenziert eine Grafik auf der Drucker-Storage via ^XG. Die Bereitstellung entscheidet, ob die Bytes mit jedem Job, einmalig im Setup-Skript oder gar nicht mitgesendet werden.',
       storeInline: 'Inline einbetten',
-      openObjects: 'Gespeicherte Objekte verwalten',
     },
     symbol: {
       symbol: 'Symbol',
@@ -1771,6 +1770,7 @@ const de = {
     jobNeedsAlias: 'Braucht einen Alias, damit ein ^CW die Datei benennen kann.',
     setupNeedsBytes: 'Braucht die Bilddaten, um den Upload zu kodieren.',
     jobNeedsBytes: 'Braucht Bilddaten, die mit dem Auftrag gesendet werden.',
+    manageObjects: 'Gespeicherte Objekte verwalten',
     opaqueBytes: 'Die Bytes bleiben wie importiert und lassen sich nicht auf dem Drucker ablegen.',
     formatJobHint: 'Jeder Druckjob speichert das Format erneut und druckt es mit den Zeilen eines Datensatzes.',
     formatSetupHint: 'Das Setup-Skript dieses Druckerprofils speichert das Format einmalig. Jobs senden nur die Daten.',

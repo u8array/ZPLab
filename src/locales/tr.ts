@@ -1282,7 +1282,6 @@ const tr = {
       storage: 'Yazıcı depolama',
       storeOnPrinterHint: 'Yazıcıda saklanan bir grafiğe ^XG ile başvurur. Teslimat, baytların her işle mi, kurulum betiğinde bir kez mi, yoksa hiç gönderilmeyeceğini mi belirler.',
       storeInline: 'Satır içi göm',
-      openObjects: 'Kayıtlı nesneleri yönet',
     },
     symbol: {
       symbol: 'Sembol',
@@ -1734,6 +1733,7 @@ const tr = {
     jobNeedsAlias: 'Bir ^CW dosyayı adlandırabilsin diye takma ad gerektirir.',
     setupNeedsBytes: 'Yüklemeyi kodlamak için görüntü verilerini gerektirir.',
     jobNeedsBytes: 'Yazdırma işiyle göndermek için görüntü verilerini gerektirir.',
+    manageObjects: 'Kayıtlı nesneleri yönet',
     opaqueBytes: 'Veriler içe aktarıldığı gibi kalır ve yazıcıya kaydedilemez.',
     formatJobHint: 'Her yazdırma işi biçimi yeniden saklar ve onu bir veri kümesinin satırlarıyla yazdırır.',
     formatSetupHint: 'Bu yazıcı profilinin kurulum betiği biçimi bir kez saklar. İşler yalnızca verileri gönderir.',

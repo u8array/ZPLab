@@ -1282,7 +1282,6 @@ const lv = {
       storage: 'Printera krātuve',
       storeOnPrinterHint: 'Atsaucas uz printerī saglabātu grafiku, izmantojot ^XG. Piegāde nosaka, vai baiti tiek sūtīti ar katru darbu, vienreiz iestatīšanas skriptā, vai vispār netiek sūtīti.',
       storeInline: 'Iegult tieši',
-      openObjects: 'Pārvaldīt saglabātos objektus',
     },
     symbol: {
       symbol: 'Simbols',
@@ -1734,6 +1733,7 @@ const lv = {
     jobNeedsAlias: 'Nepieciešams aizstājvārds, lai ^CW varētu nosaukt failu.',
     setupNeedsBytes: 'Nepieciešami attēla dati, lai kodētu augšupielādi.',
     jobNeedsBytes: 'Nepieciešami attēla dati, lai tos nosūtītu kopā ar drukas darbu.',
+    manageObjects: 'Pārvaldīt saglabātos objektus',
     opaqueBytes: 'Dati paliek tādi, kādi tika importēti, un tos nevar saglabāt printerī.',
     formatJobHint: 'Katrs drukas darbs saglabā formātu no jauna un drukā to ar datu kopas rindām.',
     formatSetupHint: 'Šī printera profila iestatīšanas skripts saglabā formātu vienreiz. Darbi sūta tikai datus.',

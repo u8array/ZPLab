@@ -41,7 +41,7 @@ export function TemplateSection({ locked }: { locked: boolean }) {
               onChange={(next) => setDelivery(next === "job" ? undefined : next)}
               blocked={blocked === undefined ? undefined : { setup: blocked, printer: blocked }}
               issue={issue === "contested" && chosen !== undefined ? blocked : undefined}
-              onOpenSetup={{ label: t.template.openSetupScript, open: () => setPrinterSettingsTab("clockTime") }}
+              manage={way === "setup" ? { label: t.template.openSetupScript, open: () => setPrinterSettingsTab("clockTime") } : undefined}
             />
           </div>
           <div className="flex flex-col gap-1">

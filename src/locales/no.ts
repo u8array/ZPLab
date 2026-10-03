@@ -1282,7 +1282,6 @@ const no = {
       storage: 'Skriverlagring',
       storeOnPrinterHint: 'Refererer til en grafikk lagret på skriveren via ^XG. Leveringen avgjør om bytene sendes med hver jobb, én gang i oppsettsskriptet, eller ikke i det hele tatt.',
       storeInline: 'Bygg inn direkte',
-      openObjects: 'Administrer lagrede objekter',
     },
     symbol: {
       symbol: 'Symbol',
@@ -1734,6 +1733,7 @@ const no = {
     jobNeedsAlias: 'Krever et alias, slik at en ^CW kan navngi filen.',
     setupNeedsBytes: 'Krever bildedataene for å kode opplastingen.',
     jobNeedsBytes: 'Krever bildedataene for å sende dem med utskriftsjobben.',
+    manageObjects: 'Administrer lagrede objekter',
     opaqueBytes: 'Dataene forblir som importert og kan ikke lagres på skriveren.',
     formatJobHint: 'Hver utskriftsjobb lagrer formatet på nytt og skriver det ut med radene fra et datasett.',
     formatSetupHint: 'Oppsettsskriptet til denne skriverprofilen lagrer formatet én gang. Jobber sender bare dataene.',

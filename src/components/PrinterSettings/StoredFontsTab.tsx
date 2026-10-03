@@ -4,6 +4,7 @@ import { Tooltip } from "../ui/Tooltip";
 import { cachedFontPath, loadFontBytes } from "@zplab/core/lib/fontCache";
 import { findSetupEntry, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
 import { isTrueTypeFileName, prepareFontUpload, printerFontFileName, type FontUploadIssue } from "@zplab/core/lib/customFonts";
+import { listsStoredFont } from "@zplab/core/lib/storedObjects";
 import { storageKey, storageRefMatchesPath } from "@zplab/core/lib/storagePath";
 import { useCachedFonts } from "../../hooks/useCachedFonts";
 import { useUpload } from "../../hooks/useUpload";
@@ -40,7 +41,7 @@ export function StoredFontsTab() {
   const rows = [
     ...(setupFonts ?? []).map((f) => ({ path: f.path, inProfile: true, replayed: f.download !== undefined, issue: f.download === undefined ? rowIssue(f.path, cachedKeys) : undefined })),
     ...cachedPaths
-      .filter((path) => isTrueTypeFileName(path) && !findSetupEntry(setupFonts, path))
+      .filter((path) => listsStoredFont(path, setupFonts) && !findSetupEntry(setupFonts, path))
       .map((path) => ({ path, inProfile: false, replayed: false, issue: undefined })),
   ];
 

@@ -1282,7 +1282,6 @@ const sl = {
       storage: 'Shramba tiskalnika',
       storeOnPrinterHint: 'Sklicuje se na grafiko, shranjeno v tiskalniku, prek ^XG. Dostava določa, ali se bajti pošljejo z vsakim opravilom, enkrat v namestitvenem skriptu, ali sploh ne.',
       storeInline: 'Vstavi neposredno',
-      openObjects: 'Upravljanje shranjenih predmetov',
     },
     symbol: {
       symbol: 'Simbol',
@@ -1734,6 +1733,7 @@ const sl = {
     jobNeedsAlias: 'Potrebuje vzdevek, da lahko ^CW poimenuje datoteko.',
     setupNeedsBytes: 'Potrebuje slikovne podatke za kodiranje nalaganja.',
     jobNeedsBytes: 'Potrebuje slikovne podatke za pošiljanje s tiskalniškim opravilom.',
+    manageObjects: 'Upravljanje shranjenih predmetov',
     opaqueBytes: 'Podatki ostanejo takšni, kot so bili uvoženi, in jih ni mogoče shraniti v tiskalnik.',
     formatJobHint: 'Vsako tiskalniško opravilo znova shrani obliko zapisa in jo natisne z vrsticami podatkovnega niza.',
     formatSetupHint: 'Namestitveni skript tega profila tiskalnika shrani obliko zapisa enkrat. Opravila pošljejo samo podatke.',

@@ -1282,7 +1282,6 @@ const sv = {
       storage: 'Skrivarlagring',
       storeOnPrinterHint: 'Refererar till en grafik som är lagrad på skrivaren via ^XG. Leveransen avgör om bytena skickas med varje jobb, en gång i installationsskriptet, eller inte alls.',
       storeInline: 'Bädda in direkt',
-      openObjects: 'Hantera sparade objekt',
     },
     symbol: {
       symbol: 'Symbol',
@@ -1734,6 +1733,7 @@ const sv = {
     jobNeedsAlias: 'Kräver ett alias, så att en ^CW kan namnge filen.',
     setupNeedsBytes: 'Kräver bilddata för att koda uppladdningen.',
     jobNeedsBytes: 'Kräver bilddata för att skicka med utskriftsjobbet.',
+    manageObjects: 'Hantera sparade objekt',
     opaqueBytes: 'Data förblir som importerat och kan inte lagras på skrivaren.',
     formatJobHint: 'Varje utskriftsjobb lagrar formatet igen och skriver ut det med raderna i en datamängd.',
     formatSetupHint: 'Installationsskriptet för den här skrivarprofilen lagrar formatet en gång. Jobb skickar bara data.',

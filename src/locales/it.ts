@@ -1282,7 +1282,6 @@ const it = {
       storage: 'Archiviazione stampante',
       storeOnPrinterHint: 'Riferimento a una grafica memorizzata sulla stampante tramite ^XG. La consegna decide se i byte vengono inviati con ogni lavoro, una volta nello script di configurazione, oppure mai.',
       storeInline: 'Incorpora',
-      openObjects: 'Gestisci gli oggetti memorizzati',
     },
     symbol: {
       symbol: 'Simbolo',
@@ -1734,6 +1733,7 @@ const it = {
     jobNeedsAlias: 'Richiede un alias, così un ^CW può nominare il file.',
     setupNeedsBytes: "Richiede i dati dell'immagine per codificare il caricamento.",
     jobNeedsBytes: "Richiede i dati dell'immagine per inviarli con il lavoro di stampa.",
+    manageObjects: 'Gestisci gli oggetti memorizzati',
     opaqueBytes: 'I dati restano come importati e non possono essere memorizzati sulla stampante.',
     formatJobHint: 'Ogni lavoro di stampa memorizza di nuovo il formato e lo stampa con le righe di un set di dati.',
     formatSetupHint: 'Lo script di configurazione di questo profilo stampante memorizza il formato una volta. I lavori inviano solo i dati.',

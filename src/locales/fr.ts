@@ -1282,7 +1282,6 @@ const fr = {
       storage: 'Stockage de l’imprimante',
       storeOnPrinterHint: 'Référence un graphique stocké sur l’imprimante via ^XG. La livraison décide si les octets sont envoyés avec chaque travail, une fois dans le script d’installation, ou jamais.',
       storeInline: 'Intégrer en ligne',
-      openObjects: 'Gérer les objets stockés',
     },
     symbol: {
       symbol: 'Symbole',
@@ -1734,6 +1733,7 @@ const fr = {
     jobNeedsAlias: "Nécessite un alias, pour qu'un ^CW puisse nommer le fichier.",
     setupNeedsBytes: "Nécessite les données de l'image pour encoder le téléversement.",
     jobNeedsBytes: "Nécessite les données de l'image pour les envoyer avec le travail d'impression.",
+    manageObjects: 'Gérer les objets stockés',
     opaqueBytes: "Les données restent telles qu'importées et ne peuvent pas être stockées sur l'imprimante.",
     formatJobHint: "Chaque travail d'impression stocke à nouveau le format et l'imprime avec les lignes d'un jeu de données.",
     formatSetupHint: "Le script d'installation de ce profil d'imprimante stocke le format une fois. Les travaux n'envoient que les données.",

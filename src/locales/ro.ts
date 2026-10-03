@@ -1282,7 +1282,6 @@ const ro = {
       storage: 'Stocare imprimantă',
       storeOnPrinterHint: 'Referențiază un grafic stocat pe imprimantă prin ^XG. Livrarea decide dacă octeții sunt trimiși cu fiecare lucrare, o dată în scriptul de configurare, sau deloc.',
       storeInline: 'Încorporează direct',
-      openObjects: 'Gestionează obiectele stocate',
     },
     symbol: {
       symbol: 'Simbol',
@@ -1734,6 +1733,7 @@ const ro = {
     jobNeedsAlias: 'Necesită un alias, pentru ca un ^CW să poată numi fișierul.',
     setupNeedsBytes: 'Necesită datele imaginii pentru a codifica încărcarea.',
     jobNeedsBytes: 'Necesită datele imaginii pentru a le trimite odată cu sarcina de imprimare.',
+    manageObjects: 'Gestionează obiectele stocate',
     opaqueBytes: 'Datele rămân așa cum au fost importate și nu pot fi stocate pe imprimantă.',
     formatJobHint: 'Fiecare sarcină de imprimare stochează din nou formatul și îl tipărește cu rândurile unui set de date.',
     formatSetupHint: 'Scriptul de configurare al acestui profil de imprimantă stochează formatul o dată. Sarcinile trimit doar datele.',

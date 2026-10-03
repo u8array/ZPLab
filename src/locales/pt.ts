@@ -1282,7 +1282,6 @@ const pt = {
       storage: 'Armazenamento da impressora',
       storeOnPrinterHint: 'Referencia uma imagem armazenada na impressora via ^XG. A entrega decide se os bytes são enviados com cada trabalho, uma vez no script de configuração, ou nunca.',
       storeInline: 'Incorporar',
-      openObjects: 'Gerir objetos guardados',
     },
     symbol: {
       symbol: 'Símbolo',
@@ -1734,6 +1733,7 @@ const pt = {
     jobNeedsAlias: 'Precisa de um alias, para que um ^CW possa nomear o arquivo.',
     setupNeedsBytes: 'Precisa dos dados da imagem para codificar o envio.',
     jobNeedsBytes: 'Precisa dos dados da imagem para enviá-los com o trabalho de impressão.',
+    manageObjects: 'Gerir objetos guardados',
     opaqueBytes: 'Os dados permanecem como foram importados e não podem ser armazenados na impressora.',
     formatJobHint: 'Cada trabalho de impressão armazena o formato novamente e o imprime com as linhas de um conjunto de dados.',
     formatSetupHint: 'O script de configuração deste perfil de impressora armazena o formato uma vez. Os trabalhos apenas enviam os dados.',

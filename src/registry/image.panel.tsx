@@ -16,6 +16,7 @@ import { Select } from '../components/ui/Select';
 import { IMAGE_PROP_SPECS, isImageRotatable, profileGraphicRecall, recallCommand, recalledSetupEntry, recallStoragePath, retiredSources, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
 import { applyGraphicDelivery, draftGraphicIdentity, graphicDelivery, graphicWayBlocks, providedGraphic, type GraphicWayBlock, type ResourceDelivery } from '@zplab/core/lib/resourceDelivery';
 import { findSetupEntry } from '@zplab/core/lib/setupEntries';
+import { listsStoredGraphic, storedGraphicRows } from '@zplab/core/lib/storedObjects';
 import { DeliverySelect } from '../components/Properties/DeliverySelect';
 import { useCachedImages } from '../hooks/useCachedImages';
 import { useLabelStore } from '../store/labelStore';
@@ -78,6 +79,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
     const setupGraphics = useLabelStore((s) => s.printerProfile.setupGraphics);
     const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
     const openObjects = useLabelStore((s) => s.setPrinterSettingsTab);
+    const listed = useLabelStore((s) => listsStoredGraphic(storedGraphicRows(s.pages), p));
     // Held in state so the drafted name does not churn across renders.
     const [draft, setDraft] = useState(() => draftGraphicIdentity(setupGraphics));
     // A draft the profile already holds would adopt that entry's bytes, so redraft before the checks read it.
@@ -272,7 +274,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
               blocked={{ job: blocked('job'), setup: blocked('setup'), printer: blocked('printer') }}
               disabled={locked}
               issue={issue}
-              onOpenSetup={{ label: t.registry.image.openObjects, open: () => openObjects('storedGraphics') }}
+              manage={listed ? { label: t.delivery.manageObjects, open: () => openObjects('storedGraphics') } : undefined}
             />
             {(refusal || (storedAs && setupState === 'tooLarge')) && (
               <span className="text-[10px] text-warning">{refusal === 'unshippable' ? t.printerSettings.objects.tooWide : t.printerSettings.objects.tooLarge}</span>

@@ -1282,7 +1282,6 @@ const lt = {
       storage: 'Spausdintuvo saugykla',
       storeOnPrinterHint: 'Nurodo spausdintuve saugomą grafiką per ^XG. Pristatymas nulemia, ar baitai siunčiami su kiekviena užduotimi, vieną kartą sąrankos scenarijuje, ar visai nesiunčiami.',
       storeInline: 'Įterpti tiesiogiai',
-      openObjects: 'Tvarkyti įrašytus objektus',
     },
     symbol: {
       symbol: 'Simbolis',
@@ -1734,6 +1733,7 @@ const lt = {
     jobNeedsAlias: 'Reikia slapyvardžio, kad ^CW galėtų įvardyti failą.',
     setupNeedsBytes: 'Reikia vaizdo duomenų, kad būtų užkoduotas įkėlimas.',
     jobNeedsBytes: 'Reikia vaizdo duomenų, kad jie būtų išsiųsti su spausdinimo užduotimi.',
+    manageObjects: 'Tvarkyti įrašytus objektus',
     opaqueBytes: 'Duomenys išlieka tokie, kokie buvo importuoti, ir jų negalima išsaugoti spausdintuve.',
     formatJobHint: 'Kiekviena spausdinimo užduotis vėl išsaugo formatą ir spausdina jį su duomenų rinkinio eilutėmis.',
     formatSetupHint: 'Šio spausdintuvo profilio sąrankos scenarijus išsaugo formatą vieną kartą. Užduotys siunčia tik duomenis.',

@@ -1282,7 +1282,6 @@ const hr = {
       storage: 'Pohrana pisača',
       storeOnPrinterHint: 'Referencira grafiku pohranjenu na pisaču putem ^XG. Isporuka određuje šalju li se bajtovi sa svakim zadatkom, jednom u instalacijskoj skripti ili uopće ne.',
       storeInline: 'Ugradi izravno',
-      openObjects: 'Upravljaj pohranjenim objektima',
     },
     symbol: {
       symbol: 'Simbol',
@@ -1734,6 +1733,7 @@ const hr = {
     jobNeedsAlias: 'Zahtijeva alias, kako bi ^CW mogao imenovati datoteku.',
     setupNeedsBytes: 'Zahtijeva podatke slike za kodiranje prijenosa.',
     jobNeedsBytes: 'Zahtijeva podatke slike za slanje s ispisnim zadatkom.',
+    manageObjects: 'Upravljaj pohranjenim objektima',
     opaqueBytes: 'Podaci ostaju kakvi su uvezeni i ne mogu se spremiti na pisač.',
     formatJobHint: 'Svaki ispisni zadatak ponovno pohranjuje format i ispisuje ga s redcima skupa podataka.',
     formatSetupHint: 'Instalacijska skripta ovog profila pisača pohranjuje format jednom. Zadaci šalju samo podatke.',

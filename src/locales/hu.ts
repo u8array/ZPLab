@@ -1282,7 +1282,6 @@ const hu = {
       storage: 'Nyomtató tárhely',
       storeOnPrinterHint: 'A nyomtatón tárolt grafikára hivatkozik ^XG-vel. A továbbítás dönti el, hogy a bájtok minden feladattal, egyszer a beállító szkriptben, vagy egyáltalán nem kerülnek elküldésre.',
       storeInline: 'Beágyazás',
-      openObjects: 'Tárolt objektumok kezelése',
     },
     symbol: {
       symbol: 'Szimbólum',
@@ -1734,6 +1733,7 @@ const hu = {
     jobNeedsAlias: 'Aliasra van szükség, hogy egy ^CW elnevezhesse a fájlt.',
     setupNeedsBytes: 'A feltöltés kódolásához szükség van a kép adataira.',
     jobNeedsBytes: 'A nyomtatási feladattal való elküldéshez szükség van a kép adataira.',
+    manageObjects: 'Tárolt objektumok kezelése',
     opaqueBytes: 'Az adatok az importált formájukban maradnak, és nem menthetők el a nyomtatóra.',
     formatJobHint: 'Minden nyomtatási feladat újra tárolja a formátumot, és egy adathalmaz soraival nyomtatja ki.',
     formatSetupHint: 'Ennek a nyomtatóprofilnak a beállító szkriptje egyszer tárolja a formátumot. A feladatok csak az adatokat küldik.',

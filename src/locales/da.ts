@@ -1282,7 +1282,6 @@ const da = {
       storage: 'Printer-lager',
       storeOnPrinterHint: 'Refererer en grafik gemt på printeren via ^XG. Leveringen afgør, om bytene sendes med hvert job, én gang i opsætningsscriptet, eller slet ikke.',
       storeInline: 'Indlejr direkte',
-      openObjects: 'Administrer gemte objekter',
     },
     symbol: {
       symbol: 'Symbol',
@@ -1734,6 +1733,7 @@ const da = {
     jobNeedsAlias: 'Kræver et alias, så en ^CW kan navngive filen.',
     setupNeedsBytes: 'Kræver billeddataene for at kode uploadet.',
     jobNeedsBytes: 'Kræver billeddataene for at sende dem med printjobbet.',
+    manageObjects: 'Administrer gemte objekter',
     opaqueBytes: 'Dataene forbliver som importeret og kan ikke lagres på printeren.',
     formatJobHint: 'Hvert printjob gemmer formatet igen og udskriver det med rækkerne fra et datasæt.',
     formatSetupHint: 'Opsætningsscriptet til denne printerprofil gemmer formatet én gang. Job sender kun dataene.',

@@ -1282,7 +1282,6 @@ const sk = {
       storage: 'Úložisko tlačiarne',
       storeOnPrinterHint: 'Odkazuje na grafiku uloženú v tlačiarni cez ^XG. Doručenie určuje, či sa bajty odošlú s každou úlohou, raz v inštalačnom skripte, alebo vôbec.',
       storeInline: 'Vložiť priamo',
-      openObjects: 'Spravovať uložené objekty',
     },
     symbol: {
       symbol: 'Symbol',
@@ -1734,6 +1733,7 @@ const sk = {
     jobNeedsAlias: 'Vyžaduje alias, aby ^CW mohol súbor pomenovať.',
     setupNeedsBytes: 'Vyžaduje obrazové dáta na zakódovanie nahrávania.',
     jobNeedsBytes: 'Vyžaduje obrazové dáta na odoslanie s tlačovou úlohou.',
+    manageObjects: 'Spravovať uložené objekty',
     opaqueBytes: 'Dáta zostávajú tak, ako boli importované, a nemožno ich uložiť do tlačiarne.',
     formatJobHint: 'Každá tlačová úloha znovu uloží formát a vytlačí ho s riadkami dátovej sady.',
     formatSetupHint: 'Inštalačný skript tohto profilu tlačiarne uloží formát raz. Úlohy odosielajú len údaje.',

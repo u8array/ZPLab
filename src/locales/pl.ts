@@ -1282,7 +1282,6 @@ const pl = {
       storage: 'Pamięć drukarki',
       storeOnPrinterHint: 'Odwołuje się do grafiki przechowywanej na drukarce za pomocą ^XG. Dostarczanie decyduje, czy bajty są wysyłane z każdym zadaniem, raz w skrypcie konfiguracyjnym, czy wcale.',
       storeInline: 'Osadź bezpośrednio',
-      openObjects: 'Zarządzaj zapisanymi obiektami',
     },
     symbol: {
       symbol: 'Symbol',
@@ -1734,6 +1733,7 @@ const pl = {
     jobNeedsAlias: 'Wymaga aliasu, aby ^CW mógł nazwać plik.',
     setupNeedsBytes: 'Wymaga danych obrazu, aby zakodować przesyłanie.',
     jobNeedsBytes: 'Wymaga danych obrazu, aby wysłać je z zadaniem drukowania.',
+    manageObjects: 'Zarządzaj zapisanymi obiektami',
     opaqueBytes: 'Dane pozostają takie, jak zostały zaimportowane, i nie można ich zapisać w drukarce.',
     formatJobHint: 'Każde zadanie drukowania ponownie zapisuje format i drukuje go z wierszami zbioru danych.',
     formatSetupHint: 'Skrypt konfiguracyjny tego profilu drukarki zapisuje format raz. Zadania wysyłają tylko dane.',

@@ -10,8 +10,8 @@ import { sanitizeStorageName, setupEntryKey, uploadedGraphicPath } from "@zplab/
 import { findSetupEntry, setupEntryHoldsOther, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
 import { buttonCls, disabledCls, zplCommandTagCls } from "../ui/formStyles";
 import { useCachedImages } from "../../hooks/useCachedImages";
-import { exportableLeaves } from "@zplab/core/types/Group";
-import { canSendSetupGraphic, setupGraphicFits, setupGraphicOf, setupGraphicState, uploadKey, type ImageProps } from "@zplab/core/registry/image";
+import { canSendSetupGraphic, setupGraphicFits, setupGraphicOf, setupGraphicState, type ImageProps } from "@zplab/core/registry/image";
+import { storedGraphicRows } from "@zplab/core/lib/storedObjects";
 import { removeImage } from "@zplab/core/lib/imageCache";
 import { imageUsage } from "@zplab/core/lib/imageUsage";
 import type { LiveReason } from "@zplab/core/lib/liveUsage";
@@ -25,14 +25,7 @@ export function StoredGraphicsTab() {
   const patchPrinterProfileWith = useLabelStore((s) => s.patchPrinterProfileWith);
   const loc = t.printerSettings.objects;
 
-  const rows = new Map<string, ImageProps>();
-  for (const page of pages) {
-    for (const leaf of exportableLeaves(page.objects)) {
-      const props = leaf.props as ImageProps;
-      const key = leaf.type === "image" ? uploadKey(props) : undefined;
-      if (key && !rows.has(key)) rows.set(key, props);
-    }
-  }
+  const rows = storedGraphicRows(pages);
   const profileOnly = (setupGraphics ?? []).filter((g) => !rows.has(setupEntryKey(g)));
 
   const put = (entry: SetupGraphic) => patchPrinterProfileWith((p) => ({ setupGraphics: withSetupEntry(p.setupGraphics, entry) }));

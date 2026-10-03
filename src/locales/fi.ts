@@ -1282,7 +1282,6 @@ const fi = {
       storage: 'Tulostimen tallennus',
       storeOnPrinterHint: 'Viittaa tulostimelle tallennettuun grafiikkaan ^XG:llä. Toimitus määrää, lähetetäänkö tavut jokaisen työn mukana, kerran asennusskriptissä vai ei lainkaan.',
       storeInline: 'Upota suoraan',
-      openObjects: 'Hallitse tallennettuja objekteja',
     },
     symbol: {
       symbol: 'Symboli',
@@ -1734,6 +1733,7 @@ const fi = {
     jobNeedsAlias: 'Vaatii aliaksen, jotta ^CW voi nimetä tiedoston.',
     setupNeedsBytes: 'Vaatii kuvatiedot lataamisen koodaamiseksi.',
     jobNeedsBytes: 'Vaatii kuvatiedot lähetettäväksi tulostustyön mukana.',
+    manageObjects: 'Hallitse tallennettuja objekteja',
     opaqueBytes: 'Tiedot pysyvät sellaisina kuin ne tuotiin, eikä niitä voi tallentaa tulostimeen.',
     formatJobHint: 'Jokainen tulostustyö tallentaa muodon uudelleen ja tulostaa sen datajoukon riveillä.',
     formatSetupHint: 'Tämän tulostinprofiilin asennusskripti tallentaa muodon kerran. Työt lähettävät vain datan.',

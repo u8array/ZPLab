@@ -14,13 +14,12 @@ interface Props {
   blocked?: Partial<Record<ResourceDelivery, string>>;
   /** A warning about the chosen way, shown under the hint. */
   issue?: string;
-  /** Jumps to the printer tab that provisions the file, offered once the file is delivered at setup. */
-  onOpenSetup?: { label: string; open: () => void };
+  manage?: { label: string; open: () => void };
   disabled?: boolean;
 }
 
 /** One control for every file the printer needs, so job, setup and printer cannot diverge across two widgets. */
-export function DeliverySelect({ value, onChange, resource, subject, blocked, issue, onOpenSetup, disabled }: Props) {
+export function DeliverySelect({ value, onChange, resource, subject, blocked, issue, manage, disabled }: Props) {
   const t = useT();
   const hints: Record<ResourceDelivery, string> = resource === 'format'
     ? { job: t.delivery.formatJobHint, setup: t.delivery.formatSetupHint, printer: t.delivery.formatPrinterHint }
@@ -45,9 +44,9 @@ export function DeliverySelect({ value, onChange, resource, subject, blocked, is
       />
       <p className={`text-[10px] leading-snug ${warn ? 'text-warning' : 'text-muted'}`}>{hints[value]}</p>
       {issue && <p className="text-[10px] text-warning">{issue}</p>}
-      {value === 'setup' && onOpenSetup && (
-        <button type="button" className="self-start text-[10px] text-accent hover:underline" onClick={onOpenSetup.open}>
-          {onOpenSetup.label}
+      {manage && (
+        <button type="button" aria-label={`${manage.label}: ${subject}`} className="self-start text-[10px] text-accent hover:underline" onClick={manage.open}>
+          {manage.label}
         </button>
       )}
     </div>

@@ -45,7 +45,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   removeImage("cat");
-  act(() => useLabelStore.setState({ printerProfile: {} }));
+  act(() => useLabelStore.setState({ printerProfile: {}, printerSettingsTab: null }));
 });
 
 const option = (r: ReturnType<typeof render>, name: string) => {
@@ -275,14 +275,26 @@ describe("image panel delivery", () => {
     expect(useLabelStore.getState().printerProfile.setupGraphics).toBeUndefined();
   });
 
-  it("hands off from the setup-script hint to the stored graphics tab", () => {
-    act(() => useLabelStore.setState({ printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: GFA }] } }));
+  it("hands off to the stored graphics tab for a recall the tab lists", () => {
+    act(() => useLabelStore.setState({ pages: [{ objects: [stored({ embedInZpl: false }) as never] }] }));
     const { getByText } = render(<Panel obj={stored({ embedInZpl: false })} onChange={() => undefined} />);
     act(() => {
       fireEvent.click(getByText(/Manage stored objects/));
     });
     expect(useLabelStore.getState().printerSettingsTab).toBe("storedGraphics");
-    act(() => useLabelStore.setState({ printerSettingsTab: null }));
+  });
+
+  it("offers the link for a cached image with no printer name", () => {
+    putImage({ id: "cat", name: "cat.png", dataUrl: "data:image/png;base64,", width: 1, height: 1 });
+    const obj = inline();
+    const { getByText } = render(<Panel obj={{ ...obj, props: { ...obj.props, imageId: "cat" } }} onChange={() => undefined} />);
+    expect(getByText(/Manage stored objects/)).toBeTruthy();
+  });
+
+  it("offers no link for a recall of a file no upload writes", () => {
+    act(() => useLabelStore.setState({ pages: [{ objects: [stored({ ext: "PNG", recall: "IM", embedInZpl: false }) as never] }] }));
+    const { queryByText } = render(<Panel obj={stored({ ext: "PNG", recall: "IM", embedInZpl: false })} onChange={() => undefined} />);
+    expect(queryByText(/Manage stored objects/)).toBeNull();
   });
 
   it("shows a refused encode until the object's bytes change", () => {

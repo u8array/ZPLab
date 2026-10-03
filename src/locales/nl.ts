@@ -1282,7 +1282,6 @@ const nl = {
       storage: 'Printer-opslag',
       storeOnPrinterHint: 'Verwijst naar een afbeelding op de printer via ^XG. De levering bepaalt of de bytes met elke taak, eenmalig in het installatiescript, of helemaal niet worden meegestuurd.',
       storeInline: 'Inline insluiten',
-      openObjects: 'Opgeslagen objecten beheren',
     },
     symbol: {
       symbol: 'Symbool',
@@ -1734,6 +1733,7 @@ const nl = {
     jobNeedsAlias: 'Vereist een alias, zodat een ^CW het bestand kan benoemen.',
     setupNeedsBytes: 'Vereist de afbeeldingsgegevens om de upload te coderen.',
     jobNeedsBytes: 'Vereist de afbeeldingsgegevens om ze met de afdruktaak te verzenden.',
+    manageObjects: 'Opgeslagen objecten beheren',
     opaqueBytes: 'De gegevens blijven zoals geïmporteerd en kunnen niet op de printer worden opgeslagen.',
     formatJobHint: 'Elke afdruktaak slaat het formaat opnieuw op en drukt het af met de rijen van een gegevensset.',
     formatSetupHint: 'Het installatiescript van dit printerprofiel slaat het formaat eenmalig op. Taken sturen alleen de gegevens.',

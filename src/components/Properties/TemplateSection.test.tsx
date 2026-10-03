@@ -96,7 +96,7 @@ describe("TemplateSection", () => {
     setPages([{ objects: [], storedFormatPath: "E:JOB.ZPL", storedFormatDelivery: "setup" }]);
     const r = render(<TemplateSection locked={false} />);
     act(() => {
-      fireEvent.click(r.getByRole("button", { name: en.template.openSetupScript }));
+      fireEvent.click(r.getByRole("button", { name: `${en.template.openSetupScript}: E:JOB.ZPL` }));
     });
     expect(state().printerSettingsTab).toBe("clockTime");
   });

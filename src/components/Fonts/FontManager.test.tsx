@@ -208,3 +208,17 @@ describe("FontManager upload", () => {
     expect(getAllFonts().map((f) => f.name).sort()).toEqual(["E:ARIAL.TTF", "E:MYLOGO.TTF"]);
   });
 });
+
+describe("FontManager stored fonts hand-off", () => {
+  afterEach(() => act(() => useLabelStore.setState({ printerSettingsTab: null })));
+
+  it("links a TrueType font to the stored fonts tab and leaves a bare printer name unlinked", async () => {
+    await loadFontBytes(new Uint8Array([0, 1, 0, 0]), "R:MYFONT");
+    const r = render(<FontManager />);
+    expect(r.queryByRole("button", { name: "Manage stored objects: R:MYFONT" })).toBeNull();
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: "Manage stored objects: E:ARIAL.TTF" }));
+    });
+    expect(useLabelStore.getState().printerSettingsTab).toBe("storedFonts");
+  });
+});

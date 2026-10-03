@@ -1319,7 +1319,6 @@ const en = {
       storage: 'Printer storage',
       storeOnPrinterHint: 'Reference a graphic stored on the printer via ^XG. The delivery decides whether the bytes ship with every job, once in the setup script, or not at all.',
       storeInline: 'Embed inline',
-      openObjects: 'Manage stored objects',
     },
     symbol: {
       symbol: 'Symbol',
@@ -1771,6 +1770,7 @@ const en = {
     jobNeedsAlias: 'Needs an alias, so that a ^CW can name the file.',
     setupNeedsBytes: 'Needs the image data to encode the upload.',
     jobNeedsBytes: 'Needs image data to send with the job.',
+    manageObjects: 'Manage stored objects',
     opaqueBytes: 'The bytes stay as imported and cannot be stored on the printer.',
     formatJobHint: 'Every job stores the format again and prints it with the rows of a dataset.',
     formatSetupHint: 'The setup script of this printer profile stores the format once. Jobs only send the data.',

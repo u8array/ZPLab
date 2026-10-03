@@ -1282,7 +1282,6 @@ const zhHans = {
       storage: '打印机存储',
       storeOnPrinterHint: '通过 ^XG 引用存储在打印机上的图形。交付设置决定字节是随每个作业发送、在安装脚本中一次性发送，还是完全不发送。',
       storeInline: '内嵌',
-      openObjects: '管理已存对象',
     },
     symbol: {
       symbol: '符号',
@@ -1734,6 +1733,7 @@ const zhHans = {
     jobNeedsAlias: '需要别名，以便 ^CW 可以为文件命名。',
     setupNeedsBytes: '需要图像数据来编码此次上传。',
     jobNeedsBytes: '需要图像数据以随打印任务一起发送。',
+    manageObjects: '管理已存对象',
     opaqueBytes: '数据保持导入时的原样，无法存储在打印机上。',
     formatJobHint: '每个打印任务都会重新存储格式，并使用数据集的行来打印。',
     formatSetupHint: '此打印机配置文件的安装脚本一次性存储格式。任务只发送数据。',

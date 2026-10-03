@@ -1282,7 +1282,6 @@ const zhHant = {
       storage: '印表機儲存',
       storeOnPrinterHint: '透過 ^XG 引用儲存在印表機上的圖形。交付設定決定位元組隨每個工作傳送、在安裝指令稿中一次傳送，還是完全不傳送。',
       storeInline: '內嵌',
-      openObjects: '管理已存物件',
     },
     symbol: {
       symbol: '符號',
@@ -1734,6 +1733,7 @@ const zhHant = {
     jobNeedsAlias: '需要別名，以便 ^CW 可以為檔案命名。',
     setupNeedsBytes: '需要影像資料來編碼此次上傳。',
     jobNeedsBytes: '需要影像資料以隨列印工作一起傳送。',
+    manageObjects: '管理已存物件',
     opaqueBytes: '資料保持匯入時的原樣，無法儲存在印表機上。',
     formatJobHint: '每個列印工作都會重新儲存格式，並使用資料集的列來列印。',
     formatSetupHint: '此印表機設定檔的安裝指令稿一次儲存格式。工作只傳送資料。',

@@ -14,6 +14,7 @@ import type { LiveReason } from '@zplab/core/lib/liveUsage';
 import { useT } from '../../hooks/useT';
 import { useUpload } from '../../hooks/useUpload';
 import { storageKey, storageRefMatchesPath } from '@zplab/core/lib/storagePath';
+import { listsStoredFont } from '@zplab/core/lib/storedObjects';
 import {
   ZPL_DRIVE_PREFIXES,
   isBuiltinFontId,
@@ -151,6 +152,7 @@ export function FontManager() {
               embedLarge={isEmbedLarge(path)}
               previewMissing={!getFontFamily(path)}
               inUse={live.get(storageKey(path))}
+              listed={listsStoredFont(path, setupFonts)}
               onAliasChange={(v) => setAliasForPath(path, v)}
               onDeliveryChange={(v) => deliverPath(path, v)}
               onRequestDelete={() => setPendingDelete(path)}
@@ -240,6 +242,7 @@ interface FontEntryProps {
   previewMissing: boolean;
   /** Why the delete is off: who still names the file. */
   inUse: LiveReason | undefined;
+  listed: boolean;
   onAliasChange: (next: string) => void;
   onDeliveryChange: (next: ResourceDelivery) => void;
   onRequestDelete: () => void;
@@ -253,11 +256,13 @@ function FontEntry({
   embedLarge,
   previewMissing,
   inUse,
+  listed,
   onAliasChange,
   onDeliveryChange,
   onRequestDelete,
 }: FontEntryProps) {
   const t = useT();
+  const openObjects = useLabelStore((s) => s.setPrinterSettingsTab);
   // ~DY without a matching ^CW would dump bytes onto the printer that no field can reference.
   const jobBlocked = alias ? undefined : t.delivery.jobNeedsAlias;
   // Heads-up when the user picks a built-in letter (0, A-H): ^CW with
@@ -319,6 +324,7 @@ function FontEntry({
         value={delivery}
         onChange={onDeliveryChange}
         blocked={jobBlocked === undefined ? undefined : { job: jobBlocked }}
+        manage={listed ? { label: t.delivery.manageObjects, open: () => openObjects('storedFonts') } : undefined}
       />
       {overridesBuiltin && (
         <p className="text-[10px] text-amber-500 leading-snug pl-1">

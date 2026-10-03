@@ -1282,7 +1282,6 @@ const et = {
       storage: 'Printeri salvestus',
       storeOnPrinterHint: 'Viitab printerisse salvestatud graafikale ^XG kaudu. Edastus määrab, kas baidid saadetakse iga tööga, üks kord seadistusskriptis või üldse mitte.',
       storeInline: 'Manusta otse',
-      openObjects: 'Halda salvestatud objekte',
     },
     symbol: {
       symbol: 'Sümbol',
@@ -1734,6 +1733,7 @@ const et = {
     jobNeedsAlias: 'Vajab varjunime, et ^CW saaks faili nimetada.',
     setupNeedsBytes: 'Vajab pildiandmeid, et üleslaadimist kodeerida.',
     jobNeedsBytes: 'Vajab pildiandmeid, et need prinditööga kaasa saata.',
+    manageObjects: 'Halda salvestatud objekte',
     opaqueBytes: 'Andmed jäävad sellisena, nagu imporditi, ja neid ei saa printerisse salvestada.',
     formatJobHint: 'Iga prinditöö salvestab vormingu uuesti ja prindib selle andmestiku ridadega.',
     formatSetupHint: 'Selle printeriprofiili seadistusskript salvestab vormingu üks kord. Tööd saadavad ainult andmed.',
