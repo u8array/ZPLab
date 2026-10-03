@@ -1057,6 +1057,8 @@ const it = {
     lintStillOpenHereFmt: '{cmd} è ancora aperto qui',
     lintInsertCmdFmt: 'Inserisci {cmd}',
     editSourceApply: 'Applica',
+    editSourceEmpty: 'Il pulsante Applica avvia un nuovo design.',
+    editSourceEmptyBody: 'Avviare un nuovo design? Restano solo la dimensione etichetta e il profilo stampante.',
     editSourceGateBlob: "Non disponibile: una riga del codice è troppo lunga per essere modificata come testo (di solito un'immagine incorporata).",
     editSourceGateSize: 'Non disponibile: il codice generato è troppo grande per essere modificato come testo.',
     editSourceGateRecall: 'Non disponibile: una pagina richiama il proprio formato memorizzato invece di memorizzarlo, quindi il codice non contiene un layout da modificare. Imposta prima la consegna di quella pagina su ogni lavoro di stampa.',

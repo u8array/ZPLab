@@ -389,6 +389,30 @@ describe("authoring into an empty document", () => {
     expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
     expect(useLabelStore.getState().pages).toBe(pages);
   });
+
+  it("replaces the document with an empty design on the same media when the new-design question is confirmed", () => {
+    useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8, darkness: 22 }, variables: [{ id: "v1", name: "n", fnNumber: 1 }] as never });
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("");
+    fireEvent.click(screen.getByRole("button", { name: t().output.editSourceApply }));
+    expect(useLabelStore.getState().pages).toBe(pages);
+    fireEvent.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: t().app.newDesign }));
+    const state = useLabelStore.getState();
+    expect(state.sourceEdit.status).toBe("off");
+    expect(state.pages.flatMap((p) => p.objects)).toEqual([]);
+    expect(state.variables).toEqual([]);
+    expect(state.label).toEqual({ widthMm: 70, heightMm: 40, dpmm: 8 });
+    expect(useLabelStore.temporal.getState().pastStates).toHaveLength(0);
+  });
+
+  it("keeps the document when the new-design question is declined", () => {
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("");
+    fireEvent.click(screen.getByRole("button", { name: t().output.editSourceApply }));
+    fireEvent.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: t().app.cancel }));
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    expect(useLabelStore.getState().pages).toBe(pages);
+  });
 });
 
 describe("inline diagnostics", () => {

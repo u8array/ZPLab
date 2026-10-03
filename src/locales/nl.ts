@@ -1057,6 +1057,8 @@ const nl = {
     lintStillOpenHereFmt: '{cmd} is hier nog steeds open',
     lintInsertCmdFmt: '{cmd} invoegen',
     editSourceApply: 'Toepassen',
+    editSourceEmpty: 'Toepassen start een nieuw ontwerp.',
+    editSourceEmptyBody: 'Nieuw ontwerp starten? Alleen het labelformaat en het printerprofiel blijven.',
     editSourceGateBlob: 'Niet beschikbaar: een regel van de code is te lang om als tekst te bewerken (meestal een ingesloten afbeelding).',
     editSourceGateSize: 'Niet beschikbaar: de gegenereerde code is te groot om als tekst te bewerken.',
     editSourceGateRecall: 'Niet beschikbaar: een pagina roept haar opgeslagen formaat op in plaats van het op te slaan, dus de code bevat geen lay-out om te bewerken. Stel eerst de levering van die pagina in op elke afdruktaak.',

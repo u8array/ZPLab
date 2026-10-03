@@ -1057,6 +1057,8 @@ const et = {
     lintStillOpenHereFmt: '{cmd} on siin endiselt avatud',
     lintInsertCmdFmt: 'Lisa {cmd}',
     editSourceApply: 'Rakenda',
+    editSourceEmpty: 'Nupp Rakenda alustab uut kujundust.',
+    editSourceEmptyBody: 'Kas alustada uut kujundust? Alles jäävad ainult etiketisuurus ja printeriprofiil.',
     editSourceGateBlob: 'Pole saadaval: üks koodirida on tekstina muutmiseks liiga pikk (tavaliselt manustatud graafika).',
     editSourceGateSize: 'Pole saadaval: loodud kood on tekstina muutmiseks liiga suur.',
     editSourceGateRecall: 'Pole saadaval: leht kutsub esile oma salvestatud vormingu, selle salvestamise asemel, mistõttu kood ei sisalda redigeeritavat paigutust. Määra kõigepealt selle lehe edastuseks iga prinditöö.',

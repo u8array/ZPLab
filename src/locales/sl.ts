@@ -1057,6 +1057,8 @@ const sl = {
     lintStillOpenHereFmt: '{cmd} je tukaj še vedno odprt',
     lintInsertCmdFmt: 'Vstavi {cmd}',
     editSourceApply: 'Uporabi',
+    editSourceEmpty: 'Gumb Uporabi začne nov dizajn.',
+    editSourceEmptyBody: 'Ali želite začeti nov dizajn? Ostanejo samo velikost nalepke in profil tiskalnika.',
     editSourceGateBlob: 'Ni na voljo: ena vrstica kode je predolga za urejanje kot besedilo (običajno vgrajena grafika).',
     editSourceGateSize: 'Ni na voljo: ustvarjena koda je prevelika za urejanje kot besedilo.',
     editSourceGateRecall: 'Ni na voljo: stran prikliče svojo shranjeno obliko, namesto da bi jo shranila, zato koda ne vsebuje postavitve za urejanje. Najprej nastavi dostavo te strani na vsako tiskalniško opravilo.',

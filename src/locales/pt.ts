@@ -1057,6 +1057,8 @@ const pt = {
     lintStillOpenHereFmt: '{cmd} continua aberto aqui',
     lintInsertCmdFmt: 'Inserir {cmd}',
     editSourceApply: 'Aplicar',
+    editSourceEmpty: 'Aplicar inicia um novo design.',
+    editSourceEmptyBody: 'Iniciar um novo design? Só ficam o tamanho da etiqueta e o perfil da impressora.',
     editSourceGateBlob: 'Indisponível: uma linha do código é demasiado longa para ser editada como texto (normalmente um gráfico incorporado).',
     editSourceGateSize: 'Indisponível: o código gerado é demasiado grande para ser editado como texto.',
     editSourceGateRecall: 'Indisponível: uma página recupera o formato armazenado em vez de armazená-lo, por isso o código não contém um layout para editar. Defina primeiro a entrega dessa página para cada trabalho de impressão.',

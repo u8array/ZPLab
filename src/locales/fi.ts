@@ -1057,6 +1057,8 @@ const fi = {
     lintStillOpenHereFmt: '{cmd} on täällä yhä auki',
     lintInsertCmdFmt: 'Lisää {cmd}',
     editSourceApply: 'Käytä',
+    editSourceEmpty: 'Uusi rakenne alkaa vasta, kun painat Käytä.',
+    editSourceEmptyBody: 'Aloitetaanko uusi rakenne? Vain etikettikoko ja tulostinprofiili säilyvät.',
     editSourceGateBlob: 'Ei käytettävissä: yksi koodirivi on liian pitkä tekstinä muokattavaksi (yleensä upotettu kuva).',
     editSourceGateSize: 'Ei käytettävissä: luotu koodi on liian suuri tekstinä muokattavaksi.',
     editSourceGateRecall: 'Ei käytettävissä: sivu kutsuu tallennettua muotoaan sen tallentamisen sijaan, joten koodissa ei ole muokattavaa asettelua. Aseta ensin tämän sivun toimitus jokaiseen tulostustyöhön.',

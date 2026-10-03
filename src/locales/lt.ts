@@ -1057,6 +1057,8 @@ const lt = {
     lintStillOpenHereFmt: '{cmd} čia vis dar atviras',
     lintInsertCmdFmt: 'Įterpti {cmd}',
     editSourceApply: 'Taikyti',
+    editSourceEmpty: 'Mygtukas Taikyti pradeda naują dizainą.',
+    editSourceEmptyBody: 'Pradėti naują dizainą? Išlieka tik etiketės dydis ir spausdintuvo profilis.',
     editSourceGateBlob: 'Negalima: viena kodo eilutė per ilga, kad ją būtų galima redaguoti kaip tekstą (paprastai įterpta grafika).',
     editSourceGateSize: 'Negalima: sugeneruotas kodas per didelis, kad jį būtų galima redaguoti kaip tekstą.',
     editSourceGateRecall: 'Negalima: puslapis iškviečia savo išsaugotą formatą, vietoj to, kad jį išsaugotų, todėl kodas neturi išdėstymo redagavimui. Pirmiausia nustatykite šio puslapio pristatymą kiekvienai spausdinimo užduočiai.',

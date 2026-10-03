@@ -1057,6 +1057,8 @@ const da = {
     lintStillOpenHereFmt: '{cmd} er stadig åbent her',
     lintInsertCmdFmt: 'Indsæt {cmd}',
     editSourceApply: 'Anvend',
+    editSourceEmpty: 'Knappen Anvend starter et nyt design.',
+    editSourceEmptyBody: 'Start et nyt design? Kun etiketstørrelsen og printerprofilen bevares.',
     editSourceGateBlob: 'Ikke tilgængelig: en linje i koden er for lang til at redigere som tekst (som regel en indlejret grafik).',
     editSourceGateSize: 'Ikke tilgængelig: den genererede kode er for stor til at redigere som tekst.',
     editSourceGateRecall: 'Ikke tilgængelig: en side kalder sit gemte format i stedet for at gemme det, så koden indeholder intet layout at redigere. Indstil først sidens levering til hvert printjob.',

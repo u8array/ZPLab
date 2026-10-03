@@ -13,7 +13,7 @@ export function sourceRefusalText(
 ): string {
   switch (reason) {
     case 'empty':
-      return t.importModal.errPasteFirst;
+      return t.output.editSourceEmpty;
     case 'noContent':
       return t.importModal.errNoObjects;
     case 'blobLine':

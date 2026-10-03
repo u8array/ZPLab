@@ -1057,6 +1057,8 @@ const hr = {
     lintStillOpenHereFmt: '{cmd} je ovdje i dalje otvoren',
     lintInsertCmdFmt: 'Umetni {cmd}',
     editSourceApply: 'Primijeni',
+    editSourceEmpty: 'Gumb Primijeni pokreće novi dizajn.',
+    editSourceEmptyBody: 'Pokrenuti novi dizajn? Ostaju samo veličina naljepnice i profil pisača.',
     editSourceGateBlob: 'Nedostupno: jedan redak koda predug je za uređivanje kao tekst (obično ugrađena grafika).',
     editSourceGateSize: 'Nedostupno: generirani kôd prevelik je za uređivanje kao tekst.',
     editSourceGateRecall: 'Nedostupno: stranica poziva svoj pohranjeni format umjesto da ga pohrani, pa kôd ne sadrži raspored za uređivanje. Najprije postavite isporuku te stranice na svaki ispisni zadatak.',

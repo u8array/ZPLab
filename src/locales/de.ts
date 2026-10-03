@@ -1094,6 +1094,8 @@ const de = {
     lintStillOpenHereFmt: '{cmd} ist hier noch offen',
     lintInsertCmdFmt: '{cmd} einfügen',
     editSourceApply: 'Übernehmen',
+    editSourceEmpty: 'Übernehmen beginnt ein neues Design.',
+    editSourceEmptyBody: 'Neues Design beginnen? Nur die Etikettgröße und das Druckerprofil bleiben.',
     editSourceGateBlob: 'Nicht verfügbar: Eine Zeile des Codes ist zu lang, um sie als Text zu bearbeiten (meist eine eingebettete Grafik).',
     editSourceGateSize: 'Nicht verfügbar: Der erzeugte Code ist zu groß, um ihn als Text zu bearbeiten.',
     editSourceGateRecall: 'Nicht verfügbar: Eine Seite ruft ihr gespeichertes Format auf, statt es zu speichern, daher enthält der Code kein Layout zum Bearbeiten. Stelle zuerst die Bereitstellung dieser Seite auf jeden Druckjob um.',

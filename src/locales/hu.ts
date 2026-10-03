@@ -1057,6 +1057,8 @@ const hu = {
     lintStillOpenHereFmt: '{cmd} itt még mindig nyitva van',
     lintInsertCmdFmt: '{cmd} beszúrása',
     editSourceApply: 'Alkalmaz',
+    editSourceEmpty: 'Az Alkalmaz gombra kattintva új terv kezdődik.',
+    editSourceEmptyBody: 'Elkezdi az új tervet? Csak a címkeméret és a nyomtatóprofil marad meg.',
     editSourceGateBlob: 'Nem érhető el: a kód egyik sora túl hosszú ahhoz, hogy szövegként szerkeszthető legyen (általában beágyazott grafika).',
     editSourceGateSize: 'Nem érhető el: a létrehozott kód túl nagy ahhoz, hogy szövegként szerkeszthető legyen.',
     editSourceGateRecall: 'Nem érhető el: egy oldal előhívja a tárolt formátumát ahelyett, hogy tárolná, így a kód nem tartalmaz szerkeszthető elrendezést. Állítsd be először ennek az oldalnak a továbbítását minden nyomtatási feladatra.',

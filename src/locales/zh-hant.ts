@@ -1057,6 +1057,8 @@ const zhHant = {
     lintStillOpenHereFmt: '{cmd} 在此處仍處於開啟狀態',
     lintInsertCmdFmt: '插入 {cmd}',
     editSourceApply: '套用',
+    editSourceEmpty: '點選套用即可開始新設計。',
+    editSourceEmptyBody: '要開始新設計嗎？只會保留標籤尺寸和印表機設定檔。',
     editSourceGateBlob: '無法使用：程式碼中有一行過長，無法以文字方式編輯（通常是內嵌的圖形）。',
     editSourceGateSize: '無法使用：產生的程式碼過大，無法以文字方式編輯。',
     editSourceGateRecall: '無法使用：頁面呼叫其已儲存格式而非儲存它，因此程式碼不含可編輯的版面。請先將該頁面的交付設為每個列印工作。',

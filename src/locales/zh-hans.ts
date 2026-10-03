@@ -1057,6 +1057,8 @@ const zhHans = {
     lintStillOpenHereFmt: '{cmd} 在此处仍处于打开状态',
     lintInsertCmdFmt: '插入 {cmd}',
     editSourceApply: '应用',
+    editSourceEmpty: '点击应用即可开始新设计。',
+    editSourceEmptyBody: '要开始新设计吗？只保留标签尺寸和打印机配置文件。',
     editSourceGateBlob: '不可用：代码中有一行过长，无法以文本方式编辑（通常是嵌入的图形）。',
     editSourceGateSize: '不可用：生成的代码过大，无法以文本方式编辑。',
     editSourceGateRecall: '不可用：页面调用其已存储格式而不是存储它，因此代码不包含可编辑的版面。请先将该页面的交付设置为每个打印任务。',

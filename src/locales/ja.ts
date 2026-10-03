@@ -1057,6 +1057,8 @@ const ja = {
     lintStillOpenHereFmt: '{cmd} はここではまだ開いています',
     lintInsertCmdFmt: '{cmd} を挿入',
     editSourceApply: '適用',
+    editSourceEmpty: '適用で新しいデザインが始まります。',
+    editSourceEmptyBody: '新しいデザインを開始しますか? 残るのはラベルサイズとプリンタープロファイルだけです。',
     editSourceGateBlob: '利用できません: コードの1行が長すぎてテキストとして編集できません (多くは埋め込み画像です)。',
     editSourceGateSize: '利用できません: 生成されたコードが大きすぎて、テキストとして編集できません。',
     editSourceGateRecall: '利用できません: このページは保存済みフォーマットを保存する代わりに呼び出すため、コードに編集できるレイアウトがありません。まずこのページの配信を印刷ジョブごとに設定してください。',

@@ -76,6 +76,7 @@ export interface SourceEditSlice {
    *  `draft` is the text the refusal describes. */
   setSourceRefusal: (refusal: SourceShadow['refusal'], draft: string) => void;
   cancelSourceEdit: () => void;
+  applyEmptySource: () => void;
   /** Commits a prepared plan as ONE undo step. Unlike loadDesign this keeps
    *  history and dataset: the document keeps its identity, only its ZPL
    *  representation was rewritten. `session` is the id the plan was built
@@ -144,6 +145,12 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
       // document may not have them.
       currentPageIndex: clampPageIndex(state.currentPageIndex, state.pages.length),
     }));
+  },
+
+  applyEmptySource: () => {
+    // Cancel first or newDesign no-ops.
+    get().cancelSourceEdit();
+    get().newDesign();
   },
 
   applyZplSource: (plan, session) => {

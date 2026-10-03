@@ -1057,6 +1057,8 @@ const he = {
     lintStillOpenHereFmt: '{cmd} עדיין פתוח כאן',
     lintInsertCmdFmt: 'הוסף {cmd}',
     editSourceApply: 'החל',
+    editSourceEmpty: 'החל מתחיל עיצוב חדש.',
+    editSourceEmptyBody: 'להתחיל עיצוב חדש? רק גודל התווית ופרופיל המדפסת יישארו.',
     editSourceGateBlob: 'לא זמין: אחת משורות הקוד ארוכה מדי לעריכה כטקסט (בדרך כלל גרפיקה משובצת).',
     editSourceGateSize: 'לא זמין: הקוד שנוצר גדול מכדי לערוך אותו כטקסט.',
     editSourceGateRecall: 'לא זמין: עמוד משחזר את הפורמט השמור שלו במקום לשמור אותו, ולכן הקוד אינו מכיל פריסה לעריכה. הגדירו תחילה את אספקת העמוד הזה לכל עבודת הדפסה.',

@@ -1057,6 +1057,8 @@ const lv = {
     lintStillOpenHereFmt: '{cmd} šeit joprojām ir atvērts',
     lintInsertCmdFmt: 'Ievietot {cmd}',
     editSourceApply: 'Lietot',
+    editSourceEmpty: 'Poga Lietot sāk jaunu dizainu.',
+    editSourceEmptyBody: 'Vai sākt jaunu dizainu? Paliek tikai etiķetes izmērs un printera profils.',
     editSourceGateBlob: 'Nav pieejams: viena koda rinda ir pārāk gara, lai to rediģētu kā tekstu (parasti iegulta grafika).',
     editSourceGateSize: 'Nav pieejams: ģenerētais kods ir pārāk liels, lai to rediģētu kā tekstu.',
     editSourceGateRecall: 'Nav pieejams: lapa izsauc savu saglabāto formātu tā vietā, lai to saglabātu, tāpēc kodā nav izkārtojuma, ko rediģēt. Vispirms iestatiet šīs lapas piegādi uz katru drukas darbu.',

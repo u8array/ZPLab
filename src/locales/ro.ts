@@ -1057,6 +1057,8 @@ const ro = {
     lintStillOpenHereFmt: '{cmd} este încă deschis aici',
     lintInsertCmdFmt: 'Inserați {cmd}',
     editSourceApply: 'Aplică',
+    editSourceEmpty: 'Butonul Aplică începe un design nou.',
+    editSourceEmptyBody: 'Începe un design nou? Rămân doar dimensiunea etichetei și profilul imprimantei.',
     editSourceGateBlob: 'Indisponibil: o linie din cod este prea lungă pentru a fi editată ca text (de obicei un element grafic încorporat).',
     editSourceGateSize: 'Indisponibil: codul generat este prea mare pentru a fi editat ca text.',
     editSourceGateRecall: 'Indisponibil: o pagină recheamă formatul stocat în loc să îl stocheze, așa că acest cod nu conține un aspect de editat. Setează mai întâi livrarea acestei pagini la fiecare sarcină de imprimare.',

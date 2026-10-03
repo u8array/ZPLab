@@ -1057,6 +1057,8 @@ const no = {
     lintStillOpenHereFmt: '{cmd} er fortsatt åpent her',
     lintInsertCmdFmt: 'Sett inn {cmd}',
     editSourceApply: 'Bruk',
+    editSourceEmpty: 'Knappen Bruk starter et nytt design.',
+    editSourceEmptyBody: 'Starte et nytt design? Bare etikettstørrelsen og skriverprofilen bevares.',
     editSourceGateBlob: 'Ikke tilgjengelig: en linje i koden er for lang til å redigeres som tekst (som regel en innebygd grafikk).',
     editSourceGateSize: 'Ikke tilgjengelig: den genererte koden er for stor til å redigeres som tekst.',
     editSourceGateRecall: 'Ikke tilgjengelig: en side henter sitt lagrede format i stedet for å lagre det, så koden inneholder ingen layout å redigere. Still først inn leveringen for denne siden til hver utskriftsjobb.',

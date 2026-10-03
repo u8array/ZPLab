@@ -1057,6 +1057,8 @@ const tr = {
     lintStillOpenHereFmt: '{cmd} burada hâlâ açık',
     lintInsertCmdFmt: '{cmd} ekle',
     editSourceApply: 'Uygula',
+    editSourceEmpty: 'Uygula düğmesi yeni bir tasarım başlatır.',
+    editSourceEmptyBody: 'Yeni bir tasarım başlatılsın mı? Yalnızca etiket boyutu ve yazıcı profili kalır.',
     editSourceGateBlob: 'Kullanılamıyor: kodun bir satırı metin olarak düzenlenemeyecek kadar uzun (genellikle gömülü bir grafik).',
     editSourceGateSize: 'Kullanılamıyor: oluşturulan kod metin olarak düzenlenemeyecek kadar büyük.',
     editSourceGateRecall: 'Kullanılamıyor: bir sayfa, kayıtlı biçimini kaydetmek yerine çağırır, bu yüzden kod düzenlenecek hiçbir düzen içermez. Önce bu sayfanın teslimatını her yazdırma işine ayarlayın.',

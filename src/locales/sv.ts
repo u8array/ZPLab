@@ -1057,6 +1057,8 @@ const sv = {
     lintStillOpenHereFmt: '{cmd} är fortfarande öppet här',
     lintInsertCmdFmt: 'Infoga {cmd}',
     editSourceApply: 'Använd',
+    editSourceEmpty: 'Knappen Använd startar en ny design.',
+    editSourceEmptyBody: 'Starta en ny design? Endast etikettstorleken och skrivarprofilen behålls.',
     editSourceGateBlob: 'Inte tillgängligt: en rad i koden är för lång för att redigeras som text (oftast en inbäddad grafik).',
     editSourceGateSize: 'Inte tillgängligt: den genererade koden är för stor för att redigeras som text.',
     editSourceGateRecall: 'Inte tillgängligt: en sida återkallar sitt sparade format i stället för att spara det, så koden innehåller ingen layout att redigera. Ställ först in leveransen för den sidan till varje utskriftsjobb.',

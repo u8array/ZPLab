@@ -1057,6 +1057,8 @@ const pl = {
     lintStillOpenHereFmt: '{cmd} jest tutaj wciąż otwarty',
     lintInsertCmdFmt: 'Wstaw {cmd}',
     editSourceApply: 'Zastosuj',
+    editSourceEmpty: 'Przycisk Zastosuj rozpoczyna nowy projekt.',
+    editSourceEmptyBody: 'Zacząć nowy projekt? Zostaną tylko rozmiar etykiety i profil drukarki.',
     editSourceGateBlob: 'Niedostępne: jeden wiersz kodu jest zbyt długi, aby edytować go jako tekst (zwykle osadzona grafika).',
     editSourceGateSize: 'Niedostępne: wygenerowany kod jest zbyt duży, aby edytować go jako tekst.',
     editSourceGateRecall: 'Niedostępne: strona przywołuje swój zapisany format zamiast go zapisać, więc kod nie zawiera układu do edycji. Ustaw najpierw dostarczanie tej strony na każde zadanie drukowania.',

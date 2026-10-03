@@ -1057,6 +1057,8 @@ const sk = {
     lintStillOpenHereFmt: '{cmd} je tu stále otvorený',
     lintInsertCmdFmt: 'Vložiť {cmd}',
     editSourceApply: 'Použiť',
+    editSourceEmpty: 'Tlačidlo Použiť spustí nový návrh.',
+    editSourceEmptyBody: 'Spustiť nový návrh? Zostane len veľkosť štítku a profil tlačiarne.',
     editSourceGateBlob: 'Nedostupné: jeden riadok kódu je príliš dlhý na úpravu ako text (zvyčajne vložená grafika).',
     editSourceGateSize: 'Nedostupné: vygenerovaný kód je príliš veľký na úpravu ako text.',
     editSourceGateRecall: 'Nedostupné: stránka vyvoláva svoj uložený formát namiesto toho, aby ho uložila, takže kód neobsahuje žiadne rozloženie na úpravu. Najprv nastavte doručenie tejto stránky na každú tlačovú úlohu.',

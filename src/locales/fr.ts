@@ -1057,6 +1057,8 @@ const fr = {
     lintStillOpenHereFmt: '{cmd} est toujours ouvert ici',
     lintInsertCmdFmt: 'Insérer {cmd}',
     editSourceApply: 'Appliquer',
+    editSourceEmpty: 'Appliquer démarre un nouveau design.',
+    editSourceEmptyBody: "Démarrer un nouveau design ? Seuls le format d'étiquette et le profil d'imprimante sont conservés.",
     editSourceGateBlob: 'Indisponible : une ligne du code est trop longue pour être modifiée sous forme de texte (généralement une image intégrée).',
     editSourceGateSize: 'Indisponible : le code généré est trop volumineux pour être modifié sous forme de texte.',
     editSourceGateRecall: "Indisponible : une page rappelle son format stocké au lieu de le stocker, donc le code ne contient aucune mise en page à modifier. Réglez d'abord la livraison de cette page sur chaque travail d'impression.",

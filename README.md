@@ -101,7 +101,7 @@ While you edit, the canvas shows a live preview. Canvas editing and the **Proper
 
 - **Apply** or leaving the panel commits your changes.
 - `Esc` or **Cancel** discards them.
-- ZPLab asks for confirmation when parsing finds problems, when editor settings would be lost, or when fonts or graphics move into the printer profile. It also asks when you discard a changed source.
+- ZPLab asks for confirmation when parsing finds problems, when editor settings would be lost, or when fonts or graphics move into the printer profile. It also asks when you discard a changed source. **Apply** on an emptied source asks whether to start a new design.
 - Applying re-imports the ZPL under the [Import guarantees](#import-guarantees).
 
 ### Importing existing ZPL

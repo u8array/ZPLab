@@ -1094,6 +1094,8 @@ const en = {
     lintStillOpenHereFmt: '{cmd} is still open here',
     lintInsertCmdFmt: 'Insert {cmd}',
     editSourceApply: 'Apply',
+    editSourceEmpty: 'Press Apply to start a new design.',
+    editSourceEmptyBody: 'Start a new design? Only the label size and the printer profile stay.',
     editSourceGateBlob: 'Unavailable: one line of the code is too long to edit as text (usually an embedded graphic).',
     editSourceGateSize: 'Unavailable: the generated code is too large to edit as text.',
     editSourceGateRecall: "Unavailable: a page recalls its stored format instead of storing it, so the code holds no layout to edit. Set that page's delivery to every job first.",

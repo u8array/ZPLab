@@ -159,11 +159,13 @@ function SessionChrome({
 }) {
   const t = useT();
   const cancelSourceEdit = useLabelStore((s) => s.cancelSourceEdit);
+  const applyEmptySource = useLabelStore((s) => s.applyEmptySource);
   const applyZplSource = useLabelStore((s) => s.applyZplSource);
   // Modal-local like the import modal's result/pending: only the buffer lives
   // in the store, the in-flight plan does not survive its session anyway.
   const [pendingPlan, setPendingPlan] = useState<SourceApplyOk | null>(null);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const [confirmNew, setConfirmNew] = useState(false);
   const liveRefusal = useLabelStore(selectShadowRefusal);
   const liveDraft = useLabelStore(selectShadowDraft);
   // A located imbalance names bytes, so it may only be quoted while the parse
@@ -195,12 +197,17 @@ function SessionChrome({
   };
 
   /** Returns whether the session ended (a held session swallows the click). */
-  const handleApply = (): boolean => {
+  const handleApply = (explicit = false): boolean => {
     // An untouched buffer must not commit: the reparse would still rename
     // variables and replace ids, pure loss for a no-op edit.
     if (!dirty) {
       cancelSourceEdit();
       return true;
+    }
+    // A blur is not consent for replacing the document.
+    if (explicit && session.draft.trim() === '') {
+      setConfirmNew(true);
+      return false;
     }
     const state = useLabelStore.getState();
     const plan = prepareSourceApply({
@@ -230,7 +237,7 @@ function SessionChrome({
   useSessionExit(panelRef, {
     onExit: handleApply,
     onEscape: requestCancel,
-    suspended: pendingPlan !== null || confirmDiscard,
+    suspended: pendingPlan !== null || confirmDiscard || confirmNew,
   });
 
   return (
@@ -256,10 +263,10 @@ function SessionChrome({
             // Refocus like Cancel: a clean apply unmounts this button. On the
             // dialog path the trap's initial focus wins afterwards, harmless.
             onClick={() => {
-              handleApply();
+              handleApply(true);
               focusEditor();
             }}
-            disabled={session.draft.trim() === ''}
+            disabled={!dirty && session.draft.trim() === ''}
             className="px-3 py-1.5 rounded text-xs font-mono bg-accent text-bg hover:opacity-90 disabled:opacity-25 disabled:cursor-not-allowed transition-opacity"
           >
             {t.output.editSourceApply}
@@ -281,6 +288,24 @@ function SessionChrome({
           }}
           // The review stays open underneath, so a declined confirmation returns to it.
           onDiscard={requestCancel}
+        />
+      )}
+
+      {confirmNew && (
+        <ConfirmDialog
+          message={t.output.editSourceEmptyBody}
+          confirmLabel={t.app.newDesign}
+          cancelLabel={t.app.cancel}
+          destructive
+          onConfirm={() => {
+            setConfirmNew(false);
+            applyEmptySource();
+            focusEditor();
+          }}
+          onCancel={() => {
+            setConfirmNew(false);
+            focusEditor();
+          }}
         />
       )}
 

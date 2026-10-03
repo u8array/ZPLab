@@ -1057,6 +1057,8 @@ const ko = {
     lintStillOpenHereFmt: '{cmd}은(는) 여기서 아직 열려 있습니다',
     lintInsertCmdFmt: '{cmd} 삽입',
     editSourceApply: '적용',
+    editSourceEmpty: '적용을 누르면 새 디자인이 시작됩니다.',
+    editSourceEmptyBody: '새 디자인을 시작할까요? 라벨 크기와 프린터 프로필만 유지됩니다.',
     editSourceGateBlob: '사용할 수 없음: 코드의 한 줄이 너무 길어 텍스트로 편집할 수 없습니다 (대개 포함된 그래픽입니다).',
     editSourceGateSize: '사용할 수 없음: 생성된 코드가 너무 커서 텍스트로 편집할 수 없습니다.',
     editSourceGateRecall: '사용할 수 없음: 이 페이지는 저장된 포맷을 저장하는 대신 호출하므로 코드에 편집할 레이아웃이 없습니다. 먼저 이 페이지가 인쇄 작업마다 전달되도록 설정하세요.',
