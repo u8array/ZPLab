@@ -19,7 +19,7 @@ import { pinBareFontDriveLeaf, reconstructLegacyHeads } from '@zplab/core/lib/de
 import type { DesignFilePage } from '@zplab/core/lib/designFile';
 import type { CustomFontMapping, JmDensity, LabelConfig } from '@zplab/core/types/LabelConfig';
 import type { LabelObject, Page } from '@zplab/core/types/Group';
-import { documentUsage, liveUsage, ownerUsage, usageOfDesignText, type LiveUsage, type Usage } from '@zplab/core/lib/liveUsage';
+import { documentUsage, fileDeletability, liveUsage, usageOfDesignText, type BlockingOwner, type LiveUsage, type Usage } from '@zplab/core/lib/liveUsage';
 import {
   createPrinterProfileSlice,
   type PrinterProfileSlice,
@@ -607,14 +607,14 @@ export const getCurrentObjects = (): LabelObject[] =>
 const noopHistoryAction = () => {
   /* editor frozen */
 };
-/** What an undo or redo step still names. Cached per snapshot object: zundo mutates its
- *  pastStates and futureStates arrays in place, so only the snapshots are stable keys. */
+/** zundo mutates pastStates and futureStates in place, so only the snapshots are stable keys. */
 const historyUsage = new WeakMap<object, Usage>();
 
 function usageOfSnapshot(snapshot: Partial<LabelState>): Usage {
   const cached = historyUsage.get(snapshot);
   if (cached) return cached;
-  const usage = ownerUsage(snapshot.pages ?? [], snapshot.label ?? {}, snapshot.printerProfile ?? {});
+  // A step's setupFonts entry may outlive the bytes, since the stored fonts tab flags it as missing.
+  const usage = documentUsage(snapshot.pages ?? [], snapshot.label ?? {});
   historyUsage.set(snapshot, usage);
   return usage;
 }
@@ -630,22 +630,46 @@ function usageOfReplaced(slot: ReplacedDesign): Usage {
   return usage;
 }
 
-/** Everything that still names a cached file: the open pages, the profile, the undo history, the replaced design, the clipboard. */
-export const useLiveUsage = (): LiveUsage => {
+function useOwners(): { live: LiveUsage; history: Usage[] } {
   const { pastStates, futureStates } = useHistory();
+  const history = [...pastStates, ...futureStates].map(usageOfSnapshot);
   const pages = useLabelStore((s) => s.pages);
   const label = useLabelStore((s) => s.label);
   const printerProfile = useLabelStore((s) => s.printerProfile);
   const clipboard = useLabelStore((s) => s.clipboard);
   const replaced = useLabelStore((s) => s.replacedDesign);
-  return liveUsage({
+  const live = liveUsage({
     document: documentUsage(pages, label),
     profile: printerProfile,
-    history: [...pastStates, ...futureStates].map(usageOfSnapshot),
+    history,
     restore: replaced ? usageOfReplaced(replaced) : undefined,
     clipboard: documentUsage([{ objects: clipboard }], {}),
   });
+  return { live, history };
+}
+
+export type DeleteBlock = BlockingOwner | 'frozen';
+
+/** Deleting prunes undo steps, so a frozen editor blocks it. */
+export const useFileDeletability = (): ((kind: keyof Usage, key: string) => { blockedBy: DeleteBlock | undefined; historySteps: number }) => {
+  const { live, history } = useOwners();
+  const frozen = useLabelStore(selectEditorFrozen);
+  return (kind, key) => {
+    const found = fileDeletability(live, history, kind, key);
+    return { ...found, blockedBy: found.blockedBy ?? (frozen ? 'frozen' : undefined) };
+  };
 };
+
+/** A kept step would restore a reference to a file that is gone. */
+export function forgetHistoryUsing(kind: keyof Usage, key: string): number {
+  const { pastStates, futureStates } = useLabelStore.temporal.getState();
+  const keeps = (snapshot: Partial<LabelState>) => !usageOfSnapshot(snapshot)[kind].has(key);
+  const past = pastStates.filter(keeps);
+  const future = futureStates.filter(keeps);
+  const dropped = pastStates.length - past.length + futureStates.length - future.length;
+  if (dropped > 0) useLabelStore.temporal.setState({ pastStates: past, futureStates: future });
+  return dropped;
+}
 
 export const useHistory = () => {
   const history = useStore(useLabelStore.temporal);

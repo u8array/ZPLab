@@ -23,16 +23,17 @@ export function profileFontKeys(profile: Pick<PrinterProfile, "setupFonts">): Re
   return new Set((profile.setupFonts ?? []).map(setupEntryKey));
 }
 
-/** A store state's claim: an undo step restores the profile with the pages, so its fonts count too. */
-export function ownerUsage(pages: readonly Page[], label: Pick<LabelConfig, "customFonts">, profile: Pick<PrinterProfile, "setupFonts">): Usage {
-  const document = documentUsage(pages, label);
-  return { images: document.images, fonts: new Set([...document.fonts, ...profileFontKeys(profile)]) };
-}
-
 /** A serialized design's claim. A text that no longer parses claims nothing. */
 export function usageOfDesignText(text: string): Usage {
   const parsed = parseDesignFile(text);
   return parsed.ok ? documentUsage(parsed.value.pages, parsed.value.label) : { images: new Set(), fonts: new Set() };
+}
+
+export type BlockingOwner = Exclude<LiveReason, "history">;
+
+export function fileDeletability(live: LiveUsage, history: readonly Usage[], kind: keyof Usage, key: string): { blockedBy: BlockingOwner | undefined; historySteps: number } {
+  const owner = live[kind].get(key);
+  return { blockedBy: owner === "history" ? undefined : owner, historySteps: history.filter((step) => step[kind].has(key)).length };
 }
 
 export interface LiveOwners {
@@ -48,7 +49,8 @@ export interface LiveUsage {
   fonts: ReadonlyMap<string, LiveReason>;
 }
 
-/** The first owner in declaration order wins. A setupGraphics entry carries its own bytes, so the profile can pin fonts only. */
+/** A setupGraphics entry carries its own bytes, so the profile can pin fonts only.
+ *  History claims last so another owner's block outranks it. */
 export function liveUsage(owners: LiveOwners): LiveUsage {
   const images = new Map<string, LiveReason>();
   const fonts = new Map<string, LiveReason>();
@@ -58,15 +60,15 @@ export function liveUsage(owners: LiveOwners): LiveUsage {
   claim(images, owners.document.images, "document");
   claim(fonts, owners.document.fonts, "document");
   claim(fonts, profileFontKeys(owners.profile), "profile");
-  for (const snapshot of owners.history) {
-    claim(images, snapshot.images, "history");
-    claim(fonts, snapshot.fonts, "history");
-  }
   if (owners.restore) {
     claim(images, owners.restore.images, "restore");
     claim(fonts, owners.restore.fonts, "restore");
   }
   claim(images, owners.clipboard.images, "clipboard");
   claim(fonts, owners.clipboard.fonts, "clipboard");
+  for (const snapshot of owners.history) {
+    claim(images, snapshot.images, "history");
+    claim(fonts, snapshot.fonts, "history");
+  }
   return { images, fonts };
 }

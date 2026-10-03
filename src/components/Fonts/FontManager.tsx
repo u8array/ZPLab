@@ -9,8 +9,7 @@ import {
   cachedFontPath,
 } from '@zplab/core/lib/fontCache';
 import { useCachedFonts } from '../../hooks/useCachedFonts';
-import { useLabelStore, useLiveUsage } from '../../store/labelStore';
-import type { LiveReason } from '@zplab/core/lib/liveUsage';
+import { useLabelStore, useFileDeletability, forgetHistoryUsing, type DeleteBlock } from '../../store/labelStore';
 import { useT } from '../../hooks/useT';
 import { useUpload } from '../../hooks/useUpload';
 import { storageKey, storageRefMatchesPath } from '@zplab/core/lib/storagePath';
@@ -43,10 +42,13 @@ export function FontManager() {
   const setLabelConfig = useLabelStore((s) => s.setLabelConfig);
   const setupFonts = useLabelStore((s) => s.printerProfile.setupFonts);
   const patchPrinterProfile = useLabelStore((s) => s.patchPrinterProfile);
-  const live = useLiveUsage().fonts;
+  const fileDeletability = useFileDeletability();
+  const deletability = (path: string) => fileDeletability('fonts', storageKey(path));
 
   const [adding, setAdding] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const deleteMessage = (steps: number) =>
+    steps === 0 ? t.fonts.deleteConfirm : `${t.fonts.deleteConfirm} ${steps === 1 ? t.fonts.deleteHistoryOne : t.fonts.deleteHistoryManyFmt.replace('{n}', String(steps))}`;
 
   const uploadedPaths = fonts.map(cachedFontPath);
 
@@ -151,7 +153,7 @@ export function FontManager() {
               delivery={fontDelivery(entry, path, setupFonts)}
               embedLarge={isEmbedLarge(path)}
               previewMissing={!getFontFamily(path)}
-              inUse={live.get(storageKey(path))}
+              blockedBy={deletability(path).blockedBy}
               listed={listsStoredFont(path, setupFonts)}
               onAliasChange={(v) => setAliasForPath(path, v)}
               onDeliveryChange={(v) => deliverPath(path, v)}
@@ -214,12 +216,15 @@ export function FontManager() {
 
       {pendingDelete !== null && (
         <ConfirmDialog
-          message={t.fonts.deleteConfirm}
+          message={deleteMessage(deletability(pendingDelete).historySteps)}
           confirmLabel={t.fonts.delete}
           cancelLabel={t.app.cancel}
           destructive
           onConfirm={() => {
-            removeFont(pendingDelete);
+            if (deletability(pendingDelete).blockedBy === undefined) {
+              forgetHistoryUsing('fonts', storageKey(pendingDelete));
+              removeFont(pendingDelete);
+            }
             setPendingDelete(null);
           }}
           onCancel={() => setPendingDelete(null)}
@@ -240,8 +245,7 @@ interface FontEntryProps {
   embedLarge: boolean;
   /** Bytes are cached, but no browser face draws them. */
   previewMissing: boolean;
-  /** Why the delete is off: who still names the file. */
-  inUse: LiveReason | undefined;
+  blockedBy: DeleteBlock | undefined;
   listed: boolean;
   onAliasChange: (next: string) => void;
   onDeliveryChange: (next: ResourceDelivery) => void;
@@ -255,7 +259,7 @@ function FontEntry({
   delivery,
   embedLarge,
   previewMissing,
-  inUse,
+  blockedBy,
   listed,
   onAliasChange,
   onDeliveryChange,
@@ -306,11 +310,11 @@ function FontEntry({
             onChange={(e) => onAliasChange(e.target.value)}
           />
         </Tooltip>
-        <Tooltip content={inUse ? { document: t.fonts.inUse, profile: t.fonts.inProfile, history: t.fonts.inHistory, restore: t.fonts.inRestore, clipboard: t.fonts.inClipboard }[inUse] : t.fonts.delete}>
+        <Tooltip content={blockedBy ? ({ document: t.fonts.inUse, profile: t.fonts.inProfile, restore: t.fonts.inRestore, clipboard: t.fonts.inClipboard, frozen: t.printerSettings.frozenHint } satisfies Record<DeleteBlock, string>)[blockedBy] : t.fonts.delete}>
           <button
             type="button"
             onClick={onRequestDelete}
-            disabled={inUse !== undefined}
+            disabled={blockedBy !== undefined}
             className="p-1 text-muted hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             aria-label={t.fonts.delete}
           >

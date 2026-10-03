@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach } from "vitest";
-import { render, cleanup, fireEvent, act } from "@testing-library/react";
+import { render, cleanup, fireEvent, act, within } from "@testing-library/react";
 import { FontManager } from "./FontManager";
-import { useLabelStore } from "../../store/labelStore";
+import { useLabelStore, forgetHistoryUsing } from "../../store/labelStore";
 import { cachedFontPath, getAllFonts, loadFontBytes, removeFont } from "@zplab/core/lib/fontCache";
 import { withoutSetupEntry } from "@zplab/core/lib/setupEntries";
 import { serializeDesign } from "@zplab/core/lib/designFile";
@@ -47,15 +47,20 @@ describe("FontManager delete", () => {
     expect(deleteReason(r)).toMatch(/text field or an alias/);
   });
 
-  it("keeps a font an undo step still names, and frees it once the history is gone", () => {
+  it("deletes a font an undo step names, and that step with it", () => {
     act(() => useLabelStore.setState({ pages: [{ objects: [text("E:ARIAL.TTF")] }] }));
     act(() => useLabelStore.setState({ pages: [{ objects: [] }] }));
-    const first = render(<FontManager />);
-    expect(deleteButton(first).disabled).toBe(true);
-    expect(deleteReason(first)).toMatch(/undo step/);
-    first.unmount();
-    act(() => useLabelStore.temporal.getState().clear());
-    expect(deleteButton(render(<FontManager />)).disabled).toBe(false);
+    const r = render(<FontManager />);
+    expect(deleteButton(r).disabled).toBe(false);
+    act(() => {
+      fireEvent.click(deleteButton(r));
+    });
+    expect(r.getByRole("alertdialog").textContent).toMatch(/drops (the one step|\d+ steps) in the undo history/);
+    act(() => {
+      fireEvent.click(within(r.getByRole("alertdialog")).getByText("Delete"));
+    });
+    expect(getAllFonts()).toHaveLength(0);
+    expect(forgetHistoryUsing("fonts", "E:ARIAL.TTF")).toBe(0);
   });
 });
 
@@ -68,18 +73,38 @@ describe("FontManager delete owners", () => {
     act(() => useLabelStore.setState({ printerProfile: {} }));
   });
 
-  it("keeps a font an undo step's profile still ships, and lets the live profile name itself first", () => {
+  it("frees a font once the profile entry is gone, whatever an undo step's profile shipped", () => {
     act(() => useLabelStore.getState().patchPrinterProfile({ setupFonts: [{ path: "E:ARIAL.TTF" }] }));
     const provisioned = render(<FontManager />);
     expect(deleteReason(provisioned)).toMatch(/printer profile/);
     provisioned.unmount();
     act(() => useLabelStore.getState().patchPrinterProfileWith((p) => ({ setupFonts: withoutSetupEntry(p.setupFonts, "E:ARIAL.TTF") })));
     const dropped = render(<FontManager />);
-    expect(deleteButton(dropped).disabled).toBe(true);
-    expect(deleteReason(dropped)).toMatch(/undo step/);
-    dropped.unmount();
-    act(() => useLabelStore.temporal.getState().clear());
-    expect(deleteButton(render(<FontManager />)).disabled).toBe(false);
+    expect(deleteButton(dropped).disabled).toBe(false);
+    act(() => {
+      fireEvent.click(deleteButton(dropped));
+    });
+    expect(dropped.getByRole("alertdialog").textContent).not.toMatch(/undo history/);
+  });
+
+  it("keeps a font when the editor freezes while the dialog stands", () => {
+    const r = render(<FontManager />);
+    act(() => {
+      fireEvent.click(deleteButton(r));
+    });
+    act(() => useLabelStore.setState({ sourceEdit: { status: "editing", draft: "^XA^XZ", baseline: "^XA^XZ", session: 1 } }));
+    act(() => {
+      fireEvent.click(within(r.getByRole("alertdialog")).getByText("Delete"));
+    });
+    expect(getAllFonts()).toHaveLength(1);
+  });
+
+  it("keeps a font while the editor is frozen, and says so", () => {
+    act(() => useLabelStore.setState({ pages: [{ objects: [text("E:ARIAL.TTF")] }] }));
+    act(() => useLabelStore.setState({ pages: [{ objects: [] }], sourceEdit: { status: "editing", draft: "^XA^XZ", baseline: "^XA^XZ", session: 1 } }));
+    const r = render(<FontManager />);
+    expect(deleteButton(r).disabled).toBe(true);
+    expect(deleteReason(r)).toMatch(/locked/);
   });
 
   it("keeps a font only the replaced design names, and says so", () => {

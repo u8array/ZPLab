@@ -4,7 +4,7 @@ import { Tooltip } from "../ui/Tooltip";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { useT } from "../../hooks/useT";
 import { useUpload } from "../../hooks/useUpload";
-import { useLabelStore, useLiveUsage, selectEditorFrozen } from "../../store/labelStore";
+import { useLabelStore, useFileDeletability, forgetHistoryUsing, selectEditorFrozen, type DeleteBlock } from "../../store/labelStore";
 import { encodeGraphicFile } from "@zplab/core/lib/imageToZpl";
 import { sanitizeStorageName, setupEntryKey, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
 import { findSetupEntry, setupEntryHoldsOther, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
@@ -14,7 +14,6 @@ import { canSendSetupGraphic, setupGraphicFits, setupGraphicOf, setupGraphicStat
 import { storedGraphicRows } from "@zplab/core/lib/storedObjects";
 import { removeImage } from "@zplab/core/lib/imageCache";
 import { imageUsage } from "@zplab/core/lib/imageUsage";
-import type { LiveReason } from "@zplab/core/lib/liveUsage";
 import type { SetupGraphic } from "@zplab/core/types/PrinterProfile";
 
 /** Provisioning plus the local image cache. Whether a job ships its own bytes stays with the object. */
@@ -42,12 +41,24 @@ export function StoredGraphicsTab() {
   // Frozen, the open pages are not what a source session will apply, so no control may act on them.
   const frozen = useLabelStore(selectEditorFrozen);
   const usage = imageUsage(pages);
-  const held = useLiveUsage().images;
+  const deletability = useFileDeletability();
   const cached = useCachedImages();
-  const unused = cached.filter((img) => !held.has(img.id));
+  const unused = cached.filter((img) => {
+    const { blockedBy, historySteps } = deletability("images", img.id);
+    return blockedBy === undefined && historySteps === 0;
+  });
   const [pendingDrop, setPendingDrop] = useState<string[] | null>(null);
   const dropCached = (ids: string[]) => {
-    for (const id of ids) removeImage(id);
+    for (const id of ids) {
+      forgetHistoryUsing("images", id);
+      removeImage(id);
+    }
+  };
+
+  const dropMessage = (ids: string[]) => {
+    const base = ids.length === 1 ? loc.cacheDeleteConfirm : loc.cacheDeleteUnusedConfirmFmt.replace("{n}", String(ids.length));
+    const steps = ids.length === 1 ? deletability("images", ids[0] as string).historySteps : 0;
+    return steps === 0 ? base : `${base} ${steps === 1 ? loc.cacheDeleteHistoryOne : loc.cacheDeleteHistoryManyFmt.replace("{n}", String(steps))}`;
   };
 
   const fileRef = useRef<HTMLInputElement>(null);
@@ -194,7 +205,7 @@ export function StoredGraphicsTab() {
           <button
             type="button"
             className={`${buttonCls} ${disabledCls}`}
-            disabled={unused.length === 0 || frozen}
+            disabled={unused.length === 0}
             title={frozen ? loc.cacheFrozen : undefined}
             onClick={() => setPendingDrop(unused.map((img) => img.id))}
           >
@@ -207,7 +218,7 @@ export function StoredGraphicsTab() {
           <ul className="flex flex-col gap-1">
             {cached.map((img) => {
               const count = usage.get(img.id) ?? 0;
-              const reason = held.get(img.id);
+              const { blockedBy } = deletability("images", img.id);
               return (
                 <li
                   key={img.id}
@@ -224,10 +235,10 @@ export function StoredGraphicsTab() {
                       </span>
                     </span>
                   </span>
-                  <Tooltip content={reason ? (({ document: loc.cacheInUse, history: loc.cacheInHistory, restore: loc.cacheInRestore, clipboard: loc.cacheInClipboard }) as Partial<Record<LiveReason, string>>)[reason] ?? loc.cacheInUse : frozen ? loc.cacheFrozen : loc.removeCached}>
+                  <Tooltip content={blockedBy ? ({ document: loc.cacheInUse, profile: loc.cacheInUse, restore: loc.cacheInRestore, clipboard: loc.cacheInClipboard, frozen: loc.cacheFrozen } satisfies Record<DeleteBlock, string>)[blockedBy] : loc.removeCached}>
                     <button
                       type="button"
-                      disabled={held.has(img.id) || frozen}
+                      disabled={blockedBy !== undefined}
                       onClick={() => setPendingDrop([img.id])}
                       className="font-mono text-[10px] text-muted hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed px-1"
                       aria-label={`${loc.removeCached}: ${img.name}`}
@@ -243,12 +254,13 @@ export function StoredGraphicsTab() {
       </section>
       {pendingDrop !== null && (
         <ConfirmDialog
-          message={pendingDrop.length === 1 ? loc.cacheDeleteConfirm : loc.cacheDeleteUnusedConfirmFmt.replace("{n}", String(pendingDrop.length))}
+          message={dropMessage(pendingDrop)}
           confirmLabel={loc.removeCached}
           cancelLabel={t.app.cancel}
           destructive
           onConfirm={() => {
-            dropCached(pendingDrop);
+            // The store can move while the dialog stands, so a file an owner claims by then stays.
+            dropCached(pendingDrop.filter((id) => deletability("images", id).blockedBy === undefined));
             setPendingDrop(null);
           }}
           onCancel={() => setPendingDrop(null)}

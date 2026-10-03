@@ -2,7 +2,7 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { render, cleanup, fireEvent, act, within } from "@testing-library/react";
 import { StoredGraphicsTab } from "./StoredGraphicsTab";
-import { useLabelStore } from "../../store/labelStore";
+import { useLabelStore, forgetHistoryUsing } from "../../store/labelStore";
 import type { LabelObject } from "@zplab/core/types/Group";
 import { getAllImages, putImage, removeImage } from "@zplab/core/lib/imageCache";
 import type * as ImageToZpl from "@zplab/core/lib/imageToZpl";
@@ -35,7 +35,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   for (const id of ["used", "spare", "a", "b", "gone", "clip"]) removeImage(id);
-  act(() => useLabelStore.setState({ pages: [{ objects: [] }], printerProfile: {} }));
+  act(() => useLabelStore.setState({ pages: [{ objects: [] }], printerProfile: {}, clipboard: [] }));
 });
 
 describe("StoredGraphicsTab", () => {
@@ -170,18 +170,43 @@ describe("StoredGraphicsTab", () => {
     expect((getByText(/Remove unused/) as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it("keeps a row an undo step still names out of the cleanup, and frees it once the history is gone", () => {
+  it("keeps a row only undo steps name out of the bulk cleanup and deletes it with those steps", () => {
     putImage({ id: "gone", name: "gone.png", dataUrl: "data:,", width: 8, height: 4 });
     act(() => useLabelStore.setState({ pages: [{ objects: [withProps({ imageId: "gone" })] }] }));
     act(() => useLabelStore.setState({ pages: [{ objects: [] }] }));
-    const first = render(<StoredGraphicsTab />);
-    expect(first.getByText(/Not used by the open design/)).toBeTruthy();
-    expect((first.getByLabelText(/Delete local copy/) as HTMLButtonElement).disabled).toBe(true);
-    expect((first.getByText(/Remove unused/) as HTMLButtonElement).disabled).toBe(true);
-    first.unmount();
-    act(() => useLabelStore.temporal.getState().clear());
-    const second = render(<StoredGraphicsTab />);
-    expect((second.getByLabelText(/Delete local copy/) as HTMLButtonElement).disabled).toBe(false);
+    const r = render(<StoredGraphicsTab />);
+    expect(r.getByText(/Not used by the open design/)).toBeTruthy();
+    expect((r.getByText(/Remove unused/) as HTMLButtonElement).disabled).toBe(true);
+    act(() => {
+      fireEvent.click(r.getByLabelText(/Delete local copy/));
+    });
+    expect(r.getByRole("alertdialog").textContent).toMatch(/drops (the one step|\d+ steps) in the undo history/);
+    act(() => {
+      fireEvent.click(within(r.getByRole("alertdialog")).getByText("Delete local copy"));
+    });
+    expect(getAllImages().map((i) => i.id)).not.toContain("gone");
+    expect(forgetHistoryUsing("images", "gone")).toBe(0);
+  });
+
+  it("keeps a row the document names while the dialog stands", () => {
+    putImage({ id: "gone", name: "gone.png", dataUrl: "data:,", width: 8, height: 4 });
+    const r = render(<StoredGraphicsTab />);
+    act(() => {
+      fireEvent.click(r.getByLabelText(/Delete local copy/));
+    });
+    act(() => useLabelStore.setState({ pages: [{ objects: [withProps({ imageId: "gone" })] }] }));
+    act(() => {
+      fireEvent.click(within(r.getByRole("alertdialog")).getByText("Delete local copy"));
+    });
+    expect(getAllImages().map((i) => i.id)).toContain("gone");
+  });
+
+  it("keeps a row the clipboard names even while undo steps name it too", () => {
+    putImage({ id: "clip", name: "clip.png", dataUrl: "data:,", width: 8, height: 4 });
+    act(() => useLabelStore.setState({ pages: [{ objects: [withProps({ imageId: "clip" })] }] }));
+    act(() => useLabelStore.setState({ pages: [{ objects: [] }], clipboard: [withProps({ imageId: "clip" })] }));
+    const { getByLabelText } = render(<StoredGraphicsTab />);
+    expect((getByLabelText(/Delete local copy/) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("keeps a row only the clipboard names out of the cleanup", () => {
