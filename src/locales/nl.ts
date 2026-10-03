@@ -1025,6 +1025,7 @@ const nl = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL-referentie',
+    catalogList: 'Opdrachtenlijst',
     catalogSearch: 'Opdrachten zoeken',
     catalogInsert: 'Invoegen',
     catalogWeb: 'Web',

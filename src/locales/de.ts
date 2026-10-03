@@ -1062,6 +1062,7 @@ const de = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL-Referenz',
+    catalogList: 'Befehlsliste',
     catalogSearch: 'Befehle durchsuchen',
     catalogInsert: 'Einfügen',
     catalogWeb: 'Web',

@@ -1025,6 +1025,7 @@ const tr = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL referansı',
+    catalogList: 'Komut listesi',
     catalogSearch: 'Komut ara',
     catalogInsert: 'Ekle',
     catalogWeb: 'Web',

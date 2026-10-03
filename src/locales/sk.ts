@@ -1025,6 +1025,7 @@ const sk = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'Referencia ZPL',
+    catalogList: 'Zoznam príkazov',
     catalogSearch: 'Hľadať príkazy',
     catalogInsert: 'Vložiť',
     catalogWeb: 'Web',

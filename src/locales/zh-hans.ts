@@ -1025,6 +1025,7 @@ const zhHans = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL 参考',
+    catalogList: '命令列表',
     catalogSearch: '搜索命令',
     catalogInsert: '插入',
     catalogWeb: '网页',

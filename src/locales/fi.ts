@@ -1025,6 +1025,7 @@ const fi = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL-viiteopas',
+    catalogList: 'Komentolista',
     catalogSearch: 'Hae komentoja',
     catalogInsert: 'Lisää',
     catalogWeb: 'Web',

@@ -1025,6 +1025,7 @@ const bg = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'Справка за ZPL',
+    catalogList: 'Списък с команди',
     catalogSearch: 'Търсене на команди',
     catalogInsert: 'Вмъкни',
     catalogWeb: 'Уеб',

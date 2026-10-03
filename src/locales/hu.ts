@@ -1025,6 +1025,7 @@ const hu = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL-referencia',
+    catalogList: 'Parancslista',
     catalogSearch: 'Parancsok keresése',
     catalogInsert: 'Beszúrás',
     catalogWeb: 'Web',

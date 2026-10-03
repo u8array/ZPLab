@@ -1025,6 +1025,7 @@ const pl = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'Dokumentacja ZPL',
+    catalogList: 'Lista poleceń',
     catalogSearch: 'Szukaj poleceń',
     catalogInsert: 'Wstaw',
     catalogWeb: 'Web',

@@ -1025,6 +1025,7 @@ const no = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL-referanse',
+    catalogList: 'Kommandoliste',
     catalogSearch: 'Søk i kommandoer',
     catalogInsert: 'Sett inn',
     catalogWeb: 'Web',

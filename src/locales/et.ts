@@ -1025,6 +1025,7 @@ const et = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL-i teatmik',
+    catalogList: 'Käskude loend',
     catalogSearch: 'Otsi käske',
     catalogInsert: 'Lisa',
     catalogWeb: 'Veeb',

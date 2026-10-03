@@ -1025,6 +1025,7 @@ const ar = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'مرجع ZPL',
+    catalogList: 'قائمة الأوامر',
     catalogSearch: 'بحث عن الأوامر',
     catalogInsert: 'إدراج',
     catalogWeb: 'الويب',

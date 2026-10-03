@@ -1025,6 +1025,7 @@ const sl = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'Referenca ZPL',
+    catalogList: 'Seznam ukazov',
     catalogSearch: 'Iskanje ukazov',
     catalogInsert: 'Vstavi',
     catalogWeb: 'Splet',

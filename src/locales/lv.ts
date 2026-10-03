@@ -1025,6 +1025,7 @@ const lv = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL uzziņas',
+    catalogList: 'Komandu saraksts',
     catalogSearch: 'Meklēt komandas',
     catalogInsert: 'Ievietot',
     catalogWeb: 'Tīmeklis',

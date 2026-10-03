@@ -1025,6 +1025,7 @@ const da = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL-reference',
+    catalogList: 'Kommandoliste',
     catalogSearch: 'Søg i kommandoer',
     catalogInsert: 'Indsæt',
     catalogWeb: 'Web',

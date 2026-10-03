@@ -1025,6 +1025,7 @@ const ro = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'Referință ZPL',
+    catalogList: 'Lista de comenzi',
     catalogSearch: 'Căutare comenzi',
     catalogInsert: 'Inserați',
     catalogWeb: 'Web',

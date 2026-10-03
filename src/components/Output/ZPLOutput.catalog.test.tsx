@@ -80,8 +80,8 @@ describe("reference panel wiring", () => {
     const view = mount();
     const pos = placePointerCaret(view, "^FO");
     expect(detail().getByText("field origin")).toBeTruthy();
-    // The detail shows the caret's own command, so that is what the button inserts, at the caret.
-    fireEvent.click(detail().getByRole("button", { name: /^Insert$/ }));
+    fireEvent.contextMenu(screen.getByRole("option", { name: /\^FO/ }), { clientX: 10, clientY: 10 });
+    fireEvent.click(within(screen.getByRole("menu")).getByRole("button", { name: /^Insert$/ }));
     expect(view.state.doc.toString().slice(pos, pos + 6)).toBe("^FO^FO");
   });
 
@@ -111,12 +111,12 @@ describe("reference panel wiring", () => {
     expect(detail().getByText("label length")).toBeTruthy();
   });
 
-  it("refuses pointer focus for rows and the Insert button while the editor holds it, never for search or prose", () => {
+  it("refuses pointer focus for rows and the list toggle while the editor holds it, never for search or prose", () => {
     const view = mount();
     placePointerCaret(view, "hello");
     // fireEvent returns false when a handler called preventDefault. Here that default is the focus move.
     expect(fireEvent.mouseDown(screen.getByRole("option", { name: /\^LL/ }))).toBe(false);
-    expect(fireEvent.mouseDown(detail().getByRole("button", { name: /^Insert$/ }))).toBe(false);
+    expect(fireEvent.mouseDown(screen.getByRole("button", { name: "Command list" }))).toBe(false);
     expect(fireEvent.mouseDown(screen.getByRole("searchbox"))).toBe(true);
     expect(fireEvent.mouseDown(detail().getByText("field data"))).toBe(true);
   });
@@ -124,7 +124,7 @@ describe("reference panel wiring", () => {
   it("takes pointer focus as before while the editor does not hold it, or no longer holds it", () => {
     const view = mount();
     expect(fireEvent.mouseDown(screen.getByRole("option", { name: /\^LL/ }))).toBe(true);
-    expect(fireEvent.mouseDown(detail().getByRole("button", { name: /^Insert$/ }))).toBe(true);
+    expect(fireEvent.mouseDown(screen.getByRole("button", { name: "Command list" }))).toBe(true);
     placePointerCaret(view, "hello");
     act(() => view.contentDOM.blur());
     expect(fireEvent.mouseDown(screen.getByRole("option", { name: /\^LL/ }))).toBe(true);

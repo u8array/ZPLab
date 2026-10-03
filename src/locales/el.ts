@@ -1025,6 +1025,7 @@ const el = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'Αναφορά ZPL',
+    catalogList: 'Λίστα εντολών',
     catalogSearch: 'Αναζήτηση εντολών',
     catalogInsert: 'Εισαγωγή',
     catalogWeb: 'Ιστός',

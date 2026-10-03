@@ -1025,6 +1025,7 @@ const pt = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'Referência ZPL',
+    catalogList: 'Lista de comandos',
     catalogSearch: 'Pesquisar comandos',
     catalogInsert: 'Inserir',
     catalogWeb: 'Web',

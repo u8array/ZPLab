@@ -1025,6 +1025,7 @@ const sv = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL-referens',
+    catalogList: 'Kommandolista',
     catalogSearch: 'Sök kommandon',
     catalogInsert: 'Infoga',
     catalogWeb: 'Webb',

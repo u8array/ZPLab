@@ -1025,6 +1025,7 @@ const ko = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL 참조',
+    catalogList: '명령어 목록',
     catalogSearch: '명령어 검색',
     catalogInsert: '삽입',
     catalogWeb: '웹',

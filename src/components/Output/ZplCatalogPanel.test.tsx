@@ -5,7 +5,10 @@ import { ZplCatalogPanel } from "./ZplCatalogPanel";
 import { useCatalogSelection } from "../../hooks/useCatalogSelection";
 import type { CursorCommand } from "../../lib/zplLanguage";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  localStorage.removeItem("zpl:section:catalog-list");
+});
 
 /** The panel over its own selection, as the source editor mounts it. */
 function Panel({ cursor, onInsert }: { cursor: CursorCommand | null; onInsert?: (text: string) => void }) {
@@ -15,13 +18,38 @@ function Panel({ cursor, onInsert }: { cursor: CursorCommand | null; onInsert?: 
 describe("ZplCatalogPanel", () => {
   const detail = (getByTestId: (id: string) => HTMLElement) => within(getByTestId("catalog-detail"));
 
-  it("shows the command under the caret with its description and inserts it on request", () => {
-    const onInsert = vi.fn();
-    const { getByTestId, getByRole } = render(<Panel cursor={{ id: "^LL", from: 0, pointed: true }} onInsert={onInsert} />);
+  it("shows the command under the caret with its description", () => {
+    const { getByTestId } = render(<Panel cursor={{ id: "^LL", from: 0, pointed: true }} onInsert={vi.fn()} />);
     expect(detail(getByTestId).getByText("label length")).toBeTruthy();
     expect(getByTestId("catalog-detail").querySelector("p")?.textContent).toMatch(/\w+\.$/);
-    fireEvent.click(getByRole("button", { name: /^Insert$/ }));
-    expect(onInsert).toHaveBeenCalledWith("^LL");
+  });
+
+  it("scrolls the list on an unfold and not on a fold", () => {
+    const scrolled = vi.fn();
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = scrolled;
+    try {
+      const { getByRole } = render(<Panel cursor={{ id: "~WR", from: 0, pointed: true }} onInsert={vi.fn()} />);
+      scrolled.mockClear();
+      fireEvent.click(getByRole("button", { name: "Command list" }));
+      expect(scrolled).not.toHaveBeenCalled();
+      fireEvent.click(getByRole("button", { name: "Command list" }));
+      expect(scrolled).toHaveBeenCalledTimes(1);
+    } finally {
+      Element.prototype.scrollIntoView = original;
+    }
+  });
+
+  it("folds the command list away, keeps the description and remembers the fold", () => {
+    const first = render(<Panel cursor={{ id: "^LL", from: 0, pointed: true }} onInsert={vi.fn()} />);
+    fireEvent.click(first.getByRole("button", { name: "Command list" }));
+    expect(first.queryByRole("listbox")).toBeNull();
+    expect(detail(first.getByTestId).getByText("label length")).toBeTruthy();
+    first.unmount();
+    const second = render(<Panel cursor={{ id: "^LL", from: 0, pointed: true }} onInsert={vi.fn()} />);
+    expect(second.queryByRole("listbox")).toBeNull();
+    fireEvent.click(second.getByRole("button", { name: "Command list" }));
+    expect(second.getByRole("listbox")).toBeTruthy();
   });
 
   it("inserts on a double-click, whose first click pins the row", () => {
@@ -61,12 +89,6 @@ describe("ZplCatalogPanel", () => {
     expect((within(getByRole("menu")).getByRole("button", { name: /^Insert$/ }) as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it("marks the insert button aria-disabled when inserting is unavailable", () => {
-    const { getByRole } = render(<Panel cursor={{ id: "^LL", from: 0, pointed: true }} />);
-    // Pins aria-disabled: a disabled button would drop its focus to body.
-    expect(getByRole("button", { name: /^Insert$/ }).getAttribute("aria-disabled")).toBe("true");
-  });
-
   it("shows the three support levels in web, desktop, lint order", () => {
     const levelsOf = (id: string) => {
       const { getByTestId, unmount } = render(<Panel cursor={{ id, from: 0, pointed: true }} onInsert={vi.fn()} />);
@@ -83,7 +105,8 @@ describe("ZplCatalogPanel", () => {
     // ~HL shares the row with ^HL but is not the same thing on the printer.
     const onInsert = vi.fn();
     const { getByRole } = render(<Panel cursor={{ id: "~HL", from: 0, pointed: true }} onInsert={onInsert} />);
-    fireEvent.click(getByRole("button", { name: /^Insert$/ }));
+    fireEvent.contextMenu(getByRole("option", { name: /\^HL/ }), { clientX: 10, clientY: 10 });
+    fireEvent.click(within(getByRole("menu")).getByRole("button", { name: /^Insert$/ }));
     expect(onInsert).toHaveBeenCalledWith("~HL");
   });
 
@@ -105,7 +128,7 @@ describe("ZplCatalogPanel", () => {
 
   it("dismisses on Escape without letting focus leave the panel", () => {
     const { getByRole, getByTestId } = render(<Panel cursor={{ id: "^FO", from: 4, pointed: true }} onInsert={vi.fn()} />);
-    const button = getByRole("button", { name: /^Insert$/ });
+    const button = getByRole("button", { name: "Command list" });
     button.focus();
     fireEvent.keyDown(button, { key: "Escape" });
     expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
@@ -207,13 +230,13 @@ describe("ZplCatalogPanel", () => {
     expect(detail(getByTestId).getByText(/Reference hidden/)).toBeTruthy();
   });
 
-  it("keeps the caret's spelling for Insert after ArrowDown out of the empty state", () => {
+  it("inserts the caret's spelling on Enter after ArrowDown out of the empty state", () => {
     const onInsert = vi.fn();
     const { getByRole } = render(<Panel cursor={{ id: "~HL", from: 0, pointed: true }} onInsert={onInsert} />);
     const list = getByRole("listbox");
     fireEvent.keyDown(list, { key: "Escape" });
     fireEvent.keyDown(list, { key: "ArrowDown" });
-    fireEvent.click(getByRole("button", { name: /^Insert$/ }));
+    fireEvent.keyDown(list, { key: "Enter" });
     expect(onInsert).toHaveBeenCalledWith("~HL");
   });
 
@@ -251,7 +274,6 @@ describe("ZplCatalogPanel", () => {
     const after = [getByTestId("catalog-detail").textContent, queryAllByRole("option", { selected: true }).length];
     expect(after).toEqual(before);
     expect(detail(getByTestId).getByText("^ZQ is not in the reference.")).toBeTruthy();
-    expect(getByRole("button", { name: /^Insert$/ }).getAttribute("aria-disabled")).toBe("true");
   });
 
   it("keeps a pin the search hides when there is nothing shown to step back from", () => {

@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { CATALOG_SECTIONS, commandId, commandLabel, type CommandSupport, type SupportLevel } from "@zplab/core/catalog";
 import { useT } from "../../hooks/useT";
 import { useCatalogSummaries } from "../../hooks/useCatalogSummaries";
@@ -9,6 +10,8 @@ import type { Translations } from "../../locales";
 import { inputCls } from "../Properties/styles";
 import { ContextMenu, type MenuSection } from "../ui/ContextMenu";
 import { useContextMenu } from "../../hooks/useContextMenu";
+import { useCollapsibleState } from "../ui/useCollapsibleState";
+import { Tooltip } from "../ui/Tooltip";
 
 type OutputKey = keyof Translations["output"];
 
@@ -30,7 +33,7 @@ const LEVEL: Record<SupportLevel, { cls: string; key: OutputKey }> = {
 const domId = (listId: string, key: string): string =>
   `${listId}-${key.replace(/^\^/, "c").replace(/^~/, "t").replace(/[^A-Za-z0-9]/g, "_")}`;
 
-/** One entry: the same insert the row's button and double-click already trigger. */
+/** One entry: the insert a double-click and Enter also run. */
 function buildCatalogRowMenu(label: string, run: (() => void) | undefined): MenuSection[] {
   return [{ id: "row", items: [{ id: "insert", label, run, disabled: run === undefined }] }];
 }
@@ -50,6 +53,7 @@ export function ZplCatalogPanel({
   const summaries = useCatalogSummaries();
   const listId = useId();
   const listRef = useRef<HTMLUListElement>(null);
+  const [listOpen, setListOpen] = useCollapsibleState("catalog-list", true);
   // State, not a ref: the menu's container is read during render.
   const [panelEl, setPanelEl] = useState<HTMLElement | null>(null);
   // A row chosen under the pointer is in view already, and scrolling would close the menu that opens with it.
@@ -61,7 +65,6 @@ export function ZplCatalogPanel({
     (g) => g.rows.length > 0,
   );
   const empty = ids.length === 0;
-  const requestInsert = onInsert && shownId ? () => onInsert(insertTextFor(shownId)) : undefined;
   const emptyLine = emptyReason && <p className="text-muted leading-relaxed">{catalogEmptyText(emptyReason, t)}</p>;
   // Only the caret-driven lines are announced. The no-cursor line would be read on every step through plain text.
   const announced = emptyReason?.kind !== "noCursor";
@@ -83,8 +86,8 @@ export function ZplCatalogPanel({
     if (!shownId || shownId === justChosen) return;
     const row = listRef.current?.querySelector(`#${CSS.escape(domId(listId, shownId))}`);
     row?.scrollIntoView?.({ block: "nearest" });
-    // `query` re-runs this when a cleared filter re-mounts the active row.
-  }, [shownId, listId, query]);
+    // `query` and `listOpen` re-run this when a cleared filter or an unfold re-mounts the active row.
+  }, [shownId, listId, query, listOpen]);
 
   const onListKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -120,12 +123,29 @@ export function ZplCatalogPanel({
       data-session-exit-ignore
       className="flex flex-col basis-2/5 min-w-[14rem] max-w-[52rem] shrink border-l border-border bg-surface text-xs @container outline-none"
     >
-      <h2 className="px-3 py-1.5 border-b border-border shrink-0 font-mono text-[10px] text-muted uppercase tracking-widest">
-        {t.output.catalogHeading}
-      </h2>
-      <div className="flex flex-col flex-1 min-h-0 @xl:flex-row-reverse">
+      <div className="flex items-center px-3 py-1.5 border-b border-border shrink-0">
+        <h2 className="font-mono text-[10px] text-muted uppercase tracking-widest">{t.output.catalogHeading}</h2>
+        <Tooltip content={t.output.catalogList}>
+          <button
+            type="button"
+            aria-label={t.output.catalogList}
+            aria-expanded={listOpen}
+            aria-controls={`${listId}-list`}
+            onMouseDown={keepEditorFocus}
+            onClick={() => setListOpen((o) => !o)}
+            className="ml-auto p-0.5 text-muted hover:text-text transition-colors"
+          >
+            <ChevronDownIcon className={`w-3 h-3 transition-transform ${listOpen ? "" : "-rotate-90"}`} />
+          </button>
+        </Tooltip>
+      </div>
+      <div className={`flex flex-col flex-1 min-h-0 ${listOpen ? "@xl:flex-row-reverse" : ""}`}>
         <div
-          className="px-3 py-2 border-b border-border shrink-0 max-h-40 overflow-auto @xl:max-h-none @xl:w-72 @xl:border-b-0 @xl:border-l"
+          className={
+            listOpen
+              ? "px-3 py-2 border-b border-border shrink-0 max-h-40 overflow-auto @xl:max-h-none @xl:w-72 @xl:border-b-0 @xl:border-l"
+              : "px-3 py-2 flex-1 min-h-0 overflow-auto"
+          }
           data-testid="catalog-detail"
         >
           <div className="space-y-1 min-w-0">
@@ -150,94 +170,83 @@ export function ZplCatalogPanel({
               {announced && emptyLine}
             </div>
             {!announced && emptyLine}
-            <div className="flex justify-end">
-              <button
-                type="button"
-                // Stays mounted and focusable: a focused button that unmounts or turns disabled
-                // drops focus to body, and the session's focusout fallback would then apply a dirty edit.
-                aria-disabled={!requestInsert}
-                onMouseDown={keepEditorFocus}
-                onClick={requestInsert}
-                className="font-mono text-[10px] text-muted hover:text-accent aria-disabled:opacity-25 aria-disabled:cursor-not-allowed transition-colors"
-              >
-                {t.output.catalogInsert}
-              </button>
+          </div>
+        </div>
+        {listOpen && (
+          <div id={`${listId}-list`} className="flex flex-col flex-1 min-h-0 min-w-0">
+            <div className="px-3 py-2 border-b border-border shrink-0">
+              <label className="relative block">
+                <MagnifyingGlassIcon className="w-3.5 h-3.5 absolute left-2 top-1/2 -translate-y-1/2 text-muted" />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  // Cleared here on purpose: only some browsers clear a search field natively,
+                  // and the panel's own Escape must not take the detail with it. An empty
+                  // field has nothing to clear, so Escape falls through to the step-back.
+                  onKeyDown={(e) => {
+                    if (e.key !== "Escape" || query === "") return;
+                    e.stopPropagation();
+                    setQuery("");
+                  }}
+                  placeholder={t.output.catalogSearch}
+                  aria-label={t.output.catalogSearch}
+                  className={`${inputCls} pl-7`}
+                />
+              </label>
             </div>
+            {empty && <p className="flex-1 px-3 py-2 text-muted">{t.output.catalogNoMatch}</p>}
+            <ul
+              ref={listRef}
+              role="listbox"
+              hidden={empty}
+              tabIndex={0}
+              aria-label={t.output.catalogHeading}
+              aria-activedescendant={shownId && activeIndex >= 0 ? domId(listId, shownId) : undefined}
+              onKeyDown={onListKeyDown}
+              className="flex-1 min-h-0 overflow-auto py-1 outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            >
+              {groups.map(({ section, rows }) => {
+                const headingId = domId(listId, `section ${section.name}`);
+                return (
+                  <li key={section.name} role="group" aria-labelledby={headingId}>
+                    <div id={headingId} className="px-3 pt-2 pb-0.5 font-mono text-[10px] text-muted uppercase tracking-widest">
+                      {section.name}
+                    </div>
+                    <ul role="presentation">
+                      {rows.map((row) => {
+                        const id = commandId(row);
+                        const active = id === shownId;
+                        return (
+                          <li
+                            key={id}
+                            id={domId(listId, id)}
+                            role="option"
+                            aria-selected={active}
+                            onMouseDown={keepEditorFocus}
+                            // The clicks of a double-click must not toggle the pin twice.
+                            onClick={(e) => {
+                              if (e.detail > 1) return;
+                              chosenByPointer.current = id;
+                              toggle(id);
+                            }}
+                            onDoubleClick={() => onInsert?.(insertTextFor(id))}
+                            onContextMenu={(e) => openRowMenu(e, id)}
+                            className={`flex items-baseline gap-2 px-3 py-0.5 cursor-default select-none hover:bg-border/60 ${active ? "bg-border/60" : ""}`}
+                          >
+                            {/* Coloured by web support: the answer most users need at a glance. */}
+                            <span className={`font-mono shrink-0 ${LEVEL[row.support.web].cls}`}>{id}</span>
+                            <span className="text-muted truncate">{row.title}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        </div>
-        <div className="flex flex-col flex-1 min-h-0 min-w-0">
-          <div className="px-3 py-2 border-b border-border shrink-0">
-            <label className="relative block">
-              <MagnifyingGlassIcon className="w-3.5 h-3.5 absolute left-2 top-1/2 -translate-y-1/2 text-muted" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                // Cleared here on purpose: only some browsers clear a search field natively,
-                // and the panel's own Escape must not take the detail with it. An empty
-                // field has nothing to clear, so Escape falls through to the step-back.
-                onKeyDown={(e) => {
-                  if (e.key !== "Escape" || query === "") return;
-                  e.stopPropagation();
-                  setQuery("");
-                }}
-                placeholder={t.output.catalogSearch}
-                aria-label={t.output.catalogSearch}
-                className={`${inputCls} pl-7`}
-              />
-            </label>
-          </div>
-          {empty && <p className="flex-1 px-3 py-2 text-muted">{t.output.catalogNoMatch}</p>}
-          <ul
-            ref={listRef}
-            role="listbox"
-            hidden={empty}
-            tabIndex={0}
-            aria-label={t.output.catalogHeading}
-            aria-activedescendant={shownId && activeIndex >= 0 ? domId(listId, shownId) : undefined}
-            onKeyDown={onListKeyDown}
-            className="flex-1 min-h-0 overflow-auto py-1 outline-none focus-visible:ring-1 focus-visible:ring-accent"
-          >
-            {groups.map(({ section, rows }) => {
-              const headingId = domId(listId, `section ${section.name}`);
-              return (
-                <li key={section.name} role="group" aria-labelledby={headingId}>
-                  <div id={headingId} className="px-3 pt-2 pb-0.5 font-mono text-[10px] text-muted uppercase tracking-widest">
-                    {section.name}
-                  </div>
-                  <ul role="presentation">
-                    {rows.map((row) => {
-                      const id = commandId(row);
-                      const active = id === shownId;
-                      return (
-                        <li
-                          key={id}
-                          id={domId(listId, id)}
-                          role="option"
-                          aria-selected={active}
-                          onMouseDown={keepEditorFocus}
-                          // The clicks of a double-click must not toggle the pin twice.
-                          onClick={(e) => {
-                            if (e.detail > 1) return;
-                            chosenByPointer.current = id;
-                            toggle(id);
-                          }}
-                          onDoubleClick={() => onInsert?.(insertTextFor(id))}
-                          onContextMenu={(e) => openRowMenu(e, id)}
-                          className={`flex items-baseline gap-2 px-3 py-0.5 cursor-default select-none hover:bg-border/60 ${active ? "bg-border/60" : ""}`}
-                        >
-                          {/* Coloured by web support: the answer most users need at a glance. */}
-                          <span className={`font-mono shrink-0 ${LEVEL[row.support.web].cls}`}>{id}</span>
-                          <span className="text-muted truncate">{row.title}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        )}
       </div>
       {/* Mounted inside the panel: the session exit reads a pointerdown outside it as leaving the edit. */}
       {menu && <ContextMenu sections={menu.data} x={menu.x} y={menu.y} onClose={close} container={panelEl} />}

@@ -1025,6 +1025,7 @@ const ja = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPLリファレンス',
+    catalogList: 'コマンド一覧',
     catalogSearch: 'コマンドを検索',
     catalogInsert: '挿入',
     catalogWeb: 'Web',

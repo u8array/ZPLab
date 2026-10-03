@@ -1025,6 +1025,7 @@ const cs = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'Reference ZPL',
+    catalogList: 'Seznam příkazů',
     catalogSearch: 'Hledat příkazy',
     catalogInsert: 'Vložit',
     catalogWeb: 'Web',

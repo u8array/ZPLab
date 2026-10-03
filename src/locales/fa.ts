@@ -1025,6 +1025,7 @@ const fa = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'مرجع ZPL',
+    catalogList: 'فهرست دستورها',
     catalogSearch: 'جستجوی دستورها',
     catalogInsert: 'درج',
     catalogWeb: 'وب',

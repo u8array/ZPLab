@@ -1025,6 +1025,7 @@ const he = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'מדריך ZPL',
+    catalogList: 'רשימת פקודות',
     catalogSearch: 'חיפוש פקודות',
     catalogInsert: 'הוסף',
     catalogWeb: 'אינטרנט',

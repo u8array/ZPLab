@@ -1025,6 +1025,7 @@ const lt = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL žinynas',
+    catalogList: 'Komandų sąrašas',
     catalogSearch: 'Ieškoti komandų',
     catalogInsert: 'Įterpti',
     catalogWeb: 'Žiniatinklis',

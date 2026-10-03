@@ -1025,6 +1025,7 @@ const hr = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL referenca',
+    catalogList: 'Popis naredbi',
     catalogSearch: 'Pretraži naredbe',
     catalogInsert: 'Umetni',
     catalogWeb: 'Web',

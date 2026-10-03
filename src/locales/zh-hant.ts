@@ -1025,6 +1025,7 @@ const zhHant = {
   output: {
     zplHeading: 'ZPL',
     catalogHeading: 'ZPL 參考',
+    catalogList: '命令清單',
     catalogSearch: '搜尋命令',
     catalogInsert: '插入',
     catalogWeb: '網頁',
