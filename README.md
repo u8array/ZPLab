@@ -209,9 +209,6 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 
 ## Limitations
 
-- Labelary ignores CODABLOCK's `^BB` and shows the field content as plain text. It renders Maxicode slightly smaller than a Zebra ZD230.
-- **Preview** and **Print as Image (browser)** render only the current page. **Export ZPL** and **Send to Zebra Printer** include every page.
-- A page with a stored format (`^DF`) is stored on the printer instead of printed. **Send to Zebra Printer** says so before sending.
 - The GS1 builders skip the multi-part identifiers GDTI (253), GCN (255), GRAI (8003) and ITIP (8006), as barcode data and as Digital Link keys.
 
 ## Self-hosting
