@@ -6,16 +6,19 @@ import { fallbackTranslations as en } from "../locales";
 import type { ImportFinding } from "@zplab/core/lib/importReport";
 
 describe("buildSourceDiagnostics", () => {
-  it("names each imbalance kind with the bytes it found", () => {
+  it("names each imbalance kind with the bytes it found and offers the missing command", () => {
     const of = (ub: { kind: "strayXz" | "unclosedXa"; at: number; cmd: string }) =>
       buildSourceDiagnostics({ reason: "unbalanced", unbalanced: ub }, [], en);
     // The generic banner told the user to ADD what the diagnostic points at.
     expect(of({ kind: "strayXz", at: 0, cmd: "#XZ" })).toEqual([{
       from: 0, to: 3, severity: "error",
       message: formatTemplate(en.output.lintStrayXzFmt, { cmd: "#XZ" }),
+      fix: { command: "^XA", label: formatTemplate(en.output.lintInsertCmdFmt, { cmd: "^XA" }), place: "openFormat" },
     }]);
     expect(of({ kind: "unclosedXa", at: 4, cmd: "#XA" })[0]?.message)
       .toBe(formatTemplate(en.output.lintUnclosedXaFmt, { cmd: "#XA" }));
+    expect(of({ kind: "unclosedXa", at: 4, cmd: "#XA" })[0]?.fix)
+      .toEqual({ command: "^XZ", label: formatTemplate(en.output.lintInsertCmdFmt, { cmd: "^XZ" }), place: "closeFormat" });
   });
 
   it("adds the repair site as a weaker second mark", () => {
@@ -25,6 +28,7 @@ describe("buildSourceDiagnostics", () => {
     }, [], en);
     expect(lints.map((l) => [l.from, l.severity])).toEqual([[0, "error"], [40, "related"]]);
     expect(lints[1]?.message).toBe(formatTemplate(en.output.lintStillOpenHereFmt, { cmd: "^XA" }));
+    expect(lints.map((l) => l.fix?.place)).toEqual(["closeFormat", "before"]);
   });
 
   it("stays silent for a refusal without a located command", () => {
@@ -65,7 +69,7 @@ describe("buildSourceDiagnostics", () => {
     const [a, b] = buildSourceDiagnostics(null, [dropped, other], en);
     expect(a?.to).toBe(29);
     expect(a?.message).toContain(en.importReport.unterminatedFieldTitleFmt.replace("{fs}", "^FS"));
-    expect(a?.fix).toEqual({ command: "^FS", label: formatTemplate(en.output.lintInsertCmdFmt, { cmd: "^FS" }) });
+    expect(a?.fix).toEqual({ command: "^FS", label: formatTemplate(en.output.lintInsertCmdFmt, { cmd: "^FS" }), place: "after" });
     expect(b?.fix).toBeUndefined();
   });
 

@@ -16,6 +16,7 @@ import {
 import type { EditorState, Transaction, TransactionSpec } from "@codemirror/state";
 import { applyPrefixRemap, PAYLOAD_CMDS, tokenize, type TokenizerChars } from "@zplab/core/lib/zplParser/helpers";
 import { commandBoundaryAt, prefixCharsAt, spellPrefix } from "@zplab/core/lib/zplCanonicalPrefixes";
+import type { FixPlace } from "./sourceDiagnostics";
 
 // A ~DY/~DG payload can be megabytes on one line; folding keeps the editor
 // responsive, and the read-only preview truncates at the same length.
@@ -306,11 +307,9 @@ export interface CommandOccurrence {
   to: number;
 }
 
-/** Command names touching [from, to] on the tree parsed so far: a range past the parse
- *  budget yields nothing now, and the parser's next step revisits it. */
-export function commandOccurrences(state: EditorState, from: number, to: number): CommandOccurrence[] {
+function namesIn(state: EditorState, tree: Tree, from: number, to: number): CommandOccurrence[] {
   const out: CommandOccurrence[] = [];
-  syntaxTree(state).iterate({
+  tree.iterate({
     from,
     to,
     enter: (n) => {
@@ -322,20 +321,23 @@ export function commandOccurrences(state: EditorState, from: number, to: number)
   return out;
 }
 
+/** The live tree may end before the partner command, so the whole document is parsed. */
+const wholeDocNames = (state: EditorState) => namesIn(state, treeUpTo(state, state.doc.length, WHOLE_DOC_PARSE_MS), 0, state.doc.length);
+
+const structuralAt = (state: EditorState, id: "^XA" | "^XZ") => wholeDocNames(state).filter((c) => c.id === id);
+
+/** Command names touching [from, to] on the tree parsed so far: a range past the parse
+ *  budget yields nothing now, and the parser's next step revisits it. */
+export function commandOccurrences(state: EditorState, from: number, to: number): CommandOccurrence[] {
+  return namesIn(state, syntaxTree(state), from, to);
+}
+
 /** Positional: the page-th ^XZ of the live document (the export emits one block per page),
  *  else the last ^XZ, else null; goes stale if the user removes earlier blocks mid-session.
  *  Read from the tree, so a ^CC remap still finds it. */
 export function formatCloseFor(state: EditorState, page: number): number | null {
-  const tree = treeUpTo(state, state.doc.length, WHOLE_DOC_PARSE_MS);
-  const closes: number[] = [];
-  tree.iterate({
-    enter: (n) => {
-      // Only the caret form closes a format; the core parser reports ~XZ as unknown.
-      if (!NAME_NODES.has(n.name) || readCommandName(state, n).id !== "^XZ") return undefined;
-      closes.push(n.from);
-      return false;
-    },
-  });
+  // Only the caret form closes a format; the core parser reports ~XZ as unknown.
+  const closes = structuralAt(state, "^XZ").map((c) => c.from);
   return closes[page] ?? closes[closes.length - 1] ?? null;
 }
 
@@ -362,12 +364,30 @@ export function placesCaret(tr: Transaction): boolean {
 /** The tree keeps only spelled names, so the head up to `pos` is replayed for the prefix in force. */
 const spellAt = (state: EditorState, text: string, pos: number): string => spellPrefix(text, prefixCharsAt(state.doc.sliceString(0, pos)));
 
-/** Transaction for a lint's repair: `command` in front of the first command at or after `at`,
- *  spelled with the prefix in force. Data runs up to that prefix, trailing whitespace included,
- *  so the lint's trimmed end would cut it short. */
-export function fixInsertion(state: EditorState, command: string, at: number): TransactionSpec {
+/** Transaction that inserts `command` at `place`, spelled with the prefix in force there, or an empty one when it already sits there.
+ *  For `after` the data runs up to the next prefix, trailing whitespace included, so the lint's trimmed end would cut it short. */
+export function fixInsertion(state: EditorState, command: string, place: FixPlace, from: number, to: number): TransactionSpec {
+  const at =
+    place === "after"
+      ? to
+      : place === "before"
+        ? from
+        : place === "closeFormat"
+          ? (structuralAt(state, "^XA").find((c) => c.from >= to)?.from ?? state.doc.length)
+          : (structuralAt(state, "^XZ").filter((c) => c.to <= from).at(-1)?.to ?? 0);
   const { pos, chars } = commandBoundaryAt(state.doc.toString(), at);
-  return { changes: { from: pos, insert: spellPrefix(command, chars) }, userEvent: LINTFIX_USER_EVENT };
+  const spelled = spellPrefix(command, chars);
+  // The diagnostic outlives the first click by the reparse window, so a second click must not stack a copy.
+  const before = state.doc.sliceString(0, pos).trimEnd().length;
+  const already = wholeDocNames(state).some((c) => c.id === command && (c.from === pos || c.to === before));
+  if (already) return { userEvent: LINTFIX_USER_EVENT };
+  if (place === "after") return { changes: { from: pos, insert: spelled }, userEvent: LINTFIX_USER_EVENT };
+  // The generator writes a format command on its own line.
+  const lead = pos > 0 && state.doc.lineAt(pos).from !== pos ? state.lineBreak : "";
+  const tail = pos < state.doc.length ? state.lineBreak : "";
+  // A line break is one document position whatever the separator's length.
+  const anchor = pos + (lead ? 1 : 0) + spelled.length;
+  return { changes: { from: pos, insert: `${lead}${spelled}${tail}` }, selection: { anchor }, scrollIntoView: true, userEvent: LINTFIX_USER_EVENT };
 }
 
 /** Where a catalog insert goes: the user's caret, or a page's block. */

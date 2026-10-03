@@ -368,7 +368,7 @@ describe("ZplCodeMirror diagnostics", () => {
         value={value}
         onChange={onChange}
         ariaLabel="zpl" placeholderText="ph"
-        diagnostics={[{ from, to: from + dropped.length, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS" } }]}
+        diagnostics={[{ from, to: from + dropped.length, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS", place: "after" } }]}
       />,
     );
     const view = EditorView.findFromDOM(container as HTMLElement)!;
@@ -378,6 +378,25 @@ describe("ZplCodeMirror diagnostics", () => {
     act(() => seen[0]?.d.actions?.[0]?.apply(view, from, seen[0].to));
     expect(view.state.doc.toString()).toContain(`${dropped}#FS#FO10,60`);
     expect(onChange).toHaveBeenCalledWith(expect.stringContaining(`${dropped}#FS#FO10,60`));
+  });
+
+  it("closes an open format before the opener that interrupts it, spelled with the prefix in force", async () => {
+    const { forEachDiagnostic } = await import("@codemirror/lint");
+    const value = "^CC#\n#XA#FO10,10#FDa#FS\n#XA#FDb#FS#XZ";
+    const from = value.indexOf("#XA");
+    const { container } = render(
+      <ZplCodeMirror
+        value={value}
+        onChange={vi.fn()}
+        ariaLabel="zpl" placeholderText="ph"
+        diagnostics={[{ from, to: from + 3, severity: "error", message: "open", fix: { command: "^XZ", label: "Insert ^XZ", place: "closeFormat" } }]}
+      />,
+    );
+    const view = EditorView.findFromDOM(container as HTMLElement)!;
+    const seen: { d: Diagnostic; from: number; to: number }[] = [];
+    forEachDiagnostic(view.state, (d, start, end) => seen.push({ d, from: start, to: end }));
+    act(() => seen[0]?.d.actions?.[0]?.apply(view, seen[0].from, seen[0].to));
+    expect(view.state.doc.toString()).toBe("^CC#\n#XA#FO10,10#FDa#FS\n#XZ\n#XA#FDb#FS#XZ");
   });
 
   it("keeps the field's trailing data when the lint's end was trimmed", async () => {
@@ -390,7 +409,7 @@ describe("ZplCodeMirror diagnostics", () => {
         value={value}
         onChange={vi.fn()}
         ariaLabel="zpl" placeholderText="ph"
-        diagnostics={[{ from: 3, to, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS" } }]}
+        diagnostics={[{ from: 3, to, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS", place: "after" } }]}
       />,
     );
     const view = EditorView.findFromDOM(container as HTMLElement)!;
@@ -409,7 +428,7 @@ describe("ZplCodeMirror diagnostics", () => {
         value={value}
         onChange={onChange}
         ariaLabel="zpl" placeholderText="ph" readOnly
-        diagnostics={[{ from: 3, to: 12, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS" } }]}
+        diagnostics={[{ from: 3, to: 12, severity: "warning", message: "dropped", fix: { command: "^FS", label: "Insert ^FS", place: "after" } }]}
       />,
     );
     const view = EditorView.findFromDOM(container as HTMLElement)!;

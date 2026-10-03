@@ -5,12 +5,14 @@ import { describeFinding } from './importReport';
 import { formatTemplate } from './formatTemplate';
 import type { Translations } from '../locales';
 
-/** One-click repair: the command the editor inserts at the first command boundary at
- *  or after the lint, spelled with the prefix in force there; the label stays canonical,
- *  as in the catalog. The imbalance kinds get none, as no single byte is the right spot. */
+/** Where a repair lands: after its lint, before it, where the open format must close, or where the orphan run must open. */
+export type FixPlace = 'after' | 'before' | 'closeFormat' | 'openFormat';
+
+/** One-click repair whose label stays canonical, as in the catalog, while the editor re-spells `command` where it inserts it. */
 export interface SourceFix {
   command: string;
   label: string;
+  place: FixPlace;
 }
 
 /** Editor-framework-neutral lint in STRING offsets of its build's text. */
@@ -45,11 +47,14 @@ export function buildSourceDiagnostics(
   const lints: SourceLint[] = [];
   if (refusal?.reason === 'unbalanced') {
     const ub: UnbalancedFormat = refusal.unbalanced;
+    const missing = ub.kind === 'strayXz' ? '^XA' : '^XZ';
+    const label = formatTemplate(t.output.lintInsertCmdFmt, { cmd: missing });
     lints.push({
       from: ub.at,
       to: ub.at + ub.cmd.length,
       severity: 'error',
       message: formatTemplate(t.output[KIND_MSG[ub.kind]], { cmd: ub.cmd }),
+      fix: { command: missing, label, place: ub.kind === 'strayXz' ? 'openFormat' : 'closeFormat' },
     });
     // The defect is the unterminated format, but the repair goes here, which in
     // a multi-label document is a whole label away from the opener.
@@ -59,6 +64,7 @@ export function buildSourceDiagnostics(
         to: ub.related.at + ub.related.cmd.length,
         severity: 'related',
         message: formatTemplate(t.output.lintStillOpenHereFmt, { cmd: ub.cmd }),
+        fix: { command: missing, label, place: 'before' },
       });
     }
   }
@@ -74,7 +80,7 @@ export function buildSourceDiagnostics(
     };
     // The field ends where the next command begins, which is where ^FS belongs.
     if (f.kind === 'unterminatedField') {
-      lint.fix = { command: '^FS', label: formatTemplate(t.output.lintInsertCmdFmt, { cmd: '^FS' }) };
+      lint.fix = { command: '^FS', label: formatTemplate(t.output.lintInsertCmdFmt, { cmd: '^FS' }), place: 'after' };
     }
     warnings.push(lint);
   }

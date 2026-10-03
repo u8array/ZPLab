@@ -3,6 +3,7 @@ import { describe, it, expect } from "vitest";
 import { EditorState, type TransactionSpec } from "@codemirror/state";
 import { ensureSyntaxTree, foldable, syntaxTree } from "@codemirror/language";
 import { highlightCode } from "@lezer/highlight";
+import type { FixPlace } from "./sourceDiagnostics";
 import {
   buildZplTree,
   commandAtCursor,
@@ -296,14 +297,78 @@ describe("placesCaret", () => {
   });
 });
 
+const NL = String.fromCharCode(10);
+const CRLF = String.fromCharCode(13) + NL;
+
 describe("fixInsertion", () => {
   it("lands before the next command as the tokenizer sees it, not before a payload tilde", () => {
     // ^BX escapes like ~1 are data; only a tilde that opens a command ends the field.
     const doc = "^XA^FO1,1^BXN,5,200,,,,~^FDab~1x^FO2,2^FDb^FS^XZ";
     const state = EditorState.create({ doc, extensions: [zpl()] });
     const at = doc.indexOf("~1x");
-    const spec = fixInsertion(state, "^FS", at);
+    const spec = fixInsertion(state, "^FS", "after", at, at);
     expect(state.update(spec).state.doc.toString()).toBe("^XA^FO1,1^BXN,5,200,,,,~^FDab~1x^FS^FO2,2^FDb^FS^XZ");
+  });
+
+  const fixed = (doc: string, command: string, place: FixPlace, from: number, to: number) => {
+    const state = EditorState.create({ doc, extensions: [zpl()] });
+    return state.update(fixInsertion(state, command, place, from, to)).state.doc.toString();
+  };
+
+  it("closes an open format on its own line before the opener that interrupts it", () => {
+    expect(fixed("^XA^FO1,1^FDa^FS^XA^FDb^FS^XZ", "^XZ", "closeFormat", 0, 3)).toBe("^XA^FO1,1^FDa^FS\n^XZ\n^XA^FDb^FS^XZ");
+  });
+
+  it("closes a format with no later opener at the end of the document", () => {
+    expect(fixed("^XA^FO1,1^FDa^FS", "^XZ", "closeFormat", 0, 3)).toBe("^XA^FO1,1^FDa^FS\n^XZ");
+  });
+
+  it("inserts the closer in front of the command the repair points at", () => {
+    const doc = "^XA^FO1,1^FDa^FS\n^XA^FDb^FS^XZ";
+    const at = doc.lastIndexOf("^XA");
+    expect(fixed(doc, "^XZ", "before", at, at + 3)).toBe("^XA^FO1,1^FDa^FS\n^XZ\n^XA^FDb^FS^XZ");
+  });
+
+  it("opens an orphan run after the previous closer", () => {
+    const doc = "^XA^FDa^FS^XZ^FO1,1^FDb^FS^XZ";
+    const at = doc.lastIndexOf("^XZ");
+    expect(fixed(doc, "^XA", "openFormat", at, at + 3)).toBe("^XA^FDa^FS^XZ\n^XA\n^FO1,1^FDb^FS^XZ");
+  });
+
+  it("opens an orphan run at the start of the stream", () => {
+    const doc = "^FO1,1^FDb^FS^XZ";
+    const at = doc.indexOf("^XZ");
+    expect(fixed(doc, "^XA", "openFormat", at, at + 3)).toBe("^XA\n^FO1,1^FDb^FS^XZ");
+  });
+
+  it("places the caret after the inserted closer under CRLF too", () => {
+    const doc = "^XA^FO1,1^FDa^FS" + CRLF + "^XA^FDb^FS^XZ";
+    const state = EditorState.create({ doc, extensions: [zpl(), EditorState.lineSeparator.of(CRLF)] });
+    const next = state.update(fixInsertion(state, "^XZ", "closeFormat", 0, 3)).state;
+    expect(next.doc.toString()).toBe("^XA^FO1,1^FDa^FS" + NL + "^XZ" + NL + "^XA^FDb^FS^XZ");
+    expect(next.doc.sliceString(next.selection.main.head - 3, next.selection.main.head)).toBe("^XZ");
+    const end = EditorState.create({ doc: "^XA^FO1,1^FDa^FS", extensions: [zpl(), EditorState.lineSeparator.of(CRLF)] });
+    expect(() => end.update(fixInsertion(end, "^XZ", "closeFormat", 0, 3))).not.toThrow();
+  });
+
+  it("still inserts when a byte payload ends in the same letters", () => {
+    const doc = "^XA^FO1,1^FDa^FS~DYE:X.TTF,B,T,5,,ab^XZ^XA^FDb^FS^XZ";
+    expect(fixed(doc, "^XZ", "closeFormat", 0, 3)).toContain("ab^XZ" + NL + "^XZ" + NL + "^XA^FDb");
+  });
+
+  it("inserts nothing when the command already sits at the spot", () => {
+    const doc = "^XA^FO1,1^FDa^FS\n^XZ\n^XA^FDb^FS^XZ";
+    expect(fixed(doc, "^XZ", "closeFormat", 0, 3)).toBe(doc);
+    const fs = "^XA^FO1,1^FDa^FS^XZ";
+    expect(fixed(fs, "^FS", "after", 9, 13)).toBe(fs);
+  });
+
+  it("finds the interrupting opener beyond the reach of the live tree", () => {
+    const filler = Array.from({ length: 4000 }, (_, i) => `^FXfiller ${i} ................^FS`).join(NL);
+    const doc = `^XA^FO1,1^FDa^FS${NL}${filler}${NL}^XA^FDb^FS^XZ`;
+    const out = fixed(doc, "^XZ", "closeFormat", 0, 3);
+    expect(out.endsWith(`^XZ${NL}^XA^FDb^FS^XZ`)).toBe(true);
+    expect(out.indexOf("^XZ")).toBeGreaterThan(doc.length - 40);
   });
 });
 

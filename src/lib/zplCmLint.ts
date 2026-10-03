@@ -22,10 +22,10 @@ export function toDiagnostic(d: SourceLint, docPos: (offset: number) => number):
       ? [
           {
             name: fix.label,
-            // `to` arrives live: CM has mapped the range through edits made since the build.
-            apply: (view: EditorView, _from: number, to: number) => {
+            // CM has mapped this range through the edits made since the build.
+            apply: (view: EditorView, from: number, to: number) => {
               if (view.state.readOnly) return;
-              view.dispatch(fixInsertion(view.state, fix.command, to));
+              view.dispatch(fixInsertion(view.state, fix.command, fix.place, from, to));
             },
           },
         ]
