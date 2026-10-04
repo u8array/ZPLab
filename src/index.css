@@ -96,6 +96,14 @@
   /* Layers-tree connector lines: very faint so the tree structure reads
      without competing with content. */
   --color-guide:     rgba(255, 255, 255, 0.16);
+  /* One hue per reference parameter so a syntax letter and its block pair up. Six
+     cover the longest documented command without a repeat and avoid the amber accent. */
+  --color-slot-1:    #54bcd4;
+  --color-slot-2:    #ef8d9c;
+  --color-slot-3:    #5fc98a;
+  --color-slot-4:    #c88ae8;
+  --color-slot-5:    #c3cc5c;
+  --color-slot-6:    #8fa8f5;
 
   --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -123,6 +131,12 @@
   --color-ok:        #2e7d32;
   --color-string:    #4a7a35;
   --color-guide:     rgba(0, 0, 0, 0.20);
+  --color-slot-1:    #0e6f85;
+  --color-slot-2:    #bd2e46;
+  --color-slot-3:    #157f45;
+  --color-slot-4:    #8b25b5;
+  --color-slot-5:    #5f7a10;
+  --color-slot-6:    #3a46c8;
 }
 
 *, *::before, *::after {

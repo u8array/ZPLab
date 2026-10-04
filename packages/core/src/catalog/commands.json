@@ -96,6 +96,18 @@
       "section": "Layout & flow",
       "title": "print width",
       "summary": "Sets the printable width in dots. Content beyond that width is clipped by the printer.",
+      "reference": {
+        "syntax": "^PWa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "print width in dots",
+            "values": "2 to the label width",
+            "default": "last saved value"
+          }
+        ],
+        "example": "^PW812"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -109,6 +121,24 @@
       "section": "Layout & flow",
       "title": "label length",
       "summary": "Sets the label length in dots, defining where the printable format ends.",
+      "reference": {
+        "syntax": "^LLy,x",
+        "params": [
+          {
+            "name": "y",
+            "meaning": "label length in dots",
+            "values": "1 to 32000",
+            "default": "printer setting"
+          },
+          {
+            "name": "x",
+            "meaning": "applies to all media",
+            "values": "N continuous only, Y all media",
+            "default": "N"
+          }
+        ],
+        "example": "^LL1218"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -265,6 +295,30 @@
       "section": "Fields",
       "title": "field origin",
       "summary": "Positions the next field from the label home origin using its upper-left corner.",
+      "reference": {
+        "syntax": "^FOx,y,z",
+        "params": [
+          {
+            "name": "x",
+            "meaning": "horizontal position in dots",
+            "values": "0 to 32000",
+            "default": "0"
+          },
+          {
+            "name": "y",
+            "meaning": "vertical position in dots",
+            "values": "0 to 32000",
+            "default": "0"
+          },
+          {
+            "name": "z",
+            "meaning": "justification",
+            "values": "0 left, 1 right, 2 auto",
+            "default": "last ^FW"
+          }
+        ],
+        "example": "^FO50,50^A0N,30,30^FDHello^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -291,6 +345,17 @@
       "section": "Fields",
       "title": "field data",
       "summary": "Provides the content for the current field, including text, barcode data or RFID data.",
+      "reference": {
+        "syntax": "^FDa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "field content",
+            "values": "any printable data up to 3072 bytes, no prefix characters"
+          }
+        ],
+        "example": "^FO50,50^A0N,30,30^FDSerial 12345^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -369,6 +434,42 @@
       "section": "Fields",
       "title": "multi line text block",
       "summary": "Wraps field data inside a fixed-width block with line count, spacing, indent and justification controls.",
+      "reference": {
+        "syntax": "^FBa,b,c,d,e",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "block width in dots",
+            "values": "0 to the label width",
+            "default": "0"
+          },
+          {
+            "name": "b",
+            "meaning": "maximum lines",
+            "values": "1 to 9999",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "extra line spacing in dots",
+            "values": "-9999 to 9999",
+            "default": "0"
+          },
+          {
+            "name": "d",
+            "meaning": "justification",
+            "values": "L left, C center, R right, J justified",
+            "default": "L"
+          },
+          {
+            "name": "e",
+            "meaning": "hanging indent of the following lines in dots",
+            "values": "0 to 9999",
+            "default": "0"
+          }
+        ],
+        "example": "^FO50,50^A0N,28,28^FB400,3,0,C^FDText that wraps inside the block^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -448,6 +549,30 @@
       "section": "Fields",
       "title": "barcode field default",
       "summary": "Sets default barcode module width, wide-to-narrow ratio and height for following barcode fields.",
+      "reference": {
+        "syntax": "^BYw,r,h",
+        "params": [
+          {
+            "name": "w",
+            "meaning": "module width in dots",
+            "values": "1 to 10",
+            "default": "2"
+          },
+          {
+            "name": "r",
+            "meaning": "wide to narrow bar ratio",
+            "values": "2.0 to 3.0 in steps of 0.1",
+            "default": "3.0"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "any height in dots",
+            "default": "10"
+          }
+        ],
+        "example": "^BY3,3,100^FO50,50^BCN,,Y,N^FD12345678^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -487,6 +612,30 @@
       "section": "Text & fonts",
       "title": "scalable font 0",
       "summary": "Selects resident scalable font 0 for the next field at the requested size and orientation.",
+      "reference": {
+        "syntax": "^A0o,h,w",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "character height in dots",
+            "values": "10 to 32000",
+            "default": "last ^CF"
+          },
+          {
+            "name": "w",
+            "meaning": "character width in dots",
+            "values": "10 to 32000",
+            "default": "last ^CF"
+          }
+        ],
+        "example": "^FO50,50^A0N,40,40^FDScalable^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -500,6 +649,36 @@
       "section": "Text & fonts",
       "title": "fonts A to Z and 0 to 9",
       "summary": "Selects a resident font by one-character name, with optional orientation, height and width.",
+      "reference": {
+        "syntax": "^Afo,h,w",
+        "params": [
+          {
+            "name": "f",
+            "meaning": "font name",
+            "values": "A to Z, 0 to 9",
+            "default": "last ^CF"
+          },
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "character height in dots",
+            "values": "10 to 32000 scalable, 1 to 10 times the base height bitmapped",
+            "default": "last ^CF"
+          },
+          {
+            "name": "w",
+            "meaning": "character width in dots",
+            "values": "10 to 32000 scalable, 1 to 10 times the base width bitmapped",
+            "default": "last ^CF"
+          }
+        ],
+        "example": "^FO50,50^ADN,36,20^FDDevice font^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -528,6 +707,30 @@
       "section": "Text & fonts",
       "title": "change default font",
       "summary": "Sets the fallback font, height and width used by text fields that specify none of their own.",
+      "reference": {
+        "syntax": "^CFf,h,w",
+        "params": [
+          {
+            "name": "f",
+            "meaning": "default font",
+            "values": "A to Z, 0 to 9",
+            "default": "A"
+          },
+          {
+            "name": "h",
+            "meaning": "default character height in dots",
+            "values": "0 to 32000",
+            "default": "9"
+          },
+          {
+            "name": "w",
+            "meaning": "default character width in dots",
+            "values": "0 to 32000",
+            "default": "5 or last saved value"
+          }
+        ],
+        "example": "^CF0,30^FO50,50^FDDefault font^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -685,6 +888,48 @@
       "section": "Barcodes",
       "title": "Code 128",
       "summary": "Draws a Code 128 barcode for variable-length ASCII data, with modes for automatic subset switching and UCC/EAN data.",
+      "reference": {
+        "syntax": "^BCo,h,f,g,e,m",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "N no, Y yes",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above the code",
+            "values": "N no, Y yes",
+            "default": "N"
+          },
+          {
+            "name": "e",
+            "meaning": "UCC check digit",
+            "values": "N no, Y yes",
+            "default": "N"
+          },
+          {
+            "name": "m",
+            "meaning": "mode",
+            "values": "N none, U UCC case, A automatic, D UCC/EAN",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^BCN,100,Y,N,N^FD12345678^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1066,6 +1311,42 @@
       "section": "Graphics",
       "title": "graphic box",
       "summary": "Draws a filled or outlined rectangle. Matching a side to border thickness produces a line.",
+      "reference": {
+        "syntax": "^GBw,h,t,c,r",
+        "params": [
+          {
+            "name": "w",
+            "meaning": "box width in dots",
+            "values": "t to 32000",
+            "default": "t or 1"
+          },
+          {
+            "name": "h",
+            "meaning": "box height in dots",
+            "values": "t to 32000",
+            "default": "t or 1"
+          },
+          {
+            "name": "t",
+            "meaning": "border thickness in dots",
+            "values": "1 to 32000",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "line color",
+            "values": "B black, W white",
+            "default": "B"
+          },
+          {
+            "name": "r",
+            "meaning": "corner rounding",
+            "values": "0 none to 8 heaviest",
+            "default": "0"
+          }
+        ],
+        "example": "^FO50,50^GB400,200,4^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"

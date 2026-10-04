@@ -95,7 +95,7 @@ The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the
 
 The **ZPL** panel highlights syntax and collapses long blocks of image data. Selecting a canvas object marks its ZPL lines. A notice above the code lists commands that change saved printer settings or control the printer.
 
-The **command list** left of the code filters as you search. The **ZPL reference** on the right follows the cursor. Click a command to pin its details. A double-click or the right-click menu inserts the command at the cursor. A chevron folds each pane to a rail. Click the rail to bring it back.
+The **command list** left of the code filters as you search. The **ZPL reference** on the right follows the cursor. Click a command to pin its details. The details also show the syntax, a parameter table and an example where the reference has them. A double-click or the right-click menu inserts the command at the cursor. A chevron folds each pane to a rail. Click the rail to bring it back.
 
 While you edit, the canvas shows a live preview. Canvas editing and the **Properties** tab are disabled. Page switching stays enabled. The editor refuses source that is too large or has mismatched `^XA`/`^XZ` commands, and marks the mismatches. Click a mark to insert the missing command.
 

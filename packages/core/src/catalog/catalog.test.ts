@@ -26,7 +26,7 @@ describe("zpl command catalog", () => {
   });
 
   it("keeps every title a short plain phrase without parentheses", () => {
-    // A name, not a sentence: the panel shows it beside the command, and the en text is what translations hash against.
+    // A name, not a sentence: the panel shows it beside the command.
     const TITLE_WORD_CAP = 8;
     for (const c of ZPL_COMMANDS) {
       expect(c.title.split(/\s+/).length, c.cmd).toBeLessThanOrEqual(TITLE_WORD_CAP);
@@ -48,6 +48,33 @@ describe("zpl command catalog", () => {
       expect(c.summary, c.cmd).not.toMatch(/[();:]/);
       expect(c.summary, c.cmd).not.toMatch(/[^\x20-\x7E]/);
       expect(c.summary, c.cmd).not.toMatch(/ZPLab|supported/i);
+    }
+  });
+
+  it("ties each reference block to its command and keeps the parameter prose plain", () => {
+    const PARAM_WORD_CAP = 12;
+    for (const c of ZPL_COMMANDS) {
+      if (!c.reference) continue;
+      const { syntax, params, example } = c.reference;
+      expect(syntax.startsWith(commandId(c)), c.cmd).toBe(true);
+      expect(example, c.cmd).toContain(commandId(c));
+      expect(syntax.slice(commandId(c).length).match(/[a-z]/g) ?? [], c.cmd).toEqual(params.map((p) => p.name));
+      for (const p of params) {
+        for (const text of [p.meaning, p.values, p.default ?? "x"]) {
+          expect(text.split(/\s+/).length, `${c.cmd} ${p.name}`).toBeLessThanOrEqual(PARAM_WORD_CAP);
+          expect(text, `${c.cmd} ${p.name}`).not.toMatch(/[();:]|[^\x20-\x7E]/);
+        }
+        // An enum cell lists its tokens, so a single-token default must be one of them.
+        if (p.default && !/ to /.test(p.values) && /^[A-Z0-9]$/.test(p.default)) {
+          expect(p.values.split(", ").map((v) => v.split(" ")[0]), `${c.cmd} ${p.name}`).toContain(p.default);
+        }
+      }
+    }
+  });
+
+  it("pins the commands that ship a parameter table", () => {
+    for (const id of ["^FO", "^FD", "^A", "^A0", "^CF", "^FB", "^GB", "^BY", "^BC", "^PW", "^LL"]) {
+      expect(catalogEntry(id)?.reference?.params.length, id).toBeGreaterThan(0);
     }
   });
 

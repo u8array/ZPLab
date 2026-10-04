@@ -15,3 +15,22 @@ export function catalogEmptyText(reason: CatalogEmptyReason, t: Translations): s
       return formatTemplate(t.output.catalogNoEntryFmt, { cmd: reason.cmd });
   }
 }
+
+/** `slot` is the parameter's index, or null for literal text. */
+export interface SyntaxSegment {
+  text: string;
+  slot: number | null;
+}
+
+export function syntaxSegments(syntax: string, names: readonly string[]): SyntaxSegment[] {
+  const out: SyntaxSegment[] = [];
+  for (const ch of syntax) {
+    const slot = names.indexOf(ch);
+    const last = out[out.length - 1];
+    // ^Afo: adjacent slot letters must not coalesce, each carries its own index.
+    if (slot >= 0) out.push({ text: ch, slot });
+    else if (last && last.slot === null) last.text += ch;
+    else out.push({ text: ch, slot: null });
+  }
+  return out;
+}

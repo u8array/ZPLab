@@ -13,6 +13,18 @@ export type ImportLossCause = (typeof IMPORT_LOSS_CAUSES)[number];
 const supportSchema = z.object({ web: z.enum(SUPPORT_LEVELS), desktop: z.enum(SUPPORT_LEVELS), docker: z.enum(SUPPORT_LEVELS).optional() }).strict();
 export type CommandSupport = Required<z.infer<typeof supportSchema>>;
 
+/** Slot letters of the format line in order. English only like `title`, so no translated channel. */
+const paramSchema = z.object({
+  name: z.string().min(1),
+  meaning: z.string().min(1),
+  values: z.string().min(1),
+  default: z.string().min(1).optional(),
+}).strict();
+export type CommandParam = z.infer<typeof paramSchema>;
+
+const referenceSchema = z.object({ syntax: z.string().min(1), params: z.array(paramSchema).min(1), example: z.string().min(1) }).strict();
+export type CommandReference = z.infer<typeof referenceSchema>;
+
 const commandSchema = z.object({
   cmd: z.string().regex(/^[A-Z0-9@]{1,2}$/),
   prefixes: z.array(z.enum(["^", "~"])).min(1).max(2),
@@ -23,6 +35,7 @@ const commandSchema = z.object({
   title: z.string().min(1),
   /** Human-facing command explanation shown in the panel; one or two short sentences. */
   summary: z.string().min(1),
+  reference: referenceSchema.optional(),
   support: supportSchema,
   loss: z.enum(IMPORT_LOSS_CAUSES).optional(),
 }).strict();

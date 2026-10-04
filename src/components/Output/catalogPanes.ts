@@ -18,6 +18,12 @@ export const focusKeeper = (editorHasFocus?: () => boolean) => (e: React.MouseEv
   if (editorHasFocus?.()) e.preventDefault();
 };
 
+export const CAPTION_CLS = "font-mono text-[10px] font-medium uppercase tracking-widest text-muted";
+
+const SLOT_CLS = ["text-slot-1", "text-slot-2", "text-slot-3", "text-slot-4", "text-slot-5", "text-slot-6"] as const;
+
+export const slotClass = (index: number): string => SLOT_CLS[index % SLOT_CLS.length] ?? "";
+
 /** Width, border and minimum apply only while open, since the rail brings its own. */
 export const paneClass = (open: boolean, openClass: string): string =>
   `flex flex-col bg-surface text-xs outline-none ${open ? `shrink ${openClass}` : "shrink-0"}`;

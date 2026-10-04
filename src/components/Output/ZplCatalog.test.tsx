@@ -47,6 +47,16 @@ describe("catalog panes", () => {
     }
   });
 
+  it("shows syntax, one block per parameter and the example, and no parameter list for a command without a reference", () => {
+    const first = render(<CatalogPanes cursor={{ id: "^FO", from: 0, pointed: true }} onInsert={vi.fn()} />);
+    expect(detail(first.getByTestId).getByText((_, el) => el?.tagName === "CODE" && el.textContent === "^FOx,y,z")).toBeTruthy();
+    expect(detail(first.getByTestId).getAllByRole("listitem")).toHaveLength(3);
+    expect(detail(first.getByTestId).getByText("^FO50,50^A0N,30,30^FDHello^FS")).toBeTruthy();
+    first.unmount();
+    const second = render(<CatalogPanes cursor={{ id: "^XA", from: 0, pointed: true }} onInsert={vi.fn()} />);
+    expect(second.queryByRole("list")).toBeNull();
+  });
+
   it("folds the command list to a rail, keeps the description and remembers the fold", () => {
     const first = render(<CatalogPanes cursor={{ id: "^LL", from: 0, pointed: true }} onInsert={vi.fn()} />);
     fireEvent.click(first.getByRole("button", { name: "Command list" }));

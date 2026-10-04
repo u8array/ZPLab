@@ -3,7 +3,7 @@ import raw from "./commands.json";
 import type { Catalog, CatalogSection, ZplCommandEntry } from "./schema";
 
 // Types only: a value re-export pulls zod into the app bundle.
-export type { CatalogSection, CommandSupport, ImportLossCause, SupportLevel, ZplCommandEntry } from "./schema";
+export type { CatalogSection, CommandParam, CommandReference, CommandSupport, ImportLossCause, SupportLevel, ZplCommandEntry } from "./schema";
 
 // Cast, not parse: catalog.test.ts validates the JSON.
 const catalog = raw as unknown as Catalog;
