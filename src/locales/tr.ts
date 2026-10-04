@@ -826,7 +826,7 @@ const tr = {
       checkUpdates: 'Güncellemeleri denetle',
       checkingUpdates: 'Denetleniyor…',
       upToDate: 'En güncel sürümü kullanıyorsunuz.',
-      updatesViaStore: 'Güncellemeler Microsoft Store üzerinden gelir.',
+      updatesViaStore: "Güncellemeler, ZPLab'ı yükleyen mağaza üzerinden gelir.",
     },
     preview: {
       providerHeading: 'Önizleme oluşturucu',
@@ -1790,6 +1790,7 @@ const tr = {
     tabUsb: 'USB',
     usbPermissionDenied: "USB yazıcıya erişilemiyor. İzin vermek için Erişimi ayarla'ya tıklayın.",
     usbSetupAccess: 'Erişimi ayarla',
+    usbSetupFlatpak: 'Flatpak içinde uygulama udev kuralını kendi başına yükleyemez. ZPLab deposundan 70-zplab.rules dosyasını ana makineye yükleyin, ardından yazıcıyı yeniden takın.',
     usbNotFound: 'USB yazıcı bulunamadı, yeniden takıp yenileyin.',
   },
   pdfExport: {

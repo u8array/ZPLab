@@ -826,7 +826,7 @@ const fa = {
       checkUpdates: 'بررسی به‌روزرسانی‌ها',
       checkingUpdates: 'در حال بررسی…',
       upToDate: 'شما از آخرین نسخه استفاده می‌کنید.',
-      updatesViaStore: 'به‌روزرسانی‌ها از طریق Microsoft Store می‌رسند.',
+      updatesViaStore: 'به‌روزرسانی‌ها از طریق فروشگاهی می‌رسند که ZPLab را نصب کرده است.',
     },
     preview: {
       providerHeading: 'موتور پیش‌نمایش',
@@ -1790,6 +1790,7 @@ const fa = {
     tabUsb: 'USB',
     usbPermissionDenied: 'دسترسی به چاپگر USB وجود ندارد. برای اعطای دسترسی روی «تنظیم دسترسی» کلیک کنید.',
     usbSetupAccess: 'تنظیم دسترسی',
+    usbSetupFlatpak: 'داخل Flatpak، برنامه نمی‌تواند قانون udev را خودش نصب کند. فایل 70-zplab.rules را از مخزن ZPLab روی میزبان نصب کنید، سپس چاپگر را دوباره وصل کنید.',
     usbNotFound: 'چاپگر USB یافت نشد، آن را دوباره وصل کنید و به‌روزرسانی کنید.',
   },
   pdfExport: {

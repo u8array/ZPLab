@@ -1,9 +1,11 @@
 use tauri::{AppHandle, Config};
 
 /// Tauri's Windows updater runs the NSIS setup, which cannot replace a packaged install.
-/// The Store variant also ships without plugins.updater.
+/// The Store variant also ships without plugins.updater. Flathub updates a Flatpak itself.
 pub fn self_update_enabled(config: &Config) -> bool {
-  config.plugins.0.contains_key("updater") && !crate::package::is_packaged()
+  config.plugins.0.contains_key("updater")
+    && !crate::package::is_packaged()
+    && !crate::package::is_flatpak()
 }
 
 #[tauri::command]

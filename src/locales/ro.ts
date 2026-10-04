@@ -826,7 +826,7 @@ const ro = {
       checkUpdates: 'Caută actualizări',
       checkingUpdates: 'Se verifică…',
       upToDate: 'Aveți cea mai recentă versiune.',
-      updatesViaStore: 'Actualizările ajung prin Microsoft Store.',
+      updatesViaStore: 'Actualizările ajung prin magazinul care a instalat ZPLab.',
     },
     preview: {
       providerHeading: 'Motor de previzualizare',
@@ -1790,6 +1790,7 @@ const ro = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Fără acces la imprimanta USB. Fă clic pe Configurează accesul pentru a-l acorda.',
     usbSetupAccess: 'Configurează accesul',
+    usbSetupFlatpak: 'În interiorul Flatpak, aplicația nu poate instala regula udev singură. Instalează 70-zplab.rules din depozitul ZPLab pe sistemul-host, apoi reconectează imprimanta.',
     usbNotFound: 'Imprimanta USB nu a fost găsită, reconecteaz-o și reîmprospătează.',
   },
   pdfExport: {

@@ -826,7 +826,7 @@ const ja = {
       checkUpdates: 'アップデートを確認',
       checkingUpdates: '確認中…',
       upToDate: '最新の状態です。',
-      updatesViaStore: 'アップデートはMicrosoft Store経由で届きます。',
+      updatesViaStore: 'アップデートはZPLabをインストールしたストア経由で届きます。',
     },
     preview: {
       providerHeading: 'プレビューのレンダラー',
@@ -1790,6 +1790,7 @@ const ja = {
     tabUsb: 'USB',
     usbPermissionDenied: 'USBプリンターにアクセスできません。「アクセスを設定」をクリックして許可してください。',
     usbSetupAccess: 'アクセスを設定',
+    usbSetupFlatpak: 'Flatpak内ではアプリが自分でudevルールをインストールできません。ホスト側でZPLabリポジトリから70-zplab.rulesをインストールし、プリンターを再接続してください。',
     usbNotFound: 'USBプリンターが見つかりません。再接続して更新してください。',
   },
   pdfExport: {

@@ -230,7 +230,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
       setUsbStatus({ type: "idle" });
     } catch (e) {
       // Failed or cancelled: keep usbNeedsSetup so the button stays available.
-      setUsbStatus({ type: "error", message: errorMessage(e) });
+      setUsbStatus({ type: "error", message: e === "flatpak" ? t.zebraPrint.usbSetupFlatpak : errorMessage(e) });
     }
   }
 

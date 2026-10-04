@@ -826,7 +826,7 @@ const hr = {
       checkUpdates: 'Provjeri ažuriranja',
       checkingUpdates: 'Provjeravam…',
       upToDate: 'Imate najnoviju verziju.',
-      updatesViaStore: 'Ažuriranja stižu putem Microsoft Storea.',
+      updatesViaStore: 'Ažuriranja stižu putem trgovine koja je instalirala ZPLab.',
     },
     preview: {
       providerHeading: 'Prikaz pregleda',
@@ -1790,6 +1790,7 @@ const hr = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Nema pristupa USB pisaču. Kliknite Postavi pristup da biste ga odobrili.',
     usbSetupAccess: 'Postavi pristup',
+    usbSetupFlatpak: 'Unutar Flatpaka aplikacija ne može sama instalirati udev pravilo. Instalirajte 70-zplab.rules iz ZPLab repozitorija na glavnom sustavu, zatim ponovno priključite pisač.',
     usbNotFound: 'USB pisač nije pronađen. Ponovno ga priključite i osvježite.',
   },
   pdfExport: {

@@ -1,0 +1,51 @@
+# Flathub manifest. Flathub builds this itself from the release deb, release.yml has no Flatpak leg.
+app-id: de.u8array.zplab
+runtime: org.gnome.Platform
+runtime-version: "50"
+sdk: org.gnome.Sdk
+command: ZPLab
+finish-args:
+  # Raw TCP to printers, Labelary previews, the loopback MCP server.
+  - --share=network
+  # The system print queue runs through libcups.
+  - --socket=cups
+  # The usblp nodes under /dev/usb are outside --device=usb.
+  - --device=all
+  # Saved printer and database passwords live in the Secret Service.
+  - --talk-name=org.freedesktop.secrets
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  # The GTK file dialogs are not portal aware.
+  - --filesystem=home
+modules:
+  - name: zplab
+    buildsystem: simple
+    rename-desktop-file: ZPLab.desktop
+    rename-icon: ZPLab
+    build-commands:
+      - ar x ZPLab.deb
+      - tar -xf data.tar.*
+      - install -Dm755 usr/bin/ZPLab /app/bin/ZPLab
+      - install -Dm755 usr/bin/zplab-mcp /app/bin/zplab-mcp
+      - install -Dm644 usr/share/applications/ZPLab.desktop /app/share/applications/ZPLab.desktop
+      - for size in 32x32 128x128; do install -Dm644 "usr/share/icons/hicolor/$size/apps/ZPLab.png" "/app/share/icons/hicolor/$size/apps/ZPLab.png"; done
+      # Tauri files the 256 px icon under a size no theme lookup reads.
+      - install -Dm644 usr/share/icons/hicolor/256x256@2/apps/ZPLab.png /app/share/icons/hicolor/256x256/apps/ZPLab.png
+      - install -Dm644 de.u8array.zplab.metainfo.xml /app/share/metainfo/de.u8array.zplab.metainfo.xml
+      # The packaged metainfo launches the deb's desktop file name.
+      - sed -i 's#<launchable type="desktop-id">ZPLab.desktop</launchable>#<launchable type="desktop-id">de.u8array.zplab.desktop</launchable>#' /app/share/metainfo/de.u8array.zplab.metainfo.xml
+    sources:
+      - type: file
+        dest-filename: ZPLab.deb
+        only-arches: [x86_64]
+        url: https://github.com/u8array/ZPLab/releases/download/v0.7.1/ZPLab_0.7.1_amd64.deb
+        sha256: fc9044106420d1349227c74d259949c73305709882da3e733d8e347648ba9c4a
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/u8array/ZPLab/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          url-query: .assets[] | select(.name | test("_amd64\\.deb$")) | .browser_download_url
+      # The deb of a release carries the metainfo as it was before that release's own entry.
+      - type: file
+        path: ../linux/de.u8array.zplab.metainfo.xml

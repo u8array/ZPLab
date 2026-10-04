@@ -826,7 +826,7 @@ const sk = {
       checkUpdates: 'Skontrolovať aktualizácie',
       checkingUpdates: 'Kontrola…',
       upToDate: 'Máte najnovšiu verziu.',
-      updatesViaStore: 'Aktualizácie prichádzajú cez Microsoft Store.',
+      updatesViaStore: 'Aktualizácie prichádzajú cez obchod, ktorý nainštaloval ZPLab.',
     },
     preview: {
       providerHeading: 'Vykresľovač náhľadu',
@@ -1790,6 +1790,7 @@ const sk = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Žiadny prístup k tlačiarni USB. Prístup udelíte kliknutím na Nastaviť prístup.',
     usbSetupAccess: 'Nastaviť prístup',
+    usbSetupFlatpak: 'Vo Flatpaku si aplikácia nemôže pravidlo udev nainštalovať sama. Nainštalujte 70-zplab.rules z repozitára ZPLab na hostiteľský systém a potom znova pripojte tlačiareň.',
     usbNotFound: 'Tlačiareň USB sa nenašla, znova ju zapojte a obnovte.',
   },
   pdfExport: {

@@ -16,3 +16,8 @@ pub fn is_packaged() -> bool {
 pub fn is_packaged() -> bool {
   false
 }
+
+/// The file marks every sandbox, even one started with a cleared environment.
+pub fn is_flatpak() -> bool {
+  cfg!(target_os = "linux") && std::path::Path::new("/.flatpak-info").exists()
+}

@@ -826,7 +826,7 @@ const sl = {
       checkUpdates: 'Preveri posodobitve',
       checkingUpdates: 'Preverjanje…',
       upToDate: 'Imate najnovejšo različico.',
-      updatesViaStore: 'Posodobitve prihajajo prek Microsoft Store.',
+      updatesViaStore: 'Posodobitve prihajajo prek trgovine, ki je namestila ZPLab.',
     },
     preview: {
       providerHeading: 'Izrisovalnik predogleda',
@@ -1790,6 +1790,7 @@ const sl = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Ni dostopa do tiskalnika USB. Za dodelitev kliknite Nastavi dostop.',
     usbSetupAccess: 'Nastavi dostop',
+    usbSetupFlatpak: 'Znotraj Flatpaka aplikacija ne more sama namestiti pravila udev. Namestite 70-zplab.rules iz repozitorija ZPLab na gostitelja in nato tiskalnik znova priključite.',
     usbNotFound: 'Tiskalnika USB ni mogoče najti, znova ga priključite in osvežite.',
   },
   pdfExport: {

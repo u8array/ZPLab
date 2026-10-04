@@ -826,7 +826,7 @@ const nl = {
       checkUpdates: 'Controleren op updates',
       checkingUpdates: 'Controleren…',
       upToDate: 'Je hebt de nieuwste versie.',
-      updatesViaStore: 'Updates komen via de Microsoft Store.',
+      updatesViaStore: 'Updates komen via de store die ZPLab heeft geïnstalleerd.',
     },
     preview: {
       providerHeading: 'Voorbeeldrenderer',
@@ -1790,6 +1790,7 @@ const nl = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Geen toegang tot de USB-printer. Klik op Toegang instellen om toegang te verlenen.',
     usbSetupAccess: 'Toegang instellen',
+    usbSetupFlatpak: 'Binnen Flatpak kan de app de udev-regel niet zelf installeren. Installeer 70-zplab.rules uit de ZPLab-repository op de host en sluit de printer vervolgens opnieuw aan.',
     usbNotFound: 'USB-printer niet gevonden. Sluit deze opnieuw aan en vernieuw.',
   },
   pdfExport: {

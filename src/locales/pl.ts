@@ -826,7 +826,7 @@ const pl = {
       checkUpdates: 'Sprawdź aktualizacje',
       checkingUpdates: 'Sprawdzanie…',
       upToDate: 'Masz najnowszą wersję.',
-      updatesViaStore: 'Aktualizacje docierają przez Microsoft Store.',
+      updatesViaStore: 'Aktualizacje docierają przez sklep, który zainstalował ZPLab.',
     },
     preview: {
       providerHeading: 'Silnik podglądu',
@@ -1790,6 +1790,7 @@ const pl = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Brak dostępu do drukarki USB. Kliknij Skonfiguruj dostęp, aby go przyznać.',
     usbSetupAccess: 'Skonfiguruj dostęp',
+    usbSetupFlatpak: 'Wewnątrz Flatpaka aplikacja nie może sama zainstalować reguły udev. Zainstaluj 70-zplab.rules z repozytorium ZPLab na hoście, a następnie podłącz drukarkę ponownie.',
     usbNotFound: 'Nie znaleziono drukarki USB, podłącz ją ponownie i odśwież.',
   },
   pdfExport: {

@@ -826,7 +826,7 @@ const ar = {
       checkUpdates: 'التحقق من التحديثات',
       checkingUpdates: 'جارٍ التحقق…',
       upToDate: 'أنت على أحدث إصدار.',
-      updatesViaStore: 'التحديثات تصل عبر Microsoft Store.',
+      updatesViaStore: 'التحديثات تصل عبر المتجر الذي ثبّت ZPLab.',
     },
     preview: {
       providerHeading: 'عارض المعاينة',
@@ -1790,6 +1790,7 @@ const ar = {
     tabUsb: 'USB',
     usbPermissionDenied: 'لا يمكن الوصول إلى طابعة USB. انقر على «إعداد الوصول» لمنح الإذن.',
     usbSetupAccess: 'إعداد الوصول',
+    usbSetupFlatpak: 'داخل Flatpak، لا يمكن للتطبيق تثبيت قاعدة udev بنفسه. ثبّت الملف 70-zplab.rules من مستودع ZPLab على النظام المضيف، ثم أعد توصيل الطابعة.',
     usbNotFound: 'لم يتم العثور على طابعة USB، أعد توصيلها وقم بالتحديث.',
   },
   pdfExport: {

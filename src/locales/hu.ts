@@ -826,7 +826,7 @@ const hu = {
       checkUpdates: 'Frissítések keresése',
       checkingUpdates: 'Keresés…',
       upToDate: 'A legújabb verziót használja.',
-      updatesViaStore: 'A frissítéseket a Microsoft Store kézbesíti.',
+      updatesViaStore: 'A frissítéseket az a bolt kézbesíti, amely telepítette a ZPLab alkalmazást.',
     },
     preview: {
       providerHeading: 'Előnézet-megjelenítő',
@@ -1790,6 +1790,7 @@ const hu = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Nincs hozzáférés az USB-nyomtatóhoz. Kattintson a Hozzáférés beállítása gombra az engedélyezéshez.',
     usbSetupAccess: 'Hozzáférés beállítása',
+    usbSetupFlatpak: 'A Flatpakon belül az alkalmazás nem tudja magától telepíteni az udev szabályt. Telepítse a 70-zplab.rules fájlt a ZPLab tárolóból a gazdagépre, majd csatlakoztassa újra a nyomtatót.',
     usbNotFound: 'Az USB-nyomtató nem található. Csatlakoztassa újra, és frissítsen.',
   },
   pdfExport: {

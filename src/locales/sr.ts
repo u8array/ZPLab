@@ -826,7 +826,7 @@ const sr = {
       checkUpdates: 'Провери ажурирања',
       checkingUpdates: 'Провера…',
       upToDate: 'Имате најновију верзију.',
-      updatesViaStore: 'Ажурирања стижу путем Microsoft Storea.',
+      updatesViaStore: 'Ажурирања стижу путем продавнице која је инсталирала ZPLab.',
     },
     preview: {
       providerHeading: 'Prikazivač pregleda',
@@ -1790,6 +1790,7 @@ const sr = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Нема приступа USB штампачу. Кликните на Подеси приступ да бисте га омогућили.',
     usbSetupAccess: 'Подеси приступ',
+    usbSetupFlatpak: 'Унутар Flatpak-а апликација не може сама да инсталира udev правило. Инсталирајте 70-zplab.rules из ZPLab репозиторијума на хост систем, затим поново прикључите штампач.',
     usbNotFound: 'USB штампач није пронађен, поново га прикључите и освежите.',
   },
   pdfExport: {

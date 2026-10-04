@@ -826,7 +826,7 @@ const bg = {
       checkUpdates: 'Проверка за актуализации',
       checkingUpdates: 'Проверка…',
       upToDate: 'Използвате най-новата версия.',
-      updatesViaStore: 'Актуализациите пристигат през Microsoft Store.',
+      updatesViaStore: 'Актуализациите пристигат през магазина, който инсталира ZPLab.',
     },
     preview: {
       providerHeading: 'Визуализатор за преглед',
@@ -1790,6 +1790,7 @@ const bg = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Няма достъп до USB принтера. Щракнете върху Настройване на достъп, за да го предоставите.',
     usbSetupAccess: 'Настройване на достъп',
+    usbSetupFlatpak: 'В Flatpak приложението не може само да инсталира правилото за udev. Инсталирайте 70-zplab.rules от хранилището на ZPLab на хост системата, след което включете принтера отново.',
     usbNotFound: 'USB принтерът не е намерен, включете го отново и обновете.',
   },
   pdfExport: {

@@ -826,7 +826,7 @@ const zhHant = {
       checkUpdates: '檢查更新',
       checkingUpdates: '檢查中…',
       upToDate: '已是最新版本。',
-      updatesViaStore: '更新透過 Microsoft Store 提供。',
+      updatesViaStore: '更新透過安裝 ZPLab 的商店提供。',
     },
     preview: {
       providerHeading: '預覽算繪方式',
@@ -1790,6 +1790,7 @@ const zhHant = {
     tabUsb: 'USB',
     usbPermissionDenied: '無法存取 USB 印表機。點按「設定存取權限」以授予權限。',
     usbSetupAccess: '設定存取權限',
+    usbSetupFlatpak: '在 Flatpak 中，應用程式無法自行安裝 udev 規則。請在主機上從 ZPLab 儲存庫安裝 70-zplab.rules，然後重新插拔印表機。',
     usbNotFound: '找不到 USB 印表機，請重新插入並重新整理。',
   },
   pdfExport: {

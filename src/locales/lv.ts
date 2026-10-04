@@ -826,7 +826,7 @@ const lv = {
       checkUpdates: 'Meklēt atjauninājumus',
       checkingUpdates: 'Pārbauda…',
       upToDate: 'Jums ir jaunākā versija.',
-      updatesViaStore: 'Atjauninājumus nodrošina Microsoft Store.',
+      updatesViaStore: 'Atjauninājumus nodrošina veikals, kas instalēja ZPLab.',
     },
     preview: {
       providerHeading: 'Priekšskatījuma renderētājs',
@@ -1790,6 +1790,7 @@ const lv = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Nav piekļuves USB printerim. Noklikšķiniet uz Iestatīt piekļuvi, lai to piešķirtu.',
     usbSetupAccess: 'Iestatīt piekļuvi',
+    usbSetupFlatpak: 'Flatpak iekšienē lietotne nevar pati instalēt udev kārtulu. Instalējiet 70-zplab.rules no ZPLab repozitorija resursdatorā un pēc tam atkārtoti pievienojiet printeri.',
     usbNotFound: 'USB printeris nav atrasts. Pievienojiet to atkārtoti un atsvaidziniet.',
   },
   pdfExport: {

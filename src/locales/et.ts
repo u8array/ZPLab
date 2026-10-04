@@ -826,7 +826,7 @@ const et = {
       checkUpdates: 'Otsi uuendusi',
       checkingUpdates: 'Otsin…',
       upToDate: 'Teil on uusim versioon.',
-      updatesViaStore: 'Uuendused tulevad Microsoft Store kaudu.',
+      updatesViaStore: 'Uuendused tulevad poe kaudu, mis paigaldas rakenduse ZPLab.',
     },
     preview: {
       providerHeading: 'Eelvaate renderdaja',
@@ -1790,6 +1790,7 @@ const et = {
     tabUsb: 'USB',
     usbPermissionDenied: 'USB-printerile puudub juurdepääs. Klõpsa Seadista juurdepääs, et see anda.',
     usbSetupAccess: 'Seadista juurdepääs',
+    usbSetupFlatpak: 'Flatpaki sees ei saa rakendus ise udev-reeglit paigaldada. Paigalda 70-zplab.rules ZPLab-i hoidlast hostsüsteemi ja ühenda printer uuesti.',
     usbNotFound: 'USB-printerit ei leitud. Ühenda see uuesti ja värskenda.',
   },
   pdfExport: {

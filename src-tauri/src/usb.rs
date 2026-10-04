@@ -389,6 +389,10 @@ const UDEV_RULE: &str = include_str!("../packaging/udev/70-zplab.rules");
 #[cfg(target_os = "linux")]
 #[tauri::command]
 pub async fn setup_usb_access() -> Result<(), String> {
+  // No pkexec in the sandbox and the host /etc is out of reach.
+  if crate::package::is_flatpak() {
+    return Err("flatpak".to_string());
+  }
   // Used by AppImage (no installer) and as a repair path. Writes to
   // /etc/udev/rules.d (writable on immutable distros, the right place for a
   // runtime rule); set -e so a failed step surfaces instead of being swallowed.

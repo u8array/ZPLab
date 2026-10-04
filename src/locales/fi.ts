@@ -826,7 +826,7 @@ const fi = {
       checkUpdates: 'Tarkista päivitykset',
       checkingUpdates: 'Tarkistetaan…',
       upToDate: 'Sinulla on uusin versio.',
-      updatesViaStore: 'Päivitykset saapuvat Microsoft Storen kautta.',
+      updatesViaStore: 'Päivitykset saapuvat sen kaupan kautta, joka asensi sovelluksen ZPLab.',
     },
     preview: {
       providerHeading: 'Esikatselun renderöijä',
@@ -1790,6 +1790,7 @@ const fi = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Ei käyttöoikeutta USB-tulostimeen. Napsauta Määritä käyttöoikeus myöntääksesi sen.',
     usbSetupAccess: 'Määritä käyttöoikeus',
+    usbSetupFlatpak: 'Flatpakin sisällä sovellus ei voi asentaa udev-sääntöä itse. Asenna 70-zplab.rules ZPLab-tietovarastosta isäntäjärjestelmään ja kytke tulostin uudelleen.',
     usbNotFound: 'USB-tulostinta ei löytynyt. Kytke se uudelleen ja päivitä.',
   },
   pdfExport: {

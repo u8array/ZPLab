@@ -826,7 +826,7 @@ const zhHans = {
       checkUpdates: '检查更新',
       checkingUpdates: '正在检查…',
       upToDate: '已是最新版本。',
-      updatesViaStore: '更新通过 Microsoft Store 提供。',
+      updatesViaStore: '更新通过安装 ZPLab 的商店提供。',
     },
     preview: {
       providerHeading: '预览渲染方式',
@@ -1790,6 +1790,7 @@ const zhHans = {
     tabUsb: 'USB',
     usbPermissionDenied: '无法访问 USB 打印机。点击「设置访问权限」以授予权限。',
     usbSetupAccess: '设置访问权限',
+    usbSetupFlatpak: '在 Flatpak 中，应用无法自行安装 udev 规则。请在主机上从 ZPLab 仓库安装 70-zplab.rules，然后重新插拔打印机。',
     usbNotFound: '未找到 USB 打印机，请重新插入并刷新。',
   },
   pdfExport: {

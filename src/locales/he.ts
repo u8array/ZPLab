@@ -826,7 +826,7 @@ const he = {
       checkUpdates: 'בדיקת עדכונים',
       checkingUpdates: 'בודק…',
       upToDate: 'אתה מעודכן.',
-      updatesViaStore: 'העדכונים מגיעים דרך Microsoft Store.',
+      updatesViaStore: 'העדכונים מגיעים דרך החנות שהתקינה את ZPLab.',
     },
     preview: {
       providerHeading: 'מנוע תצוגה מקדימה',
@@ -1790,6 +1790,7 @@ const he = {
     tabUsb: 'USB',
     usbPermissionDenied: "אין גישה למדפסת ה-USB. לחץ על 'הגדרת גישה' כדי להעניק אותה.",
     usbSetupAccess: 'הגדרת גישה',
+    usbSetupFlatpak: 'בתוך Flatpak האפליקציה לא יכולה להתקין את כלל ה-udev בעצמה. התקן את 70-zplab.rules ממאגר ZPLab על המארח, ואז חבר את המדפסת מחדש.',
     usbNotFound: 'מדפסת ה-USB לא נמצאה, חבר אותה מחדש ורענן.',
   },
   pdfExport: {

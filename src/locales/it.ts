@@ -826,7 +826,7 @@ const it = {
       checkUpdates: 'Controlla aggiornamenti',
       checkingUpdates: 'Controllo…',
       upToDate: 'Hai la versione più recente.',
-      updatesViaStore: 'Gli aggiornamenti arrivano tramite Microsoft Store.',
+      updatesViaStore: 'Gli aggiornamenti arrivano tramite lo store che ha installato ZPLab.',
     },
     preview: {
       providerHeading: 'Motore di anteprima',
@@ -1790,6 +1790,7 @@ const it = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Nessun accesso alla stampante USB. Fai clic su Configura accesso per concederlo.',
     usbSetupAccess: 'Configura accesso',
+    usbSetupFlatpak: "All'interno di Flatpak l'app non può installare la regola udev da sola. Installa 70-zplab.rules dal repository ZPLab sull'host, poi ricollega la stampante.",
     usbNotFound: 'Stampante USB non trovata, ricollegala e aggiorna.',
   },
   pdfExport: {

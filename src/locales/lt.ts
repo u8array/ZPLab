@@ -826,7 +826,7 @@ const lt = {
       checkUpdates: 'Tikrinti atnaujinimus',
       checkingUpdates: 'Tikrinama…',
       upToDate: 'Turite naujausią versiją.',
-      updatesViaStore: 'Atnaujinimai pasiekia per Microsoft Store.',
+      updatesViaStore: 'Atnaujinimai pasiekia per parduotuvę, kuri įdiegė ZPLab.',
     },
     preview: {
       providerHeading: 'Peržiūros atvaizdavimo įrankis',
@@ -1790,6 +1790,7 @@ const lt = {
     tabUsb: 'USB',
     usbPermissionDenied: 'Nėra prieigos prie USB spausdintuvo. Spustelėkite Nustatyti prieigą, kad ją suteiktumėte.',
     usbSetupAccess: 'Nustatyti prieigą',
+    usbSetupFlatpak: 'Flatpak aplinkoje programa negali pati įdiegti udev taisyklės. Įdiekite 70-zplab.rules iš ZPLab saugyklos pagrindinėje sistemoje, tada iš naujo prijunkite spausdintuvą.',
     usbNotFound: 'USB spausdintuvas nerastas. Prijunkite jį iš naujo ir atnaujinkite.',
   },
   pdfExport: {
