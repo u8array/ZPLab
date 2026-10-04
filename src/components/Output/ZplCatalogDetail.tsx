@@ -70,19 +70,21 @@ export function ZplCatalogDetail({ selection, editorHasFocus }: { selection: Cat
                       <span key={i} className={seg.slot === null ? undefined : slotClass(seg.slot)}>{seg.text}</span>
                     ))}
                   </code>
-                  <ul className="mt-2.5 space-y-2">
-                    {entry.reference.params.map((p, i) => (
-                      <li key={p.name} className="grid grid-cols-[0.875rem_1fr] gap-x-2 items-baseline">
-                        <span className={`font-mono font-semibold ${slotClass(i)}`}>{p.name}</span>
-                        <span className="text-text leading-snug">{p.meaning}</span>
-                        <span className="col-start-2 mt-0.5 text-[11px] text-muted leading-snug">
-                          {p.values}
-                          {/* Without nowrap the separator can end a line and orphan the default. */}
-                          {p.default && <span className="whitespace-nowrap">{` \u00b7 ${t.output.catalogDefault} ${p.default}`}</span>}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                  {entry.reference.params.length > 0 && (
+                    <ul className="mt-2.5 space-y-2">
+                      {entry.reference.params.map((p, i) => (
+                        <li key={p.name} className="grid grid-cols-[0.875rem_1fr] gap-x-2 items-baseline">
+                          <span className={`font-mono font-semibold ${slotClass(i)}`}>{p.name}</span>
+                          <span className="text-text leading-snug">{p.meaning}</span>
+                          <span className="col-start-2 mt-0.5 text-[11px] text-muted leading-snug">
+                            {p.values}
+                            {/* Without nowrap the separator can end a line and orphan the default. */}
+                            {p.default && <span className="whitespace-nowrap">{` \u00b7 ${t.output.catalogDefault} ${p.default}`}</span>}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </section>
                 <section className="mt-4">
                   <h3 className={CAPTION_CLS}>{t.output.catalogExample}</h3>

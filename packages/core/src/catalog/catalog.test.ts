@@ -53,6 +53,8 @@ describe("zpl command catalog", () => {
 
   it("ties each reference block to its command and keeps the parameter prose plain", () => {
     const PARAM_WORD_CAP = 12;
+    // An enumeration with a dozen tokens needs room, the other cells do not.
+    const VALUES_WORD_CAP = 32;
     for (const c of ZPL_COMMANDS) {
       if (!c.reference) continue;
       const { syntax, params, example } = c.reference;
@@ -60,8 +62,8 @@ describe("zpl command catalog", () => {
       expect(example, c.cmd).toContain(commandId(c));
       expect(syntax.slice(commandId(c).length).match(/[a-z]/g) ?? [], c.cmd).toEqual(params.map((p) => p.name));
       for (const p of params) {
-        for (const text of [p.meaning, p.values, p.default ?? "x"]) {
-          expect(text.split(/\s+/).length, `${c.cmd} ${p.name}`).toBeLessThanOrEqual(PARAM_WORD_CAP);
+        for (const [text, cap] of [[p.meaning, PARAM_WORD_CAP], [p.values, VALUES_WORD_CAP], [p.default ?? "x", PARAM_WORD_CAP]] as const) {
+          expect(text.split(/\s+/).length, `${c.cmd} ${p.name}`).toBeLessThanOrEqual(cap);
           expect(text, `${c.cmd} ${p.name}`).not.toMatch(/[();:]|[^\x20-\x7E]/);
         }
         // An enum cell lists its tokens, so a single-token default must be one of them.

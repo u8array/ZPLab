@@ -70,6 +70,11 @@
       "section": "Layout & flow",
       "title": "start label",
       "summary": "Starts a new label format. Commands after it define fields, media handling and printer behavior for that label.",
+      "reference": {
+        "syntax": "^XA",
+        "params": [],
+        "example": "^XA^FO50,50^A0N,30,30^FDHello^FS^XZ"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -83,6 +88,11 @@
       "section": "Layout & flow",
       "title": "end label",
       "summary": "Closes the current label format and submits it for printing.",
+      "reference": {
+        "syntax": "^XZ",
+        "params": [],
+        "example": "^XA^FO50,50^A0N,30,30^FDHello^FS^XZ"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -152,6 +162,24 @@
       "section": "Layout & flow",
       "title": "label home origin",
       "summary": "Moves the label home position, changing the origin used by later field coordinates.",
+      "reference": {
+        "syntax": "^LHx,y",
+        "params": [
+          {
+            "name": "x",
+            "meaning": "x-axis label home position",
+            "values": "0 to 32000",
+            "default": "0 or last saved value"
+          },
+          {
+            "name": "y",
+            "meaning": "y-axis label home position",
+            "values": "0 to 32000",
+            "default": "0 or last saved value"
+          }
+        ],
+        "example": "^LH30,30^FO0,0^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -165,6 +193,18 @@
       "section": "Layout & flow",
       "title": "label shift",
       "summary": "Applies a horizontal offset to field positions for compatibility with older Zebra formats.",
+      "reference": {
+        "syntax": "^LSa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "left shift of all field positions",
+            "values": "-9999 to 9999",
+            "default": "0"
+          }
+        ],
+        "example": "^LS10^FO0,0^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -178,6 +218,17 @@
       "section": "Layout & flow",
       "title": "label top offset",
       "summary": "Adds a vertical offset to the entire format relative to the top edge of the media.",
+      "reference": {
+        "syntax": "^LTx",
+        "params": [
+          {
+            "name": "x",
+            "meaning": "moves the whole format up or down in dot rows",
+            "values": "-120 to 120, XiIIIPlus 600 dpi -240 to 240"
+          }
+        ],
+        "example": "^LT10^FO0,0^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -191,6 +242,28 @@
       "section": "Layout & flow",
       "title": "units of measure",
       "summary": "Sets coordinate units to dots, inches or millimeters, and can scale formats between print resolutions.",
+      "reference": {
+        "syntax": "^MUa,b,c",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "coordinate units for following fields",
+            "values": "D dots, I inches, M millimeters",
+            "default": "D"
+          },
+          {
+            "name": "b",
+            "meaning": "format base resolution in dots-per-inch",
+            "values": "150, 200, 300"
+          },
+          {
+            "name": "c",
+            "meaning": "target resolution to convert to",
+            "values": "300, 600"
+          }
+        ],
+        "example": "^MUm^FO12.5,12.5^GB40,16,16^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -204,6 +277,24 @@
       "section": "Layout & flow",
       "title": "print mode",
       "summary": "Sets the media handling mode after printing, including tear-off, peel-off, cutter, rewind and applicator modes.",
+      "reference": {
+        "syntax": "^MMa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "media handling mode after printing",
+            "values": "T tear-off, P peel-off, R rewind, A applicator, C cutter, D delayed cutter, F rfid, K kiosk",
+            "default": "printer setting"
+          },
+          {
+            "name": "b",
+            "meaning": "prepeel before the next label",
+            "values": "N no, Y yes",
+            "default": "N"
+          }
+        ],
+        "example": "^MMT^FO50,50^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -217,6 +308,17 @@
       "section": "Layout & flow",
       "title": "media type",
       "summary": "Selects thermal transfer or direct thermal mode, matching whether the loaded media uses a ribbon.",
+      "reference": {
+        "syntax": "^MTa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "media type used by the printer",
+            "values": "T thermal-transfer, D direct-thermal"
+          }
+        ],
+        "example": "^MTD^FO50,50^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -230,6 +332,42 @@
       "section": "Layout & flow",
       "title": "print quantity",
       "summary": "Sets print quantity, pause or cut grouping, and copies per serial value.",
+      "reference": {
+        "syntax": "^PQq,p,r,o,e",
+        "params": [
+          {
+            "name": "q",
+            "meaning": "total labels to print",
+            "values": "1 to 99999999",
+            "default": "1"
+          },
+          {
+            "name": "p",
+            "meaning": "labels printed before a pause",
+            "values": "1 to 99999999",
+            "default": "0"
+          },
+          {
+            "name": "r",
+            "meaning": "replicates of each serial number",
+            "values": "0 to 99999999",
+            "default": "0"
+          },
+          {
+            "name": "o",
+            "meaning": "override the pause count",
+            "values": "N no, Y yes",
+            "default": "N"
+          },
+          {
+            "name": "e",
+            "meaning": "cut after a voided rfid label",
+            "values": "N no, Y yes",
+            "default": "Y"
+          }
+        ],
+        "example": "^PQ5,1,0,N,Y"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -243,6 +381,18 @@
       "section": "Layout & flow",
       "title": "label reverse",
       "summary": "Reverses printing for following fields by swapping foreground and background.",
+      "reference": {
+        "syntax": "^LRa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "reverses print color for following fields",
+            "values": "N no, Y yes",
+            "default": "N or last saved value"
+          }
+        ],
+        "example": "^LRY^FO50,50^GB200,100,100^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -256,6 +406,18 @@
       "section": "Layout & flow",
       "title": "print orientation",
       "summary": "Rotates the complete label format by 180 degrees.",
+      "reference": {
+        "syntax": "^POa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "prints the label upside down",
+            "values": "N normal, I invert",
+            "default": "N"
+          }
+        ],
+        "example": "^POI^FO50,50^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -269,6 +431,18 @@
       "section": "Layout & flow",
       "title": "print mirror",
       "summary": "Mirrors the printable area horizontally.",
+      "reference": {
+        "syntax": "^PMa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "mirrors the label left to right",
+            "values": "N no, Y yes",
+            "default": "N"
+          }
+        ],
+        "example": "^PMY^FO50,50^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -282,6 +456,30 @@
       "section": "Layout & flow",
       "title": "print rate",
       "summary": "Sets print speed, slew speed and backfeed speed in inches per second.",
+      "reference": {
+        "syntax": "^PRp,s,b",
+        "params": [
+          {
+            "name": "p",
+            "meaning": "print speed in inches-per-second",
+            "values": "1 to 14, or A 2, B 3, C 4, D 6, E 8",
+            "default": "6"
+          },
+          {
+            "name": "s",
+            "meaning": "slew speed feeding a blank label",
+            "values": "2 to 14",
+            "default": "6"
+          },
+          {
+            "name": "b",
+            "meaning": "backfeed speed after printing",
+            "values": "2 to 14",
+            "default": "2"
+          }
+        ],
+        "example": "^PR4,4,4^FO50,50^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -332,6 +530,30 @@
       "section": "Fields",
       "title": "field top",
       "summary": "Positions the next field from its baseline or barcode edge, giving rotated fields a stable anchor.",
+      "reference": {
+        "syntax": "^FTx,y,z",
+        "params": [
+          {
+            "name": "x",
+            "meaning": "horizontal position in dots",
+            "values": "0 to 32000",
+            "default": "last field position"
+          },
+          {
+            "name": "y",
+            "meaning": "vertical position in dots",
+            "values": "0 to 32000",
+            "default": "last field position"
+          },
+          {
+            "name": "z",
+            "meaning": "justification",
+            "values": "0 left, 1 right, 2 auto",
+            "default": "last ^FW"
+          }
+        ],
+        "example": "^FT50,50^A0N,30,30^FDHello^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -369,6 +591,11 @@
       "section": "Fields",
       "title": "field separator",
       "summary": "Terminates the current field definition.",
+      "reference": {
+        "syntax": "^FS",
+        "params": [],
+        "example": "^FO50,50^FDHello^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -382,6 +609,18 @@
       "section": "Fields",
       "title": "field hex indicator",
       "summary": "Enables hexadecimal escapes inside field data for binary bytes and reserved command characters.",
+      "reference": {
+        "syntax": "^FHa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "hexadecimal indicator character",
+            "values": "any character except format and control prefixes",
+            "default": "_"
+          }
+        ],
+        "example": "^FO50,50^A0N,30,30^FH^FD_245.00^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -395,6 +634,11 @@
       "section": "Fields",
       "title": "field reverse",
       "summary": "Reverses foreground and background for the next field only.",
+      "reference": {
+        "syntax": "^FR",
+        "params": [],
+        "example": "^FO50,50^GB100,100,100^FS^FO50,50^FR^A0N,30,30^FDHello^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -408,6 +652,17 @@
       "section": "Fields",
       "title": "field comment",
       "summary": "Adds a comment field. The printer ignores its contents through the next field separator.",
+      "reference": {
+        "syntax": "^FXc",
+        "params": [
+          {
+            "name": "c",
+            "meaning": "non-printing comment text",
+            "values": "any text, ignored until next command"
+          }
+        ],
+        "example": "^FXThis is a comment^FS^FO50,50^A0N,30,30^FDHello^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -421,6 +676,24 @@
       "section": "Fields",
       "title": "default field rotation",
       "summary": "Sets the default field orientation and, on newer firmware, the default justification.",
+      "reference": {
+        "syntax": "^FWr,z",
+        "params": [
+          {
+            "name": "r",
+            "meaning": "default field rotation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "N"
+          },
+          {
+            "name": "z",
+            "meaning": "default justification",
+            "values": "0 left, 1 right, 2 auto",
+            "default": "auto for ^TB, left otherwise"
+          }
+        ],
+        "example": "^FWR^FO50,50^A0,30,30^FDHello^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -483,6 +756,30 @@
       "section": "Fields",
       "title": "text block",
       "summary": "Wraps text inside a fixed-width and fixed-height box, truncating overflow.",
+      "reference": {
+        "syntax": "^TBa,b,c",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "block rotation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^A"
+          },
+          {
+            "name": "b",
+            "meaning": "block width in dots",
+            "values": "1 to the label width",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "block height in dots",
+            "values": "1 to the label length",
+            "default": "1"
+          }
+        ],
+        "example": "^FO50,50^A0N,28,28^TBN,400,200^FDText that wraps inside the block^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -496,6 +793,23 @@
       "section": "Fields",
       "title": "variable placeholder",
       "summary": "Assigns a number to a variable field in stored and recalled formats.",
+      "reference": {
+        "syntax": "^FNn\"a\"",
+        "params": [
+          {
+            "name": "n",
+            "meaning": "field number",
+            "values": "0 to 9999",
+            "default": "0"
+          },
+          {
+            "name": "a",
+            "meaning": "optional KDU prompt text",
+            "values": "up to 255 alphanumeric characters"
+          }
+        ],
+        "example": "^FO50,50^A0N,30,30^FN1^FDHello^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -509,6 +823,17 @@
       "section": "Fields",
       "title": "variable data",
       "summary": "Provides data for a variable field. Unlike ^FD data, it is cleared after the label prints.",
+      "reference": {
+        "syntax": "^FVa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "variable field data",
+            "values": "0 to 3072 byte string"
+          }
+        ],
+        "example": "^FO50,50^A0N,30,30^FVVariable text^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -522,6 +847,18 @@
       "section": "Fields",
       "title": "field number embed character",
       "summary": "Sets the character used to embed numbered field values inside another field string.",
+      "reference": {
+        "syntax": "^FEa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "field concatenation delimiter",
+            "values": "any character except format and control prefixes",
+            "default": "#"
+          }
+        ],
+        "example": "^FO50,50^A0N,30,30^FN1^FDWorld^FS^FO50,100^A0N,30,30^FE#^FDHello #1#^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -536,6 +873,28 @@
       "section": "Fields",
       "title": "field clock",
       "summary": "Sets the markers used for real-time clock tokens inside field data.",
+      "reference": {
+        "syntax": "^FCa,b,c",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "primary clock indicator character",
+            "values": "any ASCII character",
+            "default": "%"
+          },
+          {
+            "name": "b",
+            "meaning": "secondary clock indicator character",
+            "values": "any ASCII character, differs from a"
+          },
+          {
+            "name": "c",
+            "meaning": "third clock indicator character",
+            "values": "any ASCII character, differs from a and b"
+          }
+        ],
+        "example": "^FO50,50^A0N,30,30^FC%^FDTime is %H%M^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -586,6 +945,22 @@
       "section": "Fields",
       "title": "PDF417 structured-append origins, ignored elsewhere",
       "summary": "Places PDF417 or MicroPDF417 segments at specific origins when one message spans multiple symbols.",
+      "reference": {
+        "syntax": "^FMx,y",
+        "params": [
+          {
+            "name": "x",
+            "meaning": "x-axis of first symbol, repeat pairs for more",
+            "values": "0 to 32000, or e to skip this symbol"
+          },
+          {
+            "name": "y",
+            "meaning": "y-axis of first symbol, repeat pairs for more",
+            "values": "0 to 32000, or e to skip this symbol"
+          }
+        ],
+        "example": "^FO50,50^B7N,40^FM50,50,50,400^FDPart1^FS"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -599,6 +974,24 @@
       "section": "Fields",
       "title": "vertical / reverse field layout",
       "summary": "Sets character order for the current field and can add extra character spacing.",
+      "reference": {
+        "syntax": "^FPd,g",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "print direction",
+            "values": "H horizontal, V vertical, R reverse",
+            "default": "H"
+          },
+          {
+            "name": "g",
+            "meaning": "extra inter-character gap in dots",
+            "values": "0 to 9999",
+            "default": "0"
+          }
+        ],
+        "example": "^FO50,50^A0N,30,30^FPV^FDHello^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -693,6 +1086,47 @@
       "section": "Text & fonts",
       "title": "TrueType reference",
       "summary": "Selects a stored font file for the next field, with optional orientation, height and width.",
+      "reference": {
+        "syntax": "^A@o,h,w,d:f.x",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "field orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "character height in dots",
+            "values": "10 to 32000 scalable, 1 to 10 times base height bitmapped",
+            "default": "last ^CF"
+          },
+          {
+            "name": "w",
+            "meaning": "character width in dots",
+            "values": "10 to 32000 scalable, 1 to 10 times base width bitmapped",
+            "default": "last ^CF"
+          },
+          {
+            "name": "d",
+            "meaning": "drive holding the font",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "f",
+            "meaning": "font file name to use",
+            "values": "any valid font name",
+            "default": "last ^CF"
+          },
+          {
+            "name": "x",
+            "meaning": "font file extension",
+            "values": "FNT font, TTF TrueType, TTE TrueType extension"
+          }
+        ],
+        "example": "^FO50,50^A@N,30,30,R:MYFONT.FNT^FDFont test^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -744,6 +1178,30 @@
       "section": "Text & fonts",
       "title": "international encoding",
       "summary": "Selects the encoding used to interpret field data, including code pages and UTF-8.",
+      "reference": {
+        "syntax": "^CIa,s,d",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "character encoding to use",
+            "values": "0 to 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+            "default": "0"
+          },
+          {
+            "name": "s",
+            "meaning": "character position to remap",
+            "values": "0 to 255",
+            "default": "none"
+          },
+          {
+            "name": "d",
+            "meaning": "replacement character position",
+            "values": "0 to 255",
+            "default": "none"
+          }
+        ],
+        "example": "^CI28"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -757,6 +1215,36 @@
       "section": "Text & fonts",
       "title": "advanced text properties",
       "summary": "Enables advanced text layout for following fields, including bidirectional text, shaping and OpenType features.",
+      "reference": {
+        "syntax": "^PAa,b,c,d",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "default glyph source",
+            "values": "0 space character, 1 font glyph",
+            "default": "0"
+          },
+          {
+            "name": "b",
+            "meaning": "bidirectional text layout",
+            "values": "0 off, 1 on",
+            "default": "0"
+          },
+          {
+            "name": "c",
+            "meaning": "character shaping",
+            "values": "0 off, 1 on",
+            "default": "0"
+          },
+          {
+            "name": "d",
+            "meaning": "OpenType table support",
+            "values": "0 off, 1 on",
+            "default": "0"
+          }
+        ],
+        "example": "^PA0,1,1,1"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -770,6 +1258,34 @@
       "section": "Text & fonts",
       "title": "font alias",
       "summary": "Maps a one-character font name to a stored font file.",
+      "reference": {
+        "syntax": "^CWa,d:o.x",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "font letter to add or replace",
+            "values": "A to Z, 0 to 9"
+          },
+          {
+            "name": "d",
+            "meaning": "drive to store the font",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "stored font file name",
+            "values": "up to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "font file extension",
+            "values": "FNT font, TTF TrueType, TTE TrueType extension"
+          }
+        ],
+        "example": "^CWQ,R:MYFONT.FNT"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -783,6 +1299,30 @@
       "section": "Text & fonts",
       "title": "font cache size",
       "summary": "Sets the cache size for rendered scalable glyphs to speed repeated large-font output.",
+      "reference": {
+        "syntax": "^COa,b,c",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "character cache enabled",
+            "values": "N no, Y yes",
+            "default": "Y"
+          },
+          {
+            "name": "b",
+            "meaning": "extra cache memory in K",
+            "values": "1 to 9999",
+            "default": "40"
+          },
+          {
+            "name": "c",
+            "meaning": "cache buffer type",
+            "values": "0 normal fonts, 1 Asian fonts",
+            "default": "0"
+          }
+        ],
+        "example": "^COY,78,0"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -796,6 +1336,27 @@
       "section": "Text & fonts",
       "title": "font linking",
       "summary": "Defines TrueType fallback chains used when the base font lacks a glyph.",
+      "reference": {
+        "syntax": "^FLe,b,l",
+        "params": [
+          {
+            "name": "e",
+            "meaning": "extension font to link, device and file",
+            "values": "TTF or TTE file on a device"
+          },
+          {
+            "name": "b",
+            "meaning": "base font or fonts to receive it",
+            "values": "FNT, TTF or TTE file, wildcard allowed"
+          },
+          {
+            "name": "l",
+            "meaning": "link or unlink the extension",
+            "values": "0 unlink, 1 link"
+          }
+        ],
+        "example": "^FLE:ANMDJ.TTF,E:SWISS721.TTF,1"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -809,6 +1370,11 @@
       "section": "Text & fonts",
       "title": "list font links",
       "summary": "Prints a label listing configured font links and their chained fallback faces.",
+      "reference": {
+        "syntax": "^LF",
+        "params": [],
+        "example": "^LF"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -823,6 +1389,71 @@
       "section": "Text & fonts",
       "title": "download bitmap font",
       "summary": "Downloads a bitmap font and its metrics into printer memory.",
+      "reference": {
+        "syntax": "~DBd:o.x,a,h,w,b,s,n,c,p",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "drive to store the font",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "name of the font",
+            "values": "up to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "font file extension",
+            "values": "FNT fixed value",
+            "default": "FNT"
+          },
+          {
+            "name": "a",
+            "meaning": "orientation of the native font",
+            "values": "N normal only",
+            "default": "N"
+          },
+          {
+            "name": "h",
+            "meaning": "maximum cell height in dots",
+            "values": "1 to 32000"
+          },
+          {
+            "name": "w",
+            "meaning": "maximum cell width in dots",
+            "values": "1 to 32000"
+          },
+          {
+            "name": "b",
+            "meaning": "dots from cell top to baseline",
+            "values": "1 to 32000"
+          },
+          {
+            "name": "s",
+            "meaning": "width of space characters",
+            "values": "1 to 32000"
+          },
+          {
+            "name": "n",
+            "meaning": "number of characters in the font",
+            "values": "1 to 256"
+          },
+          {
+            "name": "c",
+            "meaning": "copyright holder text",
+            "values": "1 to 63 alphanumeric characters"
+          },
+          {
+            "name": "p",
+            "meaning": "structured bitmap data per character",
+            "values": "hash code then height width offsets then hex data"
+          }
+        ],
+        "example": "~DBR:TST.FNT,N,5,5,3,2,1,ZEBRA,#0041.5.5.0.0.5.FF00FF00FF"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -836,6 +1467,40 @@
       "section": "Text & fonts",
       "title": "download scalable font",
       "summary": "Downloads an encoded scalable Intellifont into printer memory.",
+      "reference": {
+        "syntax": "~DSd:o.x,s,p",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "drive to store the font",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "name of the font",
+            "values": "up to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "font file extension",
+            "values": "FNT fixed value",
+            "default": "FNT"
+          },
+          {
+            "name": "s",
+            "meaning": "font size in bytes from ZTools",
+            "values": "byte count of the converted font"
+          },
+          {
+            "name": "p",
+            "meaning": "encoded font byte data",
+            "values": "hex pairs matching the size"
+          }
+        ],
+        "example": "~DSB:TST.FNT,4,0101FFFF"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -849,6 +1514,40 @@
       "section": "Text & fonts",
       "title": "download TrueType font",
       "summary": "Downloads an encoded TrueType font with up to 256 characters into printer memory.",
+      "reference": {
+        "syntax": "~DTd:o.x,s,p",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "drive to store the font",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "name of the font",
+            "values": "up to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "font file extension",
+            "values": "DAT fixed value",
+            "default": "DAT"
+          },
+          {
+            "name": "s",
+            "meaning": "font size in bytes",
+            "values": "byte count of the converted font"
+          },
+          {
+            "name": "p",
+            "meaning": "encoded font byte data",
+            "values": "hex pairs matching the size"
+          }
+        ],
+        "example": "~DTR:TST.DAT,2,0101"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -862,6 +1561,40 @@
       "section": "Text & fonts",
       "title": "download unbounded TrueType",
       "summary": "Downloads an encoded TrueType font with more than 256 glyphs into printer memory.",
+      "reference": {
+        "syntax": "~DUd:o.x,s,p",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "drive to store the font",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "name of the font",
+            "values": "up to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "font file extension",
+            "values": "FNT fixed value",
+            "default": "FNT"
+          },
+          {
+            "name": "s",
+            "meaning": "font size in bytes",
+            "values": "byte count of the converted font"
+          },
+          {
+            "name": "p",
+            "meaning": "encoded font byte data",
+            "values": "hex pairs matching the size"
+          }
+        ],
+        "example": "~DUR:TST.FNT,2,0101"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -875,6 +1608,40 @@
       "section": "Text & fonts",
       "title": "download encoding",
       "summary": "Downloads an encoding table that maps field-data bytes to Unicode values for TrueType fonts.",
+      "reference": {
+        "syntax": "~DEd:o.x,s,p",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "drive holding the table",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "name of the table",
+            "values": "up to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "table file extension",
+            "values": "DAT fixed value",
+            "default": "DAT"
+          },
+          {
+            "name": "s",
+            "meaning": "table size in bytes",
+            "values": "byte count of the converted table"
+          },
+          {
+            "name": "p",
+            "meaning": "encoded table byte data",
+            "values": "hex pairs matching the size"
+          }
+        ],
+        "example": "~DER:TST.DAT,2,0101"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -943,6 +1710,42 @@
       "section": "Barcodes",
       "title": "Code 39",
       "summary": "Draws a Code 39 barcode with an optional Mod 43 check digit.",
+      "reference": {
+        "syntax": "^B3o,e,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "e",
+            "meaning": "Mod 43 check digit",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^B3N,N,100,Y,N^FD123456789^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -956,6 +1759,42 @@
       "section": "Barcodes",
       "title": "Code 93",
       "summary": "Draws a Code 93 barcode, representing full ASCII data through shift characters.",
+      "reference": {
+        "syntax": "^BAo,h,f,g,e",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "e",
+            "meaning": "print check digit",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^BAN,100,Y,N,N^FDCODE93-1^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -969,6 +1808,42 @@
       "section": "Barcodes",
       "title": "Code 11",
       "summary": "Draws a Code 11 barcode for digits and hyphens, with optional check digits.",
+      "reference": {
+        "syntax": "^B1o,e,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "e",
+            "meaning": "check digit count",
+            "values": "Y 1 digit, N 2 digits",
+            "default": "N"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^B1N,N,100,Y,N^FD123-456^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -982,6 +1857,47 @@
       "section": "Barcodes",
       "title": "Interleaved 2 of 5",
       "summary": "Draws an Interleaved 2 of 5 barcode for even-length numeric data, with an optional check digit.",
+      "reference": {
+        "syntax": "^B2o,h,f,g,e,j",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "e",
+            "meaning": "Mod 10 check digit",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "j",
+            "meaning": "sixth slot, undocumented",
+            "values": "not documented in the guide"
+          }
+        ],
+        "example": "^FO50,50^BY2^B2N,100,Y,N,N^FD123456^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -995,6 +1911,36 @@
       "section": "Barcodes",
       "title": "Industrial 2 of 5",
       "summary": "Draws an Industrial 2 of 5 barcode, a numeric code with data encoded in bars only.",
+      "reference": {
+        "syntax": "^BIo,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^BIN,100,Y,N^FD123456^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1008,6 +1954,36 @@
       "section": "Barcodes",
       "title": "Standard 2 of 5",
       "summary": "Draws a Standard 2 of 5 barcode, a self-checking numeric code with data encoded in bars only.",
+      "reference": {
+        "syntax": "^BJo,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^BJN,100,Y,N^FD123456^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1021,6 +1997,54 @@
       "section": "Barcodes",
       "title": "ANSI Codabar",
       "summary": "Draws an ANSI Codabar barcode, also known as USD-4, for library, healthcare and courier labels.",
+      "reference": {
+        "syntax": "^BKo,e,h,f,g,k,l",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "e",
+            "meaning": "check digit, fixed off",
+            "values": "N only",
+            "default": "N"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "k",
+            "meaning": "start character",
+            "values": "A, B, C, D",
+            "default": "A"
+          },
+          {
+            "name": "l",
+            "meaning": "stop character",
+            "values": "A, B, C, D",
+            "default": "A"
+          }
+        ],
+        "example": "^FO50,50^BY2^BKN,N,100,Y,N,A,A^FD1234567890^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1034,6 +2058,30 @@
       "section": "Barcodes",
       "title": "LOGMARS",
       "summary": "Draws a LOGMARS barcode, the Department of Defense variant of Code 39, and folds lowercase data to uppercase.",
+      "reference": {
+        "syntax": "^BLo,h,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^BLN,100,N^FDLOGMARS1^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1047,6 +2095,48 @@
       "section": "Barcodes",
       "title": "MSI",
       "summary": "Draws an MSI barcode, a Plessey-derived numeric code with selectable check digit schemes.",
+      "reference": {
+        "syntax": "^BMo,e,h,f,g,c",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "e",
+            "meaning": "check digit scheme",
+            "values": "A none, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+            "default": "B"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "c",
+            "meaning": "check digit in interpretation line",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^BMN,B,100,Y,N,N^FD1234567^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1060,6 +2150,42 @@
       "section": "Barcodes",
       "title": "Plessey",
       "summary": "Draws a Plessey barcode, an older numeric code with optional check digits.",
+      "reference": {
+        "syntax": "^BPo,e,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "e",
+            "meaning": "print check digit",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^BPN,N,100,Y,N^FD1234567890^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1073,6 +2199,36 @@
       "section": "Barcodes",
       "title": "EAN-13",
       "summary": "Draws an EAN-13 barcode for retail article numbers and derives the check digit from twelve data digits.",
+      "reference": {
+        "syntax": "^BEo,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^BEN,100,Y,N^FD123456789012^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1086,6 +2242,36 @@
       "section": "Barcodes",
       "title": "EAN-8",
       "summary": "Draws an EAN-8 barcode for small retail packages and derives the check digit from seven data digits.",
+      "reference": {
+        "syntax": "^B8o,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^B8N,100,Y,N^FD1234567^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1099,6 +2285,42 @@
       "section": "Barcodes",
       "title": "UPC-A",
       "summary": "Draws a UPC-A barcode for retail packaging from eleven data digits, with optional check digit printing.",
+      "reference": {
+        "syntax": "^BUo,h,f,g,e",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 9999",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "e",
+            "meaning": "print check digit",
+            "values": "Y yes, N no",
+            "default": "Y"
+          }
+        ],
+        "example": "^FO50,50^BY2^BUN,100,Y,N,Y^FD12345678901^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1112,6 +2334,42 @@
       "section": "Barcodes",
       "title": "UPC-E",
       "summary": "Draws a UPC-E barcode, the short form of UPC-A. Field data is the full ten-digit manufacturer and product code.",
+      "reference": {
+        "syntax": "^B9o,h,f,g,e",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "e",
+            "meaning": "print check digit",
+            "values": "Y yes, N no",
+            "default": "Y"
+          }
+        ],
+        "example": "^FO50,50^BY2^B9N,100,Y,N,Y^FD1234567890^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1125,6 +2383,48 @@
       "section": "Barcodes",
       "title": "GS1 DataBar",
       "summary": "Draws a GS1 DataBar symbol with selectable subtype, magnification, height and segment width.",
+      "reference": {
+        "syntax": "^BRa,b,c,d,e,f",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "orientation",
+            "values": "N normal, R rotated, I inverted, B bottom-up",
+            "default": "R"
+          },
+          {
+            "name": "b",
+            "meaning": "DataBar symbology type",
+            "values": "1 omni, 2 truncated, 3 stacked, 4 stacked omni, 5 limited, 6 expanded, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 with CC-A/B, 12 UCC/EAN-128 with CC-C",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "magnification factor",
+            "values": "1 to 10",
+            "default": "printer setting"
+          },
+          {
+            "name": "d",
+            "meaning": "separator height",
+            "values": "1 or 2",
+            "default": "1"
+          },
+          {
+            "name": "e",
+            "meaning": "linear portion height in dots",
+            "values": "1 to 32000",
+            "default": "25"
+          },
+          {
+            "name": "f",
+            "meaning": "segment width for GS1 DataBar Expanded",
+            "values": "2 to 22 even only",
+            "default": "22"
+          }
+        ],
+        "example": "^FO50,50^BRN,1,5,1,25^FD0012345678905^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1138,6 +2438,36 @@
       "section": "Barcodes",
       "title": "Planet Code",
       "summary": "Draws a Planet Code postal barcode from digits encoded as tall and short bars.",
+      "reference": {
+        "syntax": "^B5o,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R rotated, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 9999",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^B5N,100,N,N^FD01234567913^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1151,6 +2481,42 @@
       "section": "Barcodes",
       "title": "POSTNET / Planet Code / Intelligent Mail",
       "summary": "Draws POSTNET, Planet Code or USPS Intelligent Mail as selected by the postal code type.",
+      "reference": {
+        "syntax": "^BZo,h,f,g,t",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "t",
+            "meaning": "postal code type",
+            "values": "0 postnet, 1 planet, 2 reserved, 3 intelligent-mail",
+            "default": "0"
+          }
+        ],
+        "example": "^FO50,50^BY2^BZN,50,N,N,0^FD01234^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1164,6 +2530,36 @@
       "section": "Barcodes",
       "title": "UPC/EAN 2 or 5 digit add-on",
       "summary": "Draws a two-digit or five-digit UPC/EAN add-on symbol beside a main barcode.",
+      "reference": {
+        "syntax": "^BSo,h,f,g",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 32000",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "interpretation line above code",
+            "values": "Y yes, N no",
+            "default": "Y"
+          }
+        ],
+        "example": "^FO50,50^BY2^BSN,50,Y,Y^FD12345^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1177,6 +2573,36 @@
       "section": "Barcodes",
       "title": "Code 49",
       "summary": "Draws a Code 49 stacked barcode with two to eight rows of full ASCII data.",
+      "reference": {
+        "syntax": "^B4o,h,f,m",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "height multiplier of individual rows",
+            "values": "1 to height of label",
+            "default": "last ^BY"
+          },
+          {
+            "name": "f",
+            "meaning": "interpretation line placement",
+            "values": "N none, A above, B below",
+            "default": "N"
+          },
+          {
+            "name": "m",
+            "meaning": "starting mode",
+            "values": "0 alphanumeric, 1 multiread, 2 numeric, 3 group alpha, 4 shift 1, 5 shift 2, A auto",
+            "default": "A"
+          }
+        ],
+        "example": "^FO50,50^B4N,10,N,A^FDCODE49DATA^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1190,6 +2616,42 @@
       "section": "Barcodes",
       "title": "QR Code",
       "summary": "Draws a QR Code symbol. Command parameters set model, magnification and mask. Field data sets error correction and character mode.",
+      "reference": {
+        "syntax": "^BQa,b,c,d,e",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "field orientation",
+            "values": "N normal only",
+            "default": "N"
+          },
+          {
+            "name": "b",
+            "meaning": "model",
+            "values": "1 original, 2 enhanced",
+            "default": "2"
+          },
+          {
+            "name": "c",
+            "meaning": "magnification factor",
+            "values": "1 to 100",
+            "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+          },
+          {
+            "name": "d",
+            "meaning": "error correction level",
+            "values": "H ultra-high, Q high, M standard, L high-density",
+            "default": "Q when empty, M when the value is invalid"
+          },
+          {
+            "name": "e",
+            "meaning": "mask value",
+            "values": "0 to 7",
+            "default": "7"
+          }
+        ],
+        "example": "^FO50,50^BQN,2,10^FDQA,Hello World^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1204,6 +2666,58 @@
       "section": "Barcodes",
       "title": "Data Matrix",
       "summary": "Draws a Data Matrix symbol with configurable element size, quality level and escape handling.",
+      "reference": {
+        "syntax": "^BXo,h,s,c,r,f,g,a",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "dimensional height of symbol elements",
+            "values": "1 to the label width",
+            "default": "0, which takes the symbol height from ^BY"
+          },
+          {
+            "name": "s",
+            "meaning": "quality level",
+            "values": "0, 50, 80, 100, 140, 200",
+            "default": "0"
+          },
+          {
+            "name": "c",
+            "meaning": "columns to encode",
+            "values": "9 to 49, odd only for quality 0 to 140, even only for quality 200"
+          },
+          {
+            "name": "r",
+            "meaning": "rows to encode",
+            "values": "9 to 49"
+          },
+          {
+            "name": "f",
+            "meaning": "format ID",
+            "values": "1 numeric, 2 upper alpha, 3 upper alphanumeric with . , - /, 4 upper alphanumeric, 5 ascii7, 6 iso8",
+            "default": "6"
+          },
+          {
+            "name": "g",
+            "meaning": "escape sequence control character",
+            "values": "any character",
+            "default": "tilde"
+          },
+          {
+            "name": "a",
+            "meaning": "aspect ratio",
+            "values": "1 square, 2 rectangular",
+            "default": "1"
+          }
+        ],
+        "example": "^FO50,50^BY2^BXN,10,200^FDData Matrix 1^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1217,6 +2731,48 @@
       "section": "Barcodes",
       "title": "PDF417",
       "summary": "Draws a PDF417 stacked two-dimensional symbol for large text or binary payloads.",
+      "reference": {
+        "syntax": "^B7o,h,s,c,r,t",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height per row in dots",
+            "values": "1 to height of label",
+            "default": "last ^BY"
+          },
+          {
+            "name": "s",
+            "meaning": "security level",
+            "values": "1 to 8",
+            "default": "0"
+          },
+          {
+            "name": "c",
+            "meaning": "number of data columns",
+            "values": "1 to 30",
+            "default": "automatic aspect ratio"
+          },
+          {
+            "name": "r",
+            "meaning": "number of rows",
+            "values": "3 to 90",
+            "default": "automatic aspect ratio"
+          },
+          {
+            "name": "t",
+            "meaning": "truncate right row indicators and stop pattern",
+            "values": "Y yes, N no",
+            "default": "N"
+          }
+        ],
+        "example": "^FO50,50^BY2^B7N,100,0,,,N^FDPDF417 Sample Data^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1230,6 +2786,30 @@
       "section": "Barcodes",
       "title": "MicroPDF417",
       "summary": "Draws a MicroPDF417 symbol, a compact PDF417 variant with row-address patterns.",
+      "reference": {
+        "syntax": "^BFo,h,m",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height in dots",
+            "values": "1 to 9999",
+            "default": "last ^BY, or 10 if no ^BY was sent"
+          },
+          {
+            "name": "m",
+            "meaning": "mode",
+            "values": "0 to 33",
+            "default": "0"
+          }
+        ],
+        "example": "^FO50,50^BY2^BFN,10,0^FDMicroPDF417 data^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1246,6 +2826,54 @@
       "section": "Barcodes",
       "title": "Aztec",
       "summary": "Draws an Aztec matrix symbol with configurable magnification and error correction.",
+      "reference": {
+        "syntax": "^B0a,b,c,d,e,f,g",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "orientation",
+            "values": "N normal, R rotated, I 180, B 270",
+            "default": "last ^FW"
+          },
+          {
+            "name": "b",
+            "meaning": "magnification factor",
+            "values": "1 to 10",
+            "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+          },
+          {
+            "name": "c",
+            "meaning": "extended channel interpretation indicator",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "d",
+            "meaning": "error control and symbol size",
+            "values": "0 default, 1 to 99 error percent, 101 to 104 compact layers, 201 to 232 full layers, 300 rune",
+            "default": "0"
+          },
+          {
+            "name": "e",
+            "meaning": "menu symbol indicator",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "f",
+            "meaning": "number of symbols for structured append",
+            "values": "1 to 26",
+            "default": "1"
+          },
+          {
+            "name": "g",
+            "meaning": "structured append ID field",
+            "values": "text up to 24 characters",
+            "default": "no ID"
+          }
+        ],
+        "example": "^FO50,50^B0N,3,N,0,N,1^FDAztecData1^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1259,6 +2887,46 @@
       "section": "Barcodes",
       "title": "CODABLOCK F",
       "summary": "Draws a CODABLOCK symbol in mode A, E or F for larger data payloads.",
+      "reference": {
+        "syntax": "^BBo,h,s,c,r,m",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "N"
+          },
+          {
+            "name": "h",
+            "meaning": "bar code height per row in dots",
+            "values": "2 to 32000",
+            "default": "8"
+          },
+          {
+            "name": "s",
+            "meaning": "security level",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "c",
+            "meaning": "characters per row",
+            "values": "2 to 62"
+          },
+          {
+            "name": "r",
+            "meaning": "rows to encode",
+            "values": "mode-A 1-22, mode-EF 2-4"
+          },
+          {
+            "name": "m",
+            "meaning": "mode",
+            "values": "A code39-set, E code128-fnc1, F code128-set",
+            "default": "F"
+          }
+        ],
+        "example": "^FO50,50^BY2^BBN,8,Y,6,3,F^FDCODABLOCKDATA1^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1272,6 +2940,30 @@
       "section": "Barcodes",
       "title": "UPS MaxiCode",
       "summary": "Draws a UPS MaxiCode symbol with a mode for structured carrier messages or general data.",
+      "reference": {
+        "syntax": "^BDm,n,t",
+        "params": [
+          {
+            "name": "m",
+            "meaning": "mode",
+            "values": "2 us-postal, 3 non-us-postal, 4 standard, 5 full-eec, 6 reader-program",
+            "default": "2"
+          },
+          {
+            "name": "n",
+            "meaning": "symbol number in sequence",
+            "values": "1 to 8",
+            "default": "1"
+          },
+          {
+            "name": "t",
+            "meaning": "total number of symbols",
+            "values": "1 to 8",
+            "default": "1"
+          }
+        ],
+        "example": "^FO50,50^BD4,1,1^FDMaxiCode sample data^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1285,6 +2977,47 @@
       "section": "Barcodes",
       "title": "TLC39",
       "summary": "Draws a TLC39 telecom label symbol combining Code 39 with a MicroPDF417 component.",
+      "reference": {
+        "syntax": "^BTo,w,r,h,p,q",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R rotated, I inverted, B bottom-up"
+          },
+          {
+            "name": "w",
+            "meaning": "width of the Code 39 part in dots",
+            "values": "1 to 10",
+            "default": "600 dpi 4, else 2"
+          },
+          {
+            "name": "r",
+            "meaning": "wide to narrow ratio of the Code 39 part",
+            "values": "2.0 to 3.0 in steps of 0.1",
+            "default": "2.0"
+          },
+          {
+            "name": "h",
+            "meaning": "height of the Code 39 part in dots",
+            "values": "1 to 9999",
+            "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+          },
+          {
+            "name": "p",
+            "meaning": "narrow bar width of the MicroPDF417 part",
+            "values": "1 to 10",
+            "default": "600 dpi 4, else 2"
+          },
+          {
+            "name": "q",
+            "meaning": "row height of the MicroPDF417 part in dots",
+            "values": "1 to 255",
+            "default": "600 dpi 8, else 4"
+          }
+        ],
+        "example": "^FO50,50^BTN,4,2.0,120,4,8^FD123456,ABC123DEF^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1298,6 +3031,18 @@
       "section": "Barcodes",
       "title": "code validation",
       "summary": "When enabled, validates barcode data and parameters and prints INVALID instead of a bad symbol.",
+      "reference": {
+        "syntax": "^CVa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "code validation",
+            "values": "N no, Y yes",
+            "default": "N"
+          }
+        ],
+        "example": "^CVY^FO50,50^B3N,N,100,Y,N^FD123456789^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1360,6 +3105,42 @@
       "section": "Graphics",
       "title": "diagonal line",
       "summary": "Draws a diagonal line across a given width and height, leaning right or left.",
+      "reference": {
+        "syntax": "^GDw,h,t,c,o",
+        "params": [
+          {
+            "name": "w",
+            "meaning": "box width in dots",
+            "values": "3 to 32000",
+            "default": "t or 3"
+          },
+          {
+            "name": "h",
+            "meaning": "box height in dots",
+            "values": "3 to 32000",
+            "default": "t or 3"
+          },
+          {
+            "name": "t",
+            "meaning": "border thickness in dots",
+            "values": "1 to 32000",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "line color",
+            "values": "B black, W white",
+            "default": "B"
+          },
+          {
+            "name": "o",
+            "meaning": "diagonal direction",
+            "values": "R or / right leaning, L or \\ left leaning",
+            "default": "R"
+          }
+        ],
+        "example": "^FO50,50^GD100,50,4,B,R^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1373,6 +3154,36 @@
       "section": "Graphics",
       "title": "ellipse",
       "summary": "Draws an ellipse from a width and height in dots, with inward border thickness and black or white output.",
+      "reference": {
+        "syntax": "^GEw,h,t,c",
+        "params": [
+          {
+            "name": "w",
+            "meaning": "ellipse width in dots",
+            "values": "3 to 4095",
+            "default": "t or 1"
+          },
+          {
+            "name": "h",
+            "meaning": "ellipse height in dots",
+            "values": "3 to 4095",
+            "default": "t or 1"
+          },
+          {
+            "name": "t",
+            "meaning": "border thickness in dots",
+            "values": "2 to 4095",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "line color",
+            "values": "B black, W white",
+            "default": "B"
+          }
+        ],
+        "example": "^FO50,50^GE200,100,4,B^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1386,6 +3197,30 @@
       "section": "Graphics",
       "title": "circle",
       "summary": "Draws a circle of the given diameter in dots, with inward border thickness and black or white output.",
+      "reference": {
+        "syntax": "^GCd,t,c",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "circle diameter in dots",
+            "values": "3 to 4095",
+            "default": "3"
+          },
+          {
+            "name": "t",
+            "meaning": "border thickness in dots",
+            "values": "2 to 4095",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "line color",
+            "values": "B black, W white",
+            "default": "B"
+          }
+        ],
+        "example": "^FO50,50^GC100,4,B^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1399,6 +3234,38 @@
       "section": "Graphics",
       "title": "monochrome bitmap",
       "summary": "Places a monochrome bitmap at the current field position using ASCII hex, binary or compressed data.",
+      "reference": {
+        "syntax": "^GFa,b,c,d,e",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "compression type",
+            "values": "A ascii hex, B binary, C compressed binary",
+            "default": "A"
+          },
+          {
+            "name": "b",
+            "meaning": "total bytes to send",
+            "values": "1 to 99999"
+          },
+          {
+            "name": "c",
+            "meaning": "total bytes in the image",
+            "values": "1 to 99999"
+          },
+          {
+            "name": "d",
+            "meaning": "bytes per image row",
+            "values": "1 to 99999"
+          },
+          {
+            "name": "e",
+            "meaning": "image data",
+            "values": "ascii hex 00 to FF"
+          }
+        ],
+        "example": "^FO50,50^GFA,8,8,1,FF00FF00FF00FF00^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1413,6 +3280,30 @@
       "section": "Graphics",
       "title": "graphic symbol",
       "summary": "Prints a resident symbol selected by field data, such as copyright or registered trademark.",
+      "reference": {
+        "syntax": "^GSo,h,w",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "orientation",
+            "values": "N normal, R 90 clockwise, I 180, B 270",
+            "default": "N or last ^FW"
+          },
+          {
+            "name": "h",
+            "meaning": "character height proportional to width",
+            "values": "0 to 32000",
+            "default": "last ^CF"
+          },
+          {
+            "name": "w",
+            "meaning": "character width proportional to height",
+            "values": "0 to 32000",
+            "default": "last ^CF"
+          }
+        ],
+        "example": "^FO50,50^GSN,30,30^FDB^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1426,6 +3317,29 @@
       "section": "Graphics",
       "title": "image load",
       "summary": "Loads a stored image at the start of a format and anchors it at the label origin.",
+      "reference": {
+        "syntax": "^ILd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "storage device",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "object name",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": ".GRF or .PNG"
+          }
+        ],
+        "example": "^ILR:SAMPLE.GRF^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1440,6 +3354,29 @@
       "section": "Graphics",
       "title": "image move",
       "summary": "Places a stored image at the current field position without scaling it.",
+      "reference": {
+        "syntax": "^IMd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "storage device",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "search priority order"
+          },
+          {
+            "name": "o",
+            "meaning": "object name",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": ".GRF or .PNG"
+          }
+        ],
+        "example": "^FO100,100^IMR:SAMPLE.GRF^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1454,6 +3391,30 @@
       "section": "Graphics",
       "title": "delete stored graphics, fonts and formats",
       "summary": "Deletes stored graphics, fonts or formats from printer memory, with wildcard support for groups.",
+      "reference": {
+        "syntax": "^IDd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "storage device",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "object name, wildcard allowed",
+            "values": "1 to 8 characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension, wildcard allowed",
+            "values": "any extension",
+            "default": ".GRF"
+          }
+        ],
+        "example": "^IDR:*.ZPL^FS"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -1467,6 +3428,36 @@
       "section": "Graphics",
       "title": "image save",
       "summary": "Saves the current format as a graphic image for fast recall and variable-data overlays.",
+      "reference": {
+        "syntax": "^ISd:o.x,p",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "storage device",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "object name",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": ".GRF or .PNG",
+            "default": ".GRF"
+          },
+          {
+            "name": "p",
+            "meaning": "print label after saving",
+            "values": "N no, Y yes",
+            "default": "Y"
+          }
+        ],
+        "example": "^ISR:SAMPLE2.GRF,Y^FS"
+      },
       "support": {
         "web": "no",
         "desktop": "yes"
@@ -1480,6 +3471,44 @@
       "section": "Graphics",
       "title": "download graphic",
       "summary": "Downloads an ASCII-hex graphic into printer memory under a reusable name.",
+      "reference": {
+        "syntax": "~DGd:o.x,t,w,e",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "storage device",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "image name",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": ".GRF"
+          },
+          {
+            "name": "t",
+            "meaning": "total image size in bytes",
+            "values": "computed from image width and height"
+          },
+          {
+            "name": "w",
+            "meaning": "bytes per image row",
+            "values": "computed from image width"
+          },
+          {
+            "name": "e",
+            "meaning": "graphic image data",
+            "values": "ascii hex 00 to FF"
+          }
+        ],
+        "example": "~DGR:SAMPLE.GRF,8,1,FF00FF00FF00FF00"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1493,6 +3522,11 @@
       "section": "Graphics",
       "title": "abort download",
       "summary": "Stops a graphic upload that was interrupted midway and returns the printer to normal operation.",
+      "reference": {
+        "syntax": "~DN",
+        "params": [],
+        "example": "~DN"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -1506,6 +3540,50 @@
       "section": "Graphics",
       "title": "download font / graphic",
       "summary": "Downloads a graphic, font or certificate into printer memory under a reusable name.",
+      "reference": {
+        "syntax": "~DYd:f,b,x,t,w,e",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "storage device",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "f",
+            "meaning": "file name",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "b",
+            "meaning": "data format",
+            "values": "A ascii or zb64, B binary, C ar compressed, P png zb64"
+          },
+          {
+            "name": "x",
+            "meaning": "stored file type",
+            "values": "B bitmap, E tte, G raw grf, P png, T ttf or otf, X pcx, NRD non-readable, PAC access credential, C wml menu, F htm page, H printer feedback",
+            "default": "G"
+          },
+          {
+            "name": "t",
+            "meaning": "total bytes in file",
+            "values": "actual decompressed file size"
+          },
+          {
+            "name": "w",
+            "meaning": "bytes per row for grf images",
+            "values": "computed from image width"
+          },
+          {
+            "name": "e",
+            "meaning": "file data",
+            "values": "ascii hex, zb64 or binary"
+          }
+        ],
+        "example": "~DYR:SAMPLE,A,G,8,1,FF00FF00FF00FF00"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1519,6 +3597,11 @@
       "section": "Graphics",
       "title": "erase download graphics",
       "summary": "Erases all downloaded graphics from printer memory. Use ^ID to delete selected objects.",
+      "reference": {
+        "syntax": "~EG",
+        "params": [],
+        "example": "~EG"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -1532,6 +3615,30 @@
       "section": "Serialisation",
       "title": "serial counter with its own start value",
       "summary": "Serializes text or barcode field data across labels, using a start value, direction and increment.",
+      "reference": {
+        "syntax": "^SNv,n,z",
+        "params": [
+          {
+            "name": "v",
+            "meaning": "starting serial value",
+            "values": "up to 12 digits",
+            "default": "1"
+          },
+          {
+            "name": "n",
+            "meaning": "increment or decrement step",
+            "values": "up to 12 digits",
+            "default": "1"
+          },
+          {
+            "name": "z",
+            "meaning": "pad with leading zeros",
+            "values": "N no, Y yes",
+            "default": "N"
+          }
+        ],
+        "example": "^FO100,100^A0N,36,20^SN001,1,Y^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1545,6 +3652,23 @@
       "section": "Serialisation",
       "title": "serial mask over ^FD data",
       "summary": "Serializes selected positions in field data using a mask and character sets.",
+      "reference": {
+        "syntax": "^SFa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "serialization mask selecting which characters change",
+            "values": "D decimal, H hex, O octal, A alpha, N alphanumeric, % skip"
+          },
+          {
+            "name": "b",
+            "meaning": "increment or decrement string for the mask",
+            "values": "one value per mask position, % to leave it",
+            "default": "1"
+          }
+        ],
+        "example": "^FO100,100^A0N,36,20^FDABCD1000EFGH^SF%%%%dddd%%%%,10000^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1558,6 +3682,29 @@
       "section": "Templates & variables",
       "title": "store template",
       "summary": "Stores the following commands as a reusable format rather than printing them immediately.",
+      "reference": {
+        "syntax": "^DFd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "device to store the template",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "template name",
+            "values": "1 to 16 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": "ZPL"
+          }
+        ],
+        "example": "^DFR:SAMPLE.ZPL^FO50,50^A0N,30,30^FDTag^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1571,6 +3718,29 @@
       "section": "Templates & variables",
       "title": "recall template",
       "summary": "Recalls a stored format and supplies values for its numbered placeholder fields.",
+      "reference": {
+        "syntax": "^XFd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "source device of the stored template",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R then E then B then A"
+          },
+          {
+            "name": "o",
+            "meaning": "name of the stored template",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": "ZPL"
+          }
+        ],
+        "example": "^XFR:SAMPLE.ZPL"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1584,6 +3754,41 @@
       "section": "Templates & variables",
       "title": "recall graphic",
       "summary": "Recalls a stored graphic at the current position with independent horizontal and vertical scaling.",
+      "reference": {
+        "syntax": "^XGd:o.x,m,n",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "source device of the stored graphic",
+            "values": "R, E, B, A",
+            "default": "R then E then B then A"
+          },
+          {
+            "name": "o",
+            "meaning": "name of the stored graphic",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": "GRF"
+          },
+          {
+            "name": "m",
+            "meaning": "x-axis magnification factor",
+            "values": "1 to 10",
+            "default": "1"
+          },
+          {
+            "name": "n",
+            "meaning": "y-axis magnification factor",
+            "values": "1 to 10",
+            "default": "1"
+          }
+        ],
+        "example": "^FO100,100^XGR:SAMPLE.GRF,1,1^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1598,6 +3803,24 @@
       "section": "Media & feed",
       "title": "media tracking",
       "summary": "Selects how the printer detects label boundaries, using gaps, marks or continuous media.",
+      "reference": {
+        "syntax": "^MNa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "media tracking method",
+            "values": "N continuous, Y or W non-continuous web, M non-continuous mark, A auto detect, V continuous variable length",
+            "default": "must be specified"
+          },
+          {
+            "name": "b",
+            "meaning": "black mark offset in dots",
+            "values": "-120 to 283 on most printers, -240 to 566 at 600 dpi",
+            "default": "0"
+          }
+        ],
+        "example": "^MNM,0"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1611,6 +3834,18 @@
       "section": "Media & feed",
       "title": "maximum label length",
       "summary": "Sets the maximum label length the printer searches while calibrating non-continuous media.",
+      "reference": {
+        "syntax": "^MLa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "maximum label length in dot rows",
+            "values": "printer dpi times two, up to max length",
+            "default": "last saved value"
+          }
+        ],
+        "example": "^ML1200"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1624,6 +3859,24 @@
       "section": "Media & feed",
       "title": "media feed",
       "summary": "Sets the power-up and printhead-close action, including calibration, feed or length measurement.",
+      "reference": {
+        "syntax": "^MFp,h",
+        "params": [
+          {
+            "name": "p",
+            "meaning": "feed action at power up",
+            "values": "F feed to first web, C calibrate like ~JC, L set length like ~JL, N no feed, S short calibration",
+            "default": "C"
+          },
+          {
+            "name": "h",
+            "meaning": "feed action after head close",
+            "values": "F feed to first web, C calibrate like ~JC, L set length like ~JL, N no feed, S short calibration",
+            "default": "C"
+          }
+        ],
+        "example": "^MFC,C"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1637,6 +3890,11 @@
       "section": "Media & feed",
       "title": "suppress backfeed",
       "summary": "Suppresses backfeed for the current label when moving to the tear-off position is unnecessary.",
+      "reference": {
+        "syntax": "^XB",
+        "params": [],
+        "example": "^XB"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1650,6 +3908,41 @@
       "section": "Media & feed",
       "title": "maintenance alert",
       "summary": "Configures printed maintenance alerts for printhead cleaning or replacement.",
+      "reference": {
+        "syntax": "^MAt,p,l,f,u",
+        "params": [
+          {
+            "name": "t",
+            "meaning": "alert type",
+            "values": "R head replacement, C head cleaning"
+          },
+          {
+            "name": "p",
+            "meaning": "print the alert label",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "l",
+            "meaning": "distance to first alert",
+            "values": "R 0 to 150 km, C 100 to 2000 meters, 0 off",
+            "default": "50 km for R, 0 off for C"
+          },
+          {
+            "name": "f",
+            "meaning": "distance before reissuing the alert",
+            "values": "0 to 2000 meters",
+            "default": "0"
+          },
+          {
+            "name": "u",
+            "meaning": "unit of measurement reported",
+            "values": "C centimeters, I inches, M meters",
+            "default": "I"
+          }
+        ],
+        "example": "^MAC,Y,5,1,M"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1663,6 +3956,18 @@
       "section": "Media & feed",
       "title": "map clear",
       "summary": "Controls whether the label bitmap is cleared after printing or kept for reuse by later labels.",
+      "reference": {
+        "syntax": "^MCa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "clear the bitmap after printing",
+            "values": "Y clear, N retain",
+            "default": "Y"
+          }
+        ],
+        "example": "^MCN"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1676,6 +3981,24 @@
       "section": "Media & feed",
       "title": "maintenance information message",
       "summary": "Sets the text shown on maintenance alert labels for printhead cleaning or replacement.",
+      "reference": {
+        "syntax": "^MIt,m",
+        "params": [
+          {
+            "name": "t",
+            "meaning": "alert type",
+            "values": "R head replacement, C head cleaning",
+            "default": "R"
+          },
+          {
+            "name": "m",
+            "meaning": "message printed on the alert label",
+            "values": "up to 63 characters, no commas",
+            "default": "please clean printhead or please replace printhead"
+          }
+        ],
+        "example": "^MIC,PLEASE CLEAN HEAD"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1689,6 +4012,18 @@
       "section": "Media & feed",
       "title": "mode protection",
       "summary": "Locks a control panel setting, such as darkness or calibration, until it is unlocked.",
+      "reference": {
+        "syntax": "^MPa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "control panel mode to protect",
+            "values": "D darkness, P position, C calibration, E enable all, S no saves, W pause, F feed, X cancel, M menu",
+            "default": "must be specified"
+          }
+        ],
+        "example": "^MPD"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1702,6 +4037,17 @@
       "section": "Media & feed",
       "title": "printhead cold warning",
       "summary": "Enables or disables the printhead-cold warning indicator.",
+      "reference": {
+        "syntax": "^MWa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "enable the head cold warning",
+            "values": "Y enable, N disable"
+          }
+        ],
+        "example": "^MWY"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1715,6 +4061,18 @@
       "section": "Print quality",
       "title": "media darkness",
       "summary": "Adjusts print darkness relative to the printer's current configured darkness.",
+      "reference": {
+        "syntax": "^MDa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "media darkness relative to current setting",
+            "values": "-30 to 30",
+            "default": "0"
+          }
+        ],
+        "example": "^MD10"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1728,6 +4086,18 @@
       "section": "Print quality",
       "title": "set darkness",
       "summary": "Sets absolute print darkness immediately, matching the front-panel darkness setting.",
+      "reference": {
+        "syntax": "~SDa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "absolute print darkness level",
+            "values": "00 to 30",
+            "default": "last saved value"
+          }
+        ],
+        "example": "~SD15"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1741,6 +4111,18 @@
       "section": "Print quality",
       "title": "reprint after error",
       "summary": "Controls whether a label interrupted by media, ribbon or printhead faults is reprinted after recovery.",
+      "reference": {
+        "syntax": "^JZa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "reprint label after error clears",
+            "values": "N no, Y yes",
+            "default": "Y"
+          }
+        ],
+        "example": "^JZY"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1754,6 +4136,36 @@
       "section": "Print quality",
       "title": "printhead test interval",
       "summary": "Schedules periodic printhead element tests by printed-label count and optional element range.",
+      "reference": {
+        "syntax": "^JTn,a,b,c",
+        "params": [
+          {
+            "name": "n",
+            "meaning": "labels printed between head tests",
+            "values": "0 to 9999",
+            "default": "0"
+          },
+          {
+            "name": "a",
+            "meaning": "manually select head test element range",
+            "values": "N no, Y yes",
+            "default": "N"
+          },
+          {
+            "name": "b",
+            "meaning": "first test element number",
+            "values": "0 to 9999",
+            "default": "0"
+          },
+          {
+            "name": "c",
+            "meaning": "last test element number",
+            "values": "0 to 9999",
+            "default": "9999"
+          }
+        ],
+        "example": "^JT1000,Y,100,9999"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1767,6 +4179,18 @@
       "section": "Print quality",
       "title": "tear off adjust",
       "summary": "Adjusts the resting tear-off or cut position by a small dot offset after printing.",
+      "reference": {
+        "syntax": "~TAa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "tear off rest position change in dots",
+            "values": "-120 to 120",
+            "default": "last saved value"
+          }
+        ],
+        "example": "~TA015"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1780,6 +4204,72 @@
       "section": "Print quality",
       "title": "early warning settings",
       "summary": "Configures early warning thresholds for media, ribbon and printhead maintenance.",
+      "reference": {
+        "syntax": "^JHa,b,c,d,e,f,g,h,i,j",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "early warning for media or supplies",
+            "values": "E enable, D disable",
+            "default": "D"
+          },
+          {
+            "name": "b",
+            "meaning": "labels per roll count",
+            "values": "100 to 9999",
+            "default": "900"
+          },
+          {
+            "name": "c",
+            "meaning": "media was replaced",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "d",
+            "meaning": "ribbon length code by model",
+            "values": "N 0 m, 0 to 7 is 100 to 450 m, 10 to 16 is 600 to 900 m",
+            "default": "1 or 7 by model"
+          },
+          {
+            "name": "e",
+            "meaning": "ribbon was replaced",
+            "values": "Y yes, N no",
+            "default": "N"
+          },
+          {
+            "name": "f",
+            "meaning": "early warning maintenance enabled",
+            "values": "E enabled, D disabled",
+            "default": "D"
+          },
+          {
+            "name": "g",
+            "meaning": "head cleaning interval code",
+            "values": "0 to 16 for 100 m to 900 m in 50 m steps",
+            "default": "1 or 7 by model"
+          },
+          {
+            "name": "h",
+            "meaning": "printhead was cleaned",
+            "values": "N no, Y yes",
+            "default": "N"
+          },
+          {
+            "name": "i",
+            "meaning": "head life warning threshold in inches",
+            "values": "0 off, or 100 to 3500000 inches",
+            "default": "1000000"
+          },
+          {
+            "name": "j",
+            "meaning": "printhead was replaced",
+            "values": "N no, Y yes",
+            "default": "N"
+          }
+        ],
+        "example": "^JHE,900,N,7,N,D,7,N,1000000,N"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1793,6 +4283,18 @@
       "section": "Print quality",
       "title": "change backfeed sequence",
       "summary": "Controls backfeed timing around printing and cutting, or turns backfeed off.",
+      "reference": {
+        "syntax": "~JSb",
+        "params": [
+          {
+            "name": "b",
+            "meaning": "backfeed timing relative to printing",
+            "values": "A full after, B full before, N normal, O off, 10 to 90 percent",
+            "default": "N"
+          }
+        ],
+        "example": "~JSN"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1806,6 +4308,18 @@
       "section": "Print quality",
       "title": "slew given number of dot rows",
       "summary": "Feeds a specified number of blank dot rows at slew speed.",
+      "reference": {
+        "syntax": "^PFa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "dot rows slewed from bottom",
+            "values": "0 to 32000",
+            "default": "must be specified"
+          }
+        ],
+        "example": "^PF100"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1819,6 +4333,11 @@
       "section": "Print quality",
       "title": "slew home",
       "summary": "Feeds one blank label after the current format has printed.",
+      "reference": {
+        "syntax": "^PH",
+        "params": [],
+        "example": "^PH"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1832,6 +4351,11 @@
       "section": "Print quality",
       "title": "slew home, immediate",
       "summary": "Feeds one blank label as soon as the printer is free, after the current format or while paused.",
+      "reference": {
+        "syntax": "~PH",
+        "params": [],
+        "example": "~PH"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -1845,6 +4369,11 @@
       "section": "Print quality",
       "title": "programmable pause",
       "summary": "Pauses after the current format prints. Already buffered labels can still print first.",
+      "reference": {
+        "syntax": "^PP",
+        "params": [],
+        "example": "^PP"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1858,6 +4387,11 @@
       "section": "Print quality",
       "title": "pause, immediate",
       "summary": "Pauses after the current label finishes. Printing resumes when the pause state is cleared.",
+      "reference": {
+        "syntax": "~PP",
+        "params": [],
+        "example": "~PP"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -1871,6 +4405,11 @@
       "section": "Print quality",
       "title": "applicator reprint",
       "summary": "Reprints the previous label when applicator reprint mode is enabled.",
+      "reference": {
+        "syntax": "~PR",
+        "params": [],
+        "example": "~PR"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -1884,6 +4423,11 @@
       "section": "Print quality",
       "title": "print start",
       "summary": "Clears pause mode and resumes printing.",
+      "reference": {
+        "syntax": "~PS",
+        "params": [],
+        "example": "~PS"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -1897,6 +4441,17 @@
       "section": "Print quality",
       "title": "cut now, KR403 kiosk only",
       "summary": "Runs the cutter immediately on KR403 printers in kiosk print mode.",
+      "reference": {
+        "syntax": "^CNa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "cut amount override mode",
+            "values": "0 kiosk setting, 1 full cut"
+          }
+        ],
+        "example": "^CN1"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -1910,6 +4465,18 @@
       "section": "Print quality",
       "title": "present length addition, KR403 kiosk only",
       "summary": "Adds extra eject length to a KR403 kiosk presenter, making printed media easier to take.",
+      "reference": {
+        "syntax": "~PLa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "extra media eject length in mm",
+            "values": "0 to 255",
+            "default": "0"
+          }
+        ],
+        "example": "~PL010"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -1923,6 +4490,17 @@
       "section": "Print quality",
       "title": "presenter cycle, KR403 kiosk only",
       "summary": "Runs a KR403 presenter cycle, offering printed media for manual removal.",
+      "reference": {
+        "syntax": "^PNa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "media eject length for presenter in mm",
+            "values": "0 to 255"
+          }
+        ],
+        "example": "^PN50"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -1936,6 +4514,18 @@
       "section": "Print quality",
       "title": "set ribbon tension, PAX only",
       "summary": "Sets ribbon supply tension on PAX-series printers.",
+      "reference": {
+        "syntax": "^JWt",
+        "params": [
+          {
+            "name": "t",
+            "meaning": "ribbon tension level",
+            "values": "L low, M medium, H high",
+            "default": "must be specified"
+          }
+        ],
+        "example": "^JWM"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -1949,6 +4539,54 @@
       "section": "Clock & time",
       "title": "set date and time",
       "summary": "Sets the printer's real-time clock date and time.",
+      "reference": {
+        "syntax": "^STa,b,c,d,e,f,g",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "month",
+            "values": "01 to 12",
+            "default": "current month"
+          },
+          {
+            "name": "b",
+            "meaning": "day",
+            "values": "01 to 31",
+            "default": "current day"
+          },
+          {
+            "name": "c",
+            "meaning": "year",
+            "values": "1998 to 2097",
+            "default": "current year"
+          },
+          {
+            "name": "d",
+            "meaning": "hour",
+            "values": "00 to 23",
+            "default": "current hour"
+          },
+          {
+            "name": "e",
+            "meaning": "minute",
+            "values": "00 to 59",
+            "default": "current minute"
+          },
+          {
+            "name": "f",
+            "meaning": "second",
+            "values": "00 to 59",
+            "default": "current second"
+          },
+          {
+            "name": "g",
+            "meaning": "am pm or 24 hour format",
+            "values": "A am, P pm, M 24 hour",
+            "default": "M"
+          }
+        ],
+        "example": "^ST01,15,2026,13,30,00,M"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1962,6 +4600,18 @@
       "section": "Clock & time",
       "title": "date and time format",
       "summary": "Selects the date and time format shown on the configuration label and control panel.",
+      "reference": {
+        "syntax": "^KDa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "date and time display format",
+            "values": "0 version number, 1 MM/DD/YY 24 hour, 2 MM/DD/YY 12 hour, 3 DD/MM/YY 24 hour, 4 DD/MM/YY 12 hour",
+            "default": "0"
+          }
+        ],
+        "example": "^KD1"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1975,6 +4625,54 @@
       "section": "Clock & time",
       "title": "real-time clock offset",
       "summary": "Defines secondary clock offsets from the real-time clock. The offsets are lost when the printer powers off.",
+      "reference": {
+        "syntax": "^SOa,b,c,d,e,f,g",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "clock number to offset",
+            "values": "2 secondary, 3 third",
+            "default": "must be specified"
+          },
+          {
+            "name": "b",
+            "meaning": "months offset",
+            "values": "-32000 to 32000",
+            "default": "0"
+          },
+          {
+            "name": "c",
+            "meaning": "days offset",
+            "values": "-32000 to 32000",
+            "default": "0"
+          },
+          {
+            "name": "d",
+            "meaning": "years offset",
+            "values": "-32000 to 32000",
+            "default": "0"
+          },
+          {
+            "name": "e",
+            "meaning": "hours offset",
+            "values": "-32000 to 32000",
+            "default": "0"
+          },
+          {
+            "name": "f",
+            "meaning": "minutes offset",
+            "values": "-32000 to 32000",
+            "default": "0"
+          },
+          {
+            "name": "g",
+            "meaning": "seconds offset",
+            "values": "-32000 to 32000",
+            "default": "0"
+          }
+        ],
+        "example": "^SO2,0,0,0,1,30,0"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -1988,6 +4686,24 @@
       "section": "Clock & time",
       "title": "clock mode and language",
       "summary": "Sets when time fields are stamped and selects the language for day and month names.",
+      "reference": {
+        "syntax": "^SLa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "clock reading mode",
+            "values": "S start time, T time now, 0 to 999 tolerance",
+            "default": "S"
+          },
+          {
+            "name": "b",
+            "meaning": "language for day and month names",
+            "values": "1 English, 2 Spanish, 3 French, 4 German, 5 Italian, 6 to 18 more languages",
+            "default": "last ^KL"
+          }
+        ],
+        "example": "^SLS,2"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2001,6 +4717,18 @@
       "section": "Encoding & language",
       "title": "define language",
       "summary": "Selects the display language of the printer's control panel from a list that varies by model.",
+      "reference": {
+        "syntax": "^KLa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "control panel display language",
+            "values": "1 to 20 language codes",
+            "default": "1"
+          }
+        ],
+        "example": "^KL4"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2014,6 +4742,29 @@
       "section": "Encoding & language",
       "title": "encoding table",
       "summary": "Selects a stored encoding table used to map field data before printing.",
+      "reference": {
+        "syntax": "^SEd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "drive location of encoding table",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "name of encoding table file",
+            "values": "1 to 8 alphanumeric characters"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": "DAT fixed value",
+            "default": "DAT"
+          }
+        ],
+        "example": "^SER:ENCTBL.DAT"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2027,6 +4778,18 @@
       "section": "Encoding & language",
       "title": "set ZPL mode",
       "summary": "Selects original ZPL or ZPL II command interpretation for compatibility with older formats.",
+      "reference": {
+        "syntax": "^SZa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "ZPL interpreter version",
+            "values": "1 ZPL, 2 ZPL II",
+            "default": "2"
+          }
+        ],
+        "example": "^SZ2"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2040,6 +4803,24 @@
       "section": "Identity & access",
       "title": "printer name and description",
       "summary": "Assigns the printer a network name and a free-text description, both shown on the configuration label and its built-in web page.",
+      "reference": {
+        "syntax": "^KNa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "printer network name",
+            "values": "up to 16 alphanumeric characters",
+            "default": "ZBR plus MAC suffix"
+          },
+          {
+            "name": "b",
+            "meaning": "printer description for configuration label and web page",
+            "values": "up to 35 alphanumeric characters",
+            "default": "blank"
+          }
+        ],
+        "example": "^KNZebra1,desk_printer"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2053,6 +4834,24 @@
       "section": "Identity & access",
       "title": "set password",
       "summary": "Sets the four-digit password for the control panel setup menus.",
+      "reference": {
+        "syntax": "^KPa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "four digit control panel password",
+            "values": "0000 to 9999",
+            "default": "1234"
+          },
+          {
+            "name": "b",
+            "meaning": "password level, S4M printer only",
+            "values": "1 to 4",
+            "default": "3"
+          }
+        ],
+        "example": "^KP5678"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2066,6 +4865,17 @@
       "section": "Configuration & persistence",
       "title": "configuration update",
       "summary": "Saves, restores or resets printer configuration settings.",
+      "reference": {
+        "syntax": "^JUa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "configuration action",
+            "values": "A factory all, F factory, N network, R recall, S save"
+          }
+        ],
+        "example": "^JUS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2080,6 +4890,17 @@
       "section": "Configuration & persistence",
       "title": "change caret",
       "summary": "Changes the format-command prefix character, normally the caret, either globally or for the current format.",
+      "reference": {
+        "syntax": "^CCx",
+        "params": [
+          {
+            "name": "x",
+            "meaning": "new format command prefix",
+            "values": "any ASCII character"
+          }
+        ],
+        "example": "^CC//CC^"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2094,6 +4915,17 @@
       "section": "Configuration & persistence",
       "title": "change delimiter",
       "summary": "Changes the parameter delimiter character, normally the comma, either globally or for the current format.",
+      "reference": {
+        "syntax": "^CDa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "new parameter delimiter character",
+            "values": "any ASCII character"
+          }
+        ],
+        "example": "^CD;"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2108,6 +4940,17 @@
       "section": "Configuration & persistence",
       "title": "change tilde",
       "summary": "Changes the immediate-command prefix character, normally the tilde, either globally or for the current format.",
+      "reference": {
+        "syntax": "^CTa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "new control command prefix",
+            "values": "any ASCII character"
+          }
+        ],
+        "example": "^CT+"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2121,6 +4964,42 @@
       "section": "Configuration & persistence",
       "title": "change memory letter assignment",
       "summary": "Remaps printer memory letters so stored objects can keep their existing names.",
+      "reference": {
+        "syntax": "^CMa,b,c,d,e",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "memory alias for B",
+            "values": "B memory card, E flash, R DRAM, A compact flash, NONE unset",
+            "default": "B"
+          },
+          {
+            "name": "b",
+            "meaning": "memory alias for E",
+            "values": "B memory card, E flash, R DRAM, A compact flash, NONE unset",
+            "default": "E"
+          },
+          {
+            "name": "c",
+            "meaning": "memory alias for R",
+            "values": "B memory card, E flash, R DRAM, A compact flash, NONE unset",
+            "default": "R"
+          },
+          {
+            "name": "d",
+            "meaning": "memory alias for A",
+            "values": "B memory card, E flash, R DRAM, A compact flash, NONE unset",
+            "default": "A"
+          },
+          {
+            "name": "e",
+            "meaning": "allow duplicate alias assignment",
+            "values": "M multiple alias",
+            "default": "none"
+          }
+        ],
+        "example": "^CME,E,R,A,M"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2134,6 +5013,11 @@
       "section": "Hardware control & calibration",
       "title": "cancel all",
       "summary": "Cancels queued formats and the current batch. The label already printing can finish.",
+      "reference": {
+        "syntax": "~JA",
+        "params": [],
+        "example": "~JA"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2147,6 +5031,18 @@
       "section": "Hardware control & calibration",
       "title": "initialize flash memory",
       "summary": "Erases and reinitializes one flash memory device. Losing power during this operation can corrupt storage.",
+      "reference": {
+        "syntax": "^JBa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "flash memory device to initialize",
+            "values": "A option flash, B flash card, E internal flash",
+            "default": "must be specified"
+          }
+        ],
+        "example": "^JBE"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2160,6 +5056,11 @@
       "section": "Hardware control & calibration",
       "title": "reset optional memory",
       "summary": "Reinitializes the battery-backed memory card after installation or battery replacement.",
+      "reference": {
+        "syntax": "~JB",
+        "params": [],
+        "example": "~JB"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2173,6 +5074,11 @@
       "section": "Hardware control & calibration",
       "title": "media sensor calibration",
       "summary": "Runs media calibration to measure label length and adjust media and ribbon sensors.",
+      "reference": {
+        "syntax": "~JC",
+        "params": [],
+        "example": "~JC"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2186,6 +5092,11 @@
       "section": "Hardware control & calibration",
       "title": "enable communications diagnostics",
       "summary": "Prints incoming bytes and their hexadecimal values instead of executing them, for host communication diagnostics.",
+      "reference": {
+        "syntax": "~JD",
+        "params": [],
+        "example": "~JD"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2199,6 +5110,11 @@
       "section": "Hardware control & calibration",
       "title": "disable communications diagnostics",
       "summary": "Leaves communications diagnostic mode and returns the printer to normal label printing.",
+      "reference": {
+        "syntax": "~JE",
+        "params": [],
+        "example": "~JE"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2212,6 +5128,18 @@
       "section": "Hardware control & calibration",
       "title": "set battery condition, PA400 and PT400 only",
       "summary": "Sets whether low battery voltage pauses a portable printer or allows printing to continue.",
+      "reference": {
+        "syntax": "~JFp",
+        "params": [
+          {
+            "name": "p",
+            "meaning": "pause on low battery voltage",
+            "values": "Y pause, N continue printing",
+            "default": "Y"
+          }
+        ],
+        "example": "~JFY"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -2225,6 +5153,11 @@
       "section": "Hardware control & calibration",
       "title": "graphing sensor calibration",
       "summary": "Runs media calibration and prints a sensor profile graph for the media-gap transition.",
+      "reference": {
+        "syntax": "~JG",
+        "params": [],
+        "example": "~JG"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2239,6 +5172,47 @@
       "section": "Hardware control & calibration",
       "title": "start ZBI",
       "summary": "Starts the Zebra BASIC Interpreter on the printer, optionally launching a stored program.",
+      "reference": {
+        "syntax": "^JId:o.x,b,c,e",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "program storage location",
+            "values": "R, E, B, A",
+            "default": "must be specified"
+          },
+          {
+            "name": "o",
+            "meaning": "name of program to run",
+            "values": "any valid program name",
+            "default": "must be specified"
+          },
+          {
+            "name": "x",
+            "meaning": "program file extension",
+            "values": "BAS or BAE"
+          },
+          {
+            "name": "b",
+            "meaning": "console output control",
+            "values": "Y on, N off",
+            "default": "Y"
+          },
+          {
+            "name": "c",
+            "meaning": "command echo control",
+            "values": "Y on, N off",
+            "default": "Y"
+          },
+          {
+            "name": "e",
+            "meaning": "memory allocated to ZBI",
+            "values": "20K to 1024K",
+            "default": "50K"
+          }
+        ],
+        "example": "^JIR:MYPROG.BAS,Y,Y,50K"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2252,6 +5226,47 @@
       "section": "Hardware control & calibration",
       "title": "set auxiliary port",
       "summary": "Configures the auxiliary port for applicator or verifier signals and error handling.",
+      "reference": {
+        "syntax": "^JJa,b,c,d,e,f",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "verifier error handling mode",
+            "values": "0 off, 1 reprint on error, 2 max throughput",
+            "default": "0"
+          },
+          {
+            "name": "b",
+            "meaning": "applicator signal timing mode",
+            "values": "0 off, 1 to 4 signal timing",
+            "default": "0"
+          },
+          {
+            "name": "c",
+            "meaning": "start print signal timing mode",
+            "values": "p pulse mode, l level mode"
+          },
+          {
+            "name": "d",
+            "meaning": "label error response mode",
+            "values": "e error mode, f feed mode",
+            "default": "f"
+          },
+          {
+            "name": "e",
+            "meaning": "reprint on signal mode",
+            "values": "e enabled, d disabled",
+            "default": "d"
+          },
+          {
+            "name": "f",
+            "meaning": "ribbon low warning mode",
+            "values": "e enabled, d disabled",
+            "default": "e"
+          }
+        ],
+        "example": "^JJ1,0,p,f,d,e"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2265,6 +5280,18 @@
       "section": "Hardware control & calibration",
       "title": "sensor select",
       "summary": "Selects the media sensor used for tracking, usually reflective or transmissive.",
+      "reference": {
+        "syntax": "^JSa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "sensor to use",
+            "values": "A auto, R reflective, T transmissive",
+            "default": "varies by printer model"
+          }
+        ],
+        "example": "^JSA"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2278,6 +5305,11 @@
       "section": "Hardware control & calibration",
       "title": "set label length",
       "summary": "Measures and stores label length, feeding blank labels during the process.",
+      "reference": {
+        "syntax": "~JL",
+        "params": [],
+        "example": "~JL"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2291,6 +5323,18 @@
       "section": "Hardware control & calibration",
       "title": "dots per millimeter",
       "summary": "Sets normal or reduced dots per millimeter. Reduced density doubles the physical size of format coordinates.",
+      "reference": {
+        "syntax": "^JMn",
+        "params": [
+          {
+            "name": "n",
+            "meaning": "print density setting",
+            "values": "A normal density, B halved density",
+            "default": "A"
+          }
+        ],
+        "example": "^JMB"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2304,6 +5348,11 @@
       "section": "Hardware control & calibration",
       "title": "printhead test fatal",
       "summary": "Makes failed printhead element tests halt printing until the printer is reset or tolerant mode is restored.",
+      "reference": {
+        "syntax": "~JN",
+        "params": [],
+        "example": "~JN"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2317,6 +5366,11 @@
       "section": "Hardware control & calibration",
       "title": "printhead test non-fatal",
       "summary": "Allows printing to continue after a failed printhead element test.",
+      "reference": {
+        "syntax": "~JO",
+        "params": [],
+        "example": "~JO"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2330,6 +5384,11 @@
       "section": "Hardware control & calibration",
       "title": "pause and cancel format",
       "summary": "Cancels the next queued format and pauses the printer, one buffered format per command.",
+      "reference": {
+        "syntax": "~JP",
+        "params": [],
+        "example": "~JP"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2343,6 +5402,11 @@
       "section": "Hardware control & calibration",
       "title": "terminate ZBI",
       "summary": "Exits an active Zebra BASIC Interpreter session and returns the port to ZPL processing.",
+      "reference": {
+        "syntax": "~JQ",
+        "params": [],
+        "example": "~JQ"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2356,6 +5420,11 @@
       "section": "Hardware control & calibration",
       "title": "power on reset",
       "summary": "Reboots the printer firmware and reloads saved communication and configuration defaults.",
+      "reference": {
+        "syntax": "~JR",
+        "params": [],
+        "example": "~JR"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2369,6 +5438,11 @@
       "section": "Hardware control & calibration",
       "title": "cancel partial format",
       "summary": "Cancels the format currently being received without canceling labels already printing.",
+      "reference": {
+        "syntax": "~JX",
+        "params": [],
+        "example": "~JX"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2382,6 +5456,18 @@
       "section": "Hardware control & calibration",
       "title": "reset advanced counter",
       "summary": "Resets a selected printer usage counter, including user or RFID counters.",
+      "reference": {
+        "syntax": "~ROc",
+        "params": [
+          {
+            "name": "c",
+            "meaning": "counter to reset",
+            "values": "1 counter one, 2 counter two, 3 valid RFID, 4 voided RFID, C head cleaned, R head replaced",
+            "default": "must be specified"
+          }
+        ],
+        "example": "~RO1"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2395,6 +5481,48 @@
       "section": "Hardware control & calibration",
       "title": "set serial communications",
       "summary": "Configures all serial-port communication parameters in one command.",
+      "reference": {
+        "syntax": "^SCa,b,c,d,e,f",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "serial baud rate",
+            "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+            "default": "must be specified"
+          },
+          {
+            "name": "b",
+            "meaning": "data bits per character",
+            "values": "7 or 8",
+            "default": "must be specified"
+          },
+          {
+            "name": "c",
+            "meaning": "parity setting",
+            "values": "N none, E even, O odd",
+            "default": "must be specified"
+          },
+          {
+            "name": "d",
+            "meaning": "stop bits",
+            "values": "1 or 2",
+            "default": "must be specified"
+          },
+          {
+            "name": "e",
+            "meaning": "flow control protocol",
+            "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR and Xon/Xoff",
+            "default": "must be specified"
+          },
+          {
+            "name": "f",
+            "meaning": "zebra protocol handshake",
+            "values": "A ACK/NAK, N none, Z zebra",
+            "default": "must be specified"
+          }
+        ],
+        "example": "^SC9600,8,N,1,X,N"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2408,6 +5536,24 @@
       "section": "Hardware control & calibration",
       "title": "set sensor intensity",
       "summary": "Overrides transmissive sensor intensity or baseline values normally set by calibration.",
+      "reference": {
+        "syntax": "^SIa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "sensor setting to modify",
+            "values": "1 brightness, 2 baseline",
+            "default": "must be specified"
+          },
+          {
+            "name": "b",
+            "meaning": "value for the selected setting",
+            "values": "0 to 196",
+            "default": "must be specified"
+          }
+        ],
+        "example": "^SI1,120"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2421,6 +5567,18 @@
       "section": "Hardware control & calibration",
       "title": "start print at dot row, throughput hint only",
       "summary": "Starts printing before the full format has arrived to improve throughput on complex labels.",
+      "reference": {
+        "syntax": "^SPa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "dot row to start printing",
+            "values": "0 to 32000",
+            "default": "0"
+          }
+        ],
+        "example": "^SP500"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -2434,6 +5592,28 @@
       "section": "Hardware control & calibration",
       "title": "halt ZebraNet alert",
       "summary": "Disables a specific ZebraNet alert condition and destination.",
+      "reference": {
+        "syntax": "^SQa,b,c",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "alert condition to stop",
+            "values": "A to O and Q to V one condition each, W all on RFID printers, * all on others"
+          },
+          {
+            "name": "b",
+            "meaning": "alert destination to stop",
+            "values": "A serial, B parallel, C e-mail, D TCP/IP, E UDP/IP, F SNMP trap, * all"
+          },
+          {
+            "name": "c",
+            "meaning": "halt or resume these alerts",
+            "values": "Y halt messages, N start messages",
+            "default": "Y"
+          }
+        ],
+        "example": "^SQA,A,Y"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2447,6 +5627,18 @@
       "section": "Hardware control & calibration",
       "title": "set printhead resistance",
       "summary": "Sets the printhead resistance value used for burn-energy calculations.",
+      "reference": {
+        "syntax": "^SRa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "printhead resistance value",
+            "values": "0488 to 1175",
+            "default": "last permanently saved value"
+          }
+        ],
+        "example": "^SR0675"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2460,6 +5652,66 @@
       "section": "Hardware control & calibration",
       "title": "set media sensors",
       "summary": "Sets media sensor thresholds, label length and LED intensities normally determined by calibration.",
+      "reference": {
+        "syntax": "^SSw,m,r,l,n,o,a,b,c",
+        "params": [
+          {
+            "name": "w",
+            "meaning": "web sensor value",
+            "values": "0 to 100",
+            "default": "shown on sensor profile or config label"
+          },
+          {
+            "name": "m",
+            "meaning": "media sensor value",
+            "values": "0 to 100",
+            "default": "shown on sensor profile or config label"
+          },
+          {
+            "name": "r",
+            "meaning": "ribbon sensor value",
+            "values": "0 to 100",
+            "default": "shown on sensor profile or config label"
+          },
+          {
+            "name": "l",
+            "meaning": "label length in dots",
+            "values": "1 to 32000",
+            "default": "value from calibration"
+          },
+          {
+            "name": "n",
+            "meaning": "media LED intensity",
+            "values": "0 to 255",
+            "default": "value from calibration"
+          },
+          {
+            "name": "o",
+            "meaning": "ribbon LED intensity",
+            "values": "0 to 255",
+            "default": "value from calibration"
+          },
+          {
+            "name": "a",
+            "meaning": "mark sensing value",
+            "values": "0 to 100",
+            "default": "value from calibration"
+          },
+          {
+            "name": "b",
+            "meaning": "mark media sensing value",
+            "values": "0 to 100",
+            "default": "value from calibration"
+          },
+          {
+            "name": "c",
+            "meaning": "mark LED sensing value",
+            "values": "0 to 255",
+            "default": "value from calibration"
+          }
+        ],
+        "example": "^SS075,045,070,0812,090,085,060,055,075"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2473,6 +5725,48 @@
       "section": "Hardware control & calibration",
       "title": "set ZebraNet alert",
       "summary": "Enables a ZebraNet alert for a specific condition and destination.",
+      "reference": {
+        "syntax": "^SXa,b,c,d,e,f",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "alert condition type",
+            "values": "A to V one condition each, * all",
+            "default": "ignored if missing or invalid"
+          },
+          {
+            "name": "b",
+            "meaning": "alert destination type",
+            "values": "A serial, B parallel, C e-mail, D TCP/IP, E UDP/IP, F SNMP trap",
+            "default": "ignored if missing or invalid"
+          },
+          {
+            "name": "c",
+            "meaning": "enable alert on condition set",
+            "values": "N no, Y yes",
+            "default": "Y or previous value"
+          },
+          {
+            "name": "d",
+            "meaning": "enable alert on condition clear",
+            "values": "N no, Y yes",
+            "default": "N or previous value"
+          },
+          {
+            "name": "e",
+            "meaning": "destination address for the alert",
+            "values": "email, IP address, or SNMP target",
+            "default": "ignored if missing or invalid"
+          },
+          {
+            "name": "f",
+            "meaning": "port number for the alert",
+            "values": "0 to 65535",
+            "default": "ignored if missing or invalid"
+          }
+        ],
+        "example": "^SXA,A,Y,Y"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2486,6 +5780,47 @@
       "section": "Hardware control & calibration",
       "title": "transfer object",
       "summary": "Copies stored objects between printer memory devices, with wildcard support for groups.",
+      "reference": {
+        "syntax": "^TOs:o.x,d:n.y",
+        "params": [
+          {
+            "name": "s",
+            "meaning": "source storage device",
+            "values": "R, E, B, A"
+          },
+          {
+            "name": "o",
+            "meaning": "name of the source object",
+            "values": "any existing object name",
+            "default": "* selects all objects"
+          },
+          {
+            "name": "x",
+            "meaning": "source object extension",
+            "values": "any valid file extension",
+            "default": "* selects all extensions"
+          },
+          {
+            "name": "d",
+            "meaning": "destination storage device",
+            "values": "R, E, B, A",
+            "default": "must be specified"
+          },
+          {
+            "name": "n",
+            "meaning": "name for the object at destination",
+            "values": "up to 8 alphanumeric characters",
+            "default": "source object name"
+          },
+          {
+            "name": "y",
+            "meaning": "destination object extension",
+            "values": "any valid file extension",
+            "default": "source object extension"
+          }
+        ],
+        "example": "^TOR:ZLOGO.GRF,B:ZLOGO1.GRF"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2499,6 +5834,11 @@
       "section": "Hardware control & calibration",
       "title": "print configuration label",
       "summary": "Prints a configuration label with sensor, network, firmware and memory information.",
+      "reference": {
+        "syntax": "~WC",
+        "params": [],
+        "example": "~WC"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2512,6 +5852,30 @@
       "section": "Hardware control & calibration",
       "title": "print directory label",
       "summary": "Prints a directory label for stored objects, resident fonts or available barcodes.",
+      "reference": {
+        "syntax": "^WDd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "source device for the listing",
+            "values": "R, E, B, A, Z",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "object name filter",
+            "values": "1 to 8 characters, * or ? wildcard",
+            "default": "*"
+          },
+          {
+            "name": "x",
+            "meaning": "extension filter",
+            "values": "any valid extension, * wildcard",
+            "default": "*"
+          }
+        ],
+        "example": "^WDR:*.FNT"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2525,6 +5889,18 @@
       "section": "Hardware control & calibration",
       "title": "write query",
       "summary": "Prints requested service information, such as odometer or printhead history, on a label.",
+      "reference": {
+        "syntax": "~WQa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "type of service report to print",
+            "values": "ES status, HA hardware address, JT head test, MA alert settings, MI messages, OD odometer, PH head life, PP plug and play, SN serial number, UI USB id",
+            "default": "must be specified"
+          }
+        ],
+        "example": "~WQOD"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2538,6 +5914,42 @@
       "section": "Hardware control & calibration",
       "title": "cutter and presenter settings, KR403 only",
       "summary": "Configures KR403 kiosk presenter settings, including cut length, cut margin, retract timeout and loop length.",
+      "reference": {
+        "syntax": "^KVa,b,c,d,e",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "kiosk cut amount",
+            "values": "0 normal cut, 10 to 60 partial mm",
+            "default": "0"
+          },
+          {
+            "name": "b",
+            "meaning": "kiosk cut margin in mm",
+            "values": "2 to 9",
+            "default": "9"
+          },
+          {
+            "name": "c",
+            "meaning": "kiosk present type after printing",
+            "values": "0 eject, 1 retract, 2 no action",
+            "default": "0"
+          },
+          {
+            "name": "d",
+            "meaning": "kiosk present timeout in seconds",
+            "values": "0 to 300, 0 no timeout",
+            "default": "0"
+          },
+          {
+            "name": "e",
+            "meaning": "presenter loop length in mm",
+            "values": "0 straight through, 3 to 1023",
+            "default": "400"
+          }
+        ],
+        "example": "^KV0,9,0,6,0"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -2551,6 +5963,24 @@
       "section": "Hardware control & calibration",
       "title": "set dynamic media calibration",
       "summary": "Controls dynamic recalibration of label length and sensor threshold after power-up or media-compartment open.",
+      "reference": {
+        "syntax": "^XSa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "enable dynamic length calibration",
+            "values": "Y enable, N disable",
+            "default": "Y"
+          },
+          {
+            "name": "b",
+            "meaning": "enable dynamic threshold calibration",
+            "values": "Y enable, N disable",
+            "default": "Y"
+          }
+        ],
+        "example": "^XSY,Y"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2564,6 +5994,24 @@
       "section": "Hardware control & calibration",
       "title": "decommissioning mode",
       "summary": "Starts decommissioning mode to prepare a printer for resale or recycling.",
+      "reference": {
+        "syntax": "~PMa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "printer serial number",
+            "values": "alphanumeric string",
+            "default": "must be specified"
+          },
+          {
+            "name": "b",
+            "meaning": "number of flash wipe passes",
+            "values": "0 to 3",
+            "default": "0"
+          }
+        ],
+        "example": "~PMABC1234567890,0"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2577,6 +6025,24 @@
       "section": "Hardware control & calibration",
       "title": "printer sleep, PA400 and PT400 only",
       "summary": "Sets automatic sleep shutdown after an idle period, with options for queued labels.",
+      "reference": {
+        "syntax": "^ZZt,b",
+        "params": [
+          {
+            "name": "t",
+            "meaning": "idle seconds before automatic shutdown",
+            "values": "0 to 999999, 0 disables shutdown",
+            "default": "last saved value or 0"
+          },
+          {
+            "name": "b",
+            "meaning": "label status at shutdown",
+            "values": "Y shutdown with queue, N finish queue first",
+            "default": "N"
+          }
+        ],
+        "example": "^ZZ1800,N"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -2590,6 +6056,17 @@
       "section": "Hardware control & calibration",
       "title": "eject or retract a presented page, KR403 only",
       "summary": "Ejects or retracts media already presented by a KR403 kiosk presenter.",
+      "reference": {
+        "syntax": "^CPa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "kiosk present action",
+            "values": "0 eject, 1 retract, 2 use ^KV setting"
+          }
+        ],
+        "example": "^CP0"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -2603,6 +6080,11 @@
       "section": "Hardware control & calibration",
       "title": "kill battery",
       "summary": "Runs battery discharge mode on portable printers for pack conditioning.",
+      "reference": {
+        "syntax": "~KB",
+        "params": [],
+        "example": "~KB"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2616,6 +6098,11 @@
       "section": "Host communication",
       "title": "battery status, mobile printers only",
       "summary": "Returns battery and printhead power readings from mobile printers.",
+      "reference": {
+        "syntax": "~HB",
+        "params": [],
+        "example": "~HB"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -2629,6 +6116,11 @@
       "section": "Host communication",
       "title": "printhead diagnostic",
       "summary": "Returns printhead diagnostic data, including temperatures, element test results, darkness and speed.",
+      "reference": {
+        "syntax": "~HD",
+        "params": [],
+        "example": "~HD"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2642,6 +6134,30 @@
       "section": "Host communication",
       "title": "host format",
       "summary": "Returns a stored ZPL format from printer memory to the host.",
+      "reference": {
+        "syntax": "^HFd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "memory device to search",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "stored format name",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": ".ZPL fixed",
+            "default": ".ZPL"
+          }
+        ],
+        "example": "^HFR:SAMPLE.ZPL"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2655,6 +6171,30 @@
       "section": "Host communication",
       "title": "host graphic",
       "summary": "Returns a stored graphic image from printer memory to the host.",
+      "reference": {
+        "syntax": "^HGd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "memory device to search",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "search priority"
+          },
+          {
+            "name": "o",
+            "meaning": "graphic name to upload",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "UNKNOWN"
+          },
+          {
+            "name": "x",
+            "meaning": "file extension",
+            "values": ".GRF fixed",
+            "default": ".GRF"
+          }
+        ],
+        "example": "^HGR:SAMPLE.GRF"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2668,6 +6208,11 @@
       "section": "Host communication",
       "title": "configuration label return",
       "summary": "Returns the printer's current configuration as readable text over the host port.",
+      "reference": {
+        "syntax": "^HH",
+        "params": [],
+        "example": "^HH"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2681,6 +6226,11 @@
       "section": "Host communication",
       "title": "host identification",
       "summary": "Returns printer identity data, including model, firmware, resolution, memory and installed options.",
+      "reference": {
+        "syntax": "~HI",
+        "params": [],
+        "example": "~HI"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2694,6 +6244,11 @@
       "section": "Host communication",
       "title": "host RAM status",
       "summary": "Returns total, maximum available and currently free printer memory in kilobytes.",
+      "reference": {
+        "syntax": "~HM",
+        "params": [],
+        "example": "~HM"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2707,6 +6262,17 @@
       "section": "Host communication",
       "title": "host query",
       "summary": "Returns requested status, identity, odometer or maintenance data to the host.",
+      "reference": {
+        "syntax": "~HQa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "query selector for returned data",
+            "values": "ES status, HA wired MAC, JT printhead test, MA maintenance alerts, MI maintenance info, OD odometer, PH printhead life, PP plug and play, SN serial number, UI USB product id"
+          }
+        ],
+        "example": "~HQES"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2720,6 +6286,11 @@
       "section": "Host communication",
       "title": "host status return",
       "summary": "Returns host-status strings for interface, media, pause state, label length and buffered formats.",
+      "reference": {
+        "syntax": "~HS",
+        "params": [],
+        "example": "~HS"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2733,6 +6304,11 @@
       "section": "Host communication",
       "title": "host linked fonts list",
       "summary": "Returns the font link table to the host, listing base fonts and fallback faces.",
+      "reference": {
+        "syntax": "^HT",
+        "params": [],
+        "example": "^HT"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2747,6 +6323,11 @@
       "section": "Host communication",
       "title": "ZebraNet alert configuration",
       "summary": "Returns the configured ZebraNet alerts, including conditions, destinations and set or clear flags.",
+      "reference": {
+        "syntax": "~HU",
+        "params": [],
+        "example": "~HU"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2760,6 +6341,41 @@
       "section": "Host communication",
       "title": "host verification",
       "summary": "Returns data from a numbered field to the host, with an optional byte limit.",
+      "reference": {
+        "syntax": "^HVf,n,h,t,a",
+        "params": [
+          {
+            "name": "f",
+            "meaning": "field number set by ^FN",
+            "values": "0 to 9999",
+            "default": "0"
+          },
+          {
+            "name": "n",
+            "meaning": "bytes to return",
+            "values": "1 to 256",
+            "default": "64"
+          },
+          {
+            "name": "h",
+            "meaning": "header text before the data",
+            "values": "0 to 3072 bytes",
+            "default": "no header"
+          },
+          {
+            "name": "t",
+            "meaning": "termination text after the data",
+            "values": "0 to 3072 characters"
+          },
+          {
+            "name": "a",
+            "meaning": "response sent per",
+            "values": "F format, L label",
+            "default": "F"
+          }
+        ],
+        "example": "^HV1,20,HEADER,END,F"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2773,6 +6389,36 @@
       "section": "Host communication",
       "title": "host directory",
       "summary": "Returns a directory listing for a memory device, including remaining free space.",
+      "reference": {
+        "syntax": "^HWd:o.x,f",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "memory device to list",
+            "values": "R DRAM, E flash, B memory card, A compact flash, Z other",
+            "default": "R"
+          },
+          {
+            "name": "o",
+            "meaning": "object name filter",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "*"
+          },
+          {
+            "name": "x",
+            "meaning": "extension filter",
+            "values": "any Zebra file extension",
+            "default": "*"
+          },
+          {
+            "name": "f",
+            "meaning": "listing layout",
+            "values": "c column, d default",
+            "default": "d"
+          }
+        ],
+        "example": "^HWR:*.*"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2786,6 +6432,30 @@
       "section": "Host communication",
       "title": "upload graphics",
       "summary": "Returns a stored graphic to the host in a downloadable file format.",
+      "reference": {
+        "syntax": "^HYd:o.x",
+        "params": [
+          {
+            "name": "d",
+            "meaning": "memory device location of object",
+            "values": "R DRAM, E flash, B memory card, A compact flash",
+            "default": "search priority"
+          },
+          {
+            "name": "o",
+            "meaning": "object name to upload",
+            "values": "1 to 8 alphanumeric characters",
+            "default": "name required"
+          },
+          {
+            "name": "x",
+            "meaning": "upload format",
+            "values": "G raw bitmap, P compressed bitmap",
+            "default": "stored format"
+          }
+        ],
+        "example": "^HYR:SAMPLE.G"
+      },
       "support": {
         "web": "no",
         "desktop": "yes"
@@ -2799,6 +6469,17 @@
       "section": "Host communication",
       "title": "display description information",
       "summary": "Returns printer description XML for settings, object directory or status.",
+      "reference": {
+        "syntax": "^HZb",
+        "params": [
+          {
+            "name": "b",
+            "meaning": "description type to return",
+            "values": "a all, f format, l directory, o object, r status"
+          }
+        ],
+        "example": "^HZa"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2812,6 +6493,42 @@
       "section": "RFID",
       "title": "read / write RFID",
       "summary": "Reads from or writes to an RFID tag, including data format, memory bank and access password.",
+      "reference": {
+        "syntax": "^RFo,f,b,n,m",
+        "params": [
+          {
+            "name": "o",
+            "meaning": "operation",
+            "values": "W write, L write and lock, R read, P read password, S set password",
+            "default": "W"
+          },
+          {
+            "name": "f",
+            "meaning": "data format",
+            "values": "A ASCII, H hex, E EPC",
+            "default": "H"
+          },
+          {
+            "name": "b",
+            "meaning": "password flag or starting block number",
+            "values": "P password follows, 0 to n block",
+            "default": "0"
+          },
+          {
+            "name": "n",
+            "meaning": "number of bytes to read or write",
+            "values": "1 to n, max per tag",
+            "default": "1"
+          },
+          {
+            "name": "m",
+            "meaning": "Gen 2 memory bank",
+            "values": "E EPC 96-bit, A EPC auto PC bits, 0 reserved, 1 EPC, 2 TID, 3 user",
+            "default": "E"
+          }
+        ],
+        "example": "^RFW,H,0,4^FD1A2B3C4D^FS"
+      },
       "support": {
         "web": "planned",
         "desktop": "planned"
@@ -2877,6 +6594,24 @@
       "section": "RFID",
       "title": "define EPC data structure",
       "summary": "Defines the bit layout used to encode RFID EPC fields on a tag.",
+      "reference": {
+        "syntax": "^RBn,p",
+        "params": [
+          {
+            "name": "n",
+            "meaning": "total bit size of the partitions",
+            "values": "1 to the tag bit size",
+            "default": "96"
+          },
+          {
+            "name": "p",
+            "meaning": "bits in each partition, up to 16 partitions",
+            "values": "1 to 64",
+            "default": "1"
+          }
+        ],
+        "example": "^RB96,10,26,60^FS"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2890,6 +6625,59 @@
       "section": "RFID",
       "title": "RFID setup",
       "summary": "Sets RFID options for following labels, including tag type, programming position, failure handling and VOID bar length.",
+      "reference": {
+        "syntax": "^RSt,p,v,n,e,a,c,s",
+        "params": [
+          {
+            "name": "t",
+            "meaning": "tag type",
+            "values": "8 Gen 2 only",
+            "default": "8"
+          },
+          {
+            "name": "p",
+            "meaning": "tag program position",
+            "values": "dots absolute, F0 to Fxxx forward, B0 to B30 back, up next, down previous",
+            "default": "printer setting"
+          },
+          {
+            "name": "v",
+            "meaning": "length of the void printout",
+            "values": "0 to label length",
+            "default": "label length"
+          },
+          {
+            "name": "n",
+            "meaning": "labels to retry on failure",
+            "values": "1 to 10",
+            "default": "3"
+          },
+          {
+            "name": "e",
+            "meaning": "error handling after retries",
+            "values": "N no action, P pause, E error mode",
+            "default": "N"
+          },
+          {
+            "name": "a",
+            "meaning": "signals sent to an applicator",
+            "values": "S single signal, D double signal",
+            "default": "S"
+          },
+          {
+            "name": "c",
+            "meaning": "reserved, not used",
+            "values": "none"
+          },
+          {
+            "name": "s",
+            "meaning": "speed for printing VOID labels",
+            "values": "any valid print speed",
+            "default": "maximum print speed"
+          }
+        ],
+        "example": "^RS8"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2929,6 +6717,24 @@
       "section": "RFID",
       "title": "read unique chip serialisation",
       "summary": "Builds an EPC serial number from the tag ID and writes it into the EPC low bits.",
+      "reference": {
+        "syntax": "^RUa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "binary prefix for the serial id",
+            "values": "ASCII 1s and 0s, up to 38 bits",
+            "default": "chip MDID dependent"
+          },
+          {
+            "name": "b",
+            "meaning": "special char marking the serial field",
+            "values": "any ASCII except command, control, delimiter, RTC",
+            "default": "#"
+          }
+        ],
+        "example": "^RU1010,$"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2955,6 +6761,30 @@
       "section": "RFID",
       "title": "set read and write power",
       "summary": "Sets RFID read and write power when calibration does not produce usable values.",
+      "reference": {
+        "syntax": "^RWr,w,a",
+        "params": [
+          {
+            "name": "r",
+            "meaning": "read power level",
+            "values": "0 to 30, or H high, M medium, L low",
+            "default": "printer setting"
+          },
+          {
+            "name": "w",
+            "meaning": "write power level",
+            "values": "0 to 30, or H high, M medium, L low",
+            "default": "printer setting"
+          },
+          {
+            "name": "a",
+            "meaning": "antenna element selection",
+            "values": "printer specific grid, A1 to F4",
+            "default": "printer setting"
+          }
+        ],
+        "example": "^RW16,16,A1"
+      },
       "support": {
         "web": "yes",
         "desktop": "yes"
@@ -2968,6 +6798,32 @@
       "section": "RFID",
       "title": "lock / permalock tag memory",
       "summary": "Locks RFID tag memory, either reversibly or permanently, to prevent later writes.",
+      "reference": {
+        "syntax": "^RLM,k,a,e,u",
+        "params": [
+          {
+            "name": "k",
+            "meaning": "kill password lock state",
+            "values": "U unlock, L lock, O permanent unlock, P permanent lock"
+          },
+          {
+            "name": "a",
+            "meaning": "access password lock state",
+            "values": "U unlock, L lock, O permanent unlock, P permanent lock"
+          },
+          {
+            "name": "e",
+            "meaning": "EPC memory bank lock state",
+            "values": "U unlock, L lock, O permanent unlock, P permanent lock"
+          },
+          {
+            "name": "u",
+            "meaning": "user memory bank lock state",
+            "values": "U unlock, L lock, O permanent unlock, P permanent lock"
+          }
+        ],
+        "example": "^RLM,,,L^FS"
+      },
       "support": {
         "web": "planned",
         "desktop": "planned"
@@ -2981,6 +6837,66 @@
       "section": "RFID",
       "title": "calibrate RFID tag position",
       "summary": "Runs RFID calibration and returns position, antenna and power settings to the host.",
+      "reference": {
+        "syntax": "^HRa,b,c,d,e,f,g,h,i",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "text before the results table",
+            "values": "any string under 65 chars",
+            "default": "start"
+          },
+          {
+            "name": "b",
+            "meaning": "text after the results table",
+            "values": "any string under 65 chars",
+            "default": "end"
+          },
+          {
+            "name": "c",
+            "meaning": "calibration start position",
+            "values": "F0 to Fxxx forward, B0 to B30 back",
+            "default": "printer setting"
+          },
+          {
+            "name": "d",
+            "meaning": "calibration end position",
+            "values": "F0 to Fxxx forward, B0 to B30 back, A auto",
+            "default": "printer setting"
+          },
+          {
+            "name": "e",
+            "meaning": "auto or manual antenna and power select",
+            "values": "A automatic, M manual",
+            "default": "A"
+          },
+          {
+            "name": "f",
+            "meaning": "start of the read write power range",
+            "values": "0 to 30",
+            "default": "0"
+          },
+          {
+            "name": "g",
+            "meaning": "end of the read write power range",
+            "values": "0 to 30",
+            "default": "max power"
+          },
+          {
+            "name": "h",
+            "meaning": "start of the antenna range",
+            "values": "model dependent, usually A1",
+            "default": "A1"
+          },
+          {
+            "name": "i",
+            "meaning": "end of the antenna range",
+            "values": "model dependent, up to E4",
+            "default": "printer setting"
+          }
+        ],
+        "example": "^HR"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -2995,6 +6911,11 @@
       "section": "RFID",
       "title": "RFID data log",
       "summary": "Returns the RFID operation log, including position, antenna, power level and outcome.",
+      "reference": {
+        "syntax": "^HL",
+        "params": [],
+        "example": "^HL"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3008,6 +6929,18 @@
       "section": "Network",
       "title": "check for wired print server at boot",
       "summary": "Selects whether the printer checks for a wired print server during startup.",
+      "reference": {
+        "syntax": "^NBa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "wired print server check at boot",
+            "values": "C check, S skip",
+            "default": "S"
+          }
+        ],
+        "example": "^NBC"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3021,6 +6954,18 @@
       "section": "Network",
       "title": "select wired / wireless primary device",
       "summary": "Selects the primary network device, wired or wireless.",
+      "reference": {
+        "syntax": "^NCa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "primary network device",
+            "values": "1 wired primary, 2 wireless primary",
+            "default": "1"
+          }
+        ],
+        "example": "^NC1"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3034,6 +6979,18 @@
       "section": "Network",
       "title": "network connect, legacy RS-485 only",
       "summary": "Addresses one printer on a legacy RS-485 multidrop line by network ID.",
+      "reference": {
+        "syntax": "~NCn",
+        "params": [
+          {
+            "name": "n",
+            "meaning": "printer network ID to address",
+            "values": "001 to 999",
+            "default": "000 none"
+          }
+        ],
+        "example": "~NC001"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -3047,6 +7004,18 @@
       "section": "Network",
       "title": "network ID, legacy RS-485 only",
       "summary": "Assigns the network ID used to address a printer on a legacy RS-485 multidrop line.",
+      "reference": {
+        "syntax": "^NIn",
+        "params": [
+          {
+            "name": "n",
+            "meaning": "network ID assigned to printer",
+            "values": "001 to 999",
+            "default": "000 none"
+          }
+        ],
+        "example": "^NI001"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -3060,6 +7029,45 @@
       "section": "Network",
       "title": "set SNMP",
       "summary": "Sets SNMP identity and community strings for the printer.",
+      "reference": {
+        "syntax": "^NNa,b,c,d,e,f",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "SNMP system name",
+            "values": "up to 17 characters"
+          },
+          {
+            "name": "b",
+            "meaning": "SNMP system contact",
+            "values": "up to 50 characters"
+          },
+          {
+            "name": "c",
+            "meaning": "SNMP system location",
+            "values": "up to 50 characters"
+          },
+          {
+            "name": "d",
+            "meaning": "SNMP get community name",
+            "values": "up to 19 characters",
+            "default": "public"
+          },
+          {
+            "name": "e",
+            "meaning": "SNMP set community name",
+            "values": "up to 19 characters",
+            "default": "public"
+          },
+          {
+            "name": "f",
+            "meaning": "SNMP trap community name",
+            "values": "up to 20 characters",
+            "default": "public"
+          }
+        ],
+        "example": "^NNZPLab"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3073,6 +7081,18 @@
       "section": "Network",
       "title": "boot settings source: printer vs print server",
       "summary": "Selects whether boot-time network settings come from the printer or attached print server.",
+      "reference": {
+        "syntax": "^NPa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "primary source for boot settings",
+            "values": "P printer, M print server",
+            "default": "P"
+          }
+        ],
+        "example": "^NPP"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3086,6 +7106,11 @@
       "section": "Network",
       "title": "set all transparent, legacy RS-485 only",
       "summary": "Switches all printers on a legacy multidrop line into transparent receive mode.",
+      "reference": {
+        "syntax": "~NR",
+        "params": [],
+        "example": "~NR"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -3099,6 +7124,22 @@
       "section": "Network",
       "title": "set SMTP",
       "summary": "Configures SMTP server and domain settings for print-server email alerts.",
+      "reference": {
+        "syntax": "^NTa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "SMTP server address",
+            "values": "IPv4 address"
+          },
+          {
+            "name": "b",
+            "meaning": "print server domain name",
+            "values": "domain name"
+          }
+        ],
+        "example": "^NT10.10.10.10,zebra.com"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3112,6 +7153,11 @@
       "section": "Network",
       "title": "set connected printer transparent, legacy RS-485 only",
       "summary": "Switches the addressed legacy multidrop printer into transparent receive mode.",
+      "reference": {
+        "syntax": "~NT",
+        "params": [],
+        "example": "~NT"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -3125,6 +7171,18 @@
       "section": "Network",
       "title": "web auth timeout",
       "summary": "Sets how long an authenticated IP address can access printer web pages before reauthentication.",
+      "reference": {
+        "syntax": "^NWa",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "web page authentication timeout",
+            "values": "0 to 255 minutes",
+            "default": "5"
+          }
+        ],
+        "example": "^NW5"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3138,6 +7196,34 @@
       "section": "Network",
       "title": "set client identifier",
       "summary": "Sets the DHCP client identifier form and value for the print server.",
+      "reference": {
+        "syntax": "^KCa,b,c,d",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "client identifier mode",
+            "values": "0 disabled, 1 MAC address, 2 ASCII, 3 HEX",
+            "default": "0"
+          },
+          {
+            "name": "b",
+            "meaning": "device the identifier applies to",
+            "values": "0 all, 1 wireless, 2 external wired, 3 internal wired",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "identifier prefix",
+            "values": "11 ASCII or 22 hex characters"
+          },
+          {
+            "name": "d",
+            "meaning": "identifier suffix",
+            "values": "up to 60 ASCII or 120 hex chars"
+          }
+        ],
+        "example": "^KC1,1"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3151,6 +7237,67 @@
       "section": "Network",
       "title": "change network settings",
       "summary": "Configures IP address, subnet mask and gateway for a printer network interface.",
+      "reference": {
+        "syntax": "^NDa,b,c,d,e,f,g,h,i,j",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "device being modified",
+            "values": "1 external wired, 2 internal wired, 3 wireless"
+          },
+          {
+            "name": "b",
+            "meaning": "IP resolution method",
+            "values": "A all, B BOOTP, C DHCP and BOOTP, D DHCP, G gleaning only, R RARP, P permanent",
+            "default": "A"
+          },
+          {
+            "name": "c",
+            "meaning": "IP address",
+            "values": "IPv4 address"
+          },
+          {
+            "name": "d",
+            "meaning": "subnet mask",
+            "values": "IPv4 subnet mask"
+          },
+          {
+            "name": "e",
+            "meaning": "default gateway",
+            "values": "IPv4 address"
+          },
+          {
+            "name": "f",
+            "meaning": "WINS server address",
+            "values": "IPv4 address"
+          },
+          {
+            "name": "g",
+            "meaning": "connection timeout checking",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "h",
+            "meaning": "connection timeout value",
+            "values": "0 to 9999 seconds",
+            "default": "300"
+          },
+          {
+            "name": "i",
+            "meaning": "ARP broadcast interval",
+            "values": "0 to 30 minutes",
+            "default": "0 none"
+          },
+          {
+            "name": "j",
+            "meaning": "base raw port number",
+            "values": "1 to 65535",
+            "default": "9100"
+          }
+        ],
+        "example": "^ND1,D"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3164,6 +7311,62 @@
       "section": "Network",
       "title": "change wired network settings",
       "summary": "Configures wired print-server IP settings, timeouts and raw port for older firmware.",
+      "reference": {
+        "syntax": "^NSa,b,c,d,e,f,g,h,i",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "IP resolution method",
+            "values": "A all, B BOOTP, C DHCP and BOOTP, D DHCP, G gleaning only, R RARP, P permanent",
+            "default": "A"
+          },
+          {
+            "name": "b",
+            "meaning": "IP address",
+            "values": "IPv4 address"
+          },
+          {
+            "name": "c",
+            "meaning": "subnet mask",
+            "values": "IPv4 subnet mask"
+          },
+          {
+            "name": "d",
+            "meaning": "default gateway",
+            "values": "IPv4 address"
+          },
+          {
+            "name": "e",
+            "meaning": "WINS server address",
+            "values": "IPv4 address"
+          },
+          {
+            "name": "f",
+            "meaning": "connection timeout checking",
+            "values": "Y yes, N no",
+            "default": "Y"
+          },
+          {
+            "name": "g",
+            "meaning": "connection timeout value",
+            "values": "0 to 9999 seconds",
+            "default": "300"
+          },
+          {
+            "name": "h",
+            "meaning": "ARP broadcast interval",
+            "values": "0 to 30 minutes",
+            "default": "0 none"
+          },
+          {
+            "name": "i",
+            "meaning": "base raw port number",
+            "values": "1 to 65535",
+            "default": "9100"
+          }
+        ],
+        "example": "^NSD"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3177,6 +7380,24 @@
       "section": "Network",
       "title": "set antenna parameters",
       "summary": "Selects receive and transmit antennas for the wireless radio.",
+      "reference": {
+        "syntax": "^WAa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "receive antenna",
+            "values": "D diversity, L left, R right",
+            "default": "D"
+          },
+          {
+            "name": "b",
+            "meaning": "transmit antenna",
+            "values": "D diversity, L left, R right",
+            "default": "D"
+          }
+        ],
+        "example": "^WAD,D"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3190,6 +7411,56 @@
       "section": "Network",
       "title": "set WEP mode, obsolete, use ^WX",
       "summary": "Configures obsolete WEP security and key material for older wireless firmware.",
+      "reference": {
+        "syntax": "^WEa,b,c,d,e,f,g,h",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "encryption mode",
+            "values": "OFF none, 40 40-bit, 128 128-bit",
+            "default": "OFF"
+          },
+          {
+            "name": "b",
+            "meaning": "encryption key index",
+            "values": "1 to 4",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "authentication type",
+            "values": "O open system, S shared key",
+            "default": "O"
+          },
+          {
+            "name": "d",
+            "meaning": "encryption key storage format",
+            "values": "H hex, S string",
+            "default": "H"
+          },
+          {
+            "name": "e",
+            "meaning": "encryption key 1",
+            "values": "hex pairs or alphanumeric string"
+          },
+          {
+            "name": "f",
+            "meaning": "encryption key 2",
+            "values": "hex pairs or alphanumeric string"
+          },
+          {
+            "name": "g",
+            "meaning": "encryption key 3",
+            "values": "hex pairs or alphanumeric string"
+          },
+          {
+            "name": "h",
+            "meaning": "encryption key 4",
+            "values": "hex pairs or alphanumeric string"
+          }
+        ],
+        "example": "^WE40,,,,12345"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -3203,6 +7474,30 @@
       "section": "Network",
       "title": "set LEAP, obsolete, use ^WX",
       "summary": "Configures obsolete Cisco LEAP authentication for older wireless firmware.",
+      "reference": {
+        "syntax": "^WLa,b,c",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "LEAP mode",
+            "values": "OFF, ON",
+            "default": "OFF"
+          },
+          {
+            "name": "b",
+            "meaning": "user name",
+            "values": "1 to 32 characters",
+            "default": "user"
+          },
+          {
+            "name": "c",
+            "meaning": "password",
+            "values": "1 to 32 characters",
+            "default": "password"
+          }
+        ],
+        "example": "^WLON,user,password"
+      },
       "support": {
         "web": "no",
         "desktop": "no"
@@ -3216,6 +7511,24 @@
       "section": "Network",
       "title": "set wireless password",
       "summary": "Sets the password for wireless settings on the printer control panel.",
+      "reference": {
+        "syntax": "^WPa,b",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "old wireless password",
+            "values": "0000 to 9999",
+            "default": "0000"
+          },
+          {
+            "name": "b",
+            "meaning": "new wireless password",
+            "values": "0000 to 9999",
+            "default": "0000"
+          }
+        ],
+        "example": "^WP0000,1234"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3229,6 +7542,37 @@
       "section": "Network",
       "title": "set transmit rate",
       "summary": "Configures 802.11b data rates and transmit power on older wireless print servers.",
+      "reference": {
+        "syntax": "^WRa,b,c,d,e",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "1 Mb per second transmit rate",
+            "values": "Y on, N off"
+          },
+          {
+            "name": "b",
+            "meaning": "2 Mb per second transmit rate",
+            "values": "Y on, N off"
+          },
+          {
+            "name": "c",
+            "meaning": "5.5 Mb per second transmit rate",
+            "values": "Y on, N off"
+          },
+          {
+            "name": "d",
+            "meaning": "11 Mb per second transmit rate",
+            "values": "Y on, N off"
+          },
+          {
+            "name": "e",
+            "meaning": "transmit power",
+            "values": "1, 5, 20, 30, 50, 100"
+          }
+        ],
+        "example": "^WRY,Y,Y,Y,30"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3242,6 +7586,54 @@
       "section": "Network",
       "title": "set wireless radio card values",
       "summary": "Configures wireless network name, radio mode, preamble length and keep-alive behavior.",
+      "reference": {
+        "syntax": "^WSe,o,p,h,i,j,k",
+        "params": [
+          {
+            "name": "e",
+            "meaning": "ESSID value",
+            "values": "up to 32 characters",
+            "default": "125"
+          },
+          {
+            "name": "o",
+            "meaning": "operating mode",
+            "values": "I infrastructure, A adhoc",
+            "default": "I"
+          },
+          {
+            "name": "p",
+            "meaning": "radio card preamble length",
+            "values": "L long, S short",
+            "default": "L"
+          },
+          {
+            "name": "h",
+            "meaning": "wireless pulse enabled",
+            "values": "0 disabled, 1 enabled",
+            "default": "1"
+          },
+          {
+            "name": "i",
+            "meaning": "wireless pulse interval",
+            "values": "5 to 300 seconds",
+            "default": "15"
+          },
+          {
+            "name": "j",
+            "meaning": "channel mask",
+            "values": "4 hex digits with 0x prefix",
+            "default": "0x7FF"
+          },
+          {
+            "name": "k",
+            "meaning": "international mode",
+            "values": "0 disabled, 1 enabled",
+            "default": "0"
+          }
+        ],
+        "example": "^WSZPLab,I,L"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3255,6 +7647,90 @@
       "section": "Network",
       "title": "configure wireless security",
       "summary": "Configures wireless security mode, keys and credentials in one command.",
+      "reference": {
+        "syntax": "^WXa,b,c,d,e,f,g,h,i,j,k,l,m,n",
+        "params": [
+          {
+            "name": "a",
+            "meaning": "security type code",
+            "values": "01 none, 02 WEP 40, 03 WEP 128, 04 to 08 EAP types, 09 WPA PSK, 10 to 14 WPA EAP, 15 Kerberos",
+            "default": "01"
+          },
+          {
+            "name": "b",
+            "meaning": "WEP encryption key index",
+            "values": "1 to 4",
+            "default": "1"
+          },
+          {
+            "name": "c",
+            "meaning": "WEP authentication type",
+            "values": "O open system, S shared key",
+            "default": "O"
+          },
+          {
+            "name": "d",
+            "meaning": "WEP key storage format",
+            "values": "H hex, S string",
+            "default": "S"
+          },
+          {
+            "name": "e",
+            "meaning": "WEP encryption key 1",
+            "values": "hex pairs or alphanumeric string"
+          },
+          {
+            "name": "f",
+            "meaning": "WEP encryption key 2",
+            "values": "hex pairs or alphanumeric string"
+          },
+          {
+            "name": "g",
+            "meaning": "WEP encryption key 3",
+            "values": "hex pairs or alphanumeric string"
+          },
+          {
+            "name": "h",
+            "meaning": "WEP encryption key 4",
+            "values": "hex pairs or alphanumeric string"
+          },
+          {
+            "name": "i",
+            "meaning": "user ID for the security type",
+            "values": "any string",
+            "default": "user"
+          },
+          {
+            "name": "j",
+            "meaning": "password for the security type",
+            "values": "any string",
+            "default": "password"
+          },
+          {
+            "name": "k",
+            "meaning": "optional private key password",
+            "values": "any string"
+          },
+          {
+            "name": "l",
+            "meaning": "Kerberos realm",
+            "values": "any string",
+            "default": "kerberos"
+          },
+          {
+            "name": "m",
+            "meaning": "Kerberos key distribution center",
+            "values": "any string",
+            "default": "krbtgt"
+          },
+          {
+            "name": "n",
+            "meaning": "pre-shared key value",
+            "values": "minimum 64 hex digits"
+          }
+        ],
+        "example": "^WX01"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3268,6 +7744,11 @@
       "section": "Network",
       "title": "print network configuration label",
       "summary": "Prints a network configuration label while the printer is idle.",
+      "reference": {
+        "syntax": "~WL",
+        "params": [],
+        "example": "~WL"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"
@@ -3281,6 +7762,11 @@
       "section": "Network",
       "title": "reset wireless radio card",
       "summary": "Restarts the wireless radio card and print server, causing the radio to rejoin the network.",
+      "reference": {
+        "syntax": "~WR",
+        "params": [],
+        "example": "~WR"
+      },
       "support": {
         "web": "no",
         "desktop": "planned"

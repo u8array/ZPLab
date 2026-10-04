@@ -22,7 +22,7 @@ const paramSchema = z.object({
 }).strict();
 export type CommandParam = z.infer<typeof paramSchema>;
 
-const referenceSchema = z.object({ syntax: z.string().min(1), params: z.array(paramSchema).min(1), example: z.string().min(1) }).strict();
+const referenceSchema = z.object({ syntax: z.string().min(1), params: z.array(paramSchema), example: z.string().min(1) }).strict();
 export type CommandReference = z.infer<typeof referenceSchema>;
 
 const commandSchema = z.object({

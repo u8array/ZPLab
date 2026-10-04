@@ -53,7 +53,7 @@ describe("catalog panes", () => {
     expect(detail(first.getByTestId).getAllByRole("listitem")).toHaveLength(3);
     expect(detail(first.getByTestId).getByText("^FO50,50^A0N,30,30^FDHello^FS")).toBeTruthy();
     first.unmount();
-    const second = render(<CatalogPanes cursor={{ id: "^XA", from: 0, pointed: true }} onInsert={vi.fn()} />);
+    const second = render(<CatalogPanes cursor={{ id: "^RI", from: 0, pointed: true }} onInsert={vi.fn()} />);
     expect(second.queryByRole("list")).toBeNull();
   });
 
