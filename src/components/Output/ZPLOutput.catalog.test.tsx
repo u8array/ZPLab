@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// Real CodeMirror: the reference panel's caret feed and insert seam run through the editor.
+// Real CodeMirror: the catalog panes' caret feed and insert seam run through the editor.
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { render, cleanup, act, fireEvent, within, screen } from "@testing-library/react";
 import { EditorView } from "@codemirror/view";
@@ -45,7 +45,7 @@ const placePointerCaret = (view: EditorView, needle: string, length = 0): number
   return pos;
 };
 
-describe("reference panel wiring", () => {
+describe("catalog pane wiring", () => {
   it("inserts before the closing ^XZ while no caret has been placed", () => {
     const view = mount();
     expect(detail().getByText(/Place the cursor/)).toBeTruthy();
@@ -91,7 +91,7 @@ describe("reference panel wiring", () => {
     placePointerCaret(view, "^FO");
     expect(detail().getByText("field origin")).toBeTruthy();
     act(() => useLabelStore.setState({ currentPageIndex: 1 }));
-    // The panel and the insert agree: no caret counts until the user places one again.
+    // The panes and the insert agree: no caret counts until the user places one again.
     expect(detail().getByText(/Place the cursor/)).toBeTruthy();
     fireEvent.doubleClick(screen.getByRole("option", { name: /\^LL/ }));
     const blocks = blocksOf(view);
@@ -111,12 +111,13 @@ describe("reference panel wiring", () => {
     expect(detail().getByText("label length")).toBeTruthy();
   });
 
-  it("refuses pointer focus for rows and the list toggle while the editor holds it, never for search or prose", () => {
+  it("refuses pointer focus for rows and both pane toggles while the editor holds it, never for search or prose", () => {
     const view = mount();
     placePointerCaret(view, "hello");
     // fireEvent returns false when a handler called preventDefault. Here that default is the focus move.
     expect(fireEvent.mouseDown(screen.getByRole("option", { name: /\^LL/ }))).toBe(false);
     expect(fireEvent.mouseDown(screen.getByRole("button", { name: "Command list" }))).toBe(false);
+    expect(fireEvent.mouseDown(screen.getByRole("button", { name: "ZPL reference" }))).toBe(false);
     expect(fireEvent.mouseDown(screen.getByRole("searchbox"))).toBe(true);
     expect(fireEvent.mouseDown(detail().getByText("field data"))).toBe(true);
   });

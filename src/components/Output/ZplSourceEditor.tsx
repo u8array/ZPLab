@@ -19,7 +19,8 @@ import { useSessionExit } from '../../hooks/useSessionExit';
 import { useCatalogSelection } from '../../hooks/useCatalogSelection';
 import { useT } from '../../hooks/useT';
 import ZplCodeMirror, { type ZplCodeMirrorHandle } from './ZplCodeMirror';
-import { ZplCatalogPanel } from './ZplCatalogPanel';
+import { ZplCatalogList } from './ZplCatalogList';
+import { ZplCatalogDetail } from './ZplCatalogDetail';
 import type { CursorCommand } from '../../lib/zplLanguage';
 import { buildSourceDiagnostics, type SourceLint } from '../../lib/sourceDiagnostics';
 
@@ -59,6 +60,7 @@ export function ZplSourceEditor({
   const editorRef = useRef<ZplCodeMirrorHandle>(null);
   const [cursorCommand, setCursorCommand] = useState<CursorCommand | null>(null);
   const catalog = useCatalogSelection(cursorCommand);
+  const editorHasFocus = () => editorRef.current?.hasFocus() ?? false;
   const gateMsg = gateRefusal !== null ? sourceRefusalText(gateRefusal, t) : null;
 
   const shadowRefusal = useLabelStore(selectShadowRefusal);
@@ -92,6 +94,11 @@ export function ZplSourceEditor({
   return (
     <div className="flex flex-col flex-1 min-h-0">
       <div className="flex flex-1 min-h-0 min-w-0">
+        <ZplCatalogList
+          selection={catalog}
+          onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined}
+          editorHasFocus={editorHasFocus}
+        />
         <div className="flex flex-col flex-1 min-h-0 min-w-[14rem] bg-surface-2 font-mono text-xs text-text">
           <ZplCodeMirror
             key={crlfKey ? 'crlf' : 'lf'}
@@ -117,11 +124,7 @@ export function ZplSourceEditor({
             onEscape={catalog.unpin}
           />
         </div>
-        <ZplCatalogPanel
-          selection={catalog}
-          onInsert={canInsert ? (text) => editorRef.current?.insertCommand(text) : undefined}
-          editorHasFocus={() => editorRef.current?.hasFocus() ?? false}
-        />
+        <ZplCatalogDetail selection={catalog} editorHasFocus={editorHasFocus} />
       </div>
       {gateMsg !== null && (
         <p

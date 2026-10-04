@@ -36,8 +36,6 @@ import {
   Cog6ToothIcon,
   PaperAirplaneIcon,
   XMarkIcon,
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
   SunIcon,
   MoonIcon,
   GlobeAltIcon,
@@ -71,33 +69,7 @@ import { useCsvImportActions } from "../hooks/useCsvImportActions";
 import { useZplImportExport } from "../hooks/useZplImportExport";
 import { useOutputPanel, OUTPUT_DEFAULT_H } from "../hooks/useOutputPanel";
 import { useCollapsiblePanel } from "../hooks/useCollapsiblePanel";
-
-/** Thin clickable rail shown in place of a collapsed side panel; clicking it
- *  brings the panel back. Chevrons point toward the canvas (the panel's slot). */
-function ExpandStrip({
-  side,
-  onExpand,
-  title,
-}: {
-  side: "left" | "right";
-  onExpand: () => void;
-  title: string;
-}) {
-  const Icon = side === "left" ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
-  return (
-    <Tooltip content={title} className="shrink-0 h-full">
-      <button
-        onClick={onExpand}
-        aria-label={title}
-        className={`w-5 h-full ${
-          side === "left" ? "border-r" : "border-l"
-        } border-border bg-surface hover:bg-surface-2 flex items-start justify-center pt-2 text-muted hover:text-text transition-colors`}
-      >
-        <Icon className="w-3.5 h-3.5" />
-      </button>
-    </Tooltip>
-  );
-}
+import { PaneToggle } from "./ui/PaneToggle";
 
 /** Icons per menu item id, shared by both surfaces: the DOM dropdown renders
  *  them as components, the native menu rasterizes them (useNativeMenu). */
@@ -506,19 +478,11 @@ export function AppShell() {
       <DndContext sensors={sensors} collisionDetection={collisionDetection}>
       <div ref={mainRowRef} className="flex flex-1 min-h-0 overflow-hidden">
         {leftPanel.collapsed ? (
-          <ExpandStrip side="left" onExpand={leftPanel.expand} title={t.app.expand} />
+          <PaneToggle side="left" open={false} title={t.app.expand} onToggle={leftPanel.expand} />
         ) : (
           <aside className="w-56 shrink-0 border-r border-border bg-surface flex flex-col min-h-0">
             <div className="shrink-0 flex border-b border-border bg-surface">
-              <Tooltip content={t.app.collapse}>
-                <button
-                  onClick={leftPanel.collapse}
-                  aria-label={t.app.collapse}
-                  className="px-2 flex items-center justify-center border-r border-border text-muted hover:text-text transition-colors"
-                >
-                  <ChevronDoubleLeftIcon className="w-3.5 h-3.5" />
-                </button>
-              </Tooltip>
+              <PaneToggle side="left" open title={t.app.collapse} onToggle={leftPanel.collapse} />
               <div className="flex flex-1 items-center px-2">
                 <PaletteEditToggle />
               </div>
@@ -547,7 +511,7 @@ export function AppShell() {
         </main>
 
         {rightPanel.collapsed ? (
-          <ExpandStrip side="right" onExpand={rightPanel.expand} title={t.app.expand} />
+          <PaneToggle side="right" open={false} title={t.app.expand} onToggle={rightPanel.expand} />
         ) : (
           <RightSidebar canvasRef={canvasRef} onCollapse={rightPanel.collapse} />
         )}

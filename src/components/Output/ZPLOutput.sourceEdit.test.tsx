@@ -74,6 +74,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  localStorage.removeItem("zpl:section:catalog-detail");
   copiedTexts.length = 0;
   vi.restoreAllMocks();
 });
@@ -95,6 +96,22 @@ const leavePanel = async (container: HTMLElement) => {
 };
 
 describe("the implicit session", () => {
+  it("survives folding a catalog pane, whose toggle keeps the focus it took", async () => {
+    const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XA^FO1,1^FDx^FS^XZ");
+    vi.spyOn(document, "hasFocus").mockReturnValue(true);
+    const toggle = screen.getByRole("button", { name: "ZPL reference" });
+    toggle.focus();
+    fireEvent.focusOut(panelRoot(container));
+    fireEvent.click(toggle);
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(screen.queryByTestId("catalog-detail")).toBeNull();
+    expect(document.activeElement).toBe(toggle);
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+  });
+
   it("is read-only while a preview is active", () => {
     useLabelStore.setState({ previewMode: { status: "active", url: "blob:x" } });
     render(<ZPLOutput onResizeMouseDown={vi.fn()} />);

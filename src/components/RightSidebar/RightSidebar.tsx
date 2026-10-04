@@ -3,7 +3,6 @@ import {
   AdjustmentsHorizontalIcon,
   RectangleStackIcon,
   VariableIcon,
-  ChevronDoubleRightIcon,
 } from '@heroicons/react/16/solid';
 import { PropertiesPanel } from '../Properties/PropertiesPanel';
 import { LayersPanel } from '../Properties/LayersPanel';
@@ -15,6 +14,7 @@ import type { SidebarTab } from '../../store/slices/uiSlice';
 import type { LabelCanvasHandle } from '../Canvas/LabelCanvas';
 import { AaIcon } from './AaIcon';
 import { Tooltip } from '../ui/Tooltip';
+import { PaneToggle } from '../ui/PaneToggle';
 
 type TabId = SidebarTab;
 
@@ -77,15 +77,7 @@ export function RightSidebar({ canvasRef, onCollapse }: Props) {
           })}
         </div>
         {onCollapse && (
-          <Tooltip content={t.app.collapse}>
-            <button
-              onClick={onCollapse}
-              aria-label={t.app.collapse}
-              className="px-2 flex items-center justify-center border-l border-border text-muted hover:text-text transition-colors"
-            >
-              <ChevronDoubleRightIcon className="w-3.5 h-3.5" />
-            </button>
-          </Tooltip>
+          <PaneToggle side="right" open title={t.app.collapse} onToggle={onCollapse} />
         )}
       </div>
       {/* relative: contains the panels' absolutely-positioned `sr-only` section

@@ -60,8 +60,8 @@ export function useSessionExit(
     };
     const onKeyDown = (e: KeyboardEvent) => {
       // Each layer takes a press: a visible catalog pin and a non-empty selection are
-      // consumed by the editor's keymap before the session sees Escape. The reference
-      // panel itself runs after this native listener, so it opts out by attribute.
+      // consumed by the editor's keymap before the session sees Escape. The catalog
+      // panes run after this native listener, so they opt out by attribute.
       if (e.key !== 'Escape' || e.defaultPrevented) return;
       const target = e.target instanceof Element ? e.target : null;
       if (!target?.closest('[data-session-exit-ignore]')) handlersRef.current.onEscape();

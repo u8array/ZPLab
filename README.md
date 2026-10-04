@@ -95,7 +95,7 @@ The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the
 
 The **ZPL** panel highlights syntax and collapses long blocks of image data. Selecting a canvas object marks its ZPL lines. A notice above the code lists commands that change saved printer settings or control the printer.
 
-The **ZPL reference** beside the code follows the cursor. Search to filter the list, or click a command to pin its details. A double-click or the right-click menu inserts the command at the cursor. The chevron in the heading folds the list.
+The **command list** left of the code filters as you search. The **ZPL reference** on the right follows the cursor. Click a command to pin its details. A double-click or the right-click menu inserts the command at the cursor. A chevron folds each pane to a rail. Click the rail to bring it back.
 
 While you edit, the canvas shows a live preview. Canvas editing and the **Properties** tab are disabled. Page switching stays enabled. The editor refuses source that is too large or has mismatched `^XA`/`^XZ` commands, and marks the mismatches. Click a mark to insert the missing command.
 
@@ -180,9 +180,9 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 | `Alt/⌥`+click | Cycle selection through stacked objects |
 | Scroll, middle mouse or `Space`+drag | Pan canvas |
 | `Ctrl/⌘`+Scroll | Zoom |
-| `↑` / `↓` in the ZPL reference | Move through the list |
-| `Enter` in the ZPL reference | Insert the highlighted command |
-| `Esc` in the ZPL reference | Follow the cursor again |
+| `↑` / `↓` in the command list | Move through the list |
+| `Enter` in the command list | Insert the highlighted command |
+| `Esc` in the command list or the ZPL reference | Follow the cursor again |
 
 ## Coverage
 
