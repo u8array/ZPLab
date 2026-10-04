@@ -600,8 +600,8 @@
     "summary": "Sprawia, że nieudany test elementu głowicy zatrzymuje druk aż do zresetowania drukarki lub przywrócenia trybu tolerancyjnego."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Pozwala kontynuować druk po nieudanym teście elementu głowicy."
+    "hash": "4d4bdb11",
+    "summary": "Zgłasza nieudany test elementu głowicy jako błąd, który PAUSE może usunąć bez wyłączania i włączania drukarki."
   },
   "~JP": {
     "hash": "8d1d171d",

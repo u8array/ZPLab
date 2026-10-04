@@ -5365,7 +5365,7 @@
       ],
       "section": "Hardware control & calibration",
       "title": "printhead test non-fatal",
-      "summary": "Allows printing to continue after a failed printhead element test.",
+      "summary": "Reports a failed printhead element test as an error that PAUSE can clear without a power cycle.",
       "reference": {
         "syntax": "~JO",
         "params": [],

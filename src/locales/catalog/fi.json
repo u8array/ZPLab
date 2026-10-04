@@ -600,8 +600,8 @@
     "summary": "Saa epäonnistuneet tulostuspään elementtitestit pysäyttämään tulostuksen, kunnes tulostin nollataan tai sietotila palautetaan."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Sallii tulostuksen jatkua epäonnistuneen tulostuspään elementtitestin jälkeen."
+    "hash": "4d4bdb11",
+    "summary": "Ilmoittaa epäonnistuneen tulostuspään elementtitestin virheenä, jonka PAUSE voi poistaa sammuttamatta ja käynnistämättä tulostinta uudelleen."
   },
   "~JP": {
     "hash": "8d1d171d",

@@ -600,8 +600,8 @@
     "summary": "A sikertelen nyomtatófej-elem teszt leállítja a nyomtatást, amíg a nyomtatót újra nem indítják, vagy vissza nem állítják a tűrő módot."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Engedélyezi a nyomtatás folytatását egy sikertelen nyomtatófej-elem teszt után."
+    "hash": "4d4bdb11",
+    "summary": "A sikertelen nyomtatófej-elem tesztet olyan hibaként jelzi, amelyet a PAUSE a nyomtató ki- és bekapcsolása nélkül is törölni tud."
   },
   "~JP": {
     "hash": "8d1d171d",

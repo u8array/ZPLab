@@ -600,8 +600,8 @@
     "summary": "Muudab nii, et ebaõnnestunud prindipea elemendi testid peatavad printimise, kuni printer lähtestatakse või taluv režiim taastatakse."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Lubab printimist jätkata pärast ebaõnnestunud prindipea elemendi testi."
+    "hash": "4d4bdb11",
+    "summary": "Teatab ebaõnnestunud prindipea elemendi testist veana, mille PAUSE saab kustutada printerit välja ja sisse lülitamata."
   },
   "~JP": {
     "hash": "8d1d171d",

@@ -600,8 +600,8 @@
     "summary": "Poskrbi, da neuspešna preverjanja elementov tiskalne glave ustavijo tiskanje, dokler se tiskalnik ne ponastavi ali ne povrne v toleranten način."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Dovoli nadaljevanje tiskanja po neuspešnem preverjanju elementa tiskalne glave."
+    "hash": "4d4bdb11",
+    "summary": "Sporoči neuspešno preverjanje elementa tiskalne glave kot napako, ki jo lahko PAUSE odpravi brez izklopa in vklopa tiskalnika."
   },
   "~JP": {
     "hash": "8d1d171d",

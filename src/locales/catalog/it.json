@@ -600,8 +600,8 @@
     "summary": "Fa sì che i test falliti sugli elementi della testina blocchino la stampa finché la stampante non viene riavviata o ripristinata in modalità tollerante."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Consente alla stampa di continuare dopo un test fallito su un elemento della testina."
+    "hash": "4d4bdb11",
+    "summary": "Segnala un test non riuscito su un elemento della testina come errore che PAUSE può eliminare senza spegnere e riaccendere la stampante."
   },
   "~JP": {
     "hash": "8d1d171d",

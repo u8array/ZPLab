@@ -600,8 +600,8 @@
     "summary": "Får mislykkede tests af printhovedets elementer til at stoppe udskrivningen, indtil printeren nulstilles, eller tolerant tilstand genoprettes."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Tillader, at udskrivningen fortsætter efter en mislykket test af printhovedets elementer."
+    "hash": "4d4bdb11",
+    "summary": "Rapporterer en mislykket test af printhovedets elementer som en fejl, som PAUSE kan rydde uden at slukke og tænde printeren."
   },
   "~JP": {
     "hash": "8d1d171d",

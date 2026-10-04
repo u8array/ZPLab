@@ -600,8 +600,8 @@
     "summary": "Postavlja da neuspjeli testovi elemenata glave za ispis zaustave ispis dok se pisač ne resetira ili ne vrati tolerantni način rada."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Dopušta nastavak ispisa nakon neuspjelog testa elementa glave za ispis."
+    "hash": "4d4bdb11",
+    "summary": "Prijavljuje neuspjeli test elementa glave za ispis kao pogrešku koju PAUSE može ukloniti bez isključivanja i ponovnog uključivanja pisača."
   },
   "~JP": {
     "hash": "8d1d171d",

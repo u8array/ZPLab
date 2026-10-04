@@ -600,8 +600,8 @@
     "summary": "Zorgt dat mislukte tests van printkopelementen het printen stopzetten, totdat de printer wordt gereset of de tolerante modus wordt hersteld."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Staat toe dat het printen doorgaat na een mislukte test van een printkopelement."
+    "hash": "4d4bdb11",
+    "summary": "Meldt een mislukte test van een printkopelement als een fout die PAUSE kan wissen zonder de printer uit en weer aan te zetten."
   },
   "~JP": {
     "hash": "8d1d171d",

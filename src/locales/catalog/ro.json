@@ -600,8 +600,8 @@
     "summary": "Face ca testele eșuate ale elementelor capului de imprimare să oprească imprimarea, până la resetarea imprimantei sau la restabilirea modului tolerant."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Permite continuarea imprimării după eșuarea unui test al unui element al capului de imprimare."
+    "hash": "4d4bdb11",
+    "summary": "Raportează eșuarea unui test al unui element al capului de imprimare ca eroare pe care PAUSE o poate elimina fără a opri și reporni imprimanta."
   },
   "~JP": {
     "hash": "8d1d171d",

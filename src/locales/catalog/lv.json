@@ -600,8 +600,8 @@
     "summary": "Panāk, ka neveiksmīgs drukas galviņas elementa tests aptur drukāšanu, līdz printeris tiek restartēts vai atjaunots iecietīgais režīms."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Ļauj drukāšanai turpināties pēc neveiksmīga drukas galviņas elementa testa."
+    "hash": "4d4bdb11",
+    "summary": "Ziņo par neveiksmīgu drukas galviņas elementa testu kā kļūdu, ko PAUSE var novērst, printeri neizslēdzot un neieslēdzot no jauna."
   },
   "~JP": {
     "hash": "8d1d171d",

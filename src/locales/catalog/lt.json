@@ -600,8 +600,8 @@
     "summary": "Priverčia nepavykusius spausdinimo galvutės elementų testus sustabdyti spausdinimą, kol spausdintuvas perkraunamas arba atkuriamas tolerantiškas režimas."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Leidžia spausdinimui tęstis po nepavykusio spausdinimo galvutės elemento testo."
+    "hash": "4d4bdb11",
+    "summary": "Praneša apie nepavykusį spausdinimo galvutės elemento testą kaip klaidą, kurią PAUSE gali pašalinti neišjungiant ir neįjungiant spausdintuvo."
   },
   "~JP": {
     "hash": "8d1d171d",

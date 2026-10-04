@@ -600,8 +600,8 @@
     "summary": "Gör att misslyckade tester av skrivhuvudets element stoppar utskriften tills skrivaren startas om eller toleransläget återställs."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Tillåter att utskriften fortsätter efter ett misslyckat test av skrivhuvudets element."
+    "hash": "4d4bdb11",
+    "summary": "Rapporterar ett misslyckat test av ett skrivhuvudelement som ett fel som PAUSE kan rensa utan att stänga av och sätta på skrivaren igen."
   },
   "~JP": {
     "hash": "8d1d171d",

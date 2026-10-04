@@ -600,8 +600,8 @@
     "summary": "Faz com que testes falhados aos elementos da cabeça de impressão interrompam a impressão, até a impressora ser reiniciada ou o modo tolerante ser restaurado."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Permite que a impressão continue após um teste falhado a um elemento da cabeça de impressão."
+    "hash": "4d4bdb11",
+    "summary": "Comunica um teste falhado a um elemento da cabeça de impressão como um erro que o PAUSE pode eliminar sem desligar e voltar a ligar a impressora."
   },
   "~JP": {
     "hash": "8d1d171d",

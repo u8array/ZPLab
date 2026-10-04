@@ -600,8 +600,8 @@
     "summary": "Sorgt dafür, dass fehlgeschlagene Druckkopfelement-Tests den Druck stoppen, bis der Drucker zurückgesetzt oder der tolerante Modus wiederhergestellt wird."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Lässt den Druck nach einem fehlgeschlagenen Druckkopfelement-Test fortsetzen."
+    "hash": "4d4bdb11",
+    "summary": "Meldet einen fehlgeschlagenen Druckkopfelement-Test als Fehler, den PAUSE ohne Aus- und Wiedereinschalten des Druckers beheben kann."
   },
   "~JP": {
     "hash": "8d1d171d",

@@ -600,8 +600,8 @@
     "summary": "Başarısız baskı kafası eleman testlerinin, yazıcı sıfırlanana veya tolerans modu geri yüklenene kadar yazdırmayı durdurmasını sağlar."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Başarısız bir baskı kafası eleman testinden sonra yazdırmanın devam etmesine izin verir."
+    "hash": "4d4bdb11",
+    "summary": "Başarısız bir baskı kafası eleman testini, yazıcıyı kapatıp açmadan PAUSE ile temizlenebilen bir hata olarak bildirir."
   },
   "~JP": {
     "hash": "8d1d171d",

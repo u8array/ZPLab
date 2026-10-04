@@ -600,8 +600,8 @@
     "summary": "Fait en sorte qu'un échec des tests d'éléments de la tête d'impression arrête l'impression jusqu'à la réinitialisation de l'imprimante ou le rétablissement du mode tolérant."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Permet à l'impression de se poursuivre après un échec d'un test d'élément de la tête d'impression."
+    "hash": "4d4bdb11",
+    "summary": "Signale un échec de test d'élément de la tête d'impression comme une erreur que PAUSE peut effacer sans éteindre et rallumer l'imprimante."
   },
   "~JP": {
     "hash": "8d1d171d",

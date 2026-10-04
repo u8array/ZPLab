@@ -600,8 +600,8 @@
     "summary": "Hace que las pruebas fallidas de elementos del cabezal detengan la impresión hasta que se reinicie la impresora o se restaure el modo tolerante."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Permite que la impresión continúe después de una prueba fallida de elemento del cabezal."
+    "hash": "4d4bdb11",
+    "summary": "Registra una prueba fallida de elemento del cabezal como un error que PAUSE puede borrar sin apagar y encender la impresora."
   },
   "~JP": {
     "hash": "8d1d171d",

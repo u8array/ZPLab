@@ -600,8 +600,8 @@
     "summary": "Sørger for at mislykkede tester av skrivehodeelementer stopper utskriften inntil skriveren tilbakestilles eller toleransemodus gjenopprettes."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Lar utskriften fortsette etter en mislykket test av et skrivehodeelement."
+    "hash": "4d4bdb11",
+    "summary": "Rapporterer en mislykket test av et skrivehodeelement som en feil som PAUSE kan fjerne uten å slå skriveren av og på."
   },
   "~JP": {
     "hash": "8d1d171d",

@@ -600,8 +600,8 @@
     "summary": "Způsobuje, že neúspěšné testy prvků tiskové hlavy zastaví tisk, dokud se tiskárna neresetuje nebo se neobnoví tolerantní režim."
   },
   "~JO": {
-    "hash": "1a5843a5",
-    "summary": "Umožňuje pokračovat v tisku i po neúspěšném testu prvku tiskové hlavy."
+    "hash": "4d4bdb11",
+    "summary": "Hlásí neúspěšný test prvku tiskové hlavy jako chybu, kterou PAUSE může vymazat bez vypnutí a zapnutí tiskárny."
   },
   "~JP": {
     "hash": "8d1d171d",
