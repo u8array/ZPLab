@@ -1030,7 +1030,7 @@ const sl = {
     catalogInsert: 'Vstavi',
     catalogWeb: 'Splet',
     catalogDesktop: 'Namizje',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'da',
     catalogPlanned: 'načrtovano',
     catalogNo: 'ne',

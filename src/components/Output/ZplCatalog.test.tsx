@@ -108,14 +108,14 @@ describe("catalog panes", () => {
     expect((within(getByRole("menu")).getByRole("button", { name: /^Insert$/ }) as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it("shows the three support levels in web, desktop, lint order", () => {
+  it("shows the three support levels in web, desktop, docker order", () => {
     const levelsOf = (id: string) => {
       const { getByTestId, unmount } = render(<CatalogPanes cursor={{ id, from: 0, pointed: true }} onInsert={vi.fn()} />);
       const levels = [...getByTestId("catalog-detail").querySelectorAll("dd")].map((dd) => dd.textContent);
       unmount();
       return levels;
     };
-    expect(levelsOf("^LL")).toEqual(["yes", "yes", "no"]);
+    expect(levelsOf("^LL")).toEqual(["yes", "yes", "yes"]);
     expect(levelsOf("^LF")).toEqual(["no", "planned", "no"]);
     expect(levelsOf("^JW")).toEqual(["no", "no", "no"]);
   });

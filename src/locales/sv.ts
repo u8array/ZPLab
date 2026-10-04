@@ -1030,7 +1030,7 @@ const sv = {
     catalogInsert: 'Infoga',
     catalogWeb: 'Webb',
     catalogDesktop: 'Skrivbord',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'ja',
     catalogPlanned: 'planerad',
     catalogNo: 'nej',

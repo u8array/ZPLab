@@ -1067,7 +1067,7 @@ const de = {
     catalogInsert: 'Einfügen',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'ja',
     catalogPlanned: 'geplant',
     catalogNo: 'nein',

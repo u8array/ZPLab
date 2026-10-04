@@ -1030,7 +1030,7 @@ const no = {
     catalogInsert: 'Sett inn',
     catalogWeb: 'Web',
     catalogDesktop: 'Skrivebord',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'ja',
     catalogPlanned: 'planlagt',
     catalogNo: 'nei',

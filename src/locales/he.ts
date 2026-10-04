@@ -1030,7 +1030,7 @@ const he = {
     catalogInsert: 'הוסף',
     catalogWeb: 'אינטרנט',
     catalogDesktop: 'שולחן עבודה',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'כן',
     catalogPlanned: 'מתוכנן',
     catalogNo: 'לא',

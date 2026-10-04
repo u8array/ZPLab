@@ -1030,7 +1030,7 @@ const et = {
     catalogInsert: 'Lisa',
     catalogWeb: 'Veeb',
     catalogDesktop: 'Töölaud',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'jah',
     catalogPlanned: 'planeeritud',
     catalogNo: 'ei',

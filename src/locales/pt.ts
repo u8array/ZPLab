@@ -1030,7 +1030,7 @@ const pt = {
     catalogInsert: 'Inserir',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'sim',
     catalogPlanned: 'planejado',
     catalogNo: 'não',

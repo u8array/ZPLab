@@ -1030,7 +1030,7 @@ const el = {
     catalogInsert: 'Εισαγωγή',
     catalogWeb: 'Ιστός',
     catalogDesktop: 'Επιτραπέζιο',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'ναι',
     catalogPlanned: 'προγραμματισμένο',
     catalogNo: 'όχι',

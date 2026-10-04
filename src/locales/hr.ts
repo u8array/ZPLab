@@ -1030,7 +1030,7 @@ const hr = {
     catalogInsert: 'Umetni',
     catalogWeb: 'Web',
     catalogDesktop: 'Radna površina',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'da',
     catalogPlanned: 'planirano',
     catalogNo: 'ne',

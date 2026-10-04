@@ -1030,7 +1030,7 @@ const pl = {
     catalogInsert: 'Wstaw',
     catalogWeb: 'Web',
     catalogDesktop: 'Komputer',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'tak',
     catalogPlanned: 'planowane',
     catalogNo: 'nie',

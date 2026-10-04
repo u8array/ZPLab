@@ -1030,7 +1030,7 @@ const fi = {
     catalogInsert: 'Lisää',
     catalogWeb: 'Web',
     catalogDesktop: 'Työpöytä',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'kyllä',
     catalogPlanned: 'suunniteltu',
     catalogNo: 'ei',

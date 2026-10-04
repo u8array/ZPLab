@@ -1030,7 +1030,7 @@ const fr = {
     catalogInsert: 'Insérer',
     catalogWeb: 'Web',
     catalogDesktop: 'Bureau',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'oui',
     catalogPlanned: 'prévu',
     catalogNo: 'non',

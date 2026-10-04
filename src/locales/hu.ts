@@ -1030,7 +1030,7 @@ const hu = {
     catalogInsert: 'Beszúrás',
     catalogWeb: 'Web',
     catalogDesktop: 'Asztali',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'igen',
     catalogPlanned: 'tervezett',
     catalogNo: 'nem',

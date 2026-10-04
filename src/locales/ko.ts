@@ -1030,7 +1030,7 @@ const ko = {
     catalogInsert: '삽입',
     catalogWeb: '웹',
     catalogDesktop: '데스크톱',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: '예',
     catalogPlanned: '예정',
     catalogNo: '아니요',

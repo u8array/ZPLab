@@ -1030,7 +1030,7 @@ const it = {
     catalogInsert: 'Inserisci',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'sì',
     catalogPlanned: 'pianificato',
     catalogNo: 'no',

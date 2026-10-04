@@ -1030,7 +1030,7 @@ const sk = {
     catalogInsert: 'Vložiť',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'áno',
     catalogPlanned: 'plánované',
     catalogNo: 'nie',

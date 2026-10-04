@@ -1030,7 +1030,7 @@ const ro = {
     catalogInsert: 'Inserați',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'da',
     catalogPlanned: 'planificat',
     catalogNo: 'nu',

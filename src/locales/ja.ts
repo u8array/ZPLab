@@ -1030,7 +1030,7 @@ const ja = {
     catalogInsert: '挿入',
     catalogWeb: 'Web',
     catalogDesktop: 'デスクトップ',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'はい',
     catalogPlanned: '予定',
     catalogNo: 'いいえ',

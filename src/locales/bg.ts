@@ -1030,7 +1030,7 @@ const bg = {
     catalogInsert: 'Вмъкни',
     catalogWeb: 'Уеб',
     catalogDesktop: 'Настолно приложение',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'да',
     catalogPlanned: 'планирано',
     catalogNo: 'не',

@@ -1030,7 +1030,7 @@ const zhHant = {
     catalogInsert: '插入',
     catalogWeb: '網頁',
     catalogDesktop: '桌面',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: '是',
     catalogPlanned: '計畫中',
     catalogNo: '否',

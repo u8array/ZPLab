@@ -1030,7 +1030,7 @@ const lv = {
     catalogInsert: 'Ievietot',
     catalogWeb: 'Tīmeklis',
     catalogDesktop: 'Darbvirsma',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'jā',
     catalogPlanned: 'plānots',
     catalogNo: 'nē',

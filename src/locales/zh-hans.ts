@@ -1030,7 +1030,7 @@ const zhHans = {
     catalogInsert: '插入',
     catalogWeb: '网页',
     catalogDesktop: '桌面',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: '是',
     catalogPlanned: '计划中',
     catalogNo: '否',

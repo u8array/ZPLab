@@ -9,7 +9,10 @@ export type { CatalogSection, CommandSupport, ImportLossCause, SupportLevel, Zpl
 const catalog = raw as unknown as Catalog;
 
 export const CATALOG_SECTIONS: readonly CatalogSection[] = catalog.sections;
-export const ZPL_COMMANDS: readonly ZplCommandEntry[] = catalog.commands;
+export const ZPL_COMMANDS: readonly ZplCommandEntry[] = catalog.commands.map((entry) => ({
+  ...entry,
+  support: { ...entry.support, docker: entry.support.docker ?? entry.support.web },
+}));
 
 /** The one spelling of an entry's id (`^LL`, `~JA`); twins answer to their first prefix. */
 export const commandId = (entry: ZplCommandEntry): string => `${entry.prefixes[0]}${entry.cmd}`;

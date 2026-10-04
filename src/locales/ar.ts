@@ -1030,7 +1030,7 @@ const ar = {
     catalogInsert: 'إدراج',
     catalogWeb: 'الويب',
     catalogDesktop: 'سطح المكتب',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'نعم',
     catalogPlanned: 'مخطط',
     catalogNo: 'لا',

@@ -1030,7 +1030,7 @@ const lt = {
     catalogInsert: 'Įterpti',
     catalogWeb: 'Žiniatinklis',
     catalogDesktop: 'Darbalaukis',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'taip',
     catalogPlanned: 'planuojama',
     catalogNo: 'ne',

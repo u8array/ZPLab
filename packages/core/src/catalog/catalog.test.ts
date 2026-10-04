@@ -1,12 +1,18 @@
 import { describe, it, expect } from "vitest";
 import raw from "./commands.json";
-import { catalogSchema } from "./schema";
+import { catalogSchema, type StoredCommandEntry } from "./schema";
 import { CATALOG_SECTIONS, ZPL_COMMANDS, catalogEntry, commandId, commandIds, filterCatalog } from "./index";
 
 describe("zpl command catalog", () => {
   it("validates the checked-in data against the schema", () => {
     const result = catalogSchema.safeParse(raw);
     expect(result.success ? [] : result.error.issues).toEqual([]);
+  });
+
+  it("stores a docker level only where it diverges from the web", () => {
+    for (const c of (raw as unknown as { commands: StoredCommandEntry[] }).commands) {
+      if (c.support.docker !== undefined) expect(c.support.docker, c.cmd).not.toBe(c.support.web);
+    }
   });
 
   it("tracks the whole ZPL II guide: unique ids, grouped by section in section order", () => {
@@ -49,6 +55,7 @@ describe("zpl command catalog", () => {
     const rank = { no: 0, planned: 1, yes: 2 } as const;
     for (const c of ZPL_COMMANDS) {
       expect(rank[c.support.desktop], c.cmd).toBeGreaterThanOrEqual(rank[c.support.web]);
+      expect(rank[c.support.docker], c.cmd).toBeGreaterThanOrEqual(rank[c.support.web]);
       // The coverage legend promises the reason in the name: a qualifier after a comma.
       if (Object.values(c.support).every((level) => level === "no")) expect(c.title, c.cmd).toMatch(/,/);
     }
@@ -61,8 +68,8 @@ describe("zpl command catalog", () => {
     expect(catalogEntry("~HL")).toBe(catalogEntry("^HL"));
     expect(commandId(catalogEntry("~HL")!)).toBe("^HL");
     // Prefix twins with diverging support are separate entries.
-    expect(catalogEntry("^PH")?.support).toEqual({ web: "yes", desktop: "yes", lint: "no" });
-    expect(catalogEntry("~PH")?.support).toEqual({ web: "no", desktop: "planned", lint: "no" });
+    expect(catalogEntry("^PH")?.support).toEqual({ web: "yes", desktop: "yes", docker: "yes" });
+    expect(catalogEntry("~PH")?.support).toEqual({ web: "no", desktop: "planned", docker: "no" });
     expect(catalogEntry("^QQ")).toBeUndefined();
   });
 

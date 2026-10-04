@@ -1030,7 +1030,7 @@ const tr = {
     catalogInsert: 'Ekle',
     catalogWeb: 'Web',
     catalogDesktop: 'Masaüstü',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'evet',
     catalogPlanned: 'planlandı',
     catalogNo: 'hayır',

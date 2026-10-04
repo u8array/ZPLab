@@ -14,7 +14,7 @@ const DOC = join(ROOT, 'docs', 'zpl-coverage.md');
 const README = join(ROOT, 'README.md');
 const SRC_ROOTS = [join(ROOT, 'src'), join(ROOT, 'packages', 'core', 'src')];
 const MARK = { yes: '[x]', planned: '[~]', no: '[ ]' };
-const CAPABILITY_LABEL = { web: 'Web', desktop: 'Desktop', lint: 'Lint' };
+const CAPABILITY_LABEL = { web: 'Web', desktop: 'Desktop', docker: 'Docker' };
 /** README shows one figure per area: web-modelled commands, which the desktop build always covers too. */
 const README_COLUMN = 'web';
 
@@ -86,7 +86,6 @@ function readmeIntro(commands) {
   const desktopExtra = count(commands, 'desktop', 'yes') - web;
   const bothPlanned = count(commands, 'web', 'planned');
   const printerPlanned = commands.filter((e) => e.support.web === 'no' && e.support.desktop === 'planned').length;
-  const lint = count(commands, 'lint', 'yes');
   const modelled = desktopExtra
     ? `${web} of the ${total} ZPL II commands are modelled in the browser; desktop covers ${desktopExtra} more with a connected printer.`
     : `${web} of the ${total} ZPL II commands are modelled in both the web and desktop builds.`;
@@ -94,8 +93,7 @@ function readmeIntro(commands) {
     bothPlanned ? `${bothPlanned} more are planned for both builds.` : '',
     printerPlanned ? `${printerPlanned} need a connected printer and are planned for desktop.` : '',
   ];
-  const linting = lint ? `The source editor checks parameters for ${lint} command${lint === 1 ? '' : 's'}.` : 'The source editor does not lint command parameters yet.';
-  return [modelled, ...planned, linting, 'See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).'].filter(Boolean).join(' ');
+  return [modelled, ...planned, 'See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).'].filter(Boolean).join(' ');
 }
 
 function renderReadmeBlock(catalog) {

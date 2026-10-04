@@ -1030,7 +1030,7 @@ const nl = {
     catalogInsert: 'Invoegen',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'ja',
     catalogPlanned: 'gepland',
     catalogNo: 'nee',

@@ -1067,7 +1067,7 @@ const en = {
     catalogInsert: 'Insert',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'yes',
     catalogPlanned: 'planned',
     catalogNo: 'no',

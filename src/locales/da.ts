@@ -1030,7 +1030,7 @@ const da = {
     catalogInsert: 'Indsæt',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'ja',
     catalogPlanned: 'planlagt',
     catalogNo: 'nej',

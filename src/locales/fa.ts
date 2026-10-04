@@ -1030,7 +1030,7 @@ const fa = {
     catalogInsert: 'درج',
     catalogWeb: 'وب',
     catalogDesktop: 'دسکتاپ',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'بله',
     catalogPlanned: 'برنامه‌ریزی‌شده',
     catalogNo: 'خیر',

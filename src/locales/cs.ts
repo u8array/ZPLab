@@ -1030,7 +1030,7 @@ const cs = {
     catalogInsert: 'Vložit',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'ano',
     catalogPlanned: 'plánováno',
     catalogNo: 'ne',

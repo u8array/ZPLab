@@ -9,9 +9,9 @@ export type SupportLevel = (typeof SUPPORT_LEVELS)[number];
 const IMPORT_LOSS_CAUSES = ["fontFace", "printerComms", "gfRawBinary", "qrFdMode", "storedGraphic", "shortPayload", "recallMagnification", "checksumMismatch", "oversizeUpload", "oversizeFontUpload", "unreplayableUpload", "cachedFaceDropped", "unshippableUpload", "unshippableFontName", "unshippableGraphicName", "fontVersionReplaced", "fnPartialInsert", "recallFormat", "recallSlot", "recallSettings"] as const;
 export type ImportLossCause = (typeof IMPORT_LOSS_CAUSES)[number];
 
-/** Support per axis; docs/zpl-coverage.md defines the three. */
-const supportSchema = z.object({ web: z.enum(SUPPORT_LEVELS), desktop: z.enum(SUPPORT_LEVELS), lint: z.enum(SUPPORT_LEVELS) }).strict();
-export type CommandSupport = z.infer<typeof supportSchema>;
+/** Support per axis as docs/zpl-coverage.md defines them. The image serves the web build, so `docker` is stored only where it diverges. */
+const supportSchema = z.object({ web: z.enum(SUPPORT_LEVELS), desktop: z.enum(SUPPORT_LEVELS), docker: z.enum(SUPPORT_LEVELS).optional() }).strict();
+export type CommandSupport = Required<z.infer<typeof supportSchema>>;
 
 const commandSchema = z.object({
   cmd: z.string().regex(/^[A-Z0-9@]{1,2}$/),
@@ -33,6 +33,7 @@ export const catalogSchema = z.object({
   commands: z.array(commandSchema).min(1),
 }).strict();
 
-export type ZplCommandEntry = z.infer<typeof commandSchema>;
+export type StoredCommandEntry = z.infer<typeof commandSchema>;
+export type ZplCommandEntry = Omit<StoredCommandEntry, "support"> & { support: CommandSupport };
 export type Catalog = z.infer<typeof catalogSchema>;
 export type CatalogSection = Catalog["sections"][number];

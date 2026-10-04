@@ -1030,7 +1030,7 @@ const sr = {
     catalogInsert: 'Umetni',
     catalogWeb: 'Веб',
     catalogDesktop: 'Десктоп',
-    catalogLint: 'Lint',
+    catalogDocker: 'Docker',
     catalogYes: 'да',
     catalogPlanned: 'планирано',
     catalogNo: 'не',
