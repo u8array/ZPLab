@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useT } from "../../hooks/useT";
 import { Tooltip } from "../ui/Tooltip";
-import { cachedFontPath, loadFontBytes } from "@zplab/core/lib/fontCache";
+import { FONT_FILE_ACCEPT, cachedFontPath, loadFontBytes } from "@zplab/core/lib/fontCache";
 import { findSetupEntry, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
 import { isTrueTypeFileName, prepareFontUpload, printerFontFileName, type FontUploadIssue } from "@zplab/core/lib/customFonts";
 import { listsStoredFont } from "@zplab/core/lib/storedObjects";
@@ -77,7 +77,7 @@ export function StoredFontsTab() {
           <input
             ref={fileRef}
             type="file"
-            accept=".ttf,.otf,.tte,.TTF,.OTF,.TTE"
+            accept={FONT_FILE_ACCEPT}
             className="hidden"
             aria-label={loc.uploadFont}
             onChange={(e) => {

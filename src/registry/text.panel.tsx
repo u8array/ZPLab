@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import type { ObjectTypeUi } from "./panelTypes";
 import { useT } from "../hooks/useT";
 import { buttonCls, inputCls, labelCls } from "../components/Properties/styles";
-import { getFontFamily, hasFontBytes, loadFontFile } from "@zplab/core/lib/fontCache";
+import { FONT_FILE_ACCEPT, getFontFamily, hasFontBytes, loadFontFile } from "@zplab/core/lib/fontCache";
 import { useFontCacheVersion } from "../hooks/useFontCacheVersion";
 import { useLabelStore } from "../store/labelStore";
 import { currentObjects, currentPageLabel } from "../store/labelStore.selectors";
@@ -190,7 +190,7 @@ export const textPanel: ObjectTypeUi<TextProps> = {
                       <input
                         ref={fileRef}
                         type="file"
-                        accept=".ttf,.otf,.tte,.TTF,.OTF,.TTE"
+                        accept={FONT_FILE_ACCEPT}
                         className="hidden"
                         onChange={(e) => {
                           const file = e.target.files?.[0];

@@ -7,6 +7,8 @@ export const labelCls = 'font-mono text-[10px] text-muted uppercase tracking-wid
 export const buttonCls = 'px-3 py-1.5 rounded text-xs font-mono bg-surface-2 border border-border text-text hover:bg-border transition-colors';
 /** `buttonCls` hovers, so a disabled button needs its hover taken back too. */
 export const disabledCls = 'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-surface-2';
+/** The same look for a control that locks with `aria-disabled` and keeps focus. */
+export const ariaDisabledCls = 'aria-disabled:opacity-40 aria-disabled:cursor-not-allowed';
 /** Content-builder launch button under a token field. Disabled while a variable
  *  is present, since the builder writes a literal that can't coexist with chips. */
 export const builderButtonCls = `self-start text-xs px-2 py-1 rounded border border-border bg-surface-2 hover:bg-border transition-colors ${disabledCls}`;

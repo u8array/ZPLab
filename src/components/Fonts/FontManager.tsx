@@ -1,8 +1,7 @@
-import { useEffect, useId, useRef, useState, type FocusEvent } from 'react';
+import { useState, type FocusEvent } from 'react';
 import { PlusIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/16/solid';
 import {
   hasFontBytes,
-  loadFontBytes,
   removeFont,
   getFontFamily,
   isEmbedLarge,
@@ -11,9 +10,7 @@ import {
 import { useCachedFonts } from '../../hooks/useCachedFonts';
 import { useLabelStore, useFileDeletability, forgetHistoryUsing, type DeleteBlock } from '../../store/labelStore';
 import { useT } from '../../hooks/useT';
-import { useUpload } from '../../hooks/useUpload';
-import { isDesktopShell } from '../../lib/platform';
-import { listSystemFonts, readSystemFont, type SystemFont } from '../../lib/systemFonts';
+import { cachedFontFaceStyle } from '../../lib/fontFaceStyle';
 import { storageKey, storageRefMatchesPath } from '@zplab/core/lib/storagePath';
 import { listsStoredFont } from '@zplab/core/lib/storedObjects';
 import {
@@ -21,13 +18,11 @@ import {
   isBuiltinFontId,
   nextFreeAlias,
   normalizeAlias,
-  prepareFontBytes,
-  prepareFontUpload,
-  type FontNameIssue,
   upsertCustomFontMapping,
 } from '@zplab/core/lib/customFonts';
-import { inputCls, labelCls } from '../Properties/styles';
+import { inputCls } from '../ui/formStyles';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
+import { AddFontDialog } from './AddFontDialog';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { Tooltip } from '../ui/Tooltip';
 import type { CustomFontMapping } from '@zplab/core/types/LabelConfig';
@@ -155,7 +150,7 @@ export function FontManager() {
               duplicate={isDuplicateAlias(alias)}
               delivery={fontDelivery(entry, path, setupFonts)}
               embedLarge={isEmbedLarge(path)}
-              previewMissing={!getFontFamily(path)}
+              previewFamily={getFontFamily(path)}
               blockedBy={deletability(path).blockedBy}
               listed={listsStoredFont(path, setupFonts)}
               onAliasChange={(v) => setAliasForPath(path, v)}
@@ -166,8 +161,12 @@ export function FontManager() {
         })}
       </div>
 
-      {adding ? (
-        <AddFontForm
+      <button type="button" className={addBtnCls} onClick={() => setAdding(true)}>
+        <span className="text-accent">+</span>
+        {t.fonts.addFont}
+      </button>
+      {adding && (
+        <AddFontDialog
           onDone={(uploadedPath) => {
             // Auto-assign the next free alias when the upload succeeds.
             // Closes the "what now?" gap between the upload finishing
@@ -185,11 +184,6 @@ export function FontManager() {
             setAdding(false);
           }}
         />
-      ) : (
-        <button type="button" className={addBtnCls} onClick={() => setAdding(true)}>
-          <span className="text-accent">+</span>
-          {t.fonts.addFont}
-        </button>
       )}
 
       <CollapsibleSection
@@ -246,8 +240,7 @@ interface FontEntryProps {
   delivery: ResourceDelivery;
   /** Font is large; embedding still works but warns (bigger job, slower view). */
   embedLarge: boolean;
-  /** Bytes are cached, but no browser face draws them. */
-  previewMissing: boolean;
+  previewFamily: string | undefined;
   blockedBy: DeleteBlock | undefined;
   listed: boolean;
   onAliasChange: (next: string) => void;
@@ -261,7 +254,7 @@ function FontEntry({
   duplicate,
   delivery,
   embedLarge,
-  previewMissing,
+  previewFamily,
   blockedBy,
   listed,
   onAliasChange,
@@ -283,6 +276,7 @@ function FontEntry({
       <div className="grid grid-cols-[1fr_3rem_auto] items-center gap-2">
         <span
           className="font-mono text-xs text-text truncate"
+          style={cachedFontFaceStyle(previewFamily)}
           title={name}
         >
           {name}
@@ -338,7 +332,7 @@ function FontEntry({
           {t.fonts.builtinAliasWarning}
         </p>
       )}
-      {previewMissing && (
+      {!previewFamily && (
         <p className="text-[10px] font-mono text-warning">{t.fonts.faceRejected}</p>
       )}
       {embedLarge && delivery === 'job' && (
@@ -456,144 +450,6 @@ function ManualMappingsSection({
           </button>
         </Tooltip>
       </div>
-    </div>
-  );
-}
-
-// ── AddFontForm ────────────────────────────────────────────────────────────────
-
-interface AddFontFormProps {
-  /** `uploadedPath` is the stored printer path on success, undefined on cancel or failure. */
-  onDone: (uploadedPath?: string) => void;
-}
-
-function AddFontForm({ onDone }: AddFontFormProps) {
-  const t = useT();
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState('');
-  const [fromComputer, setFromComputer] = useState(false);
-  const listId = useId();
-  // One run for both sources, so every control stays locked while a pick is still landing.
-  const { busy: uploading, issue: uploadIssue, start: uploadFile } = useUpload<'error' | FontNameIssue, File | SystemFont>(async (input) => {
-    // Nothing typed means the picked file's own name, which is almost always the intended one.
-    const prepared =
-      input instanceof File ? await prepareFontUpload(input, name) : prepareFontBytes(input.file_name, await readSystemFont(input.path), name);
-    if (!prepared.ok) return prepared.reason === 'notAFont' ? 'error' : prepared.reason;
-    await loadFontBytes(prepared.bytes, prepared.path);
-    onDone(prepared.path);
-    return null;
-  }, 'error');
-
-  return (
-    <div className="flex flex-col gap-2 p-2 rounded border border-border bg-surface-2">
-      <div className="flex flex-col gap-1">
-        <label className={labelCls}>{t.fonts.printerFilename}</label>
-        <input
-          className={inputCls}
-          value={name}
-          placeholder={t.fonts.printerFilenamePlaceholder}
-          onChange={(e) => setName(e.target.value)}
-          autoFocus
-        />
-      </div>
-
-      <input
-        ref={fileRef}
-        type="file"
-        accept=".ttf,.otf,.tte,.TTF,.OTF,.TTE"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) uploadFile(file);
-          e.target.value = '';
-        }}
-      />
-
-      {uploadIssue && (
-        <p className="text-[10px] font-mono text-red-400">{{ error: t.fonts.uploadError, nameTaken: t.fonts.nameTaken, nameUnusable: t.fonts.nameUnusable }[uploadIssue]}</p>
-      )}
-
-      <div className="flex gap-2">
-        <button
-          type="button"
-          className="flex-1 px-2 py-1.5 rounded text-xs font-mono bg-accent text-bg hover:opacity-90 disabled:opacity-40 transition-opacity"
-          onClick={() => fileRef.current?.click()}
-          disabled={uploading}
-        >
-          {uploading ? '…' : t.fonts.upload}
-        </button>
-        {isDesktopShell && (
-          <button
-            type="button"
-            className="px-2 py-1.5 rounded text-xs font-mono border border-border text-muted hover:text-text transition-colors"
-            onClick={() => setFromComputer((v) => !v)}
-            disabled={uploading}
-            aria-expanded={fromComputer}
-            aria-controls={fromComputer ? listId : undefined}
-          >
-            {t.fonts.fromComputer}
-          </button>
-        )}
-        <button
-          type="button"
-          className="px-2 py-1.5 rounded text-xs font-mono border border-border text-muted hover:text-text transition-colors"
-          onClick={() => onDone()}
-          disabled={uploading}
-        >
-          {t.fonts.cancel}
-        </button>
-      </div>
-
-      {fromComputer && <SystemFontList listId={listId} busy={uploading} onPick={uploadFile} />}
-    </div>
-  );
-}
-
-// ── SystemFontList ─────────────────────────────────────────────────────────────
-
-function SystemFontList({ listId, busy, onPick }: { listId: string; busy: boolean; onPick: (font: SystemFont) => void }) {
-  const t = useT();
-  const [fonts, setFonts] = useState<SystemFont[] | null>(null);
-  const [failed, setFailed] = useState(false);
-  const [query, setQuery] = useState('');
-  useEffect(() => {
-    let current = true;
-    listSystemFonts().then(
-      (list) => current && setFonts(list),
-      () => current && setFailed(true),
-    );
-    return () => {
-      current = false;
-    };
-  }, []);
-  const shown = (fonts ?? []).filter((f) => `${f.family} ${f.style}`.toLowerCase().includes(query.trim().toLowerCase()));
-  return (
-    <div className="flex flex-col gap-1">
-      <input className={inputCls} value={query} placeholder={t.fonts.filterFonts} onChange={(e) => setQuery(e.target.value)} aria-label={t.fonts.filterFonts} />
-      {fonts === null && !failed && <p className="text-[10px] text-muted">…</p>}
-      {fonts !== null && fonts.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noSystemFonts}</p>}
-      {fonts !== null && fonts.length > 0 && shown.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noFilterMatch}</p>}
-      {failed && <p className="text-[10px] font-mono text-red-400">{t.fonts.systemFontsFailed}</p>}
-      <ul id={listId} className="max-h-48 overflow-auto rounded border border-border text-xs" aria-label={t.fonts.fromComputer}>
-        {shown.map((font) => (
-          <li key={font.path}>
-            {/* aria-disabled, not disabled: a greyed row must stay reachable, so its reason can be read. */}
-            <button
-              type="button"
-              className="flex w-full items-baseline gap-2 px-2 py-1 text-left hover:bg-border/60 aria-disabled:opacity-40 aria-disabled:hover:bg-transparent"
-              onClick={() => {
-                if (!busy && !font.restricted) onPick(font);
-              }}
-              aria-disabled={busy || font.restricted}
-              title={font.restricted ? t.fonts.restrictedLicense : font.variable ? t.fonts.variableFont : undefined}
-            >
-              <span className="text-text truncate">{font.family}</span>
-              <span className="text-muted truncate">{font.style}</span>
-              <span className="ml-auto font-mono text-[10px] text-muted shrink-0">{Math.ceil(font.bytes / 1024)} KB</span>
-            </button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

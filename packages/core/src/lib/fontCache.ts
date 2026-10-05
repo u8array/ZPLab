@@ -25,7 +25,10 @@ export const MAX_FONT_BYTES = 4 * 1024 * 1024;
  *  grows, and the live ZPL view rebuilds the payload on every edit. */
 export const EMBED_WARN_FONT_BYTES = 1024 * 1024;
 
-const FONT_EXT_RE = /\.(ttf|otf|tte)$/i;
+const FONT_EXTENSIONS = ["ttf", "otf", "tte"];
+const FONT_EXT_RE = new RegExp(`\\.(${FONT_EXTENSIONS.join("|")})$`, "i");
+/** The `accept` list of a font picker, so a picker never offers what the gate refuses. */
+export const FONT_FILE_ACCEPT = FONT_EXTENSIONS.flatMap((ext) => [`.${ext}`, `.${ext.toUpperCase()}`]).join(",");
 
 /** What `loadFontFile` will take, answerable before a byte is read. */
 export const isFontFile = (file: File): boolean => FONT_EXT_RE.test(file.name) && file.size <= MAX_FONT_BYTES;

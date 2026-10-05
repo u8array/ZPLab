@@ -14,7 +14,25 @@ const MAX_FONT_BYTES: u64 = 4 * 1024 * 1024;
 
 /// The scan reads every font file, so one session keeps its result.
 #[derive(Default)]
-pub struct SystemFonts(Mutex<Option<Vec<SystemFont>>>);
+pub struct SystemFonts {
+  listing: Mutex<Option<Vec<SystemFont>>>,
+}
+
+impl SystemFonts {
+  fn listed(&self) -> Result<Option<Vec<SystemFont>>, String> {
+    Ok(self.listing.lock().map_err(|e| e.to_string())?.clone())
+  }
+
+  fn keep(&self, fonts: Vec<SystemFont>) -> Result<(), String> {
+    *self.listing.lock().map_err(|e| e.to_string())? = Some(fonts);
+    Ok(())
+  }
+
+  fn allows(&self, path: &str) -> Result<bool, String> {
+    let listing = self.listing.lock().map_err(|e| e.to_string())?;
+    Ok(allows(listing.as_deref().unwrap_or(&[]), path))
+  }
+}
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 pub struct SystemFont {
@@ -31,11 +49,11 @@ pub struct SystemFont {
 pub async fn list_system_fonts(
   state: tauri::State<'_, SystemFonts>,
 ) -> Result<Vec<SystemFont>, String> {
-  if let Some(fonts) = state.0.lock().map_err(|e| e.to_string())?.clone() {
+  if let Some(fonts) = state.listed()? {
     return Ok(fonts);
   }
   let fonts = blocking(scan).await?;
-  *state.0.lock().map_err(|e| e.to_string())? = Some(fonts.clone());
+  state.keep(fonts.clone())?;
   Ok(fonts)
 }
 
@@ -44,15 +62,7 @@ pub async fn read_system_font(
   state: tauri::State<'_, SystemFonts>,
   path: String,
 ) -> Result<tauri::ipc::Response, String> {
-  let allowed = allows(
-    state
-      .0
-      .lock()
-      .map_err(|e| e.to_string())?
-      .as_deref()
-      .unwrap_or(&[]),
-    &path,
-  );
+  let allowed = state.allows(&path)?;
   let bytes = blocking(move || read_listed(allowed, &path)).await??;
   Ok(tauri::ipc::Response::new(bytes))
 }
@@ -89,14 +99,12 @@ fn single_face_file(path: &Path) -> bool {
       .and_then(|e| e.to_str())
       .map(|e| e.to_ascii_lowercase())
       .as_deref(),
-    Some("ttf") | Some("otf")
+    Some("ttf") | Some("otf") | Some("tte")
   )
 }
 
 fn font_dirs() -> Vec<PathBuf> {
-  let home = std::env::var_os("HOME")
-    .or_else(|| std::env::var_os("USERPROFILE"))
-    .map(PathBuf::from);
+  let home = || std::env::var_os("HOME").map(PathBuf::from);
   let mut dirs = Vec::new();
   if cfg!(target_os = "windows") {
     if let Some(root) = std::env::var_os("SYSTEMROOT") {
@@ -114,12 +122,12 @@ fn font_dirs() -> Vec<PathBuf> {
       ]
       .map(PathBuf::from),
     );
-    if let Some(home) = &home {
+    if let Some(home) = home() {
       dirs.push(home.join("Library/Fonts"));
     }
   } else {
     dirs.extend(["/usr/share/fonts", "/usr/local/share/fonts"].map(PathBuf::from));
-    if let Some(home) = &home {
+    if let Some(home) = home() {
       dirs.push(home.join(".fonts"));
       dirs.push(home.join(".local/share/fonts"));
     }
@@ -388,6 +396,7 @@ mod tests {
   fn lists_single_face_files_only() {
     assert!(single_face_file(Path::new("C:/Windows/Fonts/ARIAL.TTF")));
     assert!(single_face_file(Path::new("/usr/share/fonts/a.otf")));
+    assert!(single_face_file(Path::new("/usr/share/fonts/a.tte")));
     assert!(!single_face_file(Path::new("/usr/share/fonts/a.ttc")));
   }
 }

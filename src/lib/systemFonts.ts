@@ -1,5 +1,6 @@
 import { isDesktopShell } from "./platform";
 
+/** Mirrors the Rust `SystemFont` DTO. */
 export interface SystemFont {
   family: string;
   style: string;

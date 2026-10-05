@@ -22,11 +22,15 @@ afterEach(() => {
   for (const f of getAllFonts()) removeFont(cachedFontPath(f));
 });
 
-const pick = async (r: ReturnType<typeof render>, file: File) => {
+const addFile = async (r: ReturnType<typeof render>, file: File) => {
   fireEvent.click(r.getByText("Add font"));
-  const input = r.container.querySelector('input[type="file"]') as HTMLInputElement;
+  // The dialog is portaled, so the hidden input sits outside `container`.
+  const input = r.baseElement.querySelector('input[type="file"]') as HTMLInputElement;
   await act(async () => {
     fireEvent.change(input, { target: { files: [file] } });
+  });
+  await act(async () => {
+    fireEvent.click(within(r.getByRole("dialog")).getByRole("button", { name: "Add font" }));
   });
 };
 
@@ -124,6 +128,43 @@ describe("FontManager delete owners", () => {
   });
 });
 
+describe("FontManager preview face", () => {
+  it("draws a cached font's name in the face the cache registered", () => {
+    const r = render(<FontManager />);
+    expect(r.getByTitle("E:ARIAL.TTF").style.fontFamily).toMatch(/^"zpl-/);
+  });
+
+  it("names a font no browser face took, and leaves its row unstyled", async () => {
+    const real = globalThis.FontFace;
+    Object.defineProperty(globalThis, "FontFace", {
+      configurable: true,
+      value: class {
+        load() {
+          return Promise.reject(new Error("rejected"));
+        }
+      },
+    });
+    try {
+      await loadFontBytes(new Uint8Array([0, 1, 0, 0, 9]), "E:BROKEN.TTF");
+    } finally {
+      Object.defineProperty(globalThis, "FontFace", { configurable: true, value: real });
+    }
+    const r = render(<FontManager />);
+    expect(r.getByText(/cannot render this font/)).toBeTruthy();
+    expect(r.getByTitle("E:BROKEN.TTF").style.fontFamily).toBe("");
+  });
+});
+
+describe("FontManager on the web", () => {
+  it("offers no installed-fonts list, the file being the only source", () => {
+    const r = render(<FontManager />);
+    fireEvent.click(r.getByText("Add font"));
+    expect(r.queryByLabelText("Filter fonts")).toBeNull();
+    expect(r.queryByRole("listbox")).toBeNull();
+    expect(within(r.getByRole("dialog")).getByText("Upload")).toBeTruthy();
+  });
+});
+
 describe("FontManager manual mappings", () => {
   it("names a mapping that promises an embed but has no bytes to ship", () => {
     act(() => useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8, customFonts: [{ alias: "M", path: "E:GONE.TTF", embedInZpl: true }] } }));
@@ -215,21 +256,21 @@ describe("FontManager alias", () => {
 describe("FontManager upload", () => {
   it("refuses a file whose name folds onto a cached font holding other bytes", async () => {
     const r = render(<FontManager />);
-    await pick(r, new File(["other bytes"], "arial.ttf"));
+    await addFile(r, new File(["other bytes"], "arial.ttf"));
     expect(r.getByText(/different printer filename/)).toBeTruthy();
     expect(getAllFonts()).toHaveLength(1);
   });
 
   it("refuses a file whose name leaves no printer name", async () => {
     const r = render(<FontManager />);
-    await pick(r, new File(["x"], "日本.ttf"));
+    await addFile(r, new File(["x"], "日本.ttf"));
     expect(r.getByText(/leaves no printer name/)).toBeTruthy();
     expect(getAllFonts()).toHaveLength(1);
   });
 
   it("stores a picked file under the .TTF printer name ^CW can reference", async () => {
     const r = render(<FontManager />);
-    await pick(r, new File(["x"], "My Logo.otf"));
+    await addFile(r, new File(["x"], "My Logo.otf"));
     expect(getAllFonts().map((f) => f.name).sort()).toEqual(["E:ARIAL.TTF", "E:MYLOGO.TTF"]);
   });
 });
