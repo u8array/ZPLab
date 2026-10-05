@@ -1,4 +1,4 @@
-# Flathub manifest. Flathub builds this itself from the release deb, release.yml has no Flatpak leg.
+# Flathub manifest. Flathub builds it from the release deb, so release.yml has no Flatpak leg.
 app-id: de.u8array.zplab
 runtime: org.gnome.Platform
 runtime-version: "50"
@@ -33,6 +33,8 @@ modules:
       # Tauri files the 256 px icon under a size no theme lookup reads.
       - install -Dm644 usr/share/icons/hicolor/256x256@2/apps/ZPLab.png /app/share/icons/hicolor/256x256/apps/ZPLab.png
       - install -Dm644 de.u8array.zplab.metainfo.xml /app/share/metainfo/de.u8array.zplab.metainfo.xml
+      # sed -i reports success on no match, so a missed rename would ship an unresolved launchable.
+      - grep -q '<launchable type="desktop-id">ZPLab.desktop</launchable>' /app/share/metainfo/de.u8array.zplab.metainfo.xml
       # The packaged metainfo launches the deb's desktop file name.
       - sed -i 's#<launchable type="desktop-id">ZPLab.desktop</launchable>#<launchable type="desktop-id">de.u8array.zplab.desktop</launchable>#' /app/share/metainfo/de.u8array.zplab.metainfo.xml
     sources:

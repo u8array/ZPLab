@@ -1,9 +1,7 @@
 name: Rust
 
-# Rust lives in src-tauri and is only compiled during a release build, so its
-# unit tests, clippy, and fmt never gated a PR. This runs them on every change
-# that touches the crate. Path-filtered so pure-frontend PRs don't pay the
-# (heavy) Tauri dependency compile.
+# src-tauri gets no other PR gate, because Rust and the packaging data only matter in a release build.
+# Path-filtered because the Tauri dependency compile is too heavy for pure-frontend PRs.
 on:
   pull_request:
     branches: [main, prod]
@@ -17,8 +15,15 @@ defaults:
     working-directory: ./src-tauri
 
 jobs:
-  # Format check is platform-independent (rustfmt parses, doesn't compile), so
-  # run it once instead of per matrix platform.
+  # Nothing in the release build validates the metainfo, so this job is its only gate.
+  metainfo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: sudo apt-get update && sudo apt-get install -y appstream
+      - run: appstreamcli validate --no-net packaging/linux/de.u8array.zplab.metainfo.xml
+
+  # rustfmt parses without compiling, so one run covers every matrix platform.
   fmt:
     runs-on: ubuntu-latest
     steps:

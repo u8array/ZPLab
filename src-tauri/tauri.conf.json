@@ -58,6 +58,11 @@
       "icons/icon.ico"
     ],
     "linux": {
+      "appimage": {
+        "files": {
+          "/usr/share/metainfo/de.u8array.zplab.metainfo.xml": "packaging/linux/de.u8array.zplab.metainfo.xml"
+        }
+      },
       "deb": {
         "files": {
           "/usr/lib/udev/rules.d/70-zplab.rules": "packaging/udev/70-zplab.rules",
