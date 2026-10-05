@@ -6,6 +6,7 @@ import { useT } from '../../hooks/useT';
 import { useUpload } from '../../hooks/useUpload';
 import { isDesktopShell } from '../../lib/platform';
 import { systemFontFaceStyle } from '../../lib/fontFaceStyle';
+import { fontNameIssueText } from '../../lib/fontNameIssueText';
 import { listSystemFonts, readSystemFont, type SystemFont } from '../../lib/systemFonts';
 import { ariaDisabledCls, inputCls, labelCls } from '../ui/formStyles';
 import { DialogShell } from '../ui/DialogShell';
@@ -152,7 +153,7 @@ export function AddFontDialog({ onDone }: AddFontDialogProps) {
             />
             {issue && (
               <p id={issueId} role="alert" className="text-[10px] font-mono text-red-400 leading-snug">
-                {{ error: t.fonts.uploadError, nameTaken: t.fonts.nameTaken, nameUnusable: t.fonts.nameUnusable }[issue]}
+                {{ error: t.fonts.uploadError, ...fontNameIssueText(t) }[issue]}
               </p>
             )}
           </div>
@@ -172,7 +173,7 @@ export function AddFontDialog({ onDone }: AddFontDialogProps) {
             aria-disabled={!canAdd}
             aria-busy={busy || undefined}
           >
-            {t.fonts.addFont}
+            {t.fonts.add}
           </button>
         </div>
       </form>
@@ -241,7 +242,7 @@ function SystemFontList({
         autoFocus
       />
       {fonts === null && !failed && <p className="text-[10px] text-muted">…</p>}
-      {fonts !== null && fonts.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noSystemFonts}</p>}
+      {fonts !== null && fonts.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noInstalledFonts}</p>}
       {fonts !== null && fonts.length > 0 && shown.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noFilterMatch}</p>}
       {failed && <p className="text-[10px] font-mono text-red-400">{t.fonts.systemFontsFailed}</p>}
       <div

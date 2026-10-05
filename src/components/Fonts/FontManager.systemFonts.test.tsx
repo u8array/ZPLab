@@ -30,7 +30,7 @@ afterEach(() => {
 
 const open = (r: ReturnType<typeof render>) => fireEvent.click(r.getByText(en.fonts.addFont));
 const add = (r: ReturnType<typeof render>) =>
-  within(r.getByRole("dialog")).getByRole("button", { name: en.fonts.addFont }) as HTMLButtonElement;
+  within(r.getByRole("dialog")).getByRole("button", { name: en.fonts.add }) as HTMLButtonElement;
 const nameField = (r: ReturnType<typeof render>) => r.getByPlaceholderText(en.fonts.printerFilenamePlaceholder) as HTMLInputElement;
 
 describe("FontManager installed fonts", () => {
