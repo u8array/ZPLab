@@ -245,14 +245,21 @@ fn name_string(name: &[u8], id: u16) -> Option<String> {
   let mut mac = None;
   for i in 0..count {
     let rec = 6 + i * 12;
-    if u16_at(name, rec + 6)? != id {
+    // Records are fixed and sequential, so a short one ends the table.
+    let Some(record) = name.get(rec..rec + 12) else {
+      break;
+    };
+    if u16_at(record, 6)? != id {
       continue;
     }
-    let platform = u16_at(name, rec)?;
-    let encoding = u16_at(name, rec + 2)?;
-    let len = u16_at(name, rec + 8)? as usize;
-    let at = strings + u16_at(name, rec + 10)? as usize;
-    let data = name.get(at..at + len)?;
+    let platform = u16_at(record, 0)?;
+    let encoding = u16_at(record, 2)?;
+    let len = u16_at(record, 8)? as usize;
+    let at = strings + u16_at(record, 10)? as usize;
+    // One record pointing outside the table must not hide the others.
+    let Some(data) = name.get(at..at + len) else {
+      continue;
+    };
     match (platform, encoding) {
       (3, 1) | (3, 10) | (0, _) => {
         let units: Vec<u16> = data
@@ -314,17 +321,13 @@ mod tests {
         .collect::<Vec<u8>>()
     };
     let (fam, sty) = (utf16(family), utf16(style));
-    let mut name = Vec::new();
-    name.extend(0u16.to_be_bytes());
-    name.extend(2u16.to_be_bytes());
-    name.extend((6u16 + 2 * 12).to_be_bytes());
-    for (id, data, offset) in [(1u16, &fam, 0u16), (2, &sty, fam.len() as u16)] {
-      for v in [3u16, 1, 0x0409, id, data.len() as u16, offset] {
-        name.extend(v.to_be_bytes());
-      }
-    }
-    name.extend(&fam);
-    name.extend(&sty);
+    let name = name_table(
+      &[
+        [3, 1, 0x0409, 1, fam.len() as u16, 0],
+        [3, 1, 0x0409, 2, sty.len() as u16, fam.len() as u16],
+      ],
+      &[fam, sty].concat(),
+    );
     let mut os2 = vec![0u8; 78];
     os2[8..10].copy_from_slice(&fs_type.to_be_bytes());
     let mut tables: Vec<(&[u8; 4], Vec<u8>)> = vec![
@@ -409,6 +412,37 @@ mod tests {
         .restricted
     );
     assert!(!parse(&font("A", "B", 0x0008, false)).unwrap().restricted);
+  }
+
+  /// Records as platform, encoding, language, id, length and offset into `pool`.
+  fn name_table(records: &[[u16; 6]], pool: &[u8]) -> Vec<u8> {
+    let mut table = Vec::new();
+    table.extend(0u16.to_be_bytes());
+    table.extend((records.len() as u16).to_be_bytes());
+    table.extend((6 + 12 * records.len() as u16).to_be_bytes());
+    for record in records {
+      for v in record {
+        table.extend(v.to_be_bytes());
+      }
+    }
+    table.extend(pool);
+    table
+  }
+
+  #[test]
+  fn skips_a_name_record_that_points_outside_the_table() {
+    let table = name_table(
+      &[[3, 1, 0x0409, 1, 2, 0xFFF0], [3, 1, 0x0409, 1, 2, 0]],
+      &[0, 65],
+    );
+    assert_eq!(name_string(&table, 1).as_deref(), Some("A"));
+  }
+
+  #[test]
+  fn keeps_the_fallback_name_when_the_record_count_overstates_the_table() {
+    let mut table = name_table(&[[1, 0, 0, 1, 1, 0]], b"B");
+    table[2..4].copy_from_slice(&2u16.to_be_bytes());
+    assert_eq!(name_string(&table, 1).as_deref(), Some("B"));
   }
 
   #[test]

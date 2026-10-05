@@ -30,7 +30,7 @@ const addFile = async (r: ReturnType<typeof render>, file: File) => {
     fireEvent.change(input, { target: { files: [file] } });
   });
   await act(async () => {
-    fireEvent.click(within(r.getByRole("dialog")).getByRole("button", { name: "Add font" }));
+    fireEvent.click(within(r.getByRole("dialog")).getByRole("button", { name: "Add" }));
   });
 };
 

@@ -9,6 +9,7 @@ import { storageKey, storageRefMatchesPath } from "@zplab/core/lib/storagePath";
 import { useCachedFonts } from "../../hooks/useCachedFonts";
 import { useUpload } from "../../hooks/useUpload";
 import { useLabelStore, selectEditorFrozen } from "../../store/labelStore";
+import { fontNameIssueText } from "../../lib/fontNameIssueText";
 import { buttonCls, disabledCls } from "../ui/formStyles";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 
@@ -91,7 +92,7 @@ export function StoredFontsTab() {
               {loc.uploadFont}
             </button>
           </Tooltip>
-          {uploadIssue && <span className="text-[10px] text-warning">{{ error: loc.uploadError, notAFont: loc.uploadError, nameTaken: t.fonts.nameTaken, nameUnusable: t.fonts.nameUnusable, refused: t.printerSettings.frozenHint }[uploadIssue]}</span>}
+          {uploadIssue && <span className="text-[10px] text-warning">{{ error: loc.uploadError, notAFont: loc.uploadError, ...fontNameIssueText(t), refused: t.printerSettings.frozenHint }[uploadIssue]}</span>}
         </div>
         {rows.length === 0 ? (
           <p className="text-xs text-muted/70">{loc.noFonts}</p>

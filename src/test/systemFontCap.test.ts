@@ -9,7 +9,7 @@ describe("the system font cap", () => {
     const product = rust.split("*").map((factor) => Number(factor.trim())).reduce((a, b) => a * b, 1);
     expect(product).toBe(MAX_FONT_BYTES);
     for (const code of LOCALE_CODES) {
-      expect((await loadLocale(code)).fonts.noSystemFonts, code).toContain(`${MAX_FONT_BYTES / 1024 / 1024} MiB`);
+      expect((await loadLocale(code)).fonts.noInstalledFonts, code).toContain(`${MAX_FONT_BYTES / 1024 / 1024} MiB`);
     }
   });
 });
