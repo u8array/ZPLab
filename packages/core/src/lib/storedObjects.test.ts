@@ -20,6 +20,11 @@ describe("the stored graphics tab's rows", () => {
     expect(listsStoredGraphic(rows, { ...recall(), storedAs: { device: "R", name: "OTHER" } })).toBe(false);
   });
 
+  it("puts a path's row on the first object under it", () => {
+    const rows = storedGraphicRows([{ objects: [graphic("a", recall()), graphic("b", recall())] }]);
+    expect([...rows.values()].map((row) => row.id)).toEqual(["a"]);
+  });
+
   it("lists no recall of a file no upload writes", () => {
     const rows = storedGraphicRows([{ objects: [graphic("a", recall("PNG"))] }]);
     expect(rows.size).toBe(0);

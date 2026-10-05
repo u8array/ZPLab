@@ -10,13 +10,13 @@ import type * as ImageRegistry from "@zplab/core/registry/image";
 
 const { encode, verdict } = vi.hoisted(() => ({
   encode: vi.fn(async () => ({ zpl: "^GFA,4,4,1,00FFFF00", widthDots: 8, heightDots: 4 })),
-  verdict: vi.fn<() => { fit: "tooLarge" | "unshippable" } | undefined>(() => undefined),
+  verdict: vi.fn<() => ImageRegistry.SetupGraphicVerdict | undefined>(() => undefined),
 }));
 vi.mock("@zplab/core/lib/imageToZpl", async (importOriginal) => ({
   ...(await importOriginal<typeof ImageToZpl>()),
   encodeGraphicFile: () => encode(),
 }));
-// jsdom has no canvas, so a refusal of a fresh encode is injected in front of the real verdict.
+// jsdom has no canvas, so the verdict of a fresh encode is injected in front of the real one.
 vi.mock("@zplab/core/registry/image", async (importOriginal) => {
   const real = await importOriginal<typeof ImageRegistry>();
   return { ...real, setupGraphicOf: (p: Parameters<typeof real.setupGraphicOf>[0]) => verdict() ?? real.setupGraphicOf(p) };
@@ -82,6 +82,41 @@ describe("StoredGraphicsTab", () => {
     expect((getByLabelText(/Send at setup/) as HTMLInputElement).checked).toBe(true);
     expect(getByText(/not verifiable/)).toBeTruthy();
     expect(queryByRole("button", { name: /not verifiable/ })).toBeNull();
+  });
+
+  const cacheOf = (page: number) => (useLabelStore.getState().pages[page]?.objects[0] as { props?: { _gfaCache?: string } }).props?._gfaCache;
+
+  it("pins the sent bytes on the object in one undo step, so the row stops asking for a re-send", () => {
+    putImage({ id: "used", name: "used.png", dataUrl: "data:,", width: 8, height: 4 });
+    verdict.mockReturnValueOnce({ fit: "ok", entry: { path: "R:LOGO.GRF", gfa: GFA } });
+    act(() => useLabelStore.setState({
+      pages: [{ objects: [withProps({ imageId: "used", _gfaCache: undefined })] }],
+      printerProfile: { setupGraphics: [{ path: "R:LOGO.GRF", gfa: "^GFA,4,4,1,FF0000FF" }] },
+    }));
+    useLabelStore.temporal.getState().clear();
+    const { getByRole, queryByText } = render(<StoredGraphicsTab />);
+    act(() => {
+      fireEvent.click(getByRole("button", { name: /not verifiable/ }));
+    });
+    expect(cacheOf(0)).toBe(GFA);
+    expect(queryByText(/Send again/)).toBeNull();
+    expect(useLabelStore.temporal.getState().pastStates).toHaveLength(1);
+  });
+
+  it("pins the bytes on a locked object on a page the editor is not showing", () => {
+    putImage({ id: "used", name: "used.png", dataUrl: "data:,", width: 8, height: 4 });
+    verdict.mockReturnValue({ fit: "ok", entry: { path: "R:LOGO.GRF", gfa: GFA } });
+    act(() => useLabelStore.setState({
+      pages: [{ objects: [] }, { objects: [{ ...withProps({ imageId: "used", _gfaCache: undefined }), locked: true }] }],
+      currentPageIndex: 0,
+    }));
+    const { getByLabelText } = render(<StoredGraphicsTab />);
+    act(() => {
+      fireEvent.click(getByLabelText(/Send at setup/));
+    });
+    expect(cacheOf(1)).toBe(GFA);
+    expect(useLabelStore.getState().printerProfile.setupGraphics).toEqual([{ path: "R:LOGO.GRF", gfa: GFA }]);
+    verdict.mockReset().mockReturnValue(undefined);
   });
 
   it("warns about a recall-only object no setup entry backs", () => {

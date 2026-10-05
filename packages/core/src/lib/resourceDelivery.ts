@@ -115,6 +115,10 @@ export function applyGraphicDelivery(
   const verdict = setupGraphicOf(provided);
   if (!verdict) return undefined;
   if (verdict.fit !== "ok") return { refused: verdict.fit };
-  // The cache holds what was just sent, so the state reads current without a fresh encode.
-  return { patch: { storedAs: provided.storedAs, _gfaCache: verdict.entry.gfa }, setupGraphics: withSetupEntry(setupGraphics, verdict.entry) };
+  return { patch: { storedAs: provided.storedAs, ...sentGraphicPatch(verdict.entry) }, setupGraphics: withSetupEntry(setupGraphics, verdict.entry) };
+}
+
+/** The cache holds what was just sent, so the state reads current without a fresh encode. */
+export function sentGraphicPatch(entry: SetupGraphic): Pick<ImageProps, "_gfaCache"> {
+  return { _gfaCache: entry.gfa };
 }

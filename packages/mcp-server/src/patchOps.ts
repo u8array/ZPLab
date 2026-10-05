@@ -132,13 +132,17 @@ export function editNotes(
     if (op.op !== "update" || !op.props) return [];
     const target = finalNodes.get(op.id);
     const props = (target as { props?: ImageProps } | undefined)?.props;
+    if (!props) return [];
+    const notes: string[] = [];
+    // Verbatim ^GF wins over any cache in the emit, so a cache written beside it never prints.
+    if ("_gfaCache" in op.props && props.rawGf) notes.push(`${op.id}: the graphic prints its verbatim ^GF, so _gfaCache does not change it`);
     // Fresh bytes in the same op DO change the print, so no note then.
-    if (!props || "_gfaCache" in op.props || "rawGf" in op.props) return [];
-    // Byte-fixed either way: verbatim ^GF ships as-is, and a cache with no source image cannot re-encode.
-    if (!props.rawGf && !gfaCacheIsOnlyCopy(props)) return [];
-    if (!("widthDots" in op.props || "threshold" in op.props)) return [];
-    // The graphic prints from bytes nothing here can re-encode, so width and threshold change only the model.
-    return [`${op.id}: the graphic prints from its stored bytes, so widthDots and threshold do not change it`];
+    const freshBytes = "rawGf" in op.props || ("_gfaCache" in op.props && !props.rawGf);
+    const byteFixed = !!props.rawGf || gfaCacheIsOnlyCopy(props);
+    if (!freshBytes && byteFixed && ("widthDots" in op.props || "threshold" in op.props)) {
+      notes.push(`${op.id}: the graphic prints from its stored bytes, so widthDots and threshold do not change it`);
+    }
+    return notes;
   });
   const opNotes = operations.flatMap((op, i) =>
     op.op === "add"

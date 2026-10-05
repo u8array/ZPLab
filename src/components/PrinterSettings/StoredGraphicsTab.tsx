@@ -10,8 +10,8 @@ import { sanitizeStorageName, setupEntryKey, uploadedGraphicPath } from "@zplab/
 import { findSetupEntry, setupEntryHoldsOther, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
 import { buttonCls, disabledCls, zplCommandTagCls } from "../ui/formStyles";
 import { useCachedImages } from "../../hooks/useCachedImages";
-import { canSendSetupGraphic, setupGraphicFits, setupGraphicOf, setupGraphicState, type ImageProps } from "@zplab/core/registry/image";
-import { storedGraphicRows } from "@zplab/core/lib/storedObjects";
+import { canSendSetupGraphic, setupGraphicFits, setupGraphicOf, setupGraphicState } from "@zplab/core/registry/image";
+import { storedGraphicRows, type StoredGraphicRow } from "@zplab/core/lib/storedObjects";
 import { removeImage } from "@zplab/core/lib/imageCache";
 import { imageUsage } from "@zplab/core/lib/imageUsage";
 import type { SetupGraphic } from "@zplab/core/types/PrinterProfile";
@@ -22,6 +22,7 @@ export function StoredGraphicsTab() {
   const pages = useLabelStore((s) => s.pages);
   const setupGraphics = useLabelStore((s) => s.printerProfile.setupGraphics);
   const patchPrinterProfileWith = useLabelStore((s) => s.patchPrinterProfileWith);
+  const sendSetupGraphic = useLabelStore((s) => s.sendSetupGraphic);
   const loc = t.printerSettings.objects;
 
   const rows = storedGraphicRows(pages);
@@ -30,12 +31,12 @@ export function StoredGraphicsTab() {
   const put = (entry: SetupGraphic) => patchPrinterProfileWith((p) => ({ setupGraphics: withSetupEntry(p.setupGraphics, entry) }));
   const drop = (path: string) => patchPrinterProfileWith((p) => ({ setupGraphics: withoutSetupEntry(p.setupGraphics, path) }));
   const [sendIssue, setSendIssue] = useState<{ path: string; cache: string | undefined; fit: "tooLarge" | "unshippable" } | null>(null);
-  const send = (path: string, props: ImageProps) => {
+  const send = (path: string, { id, props }: StoredGraphicRow) => {
     const verdict = setupGraphicOf(props);
     if (!verdict) return;
     if (verdict.fit !== "ok") return setSendIssue({ path, cache: props._gfaCache, fit: verdict.fit });
     setSendIssue(null);
-    put(verdict.entry);
+    sendSetupGraphic(id, verdict.entry);
   };
 
   // Frozen, the open pages are not what a source session will apply, so no control may act on them.
@@ -118,7 +119,8 @@ export function StoredGraphicsTab() {
           <p className="text-xs text-muted/70">{loc.noGraphics}</p>
         ) : (
           <ul className="flex flex-col gap-1">
-            {[...rows.entries()].map(([path, props]) => {
+            {[...rows.entries()].map(([path, row]) => {
+              const { props } = row;
               const state = setupGraphicState(props, setupGraphics);
               const hasEntry = findSetupEntry(setupGraphics, path) !== undefined;
               const orphan = state === "none" && props.storedAs?.embedInZpl === false;
@@ -138,7 +140,7 @@ export function StoredGraphicsTab() {
                     {refused ? (
                       <span className="text-[10px] text-warning">{refused === "tooLarge" ? loc.tooLarge : loc.tooWide}</span>
                     ) : resend && canSendSetupGraphic(props) ? (
-                      <button type="button" className="text-left text-[10px] text-warning hover:underline disabled:opacity-40" disabled={frozen} onClick={() => send(path, props)}>
+                      <button type="button" className="text-left text-[10px] text-warning hover:underline disabled:opacity-40" disabled={frozen} onClick={() => send(path, row)}>
                         {resend}
                       </button>
                     ) : resend ? (
@@ -158,7 +160,7 @@ export function StoredGraphicsTab() {
                         className="accent-accent"
                         checked={hasEntry}
                         disabled={frozen || (!hasEntry && !canSendSetupGraphic(props))}
-                        onChange={(e) => (e.target.checked ? send(path, props) : drop(path))}
+                        onChange={(e) => (e.target.checked ? send(path, row) : drop(path))}
                       />
                       {loc.uploadToggle}
                     </label>

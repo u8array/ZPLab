@@ -8,6 +8,11 @@ import {
   type PrinterProfile,
 } from '@zplab/core/types/PrinterProfile';
 import { pruneUndefined } from '@zplab/core/lib/pruneUndefined';
+import { withSetupEntry } from '@zplab/core/lib/setupEntries';
+import { sentGraphicPatch } from '@zplab/core/lib/resourceDelivery';
+import { isGroup, mapObjectById, type LabelObject } from '@zplab/core/types/Group';
+import type { SetupGraphic } from '@zplab/core/types/PrinterProfile';
+import type { ImageProps } from '@zplab/core/registry/image';
 import { selectEditorFrozen } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 
@@ -24,6 +29,8 @@ export interface PrinterProfileSlice {
   patchPrinterProfileWith: (make: (profile: PrinterProfile) => Partial<PrinterProfile>) => boolean;
   /** Back to printer defaults for every setting. The provisioned uploads stay, see `SETUP_UPLOAD_FIELDS`. */
   resetPrinterProfile: () => void;
+  /** The entry and the pin on the object are one step, so undo takes both back together. False when the store refused it. */
+  sendSetupGraphic: (objectId: string, entry: SetupGraphic) => boolean;
 }
 
 export const createPrinterProfileSlice: StateCreator<
@@ -36,6 +43,23 @@ export const createPrinterProfileSlice: StateCreator<
 
   patchPrinterProfile: (patch) => commitProfilePatch(get(), set, () => patch),
   patchPrinterProfileWith: (make) => commitProfilePatch(get(), set, make),
+
+  sendSetupGraphic: (objectId, entry) => {
+    const state = get();
+    if (selectEditorFrozen(state)) return false;
+    const profile = applyProfilePatch(state, (p) => ({ setupGraphics: withSetupEntry(p.setupGraphics, entry) }));
+    if (!profile) return false;
+    // Bookkeeping about bytes that just went out, so a lock on the object does not apply.
+    const pages = state.pages.map((page) => {
+      const objects = mapObjectById(page.objects, objectId, (o) =>
+        isGroup(o) || (o.props as ImageProps)._gfaCache === entry.gfa ? o : ({ ...o, props: { ...o.props, ...sentGraphicPatch(entry) } } as LabelObject),
+      );
+      return objects === page.objects ? page : { ...page, objects };
+    });
+    // map returns a fresh array even when nothing changed, so the unchanged list must keep its identity.
+    set(pages.some((page, i) => page !== state.pages[i]) ? { ...profile, pages } : profile);
+    return true;
+  },
 
   resetPrinterProfile: () =>
     set((state) => {
