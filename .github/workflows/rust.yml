@@ -36,7 +36,7 @@ jobs:
         # Windows covers the winspool RAW path (#[cfg(windows)] in print.rs);
         # Linux covers the libcups + Secret Service + USB ioctl paths; macOS
         # covers the nusb/IOKit USB transport (#[cfg(target_os = "macos")]).
-        # ubuntu-22.04 matches the release floor in release.yml.
+        # ubuntu-22.04 matches the release runner in release.yml.
         platform: [ubuntu-22.04, windows-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
