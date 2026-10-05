@@ -24,6 +24,15 @@ describe("PreviewSettingsTab", () => {
     expect(useLabelStore.getState().previewProvider).toBe("none");
     expect(r.getByLabelText(loc.labelaryConsent)).toBeTruthy();
     expect(r.queryByText(loc.apiHeading)).toBeNull();
+    expect(r.getByText(loc.labelaryIdleHint, { exact: false })).toBeTruthy();
+    expect(r.queryByText(en.output.previewNoticeBody, { exact: false })).toBeNull();
+  });
+
+  it("keeps the notice when a stored printer way falls back to Labelary on the web", () => {
+    act(() => useLabelStore.setState({ previewProvider: "printer" }));
+    const r = render(<PreviewSettingsTab />);
+    expect(r.getByText(en.output.previewNoticeBody, { exact: false })).toBeTruthy();
+    expect(r.queryByText(loc.labelaryIdleHint, { exact: false })).toBeNull();
   });
 
   it("shows the stored choice and says a build without Labelary has no renderer", () => {

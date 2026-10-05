@@ -78,12 +78,12 @@ Select several objects with Shift-click or a lasso. Position and size changes ap
 
 ### 4. Print or export
 
-The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. The canvas shows the label as you design it. **Preview** adds an alternative rendering from the connected printer (desktop) or, with consent, from the third-party service [Labelary](https://labelary.com/).
+The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
 
 - **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
 - **File → Send to Zebra Printer:** opens the send dialog. It sends over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop.
-- **File → Export PDF:** saves one PDF page per label page, rendered by the preview renderer. With the renderer off it holds the current page only. A batch PDF holds one page per data row.
-- **File → Print as Image (browser):** opens the rendered label, then the browser print dialog
+- **File → Export PDF:** saves one PDF page per label page, rendered by the preview renderer. With the renderer off, ZPLab captures the canvas, so the PDF holds the current page only. A batch PDF needs the renderer and holds one page per data row.
+- **File → Print as Image (browser):** renders the current page with the same renderer, then opens the browser print dialog
 
 ### 5. Save the design
 
@@ -97,7 +97,7 @@ The **ZPL** panel highlights syntax and collapses long blocks of image data. Sel
 
 The **command list** left of the code filters as you search. The **ZPL reference** on the right follows the cursor. Click a command to pin its details. The details also show the syntax, a parameter table and an example where the reference has them. A double-click or the right-click menu inserts the command at the cursor. A chevron folds each pane to a rail. Click the rail to bring it back.
 
-While you edit, the canvas shows a live preview. Canvas editing and the **Properties** tab are disabled. Page switching stays enabled. The editor refuses source that is too large or has mismatched `^XA`/`^XZ` commands, and marks the mismatches. Click a mark to insert the missing command.
+While you edit, the canvas renders the source. Canvas editing and the **Properties** tab are disabled. Page switching stays enabled. The editor refuses source that is too large or has mismatched `^XA`/`^XZ` commands, and marks the mismatches. Click a mark to insert the missing command.
 
 - **Apply** or leaving the panel commits your changes.
 - `Esc` or **Cancel** discards them.
