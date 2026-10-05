@@ -34,7 +34,7 @@
       <li>Typed payloads for QR Code, Data Matrix and Aztec: URLs, Wi-Fi, contacts, email, phone, SMS and coordinates, plus GS1 Digital Links</li>
       <li>Batch printing: map label variables to CSV, Excel or database columns and print one label per row</li>
       <li>Printing over raw TCP, the system print queue, or USB</li>
-      <li>Previews rendered through Labelary, or by the connected printer's own firmware</li>
+      <li>An optional second rendering of the label, from Labelary or from the connected printer's own firmware, to compare against the canvas</li>
       <li>An MCP server that lets a local AI assistant read, build and validate labels, and edit the open design directly</li>
       <li>32 interface languages, light and dark theme</li>
       <li>MIT-licensed, with no account and no backend</li>

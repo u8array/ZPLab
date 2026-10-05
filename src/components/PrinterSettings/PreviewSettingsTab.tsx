@@ -186,7 +186,8 @@ export function PreviewSettingsTab() {
           <p className="text-[10px] text-muted leading-relaxed max-w-md">
             {publicHost ? (
               <>
-                {t.output.previewNoticeBody}{" "}
+                {/* The notice must stand wherever Labelary renders or is about to: a stored printer choice degrades to it on the web. */}
+                {chosen === "labelary" || provider === "labelary" ? t.output.previewNoticeBody : loc.labelaryIdleHint}{" "}
                 {/* The plans/retention link is about the public service; a
                     custom endpoint is the operator's own, so omit it there. */}
                 <a
