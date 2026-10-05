@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { prepareFontBytes } from "@zplab/core/lib/customFonts";
 import {
   builtinFontFamily,
   dropLegacyFontBindings,
@@ -340,5 +341,14 @@ describe("resolveDefaultPrinterFontName", () => {
     expect(
       resolveDefaultPrinterFontName({ defaultFontId: "M" }),
     ).toBeUndefined();
+  });
+});
+
+describe("prepareFontBytes", () => {
+  it("prefers the typed printer name over the source file name, and refuses a name with no usable stem", () => {
+    const bytes = new Uint8Array([0, 1, 0, 0]);
+    expect(prepareFontBytes("arial.otf", bytes)).toEqual({ ok: true, path: "E:ARIAL.TTF", bytes });
+    expect(prepareFontBytes("arial.ttf", bytes, "R:LOGO")).toEqual({ ok: true, path: "R:LOGO.TTF", bytes });
+    expect(prepareFontBytes("...", bytes)).toEqual({ ok: false, reason: "nameUnusable" });
   });
 });

@@ -7,6 +7,7 @@ mod package;
 mod preview;
 mod print;
 mod scope;
+mod system_fonts;
 mod transport;
 mod updates;
 mod usb;
@@ -17,6 +18,7 @@ use tauri::Manager;
 pub fn run() {
   let builder = tauri::Builder::default()
     .manage(mcp::McpState::default())
+    .manage(system_fonts::SystemFonts::default())
     // In setup, not manage(): loading the persisted grants needs the app paths.
     .setup(|app| {
       let grants = scope::PathGrants::load(app.handle());
@@ -32,6 +34,8 @@ pub fn run() {
       usb::send_zpl_usb,
       usb::query_zpl_usb,
       usb::setup_usb_access,
+      system_fonts::list_system_fonts,
+      system_fonts::read_system_font,
       db::db_list_tables,
       db::db_fetch,
       db::db_set_password,

@@ -63,7 +63,7 @@ export const ZPL_BUILTIN_FONT_IDS = [
 ] as const;
 
 /** The printer path for a locally picked file: a real device, up to 8 name chars, and an extension
- *  ^A@ and ^CW can reference (spec p.63, p.168): .TTE stays, everything else is .TTF. */
+ *  ^A@ and ^CW can reference (spec p.63, p.168). .TTE stays, .OTF and the rest become .TTF (p.184). */
 export function printerFontFileName(fileName: string): string | undefined {
   const first = fileName[0]?.toUpperCase() ?? "";
   const typedDevice = fileName[1] === ":" && (STORAGE_DEVICES as readonly string[]).includes(first) ? `${first}:` : undefined;
@@ -77,16 +77,20 @@ export function printerFontFileName(fileName: string): string | undefined {
 
 export type FontUploadIssue = "notAFont" | "nameUnusable" | "nameTaken";
 
-/** The gate a picked file passes before its bytes enter the cache; reads the file once. */
-export async function prepareFontUpload(
-  file: File,
-  typedName = "",
-): Promise<{ ok: true; path: string; bytes: Uint8Array } | { ok: false; reason: FontUploadIssue }> {
+export type FontNameIssue = Exclude<FontUploadIssue, "notAFont">;
+export type PreparedFont = { ok: true; path: string; bytes: Uint8Array } | { ok: false; reason: FontNameIssue };
+
+/** The gate a picked file passes before its bytes enter the cache. */
+export async function prepareFontUpload(file: File, typedName = ""): Promise<PreparedFont | { ok: false; reason: "notAFont" }> {
   if (!isFontFile(file)) return { ok: false, reason: "notAFont" };
-  const path = printerFontFileName(typedName.trim() || file.name);
+  return prepareFontBytes(file.name, new Uint8Array(await file.arrayBuffer()), typedName);
+}
+
+/** The name and collision half of the gate, for bytes that arrive without a File. */
+export function prepareFontBytes(fileName: string, bytes: Uint8Array, typedName = ""): PreparedFont {
+  const path = printerFontFileName(typedName.trim() || fileName);
   if (!path) return { ok: false, reason: "nameUnusable" };
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  // Two picked files can fold onto one printer name; a different file must not take the first one's row.
+  // Two picked files can fold onto one printer name. A different file must not take the first one's row.
   if (holdsOtherBytes(path, bytes)) return { ok: false, reason: "nameTaken" };
   return { ok: true, path, bytes };
 }

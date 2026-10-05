@@ -56,7 +56,7 @@ export function StoredFontsTab() {
     setRepairTarget(target);
     fileRef.current?.click();
   };
-  const { busy: uploading, issue: uploadIssue, start: uploadFile } = useUpload<"error" | "refused" | FontUploadIssue, [target?: string]>(async (file, target) => {
+  const { busy: uploading, issue: uploadIssue, start: uploadFile } = useUpload<"error" | "refused" | FontUploadIssue, File, [target?: string]>(async (file, target) => {
     const prepared = await prepareFontUpload(file, target);
     if (!prepared.ok) return prepared.reason;
     await loadFontBytes(prepared.bytes, prepared.path);

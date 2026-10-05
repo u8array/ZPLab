@@ -131,7 +131,7 @@ The **Variables** tab adds a variable with a name, an `^FN` slot and a default v
 
 ### Fonts
 
-The **Fonts** tab uploads TrueType fonts and assigns their `^CW` alias.
+The **Fonts** tab uploads TrueType fonts and assigns their `^CW` alias. On the desktop the tab also offers the fonts installed on this computer.
 
 ### Pages
 

@@ -151,7 +151,7 @@ describe("StoredFontsTab", () => {
       fireEvent.change(getByLabelText(/Upload font/), { target: { files: [new File(["other bytes"], "arial.ttf")] } });
     });
     expect(getAllFonts()).toHaveLength(1);
-    expect(getByText(/Rename the file/)).toBeTruthy();
+    expect(getByText(/different printer filename/)).toBeTruthy();
     expect(useLabelStore.getState().printerProfile.setupFonts).toBeUndefined();
   });
 

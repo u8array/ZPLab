@@ -1,4 +1,4 @@
-import { useRef, useState, type FocusEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FocusEvent } from 'react';
 import { PlusIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/16/solid';
 import {
   hasFontBytes,
@@ -12,6 +12,8 @@ import { useCachedFonts } from '../../hooks/useCachedFonts';
 import { useLabelStore, useFileDeletability, forgetHistoryUsing, type DeleteBlock } from '../../store/labelStore';
 import { useT } from '../../hooks/useT';
 import { useUpload } from '../../hooks/useUpload';
+import { isDesktopShell } from '../../lib/platform';
+import { listSystemFonts, readSystemFont, type SystemFont } from '../../lib/systemFonts';
 import { storageKey, storageRefMatchesPath } from '@zplab/core/lib/storagePath';
 import { listsStoredFont } from '@zplab/core/lib/storedObjects';
 import {
@@ -19,8 +21,9 @@ import {
   isBuiltinFontId,
   nextFreeAlias,
   normalizeAlias,
+  prepareFontBytes,
   prepareFontUpload,
-  type FontUploadIssue,
+  type FontNameIssue,
   upsertCustomFontMapping,
 } from '@zplab/core/lib/customFonts';
 import { inputCls, labelCls } from '../Properties/styles';
@@ -468,9 +471,13 @@ function AddFontForm({ onDone }: AddFontFormProps) {
   const t = useT();
   const fileRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState('');
-  const { busy: uploading, issue: uploadIssue, start: uploadFile } = useUpload<'error' | Exclude<FontUploadIssue, 'notAFont'>>(async (file) => {
-    // The typed name wins. Otherwise the picked file's own name is almost always the intended one.
-    const prepared = await prepareFontUpload(file, name);
+  const [fromComputer, setFromComputer] = useState(false);
+  const listId = useId();
+  // One run for both sources, so every control stays locked while a pick is still landing.
+  const { busy: uploading, issue: uploadIssue, start: uploadFile } = useUpload<'error' | FontNameIssue, File | SystemFont>(async (input) => {
+    // Nothing typed means the picked file's own name, which is almost always the intended one.
+    const prepared =
+      input instanceof File ? await prepareFontUpload(input, name) : prepareFontBytes(input.file_name, await readSystemFont(input.path), name);
     if (!prepared.ok) return prepared.reason === 'notAFont' ? 'error' : prepared.reason;
     await loadFontBytes(prepared.bytes, prepared.path);
     onDone(prepared.path);
@@ -515,6 +522,18 @@ function AddFontForm({ onDone }: AddFontFormProps) {
         >
           {uploading ? '…' : t.fonts.upload}
         </button>
+        {isDesktopShell && (
+          <button
+            type="button"
+            className="px-2 py-1.5 rounded text-xs font-mono border border-border text-muted hover:text-text transition-colors"
+            onClick={() => setFromComputer((v) => !v)}
+            disabled={uploading}
+            aria-expanded={fromComputer}
+            aria-controls={fromComputer ? listId : undefined}
+          >
+            {t.fonts.fromComputer}
+          </button>
+        )}
         <button
           type="button"
           className="px-2 py-1.5 rounded text-xs font-mono border border-border text-muted hover:text-text transition-colors"
@@ -524,6 +543,57 @@ function AddFontForm({ onDone }: AddFontFormProps) {
           {t.fonts.cancel}
         </button>
       </div>
+
+      {fromComputer && <SystemFontList listId={listId} busy={uploading} onPick={uploadFile} />}
+    </div>
+  );
+}
+
+// ── SystemFontList ─────────────────────────────────────────────────────────────
+
+function SystemFontList({ listId, busy, onPick }: { listId: string; busy: boolean; onPick: (font: SystemFont) => void }) {
+  const t = useT();
+  const [fonts, setFonts] = useState<SystemFont[] | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [query, setQuery] = useState('');
+  useEffect(() => {
+    let current = true;
+    listSystemFonts().then(
+      (list) => current && setFonts(list),
+      () => current && setFailed(true),
+    );
+    return () => {
+      current = false;
+    };
+  }, []);
+  const shown = (fonts ?? []).filter((f) => `${f.family} ${f.style}`.toLowerCase().includes(query.trim().toLowerCase()));
+  return (
+    <div className="flex flex-col gap-1">
+      <input className={inputCls} value={query} placeholder={t.fonts.filterFonts} onChange={(e) => setQuery(e.target.value)} aria-label={t.fonts.filterFonts} />
+      {fonts === null && !failed && <p className="text-[10px] text-muted">…</p>}
+      {fonts !== null && fonts.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noSystemFonts}</p>}
+      {fonts !== null && fonts.length > 0 && shown.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noFilterMatch}</p>}
+      {failed && <p className="text-[10px] font-mono text-red-400">{t.fonts.systemFontsFailed}</p>}
+      <ul id={listId} className="max-h-48 overflow-auto rounded border border-border text-xs" aria-label={t.fonts.fromComputer}>
+        {shown.map((font) => (
+          <li key={font.path}>
+            {/* aria-disabled, not disabled: a greyed row must stay reachable, so its reason can be read. */}
+            <button
+              type="button"
+              className="flex w-full items-baseline gap-2 px-2 py-1 text-left hover:bg-border/60 aria-disabled:opacity-40 aria-disabled:hover:bg-transparent"
+              onClick={() => {
+                if (!busy && !font.restricted) onPick(font);
+              }}
+              aria-disabled={busy || font.restricted}
+              title={font.restricted ? t.fonts.restrictedLicense : font.variable ? t.fonts.variableFont : undefined}
+            >
+              <span className="text-text truncate">{font.family}</span>
+              <span className="text-muted truncate">{font.style}</span>
+              <span className="ml-auto font-mono text-[10px] text-muted shrink-0">{Math.ceil(font.bytes / 1024)} KB</span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

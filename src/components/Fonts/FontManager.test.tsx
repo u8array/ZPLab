@@ -216,7 +216,7 @@ describe("FontManager upload", () => {
   it("refuses a file whose name folds onto a cached font holding other bytes", async () => {
     const r = render(<FontManager />);
     await pick(r, new File(["other bytes"], "arial.ttf"));
-    expect(r.getByText(/Rename the file/)).toBeTruthy();
+    expect(r.getByText(/different printer filename/)).toBeTruthy();
     expect(getAllFonts()).toHaveLength(1);
   });
 
