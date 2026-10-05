@@ -108,9 +108,8 @@ jobs:
             args: '--target aarch64-apple-darwin'
           - platform: macos-latest # Intel, cross-compiled on the arm64 runner
             args: '--target x86_64-apple-darwin'
-          # Oldest LTS with webkit2gtk-4.1. glibc is forward compatible only, so this runner sets
-          # the floor for every Linux artifact and a newer one drops Debian 12 and Ubuntu 22.04.
-          # 22.04 leaves standard support in April 2027. Moving the floor is a release decision.
+          # Oldest LTS with webkit2gtk-4.1, standard support until April 2027. glibc is forward compatible
+          # only, so a newer runner drops Debian 12 and Ubuntu 22.04. Moving the runner is a release decision.
           - platform: ubuntu-22.04
             args: ''
           - platform: windows-latest
@@ -162,15 +161,16 @@ jobs:
           updaterJsonPreferNsis: true
           args: ${{ matrix.args }}
 
-      # deb, rpm and AppImage all package this same binary.
       - name: glibc floor
         if: startsWith(matrix.platform, 'ubuntu')
         run: |
-          FLOOR=GLIBC_2.35
+          # deb and rpm link the system glibc, so the floor is what RHEL 9 ships.
+          # The AppImage bundles the runner's libraries, so the guard does not lower its 2.35.
+          FLOOR=GLIBC_2.34
           BIN="src-tauri/target/release/$(jq -r .mainBinaryName src-tauri/tauri.conf.json)"
           MAX=$(objdump -T "$BIN" | grep -o 'GLIBC_[0-9.]*' | sort -Vu | tail -1)
           echo "$BIN requires ${MAX:?no glibc symbols found}, floor $FLOOR"
-          [ "$(printf '%s\n%s\n' "$MAX" "$FLOOR" | sort -V | tail -1)" = "$FLOOR" ] || { echo "built against a too-new glibc"; exit 1; }
+          [ "$(printf '%s\n%s\n' "$MAX" "$FLOOR" | sort -V | tail -1)" = "$FLOOR" ] || { echo "$MAX is newer than the floor $FLOOR"; exit 1; }
 
   msix:
     needs: gates
