@@ -1,7 +1,6 @@
-//! A path leaves this module only through the listing, and the read serves only what the listing
-//! named. The tables are read here, not by a font crate: the parser crate is unmaintained
-//! (RUSTSEC-2026-0192) and three tables suffice.
-use std::io::Read;
+//! A path leaves this module only through the listing, and the read serves only what the listing named.
+//! The name and OS/2 tables are parsed here instead of with ttf-parser, which is unmaintained under RUSTSEC-2026-0192.
+use std::io::{Cursor, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
@@ -12,7 +11,7 @@ use crate::transport::blocking;
 /// The font cache's own cap, so the listing only offers rows the cache will take.
 const MAX_FONT_BYTES: u64 = 4 * 1024 * 1024;
 
-/// The scan reads every font file, so one session keeps its result.
+/// The scan opens every font file, so one session keeps its result.
 #[derive(Default)]
 pub struct SystemFonts {
   listing: Mutex<Option<Vec<SystemFont>>>,
@@ -84,7 +83,7 @@ fn read_listed(allowed: bool, path: &str) -> Result<Vec<u8>, String> {
   if bytes.len() as u64 > MAX_FONT_BYTES {
     return Err("too large".to_string());
   }
-  match read_face(&bytes) {
+  match read_face(&mut Cursor::new(&bytes)) {
     Some(face) if !face.restricted => Ok(bytes),
     Some(_) => Err("restricted".to_string()),
     None => Err("not a font".to_string()),
@@ -157,16 +156,16 @@ fn scan() -> Vec<SystemFont> {
   }
   let mut out = Vec::new();
   for path in files {
-    let Ok(meta) = std::fs::metadata(&path) else {
+    let Ok(mut file) = std::fs::File::open(&path) else {
+      continue;
+    };
+    let Ok(meta) = file.metadata() else {
       continue;
     };
     if meta.len() > MAX_FONT_BYTES {
       continue;
     }
-    let Ok(bytes) = std::fs::read(&path) else {
-      continue;
-    };
-    let Some(face) = read_face(&bytes) else {
+    let Some(face) = read_face(&mut file) else {
       continue;
     };
     out.push(SystemFont {
@@ -202,20 +201,44 @@ fn u32_at(b: &[u8], at: usize) -> Option<u32> {
     .map(|s| u32::from_be_bytes([s[0], s[1], s[2], s[3]]))
 }
 
-fn table<'a>(bytes: &'a [u8], tag: &[u8; 4]) -> Option<&'a [u8]> {
-  let count = u16_at(bytes, 4)? as usize;
-  (0..count).find_map(|i| {
-    let at = 12 + i * 16;
-    if bytes.get(at..at + 4)? != tag {
+struct Directory(Vec<u8>);
+
+impl Directory {
+  fn read<R: Read + Seek>(src: &mut R) -> Option<Self> {
+    let mut head = [0u8; 12];
+    src.read_exact(&mut head).ok()?;
+    let version = &head[..4];
+    if version != [0, 1, 0, 0] && version != b"OTTO" && version != b"true" {
       return None;
     }
-    let offset = u32_at(bytes, at + 8)? as usize;
-    let length = u32_at(bytes, at + 12)? as usize;
-    bytes.get(offset..offset.checked_add(length)?)
-  })
+    let entries = read_exact_vec(src, u16_at(&head, 4)? as u64 * 16)?;
+    Some(Self(entries))
+  }
+
+  fn entry(&self, tag: &[u8; 4]) -> Option<(u64, u64)> {
+    self.0.chunks_exact(16).find_map(|e| {
+      if &e[..4] != tag {
+        return None;
+      }
+      Some((u32_at(e, 8)? as u64, u32_at(e, 12)? as u64))
+    })
+  }
+
+  fn table<R: Read + Seek>(&self, src: &mut R, tag: &[u8; 4]) -> Option<Vec<u8>> {
+    let (offset, length) = self.entry(tag)?;
+    src.seek(SeekFrom::Start(offset)).ok()?;
+    read_exact_vec(src, length)
+  }
 }
 
-/// Windows Unicode names first, Macintosh Roman as the fallback the oldest fonts carry.
+/// Fails unless the whole length arrives, so a length the file declares never sizes an allocation.
+fn read_exact_vec<R: Read>(src: &mut R, length: u64) -> Option<Vec<u8>> {
+  let mut bytes = Vec::new();
+  src.by_ref().take(length).read_to_end(&mut bytes).ok()?;
+  (bytes.len() as u64 == length).then_some(bytes)
+}
+
+/// Unicode names win, Macintosh Roman is the fallback the oldest fonts carry.
 fn name_string(name: &[u8], id: u16) -> Option<String> {
   let count = u16_at(name, 2)? as usize;
   let strings = u16_at(name, 4)? as usize;
@@ -249,24 +272,22 @@ fn name_string(name: &[u8], id: u16) -> Option<String> {
 const FSTYPE_RESTRICTED: u16 = 0x0002;
 const FSTYPE_BITMAP_ONLY: u16 = 0x0200;
 
-fn read_face(bytes: &[u8]) -> Option<Face> {
-  let version = bytes.get(..4)?;
-  if version != [0, 1, 0, 0] && version != b"OTTO" && version != b"true" {
-    return None;
-  }
-  let name = table(bytes, b"name")?;
-  let family = name_string(name, 16).or_else(|| name_string(name, 1))?;
-  let style = name_string(name, 17)
-    .or_else(|| name_string(name, 2))
+fn read_face<R: Read + Seek>(src: &mut R) -> Option<Face> {
+  let dir = Directory::read(src)?;
+  let name = dir.table(src, b"name")?;
+  let family = name_string(&name, 16).or_else(|| name_string(&name, 1))?;
+  let style = name_string(&name, 17)
+    .or_else(|| name_string(&name, 2))
     .unwrap_or_else(|| "Regular".to_string());
-  let fs_type = table(bytes, b"OS/2")
-    .and_then(|t| u16_at(t, 8))
+  let fs_type = dir
+    .table(src, b"OS/2")
+    .and_then(|t| u16_at(&t, 8))
     .unwrap_or(0);
   Some(Face {
     family,
     style,
     restricted: fs_type & (FSTYPE_RESTRICTED | FSTYPE_BITMAP_ONLY) != 0,
-    variable: table(bytes, b"fvar").is_some(),
+    variable: dir.entry(b"fvar").is_some(),
   })
 }
 
@@ -306,7 +327,11 @@ mod tests {
     name.extend(&sty);
     let mut os2 = vec![0u8; 78];
     os2[8..10].copy_from_slice(&fs_type.to_be_bytes());
-    let mut tables: Vec<(&[u8; 4], Vec<u8>)> = vec![(b"OS/2", os2), (b"name", name)];
+    let mut tables: Vec<(&[u8; 4], Vec<u8>)> = vec![
+      (b"glyf", vec![0u8; 64 * 1024]),
+      (b"OS/2", os2),
+      (b"name", name),
+    ];
     if variable {
       tables.push((b"fvar", vec![0u8; 16]));
     }
@@ -328,9 +353,45 @@ mod tests {
     out
   }
 
+  struct Counting<R>(R, usize);
+
+  impl<R: Read> Read for Counting<R> {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+      let n = self.0.read(buf)?;
+      self.1 += n;
+      Ok(n)
+    }
+  }
+
+  impl<R: Seek> Seek for Counting<R> {
+    fn seek(&mut self, pos: SeekFrom) -> std::io::Result<u64> {
+      self.0.seek(pos)
+    }
+  }
+
+  fn parse(bytes: &[u8]) -> Option<Face> {
+    read_face(&mut Cursor::new(bytes))
+  }
+
+  #[test]
+  fn reads_none_of_the_glyph_table() {
+    let bytes = font("A", "B", 0, true);
+    let mut src = Counting(Cursor::new(&bytes), 0);
+    read_face(&mut src).unwrap();
+    assert!(src.1 < 1024, "read {} of {} bytes", src.1, bytes.len());
+  }
+
+  #[test]
+  fn a_variable_font_needs_no_fvar_read() {
+    let mut bytes = font("A", "B", 0, true);
+    let fvar = 12 + 3 * 16;
+    bytes[fvar + 8..fvar + 12].copy_from_slice(&u32::MAX.to_be_bytes());
+    assert!(parse(&bytes).unwrap().variable);
+  }
+
   #[test]
   fn reads_names_and_flags_from_the_tables() {
-    let face = read_face(&font("Noto Sans", "Bold Italic", 0, true)).unwrap();
+    let face = parse(&font("Noto Sans", "Bold Italic", 0, true)).unwrap();
     assert_eq!(
       (face.family.as_str(), face.style.as_str()),
       ("Noto Sans", "Bold Italic")
@@ -338,26 +399,32 @@ mod tests {
     assert!(!face.restricted);
     assert!(face.variable);
     assert!(
-      read_face(&font("A", "B", FSTYPE_RESTRICTED, false))
+      parse(&font("A", "B", FSTYPE_RESTRICTED, false))
         .unwrap()
         .restricted
     );
     assert!(
-      read_face(&font("A", "B", FSTYPE_BITMAP_ONLY, false))
+      parse(&font("A", "B", FSTYPE_BITMAP_ONLY, false))
         .unwrap()
         .restricted
     );
-    assert!(
-      !read_face(&font("A", "B", 0x0008, false))
-        .unwrap()
-        .restricted
-    );
-    assert!(read_face(b"not a font at all").is_none());
-    assert!(read_face(&[]).is_none());
+    assert!(!parse(&font("A", "B", 0x0008, false)).unwrap().restricted);
   }
 
   #[test]
-  fn serves_the_listed_spelling_only() {
+  fn rejects_a_foreign_or_truncated_file() {
+    assert!(parse(b"not a font at all").is_none());
+    assert!(parse(&[]).is_none());
+    let mut short_directory = font("A", "B", 0, false);
+    short_directory.truncate(12 + 10);
+    assert!(parse(&short_directory).is_none());
+    let mut short_table = font("A", "B", 0, false);
+    short_table.truncate(12 + 3 * 16 + 10);
+    assert!(parse(&short_table).is_none());
+  }
+
+  #[test]
+  fn serves_only_the_listed_spelling_of_an_unrestricted_font() {
     let fonts = [listed("C:/Windows/Fonts/arial.ttf", false)];
     assert!(allows(&fonts, "C:/Windows/Fonts/arial.ttf"));
     assert!(!allows(&fonts, "C:/Windows/Fonts/../Fonts/arial.ttf"));
@@ -370,7 +437,7 @@ mod tests {
   }
 
   #[test]
-  fn reads_only_when_allowed_and_within_the_cap() {
+  fn reads_only_an_allowed_unrestricted_font_within_the_cap() {
     let dir = std::env::temp_dir().join(format!("zplab-font-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
     let file = dir.join("a.ttf");
