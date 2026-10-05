@@ -1979,7 +1979,7 @@ describe("the patch operations array", () => {
   });
 });
 
-describe("the byte-fixed edit note", () => {
+describe("the edit notes for byte-fixed graphics", () => {
   it("covers rawGf graphics like it covers a source-less cache", () => {
     const created = ok(createDraft({
       widthMm: 60, heightMm: 40, dpmm: 8,
@@ -1989,6 +1989,21 @@ describe("the byte-fixed edit note", () => {
       { op: "update", id: "img", props: { widthDots: 400 } },
     ]));
     expect(patched.notes?.some((n) => n.includes("stored bytes"))).toBe(true);
+  });
+
+  it("names a cache written beside verbatim ^GF as unprinted, and still names the fixed bytes beside it", () => {
+    const created = ok(createDraft({
+      widthMm: 60, heightMm: 40, dpmm: 8,
+      objects: [{ type: "image", id: "img", x: 10, y: 10, props: { imageId: "", widthDots: 8, rawGf: "^GFA,4,4,1,00FFFF00" } }],
+    }));
+    const patched = ok(patchDesign(created.designFile, [
+      { op: "update", id: "img", props: { _gfaCache: "^GFA,4,4,1,FF0000FF" } },
+    ]));
+    expect(patched.notes).toContain("img: the graphic prints its verbatim ^GF, so _gfaCache does not change it");
+    const both = ok(patchDesign(created.designFile, [
+      { op: "update", id: "img", props: { _gfaCache: "^GFA,4,4,1,FF0000FF", widthDots: 20 } },
+    ]));
+    expect(both.notes?.filter((n) => n.startsWith("img:"))).toHaveLength(2);
   });
 });
 
