@@ -46,8 +46,8 @@ async function invokeUsbCommand<R>(
   args: Record<string, unknown>,
 ): Promise<R | UsbError> {
   if (!isDesktopShell) return { kind: "error", message: "USB printing requires the desktop app" };
-  const { invoke } = await import("@tauri-apps/api/core");
   try {
+    const { invoke } = await import("@tauri-apps/api/core");
     return await invoke<R>(cmd, args);
   } catch (e) {
     return { kind: "error", message: errorMessage(e) };

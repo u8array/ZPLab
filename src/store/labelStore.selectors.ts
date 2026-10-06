@@ -3,6 +3,8 @@ import { pageLabelConfig, type LabelObject, type Page } from '@zplab/core/types/
 import { boundColumnIndex } from '@zplab/core/lib/variableBinding';
 import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
 import { isDesktopShell } from '../lib/platform';
+import { queryKeyFor, type PrintTransport } from '../lib/printTarget';
+import type { PrinterState } from './slices/printerStateSlice';
 import type { Dataset } from './slices/dataSlice';
 import type { PreviewProvider } from './slices/uiSlice';
 import type { ColumnMapping } from '@zplab/core/types/Variable';
@@ -214,3 +216,12 @@ export const selectAppUpdateBusy = ({ appUpdate: { phase } }: LabelState) =>
 /** Nothing left to check: a restart is pending, or self-update is unavailable. */
 export const selectAppUpdateSettled = ({ appUpdate: { phase } }: LabelState) =>
   phase === 'installed' || phase === 'unsupported';
+
+// One shared object, so a selector returning it reads as unchanged between renders.
+const PRINTER_IDLE: PrinterState = { phase: 'idle' };
+
+/** The reply only while its key still matches the target. */
+export const selectPrinterState = (s: LabelState, transport?: PrintTransport): PrinterState =>
+  s.printerState.phase !== 'idle' && s.printerState.key === queryKeyFor(s.printTarget, transport) ? s.printerState : PRINTER_IDLE;
+
+export const selectPrinterReading = (s: LabelState): boolean => s.printerReading !== undefined;

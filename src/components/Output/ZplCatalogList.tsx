@@ -8,6 +8,7 @@ import { ContextMenu, type MenuSection } from "../ui/ContextMenu";
 import { useContextMenu } from "../../hooks/useContextMenu";
 import { useCollapsibleState } from "../ui/useCollapsibleState";
 import { PaneToggle } from "../ui/PaneToggle";
+import { sectionHeadingCls } from "../ui/formStyles";
 import { focusKeeper, PANE_ATTRS, paneClass, SUPPORT_LEVEL } from "./catalogPanes";
 
 // Neither useId output nor a command id is a bare identifier. The prefix must survive, since ^PH and ~PH are separate rows.
@@ -98,7 +99,7 @@ export function ZplCatalogList({
           onMouseDown={keepEditorFocus}
           controls={`${listId}-list`}
         />
-        {listOpen && <h2 className="flex-1 px-3 py-1.5 text-right font-mono text-[10px] text-muted uppercase tracking-widest">{t.output.catalogList}</h2>}
+        {listOpen && <h2 className={`flex-1 px-3 py-1.5 text-right ${sectionHeadingCls}`}>{t.output.catalogList}</h2>}
       </div>
       {listOpen && (
         <div id={`${listId}-list`} className="flex flex-col flex-1 min-h-0 min-w-0">
@@ -137,7 +138,7 @@ export function ZplCatalogList({
               const headingId = domId(listId, `section ${section.name}`);
               return (
                 <li key={section.name} role="group" aria-labelledby={headingId}>
-                  <div id={headingId} className="px-3 pt-2 pb-0.5 font-mono text-[10px] text-muted uppercase tracking-widest">
+                  <div id={headingId} className={`px-3 pt-2 pb-0.5 ${sectionHeadingCls}`}>
                     {section.name}
                   </div>
                   <ul role="presentation">

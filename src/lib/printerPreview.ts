@@ -1,6 +1,6 @@
-import { isDesktopShell } from "./platform";
 import { errorMessage } from "./errorMessage";
-import { queryZplUsb } from "./usbPrint";
+import { queryPrinter, type PrinterOutcome } from "./printerQuery";
+import type { QueryTarget } from "./printTarget";
 import {
   buildPrinterPreviewZpl,
   contentBounds,
@@ -8,47 +8,6 @@ import {
   monoToRgba,
   type PrinterBitmap,
 } from "./zebraGraphic";
-
-/** Where the preview query goes: the raw-TCP port or a USB printer id. */
-export type PreviewTarget =
-  | { kind: "network"; host: string; port: number }
-  | { kind: "usb"; id: string };
-
-/** Failure kinds the query dispatch and the final result share, so
- *  fetchPrinterPreview forwards them to the caller unchanged. */
-type PrinterQueryFailure =
-  | { kind: "refused" }
-  | { kind: "unreachable" }
-  | { kind: "not_found" }
-  | { kind: "permission_denied" }
-  | { kind: "error"; message: string };
-
-export type PrinterPreviewResult = { kind: "bitmap"; bitmap: PrinterBitmap } | PrinterQueryFailure;
-
-/** One wording per failure, so the preview overlay, the print window and the PDF export tell the same story. */
-export function printerFailureMessage(failure: PrinterQueryFailure, target: PreviewTarget): string {
-  switch (failure.kind) {
-    case "refused":
-      // 'refused' is network-only, so the port hint needs a network target.
-      return `The printer refused the connection.${target.kind === "network" ? ` Check that port ${target.port} is open.` : ""}`;
-    case "unreachable":
-      return "Could not reach the printer. Check the IP address and network.";
-    case "not_found":
-      return "USB printer not found. Re-plug it and check Settings, Printer.";
-    case "permission_denied":
-      return "No access to the USB printer. Grant it in the print dialog, USB tab.";
-    case "error":
-      return failure.message;
-  }
-}
-
-/** queryTarget's outcome: the raw reply to decode, or a failure to forward. */
-type PrinterQueryOutcome = { kind: "data"; body: string } | PrinterQueryFailure;
-
-interface TcpQueryResult {
-  kind: "data" | "refused" | "unreachable";
-  body?: string;
-}
 
 export interface PrinterRenderDims {
   width: number;
@@ -147,38 +106,20 @@ export function bitmapToDataUrl(bmp: PrinterBitmap): string | null {
   return canvas.toDataURL("image/png");
 }
 
-async function queryTarget(target: PreviewTarget, zpl: string): Promise<PrinterQueryOutcome> {
-  if (target.kind === "usb") {
-    return await queryZplUsb(target.id, zpl);
-  }
-  const { invoke } = await import("@tauri-apps/api/core");
-  const res = await invoke<TcpQueryResult>("query_zpl_tcp", {
-    host: target.host,
-    port: target.port,
-    zpl,
-  });
-  if (res.kind === "refused") return { kind: "refused" };
-  if (res.kind === "unreachable") return { kind: "unreachable" };
-  return { kind: "data", body: res.body ?? "" };
-}
-
 /** Ask the printer to render the design and upload the resulting bitmap
  *  (^IS store + ^HY upload over one bidirectional channel). Ground truth from
  *  the firmware renderer, so it needs raw TCP (9100) or a USB read channel,
  *  not IPP. Desktop shell only: the web build has neither. */
 export async function fetchPrinterPreview(
-  target: PreviewTarget,
+  target: QueryTarget,
   designZpl: string,
-): Promise<PrinterPreviewResult> {
-  if (!isDesktopShell) {
-    return { kind: "error", message: "printer preview requires the desktop app" };
-  }
+): Promise<PrinterOutcome<PrinterBitmap>> {
   try {
-    const res = await queryTarget(target, buildPrinterPreviewZpl(designZpl));
-    if (res.kind !== "data") return res;
-    const bitmap = decodeDyGraphic(res.body);
+    const res = await queryPrinter(target, buildPrinterPreviewZpl(designZpl));
+    if (res.kind !== "ok") return res;
+    const bitmap = decodeDyGraphic(res.value);
     return bitmap
-      ? { kind: "bitmap", bitmap }
+      ? { kind: "ok", value: bitmap }
       : { kind: "error", message: "no graphic in printer response" };
   } catch (e) {
     return { kind: "error", message: errorMessage(e) };

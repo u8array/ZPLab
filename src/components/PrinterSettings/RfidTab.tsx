@@ -21,7 +21,7 @@ import {
   ZplFieldHint,
   ZplSubField,
 } from "./zplFieldPrimitives";
-import { fieldGridCols, fieldGridCell, labelCls, zplCommandTagCls } from "../ui/formStyles";
+import { fieldGridCols, fieldGridCell, labelCls, zplCommandTagCls, sectionHeadingCls } from "../ui/formStyles";
 import { PlusIcon, TrashIcon, ViewfinderCircleIcon, XMarkIcon } from "@heroicons/react/16/solid";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { Select } from "../ui/Select";
@@ -47,8 +47,6 @@ import {
 import { RegionFocus } from "./printerIllustration";
 
 type LocRfid = ReturnType<typeof useT>["printerSettings"]["rfid"];
-
-const sectionHeadingCls = "font-mono text-[10px] uppercase tracking-widest text-muted";
 
 const iconBtnCls =
   "p-1 rounded border border-border text-muted hover:text-text hover:bg-surface-2 transition-colors";

@@ -1,7 +1,7 @@
 import { CheckIcon, ClipboardDocumentIcon } from "@heroicons/react/16/solid";
 import { useT } from "../../hooks/useT";
 import { useMcpServer, type RunState } from "../../hooks/useMcpServer";
-import { labelCls, inputCls, buttonCls } from "../ui/formStyles";
+import { labelCls, inputCls, buttonCls, sectionHeadingCls } from "../ui/formStyles";
 
 /** Local MCP loopback server controls. Only mounted when the build can spawn
  *  the sidecar (gated by TAB_GATES in the modal). */
@@ -12,7 +12,7 @@ export function McpServerTab() {
 
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.heading}</h3>
+      <h3 className={sectionHeadingCls}>{loc.heading}</h3>
 
       <label className="flex items-center gap-2 cursor-pointer">
         <input

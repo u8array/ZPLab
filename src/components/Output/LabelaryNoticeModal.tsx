@@ -2,6 +2,7 @@ import { XMarkIcon } from '@heroicons/react/16/solid';
 import { useLabelStore } from '../../store/labelStore';
 import { useT } from '../../hooks/useT';
 import { DialogShell } from '../ui/DialogShell';
+import { sectionHeadingCls } from '../ui/formStyles';
 
 interface Props {
   /** Called after the modal flipped the store flag, so callers only need
@@ -32,7 +33,7 @@ export function LabelaryNoticeModal({ onContinue, onClose }: Props) {
       boxClassName="bg-surface border border-border-2 rounded shadow-lg flex flex-col overflow-hidden max-w-[90vw]"
     >
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-border-2 shrink-0">
-        <span id="labelary-notice-title" className="font-mono text-[10px] text-muted uppercase tracking-widest">
+        <span id="labelary-notice-title" className={sectionHeadingCls}>
           {t.output.previewNoticeTitle}
         </span>
         <button

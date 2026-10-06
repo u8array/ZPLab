@@ -1,8 +1,13 @@
-import type { PreviewTarget } from "./printerPreview";
-
 export type PrintTransport = "network" | "browserprint" | "local" | "usb";
 
-/** Where labels go: the way to send and the device bound per way. The printer preview uses the same way when
+export type QueryTarget =
+  | { kind: "network"; host: string; port: number }
+  | { kind: "usb"; id: string };
+
+/** Names the device, so a cached render or a read state is dropped when the target changes. */
+export const queryTargetKey = (target: QueryTarget): string => (target.kind === "usb" ? `usb:${target.id}` : `net:${target.host}:${target.port}`);
+
+/** Where labels go: the way to send and the device bound per way. A printer query uses the same way when
  *  it is bidirectional and the network address otherwise. */
 export interface PrintTarget {
   transport: PrintTransport;
@@ -72,11 +77,14 @@ export function readLegacyPrintTarget(storage: Pick<Storage, "getItem" | "remove
   return target;
 }
 
-/** The preview channel, or the message telling the user what to configure. A USB way without a device falls
- *  through to the network so a re-plug restores it without the user choosing again. */
-export function resolvePreviewTarget(target: PrintTarget): { target: PreviewTarget } | { error: string } {
-  if (target.transport === "usb" && target.usbId) return { target: { kind: "usb", id: target.usbId } };
-  return target.host
-    ? { target: { kind: "network", host: target.host, port: target.port } }
-    : { error: "No printer configured. Set a USB device or IP under Settings, Printer." };
+/** The channel for `transport`, default the stored way. A USB way without a device falls through to the network, so a re-plug restores it. */
+export function resolveQueryTarget(target: PrintTarget, transport: PrintTransport = target.transport): { target: QueryTarget } | { failure: { kind: "unconfigured" } } {
+  if (transport === "usb" && target.usbId) return { target: { kind: "usb", id: target.usbId } };
+  return target.host ? { target: { kind: "network", host: target.host, port: target.port } } : { failure: { kind: "unconfigured" } };
+}
+
+/** An unconfigured target has no device, so its failure files under the empty key. */
+export function queryKeyFor(target: PrintTarget, transport?: PrintTransport): string {
+  const resolved = resolveQueryTarget(target, transport);
+  return "failure" in resolved ? "" : queryTargetKey(resolved.target);
 }

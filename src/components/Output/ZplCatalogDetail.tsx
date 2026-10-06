@@ -6,6 +6,7 @@ import type { CatalogSelection } from "../../hooks/useCatalogSelection";
 import { catalogEmptyText, syntaxSegments } from "../../lib/catalogText";
 import { useCollapsibleState } from "../ui/useCollapsibleState";
 import { PaneToggle } from "../ui/PaneToggle";
+import { sectionHeadingCls } from "../ui/formStyles";
 import { CAPTION_CLS, focusKeeper, type OutputKey, PANE_ATTRS, paneClass, slotClass, SUPPORT_LEVEL } from "./catalogPanes";
 
 /** Rendering order of the support axes. */
@@ -35,7 +36,7 @@ export function ZplCatalogDetail({ selection, editorHasFocus }: { selection: Cat
       className={paneClass(open, "w-72 min-w-[12rem] border-l border-border")}
     >
       <div className={open ? "flex border-b border-border shrink-0" : "flex flex-col flex-1"}>
-        {open && <h2 className="flex-1 px-3 py-1.5 font-mono text-[10px] text-muted uppercase tracking-widest">{t.output.catalogHeading}</h2>}
+        {open && <h2 className={`flex-1 px-3 py-1.5 ${sectionHeadingCls}`}>{t.output.catalogHeading}</h2>}
         <PaneToggle
           side="right"
           open={open}

@@ -8,7 +8,7 @@ import { useLabelStore, useFileDeletability, forgetHistoryUsing, selectEditorFro
 import { encodeGraphicFile } from "@zplab/core/lib/imageToZpl";
 import { sanitizeStorageName, setupEntryKey, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
 import { findSetupEntry, setupEntryHoldsOther, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
-import { buttonCls, disabledCls, zplCommandTagCls } from "../ui/formStyles";
+import { buttonCls, disabledCls, sectionHeadingCls, zplCommandTagCls } from "../ui/formStyles";
 import { useCachedImages } from "../../hooks/useCachedImages";
 import { canSendSetupGraphic, setupGraphicFits, setupGraphicOf, setupGraphicState } from "@zplab/core/registry/image";
 import { storedGraphicRows, type StoredGraphicRow } from "@zplab/core/lib/storedObjects";
@@ -82,7 +82,7 @@ export function StoredGraphicsTab() {
       <section className="flex flex-col gap-2">
         <div className="flex items-baseline justify-between gap-2">
           <div className="flex items-center gap-1.5">
-            <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">
+            <h3 className={sectionHeadingCls}>
               {loc.uploadHeading}
             </h3>
             <Tooltip content={loc.uploadHint}>
@@ -197,7 +197,7 @@ export function StoredGraphicsTab() {
       <section className="flex flex-col gap-2">
         <div className="flex items-baseline justify-between gap-2">
           <div className="flex items-center gap-1.5">
-            <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">
+            <h3 className={sectionHeadingCls}>
               {loc.cacheHeading}
             </h3>
             <Tooltip content={loc.cacheHint}>

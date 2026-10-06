@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useT } from "../../hooks/useT";
-import { inputCls } from "../ui/formStyles";
+import { inputCls, sectionHeadingCls } from "../ui/formStyles";
 import { Tooltip } from "../ui/Tooltip";
 import { AI_BY_GROUP, GS1_GROUP_ORDER, GS1_COMMON_AIS, reqSatisfiableInBuilder } from "../../lib/gs1BuilderPalette";
 import { addBlockText, aiName } from "./gs1Text";
@@ -28,7 +28,7 @@ export function Gs1AiPalette({ draft, addBlock, className }: { draft: Gs1Segment
   return (
     <aside className={`flex flex-col min-h-0 ${className ?? ""}`}>
       <div className="px-4 py-3 border-b border-border flex flex-col gap-2">
-        <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{tg.paletteHeading}</h3>
+        <h3 className={sectionHeadingCls}>{tg.paletteHeading}</h3>
         <input
           className={`${inputCls} py-0.5 text-xs`}
           placeholder={tg.searchPlaceholder}

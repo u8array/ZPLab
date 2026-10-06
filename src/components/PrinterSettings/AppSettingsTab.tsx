@@ -3,7 +3,7 @@ import { useT } from "../../hooks/useT";
 import { useLabelStore, selectAppUpdateBusy, selectAppUpdateSettled } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { formatTemplate } from "../../lib/formatTemplate";
-import { labelCls } from "../ui/formStyles";
+import { labelCls, sectionHeadingCls } from "../ui/formStyles";
 import { DangerConfirmButton } from "../ui/DangerConfirmButton";
 import { Select } from "../ui/Select";
 import { GitHubIcon } from "../ui/GitHubIcon";
@@ -59,7 +59,7 @@ export function AppSettingsTab() {
   return (
     <div className="flex flex-col gap-5">
       <section className="flex flex-col gap-2">
-        <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.appearanceHeading}</h3>
+        <h3 className={sectionHeadingCls}>{loc.appearanceHeading}</h3>
         <div className="grid grid-cols-2 gap-2 max-w-md">
           <div className="flex flex-col gap-1">
             <span className={labelCls}>{loc.language}</span>
@@ -88,7 +88,7 @@ export function AppSettingsTab() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.editorHeading}</h3>
+        <h3 className={sectionHeadingCls}>{loc.editorHeading}</h3>
         <SettingToggle
           checked={showZplCommands}
           onChange={setShowZplCommands}
@@ -110,7 +110,7 @@ export function AppSettingsTab() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.updatesHeading}</h3>
+        <h3 className={sectionHeadingCls}>{loc.updatesHeading}</h3>
         <div className="flex items-center gap-3">
           <span className="font-mono text-[10px] text-muted">
             {formatTemplate(loc.versionFmt, { version: __APP_VERSION__ })}
@@ -181,7 +181,7 @@ export function AppSettingsTab() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.resetHeading}</h3>
+        <h3 className={sectionHeadingCls}>{loc.resetHeading}</h3>
         <span className="text-[10px] text-muted max-w-md">{loc.resetHint}</span>
         <DangerConfirmButton
           label={loc.reset}

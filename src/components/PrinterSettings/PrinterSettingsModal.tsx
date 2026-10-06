@@ -31,6 +31,7 @@ import { PreviewSettingsTab } from "./PreviewSettingsTab";
 import { PrintTargetTab } from "./PrintTargetTab";
 import { PrintQualityTab } from "./PrintQualityTab";
 import { IllustrationFocusProvider, PrinterIllustration } from "./printerIllustration";
+import { sectionHeadingCls } from "../ui/formStyles";
 
 /** Sub-tab → top-tab. `satisfies` flags any PrinterSettingsTab union
  *  literal that gets added but forgotten here at compile time. */
@@ -364,7 +365,7 @@ function PreviewDock({
               {collapsed ? <ChevronUpIcon className="w-3.5 h-3.5" /> : <ChevronDownIcon className="w-3.5 h-3.5" />}
             </button>
           </Tooltip>
-          <span className="font-mono text-[10px] text-muted uppercase tracking-widest">
+          <span className={sectionHeadingCls}>
             {t.printerSettings.previewHeading}
           </span>
         </div>

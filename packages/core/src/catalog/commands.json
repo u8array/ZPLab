@@ -6215,7 +6215,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "yes"
       }
     },
     {
@@ -6233,7 +6233,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "yes"
       }
     },
     {
@@ -6251,7 +6251,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "yes"
       }
     },
     {
@@ -6293,7 +6293,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "yes"
       }
     },
     {
