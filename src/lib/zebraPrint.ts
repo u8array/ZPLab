@@ -89,8 +89,8 @@ async function sendViaNetworkTcp(
   port: number,
   zpl: string,
 ): Promise<NetworkPrintResult> {
-  const { invoke } = await import("@tauri-apps/api/core");
   try {
+    const { invoke } = await import("@tauri-apps/api/core");
     return await invoke<NetworkPrintResult>("send_zpl_tcp", { host: ip, port, zpl });
   } catch {
     return { kind: "error" };

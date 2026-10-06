@@ -164,6 +164,9 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
           return;
         }
         case 'unconfigured':
+        case 'busy':
+        case 'unparsed':
+        case 'ignored':
         case 'refused':
         case 'unreachable':
         case 'not_found':

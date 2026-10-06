@@ -26,8 +26,8 @@ describe("checkPrinter", () => {
     });
     const pending = useLabelStore.getState().checkPrinter("usb");
     expect(useLabelStore.getState().printerReading).toBe("~HI");
-    expect(await useLabelStore.getState().readPrinterConfiguration()).toBeUndefined();
-    expect(await useLabelStore.getState().checkPrinter()).toBeUndefined();
+    expect(await useLabelStore.getState().readPrinterConfiguration()).toEqual({ kind: "busy" });
+    expect(await useLabelStore.getState().checkPrinter()).toEqual({ kind: "busy" });
     expect(readPrinterStatus).toHaveBeenCalledTimes(1);
     finish({ kind: "ok", value: report });
     await pending;
@@ -55,7 +55,7 @@ describe("readPrinterConfiguration", () => {
     readPrinterConfiguration.mockImplementation(() => new Promise((resolve) => (finish = resolve)));
     const pending = useLabelStore.getState().readPrinterConfiguration();
     expect(useLabelStore.getState().printerReading).toBe("^HH");
-    expect(await useLabelStore.getState().checkPrinter()).toBeUndefined();
+    expect(await useLabelStore.getState().checkPrinter()).toEqual({ kind: "busy" });
     finish({ kind: "ok", value: "ZD230  PRINTER" });
     expect(await pending).toEqual({ kind: "ok", value: "ZD230  PRINTER" });
     expect(useLabelStore.getState().printerReading).toBeUndefined();

@@ -132,7 +132,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^GS` | graphic symbol | `[x]` | `[x]` | `[x]` |
 | `^IL` | image load | `[x]` | `[x]` | `[x]` |
 | `^IM` | image move | `[x]` | `[x]` | `[x]` |
-| `^ID` | delete stored graphics, fonts and formats | `[ ]` | `[~]` | `[ ]` |
+| `^ID` | delete stored graphics, fonts and formats | `[ ]` | `[x]` | `[ ]` |
 | `^IS` | image save | `[ ]` | `[x]` | `[ ]` |
 | `~DG` | download graphic | `[x]` | `[x]` | `[x]` |
 | `~DN` | abort download | `[ ]` | `[~]` | `[ ]` |
@@ -276,7 +276,7 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `~HB` | battery status, mobile printers only | `[ ]` | `[ ]` | `[ ]` |
 | `~HD` | printhead diagnostic | `[ ]` | `[~]` | `[ ]` |
 | `^HF` | host format | `[ ]` | `[~]` | `[ ]` |
-| `^HG` | host graphic | `[ ]` | `[~]` | `[ ]` |
+| `^HG` | host graphic | `[ ]` | `[x]` | `[ ]` |
 | `^HH` | configuration label return | `[ ]` | `[x]` | `[ ]` |
 | `~HI` | host identification | `[ ]` | `[x]` | `[ ]` |
 | `~HM` | host RAM status | `[ ]` | `[x]` | `[ ]` |
@@ -285,7 +285,7 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `^HT` | host linked fonts list | `[ ]` | `[~]` | `[ ]` |
 | `~HU` | ZebraNet alert configuration | `[ ]` | `[~]` | `[ ]` |
 | `^HV` | host verification | `[ ]` | `[~]` | `[ ]` |
-| `^HW` | host directory | `[ ]` | `[~]` | `[ ]` |
+| `^HW` | host directory | `[ ]` | `[x]` | `[ ]` |
 | `^HY` | upload graphics | `[ ]` | `[x]` | `[ ]` |
 | `^HZ` | display description information | `[ ]` | `[~]` | `[ ]` |
 

@@ -28,6 +28,9 @@ describe("failureText", () => {
   it("names the failure in the locale and passes a transport message through", () => {
     expect(failureText(loc, { kind: "refused", port: 9100 })).toBe("The printer refused the connection. Check that port 9100 is open.");
     expect(failureText(loc, { kind: "unconfigured" })).toBe(loc.failUnconfigured);
+    expect(failureText(loc, { kind: "busy" })).toBe(loc.failBusy);
+    expect(failureText(loc, { kind: "unparsed" })).toBe(loc.failUnparsed);
+    expect(failureText(loc, { kind: "ignored" })).toBe(loc.failIgnored);
     expect(failureText(loc, { kind: "error", message: "no response from printer" })).toBe("no response from printer");
   });
 });
