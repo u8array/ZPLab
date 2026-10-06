@@ -7,6 +7,7 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { stripCertificateTable } from "./pe.mjs";
 
 const pkgDir = dirname(dirname(fileURLToPath(import.meta.url)));
 const { values } = parseArgs({
@@ -86,8 +87,9 @@ if (triple) {
   }
 }
 copyFileSync(values.node, exe);
-// postject invalidates the signature and macOS arm64 refuses unsigned
-// binaries: strip before injecting, ad-hoc re-sign after.
+// postject's appended section would leave the Authenticode entry pointing inside the file.
+if (isWindows) stripCertificateTable(exe);
+// macOS arm64 refuses unsigned binaries, so the ad-hoc signature goes back on after injecting.
 if (isMac) run("codesign", ["--remove-signature", exe]);
 runBin("postject/dist/cli.js", [
   exe,
