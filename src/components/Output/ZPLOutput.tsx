@@ -8,6 +8,9 @@ import { useT } from '../../hooks/useT';
 import { LabelaryNoticeModal } from './LabelaryNoticeModal';
 import { ZplSourceEditor } from './ZplSourceEditor';
 import { Tooltip } from '../ui/Tooltip';
+import { isDesktopShell } from '../../lib/platform';
+import { PrinterChip } from './PrinterChip';
+import { sectionHeadingCls } from '../ui/formStyles';
 
 interface Props {
   collapsed?: boolean;
@@ -18,8 +21,7 @@ interface Props {
   onResizeMouseDown: (e: React.MouseEvent) => void;
 }
 
-/** The ZPL output panel: header (collapse, preview, copy), notices, and the
- *  always-mounted source pane. */
+/** The ZPL output panel with its always-mounted source pane. */
 export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }: Props) {
   const t = useT();
   const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
@@ -78,9 +80,10 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
                 </button>
               </Tooltip>
             )}
-            <span className="font-mono text-[10px] text-muted uppercase tracking-widest">{t.output.zplHeading}</span>
+            <span className={sectionHeadingCls}>{t.output.zplHeading}</span>
           </div>
           <div className="flex items-center gap-3">
+            {isDesktopShell && <PrinterChip />}
             {previewAvailable && (
               <Tooltip content={t.output.previewHeading}>
                 <button

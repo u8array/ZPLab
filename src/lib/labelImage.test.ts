@@ -38,11 +38,11 @@ describe("labelImage", () => {
     // 40-dot head, 32-dot label: the crop starts at column 4.
     const mono = new Uint8Array(5 * 8);
     for (let y = 0; y < 8; y++) mono[y * 5 + 1] = 0b11110000;
-    fetchPrinterPreview.mockResolvedValueOnce({ kind: "bitmap", bitmap: { width: 40, height: 8, mono } });
+    fetchPrinterPreview.mockResolvedValueOnce({ kind: "ok", value: { width: 40, height: 8, mono } });
     const raster = await renderLabelMono("printer", job, deps);
     expect([raster.width, raster.height]).toEqual([32, 8]);
     expect(raster.mono[0]).toBe(0b00001111);
-    fetchPrinterPreview.mockResolvedValueOnce({ kind: "refused" });
+    fetchPrinterPreview.mockResolvedValueOnce({ kind: "refused", port: 9100 });
     await expect(renderLabelMono("printer", job, deps)).rejects.toThrow("The printer refused the connection. Check that port 9100 is open.");
     await expect(renderLabelImageUrl("printer", job, { ...deps, printTarget: DEFAULT_PRINT_TARGET })).rejects.toThrow("No printer configured.");
   });

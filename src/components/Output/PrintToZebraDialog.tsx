@@ -7,13 +7,16 @@ import { Select } from "../ui/Select";
 import { sendViaBrowserPrint, sendViaNetwork } from "../../lib/zebraPrint";
 import { isDesktopShell } from "../../lib/platform";
 import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
-import { useLabelStore, selectBatchInputs, selectCanBatchExport, selectBatchPrintCount } from "../../store/labelStore";
+import { useLabelStore, selectBatchInputs, selectCanBatchExport, selectBatchPrintCount, selectPrinterReading } from "../../store/labelStore";
 import { formatTemplate } from "../../lib/formatTemplate";
 import { deliveryNotices, exportPrinterImpact, printerImpactNotices } from "../../lib/exportImpact";
 import { sendZplLocal } from "../../lib/localPrint";
 import { sendZplUsb, setupUsbAccess } from "../../lib/usbPrint";
 import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useUsbPrinters } from "../../hooks/usePrintDevices";
 import { PrinterAddressFields } from "../PrinterSettings/PrinterAddressFields";
+import { PrinterCheck } from "./PrinterCheck";
+import { sectionHeadingCls } from "../ui/formStyles";
+import type { PrinterQueryFailure } from "../../lib/printerQuery";
 
 type Tab = PrintTransport;
 interface Status { type: "idle" | "sending" | "success" | "error"; message?: string }
@@ -54,7 +57,7 @@ function TransportBody({ view, fieldLabel }: { view: TransportView; fieldLabel: 
           groups={[{ options: view.options }]}
         />
       </div>
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-start justify-between gap-2">
         {view.extra ?? <span />}
         <button
           onClick={view.onSend}
@@ -111,6 +114,8 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
   const printSource = useLabelStore((s) => s.zebraPrintSource);
 
   const host = useLabelStore((s) => s.printTarget.host);
+  // A check holds the raw channel, so the ways that share it cannot send meanwhile.
+  const checking = useLabelStore(selectPrinterReading);
   const [netStatus, setNetStatus] = useState<Status>({ type: "idle" });
 
   const bp = useBrowserPrintDevices();
@@ -244,6 +249,15 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
   const offered = offeredTransports(isDesktopShell, { local: local.present, usb: usb.present });
   const tabLabels: Record<Tab, string> = { network: t.zebraPrint.tabNetwork, browserprint: t.zebraPrint.tabBrowserPrint, local: t.zebraPrint.tabLocal, usb: t.zebraPrint.tabUsb };
   const tab = effectiveTransport(transport, offered);
+  const checkProps = (sending: boolean) => ({
+    transport: tab,
+    sendBusy: sending,
+    onFailure: (failure: PrinterQueryFailure) => {
+      if (failure.kind !== "permission_denied") return;
+      setUsbNeedsSetup(true);
+      setUsbStatus({ type: "error", message: t.zebraPrint.usbPermissionDenied });
+    },
+  });
 
   const views: TransportView[] = [
     {
@@ -288,7 +302,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
       selectDisabled: usb.options.length === 0,
       onSend: handleUsbSend,
       sendLabel: usbStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send,
-      sendDisabled: !usb.selectedId || usb.options.length === 0 || usb.loading || usbStatus.type === "sending",
+      sendDisabled: !usb.selectedId || usb.options.length === 0 || usb.loading || usbStatus.type === "sending" || checking,
       status: usbViewStatus,
       extra: usbNeedsSetup ? (
         <button
@@ -297,7 +311,9 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
         >
           {t.zebraPrint.usbSetupAccess}
         </button>
-      ) : undefined,
+      ) : (
+        <PrinterCheck {...checkProps(usbStatus.type === "sending")} />
+      ),
     },
   ];
   const activeView = views.find((v) => v.key === tab);
@@ -310,7 +326,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-border shrink-0">
-        <span id="zebra-print-title" className="font-mono text-[10px] text-muted uppercase tracking-widest">
+        <span id="zebra-print-title" className={sectionHeadingCls}>
           {t.zebraPrint.heading}
         </span>
         <button
@@ -357,13 +373,17 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
           )}
           <PrinterAddressFields />
 
-          <button
-            onClick={handleNetworkSend}
-            disabled={!host || netStatus.type === "sending"}
-            className="self-end px-3 py-1.5 text-xs font-mono rounded bg-accent text-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
-          >
-            {netStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send}
-          </button>
+          <div className="flex items-start justify-between gap-2">
+            {/* The browser cannot read a reply, so the check is desktop only. */}
+            {isDesktopShell ? <PrinterCheck {...checkProps(netStatus.type === "sending")} /> : <span />}
+            <button
+              onClick={handleNetworkSend}
+              disabled={!host || netStatus.type === "sending" || checking}
+              className="px-3 py-1.5 text-xs font-mono rounded bg-accent text-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+            >
+              {netStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send}
+            </button>
+          </div>
 
           <StatusMessage status={netStatus} />
         </div>

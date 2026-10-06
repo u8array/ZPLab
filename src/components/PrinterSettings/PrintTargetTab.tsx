@@ -3,18 +3,16 @@ import { useLabelStore } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
 import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useUsbPrinters, type DeviceListState } from "../../hooks/usePrintDevices";
-import { buttonCls } from "../ui/formStyles";
+import { buttonCls, sectionHeadingCls } from "../ui/formStyles";
 import { RadioOption } from "../ui/RadioOption";
 import { Select } from "../ui/Select";
 import { PrinterAddressFields } from "./PrinterAddressFields";
-
-const headingCls = "font-mono text-[10px] uppercase tracking-widest text-muted";
 
 function DevicePicker({ list, error }: { list: DeviceListState; error: string | null }) {
   const t = useT();
   return (
     <section className="flex flex-col gap-2">
-      <h3 className={headingCls}>{t.zebraPrint.printer}</h3>
+      <h3 className={sectionHeadingCls}>{t.zebraPrint.printer}</h3>
       <div className="max-w-md">
         <Select<string> value={list.selectedId} onChange={list.select} disabled={list.options.length === 0} groups={[{ options: pickerOptions(t, list) }]} />
       </div>
@@ -47,7 +45,7 @@ export function PrintTargetTab() {
   return (
     <div className="flex flex-col gap-5">
       <section className="flex flex-col gap-2">
-        <h3 className={headingCls}>{loc.transportHeading}</h3>
+        <h3 className={sectionHeadingCls}>{loc.transportHeading}</h3>
         {ways
           .filter((w) => offered.includes(w.value) || (w.desktopOnly && isDesktopShell))
           .map((w) => (
@@ -77,7 +75,7 @@ export function PrintTargetTab() {
       {way === "usb" && <DevicePicker list={usb} error={usb.error} />}
 
       <section className="flex flex-col gap-2">
-        <h3 className={headingCls}>{loc.addressHeading}</h3>
+        <h3 className={sectionHeadingCls}>{loc.addressHeading}</h3>
         <PrinterAddressFields />
         <span className="text-[10px] text-muted max-w-md">{loc.addressHint}</span>
       </section>

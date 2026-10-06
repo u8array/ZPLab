@@ -78,10 +78,10 @@ Select several objects with Shift-click or a lasso. Position and size changes ap
 
 ### 4. Print or export
 
-The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
+The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. On desktop the panel names the configured printer. A click shows its state and offers to read its configuration. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
 
 - **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
-- **File → Send to Zebra Printer:** opens the send dialog. It sends over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop.
+- **File → Send to Zebra Printer:** opens the send dialog. It sends over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop. On desktop, **Check printer** asks the printer for its state over the network or USB.
 - **File → Export PDF:** saves one PDF page per label page, rendered by the preview renderer. With the renderer off, ZPLab captures the canvas, so the PDF holds the current page only. A batch PDF needs the renderer and holds one page per data row.
 - **File → Print as Image (browser):** renders the current page with the same renderer, then opens the browser print dialog
 
@@ -187,7 +187,7 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-125 of the 225 ZPL II commands are modelled in the browser; desktop covers 2 more with a connected printer. 2 more are planned for both builds. 74 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+125 of the 225 ZPL II commands are modelled in the browser; desktop covers 6 more with a connected printer. 2 more are planned for both builds. 70 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|

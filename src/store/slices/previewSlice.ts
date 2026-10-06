@@ -4,12 +4,11 @@ import {
   bitmapToDataUrl,
   fetchPrinterPreview,
   printerRenderDims,
-  type PreviewTarget,
   type PrinterRenderDims,
 } from '../../lib/printerPreview';
 import { buildActiveRow } from '@zplab/core/lib/variableBinding';
-import { printerFailureMessage } from '../../lib/printerPreview';
-import { resolvePreviewTarget } from '../../lib/printTarget';
+import { printerFailureMessage } from '../../lib/printerQuery';
+import { queryTargetKey, resolveQueryTarget, type QueryTarget } from '../../lib/printTarget';
 import { buildPreviewZpl } from '../../lib/printPreview';
 import { currentObjects, currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint, selectSourceEditing } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
@@ -52,12 +51,6 @@ const previewCache = (() => {
 /** Test-only handle to clear the preview cache between test cases. */
 export const __resetPreviewCacheForTests = (): void => previewCache._resetForTests();
 
-/** Cache-key part identifying the device, so switching the preview transport
- *  or printer invalidates the cached render (different dpi, different label). */
-function previewTargetKey(target: PreviewTarget): string {
-  return target.kind === 'usb' ? `usb:${target.id}` : `net:${target.host}:${target.port}`;
-}
-
 export interface PreviewSlice {
   previewMode: PreviewMode;
   /** Caller-checked: only call when `previewMode.status` is `idle` or `error`. A no-op without a renderer. */
@@ -99,11 +92,11 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     const zpl = buildPreviewZpl(pageLabel, objs, state.variables, active, { blankSamples: true });
     // The printer target resolves before the cache lookup so the key can fold
     // the device in; an unconfigured target fails here, before 'loading'.
-    let printerTarget: PreviewTarget | null = null;
+    let printerTarget: QueryTarget | null = null;
     if (provider === 'printer') {
-      const resolved = resolvePreviewTarget(state.printTarget);
-      if ('error' in resolved) {
-        set({ previewMode: { status: 'error', error: resolved.error } });
+      const resolved = resolveQueryTarget(state.printTarget);
+      if ('failure' in resolved) {
+        set({ previewMode: { status: 'error', error: printerFailureMessage(resolved.failure) } });
         return;
       }
       printerTarget = resolved.target;
@@ -113,7 +106,7 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
     // render; the printer path folds the target in instead. NUL-joined so a ':'
     // inside any field can't shift a boundary and collide.
     const endpoint = selectLabelaryEndpoint(state);
-    const printerKey = (t: PreviewTarget): string => [provider, previewTargetKey(t), zpl].join('\0');
+    const printerKey = (t: QueryTarget): string => [provider, queryTargetKey(t), zpl].join('\0');
     const serveCached = (k: string): boolean => {
       const hit = previewCache.get(k);
       if (hit) set({ previewMode: { status: 'active', ...hit } });
@@ -156,26 +149,27 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
         }
       }
       switch (result.kind) {
-        case 'bitmap': {
-          const url = bitmapToDataUrl(result.bitmap);
+        case 'ok': {
+          const url = bitmapToDataUrl(result.value);
           if (!url) {
             fail('Could not decode the printer preview.');
             return;
           }
           const render: PreviewRender = {
             url,
-            printerDims: printerRenderDims(result.bitmap),
+            printerDims: printerRenderDims(result.value),
           };
           previewCache.set(key, render);
           set({ previewMode: { status: 'active', ...render } });
           return;
         }
+        case 'unconfigured':
         case 'refused':
         case 'unreachable':
         case 'not_found':
         case 'permission_denied':
         case 'error':
-          fail(printerFailureMessage(result, target));
+          fail(printerFailureMessage(result));
           return;
         default: {
           // Exhaustive: a new result kind must be handled here, not silently

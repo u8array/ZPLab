@@ -3,7 +3,7 @@ import { useT } from "../../hooks/useT";
 import { useLabelStore, selectEffectivePreviewProvider } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { isDefaultHost } from "../../lib/labelary";
-import { labelCls, inputCls, buttonCls } from "../ui/formStyles";
+import { labelCls, inputCls, buttonCls, sectionHeadingCls } from "../ui/formStyles";
 import { RadioOption } from "../ui/RadioOption";
 import { formatTemplate } from "../../lib/formatTemplate";
 import { previewProviderLabel } from "../../lib/previewProviderLabel";
@@ -77,7 +77,7 @@ export function PreviewSettingsTab() {
   return (
     <div className="flex flex-col gap-5">
       <section className="flex flex-col gap-2">
-        <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.providerHeading}</h3>
+        <h3 className={sectionHeadingCls}>{loc.providerHeading}</h3>
         <RadioOption
           name="preview-provider"
           value="labelary"
@@ -121,7 +121,7 @@ export function PreviewSettingsTab() {
 
       {labelaryAvailable && chosen === "labelary" && (
         <section className="flex flex-col gap-2">
-          <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.apiHeading}</h3>
+          <h3 className={sectionHeadingCls}>{loc.apiHeading}</h3>
           <div className="flex flex-col gap-2 max-w-md">
             <div className="flex flex-col gap-1">
               <label className={labelCls}>{loc.apiHost}</label>
@@ -171,7 +171,7 @@ export function PreviewSettingsTab() {
       {/* Consent is a standing grant for every Labelary action, printing included, so it never hides behind the renderer. */}
       {labelaryAvailable && (
         <section className="flex flex-col gap-2">
-          <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">{loc.privacyHeading}</h3>
+          <h3 className={sectionHeadingCls}>{loc.privacyHeading}</h3>
           {publicHost && (
             <label className="flex items-center gap-2 cursor-pointer">
               <input

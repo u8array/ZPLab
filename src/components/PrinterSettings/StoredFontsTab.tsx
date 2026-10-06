@@ -10,7 +10,7 @@ import { useCachedFonts } from "../../hooks/useCachedFonts";
 import { useUpload } from "../../hooks/useUpload";
 import { useLabelStore, selectEditorFrozen } from "../../store/labelStore";
 import { fontNameIssueText } from "../../lib/fontNameIssueText";
-import { buttonCls, disabledCls } from "../ui/formStyles";
+import { buttonCls, disabledCls, sectionHeadingCls } from "../ui/formStyles";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 
 /** Why a profile row cannot be provisioned. */
@@ -69,7 +69,7 @@ export function StoredFontsTab() {
     <div className="flex flex-col gap-4">
       <section className="flex flex-col gap-2">
         <div className="flex items-baseline justify-between gap-2">
-          <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted">
+          <h3 className={sectionHeadingCls}>
             {loc.uploadHeading}
           </h3>
         </div>

@@ -5,8 +5,9 @@ import type { ActiveRow } from "@zplab/core/lib/variableBinding";
 import type { PreviewProvider } from "../store/slices/uiSlice";
 import { buildPreviewZpl } from "./printPreview";
 import { fetchPreview } from "./labelary";
-import { fetchPrinterPreview, printerFailureMessage } from "./printerPreview";
-import { resolvePreviewTarget, type PrintTarget } from "./printTarget";
+import { fetchPrinterPreview } from "./printerPreview";
+import { printerFailureMessage } from "./printerQuery";
+import { resolveQueryTarget, type PrintTarget } from "./printTarget";
 import { labelDots, monoFromImageUrl, monoFromPrinterBitmap, rasterToDataUrl, type MonoRaster } from "./labelRaster";
 
 export interface RenderJob {
@@ -54,9 +55,9 @@ async function captureUrl(deps: RenderDeps, dots: { width: number; height: numbe
 }
 
 async function printerBitmap(job: RenderJob, deps: RenderDeps) {
-  const resolved = resolvePreviewTarget(deps.printTarget);
-  if ("error" in resolved) throw new Error(resolved.error);
+  const resolved = resolveQueryTarget(deps.printTarget);
+  if ("failure" in resolved) throw new Error(printerFailureMessage(resolved.failure));
   const result = await fetchPrinterPreview(resolved.target, previewZpl(job));
-  if (result.kind === "bitmap") return result.bitmap;
-  throw new Error(printerFailureMessage(result, resolved.target));
+  if (result.kind === "ok") return result.value;
+  throw new Error(printerFailureMessage(result));
 }

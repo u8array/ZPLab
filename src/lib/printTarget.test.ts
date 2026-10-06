@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PRINT_TARGET, effectiveTransport, offeredTransports, parsePort, readLegacyPrintTarget, resolvePreviewTarget } from "./printTarget";
+import { DEFAULT_PRINT_TARGET, effectiveTransport, offeredTransports, parsePort, readLegacyPrintTarget, resolveQueryTarget } from "./printTarget";
 
 function storageOf(entries: Record<string, string>) {
   const map = new Map(Object.entries(entries));
@@ -56,11 +56,12 @@ describe("printTarget", () => {
     expect(readLegacyPrintTarget(storage)).toEqual(DEFAULT_PRINT_TARGET);
   });
 
-  it("previews over the USB way and lets one without a device fall through to the network", () => {
+  it("resolves the USB way and lets one without a device fall through to the network", () => {
     const usb = { ...DEFAULT_PRINT_TARGET, host: "10.0.0.5", usbId: "usb-1", transport: "usb" as const };
-    expect(resolvePreviewTarget(usb)).toEqual({ target: { kind: "usb", id: "usb-1" } });
-    expect(resolvePreviewTarget({ ...usb, usbId: "" })).toEqual({ target: { kind: "network", host: "10.0.0.5", port: 9100 } });
-    expect(resolvePreviewTarget({ ...usb, transport: "local" })).toEqual({ target: { kind: "network", host: "10.0.0.5", port: 9100 } });
-    expect(resolvePreviewTarget(DEFAULT_PRINT_TARGET)).toEqual({ error: "No printer configured. Set a USB device or IP under Settings, Printer." });
+    expect(resolveQueryTarget(usb)).toEqual({ target: { kind: "usb", id: "usb-1" } });
+    expect(resolveQueryTarget({ ...usb, usbId: "" })).toEqual({ target: { kind: "network", host: "10.0.0.5", port: 9100 } });
+    expect(resolveQueryTarget({ ...usb, transport: "local" })).toEqual({ target: { kind: "network", host: "10.0.0.5", port: 9100 } });
+    expect(resolveQueryTarget(DEFAULT_PRINT_TARGET)).toEqual({ failure: { kind: "unconfigured" } });
+    expect(resolveQueryTarget(usb, "network")).toEqual({ target: { kind: "network", host: "10.0.0.5", port: 9100 } });
   });
 });

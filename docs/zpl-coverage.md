@@ -277,11 +277,11 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `~HD` | printhead diagnostic | `[ ]` | `[~]` | `[ ]` |
 | `^HF` | host format | `[ ]` | `[~]` | `[ ]` |
 | `^HG` | host graphic | `[ ]` | `[~]` | `[ ]` |
-| `^HH` | configuration label return | `[ ]` | `[~]` | `[ ]` |
-| `~HI` | host identification | `[ ]` | `[~]` | `[ ]` |
-| `~HM` | host RAM status | `[ ]` | `[~]` | `[ ]` |
+| `^HH` | configuration label return | `[ ]` | `[x]` | `[ ]` |
+| `~HI` | host identification | `[ ]` | `[x]` | `[ ]` |
+| `~HM` | host RAM status | `[ ]` | `[x]` | `[ ]` |
 | `~HQ` | host query | `[ ]` | `[~]` | `[ ]` |
-| `~HS` | host status return | `[ ]` | `[~]` | `[ ]` |
+| `~HS` | host status return | `[ ]` | `[x]` | `[ ]` |
 | `^HT` | host linked fonts list | `[ ]` | `[~]` | `[ ]` |
 | `~HU` | ZebraNet alert configuration | `[ ]` | `[~]` | `[ ]` |
 | `^HV` | host verification | `[ ]` | `[~]` | `[ ]` |
