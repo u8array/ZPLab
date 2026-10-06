@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { manifestExecutable, packageVersion, readManifest, stampVersion, storeVersion } from './msix.mjs';
+import { hasCertificateTable } from '../packages/mcp-server/scripts/pe.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const TAURI = join(ROOT, 'src-tauri');
@@ -91,7 +92,11 @@ run(makepri, ['createconfig', '/cf', priconfig, '/dq', 'en-US_scale-100', '/o'])
 run(process.execPath, [TAURI_CLI, 'build', '--target', TARGET, '--config', join(TAURI, 'tauri.msix.conf.json'), '--config', JSON.stringify({ version })]);
 
 const release = join(targetDir, TARGET, 'release');
-for (const exe of executables) copyFileSync(join(release, exe), join(layout, exe));
+for (const exe of executables) {
+  // A carried-over table makes that signing fail with ERROR_BAD_EXE_FORMAT.
+  if (hasCertificateTable(join(release, exe))) throw new Error(`${join(release, exe)} carries a certificate table, build:sea must strip it`);
+  copyFileSync(join(release, exe), join(layout, exe));
+}
 run(makepri, ['new', '/pr', layout, '/cf', priconfig, '/mn', join(layout, 'AppxManifest.xml'), '/of', join(layout, 'resources.pri'), '/o']);
 
 const msix = join(out, `ZPLab_${version}_x64.msix`);

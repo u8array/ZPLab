@@ -12,6 +12,7 @@ on:
       - 'pnpm-lock.yaml'
       - 'scripts/build-msix.mjs'
       - 'scripts/msix.mjs'
+      - 'packages/mcp-server/scripts/**'
       - '.github/workflows/msix.yml'
 
 concurrency:
@@ -50,6 +51,9 @@ jobs:
           "CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16" >> $env:GITHUB_ENV
 
       - run: pnpm msix:build
+
+      # The sidecar had its Authenticode table cut off, so prove the SEA binary still starts.
+      - run: pnpm --filter @zplab/mcp-server build:sea && pnpm --filter @zplab/mcp-server smoke:sea
 
       # Launched through its package identity, as a Store install runs.
       - name: smoke-launch the packaged app

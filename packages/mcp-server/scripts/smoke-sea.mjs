@@ -101,7 +101,11 @@ try {
 
   const tools = await rpc(2, "tools/list", {});
   const names = tools.result?.tools?.map((t) => t.name) ?? [];
-  check("all 8 tools", names.length === 8, names.join(","));
+  const expected = [
+    "create_draft", "validate_draft", "patch_design", "export_zpl", "validate_zpl", "import_zpl",
+    "get_schema", "open_in_app", "edit_design", "raster_image", "get_current_design",
+  ];
+  check("hosted tool set", expected.every((n) => names.includes(n)) && names.length === expected.length, names.join(","));
 
   const created = await rpc(3, "tools/call", {
     name: "create_draft",
@@ -135,10 +139,19 @@ try {
   });
   check("wrong token 401", denied.status === 401);
 
-  const oia = await rpc(4, "tools/call", { name: "open_in_app", arguments: { designFile: design } });
-  check("open_in_app", JSON.parse(oia.result.content[0].text).ok === true);
+  // Until a session is announced the window tools answer with a reason, so attach the way the app does on boot.
+  const attached = await fetch(`${BASE}app-attach`, { method: "POST", headers: H, body: JSON.stringify({ session: "smoke" }) });
+  check("app-attach", attached.ok);
+
+  // open_in_app resolves only on the receipt, so hold the call until the event is answered.
+  const pendingOpen = rpc(4, "tools/call", { name: "open_in_app", arguments: { designFile: design } });
   await new Promise((r) => setTimeout(r, 200));
-  check("openDraft stdout event", events.some((e) => e.zplabEvent === "openDraft"));
+  const draft = events.find((e) => e.zplabEvent === "openDraft");
+  check("openDraft stdout event", !!draft);
+  if (draft) {
+    await fetch(`${BASE}draft-receipt`, { method: "POST", headers: H, body: JSON.stringify({ id: draft.id, ok: true, replacedObjects: 0 }) });
+    check("open_in_app", JSON.parse((await pendingOpen).result.content[0].text).ok === true);
+  }
 
   const pendingCall = rpc(5, "tools/call", { name: "get_current_design", arguments: {} });
   await new Promise((r) => setTimeout(r, 300));
