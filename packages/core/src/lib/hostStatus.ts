@@ -6,7 +6,7 @@ export function unframed(body: string): string {
   return body.replaceAll(STX, "").replaceAll(ETX, "");
 }
 
-function replyLines(body: string): string[] {
+export function replyLines(body: string): string[] {
   return unframed(body)
     .split(/\r\n|\r|\n/)
     .map((line) => line.trim())

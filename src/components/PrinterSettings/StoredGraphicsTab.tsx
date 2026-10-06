@@ -15,8 +15,10 @@ import { storedGraphicRows, type StoredGraphicRow } from "@zplab/core/lib/stored
 import { removeImage } from "@zplab/core/lib/imageCache";
 import { imageUsage } from "@zplab/core/lib/imageUsage";
 import type { SetupGraphic } from "@zplab/core/types/PrinterProfile";
+import { isDesktopShell } from "../../lib/platform";
+import { PrinterObjectsSection } from "./PrinterObjectsSection";
 
-/** Provisioning plus the local image cache. Whether a job ships its own bytes stays with the object. */
+/** Provisioning, the local image cache and the printer's own listing. Whether a job ships its own bytes stays with the object. */
 export function StoredGraphicsTab() {
   const t = useT();
   const pages = useLabelStore((s) => s.pages);
@@ -194,6 +196,7 @@ export function StoredGraphicsTab() {
         )}
       </section>
 
+      {isDesktopShell && <PrinterObjectsSection kind="graphic" />}
       <section className="flex flex-col gap-2">
         <div className="flex items-baseline justify-between gap-2">
           <div className="flex items-center gap-1.5">

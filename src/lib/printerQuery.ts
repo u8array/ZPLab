@@ -5,6 +5,9 @@ import { queryZplUsb } from "./usbPrint";
 
 export type PrinterQueryFailure =
   | { kind: "unconfigured" }
+  | { kind: "busy" }
+  | { kind: "unparsed" }
+  | { kind: "ignored" }
   | { kind: "refused"; port: number }
   | { kind: "unreachable" }
   | { kind: "not_found" }
@@ -24,6 +27,12 @@ export function printerFailureMessage(failure: PrinterQueryFailure): string {
   switch (failure.kind) {
     case "unconfigured":
       return "No printer configured. Set a USB device or IP under Settings, Printer.";
+    case "busy":
+      return "Another printer read is still running. Try again in a moment.";
+    case "unparsed":
+      return "The printer answered, but the reply could not be read.";
+    case "ignored":
+      return "The printer ignored the command. The object is still there.";
     case "refused":
       return `The printer refused the connection. Check that port ${failure.port} is open.`;
     case "unreachable":

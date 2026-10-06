@@ -3,6 +3,7 @@ import type { PrinterOutcome, PrinterQueryFailure } from '../../lib/printerQuery
 import { readPrinterConfiguration as queryConfiguration, readPrinterStatus, type PrinterStatusReport } from '../../lib/printerStatus';
 import { queryKeyFor, resolveQueryTarget, type PrintTransport } from '../../lib/printTarget';
 import type { LabelState } from '../labelStore';
+import { overPrinterChannel } from '../printerChannel';
 
 export type PrinterState =
   | { phase: 'idle' }
@@ -16,39 +17,33 @@ export interface PrinterStateSlice {
   /** `transport` overrides the stored way with the dialog tab. */
   checkPrinter: (transport?: PrintTransport) => Promise<PrinterOutcome<PrinterStatusReport> | undefined>;
   /** ^HH as text. The echo is handed back, not kept. */
-  readPrinterConfiguration: () => Promise<PrinterOutcome<string> | undefined>;
+  readPrinterConfiguration: () => Promise<PrinterOutcome<string>>;
 }
 
 export const createPrinterStateSlice: StateCreator<LabelState, [], [], PrinterStateSlice> = (set, get) => ({
   printerState: { phase: 'idle' },
   printerReading: undefined,
 
-  checkPrinter: async (transport) => {
-    if (get().printerReading !== undefined) return undefined;
+  checkPrinter: (transport) => {
     const stored = get().printTarget;
     const resolved = resolveQueryTarget(stored, transport);
     const key = queryKeyFor(stored, transport);
-    if ('failure' in resolved) {
-      set({ printerState: { phase: 'failed', key, at: Date.now(), failure: resolved.failure } });
-      return undefined;
-    }
-    set({ printerReading: '' });
-    const result = await readPrinterStatus(resolved.target, (step) => set({ printerReading: step }));
-    set({
-      printerReading: undefined,
-      printerState:
-        result.kind === 'ok' ? { phase: 'done', key, at: Date.now(), report: result.value } : { phase: 'failed', key, at: Date.now(), failure: result },
+    return overPrinterChannel(get, set, '', async () => {
+      if ('failure' in resolved) {
+        set({ printerState: { phase: 'failed', key, at: Date.now(), failure: resolved.failure } });
+        return undefined;
+      }
+      const result = await readPrinterStatus(resolved.target, (step) => set({ printerReading: step }));
+      set({
+        printerState:
+          result.kind === 'ok' ? { phase: 'done', key, at: Date.now(), report: result.value } : { phase: 'failed', key, at: Date.now(), failure: result },
+      });
+      return result;
     });
-    return result;
   },
 
-  readPrinterConfiguration: async () => {
-    if (get().printerReading !== undefined) return undefined;
+  readPrinterConfiguration: () => {
     const resolved = resolveQueryTarget(get().printTarget);
-    if ('failure' in resolved) return resolved.failure;
-    set({ printerReading: '^HH' });
-    const result = await queryConfiguration(resolved.target);
-    set({ printerReading: undefined });
-    return result;
+    return overPrinterChannel(get, set, '^HH', () => ('failure' in resolved ? Promise.resolve(resolved.failure) : queryConfiguration(resolved.target)));
   },
 });

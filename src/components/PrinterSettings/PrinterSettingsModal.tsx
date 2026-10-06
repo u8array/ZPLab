@@ -1,4 +1,5 @@
 import { useId, useRef, useState, type FC } from "react";
+import { useCollapsibleState } from "../ui/useCollapsibleState";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon, ClipboardDocumentIcon, TrashIcon, XMarkIcon } from "@heroicons/react/16/solid";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { useMcpAvailability } from "../../hooks/useMcpServer";
@@ -341,8 +342,8 @@ function PreviewDock({
     const s = useLabelStore.getState();
     return generateSetupScript(printerProfile, setupFormatBlocks(s.label, s.pages, s.variables));
   });
-  // Collapse frees vertical space on short screens; no animation/persistence by design.
-  const [collapsed, setCollapsed] = useState(false);
+  const [open, setOpen] = useCollapsibleState('printer-settings-script-dock', false);
+  const collapsed = !open;
 
   const hasScript = lines.length > 0;
   // Clear keeps the provisioned uploads, so it has nothing to do while only their lines remain.
@@ -357,7 +358,7 @@ function PreviewDock({
           <Tooltip content={collapseLabel}>
             <button
               type="button"
-              onClick={() => setCollapsed((c) => !c)}
+              onClick={() => setOpen((o) => !o)}
               aria-label={collapseLabel}
               aria-expanded={!collapsed}
               className="p-0.5 rounded text-muted hover:text-text hover:bg-border transition-colors"

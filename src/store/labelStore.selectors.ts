@@ -5,6 +5,7 @@ import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
 import { isDesktopShell } from '../lib/platform';
 import { queryKeyFor, type PrintTransport } from '../lib/printTarget';
 import type { PrinterState } from './slices/printerStateSlice';
+import type { PrinterObjectsState } from './slices/printerObjectsSlice';
 import type { Dataset } from './slices/dataSlice';
 import type { PreviewProvider } from './slices/uiSlice';
 import type { ColumnMapping } from '@zplab/core/types/Variable';
@@ -217,11 +218,16 @@ export const selectAppUpdateBusy = ({ appUpdate: { phase } }: LabelState) =>
 export const selectAppUpdateSettled = ({ appUpdate: { phase } }: LabelState) =>
   phase === 'installed' || phase === 'unsupported';
 
-// One shared object, so a selector returning it reads as unchanged between renders.
+// One shared object per kind, so a selector returning it reads as unchanged between renders.
 const PRINTER_IDLE: PrinterState = { phase: 'idle' };
+const OBJECTS_IDLE: PrinterObjectsState = { phase: 'idle' };
 
-/** The reply only while its key still matches the target. */
-export const selectPrinterState = (s: LabelState, transport?: PrintTransport): PrinterState =>
-  s.printerState.phase !== 'idle' && s.printerState.key === queryKeyFor(s.printTarget, transport) ? s.printerState : PRINTER_IDLE;
+/** A reply only while its key still matches the target. */
+const ownedByTarget = <S extends { phase: 'idle' } | { key: string }>(s: LabelState, reply: S, idle: S, transport?: PrintTransport): S =>
+  'key' in reply && reply.key === queryKeyFor(s.printTarget, transport) ? reply : idle;
+
+export const selectPrinterState = (s: LabelState, transport?: PrintTransport): PrinterState => ownedByTarget(s, s.printerState, PRINTER_IDLE, transport);
+
+export const selectPrinterObjects = (s: LabelState): PrinterObjectsState => ownedByTarget(s, s.printerObjects, OBJECTS_IDLE);
 
 export const selectPrinterReading = (s: LabelState): boolean => s.printerReading !== undefined;

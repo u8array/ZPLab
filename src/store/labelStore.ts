@@ -30,6 +30,7 @@ import { readLegacyPrintTarget } from '../lib/printTarget';
 import { createSelectionSlice, type SelectionSlice } from './slices/selectionSlice';
 import { createPreviewSlice, type PreviewSlice } from './slices/previewSlice';
 import { createPrinterStateSlice, type PrinterStateSlice } from './slices/printerStateSlice';
+import { createPrinterObjectsSlice, type PrinterObjectsSlice } from './slices/printerObjectsSlice';
 import { createDataSlice, type DataSlice } from './slices/dataSlice';
 import { createDbSlice, type DbSlice } from './slices/dbSlice';
 import { createVariablesSlice, type VariablesSlice } from './slices/variablesSlice';
@@ -60,6 +61,7 @@ export type LabelState =
   & SelectionSlice
   & PreviewSlice
   & PrinterStateSlice
+  & PrinterObjectsSlice
   & DataSlice
   & DbSlice
   & VariablesSlice
@@ -104,6 +106,7 @@ export {
   selectAppUpdateSettled,
   selectPrinterState,
   selectPrinterReading,
+  selectPrinterObjects,
 } from './labelStore.selectors';
 import { currentObjects, selectEditorFrozen } from './labelStore.selectors';
 
@@ -550,6 +553,7 @@ export const useLabelStore = create<LabelState>()(
       ...createSelectionSlice(set, get, store),
       ...createPreviewSlice(set, get, store),
       ...createPrinterStateSlice(set, get, store),
+      ...createPrinterObjectsSlice(set, get, store),
       ...createDataSlice(set, get, store),
       ...createDbSlice(set, get, store),
       ...createVariablesSlice(set, get, store),

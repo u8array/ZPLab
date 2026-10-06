@@ -151,6 +151,7 @@ On desktop, **Connect data** also reads an Excel worksheet. **File → Settings�
 
 - The **Objects** group selects the fonts and graphics the **Setup Script** uploads.
 - It lists cached images and deletes the unused ones.
+- On desktop it also reads what the printer holds. You can show a stored graphic and delete objects on the printer.
 - Saved designs and label exports exclude **Setup Script** values such as printer name and locale.
 - **Clear** resets the **Setup Script** values and keeps the uploads.
 
@@ -187,7 +188,7 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-125 of the 225 ZPL II commands are modelled in the browser; desktop covers 6 more with a connected printer. 2 more are planned for both builds. 70 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+125 of the 225 ZPL II commands are modelled in the browser; desktop covers 9 more with a connected printer. 2 more are planned for both builds. 67 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|

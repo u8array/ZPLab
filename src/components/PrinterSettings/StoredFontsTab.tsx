@@ -10,6 +10,8 @@ import { useCachedFonts } from "../../hooks/useCachedFonts";
 import { useUpload } from "../../hooks/useUpload";
 import { useLabelStore, selectEditorFrozen } from "../../store/labelStore";
 import { fontNameIssueText } from "../../lib/fontNameIssueText";
+import { isDesktopShell } from "../../lib/platform";
+import { PrinterObjectsSection } from "./PrinterObjectsSection";
 import { buttonCls, disabledCls, sectionHeadingCls } from "../ui/formStyles";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 
@@ -25,7 +27,7 @@ function repairable(path: string): boolean {
   return own !== undefined && storageRefMatchesPath(own, path);
 }
 
-/** Provisioning only. Deleting cached fonts stays in the FontManager. */
+/** Provisioning plus the printer's own listing. Deleting cached fonts stays in the FontManager. */
 export function StoredFontsTab() {
   const t = useT();
   const fonts = useCachedFonts();
@@ -175,6 +177,7 @@ export function StoredFontsTab() {
           </ul>
         )}
       </section>
+      {isDesktopShell && <PrinterObjectsSection kind="font" />}
       {pendingRemove !== undefined && (
         <ConfirmDialog
           message={loc.removeReplayedConfirm}

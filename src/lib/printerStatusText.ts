@@ -46,6 +46,12 @@ export function failureText(loc: Loc, failure: PrinterQueryFailure): string {
   switch (failure.kind) {
     case "unconfigured":
       return loc.failUnconfigured;
+    case "busy":
+      return loc.failBusy;
+    case "unparsed":
+      return loc.failUnparsed;
+    case "ignored":
+      return loc.failIgnored;
     case "refused":
       return formatTemplate(loc.failRefusedFmt, { port: String(failure.port) });
     case "unreachable":
