@@ -76,14 +76,14 @@ describe("readPrinterObjects", () => {
     queryPrinter.mockImplementation((_t: unknown, zpl: string) => Promise.resolve(listingOf(zpl)));
     const steps: string[] = [];
     const result = await readPrinterObjects(network, (step) => steps.push(step));
-    expect(steps).toEqual(["^HWR:*.*", "^HWE:*.*", "^HWB:*.*", "^HWA:*.*"]);
+    expect(steps).toEqual(["^HWR:*.*", "^HWE:*.*", "^HWB:*.*", "^HWA:*.*", "^HWZ:*.*"]);
     expect(queryPrinter).toHaveBeenNthCalledWith(2, network, "^XA^HWE:*.*^XZ");
-    expect(result).toMatchObject({ kind: "ok", value: [{ device: "R", objects: [{ name: "PRE" }] }, { device: "E" }, { device: "B" }, { device: "A" }] });
+    expect(result).toMatchObject({ kind: "ok", value: [{ device: "R", objects: [{ name: "PRE" }] }, { device: "E" }, { device: "B" }, { device: "A" }, { device: "Z" }] });
   });
 
   it("leaves out a drive the printer does not list and fails when no drive parsed", async () => {
     queryPrinter.mockImplementation((_t: unknown, zpl: string) => Promise.resolve(zpl.includes("HWA") ? { kind: "ok", value: "" } : listingOf(zpl)));
-    expect(await readPrinterObjects(network)).toMatchObject({ kind: "ok", value: [{ device: "R" }, { device: "E" }, { device: "B" }] });
+    expect(await readPrinterObjects(network)).toMatchObject({ kind: "ok", value: [{ device: "R" }, { device: "E" }, { device: "B" }, { device: "Z" }] });
     queryPrinter.mockResolvedValue({ kind: "ok", value: "PRINTER STATUS" });
     expect(await readPrinterObjects(network)).toEqual({ kind: "unparsed" });
   });

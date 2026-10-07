@@ -1,5 +1,6 @@
 import { FONT_FORMAT_BY_EXT } from "./customFonts";
 import { replyLines, unframed } from "./hostStatus";
+import { STORAGE_DEVICES } from "./storagePath";
 
 export interface HostObject {
   device: string;
@@ -15,6 +16,9 @@ export interface HostDirectory {
 }
 
 export const hostObjectPath = (o: HostObject): string => `${o.device}:${o.name}.${o.ext}`;
+
+/** ^HW also lists the firmware drive Z:, which no upload can name (spec p.240). */
+export const HOST_LISTING_DEVICES = [...STORAGE_DEVICES, "Z"] as const;
 
 export type HostObjectKind = "graphic" | "font" | "format" | "other";
 

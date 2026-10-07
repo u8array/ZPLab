@@ -1,5 +1,6 @@
 import type { StateCreator } from 'zustand';
 import { hostObjectKind, hostObjectPath, type HostDirectory, type HostObject } from '@zplab/core/lib/hostDirectory';
+import { hostListing, listingHolds } from '@zplab/core/lib/storedObjectOrigins';
 import type { PrinterOutcome, PrinterQueryFailure } from '../../lib/printerQuery';
 import { deletePrinterObject, readPrinterObjectImage, readPrinterObjects } from '../../lib/printerObjects';
 import { queryKeyFor, resolveQueryTarget, type QueryTarget } from '../../lib/printTarget';
@@ -60,8 +61,7 @@ export const createPrinterObjectsSlice: StateCreator<LabelState, [], [], Printer
         const failure = await deletePrinterObject(resolved.target, object);
         if (failure) return failure;
         const listing = await list(resolved.target, queryKeyFor(stored));
-        const path = hostObjectPath(object);
-        const kept = listing.kind === 'ok' && listing.value.some((d) => d.objects.some((o) => hostObjectPath(o) === path));
+        const kept = listing.kind === 'ok' && listingHolds(hostListing(listing.value), hostObjectPath(object));
         return kept ? { kind: 'ignored' } : undefined;
       });
     },

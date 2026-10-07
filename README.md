@@ -151,7 +151,7 @@ On desktop, **Connect data** also reads an Excel worksheet. **File â†’ Settingsâ
 
 - The **Objects** group selects the fonts and graphics the **Setup Script** uploads.
 - It lists cached images and deletes the unused ones.
-- On desktop it also reads what the printer holds. Show a stored graphic or let the printer draw a font sample. Delete objects on the printer.
+- On desktop it reads what the printer holds, so every row says where its file stands. Show a stored graphic or let the printer draw a font sample. Delete objects on the printer.
 - Saved designs and label exports exclude **Setup Script** values such as printer name and locale.
 - **Clear** resets the **Setup Script** values and keeps the uploads.
 

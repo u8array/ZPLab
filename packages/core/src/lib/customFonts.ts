@@ -1,6 +1,6 @@
 import type { CustomFontMapping, LabelConfig } from "../types/LabelConfig";
 import { getFontBytes, holdsOtherBytes, isFontFile } from "./fontCache";
-import { DEFAULT_FONT_DEVICE, sanitizeStorageName, STORAGE_DEVICES, storageRefMatchesPath } from "./storagePath";
+import { DEFAULT_FONT_DEVICE, isWritableDevice, sanitizeStorageName, storageRefMatchesPath } from "./storagePath";
 import { stripZplParamChars } from "./zplParams";
 /** Strip-pattern; schema's regex `/^[A-Z0-9]$/` is the inverse. */
 export const ALIAS_CHAR_RE = /[^A-Z0-9]/g;
@@ -66,7 +66,7 @@ export const ZPL_BUILTIN_FONT_IDS = [
  *  ^A@ and ^CW can reference (spec p.63, p.168). .TTE stays, .OTF and the rest become .TTF (p.184). */
 export function printerFontFileName(fileName: string): string | undefined {
   const first = fileName[0]?.toUpperCase() ?? "";
-  const typedDevice = fileName[1] === ":" && (STORAGE_DEVICES as readonly string[]).includes(first) ? `${first}:` : undefined;
+  const typedDevice = fileName[1] === ":" && isWritableDevice(first) ? `${first}:` : undefined;
   const rest = typedDevice ? fileName.slice(2) : fileName;
   const device = typedDevice ?? `${DEFAULT_FONT_DEVICE}:`;
   const dot = rest.lastIndexOf(".");
