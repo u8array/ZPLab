@@ -15,7 +15,7 @@ export type PrinterObjectsState =
 export interface PrinterObjectsSlice {
   printerObjects: PrinterObjectsState;
   readPrinterObjects: () => Promise<void>;
-  /** A graphic as stored, or a font drawn by the printer on the page's media. */
+  /** Fonts are sampled on the current page's media. */
   readPrinterObjectImage: (object: HostObject) => Promise<PrinterOutcome<string | null>>;
   /** The fresh listing tells whether the printer took the delete (spec p.246 ignores unknown names). */
   deletePrinterObject: (object: HostObject) => Promise<PrinterQueryFailure | undefined>;

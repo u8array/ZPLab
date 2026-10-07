@@ -9,18 +9,17 @@ export interface PrinterBitmap {
   mono: Uint8Array;
 }
 
-/** Wrap a design's ZPL so the printer renders it to a stored graphic (^IS, with
- *  print suppressed) and then uploads that graphic to the host (^HY). The reply
- *  is a ~DY the caller decodes with {@link decodeDyGraphic}. `^IS` is injected
- *  before the label's final `^XZ` so it captures the rendered format. */
+/** Wrap a design so the printer renders it into a scratch graphic (^IS with print suppressed),
+ *  uploads it (^HY) and drops it (^ID). The `^IS` goes before the label's final `^XZ` so it
+ *  captures the rendered format. The reply is a ~DY for {@link decodeDyGraphic}. */
 export function buildPrinterPreviewZpl(designZpl: string): string {
   // `^LL` applies to continuous media only; `,Y` forces the design length onto
   // gap/notch media too. Preview-only; the print path respects real media.
   const sized = designZpl.replace(/(\^LL\d+)(?![\d,])/g, "$1,Y");
-  // A name of its own per render, so the scratch never overwrites an object the user keeps on R:.
+  // A fixed name would overwrite a graphic the user keeps on R:.
   const scratch = `R:ZL${Math.floor(Math.random() * 0x1000000).toString(16).toUpperCase().padStart(6, "0")}.GRF`;
   const store = /\^XZ\s*$/.test(sized) ? sized.replace(/\^XZ\s*$/, `^IS${scratch},N^XZ`) : `${sized}^IS${scratch},N^XZ`;
-  // The ^ID rides in the same transmission, so the scratch never stays on the printer.
+  // The ^ID rides in the same transmission, so the scratch goes without a second query.
   return `${store}\n^XA^HY${scratch}^XZ^XA^ID${scratch}^FS^XZ`;
 }
 
@@ -78,7 +77,7 @@ export interface ContentBounds {
   bottom: number;
 }
 
-/** The bounds widened to whole bytes, so the rows copy without re-packing bits. */
+/** Crop to the bounds, widened to whole bytes so the rows copy without re-packing bits. */
 export function cropBitmap(bmp: PrinterBitmap, bounds: ContentBounds): PrinterBitmap {
   const firstByte = Math.floor(bounds.left / 8);
   const lastByte = Math.ceil(bounds.right / 8);

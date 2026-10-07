@@ -4,12 +4,11 @@ import { PrinterReplyDialog } from "../Output/PrinterReplyDialog";
 interface Props {
   path: string;
   read: PrinterOutcome<string | null> | "reading";
-  /** What to say for null, since a blank sample and an unreadable graphic differ. */
+  /** Null is a blank sample for a font and an unreadable raster for a graphic, so the caller words it. */
   blankText: string;
   onClose: () => void;
 }
 
-/** A stored graphic or a font sample as the printer draws it. */
 export function PrinterImageDialog({ path, read, blankText, onClose }: Props) {
   return (
     <PrinterReplyDialog title={path} titleClassName="font-mono" portal read={read} onClose={onClose}>

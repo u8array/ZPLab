@@ -29,7 +29,7 @@ export async function readPrinterGraphic(target: QueryTarget, object: HostObject
   return graphic ? { kind: "ok", value: graphic } : { kind: "unparsed" };
 }
 
-/** The printer renders the sample itself, so the font shows as the firmware draws it. Null when it drew nothing. */
+/** The sample the printer draws for one font, cropped to the ink. Null when it drew nothing. */
 export async function readPrinterFontSample(target: QueryTarget, object: HostObject, media: SampleMedia): Promise<PrinterOutcome<PrinterBitmap | null>> {
   const res = await fetchPrinterPreview(target, fontSampleZpl(hostObjectPath(object), media));
   if (res.kind !== "ok") return res;
@@ -42,7 +42,7 @@ function graphicDataUrl(graphic: HostGraphic): string | null {
   return raster ? bitmapToDataUrl({ width: raster.paddedWidth, height: raster.heightDots, mono: raster.bytes }) : null;
 }
 
-/** The picture of an object by its kind, as a data URL. Null when the printer gave nothing drawable. */
+/** A data URL of the object, a stored graphic or a drawn font sample. Null when nothing is drawable. */
 export async function readPrinterObjectImage(target: QueryTarget, object: HostObject, media: SampleMedia): Promise<PrinterOutcome<string | null>> {
   if (hostObjectKind(object.ext) === "font") {
     const sample = await readPrinterFontSample(target, object, media);

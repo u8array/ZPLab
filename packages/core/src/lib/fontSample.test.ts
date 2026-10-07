@@ -4,7 +4,7 @@ import { FONT_SAMPLE_TEXT, fontSampleZpl } from "./fontSample";
 const media = { widthMm: 100, heightMm: 150, dpmm: 8 };
 
 describe("fontSampleZpl", () => {
-  it("sets the font from the printer on a label of the media size, with a line budget the text cannot exceed", () => {
+  it("sets the printer font on a label of the media size, with a line budget the text cannot exceed", () => {
     expect(fontSampleZpl("E:CG_TIMES.TTF", media)).toBe(`^XA^PW800^LL1200^FO40,40^A@N,60,,E:CG_TIMES.TTF^FB720,${FONT_SAMPLE_TEXT.length},0,L^FD${FONT_SAMPLE_TEXT}^FS^XZ`);
   });
 
@@ -17,7 +17,7 @@ describe("fontSampleZpl", () => {
     expect(fontSampleZpl("E:A.FNT", { widthMm: 1, heightMm: 1, dpmm: 6, jmDensity: "B" })).toContain("^FO0,0^A@N,1,,E:A.FNT^FB3,");
   });
 
-  it("declares half density and sizes the field in that space while the media keeps head dots", () => {
+  it("declares half density and sizes the field in that space while ^PW and ^LL keep head dots", () => {
     expect(fontSampleZpl("E:A.FNT", { ...media, jmDensity: "B" })).toContain("^XA^JMB^PW800^LL1200^FO20,20^A@N,30,,E:A.FNT^FB360,");
   });
 

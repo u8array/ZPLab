@@ -56,7 +56,7 @@ describe("readPrinterObjects", () => {
 });
 
 describe("readPrinterObjectImage", () => {
-  it("hands the image back on the page's media without touching the listing", async () => {
+  it("hands the image back on the page's media, names the step per kind and leaves the listing", async () => {
     let step: string | undefined;
     readPrinterObjectImage.mockImplementation(() => {
       step = useLabelStore.getState().printerReading;
