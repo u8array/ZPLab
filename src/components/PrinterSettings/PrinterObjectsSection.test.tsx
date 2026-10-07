@@ -64,7 +64,7 @@ describe("PrinterObjectsSection", () => {
     expect(fonts.queryByText("R:PRE.GRF")).toBeNull();
   });
 
-  it("shows a stored graphic in a dialog and names a raster it cannot draw", async () => {
+  it("shows a stored graphic in a dialog and names one it cannot draw", async () => {
     listed();
     readPrinterObjectImage.mockResolvedValueOnce({ kind: "ok", value: "data:image/png;base64,x" });
     const r = render(<PrinterObjectsSection kind="graphic" />);

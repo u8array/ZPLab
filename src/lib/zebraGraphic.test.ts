@@ -16,7 +16,7 @@ const dyResponse = (mono: Uint8Array, kind: "Z" | "B", wrap = false): string => 
 };
 
 describe("buildPrinterPreviewZpl", () => {
-  it("injects ^IS before the final ^XZ and appends the ^HY upload", () => {
+  it("stores under a fresh name per render, uploads it with ^HY and deletes it with ^ID", () => {
     const random = vi.spyOn(Math, "random").mockReturnValueOnce(0.5).mockReturnValueOnce(0.25);
     const out = buildPrinterPreviewZpl("^XA^FO10,10^A0N,30^FDHi^FS^XZ");
     expect(out).toContain("^ISR:ZL800000.GRF,N^XZ");
