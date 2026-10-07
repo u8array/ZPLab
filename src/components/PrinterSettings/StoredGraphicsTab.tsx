@@ -2,23 +2,24 @@ import { useRef, useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/16/solid";
 import { Tooltip } from "../ui/Tooltip";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { usePrinterListing } from "../../hooks/usePrinterListing";
 import { useT } from "../../hooks/useT";
 import { useUpload } from "../../hooks/useUpload";
 import { useLabelStore, useFileDeletability, forgetHistoryUsing, selectEditorFrozen, type DeleteBlock } from "../../store/labelStore";
 import { encodeGraphicFile } from "@zplab/core/lib/imageToZpl";
-import { sanitizeStorageName, setupEntryKey, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
-import { findSetupEntry, setupEntryHoldsOther, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
-import { buttonCls, disabledCls, sectionHeadingCls, zplCommandTagCls } from "../ui/formStyles";
+import { sanitizeStorageName, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
+import { setupEntryHoldsOther, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
+import { buttonCls, disabledCls, sectionHeadingCls } from "../ui/formStyles";
 import { useCachedImages } from "../../hooks/useCachedImages";
-import { canSendSetupGraphic, setupGraphicFits, setupGraphicOf, setupGraphicState } from "@zplab/core/registry/image";
+import { canSendSetupGraphic, hasLocalGraphicBytes, setupGraphicFits, setupGraphicOf, setupGraphicState } from "@zplab/core/registry/image";
 import { storedGraphicRows, type StoredGraphicRow } from "@zplab/core/lib/storedObjects";
+import { storedObjectOrigins } from "@zplab/core/lib/storedObjectOrigins";
 import { removeImage } from "@zplab/core/lib/imageCache";
 import { imageUsage } from "@zplab/core/lib/imageUsage";
 import type { SetupGraphic } from "@zplab/core/types/PrinterProfile";
 import { isDesktopShell } from "../../lib/platform";
-import { PrinterObjectsSection } from "./PrinterObjectsSection";
+import { PrinterObjectActions, PrinterOriginMark, PrinterStorageBar, StoredObjectsHeading } from "./PrinterStorage";
 
-/** Provisioning, the local image cache and the printer's own listing. Whether a job ships its own bytes stays with the object. */
 export function StoredGraphicsTab() {
   const t = useT();
   const pages = useLabelStore((s) => s.pages);
@@ -28,7 +29,13 @@ export function StoredGraphicsTab() {
   const loc = t.printerSettings.objects;
 
   const rows = storedGraphicRows(pages);
-  const profileOnly = (setupGraphics ?? []).filter((g) => !rows.has(setupEntryKey(g)));
+  const setupPaths = (setupGraphics ?? []).map((g) => g.path);
+  const local = [
+    ...[...rows.entries()].map(([path, row]) => ({ path, hasBytes: hasLocalGraphicBytes(row.props) })),
+    // A profile entry always carries its own bytes.
+    ...setupPaths.map((path) => ({ path, hasBytes: true })),
+  ];
+  const origins = storedObjectOrigins({ kind: "graphic", setupPaths, local, listing: usePrinterListing() });
 
   const put = (entry: SetupGraphic) => patchPrinterProfileWith((p) => ({ setupGraphics: withSetupEntry(p.setupGraphics, entry) }));
   const drop = (path: string) => patchPrinterProfileWith((p) => ({ setupGraphics: withoutSetupEntry(p.setupGraphics, path) }));
@@ -82,17 +89,7 @@ export function StoredGraphicsTab() {
   return (
     <div className="flex flex-col gap-4">
       <section className="flex flex-col gap-2">
-        <div className="flex items-baseline justify-between gap-2">
-          <div className="flex items-center gap-1.5">
-            <h3 className={sectionHeadingCls}>
-              {loc.uploadHeading}
-            </h3>
-            <Tooltip content={loc.uploadHint}>
-              <InformationCircleIcon className="w-3 h-3 text-muted/60 cursor-help shrink-0" />
-            </Tooltip>
-          </div>
-          <span className={zplCommandTagCls}>~DY</span>
-        </div>
+        <StoredObjectsHeading />
         <div className="flex items-center gap-2">
           <input
             ref={fileRef}
@@ -106,7 +103,7 @@ export function StoredGraphicsTab() {
               if (file) uploadFile(file);
             }}
           />
-          <Tooltip content={frozen ? t.printerSettings.frozenHint : undefined}>
+          <Tooltip content={frozen ? t.printerSettings.frozenHint : loc.uploadHint}>
             <button type="button" className={`${buttonCls} ${disabledCls}`} disabled={uploading || frozen} onClick={() => fileRef.current?.click()}>
               {loc.uploadGraphic}
             </button>
@@ -117,22 +114,57 @@ export function StoredGraphicsTab() {
             </span>
           )}
         </div>
-        {rows.size === 0 && profileOnly.length === 0 ? (
+        {isDesktopShell && <PrinterStorageBar />}
+        {origins.length === 0 ? (
           <p className="text-xs text-muted/70">{loc.noGraphics}</p>
         ) : (
           <ul className="flex flex-col gap-1">
-            {[...rows.entries()].map(([path, row]) => {
+            {origins.map((origin) => {
+              const { key, path, hostObject } = origin;
+              // `uploadKey` already returns the normalised key, so an origin finds its row.
+              const row = rows.get(key);
+              const actions = hostObject && <PrinterObjectActions origin={{ ...origin, hostObject }} kind="graphic" />;
+              if (!row) {
+                return (
+                  <li
+                    key={key}
+                    className={`flex items-center justify-between gap-3 px-2 py-1.5 rounded border ${origin.inSetup ? "border-border-2/60 bg-surface-2/20" : "border-transparent hover:border-border-2 hover:bg-surface-2/40 transition-colors"}`}
+                  >
+                    <span className="flex flex-col gap-0.5 min-w-0">
+                      <span className="font-mono text-xs text-text/80 truncate" title={path}>
+                        {path}
+                      </span>
+                      {origin.inSetup && <span className="text-[10px] text-muted">{loc.fromProfile}</span>}
+                      <PrinterOriginMark origin={origin} />
+                    </span>
+                    <span className="flex items-center gap-2 shrink-0">
+                      {actions}
+                      {origin.inSetup && (
+                        <button
+                          type="button"
+                          disabled={frozen}
+                          onClick={() => drop(key)}
+                          className="font-mono text-[10px] text-muted hover:text-red-400 disabled:opacity-30 px-1"
+                          aria-label={loc.removeEntry}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </span>
+                  </li>
+                );
+              }
               const { props } = row;
               const state = setupGraphicState(props, setupGraphics);
-              const hasEntry = findSetupEntry(setupGraphics, path) !== undefined;
+              const hasEntry = origin.inSetup;
               const orphan = state === "none" && props.storedAs?.embedInZpl === false;
               // Bytes double up when the entry and the job both ship, so the row names it.
               const shipsToo = hasEntry && props.storedAs?.embedInZpl !== false;
               const resend = state === "stale" ? loc.staleEntry : state === "unknown" ? loc.unverifiedEntry : null;
-              const refused = sendIssue?.path === path && sendIssue.cache === props._gfaCache ? sendIssue.fit : null;
+              const refused = sendIssue?.path === key && sendIssue.cache === props._gfaCache ? sendIssue.fit : null;
               return (
                 <li
-                  key={path}
+                  key={key}
                   className="flex items-center justify-between gap-3 px-2 py-1.5 rounded border border-transparent hover:border-border-2 hover:bg-surface-2/40 transition-colors"
                 >
                   <span className="flex flex-col gap-0.5 min-w-0">
@@ -142,7 +174,7 @@ export function StoredGraphicsTab() {
                     {refused ? (
                       <span className="text-[10px] text-warning">{refused === "tooLarge" ? loc.tooLarge : loc.tooWide}</span>
                     ) : resend && canSendSetupGraphic(props) ? (
-                      <button type="button" className="text-left text-[10px] text-warning hover:underline disabled:opacity-40" disabled={frozen} onClick={() => send(path, row)}>
+                      <button type="button" className="text-left text-[10px] text-warning hover:underline disabled:opacity-40" disabled={frozen} onClick={() => send(key, row)}>
                         {resend}
                       </button>
                     ) : resend ? (
@@ -154,49 +186,30 @@ export function StoredGraphicsTab() {
                     ) : shipsToo ? (
                       <span className="text-[10px] text-muted">{t.delivery.job}</span>
                     ) : null}
+                    <PrinterOriginMark origin={origin} />
                   </span>
-                  <Tooltip content={frozen ? t.printerSettings.frozenHint : undefined}>
-                    <label className="flex items-center gap-1.5 text-[10px] font-mono text-muted hover:text-text cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="accent-accent"
-                        checked={hasEntry}
-                        disabled={frozen || (!hasEntry && !canSendSetupGraphic(props))}
-                        onChange={(e) => (e.target.checked ? send(path, row) : drop(path))}
-                      />
-                      {loc.uploadToggle}
-                    </label>
-                  </Tooltip>
+                  <span className="flex items-center gap-2 shrink-0">
+                    {actions}
+                    <Tooltip content={frozen ? t.printerSettings.frozenHint : undefined}>
+                      <label className="flex items-center gap-1.5 text-[10px] font-mono text-muted hover:text-text cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="accent-accent"
+                          checked={hasEntry}
+                          disabled={frozen || (!hasEntry && !canSendSetupGraphic(props))}
+                          onChange={(e) => (e.target.checked ? send(key, row) : drop(key))}
+                        />
+                        {loc.uploadToggle}
+                      </label>
+                    </Tooltip>
+                  </span>
                 </li>
               );
             })}
-            {profileOnly.map((entry) => (
-              <li
-                key={entry.path}
-                className="flex items-center justify-between gap-3 px-2 py-1.5 rounded border border-border-2/60 bg-surface-2/20"
-              >
-                <span className="flex flex-col gap-0.5 min-w-0">
-                  <span className="font-mono text-xs text-text/80 truncate" title={entry.path}>
-                    {entry.path}
-                  </span>
-                  <span className="text-[10px] text-muted">{loc.fromProfile}</span>
-                </span>
-                <button
-                  type="button"
-                  disabled={frozen}
-                  onClick={() => drop(entry.path)}
-                  className="font-mono text-[10px] text-muted hover:text-red-400 disabled:opacity-30 px-1"
-                  aria-label={loc.removeEntry}
-                >
-                  ✕
-                </button>
-              </li>
-            ))}
           </ul>
         )}
       </section>
 
-      {isDesktopShell && <PrinterObjectsSection kind="graphic" />}
       <section className="flex flex-col gap-2">
         <div className="flex items-baseline justify-between gap-2">
           <div className="flex items-center gap-1.5">

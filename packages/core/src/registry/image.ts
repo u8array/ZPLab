@@ -363,6 +363,11 @@ export function setupGraphicState(
   return entry.gfa === cached ? 'current' : 'stale';
 }
 
+/** A verbatim ^GF in the document is a copy like any other. */
+export function hasLocalGraphicBytes(p: ImageProps): boolean {
+  return getImage(p.imageId) !== undefined || p._gfaCache !== undefined || p.rawGf !== undefined;
+}
+
 /** Whether an encode is worth attempting. The encode itself may still refuse its result. */
 export function canSendSetupGraphic(p: ImageProps): boolean {
   if (uploadKey(p) === undefined || cacheTooLarge(p)) return false;

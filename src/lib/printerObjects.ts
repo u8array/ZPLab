@@ -1,7 +1,6 @@
 import { fontSampleZpl, type SampleMedia } from "@zplab/core/lib/fontSample";
 import { rasterFromGfa } from "@zplab/core/lib/gfaDecode";
-import { hostObjectKind, hostObjectPath, parseHostDirectories, parseHostGraphic, type HostDirectory, type HostGraphic, type HostObject } from "@zplab/core/lib/hostDirectory";
-import { STORAGE_DEVICES } from "@zplab/core/lib/storagePath";
+import { HOST_LISTING_DEVICES, hostObjectKind, hostObjectPath, parseHostDirectories, parseHostGraphic, type HostDirectory, type HostGraphic, type HostObject } from "@zplab/core/lib/hostDirectory";
 import { bitmapToDataUrl, fetchPrinterPreview } from "./printerPreview";
 import { queryPrinter, type PrinterOutcome, type PrinterQueryFailure } from "./printerQuery";
 import type { QueryTarget } from "./printTarget";
@@ -12,7 +11,7 @@ import { contentBounds, cropBitmap, type PrinterBitmap } from "./zebraGraphic";
 /** One ^HW per drive and per query, so a slow drive cannot cut the next one off at the idle gap. A drive that goes silent ends the walk and keeps the earlier listings. */
 export async function readPrinterObjects(target: QueryTarget, onStep?: (command: string) => void): Promise<PrinterOutcome<HostDirectory[]>> {
   const directories: HostDirectory[] = [];
-  for (const device of STORAGE_DEVICES) {
+  for (const device of HOST_LISTING_DEVICES) {
     const command = `^HW${device}:*.*`;
     onStep?.(command);
     const res = await queryPrinter(target, `^XA${command}^XZ`);

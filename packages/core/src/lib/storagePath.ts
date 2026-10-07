@@ -10,6 +10,9 @@ export type StorageDevice = (typeof STORAGE_DEVICES)[number];
 /** Where a locally picked font goes. */
 export const DEFAULT_FONT_DEVICE = "E";
 
+export const isWritableDevice = (device: string): boolean =>
+  (STORAGE_DEVICES as readonly string[]).includes(device.toUpperCase());
+
 /** DOS-style 8.3 (8-char uppercase alnum + underscore). */
 export const MAX_STORAGE_NAME_LEN = 8;
 export const STORAGE_NAME_FILTER_RE = /[^A-Z0-9_]/g;
