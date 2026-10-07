@@ -753,7 +753,6 @@ const zhHans = {
       cacheDeleteHistoryManyFmt: '这还会移除撤销历史记录中使用它的 {n} 步。',
       readPrinter: '读取打印机',
       printerNotRead: '尚未读取。',
-      printerFreeFmt: '{device}：{kb} KB 可用',
       objectSizeFmt: '{kb} KB',
       showObject: '显示',
       deleteObject: '删除',
@@ -772,6 +771,9 @@ const zhHans = {
       deleteLocalCopyHint: '本地副本会留在这里。',
       deleteNoCopyHint: '这里没有任何副本。出厂对象会随固件重新加载恢复。上传的对象不会恢复。',
       firmwareObject: '打印机保留自己的固件对象，不会释放它们。',
+      usageFmt: '{device}：已用 {used} KB，可用 {free} KB',
+      usageHint: '容量是列出的对象加上打印机报告的可用空间。固件本身占用的部分不包含在这两个数字中的任何一个里。',
+      usageObjectFmt: '{path}：{kb} KB，{percent}%',
     },
     identity: {
       printerName: '打印机名称',

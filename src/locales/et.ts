@@ -753,7 +753,6 @@ const et = {
       cacheDeleteHistoryManyFmt: 'Selle käigus kustub ka {n} sammu tagasivõtmise ajaloos, mis seda kasutavad.',
       readPrinter: 'Loe printerit',
       printerNotRead: 'Pole veel loetud.',
-      printerFreeFmt: '{device}: {kb} KB vaba',
       objectSizeFmt: '{kb} KB',
       showObject: 'Näita',
       deleteObject: 'Kustuta',
@@ -772,6 +771,9 @@ const et = {
       deleteLocalCopyHint: 'Kohalik koopia jääb siia.',
       deleteNoCopyHint: 'Siin ei hoia midagi koopiat. Tehase objekt tuleb tagasi püsivara uuesti laadimisega. Üles laaditud fail ei tule tagasi.',
       firmwareObject: 'Printer hoiab oma püsivara objekte ja ei anna neid käest.',
+      usageFmt: '{device}: {used} KB kasutatud, {free} KB vaba',
+      usageHint: 'Mahutavus on loetletud objektide ja printeri teatatud vaba ruumi summa. See, mida püsivara ise hõivab, ei kajastu kummaski arvus.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Printeri nimi',

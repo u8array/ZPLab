@@ -753,7 +753,6 @@ const bg = {
       cacheDeleteHistoryManyFmt: 'Това също ще премахне {n} стъпки в историята на отмяна, които го използват.',
       readPrinter: 'Прочитане на принтера',
       printerNotRead: 'Още не е прочетено.',
-      printerFreeFmt: '{device}: {kb} KB свободни',
       objectSizeFmt: '{kb} KB',
       showObject: 'Показване',
       deleteObject: 'Изтриване',
@@ -772,6 +771,9 @@ const bg = {
       deleteLocalCopyHint: 'Локалното копие остава тук.',
       deleteNoCopyHint: 'Нищо тук не пази копие. Фабричен обект се възстановява при презареждане на фърмуера. Качен файл не се възстановява.',
       firmwareObject: 'Принтерът пази собствените си обекти на фърмуера и не се разделя с тях.',
+      usageFmt: '{device}: {used} KB заети, {free} KB свободни',
+      usageHint: 'Капацитетът е сумата от изброените обекти и свободното място, което съобщава принтерът. Това, което заема самият фърмуер, не е включено в нито едно от двете числа.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Име на принтера',

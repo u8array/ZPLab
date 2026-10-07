@@ -753,7 +753,6 @@ const hu = {
       cacheDeleteHistoryManyFmt: 'Ez egyben töröl {n} lépést a visszavonási előzményekben, amelyek ezt használják.',
       readPrinter: 'Nyomtató beolvasása',
       printerNotRead: 'Még nincs beolvasva.',
-      printerFreeFmt: '{device}: {kb} KB szabad',
       objectSizeFmt: '{kb} KB',
       showObject: 'Megjelenítés',
       deleteObject: 'Törlés',
@@ -772,6 +771,9 @@ const hu = {
       deleteLocalCopyHint: 'A helyi másolat itt marad.',
       deleteNoCopyHint: 'Semmi itt nem tart másolatot. Egy gyári objektum visszatér a firmware újratöltésével. Egy feltöltés nem tér vissza.',
       firmwareObject: 'A nyomtató megtartja a saját firmware-objektumait, és nem engedi el őket.',
+      usageFmt: '{device}: {used} KB foglalt, {free} KB szabad',
+      usageHint: 'A kapacitás a felsorolt objektumok és a nyomtató által jelentett szabad terület összege. Amit a firmware maga elfoglal, az nincs benne sem az egyik, sem a másik számban.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Nyomtató neve',

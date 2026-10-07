@@ -753,7 +753,6 @@ const de = {
       cacheDeleteHistoryManyFmt: 'Dabei entfallen auch {n} Schritte im Undo-Verlauf, die es benutzen.',
       readPrinter: 'Drucker lesen',
       printerNotRead: 'Noch nicht gelesen.',
-      printerFreeFmt: '{device}: {kb} KB frei',
       objectSizeFmt: '{kb} KB',
       showObject: 'Anzeigen',
       deleteObject: 'Löschen',
@@ -772,6 +771,9 @@ const de = {
       deleteLocalCopyHint: 'Die lokale Kopie bleibt hier.',
       deleteNoCopyHint: 'Nichts hier bewahrt eine Kopie. Ein Werksobjekt kehrt mit einem Firmware-Reload zurück. Ein Upload kommt nicht zurück.',
       firmwareObject: 'Der Drucker behält seine eigenen Firmware-Objekte und gibt sie nicht frei.',
+      usageFmt: '{device}: {used} KB belegt, {free} KB frei',
+      usageHint: 'Die Kapazität ergibt sich aus den aufgeführten Objekten plus dem freien Speicher, den der Drucker meldet. Was die Firmware selbst belegt, steckt in keiner der beiden Zahlen.',
+      usageObjectFmt: '{path}: {kb} KB, {percent} %',
     },
     identity: {
       printerName: 'Druckername',

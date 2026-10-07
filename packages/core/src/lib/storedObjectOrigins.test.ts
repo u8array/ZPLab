@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deleteKnowledge, hostListing, listingHolds, originState, storedObjectOrigins } from "./storedObjectOrigins";
+import { deleteKnowledge, driveUsage, hostListing, listedObject, listingHolds, originState, storedObjectOrigins } from "./storedObjectOrigins";
 import type { HostDirectory } from "./hostDirectory";
 
 const object = (device: string, name: string, ext: string, size = 100) => ({ device, name, ext, size });
@@ -109,5 +109,37 @@ describe("deleteKnowledge", () => {
     expect(deleteKnowledge(row(true, false))).toBe("noCopy");
     expect(deleteKnowledge(row(false, true))).toBe("localCopy");
     expect(deleteKnowledge(row(false, false))).toBe("noCopy");
+  });
+});
+
+describe("driveUsage", () => {
+  it("counts every kind on the drive, not just one tab's", () => {
+    const listing = hostListing([
+      dir("R", [object("R", "LOGO", "GRF", 100), object("R", "ARIAL", "TTF", 300), object("R", "LBL", "ZPL", 50)], 550),
+    ]);
+    expect(driveUsage(listing)).toEqual([{ device: "R", used: 450, free: 550, capacity: 1000 }]);
+  });
+
+  it("leaves out a drive that never said how much room is left", () => {
+    const listing = hostListing([dir("R", [object("R", "LOGO", "GRF", 100)], 900), dir("E", [object("E", "ARIAL", "TTF", 100)])]);
+    expect(driveUsage(listing).map((u) => u.device)).toEqual(["R"]);
+  });
+
+  it("leaves out the firmware drive, which no upload fills", () => {
+    const listing = hostListing([dir("Z", [object("Z", "TT0003M_", "FNT", 100)], 0)]);
+    expect(driveUsage(listing)).toEqual([]);
+  });
+
+  it("leaves out a drive with neither room nor content, which has nothing to show", () => {
+    expect(driveUsage(hostListing([dir("R", [], 0)]))).toEqual([]);
+    expect(driveUsage(hostListing([dir("R", [object("R", "LOGO", "GRF", 100)], 0)]))).toEqual([{ device: "R", used: 100, free: 0, capacity: 100 }]);
+  });
+});
+
+describe("listedObject", () => {
+  it("hands back the object behind a key, whatever spelling the key came in", () => {
+    const listing = hostListing([dir("E", [object("E", "ARIAL", "TTF", 4096)])]);
+    expect(listedObject(listing, "e:arial.ttf")?.size).toBe(4096);
+    expect(listedObject(listing, "R:ARIAL.TTF")).toBeUndefined();
   });
 });

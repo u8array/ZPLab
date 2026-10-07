@@ -753,7 +753,6 @@ const el = {
       cacheDeleteHistoryManyFmt: 'Αυτό αφαιρεί επίσης {n} βήματα στο ιστορικό αναιρέσεων που τη χρησιμοποιούν.',
       readPrinter: 'Ανάγνωση εκτυπωτή',
       printerNotRead: 'Δεν έχει διαβαστεί ακόμα.',
-      printerFreeFmt: '{device}: {kb} KB ελεύθερα',
       objectSizeFmt: '{kb} KB',
       showObject: 'Εμφάνιση',
       deleteObject: 'Διαγραφή',
@@ -772,6 +771,9 @@ const el = {
       deleteLocalCopyHint: 'Το τοπικό αντίγραφο παραμένει εδώ.',
       deleteNoCopyHint: 'Τίποτα εδώ δεν κρατά αντίγραφο. Ένα εργοστασιακό αντικείμενο επανέρχεται με επαναφόρτωση του firmware. Ένα ανεβασμένο αρχείο δεν επανέρχεται.',
       firmwareObject: 'Ο εκτυπωτής διατηρεί τα δικά του αντικείμενα firmware και δεν τα αφήνει να φύγουν.',
+      usageFmt: '{device}: {used} KB σε χρήση, {free} KB ελεύθερα',
+      usageHint: 'Η χωρητικότητα είναι το άθροισμα των αντικειμένων που εμφανίζονται και του ελεύθερου χώρου που αναφέρει ο εκτυπωτής. Ό,τι καταλαμβάνει το ίδιο το firmware δεν περιλαμβάνεται σε κανέναν από τους δύο αριθμούς.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Όνομα εκτυπωτή',

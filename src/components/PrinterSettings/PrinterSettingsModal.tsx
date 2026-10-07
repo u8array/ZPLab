@@ -32,6 +32,8 @@ import { PreviewSettingsTab } from "./PreviewSettingsTab";
 import { PrintTargetTab } from "./PrintTargetTab";
 import { PrintQualityTab } from "./PrintQualityTab";
 import { IllustrationFocusProvider, PrinterIllustration } from "./printerIllustration";
+import { PrinterStorageUsage } from "./PrinterStorage";
+import { StoredObjectHoverProvider } from "./storedObjectHover";
 import { sectionHeadingCls } from "../ui/formStyles";
 
 /** Sub-tab → top-tab. `satisfies` flags any PrinterSettingsTab union
@@ -247,6 +249,7 @@ export function PrinterSettingsModal() {
       </div>
 
       <IllustrationFocusProvider>
+        <StoredObjectHoverProvider>
         <div className="flex-1 flex min-h-0">
           <div className="w-44 shrink-0 border-r border-border bg-surface-2/40 flex flex-col">
             {activeTopTab === 'perLabel' && <PrinterIllustration />}
@@ -262,6 +265,7 @@ export function PrinterSettingsModal() {
                 />
               ))}
             </nav>
+            {activeTopTab === 'objects' && isDesktopShell && <PrinterStorageUsage />}
             {activeTopTab === 'perLabel' && hasPerLabelOverrides && (
               <div className="px-3 pb-3">
                 <ResetPerLabelButton
@@ -277,6 +281,7 @@ export function PrinterSettingsModal() {
             {ActiveTab && <ActiveTab />}
           </section>
         </div>
+        </StoredObjectHoverProvider>
       </IllustrationFocusProvider>
 
       {SCRIPT_TOP_TABS.has(activeTopTab) && (

@@ -753,7 +753,6 @@ const sl = {
       cacheDeleteHistoryManyFmt: 'S tem bo izbrisanih tudi {n} korakov v zgodovini razveljavitev, ki jo uporabljajo.',
       readPrinter: 'Preberi tiskalnik',
       printerNotRead: 'Še ni prebrano.',
-      printerFreeFmt: '{device}: {kb} KB prosto',
       objectSizeFmt: '{kb} KB',
       showObject: 'Prikaži',
       deleteObject: 'Izbriši',
@@ -772,6 +771,9 @@ const sl = {
       deleteLocalCopyHint: 'Lokalna kopija ostane tukaj.',
       deleteNoCopyHint: 'Nič tukaj ne hrani kopije. Tovarniški predmet se vrne s ponovnim nalaganjem strojne programske opreme. Naložena datoteka se ne vrne.',
       firmwareObject: 'Tiskalnik hrani svoje lastne predmete strojne programske opreme in jih ne izpusti.',
+      usageFmt: '{device}: {used} KB zasedeno, {free} KB prosto',
+      usageHint: 'Zmogljivost je vsota navedenih predmetov in prostega prostora, ki ga sporoči tiskalnik. Kar zaseda sama strojna programska oprema, ni zajeto v nobenem od teh dveh števil.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Ime tiskalnika',

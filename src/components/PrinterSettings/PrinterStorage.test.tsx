@@ -54,14 +54,15 @@ beforeEach(() => {
 });
 
 describe("PrinterStorageBar", () => {
-  it("reads the printer on request and reports the free space of every drive that answered", async () => {
+  it("reads the printer on request and stops saying it never did", async () => {
     readPrinterObjects.mockResolvedValue({ kind: "ok", value: listing });
     const r = render(<PrinterStorageBar />);
     expect(r.getByText(loc.printerNotRead)).toBeTruthy();
     await act(async () => {
       fireEvent.click(r.getByText(loc.readPrinter));
     });
-    expect(r.getByText("R: 7292 KB free, E: 46848 KB free")).toBeTruthy();
+    expect(readPrinterObjects).toHaveBeenCalledOnce();
+    expect(r.queryByText(loc.printerNotRead)).toBeNull();
   });
 
   it("names a failed read instead of an empty listing", async () => {

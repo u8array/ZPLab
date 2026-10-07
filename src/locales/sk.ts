@@ -753,7 +753,6 @@ const sk = {
       cacheDeleteHistoryManyFmt: 'Tým sa zároveň odstráni v histórii krokov späť aj {n} krokov, ktoré ho používajú.',
       readPrinter: 'Načítať tlačiareň',
       printerNotRead: 'Zatiaľ neprečítané.',
-      printerFreeFmt: '{device}: {kb} KB voľné',
       objectSizeFmt: '{kb} KB',
       showObject: 'Zobraziť',
       deleteObject: 'Odstrániť',
@@ -772,6 +771,9 @@ const sk = {
       deleteLocalCopyHint: 'Lokálna kópia zostane tu.',
       deleteNoCopyHint: 'Nič tu neuchováva kópiu. Továrenský objekt sa vráti po opätovnom nahraní firmvéru. Nahraný súbor sa nevráti.',
       firmwareObject: 'Tlačiareň si ponecháva vlastné objekty firmvéru a nikdy sa ich nevzdá.',
+      usageFmt: '{device}: {used} KB obsadené, {free} KB voľné',
+      usageHint: 'Kapacita je súčet uvedených objektov a voľného miesta, ktoré hlási tlačiareň. To, čo zaberá samotný firmvér, nie je v žiadnom z týchto čísel.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Názov tlačiarne',

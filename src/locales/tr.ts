@@ -753,7 +753,6 @@ const tr = {
       cacheDeleteHistoryManyFmt: 'Bu işlem onu kullanan geri alma geçmişindeki {n} adımı da siler.',
       readPrinter: 'Yazıcıyı oku',
       printerNotRead: 'Henüz okunmadı.',
-      printerFreeFmt: '{device}: {kb} KB boş',
       objectSizeFmt: '{kb} KB',
       showObject: 'Göster',
       deleteObject: 'Sil',
@@ -772,6 +771,9 @@ const tr = {
       deleteLocalCopyHint: 'Yerel kopya burada kalır.',
       deleteNoCopyHint: 'Burada hiçbir şey kopya tutmuyor. Fabrika nesnesi bir aygıt yazılımı yeniden yüklemesiyle geri gelir. Bir yükleme geri gelmez.',
       firmwareObject: 'Yazıcı kendi aygıt yazılımı nesnelerini tutar ve onları bırakmaz.',
+      usageFmt: '{device}: {used} KB kullanılan, {free} KB boş',
+      usageHint: 'Kapasite, listelenen nesneler ile yazıcının bildirdiği boş alanın toplamıdır. Aygıt yazılımının kendisinin kapladığı yer bu iki sayının hiçbirinde yoktur.',
+      usageObjectFmt: '{path}: {kb} KB, %{percent}',
     },
     identity: {
       printerName: 'Yazıcı adı',

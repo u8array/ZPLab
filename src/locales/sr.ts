@@ -753,7 +753,6 @@ const sr = {
       cacheDeleteHistoryManyFmt: 'Ово ће уклонити и {n} корака у историји опозивања који је користе.',
       readPrinter: 'Прочитај штампач',
       printerNotRead: 'Још није прочитано.',
-      printerFreeFmt: '{device}: {kb} KB slobodno',
       objectSizeFmt: '{kb} KB',
       showObject: 'Прикажи',
       deleteObject: 'Обриши',
@@ -772,6 +771,9 @@ const sr = {
       deleteLocalCopyHint: 'Локална копија остаје овде.',
       deleteNoCopyHint: 'Ништа овде не чува копију. Фабрички објекат се враћа поновним учитавањем фирмвера. Отпремљени фајл се не враћа.',
       firmwareObject: 'Штампач чува своје сопствене фирмвер објекте и не одустаје од њих.',
+      usageFmt: '{device}: {used} KB заузето, {free} KB слободно',
+      usageHint: 'Капацитет је збир наведених објеката и слободног простора који пријављује штампач. Оно што заузима сам фирмвер није укључено ни у један од та два броја.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Назив штампача',

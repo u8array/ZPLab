@@ -753,7 +753,6 @@ const pl = {
       cacheDeleteHistoryManyFmt: 'To usunie też {n} kroków w historii cofania, które go używają.',
       readPrinter: 'Odczytaj drukarkę',
       printerNotRead: 'Jeszcze nie odczytano.',
-      printerFreeFmt: '{device}: {kb} KB wolne',
       objectSizeFmt: '{kb} KB',
       showObject: 'Pokaż',
       deleteObject: 'Usuń',
@@ -772,6 +771,9 @@ const pl = {
       deleteLocalCopyHint: 'Lokalna kopia zostaje tutaj.',
       deleteNoCopyHint: 'Nic tutaj nie ma kopii. Obiekt fabryczny wraca po ponownym wczytaniu oprogramowania układowego. Przesłany plik nie wraca.',
       firmwareObject: 'Drukarka zatrzymuje własne obiekty oprogramowania układowego i nie oddaje ich.',
+      usageFmt: '{device}: {used} KB zajęte, {free} KB wolne',
+      usageHint: 'Pojemność to suma wymienionych obiektów i wolnego miejsca zgłaszanego przez drukarkę. To, co zajmuje samo oprogramowanie układowe, nie jest ujęte w żadnej z tych liczb.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Nazwa drukarki',

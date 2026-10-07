@@ -753,7 +753,6 @@ const en = {
       cacheDeleteHistoryManyFmt: 'This also drops {n} steps in the undo history that use it.',
       readPrinter: 'Read printer',
       printerNotRead: 'Not read yet.',
-      printerFreeFmt: '{device}: {kb} KB free',
       objectSizeFmt: '{kb} KB',
       showObject: 'Show',
       deleteObject: 'Delete',
@@ -772,6 +771,9 @@ const en = {
       deleteLocalCopyHint: 'The local copy stays here.',
       deleteNoCopyHint: 'Nothing here holds a copy. A factory object comes back with a firmware reload. An upload does not come back.',
       firmwareObject: 'The printer keeps its own firmware objects and does not let them go.',
+      usageFmt: '{device}: {used} KB used, {free} KB free',
+      usageHint: 'The capacity is the listed objects plus the free space the printer reports. What the firmware itself occupies is in neither number.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Printer name',

@@ -753,7 +753,6 @@ const he = {
       cacheDeleteHistoryManyFmt: 'פעולה זו גם תמחק {n} שלבים בהיסטוריית הביטולים שמשתמשים בה.',
       readPrinter: 'קרא מדפסת',
       printerNotRead: 'עדיין לא נקרא.',
-      printerFreeFmt: '{device}: {kb} KB פנויים',
       objectSizeFmt: '{kb} KB',
       showObject: 'הצג',
       deleteObject: 'מחק',
@@ -772,6 +771,9 @@ const he = {
       deleteLocalCopyHint: 'העותק המקומי נשאר כאן.',
       deleteNoCopyHint: 'שום דבר כאן לא מחזיק עותק. אובייקט יצרן חוזר עם טעינה מחדש של הקושחה. קובץ שהועלה לא חוזר.',
       firmwareObject: 'המדפסת שומרת על אובייקטי הקושחה שלה ולא משחררת אותם.',
+      usageFmt: '{device}: {used} KB בשימוש, {free} KB פנויים',
+      usageHint: 'הקיבולת היא סכום האובייקטים המפורטים והשטח הפנוי שהמדפסת מדווחת עליו. מה שהקושחה עצמה תופסת אינו כלול באף אחד מהמספרים.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'שם המדפסת',

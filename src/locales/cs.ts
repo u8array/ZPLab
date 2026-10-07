@@ -753,7 +753,6 @@ const cs = {
       cacheDeleteHistoryManyFmt: 'Tím se navíc odstraní {n} kroků v historii zpět, které ji používají.',
       readPrinter: 'Načíst tiskárnu',
       printerNotRead: 'Zatím nepřečteno.',
-      printerFreeFmt: '{device}: {kb} KB volné',
       objectSizeFmt: '{kb} KB',
       showObject: 'Zobrazit',
       deleteObject: 'Smazat',
@@ -772,6 +771,9 @@ const cs = {
       deleteLocalCopyHint: 'Místní kopie zůstává tady.',
       deleteNoCopyHint: 'Nic tady neukládá kopii. Tovární objekt se vrátí po novém nahrání firmwaru. Nahraný soubor se nevrátí.',
       firmwareObject: 'Tiskárna si ponechává vlastní objekty firmwaru a nevzdává se jich.',
+      usageFmt: '{device}: {used} KB obsazeno, {free} KB volné',
+      usageHint: 'Kapacita je součet uvedených objektů a volného místa, které hlásí tiskárna. To, co zabírá samotný firmware, není v žádném z těchto čísel.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Název tiskárny',
