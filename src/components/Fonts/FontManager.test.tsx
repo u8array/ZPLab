@@ -129,9 +129,11 @@ describe("FontManager delete owners", () => {
 });
 
 describe("FontManager preview face", () => {
-  it("draws a cached font's name in the face the cache registered", () => {
+  it("draws a sample beside a cached font's name in the face the cache registered, and the name in the UI face", () => {
     const r = render(<FontManager />);
-    expect(r.getByTitle("E:ARIAL.TTF").style.fontFamily).toMatch(/^"zpl-/);
+    const name = r.getByTitle("E:ARIAL.TTF");
+    expect(name.style.fontFamily).toBe("");
+    expect((name.nextElementSibling as HTMLElement).style.fontFamily).toMatch(/^"zpl-/);
   });
 
   it("names a font no browser face took, and leaves its row unstyled", async () => {
@@ -151,7 +153,7 @@ describe("FontManager preview face", () => {
     }
     const r = render(<FontManager />);
     expect(r.getByText(/cannot render this font/)).toBeTruthy();
-    expect(r.getByTitle("E:BROKEN.TTF").style.fontFamily).toBe("");
+    expect(r.getByTitle("E:BROKEN.TTF").nextElementSibling).toBeNull();
   });
 });
 

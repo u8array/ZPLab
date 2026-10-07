@@ -274,12 +274,16 @@ function FontEntry({
   return (
     <div className="flex flex-col gap-0.5 px-2 py-1.5 rounded border border-transparent hover:border-border-2 hover:bg-surface-2 transition-colors">
       <div className="grid grid-cols-[1fr_3rem_auto] items-center gap-2">
-        <span
-          className="font-mono text-xs text-text truncate"
-          style={cachedFontFaceStyle(previewFamily)}
-          title={name}
-        >
-          {name}
+        <span className="flex items-center gap-2 min-w-0">
+          <span className="font-mono text-xs text-text truncate" title={name}>
+            {name}
+          </span>
+          {/* The face shows on a sample, not on the name, so a display font leaves the name readable. */}
+          {previewFamily && (
+            <span className="text-sm leading-none text-muted shrink-0" style={cachedFontFaceStyle(previewFamily)} aria-hidden="true">
+              Aa
+            </span>
+          )}
         </span>
         <Tooltip
           className="w-full"
