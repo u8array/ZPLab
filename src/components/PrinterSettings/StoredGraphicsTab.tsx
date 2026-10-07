@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/16/solid";
 import { Tooltip } from "../ui/Tooltip";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { useStoredObjectHover } from "../../hooks/useStoredObjectHover";
 import { usePrinterListing } from "../../hooks/usePrinterListing";
 import { useT } from "../../hooks/useT";
 import { useUpload } from "../../hooks/useUpload";
@@ -27,6 +28,7 @@ export function StoredGraphicsTab() {
   const patchPrinterProfileWith = useLabelStore((s) => s.patchPrinterProfileWith);
   const sendSetupGraphic = useLabelStore((s) => s.sendSetupGraphic);
   const loc = t.printerSettings.objects;
+  const { setHoveredKey } = useStoredObjectHover();
 
   const rows = storedGraphicRows(pages);
   const setupPaths = (setupGraphics ?? []).map((g) => g.path);
@@ -128,6 +130,8 @@ export function StoredGraphicsTab() {
                 return (
                   <li
                     key={key}
+                    onMouseEnter={() => setHoveredKey(key)}
+                    onMouseLeave={() => setHoveredKey(undefined)}
                     className={`flex items-center justify-between gap-3 px-2 py-1.5 rounded border ${origin.inSetup ? "border-border-2/60 bg-surface-2/20" : "border-transparent hover:border-border-2 hover:bg-surface-2/40 transition-colors"}`}
                   >
                     <span className="flex flex-col gap-0.5 min-w-0">
@@ -165,6 +169,8 @@ export function StoredGraphicsTab() {
               return (
                 <li
                   key={key}
+                  onMouseEnter={() => setHoveredKey(key)}
+                  onMouseLeave={() => setHoveredKey(undefined)}
                   className="flex items-center justify-between gap-3 px-2 py-1.5 rounded border border-transparent hover:border-border-2 hover:bg-surface-2/40 transition-colors"
                 >
                   <span className="flex flex-col gap-0.5 min-w-0">

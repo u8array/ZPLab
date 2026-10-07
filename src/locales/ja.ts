@@ -753,7 +753,6 @@ const ja = {
       cacheDeleteHistoryManyFmt: 'これにより、それを使用する元に戻す履歴内の操作も{n}件削除されます。',
       readPrinter: 'プリンターを読み取る',
       printerNotRead: 'まだ読み取っていません。',
-      printerFreeFmt: '{device}: {kb} KB 空き',
       objectSizeFmt: '{kb} KB',
       showObject: '表示',
       deleteObject: '削除',
@@ -772,6 +771,9 @@ const ja = {
       deleteLocalCopyHint: 'ローカルのコピーはここに残ります。',
       deleteNoCopyHint: 'ここにはコピーがありません。工場出荷時のオブジェクトはファームウェアの再読み込みで復元されます。アップロードしたものは復元されません。',
       firmwareObject: 'プリンターは自身のファームウェアオブジェクトを保持し、手放しません。',
+      usageFmt: '{device}: 使用 {used} KB、空き {free} KB',
+      usageHint: '容量は一覧表示されたオブジェクトとプリンターが報告する空き容量の合計です。ファームウェア自体が占有する分はどちらの数値にも含まれません。',
+      usageObjectFmt: '{path}: {kb} KB、{percent}%',
     },
     identity: {
       printerName: 'プリンター名',

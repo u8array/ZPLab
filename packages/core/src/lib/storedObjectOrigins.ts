@@ -32,8 +32,28 @@ function firmwareLast(a: HostObject, b: HostObject): number {
   return Number(!isWritableDevice(a.device)) - Number(!isWritableDevice(b.device));
 }
 
-export const listingHolds = (listing: HostListing, path: string): boolean =>
-  listing.objects.some((o) => storageKey(hostObjectPath(o)) === storageKey(path));
+export const listedObject = (listing: HostListing, path: string): HostObject | undefined =>
+  listing.objects.find((o) => storageKey(hostObjectPath(o)) === storageKey(path));
+
+export const listingHolds = (listing: HostListing, path: string): boolean => listedObject(listing, path) !== undefined;
+
+export interface DriveUsage {
+  device: string;
+  /** Every object on the drive, whatever kind, so no tab's filter shrinks it. */
+  used: number;
+  free: number;
+  /** An estimate: what the firmware itself occupies is in neither number. */
+  capacity: number;
+}
+
+/** A drive can only say how full it is once it reported its free space and has something to show. */
+export function driveUsage(listing: HostListing): DriveUsage[] {
+  return listing.free.flatMap(({ device, bytesFree }) => {
+    const used = listing.objects.reduce((sum, o) => (o.device === device ? sum + o.size : sum), 0);
+    const capacity = used + bytesFree;
+    return capacity > 0 ? [{ device, used, free: bytesFree, capacity }] : [];
+  });
+}
 
 export type HostPresence = "present" | "absent" | "unknown";
 

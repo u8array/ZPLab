@@ -753,7 +753,6 @@ const lt = {
       cacheDeleteHistoryManyFmt: 'Tai taip pat pašalins {n} žingsnius atšaukimo istorijoje, kurie jį naudoja.',
       readPrinter: 'Nuskaityti spausdintuvą',
       printerNotRead: 'Dar nenuskaityta.',
-      printerFreeFmt: '{device}: {kb} KB laisva',
       objectSizeFmt: '{kb} KB',
       showObject: 'Rodyti',
       deleteObject: 'Ištrinti',
@@ -772,6 +771,9 @@ const lt = {
       deleteLocalCopyHint: 'Vietinė kopija lieka čia.',
       deleteNoCopyHint: 'Čia kopijos nėra. Gamyklinis objektas atsistato iš naujo įkėlus programinę aparatinę įrangą. Įkeltas failas neatsistato.',
       firmwareObject: 'Spausdintuvas pasilieka savo programinės aparatinės įrangos objektus ir jų neatsisako.',
+      usageFmt: '{device}: {used} KB užimta, {free} KB laisva',
+      usageHint: 'Talpa yra išvardytų objektų ir spausdintuvo nurodytos laisvos vietos suma. Tai, ką užima pati programinė aparatinė įranga, nepatenka į nė vieną iš šių skaičių.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Spausdintuvo pavadinimas',

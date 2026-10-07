@@ -753,7 +753,6 @@ const hr = {
       cacheDeleteHistoryManyFmt: 'Time će se izbrisati i {n} koraka u povijesti poništavanja koji je koriste.',
       readPrinter: 'Pročitaj pisač',
       printerNotRead: 'Još nije pročitano.',
-      printerFreeFmt: '{device}: {kb} KB slobodno',
       objectSizeFmt: '{kb} KB',
       showObject: 'Prikaži',
       deleteObject: 'Izbriši',
@@ -772,6 +771,9 @@ const hr = {
       deleteLocalCopyHint: 'Lokalna kopija ostaje ovdje.',
       deleteNoCopyHint: 'Ništa ovdje ne čuva kopiju. Fabrički objekt vraća se ponovnim učitavanjem firmvera. Učitana datoteka se ne vraća.',
       firmwareObject: 'Pisač čuva svoje objekte firmvera i ne pušta ih.',
+      usageFmt: '{device}: {used} KB zauzeto, {free} KB slobodno',
+      usageHint: 'Kapacitet je zbroj navedenih objekata i slobodnog prostora koji javlja pisač. Ono što zauzima sam firmver nije uključeno u nijedan od ta dva broja.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Naziv pisača',

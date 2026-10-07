@@ -753,7 +753,6 @@ const zhHant = {
       cacheDeleteHistoryManyFmt: '這還會移除復原歷史記錄中使用它的 {n} 步。',
       readPrinter: '讀取印表機',
       printerNotRead: '尚未讀取。',
-      printerFreeFmt: '{device}：{kb} KB 可用',
       objectSizeFmt: '{kb} KB',
       showObject: '顯示',
       deleteObject: '刪除',
@@ -772,6 +771,9 @@ const zhHant = {
       deleteLocalCopyHint: '本機副本會留在這裡。',
       deleteNoCopyHint: '這裡沒有任何副本。出廠物件會隨韌體重新載入恢復。上傳的物件不會恢復。',
       firmwareObject: '印表機保留自己的韌體物件，不會釋放它們。',
+      usageFmt: '{device}：已用 {used} KB，可用 {free} KB',
+      usageHint: '容量是列出的物件加上印表機回報的可用空間。韌體本身占用的部分不包含在這兩個數字中的任何一個。',
+      usageObjectFmt: '{path}：{kb} KB，{percent}%',
     },
     identity: {
       printerName: '印表機名稱',

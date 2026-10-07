@@ -753,7 +753,6 @@ const sv = {
       cacheDeleteHistoryManyFmt: 'Detta tar också bort {n} steg i ångra-historiken som använder det.',
       readPrinter: 'Läs skrivare',
       printerNotRead: 'Inte läst än.',
-      printerFreeFmt: '{device}: {kb} KB fritt',
       objectSizeFmt: '{kb} KB',
       showObject: 'Visa',
       deleteObject: 'Ta bort',
@@ -772,6 +771,9 @@ const sv = {
       deleteLocalCopyHint: 'Den lokala kopian finns kvar här.',
       deleteNoCopyHint: 'Inget här har en kopia. Ett fabriksobjekt kommer tillbaka med en ny firmwareinläsning. En uppladdning kommer inte tillbaka.',
       firmwareObject: 'Skrivaren behåller sina egna firmwareobjekt och gör sig aldrig av med dem.',
+      usageFmt: '{device}: {used} KB använt, {free} KB fritt',
+      usageHint: 'Kapaciteten är summan av de listade objekten och det lediga utrymmet skrivaren rapporterar. Det firmware självt tar upp finns inte med i något av talen.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Skrivarnamn',

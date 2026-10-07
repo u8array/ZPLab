@@ -753,7 +753,6 @@ const ar = {
       cacheDeleteHistoryManyFmt: 'سيحذف ذلك أيضاً {n} خطوات في سجل التراجع تستخدمها.',
       readPrinter: 'قراءة الطابعة',
       printerNotRead: 'لم تُقرأ بعد.',
-      printerFreeFmt: '{device}: {kb} KB متاحة',
       objectSizeFmt: '{kb} KB',
       showObject: 'عرض',
       deleteObject: 'حذف',
@@ -772,6 +771,9 @@ const ar = {
       deleteLocalCopyHint: 'تبقى النسخة المحلية هنا.',
       deleteNoCopyHint: 'لا شيء هنا يحتفظ بنسخة. يعود عنصر المصنع مع إعادة تحميل البرنامج الثابت. الملف المرفوع لا يعود.',
       firmwareObject: 'تحتفظ الطابعة بعناصر البرنامج الثابت الخاصة بها ولا تتخلى عنها.',
+      usageFmt: '{device}: {used} KB مستخدمة، {free} KB متاحة',
+      usageHint: 'السعة هي العناصر المدرجة زائد المساحة المتاحة التي تُبلّغ عنها الطابعة. ما تشغله البرامج الثابتة نفسها لا يظهر في أي من الرقمين.',
+      usageObjectFmt: '{path}: {kb} KB، {percent}%',
     },
     identity: {
       printerName: 'اسم الطابعة',

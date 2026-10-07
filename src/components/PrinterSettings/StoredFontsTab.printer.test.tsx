@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
-import { render, cleanup, act } from "@testing-library/react";
+import { render, cleanup, fireEvent, act } from "@testing-library/react";
 import { loadFontBytes, removeFont } from "@zplab/core/lib/fontCache";
 import { StoredFontsTab } from "./StoredFontsTab";
+import { PrinterStorageUsage } from "./PrinterStorage";
+import { StoredObjectHoverProvider } from "./storedObjectHover";
 import { useLabelStore } from "../../store/labelStore";
 import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
 import { fallbackTranslations as en } from "../../locales";
@@ -13,7 +15,7 @@ vi.mock("../../lib/platform", async (importOriginal) => ({ ...(await importOrigi
 const loc = en.printerSettings.objects;
 const fontsLoc = en.printerSettings.fonts;
 const object = (device: string, name: string, ext: string, size = 1000) => ({ device, name, ext, size });
-const dir = (device: string, objects: HostDirectory["objects"]): HostDirectory => ({ device, objects, bytesFree: undefined });
+const dir = (device: string, objects: HostDirectory["objects"], bytesFree?: number): HostDirectory => ({ device, objects, bytesFree });
 const listed = (directories: HostDirectory[]) =>
   act(() => useLabelStore.setState({ printerObjects: { phase: "done", key: "net:172.17.17.175:9100", at: 0, directories } }));
 
@@ -34,7 +36,45 @@ afterEach(() => {
   removeFont("E:ARIAL.TTF");
 });
 
+/** The modal puts the lists and the drive bars under one provider, so a hover test needs both. */
+const withUsage = () =>
+  render(
+    <StoredObjectHoverProvider>
+      <StoredFontsTab />
+      <PrinterStorageUsage />
+    </StoredObjectHoverProvider>,
+  );
+
 describe("StoredFontsTab against the printer", () => {
+  it("shows how full a drive is, counting the graphics the tab does not list", () => {
+    listed([dir("E", [object("E", "ARIAL", "TTF", 1024), object("E", "LOGO", "GRF", 1024)], 2048), dir("R", [])]);
+    const r = withUsage();
+    expect(r.getByText("E: 2 KB used, 2 KB free")).toBeTruthy();
+    // R: never said how much room is left, so it gets no bar.
+    expect(r.queryByText(/^R:/)).toBeNull();
+  });
+
+  it("names the hovered row's share and lifts it out of the used block", () => {
+    listed([dir("E", [object("E", "ARIAL", "TTF", 1024), object("E", "LOGO", "GRF", 1024)], 2048)]);
+    const r = withUsage();
+    const width = (part: string) => (r.container.querySelector(`[data-part="${part}"]`) as HTMLElement).style.width;
+    expect(width("highlight")).toBe("0%");
+    fireEvent.mouseEnter(r.getByTitle("E:ARIAL.TTF").closest("li") as HTMLElement);
+    expect(r.getByText("E:ARIAL.TTF: 1 KB, 25.0%")).toBeTruthy();
+    expect(width("highlight")).toBe("25%");
+    expect(width("used")).toBe("25%");
+  });
+
+  it("drops the mark when the next listing no longer holds the hovered file", () => {
+    listed([dir("E", [object("E", "ARIAL", "TTF", 1024), object("E", "LOGO", "GRF", 1024)], 2048)]);
+    const r = withUsage();
+    fireEvent.mouseEnter(r.getByTitle("E:ARIAL.TTF").closest("li") as HTMLElement);
+    expect(r.getByText("E:ARIAL.TTF: 1 KB, 25.0%")).toBeTruthy();
+    // The row can vanish under a pointer that never left it, so a fresh listing has the last word.
+    listed([dir("E", [object("E", "LOGO", "GRF", 1024)], 3072)]);
+    expect(r.queryByText(/E:ARIAL\.TTF: /)).toBeNull();
+  });
+
   it("marks each row with where it stands and keeps one row per file", () => {
     act(() => useLabelStore.setState({ printerProfile: { setupFonts: [{ path: "E:ARIAL.TTF" }, { path: "R:GONE.TTF" }] } }));
     listed([

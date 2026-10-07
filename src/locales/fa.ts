@@ -753,7 +753,6 @@ const fa = {
       cacheDeleteHistoryManyFmt: 'این کار {n} مرحله از تاریخچهٔ واگرد را که از آن استفاده می‌کنند نیز حذف می‌کند.',
       readPrinter: 'خواندن چاپگر',
       printerNotRead: 'هنوز خوانده نشده است.',
-      printerFreeFmt: '{device}: {kb} KB آزاد',
       objectSizeFmt: '{kb} KB',
       showObject: 'نمایش',
       deleteObject: 'حذف',
@@ -772,6 +771,9 @@ const fa = {
       deleteLocalCopyHint: 'نسخه محلی همین‌جا باقی می‌ماند.',
       deleteNoCopyHint: 'هیچ‌چیز در اینجا نسخه‌ای نگه نمی‌دارد. یک شیء کارخانه‌ای با بازنشانی فریمور برمی‌گردد. فایل بارگذاری‌شده برنمی‌گردد.',
       firmwareObject: 'چاپگر اشیاء فریمور خودش را نگه می‌دارد و اجازه نمی‌دهد از بین بروند.',
+      usageFmt: '{device}: {used} KB استفاده‌شده، {free} KB آزاد',
+      usageHint: 'ظرفیت برابر است با اشیاء فهرست‌شده به‌علاوه فضای آزادی که چاپگر گزارش می‌دهد. آنچه خود فریمور اشغال می‌کند در هیچ‌یک از این دو عدد نیست.',
+      usageObjectFmt: '{path}: {kb} KB، {percent}٪',
     },
     identity: {
       printerName: 'نام چاپگر',

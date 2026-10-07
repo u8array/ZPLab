@@ -753,7 +753,6 @@ const fi = {
       cacheDeleteHistoryManyFmt: 'Tämä poistaa myös {n} vaihetta kumoamishistoriassa, jotka käyttävät sitä.',
       readPrinter: 'Lue tulostin',
       printerNotRead: 'Ei vielä luettu.',
-      printerFreeFmt: '{device}: {kb} KB vapaana',
       objectSizeFmt: '{kb} KB',
       showObject: 'Näytä',
       deleteObject: 'Poista',
@@ -772,6 +771,9 @@ const fi = {
       deleteLocalCopyHint: 'Paikallinen kopio säilyy tässä.',
       deleteNoCopyHint: 'Mikään tässä ei säilytä kopiota. Tehtaan objekti palautuu laiteohjelmiston uudelleenlatauksella. Lataus ei palaudu.',
       firmwareObject: 'Tulostin pitää omat laiteohjelmisto-objektinsa eikä päästä niistä irti.',
+      usageFmt: '{device}: {used} KB käytetty, {free} KB vapaana',
+      usageHint: 'Kapasiteetti on lueteltujen objektien ja tulostimen ilmoittaman vapaan tilan summa. Se, mitä laiteohjelmisto itse käyttää, ei näy kummassakaan luvussa.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Tulostimen nimi',

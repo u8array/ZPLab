@@ -753,7 +753,6 @@ const es = {
       cacheDeleteHistoryManyFmt: 'Esto también elimina {n} pasos en el historial de deshacer que la usan.',
       readPrinter: 'Leer impresora',
       printerNotRead: 'Aún no leído.',
-      printerFreeFmt: '{device}: {kb} KB libres',
       objectSizeFmt: '{kb} KB',
       showObject: 'Mostrar',
       deleteObject: 'Eliminar',
@@ -772,6 +771,9 @@ const es = {
       deleteLocalCopyHint: 'La copia local se queda aquí.',
       deleteNoCopyHint: 'Nada aquí guarda una copia. Un objeto de fábrica vuelve con una recarga del firmware. Un archivo subido no vuelve.',
       firmwareObject: 'La impresora conserva sus propios objetos de firmware y no los suelta.',
+      usageFmt: '{device}: {used} KB usados, {free} KB libres',
+      usageHint: 'La capacidad es la suma de los objetos listados y el espacio libre que indica la impresora. Lo que ocupa el propio firmware no aparece en ninguna de las dos cifras.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Nombre de la impresora',

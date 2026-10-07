@@ -753,7 +753,6 @@ const da = {
       cacheDeleteHistoryManyFmt: 'Dette fjerner også {n} trin i fortryd-historikken, der bruger det.',
       readPrinter: 'Læs printer',
       printerNotRead: 'Endnu ikke læst.',
-      printerFreeFmt: '{device}: {kb} KB fri',
       objectSizeFmt: '{kb} KB',
       showObject: 'Vis',
       deleteObject: 'Slet',
@@ -772,6 +771,9 @@ const da = {
       deleteLocalCopyHint: 'Den lokale kopi bliver her.',
       deleteNoCopyHint: 'Ingenting her har en kopi. Et fabriksobjekt kommer tilbage med en firmware-genindlæsning. En upload kommer ikke tilbage.',
       firmwareObject: 'Printeren beholder sine egne firmware-objekter og giver dem ikke fra sig.',
+      usageFmt: '{device}: {used} KB brugt, {free} KB fri',
+      usageHint: 'Kapaciteten er summen af de viste objekter og den fri plads, printeren rapporterer. Det, firmwaren selv bruger, er ikke med i nogen af tallene.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Printernavn',

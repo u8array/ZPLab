@@ -753,7 +753,6 @@ const fr = {
       cacheDeleteHistoryManyFmt: "Cela supprime aussi {n} étapes de l'historique d'annulation qui l'utilisent.",
       readPrinter: "Lire l'imprimante",
       printerNotRead: 'Pas encore lu.',
-      printerFreeFmt: '{device} : {kb} KB libres',
       objectSizeFmt: '{kb} KB',
       showObject: 'Afficher',
       deleteObject: 'Supprimer',
@@ -772,6 +771,9 @@ const fr = {
       deleteLocalCopyHint: 'La copie locale reste ici.',
       deleteNoCopyHint: "Rien ici ne détient de copie. Un objet d'usine revient avec une réinstallation du firmware. Un téléversement ne revient pas.",
       firmwareObject: "L'imprimante garde ses propres objets firmware et ne les laisse pas partir.",
+      usageFmt: '{device} : {used} KB utilisés, {free} KB libres',
+      usageHint: "La capacité correspond aux objets listés plus l'espace libre indiqué par l'imprimante. Ce qu'occupe le firmware lui-même n'apparaît dans aucun des deux chiffres.",
+      usageObjectFmt: '{path} : {kb} KB, {percent} %',
     },
     identity: {
       printerName: 'Nom de l\'imprimante',

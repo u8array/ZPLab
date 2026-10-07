@@ -753,7 +753,6 @@ const nl = {
       cacheDeleteHistoryManyFmt: 'Dit verwijdert ook {n} stappen in de geschiedenis van ongedaan maken die het gebruiken.',
       readPrinter: 'Printer uitlezen',
       printerNotRead: 'Nog niet uitgelezen.',
-      printerFreeFmt: '{device}: {kb} KB vrij',
       objectSizeFmt: '{kb} KB',
       showObject: 'Weergeven',
       deleteObject: 'Verwijderen',
@@ -772,6 +771,9 @@ const nl = {
       deleteLocalCopyHint: 'De lokale kopie blijft hier.',
       deleteNoCopyHint: 'Niets hier bewaart een kopie. Een fabrieksobject komt terug bij een firmware-herlaad. Een upload komt niet terug.',
       firmwareObject: 'De printer houdt zijn eigen firmware-objecten vast en geeft ze niet op.',
+      usageFmt: '{device}: {used} KB gebruikt, {free} KB vrij',
+      usageHint: 'De capaciteit is de som van de vermelde objecten en de vrije ruimte die de printer meldt. Wat de firmware zelf gebruikt, staat in geen van beide getallen.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Printernaam',

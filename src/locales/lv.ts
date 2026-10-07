@@ -753,7 +753,6 @@ const lv = {
       cacheDeleteHistoryManyFmt: 'Tas arī dzēsīs {n} soļus atsaukšanas vēsturē, kas to izmanto.',
       readPrinter: 'Nolasīt printeri',
       printerNotRead: 'Vēl nav nolasīts.',
-      printerFreeFmt: '{device}: {kb} KB brīvi',
       objectSizeFmt: '{kb} KB',
       showObject: 'Rādīt',
       deleteObject: 'Dzēst',
@@ -772,6 +771,9 @@ const lv = {
       deleteLocalCopyHint: 'Lokālā kopija paliek šeit.',
       deleteNoCopyHint: 'Šeit kopijas nav. Rūpnīcas objekts atjaunojas, pārlādējot aparātprogrammatūru. Augšupielādēts fails neatjaunojas.',
       firmwareObject: 'Printeris patur savus aparātprogrammatūras objektus un no tiem neatsakās.',
+      usageFmt: '{device}: {used} KB izmantoti, {free} KB brīvi',
+      usageHint: 'Kapacitāte ir uzrādīto objektu un printera ziņotās brīvās vietas summa. Tas, ko aizņem pati aparātprogrammatūra, nav iekļauts nevienā no šiem skaitļiem.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Printera nosaukums',

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/16/solid";
-import type { HostObject } from "@zplab/core/lib/hostDirectory";
+import { hostObjectPath, type HostObject } from "@zplab/core/lib/hostDirectory";
 import { isWritableDevice } from "@zplab/core/lib/storagePath";
-import { deleteKnowledge, originState, type DeleteKnowledge, type OriginState, type StoredObjectKind, type StoredObjectOrigin } from "@zplab/core/lib/storedObjectOrigins";
+import { deleteKnowledge, driveUsage, listedObject, originState, type DeleteKnowledge, type OriginState, type StoredObjectKind, type StoredObjectOrigin } from "@zplab/core/lib/storedObjectOrigins";
 import { isDesktopShell } from "../../lib/platform";
 import { usePrinterListing } from "../../hooks/usePrinterListing";
 import { useT } from "../../hooks/useT";
@@ -13,9 +13,11 @@ import type { PrinterObjectsState } from "../../store/slices/printerObjectsSlice
 import { failureText, readingText } from "../../lib/printerStatusText";
 import { selectPrinterObjects, useLabelStore } from "../../store/labelStore";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { MemoryBar } from "../ui/MemoryBar";
 import { Tooltip } from "../ui/Tooltip";
 import { buttonCls, disabledCls, sectionHeadingCls, zplCommandTagCls } from "../ui/formStyles";
 import { PrinterImageDialog } from "./PrinterImageDialog";
+import { useStoredObjectHover } from "../../hooks/useStoredObjectHover";
 
 const kb = (bytes: number): string => String(bytes === 0 ? 0 : Math.max(1, Math.round(bytes / 1024)));
 
@@ -44,7 +46,6 @@ export function PrinterStorageBar() {
   const state = useLabelStore(selectPrinterObjects);
   const step = useLabelStore((s) => s.printerReading);
   const read = useLabelStore((s) => s.readPrinterObjects);
-  const listing = usePrinterListing();
   const line =
     step !== undefined
       ? readingText(status, step)
@@ -64,9 +65,42 @@ export function PrinterStorageBar() {
           {line}
         </span>
       </div>
-      {listing && listing.free.length > 0 && (
-        <p className="text-[10px] text-muted">{listing.free.map((f) => formatTemplate(loc.printerFreeFmt, { device: f.device, kb: kb(f.bytesFree) })).join(", ")}</p>
-      )}
+    </div>
+  );
+}
+
+/** Beside the lists rather than inside one, so it stands while the tabs change. */
+export function PrinterStorageUsage() {
+  const loc = useT().printerSettings.objects;
+  const listing = usePrinterListing();
+  const { hoveredKey } = useStoredObjectHover();
+  const drives = listing ? driveUsage(listing) : [];
+  const hovered = listing && hoveredKey ? listedObject(listing, hoveredKey) : undefined;
+  if (drives.length === 0) return null;
+  return (
+    <div className="px-3 pb-3 pt-2 border-t border-border flex flex-col gap-2">
+      {drives.map((usage) => {
+        const share = hovered?.device === usage.device ? hovered : undefined;
+        return (
+          <div key={usage.device} className="flex flex-col gap-0.5">
+            <Tooltip content={loc.usageHint}>
+              <span className="text-[10px] text-muted cursor-help">
+                {formatTemplate(loc.usageFmt, { device: usage.device, used: kb(usage.used), free: kb(usage.free) })}
+              </span>
+            </Tooltip>
+            <MemoryBar used={usage.used} capacity={usage.capacity} highlight={share?.size ?? 0} />
+            {share && (
+              <span className="text-[10px] text-accent truncate" title={hostObjectPath(share)}>
+                {formatTemplate(loc.usageObjectFmt, {
+                  path: hostObjectPath(share),
+                  kb: kb(share.size),
+                  percent: ((share.size / usage.capacity) * 100).toFixed(1),
+                })}
+              </span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

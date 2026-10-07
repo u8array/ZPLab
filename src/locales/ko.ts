@@ -753,7 +753,6 @@ const ko = {
       cacheDeleteHistoryManyFmt: '이렇게 하면 이를 사용하는 실행 취소 기록의 단계 {n}개도 함께 삭제됩니다.',
       readPrinter: '프린터 읽기',
       printerNotRead: '아직 읽지 않았습니다.',
-      printerFreeFmt: '{device}: {kb} KB 사용 가능',
       objectSizeFmt: '{kb} KB',
       showObject: '표시',
       deleteObject: '삭제',
@@ -772,6 +771,9 @@ const ko = {
       deleteLocalCopyHint: '로컬 복사본은 여기에 남습니다.',
       deleteNoCopyHint: '여기에는 복사본이 없습니다. 출고 시 기본 객체는 펌웨어를 다시 불러오면 돌아옵니다. 업로드한 것은 돌아오지 않습니다.',
       firmwareObject: '프린터는 자체 펌웨어 객체를 보유하며 이를 내놓지 않습니다.',
+      usageFmt: '{device}: 사용 {used} KB, 여유 {free} KB',
+      usageHint: '용량은 나열된 개체와 프린터가 보고하는 여유 공간을 합한 값입니다. 펌웨어 자체가 차지하는 부분은 두 수치 어디에도 포함되지 않습니다.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: '프린터 이름',

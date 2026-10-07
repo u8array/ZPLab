@@ -16,6 +16,7 @@ import { isDesktopShell } from "../../lib/platform";
 import { PrinterObjectActions, PrinterOriginMark, PrinterStorageBar, StoredObjectsHeading } from "./PrinterStorage";
 import { buttonCls, disabledCls } from "../ui/formStyles";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { useStoredObjectHover } from "../../hooks/useStoredObjectHover";
 
 /** Why a profile row cannot be provisioned. */
 function rowIssue(key: string, cachedKeys: ReadonlySet<string>): "unshippable" | "missingBytes" | undefined {
@@ -38,6 +39,7 @@ export function StoredFontsTab() {
   const shipsToo = (path: string) => customFonts?.some((m) => m.embedInZpl && m.path !== undefined && storageRefMatchesPath(m.path, path)) ?? false;
   const patchPrinterProfileWith = useLabelStore((s) => s.patchPrinterProfileWith);
   const loc = t.printerSettings.fonts;
+  const { setHoveredKey } = useStoredObjectHover();
   const frozen = useLabelStore(selectEditorFrozen);
 
   // A cache row is named by its printer path, so profile and cache rows share one identity rule.
@@ -112,6 +114,8 @@ export function StoredFontsTab() {
               return (
                 <li
                   key={key}
+                  onMouseEnter={() => setHoveredKey(key)}
+                  onMouseLeave={() => setHoveredKey(undefined)}
                   className={`flex items-center justify-between gap-3 px-2 py-1.5 rounded border ${issue ? "border-warning/30 bg-warning/5" : "border-transparent hover:border-border-2 hover:bg-surface-2/40 transition-colors"}`}
                 >
                   <span className="flex flex-col gap-0.5 min-w-0">

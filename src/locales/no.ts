@@ -753,7 +753,6 @@ const no = {
       cacheDeleteHistoryManyFmt: 'Dette fjerner også {n} trinn i angre-historikken som bruker det.',
       readPrinter: 'Les skriver',
       printerNotRead: 'Ikke lest ennå.',
-      printerFreeFmt: '{device}: {kb} KB ledig',
       objectSizeFmt: '{kb} KB',
       showObject: 'Vis',
       deleteObject: 'Slett',
@@ -772,6 +771,9 @@ const no = {
       deleteLocalCopyHint: 'Den lokale kopien blir liggende her.',
       deleteNoCopyHint: 'Ingenting her har en kopi. Et fabrikkobjekt kommer tilbake ved en ny opplasting av fastvare. En opplasting kommer ikke tilbake.',
       firmwareObject: 'Skriveren holder på sine egne fastvareobjekter og gir dem ikke fra seg.',
+      usageFmt: '{device}: {used} KB brukt, {free} KB ledig',
+      usageHint: 'Kapasiteten er summen av de oppførte objektene og den ledige plassen skriveren rapporterer. Det fastvaren selv bruker, er ikke med i noen av tallene.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Skrivernavn',

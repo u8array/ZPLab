@@ -753,7 +753,6 @@ const ro = {
       cacheDeleteHistoryManyFmt: 'Asta va elimina și {n} pași din istoricul de anulare care o folosesc.',
       readPrinter: 'Citește imprimanta',
       printerNotRead: 'Încă necitit.',
-      printerFreeFmt: '{device}: {kb} KB liberi',
       objectSizeFmt: '{kb} KB',
       showObject: 'Arată',
       deleteObject: 'Șterge',
@@ -772,6 +771,9 @@ const ro = {
       deleteLocalCopyHint: 'Copia locală rămâne aici.',
       deleteNoCopyHint: 'Nimic de aici nu reține o copie. Un obiect din fabrică revine cu o reîncărcare a firmware-ului. O încărcare nu revine.',
       firmwareObject: 'Imprimanta își păstrează propriile obiecte de firmware și nu renunță la ele.',
+      usageFmt: '{device}: {used} KB utilizați, {free} KB liberi',
+      usageHint: 'Capacitatea este suma obiectelor listate și a spațiului liber raportat de imprimantă. Ce ocupă firmware-ul însuși nu apare în niciuna dintre cele două cifre.',
+      usageObjectFmt: '{path}: {kb} KB, {percent}%',
     },
     identity: {
       printerName: 'Numele imprimantei',
