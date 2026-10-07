@@ -763,6 +763,7 @@ const hu = {
       showObject: 'Megjelenítés',
       deleteObject: 'Törlés',
       graphicUnreadable: 'A nyomtató nem küldött olvasható grafikát.',
+      fontSampleBlank: 'A nyomtató semmit nem rajzolt ezzel a betűtípussal.',
       deleteGraphicConfirmFmt: 'Törli a {path} elemet a nyomtatóról? A rá hivatkozó címkék nélküle nyomtatnak.',
       deleteFontConfirmFmt: 'Törli a {path} elemet a nyomtatóról? Az ezt használó címkék másik betűtípusra váltanak.',
       setupReuploadHint: 'A beállító szkript felsorolja, és a következő futásakor újra feltölti.',

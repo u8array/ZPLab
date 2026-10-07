@@ -763,6 +763,7 @@ const nl = {
       showObject: 'Weergeven',
       deleteObject: 'Verwijderen',
       graphicUnreadable: 'De printer heeft geen leesbare afbeelding verzonden.',
+      fontSampleBlank: 'De printer heeft met dit lettertype niets getekend.',
       deleteGraphicConfirmFmt: '{path} van de printer verwijderen? Etiketten die het oproepen, drukken zonder het af.',
       deleteFontConfirmFmt: '{path} van de printer verwijderen? Etiketten die het gebruiken, vallen terug op een ander lettertype.',
       setupReuploadHint: 'Het installatiescript vermeldt het en uploadt het opnieuw bij de volgende uitvoering.',

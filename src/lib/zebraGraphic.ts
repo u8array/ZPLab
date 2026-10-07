@@ -17,10 +17,11 @@ export function buildPrinterPreviewZpl(designZpl: string): string {
   // `^LL` applies to continuous media only; `,Y` forces the design length onto
   // gap/notch media too. Preview-only; the print path respects real media.
   const sized = designZpl.replace(/(\^LL\d+)(?![\d,])/g, "$1,Y");
-  const store = /\^XZ\s*$/.test(sized)
-    ? sized.replace(/\^XZ\s*$/, "^ISR:PRE.GRF,N^XZ")
-    : `${sized}^ISR:PRE.GRF,N^XZ`;
-  return `${store}\n^XA^HYR:PRE.GRF^XZ`;
+  // A name of its own per render, so the scratch never overwrites an object the user keeps on R:.
+  const scratch = `R:ZL${Math.floor(Math.random() * 0x1000000).toString(16).toUpperCase().padStart(6, "0")}.GRF`;
+  const store = /\^XZ\s*$/.test(sized) ? sized.replace(/\^XZ\s*$/, `^IS${scratch},N^XZ`) : `${sized}^IS${scratch},N^XZ`;
+  // The ^ID rides in the same transmission, so the scratch never stays on the printer.
+  return `${store}\n^XA^HY${scratch}^XZ^XA^ID${scratch}^FS^XZ`;
 }
 
 function base64ToBytes(b64: string): Uint8Array {
@@ -75,6 +76,20 @@ export interface ContentBounds {
   right: number;
   top: number;
   bottom: number;
+}
+
+/** The bounds widened to whole bytes, so the rows copy without re-packing bits. */
+export function cropBitmap(bmp: PrinterBitmap, bounds: ContentBounds): PrinterBitmap {
+  const firstByte = Math.floor(bounds.left / 8);
+  const lastByte = Math.ceil(bounds.right / 8);
+  const width = (lastByte - firstByte) * 8;
+  const height = bounds.bottom - bounds.top;
+  const source = bmp.width / 8;
+  const mono = new Uint8Array((width / 8) * height);
+  for (let y = 0; y < height; y++) {
+    mono.set(bmp.mono.subarray((bounds.top + y) * source + firstByte, (bounds.top + y) * source + lastByte), y * (width / 8));
+  }
+  return { width, height, mono };
 }
 
 /** Black-pixel bounding box (right/bottom exclusive). The print is padded

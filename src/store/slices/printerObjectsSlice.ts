@@ -1,9 +1,10 @@
 import type { StateCreator } from 'zustand';
-import { hostObjectPath, type HostDirectory, type HostGraphic, type HostObject } from '@zplab/core/lib/hostDirectory';
+import { hostObjectKind, hostObjectPath, type HostDirectory, type HostObject } from '@zplab/core/lib/hostDirectory';
 import type { PrinterOutcome, PrinterQueryFailure } from '../../lib/printerQuery';
-import { deletePrinterObject, readPrinterGraphic, readPrinterObjects } from '../../lib/printerObjects';
+import { deletePrinterObject, readPrinterObjectImage, readPrinterObjects } from '../../lib/printerObjects';
 import { queryKeyFor, resolveQueryTarget, type QueryTarget } from '../../lib/printTarget';
 import type { LabelState } from '../labelStore';
+import { currentPageLabel } from '../labelStore.selectors';
 import { overPrinterChannel } from '../printerChannel';
 
 export type PrinterObjectsState =
@@ -14,7 +15,8 @@ export type PrinterObjectsState =
 export interface PrinterObjectsSlice {
   printerObjects: PrinterObjectsState;
   readPrinterObjects: () => Promise<void>;
-  readPrinterGraphic: (object: HostObject) => Promise<PrinterOutcome<HostGraphic>>;
+  /** A graphic as stored, or a font drawn by the printer on the page's media. */
+  readPrinterObjectImage: (object: HostObject) => Promise<PrinterOutcome<string | null>>;
   /** The fresh listing tells whether the printer took the delete (spec p.246 ignores unknown names). */
   deletePrinterObject: (object: HostObject) => Promise<PrinterQueryFailure | undefined>;
 }
@@ -41,9 +43,13 @@ export const createPrinterObjectsSlice: StateCreator<LabelState, [], [], Printer
       });
     },
 
-    readPrinterGraphic: (object) => {
-      const resolved = resolveQueryTarget(get().printTarget);
-      return overPrinterChannel(get, set, '^HG', () => ('failure' in resolved ? Promise.resolve(resolved.failure) : readPrinterGraphic(resolved.target, object)));
+    readPrinterObjectImage: (object) => {
+      const state = get();
+      const resolved = resolveQueryTarget(state.printTarget);
+      const step = hostObjectKind(object.ext) === 'font' ? '^IS' : '^HG';
+      return overPrinterChannel(get, set, step, () =>
+        'failure' in resolved ? Promise.resolve(resolved.failure) : readPrinterObjectImage(resolved.target, object, currentPageLabel(state)),
+      );
     },
 
     deletePrinterObject: (object) => {

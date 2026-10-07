@@ -763,6 +763,7 @@ const ko = {
       showObject: '표시',
       deleteObject: '삭제',
       graphicUnreadable: '프린터가 읽을 수 있는 그래픽을 보내지 않았습니다.',
+      fontSampleBlank: '프린터가 이 글꼴로 아무것도 그리지 않았습니다.',
       deleteGraphicConfirmFmt: '{path}를 프린터에서 삭제할까요? 이를 호출하는 레이블은 이것 없이 인쇄됩니다.',
       deleteFontConfirmFmt: '{path}를 프린터에서 삭제할까요? 이를 사용하는 레이블은 다른 글꼴로 대체됩니다.',
       setupReuploadHint: '설정 스크립트가 이를 목록에 포함하고 다음 실행 시 다시 업로드합니다.',

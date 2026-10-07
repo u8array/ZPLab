@@ -763,6 +763,7 @@ const sv = {
       showObject: 'Visa',
       deleteObject: 'Ta bort',
       graphicUnreadable: 'Skrivaren skickade ingen läsbar grafik.',
+      fontSampleBlank: 'Skrivaren ritade ingenting med detta teckensnitt.',
       deleteGraphicConfirmFmt: 'Ta bort {path} från skrivaren? Etiketter som hämtar fram det skriver ut utan det.',
       deleteFontConfirmFmt: 'Ta bort {path} från skrivaren? Etiketter som använder det faller tillbaka till ett annat teckensnitt.',
       setupReuploadHint: 'Installationsskriptet listar det och laddar upp det igen vid nästa körning.',

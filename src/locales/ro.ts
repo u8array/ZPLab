@@ -763,6 +763,7 @@ const ro = {
       showObject: 'Arată',
       deleteObject: 'Șterge',
       graphicUnreadable: 'Imprimanta nu a trimis nicio grafică lizibilă.',
+      fontSampleBlank: 'Imprimanta nu a desenat nimic cu acest font.',
       deleteGraphicConfirmFmt: 'Ștergeți {path} de pe imprimantă? Etichetele care îl apelează se imprimă fără el.',
       deleteFontConfirmFmt: 'Ștergeți {path} de pe imprimantă? Etichetele care îl folosesc trec la un alt font.',
       setupReuploadHint: 'Scriptul de configurare îl listează și îl încarcă din nou la următoarea rulare.',

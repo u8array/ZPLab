@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { deletePrinterObject, readPrinterGraphic, readPrinterObjects } from "./printerObjects";
+import { deletePrinterObject, readPrinterFontSample, readPrinterGraphic, readPrinterObjectImage, readPrinterObjects } from "./printerObjects";
+import type * as PrinterPreview from "./printerPreview";
 import type * as PrinterQuery from "./printerQuery";
 import type * as ZebraPrint from "./zebraPrint";
 import type * as UsbPrint from "./usbPrint";
@@ -7,6 +8,11 @@ import type * as UsbPrint from "./usbPrint";
 const queryPrinter = vi.fn();
 const sendViaNetwork = vi.fn();
 const sendZplUsb = vi.fn();
+const fetchPrinterPreview = vi.fn();
+vi.mock("./printerPreview", async (importOriginal) => ({
+  ...(await importOriginal<typeof PrinterPreview>()),
+  fetchPrinterPreview: (...args: unknown[]) => fetchPrinterPreview(...args),
+}));
 vi.mock("./printerQuery", async (importOriginal) => ({
   ...(await importOriginal<typeof PrinterQuery>()),
   queryPrinter: (...args: unknown[]) => queryPrinter(...args),
@@ -32,6 +38,37 @@ beforeEach(() => {
   queryPrinter.mockReset();
   sendViaNetwork.mockReset();
   sendZplUsb.mockReset();
+  fetchPrinterPreview.mockReset();
+});
+
+const font = { device: "E", name: "CG_TIMES", ext: "TTF", size: 62252 };
+const media = { widthMm: 100, heightMm: 150, dpmm: 8 };
+
+describe("readPrinterFontSample", () => {
+  it("has the printer render the sample and crops it to the ink", async () => {
+    fetchPrinterPreview.mockResolvedValueOnce({ kind: "ok", value: { width: 16, height: 3, mono: Uint8Array.from([0, 0, 0, 0x18, 0, 0]) } });
+    expect(await readPrinterFontSample(network, font, media)).toEqual({ kind: "ok", value: { width: 8, height: 1, mono: Uint8Array.from([0x18]) } });
+    expect(fetchPrinterPreview).toHaveBeenCalledWith(network, expect.stringContaining("^A@N,60,,E:CG_TIMES.TTF"));
+    expect(sendViaNetwork).not.toHaveBeenCalled();
+  });
+
+  it("reports a blank sample as null and passes a failed render through", async () => {
+    fetchPrinterPreview.mockResolvedValueOnce({ kind: "ok", value: { width: 8, height: 1, mono: Uint8Array.from([0]) } });
+    expect(await readPrinterFontSample(network, font, media)).toEqual({ kind: "ok", value: null });
+    fetchPrinterPreview.mockResolvedValueOnce({ kind: "unreachable" });
+    expect(await readPrinterFontSample(network, font, media)).toEqual({ kind: "unreachable" });
+  });
+});
+
+describe("readPrinterObjectImage", () => {
+  it("takes the ^HG path for a graphic and the sample path for a font", async () => {
+    queryPrinter.mockResolvedValueOnce({ kind: "ok", value: "" });
+    expect(await readPrinterObjectImage(network, pre, media)).toEqual({ kind: "unparsed" });
+    expect(fetchPrinterPreview).not.toHaveBeenCalled();
+    fetchPrinterPreview.mockResolvedValueOnce({ kind: "ok", value: { width: 8, height: 1, mono: Uint8Array.from([0]) } });
+    expect(await readPrinterObjectImage(network, font, media)).toEqual({ kind: "ok", value: null });
+    expect(queryPrinter).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("readPrinterObjects", () => {

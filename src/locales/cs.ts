@@ -763,6 +763,7 @@ const cs = {
       showObject: 'Zobrazit',
       deleteObject: 'Smazat',
       graphicUnreadable: 'Tiskárna neposlala žádnou čitelnou grafiku.',
+      fontSampleBlank: 'Tiskárna nevykreslila nic tímto písmem.',
       deleteGraphicConfirmFmt: 'Smazat {path} z tiskárny? Štítky, které jej vyvolávají, se vytisknou bez něj.',
       deleteFontConfirmFmt: 'Smazat {path} z tiskárny? Štítky, které ho používají, přejdou na jiné písmo.',
       setupReuploadHint: 'Instalační skript ho uvádí v seznamu a při dalším běhu ho nahraje znovu.',

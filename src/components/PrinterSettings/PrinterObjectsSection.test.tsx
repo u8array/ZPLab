@@ -8,17 +8,14 @@ import { fallbackTranslations as en } from "../../locales";
 import type * as PrinterObjects from "../../lib/printerObjects";
 
 const readPrinterObjects = vi.fn();
-const readPrinterGraphic = vi.fn();
+const readPrinterObjectImage = vi.fn();
 const deletePrinterObject = vi.fn();
-const bitmapToDataUrl = vi.fn();
 vi.mock("../../lib/printerObjects", async (importOriginal) => ({
   ...(await importOriginal<typeof PrinterObjects>()),
   readPrinterObjects: (...args: unknown[]) => readPrinterObjects(...args),
-  readPrinterGraphic: (...args: unknown[]) => readPrinterGraphic(...args),
+  readPrinterObjectImage: (...args: unknown[]) => readPrinterObjectImage(...args),
   deletePrinterObject: (...args: unknown[]) => deletePrinterObject(...args),
 }));
-// jsdom has no canvas, so the raster-to-image step is stubbed.
-vi.mock("../../lib/printerPreview", () => ({ bitmapToDataUrl: () => bitmapToDataUrl() }));
 
 const loc = en.printerSettings.objects;
 const pre = { device: "R", name: "PRE", ext: "GRF", size: 49924 };
@@ -29,14 +26,14 @@ const listing = [
   { device: "E", objects: [png, font], bytesFree: 47972352 },
 ];
 const target = { kind: "network", host: "172.17.17.175", port: 9100 };
+const media = expect.objectContaining({ dpmm: expect.any(Number) });
 const listed = () => act(() => useLabelStore.setState({ printerObjects: { phase: "done", key: "net:172.17.17.175:9100", at: 0, directories: listing } }));
 
 afterEach(cleanup);
 beforeEach(() => {
   readPrinterObjects.mockReset();
-  readPrinterGraphic.mockReset();
+  readPrinterObjectImage.mockReset();
   deletePrinterObject.mockReset();
-  bitmapToDataUrl.mockReset().mockReturnValue("data:image/png;base64,x");
   act(() =>
     useLabelStore.setState({
       printerObjects: { phase: "idle" },
@@ -65,24 +62,40 @@ describe("PrinterObjectsSection", () => {
     const fonts = render(<PrinterObjectsSection kind="font" />);
     expect(fonts.getByText("E:CG_TIMES.TTF")).toBeTruthy();
     expect(fonts.queryByText("R:PRE.GRF")).toBeNull();
-    expect(fonts.queryByText(loc.showObject)).toBeNull();
   });
 
   it("shows a stored graphic in a dialog and names a raster it cannot draw", async () => {
     listed();
-    readPrinterGraphic.mockResolvedValue({ kind: "ok", value: { name: "PRE", gfa: "^GFA,2,2,1,FFFF" } });
+    readPrinterObjectImage.mockResolvedValueOnce({ kind: "ok", value: "data:image/png;base64,x" });
     const r = render(<PrinterObjectsSection kind="graphic" />);
     await act(async () => {
       fireEvent.click(r.getAllByText(loc.showObject)[0] as HTMLElement);
     });
-    expect(readPrinterGraphic).toHaveBeenCalledWith(target, pre);
+    expect(readPrinterObjectImage).toHaveBeenCalledWith(target, pre, media);
     expect((r.getByRole("img") as HTMLImageElement).alt).toBe("R:PRE.GRF");
     fireEvent.click(r.getByLabelText(en.app.close));
-    bitmapToDataUrl.mockReturnValue(null);
+    readPrinterObjectImage.mockResolvedValueOnce({ kind: "ok", value: null });
     await act(async () => {
       fireEvent.click(r.getAllByText(loc.showObject)[0] as HTMLElement);
     });
     expect(r.getByRole("alert").textContent).toBe(loc.graphicUnreadable);
+  });
+
+  it("lets the printer draw a font sample and says when it drew nothing", async () => {
+    listed();
+    readPrinterObjectImage.mockResolvedValueOnce({ kind: "ok", value: "data:image/png;base64,x" });
+    const r = render(<PrinterObjectsSection kind="font" />);
+    await act(async () => {
+      fireEvent.click(r.getByText(loc.showObject));
+    });
+    expect(readPrinterObjectImage).toHaveBeenCalledWith(target, font, media);
+    expect((r.getByRole("img") as HTMLImageElement).alt).toBe("E:CG_TIMES.TTF");
+    fireEvent.click(r.getByLabelText(en.app.close));
+    readPrinterObjectImage.mockResolvedValueOnce({ kind: "ok", value: null });
+    await act(async () => {
+      fireEvent.click(r.getByText(loc.showObject));
+    });
+    expect(r.getByRole("alert").textContent).toBe(loc.fontSampleBlank);
   });
 
   it("asks per kind before deleting, warns when the setup script would upload it again, and reports a failed delete", async () => {

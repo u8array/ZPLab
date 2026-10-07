@@ -763,6 +763,7 @@ const fr = {
       showObject: 'Afficher',
       deleteObject: 'Supprimer',
       graphicUnreadable: "L'imprimante n'a envoyé aucun graphique lisible.",
+      fontSampleBlank: "L'imprimante n'a rien dessiné avec cette police.",
       deleteGraphicConfirmFmt: "Supprimer {path} de l'imprimante ? Les étiquettes qui le rappellent s'impriment sans lui.",
       deleteFontConfirmFmt: "Supprimer {path} de l'imprimante ? Les étiquettes qui l'utilisent basculent vers une autre police.",
       setupReuploadHint: "Le script d'installation le liste et le téléverse à nouveau lors de sa prochaine exécution.",

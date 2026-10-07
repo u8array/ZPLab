@@ -763,6 +763,7 @@ const es = {
       showObject: 'Mostrar',
       deleteObject: 'Eliminar',
       graphicUnreadable: 'La impresora no envió ningún gráfico legible.',
+      fontSampleBlank: 'La impresora no dibujó nada con esta fuente.',
       deleteGraphicConfirmFmt: '¿Eliminar {path} de la impresora? Las etiquetas que lo invocan se imprimen sin él.',
       deleteFontConfirmFmt: '¿Eliminar {path} de la impresora? Las etiquetas que lo usan recurren a otra fuente.',
       setupReuploadHint: 'El script de configuración lo incluye en la lista y lo vuelve a subir en su próxima ejecución.',

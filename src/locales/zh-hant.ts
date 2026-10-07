@@ -763,6 +763,7 @@ const zhHant = {
       showObject: '顯示',
       deleteObject: '刪除',
       graphicUnreadable: '印表機未傳送可讀取的圖形。',
+      fontSampleBlank: '印表機未使用此字型繪製任何內容。',
       deleteGraphicConfirmFmt: '要從印表機中刪除{path}嗎？呼叫它的標籤不帶它列印。',
       deleteFontConfirmFmt: '要從印表機中刪除{path}嗎？使用它的標籤回退到其他字型。',
       setupReuploadHint: '安裝指令稿將其列出，並在下次執行時重新上傳。',
