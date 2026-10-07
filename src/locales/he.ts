@@ -763,6 +763,7 @@ const he = {
       showObject: 'הצג',
       deleteObject: 'מחק',
       graphicUnreadable: 'המדפסת לא שלחה גרפיקה קריאה.',
+      fontSampleBlank: 'המדפסת לא שרטטה דבר עם הגופן הזה.',
       deleteGraphicConfirmFmt: 'למחוק את {path} מהמדפסת? תוויות שקוראות לו יודפסו בלעדיו.',
       deleteFontConfirmFmt: 'למחוק את {path} מהמדפסת? תוויות שמשתמשות בו יעברו לגופן אחר.',
       setupReuploadHint: 'סקריפט ההתקנה מפרט אותו ומעלה אותו שוב בהפעלה הבאה שלו.',

@@ -763,6 +763,7 @@ const it = {
       showObject: 'Mostra',
       deleteObject: 'Elimina',
       graphicUnreadable: 'La stampante non ha inviato nessuna grafica leggibile.',
+      fontSampleBlank: 'La stampante non ha disegnato nulla con questo font.',
       deleteGraphicConfirmFmt: 'Eliminare {path} dalla stampante? Le etichette che lo richiamano vengono stampate senza di esso.',
       deleteFontConfirmFmt: 'Eliminare {path} dalla stampante? Le etichette che lo usano passano a un altro font.',
       setupReuploadHint: 'Lo script di configurazione lo elenca e lo carica di nuovo alla successiva esecuzione.',

@@ -763,6 +763,7 @@ const de = {
       showObject: 'Anzeigen',
       deleteObject: 'Löschen',
       graphicUnreadable: 'Der Drucker hat keine lesbare Grafik gesendet.',
+      fontSampleBlank: 'Der Drucker hat mit dieser Schrift nichts gezeichnet.',
       deleteGraphicConfirmFmt: '{path} vom Drucker löschen? Etiketten, die es aufrufen, drucken dann ohne es.',
       deleteFontConfirmFmt: '{path} vom Drucker löschen? Etiketten, die ihn verwenden, weichen auf eine andere Schriftart aus.',
       setupReuploadHint: 'Das Setup-Skript listet es und lädt es beim nächsten Lauf erneut hoch.',

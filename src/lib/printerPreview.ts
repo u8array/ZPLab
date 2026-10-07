@@ -118,9 +118,7 @@ export async function fetchPrinterPreview(
     const res = await queryPrinter(target, buildPrinterPreviewZpl(designZpl));
     if (res.kind !== "ok") return res;
     const bitmap = decodeDyGraphic(res.value);
-    return bitmap
-      ? { kind: "ok", value: bitmap }
-      : { kind: "error", message: "no graphic in printer response" };
+    return bitmap ? { kind: "ok", value: bitmap } : { kind: "unparsed" };
   } catch (e) {
     return { kind: "error", message: errorMessage(e) };
   }

@@ -763,6 +763,7 @@ const sk = {
       showObject: 'Zobraziť',
       deleteObject: 'Odstrániť',
       graphicUnreadable: 'Tlačiareň neposlala žiadnu čitateľnú grafiku.',
+      fontSampleBlank: 'Tlačiareň nevykreslila nič týmto písmom.',
       deleteGraphicConfirmFmt: 'Odstrániť {path} z tlačiarne? Štítky, ktoré ho vyvolávajú, sa vytlačia bez neho.',
       deleteFontConfirmFmt: 'Odstrániť {path} z tlačiarne? Štítky, ktoré ho používajú, prejdú na iné písmo.',
       setupReuploadHint: 'Inštalačný skript ho uvádza v zozname a pri ďalšom spustení ho znova nahrá.',

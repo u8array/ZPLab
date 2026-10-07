@@ -763,6 +763,7 @@ const et = {
       showObject: 'Näita',
       deleteObject: 'Kustuta',
       graphicUnreadable: 'Printer ei saatnud loetavat graafikat.',
+      fontSampleBlank: 'Printer ei joonistanud selle fondiga midagi.',
       deleteGraphicConfirmFmt: 'Kustutada {path} printerist? Etiketid, mis selle välja kutsuvad, prinditakse selleta.',
       deleteFontConfirmFmt: 'Kustutada {path} printerist? Etiketid, mis seda kasutavad, lähevad üle teisele fondile.',
       setupReuploadHint: 'Seadistusskript loetleb selle ja laadib selle järgmisel käitamisel uuesti üles.',

@@ -763,6 +763,7 @@ const tr = {
       showObject: 'Göster',
       deleteObject: 'Sil',
       graphicUnreadable: 'Yazıcı okunabilir bir grafik göndermedi.',
+      fontSampleBlank: 'Yazıcı bu yazı tipiyle hiçbir şey çizmedi.',
       deleteGraphicConfirmFmt: '{path} yazıcıdan silinsin mi? Onu çağıran etiketler onsuz yazdırılır.',
       deleteFontConfirmFmt: '{path} yazıcıdan silinsin mi? Onu kullanan etiketler başka bir yazı tipine geçer.',
       setupReuploadHint: 'Kurulum betiği onu listeler ve bir sonraki çalıştırmasında yeniden yükler.',

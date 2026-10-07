@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/16/solid";
-import { hostObjectKind, hostObjectPath, type HostGraphic, type HostObject, type HostObjectKind } from "@zplab/core/lib/hostDirectory";
+import { hostObjectKind, hostObjectPath, type HostObject, type HostObjectKind } from "@zplab/core/lib/hostDirectory";
 import { findSetupEntry } from "@zplab/core/lib/setupEntries";
 import { useT } from "../../hooks/useT";
 import { formatTemplate } from "../../lib/formatTemplate";
@@ -10,7 +10,7 @@ import { selectPrinterObjects, useLabelStore } from "../../store/labelStore";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { Tooltip } from "../ui/Tooltip";
 import { buttonCls, disabledCls, sectionHeadingCls, zplCommandTagCls } from "../ui/formStyles";
-import { PrinterGraphicDialog } from "./PrinterGraphicDialog";
+import { PrinterImageDialog } from "./PrinterImageDialog";
 
 type Kind = Extract<HostObjectKind, "graphic" | "font">;
 
@@ -25,11 +25,11 @@ export function PrinterObjectsSection({ kind }: { kind: Kind }) {
   const step = useLabelStore((s) => s.printerReading);
   const setupEntries = useLabelStore((s) => (kind === "graphic" ? s.printerProfile.setupGraphics : s.printerProfile.setupFonts));
   const read = useLabelStore((s) => s.readPrinterObjects);
-  const readGraphic = useLabelStore((s) => s.readPrinterGraphic);
+  const readImage = useLabelStore((s) => s.readPrinterObjectImage);
   const remove = useLabelStore((s) => s.deletePrinterObject);
   const [pendingDelete, setPendingDelete] = useState<HostObject | null>(null);
   const [issue, setIssue] = useState<string | null>(null);
-  const [graphic, setGraphic] = useState<{ path: string; read: PrinterOutcome<HostGraphic> | "reading" } | undefined>();
+  const [graphic, setGraphic] = useState<{ path: string; read: PrinterOutcome<string | null> | "reading" } | undefined>();
 
   const reading = step !== undefined;
   // A drive answering with two DIR blocks would list its objects and its free space twice.
@@ -47,7 +47,7 @@ export function PrinterObjectsSection({ kind }: { kind: Kind }) {
   const show = (object: HostObject) => {
     const path = hostObjectPath(object);
     setGraphic({ path, read: "reading" });
-    void readGraphic(object).then((result) => setGraphic((current) => (current?.path === path ? { path, read: result } : current)));
+    void readImage(object).then((read) => setGraphic((current) => (current?.path === path ? { path, read } : current)));
   };
   const confirmDelete = (object: HostObject) => {
     setPendingDelete(null);
@@ -103,11 +103,9 @@ export function PrinterObjectsSection({ kind }: { kind: Kind }) {
                     <span className="text-[10px] text-muted">{formatTemplate(loc.objectSizeFmt, { kb: kb(o.size) })}</span>
                   </span>
                   <span className="flex items-center gap-1 shrink-0">
-                    {kind === "graphic" && (
-                      <button type="button" className={`${buttonCls} ${disabledCls}`} disabled={reading} onClick={() => show(o)}>
-                        {loc.showObject}
-                      </button>
-                    )}
+                    <button type="button" className={`${buttonCls} ${disabledCls}`} disabled={reading} onClick={() => show(o)}>
+                      {loc.showObject}
+                    </button>
                     <button type="button" className={`${buttonCls} ${disabledCls}`} disabled={reading} onClick={() => setPendingDelete(o)}>
                       {loc.deleteObject}
                     </button>
@@ -128,7 +126,9 @@ export function PrinterObjectsSection({ kind }: { kind: Kind }) {
           onCancel={() => setPendingDelete(null)}
         />
       )}
-      {state.phase === "done" && graphic && <PrinterGraphicDialog path={graphic.path} read={graphic.read} onClose={() => setGraphic(undefined)} />}
+      {state.phase === "done" && graphic && (
+        <PrinterImageDialog path={graphic.path} read={graphic.read} blankText={kind === "font" ? loc.fontSampleBlank : loc.graphicUnreadable} onClose={() => setGraphic(undefined)} />
+      )}
     </section>
   );
 }

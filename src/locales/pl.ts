@@ -763,6 +763,7 @@ const pl = {
       showObject: 'Pokaż',
       deleteObject: 'Usuń',
       graphicUnreadable: 'Drukarka nie wysłała żadnej czytelnej grafiki.',
+      fontSampleBlank: 'Drukarka nie narysowała niczego tą czcionką.',
       deleteGraphicConfirmFmt: 'Usunąć {path} z drukarki? Etykiety, które go przywołują, drukują się bez niego.',
       deleteFontConfirmFmt: 'Usunąć {path} z drukarki? Etykiety, które z niego korzystają, przechodzą na inną czcionkę.',
       setupReuploadHint: 'Skrypt konfiguracyjny wymienia go na liście i przesyła ponownie przy następnym uruchomieniu.',

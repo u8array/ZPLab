@@ -763,6 +763,7 @@ const sl = {
       showObject: 'Prikaži',
       deleteObject: 'Izbriši',
       graphicUnreadable: 'Tiskalnik ni poslal berljive grafike.',
+      fontSampleBlank: 'Tiskalnik ni izrisal ničesar s to pisavo.',
       deleteGraphicConfirmFmt: 'Izbrišem {path} iz tiskalnika? Nalepke, ki ga prikličejo, se natisnejo brez njega.',
       deleteFontConfirmFmt: 'Izbrišem {path} iz tiskalnika? Nalepke, ki jo uporabljajo, preklopijo na drugo pisavo.',
       setupReuploadHint: 'Namestitveni skript ga navede na seznamu in ga znova naloži ob naslednjem zagonu.',

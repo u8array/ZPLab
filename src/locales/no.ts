@@ -763,6 +763,7 @@ const no = {
       showObject: 'Vis',
       deleteObject: 'Slett',
       graphicUnreadable: 'Skriveren sendte ingen lesbar grafikk.',
+      fontSampleBlank: 'Skriveren tegnet ingenting med denne skriften.',
       deleteGraphicConfirmFmt: 'Slette {path} fra skriveren? Etiketter som henter det frem, skriver ut uten det.',
       deleteFontConfirmFmt: 'Slette {path} fra skriveren? Etiketter som bruker den, faller tilbake til en annen skrift.',
       setupReuploadHint: 'Oppsettsskriptet lister den opp og laster den opp igjen ved neste kjøring.',

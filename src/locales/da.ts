@@ -763,6 +763,7 @@ const da = {
       showObject: 'Vis',
       deleteObject: 'Slet',
       graphicUnreadable: 'Printeren sendte ingen læsbar grafik.',
+      fontSampleBlank: 'Printeren tegnede ingenting med denne skrifttype.',
       deleteGraphicConfirmFmt: 'Slet {path} fra printeren? Etiketter, der henter det frem, udskrives uden det.',
       deleteFontConfirmFmt: 'Slet {path} fra printeren? Etiketter, der bruger den, falder tilbage til en anden skrifttype.',
       setupReuploadHint: 'Opsætningsscriptet lister den og uploader den igen ved næste kørsel.',

@@ -763,6 +763,7 @@ const ja = {
       showObject: '表示',
       deleteObject: '削除',
       graphicUnreadable: 'プリンターは読み取り可能なグラフィックを送信しませんでした。',
+      fontSampleBlank: 'プリンターはこのフォントで何も描画しませんでした。',
       deleteGraphicConfirmFmt: '{path}をプリンターから削除しますか? それを呼び出すラベルはそれなしで印刷されます。',
       deleteFontConfirmFmt: '{path}をプリンターから削除しますか? それを使用するラベルは別のフォントに切り替わります。',
       setupReuploadHint: 'セットアップスクリプトがそれを一覧に含め、次回の実行時に再度アップロードします。',

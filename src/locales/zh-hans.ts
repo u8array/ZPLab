@@ -763,6 +763,7 @@ const zhHans = {
       showObject: '显示',
       deleteObject: '删除',
       graphicUnreadable: '打印机未发送可读的图形。',
+      fontSampleBlank: '打印机未用此字体绘制任何内容。',
       deleteGraphicConfirmFmt: '要从打印机中删除{path}吗？调用它的标签不带它打印。',
       deleteFontConfirmFmt: '要从打印机中删除{path}吗？使用它的标签回退到其他字体。',
       setupReuploadHint: '安装脚本将其列出，并在下次运行时重新上传。',

@@ -763,6 +763,7 @@ const lt = {
       showObject: 'Rodyti',
       deleteObject: 'Ištrinti',
       graphicUnreadable: 'Spausdintuvas nenusiuntė nuskaitomos grafikos.',
+      fontSampleBlank: 'Spausdintuvas šiuo šriftu nieko nepiešė.',
       deleteGraphicConfirmFmt: 'Ištrinti {path} iš spausdintuvo? Etiketės, kurios jį iškviečia, spausdinamos be jo.',
       deleteFontConfirmFmt: 'Ištrinti {path} iš spausdintuvo? Etiketės, kurios jį naudoja, persijungia į kitą šriftą.',
       setupReuploadHint: 'Sąrankos scenarijus jį įtraukia į sąrašą ir vėl įkelia kito paleidimo metu.',

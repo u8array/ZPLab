@@ -763,6 +763,7 @@ const pt = {
       showObject: 'Mostrar',
       deleteObject: 'Eliminar',
       graphicUnreadable: 'A impressora não enviou nenhum gráfico legível.',
+      fontSampleBlank: 'A impressora não desenhou nada com esta fonte.',
       deleteGraphicConfirmFmt: 'Eliminar {path} da impressora? As etiquetas que o chamam imprimem sem ele.',
       deleteFontConfirmFmt: 'Eliminar {path} da impressora? As etiquetas que o usam recorrem a outra fonte.',
       setupReuploadHint: 'O script de configuração lista-o e carrega-o novamente na próxima execução.',

@@ -1,12 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { zlibSync } from "fflate";
-import {
-  buildPrinterPreviewZpl,
-  contentBounds,
-  decodeDyGraphic,
-  monoToRgba,
-  type PrinterBitmap,
-} from "./zebraGraphic";
+import { buildPrinterPreviewZpl, contentBounds, cropBitmap, decodeDyGraphic, monoToRgba, type PrinterBitmap } from "./zebraGraphic";
 
 const b64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes));
 
@@ -23,14 +17,18 @@ const dyResponse = (mono: Uint8Array, kind: "Z" | "B", wrap = false): string => 
 
 describe("buildPrinterPreviewZpl", () => {
   it("injects ^IS before the final ^XZ and appends the ^HY upload", () => {
+    const random = vi.spyOn(Math, "random").mockReturnValueOnce(0.5).mockReturnValueOnce(0.25);
     const out = buildPrinterPreviewZpl("^XA^FO10,10^A0N,30^FDHi^FS^XZ");
-    expect(out).toContain("^ISR:PRE.GRF,N^XZ");
-    expect(out).toContain("^HYR:PRE.GRF");
-    expect(out.indexOf("^ISR:PRE.GRF")).toBeLessThan(out.indexOf("^HYR:PRE.GRF"));
+    expect(out).toContain("^ISR:ZL800000.GRF,N^XZ");
+    expect(out).toContain("^HYR:ZL800000.GRF^XZ");
+    expect(out.indexOf("^IS")).toBeLessThan(out.indexOf("^HY"));
+    expect(out.indexOf("^HY")).toBeLessThan(out.indexOf("^IDR:ZL800000.GRF^FS^XZ"));
+    expect(buildPrinterPreviewZpl("^XA^FDx^FS^XZ")).toContain("^ISR:ZL400000.GRF,N^XZ");
+    random.mockRestore();
   });
 
   it("appends ^IS even when the design has no trailing ^XZ", () => {
-    expect(buildPrinterPreviewZpl("^XA^FDx^FS")).toContain("^ISR:PRE.GRF,N^XZ");
+    expect(buildPrinterPreviewZpl("^XA^FDx^FS")).toMatch(/\^ISR:ZL[0-9A-F]{6}\.GRF,N\^XZ/);
   });
 
   it("forces ^LL onto all media so the render matches the design length", () => {
@@ -136,5 +134,14 @@ describe("monoToRgba", () => {
     // row0 pixel 15 (rightmost bit set) = black
     const p15 = 15 * 4;
     expect([rgba[p15], rgba[p15 + 1], rgba[p15 + 2]]).toEqual([0, 0, 0]);
+  });
+});
+
+describe("cropBitmap", () => {
+  it("widens the bounds to whole bytes and copies the rows between top and bottom", () => {
+    const mono = Uint8Array.from([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x80, 0x00, 0x00, 0x00, 0x00]);
+    const bmp = { width: 24, height: 4, mono };
+    expect(cropBitmap(bmp, { left: 7, right: 9, top: 2, bottom: 3 })).toEqual({ width: 16, height: 1, mono: Uint8Array.from([0x01, 0x80]) });
+    expect(cropBitmap(bmp, contentBounds(bmp))).toEqual({ width: 16, height: 1, mono: Uint8Array.from([0x01, 0x80]) });
   });
 });

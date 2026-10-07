@@ -763,6 +763,7 @@ const ar = {
       showObject: 'عرض',
       deleteObject: 'حذف',
       graphicUnreadable: 'لم ترسل الطابعة أي رسم قابل للقراءة.',
+      fontSampleBlank: 'الطابعة لم ترسم أي شيء بهذا الخط.',
       deleteGraphicConfirmFmt: 'هل تريد حذف {path} من الطابعة؟ الملصقات التي تستدعيه تُطبع بدونه.',
       deleteFontConfirmFmt: 'هل تريد حذف {path} من الطابعة؟ الملصقات التي تستخدمه تتراجع إلى خط آخر.',
       setupReuploadHint: 'نص الإعداد يسرده ويرفعه مرة أخرى في تشغيله التالي.',

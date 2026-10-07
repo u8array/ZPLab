@@ -1,11 +1,13 @@
+import { fontSampleZpl, type SampleMedia } from "@zplab/core/lib/fontSample";
 import { rasterFromGfa } from "@zplab/core/lib/gfaDecode";
-import { hostObjectPath, parseHostDirectories, parseHostGraphic, type HostDirectory, type HostGraphic, type HostObject } from "@zplab/core/lib/hostDirectory";
+import { hostObjectKind, hostObjectPath, parseHostDirectories, parseHostGraphic, type HostDirectory, type HostGraphic, type HostObject } from "@zplab/core/lib/hostDirectory";
 import { STORAGE_DEVICES } from "@zplab/core/lib/storagePath";
-import { bitmapToDataUrl } from "./printerPreview";
+import { bitmapToDataUrl, fetchPrinterPreview } from "./printerPreview";
 import { queryPrinter, type PrinterOutcome, type PrinterQueryFailure } from "./printerQuery";
 import type { QueryTarget } from "./printTarget";
 import { sendZplUsb } from "./usbPrint";
 import { sendViaNetwork } from "./zebraPrint";
+import { contentBounds, cropBitmap, type PrinterBitmap } from "./zebraGraphic";
 
 /** One ^HW per drive and per query, so a slow drive cannot cut the next one off at the idle gap. A drive that goes silent ends the walk and keeps the earlier listings. */
 export async function readPrinterObjects(target: QueryTarget, onStep?: (command: string) => void): Promise<PrinterOutcome<HostDirectory[]>> {
@@ -27,9 +29,27 @@ export async function readPrinterGraphic(target: QueryTarget, object: HostObject
   return graphic ? { kind: "ok", value: graphic } : { kind: "unparsed" };
 }
 
-export function graphicDataUrl(graphic: HostGraphic): string | null {
+/** The printer renders the sample itself, so the font shows as the firmware draws it. Null when it drew nothing. */
+export async function readPrinterFontSample(target: QueryTarget, object: HostObject, media: SampleMedia): Promise<PrinterOutcome<PrinterBitmap | null>> {
+  const res = await fetchPrinterPreview(target, fontSampleZpl(hostObjectPath(object), media));
+  if (res.kind !== "ok") return res;
+  const bounds = contentBounds(res.value);
+  return { kind: "ok", value: bounds.right > bounds.left ? cropBitmap(res.value, bounds) : null };
+}
+
+function graphicDataUrl(graphic: HostGraphic): string | null {
   const raster = rasterFromGfa(graphic.gfa);
   return raster ? bitmapToDataUrl({ width: raster.paddedWidth, height: raster.heightDots, mono: raster.bytes }) : null;
+}
+
+/** The picture of an object by its kind, as a data URL. Null when the printer gave nothing drawable. */
+export async function readPrinterObjectImage(target: QueryTarget, object: HostObject, media: SampleMedia): Promise<PrinterOutcome<string | null>> {
+  if (hostObjectKind(object.ext) === "font") {
+    const sample = await readPrinterFontSample(target, object, media);
+    return sample.kind === "ok" ? { kind: "ok", value: sample.value && bitmapToDataUrl(sample.value) } : sample;
+  }
+  const graphic = await readPrinterGraphic(target, object);
+  return graphic.kind === "ok" ? { kind: "ok", value: graphicDataUrl(graphic.value) } : graphic;
 }
 
 /** ^ID answers nothing, so it goes the way a job goes. */

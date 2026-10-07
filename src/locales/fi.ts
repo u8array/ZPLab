@@ -763,6 +763,7 @@ const fi = {
       showObject: 'Näytä',
       deleteObject: 'Poista',
       graphicUnreadable: 'Tulostin ei lähettänyt luettavaa grafiikkaa.',
+      fontSampleBlank: 'Tulostin ei piirtänyt mitään tällä fontilla.',
       deleteGraphicConfirmFmt: 'Poistetaanko {path} tulostimesta? Etiketit, jotka hakevat sen, tulostuvat sitä ilman.',
       deleteFontConfirmFmt: 'Poistetaanko {path} tulostimesta? Etiketit, jotka käyttävät sitä, siirtyvät toiseen fonttiin.',
       setupReuploadHint: 'Asennusskripti listaa sen ja lähettää sen uudelleen seuraavalla ajolla.',

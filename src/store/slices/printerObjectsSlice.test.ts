@@ -4,11 +4,11 @@ import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
 import { selectPrinterObjects } from "../labelStore.selectors";
 
 const readPrinterObjects = vi.fn();
-const readPrinterGraphic = vi.fn();
+const readPrinterObjectImage = vi.fn();
 const deletePrinterObject = vi.fn();
 vi.mock("../../lib/printerObjects", () => ({
   readPrinterObjects: (...args: unknown[]) => readPrinterObjects(...args),
-  readPrinterGraphic: (...args: unknown[]) => readPrinterGraphic(...args),
+  readPrinterObjectImage: (...args: unknown[]) => readPrinterObjectImage(...args),
   deletePrinterObject: (...args: unknown[]) => deletePrinterObject(...args),
 }));
 const readPrinterStatus = vi.fn();
@@ -19,11 +19,12 @@ vi.mock("../../lib/printerStatus", () => ({
 
 const target = { kind: "network", host: "172.17.17.175", port: 9100 };
 const pre = { device: "R", name: "PRE", ext: "GRF", size: 49924 };
+const font = { device: "E", name: "CG_TIMES", ext: "TTF", size: 62252 };
 const listing = [{ device: "R", objects: [pre], bytesFree: 7467008 }];
 
 beforeEach(() => {
   readPrinterObjects.mockReset();
-  readPrinterGraphic.mockReset();
+  readPrinterObjectImage.mockReset();
   deletePrinterObject.mockReset();
   readPrinterStatus.mockReset();
   useLabelStore.setState({ printerObjects: { phase: "idle" }, printerReading: undefined, printTarget: { ...DEFAULT_PRINT_TARGET, host: "172.17.17.175" } });
@@ -36,7 +37,7 @@ describe("readPrinterObjects", () => {
     const pending = useLabelStore.getState().readPrinterObjects();
     expect(useLabelStore.getState().printerReading).toBe("^HW");
     expect(await useLabelStore.getState().checkPrinter()).toEqual({ kind: "busy" });
-    expect(await useLabelStore.getState().readPrinterGraphic(pre)).toEqual({ kind: "busy" });
+    expect(await useLabelStore.getState().readPrinterObjectImage(pre)).toEqual({ kind: "busy" });
     expect(await useLabelStore.getState().deletePrinterObject(pre)).toEqual({ kind: "busy" });
     expect(readPrinterStatus).not.toHaveBeenCalled();
     expect(deletePrinterObject).not.toHaveBeenCalled();
@@ -54,11 +55,19 @@ describe("readPrinterObjects", () => {
   });
 });
 
-describe("readPrinterGraphic", () => {
-  it("hands the graphic back without touching the listing", async () => {
-    readPrinterGraphic.mockResolvedValue({ kind: "ok", value: { name: "PRE", gfa: "^GFA,2,2,1,FFFF" } });
-    expect(await useLabelStore.getState().readPrinterGraphic(pre)).toMatchObject({ kind: "ok", value: { name: "PRE" } });
-    expect(readPrinterGraphic).toHaveBeenCalledWith(target, pre);
+describe("readPrinterObjectImage", () => {
+  it("hands the image back on the page's media without touching the listing", async () => {
+    let step: string | undefined;
+    readPrinterObjectImage.mockImplementation(() => {
+      step = useLabelStore.getState().printerReading;
+      return Promise.resolve({ kind: "ok", value: "data:image/png;base64,x" });
+    });
+    expect(await useLabelStore.getState().readPrinterObjectImage(font)).toEqual({ kind: "ok", value: "data:image/png;base64,x" });
+    expect(step).toBe("^IS");
+    const { widthMm, heightMm, dpmm } = useLabelStore.getState().label;
+    expect(readPrinterObjectImage).toHaveBeenCalledWith(target, font, expect.objectContaining({ widthMm, heightMm, dpmm }));
+    await useLabelStore.getState().readPrinterObjectImage(pre);
+    expect(step).toBe("^HG");
     expect(useLabelStore.getState().printerObjects).toEqual({ phase: "idle" });
     expect(useLabelStore.getState().printerReading).toBeUndefined();
   });

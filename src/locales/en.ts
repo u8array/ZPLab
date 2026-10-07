@@ -763,6 +763,7 @@ const en = {
       showObject: 'Show',
       deleteObject: 'Delete',
       graphicUnreadable: 'The printer sent no readable graphic.',
+      fontSampleBlank: 'The printer drew nothing with this font.',
       deleteGraphicConfirmFmt: 'Delete {path} from the printer? Labels that recall it print without it.',
       deleteFontConfirmFmt: 'Delete {path} from the printer? Labels that use it fall back to another font.',
       setupReuploadHint: 'The setup script lists it and uploads it again on its next run.',

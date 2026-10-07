@@ -763,6 +763,7 @@ const lv = {
       showObject: 'Rādīt',
       deleteObject: 'Dzēst',
       graphicUnreadable: 'Printeris nenosūtīja lasāmu grafiku.',
+      fontSampleBlank: 'Printeris ar šo fontu neko nezīmēja.',
       deleteGraphicConfirmFmt: 'Dzēst {path} no printera? Etiķetes, kas to izsauc, tiek drukātas bez tā.',
       deleteFontConfirmFmt: 'Dzēst {path} no printera? Etiķetes, kas to izmanto, pārslēdzas uz citu fontu.',
       setupReuploadHint: 'Iestatīšanas skripts to norāda sarakstā un augšupielādē atkārtoti nākamajā palaišanas reizē.',

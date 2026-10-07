@@ -763,6 +763,7 @@ const hr = {
       showObject: 'Prikaži',
       deleteObject: 'Izbriši',
       graphicUnreadable: 'Pisač nije poslao nijednu čitljivu grafiku.',
+      fontSampleBlank: 'Pisač nije ništa nacrtao ovim fontom.',
       deleteGraphicConfirmFmt: 'Izbrisati {path} s pisača? Naljepnice koje ga pozivaju ispisuju se bez njega.',
       deleteFontConfirmFmt: 'Izbrisati {path} s pisača? Naljepnice koje ga koriste prelaze na drugi font.',
       setupReuploadHint: 'Instalacijska skripta ga navodi na popisu i ponovno ga učitava kod sljedećeg pokretanja.',
