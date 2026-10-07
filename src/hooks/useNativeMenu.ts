@@ -93,8 +93,6 @@ let latest: MenuData | null = null;
 let installed: InstalledMenu | null = null;
 let updateGen = 0;
 let queue: Promise<void> = Promise.resolve();
-/** Unique step ids: positional ids could collide with an item still closing. */
-let stepIdSeq = 0;
 /** The OS toggles a clicked CheckMenuItem's checkmark itself; after a jump we
  *  re-assert every step's checkmark so that stray toggle can't linger. */
 let checkmarkDirty = false;
@@ -143,7 +141,6 @@ async function makeStepItem(
 ): Promise<HistoryStep> {
   const { CheckMenuItem } = await import('@tauri-apps/api/menu');
   const item = await CheckMenuItem.new({
-    id: `history-${stepIdSeq++}`,
     text: step.label,
     checked: step.current,
     enabled: step.enabled,
@@ -171,11 +168,12 @@ async function rebuildMenu(structureKey: string, d: MenuData, gen: number): Prom
 
     const items = new Map<MenuItemId, ItemHandle>();
     const buildItem = async (item: { id: MenuItemId; label: string; enabled: boolean }) => {
+      // Nothing here names a menu item: Tauri keys click channels by menu id and drops one when that
+      // id closes, so a rebuild's old tree would take the new tree's channels. Its own ids are unique.
       const base = {
-        id: item.id,
         text: item.label,
         enabled: item.enabled,
-        action: (id: string) => latest?.handlers[id as MenuItemId]?.(),
+        action: () => latest?.handlers[item.id]?.(),
       };
       const icon = await itemIcon(item.id, d.icons, d.dark);
       const handle = track(icon ? await IconMenuItem.new({ ...base, icon }) : await MenuItem.new(base));
@@ -199,7 +197,6 @@ async function rebuildMenu(structureKey: string, d: MenuData, gen: number): Prom
       steps.push(hstep);
     }
     const clear = track(await MenuItem.new({
-      id: 'historyClear',
       text: d.history.clearLabel,
       enabled: d.history.canClear,
       action: () => latest?.onHistoryClear(),
