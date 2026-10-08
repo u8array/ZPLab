@@ -28,7 +28,7 @@ const dot = (r: ReturnType<typeof render>) => (r.container.querySelector("button
 afterEach(cleanup);
 beforeEach(() => {
   readPrinterStatus.mockReset();
-  act(() => useLabelStore.setState({ printerState: { phase: "idle" }, printTarget: { ...DEFAULT_PRINT_TARGET, host: "172.17.17.175" } }));
+  act(() => useLabelStore.setState({ printerState: { phase: "idle" }, printerSettingsTab: null, printTarget: { ...DEFAULT_PRINT_TARGET, host: "172.17.17.175" } }));
 });
 
 describe("PrinterChip", () => {
@@ -72,6 +72,13 @@ describe("PrinterChip", () => {
     fireEvent.click(r.getByText(en.zebraPrint.printer));
     expect(r.getByText(/No printer configured/)).toBeTruthy();
     expect(dot(r)).toBe("blocked");
+  });
+
+  it("opens the printer's own storage, the shortest way there from the design", () => {
+    const r = render(<PrinterChip />);
+    fireEvent.click(r.getByText("172.17.17.175"));
+    fireEvent.click(r.getByText(en.printerSettings.objects.listHeading));
+    expect(useLabelStore.getState().printerSettingsTab).toBe("storedFonts");
   });
 
   it("opens the configuration echo with the raw replies beside it", async () => {

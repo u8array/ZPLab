@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ArrowPathIcon, ChevronDownIcon, Cog6ToothIcon, DocumentTextIcon } from "@heroicons/react/16/solid";
+import { ArrowPathIcon, ChevronDownIcon, CircleStackIcon, Cog6ToothIcon, DocumentTextIcon } from "@heroicons/react/16/solid";
 import { useT } from "../../hooks/useT";
 import { useDismiss } from "../../hooks/useDismiss";
 import { formatTemplate } from "../../lib/formatTemplate";
@@ -87,6 +87,9 @@ export function PrinterChip() {
           </DropdownItem>
           <DropdownItem icon={DocumentTextIcon} disabled={reading} onClick={closeThen(openConfiguration)}>
             {loc.readConfiguration}
+          </DropdownItem>
+          <DropdownItem icon={CircleStackIcon} onClick={closeThen(() => setPrinterSettingsTab("storedFonts"))}>
+            {t.printerSettings.objects.listHeading}
           </DropdownItem>
           <DropdownItem icon={Cog6ToothIcon} onClick={closeThen(() => setPrinterSettingsTab("printTarget"))}>
             {t.printerSettings.title}

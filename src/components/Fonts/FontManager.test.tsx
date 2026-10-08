@@ -7,6 +7,7 @@ import { cachedFontPath, getAllFonts, loadFontBytes, removeFont } from "@zplab/c
 import { withoutSetupEntry } from "@zplab/core/lib/setupEntries";
 import { serializeDesign } from "@zplab/core/lib/designFile";
 import type { LabelObject } from "@zplab/core/types/Group";
+import { fallbackTranslations as en } from "../../locales";
 
 const text = (printerFontName: string): LabelObject =>
   ({ id: "t1", type: "text", x: 0, y: 0, rotation: 0, props: { content: "x", fontHeight: 30, fontWidth: 0, rotation: "N", printerFontName } }) as unknown as LabelObject;
@@ -260,6 +261,13 @@ describe("FontManager upload", () => {
     const r = render(<FontManager />);
     await addFile(r, new File(["other bytes"], "arial.ttf"));
     expect(r.getByText(/different printer filename/)).toBeTruthy();
+    expect(getAllFonts()).toHaveLength(1);
+  });
+
+  it("names a file it cannot read as a font at all", async () => {
+    const r = render(<FontManager />);
+    await addFile(r, new File(["x"], "bad.txt"));
+    expect(r.getByText(en.fonts.uploadError)).toBeTruthy();
     expect(getAllFonts()).toHaveLength(1);
   });
 

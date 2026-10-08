@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/16/solid';
-import { FONT_FILE_ACCEPT, loadFontBytes } from '@zplab/core/lib/fontCache';
+import { FONT_FILE_ACCEPT } from '@zplab/core/lib/fontCache';
 import { prepareFontBytes, prepareFontUpload, printerFontFileName, type FontNameIssue } from '@zplab/core/lib/customFonts';
 import { useT } from '../../hooks/useT';
 import { useUpload } from '../../hooks/useUpload';
@@ -12,8 +12,11 @@ import { ariaDisabledCls, inputCls, labelCls } from '../ui/formStyles';
 import { DialogShell } from '../ui/DialogShell';
 
 interface AddFontDialogProps {
-  /** `uploadedPath` is the stored printer path on success, undefined when the dialog closes without adding. */
-  onDone: (uploadedPath?: string) => void;
+  /** Undefined when the dialog closes without adding. The caller caches, so it can still refuse a
+   *  name this dialog has no way to know is taken. */
+  onDone: (picked?: { path: string; bytes: Uint8Array }) => void;
+  /** The file a stale profile entry waits for. Its name is fixed, because any other name repairs nothing. */
+  repairPath?: string;
 }
 
 /** Picked but not yet cached. The gate runs on Add, so a rejected name stays editable. */
@@ -26,13 +29,13 @@ const lockedBtnCls = `px-3 py-1.5 rounded text-xs font-mono transition-colors ${
 const secondaryBtnCls = `${lockedBtnCls} whitespace-nowrap border`;
 
 /** Modal because the installed-fonts list needs more room than the sidebar gives. */
-export function AddFontDialog({ onDone }: AddFontDialogProps) {
+export function AddFontDialog({ onDone, repairPath }: AddFontDialogProps) {
   const t = useT();
   const fileRef = useRef<HTMLInputElement>(null);
   // Closing abandons a pending read, so its result must not reach the cache.
   const aborted = useRef(false);
   const [candidate, setCandidate] = useState<FontCandidate | null>(null);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(repairPath ?? '');
   const titleId = useId();
   const listLabelId = useId();
   const issueId = useId();
@@ -41,13 +44,13 @@ export function AddFontDialog({ onDone }: AddFontDialogProps) {
       input instanceof File ? await prepareFontUpload(input, name) : prepareFontBytes(input.file_name, await readSystemFont(input.path), name);
     if (aborted.current) return null;
     if (!prepared.ok) return prepared.reason === 'notAFont' ? 'error' : prepared.reason;
-    await loadFontBytes(prepared.bytes, prepared.path);
-    onDone(prepared.path);
+    onDone({ path: prepared.path, bytes: prepared.bytes });
     return null;
   }, 'error');
 
   const select = (next: FontCandidate) => {
     setCandidate(next);
+    if (repairPath) return;
     const fileName = candidateFileName(next);
     setName(printerFontFileName(fileName) ?? fileName);
   };
@@ -145,8 +148,8 @@ export function AddFontDialog({ onDone }: AddFontDialogProps) {
               value={name}
               placeholder={t.fonts.printerFilenamePlaceholder}
               onChange={(e) => setName(e.target.value)}
-              readOnly={busy}
-              aria-disabled={busy}
+              readOnly={busy || repairPath !== undefined}
+              aria-disabled={busy || repairPath !== undefined}
               aria-invalid={nameRejected || undefined}
               aria-describedby={issue ? issueId : undefined}
               autoFocus={!isDesktopShell}
@@ -178,6 +181,19 @@ export function AddFontDialog({ onDone }: AddFontDialogProps) {
         </div>
       </form>
     </DialogShell>
+  );
+}
+
+/** Uneven on purpose, so the placeholder reads as a list of names rather than a block. */
+const LOADING_ROW_WIDTHS = ["70%", "58%", "66%", "44%", "62%", "50%"];
+
+function LoadingRows() {
+  return (
+    <div aria-hidden="true" className="flex flex-col gap-2 px-2 py-2">
+      {LOADING_ROW_WIDTHS.map((width) => (
+        <span key={width} className="h-3 rounded bg-border animate-pulse" style={{ width }} />
+      ))}
+    </div>
   );
 }
 
@@ -241,15 +257,17 @@ function SystemFontList({
         aria-disabled={busy}
         autoFocus
       />
-      {fonts === null && !failed && <p className="text-[10px] text-muted">…</p>}
-      {fonts !== null && fonts.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noInstalledFonts}</p>}
-      {fonts !== null && fonts.length > 0 && shown.length === 0 && <p className="text-[10px] text-muted">{t.fonts.noFilterMatch}</p>}
-      {failed && <p className="text-[10px] font-mono text-red-400">{t.fonts.systemFontsFailed}</p>}
+      {/* Fixed height, so neither the arriving list nor a filter resizes the dialog under the pointer. */}
       <div
         role="listbox"
         aria-labelledby={labelId}
-        className="max-h-56 overflow-auto rounded border border-border text-xs"
+        aria-busy={fonts === null && !failed}
+        className="h-56 overflow-auto rounded border border-border text-xs"
       >
+        {failed && <p className="px-2 py-1 font-mono text-[10px] text-red-400">{t.fonts.systemFontsFailed}</p>}
+        {fonts === null && !failed && <LoadingRows />}
+        {fonts !== null && fonts.length === 0 && <p className="px-2 py-1 text-[10px] text-muted">{t.fonts.noInstalledFonts}</p>}
+        {fonts !== null && fonts.length > 0 && shown.length === 0 && <p className="px-2 py-1 text-[10px] text-muted">{t.fonts.noFilterMatch}</p>}
         {shown.map((font, i) => {
           const selected = font.path === selectedPath;
           return (
