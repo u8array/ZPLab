@@ -6,7 +6,7 @@ Every command of the ZPL II Programming Guide and what it takes to use it in ZPL
 |---|---|
 | **Web** | The browser build reads the command on import and writes it back on export: as itself, folded into object properties (`^FW`, `^LR`, `^BY`, `^MU`, `^LH`, `^LT`, `^CI`), or into the Setup Script (printer setup commands). Structural commands (`^XA`, `^FS`, prefix changers) carry no user state |
 | **Desktop** | The same in the desktop app, which also talks to a connected printer; commands that need one (host queries, calibration, downloads to printer storage, RFID hardware) can only ever get a mark here |
-| **Docker** | The same in the self-hosted image. The image serves the web build today, so this column repeats Web. It will diverge once the image gains server-side features |
+| **Docker** | The same in the self-hosted image, which serves the web build today. A container can open a printer connection, so what the desktop reaches that way is planned here |
 
 | Mark | Meaning |
 |:-:|---|
@@ -79,7 +79,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^CW` | font alias | `[x]` | `[x]` | `[x]` |
 | `^CO` | font cache size | `[x]` | `[x]` | `[x]` |
 | `^FL` | font linking | `[x]` | `[x]` | `[x]` |
-| `^LF` | list font links | `[ ]` | `[~]` | `[ ]` |
+| `^LF` | list font links | `[ ]` | `[~]` | `[~]` |
 | `~DB` | download bitmap font | `[x]` | `[x]` | `[x]` |
 | `~DS` | download scalable font | `[x]` | `[x]` | `[x]` |
 | `~DT` | download TrueType font | `[x]` | `[x]` | `[x]` |
@@ -132,12 +132,12 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^GS` | graphic symbol | `[x]` | `[x]` | `[x]` |
 | `^IL` | image load | `[x]` | `[x]` | `[x]` |
 | `^IM` | image move | `[x]` | `[x]` | `[x]` |
-| `^ID` | delete stored graphics, fonts and formats | `[ ]` | `[x]` | `[ ]` |
-| `^IS` | image save | `[ ]` | `[x]` | `[ ]` |
+| `^ID` | delete stored graphics, fonts and formats | `[ ]` | `[x]` | `[~]` |
+| `^IS` | image save | `[ ]` | `[x]` | `[~]` |
 | `~DG` | download graphic | `[x]` | `[x]` | `[x]` |
-| `~DN` | abort download | `[ ]` | `[~]` | `[ ]` |
+| `~DN` | abort download | `[ ]` | `[~]` | `[~]` |
 | `~DY` | download font / graphic | `[x]` | `[x]` | `[x]` |
-| `~EG` | erase download graphics | `[ ]` | `[~]` | `[ ]` |
+| `~EG` | erase download graphics | `[ ]` | `[~]` | `[~]` |
 
 ## Serialisation
 
@@ -181,11 +181,11 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `~JS` | change backfeed sequence | `[x]` | `[x]` | `[x]` |
 | `^PF` | slew given number of dot rows | `[x]` | `[x]` | `[x]` |
 | `^PH` | slew home | `[x]` | `[x]` | `[x]` |
-| `~PH` | slew home, immediate | `[ ]` | `[~]` | `[ ]` |
+| `~PH` | slew home, immediate | `[ ]` | `[~]` | `[~]` |
 | `^PP` | programmable pause | `[x]` | `[x]` | `[x]` |
-| `~PP` | pause, immediate | `[ ]` | `[~]` | `[ ]` |
-| `~PR` | applicator reprint | `[ ]` | `[~]` | `[ ]` |
-| `~PS` | print start | `[ ]` | `[~]` | `[ ]` |
+| `~PP` | pause, immediate | `[ ]` | `[~]` | `[~]` |
+| `~PR` | applicator reprint | `[ ]` | `[~]` | `[~]` |
+| `~PS` | print start | `[ ]` | `[~]` | `[~]` |
 | `^CN` | cut now, KR403 kiosk only | `[ ]` | `[ ]` | `[ ]` |
 | `~PL` | present length addition, KR403 kiosk only | `[ ]` | `[ ]` | `[ ]` |
 | `^PN` | presenter cycle, KR403 kiosk only | `[ ]` | `[ ]` | `[ ]` |
@@ -223,7 +223,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^CC` / `~CC` | change caret | `[x]` | `[x]` | `[x]` |
 | `^CD` / `~CD` | change delimiter | `[x]` | `[x]` | `[x]` |
 | `^CT` / `~CT` | change tilde | `[x]` | `[x]` | `[x]` |
-| `^CM` | change memory letter assignment | `[ ]` | `[~]` | `[ ]` |
+| `^CM` | change memory letter assignment | `[ ]` | `[~]` | `[~]` |
 
 ## Hardware control & calibration
 
@@ -231,63 +231,63 @@ Printer-side control, calibration and device actions; most need a connection or 
 
 | Command | Name | Web | Desktop | Docker |
 |---|---|:-:|:-:|:-:|
-| `~JA` | cancel all | `[ ]` | `[~]` | `[ ]` |
-| `^JB` | initialize flash memory | `[ ]` | `[~]` | `[ ]` |
-| `~JB` | reset optional memory | `[ ]` | `[~]` | `[ ]` |
-| `~JC` | media sensor calibration | `[ ]` | `[~]` | `[ ]` |
-| `~JD` | enable communications diagnostics | `[ ]` | `[~]` | `[ ]` |
-| `~JE` | disable communications diagnostics | `[ ]` | `[~]` | `[ ]` |
+| `~JA` | cancel all | `[ ]` | `[~]` | `[~]` |
+| `^JB` | initialize flash memory | `[ ]` | `[~]` | `[~]` |
+| `~JB` | reset optional memory | `[ ]` | `[~]` | `[~]` |
+| `~JC` | media sensor calibration | `[ ]` | `[~]` | `[~]` |
+| `~JD` | enable communications diagnostics | `[ ]` | `[~]` | `[~]` |
+| `~JE` | disable communications diagnostics | `[ ]` | `[~]` | `[~]` |
 | `~JF` | set battery condition, PA400 and PT400 only | `[ ]` | `[ ]` | `[ ]` |
-| `~JG` | graphing sensor calibration | `[ ]` | `[~]` | `[ ]` |
-| `^JI` / `~JI` | start ZBI | `[ ]` | `[~]` | `[ ]` |
-| `^JJ` | set auxiliary port | `[ ]` | `[~]` | `[ ]` |
-| `^JS` | sensor select | `[ ]` | `[~]` | `[ ]` |
-| `~JL` | set label length | `[ ]` | `[~]` | `[ ]` |
+| `~JG` | graphing sensor calibration | `[ ]` | `[~]` | `[~]` |
+| `^JI` / `~JI` | start ZBI | `[ ]` | `[~]` | `[~]` |
+| `^JJ` | set auxiliary port | `[ ]` | `[~]` | `[~]` |
+| `^JS` | sensor select | `[ ]` | `[~]` | `[~]` |
+| `~JL` | set label length | `[ ]` | `[~]` | `[~]` |
 | `^JM` | dots per millimeter | `[x]` | `[x]` | `[x]` |
-| `~JN` | printhead test fatal | `[ ]` | `[~]` | `[ ]` |
-| `~JO` | printhead test non-fatal | `[ ]` | `[~]` | `[ ]` |
-| `~JP` | pause and cancel format | `[ ]` | `[~]` | `[ ]` |
-| `~JQ` | terminate ZBI | `[ ]` | `[~]` | `[ ]` |
-| `~JR` | power on reset | `[ ]` | `[~]` | `[ ]` |
-| `~JX` | cancel partial format | `[ ]` | `[~]` | `[ ]` |
-| `~RO` | reset advanced counter | `[ ]` | `[~]` | `[ ]` |
-| `^SC` | set serial communications | `[ ]` | `[~]` | `[ ]` |
-| `^SI` | set sensor intensity | `[ ]` | `[~]` | `[ ]` |
+| `~JN` | printhead test fatal | `[ ]` | `[~]` | `[~]` |
+| `~JO` | printhead test non-fatal | `[ ]` | `[~]` | `[~]` |
+| `~JP` | pause and cancel format | `[ ]` | `[~]` | `[~]` |
+| `~JQ` | terminate ZBI | `[ ]` | `[~]` | `[~]` |
+| `~JR` | power on reset | `[ ]` | `[~]` | `[~]` |
+| `~JX` | cancel partial format | `[ ]` | `[~]` | `[~]` |
+| `~RO` | reset advanced counter | `[ ]` | `[~]` | `[~]` |
+| `^SC` | set serial communications | `[ ]` | `[~]` | `[~]` |
+| `^SI` | set sensor intensity | `[ ]` | `[~]` | `[~]` |
 | `^SP` | start print at dot row, throughput hint only | `[ ]` | `[ ]` | `[ ]` |
-| `^SQ` | halt ZebraNet alert | `[ ]` | `[~]` | `[ ]` |
-| `^SR` | set printhead resistance | `[ ]` | `[~]` | `[ ]` |
-| `^SS` | set media sensors | `[ ]` | `[~]` | `[ ]` |
-| `^SX` | set ZebraNet alert | `[ ]` | `[~]` | `[ ]` |
-| `^TO` | transfer object | `[ ]` | `[~]` | `[ ]` |
-| `~WC` | print configuration label | `[ ]` | `[~]` | `[ ]` |
-| `^WD` | print directory label | `[ ]` | `[~]` | `[ ]` |
-| `~WQ` | write query | `[ ]` | `[~]` | `[ ]` |
+| `^SQ` | halt ZebraNet alert | `[ ]` | `[~]` | `[~]` |
+| `^SR` | set printhead resistance | `[ ]` | `[~]` | `[~]` |
+| `^SS` | set media sensors | `[ ]` | `[~]` | `[~]` |
+| `^SX` | set ZebraNet alert | `[ ]` | `[~]` | `[~]` |
+| `^TO` | transfer object | `[ ]` | `[~]` | `[~]` |
+| `~WC` | print configuration label | `[ ]` | `[~]` | `[~]` |
+| `^WD` | print directory label | `[ ]` | `[~]` | `[~]` |
+| `~WQ` | write query | `[ ]` | `[~]` | `[~]` |
 | `^KV` | cutter and presenter settings, KR403 only | `[ ]` | `[ ]` | `[ ]` |
-| `^XS` | set dynamic media calibration | `[ ]` | `[~]` | `[ ]` |
-| `~PM` | decommissioning mode | `[ ]` | `[~]` | `[ ]` |
+| `^XS` | set dynamic media calibration | `[ ]` | `[~]` | `[~]` |
+| `~PM` | decommissioning mode | `[ ]` | `[~]` | `[~]` |
 | `^ZZ` | printer sleep, PA400 and PT400 only | `[ ]` | `[ ]` | `[ ]` |
 | `^CP` | eject or retract a presented page, KR403 only | `[ ]` | `[ ]` | `[ ]` |
-| `~KB` | kill battery | `[ ]` | `[~]` | `[ ]` |
+| `~KB` | kill battery | `[ ]` | `[~]` | `[~]` |
 
 ## Host communication
 
 | Command | Name | Web | Desktop | Docker |
 |---|---|:-:|:-:|:-:|
 | `~HB` | battery status, mobile printers only | `[ ]` | `[ ]` | `[ ]` |
-| `~HD` | printhead diagnostic | `[ ]` | `[~]` | `[ ]` |
-| `^HF` | host format | `[ ]` | `[~]` | `[ ]` |
-| `^HG` | host graphic | `[ ]` | `[x]` | `[ ]` |
-| `^HH` | configuration label return | `[ ]` | `[x]` | `[ ]` |
-| `~HI` | host identification | `[ ]` | `[x]` | `[ ]` |
-| `~HM` | host RAM status | `[ ]` | `[x]` | `[ ]` |
-| `~HQ` | host query | `[ ]` | `[~]` | `[ ]` |
-| `~HS` | host status return | `[ ]` | `[x]` | `[ ]` |
-| `^HT` | host linked fonts list | `[ ]` | `[~]` | `[ ]` |
-| `~HU` | ZebraNet alert configuration | `[ ]` | `[~]` | `[ ]` |
-| `^HV` | host verification | `[ ]` | `[~]` | `[ ]` |
-| `^HW` | host directory | `[ ]` | `[x]` | `[ ]` |
-| `^HY` | upload graphics | `[ ]` | `[x]` | `[ ]` |
-| `^HZ` | display description information | `[ ]` | `[~]` | `[ ]` |
+| `~HD` | printhead diagnostic | `[ ]` | `[~]` | `[~]` |
+| `^HF` | host format | `[ ]` | `[~]` | `[~]` |
+| `^HG` | host graphic | `[ ]` | `[x]` | `[~]` |
+| `^HH` | configuration label return | `[ ]` | `[x]` | `[~]` |
+| `~HI` | host identification | `[ ]` | `[x]` | `[~]` |
+| `~HM` | host RAM status | `[ ]` | `[x]` | `[~]` |
+| `~HQ` | host query | `[ ]` | `[~]` | `[~]` |
+| `~HS` | host status return | `[ ]` | `[x]` | `[~]` |
+| `^HT` | host linked fonts list | `[ ]` | `[~]` | `[~]` |
+| `~HU` | ZebraNet alert configuration | `[ ]` | `[~]` | `[~]` |
+| `^HV` | host verification | `[ ]` | `[~]` | `[~]` |
+| `^HW` | host directory | `[ ]` | `[x]` | `[~]` |
+| `^HY` | upload graphics | `[ ]` | `[x]` | `[~]` |
+| `^HZ` | display description information | `[ ]` | `[~]` | `[~]` |
 
 ## RFID
 
@@ -299,45 +299,45 @@ password-coupled ^RL. Read-back stays native. ^RM/^RR folded into ^RS,
 | Command | Name | Web | Desktop | Docker |
 |---|---|:-:|:-:|:-:|
 | `^RF` | read / write RFID | `[~]` | `[~]` | `[~]` |
-| `^RI` | get tag ID | `[ ]` | `[~]` | `[ ]` |
+| `^RI` | get tag ID | `[ ]` | `[~]` | `[~]` |
 | `^RM` | enable motion, pre-Link-OS, folded into ^RS | `[ ]` | `[ ]` | `[ ]` |
 | `^RN` | detect multiple tags, pre-Link-OS, absent from guide | `[ ]` | `[ ]` | `[ ]` |
 | `^RR` | RFID retries, pre-Link-OS, folded into ^RS | `[ ]` | `[ ]` | `[ ]` |
 | `^RB` | define EPC data structure | `[x]` | `[x]` | `[x]` |
 | `^RS` | RFID setup | `[x]` | `[x]` | `[x]` |
-| `^RT` | read tag | `[ ]` | `[~]` | `[ ]` |
+| `^RT` | read tag | `[ ]` | `[~]` | `[~]` |
 | `^WT` | legacy RFID write, superseded by ^RF | `[ ]` | `[ ]` | `[ ]` |
-| `^RU` | read unique chip serialisation | `[ ]` | `[~]` | `[ ]` |
+| `^RU` | read unique chip serialisation | `[ ]` | `[~]` | `[~]` |
 | `~RV` | report encoding result, pre-Link-OS, absent from guide | `[ ]` | `[ ]` | `[ ]` |
 | `^RW` | set read and write power | `[x]` | `[x]` | `[x]` |
 | `^RL` | lock / permalock tag memory | `[~]` | `[~]` | `[~]` |
-| `^HR` | calibrate RFID tag position | `[ ]` | `[~]` | `[ ]` |
-| `^HL` / `~HL` | RFID data log | `[ ]` | `[~]` | `[ ]` |
+| `^HR` | calibrate RFID tag position | `[ ]` | `[~]` | `[~]` |
+| `^HL` / `~HL` | RFID data log | `[ ]` | `[~]` | `[~]` |
 
 ## Network
 
 | Command | Name | Web | Desktop | Docker |
 |---|---|:-:|:-:|:-:|
-| `^NB` | check for wired print server at boot | `[ ]` | `[~]` | `[ ]` |
-| `^NC` | select wired / wireless primary device | `[ ]` | `[~]` | `[ ]` |
+| `^NB` | check for wired print server at boot | `[ ]` | `[~]` | `[~]` |
+| `^NC` | select wired / wireless primary device | `[ ]` | `[~]` | `[~]` |
 | `~NC` | network connect, legacy RS-485 only | `[ ]` | `[ ]` | `[ ]` |
 | `^NI` | network ID, legacy RS-485 only | `[ ]` | `[ ]` | `[ ]` |
-| `^NN` | set SNMP | `[ ]` | `[~]` | `[ ]` |
-| `^NP` | boot settings source: printer vs print server | `[ ]` | `[~]` | `[ ]` |
+| `^NN` | set SNMP | `[ ]` | `[~]` | `[~]` |
+| `^NP` | boot settings source: printer vs print server | `[ ]` | `[~]` | `[~]` |
 | `~NR` | set all transparent, legacy RS-485 only | `[ ]` | `[ ]` | `[ ]` |
-| `^NT` | set SMTP | `[ ]` | `[~]` | `[ ]` |
+| `^NT` | set SMTP | `[ ]` | `[~]` | `[~]` |
 | `~NT` | set connected printer transparent, legacy RS-485 only | `[ ]` | `[ ]` | `[ ]` |
-| `^NW` | web auth timeout | `[ ]` | `[~]` | `[ ]` |
-| `^KC` | set client identifier | `[ ]` | `[~]` | `[ ]` |
-| `^ND` | change network settings | `[ ]` | `[~]` | `[ ]` |
-| `^NS` | change wired network settings | `[ ]` | `[~]` | `[ ]` |
-| `^WA` | set antenna parameters | `[ ]` | `[~]` | `[ ]` |
+| `^NW` | web auth timeout | `[ ]` | `[~]` | `[~]` |
+| `^KC` | set client identifier | `[ ]` | `[~]` | `[~]` |
+| `^ND` | change network settings | `[ ]` | `[~]` | `[~]` |
+| `^NS` | change wired network settings | `[ ]` | `[~]` | `[~]` |
+| `^WA` | set antenna parameters | `[ ]` | `[~]` | `[~]` |
 | `^WE` | set WEP mode, obsolete, use ^WX | `[ ]` | `[ ]` | `[ ]` |
 | `^WL` | set LEAP, obsolete, use ^WX | `[ ]` | `[ ]` | `[ ]` |
-| `^WP` | set wireless password | `[ ]` | `[~]` | `[ ]` |
-| `^WR` | set transmit rate | `[ ]` | `[~]` | `[ ]` |
-| `^WS` | set wireless radio card values | `[ ]` | `[~]` | `[ ]` |
-| `^WX` | configure wireless security | `[ ]` | `[~]` | `[ ]` |
-| `~WL` | print network configuration label | `[ ]` | `[~]` | `[ ]` |
-| `~WR` | reset wireless radio card | `[ ]` | `[~]` | `[ ]` |
+| `^WP` | set wireless password | `[ ]` | `[~]` | `[~]` |
+| `^WR` | set transmit rate | `[ ]` | `[~]` | `[~]` |
+| `^WS` | set wireless radio card values | `[ ]` | `[~]` | `[~]` |
+| `^WX` | configure wireless security | `[ ]` | `[~]` | `[~]` |
+| `~WL` | print network configuration label | `[ ]` | `[~]` | `[~]` |
+| `~WR` | reset wireless radio card | `[ ]` | `[~]` | `[~]` |
 <!-- coverage:end -->

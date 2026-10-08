@@ -98,7 +98,7 @@ describe("zpl command catalog", () => {
     expect(commandId(catalogEntry("~HL")!)).toBe("^HL");
     // Prefix twins with diverging support are separate entries.
     expect(catalogEntry("^PH")?.support).toEqual({ web: "yes", desktop: "yes", docker: "yes" });
-    expect(catalogEntry("~PH")?.support).toEqual({ web: "no", desktop: "planned", docker: "no" });
+    expect(catalogEntry("~PH")?.support).toEqual({ web: "no", desktop: "planned", docker: "planned" });
     expect(catalogEntry("^QQ")).toBeUndefined();
   });
 
