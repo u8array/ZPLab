@@ -1,21 +1,20 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { usePrinterListing } from "../../hooks/usePrinterListing";
 import { useT } from "../../hooks/useT";
 import { Tooltip } from "../ui/Tooltip";
-import { FONT_FILE_ACCEPT, cachedFontPath, loadFontBytes } from "@zplab/core/lib/fontCache";
+import { cachedFontPath, loadFontBytes } from "@zplab/core/lib/fontCache";
 import { withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
-import { isTrueTypeFileName, prepareFontUpload, printerFontFileName, type FontUploadIssue } from "@zplab/core/lib/customFonts";
+import { isTrueTypeFileName, printerFontFileName } from "@zplab/core/lib/customFonts";
 import { listsStoredFont } from "@zplab/core/lib/storedObjects";
 import { storedObjectOrigins } from "@zplab/core/lib/storedObjectOrigins";
 import { storageKey, storageRefMatchesPath } from "@zplab/core/lib/storagePath";
 import { useCachedFonts } from "../../hooks/useCachedFonts";
-import { useUpload } from "../../hooks/useUpload";
 import { useLabelStore, selectEditorFrozen } from "../../store/labelStore";
-import { fontNameIssueText } from "../../lib/fontNameIssueText";
 import { isDesktopShell } from "../../lib/platform";
 import { PrinterObjectActions, PrinterOriginMark, PrinterStorageBar, StoredObjectsHeading } from "./PrinterStorage";
 import { buttonCls, disabledCls } from "../ui/formStyles";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { AddFontDialog } from "../Fonts/AddFontDialog";
 import { useStoredObjectHover } from "../../hooks/useStoredObjectHover";
 
 /** Why a profile row cannot be provisioned. */
@@ -64,45 +63,36 @@ export function StoredFontsTab() {
   const toggle = (path: string, on: boolean) =>
     patchPrinterProfileWith((p) => ({ setupFonts: on ? withSetupEntry(p.setupFonts, { path }) : withoutSetupEntry(p.setupFonts, path) }));
 
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [repairTarget, setRepairTarget] = useState<string>();
+  // One upload path for the app, so the tab opens the font panel's dialog instead of keeping its own.
+  const [adding, setAdding] = useState<{ repairPath?: string }>();
+  const [uploadIssue, setUploadIssue] = useState<"replayedNameTaken" | "refused">();
+
+  /** A replayed entry carries the only copy of its bytes, and a profile write replaces an entry
+   *  whole. Nothing may be written before the refusal. */
+  const provision = async ({ path, bytes }: { path: string; bytes: Uint8Array }) => {
+    if (replayedKeys.has(storageKey(path))) return setUploadIssue("replayedNameTaken");
+    // The entry has to meet a cache that already holds the file, or its row reads as missing bytes.
+    await loadFontBytes(bytes, path);
+    setUploadIssue(toggle(path, true) ? undefined : "refused");
+  };
   // A replayed upload lives in the profile only, so removing it is a delete, not a toggle.
   const [pendingRemove, setPendingRemove] = useState<string>();
-  const pick = (target?: string) => {
-    setRepairTarget(target);
-    fileRef.current?.click();
-  };
-  const { busy: uploading, issue: uploadIssue, start: uploadFile } = useUpload<"error" | "refused" | FontUploadIssue, File, [target?: string]>(async (file, target) => {
-    const prepared = await prepareFontUpload(file, target);
-    if (!prepared.ok) return prepared.reason;
-    await loadFontBytes(prepared.bytes, prepared.path);
-    if (!toggle(prepared.path, true)) return "refused";
-    return null;
-  }, "error");
 
   return (
     <div className="flex flex-col gap-4">
       <section className="flex flex-col gap-2">
         <StoredObjectsHeading />
         <div className="flex items-center gap-2">
-          <input
-            ref={fileRef}
-            type="file"
-            accept={FONT_FILE_ACCEPT}
-            className="hidden"
-            aria-label={loc.uploadFont}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              e.target.value = "";
-              if (file) uploadFile(file, repairTarget);
-            }}
-          />
           <Tooltip content={frozen ? t.printerSettings.frozenHint : loc.uploadHint}>
-            <button type="button" className={`${buttonCls} ${disabledCls}`} disabled={uploading || frozen} onClick={() => pick()}>
+            <button type="button" className={`${buttonCls} ${disabledCls}`} disabled={frozen} onClick={() => { setUploadIssue(undefined); setAdding({}); }}>
               {loc.uploadFont}
             </button>
           </Tooltip>
-          {uploadIssue && <span className="text-[10px] text-warning">{{ error: loc.uploadError, notAFont: loc.uploadError, ...fontNameIssueText(t), refused: t.printerSettings.frozenHint }[uploadIssue]}</span>}
+          {uploadIssue && (
+            <span role="alert" className="text-[10px] text-warning">
+              {uploadIssue === "refused" ? t.printerSettings.frozenHint : loc.replayedNameTaken}
+            </span>
+          )}
         </div>
         {isDesktopShell && <PrinterStorageBar />}
         {rows.length === 0 ? (
@@ -134,7 +124,7 @@ export function StoredFontsTab() {
                   <span className="flex items-center gap-2 shrink-0">
                     {hostObject && <PrinterObjectActions origin={{ ...origin, hostObject }} kind="font" />}
                     {issue === "missingBytes" && repairable(path) && (
-                      <button type="button" className={`${buttonCls} ${disabledCls}`} disabled={uploading || frozen} onClick={() => pick(path)}>
+                      <button type="button" className={`${buttonCls} ${disabledCls}`} disabled={frozen} onClick={() => { setUploadIssue(undefined); setAdding({ repairPath: path }); }}>
                         {loc.repairEntry}
                       </button>
                     )}
@@ -181,6 +171,15 @@ export function StoredFontsTab() {
           </ul>
         )}
       </section>
+      {adding && (
+        <AddFontDialog
+          repairPath={adding.repairPath}
+          onDone={(picked) => {
+            if (picked) void provision(picked);
+            setAdding(undefined);
+          }}
+        />
+      )}
       {pendingRemove !== undefined && (
         <ConfirmDialog
           message={loc.removeReplayedConfirm}

@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach } from "vitest";
-import { render, cleanup, fireEvent, act } from "@testing-library/react";
+import { render, cleanup, fireEvent, act, within } from "@testing-library/react";
 import { StoredFontsTab } from "./StoredFontsTab";
 import { useLabelStore } from "../../store/labelStore";
 import { getAllFonts, loadFontBytes, removeFont } from "@zplab/core/lib/fontCache";
+import { fallbackTranslations as en } from "../../locales";
 
 beforeEach(async () => {
   await loadFontBytes(new Uint8Array([0, 1, 0, 0]), "E:ARIAL.TTF");
@@ -12,8 +13,20 @@ beforeEach(async () => {
 
 afterEach(() => {
   cleanup();
-  for (const name of ["E:ARIAL.TTF", "R:ARIAL.TTF", "E:NEW.TTF", "E:OLD.BIN", "E:MYLOGO.TTF", "R:GONE.TTF", "E:OTHER.TTF"]) removeFont(name);
+  for (const name of ["E:ARIAL.TTF", "R:ARIAL.TTF", "E:NEW.TTF", "E:OLD.BIN", "R:GONE.TTF", "E:OTHER.TTF"]) removeFont(name);
 });
+
+const addFile = async (r: ReturnType<typeof render>, open: string, file: File) => {
+  fireEvent.click(r.getByText(open));
+  // The dialog is portaled, so its hidden input sits outside `container`.
+  const input = r.baseElement.querySelector('input[type="file"]') as HTMLInputElement;
+  await act(async () => {
+    fireEvent.change(input, { target: { files: [file] } });
+  });
+  await act(async () => {
+    fireEvent.click(within(r.getByRole("dialog")).getByRole("button", { name: "Add" }));
+  });
+};
 
 describe("StoredFontsTab", () => {
   it("lists a cached font and adds it to the setup script", () => {
@@ -99,43 +112,38 @@ describe("StoredFontsTab", () => {
     expect(useLabelStore.getState().printerProfile.setupFonts).toBeUndefined();
   });
 
-  it("repairs a missing entry under its own path instead of the default drive", async () => {
+  it("repairs a missing entry under its own path, whatever the picked file is called", async () => {
     act(() => useLabelStore.setState({ printerProfile: { setupFonts: [{ path: "R:GONE.TTF" }] } }));
-    const { getByText, getByLabelText, queryByText } = render(<StoredFontsTab />);
-    act(() => {
-      fireEvent.click(getByText("Upload the file"));
-    });
-    await act(async () => {
-      fireEvent.change(getByLabelText(/Upload font/), { target: { files: [new File(["x"], "other.ttf")] } });
-    });
+    const r = render(<StoredFontsTab />);
+    await addFile(r, "Upload the file", new File(["x"], "other.ttf"));
     expect(getAllFonts().map((f) => f.name)).toContain("R:GONE.TTF");
-    expect(queryByText(/Font missing/)).toBeNull();
+    expect(r.queryByText(/Font missing/)).toBeNull();
     expect(useLabelStore.getState().printerProfile.setupFonts).toEqual([{ path: "R:GONE.TTF" }]);
   });
 
+  it("keeps an imported upload whose only copy is the profile, rather than replacing it", async () => {
+    act(() => useLabelStore.setState({ printerProfile: { setupFonts: [{ path: "E:OTHER.TTF", download: "~DYE:OTHER.TTF,A,T,4,,00010000" }] } }));
+    const r = render(<StoredFontsTab />);
+    await addFile(r, "Upload font…", new File(["x"], "other.ttf"));
+    expect(useLabelStore.getState().printerProfile.setupFonts).toEqual([{ path: "E:OTHER.TTF", download: "~DYE:OTHER.TTF,A,T,4,,00010000" }]);
+    // The cache must stay out of it too, or the canvas would draw bytes the setup script never sends.
+    expect(getAllFonts().map((f) => f.name)).not.toContain("E:OTHER.TTF");
+    expect(r.getByRole("alert").textContent).toBe(en.printerSettings.fonts.replayedNameTaken);
+  });
+
   it("uploads a font file into the cache and the setup script in one step", async () => {
-    const { getByLabelText } = render(<StoredFontsTab />);
-    await act(async () => {
-      fireEvent.change(getByLabelText(/Upload font/), { target: { files: [new File(["x"], "new.ttf")] } });
-    });
+    const r = render(<StoredFontsTab />);
+    await addFile(r, "Upload font…", new File(["x"], "new.ttf"));
     expect(getAllFonts().map((f) => f.name)).toContain("E:NEW.TTF");
     expect(useLabelStore.getState().printerProfile.setupFonts).toEqual([{ path: "E:NEW.TTF" }]);
   });
 
-  it("gives a picked file a printer name the ~DY operand can carry", async () => {
-    const { getByLabelText } = render(<StoredFontsTab />);
-    await act(async () => {
-      fireEvent.change(getByLabelText(/Upload font/), { target: { files: [new File(["x"], "my logo.ttf")] } });
-    });
-    expect(useLabelStore.getState().printerProfile.setupFonts).toEqual([{ path: "E:MYLOGO.TTF" }]);
-  });
-
   it("locks every profile control while the editor is frozen, instead of snapping back", () => {
     act(() => useLabelStore.setState({ sourceEdit: { status: "editing", draft: "^XA^XZ", baseline: "^XA^XZ", session: 1 } }));
-    const { getByLabelText, getByRole } = render(<StoredFontsTab />);
+    const { getByLabelText, getByRole, getByText } = render(<StoredFontsTab />);
     const toggle = getByLabelText(/Send at setup/) as HTMLInputElement;
     expect(toggle.disabled).toBe(true);
-    const upload = (getByLabelText(/Upload font/) as HTMLInputElement).closest("div")?.querySelector("button") as HTMLButtonElement;
+    const upload = getByText("Upload font…") as HTMLButtonElement;
     expect(upload.disabled).toBe(true);
     // A disabled control swallows its own events, so the reason sits on the wrapper.
     act(() => {
@@ -145,21 +153,4 @@ describe("StoredFontsTab", () => {
     act(() => useLabelStore.setState({ sourceEdit: { status: "off" } }));
   });
 
-  it("refuses a second file that folds onto a cached printer name with different bytes", async () => {
-    const { getByLabelText, getByText } = render(<StoredFontsTab />);
-    await act(async () => {
-      fireEvent.change(getByLabelText(/Upload font/), { target: { files: [new File(["other bytes"], "arial.ttf")] } });
-    });
-    expect(getAllFonts()).toHaveLength(1);
-    expect(getByText(/different printer filename/)).toBeTruthy();
-    expect(useLabelStore.getState().printerProfile.setupFonts).toBeUndefined();
-  });
-
-  it("names a failed upload", async () => {
-    const { getByLabelText, getByText } = render(<StoredFontsTab />);
-    await act(async () => {
-      fireEvent.change(getByLabelText(/Upload font/), { target: { files: [new File(["x"], "bad.txt")] } });
-    });
-    expect(getByText(/Could not load the font file/)).toBeTruthy();
-  });
 });
