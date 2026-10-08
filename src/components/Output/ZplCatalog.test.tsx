@@ -126,7 +126,7 @@ describe("catalog panes", () => {
       return levels;
     };
     expect(levelsOf("^LL")).toEqual(["yes", "yes", "yes"]);
-    expect(levelsOf("^LF")).toEqual(["no", "planned", "no"]);
+    expect(levelsOf("^LF")).toEqual(["no", "planned", "planned"]);
     expect(levelsOf("^JW")).toEqual(["no", "no", "no"]);
   });
 

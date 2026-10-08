@@ -1377,7 +1377,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       },
       "loss": "printerComms"
     },
@@ -3417,7 +3418,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -3460,7 +3462,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -3529,7 +3532,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -3604,7 +3608,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -4358,7 +4363,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -4394,7 +4400,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -4412,7 +4419,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -4430,7 +4438,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5002,7 +5011,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5020,7 +5030,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5045,7 +5056,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5063,7 +5075,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5081,7 +5094,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5099,7 +5113,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5117,7 +5132,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5160,7 +5176,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5215,7 +5232,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5269,7 +5287,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5294,7 +5313,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5312,7 +5332,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5355,7 +5376,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5373,7 +5395,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5391,7 +5414,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5409,7 +5433,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5427,7 +5452,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5445,7 +5471,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5470,7 +5497,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5525,7 +5553,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5556,7 +5585,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5616,7 +5646,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5641,7 +5672,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5714,7 +5746,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5769,7 +5802,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5823,7 +5857,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5841,7 +5876,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5878,7 +5914,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5903,7 +5940,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5983,7 +6021,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6014,7 +6053,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6087,7 +6127,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6123,7 +6164,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6160,7 +6202,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6197,7 +6240,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -6215,7 +6259,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -6233,7 +6278,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -6251,7 +6297,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -6275,7 +6322,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6293,7 +6341,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -6311,7 +6360,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       },
       "loss": "printerComms"
     },
@@ -6330,7 +6380,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6378,7 +6429,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6421,7 +6473,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -6458,7 +6511,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "yes"
+        "desktop": "yes",
+        "docker": "planned"
       }
     },
     {
@@ -6482,7 +6536,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6544,7 +6599,8 @@
       "summary": "Reads the current RFID tag ID for use in label data or a host reply.",
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6693,7 +6749,8 @@
       "summary": "Reads tag data into a label field in legacy RFID formats.",
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6737,7 +6794,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6899,7 +6957,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6918,7 +6977,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6943,7 +7003,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6968,7 +7029,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7070,7 +7132,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7095,7 +7158,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7142,7 +7206,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7185,7 +7250,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7226,7 +7292,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7300,7 +7367,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7369,7 +7437,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7400,7 +7469,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7531,7 +7601,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7575,7 +7646,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7636,7 +7708,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7733,7 +7806,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7751,7 +7825,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -7769,7 +7844,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned"
+        "desktop": "planned",
+        "docker": "planned"
       }
     }
   ]
