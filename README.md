@@ -81,9 +81,8 @@ Select several objects with Shift-click or a lasso. Position and size changes ap
 The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. On desktop the panel names the configured printer. A click shows its state and offers to read its configuration. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
 
 - **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
-- **File → Send to Zebra Printer:** opens the send dialog. It sends over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop. On desktop, **Check printer** asks the printer for its state over the network or USB.
+- **File → Print:** opens the output dialog, where you choose what the label becomes. **ZPL** sends the code over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop. On desktop, **Check printer** asks the printer for its state over the network or USB. **Image** renders the current label and prints it through the system print dialog. **PDF** saves the design as a file.
 - **File → Export PDF:** saves one PDF page per label page, rendered by the preview renderer. With the renderer off, ZPLab captures the canvas, so the PDF holds the current page only. A batch PDF needs the renderer and holds one page per data row.
-- **File → Print as Image (browser):** renders the current page with the same renderer, then opens the browser print dialog
 
 ### 5. Save the design
 

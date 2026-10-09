@@ -14,7 +14,7 @@ import { ZplImportModal } from "./Output/ZplImportModal";
 import { VariableMappingModal } from "./Variables/VariableMappingModal";
 import { ConnectDataWizard } from "./Variables/ConnectDataWizard";
 import { CsvImportConfirmDialog } from "./Variables/CsvImportConfirmDialog";
-import { PrintToZebraDialog } from "./Output/PrintToZebraDialog";
+import { OutputDialog } from "./Output/OutputDialog";
 import {
   DropdownMenu,
   DropdownItem,
@@ -34,18 +34,17 @@ import {
   TableCellsIcon,
   PrinterIcon,
   Cog6ToothIcon,
-  PaperAirplaneIcon,
   XMarkIcon,
   SunIcon,
   MoonIcon,
   GlobeAltIcon,
 } from "@heroicons/react/16/solid";
-import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectEditorFrozen, selectSourceEditing, selectSourceEditDirty, selectDocumentEmits, selectBatchPrintCount } from "../store/labelStore";
+import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectEditorFrozen, selectSourceEditing, selectSourceEditDirty, selectDocumentEmits } from "../store/labelStore";
 import { datasetTimestamp } from "@zplab/core/types/DataSource";
 import { isCurrentDataContext, settleDatasetReplace } from "../store/datasetActions";
 import { ConfirmDialog } from "./ui/ConfirmDialog";
 import { formatTemplate } from "../lib/formatTemplate";
-import { buildMenuModel, type MenuItemId } from "../lib/menuModel";
+import { buildMenuModel, type MenuFlags, type MenuItemId } from "../lib/menuModel";
 import { NativeMenuBridge } from "./NativeMenuBridge";
 import type { MenuHandlers } from "../hooks/useNativeMenu";
 import { isDesktopShell, isMacDesktop } from "../lib/platform";
@@ -87,7 +86,6 @@ const MENU_ICONS: Partial<Record<MenuItemId, ComponentType<SVGProps<SVGSVGElemen
   importCsv: TableCellsIcon,
   connectData: TableCellsIcon,
   print: PrinterIcon,
-  sendToZebra: PaperAirplaneIcon,
   undo: ArrowUturnLeftIcon,
   redo: ArrowUturnRightIcon,
   github: GitHubIcon,
@@ -96,7 +94,6 @@ const MENU_ICONS: Partial<Record<MenuItemId, ComponentType<SVGProps<SVGSVGElemen
 export function AppShell() {
   const t = useT();
   const label = useLabelStore((s) => s.label);
-  const batchPrintCount = useLabelStore(selectBatchPrintCount);
   const pages = useLabelStore((s) => s.pages);
   const selectObject = useLabelStore((s) => s.selectObject);
   const addPage = useLabelStore((s) => s.addPage);
@@ -116,7 +113,15 @@ export function AppShell() {
   const pageCount = useLabelStore((s) => s.pages.length);
   // The Labelary notice gates every Labelary render, so the action waits here until the user continues.
   const [afterNotice, setAfterNotice] = useState<(() => void) | null>(null);
-  const withNotice = (action: () => void) => (renderer === "labelary" && noticeRequired ? setAfterNotice(() => action) : action());
+  // Hands back what the action returns, so a caller can wait for it. Nothing comes back while the
+  // notice is still open, because the work has not started yet.
+  const withNotice = <T,>(action: () => T): T | undefined => {
+    if (renderer === "labelary" && noticeRequired) {
+      setAfterNotice(() => () => void action());
+      return undefined;
+    }
+    return action();
+  };
   const appUpdate = useLabelStore((s) => s.appUpdate);
   const checkForAppUpdate = useLabelStore((s) => s.checkForAppUpdate);
   const installAppUpdate = useLabelStore((s) => s.installAppUpdate);
@@ -191,7 +196,7 @@ export function AppShell() {
     showZplImport,
     openZplImport,
     closeZplImport,
-    showZebraPrint,
+    outputSource,
     openZebraPrint,
     closeZebraPrint,
     currentZpl,
@@ -207,15 +212,15 @@ export function AppShell() {
   const leftPanel = useCollapsiblePanel("zpl-panel-left");
   const rightPanel = useCollapsiblePanel("zpl-panel-right");
 
-  // One menu model for both surfaces: the DOM dropdown (web header) and the
-  // native OS menu (desktop, where the header row is not rendered at all).
-  const menuModel = buildMenuModel(t, {
+  // One menu model for both surfaces: the DOM dropdown in the web header, and the native OS menu on
+  // the desktop, where the header row is not rendered at all. The output dialog reads the same
+  // flags, so its first level and these entries agree on what the document can produce.
+  const menuFlags: MenuFlags = {
     hasObjects,
     documentEmits,
     sourceEditing,
     canBatchExport,
     batchRowCount,
-    batchPrintCount,
     connectDataWizard: isDesktopShell,
     canBatchPdf: renderer !== "none",
     pdfCurrentPageOnly: renderer === "none" && pageCount > 1,
@@ -223,7 +228,8 @@ export function AppShell() {
     canRedo,
     // On macOS quit lives in the app submenu (Cmd+Q), not the File section.
     includeQuit: isDesktopShell && !isMacDesktop,
-  });
+  };
+  const menuModel = buildMenuModel(t, menuFlags);
   const menuHandlers: MenuHandlers = {
     new: handleNew,
     addPage,
@@ -237,8 +243,7 @@ export function AppShell() {
     saveDesign: handleSave,
     importCsv: openCsvPicker,
     connectData: openConnectWizard,
-    print: () => withNotice(() => void handlePrint()),
-    sendToZebra: openZebraPrint,
+    print: openZebraPrint,
     undo: () => undo(),
     redo: () => redo(),
     github: () => openExternal(REPO_URL),
@@ -565,8 +570,15 @@ export function AppShell() {
           onCancel={() => settleDatasetReplace(false)}
         />
       )}
-      {showZebraPrint && (
-        <PrintToZebraDialog zpl={currentZpl()} onClose={closeZebraPrint} />
+      {outputSource && (
+        <OutputDialog
+          zpl={currentZpl}
+          source={outputSource}
+          facts={menuFlags}
+          onClose={closeZebraPrint}
+          onPrintImage={() => withNotice(handlePrint)}
+          onExportPdf={(scope) => withNotice(scope === "batch" ? exportBatchPdf : exportPdf)}
+        />
       )}
       {afterNotice && (
         <LabelaryNoticeModal

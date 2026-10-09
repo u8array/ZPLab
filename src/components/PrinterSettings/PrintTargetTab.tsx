@@ -2,6 +2,7 @@ import { useT } from "../../hooks/useT";
 import { useLabelStore } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
+import { wayHint } from "../../lib/printWayText";
 import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useUsbPrinters, type DeviceListState } from "../../hooks/usePrintDevices";
 import { buttonCls, sectionHeadingCls } from "../ui/formStyles";
 import { RadioOption } from "../ui/RadioOption";
@@ -33,7 +34,7 @@ export function PrintTargetTab() {
   const offered = offeredTransports(isDesktopShell, { local: local.present, usb: usb.present });
   const way = effectiveTransport(transport, offered);
 
-  // A device way without devices stays visible but disabled, so the user sees why it is not on offer.
+  // A device way without devices stays visible, and then its reason replaces the description.
   const deviceWayHint = (value: PrintTransport) => (offered.includes(value) ? undefined : t.zebraPrint.noPrinters);
   const ways: { value: PrintTransport; label: string; desktopOnly?: boolean }[] = [
     { value: "network", label: t.zebraPrint.tabNetwork },
@@ -56,7 +57,7 @@ export function PrintTargetTab() {
               current={way}
               onSelect={(next) => setPrintTarget({ transport: next })}
               label={w.label}
-              hint={w.desktopOnly ? deviceWayHint(w.value) : undefined}
+              hint={deviceWayHint(w.value) ?? wayHint(t.zebraPrint, w.value, isDesktopShell)}
               disabled={!offered.includes(w.value)}
             />
           ))}

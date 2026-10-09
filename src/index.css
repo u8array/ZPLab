@@ -150,3 +150,43 @@ html, body, #root {
   background: var(--color-bg);
   color: var(--color-text);
 }
+
+/* The sheet these rules dress is built in printSheet.ts. */
+/* Off the screen rather than hidden, because the sheet sits in the page from the moment it is
+   mounted until the engine is done with it and must never flash into view. */
+.print-sheet {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+}
+
+@media print {
+  /* No page margin, or the engine draws its own header and footer there and stamps the sheet with
+     the title and the date. Printing the app's own interface is no goal of this app. */
+  @page {
+    margin: 0;
+  }
+
+  /* The page takes its ground from the root element, so the app's own must be reset there. */
+  html.printing-label,
+  html.printing-label body {
+    background: #fff;
+    color: #000;
+  }
+
+  html.printing-label body > *:not(.print-sheet) {
+    display: none !important;
+  }
+
+  html.printing-label .print-sheet {
+    position: static;
+  }
+
+  /* A 100x150 label is taller than a sheet, and without the cap its foot lands on a second page.
+     Block, because an inline image adds the baseline gap below it and spills that page anyway. */
+  .print-sheet img {
+    display: block;
+    max-width: 100%;
+    max-height: 100vh;
+  }
+}

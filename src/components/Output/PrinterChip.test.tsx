@@ -3,7 +3,7 @@ import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { render, cleanup, fireEvent, act } from "@testing-library/react";
 import { PrinterChip } from "./PrinterChip";
 import { useLabelStore } from "../../store/labelStore";
-import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
+import { DEFAULT_PRINT_TARGET, type PrintTarget } from "../../lib/printTarget";
 import { fallbackTranslations as en } from "../../locales";
 import type { PrinterStatusReport } from "../../lib/printerStatus";
 
@@ -72,6 +72,24 @@ describe("PrinterChip", () => {
     fireEvent.click(r.getByText(en.zebraPrint.printer));
     expect(r.getByText(/No printer configured/)).toBeTruthy();
     expect(dot(r)).toBe("blocked");
+  });
+
+  it("says where the check asked, whenever that was the address and not the way", () => {
+    const target = (over: Partial<PrintTarget>) =>
+      act(() => useLabelStore.setState({ printTarget: { ...DEFAULT_PRINT_TARGET, host: "172.17.17.175", ...over } }));
+    const r = render(<PrinterChip />);
+    fireEvent.click(r.getByText("172.17.17.175"));
+    expect(r.queryByText(en.zebraPrint.wayQueryAddress)).toBeNull();
+    target({ transport: "local" });
+    expect(r.getByText(en.zebraPrint.wayQueryAddress)).toBeTruthy();
+    // A USB way without a device falls through to the address, so the note belongs there too.
+    target({ transport: "usb", usbId: "" });
+    expect(r.getByText(en.zebraPrint.wayQueryAddress)).toBeTruthy();
+    target({ transport: "usb", usbId: "dev1" });
+    expect(r.queryByText(en.zebraPrint.wayQueryAddress)).toBeNull();
+    // Without an address there is nothing to ask over, and the chip says that instead.
+    target({ transport: "local", host: "" });
+    expect(r.queryByText(en.zebraPrint.wayQueryAddress)).toBeNull();
   });
 
   it("opens the printer's own storage, the shortest way there from the design", () => {

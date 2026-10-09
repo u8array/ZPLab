@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
-import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
+import { describe, it, expect, afterEach, beforeEach } from "vitest";
 import { render, cleanup, act, fireEvent } from "@testing-library/react";
-import { PrintToZebraDialog } from "./PrintToZebraDialog";
+import { ZplSendPanel } from "./ZplSendPanel";
 import { useLabelStore } from "../../store/labelStore";
 import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
 import { fallbackTranslations as en } from "../../locales";
@@ -14,12 +14,12 @@ beforeEach(() => {
   });
 });
 
-describe("PrintToZebraDialog print target", () => {
+describe("ZplSendPanel print target", () => {
   it("opens on the way last used and keeps the choice when a tab is clicked", () => {
     act(() => {
       useLabelStore.getState().setPrintTarget({ transport: "browserprint" });
     });
-    const r = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
     expect(r.getByText(en.zebraPrint.discover)).toBeTruthy();
     act(() => {
       fireEvent.click(r.getByText(en.zebraPrint.tabNetwork));
@@ -32,13 +32,13 @@ describe("PrintToZebraDialog print target", () => {
     act(() => {
       useLabelStore.getState().setPrintTarget({ transport: "local" });
     });
-    const r = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
     expect(r.getByDisplayValue("172.17.17.175")).toBeTruthy();
     expect(useLabelStore.getState().printTarget.transport).toBe("local");
   });
 
   it("commits the host trimmed and a typed port at once and refuses a keystroke that leaves no port", () => {
-    const r = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
     const host = r.getByDisplayValue("172.17.17.175");
     const port = r.getByDisplayValue("9100");
     act(() => {

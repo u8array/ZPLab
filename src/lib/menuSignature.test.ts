@@ -10,7 +10,6 @@ const FLAGS: MenuFlags = {
   sourceEditing: false,
   canBatchExport: false,
   batchRowCount: 0,
-  batchPrintCount: 0,
   connectDataWizard: false,
   canBatchPdf: true,
   pdfCurrentPageOnly: false,

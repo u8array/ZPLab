@@ -1,4 +1,5 @@
 import type { StateCreator } from 'zustand';
+import { DEFAULT_OUTPUT_CHOICE, type OutputChoice, type OutputSource } from '../../lib/outputChoice';
 import type { Unit } from '@zplab/core/lib/units';
 import type { ViewRotation } from '@zplab/core/registry/rotation';
 import { fallbackTranslations, loadLocale, type LocaleCode, type Translations } from '../../locales';
@@ -180,9 +181,11 @@ export interface UiSlice {
   /** Reference for the "Align" section toggle; see AlignSelectionRef. Transient. */
   alignRef: AlignSelectionRef;
   printerSettingsTab: PrinterSettingsTab | null;
-  /** Cross-component trigger for the "send to Zebra" dialog. `null`
-   *  keeps the dialog closed. */
-  zebraPrintSource: 'label' | 'setupScript' | null;
+  /** Cross-component trigger for the output dialog. `null` keeps it closed. */
+  zebraPrintSource: OutputSource | null;
+  /** What the dialog proposes when it opens again. Out of the persisted set on purpose: the user
+   *  asked for a memory that lasts the session and starts neutral after a restart. */
+  outputChoice: OutputChoice;
   /** Barcode object id whose GS1 content builder modal is open; null = closed. */
   gs1BuilderObjectId: string | null;
   /** Object id whose typed-content builder modal is open; null = closed.
@@ -250,8 +253,9 @@ export interface UiSlice {
   endRfidPositionPick: () => void;
   setAlignRef: (ref: AlignSelectionRef) => void;
   setPrinterSettingsTab: (tab: PrinterSettingsTab | null) => void;
-  openZebraPrint: (source: 'label' | 'setupScript') => void;
+  openZebraPrint: (source: OutputSource) => void;
   closeZebraPrint: () => void;
+  setOutputChoice: (patch: Partial<OutputChoice>) => void;
   openGs1Builder: (objectId: string) => void;
   closeGs1Builder: () => void;
   openContentBuilder: (objectId: string) => void;
@@ -341,6 +345,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   alignRef: 'selection',
   printerSettingsTab: null,
   zebraPrintSource: null,
+  outputChoice: DEFAULT_OUTPUT_CHOICE,
   gs1BuilderObjectId: null,
   contentBuilderObjectId: null,
   variableBuilderObjectId: null,
@@ -524,6 +529,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   setPrinterSettingsTab: (tab) => set({ printerSettingsTab: tab, pickingRfidPosition: false }),
   openZebraPrint: (source) => set({ zebraPrintSource: source }),
   closeZebraPrint: () => set({ zebraPrintSource: null }),
+  setOutputChoice: (patch) => set((state) => ({ outputChoice: { ...state.outputChoice, ...patch } })),
   openGs1Builder: (objectId) => set({ gs1BuilderObjectId: objectId }),
   closeGs1Builder: () => set({ gs1BuilderObjectId: null }),
   openContentBuilder: (objectId) => set({ contentBuilderObjectId: objectId }),

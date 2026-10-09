@@ -8,7 +8,6 @@ const FLAGS: MenuFlags = {
   sourceEditing: false,
   canBatchExport: false,
   batchRowCount: 0,
-  batchPrintCount: 0,
   connectDataWizard: false,
   canBatchPdf: true,
   pdfCurrentPageOnly: false,
@@ -26,7 +25,7 @@ describe("buildMenuModel", () => {
     const m = buildMenuModel(en, FLAGS);
     expect(ids(m)).toEqual([
       "new", "addPage", "importZpl", "settings", "exportZpl", "exportPdf",
-      "openDesign", "saveDesign", "importCsv", "print", "sendToZebra",
+      "openDesign", "saveDesign", "importCsv", "print",
     ]);
     expect(m.file).toHaveLength(5);
   });
@@ -40,7 +39,7 @@ describe("buildMenuModel", () => {
 
   it("gates object-dependent items on hasObjects and export/save on documentEmits", () => {
     const m = buildMenuModel(en, { ...FLAGS, hasObjects: false, documentEmits: false });
-    for (const id of ["exportZpl", "saveDesign", "print", "sendToZebra"]) {
+    for (const id of ["exportZpl", "saveDesign", "print"]) {
       expect(byId(m, id)?.enabled).toBe(false);
     }
     expect(byId(m, "new")?.enabled).toBe(true);
@@ -49,15 +48,14 @@ describe("buildMenuModel", () => {
     const emits = buildMenuModel(en, { ...FLAGS, hasObjects: false, documentEmits: true });
     expect(byId(emits, "exportZpl")?.enabled).toBe(true);
     expect(byId(emits, "saveDesign")?.enabled).toBe(true);
-    // A config-only overlay stream is a legitimate setup job for the device;
-    // only the Labelary render stays objects-gated.
-    expect(byId(emits, "sendToZebra")?.enabled).toBe(true);
-    expect(byId(emits, "print")?.enabled).toBe(false);
+    // The one output entry stays open, because a config-only overlay stream is still a legitimate
+    // setup job for the device. The dialog drops the two rendered kinds behind it.
+    expect(byId(emits, "print")?.enabled).toBe(true);
   });
 
   it("disables document-replacing and emitting entries during a source-edit session", () => {
     const m = buildMenuModel(en, { ...FLAGS, sourceEditing: true });
-    for (const id of ["new", "addPage", "importZpl", "openDesign", "saveDesign", "importCsv", "exportZpl", "print", "sendToZebra"]) {
+    for (const id of ["new", "addPage", "importZpl", "openDesign", "saveDesign", "importCsv", "exportZpl", "print"]) {
       expect(byId(m, id)?.enabled, id).toBe(false);
     }
     expect(byId(m, "settings")?.enabled).toBe(true);
@@ -70,14 +68,11 @@ describe("buildMenuModel", () => {
     expect(item?.label).toContain("7");
   });
 
-  it("labels sendToZebra with the physical print count while a batch is mapped", () => {
-    expect(byId(buildMenuModel(en, FLAGS), "sendToZebra")?.label).toBe(en.app.sendToZebra);
-    // 7 rows × ^PQ 3: the send label counts printed labels, the export
-    // label counts file rows.
-    const m = buildMenuModel(en, {
-      ...FLAGS, canBatchExport: true, batchRowCount: 7, batchPrintCount: 21,
-    });
-    expect(byId(m, "sendToZebra")?.label).toContain("21");
+  it("keeps the output entry's label free of any count, because it names no kind", () => {
+    expect(byId(buildMenuModel(en, FLAGS), "print")?.label).toBe(en.app.print);
+    // The counts belong to the entries that name what they produce, and to the dialog itself.
+    const m = buildMenuModel(en, { ...FLAGS, canBatchExport: true, batchRowCount: 7 });
+    expect(byId(m, "print")?.label).toBe(en.app.print);
     expect(byId(m, "exportBatch")?.label).toContain("7");
   });
 
