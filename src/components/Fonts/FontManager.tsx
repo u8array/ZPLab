@@ -118,6 +118,7 @@ export function FontManager() {
   };
 
   // The alias has to meet a cache that already holds the file, or the row lands under the manual mappings.
+  // The alias is assigned here, so the user lands on a row already wired to ^CW and the canvas.
   const addPicked = async ({ path, bytes }: { path: string; bytes: Uint8Array }) => {
     await loadFontBytes(bytes, path);
     const taken = (customFonts ?? []).map((m) => m.alias).filter(Boolean);
@@ -177,11 +178,6 @@ export function FontManager() {
       {adding && (
         <AddFontDialog
           onDone={(picked) => {
-            // Auto-assign the next free alias when the upload succeeds.
-            // Closes the "what now?" gap between the upload finishing
-            // and the delivery select becoming usable: the user lands on
-            // a row that is already wired through to ^CW + canvas, with
-            // an editable alias if they want to override the default.
             if (picked) void addPicked(picked);
             setAdding(false);
           }}

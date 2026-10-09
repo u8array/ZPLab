@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import { DEFAULT_OUTPUT_CHOICE, type OutputChoice, type OutputSource } from '../../lib/outputChoice';
+import { defaultOutputChoice, type OutputChoice, type OutputSource } from '../../lib/outputChoice';
 import type { Unit } from '@zplab/core/lib/units';
 import type { ViewRotation } from '@zplab/core/registry/rotation';
 import { fallbackTranslations, loadLocale, type LocaleCode, type Translations } from '../../locales';
@@ -9,6 +9,7 @@ import {
   thirdPartyDefaults,
 } from '../labelStore.internals';
 import type { LabelState } from '../labelStore';
+import type { PrintWay } from '../../lib/printTarget';
 import { defaultPaletteRows } from '../../registry/paletteTypes';
 import { makeCredentialHydrator, setCredential, setLabelaryKeyBound, migrateLabelaryKeyBinding, LABELARY_KEY_CRED } from '../../lib/credentialStore';
 import { isDesktopShell } from '../../lib/platform';
@@ -182,9 +183,8 @@ export interface UiSlice {
   alignRef: AlignSelectionRef;
   printerSettingsTab: PrinterSettingsTab | null;
   /** Cross-component trigger for the output dialog. `null` keeps it closed. */
-  zebraPrintSource: OutputSource | null;
-  /** What the dialog proposes when it opens again. Out of the persisted set on purpose: the user
-   *  asked for a memory that lasts the session and starts neutral after a restart. */
+  outputSource: OutputSource | null;
+  /** Session memory only, so a restart begins neutral. */
   outputChoice: OutputChoice;
   /** Barcode object id whose GS1 content builder modal is open; null = closed. */
   gs1BuilderObjectId: string | null;
@@ -253,9 +253,11 @@ export interface UiSlice {
   endRfidPositionPick: () => void;
   setAlignRef: (ref: AlignSelectionRef) => void;
   setPrinterSettingsTab: (tab: PrinterSettingsTab | null) => void;
-  openZebraPrint: (source: OutputSource) => void;
-  closeZebraPrint: () => void;
+  openOutput: (source: OutputSource) => void;
+  closeOutput: () => void;
   setOutputChoice: (patch: Partial<OutputChoice>) => void;
+  /** The one write of the chosen way: the sentinel and the print target cannot disagree about it. */
+  chooseOutputWay: (way: PrintWay) => void;
   openGs1Builder: (objectId: string) => void;
   closeGs1Builder: () => void;
   openContentBuilder: (objectId: string) => void;
@@ -344,8 +346,8 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   pickingRfidPosition: false,
   alignRef: 'selection',
   printerSettingsTab: null,
-  zebraPrintSource: null,
-  outputChoice: DEFAULT_OUTPUT_CHOICE,
+  outputSource: null,
+  outputChoice: defaultOutputChoice(isDesktopShell),
   gs1BuilderObjectId: null,
   contentBuilderObjectId: null,
   variableBuilderObjectId: null,
@@ -527,9 +529,14 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   // Opening or closing the dialog ends a pick: its capture layer must never
   // outlive the flow that started it.
   setPrinterSettingsTab: (tab) => set({ printerSettingsTab: tab, pickingRfidPosition: false }),
-  openZebraPrint: (source) => set({ zebraPrintSource: source }),
-  closeZebraPrint: () => set({ zebraPrintSource: null }),
+  openOutput: (source) => set({ outputSource: source }),
+  closeOutput: () => set({ outputSource: null }),
   setOutputChoice: (patch) => set((state) => ({ outputChoice: { ...state.outputChoice, ...patch } })),
+  chooseOutputWay: (way) =>
+    set((state) => ({
+      outputChoice: { ...state.outputChoice, printWay: way === "system" ? "system" : null },
+      printTarget: way === "system" ? state.printTarget : { ...state.printTarget, transport: way },
+    })),
   openGs1Builder: (objectId) => set({ gs1BuilderObjectId: objectId }),
   closeGs1Builder: () => set({ gs1BuilderObjectId: null }),
   openContentBuilder: (objectId) => set({ contentBuilderObjectId: objectId }),

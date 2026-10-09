@@ -81,8 +81,9 @@ Select several objects with Shift-click or a lasso. Position and size changes ap
 The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. On desktop the panel names the configured printer. A click shows its state and offers to read its configuration. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
 
 - **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
-- **File → Print:** opens the output dialog, where you choose what the label becomes. **ZPL** sends the code over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop. On desktop, **Check printer** asks the printer for its state over the network or USB. **Image** renders the current label and prints it through the system print dialog. **PDF** saves the design as a file.
-- **File → Export PDF:** saves one PDF page per label page, rendered by the preview renderer. With the renderer off, ZPLab captures the canvas, so the PDF holds the current page only. A batch PDF needs the renderer and holds one page per data row.
+- **File → Output:** opens the output dialog with two destinations.
+  - **Print** sends the code to a Zebra over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop. Its **Other printer** way renders the label and hands it to the operating system's print dialog, which reaches any printer with a driver. On desktop, **Check printer** asks the printer for its state over the network or USB.
+  - **File** writes a **PDF** with one page per label page, rendered by the preview renderer. With the renderer off, ZPLab captures the canvas, so the PDF holds the current page only. The **Scope** option **One label per data row** needs the renderer and holds one page per row. **PNG** saves the canvas drawing of the current label.
 
 ### 5. Save the design
 
@@ -138,7 +139,7 @@ The **Fonts** tab uploads TrueType fonts and assigns their `^CW` alias. On the d
 
 ### Batch printing
 
-**File → Import CSV data** (web) or **File → Connect data** (desktop) loads a CSV. Assign a column to each variable in the mapping dialog. **File → Export batch ZPL** or **File → Send to Zebra Printer** then produce one label per row. Export names the row count, the send item names the labels the printer will produce.
+**File → Import CSV data** (web) or **File → Connect data** (desktop) loads a CSV. Assign a column to each variable in the mapping dialog. **File → Export batch ZPL** writes one label per row and names the row count. **File → Output** sends the same rows to the printer, and the dialog names the labels it will produce.
 
 The batch stores the page as a format on the printer and recalls it per row. A page that names a stored format keeps that name when the name itself is at most 8 characters. Longer names fall back to `R:LBL.ZPL`.
 
@@ -150,11 +151,11 @@ On desktop, **Connect data** also reads an Excel worksheet. **File → Settings�
 
 - The **Objects** group selects the fonts and graphics the **Setup Script** uploads.
 - It lists cached images and deletes the unused ones.
-- On desktop it reads what the printer holds, so every row says where its file stands and a bar shows how full each drive is. Show a stored graphic or let the printer draw a font sample. Delete objects on the printer.
+- On desktop it reads what the printer holds, so every row says where its file stands. A bar shows how full each drive is. Show a stored graphic or let the printer draw a font sample. Delete objects on the printer.
 - Saved designs and label exports exclude **Setup Script** values such as printer name and locale.
 - **Clear** resets the **Setup Script** values and keeps the uploads.
 
-The **App → Printer** tab sets how labels are sent and to which printer. **Send to Zebra Printer** opens with that method selected. The **App → Preview** tab selects the renderer: the connected printer (desktop), Labelary, or off. It takes a premium Labelary endpoint and API key. The key is stored in the OS keychain on desktop and in browser storage on the web.
+The **App → Printer** tab sets how labels are sent and to which printer. **File → Output** opens with that method selected. The **App → Preview** tab selects the renderer: the connected printer (desktop), Labelary, or off. It takes a premium Labelary endpoint and API key. The key is stored in the OS keychain on desktop and in browser storage on the web.
 
 ### MCP server
 

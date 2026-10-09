@@ -1,12 +1,9 @@
-// Printing a rendered label through this document, with the stylesheet in index.css.
-
 /** The sheet the print shows. One at a time, so the class needs no instance of its own. */
 const SHEET_CLASS = "print-sheet";
 /** Without this flag on the root the user's own Ctrl+P would hide the app and print a blank page. */
 const PRINTING_CLASS = "printing-label";
 
-/** Shown when no print starts. The reasons are the engine's own or bytes that will not load, and
- *  neither leaves the caller anything to add that the label would explain. */
+/** Shown when no print starts. No reason the engine gives leaves the caller anything to add. */
 export const printErrorMessage = "Could not start the print.";
 
 /** Not a failure to report: a newer print took this sheet over, which is what the user asked for. */
@@ -24,9 +21,7 @@ interface Standing {
   settle: (failure?: unknown) => void;
 }
 
-/** Prints through this document and not a popup. A Tauri webview opens no second window, so
- *  window.open returned null there and the click did nothing. Resolves once a print is under way,
- *  so a click that starts nothing reaches the caller as a failure. */
+/** Prints through this document because a Tauri webview opens no second window. */
 export async function printLabel(url: string): Promise<void> {
   const ticket = ++issued;
   const img = document.createElement("img");
@@ -39,7 +34,6 @@ export async function printLabel(url: string): Promise<void> {
     URL.revokeObjectURL(url);
     throw e;
   }
-  // Renders come back in their own order, and the later click is the one the user meant.
   if (ticket !== issued) {
     URL.revokeObjectURL(url);
     throw printReplaced;
@@ -63,21 +57,14 @@ function printNow(img: HTMLImageElement, url: string): Promise<void> {
     const stop = watchEpisode(sheet);
     standing.stop = stop;
     const answer: unknown = window.print();
-    // Two mechanisms with two ways of reporting, like the network send. Tauri replaces this call on
-    // macOS with one into the shell, which answers with a promise and sends no print event. A print
-    // that got under way there keeps its sheet until the next one, since nothing says it is through.
-    // Leaving the stylesheet armed is safe, because Tauri shims this very call on that platform, the
-    // shell binds no print accelerator and the webview offers no print of its own, so every print
-    // there is ours.
+    // This path reports no print event.
     if (thenable(answer)) {
       // The local one, because a print that reported itself during the call is already retired.
       stop();
       if (standing?.sheet === sheet) standing.stop = () => undefined;
       answer.then(() => settle(), refused(sheet, settle));
     } else {
-      // The call came back without throwing, and that is all an engine promises: it prints, it opens
-      // a dialog, or it throws. Waiting for a print event instead cuts short every build that
-      // reports the job only once the user has answered that dialog.
+      // Waiting for a print event would cut off every engine that reports only after the dialog.
       settle();
     }
   } catch (e) {
@@ -93,8 +80,8 @@ const refused = (sheet: HTMLDivElement, settle: (failure?: unknown) => void) => 
   retire(sheet);
 };
 
-/** The job's own brackets, for one purpose: the sheet goes when the episode ends. An engine that
- *  never reports an end leaves it to the next print, as the shell path does. */
+/** The job's own brackets: the sheet goes when the episode ends. An engine that never reports an end
+ *  leaves it to the next print, and in the shell no other print can reach the webview. */
 function watchEpisode(sheet: HTMLDivElement): () => void {
   const onAfter = () => retire(sheet);
   // The media query brackets the episode too, and some builds answer only there.
@@ -109,7 +96,7 @@ function watchEpisode(sheet: HTMLDivElement): () => void {
 }
 
 /** Safari 13 has the print media query but not its event target, and there the print events are the
- *  only word. A second source may not cost the first one. */
+ *  only word. */
 function watchMedia(onChange: (e: MediaQueryListEvent) => void): () => void {
   try {
     const media = window.matchMedia("print");
@@ -124,8 +111,7 @@ function watchMedia(onChange: (e: MediaQueryListEvent) => void): () => void {
 const thenable = (v: unknown): v is PromiseLike<unknown> =>
   typeof v === "object" && v !== null && typeof (v as { then?: unknown }).then === "function";
 
-/** Every teardown names the sheet it means, so an older print can never retire the one that
- *  replaced it. */
+/** Named per sheet, so an older print cannot retire the one that replaced it. */
 function retire(sheet: HTMLDivElement | undefined): void {
   if (!standing || standing.sheet !== sheet) return;
   const { url, stop } = standing;

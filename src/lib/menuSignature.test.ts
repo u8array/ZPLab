@@ -54,7 +54,6 @@ describe("menuStructureKey", () => {
   it("changes when the item set changes (add/remove forces a rebuild)", () => {
     const base = menuStructureKey(false, buildMenuModel(en, FLAGS));
     expect(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, canBatchExport: true, batchRowCount: 1 }))).not.toBe(base);
-    expect(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, canBatchExport: true, batchRowCount: 1, canBatchPdf: false }))).not.toBe(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, canBatchExport: true, batchRowCount: 1 })));
     expect(menuStructureKey(false, buildMenuModel(en, { ...FLAGS, includeQuit: false }))).not.toBe(base);
   });
 
@@ -74,7 +73,7 @@ describe("menuContentSignature", () => {
   });
 
   it("changes when an enabled flag changes", () => {
-    const other = buildMenuModel(en, { ...FLAGS, hasObjects: false });
+    const other = buildMenuModel(en, { ...FLAGS, documentEmits: false });
     expect(menuContentSignature(false, LABELS, other, HISTORY)).not.toBe(base);
   });
 

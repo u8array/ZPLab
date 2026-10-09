@@ -74,7 +74,7 @@ describe("PrinterChip", () => {
     expect(dot(r)).toBe("blocked");
   });
 
-  it("says where the check asked, whenever that was the address and not the way", () => {
+  it("notes that the check went over the address when the way is not the network", () => {
     const target = (over: Partial<PrintTarget>) =>
       act(() => useLabelStore.setState({ printTarget: { ...DEFAULT_PRINT_TARGET, host: "172.17.17.175", ...over } }));
     const r = render(<PrinterChip />);

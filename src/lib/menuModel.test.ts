@@ -24,10 +24,10 @@ describe("buildMenuModel", () => {
   it("keeps the dropdown's item order and sections", () => {
     const m = buildMenuModel(en, FLAGS);
     expect(ids(m)).toEqual([
-      "new", "addPage", "importZpl", "settings", "exportZpl", "exportPdf",
-      "openDesign", "saveDesign", "importCsv", "print",
+      "new", "addPage", "importZpl", "settings", "exportZpl", "output",
+      "openDesign", "saveDesign", "importCsv",
     ]);
-    expect(m.file).toHaveLength(5);
+    expect(m.file).toHaveLength(4);
   });
 
   it("disables the import under a source session, like opening a file", () => {
@@ -37,25 +37,23 @@ describe("buildMenuModel", () => {
     expect(byId(m, "settings")?.enabled).toBe(true);
   });
 
-  it("gates object-dependent items on hasObjects and export/save on documentEmits", () => {
+  it("gates export, save and the output entry on documentEmits", () => {
     const m = buildMenuModel(en, { ...FLAGS, hasObjects: false, documentEmits: false });
-    for (const id of ["exportZpl", "saveDesign", "print"]) {
+    for (const id of ["exportZpl", "saveDesign", "output"]) {
       expect(byId(m, id)?.enabled).toBe(false);
     }
     expect(byId(m, "new")?.enabled).toBe(true);
-    // Overlay pages emit without objects (config-only source apply): export
-    // and save stay reachable, the render-dependent items do not.
+    // An overlay page emits without objects, so export and save stay reachable.
     const emits = buildMenuModel(en, { ...FLAGS, hasObjects: false, documentEmits: true });
     expect(byId(emits, "exportZpl")?.enabled).toBe(true);
     expect(byId(emits, "saveDesign")?.enabled).toBe(true);
-    // The one output entry stays open, because a config-only overlay stream is still a legitimate
-    // setup job for the device. The dialog drops the two rendered kinds behind it.
-    expect(byId(emits, "print")?.enabled).toBe(true);
+    // The dialog decides what the entry leads to, so the entry itself only asks whether anything emits.
+    expect(byId(emits, "output")?.enabled).toBe(true);
   });
 
   it("disables document-replacing and emitting entries during a source-edit session", () => {
     const m = buildMenuModel(en, { ...FLAGS, sourceEditing: true });
-    for (const id of ["new", "addPage", "importZpl", "openDesign", "saveDesign", "importCsv", "exportZpl", "print"]) {
+    for (const id of ["new", "addPage", "importZpl", "openDesign", "saveDesign", "importCsv", "exportZpl", "output"]) {
       expect(byId(m, id)?.enabled, id).toBe(false);
     }
     expect(byId(m, "settings")?.enabled).toBe(true);
@@ -68,12 +66,20 @@ describe("buildMenuModel", () => {
     expect(item?.label).toContain("7");
   });
 
-  it("keeps the output entry's label free of any count, because it names no kind", () => {
-    expect(byId(buildMenuModel(en, FLAGS), "print")?.label).toBe(en.app.print);
+  it("names the output entry as the dialog titles itself, without a count", () => {
+    expect(byId(buildMenuModel(en, FLAGS), "output")?.label).toBe(en.zebraPrint.outputHeading);
     // The counts belong to the entries that name what they produce, and to the dialog itself.
     const m = buildMenuModel(en, { ...FLAGS, canBatchExport: true, batchRowCount: 7 });
-    expect(byId(m, "print")?.label).toBe(en.app.print);
+    expect(byId(m, "output")?.label).toBe(en.zebraPrint.outputHeading);
     expect(byId(m, "exportBatch")?.label).toContain("7");
+  });
+
+  it("leaves the PDF to the dialog instead of a menu entry of its own", () => {
+    const batch = { ...FLAGS, canBatchExport: true, batchRowCount: 3 };
+    expect(byId(buildMenuModel(en, batch), "output")?.enabled).toBe(true);
+    for (const id of ["exportPdf", "exportBatchPdf"]) {
+      expect(ids(buildMenuModel(en, batch))).not.toContain(id);
+    }
   });
 
   it("offers the direct CSV import on web and the connect-data wizard on desktop", () => {
@@ -85,14 +91,6 @@ describe("buildMenuModel", () => {
     expect(byId(desktop, "connectData")).toBeDefined();
     // Replaces the CSV slot (after saveDesign), not an extra entry.
     expect(ids(desktop).indexOf("connectData")).toBe(ids(desktop).indexOf("saveDesign") + 1);
-  });
-
-  it("offers the batch PDF only while a renderer can draw every row", () => {
-    const batch = { ...FLAGS, canBatchExport: true, batchRowCount: 3 };
-    expect(byId(buildMenuModel(en, batch), "exportBatchPdf")?.label).toBe("Export batch PDF (3 labels)");
-    expect(byId(buildMenuModel(en, { ...batch, canBatchPdf: false }), "exportBatchPdf")).toBeUndefined();
-    expect(byId(buildMenuModel(en, batch), "print")?.enabled).toBe(true);
-    expect(byId(buildMenuModel(en, { ...FLAGS, pdfCurrentPageOnly: true }), "exportPdf")?.label).toBe("Export PDF (current page)");
   });
 
   it("appends the quit section only on desktop", () => {

@@ -29,7 +29,8 @@ function repairable(path: string): boolean {
   return own !== undefined && storageRefMatchesPath(own, path);
 }
 
-/** Deleting cached fonts stays in the FontManager. */
+/** The printer's fonts and the profile's entries in one list. Deleting cached bytes stays in the
+ *  FontManager. */
 export function StoredFontsTab() {
   const t = useT();
   const fonts = useCachedFonts();
@@ -44,7 +45,7 @@ export function StoredFontsTab() {
   // A cache row is named by its printer path, so profile and cache rows share one identity rule.
   const cachedPaths = fonts.map(cachedFontPath).filter((path) => listsStoredFont(path, setupFonts));
   const cachedKeys = new Set(cachedPaths.map(storageKey));
-  // A replayed upload carries its own bytes in the profile, so it needs no cache row behind it.
+  // A replayed upload needs no cache row behind it.
   const replayedPaths = (setupFonts ?? []).flatMap((f) => (f.download === undefined ? [] : [f.path]));
   const replayedKeys = new Set(replayedPaths.map(storageKey));
   const rows = storedObjectOrigins({
@@ -63,7 +64,7 @@ export function StoredFontsTab() {
   const toggle = (path: string, on: boolean) =>
     patchPrinterProfileWith((p) => ({ setupFonts: on ? withSetupEntry(p.setupFonts, { path }) : withoutSetupEntry(p.setupFonts, path) }));
 
-  // One upload path for the app, so the tab opens the font panel's dialog instead of keeping its own.
+  // One upload path for the app, so the tab opens the font panel's dialog.
   const [adding, setAdding] = useState<{ repairPath?: string }>();
   const [uploadIssue, setUploadIssue] = useState<"replayedNameTaken" | "refused">();
 
@@ -75,7 +76,7 @@ export function StoredFontsTab() {
     await loadFontBytes(bytes, path);
     setUploadIssue(toggle(path, true) ? undefined : "refused");
   };
-  // A replayed upload lives in the profile only, so removing it is a delete, not a toggle.
+  // Removing a replayed upload is a delete, not a toggle.
   const [pendingRemove, setPendingRemove] = useState<string>();
 
   return (

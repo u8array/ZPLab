@@ -169,18 +169,18 @@ describe("useNativeMenu after a rebuild", () => {
     const { handlers } = await rebuild({ flags: BATCH_FLAGS });
 
     click(en.app.newDesign);
-    click(en.app.print);
+    click(en.zebraPrint.outputHeading);
     click(en.app.exportBatchZplFmt.replace("{n}", "3"));
 
     expect(handlers.new).toHaveBeenCalledOnce();
-    expect(handlers.print).toHaveBeenCalledOnce();
+    expect(handlers.output).toHaveBeenCalledOnce();
     expect(handlers.exportBatch).toHaveBeenCalledOnce();
   });
 
   it("keeps the history submenu clickable too, the steps and the clear entry", async () => {
     const { onHistoryJump, onHistoryClear } = await rebuild({ flags: BATCH_FLAGS });
 
-    // The steps have no id of their own either since the fix, so they belong in this guard.
+    // The steps have no id of their own either, so they belong in this guard.
     click("Move text");
     click("Clear history");
 
@@ -192,9 +192,9 @@ describe("useNativeMenu after a rebuild", () => {
     const { handlers } = await rebuild({ dark: true });
 
     click(en.app.newDesign);
-    click(en.app.print);
+    click(en.zebraPrint.outputHeading);
 
     expect(handlers.new).toHaveBeenCalledOnce();
-    expect(handlers.print).toHaveBeenCalledOnce();
+    expect(handlers.output).toHaveBeenCalledOnce();
   });
 });

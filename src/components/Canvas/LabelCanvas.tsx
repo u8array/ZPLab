@@ -85,7 +85,7 @@ import { zplForSelection } from "../../lib/zplForSelection";
 import { finishZplExport } from "../../lib/exportZpl";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { captureLabelBlob, captureRegionBlob, copyPngToClipboard, CAPTURE_CHROME } from "../../lib/canvasImage";
-import { saveFile, saveErrorMessage, PNG_FILTER } from "../../lib/fileDialogs";
+import { saveLabelImage } from "../../lib/saveLabelImage";
 import { printerPreviewLayout } from "../../lib/printerPreview";
 
 /** Object types offered by the context menu's "Add object here". */
@@ -156,6 +156,11 @@ interface Props {
   onViewRotationChange: (rotation: ViewRotation) => void;
 }
 
+/** Nothing drawn yet is nothing to capture, so the context menu and the output dialog get a click that
+ *  does nothing. */
+const labelCapture = (group: Konva.Group | null, paper: Konva.Rect | null) =>
+  group ? captureLabelBlob(group, paper) : Promise.resolve(null);
+
 export interface LabelCanvasHandle {
   alignSelection: (op: AlignOp, ref: AlignRef) => void;
   distributeSelection: (axis: DistributeAxis) => void;
@@ -163,6 +168,8 @@ export interface LabelCanvasHandle {
   convertObjectPositionType: (id: string, target: "FO" | "FT") => void;
   /** The label paper as drawn, at exactly the given dots, so a raster of it lines up with a printer render. */
   captureLabelDots: (dots: { width: number; height: number }) => Promise<Blob | null>;
+  /** The label as the canvas draws it, the capture behind the image export. */
+  captureLabel: () => Promise<Blob | null>;
 }
 
 export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCanvas({
@@ -257,8 +264,6 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     clipboard,
     variables,
     pages,
-    setUserError,
-    clearUserError,
   } = useLabelStore();
   // Everything on canvas is drawn in the current page's dot scale;
   // designLabel stays the MODEL's design scope for the whole-document emit.
@@ -955,6 +960,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
           const group = rotationGroupRef.current;
           return group ? captureLabelBlob(group, labelPaperRef.current, { pixelRatio: label.dpmm / scale, dots }) : Promise.resolve(null);
         },
+        captureLabel: () => labelCapture(rotationGroupRef.current, labelPaperRef.current),
       };
     },
     [updateObjects, updateObject, label.dpmm, scale],
@@ -1260,7 +1266,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const switchTypeLocked =
       !!singleForSwitch &&
       (!!singleForSwitch.locked || hasLockedAncestor(objects, singleForSwitch.id));
-    const captureLabel = () => (rotationGroupRef.current ? captureLabelBlob(rotationGroupRef.current, labelPaperRef.current) : Promise.resolve(null));
+    const captureLabel = () => labelCapture(rotationGroupRef.current, labelPaperRef.current);
     // The region comes from the model like the selection frame: groups have no node, a sample barcode's
     // node is chrome, and a line's node is its hit stroke. Frame px are stage px once the view rotation is 0.
     const captureSelection = () => {
@@ -1278,13 +1284,6 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         return b;
       });
       void copyPngToClipboard(blob).catch(() => undefined);
-    };
-    const exportImage = async (pending: Promise<Blob | null>, filename: string) => {
-      const blob = await pending;
-      if (!blob) return;
-      await saveFile(blob, { filename, filters: [PNG_FILTER] })
-        .then((wrote) => wrote && clearUserError())
-        .catch(() => setUserError(saveErrorMessage));
     };
     const dispatch = {
       copy: copySelectedObjects,
@@ -1307,9 +1306,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         void copyText(finishZplExport(generateMultiPageZPL(designLabel, pages, variables)));
       },
       copyImageSelected: () => copyImage(captureSelection()),
-      exportImageSelected: () => exportImage(captureSelection(), `${(sel.length === 1 ? findObjectById(objects, sel[0] ?? "")?.type : undefined) ?? "selection"}.png`),
+      exportImageSelected: () => void saveLabelImage(captureSelection(), `${(sel.length === 1 ? findObjectById(objects, sel[0] ?? "")?.type : undefined) ?? "selection"}.png`),
       copyImageLabel: () => copyImage(captureLabel()),
-      exportImageLabel: () => exportImage(captureLabel(), "label.png"),
+      exportImageLabel: () => void saveLabelImage(captureLabel(), "label.png"),
       selectAll: () => selectObjects(objects.map((o) => o.id)),
       switchType: (type: string) => {
         if (singleForSwitch) {

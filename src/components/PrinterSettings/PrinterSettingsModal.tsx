@@ -163,7 +163,7 @@ export function PrinterSettingsModal() {
   const hasPerLabelOverrides = useLabelStore(selectHasPerLabelOverrides);
   const mcpSidecarAvailable = useLabelStore((s) => s.mcpSidecarAvailable);
   const gateCtx: TabGateCtx = { mcpSidecarAvailable, isDesktop: isDesktopShell };
-  const openZebraPrint = useLabelStore((s) => s.openZebraPrint);
+  const openOutput = useLabelStore((s) => s.openOutput);
   const label = useLabelStore((s) => s.label);
   const pages = useLabelStore((s) => s.pages);
   const variables = useLabelStore((s) => s.variables);
@@ -292,7 +292,7 @@ export function PrinterSettingsModal() {
           onJump={setTab}
           onSend={() => {
             setTab(null);
-            openZebraPrint('setupScript');
+            openOutput('setupScript');
           }}
         />
       )}
