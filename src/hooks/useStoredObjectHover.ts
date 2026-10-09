@@ -9,7 +9,7 @@ export interface StoredObjectHover {
 /** The lists and the drive bars sit in different subtrees, so one hover needs a shared slot. */
 export const StoredObjectHoverContext = createContext<StoredObjectHover | null>(null);
 
-/** Outside the provider a list still renders, it just reports its hover to nobody. */
+/** Outside the provider a list still renders and reports its hover to nobody. */
 export function useStoredObjectHover(): StoredObjectHover {
   return useContext(StoredObjectHoverContext) ?? { hoveredKey: undefined, setHoveredKey: () => undefined };
 }

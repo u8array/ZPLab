@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PRINT_TARGET, effectiveTransport, offeredTransports, parsePort, readLegacyPrintTarget, resolveQueryTarget } from "./printTarget";
+import { DEFAULT_PRINT_TARGET, effectiveTransport, needsRawChannel, offeredTransports, parsePort, readLegacyPrintTarget, resolveQueryTarget } from "./printTarget";
 
 function storageOf(entries: Record<string, string>) {
   const map = new Map(Object.entries(entries));
@@ -29,6 +29,17 @@ describe("printTarget", () => {
     expect(effectiveTransport("usb", offeredTransports(true, all))).toBe("usb");
     expect(effectiveTransport("usb", offeredTransports(true, { local: true, usb: false }))).toBe("network");
     expect(effectiveTransport("local", offeredTransports(false, all))).toBe("network");
+  });
+
+  it("names the ways a status read blocks", () => {
+    expect(needsRawChannel("network", "none")).toBe(true);
+    expect(needsRawChannel("usb", "none")).toBe(true);
+    // The agent and the OS spooler own the device, so a read of our own cannot be in their way.
+    expect(needsRawChannel("browserprint", "printer")).toBe(false);
+    expect(needsRawChannel("local", "printer")).toBe(false);
+    // The system way sends no code, so only the render it needs first can contend.
+    expect(needsRawChannel("system", "printer")).toBe(true);
+    expect(needsRawChannel("system", "labelary")).toBe(false);
   });
 
   it("takes the pre-0.7.0 browser keys over once and clears them", () => {

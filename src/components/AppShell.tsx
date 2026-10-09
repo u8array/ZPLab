@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type ComponentType, type SVGProps } from "react";
+import { useEffect, useRef, type ComponentType, type SVGProps } from "react";
 import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { makePaletteCollision } from "../dnd/collision";
 import { ObjectPalette } from "./Palette/ObjectPalette";
@@ -39,7 +39,7 @@ import {
   MoonIcon,
   GlobeAltIcon,
 } from "@heroicons/react/16/solid";
-import { useLabelStore, useHistory, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectEditorFrozen, selectSourceEditing, selectSourceEditDirty, selectDocumentEmits } from "../store/labelStore";
+import { useLabelStore, useHistory, selectEffectivePreviewProvider, selectEditorFrozen, selectSourceEditing, selectSourceEditDirty, selectDocumentEmits } from "../store/labelStore";
 import { datasetTimestamp } from "@zplab/core/types/DataSource";
 import { isCurrentDataContext, settleDatasetReplace } from "../store/datasetActions";
 import { ConfirmDialog } from "./ui/ConfirmDialog";
@@ -50,7 +50,6 @@ import type { MenuHandlers } from "../hooks/useNativeMenu";
 import { isDesktopShell, isMacDesktop } from "../lib/platform";
 import { acceptAttr, DESIGN_FILTER, CSV_FILTER } from "../lib/fileDialogs";
 import { openExternal, REPO_URL } from "../lib/openExternal";
-import { LabelaryNoticeModal } from "./Output/LabelaryNoticeModal";
 import { PdfExportDialog } from "./Output/PdfExportDialog";
 import { usePdfExport } from "../hooks/usePdfExport";
 import { PrinterSettingsModal } from "./PrinterSettings/PrinterSettingsModal";
@@ -79,13 +78,11 @@ const MENU_ICONS: Partial<Record<MenuItemId, ComponentType<SVGProps<SVGSVGElemen
   settings: Cog6ToothIcon,
   exportZpl: ArrowDownTrayIcon,
   exportBatch: ArrowDownTrayIcon,
-  exportPdf: ArrowDownTrayIcon,
-  exportBatchPdf: ArrowDownTrayIcon,
   openDesign: FolderOpenIcon,
   saveDesign: DocumentArrowDownIcon,
   importCsv: TableCellsIcon,
   connectData: TableCellsIcon,
-  print: PrinterIcon,
+  output: PrinterIcon,
   undo: ArrowUturnLeftIcon,
   redo: ArrowUturnRightIcon,
   github: GitHubIcon,
@@ -108,20 +105,8 @@ export function AppShell() {
   const restoreReplacedDesign = useLabelStore((s) => s.restoreReplacedDesign);
   const dismissReplacedDesign = useLabelStore((s) => s.dismissReplacedDesign);
   const sourceEditDirty = useLabelStore(selectSourceEditDirty);
-  const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
   const renderer = useLabelStore(selectEffectivePreviewProvider);
   const pageCount = useLabelStore((s) => s.pages.length);
-  // The Labelary notice gates every Labelary render, so the action waits here until the user continues.
-  const [afterNotice, setAfterNotice] = useState<(() => void) | null>(null);
-  // Hands back what the action returns, so a caller can wait for it. Nothing comes back while the
-  // notice is still open, because the work has not started yet.
-  const withNotice = <T,>(action: () => T): T | undefined => {
-    if (renderer === "labelary" && noticeRequired) {
-      setAfterNotice(() => () => void action());
-      return undefined;
-    }
-    return action();
-  };
   const appUpdate = useLabelStore((s) => s.appUpdate);
   const checkForAppUpdate = useLabelStore((s) => s.checkForAppUpdate);
   const installAppUpdate = useLabelStore((s) => s.installAppUpdate);
@@ -197,14 +182,15 @@ export function AppShell() {
     openZplImport,
     closeZplImport,
     outputSource,
-    openZebraPrint,
-    closeZebraPrint,
+    openOutput,
+    closeOutput,
     currentZpl,
     handleDownload,
     handleExportBatch,
     canBatchExport,
     batchRowCount,
     handlePrint,
+    handleExportPng,
   } = useZplImportExport(canvasRef);
   // The panel may grow until the main row has no height left.
   const mainRowRef = useRef<HTMLDivElement>(null);
@@ -213,8 +199,7 @@ export function AppShell() {
   const rightPanel = useCollapsiblePanel("zpl-panel-right");
 
   // One menu model for both surfaces: the DOM dropdown in the web header, and the native OS menu on
-  // the desktop, where the header row is not rendered at all. The output dialog reads the same
-  // flags, so its first level and these entries agree on what the document can produce.
+  // the desktop, where the header row is not rendered at all.
   const menuFlags: MenuFlags = {
     hasObjects,
     documentEmits,
@@ -237,13 +222,11 @@ export function AppShell() {
     settings: () => setPrinterSettingsTab("appSettings"),
     exportZpl: handleDownload,
     exportBatch: handleExportBatch,
-    exportPdf: () => withNotice(exportPdf),
-    exportBatchPdf: () => withNotice(exportBatchPdf),
     openDesign: handleOpen,
     saveDesign: handleSave,
     importCsv: openCsvPicker,
     connectData: openConnectWizard,
-    print: openZebraPrint,
+    output: openOutput,
     undo: () => undo(),
     redo: () => redo(),
     github: () => openExternal(REPO_URL),
@@ -575,18 +558,10 @@ export function AppShell() {
           zpl={currentZpl}
           source={outputSource}
           facts={menuFlags}
-          onClose={closeZebraPrint}
-          onPrintImage={() => withNotice(handlePrint)}
-          onExportPdf={(scope) => withNotice(scope === "batch" ? exportBatchPdf : exportPdf)}
-        />
-      )}
-      {afterNotice && (
-        <LabelaryNoticeModal
-          onClose={() => setAfterNotice(null)}
-          onContinue={() => {
-            setAfterNotice(null);
-            afterNotice();
-          }}
+          onClose={closeOutput}
+          onPrintImage={handlePrint}
+          onExportPdf={(scope) => (scope === "batch" ? exportBatchPdf() : exportPdf())}
+          onExportPng={handleExportPng}
         />
       )}
       {pdfProgress && <PdfExportDialog progress={pdfProgress} onCancel={cancelPdfExport} />}

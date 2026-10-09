@@ -152,8 +152,8 @@ html, body, #root {
 }
 
 /* The sheet these rules dress is built in printSheet.ts. */
-/* Off the screen rather than hidden, because the sheet sits in the page from the moment it is
-   mounted until the engine is done with it and must never flash into view. */
+/* Off the screen rather than hidden, because the sheet stands in the page and must never flash into
+   view. */
 .print-sheet {
   position: fixed;
   left: -10000px;
@@ -162,7 +162,7 @@ html, body, #root {
 
 @media print {
   /* No page margin, or the engine draws its own header and footer there and stamps the sheet with
-     the title and the date. Printing the app's own interface is no goal of this app. */
+     the title and the date. */
   @page {
     margin: 0;
   }

@@ -12,8 +12,8 @@ import { ariaDisabledCls, inputCls, labelCls } from '../ui/formStyles';
 import { DialogShell } from '../ui/DialogShell';
 
 interface AddFontDialogProps {
-  /** Undefined when the dialog closes without adding. The caller caches, so it can still refuse a
-   *  name this dialog has no way to know is taken. */
+  /** The picked bytes, undefined when the dialog closes without adding. The caller caches them, so it
+   *  can still refuse a name this dialog has no way to know is taken. */
   onDone: (picked?: { path: string; bytes: Uint8Array }) => void;
   /** The file a stale profile entry waits for. Its name is fixed, because any other name repairs nothing. */
   repairPath?: string;

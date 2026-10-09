@@ -1,5 +1,5 @@
 import type { Translations } from '../locales';
-import { anyProducible, offeredScopes, producibleKinds } from './outputChoice';
+import { anyProducible, type OutputFacts } from './outputChoice';
 import { formatTemplate } from './formatTemplate';
 
 /**
@@ -17,13 +17,11 @@ export type MenuItemId =
   | 'settings'
   | 'exportZpl'
   | 'exportBatch'
-  | 'exportPdf'
-  | 'exportBatchPdf'
   | 'openDesign'
   | 'saveDesign'
   | 'importCsv'
   | 'connectData'
-  | 'print'
+  | 'output'
   | 'undo'
   | 'redo'
   | 'github'
@@ -63,22 +61,11 @@ export interface HistorySubmenu {
   items: { index: number; label: string; current: boolean; enabled: boolean }[];
 }
 
-export interface MenuFlags {
-  hasObjects: boolean;
-  /** Overlay pages emit even with zero objects (config-only source apply), so
-   *  export/save gate on this, not on hasObjects. */
-  documentEmits: boolean;
-  /** Live source-edit session: entries that would replace or emit the document disable. */
-  sourceEditing: boolean;
-  canBatchExport: boolean;
-  batchRowCount: number;
+/** `OutputFacts` plus what only a menu asks. */
+export interface MenuFlags extends OutputFacts {
   /** Desktop routes every data source through the connect-data wizard (one File
    *  entry); web keeps the direct CSV import as its only supported source. */
   connectDataWizard: boolean;
-  /** A batch PDF needs a renderer for every row. */
-  canBatchPdf: boolean;
-  /** Without a renderer the PDF holds the current page only. */
-  pdfCurrentPageOnly: boolean;
   canUndo: boolean;
   canRedo: boolean;
   /** Desktop convention only; a browser tab has no app-quit. */
@@ -87,7 +74,6 @@ export interface MenuFlags {
 
 export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
   const live = !f.sourceEditing;
-  const kinds = producibleKinds(f);
   const file: MenuSection[] = [
     [
       { id: 'new', label: t.app.newDesign, enabled: live },
@@ -104,14 +90,8 @@ export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
             enabled: f.hasObjects && live,
           }]
         : []),
-      { id: 'exportPdf', label: f.pdfCurrentPageOnly ? t.app.exportPdfCurrentPage : t.app.exportPdf, enabled: kinds.pdf },
-      ...(offeredScopes(f).includes('batch')
-        ? [{
-            id: 'exportBatchPdf' as const,
-            label: formatTemplate(t.app.exportBatchPdfFmt, { n: String(f.batchRowCount) }),
-            enabled: f.hasObjects && live,
-          }]
-        : []),
+      // The dialog carries the file exports too, so the menu names the one door to all of them.
+      { id: 'output', label: t.zebraPrint.outputHeading, enabled: anyProducible(f) },
     ],
     [
       { id: 'openDesign', label: t.app.openDesign, enabled: live },
@@ -119,12 +99,6 @@ export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
       f.connectDataWizard
         ? { id: 'connectData' as const, label: t.connectData.title, enabled: live }
         : { id: 'importCsv' as const, label: t.app.importCsvData, enabled: live },
-    ],
-    [
-      // The one door to the output dialog, which names no kind of its own, so it may propose the
-      // one chosen last. No accelerator on purpose: on macOS the print sheet stays armed until the
-      // next print, and a Cmd+P that bypassed this entry would print the previous label.
-      { id: 'print', label: t.app.print, enabled: anyProducible(f) },
     ],
     ...(f.includeQuit
       ? [[{ id: 'quit' as const, label: t.app.quitMenu, enabled: true }]]

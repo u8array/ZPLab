@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { render, cleanup, act, fireEvent, waitFor } from "@testing-library/react";
-import { ZplSendPanel } from "./ZplSendPanel";
+import { WayPanel } from "./ZebraWayPanel.testkit";
 import { useLabelStore } from "../../store/labelStore";
 import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
 import { fallbackTranslations as en } from "../../locales";
@@ -31,15 +31,15 @@ beforeEach(() => {
   setupUsbAccess.mockReset();
   readPrinterStatus.mockReset();
   act(() => {
-    useLabelStore.setState({ zebraPrintSource: "label", dataset: null, columnMapping: null, printTarget: { ...DEFAULT_PRINT_TARGET, transport: "usb" } });
+    useLabelStore.setState({ dataset: null, columnMapping: null, printTarget: { ...DEFAULT_PRINT_TARGET, transport: "usb" } });
   });
 });
 
-describe("ZplSendPanel USB access", () => {
+describe("ZebraWayPanel USB access", () => {
   it("offers the setup route with its message after a denied check, as after a denied send", async () => {
     readPrinterStatus.mockResolvedValue({ kind: "permission_denied" });
     act(() => useLabelStore.setState({ printerState: { phase: "idle" }, printTarget: { ...DEFAULT_PRINT_TARGET, transport: "usb", usbId: "usb1" } }));
-    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
+    const r = render(<WayPanel way="usb" zpl={() => "^XA^XZ"} />);
     await waitFor(() => expect(r.getByText(en.zebraPrint.checkPrinter)).toBeTruthy());
     await act(async () => {
       fireEvent.click(r.getByText(en.zebraPrint.checkPrinter));
@@ -50,7 +50,7 @@ describe("ZplSendPanel USB access", () => {
 
   it("shows the manual route when the sandbox refuses to install the udev rule", async () => {
     setupUsbAccess.mockRejectedValue("flatpak");
-    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
+    const r = render(<WayPanel way="usb" zpl={() => "^XA^XZ"} />);
     await waitFor(() => expect(r.getByText(/Zebra ZD230/)).toBeTruthy());
     await act(async () => {
       fireEvent.click(r.getByText(en.zebraPrint.send));
@@ -63,9 +63,21 @@ describe("ZplSendPanel USB access", () => {
     expect(r.getByText(en.zebraPrint.usbSetupAccess)).toBeTruthy();
   });
 
+  it("reads the code at the click and never in the render", async () => {
+    const zpl = vi.fn(() => "^XA^XZ");
+    const r = render(<WayPanel way="usb" zpl={zpl} />);
+    await waitFor(() => expect(r.getByText(/Zebra ZD230/)).toBeTruthy());
+    expect(zpl).not.toHaveBeenCalled();
+
+    await act(async () => {
+      fireEvent.click(r.getByText(en.zebraPrint.send));
+    });
+    expect(zpl).toHaveBeenCalledTimes(1);
+  });
+
   it("keeps the raw reason for any other failure", async () => {
     setupUsbAccess.mockRejectedValue("setup cancelled");
-    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
+    const r = render(<WayPanel way="usb" zpl={() => "^XA^XZ"} />);
     await waitFor(() => expect(r.getByText(/Zebra ZD230/)).toBeTruthy());
     await act(async () => {
       fireEvent.click(r.getByText(en.zebraPrint.send));

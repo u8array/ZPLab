@@ -1,11 +1,11 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon } from '@heroicons/react/16/solid';
-import { useLabelStore, selectLabelaryNoticeRequired, selectEffectivePreviewProvider, selectPreviewLocksEditor } from '../../store/labelStore';
+import { useLabelStore, selectEffectivePreviewProvider, selectPreviewLocksEditor } from '../../store/labelStore';
 import { useZplOutputView } from '../../hooks/useZplOutputView';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import { finishZplExport } from '../../lib/exportZpl';
 import { useT } from '../../hooks/useT';
-import { LabelaryNoticeModal } from './LabelaryNoticeModal';
+import { useLabelaryConsent } from '../../hooks/useLabelaryConsent';
 import { ZplSourceEditor } from './ZplSourceEditor';
 import { Tooltip } from '../ui/Tooltip';
 import { isDesktopShell } from '../../lib/platform';
@@ -24,12 +24,11 @@ interface Props {
 /** The ZPL output panel with its always-mounted source pane. */
 export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }: Props) {
   const t = useT();
-  const noticeRequired = useLabelStore(selectLabelaryNoticeRequired);
   const effectiveProvider = useLabelStore(selectEffectivePreviewProvider);
   const previewActive = useLabelStore(selectPreviewLocksEditor);
   const enterPreviewMode = useLabelStore((s) => s.enterPreviewMode);
   const exitPreviewMode = useLabelStore((s) => s.exitPreviewMode);
-  const [showNotice, setShowNotice] = useState(false);
+  const { gate, notice: consentNotice } = useLabelaryConsent();
   // The session's focus boundary: leaving this panel applies the buffer, so
   // header actions (copy) stay inside it and don't count as leaving.
   const panelRef = useRef<HTMLDivElement>(null);
@@ -39,7 +38,6 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
   // The body keeps its metadata (the apply reparses it); the button copies the export form.
   const { copy, copied } = useCopyToClipboard(() => finishZplExport(shownText));
 
-  // The printer talks to the user's own device, so only Labelary needs the consent notice.
   const previewAvailable = effectiveProvider !== 'none';
 
   const togglePreview = () => {
@@ -47,11 +45,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
       exitPreviewMode();
       return;
     }
-    if (effectiveProvider === 'labelary' && noticeRequired) {
-      setShowNotice(true);
-      return;
-    }
-    void enterPreviewMode();
+    gate(() => void enterPreviewMode());
   };
 
   // Collapsing the panel mid-edit would hide an unapplied buffer.
@@ -134,15 +128,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
         )}
       </div>
 
-      {showNotice && (
-        <LabelaryNoticeModal
-          onClose={() => setShowNotice(false)}
-          onContinue={() => {
-            setShowNotice(false);
-            void enterPreviewMode();
-          }}
-        />
-      )}
+      {consentNotice}
     </div>
   );
 }

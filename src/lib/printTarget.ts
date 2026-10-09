@@ -1,4 +1,10 @@
+import type { PreviewProvider } from "../store/slices/uiSlice";
+
 export type PrintTransport = "network" | "browserprint" | "local" | "usb";
+
+/** A way out of the output dialog. The system dialog hands a rendered label to the operating system, so it
+ *  binds no device and answers nothing. */
+export type PrintWay = PrintTransport | "system";
 
 export type QueryTarget =
   | { kind: "network"; host: string; port: number }
@@ -46,8 +52,18 @@ export function offeredTransports(desktop: boolean, present: { local: boolean; u
   ];
 }
 
+/** The ways the output dialog offers. Only a label that can be drawn gates the system dialog. */
+export function offeredWays(desktop: boolean, present: { local: boolean; usb: boolean }, renderable: boolean): PrintWay[] {
+  return [...offeredTransports(desktop, present), ...(renderable ? ["system" as const] : [])];
+}
+
+/** The ways a status read blocks, plus the system dialog while the printer itself renders. */
+export function needsRawChannel(way: PrintWay, renderer: PreviewProvider): boolean {
+  return way === "network" || way === "usb" || (way === "system" && renderer === "printer");
+}
+
 /** The stored way when the build offers it, else the network form, without rewriting the choice. */
-export function effectiveTransport(transport: PrintTransport, offered: PrintTransport[]): PrintTransport {
+export function effectiveTransport(transport: PrintTransport, offered: readonly PrintWay[]): PrintTransport {
   return offered.includes(transport) ? transport : "network";
 }
 

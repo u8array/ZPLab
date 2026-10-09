@@ -2,14 +2,15 @@ import { useState, type RefObject } from "react";
 import { finishZplExport } from "../lib/exportZpl";
 import {
   currentObjects,
-  selectBatchInputs,
   selectCanBatchExport,
   useLabelStore,
 } from "../store/labelStore";
-import { generateMultiPageZPL, generateBatchZpl } from "@zplab/core/lib/zplGenerator";
+import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
+import { sendZpl } from "../lib/sendZpl";
 import { generateSetupScript, setupFormatBlocks } from "../lib/zplSetupScript";
 import { printErrorMessage, printLabel, printReplaced } from "../lib/printSheet";
 import { saveTextFile, saveErrorMessage, ZPL_SAVE_FILTERS } from "../lib/fileDialogs";
+import { saveLabelImage } from "../lib/saveLabelImage";
 import { labelaryErrorMessage } from "../lib/labelary";
 import { currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint } from "../store/labelStore.selectors";
 import { buildActiveRow } from "@zplab/core/lib/variableBinding";
@@ -25,12 +26,10 @@ export function useZplImportExport(canvasRef: RefObject<LabelCanvasHandle | null
   // render on every label / page / variable edit.
   const canBatchExport = useLabelStore(selectCanBatchExport);
   const batchRowCount = useLabelStore((s) => s.dataset?.rows.length ?? 0);
-  // Source-aware Zebra-print state lives in the store so the
-  // PrinterSettingsModal can trigger a Setup-Script send without
-  // prop-drilling through this hook. Treat `null` as closed.
-  const zebraPrintSource = useLabelStore((s) => s.zebraPrintSource);
-  const openZebraPrintStore = useLabelStore((s) => s.openZebraPrint);
-  const closeZebraPrintStore = useLabelStore((s) => s.closeZebraPrint);
+  // In the store, so PrinterSettingsModal can open the dialog on the setup script without prop-drilling.
+  const outputSource = useLabelStore((s) => s.outputSource);
+  const openOutputStore = useLabelStore((s) => s.openOutput);
+  const closeOutput = useLabelStore((s) => s.closeOutput);
 
   const setUserError = useLabelStore((s) => s.setUserError);
   const clearUserError = useLabelStore((s) => s.clearUserError);
@@ -46,14 +45,15 @@ export function useZplImportExport(canvasRef: RefObject<LabelCanvasHandle | null
 
   const handleExportBatch = () => {
     const s = useLabelStore.getState();
-    const batch = selectBatchInputs(s);
-    if (!batch) return;
-    const zpl = finishZplExport(
-      generateBatchZpl(currentPageLabel(s), currentObjects(s), s.variables, batch.dataset, batch.mapping),
-    );
-    void saveTextFile(zpl, { filename: "label-batch.zpl", filters: ZPL_SAVE_FILTERS })
+    if (!selectCanBatchExport(s)) return;
+    void saveTextFile(sendZpl(s), { filename: "label-batch.zpl", filters: ZPL_SAVE_FILTERS })
       .then((wrote) => wrote && clearUserError())
       .catch(() => setUserError(saveErrorMessage));
+  };
+
+  // The canvas capture the context menu saves, so both image exports hold the same pixels.
+  const handleExportPng = () => {
+    void saveLabelImage(canvasRef.current?.captureLabel() ?? Promise.resolve(null), "label.png");
   };
 
   // Prints the current page as the preview renderer draws it, with the active row substituted.
@@ -81,42 +81,32 @@ export function useZplImportExport(canvasRef: RefObject<LabelCanvasHandle | null
       await printLabel(image);
       clearUserError();
     } catch (e) {
-      // The print the user replaced is the older one, so it may not speak for the newer one's banner.
       if (e !== printReplaced) setUserError(printErrorMessage);
     }
   };
 
-  // ZPL surfaced to direct-print: branch on the active source.
-  // - 'setupScript': EEPROM-persistent printer config (live-clock
-  //   safe; the generator captures `now` here, at click-time).
-  // - 'label' (default): batch form when a CSV is in play, otherwise
-  //   the same template the editor displays.
+  // The setup script captures `now` at the click, so a live clock stays right.
   const currentZpl = () => {
     const s = useLabelStore.getState();
-    if (zebraPrintSource === 'setupScript') {
+    if (outputSource === 'setupScript') {
       return generateSetupScript(s.printerProfile, setupFormatBlocks(s.label, s.pages, s.variables));
     }
-    const batch = selectBatchInputs(s);
-    const zpl = batch
-      ? generateBatchZpl(
-          currentPageLabel(s), currentObjects(s), s.variables, batch.dataset, batch.mapping,
-        )
-      : generateMultiPageZPL(s.label, s.pages, s.variables);
-    return finishZplExport(zpl);
+    return sendZpl(s);
   };
 
   return {
     showZplImport,
     openZplImport: () => setShowZplImport(true),
     closeZplImport: () => setShowZplImport(false),
-    outputSource: zebraPrintSource,
-    openZebraPrint: () => openZebraPrintStore('label'),
-    closeZebraPrint: closeZebraPrintStore,
+    outputSource,
+    openOutput: () => openOutputStore('label'),
+    closeOutput,
     currentZpl,
     handleDownload,
     handleExportBatch,
     canBatchExport,
     batchRowCount,
     handlePrint,
+    handleExportPng,
   };
 }

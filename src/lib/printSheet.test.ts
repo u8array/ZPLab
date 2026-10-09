@@ -22,19 +22,16 @@ describe("printLabel", () => {
     sheetSrc = document.querySelector<HTMLImageElement>(".print-sheet img")?.src ?? null;
     sheetsAtPrint = sheets();
   };
-  /** A normal browser print. */
-  const announcing = () => {
+  const announcesAfterprint = () => {
     seen();
     window.dispatchEvent(new Event("beforeprint"));
     window.dispatchEvent(new Event("afterprint"));
   };
-  /** The same, with a dialog the user has not answered yet. */
-  const slow = () => {
+  const dialogStillOpen = () => {
     seen();
     window.dispatchEvent(new Event("beforeprint"));
   };
-  /** The macOS shell path. */
-  const shell = () => {
+  const shellPromise = () => {
     seen();
     return Promise.resolve();
   };
@@ -54,14 +51,13 @@ describe("printLabel", () => {
       if (tag === "img") imgs.push(el as HTMLImageElement);
       return el;
     });
-    print = vi.fn(announcing);
+    print = vi.fn(announcesAfterprint);
     vi.stubGlobal("print", print);
   });
 
   afterEach(async () => {
-    // The shell path holds its sheet until the next print, so one more print clears the module out.
     decodes();
-    print.mockImplementation(announcing);
+    print.mockImplementation(announcesAfterprint);
     await printLabel("blob:reset");
     vi.runOnlyPendingTimers();
     vi.useRealTimers();
@@ -72,7 +68,7 @@ describe("printLabel", () => {
     document.documentElement.classList.remove("printing-label");
   });
 
-  it("prints the label through this document and gives the bytes back", async () => {
+  it("prints through this document and releases the label image afterwards", async () => {
     await printLabel("blob:label");
 
     expect(print).toHaveBeenCalledOnce();
@@ -92,7 +88,7 @@ describe("printLabel", () => {
   });
 
   it("keeps the sheet standing for as long as a dialog takes", async () => {
-    print.mockImplementation(slow);
+    print.mockImplementation(dialogStillOpen);
     await printLabel("blob:slow");
 
     await vi.advanceTimersByTimeAsync(900_000);
@@ -113,7 +109,6 @@ describe("printLabel", () => {
     await printLabel("blob:quiet");
 
     await vi.advanceTimersByTimeAsync(900_000);
-    // No deadline may take the sheet away while a dialog of that engine is still open.
     expect(armed()).toBe(true);
     expect(sheets()).toBe(1);
     expect(revoked).toEqual([]);
@@ -131,7 +126,7 @@ describe("printLabel", () => {
   });
 
   it("still prints where the print media query has no event target", async () => {
-    // Safari 13 is such a build, and a second source may not cost the first one.
+    // Safari 13 is such a build.
     vi.stubGlobal("matchMedia", () => {
       throw new TypeError("addEventListener is not a function");
     });
@@ -153,7 +148,7 @@ describe("printLabel", () => {
       removeEventListener: () => undefined,
     };
     vi.stubGlobal("matchMedia", () => media);
-    // An engine that reports no print event, which WebKit builds are repeatedly suspected of.
+    // An engine that reports no print event, as some WebKit builds do.
     print.mockImplementation(() => {
       seen();
       fire({ matches: true });
@@ -162,13 +157,11 @@ describe("printLabel", () => {
     await printLabel("blob:media");
 
     await vi.advanceTimersByTimeAsync(2_000);
-    // The deadline would otherwise have pulled the sheet out from under an open print dialog.
     expect(sheetSrc).toBe("blob:media");
     expect(armed()).toBe(true);
     expect(sheets()).toBe(1);
 
     fire({ matches: false });
-    // And the sheet may not outlive the job, or the next print of the user's own shows this label.
     expect(armed()).toBe(false);
     expect(sheets()).toBe(0);
     expect(revoked).toEqual(["blob:media"]);
@@ -185,11 +178,9 @@ describe("printLabel", () => {
 
   describe("when the shell prints for us", () => {
     it("takes the promise as the answer and keeps the sheet for the dialog", async () => {
-      print.mockImplementation(shell);
+      print.mockImplementation(shellPromise);
       await printLabel("blob:shell");
 
-      // No print event ever arrives on this path, and the shell paints the document when the user
-      // confirms, so taking the sheet away on a deadline would print the app instead of the label.
       expect(sheetSrc).toBe("blob:shell");
       expect(armed()).toBe(true);
       expect(sheets()).toBe(1);
@@ -204,7 +195,7 @@ describe("printLabel", () => {
       const first = expect(printLabel("blob:a")).rejects.toThrow("not allowed");
       await vi.advanceTimersByTimeAsync(0);
 
-      print.mockImplementation(shell);
+      print.mockImplementation(shellPromise);
       await printLabel("blob:b");
       refuse(new Error("webview.print not allowed"));
       await first;
@@ -236,7 +227,6 @@ describe("printLabel", () => {
       const printing = printLabel("blob:pending");
       await vi.advanceTimersByTimeAsync(0);
 
-      // The user's own Ctrl+P must print the app, not a label that is not even ready.
       expect(armed()).toBe(false);
       expect(sheets()).toBe(0);
       expect(print).not.toHaveBeenCalled();
@@ -253,7 +243,6 @@ describe("printLabel", () => {
       await vi.advanceTimersByTimeAsync(0);
       expect(sheets()).toBe(0);
 
-      // The older render answers first here, and must not take the job from the newer click.
       held(0).dispatchEvent(new Event("load"));
       await first;
       expect(print).not.toHaveBeenCalled();
@@ -265,7 +254,7 @@ describe("printLabel", () => {
       expect(sheetsAtPrint).toBe(1);
     });
 
-    it("gives the bytes back and leaves no sheet when the image fails", async () => {
+    it("releases the image and leaves no sheet when it fails to load", async () => {
       const printing = printLabel("blob:broken");
       await vi.advanceTimersByTimeAsync(0);
       held().dispatchEvent(new Event("error"));

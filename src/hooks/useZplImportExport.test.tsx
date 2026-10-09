@@ -26,7 +26,7 @@ beforeEach(() => {
     dataset: null,
     columnMapping: null,
     previewMode: { status: "idle" },
-    zebraPrintSource: "label",
+    outputSource: "label",
     keepExportMetadata: false,
   });
 });
