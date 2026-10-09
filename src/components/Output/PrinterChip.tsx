@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { ArrowPathIcon, ChevronDownIcon, CircleStackIcon, Cog6ToothIcon, DocumentTextIcon } from "@heroicons/react/16/solid";
+import { ArrowDownTrayIcon, ArrowPathIcon, ChevronDownIcon, CircleStackIcon, Cog6ToothIcon, DocumentTextIcon } from "@heroicons/react/16/solid";
+import type { SgdSetting } from "@zplab/core/lib/sgd";
 import { useT } from "../../hooks/useT";
 import { useDismiss } from "../../hooks/useDismiss";
 import { formatTemplate } from "../../lib/formatTemplate";
@@ -8,6 +9,7 @@ import { failureText, readingText, reportView, warningsText, type ReadinessTone 
 import { resolveQueryTarget } from "../../lib/printTarget";
 import { selectPrinterState, useLabelStore } from "../../store/labelStore";
 import { DropdownItem, DropdownSeparator } from "../ui/DropdownMenu";
+import { AdoptSettingsDialog } from "./AdoptSettingsDialog";
 import { PrinterConfigurationDialog } from "./PrinterConfigurationDialog";
 
 const DOT_CLS: Record<ReadinessTone, string> = {
@@ -35,9 +37,11 @@ export function PrinterChip() {
   const step = useLabelStore((s) => s.printerReading);
   const checkPrinter = useLabelStore((s) => s.checkPrinter);
   const readPrinterConfiguration = useLabelStore((s) => s.readPrinterConfiguration);
+  const readPrinterSettings = useLabelStore((s) => s.readPrinterSettings);
   const setPrinterSettingsTab = useLabelStore((s) => s.setPrinterSettingsTab);
   const [open, setOpen] = useState(false);
   const [configuration, setConfiguration] = useState<PrinterOutcome<string> | "reading" | undefined>();
+  const [settings, setSettings] = useState<PrinterOutcome<SgdSetting[]> | "reading" | undefined>();
   const rootRef = useRef<HTMLDivElement>(null);
   useDismiss(rootRef, () => setOpen(false), { active: open });
 
@@ -58,6 +62,10 @@ export function PrinterChip() {
   const openConfiguration = () => {
     setConfiguration("reading");
     void readPrinterConfiguration().then((result) => setConfiguration((current) => (current === "reading" ? result : current)));
+  };
+  const openSettings = () => {
+    setSettings("reading");
+    void readPrinterSettings().then((result) => setSettings((current) => (current === "reading" ? result : current)));
   };
 
   return (
@@ -93,6 +101,9 @@ export function PrinterChip() {
           <DropdownItem icon={DocumentTextIcon} disabled={reading} onClick={closeThen(openConfiguration)}>
             {loc.readConfiguration}
           </DropdownItem>
+          <DropdownItem icon={ArrowDownTrayIcon} disabled={reading} onClick={closeThen(openSettings)}>
+            {loc.adoptFromPrinter}
+          </DropdownItem>
           <DropdownItem icon={CircleStackIcon} onClick={closeThen(() => setPrinterSettingsTab("storedFonts"))}>
             {t.printerSettings.objects.listHeading}
           </DropdownItem>
@@ -102,6 +113,7 @@ export function PrinterChip() {
         </div>
       )}
       {configuration && <PrinterConfigurationDialog read={configuration} onClose={() => setConfiguration(undefined)} />}
+      {settings && <AdoptSettingsDialog read={settings} onClose={() => setSettings(undefined)} />}
     </div>
   );
 }

@@ -2,12 +2,19 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useLabelStore } from "../labelStore";
 import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
 import { selectPrinterState } from "../labelStore.selectors";
+import { adoptionDiff } from "@zplab/core/lib/printerSettingsAdoption";
+import { parseSgdDump } from "@zplab/core/lib/sgd";
+import { ZD230_ALLCV_EXCERPT } from "@zplab/core/lib/sgd.fixture";
 
 const readPrinterStatus = vi.fn();
 const readPrinterConfiguration = vi.fn();
+const readPrinterSettings = vi.fn();
 vi.mock("../../lib/printerStatus", () => ({
   readPrinterStatus: (...args: unknown[]) => readPrinterStatus(...args),
   readPrinterConfiguration: (...args: unknown[]) => readPrinterConfiguration(...args),
+}));
+vi.mock("../../lib/printerSettings", () => ({
+  readPrinterSettings: (...args: unknown[]) => readPrinterSettings(...args),
 }));
 
 const report = { identity: undefined, flags: { errors: [], warnings: [] }, memory: undefined, status: undefined, withheld: false, raw: "" };
@@ -62,5 +69,66 @@ describe("readPrinterConfiguration", () => {
     expect(readPrinterConfiguration).toHaveBeenCalledWith({ kind: "network", host: "172.17.17.175", port: 9100 });
     useLabelStore.setState({ printTarget: DEFAULT_PRINT_TARGET });
     expect(await useLabelStore.getState().readPrinterConfiguration()).toEqual({ kind: "unconfigured" });
+  });
+});
+
+describe("readPrinterSettings", () => {
+  it("holds the channel under the dump command and hands the settings back", async () => {
+    let finish: (value: unknown) => void = () => undefined;
+    readPrinterSettings.mockImplementation(() => new Promise((resolve) => (finish = resolve)));
+    const pending = useLabelStore.getState().readPrinterSettings();
+    expect(useLabelStore.getState().printerReading).toBe('! U1 getvar "allcv"');
+    expect(await useLabelStore.getState().checkPrinter()).toEqual({ kind: "busy" });
+    finish({ kind: "ok", value: [{ key: "print.tone", value: "15.0" }] });
+    expect(await pending).toEqual({ kind: "ok", value: [{ key: "print.tone", value: "15.0" }] });
+    expect(useLabelStore.getState().printerReading).toBeUndefined();
+    expect(readPrinterSettings).toHaveBeenCalledWith({ kind: "network", host: "172.17.17.175", port: 9100 });
+    useLabelStore.setState({ printTarget: DEFAULT_PRINT_TARGET });
+    expect(await useLabelStore.getState().readPrinterSettings()).toEqual({ kind: "unconfigured" });
+  });
+});
+
+describe("adoptPrinterSettings", () => {
+  const rowsFor = (fields: string[]) => {
+    const state = useLabelStore.getState();
+    return adoptionDiff(parseSgdDump(ZD230_ALLCV_EXCERPT), state.label, state.printerProfile).filter((row) => fields.includes(row.field));
+  };
+
+  it("writes the chosen rows to the label settings and to the printer profile", () => {
+    useLabelStore.setState({ label: { widthMm: 100, heightMm: 60, dpmm: 8 }, printerProfile: {} });
+    expect(useLabelStore.getState().adoptPrinterSettings(rowsFor(["printSpeed", "mediaMode", "printerName"]))).toBe(true);
+    expect(useLabelStore.getState().label).toMatchObject({ printSpeed: 6, mediaMode: "T", widthMm: 100 });
+    expect(useLabelStore.getState().printerProfile).toEqual({ printerName: "D4J260700032" });
+  });
+
+  it("rescales the design when the head density comes along", () => {
+    useLabelStore.setState({ label: { widthMm: 100, heightMm: 60, dpmm: 12, labelHomeX: 120 }, printerProfile: {} });
+    useLabelStore.getState().adoptPrinterSettings(rowsFor(["dpmm", "widthMm", "heightMm"]));
+    expect(useLabelStore.getState().label).toMatchObject({ dpmm: 8, widthMm: 101.6, heightMm: 152.4, labelHomeX: 80 });
+  });
+
+  it("takes the label and the profile back in one undo", () => {
+    useLabelStore.setState({ label: { widthMm: 100, heightMm: 60, dpmm: 8 }, printerProfile: {} });
+    useLabelStore.temporal.getState().clear();
+    useLabelStore.getState().adoptPrinterSettings(rowsFor(["printSpeed", "printerName"]));
+    useLabelStore.temporal.getState().undo();
+    expect(useLabelStore.getState().label.printSpeed).toBeUndefined();
+    expect(useLabelStore.getState().printerProfile.printerName).toBeUndefined();
+  });
+
+  it("takes the rescaled design and the profile back in one undo", () => {
+    useLabelStore.setState({ label: { widthMm: 100, heightMm: 60, dpmm: 12, labelHomeX: 120 }, printerProfile: {} });
+    useLabelStore.temporal.getState().clear();
+    useLabelStore.getState().adoptPrinterSettings(rowsFor(["dpmm", "printerName"]));
+    useLabelStore.temporal.getState().undo();
+    expect(useLabelStore.getState().label).toMatchObject({ dpmm: 12, labelHomeX: 120 });
+    expect(useLabelStore.getState().printerProfile.printerName).toBeUndefined();
+  });
+
+  it("answers false and writes nothing while the editor is locked", () => {
+    useLabelStore.setState({ label: { widthMm: 100, heightMm: 60, dpmm: 8 }, printerProfile: {}, sourceEdit: { status: "editing", draft: "^XA^XZ", baseline: "^XA^XZ", session: 1 } });
+    expect(useLabelStore.getState().adoptPrinterSettings(rowsFor(["printSpeed"]))).toBe(false);
+    expect(useLabelStore.getState().label.printSpeed).toBeUndefined();
+    useLabelStore.setState({ sourceEdit: { status: "off" } });
   });
 });

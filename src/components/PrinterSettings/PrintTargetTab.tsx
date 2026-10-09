@@ -1,9 +1,13 @@
+import { useState } from "react";
+import type { SgdSetting } from "@zplab/core/lib/sgd";
 import { useT } from "../../hooks/useT";
 import { useLabelStore } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
 import { wayHint, wayLabel } from "../../lib/printWayText";
+import type { PrinterOutcome } from "../../lib/printerQuery";
 import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useUsbPrinters, type DeviceListState } from "../../hooks/usePrintDevices";
+import { AdoptSettingsDialog } from "../Output/AdoptSettingsDialog";
 import { buttonCls, sectionHeadingCls } from "../ui/formStyles";
 import { RadioOption } from "../ui/RadioOption";
 import { Select } from "../ui/Select";
@@ -28,6 +32,9 @@ export function PrintTargetTab() {
   const loc = t.printerSettings.printTarget;
   const transport = useLabelStore((s) => s.printTarget.transport);
   const setPrintTarget = useLabelStore((s) => s.setPrintTarget);
+  const readPrinterSettings = useLabelStore((s) => s.readPrinterSettings);
+  const reading = useLabelStore((s) => s.printerReading) !== undefined;
+  const [settings, setSettings] = useState<PrinterOutcome<SgdSetting[]> | "reading" | undefined>();
   const usb = useUsbPrinters(isDesktopShell);
   const local = useLocalPrinters(isDesktopShell);
   const bp = useBrowserPrintDevices();
@@ -36,6 +43,10 @@ export function PrintTargetTab() {
 
   // A device way without devices stays visible, and then its reason replaces the description.
   const deviceWayHint = (value: PrintTransport) => (offered.includes(value) ? undefined : t.zebraPrint.noPrinters);
+  const openSettings = () => {
+    setSettings("reading");
+    void readPrinterSettings().then((result) => setSettings((current) => (current === "reading" ? result : current)));
+  };
   const ways: { value: PrintTransport; desktopOnly?: boolean }[] = [
     { value: "network" },
     { value: "browserprint" },
@@ -80,6 +91,13 @@ export function PrintTargetTab() {
         <PrinterAddressFields />
         <span className="text-[10px] text-muted max-w-md">{loc.addressHint}</span>
       </section>
+
+      {isDesktopShell && (
+        <button type="button" className={`${buttonCls} self-start`} disabled={reading} onClick={openSettings}>
+          {t.printerSettings.printerStatus.adoptFromPrinter}
+        </button>
+      )}
+      {settings && <AdoptSettingsDialog read={settings} portal onClose={() => setSettings(undefined)} />}
     </div>
   );
 }

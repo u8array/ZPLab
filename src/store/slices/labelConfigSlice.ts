@@ -75,15 +75,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
   label: { widthMm: 100, heightMm: 60, dpmm: 8 },
 
   setLabelConfig: (config) =>
-    set((state) => {
-      if (selectEditorFrozen(state)) return {};
-      const label = { ...state.label, ...config };
-      // An emit-affecting config edit invalidates each page overlay's verbatim
-      // config bytes; drop overlays so those pages regenerate with the new
-      // value (config-segment patching is a later stage).
-      if (!configPatchAffectsEmit(state.label, config)) return { label };
-      return { label, pages: dropPageOverlays(state.pages) };
-    }),
+    set((state) => (selectEditorFrozen(state) ? {} : labelConfigPatch(state, config))),
 
   resetPerLabelConfig: () =>
     get().setLabelConfig(
@@ -185,15 +177,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
   },
 
   rescaleDensity: (toDpmm, configPatch) =>
-    set((state) => {
-      if (selectEditorFrozen(state)) return {};
-      if (toDpmm === state.label.dpmm) return {};
-      const p = rescaleParamsFor({ kind: 'dpmm', toDpmm, configPatch }, state.label);
-      // Geometry changes, so the captured overlay bytes no longer match; drop
-      // them so the rescaled pages regenerate from the model.
-      const { pages, label } = rescaleDesign(state.pages, state.label, p.fromEff, p.toEff, p.patch, p.includeCalibrationFields);
-      return { label, pages: dropPageOverlays(pages) };
-    }),
+    set((state) => (selectEditorFrozen(state) ? {} : densityRescalePatch(state, toDpmm, configPatch))),
 
   rescaleJmDensity: (jmDensity) =>
     set((state) => {
@@ -237,3 +221,21 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       return pages.every((p, i) => p === state.pages[i]) ? {} : { pages };
     }),
 });
+
+/** A config edit as a patch, so a caller can land it in a `set()` of its own. */
+export function labelConfigPatch(state: LabelState, config: Partial<LabelConfig>): Partial<LabelState> {
+  if (Object.keys(config).length === 0) return {};
+  const label = { ...state.label, ...config };
+  // An emit-affecting config edit invalidates each page overlay's verbatim config bytes.
+  if (!configPatchAffectsEmit(state.label, config)) return { label };
+  return { label, pages: dropPageOverlays(state.pages) };
+}
+
+/** A density change as a patch, with `configPatch` folded into the same step. */
+export function densityRescalePatch(state: LabelState, toDpmm: number, configPatch?: Partial<LabelConfig>): Partial<LabelState> {
+  if (toDpmm === state.label.dpmm) return {};
+  const p = rescaleParamsFor({ kind: 'dpmm', toDpmm, configPatch }, state.label);
+  // Rescaled geometry invalidates the captured overlay bytes.
+  const { pages, label } = rescaleDesign(state.pages, state.label, p.fromEff, p.toEff, p.patch, p.includeCalibrationFields);
+  return { label, pages: dropPageOverlays(pages) };
+}
