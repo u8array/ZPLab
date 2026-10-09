@@ -8,7 +8,7 @@ import {
 } from "../store/labelStore";
 import { generateMultiPageZPL, generateBatchZpl } from "@zplab/core/lib/zplGenerator";
 import { generateSetupScript, setupFormatBlocks } from "../lib/zplSetupScript";
-import { printLabel } from "../lib/printPreview";
+import { printErrorMessage, printLabel, printReplaced } from "../lib/printSheet";
 import { saveTextFile, saveErrorMessage, ZPL_SAVE_FILTERS } from "../lib/fileDialogs";
 import { labelaryErrorMessage } from "../lib/labelary";
 import { currentPageLabel, selectEffectivePreviewProvider, selectLabelaryEndpoint } from "../store/labelStore.selectors";
@@ -59,24 +59,30 @@ export function useZplImportExport(canvasRef: RefObject<LabelCanvasHandle | null
   // Prints the current page as the preview renderer draws it, with the active row substituted.
   const handlePrint = async () => {
     const renderer = selectEffectivePreviewProvider(useLabelStore.getState());
-    const image = (async () => {
+    // Two stages with two kinds of failure: the renderer may be out of reach, or no print may start.
+    let image: string;
+    try {
       // A premium host needs the keychain key before the request goes out.
       if (renderer === "labelary" && !useLabelStore.getState().labelaryApiKeyLoaded) {
         await useLabelStore.getState().hydrateLabelaryApiKey();
       }
       const s = useLabelStore.getState();
       const job = { label: currentPageLabel(s), objects: currentObjects(s), variables: s.variables, active: buildActiveRow(s.dataset, s.columnMapping) };
-      return renderLabelImageUrl(renderer, job, {
+      image = await renderLabelImageUrl(renderer, job, {
         labelary: selectLabelaryEndpoint(s),
         printTarget: s.printTarget,
         captureCanvas: async (dots) => (await canvasRef.current?.captureLabelDots(dots)) ?? null,
       });
-    })();
+    } catch (e) {
+      setUserError(renderer === "labelary" ? labelaryErrorMessage(e) : errorMessage(e), { retryExport: renderer === "labelary" });
+      return;
+    }
     try {
       await printLabel(image);
       clearUserError();
     } catch (e) {
-      setUserError(renderer === "labelary" ? labelaryErrorMessage(e) : errorMessage(e), { retryExport: renderer === "labelary" });
+      // The print the user replaced is the older one, so it may not speak for the newer one's banner.
+      if (e !== printReplaced) setUserError(printErrorMessage);
     }
   };
 
@@ -103,7 +109,7 @@ export function useZplImportExport(canvasRef: RefObject<LabelCanvasHandle | null
     showZplImport,
     openZplImport: () => setShowZplImport(true),
     closeZplImport: () => setShowZplImport(false),
-    showZebraPrint: zebraPrintSource !== null,
+    outputSource: zebraPrintSource,
     openZebraPrint: () => openZebraPrintStore('label'),
     closeZebraPrint: closeZebraPrintStore,
     currentZpl,

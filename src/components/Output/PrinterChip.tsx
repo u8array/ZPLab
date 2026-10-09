@@ -43,6 +43,9 @@ export function PrinterChip() {
 
   const resolved = resolveQueryTarget(printTarget);
   const name = "failure" in resolved ? t.zebraPrint.printer : resolved.target.kind === "usb" ? t.zebraPrint.tabUsb : resolved.target.host;
+  // The stored way and not the effective one. Reading the effective way would enumerate printers on
+  // every mount, and only the desktop build renders this chip at all.
+  const askedOverAddress = !("failure" in resolved) && resolved.target.kind === "network" && printTarget.transport !== "network";
   const view = reportView(loc, state.phase === "done" ? state.report : undefined);
   const reading = step !== undefined;
   const tone: ReadinessTone = state.phase === "failed" ? "blocked" : (view?.line.tone ?? "unknown");
@@ -81,6 +84,7 @@ export function PrinterChip() {
             <Row label={loc.memory} value={formatTemplate(loc.memoryFmt, { available: String(view.report.memory.availableKb), max: String(view.report.memory.maxKb) })} />
           )}
           {checkedAt && <div className="px-3 py-0.5 text-[10px] font-mono text-muted text-right">{checkedAt}</div>}
+          {askedOverAddress && <div className="px-3 pb-1 text-[10px] text-muted leading-snug">{t.zebraPrint.wayQueryAddress}</div>}
           <DropdownSeparator />
           <DropdownItem icon={ArrowPathIcon} disabled={reading} onClick={closeThen(() => void checkPrinter())}>
             {loc.checkNow}

@@ -6,6 +6,8 @@ export const sectionHeadingCls = 'font-mono text-[10px] uppercase tracking-wides
  *  surface-2 + border styling used by `inputCls` so buttons sit naturally
  *  next to form fields without dominating the visual hierarchy. */
 export const buttonCls = 'px-3 py-1.5 rounded text-xs font-mono bg-surface-2 border border-border text-text hover:bg-border transition-colors';
+/** The action a dialog exists for: the send, the print, the export. */
+export const primaryButtonCls = 'px-3 py-1.5 text-xs font-mono rounded bg-accent text-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity';
 /** `buttonCls` hovers, so a disabled button needs its hover taken back too. */
 export const disabledCls = 'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-surface-2';
 /** The same look for a control that locks with `aria-disabled` and keeps focus. */

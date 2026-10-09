@@ -1,4 +1,5 @@
 import type { Translations } from '../locales';
+import { anyProducible, offeredScopes, producibleKinds } from './outputChoice';
 import { formatTemplate } from './formatTemplate';
 
 /**
@@ -23,7 +24,6 @@ export type MenuItemId =
   | 'importCsv'
   | 'connectData'
   | 'print'
-  | 'sendToZebra'
   | 'undo'
   | 'redo'
   | 'github'
@@ -72,9 +72,6 @@ export interface MenuFlags {
   sourceEditing: boolean;
   canBatchExport: boolean;
   batchRowCount: number;
-  /** Physical labels a batch send produces: rows × per-label ^PQ quantity.
-   *  exportBatch keeps batchRowCount (it names file content, not printing). */
-  batchPrintCount: number;
   /** Desktop routes every data source through the connect-data wizard (one File
    *  entry); web keeps the direct CSV import as its only supported source. */
   connectDataWizard: boolean;
@@ -90,6 +87,7 @@ export interface MenuFlags {
 
 export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
   const live = !f.sourceEditing;
+  const kinds = producibleKinds(f);
   const file: MenuSection[] = [
     [
       { id: 'new', label: t.app.newDesign, enabled: live },
@@ -106,8 +104,8 @@ export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
             enabled: f.hasObjects && live,
           }]
         : []),
-      { id: 'exportPdf', label: f.pdfCurrentPageOnly ? t.app.exportPdfCurrentPage : t.app.exportPdf, enabled: f.hasObjects && live },
-      ...(f.canBatchExport && f.canBatchPdf
+      { id: 'exportPdf', label: f.pdfCurrentPageOnly ? t.app.exportPdfCurrentPage : t.app.exportPdf, enabled: kinds.pdf },
+      ...(offeredScopes(f).includes('batch')
         ? [{
             id: 'exportBatchPdf' as const,
             label: formatTemplate(t.app.exportBatchPdfFmt, { n: String(f.batchRowCount) }),
@@ -123,17 +121,10 @@ export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
         : { id: 'importCsv' as const, label: t.app.importCsvData, enabled: live },
     ],
     [
-      { id: 'print', label: t.app.print, enabled: f.hasObjects && live },
-      {
-        // Sends the full export (a config-only overlay stream is a legitimate
-        // setup job), so it follows documentEmits like exportZpl; the rendered
-        // print above stays hasObjects (rendering nothing has no value).
-        id: 'sendToZebra',
-        label: f.canBatchExport
-          ? formatTemplate(t.app.sendToZebraBatchFmt, { n: String(f.batchPrintCount) })
-          : t.app.sendToZebra,
-        enabled: f.documentEmits && live,
-      },
+      // The one door to the output dialog, which names no kind of its own, so it may propose the
+      // one chosen last. No accelerator on purpose: on macOS the print sheet stays armed until the
+      // next print, and a Cmd+P that bypassed this entry would print the previous label.
+      { id: 'print', label: t.app.print, enabled: anyProducible(f) },
     ],
     ...(f.includeQuit
       ? [[{ id: 'quit' as const, label: t.app.quitMenu, enabled: true }]]

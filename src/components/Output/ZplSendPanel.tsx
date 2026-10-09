@@ -1,11 +1,12 @@
 import { useState, type ReactNode } from "react";
 import { errorMessage } from "../../lib/errorMessage";
-import { XMarkIcon } from "@heroicons/react/16/solid";
 import { useT } from "../../hooks/useT";
-import { DialogShell } from "../ui/DialogShell";
 import { Select } from "../ui/Select";
+import { primaryButtonCls } from "../ui/formStyles";
 import { sendViaBrowserPrint, sendViaNetwork } from "../../lib/zebraPrint";
 import { isDesktopShell } from "../../lib/platform";
+import { Tooltip } from "../ui/Tooltip";
+import { wayHint } from "../../lib/printWayText";
 import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
 import { useLabelStore, selectBatchInputs, selectCanBatchExport, selectBatchPrintCount, selectPrinterReading } from "../../store/labelStore";
 import { formatTemplate } from "../../lib/formatTemplate";
@@ -15,7 +16,6 @@ import { sendZplUsb, setupUsbAccess } from "../../lib/usbPrint";
 import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useUsbPrinters } from "../../hooks/usePrintDevices";
 import { PrinterAddressFields } from "../PrinterSettings/PrinterAddressFields";
 import { PrinterCheck } from "./PrinterCheck";
-import { sectionHeadingCls } from "../ui/formStyles";
 import type { PrinterQueryFailure } from "../../lib/printerQuery";
 
 type Tab = PrintTransport;
@@ -30,8 +30,8 @@ function StatusMessage({ status }: { status: Status }) {
   );
 }
 
-// The list-based transports (browser print, OS spooler, direct USB) share this
-// body; network keeps its own ip/port form and stays separate.
+// Browser print, the OS spooler and USB share this body, because each picks from a device list.
+// Network keeps its own address form.
 interface TransportView {
   key: Tab;
   selected: string;
@@ -62,7 +62,7 @@ function TransportBody({ view, fieldLabel }: { view: TransportView; fieldLabel: 
         <button
           onClick={view.onSend}
           disabled={view.sendDisabled}
-          className="px-3 py-1.5 text-xs font-mono rounded bg-accent text-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+          className={primaryButtonCls}
         >
           {view.sendLabel}
         </button>
@@ -92,20 +92,14 @@ function ImpactNotices({ zpl }: { zpl: string }) {
   );
 }
 
-interface Props {
-  zpl: string;
-  onClose: () => void;
-}
-
-export function PrintToZebraDialog({ zpl, onClose }: Props) {
+/** The ways to a Zebra and the bytes they send, without a frame of its own, so the output dialog
+ *  shows it under its own heading. */
+export function ZplSendPanel({ zpl }: { zpl: string }) {
   const t = useT();
   // The way last used is the tab the dialog opens on, so a repeat print is one click.
   const transport = useLabelStore((s) => s.printTarget.transport);
   const setPrintTarget = useLabelStore((s) => s.setPrintTarget);
-  // The label source silently switches to batch form when a dataset is
-  // mapped; surface the count so nobody sends 10k labels unaware. A per-label
-  // ^PQ rides the stored template and multiplies EVERY recall, so the honest
-  // number (selectBatchPrintCount) is rows × quantity.
+  // A per-label ^PQ multiplies every recall, so the honest count is rows times quantity.
   const batchRows = useLabelStore((s) =>
     s.zebraPrintSource === "label" ? selectBatchInputs(s)?.dataset.rows.length ?? null : null,
   );
@@ -143,8 +137,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
         setNetStatus({ type: "success", message: t.zebraPrint.success });
         return;
       case "responded":
-        // 2xx only counts as success; print servers / proxies that respond
-        // with 4xx or 5xx must surface as an error rather than green-success.
+        // A print server or proxy answers with a status, and 4xx or 5xx must not read as success.
         if (result.status >= 200 && result.status < 300) {
           setNetStatus({ type: "success", message: t.zebraPrint.success });
         } else {
@@ -229,7 +222,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
   async function handleUsbSetup() {
     try {
       await setupUsbAccess();
-      // Access granted: refresh (a hot-plugged printer may be new) and clear the prompt.
+      // Refresh after access is granted, because a printer plugged in meanwhile is not in the list.
       await usb.refresh();
       setUsbNeedsSetup(false);
       setUsbStatus({ type: "idle" });
@@ -319,25 +312,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
   const activeView = views.find((v) => v.key === tab);
 
   return (
-    <DialogShell
-      onClose={onClose}
-      labelledBy="zebra-print-title"
-      boxClassName="bg-surface border border-border rounded shadow-lg flex flex-col w-[420px] max-w-[95vw]"
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 py-1.5 border-b border-border shrink-0">
-        <span id="zebra-print-title" className={sectionHeadingCls}>
-          {t.zebraPrint.heading}
-        </span>
-        <button
-          onClick={onClose}
-          aria-label={t.app.close}
-          className="p-1 rounded text-muted hover:text-text hover:bg-surface-2 transition-colors"
-        >
-          <XMarkIcon className="w-3.5 h-3.5" />
-        </button>
-      </div>
-
+    <>
       {batchRows !== null && (
         <p className="px-3 py-1.5 border-b border-border font-mono text-[10px] text-amber-400">
           {printQuantity > 1
@@ -350,20 +325,20 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
         </p>
       )}
 
-      {/* These are the exact bytes sent (batch form included), which the panel may never
-          have shown. Source-gated: a setup script changing settings is its purpose. */}
+      {/* These are the exact bytes sent, which the panel may never have shown. A setup script is
+          left out, because changing settings is what it is for. */}
       {printSource !== "setupScript" && <ImpactNotices zpl={zpl} />}
 
-      {/* Tabs */}
       <div className="flex border-b border-border">
         {offered.map((key) => (
-          <button key={key} className={tabClass(tab === key)} onClick={() => setPrintTarget({ transport: key })}>
-            {tabLabels[key]}
-          </button>
+          <Tooltip key={key} content={wayHint(t.zebraPrint, key, isDesktopShell)}>
+            <button className={tabClass(tab === key)} onClick={() => setPrintTarget({ transport: key })}>
+              {tabLabels[key]}
+            </button>
+          </Tooltip>
         ))}
       </div>
 
-      {/* Network tab */}
       {tab === "network" && (
         <div className="flex flex-col gap-3 p-4">
           {window.location.protocol === "https:" && (
@@ -379,7 +354,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
             <button
               onClick={handleNetworkSend}
               disabled={!host || netStatus.type === "sending" || checking}
-              className="px-3 py-1.5 text-xs font-mono rounded bg-accent text-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+              className={primaryButtonCls}
             >
               {netStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send}
             </button>
@@ -389,8 +364,7 @@ export function PrintToZebraDialog({ zpl, onClose }: Props) {
         </div>
       )}
 
-      {/* List-based transports (browser print, OS spooler, direct USB) */}
       {activeView && <TransportBody view={activeView} fieldLabel={t.zebraPrint.printer} />}
-    </DialogShell>
+    </>
   );
 }

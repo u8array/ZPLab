@@ -6,7 +6,6 @@ import {
   sendViaNetwork,
   type BrowserPrintDevice,
 } from "../lib/zebraPrint";
-import { buildPrintHtml, buildLoadingHtml } from "../lib/printPreview";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -172,28 +171,5 @@ describe("sendViaNetwork", () => {
       kind: "responded",
       status: 500,
     });
-  });
-});
-
-// ── printPreview pure functions ───────────────────────────────────────────────
-
-describe("buildPrintHtml", () => {
-  it("embeds the image URL as src", () => {
-    const html = buildPrintHtml("blob:http://localhost/abc");
-    expect(html).toContain('src="blob:http://localhost/abc"');
-  });
-
-  it("triggers window.print and window.close on image load", () => {
-    const html = buildPrintHtml("blob:x");
-    expect(html).toContain("window.print()");
-    expect(html).toContain("window.close()");
-  });
-});
-
-describe("buildLoadingHtml", () => {
-  it("returns a non-empty HTML string with loading indicator", () => {
-    const html = buildLoadingHtml();
-    expect(html).toContain("<html");
-    expect(html.toLowerCase()).toContain("loading");
   });
 });

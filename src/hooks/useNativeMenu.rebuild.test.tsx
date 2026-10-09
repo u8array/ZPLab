@@ -57,7 +57,6 @@ const BASE_FLAGS: MenuFlags = {
   sourceEditing: false,
   canBatchExport: false,
   batchRowCount: 0,
-  batchPrintCount: 0,
   connectDataWizard: true,
   canBatchPdf: false,
   pdfCurrentPageOnly: false,
@@ -65,7 +64,7 @@ const BASE_FLAGS: MenuFlags = {
   canRedo: false,
   includeQuit: true,
 };
-const BATCH_FLAGS: MenuFlags = { ...BASE_FLAGS, canBatchExport: true, batchRowCount: 3, batchPrintCount: 3 };
+const BATCH_FLAGS: MenuFlags = { ...BASE_FLAGS, canBatchExport: true, batchRowCount: 3 };
 
 const LABELS: SubmenuLabels = { file: "File", edit: "Edit", help: "Help", quit: "Quit" };
 const HISTORY: HistorySubmenu = {
@@ -170,11 +169,11 @@ describe("useNativeMenu after a rebuild", () => {
     const { handlers } = await rebuild({ flags: BATCH_FLAGS });
 
     click(en.app.newDesign);
-    click(en.app.sendToZebraBatchFmt.replace("{n}", "3"));
+    click(en.app.print);
     click(en.app.exportBatchZplFmt.replace("{n}", "3"));
 
     expect(handlers.new).toHaveBeenCalledOnce();
-    expect(handlers.sendToZebra).toHaveBeenCalledOnce();
+    expect(handlers.print).toHaveBeenCalledOnce();
     expect(handlers.exportBatch).toHaveBeenCalledOnce();
   });
 
@@ -193,9 +192,9 @@ describe("useNativeMenu after a rebuild", () => {
     const { handlers } = await rebuild({ dark: true });
 
     click(en.app.newDesign);
-    click(en.app.sendToZebra);
+    click(en.app.print);
 
     expect(handlers.new).toHaveBeenCalledOnce();
-    expect(handlers.sendToZebra).toHaveBeenCalledOnce();
+    expect(handlers.print).toHaveBeenCalledOnce();
   });
 });

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { render, cleanup, act, fireEvent, waitFor } from "@testing-library/react";
-import { PrintToZebraDialog } from "./PrintToZebraDialog";
+import { ZplSendPanel } from "./ZplSendPanel";
 import { useLabelStore } from "../../store/labelStore";
 import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
 import { fallbackTranslations as en } from "../../locales";
@@ -35,11 +35,11 @@ beforeEach(() => {
   });
 });
 
-describe("PrintToZebraDialog USB access", () => {
+describe("ZplSendPanel USB access", () => {
   it("offers the setup route with its message after a denied check, as after a denied send", async () => {
     readPrinterStatus.mockResolvedValue({ kind: "permission_denied" });
     act(() => useLabelStore.setState({ printerState: { phase: "idle" }, printTarget: { ...DEFAULT_PRINT_TARGET, transport: "usb", usbId: "usb1" } }));
-    const r = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
     await waitFor(() => expect(r.getByText(en.zebraPrint.checkPrinter)).toBeTruthy());
     await act(async () => {
       fireEvent.click(r.getByText(en.zebraPrint.checkPrinter));
@@ -50,7 +50,7 @@ describe("PrintToZebraDialog USB access", () => {
 
   it("shows the manual route when the sandbox refuses to install the udev rule", async () => {
     setupUsbAccess.mockRejectedValue("flatpak");
-    const r = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
     await waitFor(() => expect(r.getByText(/Zebra ZD230/)).toBeTruthy());
     await act(async () => {
       fireEvent.click(r.getByText(en.zebraPrint.send));
@@ -65,7 +65,7 @@ describe("PrintToZebraDialog USB access", () => {
 
   it("keeps the raw reason for any other failure", async () => {
     setupUsbAccess.mockRejectedValue("setup cancelled");
-    const r = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const r = render(<ZplSendPanel zpl="^XA^XZ" />);
     await waitFor(() => expect(r.getByText(/Zebra ZD230/)).toBeTruthy());
     await act(async () => {
       fireEvent.click(r.getByText(en.zebraPrint.send));

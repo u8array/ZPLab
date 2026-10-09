@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
-import { describe, it, expect, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup, act } from '@testing-library/react';
-import { PrintToZebraDialog } from './PrintToZebraDialog';
+import { ZplSendPanel } from './ZplSendPanel';
 import { useLabelStore } from '../../store/labelStore';
 import { fallbackTranslations as en } from '../../locales';
 
@@ -25,13 +25,13 @@ const mapping = { bindings: { v1: 'sku' }, headerSnapshot: ['sku'] };
 
 const noticeText = () => en.zebraPrint.batchNoticeFmt.replace('{n}', '3');
 
-describe('PrintToZebraDialog printer-impact notice', () => {
+describe('ZplSendPanel printer-impact notice', () => {
   it('warns when the sent bytes carry printer-setup commands', () => {
     act(() => {
       useLabelStore.setState({ zebraPrintSource: 'label', dataset: null, columnMapping: null });
     });
     const { container } = render(
-      <PrintToZebraDialog zpl={'^XA^JUS^FO10,10^A0N,30,30^FDX^FS^XZ'} onClose={vi.fn()} />,
+      <ZplSendPanel zpl={'^XA^JUS^FO10,10^A0N,30,30^FDX^FS^XZ'} />,
     );
     expect(container.textContent).toContain('^JU');
   });
@@ -40,19 +40,19 @@ describe('PrintToZebraDialog printer-impact notice', () => {
     act(() => {
       useLabelStore.setState({ zebraPrintSource: 'setupScript', dataset: null, columnMapping: null });
     });
-    const { container } = render(<PrintToZebraDialog zpl={'^XA^JUS^XZ'} onClose={vi.fn()} />);
+    const { container } = render(<ZplSendPanel zpl={'^XA^JUS^XZ'} />);
     expect(container.textContent).not.toContain('^JU');
   });
 });
 
 // Regression: the batch send-notice guards against an unaware bulk send, so it
 // must appear iff a mapped dataset drives the label source.
-describe('PrintToZebraDialog batch notice', () => {
+describe('ZplSendPanel batch notice', () => {
   it('shows the row-count notice for a mapped dataset on the label source', () => {
     act(() => {
       useLabelStore.setState({ zebraPrintSource: 'label', dataset, columnMapping: mapping, variables });
     });
-    const { container } = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const { container } = render(<ZplSendPanel zpl="^XA^XZ" />);
     expect(container.textContent).toContain(noticeText());
   });
 
@@ -66,7 +66,7 @@ describe('PrintToZebraDialog batch notice', () => {
         label: { widthMm: 50, heightMm: 30, dpmm: 8, printQuantity: 4 },
       });
     });
-    const { container } = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const { container } = render(<ZplSendPanel zpl="^XA^XZ" />);
     const expected = en.zebraPrint.batchNoticeQtyFmt
       .replace('{n}', '12')
       .replace('{rows}', '3')
@@ -78,7 +78,7 @@ describe('PrintToZebraDialog batch notice', () => {
     act(() => {
       useLabelStore.setState({ zebraPrintSource: 'setupScript', dataset, columnMapping: mapping });
     });
-    const { container } = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const { container } = render(<ZplSendPanel zpl="^XA^XZ" />);
     expect(container.textContent).not.toContain(noticeText());
   });
 
@@ -86,7 +86,7 @@ describe('PrintToZebraDialog batch notice', () => {
     act(() => {
       useLabelStore.setState({ zebraPrintSource: 'label', dataset: null, columnMapping: null });
     });
-    const { container } = render(<PrintToZebraDialog zpl="^XA^XZ" onClose={vi.fn()} />);
+    const { container } = render(<ZplSendPanel zpl="^XA^XZ" />);
     expect(container.textContent).not.toContain('one per data row');
   });
 });

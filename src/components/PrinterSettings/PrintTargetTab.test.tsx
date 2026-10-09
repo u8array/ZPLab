@@ -15,6 +15,13 @@ beforeEach(() => {
 });
 
 describe("PrintTargetTab", () => {
+  // The test build is the browser one, so the network way shows its web wording.
+  it("says under each offered way what it does in this build", () => {
+    const r = render(<PrintTargetTab />);
+    expect(r.getByText(en.zebraPrint.wayNetworkWeb)).toBeTruthy();
+    expect(r.getByText(en.zebraPrint.wayBrowserPrint)).toBeTruthy();
+  });
+
   it("binds the way to the print target and keeps the address in reach for the preview", () => {
     const r = render(<PrintTargetTab />);
     act(() => {
