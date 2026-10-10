@@ -199,7 +199,7 @@ function SessionChrome({
     focusEditor();
   };
 
-  /** Returns whether the session ended (a held session swallows the click). */
+  /** Returns whether the session ended. */
   const handleApply = (explicit = false): boolean => {
     // An untouched buffer must not commit: the reparse would still rename
     // variables and replace ids, pure loss for a no-op edit.
@@ -237,11 +237,7 @@ function SessionChrome({
     return false;
   };
 
-  useSessionExit(panelRef, {
-    onExit: handleApply,
-    onEscape: requestCancel,
-    suspended: pendingPlan !== null || confirmDiscard || confirmNew,
-  });
+  useSessionExit(panelRef, { onExit: handleApply, onEscape: requestCancel });
 
   return (
     <>

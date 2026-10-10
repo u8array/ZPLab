@@ -48,6 +48,7 @@ vi.mock("./ZplCodeMirror", () => {
   return { default: MockCodeMirror };
 });
 import { ZPLOutput } from "./ZPLOutput";
+import { DialogShell } from "../ui/DialogShell";
 import { useLabelStore } from "../../store/labelStore";
 import type { LabelObject, Page } from "@zplab/core/types/Group";
 
@@ -234,7 +235,7 @@ describe("leaving the editor", () => {
     const confirm = () => within(screen.getByRole("alertdialog"));
     expect(confirm().getByText(t().output.editSourceDiscardBody)).toBeTruthy();
     expect(review().getByRole("button", { name: t().output.editSourceConfirmApply })).toBeTruthy();
-    // The deferred blur apply stays suspended across the handover. No apply, no second review.
+    // Focus crossing from the review into the question must not apply, or a second review opens.
     await act(async () => {
       await new Promise((r) => setTimeout(r, 0));
     });
@@ -266,7 +267,7 @@ describe("leaving the editor", () => {
     expect(copiedTexts).toEqual(["^XA^FDedited^FS^XZ"]);
   });
 
-  it("asks before discarding a modified buffer, and the question suspends the blur apply", async () => {
+  it("asks before discarding a modified buffer, and the question holds the blur apply", async () => {
     const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
     typeDraft("^XA^JZY^FO10,10^A0N,30,30^FDX^FS^XZ");
     fireEvent.click(screen.getByRole("button", { name: t().app.cancel }));
@@ -590,6 +591,54 @@ describe("outside pointerdown", () => {
     expect(rail).not.toBeNull();
     fireEvent.pointerDown(rail!);
     expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+  });
+});
+
+describe("a modal above the panel", () => {
+  const Modal = ({ onAction }: { onAction: () => void }) => (
+    <DialogShell portal onClose={vi.fn()} describedBy="modal-body" boxClassName="">
+      <p id="modal-body">settings</p>
+      <button onClick={onAction}>setting</button>
+    </DialogShell>
+  );
+
+  it("takes clicks while an unappliable buffer holds the session", () => {
+    const action = vi.fn();
+    render(
+      <>
+        <Modal onAction={action} />
+        <ZPLOutput onResizeMouseDown={vi.fn()} />
+      </>,
+    );
+    typeDraft("^XA^FO10,10^A0N,30,30^FDbroken^FS");
+    const setting = screen.getByRole("button", { name: "setting" });
+    fireEvent.pointerDown(setting);
+    fireEvent.click(setting);
+    expect(action).toHaveBeenCalledTimes(1);
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    expect(useLabelStore.getState().sourceShadow?.refusal ?? null).toBeNull();
+  });
+
+  it("keeps the focus it took instead of handing it back to the editor", async () => {
+    const { container, rerender } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XA^FO10,10^A0N,30,30^FDbroken^FS");
+    editor().focus();
+    rerender(
+      <>
+        <Modal onAction={vi.fn()} />
+        <ZPLOutput onResizeMouseDown={vi.fn()} />
+      </>,
+    );
+    vi.spyOn(document, "hasFocus").mockReturnValue(true);
+    const setting = screen.getByRole("button", { name: "setting" });
+    setting.focus();
+    fireEvent.focusOut(panelRoot(container));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+    expect(useLabelStore.getState().sourceShadow?.refusal ?? null).toBeNull();
+    expect(document.activeElement).toBe(setting);
   });
 });
 

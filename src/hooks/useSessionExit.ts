@@ -1,11 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
 
 /** The source-edit session's exit surface on a panel root. Not useDismiss:
- *  capture phase, focusout fallback, and a held exit (onExit false: refusal
- *  or confirm dialog) swallows the click so nothing fires under it. */
+ *  capture phase, a focusout fallback, and a held exit that swallows the
+ *  click so nothing fires under it. */
 export function useSessionExit(
   panelRef: RefObject<HTMLElement | null>,
-  handlers: { onExit: () => boolean; onEscape: () => void; suspended: boolean },
+  handlers: { onExit: () => boolean; onEscape: () => void },
 ): void {
   // Latest closures for the raw DOM listeners (mounted once per session).
   // Layout effect: synced before paint, so no user event sees a stale closure.
@@ -18,14 +18,15 @@ export function useSessionExit(
     const root = panelRef.current;
     if (!root) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    // Under a modal's backdrop a held session would swallow every click, so a modal is no exit.
+    const modalOpen = () => document.querySelector('[aria-modal="true"]') !== null;
     // Capture-phase, so the exit lands BEFORE the target's own handlers and
     // chrome/stage clicks act on the unfrozen store in the same click. (A
     // click on a canvas OBJECT still needs a second one: the apply re-ids
     // the Konva node under the pointer mid-gesture.)
     const onPointerDown = (e: PointerEvent) => {
-      if (handlersRef.current.suspended) return;
       const target = e.target as Element | null;
-      if (!target || root.contains(target)) return;
+      if (!target || root.contains(target) || modalOpen()) return;
       if (!handlersRef.current.onExit()) {
         e.preventDefault();
         e.stopPropagation();
@@ -51,10 +52,10 @@ export function useSessionExit(
       // window blur (alt-tab) keeps the session; only focus moving elsewhere
       // in the app is "the one person now works the canvas".
       timer = setTimeout(() => {
-        if (handlersRef.current.suspended) return;
         if (!document.hasFocus()) return;
         const active = document.activeElement;
         if (active && root.contains(active)) return;
+        if (modalOpen()) return;
         handlersRef.current.onExit();
       }, 0);
     };
