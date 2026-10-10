@@ -36,12 +36,12 @@ Drag objects onto the canvas, edit their properties, then copy or export the ZPL
 
 ## Download
 
-| Platform | [v0.7.1](https://github.com/u8array/ZPLab/releases/tag/v0.7.1) |
+| Platform | [v0.8.0](https://github.com/u8array/ZPLab/releases/tag/v0.8.0) |
 |---|---|
-| Windows | [x64 installer](https://github.com/u8array/ZPLab/releases/download/v0.7.1/ZPLab_0.7.1_x64-setup.exe) |
-| macOS | [Apple Silicon](https://github.com/u8array/ZPLab/releases/download/v0.7.1/ZPLab_0.7.1_aarch64.dmg) · [Intel](https://github.com/u8array/ZPLab/releases/download/v0.7.1/ZPLab_0.7.1_x64.dmg) |
-| Linux | [AppImage](https://github.com/u8array/ZPLab/releases/download/v0.7.1/ZPLab_0.7.1_amd64.AppImage) · [deb](https://github.com/u8array/ZPLab/releases/download/v0.7.1/ZPLab_0.7.1_amd64.deb) · [rpm](https://github.com/u8array/ZPLab/releases/download/v0.7.1/ZPLab-0.7.1-1.x86_64.rpm) |
-| Web (self-hosted) | [zip](https://github.com/u8array/ZPLab/releases/download/v0.7.1/ZPLab_0.7.1_web.zip) · [Docker](#self-hosting) |
+| Windows | [x64 installer](https://github.com/u8array/ZPLab/releases/download/v0.8.0/ZPLab_0.8.0_x64-setup.exe) |
+| macOS | [Apple Silicon](https://github.com/u8array/ZPLab/releases/download/v0.8.0/ZPLab_0.8.0_aarch64.dmg) · [Intel](https://github.com/u8array/ZPLab/releases/download/v0.8.0/ZPLab_0.8.0_x64.dmg) |
+| Linux | [AppImage](https://github.com/u8array/ZPLab/releases/download/v0.8.0/ZPLab_0.8.0_amd64.AppImage) · [deb](https://github.com/u8array/ZPLab/releases/download/v0.8.0/ZPLab_0.8.0_amd64.deb) · [rpm](https://github.com/u8array/ZPLab/releases/download/v0.8.0/ZPLab-0.8.0-1.x86_64.rpm) |
+| Web (self-hosted) | [zip](https://github.com/u8array/ZPLab/releases/download/v0.8.0/ZPLab_0.8.0_web.zip) · [Docker](#self-hosting) |
 
 On macOS, the first launch may be blocked. Allow ZPLab under **System Settings → Privacy & Security**.
 
@@ -78,7 +78,7 @@ Select several objects with Shift-click or a lasso. Position and size changes ap
 
 ### 4. Print or export
 
-The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. **Output** opens the output dialog. On desktop the panel names the configured printer. A click shows its state and offers to read its configuration. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
+The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. **Output** opens the output dialog. On desktop the panel shows the print target. A click shows its state and offers to read its configuration. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
 
 - **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
 - **File → Output:** opens the output dialog with two destinations.
