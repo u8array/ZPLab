@@ -1571,7 +1571,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @lezer/highlight 1.2.4
+### @lezer/highlight 1.2.5
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -2556,7 +2556,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @tauri-apps/api 2.12.0
+### @tauri-apps/api 2.12.1
 
 - License: Apache-2.0 OR MIT
 - Homepage: https://github.com/tauri-apps/tauri#readme
@@ -2741,7 +2741,7 @@ SOFTWARE.
    END OF TERMS AND CONDITIONS
 ```
 
-### @tauri-apps/plugin-dialog 2.7.3
+### @tauri-apps/plugin-dialog 2.8.1
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2769,7 +2769,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-fs 2.5.2
+### @tauri-apps/plugin-fs 2.6.0
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2797,7 +2797,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-opener 2.5.5
+### @tauri-apps/plugin-opener 2.7.0
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2825,7 +2825,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-process 2.3.1
+### @tauri-apps/plugin-process 2.4.0
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2853,7 +2853,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-updater 2.12.0
+### @tauri-apps/plugin-updater 2.13.1
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
