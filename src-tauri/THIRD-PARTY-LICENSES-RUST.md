@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (453)
+- MIT License (441)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -3498,7 +3498,6 @@ DEALINGS IN THE SOFTWARE.
 Used by:
 
 - [dirs-sys 0.5.0](https://github.com/dirs-dev/dirs-sys-rs)
-- [dirs 6.0.0](https://github.com/soc/dirs-rs)
 - [dirs 7.0.0](https://codeberg.org/dirs/dirs-rs)
 ````
 Copyright (c) 2018-2019 dirs-rs contributors
@@ -4766,7 +4765,7 @@ SOFTWARE.
 
 Used by:
 
-- [libc 0.2.189](https://github.com/rust-lang/libc)
+- [libc 0.2.190](https://github.com/rust-lang/libc)
 ````
 Copyright (c) The Rust Project Developers
 
@@ -5060,13 +5059,13 @@ SOFTWARE.
 
 Used by:
 
-- [tauri-build 2.7.0](https://github.com/tauri-apps/tauri)
-- [tauri-codegen 2.7.0](https://github.com/tauri-apps/tauri)
-- [tauri-macros 2.7.0](https://github.com/tauri-apps/tauri)
-- [tauri-runtime-wry 2.12.0](https://github.com/tauri-apps/tauri)
-- [tauri-runtime 2.12.0](https://github.com/tauri-apps/tauri)
-- [tauri-utils 2.10.0](https://github.com/tauri-apps/tauri)
-- [tauri 2.12.0](https://github.com/tauri-apps/tauri)
+- [tauri-build 2.7.1](https://github.com/tauri-apps/tauri)
+- [tauri-codegen 2.7.1](https://github.com/tauri-apps/tauri)
+- [tauri-macros 2.7.1](https://github.com/tauri-apps/tauri)
+- [tauri-runtime-wry 2.12.1](https://github.com/tauri-apps/tauri)
+- [tauri-runtime 2.12.1](https://github.com/tauri-apps/tauri)
+- [tauri-utils 2.10.1](https://github.com/tauri-apps/tauri)
+- [tauri 2.12.1](https://github.com/tauri-apps/tauri)
 ````
 MIT License
 
@@ -5157,7 +5156,6 @@ SOFTWARE.
 Used by:
 
 - [cfb 0.14.0](https://github.com/mdsteele/rust-cfb)
-- [cfb 0.7.3](https://github.com/mdsteele/rust-cfb)
 ````
 MIT License
 
@@ -5339,7 +5337,6 @@ SOFTWARE.
 
 Used by:
 
-- [infer 0.19.0](https://github.com/bojand/infer)
 - [infer 0.22.0](https://github.com/bojand/infer)
 ````
 MIT License
@@ -5859,7 +5856,7 @@ SOFTWARE.
 
 Used by:
 
-- [zplab 0.7.1](https://github.com/u8array/ZPLab)
+- [zplab 0.8.0](https://github.com/u8array/ZPLab)
 - [block2 0.6.2](https://github.com/madsmtm/objc2)
 - [brotli-decompressor 6.0.1](https://github.com/dropbox/rust-brotli-decompressor)
 - [cargo_toml 1.0.1](https://gitlab.com/lib.rs/cargo_toml)
@@ -5884,43 +5881,34 @@ Used by:
 - [sqlx-mysql 0.9.0](https://github.com/launchbadge/sqlx)
 - [sqlx-postgres 0.9.0](https://github.com/launchbadge/sqlx)
 - [sqlx-sqlite 0.9.0](https://github.com/launchbadge/sqlx)
-- [tauri-plugin-dialog 2.7.3](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-fs 2.5.2](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-opener 2.5.5](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-process 2.3.1](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-updater 2.12.0](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-window-state 2.4.1](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin 2.6.3](https://github.com/tauri-apps/tauri)
+- [tauri-plugin-dialog 2.8.1](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-fs 2.6.0](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-opener 2.7.0](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-process 2.4.0](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-updater 2.13.1](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-window-state 2.5.0](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin 2.7.1](https://github.com/tauri-apps/tauri)
 - [webview2-com-macros 0.8.1](https://github.com/wravery/webview2-rs)
 - [webview2-com-sys 0.39.1](https://github.com/wravery/webview2-rs)
 - [webview2-com 0.39.1](https://github.com/wravery/webview2-rs)
 - [whoami 2.1.2](https://github.com/ardaku/whoami)
-- [windows-collections 0.2.0](https://github.com/microsoft/windows-rs)
 - [windows-collections 0.3.2](https://github.com/microsoft/windows-rs)
-- [windows-core 0.61.2](https://github.com/microsoft/windows-rs)
 - [windows-core 0.62.2](https://github.com/microsoft/windows-rs)
-- [windows-future 0.2.1](https://github.com/microsoft/windows-rs)
 - [windows-future 0.3.2](https://github.com/microsoft/windows-rs)
 - [windows-implement 0.60.2](https://github.com/microsoft/windows-rs)
 - [windows-interface 0.59.3](https://github.com/microsoft/windows-rs)
-- [windows-link 0.1.3](https://github.com/microsoft/windows-rs)
 - [windows-link 0.2.1](https://github.com/microsoft/windows-rs)
-- [windows-numerics 0.2.0](https://github.com/microsoft/windows-rs)
 - [windows-numerics 0.3.1](https://github.com/microsoft/windows-rs)
 - [windows-registry 0.6.1](https://github.com/microsoft/windows-rs)
-- [windows-result 0.3.4](https://github.com/microsoft/windows-rs)
 - [windows-result 0.4.1](https://github.com/microsoft/windows-rs)
-- [windows-strings 0.4.2](https://github.com/microsoft/windows-rs)
 - [windows-strings 0.5.1](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.59.0](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.60.2](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.61.2](https://github.com/microsoft/windows-rs)
 - [windows-targets 0.52.6](https://github.com/microsoft/windows-rs)
 - [windows-targets 0.53.5](https://github.com/microsoft/windows-rs)
-- [windows-threading 0.1.0](https://github.com/microsoft/windows-rs)
 - [windows-threading 0.2.1](https://github.com/microsoft/windows-rs)
 - [windows-version 0.1.7](https://github.com/microsoft/windows-rs)
-- [windows 0.61.3](https://github.com/microsoft/windows-rs)
 - [windows 0.62.2](https://github.com/microsoft/windows-rs)
 - [windows_x86_64_gnu 0.52.6](https://github.com/microsoft/windows-rs)
 - [windows_x86_64_gnu 0.53.1](https://github.com/microsoft/windows-rs)
@@ -5954,7 +5942,7 @@ Used by:
 
 - [tokio-stream 0.1.19](https://github.com/tokio-rs/tokio)
 - [tokio-util 0.7.18](https://github.com/tokio-rs/tokio)
-- [tokio 1.53.1](https://github.com/tokio-rs/tokio)
+- [tokio 1.53.2](https://github.com/tokio-rs/tokio)
 ````
 MIT License
 
