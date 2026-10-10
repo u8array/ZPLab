@@ -16,8 +16,8 @@ type Labelling =
 type Props = Labelling & {
   onClose: () => void;
   role?: 'dialog' | 'alertdialog';
-  /** Render via portal to document.body. Use when an ancestor has a
-   *  CSS transform that would otherwise contain `position: fixed`. */
+  /** Render via portal to document.body. The usual reason is an ancestor
+   *  transform that would contain `position: fixed`. */
   portal?: boolean;
   /** Tailwind classes for the inner dialog box (background, border,
    *  width, etc.). Each modal supplies its own; visual variants stay

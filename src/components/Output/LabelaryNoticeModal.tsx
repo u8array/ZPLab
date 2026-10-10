@@ -5,18 +5,13 @@ import { DialogShell } from '../ui/DialogShell';
 import { sectionHeadingCls } from '../ui/formStyles';
 
 interface Props {
-  /** Called after the modal flipped the store flag, so callers only need
-   *  to react (start the fetch / open the next modal). Acknowledgement
-   *  itself is the modal's responsibility. */
+  /** Acknowledgement is the modal's own job, so the caller only reacts. */
   onContinue: () => void;
   onClose: () => void;
 }
 
-/** Privacy notice shown the first time the user invokes a Labelary-backed
- *  feature (Preview, Print). After acknowledgement the gate
- *  (`canCallLabelary`) opens permanently and this modal is no longer
- *  rendered. Shared between Preview and Print so the disclosure wording
- *  stays in lockstep. */
+/** Privacy notice before the first Labelary request on the public host.
+ *  Shared by the preview and the print path so the disclosure reads the same. */
 export function LabelaryNoticeModal({ onContinue, onClose }: Props) {
   const t = useT();
   const acknowledgeLabelaryNotice = useLabelStore((s) => s.acknowledgeLabelaryNotice);
@@ -28,6 +23,8 @@ export function LabelaryNoticeModal({ onContinue, onClose }: Props) {
 
   return (
     <DialogShell
+      // The output dialog portals to the body, and a modal that stacks below it cannot receive clicks.
+      portal
       onClose={onClose}
       labelledBy="labelary-notice-title"
       boxClassName="bg-surface border border-border-2 rounded shadow-lg flex flex-col overflow-hidden max-w-[90vw]"

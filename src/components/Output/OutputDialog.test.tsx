@@ -143,6 +143,24 @@ describe("OutputDialog", () => {
     expect(useLabelStore.getState().labelaryNoticeAcknowledged).toBe(true);
   });
 
+  it("lays the consent notice over the dialog that asked for it", () => {
+    act(() => {
+      useLabelStore.setState({ previewProvider: "labelary", labelaryNoticeAcknowledged: false });
+    });
+    const r = showDialog();
+    act(() => {
+      fireEvent.click(r.getByText(loc.tabSystem));
+    });
+    act(() => {
+      fireEvent.click(printButton(r.container));
+    });
+
+    // Both dialogs share one z-index, so the later one in the document is the one on top.
+    const output = document.querySelector('[aria-labelledby="output-title"]')!;
+    const notice = document.querySelector('[aria-labelledby="labelary-notice-title"]')!;
+    expect(output.compareDocumentPosition(notice) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("stays and says that the label is rendering", async () => {
     let finish: () => void = () => undefined;
     const onPrintImage = vi.fn(() => new Promise<void>((resolve) => (finish = resolve)));
