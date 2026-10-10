@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { render, cleanup } from "@testing-library/react";
+import { render, cleanup, fireEvent } from "@testing-library/react";
 import { ZPLOutput } from "./ZPLOutput";
 import { useLabelStore } from "../../store/labelStore";
 import { fallbackTranslations as en } from "../../locales";
@@ -33,5 +33,24 @@ describe("ZPLOutput preview button", () => {
     useLabelStore.setState({ previewProvider: "none" });
     const canvas = render(<ZPLOutput onResizeMouseDown={() => undefined} />);
     expect(canvas.queryByRole("button", { name: en.output.previewHeading })).toBeNull();
+  });
+});
+
+describe("ZPLOutput output button", () => {
+  it("opens the output dialog for the label from the bar", () => {
+    useLabelStore.setState({ outputSource: null });
+    const r = render(<ZPLOutput onResizeMouseDown={() => undefined} />);
+    fireEvent.click(r.getByRole("button", { name: en.zebraPrint.outputHeading }));
+    expect(useLabelStore.getState().outputSource).toBe("label");
+  });
+
+  it("stays disabled while a source-edit session is open and ignores a click", () => {
+    useLabelStore.setState({ outputSource: null });
+    useLabelStore.getState().enterSourceEdit("^XA^FO10,10^A0N,30,30^FDdraft^FS^XZ");
+    const r = render(<ZPLOutput onResizeMouseDown={() => undefined} />);
+    const button = r.getByRole("button", { name: en.zebraPrint.outputHeading }) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
+    fireEvent.click(button);
+    expect(useLabelStore.getState().outputSource).toBeNull();
   });
 });

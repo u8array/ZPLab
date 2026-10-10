@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon } from '@heroicons/react/16/solid';
+import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon, PrinterIcon } from '@heroicons/react/16/solid';
 import { useLabelStore, selectEffectivePreviewProvider, selectPreviewLocksEditor } from '../../store/labelStore';
 import { useZplOutputView } from '../../hooks/useZplOutputView';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
@@ -37,6 +37,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
     useZplOutputView(collapsed ?? false);
   // The body keeps its metadata (the apply reparses it); the button copies the export form.
   const { copy, copied } = useCopyToClipboard(() => finishZplExport(shownText));
+  const openOutput = useLabelStore((s) => s.openOutput);
 
   const previewAvailable = effectiveProvider !== 'none';
 
@@ -102,6 +103,17 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
                 {copied
                   ? <><CheckIcon className="w-4 h-4" />{t.output.copied}</>
                   : <><ClipboardDocumentIcon className="w-4 h-4" />{t.output.copy}</>}
+              </button>
+            </Tooltip>
+            {/* Otherwise the dialog is reachable only through the File menu. */}
+            <Tooltip content={t.zebraPrint.outputHeading}>
+              <button
+                onClick={() => openOutput('label')}
+                disabled={!shownText || session !== null}
+                className="flex items-center gap-1 font-mono text-[10px] text-muted hover:text-accent disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+              >
+                <PrinterIcon className="w-4 h-4" />
+                {t.zebraPrint.outputHeading}
               </button>
             </Tooltip>
           </div>

@@ -78,7 +78,7 @@ Select several objects with Shift-click or a lasso. Position and size changes ap
 
 ### 4. Print or export
 
-The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. On desktop the panel names the configured printer. A click shows its state and offers to read its configuration. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
+The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the clipboard. **Output** opens the output dialog. On desktop the panel names the configured printer. A click shows its state and offers to read its configuration. The canvas is ZPLab's rendering of the label. A second rendering comes from the preview renderer under **File → Settings… → App → Preview**: the connected printer (desktop) or, with consent, the third-party service [Labelary](https://labelary.com/). **Preview** shows it for comparison.
 
 - **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
 - **File → Output:** opens the output dialog with two destinations.
