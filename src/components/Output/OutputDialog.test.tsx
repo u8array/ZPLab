@@ -161,6 +161,33 @@ describe("OutputDialog", () => {
     expect(output.compareDocumentPosition(notice) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
+  it("offers the renderer where its image is used and writes the shared setting", () => {
+    act(() => {
+      useLabelStore.setState({ previewProvider: "labelary", labelaryNoticeAcknowledged: true });
+    });
+    const r = showDialog();
+    act(() => {
+      fireEvent.click(r.getByText(loc.tabSystem));
+    });
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: loc.rendererHeading }));
+    });
+    act(() => {
+      r.getByRole("option", { name: en.printerSettings.preview.providerPrinter }).click();
+    });
+    expect(useLabelStore.getState().previewProvider).toBe("printer");
+
+    act(() => {
+      useLabelStore.getState().setOutputChoice({ kind: "file", fileFormat: "pdf" });
+    });
+    expect(r.getByRole("button", { name: loc.rendererHeading })).toBeTruthy();
+    // The PNG is always the canvas, so there is nothing to pick.
+    act(() => {
+      useLabelStore.getState().setOutputChoice({ fileFormat: "png" });
+    });
+    expect(r.queryByRole("button", { name: loc.rendererHeading })).toBeNull();
+  });
+
   it("stays and says that the label is rendering", async () => {
     let finish: () => void = () => undefined;
     const onPrintImage = vi.fn(() => new Promise<void>((resolve) => (finish = resolve)));

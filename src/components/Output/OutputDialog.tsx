@@ -26,6 +26,7 @@ import { usePrintWays } from "../../hooks/usePrintWays";
 import { useSendNotices } from "../../hooks/useSendNotices";
 import { ActiveRowNotice, DatasetNotice } from "./DatasetNotice";
 import { SystemPrintBody } from "./SystemPrintBody";
+import { RendererSelect } from "./RendererSelect";
 import { ZebraWayPanel } from "./ZebraWayPanel";
 
 interface Props {
@@ -189,6 +190,7 @@ export function OutputDialog({ zpl, source, facts, onClose, onPrintImage, onExpo
 
             {choice.fileFormat === "pdf" ? (
               <>
+                <RendererSelect />
                 {scopeChoosable && (
                   // Flex on an inner box, because a legend inside a flex fieldset lays out per browser.
                   <fieldset className="min-w-0">

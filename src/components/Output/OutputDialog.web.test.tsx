@@ -30,6 +30,24 @@ describe("OutputDialog in the browser", () => {
     expect(printButton(r.container)).toBeTruthy();
   });
 
+  it("lists the printer renderer but locks it, like the settings do", () => {
+    const r = showDialog({ facts: webFacts });
+    act(() => {
+      fireEvent.click(r.getByRole("button", { name: loc.rendererHeading }));
+    });
+    expect(r.getByRole("option", { name: en.printerSettings.preview.providerPrinter }).getAttribute("aria-disabled")).toBe("true");
+    expect(r.getByRole("option", { name: en.printerSettings.preview.providerNone }).getAttribute("aria-disabled")).toBeNull();
+  });
+
+  it("names the renderer that draws when the stored one cannot", () => {
+    act(() => {
+      useLabelStore.setState({ previewProvider: "printer" });
+    });
+    const r = showDialog({ facts: webFacts });
+    // The stored printer choice degrades to Labelary off the desktop, not to the built-in renderer.
+    expect(r.getByText(`Currently active: ${en.printerSettings.preview.providerLabelary}`)).toBeTruthy();
+  });
+
   it("runs the print path the rendered label takes", async () => {
     const r = showDialog({ facts: webFacts });
 

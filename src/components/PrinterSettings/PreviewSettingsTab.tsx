@@ -6,18 +6,19 @@ import { isDefaultHost } from "../../lib/labelary";
 import { labelCls, inputCls, buttonCls, sectionHeadingCls } from "../ui/formStyles";
 import { RadioOption } from "../ui/RadioOption";
 import { formatTemplate } from "../../lib/formatTemplate";
-import { previewProviderLabel } from "../../lib/previewProviderLabel";
+import { previewProviderChoices, previewProviderLabel } from "../../lib/previewProviderLabel";
 
 /** Preview configuration: which renderer draws the overlay and the Labelary privacy consent. */
 export function PreviewSettingsTab() {
   const t = useT();
   const loc = t.printerSettings.preview;
 
-  // The radio shows the stored choice, so a click always commits. A degraded build names what renders instead.
+  // The radio shows the stored choice, so a click always commits. The note names what draws where the choice is out of reach.
   const chosen = useLabelStore((s) => s.previewProvider);
   const provider = useLabelStore(selectEffectivePreviewProvider);
   const setProvider = useLabelStore((s) => s.setPreviewProvider);
   const labelaryAvailable = useLabelStore((s) => s.thirdParty.labelary);
+  const locked = Object.fromEntries(previewProviderChoices(t, { thirdParty: { labelary: labelaryAvailable } }).map((c) => [c.provider, c.disabled]));
   const labelaryConsent = useLabelStore((s) => s.labelaryNoticeAcknowledged);
   const acknowledgeLabelaryNotice = useLabelStore((s) => s.acknowledgeLabelaryNotice);
   const revokeLabelaryNotice = useLabelStore((s) => s.revokeLabelaryNotice);
@@ -84,7 +85,7 @@ export function PreviewSettingsTab() {
           current={chosen}
           onSelect={setProvider}
           label={loc.providerLabelary}
-          disabled={!labelaryAvailable}
+          disabled={locked.labelary}
         />
         <RadioOption
           name="preview-provider"
@@ -93,7 +94,7 @@ export function PreviewSettingsTab() {
           onSelect={setProvider}
           label={loc.providerPrinter}
           hint={isDesktopShell ? loc.providerPrinterHint : loc.providerPrinterDesktopOnly}
-          disabled={!isDesktopShell}
+          disabled={locked.printer}
         />
         <RadioOption
           name="preview-provider"

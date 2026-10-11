@@ -82,8 +82,8 @@ The **ZPL** panel at the bottom shows the generated ZPL, **Copy** puts it on the
 
 - **File → Export ZPL:** saves a `.zpl` file, or `.prn` where the save dialog offers file types
 - **File → Output:** opens the output dialog with two destinations.
-  - **Print** sends the code to a Zebra over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop. Its **Other printer** way renders the label and hands it to the operating system's print dialog, which reaches any printer with a driver. On desktop, **Check printer** asks the printer for its state over the network or USB.
-  - **File** writes a **PDF** with one page per label page, rendered by the preview renderer. With the renderer off, ZPLab captures the canvas, so the PDF holds the current page only. The **Scope** option **One label per data row** needs the renderer and holds one page per row. **PNG** saves the canvas drawing of the current label.
+  - **Print** sends the code to a Zebra over the network, through the Zebra Browser Print agent in the browser, or through the system spooler or USB on desktop. Its **Other printer** way renders the label and hands it to the operating system's print dialog, which reaches any printer with a driver. Its **Renderer** select picks the preview renderer. On desktop, **Check printer** asks the printer for its state over the network or USB.
+  - **File** writes a **PDF** with one page per label page, rendered by the chosen **Renderer**. With **Built-in**, the PDF holds the current page only. The **Scope** option **One label per data row** needs the renderer and holds one page per row. **PNG** saves the canvas drawing of the current label.
 
 ### 5. Save the design
 
@@ -155,7 +155,7 @@ On desktop, **Connect data** also reads an Excel worksheet. **File → Settings�
 - Saved designs and label exports exclude **Setup Script** values such as printer name and locale.
 - **Clear** resets the **Setup Script** values and keeps the uploads.
 
-The **App → Printer** tab sets how labels are sent and to which printer. On desktop, **Adopt from printer** reads the printer's own settings and asks which of the differing values to adopt. **File → Output** opens with that method selected. The **App → Preview** tab selects the renderer: the connected printer (desktop), Labelary, or off. It takes a premium Labelary endpoint and API key. The key is stored in the OS keychain on desktop and in browser storage on the web.
+The **App → Printer** tab sets how labels are sent and to which printer. On desktop, **Adopt from printer** reads the printer's own settings and asks which of the differing values to adopt. **File → Output** opens with that method selected. The **App → Preview** tab selects the renderer: the connected printer (desktop), Labelary, or **Built-in**. It takes a premium Labelary endpoint and API key. The key is stored in the OS keychain on desktop and in browser storage on the web.
 
 ### MCP server
 
