@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Nastavi tiskalno širino v pikah. Vsebino, ki presega to širino, tiskalnik obreže."
+    "summary": "Nastavi tiskalno širino v pikah. Vsebino, ki presega to širino, tiskalnik obreže.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "tiskalna širina v pikah",
+          "values": "2 do širine etikete",
+          "default": "zadnja shranjena vrednost"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Nastavi dolžino etikete v pikah in s tem določi, kje se format etikete konča."
+    "summary": "Nastavi dolžino etikete v pikah in s tem določi, kje se format etikete konča.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "dolžina etikete v pikah",
+          "values": "1 do 32000",
+          "default": "nastavitev tiskalnika"
+        },
+        {
+          "meaning": "velja za vse medije",
+          "values": "N samo neprekinjen, Y vsi mediji",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Premakne izhodiščno točko etikete in s tem spremeni izhodišče, ki ga uporabljajo koordinate poznejših polj."
+    "summary": "Premakne izhodiščno točko etikete in s tem spremeni izhodišče, ki ga uporabljajo koordinate poznejših polj.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "izhodiščni položaj etikete na osi x",
+          "values": "0 do 32000",
+          "default": "0 ali zadnja shranjena vrednost"
+        },
+        {
+          "meaning": "izhodiščni položaj etikete na osi y",
+          "values": "0 do 32000",
+          "default": "0 ali zadnja shranjena vrednost"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Uporabi vodoravni zamik pri položajih polj zaradi združljivosti s starejšimi formati Zebra."
+    "summary": "Uporabi vodoravni zamik pri položajih polj zaradi združljivosti s starejšimi formati Zebra.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "vodoravni zamik vseh položajev polj",
+          "values": "-9999 do 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Doda navpični zamik celotnemu formatu etikete glede na zgornji rob medija."
+    "summary": "Doda navpični zamik celotnemu formatu etikete glede na zgornji rob medija.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "premakne celotno obliko zapisa navzgor ali navzdol v vrsticah pik",
+          "values": "-120 do 120, pri XiIIIPlus 600 dpi -240 do 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Nastavi merske enote koordinat na pike, palce ali milimetre in lahko formate skalira med različnimi tiskalnimi ločljivostmi."
+    "summary": "Nastavi merske enote koordinat na pike, palce ali milimetre in lahko formate skalira med različnimi tiskalnimi ločljivostmi.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "merske enote koordinat za naslednja polja",
+          "values": "D pike, I palci, M milimetri",
+          "default": "D"
+        },
+        {
+          "meaning": "osnovna ločljivost oblike zapisa v pikah na palec",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "ciljna ločljivost za pretvorbo",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Nastavi način ravnanja z mediji po tiskanju, med drugim odtrganje, odlepljanje, rezanje, previjanje in nanašanje z aplikatorjem."
+    "summary": "Nastavi način ravnanja z mediji po tiskanju, med drugim odtrganje, odlepljanje, rezanje, previjanje in nanašanje z aplikatorjem.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "način ravnanja z mediji po tiskanju",
+          "values": "T odtrganje, P odlepljanje, R previjanje, A aplikator, C rezalnik, D zamaknjeno rezanje, F rfid, K kiosk",
+          "default": "nastavitev tiskalnika"
+        },
+        {
+          "meaning": "predhodno odlepljanje pred naslednjo etiketo",
+          "values": "N ne, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Izbere način termalnega prenosa ali direktnega termalnega tiska glede na to, ali naloženi medij uporablja trak."
+    "summary": "Izbere način termalnega prenosa ali direktnega termalnega tiska glede na to, ali naloženi medij uporablja trak.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "vrsta medija, ki jo uporablja tiskalnik",
+          "values": "T termični prenos, D neposredno termično"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Nastavi število natisov, združevanje s premorom ali rezanjem ter število kopij na posamezno serijsko vrednost."
+    "summary": "Nastavi število natisov, združevanje s premorom ali rezanjem ter število kopij na posamezno serijsko vrednost.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "skupno etiket za tisk",
+          "values": "1 do 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "natisnjenih etiket pred premorom",
+          "values": "1 do 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "replike vsake serijske številke",
+          "values": "0 do 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "razveljavi števec premorov",
+          "values": "N ne, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "rez po razveljavljeni etiketi RFID",
+          "values": "N ne, Y da",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Obrne tiskanje za naslednja polja tako, da zamenja ospredje in ozadje."
+    "summary": "Obrne tiskanje za naslednja polja tako, da zamenja ospredje in ozadje.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "obrne barvo tiska za naslednja polja",
+          "values": "N ne, Y da",
+          "default": "N ali zadnja shranjena vrednost"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Zavrti celoten format etikete za 180 stopinj."
+    "summary": "Zavrti celoten format etikete za 180 stopinj.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "natisne etiketo na glavo",
+          "values": "N običajno, I obrnjeno",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Vodoravno zrcali tiskalno območje."
+    "summary": "Vodoravno zrcali tiskalno območje.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "zrcali etiketo z leve na desno",
+          "values": "N ne, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Nastavi hitrost tiskanja, hitrost premikanja in hitrost povratnega podajanja v palcih na sekundo."
+    "summary": "Nastavi hitrost tiskanja, hitrost premikanja in hitrost povratnega podajanja v palcih na sekundo.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "hitrost tiskanja v palcih na sekundo",
+          "values": "1 do 14, ali A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "hitrost pomika pri podajanju prazne etikete",
+          "values": "2 do 14",
+          "default": "6"
+        },
+        {
+          "meaning": "hitrost povratnega podajanja po tiskanju",
+          "values": "2 do 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Umesti naslednje polje glede na izhodiščno točko etikete, izhajajoč iz njegovega zgornjega levega kota."
+    "summary": "Umesti naslednje polje glede na izhodiščno točko etikete, izhajajoč iz njegovega zgornjega levega kota.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "vodoravni položaj v pikah",
+          "values": "0 do 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "navpični položaj v pikah",
+          "values": "0 do 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "poravnava",
+          "values": "0 levo, 1 desno, 2 samodejno",
+          "default": "zadnji ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Umesti naslednje polje glede na njegovo osnovno črto ali rob črtne kode, kar zasukanim poljem zagotavlja stabilno sidrišče."
+    "summary": "Umesti naslednje polje glede na njegovo osnovno črto ali rob črtne kode, kar zasukanim poljem zagotavlja stabilno sidrišče.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "vodoravni položaj v pikah",
+          "values": "0 do 32000",
+          "default": "zadnji položaj polja"
+        },
+        {
+          "meaning": "navpični položaj v pikah",
+          "values": "0 do 32000",
+          "default": "zadnji položaj polja"
+        },
+        {
+          "meaning": "poravnava",
+          "values": "0 levo, 1 desno, 2 samodejno",
+          "default": "zadnji ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Poda vsebino trenutnega polja, na primer besedilo, podatke črtne kode ali podatke RFID."
+    "summary": "Poda vsebino trenutnega polja, na primer besedilo, podatke črtne kode ali podatke RFID.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "vsebina polja",
+          "values": "katerikoli izpisljivi podatki do 3072 bajtov, brez predpone"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Omogoči šestnajstiška ubežna zaporedja znotraj podatkov polja za binarne bajte in rezervirane ukazne znake."
+    "summary": "Omogoči šestnajstiška ubežna zaporedja znotraj podatkov polja za binarne bajte in rezervirane ukazne znake.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "znak za šestnajstiški indikator",
+          "values": "katerikoli znak razen predpon oblike zapisa in krmilnih ukazov",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Doda komentarsko polje. Tiskalnik njegovo vsebino prezre do naslednjega ločila polja."
+    "summary": "Doda komentarsko polje. Tiskalnik njegovo vsebino prezre do naslednjega ločila polja.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "netiskano besedilo komentarja",
+          "values": "katerokoli besedilo, prezrto do naslednjega ukaza"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Nastavi privzeto usmerjenost polja, pri novejši strojni programski opremi pa tudi privzeto poravnavo."
+    "summary": "Nastavi privzeto usmerjenost polja, pri novejši strojni programski opremi pa tudi privzeto poravnavo.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "privzeta rotacija polja",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "privzeta poravnava",
+          "values": "0 levo, 1 desno, 2 samodejno",
+          "default": "samodejno za ^TB, sicer levo"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Prelomi podatke polja v blok s fiksno širino, kjer se nadzorujejo število vrstic, razmik, zamik in poravnava."
+    "summary": "Prelomi podatke polja v blok s fiksno širino, kjer se nadzorujejo število vrstic, razmik, zamik in poravnava.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "širina bloka v pikah",
+          "values": "0 do širine etikete",
+          "default": "0"
+        },
+        {
+          "meaning": "največje število vrstic",
+          "values": "1 do 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "dodaten razmik med vrsticami v pikah",
+          "values": "-9999 do 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "poravnava",
+          "values": "L levo, C sredina, R desno, J obojestransko",
+          "default": "L"
+        },
+        {
+          "meaning": "viseči zamik naslednjih vrstic v pikah",
+          "values": "0 do 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Prelomi besedilo v okvir s fiksno širino in fiksno višino, presežek pa odreže."
+    "summary": "Prelomi besedilo v okvir s fiksno širino in fiksno višino, presežek pa odreže.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "rotacija bloka",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^A"
+        },
+        {
+          "meaning": "širina bloka v pikah",
+          "values": "1 do širine etikete",
+          "default": "1"
+        },
+        {
+          "meaning": "višina bloka v pikah",
+          "values": "1 do dolžine etikete",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Dodeli številko spremenljivemu polju v shranjenih in ponovno priklicanih formatih."
+    "summary": "Dodeli številko spremenljivemu polju v shranjenih in ponovno priklicanih formatih.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "številka polja",
+          "values": "0 do 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "izbirno pozivno besedilo KDU",
+          "values": "do 255 alfanumeričnih znakov"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Poda podatke za spremenljivo polje. Za razliko od podatkov ^FD se po natisu etikete počistijo."
+    "summary": "Poda podatke za spremenljivo polje. Za razliko od podatkov ^FD se po natisu etikete počistijo.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "podatki spremenljivega polja",
+          "values": "0 do 3072 bajtov niza"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Nastavi znak, ki se uporablja za vstavljanje vrednosti oštevilčenih polj v niz drugega polja."
+    "summary": "Nastavi znak, ki se uporablja za vstavljanje vrednosti oštevilčenih polj v niz drugega polja.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "ločilo za združevanje polj",
+          "values": "katerikoli znak razen predpon oblike zapisa in krmilnih ukazov",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Nastavi oznake, ki se uporabljajo za žetone realnočasovne ure znotraj podatkov polja."
+    "summary": "Nastavi oznake, ki se uporabljajo za žetone realnočasovne ure znotraj podatkov polja.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "znak primarnega indikatorja ure",
+          "values": "katerikoli znak ASCII",
+          "default": "%"
+        },
+        {
+          "meaning": "znak sekundarnega indikatorja ure",
+          "values": "katerikoli znak ASCII, drugačen od a"
+        },
+        {
+          "meaning": "znak terciarnega indikatorja ure",
+          "values": "katerikoli znak ASCII, drugačen od a in b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Nastavi privzeto širino modula črtne kode, razmerje med širokimi in ozkimi črtami ter višino za naslednja polja s črtno kodo."
+    "summary": "Nastavi privzeto širino modula črtne kode, razmerje med širokimi in ozkimi črtami ter višino za naslednja polja s črtno kodo.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "širina modula v pikah",
+          "values": "1 do 10",
+          "default": "2"
+        },
+        {
+          "meaning": "razmerje širokega proti ozkemu traku",
+          "values": "2.0 do 3.0 v korakih po 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "katerakoli višina v pikah",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Umesti segmente PDF417 ali MicroPDF417 na določena izhodišča, kadar eno sporočilo obsega več simbolov."
+    "summary": "Umesti segmente PDF417 ali MicroPDF417 na določena izhodišča, kadar eno sporočilo obsega več simbolov.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "x-koordinata prvega simbola, pare ponovite za več simbolov",
+          "values": "0 do 32000, ali e za preskok tega simbola"
+        },
+        {
+          "meaning": "y-koordinata prvega simbola, pare ponovite za več simbolov",
+          "values": "0 do 32000, ali e za preskok tega simbola"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Nastavi vrstni red znakov za trenutno polje in lahko doda dodaten razmik med znaki."
+    "summary": "Nastavi vrstni red znakov za trenutno polje in lahko doda dodaten razmik med znaki.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "smer tiskanja",
+          "values": "H vodoravno, V navpično, R obratno",
+          "default": "H"
+        },
+        {
+          "meaning": "dodaten razmik med znaki v pikah",
+          "values": "0 do 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Izbere vgrajeno skalabilno pisavo 0 za naslednje polje v zahtevani velikosti in usmerjenosti."
+    "summary": "Izbere vgrajeno skalabilno pisavo 0 za naslednje polje v zahtevani velikosti in usmerjenosti.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina znaka v pikah",
+          "values": "10 do 32000",
+          "default": "zadnji ^CF"
+        },
+        {
+          "meaning": "širina znaka v pikah",
+          "values": "10 do 32000",
+          "default": "zadnji ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Izbere vgrajeno pisavo po enočrkovnem imenu, z izbirno usmerjenostjo, višino in širino."
+    "summary": "Izbere vgrajeno pisavo po enočrkovnem imenu, z izbirno usmerjenostjo, višino in širino.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "ime pisave",
+          "values": "A do Z, 0 do 9",
+          "default": "zadnji ^CF"
+        },
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina znaka v pikah",
+          "values": "10 do 32000 raztegljivo, 1 do 10-kratnik osnovne višine bitno",
+          "default": "zadnji ^CF"
+        },
+        {
+          "meaning": "širina znaka v pikah",
+          "values": "10 do 32000 raztegljivo, 1 do 10-kratnik osnovne širine bitno",
+          "default": "zadnji ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Izbere shranjeno datoteko pisave za naslednje polje, z izbirno usmerjenostjo, višino in širino."
+    "summary": "Izbere shranjeno datoteko pisave za naslednje polje, z izbirno usmerjenostjo, višino in širino.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "usmerjenost polja",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina znaka v pikah",
+          "values": "10 do 32000 raztegljivo, 1 do 10-kratnik osnovne višine pri bitnih pisavah",
+          "default": "zadnji ^CF"
+        },
+        {
+          "meaning": "širina znaka v pikah",
+          "values": "10 do 32000 raztegljivo, 1 do 10-kratnik osnovne širine pri bitnih pisavah",
+          "default": "zadnji ^CF"
+        },
+        {
+          "meaning": "pogon, ki hrani pisavo",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime datoteke pisave za uporabo",
+          "values": "katerokoli veljavno ime pisave",
+          "default": "zadnji ^CF"
+        },
+        {
+          "meaning": "pripona datoteke pisave",
+          "values": "FNT pisava, TTF TrueType, TTE razširitev TrueType"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Nastavi nadomestno pisavo, višino in širino, ki jo uporabijo besedilna polja brez lastnih nastavitev."
+    "summary": "Nastavi nadomestno pisavo, višino in širino, ki jo uporabijo besedilna polja brez lastnih nastavitev.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "privzeta pisava",
+          "values": "A do Z, 0 do 9",
+          "default": "A"
+        },
+        {
+          "meaning": "privzeta višina znaka v pikah",
+          "values": "0 do 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "privzeta širina znaka v pikah",
+          "values": "0 do 32000",
+          "default": "5 ali zadnja shranjena vrednost"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Izbere kodiranje za tolmačenje podatkov polja, med drugim kodne strani in UTF-8."
+    "summary": "Izbere kodiranje za tolmačenje podatkov polja, med drugim kodne strani in UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "kodiranje znakov za uporabo",
+          "values": "0 do 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "položaj znaka za preslikavo",
+          "values": "0 do 255",
+          "default": "brez"
+        },
+        {
+          "meaning": "položaj nadomestnega znaka",
+          "values": "0 do 255",
+          "default": "brez"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Omogoči napredno postavitev besedila za naslednja polja, vključno z dvosmernim besedilom, oblikovanjem znakov in funkcijami OpenType."
+    "summary": "Omogoči napredno postavitev besedila za naslednja polja, vključno z dvosmernim besedilom, oblikovanjem znakov in funkcijami OpenType.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "privzeti vir glifov",
+          "values": "0 znak presledka, 1 glif pisave",
+          "default": "0"
+        },
+        {
+          "meaning": "dvosmerna postavitev besedila",
+          "values": "0 izklopljeno, 1 vklopljeno",
+          "default": "0"
+        },
+        {
+          "meaning": "oblikovanje znakov",
+          "values": "0 izklopljeno, 1 vklopljeno",
+          "default": "0"
+        },
+        {
+          "meaning": "podpora tabelam OpenType",
+          "values": "0 izklopljeno, 1 vklopljeno",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Priredi enočrkovno ime pisave shranjeni datoteki pisave."
+    "summary": "Priredi enočrkovno ime pisave shranjeni datoteki pisave.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "črka pisave za dodajanje ali zamenjavo",
+          "values": "A do Z, 0 do 9"
+        },
+        {
+          "meaning": "pogon za shranjevanje pisave",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime shranjene datoteke pisave",
+          "values": "do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke pisave",
+          "values": "FNT pisava, TTF TrueType, TTE razširitev TrueType"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Nastavi velikost predpomnilnika za izrisane skalabilne znake in s tem pospeši ponavljajoče se izpisovanje velikih pisav."
+    "summary": "Nastavi velikost predpomnilnika za izrisane skalabilne znake in s tem pospeši ponavljajoče se izpisovanje velikih pisav.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "predpomnilnik znakov omogočen",
+          "values": "N ne, Y da",
+          "default": "Y"
+        },
+        {
+          "meaning": "dodaten pomnilnik predpomnilnika v K",
+          "values": "1 do 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "vrsta medpomnilnika predpomnilnika",
+          "values": "0 običajne pisave, 1 azijske pisave",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Določi verige nadomestnih pisav TrueType, ki se uporabijo, kadar osnovni pisavi manjka znak."
+    "summary": "Določi verige nadomestnih pisav TrueType, ki se uporabijo, kadar osnovni pisavi manjka znak.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "razširitvena pisava za povezavo, naprava in datoteka",
+          "values": "datoteka TTF ali TTE na napravi"
+        },
+        {
+          "meaning": "osnovna pisava ali pisave, ki jo prejmejo",
+          "values": "datoteka FNT, TTF ali TTE, nadomestni znak dovoljen"
+        },
+        {
+          "meaning": "povezava ali prekinitev povezave razširitve",
+          "values": "0 prekini povezavo, 1 povezava"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Prenese bitno pisavo in njene mere v pomnilnik tiskalnika."
+    "summary": "Prenese bitno pisavo in njene mere v pomnilnik tiskalnika.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "pogon za shranjevanje pisave",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime pisave",
+          "values": "do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke pisave",
+          "values": "FNT fiksna vrednost",
+          "default": "FNT"
+        },
+        {
+          "meaning": "usmerjenost izvorne pisave",
+          "values": "N samo običajno",
+          "default": "N"
+        },
+        {
+          "meaning": "največja višina celice v pikah",
+          "values": "1 do 32000"
+        },
+        {
+          "meaning": "največja širina celice v pikah",
+          "values": "1 do 32000"
+        },
+        {
+          "meaning": "pike od vrha celice do osnovne linije",
+          "values": "1 do 32000"
+        },
+        {
+          "meaning": "širina presledka",
+          "values": "1 do 32000"
+        },
+        {
+          "meaning": "število znakov v pisavi",
+          "values": "1 do 256"
+        },
+        {
+          "meaning": "besedilo imetnika avtorskih pravic",
+          "values": "1 do 63 alfanumeričnih znakov"
+        },
+        {
+          "meaning": "strukturirani podatki bitne slike na znak",
+          "values": "razpršena koda, nato odmiki višine in širine, nato podatki hex"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Prenese kodirano skalabilno pisavo Intellifont v pomnilnik tiskalnika."
+    "summary": "Prenese kodirano skalabilno pisavo Intellifont v pomnilnik tiskalnika.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "pogon za shranjevanje pisave",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime pisave",
+          "values": "do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke pisave",
+          "values": "FNT fiksna vrednost",
+          "default": "FNT"
+        },
+        {
+          "meaning": "velikost pisave v bajtih iz ZTools",
+          "values": "število bajtov pretvorjene pisave"
+        },
+        {
+          "meaning": "kodirani bajtni podatki pisave",
+          "values": "pari hex, ki ustrezajo velikosti"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Prenese kodirano pisavo TrueType z največ 256 znaki v pomnilnik tiskalnika."
+    "summary": "Prenese kodirano pisavo TrueType z največ 256 znaki v pomnilnik tiskalnika.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "pogon za shranjevanje pisave",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime pisave",
+          "values": "do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke pisave",
+          "values": "DAT fiksna vrednost",
+          "default": "DAT"
+        },
+        {
+          "meaning": "velikost pisave v bajtih",
+          "values": "število bajtov pretvorjene pisave"
+        },
+        {
+          "meaning": "kodirani bajtni podatki pisave",
+          "values": "pari hex, ki ustrezajo velikosti"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Prenese kodirano pisavo TrueType z več kot 256 znaki v pomnilnik tiskalnika."
+    "summary": "Prenese kodirano pisavo TrueType z več kot 256 znaki v pomnilnik tiskalnika.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "pogon za shranjevanje pisave",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime pisave",
+          "values": "do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke pisave",
+          "values": "FNT fiksna vrednost",
+          "default": "FNT"
+        },
+        {
+          "meaning": "velikost pisave v bajtih",
+          "values": "število bajtov pretvorjene pisave"
+        },
+        {
+          "meaning": "kodirani bajtni podatki pisave",
+          "values": "pari hex, ki ustrezajo velikosti"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Prenese tabelo kodiranja, ki bajte podatkov polja preslika v vrednosti Unicode za pisave TrueType."
+    "summary": "Prenese tabelo kodiranja, ki bajte podatkov polja preslika v vrednosti Unicode za pisave TrueType.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "pogon, ki hrani tabelo",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime tabele",
+          "values": "do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke tabele",
+          "values": "DAT fiksna vrednost",
+          "default": "DAT"
+        },
+        {
+          "meaning": "velikost tabele v bajtih",
+          "values": "število bajtov pretvorjene tabele"
+        },
+        {
+          "meaning": "kodirani bajtni podatki tabele",
+          "values": "pari hex, ki ustrezajo velikosti"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Nariše črtno kodo Code 128 za ASCII-podatke spremenljive dolžine, z načini za samodejni preklop podnaborov in podatke UCC/EAN."
+    "summary": "Nariše črtno kodo Code 128 za ASCII-podatke spremenljive dolžine, z načini za samodejni preklop podnaborov in podatke UCC/EAN.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "N ne, Y da",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "N ne, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolna števka UCC",
+          "values": "N ne, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "način",
+          "values": "N brez, U UCC Case Mode, A samodejno, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Nariše črtno kodo Code 39 z izbirno kontrolno števko po metodi Mod 43."
+    "summary": "Nariše črtno kodo Code 39 z izbirno kontrolno števko po metodi Mod 43.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "kontrolna števka Mod 43",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Nariše črtno kodo Code 93, ki celoten nabor znakov ASCII predstavi s pomočjo preklopnih znakov."
+    "summary": "Nariše črtno kodo Code 93, ki celoten nabor znakov ASCII predstavi s pomočjo preklopnih znakov.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "natisni kontrolno števko",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Nariše črtno kodo Code 11 za števke in vezaje, z izbirnimi kontrolnimi števkami."
+    "summary": "Nariše črtno kodo Code 11 za števke in vezaje, z izbirnimi kontrolnimi števkami.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "število kontrolnih števk",
+          "values": "Y 1 števka, N 2 števki",
+          "default": "N"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Nariše črtno kodo Interleaved 2 of 5 za številske podatke sode dolžine, z izbirno kontrolno števko."
+    "summary": "Nariše črtno kodo Interleaved 2 of 5 za številske podatke sode dolžine, z izbirno kontrolno števko.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolna števka Mod 10",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "šesta reža, nedokumentirano",
+          "values": "ni dokumentirano v priročniku"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Nariše črtno kodo Industrial 2 of 5, številsko kodo, pri kateri so podatki kodirani samo s črtami."
+    "summary": "Nariše črtno kodo Industrial 2 of 5, številsko kodo, pri kateri so podatki kodirani samo s črtami.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Nariše črtno kodo Standard 2 of 5, samopreverjajočo številsko kodo, pri kateri so podatki kodirani samo s črtami."
+    "summary": "Nariše črtno kodo Standard 2 of 5, samopreverjajočo številsko kodo, pri kateri so podatki kodirani samo s črtami.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Nariše črtno kodo ANSI Codabar, znano tudi kot USD-4, za etikete v knjižnicah, zdravstvu in kurirskih storitvah."
+    "summary": "Nariše črtno kodo ANSI Codabar, znano tudi kot USD-4, za etikete v knjižnicah, zdravstvu in kurirskih storitvah.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "kontrolna števka, fiksno izklopljena",
+          "values": "samo N",
+          "default": "N"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "začetni znak",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "zaključni znak",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Nariše črtno kodo LOGMARS, različico Code 39, ki jo uporablja ameriško obrambno ministrstvo, in male črke v podatkih pretvori v velike."
+    "summary": "Nariše črtno kodo LOGMARS, različico Code 39, ki jo uporablja ameriško obrambno ministrstvo, in male črke v podatkih pretvori v velike.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Nariše črtno kodo MSI, številsko kodo izpeljano iz Plessey, z izbirnimi shemami kontrolnih števk."
+    "summary": "Nariše črtno kodo MSI, številsko kodo izpeljano iz Plessey, z izbirnimi shemami kontrolnih števk.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "shema kontrolne števke",
+          "values": "A brez, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolna števka v berljivi vrstici",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Nariše črtno kodo Plessey, starejšo številsko kodo z izbirnimi kontrolnimi števkami."
+    "summary": "Nariše črtno kodo Plessey, starejšo številsko kodo z izbirnimi kontrolnimi števkami.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "natisni kontrolno števko",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Nariše črtno kodo EAN-13 za trgovske številke artiklov in kontrolno števko izračuna iz dvanajstih podatkovnih števk."
+    "summary": "Nariše črtno kodo EAN-13 za trgovske številke artiklov in kontrolno števko izračuna iz dvanajstih podatkovnih števk.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Nariše črtno kodo EAN-8 za majhna trgovska pakiranja in kontrolno števko izračuna iz sedmih podatkovnih števk."
+    "summary": "Nariše črtno kodo EAN-8 za majhna trgovska pakiranja in kontrolno števko izračuna iz sedmih podatkovnih števk.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Nariše črtno kodo UPC-A za trgovsko pakiranje iz enajstih podatkovnih števk, z izbirnim tiskom kontrolne števke."
+    "summary": "Nariše črtno kodo UPC-A za trgovsko pakiranje iz enajstih podatkovnih števk, z izbirnim tiskom kontrolne števke.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 9999",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "natisni kontrolno števko",
+          "values": "Y da, N ne",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Nariše črtno kodo UPC-E, skrajšano obliko UPC-A. Podatki polja so celotna desetmestna koda proizvajalca in izdelka."
+    "summary": "Nariše črtno kodo UPC-E, skrajšano obliko UPC-A. Podatki polja so celotna desetmestna koda proizvajalca in izdelka.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "natisni kontrolno števko",
+          "values": "Y da, N ne",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Nariše simbol GS1 DataBar z izbirnim podtipom, povečavo, višino in širino segmenta."
+    "summary": "Nariše simbol GS1 DataBar z izbirnim podtipom, povečavo, višino in širino segmenta.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R zasukano, I obrnjeno, B od spodaj navzgor",
+          "default": "R"
+        },
+        {
+          "meaning": "podtip simbologije DataBar",
+          "values": "1 omni, 2 skrajšano, 3 zloženo, 4 zloženo omni, 5 omejeno, 6 razširjeno, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 s CC-A/B, 12 UCC/EAN-128 s CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "faktor povečave",
+          "values": "1 do 10",
+          "default": "nastavitev tiskalnika"
+        },
+        {
+          "meaning": "višina ločila",
+          "values": "1 ali 2",
+          "default": "1"
+        },
+        {
+          "meaning": "višina linearnega dela v pikah",
+          "values": "1 do 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "širina segmenta za GS1 DataBar Expanded",
+          "values": "2 do 22 samo sodo",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Nariše poštno črtno kodo Planet Code iz števk, kodiranih kot visoke in nizke črte."
+    "summary": "Nariše poštno črtno kodo Planet Code iz števk, kodiranih kot visoke in nizke črte.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R zasukano, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 9999",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Nariše POSTNET, Planet Code ali USPS Intelligent Mail glede na izbrano vrsto poštne kode."
+    "summary": "Nariše POSTNET, Planet Code ali USPS Intelligent Mail glede na izbrano vrsto poštne kode.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "vrsta poštne kode",
+          "values": "0 postnet, 1 planet, 2 rezervirano, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Nariše dvo- ali petmestni dodatni simbol UPC/EAN ob glavni črtni kodi."
+    "summary": "Nariše dvo- ali petmestni dodatni simbol UPC/EAN ob glavni črtni kodi.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 32000",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "berljiva vrstica",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "berljiva vrstica nad kodo",
+          "values": "Y da, N ne",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Nariše zloženo črtno kodo Code 49 z dvema do osmimi vrsticami podatkov s celotnim naborom ASCII."
+    "summary": "Nariše zloženo črtno kodo Code 49 z dvema do osmimi vrsticami podatkov s celotnim naborom ASCII.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "množitelj višine posameznih vrstic",
+          "values": "1 do višine etikete",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "umestitev berljive vrstice",
+          "values": "N brez, A nad, B pod",
+          "default": "N"
+        },
+        {
+          "meaning": "začetni način",
+          "values": "0 alfanumerično, 1 večkratno branje, 2 številsko, 3 skupina alfa, 4 shift 1, 5 shift 2, A samodejno",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Nariše simbol QR Code. Parametri ukaza določajo model, povečavo in masko, podatki polja pa raven popravljanja napak in način znakov."
+    "summary": "Nariše simbol QR Code. Parametri ukaza določajo model, povečavo in masko, podatki polja pa raven popravljanja napak in način znakov.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "usmerjenost polja",
+          "values": "N samo običajno",
+          "default": "N"
+        },
+        {
+          "meaning": "model",
+          "values": "1 izvirni, 2 izboljšani",
+          "default": "2"
+        },
+        {
+          "meaning": "faktor povečave",
+          "values": "1 do 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "raven popravljanja napak",
+          "values": "H ultra visoko, Q visoko, M standardno, L visoka gostota",
+          "default": "Q kadar prazno, M kadar vrednost ni veljavna"
+        },
+        {
+          "meaning": "vrednost maske",
+          "values": "0 do 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Nariše simbol Data Matrix z nastavljivo velikostjo elementa, ravnjo kakovosti in ravnanjem z ubežnimi zaporedji."
+    "summary": "Nariše simbol Data Matrix z nastavljivo velikostjo elementa, ravnjo kakovosti in ravnanjem z ubežnimi zaporedji.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "dimenzijska višina elementov simbola",
+          "values": "1 do širine etikete",
+          "default": "0, kar prevzame višino simbola iz ^BY"
+        },
+        {
+          "meaning": "raven kakovosti",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "stolpcev za kodiranje",
+          "values": "9 do 49, samo liho za kakovost 0 do 140, samo sodo za kakovost 200"
+        },
+        {
+          "meaning": "vrstic za kodiranje",
+          "values": "9 do 49"
+        },
+        {
+          "meaning": "ID oblike zapisa",
+          "values": "1 številsko, 2 velike črke, 3 velike alfanumerično z . , - /, 4 velike alfanumerično, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "krmilni znak ubežnega zaporedja",
+          "values": "katerikoli znak",
+          "default": "tilda"
+        },
+        {
+          "meaning": "razmerje stranic",
+          "values": "1 kvadratno, 2 pravokotno",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Nariše zloženi dvorazsežni simbol PDF417 za obsežna besedilna ali binarna sporočila."
+    "summary": "Nariše zloženi dvorazsežni simbol PDF417 za obsežna besedilna ali binarna sporočila.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode na vrstico v pikah",
+          "values": "1 do višine etikete",
+          "default": "zadnji ^BY"
+        },
+        {
+          "meaning": "raven varnosti",
+          "values": "1 do 8",
+          "default": "0"
+        },
+        {
+          "meaning": "število podatkovnih stolpcev",
+          "values": "1 do 30",
+          "default": "samodejno razmerje stranic"
+        },
+        {
+          "meaning": "število vrstic",
+          "values": "3 do 90",
+          "default": "samodejno razmerje stranic"
+        },
+        {
+          "meaning": "skrajšaj desne indikatorje vrstic in zaključni vzorec",
+          "values": "Y da, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Nariše simbol MicroPDF417, kompaktno različico PDF417 z vzorci naslavljanja vrstic."
+    "summary": "Nariše simbol MicroPDF417, kompaktno različico PDF417 z vzorci naslavljanja vrstic.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "višina črtne kode v pikah",
+          "values": "1 do 9999",
+          "default": "zadnji ^BY, ali 10, če ^BY ni bil poslan"
+        },
+        {
+          "meaning": "način",
+          "values": "0 do 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Nariše matrični simbol Aztec z nastavljivo povečavo in popravljanjem napak."
+    "summary": "Nariše matrični simbol Aztec z nastavljivo povečavo in popravljanjem napak.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R zasukano, I 180, B 270",
+          "default": "zadnji ^FW"
+        },
+        {
+          "meaning": "faktor povečave",
+          "values": "1 do 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "indikator razširjene interpretacije kanala",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "nadzor napak in velikost simbola",
+          "values": "0 privzeto, 1 do 99 odstotek napak, 101 do 104 kompaktne plasti, 201 do 232 polne plasti, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "indikator simbola menija",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "število simbolov za strukturirano dodajanje",
+          "values": "1 do 26",
+          "default": "1"
+        },
+        {
+          "meaning": "polje ID za strukturirano dodajanje",
+          "values": "besedilo do 24 znakov",
+          "default": "brez ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Nariše simbol CODABLOCK v načinu A, E ali F za obsežnejše podatke."
+    "summary": "Nariše simbol CODABLOCK v načinu A, E ali F za obsežnejše podatke.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "višina črtne kode na vrstico v pikah",
+          "values": "2 do 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "raven varnosti",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "znakov na vrstico",
+          "values": "2 do 62"
+        },
+        {
+          "meaning": "vrstic za kodiranje",
+          "values": "način A 1-22, način EF 2-4"
+        },
+        {
+          "meaning": "način",
+          "values": "A nabor code39, E code128-fnc1, F nabor code128",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Nariše simbol UPS MaxiCode z načinom za strukturirana sporočila prevoznika ali splošne podatke."
+    "summary": "Nariše simbol UPS MaxiCode z načinom za strukturirana sporočila prevoznika ali splošne podatke.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "način",
+          "values": "2 ameriška poštna, 3 ne-ameriška poštna, 4 standardno, 5 polno-eec, 6 program bralnika",
+          "default": "2"
+        },
+        {
+          "meaning": "številka simbola v zaporedju",
+          "values": "1 do 8",
+          "default": "1"
+        },
+        {
+          "meaning": "skupno število simbolov",
+          "values": "1 do 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Nariše simbol telekomunikacijske etikete TLC39, ki združuje Code 39 s komponento MicroPDF417."
+    "summary": "Nariše simbol telekomunikacijske etikete TLC39, ki združuje Code 39 s komponento MicroPDF417.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R zasukano, I obrnjeno, B od spodaj navzgor"
+        },
+        {
+          "meaning": "širina dela Code 39 v pikah",
+          "values": "1 do 10",
+          "default": "600 dpi 4, sicer 2"
+        },
+        {
+          "meaning": "razmerje širokega proti ozkemu traku dela Code 39",
+          "values": "2.0 do 3.0 v korakih po 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "višina dela Code 39 v pikah",
+          "values": "1 do 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "širina ozke črte dela MicroPDF417",
+          "values": "1 do 10",
+          "default": "600 dpi 4, sicer 2"
+        },
+        {
+          "meaning": "višina vrstice dela MicroPDF417 v pikah",
+          "values": "1 do 255",
+          "default": "600 dpi 8, sicer 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Kadar je omogočen, preveri podatke in parametre črtne kode ter namesto neveljavnega simbola natisne INVALID."
+    "summary": "Kadar je omogočen, preveri podatke in parametre črtne kode ter namesto neveljavnega simbola natisne INVALID.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "preverjanje kode",
+          "values": "N ne, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Nariše zapolnjen ali obrobljen pravokotnik. Če se stranica ujema z debelino obrobe, nastane črta."
+    "summary": "Nariše zapolnjen ali obrobljen pravokotnik. Če se stranica ujema z debelino obrobe, nastane črta.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "širina pravokotnika v pikah",
+          "values": "t do 32000",
+          "default": "t ali 1"
+        },
+        {
+          "meaning": "višina pravokotnika v pikah",
+          "values": "t do 32000",
+          "default": "t ali 1"
+        },
+        {
+          "meaning": "debelina obrobe v pikah",
+          "values": "1 do 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "barva črte",
+          "values": "B črno, W belo",
+          "default": "B"
+        },
+        {
+          "meaning": "zaobljenost kotov",
+          "values": "0 brez zaokrožitve do 8 najmočnejša zaokrožitev",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Nariše diagonalno črto čez podano širino in višino, nagnjeno v desno ali levo."
+    "summary": "Nariše diagonalno črto čez podano širino in višino, nagnjeno v desno ali levo.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "širina pravokotnika v pikah",
+          "values": "3 do 32000",
+          "default": "t ali 3"
+        },
+        {
+          "meaning": "višina pravokotnika v pikah",
+          "values": "3 do 32000",
+          "default": "t ali 3"
+        },
+        {
+          "meaning": "debelina obrobe v pikah",
+          "values": "1 do 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "barva črte",
+          "values": "B črno, W belo",
+          "default": "B"
+        },
+        {
+          "meaning": "smer diagonale",
+          "values": "R ali / nagnjeno desno, L ali \\ nagnjeno levo",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Nariše elipso iz širine in višine v pikah, z obrobo, ki se debeli navznoter, ter črnim ali belim izpisom."
+    "summary": "Nariše elipso iz širine in višine v pikah, z obrobo, ki se debeli navznoter, ter črnim ali belim izpisom.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "širina elipse v pikah",
+          "values": "3 do 4095",
+          "default": "t ali 1"
+        },
+        {
+          "meaning": "višina elipse v pikah",
+          "values": "3 do 4095",
+          "default": "t ali 1"
+        },
+        {
+          "meaning": "debelina obrobe v pikah",
+          "values": "2 do 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "barva črte",
+          "values": "B črno, W belo",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Nariše krog s podanim premerom v pikah, z obrobo, ki se debeli navznoter, ter črnim ali belim izpisom."
+    "summary": "Nariše krog s podanim premerom v pikah, z obrobo, ki se debeli navznoter, ter črnim ali belim izpisom.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "premer kroga v pikah",
+          "values": "3 do 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "debelina obrobe v pikah",
+          "values": "2 do 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "barva črte",
+          "values": "B črno, W belo",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Umesti enobarvno bitno sliko na trenutni položaj polja z uporabo šestnajstiških ASCII, binarnih ali stisnjenih podatkov."
+    "summary": "Umesti enobarvno bitno sliko na trenutni položaj polja z uporabo šestnajstiških ASCII, binarnih ali stisnjenih podatkov.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "vrsta stiskanja",
+          "values": "A ascii hex, B binarno, C stisnjeno binarno",
+          "default": "A"
+        },
+        {
+          "meaning": "skupno bajtov za pošiljanje",
+          "values": "1 do 99999"
+        },
+        {
+          "meaning": "skupno bajtov v sliki",
+          "values": "1 do 99999"
+        },
+        {
+          "meaning": "bajtov na vrstico slike",
+          "values": "1 do 99999"
+        },
+        {
+          "meaning": "podatki slike",
+          "values": "ascii hex 00 do FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Natisne vgrajeni simbol, izbran s podatki polja, na primer znak avtorskih pravic ali registrirane blagovne znamke."
+    "summary": "Natisne vgrajeni simbol, izbran s podatki polja, na primer znak avtorskih pravic ali registrirane blagovne znamke.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "usmerjenost",
+          "values": "N običajno, R 90 v smeri urinega kazalca, I 180, B 270",
+          "default": "N ali zadnji ^FW"
+        },
+        {
+          "meaning": "višina znaka sorazmerna s širino",
+          "values": "0 do 32000",
+          "default": "zadnji ^CF"
+        },
+        {
+          "meaning": "širina znaka sorazmerna z višino",
+          "values": "0 do 32000",
+          "default": "zadnji ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Naloži shranjeno sliko na začetku formata etikete in jo zasidra na izhodišče etikete."
+    "summary": "Naloži shranjeno sliko na začetku formata etikete in jo zasidra na izhodišče etikete.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime predmeta",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": ".GRF ali .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Umesti shranjeno sliko na trenutni položaj polja, ne da bi jo spremenil po velikosti."
+    "summary": "Umesti shranjeno sliko na trenutni položaj polja, ne da bi jo spremenil po velikosti.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "vrstni red prioritete iskanja"
+        },
+        {
+          "meaning": "ime predmeta",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": ".GRF ali .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Izbriše shranjene grafike, pisave ali formate iz pomnilnika tiskalnika, s podporo nadomestnim znakom za skupine."
+    "summary": "Izbriše shranjene grafike, pisave ali formate iz pomnilnika tiskalnika, s podporo nadomestnim znakom za skupine.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime predmeta, nadomestni znak dovoljen",
+          "values": "1 do 8 znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke, nadomestni znak dovoljen",
+          "values": "katerakoli pripona",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Shrani trenutni format etikete kot grafično sliko za hiter priklic in prekrivanje s spremenljivimi podatki."
+    "summary": "Shrani trenutni format etikete kot grafično sliko za hiter priklic in prekrivanje s spremenljivimi podatki.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime predmeta",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": ".GRF ali .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "natisni etiketo po shranjevanju",
+          "values": "N ne, Y da",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Prenese grafiko v šestnajstiškem zapisu ASCII v pomnilnik tiskalnika pod imenom za ponovno uporabo."
+    "summary": "Prenese grafiko v šestnajstiškem zapisu ASCII v pomnilnik tiskalnika pod imenom za ponovno uporabo.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime slike",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "skupna velikost slike v bajtih",
+          "values": "izračunano iz širine in višine slike"
+        },
+        {
+          "meaning": "bajtov na vrstico slike",
+          "values": "izračunano iz širine slike"
+        },
+        {
+          "meaning": "podatki grafične slike",
+          "values": "ascii hex 00 do FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Prenese grafiko, pisavo ali certifikat v pomnilnik tiskalnika pod imenom za ponovno uporabo."
+    "summary": "Prenese grafiko, pisavo ali certifikat v pomnilnik tiskalnika pod imenom za ponovno uporabo.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime datoteke",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "oblika podatkov",
+          "values": "A ascii ali zb64, B binarno, C stisnjeno ar, P png zb64"
+        },
+        {
+          "meaning": "vrsta shranjene datoteke",
+          "values": "B bitna slika, E tte, G neobdelan grf, P png, T ttf ali otf, X pcx, NRD neberljivo, PAC poverilnica za dostop, C meni wml, F stran htm, H odziv tiskalnika",
+          "default": "G"
+        },
+        {
+          "meaning": "skupno bajtov v datoteki",
+          "values": "dejanska razširjena velikost datoteke"
+        },
+        {
+          "meaning": "bajtov na vrstico za slike GRF",
+          "values": "izračunano iz širine slike"
+        },
+        {
+          "meaning": "podatki datoteke",
+          "values": "ascii hex, zb64 ali binarno"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Serijsko oštevilči podatke besedilnega ali črtnokodnega polja med etiketami, z začetno vrednostjo, smerjo in korakom."
+    "summary": "Serijsko oštevilči podatke besedilnega ali črtnokodnega polja med etiketami, z začetno vrednostjo, smerjo in korakom.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "začetna serijska vrednost",
+          "values": "do 12 števk",
+          "default": "1"
+        },
+        {
+          "meaning": "korak povečevanja ali zmanjševanja",
+          "values": "do 12 števk",
+          "default": "1"
+        },
+        {
+          "meaning": "dopolni z vodilnimi ničlami",
+          "values": "N ne, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Serijsko oštevilči izbrane položaje v podatkih polja z uporabo maske in naborov znakov."
+    "summary": "Serijsko oštevilči izbrane položaje v podatkih polja z uporabo maske in naborov znakov.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "maska serializacije, ki izbere znake za spremembo",
+          "values": "D decimalno, H hex, O osmiško, A alfa, N alfanumerično, % preskoči"
+        },
+        {
+          "meaning": "niz povečevanja ali zmanjševanja za masko",
+          "values": "ena vrednost na položaj maske, % za ohranitev",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Shrani naslednje ukaze kot format etikete za ponovno uporabo, namesto da bi jih takoj natisnil."
+    "summary": "Shrani naslednje ukaze kot format etikete za ponovno uporabo, namesto da bi jih takoj natisnil.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "naprava za shranjevanje predloge",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime predloge",
+          "values": "1 do 16 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Prikliče shranjeni format etikete in vanj vstavi vrednosti za njegova oštevilčena rezervirana polja."
+    "summary": "Prikliče shranjeni format etikete in vanj vstavi vrednosti za njegova oštevilčena rezervirana polja.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "izvorna naprava shranjene predloge",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R nato E nato B nato A"
+        },
+        {
+          "meaning": "ime shranjene predloge",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Prikliče shranjeno grafiko na trenutnem položaju z neodvisnim vodoravnim in navpičnim spreminjanjem velikosti."
+    "summary": "Prikliče shranjeno grafiko na trenutnem položaju z neodvisnim vodoravnim in navpičnim spreminjanjem velikosti.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "izvorna naprava shranjene grafike",
+          "values": "R, E, B, A",
+          "default": "R nato E nato B nato A"
+        },
+        {
+          "meaning": "ime shranjene grafike",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": "GRF"
+        },
+        {
+          "meaning": "faktor povečave na osi x",
+          "values": "1 do 10",
+          "default": "1"
+        },
+        {
+          "meaning": "faktor povečave na osi y",
+          "values": "1 do 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Izbere način zaznavanja mej etiket, in sicer z vrzelmi, oznakami ali neprekinjenim medijem."
+    "summary": "Izbere način zaznavanja mej etiket, in sicer z vrzelmi, oznakami ali neprekinjenim medijem.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "način sledenja mediju",
+          "values": "N neprekinjen, Y ali W medij z vrzelmi, M medij z oznako, A samodejno zaznavanje, V neprekinjena spremenljiva dolžina",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "odmik črne oznake v pikah",
+          "values": "-120 do 283 pri večini tiskalnikov, -240 do 566 pri 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Nastavi največjo dolžino etikete, ki jo tiskalnik preišče pri umerjanju medija, ki ni neprekinjen."
+    "summary": "Nastavi največjo dolžino etikete, ki jo tiskalnik preišče pri umerjanju medija, ki ni neprekinjen.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "največja dolžina etikete v vrsticah pik",
+          "values": "dpi tiskalnika krat dva, do največje dolžine",
+          "default": "zadnja shranjena vrednost"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Nastavi dejanje ob vklopu in zaprtju tiskalne glave, na primer umerjanje, podajanje ali merjenje dolžine."
+    "summary": "Nastavi dejanje ob vklopu in zaprtju tiskalne glave, na primer umerjanje, podajanje ali merjenje dolžine.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "dejanje podajanja ob vklopu",
+          "values": "F podaj do prve vrzeli, C umeri kot ~JC, L nastavi dolžino kot ~JL, N brez podajanja, S kratko umerjanje",
+          "default": "C"
+        },
+        {
+          "meaning": "dejanje podajanja po zaprtju glave",
+          "values": "F podaj do prve vrzeli, C umeri kot ~JC, L nastavi dolžino kot ~JL, N brez podajanja, S kratko umerjanje",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Nastavi natisnjena vzdrževalna opozorila za čiščenje ali menjavo tiskalne glave."
+    "summary": "Nastavi natisnjena vzdrževalna opozorila za čiščenje ali menjavo tiskalne glave.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "vrsta opozorila",
+          "values": "R zamenjava glave, C čiščenje glave"
+        },
+        {
+          "meaning": "natisni opozorilno etiketo",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "razdalja do prvega opozorila",
+          "values": "R 0 do 150 km, C 100 do 2000 metrov, 0 izklopljeno",
+          "default": "50 km za R, 0 izklopljeno za C"
+        },
+        {
+          "meaning": "razdalja pred ponovno sprožitvijo opozorila",
+          "values": "0 do 2000 metrov",
+          "default": "0"
+        },
+        {
+          "meaning": "sporočena merska enota",
+          "values": "C centimetri, I palci, M metri",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Nadzoruje, ali se bitna slika etikete po tiskanju počisti ali ohrani za ponovno uporabo pri poznejših etiketah."
+    "summary": "Nadzoruje, ali se bitna slika etikete po tiskanju počisti ali ohrani za ponovno uporabo pri poznejših etiketah.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "počisti bitno sliko po tiskanju",
+          "values": "Y počisti, N ohrani",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Nastavi besedilo, prikazano na vzdrževalnih opozorilnih etiketah za čiščenje ali menjavo tiskalne glave."
+    "summary": "Nastavi besedilo, prikazano na vzdrževalnih opozorilnih etiketah za čiščenje ali menjavo tiskalne glave.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "vrsta opozorila",
+          "values": "R zamenjava glave, C čiščenje glave",
+          "default": "R"
+        },
+        {
+          "meaning": "sporočilo, natisnjeno na opozorilni etiketi",
+          "values": "do 63 znakov, brez vejic",
+          "default": "očistite tiskalno glavo ali zamenjajte tiskalno glavo"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Zaklene nastavitev na nadzorni plošči, na primer temnost ali umerjanje, dokler je ne odklenete."
+    "summary": "Zaklene nastavitev na nadzorni plošči, na primer temnost ali umerjanje, dokler je ne odklenete.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "način nadzorne plošče za zaščito",
+          "values": "D temnost, P položaj, C umerjanje, E omogoči vse, S brez shranjevanja, W premor, F podajanje, X prekliči, M meni",
+          "default": "mora biti podano"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Omogoči ali onemogoči opozorilni indikator za hladno tiskalno glavo."
+    "summary": "Omogoči ali onemogoči opozorilni indikator za hladno tiskalno glavo.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "omogoči opozorilo o hladni glavi",
+          "values": "Y omogoči, N onemogoči"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Prilagodi temnost tiska glede na trenutno nastavljeno temnost tiskalnika."
+    "summary": "Prilagodi temnost tiska glede na trenutno nastavljeno temnost tiskalnika.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "temnost medija glede na trenutno nastavitev",
+          "values": "-30 do 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Takoj nastavi absolutno temnost tiska, skladno z nastavitvijo temnosti na sprednji plošči."
+    "summary": "Takoj nastavi absolutno temnost tiska, skladno z nastavitvijo temnosti na sprednji plošči.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "absolutna raven temnosti tiska",
+          "values": "00 do 30",
+          "default": "zadnja shranjena vrednost"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Nadzoruje, ali se etiketa, prekinjena zaradi napake medija, traku ali tiskalne glave, po odpravi napake ponovno natisne."
+    "summary": "Nadzoruje, ali se etiketa, prekinjena zaradi napake medija, traku ali tiskalne glave, po odpravi napake ponovno natisne.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "ponovno natisni etiketo po odpravi napake",
+          "values": "N ne, Y da",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Razporedi periodična preverjanja elementov tiskalne glave glede na število natisnjenih etiket in izbirno območje elementov."
+    "summary": "Razporedi periodična preverjanja elementov tiskalne glave glede na število natisnjenih etiket in izbirno območje elementov.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "natisnjenih etiket med testi glave",
+          "values": "0 do 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "ročna izbira območja testnih elementov glave",
+          "values": "N ne, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "številka prvega testnega elementa",
+          "values": "0 do 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "številka zadnjega testnega elementa",
+          "values": "0 do 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Po tiskanju prilagodi mirovni položaj za odtrganje ali rezanje z majhnim zamikom v pikah."
+    "summary": "Po tiskanju prilagodi mirovni položaj za odtrganje ali rezanje z majhnim zamikom v pikah.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "sprememba mirovnega položaja odtrganja v pikah",
+          "values": "-120 do 120",
+          "default": "zadnja shranjena vrednost"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Nastavi pragove za zgodnja opozorila glede vzdrževanja medija, traku in tiskalne glave."
+    "summary": "Nastavi pragove za zgodnja opozorila glede vzdrževanja medija, traku in tiskalne glave.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "zgodnje opozorilo za medij ali potrošni material",
+          "values": "E omogoči, D onemogoči",
+          "default": "D"
+        },
+        {
+          "meaning": "število etiket na kolut",
+          "values": "100 do 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "medij je bil zamenjan",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "koda dolžine traku glede na model",
+          "values": "N 0 m, 0 do 7 je 100 do 450 m, 10 do 16 je 600 do 900 m",
+          "default": "1 ali 7 glede na model"
+        },
+        {
+          "meaning": "trak je bil zamenjan",
+          "values": "Y da, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "vzdrževanje z zgodnjim opozorilom omogočeno",
+          "values": "E omogočeno, D onemogočeno",
+          "default": "D"
+        },
+        {
+          "meaning": "koda intervala čiščenja glave",
+          "values": "0 do 16 za 100 m do 900 m v korakih po 50 m",
+          "default": "1 ali 7 glede na model"
+        },
+        {
+          "meaning": "tiskalna glava je bila očiščena",
+          "values": "N ne, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "prag opozorila o življenjski dobi glave v palcih",
+          "values": "0 izklopljeno, ali 100 do 3500000 palcev",
+          "default": "1000000"
+        },
+        {
+          "meaning": "tiskalna glava je bila zamenjana",
+          "values": "N ne, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Nadzoruje časovni potek povratnega podajanja ob tiskanju in rezanju ali ga izklopi."
+    "summary": "Nadzoruje časovni potek povratnega podajanja ob tiskanju in rezanju ali ga izklopi.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "časovanje povratnega podajanja glede na tiskanje",
+          "values": "A polno po, B polno pred, N običajno, O izklopljeno, 10 do 90 odstotkov",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Poda določeno število praznih vrstic pik s hitrostjo premikanja."
+    "summary": "Poda določeno število praznih vrstic pik s hitrostjo premikanja.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "vrstice pik, preskočene od spodaj",
+          "values": "0 do 32000",
+          "default": "mora biti podano"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Takoj sproži rezalnik na tiskalnikih KR403 v kioškem načinu tiskanja."
+    "summary": "Takoj sproži rezalnik na tiskalnikih KR403 v kioškem načinu tiskanja.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "način razveljavitve količine reza",
+          "values": "0 nastavitev kioska, 1 celoten rez"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Doda dodatno dolžino izmeta na predstavitveni mehanizem kioska KR403, kar olajša jemanje natisnjenega medija."
+    "summary": "Doda dodatno dolžino izmeta na predstavitveni mehanizem kioska KR403, kar olajša jemanje natisnjenega medija.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "dodatna dolžina izmeta medija v mm",
+          "values": "0 do 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Sproži cikel predstavitvenega mehanizma KR403 in ponudi natisnjeni medij za ročni odvzem."
+    "summary": "Sproži cikel predstavitvenega mehanizma KR403 in ponudi natisnjeni medij za ročni odvzem.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "dolžina izmeta medija za predstavitveni mehanizem v mm",
+          "values": "0 do 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Nastavi napetost dovoda traku na tiskalnikih serije PAX."
+    "summary": "Nastavi napetost dovoda traku na tiskalnikih serije PAX.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "raven napetosti traku",
+          "values": "L nizko, M srednje, H visoko",
+          "default": "mora biti podano"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Nastavi datum in čas realnočasovne ure tiskalnika."
+    "summary": "Nastavi datum in čas realnočasovne ure tiskalnika.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "mesec",
+          "values": "01 do 12",
+          "default": "trenutni mesec"
+        },
+        {
+          "meaning": "dan",
+          "values": "01 do 31",
+          "default": "trenutni dan"
+        },
+        {
+          "meaning": "leto",
+          "values": "1998 do 2097",
+          "default": "trenutno leto"
+        },
+        {
+          "meaning": "ura",
+          "values": "00 do 23",
+          "default": "trenutna ura"
+        },
+        {
+          "meaning": "minuta",
+          "values": "00 do 59",
+          "default": "trenutna minuta"
+        },
+        {
+          "meaning": "sekunda",
+          "values": "00 do 59",
+          "default": "trenutna sekunda"
+        },
+        {
+          "meaning": "format dop./pop. ali 24-urni",
+          "values": "A dop., P pop., M 24-urni",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Izbere obliko zapisa datuma in časa, prikazano na konfiguracijski etiketi in nadzorni plošči."
+    "summary": "Izbere obliko zapisa datuma in časa, prikazano na konfiguracijski etiketi in nadzorni plošči.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "oblika prikaza datuma in časa",
+          "values": "0 številka različice, 1 MM/DD/YY 24-urni, 2 MM/DD/YY 12-urni, 3 DD/MM/YY 24-urni, 4 DD/MM/YY 12-urni",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Določi sekundarne zamike ure glede na realnočasovno uro. Zamiki se ob izklopu tiskalnika izgubijo."
+    "summary": "Določi sekundarne zamike ure glede na realnočasovno uro. Zamiki se ob izklopu tiskalnika izgubijo.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "številka ure za zamik",
+          "values": "2 sekundarno, 3 terciarno",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "zamik v mesecih",
+          "values": "-32000 do 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "zamik v dnevih",
+          "values": "-32000 do 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "zamik v letih",
+          "values": "-32000 do 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "zamik v urah",
+          "values": "-32000 do 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "zamik v minutah",
+          "values": "-32000 do 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "zamik v sekundah",
+          "values": "-32000 do 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Nastavi, kdaj se časovna polja žigosajo, ter izbere jezik imen dni in mesecev."
+    "summary": "Nastavi, kdaj se časovna polja žigosajo, ter izbere jezik imen dni in mesecev.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "način branja ure",
+          "values": "S začetni čas, T trenutni čas, 0 do 999 toleranca",
+          "default": "S"
+        },
+        {
+          "meaning": "jezik imen dni in mesecev",
+          "values": "1 angleško, 2 špansko, 3 francosko, 4 nemško, 5 italijansko, 6 do 18 drugi jeziki",
+          "default": "zadnji ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Izbere jezik prikaza na nadzorni plošči tiskalnika s seznama, ki se razlikuje glede na model."
+    "summary": "Izbere jezik prikaza na nadzorni plošči tiskalnika s seznama, ki se razlikuje glede na model.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "jezik zaslona nadzorne plošče",
+          "values": "1 do 20 kod jezikov",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Izbere shranjeno tabelo kodiranja, ki pred tiskanjem preslika podatke polja."
+    "summary": "Izbere shranjeno tabelo kodiranja, ki pred tiskanjem preslika podatke polja.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "lokacija pogona tabele kodiranja",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime datoteke tabele kodiranja",
+          "values": "1 do 8 alfanumeričnih znakov"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": "DAT fiksna vrednost",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Izbere razlago ukazov po izvirnem ZPL ali ZPL II zaradi združljivosti s starejšimi formati."
+    "summary": "Izbere razlago ukazov po izvirnem ZPL ali ZPL II zaradi združljivosti s starejšimi formati.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "različica tolmača ZPL",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Tiskalniku dodeli omrežno ime in poljubni opis, oba prikazana na konfiguracijski etiketi in vgrajeni spletni strani."
+    "summary": "Tiskalniku dodeli omrežno ime in poljubni opis, oba prikazana na konfiguracijski etiketi in vgrajeni spletni strani.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "omrežno ime tiskalnika",
+          "values": "do 16 alfanumeričnih znakov",
+          "default": "ZBR plus pripona MAC"
+        },
+        {
+          "meaning": "opis tiskalnika za konfiguracijsko etiketo in spletno stran",
+          "values": "do 35 alfanumeričnih znakov",
+          "default": "prazno"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Nastavi štirimestno geslo za nastavitvene menije nadzorne plošče."
+    "summary": "Nastavi štirimestno geslo za nastavitvene menije nadzorne plošče.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "štirimestno geslo nadzorne plošče",
+          "values": "0000 do 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "raven gesla, samo tiskalnik S4M",
+          "values": "1 do 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Shrani, obnovi ali ponastavi konfiguracijske nastavitve tiskalnika."
+    "summary": "Shrani, obnovi ali ponastavi konfiguracijske nastavitve tiskalnika.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "dejanje konfiguracije",
+          "values": "A tovarniško vse, F tovarniško, N omrežje, R priklic, S shrani"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Spremeni predznak ukazov formata, običajno strešico, bodisi globalno bodisi samo za trenutni format etikete."
+    "summary": "Spremeni predznak ukazov formata, običajno strešico, bodisi globalno bodisi samo za trenutni format etikete.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "nova predpona ukazov oblike zapisa",
+          "values": "katerikoli znak ASCII"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Spremeni ločilo parametrov, običajno vejico, bodisi globalno bodisi samo za trenutni format etikete."
+    "summary": "Spremeni ločilo parametrov, običajno vejico, bodisi globalno bodisi samo za trenutni format etikete.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "nov znak ločila parametrov",
+          "values": "katerikoli znak ASCII"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Spremeni predznak takojšnjih ukazov, običajno tildo, bodisi globalno bodisi samo za trenutni format etikete."
+    "summary": "Spremeni predznak takojšnjih ukazov, običajno tildo, bodisi globalno bodisi samo za trenutni format etikete.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "nova predpona takojšnjih ukazov",
+          "values": "katerikoli znak ASCII"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Preslika črke pomnilniških naprav tiskalnika, tako da shranjeni objekti ohranijo svoja obstoječa imena."
+    "summary": "Preslika črke pomnilniških naprav tiskalnika, tako da shranjeni objekti ohranijo svoja obstoječa imena.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "pomnilniški vzdevek za B",
+          "values": "B pomnilniška kartica, E flash, R DRAM, A compact flash, NONE ni nastavljeno",
+          "default": "B"
+        },
+        {
+          "meaning": "pomnilniški vzdevek za E",
+          "values": "B pomnilniška kartica, E flash, R DRAM, A compact flash, NONE ni nastavljeno",
+          "default": "E"
+        },
+        {
+          "meaning": "pomnilniški vzdevek za R",
+          "values": "B pomnilniška kartica, E flash, R DRAM, A compact flash, NONE ni nastavljeno",
+          "default": "R"
+        },
+        {
+          "meaning": "pomnilniški vzdevek za A",
+          "values": "B pomnilniška kartica, E flash, R DRAM, A compact flash, NONE ni nastavljeno",
+          "default": "A"
+        },
+        {
+          "meaning": "dovoli podvojeno dodelitev vzdevka",
+          "values": "M večkratni vzdevek",
+          "default": "brez"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Izbriše in ponovno inicializira eno pomnilniško napravo flash. Izpad napajanja med tem postopkom lahko poškoduje pomnilnik."
+    "summary": "Izbriše in ponovno inicializira eno pomnilniško napravo flash. Izpad napajanja med tem postopkom lahko poškoduje pomnilnik.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava flash za inicializacijo",
+          "values": "A izbirni flash, B kartica flash, E notranji flash",
+          "default": "mora biti podano"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Nastavi, ali nizka napetost baterije prenosni tiskalnik ustavi v premor ali dovoli nadaljevanje tiskanja."
+    "summary": "Nastavi, ali nizka napetost baterije prenosni tiskalnik ustavi v premor ali dovoli nadaljevanje tiskanja.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "premor ob nizki napetosti baterije",
+          "values": "Y premor, N nadaljuj tiskanje",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Zažene Zebra BASIC Interpreter na tiskalniku, po izbiri z zagonom shranjenega programa."
+    "summary": "Zažene Zebra BASIC Interpreter na tiskalniku, po izbiri z zagonom shranjenega programa.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "lokacija shranjevanja programa",
+          "values": "R, E, B, A",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "ime programa za zagon",
+          "values": "katerokoli veljavno ime programa",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "pripona programske datoteke",
+          "values": "BAS ali BAE"
+        },
+        {
+          "meaning": "nadzor izhoda konzole",
+          "values": "Y vklopljeno, N izklopljeno",
+          "default": "Y"
+        },
+        {
+          "meaning": "nadzor odmeva ukazov",
+          "values": "Y vklopljeno, N izklopljeno",
+          "default": "Y"
+        },
+        {
+          "meaning": "pomnilnik, dodeljen ZBI",
+          "values": "20K do 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Nastavi pomožna vrata za signale aplikatorja ali preverjalnika ter ravnanje z napakami."
+    "summary": "Nastavi pomožna vrata za signale aplikatorja ali preverjalnika ter ravnanje z napakami.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "način ravnanja z napako preverjalnika",
+          "values": "0 izklopljeno, 1 ponoven tisk ob napaki, 2 največja pretočnost",
+          "default": "0"
+        },
+        {
+          "meaning": "način časovanja signala aplikatorja",
+          "values": "0 izklopljeno, 1 do 4 časovanje signala",
+          "default": "0"
+        },
+        {
+          "meaning": "način časovanja signala za začetek tiskanja",
+          "values": "p pulzni način, l nivojski način"
+        },
+        {
+          "meaning": "način odziva na napako etikete",
+          "values": "e način napake, f način podajanja",
+          "default": "f"
+        },
+        {
+          "meaning": "način ponovnega tiska ob signalu",
+          "values": "e omogočeno, d onemogočeno",
+          "default": "d"
+        },
+        {
+          "meaning": "način opozorila o nizki zalogi traku",
+          "values": "e omogočeno, d onemogočeno",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Izbere senzor medija za sledenje, običajno odbojnega ali prepustnega tipa."
+    "summary": "Izbere senzor medija za sledenje, običajno odbojnega ali prepustnega tipa.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "senzor za uporabo",
+          "values": "A samodejno, R odbojno, T prepustno",
+          "default": "razlikuje se glede na model tiskalnika"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Nastavi normalno ali zmanjšano gostoto pik na milimeter. Zmanjšana gostota podvoji fizično velikost koordinat formata etikete."
+    "summary": "Nastavi normalno ali zmanjšano gostoto pik na milimeter. Zmanjšana gostota podvoji fizično velikost koordinat formata etikete.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "nastavitev gostote tiska",
+          "values": "A običajna gostota, B polovična gostota",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Ponastavi izbrani števec uporabe tiskalnika, med drugim uporabniške ali RFID-števce."
+    "summary": "Ponastavi izbrani števec uporabe tiskalnika, med drugim uporabniške ali RFID-števce.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "števec za ponastavitev",
+          "values": "1 števec ena, 2 števec dva, 3 veljaven RFID, 4 razveljavljen RFID, C glava očiščena, R glava zamenjana",
+          "default": "mora biti podano"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "V enem ukazu nastavi vse komunikacijske parametre serijskih vrat."
+    "summary": "V enem ukazu nastavi vse komunikacijske parametre serijskih vrat.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "serijska hitrost prenosa",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "podatkovnih bitov na znak",
+          "values": "7 ali 8",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "nastavitev paritete",
+          "values": "N brez, E sodo, O liho",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "stop biti",
+          "values": "1 ali 2",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "protokol nadzora pretoka",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR in Xon/Xoff",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "izmenjava protokola Zebra",
+          "values": "A ACK/NAK, N brez, Z zebra",
+          "default": "mora biti podano"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Prepiše vrednosti intenzitete ali izhodiščne vrednosti prepustnega senzorja, ki jih sicer določi umerjanje."
+    "summary": "Prepiše vrednosti intenzitete ali izhodiščne vrednosti prepustnega senzorja, ki jih sicer določi umerjanje.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "nastavitev senzorja za spremembo",
+          "values": "1 svetlost, 2 izhodišče",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "vrednost za izbrano nastavitev",
+          "values": "0 do 196",
+          "default": "mora biti podano"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Začne tiskanje, še preden je prispel celoten format etikete, kar poveča pretočnost pri zapletenih etiketah."
+    "summary": "Začne tiskanje, še preden je prispel celoten format etikete, kar poveča pretočnost pri zapletenih etiketah.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "vrstica pik za začetek tiskanja",
+          "values": "0 do 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Onemogoči določen pogoj in cilj opozorila ZebraNet."
+    "summary": "Onemogoči določen pogoj in cilj opozorila ZebraNet.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "pogoj opozorila za zaustavitev",
+          "values": "A do O in Q do V vsak en pogoj, W vse pri tiskalnikih RFID, * vse pri drugih"
+        },
+        {
+          "meaning": "cilj opozorila za zaustavitev",
+          "values": "A serijsko, B paralelno, C e-pošta, D TCP/IP, E UDP/IP, F SNMP trap, * vse"
+        },
+        {
+          "meaning": "zaustavi ali nadaljuj ta opozorila",
+          "values": "Y zaustavi sporočila, N začni sporočila",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Nastavi vrednost upornosti tiskalne glave, ki se uporablja pri izračunih energije žarjenja."
+    "summary": "Nastavi vrednost upornosti tiskalne glave, ki se uporablja pri izračunih energije žarjenja.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "vrednost upornosti tiskalne glave",
+          "values": "0488 do 1175",
+          "default": "zadnja permanentno shranjena vrednost"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Nastavi pragove senzorja medija, dolžino etikete in intenzitete LED, ki jih sicer določi umerjanje."
+    "summary": "Nastavi pragove senzorja medija, dolžino etikete in intenzitete LED, ki jih sicer določi umerjanje.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "vrednost senzorja reže",
+          "values": "0 do 100",
+          "default": "prikazano na profilu senzorja ali konfiguracijski etiketi"
+        },
+        {
+          "meaning": "vrednost senzorja medija",
+          "values": "0 do 100",
+          "default": "prikazano na profilu senzorja ali konfiguracijski etiketi"
+        },
+        {
+          "meaning": "vrednost senzorja traku",
+          "values": "0 do 100",
+          "default": "prikazano na profilu senzorja ali konfiguracijski etiketi"
+        },
+        {
+          "meaning": "dolžina etikete v pikah",
+          "values": "1 do 32000",
+          "default": "vrednost iz umerjanja"
+        },
+        {
+          "meaning": "intenzivnost LED za medij",
+          "values": "0 do 255",
+          "default": "vrednost iz umerjanja"
+        },
+        {
+          "meaning": "intenzivnost LED za trak",
+          "values": "0 do 255",
+          "default": "vrednost iz umerjanja"
+        },
+        {
+          "meaning": "vrednost zaznavanja oznake",
+          "values": "0 do 100",
+          "default": "vrednost iz umerjanja"
+        },
+        {
+          "meaning": "vrednost zaznavanja medija za oznako",
+          "values": "0 do 100",
+          "default": "vrednost iz umerjanja"
+        },
+        {
+          "meaning": "vrednost zaznavanja LED za oznako",
+          "values": "0 do 255",
+          "default": "vrednost iz umerjanja"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Omogoči opozorilo ZebraNet za določen pogoj in cilj."
+    "summary": "Omogoči opozorilo ZebraNet za določen pogoj in cilj.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "vrsta pogoja opozorila",
+          "values": "A do V vsak en pogoj, * vse",
+          "default": "prezrto, če manjka ali ni veljavno"
+        },
+        {
+          "meaning": "vrsta cilja opozorila",
+          "values": "A serijsko, B paralelno, C e-pošta, D TCP/IP, E UDP/IP, F SNMP trap",
+          "default": "prezrto, če manjka ali ni veljavno"
+        },
+        {
+          "meaning": "omogoči opozorilo ob nastopu pogoja",
+          "values": "N ne, Y da",
+          "default": "Y ali prejšnja vrednost"
+        },
+        {
+          "meaning": "omogoči opozorilo ob umiku pogoja",
+          "values": "N ne, Y da",
+          "default": "N ali prejšnja vrednost"
+        },
+        {
+          "meaning": "ciljni naslov opozorila",
+          "values": "e-pošta, naslov IP ali cilj SNMP",
+          "default": "prezrto, če manjka ali ni veljavno"
+        },
+        {
+          "meaning": "številka vrat za opozorilo",
+          "values": "0 do 65535",
+          "default": "prezrto, če manjka ali ni veljavno"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopira shranjene objekte med pomnilniškimi napravami tiskalnika, s podporo nadomestnim znakom za skupine."
+    "summary": "Kopira shranjene objekte med pomnilniškimi napravami tiskalnika, s podporo nadomestnim znakom za skupine.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "izvorna pomnilniška naprava",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "ime izvornega predmeta",
+          "values": "katerokoli obstoječe ime predmeta",
+          "default": "* izbere vse predmete"
+        },
+        {
+          "meaning": "pripona izvornega predmeta",
+          "values": "katerakoli veljavna pripona datoteke",
+          "default": "* izbere vse pripone"
+        },
+        {
+          "meaning": "ciljna pomnilniška naprava",
+          "values": "R, E, B, A",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "ime predmeta na cilju",
+          "values": "do 8 alfanumeričnih znakov",
+          "default": "ime izvornega predmeta"
+        },
+        {
+          "meaning": "pripona ciljnega predmeta",
+          "values": "katerakoli veljavna pripona datoteke",
+          "default": "pripona izvornega predmeta"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Natisne etiketo z imenikom shranjenih objektov, vgrajenih pisav ali razpoložljivih črtnih kod."
+    "summary": "Natisne etiketo z imenikom shranjenih objektov, vgrajenih pisav ali razpoložljivih črtnih kod.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "izvorna naprava za izpis",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "filter imena predmeta",
+          "values": "1 do 8 znakov, nadomestni znak * ali ?",
+          "default": "*"
+        },
+        {
+          "meaning": "filter pripone",
+          "values": "katerakoli veljavna pripona, nadomestni znak *",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Na etiketi natisne zahtevane servisne podatke, na primer stanje števca ali zgodovino tiskalne glave."
+    "summary": "Na etiketi natisne zahtevane servisne podatke, na primer stanje števca ali zgodovino tiskalne glave.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "vrsta servisnega poročila za tisk",
+          "values": "ES stanje, HA strojni naslov, JT test glave, MA nastavitve opozoril, MI sporočila, OD števec, PH življenjska doba glave, PP plug and play, SN serijska številka, UI ID USB",
+          "default": "mora biti podano"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Nastavi predstavitveni mehanizem kioska KR403, med drugim dolžino reza, rob reza, časovno omejitev umika in dolžino zanke."
+    "summary": "Nastavi predstavitveni mehanizem kioska KR403, med drugim dolžino reza, rob reza, časovno omejitev umika in dolžino zanke.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "količina reza kioska",
+          "values": "0 običajen rez, 10 do 60 delni rez v mm",
+          "default": "0"
+        },
+        {
+          "meaning": "rob reza kioska v mm",
+          "values": "2 do 9",
+          "default": "9"
+        },
+        {
+          "meaning": "vrsta predstavitve kioska po tiskanju",
+          "values": "0 izvrzi, 1 umakni, 2 brez dejanja",
+          "default": "0"
+        },
+        {
+          "meaning": "časovna omejitev predstavitve kioska v sekundah",
+          "values": "0 do 300, 0 brez časovne omejitve",
+          "default": "0"
+        },
+        {
+          "meaning": "dolžina zanke predstavitvenega mehanizma v mm",
+          "values": "0 neposredno, 3 do 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Nadzoruje dinamično ponovno umerjanje dolžine etikete in praga senzorja po vklopu ali odprtju predala za medij."
+    "summary": "Nadzoruje dinamično ponovno umerjanje dolžine etikete in praga senzorja po vklopu ali odprtju predala za medij.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "omogoči dinamično umerjanje dolžine",
+          "values": "Y omogoči, N onemogoči",
+          "default": "Y"
+        },
+        {
+          "meaning": "omogoči dinamično umerjanje praga",
+          "values": "Y omogoči, N onemogoči",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Zažene način razgradnje za pripravo tiskalnika na nadaljnjo prodajo ali recikliranje."
+    "summary": "Zažene način razgradnje za pripravo tiskalnika na nadaljnjo prodajo ali recikliranje.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "serijska številka tiskalnika",
+          "values": "alfanumerični niz",
+          "default": "mora biti podano"
+        },
+        {
+          "meaning": "število prehodov brisanja flash",
+          "values": "0 do 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Nastavi samodejni preklop v mirovanje po obdobju nedejavnosti, z možnostmi za čakajoče etikete."
+    "summary": "Nastavi samodejni preklop v mirovanje po obdobju nedejavnosti, z možnostmi za čakajoče etikete.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "sekunde nedejavnosti pred samodejnim izklopom",
+          "values": "0 do 999999, 0 onemogoči izklop",
+          "default": "zadnja shranjena vrednost ali 0"
+        },
+        {
+          "meaning": "stanje etikete ob izklopu",
+          "values": "Y izklopi s čakalno vrsto, N najprej dokončaj čakalno vrsto",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Izvrže ali umakne medij, ki ga je predstavitveni mehanizem kioska KR403 že ponudil."
+    "summary": "Izvrže ali umakne medij, ki ga je predstavitveni mehanizem kioska KR403 že ponudil.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "dejanje predstavitve kioska",
+          "values": "0 izvrzi, 1 umakni, 2 uporabi nastavitev ^KV"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Vrne shranjeni format ZPL iz pomnilnika tiskalnika gostitelju."
+    "summary": "Vrne shranjeni format ZPL iz pomnilnika tiskalnika gostitelju.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava za iskanje",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "ime shranjene oblike zapisa",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": ".ZPL fiksno",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Vrne shranjeno grafično sliko iz pomnilnika tiskalnika gostitelju."
+    "summary": "Vrne shranjeno grafično sliko iz pomnilnika tiskalnika gostitelju.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava za iskanje",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "prioriteta iskanja"
+        },
+        {
+          "meaning": "ime grafike za nalaganje",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "pripona datoteke",
+          "values": ".GRF fiksno",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Gostitelju vrne zahtevane podatke o stanju, identiteti, števcu ali vzdrževanju."
+    "summary": "Gostitelju vrne zahtevane podatke o stanju, identiteti, števcu ali vzdrževanju.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "selektor poizvedbe za vrnjene podatke",
+          "values": "ES stanje, HA žični MAC, JT test tiskalne glave, MA opozorila vzdrževanja, MI informacije o vzdrževanju, OD števec, PH življenjska doba tiskalne glave, PP plug and play, SN serijska številka, UI ID izdelka USB"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Gostitelju vrne podatke iz oštevilčenega polja, z izbirno omejitvijo števila bajtov."
+    "summary": "Gostitelju vrne podatke iz oštevilčenega polja, z izbirno omejitvijo števila bajtov.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "številka polja, nastavljena z ^FN",
+          "values": "0 do 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "bajtov za vrnitev",
+          "values": "1 do 256",
+          "default": "64"
+        },
+        {
+          "meaning": "besedilo glave pred podatki",
+          "values": "0 do 3072 bajtov",
+          "default": "brez glave"
+        },
+        {
+          "meaning": "zaključno besedilo po podatkih",
+          "values": "0 do 3072 znakov"
+        },
+        {
+          "meaning": "odgovor poslan glede na",
+          "values": "F oblika zapisa, L etiketa",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Vrne izpis imenika za pomnilniško napravo, med drugim preostali prosti prostor."
+    "summary": "Vrne izpis imenika za pomnilniško napravo, med drugim preostali prosti prostor.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "pomnilniška naprava za izpis",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash, Z drugo",
+          "default": "R"
+        },
+        {
+          "meaning": "filter imena predmeta",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "*"
+        },
+        {
+          "meaning": "filter pripone",
+          "values": "katerakoli pripona datoteke Zebra",
+          "default": "*"
+        },
+        {
+          "meaning": "postavitev izpisa",
+          "values": "c stolpec, d privzeto",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Gostitelju vrne shranjeno grafiko v obliki datoteke, primerni za prenos."
+    "summary": "Gostitelju vrne shranjeno grafiko v obliki datoteke, primerni za prenos.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "lokacija pomnilniške naprave predmeta",
+          "values": "R DRAM, E flash, B pomnilniška kartica, A compact flash",
+          "default": "prioriteta iskanja"
+        },
+        {
+          "meaning": "ime predmeta za nalaganje",
+          "values": "1 do 8 alfanumeričnih znakov",
+          "default": "zahtevano ime"
+        },
+        {
+          "meaning": "oblika nalaganja",
+          "values": "G neobdelana bitna slika, P stisnjena bitna slika",
+          "default": "shranjena oblika zapisa"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Vrne opisni XML tiskalnika za nastavitve, imenik objektov ali stanje."
+    "summary": "Vrne opisni XML tiskalnika za nastavitve, imenik objektov ali stanje.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "vrsta opisa za vrnitev",
+          "values": "a vse, f oblika zapisa, l imenik, o predmet, r stanje"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Bere iz oznake RFID ali vanjo piše, pri čemer določa obliko podatkov, pomnilniško banko in dostopno geslo."
+    "summary": "Bere iz oznake RFID ali vanjo piše, pri čemer določa obliko podatkov, pomnilniško banko in dostopno geslo.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "operacija",
+          "values": "W pisanje, L pisanje in zaklep, R branje, P branje gesla, S nastavitev gesla",
+          "default": "W"
+        },
+        {
+          "meaning": "oblika podatkov",
+          "values": "A ASCII, H hex, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "zastavica gesla ali začetna številka bloka",
+          "values": "P sledi geslo, 0 do n blok",
+          "default": "0"
+        },
+        {
+          "meaning": "število bajtov za branje ali pisanje",
+          "values": "1 do n, največ na oznako",
+          "default": "1"
+        },
+        {
+          "meaning": "pomnilniška banka Gen 2",
+          "values": "E EPC 96-bitno, A EPC samodejni biti PC, 0 rezervirano, 1 EPC, 2 TID, 3 uporabnik",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Določi razporeditev bitov, ki se uporablja za kodiranje polj RFID EPC na oznaki."
+    "summary": "Določi razporeditev bitov, ki se uporablja za kodiranje polj RFID EPC na oznaki.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "skupna velikost particij v bitih",
+          "values": "1 do bitne velikosti oznake",
+          "default": "96"
+        },
+        {
+          "meaning": "bitov v posamezni particiji, do 16 particij",
+          "values": "1 do 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Nastavi možnosti RFID za naslednje etikete, med drugim vrsto oznake, položaj programiranja, ravnanje z napakami in dolžino črte VOID."
+    "summary": "Nastavi možnosti RFID za naslednje etikete, med drugim vrsto oznake, položaj programiranja, ravnanje z napakami in dolžino črte VOID.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "vrsta oznake",
+          "values": "8 samo Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "položaj programiranja oznake",
+          "values": "pike absolutno, F0 do Fxxx naprej, B0 do B30 nazaj, up naslednji, down prejšnji",
+          "default": "nastavitev tiskalnika"
+        },
+        {
+          "meaning": "dolžina izpisa VOID",
+          "values": "0 do dolžine etikete",
+          "default": "dolžina etikete"
+        },
+        {
+          "meaning": "etiket za ponovni poskus ob napaki",
+          "values": "1 do 10",
+          "default": "3"
+        },
+        {
+          "meaning": "ravnanje z napako po poskusih",
+          "values": "N brez dejanja, P premor, E način napake",
+          "default": "N"
+        },
+        {
+          "meaning": "signali, poslani aplikatorju",
+          "values": "S enojni signal, D dvojni signal",
+          "default": "S"
+        },
+        {
+          "meaning": "rezervirano, ni v uporabi",
+          "values": "brez"
+        },
+        {
+          "meaning": "hitrost tiskanja etiket VOID",
+          "values": "katerakoli veljavna hitrost tiskanja",
+          "default": "največja hitrost tiskanja"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Iz ID-ja oznake sestavi serijsko številko EPC in jo zapiše v spodnje bite EPC."
+    "summary": "Iz ID-ja oznake sestavi serijsko številko EPC in jo zapiše v spodnje bite EPC.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "binarna predpona za serijski ID",
+          "values": "znaki ASCII 1 in 0, do 38 bitov",
+          "default": "odvisno od čipa MDID"
+        },
+        {
+          "meaning": "posebni znak za oznako serijskega polja",
+          "values": "katerikoli ASCII razen ukaza, krmilnega znaka, ločila, RTC",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Nastavi moč branja in pisanja RFID, kadar umerjanje ne da uporabnih vrednosti."
+    "summary": "Nastavi moč branja in pisanja RFID, kadar umerjanje ne da uporabnih vrednosti.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "raven moči branja",
+          "values": "0 do 30, ali H visoko, M srednje, L nizko",
+          "default": "nastavitev tiskalnika"
+        },
+        {
+          "meaning": "raven moči pisanja",
+          "values": "0 do 30, ali H visoko, M srednje, L nizko",
+          "default": "nastavitev tiskalnika"
+        },
+        {
+          "meaning": "izbira antenskega elementa",
+          "values": "mreža, specifična za tiskalnik, A1 do F4",
+          "default": "nastavitev tiskalnika"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Zaklene pomnilnik oznake RFID, bodisi povratno bodisi trajno, da prepreči poznejše pisanje."
+    "summary": "Zaklene pomnilnik oznake RFID, bodisi povratno bodisi trajno, da prepreči poznejše pisanje.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "stanje zaklepa z geslom za deaktivacijo",
+          "values": "U odkleni, L zakleni, O permanentno odkleni, P permanentno zakleni"
+        },
+        {
+          "meaning": "stanje zaklepa z geslom za dostop",
+          "values": "U odkleni, L zakleni, O permanentno odkleni, P permanentno zakleni"
+        },
+        {
+          "meaning": "stanje zaklepa pomnilniške banke EPC",
+          "values": "U odkleni, L zakleni, O permanentno odkleni, P permanentno zakleni"
+        },
+        {
+          "meaning": "stanje zaklepa uporabniške pomnilniške banke",
+          "values": "U odkleni, L zakleni, O permanentno odkleni, P permanentno zakleni"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Izvede umerjanje RFID in gostitelju vrne nastavitve položaja, antene in moči."
+    "summary": "Izvede umerjanje RFID in gostitelju vrne nastavitve položaja, antene in moči.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "besedilo pred tabelo rezultatov",
+          "values": "katerikoli niz pod 65 znakov",
+          "default": "začetek"
+        },
+        {
+          "meaning": "besedilo za tabelo rezultatov",
+          "values": "katerikoli niz pod 65 znakov",
+          "default": "konec"
+        },
+        {
+          "meaning": "začetni položaj umerjanja",
+          "values": "F0 do Fxxx naprej, B0 do B30 nazaj",
+          "default": "nastavitev tiskalnika"
+        },
+        {
+          "meaning": "končni položaj umerjanja",
+          "values": "F0 do Fxxx naprej, B0 do B30 nazaj, A samodejno",
+          "default": "nastavitev tiskalnika"
+        },
+        {
+          "meaning": "samodejna ali ročna izbira antene in moči",
+          "values": "A samodejno, M ročno",
+          "default": "A"
+        },
+        {
+          "meaning": "začetek območja moči branja in pisanja",
+          "values": "0 do 30",
+          "default": "0"
+        },
+        {
+          "meaning": "konec območja moči branja in pisanja",
+          "values": "0 do 30",
+          "default": "največja moč"
+        },
+        {
+          "meaning": "začetek območja antene",
+          "values": "odvisno od modela, običajno A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "konec območja antene",
+          "values": "odvisno od modela, do E4",
+          "default": "nastavitev tiskalnika"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Izbere, ali tiskalnik ob zagonu preveri prisotnost žičnega tiskalnega strežnika."
+    "summary": "Izbere, ali tiskalnik ob zagonu preveri prisotnost žičnega tiskalnega strežnika.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "preverjanje žičnega tiskalniškega strežnika ob zagonu",
+          "values": "C preveri, S preskoči",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Izbere primarno omrežno napravo, žično ali brezžično."
+    "summary": "Izbere primarno omrežno napravo, žično ali brezžično.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "primarna omrežna naprava",
+          "values": "1 žično primarno, 2 brezžično primarno",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Naslovi en tiskalnik na starejši večtočkovni liniji RS-485 po omrežnem ID-ju."
+    "summary": "Naslovi en tiskalnik na starejši večtočkovni liniji RS-485 po omrežnem ID-ju.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "omrežni ID tiskalnika za naslavljanje",
+          "values": "001 do 999",
+          "default": "000 brez"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Dodeli omrežni ID, ki se uporablja za naslavljanje tiskalnika na starejši večtočkovni liniji RS-485."
+    "summary": "Dodeli omrežni ID, ki se uporablja za naslavljanje tiskalnika na starejši večtočkovni liniji RS-485.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "omrežni ID, dodeljen tiskalniku",
+          "values": "001 do 999",
+          "default": "000 brez"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Nastavi identiteto SNMP in nize skupnosti za tiskalnik."
+    "summary": "Nastavi identiteto SNMP in nize skupnosti za tiskalnik.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "ime sistema SNMP",
+          "values": "do 17 znakov"
+        },
+        {
+          "meaning": "kontakt sistema SNMP",
+          "values": "do 50 znakov"
+        },
+        {
+          "meaning": "lokacija sistema SNMP",
+          "values": "do 50 znakov"
+        },
+        {
+          "meaning": "ime skupnosti SNMP za branje",
+          "values": "do 19 znakov",
+          "default": "public"
+        },
+        {
+          "meaning": "ime skupnosti SNMP za pisanje",
+          "values": "do 19 znakov",
+          "default": "public"
+        },
+        {
+          "meaning": "ime skupnosti SNMP za trap",
+          "values": "do 20 znakov",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Izbere, ali omrežne nastavitve ob zagonu izvirajo iz tiskalnika ali priključenega tiskalnega strežnika."
+    "summary": "Izbere, ali omrežne nastavitve ob zagonu izvirajo iz tiskalnika ali priključenega tiskalnega strežnika.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "primarni vir zagonskih nastavitev",
+          "values": "P tiskalnik, M tiskalniški strežnik",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Nastavi strežnik SMTP in domenske nastavitve za e-poštna opozorila tiskalnega strežnika."
+    "summary": "Nastavi strežnik SMTP in domenske nastavitve za e-poštna opozorila tiskalnega strežnika.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "naslov strežnika SMTP",
+          "values": "naslov IPv4"
+        },
+        {
+          "meaning": "domensko ime tiskalniškega strežnika",
+          "values": "domensko ime"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Nastavi, kako dolgo lahko avtenticiran naslov IP dostopa do spletnih strani tiskalnika, preden je potrebna ponovna avtentikacija."
+    "summary": "Nastavi, kako dolgo lahko avtenticiran naslov IP dostopa do spletnih strani tiskalnika, preden je potrebna ponovna avtentikacija.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "časovna omejitev avtentikacije spletne strani",
+          "values": "0 do 255 minut",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Nastavi obliko in vrednost identifikatorja odjemalca DHCP za tiskalni strežnik."
+    "summary": "Nastavi obliko in vrednost identifikatorja odjemalca DHCP za tiskalni strežnik.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "način identifikatorja odjemalca",
+          "values": "0 onemogočeno, 1 naslov MAC, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "naprava, na katero se identifikator nanaša",
+          "values": "0 vse, 1 brezžično, 2 zunanje žično, 3 notranje žično",
+          "default": "1"
+        },
+        {
+          "meaning": "predpona identifikatorja",
+          "values": "11 znakov ASCII ali 22 znakov hex"
+        },
+        {
+          "meaning": "pripona identifikatorja",
+          "values": "do 60 znakov ASCII ali 120 znakov hex"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Nastavi naslov IP, masko podomrežja in prehod za omrežni vmesnik tiskalnika."
+    "summary": "Nastavi naslov IP, masko podomrežja in prehod za omrežni vmesnik tiskalnika.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "naprava, ki se spreminja",
+          "values": "1 zunanje žično, 2 notranje žično, 3 brezžično"
+        },
+        {
+          "meaning": "način pridobitve naslova IP",
+          "values": "A vse, B BOOTP, C DHCP in BOOTP, D DHCP, G samo gleaning, R RARP, P permanentno",
+          "default": "A"
+        },
+        {
+          "meaning": "naslov IP",
+          "values": "naslov IPv4"
+        },
+        {
+          "meaning": "maska podomrežja",
+          "values": "maska podomrežja IPv4"
+        },
+        {
+          "meaning": "privzeti prehod",
+          "values": "naslov IPv4"
+        },
+        {
+          "meaning": "naslov strežnika WINS",
+          "values": "naslov IPv4"
+        },
+        {
+          "meaning": "preverjanje časovne omejitve povezave",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "vrednost časovne omejitve povezave",
+          "values": "0 do 9999 sekund",
+          "default": "300"
+        },
+        {
+          "meaning": "interval oddajanja ARP",
+          "values": "0 do 30 minut",
+          "default": "0 brez"
+        },
+        {
+          "meaning": "osnovna številka vrat za neobdelano tiskanje",
+          "values": "1 do 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Nastavi nastavitve IP žičnega tiskalnega strežnika, časovne omejitve in surova vrata za starejšo strojno programsko opremo."
+    "summary": "Nastavi nastavitve IP žičnega tiskalnega strežnika, časovne omejitve in surova vrata za starejšo strojno programsko opremo.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "način pridobitve naslova IP",
+          "values": "A vse, B BOOTP, C DHCP in BOOTP, D DHCP, G samo gleaning, R RARP, P permanentno",
+          "default": "A"
+        },
+        {
+          "meaning": "naslov IP",
+          "values": "naslov IPv4"
+        },
+        {
+          "meaning": "maska podomrežja",
+          "values": "maska podomrežja IPv4"
+        },
+        {
+          "meaning": "privzeti prehod",
+          "values": "naslov IPv4"
+        },
+        {
+          "meaning": "naslov strežnika WINS",
+          "values": "naslov IPv4"
+        },
+        {
+          "meaning": "preverjanje časovne omejitve povezave",
+          "values": "Y da, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "vrednost časovne omejitve povezave",
+          "values": "0 do 9999 sekund",
+          "default": "300"
+        },
+        {
+          "meaning": "interval oddajanja ARP",
+          "values": "0 do 30 minut",
+          "default": "0 brez"
+        },
+        {
+          "meaning": "osnovna številka vrat za neobdelano tiskanje",
+          "values": "1 do 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Izbere sprejemno in oddajno anteno za brezžični radijski modul."
+    "summary": "Izbere sprejemno in oddajno anteno za brezžični radijski modul.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "sprejemna antena",
+          "values": "D diverziteta, L levo, R desno",
+          "default": "D"
+        },
+        {
+          "meaning": "oddajna antena",
+          "values": "D diverziteta, L levo, R desno",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Nastavi zastarelo varnost WEP in ključni material za starejšo brezžično strojno programsko opremo."
+    "summary": "Nastavi zastarelo varnost WEP in ključni material za starejšo brezžično strojno programsko opremo.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "način šifriranja",
+          "values": "OFF brez, 40 40-bitno, 128 128-bitno",
+          "default": "OFF"
+        },
+        {
+          "meaning": "indeks šifrirnega ključa",
+          "values": "1 do 4",
+          "default": "1"
+        },
+        {
+          "meaning": "vrsta avtentikacije",
+          "values": "O odprti sistem, S skupni ključ",
+          "default": "O"
+        },
+        {
+          "meaning": "oblika shranjevanja šifrirnega ključa",
+          "values": "H hex, S niz",
+          "default": "H"
+        },
+        {
+          "meaning": "šifrirni ključ 1",
+          "values": "pari hex ali alfanumerični niz"
+        },
+        {
+          "meaning": "šifrirni ključ 2",
+          "values": "pari hex ali alfanumerični niz"
+        },
+        {
+          "meaning": "šifrirni ključ 3",
+          "values": "pari hex ali alfanumerični niz"
+        },
+        {
+          "meaning": "šifrirni ključ 4",
+          "values": "pari hex ali alfanumerični niz"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Nastavi zastarelo avtentikacijo Cisco LEAP za starejšo brezžično strojno programsko opremo."
+    "summary": "Nastavi zastarelo avtentikacijo Cisco LEAP za starejšo brezžično strojno programsko opremo.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "način LEAP",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "uporabniško ime",
+          "values": "1 do 32 znakov",
+          "default": "user"
+        },
+        {
+          "meaning": "geslo",
+          "values": "1 do 32 znakov",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Nastavi geslo za brezžične nastavitve na nadzorni plošči tiskalnika."
+    "summary": "Nastavi geslo za brezžične nastavitve na nadzorni plošči tiskalnika.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "staro brezžično geslo",
+          "values": "0000 do 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "novo brezžično geslo",
+          "values": "0000 do 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Nastavi podatkovne hitrosti 802.11b in oddajno moč na starejših brezžičnih tiskalnih strežnikih."
+    "summary": "Nastavi podatkovne hitrosti 802.11b in oddajno moč na starejših brezžičnih tiskalnih strežnikih.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "oddajna hitrost 1 Mb na sekundo",
+          "values": "Y vklopljeno, N izklopljeno"
+        },
+        {
+          "meaning": "oddajna hitrost 2 Mb na sekundo",
+          "values": "Y vklopljeno, N izklopljeno"
+        },
+        {
+          "meaning": "oddajna hitrost 5.5 Mb na sekundo",
+          "values": "Y vklopljeno, N izklopljeno"
+        },
+        {
+          "meaning": "oddajna hitrost 11 Mb na sekundo",
+          "values": "Y vklopljeno, N izklopljeno"
+        },
+        {
+          "meaning": "oddajna moč",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Nastavi ime brezžičnega omrežja, radijski način, dolžino preambule in obnašanje ohranjanja povezave."
+    "summary": "Nastavi ime brezžičnega omrežja, radijski način, dolžino preambule in obnašanje ohranjanja povezave.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "vrednost ESSID",
+          "values": "do 32 znakov",
+          "default": "125"
+        },
+        {
+          "meaning": "način delovanja",
+          "values": "I infrastruktura, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "dolžina preambule radijske kartice",
+          "values": "L dolgo, S kratko",
+          "default": "L"
+        },
+        {
+          "meaning": "brezžični pulz omogočen",
+          "values": "0 onemogočeno, 1 omogočeno",
+          "default": "1"
+        },
+        {
+          "meaning": "interval brezžičnega pulza",
+          "values": "5 do 300 sekund",
+          "default": "15"
+        },
+        {
+          "meaning": "maska kanala",
+          "values": "4 šestnajstiške števke s predpono 0x",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "mednarodni način",
+          "values": "0 onemogočeno, 1 omogočeno",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "V enem ukazu nastavi način brezžične varnosti, ključe in poverilnice."
+    "summary": "V enem ukazu nastavi način brezžične varnosti, ključe in poverilnice.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "koda vrste varnosti",
+          "values": "01 brez, 02 WEP 40, 03 WEP 128, 04 do 08 vrste EAP, 09 WPA PSK, 10 do 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "indeks šifrirnega ključa WEP",
+          "values": "1 do 4",
+          "default": "1"
+        },
+        {
+          "meaning": "vrsta avtentikacije WEP",
+          "values": "O odprti sistem, S skupni ključ",
+          "default": "O"
+        },
+        {
+          "meaning": "oblika shranjevanja ključa WEP",
+          "values": "H hex, S niz",
+          "default": "S"
+        },
+        {
+          "meaning": "šifrirni ključ WEP 1",
+          "values": "pari hex ali alfanumerični niz"
+        },
+        {
+          "meaning": "šifrirni ključ WEP 2",
+          "values": "pari hex ali alfanumerični niz"
+        },
+        {
+          "meaning": "šifrirni ključ WEP 3",
+          "values": "pari hex ali alfanumerični niz"
+        },
+        {
+          "meaning": "šifrirni ključ WEP 4",
+          "values": "pari hex ali alfanumerični niz"
+        },
+        {
+          "meaning": "ID uporabnika za vrsto varnosti",
+          "values": "katerikoli niz",
+          "default": "user"
+        },
+        {
+          "meaning": "geslo za vrsto varnosti",
+          "values": "katerikoli niz",
+          "default": "password"
+        },
+        {
+          "meaning": "izbirno geslo zasebnega ključa",
+          "values": "katerikoli niz"
+        },
+        {
+          "meaning": "domena Kerberos",
+          "values": "katerikoli niz",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "center za distribucijo ključev Kerberos",
+          "values": "katerikoli niz",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "vrednost vnaprej dogovorjenega ključa",
+          "values": "najmanj 64 števk hex"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

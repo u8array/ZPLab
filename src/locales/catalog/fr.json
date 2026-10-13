@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Définit la largeur imprimable en points. Le contenu au-delà de cette largeur est tronqué par l'imprimante."
+    "summary": "Définit la largeur imprimable en points. Le contenu au-delà de cette largeur est tronqué par l'imprimante.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "largeur d'impression en points",
+          "values": "2 à la largeur de l'étiquette",
+          "default": "dernière valeur enregistrée"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Définit la longueur de l'étiquette en points, marquant la fin de la zone imprimable du format."
+    "summary": "Définit la longueur de l'étiquette en points, marquant la fin de la zone imprimable du format.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "longueur de l'étiquette en points",
+          "values": "1 à 32000",
+          "default": "réglage de l'imprimante"
+        },
+        {
+          "meaning": "s'applique à tous les supports",
+          "values": "N continu uniquement, Y tous supports",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Déplace la position d'origine de l'étiquette, modifiant le repère utilisé par les coordonnées des champs suivants."
+    "summary": "Déplace la position d'origine de l'étiquette, modifiant le repère utilisé par les coordonnées des champs suivants.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "position d'origine de l'étiquette sur l'axe x",
+          "values": "0 à 32000",
+          "default": "0 ou dernière valeur enregistrée"
+        },
+        {
+          "meaning": "position d'origine de l'étiquette sur l'axe y",
+          "values": "0 à 32000",
+          "default": "0 ou dernière valeur enregistrée"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Applique un décalage horizontal aux positions des champs, pour la compatibilité avec d'anciens formats Zebra."
+    "summary": "Applique un décalage horizontal aux positions des champs, pour la compatibilité avec d'anciens formats Zebra.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "décalage à gauche de toutes les positions de champ",
+          "values": "-9999 à 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Ajoute un décalage vertical à l'ensemble du format par rapport au bord supérieur du support."
+    "summary": "Ajoute un décalage vertical à l'ensemble du format par rapport au bord supérieur du support.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "déplace tout le format vers le haut ou le bas en lignes de points",
+          "values": "-120 à 120, XiIIIPlus à 600 dpi -240 à 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Définit l'unité des coordonnées en points, pouces ou millimètres, et peut mettre à l'échelle les formats entre différentes résolutions d'impression."
+    "summary": "Définit l'unité des coordonnées en points, pouces ou millimètres, et peut mettre à l'échelle les formats entre différentes résolutions d'impression.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "unité des coordonnées pour les champs suivants",
+          "values": "D points, I pouces, M millimètres",
+          "default": "D"
+        },
+        {
+          "meaning": "résolution de base du format en points par pouce",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "résolution cible de la conversion",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Définit le mode de gestion du support après impression, notamment déchirement, pelage, découpe, rembobinage et applicateur."
+    "summary": "Définit le mode de gestion du support après impression, notamment déchirement, pelage, découpe, rembobinage et applicateur.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "mode de gestion du support après impression",
+          "values": "T déchirement, P pelage, R rembobinage, A applicateur, C découpe, D découpe différée, F RFID, K kiosque",
+          "default": "réglage de l'imprimante"
+        },
+        {
+          "meaning": "pelage préalable avant l'étiquette suivante",
+          "values": "N non, Y oui",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Sélectionne le mode transfert thermique ou thermique direct, selon que le support chargé utilise un ruban ou non."
+    "summary": "Sélectionne le mode transfert thermique ou thermique direct, selon que le support chargé utilise un ruban ou non.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "type de support utilisé par l'imprimante",
+          "values": "T transfert thermique, D thermique direct"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Définit la quantité à imprimer, le regroupement pour pause ou découpe, ainsi que le nombre de copies par valeur de série."
+    "summary": "Définit la quantité à imprimer, le regroupement pour pause ou découpe, ainsi que le nombre de copies par valeur de série.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "nombre total d'étiquettes à imprimer",
+          "values": "1 à 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "étiquettes imprimées avant une pause",
+          "values": "1 à 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "répétitions de chaque numéro de série",
+          "values": "0 à 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "remplace le nombre de pause",
+          "values": "N non, Y oui",
+          "default": "N"
+        },
+        {
+          "meaning": "découpe après une étiquette RFID annulée",
+          "values": "N non, Y oui",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Inverse l'impression des champs suivants en permutant le premier plan et l'arrière-plan."
+    "summary": "Inverse l'impression des champs suivants en permutant le premier plan et l'arrière-plan.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "inverse la couleur d'impression des champs suivants",
+          "values": "N non, Y oui",
+          "default": "N ou dernière valeur enregistrée"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Fait pivoter l'ensemble du format d'étiquette de 180 degrés."
+    "summary": "Fait pivoter l'ensemble du format d'étiquette de 180 degrés.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "imprime l'étiquette tête en bas",
+          "values": "N normal, I inversé",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Met en miroir la zone imprimable horizontalement."
+    "summary": "Met en miroir la zone imprimable horizontalement.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "met l'étiquette en miroir horizontalement",
+          "values": "N non, Y oui",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Définit la vitesse d'impression, la vitesse de défilement et la vitesse de retour arrière en pouces par seconde."
+    "summary": "Définit la vitesse d'impression, la vitesse de défilement et la vitesse de retour arrière en pouces par seconde.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "vitesse d'impression en pouces par seconde",
+          "values": "1 à 14, ou A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "vitesse de défilement pour une étiquette vierge",
+          "values": "2 à 14",
+          "default": "6"
+        },
+        {
+          "meaning": "vitesse de retour arrière après impression",
+          "values": "2 à 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Positionne le champ suivant par rapport à l'origine de l'étiquette, en utilisant son coin supérieur gauche."
+    "summary": "Positionne le champ suivant par rapport à l'origine de l'étiquette, en utilisant son coin supérieur gauche.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "position horizontale en points",
+          "values": "0 à 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "position verticale en points",
+          "values": "0 à 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "justification",
+          "values": "0 gauche, 1 droite, 2 automatique",
+          "default": "dernier ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Positionne le champ suivant à partir de sa ligne de base ou du bord du code-barres, offrant un point d'ancrage stable aux champs pivotés."
+    "summary": "Positionne le champ suivant à partir de sa ligne de base ou du bord du code-barres, offrant un point d'ancrage stable aux champs pivotés.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "position horizontale en points",
+          "values": "0 à 32000",
+          "default": "dernière position de champ"
+        },
+        {
+          "meaning": "position verticale en points",
+          "values": "0 à 32000",
+          "default": "dernière position de champ"
+        },
+        {
+          "meaning": "justification",
+          "values": "0 gauche, 1 droite, 2 automatique",
+          "default": "dernier ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Fournit le contenu du champ courant, qu'il s'agisse de texte, de données de code-barres ou de données RFID."
+    "summary": "Fournit le contenu du champ courant, qu'il s'agisse de texte, de données de code-barres ou de données RFID.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "contenu du champ",
+          "values": "données imprimables jusqu'à 3072 octets, sans caractères préfixes"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Active les séquences d'échappement hexadécimales dans les données de champ pour les octets binaires et les caractères de commande réservés."
+    "summary": "Active les séquences d'échappement hexadécimales dans les données de champ pour les octets binaires et les caractères de commande réservés.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "caractère indicateur du mode hexadécimal",
+          "values": "tout caractère sauf les préfixes de format et de commande",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Ajoute un champ de commentaire. L'imprimante ignore son contenu jusqu'au séparateur de champ suivant."
+    "summary": "Ajoute un champ de commentaire. L'imprimante ignore son contenu jusqu'au séparateur de champ suivant.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "texte de commentaire non imprimé",
+          "values": "tout texte, ignoré jusqu'à la commande suivante"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Définit l'orientation par défaut des champs et, sur les micrologiciels récents, la justification par défaut."
+    "summary": "Définit l'orientation par défaut des champs et, sur les micrologiciels récents, la justification par défaut.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "rotation de champ par défaut",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "justification par défaut",
+          "values": "0 gauche, 1 droite, 2 automatique",
+          "default": "automatique pour ^TB, sinon gauche"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Fait tenir les données du champ dans un bloc de largeur fixe, avec contrôle du nombre de lignes, de l'espacement, du retrait et de la justification."
+    "summary": "Fait tenir les données du champ dans un bloc de largeur fixe, avec contrôle du nombre de lignes, de l'espacement, du retrait et de la justification.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "largeur du bloc en points",
+          "values": "0 à la largeur de l'étiquette",
+          "default": "0"
+        },
+        {
+          "meaning": "nombre maximal de lignes",
+          "values": "1 à 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "interligne supplémentaire en points",
+          "values": "-9999 à 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "justification",
+          "values": "L gauche, C centré, R droite, J justifié",
+          "default": "L"
+        },
+        {
+          "meaning": "retrait négatif des lignes suivantes en points",
+          "values": "0 à 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Fait tenir le texte dans une zone de largeur et de hauteur fixes, en tronquant le dépassement."
+    "summary": "Fait tenir le texte dans une zone de largeur et de hauteur fixes, en tronquant le dépassement.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "rotation du bloc",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^A"
+        },
+        {
+          "meaning": "largeur du bloc en points",
+          "values": "1 à la largeur de l'étiquette",
+          "default": "1"
+        },
+        {
+          "meaning": "hauteur du bloc en points",
+          "values": "1 à la longueur de l'étiquette",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Attribue un numéro à un champ variable dans les formats stockés et rappelés."
+    "summary": "Attribue un numéro à un champ variable dans les formats stockés et rappelés.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "numéro de champ",
+          "values": "0 à 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "texte d'invite KDU en option",
+          "values": "jusqu'à 255 caractères alphanumériques"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Fournit les données d'un champ variable. Contrairement aux données ^FD, elles sont effacées une fois l'étiquette imprimée."
+    "summary": "Fournit les données d'un champ variable. Contrairement aux données ^FD, elles sont effacées une fois l'étiquette imprimée.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "données du champ variable",
+          "values": "chaîne de 0 à 3072 octets"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Définit le caractère utilisé pour insérer des valeurs de champs numérotés à l'intérieur d'une autre chaîne de champ."
+    "summary": "Définit le caractère utilisé pour insérer des valeurs de champs numérotés à l'intérieur d'une autre chaîne de champ.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "délimiteur de concaténation de champs",
+          "values": "tout caractère sauf les préfixes de format et de commande",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Définit les marqueurs utilisés pour les jetons d'horloge temps réel dans les données de champ."
+    "summary": "Définit les marqueurs utilisés pour les jetons d'horloge temps réel dans les données de champ.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "caractère indicateur de l'horloge principale",
+          "values": "tout caractère ASCII",
+          "default": "%"
+        },
+        {
+          "meaning": "caractère indicateur de l'horloge secondaire",
+          "values": "tout caractère ASCII, différent de a"
+        },
+        {
+          "meaning": "caractère indicateur de la troisième horloge",
+          "values": "tout caractère ASCII, différent de a et b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Définit la largeur de module, le rapport barre large/barre étroite et la hauteur par défaut des codes-barres pour les champs suivants."
+    "summary": "Définit la largeur de module, le rapport barre large/barre étroite et la hauteur par défaut des codes-barres pour les champs suivants.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "largeur de module en points",
+          "values": "1 à 10",
+          "default": "2"
+        },
+        {
+          "meaning": "rapport barre large sur barre étroite",
+          "values": "2.0 à 3.0 par pas de 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "toute hauteur en points",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Place des segments PDF417 ou MicroPDF417 à des origines précises lorsqu'un même message s'étend sur plusieurs symboles."
+    "summary": "Place des segments PDF417 ou MicroPDF417 à des origines précises lorsqu'un même message s'étend sur plusieurs symboles.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "axe x du premier symbole, répéter les paires pour les suivants",
+          "values": "0 à 32000, ou e pour ignorer ce symbole"
+        },
+        {
+          "meaning": "axe y du premier symbole, répéter les paires pour les suivants",
+          "values": "0 à 32000, ou e pour ignorer ce symbole"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Définit l'ordre des caractères du champ courant et peut ajouter un espacement supplémentaire entre caractères."
+    "summary": "Définit l'ordre des caractères du champ courant et peut ajouter un espacement supplémentaire entre caractères.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "sens d'impression",
+          "values": "H horizontal, V vertical, R inversé",
+          "default": "H"
+        },
+        {
+          "meaning": "espacement supplémentaire entre caractères en points",
+          "values": "0 à 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Sélectionne la police vectorielle résidente 0 pour le champ suivant, à la taille et à l'orientation demandées."
+    "summary": "Sélectionne la police vectorielle résidente 0 pour le champ suivant, à la taille et à l'orientation demandées.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur de caractère en points",
+          "values": "10 à 32000",
+          "default": "dernier ^CF"
+        },
+        {
+          "meaning": "largeur de caractère en points",
+          "values": "10 à 32000",
+          "default": "dernier ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Sélectionne une police résidente par son nom d'un caractère, avec orientation, hauteur et largeur en option."
+    "summary": "Sélectionne une police résidente par son nom d'un caractère, avec orientation, hauteur et largeur en option.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "nom de la police",
+          "values": "A à Z, 0 à 9",
+          "default": "dernier ^CF"
+        },
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur de caractère en points",
+          "values": "10 à 32000 vectoriel, 1 à 10 fois la hauteur de base en bitmap",
+          "default": "dernier ^CF"
+        },
+        {
+          "meaning": "largeur de caractère en points",
+          "values": "10 à 32000 vectoriel, 1 à 10 fois la largeur de base en bitmap",
+          "default": "dernier ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Sélectionne un fichier de police stocké pour le champ suivant, avec orientation, hauteur et largeur en option."
+    "summary": "Sélectionne un fichier de police stocké pour le champ suivant, avec orientation, hauteur et largeur en option.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "orientation du champ",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur de caractère en points",
+          "values": "10 à 32000 vectoriel, 1 à 10 fois la hauteur de base en bitmap",
+          "default": "dernier ^CF"
+        },
+        {
+          "meaning": "largeur de caractère en points",
+          "values": "10 à 32000 vectoriel, 1 à 10 fois la largeur de base en bitmap",
+          "default": "dernier ^CF"
+        },
+        {
+          "meaning": "lecteur contenant la police",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom du fichier de police à utiliser",
+          "values": "tout nom de police valide",
+          "default": "dernier ^CF"
+        },
+        {
+          "meaning": "extension du fichier de police",
+          "values": "FNT police, TTF TrueType, TTE extension TrueType"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Définit la police, la hauteur et la largeur de secours utilisées par les champs de texte qui n'en précisent aucune."
+    "summary": "Définit la police, la hauteur et la largeur de secours utilisées par les champs de texte qui n'en précisent aucune.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "police par défaut",
+          "values": "A à Z, 0 à 9",
+          "default": "A"
+        },
+        {
+          "meaning": "hauteur de caractère par défaut en points",
+          "values": "0 à 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "largeur de caractère par défaut en points",
+          "values": "0 à 32000",
+          "default": "5 ou dernière valeur enregistrée"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Sélectionne l'encodage utilisé pour interpréter les données de champ, y compris les pages de code et l'UTF-8."
+    "summary": "Sélectionne l'encodage utilisé pour interpréter les données de champ, y compris les pages de code et l'UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "encodage de caractères à utiliser",
+          "values": "0 à 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "position de caractère à réaffecter",
+          "values": "0 à 255",
+          "default": "aucune"
+        },
+        {
+          "meaning": "position du caractère de remplacement",
+          "values": "0 à 255",
+          "default": "aucune"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Active la mise en page de texte avancée pour les champs suivants, notamment le texte bidirectionnel, le façonnage des glyphes et les fonctionnalités OpenType."
+    "summary": "Active la mise en page de texte avancée pour les champs suivants, notamment le texte bidirectionnel, le façonnage des glyphes et les fonctionnalités OpenType.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "source de glyphe par défaut",
+          "values": "0 caractère espace, 1 glyphe de police",
+          "default": "0"
+        },
+        {
+          "meaning": "mise en page de texte bidirectionnel",
+          "values": "0 désactivé, 1 activé",
+          "default": "0"
+        },
+        {
+          "meaning": "façonnage des glyphes",
+          "values": "0 désactivé, 1 activé",
+          "default": "0"
+        },
+        {
+          "meaning": "prise en charge des tables OpenType",
+          "values": "0 désactivé, 1 activé",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Associe un nom de police d'un caractère à un fichier de police stocké."
+    "summary": "Associe un nom de police d'un caractère à un fichier de police stocké.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "lettre de police à ajouter ou remplacer",
+          "values": "A à Z, 0 à 9"
+        },
+        {
+          "meaning": "lecteur de stockage de la police",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom du fichier de police stocké",
+          "values": "jusqu'à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension du fichier de police",
+          "values": "FNT police, TTF TrueType, TTE extension TrueType"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Définit la taille du cache des glyphes vectoriels rendus, afin d'accélérer les impressions répétées en grande police."
+    "summary": "Définit la taille du cache des glyphes vectoriels rendus, afin d'accélérer les impressions répétées en grande police.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "cache de caractères activé",
+          "values": "N non, Y oui",
+          "default": "Y"
+        },
+        {
+          "meaning": "mémoire cache supplémentaire en Ko",
+          "values": "1 à 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "type de tampon de cache",
+          "values": "0 polices normales, 1 polices asiatiques",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Définit les chaînes de polices TrueType de secours utilisées lorsque la police de base ne dispose pas d'un glyphe."
+    "summary": "Définit les chaînes de polices TrueType de secours utilisées lorsque la police de base ne dispose pas d'un glyphe.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "police d'extension à lier, lecteur et fichier",
+          "values": "fichier TTF ou TTE sur un périphérique"
+        },
+        {
+          "meaning": "police ou polices de base qui la reçoivent",
+          "values": "fichier FNT, TTF ou TTE, caractère générique autorisé"
+        },
+        {
+          "meaning": "lier ou dissocier l'extension",
+          "values": "0 dissocier, 1 associer"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Télécharge une police bitmap et ses métriques dans la mémoire de l'imprimante."
+    "summary": "Télécharge une police bitmap et ses métriques dans la mémoire de l'imprimante.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "lecteur de stockage de la police",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de la police",
+          "values": "jusqu'à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension du fichier de police",
+          "values": "FNT valeur fixe",
+          "default": "FNT"
+        },
+        {
+          "meaning": "orientation de la police native",
+          "values": "N normal uniquement",
+          "default": "N"
+        },
+        {
+          "meaning": "hauteur de cellule maximale en points",
+          "values": "1 à 32000"
+        },
+        {
+          "meaning": "largeur de cellule maximale en points",
+          "values": "1 à 32000"
+        },
+        {
+          "meaning": "points entre le haut de la cellule et la ligne de base",
+          "values": "1 à 32000"
+        },
+        {
+          "meaning": "largeur des caractères d'espace",
+          "values": "1 à 32000"
+        },
+        {
+          "meaning": "nombre de caractères de la police",
+          "values": "1 à 256"
+        },
+        {
+          "meaning": "texte du titulaire du droit d'auteur",
+          "values": "1 à 63 caractères alphanumériques"
+        },
+        {
+          "meaning": "données bitmap structurées par caractère",
+          "values": "code de hachage, puis hauteur, largeur, décalages, puis données hexadécimales"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Télécharge une police vectorielle Intellifont encodée dans la mémoire de l'imprimante."
+    "summary": "Télécharge une police vectorielle Intellifont encodée dans la mémoire de l'imprimante.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "lecteur de stockage de la police",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de la police",
+          "values": "jusqu'à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension du fichier de police",
+          "values": "FNT valeur fixe",
+          "default": "FNT"
+        },
+        {
+          "meaning": "taille de la police en octets depuis ZTools",
+          "values": "nombre d'octets de la police convertie"
+        },
+        {
+          "meaning": "données d'octets encodées de la police",
+          "values": "paires hexadécimales correspondant à la taille"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Télécharge une police TrueType encodée comptant jusqu'à 256 caractères dans la mémoire de l'imprimante."
+    "summary": "Télécharge une police TrueType encodée comptant jusqu'à 256 caractères dans la mémoire de l'imprimante.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "lecteur de stockage de la police",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de la police",
+          "values": "jusqu'à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension du fichier de police",
+          "values": "DAT valeur fixe",
+          "default": "DAT"
+        },
+        {
+          "meaning": "taille de la police en octets",
+          "values": "nombre d'octets de la police convertie"
+        },
+        {
+          "meaning": "données d'octets encodées de la police",
+          "values": "paires hexadécimales correspondant à la taille"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Télécharge une police TrueType encodée comptant plus de 256 glyphes dans la mémoire de l'imprimante."
+    "summary": "Télécharge une police TrueType encodée comptant plus de 256 glyphes dans la mémoire de l'imprimante.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "lecteur de stockage de la police",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de la police",
+          "values": "jusqu'à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension du fichier de police",
+          "values": "FNT valeur fixe",
+          "default": "FNT"
+        },
+        {
+          "meaning": "taille de la police en octets",
+          "values": "nombre d'octets de la police convertie"
+        },
+        {
+          "meaning": "données d'octets encodées de la police",
+          "values": "paires hexadécimales correspondant à la taille"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Télécharge une table d'encodage associant les octets des données de champ à des valeurs Unicode pour les polices TrueType."
+    "summary": "Télécharge une table d'encodage associant les octets des données de champ à des valeurs Unicode pour les polices TrueType.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "lecteur contenant la table",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de la table",
+          "values": "jusqu'à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension du fichier de table",
+          "values": "DAT valeur fixe",
+          "default": "DAT"
+        },
+        {
+          "meaning": "taille de la table en octets",
+          "values": "nombre d'octets de la table convertie"
+        },
+        {
+          "meaning": "données d'octets encodées de la table",
+          "values": "paires hexadécimales correspondant à la taille"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Trace un code-barres Code 128 pour des données ASCII de longueur variable, avec des modes de changement automatique de sous-jeu et de gestion des données UCC/EAN."
+    "summary": "Trace un code-barres Code 128 pour des données ASCII de longueur variable, avec des modes de changement automatique de sous-jeu et de gestion des données UCC/EAN.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "N non, Y oui",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "N non, Y oui",
+          "default": "N"
+        },
+        {
+          "meaning": "clé de contrôle UCC",
+          "values": "N non, Y oui",
+          "default": "N"
+        },
+        {
+          "meaning": "mode",
+          "values": "N aucun, U UCC Case Mode, A automatique, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Trace un code-barres Code 39 avec une clé de contrôle Mod 43 en option."
+    "summary": "Trace un code-barres Code 39 avec une clé de contrôle Mod 43 en option.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "clé de contrôle Mod 43",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Trace un code-barres Code 93, capable de représenter l'ASCII complet grâce à des caractères de décalage."
+    "summary": "Trace un code-barres Code 93, capable de représenter l'ASCII complet grâce à des caractères de décalage.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimer la clé de contrôle",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Trace un code-barres Code 11 pour des chiffres et des tirets, avec des clés de contrôle en option."
+    "summary": "Trace un code-barres Code 11 pour des chiffres et des tirets, avec des clés de contrôle en option.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "nombre de clés de contrôle",
+          "values": "Y 1 chiffre, N 2 chiffres",
+          "default": "N"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Trace un code-barres Interleaved 2 of 5 pour des données numériques de longueur paire, avec une clé de contrôle en option."
+    "summary": "Trace un code-barres Interleaved 2 of 5 pour des données numériques de longueur paire, avec une clé de contrôle en option.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "clé de contrôle Mod 10",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "sixième emplacement, non documenté",
+          "values": "non documenté dans le guide"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Trace un code-barres Industrial 2 of 5, un code numérique dont les données sont encodées uniquement dans les barres."
+    "summary": "Trace un code-barres Industrial 2 of 5, un code numérique dont les données sont encodées uniquement dans les barres.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Trace un code-barres Standard 2 of 5, un code numérique autovérificateur dont les données sont encodées uniquement dans les barres."
+    "summary": "Trace un code-barres Standard 2 of 5, un code numérique autovérificateur dont les données sont encodées uniquement dans les barres.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Trace un code-barres ANSI Codabar, aussi appelé USD-4, utilisé pour les étiquettes de bibliothèques, de santé et de messagerie."
+    "summary": "Trace un code-barres ANSI Codabar, aussi appelé USD-4, utilisé pour les étiquettes de bibliothèques, de santé et de messagerie.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "clé de contrôle, désactivée de façon fixe",
+          "values": "N uniquement",
+          "default": "N"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "caractère de début",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "caractère de fin",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Trace un code-barres LOGMARS, la variante Code 39 du Department of Defense, et convertit les minuscules des données en majuscules."
+    "summary": "Trace un code-barres LOGMARS, la variante Code 39 du Department of Defense, et convertit les minuscules des données en majuscules.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Trace un code-barres MSI, un code numérique dérivé du Plessey avec plusieurs schémas de clé de contrôle possibles."
+    "summary": "Trace un code-barres MSI, un code numérique dérivé du Plessey avec plusieurs schémas de clé de contrôle possibles.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "schéma de clé de contrôle",
+          "values": "A aucune, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "clé de contrôle dans la ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Trace un code-barres Plessey, un ancien code numérique avec des clés de contrôle en option."
+    "summary": "Trace un code-barres Plessey, un ancien code numérique avec des clés de contrôle en option.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "imprimer la clé de contrôle",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Trace un code-barres EAN-13 pour les numéros d'articles de vente au détail, la clé de contrôle étant calculée à partir de douze chiffres de données."
+    "summary": "Trace un code-barres EAN-13 pour les numéros d'articles de vente au détail, la clé de contrôle étant calculée à partir de douze chiffres de données.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Trace un code-barres EAN-8 pour les petits conditionnements de détail, la clé de contrôle étant calculée à partir de sept chiffres de données."
+    "summary": "Trace un code-barres EAN-8 pour les petits conditionnements de détail, la clé de contrôle étant calculée à partir de sept chiffres de données.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Trace un code-barres UPC-A pour les emballages de détail à partir de onze chiffres de données, avec impression de la clé de contrôle en option."
+    "summary": "Trace un code-barres UPC-A pour les emballages de détail à partir de onze chiffres de données, avec impression de la clé de contrôle en option.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 9999",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimer la clé de contrôle",
+          "values": "Y oui, N non",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Trace un code-barres UPC-E, la forme courte de l'UPC-A. Les données du champ constituent le code fabricant et produit complet à dix chiffres."
+    "summary": "Trace un code-barres UPC-E, la forme courte de l'UPC-A. Les données du champ constituent le code fabricant et produit complet à dix chiffres.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimer la clé de contrôle",
+          "values": "Y oui, N non",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Trace un symbole GS1 DataBar avec sous-type, grossissement, hauteur et largeur de segment sélectionnables."
+    "summary": "Trace un symbole GS1 DataBar avec sous-type, grossissement, hauteur et largeur de segment sélectionnables.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R pivoté, I inversé, B tête en bas",
+          "default": "R"
+        },
+        {
+          "meaning": "type de symbologie DataBar",
+          "values": "1 omnidirectionnel, 2 tronqué, 3 empilé, 4 empilé omnidirectionnel, 5 limité, 6 étendu, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 avec CC-A/B, 12 UCC/EAN-128 avec CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "facteur de grossissement",
+          "values": "1 à 10",
+          "default": "réglage de l'imprimante"
+        },
+        {
+          "meaning": "hauteur du séparateur",
+          "values": "1 ou 2",
+          "default": "1"
+        },
+        {
+          "meaning": "hauteur de la partie linéaire en points",
+          "values": "1 à 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "largeur de segment pour GS1 DataBar Expanded",
+          "values": "2 à 22, pairs uniquement",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Trace un code-barres postal Planet Code à partir de chiffres encodés sous forme de barres hautes et courtes."
+    "summary": "Trace un code-barres postal Planet Code à partir de chiffres encodés sous forme de barres hautes et courtes.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R pivoté, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 9999",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Trace un code POSTNET, Planet Code ou USPS Intelligent Mail selon le type de code postal sélectionné."
+    "summary": "Trace un code POSTNET, Planet Code ou USPS Intelligent Mail selon le type de code postal sélectionné.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "type de code postal",
+          "values": "0 Postnet, 1 Planet, 2 réservé, 3 Intelligent Mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Trace un symbole complémentaire UPC/EAN à deux ou cinq chiffres à côté d'un code-barres principal."
+    "summary": "Trace un symbole complémentaire UPC/EAN à deux ou cinq chiffres à côté d'un code-barres principal.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 32000",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "ligne d'interprétation",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "ligne d'interprétation au-dessus du code",
+          "values": "Y oui, N non",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Trace un code-barres empilé Code 49 comportant de deux à huit lignes de données ASCII complètes."
+    "summary": "Trace un code-barres empilé Code 49 comportant de deux à huit lignes de données ASCII complètes.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "multiplicateur de hauteur de chaque ligne",
+          "values": "1 à la hauteur de l'étiquette",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "emplacement de la ligne d'interprétation",
+          "values": "N aucune, A au-dessus, B en dessous",
+          "default": "N"
+        },
+        {
+          "meaning": "mode de départ",
+          "values": "0 alphanumérique, 1 lecture multiple, 2 numérique, 3 groupe alpha, 4 décalage 1, 5 décalage 2, A automatique",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Trace un symbole QR Code. Les paramètres de la commande définissent le modèle, le grossissement et le masque. Les données du champ définissent la correction d'erreur et le mode de caractères."
+    "summary": "Trace un symbole QR Code. Les paramètres de la commande définissent le modèle, le grossissement et le masque. Les données du champ définissent la correction d'erreur et le mode de caractères.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "orientation du champ",
+          "values": "N normal uniquement",
+          "default": "N"
+        },
+        {
+          "meaning": "modèle",
+          "values": "1 original, 2 amélioré",
+          "default": "2"
+        },
+        {
+          "meaning": "facteur de grossissement",
+          "values": "1 à 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "niveau de correction d'erreur",
+          "values": "H ultra-haute, Q haute, M standard, L haute densité",
+          "default": "Q si vide, M si la valeur n'est pas valide"
+        },
+        {
+          "meaning": "valeur du masque",
+          "values": "0 à 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Trace un symbole Data Matrix avec taille d'élément, niveau de qualité et gestion des séquences d'échappement configurables."
+    "summary": "Trace un symbole Data Matrix avec taille d'élément, niveau de qualité et gestion des séquences d'échappement configurables.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur des éléments du symbole",
+          "values": "1 à la largeur de l'étiquette",
+          "default": "0, reprend la hauteur du symbole depuis ^BY"
+        },
+        {
+          "meaning": "niveau de qualité",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "colonnes à encoder",
+          "values": "9 à 49, impairs uniquement pour la qualité 0 à 140, pairs uniquement pour la qualité 200"
+        },
+        {
+          "meaning": "lignes à encoder",
+          "values": "9 à 49"
+        },
+        {
+          "meaning": "ID de format",
+          "values": "1 numérique, 2 majuscules, 3 alphanumérique majuscules avec . , - /, 4 alphanumérique majuscules, 5 ASCII7, 6 ISO8",
+          "default": "6"
+        },
+        {
+          "meaning": "caractère de contrôle des séquences d'échappement",
+          "values": "tout caractère",
+          "default": "tilde"
+        },
+        {
+          "meaning": "rapport d'aspect",
+          "values": "1 carré, 2 rectangulaire",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Trace un symbole bidimensionnel empilé PDF417 pour de grands volumes de texte ou de données binaires."
+    "summary": "Trace un symbole bidimensionnel empilé PDF417 pour de grands volumes de texte ou de données binaires.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres par ligne en points",
+          "values": "1 à la hauteur de l'étiquette",
+          "default": "dernier ^BY"
+        },
+        {
+          "meaning": "niveau de sécurité",
+          "values": "1 à 8",
+          "default": "0"
+        },
+        {
+          "meaning": "nombre de colonnes de données",
+          "values": "1 à 30",
+          "default": "rapport d'aspect automatique"
+        },
+        {
+          "meaning": "nombre de lignes",
+          "values": "3 à 90",
+          "default": "rapport d'aspect automatique"
+        },
+        {
+          "meaning": "tronquer les indicateurs de ligne droits et le motif d'arrêt",
+          "values": "Y oui, N non",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Trace un symbole MicroPDF417, une variante compacte du PDF417 avec motifs d'adressage de ligne."
+    "summary": "Trace un symbole MicroPDF417, une variante compacte du PDF417 avec motifs d'adressage de ligne.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "hauteur du code-barres en points",
+          "values": "1 à 9999",
+          "default": "dernier ^BY, ou 10 si aucun ^BY n'a été envoyé"
+        },
+        {
+          "meaning": "mode",
+          "values": "0 à 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Trace un symbole matriciel Aztec avec grossissement et correction d'erreur configurables."
+    "summary": "Trace un symbole matriciel Aztec avec grossissement et correction d'erreur configurables.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R pivoté, I 180, B 270",
+          "default": "dernier ^FW"
+        },
+        {
+          "meaning": "facteur de grossissement",
+          "values": "1 à 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "indicateur d'interprétation de canal étendu",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "contrôle d'erreur et taille du symbole",
+          "values": "0 par défaut, 1 à 99 pourcentage d'erreur, 101 à 104 couches compactes, 201 à 232 couches complètes, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "indicateur de symbole de menu",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "nombre de symboles pour l'ajout structuré",
+          "values": "1 à 26",
+          "default": "1"
+        },
+        {
+          "meaning": "champ ID pour l'ajout structuré",
+          "values": "texte jusqu'à 24 caractères",
+          "default": "aucun ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Trace un symbole CODABLOCK en mode A, E ou F pour des volumes de données plus importants."
+    "summary": "Trace un symbole CODABLOCK en mode A, E ou F pour des volumes de données plus importants.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "hauteur du code-barres par ligne en points",
+          "values": "2 à 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "niveau de sécurité",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "caractères par ligne",
+          "values": "2 à 62"
+        },
+        {
+          "meaning": "lignes à encoder",
+          "values": "mode A 1-22, mode EF 2-4"
+        },
+        {
+          "meaning": "mode",
+          "values": "A jeu Code 39, E Code 128 FNC1, F jeu Code 128",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Trace un symbole MaxiCode UPS avec un mode pour les messages structurés de transporteur ou les données générales."
+    "summary": "Trace un symbole MaxiCode UPS avec un mode pour les messages structurés de transporteur ou les données générales.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "mode",
+          "values": "2 postal US, 3 postal non-US, 4 standard, 5 EEC complet, 6 programme lecteur",
+          "default": "2"
+        },
+        {
+          "meaning": "numéro du symbole dans la séquence",
+          "values": "1 à 8",
+          "default": "1"
+        },
+        {
+          "meaning": "nombre total de symboles",
+          "values": "1 à 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Trace un symbole TLC39 pour étiquettes télécoms, combinant un Code 39 avec un composant MicroPDF417."
+    "summary": "Trace un symbole TLC39 pour étiquettes télécoms, combinant un Code 39 avec un composant MicroPDF417.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R pivoté, I inversé, B tête en bas"
+        },
+        {
+          "meaning": "largeur de la partie Code 39 en points",
+          "values": "1 à 10",
+          "default": "600 dpi 4, sinon 2"
+        },
+        {
+          "meaning": "rapport barre large sur barre étroite de la partie Code 39",
+          "values": "2.0 à 3.0 par pas de 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "hauteur de la partie Code 39 en points",
+          "values": "1 à 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "largeur de barre étroite de la partie MicroPDF417",
+          "values": "1 à 10",
+          "default": "600 dpi 4, sinon 2"
+        },
+        {
+          "meaning": "hauteur de ligne de la partie MicroPDF417 en points",
+          "values": "1 à 255",
+          "default": "600 dpi 8, sinon 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Une fois activée, valide les données et paramètres des codes-barres et imprime INVALID au lieu d'un symbole erroné."
+    "summary": "Une fois activée, valide les données et paramètres des codes-barres et imprime INVALID au lieu d'un symbole erroné.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "validation du code",
+          "values": "N non, Y oui",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Trace un rectangle plein ou avec contour. Faire correspondre un côté à l'épaisseur de bordure produit une ligne."
+    "summary": "Trace un rectangle plein ou avec contour. Faire correspondre un côté à l'épaisseur de bordure produit une ligne.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "largeur du rectangle en points",
+          "values": "t à 32000",
+          "default": "t ou 1"
+        },
+        {
+          "meaning": "hauteur du rectangle en points",
+          "values": "t à 32000",
+          "default": "t ou 1"
+        },
+        {
+          "meaning": "épaisseur de bordure en points",
+          "values": "1 à 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "couleur de la ligne",
+          "values": "B noir, W blanc",
+          "default": "B"
+        },
+        {
+          "meaning": "arrondi des coins",
+          "values": "0 aucun arrondi à 8 arrondi maximal",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Trace une ligne diagonale sur une largeur et une hauteur données, inclinée vers la droite ou vers la gauche."
+    "summary": "Trace une ligne diagonale sur une largeur et une hauteur données, inclinée vers la droite ou vers la gauche.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "largeur du rectangle en points",
+          "values": "3 à 32000",
+          "default": "t ou 3"
+        },
+        {
+          "meaning": "hauteur du rectangle en points",
+          "values": "3 à 32000",
+          "default": "t ou 3"
+        },
+        {
+          "meaning": "épaisseur de bordure en points",
+          "values": "1 à 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "couleur de la ligne",
+          "values": "B noir, W blanc",
+          "default": "B"
+        },
+        {
+          "meaning": "sens de la diagonale",
+          "values": "R ou / inclinée à droite, L ou \\ inclinée à gauche",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Trace une ellipse à partir d'une largeur et d'une hauteur en points, avec une épaisseur de bordure vers l'intérieur et un rendu en noir ou en blanc."
+    "summary": "Trace une ellipse à partir d'une largeur et d'une hauteur en points, avec une épaisseur de bordure vers l'intérieur et un rendu en noir ou en blanc.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "largeur de l'ellipse en points",
+          "values": "3 à 4095",
+          "default": "t ou 1"
+        },
+        {
+          "meaning": "hauteur de l'ellipse en points",
+          "values": "3 à 4095",
+          "default": "t ou 1"
+        },
+        {
+          "meaning": "épaisseur de bordure en points",
+          "values": "2 à 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "couleur de la ligne",
+          "values": "B noir, W blanc",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Trace un cercle du diamètre donné en points, avec une épaisseur de bordure vers l'intérieur et un rendu en noir ou en blanc."
+    "summary": "Trace un cercle du diamètre donné en points, avec une épaisseur de bordure vers l'intérieur et un rendu en noir ou en blanc.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "diamètre du cercle en points",
+          "values": "3 à 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "épaisseur de bordure en points",
+          "values": "2 à 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "couleur de la ligne",
+          "values": "B noir, W blanc",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Place une image bitmap monochrome à la position de champ courante à partir de données en hexadécimal ASCII, binaires ou compressées."
+    "summary": "Place une image bitmap monochrome à la position de champ courante à partir de données en hexadécimal ASCII, binaires ou compressées.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "type de compression",
+          "values": "A ASCII hex, B binaire, C binaire compressé",
+          "default": "A"
+        },
+        {
+          "meaning": "nombre total d'octets à envoyer",
+          "values": "1 à 99999"
+        },
+        {
+          "meaning": "nombre total d'octets de l'image",
+          "values": "1 à 99999"
+        },
+        {
+          "meaning": "octets par ligne de l'image",
+          "values": "1 à 99999"
+        },
+        {
+          "meaning": "données de l'image",
+          "values": "ASCII hex 00 à FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Imprime un symbole résident sélectionné par les données de champ, comme le symbole copyright ou marque déposée."
+    "summary": "Imprime un symbole résident sélectionné par les données de champ, comme le symbole copyright ou marque déposée.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "orientation",
+          "values": "N normal, R 90 sens horaire, I 180, B 270",
+          "default": "N ou dernier ^FW"
+        },
+        {
+          "meaning": "hauteur de caractère proportionnelle à la largeur",
+          "values": "0 à 32000",
+          "default": "dernier ^CF"
+        },
+        {
+          "meaning": "largeur de caractère proportionnelle à la hauteur",
+          "values": "0 à 32000",
+          "default": "dernier ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Charge une image stockée en début de format et l'ancre à l'origine de l'étiquette."
+    "summary": "Charge une image stockée en début de format et l'ancre à l'origine de l'étiquette.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "périphérique de stockage",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de l'objet",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": ".GRF ou .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Place une image stockée à la position de champ courante sans la redimensionner."
+    "summary": "Place une image stockée à la position de champ courante sans la redimensionner.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "périphérique de stockage",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "ordre de priorité de recherche"
+        },
+        {
+          "meaning": "nom de l'objet",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": ".GRF ou .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Supprime des graphiques, polices ou formats stockés de la mémoire de l'imprimante, avec prise en charge des caractères génériques pour les groupes."
+    "summary": "Supprime des graphiques, polices ou formats stockés de la mémoire de l'imprimante, avec prise en charge des caractères génériques pour les groupes.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "périphérique de stockage",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de l'objet, caractère générique autorisé",
+          "values": "1 à 8 caractères",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier, caractère générique autorisé",
+          "values": "toute extension",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Enregistre le format courant sous forme d'image graphique pour un rappel rapide et des superpositions de données variables."
+    "summary": "Enregistre le format courant sous forme d'image graphique pour un rappel rapide et des superpositions de données variables.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "périphérique de stockage",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de l'objet",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": ".GRF ou .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "imprimer l'étiquette après l'enregistrement",
+          "values": "N non, Y oui",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Télécharge un graphique en hexadécimal ASCII dans la mémoire de l'imprimante sous un nom réutilisable."
+    "summary": "Télécharge un graphique en hexadécimal ASCII dans la mémoire de l'imprimante sous un nom réutilisable.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "périphérique de stockage",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de l'image",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "taille totale de l'image en octets",
+          "values": "calculé à partir de la largeur et de la hauteur de l'image"
+        },
+        {
+          "meaning": "octets par ligne de l'image",
+          "values": "calculé à partir de la largeur de l'image"
+        },
+        {
+          "meaning": "données de l'image graphique",
+          "values": "ASCII hex 00 à FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Télécharge un graphique, une police ou un certificat dans la mémoire de l'imprimante sous un nom réutilisable."
+    "summary": "Télécharge un graphique, une police ou un certificat dans la mémoire de l'imprimante sous un nom réutilisable.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "périphérique de stockage",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom du fichier",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "format des données",
+          "values": "A ASCII ou ZB64, B binaire, C AR compressé, P PNG ZB64"
+        },
+        {
+          "meaning": "type de fichier stocké",
+          "values": "B bitmap, E TTE, G GRF brut, P PNG, T TTF ou OTF, X PCX, NRD non lisible, PAC identifiant d'accès, C menu WML, F page HTM, H retour imprimante",
+          "default": "G"
+        },
+        {
+          "meaning": "nombre total d'octets du fichier",
+          "values": "taille réelle du fichier décompressé"
+        },
+        {
+          "meaning": "octets par ligne pour les images GRF",
+          "values": "calculé à partir de la largeur de l'image"
+        },
+        {
+          "meaning": "données du fichier",
+          "values": "ASCII hex, ZB64 ou binaire"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Sérialise les données de champ texte ou code-barres sur plusieurs étiquettes, à partir d'une valeur de départ, d'un sens et d'un incrément."
+    "summary": "Sérialise les données de champ texte ou code-barres sur plusieurs étiquettes, à partir d'une valeur de départ, d'un sens et d'un incrément.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "valeur de départ de la série",
+          "values": "jusqu'à 12 chiffres",
+          "default": "1"
+        },
+        {
+          "meaning": "pas d'incrémentation ou de décrémentation",
+          "values": "jusqu'à 12 chiffres",
+          "default": "1"
+        },
+        {
+          "meaning": "compléter avec des zéros de tête",
+          "values": "N non, Y oui",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Sérialise des positions sélectionnées dans les données de champ à l'aide d'un masque et de jeux de caractères."
+    "summary": "Sérialise des positions sélectionnées dans les données de champ à l'aide d'un masque et de jeux de caractères.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "masque de sérialisation sélectionnant les caractères à modifier",
+          "values": "D décimal, H hex, O octal, A alpha, N alphanumérique, % ignorer"
+        },
+        {
+          "meaning": "chaîne d'incrémentation ou de décrémentation du masque",
+          "values": "une valeur par position du masque, % pour la laisser inchangée",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Enregistre les commandes suivantes comme un format réutilisable au lieu de les imprimer immédiatement."
+    "summary": "Enregistre les commandes suivantes comme un format réutilisable au lieu de les imprimer immédiatement.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "périphérique de stockage du modèle",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom du modèle",
+          "values": "1 à 16 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Rappelle un format stocké et fournit les valeurs de ses champs numérotés à remplir."
+    "summary": "Rappelle un format stocké et fournit les valeurs de ses champs numérotés à remplir.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "périphérique source du modèle stocké",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R, puis E, puis B, puis A"
+        },
+        {
+          "meaning": "nom du modèle stocké",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Rappelle un graphique stocké à la position courante avec des mises à l'échelle horizontale et verticale indépendantes."
+    "summary": "Rappelle un graphique stocké à la position courante avec des mises à l'échelle horizontale et verticale indépendantes.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "périphérique source du graphique stocké",
+          "values": "R, E, B, A",
+          "default": "R, puis E, puis B, puis A"
+        },
+        {
+          "meaning": "nom du graphique stocké",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": "GRF"
+        },
+        {
+          "meaning": "facteur de grossissement sur l'axe x",
+          "values": "1 à 10",
+          "default": "1"
+        },
+        {
+          "meaning": "facteur de grossissement sur l'axe y",
+          "values": "1 à 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Sélectionne la manière dont l'imprimante détecte les limites des étiquettes, par espaces, repères ou support continu."
+    "summary": "Sélectionne la manière dont l'imprimante détecte les limites des étiquettes, par espaces, repères ou support continu.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "méthode de suivi du support",
+          "values": "N continu, Y ou W non continu avec écart, M non continu avec repère, A détection automatique, V continu à longueur variable",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "décalage de la marque noire en points",
+          "values": "-120 à 283 sur la plupart des imprimantes, -240 à 566 à 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Définit la longueur maximale d'étiquette recherchée par l'imprimante lors de l'étalonnage d'un support non continu."
+    "summary": "Définit la longueur maximale d'étiquette recherchée par l'imprimante lors de l'étalonnage d'un support non continu.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "longueur d'étiquette maximale en lignes de points",
+          "values": "dpi de l'imprimante fois deux, jusqu'à la longueur maximale",
+          "default": "dernière valeur enregistrée"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Définit l'action à la mise sous tension et à la fermeture de la tête d'impression, notamment l'étalonnage, l'avance ou la mesure de longueur."
+    "summary": "Définit l'action à la mise sous tension et à la fermeture de la tête d'impression, notamment l'étalonnage, l'avance ou la mesure de longueur.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "action d'avance à la mise sous tension",
+          "values": "F avance jusqu'au premier écart, C étalonner comme ~JC, L fixer la longueur comme ~JL, N pas d'avance, S étalonnage court",
+          "default": "C"
+        },
+        {
+          "meaning": "action d'avance après la fermeture de la tête",
+          "values": "F avance jusqu'au premier écart, C étalonner comme ~JC, L fixer la longueur comme ~JL, N pas d'avance, S étalonnage court",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Configure les alertes de maintenance imprimées pour le nettoyage ou le remplacement de la tête d'impression."
+    "summary": "Configure les alertes de maintenance imprimées pour le nettoyage ou le remplacement de la tête d'impression.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "type d'alerte",
+          "values": "R remplacement de tête, C nettoyage de tête"
+        },
+        {
+          "meaning": "imprimer l'étiquette d'alerte",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "distance jusqu'à la première alerte",
+          "values": "R 0 à 150 km, C 100 à 2000 mètres, 0 désactivé",
+          "default": "50 km pour R, 0 désactivé pour C"
+        },
+        {
+          "meaning": "distance avant la nouvelle émission de l'alerte",
+          "values": "0 à 2000 mètres",
+          "default": "0"
+        },
+        {
+          "meaning": "unité de mesure indiquée",
+          "values": "C centimètres, I pouces, M mètres",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Contrôle si l'image bitmap de l'étiquette est effacée après impression ou conservée pour être réutilisée par les étiquettes suivantes."
+    "summary": "Contrôle si l'image bitmap de l'étiquette est effacée après impression ou conservée pour être réutilisée par les étiquettes suivantes.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "effacer l'image bitmap après l'impression",
+          "values": "Y effacer, N conserver",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Définit le texte affiché sur les étiquettes d'alerte de maintenance pour le nettoyage ou le remplacement de la tête d'impression."
+    "summary": "Définit le texte affiché sur les étiquettes d'alerte de maintenance pour le nettoyage ou le remplacement de la tête d'impression.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "type d'alerte",
+          "values": "R remplacement de tête, C nettoyage de tête",
+          "default": "R"
+        },
+        {
+          "meaning": "message imprimé sur l'étiquette d'alerte",
+          "values": "jusqu'à 63 caractères, sans virgules",
+          "default": "veuillez nettoyer la tête d'impression ou veuillez remplacer la tête d'impression"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Verrouille un paramètre du panneau de commande, comme la densité ou l'étalonnage, jusqu'à son déverrouillage."
+    "summary": "Verrouille un paramètre du panneau de commande, comme la densité ou l'étalonnage, jusqu'à son déverrouillage.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "mode du panneau de commande à protéger",
+          "values": "D densité, P position, C étalonnage, E tout activer, S sans enregistrement, W pause, F avance, X annuler, M menu",
+          "default": "doit être spécifié"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Active ou désactive le voyant d'avertissement de tête d'impression froide."
+    "summary": "Active ou désactive le voyant d'avertissement de tête d'impression froide.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "activer l'avertissement de tête froide",
+          "values": "Y activer, N désactiver"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Ajuste la densité d'impression par rapport à la densité actuellement configurée de l'imprimante."
+    "summary": "Ajuste la densité d'impression par rapport à la densité actuellement configurée de l'imprimante.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "densité du support par rapport au réglage courant",
+          "values": "-30 à 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Définit immédiatement une densité d'impression absolue, correspondant au réglage de densité du panneau avant."
+    "summary": "Définit immédiatement une densité d'impression absolue, correspondant au réglage de densité du panneau avant.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "niveau de densité d'impression absolu",
+          "values": "00 à 30",
+          "default": "dernière valeur enregistrée"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Contrôle si une étiquette interrompue par une erreur de support, de ruban ou de tête d'impression est réimprimée après la reprise."
+    "summary": "Contrôle si une étiquette interrompue par une erreur de support, de ruban ou de tête d'impression est réimprimée après la reprise.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "réimprimer l'étiquette après la disparition de l'erreur",
+          "values": "N non, Y oui",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Planifie des tests périodiques des éléments de la tête d'impression selon le nombre d'étiquettes imprimées et une plage d'éléments en option."
+    "summary": "Planifie des tests périodiques des éléments de la tête d'impression selon le nombre d'étiquettes imprimées et une plage d'éléments en option.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "étiquettes imprimées entre deux tests de tête",
+          "values": "0 à 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "sélectionner manuellement la plage d'éléments du test de tête",
+          "values": "N non, Y oui",
+          "default": "N"
+        },
+        {
+          "meaning": "numéro du premier élément testé",
+          "values": "0 à 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "numéro du dernier élément testé",
+          "values": "0 à 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Ajuste la position de repos de déchirement ou de découpe par un léger décalage en points après l'impression."
+    "summary": "Ajuste la position de repos de déchirement ou de découpe par un léger décalage en points après l'impression.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "changement de la position de repos de déchirement en points",
+          "values": "-120 à 120",
+          "default": "dernière valeur enregistrée"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Configure les seuils d'alerte précoce pour la maintenance du support, du ruban et de la tête d'impression."
+    "summary": "Configure les seuils d'alerte précoce pour la maintenance du support, du ruban et de la tête d'impression.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "alerte précoce pour le support ou les consommables",
+          "values": "E activer, D désactiver",
+          "default": "D"
+        },
+        {
+          "meaning": "nombre d'étiquettes par rouleau",
+          "values": "100 à 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "le support a été remplacé",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "code de longueur de ruban selon le modèle",
+          "values": "N 0 m, 0 à 7 correspond à 100 à 450 m, 10 à 16 correspond à 600 à 900 m",
+          "default": "1 ou 7 selon le modèle"
+        },
+        {
+          "meaning": "le ruban a été remplacé",
+          "values": "Y oui, N non",
+          "default": "N"
+        },
+        {
+          "meaning": "alerte précoce de maintenance activée",
+          "values": "E activé, D désactivé",
+          "default": "D"
+        },
+        {
+          "meaning": "code d'intervalle de nettoyage de la tête",
+          "values": "0 à 16 pour 100 m à 900 m par pas de 50 m",
+          "default": "1 ou 7 selon le modèle"
+        },
+        {
+          "meaning": "la tête d'impression a été nettoyée",
+          "values": "N non, Y oui",
+          "default": "N"
+        },
+        {
+          "meaning": "seuil d'alerte de durée de vie de la tête en pouces",
+          "values": "0 désactivé, ou 100 à 3500000 pouces",
+          "default": "1000000"
+        },
+        {
+          "meaning": "la tête d'impression a été remplacée",
+          "values": "N non, Y oui",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Contrôle le moment du retour arrière autour de l'impression et de la découpe, ou désactive le retour arrière."
+    "summary": "Contrôle le moment du retour arrière autour de l'impression et de la découpe, ou désactive le retour arrière.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "moment du retour arrière par rapport à l'impression",
+          "values": "A complet après, B complet avant, N normal, O désactivé, 10 à 90 pourcent",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Fait avancer un nombre défini de lignes de points vierges à la vitesse de défilement."
+    "summary": "Fait avancer un nombre défini de lignes de points vierges à la vitesse de défilement.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "lignes de points avancées rapidement depuis le bas",
+          "values": "0 à 32000",
+          "default": "doit être spécifié"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Actionne immédiatement le massicot sur les imprimantes KR403 en mode d'impression kiosque."
+    "summary": "Actionne immédiatement le massicot sur les imprimantes KR403 en mode d'impression kiosque.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "mode de remplacement de la longueur de découpe",
+          "values": "0 réglage kiosque, 1 découpe complète"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Ajoute une longueur d'éjection supplémentaire au présentateur kiosque KR403, pour faciliter la prise du support imprimé."
+    "summary": "Ajoute une longueur d'éjection supplémentaire au présentateur kiosque KR403, pour faciliter la prise du support imprimé.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "longueur d'éjection supplémentaire du support en mm",
+          "values": "0 à 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Exécute un cycle du présentateur KR403, proposant le support imprimé pour un retrait manuel."
+    "summary": "Exécute un cycle du présentateur KR403, proposant le support imprimé pour un retrait manuel.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "longueur d'éjection du support pour le présentateur en mm",
+          "values": "0 à 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Définit la tension d'alimentation du ruban sur les imprimantes de la série PAX."
+    "summary": "Définit la tension d'alimentation du ruban sur les imprimantes de la série PAX.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "niveau de tension du ruban",
+          "values": "L basse, M moyenne, H haute",
+          "default": "doit être spécifié"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Définit la date et l'heure de l'horloge temps réel de l'imprimante."
+    "summary": "Définit la date et l'heure de l'horloge temps réel de l'imprimante.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "mois",
+          "values": "01 à 12",
+          "default": "mois courant"
+        },
+        {
+          "meaning": "jour",
+          "values": "01 à 31",
+          "default": "jour courant"
+        },
+        {
+          "meaning": "année",
+          "values": "1998 à 2097",
+          "default": "année courante"
+        },
+        {
+          "meaning": "heure",
+          "values": "00 à 23",
+          "default": "heure courante"
+        },
+        {
+          "meaning": "minute",
+          "values": "00 à 59",
+          "default": "minute courante"
+        },
+        {
+          "meaning": "seconde",
+          "values": "00 à 59",
+          "default": "seconde courante"
+        },
+        {
+          "meaning": "format am, pm ou 24 heures",
+          "values": "A am, P pm, M 24 heures",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Sélectionne le format de date et d'heure affiché sur l'étiquette de configuration et le panneau de commande."
+    "summary": "Sélectionne le format de date et d'heure affiché sur l'étiquette de configuration et le panneau de commande.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "format d'affichage de la date et de l'heure",
+          "values": "0 numéro de version, 1 MM/DD/YY 24 heures, 2 MM/DD/YY 12 heures, 3 DD/MM/YY 24 heures, 4 DD/MM/YY 12 heures",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Définit des décalages d'horloge secondaires par rapport à l'horloge temps réel. Ces décalages sont perdus à la mise hors tension de l'imprimante."
+    "summary": "Définit des décalages d'horloge secondaires par rapport à l'horloge temps réel. Ces décalages sont perdus à la mise hors tension de l'imprimante.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "numéro de l'horloge à décaler",
+          "values": "2 secondaire, 3 tertiaire",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "décalage en mois",
+          "values": "-32000 à 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "décalage en jours",
+          "values": "-32000 à 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "décalage en années",
+          "values": "-32000 à 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "décalage en heures",
+          "values": "-32000 à 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "décalage en minutes",
+          "values": "-32000 à 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "décalage en secondes",
+          "values": "-32000 à 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Définit le moment où les champs horodatés sont estampillés et sélectionne la langue des noms de jours et de mois."
+    "summary": "Définit le moment où les champs horodatés sont estampillés et sélectionne la langue des noms de jours et de mois.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "mode de lecture de l'horloge",
+          "values": "S heure de départ, T heure actuelle, 0 à 999 tolérance",
+          "default": "S"
+        },
+        {
+          "meaning": "langue des noms de jours et de mois",
+          "values": "1 anglais, 2 espagnol, 3 français, 4 allemand, 5 italien, 6 à 18 autres langues",
+          "default": "dernier ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Sélectionne la langue d'affichage du panneau de commande de l'imprimante, à partir d'une liste qui varie selon le modèle."
+    "summary": "Sélectionne la langue d'affichage du panneau de commande de l'imprimante, à partir d'une liste qui varie selon le modèle.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "langue d'affichage du panneau de commande",
+          "values": "1 à 20 codes de langue",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Sélectionne une table d'encodage stockée utilisée pour convertir les données de champ avant l'impression."
+    "summary": "Sélectionne une table d'encodage stockée utilisée pour convertir les données de champ avant l'impression.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "lecteur de la table d'encodage",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom du fichier de la table d'encodage",
+          "values": "1 à 8 caractères alphanumériques"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": "DAT valeur fixe",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Sélectionne l'interprétation des commandes ZPL d'origine ou ZPL II, pour la compatibilité avec les anciens formats."
+    "summary": "Sélectionne l'interprétation des commandes ZPL d'origine ou ZPL II, pour la compatibilité avec les anciens formats.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "version de l'interpréteur ZPL",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Attribue à l'imprimante un nom réseau et une description en texte libre, tous deux affichés sur l'étiquette de configuration et sa page web intégrée."
+    "summary": "Attribue à l'imprimante un nom réseau et une description en texte libre, tous deux affichés sur l'étiquette de configuration et sa page web intégrée.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "nom réseau de l'imprimante",
+          "values": "jusqu'à 16 caractères alphanumériques",
+          "default": "ZBR plus suffixe MAC"
+        },
+        {
+          "meaning": "description de l'imprimante pour l'étiquette de configuration et la page web",
+          "values": "jusqu'à 35 caractères alphanumériques",
+          "default": "vide"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Définit le mot de passe à quatre chiffres des menus de configuration du panneau de commande."
+    "summary": "Définit le mot de passe à quatre chiffres des menus de configuration du panneau de commande.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "mot de passe à quatre chiffres du panneau de commande",
+          "values": "0000 à 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "niveau de mot de passe, imprimantes S4M uniquement",
+          "values": "1 à 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Enregistre, restaure ou réinitialise les paramètres de configuration de l'imprimante."
+    "summary": "Enregistre, restaure ou réinitialise les paramètres de configuration de l'imprimante.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "action de configuration",
+          "values": "A réinitialisation usine complète, F réinitialisation usine, N réseau, R rappel, S enregistrement"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Change le caractère préfixe des commandes de format, normalement le circonflexe, de façon globale ou pour le format courant."
+    "summary": "Change le caractère préfixe des commandes de format, normalement le circonflexe, de façon globale ou pour le format courant.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "nouveau préfixe des commandes de format",
+          "values": "tout caractère ASCII"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Change le caractère délimiteur de paramètres, normalement la virgule, de façon globale ou pour le format courant."
+    "summary": "Change le caractère délimiteur de paramètres, normalement la virgule, de façon globale ou pour le format courant.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "nouveau caractère délimiteur de paramètres",
+          "values": "tout caractère ASCII"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Change le caractère préfixe des commandes immédiates, normalement le tilde, de façon globale ou pour le format courant."
+    "summary": "Change le caractère préfixe des commandes immédiates, normalement le tilde, de façon globale ou pour le format courant.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "nouveau préfixe des commandes immédiates",
+          "values": "tout caractère ASCII"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Réattribue les lettres de mémoire de l'imprimante afin que les objets stockés puissent conserver leurs noms existants."
+    "summary": "Réattribue les lettres de mémoire de l'imprimante afin que les objets stockés puissent conserver leurs noms existants.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "alias de mémoire pour B",
+          "values": "B carte mémoire, E flash, R DRAM, A compact flash, NONE non défini",
+          "default": "B"
+        },
+        {
+          "meaning": "alias de mémoire pour E",
+          "values": "B carte mémoire, E flash, R DRAM, A compact flash, NONE non défini",
+          "default": "E"
+        },
+        {
+          "meaning": "alias de mémoire pour R",
+          "values": "B carte mémoire, E flash, R DRAM, A compact flash, NONE non défini",
+          "default": "R"
+        },
+        {
+          "meaning": "alias de mémoire pour A",
+          "values": "B carte mémoire, E flash, R DRAM, A compact flash, NONE non défini",
+          "default": "A"
+        },
+        {
+          "meaning": "autoriser l'attribution d'un alias en double",
+          "values": "M alias multiple",
+          "default": "aucun"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Efface et réinitialise un périphérique de mémoire flash. Une coupure d'alimentation pendant cette opération peut corrompre le stockage."
+    "summary": "Efface et réinitialise un périphérique de mémoire flash. Une coupure d'alimentation pendant cette opération peut corrompre le stockage.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "périphérique de mémoire flash à initialiser",
+          "values": "A flash optionnel, B carte flash, E flash interne",
+          "default": "doit être spécifié"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Détermine si une tension de batterie faible met en pause une imprimante portable ou laisse l'impression se poursuivre."
+    "summary": "Détermine si une tension de batterie faible met en pause une imprimante portable ou laisse l'impression se poursuivre.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pause en cas de tension de batterie faible",
+          "values": "Y pause, N poursuivre l'impression",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Démarre le Zebra BASIC Interpreter sur l'imprimante, en lançant éventuellement un programme stocké."
+    "summary": "Démarre le Zebra BASIC Interpreter sur l'imprimante, en lançant éventuellement un programme stocké.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "emplacement de stockage du programme",
+          "values": "R, E, B, A",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "nom du programme à exécuter",
+          "values": "tout nom de programme valide",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "extension du fichier de programme",
+          "values": "BAS ou BAE"
+        },
+        {
+          "meaning": "contrôle de la sortie console",
+          "values": "Y activé, N désactivé",
+          "default": "Y"
+        },
+        {
+          "meaning": "contrôle de l'écho des commandes",
+          "values": "Y activé, N désactivé",
+          "default": "Y"
+        },
+        {
+          "meaning": "mémoire allouée au ZBI",
+          "values": "20K à 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Configure le port auxiliaire pour les signaux d'applicateur ou de vérificateur et la gestion des erreurs."
+    "summary": "Configure le port auxiliaire pour les signaux d'applicateur ou de vérificateur et la gestion des erreurs.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "mode de gestion des erreurs du vérificateur",
+          "values": "0 désactivé, 1 réimpression sur erreur, 2 débit maximal",
+          "default": "0"
+        },
+        {
+          "meaning": "mode de temporisation du signal d'applicateur",
+          "values": "0 désactivé, 1 à 4 temporisation du signal",
+          "default": "0"
+        },
+        {
+          "meaning": "mode de temporisation du signal de démarrage d'impression",
+          "values": "p mode impulsion, l mode niveau"
+        },
+        {
+          "meaning": "mode de réponse en cas d'erreur d'étiquette",
+          "values": "e mode erreur, f mode avance",
+          "default": "f"
+        },
+        {
+          "meaning": "mode de réimpression par signal",
+          "values": "e activé, d désactivé",
+          "default": "d"
+        },
+        {
+          "meaning": "mode d'alerte de ruban bas",
+          "values": "e activé, d désactivé",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Sélectionne le capteur de support utilisé pour le suivi, généralement réfléchissant ou transmissif."
+    "summary": "Sélectionne le capteur de support utilisé pour le suivi, généralement réfléchissant ou transmissif.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "capteur à utiliser",
+          "values": "A automatique, R réfléchissant, T transmissif",
+          "default": "varie selon le modèle d'imprimante"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Définit une densité normale ou réduite en points par millimètre. La densité réduite double la taille physique des coordonnées du format."
+    "summary": "Définit une densité normale ou réduite en points par millimètre. La densité réduite double la taille physique des coordonnées du format.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "réglage de la densité d'impression",
+          "values": "A densité normale, B densité réduite de moitié",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Réinitialise un compteur d'utilisation sélectionné de l'imprimante, y compris les compteurs utilisateur ou RFID."
+    "summary": "Réinitialise un compteur d'utilisation sélectionné de l'imprimante, y compris les compteurs utilisateur ou RFID.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "compteur à réinitialiser",
+          "values": "1 compteur un, 2 compteur deux, 3 RFID valide, 4 RFID annulée, C tête nettoyée, R tête remplacée",
+          "default": "doit être spécifié"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Configure en une seule commande tous les paramètres de communication du port série."
+    "summary": "Configure en une seule commande tous les paramètres de communication du port série.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "vitesse de transmission du port série",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "bits de données par caractère",
+          "values": "7 ou 8",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "réglage de la parité",
+          "values": "N aucune, E paire, O impaire",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "bits d'arrêt",
+          "values": "1 ou 2",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "protocole de contrôle de flux",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR et Xon/Xoff",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "négociation du protocole Zebra",
+          "values": "A ACK/NAK, N aucun, Z zebra",
+          "default": "doit être spécifié"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Remplace l'intensité du capteur transmissif ou les valeurs de référence normalement définies par l'étalonnage."
+    "summary": "Remplace l'intensité du capteur transmissif ou les valeurs de référence normalement définies par l'étalonnage.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "réglage de capteur à modifier",
+          "values": "1 luminosité, 2 ligne de base",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "valeur du réglage sélectionné",
+          "values": "0 à 196",
+          "default": "doit être spécifié"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Démarre l'impression avant l'arrivée complète du format, afin d'améliorer le débit sur les étiquettes complexes."
+    "summary": "Démarre l'impression avant l'arrivée complète du format, afin d'améliorer le débit sur les étiquettes complexes.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "ligne de points de début d'impression",
+          "values": "0 à 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Désactive une condition et une destination spécifiques d'alerte ZebraNet."
+    "summary": "Désactive une condition et une destination spécifiques d'alerte ZebraNet.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "condition d'alerte à arrêter",
+          "values": "A à O et Q à V une condition chacune, W toutes sur les imprimantes RFID, * toutes sur les autres"
+        },
+        {
+          "meaning": "destination d'alerte à arrêter",
+          "values": "A série, B parallèle, C e-mail, D TCP/IP, E UDP/IP, F trap SNMP, * toutes"
+        },
+        {
+          "meaning": "arrêter ou reprendre ces alertes",
+          "values": "Y arrêter les messages, N démarrer les messages",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Définit la valeur de résistance de la tête d'impression utilisée pour les calculs d'énergie de chauffe."
+    "summary": "Définit la valeur de résistance de la tête d'impression utilisée pour les calculs d'énergie de chauffe.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "valeur de résistance de la tête d'impression",
+          "values": "0488 à 1175",
+          "default": "dernière valeur enregistrée de façon permanente"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Définit les seuils du capteur de support, la longueur d'étiquette et les intensités des LED normalement déterminés par l'étalonnage."
+    "summary": "Définit les seuils du capteur de support, la longueur d'étiquette et les intensités des LED normalement déterminés par l'étalonnage.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "valeur du capteur d'écart entre étiquettes",
+          "values": "0 à 100",
+          "default": "indiqué sur le profil de capteur ou l'étiquette de configuration"
+        },
+        {
+          "meaning": "valeur du capteur de support",
+          "values": "0 à 100",
+          "default": "indiqué sur le profil de capteur ou l'étiquette de configuration"
+        },
+        {
+          "meaning": "valeur du capteur de ruban",
+          "values": "0 à 100",
+          "default": "indiqué sur le profil de capteur ou l'étiquette de configuration"
+        },
+        {
+          "meaning": "longueur de l'étiquette en points",
+          "values": "1 à 32000",
+          "default": "valeur issue de l'étalonnage"
+        },
+        {
+          "meaning": "intensité de la LED du capteur de support",
+          "values": "0 à 255",
+          "default": "valeur issue de l'étalonnage"
+        },
+        {
+          "meaning": "intensité de la LED du capteur de ruban",
+          "values": "0 à 255",
+          "default": "valeur issue de l'étalonnage"
+        },
+        {
+          "meaning": "valeur de détection des repères",
+          "values": "0 à 100",
+          "default": "valeur issue de l'étalonnage"
+        },
+        {
+          "meaning": "valeur de détection du support à repères",
+          "values": "0 à 100",
+          "default": "valeur issue de l'étalonnage"
+        },
+        {
+          "meaning": "valeur de LED de détection des repères",
+          "values": "0 à 255",
+          "default": "valeur issue de l'étalonnage"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Active une alerte ZebraNet pour une condition et une destination spécifiques."
+    "summary": "Active une alerte ZebraNet pour une condition et une destination spécifiques.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "type de condition d'alerte",
+          "values": "A à V une condition chacune, * toutes",
+          "default": "ignoré en cas d'absence ou de valeur non valide"
+        },
+        {
+          "meaning": "type de destination d'alerte",
+          "values": "A série, B parallèle, C e-mail, D TCP/IP, E UDP/IP, F trap SNMP",
+          "default": "ignoré en cas d'absence ou de valeur non valide"
+        },
+        {
+          "meaning": "activer l'alerte à l'apparition de la condition",
+          "values": "N non, Y oui",
+          "default": "Y ou valeur précédente"
+        },
+        {
+          "meaning": "activer l'alerte à la disparition de la condition",
+          "values": "N non, Y oui",
+          "default": "N ou valeur précédente"
+        },
+        {
+          "meaning": "adresse de destination de l'alerte",
+          "values": "adresse e-mail, adresse IP ou cible SNMP",
+          "default": "ignoré en cas d'absence ou de valeur non valide"
+        },
+        {
+          "meaning": "numéro de port de l'alerte",
+          "values": "0 à 65535",
+          "default": "ignoré en cas d'absence ou de valeur non valide"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Copie des objets stockés entre les périphériques de mémoire de l'imprimante, avec prise en charge des caractères génériques pour les groupes."
+    "summary": "Copie des objets stockés entre les périphériques de mémoire de l'imprimante, avec prise en charge des caractères génériques pour les groupes.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "périphérique de stockage source",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "nom de l'objet source",
+          "values": "tout nom d'objet existant",
+          "default": "* sélectionne tous les objets"
+        },
+        {
+          "meaning": "extension de l'objet source",
+          "values": "toute extension de fichier valide",
+          "default": "* sélectionne toutes les extensions"
+        },
+        {
+          "meaning": "périphérique de stockage de destination",
+          "values": "R, E, B, A",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "nom de l'objet à destination",
+          "values": "jusqu'à 8 caractères alphanumériques",
+          "default": "nom de l'objet source"
+        },
+        {
+          "meaning": "extension de l'objet de destination",
+          "values": "toute extension de fichier valide",
+          "default": "extension de l'objet source"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Imprime une étiquette de répertoire pour les objets stockés, les polices résidentes ou les codes-barres disponibles."
+    "summary": "Imprime une étiquette de répertoire pour les objets stockés, les polices résidentes ou les codes-barres disponibles.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "périphérique source pour le listage",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "filtre de nom d'objet",
+          "values": "1 à 8 caractères, * ou ? comme caractère générique",
+          "default": "*"
+        },
+        {
+          "meaning": "filtre d'extension",
+          "values": "toute extension valide, * comme caractère générique",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Imprime sur une étiquette les informations de service demandées, comme le compteur kilométrique ou l'historique de la tête d'impression."
+    "summary": "Imprime sur une étiquette les informations de service demandées, comme le compteur kilométrique ou l'historique de la tête d'impression.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "type de rapport de service à imprimer",
+          "values": "ES statut, HA adresse matérielle, JT test de tête, MA réglages d'alerte, MI messages, OD compteur kilométrique, PH durée de vie de la tête, PP plug and play, SN numéro de série, UI ID USB",
+          "default": "doit être spécifié"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Configure les paramètres du présentateur kiosque KR403, notamment la longueur de découpe, la marge de découpe, le délai de rétraction et la longueur de boucle."
+    "summary": "Configure les paramètres du présentateur kiosque KR403, notamment la longueur de découpe, la marge de découpe, le délai de rétraction et la longueur de boucle.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "longueur de découpe en mode kiosque",
+          "values": "0 découpe normale, 10 à 60 découpe partielle en mm",
+          "default": "0"
+        },
+        {
+          "meaning": "marge de découpe en mode kiosque en mm",
+          "values": "2 à 9",
+          "default": "9"
+        },
+        {
+          "meaning": "type de présentation en mode kiosque après impression",
+          "values": "0 éjecter, 1 rétracter, 2 aucune action",
+          "default": "0"
+        },
+        {
+          "meaning": "délai de présentation en mode kiosque en secondes",
+          "values": "0 à 300, 0 pas de délai",
+          "default": "0"
+        },
+        {
+          "meaning": "longueur de boucle du présentateur en mm",
+          "values": "0 direct, 3 à 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Contrôle le réétalonnage dynamique de la longueur d'étiquette et du seuil de capteur après la mise sous tension ou l'ouverture du compartiment support."
+    "summary": "Contrôle le réétalonnage dynamique de la longueur d'étiquette et du seuil de capteur après la mise sous tension ou l'ouverture du compartiment support.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "activer l'étalonnage dynamique de la longueur",
+          "values": "Y activer, N désactiver",
+          "default": "Y"
+        },
+        {
+          "meaning": "activer l'étalonnage dynamique du seuil",
+          "values": "Y activer, N désactiver",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Démarre le mode de mise hors service pour préparer une imprimante en vue d'une revente ou d'un recyclage."
+    "summary": "Démarre le mode de mise hors service pour préparer une imprimante en vue d'une revente ou d'un recyclage.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "numéro de série de l'imprimante",
+          "values": "chaîne alphanumérique",
+          "default": "doit être spécifié"
+        },
+        {
+          "meaning": "nombre de passes d'effacement du flash",
+          "values": "0 à 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Définit la mise en veille automatique après une période d'inactivité, avec des options pour les étiquettes en file d'attente."
+    "summary": "Définit la mise en veille automatique après une période d'inactivité, avec des options pour les étiquettes en file d'attente.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "secondes d'inactivité avant la mise hors tension automatique",
+          "values": "0 à 999999, 0 désactive la mise hors tension",
+          "default": "dernière valeur enregistrée ou 0"
+        },
+        {
+          "meaning": "état de l'étiquette à la mise hors tension",
+          "values": "Y mise hors tension avec la file, N terminer la file d'abord",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Éjecte ou rétracte le support déjà présenté par un présentateur kiosque KR403."
+    "summary": "Éjecte ou rétracte le support déjà présenté par un présentateur kiosque KR403.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "action de présentation en mode kiosque",
+          "values": "0 éjecter, 1 rétracter, 2 utiliser le réglage de ^KV"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Renvoie à l'hôte un format ZPL stocké dans la mémoire de l'imprimante."
+    "summary": "Renvoie à l'hôte un format ZPL stocké dans la mémoire de l'imprimante.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "périphérique de mémoire à rechercher",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom du format stocké",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": ".ZPL valeur fixe",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Renvoie à l'hôte une image graphique stockée dans la mémoire de l'imprimante."
+    "summary": "Renvoie à l'hôte une image graphique stockée dans la mémoire de l'imprimante.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "périphérique de mémoire à rechercher",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "priorité de recherche"
+        },
+        {
+          "meaning": "nom du graphique à téléverser",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extension de fichier",
+          "values": ".GRF valeur fixe",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Renvoie à l'hôte les données de statut, d'identité, de compteur kilométrique ou de maintenance demandées."
+    "summary": "Renvoie à l'hôte les données de statut, d'identité, de compteur kilométrique ou de maintenance demandées.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "critère de sélection des données renvoyées",
+          "values": "ES statut, HA MAC filaire, JT test de tête d'impression, MA alertes de maintenance, MI infos de maintenance, OD compteur kilométrique, PH durée de vie de la tête d'impression, PP plug and play, SN numéro de série, UI ID produit USB"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Renvoie à l'hôte les données d'un champ numéroté, avec une limite d'octets en option."
+    "summary": "Renvoie à l'hôte les données d'un champ numéroté, avec une limite d'octets en option.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "numéro de champ défini par ^FN",
+          "values": "0 à 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "octets à renvoyer",
+          "values": "1 à 256",
+          "default": "64"
+        },
+        {
+          "meaning": "texte d'en-tête avant les données",
+          "values": "0 à 3072 octets",
+          "default": "aucun en-tête"
+        },
+        {
+          "meaning": "texte de fin après les données",
+          "values": "0 à 3072 caractères"
+        },
+        {
+          "meaning": "réponse envoyée par",
+          "values": "F format, L étiquette",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Renvoie la liste du répertoire d'un périphérique de mémoire, y compris l'espace libre restant."
+    "summary": "Renvoie la liste du répertoire d'un périphérique de mémoire, y compris l'espace libre restant.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "périphérique de mémoire à lister",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash, Z autre",
+          "default": "R"
+        },
+        {
+          "meaning": "filtre de nom d'objet",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "*"
+        },
+        {
+          "meaning": "filtre d'extension",
+          "values": "toute extension de fichier Zebra",
+          "default": "*"
+        },
+        {
+          "meaning": "mise en page du listage",
+          "values": "c colonne, d par défaut",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Renvoie à l'hôte un graphique stocké dans un format de fichier téléchargeable."
+    "summary": "Renvoie à l'hôte un graphique stocké dans un format de fichier téléchargeable.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "emplacement mémoire de l'objet",
+          "values": "R DRAM, E flash, B carte mémoire, A compact flash",
+          "default": "priorité de recherche"
+        },
+        {
+          "meaning": "nom de l'objet à téléverser",
+          "values": "1 à 8 caractères alphanumériques",
+          "default": "nom requis"
+        },
+        {
+          "meaning": "format de téléversement",
+          "values": "G bitmap brut, P bitmap compressé",
+          "default": "format stocké"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Renvoie une description XML de l'imprimante pour les paramètres, le répertoire d'objets ou le statut."
+    "summary": "Renvoie une description XML de l'imprimante pour les paramètres, le répertoire d'objets ou le statut.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "type de description à renvoyer",
+          "values": "a tout, f format, l répertoire, o objet, r statut"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Lit ou écrit sur une étiquette RFID, y compris le format des données, la banque de mémoire et le mot de passe d'accès."
+    "summary": "Lit ou écrit sur une étiquette RFID, y compris le format des données, la banque de mémoire et le mot de passe d'accès.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "opération",
+          "values": "W écrire, L écrire et verrouiller, R lire, P mot de passe de lecture, S définir le mot de passe",
+          "default": "W"
+        },
+        {
+          "meaning": "format des données",
+          "values": "A ASCII, H hex, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "indicateur de mot de passe ou numéro de bloc de départ",
+          "values": "P mot de passe suit, 0 à n bloc",
+          "default": "0"
+        },
+        {
+          "meaning": "nombre d'octets à lire ou écrire",
+          "values": "1 à n, maximum par tag",
+          "default": "1"
+        },
+        {
+          "meaning": "banque de mémoire Gen 2",
+          "values": "E EPC 96 bits, A bits PC EPC automatiques, 0 réservé, 1 EPC, 2 TID, 3 utilisateur",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Définit la disposition des bits utilisée pour encoder les champs EPC RFID sur une étiquette."
+    "summary": "Définit la disposition des bits utilisée pour encoder les champs EPC RFID sur une étiquette.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "taille totale des partitions en bits",
+          "values": "1 à la taille en bits du tag",
+          "default": "96"
+        },
+        {
+          "meaning": "bits par partition, jusqu'à 16 partitions",
+          "values": "1 à 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Définit les options RFID pour les étiquettes suivantes, notamment le type d'étiquette, la position de programmation, la gestion des échecs et la longueur de la barre VOID."
+    "summary": "Définit les options RFID pour les étiquettes suivantes, notamment le type d'étiquette, la position de programmation, la gestion des échecs et la longueur de la barre VOID.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "type de tag",
+          "values": "8 Gen 2 uniquement",
+          "default": "8"
+        },
+        {
+          "meaning": "position de programmation du tag",
+          "values": "points absolus, F0 à Fxxx en avant, B0 à B30 en arrière, up suivant, down précédent",
+          "default": "réglage de l'imprimante"
+        },
+        {
+          "meaning": "longueur de l'impression VOID",
+          "values": "0 à la longueur de l'étiquette",
+          "default": "longueur de l'étiquette"
+        },
+        {
+          "meaning": "étiquettes à retenter en cas d'échec",
+          "values": "1 à 10",
+          "default": "3"
+        },
+        {
+          "meaning": "gestion des erreurs après les tentatives",
+          "values": "N aucune action, P pause, E mode erreur",
+          "default": "N"
+        },
+        {
+          "meaning": "signaux envoyés à un applicateur",
+          "values": "S signal simple, D signal double",
+          "default": "S"
+        },
+        {
+          "meaning": "réservé, non utilisé",
+          "values": "aucune"
+        },
+        {
+          "meaning": "vitesse d'impression des étiquettes VOID",
+          "values": "toute vitesse d'impression valide",
+          "default": "vitesse d'impression maximale"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Construit un numéro de série EPC à partir de l'identifiant de l'étiquette et l'écrit dans les bits de poids faible de l'EPC."
+    "summary": "Construit un numéro de série EPC à partir de l'identifiant de l'étiquette et l'écrit dans les bits de poids faible de l'EPC.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "préfixe binaire du numéro de série",
+          "values": "caractères ASCII 1 et 0, jusqu'à 38 bits",
+          "default": "dépend du MDID de la puce"
+        },
+        {
+          "meaning": "caractère spécial marquant le champ de série",
+          "values": "tout ASCII sauf commande, contrôle, délimiteur, RTC",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Définit la puissance de lecture et d'écriture RFID lorsque l'étalonnage ne produit pas de valeurs exploitables."
+    "summary": "Définit la puissance de lecture et d'écriture RFID lorsque l'étalonnage ne produit pas de valeurs exploitables.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "niveau de puissance de lecture",
+          "values": "0 à 30, ou H haute, M moyenne, L basse",
+          "default": "réglage de l'imprimante"
+        },
+        {
+          "meaning": "niveau de puissance d'écriture",
+          "values": "0 à 30, ou H haute, M moyenne, L basse",
+          "default": "réglage de l'imprimante"
+        },
+        {
+          "meaning": "sélection de l'élément d'antenne",
+          "values": "grille propre à l'imprimante, A1 à F4",
+          "default": "réglage de l'imprimante"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Verrouille la mémoire de l'étiquette RFID, de façon réversible ou permanente, pour empêcher toute écriture ultérieure."
+    "summary": "Verrouille la mémoire de l'étiquette RFID, de façon réversible ou permanente, pour empêcher toute écriture ultérieure.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "état de verrouillage du mot de passe de destruction",
+          "values": "U déverrouiller, L verrouiller, O déverrouillage permanent, P verrouillage permanent"
+        },
+        {
+          "meaning": "état de verrouillage du mot de passe d'accès",
+          "values": "U déverrouiller, L verrouiller, O déverrouillage permanent, P verrouillage permanent"
+        },
+        {
+          "meaning": "état de verrouillage de la banque de mémoire EPC",
+          "values": "U déverrouiller, L verrouiller, O déverrouillage permanent, P verrouillage permanent"
+        },
+        {
+          "meaning": "état de verrouillage de la banque de mémoire utilisateur",
+          "values": "U déverrouiller, L verrouiller, O déverrouillage permanent, P verrouillage permanent"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Exécute l'étalonnage RFID et renvoie à l'hôte les paramètres de position, d'antenne et de puissance."
+    "summary": "Exécute l'étalonnage RFID et renvoie à l'hôte les paramètres de position, d'antenne et de puissance.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "texte avant le tableau de résultats",
+          "values": "toute chaîne de moins de 65 caractères",
+          "default": "début"
+        },
+        {
+          "meaning": "texte après le tableau de résultats",
+          "values": "toute chaîne de moins de 65 caractères",
+          "default": "fin"
+        },
+        {
+          "meaning": "position de début de l'étalonnage",
+          "values": "F0 à Fxxx en avant, B0 à B30 en arrière",
+          "default": "réglage de l'imprimante"
+        },
+        {
+          "meaning": "position de fin de l'étalonnage",
+          "values": "F0 à Fxxx en avant, B0 à B30 en arrière, A automatique",
+          "default": "réglage de l'imprimante"
+        },
+        {
+          "meaning": "sélection automatique ou manuelle de l'antenne et de la puissance",
+          "values": "A automatique, M manuel",
+          "default": "A"
+        },
+        {
+          "meaning": "début de la plage de puissance de lecture-écriture",
+          "values": "0 à 30",
+          "default": "0"
+        },
+        {
+          "meaning": "fin de la plage de puissance de lecture-écriture",
+          "values": "0 à 30",
+          "default": "puissance maximale"
+        },
+        {
+          "meaning": "début de la plage d'antenne",
+          "values": "dépend du modèle, généralement A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "fin de la plage d'antenne",
+          "values": "dépend du modèle, jusqu'à E4",
+          "default": "réglage de l'imprimante"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Détermine si l'imprimante recherche un serveur d'impression filaire au démarrage."
+    "summary": "Détermine si l'imprimante recherche un serveur d'impression filaire au démarrage.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "vérification du serveur d'impression filaire au démarrage",
+          "values": "C vérifier, S ignorer",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Sélectionne le périphérique réseau principal, filaire ou sans fil."
+    "summary": "Sélectionne le périphérique réseau principal, filaire ou sans fil.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "périphérique réseau principal",
+          "values": "1 filaire principal, 2 sans fil principal",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresse une imprimante sur une ligne multipoint RS-485 historique par son identifiant réseau."
+    "summary": "Adresse une imprimante sur une ligne multipoint RS-485 historique par son identifiant réseau.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "ID réseau de l'imprimante à adresser",
+          "values": "001 à 999",
+          "default": "000 aucun"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Attribue l'identifiant réseau utilisé pour adresser une imprimante sur une ligne multipoint RS-485 historique."
+    "summary": "Attribue l'identifiant réseau utilisé pour adresser une imprimante sur une ligne multipoint RS-485 historique.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "ID réseau attribué à l'imprimante",
+          "values": "001 à 999",
+          "default": "000 aucun"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Définit l'identité SNMP et les chaînes de communauté de l'imprimante."
+    "summary": "Définit l'identité SNMP et les chaînes de communauté de l'imprimante.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "nom système SNMP",
+          "values": "jusqu'à 17 caractères"
+        },
+        {
+          "meaning": "contact système SNMP",
+          "values": "jusqu'à 50 caractères"
+        },
+        {
+          "meaning": "emplacement système SNMP",
+          "values": "jusqu'à 50 caractères"
+        },
+        {
+          "meaning": "nom de communauté SNMP get",
+          "values": "jusqu'à 19 caractères",
+          "default": "public"
+        },
+        {
+          "meaning": "nom de communauté SNMP set",
+          "values": "jusqu'à 19 caractères",
+          "default": "public"
+        },
+        {
+          "meaning": "nom de communauté SNMP trap",
+          "values": "jusqu'à 20 caractères",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Détermine si les paramètres réseau au démarrage proviennent de l'imprimante ou du serveur d'impression connecté."
+    "summary": "Détermine si les paramètres réseau au démarrage proviennent de l'imprimante ou du serveur d'impression connecté.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "source principale des réglages de démarrage",
+          "values": "P imprimante, M serveur d'impression",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Configure les paramètres de serveur SMTP et de domaine pour les alertes e-mail du serveur d'impression."
+    "summary": "Configure les paramètres de serveur SMTP et de domaine pour les alertes e-mail du serveur d'impression.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "adresse du serveur SMTP",
+          "values": "adresse IPv4"
+        },
+        {
+          "meaning": "nom de domaine du serveur d'impression",
+          "values": "nom de domaine"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Définit la durée pendant laquelle une adresse IP authentifiée peut accéder aux pages web de l'imprimante avant une nouvelle authentification."
+    "summary": "Définit la durée pendant laquelle une adresse IP authentifiée peut accéder aux pages web de l'imprimante avant une nouvelle authentification.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "délai d'authentification de la page web",
+          "values": "0 à 255 minutes",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Définit la forme et la valeur de l'identifiant client DHCP du serveur d'impression."
+    "summary": "Définit la forme et la valeur de l'identifiant client DHCP du serveur d'impression.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "mode de l'identifiant client",
+          "values": "0 désactivé, 1 adresse MAC, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "périphérique visé par l'identifiant",
+          "values": "0 tous, 1 sans fil, 2 filaire externe, 3 filaire interne",
+          "default": "1"
+        },
+        {
+          "meaning": "préfixe de l'identifiant",
+          "values": "11 caractères ASCII ou 22 hex"
+        },
+        {
+          "meaning": "suffixe de l'identifiant",
+          "values": "jusqu'à 60 caractères ASCII ou 120 hex"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Configure l'adresse IP, le masque de sous-réseau et la passerelle d'une interface réseau de l'imprimante."
+    "summary": "Configure l'adresse IP, le masque de sous-réseau et la passerelle d'une interface réseau de l'imprimante.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "périphérique modifié",
+          "values": "1 filaire externe, 2 filaire interne, 3 sans fil"
+        },
+        {
+          "meaning": "méthode de résolution de l'adresse IP",
+          "values": "A tous, B BOOTP, C DHCP et BOOTP, D DHCP, G gleaning uniquement, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "adresse IP",
+          "values": "adresse IPv4"
+        },
+        {
+          "meaning": "masque de sous-réseau",
+          "values": "masque de sous-réseau IPv4"
+        },
+        {
+          "meaning": "passerelle par défaut",
+          "values": "adresse IPv4"
+        },
+        {
+          "meaning": "adresse du serveur WINS",
+          "values": "adresse IPv4"
+        },
+        {
+          "meaning": "vérification du délai de connexion",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "valeur du délai de connexion",
+          "values": "0 à 9999 secondes",
+          "default": "300"
+        },
+        {
+          "meaning": "intervalle de diffusion ARP",
+          "values": "0 à 30 minutes",
+          "default": "0 aucun"
+        },
+        {
+          "meaning": "numéro de port de base pour l'impression raw",
+          "values": "1 à 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Configure les paramètres IP, les délais d'attente et le port raw du serveur d'impression filaire, pour les anciens micrologiciels."
+    "summary": "Configure les paramètres IP, les délais d'attente et le port raw du serveur d'impression filaire, pour les anciens micrologiciels.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "méthode de résolution de l'adresse IP",
+          "values": "A tous, B BOOTP, C DHCP et BOOTP, D DHCP, G gleaning uniquement, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "adresse IP",
+          "values": "adresse IPv4"
+        },
+        {
+          "meaning": "masque de sous-réseau",
+          "values": "masque de sous-réseau IPv4"
+        },
+        {
+          "meaning": "passerelle par défaut",
+          "values": "adresse IPv4"
+        },
+        {
+          "meaning": "adresse du serveur WINS",
+          "values": "adresse IPv4"
+        },
+        {
+          "meaning": "vérification du délai de connexion",
+          "values": "Y oui, N non",
+          "default": "Y"
+        },
+        {
+          "meaning": "valeur du délai de connexion",
+          "values": "0 à 9999 secondes",
+          "default": "300"
+        },
+        {
+          "meaning": "intervalle de diffusion ARP",
+          "values": "0 à 30 minutes",
+          "default": "0 aucun"
+        },
+        {
+          "meaning": "numéro de port de base pour l'impression raw",
+          "values": "1 à 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Sélectionne les antennes de réception et d'émission du module radio sans fil."
+    "summary": "Sélectionne les antennes de réception et d'émission du module radio sans fil.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "antenne de réception",
+          "values": "D diversité, L gauche, R droite",
+          "default": "D"
+        },
+        {
+          "meaning": "antenne d'émission",
+          "values": "D diversité, L gauche, R droite",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Configure la sécurité WEP obsolète et les clés associées pour les anciens micrologiciels sans fil."
+    "summary": "Configure la sécurité WEP obsolète et les clés associées pour les anciens micrologiciels sans fil.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "mode de chiffrement",
+          "values": "OFF aucune, 40 40 bits, 128 128 bits",
+          "default": "OFF"
+        },
+        {
+          "meaning": "index de la clé de chiffrement",
+          "values": "1 à 4",
+          "default": "1"
+        },
+        {
+          "meaning": "type d'authentification",
+          "values": "O système ouvert, S clé partagée",
+          "default": "O"
+        },
+        {
+          "meaning": "format de stockage de la clé de chiffrement",
+          "values": "H hex, S chaîne",
+          "default": "H"
+        },
+        {
+          "meaning": "clé de chiffrement 1",
+          "values": "paires hexadécimales ou chaîne alphanumérique"
+        },
+        {
+          "meaning": "clé de chiffrement 2",
+          "values": "paires hexadécimales ou chaîne alphanumérique"
+        },
+        {
+          "meaning": "clé de chiffrement 3",
+          "values": "paires hexadécimales ou chaîne alphanumérique"
+        },
+        {
+          "meaning": "clé de chiffrement 4",
+          "values": "paires hexadécimales ou chaîne alphanumérique"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Configure l'authentification Cisco LEAP obsolète pour les anciens micrologiciels sans fil."
+    "summary": "Configure l'authentification Cisco LEAP obsolète pour les anciens micrologiciels sans fil.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "mode LEAP",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "nom d'utilisateur",
+          "values": "1 à 32 caractères",
+          "default": "user"
+        },
+        {
+          "meaning": "mot de passe",
+          "values": "1 à 32 caractères",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Définit le mot de passe des paramètres sans fil sur le panneau de commande de l'imprimante."
+    "summary": "Définit le mot de passe des paramètres sans fil sur le panneau de commande de l'imprimante.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "ancien mot de passe sans fil",
+          "values": "0000 à 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "nouveau mot de passe sans fil",
+          "values": "0000 à 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Configure les débits 802.11b et la puissance d'émission sur les anciens serveurs d'impression sans fil."
+    "summary": "Configure les débits 802.11b et la puissance d'émission sur les anciens serveurs d'impression sans fil.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "débit d'émission de 1 Mbit/s",
+          "values": "Y activé, N désactivé"
+        },
+        {
+          "meaning": "débit d'émission de 2 Mbit/s",
+          "values": "Y activé, N désactivé"
+        },
+        {
+          "meaning": "débit d'émission de 5,5 Mbit/s",
+          "values": "Y activé, N désactivé"
+        },
+        {
+          "meaning": "débit d'émission de 11 Mbit/s",
+          "values": "Y activé, N désactivé"
+        },
+        {
+          "meaning": "puissance d'émission",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Configure le nom du réseau sans fil, le mode radio, la longueur du préambule et le comportement de maintien de connexion."
+    "summary": "Configure le nom du réseau sans fil, le mode radio, la longueur du préambule et le comportement de maintien de connexion.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "valeur ESSID",
+          "values": "jusqu'à 32 caractères",
+          "default": "125"
+        },
+        {
+          "meaning": "mode de fonctionnement",
+          "values": "I infrastructure, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "longueur du préambule de la carte radio",
+          "values": "L long, S court",
+          "default": "L"
+        },
+        {
+          "meaning": "impulsion sans fil activée",
+          "values": "0 désactivé, 1 activé",
+          "default": "1"
+        },
+        {
+          "meaning": "intervalle d'impulsion sans fil",
+          "values": "5 à 300 secondes",
+          "default": "15"
+        },
+        {
+          "meaning": "masque de canal",
+          "values": "4 chiffres hex avec préfixe 0x",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "mode international",
+          "values": "0 désactivé, 1 activé",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Configure en une seule commande le mode de sécurité sans fil, les clés et les identifiants."
+    "summary": "Configure en une seule commande le mode de sécurité sans fil, les clés et les identifiants.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "code du type de sécurité",
+          "values": "01 aucune, 02 WEP 40, 03 WEP 128, 04 à 08 types EAP, 09 WPA PSK, 10 à 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "index de la clé WEP",
+          "values": "1 à 4",
+          "default": "1"
+        },
+        {
+          "meaning": "type d'authentification WEP",
+          "values": "O système ouvert, S clé partagée",
+          "default": "O"
+        },
+        {
+          "meaning": "format de stockage de la clé WEP",
+          "values": "H hex, S chaîne",
+          "default": "S"
+        },
+        {
+          "meaning": "clé WEP 1",
+          "values": "paires hexadécimales ou chaîne alphanumérique"
+        },
+        {
+          "meaning": "clé WEP 2",
+          "values": "paires hexadécimales ou chaîne alphanumérique"
+        },
+        {
+          "meaning": "clé WEP 3",
+          "values": "paires hexadécimales ou chaîne alphanumérique"
+        },
+        {
+          "meaning": "clé WEP 4",
+          "values": "paires hexadécimales ou chaîne alphanumérique"
+        },
+        {
+          "meaning": "identifiant utilisateur pour le type de sécurité",
+          "values": "toute chaîne",
+          "default": "user"
+        },
+        {
+          "meaning": "mot de passe pour le type de sécurité",
+          "values": "toute chaîne",
+          "default": "password"
+        },
+        {
+          "meaning": "mot de passe de clé privée en option",
+          "values": "toute chaîne"
+        },
+        {
+          "meaning": "domaine Kerberos",
+          "values": "toute chaîne",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "centre de distribution de clés Kerberos",
+          "values": "toute chaîne",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "valeur de la clé pré-partagée",
+          "values": "minimum 64 chiffres hex"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "인쇄 가능 폭을 도트 단위로 지정합니다. 이 폭을 벗어난 내용은 프린터가 잘라냅니다."
+    "summary": "인쇄 가능 폭을 도트 단위로 지정합니다. 이 폭을 벗어난 내용은 프린터가 잘라냅니다.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "도트 단위 인쇄 폭",
+          "values": "2 ~ 라벨 폭",
+          "default": "마지막 저장 값"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "라벨 길이를 도트 단위로 지정하여 인쇄 포맷이 끝나는 지점을 정의합니다."
+    "summary": "라벨 길이를 도트 단위로 지정하여 인쇄 포맷이 끝나는 지점을 정의합니다.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "도트 단위 라벨 길이",
+          "values": "1 ~ 32000",
+          "default": "프린터 설정"
+        },
+        {
+          "meaning": "모든 용지에 적용",
+          "values": "N 연속용지만, Y 모든 용지",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "라벨 홈 위치를 옮겨 이후 필드 좌표가 기준으로 삼는 원점을 변경합니다."
+    "summary": "라벨 홈 위치를 옮겨 이후 필드 좌표가 기준으로 삼는 원점을 변경합니다.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "라벨 홈 위치의 x축",
+          "values": "0 ~ 32000",
+          "default": "0 또는 마지막 저장 값"
+        },
+        {
+          "meaning": "라벨 홈 위치의 y축",
+          "values": "0 ~ 32000",
+          "default": "0 또는 마지막 저장 값"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "이전 Zebra 포맷과의 호환을 위해 필드 위치에 가로 오프셋을 적용합니다."
+    "summary": "이전 Zebra 포맷과의 호환을 위해 필드 위치에 가로 오프셋을 적용합니다.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "모든 필드 위치의 좌측 이동량",
+          "values": "-9999 ~ 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "용지 상단 가장자리를 기준으로 포맷 전체에 세로 오프셋을 더합니다."
+    "summary": "용지 상단 가장자리를 기준으로 포맷 전체에 세로 오프셋을 더합니다.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "포맷 전체를 도트 행 단위로 상하 이동",
+          "values": "-120 ~ 120, XiIIIPlus 600dpi -240 ~ 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "좌표 단위를 도트, 인치, 밀리미터 중에서 지정하며, 서로 다른 인쇄 해상도 사이에서 포맷 크기를 변환할 수도 있습니다."
+    "summary": "좌표 단위를 도트, 인치, 밀리미터 중에서 지정하며, 서로 다른 인쇄 해상도 사이에서 포맷 크기를 변환할 수도 있습니다.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "이후 필드의 좌표 단위",
+          "values": "D 도트, I 인치, M 밀리미터",
+          "default": "D"
+        },
+        {
+          "meaning": "인치당 도트 단위의 포맷 기준 해상도",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "변환할 목표 해상도",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "인쇄 후 용지 처리 방식을 지정합니다. tear-off, peel-off, cutter, rewind, applicator 모드를 사용할 수 있습니다."
+    "summary": "인쇄 후 용지 처리 방식을 지정합니다. tear-off, peel-off, cutter, rewind, applicator 모드를 사용할 수 있습니다.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "인쇄 후 용지 처리 모드",
+          "values": "T 찢기, P 벗기기, R 되감기, A 애플리케이터, C 커터, D 지연 커터, F RFID, K 키오스크",
+          "default": "프린터 설정"
+        },
+        {
+          "meaning": "다음 라벨 전 미리 벗기기",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "장착된 용지가 리본을 사용하는지에 맞추어 열전사 모드와 감열 모드 중 하나를 선택합니다."
+    "summary": "장착된 용지가 리본을 사용하는지에 맞추어 열전사 모드와 감열 모드 중 하나를 선택합니다.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "프린터가 사용하는 용지 종류",
+          "values": "T 열전사, D 감열"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "인쇄 매수와 일시정지 또는 절단 단위, 일련번호 값당 사본 수를 지정합니다."
+    "summary": "인쇄 매수와 일시정지 또는 절단 단위, 일련번호 값당 사본 수를 지정합니다.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "인쇄할 전체 라벨 수",
+          "values": "1 ~ 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "일시정지 전 인쇄 라벨 수",
+          "values": "1 ~ 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "일련번호당 복제 수",
+          "values": "0 ~ 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "일시정지 횟수 재정의",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        },
+        {
+          "meaning": "무효화된 RFID 라벨 후 절단",
+          "values": "N 아니오, Y 예",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "전경과 배경을 서로 바꾸어 이후 필드를 반전 인쇄합니다."
+    "summary": "전경과 배경을 서로 바꾸어 이후 필드를 반전 인쇄합니다.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "이후 필드의 인쇄 색상 반전",
+          "values": "N 아니오, Y 예",
+          "default": "N 또는 마지막 저장 값"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "라벨 포맷 전체를 180도 회전시킵니다."
+    "summary": "라벨 포맷 전체를 180도 회전시킵니다.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "라벨을 뒤집어 인쇄",
+          "values": "N 표준, I 반전",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "인쇄 영역을 좌우로 반전시킵니다."
+    "summary": "인쇄 영역을 좌우로 반전시킵니다.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "라벨을 좌우로 반전",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "인쇄 속도와 이송 속도, 백피드 속도를 초당 인치 단위로 지정합니다."
+    "summary": "인쇄 속도와 이송 속도, 백피드 속도를 초당 인치 단위로 지정합니다.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "초당 인치 단위 인쇄 속도",
+          "values": "1 ~ 14, 또는 A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "빈 라벨 급지 속도",
+          "values": "2 ~ 14",
+          "default": "6"
+        },
+        {
+          "meaning": "인쇄 후 백피드 속도",
+          "values": "2 ~ 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "다음 필드를 좌측 상단 모서리 기준으로 라벨 홈 원점으로부터 배치합니다."
+    "summary": "다음 필드를 좌측 상단 모서리 기준으로 라벨 홈 원점으로부터 배치합니다.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "도트 단위 가로 위치",
+          "values": "0 ~ 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "도트 단위 세로 위치",
+          "values": "0 ~ 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "정렬",
+          "values": "0 왼쪽, 1 오른쪽, 2 자동",
+          "default": "마지막 ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "다음 필드를 글자 기준선이나 바코드 가장자리를 기준으로 배치하여, 회전된 필드에도 일정한 기준점을 제공합니다."
+    "summary": "다음 필드를 글자 기준선이나 바코드 가장자리를 기준으로 배치하여, 회전된 필드에도 일정한 기준점을 제공합니다.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "도트 단위 가로 위치",
+          "values": "0 ~ 32000",
+          "default": "마지막 필드 위치"
+        },
+        {
+          "meaning": "도트 단위 세로 위치",
+          "values": "0 ~ 32000",
+          "default": "마지막 필드 위치"
+        },
+        {
+          "meaning": "정렬",
+          "values": "0 왼쪽, 1 오른쪽, 2 자동",
+          "default": "마지막 ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "현재 필드의 내용을 지정합니다. 텍스트와 바코드 데이터, RFID 데이터가 여기에 해당합니다."
+    "summary": "현재 필드의 내용을 지정합니다. 텍스트와 바코드 데이터, RFID 데이터가 여기에 해당합니다.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "필드 내용",
+          "values": "출력 가능한 데이터 최대 3072바이트, 접두 문자 없음"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "필드 데이터 안에서 16진수 이스케이프를 사용하도록 하여 바이너리 바이트와 예약된 명령 문자를 표현합니다."
+    "summary": "필드 데이터 안에서 16진수 이스케이프를 사용하도록 하여 바이너리 바이트와 예약된 명령 문자를 표현합니다.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "16진수 표시 문자",
+          "values": "포맷과 제어 접두 문자를 제외한 모든 문자",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "주석 필드를 추가합니다. 프린터는 다음 필드 구분자까지의 내용을 무시합니다."
+    "summary": "주석 필드를 추가합니다. 프린터는 다음 필드 구분자까지의 내용을 무시합니다.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "인쇄되지 않는 주석 텍스트",
+          "values": "모든 텍스트, 다음 명령까지 무시"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "필드의 기본 방향을 지정하며, 최신 펌웨어에서는 기본 정렬도 함께 지정합니다."
+    "summary": "필드의 기본 방향을 지정하며, 최신 펌웨어에서는 기본 정렬도 함께 지정합니다.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "기본 필드 회전",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "기본 정렬",
+          "values": "0 왼쪽, 1 오른쪽, 2 자동",
+          "default": "^TB는 자동, 그 외는 왼쪽"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "필드 데이터를 고정 폭 블록 안에서 줄바꿈하며, 줄 수와 줄 간격, 들여쓰기, 정렬을 제어합니다."
+    "summary": "필드 데이터를 고정 폭 블록 안에서 줄바꿈하며, 줄 수와 줄 간격, 들여쓰기, 정렬을 제어합니다.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "도트 단위 블록 너비",
+          "values": "0 ~ 라벨 폭",
+          "default": "0"
+        },
+        {
+          "meaning": "최대 줄 수",
+          "values": "1 ~ 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "도트 단위 추가 줄 간격",
+          "values": "-9999 ~ 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "정렬",
+          "values": "L 왼쪽, C 가운데, R 오른쪽, J 양쪽",
+          "default": "L"
+        },
+        {
+          "meaning": "도트 단위 이후 줄의 내어쓰기",
+          "values": "0 ~ 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "폭과 높이가 고정된 상자 안에서 텍스트를 줄바꿈하고, 넘치는 부분은 잘라냅니다."
+    "summary": "폭과 높이가 고정된 상자 안에서 텍스트를 줄바꿈하고, 넘치는 부분은 잘라냅니다.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "블록 회전",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^A"
+        },
+        {
+          "meaning": "도트 단위 블록 너비",
+          "values": "1 ~ 라벨 폭",
+          "default": "1"
+        },
+        {
+          "meaning": "도트 단위 블록 높이",
+          "values": "1 ~ 라벨 길이",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "저장한 뒤 불러오는 포맷에서 가변 필드에 번호를 지정합니다."
+    "summary": "저장한 뒤 불러오는 포맷에서 가변 필드에 번호를 지정합니다.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "필드 번호",
+          "values": "0 ~ 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "선택적 KDU 프롬프트 텍스트",
+          "values": "최대 255자의 영숫자"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "가변 필드에 데이터를 공급합니다. ^FD 데이터와 달리 라벨이 인쇄된 후 지워집니다."
+    "summary": "가변 필드에 데이터를 공급합니다. ^FD 데이터와 달리 라벨이 인쇄된 후 지워집니다.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "가변 필드 데이터",
+          "values": "0 ~ 3072바이트 문자열"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "다른 필드 문자열 안에 번호가 지정된 필드 값을 끼워 넣을 때 사용할 문자를 지정합니다."
+    "summary": "다른 필드 문자열 안에 번호가 지정된 필드 값을 끼워 넣을 때 사용할 문자를 지정합니다.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "필드 연결 구분자",
+          "values": "포맷과 제어 접두 문자를 제외한 모든 문자",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "필드 데이터 안에서 실시간 시계 토큰을 나타낼 표시 문자를 지정합니다."
+    "summary": "필드 데이터 안에서 실시간 시계 토큰을 나타낼 표시 문자를 지정합니다.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "주 시계 표시 문자",
+          "values": "모든 ASCII 문자",
+          "default": "%"
+        },
+        {
+          "meaning": "보조 시계 표시 문자",
+          "values": "모든 ASCII 문자, a와 달라야 함"
+        },
+        {
+          "meaning": "세 번째 시계 표시 문자",
+          "values": "모든 ASCII 문자, a와 b와 달라야 함"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "이후 바코드 필드에 적용할 기본 모듈 폭과 굵은 바 대 얇은 바 비율, 높이를 지정합니다."
+    "summary": "이후 바코드 필드에 적용할 기본 모듈 폭과 굵은 바 대 얇은 바 비율, 높이를 지정합니다.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "도트 단위 모듈 폭",
+          "values": "1 ~ 10",
+          "default": "2"
+        },
+        {
+          "meaning": "굵은 바 대 얇은 바 비율",
+          "values": "2.0 ~ 3.0, 0.1 단위",
+          "default": "3.0"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "모든 도트 단위 높이",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "하나의 메시지가 여러 심볼에 걸칠 때 PDF417 또는 MicroPDF417 세그먼트를 지정한 원점에 배치합니다."
+    "summary": "하나의 메시지가 여러 심볼에 걸칠 때 PDF417 또는 MicroPDF417 세그먼트를 지정한 원점에 배치합니다.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "첫 심볼의 x축, 추가 심볼은 쌍으로 반복",
+          "values": "0 ~ 32000, 또는 e로 이 심볼 건너뜀"
+        },
+        {
+          "meaning": "첫 심볼의 y축, 추가 심볼은 쌍으로 반복",
+          "values": "0 ~ 32000, 또는 e로 이 심볼 건너뜀"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "현재 필드의 문자 배열 방향을 지정하며 문자 간격을 추가할 수도 있습니다."
+    "summary": "현재 필드의 문자 배열 방향을 지정하며 문자 간격을 추가할 수도 있습니다.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "인쇄 방향",
+          "values": "H 가로, V 세로, R 반전",
+          "default": "H"
+        },
+        {
+          "meaning": "도트 단위 추가 문자 간격",
+          "values": "0 ~ 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "다음 필드에 내장 스케일러블 폰트 0을 지정한 크기와 방향으로 적용합니다."
+    "summary": "다음 필드에 내장 스케일러블 폰트 0을 지정한 크기와 방향으로 적용합니다.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 문자 높이",
+          "values": "10 ~ 32000",
+          "default": "마지막 ^CF"
+        },
+        {
+          "meaning": "도트 단위 문자 너비",
+          "values": "10 ~ 32000",
+          "default": "마지막 ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "한 글자 이름으로 내장 폰트를 선택하며, 방향과 높이, 폭을 함께 지정할 수 있습니다."
+    "summary": "한 글자 이름으로 내장 폰트를 선택하며, 방향과 높이, 폭을 함께 지정할 수 있습니다.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "글꼴 이름",
+          "values": "A ~ Z, 0 ~ 9",
+          "default": "마지막 ^CF"
+        },
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 문자 높이",
+          "values": "10 ~ 32000 스케일러블, 비트맵은 기준 높이의 1 ~ 10배",
+          "default": "마지막 ^CF"
+        },
+        {
+          "meaning": "도트 단위 문자 너비",
+          "values": "10 ~ 32000 스케일러블, 비트맵은 기준 너비의 1 ~ 10배",
+          "default": "마지막 ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "다음 필드에 저장된 폰트 파일을 적용하며, 방향과 높이, 폭을 함께 지정할 수 있습니다."
+    "summary": "다음 필드에 저장된 폰트 파일을 적용하며, 방향과 높이, 폭을 함께 지정할 수 있습니다.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "필드 방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 문자 높이",
+          "values": "10 ~ 32000 스케일러블, 비트맵은 기준 높이의 1 ~ 10배",
+          "default": "마지막 ^CF"
+        },
+        {
+          "meaning": "도트 단위 문자 너비",
+          "values": "10 ~ 32000 스케일러블, 비트맵은 기준 너비의 1 ~ 10배",
+          "default": "마지막 ^CF"
+        },
+        {
+          "meaning": "글꼴이 있는 드라이브",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "사용할 글꼴 파일 이름",
+          "values": "유효한 모든 글꼴 이름",
+          "default": "마지막 ^CF"
+        },
+        {
+          "meaning": "글꼴 파일 확장자",
+          "values": "FNT 글꼴, TTF TrueType, TTE TrueType 확장"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "폰트를 직접 지정하지 않은 텍스트 필드가 사용할 기본 폰트와 높이, 폭을 지정합니다."
+    "summary": "폰트를 직접 지정하지 않은 텍스트 필드가 사용할 기본 폰트와 높이, 폭을 지정합니다.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "기본 글꼴",
+          "values": "A ~ Z, 0 ~ 9",
+          "default": "A"
+        },
+        {
+          "meaning": "도트 단위 기본 문자 높이",
+          "values": "0 ~ 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "도트 단위 기본 문자 너비",
+          "values": "0 ~ 32000",
+          "default": "5 또는 마지막 저장 값"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "필드 데이터를 해석할 인코딩을 선택합니다. 코드 페이지와 UTF-8을 사용할 수 있습니다."
+    "summary": "필드 데이터를 해석할 인코딩을 선택합니다. 코드 페이지와 UTF-8을 사용할 수 있습니다.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "사용할 문자 인코딩",
+          "values": "0 ~ 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "재매핑할 문자 위치",
+          "values": "0 ~ 255",
+          "default": "없음"
+        },
+        {
+          "meaning": "대체 문자 위치",
+          "values": "0 ~ 255",
+          "default": "없음"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "이후 필드에 고급 텍스트 레이아웃을 적용하여 양방향 텍스트와 글자 결합, OpenType 기능을 사용합니다."
+    "summary": "이후 필드에 고급 텍스트 레이아웃을 적용하여 양방향 텍스트와 글자 결합, OpenType 기능을 사용합니다.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "기본 글리프 소스",
+          "values": "0 공백 문자, 1 글꼴 글리프",
+          "default": "0"
+        },
+        {
+          "meaning": "양방향 텍스트 배치",
+          "values": "0 끔, 1 켬",
+          "default": "0"
+        },
+        {
+          "meaning": "문자 셰이핑",
+          "values": "0 끔, 1 켬",
+          "default": "0"
+        },
+        {
+          "meaning": "OpenType 테이블 지원",
+          "values": "0 끔, 1 켬",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "한 글자 폰트 이름을 저장된 폰트 파일에 연결합니다."
+    "summary": "한 글자 폰트 이름을 저장된 폰트 파일에 연결합니다.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "추가 또는 교체할 글꼴 문자",
+          "values": "A ~ Z, 0 ~ 9"
+        },
+        {
+          "meaning": "글꼴을 저장할 드라이브",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "저장된 글꼴 파일 이름",
+          "values": "최대 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "글꼴 파일 확장자",
+          "values": "FNT 글꼴, TTF TrueType, TTE TrueType 확장"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "렌더링된 스케일러블 글리프의 캐시 크기를 지정하여 큰 글꼴을 반복 출력할 때의 속도를 높입니다."
+    "summary": "렌더링된 스케일러블 글리프의 캐시 크기를 지정하여 큰 글꼴을 반복 출력할 때의 속도를 높입니다.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "문자 캐시 활성화",
+          "values": "N 아니오, Y 예",
+          "default": "Y"
+        },
+        {
+          "meaning": "K 단위 추가 캐시 메모리",
+          "values": "1 ~ 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "캐시 버퍼 유형",
+          "values": "0 일반 글꼴, 1 아시아 글꼴",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "기본 폰트에 해당 글리프가 없을 때 사용할 TrueType 대체 폰트 연결을 정의합니다."
+    "summary": "기본 폰트에 해당 글리프가 없을 때 사용할 TrueType 대체 폰트 연결을 정의합니다.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "링크할 확장 글꼴, 장치와 파일",
+          "values": "장치에 있는 TTF 또는 TTE 파일"
+        },
+        {
+          "meaning": "이를 받을 기본 글꼴",
+          "values": "FNT, TTF 또는 TTE 파일, 와일드카드 허용"
+        },
+        {
+          "meaning": "확장 글꼴 링크 또는 링크 해제",
+          "values": "0 링크 해제, 1 링크"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "비트맵 폰트와 그 메트릭 정보를 프린터 메모리에 다운로드합니다."
+    "summary": "비트맵 폰트와 그 메트릭 정보를 프린터 메모리에 다운로드합니다.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "글꼴을 저장할 드라이브",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "글꼴 이름",
+          "values": "최대 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "글꼴 파일 확장자",
+          "values": "FNT 고정값",
+          "default": "FNT"
+        },
+        {
+          "meaning": "네이티브 글꼴의 방향",
+          "values": "N 표준만",
+          "default": "N"
+        },
+        {
+          "meaning": "도트 단위 최대 셀 높이",
+          "values": "1 ~ 32000"
+        },
+        {
+          "meaning": "도트 단위 최대 셀 너비",
+          "values": "1 ~ 32000"
+        },
+        {
+          "meaning": "셀 상단에서 기준선까지 도트 수",
+          "values": "1 ~ 32000"
+        },
+        {
+          "meaning": "공백 문자 너비",
+          "values": "1 ~ 32000"
+        },
+        {
+          "meaning": "글꼴의 문자 수",
+          "values": "1 ~ 256"
+        },
+        {
+          "meaning": "저작권자 텍스트",
+          "values": "1 ~ 63자의 영숫자"
+        },
+        {
+          "meaning": "문자별 구조화 비트맵 데이터",
+          "values": "해시 코드 다음 높이와 너비 오프셋 다음 16진 데이터"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "인코딩된 스케일러블 Intellifont를 프린터 메모리에 다운로드합니다."
+    "summary": "인코딩된 스케일러블 Intellifont를 프린터 메모리에 다운로드합니다.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "글꼴을 저장할 드라이브",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "글꼴 이름",
+          "values": "최대 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "글꼴 파일 확장자",
+          "values": "FNT 고정값",
+          "default": "FNT"
+        },
+        {
+          "meaning": "ZTools 기준 바이트 단위 글꼴 크기",
+          "values": "변환된 글꼴의 바이트 수"
+        },
+        {
+          "meaning": "인코딩된 글꼴 바이트 데이터",
+          "values": "크기에 맞는 16진수 쌍"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "문자 수가 최대 256자인 인코딩된 TrueType 폰트를 프린터 메모리에 다운로드합니다."
+    "summary": "문자 수가 최대 256자인 인코딩된 TrueType 폰트를 프린터 메모리에 다운로드합니다.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "글꼴을 저장할 드라이브",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "글꼴 이름",
+          "values": "최대 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "글꼴 파일 확장자",
+          "values": "DAT 고정값",
+          "default": "DAT"
+        },
+        {
+          "meaning": "바이트 단위 글꼴 크기",
+          "values": "변환된 글꼴의 바이트 수"
+        },
+        {
+          "meaning": "인코딩된 글꼴 바이트 데이터",
+          "values": "크기에 맞는 16진수 쌍"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "글리프가 256자를 넘는 인코딩된 TrueType 폰트를 프린터 메모리에 다운로드합니다."
+    "summary": "글리프가 256자를 넘는 인코딩된 TrueType 폰트를 프린터 메모리에 다운로드합니다.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "글꼴을 저장할 드라이브",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "글꼴 이름",
+          "values": "최대 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "글꼴 파일 확장자",
+          "values": "FNT 고정값",
+          "default": "FNT"
+        },
+        {
+          "meaning": "바이트 단위 글꼴 크기",
+          "values": "변환된 글꼴의 바이트 수"
+        },
+        {
+          "meaning": "인코딩된 글꼴 바이트 데이터",
+          "values": "크기에 맞는 16진수 쌍"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "TrueType 폰트에서 필드 데이터 바이트를 Unicode 값에 대응시키는 인코딩 테이블을 다운로드합니다."
+    "summary": "TrueType 폰트에서 필드 데이터 바이트를 Unicode 값에 대응시키는 인코딩 테이블을 다운로드합니다.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "테이블이 있는 드라이브",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "테이블 이름",
+          "values": "최대 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "테이블 파일 확장자",
+          "values": "DAT 고정값",
+          "default": "DAT"
+        },
+        {
+          "meaning": "바이트 단위 테이블 크기",
+          "values": "변환된 테이블의 바이트 수"
+        },
+        {
+          "meaning": "인코딩된 테이블 바이트 데이터",
+          "values": "크기에 맞는 16진수 쌍"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "가변 길이 ASCII 데이터를 담는 Code 128 바코드를 생성합니다. 서브셋 자동 전환과 UCC/EAN 데이터를 위한 모드를 제공합니다."
+    "summary": "가변 길이 ASCII 데이터를 담는 Code 128 바코드를 생성합니다. 서브셋 자동 전환과 UCC/EAN 데이터를 위한 모드를 제공합니다.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "N 아니오, Y 예",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC 체크 디지트",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        },
+        {
+          "meaning": "모드",
+          "values": "N 없음, U UCC Case Mode, A 자동, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Code 39 바코드를 생성하며 Mod 43 체크 디지트를 선택적으로 붙일 수 있습니다."
+    "summary": "Code 39 바코드를 생성하며 Mod 43 체크 디지트를 선택적으로 붙일 수 있습니다.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "Mod 43 체크 디지트",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "시프트 문자를 사용해 전체 ASCII 데이터를 표현하는 Code 93 바코드를 생성합니다."
+    "summary": "시프트 문자를 사용해 전체 ASCII 데이터를 표현하는 Code 93 바코드를 생성합니다.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "체크 디지트 인쇄 여부",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "숫자와 하이픈을 담는 Code 11 바코드를 생성하며 체크 디지트를 선택적으로 붙일 수 있습니다."
+    "summary": "숫자와 하이픈을 담는 Code 11 바코드를 생성하며 체크 디지트를 선택적으로 붙일 수 있습니다.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "체크 디지트 자릿수",
+          "values": "Y 1자리, N 2자리",
+          "default": "N"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "길이가 짝수인 숫자 데이터를 담는 Interleaved 2 of 5 바코드를 생성하며 체크 디지트를 선택적으로 붙일 수 있습니다."
+    "summary": "길이가 짝수인 숫자 데이터를 담는 Interleaved 2 of 5 바코드를 생성하며 체크 디지트를 선택적으로 붙일 수 있습니다.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod 10 체크 디지트",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "여섯 번째 슬롯, 문서화되지 않음",
+          "values": "가이드에 문서화되지 않음"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "데이터를 바에만 인코딩하는 숫자 전용 코드인 Industrial 2 of 5 바코드를 생성합니다."
+    "summary": "데이터를 바에만 인코딩하는 숫자 전용 코드인 Industrial 2 of 5 바코드를 생성합니다.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "데이터를 바에만 인코딩하는 자체 검증형 숫자 코드인 Standard 2 of 5 바코드를 생성합니다."
+    "summary": "데이터를 바에만 인코딩하는 자체 검증형 숫자 코드인 Standard 2 of 5 바코드를 생성합니다.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "도서관과 의료, 택배 라벨에 쓰이는 ANSI Codabar 바코드를 생성합니다. USD-4라고도 불립니다."
+    "summary": "도서관과 의료, 택배 라벨에 쓰이는 ANSI Codabar 바코드를 생성합니다. USD-4라고도 불립니다.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "체크 디지트, 고정 끔",
+          "values": "N만",
+          "default": "N"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "시작 문자",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "정지 문자",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Code 39의 미국 국방부 변형인 LOGMARS 바코드를 생성하며, 소문자 데이터는 대문자로 바꿉니다."
+    "summary": "Code 39의 미국 국방부 변형인 LOGMARS 바코드를 생성하며, 소문자 데이터는 대문자로 바꿉니다.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Plessey에서 파생된 숫자 코드인 MSI 바코드를 생성하며 체크 디지트 방식을 선택할 수 있습니다."
+    "summary": "Plessey에서 파생된 숫자 코드인 MSI 바코드를 생성하며 체크 디지트 방식을 선택할 수 있습니다.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "체크 디지트 방식",
+          "values": "A 없음, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "해석 라인의 체크 디지트",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "구형 숫자 코드인 Plessey 바코드를 생성하며 체크 디지트를 선택적으로 붙일 수 있습니다."
+    "summary": "구형 숫자 코드인 Plessey 바코드를 생성하며 체크 디지트를 선택적으로 붙일 수 있습니다.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "체크 디지트 인쇄 여부",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "소매 상품 번호용 EAN-13 바코드를 생성하며, 데이터 12자리에서 체크 디지트를 계산합니다."
+    "summary": "소매 상품 번호용 EAN-13 바코드를 생성하며, 데이터 12자리에서 체크 디지트를 계산합니다.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "소형 소매 포장용 EAN-8 바코드를 생성하며, 데이터 7자리에서 체크 디지트를 계산합니다."
+    "summary": "소형 소매 포장용 EAN-8 바코드를 생성하며, 데이터 7자리에서 체크 디지트를 계산합니다.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "데이터 11자리로 소매 포장용 UPC-A 바코드를 생성하며 체크 디지트 인쇄 여부를 선택할 수 있습니다."
+    "summary": "데이터 11자리로 소매 포장용 UPC-A 바코드를 생성하며 체크 디지트 인쇄 여부를 선택할 수 있습니다.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 9999",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "체크 디지트 인쇄 여부",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "UPC-A의 축약형인 UPC-E 바코드를 생성합니다. 필드 데이터에는 제조업체와 제품 코드 10자리를 모두 입력합니다."
+    "summary": "UPC-A의 축약형인 UPC-E 바코드를 생성합니다. 필드 데이터에는 제조업체와 제품 코드 10자리를 모두 입력합니다.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "체크 디지트 인쇄 여부",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "GS1 DataBar 심볼을 생성하며 하위 유형과 배율, 높이, 세그먼트 폭을 선택할 수 있습니다."
+    "summary": "GS1 DataBar 심볼을 생성하며 하위 유형과 배율, 높이, 세그먼트 폭을 선택할 수 있습니다.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 회전, I 반전, B 상하반전",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar 심볼 유형",
+          "values": "1 omni, 2 truncated, 3 stacked, 4 stacked omni, 5 limited, 6 expanded, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 CC-A/B 포함 UCC/EAN-128, 12 CC-C 포함 UCC/EAN-128",
+          "default": "1"
+        },
+        {
+          "meaning": "확대 비율",
+          "values": "1 ~ 10",
+          "default": "프린터 설정"
+        },
+        {
+          "meaning": "구분선 높이",
+          "values": "1 또는 2",
+          "default": "1"
+        },
+        {
+          "meaning": "도트 단위 선형 부분 높이",
+          "values": "1 ~ 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "GS1 DataBar Expanded 세그먼트 폭",
+          "values": "2 ~ 22, 짝수만",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "숫자를 긴 바와 짧은 바로 인코딩하는 Planet Code 우편 바코드를 생성합니다."
+    "summary": "숫자를 긴 바와 짧은 바로 인코딩하는 Planet Code 우편 바코드를 생성합니다.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 회전, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 9999",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "우편 코드 유형 설정에 따라 POSTNET, Planet Code, USPS Intelligent Mail 중 하나를 생성합니다."
+    "summary": "우편 코드 유형 설정에 따라 POSTNET, Planet Code, USPS Intelligent Mail 중 하나를 생성합니다.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "우편 코드 유형",
+          "values": "0 postnet, 1 planet, 2 예약, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "주 바코드 옆에 두 자리 또는 다섯 자리 UPC/EAN 부가 심볼을 생성합니다."
+    "summary": "주 바코드 옆에 두 자리 또는 다섯 자리 UPC/EAN 부가 심볼을 생성합니다.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 32000",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "코드 위 해석 라인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "전체 ASCII 데이터를 2행에서 8행까지 담는 Code 49 적층형 바코드를 생성합니다."
+    "summary": "전체 ASCII 데이터를 2행에서 8행까지 담는 Code 49 적층형 바코드를 생성합니다.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "개별 행의 높이 배율",
+          "values": "1 ~ 라벨 높이",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "해석 라인 위치",
+          "values": "N 없음, A 위, B 아래",
+          "default": "N"
+        },
+        {
+          "meaning": "시작 모드",
+          "values": "0 영숫자, 1 multiread, 2 숫자, 3 group alpha, 4 shift 1, 5 shift 2, A 자동",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "QR Code 심볼을 생성합니다. 명령 파라미터로 모델과 배율, 마스크를 지정하고 필드 데이터로 오류 정정 수준과 문자 모드를 지정합니다."
+    "summary": "QR Code 심볼을 생성합니다. 명령 파라미터로 모델과 배율, 마스크를 지정하고 필드 데이터로 오류 정정 수준과 문자 모드를 지정합니다.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "필드 방향",
+          "values": "N 표준만",
+          "default": "N"
+        },
+        {
+          "meaning": "모델",
+          "values": "1 기존, 2 향상",
+          "default": "2"
+        },
+        {
+          "meaning": "확대 비율",
+          "values": "1 ~ 100",
+          "default": "150dpi 1, 200dpi 2, 300dpi 3, 600dpi 6"
+        },
+        {
+          "meaning": "오류 정정 수준",
+          "values": "H 울트라하이, Q 하이, M 표준, L 고밀도",
+          "default": "값이 없으면 Q, 값이 유효하지 않으면 M"
+        },
+        {
+          "meaning": "마스크 값",
+          "values": "0 ~ 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Data Matrix 심볼을 생성하며 요소 크기와 품질 수준, 이스케이프 처리 방식을 설정할 수 있습니다."
+    "summary": "Data Matrix 심볼을 생성하며 요소 크기와 품질 수준, 이스케이프 처리 방식을 설정할 수 있습니다.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "심볼 요소의 치수 높이",
+          "values": "1 ~ 라벨 폭",
+          "default": "0, ^BY에서 심볼 높이를 가져옴"
+        },
+        {
+          "meaning": "품질 수준",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "인코딩할 열 수",
+          "values": "9 ~ 49, 품질 0 ~ 140은 홀수만, 품질 200은 짝수만"
+        },
+        {
+          "meaning": "인코딩할 행 수",
+          "values": "9 ~ 49"
+        },
+        {
+          "meaning": "포맷 ID",
+          "values": "1 숫자, 2 대문자, 3 ., - / 포함 대문자 영숫자, 4 대문자 영숫자, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "이스케이프 시퀀스 제어 문자",
+          "values": "모든 문자",
+          "default": "틸드"
+        },
+        {
+          "meaning": "가로세로 비율",
+          "values": "1 정사각형, 2 사각형",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "대용량 텍스트나 바이너리 데이터를 담는 PDF417 적층형 2차원 심볼을 생성합니다."
+    "summary": "대용량 텍스트나 바이너리 데이터를 담는 PDF417 적층형 2차원 심볼을 생성합니다.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 행당 바코드 높이",
+          "values": "1 ~ 라벨 높이",
+          "default": "마지막 ^BY"
+        },
+        {
+          "meaning": "보안 수준",
+          "values": "1 ~ 8",
+          "default": "0"
+        },
+        {
+          "meaning": "데이터 열 수",
+          "values": "1 ~ 30",
+          "default": "자동 가로세로 비율"
+        },
+        {
+          "meaning": "행 수",
+          "values": "3 ~ 90",
+          "default": "자동 가로세로 비율"
+        },
+        {
+          "meaning": "우측 행 표시와 정지 패턴 절단",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "행 주소 패턴을 사용하는 PDF417의 소형 변형인 MicroPDF417 심볼을 생성합니다."
+    "summary": "행 주소 패턴을 사용하는 PDF417의 소형 변형인 MicroPDF417 심볼을 생성합니다.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "도트 단위 바코드 높이",
+          "values": "1 ~ 9999",
+          "default": "마지막 ^BY, ^BY가 없으면 10"
+        },
+        {
+          "meaning": "모드",
+          "values": "0 ~ 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Aztec 매트릭스 심볼을 생성하며 배율과 오류 정정 수준을 설정할 수 있습니다."
+    "summary": "Aztec 매트릭스 심볼을 생성하며 배율과 오류 정정 수준을 설정할 수 있습니다.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 회전, I 180, B 270",
+          "default": "마지막 ^FW"
+        },
+        {
+          "meaning": "확대 비율",
+          "values": "1 ~ 10",
+          "default": "150dpi 1, 200dpi 2, 300dpi 3, 600dpi 6"
+        },
+        {
+          "meaning": "확장 채널 해석 표시자",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "오류 제어와 심볼 크기",
+          "values": "0 기본값, 1 ~ 99 오류 퍼센트, 101 ~ 104 컴팩트 레이어, 201 ~ 232 풀 레이어, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "메뉴 심볼 표시자",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "구조적 추가의 심볼 수",
+          "values": "1 ~ 26",
+          "default": "1"
+        },
+        {
+          "meaning": "구조적 추가 ID 필드",
+          "values": "최대 24자 텍스트",
+          "default": "ID 없음"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "대용량 데이터를 담는 CODABLOCK 심볼을 A, E, F 모드 중 하나로 생성합니다."
+    "summary": "대용량 데이터를 담는 CODABLOCK 심볼을 A, E, F 모드 중 하나로 생성합니다.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "도트 단위 행당 바코드 높이",
+          "values": "2 ~ 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "보안 수준",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "행당 문자 수",
+          "values": "2 ~ 62"
+        },
+        {
+          "meaning": "인코딩할 행 수",
+          "values": "mode-A 1-22, mode-EF 2-4"
+        },
+        {
+          "meaning": "모드",
+          "values": "A code39-set, E code128-fnc1, F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "UPS MaxiCode 심볼을 생성합니다. 구조화된 운송사 메시지용 모드와 일반 데이터용 모드를 지정할 수 있습니다."
+    "summary": "UPS MaxiCode 심볼을 생성합니다. 구조화된 운송사 메시지용 모드와 일반 데이터용 모드를 지정할 수 있습니다.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "모드",
+          "values": "2 us-postal, 3 non-us-postal, 4 standard, 5 full-eec, 6 reader-program",
+          "default": "2"
+        },
+        {
+          "meaning": "시퀀스 내 심볼 번호",
+          "values": "1 ~ 8",
+          "default": "1"
+        },
+        {
+          "meaning": "전체 심볼 수",
+          "values": "1 ~ 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Code 39와 MicroPDF417 구성 요소를 결합한 통신 장비 라벨용 TLC39 심볼을 생성합니다."
+    "summary": "Code 39와 MicroPDF417 구성 요소를 결합한 통신 장비 라벨용 TLC39 심볼을 생성합니다.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 회전, I 반전, B 상하반전"
+        },
+        {
+          "meaning": "도트 단위 Code 39 부분 폭",
+          "values": "1 ~ 10",
+          "default": "600dpi는 4, 그 외는 2"
+        },
+        {
+          "meaning": "Code 39 부분의 굵은 바 대 얇은 바 비율",
+          "values": "2.0 ~ 3.0, 0.1 단위",
+          "default": "2.0"
+        },
+        {
+          "meaning": "도트 단위 Code 39 부분 높이",
+          "values": "1 ~ 9999",
+          "default": "600dpi 120, 300dpi 60, 200dpi 40"
+        },
+        {
+          "meaning": "MicroPDF417 부분의 얇은 바 폭",
+          "values": "1 ~ 10",
+          "default": "600dpi는 4, 그 외는 2"
+        },
+        {
+          "meaning": "도트 단위 MicroPDF417 부분 행 높이",
+          "values": "1 ~ 255",
+          "default": "600dpi는 8, 그 외는 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "활성화하면 바코드 데이터와 파라미터를 검사하여, 잘못된 심볼 대신 INVALID를 인쇄합니다."
+    "summary": "활성화하면 바코드 데이터와 파라미터를 검사하여, 잘못된 심볼 대신 INVALID를 인쇄합니다.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "코드 검증",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "채워진 사각형이나 테두리만 있는 사각형을 그립니다. 한 변의 길이를 테두리 두께와 같게 하면 선이 됩니다."
+    "summary": "채워진 사각형이나 테두리만 있는 사각형을 그립니다. 한 변의 길이를 테두리 두께와 같게 하면 선이 됩니다.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "도트 단위 상자 너비",
+          "values": "t ~ 32000",
+          "default": "t 또는 1"
+        },
+        {
+          "meaning": "도트 단위 상자 높이",
+          "values": "t ~ 32000",
+          "default": "t 또는 1"
+        },
+        {
+          "meaning": "도트 단위 테두리 두께",
+          "values": "1 ~ 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "선 색상",
+          "values": "B 검정, W 흰색",
+          "default": "B"
+        },
+        {
+          "meaning": "모서리 둥글림",
+          "values": "0 없음 ~ 8 가장 강한 모서리 둥글기",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "지정한 폭과 높이에 걸쳐 오른쪽 또는 왼쪽으로 기운 대각선을 그립니다."
+    "summary": "지정한 폭과 높이에 걸쳐 오른쪽 또는 왼쪽으로 기운 대각선을 그립니다.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "도트 단위 상자 너비",
+          "values": "3 ~ 32000",
+          "default": "t 또는 3"
+        },
+        {
+          "meaning": "도트 단위 상자 높이",
+          "values": "3 ~ 32000",
+          "default": "t 또는 3"
+        },
+        {
+          "meaning": "도트 단위 테두리 두께",
+          "values": "1 ~ 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "선 색상",
+          "values": "B 검정, W 흰색",
+          "default": "B"
+        },
+        {
+          "meaning": "대각선 방향",
+          "values": "R 또는 / 오른쪽 기울임, L 또는 \\ 왼쪽 기울임",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "도트 단위 폭과 높이로 타원을 그립니다. 테두리는 안쪽으로 그려지며 검정 또는 흰색으로 출력됩니다."
+    "summary": "도트 단위 폭과 높이로 타원을 그립니다. 테두리는 안쪽으로 그려지며 검정 또는 흰색으로 출력됩니다.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "도트 단위 타원 너비",
+          "values": "3 ~ 4095",
+          "default": "t 또는 1"
+        },
+        {
+          "meaning": "도트 단위 타원 높이",
+          "values": "3 ~ 4095",
+          "default": "t 또는 1"
+        },
+        {
+          "meaning": "도트 단위 테두리 두께",
+          "values": "2 ~ 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "선 색상",
+          "values": "B 검정, W 흰색",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "지정한 지름의 원을 도트 단위로 그립니다. 테두리는 안쪽으로 그려지며 검정 또는 흰색으로 출력됩니다."
+    "summary": "지정한 지름의 원을 도트 단위로 그립니다. 테두리는 안쪽으로 그려지며 검정 또는 흰색으로 출력됩니다.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "도트 단위 원 지름",
+          "values": "3 ~ 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "도트 단위 테두리 두께",
+          "values": "2 ~ 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "선 색상",
+          "values": "B 검정, W 흰색",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "ASCII 16진수나 바이너리, 압축 데이터 형식의 흑백 비트맵을 현재 필드 위치에 배치합니다."
+    "summary": "ASCII 16진수나 바이너리, 압축 데이터 형식의 흑백 비트맵을 현재 필드 위치에 배치합니다.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "압축 유형",
+          "values": "A ASCII 16진수, B 바이너리, C 압축 바이너리",
+          "default": "A"
+        },
+        {
+          "meaning": "전송할 전체 바이트 수",
+          "values": "1 ~ 99999"
+        },
+        {
+          "meaning": "이미지의 전체 바이트 수",
+          "values": "1 ~ 99999"
+        },
+        {
+          "meaning": "이미지 행당 바이트 수",
+          "values": "1 ~ 99999"
+        },
+        {
+          "meaning": "이미지 데이터",
+          "values": "ASCII 16진수 00 ~ FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "필드 데이터로 선택한 내장 기호를 인쇄합니다. 저작권 기호나 등록 상표 기호 등이 있습니다."
+    "summary": "필드 데이터로 선택한 내장 기호를 인쇄합니다. 저작권 기호나 등록 상표 기호 등이 있습니다.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "방향",
+          "values": "N 표준, R 시계방향 90, I 180, B 270",
+          "default": "N 또는 마지막 ^FW"
+        },
+        {
+          "meaning": "너비에 비례한 문자 높이",
+          "values": "0 ~ 32000",
+          "default": "마지막 ^CF"
+        },
+        {
+          "meaning": "높이에 비례한 문자 너비",
+          "values": "0 ~ 32000",
+          "default": "마지막 ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "포맷 시작 시점에 저장된 이미지를 불러와 라벨 원점에 고정합니다."
+    "summary": "포맷 시작 시점에 저장된 이미지를 불러와 라벨 원점에 고정합니다.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "저장 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "객체 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": ".GRF 또는 .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "저장된 이미지를 크기 조정 없이 현재 필드 위치에 배치합니다."
+    "summary": "저장된 이미지를 크기 조정 없이 현재 필드 위치에 배치합니다.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "저장 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "검색 우선순위"
+        },
+        {
+          "meaning": "객체 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": ".GRF 또는 .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "프린터 메모리에 저장된 그래픽과 폰트, 포맷을 삭제합니다. 와일드카드로 여러 개를 묶어 지정할 수 있습니다."
+    "summary": "프린터 메모리에 저장된 그래픽과 폰트, 포맷을 삭제합니다. 와일드카드로 여러 개를 묶어 지정할 수 있습니다.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "저장 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "객체 이름, 와일드카드 허용",
+          "values": "1 ~ 8자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자, 와일드카드 허용",
+          "values": "모든 확장자",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "현재 포맷을 그래픽 이미지로 저장하여 빠르게 불러오고 가변 데이터를 덧씌울 수 있게 합니다."
+    "summary": "현재 포맷을 그래픽 이미지로 저장하여 빠르게 불러오고 가변 데이터를 덧씌울 수 있게 합니다.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "저장 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "객체 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": ".GRF 또는 .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "저장 후 라벨 인쇄",
+          "values": "N 아니오, Y 예",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "ASCII 16진수 그래픽을 재사용 가능한 이름으로 프린터 메모리에 다운로드합니다."
+    "summary": "ASCII 16진수 그래픽을 재사용 가능한 이름으로 프린터 메모리에 다운로드합니다.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "저장 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "이미지 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "바이트 단위 전체 이미지 크기",
+          "values": "이미지 너비와 높이로 계산"
+        },
+        {
+          "meaning": "이미지 행당 바이트 수",
+          "values": "이미지 너비로 계산"
+        },
+        {
+          "meaning": "그래픽 이미지 데이터",
+          "values": "ASCII 16진수 00 ~ FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "그래픽과 폰트, 인증서를 재사용 가능한 이름으로 프린터 메모리에 다운로드합니다."
+    "summary": "그래픽과 폰트, 인증서를 재사용 가능한 이름으로 프린터 메모리에 다운로드합니다.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "저장 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "파일 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "데이터 포맷",
+          "values": "A ASCII 또는 zb64, B 바이너리, C ar 압축, P png zb64"
+        },
+        {
+          "meaning": "저장된 파일 유형",
+          "values": "B 비트맵, E tte, G 원시 grf, P png, T ttf 또는 otf, X pcx, NRD 읽기 불가, PAC 액세스 자격 증명, C wml 메뉴, F htm 페이지, H 프린터 피드백",
+          "default": "G"
+        },
+        {
+          "meaning": "파일의 전체 바이트 수",
+          "values": "압축 해제된 실제 파일 크기"
+        },
+        {
+          "meaning": "GRF 이미지의 행당 바이트 수",
+          "values": "이미지 너비로 계산"
+        },
+        {
+          "meaning": "파일 데이터",
+          "values": "ASCII 16진수, zb64 또는 바이너리"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "시작 값과 증감 방향, 증분을 사용해 텍스트나 바코드 필드 데이터를 라벨마다 순차 증가시킵니다."
+    "summary": "시작 값과 증감 방향, 증분을 사용해 텍스트나 바코드 필드 데이터를 라벨마다 순차 증가시킵니다.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "시작 일련번호 값",
+          "values": "최대 12자리",
+          "default": "1"
+        },
+        {
+          "meaning": "증가 또는 감소 단계",
+          "values": "최대 12자리",
+          "default": "1"
+        },
+        {
+          "meaning": "앞에 0 채우기",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "마스크와 문자 집합을 사용해 필드 데이터의 지정된 자리만 순차 증가시킵니다."
+    "summary": "마스크와 문자 집합을 사용해 필드 데이터의 지정된 자리만 순차 증가시킵니다.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "변경할 문자를 지정하는 일련번호 마스크",
+          "values": "D 10진수, H 16진수, O 8진수, A 알파, N 영숫자, % 건너뜀"
+        },
+        {
+          "meaning": "마스크의 증가 또는 감소 문자열",
+          "values": "마스크 위치마다 값 하나, %는 그대로 유지",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "이후의 명령을 즉시 인쇄하지 않고 재사용 가능한 포맷으로 저장합니다."
+    "summary": "이후의 명령을 즉시 인쇄하지 않고 재사용 가능한 포맷으로 저장합니다.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "템플릿을 저장할 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "템플릿 이름",
+          "values": "1 ~ 16자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "저장된 포맷을 불러오고 번호가 지정된 자리 표시 필드에 값을 채웁니다."
+    "summary": "저장된 포맷을 불러오고 번호가 지정된 자리 표시 필드에 값을 채웁니다.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "저장된 템플릿의 원본 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R, E, B, A 순서"
+        },
+        {
+          "meaning": "저장된 템플릿 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "저장된 그래픽을 현재 위치에 불러오며 가로 배율과 세로 배율을 따로 지정할 수 있습니다."
+    "summary": "저장된 그래픽을 현재 위치에 불러오며 가로 배율과 세로 배율을 따로 지정할 수 있습니다.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "저장된 그래픽의 원본 장치",
+          "values": "R, E, B, A",
+          "default": "R, E, B, A 순서"
+        },
+        {
+          "meaning": "저장된 그래픽 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": "GRF"
+        },
+        {
+          "meaning": "x축 확대 비율",
+          "values": "1 ~ 10",
+          "default": "1"
+        },
+        {
+          "meaning": "y축 확대 비율",
+          "values": "1 ~ 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "프린터가 라벨 경계를 감지하는 방식을 갭, 마크, 연속 용지 중에서 선택합니다."
+    "summary": "프린터가 라벨 경계를 감지하는 방식을 갭, 마크, 연속 용지 중에서 선택합니다.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "용지 감지 방식",
+          "values": "N 연속, Y 또는 W 비연속 웹, M 비연속 마크, A 자동 감지, V 연속 가변 길이",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "도트 단위 블랙 마크 오프셋",
+          "values": "대부분 프린터는 -120 ~ 283, 600dpi는 -240 ~ 566",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "비연속 용지를 보정할 때 프린터가 탐색할 최대 라벨 길이를 지정합니다."
+    "summary": "비연속 용지를 보정할 때 프린터가 탐색할 최대 라벨 길이를 지정합니다.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "도트 행 단위 최대 라벨 길이",
+          "values": "프린터 dpi의 2배, 최대 길이까지",
+          "default": "마지막 저장 값"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "전원을 켤 때와 프린트헤드를 닫을 때 수행할 동작을 지정합니다. 보정과 급지, 길이 측정 등을 선택할 수 있습니다."
+    "summary": "전원을 켤 때와 프린트헤드를 닫을 때 수행할 동작을 지정합니다. 보정과 급지, 길이 측정 등을 선택할 수 있습니다.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "전원 켤 때 급지 동작",
+          "values": "F 첫 웹까지 급지, C ~JC처럼 보정, L ~JL처럼 길이 설정, N 급지 없음, S 간단 보정",
+          "default": "C"
+        },
+        {
+          "meaning": "헤드 닫은 후 급지 동작",
+          "values": "F 첫 웹까지 급지, C ~JC처럼 보정, L ~JL처럼 길이 설정, N 급지 없음, S 간단 보정",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "프린트헤드 청소나 교체를 알리는 유지보수 경고 라벨의 인쇄 조건을 설정합니다."
+    "summary": "프린트헤드 청소나 교체를 알리는 유지보수 경고 라벨의 인쇄 조건을 설정합니다.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "경고 유형",
+          "values": "R 헤드 교체, C 헤드 청소"
+        },
+        {
+          "meaning": "경고 라벨 인쇄",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "첫 경고까지 거리",
+          "values": "R 0 ~ 150km, C 100 ~ 2000m, 0 끔",
+          "default": "R은 50km, C는 0 끔"
+        },
+        {
+          "meaning": "경고 재발생 전 거리",
+          "values": "0 ~ 2000m",
+          "default": "0"
+        },
+        {
+          "meaning": "보고되는 측정 단위",
+          "values": "C 센티미터, I 인치, M 미터",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "인쇄 후 라벨 비트맵을 지울지, 이후 라벨에서 재사용하도록 남겨 둘지 제어합니다."
+    "summary": "인쇄 후 라벨 비트맵을 지울지, 이후 라벨에서 재사용하도록 남겨 둘지 제어합니다.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "인쇄 후 비트맵 지우기",
+          "values": "Y 지움, N 유지",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "프린트헤드 청소 또는 교체를 알리는 유지보수 경고 라벨에 표시할 문구를 지정합니다."
+    "summary": "프린트헤드 청소 또는 교체를 알리는 유지보수 경고 라벨에 표시할 문구를 지정합니다.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "경고 유형",
+          "values": "R 헤드 교체, C 헤드 청소",
+          "default": "R"
+        },
+        {
+          "meaning": "경고 라벨에 인쇄되는 메시지",
+          "values": "최대 63자, 쉼표 제외",
+          "default": "헤드 청소 또는 헤드 교체 안내"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "농도나 보정 같은 조작 패널 설정을 잠금이 해제될 때까지 변경하지 못하도록 잠급니다."
+    "summary": "농도나 보정 같은 조작 패널 설정을 잠금이 해제될 때까지 변경하지 못하도록 잠급니다.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "보호할 제어판 모드",
+          "values": "D 농도, P 위치, C 보정, E 전체 활성화, S 저장 안 함, W 일시정지, F 급지, X 취소, M 메뉴",
+          "default": "반드시 지정"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "프린트헤드 저온 경고 표시를 켜거나 끕니다."
+    "summary": "프린트헤드 저온 경고 표시를 켜거나 끕니다.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "헤드 저온 경고 활성화",
+          "values": "Y 활성화, N 비활성화"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "프린터에 설정된 현재 농도를 기준으로 인쇄 농도를 상대적으로 조정합니다."
+    "summary": "프린터에 설정된 현재 농도를 기준으로 인쇄 농도를 상대적으로 조정합니다.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "현재 설정 대비 용지 농도",
+          "values": "-30 ~ 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "전면 패널의 농도 설정과 동일한 방식으로 인쇄 농도를 절대값으로 즉시 지정합니다."
+    "summary": "전면 패널의 농도 설정과 동일한 방식으로 인쇄 농도를 절대값으로 즉시 지정합니다.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "절대 인쇄 농도 수준",
+          "values": "00 ~ 30",
+          "default": "마지막 저장 값"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "용지나 리본, 프린트헤드 오류로 중단된 라벨을 복구 후 다시 인쇄할지 제어합니다."
+    "summary": "용지나 리본, 프린트헤드 오류로 중단된 라벨을 복구 후 다시 인쇄할지 제어합니다.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "오류 해소 후 라벨 재인쇄",
+          "values": "N 아니오, Y 예",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "인쇄된 라벨 수를 기준으로 프린트헤드 발열체 검사를 주기적으로 수행하도록 예약하며, 검사할 발열체 범위도 지정할 수 있습니다."
+    "summary": "인쇄된 라벨 수를 기준으로 프린트헤드 발열체 검사를 주기적으로 수행하도록 예약하며, 검사할 발열체 범위도 지정할 수 있습니다.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "헤드 테스트 사이 인쇄 라벨 수",
+          "values": "0 ~ 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "헤드 테스트 엘리먼트 범위 수동 선택",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        },
+        {
+          "meaning": "첫 테스트 엘리먼트 번호",
+          "values": "0 ~ 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "마지막 테스트 엘리먼트 번호",
+          "values": "0 ~ 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "인쇄 후 정지하는 tear-off 또는 절단 위치를 도트 단위로 미세하게 조정합니다."
+    "summary": "인쇄 후 정지하는 tear-off 또는 절단 위치를 도트 단위로 미세하게 조정합니다.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "도트 단위 티어오프 정지 위치 변경",
+          "values": "-120 ~ 120",
+          "default": "마지막 저장 값"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "용지와 리본, 프린트헤드 유지보수에 대한 사전 경고 기준값을 설정합니다."
+    "summary": "용지와 리본, 프린트헤드 유지보수에 대한 사전 경고 기준값을 설정합니다.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "용지 또는 소모품 조기 경고",
+          "values": "E 활성화, D 비활성화",
+          "default": "D"
+        },
+        {
+          "meaning": "롤당 라벨 수",
+          "values": "100 ~ 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "용지 교체됨",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "모델별 리본 길이 코드",
+          "values": "N 0m, 0 ~ 7은 100 ~ 450m, 10 ~ 16은 600 ~ 900m",
+          "default": "모델별 1 또는 7"
+        },
+        {
+          "meaning": "리본 교체됨",
+          "values": "Y 예, N 아니오",
+          "default": "N"
+        },
+        {
+          "meaning": "조기 경고 유지보수 활성화",
+          "values": "E 활성화, D 비활성화",
+          "default": "D"
+        },
+        {
+          "meaning": "헤드 청소 간격 코드",
+          "values": "0 ~ 16, 100m ~ 900m를 50m 단위로",
+          "default": "모델별 1 또는 7"
+        },
+        {
+          "meaning": "헤드 청소됨",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        },
+        {
+          "meaning": "인치 단위 헤드 수명 경고 임계값",
+          "values": "0 끔, 또는 100 ~ 3500000인치",
+          "default": "1000000"
+        },
+        {
+          "meaning": "헤드 교체됨",
+          "values": "N 아니오, Y 예",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "인쇄와 절단 전후의 백피드 시점을 제어하거나 백피드를 끕니다."
+    "summary": "인쇄와 절단 전후의 백피드 시점을 제어하거나 백피드를 끕니다.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "인쇄 기준 백피드 시점",
+          "values": "A 인쇄 후 전체, B 인쇄 전 전체, N 표준, O 끔, 10 ~ 90퍼센트",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "지정한 수만큼 빈 도트 행을 이송 속도로 급지합니다."
+    "summary": "지정한 수만큼 빈 도트 행을 이송 속도로 급지합니다.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "하단에서 슬루되는 도트 행",
+          "values": "0 ~ 32000",
+          "default": "반드시 지정"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "키오스크 인쇄 모드의 KR403 프린터에서 커터를 즉시 동작시킵니다."
+    "summary": "키오스크 인쇄 모드의 KR403 프린터에서 커터를 즉시 동작시킵니다.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "절단량 재정의 모드",
+          "values": "0 키오스크 설정, 1 전체 절단"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "KR403 키오스크 프레젠터의 배출 길이를 늘려 인쇄된 용지를 더 쉽게 뽑을 수 있게 합니다."
+    "summary": "KR403 키오스크 프레젠터의 배출 길이를 늘려 인쇄된 용지를 더 쉽게 뽑을 수 있게 합니다.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "mm 단위 추가 용지 배출 길이",
+          "values": "0 ~ 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "KR403 프레젠터 동작을 실행하여 인쇄된 용지를 사용자가 직접 가져갈 수 있도록 내보냅니다."
+    "summary": "KR403 프레젠터 동작을 실행하여 인쇄된 용지를 사용자가 직접 가져갈 수 있도록 내보냅니다.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "mm 단위 프리젠터 용지 배출 길이",
+          "values": "0 ~ 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "PAX 시리즈 프린터의 리본 공급 장력을 설정합니다."
+    "summary": "PAX 시리즈 프린터의 리본 공급 장력을 설정합니다.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "리본 텐션 수준",
+          "values": "L 낮음, M 중간, H 높음",
+          "default": "반드시 지정"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "프린터 실시간 시계의 날짜와 시각을 설정합니다."
+    "summary": "프린터 실시간 시계의 날짜와 시각을 설정합니다.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "월",
+          "values": "01 ~ 12",
+          "default": "현재 월"
+        },
+        {
+          "meaning": "일",
+          "values": "01 ~ 31",
+          "default": "현재 일"
+        },
+        {
+          "meaning": "년",
+          "values": "1998 ~ 2097",
+          "default": "현재 연도"
+        },
+        {
+          "meaning": "시",
+          "values": "00 ~ 23",
+          "default": "현재 시"
+        },
+        {
+          "meaning": "분",
+          "values": "00 ~ 59",
+          "default": "현재 분"
+        },
+        {
+          "meaning": "초",
+          "values": "00 ~ 59",
+          "default": "현재 초"
+        },
+        {
+          "meaning": "오전/오후 또는 24시간 형식",
+          "values": "A 오전, P 오후, M 24시간",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "설정 라벨과 조작 패널에 표시되는 날짜 및 시각 형식을 선택합니다."
+    "summary": "설정 라벨과 조작 패널에 표시되는 날짜 및 시각 형식을 선택합니다.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "날짜와 시간 표시 형식",
+          "values": "0 버전 번호, 1 MM/DD/YY 24시간, 2 MM/DD/YY 12시간, 3 DD/MM/YY 24시간, 4 DD/MM/YY 12시간",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "실시간 시계를 기준으로 한 보조 시계의 시차를 정의합니다. 이 시차 값은 프린터 전원을 끄면 사라집니다."
+    "summary": "실시간 시계를 기준으로 한 보조 시계의 시차를 정의합니다. 이 시차 값은 프린터 전원을 끄면 사라집니다.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "오프셋할 시계 번호",
+          "values": "2 보조, 3 세 번째",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "월 오프셋",
+          "values": "-32000 ~ 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "일 오프셋",
+          "values": "-32000 ~ 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "년 오프셋",
+          "values": "-32000 ~ 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "시 오프셋",
+          "values": "-32000 ~ 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "분 오프셋",
+          "values": "-32000 ~ 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "초 오프셋",
+          "values": "-32000 ~ 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "시각 필드에 값이 기록되는 시점을 지정하고 요일과 월 이름에 사용할 언어를 선택합니다."
+    "summary": "시각 필드에 값이 기록되는 시점을 지정하고 요일과 월 이름에 사용할 언어를 선택합니다.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "시계 읽기 모드",
+          "values": "S 시작 시각, T 현재 시각, 0 ~ 999 허용오차",
+          "default": "S"
+        },
+        {
+          "meaning": "요일과 월 이름의 언어",
+          "values": "1 영어, 2 스페인어, 3 프랑스어, 4 독일어, 5 이탈리아어, 6 ~ 18 그 외 언어",
+          "default": "마지막 ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "프린터 조작 패널의 표시 언어를 선택합니다. 선택할 수 있는 언어 목록은 모델마다 다릅니다."
+    "summary": "프린터 조작 패널의 표시 언어를 선택합니다. 선택할 수 있는 언어 목록은 모델마다 다릅니다.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "제어판 표시 언어",
+          "values": "1 ~ 20 언어 코드",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "인쇄 전에 필드 데이터를 변환하는 데 사용할 저장된 인코딩 테이블을 선택합니다."
+    "summary": "인쇄 전에 필드 데이터를 변환하는 데 사용할 저장된 인코딩 테이블을 선택합니다.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "인코딩 테이블의 드라이브 위치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "인코딩 테이블 파일 이름",
+          "values": "1 ~ 8자의 영숫자"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": "DAT 고정값",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "이전 포맷과의 호환을 위해 명령 해석 방식을 원래의 ZPL과 ZPL II 중에서 선택합니다."
+    "summary": "이전 포맷과의 호환을 위해 명령 해석 방식을 원래의 ZPL과 ZPL II 중에서 선택합니다.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPL 인터프리터 버전",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "프린터에 네트워크 이름과 자유 형식 설명을 지정합니다. 두 값 모두 설정 라벨과 내장 웹 페이지에 표시됩니다."
+    "summary": "프린터에 네트워크 이름과 자유 형식 설명을 지정합니다. 두 값 모두 설정 라벨과 내장 웹 페이지에 표시됩니다.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "프린터 네트워크 이름",
+          "values": "최대 16자의 영숫자",
+          "default": "ZBR과 MAC 접미사"
+        },
+        {
+          "meaning": "설정 라벨과 웹 페이지용 프린터 설명",
+          "values": "최대 35자의 영숫자",
+          "default": "공백"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "조작 패널 설정 메뉴에 사용할 네 자리 비밀번호를 지정합니다."
+    "summary": "조작 패널 설정 메뉴에 사용할 네 자리 비밀번호를 지정합니다.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "네 자리 제어판 비밀번호",
+          "values": "0000 ~ 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "비밀번호 수준, S4M 프린터 전용",
+          "values": "1 ~ 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "프린터 설정을 저장하거나 복원하거나 초기화합니다."
+    "summary": "프린터 설정을 저장하거나 복원하거나 초기화합니다.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "설정 동작",
+          "values": "A 전체 초기화, F 초기화, N 네트워크, R 리콜, S 저장"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "기본값이 캐럿인 포맷 명령 접두 문자를 전역으로 또는 현재 포맷에 한해 변경합니다."
+    "summary": "기본값이 캐럿인 포맷 명령 접두 문자를 전역으로 또는 현재 포맷에 한해 변경합니다.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "새 포맷 명령 접두문자",
+          "values": "모든 ASCII 문자"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "기본값이 쉼표인 파라미터 구분 문자를 전역으로 또는 현재 포맷에 한해 변경합니다."
+    "summary": "기본값이 쉼표인 파라미터 구분 문자를 전역으로 또는 현재 포맷에 한해 변경합니다.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "새 매개변수 구분 문자",
+          "values": "모든 ASCII 문자"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "기본값이 물결표인 즉시 실행 명령 접두 문자를 전역으로 또는 현재 포맷에 한해 변경합니다."
+    "summary": "기본값이 물결표인 즉시 실행 명령 접두 문자를 전역으로 또는 현재 포맷에 한해 변경합니다.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "새 제어 명령 접두문자",
+          "values": "모든 ASCII 문자"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "프린터 메모리 문자를 다시 할당하여 저장된 객체가 기존 이름을 그대로 유지할 수 있게 합니다."
+    "summary": "프린터 메모리 문자를 다시 할당하여 저장된 객체가 기존 이름을 그대로 유지할 수 있게 합니다.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "B의 메모리 별칭",
+          "values": "B 메모리 카드, E 플래시, R DRAM, A 컴팩트 플래시, NONE 미설정",
+          "default": "B"
+        },
+        {
+          "meaning": "E의 메모리 별칭",
+          "values": "B 메모리 카드, E 플래시, R DRAM, A 컴팩트 플래시, NONE 미설정",
+          "default": "E"
+        },
+        {
+          "meaning": "R의 메모리 별칭",
+          "values": "B 메모리 카드, E 플래시, R DRAM, A 컴팩트 플래시, NONE 미설정",
+          "default": "R"
+        },
+        {
+          "meaning": "A의 메모리 별칭",
+          "values": "B 메모리 카드, E 플래시, R DRAM, A 컴팩트 플래시, NONE 미설정",
+          "default": "A"
+        },
+        {
+          "meaning": "별칭 중복 할당 허용",
+          "values": "M 다중 별칭",
+          "default": "없음"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "플래시 메모리 장치 하나를 지우고 다시 초기화합니다. 이 작업 중 전원이 끊기면 저장 영역이 손상될 수 있습니다."
+    "summary": "플래시 메모리 장치 하나를 지우고 다시 초기화합니다. 이 작업 중 전원이 끊기면 저장 영역이 손상될 수 있습니다.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "초기화할 플래시 메모리 장치",
+          "values": "A 옵션 플래시, B 플래시 카드, E 내부 플래시",
+          "default": "반드시 지정"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "배터리 전압이 낮을 때 휴대용 프린터를 일시정지시킬지 인쇄를 계속하게 할지 지정합니다."
+    "summary": "배터리 전압이 낮을 때 휴대용 프린터를 일시정지시킬지 인쇄를 계속하게 할지 지정합니다.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "배터리 전압 낮을 때 일시정지",
+          "values": "Y 일시정지, N 인쇄 계속",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "프린터에서 Zebra BASIC Interpreter를 시작하며, 저장된 프로그램을 함께 실행할 수도 있습니다."
+    "summary": "프린터에서 Zebra BASIC Interpreter를 시작하며, 저장된 프로그램을 함께 실행할 수도 있습니다.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "프로그램 저장 위치",
+          "values": "R, E, B, A",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "실행할 프로그램 이름",
+          "values": "유효한 모든 프로그램 이름",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "프로그램 파일 확장자",
+          "values": "BAS 또는 BAE"
+        },
+        {
+          "meaning": "콘솔 출력 제어",
+          "values": "Y 켬, N 끔",
+          "default": "Y"
+        },
+        {
+          "meaning": "명령 에코 제어",
+          "values": "Y 켬, N 끔",
+          "default": "Y"
+        },
+        {
+          "meaning": "ZBI에 할당된 메모리",
+          "values": "20K ~ 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "applicator 또는 검증기 신호와 오류 처리를 위한 보조 포트를 설정합니다."
+    "summary": "applicator 또는 검증기 신호와 오류 처리를 위한 보조 포트를 설정합니다.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "검증기 오류 처리 모드",
+          "values": "0 끔, 1 오류 시 재인쇄, 2 최대 처리량",
+          "default": "0"
+        },
+        {
+          "meaning": "애플리케이터 신호 타이밍 모드",
+          "values": "0 끔, 1 ~ 4 신호 타이밍",
+          "default": "0"
+        },
+        {
+          "meaning": "인쇄 시작 신호 타이밍 모드",
+          "values": "p 펄스 모드, l 레벨 모드"
+        },
+        {
+          "meaning": "라벨 오류 응답 모드",
+          "values": "e 오류 모드, f 급지 모드",
+          "default": "f"
+        },
+        {
+          "meaning": "신호 시 재인쇄 모드",
+          "values": "e 활성화, d 비활성화",
+          "default": "d"
+        },
+        {
+          "meaning": "리본 부족 경고 모드",
+          "values": "e 활성화, d 비활성화",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "용지 추적에 사용할 센서를 선택합니다. 보통 반사형과 투과형 중에서 고릅니다."
+    "summary": "용지 추적에 사용할 센서를 선택합니다. 보통 반사형과 투과형 중에서 고릅니다.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "사용할 센서",
+          "values": "A 자동, R 반사형, T 투과형",
+          "default": "프린터 모델에 따라 다름"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "밀리미터당 도트 수를 기본 밀도와 축소 밀도 중에서 지정합니다. 밀도를 낮추면 포맷 좌표의 실제 크기가 두 배가 됩니다."
+    "summary": "밀리미터당 도트 수를 기본 밀도와 축소 밀도 중에서 지정합니다. 밀도를 낮추면 포맷 좌표의 실제 크기가 두 배가 됩니다.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "인쇄 밀도 설정",
+          "values": "A 표준 밀도, B 절반 밀도",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "선택한 프린터 사용량 카운터를 초기화합니다. 사용자 카운터와 RFID 카운터가 대상에 포함됩니다."
+    "summary": "선택한 프린터 사용량 카운터를 초기화합니다. 사용자 카운터와 RFID 카운터가 대상에 포함됩니다.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "재설정할 카운터",
+          "values": "1 카운터 1, 2 카운터 2, 3 유효 RFID, 4 무효 RFID, C 헤드 청소, R 헤드 교체",
+          "default": "반드시 지정"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "직렬 포트의 통신 파라미터를 하나의 명령으로 모두 설정합니다."
+    "summary": "직렬 포트의 통신 파라미터를 하나의 명령으로 모두 설정합니다.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "직렬 통신 속도",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "문자당 데이터 비트",
+          "values": "7 또는 8",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "패리티 설정",
+          "values": "N 없음, E 짝수, O 홀수",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "정지 비트",
+          "values": "1 또는 2",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "흐름 제어 프로토콜",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR과 Xon/Xoff",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "Zebra 프로토콜 핸드셰이크",
+          "values": "A ACK/NAK, N 없음, Z zebra",
+          "default": "반드시 지정"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "보통 보정으로 결정되는 투과형 센서의 강도나 기준값을 직접 지정합니다."
+    "summary": "보통 보정으로 결정되는 투과형 센서의 강도나 기준값을 직접 지정합니다.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "수정할 센서 설정",
+          "values": "1 밝기, 2 기준선",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "선택한 설정의 값",
+          "values": "0 ~ 196",
+          "default": "반드시 지정"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "포맷 전체가 도착하기 전에 인쇄를 시작하여 복잡한 라벨의 처리량을 높입니다."
+    "summary": "포맷 전체가 도착하기 전에 인쇄를 시작하여 복잡한 라벨의 처리량을 높입니다.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "인쇄 시작 도트 행",
+          "values": "0 ~ 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "특정 ZebraNet 경보 조건과 전송 대상을 비활성화합니다."
+    "summary": "특정 ZebraNet 경보 조건과 전송 대상을 비활성화합니다.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "중지할 경고 조건",
+          "values": "A ~ O와 Q ~ V는 각각 하나의 조건, W는 RFID 프린터에서 전체, *는 그 외에서 전체"
+        },
+        {
+          "meaning": "중지할 경고 대상",
+          "values": "A 직렬, B 병렬, C 이메일, D TCP/IP, E UDP/IP, F SNMP trap, * 전체"
+        },
+        {
+          "meaning": "이 경고 중지 또는 재개",
+          "values": "Y 메시지 중지, N 메시지 시작",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "발열 에너지 계산에 사용하는 프린트헤드 저항 값을 지정합니다."
+    "summary": "발열 에너지 계산에 사용하는 프린트헤드 저항 값을 지정합니다.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "헤드 저항 값",
+          "values": "0488 ~ 1175",
+          "default": "마지막 영구 저장 값"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "보통 보정으로 결정되는 용지 센서 임계값과 라벨 길이, LED 밝기를 직접 지정합니다."
+    "summary": "보통 보정으로 결정되는 용지 센서 임계값과 라벨 길이, LED 밝기를 직접 지정합니다.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "웹 센서 값",
+          "values": "0 ~ 100",
+          "default": "센서 프로필 또는 설정 라벨에 표시된 값"
+        },
+        {
+          "meaning": "용지 센서 값",
+          "values": "0 ~ 100",
+          "default": "센서 프로필 또는 설정 라벨에 표시된 값"
+        },
+        {
+          "meaning": "리본 센서 값",
+          "values": "0 ~ 100",
+          "default": "센서 프로필 또는 설정 라벨에 표시된 값"
+        },
+        {
+          "meaning": "도트 단위 라벨 길이",
+          "values": "1 ~ 32000",
+          "default": "보정에서 얻은 값"
+        },
+        {
+          "meaning": "용지 LED 강도",
+          "values": "0 ~ 255",
+          "default": "보정에서 얻은 값"
+        },
+        {
+          "meaning": "리본 LED 강도",
+          "values": "0 ~ 255",
+          "default": "보정에서 얻은 값"
+        },
+        {
+          "meaning": "마크 감지 값",
+          "values": "0 ~ 100",
+          "default": "보정에서 얻은 값"
+        },
+        {
+          "meaning": "마크 용지 감지 값",
+          "values": "0 ~ 100",
+          "default": "보정에서 얻은 값"
+        },
+        {
+          "meaning": "마크 LED 감지 값",
+          "values": "0 ~ 255",
+          "default": "보정에서 얻은 값"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "특정 조건과 전송 대상에 대한 ZebraNet 경보를 활성화합니다."
+    "summary": "특정 조건과 전송 대상에 대한 ZebraNet 경보를 활성화합니다.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "경고 조건 유형",
+          "values": "A ~ V는 각각 하나의 조건, *는 전체",
+          "default": "없거나 유효하지 않으면 무시"
+        },
+        {
+          "meaning": "경고 대상 유형",
+          "values": "A 직렬, B 병렬, C 이메일, D TCP/IP, E UDP/IP, F SNMP trap",
+          "default": "없거나 유효하지 않으면 무시"
+        },
+        {
+          "meaning": "조건 설정 시 경고 활성화",
+          "values": "N 아니오, Y 예",
+          "default": "Y 또는 이전 값"
+        },
+        {
+          "meaning": "조건 해제 시 경고 활성화",
+          "values": "N 아니오, Y 예",
+          "default": "N 또는 이전 값"
+        },
+        {
+          "meaning": "경고 대상 주소",
+          "values": "이메일, IP 주소 또는 SNMP 대상",
+          "default": "없거나 유효하지 않으면 무시"
+        },
+        {
+          "meaning": "경고 포트 번호",
+          "values": "0 ~ 65535",
+          "default": "없거나 유효하지 않으면 무시"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "프린터 메모리 장치 사이에서 저장된 객체를 복사합니다. 와일드카드로 여러 개를 묶어 지정할 수 있습니다."
+    "summary": "프린터 메모리 장치 사이에서 저장된 객체를 복사합니다. 와일드카드로 여러 개를 묶어 지정할 수 있습니다.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "원본 저장 장치",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "원본 객체 이름",
+          "values": "기존 객체 이름",
+          "default": "*는 모든 객체 선택"
+        },
+        {
+          "meaning": "원본 객체 확장자",
+          "values": "유효한 모든 파일 확장자",
+          "default": "*는 모든 확장자 선택"
+        },
+        {
+          "meaning": "대상 저장 장치",
+          "values": "R, E, B, A",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "대상 객체 이름",
+          "values": "최대 8자의 영숫자",
+          "default": "원본 객체 이름"
+        },
+        {
+          "meaning": "대상 객체 확장자",
+          "values": "유효한 모든 파일 확장자",
+          "default": "원본 객체 확장자"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "저장된 객체나 내장 폰트, 사용 가능한 바코드 목록을 담은 디렉터리 라벨을 인쇄합니다."
+    "summary": "저장된 객체나 내장 폰트, 사용 가능한 바코드 목록을 담은 디렉터리 라벨을 인쇄합니다.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "목록의 원본 장치",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "객체 이름 필터",
+          "values": "1 ~ 8자, * 또는 ? 와일드카드",
+          "default": "*"
+        },
+        {
+          "meaning": "확장자 필터",
+          "values": "유효한 모든 확장자, * 와일드카드",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "적산 카운터나 프린트헤드 이력처럼 요청한 서비스 정보를 라벨에 인쇄합니다."
+    "summary": "적산 카운터나 프린트헤드 이력처럼 요청한 서비스 정보를 라벨에 인쇄합니다.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "인쇄할 서비스 보고서 유형",
+          "values": "ES 상태, HA 하드웨어 주소, JT 헤드 테스트, MA 경고 설정, MI 메시지, OD 오도미터, PH 헤드 수명, PP 플러그 앤 플레이, SN 일련번호, UI USB id",
+          "default": "반드시 지정"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "KR403 키오스크 프레젠터의 절단 길이와 절단 여백, 회수 대기 시간, 루프 길이를 설정합니다."
+    "summary": "KR403 키오스크 프레젠터의 절단 길이와 절단 여백, 회수 대기 시간, 루프 길이를 설정합니다.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "키오스크 절단량",
+          "values": "0 표준 절단, 10 ~ 60 부분 절단 mm",
+          "default": "0"
+        },
+        {
+          "meaning": "mm 단위 키오스크 절단 여백",
+          "values": "2 ~ 9",
+          "default": "9"
+        },
+        {
+          "meaning": "인쇄 후 키오스크 제시 유형",
+          "values": "0 배출, 1 후퇴, 2 동작 없음",
+          "default": "0"
+        },
+        {
+          "meaning": "초 단위 키오스크 제시 시간 초과",
+          "values": "0 ~ 300, 0은 시간 초과 없음",
+          "default": "0"
+        },
+        {
+          "meaning": "mm 단위 프리젠터 루프 길이",
+          "values": "0 직진, 3 ~ 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "전원을 켜거나 용지함을 연 후 라벨 길이와 센서 임계값을 자동으로 다시 보정할지 제어합니다."
+    "summary": "전원을 켜거나 용지함을 연 후 라벨 길이와 센서 임계값을 자동으로 다시 보정할지 제어합니다.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "동적 길이 보정 활성화",
+          "values": "Y 활성화, N 비활성화",
+          "default": "Y"
+        },
+        {
+          "meaning": "동적 임계값 보정 활성화",
+          "values": "Y 활성화, N 비활성화",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "프린터를 재판매하거나 재활용하기 위해 사용 종료 모드를 시작합니다."
+    "summary": "프린터를 재판매하거나 재활용하기 위해 사용 종료 모드를 시작합니다.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "프린터 일련번호",
+          "values": "영숫자 문자열",
+          "default": "반드시 지정"
+        },
+        {
+          "meaning": "플래시 와이프 횟수",
+          "values": "0 ~ 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "일정 시간 사용하지 않으면 자동으로 절전 종료하도록 설정하며, 대기 중인 라벨에 대한 처리 방식도 함께 지정합니다."
+    "summary": "일정 시간 사용하지 않으면 자동으로 절전 종료하도록 설정하며, 대기 중인 라벨에 대한 처리 방식도 함께 지정합니다.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "자동 종료 전 유휴 초",
+          "values": "0 ~ 999999, 0은 종료 비활성화",
+          "default": "마지막 저장 값 또는 0"
+        },
+        {
+          "meaning": "종료 시 라벨 상태",
+          "values": "Y 대기열과 함께 종료, N 대기열 먼저 완료",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "KR403 키오스크 프레젠터가 이미 내보낸 용지를 배출하거나 회수합니다."
+    "summary": "KR403 키오스크 프레젠터가 이미 내보낸 용지를 배출하거나 회수합니다.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "키오스크 제시 동작",
+          "values": "0 배출, 1 후퇴, 2 ^KV 설정 사용"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "프린터 메모리에 저장된 ZPL 포맷을 호스트로 반환합니다."
+    "summary": "프린터 메모리에 저장된 ZPL 포맷을 호스트로 반환합니다.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "검색할 메모리 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "R"
+        },
+        {
+          "meaning": "저장된 포맷 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": ".ZPL 고정",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "프린터 메모리에 저장된 그래픽 이미지를 호스트로 반환합니다."
+    "summary": "프린터 메모리에 저장된 그래픽 이미지를 호스트로 반환합니다.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "검색할 메모리 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "검색 우선순위"
+        },
+        {
+          "meaning": "업로드할 그래픽 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "파일 확장자",
+          "values": ".GRF 고정",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "요청한 상태와 식별 정보, 적산 카운터, 유지보수 데이터를 호스트로 반환합니다."
+    "summary": "요청한 상태와 식별 정보, 적산 카운터, 유지보수 데이터를 호스트로 반환합니다.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "반환 데이터의 쿼리 선택자",
+          "values": "ES 상태, HA 유선 MAC, JT 헤드 테스트, MA 유지보수 경고, MI 유지보수 정보, OD 오도미터, PH 헤드 수명, PP 플러그 앤 플레이, SN 일련번호, UI USB 제품 id"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "번호가 지정된 필드의 데이터를 호스트로 반환하며, 바이트 수 제한을 함께 지정할 수 있습니다."
+    "summary": "번호가 지정된 필드의 데이터를 호스트로 반환하며, 바이트 수 제한을 함께 지정할 수 있습니다.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "^FN으로 설정된 필드 번호",
+          "values": "0 ~ 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "반환할 바이트 수",
+          "values": "1 ~ 256",
+          "default": "64"
+        },
+        {
+          "meaning": "데이터 앞 머리글 텍스트",
+          "values": "0 ~ 3072바이트",
+          "default": "머리글 없음"
+        },
+        {
+          "meaning": "데이터 뒤 종료 텍스트",
+          "values": "0 ~ 3072자"
+        },
+        {
+          "meaning": "응답 전송 단위",
+          "values": "F 포맷, L 라벨",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "메모리 장치의 디렉터리 목록을 남은 여유 공간과 함께 반환합니다."
+    "summary": "메모리 장치의 디렉터리 목록을 남은 여유 공간과 함께 반환합니다.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "나열할 메모리 장치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시, Z 기타",
+          "default": "R"
+        },
+        {
+          "meaning": "객체 이름 필터",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "*"
+        },
+        {
+          "meaning": "확장자 필터",
+          "values": "Zebra 파일 확장자",
+          "default": "*"
+        },
+        {
+          "meaning": "목록 레이아웃",
+          "values": "c 열, d 기본값",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "저장된 그래픽을 다운로드 가능한 파일 형식으로 호스트에 반환합니다."
+    "summary": "저장된 그래픽을 다운로드 가능한 파일 형식으로 호스트에 반환합니다.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "객체의 메모리 장치 위치",
+          "values": "R DRAM, E 플래시, B 메모리 카드, A 컴팩트 플래시",
+          "default": "검색 우선순위"
+        },
+        {
+          "meaning": "업로드할 객체 이름",
+          "values": "1 ~ 8자의 영숫자",
+          "default": "이름 필수"
+        },
+        {
+          "meaning": "업로드 포맷",
+          "values": "G raw 비트맵, P 압축 비트맵",
+          "default": "저장된 포맷"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "설정과 객체 디렉터리, 상태에 대한 프린터 설명 XML을 반환합니다."
+    "summary": "설정과 객체 디렉터리, 상태에 대한 프린터 설명 XML을 반환합니다.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "반환할 설명 유형",
+          "values": "a 전체, f 포맷, l 디렉터리, o 객체, r 상태"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "RFID 태그를 읽거나 기록합니다. 데이터 형식과 메모리 뱅크, 액세스 비밀번호를 지정할 수 있습니다."
+    "summary": "RFID 태그를 읽거나 기록합니다. 데이터 형식과 메모리 뱅크, 액세스 비밀번호를 지정할 수 있습니다.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "작업",
+          "values": "W 쓰기, L 쓰기와 잠금, R 읽기, P 비밀번호 읽기, S 비밀번호 설정",
+          "default": "W"
+        },
+        {
+          "meaning": "데이터 포맷",
+          "values": "A ASCII, H 16진수, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "비밀번호 플래그 또는 시작 블록 번호",
+          "values": "P 비밀번호가 뒤따름, 0 ~ n 블록",
+          "default": "0"
+        },
+        {
+          "meaning": "읽거나 쓸 바이트 수",
+          "values": "1 ~ n, 태그당 최대",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen 2 메모리 뱅크",
+          "values": "E EPC 96비트, A EPC 자동 PC 비트, 0 예약, 1 EPC, 2 TID, 3 사용자",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "태그에 RFID EPC 필드를 인코딩할 때 사용할 비트 구성을 정의합니다."
+    "summary": "태그에 RFID EPC 필드를 인코딩할 때 사용할 비트 구성을 정의합니다.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "파티션의 전체 비트 크기",
+          "values": "1 ~ 태그 비트 크기",
+          "default": "96"
+        },
+        {
+          "meaning": "파티션당 비트 수, 최대 16개 파티션",
+          "values": "1 ~ 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "이후 라벨에 적용할 RFID 옵션을 지정합니다. 태그 종류와 기록 위치, 실패 처리 방식, VOID 바 길이가 포함됩니다."
+    "summary": "이후 라벨에 적용할 RFID 옵션을 지정합니다. 태그 종류와 기록 위치, 실패 처리 방식, VOID 바 길이가 포함됩니다.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "태그 유형",
+          "values": "8 Gen 2만",
+          "default": "8"
+        },
+        {
+          "meaning": "태그 프로그램 위치",
+          "values": "도트 절대값, F0 ~ Fxxx 앞으로, B0 ~ B30 뒤로, up 다음, down 이전",
+          "default": "프린터 설정"
+        },
+        {
+          "meaning": "무효 출력물 길이",
+          "values": "0 ~ 라벨 길이",
+          "default": "라벨 길이"
+        },
+        {
+          "meaning": "실패 시 재시도할 라벨 수",
+          "values": "1 ~ 10",
+          "default": "3"
+        },
+        {
+          "meaning": "재시도 후 오류 처리",
+          "values": "N 동작 없음, P 일시정지, E 오류 모드",
+          "default": "N"
+        },
+        {
+          "meaning": "애플리케이터로 전송되는 신호",
+          "values": "S 단일 신호, D 이중 신호",
+          "default": "S"
+        },
+        {
+          "meaning": "예약됨, 사용 안 함",
+          "values": "없음"
+        },
+        {
+          "meaning": "VOID 라벨 인쇄 속도",
+          "values": "유효한 모든 인쇄 속도",
+          "default": "최대 인쇄 속도"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "태그 ID로 EPC 일련번호를 만들어 EPC 하위 비트에 기록합니다."
+    "summary": "태그 ID로 EPC 일련번호를 만들어 EPC 하위 비트에 기록합니다.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "일련 ID의 바이너리 접두사",
+          "values": "ASCII 1과 0, 최대 38비트",
+          "default": "칩 MDID에 따라 다름"
+        },
+        {
+          "meaning": "일련 필드를 표시하는 특수 문자",
+          "values": "명령, 제어, 구분자, RTC를 제외한 모든 ASCII",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "보정으로 쓸 만한 값을 얻지 못할 때 RFID 읽기 및 쓰기 출력을 직접 지정합니다."
+    "summary": "보정으로 쓸 만한 값을 얻지 못할 때 RFID 읽기 및 쓰기 출력을 직접 지정합니다.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "읽기 출력 수준",
+          "values": "0 ~ 30, 또는 H 높음, M 중간, L 낮음",
+          "default": "프린터 설정"
+        },
+        {
+          "meaning": "쓰기 출력 수준",
+          "values": "0 ~ 30, 또는 H 높음, M 중간, L 낮음",
+          "default": "프린터 설정"
+        },
+        {
+          "meaning": "안테나 엘리먼트 선택",
+          "values": "프린터별 그리드, A1 ~ F4",
+          "default": "프린터 설정"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "이후의 쓰기를 막기 위해 RFID 태그 메모리를 해제 가능한 방식 또는 영구적인 방식으로 잠급니다."
+    "summary": "이후의 쓰기를 막기 위해 RFID 태그 메모리를 해제 가능한 방식 또는 영구적인 방식으로 잠급니다.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "킬 비밀번호 잠금 상태",
+          "values": "U 잠금 해제, L 잠금, O 영구 잠금 해제, P 영구 잠금"
+        },
+        {
+          "meaning": "액세스 비밀번호 잠금 상태",
+          "values": "U 잠금 해제, L 잠금, O 영구 잠금 해제, P 영구 잠금"
+        },
+        {
+          "meaning": "EPC 메모리 뱅크 잠금 상태",
+          "values": "U 잠금 해제, L 잠금, O 영구 잠금 해제, P 영구 잠금"
+        },
+        {
+          "meaning": "사용자 메모리 뱅크 잠금 상태",
+          "values": "U 잠금 해제, L 잠금, O 영구 잠금 해제, P 영구 잠금"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "RFID 보정을 실행하고 위치와 안테나, 출력 설정을 호스트로 반환합니다."
+    "summary": "RFID 보정을 실행하고 위치와 안테나, 출력 설정을 호스트로 반환합니다.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "결과 표 앞 텍스트",
+          "values": "65자 미만의 모든 문자열",
+          "default": "시작"
+        },
+        {
+          "meaning": "결과 표 뒤 텍스트",
+          "values": "65자 미만의 모든 문자열",
+          "default": "종료"
+        },
+        {
+          "meaning": "보정 시작 위치",
+          "values": "F0 ~ Fxxx 앞으로, B0 ~ B30 뒤로",
+          "default": "프린터 설정"
+        },
+        {
+          "meaning": "보정 종료 위치",
+          "values": "F0 ~ Fxxx 앞으로, B0 ~ B30 뒤로, A 자동",
+          "default": "프린터 설정"
+        },
+        {
+          "meaning": "자동 또는 수동 안테나와 출력 선택",
+          "values": "A 자동, M 수동",
+          "default": "A"
+        },
+        {
+          "meaning": "읽기쓰기 출력 범위 시작",
+          "values": "0 ~ 30",
+          "default": "0"
+        },
+        {
+          "meaning": "읽기쓰기 출력 범위 종료",
+          "values": "0 ~ 30",
+          "default": "최대 출력"
+        },
+        {
+          "meaning": "안테나 범위 시작",
+          "values": "모델에 따라 다름, 보통 A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "안테나 범위 종료",
+          "values": "모델에 따라 다름, 최대 E4",
+          "default": "프린터 설정"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "프린터가 시작할 때 유선 프린트 서버를 확인할지 여부를 지정합니다."
+    "summary": "프린터가 시작할 때 유선 프린트 서버를 확인할지 여부를 지정합니다.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "부팅 시 유선 프린트 서버 확인",
+          "values": "C 확인, S 건너뜀",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "기본 네트워크 장치를 유선과 무선 중에서 선택합니다."
+    "summary": "기본 네트워크 장치를 유선과 무선 중에서 선택합니다.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "기본 네트워크 장치",
+          "values": "1 유선 우선, 2 무선 우선",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "구형 RS-485 멀티드롭 회선에 연결된 프린터 한 대를 네트워크 ID로 지정합니다."
+    "summary": "구형 RS-485 멀티드롭 회선에 연결된 프린터 한 대를 네트워크 ID로 지정합니다.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "지정할 프린터 네트워크 ID",
+          "values": "001 ~ 999",
+          "default": "000 없음"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "구형 RS-485 멀티드롭 회선에서 프린터를 지정할 때 사용할 네트워크 ID를 할당합니다."
+    "summary": "구형 RS-485 멀티드롭 회선에서 프린터를 지정할 때 사용할 네트워크 ID를 할당합니다.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "프린터에 할당된 네트워크 ID",
+          "values": "001 ~ 999",
+          "default": "000 없음"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "프린터의 SNMP 식별 정보와 커뮤니티 문자열을 설정합니다."
+    "summary": "프린터의 SNMP 식별 정보와 커뮤니티 문자열을 설정합니다.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP 시스템 이름",
+          "values": "최대 17자"
+        },
+        {
+          "meaning": "SNMP 시스템 담당자",
+          "values": "최대 50자"
+        },
+        {
+          "meaning": "SNMP 시스템 위치",
+          "values": "최대 50자"
+        },
+        {
+          "meaning": "SNMP get 커뮤니티 이름",
+          "values": "최대 19자",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set 커뮤니티 이름",
+          "values": "최대 19자",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap 커뮤니티 이름",
+          "values": "최대 20자",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "부팅 시 네트워크 설정을 프린터에서 가져올지 연결된 프린트 서버에서 가져올지 선택합니다."
+    "summary": "부팅 시 네트워크 설정을 프린터에서 가져올지 연결된 프린트 서버에서 가져올지 선택합니다.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "부팅 설정의 기본 소스",
+          "values": "P 프린터, M 프린트 서버",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "프린트 서버의 이메일 경보에 사용할 SMTP 서버와 도메인 설정을 구성합니다."
+    "summary": "프린트 서버의 이메일 경보에 사용할 SMTP 서버와 도메인 설정을 구성합니다.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTP 서버 주소",
+          "values": "IPv4 주소"
+        },
+        {
+          "meaning": "프린트 서버 도메인 이름",
+          "values": "도메인 이름"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "인증된 IP 주소가 재인증 없이 프린터 웹 페이지에 접근할 수 있는 시간을 지정합니다."
+    "summary": "인증된 IP 주소가 재인증 없이 프린터 웹 페이지에 접근할 수 있는 시간을 지정합니다.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "웹 페이지 인증 시간 초과",
+          "values": "0 ~ 255분",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "프린트 서버의 DHCP 클라이언트 식별자 형식과 값을 지정합니다."
+    "summary": "프린트 서버의 DHCP 클라이언트 식별자 형식과 값을 지정합니다.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "클라이언트 식별자 모드",
+          "values": "0 비활성화, 1 MAC 주소, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "식별자가 적용되는 장치",
+          "values": "0 전체, 1 무선, 2 외부 유선, 3 내부 유선",
+          "default": "1"
+        },
+        {
+          "meaning": "식별자 접두사",
+          "values": "ASCII 11자 또는 16진수 22자"
+        },
+        {
+          "meaning": "식별자 접미사",
+          "values": "최대 ASCII 60자 또는 16진수 120자"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "프린터 네트워크 인터페이스의 IP 주소와 서브넷 마스크, 게이트웨이를 설정합니다."
+    "summary": "프린터 네트워크 인터페이스의 IP 주소와 서브넷 마스크, 게이트웨이를 설정합니다.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "수정 중인 장치",
+          "values": "1 외부 유선, 2 내부 유선, 3 무선"
+        },
+        {
+          "meaning": "IP 확인 방식",
+          "values": "A 전체, B BOOTP, C DHCP와 BOOTP, D DHCP, G gleaning만, R RARP, P 영구",
+          "default": "A"
+        },
+        {
+          "meaning": "IP 주소",
+          "values": "IPv4 주소"
+        },
+        {
+          "meaning": "서브넷 마스크",
+          "values": "IPv4 서브넷 마스크"
+        },
+        {
+          "meaning": "기본 게이트웨이",
+          "values": "IPv4 주소"
+        },
+        {
+          "meaning": "WINS 서버 주소",
+          "values": "IPv4 주소"
+        },
+        {
+          "meaning": "연결 시간 초과 확인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "연결 시간 초과 값",
+          "values": "0 ~ 9999초",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP 브로드캐스트 간격",
+          "values": "0 ~ 30분",
+          "default": "0 없음"
+        },
+        {
+          "meaning": "기본 raw 포트 번호",
+          "values": "1 ~ 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "구형 펌웨어에서 유선 프린트 서버의 IP 설정과 시간 초과 값, raw 포트를 구성합니다."
+    "summary": "구형 펌웨어에서 유선 프린트 서버의 IP 설정과 시간 초과 값, raw 포트를 구성합니다.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "IP 확인 방식",
+          "values": "A 전체, B BOOTP, C DHCP와 BOOTP, D DHCP, G gleaning만, R RARP, P 영구",
+          "default": "A"
+        },
+        {
+          "meaning": "IP 주소",
+          "values": "IPv4 주소"
+        },
+        {
+          "meaning": "서브넷 마스크",
+          "values": "IPv4 서브넷 마스크"
+        },
+        {
+          "meaning": "기본 게이트웨이",
+          "values": "IPv4 주소"
+        },
+        {
+          "meaning": "WINS 서버 주소",
+          "values": "IPv4 주소"
+        },
+        {
+          "meaning": "연결 시간 초과 확인",
+          "values": "Y 예, N 아니오",
+          "default": "Y"
+        },
+        {
+          "meaning": "연결 시간 초과 값",
+          "values": "0 ~ 9999초",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP 브로드캐스트 간격",
+          "values": "0 ~ 30분",
+          "default": "0 없음"
+        },
+        {
+          "meaning": "기본 raw 포트 번호",
+          "values": "1 ~ 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "무선 통신에 사용할 수신 안테나와 송신 안테나를 선택합니다."
+    "summary": "무선 통신에 사용할 수신 안테나와 송신 안테나를 선택합니다.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "수신 안테나",
+          "values": "D 다이버시티, L 왼쪽, R 오른쪽",
+          "default": "D"
+        },
+        {
+          "meaning": "송신 안테나",
+          "values": "D 다이버시티, L 왼쪽, R 오른쪽",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "구형 무선 펌웨어에서 지금은 쓰이지 않는 WEP 보안과 키 정보를 설정합니다."
+    "summary": "구형 무선 펌웨어에서 지금은 쓰이지 않는 WEP 보안과 키 정보를 설정합니다.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "암호화 모드",
+          "values": "OFF 없음, 40 40비트, 128 128비트",
+          "default": "OFF"
+        },
+        {
+          "meaning": "암호화 키 인덱스",
+          "values": "1 ~ 4",
+          "default": "1"
+        },
+        {
+          "meaning": "인증 유형",
+          "values": "O 개방형 시스템, S 공유 키",
+          "default": "O"
+        },
+        {
+          "meaning": "암호화 키 저장 형식",
+          "values": "H 16진수, S 문자열",
+          "default": "H"
+        },
+        {
+          "meaning": "암호화 키 1",
+          "values": "16진수 쌍 또는 영숫자 문자열"
+        },
+        {
+          "meaning": "암호화 키 2",
+          "values": "16진수 쌍 또는 영숫자 문자열"
+        },
+        {
+          "meaning": "암호화 키 3",
+          "values": "16진수 쌍 또는 영숫자 문자열"
+        },
+        {
+          "meaning": "암호화 키 4",
+          "values": "16진수 쌍 또는 영숫자 문자열"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "구형 무선 펌웨어에서 지금은 쓰이지 않는 Cisco LEAP 인증을 설정합니다."
+    "summary": "구형 무선 펌웨어에서 지금은 쓰이지 않는 Cisco LEAP 인증을 설정합니다.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP 모드",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "사용자 이름",
+          "values": "1 ~ 32자",
+          "default": "user"
+        },
+        {
+          "meaning": "비밀번호",
+          "values": "1 ~ 32자",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "프린터 조작 패널의 무선 설정에 사용할 비밀번호를 지정합니다."
+    "summary": "프린터 조작 패널의 무선 설정에 사용할 비밀번호를 지정합니다.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "이전 무선 비밀번호",
+          "values": "0000 ~ 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "새 무선 비밀번호",
+          "values": "0000 ~ 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "구형 무선 프린트 서버의 802.11b 데이터 전송률과 송신 출력을 설정합니다."
+    "summary": "구형 무선 프린트 서버의 802.11b 데이터 전송률과 송신 출력을 설정합니다.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "초당 1Mb 전송률",
+          "values": "Y 켬, N 끔"
+        },
+        {
+          "meaning": "초당 2Mb 전송률",
+          "values": "Y 켬, N 끔"
+        },
+        {
+          "meaning": "초당 5.5Mb 전송률",
+          "values": "Y 켬, N 끔"
+        },
+        {
+          "meaning": "초당 11Mb 전송률",
+          "values": "Y 켬, N 끔"
+        },
+        {
+          "meaning": "송신 출력",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "무선 네트워크 이름과 통신 모드, 프리앰블 길이, 연결 유지 동작을 설정합니다."
+    "summary": "무선 네트워크 이름과 통신 모드, 프리앰블 길이, 연결 유지 동작을 설정합니다.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID 값",
+          "values": "최대 32자",
+          "default": "125"
+        },
+        {
+          "meaning": "동작 모드",
+          "values": "I 인프라스트럭처, A 애드혹",
+          "default": "I"
+        },
+        {
+          "meaning": "무선 카드 프리앰블 길이",
+          "values": "L 길게, S 짧게",
+          "default": "L"
+        },
+        {
+          "meaning": "무선 펄스 활성화",
+          "values": "0 비활성화, 1 활성화",
+          "default": "1"
+        },
+        {
+          "meaning": "무선 펄스 간격",
+          "values": "5 ~ 300초",
+          "default": "15"
+        },
+        {
+          "meaning": "채널 마스크",
+          "values": "0x 접두사가 붙은 16진수 4자리",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "국가별 모드",
+          "values": "0 비활성화, 1 활성화",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "무선 보안 모드와 키, 인증 정보를 하나의 명령으로 설정합니다."
+    "summary": "무선 보안 모드와 키, 인증 정보를 하나의 명령으로 설정합니다.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "보안 유형 코드",
+          "values": "01 없음, 02 WEP 40, 03 WEP 128, 04 ~ 08 EAP 유형, 09 WPA PSK, 10 ~ 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "WEP 암호화 키 인덱스",
+          "values": "1 ~ 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP 인증 유형",
+          "values": "O 개방형 시스템, S 공유 키",
+          "default": "O"
+        },
+        {
+          "meaning": "WEP 키 저장 형식",
+          "values": "H 16진수, S 문자열",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP 암호화 키 1",
+          "values": "16진수 쌍 또는 영숫자 문자열"
+        },
+        {
+          "meaning": "WEP 암호화 키 2",
+          "values": "16진수 쌍 또는 영숫자 문자열"
+        },
+        {
+          "meaning": "WEP 암호화 키 3",
+          "values": "16진수 쌍 또는 영숫자 문자열"
+        },
+        {
+          "meaning": "WEP 암호화 키 4",
+          "values": "16진수 쌍 또는 영숫자 문자열"
+        },
+        {
+          "meaning": "보안 유형의 사용자 ID",
+          "values": "모든 문자열",
+          "default": "user"
+        },
+        {
+          "meaning": "보안 유형의 비밀번호",
+          "values": "모든 문자열",
+          "default": "password"
+        },
+        {
+          "meaning": "선택적 개인 키 비밀번호",
+          "values": "모든 문자열"
+        },
+        {
+          "meaning": "Kerberos 영역",
+          "values": "모든 문자열",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberos 키 배포 센터",
+          "values": "모든 문자열",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "사전 공유 키 값",
+          "values": "16진수 최소 64자리"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

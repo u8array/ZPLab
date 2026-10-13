@@ -5,9 +5,13 @@ import { ZplCatalogList } from "./ZplCatalogList";
 import { ZplCatalogDetail } from "./ZplCatalogDetail";
 import { useCatalogSelection } from "../../hooks/useCatalogSelection";
 import type { CursorCommand } from "../../lib/zplLanguage";
+import { useCatalogSummaries } from "../../hooks/useCatalogSummaries";
+
+vi.mock("../../hooks/useCatalogSummaries", () => ({ useCatalogSummaries: vi.fn(() => ({})) }));
 
 afterEach(() => {
   cleanup();
+  vi.mocked(useCatalogSummaries).mockReturnValue({});
   localStorage.removeItem("zpl:section:catalog-list");
   localStorage.removeItem("zpl:section:catalog-detail");
 });
@@ -55,6 +59,26 @@ describe("catalog panes", () => {
     first.unmount();
     const second = render(<CatalogPanes cursor={{ id: "^RI", from: 0, pointed: true }} onInsert={vi.fn()} />);
     expect(second.queryByRole("list")).toBeNull();
+  });
+
+  it("shows the parameter table in the loaded language and falls back to English row by row", () => {
+    vi.mocked(useCatalogSummaries).mockReturnValue({
+      "^FO": { hash: "x", summary: "Setzt die Feldposition.", reference: { hash: "y", params: [
+        { meaning: "horizontale Position in Punkten", values: "0 bis 32000", default: "0" },
+        { meaning: "vertikale Position in Punkten", values: "0 bis 32000", default: "0" },
+        { meaning: "Ausrichtung", values: "0 links, 1 rechts, 2 automatisch", default: "letztes ^FW" },
+      ] } },
+    });
+    const r = render(<CatalogPanes cursor={{ id: "^FO", from: 0, pointed: true }} onInsert={vi.fn()} />);
+    expect(detail(r.getByTestId).getByText("horizontale Position in Punkten")).toBeTruthy();
+    expect(detail(r.getByTestId).getByText(/0 links, 1 rechts, 2 automatisch/)).toBeTruthy();
+    r.unmount();
+    vi.mocked(useCatalogSummaries).mockReturnValue({ "^FO": { hash: "x", summary: "Setzt die Feldposition.", reference: { hash: "y", params: [
+      { meaning: "horizontale Position in Punkten", values: "0 bis 32000", default: "0" },
+    ] } } });
+    const mixed = render(<CatalogPanes cursor={{ id: "^FO", from: 0, pointed: true }} onInsert={vi.fn()} />);
+    expect(detail(mixed.getByTestId).getByText("horizontale Position in Punkten")).toBeTruthy();
+    expect(detail(mixed.getByTestId).getByText("vertical position in dots")).toBeTruthy();
   });
 
   it("folds the command list to a rail, keeps the description and remembers the fold", () => {

@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Nustato spausdinamą plotį taškais. Spausdintuvas nukerpa turinį, išeinantį už šio pločio."
+    "summary": "Nustato spausdinamą plotį taškais. Spausdintuvas nukerpa turinį, išeinantį už šio pločio.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "spausdinimo plotis taškais",
+          "values": "nuo 2 iki etiketės pločio",
+          "default": "paskutinė išsaugota reikšmė"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Nustato etiketės ilgį taškais, taip apibrėžiant, kur baigiasi spausdinamas formatas."
+    "summary": "Nustato etiketės ilgį taškais, taip apibrėžiant, kur baigiasi spausdinamas formatas.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "etiketės ilgis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "spausdintuvo nustatymas"
+        },
+        {
+          "meaning": "taikoma visai medijai",
+          "values": "N tik tolydi, Y visa medija",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Perkelia etiketės pradžios tašką, pakeisdama koordinačių pradžią, naudojamą vėlesnių laukų koordinatėms."
+    "summary": "Perkelia etiketės pradžios tašką, pakeisdama koordinačių pradžią, naudojamą vėlesnių laukų koordinatėms.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "etiketės pradžios taško x ašis",
+          "values": "nuo 0 iki 32000",
+          "default": "0 arba paskutinė išsaugota reikšmė"
+        },
+        {
+          "meaning": "etiketės pradžios taško y ašis",
+          "values": "nuo 0 iki 32000",
+          "default": "0 arba paskutinė išsaugota reikšmė"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Pritaiko horizontalų poslinkį laukų pozicijoms, siekiant suderinamumo su senesniais Zebra formatais."
+    "summary": "Pritaiko horizontalų poslinkį laukų pozicijoms, siekiant suderinamumo su senesniais Zebra formatais.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "visų laukų pozicijų poslinkis į kairę",
+          "values": "nuo -9999 iki 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Prideda vertikalų poslinkį visam formatui medijos viršutinio krašto atžvilgiu."
+    "summary": "Prideda vertikalų poslinkį visam formatui medijos viršutinio krašto atžvilgiu.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "perkelia visą formatą aukštyn arba žemyn taškų eilutėmis",
+          "values": "nuo -120 iki 120, XiIIIPlus 600 dpi nuo -240 iki 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Nustato koordinačių matavimo vienetus taškais, coliais arba milimetrais ir gali perskaičiuoti formatus tarp skirtingų spausdinimo skiriamųjų gebų."
+    "summary": "Nustato koordinačių matavimo vienetus taškais, coliais arba milimetrais ir gali perskaičiuoti formatus tarp skirtingų spausdinimo skiriamųjų gebų.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "kitų laukų koordinačių vienetai",
+          "values": "D taškai, I coliai, M milimetrai",
+          "default": "D"
+        },
+        {
+          "meaning": "formato bazinė skiriamoji geba taškais colyje",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "tikslinė skiriamoji geba konvertavimui",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Nustato medijos tvarkymo režimą po spausdinimo, įskaitant nuplėšimo, atplėšimo, pjoviklio, atsukimo ir aplikatoriaus režimus."
+    "summary": "Nustato medijos tvarkymo režimą po spausdinimo, įskaitant nuplėšimo, atplėšimo, pjoviklio, atsukimo ir aplikatoriaus režimus.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "medijos tvarkymo režimas po spausdinimo",
+          "values": "T nuplėšimas, P nulupimas, R atsukimas, A aplikatorius, C pjoviklis, D atidėtas pjoviklis, F RFID, K kioskas",
+          "default": "spausdintuvo nustatymas"
+        },
+        {
+          "meaning": "nulupimas prieš kitą etiketę",
+          "values": "N ne, Y taip",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Pasirenka terminio perdavimo arba tiesioginio terminio spausdinimo režimą, priklausomai nuo to, ar įdėta medija naudoja juostelę."
+    "summary": "Pasirenka terminio perdavimo arba tiesioginio terminio spausdinimo režimą, priklausomai nuo to, ar įdėta medija naudoja juostelę.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "spausdintuvo naudojamos medijos tipas",
+          "values": "T terminis perdavimas, D tiesioginis terminis"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Nustato spausdinamų kopijų kiekį, pauzės arba pjovimo grupavimą ir kopijų skaičių kiekvienai serijos reikšmei."
+    "summary": "Nustato spausdinamų kopijų kiekį, pauzės arba pjovimo grupavimą ir kopijų skaičių kiekvienai serijos reikšmei.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "bendras spausdinamų etikečių skaičius",
+          "values": "nuo 1 iki 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "atspausdintos etiketės prieš pristabdymą",
+          "values": "nuo 1 iki 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "kiekvieno serijos numerio kopijų skaičius",
+          "values": "nuo 0 iki 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "nepaiso pristabdymo skaitiklio",
+          "values": "N ne, Y taip",
+          "default": "N"
+        },
+        {
+          "meaning": "nukerpa po anuliuotos RFID etiketės",
+          "values": "N ne, Y taip",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Apverčia vėlesnių laukų spausdinimą, sukeisdama pirmo plano ir fono spalvas."
+    "summary": "Apverčia vėlesnių laukų spausdinimą, sukeisdama pirmo plano ir fono spalvas.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "sukeičia spausdinimo spalvą kitiems laukams",
+          "values": "N ne, Y taip",
+          "default": "N arba paskutinė išsaugota reikšmė"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Pasuka visą etiketės formatą 180 laipsnių kampu."
+    "summary": "Pasuka visą etiketės formatą 180 laipsnių kampu.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "spausdina etiketę aukštyn kojomis",
+          "values": "N normalus, I invertuotas",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Horizontaliai apverčia spausdinamą sritį veidrodiniu būdu."
+    "summary": "Horizontaliai apverčia spausdinamą sritį veidrodiniu būdu.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "apverčia etiketę iš kairės į dešinę",
+          "values": "N ne, Y taip",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Nustato spausdinimo, pastūmimo ir atgalinio padavimo greitį coliais per sekundę."
+    "summary": "Nustato spausdinimo, pastūmimo ir atgalinio padavimo greitį coliais per sekundę.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "spausdinimo greitis coliais per sekundę",
+          "values": "nuo 1 iki 14, arba A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "tuščios etiketės pastūmimo greitis",
+          "values": "nuo 2 iki 14",
+          "default": "6"
+        },
+        {
+          "meaning": "atgalinio padavimo greitis po spausdinimo",
+          "values": "nuo 2 iki 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Nustato kito lauko poziciją nuo etiketės pradžios taško, remiantis lauko viršutiniu kairiuoju kampu."
+    "summary": "Nustato kito lauko poziciją nuo etiketės pradžios taško, remiantis lauko viršutiniu kairiuoju kampu.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "horizontali pozicija taškais",
+          "values": "nuo 0 iki 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "vertikali pozicija taškais",
+          "values": "nuo 0 iki 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "lygiavimas",
+          "values": "0 kairė, 1 dešinė, 2 automatinis",
+          "default": "paskutinis ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Nustato kito lauko poziciją nuo jo bazinės linijos arba brūkšninio kodo krašto, suteikdama pasuktiems laukams stabilų atskaitos tašką."
+    "summary": "Nustato kito lauko poziciją nuo jo bazinės linijos arba brūkšninio kodo krašto, suteikdama pasuktiems laukams stabilų atskaitos tašką.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "horizontali pozicija taškais",
+          "values": "nuo 0 iki 32000",
+          "default": "paskutinė lauko pozicija"
+        },
+        {
+          "meaning": "vertikali pozicija taškais",
+          "values": "nuo 0 iki 32000",
+          "default": "paskutinė lauko pozicija"
+        },
+        {
+          "meaning": "lygiavimas",
+          "values": "0 kairė, 1 dešinė, 2 automatinis",
+          "default": "paskutinis ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Pateikia esamo lauko turinį, įskaitant tekstą, brūkšninio kodo duomenis arba RFID duomenis."
+    "summary": "Pateikia esamo lauko turinį, įskaitant tekstą, brūkšninio kodo duomenis arba RFID duomenis.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "lauko turinys",
+          "values": "bet kurie spausdinami duomenys iki 3072 baitų, be priešdėlio simbolių"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Įjungia šešioliktainius pabėgimo simbolius lauko duomenyse, skirtus dvejetainiams baitams ir rezervuotiems komandų simboliams."
+    "summary": "Įjungia šešioliktainius pabėgimo simbolius lauko duomenyse, skirtus dvejetainiams baitams ir rezervuotiems komandų simboliams.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "šešioliktainio žymėjimo simbolis",
+          "values": "bet kuris simbolis, išskyrus formato ir valdymo priešdėlius",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Prideda komentaro lauką. Spausdintuvas ignoruoja jo turinį iki kito lauko skirtuko."
+    "summary": "Prideda komentaro lauką. Spausdintuvas ignoruoja jo turinį iki kito lauko skirtuko.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "nespausdinamas komentaro tekstas",
+          "values": "bet kuris tekstas, ignoruojamas iki kitos komandos"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Nustato numatytąją lauko orientaciją, o naujesnėje programinėje aparatinėje įrangoje ir numatytąjį lygiavimą."
+    "summary": "Nustato numatytąją lauko orientaciją, o naujesnėje programinėje aparatinėje įrangoje ir numatytąjį lygiavimą.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "numatytasis lauko pasukimas",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "numatytasis lygiavimas",
+          "values": "0 kairė, 1 dešinė, 2 automatinis",
+          "default": "automatinis, kai ^TB, kitaip kairė"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Sutalpina lauko duomenis fiksuoto pločio bloke, valdant eilučių skaičių, tarpus, įtrauką ir lygiavimą."
+    "summary": "Sutalpina lauko duomenis fiksuoto pločio bloke, valdant eilučių skaičių, tarpus, įtrauką ir lygiavimą.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "bloko plotis taškais",
+          "values": "nuo 0 iki etiketės pločio",
+          "default": "0"
+        },
+        {
+          "meaning": "maksimalus eilučių skaičius",
+          "values": "nuo 1 iki 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "papildomas eilučių tarpas taškais",
+          "values": "nuo -9999 iki 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "lygiavimas",
+          "values": "L kairė, C centras, R dešinė, J abipusis",
+          "default": "L"
+        },
+        {
+          "meaning": "tolesnių eilučių įtrauka taškais",
+          "values": "nuo 0 iki 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Sutalpina tekstą fiksuoto pločio ir aukščio dėžutėje, o netelpantį tekstą nukerpa."
+    "summary": "Sutalpina tekstą fiksuoto pločio ir aukščio dėžutėje, o netelpantį tekstą nukerpa.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "bloko pasukimas",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^A"
+        },
+        {
+          "meaning": "bloko plotis taškais",
+          "values": "nuo 1 iki etiketės pločio",
+          "default": "1"
+        },
+        {
+          "meaning": "bloko aukštis taškais",
+          "values": "nuo 1 iki etiketės ilgio",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Priskiria numerį kintamajam laukui saugomuose ir vėliau iškviečiamuose formatuose."
+    "summary": "Priskiria numerį kintamajam laukui saugomuose ir vėliau iškviečiamuose formatuose.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "lauko numeris",
+          "values": "nuo 0 iki 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "nebūtinas KDU užklausos tekstas",
+          "values": "iki 255 raidinių skaitmeninių simbolių"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Pateikia duomenis kintamajam laukui. Skirtingai nei ^FD duomenys, jie išvalomi po etiketės atspausdinimo."
+    "summary": "Pateikia duomenis kintamajam laukui. Skirtingai nei ^FD duomenys, jie išvalomi po etiketės atspausdinimo.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "kintamojo lauko duomenys",
+          "values": "eilutė nuo 0 iki 3072 baitų"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Nustato simbolį, naudojamą sunumeruotų laukų reikšmėms įterpti į kito lauko eilutę."
+    "summary": "Nustato simbolį, naudojamą sunumeruotų laukų reikšmėms įterpti į kito lauko eilutę.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "laukų sujungimo skirtukas",
+          "values": "bet kuris simbolis, išskyrus formato ir valdymo priešdėlius",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Nustato žymes, naudojamas realaus laiko laikrodžio žymenims lauko duomenyse."
+    "summary": "Nustato žymes, naudojamas realaus laiko laikrodžio žymenims lauko duomenyse.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "pirminio laikrodžio žymėjimo simbolis",
+          "values": "bet kuris ASCII simbolis",
+          "default": "%"
+        },
+        {
+          "meaning": "antrinio laikrodžio žymėjimo simbolis",
+          "values": "bet kuris ASCII simbolis, kitoks nei a"
+        },
+        {
+          "meaning": "trečio laikrodžio žymėjimo simbolis",
+          "values": "bet kuris ASCII simbolis, kitoks nei a ir b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Nustato numatytąjį brūkšninio kodo modulio plotį, plataus ir siauro brūkšnio santykį bei aukštį vėlesniems brūkšninio kodo laukams."
+    "summary": "Nustato numatytąjį brūkšninio kodo modulio plotį, plataus ir siauro brūkšnio santykį bei aukštį vėlesniems brūkšninio kodo laukams.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "modulio plotis taškais",
+          "values": "nuo 1 iki 10",
+          "default": "2"
+        },
+        {
+          "meaning": "plataus ir siauro brūkšnio santykis",
+          "values": "nuo 2.0 iki 3.0 0.1 žingsniais",
+          "default": "3.0"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "bet kuris aukštis taškais",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Išdėsto PDF417 arba MicroPDF417 segmentus nurodytose pradžios pozicijose, kai viena žinutė apima kelis simbolius."
+    "summary": "Išdėsto PDF417 arba MicroPDF417 segmentus nurodytose pradžios pozicijose, kai viena žinutė apima kelis simbolius.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "pirmo simbolio x ašis, daugiau porų kartojant",
+          "values": "nuo 0 iki 32000, arba e praleisti šį simbolį"
+        },
+        {
+          "meaning": "pirmo simbolio y ašis, daugiau porų kartojant",
+          "values": "nuo 0 iki 32000, arba e praleisti šį simbolį"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Nustato simbolių tvarką esamame lauke ir gali pridėti papildomą tarpą tarp simbolių."
+    "summary": "Nustato simbolių tvarką esamame lauke ir gali pridėti papildomą tarpą tarp simbolių.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "spausdinimo kryptis",
+          "values": "H horizontalus, V vertikalus, R atvirkštinis",
+          "default": "H"
+        },
+        {
+          "meaning": "papildomas tarpas tarp simbolių taškais",
+          "values": "nuo 0 iki 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Pasirenka rezidentinį keičiamo dydžio šriftą 0 kitam laukui nurodytu dydžiu ir orientacija."
+    "summary": "Pasirenka rezidentinį keičiamo dydžio šriftą 0 kitam laukui nurodytu dydžiu ir orientacija.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "simbolio aukštis taškais",
+          "values": "nuo 10 iki 32000",
+          "default": "paskutinis ^CF"
+        },
+        {
+          "meaning": "simbolio plotis taškais",
+          "values": "nuo 10 iki 32000",
+          "default": "paskutinis ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Pasirenka rezidentinį šriftą pagal vieno simbolio pavadinimą, su pasirenkama orientacija, aukščiu ir pločiu."
+    "summary": "Pasirenka rezidentinį šriftą pagal vieno simbolio pavadinimą, su pasirenkama orientacija, aukščiu ir pločiu.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "šrifto pavadinimas",
+          "values": "nuo A iki Z, nuo 0 iki 9",
+          "default": "paskutinis ^CF"
+        },
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "simbolio aukštis taškais",
+          "values": "nuo 10 iki 32000 keičiamo dydžio, nuo 1 iki 10 kartų bazinio aukščio taškiniam šriftui",
+          "default": "paskutinis ^CF"
+        },
+        {
+          "meaning": "simbolio plotis taškais",
+          "values": "nuo 10 iki 32000 keičiamo dydžio, nuo 1 iki 10 kartų bazinio pločio taškiniam šriftui",
+          "default": "paskutinis ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Pasirenka saugomą šrifto failą kitam laukui, su pasirenkama orientacija, aukščiu ir pločiu."
+    "summary": "Pasirenka saugomą šrifto failą kitam laukui, su pasirenkama orientacija, aukščiu ir pločiu.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "lauko orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "simbolio aukštis taškais",
+          "values": "nuo 10 iki 32000 keičiamo dydžio, nuo 1 iki 10 kartų bazinio aukščio taškiniam šriftui",
+          "default": "paskutinis ^CF"
+        },
+        {
+          "meaning": "simbolio plotis taškais",
+          "values": "nuo 10 iki 32000 keičiamo dydžio, nuo 1 iki 10 kartų bazinio pločio taškiniam šriftui",
+          "default": "paskutinis ^CF"
+        },
+        {
+          "meaning": "diskas su šriftu",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naudojamo šrifto failo pavadinimas",
+          "values": "bet kuris galiojantis šrifto pavadinimas",
+          "default": "paskutinis ^CF"
+        },
+        {
+          "meaning": "šrifto failo plėtinys",
+          "values": "FNT šriftas, TTF TrueType, TTE TrueType plėtinys"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Nustato atsarginį šriftą, aukštį ir plotį, naudojamus teksto laukams, kurie savo šrifto nenurodo."
+    "summary": "Nustato atsarginį šriftą, aukštį ir plotį, naudojamus teksto laukams, kurie savo šrifto nenurodo.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "numatytasis šriftas",
+          "values": "nuo A iki Z, nuo 0 iki 9",
+          "default": "A"
+        },
+        {
+          "meaning": "numatytasis simbolio aukštis taškais",
+          "values": "nuo 0 iki 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "numatytasis simbolio plotis taškais",
+          "values": "nuo 0 iki 32000",
+          "default": "5 arba paskutinė išsaugota reikšmė"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Pasirenka koduotę, naudojamą lauko duomenims interpretuoti, įskaitant kodų puslapius ir UTF-8."
+    "summary": "Pasirenka koduotę, naudojamą lauko duomenims interpretuoti, įskaitant kodų puslapius ir UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "naudojama koduotė",
+          "values": "nuo 0 iki 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "iš naujo priskiriama simbolio pozicija",
+          "values": "nuo 0 iki 255",
+          "default": "nėra"
+        },
+        {
+          "meaning": "pakeičiančiojo simbolio pozicija",
+          "values": "nuo 0 iki 255",
+          "default": "nėra"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Įjungia išplėstinį teksto maketavimą vėlesniems laukams, įskaitant dvikryptį tekstą, formavimą ir OpenType funkcijas."
+    "summary": "Įjungia išplėstinį teksto maketavimą vėlesniems laukams, įskaitant dvikryptį tekstą, formavimą ir OpenType funkcijas.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "numatytasis glifų šaltinis",
+          "values": "0 tarpo simbolis, 1 šrifto glifas",
+          "default": "0"
+        },
+        {
+          "meaning": "dvikryptis teksto išdėstymas",
+          "values": "0 išjungta, 1 įjungta",
+          "default": "0"
+        },
+        {
+          "meaning": "simbolių formavimas",
+          "values": "0 išjungta, 1 įjungta",
+          "default": "0"
+        },
+        {
+          "meaning": "OpenType lentelių palaikymas",
+          "values": "0 išjungta, 1 įjungta",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Susieja vieno simbolio šrifto pavadinimą su saugomu šrifto failu."
+    "summary": "Susieja vieno simbolio šrifto pavadinimą su saugomu šrifto failu.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "pridedama arba pakeičiama šrifto raidė",
+          "values": "nuo A iki Z, nuo 0 iki 9"
+        },
+        {
+          "meaning": "įrenginys šriftui saugoti",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "išsaugoto šrifto failo pavadinimas",
+          "values": "iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "šrifto failo plėtinys",
+          "values": "FNT šriftas, TTF TrueType, TTE TrueType plėtinys"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Nustato atvaizduotų keičiamo dydžio glifų talpyklos dydį, kad pagreitintų kartotinį didelio šrifto spausdinimą."
+    "summary": "Nustato atvaizduotų keičiamo dydžio glifų talpyklos dydį, kad pagreitintų kartotinį didelio šrifto spausdinimą.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "simbolių podėlis įjungtas",
+          "values": "N ne, Y taip",
+          "default": "Y"
+        },
+        {
+          "meaning": "papildoma podėlio atmintis K",
+          "values": "nuo 1 iki 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "podėlio buferio tipas",
+          "values": "0 standartiniai šriftai, 1 azijos šriftai",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Apibrėžia TrueType atsarginių šriftų grandines, naudojamas, kai pagrindiniam šriftui trūksta glifo."
+    "summary": "Apibrėžia TrueType atsarginių šriftų grandines, naudojamas, kai pagrindiniam šriftui trūksta glifo.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "susiejamas plėtinio šriftas, įrenginys ir failas",
+          "values": "TTF arba TTE failas įrenginyje"
+        },
+        {
+          "meaning": "bazinis šriftas arba šriftai, kurie jį gauna",
+          "values": "FNT, TTF arba TTE failas, leidžiamas pakaitos simbolis"
+        },
+        {
+          "meaning": "susieja arba atsieja plėtinį",
+          "values": "0 atsieti, 1 susieti"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Įkelia taškinį šriftą ir jo metrikas į spausdintuvo atmintį."
+    "summary": "Įkelia taškinį šriftą ir jo metrikas į spausdintuvo atmintį.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "įrenginys šriftui saugoti",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "šrifto pavadinimas",
+          "values": "iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "šrifto failo plėtinys",
+          "values": "FNT fiksuota reikšmė",
+          "default": "FNT"
+        },
+        {
+          "meaning": "vietinio šrifto orientacija",
+          "values": "N tik normalus",
+          "default": "N"
+        },
+        {
+          "meaning": "maksimalus langelio aukštis taškais",
+          "values": "nuo 1 iki 32000"
+        },
+        {
+          "meaning": "maksimalus langelio plotis taškais",
+          "values": "nuo 1 iki 32000"
+        },
+        {
+          "meaning": "taškai nuo langelio viršaus iki bazinės linijos",
+          "values": "nuo 1 iki 32000"
+        },
+        {
+          "meaning": "tarpo simbolių plotis",
+          "values": "nuo 1 iki 32000"
+        },
+        {
+          "meaning": "šrifto simbolių skaičius",
+          "values": "nuo 1 iki 256"
+        },
+        {
+          "meaning": "autorių teisių savininko tekstas",
+          "values": "nuo 1 iki 63 raidinių skaitmeninių simbolių"
+        },
+        {
+          "meaning": "struktūriniai bitmap duomenys simboliui",
+          "values": "hash kodas, tada aukščio pločio poslinkiai, tada šešioliktainiai duomenys"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Įkelia užkoduotą keičiamo dydžio Intellifont šriftą į spausdintuvo atmintį."
+    "summary": "Įkelia užkoduotą keičiamo dydžio Intellifont šriftą į spausdintuvo atmintį.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "įrenginys šriftui saugoti",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "šrifto pavadinimas",
+          "values": "iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "šrifto failo plėtinys",
+          "values": "FNT fiksuota reikšmė",
+          "default": "FNT"
+        },
+        {
+          "meaning": "šrifto dydis baitais iš ZTools",
+          "values": "konvertuoto šrifto baitų kiekis"
+        },
+        {
+          "meaning": "užkoduoti šrifto baitų duomenys",
+          "values": "šešioliktainės poros, atitinkančios dydį"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Įkelia užkoduotą TrueType šriftą su ne daugiau kaip 256 simboliais į spausdintuvo atmintį."
+    "summary": "Įkelia užkoduotą TrueType šriftą su ne daugiau kaip 256 simboliais į spausdintuvo atmintį.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "įrenginys šriftui saugoti",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "šrifto pavadinimas",
+          "values": "iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "šrifto failo plėtinys",
+          "values": "DAT fiksuota reikšmė",
+          "default": "DAT"
+        },
+        {
+          "meaning": "šrifto dydis baitais",
+          "values": "konvertuoto šrifto baitų kiekis"
+        },
+        {
+          "meaning": "užkoduoti šrifto baitų duomenys",
+          "values": "šešioliktainės poros, atitinkančios dydį"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Įkelia užkoduotą TrueType šriftą su daugiau kaip 256 glifais į spausdintuvo atmintį."
+    "summary": "Įkelia užkoduotą TrueType šriftą su daugiau kaip 256 glifais į spausdintuvo atmintį.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "įrenginys šriftui saugoti",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "šrifto pavadinimas",
+          "values": "iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "šrifto failo plėtinys",
+          "values": "FNT fiksuota reikšmė",
+          "default": "FNT"
+        },
+        {
+          "meaning": "šrifto dydis baitais",
+          "values": "konvertuoto šrifto baitų kiekis"
+        },
+        {
+          "meaning": "užkoduoti šrifto baitų duomenys",
+          "values": "šešioliktainės poros, atitinkančios dydį"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Įkelia koduočių lentelę, kuri susieja lauko duomenų baitus su Unicode reikšmėmis TrueType šriftams."
+    "summary": "Įkelia koduočių lentelę, kuri susieja lauko duomenų baitus su Unicode reikšmėmis TrueType šriftams.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "įrenginys su lentele",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "lentelės pavadinimas",
+          "values": "iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "lentelės failo plėtinys",
+          "values": "DAT fiksuota reikšmė",
+          "default": "DAT"
+        },
+        {
+          "meaning": "lentelės dydis baitais",
+          "values": "konvertuotos lentelės baitų kiekis"
+        },
+        {
+          "meaning": "užkoduoti lentelės baitų duomenys",
+          "values": "šešioliktainės poros, atitinkančios dydį"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Nubraižo Code 128 brūkšninį kodą kintamo ilgio ASCII duomenims, su režimais automatiniam poaibio perjungimui ir UCC/EAN duomenims."
+    "summary": "Nubraižo Code 128 brūkšninį kodą kintamo ilgio ASCII duomenims, su režimais automatiniam poaibio perjungimui ir UCC/EAN duomenims.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "N ne, Y taip",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "N ne, Y taip",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC kontrolinis skaičius",
+          "values": "N ne, Y taip",
+          "default": "N"
+        },
+        {
+          "meaning": "režimas",
+          "values": "N nėra, U UCC Case Mode, A automatinis, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Nubraižo Code 39 brūkšninį kodą su pasirenkamu Mod 43 kontroliniu skaitmeniu."
+    "summary": "Nubraižo Code 39 brūkšninį kodą su pasirenkamu Mod 43 kontroliniu skaitmeniu.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "Mod 43 kontrolinis skaičius",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Nubraižo Code 93 brūkšninį kodą, perteikiantį pilnus ASCII duomenis per poslinkio simbolius."
+    "summary": "Nubraižo Code 93 brūkšninį kodą, perteikiantį pilnus ASCII duomenis per poslinkio simbolius.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "spausdina kontrolinį skaičių",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Nubraižo Code 11 brūkšninį kodą skaitmenims ir brūkšneliams, su pasirenkamais kontroliniais skaitmenimis."
+    "summary": "Nubraižo Code 11 brūkšninį kodą skaitmenims ir brūkšneliams, su pasirenkamais kontroliniais skaitmenimis.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "kontrolinių skaičių kiekis",
+          "values": "Y 1 skaitmuo, N 2 skaitmenys",
+          "default": "N"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Nubraižo Interleaved 2 of 5 brūkšninį kodą lyginio ilgio skaitiniams duomenims, su pasirenkamu kontroliniu skaitmeniu."
+    "summary": "Nubraižo Interleaved 2 of 5 brūkšninį kodą lyginio ilgio skaitiniams duomenims, su pasirenkamu kontroliniu skaitmeniu.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod 10 kontrolinis skaičius",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "šeštas lizdas, nedokumentuotas",
+          "values": "nedokumentuota vadove"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Nubraižo Industrial 2 of 5 brūkšninį kodą, skaitinį kodą, kuriame duomenys užkoduoti tik brūkšniais."
+    "summary": "Nubraižo Industrial 2 of 5 brūkšninį kodą, skaitinį kodą, kuriame duomenys užkoduoti tik brūkšniais.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Nubraižo Standard 2 of 5 brūkšninį kodą, save tikrinantį skaitinį kodą, kuriame duomenys užkoduoti tik brūkšniais."
+    "summary": "Nubraižo Standard 2 of 5 brūkšninį kodą, save tikrinantį skaitinį kodą, kuriame duomenys užkoduoti tik brūkšniais.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Nubraižo ANSI Codabar brūkšninį kodą, taip pat žinomą kaip USD-4, naudojamą bibliotekų, sveikatos priežiūros ir kurjerių etiketėse."
+    "summary": "Nubraižo ANSI Codabar brūkšninį kodą, taip pat žinomą kaip USD-4, naudojamą bibliotekų, sveikatos priežiūros ir kurjerių etiketėse.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "kontrolinis skaičius, fiksuotai išjungtas",
+          "values": "tik N",
+          "default": "N"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "pradžios simbolis",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "pabaigos simbolis",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Nubraižo LOGMARS brūkšninį kodą, JAV gynybos departamento Code 39 variantą, ir mažąsias raides duomenyse paverčia didžiosiomis."
+    "summary": "Nubraižo LOGMARS brūkšninį kodą, JAV gynybos departamento Code 39 variantą, ir mažąsias raides duomenyse paverčia didžiosiomis.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Nubraižo MSI brūkšninį kodą, iš Plessey kilusį skaitinį kodą su pasirenkamomis kontrolinio skaitmens schemomis."
+    "summary": "Nubraižo MSI brūkšninį kodą, iš Plessey kilusį skaitinį kodą su pasirenkamomis kontrolinio skaitmens schemomis.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "kontrolinio skaičiaus schema",
+          "values": "A nėra, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolinis skaičius interpretacinėje eilutėje",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Nubraižo Plessey brūkšninį kodą, senesnį skaitinį kodą su pasirenkamais kontroliniais skaitmenimis."
+    "summary": "Nubraižo Plessey brūkšninį kodą, senesnį skaitinį kodą su pasirenkamais kontroliniais skaitmenimis.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "spausdina kontrolinį skaičių",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Nubraižo EAN-13 brūkšninį kodą mažmeninės prekybos prekių numeriams ir kontrolinį skaitmenį apskaičiuoja iš dvylikos duomenų skaitmenų."
+    "summary": "Nubraižo EAN-13 brūkšninį kodą mažmeninės prekybos prekių numeriams ir kontrolinį skaitmenį apskaičiuoja iš dvylikos duomenų skaitmenų.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Nubraižo EAN-8 brūkšninį kodą mažoms mažmeninės prekybos pakuotėms ir kontrolinį skaitmenį apskaičiuoja iš septynių duomenų skaitmenų."
+    "summary": "Nubraižo EAN-8 brūkšninį kodą mažoms mažmeninės prekybos pakuotėms ir kontrolinį skaitmenį apskaičiuoja iš septynių duomenų skaitmenų.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Nubraižo UPC-A brūkšninį kodą mažmeninės prekybos pakuotėms iš vienuolikos duomenų skaitmenų, su pasirenkamu kontrolinio skaitmens spausdinimu."
+    "summary": "Nubraižo UPC-A brūkšninį kodą mažmeninės prekybos pakuotėms iš vienuolikos duomenų skaitmenų, su pasirenkamu kontrolinio skaitmens spausdinimu.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 9999",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "spausdina kontrolinį skaičių",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Nubraižo UPC-E brūkšninį kodą, trumpąją UPC-A formą. Lauko duomenys yra pilnas dešimties skaitmenų gamintojo ir gaminio kodas."
+    "summary": "Nubraižo UPC-E brūkšninį kodą, trumpąją UPC-A formą. Lauko duomenys yra pilnas dešimties skaitmenų gamintojo ir gaminio kodas.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "spausdina kontrolinį skaičių",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Nubraižo GS1 DataBar simbolį su pasirenkamu potipiu, mastelio didinimu, aukščiu ir segmento pločiu."
+    "summary": "Nubraižo GS1 DataBar simbolį su pasirenkamu potipiu, mastelio didinimu, aukščiu ir segmento pločiu.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R pasuktas, I invertuotas, B apverstas",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar simbolikos tipas",
+          "values": "1 omni, 2 trumpintas, 3 sukrautas, 4 sukrautas omni, 5 ribotas, 6 išplėstas, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 su CC-A/B, 12 UCC/EAN-128 su CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "didinimo koeficientas",
+          "values": "nuo 1 iki 10",
+          "default": "spausdintuvo nustatymas"
+        },
+        {
+          "meaning": "skirtuko aukštis",
+          "values": "1 arba 2",
+          "default": "1"
+        },
+        {
+          "meaning": "linijinės dalies aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "GS1 DataBar Expanded segmento plotis",
+          "values": "nuo 2 iki 22, tik lyginiai",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Nubraižo Planet Code pašto brūkšninį kodą iš skaitmenų, užkoduotų aukštais ir žemais brūkšniais."
+    "summary": "Nubraižo Planet Code pašto brūkšninį kodą iš skaitmenų, užkoduotų aukštais ir žemais brūkšniais.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R pasuktas, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 9999",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Nubraižo POSTNET, Planet Code arba USPS Intelligent Mail kodą, priklausomai nuo pasirinkto pašto kodo tipo."
+    "summary": "Nubraižo POSTNET, Planet Code arba USPS Intelligent Mail kodą, priklausomai nuo pasirinkto pašto kodo tipo.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "pašto kodo tipas",
+          "values": "0 postnet, 1 planet, 2 rezervuota, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Nubraižo dviejų arba penkių skaitmenų UPC/EAN papildomą simbolį šalia pagrindinio brūkšninio kodo."
+    "summary": "Nubraižo dviejų arba penkių skaitmenų UPC/EAN papildomą simbolį šalia pagrindinio brūkšninio kodo.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinė eilutė",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretacinė eilutė virš kodo",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Nubraižo sluoksniuotą Code 49 brūkšninį kodą su dviem iki aštuonių eilučių pilnų ASCII duomenų."
+    "summary": "Nubraižo sluoksniuotą Code 49 brūkšninį kodą su dviem iki aštuonių eilučių pilnų ASCII duomenų.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "atskirų eilučių aukščio daugiklis",
+          "values": "nuo 1 iki etiketės aukščio",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "interpretacinės eilutės vieta",
+          "values": "N nėra, A virš, B apačioje",
+          "default": "N"
+        },
+        {
+          "meaning": "paleidimo režimas",
+          "values": "0 raidinis skaitmeninis, 1 daugkartinis skaitymas, 2 skaitmeninis, 3 grupinis raidinis, 4 shift 1, 5 shift 2, A automatinis",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Nubraižo QR Code simbolį. Komandos parametrai nustato modelį, mastelio didinimą ir kaukę. Lauko duomenys nustato klaidų taisymo lygį ir simbolių režimą."
+    "summary": "Nubraižo QR Code simbolį. Komandos parametrai nustato modelį, mastelio didinimą ir kaukę. Lauko duomenys nustato klaidų taisymo lygį ir simbolių režimą.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "lauko orientacija",
+          "values": "N tik normalus",
+          "default": "N"
+        },
+        {
+          "meaning": "modelis",
+          "values": "1 originalus, 2 patobulintas",
+          "default": "2"
+        },
+        {
+          "meaning": "didinimo koeficientas",
+          "values": "nuo 1 iki 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "klaidų taisymo lygis",
+          "values": "H ypač aukštas, Q aukštas, M standartinis, L didelio tankio",
+          "default": "Q kai tuščia, M kai reikšmė neteisinga"
+        },
+        {
+          "meaning": "kaukės reikšmė",
+          "values": "nuo 0 iki 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Nubraižo Data Matrix simbolį su konfigūruojamu elemento dydžiu, kokybės lygiu ir kaitos sekų apdorojimu."
+    "summary": "Nubraižo Data Matrix simbolį su konfigūruojamu elemento dydžiu, kokybės lygiu ir kaitos sekų apdorojimu.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "simbolio elementų aukštis",
+          "values": "nuo 1 iki etiketės pločio",
+          "default": "0, tada aukštis imamas iš ^BY"
+        },
+        {
+          "meaning": "kokybės lygis",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "koduojamų stulpelių skaičius",
+          "values": "nuo 9 iki 49, tik nelyginiai, kai kokybė nuo 0 iki 140, tik lyginiai, kai kokybė 200"
+        },
+        {
+          "meaning": "koduojamų eilučių skaičius",
+          "values": "nuo 9 iki 49"
+        },
+        {
+          "meaning": "formato ID",
+          "values": "1 skaitmeninis, 2 didžiosios raidės, 3 didžiosios raidinis skaitmeninis su . , - /, 4 didžiosios raidinis skaitmeninis, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "escape sekos valdymo simbolis",
+          "values": "bet kuris simbolis",
+          "default": "tildė"
+        },
+        {
+          "meaning": "proporcijos",
+          "values": "1 kvadratinis, 2 stačiakampis",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Nubraižo sluoksniuotą PDF417 dvimatį simbolį didelės apimties teksto arba dvejetainiams duomenims."
+    "summary": "Nubraižo sluoksniuotą PDF417 dvimatį simbolį didelės apimties teksto arba dvejetainiams duomenims.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis eilutei taškais",
+          "values": "nuo 1 iki etiketės aukščio",
+          "default": "paskutinis ^BY"
+        },
+        {
+          "meaning": "saugumo lygis",
+          "values": "nuo 1 iki 8",
+          "default": "0"
+        },
+        {
+          "meaning": "duomenų stulpelių skaičius",
+          "values": "nuo 1 iki 30",
+          "default": "automatinės proporcijos"
+        },
+        {
+          "meaning": "eilučių skaičius",
+          "values": "nuo 3 iki 90",
+          "default": "automatinės proporcijos"
+        },
+        {
+          "meaning": "atkerpa dešinius eilučių žymeklius ir pabaigos raštą",
+          "values": "Y taip, N ne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Nubraižo MicroPDF417 simbolį, kompaktišką PDF417 variantą su eilučių adresavimo raštais."
+    "summary": "Nubraižo MicroPDF417 simbolį, kompaktišką PDF417 variantą su eilučių adresavimo raštais.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis taškais",
+          "values": "nuo 1 iki 9999",
+          "default": "paskutinis ^BY, arba 10, jei ^BY nebuvo siųstas"
+        },
+        {
+          "meaning": "režimas",
+          "values": "nuo 0 iki 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Nubraižo Aztec matricinį simbolį su konfigūruojamu mastelio didinimu ir klaidų taisymu."
+    "summary": "Nubraižo Aztec matricinį simbolį su konfigūruojamu mastelio didinimu ir klaidų taisymu.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R pasuktas, I 180, B 270",
+          "default": "paskutinis ^FW"
+        },
+        {
+          "meaning": "didinimo koeficientas",
+          "values": "nuo 1 iki 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "išplėstinio kanalo interpretavimo indikatorius",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "klaidų valdymas ir simbolio dydis",
+          "values": "0 numatyta, nuo 1 iki 99 klaidų procentas, nuo 101 iki 104 glaudūs sluoksniai, nuo 201 iki 232 pilni sluoksniai, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "meniu simbolio indikatorius",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "simbolių skaičius struktūriniam sujungimui",
+          "values": "nuo 1 iki 26",
+          "default": "1"
+        },
+        {
+          "meaning": "struktūrinio sujungimo ID laukas",
+          "values": "tekstas iki 24 simbolių",
+          "default": "nėra ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Nubraižo CODABLOCK simbolį A, E arba F režimu didesnės apimties duomenims."
+    "summary": "Nubraižo CODABLOCK simbolį A, E arba F režimu didesnės apimties duomenims.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "brūkšninio kodo aukštis eilutei taškais",
+          "values": "nuo 2 iki 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "saugumo lygis",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "simbolių eilutėje",
+          "values": "nuo 2 iki 62"
+        },
+        {
+          "meaning": "koduojamų eilučių skaičius",
+          "values": "mode-A 1-22, mode-EF 2-4"
+        },
+        {
+          "meaning": "režimas",
+          "values": "A code39-set, E code128-fnc1, F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Nubraižo UPS MaxiCode simbolį su režimu struktūrizuotoms vežėjo žinutėms arba bendriems duomenims."
+    "summary": "Nubraižo UPS MaxiCode simbolį su režimu struktūrizuotoms vežėjo žinutėms arba bendriems duomenims.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "režimas",
+          "values": "2 us-postal, 3 non-us-postal, 4 standartinis, 5 full-eec, 6 reader-program",
+          "default": "2"
+        },
+        {
+          "meaning": "simbolio numeris sekoje",
+          "values": "nuo 1 iki 8",
+          "default": "1"
+        },
+        {
+          "meaning": "bendras simbolių skaičius",
+          "values": "nuo 1 iki 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Nubraižo TLC39 telekomunikacijų etiketės simbolį, sujungiantį Code 39 su MicroPDF417 komponentu."
+    "summary": "Nubraižo TLC39 telekomunikacijų etiketės simbolį, sujungiantį Code 39 su MicroPDF417 komponentu.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R pasuktas, I invertuotas, B apverstas"
+        },
+        {
+          "meaning": "Code 39 dalies plotis taškais",
+          "values": "nuo 1 iki 10",
+          "default": "600 dpi 4, kitaip 2"
+        },
+        {
+          "meaning": "Code 39 dalies plataus ir siauro brūkšnio santykis",
+          "values": "nuo 2.0 iki 3.0 0.1 žingsniais",
+          "default": "2.0"
+        },
+        {
+          "meaning": "Code 39 dalies aukštis taškais",
+          "values": "nuo 1 iki 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "MicroPDF417 dalies siauro brūkšnio plotis",
+          "values": "nuo 1 iki 10",
+          "default": "600 dpi 4, kitaip 2"
+        },
+        {
+          "meaning": "MicroPDF417 dalies eilutės aukštis taškais",
+          "values": "nuo 1 iki 255",
+          "default": "600 dpi 8, kitaip 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Kai įjungta, patikrina brūkšninio kodo duomenis ir parametrus ir vietoje neteisingo simbolio atspausdina INVALID."
+    "summary": "Kai įjungta, patikrina brūkšninio kodo duomenis ir parametrus ir vietoje neteisingo simbolio atspausdina INVALID.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "kodo tikrinimas",
+          "values": "N ne, Y taip",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Nubraižo užpildytą arba kontūrinį stačiakampį. Kai kraštinės ilgis sutampa su rėmelio storiu, gaunama linija."
+    "summary": "Nubraižo užpildytą arba kontūrinį stačiakampį. Kai kraštinės ilgis sutampa su rėmelio storiu, gaunama linija.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "stačiakampiss plotis taškais",
+          "values": "nuo t iki 32000",
+          "default": "t arba 1"
+        },
+        {
+          "meaning": "stačiakampiss aukštis taškais",
+          "values": "nuo t iki 32000",
+          "default": "t arba 1"
+        },
+        {
+          "meaning": "rėmelio storis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "linijos spalva",
+          "values": "B juoda, W balta",
+          "default": "B"
+        },
+        {
+          "meaning": "kampų apvalinimas",
+          "values": "nuo 0 be apvalinimo iki 8 stipriausias apvalinimas",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Nubraižo įstrižą liniją nurodytame plotyje ir aukštyje, pasvirusią į dešinę arba į kairę."
+    "summary": "Nubraižo įstrižą liniją nurodytame plotyje ir aukštyje, pasvirusią į dešinę arba į kairę.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "dėžutės plotis taškais",
+          "values": "nuo 3 iki 32000",
+          "default": "t arba 3"
+        },
+        {
+          "meaning": "dėžutės aukštis taškais",
+          "values": "nuo 3 iki 32000",
+          "default": "t arba 3"
+        },
+        {
+          "meaning": "rėmelio storis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "linijos spalva",
+          "values": "B juoda, W balta",
+          "default": "B"
+        },
+        {
+          "meaning": "įstrižainės kryptis",
+          "values": "R arba / pakrypęs į dešinę, L arba \\ pakrypęs į kairę",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Nubraižo elipsę pagal plotį ir aukštį taškais, su į vidų einančiu rėmelio storiu ir juoda arba balta spalva."
+    "summary": "Nubraižo elipsę pagal plotį ir aukštį taškais, su į vidų einančiu rėmelio storiu ir juoda arba balta spalva.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "elipsės plotis taškais",
+          "values": "nuo 3 iki 4095",
+          "default": "t arba 1"
+        },
+        {
+          "meaning": "elipsės aukštis taškais",
+          "values": "nuo 3 iki 4095",
+          "default": "t arba 1"
+        },
+        {
+          "meaning": "rėmelio storis taškais",
+          "values": "nuo 2 iki 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "linijos spalva",
+          "values": "B juoda, W balta",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Nubraižo apskritimą pagal nurodytą skersmenį taškais, su į vidų einančiu rėmelio storiu ir juoda arba balta spalva."
+    "summary": "Nubraižo apskritimą pagal nurodytą skersmenį taškais, su į vidų einančiu rėmelio storiu ir juoda arba balta spalva.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "skritulio skersmuo taškais",
+          "values": "nuo 3 iki 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "rėmelio storis taškais",
+          "values": "nuo 2 iki 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "linijos spalva",
+          "values": "B juoda, W balta",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Įterpia monochrominį taškinį vaizdą esamoje lauko pozicijoje, naudojant ASCII šešioliktainius, dvejetainius arba suglaudintus duomenis."
+    "summary": "Įterpia monochrominį taškinį vaizdą esamoje lauko pozicijoje, naudojant ASCII šešioliktainius, dvejetainius arba suglaudintus duomenis.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "glaudinimo tipas",
+          "values": "A ascii hex, B dvejetainis, C glaudintas dvejetainis",
+          "default": "A"
+        },
+        {
+          "meaning": "bendras siunčiamų baitų skaičius",
+          "values": "nuo 1 iki 99999"
+        },
+        {
+          "meaning": "bendras baitų skaičius vaizde",
+          "values": "nuo 1 iki 99999"
+        },
+        {
+          "meaning": "baitai vaizdo eilutei",
+          "values": "nuo 1 iki 99999"
+        },
+        {
+          "meaning": "vaizdo duomenys",
+          "values": "ascii hex nuo 00 iki FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Atspausdina rezidentinį simbolį, pasirinktą pagal lauko duomenis, pavyzdžiui, autorių teisių arba registruoto prekės ženklo ženklą."
+    "summary": "Atspausdina rezidentinį simbolį, pasirinktą pagal lauko duomenis, pavyzdžiui, autorių teisių arba registruoto prekės ženklo ženklą.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "orientacija",
+          "values": "N normalus, R 90 pagal laikrodžio rodyklę, I 180, B 270",
+          "default": "N arba paskutinis ^FW"
+        },
+        {
+          "meaning": "simbolio aukštis proporcingas pločiui",
+          "values": "nuo 0 iki 32000",
+          "default": "paskutinis ^CF"
+        },
+        {
+          "meaning": "simbolio plotis proporcingas aukščiui",
+          "values": "nuo 0 iki 32000",
+          "default": "paskutinis ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Įkelia saugomą vaizdą formato pradžioje ir pritvirtina jį prie etiketės pradžios taško."
+    "summary": "Įkelia saugomą vaizdą formato pradžioje ir pritvirtina jį prie etiketės pradžios taško.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekto pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": ".GRF arba .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Įterpia saugomą vaizdą esamoje lauko pozicijoje jo nekeisdama mastelio."
+    "summary": "Įterpia saugomą vaizdą esamoje lauko pozicijoje jo nekeisdama mastelio.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "paieškos prioriteto tvarka"
+        },
+        {
+          "meaning": "objekto pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": ".GRF arba .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Ištrina saugomus grafinius vaizdus, šriftus arba formatus iš spausdintuvo atminties, su pakaitos simbolių palaikymu grupėms."
+    "summary": "Ištrina saugomus grafinius vaizdus, šriftus arba formatus iš spausdintuvo atminties, su pakaitos simbolių palaikymu grupėms.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekto pavadinimas, leidžiamas pakaitos simbolis",
+          "values": "nuo 1 iki 8 simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys, leidžiamas pakaitos simbolis",
+          "values": "bet kuris plėtinys",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Išsaugo esamą formatą kaip grafinį vaizdą greitam iškvietimui ir kintamųjų duomenų perdengimui."
+    "summary": "Išsaugo esamą formatą kaip grafinį vaizdą greitam iškvietimui ir kintamųjų duomenų perdengimui.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekto pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": ".GRF arba .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "spausdina etiketę po išsaugojimo",
+          "values": "N ne, Y taip",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Įkelia ASCII šešioliktainį grafinį vaizdą į spausdintuvo atmintį pakartotinai naudojamu pavadinimu."
+    "summary": "Įkelia ASCII šešioliktainį grafinį vaizdą į spausdintuvo atmintį pakartotinai naudojamu pavadinimu.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "vaizdo pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "bendras vaizdo dydis baitais",
+          "values": "apskaičiuota pagal vaizdo plotį ir aukštį"
+        },
+        {
+          "meaning": "baitai vaizdo eilutei",
+          "values": "apskaičiuota pagal vaizdo plotį"
+        },
+        {
+          "meaning": "grafinio vaizdo duomenys",
+          "values": "ascii hex nuo 00 iki FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Įkelia grafinį vaizdą, šriftą arba sertifikatą į spausdintuvo atmintį pakartotinai naudojamu pavadinimu."
+    "summary": "Įkelia grafinį vaizdą, šriftą arba sertifikatą į spausdintuvo atmintį pakartotinai naudojamu pavadinimu.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "failo pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "duomenų formatas",
+          "values": "A ascii arba zb64, B dvejetainis, C ar glaudinimas, P png zb64"
+        },
+        {
+          "meaning": "išsaugoto failo tipas",
+          "values": "B bitmap, E tte, G neglaudintas grf, P png, T ttf arba otf, X pcx, NRD neskaitomas, PAC prieigos leidimas, C wml meniu, F htm puslapis, H spausdintuvo atsakas",
+          "default": "G"
+        },
+        {
+          "meaning": "bendras baitų skaičius faile",
+          "values": "tikras išpakuoto failo dydis"
+        },
+        {
+          "meaning": "baitai eilutei GRF vaizdams",
+          "values": "apskaičiuota pagal vaizdo plotį"
+        },
+        {
+          "meaning": "failo duomenys",
+          "values": "ascii hex, zb64 arba dvejetainis"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Serializuoja teksto arba brūkšninio kodo lauko duomenis skirtingose etiketėse, naudodama pradinę reikšmę, kryptį ir žingsnį."
+    "summary": "Serializuoja teksto arba brūkšninio kodo lauko duomenis skirtingose etiketėse, naudodama pradinę reikšmę, kryptį ir žingsnį.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "pradinė serijos reikšmė",
+          "values": "iki 12 skaitmenų",
+          "default": "1"
+        },
+        {
+          "meaning": "didinimo arba mažinimo žingsnis",
+          "values": "iki 12 skaitmenų",
+          "default": "1"
+        },
+        {
+          "meaning": "užpildyti pradiniais nuliais",
+          "values": "N ne, Y taip",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Serializuoja pasirinktas pozicijas lauko duomenyse, naudodama kaukę ir simbolių rinkinius."
+    "summary": "Serializuoja pasirinktas pozicijas lauko duomenyse, naudodama kaukę ir simbolių rinkinius.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "serijinimo kaukė, nurodanti kurie simboliai kinta",
+          "values": "D dešimtainis, H šešioliktainis, O aštuntainis, A raidinis, N raidinis skaitmeninis, % praleisti"
+        },
+        {
+          "meaning": "didinimo arba mažinimo eilutė kaukei",
+          "values": "viena reikšmė kaukės pozicijai, % palikti kaip yra",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Išsaugo po jos einančias komandas kaip pakartotinai naudojamą formatą, o ne jas iškart atspausdina."
+    "summary": "Išsaugo po jos einančias komandas kaip pakartotinai naudojamą formatą, o ne jas iškart atspausdina.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "įrenginys šablonui saugoti",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "šablono pavadinimas",
+          "values": "nuo 1 iki 16 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Iškviečia saugomą formatą ir pateikia reikšmes jo sunumeruotiems vietaženklio laukams."
+    "summary": "Iškviečia saugomą formatą ir pateikia reikšmes jo sunumeruotiems vietaženklio laukams.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "išsaugoto šablono šaltinio įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "pirmiausia R, tada E, tada B, tada A"
+        },
+        {
+          "meaning": "išsaugoto šablono pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Iškviečia saugomą grafinį vaizdą esamoje pozicijoje su nepriklausomu horizontaliu ir vertikaliu mastelio keitimu."
+    "summary": "Iškviečia saugomą grafinį vaizdą esamoje pozicijoje su nepriklausomu horizontaliu ir vertikaliu mastelio keitimu.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "išsaugotos grafikos šaltinio įrenginys",
+          "values": "R, E, B, A",
+          "default": "pirmiausia R, tada E, tada B, tada A"
+        },
+        {
+          "meaning": "išsaugotos grafikos pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": "GRF"
+        },
+        {
+          "meaning": "x ašies didinimo koeficientas",
+          "values": "nuo 1 iki 10",
+          "default": "1"
+        },
+        {
+          "meaning": "y ašies didinimo koeficientas",
+          "values": "nuo 1 iki 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Pasirenka, kaip spausdintuvas aptinka etikečių ribas, naudodamas tarpelius, žymes arba nepertraukiamą mediją."
+    "summary": "Pasirenka, kaip spausdintuvas aptinka etikečių ribas, naudodamas tarpelius, žymes arba nepertraukiamą mediją.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "medijos sekimo metodas",
+          "values": "N tolydi, Y arba W nenutolydi su tarpeliu, M nenutolydi su žyme, A automatinis nustatymas, V tolydi kintamo ilgio",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "juodos žymės poslinkis taškais",
+          "values": "nuo -120 iki 283 daugumoje spausdintuvų, nuo -240 iki 566 esant 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Nustato maksimalų etiketės ilgį, kurio spausdintuvas ieško kalibruodamas pertraukiamą mediją."
+    "summary": "Nustato maksimalų etiketės ilgį, kurio spausdintuvas ieško kalibruodamas pertraukiamą mediją.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "maksimalus etiketės ilgis taškų eilutėmis",
+          "values": "spausdintuvo dpi dukart, iki maksimalaus ilgio",
+          "default": "paskutinė išsaugota reikšmė"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Nustato veiksmą įjungimo metu ir uždarius spausdinimo galvutę, įskaitant kalibravimą, pastūmimą arba ilgio matavimą."
+    "summary": "Nustato veiksmą įjungimo metu ir uždarius spausdinimo galvutę, įskaitant kalibravimą, pastūmimą arba ilgio matavimą.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "pastūmimo veiksmas įjungimo metu",
+          "values": "F pastūmimas iki pirmo tarpelio, C kalibruoti kaip ~JC, L nustatyti ilgį kaip ~JL, N be pastūmimo, S trumpas kalibravimas",
+          "default": "C"
+        },
+        {
+          "meaning": "pastūmimo veiksmas uždarius galvutę",
+          "values": "F pastūmimas iki pirmo tarpelio, C kalibruoti kaip ~JC, L nustatyti ilgį kaip ~JL, N be pastūmimo, S trumpas kalibravimas",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Sukonfigūruoja spausdinamus techninės priežiūros įspėjimus dėl spausdinimo galvutės valymo arba keitimo."
+    "summary": "Sukonfigūruoja spausdinamus techninės priežiūros įspėjimus dėl spausdinimo galvutės valymo arba keitimo.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "įspėjimo tipas",
+          "values": "R galvutės keitimas, C galvutės valymas"
+        },
+        {
+          "meaning": "spausdina įspėjimo etiketę",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "atstumas iki pirmo įspėjimo",
+          "values": "R nuo 0 iki 150 km, C nuo 100 iki 2000 metrų, 0 išjungta",
+          "default": "50 km, kai R, 0 išjungta, kai C"
+        },
+        {
+          "meaning": "atstumas prieš pakartotinį įspėjimą",
+          "values": "nuo 0 iki 2000 metrų",
+          "default": "0"
+        },
+        {
+          "meaning": "pateikiamas matavimo vienetas",
+          "values": "C centimetrai, I coliai, M metrai",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Valdo, ar etiketės taškinis vaizdas išvalomas po spausdinimo, ar išsaugomas pakartotiniam naudojimui vėlesnėse etiketėse."
+    "summary": "Valdo, ar etiketės taškinis vaizdas išvalomas po spausdinimo, ar išsaugomas pakartotiniam naudojimui vėlesnėse etiketėse.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "išvalo bitmap po spausdinimo",
+          "values": "Y išvalyti, N palikti",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Nustato tekstą, rodomą techninės priežiūros įspėjimo etiketėse dėl spausdinimo galvutės valymo arba keitimo."
+    "summary": "Nustato tekstą, rodomą techninės priežiūros įspėjimo etiketėse dėl spausdinimo galvutės valymo arba keitimo.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "įspėjimo tipas",
+          "values": "R galvutės keitimas, C galvutės valymas",
+          "default": "R"
+        },
+        {
+          "meaning": "įspėjimo etiketėje spausdinama žinutė",
+          "values": "iki 63 simbolių, be kablelių",
+          "default": "išvalykite spausdinimo galvutę arba pakeiskite spausdinimo galvutę"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Užrakina valdymo pulto nustatymą, pavyzdžiui, tamsumą arba kalibravimą, kol jis atrakinamas."
+    "summary": "Užrakina valdymo pulto nustatymą, pavyzdžiui, tamsumą arba kalibravimą, kol jis atrakinamas.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "saugomas valdymo pulto režimas",
+          "values": "D tamsumas, P pozicija, C kalibravimas, E įjungti visus, S neišsaugoti, W pristabdyti, F pastūmimas, X atšaukti, M meniu",
+          "default": "turi būti nurodyta"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Įjungia arba išjungia spausdinimo galvutės atšalimo įspėjimo indikatorių."
+    "summary": "Įjungia arba išjungia spausdinimo galvutės atšalimo įspėjimo indikatorių.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "įjungia šaltos galvutės įspėjimą",
+          "values": "Y įjungti, N išjungti"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Koreguoja spausdinimo tamsumą, palyginti su esamu spausdintuvo sukonfigūruotu tamsumu."
+    "summary": "Koreguoja spausdinimo tamsumą, palyginti su esamu spausdintuvo sukonfigūruotu tamsumu.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "medijos tamsumas esamo nustatymo atžvilgiu",
+          "values": "nuo -30 iki 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Nedelsiant nustato absoliutų spausdinimo tamsumą, atitinkantį priekinio pulto tamsumo nustatymą."
+    "summary": "Nedelsiant nustato absoliutų spausdinimo tamsumą, atitinkantį priekinio pulto tamsumo nustatymą.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "absolutus spausdinimo tamsumo lygis",
+          "values": "nuo 00 iki 30",
+          "default": "paskutinė išsaugota reikšmė"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Valdo, ar etiketė, kurios spausdinimą nutraukė medijos, juostelės arba spausdinimo galvutės gedimas, atspausdinama iš naujo po atsigavimo."
+    "summary": "Valdo, ar etiketė, kurios spausdinimą nutraukė medijos, juostelės arba spausdinimo galvutės gedimas, atspausdinama iš naujo po atsigavimo.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "pakartotinai spausdina etiketę po klaidos pašalinimo",
+          "values": "N ne, Y taip",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Suplanuoja periodinius spausdinimo galvutės elementų testus pagal atspausdintų etikečių skaičių ir pasirenkamą elementų diapazoną."
+    "summary": "Suplanuoja periodinius spausdinimo galvutės elementų testus pagal atspausdintų etikečių skaičių ir pasirenkamą elementų diapazoną.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "atspausdintos etiketės tarp galvutės testų",
+          "values": "nuo 0 iki 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "rankiniu būdu pasirenkamas galvutės testo elementų diapazonas",
+          "values": "N ne, Y taip",
+          "default": "N"
+        },
+        {
+          "meaning": "pirmo testo elemento numeris",
+          "values": "nuo 0 iki 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "paskutinio testo elemento numeris",
+          "values": "nuo 0 iki 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Koreguoja poilsio nuplėšimo arba pjovimo poziciją nedideliu taškų poslinkiu po spausdinimo."
+    "summary": "Koreguoja poilsio nuplėšimo arba pjovimo poziciją nedideliu taškų poslinkiu po spausdinimo.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "nuplėšimo ramybės pozicijos pakeitimas taškais",
+          "values": "nuo -120 iki 120",
+          "default": "paskutinė išsaugota reikšmė"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Sukonfigūruoja ankstyvo įspėjimo ribas medijos, juostelės ir spausdinimo galvutės techninei priežiūrai."
+    "summary": "Sukonfigūruoja ankstyvo įspėjimo ribas medijos, juostelės ir spausdinimo galvutės techninei priežiūrai.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "ankstyvas medijos arba atsargų įspėjimas",
+          "values": "E įjungti, D išjungti",
+          "default": "D"
+        },
+        {
+          "meaning": "etiketių skaičius ritinyje",
+          "values": "nuo 100 iki 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "medija buvo pakeista",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "juostelės ilgio kodas pagal modelį",
+          "values": "N 0 m, nuo 0 iki 7 reiškia nuo 100 iki 450 m, nuo 10 iki 16 reiškia nuo 600 iki 900 m",
+          "default": "1 arba 7, pagal modelį"
+        },
+        {
+          "meaning": "juostelė buvo pakeista",
+          "values": "Y taip, N ne",
+          "default": "N"
+        },
+        {
+          "meaning": "ankstyvo įspėjimo priežiūra įjungta",
+          "values": "E įjungta, D išjungta",
+          "default": "D"
+        },
+        {
+          "meaning": "galvutės valymo intervalo kodas",
+          "values": "nuo 0 iki 16, atitinka nuo 100 m iki 900 m 50 m žingsniais",
+          "default": "1 arba 7, pagal modelį"
+        },
+        {
+          "meaning": "spausdinimo galvutė buvo nuvalyta",
+          "values": "N ne, Y taip",
+          "default": "N"
+        },
+        {
+          "meaning": "galvutės eksploatavimo įspėjimo slenkstis coliais",
+          "values": "0 išjungta, arba nuo 100 iki 3500000 colių",
+          "default": "1000000"
+        },
+        {
+          "meaning": "spausdinimo galvutė buvo pakeista",
+          "values": "N ne, Y taip",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Valdo atgalinio padavimo laiką aplink spausdinimą ir pjovimą arba jį visai išjungia."
+    "summary": "Valdo atgalinio padavimo laiką aplink spausdinimą ir pjovimą arba jį visai išjungia.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "atgalinio padavimo laikas spausdinimo atžvilgiu",
+          "values": "A pilnas po, B pilnas prieš, N normalus, O išjungta, nuo 10 iki 90 procentų",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Pastumia nurodytą tuščių taškų eilučių skaičių pastūmimo greičiu."
+    "summary": "Pastumia nurodytą tuščių taškų eilučių skaičių pastūmimo greičiu.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "taškų eilutės, paslinktos nuo apačios",
+          "values": "nuo 0 iki 32000",
+          "default": "turi būti nurodyta"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Nedelsiant suveikia pjoviklį KR403 spausdintuvuose kiosko spausdinimo režimu."
+    "summary": "Nedelsiant suveikia pjoviklį KR403 spausdintuvuose kiosko spausdinimo režimu.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "pjovimo kiekio nepaisymo režimas",
+          "values": "0 kiosko nustatymas, 1 pilnas pjovimas"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Prideda papildomą išstūmimo ilgį KR403 kiosko pateikimo įrenginiui, kad atspausdintą mediją būtų lengviau paimti."
+    "summary": "Prideda papildomą išstūmimo ilgį KR403 kiosko pateikimo įrenginiui, kad atspausdintą mediją būtų lengviau paimti.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "papildomas medijos išstūmimo ilgis mm",
+          "values": "nuo 0 iki 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Vykdo KR403 pateikimo įrenginio ciklą, pasiūlydamas atspausdintą mediją rankiniam paėmimui."
+    "summary": "Vykdo KR403 pateikimo įrenginio ciklą, pasiūlydamas atspausdintą mediją rankiniam paėmimui.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "medijos išstūmimo ilgis pateikimo mechanizmui mm",
+          "values": "nuo 0 iki 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Nustato juostelės tiekimo įtempimą PAX serijos spausdintuvuose."
+    "summary": "Nustato juostelės tiekimo įtempimą PAX serijos spausdintuvuose.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "juostelės įtempimo lygis",
+          "values": "L žemas, M vidutinis, H aukštas",
+          "default": "turi būti nurodyta"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Nustato spausdintuvo realaus laiko laikrodžio datą ir laiką."
+    "summary": "Nustato spausdintuvo realaus laiko laikrodžio datą ir laiką.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "mėnuo",
+          "values": "nuo 01 iki 12",
+          "default": "dabartinis mėnuo"
+        },
+        {
+          "meaning": "diena",
+          "values": "nuo 01 iki 31",
+          "default": "dabartinė diena"
+        },
+        {
+          "meaning": "metai",
+          "values": "nuo 1998 iki 2097",
+          "default": "dabartiniai metai"
+        },
+        {
+          "meaning": "valanda",
+          "values": "nuo 00 iki 23",
+          "default": "dabartinė valanda"
+        },
+        {
+          "meaning": "minutė",
+          "values": "nuo 00 iki 59",
+          "default": "dabartinė minutė"
+        },
+        {
+          "meaning": "sekundė",
+          "values": "nuo 00 iki 59",
+          "default": "dabartinė sekundė"
+        },
+        {
+          "meaning": "am/pm arba 24 valandų formatas",
+          "values": "A am, P pm, M 24 valandų",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Pasirenka datos ir laiko formatą, rodomą konfigūracijos etiketėje ir valdymo pulte."
+    "summary": "Pasirenka datos ir laiko formatą, rodomą konfigūracijos etiketėje ir valdymo pulte.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "datos ir laiko rodymo formatas",
+          "values": "0 versijos numeris, 1 MM/DD/YY 24 valandų, 2 MM/DD/YY 12 valandų, 3 DD/MM/YY 24 valandų, 4 DD/MM/YY 12 valandų",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Apibrėžia antrinio laikrodžio poslinkius nuo realaus laiko laikrodžio. Poslinkiai prarandami, kai spausdintuvas išjungiamas."
+    "summary": "Apibrėžia antrinio laikrodžio poslinkius nuo realaus laiko laikrodžio. Poslinkiai prarandami, kai spausdintuvas išjungiamas.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "laikrodžio numeris poslinkiui",
+          "values": "2 antrinis, 3 tretinis",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "mėnesių poslinkis",
+          "values": "nuo -32000 iki 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "dienų poslinkis",
+          "values": "nuo -32000 iki 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "metų poslinkis",
+          "values": "nuo -32000 iki 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "valandų poslinkis",
+          "values": "nuo -32000 iki 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "minučių poslinkis",
+          "values": "nuo -32000 iki 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "sekundžių poslinkis",
+          "values": "nuo -32000 iki 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Nustato, kada laiko laukai žymimi laiko žyma, ir pasirenka kalbą dienų bei mėnesių pavadinimams."
+    "summary": "Nustato, kada laiko laukai žymimi laiko žyma, ir pasirenka kalbą dienų bei mėnesių pavadinimams.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "laikrodžio skaitymo režimas",
+          "values": "S pradžios laikas, T dabartinis laikas, nuo 0 iki 999 tolerancija",
+          "default": "S"
+        },
+        {
+          "meaning": "dienų ir mėnesių pavadinimų kalba",
+          "values": "1 angliškai, 2 ispaniškai, 3 prancūziškai, 4 vokiškai, 5 itališkai, nuo 6 iki 18 kitos kalbos",
+          "default": "paskutinis ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Pasirenka spausdintuvo valdymo pulto ekrano kalbą iš sąrašo, kuris priklauso nuo modelio."
+    "summary": "Pasirenka spausdintuvo valdymo pulto ekrano kalbą iš sąrašo, kuris priklauso nuo modelio.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "valdymo pulto ekrano kalba",
+          "values": "nuo 1 iki 20 kalbos kodų",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Pasirenka saugomą koduočių lentelę, naudojamą lauko duomenims susieti prieš spausdinimą."
+    "summary": "Pasirenka saugomą koduočių lentelę, naudojamą lauko duomenims susieti prieš spausdinimą.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "koduotės lentelės įrenginio vieta",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "koduotės lentelės failo pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": "DAT fiksuota reikšmė",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Pasirenka pradinės ZPL arba ZPL II versijos komandų interpretaciją suderinamumui su senesniais formatais."
+    "summary": "Pasirenka pradinės ZPL arba ZPL II versijos komandų interpretaciją suderinamumui su senesniais formatais.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPL interpretatoriaus versija",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Priskiria spausdintuvui tinklo pavadinimą ir laisvo teksto aprašymą, kurie abu rodomi konfigūracijos etiketėje ir jo integruotame tinklalapyje."
+    "summary": "Priskiria spausdintuvui tinklo pavadinimą ir laisvo teksto aprašymą, kurie abu rodomi konfigūracijos etiketėje ir jo integruotame tinklalapyje.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "spausdintuvo tinklo pavadinimas",
+          "values": "iki 16 raidinių skaitmeninių simbolių",
+          "default": "ZBR plius MAC priesaga"
+        },
+        {
+          "meaning": "spausdintuvo aprašymas konfigūracijos etiketei ir tinklalapiui",
+          "values": "iki 35 raidinių skaitmeninių simbolių",
+          "default": "tuščia"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Nustato keturių skaitmenų slaptažodį valdymo pulto nustatymų meniu."
+    "summary": "Nustato keturių skaitmenų slaptažodį valdymo pulto nustatymų meniu.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "keturių skaitmenų valdymo pulto slaptažodis",
+          "values": "nuo 0000 iki 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "slaptažodžio lygis, tik S4M spausdintuvui",
+          "values": "nuo 1 iki 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Išsaugo, atkuria arba atstato spausdintuvo konfigūracijos nustatymus."
+    "summary": "Išsaugo, atkuria arba atstato spausdintuvo konfigūracijos nustatymus.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "konfigūracijos veiksmas",
+          "values": "A gamykliniai visi, F gamyklinis, N tinklas, R iškvietimas, S išsaugojimas"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Pakeičia formato komandų priešdėlio simbolį, paprastai stogelį, globaliai arba tik esamam formatui."
+    "summary": "Pakeičia formato komandų priešdėlio simbolį, paprastai stogelį, globaliai arba tik esamam formatui.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "naujas formato komandos priešdėlis",
+          "values": "bet kuris ASCII simbolis"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Pakeičia parametrų skirtuko simbolį, paprastai kablelį, globaliai arba tik esamam formatui."
+    "summary": "Pakeičia parametrų skirtuko simbolį, paprastai kablelį, globaliai arba tik esamam formatui.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "naujas parametrų skirtukas",
+          "values": "bet kuris ASCII simbolis"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Pakeičia tiesioginių komandų priešdėlio simbolį, paprastai tildę, globaliai arba tik esamam formatui."
+    "summary": "Pakeičia tiesioginių komandų priešdėlio simbolį, paprastai tildę, globaliai arba tik esamam formatui.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "naujas valdymo komandos priešdėlis",
+          "values": "bet kuris ASCII simbolis"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Iš naujo susieja spausdintuvo atminties raides, kad saugomi objektai galėtų išlaikyti savo esamus pavadinimus."
+    "summary": "Iš naujo susieja spausdintuvo atminties raides, kad saugomi objektai galėtų išlaikyti savo esamus pavadinimus.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "atminties alias B",
+          "values": "B atminties kortelė, E flash, R DRAM, A compact flash, NONE nenustatyta",
+          "default": "B"
+        },
+        {
+          "meaning": "atminties alias E",
+          "values": "B atminties kortelė, E flash, R DRAM, A compact flash, NONE nenustatyta",
+          "default": "E"
+        },
+        {
+          "meaning": "atminties alias R",
+          "values": "B atminties kortelė, E flash, R DRAM, A compact flash, NONE nenustatyta",
+          "default": "R"
+        },
+        {
+          "meaning": "atminties alias A",
+          "values": "B atminties kortelė, E flash, R DRAM, A compact flash, NONE nenustatyta",
+          "default": "A"
+        },
+        {
+          "meaning": "leidžia priskirti pasikartojantį alias",
+          "values": "M keli alias",
+          "default": "nėra"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Ištrina ir iš naujo inicializuoja vieną flash atminties įrenginį. Maitinimo dingimas šios operacijos metu gali sugadinti saugyklą."
+    "summary": "Ištrina ir iš naujo inicializuoja vieną flash atminties įrenginį. Maitinimo dingimas šios operacijos metu gali sugadinti saugyklą.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "inicijuojamas flash atminties įrenginys",
+          "values": "A papildoma flash, B flash kortelė, E vidinė flash",
+          "default": "turi būti nurodyta"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Nustato, ar žema baterijos įtampa sustabdo nešiojamą spausdintuvą, ar leidžia spausdinimui tęstis."
+    "summary": "Nustato, ar žema baterijos įtampa sustabdo nešiojamą spausdintuvą, ar leidžia spausdinimui tęstis.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pristabdo esant žemai baterijos įtampai",
+          "values": "Y pristabdyti, N tęsti spausdinimą",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Paleidžia Zebra BASIC Interpreter spausdintuve, pasirenkamai paleisdama saugomą programą."
+    "summary": "Paleidžia Zebra BASIC Interpreter spausdintuve, pasirenkamai paleisdama saugomą programą.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "programos saugojimo vieta",
+          "values": "R, E, B, A",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "vykdomos programos pavadinimas",
+          "values": "bet kuris galiojantis programos pavadinimas",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "programos failo plėtinys",
+          "values": "BAS arba BAE"
+        },
+        {
+          "meaning": "konsolės išvesties valdymas",
+          "values": "Y įjungta, N išjungta",
+          "default": "Y"
+        },
+        {
+          "meaning": "komandų atgarsio valdymas",
+          "values": "Y įjungta, N išjungta",
+          "default": "Y"
+        },
+        {
+          "meaning": "ZBI priskirta atmintis",
+          "values": "nuo 20K iki 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Sukonfigūruoja papildomą prievadą aplikatoriaus arba tikrintuvo signalams ir klaidų apdorojimui."
+    "summary": "Sukonfigūruoja papildomą prievadą aplikatoriaus arba tikrintuvo signalams ir klaidų apdorojimui.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "tikrintuvo klaidų tvarkymo režimas",
+          "values": "0 išjungta, 1 pakartoti spausdinimą klaidos atveju, 2 maksimalus pralaidumas",
+          "default": "0"
+        },
+        {
+          "meaning": "aplikatoriaus signalo laiko režimas",
+          "values": "0 išjungta, nuo 1 iki 4 signalo laikas",
+          "default": "0"
+        },
+        {
+          "meaning": "spausdinimo pradžios signalo laiko režimas",
+          "values": "p impulso režimas, l lygio režimas"
+        },
+        {
+          "meaning": "etiketės klaidos atsako režimas",
+          "values": "e klaidos režimas, f pastūmimo režimas",
+          "default": "f"
+        },
+        {
+          "meaning": "pakartotinio spausdinimo pagal signalą režimas",
+          "values": "e įjungta, d išjungta",
+          "default": "d"
+        },
+        {
+          "meaning": "žemo juostelės lygio įspėjimo režimas",
+          "values": "e įjungta, d išjungta",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Pasirenka medijos jutiklį, naudojamą sekimui, paprastai atspindintį arba pralaidumo tipo."
+    "summary": "Pasirenka medijos jutiklį, naudojamą sekimui, paprastai atspindintį arba pralaidumo tipo.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "naudojamas jutiklis",
+          "values": "A automatinis, R atspindintis, T peršviečiamas",
+          "default": "skiriasi pagal spausdintuvo modelį"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Nustato normalų arba sumažintą taškų skaičių milimetre. Sumažintas tankis padvigubina formato koordinačių fizinį dydį."
+    "summary": "Nustato normalų arba sumažintą taškų skaičių milimetre. Sumažintas tankis padvigubina formato koordinačių fizinį dydį.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "spausdinimo tankio nustatymas",
+          "values": "A normalus tankis, B perpus sumažintas tankis",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Atstato pasirinktą spausdintuvo naudojimo skaitiklį, įskaitant naudotojo arba RFID skaitiklius."
+    "summary": "Atstato pasirinktą spausdintuvo naudojimo skaitiklį, įskaitant naudotojo arba RFID skaitiklius.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "nustatomas iš naujo skaitiklis",
+          "values": "1 pirmas skaitiklis, 2 antras skaitiklis, 3 galiojanti RFID, 4 anuliuota RFID, C galvutė nuvalyta, R galvutė pakeista",
+          "default": "turi būti nurodyta"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Sukonfigūruoja visus nuosekliojo prievado ryšio parametrus viena komanda."
+    "summary": "Sukonfigūruoja visus nuosekliojo prievado ryšio parametrus viena komanda.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "nuosekliojo prievado perdavimo sparta",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "duomenų bitai simboliui",
+          "values": "7 arba 8",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "lygumo nustatymas",
+          "values": "N nėra, E lyginis, O nelyginis",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "stop bitai",
+          "values": "1 arba 2",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "srauto valdymo protokolas",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR ir Xon/Xoff",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "zebra protokolo kvitavimas",
+          "values": "A ACK/NAK, N nėra, Z zebra",
+          "default": "turi būti nurodyta"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Pakeičia pralaidumo jutiklio intensyvumo arba bazinės linijos reikšmes, paprastai nustatomas kalibravimo metu."
+    "summary": "Pakeičia pralaidumo jutiklio intensyvumo arba bazinės linijos reikšmes, paprastai nustatomas kalibravimo metu.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "keičiamas jutiklio nustatymas",
+          "values": "1 ryškumas, 2 bazinė linija",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "pasirinkto nustatymo reikšmė",
+          "values": "nuo 0 iki 196",
+          "default": "turi būti nurodyta"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Pradeda spausdinti dar nesulaukus viso formato, kad pagerintų sudėtingų etikečių spausdinimo našumą."
+    "summary": "Pradeda spausdinti dar nesulaukus viso formato, kad pagerintų sudėtingų etikečių spausdinimo našumą.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "taškų eilutė, nuo kurios pradedamas spausdinimas",
+          "values": "nuo 0 iki 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Išjungia konkrečią ZebraNet įspėjimo sąlygą ir paskirties vietą."
+    "summary": "Išjungia konkrečią ZebraNet įspėjimo sąlygą ir paskirties vietą.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "stabdoma įspėjimo sąlyga",
+          "values": "nuo A iki O ir nuo Q iki V po vienai sąlygai, W visos RFID spausdintuvuose, * visos kituose"
+        },
+        {
+          "meaning": "stabdoma įspėjimo paskirties vieta",
+          "values": "A nuoseklusis, B lygiagretusis, C e-mail, D TCP/IP, E UDP/IP, F SNMP trap, * visi"
+        },
+        {
+          "meaning": "sustabdo arba atnaujina šiuos įspėjimus",
+          "values": "Y sustabdyti žinutes, N pradėti žinutes",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Nustato spausdinimo galvutės varžos reikšmę, naudojamą degimo energijos skaičiavimams."
+    "summary": "Nustato spausdinimo galvutės varžos reikšmę, naudojamą degimo energijos skaičiavimams.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "spausdinimo galvutės varžos reikšmė",
+          "values": "nuo 0488 iki 1175",
+          "default": "paskutinė nuolat išsaugota reikšmė"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Nustato medijos jutiklio ribas, etiketės ilgį ir LED intensyvumą, paprastai nustatomus kalibravimo metu."
+    "summary": "Nustato medijos jutiklio ribas, etiketės ilgį ir LED intensyvumą, paprastai nustatomus kalibravimo metu.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "web jutiklio reikšmė",
+          "values": "nuo 0 iki 100",
+          "default": "rodoma jutiklio profilyje arba konfigūracijos etiketėje"
+        },
+        {
+          "meaning": "medijos jutiklio reikšmė",
+          "values": "nuo 0 iki 100",
+          "default": "rodoma jutiklio profilyje arba konfigūracijos etiketėje"
+        },
+        {
+          "meaning": "juostelės jutiklio reikšmė",
+          "values": "nuo 0 iki 100",
+          "default": "rodoma jutiklio profilyje arba konfigūracijos etiketėje"
+        },
+        {
+          "meaning": "etiketės ilgis taškais",
+          "values": "nuo 1 iki 32000",
+          "default": "reikšmė iš kalibravimo"
+        },
+        {
+          "meaning": "medijos LED intensyvumas",
+          "values": "nuo 0 iki 255",
+          "default": "reikšmė iš kalibravimo"
+        },
+        {
+          "meaning": "juostelės LED intensyvumas",
+          "values": "nuo 0 iki 255",
+          "default": "reikšmė iš kalibravimo"
+        },
+        {
+          "meaning": "žymės jutimo reikšmė",
+          "values": "nuo 0 iki 100",
+          "default": "reikšmė iš kalibravimo"
+        },
+        {
+          "meaning": "žymės medijos jutimo reikšmė",
+          "values": "nuo 0 iki 100",
+          "default": "reikšmė iš kalibravimo"
+        },
+        {
+          "meaning": "žymės LED jutimo reikšmė",
+          "values": "nuo 0 iki 255",
+          "default": "reikšmė iš kalibravimo"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Įjungia ZebraNet įspėjimą konkrečiai sąlygai ir paskirties vietai."
+    "summary": "Įjungia ZebraNet įspėjimą konkrečiai sąlygai ir paskirties vietai.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "įspėjimo sąlygos tipas",
+          "values": "nuo A iki V po vienai sąlygai, * visos",
+          "default": "ignoruojama, jei trūksta arba neteisinga"
+        },
+        {
+          "meaning": "įspėjimo paskirties tipas",
+          "values": "A nuoseklusis, B lygiagretusis, C e-mail, D TCP/IP, E UDP/IP, F SNMP trap",
+          "default": "ignoruojama, jei trūksta arba neteisinga"
+        },
+        {
+          "meaning": "įjungia įspėjimą, kai sąlyga įsigalioja",
+          "values": "N ne, Y taip",
+          "default": "Y arba ankstesnė reikšmė"
+        },
+        {
+          "meaning": "įjungia įspėjimą, kai sąlyga nebegalioja",
+          "values": "N ne, Y taip",
+          "default": "N arba ankstesnė reikšmė"
+        },
+        {
+          "meaning": "įspėjimo paskirties adresas",
+          "values": "el. paštas, IP adresas arba SNMP paskirties vieta",
+          "default": "ignoruojama, jei trūksta arba neteisinga"
+        },
+        {
+          "meaning": "įspėjimo prievado numeris",
+          "values": "nuo 0 iki 65535",
+          "default": "ignoruojama, jei trūksta arba neteisinga"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopijuoja saugomus objektus tarp spausdintuvo atminties įrenginių, su pakaitos simbolių palaikymu grupėms."
+    "summary": "Kopijuoja saugomus objektus tarp spausdintuvo atminties įrenginių, su pakaitos simbolių palaikymu grupėms.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "šaltinio atminties įrenginys",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "šaltinio objekto pavadinimas",
+          "values": "bet kuris esamo objekto pavadinimas",
+          "default": "* pasirenka visus objektus"
+        },
+        {
+          "meaning": "šaltinio objekto plėtinys",
+          "values": "bet kuris galiojantis failo plėtinys",
+          "default": "* pasirenka visus plėtinius"
+        },
+        {
+          "meaning": "paskirties atminties įrenginys",
+          "values": "R, E, B, A",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "objekto pavadinimas paskirties vietoje",
+          "values": "iki 8 raidinių skaitmeninių simbolių",
+          "default": "šaltinio objekto pavadinimas"
+        },
+        {
+          "meaning": "paskirties objekto plėtinys",
+          "values": "bet kuris galiojantis failo plėtinys",
+          "default": "šaltinio objekto plėtinys"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Atspausdina katalogo etiketę saugomiems objektams, rezidentiniams šriftams arba galimiems brūkšniniams kodams."
+    "summary": "Atspausdina katalogo etiketę saugomiems objektams, rezidentiniams šriftams arba galimiems brūkšniniams kodams.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "sąrašo šaltinio įrenginys",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "objekto pavadinimo filtras",
+          "values": "nuo 1 iki 8 simbolių, * arba ? pakaitos simbolis",
+          "default": "*"
+        },
+        {
+          "meaning": "plėtinio filtras",
+          "values": "bet kuris galiojantis plėtinys, * pakaitos simbolis",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Atspausdina etiketėje prašomą techninės priežiūros informaciją, pavyzdžiui, ridos skaitiklį arba spausdinimo galvutės istoriją."
+    "summary": "Atspausdina etiketėje prašomą techninės priežiūros informaciją, pavyzdžiui, ridos skaitiklį arba spausdinimo galvutės istoriją.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "spausdinamo tarnybinio pranešimo tipas",
+          "values": "ES būsena, HA aparatinis adresas, JT galvutės testas, MA įspėjimų nustatymai, MI žinutės, OD ridos skaitiklis, PH galvutės eksploatavimas, PP plug and play, SN serijos numeris, UI USB id",
+          "default": "turi būti nurodyta"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Sukonfigūruoja KR403 kiosko pateikimo įrenginio nustatymus, įskaitant pjovimo ilgį, pjovimo paraštę, įtraukimo laiko limitą ir kilpos ilgį."
+    "summary": "Sukonfigūruoja KR403 kiosko pateikimo įrenginio nustatymus, įskaitant pjovimo ilgį, pjovimo paraštę, įtraukimo laiko limitą ir kilpos ilgį.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "kiosko pjovimo kiekis",
+          "values": "0 normalus pjovimas, nuo 10 iki 60 dalinis mm",
+          "default": "0"
+        },
+        {
+          "meaning": "kiosko pjovimo paraštė mm",
+          "values": "nuo 2 iki 9",
+          "default": "9"
+        },
+        {
+          "meaning": "kiosko pateikimo tipas po spausdinimo",
+          "values": "0 išstumti, 1 įtraukti, 2 nėra veiksmo",
+          "default": "0"
+        },
+        {
+          "meaning": "kiosko pateikimo laiko limitas sekundėmis",
+          "values": "nuo 0 iki 300, 0 be laiko limito",
+          "default": "0"
+        },
+        {
+          "meaning": "pateikimo mechanizmo kilpos ilgis mm",
+          "values": "0 tiesiai, nuo 3 iki 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Valdo dinaminį etiketės ilgio ir jutiklio ribos perkalibravimą po įjungimo arba medijos skyriaus atidarymo."
+    "summary": "Valdo dinaminį etiketės ilgio ir jutiklio ribos perkalibravimą po įjungimo arba medijos skyriaus atidarymo.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "įjungia dinaminį ilgio kalibravimą",
+          "values": "Y įjungti, N išjungti",
+          "default": "Y"
+        },
+        {
+          "meaning": "įjungia dinaminį slenksčio kalibravimą",
+          "values": "Y įjungti, N išjungti",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Paleidžia eksploatavimo nutraukimo režimą, ruošiant spausdintuvą perpardavimui arba perdirbimui."
+    "summary": "Paleidžia eksploatavimo nutraukimo režimą, ruošiant spausdintuvą perpardavimui arba perdirbimui.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "spausdintuvo serijos numeris",
+          "values": "raidinė skaitmeninė eilutė",
+          "default": "turi būti nurodyta"
+        },
+        {
+          "meaning": "flash trynimo ciklų skaičius",
+          "values": "nuo 0 iki 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Nustato automatinį miego režimo išjungimą po neveiklumo periodo, su parinktimis eilėje laukiančioms etiketėms."
+    "summary": "Nustato automatinį miego režimo išjungimą po neveiklumo periodo, su parinktimis eilėje laukiančioms etiketėms.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "neveiklumo sekundės prieš automatinį išsijungimą",
+          "values": "nuo 0 iki 999999, 0 išjungia išsijungimą",
+          "default": "paskutinė išsaugota reikšmė arba 0"
+        },
+        {
+          "meaning": "etiketės būsena išsijungiant",
+          "values": "Y išsijungti su eile, N pirmiau baigti eilę",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Išstumia arba įtraukia mediją, jau pateiktą KR403 kiosko pateikimo įrenginio."
+    "summary": "Išstumia arba įtraukia mediją, jau pateiktą KR403 kiosko pateikimo įrenginio.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "kiosko pateikimo veiksmas",
+          "values": "0 išstumti, 1 įtraukti, 2 naudoti ^KV nustatymą"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Grąžina saugomą ZPL formatą iš spausdintuvo atminties pagrindiniam kompiuteriui."
+    "summary": "Grąžina saugomą ZPL formatą iš spausdintuvo atminties pagrindiniam kompiuteriui.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "ieškomas atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "išsaugoto formato pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": ".ZPL fiksuota",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Grąžina saugomą grafinį vaizdą iš spausdintuvo atminties pagrindiniam kompiuteriui."
+    "summary": "Grąžina saugomą grafinį vaizdą iš spausdintuvo atminties pagrindiniam kompiuteriui.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "ieškomas atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "paieškos prioritetas"
+        },
+        {
+          "meaning": "įkeliamos grafikos pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "failo plėtinys",
+          "values": ".GRF fiksuota",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Grąžina prašomus būsenos, identifikacijos, ridos skaitiklio arba techninės priežiūros duomenis pagrindiniam kompiuteriui."
+    "summary": "Grąžina prašomus būsenos, identifikacijos, ridos skaitiklio arba techninės priežiūros duomenis pagrindiniam kompiuteriui.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "grąžinamų duomenų užklausos selektorius",
+          "values": "ES būsena, HA laidinis MAC, JT spausdinimo galvutės testas, MA priežiūros įspėjimai, MI priežiūros informacija, OD ridos skaitiklis, PH spausdinimo galvutės eksploatavimas, PP plug and play, SN serijos numeris, UI USB produkto id"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Grąžina duomenis iš sunumeruoto lauko pagrindiniam kompiuteriui, su pasirenkama baitų riba."
+    "summary": "Grąžina duomenis iš sunumeruoto lauko pagrindiniam kompiuteriui, su pasirenkama baitų riba.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "lauko numeris, nustatytas per ^FN",
+          "values": "nuo 0 iki 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "grąžinamų baitų skaičius",
+          "values": "nuo 1 iki 256",
+          "default": "64"
+        },
+        {
+          "meaning": "antraštės tekstas prieš duomenis",
+          "values": "nuo 0 iki 3072 baitų",
+          "default": "nėra antraštės"
+        },
+        {
+          "meaning": "baigiamasis tekstas po duomenų",
+          "values": "nuo 0 iki 3072 simbolių"
+        },
+        {
+          "meaning": "atsako siuntimo vienetas",
+          "values": "F formatas, L etiketė",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Grąžina atminties įrenginio katalogo sąrašą, įskaitant likusią laisvą vietą."
+    "summary": "Grąžina atminties įrenginio katalogo sąrašą, įskaitant likusią laisvą vietą.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "sąraše rodomas atminties įrenginys",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash, Z kita",
+          "default": "R"
+        },
+        {
+          "meaning": "objekto pavadinimo filtras",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "*"
+        },
+        {
+          "meaning": "plėtinio filtras",
+          "values": "bet kuris Zebra failo plėtinys",
+          "default": "*"
+        },
+        {
+          "meaning": "sąrašo išdėstymas",
+          "values": "c stulpelis, d numatyta",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Grąžina saugomą grafinį vaizdą pagrindiniam kompiuteriui atsisiunčiamo failo formatu."
+    "summary": "Grąžina saugomą grafinį vaizdą pagrindiniam kompiuteriui atsisiunčiamo failo formatu.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "objekto atminties įrenginio vieta",
+          "values": "R DRAM, E flash, B atminties kortelė, A compact flash",
+          "default": "paieškos prioritetas"
+        },
+        {
+          "meaning": "įkeliamo objekto pavadinimas",
+          "values": "nuo 1 iki 8 raidinių skaitmeninių simbolių",
+          "default": "būtinas pavadinimas"
+        },
+        {
+          "meaning": "įkėlimo formatas",
+          "values": "G neglaudintas bitmap, P glaudintas bitmap",
+          "default": "išsaugotas formatas"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Grąžina spausdintuvo aprašo XML nustatymams, objektų katalogui arba būsenai."
+    "summary": "Grąžina spausdintuvo aprašo XML nustatymams, objektų katalogui arba būsenai.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "grąžinamo aprašymo tipas",
+          "values": "a visi, f formatas, l katalogas, o objektas, r būsena"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Skaito iš RFID žymos arba rašo į ją, įskaitant duomenų formatą, atminties banką ir prieigos slaptažodį."
+    "summary": "Skaito iš RFID žymos arba rašo į ją, įskaitant duomenų formatą, atminties banką ir prieigos slaptažodį.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "operacija",
+          "values": "W rašyti, L rašyti ir užrakinti, R skaityti, P skaityti slaptažodį, S nustatyti slaptažodį",
+          "default": "W"
+        },
+        {
+          "meaning": "duomenų formatas",
+          "values": "A ASCII, H šešioliktainis, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "slaptažodžio žymė arba pradinio bloko numeris",
+          "values": "P slaptažodis seka, nuo 0 iki n blokas",
+          "default": "0"
+        },
+        {
+          "meaning": "skaitomų arba rašomų baitų skaičius",
+          "values": "nuo 1 iki n, maksimalus kiekis žymai",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen 2 atminties bankas",
+          "values": "E EPC 96 bitų, A EPC automatiniai PC bitai, 0 rezervuota, 1 EPC, 2 TID, 3 naudotojas",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Apibrėžia bitų išdėstymą, naudojamą RFID EPC laukams užkoduoti žymoje."
+    "summary": "Apibrėžia bitų išdėstymą, naudojamą RFID EPC laukams užkoduoti žymoje.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "bendras skaidinių bitų dydis",
+          "values": "nuo 1 iki žymos bitų dydžio",
+          "default": "96"
+        },
+        {
+          "meaning": "bitai kiekviame skaidinyje, iki 16 skaidinių",
+          "values": "nuo 1 iki 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Nustato RFID parinktis vėlesnėms etiketėms, įskaitant žymos tipą, programavimo poziciją, klaidų apdorojimą ir VOID juostos ilgį."
+    "summary": "Nustato RFID parinktis vėlesnėms etiketėms, įskaitant žymos tipą, programavimo poziciją, klaidų apdorojimą ir VOID juostos ilgį.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "žymos tipas",
+          "values": "8 tik Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "žymos programavimo pozicija",
+          "values": "taškai absoliučiai, nuo F0 iki Fxxx pirmyn, nuo B0 iki B30 atgal, up kitas, down ankstesnis",
+          "default": "spausdintuvo nustatymas"
+        },
+        {
+          "meaning": "VOID spaudinio ilgis",
+          "values": "nuo 0 iki etiketės ilgio",
+          "default": "etiketės ilgis"
+        },
+        {
+          "meaning": "etiketės, kartojamos po gedimo",
+          "values": "nuo 1 iki 10",
+          "default": "3"
+        },
+        {
+          "meaning": "klaidų tvarkymas po pakartojimų",
+          "values": "N nėra veiksmo, P pristabdymas, E klaidos režimas",
+          "default": "N"
+        },
+        {
+          "meaning": "aplikatoriui siunčiami signalai",
+          "values": "S vienas signalas, D dvigubas signalas",
+          "default": "S"
+        },
+        {
+          "meaning": "rezervuota, nenaudojama",
+          "values": "nėra"
+        },
+        {
+          "meaning": "VOID etikečių spausdinimo greitis",
+          "values": "bet kuris galiojantis spausdinimo greitis",
+          "default": "maksimalus spausdinimo greitis"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Sudaro EPC serijos numerį iš žymos identifikatoriaus ir įrašo jį į žemesniuosius EPC bitus."
+    "summary": "Sudaro EPC serijos numerį iš žymos identifikatoriaus ir įrašo jį į žemesniuosius EPC bitus.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "dvejetainis serijos id priešdėlis",
+          "values": "ASCII 1 ir 0, iki 38 bitų",
+          "default": "priklauso nuo chip MDID"
+        },
+        {
+          "meaning": "specialus simbolis, žymintis serijos lauką",
+          "values": "bet kuris ASCII, išskyrus komandos, valdymo, skirtuko, RTC simbolius",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Nustato RFID skaitymo ir rašymo galią, kai kalibravimas nepateikia tinkamų reikšmių."
+    "summary": "Nustato RFID skaitymo ir rašymo galią, kai kalibravimas nepateikia tinkamų reikšmių.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "skaitymo galios lygis",
+          "values": "nuo 0 iki 30, arba H aukštas, M vidutinis, L žemas",
+          "default": "spausdintuvo nustatymas"
+        },
+        {
+          "meaning": "rašymo galios lygis",
+          "values": "nuo 0 iki 30, arba H aukštas, M vidutinis, L žemas",
+          "default": "spausdintuvo nustatymas"
+        },
+        {
+          "meaning": "antenos elemento pasirinkimas",
+          "values": "spausdintuvui specifinis tinklelis, nuo A1 iki F4",
+          "default": "spausdintuvo nustatymas"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Užrakina RFID žymos atmintį, grįžtamai arba negrįžtamai, kad būtų užkirstas kelias vėlesniam rašymui."
+    "summary": "Užrakina RFID žymos atmintį, grįžtamai arba negrįžtamai, kad būtų užkirstas kelias vėlesniam rašymui.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "kill slaptažodžio užrakinimo būsena",
+          "values": "U atrakinti, L užrakinti, O pastoviai atrakinti, P pastoviai užrakinti"
+        },
+        {
+          "meaning": "prieigos slaptažodžio užrakinimo būsena",
+          "values": "U atrakinti, L užrakinti, O pastoviai atrakinti, P pastoviai užrakinti"
+        },
+        {
+          "meaning": "EPC atminties banko užrakinimo būsena",
+          "values": "U atrakinti, L užrakinti, O pastoviai atrakinti, P pastoviai užrakinti"
+        },
+        {
+          "meaning": "naudotojo atminties banko užrakinimo būsena",
+          "values": "U atrakinti, L užrakinti, O pastoviai atrakinti, P pastoviai užrakinti"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Vykdo RFID kalibravimą ir grąžina padėties, antenos ir galios nustatymus pagrindiniam kompiuteriui."
+    "summary": "Vykdo RFID kalibravimą ir grąžina padėties, antenos ir galios nustatymus pagrindiniam kompiuteriui.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "tekstas prieš rezultatų lentelę",
+          "values": "bet kuri eilutė iki 65 simbolių",
+          "default": "pradžia"
+        },
+        {
+          "meaning": "tekstas po rezultatų lentelės",
+          "values": "bet kuri eilutė iki 65 simbolių",
+          "default": "pabaiga"
+        },
+        {
+          "meaning": "kalibravimo pradžios pozicija",
+          "values": "nuo F0 iki Fxxx pirmyn, nuo B0 iki B30 atgal",
+          "default": "spausdintuvo nustatymas"
+        },
+        {
+          "meaning": "kalibravimo pabaigos pozicija",
+          "values": "nuo F0 iki Fxxx pirmyn, nuo B0 iki B30 atgal, A automatinis",
+          "default": "spausdintuvo nustatymas"
+        },
+        {
+          "meaning": "automatinis arba rankinis antenos ir galios pasirinkimas",
+          "values": "A automatinis, M rankinis",
+          "default": "A"
+        },
+        {
+          "meaning": "skaitymo ir rašymo galios diapazono pradžia",
+          "values": "nuo 0 iki 30",
+          "default": "0"
+        },
+        {
+          "meaning": "skaitymo ir rašymo galios diapazono pabaiga",
+          "values": "nuo 0 iki 30",
+          "default": "maksimali galia"
+        },
+        {
+          "meaning": "antenos diapazono pradžia",
+          "values": "priklauso nuo modelio, paprastai A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "antenos diapazono pabaiga",
+          "values": "priklauso nuo modelio, iki E4",
+          "default": "spausdintuvo nustatymas"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Pasirenka, ar spausdintuvas paleidimo metu tikrina laidinį spausdinimo serverį."
+    "summary": "Pasirenka, ar spausdintuvas paleidimo metu tikrina laidinį spausdinimo serverį.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "laidinio spausdinimo serverio tikrinimas paleidus",
+          "values": "C tikrinti, S praleisti",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Pasirenka pagrindinį tinklo įrenginį, laidinį arba belaidį."
+    "summary": "Pasirenka pagrindinį tinklo įrenginį, laidinį arba belaidį.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "pirminis tinklo įrenginys",
+          "values": "1 laidinis pirminis, 2 belaidis pirminis",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresuoja vieną spausdintuvą pasenusio tipo RS-485 daugiataškėje linijoje pagal tinklo identifikatorių."
+    "summary": "Adresuoja vieną spausdintuvą pasenusio tipo RS-485 daugiataškėje linijoje pagal tinklo identifikatorių.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "adresuojamas spausdintuvo tinklo ID",
+          "values": "nuo 001 iki 999",
+          "default": "000 nėra"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Priskiria tinklo identifikatorių, naudojamą spausdintuvui adresuoti pasenusio tipo RS-485 daugiataškėje linijoje."
+    "summary": "Priskiria tinklo identifikatorių, naudojamą spausdintuvui adresuoti pasenusio tipo RS-485 daugiataškėje linijoje.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "spausdintuvui priskirtas tinklo ID",
+          "values": "nuo 001 iki 999",
+          "default": "000 nėra"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Nustato spausdintuvo SNMP identitetą ir bendruomenės eilutes."
+    "summary": "Nustato spausdintuvo SNMP identitetą ir bendruomenės eilutes.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP sistemos pavadinimas",
+          "values": "iki 17 simbolių"
+        },
+        {
+          "meaning": "SNMP sistemos kontaktas",
+          "values": "iki 50 simbolių"
+        },
+        {
+          "meaning": "SNMP sistemos vieta",
+          "values": "iki 50 simbolių"
+        },
+        {
+          "meaning": "SNMP get bendruomenės pavadinimas",
+          "values": "iki 19 simbolių",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set bendruomenės pavadinimas",
+          "values": "iki 19 simbolių",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap bendruomenės pavadinimas",
+          "values": "iki 20 simbolių",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Pasirenka, ar įkrovimo metu tinklo nustatymai gaunami iš spausdintuvo, ar iš prijungto spausdinimo serverio."
+    "summary": "Pasirenka, ar įkrovimo metu tinklo nustatymai gaunami iš spausdintuvo, ar iš prijungto spausdinimo serverio.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "pirminis paleidimo nustatymų šaltinis",
+          "values": "P spausdintuvas, M spausdinimo serveris",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Sukonfigūruoja SMTP serverio ir domeno nustatymus spausdinimo serverio el. pašto įspėjimams."
+    "summary": "Sukonfigūruoja SMTP serverio ir domeno nustatymus spausdinimo serverio el. pašto įspėjimams.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTP serverio adresas",
+          "values": "IPv4 adresas"
+        },
+        {
+          "meaning": "spausdinimo serverio domeno pavadinimas",
+          "values": "domeno pavadinimas"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Nustato, kiek laiko autentifikuotas IP adresas gali pasiekti spausdintuvo tinklalapius prieš pakartotinę autentifikaciją."
+    "summary": "Nustato, kiek laiko autentifikuotas IP adresas gali pasiekti spausdintuvo tinklalapius prieš pakartotinę autentifikaciją.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "tinklalapio autentifikavimo laiko limitas",
+          "values": "nuo 0 iki 255 minučių",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Nustato DHCP kliento identifikatoriaus formą ir reikšmę spausdinimo serveriui."
+    "summary": "Nustato DHCP kliento identifikatoriaus formą ir reikšmę spausdinimo serveriui.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "kliento identifikatoriaus režimas",
+          "values": "0 išjungta, 1 MAC adresas, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "įrenginys, kuriam taikomas identifikatorius",
+          "values": "0 visi, 1 belaidis, 2 išorinis laidinis, 3 vidinis laidinis",
+          "default": "1"
+        },
+        {
+          "meaning": "identifikatoriaus priešdėlis",
+          "values": "11 ASCII arba 22 šešioliktainiai simboliai"
+        },
+        {
+          "meaning": "identifikatoriaus priesaga",
+          "values": "iki 60 ASCII arba 120 šešioliktainių simbolių"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Sukonfigūruoja IP adresą, potinklio kaukę ir tinklų sietuvą spausdintuvo tinklo sąsajai."
+    "summary": "Sukonfigūruoja IP adresą, potinklio kaukę ir tinklų sietuvą spausdintuvo tinklo sąsajai.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "keičiamas įrenginys",
+          "values": "1 išorinis laidinis, 2 vidinis laidinis, 3 belaidis"
+        },
+        {
+          "meaning": "IP adreso nustatymo metodas",
+          "values": "A visi, B BOOTP, C DHCP ir BOOTP, D DHCP, G tik gleaning, R RARP, P pastovus",
+          "default": "A"
+        },
+        {
+          "meaning": "IP adresas",
+          "values": "IPv4 adresas"
+        },
+        {
+          "meaning": "potinklio kaukė",
+          "values": "IPv4 potinklio kaukė"
+        },
+        {
+          "meaning": "numatytasis šliuzas",
+          "values": "IPv4 adresas"
+        },
+        {
+          "meaning": "WINS serverio adresas",
+          "values": "IPv4 adresas"
+        },
+        {
+          "meaning": "ryšio laiko limito tikrinimas",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "ryšio laiko limito reikšmė",
+          "values": "nuo 0 iki 9999 sekundžių",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP transliavimo intervalas",
+          "values": "nuo 0 iki 30 minučių",
+          "default": "0 nėra"
+        },
+        {
+          "meaning": "bazinis raw prievado numeris",
+          "values": "nuo 1 iki 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Sukonfigūruoja laidinio spausdinimo serverio IP nustatymus, laiko limitus ir žaliavinį prievadą senesnei programinei aparatinei įrangai."
+    "summary": "Sukonfigūruoja laidinio spausdinimo serverio IP nustatymus, laiko limitus ir žaliavinį prievadą senesnei programinei aparatinei įrangai.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "IP adreso nustatymo metodas",
+          "values": "A visi, B BOOTP, C DHCP ir BOOTP, D DHCP, G tik gleaning, R RARP, P pastovus",
+          "default": "A"
+        },
+        {
+          "meaning": "IP adresas",
+          "values": "IPv4 adresas"
+        },
+        {
+          "meaning": "potinklio kaukė",
+          "values": "IPv4 potinklio kaukė"
+        },
+        {
+          "meaning": "numatytasis šliuzas",
+          "values": "IPv4 adresas"
+        },
+        {
+          "meaning": "WINS serverio adresas",
+          "values": "IPv4 adresas"
+        },
+        {
+          "meaning": "ryšio laiko limito tikrinimas",
+          "values": "Y taip, N ne",
+          "default": "Y"
+        },
+        {
+          "meaning": "ryšio laiko limito reikšmė",
+          "values": "nuo 0 iki 9999 sekundžių",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP transliavimo intervalas",
+          "values": "nuo 0 iki 30 minučių",
+          "default": "0 nėra"
+        },
+        {
+          "meaning": "bazinis raw prievado numeris",
+          "values": "nuo 1 iki 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Pasirenka priėmimo ir siuntimo antenas belaidžiam radijo moduliui."
+    "summary": "Pasirenka priėmimo ir siuntimo antenas belaidžiam radijo moduliui.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "priėmimo antena",
+          "values": "D įvairovė, L kairė, R dešinė",
+          "default": "D"
+        },
+        {
+          "meaning": "siuntimo antena",
+          "values": "D įvairovė, L kairė, R dešinė",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Sukonfigūruoja pasenusį WEP saugumą ir rakto medžiagą senesnei belaidžio ryšio programinei aparatinei įrangai."
+    "summary": "Sukonfigūruoja pasenusį WEP saugumą ir rakto medžiagą senesnei belaidžio ryšio programinei aparatinei įrangai.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "šifravimo režimas",
+          "values": "OFF nėra, 40 40 bitų, 128 128 bitų",
+          "default": "OFF"
+        },
+        {
+          "meaning": "šifravimo rakto indeksas",
+          "values": "nuo 1 iki 4",
+          "default": "1"
+        },
+        {
+          "meaning": "autentifikavimo tipas",
+          "values": "O atvira sistema, S bendras raktas",
+          "default": "O"
+        },
+        {
+          "meaning": "šifravimo rakto saugojimo formatas",
+          "values": "H šešioliktainis, S eilutė",
+          "default": "H"
+        },
+        {
+          "meaning": "šifravimo raktas 1",
+          "values": "šešioliktainės poros arba raidinė skaitmeninė eilutė"
+        },
+        {
+          "meaning": "šifravimo raktas 2",
+          "values": "šešioliktainės poros arba raidinė skaitmeninė eilutė"
+        },
+        {
+          "meaning": "šifravimo raktas 3",
+          "values": "šešioliktainės poros arba raidinė skaitmeninė eilutė"
+        },
+        {
+          "meaning": "šifravimo raktas 4",
+          "values": "šešioliktainės poros arba raidinė skaitmeninė eilutė"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Sukonfigūruoja pasenusią Cisco LEAP autentifikaciją senesnei belaidžio ryšio programinei aparatinei įrangai."
+    "summary": "Sukonfigūruoja pasenusią Cisco LEAP autentifikaciją senesnei belaidžio ryšio programinei aparatinei įrangai.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP režimas",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "naudotojo vardas",
+          "values": "nuo 1 iki 32 simbolių",
+          "default": "user"
+        },
+        {
+          "meaning": "slaptažodis",
+          "values": "nuo 1 iki 32 simbolių",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Nustato slaptažodį belaidžio ryšio nustatymams spausdintuvo valdymo pulte."
+    "summary": "Nustato slaptažodį belaidžio ryšio nustatymams spausdintuvo valdymo pulte.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "senas belaidžio tinklo slaptažodis",
+          "values": "nuo 0000 iki 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "naujas belaidžio tinklo slaptažodis",
+          "values": "nuo 0000 iki 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Sukonfigūruoja 802.11b duomenų perdavimo spartas ir siuntimo galią senesniuose belaidžiuose spausdinimo serveriuose."
+    "summary": "Sukonfigūruoja 802.11b duomenų perdavimo spartas ir siuntimo galią senesniuose belaidžiuose spausdinimo serveriuose.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "1 Mb/s perdavimo sparta",
+          "values": "Y įjungta, N išjungta"
+        },
+        {
+          "meaning": "2 Mb/s perdavimo sparta",
+          "values": "Y įjungta, N išjungta"
+        },
+        {
+          "meaning": "5.5 Mb/s perdavimo sparta",
+          "values": "Y įjungta, N išjungta"
+        },
+        {
+          "meaning": "11 Mb/s perdavimo sparta",
+          "values": "Y įjungta, N išjungta"
+        },
+        {
+          "meaning": "siuntimo galia",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Sukonfigūruoja belaidžio tinklo pavadinimą, radijo režimą, preambulės ilgį ir ryšio palaikymo elgseną."
+    "summary": "Sukonfigūruoja belaidžio tinklo pavadinimą, radijo režimą, preambulės ilgį ir ryšio palaikymo elgseną.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID reikšmė",
+          "values": "iki 32 simbolių",
+          "default": "125"
+        },
+        {
+          "meaning": "veikimo režimas",
+          "values": "I infrastruktūra, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "radijo kortelės preambulės ilgis",
+          "values": "L ilgas, S trumpas",
+          "default": "L"
+        },
+        {
+          "meaning": "belaidis impulsas įjungtas",
+          "values": "0 išjungta, 1 įjungta",
+          "default": "1"
+        },
+        {
+          "meaning": "belaidžio impulso intervalas",
+          "values": "nuo 5 iki 300 sekundžių",
+          "default": "15"
+        },
+        {
+          "meaning": "kanalų kaukė",
+          "values": "4 šešioliktainiai skaitmenys su 0x priešdėliu",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "tarptautinis režimas",
+          "values": "0 išjungta, 1 įjungta",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Sukonfigūruoja belaidžio ryšio saugumo režimą, raktus ir prisijungimo duomenis viena komanda."
+    "summary": "Sukonfigūruoja belaidžio ryšio saugumo režimą, raktus ir prisijungimo duomenis viena komanda.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "saugumo tipo kodas",
+          "values": "01 nėra, 02 WEP 40, 03 WEP 128, nuo 04 iki 08 EAP tipai, 09 WPA PSK, nuo 10 iki 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "WEP šifravimo rakto indeksas",
+          "values": "nuo 1 iki 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP autentifikavimo tipas",
+          "values": "O atvira sistema, S bendras raktas",
+          "default": "O"
+        },
+        {
+          "meaning": "WEP rakto saugojimo formatas",
+          "values": "H šešioliktainis, S eilutė",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP šifravimo raktas 1",
+          "values": "šešioliktainės poros arba raidinė skaitmeninė eilutė"
+        },
+        {
+          "meaning": "WEP šifravimo raktas 2",
+          "values": "šešioliktainės poros arba raidinė skaitmeninė eilutė"
+        },
+        {
+          "meaning": "WEP šifravimo raktas 3",
+          "values": "šešioliktainės poros arba raidinė skaitmeninė eilutė"
+        },
+        {
+          "meaning": "WEP šifravimo raktas 4",
+          "values": "šešioliktainės poros arba raidinė skaitmeninė eilutė"
+        },
+        {
+          "meaning": "saugumo tipo naudotojo ID",
+          "values": "bet kuri eilutė",
+          "default": "user"
+        },
+        {
+          "meaning": "saugumo tipo slaptažodis",
+          "values": "bet kuri eilutė",
+          "default": "password"
+        },
+        {
+          "meaning": "nebūtinas privataus rakto slaptažodis",
+          "values": "bet kuri eilutė"
+        },
+        {
+          "meaning": "Kerberos sritis",
+          "values": "bet kuri eilutė",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberos raktų paskirstymo centras",
+          "values": "bet kuri eilutė",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "iš anksto pasidalinto rakto reikšmė",
+          "values": "mažiausiai 64 šešioliktainiai skaitmenys"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

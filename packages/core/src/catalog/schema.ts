@@ -13,7 +13,7 @@ export type ImportLossCause = (typeof IMPORT_LOSS_CAUSES)[number];
 const supportSchema = z.object({ web: z.enum(SUPPORT_LEVELS), desktop: z.enum(SUPPORT_LEVELS), docker: z.enum(SUPPORT_LEVELS).optional() }).strict();
 export type CommandSupport = Required<z.infer<typeof supportSchema>>;
 
-/** Slot letters of the format line in order. English only like `title`, so no translated channel. */
+/** Slot letters of the format line in order. `name` stays English like `title`; the other cells are translated per locale, keyed by the English block. */
 const paramSchema = z.object({
   name: z.string().min(1),
   meaning: z.string().min(1),

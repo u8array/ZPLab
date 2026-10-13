@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Iestata apdrukājamo platumu punktos. Saturu, kas pārsniedz šo platumu, printeris nogriež."
+    "summary": "Iestata apdrukājamo platumu punktos. Saturu, kas pārsniedz šo platumu, printeris nogriež.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "drukas platums punktos",
+          "values": "2 līdz etiķetes platumam",
+          "default": "pēdējā saglabātā vērtība"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Iestata etiķetes garumu punktos, nosakot, kur beidzas apdrukājamais formāts."
+    "summary": "Iestata etiķetes garumu punktos, nosakot, kur beidzas apdrukājamais formāts.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "etiķetes garums punktos",
+          "values": "1 līdz 32000",
+          "default": "printera iestatījums"
+        },
+        {
+          "meaning": "attiecas uz visiem materiāliem",
+          "values": "N tikai nepārtraukts, Y visi materiāli",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Pārvieto etiķetes sākumpunktu, mainot atskaites punktu, ko izmanto turpmāko lauku koordinātas."
+    "summary": "Pārvieto etiķetes sākumpunktu, mainot atskaites punktu, ko izmanto turpmāko lauku koordinātas.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "etiķetes sākumpunkts x asī",
+          "values": "0 līdz 32000",
+          "default": "0 vai pēdējā saglabātā vērtība"
+        },
+        {
+          "meaning": "etiķetes sākumpunkts y asī",
+          "values": "0 līdz 32000",
+          "default": "0 vai pēdējā saglabātā vērtība"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Pielieto horizontālu nobīdi lauku pozīcijām saderībai ar vecākiem Zebra formātiem."
+    "summary": "Pielieto horizontālu nobīdi lauku pozīcijām saderībai ar vecākiem Zebra formātiem.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "visu lauku pozīciju nobīde pa kreisi",
+          "values": "-9999 līdz 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Pievieno vertikālu nobīdi visam formātam attiecībā pret materiāla augšējo malu."
+    "summary": "Pievieno vertikālu nobīdi visam formātam attiecībā pret materiāla augšējo malu.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "pārvieto visu formātu uz augšu vai uz leju punktu rindās",
+          "values": "-120 līdz 120, XiIIIPlus 600 dpi -240 līdz 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Iestata koordinātu mērvienības punktos, collās vai milimetros un var mērogot formātus starp drukas izšķirtspējām."
+    "summary": "Iestata koordinātu mērvienības punktos, collās vai milimetros un var mērogot formātus starp drukas izšķirtspējām.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "koordinātu mērvienība turpmākajiem laukiem",
+          "values": "D punkti, I collas, M milimetri",
+          "default": "D"
+        },
+        {
+          "meaning": "formāta bāzes izšķirtspēja punktos collā",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "mērķa izšķirtspēja pārveidošanai",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Iestata materiāla apstrādes režīmu pēc drukāšanas, tostarp atplēšanas, atlīmēšanas, griešanas, uztīšanas un aplikatora režīmus."
+    "summary": "Iestata materiāla apstrādes režīmu pēc drukāšanas, tostarp atplēšanas, atlīmēšanas, griešanas, uztīšanas un aplikatora režīmus.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "materiāla apstrādes režīms pēc drukāšanas",
+          "values": "T atplēšana, P atlīmēšana, R uztīšana, A aplikators, C griezējs, D aizkavēts griezējs, F RFID, K kiosks",
+          "default": "printera iestatījums"
+        },
+        {
+          "meaning": "priekšatlīmēšana pirms nākamās etiķetes",
+          "values": "N nē, Y jā",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Izvēlas termopārneses vai tiešās termodrukas režīmu atbilstoši tam, vai ievietotais materiāls izmanto lenti."
+    "summary": "Izvēlas termopārneses vai tiešās termodrukas režīmu atbilstoši tam, vai ievietotais materiāls izmanto lenti.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "printera izmantotais materiāla tips",
+          "values": "T termopārnese, D tiešā termodruka"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Iestata drukājamo daudzumu, pauzes vai griešanas grupēšanu un kopiju skaitu katrai sērijas vērtībai."
+    "summary": "Iestata drukājamo daudzumu, pauzes vai griešanas grupēšanu un kopiju skaitu katrai sērijas vērtībai.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "kopējais drukājamo etiķešu skaits",
+          "values": "1 līdz 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "etiķetes, kas izdrukātas pirms pauzes",
+          "values": "1 līdz 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "katras sērijas vērtības dublikātu skaits",
+          "values": "0 līdz 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "ignorēt pauzes skaitītāju",
+          "values": "N nē, Y jā",
+          "default": "N"
+        },
+        {
+          "meaning": "griezt pēc anulētas RFID etiķetes",
+          "values": "N nē, Y jā",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Apgriež drukāšanu turpmākajiem laukiem, samainot vietām priekšplānu un fonu."
+    "summary": "Apgriež drukāšanu turpmākajiem laukiem, samainot vietām priekšplānu un fonu.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "apgriež drukas krāsu turpmākajiem laukiem",
+          "values": "N nē, Y jā",
+          "default": "N vai pēdējā saglabātā vērtība"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Pagriež visu etiķetes formātu par 180 grādiem."
+    "summary": "Pagriež visu etiķetes formātu par 180 grādiem.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "drukā etiķeti otrādi",
+          "values": "N normāli, I apgriezti",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Spoguļo apdrukājamo laukumu horizontāli."
+    "summary": "Spoguļo apdrukājamo laukumu horizontāli.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "spoguļo etiķeti no kreisās uz labo",
+          "values": "N nē, Y jā",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Iestata drukas ātrumu, pārvietošanas ātrumu un atpakaļpadeves ātrumu collās sekundē."
+    "summary": "Iestata drukas ātrumu, pārvietošanas ātrumu un atpakaļpadeves ātrumu collās sekundē.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "drukas ātrums collās sekundē",
+          "values": "1 līdz 14, vai A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "pārvietošanas ātrums tukšas etiķetes padevei",
+          "values": "2 līdz 14",
+          "default": "6"
+        },
+        {
+          "meaning": "atpakaļpadeves ātrums pēc drukāšanas",
+          "values": "2 līdz 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Novieto nākamo lauku no etiķetes sākumpunkta, izmantojot lauka augšējo kreiso stūri."
+    "summary": "Novieto nākamo lauku no etiķetes sākumpunkta, izmantojot lauka augšējo kreiso stūri.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "horizontālā pozīcija punktos",
+          "values": "0 līdz 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "vertikālā pozīcija punktos",
+          "values": "0 līdz 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "līdzinājums",
+          "values": "0 pa kreisi, 1 pa labi, 2 automātiski",
+          "default": "pēdējais ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Novieto nākamo lauku pēc tā bāzes līnijas vai svītrkoda malas, nodrošinot pagrieztiem laukiem stabilu piesaisti."
+    "summary": "Novieto nākamo lauku pēc tā bāzes līnijas vai svītrkoda malas, nodrošinot pagrieztiem laukiem stabilu piesaisti.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "horizontālā pozīcija punktos",
+          "values": "0 līdz 32000",
+          "default": "pēdējā lauka pozīcija"
+        },
+        {
+          "meaning": "vertikālā pozīcija punktos",
+          "values": "0 līdz 32000",
+          "default": "pēdējā lauka pozīcija"
+        },
+        {
+          "meaning": "līdzinājums",
+          "values": "0 pa kreisi, 1 pa labi, 2 automātiski",
+          "default": "pēdējais ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Nodrošina pašreizējā lauka saturu, tostarp tekstu, svītrkoda datus vai RFID datus."
+    "summary": "Nodrošina pašreizējā lauka saturu, tostarp tekstu, svītrkoda datus vai RFID datus.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "lauka saturs",
+          "values": "jebkuri drukājami dati līdz 3072 baitiem, bez prefiksa rakstzīmēm"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Iespējo heksadecimālas izvades sekvences lauka datos bināriem baitiem un rezervētām komandu rakstzīmēm."
+    "summary": "Iespējo heksadecimālas izvades sekvences lauka datos bināriem baitiem un rezervētām komandu rakstzīmēm.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "heksadecimālā indikatora rakstzīme",
+          "values": "jebkura rakstzīme, izņemot formāta un kontroles prefiksus",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Pievieno komentāra lauku. Printeris ignorē tā saturu līdz nākamajam lauka atdalītājam."
+    "summary": "Pievieno komentāra lauku. Printeris ignorē tā saturu līdz nākamajam lauka atdalītājam.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "neapdrukājams komentāra teksts",
+          "values": "jebkurš teksts, ignorēts līdz nākamajai komandai"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Iestata lauka noklusējuma orientāciju un jaunākā programmaparatūrā arī noklusējuma līdzinājumu."
+    "summary": "Iestata lauka noklusējuma orientāciju un jaunākā programmaparatūrā arī noklusējuma līdzinājumu.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "lauka noklusējuma pagriezums",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "noklusējuma līdzinājums",
+          "values": "0 pa kreisi, 1 pa labi, 2 automātiski",
+          "default": "automātiski priekš ^TB, citādi pa kreisi"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Ietver lauka datus fiksēta platuma blokā ar rindu skaita, atstarpes, atkāpes un līdzinājuma vadību."
+    "summary": "Ietver lauka datus fiksēta platuma blokā ar rindu skaita, atstarpes, atkāpes un līdzinājuma vadību.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "bloka platums punktos",
+          "values": "0 līdz etiķetes platumam",
+          "default": "0"
+        },
+        {
+          "meaning": "maksimālais rindu skaits",
+          "values": "1 līdz 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "papildu rindstarpa punktos",
+          "values": "-9999 līdz 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "līdzinājums",
+          "values": "L pa kreisi, C centrēts, R pa labi, J izlīdzināts",
+          "default": "L"
+        },
+        {
+          "meaning": "turpmāko rindu nokares atkāpe punktos",
+          "values": "0 līdz 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Ietver tekstu fiksēta platuma un fiksēta augstuma rāmī, apgriežot pārpalikumu."
+    "summary": "Ietver tekstu fiksēta platuma un fiksēta augstuma rāmī, apgriežot pārpalikumu.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "bloka pagriezums",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^A"
+        },
+        {
+          "meaning": "bloka platums punktos",
+          "values": "1 līdz etiķetes platumam",
+          "default": "1"
+        },
+        {
+          "meaning": "bloka augstums punktos",
+          "values": "1 līdz etiķetes garumam",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Piešķir numuru mainīgajam laukam saglabātos un atsauktos formātos."
+    "summary": "Piešķir numuru mainīgajam laukam saglabātos un atsauktos formātos.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "lauka numurs",
+          "values": "0 līdz 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "neobligāts KDU uzvednes teksts",
+          "values": "līdz 255 burtciparu rakstzīmēm"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Nodrošina datus mainīgajam laukam. Atšķirībā no ^FD datiem tie tiek dzēsti pēc etiķetes izdrukāšanas."
+    "summary": "Nodrošina datus mainīgajam laukam. Atšķirībā no ^FD datiem tie tiek dzēsti pēc etiķetes izdrukāšanas.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "mainīgā lauka dati",
+          "values": "0 līdz 3072 baitu virkne"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Iestata rakstzīmi, ko izmanto, lai iegultu numurētu lauku vērtības cita lauka virknē."
+    "summary": "Iestata rakstzīmi, ko izmanto, lai iegultu numurētu lauku vērtības cita lauka virknē.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "lauku savienošanas atdalītājs",
+          "values": "jebkura rakstzīme, izņemot formāta un kontroles prefiksus",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Iestata marķierus, ko izmanto reāllaika pulksteņa marķieriem lauka datos."
+    "summary": "Iestata marķierus, ko izmanto reāllaika pulksteņa marķieriem lauka datos.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "primārā pulksteņa indikatora rakstzīme",
+          "values": "jebkura ASCII rakstzīme",
+          "default": "%"
+        },
+        {
+          "meaning": "sekundārā pulksteņa indikatora rakstzīme",
+          "values": "jebkura ASCII rakstzīme, atšķiras no a"
+        },
+        {
+          "meaning": "trešā pulksteņa indikatora rakstzīme",
+          "values": "jebkura ASCII rakstzīme, atšķiras no a un b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Iestata svītrkoda moduļa noklusējuma platumu, plato-šaurā attiecību un augstumu turpmākajiem svītrkoda laukiem."
+    "summary": "Iestata svītrkoda moduļa noklusējuma platumu, plato-šaurā attiecību un augstumu turpmākajiem svītrkoda laukiem.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "moduļa platums punktos",
+          "values": "1 līdz 10",
+          "default": "2"
+        },
+        {
+          "meaning": "platās un šaurās svītras attiecība",
+          "values": "2.0 līdz 3.0 ar soli 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "jebkurš augstums punktos",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Novieto PDF417 vai MicroPDF417 segmentus konkrētos sākumpunktos, ja viens ziņojums aptver vairākus simbolus."
+    "summary": "Novieto PDF417 vai MicroPDF417 segmentus konkrētos sākumpunktos, ja viens ziņojums aptver vairākus simbolus.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "pirmā simbola x ass, atkārtot pārus vairākiem",
+          "values": "0 līdz 32000, vai e, lai izlaistu šo simbolu"
+        },
+        {
+          "meaning": "pirmā simbola y ass, atkārtot pārus vairākiem",
+          "values": "0 līdz 32000, vai e, lai izlaistu šo simbolu"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Iestata rakstzīmju secību pašreizējam laukam un var pievienot papildu rakstzīmju atstarpi."
+    "summary": "Iestata rakstzīmju secību pašreizējam laukam un var pievienot papildu rakstzīmju atstarpi.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "drukas virziens",
+          "values": "H horizontāli, V vertikāli, R reversi",
+          "default": "H"
+        },
+        {
+          "meaning": "papildu atstarpe starp rakstzīmēm punktos",
+          "values": "0 līdz 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Izvēlas iebūvēto mērogojamo fontu 0 nākamajam laukam pieprasītajā izmērā un orientācijā."
+    "summary": "Izvēlas iebūvēto mērogojamo fontu 0 nākamajam laukam pieprasītajā izmērā un orientācijā.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "rakstzīmes augstums punktos",
+          "values": "10 līdz 32000",
+          "default": "pēdējais ^CF"
+        },
+        {
+          "meaning": "rakstzīmes platums punktos",
+          "values": "10 līdz 32000",
+          "default": "pēdējais ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Izvēlas iebūvētu fontu pēc viena rakstzīmes nosaukuma, opcionāli norādot orientāciju, augstumu un platumu."
+    "summary": "Izvēlas iebūvētu fontu pēc viena rakstzīmes nosaukuma, opcionāli norādot orientāciju, augstumu un platumu.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "fonta nosaukums",
+          "values": "A līdz Z, 0 līdz 9",
+          "default": "pēdējais ^CF"
+        },
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "rakstzīmes augstums punktos",
+          "values": "10 līdz 32000 mērogojamiem, 1 līdz 10 reizes bāzes augstums rastra fontiem",
+          "default": "pēdējais ^CF"
+        },
+        {
+          "meaning": "rakstzīmes platums punktos",
+          "values": "10 līdz 32000 mērogojamiem, 1 līdz 10 reizes bāzes platums rastra fontiem",
+          "default": "pēdējais ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Izvēlas saglabātu fonta failu nākamajam laukam, opcionāli norādot orientāciju, augstumu un platumu."
+    "summary": "Izvēlas saglabātu fonta failu nākamajam laukam, opcionāli norādot orientāciju, augstumu un platumu.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "lauka orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "rakstzīmes augstums punktos",
+          "values": "10 līdz 32000 mērogojamiem, 1 līdz 10 reizes bāzes augstums rastra fontiem",
+          "default": "pēdējais ^CF"
+        },
+        {
+          "meaning": "rakstzīmes platums punktos",
+          "values": "10 līdz 32000 mērogojamiem, 1 līdz 10 reizes bāzes platums rastra fontiem",
+          "default": "pēdējais ^CF"
+        },
+        {
+          "meaning": "diskdzinis, kurā glabājas fonts",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "izmantojamā fonta faila nosaukums",
+          "values": "jebkurš derīgs fonta nosaukums",
+          "default": "pēdējais ^CF"
+        },
+        {
+          "meaning": "fonta faila paplašinājums",
+          "values": "FNT fonts, TTF TrueType, TTE TrueType paplašinājums"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Iestata rezerves fontu, augstumu un platumu, ko izmanto teksta lauki, kuri paši šos parametrus nenorāda."
+    "summary": "Iestata rezerves fontu, augstumu un platumu, ko izmanto teksta lauki, kuri paši šos parametrus nenorāda.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "noklusējuma fonts",
+          "values": "A līdz Z, 0 līdz 9",
+          "default": "A"
+        },
+        {
+          "meaning": "noklusējuma rakstzīmes augstums punktos",
+          "values": "0 līdz 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "noklusējuma rakstzīmes platums punktos",
+          "values": "0 līdz 32000",
+          "default": "5 vai pēdējā saglabātā vērtība"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Izvēlas kodējumu, ko izmanto lauka datu interpretācijai, tostarp koda lapas un UTF-8."
+    "summary": "Izvēlas kodējumu, ko izmanto lauka datu interpretācijai, tostarp koda lapas un UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "izmantojamais rakstzīmju kodējums",
+          "values": "0 līdz 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "pārkartējamā rakstzīmes pozīcija",
+          "values": "0 līdz 255",
+          "default": "nav"
+        },
+        {
+          "meaning": "aizstājošās rakstzīmes pozīcija",
+          "values": "0 līdz 255",
+          "default": "nav"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Iespējo uzlabotu teksta izkārtojumu turpmākajiem laukiem, tostarp divvirzienu tekstu, formu veidošanu un OpenType funkcijas."
+    "summary": "Iespējo uzlabotu teksta izkārtojumu turpmākajiem laukiem, tostarp divvirzienu tekstu, formu veidošanu un OpenType funkcijas.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "noklusējuma glifa avots",
+          "values": "0 atstarpes rakstzīme, 1 fonta glifs",
+          "default": "0"
+        },
+        {
+          "meaning": "divvirzienu teksta izkārtojums",
+          "values": "0 izslēgts, 1 ieslēgts",
+          "default": "0"
+        },
+        {
+          "meaning": "rakstzīmju formēšana",
+          "values": "0 izslēgts, 1 ieslēgts",
+          "default": "0"
+        },
+        {
+          "meaning": "OpenType tabulu atbalsts",
+          "values": "0 izslēgts, 1 ieslēgts",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Piesaista viena rakstzīmes fonta nosaukumu saglabātam fonta failam."
+    "summary": "Piesaista viena rakstzīmes fonta nosaukumu saglabātam fonta failam.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "pievienojamais vai aizstājamais fonta burts",
+          "values": "A līdz Z, 0 līdz 9"
+        },
+        {
+          "meaning": "diskdzinis fonta saglabāšanai",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "saglabātā fonta faila nosaukums",
+          "values": "līdz 8 burtciparu rakstzīmēm",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fonta faila paplašinājums",
+          "values": "FNT fonts, TTF TrueType, TTE TrueType paplašinājums"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Iestata kešatmiņas apjomu renderētiem mērogojamiem glifiem, lai paātrinātu atkārtotu liela fonta izvadi."
+    "summary": "Iestata kešatmiņas apjomu renderētiem mērogojamiem glifiem, lai paātrinātu atkārtotu liela fonta izvadi.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "rakstzīmju kešatmiņa iespējota",
+          "values": "N nē, Y jā",
+          "default": "Y"
+        },
+        {
+          "meaning": "papildu kešatmiņa kilobaitos",
+          "values": "1 līdz 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "kešatmiņas bufera tips",
+          "values": "0 parastie fonti, 1 Āzijas fonti",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Definē TrueType rezerves fontu ķēdes, ko izmanto, ja bāzes fontam trūkst glifa."
+    "summary": "Definē TrueType rezerves fontu ķēdes, ko izmanto, ja bāzes fontam trūkst glifa.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "saistāmais papildu fonts, ierīce un fails",
+          "values": "TTF vai TTE fails ierīcē"
+        },
+        {
+          "meaning": "bāzes fonts vai fonti, kas to saņem",
+          "values": "FNT, TTF vai TTE fails, atļauta aizstājējzīme"
+        },
+        {
+          "meaning": "saistīt vai atsaistīt papildu fontu",
+          "values": "0 atsaistīt, 1 saistīt"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Ielādē rastra fontu un tā metriku printera atmiņā."
+    "summary": "Ielādē rastra fontu un tā metriku printera atmiņā.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "diskdzinis fonta saglabāšanai",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fonta nosaukums",
+          "values": "līdz 8 burtciparu rakstzīmēm",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fonta faila paplašinājums",
+          "values": "FNT fiksēta vērtība",
+          "default": "FNT"
+        },
+        {
+          "meaning": "vietējā fonta orientācija",
+          "values": "N tikai normāli",
+          "default": "N"
+        },
+        {
+          "meaning": "maksimālais šūnas augstums punktos",
+          "values": "1 līdz 32000"
+        },
+        {
+          "meaning": "maksimālais šūnas platums punktos",
+          "values": "1 līdz 32000"
+        },
+        {
+          "meaning": "punktu skaits no šūnas augšas līdz bāzlīnijai",
+          "values": "1 līdz 32000"
+        },
+        {
+          "meaning": "atstarpes rakstzīmes platums",
+          "values": "1 līdz 32000"
+        },
+        {
+          "meaning": "rakstzīmju skaits fontā",
+          "values": "1 līdz 256"
+        },
+        {
+          "meaning": "autortiesību īpašnieka teksts",
+          "values": "1 līdz 63 burtciparu rakstzīmēm"
+        },
+        {
+          "meaning": "strukturēti rastra dati katrai rakstzīmei",
+          "values": "hash kods, tad augstuma un platuma nobīdes, tad heksadecimāli dati"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Ielādē kodētu mērogojamu Intellifont fontu printera atmiņā."
+    "summary": "Ielādē kodētu mērogojamu Intellifont fontu printera atmiņā.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "diskdzinis fonta saglabāšanai",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fonta nosaukums",
+          "values": "līdz 8 burtciparu rakstzīmēm",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fonta faila paplašinājums",
+          "values": "FNT fiksēta vērtība",
+          "default": "FNT"
+        },
+        {
+          "meaning": "fonta izmērs baitos no ZTools",
+          "values": "pārveidotā fonta baitu skaits"
+        },
+        {
+          "meaning": "kodēti fonta baitu dati",
+          "values": "heksadecimāli pāri atbilstoši izmēram"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Ielādē kodētu TrueType fontu ar līdz 256 rakstzīmēm printera atmiņā."
+    "summary": "Ielādē kodētu TrueType fontu ar līdz 256 rakstzīmēm printera atmiņā.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "diskdzinis fonta saglabāšanai",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fonta nosaukums",
+          "values": "līdz 8 burtciparu rakstzīmēm",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fonta faila paplašinājums",
+          "values": "DAT fiksēta vērtība",
+          "default": "DAT"
+        },
+        {
+          "meaning": "fonta izmērs baitos",
+          "values": "pārveidotā fonta baitu skaits"
+        },
+        {
+          "meaning": "kodēti fonta baitu dati",
+          "values": "heksadecimāli pāri atbilstoši izmēram"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Ielādē kodētu TrueType fontu ar vairāk nekā 256 glifiem printera atmiņā."
+    "summary": "Ielādē kodētu TrueType fontu ar vairāk nekā 256 glifiem printera atmiņā.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "diskdzinis fonta saglabāšanai",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fonta nosaukums",
+          "values": "līdz 8 burtciparu rakstzīmēm",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fonta faila paplašinājums",
+          "values": "FNT fiksēta vērtība",
+          "default": "FNT"
+        },
+        {
+          "meaning": "fonta izmērs baitos",
+          "values": "pārveidotā fonta baitu skaits"
+        },
+        {
+          "meaning": "kodēti fonta baitu dati",
+          "values": "heksadecimāli pāri atbilstoši izmēram"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Ielādē kodējuma tabulu, kas piesaista lauka datu baitus Unicode vērtībām TrueType fontiem."
+    "summary": "Ielādē kodējuma tabulu, kas piesaista lauka datu baitus Unicode vērtībām TrueType fontiem.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "diskdzinis, kurā glabājas tabula",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "tabulas nosaukums",
+          "values": "līdz 8 burtciparu rakstzīmēm",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tabulas faila paplašinājums",
+          "values": "DAT fiksēta vērtība",
+          "default": "DAT"
+        },
+        {
+          "meaning": "tabulas izmērs baitos",
+          "values": "pārveidotās tabulas baitu skaits"
+        },
+        {
+          "meaning": "kodēti tabulas baitu dati",
+          "values": "heksadecimāli pāri atbilstoši izmēram"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Zīmē Code 128 svītrkodu mainīga garuma ASCII datiem, ar režīmiem automātiskai apakškopu pārslēgšanai un UCC/EAN datiem."
+    "summary": "Zīmē Code 128 svītrkodu mainīga garuma ASCII datiem, ar režīmiem automātiskai apakškopu pārslēgšanai un UCC/EAN datiem.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "N nē, Y jā",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "N nē, Y jā",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC kontrolcipars",
+          "values": "N nē, Y jā",
+          "default": "N"
+        },
+        {
+          "meaning": "režīms",
+          "values": "N nekāds, U UCC Case Mode, A automātisks, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Zīmē Code 39 svītrkodu ar neobligātu Mod 43 kontrolciparu."
+    "summary": "Zīmē Code 39 svītrkodu ar neobligātu Mod 43 kontrolciparu.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "Mod 43 kontrolcipars",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Zīmē Code 93 svītrkodu, kas ar nobīdes rakstzīmēm attēlo pilnu ASCII datu kopu."
+    "summary": "Zīmē Code 93 svītrkodu, kas ar nobīdes rakstzīmēm attēlo pilnu ASCII datu kopu.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "drukāt kontrolciparu",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Zīmē Code 11 svītrkodu cipariem un defisēm, ar iespējamiem kontrolcipariem."
+    "summary": "Zīmē Code 11 svītrkodu cipariem un defisēm, ar iespējamiem kontrolcipariem.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "kontrolciparu skaits",
+          "values": "Y 1 cipars, N 2 cipari",
+          "default": "N"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Zīmē Interleaved 2 of 5 svītrkodu pāra garuma skaitliskiem datiem, ar iespējamu kontrolciparu."
+    "summary": "Zīmē Interleaved 2 of 5 svītrkodu pāra garuma skaitliskiem datiem, ar iespējamu kontrolciparu.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod 10 kontrolcipars",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "sestā vieta, nedokumentēta",
+          "values": "nav dokumentēts rokasgrāmatā"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Zīmē Industrial 2 of 5 svītrkodu, skaitlisku kodu, kurā dati kodēti tikai svītrās."
+    "summary": "Zīmē Industrial 2 of 5 svītrkodu, skaitlisku kodu, kurā dati kodēti tikai svītrās.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Zīmē Standard 2 of 5 svītrkodu, pašpārbaudošu skaitlisku kodu, kurā dati kodēti tikai svītrās."
+    "summary": "Zīmē Standard 2 of 5 svītrkodu, pašpārbaudošu skaitlisku kodu, kurā dati kodēti tikai svītrās.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Zīmē ANSI Codabar svītrkodu, pazīstamu arī kā USD-4, bibliotēku, veselības aprūpes un kurjeru etiķetēm."
+    "summary": "Zīmē ANSI Codabar svītrkodu, pazīstamu arī kā USD-4, bibliotēku, veselības aprūpes un kurjeru etiķetēm.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "kontrolcipars, fiksēti izslēgts",
+          "values": "tikai N",
+          "default": "N"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "sākuma rakstzīme",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "beigu rakstzīme",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Zīmē LOGMARS svītrkodu, ASV Aizsardzības departamenta Code 39 variantu, un pārveido mazos burtus datos par lielajiem."
+    "summary": "Zīmē LOGMARS svītrkodu, ASV Aizsardzības departamenta Code 39 variantu, un pārveido mazos burtus datos par lielajiem.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Zīmē MSI svītrkodu, no Plessey atvasinātu skaitlisku kodu ar izvēlamām kontrolciparu shēmām."
+    "summary": "Zīmē MSI svītrkodu, no Plessey atvasinātu skaitlisku kodu ar izvēlamām kontrolciparu shēmām.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "kontrolcipara shēma",
+          "values": "A nekāds, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolcipars interpretācijas rindā",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Zīmē Plessey svītrkodu, vecāku skaitlisku kodu ar iespējamiem kontrolcipariem."
+    "summary": "Zīmē Plessey svītrkodu, vecāku skaitlisku kodu ar iespējamiem kontrolcipariem.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "drukāt kontrolciparu",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Zīmē EAN-13 svītrkodu mazumtirdzniecības preču numuriem un aprēķina kontrolciparu no divpadsmit datu cipariem."
+    "summary": "Zīmē EAN-13 svītrkodu mazumtirdzniecības preču numuriem un aprēķina kontrolciparu no divpadsmit datu cipariem.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Zīmē EAN-8 svītrkodu maziem mazumtirdzniecības iepakojumiem un aprēķina kontrolciparu no septiņiem datu cipariem."
+    "summary": "Zīmē EAN-8 svītrkodu maziem mazumtirdzniecības iepakojumiem un aprēķina kontrolciparu no septiņiem datu cipariem.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Zīmē UPC-A svītrkodu mazumtirdzniecības iepakojumam no vienpadsmit datu cipariem, ar iespējamu kontrolcipara drukāšanu."
+    "summary": "Zīmē UPC-A svītrkodu mazumtirdzniecības iepakojumam no vienpadsmit datu cipariem, ar iespējamu kontrolcipara drukāšanu.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 9999",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "drukāt kontrolciparu",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Zīmē UPC-E svītrkodu, UPC-A saīsināto formu. Lauka dati ir pilns desmit ciparu ražotāja un produkta kods."
+    "summary": "Zīmē UPC-E svītrkodu, UPC-A saīsināto formu. Lauka dati ir pilns desmit ciparu ražotāja un produkta kods.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "drukāt kontrolciparu",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Zīmē GS1 DataBar simbolu ar izvēlamu apakštipu, palielinājumu, augstumu un segmenta platumu."
+    "summary": "Zīmē GS1 DataBar simbolu ar izvēlamu apakštipu, palielinājumu, augstumu un segmenta platumu.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R pagriezts, I apgriezts, B no apakšas uz augšu",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar simbolikas tips",
+          "values": "1 omni, 2 truncated, 3 stacked, 4 stacked omni, 5 limited, 6 expanded, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 ar CC-A/B, 12 UCC/EAN-128 ar CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "palielinājuma koeficients",
+          "values": "1 līdz 10",
+          "default": "printera iestatījums"
+        },
+        {
+          "meaning": "atdalītāja augstums",
+          "values": "1 vai 2",
+          "default": "1"
+        },
+        {
+          "meaning": "lineārās daļas augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "segmenta platums GS1 DataBar Expanded",
+          "values": "2 līdz 22, tikai pāra skaitļi",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Zīmē Planet Code pasta svītrkodu no cipariem, kas kodēti kā garas un īsas svītras."
+    "summary": "Zīmē Planet Code pasta svītrkodu no cipariem, kas kodēti kā garas un īsas svītras.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R pagriezts, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 9999",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Zīmē POSTNET, Planet Code vai USPS Intelligent Mail atbilstoši izvēlētajam pasta koda tipam."
+    "summary": "Zīmē POSTNET, Planet Code vai USPS Intelligent Mail atbilstoši izvēlētajam pasta koda tipam.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "pasta koda tips",
+          "values": "0 postnet, 1 planet, 2 rezervēts, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Zīmē divciparu vai piecciparu UPC/EAN papildsimbolu blakus galvenajam svītrkodam."
+    "summary": "Zīmē divciparu vai piecciparu UPC/EAN papildsimbolu blakus galvenajam svītrkodam.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 32000",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rinda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretācijas rinda virs koda",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Zīmē Code 49 kārtoto svītrkodu ar divām līdz astoņām pilna ASCII datu rindām."
+    "summary": "Zīmē Code 49 kārtoto svītrkodu ar divām līdz astoņām pilna ASCII datu rindām.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "atsevišķu rindu augstuma reizinātājs",
+          "values": "1 līdz etiķetes augstumam",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "interpretācijas rindas novietojums",
+          "values": "N nekāds, A virs, B apakšā",
+          "default": "N"
+        },
+        {
+          "meaning": "sākuma režīms",
+          "values": "0 burtciparu, 1 multiread, 2 skaitlisks, 3 group alpha, 4 shift 1, 5 shift 2, A automātiski",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Zīmē QR Code simbolu. Komandas parametri iestata modeli, palielinājumu un masku, savukārt lauka dati nosaka kļūdu labošanas līmeni un rakstzīmju režīmu."
+    "summary": "Zīmē QR Code simbolu. Komandas parametri iestata modeli, palielinājumu un masku, savukārt lauka dati nosaka kļūdu labošanas līmeni un rakstzīmju režīmu.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "lauka orientācija",
+          "values": "N tikai normāli",
+          "default": "N"
+        },
+        {
+          "meaning": "modelis",
+          "values": "1 oriģināls, 2 pastiprināts",
+          "default": "2"
+        },
+        {
+          "meaning": "palielinājuma koeficients",
+          "values": "1 līdz 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "kļūdu labošanas līmenis",
+          "values": "H ultraaugsts, Q augsts, M standarts, L augsts blīvums",
+          "default": "Q, kad tukšs, M, kad vērtība nederīga"
+        },
+        {
+          "meaning": "maskas vērtība",
+          "values": "0 līdz 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Zīmē Data Matrix simbolu ar konfigurējamu elementa izmēru, kvalitātes līmeni un atsoļa sekvenču apstrādi."
+    "summary": "Zīmē Data Matrix simbolu ar konfigurējamu elementa izmēru, kvalitātes līmeni un atsoļa sekvenču apstrādi.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "simbola elementu izmēra augstums",
+          "values": "1 līdz etiķetes platumam",
+          "default": "0, kas pārņem simbola augstumu no ^BY"
+        },
+        {
+          "meaning": "kvalitātes līmenis",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "kodējamo kolonnu skaits",
+          "values": "9 līdz 49, kvalitātei 0 līdz 140 tikai nepāra, kvalitātei 200 tikai pāra"
+        },
+        {
+          "meaning": "kodējamo rindu skaits",
+          "values": "9 līdz 49"
+        },
+        {
+          "meaning": "formāta ID",
+          "values": "1 skaitlisks, 2 lielie burti, 3 lielie burtcipari ar . , - /, 4 lielie burtcipari, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "atsoļa sekvences kontroles rakstzīme",
+          "values": "jebkura rakstzīme",
+          "default": "tilde"
+        },
+        {
+          "meaning": "malu attiecība",
+          "values": "1 kvadrāts, 2 taisnstūris",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Zīmē PDF417 kārtoto divdimensiju simbolu lieliem teksta vai bināriem datu apjomiem."
+    "summary": "Zīmē PDF417 kārtoto divdimensiju simbolu lieliem teksta vai bināriem datu apjomiem.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums katrā rindā punktos",
+          "values": "1 līdz etiķetes augstumam",
+          "default": "pēdējais ^BY"
+        },
+        {
+          "meaning": "drošības līmenis",
+          "values": "1 līdz 8",
+          "default": "0"
+        },
+        {
+          "meaning": "datu kolonnu skaits",
+          "values": "1 līdz 30",
+          "default": "automātiska malu attiecība"
+        },
+        {
+          "meaning": "rindu skaits",
+          "values": "3 līdz 90",
+          "default": "automātiska malu attiecība"
+        },
+        {
+          "meaning": "apgriezt labās puses rindu indikatorus un beigu rakstu",
+          "values": "Y jā, N nē",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Zīmē MicroPDF417 simbolu, kompaktu PDF417 variantu ar rindu adrešu rakstiem."
+    "summary": "Zīmē MicroPDF417 simbolu, kompaktu PDF417 variantu ar rindu adrešu rakstiem.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "svītrkoda augstums punktos",
+          "values": "1 līdz 9999",
+          "default": "pēdējais ^BY, vai 10, ja ^BY netika nosūtīts"
+        },
+        {
+          "meaning": "režīms",
+          "values": "0 līdz 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Zīmē Aztec matricas simbolu ar konfigurējamu palielinājumu un kļūdu labošanu."
+    "summary": "Zīmē Aztec matricas simbolu ar konfigurējamu palielinājumu un kļūdu labošanu.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R pagriezts, I 180, B 270",
+          "default": "pēdējais ^FW"
+        },
+        {
+          "meaning": "palielinājuma koeficients",
+          "values": "1 līdz 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "paplašinātās kanāla interpretācijas indikators",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "kļūdu kontrole un simbola izmērs",
+          "values": "0 noklusējums, 1 līdz 99 kļūdu procenti, 101 līdz 104 compact slāņi, 201 līdz 232 pilni slāņi, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "izvēlnes simbola indikators",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "simbolu skaits strukturētai pievienošanai",
+          "values": "1 līdz 26",
+          "default": "1"
+        },
+        {
+          "meaning": "strukturētās pievienošanas ID lauks",
+          "values": "teksts līdz 24 rakstzīmēm",
+          "default": "nav ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Zīmē CODABLOCK simbolu A, E vai F režīmā lielākiem datu apjomiem."
+    "summary": "Zīmē CODABLOCK simbolu A, E vai F režīmā lielākiem datu apjomiem.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "svītrkoda augstums katrā rindā punktos",
+          "values": "2 līdz 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "drošības līmenis",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "rakstzīmes katrā rindā",
+          "values": "2 līdz 62"
+        },
+        {
+          "meaning": "kodējamo rindu skaits",
+          "values": "mode-A 1-22, mode-EF 2-4"
+        },
+        {
+          "meaning": "režīms",
+          "values": "A code39-set, E code128-fnc1, F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Zīmē UPS MaxiCode simbolu ar režīmu strukturētiem pārvadātāja ziņojumiem vai vispārīgiem datiem."
+    "summary": "Zīmē UPS MaxiCode simbolu ar režīmu strukturētiem pārvadātāja ziņojumiem vai vispārīgiem datiem.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "režīms",
+          "values": "2 us-postal, 3 non-us-postal, 4 standard, 5 full-eec, 6 reader-program",
+          "default": "2"
+        },
+        {
+          "meaning": "simbola numurs secībā",
+          "values": "1 līdz 8",
+          "default": "1"
+        },
+        {
+          "meaning": "kopējais simbolu skaits",
+          "values": "1 līdz 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Zīmē TLC39 telekomunikāciju etiķetes simbolu, kas apvieno Code 39 ar MicroPDF417 komponenti."
+    "summary": "Zīmē TLC39 telekomunikāciju etiķetes simbolu, kas apvieno Code 39 ar MicroPDF417 komponenti.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R pagriezts, I apgriezts, B no apakšas uz augšu"
+        },
+        {
+          "meaning": "Code 39 daļas platums punktos",
+          "values": "1 līdz 10",
+          "default": "600 dpi 4, citādi 2"
+        },
+        {
+          "meaning": "Code 39 daļas plato-šaurā attiecība",
+          "values": "2.0 līdz 3.0 ar soli 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "Code 39 daļas augstums punktos",
+          "values": "1 līdz 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "MicroPDF417 daļas šaurās svītras platums",
+          "values": "1 līdz 10",
+          "default": "600 dpi 4, citādi 2"
+        },
+        {
+          "meaning": "MicroPDF417 daļas rindas augstums punktos",
+          "values": "1 līdz 255",
+          "default": "600 dpi 8, citādi 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Kad iespējots, validē svītrkoda datus un parametrus un neatbilstoša simbola vietā izdrukā INVALID."
+    "summary": "Kad iespējots, validē svītrkoda datus un parametrus un neatbilstoša simbola vietā izdrukā INVALID.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "koda validācija",
+          "values": "N nē, Y jā",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Zīmē aizpildītu vai kontūrētu taisnstūri. Ja malas garums sakrīt ar apmales biezumu, iegūst līniju."
+    "summary": "Zīmē aizpildītu vai kontūrētu taisnstūri. Ja malas garums sakrīt ar apmales biezumu, iegūst līniju.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "taisnstūra platums punktos",
+          "values": "t līdz 32000",
+          "default": "t vai 1"
+        },
+        {
+          "meaning": "taisnstūra augstums punktos",
+          "values": "t līdz 32000",
+          "default": "t vai 1"
+        },
+        {
+          "meaning": "apmales biezums punktos",
+          "values": "1 līdz 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "līnijas krāsa",
+          "values": "B melns, W balts",
+          "default": "B"
+        },
+        {
+          "meaning": "stūru noapaļojums",
+          "values": "0 nav noapaļojuma līdz 8 visstiprākais noapaļojums",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Zīmē diagonālu līniju norādītā platumā un augstumā, sasveroties pa labi vai pa kreisi."
+    "summary": "Zīmē diagonālu līniju norādītā platumā un augstumā, sasveroties pa labi vai pa kreisi.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "taisnstūra platums punktos",
+          "values": "3 līdz 32000",
+          "default": "t vai 3"
+        },
+        {
+          "meaning": "taisnstūra augstums punktos",
+          "values": "3 līdz 32000",
+          "default": "t vai 3"
+        },
+        {
+          "meaning": "apmales biezums punktos",
+          "values": "1 līdz 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "līnijas krāsa",
+          "values": "B melns, W balts",
+          "default": "B"
+        },
+        {
+          "meaning": "diagonāles virziens",
+          "values": "R vai / sasveries pa labi, L vai \\ sasveries pa kreisi",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Zīmē elipsi no platuma un augstuma punktos, ar uz iekšu vērstu apmales biezumu un melnu vai baltu izvadi."
+    "summary": "Zīmē elipsi no platuma un augstuma punktos, ar uz iekšu vērstu apmales biezumu un melnu vai baltu izvadi.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "elipses platums punktos",
+          "values": "3 līdz 4095",
+          "default": "t vai 1"
+        },
+        {
+          "meaning": "elipses augstums punktos",
+          "values": "3 līdz 4095",
+          "default": "t vai 1"
+        },
+        {
+          "meaning": "apmales biezums punktos",
+          "values": "2 līdz 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "līnijas krāsa",
+          "values": "B melns, W balts",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Zīmē apli ar norādīto diametru punktos, ar uz iekšu vērstu apmales biezumu un melnu vai baltu izvadi."
+    "summary": "Zīmē apli ar norādīto diametru punktos, ar uz iekšu vērstu apmales biezumu un melnu vai baltu izvadi.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "apļa diametrs punktos",
+          "values": "3 līdz 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "apmales biezums punktos",
+          "values": "2 līdz 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "līnijas krāsa",
+          "values": "B melns, W balts",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Novieto vienkrāsainu rastra attēlu pašreizējā lauka pozīcijā, izmantojot ASCII heksadecimālus, binārus vai saspiestus datus."
+    "summary": "Novieto vienkrāsainu rastra attēlu pašreizējā lauka pozīcijā, izmantojot ASCII heksadecimālus, binārus vai saspiestus datus.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "saspiešanas tips",
+          "values": "A ASCII heksadecimāli, B bināri, C saspiesti bināri",
+          "default": "A"
+        },
+        {
+          "meaning": "kopējais nosūtāmo baitu skaits",
+          "values": "1 līdz 99999"
+        },
+        {
+          "meaning": "kopējais baitu skaits attēlā",
+          "values": "1 līdz 99999"
+        },
+        {
+          "meaning": "baiti katrā attēla rindā",
+          "values": "1 līdz 99999"
+        },
+        {
+          "meaning": "attēla dati",
+          "values": "ASCII heksadecimāli 00 līdz FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Izdrukā iebūvētu simbolu, kas izvēlēts pēc lauka datiem, piemēram, autortiesību vai reģistrētas preču zīmes zīmi."
+    "summary": "Izdrukā iebūvētu simbolu, kas izvēlēts pēc lauka datiem, piemēram, autortiesību vai reģistrētas preču zīmes zīmi.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "orientācija",
+          "values": "N normāli, R 90 pulksteņrādītāja virzienā, I 180, B 270",
+          "default": "N vai pēdējais ^FW"
+        },
+        {
+          "meaning": "rakstzīmes augstums proporcionāli platumam",
+          "values": "0 līdz 32000",
+          "default": "pēdējais ^CF"
+        },
+        {
+          "meaning": "rakstzīmes platums proporcionāli augstumam",
+          "values": "0 līdz 32000",
+          "default": "pēdējais ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Ielādē saglabātu attēlu formāta sākumā un piesaista to etiķetes sākumpunktam."
+    "summary": "Ielādē saglabātu attēlu formāta sākumā un piesaista to etiķetes sākumpunktam.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekta nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": ".GRF vai .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Novieto saglabātu attēlu pašreizējā lauka pozīcijā, to nemērogojot."
+    "summary": "Novieto saglabātu attēlu pašreizējā lauka pozīcijā, to nemērogojot.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "meklēšanas prioritātes secība"
+        },
+        {
+          "meaning": "objekta nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": ".GRF vai .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Dzēš saglabātu grafiku, fontus vai formātus no printera atmiņas, ar aizstājējzīmju atbalstu grupām."
+    "summary": "Dzēš saglabātu grafiku, fontus vai formātus no printera atmiņas, ar aizstājējzīmju atbalstu grupām.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekta nosaukums, atļauta aizstājējzīme",
+          "values": "1 līdz 8 rakstzīmēm",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums, atļauta aizstājējzīme",
+          "values": "jebkurš paplašinājums",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Saglabā pašreizējo formātu kā grafisku attēlu ātrai atsaukšanai un mainīgo datu pārklājumiem."
+    "summary": "Saglabā pašreizējo formātu kā grafisku attēlu ātrai atsaukšanai un mainīgo datu pārklājumiem.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekta nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": ".GRF vai .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "drukāt etiķeti pēc saglabāšanas",
+          "values": "N nē, Y jā",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Ielādē ASCII heksadecimālu grafiku printera atmiņā ar atkārtoti izmantojamu nosaukumu."
+    "summary": "Ielādē ASCII heksadecimālu grafiku printera atmiņā ar atkārtoti izmantojamu nosaukumu.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "attēla nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "kopējais attēla izmērs baitos",
+          "values": "aprēķināts no attēla platuma un augstuma"
+        },
+        {
+          "meaning": "baiti katrā attēla rindā",
+          "values": "aprēķināts no attēla platuma"
+        },
+        {
+          "meaning": "grafikas attēla dati",
+          "values": "ASCII heksadecimāli 00 līdz FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Ielādē grafiku, fontu vai sertifikātu printera atmiņā ar atkārtoti izmantojamu nosaukumu."
+    "summary": "Ielādē grafiku, fontu vai sertifikātu printera atmiņā ar atkārtoti izmantojamu nosaukumu.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "faila nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "datu formāts",
+          "values": "A ASCII vai zb64, B bināri, C AR saspiesti, P png zb64"
+        },
+        {
+          "meaning": "saglabātā faila tips",
+          "values": "B rastra attēls, E tte, G neapstrādāts grf, P png, T ttf vai otf, X pcx, NRD nenolasāms, PAC piekļuves akreditācijas dati, C wml izvēlne, F htm lapa, H printera atgriezeniskā saite",
+          "default": "G"
+        },
+        {
+          "meaning": "kopējais baitu skaits failā",
+          "values": "faktiskais atspiestā faila izmērs"
+        },
+        {
+          "meaning": "baiti katrā rindā GRF attēliem",
+          "values": "aprēķināts no attēla platuma"
+        },
+        {
+          "meaning": "faila dati",
+          "values": "ASCII heksadecimāli, zb64 vai bināri"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Sērijveido teksta vai svītrkoda lauka datus vairākās etiķetēs, izmantojot sākuma vērtību, virzienu un soli."
+    "summary": "Sērijveido teksta vai svītrkoda lauka datus vairākās etiķetēs, izmantojot sākuma vērtību, virzienu un soli.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "sākuma sērijas vērtība",
+          "values": "līdz 12 cipariem",
+          "default": "1"
+        },
+        {
+          "meaning": "palielinājuma vai samazinājuma solis",
+          "values": "līdz 12 cipariem",
+          "default": "1"
+        },
+        {
+          "meaning": "papildināt ar nullēm priekšā",
+          "values": "N nē, Y jā",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Sērijveido izvēlētas pozīcijas lauka datos, izmantojot masku un rakstzīmju kopas."
+    "summary": "Sērijveido izvēlētas pozīcijas lauka datos, izmantojot masku un rakstzīmju kopas.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "sērijveidošanas maska, kas izvēlas mainīgās rakstzīmes",
+          "values": "D decimāli, H heksadecimāli, O oktāli, A burti, N burtcipari, % izlaist"
+        },
+        {
+          "meaning": "palielinājuma vai samazinājuma virkne maskai",
+          "values": "viena vērtība katrai maskas pozīcijai, % lai to atstātu",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Saglabā turpmākās komandas kā atkārtoti izmantojamu formātu, nevis tās uzreiz izdrukājot."
+    "summary": "Saglabā turpmākās komandas kā atkārtoti izmantojamu formātu, nevis tās uzreiz izdrukājot.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "ierīce veidnes saglabāšanai",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "veidnes nosaukums",
+          "values": "1 līdz 16 burtciparu rakstzīmēm",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Atsauc saglabātu formātu un nodrošina vērtības tā numurētajiem vietturu laukiem."
+    "summary": "Atsauc saglabātu formātu un nodrošina vērtības tā numurētajiem vietturu laukiem.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "saglabātās veidnes avota ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R, tad E, tad B, tad A"
+        },
+        {
+          "meaning": "saglabātās veidnes nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Atsauc saglabātu grafiku pašreizējā pozīcijā ar neatkarīgu horizontālu un vertikālu mērogošanu."
+    "summary": "Atsauc saglabātu grafiku pašreizējā pozīcijā ar neatkarīgu horizontālu un vertikālu mērogošanu.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "saglabātās grafikas avota ierīce",
+          "values": "R, E, B, A",
+          "default": "R, tad E, tad B, tad A"
+        },
+        {
+          "meaning": "saglabātās grafikas nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": "GRF"
+        },
+        {
+          "meaning": "palielinājuma koeficients x asī",
+          "values": "1 līdz 10",
+          "default": "1"
+        },
+        {
+          "meaning": "palielinājuma koeficients y asī",
+          "values": "1 līdz 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Izvēlas, kā printeris nosaka etiķešu robežas, izmantojot spraugas, atzīmes vai nepārtrauktu materiālu."
+    "summary": "Izvēlas, kā printeris nosaka etiķešu robežas, izmantojot spraugas, atzīmes vai nepārtrauktu materiālu.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "materiāla izsekošanas metode",
+          "values": "N nepārtraukts, Y vai W pārtraukts ar spraugu, M pārtraukts ar atzīmi, A automātiska noteikšana, V nepārtraukts ar mainīgu garumu",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "melnās atzīmes nobīde punktos",
+          "values": "-120 līdz 283 lielākajā daļā printeru, -240 līdz 566 ar 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Iestata maksimālo etiķetes garumu, kādu printeris meklē, kalibrējot materiālu ar atdalītām etiķetēm."
+    "summary": "Iestata maksimālo etiķetes garumu, kādu printeris meklē, kalibrējot materiālu ar atdalītām etiķetēm.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "maksimālais etiķetes garums punktu rindās",
+          "values": "printera dpi reiz divi, līdz maksimālajam garumam",
+          "default": "pēdējā saglabātā vērtība"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Iestata darbību ieslēdzot printeri un aizverot drukas galviņu, tostarp kalibrēšanu, padevi vai garuma mērīšanu."
+    "summary": "Iestata darbību ieslēdzot printeri un aizverot drukas galviņu, tostarp kalibrēšanu, padevi vai garuma mērīšanu.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "padeves darbība ieslēdzot",
+          "values": "F padot līdz pirmajai spraugai, C kalibrēt kā ~JC, L iestatīt garumu kā ~JL, N bez padeves, S īsa kalibrēšana",
+          "default": "C"
+        },
+        {
+          "meaning": "padeves darbība pēc galviņas aizvēršanas",
+          "values": "F padot līdz pirmajai spraugai, C kalibrēt kā ~JC, L iestatīt garumu kā ~JL, N bez padeves, S īsa kalibrēšana",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Konfigurē drukātus apkopes brīdinājumus drukas galviņas tīrīšanai vai nomaiņai."
+    "summary": "Konfigurē drukātus apkopes brīdinājumus drukas galviņas tīrīšanai vai nomaiņai.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "brīdinājuma tips",
+          "values": "R galviņas nomaiņa, C galviņas tīrīšana"
+        },
+        {
+          "meaning": "drukāt brīdinājuma etiķeti",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "attālums līdz pirmajam brīdinājumam",
+          "values": "R 0 līdz 150 km, C 100 līdz 2000 metri, 0 izslēgts",
+          "default": "50 km priekš R, 0 izslēgts priekš C"
+        },
+        {
+          "meaning": "attālums pirms brīdinājuma atkārtošanas",
+          "values": "0 līdz 2000 metri",
+          "default": "0"
+        },
+        {
+          "meaning": "ziņotā mērvienība",
+          "values": "C centimetri, I collas, M metri",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Kontrolē, vai etiķetes rastra attēls tiek dzēsts pēc drukāšanas vai saglabāts atkārtotai izmantošanai turpmākajās etiķetēs."
+    "summary": "Kontrolē, vai etiķetes rastra attēls tiek dzēsts pēc drukāšanas vai saglabāts atkārtotai izmantošanai turpmākajās etiķetēs.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "dzēst rastra attēlu pēc drukāšanas",
+          "values": "Y dzēst, N paturēt",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Iestata tekstu, kas tiek rādīts apkopes brīdinājuma etiķetēs drukas galviņas tīrīšanai vai nomaiņai."
+    "summary": "Iestata tekstu, kas tiek rādīts apkopes brīdinājuma etiķetēs drukas galviņas tīrīšanai vai nomaiņai.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "brīdinājuma tips",
+          "values": "R galviņas nomaiņa, C galviņas tīrīšana",
+          "default": "R"
+        },
+        {
+          "meaning": "teksts, kas tiek drukāts brīdinājuma etiķetē",
+          "values": "līdz 63 rakstzīmēm, bez komatiem",
+          "default": "lūdzu, tīrīt drukas galviņu, vai lūdzu, nomainīt drukas galviņu"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Bloķē vadības paneļa iestatījumu, piemēram, tumšumu vai kalibrēšanu, līdz tas tiek atbloķēts."
+    "summary": "Bloķē vadības paneļa iestatījumu, piemēram, tumšumu vai kalibrēšanu, līdz tas tiek atbloķēts.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "aizsargājamais vadības paneļa režīms",
+          "values": "D tumšums, P pozīcija, C kalibrēšana, E iespējot visu, S nesaglabāt, W pauze, F padeve, X atcelt, M izvēlne",
+          "default": "jānorāda obligāti"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Iespējo vai atspējo drukas galviņas zemas temperatūras brīdinājuma indikatoru."
+    "summary": "Iespējo vai atspējo drukas galviņas zemas temperatūras brīdinājuma indikatoru.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "iespējot drukas galviņas zemas temperatūras brīdinājumu",
+          "values": "Y iespējot, N atspējot"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Pielāgo drukas tumšumu attiecībā pret printera pašreiz konfigurēto tumšumu."
+    "summary": "Pielāgo drukas tumšumu attiecībā pret printera pašreiz konfigurēto tumšumu.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "materiāla tumšums attiecībā pret pašreizējo iestatījumu",
+          "values": "-30 līdz 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Nekavējoties iestata absolūtu drukas tumšumu atbilstoši priekšējā paneļa tumšuma iestatījumam."
+    "summary": "Nekavējoties iestata absolūtu drukas tumšumu atbilstoši priekšējā paneļa tumšuma iestatījumam.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "absolūtais drukas tumšuma līmenis",
+          "values": "00 līdz 30",
+          "default": "pēdējā saglabātā vērtība"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Kontrolē, vai etiķete, kuras drukāšanu pārtraukusi materiāla, lentes vai drukas galviņas kļūda, tiek pārdrukāta pēc atjaunošanās."
+    "summary": "Kontrolē, vai etiķete, kuras drukāšanu pārtraukusi materiāla, lentes vai drukas galviņas kļūda, tiek pārdrukāta pēc atjaunošanās.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "pārdrukāt etiķeti pēc kļūdas novēršanas",
+          "values": "N nē, Y jā",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Ieplāno periodiskas drukas galviņas elementu pārbaudes pēc izdrukāto etiķešu skaita un opcionāla elementu diapazona."
+    "summary": "Ieplāno periodiskas drukas galviņas elementu pārbaudes pēc izdrukāto etiķešu skaita un opcionāla elementu diapazona.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "etiķetes, kas izdrukātas starp galviņas testiem",
+          "values": "0 līdz 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "manuāli izvēlēties galviņas testa elementu diapazonu",
+          "values": "N nē, Y jā",
+          "default": "N"
+        },
+        {
+          "meaning": "pirmā testa elementa numurs",
+          "values": "0 līdz 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "pēdējā testa elementa numurs",
+          "values": "0 līdz 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Pēc drukāšanas pielāgo miera stāvokļa atplēšanas vai griešanas pozīciju ar nelielu punktu nobīdi."
+    "summary": "Pēc drukāšanas pielāgo miera stāvokļa atplēšanas vai griešanas pozīciju ar nelielu punktu nobīdi.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "atplēšanas miera pozīcijas izmaiņa punktos",
+          "values": "-120 līdz 120",
+          "default": "pēdējā saglabātā vērtība"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Konfigurē agrīnas brīdināšanas robežvērtības materiāla, lentes un drukas galviņas apkopei."
+    "summary": "Konfigurē agrīnas brīdināšanas robežvērtības materiāla, lentes un drukas galviņas apkopei.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "agrīnais brīdinājums par materiālu vai piederumiem",
+          "values": "E iespējot, D atspējot",
+          "default": "D"
+        },
+        {
+          "meaning": "etiķešu skaits rullī",
+          "values": "100 līdz 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "materiāls ir nomainīts",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "lentes garuma kods atbilstoši modelim",
+          "values": "N 0 m, 0 līdz 7 ir 100 līdz 450 m, 10 līdz 16 ir 600 līdz 900 m",
+          "default": "1 vai 7 atkarībā no modeļa"
+        },
+        {
+          "meaning": "lente ir nomainīta",
+          "values": "Y jā, N nē",
+          "default": "N"
+        },
+        {
+          "meaning": "agrīnā apkopes brīdinājuma iespējošana",
+          "values": "E iespējots, D atspējots",
+          "default": "D"
+        },
+        {
+          "meaning": "galviņas tīrīšanas intervāla kods",
+          "values": "0 līdz 16 priekš 100 m līdz 900 m ar 50 m soli",
+          "default": "1 vai 7 atkarībā no modeļa"
+        },
+        {
+          "meaning": "drukas galviņa ir tīrīta",
+          "values": "N nē, Y jā",
+          "default": "N"
+        },
+        {
+          "meaning": "galviņas kalpošanas laika brīdinājuma slieksnis collās",
+          "values": "0 izslēgts, vai 100 līdz 3500000 collas",
+          "default": "1000000"
+        },
+        {
+          "meaning": "drukas galviņa ir nomainīta",
+          "values": "N nē, Y jā",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Kontrolē atpakaļpadeves laiku ap drukāšanu un griešanu vai izslēdz atpakaļpadevi."
+    "summary": "Kontrolē atpakaļpadeves laiku ap drukāšanu un griešanu vai izslēdz atpakaļpadevi.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "atpakaļpadeves laiks attiecībā pret drukāšanu",
+          "values": "A pilns pēc, B pilns pirms, N normāli, O izslēgts, 10 līdz 90 procenti",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Padod norādītu skaitu tukšu punktu rindu ar pārvietošanas ātrumu."
+    "summary": "Padod norādītu skaitu tukšu punktu rindu ar pārvietošanas ātrumu.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "punktu rindas, kas pārvietotas no apakšas",
+          "values": "0 līdz 32000",
+          "default": "jānorāda obligāti"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Nekavējoties iedarbina griezēju KR403 printeros kioska drukas režīmā."
+    "summary": "Nekavējoties iedarbina griezēju KR403 printeros kioska drukas režīmā.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "griešanas apjoma ignorēšanas režīms",
+          "values": "0 kioska iestatījums, 1 pilna griešana"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Pievieno papildu izgrūšanas garumu KR403 kioska padevējam, atvieglojot izdrukātā materiāla paņemšanu."
+    "summary": "Pievieno papildu izgrūšanas garumu KR403 kioska padevējam, atvieglojot izdrukātā materiāla paņemšanu.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "papildu materiāla izgrūšanas garums milimetros",
+          "values": "0 līdz 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Palaiž KR403 padevēja ciklu, piedāvājot izdrukāto materiālu manuālai izņemšanai."
+    "summary": "Palaiž KR403 padevēja ciklu, piedāvājot izdrukāto materiālu manuālai izņemšanai.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "materiāla izgrūšanas garums padevējam milimetros",
+          "values": "0 līdz 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Iestata lentes padeves spriegojumu PAX sērijas printeros."
+    "summary": "Iestata lentes padeves spriegojumu PAX sērijas printeros.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "lentes spriegojuma līmenis",
+          "values": "L zems, M vidējs, H augsts",
+          "default": "jānorāda obligāti"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Iestata printera reāllaika pulksteņa datumu un laiku."
+    "summary": "Iestata printera reāllaika pulksteņa datumu un laiku.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "mēnesis",
+          "values": "01 līdz 12",
+          "default": "pašreizējais mēnesis"
+        },
+        {
+          "meaning": "diena",
+          "values": "01 līdz 31",
+          "default": "pašreizējā diena"
+        },
+        {
+          "meaning": "gads",
+          "values": "1998 līdz 2097",
+          "default": "pašreizējais gads"
+        },
+        {
+          "meaning": "stunda",
+          "values": "00 līdz 23",
+          "default": "pašreizējā stunda"
+        },
+        {
+          "meaning": "minūte",
+          "values": "00 līdz 59",
+          "default": "pašreizējā minūte"
+        },
+        {
+          "meaning": "sekunde",
+          "values": "00 līdz 59",
+          "default": "pašreizējā sekunde"
+        },
+        {
+          "meaning": "am pm vai 24 stundu formāts",
+          "values": "A am, P pm, M 24 stundu",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Izvēlas datuma un laika formātu, kas tiek rādīts konfigurācijas etiķetē un vadības panelī."
+    "summary": "Izvēlas datuma un laika formātu, kas tiek rādīts konfigurācijas etiķetē un vadības panelī.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "datuma un laika attēlošanas formāts",
+          "values": "0 versijas numurs, 1 MM/DD/YY 24 stundu, 2 MM/DD/YY 12 stundu, 3 DD/MM/YY 24 stundu, 4 DD/MM/YY 12 stundu",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Definē sekundārā pulksteņa nobīdes no reāllaika pulksteņa. Nobīdes tiek zaudētas, printerim izslēdzoties."
+    "summary": "Definē sekundārā pulksteņa nobīdes no reāllaika pulksteņa. Nobīdes tiek zaudētas, printerim izslēdzoties.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "pulksteņa numurs nobīdei",
+          "values": "2 sekundārais, 3 trešais",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "mēnešu nobīde",
+          "values": "-32000 līdz 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "dienu nobīde",
+          "values": "-32000 līdz 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "gadu nobīde",
+          "values": "-32000 līdz 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "stundu nobīde",
+          "values": "-32000 līdz 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "minūšu nobīde",
+          "values": "-32000 līdz 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "sekunžu nobīde",
+          "values": "-32000 līdz 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Iestata, kad laika lauki tiek zīmogoti, un izvēlas valodu dienu un mēnešu nosaukumiem."
+    "summary": "Iestata, kad laika lauki tiek zīmogoti, un izvēlas valodu dienu un mēnešu nosaukumiem.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "pulksteņa nolasīšanas režīms",
+          "values": "S sākuma laiks, T pašreizējais laiks, 0 līdz 999 pielaide",
+          "default": "S"
+        },
+        {
+          "meaning": "dienu un mēnešu nosaukumu valoda",
+          "values": "1 angļu, 2 spāņu, 3 franču, 4 vācu, 5 itāļu, 6 līdz 18 citas valodas",
+          "default": "pēdējais ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Izvēlas printera vadības paneļa displeja valodu no saraksta, kas atšķiras atkarībā no modeļa."
+    "summary": "Izvēlas printera vadības paneļa displeja valodu no saraksta, kas atšķiras atkarībā no modeļa.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "vadības paneļa displeja valoda",
+          "values": "1 līdz 20 valodu kodi",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Izvēlas saglabātu kodējuma tabulu, ko izmanto lauka datu pārveidošanai pirms drukāšanas."
+    "summary": "Izvēlas saglabātu kodējuma tabulu, ko izmanto lauka datu pārveidošanai pirms drukāšanas.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "kodējuma tabulas diskdziņa atrašanās vieta",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "kodējuma tabulas faila nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": "DAT fiksēta vērtība",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Izvēlas oriģinālā ZPL vai ZPL II komandu interpretāciju saderībai ar vecākiem formātiem."
+    "summary": "Izvēlas oriģinālā ZPL vai ZPL II komandu interpretāciju saderībai ar vecākiem formātiem.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPL interpretatora versija",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Piešķir printerim tīkla nosaukumu un brīvā teksta aprakstu, kas abi redzami konfigurācijas etiķetē un printera iebūvētajā tīmekļa lapā."
+    "summary": "Piešķir printerim tīkla nosaukumu un brīvā teksta aprakstu, kas abi redzami konfigurācijas etiķetē un printera iebūvētajā tīmekļa lapā.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "printera tīkla nosaukums",
+          "values": "līdz 16 burtciparu rakstzīmēm",
+          "default": "ZBR plus MAC sufikss"
+        },
+        {
+          "meaning": "printera apraksts konfigurācijas etiķetei un tīmekļa lapai",
+          "values": "līdz 35 burtciparu rakstzīmēm",
+          "default": "tukšs"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Iestata četrciparu paroli vadības paneļa iestatījumu izvēlnēm."
+    "summary": "Iestata četrciparu paroli vadības paneļa iestatījumu izvēlnēm.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "četrciparu vadības paneļa parole",
+          "values": "0000 līdz 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "paroles līmenis, tikai S4M printeriem",
+          "values": "1 līdz 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Saglabā, atjauno vai atiestata printera konfigurācijas iestatījumus."
+    "summary": "Saglabā, atjauno vai atiestata printera konfigurācijas iestatījumus.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "konfigurācijas darbība",
+          "values": "A viss no rūpnīcas, F rūpnīcas, N tīkls, R atsaukt, S saglabāt"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Maina formāta komandu prefiksa rakstzīmi, parasti jumtiņu, globāli vai tikai pašreizējam formātam."
+    "summary": "Maina formāta komandu prefiksa rakstzīmi, parasti jumtiņu, globāli vai tikai pašreizējam formātam.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "jauns formāta komandu prefikss",
+          "values": "jebkura ASCII rakstzīme"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Maina parametru atdalītāja rakstzīmi, parasti komatu, globāli vai tikai pašreizējam formātam."
+    "summary": "Maina parametru atdalītāja rakstzīmi, parasti komatu, globāli vai tikai pašreizējam formātam.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "jauna parametru atdalītāja rakstzīme",
+          "values": "jebkura ASCII rakstzīme"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Maina tūlītējo komandu prefiksa rakstzīmi, parasti tildi, globāli vai tikai pašreizējam formātam."
+    "summary": "Maina tūlītējo komandu prefiksa rakstzīmi, parasti tildi, globāli vai tikai pašreizējam formātam.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "jauns kontroles komandu prefikss",
+          "values": "jebkura ASCII rakstzīme"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Pārkārto printera atmiņas apzīmējumu burtus, lai saglabātie objekti varētu paturēt esošos nosaukumus."
+    "summary": "Pārkārto printera atmiņas apzīmējumu burtus, lai saglabātie objekti varētu paturēt esošos nosaukumus.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "atmiņas alias priekš B",
+          "values": "B atmiņas karte, E flash, R DRAM, A compact flash, NONE nav iestatīts",
+          "default": "B"
+        },
+        {
+          "meaning": "atmiņas alias priekš E",
+          "values": "B atmiņas karte, E flash, R DRAM, A compact flash, NONE nav iestatīts",
+          "default": "E"
+        },
+        {
+          "meaning": "atmiņas alias priekš R",
+          "values": "B atmiņas karte, E flash, R DRAM, A compact flash, NONE nav iestatīts",
+          "default": "R"
+        },
+        {
+          "meaning": "atmiņas alias priekš A",
+          "values": "B atmiņas karte, E flash, R DRAM, A compact flash, NONE nav iestatīts",
+          "default": "A"
+        },
+        {
+          "meaning": "atļaut dublētu alias piešķiršanu",
+          "values": "M vairāki alias",
+          "default": "nav"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Dzēš un no jauna inicializē vienu flash atmiņas ierīci. Strāvas zudums šīs darbības laikā var sabojāt atmiņu."
+    "summary": "Dzēš un no jauna inicializē vienu flash atmiņas ierīci. Strāvas zudums šīs darbības laikā var sabojāt atmiņu.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "inicializējamā flash atmiņas ierīce",
+          "values": "A opciju flash, B flash karte, E iekšējā flash",
+          "default": "jānorāda obligāti"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Iestata, vai zems akumulatora spriegums aptur pārnēsājamu printeri vai ļauj drukāšanai turpināties."
+    "summary": "Iestata, vai zems akumulatora spriegums aptur pārnēsājamu printeri vai ļauj drukāšanai turpināties.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pauzēt pie zema akumulatora sprieguma",
+          "values": "Y pauzēt, N turpināt drukāšanu",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Palaiž Zebra BASIC Interpreter printerī, opcionāli startējot saglabātu programmu."
+    "summary": "Palaiž Zebra BASIC Interpreter printerī, opcionāli startējot saglabātu programmu.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "programmas glabāšanas vieta",
+          "values": "R, E, B, A",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "palaižamās programmas nosaukums",
+          "values": "jebkurš derīgs programmas nosaukums",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "programmas faila paplašinājums",
+          "values": "BAS vai BAE"
+        },
+        {
+          "meaning": "konsoles izvades kontrole",
+          "values": "Y ieslēgts, N izslēgts",
+          "default": "Y"
+        },
+        {
+          "meaning": "komandu atbalss kontrole",
+          "values": "Y ieslēgts, N izslēgts",
+          "default": "Y"
+        },
+        {
+          "meaning": "ZBI piešķirtā atmiņa",
+          "values": "20K līdz 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Konfigurē papildporta signālus aplikatoram vai verificētājam un kļūdu apstrādi."
+    "summary": "Konfigurē papildporta signālus aplikatoram vai verificētājam un kļūdu apstrādi.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "verificētāja kļūdu apstrādes režīms",
+          "values": "0 izslēgts, 1 pārdrukāt pie kļūdas, 2 maksimāla caurlaidība",
+          "default": "0"
+        },
+        {
+          "meaning": "aplikatora signāla laika režīms",
+          "values": "0 izslēgts, 1 līdz 4 signāla laiks",
+          "default": "0"
+        },
+        {
+          "meaning": "drukas sākuma signāla laika režīms",
+          "values": "p impulsa režīms, l līmeņa režīms"
+        },
+        {
+          "meaning": "etiķetes kļūdas reakcijas režīms",
+          "values": "e kļūdas režīms, f padeves režīms",
+          "default": "f"
+        },
+        {
+          "meaning": "pārdrukāšanas signāla režīms",
+          "values": "e iespējots, d atspējots",
+          "default": "d"
+        },
+        {
+          "meaning": "lentes trūkuma brīdinājuma režīms",
+          "values": "e iespējots, d atspējots",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Izvēlas materiāla izsekošanai izmantoto sensoru, parasti atstarojošo vai caurlaidības sensoru."
+    "summary": "Izvēlas materiāla izsekošanai izmantoto sensoru, parasti atstarojošo vai caurlaidības sensoru.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "izmantojamais sensors",
+          "values": "A automātiski, R atstarojošs, T caurlaidības",
+          "default": "atšķiras atkarībā no printera modeļa"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Iestata normālu vai samazinātu punktu skaitu milimetrā. Samazināts blīvums divkāršo formāta koordinātu fizisko izmēru."
+    "summary": "Iestata normālu vai samazinātu punktu skaitu milimetrā. Samazināts blīvums divkāršo formāta koordinātu fizisko izmēru.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "drukas blīvuma iestatījums",
+          "values": "A normāls blīvums, B uz pusēm samazināts blīvums",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Atiestata izvēlēto printera lietojuma skaitītāju, tostarp lietotāja vai RFID skaitītājus."
+    "summary": "Atiestata izvēlēto printera lietojuma skaitītāju, tostarp lietotāja vai RFID skaitītājus.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "atiestatāmais skaitītājs",
+          "values": "1 skaitītājs viens, 2 skaitītājs divi, 3 derīgs RFID, 4 anulēts RFID, C galviņa tīrīta, R galviņa nomainīta",
+          "default": "jānorāda obligāti"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Konfigurē visus seriālā porta saziņas parametrus vienā komandā."
+    "summary": "Konfigurē visus seriālā porta saziņas parametrus vienā komandā.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "seriālā porta pārraides ātrums",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "datu biti katrā rakstzīmē",
+          "values": "7 vai 8",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "paritātes iestatījums",
+          "values": "N nekāda, E pāra, O nepāra",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "beigu biti",
+          "values": "1 vai 2",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "plūsmas kontroles protokols",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR un Xon/Xoff",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "Zebra protokola apstiprinājums",
+          "values": "A ACK/NAK, N nekāds, Z zebra",
+          "default": "jānorāda obligāti"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Ignorē caurlaidības sensora intensitātes vai bāzes vērtības, kuras parasti iestata kalibrēšana."
+    "summary": "Ignorē caurlaidības sensora intensitātes vai bāzes vērtības, kuras parasti iestata kalibrēšana.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "maināmais sensora iestatījums",
+          "values": "1 spilgtums, 2 bāzes līnija",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "izvēlētā iestatījuma vērtība",
+          "values": "0 līdz 196",
+          "default": "jānorāda obligāti"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Sāk drukāšanu, pirms pilns formāts ir saņemts, lai uzlabotu caurlaidību sarežģītām etiķetēm."
+    "summary": "Sāk drukāšanu, pirms pilns formāts ir saņemts, lai uzlabotu caurlaidību sarežģītām etiķetēm.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "punktu rinda, no kuras sākt drukāšanu",
+          "values": "0 līdz 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Atspējo konkrētu ZebraNet brīdinājuma nosacījumu un mērķi."
+    "summary": "Atspējo konkrētu ZebraNet brīdinājuma nosacījumu un mērķi.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "apturamais brīdinājuma nosacījums",
+          "values": "A līdz O un Q līdz V katrs vienu nosacījumu, W visi RFID printeros, * visi citos"
+        },
+        {
+          "meaning": "apturamais brīdinājuma mērķis",
+          "values": "A seriālais, B paralēlais, C e-pasts, D TCP/IP, E UDP/IP, F SNMP trap, * visi"
+        },
+        {
+          "meaning": "apturēt vai atsākt šos brīdinājumus",
+          "values": "Y apturēt ziņojumus, N sākt ziņojumus",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Iestata drukas galviņas pretestības vērtību, ko izmanto dedzināšanas enerģijas aprēķinos."
+    "summary": "Iestata drukas galviņas pretestības vērtību, ko izmanto dedzināšanas enerģijas aprēķinos.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "drukas galviņas pretestības vērtība",
+          "values": "0488 līdz 1175",
+          "default": "pēdējā pastāvīgi saglabātā vērtība"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Iestata materiāla sensora robežvērtības, etiķetes garumu un LED intensitāti, kurus parasti nosaka kalibrēšana."
+    "summary": "Iestata materiāla sensora robežvērtības, etiķetes garumu un LED intensitāti, kurus parasti nosaka kalibrēšana.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "spraugas sensora vērtība",
+          "values": "0 līdz 100",
+          "default": "redzams sensora profilā vai konfigurācijas etiķetē"
+        },
+        {
+          "meaning": "materiāla sensora vērtība",
+          "values": "0 līdz 100",
+          "default": "redzams sensora profilā vai konfigurācijas etiķetē"
+        },
+        {
+          "meaning": "lentes sensora vērtība",
+          "values": "0 līdz 100",
+          "default": "redzams sensora profilā vai konfigurācijas etiķetē"
+        },
+        {
+          "meaning": "etiķetes garums punktos",
+          "values": "1 līdz 32000",
+          "default": "vērtība no kalibrēšanas"
+        },
+        {
+          "meaning": "materiāla LED intensitāte",
+          "values": "0 līdz 255",
+          "default": "vērtība no kalibrēšanas"
+        },
+        {
+          "meaning": "lentes LED intensitāte",
+          "values": "0 līdz 255",
+          "default": "vērtība no kalibrēšanas"
+        },
+        {
+          "meaning": "atzīmes noteikšanas vērtība",
+          "values": "0 līdz 100",
+          "default": "vērtība no kalibrēšanas"
+        },
+        {
+          "meaning": "atzīmes materiāla noteikšanas vērtība",
+          "values": "0 līdz 100",
+          "default": "vērtība no kalibrēšanas"
+        },
+        {
+          "meaning": "atzīmes LED noteikšanas vērtība",
+          "values": "0 līdz 255",
+          "default": "vērtība no kalibrēšanas"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Iespējo ZebraNet brīdinājumu konkrētam nosacījumam un mērķim."
+    "summary": "Iespējo ZebraNet brīdinājumu konkrētam nosacījumam un mērķim.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "brīdinājuma nosacījuma tips",
+          "values": "A līdz V katrs vienu nosacījumu, * visi",
+          "default": "ignorēts, ja trūkst vai nederīgs"
+        },
+        {
+          "meaning": "brīdinājuma mērķa tips",
+          "values": "A seriālais, B paralēlais, C e-pasts, D TCP/IP, E UDP/IP, F SNMP trap",
+          "default": "ignorēts, ja trūkst vai nederīgs"
+        },
+        {
+          "meaning": "iespējot brīdinājumu, kad nosacījums iestājas",
+          "values": "N nē, Y jā",
+          "default": "Y vai iepriekšējā vērtība"
+        },
+        {
+          "meaning": "iespējot brīdinājumu, kad nosacījums izbeidzas",
+          "values": "N nē, Y jā",
+          "default": "N vai iepriekšējā vērtība"
+        },
+        {
+          "meaning": "brīdinājuma mērķa adrese",
+          "values": "e-pasts, IP adrese vai SNMP mērķis",
+          "default": "ignorēts, ja trūkst vai nederīgs"
+        },
+        {
+          "meaning": "brīdinājuma porta numurs",
+          "values": "0 līdz 65535",
+          "default": "ignorēts, ja trūkst vai nederīgs"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopē saglabātus objektus starp printera atmiņas ierīcēm, ar aizstājējzīmju atbalstu grupām."
+    "summary": "Kopē saglabātus objektus starp printera atmiņas ierīcēm, ar aizstājējzīmju atbalstu grupām.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "avota atmiņas ierīce",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "avota objekta nosaukums",
+          "values": "jebkurš esošs objekta nosaukums",
+          "default": "* izvēlas visus objektus"
+        },
+        {
+          "meaning": "avota objekta paplašinājums",
+          "values": "jebkurš derīgs faila paplašinājums",
+          "default": "* izvēlas visus paplašinājumus"
+        },
+        {
+          "meaning": "mērķa atmiņas ierīce",
+          "values": "R, E, B, A",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "objekta nosaukums mērķī",
+          "values": "līdz 8 burtciparu rakstzīmēm",
+          "default": "avota objekta nosaukums"
+        },
+        {
+          "meaning": "mērķa objekta paplašinājums",
+          "values": "jebkurš derīgs faila paplašinājums",
+          "default": "avota objekta paplašinājums"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Izdrukā direktorijas etiķeti saglabātiem objektiem, iebūvētiem fontiem vai pieejamiem svītrkodiem."
+    "summary": "Izdrukā direktorijas etiķeti saglabātiem objektiem, iebūvētiem fontiem vai pieejamiem svītrkodiem.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "avota ierīce sarakstam",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "objekta nosaukuma filtrs",
+          "values": "1 līdz 8 rakstzīmēm, * vai ? aizstājējzīme",
+          "default": "*"
+        },
+        {
+          "meaning": "paplašinājuma filtrs",
+          "values": "jebkurš derīgs paplašinājums, * aizstājējzīme",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Izdrukā etiķetē pieprasīto servisa informāciju, piemēram, odometra rādījumu vai drukas galviņas vēsturi."
+    "summary": "Izdrukā etiķetē pieprasīto servisa informāciju, piemēram, odometra rādījumu vai drukas galviņas vēsturi.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "drukājamā servisa pārskata tips",
+          "values": "ES status, HA aparatūras adrese, JT galviņas tests, MA brīdinājumu iestatījumi, MI ziņojumi, OD odometrs, PH galviņas kalpošanas laiks, PP plug and play, SN sērijas numurs, UI USB id",
+          "default": "jānorāda obligāti"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Konfigurē KR403 kioska padevēja iestatījumus, tostarp griešanas garumu, griešanas atkāpi, ievilkšanas noildzi un cilpas garumu."
+    "summary": "Konfigurē KR403 kioska padevēja iestatījumus, tostarp griešanas garumu, griešanas atkāpi, ievilkšanas noildzi un cilpas garumu.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "kioska griešanas apjoms",
+          "values": "0 normāla griešana, 10 līdz 60 daļēji milimetros",
+          "default": "0"
+        },
+        {
+          "meaning": "kioska griešanas atkāpe milimetros",
+          "values": "2 līdz 9",
+          "default": "9"
+        },
+        {
+          "meaning": "kioska pasniegšanas tips pēc drukāšanas",
+          "values": "0 izgrūst, 1 ievelk, 2 nav darbības",
+          "default": "0"
+        },
+        {
+          "meaning": "kioska pasniegšanas noildze sekundēs",
+          "values": "0 līdz 300, 0 bez noildzes",
+          "default": "0"
+        },
+        {
+          "meaning": "padevēja cilpas garums milimetros",
+          "values": "0 taisni cauri, 3 līdz 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Kontrolē etiķetes garuma un sensora robežvērtības dinamisku pārkalibrēšanu pēc ieslēgšanas vai materiāla nodalījuma atvēršanas."
+    "summary": "Kontrolē etiķetes garuma un sensora robežvērtības dinamisku pārkalibrēšanu pēc ieslēgšanas vai materiāla nodalījuma atvēršanas.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "iespējot dinamisku garuma kalibrēšanu",
+          "values": "Y iespējot, N atspējot",
+          "default": "Y"
+        },
+        {
+          "meaning": "iespējot dinamisku sliekšņa kalibrēšanu",
+          "values": "Y iespējot, N atspējot",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Sāk printera izņemšanas no ekspluatācijas režīmu, lai sagatavotu to tālākpārdošanai vai otrreizējai pārstrādei."
+    "summary": "Sāk printera izņemšanas no ekspluatācijas režīmu, lai sagatavotu to tālākpārdošanai vai otrreizējai pārstrādei.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "printera sērijas numurs",
+          "values": "burtciparu virkne",
+          "default": "jānorāda obligāti"
+        },
+        {
+          "meaning": "flash dzēšanas ciklu skaits",
+          "values": "0 līdz 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Iestata automātisku pāreju miega režīmā pēc dīkstāves perioda, ar opcijām rindā esošām etiķetēm."
+    "summary": "Iestata automātisku pāreju miega režīmā pēc dīkstāves perioda, ar opcijām rindā esošām etiķetēm.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "dīkstāves sekundes pirms automātiskas izslēgšanās",
+          "values": "0 līdz 999999, 0 atspējo izslēgšanos",
+          "default": "pēdējā saglabātā vērtība vai 0"
+        },
+        {
+          "meaning": "etiķetes statuss izslēgšanas brīdī",
+          "values": "Y izslēgties ar rindu, N vispirms pabeigt rindu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Izgrūž vai ievelk materiālu, ko jau piedāvājis KR403 kioska padevējs."
+    "summary": "Izgrūž vai ievelk materiālu, ko jau piedāvājis KR403 kioska padevējs.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "kioska pasniegšanas darbība",
+          "values": "0 izgrūst, 1 ievelk, 2 izmantot ^KV iestatījumu"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Atgriež saglabātu ZPL formātu no printera atmiņas saimniekdatoram."
+    "summary": "Atgriež saglabātu ZPL formātu no printera atmiņas saimniekdatoram.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "meklējamā atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "saglabātā formāta nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": ".ZPL fiksēts",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Atgriež saglabātu grafisku attēlu no printera atmiņas saimniekdatoram."
+    "summary": "Atgriež saglabātu grafisku attēlu no printera atmiņas saimniekdatoram.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "meklējamā atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "meklēšanas prioritāte"
+        },
+        {
+          "meaning": "augšupielādējamās grafikas nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faila paplašinājums",
+          "values": ".GRF fiksēts",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Atgriež saimniekdatoram pieprasīto statusa, identifikācijas, odometra vai apkopes informāciju."
+    "summary": "Atgriež saimniekdatoram pieprasīto statusa, identifikācijas, odometra vai apkopes informāciju.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "atgriezto datu atlases vaicājums",
+          "values": "ES status, HA vadu MAC, JT drukas galviņas tests, MA apkopes brīdinājumi, MI apkopes informācija, OD odometrs, PH drukas galviņas kalpošanas laiks, PP plug and play, SN sērijas numurs, UI USB produkta id"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Atgriež saimniekdatoram datus no numurēta lauka, ar iespējamu baitu skaita ierobežojumu."
+    "summary": "Atgriež saimniekdatoram datus no numurēta lauka, ar iespējamu baitu skaita ierobežojumu.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "^FN piešķirtais lauka numurs",
+          "values": "0 līdz 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "atgriežamo baitu skaits",
+          "values": "1 līdz 256",
+          "default": "64"
+        },
+        {
+          "meaning": "galvenes teksts pirms datiem",
+          "values": "0 līdz 3072 baitiem",
+          "default": "nav galvenes"
+        },
+        {
+          "meaning": "beigu teksts pēc datiem",
+          "values": "0 līdz 3072 rakstzīmēm"
+        },
+        {
+          "meaning": "atbildes nosūtīšanas veids",
+          "values": "F formāts, L etiķete",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Atgriež atmiņas ierīces direktorijas sarakstu, tostarp atlikušo brīvo vietu."
+    "summary": "Atgriež atmiņas ierīces direktorijas sarakstu, tostarp atlikušo brīvo vietu.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "uzskaitāmā atmiņas ierīce",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash, Z citi",
+          "default": "R"
+        },
+        {
+          "meaning": "objekta nosaukuma filtrs",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "*"
+        },
+        {
+          "meaning": "paplašinājuma filtrs",
+          "values": "jebkurš Zebra faila paplašinājums",
+          "default": "*"
+        },
+        {
+          "meaning": "saraksta izkārtojums",
+          "values": "c kolonna, d noklusējums",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Atgriež saimniekdatoram saglabātu grafiku lejupielādējama faila formātā."
+    "summary": "Atgriež saimniekdatoram saglabātu grafiku lejupielādējama faila formātā.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "objekta atmiņas ierīces atrašanās vieta",
+          "values": "R DRAM, E flash, B atmiņas karte, A compact flash",
+          "default": "meklēšanas prioritāte"
+        },
+        {
+          "meaning": "augšupielādējamā objekta nosaukums",
+          "values": "1 līdz 8 burtciparu rakstzīmes",
+          "default": "nosaukums obligāts"
+        },
+        {
+          "meaning": "augšupielādes formāts",
+          "values": "G neapstrādāts rastrs, P saspiests rastrs",
+          "default": "saglabātais formāts"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Atgriež printera apraksta XML iestatījumiem, objektu direktorijai vai statusam."
+    "summary": "Atgriež printera apraksta XML iestatījumiem, objektu direktorijai vai statusam.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "atgriežamā apraksta tips",
+          "values": "a visi, f formāts, l direktorija, o objekts, r statuss"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Lasa no RFID birkas vai raksta tajā, tostarp nosaka datu formātu, atmiņas banku un piekļuves paroli."
+    "summary": "Lasa no RFID birkas vai raksta tajā, tostarp nosaka datu formātu, atmiņas banku un piekļuves paroli.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "darbība",
+          "values": "W rakstīt, L rakstīt un bloķēt, R lasīt, P lasīt paroli, S iestatīt paroli",
+          "default": "W"
+        },
+        {
+          "meaning": "datu formāts",
+          "values": "A ASCII, H heksadecimāli, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "paroles karodziņš vai sākuma bloka numurs",
+          "values": "P parole sekos, 0 līdz n bloks",
+          "default": "0"
+        },
+        {
+          "meaning": "lasāmo vai rakstāmo baitu skaits",
+          "values": "1 līdz n, maksimums katrai birkai",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen 2 atmiņas banka",
+          "values": "E EPC 96 biti, A EPC automātiskie PC biti, 0 rezervēts, 1 EPC, 2 TID, 3 lietotāja",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Definē bitu izkārtojumu, ko izmanto RFID EPC lauku kodēšanai birkā."
+    "summary": "Definē bitu izkārtojumu, ko izmanto RFID EPC lauku kodēšanai birkā.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "kopējais partīciju bitu izmērs",
+          "values": "1 līdz birkas bitu izmēram",
+          "default": "96"
+        },
+        {
+          "meaning": "biti katrā partīcijā, līdz 16 partīcijām",
+          "values": "1 līdz 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Iestata RFID opcijas turpmākajām etiķetēm, tostarp birkas tipu, programmēšanas pozīciju, kļūdu apstrādi un VOID joslas garumu."
+    "summary": "Iestata RFID opcijas turpmākajām etiķetēm, tostarp birkas tipu, programmēšanas pozīciju, kļūdu apstrādi un VOID joslas garumu.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "birkas tips",
+          "values": "8 tikai Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "birkas programmēšanas pozīcija",
+          "values": "punkti absolūti, F0 līdz Fxxx uz priekšu, B0 līdz B30 atpakaļ, up nākamais, down iepriekšējais",
+          "default": "printera iestatījums"
+        },
+        {
+          "meaning": "anulēšanas izdrukas garums",
+          "values": "0 līdz etiķetes garumam",
+          "default": "etiķetes garums"
+        },
+        {
+          "meaning": "atkārtojamo etiķešu skaits kļūmes gadījumā",
+          "values": "1 līdz 10",
+          "default": "3"
+        },
+        {
+          "meaning": "kļūdu apstrāde pēc atkārtotiem mēģinājumiem",
+          "values": "N nav darbības, P pauze, E kļūdas režīms",
+          "default": "N"
+        },
+        {
+          "meaning": "aplikatoram nosūtāmie signāli",
+          "values": "S viens signāls, D divkāršs signāls",
+          "default": "S"
+        },
+        {
+          "meaning": "rezervēts, netiek izmantots",
+          "values": "nav"
+        },
+        {
+          "meaning": "VOID etiķešu drukas ātrums",
+          "values": "jebkurš derīgs drukas ātrums",
+          "default": "maksimālais drukas ātrums"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Izveido EPC sērijas numuru no birkas ID un ieraksta to EPC zemākajos bitos."
+    "summary": "Izveido EPC sērijas numuru no birkas ID un ieraksta to EPC zemākajos bitos.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "binārais prefikss sērijas ID",
+          "values": "ASCII 1 un 0, līdz 38 bitiem",
+          "default": "atkarīgs no mikroshēmas MDID"
+        },
+        {
+          "meaning": "speciālā rakstzīme, kas iezīmē sērijas lauku",
+          "values": "jebkura ASCII rakstzīme, izņemot komandu, kontroles, atdalītāja un RTC prefiksus",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Iestata RFID lasīšanas un rakstīšanas jaudu, ja kalibrēšana nedod izmantojamas vērtības."
+    "summary": "Iestata RFID lasīšanas un rakstīšanas jaudu, ja kalibrēšana nedod izmantojamas vērtības.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "lasīšanas jaudas līmenis",
+          "values": "0 līdz 30, vai H augsts, M vidējs, L zems",
+          "default": "printera iestatījums"
+        },
+        {
+          "meaning": "rakstīšanas jaudas līmenis",
+          "values": "0 līdz 30, vai H augsts, M vidējs, L zems",
+          "default": "printera iestatījums"
+        },
+        {
+          "meaning": "antenas elementa izvēle",
+          "values": "printerim specifisks tīkls, A1 līdz F4",
+          "default": "printera iestatījums"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Bloķē RFID birkas atmiņu, atgriezeniski vai neatgriezeniski, lai novērstu turpmāku rakstīšanu."
+    "summary": "Bloķē RFID birkas atmiņu, atgriezeniski vai neatgriezeniski, lai novērstu turpmāku rakstīšanu.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "kill paroles bloķēšanas stāvoklis",
+          "values": "U atbloķēts, L bloķēts, O pastāvīgi atbloķēts, P pastāvīgi bloķēts"
+        },
+        {
+          "meaning": "piekļuves paroles bloķēšanas stāvoklis",
+          "values": "U atbloķēts, L bloķēts, O pastāvīgi atbloķēts, P pastāvīgi bloķēts"
+        },
+        {
+          "meaning": "EPC atmiņas bankas bloķēšanas stāvoklis",
+          "values": "U atbloķēts, L bloķēts, O pastāvīgi atbloķēts, P pastāvīgi bloķēts"
+        },
+        {
+          "meaning": "lietotāja atmiņas bankas bloķēšanas stāvoklis",
+          "values": "U atbloķēts, L bloķēts, O pastāvīgi atbloķēts, P pastāvīgi bloķēts"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Palaiž RFID kalibrēšanu un atgriež saimniekdatoram pozīcijas, antenas un jaudas iestatījumus."
+    "summary": "Palaiž RFID kalibrēšanu un atgriež saimniekdatoram pozīcijas, antenas un jaudas iestatījumus.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "teksts pirms rezultātu tabulas",
+          "values": "jebkura virkne, kas ir īsāka par 65 rakstzīmēm",
+          "default": "sākums"
+        },
+        {
+          "meaning": "teksts pēc rezultātu tabulas",
+          "values": "jebkura virkne, kas ir īsāka par 65 rakstzīmēm",
+          "default": "beigas"
+        },
+        {
+          "meaning": "kalibrēšanas sākuma pozīcija",
+          "values": "F0 līdz Fxxx uz priekšu, B0 līdz B30 atpakaļ",
+          "default": "printera iestatījums"
+        },
+        {
+          "meaning": "kalibrēšanas beigu pozīcija",
+          "values": "F0 līdz Fxxx uz priekšu, B0 līdz B30 atpakaļ, A automātiski",
+          "default": "printera iestatījums"
+        },
+        {
+          "meaning": "automātiska vai manuāla antenas un jaudas izvēle",
+          "values": "A automātiski, M manuāli",
+          "default": "A"
+        },
+        {
+          "meaning": "lasīšanas-rakstīšanas jaudas diapazona sākums",
+          "values": "0 līdz 30",
+          "default": "0"
+        },
+        {
+          "meaning": "lasīšanas-rakstīšanas jaudas diapazona beigas",
+          "values": "0 līdz 30",
+          "default": "maksimālā jauda"
+        },
+        {
+          "meaning": "antenas diapazona sākums",
+          "values": "atkarīgs no modeļa, parasti A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "antenas diapazona beigas",
+          "values": "atkarīgs no modeļa, līdz E4",
+          "default": "printera iestatījums"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Izvēlas, vai printeris palaišanas laikā pārbauda vadu drukas servera klātbūtni."
+    "summary": "Izvēlas, vai printeris palaišanas laikā pārbauda vadu drukas servera klātbūtni.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "vadu drukas servera pārbaude ieslēdzot",
+          "values": "C pārbaudīt, S izlaist",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Izvēlas primāro tīkla ierīci, vadu vai bezvadu."
+    "summary": "Izvēlas primāro tīkla ierīci, vadu vai bezvadu.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "primārā tīkla ierīce",
+          "values": "1 vadu primārs, 2 bezvadu primārs",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresē vienu printeri novecojušā RS-485 daudzpunktu līnijā pēc tīkla ID."
+    "summary": "Adresē vienu printeri novecojušā RS-485 daudzpunktu līnijā pēc tīkla ID.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "adresējamais printera tīkla ID",
+          "values": "001 līdz 999",
+          "default": "000 nekāds"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Piešķir tīkla ID, ko izmanto printera adresēšanai novecojušā RS-485 daudzpunktu līnijā."
+    "summary": "Piešķir tīkla ID, ko izmanto printera adresēšanai novecojušā RS-485 daudzpunktu līnijā.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "printerim piešķirtais tīkla ID",
+          "values": "001 līdz 999",
+          "default": "000 nekāds"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Iestata printera SNMP identitāti un kopienas virknes."
+    "summary": "Iestata printera SNMP identitāti un kopienas virknes.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP sistēmas nosaukums",
+          "values": "līdz 17 rakstzīmēm"
+        },
+        {
+          "meaning": "SNMP sistēmas kontaktpersona",
+          "values": "līdz 50 rakstzīmēm"
+        },
+        {
+          "meaning": "SNMP sistēmas atrašanās vieta",
+          "values": "līdz 50 rakstzīmēm"
+        },
+        {
+          "meaning": "SNMP get kopienas nosaukums",
+          "values": "līdz 19 rakstzīmēm",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set kopienas nosaukums",
+          "values": "līdz 19 rakstzīmēm",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap kopienas nosaukums",
+          "values": "līdz 20 rakstzīmēm",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Izvēlas, vai ielādes brīža tīkla iestatījumi tiek ņemti no printera vai pievienotā drukas servera."
+    "summary": "Izvēlas, vai ielādes brīža tīkla iestatījumi tiek ņemti no printera vai pievienotā drukas servera.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "primārais iestatījumu avots ielādes brīdī",
+          "values": "P printeris, M drukas serveris",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Konfigurē SMTP servera un domēna iestatījumus drukas servera e-pasta brīdinājumiem."
+    "summary": "Konfigurē SMTP servera un domēna iestatījumus drukas servera e-pasta brīdinājumiem.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTP servera adrese",
+          "values": "IPv4 adrese"
+        },
+        {
+          "meaning": "drukas servera domēna nosaukums",
+          "values": "domēna nosaukums"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Iestata, cik ilgi autentificēta IP adrese var piekļūt printera tīmekļa lapām pirms atkārtotas autentifikācijas."
+    "summary": "Iestata, cik ilgi autentificēta IP adrese var piekļūt printera tīmekļa lapām pirms atkārtotas autentifikācijas.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "tīmekļa lapas autentifikācijas noildze",
+          "values": "0 līdz 255 minūtes",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Iestata drukas servera DHCP klienta identifikatora formu un vērtību."
+    "summary": "Iestata drukas servera DHCP klienta identifikatora formu un vērtību.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "klienta identifikatora režīms",
+          "values": "0 atspējots, 1 MAC adrese, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "ierīce, kurai identifikators attiecas",
+          "values": "0 visi, 1 bezvadu, 2 ārējs vadu, 3 iekšējs vadu",
+          "default": "1"
+        },
+        {
+          "meaning": "identifikatora prefikss",
+          "values": "11 ASCII vai 22 heksadecimālas rakstzīmes"
+        },
+        {
+          "meaning": "identifikatora sufikss",
+          "values": "līdz 60 ASCII vai 120 heksadecimālām rakstzīmēm"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Konfigurē IP adresi, apakštīkla masku un vārteju printera tīkla saskarnei."
+    "summary": "Konfigurē IP adresi, apakštīkla masku un vārteju printera tīkla saskarnei.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "modificējamā ierīce",
+          "values": "1 ārējs vadu, 2 iekšējs vadu, 3 bezvadu"
+        },
+        {
+          "meaning": "IP adreses noteikšanas metode",
+          "values": "A visi, B BOOTP, C DHCP un BOOTP, D DHCP, G tikai gleaning, R RARP, P pastāvīgs",
+          "default": "A"
+        },
+        {
+          "meaning": "IP adrese",
+          "values": "IPv4 adrese"
+        },
+        {
+          "meaning": "apakštīkla maska",
+          "values": "IPv4 apakštīkla maska"
+        },
+        {
+          "meaning": "noklusējuma vārteja",
+          "values": "IPv4 adrese"
+        },
+        {
+          "meaning": "WINS servera adrese",
+          "values": "IPv4 adrese"
+        },
+        {
+          "meaning": "savienojuma noildzes pārbaude",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "savienojuma noildzes vērtība",
+          "values": "0 līdz 9999 sekundes",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP apraides intervāls",
+          "values": "0 līdz 30 minūtes",
+          "default": "0 nekāds"
+        },
+        {
+          "meaning": "bāzes raw porta numurs",
+          "values": "1 līdz 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Konfigurē vadu drukas servera IP iestatījumus, noildzes un raw portu vecākai programmaparatūrai."
+    "summary": "Konfigurē vadu drukas servera IP iestatījumus, noildzes un raw portu vecākai programmaparatūrai.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "IP adreses noteikšanas metode",
+          "values": "A visi, B BOOTP, C DHCP un BOOTP, D DHCP, G tikai gleaning, R RARP, P pastāvīgs",
+          "default": "A"
+        },
+        {
+          "meaning": "IP adrese",
+          "values": "IPv4 adrese"
+        },
+        {
+          "meaning": "apakštīkla maska",
+          "values": "IPv4 apakštīkla maska"
+        },
+        {
+          "meaning": "noklusējuma vārteja",
+          "values": "IPv4 adrese"
+        },
+        {
+          "meaning": "WINS servera adrese",
+          "values": "IPv4 adrese"
+        },
+        {
+          "meaning": "savienojuma noildzes pārbaude",
+          "values": "Y jā, N nē",
+          "default": "Y"
+        },
+        {
+          "meaning": "savienojuma noildzes vērtība",
+          "values": "0 līdz 9999 sekundes",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP apraides intervāls",
+          "values": "0 līdz 30 minūtes",
+          "default": "0 nekāds"
+        },
+        {
+          "meaning": "bāzes raw porta numurs",
+          "values": "1 līdz 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Izvēlas uztveršanas un raidīšanas antenas bezvadu radio modulim."
+    "summary": "Izvēlas uztveršanas un raidīšanas antenas bezvadu radio modulim.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "uztveršanas antena",
+          "values": "D diversity, L pa kreisi, R pa labi",
+          "default": "D"
+        },
+        {
+          "meaning": "raidīšanas antena",
+          "values": "D diversity, L pa kreisi, R pa labi",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Konfigurē novecojušu WEP drošību un atslēgu materiālu vecākai bezvadu programmaparatūrai."
+    "summary": "Konfigurē novecojušu WEP drošību un atslēgu materiālu vecākai bezvadu programmaparatūrai.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "šifrēšanas režīms",
+          "values": "OFF nekāda, 40 40 bitu, 128 128 bitu",
+          "default": "OFF"
+        },
+        {
+          "meaning": "šifrēšanas atslēgas indekss",
+          "values": "1 līdz 4",
+          "default": "1"
+        },
+        {
+          "meaning": "autentifikācijas tips",
+          "values": "O atvērta sistēma, S kopīga atslēga",
+          "default": "O"
+        },
+        {
+          "meaning": "šifrēšanas atslēgas glabāšanas formāts",
+          "values": "H heksadecimāli, S virkne",
+          "default": "H"
+        },
+        {
+          "meaning": "šifrēšanas atslēga 1",
+          "values": "heksadecimāli pāri vai burtciparu virkne"
+        },
+        {
+          "meaning": "šifrēšanas atslēga 2",
+          "values": "heksadecimāli pāri vai burtciparu virkne"
+        },
+        {
+          "meaning": "šifrēšanas atslēga 3",
+          "values": "heksadecimāli pāri vai burtciparu virkne"
+        },
+        {
+          "meaning": "šifrēšanas atslēga 4",
+          "values": "heksadecimāli pāri vai burtciparu virkne"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Konfigurē novecojušu Cisco LEAP autentifikāciju vecākai bezvadu programmaparatūrai."
+    "summary": "Konfigurē novecojušu Cisco LEAP autentifikāciju vecākai bezvadu programmaparatūrai.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP režīms",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "lietotājvārds",
+          "values": "1 līdz 32 rakstzīmēm",
+          "default": "user"
+        },
+        {
+          "meaning": "parole",
+          "values": "1 līdz 32 rakstzīmēm",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Iestata paroli bezvadu iestatījumiem printera vadības panelī."
+    "summary": "Iestata paroli bezvadu iestatījumiem printera vadības panelī.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "vecā bezvadu parole",
+          "values": "0000 līdz 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "jaunā bezvadu parole",
+          "values": "0000 līdz 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Konfigurē 802.11b datu pārraides ātrumus un raidīšanas jaudu vecākos bezvadu drukas serveros."
+    "summary": "Konfigurē 802.11b datu pārraides ātrumus un raidīšanas jaudu vecākos bezvadu drukas serveros.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "raidīšanas ātrums 1 Mb sekundē",
+          "values": "Y ieslēgts, N izslēgts"
+        },
+        {
+          "meaning": "raidīšanas ātrums 2 Mb sekundē",
+          "values": "Y ieslēgts, N izslēgts"
+        },
+        {
+          "meaning": "raidīšanas ātrums 5.5 Mb sekundē",
+          "values": "Y ieslēgts, N izslēgts"
+        },
+        {
+          "meaning": "raidīšanas ātrums 11 Mb sekundē",
+          "values": "Y ieslēgts, N izslēgts"
+        },
+        {
+          "meaning": "raidīšanas jauda",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Konfigurē bezvadu tīkla nosaukumu, radio režīmu, preambulas garumu un keep-alive darbību."
+    "summary": "Konfigurē bezvadu tīkla nosaukumu, radio režīmu, preambulas garumu un keep-alive darbību.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID vērtība",
+          "values": "līdz 32 rakstzīmēm",
+          "default": "125"
+        },
+        {
+          "meaning": "darbības režīms",
+          "values": "I infrastruktūra, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "radio kartes preambulas garums",
+          "values": "L garš, S īss",
+          "default": "L"
+        },
+        {
+          "meaning": "bezvadu pulsa iespējošana",
+          "values": "0 atspējots, 1 iespējots",
+          "default": "1"
+        },
+        {
+          "meaning": "bezvadu pulsa intervāls",
+          "values": "5 līdz 300 sekundes",
+          "default": "15"
+        },
+        {
+          "meaning": "kanālu maska",
+          "values": "4 heksadecimāli cipari ar 0x prefiksu",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "starptautiskais režīms",
+          "values": "0 atspējots, 1 iespējots",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Konfigurē bezvadu drošības režīmu, atslēgas un piekļuves datus vienā komandā."
+    "summary": "Konfigurē bezvadu drošības režīmu, atslēgas un piekļuves datus vienā komandā.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "drošības tipa kods",
+          "values": "01 nekāda, 02 WEP 40, 03 WEP 128, 04 līdz 08 EAP tipi, 09 WPA PSK, 10 līdz 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "WEP šifrēšanas atslēgas indekss",
+          "values": "1 līdz 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP autentifikācijas tips",
+          "values": "O atvērta sistēma, S kopīga atslēga",
+          "default": "O"
+        },
+        {
+          "meaning": "WEP atslēgas glabāšanas formāts",
+          "values": "H heksadecimāli, S virkne",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP šifrēšanas atslēga 1",
+          "values": "heksadecimāli pāri vai burtciparu virkne"
+        },
+        {
+          "meaning": "WEP šifrēšanas atslēga 2",
+          "values": "heksadecimāli pāri vai burtciparu virkne"
+        },
+        {
+          "meaning": "WEP šifrēšanas atslēga 3",
+          "values": "heksadecimāli pāri vai burtciparu virkne"
+        },
+        {
+          "meaning": "WEP šifrēšanas atslēga 4",
+          "values": "heksadecimāli pāri vai burtciparu virkne"
+        },
+        {
+          "meaning": "drošības tipa lietotāja ID",
+          "values": "jebkura virkne",
+          "default": "user"
+        },
+        {
+          "meaning": "drošības tipa parole",
+          "values": "jebkura virkne",
+          "default": "password"
+        },
+        {
+          "meaning": "neobligāta privātās atslēgas parole",
+          "values": "jebkura virkne"
+        },
+        {
+          "meaning": "Kerberos apgabals",
+          "values": "jebkura virkne",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberos atslēgu izplatīšanas centrs",
+          "values": "jebkura virkne",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "kopīgi iepriekš zināmas atslēgas vērtība",
+          "values": "minimums 64 heksadecimāli cipari"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

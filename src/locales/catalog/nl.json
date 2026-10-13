@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Stelt de bedrukbare breedte in dots in. Inhoud buiten die breedte wordt door de printer afgekapt."
+    "summary": "Stelt de bedrukbare breedte in dots in. Inhoud buiten die breedte wordt door de printer afgekapt.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "printbreedte in dots",
+          "values": "2 tot de labelbreedte",
+          "default": "laatst opgeslagen waarde"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Stelt de labellengte in dots in en bepaalt daarmee waar de bedrukbare indeling eindigt."
+    "summary": "Stelt de labellengte in dots in en bepaalt daarmee waar de bedrukbare indeling eindigt.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "labellengte in dots",
+          "values": "1 tot 32000",
+          "default": "printerinstelling"
+        },
+        {
+          "meaning": "geldt voor alle media",
+          "values": "N alleen doorlopend, Y alle media",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Verplaatst de thuispositie van het label, waardoor de oorsprong voor latere veldcoördinaten verandert."
+    "summary": "Verplaatst de thuispositie van het label, waardoor de oorsprong voor latere veldcoördinaten verandert.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "thuispositie van het label op de x-as",
+          "values": "0 tot 32000",
+          "default": "0 of laatst opgeslagen waarde"
+        },
+        {
+          "meaning": "thuispositie van het label op de y-as",
+          "values": "0 tot 32000",
+          "default": "0 of laatst opgeslagen waarde"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Past een horizontale verschuiving toe op veldposities, voor compatibiliteit met oudere Zebra-indelingen."
+    "summary": "Past een horizontale verschuiving toe op veldposities, voor compatibiliteit met oudere Zebra-indelingen.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "linksverschuiving van alle veldposities",
+          "values": "-9999 tot 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Voegt een verticale verschuiving toe aan de hele indeling, ten opzichte van de bovenrand van de media."
+    "summary": "Voegt een verticale verschuiving toe aan de hele indeling, ten opzichte van de bovenrand van de media.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "verplaatst de hele indeling omhoog of omlaag in dotrijen",
+          "values": "-120 tot 120, XiIIIPlus bij 600 dpi -240 tot 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Stelt de coördinaateenheden in op dots, inches of millimeters en kan indelingen schalen tussen printresoluties."
+    "summary": "Stelt de coördinaateenheden in op dots, inches of millimeters en kan indelingen schalen tussen printresoluties.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "coördinaateenheid voor volgende velden",
+          "values": "D dots, I inch, M millimeter",
+          "default": "D"
+        },
+        {
+          "meaning": "basisresolutie van de indeling in dots per inch",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "doelresolutie voor de conversie",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Stelt de mediaverwerkingsmodus na het printen in, waaronder tear-off, peel-off, cutter, rewind en applicatormodi."
+    "summary": "Stelt de mediaverwerkingsmodus na het printen in, waaronder tear-off, peel-off, cutter, rewind en applicatormodi.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "mediaverwerkingsmodus na het printen",
+          "values": "T afscheuren, P afpellen, R opwikkelen, A applicator, C snijden, D vertraagd snijden, F rfid, K kiosk",
+          "default": "printerinstelling"
+        },
+        {
+          "meaning": "voorafpellen voor het volgende label",
+          "values": "N nee, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Selecteert thermal transfer of direct thermal, afgestemd op of de geladen media een lint gebruikt."
+    "summary": "Selecteert thermal transfer of direct thermal, afgestemd op of de geladen media een lint gebruikt.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "door de printer gebruikt mediatype",
+          "values": "T thermal transfer, D direct thermal"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Stelt het aantal afdrukken in, groepering voor pauzeren of snijden, en het aantal exemplaren per seriewaarde."
+    "summary": "Stelt het aantal afdrukken in, groepering voor pauzeren of snijden, en het aantal exemplaren per seriewaarde.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "totaal aantal te printen labels",
+          "values": "1 tot 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "geprinte labels voor een pauze",
+          "values": "1 tot 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "herhalingen per serienummer",
+          "values": "0 tot 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "pauzeaantal overschrijven",
+          "values": "N nee, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "snede na een ongeldig gemaakt rfid-label",
+          "values": "N nee, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Keert het printen voor volgende velden om door voor- en achtergrond te verwisselen."
+    "summary": "Keert het printen voor volgende velden om door voor- en achtergrond te verwisselen.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "keert de printkleur om voor volgende velden",
+          "values": "N nee, Y ja",
+          "default": "N of laatst opgeslagen waarde"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Draait de volledige labelindeling 180 graden."
+    "summary": "Draait de volledige labelindeling 180 graden.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "print het label ondersteboven",
+          "values": "N normaal, I omgekeerd",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Spiegelt het bedrukbare gebied horizontaal."
+    "summary": "Spiegelt het bedrukbare gebied horizontaal.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "spiegelt het label horizontaal",
+          "values": "N nee, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Stelt printsnelheid, slew-snelheid en backfeed-snelheid in, in inch per seconde."
+    "summary": "Stelt printsnelheid, slew-snelheid en backfeed-snelheid in, in inch per seconde.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "printsnelheid in inch per seconde",
+          "values": "1 tot 14, of A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "doorvoersnelheid bij het uitgeven van een blanco label",
+          "values": "2 tot 14",
+          "default": "6"
+        },
+        {
+          "meaning": "backfeed-snelheid na het printen",
+          "values": "2 tot 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Positioneert het volgende veld vanaf het nulpunt van het label, aan de hand van de linkerbovenhoek."
+    "summary": "Positioneert het volgende veld vanaf het nulpunt van het label, aan de hand van de linkerbovenhoek.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "horizontale positie in dots",
+          "values": "0 tot 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "verticale positie in dots",
+          "values": "0 tot 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "uitlijning",
+          "values": "0 links, 1 rechts, 2 automatisch",
+          "default": "laatste ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Positioneert het volgende veld vanaf zijn basislijn of barcoderand, wat geroteerde velden een stabiel ankerpunt geeft."
+    "summary": "Positioneert het volgende veld vanaf zijn basislijn of barcoderand, wat geroteerde velden een stabiel ankerpunt geeft.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "horizontale positie in dots",
+          "values": "0 tot 32000",
+          "default": "laatste veldpositie"
+        },
+        {
+          "meaning": "verticale positie in dots",
+          "values": "0 tot 32000",
+          "default": "laatste veldpositie"
+        },
+        {
+          "meaning": "uitlijning",
+          "values": "0 links, 1 rechts, 2 automatisch",
+          "default": "laatste ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Levert de inhoud voor het huidige veld, waaronder tekst, barcodegegevens of RFID-gegevens."
+    "summary": "Levert de inhoud voor het huidige veld, waaronder tekst, barcodegegevens of RFID-gegevens.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "veldinhoud",
+          "values": "elke afdrukbare data tot 3072 byte, geen voorvoegseltekens"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Schakelt hexadecimale escapecodes in veldgegevens in, voor binaire bytes en gereserveerde commandotekens."
+    "summary": "Schakelt hexadecimale escapecodes in veldgegevens in, voor binaire bytes en gereserveerde commandotekens.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "indicatorteken voor hexadecimale modus",
+          "values": "elk teken behalve de voorvoegsels voor indelings- en directe commando's",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Voegt een commentaarveld toe. De printer negeert de inhoud ervan tot aan de volgende veldscheiding."
+    "summary": "Voegt een commentaarveld toe. De printer negeert de inhoud ervan tot aan de volgende veldscheiding.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "niet-printende commentaartekst",
+          "values": "elke tekst, genegeerd tot het volgende commando"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Stelt de standaardoriëntatie van velden in en, op nieuwere firmware, de standaarduitlijning."
+    "summary": "Stelt de standaardoriëntatie van velden in en, op nieuwere firmware, de standaarduitlijning.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "standaard veldrotatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "standaarduitlijning",
+          "values": "0 links, 1 rechts, 2 automatisch",
+          "default": "automatisch bij ^TB, anders links"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Verpakt veldgegevens in een blok met vaste breedte, met regeling van regelaantal, regelafstand, inspringing en uitlijning."
+    "summary": "Verpakt veldgegevens in een blok met vaste breedte, met regeling van regelaantal, regelafstand, inspringing en uitlijning.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "blokbreedte in dots",
+          "values": "0 tot de labelbreedte",
+          "default": "0"
+        },
+        {
+          "meaning": "maximaal aantal regels",
+          "values": "1 tot 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "extra regelafstand in dots",
+          "values": "-9999 tot 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "uitlijning",
+          "values": "L links, C gecentreerd, R rechts, J uitgevuld",
+          "default": "L"
+        },
+        {
+          "meaning": "hangende inspringing van de volgende regels in dots",
+          "values": "0 tot 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Verpakt tekst in een kader met vaste breedte en vaste hoogte, waarbij overtollige tekst wordt afgekapt."
+    "summary": "Verpakt tekst in een kader met vaste breedte en vaste hoogte, waarbij overtollige tekst wordt afgekapt.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "blokrotatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^A"
+        },
+        {
+          "meaning": "blokbreedte in dots",
+          "values": "1 tot de labelbreedte",
+          "default": "1"
+        },
+        {
+          "meaning": "blokhoogte in dots",
+          "values": "1 tot de labellengte",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Kent een nummer toe aan een variabel veld in opgeslagen en opgeroepen indelingen."
+    "summary": "Kent een nummer toe aan een variabel veld in opgeslagen en opgeroepen indelingen.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "veldnummer",
+          "values": "0 tot 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "optionele KDU-promptekst",
+          "values": "tot 255 alfanumerieke tekens"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Levert gegevens voor een variabel veld. In tegenstelling tot ^FD-gegevens wordt dit gewist nadat het label is geprint."
+    "summary": "Levert gegevens voor een variabel veld. In tegenstelling tot ^FD-gegevens wordt dit gewist nadat het label is geprint.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "variabele velddata",
+          "values": "string van 0 tot 3072 byte"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Stelt het teken in waarmee genummerde veldwaarden worden ingebed in een andere veldstring."
+    "summary": "Stelt het teken in waarmee genummerde veldwaarden worden ingebed in een andere veldstring.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "scheidingsteken voor veldaaneenschakeling",
+          "values": "elk teken behalve de voorvoegsels voor indelings- en directe commando's",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Stelt de markeringen in die worden gebruikt voor real-time-klok-tokens binnen veldgegevens."
+    "summary": "Stelt de markeringen in die worden gebruikt voor real-time-klok-tokens binnen veldgegevens.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "primair klokindicatorteken",
+          "values": "elk ASCII-teken",
+          "default": "%"
+        },
+        {
+          "meaning": "secundair klokindicatorteken",
+          "values": "elk ASCII-teken, verschillend van a"
+        },
+        {
+          "meaning": "derde klokindicatorteken",
+          "values": "elk ASCII-teken, verschillend van a en b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Stelt de standaard modulebreedte, de breed-smalverhouding en de hoogte in voor volgende barcodevelden."
+    "summary": "Stelt de standaard modulebreedte, de breed-smalverhouding en de hoogte in voor volgende barcodevelden.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "modulebreedte in dots",
+          "values": "1 tot 10",
+          "default": "2"
+        },
+        {
+          "meaning": "breed-smalverhouding",
+          "values": "2.0 tot 3.0 in stappen van 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "elke hoogte in dots",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Plaatst PDF417- of MicroPDF417-segmenten op specifieke oorsprongen wanneer één bericht over meerdere symbolen verdeeld is."
+    "summary": "Plaatst PDF417- of MicroPDF417-segmenten op specifieke oorsprongen wanneer één bericht over meerdere symbolen verdeeld is.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "x-as van het eerste symbool, herhaal paren voor meer",
+          "values": "0 tot 32000, of e om dit symbool over te slaan"
+        },
+        {
+          "meaning": "y-as van het eerste symbool, herhaal paren voor meer",
+          "values": "0 tot 32000, of e om dit symbool over te slaan"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Stelt de tekenvolgorde voor het huidige veld in en kan extra tekenafstand toevoegen."
+    "summary": "Stelt de tekenvolgorde voor het huidige veld in en kan extra tekenafstand toevoegen.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "printrichting",
+          "values": "H horizontaal, V verticaal, R omgekeerd",
+          "default": "H"
+        },
+        {
+          "meaning": "extra tekenafstand in dots",
+          "values": "0 tot 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Selecteert het residente schaalbare lettertype 0 voor het volgende veld, op de gevraagde grootte en oriëntatie."
+    "summary": "Selecteert het residente schaalbare lettertype 0 voor het volgende veld, op de gevraagde grootte en oriëntatie.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "tekenhoogte in dots",
+          "values": "10 tot 32000",
+          "default": "laatste ^CF"
+        },
+        {
+          "meaning": "tekenbreedte in dots",
+          "values": "10 tot 32000",
+          "default": "laatste ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Selecteert een resident lettertype via een naam van één teken, met optionele oriëntatie, hoogte en breedte."
+    "summary": "Selecteert een resident lettertype via een naam van één teken, met optionele oriëntatie, hoogte en breedte.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "lettertypenaam",
+          "values": "A tot Z, 0 tot 9",
+          "default": "laatste ^CF"
+        },
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "tekenhoogte in dots",
+          "values": "10 tot 32000 schaalbaar, 1 tot 10 keer de basishoogte bij bitmaplettertypen",
+          "default": "laatste ^CF"
+        },
+        {
+          "meaning": "tekenbreedte in dots",
+          "values": "10 tot 32000 schaalbaar, 1 tot 10 keer de basisbreedte bij bitmaplettertypen",
+          "default": "laatste ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Selecteert een opgeslagen lettertypebestand voor het volgende veld, met optionele oriëntatie, hoogte en breedte."
+    "summary": "Selecteert een opgeslagen lettertypebestand voor het volgende veld, met optionele oriëntatie, hoogte en breedte.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "veldoriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "tekenhoogte in dots",
+          "values": "10 tot 32000 schaalbaar, 1 tot 10 keer de basishoogte bij bitmaplettertypen",
+          "default": "laatste ^CF"
+        },
+        {
+          "meaning": "tekenbreedte in dots",
+          "values": "10 tot 32000 schaalbaar, 1 tot 10 keer de basisbreedte bij bitmaplettertypen",
+          "default": "laatste ^CF"
+        },
+        {
+          "meaning": "station met het lettertype",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "te gebruiken naam van het lettertypebestand",
+          "values": "elke geldige lettertypenaam",
+          "default": "laatste ^CF"
+        },
+        {
+          "meaning": "extensie van het lettertypebestand",
+          "values": "FNT lettertype, TTF TrueType, TTE TrueType-extensie"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Stelt het reservelettertype, de hoogte en de breedte in die worden gebruikt door tekstvelden die zelf niets opgeven."
+    "summary": "Stelt het reservelettertype, de hoogte en de breedte in die worden gebruikt door tekstvelden die zelf niets opgeven.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "standaardlettertype",
+          "values": "A tot Z, 0 tot 9",
+          "default": "A"
+        },
+        {
+          "meaning": "standaard tekenhoogte in dots",
+          "values": "0 tot 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "standaard tekenbreedte in dots",
+          "values": "0 tot 32000",
+          "default": "5 of laatst opgeslagen waarde"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Selecteert de codering waarmee veldgegevens worden geïnterpreteerd, waaronder codepagina's en UTF-8."
+    "summary": "Selecteert de codering waarmee veldgegevens worden geïnterpreteerd, waaronder codepagina's en UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "te gebruiken tekencodering",
+          "values": "0 tot 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "te hertoewijzen tekenpositie",
+          "values": "0 tot 255",
+          "default": "geen"
+        },
+        {
+          "meaning": "vervangende tekenpositie",
+          "values": "0 tot 255",
+          "default": "geen"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Schakelt geavanceerde tekstopmaak in voor volgende velden, waaronder bidirectionele tekst, vormgeving van tekens en OpenType-functies."
+    "summary": "Schakelt geavanceerde tekstopmaak in voor volgende velden, waaronder bidirectionele tekst, vormgeving van tekens en OpenType-functies.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "standaardbron voor glyphs",
+          "values": "0 spatie, 1 lettertype-glyph",
+          "default": "0"
+        },
+        {
+          "meaning": "bidirectionele tekstindeling",
+          "values": "0 uit, 1 aan",
+          "default": "0"
+        },
+        {
+          "meaning": "tekenvorming",
+          "values": "0 uit, 1 aan",
+          "default": "0"
+        },
+        {
+          "meaning": "ondersteuning voor OpenType-tabellen",
+          "values": "0 uit, 1 aan",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Koppelt een lettertypenaam van één teken aan een opgeslagen lettertypebestand."
+    "summary": "Koppelt een lettertypenaam van één teken aan een opgeslagen lettertypebestand.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "toe te voegen of te vervangen lettertypeletter",
+          "values": "A tot Z, 0 tot 9"
+        },
+        {
+          "meaning": "station om het lettertype op te slaan",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van het opgeslagen lettertypebestand",
+          "values": "tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensie van het lettertypebestand",
+          "values": "FNT lettertype, TTF TrueType, TTE TrueType-extensie"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Stelt de cachegrootte voor gerenderde schaalbare glyphs in, om herhaalde uitvoer van grote lettertypen te versnellen."
+    "summary": "Stelt de cachegrootte voor gerenderde schaalbare glyphs in, om herhaalde uitvoer van grote lettertypen te versnellen.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "tekencache ingeschakeld",
+          "values": "N nee, Y ja",
+          "default": "Y"
+        },
+        {
+          "meaning": "extra cachegeheugen in KB",
+          "values": "1 tot 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "type cachebuffer",
+          "values": "0 normale lettertypen, 1 Aziatische lettertypen",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Definieert TrueType-reserveketens die worden gebruikt wanneer het basislettertype een glyph mist."
+    "summary": "Definieert TrueType-reserveketens die worden gebruikt wanneer het basislettertype een glyph mist.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "te koppelen extensielettertype, apparaat en bestand",
+          "values": "TTF- of TTE-bestand op een apparaat"
+        },
+        {
+          "meaning": "basislettertype of -lettertypen die het ontvangen",
+          "values": "FNT-, TTF- of TTE-bestand, jokertekens toegestaan"
+        },
+        {
+          "meaning": "extensie koppelen of ontkoppelen",
+          "values": "0 ontkoppelen, 1 koppelen"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Downloadt een bitmaplettertype en de bijbehorende metrieken naar het printergeheugen."
+    "summary": "Downloadt een bitmaplettertype en de bijbehorende metrieken naar het printergeheugen.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "station om het lettertype op te slaan",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van het lettertype",
+          "values": "tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensie van het lettertypebestand",
+          "values": "FNT vaste waarde",
+          "default": "FNT"
+        },
+        {
+          "meaning": "oriëntatie van het native lettertype",
+          "values": "alleen N normaal",
+          "default": "N"
+        },
+        {
+          "meaning": "maximale celhoogte in dots",
+          "values": "1 tot 32000"
+        },
+        {
+          "meaning": "maximale celbreedte in dots",
+          "values": "1 tot 32000"
+        },
+        {
+          "meaning": "dots van de bovenkant van de cel tot de basislijn",
+          "values": "1 tot 32000"
+        },
+        {
+          "meaning": "breedte van spaties",
+          "values": "1 tot 32000"
+        },
+        {
+          "meaning": "aantal tekens in het lettertype",
+          "values": "1 tot 256"
+        },
+        {
+          "meaning": "tekst van de copyrighthouder",
+          "values": "1 tot 63 alfanumerieke tekens"
+        },
+        {
+          "meaning": "gestructureerde bitmapgegevens per teken",
+          "values": "hashcode, dan hoogte, breedte, verschuivingen, dan hexdata"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Downloadt een gecodeerd schaalbaar Intellifont-lettertype naar het printergeheugen."
+    "summary": "Downloadt een gecodeerd schaalbaar Intellifont-lettertype naar het printergeheugen.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "station om het lettertype op te slaan",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van het lettertype",
+          "values": "tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensie van het lettertypebestand",
+          "values": "FNT vaste waarde",
+          "default": "FNT"
+        },
+        {
+          "meaning": "lettertypegrootte in byte uit ZTools",
+          "values": "aantal byte van het geconverteerde lettertype"
+        },
+        {
+          "meaning": "gecodeerde bytegegevens van het lettertype",
+          "values": "hex-paren passend bij de grootte"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Downloadt een gecodeerd TrueType-lettertype met maximaal 256 tekens naar het printergeheugen."
+    "summary": "Downloadt een gecodeerd TrueType-lettertype met maximaal 256 tekens naar het printergeheugen.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "station om het lettertype op te slaan",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van het lettertype",
+          "values": "tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensie van het lettertypebestand",
+          "values": "DAT vaste waarde",
+          "default": "DAT"
+        },
+        {
+          "meaning": "lettertypegrootte in byte",
+          "values": "aantal byte van het geconverteerde lettertype"
+        },
+        {
+          "meaning": "gecodeerde bytegegevens van het lettertype",
+          "values": "hex-paren passend bij de grootte"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Downloadt een gecodeerd TrueType-lettertype met meer dan 256 glyphs naar het printergeheugen."
+    "summary": "Downloadt een gecodeerd TrueType-lettertype met meer dan 256 glyphs naar het printergeheugen.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "station om het lettertype op te slaan",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van het lettertype",
+          "values": "tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensie van het lettertypebestand",
+          "values": "FNT vaste waarde",
+          "default": "FNT"
+        },
+        {
+          "meaning": "lettertypegrootte in byte",
+          "values": "aantal byte van het geconverteerde lettertype"
+        },
+        {
+          "meaning": "gecodeerde bytegegevens van het lettertype",
+          "values": "hex-paren passend bij de grootte"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Downloadt een coderingstabel die bytes uit veldgegevens koppelt aan Unicode-waarden voor TrueType-lettertypen."
+    "summary": "Downloadt een coderingstabel die bytes uit veldgegevens koppelt aan Unicode-waarden voor TrueType-lettertypen.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "station met de tabel",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van de tabel",
+          "values": "tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensie van het tabelbestand",
+          "values": "DAT vaste waarde",
+          "default": "DAT"
+        },
+        {
+          "meaning": "tabelgrootte in byte",
+          "values": "aantal byte van de geconverteerde tabel"
+        },
+        {
+          "meaning": "gecodeerde bytegegevens van de tabel",
+          "values": "hex-paren passend bij de grootte"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Tekent een Code 128-barcode voor ASCII-gegevens van variabele lengte, met modi voor automatisch wisselen van subsets en UCC/EAN-gegevens."
+    "summary": "Tekent een Code 128-barcode voor ASCII-gegevens van variabele lengte, met modi voor automatisch wisselen van subsets en UCC/EAN-gegevens.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "N nee, Y ja",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "N nee, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC-controlecijfer",
+          "values": "N nee, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "modus",
+          "values": "N geen, U UCC Case Mode, A automatisch, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Tekent een Code 39-barcode met een optioneel Mod 43-controlecijfer."
+    "summary": "Tekent een Code 39-barcode met een optioneel Mod 43-controlecijfer.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "Mod-43-controlecijfer",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Tekent een Code 93-barcode, die volledige ASCII-gegevens weergeeft via shift-tekens."
+    "summary": "Tekent een Code 93-barcode, die volledige ASCII-gegevens weergeeft via shift-tekens.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "controlecijfer printen",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Tekent een Code 11-barcode voor cijfers en koppeltekens, met optionele controlecijfers."
+    "summary": "Tekent een Code 11-barcode voor cijfers en koppeltekens, met optionele controlecijfers.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "aantal controlecijfers",
+          "values": "Y 1 cijfer, N 2 cijfers",
+          "default": "N"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Tekent een Interleaved 2 of 5-barcode voor numerieke gegevens van even lengte, met een optioneel controlecijfer."
+    "summary": "Tekent een Interleaved 2 of 5-barcode voor numerieke gegevens van even lengte, met een optioneel controlecijfer.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod-10-controlecijfer",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "zesde plaats, niet gedocumenteerd",
+          "values": "niet gedocumenteerd in de guide"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Tekent een Industrial 2 of 5-barcode, een numerieke code waarbij de gegevens uitsluitend in de balken zijn gecodeerd."
+    "summary": "Tekent een Industrial 2 of 5-barcode, een numerieke code waarbij de gegevens uitsluitend in de balken zijn gecodeerd.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Tekent een Standard 2 of 5-barcode, een zelfcontrolerende numerieke code waarbij de gegevens uitsluitend in de balken zijn gecodeerd."
+    "summary": "Tekent een Standard 2 of 5-barcode, een zelfcontrolerende numerieke code waarbij de gegevens uitsluitend in de balken zijn gecodeerd.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Tekent een ANSI Codabar-barcode, ook bekend als USD-4, voor labels in bibliotheken, de zorg en koeriersdiensten."
+    "summary": "Tekent een ANSI Codabar-barcode, ook bekend als USD-4, voor labels in bibliotheken, de zorg en koeriersdiensten.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "controlecijfer, vast uitgeschakeld",
+          "values": "alleen N",
+          "default": "N"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "startteken",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "stopteken",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Tekent een LOGMARS-barcode, de Department of Defense-variant van Code 39, en zet kleine letters in de gegevens om naar hoofdletters."
+    "summary": "Tekent een LOGMARS-barcode, de Department of Defense-variant van Code 39, en zet kleine letters in de gegevens om naar hoofdletters.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Tekent een MSI-barcode, een van Plessey afgeleide numerieke code met instelbare controlecijferschema's."
+    "summary": "Tekent een MSI-barcode, een van Plessey afgeleide numerieke code met instelbare controlecijferschema's.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "controlecijferschema",
+          "values": "A geen, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "controlecijfer in de interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Tekent een Plessey-barcode, een oudere numerieke code met optionele controlecijfers."
+    "summary": "Tekent een Plessey-barcode, een oudere numerieke code met optionele controlecijfers.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "controlecijfer printen",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Tekent een EAN-13-barcode voor retailartikelnummers en leidt het controlecijfer af uit twaalf gegevenscijfers."
+    "summary": "Tekent een EAN-13-barcode voor retailartikelnummers en leidt het controlecijfer af uit twaalf gegevenscijfers.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Tekent een EAN-8-barcode voor kleine retailverpakkingen en leidt het controlecijfer af uit zeven gegevenscijfers."
+    "summary": "Tekent een EAN-8-barcode voor kleine retailverpakkingen en leidt het controlecijfer af uit zeven gegevenscijfers.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Tekent een UPC-A-barcode voor retailverpakkingen uit elf gegevenscijfers, met optioneel afdrukken van het controlecijfer."
+    "summary": "Tekent een UPC-A-barcode voor retailverpakkingen uit elf gegevenscijfers, met optioneel afdrukken van het controlecijfer.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 9999",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "controlecijfer printen",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Tekent een UPC-E-barcode, de verkorte vorm van UPC-A. De veldgegevens vormen de volledige tiencijferige fabrikant- en productcode."
+    "summary": "Tekent een UPC-E-barcode, de verkorte vorm van UPC-A. De veldgegevens vormen de volledige tiencijferige fabrikant- en productcode.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "controlecijfer printen",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Tekent een GS1 DataBar-symbool met instelbaar subtype, vergroting, hoogte en segmentbreedte."
+    "summary": "Tekent een GS1 DataBar-symbool met instelbaar subtype, vergroting, hoogte en segmentbreedte.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R gedraaid, I omgekeerd, B ondersteboven",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar-symboliektype",
+          "values": "1 omni, 2 truncated, 3 stacked, 4 stacked omni, 5 limited, 6 expanded, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 met CC-A/B, 12 UCC/EAN-128 met CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "vergrotingsfactor",
+          "values": "1 tot 10",
+          "default": "printerinstelling"
+        },
+        {
+          "meaning": "hoogte van de scheidingslijn",
+          "values": "1 of 2",
+          "default": "1"
+        },
+        {
+          "meaning": "hoogte van het lineaire deel in dots",
+          "values": "1 tot 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "segmentbreedte voor GS1 DataBar Expanded",
+          "values": "2 tot 22, alleen even",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Tekent een postale Planet Code-barcode, waarbij cijfers worden gecodeerd als lange en korte balken."
+    "summary": "Tekent een postale Planet Code-barcode, waarbij cijfers worden gecodeerd als lange en korte balken.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R gedraaid, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 9999",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Tekent POSTNET, Planet Code of USPS Intelligent Mail, afhankelijk van het geselecteerde postcodetype."
+    "summary": "Tekent POSTNET, Planet Code of USPS Intelligent Mail, afhankelijk van het geselecteerde postcodetype.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "posttype",
+          "values": "0 Postnet, 1 Planet, 2 gereserveerd, 3 Intelligent Mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Tekent een tweecijferig of vijfcijferig UPC/EAN-aanvullingssymbool naast een hoofdbarcode."
+    "summary": "Tekent een tweecijferig of vijfcijferig UPC/EAN-aanvullingssymbool naast een hoofdbarcode.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 32000",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "interpretatieregel",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretatieregel boven de code",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Tekent een gestapelde Code 49-barcode met twee tot acht rijen volledige ASCII-gegevens."
+    "summary": "Tekent een gestapelde Code 49-barcode met twee tot acht rijen volledige ASCII-gegevens.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "hoogtefactor van de afzonderlijke rijen",
+          "values": "1 tot de hoogte van het label",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "plaatsing van de interpretatieregel",
+          "values": "N geen, A boven, B onder",
+          "default": "N"
+        },
+        {
+          "meaning": "startmodus",
+          "values": "0 alfanumeriek, 1 meervoudig lezen, 2 numeriek, 3 groep alpha, 4 shift 1, 5 shift 2, A automatisch",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Tekent een QR Code-symbool. De commandoparameters stellen model, vergroting en masker in. De veldgegevens stellen de foutcorrectie en de tekenmodus in."
+    "summary": "Tekent een QR Code-symbool. De commandoparameters stellen model, vergroting en masker in. De veldgegevens stellen de foutcorrectie en de tekenmodus in.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "veldoriëntatie",
+          "values": "alleen N normaal",
+          "default": "N"
+        },
+        {
+          "meaning": "model",
+          "values": "1 origineel, 2 verbeterd",
+          "default": "2"
+        },
+        {
+          "meaning": "vergrotingsfactor",
+          "values": "1 tot 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "foutcorrectieniveau",
+          "values": "H ultrahoog, Q hoog, M standaard, L hoge dichtheid",
+          "default": "Q indien leeg, M bij een ongeldige waarde"
+        },
+        {
+          "meaning": "maskerwaarde",
+          "values": "0 tot 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Tekent een Data Matrix-symbool met instelbare elementgrootte, kwaliteitsniveau en verwerking van escapecodes."
+    "summary": "Tekent een Data Matrix-symbool met instelbare elementgrootte, kwaliteitsniveau en verwerking van escapecodes.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "hoogte van de symboolelementen",
+          "values": "1 tot de labelbreedte",
+          "default": "0, dan geldt de symboolhoogte uit ^BY"
+        },
+        {
+          "meaning": "kwaliteitsniveau",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "te coderen kolommen",
+          "values": "9 tot 49, bij kwaliteit 0 tot 140 alleen oneven, bij kwaliteit 200 alleen even"
+        },
+        {
+          "meaning": "te coderen rijen",
+          "values": "9 tot 49"
+        },
+        {
+          "meaning": "formaat-ID",
+          "values": "1 numeriek, 2 hoofdletters, 3 hoofdletters alfanumeriek met . , - /, 4 hoofdletters alfanumeriek, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "stuurteken voor escape-sequenties",
+          "values": "elk teken",
+          "default": "tilde"
+        },
+        {
+          "meaning": "beeldverhouding",
+          "values": "1 vierkant, 2 rechthoekig",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Tekent een gestapeld tweedimensionaal PDF417-symbool voor grote hoeveelheden tekst of binaire gegevens."
+    "summary": "Tekent een gestapeld tweedimensionaal PDF417-symbool voor grote hoeveelheden tekst of binaire gegevens.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte per rij in dots",
+          "values": "1 tot de hoogte van het label",
+          "default": "laatste ^BY"
+        },
+        {
+          "meaning": "beveiligingsniveau",
+          "values": "1 tot 8",
+          "default": "0"
+        },
+        {
+          "meaning": "aantal datakolommen",
+          "values": "1 tot 30",
+          "default": "automatische beeldverhouding"
+        },
+        {
+          "meaning": "aantal rijen",
+          "values": "3 tot 90",
+          "default": "automatische beeldverhouding"
+        },
+        {
+          "meaning": "rechter rijindicatoren en stoppatroon afkappen",
+          "values": "Y ja, N nee",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Tekent een MicroPDF417-symbool, een compacte PDF417-variant met rijadrespatronen."
+    "summary": "Tekent een MicroPDF417-symbool, een compacte PDF417-variant met rijadrespatronen.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "barcodehoogte in dots",
+          "values": "1 tot 9999",
+          "default": "laatste ^BY, anders 10 zonder ^BY"
+        },
+        {
+          "meaning": "modus",
+          "values": "0 tot 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Tekent een Aztec-matrixsymbool met instelbare vergroting en foutcorrectie."
+    "summary": "Tekent een Aztec-matrixsymbool met instelbare vergroting en foutcorrectie.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R gedraaid, I 180, B 270",
+          "default": "laatste ^FW"
+        },
+        {
+          "meaning": "vergrotingsfactor",
+          "values": "1 tot 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "indicator voor uitgebreide kanaalinterpretatie",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "foutcontrole en symboolgrootte",
+          "values": "0 standaard, 1 tot 99 foutpercentage, 101 tot 104 compact layers, 201 tot 232 full layers, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "indicator voor menusymbool",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "aantal symbolen voor structured append",
+          "values": "1 tot 26",
+          "default": "1"
+        },
+        {
+          "meaning": "ID-veld voor structured append",
+          "values": "tekst tot 24 tekens",
+          "default": "geen ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Tekent een CODABLOCK-symbool in modus A, E of F, voor grotere hoeveelheden gegevens."
+    "summary": "Tekent een CODABLOCK-symbool in modus A, E of F, voor grotere hoeveelheden gegevens.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "barcodehoogte per rij in dots",
+          "values": "2 tot 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "beveiligingsniveau",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "tekens per rij",
+          "values": "2 tot 62"
+        },
+        {
+          "meaning": "te coderen rijen",
+          "values": "modus A 1-22, modus EF 2-4"
+        },
+        {
+          "meaning": "modus",
+          "values": "A code39-set, E code128-fnc1, F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Tekent een UPS MaxiCode-symbool, met een modus voor gestructureerde vervoerdersberichten of algemene gegevens."
+    "summary": "Tekent een UPS MaxiCode-symbool, met een modus voor gestructureerde vervoerdersberichten of algemene gegevens.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "modus",
+          "values": "2 VS-post, 3 niet-VS-post, 4 standaard, 5 full-eec, 6 reader-programma",
+          "default": "2"
+        },
+        {
+          "meaning": "symboolnummer in de reeks",
+          "values": "1 tot 8",
+          "default": "1"
+        },
+        {
+          "meaning": "totaal aantal symbolen",
+          "values": "1 tot 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Tekent een TLC39-telecomlabelsymbool, dat Code 39 combineert met een MicroPDF417-component."
+    "summary": "Tekent een TLC39-telecomlabelsymbool, dat Code 39 combineert met een MicroPDF417-component.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R gedraaid, I omgekeerd, B ondersteboven"
+        },
+        {
+          "meaning": "breedte van het Code 39-deel in dots",
+          "values": "1 tot 10",
+          "default": "600 dpi 4, anders 2"
+        },
+        {
+          "meaning": "breed-smalverhouding van het Code 39-deel",
+          "values": "2.0 tot 3.0 in stappen van 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "hoogte van het Code 39-deel in dots",
+          "values": "1 tot 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "smalle balkbreedte van het MicroPDF417-deel",
+          "values": "1 tot 10",
+          "default": "600 dpi 4, anders 2"
+        },
+        {
+          "meaning": "rijhoogte van het MicroPDF417-deel in dots",
+          "values": "1 tot 255",
+          "default": "600 dpi 8, anders 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Valideert, indien ingeschakeld, barcodegegevens en -parameters en print INVALID in plaats van een onjuist symbool."
+    "summary": "Valideert, indien ingeschakeld, barcodegegevens en -parameters en print INVALID in plaats van een onjuist symbool.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "codevalidatie",
+          "values": "N nee, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Tekent een gevulde of omlijnde rechthoek. Wanneer een zijde gelijk is aan de randdikte, ontstaat een lijn."
+    "summary": "Tekent een gevulde of omlijnde rechthoek. Wanneer een zijde gelijk is aan de randdikte, ontstaat een lijn.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "breedte van het kader in dots",
+          "values": "t tot 32000",
+          "default": "t of 1"
+        },
+        {
+          "meaning": "hoogte van het kader in dots",
+          "values": "t tot 32000",
+          "default": "t of 1"
+        },
+        {
+          "meaning": "randdikte in dots",
+          "values": "1 tot 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "lijnkleur",
+          "values": "B zwart, W wit",
+          "default": "B"
+        },
+        {
+          "meaning": "afronding van de hoeken",
+          "values": "0 geen afronding tot 8 sterkste afronding",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Tekent een diagonale lijn over een opgegeven breedte en hoogte, hellend naar rechts of naar links."
+    "summary": "Tekent een diagonale lijn over een opgegeven breedte en hoogte, hellend naar rechts of naar links.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "breedte van het vak in dots",
+          "values": "3 tot 32000",
+          "default": "t of 3"
+        },
+        {
+          "meaning": "hoogte van het vak in dots",
+          "values": "3 tot 32000",
+          "default": "t of 3"
+        },
+        {
+          "meaning": "randdikte in dots",
+          "values": "1 tot 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "lijnkleur",
+          "values": "B zwart, W wit",
+          "default": "B"
+        },
+        {
+          "meaning": "diagonale richting",
+          "values": "R of / naar rechts hellend, L of \\ naar links hellend",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Tekent een ellips op basis van een breedte en hoogte in dots, met naar binnen gerichte randdikte en zwarte of witte uitvoer."
+    "summary": "Tekent een ellips op basis van een breedte en hoogte in dots, met naar binnen gerichte randdikte en zwarte of witte uitvoer.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "ellipsbreedte in dots",
+          "values": "3 tot 4095",
+          "default": "t of 1"
+        },
+        {
+          "meaning": "ellipshoogte in dots",
+          "values": "3 tot 4095",
+          "default": "t of 1"
+        },
+        {
+          "meaning": "randdikte in dots",
+          "values": "2 tot 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "lijnkleur",
+          "values": "B zwart, W wit",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Tekent een cirkel met de opgegeven diameter in dots, met naar binnen gerichte randdikte en zwarte of witte uitvoer."
+    "summary": "Tekent een cirkel met de opgegeven diameter in dots, met naar binnen gerichte randdikte en zwarte of witte uitvoer.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "cirkeldiameter in dots",
+          "values": "3 tot 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "randdikte in dots",
+          "values": "2 tot 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "lijnkleur",
+          "values": "B zwart, W wit",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Plaatst een monochrome bitmap op de huidige veldpositie, met gegevens in ASCII-hex, binair of gecomprimeerd formaat."
+    "summary": "Plaatst een monochrome bitmap op de huidige veldpositie, met gegevens in ASCII-hex, binair of gecomprimeerd formaat.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "compressietype",
+          "values": "A ascii-hex, B binair, C gecomprimeerd binair",
+          "default": "A"
+        },
+        {
+          "meaning": "totaal aantal te verzenden byte",
+          "values": "1 tot 99999"
+        },
+        {
+          "meaning": "totaal aantal byte in de afbeelding",
+          "values": "1 tot 99999"
+        },
+        {
+          "meaning": "byte per beeldrij",
+          "values": "1 tot 99999"
+        },
+        {
+          "meaning": "afbeeldingsgegevens",
+          "values": "ascii-hex 00 tot FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Print een resident symbool dat via de veldgegevens wordt geselecteerd, zoals copyright of geregistreerd handelsmerk."
+    "summary": "Print een resident symbool dat via de veldgegevens wordt geselecteerd, zoals copyright of geregistreerd handelsmerk.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "oriëntatie",
+          "values": "N normaal, R 90 met de klok mee, I 180, B 270",
+          "default": "N of laatste ^FW"
+        },
+        {
+          "meaning": "tekenhoogte proportioneel aan de breedte",
+          "values": "0 tot 32000",
+          "default": "laatste ^CF"
+        },
+        {
+          "meaning": "tekenbreedte proportioneel aan de hoogte",
+          "values": "0 tot 32000",
+          "default": "laatste ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Laadt een opgeslagen afbeelding aan het begin van een indeling en verankert deze op de oorsprong van het label."
+    "summary": "Laadt een opgeslagen afbeelding aan het begin van een indeling en verankert deze op de oorsprong van het label.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "opslagapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objectnaam",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": ".GRF of .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Plaatst een opgeslagen afbeelding op de huidige veldpositie, zonder deze te schalen."
+    "summary": "Plaatst een opgeslagen afbeelding op de huidige veldpositie, zonder deze te schalen.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "opslagapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "standaard zoekvolgorde"
+        },
+        {
+          "meaning": "objectnaam",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": ".GRF of .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Verwijdert opgeslagen afbeeldingen, lettertypen of indelingen uit het printergeheugen, met ondersteuning voor wildcards bij groepen."
+    "summary": "Verwijdert opgeslagen afbeeldingen, lettertypen of indelingen uit het printergeheugen, met ondersteuning voor wildcards bij groepen.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "opslagapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objectnaam, jokertekens toegestaan",
+          "values": "1 tot 8 tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie, jokertekens toegestaan",
+          "values": "elke extensie",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Slaat de huidige indeling op als afbeelding, voor snel oproepen en overlays met variabele gegevens."
+    "summary": "Slaat de huidige indeling op als afbeelding, voor snel oproepen en overlays met variabele gegevens.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "opslagapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objectnaam",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": ".GRF of .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "label printen na het opslaan",
+          "values": "N nee, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Downloadt een ASCII-hex-afbeelding naar het printergeheugen onder een herbruikbare naam."
+    "summary": "Downloadt een ASCII-hex-afbeelding naar het printergeheugen onder een herbruikbare naam.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "opslagapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "afbeeldingsnaam",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "totale afbeeldingsgrootte in byte",
+          "values": "berekend uit de breedte en hoogte van de afbeelding"
+        },
+        {
+          "meaning": "byte per beeldrij",
+          "values": "berekend uit de breedte van de afbeelding"
+        },
+        {
+          "meaning": "afbeeldingsgegevens",
+          "values": "ascii-hex 00 tot FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Downloadt een afbeelding, lettertype of certificaat naar het printergeheugen onder een herbruikbare naam."
+    "summary": "Downloadt een afbeelding, lettertype of certificaat naar het printergeheugen onder een herbruikbare naam.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "opslagapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "bestandsnaam",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "dataformaat",
+          "values": "A ascii of zb64, B binair, C ar-gecomprimeerd, P png zb64"
+        },
+        {
+          "meaning": "opgeslagen bestandstype",
+          "values": "B bitmap, E tte, G ruwe grf, P png, T ttf of otf, X pcx, NRD niet-leesbaar, PAC toegangsgegevens, C wml-menu, F htm-pagina, H printerfeedback",
+          "default": "G"
+        },
+        {
+          "meaning": "totaal aantal bytes in het bestand",
+          "values": "werkelijke uitgepakte bestandsgrootte"
+        },
+        {
+          "meaning": "byte per rij voor grf-afbeeldingen",
+          "values": "berekend uit de breedte van de afbeelding"
+        },
+        {
+          "meaning": "bestandsgegevens",
+          "values": "ascii-hex, zb64 of binair"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Serialiseert tekst- of barcodeveldgegevens over labels heen, met een startwaarde, richting en stapgrootte."
+    "summary": "Serialiseert tekst- of barcodeveldgegevens over labels heen, met een startwaarde, richting en stapgrootte.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "startwaarde van de serie",
+          "values": "tot 12 cijfers",
+          "default": "1"
+        },
+        {
+          "meaning": "stapgrootte voor verhogen of verlagen",
+          "values": "tot 12 cijfers",
+          "default": "1"
+        },
+        {
+          "meaning": "aanvullen met voorloopnullen",
+          "values": "N nee, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Serialiseert geselecteerde posities in veldgegevens met behulp van een masker en tekensets."
+    "summary": "Serialiseert geselecteerde posities in veldgegevens met behulp van een masker en tekensets.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "serialisatiemasker dat kiest welke tekens veranderen",
+          "values": "D decimaal, H hex, O octaal, A alfa, N alfanumeriek, % overslaan"
+        },
+        {
+          "meaning": "string voor verhogen of verlagen bij het masker",
+          "values": "één waarde per maskerpositie, % om deze te laten staan",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Slaat de volgende commando's op als een herbruikbare indeling, in plaats van ze meteen te printen."
+    "summary": "Slaat de volgende commando's op als een herbruikbare indeling, in plaats van ze meteen te printen.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "apparaat om de indeling op te slaan",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van de indeling",
+          "values": "1 tot 16 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Roept een opgeslagen indeling op en levert waarden voor de genummerde tijdelijke velden ervan."
+    "summary": "Roept een opgeslagen indeling op en levert waarden voor de genummerde tijdelijke velden ervan.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "bronapparaat van de opgeslagen indeling",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R, dan E, dan B, dan A"
+        },
+        {
+          "meaning": "naam van de opgeslagen indeling",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Roept een opgeslagen afbeelding op de huidige positie op, met onafhankelijke horizontale en verticale schaling."
+    "summary": "Roept een opgeslagen afbeelding op de huidige positie op, met onafhankelijke horizontale en verticale schaling.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "bronapparaat van de opgeslagen afbeelding",
+          "values": "R, E, B, A",
+          "default": "R, dan E, dan B, dan A"
+        },
+        {
+          "meaning": "naam van de opgeslagen afbeelding",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": "GRF"
+        },
+        {
+          "meaning": "vergrotingsfactor op de x-as",
+          "values": "1 tot 10",
+          "default": "1"
+        },
+        {
+          "meaning": "vergrotingsfactor op de y-as",
+          "values": "1 tot 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Selecteert hoe de printer labelgrenzen detecteert, via tussenruimtes, markeringen of doorlopende media."
+    "summary": "Selecteert hoe de printer labelgrenzen detecteert, via tussenruimtes, markeringen of doorlopende media.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "methode voor mediadetectie",
+          "values": "N doorlopend, Y of W niet-doorlopend met tussenruimte, M niet-doorlopend met markering, A automatisch detecteren, V doorlopend met variabele lengte",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "verschuiving van de zwarte markering in dots",
+          "values": "-120 tot 283 bij de meeste printers, -240 tot 566 bij 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Stelt de maximale labellengte in waarnaar de printer zoekt tijdens het kalibreren van niet-doorlopende media."
+    "summary": "Stelt de maximale labellengte in waarnaar de printer zoekt tijdens het kalibreren van niet-doorlopende media.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "maximale labellengte in dotrijen",
+          "values": "printer-dpi keer twee, tot de maximale lengte",
+          "default": "laatst opgeslagen waarde"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Stelt de actie in bij opstarten en bij sluiten van de printkop, waaronder kalibratie, doorvoer of lengtemeting."
+    "summary": "Stelt de actie in bij opstarten en bij sluiten van de printkop, waaronder kalibratie, doorvoer of lengtemeting.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "doorvoeractie bij het opstarten",
+          "values": "F doorvoer tot de eerste tussenruimte, C kalibreren zoals ~JC, L lengte instellen zoals ~JL, N geen doorvoer, S korte kalibratie",
+          "default": "C"
+        },
+        {
+          "meaning": "doorvoeractie na het sluiten van de printkop",
+          "values": "F doorvoer tot de eerste tussenruimte, C kalibreren zoals ~JC, L lengte instellen zoals ~JL, N geen doorvoer, S korte kalibratie",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Configureert geprinte onderhoudsmeldingen voor het reinigen of vervangen van de printkop."
+    "summary": "Configureert geprinte onderhoudsmeldingen voor het reinigen of vervangen van de printkop.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "alarmtype",
+          "values": "R printkopvervanging, C printkopreiniging"
+        },
+        {
+          "meaning": "alarmlabel printen",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "afstand tot het eerste alarm",
+          "values": "R 0 tot 150 km, C 100 tot 2000 meter, 0 uit",
+          "default": "50 km bij R, 0 uit bij C"
+        },
+        {
+          "meaning": "afstand voor het opnieuw uitgeven van het alarm",
+          "values": "0 tot 2000 meter",
+          "default": "0"
+        },
+        {
+          "meaning": "gerapporteerde meeteenheid",
+          "values": "C centimeter, I inch, M meter",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Bepaalt of de labelbitmap na het printen wordt gewist of bewaard blijft voor hergebruik door latere labels."
+    "summary": "Bepaalt of de labelbitmap na het printen wordt gewist of bewaard blijft voor hergebruik door latere labels.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "bitmap wissen na het printen",
+          "values": "Y wissen, N behouden",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Stelt de tekst in die wordt getoond op onderhoudsmeldingslabels voor het reinigen of vervangen van de printkop."
+    "summary": "Stelt de tekst in die wordt getoond op onderhoudsmeldingslabels voor het reinigen of vervangen van de printkop.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "alarmtype",
+          "values": "R printkopvervanging, C printkopreiniging",
+          "default": "R"
+        },
+        {
+          "meaning": "op het alarmlabel geprinte boodschap",
+          "values": "tot 63 tekens, geen komma's",
+          "default": "reinig de printkop of vervang de printkop"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Vergrendelt een instelling van het bedieningspaneel, zoals afdrukdichtheid of kalibratie, tot deze weer wordt ontgrendeld."
+    "summary": "Vergrendelt een instelling van het bedieningspaneel, zoals afdrukdichtheid of kalibratie, tot deze weer wordt ontgrendeld.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "te beveiligen modus van het bedieningspaneel",
+          "values": "D dichtheid, P positie, C kalibratie, E alles inschakelen, S geen opslag, W pauze, F doorvoer, X annuleren, M menu",
+          "default": "moet worden opgegeven"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Schakelt de waarschuwingsindicator voor een koude printkop in of uit."
+    "summary": "Schakelt de waarschuwingsindicator voor een koude printkop in of uit.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "waarschuwing voor koude printkop inschakelen",
+          "values": "Y inschakelen, N uitschakelen"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Past de afdrukdichtheid aan ten opzichte van de huidige geconfigureerde afdrukdichtheid van de printer."
+    "summary": "Past de afdrukdichtheid aan ten opzichte van de huidige geconfigureerde afdrukdichtheid van de printer.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "mediadichtheid ten opzichte van de huidige instelling",
+          "values": "-30 tot 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Stelt de absolute afdrukdichtheid direct in, overeenkomstig de instelling op het bedieningspaneel."
+    "summary": "Stelt de absolute afdrukdichtheid direct in, overeenkomstig de instelling op het bedieningspaneel.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "absolute afdrukdichtheid",
+          "values": "00 tot 30",
+          "default": "laatst opgeslagen waarde"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Bepaalt of een label dat onderbroken werd door een storing in media, lint of printkop, na herstel opnieuw wordt geprint."
+    "summary": "Bepaalt of een label dat onderbroken werd door een storing in media, lint of printkop, na herstel opnieuw wordt geprint.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "label opnieuw printen na het opheffen van de fout",
+          "values": "N nee, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Plant periodieke tests van printkopelementen op basis van het aantal geprinte labels en een optioneel elementbereik."
+    "summary": "Plant periodieke tests van printkopelementen op basis van het aantal geprinte labels en een optioneel elementbereik.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "geprinte labels tussen printkoptests",
+          "values": "0 tot 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "elementbereik van de printkoptest handmatig selecteren",
+          "values": "N nee, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "eerste testelementnummer",
+          "values": "0 tot 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "laatste testelementnummer",
+          "values": "0 tot 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Past de rustpositie voor tear-off of snijden aan met een kleine verschuiving in dots na het printen."
+    "summary": "Past de rustpositie voor tear-off of snijden aan met een kleine verschuiving in dots na het printen.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "wijziging van de tear-off-rustpositie in dots",
+          "values": "-120 tot 120",
+          "default": "laatst opgeslagen waarde"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Configureert vroege waarschuwingsdrempels voor onderhoud aan media, lint en printkop."
+    "summary": "Configureert vroege waarschuwingsdrempels voor onderhoud aan media, lint en printkop.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "vroege waarschuwing voor media of verbruiksmaterialen",
+          "values": "E inschakelen, D uitschakelen",
+          "default": "D"
+        },
+        {
+          "meaning": "aantal labels per rol",
+          "values": "100 tot 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "media is vervangen",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "lintlengtecode per model",
+          "values": "N 0 m, 0 tot 7 is 100 tot 450 m, 10 tot 16 is 600 tot 900 m",
+          "default": "1 of 7, afhankelijk van het model"
+        },
+        {
+          "meaning": "lint is vervangen",
+          "values": "Y ja, N nee",
+          "default": "N"
+        },
+        {
+          "meaning": "onderhoudsvroegwaarschuwing ingeschakeld",
+          "values": "E ingeschakeld, D uitgeschakeld",
+          "default": "D"
+        },
+        {
+          "meaning": "code voor het reinigingsinterval van de printkop",
+          "values": "0 tot 16 voor 100 m tot 900 m in stappen van 50 m",
+          "default": "1 of 7, afhankelijk van het model"
+        },
+        {
+          "meaning": "printkop is gereinigd",
+          "values": "N nee, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "waarschuwingsdrempel voor de levensduur van de printkop in inch",
+          "values": "0 uit, of 100 tot 3500000 inch",
+          "default": "1000000"
+        },
+        {
+          "meaning": "printkop is vervangen",
+          "values": "N nee, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Regelt de timing van backfeed rond het printen en snijden, of schakelt backfeed uit."
+    "summary": "Regelt de timing van backfeed rond het printen en snijden, of schakelt backfeed uit.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "timing van backfeed ten opzichte van het printen",
+          "values": "A volledig na, B volledig voor, N normaal, O uit, 10 tot 90 procent",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Voert een opgegeven aantal blanco dotrijen door op slew-snelheid."
+    "summary": "Voert een opgegeven aantal blanco dotrijen door op slew-snelheid.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "vanaf de onderkant doorgevoerde dotrijen",
+          "values": "0 tot 32000",
+          "default": "moet worden opgegeven"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Activeert direct de snijder op KR403-printers in kiosk-printmodus."
+    "summary": "Activeert direct de snijder op KR403-printers in kiosk-printmodus.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "overschrijvingsmodus voor de snijlengte",
+          "values": "0 kiosk-instelling, 1 volledige snede"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Voegt extra uitwerplengte toe aan een KR403-kioskpresenter, zodat geprinte media makkelijker te pakken is."
+    "summary": "Voegt extra uitwerplengte toe aan een KR403-kioskpresenter, zodat geprinte media makkelijker te pakken is.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "extra uitwerplengte van media in mm",
+          "values": "0 tot 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Doorloopt een presentatiecyclus op de KR403, waarbij geprinte media wordt aangeboden voor handmatige verwijdering."
+    "summary": "Doorloopt een presentatiecyclus op de KR403, waarbij geprinte media wordt aangeboden voor handmatige verwijdering.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "uitwerplengte voor de presenter in mm",
+          "values": "0 tot 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Stelt de lintaanvoerspanning in op printers uit de PAX-serie."
+    "summary": "Stelt de lintaanvoerspanning in op printers uit de PAX-serie.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "lintspanning",
+          "values": "L laag, M gemiddeld, H hoog",
+          "default": "moet worden opgegeven"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Stelt de datum en tijd van de real-time klok van de printer in."
+    "summary": "Stelt de datum en tijd van de real-time klok van de printer in.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "maand",
+          "values": "01 tot 12",
+          "default": "huidige maand"
+        },
+        {
+          "meaning": "dag",
+          "values": "01 tot 31",
+          "default": "huidige dag"
+        },
+        {
+          "meaning": "jaar",
+          "values": "1998 tot 2097",
+          "default": "huidig jaar"
+        },
+        {
+          "meaning": "uur",
+          "values": "00 tot 23",
+          "default": "huidig uur"
+        },
+        {
+          "meaning": "minuut",
+          "values": "00 tot 59",
+          "default": "huidige minuut"
+        },
+        {
+          "meaning": "seconde",
+          "values": "00 tot 59",
+          "default": "huidige seconde"
+        },
+        {
+          "meaning": "AM/PM- of 24-uursformaat",
+          "values": "A AM, P PM, M 24-uurs",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Selecteert de notatie voor datum en tijd die wordt getoond op het configuratielabel en het bedieningspaneel."
+    "summary": "Selecteert de notatie voor datum en tijd die wordt getoond op het configuratielabel en het bedieningspaneel.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "weergaveformaat van datum en tijd",
+          "values": "0 versienummer, 1 MM/DD/YY 24-uurs, 2 MM/DD/YY 12-uurs, 3 DD/MM/YY 24-uurs, 4 DD/MM/YY 12-uurs",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Definieert secundaire tijdsverschuivingen ten opzichte van de real-time klok. Deze verschuivingen gaan verloren wanneer de printer wordt uitgeschakeld."
+    "summary": "Definieert secundaire tijdsverschuivingen ten opzichte van de real-time klok. Deze verschuivingen gaan verloren wanneer de printer wordt uitgeschakeld.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "te verschuiven kloknummer",
+          "values": "2 secundair, 3 derde",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "maandverschuiving",
+          "values": "-32000 tot 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "dagverschuiving",
+          "values": "-32000 tot 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "jaarverschuiving",
+          "values": "-32000 tot 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "uurverschuiving",
+          "values": "-32000 tot 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "minuutverschuiving",
+          "values": "-32000 tot 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "secondeverschuiving",
+          "values": "-32000 tot 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Stelt in wanneer tijdvelden worden gestempeld en selecteert de taal voor de namen van dagen en maanden."
+    "summary": "Stelt in wanneer tijdvelden worden gestempeld en selecteert de taal voor de namen van dagen en maanden.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "modus voor het aflezen van de klok",
+          "values": "S starttijd, T huidige tijd, 0 tot 999 tolerantie",
+          "default": "S"
+        },
+        {
+          "meaning": "taal voor de namen van dagen en maanden",
+          "values": "1 Engels, 2 Spaans, 3 Frans, 4 Duits, 5 Italiaans, 6 tot 18 meer talen",
+          "default": "laatste ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Selecteert de weergavetaal van het bedieningspaneel van de printer uit een lijst die per model verschilt."
+    "summary": "Selecteert de weergavetaal van het bedieningspaneel van de printer uit een lijst die per model verschilt.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "weergavetaal van het bedieningspaneel",
+          "values": "1 tot 20 taalcodes",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Selecteert een opgeslagen coderingstabel waarmee veldgegevens vóór het printen worden omgezet."
+    "summary": "Selecteert een opgeslagen coderingstabel waarmee veldgegevens vóór het printen worden omgezet.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "station van de coderingstabel",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van het coderingstabelbestand",
+          "values": "1 tot 8 alfanumerieke tekens"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": "DAT vaste waarde",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Selecteert interpretatie van commando's volgens het oorspronkelijke ZPL of ZPL II, voor compatibiliteit met oudere indelingen."
+    "summary": "Selecteert interpretatie van commando's volgens het oorspronkelijke ZPL of ZPL II, voor compatibiliteit met oudere indelingen.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "versie van de ZPL-interpreter",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Kent de printer een netwerknaam en een vrije tekstbeschrijving toe, beide zichtbaar op het configuratielabel en de ingebouwde webpagina."
+    "summary": "Kent de printer een netwerknaam en een vrije tekstbeschrijving toe, beide zichtbaar op het configuratielabel en de ingebouwde webpagina.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "netwerknaam van de printer",
+          "values": "tot 16 alfanumerieke tekens",
+          "default": "ZBR plus MAC-achtervoegsel"
+        },
+        {
+          "meaning": "printerbeschrijving voor configuratielabel en webpagina",
+          "values": "tot 35 alfanumerieke tekens",
+          "default": "leeg"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Stelt het viercijferige wachtwoord in voor de configuratiemenu's van het bedieningspaneel."
+    "summary": "Stelt het viercijferige wachtwoord in voor de configuratiemenu's van het bedieningspaneel.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "viercijferig wachtwoord van het bedieningspaneel",
+          "values": "0000 tot 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "wachtwoordniveau, alleen S4M-printer",
+          "values": "1 tot 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Slaat printerconfiguratie-instellingen op, herstelt ze of zet ze terug naar de standaardwaarden."
+    "summary": "Slaat printerconfiguratie-instellingen op, herstelt ze of zet ze terug naar de standaardwaarden.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "configuratieactie",
+          "values": "A fabrieksinstellingen alles, F fabrieksinstellingen, N netwerk, R oproepen, S opslaan"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Wijzigt het voorvoegselteken voor indelingscommando's, normaal het dakje, hetzij globaal, hetzij voor de huidige indeling."
+    "summary": "Wijzigt het voorvoegselteken voor indelingscommando's, normaal het dakje, hetzij globaal, hetzij voor de huidige indeling.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "nieuw voorvoegsel voor indelingscommando's",
+          "values": "elk ASCII-teken"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Wijzigt het scheidingsteken voor parameters, normaal de komma, hetzij globaal, hetzij voor de huidige indeling."
+    "summary": "Wijzigt het scheidingsteken voor parameters, normaal de komma, hetzij globaal, hetzij voor de huidige indeling.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "nieuw scheidingsteken voor parameters",
+          "values": "elk ASCII-teken"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Wijzigt het voorvoegselteken voor directe commando's, normaal de tilde, hetzij globaal, hetzij voor de huidige indeling."
+    "summary": "Wijzigt het voorvoegselteken voor directe commando's, normaal de tilde, hetzij globaal, hetzij voor de huidige indeling.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "nieuw voorvoegsel voor directe commando's",
+          "values": "elk ASCII-teken"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Wijst printergeheugenletters opnieuw toe, zodat opgeslagen objecten hun bestaande namen kunnen behouden."
+    "summary": "Wijst printergeheugenletters opnieuw toe, zodat opgeslagen objecten hun bestaande namen kunnen behouden.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "geheugenalias voor B",
+          "values": "B geheugenkaart, E flash, R DRAM, A compact flash, NONE niet ingesteld",
+          "default": "B"
+        },
+        {
+          "meaning": "geheugenalias voor E",
+          "values": "B geheugenkaart, E flash, R DRAM, A compact flash, NONE niet ingesteld",
+          "default": "E"
+        },
+        {
+          "meaning": "geheugenalias voor R",
+          "values": "B geheugenkaart, E flash, R DRAM, A compact flash, NONE niet ingesteld",
+          "default": "R"
+        },
+        {
+          "meaning": "geheugenalias voor A",
+          "values": "B geheugenkaart, E flash, R DRAM, A compact flash, NONE niet ingesteld",
+          "default": "A"
+        },
+        {
+          "meaning": "dubbele aliastoewijzing toestaan",
+          "values": "M meervoudig alias",
+          "default": "geen"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Wist en herinitialiseert één flashgeheugenapparaat. Stroomverlies tijdens deze bewerking kan de opslag beschadigen."
+    "summary": "Wist en herinitialiseert één flashgeheugenapparaat. Stroomverlies tijdens deze bewerking kan de opslag beschadigen.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "te initialiseren flashgeheugenapparaat",
+          "values": "A optionele flash, B flashkaart, E interne flash",
+          "default": "moet worden opgegeven"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Bepaalt of een lage batterijspanning een draagbare printer pauzeert, of dat het printen mag doorgaan."
+    "summary": "Bepaalt of een lage batterijspanning een draagbare printer pauzeert, of dat het printen mag doorgaan.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pauzeren bij lage batterijspanning",
+          "values": "Y pauzeren, N doorgaan met printen",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Start de Zebra BASIC Interpreter op de printer, optioneel met het starten van een opgeslagen programma."
+    "summary": "Start de Zebra BASIC Interpreter op de printer, optioneel met het starten van een opgeslagen programma.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "opslaglocatie van het programma",
+          "values": "R, E, B, A",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "naam van het uit te voeren programma",
+          "values": "elke geldige programmanaam",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "extensie van het programmabestand",
+          "values": "BAS of BAE"
+        },
+        {
+          "meaning": "besturing van de console-uitvoer",
+          "values": "Y aan, N uit",
+          "default": "Y"
+        },
+        {
+          "meaning": "besturing van de commando-echo",
+          "values": "Y aan, N uit",
+          "default": "Y"
+        },
+        {
+          "meaning": "aan ZBI toegewezen geheugen",
+          "values": "20K tot 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Configureert de hulppoort voor applicator- of verifierseinen en foutafhandeling."
+    "summary": "Configureert de hulppoort voor applicator- of verifierseinen en foutafhandeling.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "foutafhandelingsmodus van de verifier",
+          "values": "0 uit, 1 opnieuw printen bij fout, 2 maximale doorvoer",
+          "default": "0"
+        },
+        {
+          "meaning": "timingmodus van het applicatorsignaal",
+          "values": "0 uit, 1 tot 4 signaaltiming",
+          "default": "0"
+        },
+        {
+          "meaning": "timingmodus van het printstartsignaal",
+          "values": "p pulsmodus, l niveaumodus"
+        },
+        {
+          "meaning": "reactiemodus bij labelfout",
+          "values": "e foutmodus, f doorvoermodus",
+          "default": "f"
+        },
+        {
+          "meaning": "modus voor opnieuw printen via signaal",
+          "values": "e ingeschakeld, d uitgeschakeld",
+          "default": "d"
+        },
+        {
+          "meaning": "waarschuwingsmodus bij weinig lint",
+          "values": "e ingeschakeld, d uitgeschakeld",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Selecteert de mediasensor die voor het volgen wordt gebruikt, meestal reflectief of doorlichtend."
+    "summary": "Selecteert de mediasensor die voor het volgen wordt gebruikt, meestal reflectief of doorlichtend.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "te gebruiken sensor",
+          "values": "A automatisch, R reflectief, T doorlichtend",
+          "default": "verschilt per printermodel"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Stelt normale of verlaagde dots per millimeter in. Bij verlaagde dichtheid verdubbelt de fysieke grootte van indelingscoördinaten."
+    "summary": "Stelt normale of verlaagde dots per millimeter in. Bij verlaagde dichtheid verdubbelt de fysieke grootte van indelingscoördinaten.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "instelling van de afdrukdichtheid",
+          "values": "A normale dichtheid, B halve dichtheid",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Zet een geselecteerde gebruiksteller van de printer terug, waaronder gebruikers- of RFID-tellers."
+    "summary": "Zet een geselecteerde gebruiksteller van de printer terug, waaronder gebruikers- of RFID-tellers.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "terug te zetten teller",
+          "values": "1 teller een, 2 teller twee, 3 geldige RFID, 4 ongeldig gemaakte RFID, C printkop gereinigd, R printkop vervangen",
+          "default": "moet worden opgegeven"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Configureert alle communicatieparameters van de seriële poort in één commando."
+    "summary": "Configureert alle communicatieparameters van de seriële poort in één commando.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "baudrate van de seriële poort",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "databits per teken",
+          "values": "7 of 8",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "pariteitsinstelling",
+          "values": "N geen, E even, O oneven",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "stopbits",
+          "values": "1 of 2",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "protocol voor flowcontrol",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR en Xon/Xoff",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "handshake van het zebra-protocol",
+          "values": "A ACK/NAK, N geen, Z zebra",
+          "default": "moet worden opgegeven"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Overschrijft de intensiteit of basiswaarden van de doorlichtende sensor, die normaal door kalibratie worden ingesteld."
+    "summary": "Overschrijft de intensiteit of basiswaarden van de doorlichtende sensor, die normaal door kalibratie worden ingesteld.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "te wijzigen sensorinstelling",
+          "values": "1 helderheid, 2 basislijn",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "waarde voor de gekozen instelling",
+          "values": "0 tot 196",
+          "default": "moet worden opgegeven"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Start het printen voordat de volledige indeling is ontvangen, om de doorvoer bij complexe labels te verbeteren."
+    "summary": "Start het printen voordat de volledige indeling is ontvangen, om de doorvoer bij complexe labels te verbeteren.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "dotrij om het printen te starten",
+          "values": "0 tot 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Schakelt een specifieke ZebraNet-waarschuwingsconditie en bijbehorende bestemming uit."
+    "summary": "Schakelt een specifieke ZebraNet-waarschuwingsconditie en bijbehorende bestemming uit.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "te stoppen alarmvoorwaarde",
+          "values": "A tot O en Q tot V elk één voorwaarde, W alle op RFID-printers, * alle op overige printers"
+        },
+        {
+          "meaning": "te stoppen alarmbestemming",
+          "values": "A serieel, B parallel, C e-mail, D TCP/IP, E UDP/IP, F SNMP-trap, * alle"
+        },
+        {
+          "meaning": "deze alarmen onderbreken of hervatten",
+          "values": "Y meldingen stoppen, N meldingen starten",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Stelt de weerstandswaarde van de printkop in, die wordt gebruikt voor berekeningen van de brandenergie."
+    "summary": "Stelt de weerstandswaarde van de printkop in, die wordt gebruikt voor berekeningen van de brandenergie.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "weerstandswaarde van de printkop",
+          "values": "0488 tot 1175",
+          "default": "laatst permanent opgeslagen waarde"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Stelt drempelwaarden van de mediasensor, de labellengte en de led-intensiteiten in, die normaal door kalibratie worden bepaald."
+    "summary": "Stelt drempelwaarden van de mediasensor, de labellengte en de led-intensiteiten in, die normaal door kalibratie worden bepaald.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "waarde van de tussenruimtesensor",
+          "values": "0 tot 100",
+          "default": "te zien op het sensorprofiel of configuratielabel"
+        },
+        {
+          "meaning": "waarde van de mediasensor",
+          "values": "0 tot 100",
+          "default": "te zien op het sensorprofiel of configuratielabel"
+        },
+        {
+          "meaning": "waarde van de lintsensor",
+          "values": "0 tot 100",
+          "default": "te zien op het sensorprofiel of configuratielabel"
+        },
+        {
+          "meaning": "labellengte in dots",
+          "values": "1 tot 32000",
+          "default": "waarde uit de kalibratie"
+        },
+        {
+          "meaning": "led-intensiteit van de mediasensor",
+          "values": "0 tot 255",
+          "default": "waarde uit de kalibratie"
+        },
+        {
+          "meaning": "led-intensiteit van de lintsensor",
+          "values": "0 tot 255",
+          "default": "waarde uit de kalibratie"
+        },
+        {
+          "meaning": "waarde van de markeringsdetectie",
+          "values": "0 tot 100",
+          "default": "waarde uit de kalibratie"
+        },
+        {
+          "meaning": "mediawaarde van de markeringsdetectie",
+          "values": "0 tot 100",
+          "default": "waarde uit de kalibratie"
+        },
+        {
+          "meaning": "led-waarde van de markeringsdetectie",
+          "values": "0 tot 255",
+          "default": "waarde uit de kalibratie"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Schakelt een ZebraNet-waarschuwing in voor een specifieke conditie en bestemming."
+    "summary": "Schakelt een ZebraNet-waarschuwing in voor een specifieke conditie en bestemming.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "type alarmvoorwaarde",
+          "values": "A tot V elk één voorwaarde, * alle",
+          "default": "genegeerd indien ontbrekend of ongeldig"
+        },
+        {
+          "meaning": "type alarmbestemming",
+          "values": "A serieel, B parallel, C e-mail, D TCP/IP, E UDP/IP, F SNMP-trap",
+          "default": "genegeerd indien ontbrekend of ongeldig"
+        },
+        {
+          "meaning": "alarm inschakelen bij het optreden van de voorwaarde",
+          "values": "N nee, Y ja",
+          "default": "Y of vorige waarde"
+        },
+        {
+          "meaning": "alarm inschakelen bij het vervallen van de voorwaarde",
+          "values": "N nee, Y ja",
+          "default": "N of vorige waarde"
+        },
+        {
+          "meaning": "doeladres voor het alarm",
+          "values": "e-mailadres, IP-adres of SNMP-doel",
+          "default": "genegeerd indien ontbrekend of ongeldig"
+        },
+        {
+          "meaning": "poortnummer voor het alarm",
+          "values": "0 tot 65535",
+          "default": "genegeerd indien ontbrekend of ongeldig"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopieert opgeslagen objecten tussen printergeheugenapparaten, met ondersteuning voor wildcards bij groepen."
+    "summary": "Kopieert opgeslagen objecten tussen printergeheugenapparaten, met ondersteuning voor wildcards bij groepen.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "bronopslagapparaat",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "naam van het bronobject",
+          "values": "elke bestaande objectnaam",
+          "default": "* selecteert alle objecten"
+        },
+        {
+          "meaning": "extensie van het bronobject",
+          "values": "elke geldige bestandsextensie",
+          "default": "* selecteert alle extensies"
+        },
+        {
+          "meaning": "doelopslagapparaat",
+          "values": "R, E, B, A",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "naam voor het object op de bestemming",
+          "values": "tot 8 alfanumerieke tekens",
+          "default": "naam van het bronobject"
+        },
+        {
+          "meaning": "extensie van het doelobject",
+          "values": "elke geldige bestandsextensie",
+          "default": "extensie van het bronobject"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Print een overzichtslabel voor opgeslagen objecten, residente lettertypen of beschikbare barcodes."
+    "summary": "Print een overzichtslabel voor opgeslagen objecten, residente lettertypen of beschikbare barcodes.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "bronapparaat voor de lijst",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "filter op objectnaam",
+          "values": "1 tot 8 tekens, * of ? als jokerteken",
+          "default": "*"
+        },
+        {
+          "meaning": "filter op extensie",
+          "values": "elke geldige extensie, * als jokerteken",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Print gevraagde service-informatie, zoals de kilometerteller of de geschiedenis van de printkop, op een label."
+    "summary": "Print gevraagde service-informatie, zoals de kilometerteller of de geschiedenis van de printkop, op een label.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "te printen type servicerapport",
+          "values": "ES status, HA hardwareadres, JT printkoptest, MA alarminstellingen, MI meldingen, OD kilometerteller, PH levensduur printkop, PP plug-and-play, SN serienummer, UI USB-id",
+          "default": "moet worden opgegeven"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Configureert de instellingen van de KR403-kioskpresenter, waaronder snijlengte, snijmarge, time-out voor terugtrekken en luslengte."
+    "summary": "Configureert de instellingen van de KR403-kioskpresenter, waaronder snijlengte, snijmarge, time-out voor terugtrekken en luslengte.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "snijlengte in kiosk-modus",
+          "values": "0 normale snede, 10 tot 60 deelsnede in mm",
+          "default": "0"
+        },
+        {
+          "meaning": "snijmarge in kiosk-modus in mm",
+          "values": "2 tot 9",
+          "default": "9"
+        },
+        {
+          "meaning": "aanbiedingstype na het printen in kiosk-modus",
+          "values": "0 uitwerpen, 1 terugtrekken, 2 geen actie",
+          "default": "0"
+        },
+        {
+          "meaning": "time-out voor aanbieden in kiosk-modus in seconden",
+          "values": "0 tot 300, 0 geen time-out",
+          "default": "0"
+        },
+        {
+          "meaning": "luslengte van de presenter in mm",
+          "values": "0 direct door, 3 tot 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Regelt dynamische herkalibratie van labellengte en sensordrempel na het inschakelen of het openen van het mediacompartiment."
+    "summary": "Regelt dynamische herkalibratie van labellengte en sensordrempel na het inschakelen of het openen van het mediacompartiment.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "dynamische lengtekalibratie inschakelen",
+          "values": "Y inschakelen, N uitschakelen",
+          "default": "Y"
+        },
+        {
+          "meaning": "dynamische drempelkalibratie inschakelen",
+          "values": "Y inschakelen, N uitschakelen",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Start de buitengebruikstellingsmodus om een printer voor te bereiden op doorverkoop of recycling."
+    "summary": "Start de buitengebruikstellingsmodus om een printer voor te bereiden op doorverkoop of recycling.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "serienummer van de printer",
+          "values": "alfanumerieke string",
+          "default": "moet worden opgegeven"
+        },
+        {
+          "meaning": "aantal wispassages van het flashgeheugen",
+          "values": "0 tot 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Stelt automatische slaapstand in na een periode van inactiviteit, met opties voor wachtende labels."
+    "summary": "Stelt automatische slaapstand in na een periode van inactiviteit, met opties voor wachtende labels.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "inactieve seconden voor automatisch afsluiten",
+          "values": "0 tot 999999, 0 schakelt afsluiten uit",
+          "default": "laatst opgeslagen waarde of 0"
+        },
+        {
+          "meaning": "labelstatus bij afsluiten",
+          "values": "Y afsluiten met wachtrij, N wachtrij eerst afhandelen",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Werpt uit of trekt terug media die al door een KR403-kioskpresenter is aangeboden."
+    "summary": "Werpt uit of trekt terug media die al door een KR403-kioskpresenter is aangeboden.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "aanbiedingsactie in kiosk-modus",
+          "values": "0 uitwerpen, 1 terugtrekken, 2 instelling uit ^KV gebruiken"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Stuurt een opgeslagen ZPL-indeling uit het printergeheugen terug naar de host."
+    "summary": "Stuurt een opgeslagen ZPL-indeling uit het printergeheugen terug naar de host.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "te doorzoeken geheugenapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "naam van de opgeslagen indeling",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": ".ZPL vaste waarde",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Stuurt een opgeslagen afbeelding uit het printergeheugen terug naar de host."
+    "summary": "Stuurt een opgeslagen afbeelding uit het printergeheugen terug naar de host.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "te doorzoeken geheugenapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "standaard zoekvolgorde"
+        },
+        {
+          "meaning": "te uploaden naam van de afbeelding",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "bestandsextensie",
+          "values": ".GRF vaste waarde",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Stuurt gevraagde status-, identiteits-, kilometerteller- of onderhoudsgegevens terug naar de host."
+    "summary": "Stuurt gevraagde status-, identiteits-, kilometerteller- of onderhoudsgegevens terug naar de host.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "selectiecriterium voor de teruggegeven gegevens",
+          "values": "ES status, HA bekabeld MAC, JT printkoptest, MA onderhoudsalarmen, MI onderhoudsinfo, OD kilometerteller, PH levensduur printkop, PP plug-and-play, SN serienummer, UI USB-productid"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Stuurt gegevens uit een genummerd veld terug naar de host, met een optionele bytelimiet."
+    "summary": "Stuurt gegevens uit een genummerd veld terug naar de host, met een optionele bytelimiet.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "veldnummer ingesteld via ^FN",
+          "values": "0 tot 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "terug te geven byte",
+          "values": "1 tot 256",
+          "default": "64"
+        },
+        {
+          "meaning": "koptekst voor de gegevens",
+          "values": "0 tot 3072 byte",
+          "default": "geen header"
+        },
+        {
+          "meaning": "afsluittekst na de gegevens",
+          "values": "0 tot 3072 tekens"
+        },
+        {
+          "meaning": "antwoord verzonden per",
+          "values": "F indeling, L label",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Geeft een overzicht van de inhoud van een geheugenapparaat terug, inclusief de resterende vrije ruimte."
+    "summary": "Geeft een overzicht van de inhoud van een geheugenapparaat terug, inclusief de resterende vrije ruimte.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "weer te geven geheugenapparaat",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash, Z overige",
+          "default": "R"
+        },
+        {
+          "meaning": "filter op objectnaam",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "*"
+        },
+        {
+          "meaning": "filter op extensie",
+          "values": "elke Zebra-bestandsextensie",
+          "default": "*"
+        },
+        {
+          "meaning": "opmaak van de lijst",
+          "values": "c kolom, d standaard",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Stuurt een opgeslagen afbeelding terug naar de host in een downloadbaar bestandsformaat."
+    "summary": "Stuurt een opgeslagen afbeelding terug naar de host in een downloadbaar bestandsformaat.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "geheugenapparaat van het object",
+          "values": "R DRAM, E flash, B geheugenkaart, A compact flash",
+          "default": "standaard zoekvolgorde"
+        },
+        {
+          "meaning": "te uploaden objectnaam",
+          "values": "1 tot 8 alfanumerieke tekens",
+          "default": "naam verplicht"
+        },
+        {
+          "meaning": "uploadformaat",
+          "values": "G ruwe bitmap, P gecomprimeerde bitmap",
+          "default": "opgeslagen indeling"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Stuurt beschrijvende XML van de printer terug voor instellingen, objectoverzicht of status."
+    "summary": "Stuurt beschrijvende XML van de printer terug voor instellingen, objectoverzicht of status.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "terug te geven beschrijvingstype",
+          "values": "a alle, f indeling, l directory, o object, r status"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Leest van of schrijft naar een RFID-tag, inclusief gegevensformaat, geheugenbank en toegangswachtwoord."
+    "summary": "Leest van of schrijft naar een RFID-tag, inclusief gegevensformaat, geheugenbank en toegangswachtwoord.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "bewerking",
+          "values": "W schrijven, L schrijven en vergrendelen, R lezen, P leeswachtwoord, S wachtwoord instellen",
+          "default": "W"
+        },
+        {
+          "meaning": "dataformaat",
+          "values": "A ASCII, H hex, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "wachtwoordvlag of startblocknummer",
+          "values": "P wachtwoord volgt, 0 tot n blok",
+          "default": "0"
+        },
+        {
+          "meaning": "aantal te lezen of te schrijven bytes",
+          "values": "1 tot n, maximum per tag",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen-2-geheugenbank",
+          "values": "E EPC 96-bit, A EPC automatische PC-bits, 0 gereserveerd, 1 EPC, 2 TID, 3 gebruiker",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Definieert de bitindeling waarmee RFID EPC-velden op een tag worden gecodeerd."
+    "summary": "Definieert de bitindeling waarmee RFID EPC-velden op een tag worden gecodeerd.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "totale bitgrootte van de partities",
+          "values": "1 tot de bitgrootte van de tag",
+          "default": "96"
+        },
+        {
+          "meaning": "bits per partitie, tot 16 partities",
+          "values": "1 tot 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Stelt RFID-opties in voor volgende labels, waaronder het tagtype, de programmeerpositie, foutafhandeling en de lengte van de VOID-balk."
+    "summary": "Stelt RFID-opties in voor volgende labels, waaronder het tagtype, de programmeerpositie, foutafhandeling en de lengte van de VOID-balk.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "tagtype",
+          "values": "alleen 8 Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "programmeerpositie van de tag",
+          "values": "dots absoluut, F0 tot Fxxx vooruit, B0 tot B30 terug, up volgende, down vorige",
+          "default": "printerinstelling"
+        },
+        {
+          "meaning": "lengte van de VOID-afdruk",
+          "values": "0 tot de labellengte",
+          "default": "labellengte"
+        },
+        {
+          "meaning": "nieuwe pogingen bij een fout",
+          "values": "1 tot 10",
+          "default": "3"
+        },
+        {
+          "meaning": "foutafhandeling na de nieuwe pogingen",
+          "values": "N geen actie, P pauze, E foutmodus",
+          "default": "N"
+        },
+        {
+          "meaning": "naar een applicator verzonden signalen",
+          "values": "S enkel signaal, D dubbel signaal",
+          "default": "S"
+        },
+        {
+          "meaning": "gereserveerd, niet gebruikt",
+          "values": "geen"
+        },
+        {
+          "meaning": "snelheid voor het printen van VOID-labels",
+          "values": "elke geldige printsnelheid",
+          "default": "maximale printsnelheid"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Bouwt een EPC-serienummer op uit de tag-ID en schrijft dit in de lage bits van de EPC."
+    "summary": "Bouwt een EPC-serienummer op uit de tag-ID en schrijft dit in de lage bits van de EPC.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "binair voorvoegsel voor de serie-id",
+          "values": "ASCII 1'en en 0'en, tot 38 bits",
+          "default": "afhankelijk van de chip-MDID"
+        },
+        {
+          "meaning": "speciaal teken dat het serieveld markeert",
+          "values": "elk ASCII-teken behalve commando-, stuur-, scheidings- en RTC-tekens",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Stelt het RFID-lees- en schrijfvermogen in wanneer kalibratie geen bruikbare waarden oplevert."
+    "summary": "Stelt het RFID-lees- en schrijfvermogen in wanneer kalibratie geen bruikbare waarden oplevert.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "leesvermogen",
+          "values": "0 tot 30, of H hoog, M gemiddeld, L laag",
+          "default": "printerinstelling"
+        },
+        {
+          "meaning": "schrijfvermogen",
+          "values": "0 tot 30, of H hoog, M gemiddeld, L laag",
+          "default": "printerinstelling"
+        },
+        {
+          "meaning": "keuze van het antenne-element",
+          "values": "printerspecifiek raster, A1 tot F4",
+          "default": "printerinstelling"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Vergrendelt het geheugen van een RFID-tag, omkeerbaar of permanent, om latere schrijfacties te voorkomen."
+    "summary": "Vergrendelt het geheugen van een RFID-tag, omkeerbaar of permanent, om latere schrijfacties te voorkomen.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "vergrendelstatus van het kill-wachtwoord",
+          "values": "U ontgrendelen, L vergrendelen, O permanent ontgrendelen, P permanent vergrendelen"
+        },
+        {
+          "meaning": "vergrendelstatus van het toegangswachtwoord",
+          "values": "U ontgrendelen, L vergrendelen, O permanent ontgrendelen, P permanent vergrendelen"
+        },
+        {
+          "meaning": "vergrendelstatus van de EPC-geheugenbank",
+          "values": "U ontgrendelen, L vergrendelen, O permanent ontgrendelen, P permanent vergrendelen"
+        },
+        {
+          "meaning": "vergrendelstatus van de gebruikersgeheugenbank",
+          "values": "U ontgrendelen, L vergrendelen, O permanent ontgrendelen, P permanent vergrendelen"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Voert RFID-kalibratie uit en stuurt positie-, antenne- en vermogensinstellingen terug naar de host."
+    "summary": "Voert RFID-kalibratie uit en stuurt positie-, antenne- en vermogensinstellingen terug naar de host.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "tekst voor de resultatentabel",
+          "values": "elke string onder 65 tekens",
+          "default": "start"
+        },
+        {
+          "meaning": "tekst na de resultatentabel",
+          "values": "elke string onder 65 tekens",
+          "default": "einde"
+        },
+        {
+          "meaning": "startpositie van de kalibratie",
+          "values": "F0 tot Fxxx vooruit, B0 tot B30 terug",
+          "default": "printerinstelling"
+        },
+        {
+          "meaning": "eindpositie van de kalibratie",
+          "values": "F0 tot Fxxx vooruit, B0 tot B30 terug, A automatisch",
+          "default": "printerinstelling"
+        },
+        {
+          "meaning": "automatische of handmatige keuze van antenne en vermogen",
+          "values": "A automatisch, M handmatig",
+          "default": "A"
+        },
+        {
+          "meaning": "begin van het lees-/schrijfvermogensbereik",
+          "values": "0 tot 30",
+          "default": "0"
+        },
+        {
+          "meaning": "einde van het lees-/schrijfvermogensbereik",
+          "values": "0 tot 30",
+          "default": "maximaal vermogen"
+        },
+        {
+          "meaning": "begin van het antennebereik",
+          "values": "afhankelijk van het model, meestal A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "einde van het antennebereik",
+          "values": "afhankelijk van het model, tot E4",
+          "default": "printerinstelling"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Bepaalt of de printer tijdens het opstarten controleert op een bekabelde printserver."
+    "summary": "Bepaalt of de printer tijdens het opstarten controleert op een bekabelde printserver.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "controle op bekabelde printserver bij opstarten",
+          "values": "C controleren, S overslaan",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Selecteert het primaire netwerkapparaat, bekabeld of draadloos."
+    "summary": "Selecteert het primaire netwerkapparaat, bekabeld of draadloos.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "primair netwerkapparaat",
+          "values": "1 bekabeld primair, 2 draadloos primair",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresseert één printer op een verouderde RS-485-multidroplijn via het netwerk-ID."
+    "summary": "Adresseert één printer op een verouderde RS-485-multidroplijn via het netwerk-ID.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "aan te spreken netwerk-ID van de printer",
+          "values": "001 tot 999",
+          "default": "000 geen"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Kent het netwerk-ID toe waarmee een printer op een verouderde RS-485-multidroplijn wordt geadresseerd."
+    "summary": "Kent het netwerk-ID toe waarmee een printer op een verouderde RS-485-multidroplijn wordt geadresseerd.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "aan de printer toegewezen netwerk-ID",
+          "values": "001 tot 999",
+          "default": "000 geen"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Stelt de SNMP-identiteit en community-strings van de printer in."
+    "summary": "Stelt de SNMP-identiteit en community-strings van de printer in.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP-systeemnaam",
+          "values": "tot 17 tekens"
+        },
+        {
+          "meaning": "SNMP-systeemcontact",
+          "values": "tot 50 tekens"
+        },
+        {
+          "meaning": "SNMP-systeemlocatie",
+          "values": "tot 50 tekens"
+        },
+        {
+          "meaning": "SNMP get-community-naam",
+          "values": "tot 19 tekens",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set-community-naam",
+          "values": "tot 19 tekens",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap-community-naam",
+          "values": "tot 20 tekens",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Bepaalt of de netwerkinstellingen bij het opstarten van de printer zelf komen of van de aangesloten printserver."
+    "summary": "Bepaalt of de netwerkinstellingen bij het opstarten van de printer zelf komen of van de aangesloten printserver.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "primaire bron voor opstartinstellingen",
+          "values": "P printer, M printserver",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Configureert de SMTP-server en domeininstellingen voor e-mailwaarschuwingen van de printserver."
+    "summary": "Configureert de SMTP-server en domeininstellingen voor e-mailwaarschuwingen van de printserver.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "adres van de SMTP-server",
+          "values": "IPv4-adres"
+        },
+        {
+          "meaning": "domeinnaam van de printserver",
+          "values": "domeinnaam"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Stelt in hoe lang een geauthenticeerd IP-adres toegang heeft tot de webpagina's van de printer voordat opnieuw authenticatie nodig is."
+    "summary": "Stelt in hoe lang een geauthenticeerd IP-adres toegang heeft tot de webpagina's van de printer voordat opnieuw authenticatie nodig is.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "authenticatie-time-out van de webpagina",
+          "values": "0 tot 255 minuten",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Stelt de vorm en waarde van de DHCP-clientidentifier voor de printserver in."
+    "summary": "Stelt de vorm en waarde van de DHCP-clientidentifier voor de printserver in.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "modus van de client-id",
+          "values": "0 uitgeschakeld, 1 MAC-adres, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "apparaat waarop de identifier van toepassing is",
+          "values": "0 alle, 1 draadloos, 2 extern bekabeld, 3 intern bekabeld",
+          "default": "1"
+        },
+        {
+          "meaning": "voorvoegsel van de identifier",
+          "values": "11 ASCII- of 22 hex-tekens"
+        },
+        {
+          "meaning": "achtervoegsel van de identifier",
+          "values": "tot 60 ASCII- of 120 hex-tekens"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Configureert IP-adres, subnetmasker en gateway voor een netwerkinterface van de printer."
+    "summary": "Configureert IP-adres, subnetmasker en gateway voor een netwerkinterface van de printer.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "te wijzigen apparaat",
+          "values": "1 extern bekabeld, 2 intern bekabeld, 3 draadloos"
+        },
+        {
+          "meaning": "methode voor IP-adrestoewijzing",
+          "values": "A alle, B BOOTP, C DHCP en BOOTP, D DHCP, G alleen gleaning, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-adres",
+          "values": "IPv4-adres"
+        },
+        {
+          "meaning": "subnetmasker",
+          "values": "IPv4-subnetmasker"
+        },
+        {
+          "meaning": "standaardgateway",
+          "values": "IPv4-adres"
+        },
+        {
+          "meaning": "adres van de WINS-server",
+          "values": "IPv4-adres"
+        },
+        {
+          "meaning": "controle op verbindings-time-out",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "waarde voor verbindings-time-out",
+          "values": "0 tot 9999 seconden",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-broadcastinterval",
+          "values": "0 tot 30 minuten",
+          "default": "0 geen"
+        },
+        {
+          "meaning": "basis-poortnummer voor raw-afdrukken",
+          "values": "1 tot 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Configureert IP-instellingen, time-outs en de raw-poort van de bekabelde printserver, voor oudere firmware."
+    "summary": "Configureert IP-instellingen, time-outs en de raw-poort van de bekabelde printserver, voor oudere firmware.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "methode voor IP-adrestoewijzing",
+          "values": "A alle, B BOOTP, C DHCP en BOOTP, D DHCP, G alleen gleaning, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-adres",
+          "values": "IPv4-adres"
+        },
+        {
+          "meaning": "subnetmasker",
+          "values": "IPv4-subnetmasker"
+        },
+        {
+          "meaning": "standaardgateway",
+          "values": "IPv4-adres"
+        },
+        {
+          "meaning": "adres van de WINS-server",
+          "values": "IPv4-adres"
+        },
+        {
+          "meaning": "controle op verbindings-time-out",
+          "values": "Y ja, N nee",
+          "default": "Y"
+        },
+        {
+          "meaning": "waarde voor verbindings-time-out",
+          "values": "0 tot 9999 seconden",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-broadcastinterval",
+          "values": "0 tot 30 minuten",
+          "default": "0 geen"
+        },
+        {
+          "meaning": "basis-poortnummer voor raw-afdrukken",
+          "values": "1 tot 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Selecteert de ontvangst- en zendantennes voor de draadloze radio."
+    "summary": "Selecteert de ontvangst- en zendantennes voor de draadloze radio.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "ontvangstantenne",
+          "values": "D diversity, L links, R rechts",
+          "default": "D"
+        },
+        {
+          "meaning": "zendantenne",
+          "values": "D diversity, L links, R rechts",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Configureert verouderde WEP-beveiliging en bijbehorend sleutelmateriaal voor oudere draadloze firmware."
+    "summary": "Configureert verouderde WEP-beveiliging en bijbehorend sleutelmateriaal voor oudere draadloze firmware.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "coderingsmodus",
+          "values": "OFF geen, 40 40-bit, 128 128-bit",
+          "default": "OFF"
+        },
+        {
+          "meaning": "index van de coderingssleutel",
+          "values": "1 tot 4",
+          "default": "1"
+        },
+        {
+          "meaning": "authenticatietype",
+          "values": "O open systeem, S gedeelde sleutel",
+          "default": "O"
+        },
+        {
+          "meaning": "opslagformaat van de coderingssleutel",
+          "values": "H hex, S string",
+          "default": "H"
+        },
+        {
+          "meaning": "coderingssleutel 1",
+          "values": "hex-paren of alfanumerieke string"
+        },
+        {
+          "meaning": "coderingssleutel 2",
+          "values": "hex-paren of alfanumerieke string"
+        },
+        {
+          "meaning": "coderingssleutel 3",
+          "values": "hex-paren of alfanumerieke string"
+        },
+        {
+          "meaning": "coderingssleutel 4",
+          "values": "hex-paren of alfanumerieke string"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Configureert verouderde Cisco LEAP-authenticatie voor oudere draadloze firmware."
+    "summary": "Configureert verouderde Cisco LEAP-authenticatie voor oudere draadloze firmware.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP-modus",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "gebruikersnaam",
+          "values": "1 tot 32 tekens",
+          "default": "user"
+        },
+        {
+          "meaning": "wachtwoord",
+          "values": "1 tot 32 tekens",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Stelt het wachtwoord in voor de draadloze instellingen op het bedieningspaneel van de printer."
+    "summary": "Stelt het wachtwoord in voor de draadloze instellingen op het bedieningspaneel van de printer.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "oud draadloos wachtwoord",
+          "values": "0000 tot 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "nieuw draadloos wachtwoord",
+          "values": "0000 tot 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Configureert 802.11b-datasnelheden en zendvermogen op oudere draadloze printservers."
+    "summary": "Configureert 802.11b-datasnelheden en zendvermogen op oudere draadloze printservers.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "zendsnelheid van 1 Mbit/s",
+          "values": "Y aan, N uit"
+        },
+        {
+          "meaning": "zendsnelheid van 2 Mbit/s",
+          "values": "Y aan, N uit"
+        },
+        {
+          "meaning": "zendsnelheid van 5,5 Mbit/s",
+          "values": "Y aan, N uit"
+        },
+        {
+          "meaning": "zendsnelheid van 11 Mbit/s",
+          "values": "Y aan, N uit"
+        },
+        {
+          "meaning": "zendvermogen",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Configureert de naam van het draadloze netwerk, de radiomodus, de preamble-lengte en het keep-alive-gedrag."
+    "summary": "Configureert de naam van het draadloze netwerk, de radiomodus, de preamble-lengte en het keep-alive-gedrag.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID-waarde",
+          "values": "tot 32 tekens",
+          "default": "125"
+        },
+        {
+          "meaning": "bedrijfsmodus",
+          "values": "I infrastructuur, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "preambellengte van de radiokaart",
+          "values": "L lang, S kort",
+          "default": "L"
+        },
+        {
+          "meaning": "draadloze pulse ingeschakeld",
+          "values": "0 uitgeschakeld, 1 ingeschakeld",
+          "default": "1"
+        },
+        {
+          "meaning": "interval van de draadloze pulse",
+          "values": "5 tot 300 seconden",
+          "default": "15"
+        },
+        {
+          "meaning": "kanaalmasker",
+          "values": "4 hex-cijfers met 0x-voorvoegsel",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "internationale modus",
+          "values": "0 uitgeschakeld, 1 ingeschakeld",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Configureert de draadloze beveiligingsmodus, sleutels en inloggegevens in één commando."
+    "summary": "Configureert de draadloze beveiligingsmodus, sleutels en inloggegevens in één commando.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "code van het beveiligingstype",
+          "values": "01 geen, 02 WEP 40, 03 WEP 128, 04 tot 08 EAP-typen, 09 WPA PSK, 10 tot 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "index van de WEP-sleutel",
+          "values": "1 tot 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP-authenticatietype",
+          "values": "O open systeem, S gedeelde sleutel",
+          "default": "O"
+        },
+        {
+          "meaning": "opslagformaat van de WEP-sleutel",
+          "values": "H hex, S string",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP-sleutel 1",
+          "values": "hex-paren of alfanumerieke string"
+        },
+        {
+          "meaning": "WEP-sleutel 2",
+          "values": "hex-paren of alfanumerieke string"
+        },
+        {
+          "meaning": "WEP-sleutel 3",
+          "values": "hex-paren of alfanumerieke string"
+        },
+        {
+          "meaning": "WEP-sleutel 4",
+          "values": "hex-paren of alfanumerieke string"
+        },
+        {
+          "meaning": "gebruikers-ID voor het beveiligingstype",
+          "values": "elke string",
+          "default": "user"
+        },
+        {
+          "meaning": "wachtwoord voor het beveiligingstype",
+          "values": "elke string",
+          "default": "password"
+        },
+        {
+          "meaning": "optioneel wachtwoord voor de privésleutel",
+          "values": "elke string"
+        },
+        {
+          "meaning": "Kerberos-realm",
+          "values": "elke string",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberos-sleuteldistributiecentrum",
+          "values": "elke string",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "waarde van de pre-shared key",
+          "values": "minimaal 64 hex-cijfers"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

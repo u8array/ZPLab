@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Määrab prinditava laiuse punktides. Printer lõikab sellest laiusest väljuva sisu ära."
+    "summary": "Määrab prinditava laiuse punktides. Printer lõikab sellest laiusest väljuva sisu ära.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "printimislaius punktides",
+          "values": "2 kuni sildi laiuseni",
+          "default": "viimati salvestatud väärtus"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Määrab sildi pikkuse punktides, mis määrab prinditava vormingu lõpu."
+    "summary": "Määrab sildi pikkuse punktides, mis määrab prinditava vormingu lõpu.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "sildi pikkus punktides",
+          "values": "1 kuni 32000",
+          "default": "printeri seadistus"
+        },
+        {
+          "meaning": "kehtib kõigile meediumitele",
+          "values": "N ainult pidev, Y kõik meediumid",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Nihutab sildi lähtepositsiooni, muutes hilisemate väljakoordinaatide lähtepunkti."
+    "summary": "Nihutab sildi lähtepositsiooni, muutes hilisemate väljakoordinaatide lähtepunkti.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "sildi lähtepositsioon x-teljel",
+          "values": "0 kuni 32000",
+          "default": "0 või viimati salvestatud väärtus"
+        },
+        {
+          "meaning": "sildi lähtepositsioon y-teljel",
+          "values": "0 kuni 32000",
+          "default": "0 või viimati salvestatud väärtus"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Rakendab väljade positsioonidele horisontaalse nihke ühilduvuseks vanemate Zebra vormingutega."
+    "summary": "Rakendab väljade positsioonidele horisontaalse nihke ühilduvuseks vanemate Zebra vormingutega.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "kõigi väljapositsioonide vasaknihe",
+          "values": "-9999 kuni 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Lisab kogu vormingule vertikaalse nihke kandja ülaserva suhtes."
+    "summary": "Lisab kogu vormingule vertikaalse nihke kandja ülaserva suhtes.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "liigutab kogu vormingu punktiridade kaupa üles või alla",
+          "values": "-120 kuni 120, XiIIIPlus 600 dpi juures -240 kuni 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Määrab koordinaatide ühikuks punktid, tollid või millimeetrid ning saab vorminguid eri prindieraldusvõimete vahel skaleerida."
+    "summary": "Määrab koordinaatide ühikuks punktid, tollid või millimeetrid ning saab vorminguid eri prindieraldusvõimete vahel skaleerida.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "koordinaatide ühik järgnevatele väljadele",
+          "values": "D punktid, I tollid, M millimeetrid",
+          "default": "D"
+        },
+        {
+          "meaning": "vormingu baaseraldusvõime punktides tolli kohta",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "sihteraldusvõime, millele teisendada",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Määrab kandja käsitlemise režiimi pärast printimist, sealhulgas ärarebimise, mahakoorimise, lõikuri, tagasikerimise ja rakendaja režiimid."
+    "summary": "Määrab kandja käsitlemise režiimi pärast printimist, sealhulgas ärarebimise, mahakoorimise, lõikuri, tagasikerimise ja rakendaja režiimid.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "meediumi käsitlusrežiim pärast printimist",
+          "values": "T ärarebimine, P mahakoorimine, R tagasikerimine, A aplikaator, C lõikur, D viitlõikur, F RFID, K kiosk",
+          "default": "printeri seadistus"
+        },
+        {
+          "meaning": "eelkoorimine enne järgmist silti",
+          "values": "N ei, Y jah",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Valib termotransfeer- või otsetermorežiimi vastavalt sellele, kas laaditud kandja kasutab värvilinti."
+    "summary": "Valib termotransfeer- või otsetermorežiimi vastavalt sellele, kas laaditud kandja kasutab värvilinti.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "printeri kasutatav meediumitüüp",
+          "values": "T termotransfeer, D otsetermo"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Määrab printimiskoguse, pausi- või lõikerühmituse ning koopiate arvu seerianumbri kohta."
+    "summary": "Määrab printimiskoguse, pausi- või lõikerühmituse ning koopiate arvu seerianumbri kohta.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "prinditavate siltide koguarv",
+          "values": "1 kuni 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "prinditud siltide arv enne pausi",
+          "values": "1 kuni 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "igale seerianumbrile vastavate koopiate arv",
+          "values": "0 kuni 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "pausiarvu ülekirjutamine",
+          "values": "N ei, Y jah",
+          "default": "N"
+        },
+        {
+          "meaning": "lõikamine kehtetuks tunnistatud RFID-sildi järel",
+          "values": "N ei, Y jah",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Pöörab järgnevate väljade printimise, vahetades esi- ja tagaplaani värvid."
+    "summary": "Pöörab järgnevate väljade printimise, vahetades esi- ja tagaplaani värvid.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "pöörab järgnevate väljade printimisvärvi vastupidiseks",
+          "values": "N ei, Y jah",
+          "default": "N või viimati salvestatud väärtus"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Pöörab kogu sildivormingu 180 kraadi võrra."
+    "summary": "Pöörab kogu sildivormingu 180 kraadi võrra.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "prindib sildi tagurpidi",
+          "values": "N tavaline, I pööratud",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Peegeldab prinditava ala horisontaalselt."
+    "summary": "Peegeldab prinditava ala horisontaalselt.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "peegeldab silti vasakult paremale",
+          "values": "N ei, Y jah",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Määrab printimiskiiruse, edasikerimiskiiruse ja tagasisöödukiiruse tollides sekundis."
+    "summary": "Määrab printimiskiiruse, edasikerimiskiiruse ja tagasisöödukiiruse tollides sekundis.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "printimiskiirus tollides sekundis",
+          "values": "1 kuni 14, või A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "tühja sildi kiirkerimise kiirus",
+          "values": "2 kuni 14",
+          "default": "6"
+        },
+        {
+          "meaning": "tagasikerimiskiirus pärast printimist",
+          "values": "2 kuni 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Positsioneerib järgmise välja sildi lähtepositsioonist, kasutades selle ülemist vasakut nurka."
+    "summary": "Positsioneerib järgmise välja sildi lähtepositsioonist, kasutades selle ülemist vasakut nurka.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "horisontaalne positsioon punktides",
+          "values": "0 kuni 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "vertikaalne positsioon punktides",
+          "values": "0 kuni 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "joondus",
+          "values": "0 vasak, 1 parem, 2 automaatne",
+          "default": "viimati ^FW-ga määratud"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Positsioneerib järgmise välja selle baasjoonest või vöötkoodi servast, andes pööratud väljadele stabiilse ankru."
+    "summary": "Positsioneerib järgmise välja selle baasjoonest või vöötkoodi servast, andes pööratud väljadele stabiilse ankru.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "horisontaalne positsioon punktides",
+          "values": "0 kuni 32000",
+          "default": "viimane välja positsioon"
+        },
+        {
+          "meaning": "vertikaalne positsioon punktides",
+          "values": "0 kuni 32000",
+          "default": "viimane välja positsioon"
+        },
+        {
+          "meaning": "joondus",
+          "values": "0 vasak, 1 parem, 2 automaatne",
+          "default": "viimati ^FW-ga määratud"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Määrab praeguse välja sisu, sealhulgas teksti, vöötkoodi andmed või RFID-andmed."
+    "summary": "Määrab praeguse välja sisu, sealhulgas teksti, vöötkoodi andmed või RFID-andmed.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "välja sisu",
+          "values": "suvalised prinditavad andmed kuni 3072 baiti, prefiksimärkideta"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Lubab välja andmetes kasutada kuueteistkümnendsüsteemi paojadasid binaarsete baitide ja reserveeritud käsumärkide jaoks."
+    "summary": "Lubab välja andmetes kasutada kuueteistkümnendsüsteemi paojadasid binaarsete baitide ja reserveeritud käsumärkide jaoks.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "kuueteistkümnendsüsteemi tähismärk",
+          "values": "suvaline märk, välja arvatud vormingu- ja juhtprefiksid",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Lisab kommentaariväli. Printer eirab selle sisu kuni järgmise väljaeraldajani."
+    "summary": "Lisab kommentaariväli. Printer eirab selle sisu kuni järgmise väljaeraldajani.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "mitteprinditav kommentaaritekst",
+          "values": "suvaline tekst, ignoreeritakse järgmise käsuni"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Määrab väljade vaikimisi suuna ja uuemas püsivaras ka vaikimisi joondamise."
+    "summary": "Määrab väljade vaikimisi suuna ja uuemas püsivaras ka vaikimisi joondamise.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "vaikimisi välja pööramine",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "vaikimisi joondus",
+          "values": "0 vasak, 1 parem, 2 automaatne",
+          "default": "automaatne ^TB korral, muidu vasak"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Murrab välja andmed fikseeritud laiusega ploki sisse, kus saab määrata ridade arvu, reavahe, taande ja joondamise."
+    "summary": "Murrab välja andmed fikseeritud laiusega ploki sisse, kus saab määrata ridade arvu, reavahe, taande ja joondamise.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "ploki laius punktides",
+          "values": "0 kuni sildi laiuseni",
+          "default": "0"
+        },
+        {
+          "meaning": "maksimaalne ridade arv",
+          "values": "1 kuni 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "täiendav reavahe punktides",
+          "values": "-9999 kuni 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "joondus",
+          "values": "L vasak, C keskel, R parem, J rööpjoondus",
+          "default": "L"
+        },
+        {
+          "meaning": "järgnevate ridade rippuv taane punktides",
+          "values": "0 kuni 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Murrab teksti fikseeritud laiuse ja kõrgusega kasti sisse, kärpides üleliigse sisu."
+    "summary": "Murrab teksti fikseeritud laiuse ja kõrgusega kasti sisse, kärpides üleliigse sisu.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "ploki pööramine",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^A-ga määratud"
+        },
+        {
+          "meaning": "ploki laius punktides",
+          "values": "1 kuni sildi laiuseni",
+          "default": "1"
+        },
+        {
+          "meaning": "ploki kõrgus punktides",
+          "values": "1 kuni sildi pikkuseni",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Omistab muutuja väljale numbri salvestatud ja taaskutsutud vormingutes."
+    "summary": "Omistab muutuja väljale numbri salvestatud ja taaskutsutud vormingutes.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "välja number",
+          "values": "0 kuni 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "valikuline KDU vihjetekst",
+          "values": "kuni 255 tähtnumbrilist märki"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Sisaldab muutuja välja andmed. Erinevalt ^FD andmetest kustutatakse need pärast sildi printimist."
+    "summary": "Sisaldab muutuja välja andmed. Erinevalt ^FD andmetest kustutatakse need pärast sildi printimist.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "muutuva välja andmed",
+          "values": "string 0 kuni 3072 baiti"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Määrab märgi, mida kasutatakse nummerdatud väljaväärtuste sisestamiseks teise välja sisusse."
+    "summary": "Määrab märgi, mida kasutatakse nummerdatud väljaväärtuste sisestamiseks teise välja sisusse.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "väljade liitmise eraldaja",
+          "values": "suvaline märk, välja arvatud vormingu- ja juhtprefiksid",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Määrab reaalajakella tähiste jaoks kasutatavad markerid välja andmetes."
+    "summary": "Määrab reaalajakella tähiste jaoks kasutatavad markerid välja andmetes.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "peakella tähismärk",
+          "values": "suvaline ASCII-märk",
+          "default": "%"
+        },
+        {
+          "meaning": "teise kella tähismärk",
+          "values": "suvaline ASCII-märk, erinev a-st"
+        },
+        {
+          "meaning": "kolmanda kella tähismärk",
+          "values": "suvaline ASCII-märk, erinev a-st ja b-st"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Määrab järgnevate vöötkoodiväljade vaikimisi mooduli laiuse, laia ja kitsa riba suhte ning kõrguse."
+    "summary": "Määrab järgnevate vöötkoodiväljade vaikimisi mooduli laiuse, laia ja kitsa riba suhte ning kõrguse.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "mooduli laius punktides",
+          "values": "1 kuni 10",
+          "default": "2"
+        },
+        {
+          "meaning": "laia ja kitsa riba suhe",
+          "values": "2.0 kuni 3.0 sammuga 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "suvaline kõrgus punktides",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Paigutab PDF417 või MicroPDF417 segmendid kindlatesse asukohtadesse, kui üks sõnum jaguneb mitme sümboli vahel."
+    "summary": "Paigutab PDF417 või MicroPDF417 segmendid kindlatesse asukohtadesse, kui üks sõnum jaguneb mitme sümboli vahel.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "esimese sümboli x-telg, rohkemate jaoks korda paare",
+          "values": "0 kuni 32000, või e selle sümboli vahelejätmiseks"
+        },
+        {
+          "meaning": "esimese sümboli y-telg, rohkemate jaoks korda paare",
+          "values": "0 kuni 32000, või e selle sümboli vahelejätmiseks"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Määrab praeguse välja märkide järjekorra ja võib lisada tähemärkidevahelist ruumi."
+    "summary": "Määrab praeguse välja märkide järjekorra ja võib lisada tähemärkidevahelist ruumi.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "printimise suund",
+          "values": "H horisontaalne, V vertikaalne, R vastupidine",
+          "default": "H"
+        },
+        {
+          "meaning": "täiendav märkidevaheline vahe punktides",
+          "values": "0 kuni 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Valib järgmise välja jaoks residentse skaleeritava fondi 0 soovitud suuruse ja suunaga."
+    "summary": "Valib järgmise välja jaoks residentse skaleeritava fondi 0 soovitud suuruse ja suunaga.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "märgi kõrgus punktides",
+          "values": "10 kuni 32000",
+          "default": "viimati ^CF-iga määratud"
+        },
+        {
+          "meaning": "märgi laius punktides",
+          "values": "10 kuni 32000",
+          "default": "viimati ^CF-iga määratud"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Valib residentse fondi ühetähelise nime järgi, valikuliste suuna, kõrguse ja laiusega."
+    "summary": "Valib residentse fondi ühetähelise nime järgi, valikuliste suuna, kõrguse ja laiusega.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "fondi nimi",
+          "values": "A kuni Z, 0 kuni 9",
+          "default": "viimati ^CF-iga määratud"
+        },
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "märgi kõrgus punktides",
+          "values": "10 kuni 32000 skaleeritav, 1 kuni 10 korda baaskõrgus bitmap-fontidel",
+          "default": "viimati ^CF-iga määratud"
+        },
+        {
+          "meaning": "märgi laius punktides",
+          "values": "10 kuni 32000 skaleeritav, 1 kuni 10 korda baaslaius bitmap-fontidel",
+          "default": "viimati ^CF-iga määratud"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Valib järgmise välja jaoks salvestatud fondifaili, valikuliste suuna, kõrguse ja laiusega."
+    "summary": "Valib järgmise välja jaoks salvestatud fondifaili, valikuliste suuna, kõrguse ja laiusega.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "välja suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "märgi kõrgus punktides",
+          "values": "10 kuni 32000 skaleeritav, 1 kuni 10 korda baaskõrgus bitmap-fontidel",
+          "default": "viimati ^CF-iga määratud"
+        },
+        {
+          "meaning": "märgi laius punktides",
+          "values": "10 kuni 32000 skaleeritav, 1 kuni 10 korda baaslaius bitmap-fontidel",
+          "default": "viimati ^CF-iga määratud"
+        },
+        {
+          "meaning": "fonti hoidev kettaseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "kasutatav fondifaili nimi",
+          "values": "suvaline kehtiv fondinimi",
+          "default": "viimati ^CF-iga määratud"
+        },
+        {
+          "meaning": "fondifaili laiend",
+          "values": "FNT font, TTF TrueType, TTE TrueType laiend"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Määrab varufondi, kõrguse ja laiuse, mida kasutavad tekstiväljad, mis ei määra ühtegi neist ise."
+    "summary": "Määrab varufondi, kõrguse ja laiuse, mida kasutavad tekstiväljad, mis ei määra ühtegi neist ise.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "vaikimisi font",
+          "values": "A kuni Z, 0 kuni 9",
+          "default": "A"
+        },
+        {
+          "meaning": "vaikimisi märgikõrgus punktides",
+          "values": "0 kuni 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "vaikimisi märgilaius punktides",
+          "values": "0 kuni 32000",
+          "default": "5 või viimati salvestatud väärtus"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Valib kodeeringu, mida kasutatakse välja andmete tõlgendamiseks, sealhulgas koodilehed ja UTF-8."
+    "summary": "Valib kodeeringu, mida kasutatakse välja andmete tõlgendamiseks, sealhulgas koodilehed ja UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "kasutatav märgikodeering",
+          "values": "0 kuni 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "ümberkaardistatav märgipositsioon",
+          "values": "0 kuni 255",
+          "default": "puudub"
+        },
+        {
+          "meaning": "asendusmärgi positsioon",
+          "values": "0 kuni 255",
+          "default": "puudub"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Lubab järgnevate väljade jaoks täiustatud tekstipaigutuse, sealhulgas kahesuunalise teksti, kujunduse ja OpenType-funktsioonid."
+    "summary": "Lubab järgnevate väljade jaoks täiustatud tekstipaigutuse, sealhulgas kahesuunalise teksti, kujunduse ja OpenType-funktsioonid.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "vaikimisi glüüfide allikas",
+          "values": "0 tühikumärk, 1 fondiglüüf",
+          "default": "0"
+        },
+        {
+          "meaning": "kahesuunaline tekstipaigutus",
+          "values": "0 väljas, 1 sees",
+          "default": "0"
+        },
+        {
+          "meaning": "märgi kujundamine",
+          "values": "0 väljas, 1 sees",
+          "default": "0"
+        },
+        {
+          "meaning": "OpenType-tabelite toetus",
+          "values": "0 väljas, 1 sees",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Seob ühetähelise fondinime salvestatud fondifailiga."
+    "summary": "Seob ühetähelise fondinime salvestatud fondifailiga.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "lisatav või asendatav fonditäht",
+          "values": "A kuni Z, 0 kuni 9"
+        },
+        {
+          "meaning": "draiv fondi salvestamiseks",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "salvestatud fondifaili nimi",
+          "values": "kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fondifaili laiend",
+          "values": "FNT font, TTF TrueType, TTE TrueType laiend"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Määrab renderdatud skaleeritavate glüüfide vahemälu suuruse, et kiirendada korduvat suure fondi väljundit."
+    "summary": "Määrab renderdatud skaleeritavate glüüfide vahemälu suuruse, et kiirendada korduvat suure fondi väljundit.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "märgipuhver lubatud",
+          "values": "N ei, Y jah",
+          "default": "Y"
+        },
+        {
+          "meaning": "täiendav puhvermälu kilobaitides",
+          "values": "1 kuni 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "puhvri tüüp",
+          "values": "0 tavalised fondid, 1 Aasia fondid",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Määrab TrueType varuahelad, mida kasutatakse, kui baasfondil puudub vajalik glüüf."
+    "summary": "Määrab TrueType varuahelad, mida kasutatakse, kui baasfondil puudub vajalik glüüf.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "lingitav laiendfont, seade ja fail",
+          "values": "TTF- või TTE-fail seadmel"
+        },
+        {
+          "meaning": "põhifont või fondid, mis seda saavad",
+          "values": "FNT-, TTF- või TTE-fail, metamärk lubatud"
+        },
+        {
+          "meaning": "lingi või eemalda laiendi link",
+          "values": "0 eemalda link, 1 lingi"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Laadib printeri mällu bitmap-fondi ja selle mõõdud."
+    "summary": "Laadib printeri mällu bitmap-fondi ja selle mõõdud.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "draiv fondi salvestamiseks",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fondi nimi",
+          "values": "kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fondifaili laiend",
+          "values": "FNT fikseeritud väärtus",
+          "default": "FNT"
+        },
+        {
+          "meaning": "algupärase fondi suund",
+          "values": "ainult N tavaline",
+          "default": "N"
+        },
+        {
+          "meaning": "lahtri maksimaalne kõrgus punktides",
+          "values": "1 kuni 32000"
+        },
+        {
+          "meaning": "lahtri maksimaalne laius punktides",
+          "values": "1 kuni 32000"
+        },
+        {
+          "meaning": "punktide arv lahtri ülaservast baasjooneni",
+          "values": "1 kuni 32000"
+        },
+        {
+          "meaning": "tühikumärkide laius",
+          "values": "1 kuni 32000"
+        },
+        {
+          "meaning": "fondi märkide arv",
+          "values": "1 kuni 256"
+        },
+        {
+          "meaning": "autoriõiguse omaniku tekst",
+          "values": "1 kuni 63 tähtnumbrilist märki"
+        },
+        {
+          "meaning": "struktureeritud bitmap-andmed märgi kohta",
+          "values": "hash-kood, seejärel kõrguse ja laiuse nihked, seejärel hex-andmed"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Laadib printeri mällu kodeeritud skaleeritava Intellifont-fondi."
+    "summary": "Laadib printeri mällu kodeeritud skaleeritava Intellifont-fondi.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "draiv fondi salvestamiseks",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fondi nimi",
+          "values": "kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fondifaili laiend",
+          "values": "FNT fikseeritud väärtus",
+          "default": "FNT"
+        },
+        {
+          "meaning": "fondi suurus baitides ZToolsist",
+          "values": "teisendatud fondi baitide arv"
+        },
+        {
+          "meaning": "fondi kodeeritud baidiandmed",
+          "values": "suurusele vastavad hex-paarid"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Laadib printeri mällu kodeeritud TrueType fondi kuni 256 märgiga."
+    "summary": "Laadib printeri mällu kodeeritud TrueType fondi kuni 256 märgiga.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "draiv fondi salvestamiseks",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fondi nimi",
+          "values": "kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fondifaili laiend",
+          "values": "DAT fikseeritud väärtus",
+          "default": "DAT"
+        },
+        {
+          "meaning": "fondi suurus baitides",
+          "values": "teisendatud fondi baitide arv"
+        },
+        {
+          "meaning": "fondi kodeeritud baidiandmed",
+          "values": "suurusele vastavad hex-paarid"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Laadib printeri mällu kodeeritud TrueType fondi, milles on üle 256 glüüfi."
+    "summary": "Laadib printeri mällu kodeeritud TrueType fondi, milles on üle 256 glüüfi.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "draiv fondi salvestamiseks",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fondi nimi",
+          "values": "kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fondifaili laiend",
+          "values": "FNT fikseeritud väärtus",
+          "default": "FNT"
+        },
+        {
+          "meaning": "fondi suurus baitides",
+          "values": "teisendatud fondi baitide arv"
+        },
+        {
+          "meaning": "fondi kodeeritud baidiandmed",
+          "values": "suurusele vastavad hex-paarid"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Laadib alla kodeerimistabeli, mis seob välja andmete baidid TrueType fontide jaoks Unicode väärtustega."
+    "summary": "Laadib alla kodeerimistabeli, mis seob välja andmete baidid TrueType fontide jaoks Unicode väärtustega.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "tabelit hoidev draiv",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "tabeli nimi",
+          "values": "kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tabelifaili laiend",
+          "values": "DAT fikseeritud väärtus",
+          "default": "DAT"
+        },
+        {
+          "meaning": "tabeli suurus baitides",
+          "values": "teisendatud tabeli baitide arv"
+        },
+        {
+          "meaning": "tabeli kodeeritud baidiandmed",
+          "values": "suurusele vastavad hex-paarid"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Joonistab Code 128 vöötkoodi muutuva pikkusega ASCII andmete jaoks, koos automaatse alamhulga vahetuse ja UCC/EAN andmete režiimidega."
+    "summary": "Joonistab Code 128 vöötkoodi muutuva pikkusega ASCII andmete jaoks, koos automaatse alamhulga vahetuse ja UCC/EAN andmete režiimidega.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "N ei, Y jah",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "N ei, Y jah",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC kontrollnumber",
+          "values": "N ei, Y jah",
+          "default": "N"
+        },
+        {
+          "meaning": "režiim",
+          "values": "N puudub, U UCC Case Mode, A automaatne, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Joonistab Code 39 vöötkoodi valikulise Mod 43 kontrollnumbriga."
+    "summary": "Joonistab Code 39 vöötkoodi valikulise Mod 43 kontrollnumbriga.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "Mod 43 kontrollnumber",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Joonistab Code 93 vöötkoodi, mis esitab täielikke ASCII andmeid nihkemärkide abil."
+    "summary": "Joonistab Code 93 vöötkoodi, mis esitab täielikke ASCII andmeid nihkemärkide abil.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "prindi kontrollnumber",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Joonistab Code 11 vöötkoodi numbrite ja sidekriipsude jaoks, valikuliste kontrollnumbritega."
+    "summary": "Joonistab Code 11 vöötkoodi numbrite ja sidekriipsude jaoks, valikuliste kontrollnumbritega.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "kontrollnumbrite arv",
+          "values": "Y 1 number, N 2 numbrit",
+          "default": "N"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Joonistab Interleaved 2 of 5 vöötkoodi paarisarvulise numbriliste andmete jaoks, valikulise kontrollnumbriga."
+    "summary": "Joonistab Interleaved 2 of 5 vöötkoodi paarisarvulise numbriliste andmete jaoks, valikulise kontrollnumbriga.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod 10 kontrollnumber",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "kuues pesa, dokumenteerimata",
+          "values": "juhendis dokumenteerimata"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Joonistab Industrial 2 of 5 vöötkoodi, numbrilise koodi, mille andmed on kodeeritud ainult ribadesse."
+    "summary": "Joonistab Industrial 2 of 5 vöötkoodi, numbrilise koodi, mille andmed on kodeeritud ainult ribadesse.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Joonistab Standard 2 of 5 vöötkoodi, ise kontrolliva numbrilise koodi, mille andmed on kodeeritud ainult ribadesse."
+    "summary": "Joonistab Standard 2 of 5 vöötkoodi, ise kontrolliva numbrilise koodi, mille andmed on kodeeritud ainult ribadesse.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Joonistab ANSI Codabar vöötkoodi, tuntud ka kui USD-4, raamatukogu-, tervishoiu- ja kulleriteenuse siltide jaoks."
+    "summary": "Joonistab ANSI Codabar vöötkoodi, tuntud ka kui USD-4, raamatukogu-, tervishoiu- ja kulleriteenuse siltide jaoks.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "kontrollnumber, püsivalt väljas",
+          "values": "ainult N",
+          "default": "N"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "alguse märk",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "lõpumärk",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Joonistab LOGMARS vöötkoodi, Code 39 kaitseministeeriumi variandi, ja teisendab väiketähelised andmed suurtähtedeks."
+    "summary": "Joonistab LOGMARS vöötkoodi, Code 39 kaitseministeeriumi variandi, ja teisendab väiketähelised andmed suurtähtedeks.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Joonistab MSI vöötkoodi, Plessey koodilt tuletatud numbrilise koodi, valitava kontrollnumbriskeemiga."
+    "summary": "Joonistab MSI vöötkoodi, Plessey koodilt tuletatud numbrilise koodi, valitava kontrollnumbriskeemiga.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "kontrollnumbri skeem",
+          "values": "A puudub, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrollnumber loetaval real",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Joonistab Plessey vöötkoodi, vanema numbrilise koodi, valikulise kontrollnumbriga."
+    "summary": "Joonistab Plessey vöötkoodi, vanema numbrilise koodi, valikulise kontrollnumbriga.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "prindi kontrollnumber",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Joonistab EAN-13 vöötkoodi jaemüügi artiklinumbrite jaoks ja tuletab kontrollnumbri kaheteistkümnest andmenumbrist."
+    "summary": "Joonistab EAN-13 vöötkoodi jaemüügi artiklinumbrite jaoks ja tuletab kontrollnumbri kaheteistkümnest andmenumbrist.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Joonistab EAN-8 vöötkoodi väikeste jaemüügipakendite jaoks ja tuletab kontrollnumbri seitsmest andmenumbrist."
+    "summary": "Joonistab EAN-8 vöötkoodi väikeste jaemüügipakendite jaoks ja tuletab kontrollnumbri seitsmest andmenumbrist.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Joonistab UPC-A vöötkoodi jaemüügipakendite jaoks üheteistkümnest andmenumbrist, valikulise kontrollnumbri printimisega."
+    "summary": "Joonistab UPC-A vöötkoodi jaemüügipakendite jaoks üheteistkümnest andmenumbrist, valikulise kontrollnumbri printimisega.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 9999",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "prindi kontrollnumber",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Joonistab UPC-E vöötkoodi, UPC-A lühivormi. Välja andmed on täielik kümnekohaline tootja- ja tootekood."
+    "summary": "Joonistab UPC-E vöötkoodi, UPC-A lühivormi. Välja andmed on täielik kümnekohaline tootja- ja tootekood.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "prindi kontrollnumber",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Joonistab GS1 DataBar sümboli valitava alamtüübi, suurendustaseme, kõrguse ja segmendi laiusega."
+    "summary": "Joonistab GS1 DataBar sümboli valitava alamtüübi, suurendustaseme, kõrguse ja segmendi laiusega.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R pööratud, I ümberpööratud, B tagurpidi",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar vöötkoodi tüüp",
+          "values": "1 omni, 2 kärbitud, 3 virnastatud, 4 virnastatud omni, 5 piiratud, 6 laiendatud, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 koos CC-A/B, 12 UCC/EAN-128 koos CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "suurenduskordaja",
+          "values": "1 kuni 10",
+          "default": "printeri seadistus"
+        },
+        {
+          "meaning": "eraldusjoone kõrgus",
+          "values": "1 või 2",
+          "default": "1"
+        },
+        {
+          "meaning": "lineaarse osa kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "GS1 DataBar Expanded segmendi laius",
+          "values": "2 kuni 22, ainult paaris",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Joonistab Planet Code postivöötkoodi numbritest, mis on kodeeritud kõrgete ja madalate ribadena."
+    "summary": "Joonistab Planet Code postivöötkoodi numbritest, mis on kodeeritud kõrgete ja madalate ribadena.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R pööratud, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 9999",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Joonistab POSTNET, Planet Code või USPS Intelligent Mail vöötkoodi vastavalt valitud postikoodi tüübile."
+    "summary": "Joonistab POSTNET, Planet Code või USPS Intelligent Mail vöötkoodi vastavalt valitud postikoodi tüübile.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "postikoodi tüüp",
+          "values": "0 Postnet, 1 Planet, 2 reserveeritud, 3 Intelligent Mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Joonistab kahe- või viiekohalise UPC/EAN lisasümboli peavöötkoodi kõrvale."
+    "summary": "Joonistab kahe- või viiekohalise UPC/EAN lisasümboli peavöötkoodi kõrvale.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 32000",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetav rida",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "loetav rida koodi kohal",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Joonistab Code 49 virnastatud vöötkoodi kahe kuni kaheksa reaga täielikke ASCII andmeid."
+    "summary": "Joonistab Code 49 virnastatud vöötkoodi kahe kuni kaheksa reaga täielikke ASCII andmeid.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "üksikute ridade kõrguskordaja",
+          "values": "1 kuni sildi kõrguseni",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "loetava rea asend",
+          "values": "N puudub, A kohal, B all",
+          "default": "N"
+        },
+        {
+          "meaning": "alustamisrežiim",
+          "values": "0 tähtnumbriline, 1 korduvlugemine, 2 numbriline, 3 rühm alfa, 4 shift 1, 5 shift 2, A automaatne",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Joonistab QR Code sümboli. Käsuparameetrid määravad mudeli, suurendustaseme ja maski. Välja andmed määravad veaparanduse ja märgirežiimi."
+    "summary": "Joonistab QR Code sümboli. Käsuparameetrid määravad mudeli, suurendustaseme ja maski. Välja andmed määravad veaparanduse ja märgirežiimi.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "välja suund",
+          "values": "ainult N tavaline",
+          "default": "N"
+        },
+        {
+          "meaning": "mudel",
+          "values": "1 algupärane, 2 täiustatud",
+          "default": "2"
+        },
+        {
+          "meaning": "suurenduskordaja",
+          "values": "1 kuni 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "veaparanduse tase",
+          "values": "H ülikõrge, Q kõrge, M standard, L suur tihedus",
+          "default": "Q kui tühi, M kui väärtus on kehtetu"
+        },
+        {
+          "meaning": "maski väärtus",
+          "values": "0 kuni 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Joonistab Data Matrix sümboli seadistatava elemendisuuruse, kvaliteeditaseme ja paojadade käsitlemisega."
+    "summary": "Joonistab Data Matrix sümboli seadistatava elemendisuuruse, kvaliteeditaseme ja paojadade käsitlemisega.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "sümbolielementide kõrgus",
+          "values": "1 kuni sildi laiuseni",
+          "default": "0, mis võtab sümboli kõrguse ^BY-st"
+        },
+        {
+          "meaning": "kvaliteeditase",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "kodeeritavad veerud",
+          "values": "9 kuni 49, kvaliteedil 0 kuni 140 ainult paaritu, kvaliteedil 200 ainult paaris"
+        },
+        {
+          "meaning": "kodeeritavad read",
+          "values": "9 kuni 49"
+        },
+        {
+          "meaning": "vormingu ID",
+          "values": "1 numbriline, 2 suurtähed, 3 suurtäheline tähtnumbriline märkidega . , - /, 4 suurtäheline tähtnumbriline, 5 ASCII7, 6 ISO8",
+          "default": "6"
+        },
+        {
+          "meaning": "paojada juhtmärk",
+          "values": "suvaline märk",
+          "default": "tilde"
+        },
+        {
+          "meaning": "kuvasuhe",
+          "values": "1 ruudukujuline, 2 ristkülikukujuline",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Joonistab PDF417 virnastatud kahemõõtmelise sümboli suure teksti- või binaarsisu jaoks."
+    "summary": "Joonistab PDF417 virnastatud kahemõõtmelise sümboli suure teksti- või binaarsisu jaoks.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus rea kohta punktides",
+          "values": "1 kuni sildi kõrguseni",
+          "default": "viimati ^BY-ga määratud"
+        },
+        {
+          "meaning": "turvatase",
+          "values": "1 kuni 8",
+          "default": "0"
+        },
+        {
+          "meaning": "andmeveergude arv",
+          "values": "1 kuni 30",
+          "default": "automaatne kuvasuhe"
+        },
+        {
+          "meaning": "ridade arv",
+          "values": "3 kuni 90",
+          "default": "automaatne kuvasuhe"
+        },
+        {
+          "meaning": "kärbi paremad reamarkerid ja stopp-muster",
+          "values": "Y jah, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Joonistab MicroPDF417 sümboli, kompaktse PDF417 variandi reaaadressimustritega."
+    "summary": "Joonistab MicroPDF417 sümboli, kompaktse PDF417 variandi reaaadressimustritega.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus punktides",
+          "values": "1 kuni 9999",
+          "default": "viimati ^BY-ga määratud, muidu 10, kui ^BY-d ei saadetud"
+        },
+        {
+          "meaning": "režiim",
+          "values": "0 kuni 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Joonistab Aztec maatrikssümboli seadistatava suurendustaseme ja veaparandusega."
+    "summary": "Joonistab Aztec maatrikssümboli seadistatava suurendustaseme ja veaparandusega.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R pööratud, I 180, B 270",
+          "default": "viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "suurenduskordaja",
+          "values": "1 kuni 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "laiendatud kanalitõlgenduse tähis",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "veakontroll ja sümboli suurus",
+          "values": "0 vaikeväärtus, 1 kuni 99 veaprotsent, 101 kuni 104 compact-kihid, 201 kuni 232 full-kihid, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "menüüsümboli tähis",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "struktureeritud liitmise sümbolite arv",
+          "values": "1 kuni 26",
+          "default": "1"
+        },
+        {
+          "meaning": "struktureeritud liitmise ID-väli",
+          "values": "tekst kuni 24 märki",
+          "default": "ID puudub"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Joonistab CODABLOCK sümboli režiimis A, E või F suuremate andmemahtude jaoks."
+    "summary": "Joonistab CODABLOCK sümboli režiimis A, E või F suuremate andmemahtude jaoks.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "vöötkoodi kõrgus rea kohta punktides",
+          "values": "2 kuni 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "turvatase",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "märke rea kohta",
+          "values": "2 kuni 62"
+        },
+        {
+          "meaning": "kodeeritavad read",
+          "values": "režiim A 1-22, režiim EF 2-4"
+        },
+        {
+          "meaning": "režiim",
+          "values": "A Code 39 komplekt, E Code 128 FNC1, F Code 128 komplekt",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Joonistab UPS MaxiCode sümboli, mille režiim sobib nii struktureeritud saatjateadete kui üldiste andmete jaoks."
+    "summary": "Joonistab UPS MaxiCode sümboli, mille režiim sobib nii struktureeritud saatjateadete kui üldiste andmete jaoks.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "režiim",
+          "values": "2 US-post, 3 mitte-US-post, 4 standard, 5 full-eec, 6 lugeriprogramm",
+          "default": "2"
+        },
+        {
+          "meaning": "sümboli number jadas",
+          "values": "1 kuni 8",
+          "default": "1"
+        },
+        {
+          "meaning": "sümbolite koguarv",
+          "values": "1 kuni 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Joonistab TLC39 telekomisildisümboli, mis ühendab Code 39 MicroPDF417 komponendiga."
+    "summary": "Joonistab TLC39 telekomisildisümboli, mis ühendab Code 39 MicroPDF417 komponendiga.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R pööratud, I ümberpööratud, B tagurpidi"
+        },
+        {
+          "meaning": "Code 39 osa laius punktides",
+          "values": "1 kuni 10",
+          "default": "600 dpi 4, muidu 2"
+        },
+        {
+          "meaning": "Code 39 osa laia ja kitsa riba suhe",
+          "values": "2.0 kuni 3.0 sammuga 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "Code 39 osa kõrgus punktides",
+          "values": "1 kuni 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "MicroPDF417 osa kitsa riba laius",
+          "values": "1 kuni 10",
+          "default": "600 dpi 4, muidu 2"
+        },
+        {
+          "meaning": "MicroPDF417 osa rea kõrgus punktides",
+          "values": "1 kuni 255",
+          "default": "600 dpi 8, muidu 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Kui lubatud, kontrollib vöötkoodi andmeid ja parameetreid ning prindib vigase sümboli asemel teksti INVALID."
+    "summary": "Kui lubatud, kontrollib vöötkoodi andmeid ja parameetreid ning prindib vigase sümboli asemel teksti INVALID.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "koodi valideerimine",
+          "values": "N ei, Y jah",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Joonistab täidetud või kontuuriga ristküliku. Külje sobitamine äärise paksusega loob joone."
+    "summary": "Joonistab täidetud või kontuuriga ristküliku. Külje sobitamine äärise paksusega loob joone.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "ristküliki laius punktides",
+          "values": "t kuni 32000",
+          "default": "t või 1"
+        },
+        {
+          "meaning": "ristküliki kõrgus punktides",
+          "values": "t kuni 32000",
+          "default": "t või 1"
+        },
+        {
+          "meaning": "äärisepaksus punktides",
+          "values": "1 kuni 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "joone värv",
+          "values": "B must, W valge",
+          "default": "B"
+        },
+        {
+          "meaning": "nurkade ümardamine",
+          "values": "0 ümardust pole kuni 8 tugevaim ümardus",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Joonistab diagonaaljoone antud laiuse ja kõrguse ulatuses, kaldudes paremale või vasakule."
+    "summary": "Joonistab diagonaaljoone antud laiuse ja kõrguse ulatuses, kaldudes paremale või vasakule.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "kasti laius punktides",
+          "values": "3 kuni 32000",
+          "default": "t või 3"
+        },
+        {
+          "meaning": "kasti kõrgus punktides",
+          "values": "3 kuni 32000",
+          "default": "t või 3"
+        },
+        {
+          "meaning": "äärisepaksus punktides",
+          "values": "1 kuni 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "joone värv",
+          "values": "B must, W valge",
+          "default": "B"
+        },
+        {
+          "meaning": "diagonaali suund",
+          "values": "R või / paremale kalduv, L või \\ vasakule kalduv",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Joonistab ellipsi punktides antud laiuse ja kõrguse järgi, sissepoole jääva äärisepaksuse ning musta või valge väljundiga."
+    "summary": "Joonistab ellipsi punktides antud laiuse ja kõrguse järgi, sissepoole jääva äärisepaksuse ning musta või valge väljundiga.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "ellipsi laius punktides",
+          "values": "3 kuni 4095",
+          "default": "t või 1"
+        },
+        {
+          "meaning": "ellipsi kõrgus punktides",
+          "values": "3 kuni 4095",
+          "default": "t või 1"
+        },
+        {
+          "meaning": "äärisepaksus punktides",
+          "values": "2 kuni 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "joone värv",
+          "values": "B must, W valge",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Joonistab antud läbimõõduga ringi punktides, sissepoole jääva äärisepaksuse ning musta või valge väljundiga."
+    "summary": "Joonistab antud läbimõõduga ringi punktides, sissepoole jääva äärisepaksuse ning musta või valge väljundiga.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "ringi läbimõõt punktides",
+          "values": "3 kuni 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "äärisepaksus punktides",
+          "values": "2 kuni 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "joone värv",
+          "values": "B must, W valge",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Paigutab praegusesse väljapositsiooni monokroomse bitmapi, kasutades ASCII-kuueteistkümnend-, binaar- või pakitud andmeid."
+    "summary": "Paigutab praegusesse väljapositsiooni monokroomse bitmapi, kasutades ASCII-kuueteistkümnend-, binaar- või pakitud andmeid.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "pakkimistüüp",
+          "values": "A ASCII-hex, B binaarne, C pakitud binaarne",
+          "default": "A"
+        },
+        {
+          "meaning": "saadetavate baitide koguarv",
+          "values": "1 kuni 99999"
+        },
+        {
+          "meaning": "pildi baitide koguarv",
+          "values": "1 kuni 99999"
+        },
+        {
+          "meaning": "baitide arv pildirea kohta",
+          "values": "1 kuni 99999"
+        },
+        {
+          "meaning": "pildiandmed",
+          "values": "ASCII-hex 00 kuni FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Prindib välja andmetega valitud residentse sümboli, näiteks autoriõiguse või registreeritud kaubamärgi märgi."
+    "summary": "Prindib välja andmetega valitud residentse sümboli, näiteks autoriõiguse või registreeritud kaubamärgi märgi.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "suund",
+          "values": "N tavaline, R 90 päripäeva, I 180, B 270",
+          "default": "N või viimati ^FW-ga määratud"
+        },
+        {
+          "meaning": "märgi kõrgus võrdeline laiusega",
+          "values": "0 kuni 32000",
+          "default": "viimati ^CF-iga määratud"
+        },
+        {
+          "meaning": "märgi laius võrdeline kõrgusega",
+          "values": "0 kuni 32000",
+          "default": "viimati ^CF-iga määratud"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Laadib salvestatud pildi vormingu alguses ja ankurdab selle sildi lähtepositsiooni."
+    "summary": "Laadib salvestatud pildi vormingu alguses ja ankurdab selle sildi lähtepositsiooni.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "salvestusseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekti nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": ".GRF või .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Paigutab salvestatud pildi praegusesse väljapositsiooni ilma seda skaleerimata."
+    "summary": "Paigutab salvestatud pildi praegusesse väljapositsiooni ilma seda skaleerimata.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "salvestusseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "otsingu prioriteetsuse järjekord"
+        },
+        {
+          "meaning": "objekti nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": ".GRF või .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Kustutab printeri mälust salvestatud graafika, fondid või vormingud, toetades gruppide jaoks metamärke."
+    "summary": "Kustutab printeri mälust salvestatud graafika, fondid või vormingud, toetades gruppide jaoks metamärke.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "salvestusseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekti nimi, metamärk lubatud",
+          "values": "1 kuni 8 märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend, metamärk lubatud",
+          "values": "suvaline laiend",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Salvestab praeguse vormingu graafilise pildina kiireks taaskutsumiseks ja muutuvate andmete pealekattumiseks."
+    "summary": "Salvestab praeguse vormingu graafilise pildina kiireks taaskutsumiseks ja muutuvate andmete pealekattumiseks.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "salvestusseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objekti nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": ".GRF või .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "prindi silt pärast salvestamist",
+          "values": "N ei, Y jah",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Laadib printeri mällu ASCII-kuueteistkümnendkoodis graafika taaskasutatava nime all."
+    "summary": "Laadib printeri mällu ASCII-kuueteistkümnendkoodis graafika taaskasutatava nime all.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "salvestusseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "pildi nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "pildi kogusuurus baitides",
+          "values": "arvutatakse pildi laiusest ja kõrgusest"
+        },
+        {
+          "meaning": "baitide arv pildirea kohta",
+          "values": "arvutatakse pildi laiusest"
+        },
+        {
+          "meaning": "graafikapildi andmed",
+          "values": "ASCII-hex 00 kuni FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Laadib printeri mällu graafika, fondi või sertifikaadi taaskasutatava nime all."
+    "summary": "Laadib printeri mällu graafika, fondi või sertifikaadi taaskasutatava nime all.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "salvestusseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "failinimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "andmevorming",
+          "values": "A ASCII või ZB64, B binaarne, C AR-pakitud, P PNG ZB64"
+        },
+        {
+          "meaning": "salvestatud faili tüüp",
+          "values": "B bitmap, E TTE, G toores GRF, P PNG, T TTF või OTF, X PCX, NRD mitteloetav, PAC juurdepääsutõend, C WML-menüü, F HTM-leht, H printeri tagasiside",
+          "default": "G"
+        },
+        {
+          "meaning": "faili baitide koguarv",
+          "values": "tegelik lahtipakitud failisuurus"
+        },
+        {
+          "meaning": "baitide arv rea kohta GRF-piltide jaoks",
+          "values": "arvutatakse pildi laiusest"
+        },
+        {
+          "meaning": "failiandmed",
+          "values": "ASCII-hex, ZB64 või binaarne"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Seerianumbriseerib teksti- või vöötkoodivälja andmed siltide vahel, kasutades algväärtust, suunda ja sammu."
+    "summary": "Seerianumbriseerib teksti- või vöötkoodivälja andmed siltide vahel, kasutades algväärtust, suunda ja sammu.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "seerianumbri algväärtus",
+          "values": "kuni 12 numbrit",
+          "default": "1"
+        },
+        {
+          "meaning": "suurenemis- või vähenemissamm",
+          "values": "kuni 12 numbrit",
+          "default": "1"
+        },
+        {
+          "meaning": "täida eesnullidega",
+          "values": "N ei, Y jah",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Seerianumbriseerib välja andmetes valitud positsioonid, kasutades maski ja märgikomplekte."
+    "summary": "Seerianumbriseerib välja andmetes valitud positsioonid, kasutades maski ja märgikomplekte.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "serialiseerimise mask, mis valib muutuvad märgid",
+          "values": "D kümnendsüsteem, H hex, O kaheksandsüsteem, A alfa, N tähtnumbriline, % jäta vahele"
+        },
+        {
+          "meaning": "maski suurenemis- või vähenemisstring",
+          "values": "üks väärtus maski positsiooni kohta, % selle jätmiseks muutmata",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Salvestab järgnevad käsud taaskasutatava vormingu, mitte ei prindi neid koheselt."
+    "summary": "Salvestab järgnevad käsud taaskasutatava vormingu, mitte ei prindi neid koheselt.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "seade, kuhu mall salvestatakse",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "malli nimi",
+          "values": "1 kuni 16 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Kutsub esile salvestatud vormingu ja edastab väärtused selle nummerdatud kohatäitjaväljadele."
+    "summary": "Kutsub esile salvestatud vormingu ja edastab väärtused selle nummerdatud kohatäitjaväljadele.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "salvestatud malli lähteseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R, siis E, siis B, siis A"
+        },
+        {
+          "meaning": "salvestatud malli nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Kutsub esile salvestatud graafika praegusesse asukohta, võimaldades sõltumatut horisontaal- ja vertikaalskaleerimist."
+    "summary": "Kutsub esile salvestatud graafika praegusesse asukohta, võimaldades sõltumatut horisontaal- ja vertikaalskaleerimist.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "salvestatud graafika lähteseade",
+          "values": "R, E, B, A",
+          "default": "R, siis E, siis B, siis A"
+        },
+        {
+          "meaning": "salvestatud graafika nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": "GRF"
+        },
+        {
+          "meaning": "x-telje suurenduskordaja",
+          "values": "1 kuni 10",
+          "default": "1"
+        },
+        {
+          "meaning": "y-telje suurenduskordaja",
+          "values": "1 kuni 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Valib, kuidas printer tuvastab sildi piirid, kasutades vahesid, märke või pidevat kandjat."
+    "summary": "Valib, kuidas printer tuvastab sildi piirid, kasutades vahesid, märke või pidevat kandjat.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "meediumi jälgimise meetod",
+          "values": "N pidev, Y või W katkendlik vahelünk, M katkendlik marker, A automaattuvastus, V pidev muutuva pikkusega",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "musta märgise nihe punktides",
+          "values": "-120 kuni 283 enamikul printeritel, -240 kuni 566 600 dpi juures",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Määrab maksimaalse sildipikkuse, mida printer otsib mittepideva kandja kalibreerimisel."
+    "summary": "Määrab maksimaalse sildipikkuse, mida printer otsib mittepideva kandja kalibreerimisel.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "sildi maksimaalne pikkus punktiridades",
+          "values": "printeri dpi korda kaks, kuni maksimaalse pikkuseni",
+          "default": "viimati salvestatud väärtus"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Määrab printeri sisselülitamisel ja prindipea sulgemisel tehtava toimingu, sealhulgas kalibreerimise, edastuse või pikkuse mõõtmise."
+    "summary": "Määrab printeri sisselülitamisel ja prindipea sulgemisel tehtava toimingu, sealhulgas kalibreerimise, edastuse või pikkuse mõõtmise.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "vedamistoiming sisselülitamisel",
+          "values": "F vedamine esimese vaheni, C kalibreeri nagu ~JC, L määra pikkus nagu ~JL, N ei vedamist, S lühike kalibreerimine",
+          "default": "C"
+        },
+        {
+          "meaning": "vedamistoiming prindipea sulgemise järel",
+          "values": "F vedamine esimese vaheni, C kalibreeri nagu ~JC, L määra pikkus nagu ~JL, N ei vedamist, S lühike kalibreerimine",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Seadistab prinditavad hooldushoiatused prindipea puhastamiseks või vahetamiseks."
+    "summary": "Seadistab prinditavad hooldushoiatused prindipea puhastamiseks või vahetamiseks.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "alarmi tüüp",
+          "values": "R prindipea vahetus, C prindipea puhastus"
+        },
+        {
+          "meaning": "prindi alarmisilt",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "vahemaa esimese alarmini",
+          "values": "R 0 kuni 150 km, C 100 kuni 2000 meetrit, 0 väljas",
+          "default": "50 km R korral, 0 väljas C korral"
+        },
+        {
+          "meaning": "vahemaa enne alarmi kordamist",
+          "values": "0 kuni 2000 meetrit",
+          "default": "0"
+        },
+        {
+          "meaning": "teatatav mõõtühik",
+          "values": "C sentimeetrid, I tollid, M meetrid",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Määrab, kas sildi bittkaart kustutatakse pärast printimist või säilitatakse järgnevate siltide jaoks taaskasutamiseks."
+    "summary": "Määrab, kas sildi bittkaart kustutatakse pärast printimist või säilitatakse järgnevate siltide jaoks taaskasutamiseks.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "kustuta bitmap pärast printimist",
+          "values": "Y kustuta, N säilita",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Määrab hooldushoiatussiltidel kuvatava teksti prindipea puhastamiseks või vahetamiseks."
+    "summary": "Määrab hooldushoiatussiltidel kuvatava teksti prindipea puhastamiseks või vahetamiseks.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "alarmi tüüp",
+          "values": "R prindipea vahetus, C prindipea puhastus",
+          "default": "R"
+        },
+        {
+          "meaning": "alarmisildile prinditud sõnum",
+          "values": "kuni 63 märki, komadeta",
+          "default": "palun puhasta prindipea või palun asenda prindipea"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Lukustab juhtpaneeli seadistuse, näiteks tumeduse või kalibreerimise, kuni see avatakse."
+    "summary": "Lukustab juhtpaneeli seadistuse, näiteks tumeduse või kalibreerimise, kuni see avatakse.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "kaitstav juhtpaneeli režiim",
+          "values": "D tumedus, P positsioon, C kalibreerimine, E luba kõik, S ei salvesta, W paus, F vedamine, X katkesta, M menüü",
+          "default": "tuleb määrata"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Lubab või keelab prindipea külmumise hoiatusnäidiku."
+    "summary": "Lubab või keelab prindipea külmumise hoiatusnäidiku.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "luba prindipea külmahoiatus",
+          "values": "Y luba, N keela"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Reguleerib printimise tumedust printeri praeguse seadistatud tumeduse suhtes."
+    "summary": "Reguleerib printimise tumedust printeri praeguse seadistatud tumeduse suhtes.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "meediumi tumedus praeguse seadistuse suhtes",
+          "values": "-30 kuni 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Määrab printimise absoluutse tumeduse koheselt, vastavalt esipaneeli tumeduse seadistusele."
+    "summary": "Määrab printimise absoluutse tumeduse koheselt, vastavalt esipaneeli tumeduse seadistusele.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "printimise absoluutne tumedus",
+          "values": "00 kuni 30",
+          "default": "viimati salvestatud väärtus"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Määrab, kas kandja, värvilindi või prindipea vea tõttu katkestatud silt trükitakse pärast taastumist uuesti."
+    "summary": "Määrab, kas kandja, värvilindi või prindipea vea tõttu katkestatud silt trükitakse pärast taastumist uuesti.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "prindi silt uuesti pärast vea kadumist",
+          "values": "N ei, Y jah",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Ajastab perioodilisi prindipea elementide teste prinditud siltide arvu ja valikulise elemendivahemiku alusel."
+    "summary": "Ajastab perioodilisi prindipea elementide teste prinditud siltide arvu ja valikulise elemendivahemiku alusel.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "prinditud siltide arv prindipea testide vahel",
+          "values": "0 kuni 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "käsitsi valitav prindipea testelementide vahemik",
+          "values": "N ei, Y jah",
+          "default": "N"
+        },
+        {
+          "meaning": "esimese testelemendi number",
+          "values": "0 kuni 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "viimase testelemendi number",
+          "values": "0 kuni 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Reguleerib pärast printimist ärarebimis- või lõikeasendi puhkeasendit väikese punktinihke võrra."
+    "summary": "Reguleerib pärast printimist ärarebimis- või lõikeasendi puhkeasendit väikese punktinihke võrra.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "ärarebimise puhkepositsiooni muutus punktides",
+          "values": "-120 kuni 120",
+          "default": "viimati salvestatud väärtus"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Seadistab varajase hoiatuse lävendid kandja, värvilindi ja prindipea hoolduse jaoks."
+    "summary": "Seadistab varajase hoiatuse lävendid kandja, värvilindi ja prindipea hoolduse jaoks.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "varajane hoiatus meediumi või tarvikute kohta",
+          "values": "E luba, D keela",
+          "default": "D"
+        },
+        {
+          "meaning": "siltide arv rullis",
+          "values": "100 kuni 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "meedium asendati",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "värvilindi pikkuse kood mudeli järgi",
+          "values": "N 0 m, 0 kuni 7 vastab 100 kuni 450 m, 10 kuni 16 vastab 600 kuni 900 m",
+          "default": "1 või 7 mudelist sõltuvalt"
+        },
+        {
+          "meaning": "värvilint asendati",
+          "values": "Y jah, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "varajase hoiatuse hooldus lubatud",
+          "values": "E lubatud, D keelatud",
+          "default": "D"
+        },
+        {
+          "meaning": "prindipea puhastusintervalli kood",
+          "values": "0 kuni 16, vastab 100 m kuni 900 m 50 m sammuga",
+          "default": "1 või 7 mudelist sõltuvalt"
+        },
+        {
+          "meaning": "prindipea puhastati",
+          "values": "N ei, Y jah",
+          "default": "N"
+        },
+        {
+          "meaning": "prindipea eluea hoiatuse lävi tollides",
+          "values": "0 väljas, või 100 kuni 3500000 tolli",
+          "default": "1000000"
+        },
+        {
+          "meaning": "prindipea asendati",
+          "values": "N ei, Y jah",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Määrab tagasisöödu ajastuse printimise ja lõikamise ümber või lülitab tagasisöödu välja."
+    "summary": "Määrab tagasisöödu ajastuse printimise ja lõikamise ümber või lülitab tagasisöödu välja.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "tagasikerimise ajastus printimise suhtes",
+          "values": "A täielik pärast, B täielik enne, N tavaline, O väljas, 10 kuni 90 protsenti",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Söödab läbi määratud arvu tühje punktiridu kiirkerimiskiirusel."
+    "summary": "Söödab läbi määratud arvu tühje punktiridu kiirkerimiskiirusel.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "alt kiirkerimisega väljastatud punktiread",
+          "values": "0 kuni 32000",
+          "default": "tuleb määrata"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Käivitab KR403 printeril kiosk-printimisrežiimis kohe lõikuri."
+    "summary": "Käivitab KR403 printeril kiosk-printimisrežiimis kohe lõikuri.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "lõikekoguse ülekirjutusrežiim",
+          "values": "0 kioski seadistus, 1 täislõige"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Lisab KR403 kiosk-esitajale täiendava väljutuspikkuse, et prinditud kandjat oleks kergem kätte võtta."
+    "summary": "Lisab KR403 kiosk-esitajale täiendava väljutuspikkuse, et prinditud kandjat oleks kergem kätte võtta.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "täiendav meediumi väljutuspikkus millimeetrites",
+          "values": "0 kuni 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Käivitab KR403 esitaja tsükli, pakkudes prinditud kandjat käsitsi eemaldamiseks."
+    "summary": "Käivitab KR403 esitaja tsükli, pakkudes prinditud kandjat käsitsi eemaldamiseks.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "meediumi väljutuspikkus presenteri jaoks millimeetrites",
+          "values": "0 kuni 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Määrab PAX-seeria printeritel värvilindi varu pinge."
+    "summary": "Määrab PAX-seeria printeritel värvilindi varu pinge.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "värvilindi pinge tase",
+          "values": "L madal, M keskmine, H kõrge",
+          "default": "tuleb määrata"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Määrab printeri reaalaja kella kuupäeva ja kellaaja."
+    "summary": "Määrab printeri reaalaja kella kuupäeva ja kellaaja.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "kuu",
+          "values": "01 kuni 12",
+          "default": "praegune kuu"
+        },
+        {
+          "meaning": "päev",
+          "values": "01 kuni 31",
+          "default": "praegune päev"
+        },
+        {
+          "meaning": "aasta",
+          "values": "1998 kuni 2097",
+          "default": "praegune aasta"
+        },
+        {
+          "meaning": "tund",
+          "values": "00 kuni 23",
+          "default": "praegune tund"
+        },
+        {
+          "meaning": "minut",
+          "values": "00 kuni 59",
+          "default": "praegune minut"
+        },
+        {
+          "meaning": "sekund",
+          "values": "00 kuni 59",
+          "default": "praegune sekund"
+        },
+        {
+          "meaning": "AM/PM- või 24-tunnine vorming",
+          "values": "A AM, P PM, M 24-tunnine",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Valib konfiguratsioonisildil ja juhtpaneelil kuvatava kuupäeva ja kellaaja vormingu."
+    "summary": "Valib konfiguratsioonisildil ja juhtpaneelil kuvatava kuupäeva ja kellaaja vormingu.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "kuupäeva ja kellaaja kuvamisvorming",
+          "values": "0 versiooninumber, 1 MM/DD/YY 24-tunnine, 2 MM/DD/YY 12-tunnine, 3 DD/MM/YY 24-tunnine, 4 DD/MM/YY 12-tunnine",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Määrab reaalajakellast tuletatud teisese kella nihked. Nihked lähevad kaotsi, kui printer välja lülitatakse."
+    "summary": "Määrab reaalajakellast tuletatud teisese kella nihked. Nihked lähevad kaotsi, kui printer välja lülitatakse.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "nihutatav kella number",
+          "values": "2 teine, 3 kolmas",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "kuude nihe",
+          "values": "-32000 kuni 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "päevade nihe",
+          "values": "-32000 kuni 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "aastate nihe",
+          "values": "-32000 kuni 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "tundide nihe",
+          "values": "-32000 kuni 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "minutite nihe",
+          "values": "-32000 kuni 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "sekundite nihe",
+          "values": "-32000 kuni 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Määrab, millal ajaväljad tembeldatakse, ja valib päeva- ning kuunimede keele."
+    "summary": "Määrab, millal ajaväljad tembeldatakse, ja valib päeva- ning kuunimede keele.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "kella lugemise režiim",
+          "values": "S algusaeg, T praegune aeg, 0 kuni 999 lubatud hälve",
+          "default": "S"
+        },
+        {
+          "meaning": "päeva- ja kuunimede keel",
+          "values": "1 inglise, 2 hispaania, 3 prantsuse, 4 saksa, 5 itaalia, 6 kuni 18 veel keeli",
+          "default": "viimati ^KL-iga määratud"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Valib printeri juhtpaneeli kuvakeele mudelipõhisest loendist."
+    "summary": "Valib printeri juhtpaneeli kuvakeele mudelipõhisest loendist.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "juhtpaneeli kuvakeel",
+          "values": "1 kuni 20 keelekoodi",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Valib salvestatud kodeerimistabeli, mida kasutatakse välja andmete teisendamiseks enne printimist."
+    "summary": "Valib salvestatud kodeerimistabeli, mida kasutatakse välja andmete teisendamiseks enne printimist.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "kodeerimistabeli draiv",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "kodeerimistabeli failinimi",
+          "values": "1 kuni 8 tähtnumbrilist märki"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": "DAT fikseeritud väärtus",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Valib algupärase ZPL või ZPL II käsutõlgenduse, ühilduvuseks vanemate vormingutega."
+    "summary": "Valib algupärase ZPL või ZPL II käsutõlgenduse, ühilduvuseks vanemate vormingutega.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPL-interpretaatori versioon",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Omistab printerile võrgunime ja vabas vormis kirjelduse, mida mõlemat kuvatakse konfiguratsioonisildil ja printeri sisseehitatud veebilehel."
+    "summary": "Omistab printerile võrgunime ja vabas vormis kirjelduse, mida mõlemat kuvatakse konfiguratsioonisildil ja printeri sisseehitatud veebilehel.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "printeri võrgunimi",
+          "values": "kuni 16 tähtnumbrilist märki",
+          "default": "ZBR koos MAC-sufiksiga"
+        },
+        {
+          "meaning": "printeri kirjeldus konfiguratsioonisildil ja veebilehel",
+          "values": "kuni 35 tähtnumbrilist märki",
+          "default": "tühi"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Määrab juhtpaneeli seadistusmenüüde neljakohalise parooli."
+    "summary": "Määrab juhtpaneeli seadistusmenüüde neljakohalise parooli.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "neljakohaline juhtpaneeli parool",
+          "values": "0000 kuni 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "parooli tase, ainult S4M printer",
+          "values": "1 kuni 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Salvestab, taastab või lähtestab printeri konfiguratsiooniseaded."
+    "summary": "Salvestab, taastab või lähtestab printeri konfiguratsiooniseaded.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "konfiguratsioonitoiming",
+          "values": "A täielik tehaseseadistus, F tehaseseadistus, N võrk, R taaskutse, S salvesta"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Muudab vormingukäsu prefiksmärgi, tavaliselt katusmärgi, kas globaalselt või ainult praeguse vormingu jaoks."
+    "summary": "Muudab vormingukäsu prefiksmärgi, tavaliselt katusmärgi, kas globaalselt või ainult praeguse vormingu jaoks.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "uus vormingukäsu prefiks",
+          "values": "suvaline ASCII-märk"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Muudab parameetri eraldusmärgi, tavaliselt koma, kas globaalselt või ainult praeguse vormingu jaoks."
+    "summary": "Muudab parameetri eraldusmärgi, tavaliselt koma, kas globaalselt või ainult praeguse vormingu jaoks.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "uus parameetrite eraldusmärk",
+          "values": "suvaline ASCII-märk"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Muudab kohese käsu prefiksmärgi, tavaliselt tilde, kas globaalselt või ainult praeguse vormingu jaoks."
+    "summary": "Muudab kohese käsu prefiksmärgi, tavaliselt tilde, kas globaalselt või ainult praeguse vormingu jaoks.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "uus juhtkäsu prefiks",
+          "values": "suvaline ASCII-märk"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Kaardistab printeri mälutähed ümber, et salvestatud objektid saaksid säilitada oma senised nimed."
+    "summary": "Kaardistab printeri mälutähed ümber, et salvestatud objektid saaksid säilitada oma senised nimed.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "mäluseadme B alias",
+          "values": "B mälukaart, E Flash, R DRAM, A Compact Flash, NONE pole määratud",
+          "default": "B"
+        },
+        {
+          "meaning": "mäluseadme E alias",
+          "values": "B mälukaart, E Flash, R DRAM, A Compact Flash, NONE pole määratud",
+          "default": "E"
+        },
+        {
+          "meaning": "mäluseadme R alias",
+          "values": "B mälukaart, E Flash, R DRAM, A Compact Flash, NONE pole määratud",
+          "default": "R"
+        },
+        {
+          "meaning": "mäluseadme A alias",
+          "values": "B mälukaart, E Flash, R DRAM, A Compact Flash, NONE pole määratud",
+          "default": "A"
+        },
+        {
+          "meaning": "luba korduv aliase määramine",
+          "values": "M mitmik-alias",
+          "default": "puudub"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Kustutab ja lähtestab ühe välkmäluseadme. Voolukatkestus selle toimingu ajal võib salvestuse rikkuda."
+    "summary": "Kustutab ja lähtestab ühe välkmäluseadme. Voolukatkestus selle toimingu ajal võib salvestuse rikkuda.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "lähtestatav Flash-mäluseade",
+          "values": "A valikuline Flash, B Flash-kaart, E sisemine Flash",
+          "default": "tuleb määrata"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Määrab, kas madal akupinge peatab kaasaskantava printeri või lubab printimist jätkata."
+    "summary": "Määrab, kas madal akupinge peatab kaasaskantava printeri või lubab printimist jätkata.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "paus madala akupinge korral",
+          "values": "Y paus, N jätka printimist",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Käivitab printeril Zebra BASIC Interpreteri, valikuliselt käivitades salvestatud programmi."
+    "summary": "Käivitab printeril Zebra BASIC Interpreteri, valikuliselt käivitades salvestatud programmi.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "programmi salvestusasukoht",
+          "values": "R, E, B, A",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "käivitatava programmi nimi",
+          "values": "suvaline kehtiv programminimi",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "programmifaili laiend",
+          "values": "BAS või BAE"
+        },
+        {
+          "meaning": "konsooliväljundi juhtimine",
+          "values": "Y sees, N väljas",
+          "default": "Y"
+        },
+        {
+          "meaning": "käsu kaja juhtimine",
+          "values": "Y sees, N väljas",
+          "default": "Y"
+        },
+        {
+          "meaning": "ZBI-le eraldatud mälu",
+          "values": "20K kuni 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Seadistab lisapordi rakendaja või verifitseerija signaalide ja veakäsitluse jaoks."
+    "summary": "Seadistab lisapordi rakendaja või verifitseerija signaalide ja veakäsitluse jaoks.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "verifitseerija veakäsitluse režiim",
+          "values": "0 väljas, 1 kordustrükk vea korral, 2 maksimaalne läbilaskvus",
+          "default": "0"
+        },
+        {
+          "meaning": "applikaatori signaali ajastusrežiim",
+          "values": "0 väljas, 1 kuni 4 signaali ajastus",
+          "default": "0"
+        },
+        {
+          "meaning": "printimise alguse signaali ajastusrežiim",
+          "values": "p impulssrežiim, l nivoorežiim"
+        },
+        {
+          "meaning": "sildi veale reageerimise režiim",
+          "values": "e vearežiim, f vedamisrežiim",
+          "default": "f"
+        },
+        {
+          "meaning": "signaalipõhise kordustrüki režiim",
+          "values": "e lubatud, d keelatud",
+          "default": "d"
+        },
+        {
+          "meaning": "värvilindi lõppemise hoiatusrežiim",
+          "values": "e lubatud, d keelatud",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Valib jälgimiseks kasutatava kandjaanduri, tavaliselt peegeldava või läbivalgustava."
+    "summary": "Valib jälgimiseks kasutatava kandjaanduri, tavaliselt peegeldava või läbivalgustava.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "kasutatav sensor",
+          "values": "A automaatne, R peegeldav, T läbivalgustatav",
+          "default": "erineb printeri mudeli järgi"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Määrab tavalise või vähendatud punktitiheduse millimeetri kohta. Vähendatud tihedus kahekordistab vormingukoordinaatide füüsilise suuruse."
+    "summary": "Määrab tavalise või vähendatud punktitiheduse millimeetri kohta. Vähendatud tihedus kahekordistab vormingukoordinaatide füüsilise suuruse.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "printimistiheduse seadistus",
+          "values": "A tavaline tihedus, B poolitatud tihedus",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Lähtestab valitud printerikasutuse loenduri, sealhulgas kasutaja- või RFID-loendurid."
+    "summary": "Lähtestab valitud printerikasutuse loenduri, sealhulgas kasutaja- või RFID-loendurid.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "lähtestatav loendur",
+          "values": "1 loendur üks, 2 loendur kaks, 3 kehtiv RFID, 4 kehtetuks tunnistatud RFID, C prindipea puhastatud, R prindipea asendatud",
+          "default": "tuleb määrata"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Seadistab kõik jadapordi sideparameetrid ühe käsuga."
+    "summary": "Seadistab kõik jadapordi sideparameetrid ühe käsuga.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "jadapordi baudikiirus",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "andmebitte märgi kohta",
+          "values": "7 või 8",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "pariteedi seadistus",
+          "values": "N puudub, E paaris, O paaritu",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "stopbitid",
+          "values": "1 või 2",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "vookontrolli protokoll",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR ja Xon/Xoff",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "Zebra protokolli käepigistus",
+          "values": "A ACK/NAK, N puudub, Z zebra",
+          "default": "tuleb määrata"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Tühistab läbivalgustava anduri tundlikkuse või lähteväärtused, mille tavaliselt määrab kalibreerimine."
+    "summary": "Tühistab läbivalgustava anduri tundlikkuse või lähteväärtused, mille tavaliselt määrab kalibreerimine.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "muudetav sensoriseadistus",
+          "values": "1 heledus, 2 baasjoon",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "valitud seadistuse väärtus",
+          "values": "0 kuni 196",
+          "default": "tuleb määrata"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Alustab printimist enne, kui kogu vorming on saabunud, et parandada läbilaskvust keerukate siltide korral."
+    "summary": "Alustab printimist enne, kui kogu vorming on saabunud, et parandada läbilaskvust keerukate siltide korral.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "punktirida, kust printimine algab",
+          "values": "0 kuni 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Keelab kindla ZebraNet hoiatustingimuse ja sihtkoha."
+    "summary": "Keelab kindla ZebraNet hoiatustingimuse ja sihtkoha.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "peatatav alarmitingimus",
+          "values": "A kuni O ja Q kuni V igaüks üks tingimus, W kõik RFID-printeritel, * kõik teistel"
+        },
+        {
+          "meaning": "peatatav alarmi sihtkoht",
+          "values": "A jadaport, B parallport, C e-post, D TCP/IP, E UDP/IP, F SNMP-trap, * kõik"
+        },
+        {
+          "meaning": "peata või jätka need alarmid",
+          "values": "Y peata sõnumid, N alusta sõnumeid",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Määrab põletusenergia arvutustes kasutatava prindipea takistuse väärtuse."
+    "summary": "Määrab põletusenergia arvutustes kasutatava prindipea takistuse väärtuse.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "prindipea takistuse väärtus",
+          "values": "0488 kuni 1175",
+          "default": "viimati püsivalt salvestatud väärtus"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Määrab kandjaanduri lävendid, sildipikkuse ja LED-tugevused, mille tavaliselt määrab kalibreerimine."
+    "summary": "Määrab kandjaanduri lävendid, sildipikkuse ja LED-tugevused, mille tavaliselt määrab kalibreerimine.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "vahelünga sensori väärtus",
+          "values": "0 kuni 100",
+          "default": "näidatud sensoriprofiilil või konfiguratsioonisildil"
+        },
+        {
+          "meaning": "meediumisensori väärtus",
+          "values": "0 kuni 100",
+          "default": "näidatud sensoriprofiilil või konfiguratsioonisildil"
+        },
+        {
+          "meaning": "värvilindisensori väärtus",
+          "values": "0 kuni 100",
+          "default": "näidatud sensoriprofiilil või konfiguratsioonisildil"
+        },
+        {
+          "meaning": "sildi pikkus punktides",
+          "values": "1 kuni 32000",
+          "default": "kalibreerimisest saadud väärtus"
+        },
+        {
+          "meaning": "meediumisensori LED-intensiivsus",
+          "values": "0 kuni 255",
+          "default": "kalibreerimisest saadud väärtus"
+        },
+        {
+          "meaning": "värvilindisensori LED-intensiivsus",
+          "values": "0 kuni 255",
+          "default": "kalibreerimisest saadud väärtus"
+        },
+        {
+          "meaning": "markeri tuvastuse väärtus",
+          "values": "0 kuni 100",
+          "default": "kalibreerimisest saadud väärtus"
+        },
+        {
+          "meaning": "markermeediumi tuvastuse väärtus",
+          "values": "0 kuni 100",
+          "default": "kalibreerimisest saadud väärtus"
+        },
+        {
+          "meaning": "markerituvastuse LED väärtus",
+          "values": "0 kuni 255",
+          "default": "kalibreerimisest saadud väärtus"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Lubab kindla ZebraNet hoiatustingimuse ja sihtkoha."
+    "summary": "Lubab kindla ZebraNet hoiatustingimuse ja sihtkoha.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "alarmitingimuse tüüp",
+          "values": "A kuni V igaüks üks tingimus, * kõik",
+          "default": "ignoreeritakse, kui puudub või on kehtetu"
+        },
+        {
+          "meaning": "alarmi sihtkoha tüüp",
+          "values": "A jadaport, B parallport, C e-post, D TCP/IP, E UDP/IP, F SNMP-trap",
+          "default": "ignoreeritakse, kui puudub või on kehtetu"
+        },
+        {
+          "meaning": "luba alarm tingimuse tekkimisel",
+          "values": "N ei, Y jah",
+          "default": "Y või eelmine väärtus"
+        },
+        {
+          "meaning": "luba alarm tingimuse kadumisel",
+          "values": "N ei, Y jah",
+          "default": "N või eelmine väärtus"
+        },
+        {
+          "meaning": "alarmi sihtaadress",
+          "values": "e-posti aadress, IP-aadress või SNMP-sihtmärk",
+          "default": "ignoreeritakse, kui puudub või on kehtetu"
+        },
+        {
+          "meaning": "alarmi pordi number",
+          "values": "0 kuni 65535",
+          "default": "ignoreeritakse, kui puudub või on kehtetu"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopeerib salvestatud objektid printeri mäluseadmete vahel, toetades gruppide jaoks metamärke."
+    "summary": "Kopeerib salvestatud objektid printeri mäluseadmete vahel, toetades gruppide jaoks metamärke.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "lähtesalvestusseade",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "lähteobjekti nimi",
+          "values": "suvaline olemasolev objektinimi",
+          "default": "* valib kõik objektid"
+        },
+        {
+          "meaning": "lähteobjekti laiend",
+          "values": "suvaline kehtiv faililaiend",
+          "default": "* valib kõik laiendid"
+        },
+        {
+          "meaning": "sihtsalvestusseade",
+          "values": "R, E, B, A",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "objekti nimi sihtkohas",
+          "values": "kuni 8 tähtnumbrilist märki",
+          "default": "lähteobjekti nimi"
+        },
+        {
+          "meaning": "sihtobjekti laiend",
+          "values": "suvaline kehtiv faililaiend",
+          "default": "lähteobjekti laiend"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Prindib kataloogisildi salvestatud objektide, residentsete fontide või saadaolevate vöötkoodide kohta."
+    "summary": "Prindib kataloogisildi salvestatud objektide, residentsete fontide või saadaolevate vöötkoodide kohta.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "loendi lähteseade",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "objektinime filter",
+          "values": "1 kuni 8 märki, metamärk * või ?",
+          "default": "*"
+        },
+        {
+          "meaning": "laiendifilter",
+          "values": "suvaline kehtiv laiend, metamärk *",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Prindib sildile soovitud hooldusteabe, näiteks läbisõidu- või prindipea ajaloo."
+    "summary": "Prindib sildile soovitud hooldusteabe, näiteks läbisõidu- või prindipea ajaloo.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "prinditava teenuseraporti tüüp",
+          "values": "ES olek, HA riistvaraaadress, JT prindipea test, MA alarmiseadistused, MI sõnumid, OD läbisõidumõõdik, PH prindipea eluiga, PP Plug and Play, SN seerianumber, UI USB-ID",
+          "default": "tuleb määrata"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Seadistab KR403 kiosk-esitaja sätted, sealhulgas lõikepikkuse, lõikeäärise, tagasitõmbe ooteaja ja aasa pikkuse."
+    "summary": "Seadistab KR403 kiosk-esitaja sätted, sealhulgas lõikepikkuse, lõikeäärise, tagasitõmbe ooteaja ja aasa pikkuse.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "kioski lõikekogus",
+          "values": "0 tavaline lõige, 10 kuni 60 osaline mm",
+          "default": "0"
+        },
+        {
+          "meaning": "kioski lõikevaru millimeetrites",
+          "values": "2 kuni 9",
+          "default": "9"
+        },
+        {
+          "meaning": "kioski esitamistüüp pärast printimist",
+          "values": "0 väljuta, 1 tõmba tagasi, 2 toiming puudub",
+          "default": "0"
+        },
+        {
+          "meaning": "kioski esitamise aegumine sekundites",
+          "values": "0 kuni 300, 0 aegumist ei toimu",
+          "default": "0"
+        },
+        {
+          "meaning": "presenteri aasa pikkus millimeetrites",
+          "values": "0 otse läbi, 3 kuni 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Määrab sildipikkuse ja anduri läve dünaamilise ümberkalibreerimise pärast sisselülitamist või kandjaosakonna avamist."
+    "summary": "Määrab sildipikkuse ja anduri läve dünaamilise ümberkalibreerimise pärast sisselülitamist või kandjaosakonna avamist.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "luba dünaamiline pikkuse kalibreerimine",
+          "values": "Y luba, N keela",
+          "default": "Y"
+        },
+        {
+          "meaning": "luba dünaamiline läve kalibreerimine",
+          "values": "Y luba, N keela",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Käivitab utiliseerimisrežiimi, et valmistada printer ette edasimüügiks või ringlussevõtuks."
+    "summary": "Käivitab utiliseerimisrežiimi, et valmistada printer ette edasimüügiks või ringlussevõtuks.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "printeri seerianumber",
+          "values": "tähtnumbriline string",
+          "default": "tuleb määrata"
+        },
+        {
+          "meaning": "Flash-kustutuse käikude arv",
+          "values": "0 kuni 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Määrab automaatse uinaku pärast jõudeperioodi, koos suvanditega järjekorras olevate siltide jaoks."
+    "summary": "Määrab automaatse uinaku pärast jõudeperioodi, koos suvanditega järjekorras olevate siltide jaoks.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "jõudeoleku sekundid enne automaatset väljalülitumist",
+          "values": "0 kuni 999999, 0 keelab väljalülitumise",
+          "default": "viimati salvestatud väärtus või 0"
+        },
+        {
+          "meaning": "sildi olek väljalülitamisel",
+          "values": "Y lülitu välja järjekorraga, N lõpeta järjekord enne",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Väljutab või tõmbab tagasi KR403 kiosk-esitaja poolt juba esitatud kandja."
+    "summary": "Väljutab või tõmbab tagasi KR403 kiosk-esitaja poolt juba esitatud kandja.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "kioski esitamistoiming",
+          "values": "0 väljuta, 1 tõmba tagasi, 2 kasuta ^KV seadistust"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Tagastab printeri mälust salvestatud ZPL vormingu hostile."
+    "summary": "Tagastab printeri mälust salvestatud ZPL vormingu hostile.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "otsitav mäluseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "salvestatud vormingu nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": ".ZPL fikseeritud väärtus",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Tagastab printeri mälust salvestatud graafilise pildi hostile."
+    "summary": "Tagastab printeri mälust salvestatud graafilise pildi hostile.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "otsitav mäluseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "otsingu prioriteet"
+        },
+        {
+          "meaning": "üleslaaditava graafika nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "faililaiend",
+          "values": ".GRF fikseeritud väärtus",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Tagastab hostile soovitud oleku-, identifitseerimis-, läbisõidu- või hooldusandmed."
+    "summary": "Tagastab hostile soovitud oleku-, identifitseerimis-, läbisõidu- või hooldusandmed.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "tagastatavate andmete valikukriteerium",
+          "values": "ES olek, HA juhtmega MAC, JT prindipea test, MA hooldusalarmid, MI hooldusteave, OD läbisõidumõõdik, PH prindipea eluiga, PP Plug and Play, SN seerianumber, UI USB tootekood"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Tagastab hostile andmed nummerdatud väljast, valikulise baidilimiidiga."
+    "summary": "Tagastab hostile andmed nummerdatud väljast, valikulise baidilimiidiga.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "^FN-iga määratud väljanumber",
+          "values": "0 kuni 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "tagastatavate baitide arv",
+          "values": "1 kuni 256",
+          "default": "64"
+        },
+        {
+          "meaning": "päisetekst enne andmeid",
+          "values": "0 kuni 3072 baiti",
+          "default": "päist pole"
+        },
+        {
+          "meaning": "lõputekst pärast andmeid",
+          "values": "0 kuni 3072 märki"
+        },
+        {
+          "meaning": "vastuse saatmise sagedus",
+          "values": "F vorming, L silt",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Tagastab mäluseadme kataloogiloendi, sealhulgas allesjäänud vaba ruumi."
+    "summary": "Tagastab mäluseadme kataloogiloendi, sealhulgas allesjäänud vaba ruumi.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "loendatav mäluseade",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash, Z muu",
+          "default": "R"
+        },
+        {
+          "meaning": "objektinime filter",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "*"
+        },
+        {
+          "meaning": "laiendifilter",
+          "values": "suvaline Zebra faililaiend",
+          "default": "*"
+        },
+        {
+          "meaning": "loendi paigutus",
+          "values": "c veerg, d vaikeväärtus",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Tagastab salvestatud graafika hostile allalaaditavas failivormingus."
+    "summary": "Tagastab salvestatud graafika hostile allalaaditavas failivormingus.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "objekti mäluseadme asukoht",
+          "values": "R DRAM, E Flash, B mälukaart, A Compact Flash",
+          "default": "otsingu prioriteet"
+        },
+        {
+          "meaning": "üleslaaditava objekti nimi",
+          "values": "1 kuni 8 tähtnumbrilist märki",
+          "default": "nimi on nõutav"
+        },
+        {
+          "meaning": "üleslaadimise vorming",
+          "values": "G toores bitmap, P pakitud bitmap",
+          "default": "salvestatud vorming"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Tagastab printeri kirjelduse XML-kujul seadete, objektide kataloogi või oleku jaoks."
+    "summary": "Tagastab printeri kirjelduse XML-kujul seadete, objektide kataloogi või oleku jaoks.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "tagastatava kirjelduse tüüp",
+          "values": "a kõik, f vorming, l kataloog, o objekt, r olek"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Loeb või kirjutab RFID-silti, sealhulgas andmevormingu, mälupanga ja juurdepääsuparooli."
+    "summary": "Loeb või kirjutab RFID-silti, sealhulgas andmevormingu, mälupanga ja juurdepääsuparooli.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "toiming",
+          "values": "W kirjuta, L kirjuta ja lukusta, R loe, P loe parool, S määra parool",
+          "default": "W"
+        },
+        {
+          "meaning": "andmevorming",
+          "values": "A ASCII, H hex, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "parooli lipp või algusbloki number",
+          "values": "P parool järgneb, 0 kuni n plokk",
+          "default": "0"
+        },
+        {
+          "meaning": "loetavate või kirjutatavate baitide arv",
+          "values": "1 kuni n, maksimaalselt tagi kohta",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen 2 mälupank",
+          "values": "E EPC 96-bitti, A EPC automaatsed PC-bitid, 0 reserveeritud, 1 EPC, 2 TID, 3 kasutaja",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Määrab RFID EPC väljade sildile kodeerimiseks kasutatava bitipaigutuse."
+    "summary": "Määrab RFID EPC väljade sildile kodeerimiseks kasutatava bitipaigutuse.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "partitsioonide kogusuurus bittides",
+          "values": "1 kuni tagi bitisuuruseni",
+          "default": "96"
+        },
+        {
+          "meaning": "bittide arv partitsiooni kohta, kuni 16 partitsiooni",
+          "values": "1 kuni 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Määrab järgnevate siltide RFID sätted, sealhulgas sildi tüübi, programmeerimispositsiooni, veakäsitluse ja VOID-riba pikkuse."
+    "summary": "Määrab järgnevate siltide RFID sätted, sealhulgas sildi tüübi, programmeerimispositsiooni, veakäsitluse ja VOID-riba pikkuse.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "tagi tüüp",
+          "values": "ainult 8 Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "tagi programmeerimispositsioon",
+          "values": "punktid absoluutväärtuses, F0 kuni Fxxx edasi, B0 kuni B30 tagasi, up järgmine, down eelmine",
+          "default": "printeri seadistus"
+        },
+        {
+          "meaning": "VOID-väljatrüki pikkus",
+          "values": "0 kuni sildi pikkuseni",
+          "default": "sildi pikkus"
+        },
+        {
+          "meaning": "siltide arv, mida ebaõnnestumisel korratakse",
+          "values": "1 kuni 10",
+          "default": "3"
+        },
+        {
+          "meaning": "veakäsitlus pärast korduskatseid",
+          "values": "N toiming puudub, P paus, E vearežiim",
+          "default": "N"
+        },
+        {
+          "meaning": "applikaatorile saadetud signaalid",
+          "values": "S üksiksignaal, D kaksiksignaal",
+          "default": "S"
+        },
+        {
+          "meaning": "reserveeritud, ei kasutata",
+          "values": "puudub"
+        },
+        {
+          "meaning": "VOID-siltide printimiskiirus",
+          "values": "suvaline kehtiv printimiskiirus",
+          "default": "maksimaalne printimiskiirus"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Koostab EPC seerianumbri sildi ID põhjal ja kirjutab selle EPC madalatesse bittidesse."
+    "summary": "Koostab EPC seerianumbri sildi ID põhjal ja kirjutab selle EPC madalatesse bittidesse.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "seerianumbri binaarne prefiks",
+          "values": "ASCII 1-d ja 0-d, kuni 38 bitti",
+          "default": "kiibi MDID-st sõltuv"
+        },
+        {
+          "meaning": "seerianumbriväljale viitav erimärk",
+          "values": "suvaline ASCII, välja arvatud käsu-, juht-, eraldus- ja RTC-märk",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Määrab RFID lugemis- ja kirjutamisvõimsuse, kui kalibreerimine ei anna kasutatavaid väärtusi."
+    "summary": "Määrab RFID lugemis- ja kirjutamisvõimsuse, kui kalibreerimine ei anna kasutatavaid väärtusi.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "lugemisvõimsuse tase",
+          "values": "0 kuni 30, või H kõrge, M keskmine, L madal",
+          "default": "printeri seadistus"
+        },
+        {
+          "meaning": "kirjutusvõimsuse tase",
+          "values": "0 kuni 30, või H kõrge, M keskmine, L madal",
+          "default": "printeri seadistus"
+        },
+        {
+          "meaning": "antennielemendi valik",
+          "values": "printerispetsiifiline ruudustik, A1 kuni F4",
+          "default": "printeri seadistus"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Lukustab RFID-sildi mälu, kas tühistatavalt või jäädavalt, et vältida hilisemaid kirjutamisi."
+    "summary": "Lukustab RFID-sildi mälu, kas tühistatavalt või jäädavalt, et vältida hilisemaid kirjutamisi.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "kustutusparooli lukustusolek",
+          "values": "U ava, L lukusta, O püsivalt ava, P püsivalt lukusta"
+        },
+        {
+          "meaning": "juurdepääsuparooli lukustusolek",
+          "values": "U ava, L lukusta, O püsivalt ava, P püsivalt lukusta"
+        },
+        {
+          "meaning": "EPC-mälupanga lukustusolek",
+          "values": "U ava, L lukusta, O püsivalt ava, P püsivalt lukusta"
+        },
+        {
+          "meaning": "kasutajamälupanga lukustusolek",
+          "values": "U ava, L lukusta, O püsivalt ava, P püsivalt lukusta"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Käivitab RFID kalibreerimise ja tagastab hostile positsiooni, antenni ja võimsuse seaded."
+    "summary": "Käivitab RFID kalibreerimise ja tagastab hostile positsiooni, antenni ja võimsuse seaded.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "tekst enne tulemustabelit",
+          "values": "suvaline string alla 65 märgi",
+          "default": "algus"
+        },
+        {
+          "meaning": "tekst pärast tulemustabelit",
+          "values": "suvaline string alla 65 märgi",
+          "default": "lõpp"
+        },
+        {
+          "meaning": "kalibreerimise algpositsioon",
+          "values": "F0 kuni Fxxx edasi, B0 kuni B30 tagasi",
+          "default": "printeri seadistus"
+        },
+        {
+          "meaning": "kalibreerimise lõpp-positsioon",
+          "values": "F0 kuni Fxxx edasi, B0 kuni B30 tagasi, A automaatne",
+          "default": "printeri seadistus"
+        },
+        {
+          "meaning": "automaatne või käsitsi antenni ja võimsuse valik",
+          "values": "A automaatne, M käsitsi",
+          "default": "A"
+        },
+        {
+          "meaning": "lugemis-kirjutamisvõimsuse vahemiku algus",
+          "values": "0 kuni 30",
+          "default": "0"
+        },
+        {
+          "meaning": "lugemis-kirjutamisvõimsuse vahemiku lõpp",
+          "values": "0 kuni 30",
+          "default": "maksimaalne võimsus"
+        },
+        {
+          "meaning": "antennivahemiku algus",
+          "values": "mudelist sõltuv, enamasti A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "antennivahemiku lõpp",
+          "values": "mudelist sõltuv, kuni E4",
+          "default": "printeri seadistus"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Valib, kas printer kontrollib käivitumisel juhtmega prindiserveri olemasolu."
+    "summary": "Valib, kas printer kontrollib käivitumisel juhtmega prindiserveri olemasolu.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "juhtmega printserveri kontroll alglaadimisel",
+          "values": "C kontrolli, S jäta vahele",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Valib peamise võrguseadme, juhtmega või juhtmevaba."
+    "summary": "Valib peamise võrguseadme, juhtmega või juhtmevaba.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "esmane võrguseade",
+          "values": "1 juhtmega esmane, 2 WiFi esmane",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresseerib ühe printeri vanemal RS-485 mitmepunktiliinil võrgu-ID järgi."
+    "summary": "Adresseerib ühe printeri vanemal RS-485 mitmepunktiliinil võrgu-ID järgi.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "pöörduv printeri võrgu ID",
+          "values": "001 kuni 999",
+          "default": "000 puudub"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Omistab võrgu-ID, mida kasutatakse printeri adresseerimiseks vanemal RS-485 mitmepunktiliinil."
+    "summary": "Omistab võrgu-ID, mida kasutatakse printeri adresseerimiseks vanemal RS-485 mitmepunktiliinil.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "printerile määratud võrgu ID",
+          "values": "001 kuni 999",
+          "default": "000 puudub"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Määrab printeri SNMP identiteedi ja kogukonnastringid."
+    "summary": "Määrab printeri SNMP identiteedi ja kogukonnastringid.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP süsteeminimi",
+          "values": "kuni 17 märki"
+        },
+        {
+          "meaning": "SNMP süsteemikontakt",
+          "values": "kuni 50 märki"
+        },
+        {
+          "meaning": "SNMP süsteemi asukoht",
+          "values": "kuni 50 märki"
+        },
+        {
+          "meaning": "SNMP get-community nimi",
+          "values": "kuni 19 märki",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set-community nimi",
+          "values": "kuni 19 märki",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap-community nimi",
+          "values": "kuni 20 märki",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Valib, kas käivitusaegsed võrguseaded tulevad printerist või ühendatud prindiserverist."
+    "summary": "Valib, kas käivitusaegsed võrguseaded tulevad printerist või ühendatud prindiserverist.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "alglaadimise seadistuste esmane allikas",
+          "values": "P printer, M printserver",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Seadistab prindiserveri e-posti hoiatuste jaoks SMTP-serveri ja domeeni sätted."
+    "summary": "Seadistab prindiserveri e-posti hoiatuste jaoks SMTP-serveri ja domeeni sätted.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTP-serveri aadress",
+          "values": "IPv4-aadress"
+        },
+        {
+          "meaning": "printserveri domeeninimi",
+          "values": "domeeninimi"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Määrab, kui kaua autenditud IP-aadress pääseb printeri veebilehtedele ligi enne uut autentimist."
+    "summary": "Määrab, kui kaua autenditud IP-aadress pääseb printeri veebilehtedele ligi enne uut autentimist.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "veebilehe autentimise aegumine",
+          "values": "0 kuni 255 minutit",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Määrab prindiserveri DHCP kliendiidentifikaatori vormi ja väärtuse."
+    "summary": "Määrab prindiserveri DHCP kliendiidentifikaatori vormi ja väärtuse.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "kliendi identifikaatori režiim",
+          "values": "0 keelatud, 1 MAC-aadress, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "seade, millele identifikaator kehtib",
+          "values": "0 kõik, 1 WiFi, 2 väline juhtmega, 3 sisemine juhtmega",
+          "default": "1"
+        },
+        {
+          "meaning": "identifikaatori prefiks",
+          "values": "11 ASCII- või 22 hex-märki"
+        },
+        {
+          "meaning": "identifikaatori sufiks",
+          "values": "kuni 60 ASCII- või 120 hex-märki"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Seadistab printeri võrguliidesele IP-aadressi, alamvõrgumaski ja lüüsi."
+    "summary": "Seadistab printeri võrguliidesele IP-aadressi, alamvõrgumaski ja lüüsi.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "muudetav seade",
+          "values": "1 väline juhtmega, 2 sisemine juhtmega, 3 WiFi"
+        },
+        {
+          "meaning": "IP-aadressi tuvastamise meetod",
+          "values": "A kõik, B BOOTP, C DHCP ja BOOTP, D DHCP, G ainult gleaning, R RARP, P püsiv",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-aadress",
+          "values": "IPv4-aadress"
+        },
+        {
+          "meaning": "alamvõrgu mask",
+          "values": "IPv4 alamvõrgu mask"
+        },
+        {
+          "meaning": "vaikelüüs",
+          "values": "IPv4-aadress"
+        },
+        {
+          "meaning": "WINS-serveri aadress",
+          "values": "IPv4-aadress"
+        },
+        {
+          "meaning": "ühenduse aegumise kontroll",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "ühenduse aegumise väärtus",
+          "values": "0 kuni 9999 sekundit",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-leviedastuse intervall",
+          "values": "0 kuni 30 minutit",
+          "default": "0 puudub"
+        },
+        {
+          "meaning": "raw-pordi baasnumber",
+          "values": "1 kuni 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Seadistab vanemale püsivarale juhtmega prindiserveri IP sätted, ajapiirangud ja toorpordi."
+    "summary": "Seadistab vanemale püsivarale juhtmega prindiserveri IP sätted, ajapiirangud ja toorpordi.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "IP-aadressi tuvastamise meetod",
+          "values": "A kõik, B BOOTP, C DHCP ja BOOTP, D DHCP, G ainult gleaning, R RARP, P püsiv",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-aadress",
+          "values": "IPv4-aadress"
+        },
+        {
+          "meaning": "alamvõrgu mask",
+          "values": "IPv4 alamvõrgu mask"
+        },
+        {
+          "meaning": "vaikelüüs",
+          "values": "IPv4-aadress"
+        },
+        {
+          "meaning": "WINS-serveri aadress",
+          "values": "IPv4-aadress"
+        },
+        {
+          "meaning": "ühenduse aegumise kontroll",
+          "values": "Y jah, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "ühenduse aegumise väärtus",
+          "values": "0 kuni 9999 sekundit",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-leviedastuse intervall",
+          "values": "0 kuni 30 minutit",
+          "default": "0 puudub"
+        },
+        {
+          "meaning": "raw-pordi baasnumber",
+          "values": "1 kuni 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Valib juhtmevaba raadio vastuvõtu- ja saateantennid."
+    "summary": "Valib juhtmevaba raadio vastuvõtu- ja saateantennid.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "vastuvõtuantenn",
+          "values": "D diversity, L vasak, R parem",
+          "default": "D"
+        },
+        {
+          "meaning": "saateantenn",
+          "values": "D diversity, L vasak, R parem",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Seadistab vananenud WEP turbe ja võtmematerjali vanemale juhtmevabale püsivarale."
+    "summary": "Seadistab vananenud WEP turbe ja võtmematerjali vanemale juhtmevabale püsivarale.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "krüpteerimisrežiim",
+          "values": "OFF puudub, 40 40-bit, 128 128-bit",
+          "default": "OFF"
+        },
+        {
+          "meaning": "krüptovõtme indeks",
+          "values": "1 kuni 4",
+          "default": "1"
+        },
+        {
+          "meaning": "autentimistüüp",
+          "values": "O avatud süsteem, S jagatud võti",
+          "default": "O"
+        },
+        {
+          "meaning": "krüptovõtme salvestusvorming",
+          "values": "H hex, S string",
+          "default": "H"
+        },
+        {
+          "meaning": "krüptovõti 1",
+          "values": "hex-paarid või tähtnumbriline string"
+        },
+        {
+          "meaning": "krüptovõti 2",
+          "values": "hex-paarid või tähtnumbriline string"
+        },
+        {
+          "meaning": "krüptovõti 3",
+          "values": "hex-paarid või tähtnumbriline string"
+        },
+        {
+          "meaning": "krüptovõti 4",
+          "values": "hex-paarid või tähtnumbriline string"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Seadistab vananenud Cisco LEAP autentimise vanemale juhtmevabale püsivarale."
+    "summary": "Seadistab vananenud Cisco LEAP autentimise vanemale juhtmevabale püsivarale.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP-režiim",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "kasutajanimi",
+          "values": "1 kuni 32 märki",
+          "default": "user"
+        },
+        {
+          "meaning": "parool",
+          "values": "1 kuni 32 märki",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Määrab printeri juhtpaneeli juhtmevabade sätete parooli."
+    "summary": "Määrab printeri juhtpaneeli juhtmevabade sätete parooli.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "vana WiFi-parool",
+          "values": "0000 kuni 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "uus WiFi-parool",
+          "values": "0000 kuni 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Seadistab 802.11b andmekiirused ja saatevõimsuse vanematel juhtmevaba prindiserveritel."
+    "summary": "Seadistab 802.11b andmekiirused ja saatevõimsuse vanematel juhtmevaba prindiserveritel.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "saatekiirus 1 Mbit/s",
+          "values": "Y sees, N väljas"
+        },
+        {
+          "meaning": "saatekiirus 2 Mbit/s",
+          "values": "Y sees, N väljas"
+        },
+        {
+          "meaning": "saatekiirus 5,5 Mbit/s",
+          "values": "Y sees, N väljas"
+        },
+        {
+          "meaning": "saatekiirus 11 Mbit/s",
+          "values": "Y sees, N väljas"
+        },
+        {
+          "meaning": "saatevõimsus",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Seadistab juhtmevaba võrgu nime, raadiorežiimi, preambuli pikkuse ja keep-alive käitumise."
+    "summary": "Seadistab juhtmevaba võrgu nime, raadiorežiimi, preambuli pikkuse ja keep-alive käitumise.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID väärtus",
+          "values": "kuni 32 märki",
+          "default": "125"
+        },
+        {
+          "meaning": "töörežiim",
+          "values": "I infrastruktuur, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "raadiokaardi preambuli pikkus",
+          "values": "L pikk, S lühike",
+          "default": "L"
+        },
+        {
+          "meaning": "WiFi-pulsi lubamine",
+          "values": "0 keelatud, 1 lubatud",
+          "default": "1"
+        },
+        {
+          "meaning": "WiFi-pulsi intervall",
+          "values": "5 kuni 300 sekundit",
+          "default": "15"
+        },
+        {
+          "meaning": "kanalimask",
+          "values": "4 hex-numbrit prefiksiga 0x",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "rahvusvaheline režiim",
+          "values": "0 keelatud, 1 lubatud",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Seadistab juhtmevaba turberežiimi, võtmed ja mandaadid ühe käsuga."
+    "summary": "Seadistab juhtmevaba turberežiimi, võtmed ja mandaadid ühe käsuga.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "turvatüübi kood",
+          "values": "01 puudub, 02 WEP 40, 03 WEP 128, 04 kuni 08 EAP-tüübid, 09 WPA PSK, 10 kuni 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "WEP-krüptovõtme indeks",
+          "values": "1 kuni 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP-autentimistüüp",
+          "values": "O avatud süsteem, S jagatud võti",
+          "default": "O"
+        },
+        {
+          "meaning": "WEP-võtme salvestusvorming",
+          "values": "H hex, S string",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP-krüptovõti 1",
+          "values": "hex-paarid või tähtnumbriline string"
+        },
+        {
+          "meaning": "WEP-krüptovõti 2",
+          "values": "hex-paarid või tähtnumbriline string"
+        },
+        {
+          "meaning": "WEP-krüptovõti 3",
+          "values": "hex-paarid või tähtnumbriline string"
+        },
+        {
+          "meaning": "WEP-krüptovõti 4",
+          "values": "hex-paarid või tähtnumbriline string"
+        },
+        {
+          "meaning": "turvatüübi kasutaja ID",
+          "values": "suvaline string",
+          "default": "user"
+        },
+        {
+          "meaning": "turvatüübi parool",
+          "values": "suvaline string",
+          "default": "password"
+        },
+        {
+          "meaning": "privaatvõtme valikuline parool",
+          "values": "suvaline string"
+        },
+        {
+          "meaning": "Kerberose domeen",
+          "values": "suvaline string",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberose võtmejaotuskeskus",
+          "values": "suvaline string",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "eeljagatud võtme väärtus",
+          "values": "vähemalt 64 hex-numbrit"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

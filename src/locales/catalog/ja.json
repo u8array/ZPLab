@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "印字可能幅をドット単位で指定する。この幅を超えた内容はプリンタ側で切り捨てられる。"
+    "summary": "印字可能幅をドット単位で指定する。この幅を超えた内容はプリンタ側で切り捨てられる。",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "ドット単位の印字幅",
+          "values": "2 からラベル幅まで",
+          "default": "直前に保存した値"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "ラベル長をドット単位で指定し、印字フォーマットの終端位置を決める。"
+    "summary": "ラベル長をドット単位で指定し、印字フォーマットの終端位置を決める。",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "ドット単位のラベル長",
+          "values": "1 から 32000",
+          "default": "プリンターの設定"
+        },
+        {
+          "meaning": "すべての用紙に適用するか",
+          "values": "N 連続用紙のみ、Y すべての用紙",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "ラベルのホーム位置を移動し、以降のフィールド座標が基準とする原点を変更する。"
+    "summary": "ラベルのホーム位置を移動し、以降のフィールド座標が基準とする原点を変更する。",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "ラベルホーム位置のX座標",
+          "values": "0 から 32000",
+          "default": "0 または直前に保存した値"
+        },
+        {
+          "meaning": "ラベルホーム位置のY座標",
+          "values": "0 から 32000",
+          "default": "0 または直前に保存した値"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "旧来のZebraフォーマットとの互換性のため、フィールド位置に水平方向のオフセットを加える。"
+    "summary": "旧来のZebraフォーマットとの互換性のため、フィールド位置に水平方向のオフセットを加える。",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "すべてのフィールド位置の左方向シフト",
+          "values": "-9999 から 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "用紙の上端を基準に、フォーマット全体へ垂直方向のオフセットを加える。"
+    "summary": "用紙の上端を基準に、フォーマット全体へ垂直方向のオフセットを加える。",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "ドット行単位でフォーマット全体を上下に移動",
+          "values": "-120 から 120、XiIIIPlusでは600 dpiのとき-240 から 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "座標の単位をドット、インチ、ミリメートルのいずれかに設定する。異なる印字解像度の間でフォーマットを拡大縮小することもできる。"
+    "summary": "座標の単位をドット、インチ、ミリメートルのいずれかに設定する。異なる印字解像度の間でフォーマットを拡大縮小することもできる。",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "以降のフィールドの座標単位",
+          "values": "D ドット、I インチ、M ミリメートル",
+          "default": "D"
+        },
+        {
+          "meaning": "dpi単位のフォーマット基準解像度",
+          "values": "150、200、300"
+        },
+        {
+          "meaning": "変換先の解像度",
+          "values": "300、600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "印字後の用紙処理モードを設定する。ティアオフ、ピールオフ、カッター、巻き取り、アプリケータの各モードを選択できる。"
+    "summary": "印字後の用紙処理モードを設定する。ティアオフ、ピールオフ、カッター、巻き取り、アプリケータの各モードを選択できる。",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "印字後の用紙処理モード",
+          "values": "T ティアオフ、P ピールオフ、R 巻き取り、A アプリケータ、C カッター、D 遅延カッター、F RFID、K キオスク",
+          "default": "プリンターの設定"
+        },
+        {
+          "meaning": "次のラベルの事前剥離",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "熱転写モードとダイレクトサーマルモードを切り替える。セットした用紙がリボンを使うかどうかに合わせて選択する。"
+    "summary": "熱転写モードとダイレクトサーマルモードを切り替える。セットした用紙がリボンを使うかどうかに合わせて選択する。",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "プリンターが使用する用紙種別",
+          "values": "T 熱転写、D ダイレクトサーマル"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "印字枚数、一時停止やカットの区切り単位、連番値ごとの複製枚数を設定する。"
+    "summary": "印字枚数、一時停止やカットの区切り単位、連番値ごとの複製枚数を設定する。",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "印字する合計ラベル数",
+          "values": "1 から 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "一時停止までの印字枚数",
+          "values": "1 から 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "各シリアル番号の複製数",
+          "values": "0 から 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "一時停止回数の上書き",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        },
+        {
+          "meaning": "無効化されたRFIDラベルの後にカット",
+          "values": "N いいえ、Y はい",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "以降のフィールドで前景と背景を入れ替え、反転印字にする。"
+    "summary": "以降のフィールドで前景と背景を入れ替え、反転印字にする。",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "以降のフィールドの印字色を反転",
+          "values": "N いいえ、Y はい",
+          "default": "N または直前に保存した値"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "ラベルフォーマット全体を180度回転させる。"
+    "summary": "ラベルフォーマット全体を180度回転させる。",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "ラベルを上下反転して印字",
+          "values": "N 通常、I 反転",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "印字領域を左右に反転する。"
+    "summary": "印字領域を左右に反転する。",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "ラベルを左右反転",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "印字速度、スルー速度、バックフィード速度を1秒あたりのインチ数で設定する。"
+    "summary": "印字速度、スルー速度、バックフィード速度を1秒あたりのインチ数で設定する。",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "インチ毎秒単位の印字速度",
+          "values": "1 から 14、または A 2、B 3、C 4、D 6、E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "空ラベル送り出し時のスリュー速度",
+          "values": "2 から 14",
+          "default": "6"
+        },
+        {
+          "meaning": "印字後のバックフィード速度",
+          "values": "2 から 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "次のフィールドを、その左上隅を基準としてラベルのホーム原点からの位置に配置する。"
+    "summary": "次のフィールドを、その左上隅を基準としてラベルのホーム原点からの位置に配置する。",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "ドット単位の水平位置",
+          "values": "0 から 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "ドット単位の垂直位置",
+          "values": "0 から 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "位置揃え",
+          "values": "0 左、1 右、2 自動",
+          "default": "直前の ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "次のフィールドをベースラインまたはバーコードの端を基準に配置する。回転したフィールドでも基準点が安定する。"
+    "summary": "次のフィールドをベースラインまたはバーコードの端を基準に配置する。回転したフィールドでも基準点が安定する。",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "ドット単位の水平位置",
+          "values": "0 から 32000",
+          "default": "直前のフィールド位置"
+        },
+        {
+          "meaning": "ドット単位の垂直位置",
+          "values": "0 から 32000",
+          "default": "直前のフィールド位置"
+        },
+        {
+          "meaning": "位置揃え",
+          "values": "0 左、1 右、2 自動",
+          "default": "直前の ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "現在のフィールドの内容を指定する。テキスト、バーコードデータ、RFIDデータを扱える。"
+    "summary": "現在のフィールドの内容を指定する。テキスト、バーコードデータ、RFIDデータを扱える。",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "フィールドの内容",
+          "values": "最大3072バイトの任意の印字可能データ、プレフィックス文字なし"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "フィールドデータ内で16進エスケープを有効にし、バイナリバイトやコマンド用の予約文字を記述できるようにする。"
+    "summary": "フィールドデータ内で16進エスケープを有効にし、バイナリバイトやコマンド用の予約文字を記述できるようにする。",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "16進数を示す指標文字",
+          "values": "フォーマットおよび制御プレフィックスを除く任意の文字",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "コメントフィールドを記述する。プリンタは次のフィールド区切りまでの内容を無視する。"
+    "summary": "コメントフィールドを記述する。プリンタは次のフィールド区切りまでの内容を無視する。",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "印字されないコメントテキスト",
+          "values": "任意のテキスト、次のコマンドまで無視される"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "フィールドの既定の向きを設定する。新しいファームウェアでは既定の位置揃えも指定できる。"
+    "summary": "フィールドの既定の向きを設定する。新しいファームウェアでは既定の位置揃えも指定できる。",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "既定のフィールドの向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "既定の位置揃え",
+          "values": "0 左、1 右、2 自動",
+          "default": "^TBでは自動、それ以外は左"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "フィールドデータを固定幅のブロック内で折り返す。行数、行間、字下げ、位置揃えを指定できる。"
+    "summary": "フィールドデータを固定幅のブロック内で折り返す。行数、行間、字下げ、位置揃えを指定できる。",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "ドット単位のブロック幅",
+          "values": "0 からラベル幅まで",
+          "default": "0"
+        },
+        {
+          "meaning": "最大行数",
+          "values": "1 から 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "ドット単位の追加行間",
+          "values": "-9999 から 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "位置揃え",
+          "values": "L 左、C 中央、R 右、J 両端揃え",
+          "default": "L"
+        },
+        {
+          "meaning": "ドット単位の2行目以降のぶら下げインデント",
+          "values": "0 から 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "幅と高さを固定したボックス内でテキストを折り返し、あふれた分は切り捨てる。"
+    "summary": "幅と高さを固定したボックス内でテキストを折り返し、あふれた分は切り捨てる。",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "ブロックの回転",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^A"
+        },
+        {
+          "meaning": "ドット単位のブロック幅",
+          "values": "1 からラベル幅まで",
+          "default": "1"
+        },
+        {
+          "meaning": "ドット単位のブロック高さ",
+          "values": "1 からラベル長まで",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "保存および呼び出しを行うフォーマット内の可変フィールドに番号を割り当てる。"
+    "summary": "保存および呼び出しを行うフォーマット内の可変フィールドに番号を割り当てる。",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "フィールド番号",
+          "values": "0 から 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "KDUの省略可能なプロンプトテキスト",
+          "values": "最大255文字の英数字"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "可変フィールドにデータを与える。^FDのデータと異なり、ラベルの印字後に消去される。"
+    "summary": "可変フィールドにデータを与える。^FDのデータと異なり、ラベルの印字後に消去される。",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "可変フィールドデータ",
+          "values": "0 から 3072バイトの文字列"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "番号付きフィールドの値を別のフィールド文字列内に埋め込むための文字を設定する。"
+    "summary": "番号付きフィールドの値を別のフィールド文字列内に埋め込むための文字を設定する。",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "フィールド連結の区切り文字",
+          "values": "フォーマットおよび制御プレフィックスを除く任意の文字",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "フィールドデータ内でリアルタイムクロックのトークンを示す記号を設定する。"
+    "summary": "フィールドデータ内でリアルタイムクロックのトークンを示す記号を設定する。",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "第1の時計指標文字",
+          "values": "任意のASCII文字",
+          "default": "%"
+        },
+        {
+          "meaning": "第2の時計指標文字",
+          "values": "任意のASCII文字、aと異なるもの"
+        },
+        {
+          "meaning": "第3の時計指標文字",
+          "values": "任意のASCII文字、aとbと異なるもの"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "以降のバーコードフィールドに適用する既定のモジュール幅、太細比、高さを設定する。"
+    "summary": "以降のバーコードフィールドに適用する既定のモジュール幅、太細比、高さを設定する。",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "ドット単位のモジュール幅",
+          "values": "1 から 10",
+          "default": "2"
+        },
+        {
+          "meaning": "太細比",
+          "values": "2.0 から 3.0 を0.1刻み",
+          "default": "3.0"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "任意のドット単位の高さ",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "1つのメッセージが複数のシンボルにまたがる場合に、PDF417またはMicroPDF417の各セグメントを指定した原点に配置する。"
+    "summary": "1つのメッセージが複数のシンボルにまたがる場合に、PDF417またはMicroPDF417の各セグメントを指定した原点に配置する。",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "最初のシンボルのX座標、以降はペアを繰り返す",
+          "values": "0 から 32000、またはeでこのシンボルを省略"
+        },
+        {
+          "meaning": "最初のシンボルのY座標、以降はペアを繰り返す",
+          "values": "0 から 32000、またはeでこのシンボルを省略"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "現在のフィールドの文字の並び順を設定する。文字間隔を追加することもできる。"
+    "summary": "現在のフィールドの文字の並び順を設定する。文字間隔を追加することもできる。",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "印字方向",
+          "values": "H 水平、V 垂直、R 逆方向",
+          "default": "H"
+        },
+        {
+          "meaning": "ドット単位の追加文字間隔",
+          "values": "0 から 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "次のフィールドに内蔵スケーラブルフォント0を、指定したサイズと向きで選択する。"
+    "summary": "次のフィールドに内蔵スケーラブルフォント0を、指定したサイズと向きで選択する。",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位の文字高さ",
+          "values": "10 から 32000",
+          "default": "直前の ^CF"
+        },
+        {
+          "meaning": "ドット単位の文字幅",
+          "values": "10 から 32000",
+          "default": "直前の ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "内蔵フォントを1文字の名前で選択する。向き、高さ、幅は省略できる。"
+    "summary": "内蔵フォントを1文字の名前で選択する。向き、高さ、幅は省略できる。",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "フォント名",
+          "values": "A から Z、0 から 9",
+          "default": "直前の ^CF"
+        },
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位の文字高さ",
+          "values": "10 から 32000 まで可変、ビットマップフォントは基準高さの1倍から10倍",
+          "default": "直前の ^CF"
+        },
+        {
+          "meaning": "ドット単位の文字幅",
+          "values": "10 から 32000 まで可変、ビットマップフォントは基準幅の1倍から10倍",
+          "default": "直前の ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "次のフィールドに保存済みのフォントファイルを選択する。向き、高さ、幅は省略できる。"
+    "summary": "次のフィールドに保存済みのフォントファイルを選択する。向き、高さ、幅は省略できる。",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "フィールドの向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位の文字高さ",
+          "values": "10 から 32000 まで可変、ビットマップフォントは基準高さの1倍から10倍",
+          "default": "直前の ^CF"
+        },
+        {
+          "meaning": "ドット単位の文字幅",
+          "values": "10 から 32000 まで可変、ビットマップフォントは基準幅の1倍から10倍",
+          "default": "直前の ^CF"
+        },
+        {
+          "meaning": "フォントの格納先ドライブ",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "使用するフォントファイル名",
+          "values": "任意の有効なフォント名",
+          "default": "直前の ^CF"
+        },
+        {
+          "meaning": "フォントファイルの拡張子",
+          "values": "FNT フォント、TTF TrueType、TTE TrueType拡張"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "フォントを自身で指定しないテキストフィールドが使う、既定のフォント、高さ、幅を設定する。"
+    "summary": "フォントを自身で指定しないテキストフィールドが使う、既定のフォント、高さ、幅を設定する。",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "既定のフォント",
+          "values": "A から Z、0 から 9",
+          "default": "A"
+        },
+        {
+          "meaning": "ドット単位の既定の文字高さ",
+          "values": "0 から 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "ドット単位の既定の文字幅",
+          "values": "0 から 32000",
+          "default": "5 または直前に保存した値"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "フィールドデータの解釈に使う文字エンコードを選択する。コードページやUTF-8を指定できる。"
+    "summary": "フィールドデータの解釈に使う文字エンコードを選択する。コードページやUTF-8を指定できる。",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "使用する文字コード",
+          "values": "0 から 36、28 UTF-8、29 UTF-16BE、30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "再割り当てする文字位置",
+          "values": "0 から 255",
+          "default": "なし"
+        },
+        {
+          "meaning": "置き換える文字位置",
+          "values": "0 から 255",
+          "default": "なし"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "以降のフィールドで高度なテキストレイアウトを有効にする。双方向テキスト、字形整形、OpenType機能に対応する。"
+    "summary": "以降のフィールドで高度なテキストレイアウトを有効にする。双方向テキスト、字形整形、OpenType機能に対応する。",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "既定のグリフソース",
+          "values": "0 スペース文字、1 フォントのグリフ",
+          "default": "0"
+        },
+        {
+          "meaning": "双方向テキストレイアウト",
+          "values": "0 オフ、1 オン",
+          "default": "0"
+        },
+        {
+          "meaning": "文字シェーピング",
+          "values": "0 オフ、1 オン",
+          "default": "0"
+        },
+        {
+          "meaning": "OpenTypeテーブルの対応",
+          "values": "0 オフ、1 オン",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "1文字のフォント名を保存済みのフォントファイルに割り当てる。"
+    "summary": "1文字のフォント名を保存済みのフォントファイルに割り当てる。",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "追加または置き換えるフォント文字",
+          "values": "A から Z、0 から 9"
+        },
+        {
+          "meaning": "フォントの保存先ドライブ",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "保存済みフォントファイル名",
+          "values": "最大8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "フォントファイルの拡張子",
+          "values": "FNT フォント、TTF TrueType、TTE TrueType拡張"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "描画済みスケーラブルグリフのキャッシュサイズを設定し、大きなフォントの繰り返し出力を高速化する。"
+    "summary": "描画済みスケーラブルグリフのキャッシュサイズを設定し、大きなフォントの繰り返し出力を高速化する。",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "文字キャッシュの有効化",
+          "values": "N いいえ、Y はい",
+          "default": "Y"
+        },
+        {
+          "meaning": "K単位の追加キャッシュメモリ",
+          "values": "1 から 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "キャッシュの種類",
+          "values": "0 通常フォント、1 アジアフォント",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "基準フォントに該当するグリフがない場合に使う、TrueTypeの代替フォント連鎖を定義する。"
+    "summary": "基準フォントに該当するグリフがない場合に使う、TrueTypeの代替フォント連鎖を定義する。",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "リンクする拡張フォント、デバイスとファイル",
+          "values": "デバイス上のTTFまたはTTEファイル"
+        },
+        {
+          "meaning": "継承先のベースフォント",
+          "values": "FNT、TTFまたはTTEファイル、ワイルドカード使用可"
+        },
+        {
+          "meaning": "拡張のリンクまたは解除",
+          "values": "0 解除、1 リンク"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "ビットマップフォントとそのメトリクスをプリンタメモリにダウンロードする。"
+    "summary": "ビットマップフォントとそのメトリクスをプリンタメモリにダウンロードする。",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "フォントの保存先ドライブ",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "フォントの名前",
+          "values": "最大8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "フォントファイルの拡張子",
+          "values": "FNT固定値",
+          "default": "FNT"
+        },
+        {
+          "meaning": "内蔵フォントの向き",
+          "values": "N 通常のみ",
+          "default": "N"
+        },
+        {
+          "meaning": "ドット単位の最大セル高さ",
+          "values": "1 から 32000"
+        },
+        {
+          "meaning": "ドット単位の最大セル幅",
+          "values": "1 から 32000"
+        },
+        {
+          "meaning": "セル上端からベースラインまでのドット数",
+          "values": "1 から 32000"
+        },
+        {
+          "meaning": "スペース文字の幅",
+          "values": "1 から 32000"
+        },
+        {
+          "meaning": "フォント内の文字数",
+          "values": "1 から 256"
+        },
+        {
+          "meaning": "著作権者のテキスト",
+          "values": "1 から 63文字の英数字"
+        },
+        {
+          "meaning": "1文字あたりの構造化ビットマップデータ",
+          "values": "ハッシュコード、続いて高さ、幅、オフセット、続いて16進データ"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "エンコードされたスケーラブルなIntellifontをプリンタメモリにダウンロードする。"
+    "summary": "エンコードされたスケーラブルなIntellifontをプリンタメモリにダウンロードする。",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "フォントの保存先ドライブ",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "フォントの名前",
+          "values": "最大8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "フォントファイルの拡張子",
+          "values": "FNT固定値",
+          "default": "FNT"
+        },
+        {
+          "meaning": "ZToolsによるバイト単位のフォントサイズ",
+          "values": "変換後のフォントのバイト数"
+        },
+        {
+          "meaning": "フォントのエンコード済みバイトデータ",
+          "values": "サイズに合わせた16進数のペア"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "最大256文字のエンコードされたTrueTypeフォントをプリンタメモリにダウンロードする。"
+    "summary": "最大256文字のエンコードされたTrueTypeフォントをプリンタメモリにダウンロードする。",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "フォントの保存先ドライブ",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "フォントの名前",
+          "values": "最大8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "フォントファイルの拡張子",
+          "values": "DAT固定値",
+          "default": "DAT"
+        },
+        {
+          "meaning": "バイト単位のフォントサイズ",
+          "values": "変換後のフォントのバイト数"
+        },
+        {
+          "meaning": "フォントのエンコード済みバイトデータ",
+          "values": "サイズに合わせた16進数のペア"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "256を超えるグリフを持つ、エンコードされたTrueTypeフォントをプリンタメモリにダウンロードする。"
+    "summary": "256を超えるグリフを持つ、エンコードされたTrueTypeフォントをプリンタメモリにダウンロードする。",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "フォントの保存先ドライブ",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "フォントの名前",
+          "values": "最大8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "フォントファイルの拡張子",
+          "values": "FNT固定値",
+          "default": "FNT"
+        },
+        {
+          "meaning": "バイト単位のフォントサイズ",
+          "values": "変換後のフォントのバイト数"
+        },
+        {
+          "meaning": "フォントのエンコード済みバイトデータ",
+          "values": "サイズに合わせた16進数のペア"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "TrueTypeフォント向けに、フィールドデータのバイトをUnicodeの値へ対応付けるエンコードテーブルをダウンロードする。"
+    "summary": "TrueTypeフォント向けに、フィールドデータのバイトをUnicodeの値へ対応付けるエンコードテーブルをダウンロードする。",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "テーブルの格納先ドライブ",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "テーブルの名前",
+          "values": "最大8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "テーブルファイルの拡張子",
+          "values": "DAT固定値",
+          "default": "DAT"
+        },
+        {
+          "meaning": "バイト単位のテーブルサイズ",
+          "values": "変換後のテーブルのバイト数"
+        },
+        {
+          "meaning": "テーブルのエンコード済みバイトデータ",
+          "values": "サイズに合わせた16進数のペア"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "可変長のASCIIデータを表すCode 128バーコードを描画する。サブセットの自動切り替えやUCC/EANデータ用のモードを備える。"
+    "summary": "可変長のASCIIデータを表すCode 128バーコードを描画する。サブセットの自動切り替えやUCC/EANデータ用のモードを備える。",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "N いいえ、Y はい",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        },
+        {
+          "meaning": "UCCチェックディジット",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        },
+        {
+          "meaning": "モード",
+          "values": "N なし、U UCC Case Mode、A 自動、D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Code 39バーコードを描画する。Mod 43のチェックディジットは任意で付加できる。"
+    "summary": "Code 39バーコードを描画する。Mod 43のチェックディジットは任意で付加できる。",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "Mod43チェックディジット",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Code 93バーコードを描画する。シフト文字によりASCII全文字を表現する。"
+    "summary": "Code 93バーコードを描画する。シフト文字によりASCII全文字を表現する。",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "チェックディジットを印字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "数字とハイフンを表すCode 11バーコードを描画する。チェックディジットは任意で付加できる。"
+    "summary": "数字とハイフンを表すCode 11バーコードを描画する。チェックディジットは任意で付加できる。",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "チェックディジットの数",
+          "values": "Y 1桁、N 2桁",
+          "default": "N"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "偶数桁の数字データを表すInterleaved 2 of 5バーコードを描画する。チェックディジットは任意で付加できる。"
+    "summary": "偶数桁の数字データを表すInterleaved 2 of 5バーコードを描画する。チェックディジットは任意で付加できる。",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod10チェックディジット",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "6番目のスロット、未文書化",
+          "values": "ガイドに記載なし"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Industrial 2 of 5バーコードを描画する。バーだけでデータを表す数字専用のコードである。"
+    "summary": "Industrial 2 of 5バーコードを描画する。バーだけでデータを表す数字専用のコードである。",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Standard 2 of 5バーコードを描画する。バーだけでデータを表す、自己チェック機能を備えた数字専用のコードである。"
+    "summary": "Standard 2 of 5バーコードを描画する。バーだけでデータを表す、自己チェック機能を備えた数字専用のコードである。",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "USD-4とも呼ばれるANSI Codabarバーコードを描画する。図書館、医療、配送のラベルに用いられる。"
+    "summary": "USD-4とも呼ばれるANSI Codabarバーコードを描画する。図書館、医療、配送のラベルに用いられる。",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "チェックディジット、固定で無効",
+          "values": "Nのみ",
+          "default": "N"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "開始文字",
+          "values": "A、B、C、D",
+          "default": "A"
+        },
+        {
+          "meaning": "終了文字",
+          "values": "A、B、C、D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Code 39の米国国防総省向け派生であるLOGMARSバーコードを描画する。小文字のデータは大文字に変換される。"
+    "summary": "Code 39の米国国防総省向け派生であるLOGMARSバーコードを描画する。小文字のデータは大文字に変換される。",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Plesseyから派生した数字専用コードであるMSIバーコードを描画する。チェックディジットの方式を選択できる。"
+    "summary": "Plesseyから派生した数字専用コードであるMSIバーコードを描画する。チェックディジットの方式を選択できる。",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "チェックディジットの方式",
+          "values": "A なし、B 1-Mod10、C 2-Mod10、D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "可読文字内のチェックディジット",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "古くから使われている数字専用コードであるPlesseyバーコードを描画する。チェックディジットは任意で付加できる。"
+    "summary": "古くから使われている数字専用コードであるPlesseyバーコードを描画する。チェックディジットは任意で付加できる。",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "チェックディジットを印字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "小売の商品番号を表すEAN-13バーコードを描画する。チェックディジットは12桁のデータから算出される。"
+    "summary": "小売の商品番号を表すEAN-13バーコードを描画する。チェックディジットは12桁のデータから算出される。",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "小型の小売パッケージ向けのEAN-8バーコードを描画する。チェックディジットは7桁のデータから算出される。"
+    "summary": "小型の小売パッケージ向けのEAN-8バーコードを描画する。チェックディジットは7桁のデータから算出される。",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "11桁のデータから、小売パッケージ向けのUPC-Aバーコードを描画する。チェックディジットの印字は任意である。"
+    "summary": "11桁のデータから、小売パッケージ向けのUPC-Aバーコードを描画する。チェックディジットの印字は任意である。",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 9999",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "チェックディジットを印字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "UPC-Aの短縮形であるUPC-Eバーコードを描画する。フィールドデータには、製造者コードと商品コードからなる10桁全体を指定する。"
+    "summary": "UPC-Aの短縮形であるUPC-Eバーコードを描画する。フィールドデータには、製造者コードと商品コードからなる10桁全体を指定する。",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "チェックディジットを印字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "GS1 DataBarシンボルを描画する。種別、倍率、高さ、セグメント幅を選択できる。"
+    "summary": "GS1 DataBarシンボルを描画する。種別、倍率、高さ、セグメント幅を選択できる。",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 回転、I 反転、B 上下逆",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBarのシンボル種別",
+          "values": "1 オムニ、2 トランケート、3 スタック、4 スタックオムニ、5 リミテッド、6 エキスパンド、7 UPC-A、8 UPC-E、9 EAN-13、10 EAN-8、11 UCC/EAN-128とCC-A/B、12 UCC/EAN-128とCC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "拡大倍率",
+          "values": "1 から 10",
+          "default": "プリンターの設定"
+        },
+        {
+          "meaning": "区切り線の高さ",
+          "values": "1 または 2",
+          "default": "1"
+        },
+        {
+          "meaning": "ドット単位のリニア部分の高さ",
+          "values": "1 から 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "GS1 DataBar Expandedのセグメント幅",
+          "values": "2 から 22 の偶数のみ",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "数字を長短のバーで表す郵便用バーコード、Planet Codeを描画する。"
+    "summary": "数字を長短のバーで表す郵便用バーコード、Planet Codeを描画する。",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 回転、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 9999",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "郵便コード種別の指定に応じて、POSTNET、Planet Code、USPS Intelligent Mailのいずれかを描画する。"
+    "summary": "郵便コード種別の指定に応じて、POSTNET、Planet Code、USPS Intelligent Mailのいずれかを描画する。",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "郵便コードの種類",
+          "values": "0 Postnet、1 Planet、2 予約済み、3 Intelligent Mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "主バーコードの横に、2桁または5桁のUPC/EANアドオンシンボルを描画する。"
+    "summary": "主バーコードの横に、2桁または5桁のUPC/EANアドオンシンボルを描画する。",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 32000",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コード上の可読文字",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "ASCII全文字のデータを2行から8行に積み重ねる、Code 49バーコードを描画する。"
+    "summary": "ASCII全文字のデータを2行から8行に積み重ねる、Code 49バーコードを描画する。",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "各行の高さの倍率",
+          "values": "1 からラベルの高さまで",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "可読文字の配置",
+          "values": "N なし、A 上、B 下",
+          "default": "N"
+        },
+        {
+          "meaning": "開始モード",
+          "values": "0 英数字、1 複数読み取り、2 数字、3 グループアルファ、4 シフト1、5 シフト2、A 自動",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "QR Codeシンボルを描画する。モデル、倍率、マスクはコマンドのパラメータで指定し、誤り訂正レベルと文字モードはフィールドデータで指定する。"
+    "summary": "QR Codeシンボルを描画する。モデル、倍率、マスクはコマンドのパラメータで指定し、誤り訂正レベルと文字モードはフィールドデータで指定する。",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "フィールドの向き",
+          "values": "N 通常のみ",
+          "default": "N"
+        },
+        {
+          "meaning": "モデル",
+          "values": "1 オリジナル、2 拡張",
+          "default": "2"
+        },
+        {
+          "meaning": "拡大倍率",
+          "values": "1 から 100",
+          "default": "150 dpiは1、200 dpiは2、300 dpiは3、600 dpiは6"
+        },
+        {
+          "meaning": "誤り訂正レベル",
+          "values": "H 超高濃度、Q 高濃度、M 標準、L 高密度",
+          "default": "空の場合はQ、値が無効な場合はM"
+        },
+        {
+          "meaning": "マスク値",
+          "values": "0 から 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Data Matrixシンボルを描画する。エレメントサイズ、品質レベル、エスケープの扱いを設定できる。"
+    "summary": "Data Matrixシンボルを描画する。エレメントサイズ、品質レベル、エスケープの扱いを設定できる。",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "シンボル要素の寸法高さ",
+          "values": "1 からラベル幅まで",
+          "default": "0、この場合は^BYからシンボル高さを取得"
+        },
+        {
+          "meaning": "品質レベル",
+          "values": "0、50、80、100、140、200",
+          "default": "0"
+        },
+        {
+          "meaning": "エンコードする列数",
+          "values": "9 から 49、品質0 から 140 は奇数のみ、品質200 は偶数のみ"
+        },
+        {
+          "meaning": "エンコードする行数",
+          "values": "9 から 49"
+        },
+        {
+          "meaning": "フォーマットID",
+          "values": "1 数字、2 英大文字、3 英大文字と数字に . , - / を含む、4 英大文字と数字、5 ASCII7、6 ISO8",
+          "default": "6"
+        },
+        {
+          "meaning": "エスケープシーケンスの制御文字",
+          "values": "任意の文字",
+          "default": "チルダ"
+        },
+        {
+          "meaning": "縦横比",
+          "values": "1 正方形、2 長方形",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "大量のテキストやバイナリデータを格納する積層型二次元シンボル、PDF417を描画する。"
+    "summary": "大量のテキストやバイナリデータを格納する積層型二次元シンボル、PDF417を描画する。",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位の行ごとのバーコード高さ",
+          "values": "1 からラベルの高さまで",
+          "default": "直前の ^BY"
+        },
+        {
+          "meaning": "セキュリティレベル",
+          "values": "1 から 8",
+          "default": "0"
+        },
+        {
+          "meaning": "データ列数",
+          "values": "1 から 30",
+          "default": "自動縦横比"
+        },
+        {
+          "meaning": "行数",
+          "values": "3 から 90",
+          "default": "自動縦横比"
+        },
+        {
+          "meaning": "右端の行インジケータと終止パターンを省略",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "行アドレスパターンを備えたPDF417の小型版、MicroPDF417シンボルを描画する。"
+    "summary": "行アドレスパターンを備えたPDF417の小型版、MicroPDF417シンボルを描画する。",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "ドット単位のバーコード高さ",
+          "values": "1 から 9999",
+          "default": "直前の ^BY、^BYが送信されていない場合は10"
+        },
+        {
+          "meaning": "モード",
+          "values": "0 から 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Aztecのマトリックスシンボルを描画する。倍率と誤り訂正を設定できる。"
+    "summary": "Aztecのマトリックスシンボルを描画する。倍率と誤り訂正を設定できる。",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 回転、I 180、B 270",
+          "default": "直前の ^FW"
+        },
+        {
+          "meaning": "拡大倍率",
+          "values": "1 から 10",
+          "default": "150 dpiは1、200 dpiは2、300 dpiは3、600 dpiは6"
+        },
+        {
+          "meaning": "拡張チャンネル解釈の指標",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "エラー制御とシンボルサイズ",
+          "values": "0 既定、1 から 99 はエラー率%、101 から 104 はコンパクトレイヤー、201 から 232 はフルレイヤー、300 はルーン",
+          "default": "0"
+        },
+        {
+          "meaning": "メニューシンボルの指標",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "Structured Append用のシンボル数",
+          "values": "1 から 26",
+          "default": "1"
+        },
+        {
+          "meaning": "Structured AppendのIDフィールド",
+          "values": "最大24文字のテキスト",
+          "default": "IDなし"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "大きなデータを格納するCODABLOCKシンボルを、モードA、E、Fのいずれかで描画する。"
+    "summary": "大きなデータを格納するCODABLOCKシンボルを、モードA、E、Fのいずれかで描画する。",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "ドット単位の行ごとのバーコード高さ",
+          "values": "2 から 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "セキュリティレベル",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "1行あたりの文字数",
+          "values": "2 から 62"
+        },
+        {
+          "meaning": "エンコードする行数",
+          "values": "モードAは1-22、モードEFは2-4"
+        },
+        {
+          "meaning": "モード",
+          "values": "A Code39セット、E Code128 FNC1、F Code128セット",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "UPSのMaxiCodeシンボルを描画する。構造化された運送業者向けメッセージ用のモードと、一般データ用のモードを選択できる。"
+    "summary": "UPSのMaxiCodeシンボルを描画する。構造化された運送業者向けメッセージ用のモードと、一般データ用のモードを選択できる。",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "モード",
+          "values": "2 米国郵便、3 米国以外の郵便、4 標準、5 フルEEC、6 リーダープログラム",
+          "default": "2"
+        },
+        {
+          "meaning": "シーケンス内のシンボル番号",
+          "values": "1 から 8",
+          "default": "1"
+        },
+        {
+          "meaning": "シンボルの合計数",
+          "values": "1 から 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Code 39とMicroPDF417の要素を組み合わせた通信機器ラベル用シンボル、TLC39を描画する。"
+    "summary": "Code 39とMicroPDF417の要素を組み合わせた通信機器ラベル用シンボル、TLC39を描画する。",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 回転、I 反転、B 上下逆"
+        },
+        {
+          "meaning": "ドット単位のCode 39部分の幅",
+          "values": "1 から 10",
+          "default": "600 dpiは4、それ以外は2"
+        },
+        {
+          "meaning": "Code 39部分の太細比",
+          "values": "2.0 から 3.0 を0.1刻み",
+          "default": "2.0"
+        },
+        {
+          "meaning": "ドット単位のCode 39部分の高さ",
+          "values": "1 から 9999",
+          "default": "600 dpiは120、300 dpiは60、200 dpiは40"
+        },
+        {
+          "meaning": "MicroPDF417部分の細バー幅",
+          "values": "1 から 10",
+          "default": "600 dpiは4、それ以外は2"
+        },
+        {
+          "meaning": "ドット単位のMicroPDF417部分の行高さ",
+          "values": "1 から 255",
+          "default": "600 dpiは8、それ以外は4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "有効にすると、バーコードのデータとパラメータを検証し、不正な場合はシンボルの代わりにINVALIDと印字する。"
+    "summary": "有効にすると、バーコードのデータとパラメータを検証し、不正な場合はシンボルの代わりにINVALIDと印字する。",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "コードの検証",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "塗りつぶしまたは枠線の矩形を描画する。一辺の長さを枠線の太さと一致させると直線になる。"
+    "summary": "塗りつぶしまたは枠線の矩形を描画する。一辺の長さを枠線の太さと一致させると直線になる。",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "ドット単位のボックス幅",
+          "values": "t から 32000",
+          "default": "t または 1"
+        },
+        {
+          "meaning": "ドット単位のボックス高さ",
+          "values": "t から 32000",
+          "default": "t または 1"
+        },
+        {
+          "meaning": "ドット単位の枠線の太さ",
+          "values": "1 から 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "線の色",
+          "values": "B 黒、W 白",
+          "default": "B"
+        },
+        {
+          "meaning": "角の丸め",
+          "values": "0 角丸なしから 8 最も強い角丸まで",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "指定した幅と高さの範囲に斜線を描画する。傾きの向きは右下がりと左下がりから選べる。"
+    "summary": "指定した幅と高さの範囲に斜線を描画する。傾きの向きは右下がりと左下がりから選べる。",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "ドット単位のボックス幅",
+          "values": "3 から 32000",
+          "default": "t または 3"
+        },
+        {
+          "meaning": "ドット単位のボックス高さ",
+          "values": "3 から 32000",
+          "default": "t または 3"
+        },
+        {
+          "meaning": "ドット単位の枠線の太さ",
+          "values": "1 から 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "線の色",
+          "values": "B 黒、W 白",
+          "default": "B"
+        },
+        {
+          "meaning": "対角線の方向",
+          "values": "R または / は右傾き、L または \\ は左傾き",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "ドット単位の幅と高さから楕円を描画する。線の太さは内側に取り、黒と白のどちらでも出力できる。"
+    "summary": "ドット単位の幅と高さから楕円を描画する。線の太さは内側に取り、黒と白のどちらでも出力できる。",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "ドット単位の楕円の幅",
+          "values": "3 から 4095",
+          "default": "t または 1"
+        },
+        {
+          "meaning": "ドット単位の楕円の高さ",
+          "values": "3 から 4095",
+          "default": "t または 1"
+        },
+        {
+          "meaning": "ドット単位の枠線の太さ",
+          "values": "2 から 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "線の色",
+          "values": "B 黒、W 白",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "ドット単位で指定した直径の円を描画する。線の太さは内側に取り、黒と白のどちらでも出力できる。"
+    "summary": "ドット単位で指定した直径の円を描画する。線の太さは内側に取り、黒と白のどちらでも出力できる。",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "ドット単位の円の直径",
+          "values": "3 から 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "ドット単位の枠線の太さ",
+          "values": "2 から 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "線の色",
+          "values": "B 黒、W 白",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "ASCII16進、バイナリ、圧縮のいずれかの形式のデータを用いて、白黒ビットマップを現在のフィールド位置に配置する。"
+    "summary": "ASCII16進、バイナリ、圧縮のいずれかの形式のデータを用いて、白黒ビットマップを現在のフィールド位置に配置する。",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "圧縮形式",
+          "values": "A ASCII16進数、B バイナリ、C 圧縮バイナリ",
+          "default": "A"
+        },
+        {
+          "meaning": "送信する合計バイト数",
+          "values": "1 から 99999"
+        },
+        {
+          "meaning": "画像内の合計バイト数",
+          "values": "1 から 99999"
+        },
+        {
+          "meaning": "画像1行あたりのバイト数",
+          "values": "1 から 99999"
+        },
+        {
+          "meaning": "画像データ",
+          "values": "ASCII16進数の00 から FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "著作権記号や登録商標記号など、フィールドデータで選択した内蔵記号を印字する。"
+    "summary": "著作権記号や登録商標記号など、フィールドデータで選択した内蔵記号を印字する。",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "向き",
+          "values": "N 通常、R 時計回りに90、I 180、B 270",
+          "default": "N または直前の ^FW"
+        },
+        {
+          "meaning": "幅に対する文字高さの比率",
+          "values": "0 から 32000",
+          "default": "直前の ^CF"
+        },
+        {
+          "meaning": "高さに対する文字幅の比率",
+          "values": "0 から 32000",
+          "default": "直前の ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "フォーマットの先頭で保存済みの画像を読み込み、ラベルの原点に配置する。"
+    "summary": "フォーマットの先頭で保存済みの画像を読み込み、ラベルの原点に配置する。",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "記憶デバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "オブジェクト名",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": ".GRF または .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "保存済みの画像を、拡大縮小せずに現在のフィールド位置へ配置する。"
+    "summary": "保存済みの画像を、拡大縮小せずに現在のフィールド位置へ配置する。",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "記憶デバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "検索優先順位"
+        },
+        {
+          "meaning": "オブジェクト名",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": ".GRF または .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "プリンタメモリから、保存済みのグラフィック、フォント、フォーマットを削除する。ワイルドカードでまとめて指定できる。"
+    "summary": "プリンタメモリから、保存済みのグラフィック、フォント、フォーマットを削除する。ワイルドカードでまとめて指定できる。",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "記憶デバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "オブジェクト名、ワイルドカード使用可",
+          "values": "1 から 8文字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子、ワイルドカード使用可",
+          "values": "任意の拡張子",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "現在のフォーマットをグラフィック画像として保存し、高速な呼び出しと可変データの重ね合わせに利用できるようにする。"
+    "summary": "現在のフォーマットをグラフィック画像として保存し、高速な呼び出しと可変データの重ね合わせに利用できるようにする。",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "記憶デバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "オブジェクト名",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": ".GRF または .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "保存後にラベルを印字",
+          "values": "N いいえ、Y はい",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "ASCII16進形式のグラフィックを、再利用できる名前を付けてプリンタメモリにダウンロードする。"
+    "summary": "ASCII16進形式のグラフィックを、再利用できる名前を付けてプリンタメモリにダウンロードする。",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "記憶デバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "画像名",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "バイト単位の画像の合計サイズ",
+          "values": "画像の幅と高さから算出"
+        },
+        {
+          "meaning": "画像1行あたりのバイト数",
+          "values": "画像の幅から算出"
+        },
+        {
+          "meaning": "画像データ",
+          "values": "ASCII16進数の00 から FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "グラフィック、フォント、証明書を、再利用できる名前を付けてプリンタメモリにダウンロードする。"
+    "summary": "グラフィック、フォント、証明書を、再利用できる名前を付けてプリンタメモリにダウンロードする。",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "記憶デバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "ファイル名",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "データ形式",
+          "values": "A ASCIIまたはZB64、B バイナリ、C AR圧縮、P PNG ZB64"
+        },
+        {
+          "meaning": "保存済みファイルの種類",
+          "values": "B ビットマップ、E TTE、G 未加工のGRF、P PNG、T TTFまたはOTF、X PCX、NRD 読み取り不可、PAC アクセス資格情報、C WMLメニュー、F HTMページ、H プリンターからの応答",
+          "default": "G"
+        },
+        {
+          "meaning": "ファイル内の合計バイト数",
+          "values": "展開後の実際のファイルサイズ"
+        },
+        {
+          "meaning": "GRF画像1行あたりのバイト数",
+          "values": "画像の幅から算出"
+        },
+        {
+          "meaning": "ファイルデータ",
+          "values": "ASCII16進数、ZB64またはバイナリ"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "開始値、増減の向き、増分を指定して、テキストまたはバーコードのフィールドデータをラベルごとに連番化する。"
+    "summary": "開始値、増減の向き、増分を指定して、テキストまたはバーコードのフィールドデータをラベルごとに連番化する。",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "シリアル値の開始値",
+          "values": "最大12桁",
+          "default": "1"
+        },
+        {
+          "meaning": "増減のステップ",
+          "values": "最大12桁",
+          "default": "1"
+        },
+        {
+          "meaning": "先頭ゼロで埋める",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "マスクと文字セットを用いて、フィールドデータの指定した桁だけを連番化する。"
+    "summary": "マスクと文字セットを用いて、フィールドデータの指定した桁だけを連番化する。",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "変化させる文字を選ぶシリアル化マスク",
+          "values": "D 10進数、H 16進数、O 8進数、A アルファ、N 英数字、% スキップ"
+        },
+        {
+          "meaning": "マスク用の増減文字列",
+          "values": "マスクの各位置に1つの値、%で変更なし",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "以降のコマンドを即座に印字せず、再利用できるフォーマットとして保存する。"
+    "summary": "以降のコマンドを即座に印字せず、再利用できるフォーマットとして保存する。",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "テンプレートの保存先デバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "テンプレート名",
+          "values": "1 から 16文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "保存済みのフォーマットを呼び出し、その番号付きプレースホルダフィールドに値を与える。"
+    "summary": "保存済みのフォーマットを呼び出し、その番号付きプレースホルダフィールドに値を与える。",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "保存済みテンプレートの格納元デバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R、次にE、次にB、次にA"
+        },
+        {
+          "meaning": "保存済みテンプレートの名前",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "保存済みのグラフィックを現在の位置に呼び出す。倍率は水平方向と垂直方向で個別に指定できる。"
+    "summary": "保存済みのグラフィックを現在の位置に呼び出す。倍率は水平方向と垂直方向で個別に指定できる。",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "保存済みグラフィックの格納元デバイス",
+          "values": "R、E、B、A",
+          "default": "R、次にE、次にB、次にA"
+        },
+        {
+          "meaning": "保存済みグラフィックの名前",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": "GRF"
+        },
+        {
+          "meaning": "X軸方向の拡大倍率",
+          "values": "1 から 10",
+          "default": "1"
+        },
+        {
+          "meaning": "Y軸方向の拡大倍率",
+          "values": "1 から 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "ラベルの境界を検出する方法を選択する。ギャップ、ブラックマーク、連続紙のいずれかを指定する。"
+    "summary": "ラベルの境界を検出する方法を選択する。ギャップ、ブラックマーク、連続紙のいずれかを指定する。",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "用紙検出方式",
+          "values": "N 連続、YまたはW 非連続のギャップ、M 非連続のマーク、A 自動検出、V 連続可変長",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "ドット単位の黒マークオフセット",
+          "values": "ほとんどのプリンターは-120 から 283、600 dpiでは-240 から 566",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "非連続紙のキャリブレーション時に、プリンタが探索するラベル長の上限を設定する。"
+    "summary": "非連続紙のキャリブレーション時に、プリンタが探索するラベル長の上限を設定する。",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "ドット行単位の最大ラベル長",
+          "values": "プリンターのdpiの2倍、最大長まで",
+          "default": "直前に保存した値"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "電源投入時と印字ヘッドを閉じたときの動作を設定する。キャリブレーション、フィード、ラベル長の測定などを選択できる。"
+    "summary": "電源投入時と印字ヘッドを閉じたときの動作を設定する。キャリブレーション、フィード、ラベル長の測定などを選択できる。",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "電源投入時のフィード動作",
+          "values": "F 最初のギャップまでフィード、C ~JCと同様にキャリブレーション、L ~JLと同様に長さを設定、N フィードなし、S 簡易キャリブレーション",
+          "default": "C"
+        },
+        {
+          "meaning": "ヘッドを閉じた後のフィード動作",
+          "values": "F 最初のギャップまでフィード、C ~JCと同様にキャリブレーション、L ~JLと同様に長さを設定、N フィードなし、S 簡易キャリブレーション",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "印字ヘッドの清掃や交換を促すメンテナンス警告の印字を設定する。"
+    "summary": "印字ヘッドの清掃や交換を促すメンテナンス警告の印字を設定する。",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "アラートの種別",
+          "values": "R ヘッド交換、C ヘッド清掃"
+        },
+        {
+          "meaning": "アラートラベルを印字",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "最初のアラートまでの距離",
+          "values": "R は0 から 150 km、C は100 から 2000メートル、0 オフ",
+          "default": "Rは50 km、Cは0 オフ"
+        },
+        {
+          "meaning": "アラート再発行までの距離",
+          "values": "0 から 2000メートル",
+          "default": "0"
+        },
+        {
+          "meaning": "報告する単位系",
+          "values": "C センチメートル、I インチ、M メートル",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "印字後にラベルのビットマップを消去するか、後続のラベルで再利用するために保持するかを制御する。"
+    "summary": "印字後にラベルのビットマップを消去するか、後続のラベルで再利用するために保持するかを制御する。",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "印字後にビットマップを消去",
+          "values": "Y 消去、N 保持",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "印字ヘッドの清掃や交換を知らせるメンテナンス警告ラベルに表示する文言を設定する。"
+    "summary": "印字ヘッドの清掃や交換を知らせるメンテナンス警告ラベルに表示する文言を設定する。",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "アラートの種別",
+          "values": "R ヘッド交換、C ヘッド清掃",
+          "default": "R"
+        },
+        {
+          "meaning": "アラートラベルに印字するメッセージ",
+          "values": "最大63文字、カンマなし",
+          "default": "プリントヘッドを清掃してください、またはプリントヘッドを交換してください"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "濃度やキャリブレーションなどの操作パネル設定を、解除するまでロックする。"
+    "summary": "濃度やキャリブレーションなどの操作パネル設定を、解除するまでロックする。",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "保護する操作パネルモード",
+          "values": "D 濃度、P 位置、C キャリブレーション、E すべて有効、S 保存なし、W 一時停止、F フィード、X 取り消し、M メニュー",
+          "default": "指定が必須"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "印字ヘッドの低温警告表示を有効または無効にする。"
+    "summary": "印字ヘッドの低温警告表示を有効または無効にする。",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "プリントヘッド低温警告を有効化",
+          "values": "Y 有効、N 無効"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "プリンタに設定されている現在の濃度を基準に、印字濃度を相対値で調整する。"
+    "summary": "プリンタに設定されている現在の濃度を基準に、印字濃度を相対値で調整する。",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "現在の設定に対する用紙濃度の相対値",
+          "values": "-30 から 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "印字濃度を絶対値で即座に設定する。指定する値は操作パネルの濃度設定と同じ意味を持つ。"
+    "summary": "印字濃度を絶対値で即座に設定する。指定する値は操作パネルの濃度設定と同じ意味を持つ。",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "絶対印字濃度",
+          "values": "00 から 30",
+          "default": "直前に保存した値"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "用紙、リボン、印字ヘッドの異常で中断したラベルを、復旧後に再印字するかどうかを制御する。"
+    "summary": "用紙、リボン、印字ヘッドの異常で中断したラベルを、復旧後に再印字するかどうかを制御する。",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "エラー解除後のラベル再印字",
+          "values": "N いいえ、Y はい",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "印字済みラベルの枚数を基準に、印字ヘッドのエレメントテストを定期実行する。検査するエレメントの範囲も指定できる。"
+    "summary": "印字済みラベルの枚数を基準に、印字ヘッドのエレメントテストを定期実行する。検査するエレメントの範囲も指定できる。",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "ヘッドテスト間の印字枚数",
+          "values": "0 から 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "ヘッドテスト要素範囲の手動選択",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        },
+        {
+          "meaning": "最初のテスト要素番号",
+          "values": "0 から 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "最後のテスト要素番号",
+          "values": "0 から 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "印字後に停止するティアオフ位置またはカット位置を、ドット単位の小さなオフセットで微調整する。"
+    "summary": "印字後に停止するティアオフ位置またはカット位置を、ドット単位の小さなオフセットで微調整する。",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "ドット単位のティアオフ休止位置の変更量",
+          "values": "-120 から 120",
+          "default": "直前に保存した値"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "用紙、リボン、印字ヘッドのメンテナンスを事前に知らせる、しきい値を設定する。"
+    "summary": "用紙、リボン、印字ヘッドのメンテナンスを事前に知らせる、しきい値を設定する。",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "用紙または消耗品の早期警告",
+          "values": "E 有効、D 無効",
+          "default": "D"
+        },
+        {
+          "meaning": "ロールあたりのラベル数",
+          "values": "100 から 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "用紙を交換した",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "モデル別のリボン長コード",
+          "values": "N は0 m、0 から 7 は100 m から 450 m、10 から 16 は600 m から 900 m",
+          "default": "1 または 7、モデルによる"
+        },
+        {
+          "meaning": "リボンを交換した",
+          "values": "Y はい、N いいえ",
+          "default": "N"
+        },
+        {
+          "meaning": "早期警告メンテナンスの有効化",
+          "values": "E 有効、D 無効",
+          "default": "D"
+        },
+        {
+          "meaning": "ヘッドクリーニング間隔のコード",
+          "values": "0 から 16、100 m から 900 m を50 m刻み",
+          "default": "1 または 7、モデルによる"
+        },
+        {
+          "meaning": "プリントヘッドを清掃した",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        },
+        {
+          "meaning": "インチ単位のヘッド寿命警告しきい値",
+          "values": "0 オフ、または100 から 3500000インチ",
+          "default": "1000000"
+        },
+        {
+          "meaning": "プリントヘッドを交換した",
+          "values": "N いいえ、Y はい",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "印字とカットの前後におけるバックフィードのタイミングを制御する。バックフィードを無効にすることもできる。"
+    "summary": "印字とカットの前後におけるバックフィードのタイミングを制御する。バックフィードを無効にすることもできる。",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "印字に対するバックフィードのタイミング",
+          "values": "A 完全に後、B 完全に前、N 通常、O オフ、10 から 90 パーセント",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "指定したドット行数分の空白を、スルー速度で紙送りする。"
+    "summary": "指定したドット行数分の空白を、スルー速度で紙送りする。",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "下端からのスリュー送りドット行数",
+          "values": "0 から 32000",
+          "default": "指定が必須"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "キオスク印字モードのKR403プリンタで、カッターを即座に動作させる。"
+    "summary": "キオスク印字モードのKR403プリンタで、カッターを即座に動作させる。",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "カット量の上書きモード",
+          "values": "0 キオスク設定、1 フルカット"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "KR403のキオスクプレゼンタの排出長を追加し、印字済みの用紙を取り出しやすくする。"
+    "summary": "KR403のキオスクプレゼンタの排出長を追加し、印字済みの用紙を取り出しやすくする。",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "ミリメートル単位の追加用紙排出長さ",
+          "values": "0 から 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "KR403のプレゼンタ動作を実行し、印字済みの用紙を手で取り出せるように差し出す。"
+    "summary": "KR403のプレゼンタ動作を実行し、印字済みの用紙を手で取り出せるように差し出す。",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "ミリメートル単位のプレゼンタ用用紙排出長さ",
+          "values": "0 から 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "PAXシリーズのプリンタで、リボン供給側のテンションを設定する。"
+    "summary": "PAXシリーズのプリンタで、リボン供給側のテンションを設定する。",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "リボンテンションレベル",
+          "values": "L 低、M 中、H 高",
+          "default": "指定が必須"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "プリンタのリアルタイムクロックの日付と時刻を設定する。"
+    "summary": "プリンタのリアルタイムクロックの日付と時刻を設定する。",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "月",
+          "values": "01 から 12",
+          "default": "現在の月"
+        },
+        {
+          "meaning": "日",
+          "values": "01 から 31",
+          "default": "現在の日"
+        },
+        {
+          "meaning": "年",
+          "values": "1998 から 2097",
+          "default": "現在の年"
+        },
+        {
+          "meaning": "時",
+          "values": "00 から 23",
+          "default": "現在の時"
+        },
+        {
+          "meaning": "分",
+          "values": "00 から 59",
+          "default": "現在の分"
+        },
+        {
+          "meaning": "秒",
+          "values": "00 から 59",
+          "default": "現在の秒"
+        },
+        {
+          "meaning": "午前午後表示か24時間表示か",
+          "values": "A AM、P PM、M 24時間表記",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "設定ラベルと操作パネルに表示する、日付と時刻の書式を選択する。"
+    "summary": "設定ラベルと操作パネルに表示する、日付と時刻の書式を選択する。",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "日時の表示形式",
+          "values": "0 バージョン番号、1 MM/DD/YYの24時間表記、2 MM/DD/YYの12時間表記、3 DD/MM/YYの24時間表記、4 DD/MM/YYの12時間表記",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "リアルタイムクロックからの差分としてセカンダリクロックを定義する。この差分は電源を切ると失われる。"
+    "summary": "リアルタイムクロックからの差分としてセカンダリクロックを定義する。この差分は電源を切ると失われる。",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "オフセット対象の時計番号",
+          "values": "2 第2、3 第3",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "月数のオフセット",
+          "values": "-32000 から 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "日数のオフセット",
+          "values": "-32000 から 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "年数のオフセット",
+          "values": "-32000 から 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "時間のオフセット",
+          "values": "-32000 から 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "分のオフセット",
+          "values": "-32000 から 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "秒数のオフセット",
+          "values": "-32000 から 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "時刻フィールドの値を確定する時点を設定し、曜日名と月名に使う言語を選択する。"
+    "summary": "時刻フィールドの値を確定する時点を設定し、曜日名と月名に使う言語を選択する。",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "時計の読み取りモード",
+          "values": "S 開始時刻、T 現在時刻、0 から 999 の許容値",
+          "default": "S"
+        },
+        {
+          "meaning": "曜日と月名の言語",
+          "values": "1 英語、2 スペイン語、3 フランス語、4 ドイツ語、5 イタリア語、6 から 18 はその他の言語",
+          "default": "直前の ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "プリンタの操作パネルの表示言語を選択する。選択できる言語はモデルによって異なる。"
+    "summary": "プリンタの操作パネルの表示言語を選択する。選択できる言語はモデルによって異なる。",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "操作パネルの表示言語",
+          "values": "1 から 20個の言語コード",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "印字前にフィールドデータを変換するために使う、保存済みのエンコードテーブルを選択する。"
+    "summary": "印字前にフィールドデータを変換するために使う、保存済みのエンコードテーブルを選択する。",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "エンコードテーブルの格納先ドライブ",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "エンコードテーブルファイルの名前",
+          "values": "1 から 8文字の英数字"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": "DAT固定値",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "旧来のフォーマットとの互換性のため、コマンドの解釈を従来のZPLとZPL IIのどちらで行うかを選択する。"
+    "summary": "旧来のフォーマットとの互換性のため、コマンドの解釈を従来のZPLとZPL IIのどちらで行うかを選択する。",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPLインタプリタのバージョン",
+          "values": "1 ZPL、2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "プリンタにネットワーク名と自由記述の説明を設定する。どちらも設定ラベルと内蔵のWebページに表示される。"
+    "summary": "プリンタにネットワーク名と自由記述の説明を設定する。どちらも設定ラベルと内蔵のWebページに表示される。",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "プリンターのネットワーク名",
+          "values": "最大16文字の英数字",
+          "default": "ZBRにMACサフィックスを付加"
+        },
+        {
+          "meaning": "設定ラベルとWebページ用のプリンター説明",
+          "values": "最大35文字の英数字",
+          "default": "空白"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "操作パネルの設定メニュー用に、4桁のパスワードを設定する。"
+    "summary": "操作パネルの設定メニュー用に、4桁のパスワードを設定する。",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "4桁の操作パネルパスワード",
+          "values": "0000 から 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "パスワードレベル、S4Mプリンターのみ",
+          "values": "1 から 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "プリンタの構成設定を保存、復元、または初期化する。"
+    "summary": "プリンタの構成設定を保存、復元、または初期化する。",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "設定操作",
+          "values": "A 工場出荷時すべて、F 工場出荷時、N ネットワーク、R リコール、S 保存"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "通常はキャレットであるフォーマットコマンドの接頭文字を変更する。変更は全体に適用することも、現在のフォーマットに限ることもできる。"
+    "summary": "通常はキャレットであるフォーマットコマンドの接頭文字を変更する。変更は全体に適用することも、現在のフォーマットに限ることもできる。",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "新しいフォーマットコマンドのプレフィックス",
+          "values": "任意のASCII文字"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "通常はカンマであるパラメータ区切り文字を変更する。変更は全体に適用することも、現在のフォーマットに限ることもできる。"
+    "summary": "通常はカンマであるパラメータ区切り文字を変更する。変更は全体に適用することも、現在のフォーマットに限ることもできる。",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "新しいパラメータ区切り文字",
+          "values": "任意のASCII文字"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "通常はチルダである即時コマンドの接頭文字を変更する。変更は全体に適用することも、現在のフォーマットに限ることもできる。"
+    "summary": "通常はチルダである即時コマンドの接頭文字を変更する。変更は全体に適用することも、現在のフォーマットに限ることもできる。",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "新しい制御コマンドのプレフィックス",
+          "values": "任意のASCII文字"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "プリンタメモリを表す文字を割り当て直し、保存済みオブジェクトの名前をそのまま使えるようにする。"
+    "summary": "プリンタメモリを表す文字を割り当て直し、保存済みオブジェクトの名前をそのまま使えるようにする。",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "Bのメモリエイリアス",
+          "values": "B メモリカード、E フラッシュ、R DRAM、A コンパクトフラッシュ、NONE 未設定",
+          "default": "B"
+        },
+        {
+          "meaning": "Eのメモリエイリアス",
+          "values": "B メモリカード、E フラッシュ、R DRAM、A コンパクトフラッシュ、NONE 未設定",
+          "default": "E"
+        },
+        {
+          "meaning": "Rのメモリエイリアス",
+          "values": "B メモリカード、E フラッシュ、R DRAM、A コンパクトフラッシュ、NONE 未設定",
+          "default": "R"
+        },
+        {
+          "meaning": "Aのメモリエイリアス",
+          "values": "B メモリカード、E フラッシュ、R DRAM、A コンパクトフラッシュ、NONE 未設定",
+          "default": "A"
+        },
+        {
+          "meaning": "エイリアスの重複割り当てを許可",
+          "values": "M 複数エイリアス",
+          "default": "なし"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "指定したフラッシュメモリを消去して再初期化する。処理中に電源が失われると記憶領域が破損するおそれがある。"
+    "summary": "指定したフラッシュメモリを消去して再初期化する。処理中に電源が失われると記憶領域が破損するおそれがある。",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "初期化するフラッシュメモリデバイス",
+          "values": "A オプションフラッシュ、B フラッシュカード、E 内部フラッシュ",
+          "default": "指定が必須"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "バッテリ電圧の低下時に、携帯型プリンタを一時停止させるか、印字を継続させるかを設定する。"
+    "summary": "バッテリ電圧の低下時に、携帯型プリンタを一時停止させるか、印字を継続させるかを設定する。",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "低電圧時の一時停止",
+          "values": "Y 一時停止、N 印字続行",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "プリンタ上でZebra BASIC Interpreterを起動する。保存済みのプログラムを同時に実行することもできる。"
+    "summary": "プリンタ上でZebra BASIC Interpreterを起動する。保存済みのプログラムを同時に実行することもできる。",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "プログラムの格納場所",
+          "values": "R、E、B、A",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "実行するプログラムの名前",
+          "values": "任意の有効なプログラム名",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "プログラムファイルの拡張子",
+          "values": "BAS または BAE"
+        },
+        {
+          "meaning": "コンソール出力の制御",
+          "values": "Y オン、N オフ",
+          "default": "Y"
+        },
+        {
+          "meaning": "コマンドエコーの制御",
+          "values": "Y オン、N オフ",
+          "default": "Y"
+        },
+        {
+          "meaning": "ZBIに割り当てるメモリ",
+          "values": "20K から 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "補助ポートを設定し、アプリケータやベリファイアの信号とエラー処理を扱えるようにする。"
+    "summary": "補助ポートを設定し、アプリケータやベリファイアの信号とエラー処理を扱えるようにする。",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "検証エラーの処理モード",
+          "values": "0 オフ、1 エラー時に再印字、2 最大スループット",
+          "default": "0"
+        },
+        {
+          "meaning": "アプリケータ信号のタイミングモード",
+          "values": "0 オフ、1 から 4 は信号タイミング",
+          "default": "0"
+        },
+        {
+          "meaning": "印字開始信号のタイミングモード",
+          "values": "p パルスモード、l レベルモード"
+        },
+        {
+          "meaning": "ラベルエラー時の応答モード",
+          "values": "e エラーモード、f フィードモード",
+          "default": "f"
+        },
+        {
+          "meaning": "信号による再印字モード",
+          "values": "e 有効、d 無効",
+          "default": "d"
+        },
+        {
+          "meaning": "リボン残量警告モード",
+          "values": "e 有効、d 無効",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "用紙の追従に使うセンサを選択する。通常は反射式か透過式のいずれかである。"
+    "summary": "用紙の追従に使うセンサを選択する。通常は反射式か透過式のいずれかである。",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "使用するセンサー",
+          "values": "A 自動、R 反射型、T 透過型",
+          "default": "プリンターモデルにより異なる"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "1ミリメートルあたりのドット数を、標準と低減のどちらにするかを設定する。低減時はフォーマット座標の実寸が2倍になる。"
+    "summary": "1ミリメートルあたりのドット数を、標準と低減のどちらにするかを設定する。低減時はフォーマット座標の実寸が2倍になる。",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "印字濃度設定",
+          "values": "A 通常濃度、B 半分の濃度",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "指定したプリンタの使用量カウンタをリセットする。ユーザーカウンタやRFIDカウンタが対象となる。"
+    "summary": "指定したプリンタの使用量カウンタをリセットする。ユーザーカウンタやRFIDカウンタが対象となる。",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "リセットするカウンタ",
+          "values": "1 カウンタ1、2 カウンタ2、3 有効なRFID、4 無効化されたRFID、C ヘッド清掃済み、R ヘッド交換済み",
+          "default": "指定が必須"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "シリアルポートの通信パラメータを、1つのコマンドでまとめて設定する。"
+    "summary": "シリアルポートの通信パラメータを、1つのコマンドでまとめて設定する。",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "シリアル通信のボーレート",
+          "values": "110、300、600、1200、2400、4800、9600、14400、19200、28800、38400、57600、115200",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "1文字あたりのデータビット数",
+          "values": "7 または 8",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "パリティ設定",
+          "values": "N なし、E 偶数、O 奇数",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "ストップビット",
+          "values": "1 または 2",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "フロー制御プロトコル",
+          "values": "X Xon/Xoff、D DTR/DSR、R RTS、M DTR/DSRとXon/Xoff",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "Zebraプロトコルのハンドシェイク",
+          "values": "A ACK/NAK、N なし、Z Zebra",
+          "default": "指定が必須"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "通常はキャリブレーションで決まる透過センサの発光強度や基準値を、手動で上書きする。"
+    "summary": "通常はキャリブレーションで決まる透過センサの発光強度や基準値を、手動で上書きする。",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "変更するセンサー設定",
+          "values": "1 明度、2 基準線",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "選択した設定の値",
+          "values": "0 から 196",
+          "default": "指定が必須"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "フォーマット全体の受信を待たずに印字を開始し、複雑なラベルのスループットを高める。"
+    "summary": "フォーマット全体の受信を待たずに印字を開始し、複雑なラベルのスループットを高める。",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "印字を開始するドット行",
+          "values": "0 から 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "指定したZebraNetアラートの条件と通知先を無効にする。"
+    "summary": "指定したZebraNetアラートの条件と通知先を無効にする。",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "停止するアラート条件",
+          "values": "A から O とQ から V は各1条件、W はRFIDプリンターでのすべて、* はその他でのすべて"
+        },
+        {
+          "meaning": "停止するアラート送信先",
+          "values": "A シリアル、B パラレル、C メール、D TCP/IP、E UDP/IP、F SNMPトラップ、* すべて"
+        },
+        {
+          "meaning": "これらのアラートの停止または再開",
+          "values": "Y メッセージ停止、N メッセージ開始",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "発熱エネルギーの計算に使う、印字ヘッドの抵抗値を設定する。"
+    "summary": "発熱エネルギーの計算に使う、印字ヘッドの抵抗値を設定する。",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "プリントヘッドの抵抗値",
+          "values": "0488 から 1175",
+          "default": "直前に永久保存した値"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "通常はキャリブレーションで決まる用紙センサのしきい値、ラベル長、LEDの発光強度を設定する。"
+    "summary": "通常はキャリブレーションで決まる用紙センサのしきい値、ラベル長、LEDの発光強度を設定する。",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "ギャップセンサーの値",
+          "values": "0 から 100",
+          "default": "センサープロファイルまたは設定ラベルに表示"
+        },
+        {
+          "meaning": "用紙センサーの値",
+          "values": "0 から 100",
+          "default": "センサープロファイルまたは設定ラベルに表示"
+        },
+        {
+          "meaning": "リボンセンサーの値",
+          "values": "0 から 100",
+          "default": "センサープロファイルまたは設定ラベルに表示"
+        },
+        {
+          "meaning": "ドット単位のラベル長",
+          "values": "1 から 32000",
+          "default": "キャリブレーションによる値"
+        },
+        {
+          "meaning": "用紙センサーLEDの強度",
+          "values": "0 から 255",
+          "default": "キャリブレーションによる値"
+        },
+        {
+          "meaning": "リボンセンサーLEDの強度",
+          "values": "0 から 255",
+          "default": "キャリブレーションによる値"
+        },
+        {
+          "meaning": "マークセンサーの検出値",
+          "values": "0 から 100",
+          "default": "キャリブレーションによる値"
+        },
+        {
+          "meaning": "マーク用紙センサーの検出値",
+          "values": "0 から 100",
+          "default": "キャリブレーションによる値"
+        },
+        {
+          "meaning": "マークLEDセンサーの検出値",
+          "values": "0 から 255",
+          "default": "キャリブレーションによる値"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "指定した条件と通知先に対して、ZebraNetアラートを有効にする。"
+    "summary": "指定した条件と通知先に対して、ZebraNetアラートを有効にする。",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "アラート条件の種別",
+          "values": "A から V は各1条件、* はすべて",
+          "default": "欠落または無効な場合は無視"
+        },
+        {
+          "meaning": "アラート送信先の種別",
+          "values": "A シリアル、B パラレル、C メール、D TCP/IP、E UDP/IP、F SNMPトラップ",
+          "default": "欠落または無効な場合は無視"
+        },
+        {
+          "meaning": "条件成立時のアラートを有効化",
+          "values": "N いいえ、Y はい",
+          "default": "Y または前回の値"
+        },
+        {
+          "meaning": "条件解除時のアラートを有効化",
+          "values": "N いいえ、Y はい",
+          "default": "N または前回の値"
+        },
+        {
+          "meaning": "アラートの宛先アドレス",
+          "values": "メールアドレス、IPアドレス、またはSNMPターゲット",
+          "default": "欠落または無効な場合は無視"
+        },
+        {
+          "meaning": "アラートのポート番号",
+          "values": "0 から 65535",
+          "default": "欠落または無効な場合は無視"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "プリンタのメモリ間で保存済みオブジェクトをコピーする。ワイルドカードでまとめて指定できる。"
+    "summary": "プリンタのメモリ間で保存済みオブジェクトをコピーする。ワイルドカードでまとめて指定できる。",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "元の記憶デバイス",
+          "values": "R、E、B、A"
+        },
+        {
+          "meaning": "元オブジェクトの名前",
+          "values": "任意の既存オブジェクト名",
+          "default": "* はすべてのオブジェクトを選択"
+        },
+        {
+          "meaning": "元オブジェクトの拡張子",
+          "values": "任意の有効なファイル拡張子",
+          "default": "* はすべての拡張子を選択"
+        },
+        {
+          "meaning": "宛先の記憶デバイス",
+          "values": "R、E、B、A",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "宛先でのオブジェクト名",
+          "values": "最大8文字の英数字",
+          "default": "元オブジェクトの名前"
+        },
+        {
+          "meaning": "宛先オブジェクトの拡張子",
+          "values": "任意の有効なファイル拡張子",
+          "default": "元オブジェクトの拡張子"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "保存済みオブジェクト、内蔵フォント、利用できるバーコードの一覧ラベルを印字する。"
+    "summary": "保存済みオブジェクト、内蔵フォント、利用できるバーコードの一覧ラベルを印字する。",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "一覧表示の対象デバイス",
+          "values": "R、E、B、A、Z",
+          "default": "R"
+        },
+        {
+          "meaning": "オブジェクト名フィルタ",
+          "values": "1 から 8文字、* または ? のワイルドカード",
+          "default": "*"
+        },
+        {
+          "meaning": "拡張子フィルタ",
+          "values": "任意の有効な拡張子、* のワイルドカード",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "走行距離計や印字ヘッドの履歴など、要求したサービス情報をラベルに印字する。"
+    "summary": "走行距離計や印字ヘッドの履歴など、要求したサービス情報をラベルに印字する。",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "印字するサービスレポートの種類",
+          "values": "ES ステータス、HA ハードウェアアドレス、JT ヘッドテスト、MA アラート設定、MI メッセージ、OD オドメータ、PH ヘッド寿命、PP プラグアンドプレイ、SN シリアル番号、UI USB ID",
+          "default": "指定が必須"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "KR403のキオスクプレゼンタを設定する。カット長、カットマージン、引き戻しのタイムアウト、ループ長を指定できる。"
+    "summary": "KR403のキオスクプレゼンタを設定する。カット長、カットマージン、引き戻しのタイムアウト、ループ長を指定できる。",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "キオスクモードのカット量",
+          "values": "0 通常カット、10 から 60 はミリメートル単位の部分カット",
+          "default": "0"
+        },
+        {
+          "meaning": "ミリメートル単位のキオスクモードのカット余白",
+          "values": "2 から 9",
+          "default": "9"
+        },
+        {
+          "meaning": "印字後のキオスクモード提出方式",
+          "values": "0 排出、1 引き込み、2 動作なし",
+          "default": "0"
+        },
+        {
+          "meaning": "秒単位のキオスクモード提出タイムアウト",
+          "values": "0 から 300、0 はタイムアウトなし",
+          "default": "0"
+        },
+        {
+          "meaning": "ミリメートル単位のプレゼンタループ長",
+          "values": "0 そのまま通過、3 から 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "電源投入後や用紙室を開けた後に、ラベル長とセンサのしきい値を動的に再キャリブレーションするかどうかを制御する。"
+    "summary": "電源投入後や用紙室を開けた後に、ラベル長とセンサのしきい値を動的に再キャリブレーションするかどうかを制御する。",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "動的な長さキャリブレーションを有効化",
+          "values": "Y 有効、N 無効",
+          "default": "Y"
+        },
+        {
+          "meaning": "動的なしきい値キャリブレーションを有効化",
+          "values": "Y 有効、N 無効",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "転売やリサイクルに備えてプリンタを整理する、廃棄準備モードを開始する。"
+    "summary": "転売やリサイクルに備えてプリンタを整理する、廃棄準備モードを開始する。",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "プリンターのシリアル番号",
+          "values": "英数字の文字列",
+          "default": "指定が必須"
+        },
+        {
+          "meaning": "フラッシュ消去の実行回数",
+          "values": "0 から 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "一定時間アイドル状態が続いたときに自動でシャットダウンし、スリープに入る設定を行う。待機中のラベルの扱いも選択できる。"
+    "summary": "一定時間アイドル状態が続いたときに自動でシャットダウンし、スリープに入る設定を行う。待機中のラベルの扱いも選択できる。",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "自動シャットダウンまでのアイドル秒数",
+          "values": "0 から 999999、0でシャットダウンを無効化",
+          "default": "直前に保存した値、または0"
+        },
+        {
+          "meaning": "シャットダウン時のラベル状態",
+          "values": "Y キューありでシャットダウン、N 先にキューを終了",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "KR403のキオスクプレゼンタがすでに差し出した用紙を、排出または引き戻す。"
+    "summary": "KR403のキオスクプレゼンタがすでに差し出した用紙を、排出または引き戻す。",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "キオスクモードの提出動作",
+          "values": "0 排出、1 引き込み、2 ^KVの設定を使用"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "プリンタメモリに保存されたZPLフォーマットをホストに返す。"
+    "summary": "プリンタメモリに保存されたZPLフォーマットをホストに返す。",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "検索するメモリデバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "R"
+        },
+        {
+          "meaning": "保存済みフォーマット名",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": ".ZPL固定",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "プリンタメモリに保存されたグラフィック画像をホストに返す。"
+    "summary": "プリンタメモリに保存されたグラフィック画像をホストに返す。",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "検索するメモリデバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "検索優先順位"
+        },
+        {
+          "meaning": "アップロードするグラフィック名",
+          "values": "1 から 8文字の英数字",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "ファイル拡張子",
+          "values": ".GRF固定",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "要求したステータス、識別情報、走行距離計、メンテナンスのデータをホストに返す。"
+    "summary": "要求したステータス、識別情報、走行距離計、メンテナンスのデータをホストに返す。",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "返すデータの選択条件",
+          "values": "ES ステータス、HA 有線MAC、JT プリントヘッドテスト、MA メンテナンスアラート、MI メンテナンス情報、OD オドメータ、PH プリントヘッド寿命、PP プラグアンドプレイ、SN シリアル番号、UI USB製品ID"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "番号付きフィールドのデータをホストに返す。返すバイト数の上限も指定できる。"
+    "summary": "番号付きフィールドのデータをホストに返す。返すバイト数の上限も指定できる。",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "^FNで設定したフィールド番号",
+          "values": "0 から 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "返すバイト数",
+          "values": "1 から 256",
+          "default": "64"
+        },
+        {
+          "meaning": "データ前のヘッダーテキスト",
+          "values": "0 から 3072バイト",
+          "default": "ヘッダーなし"
+        },
+        {
+          "meaning": "データ後の終端テキスト",
+          "values": "0 から 3072文字"
+        },
+        {
+          "meaning": "応答の送信単位",
+          "values": "F フォーマット、L ラベル",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "指定したメモリのディレクトリ一覧を、残りの空き容量とともに返す。"
+    "summary": "指定したメモリのディレクトリ一覧を、残りの空き容量とともに返す。",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "一覧表示するメモリデバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ、Z その他",
+          "default": "R"
+        },
+        {
+          "meaning": "オブジェクト名フィルタ",
+          "values": "1 から 8文字の英数字",
+          "default": "*"
+        },
+        {
+          "meaning": "拡張子フィルタ",
+          "values": "任意のZebraファイル拡張子",
+          "default": "*"
+        },
+        {
+          "meaning": "一覧のレイアウト",
+          "values": "c 列、d 既定",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "保存済みのグラフィックを、ダウンロードできるファイル形式でホストに返す。"
+    "summary": "保存済みのグラフィックを、ダウンロードできるファイル形式でホストに返す。",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "オブジェクトの格納先メモリデバイス",
+          "values": "R DRAM、E フラッシュ、B メモリカード、A コンパクトフラッシュ",
+          "default": "検索優先順位"
+        },
+        {
+          "meaning": "アップロードするオブジェクト名",
+          "values": "1 から 8文字の英数字",
+          "default": "名前が必須"
+        },
+        {
+          "meaning": "アップロード形式",
+          "values": "G 未加工のビットマップ、P 圧縮ビットマップ",
+          "default": "保存済みフォーマット"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "設定、オブジェクトのディレクトリ、ステータスを記述した、プリンタ情報のXMLを返す。"
+    "summary": "設定、オブジェクトのディレクトリ、ステータスを記述した、プリンタ情報のXMLを返す。",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "返す説明の種別",
+          "values": "a すべて、f フォーマット、l ディレクトリ、o オブジェクト、r ステータス"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "RFIDタグの読み取りと書き込みを行う。データ形式、メモリバンク、アクセスパスワードを指定できる。"
+    "summary": "RFIDタグの読み取りと書き込みを行う。データ形式、メモリバンク、アクセスパスワードを指定できる。",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "操作",
+          "values": "W 書き込み、L 書き込みとロック、R 読み取り、P 読み取りパスワード、S パスワード設定",
+          "default": "W"
+        },
+        {
+          "meaning": "データ形式",
+          "values": "A ASCII、H 16進数、E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "パスワードフラグまたは開始ブロック番号",
+          "values": "P パスワードが続く、0 から n ブロック",
+          "default": "0"
+        },
+        {
+          "meaning": "読み書きするバイト数",
+          "values": "1 から n、タグごとの最大値",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen2メモリバンク",
+          "values": "E EPC 96ビット、A EPCのPCビット自動、0 予約済み、1 EPC、2 TID、3 ユーザー",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "タグ上のRFID EPCフィールドをエンコードする際のビット構成を定義する。"
+    "summary": "タグ上のRFID EPCフィールドをエンコードする際のビット構成を定義する。",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "パーティション全体のビット数",
+          "values": "1 からタグのビットサイズまで",
+          "default": "96"
+        },
+        {
+          "meaning": "各パーティションのビット数、最大16パーティション",
+          "values": "1 から 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "以降のラベルに適用するRFIDの設定を行う。タグ種別、書き込み位置、失敗時の処理、VOIDバーの長さを指定できる。"
+    "summary": "以降のラベルに適用するRFIDの設定を行う。タグ種別、書き込み位置、失敗時の処理、VOIDバーの長さを指定できる。",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "タグの種類",
+          "values": "8はGen 2のみ",
+          "default": "8"
+        },
+        {
+          "meaning": "タグの書き込み位置",
+          "values": "ドットで絶対指定、F0 から Fxxx は前方、B0 から B30 は後方、upは次、downは前",
+          "default": "プリンターの設定"
+        },
+        {
+          "meaning": "VOID印字の長さ",
+          "values": "0 からラベル長まで",
+          "default": "ラベル長"
+        },
+        {
+          "meaning": "失敗時に再試行するラベル数",
+          "values": "1 から 10",
+          "default": "3"
+        },
+        {
+          "meaning": "再試行後のエラー処理",
+          "values": "N 動作なし、P 一時停止、E エラーモード",
+          "default": "N"
+        },
+        {
+          "meaning": "アプリケータへ送る信号",
+          "values": "S 単一信号、D 二重信号",
+          "default": "S"
+        },
+        {
+          "meaning": "予約済み、未使用",
+          "values": "なし"
+        },
+        {
+          "meaning": "VOIDラベルの印字速度",
+          "values": "任意の有効な印字速度",
+          "default": "最大印字速度"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "タグIDからEPCのシリアル番号を生成し、EPCの下位ビットに書き込む。"
+    "summary": "タグIDからEPCのシリアル番号を生成し、EPCの下位ビットに書き込む。",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "シリアルIDのバイナリプレフィックス",
+          "values": "ASCIIの1と0、最大38ビット",
+          "default": "チップのMDIDによる"
+        },
+        {
+          "meaning": "シリアルフィールドを示す特殊文字",
+          "values": "コマンド、制御、区切り文字、RTCを除く任意のASCII",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "キャリブレーションで使える値が得られない場合に、RFIDの読み取り出力と書き込み出力を設定する。"
+    "summary": "キャリブレーションで使える値が得られない場合に、RFIDの読み取り出力と書き込み出力を設定する。",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "読み取り出力レベル",
+          "values": "0 から 30、または H 高、M 中、L 低",
+          "default": "プリンターの設定"
+        },
+        {
+          "meaning": "書き込み出力レベル",
+          "values": "0 から 30、または H 高、M 中、L 低",
+          "default": "プリンターの設定"
+        },
+        {
+          "meaning": "アンテナ素子の選択",
+          "values": "プリンター固有のグリッド、A1 から F4",
+          "default": "プリンターの設定"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "RFIDタグのメモリをロックし、以後の書き込みを防ぐ。ロックは解除できる形式と永続的な形式から選べる。"
+    "summary": "RFIDタグのメモリをロックし、以後の書き込みを防ぐ。ロックは解除できる形式と永続的な形式から選べる。",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "Killパスワードのロック状態",
+          "values": "U 解除、L ロック、O 永久解除、P 永久ロック"
+        },
+        {
+          "meaning": "アクセスパスワードのロック状態",
+          "values": "U 解除、L ロック、O 永久解除、P 永久ロック"
+        },
+        {
+          "meaning": "EPCメモリバンクのロック状態",
+          "values": "U 解除、L ロック、O 永久解除、P 永久ロック"
+        },
+        {
+          "meaning": "ユーザーメモリバンクのロック状態",
+          "values": "U 解除、L ロック、O 永久解除、P 永久ロック"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "RFIDのキャリブレーションを実行し、位置、アンテナ、出力の設定をホストに返す。"
+    "summary": "RFIDのキャリブレーションを実行し、位置、アンテナ、出力の設定をホストに返す。",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "結果テーブルの前のテキスト",
+          "values": "65文字未満の任意の文字列",
+          "default": "開始"
+        },
+        {
+          "meaning": "結果テーブルの後のテキスト",
+          "values": "65文字未満の任意の文字列",
+          "default": "終了"
+        },
+        {
+          "meaning": "キャリブレーション開始位置",
+          "values": "F0 から Fxxx は前方、B0 から B30 は後方",
+          "default": "プリンターの設定"
+        },
+        {
+          "meaning": "キャリブレーション終了位置",
+          "values": "F0 から Fxxx は前方、B0 から B30 は後方、A 自動",
+          "default": "プリンターの設定"
+        },
+        {
+          "meaning": "アンテナと出力の自動選択か手動選択か",
+          "values": "A 自動、M 手動",
+          "default": "A"
+        },
+        {
+          "meaning": "読み書き出力範囲の開始",
+          "values": "0 から 30",
+          "default": "0"
+        },
+        {
+          "meaning": "読み書き出力範囲の終端",
+          "values": "0 から 30",
+          "default": "最大出力"
+        },
+        {
+          "meaning": "アンテナ範囲の開始",
+          "values": "モデルにより異なる、通常はA1",
+          "default": "A1"
+        },
+        {
+          "meaning": "アンテナ範囲の終端",
+          "values": "モデルにより異なる、最大E4",
+          "default": "プリンターの設定"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "起動時に有線プリントサーバの有無を確認するかどうかを選択する。"
+    "summary": "起動時に有線プリントサーバの有無を確認するかどうかを選択する。",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "起動時の有線プリントサーバー確認",
+          "values": "C 確認、S スキップ",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "主として使用するネットワークデバイスを、有線と無線から選択する。"
+    "summary": "主として使用するネットワークデバイスを、有線と無線から選択する。",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "プライマリネットワークデバイス",
+          "values": "1 有線を優先、2 無線を優先",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "従来のRS-485マルチドロップ回線上のプリンタを、ネットワークIDで1台指定する。"
+    "summary": "従来のRS-485マルチドロップ回線上のプリンタを、ネットワークIDで1台指定する。",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "宛先とするプリンターのネットワークID",
+          "values": "001 から 999",
+          "default": "000 なし"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "従来のRS-485マルチドロップ回線上でプリンタを指定するための、ネットワークIDを割り当てる。"
+    "summary": "従来のRS-485マルチドロップ回線上でプリンタを指定するための、ネットワークIDを割り当てる。",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "プリンターに割り当てたネットワークID",
+          "values": "001 から 999",
+          "default": "000 なし"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "プリンタのSNMPの識別情報とコミュニティ文字列を設定する。"
+    "summary": "プリンタのSNMPの識別情報とコミュニティ文字列を設定する。",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMPシステム名",
+          "values": "最大17文字"
+        },
+        {
+          "meaning": "SNMPシステム連絡先",
+          "values": "最大50文字"
+        },
+        {
+          "meaning": "SNMPシステムの設置場所",
+          "values": "最大50文字"
+        },
+        {
+          "meaning": "SNMP GETコミュニティ名",
+          "values": "最大19文字",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP SETコミュニティ名",
+          "values": "最大19文字",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMPトラップコミュニティ名",
+          "values": "最大20文字",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "起動時のネットワーク設定を、プリンタ本体と接続されたプリントサーバのどちらから取得するかを選択する。"
+    "summary": "起動時のネットワーク設定を、プリンタ本体と接続されたプリントサーバのどちらから取得するかを選択する。",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "起動設定のプライマリソース",
+          "values": "P プリンター、M プリントサーバー",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "プリントサーバによるメールアラート用に、SMTPサーバとドメインの設定を行う。"
+    "summary": "プリントサーバによるメールアラート用に、SMTPサーバとドメインの設定を行う。",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTPサーバーアドレス",
+          "values": "IPv4アドレス"
+        },
+        {
+          "meaning": "プリントサーバーのドメイン名",
+          "values": "ドメイン名"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "認証済みのIPアドレスが、再認証なしでプリンタのWebページにアクセスできる時間を設定する。"
+    "summary": "認証済みのIPアドレスが、再認証なしでプリンタのWebページにアクセスできる時間を設定する。",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "Webページ認証のタイムアウト",
+          "values": "0 から 255分",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "プリントサーバのDHCPクライアント識別子の形式と値を設定する。"
+    "summary": "プリントサーバのDHCPクライアント識別子の形式と値を設定する。",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "クライアント識別子のモード",
+          "values": "0 無効、1 MACアドレス、2 ASCII、3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "識別子を適用するデバイス",
+          "values": "0 すべて、1 無線、2 外部有線、3 内部有線",
+          "default": "1"
+        },
+        {
+          "meaning": "識別子のプレフィックス",
+          "values": "11文字のASCIIまたは22文字の16進数"
+        },
+        {
+          "meaning": "識別子のサフィックス",
+          "values": "最大60文字のASCIIまたは120文字の16進数"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "プリンタのネットワークインタフェースのIPアドレス、サブネットマスク、ゲートウェイを設定する。"
+    "summary": "プリンタのネットワークインタフェースのIPアドレス、サブネットマスク、ゲートウェイを設定する。",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "変更対象のデバイス",
+          "values": "1 外部有線、2 内部有線、3 無線"
+        },
+        {
+          "meaning": "IPアドレスの取得方法",
+          "values": "A すべて、B BOOTP、C DHCPとBOOTP、D DHCP、G Gleaningのみ、R RARP、P 固定",
+          "default": "A"
+        },
+        {
+          "meaning": "IPアドレス",
+          "values": "IPv4アドレス"
+        },
+        {
+          "meaning": "サブネットマスク",
+          "values": "IPv4サブネットマスク"
+        },
+        {
+          "meaning": "デフォルトゲートウェイ",
+          "values": "IPv4アドレス"
+        },
+        {
+          "meaning": "WINSサーバーアドレス",
+          "values": "IPv4アドレス"
+        },
+        {
+          "meaning": "接続タイムアウトの監視",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "接続タイムアウトの値",
+          "values": "0 から 9999秒",
+          "default": "300"
+        },
+        {
+          "meaning": "ARPブロードキャスト間隔",
+          "values": "0 から 30分",
+          "default": "0 なし"
+        },
+        {
+          "meaning": "Rawポートのベース番号",
+          "values": "1 から 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "旧ファームウェア向けに、有線プリントサーバのIP設定、タイムアウト、rawポートを設定する。"
+    "summary": "旧ファームウェア向けに、有線プリントサーバのIP設定、タイムアウト、rawポートを設定する。",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "IPアドレスの取得方法",
+          "values": "A すべて、B BOOTP、C DHCPとBOOTP、D DHCP、G Gleaningのみ、R RARP、P 固定",
+          "default": "A"
+        },
+        {
+          "meaning": "IPアドレス",
+          "values": "IPv4アドレス"
+        },
+        {
+          "meaning": "サブネットマスク",
+          "values": "IPv4サブネットマスク"
+        },
+        {
+          "meaning": "デフォルトゲートウェイ",
+          "values": "IPv4アドレス"
+        },
+        {
+          "meaning": "WINSサーバーアドレス",
+          "values": "IPv4アドレス"
+        },
+        {
+          "meaning": "接続タイムアウトの監視",
+          "values": "Y はい、N いいえ",
+          "default": "Y"
+        },
+        {
+          "meaning": "接続タイムアウトの値",
+          "values": "0 から 9999秒",
+          "default": "300"
+        },
+        {
+          "meaning": "ARPブロードキャスト間隔",
+          "values": "0 から 30分",
+          "default": "0 なし"
+        },
+        {
+          "meaning": "Rawポートのベース番号",
+          "values": "1 から 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "無線モジュールの受信アンテナと送信アンテナを選択する。"
+    "summary": "無線モジュールの受信アンテナと送信アンテナを選択する。",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "受信アンテナ",
+          "values": "D ダイバーシティ、L 左、R 右",
+          "default": "D"
+        },
+        {
+          "meaning": "送信アンテナ",
+          "values": "D ダイバーシティ、L 左、R 右",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "旧世代の無線ファームウェア向けに、現在は使われないWEPのセキュリティ設定と鍵情報を構成する。"
+    "summary": "旧世代の無線ファームウェア向けに、現在は使われないWEPのセキュリティ設定と鍵情報を構成する。",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "暗号化モード",
+          "values": "OFF なし、40 40ビット、128 128ビット",
+          "default": "OFF"
+        },
+        {
+          "meaning": "暗号化キーのインデックス",
+          "values": "1 から 4",
+          "default": "1"
+        },
+        {
+          "meaning": "認証方式",
+          "values": "O オープンシステム、S 共有キー",
+          "default": "O"
+        },
+        {
+          "meaning": "暗号化キーの保存形式",
+          "values": "H 16進数、S 文字列",
+          "default": "H"
+        },
+        {
+          "meaning": "暗号化キー1",
+          "values": "16進数のペアまたは英数字の文字列"
+        },
+        {
+          "meaning": "暗号化キー2",
+          "values": "16進数のペアまたは英数字の文字列"
+        },
+        {
+          "meaning": "暗号化キー3",
+          "values": "16進数のペアまたは英数字の文字列"
+        },
+        {
+          "meaning": "暗号化キー4",
+          "values": "16進数のペアまたは英数字の文字列"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "旧世代の無線ファームウェア向けに、現在は使われないCisco LEAP認証を構成する。"
+    "summary": "旧世代の無線ファームウェア向けに、現在は使われないCisco LEAP認証を構成する。",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAPモード",
+          "values": "OFF、ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "ユーザー名",
+          "values": "1 から 32文字",
+          "default": "user"
+        },
+        {
+          "meaning": "パスワード",
+          "values": "1 から 32文字",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "プリンタの操作パネルで無線設定を扱うためのパスワードを設定する。"
+    "summary": "プリンタの操作パネルで無線設定を扱うためのパスワードを設定する。",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "古い無線パスワード",
+          "values": "0000 から 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "新しい無線パスワード",
+          "values": "0000 から 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "旧世代の無線プリントサーバで、802.11bのデータレートと送信出力を設定する。"
+    "summary": "旧世代の無線プリントサーバで、802.11bのデータレートと送信出力を設定する。",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "伝送速度1Mbps",
+          "values": "Y オン、N オフ"
+        },
+        {
+          "meaning": "伝送速度2Mbps",
+          "values": "Y オン、N オフ"
+        },
+        {
+          "meaning": "伝送速度5.5Mbps",
+          "values": "Y オン、N オフ"
+        },
+        {
+          "meaning": "伝送速度11Mbps",
+          "values": "Y オン、N オフ"
+        },
+        {
+          "meaning": "送信出力",
+          "values": "1、5、20、30、50、100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "無線ネットワーク名、無線モード、プリアンブル長、キープアライブの動作を設定する。"
+    "summary": "無線ネットワーク名、無線モード、プリアンブル長、キープアライブの動作を設定する。",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSIDの値",
+          "values": "最大32文字",
+          "default": "125"
+        },
+        {
+          "meaning": "動作モード",
+          "values": "I インフラストラクチャ、A アドホック",
+          "default": "I"
+        },
+        {
+          "meaning": "無線カードのプリアンブル長",
+          "values": "L 長い、S 短い",
+          "default": "L"
+        },
+        {
+          "meaning": "無線パルスの有効化",
+          "values": "0 無効、1 有効",
+          "default": "1"
+        },
+        {
+          "meaning": "無線パルス間隔",
+          "values": "5 から 300秒",
+          "default": "15"
+        },
+        {
+          "meaning": "チャンネルマスク",
+          "values": "0x付き4桁の16進数",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "国際モード",
+          "values": "0 無効、1 有効",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "無線のセキュリティモード、鍵、認証情報を1つのコマンドでまとめて設定する。"
+    "summary": "無線のセキュリティモード、鍵、認証情報を1つのコマンドでまとめて設定する。",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "セキュリティ種別のコード",
+          "values": "01 なし、02 WEP 40、03 WEP 128、04 から 08 はEAPタイプ、09 WPA PSK、10 から 14 はWPA EAP、15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "WEP暗号化キーのインデックス",
+          "values": "1 から 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP認証方式",
+          "values": "O オープンシステム、S 共有キー",
+          "default": "O"
+        },
+        {
+          "meaning": "WEPキーの保存形式",
+          "values": "H 16進数、S 文字列",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP暗号化キー1",
+          "values": "16進数のペアまたは英数字の文字列"
+        },
+        {
+          "meaning": "WEP暗号化キー2",
+          "values": "16進数のペアまたは英数字の文字列"
+        },
+        {
+          "meaning": "WEP暗号化キー3",
+          "values": "16進数のペアまたは英数字の文字列"
+        },
+        {
+          "meaning": "WEP暗号化キー4",
+          "values": "16進数のペアまたは英数字の文字列"
+        },
+        {
+          "meaning": "セキュリティ種別のユーザーID",
+          "values": "任意の文字列",
+          "default": "user"
+        },
+        {
+          "meaning": "セキュリティ種別のパスワード",
+          "values": "任意の文字列",
+          "default": "password"
+        },
+        {
+          "meaning": "秘密鍵の省略可能なパスワード",
+          "values": "任意の文字列"
+        },
+        {
+          "meaning": "Kerberosのレルム",
+          "values": "任意の文字列",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberosの鍵配布センター",
+          "values": "任意の文字列",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "事前共有キーの値",
+          "values": "最小64桁の16進数"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

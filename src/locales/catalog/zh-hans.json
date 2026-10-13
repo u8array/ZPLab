@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "以点为单位设置可打印宽度。超出该宽度的内容会被打印机裁掉。"
+    "summary": "以点为单位设置可打印宽度。超出该宽度的内容会被打印机裁掉。",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "以点为单位的打印宽度",
+          "values": "2 到标签宽度",
+          "default": "上次保存的值"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "以点为单位设置标签长度，确定可打印格式的结束位置。"
+    "summary": "以点为单位设置标签长度，确定可打印格式的结束位置。",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "以点为单位的标签长度",
+          "values": "1 到 32000",
+          "default": "打印机设置"
+        },
+        {
+          "meaning": "是否适用于所有介质",
+          "values": "N 仅连续介质，Y 所有介质",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "移动标签的原点位置，改变后续字段坐标所使用的基准原点。"
+    "summary": "移动标签的原点位置，改变后续字段坐标所使用的基准原点。",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "标签原点的 x 轴位置",
+          "values": "0 到 32000",
+          "default": "0 或上次保存的值"
+        },
+        {
+          "meaning": "标签原点的 y 轴位置",
+          "values": "0 到 32000",
+          "default": "0 或上次保存的值"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "为字段位置施加水平偏移，以兼容早期的 Zebra 格式。"
+    "summary": "为字段位置施加水平偏移，以兼容早期的 Zebra 格式。",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "所有字段位置的左移量",
+          "values": "-9999 到 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "相对于介质顶边为整个格式添加垂直偏移。"
+    "summary": "相对于介质顶边为整个格式添加垂直偏移。",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "以点行为单位上下移动整个格式",
+          "values": "-120 到 120，XiIIIPlus 600 dpi 为 -240 到 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "将坐标单位设置为点、英寸或毫米，并可在不同打印分辨率之间缩放格式。"
+    "summary": "将坐标单位设置为点、英寸或毫米，并可在不同打印分辨率之间缩放格式。",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "后续字段使用的坐标单位",
+          "values": "D 点，I 英寸，M 毫米",
+          "default": "D"
+        },
+        {
+          "meaning": "以每英寸点数为单位的格式基准分辨率",
+          "values": "150，200，300"
+        },
+        {
+          "meaning": "要转换到的目标分辨率",
+          "values": "300，600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "设置打印后的介质处理模式，包括撕离、剥离、切刀、回卷和贴标机模式。"
+    "summary": "设置打印后的介质处理模式，包括撕离、剥离、切刀、回卷和贴标机模式。",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "打印后的介质处理模式",
+          "values": "T 撕离，P 剥离，R 回卷，A 贴标机，C 切刀，D 延迟切刀，F rfid，K 自助终端",
+          "default": "打印机设置"
+        },
+        {
+          "meaning": "是否在下一张标签前预剥离",
+          "values": "N 否，Y 是",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "选择热转印或热敏打印模式，需与所装介质是否使用碳带相匹配。"
+    "summary": "选择热转印或热敏打印模式，需与所装介质是否使用碳带相匹配。",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "打印机所用的介质类型",
+          "values": "T 热转印，D 热敏"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "设置打印数量、暂停或切刀分组方式，以及每个序列值的打印份数。"
+    "summary": "设置打印数量、暂停或切刀分组方式，以及每个序列值的打印份数。",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "要打印的标签总数",
+          "values": "1 到 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "暂停前打印的标签数",
+          "values": "1 到 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "每个序列号的副本数",
+          "values": "0 到 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "是否覆盖暂停计数",
+          "values": "N 否，Y 是",
+          "default": "N"
+        },
+        {
+          "meaning": "作废 RFID 标签后是否切纸",
+          "values": "N 否，Y 是",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "交换前景与背景，使后续字段以反白方式打印。"
+    "summary": "交换前景与背景，使后续字段以反白方式打印。",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "是否为后续字段反转打印颜色",
+          "values": "N 否，Y 是",
+          "default": "N 或上次保存的值"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "将整个标签格式旋转 180 度。"
+    "summary": "将整个标签格式旋转 180 度。",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "是否将标签倒置打印",
+          "values": "N 正常，I 反转",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "将可打印区域水平镜像。"
+    "summary": "将可打印区域水平镜像。",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "是否将标签左右镜像",
+          "values": "N 否，Y 是",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "以英寸每秒为单位设置打印速度、走纸速度和回退速度。"
+    "summary": "以英寸每秒为单位设置打印速度、走纸速度和回退速度。",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "以英寸每秒为单位的打印速度",
+          "values": "1 到 14，或 A 2，B 3，C 4，D 6，E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "送出空白标签的走纸速度",
+          "values": "2 到 14",
+          "default": "6"
+        },
+        {
+          "meaning": "打印后回退速度",
+          "values": "2 到 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "以左上角为基准，从标签原点定位下一个字段。"
+    "summary": "以左上角为基准，从标签原点定位下一个字段。",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "以点为单位的水平位置",
+          "values": "0 到 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "以点为单位的垂直位置",
+          "values": "0 到 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "对齐方式",
+          "values": "0 左，1 右，2 自动",
+          "default": "上一个 ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "以基线或条码边缘为基准定位下一个字段，使旋转后的字段拥有稳定的锚点。"
+    "summary": "以基线或条码边缘为基准定位下一个字段，使旋转后的字段拥有稳定的锚点。",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "以点为单位的水平位置",
+          "values": "0 到 32000",
+          "default": "上一个字段位置"
+        },
+        {
+          "meaning": "以点为单位的垂直位置",
+          "values": "0 到 32000",
+          "default": "上一个字段位置"
+        },
+        {
+          "meaning": "对齐方式",
+          "values": "0 左，1 右，2 自动",
+          "default": "上一个 ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "为当前字段提供内容，可以是文本、条码数据或 RFID 数据。"
+    "summary": "为当前字段提供内容，可以是文本、条码数据或 RFID 数据。",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "字段内容",
+          "values": "最多 3072 字节的任意可打印数据，不含前缀字符"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "在字段数据中启用十六进制转义，用于表示二进制字节和保留的命令字符。"
+    "summary": "在字段数据中启用十六进制转义，用于表示二进制字节和保留的命令字符。",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "十六进制标识字符",
+          "values": "除格式和控制前缀外的任意字符",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "添加注释字段。打印机会忽略其中直到下一个字段分隔符之前的所有内容。"
+    "summary": "添加注释字段。打印机会忽略其中直到下一个字段分隔符之前的所有内容。",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "不打印的注释文本",
+          "values": "任意文本，直到下一条命令前都会被忽略"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "设置默认的字段方向，在较新的固件上还可设置默认对齐方式。"
+    "summary": "设置默认的字段方向，在较新的固件上还可设置默认对齐方式。",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "默认字段旋转",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "N"
+        },
+        {
+          "meaning": "默认对齐方式",
+          "values": "0 左，1 右，2 自动",
+          "default": "^TB 时为自动，其他情况为左对齐"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "将字段数据排入固定宽度的文本块，并可控制行数、行距、缩进和对齐方式。"
+    "summary": "将字段数据排入固定宽度的文本块，并可控制行数、行距、缩进和对齐方式。",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "以点为单位的文本块宽度",
+          "values": "0 到标签宽度",
+          "default": "0"
+        },
+        {
+          "meaning": "最大行数",
+          "values": "1 到 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "以点为单位的额外行距",
+          "values": "-9999 到 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "对齐方式",
+          "values": "L 左，C 居中，R 右，J 两端对齐",
+          "default": "L"
+        },
+        {
+          "meaning": "以点为单位的后续行悬挂缩进",
+          "values": "0 到 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "将文本排入固定宽度和固定高度的文本框，超出部分被截断。"
+    "summary": "将文本排入固定宽度和固定高度的文本框，超出部分被截断。",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "文本框旋转",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^A"
+        },
+        {
+          "meaning": "以点为单位的文本框宽度",
+          "values": "1 到标签宽度",
+          "default": "1"
+        },
+        {
+          "meaning": "以点为单位的文本框高度",
+          "values": "1 到标签长度",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "为存储格式和调用格式中的可变字段指定编号。"
+    "summary": "为存储格式和调用格式中的可变字段指定编号。",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "字段编号",
+          "values": "0 到 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "可选的 KDU 提示文本",
+          "values": "最多 255 个字母数字字符"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "为可变字段提供数据。与 ^FD 的数据不同，其内容在标签打印后即被清除。"
+    "summary": "为可变字段提供数据。与 ^FD 的数据不同，其内容在标签打印后即被清除。",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "可变字段数据",
+          "values": "0 到 3072 字节的字符串"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "设置用于在另一个字段字符串中嵌入编号字段值的字符。"
+    "summary": "设置用于在另一个字段字符串中嵌入编号字段值的字符。",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "字段拼接分隔符",
+          "values": "除格式和控制前缀外的任意字符",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "设置字段数据中实时时钟标记所使用的标识字符。"
+    "summary": "设置字段数据中实时时钟标记所使用的标识字符。",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "主时钟标识字符",
+          "values": "任意 ASCII 字符",
+          "default": "%"
+        },
+        {
+          "meaning": "次时钟标识字符",
+          "values": "任意 ASCII 字符，与 a 不同"
+        },
+        {
+          "meaning": "三时钟标识字符",
+          "values": "任意 ASCII 字符，与 a 和 b 不同"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "为后续条码字段设置默认的条码模块宽度、宽窄比和高度。"
+    "summary": "为后续条码字段设置默认的条码模块宽度、宽窄比和高度。",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "以点为单位的模块宽度",
+          "values": "1 到 10",
+          "default": "2"
+        },
+        {
+          "meaning": "宽窄条比例",
+          "values": "2.0 到 3.0，步长 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "任意点高度",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "当一条消息跨越多个符号时，将 PDF417 或 MicroPDF417 分段放置在指定的原点上。"
+    "summary": "当一条消息跨越多个符号时，将 PDF417 或 MicroPDF417 分段放置在指定的原点上。",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "首个符号的 x 轴坐标，多个符号重复成对给出",
+          "values": "0 到 32000，或 e 跳过该符号"
+        },
+        {
+          "meaning": "首个符号的 y 轴坐标，多个符号重复成对给出",
+          "values": "0 到 32000，或 e 跳过该符号"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "设置当前字段的字符排列顺序，并可添加额外的字符间距。"
+    "summary": "设置当前字段的字符排列顺序，并可添加额外的字符间距。",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "打印方向",
+          "values": "H 水平，V 垂直，R 反向",
+          "default": "H"
+        },
+        {
+          "meaning": "以点为单位的额外字符间距",
+          "values": "0 到 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "为下一个字段选择内置可缩放字体 0，并指定所需的尺寸和方向。"
+    "summary": "为下一个字段选择内置可缩放字体 0，并指定所需的尺寸和方向。",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的字符高度",
+          "values": "10 到 32000",
+          "default": "上一个 ^CF"
+        },
+        {
+          "meaning": "以点为单位的字符宽度",
+          "values": "10 到 32000",
+          "default": "上一个 ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "通过单字符名称选择内置字体，方向、高度和宽度可选。"
+    "summary": "通过单字符名称选择内置字体，方向、高度和宽度可选。",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "字体名称",
+          "values": "A 到 Z，0 到 9",
+          "default": "上一个 ^CF"
+        },
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的字符高度",
+          "values": "可缩放 10 到 32000，位图字体为基础高度的 1 到 10 倍",
+          "default": "上一个 ^CF"
+        },
+        {
+          "meaning": "以点为单位的字符宽度",
+          "values": "可缩放 10 到 32000，位图字体为基础宽度的 1 到 10 倍",
+          "default": "上一个 ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "为下一个字段选择已存储的字体文件，方向、高度和宽度可选。"
+    "summary": "为下一个字段选择已存储的字体文件，方向、高度和宽度可选。",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "字段方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的字符高度",
+          "values": "可缩放 10 到 32000，位图字体为基础高度的 1 到 10 倍",
+          "default": "上一个 ^CF"
+        },
+        {
+          "meaning": "以点为单位的字符宽度",
+          "values": "可缩放 10 到 32000，位图字体为基础宽度的 1 到 10 倍",
+          "default": "上一个 ^CF"
+        },
+        {
+          "meaning": "存放字体的驱动器",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "要使用的字体文件名",
+          "values": "任意有效字体名称",
+          "default": "上一个 ^CF"
+        },
+        {
+          "meaning": "字体文件扩展名",
+          "values": "FNT 字体，TTF TrueType，TTE TrueType 扩展"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "设置未自行指定字体的文本字段所使用的后备字体、高度和宽度。"
+    "summary": "设置未自行指定字体的文本字段所使用的后备字体、高度和宽度。",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "默认字体",
+          "values": "A 到 Z，0 到 9",
+          "default": "A"
+        },
+        {
+          "meaning": "以点为单位的默认字符高度",
+          "values": "0 到 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "以点为单位的默认字符宽度",
+          "values": "0 到 32000",
+          "default": "5 或上次保存的值"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "选择用于解释字段数据的编码，包括各种代码页和 UTF-8。"
+    "summary": "选择用于解释字段数据的编码，包括各种代码页和 UTF-8。",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "使用的字符编码",
+          "values": "0 到 36，28 为 UTF-8，29 为 UTF-16BE，30 为 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "要重新映射的字符位置",
+          "values": "0 到 255",
+          "default": "无"
+        },
+        {
+          "meaning": "替换字符位置",
+          "values": "0 到 255",
+          "default": "无"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "为后续字段启用高级文本排版，包括双向文本、字形整形和 OpenType 特性。"
+    "summary": "为后续字段启用高级文本排版，包括双向文本、字形整形和 OpenType 特性。",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "默认字形来源",
+          "values": "0 空格字符，1 字体字形",
+          "default": "0"
+        },
+        {
+          "meaning": "双向文本排版",
+          "values": "0 关，1 开",
+          "default": "0"
+        },
+        {
+          "meaning": "字符整形",
+          "values": "0 关，1 开",
+          "default": "0"
+        },
+        {
+          "meaning": "OpenType 表支持",
+          "values": "0 关，1 开",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "将单字符字体名称映射到已存储的字体文件。"
+    "summary": "将单字符字体名称映射到已存储的字体文件。",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "要添加或替换的字体字母",
+          "values": "A 到 Z，0 到 9"
+        },
+        {
+          "meaning": "存储字体的驱动器",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "已存储字体文件名",
+          "values": "最多 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "字体文件扩展名",
+          "values": "FNT 字体，TTF TrueType，TTE TrueType 扩展"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "设置已渲染可缩放字形的缓存大小，以加快重复输出大字号文本的速度。"
+    "summary": "设置已渲染可缩放字形的缓存大小，以加快重复输出大字号文本的速度。",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "是否启用字符缓存",
+          "values": "N 否，Y 是",
+          "default": "Y"
+        },
+        {
+          "meaning": "以 K 为单位的附加缓存内存",
+          "values": "1 到 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "缓存缓冲区类型",
+          "values": "0 常规字体，1 亚洲字体",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "定义 TrueType 后备字体链，在基础字体缺少某个字形时使用。"
+    "summary": "定义 TrueType 后备字体链，在基础字体缺少某个字形时使用。",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "要链接的扩展字体，设备和文件",
+          "values": "设备上的 TTF 或 TTE 文件"
+        },
+        {
+          "meaning": "接收该扩展的基础字体",
+          "values": "FNT、TTF 或 TTE 文件，支持通配符"
+        },
+        {
+          "meaning": "链接或取消链接扩展字体",
+          "values": "0 取消链接，1 链接"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "将点阵字体及其度量数据下载到打印机内存。"
+    "summary": "将点阵字体及其度量数据下载到打印机内存。",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "存储字体的驱动器",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "字体名称",
+          "values": "最多 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "字体文件扩展名",
+          "values": "固定为 FNT",
+          "default": "FNT"
+        },
+        {
+          "meaning": "原生字体的方向",
+          "values": "仅 N 正常",
+          "default": "N"
+        },
+        {
+          "meaning": "以点为单位的最大字符格高度",
+          "values": "1 到 32000"
+        },
+        {
+          "meaning": "以点为单位的最大字符格宽度",
+          "values": "1 到 32000"
+        },
+        {
+          "meaning": "字符格顶部到基线的点数",
+          "values": "1 到 32000"
+        },
+        {
+          "meaning": "空格字符的宽度",
+          "values": "1 到 32000"
+        },
+        {
+          "meaning": "字体中的字符数",
+          "values": "1 到 256"
+        },
+        {
+          "meaning": "版权所有者文本",
+          "values": "1 到 63 个字母数字字符"
+        },
+        {
+          "meaning": "每个字符的结构化位图数据",
+          "values": "先是哈希码，再是高度宽度偏移，最后是十六进制数据"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "将编码后的可缩放 Intellifont 字体下载到打印机内存。"
+    "summary": "将编码后的可缩放 Intellifont 字体下载到打印机内存。",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "存储字体的驱动器",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "字体名称",
+          "values": "最多 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "字体文件扩展名",
+          "values": "固定为 FNT",
+          "default": "FNT"
+        },
+        {
+          "meaning": "由 ZTools 得出的以字节为单位的字体大小",
+          "values": "转换后字体的字节数"
+        },
+        {
+          "meaning": "编码后的字体字节数据",
+          "values": "与大小匹配的十六进制字节对"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "将最多包含 256 个字符的编码 TrueType 字体下载到打印机内存。"
+    "summary": "将最多包含 256 个字符的编码 TrueType 字体下载到打印机内存。",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "存储字体的驱动器",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "字体名称",
+          "values": "最多 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "字体文件扩展名",
+          "values": "固定为 DAT",
+          "default": "DAT"
+        },
+        {
+          "meaning": "以字节为单位的字体大小",
+          "values": "转换后字体的字节数"
+        },
+        {
+          "meaning": "编码后的字体字节数据",
+          "values": "与大小匹配的十六进制字节对"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "将包含 256 个以上字形的编码 TrueType 字体下载到打印机内存。"
+    "summary": "将包含 256 个以上字形的编码 TrueType 字体下载到打印机内存。",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "存储字体的驱动器",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "字体名称",
+          "values": "最多 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "字体文件扩展名",
+          "values": "固定为 FNT",
+          "default": "FNT"
+        },
+        {
+          "meaning": "以字节为单位的字体大小",
+          "values": "转换后字体的字节数"
+        },
+        {
+          "meaning": "编码后的字体字节数据",
+          "values": "与大小匹配的十六进制字节对"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "下载编码表，用于将字段数据字节映射为 TrueType 字体的 Unicode 值。"
+    "summary": "下载编码表，用于将字段数据字节映射为 TrueType 字体的 Unicode 值。",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "存放编码表的驱动器",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "编码表名称",
+          "values": "最多 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "编码表文件扩展名",
+          "values": "固定为 DAT",
+          "default": "DAT"
+        },
+        {
+          "meaning": "以字节为单位的编码表大小",
+          "values": "转换后编码表的字节数"
+        },
+        {
+          "meaning": "编码后的编码表字节数据",
+          "values": "与大小匹配的十六进制字节对"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "绘制 Code 128 条码，适用于可变长度的 ASCII 数据，并提供自动子集切换和 UCC/EAN 数据模式。"
+    "summary": "绘制 Code 128 条码，适用于可变长度的 ASCII 数据，并提供自动子集切换和 UCC/EAN 数据模式。",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "可读文字行",
+          "values": "N 否，Y 是",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的可读文字行",
+          "values": "N 否，Y 是",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC 校验位",
+          "values": "N 否，Y 是",
+          "default": "N"
+        },
+        {
+          "meaning": "模式",
+          "values": "N 无，U UCC Case Mode，A 自动，D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "绘制 Code 39 条码，可选附加 Mod 43 校验位。"
+    "summary": "绘制 Code 39 条码，可选附加 Mod 43 校验位。",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "Mod 43 校验位",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "绘制 Code 93 条码，通过移位字符表示完整的 ASCII 数据。"
+    "summary": "绘制 Code 93 条码，通过移位字符表示完整的 ASCII 数据。",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "是否打印校验位",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "绘制 Code 11 条码，用于数字和连字符，校验位可选。"
+    "summary": "绘制 Code 11 条码，用于数字和连字符，校验位可选。",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "校验位位数",
+          "values": "Y 1 位，N 2 位",
+          "default": "N"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "绘制 Interleaved 2 of 5 条码，用于偶数长度的数字数据，校验位可选。"
+    "summary": "绘制 Interleaved 2 of 5 条码，用于偶数长度的数字数据，校验位可选。",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod 10 校验位",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "第六个参数位，未记载",
+          "values": "指南中未记载"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "绘制 Industrial 2 of 5 条码，这是一种仅在条中编码数据的数字条码。"
+    "summary": "绘制 Industrial 2 of 5 条码，这是一种仅在条中编码数据的数字条码。",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "绘制 Standard 2 of 5 条码，这是一种自校验的数字条码，数据仅编码在条中。"
+    "summary": "绘制 Standard 2 of 5 条码，这是一种自校验的数字条码，数据仅编码在条中。",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "绘制 ANSI Codabar 条码，也称 USD-4，常用于图书馆、医疗和快递标签。"
+    "summary": "绘制 ANSI Codabar 条码，也称 USD-4，常用于图书馆、医疗和快递标签。",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "校验位，固定关闭",
+          "values": "仅 N",
+          "default": "N"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "起始字符",
+          "values": "A，B，C，D",
+          "default": "A"
+        },
+        {
+          "meaning": "终止字符",
+          "values": "A，B，C，D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "绘制 LOGMARS 条码，即美国国防部使用的 Code 39 变体，并将数据中的小写字母转换为大写。"
+    "summary": "绘制 LOGMARS 条码，即美国国防部使用的 Code 39 变体，并将数据中的小写字母转换为大写。",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "绘制 MSI 条码，这是一种由 Plessey 衍生的数字条码，校验位方案可选。"
+    "summary": "绘制 MSI 条码，这是一种由 Plessey 衍生的数字条码，校验位方案可选。",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "校验位方案",
+          "values": "A 无，B 1-Mod10，C 2-Mod10，D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "注释行中的校验位",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "绘制 Plessey 条码，这是一种较早的数字条码，校验位可选。"
+    "summary": "绘制 Plessey 条码，这是一种较早的数字条码，校验位可选。",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "是否打印校验位",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "绘制用于零售商品编号的 EAN-13 条码，校验位由十二位数据位推导得出。"
+    "summary": "绘制用于零售商品编号的 EAN-13 条码，校验位由十二位数据位推导得出。",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "绘制用于小型零售包装的 EAN-8 条码，校验位由七位数据位推导得出。"
+    "summary": "绘制用于小型零售包装的 EAN-8 条码，校验位由七位数据位推导得出。",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "由十一位数据位绘制用于零售包装的 UPC-A 条码，可选择是否打印校验位。"
+    "summary": "由十一位数据位绘制用于零售包装的 UPC-A 条码，可选择是否打印校验位。",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 9999",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "是否打印校验位",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "绘制 UPC-E 条码，即 UPC-A 的短格式。字段数据为完整的十位厂商代码和商品代码。"
+    "summary": "绘制 UPC-E 条码，即 UPC-A 的短格式。字段数据为完整的十位厂商代码和商品代码。",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "是否打印校验位",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "绘制 GS1 DataBar 符号，可选择子类型、放大倍数、高度和分段宽度。"
+    "summary": "绘制 GS1 DataBar 符号，可选择子类型、放大倍数、高度和分段宽度。",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 旋转，I 反转，B 倒置底朝上",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar 符号类型",
+          "values": "1 omni，2 truncated，3 stacked，4 stacked omni，5 limited，6 expanded，7 UPC-A，8 UPC-E，9 EAN-13，10 EAN-8，11 带 CC-A/B 的 UCC/EAN-128，12 带 CC-C 的 UCC/EAN-128",
+          "default": "1"
+        },
+        {
+          "meaning": "放大倍数",
+          "values": "1 到 10",
+          "default": "打印机设置"
+        },
+        {
+          "meaning": "分隔线高度",
+          "values": "1 或 2",
+          "default": "1"
+        },
+        {
+          "meaning": "以点为单位的线性部分高度",
+          "values": "1 到 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "GS1 DataBar Expanded 的分段宽度",
+          "values": "2 到 22，仅偶数",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "由编码为长条和短条的数字绘制 Planet Code 邮政条码。"
+    "summary": "由编码为长条和短条的数字绘制 Planet Code 邮政条码。",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 旋转，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 9999",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "按所选的邮政编码类型绘制 POSTNET、Planet Code 或 USPS Intelligent Mail 条码。"
+    "summary": "按所选的邮政编码类型绘制 POSTNET、Planet Code 或 USPS Intelligent Mail 条码。",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "邮政条码类型",
+          "values": "0 POSTNET，1 Planet Code，2 保留，3 Intelligent Mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "在主条码旁绘制两位或五位的 UPC/EAN 附加码符号。"
+    "summary": "在主条码旁绘制两位或五位的 UPC/EAN 附加码符号。",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 32000",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "条码上方的注释行",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "绘制 Code 49 堆叠式条码，可包含两到八行完整 ASCII 数据。"
+    "summary": "绘制 Code 49 堆叠式条码，可包含两到八行完整 ASCII 数据。",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "各行高度的倍数",
+          "values": "1 到标签高度",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "注释行位置",
+          "values": "N 无，A 上方，B 下方",
+          "default": "N"
+        },
+        {
+          "meaning": "起始模式",
+          "values": "0 字母数字，1 多次读取，2 数字，3 分组字母，4 移位 1，5 移位 2，A 自动",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "绘制 QR Code 符号。命令参数设置型号、放大倍数和掩码，字段数据设置纠错等级和字符模式。"
+    "summary": "绘制 QR Code 符号。命令参数设置型号、放大倍数和掩码，字段数据设置纠错等级和字符模式。",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "字段方向",
+          "values": "仅 N 正常",
+          "default": "N"
+        },
+        {
+          "meaning": "型号",
+          "values": "1 原始，2 增强",
+          "default": "2"
+        },
+        {
+          "meaning": "放大倍数",
+          "values": "1 到 100",
+          "default": "150 dpi 为 1，200 dpi 为 2，300 dpi 为 3，600 dpi 为 6"
+        },
+        {
+          "meaning": "纠错等级",
+          "values": "H 超高，Q 高，M 标准，L 高密度",
+          "default": "空值时为 Q，值无效时为 M"
+        },
+        {
+          "meaning": "掩码值",
+          "values": "0 到 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "绘制 Data Matrix 符号，单元尺寸、质量等级和转义处理方式均可配置。"
+    "summary": "绘制 Data Matrix 符号，单元尺寸、质量等级和转义处理方式均可配置。",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "符号元素的实际高度",
+          "values": "1 到标签宽度",
+          "default": "0，表示从 ^BY 获取符号高度"
+        },
+        {
+          "meaning": "质量等级",
+          "values": "0，50，80，100，140，200",
+          "default": "0"
+        },
+        {
+          "meaning": "要编码的列数",
+          "values": "9 到 49，质量 0 到 140 时仅奇数，质量 200 时仅偶数"
+        },
+        {
+          "meaning": "要编码的行数",
+          "values": "9 到 49"
+        },
+        {
+          "meaning": "格式 ID",
+          "values": "1 数字，2 大写字母，3 大写字母数字加 . , - /，4 大写字母数字，5 ascii7，6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "转义序列控制字符",
+          "values": "任意字符",
+          "default": "波浪号"
+        },
+        {
+          "meaning": "宽高比",
+          "values": "1 方形，2 矩形",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "绘制 PDF417 堆叠式二维符号，用于承载大量文本或二进制数据。"
+    "summary": "绘制 PDF417 堆叠式二维符号，用于承载大量文本或二进制数据。",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的每行条码高度",
+          "values": "1 到标签高度",
+          "default": "上一个 ^BY"
+        },
+        {
+          "meaning": "安全等级",
+          "values": "1 到 8",
+          "default": "0"
+        },
+        {
+          "meaning": "数据列数",
+          "values": "1 到 30",
+          "default": "自动宽高比"
+        },
+        {
+          "meaning": "行数",
+          "values": "3 到 90",
+          "default": "自动宽高比"
+        },
+        {
+          "meaning": "是否截去右侧行指示符和终止图案",
+          "values": "Y 是，N 否",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "绘制 MicroPDF417 符号，这是带行地址图案的紧凑型 PDF417 变体。"
+    "summary": "绘制 MicroPDF417 符号，这是带行地址图案的紧凑型 PDF417 变体。",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "以点为单位的条码高度",
+          "values": "1 到 9999",
+          "default": "上一个 ^BY，若未发送 ^BY 则为 10"
+        },
+        {
+          "meaning": "模式",
+          "values": "0 到 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "绘制 Aztec 矩阵符号，放大倍数和纠错等级均可配置。"
+    "summary": "绘制 Aztec 矩阵符号，放大倍数和纠错等级均可配置。",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 旋转，I 180 度，B 270 度",
+          "default": "上一个 ^FW"
+        },
+        {
+          "meaning": "放大倍数",
+          "values": "1 到 10",
+          "default": "150 dpi 为 1，200 dpi 为 2，300 dpi 为 3，600 dpi 为 6"
+        },
+        {
+          "meaning": "扩展通道解释指示符",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "错误控制与符号尺寸",
+          "values": "0 默认，1 到 99 为错误百分比，101 到 104 为紧凑层，201 到 232 为完整层，300 为 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "菜单符号指示符",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "结构化拼接的符号数",
+          "values": "1 到 26",
+          "default": "1"
+        },
+        {
+          "meaning": "结构化拼接 ID 字段",
+          "values": "最多 24 个字符的文本",
+          "default": "无 ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "以 A、E 或 F 模式绘制 CODABLOCK 符号，用于承载较大的数据量。"
+    "summary": "以 A、E 或 F 模式绘制 CODABLOCK 符号，用于承载较大的数据量。",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "N"
+        },
+        {
+          "meaning": "以点为单位的每行条码高度",
+          "values": "2 到 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "安全等级",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "每行字符数",
+          "values": "2 到 62"
+        },
+        {
+          "meaning": "要编码的行数",
+          "values": "模式 A 为 1-22，模式 EF 为 2-4"
+        },
+        {
+          "meaning": "模式",
+          "values": "A code39-set，E code128-fnc1，F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "绘制 UPS MaxiCode 符号，其模式可用于结构化承运商报文或通用数据。"
+    "summary": "绘制 UPS MaxiCode 符号，其模式可用于结构化承运商报文或通用数据。",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "模式",
+          "values": "2 美国邮政，3 非美国邮政，4 标准，5 full-eec，6 阅读器程序",
+          "default": "2"
+        },
+        {
+          "meaning": "序列中的符号编号",
+          "values": "1 到 8",
+          "default": "1"
+        },
+        {
+          "meaning": "符号总数",
+          "values": "1 到 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "绘制 TLC39 电信标签符号，由 Code 39 与 MicroPDF417 组件组合而成。"
+    "summary": "绘制 TLC39 电信标签符号，由 Code 39 与 MicroPDF417 组件组合而成。",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 旋转，I 反转，B 倒置底朝上"
+        },
+        {
+          "meaning": "以点为单位的 Code 39 部分宽度",
+          "values": "1 到 10",
+          "default": "600 dpi 为 4，其他为 2"
+        },
+        {
+          "meaning": "Code 39 部分的宽窄比",
+          "values": "2.0 到 3.0，步长 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "以点为单位的 Code 39 部分高度",
+          "values": "1 到 9999",
+          "default": "600 dpi 为 120，300 dpi 为 60，200 dpi 为 40"
+        },
+        {
+          "meaning": "MicroPDF417 部分的窄条宽度",
+          "values": "1 到 10",
+          "default": "600 dpi 为 4，其他为 2"
+        },
+        {
+          "meaning": "以点为单位的 MicroPDF417 部分行高",
+          "values": "1 到 255",
+          "default": "600 dpi 为 8，其他为 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "启用后会校验条码数据和参数，数据有误时打印 INVALID 而不是输出错误的符号。"
+    "summary": "启用后会校验条码数据和参数，数据有误时打印 INVALID 而不是输出错误的符号。",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "编码验证",
+          "values": "N 否，Y 是",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "绘制填充或描边的矩形。将某一边长设为与边框厚度相同即可得到一条直线。"
+    "summary": "绘制填充或描边的矩形。将某一边长设为与边框厚度相同即可得到一条直线。",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "以点为单位的矩形宽度",
+          "values": "t 到 32000",
+          "default": "t 或 1"
+        },
+        {
+          "meaning": "以点为单位的矩形高度",
+          "values": "t 到 32000",
+          "default": "t 或 1"
+        },
+        {
+          "meaning": "以点为单位的边框厚度",
+          "values": "1 到 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "线条颜色",
+          "values": "B 黑色，W 白色",
+          "default": "B"
+        },
+        {
+          "meaning": "圆角程度",
+          "values": "0 无圆角到 8 最强圆角",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "在给定的宽度和高度范围内绘制向右或向左倾斜的对角线。"
+    "summary": "在给定的宽度和高度范围内绘制向右或向左倾斜的对角线。",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "以点为单位的矩形宽度",
+          "values": "3 到 32000",
+          "default": "t 或 3"
+        },
+        {
+          "meaning": "以点为单位的矩形高度",
+          "values": "3 到 32000",
+          "default": "t 或 3"
+        },
+        {
+          "meaning": "以点为单位的边框厚度",
+          "values": "1 到 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "线条颜色",
+          "values": "B 黑色，W 白色",
+          "default": "B"
+        },
+        {
+          "meaning": "斜线方向",
+          "values": "R 或 / 表示右倾，L 或 \\ 表示左倾",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "按以点为单位的宽度和高度绘制椭圆，边框向内加粗，输出为黑色或白色。"
+    "summary": "按以点为单位的宽度和高度绘制椭圆，边框向内加粗，输出为黑色或白色。",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "以点为单位的椭圆宽度",
+          "values": "3 到 4095",
+          "default": "t 或 1"
+        },
+        {
+          "meaning": "以点为单位的椭圆高度",
+          "values": "3 到 4095",
+          "default": "t 或 1"
+        },
+        {
+          "meaning": "以点为单位的边框厚度",
+          "values": "2 到 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "线条颜色",
+          "values": "B 黑色，W 白色",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "按以点为单位的直径绘制圆形，边框向内加粗，输出为黑色或白色。"
+    "summary": "按以点为单位的直径绘制圆形，边框向内加粗，输出为黑色或白色。",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "以点为单位的圆形直径",
+          "values": "3 到 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "以点为单位的边框厚度",
+          "values": "2 到 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "线条颜色",
+          "values": "B 黑色，W 白色",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "使用 ASCII 十六进制、二进制或压缩数据，在当前字段位置放置单色位图。"
+    "summary": "使用 ASCII 十六进制、二进制或压缩数据，在当前字段位置放置单色位图。",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "压缩类型",
+          "values": "A ASCII 十六进制，B 二进制，C 压缩二进制",
+          "default": "A"
+        },
+        {
+          "meaning": "要发送的总字节数",
+          "values": "1 到 99999"
+        },
+        {
+          "meaning": "图像总字节数",
+          "values": "1 到 99999"
+        },
+        {
+          "meaning": "每行图像的字节数",
+          "values": "1 到 99999"
+        },
+        {
+          "meaning": "图像数据",
+          "values": "ASCII 十六进制 00 到 FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "打印由字段数据选定的内置符号，例如版权符号或注册商标符号。"
+    "summary": "打印由字段数据选定的内置符号，例如版权符号或注册商标符号。",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "方向",
+          "values": "N 正常，R 顺时针 90 度，I 180 度，B 270 度",
+          "default": "N 或上一个 ^FW"
+        },
+        {
+          "meaning": "与宽度成比例的字符高度",
+          "values": "0 到 32000",
+          "default": "上一个 ^CF"
+        },
+        {
+          "meaning": "与高度成比例的字符宽度",
+          "values": "0 到 32000",
+          "default": "上一个 ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "在格式开始处载入已存储的图像，并将其锚定在标签原点上。"
+    "summary": "在格式开始处载入已存储的图像，并将其锚定在标签原点上。",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "存储设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "对象名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": ".GRF 或 .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "在当前字段位置放置已存储的图像，不作缩放。"
+    "summary": "在当前字段位置放置已存储的图像，不作缩放。",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "存储设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "搜索优先顺序"
+        },
+        {
+          "meaning": "对象名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": ".GRF 或 .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "从打印机内存中删除已存储的图形、字体或格式，支持用通配符按组删除。"
+    "summary": "从打印机内存中删除已存储的图形、字体或格式，支持用通配符按组删除。",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "存储设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "对象名称，支持通配符",
+          "values": "1 到 8 个字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名，支持通配符",
+          "values": "任意扩展名",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "将当前格式保存为图形图像，便于快速调用和叠加可变数据。"
+    "summary": "将当前格式保存为图形图像，便于快速调用和叠加可变数据。",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "存储设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "对象名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": ".GRF 或 .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "保存后是否打印标签",
+          "values": "N 否，Y 是",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "以可复用的名称将 ASCII 十六进制图形下载到打印机内存。"
+    "summary": "以可复用的名称将 ASCII 十六进制图形下载到打印机内存。",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "存储设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "图像名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "以字节为单位的图像总大小",
+          "values": "根据图像宽度和高度计算"
+        },
+        {
+          "meaning": "每行图像的字节数",
+          "values": "根据图像宽度计算"
+        },
+        {
+          "meaning": "图形图像数据",
+          "values": "ASCII 十六进制 00 到 FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "以可复用的名称将图形、字体或证书下载到打印机内存。"
+    "summary": "以可复用的名称将图形、字体或证书下载到打印机内存。",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "存储设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "文件名",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "数据格式",
+          "values": "A ASCII 或 zb64，B 二进制，C ar 压缩，P png zb64"
+        },
+        {
+          "meaning": "已存储文件类型",
+          "values": "B 位图，E tte，G 原始 grf，P png，T ttf 或 otf，X pcx，NRD 不可读，PAC 访问凭据，C wml 菜单，F htm 页面，H 打印机反馈",
+          "default": "G"
+        },
+        {
+          "meaning": "文件总字节数",
+          "values": "解压后的实际文件大小"
+        },
+        {
+          "meaning": "grf 图像每行的字节数",
+          "values": "根据图像宽度计算"
+        },
+        {
+          "meaning": "文件数据",
+          "values": "ASCII 十六进制、zb64 或二进制"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "按起始值、递变方向和步长，对跨标签的文本或条码字段数据进行序列化。"
+    "summary": "按起始值、递变方向和步长，对跨标签的文本或条码字段数据进行序列化。",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "起始序列值",
+          "values": "最多 12 位数字",
+          "default": "1"
+        },
+        {
+          "meaning": "递增或递减步长",
+          "values": "最多 12 位数字",
+          "default": "1"
+        },
+        {
+          "meaning": "是否用前导零填充",
+          "values": "N 否，Y 是",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "使用掩码和字符集对字段数据中的指定位置进行序列化。"
+    "summary": "使用掩码和字符集对字段数据中的指定位置进行序列化。",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "选择哪些字符变化的序列化掩码",
+          "values": "D 十进制，H 十六进制，O 八进制，A 字母，N 字母数字，% 跳过"
+        },
+        {
+          "meaning": "掩码对应的递增或递减字符串",
+          "values": "每个掩码位置对应一个值，% 表示保留不变",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "将后续命令存储为可复用的格式，而不是立即打印。"
+    "summary": "将后续命令存储为可复用的格式，而不是立即打印。",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "存储模板的设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "模板名称",
+          "values": "1 到 16 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "调用已存储的格式，并为其中带编号的占位字段提供取值。"
+    "summary": "调用已存储的格式，并为其中带编号的占位字段提供取值。",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "已存储模板的源设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "依次为 R，E，B，A"
+        },
+        {
+          "meaning": "已存储模板的名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "在当前位置调用已存储的图形，水平和垂直缩放比例可分别设置。"
+    "summary": "在当前位置调用已存储的图形，水平和垂直缩放比例可分别设置。",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "已存储图形的源设备",
+          "values": "R，E，B，A",
+          "default": "依次为 R，E，B，A"
+        },
+        {
+          "meaning": "已存储图形的名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": "GRF"
+        },
+        {
+          "meaning": "x 轴放大倍数",
+          "values": "1 到 10",
+          "default": "1"
+        },
+        {
+          "meaning": "y 轴放大倍数",
+          "values": "1 到 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "选择打印机检测标签边界的方式，可依据间隙、黑标或连续介质。"
+    "summary": "选择打印机检测标签边界的方式，可依据间隙、黑标或连续介质。",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "介质检测方式",
+          "values": "N 连续，Y 或 W 非连续间隙，M 非连续黑标，A 自动检测，V 连续可变长度",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "以点为单位的黑标偏移",
+          "values": "大多数打印机为 -120 到 283，600 dpi 下为 -240 到 566",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "设置打印机校准非连续介质时搜索的最大标签长度。"
+    "summary": "设置打印机校准非连续介质时搜索的最大标签长度。",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "以点行为单位的最大标签长度",
+          "values": "打印机 dpi 的两倍，上限为最大长度",
+          "default": "上次保存的值"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "设置开机时和打印头合上时执行的动作，包括校准、走纸或测量长度。"
+    "summary": "设置开机时和打印头合上时执行的动作，包括校准、走纸或测量长度。",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "开机时的走纸动作",
+          "values": "F 走纸到第一个间隙，C 像 ~JC 一样校准，L 像 ~JL 一样设置长度，N 不走纸，S 简短校准",
+          "default": "C"
+        },
+        {
+          "meaning": "打印头合上后的走纸动作",
+          "values": "F 走纸到第一个间隙，C 像 ~JC 一样校准，L 像 ~JL 一样设置长度，N 不走纸，S 简短校准",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "配置打印头清洁或更换的维护提示标签打印方式。"
+    "summary": "配置打印头清洁或更换的维护提示标签打印方式。",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "警报类型",
+          "values": "R 更换打印头，C 清洁打印头"
+        },
+        {
+          "meaning": "是否打印警报标签",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "首次警报前的距离",
+          "values": "R 为 0 到 150 公里，C 为 100 到 2000 米，0 关闭",
+          "default": "R 为 50 公里，C 为 0 关闭"
+        },
+        {
+          "meaning": "重新发出警报前的距离",
+          "values": "0 到 2000 米",
+          "default": "0"
+        },
+        {
+          "meaning": "报告所用的度量单位",
+          "values": "C 厘米，I 英寸，M 米",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "控制标签位图在打印后是被清除，还是保留供后续标签复用。"
+    "summary": "控制标签位图在打印后是被清除，还是保留供后续标签复用。",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "打印后是否清除位图",
+          "values": "Y 清除，N 保留",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "设置打印头清洁或更换维护提示标签上显示的文字。"
+    "summary": "设置打印头清洁或更换维护提示标签上显示的文字。",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "警报类型",
+          "values": "R 更换打印头，C 清洁打印头",
+          "default": "R"
+        },
+        {
+          "meaning": "警报标签上打印的消息",
+          "values": "最多 63 个字符，不含逗号",
+          "default": "please clean printhead 或 please replace printhead"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "锁定控制面板上的某项设置，例如打印浓度或校准，直至再次解锁。"
+    "summary": "锁定控制面板上的某项设置，例如打印浓度或校准，直至再次解锁。",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "要锁定的控制面板模式",
+          "values": "D 浓度，P 位置，C 校准，E 全部启用，S 禁止保存，W 暂停，F 走纸，X 取消，M 菜单",
+          "default": "必须指定"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "启用或禁用打印头低温警告提示。"
+    "summary": "启用或禁用打印头低温警告提示。",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "是否启用打印头低温警告",
+          "values": "Y 启用，N 禁用"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "在打印机当前配置的浓度基础上相对调整打印浓度。"
+    "summary": "在打印机当前配置的浓度基础上相对调整打印浓度。",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "相对于当前设置的介质浓度",
+          "values": "-30 到 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "立即设置绝对打印浓度，效果与前面板的浓度设置一致。"
+    "summary": "立即设置绝对打印浓度，效果与前面板的浓度设置一致。",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "绝对打印浓度等级",
+          "values": "00 到 30",
+          "default": "上次保存的值"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "控制因介质、碳带或打印头故障中断的标签在故障排除后是否重新打印。"
+    "summary": "控制因介质、碳带或打印头故障中断的标签在故障排除后是否重新打印。",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "错误排除后是否重打印标签",
+          "values": "N 否，Y 是",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "按已打印标签数量安排打印头元件的定期检测，检测元件范围可选。"
+    "summary": "按已打印标签数量安排打印头元件的定期检测，检测元件范围可选。",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "两次打印头测试之间打印的标签数",
+          "values": "0 到 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "是否手动选择打印头测试元件范围",
+          "values": "N 否，Y 是",
+          "default": "N"
+        },
+        {
+          "meaning": "首个测试元件编号",
+          "values": "0 到 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "末个测试元件编号",
+          "values": "0 到 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "打印完成后以少量点数微调撕离或切刀的停留位置。"
+    "summary": "打印完成后以少量点数微调撕离或切刀的停留位置。",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "以点为单位的撕离停留位置变化量",
+          "values": "-120 到 120",
+          "default": "上次保存的值"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "配置介质、碳带和打印头维护的提前预警阈值。"
+    "summary": "配置介质、碳带和打印头维护的提前预警阈值。",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "介质或耗材的早期预警",
+          "values": "E 启用，D 禁用",
+          "default": "D"
+        },
+        {
+          "meaning": "每卷标签数量",
+          "values": "100 到 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "介质是否已更换",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "按型号区分的碳带长度代码",
+          "values": "N 为 0 m，0 到 7 对应 100 到 450 m，10 到 16 对应 600 到 900 m",
+          "default": "按型号为 1 或 7"
+        },
+        {
+          "meaning": "碳带是否已更换",
+          "values": "Y 是，N 否",
+          "default": "N"
+        },
+        {
+          "meaning": "是否启用早期预警维护",
+          "values": "E 已启用，D 已禁用",
+          "default": "D"
+        },
+        {
+          "meaning": "打印头清洁间隔代码",
+          "values": "0 到 16，对应 100 m 到 900 m，步长 50 m",
+          "default": "按型号为 1 或 7"
+        },
+        {
+          "meaning": "打印头是否已清洁",
+          "values": "N 否，Y 是",
+          "default": "N"
+        },
+        {
+          "meaning": "以英寸为单位的打印头寿命警告阈值",
+          "values": "0 关闭，或 100 到 3500000 英寸",
+          "default": "1000000"
+        },
+        {
+          "meaning": "打印头是否已更换",
+          "values": "N 否，Y 是",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "控制打印和切纸前后的回退时机，也可完全关闭回退。"
+    "summary": "控制打印和切纸前后的回退时机，也可完全关闭回退。",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "相对于打印的回退时机",
+          "values": "A 打印后完全回退，B 打印前完全回退，N 正常，O 关闭，10 到 90 为百分比",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "以走纸速度送出指定数量的空白点行。"
+    "summary": "以走纸速度送出指定数量的空白点行。",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "从底部跳过的点行数",
+          "values": "0 到 32000",
+          "default": "必须指定"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "在 KR403 打印机的自助终端打印模式下立即执行切刀动作。"
+    "summary": "在 KR403 打印机的自助终端打印模式下立即执行切刀动作。",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "切割量覆盖模式",
+          "values": "0 自助终端设置，1 全切"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "为 KR403 自助终端出纸机构增加额外的送出长度，便于取走打印好的介质。"
+    "summary": "为 KR403 自助终端出纸机构增加额外的送出长度，便于取走打印好的介质。",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "以毫米为单位的额外出纸长度",
+          "values": "0 到 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "执行一次 KR403 出纸循环，将打印好的介质送出以便手动取走。"
+    "summary": "执行一次 KR403 出纸循环，将打印好的介质送出以便手动取走。",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "以毫米为单位的出纸机构出纸长度",
+          "values": "0 到 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "设置 PAX 系列打印机的碳带供带张力。"
+    "summary": "设置 PAX 系列打印机的碳带供带张力。",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "碳带张力等级",
+          "values": "L 低，M 中，H 高",
+          "default": "必须指定"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "设置打印机实时时钟的日期和时间。"
+    "summary": "设置打印机实时时钟的日期和时间。",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "月",
+          "values": "01 到 12",
+          "default": "当前月"
+        },
+        {
+          "meaning": "日",
+          "values": "01 到 31",
+          "default": "当前日"
+        },
+        {
+          "meaning": "年",
+          "values": "1998 到 2097",
+          "default": "当前年"
+        },
+        {
+          "meaning": "时",
+          "values": "00 到 23",
+          "default": "当前时"
+        },
+        {
+          "meaning": "分",
+          "values": "00 到 59",
+          "default": "当前分"
+        },
+        {
+          "meaning": "秒",
+          "values": "00 到 59",
+          "default": "当前秒"
+        },
+        {
+          "meaning": "上午下午制或 24 小时制",
+          "values": "A 上午，P 下午，M 24 小时制",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "选择配置标签和控制面板上显示的日期与时间格式。"
+    "summary": "选择配置标签和控制面板上显示的日期与时间格式。",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "日期和时间显示格式",
+          "values": "0 版本号，1 MM/DD/YY 24 小时制，2 MM/DD/YY 12 小时制，3 DD/MM/YY 24 小时制，4 DD/MM/YY 12 小时制",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "定义相对于实时时钟的第二时钟偏移。打印机断电后这些偏移会丢失。"
+    "summary": "定义相对于实时时钟的第二时钟偏移。打印机断电后这些偏移会丢失。",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "要偏移的时钟编号",
+          "values": "2 次时钟，3 三时钟",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "月数偏移",
+          "values": "-32000 到 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "天数偏移",
+          "values": "-32000 到 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "年数偏移",
+          "values": "-32000 到 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "小时偏移",
+          "values": "-32000 到 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "分钟偏移",
+          "values": "-32000 到 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "秒数偏移",
+          "values": "-32000 到 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "设置时间字段的取值时机，并选择星期和月份名称所用的语言。"
+    "summary": "设置时间字段的取值时机，并选择星期和月份名称所用的语言。",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "时钟取值模式",
+          "values": "S 起始时间，T 当前时间，0 到 999 为容差",
+          "default": "S"
+        },
+        {
+          "meaning": "星期和月份名称所用的语言",
+          "values": "1 英语，2 西班牙语，3 法语，4 德语，5 意大利语，6 到 18 为其他语言",
+          "default": "上一个 ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "从因机型而异的列表中选择打印机控制面板的显示语言。"
+    "summary": "从因机型而异的列表中选择打印机控制面板的显示语言。",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "控制面板显示语言",
+          "values": "1 到 20 个语言代码",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "选择已存储的编码表，用于在打印前映射字段数据。"
+    "summary": "选择已存储的编码表，用于在打印前映射字段数据。",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "编码表所在的驱动器",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "编码表文件名称",
+          "values": "1 到 8 个字母数字字符"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": "固定为 DAT",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "选择按原始 ZPL 还是 ZPL II 方式解释命令，以兼容早期格式。"
+    "summary": "选择按原始 ZPL 还是 ZPL II 方式解释命令，以兼容早期格式。",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPL 解释器版本",
+          "values": "1 ZPL，2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "为打印机指定网络名称和一段自由文本描述，二者都会显示在配置标签和打印机内置网页上。"
+    "summary": "为打印机指定网络名称和一段自由文本描述，二者都会显示在配置标签和打印机内置网页上。",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "打印机网络名称",
+          "values": "最多 16 个字母数字字符",
+          "default": "ZBR 加 MAC 后缀"
+        },
+        {
+          "meaning": "配置标签和网页上显示的打印机描述",
+          "values": "最多 35 个字母数字字符",
+          "default": "空白"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "设置控制面板设置菜单的四位数字密码。"
+    "summary": "设置控制面板设置菜单的四位数字密码。",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "四位数的控制面板密码",
+          "values": "0000 到 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "密码级别，仅限 S4M 打印机",
+          "values": "1 到 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "保存、恢复或重置打印机的配置设置。"
+    "summary": "保存、恢复或重置打印机的配置设置。",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "配置操作",
+          "values": "A 恢复全部出厂设置，F 恢复出厂设置，N 恢复网络设置，R 调用，S 保存"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "更改格式命令的前缀字符，默认为脱字符，可全局生效或仅对当前格式生效。"
+    "summary": "更改格式命令的前缀字符，默认为脱字符，可全局生效或仅对当前格式生效。",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "新的格式命令前缀",
+          "values": "任意 ASCII 字符"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "更改参数分隔符字符，默认为逗号，可全局生效或仅对当前格式生效。"
+    "summary": "更改参数分隔符字符，默认为逗号，可全局生效或仅对当前格式生效。",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "新的参数分隔符",
+          "values": "任意 ASCII 字符"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "更改立即命令的前缀字符，默认为波浪号，可全局生效或仅对当前格式生效。"
+    "summary": "更改立即命令的前缀字符，默认为波浪号，可全局生效或仅对当前格式生效。",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "新的立即命令前缀",
+          "values": "任意 ASCII 字符"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "重新映射打印机内存的盘符，使已存储的对象可以沿用原有名称。"
+    "summary": "重新映射打印机内存的盘符，使已存储的对象可以沿用原有名称。",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "B 的内存别名",
+          "values": "B 存储卡，E 闪存，R DRAM，A CF 卡，NONE 未设置",
+          "default": "B"
+        },
+        {
+          "meaning": "E 的内存别名",
+          "values": "B 存储卡，E 闪存，R DRAM，A CF 卡，NONE 未设置",
+          "default": "E"
+        },
+        {
+          "meaning": "R 的内存别名",
+          "values": "B 存储卡，E 闪存，R DRAM，A CF 卡，NONE 未设置",
+          "default": "R"
+        },
+        {
+          "meaning": "A 的内存别名",
+          "values": "B 存储卡，E 闪存，R DRAM，A CF 卡，NONE 未设置",
+          "default": "A"
+        },
+        {
+          "meaning": "允许重复分配别名",
+          "values": "M 多重别名",
+          "default": "无"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "擦除并重新初始化一个闪存设备。该操作期间断电可能损坏存储内容。"
+    "summary": "擦除并重新初始化一个闪存设备。该操作期间断电可能损坏存储内容。",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "要初始化的闪存设备",
+          "values": "A 选配闪存，B 闪存卡，E 内部闪存",
+          "default": "必须指定"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "设置电池电压过低时是暂停便携式打印机，还是允许其继续打印。"
+    "summary": "设置电池电压过低时是暂停便携式打印机，还是允许其继续打印。",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "低电压时是否暂停",
+          "values": "Y 暂停，N 继续打印",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "在打印机上启动 Zebra BASIC Interpreter，并可同时运行已存储的程序。"
+    "summary": "在打印机上启动 Zebra BASIC Interpreter，并可同时运行已存储的程序。",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "程序存储位置",
+          "values": "R，E，B，A",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "要运行的程序名称",
+          "values": "任意有效程序名称",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "程序文件扩展名",
+          "values": "BAS 或 BAE"
+        },
+        {
+          "meaning": "控制台输出控制",
+          "values": "Y 开，N 关",
+          "default": "Y"
+        },
+        {
+          "meaning": "命令回显控制",
+          "values": "Y 开，N 关",
+          "default": "Y"
+        },
+        {
+          "meaning": "分配给 ZBI 的内存",
+          "values": "20K 到 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "配置辅助端口的贴标机或验证器信号及错误处理方式。"
+    "summary": "配置辅助端口的贴标机或验证器信号及错误处理方式。",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "验证器错误处理模式",
+          "values": "0 关闭，1 出错时重打印，2 最大吞吐量",
+          "default": "0"
+        },
+        {
+          "meaning": "贴标机信号时序模式",
+          "values": "0 关闭，1 到 4 为信号时序",
+          "default": "0"
+        },
+        {
+          "meaning": "开始打印信号时序模式",
+          "values": "p 脉冲模式，l 电平模式"
+        },
+        {
+          "meaning": "标签错误响应模式",
+          "values": "e 错误模式，f 走纸模式",
+          "default": "f"
+        },
+        {
+          "meaning": "信号触发重打印模式",
+          "values": "e 已启用，d 已禁用",
+          "default": "d"
+        },
+        {
+          "meaning": "碳带不足警告模式",
+          "values": "e 已启用，d 已禁用",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "选择用于跟踪介质的传感器，通常为反射式或透射式。"
+    "summary": "选择用于跟踪介质的传感器，通常为反射式或透射式。",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "要使用的传感器",
+          "values": "A 自动，R 反射式，T 透射式",
+          "default": "因打印机型号而异"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "设置正常或降低的每毫米点数。降低密度会使格式坐标对应的物理尺寸加倍。"
+    "summary": "设置正常或降低的每毫米点数。降低密度会使格式坐标对应的物理尺寸加倍。",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "打印密度设置",
+          "values": "A 正常密度，B 减半密度",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "重置指定的打印机使用计数器，包括用户计数器和 RFID 计数器。"
+    "summary": "重置指定的打印机使用计数器，包括用户计数器和 RFID 计数器。",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "要重置的计数器",
+          "values": "1 计数器一，2 计数器二，3 有效 RFID，4 作废 RFID，C 打印头已清洁，R 打印头已更换",
+          "default": "必须指定"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "用一条命令配置全部串口通信参数。"
+    "summary": "用一条命令配置全部串口通信参数。",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "串口波特率",
+          "values": "110，300，600，1200，2400，4800，9600，14400，19200，28800，38400，57600，115200",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "每个字符的数据位数",
+          "values": "7 或 8",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "校验设置",
+          "values": "N 无，E 偶校验，O 奇校验",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "停止位",
+          "values": "1 或 2",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "流控制协议",
+          "values": "X Xon/Xoff，D DTR/DSR，R RTS，M DTR/DSR 和 Xon/Xoff",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "Zebra 协议握手",
+          "values": "A ACK/NAK，N 无，Z zebra",
+          "default": "必须指定"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "覆盖通常由校准确定的透射式传感器强度或基准值。"
+    "summary": "覆盖通常由校准确定的透射式传感器强度或基准值。",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "要修改的传感器设置",
+          "values": "1 亮度，2 基准值",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "所选设置的值",
+          "values": "0 到 196",
+          "default": "必须指定"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "在格式尚未完整接收时即开始打印，以提高复杂标签的吞吐量。"
+    "summary": "在格式尚未完整接收时即开始打印，以提高复杂标签的吞吐量。",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "开始打印的点行",
+          "values": "0 到 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "禁用指定的 ZebraNet 警报条件及其接收目标。"
+    "summary": "禁用指定的 ZebraNet 警报条件及其接收目标。",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "要停止的警报条件",
+          "values": "A 到 O 及 Q 到 V 各对应一个条件，W 在 RFID 打印机上表示全部，* 在其他打印机上表示全部"
+        },
+        {
+          "meaning": "要停止的警报接收目标",
+          "values": "A 串口，B 并口，C 邮件，D TCP/IP，E UDP/IP，F SNMP trap，* 全部"
+        },
+        {
+          "meaning": "停止或恢复这些警报",
+          "values": "Y 停止警报，N 启动警报",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "设置用于计算加热能量的打印头电阻值。"
+    "summary": "设置用于计算加热能量的打印头电阻值。",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "打印头电阻值",
+          "values": "0488 到 1175",
+          "default": "上次永久保存的值"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "设置通常由校准确定的介质传感器阈值、标签长度和 LED 强度。"
+    "summary": "设置通常由校准确定的介质传感器阈值、标签长度和 LED 强度。",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "间隙传感器值",
+          "values": "0 到 100",
+          "default": "显示在传感器曲线图或配置标签上"
+        },
+        {
+          "meaning": "介质传感器值",
+          "values": "0 到 100",
+          "default": "显示在传感器曲线图或配置标签上"
+        },
+        {
+          "meaning": "碳带传感器值",
+          "values": "0 到 100",
+          "default": "显示在传感器曲线图或配置标签上"
+        },
+        {
+          "meaning": "以点为单位的标签长度",
+          "values": "1 到 32000",
+          "default": "校准得到的值"
+        },
+        {
+          "meaning": "介质 LED 强度",
+          "values": "0 到 255",
+          "default": "校准得到的值"
+        },
+        {
+          "meaning": "碳带 LED 强度",
+          "values": "0 到 255",
+          "default": "校准得到的值"
+        },
+        {
+          "meaning": "黑标感应值",
+          "values": "0 到 100",
+          "default": "校准得到的值"
+        },
+        {
+          "meaning": "黑标介质感应值",
+          "values": "0 到 100",
+          "default": "校准得到的值"
+        },
+        {
+          "meaning": "黑标 LED 感应值",
+          "values": "0 到 255",
+          "default": "校准得到的值"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "为指定的条件和接收目标启用 ZebraNet 警报。"
+    "summary": "为指定的条件和接收目标启用 ZebraNet 警报。",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "警报条件类型",
+          "values": "A 到 V 各对应一个条件，* 表示全部",
+          "default": "缺失或无效时忽略"
+        },
+        {
+          "meaning": "警报接收目标类型",
+          "values": "A 串口，B 并口，C 邮件，D TCP/IP，E UDP/IP，F SNMP trap",
+          "default": "缺失或无效时忽略"
+        },
+        {
+          "meaning": "条件触发时是否启用警报",
+          "values": "N 否，Y 是",
+          "default": "Y 或先前的值"
+        },
+        {
+          "meaning": "条件解除时是否启用警报",
+          "values": "N 否，Y 是",
+          "default": "N 或先前的值"
+        },
+        {
+          "meaning": "警报的接收地址",
+          "values": "邮件地址、IP 地址或 SNMP 目标",
+          "default": "缺失或无效时忽略"
+        },
+        {
+          "meaning": "警报的端口号",
+          "values": "0 到 65535",
+          "default": "缺失或无效时忽略"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "在打印机各内存设备之间复制已存储的对象，支持用通配符按组复制。"
+    "summary": "在打印机各内存设备之间复制已存储的对象，支持用通配符按组复制。",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "源存储设备",
+          "values": "R，E，B，A"
+        },
+        {
+          "meaning": "源对象名称",
+          "values": "任意已存在的对象名称",
+          "default": "* 表示选择所有对象"
+        },
+        {
+          "meaning": "源对象扩展名",
+          "values": "任意有效文件扩展名",
+          "default": "* 表示选择所有扩展名"
+        },
+        {
+          "meaning": "目标存储设备",
+          "values": "R，E，B，A",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "目标位置的对象名称",
+          "values": "最多 8 个字母数字字符",
+          "default": "源对象名称"
+        },
+        {
+          "meaning": "目标对象扩展名",
+          "values": "任意有效文件扩展名",
+          "default": "源对象扩展名"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "打印已存储对象、内置字体或可用条码的目录标签。"
+    "summary": "打印已存储对象、内置字体或可用条码的目录标签。",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "列表所用的源设备",
+          "values": "R，E，B，A，Z",
+          "default": "R"
+        },
+        {
+          "meaning": "对象名称筛选条件",
+          "values": "1 到 8 个字符，支持 * 或 ? 通配符",
+          "default": "*"
+        },
+        {
+          "meaning": "扩展名筛选条件",
+          "values": "任意有效扩展名，支持 * 通配符",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "将请求的维护信息打印到标签上，例如里程计数或打印头历史记录。"
+    "summary": "将请求的维护信息打印到标签上，例如里程计数或打印头历史记录。",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "要打印的服务报告类型",
+          "values": "ES 状态，HA 硬件地址，JT 打印头测试，MA 警报设置，MI 消息，OD 里程计数，PH 打印头寿命，PP 即插即用，SN 序列号，UI USB id",
+          "default": "必须指定"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "配置 KR403 自助终端出纸机构的设置，包括切纸长度、切纸余量、回收超时和存纸环长度。"
+    "summary": "配置 KR403 自助终端出纸机构的设置，包括切纸长度、切纸余量、回收超时和存纸环长度。",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "自助终端切割量",
+          "values": "0 正常切割，10 到 60 为部分切割毫米数",
+          "default": "0"
+        },
+        {
+          "meaning": "以毫米为单位的自助终端切割余量",
+          "values": "2 到 9",
+          "default": "9"
+        },
+        {
+          "meaning": "打印后自助终端的出纸方式",
+          "values": "0 弹出，1 收回，2 不动作",
+          "default": "0"
+        },
+        {
+          "meaning": "以秒为单位的自助终端出纸超时",
+          "values": "0 到 300，0 表示无超时",
+          "default": "0"
+        },
+        {
+          "meaning": "以毫米为单位的出纸机构存纸环长度",
+          "values": "0 直通，3 到 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "控制开机后或介质仓打开后对标签长度和传感器阈值的动态重新校准。"
+    "summary": "控制开机后或介质仓打开后对标签长度和传感器阈值的动态重新校准。",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "是否启用动态长度校准",
+          "values": "Y 启用，N 禁用",
+          "default": "Y"
+        },
+        {
+          "meaning": "是否启用动态阈值校准",
+          "values": "Y 启用，N 禁用",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "启动退役模式，为打印机的转售或回收做准备。"
+    "summary": "启动退役模式，为打印机的转售或回收做准备。",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "打印机序列号",
+          "values": "字母数字字符串",
+          "default": "必须指定"
+        },
+        {
+          "meaning": "闪存擦除次数",
+          "values": "0 到 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "设置空闲一段时间后自动休眠关机，并可选择如何处理排队中的标签。"
+    "summary": "设置空闲一段时间后自动休眠关机，并可选择如何处理排队中的标签。",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "自动关机前的空闲秒数",
+          "values": "0 到 999999，0 表示禁用关机",
+          "default": "上次保存的值或 0"
+        },
+        {
+          "meaning": "关机时的标签状态",
+          "values": "Y 连同队列关机，N 先完成队列",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "将 KR403 自助终端出纸机构已送出的介质弹出或收回。"
+    "summary": "将 KR403 自助终端出纸机构已送出的介质弹出或收回。",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "自助终端出纸动作",
+          "values": "0 弹出，1 收回，2 使用 ^KV 设置"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "将打印机内存中已存储的 ZPL 格式回传给主机。"
+    "summary": "将打印机内存中已存储的 ZPL 格式回传给主机。",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "要搜索的内存设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "R"
+        },
+        {
+          "meaning": "已存储格式的名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": "固定为 .ZPL",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "将打印机内存中已存储的图形图像回传给主机。"
+    "summary": "将打印机内存中已存储的图形图像回传给主机。",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "要搜索的内存设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "搜索优先级"
+        },
+        {
+          "meaning": "要上传的图形名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "文件扩展名",
+          "values": "固定为 .GRF",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "向主机返回所请求的状态、识别信息、里程计数或维护数据。"
+    "summary": "向主机返回所请求的状态、识别信息、里程计数或维护数据。",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "返回数据的查询选择器",
+          "values": "ES 状态，HA 有线 MAC，JT 打印头测试，MA 维护警报，MI 维护信息，OD 里程计数，PH 打印头寿命，PP 即插即用，SN 序列号，UI USB 产品 id"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "将编号字段中的数据回传给主机，可选择限制字节数。"
+    "summary": "将编号字段中的数据回传给主机，可选择限制字节数。",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "由 ^FN 设置的字段编号",
+          "values": "0 到 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "要返回的字节数",
+          "values": "1 到 256",
+          "default": "64"
+        },
+        {
+          "meaning": "数据前的标头文本",
+          "values": "0 到 3072 字节",
+          "default": "无标题"
+        },
+        {
+          "meaning": "数据后的终止文本",
+          "values": "0 到 3072 个字符"
+        },
+        {
+          "meaning": "回应的发送粒度",
+          "values": "F 格式，L 标签",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "返回某个内存设备的目录列表，其中包含剩余可用空间。"
+    "summary": "返回某个内存设备的目录列表，其中包含剩余可用空间。",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "要列出的内存设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡，Z 其他",
+          "default": "R"
+        },
+        {
+          "meaning": "对象名称筛选条件",
+          "values": "1 到 8 个字母数字字符",
+          "default": "*"
+        },
+        {
+          "meaning": "扩展名筛选条件",
+          "values": "任意 Zebra 文件扩展名",
+          "default": "*"
+        },
+        {
+          "meaning": "列表布局",
+          "values": "c 按列，d 默认",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "以可下载的文件格式将已存储的图形回传给主机。"
+    "summary": "以可下载的文件格式将已存储的图形回传给主机。",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "对象所在的内存设备",
+          "values": "R DRAM，E 闪存，B 存储卡，A CF 卡",
+          "default": "搜索优先级"
+        },
+        {
+          "meaning": "要上传的对象名称",
+          "values": "1 到 8 个字母数字字符",
+          "default": "必须提供名称"
+        },
+        {
+          "meaning": "上传格式",
+          "values": "G 原始位图，P 压缩位图",
+          "default": "已存储的格式"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "返回描述设置、对象目录或状态的打印机 XML 说明。"
+    "summary": "返回描述设置、对象目录或状态的打印机 XML 说明。",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "要返回的说明类型",
+          "values": "a 全部，f 格式，l 目录，o 对象，r 状态"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "读取或写入 RFID 标签，可指定数据格式、存储区和访问密码。"
+    "summary": "读取或写入 RFID 标签，可指定数据格式、存储区和访问密码。",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "操作",
+          "values": "W 写入，L 写入并锁定，R 读取，P 读取密码，S 设置密码",
+          "default": "W"
+        },
+        {
+          "meaning": "数据格式",
+          "values": "A ASCII，H 十六进制，E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "密码标志或起始块号",
+          "values": "P 表示随后跟密码，0 到 n 表示块号",
+          "default": "0"
+        },
+        {
+          "meaning": "要读取或写入的字节数",
+          "values": "1 到 n，上限取决于标签",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen 2 存储区",
+          "values": "E EPC 96 位，A EPC 自动 PC 位，0 保留，1 EPC，2 TID，3 用户",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "定义在标签上编码 RFID EPC 字段所用的位结构。"
+    "summary": "定义在标签上编码 RFID EPC 字段所用的位结构。",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "各分区的总位数",
+          "values": "1 到标签位数",
+          "default": "96"
+        },
+        {
+          "meaning": "每个分区的位数，最多 16 个分区",
+          "values": "1 到 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "为后续标签设置 RFID 选项，包括标签类型、编程位置、失败处理方式和 VOID 横条长度。"
+    "summary": "为后续标签设置 RFID 选项，包括标签类型、编程位置、失败处理方式和 VOID 横条长度。",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "标签类型",
+          "values": "8，仅限 Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "标签编程位置",
+          "values": "点数表示绝对位置，F0 到 Fxxx 表示向前，B0 到 B30 表示向后，up 表示下一个，down 表示上一个",
+          "default": "打印机设置"
+        },
+        {
+          "meaning": "VOID 打印的长度",
+          "values": "0 到标签长度",
+          "default": "标签长度"
+        },
+        {
+          "meaning": "失败时重试的标签数",
+          "values": "1 到 10",
+          "default": "3"
+        },
+        {
+          "meaning": "重试后的错误处理方式",
+          "values": "N 不动作，P 暂停，E 错误模式",
+          "default": "N"
+        },
+        {
+          "meaning": "发送给贴标机的信号",
+          "values": "S 单信号，D 双信号",
+          "default": "S"
+        },
+        {
+          "meaning": "保留，未使用",
+          "values": "无"
+        },
+        {
+          "meaning": "打印 VOID 标签的速度",
+          "values": "任意有效打印速度",
+          "default": "最大打印速度"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "由标签 ID 生成 EPC 序列号，并将其写入 EPC 的低位。"
+    "summary": "由标签 ID 生成 EPC 序列号，并将其写入 EPC 的低位。",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "序列号 ID 的二进制前缀",
+          "values": "ASCII 的 1 和 0，最多 38 位",
+          "default": "取决于芯片 MDID"
+        },
+        {
+          "meaning": "标记序列字段的特殊字符",
+          "values": "除命令、控制、分隔符和 RTC 字符外的任意 ASCII 字符",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "当校准无法得出可用值时，手动设置 RFID 的读取和写入功率。"
+    "summary": "当校准无法得出可用值时，手动设置 RFID 的读取和写入功率。",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "读取功率等级",
+          "values": "0 到 30，或 H 高，M 中，L 低",
+          "default": "打印机设置"
+        },
+        {
+          "meaning": "写入功率等级",
+          "values": "0 到 30，或 H 高，M 中，L 低",
+          "default": "打印机设置"
+        },
+        {
+          "meaning": "天线单元选择",
+          "values": "因打印机而异的网格，A1 到 F4",
+          "default": "打印机设置"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "以可逆或永久方式锁定 RFID 标签存储区，防止后续写入。"
+    "summary": "以可逆或永久方式锁定 RFID 标签存储区，防止后续写入。",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "灭活密码锁定状态",
+          "values": "U 解锁，L 锁定，O 永久解锁，P 永久锁定"
+        },
+        {
+          "meaning": "访问密码锁定状态",
+          "values": "U 解锁，L 锁定，O 永久解锁，P 永久锁定"
+        },
+        {
+          "meaning": "EPC 存储区锁定状态",
+          "values": "U 解锁，L 锁定，O 永久解锁，P 永久锁定"
+        },
+        {
+          "meaning": "用户存储区锁定状态",
+          "values": "U 解锁，L 锁定，O 永久解锁，P 永久锁定"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "执行 RFID 校准，并将位置、天线和功率设置返回给主机。"
+    "summary": "执行 RFID 校准，并将位置、天线和功率设置返回给主机。",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "结果表之前的文本",
+          "values": "少于 65 个字符的任意字符串",
+          "default": "start"
+        },
+        {
+          "meaning": "结果表之后的文本",
+          "values": "少于 65 个字符的任意字符串",
+          "default": "end"
+        },
+        {
+          "meaning": "校准起始位置",
+          "values": "F0 到 Fxxx 表示向前，B0 到 B30 表示向后",
+          "default": "打印机设置"
+        },
+        {
+          "meaning": "校准结束位置",
+          "values": "F0 到 Fxxx 表示向前，B0 到 B30 表示向后，A 自动",
+          "default": "打印机设置"
+        },
+        {
+          "meaning": "天线与功率自动或手动选择",
+          "values": "A 自动，M 手动",
+          "default": "A"
+        },
+        {
+          "meaning": "读写功率范围的起始值",
+          "values": "0 到 30",
+          "default": "0"
+        },
+        {
+          "meaning": "读写功率范围的结束值",
+          "values": "0 到 30",
+          "default": "最大功率"
+        },
+        {
+          "meaning": "天线范围的起始值",
+          "values": "因型号而异，通常为 A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "天线范围的结束值",
+          "values": "因型号而异，最高到 E4",
+          "default": "打印机设置"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "选择打印机启动时是否检测有线打印服务器。"
+    "summary": "选择打印机启动时是否检测有线打印服务器。",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "开机时的有线打印服务器检测",
+          "values": "C 检测，S 跳过",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "选择主网络设备，可为有线或无线。"
+    "summary": "选择主网络设备，可为有线或无线。",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "主网络设备",
+          "values": "1 有线为主，2 无线为主",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "按网络 ID 寻址早期 RS-485 多点线路上的某一台打印机。"
+    "summary": "按网络 ID 寻址早期 RS-485 多点线路上的某一台打印机。",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "要寻址的打印机网络 ID",
+          "values": "001 到 999",
+          "default": "000，无"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "指定用于在早期 RS-485 多点线路上寻址打印机的网络 ID。"
+    "summary": "指定用于在早期 RS-485 多点线路上寻址打印机的网络 ID。",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "分配给打印机的网络 ID",
+          "values": "001 到 999",
+          "default": "000，无"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "设置打印机的 SNMP 标识和团体字符串。"
+    "summary": "设置打印机的 SNMP 标识和团体字符串。",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP 系统名称",
+          "values": "最多 17 个字符"
+        },
+        {
+          "meaning": "SNMP 系统联系人",
+          "values": "最多 50 个字符"
+        },
+        {
+          "meaning": "SNMP 系统位置",
+          "values": "最多 50 个字符"
+        },
+        {
+          "meaning": "SNMP get 团体名",
+          "values": "最多 19 个字符",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set 团体名",
+          "values": "最多 19 个字符",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap 团体名",
+          "values": "最多 20 个字符",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "选择启动时的网络设置取自打印机还是所连接的打印服务器。"
+    "summary": "选择启动时的网络设置取自打印机还是所连接的打印服务器。",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "开机设置的主要来源",
+          "values": "P 打印机，M 打印服务器",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "配置打印服务器邮件警报所用的 SMTP 服务器和域设置。"
+    "summary": "配置打印服务器邮件警报所用的 SMTP 服务器和域设置。",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTP 服务器地址",
+          "values": "IPv4 地址"
+        },
+        {
+          "meaning": "打印服务器域名",
+          "values": "域名"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "设置通过身份验证的 IP 地址在需要重新验证前可访问打印机网页的时长。"
+    "summary": "设置通过身份验证的 IP 地址在需要重新验证前可访问打印机网页的时长。",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "网页身份验证超时",
+          "values": "0 到 255 分钟",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "设置打印服务器的 DHCP 客户端标识符形式及取值。"
+    "summary": "设置打印服务器的 DHCP 客户端标识符形式及取值。",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "客户端标识符模式",
+          "values": "0 禁用，1 MAC 地址，2 ASCII，3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "标识符适用的设备",
+          "values": "0 全部，1 无线，2 外部有线，3 内部有线",
+          "default": "1"
+        },
+        {
+          "meaning": "标识符前缀",
+          "values": "11 个 ASCII 字符或 22 个十六进制字符"
+        },
+        {
+          "meaning": "标识符后缀",
+          "values": "最多 60 个 ASCII 字符或 120 个十六进制字符"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "为打印机的网络接口配置 IP 地址、子网掩码和网关。"
+    "summary": "为打印机的网络接口配置 IP 地址、子网掩码和网关。",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "要修改的设备",
+          "values": "1 外部有线，2 内部有线，3 无线"
+        },
+        {
+          "meaning": "IP 地址获取方式",
+          "values": "A 全部，B BOOTP，C DHCP 和 BOOTP，D DHCP，G 仅侦听，R RARP，P 永久",
+          "default": "A"
+        },
+        {
+          "meaning": "IP 地址",
+          "values": "IPv4 地址"
+        },
+        {
+          "meaning": "子网掩码",
+          "values": "IPv4 子网掩码"
+        },
+        {
+          "meaning": "默认网关",
+          "values": "IPv4 地址"
+        },
+        {
+          "meaning": "WINS 服务器地址",
+          "values": "IPv4 地址"
+        },
+        {
+          "meaning": "是否检测连接超时",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "连接超时时长",
+          "values": "0 到 9999 秒",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP 广播间隔",
+          "values": "0 到 30 分钟",
+          "default": "0，无"
+        },
+        {
+          "meaning": "原始端口基准号",
+          "values": "1 到 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "为早期固件配置有线打印服务器的 IP 设置、超时时间和原始端口。"
+    "summary": "为早期固件配置有线打印服务器的 IP 设置、超时时间和原始端口。",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "IP 地址获取方式",
+          "values": "A 全部，B BOOTP，C DHCP 和 BOOTP，D DHCP，G 仅侦听，R RARP，P 永久",
+          "default": "A"
+        },
+        {
+          "meaning": "IP 地址",
+          "values": "IPv4 地址"
+        },
+        {
+          "meaning": "子网掩码",
+          "values": "IPv4 子网掩码"
+        },
+        {
+          "meaning": "默认网关",
+          "values": "IPv4 地址"
+        },
+        {
+          "meaning": "WINS 服务器地址",
+          "values": "IPv4 地址"
+        },
+        {
+          "meaning": "是否检测连接超时",
+          "values": "Y 是，N 否",
+          "default": "Y"
+        },
+        {
+          "meaning": "连接超时时长",
+          "values": "0 到 9999 秒",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP 广播间隔",
+          "values": "0 到 30 分钟",
+          "default": "0，无"
+        },
+        {
+          "meaning": "原始端口基准号",
+          "values": "1 到 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "为无线电模块选择接收天线和发送天线。"
+    "summary": "为无线电模块选择接收天线和发送天线。",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "接收天线",
+          "values": "D 分集，L 左，R 右",
+          "default": "D"
+        },
+        {
+          "meaning": "发送天线",
+          "values": "D 分集，L 左，R 右",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "为早期无线固件配置已废弃的 WEP 安全设置和密钥内容。"
+    "summary": "为早期无线固件配置已废弃的 WEP 安全设置和密钥内容。",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "加密模式",
+          "values": "OFF 无，40 为 40 位，128 为 128 位",
+          "default": "OFF"
+        },
+        {
+          "meaning": "加密密钥索引",
+          "values": "1 到 4",
+          "default": "1"
+        },
+        {
+          "meaning": "身份验证类型",
+          "values": "O 开放系统，S 共享密钥",
+          "default": "O"
+        },
+        {
+          "meaning": "加密密钥存储格式",
+          "values": "H 十六进制，S 字符串",
+          "default": "H"
+        },
+        {
+          "meaning": "加密密钥 1",
+          "values": "十六进制字节对或字母数字字符串"
+        },
+        {
+          "meaning": "加密密钥 2",
+          "values": "十六进制字节对或字母数字字符串"
+        },
+        {
+          "meaning": "加密密钥 3",
+          "values": "十六进制字节对或字母数字字符串"
+        },
+        {
+          "meaning": "加密密钥 4",
+          "values": "十六进制字节对或字母数字字符串"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "为早期无线固件配置已废弃的 Cisco LEAP 身份验证。"
+    "summary": "为早期无线固件配置已废弃的 Cisco LEAP 身份验证。",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP 模式",
+          "values": "OFF，ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "用户名",
+          "values": "1 到 32 个字符",
+          "default": "user"
+        },
+        {
+          "meaning": "密码",
+          "values": "1 到 32 个字符",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "设置打印机控制面板上无线设置的访问密码。"
+    "summary": "设置打印机控制面板上无线设置的访问密码。",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "旧的无线密码",
+          "values": "0000 到 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "新的无线密码",
+          "values": "0000 到 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "在早期无线打印服务器上配置 802.11b 数据速率和发射功率。"
+    "summary": "在早期无线打印服务器上配置 802.11b 数据速率和发射功率。",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "每秒 1 Mb 的发送速率",
+          "values": "Y 开，N 关"
+        },
+        {
+          "meaning": "每秒 2 Mb 的发送速率",
+          "values": "Y 开，N 关"
+        },
+        {
+          "meaning": "每秒 5.5 Mb 的发送速率",
+          "values": "Y 开，N 关"
+        },
+        {
+          "meaning": "每秒 11 Mb 的发送速率",
+          "values": "Y 开，N 关"
+        },
+        {
+          "meaning": "发送功率",
+          "values": "1，5，20，30，50，100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "配置无线网络名称、射频模式、前导码长度和保活行为。"
+    "summary": "配置无线网络名称、射频模式、前导码长度和保活行为。",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID 值",
+          "values": "最多 32 个字符",
+          "default": "125"
+        },
+        {
+          "meaning": "工作模式",
+          "values": "I 基础设施，A 自组网",
+          "default": "I"
+        },
+        {
+          "meaning": "无线网卡前导码长度",
+          "values": "L 长，S 短",
+          "default": "L"
+        },
+        {
+          "meaning": "是否启用无线保活脉冲",
+          "values": "0 禁用，1 启用",
+          "default": "1"
+        },
+        {
+          "meaning": "无线保活脉冲间隔",
+          "values": "5 到 300 秒",
+          "default": "15"
+        },
+        {
+          "meaning": "信道掩码",
+          "values": "4 位十六进制数，带 0x 前缀",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "国际模式",
+          "values": "0 禁用，1 启用",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "用一条命令配置无线安全模式、密钥和凭据。"
+    "summary": "用一条命令配置无线安全模式、密钥和凭据。",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "安全类型代码",
+          "values": "01 无，02 WEP 40，03 WEP 128，04 到 08 为 EAP 类型，09 WPA PSK，10 到 14 为 WPA EAP，15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "WEP 加密密钥索引",
+          "values": "1 到 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP 身份验证类型",
+          "values": "O 开放系统，S 共享密钥",
+          "default": "O"
+        },
+        {
+          "meaning": "WEP 密钥存储格式",
+          "values": "H 十六进制，S 字符串",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP 加密密钥 1",
+          "values": "十六进制字节对或字母数字字符串"
+        },
+        {
+          "meaning": "WEP 加密密钥 2",
+          "values": "十六进制字节对或字母数字字符串"
+        },
+        {
+          "meaning": "WEP 加密密钥 3",
+          "values": "十六进制字节对或字母数字字符串"
+        },
+        {
+          "meaning": "WEP 加密密钥 4",
+          "values": "十六进制字节对或字母数字字符串"
+        },
+        {
+          "meaning": "该安全类型的用户 ID",
+          "values": "任意字符串",
+          "default": "user"
+        },
+        {
+          "meaning": "该安全类型的密码",
+          "values": "任意字符串",
+          "default": "password"
+        },
+        {
+          "meaning": "可选的私钥密码",
+          "values": "任意字符串"
+        },
+        {
+          "meaning": "Kerberos 域",
+          "values": "任意字符串",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberos 密钥分发中心",
+          "values": "任意字符串",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "预共享密钥值",
+          "values": "至少 64 位十六进制数"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

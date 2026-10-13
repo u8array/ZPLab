@@ -1,11 +1,13 @@
 // Command descriptions per locale, one JSON chunk each, fetched on demand like
-// the UI dictionaries. Each row carries the hash of the English text it was
-// translated from; catalogSummaries.test.ts fails the build on a stale one.
+// the UI dictionaries. Each row carries the hash of its English text, so
+// catalogSummaries.test.ts fails the build on a stale translation.
 import type { LocaleCode } from ".";
 
 export interface CatalogTranslation {
   hash: string;
   summary: string;
+  /** The table carries its own hash, so it goes stale apart from the summary. */
+  reference?: { hash: string; params: { meaning: string; values: string; default?: string }[] };
 }
 export type CatalogSummaries = Readonly<Record<string, CatalogTranslation>>;
 

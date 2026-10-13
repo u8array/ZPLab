@@ -1,4 +1,6 @@
 import type { Translations } from '../locales';
+import type { CommandParam } from '@zplab/core/catalog';
+import type { CatalogTranslation } from '../locales/catalogSummaries';
 import { formatTemplate } from './formatTemplate';
 
 /** Why the reference's detail shows no entry. */
@@ -33,4 +35,16 @@ export function syntaxSegments(syntax: string, names: readonly string[]): Syntax
     else out.push({ text: ch, slot: null });
   }
   return out;
+}
+
+export interface ReferenceRow {
+  name: string;
+  meaning: string;
+  values: string;
+  default?: string;
+}
+
+/** The parameter rows to show, each in the loaded language where the translation has it and in English otherwise. */
+export function referenceRows(params: readonly CommandParam[], translation: CatalogTranslation | undefined): ReferenceRow[] {
+  return params.map((p, i) => ({ name: p.name, ...(translation?.reference?.params[i] ?? p) }));
 }

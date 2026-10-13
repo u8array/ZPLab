@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Anger den utskrivbara bredden i punkter. Innehåll som sträcker sig utanför bredden beskärs av skrivaren."
+    "summary": "Anger den utskrivbara bredden i punkter. Innehåll som sträcker sig utanför bredden beskärs av skrivaren.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "utskriftsbredd i punkter",
+          "values": "2 till etikettens bredd",
+          "default": "senast sparade värde"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Anger etikettens längd i punkter och avgör var det utskrivbara formatet slutar."
+    "summary": "Anger etikettens längd i punkter och avgör var det utskrivbara formatet slutar.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "etikettlängd i punkter",
+          "values": "1 till 32000",
+          "default": "skrivarinställning"
+        },
+        {
+          "meaning": "gäller för allt media",
+          "values": "N endast kontinuerligt, Y allt media",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Flyttar etikettens hempunkt och ändrar därmed origo som används av efterföljande fältkoordinater."
+    "summary": "Flyttar etikettens hempunkt och ändrar därmed origo som används av efterföljande fältkoordinater.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "etikettens hempunkt på x-axeln",
+          "values": "0 till 32000",
+          "default": "0 eller senast sparade värde"
+        },
+        {
+          "meaning": "etikettens hempunkt på y-axeln",
+          "values": "0 till 32000",
+          "default": "0 eller senast sparade värde"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Tillämpar en horisontell förskjutning på fältpositioner för kompatibilitet med äldre Zebra-format."
+    "summary": "Tillämpar en horisontell förskjutning på fältpositioner för kompatibilitet med äldre Zebra-format.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "vänsterförskjutning av alla fältpositioner",
+          "values": "-9999 till 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Lägger till en vertikal förskjutning för hela formatet i förhållande till mediets överkant."
+    "summary": "Lägger till en vertikal förskjutning för hela formatet i förhållande till mediets överkant.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "flyttar hela formatet uppåt eller nedåt i punktrader",
+          "values": "-120 till 120, XiIIIPlus 600 dpi -240 till 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Anger koordinatenheten till punkter, tum eller millimeter och kan skala format mellan olika utskriftsupplösningar."
+    "summary": "Anger koordinatenheten till punkter, tum eller millimeter och kan skala format mellan olika utskriftsupplösningar.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "koordinatenhet för efterföljande fält",
+          "values": "D punkter, I tum, M millimeter",
+          "default": "D"
+        },
+        {
+          "meaning": "formatets basupplösning i punkter per tum",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "målupplösning att konvertera till",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Anger medielägena efter utskrift, inklusive avriv, avskalning, klippning, upprullning och applikatorläge."
+    "summary": "Anger medielägena efter utskrift, inklusive avriv, avskalning, klippning, upprullning och applikatorläge.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "mediehanteringsläge efter utskrift",
+          "values": "T avriv, P avskalning, R upprullning, A applikator, C klippning, D fördröjd klippning, F rfid, K kiosk",
+          "default": "skrivarinställning"
+        },
+        {
+          "meaning": "förskalning före nästa etikett",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Väljer termotransfer- eller direkttermoläge beroende på om det laddade mediet använder färgband."
+    "summary": "Väljer termotransfer- eller direkttermoläge beroende på om det laddade mediet använder färgband.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "mediatyp som används av skrivaren",
+          "values": "T termotransfer, D direkttermo"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Anger antal utskrifter, gruppering för paus eller klippning samt antal kopior per serienummervärde."
+    "summary": "Anger antal utskrifter, gruppering för paus eller klippning samt antal kopior per serienummervärde.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "totalt antal etiketter att skriva ut",
+          "values": "1 till 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "antal etiketter innan en paus",
+          "values": "1 till 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "kopior av varje serienummer",
+          "values": "0 till 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "åsidosätt pausantalet",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "klipp efter en void-märkt RFID-etikett",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Vänder utskriften för efterföljande fält genom att byta plats på förgrund och bakgrund."
+    "summary": "Vänder utskriften för efterföljande fält genom att byta plats på förgrund och bakgrund.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "omvänder utskriftsfärgen för efterföljande fält",
+          "values": "N nej, Y ja",
+          "default": "N eller senast sparade värde"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Roterar hela etikettformatet 180 grader."
+    "summary": "Roterar hela etikettformatet 180 grader.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "skriver ut etiketten upp och ner",
+          "values": "N normal, I inverterad",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Speglar det utskrivbara området horisontellt."
+    "summary": "Speglar det utskrivbara området horisontellt.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "speglar etiketten från vänster till höger",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Anger utskriftshastighet, matningshastighet och backmatningshastighet i tum per sekund."
+    "summary": "Anger utskriftshastighet, matningshastighet och backmatningshastighet i tum per sekund.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "utskriftshastighet i tum per sekund",
+          "values": "1 till 14, eller A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "mathastighet för tom etikett",
+          "values": "2 till 14",
+          "default": "6"
+        },
+        {
+          "meaning": "backmatningshastighet efter utskrift",
+          "values": "2 till 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Positionerar nästa fält från etikettens origo med fältets övre vänstra hörn som referens."
+    "summary": "Positionerar nästa fält från etikettens origo med fältets övre vänstra hörn som referens.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "horisontell position i punkter",
+          "values": "0 till 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "vertikal position i punkter",
+          "values": "0 till 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "justering",
+          "values": "0 vänster, 1 höger, 2 auto",
+          "default": "senast satt med ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Positionerar nästa fält från dess baslinje eller streckkodskant, vilket ger roterade fält en stabil ankarpunkt."
+    "summary": "Positionerar nästa fält från dess baslinje eller streckkodskant, vilket ger roterade fält en stabil ankarpunkt.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "horisontell position i punkter",
+          "values": "0 till 32000",
+          "default": "senaste fältpositionen"
+        },
+        {
+          "meaning": "vertikal position i punkter",
+          "values": "0 till 32000",
+          "default": "senaste fältpositionen"
+        },
+        {
+          "meaning": "justering",
+          "values": "0 vänster, 1 höger, 2 auto",
+          "default": "senast satt med ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Anger innehållet för det aktuella fältet, till exempel text, streckkodsdata eller RFID-data."
+    "summary": "Anger innehållet för det aktuella fältet, till exempel text, streckkodsdata eller RFID-data.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "fältinnehåll",
+          "values": "valfri utskrivbar data upp till 3072 byte, inga prefixtecken"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Aktiverar hexadecimala escape-sekvenser i fältdata för binära byte och reserverade kommandotecken."
+    "summary": "Aktiverar hexadecimala escape-sekvenser i fältdata för binära byte och reserverade kommandotecken.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "indikatortecken för hexadecimal",
+          "values": "valfritt tecken utom format- och kontrollprefix",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Lägger till ett kommentarfält. Skrivaren ignorerar innehållet fram till nästa fältavgränsare."
+    "summary": "Lägger till ett kommentarfält. Skrivaren ignorerar innehållet fram till nästa fältavgränsare.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "kommentartext som inte skrivs ut",
+          "values": "valfri text, ignoreras till nästa kommando"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Anger standardorienteringen för fält och, på nyare firmware, standardjusteringen."
+    "summary": "Anger standardorienteringen för fält och, på nyare firmware, standardjusteringen.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "standardrotation för fält",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "standardjustering",
+          "values": "0 vänster, 1 höger, 2 auto",
+          "default": "auto för ^TB, annars vänster"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Radbryter fältdata inom ett block med fast bredd, med kontroll över antal rader, radavstånd, indrag och justering."
+    "summary": "Radbryter fältdata inom ett block med fast bredd, med kontroll över antal rader, radavstånd, indrag och justering.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "blockbredd i punkter",
+          "values": "0 till etikettens bredd",
+          "default": "0"
+        },
+        {
+          "meaning": "maximalt antal rader",
+          "values": "1 till 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "extra radavstånd i punkter",
+          "values": "-9999 till 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "justering",
+          "values": "L vänster, C center, R höger, J marginaljusterat",
+          "default": "L"
+        },
+        {
+          "meaning": "hängande indrag för följande rader i punkter",
+          "values": "0 till 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Radbryter text inom en ruta med fast bredd och höjd och trunkerar text som inte får plats."
+    "summary": "Radbryter text inom en ruta med fast bredd och höjd och trunkerar text som inte får plats.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "blockrotation",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^A"
+        },
+        {
+          "meaning": "blockbredd i punkter",
+          "values": "1 till etikettens bredd",
+          "default": "1"
+        },
+        {
+          "meaning": "blockhöjd i punkter",
+          "values": "1 till etikettens längd",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Tilldelar ett nummer till ett variabelt fält i lagrade och återkallade format."
+    "summary": "Tilldelar ett nummer till ett variabelt fält i lagrade och återkallade format.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "fältnummer",
+          "values": "0 till 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "valfri prompttext för KDU",
+          "values": "upp till 255 alfanumeriska tecken"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Anger data för ett variabelt fält. Till skillnad från data via ^FD rensas denna efter att etiketten har skrivits ut."
+    "summary": "Anger data för ett variabelt fält. Till skillnad från data via ^FD rensas denna efter att etiketten har skrivits ut.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "variabel fältdata",
+          "values": "0 till 3072 byte sträng"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Anger tecknet som används för att bädda in numrerade fältvärden i en annan fältsträng."
+    "summary": "Anger tecknet som används för att bädda in numrerade fältvärden i en annan fältsträng.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "avgränsare för fältsammanfogning",
+          "values": "valfritt tecken utom format- och kontrollprefix",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Anger markörerna som används för realtidsklockans platshållare i fältdata."
+    "summary": "Anger markörerna som används för realtidsklockans platshållare i fältdata.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "indikatortecken för primär klocka",
+          "values": "valfritt ASCII-tecken",
+          "default": "%"
+        },
+        {
+          "meaning": "indikatortecken för sekundär klocka",
+          "values": "valfritt ASCII-tecken, annat än a"
+        },
+        {
+          "meaning": "indikatortecken för tredje klockan",
+          "values": "valfritt ASCII-tecken, annat än a och b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Anger standardvärden för streckkodens modulbredd, förhållandet mellan breda och smala streck samt höjd för efterföljande streckkodsfält."
+    "summary": "Anger standardvärden för streckkodens modulbredd, förhållandet mellan breda och smala streck samt höjd för efterföljande streckkodsfält.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "modulbredd i punkter",
+          "values": "1 till 10",
+          "default": "2"
+        },
+        {
+          "meaning": "förhållande mellan breda och smala streck",
+          "values": "2.0 till 3.0 i steg om 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "valfri höjd i punkter",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Placerar PDF417- eller MicroPDF417-segment vid specifika origon när ett meddelande sträcker sig över flera symboler."
+    "summary": "Placerar PDF417- eller MicroPDF417-segment vid specifika origon när ett meddelande sträcker sig över flera symboler.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "x-axel för första symbolen, upprepa par för fler",
+          "values": "0 till 32000, eller e för att hoppa över denna symbol"
+        },
+        {
+          "meaning": "y-axel för första symbolen, upprepa par för fler",
+          "values": "0 till 32000, eller e för att hoppa över denna symbol"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Anger teckenordningen för det aktuella fältet och kan lägga till extra teckenmellanrum."
+    "summary": "Anger teckenordningen för det aktuella fältet och kan lägga till extra teckenmellanrum.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "utskriftsriktning",
+          "values": "H horisontellt, V vertikalt, R omvänt",
+          "default": "H"
+        },
+        {
+          "meaning": "extra mellanrum mellan tecken i punkter",
+          "values": "0 till 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Väljer det inbyggda skalbara typsnittet 0 för nästa fält med angiven storlek och orientering."
+    "summary": "Väljer det inbyggda skalbara typsnittet 0 för nästa fält med angiven storlek och orientering.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "teckenhöjd i punkter",
+          "values": "10 till 32000",
+          "default": "senast satt med ^CF"
+        },
+        {
+          "meaning": "teckenbredd i punkter",
+          "values": "10 till 32000",
+          "default": "senast satt med ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Väljer ett inbyggt typsnitt med ett enbokstavsnamn, med valfri orientering, höjd och bredd."
+    "summary": "Väljer ett inbyggt typsnitt med ett enbokstavsnamn, med valfri orientering, höjd och bredd.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "typsnittsnamn",
+          "values": "A till Z, 0 till 9",
+          "default": "senast satt med ^CF"
+        },
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "teckenhöjd i punkter",
+          "values": "10 till 32000 skalbart, 1 till 10 gånger grundhöjden för bitmappade typsnitt",
+          "default": "senast satt med ^CF"
+        },
+        {
+          "meaning": "teckenbredd i punkter",
+          "values": "10 till 32000 skalbart, 1 till 10 gånger grundbredden för bitmappade typsnitt",
+          "default": "senast satt med ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Väljer en lagrad typsnittsfil för nästa fält, med valfri orientering, höjd och bredd."
+    "summary": "Väljer en lagrad typsnittsfil för nästa fält, med valfri orientering, höjd och bredd.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "fältorientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "teckenhöjd i punkter",
+          "values": "10 till 32000 skalbart, 1 till 10 gånger grundhöjden för bitmappade typsnitt",
+          "default": "senast satt med ^CF"
+        },
+        {
+          "meaning": "teckenbredd i punkter",
+          "values": "10 till 32000 skalbart, 1 till 10 gånger grundbredden för bitmappade typsnitt",
+          "default": "senast satt med ^CF"
+        },
+        {
+          "meaning": "enhet som innehåller typsnittet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "typsnittsfilnamn att använda",
+          "values": "valfritt giltigt typsnittsnamn",
+          "default": "senast satt med ^CF"
+        },
+        {
+          "meaning": "filtillägg för typsnittsfil",
+          "values": "FNT typsnitt, TTF TrueType, TTE TrueType-tillägg"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Anger reservtypsnitt, höjd och bredd som används av textfält som inte anger egna värden."
+    "summary": "Anger reservtypsnitt, höjd och bredd som används av textfält som inte anger egna värden.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "standardtypsnitt",
+          "values": "A till Z, 0 till 9",
+          "default": "A"
+        },
+        {
+          "meaning": "standardteckenhöjd i punkter",
+          "values": "0 till 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "standardteckenbredd i punkter",
+          "values": "0 till 32000",
+          "default": "5 eller senast sparade värde"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Väljer teckenkodningen som används för att tolka fältdata, inklusive kodsidor och UTF-8."
+    "summary": "Väljer teckenkodningen som används för att tolka fältdata, inklusive kodsidor och UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "teckenkodning att använda",
+          "values": "0 till 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "teckenposition att omtilldela",
+          "values": "0 till 255",
+          "default": "ingen"
+        },
+        {
+          "meaning": "position för ersättningstecken",
+          "values": "0 till 255",
+          "default": "ingen"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Aktiverar avancerad textlayout för efterföljande fält, inklusive dubbelriktad text, formning av glyfer och OpenType-funktioner."
+    "summary": "Aktiverar avancerad textlayout för efterföljande fält, inklusive dubbelriktad text, formning av glyfer och OpenType-funktioner.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "standardkälla för glyf",
+          "values": "0 blanktecken, 1 typsnittsglyf",
+          "default": "0"
+        },
+        {
+          "meaning": "dubbelriktad textlayout",
+          "values": "0 av, 1 på",
+          "default": "0"
+        },
+        {
+          "meaning": "teckenformning",
+          "values": "0 av, 1 på",
+          "default": "0"
+        },
+        {
+          "meaning": "stöd för OpenType-tabeller",
+          "values": "0 av, 1 på",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Kopplar ett enbokstavsnamn för typsnitt till en lagrad typsnittsfil."
+    "summary": "Kopplar ett enbokstavsnamn för typsnitt till en lagrad typsnittsfil.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "typsnittsbokstav att lägga till eller ersätta",
+          "values": "A till Z, 0 till 9"
+        },
+        {
+          "meaning": "enhet för att lagra typsnittet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "filnamn för lagrat typsnitt",
+          "values": "upp till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg för typsnittsfil",
+          "values": "FNT typsnitt, TTF TrueType, TTE TrueType-tillägg"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Anger cachestorleken för renderade skalbara glyfer för att snabba upp upprepad utskrift med stora typsnitt."
+    "summary": "Anger cachestorleken för renderade skalbara glyfer för att snabba upp upprepad utskrift med stora typsnitt.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "teckencache aktiverad",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        },
+        {
+          "meaning": "extra cacheminne i K",
+          "values": "1 till 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "cachebuffertyp",
+          "values": "0 normala typsnitt, 1 asiatiska typsnitt",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Definierar reservkedjor av TrueType-typsnitt som används när bastypsnittet saknar en glyf."
+    "summary": "Definierar reservkedjor av TrueType-typsnitt som används när bastypsnittet saknar en glyf.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "tilläggstypsnitt att länka, enhet och fil",
+          "values": "TTF- eller TTE-fil på en enhet"
+        },
+        {
+          "meaning": "bastypsnitt som ska ta emot den",
+          "values": "FNT-, TTF- eller TTE-fil, jokertecken tillåtet"
+        },
+        {
+          "meaning": "länka eller koppla loss tillägget",
+          "values": "0 koppla loss, 1 länka"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Laddar ned ett bitmapptypsnitt och dess mått till skrivarens minne."
+    "summary": "Laddar ned ett bitmapptypsnitt och dess mått till skrivarens minne.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "enhet för att lagra typsnittet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "typsnittets namn",
+          "values": "upp till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg för typsnittsfil",
+          "values": "FNT, fast värde",
+          "default": "FNT"
+        },
+        {
+          "meaning": "orientering för det inbyggda typsnittet",
+          "values": "N endast normal",
+          "default": "N"
+        },
+        {
+          "meaning": "maximal cellhöjd i punkter",
+          "values": "1 till 32000"
+        },
+        {
+          "meaning": "maximal cellbredd i punkter",
+          "values": "1 till 32000"
+        },
+        {
+          "meaning": "punkter från cellens topp till baslinjen",
+          "values": "1 till 32000"
+        },
+        {
+          "meaning": "bredd på mellanslagstecken",
+          "values": "1 till 32000"
+        },
+        {
+          "meaning": "antal tecken i typsnittet",
+          "values": "1 till 256"
+        },
+        {
+          "meaning": "text för upphovsrättsinnehavare",
+          "values": "1 till 63 alfanumeriska tecken"
+        },
+        {
+          "meaning": "strukturerad bitmappsdata per tecken",
+          "values": "hashkod följt av höjd, bredd, offset och sedan hexdata"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Laddar ned ett kodat skalbart Intellifont-typsnitt till skrivarens minne."
+    "summary": "Laddar ned ett kodat skalbart Intellifont-typsnitt till skrivarens minne.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "enhet för att lagra typsnittet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "typsnittets namn",
+          "values": "upp till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg för typsnittsfil",
+          "values": "FNT, fast värde",
+          "default": "FNT"
+        },
+        {
+          "meaning": "typsnittets storlek i byte från ZTools",
+          "values": "antal byte i det konverterade typsnittet"
+        },
+        {
+          "meaning": "kodad byte-data för typsnittet",
+          "values": "hexpar som motsvarar storleken"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Laddar ned ett kodat TrueType-typsnitt med upp till 256 tecken till skrivarens minne."
+    "summary": "Laddar ned ett kodat TrueType-typsnitt med upp till 256 tecken till skrivarens minne.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "enhet för att lagra typsnittet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "typsnittets namn",
+          "values": "upp till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg för typsnittsfil",
+          "values": "DAT, fast värde",
+          "default": "DAT"
+        },
+        {
+          "meaning": "typsnittets storlek i byte",
+          "values": "antal byte i det konverterade typsnittet"
+        },
+        {
+          "meaning": "kodad byte-data för typsnittet",
+          "values": "hexpar som motsvarar storleken"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Laddar ned ett kodat TrueType-typsnitt med fler än 256 glyfer till skrivarens minne."
+    "summary": "Laddar ned ett kodat TrueType-typsnitt med fler än 256 glyfer till skrivarens minne.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "enhet för att lagra typsnittet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "typsnittets namn",
+          "values": "upp till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg för typsnittsfil",
+          "values": "FNT, fast värde",
+          "default": "FNT"
+        },
+        {
+          "meaning": "typsnittets storlek i byte",
+          "values": "antal byte i det konverterade typsnittet"
+        },
+        {
+          "meaning": "kodad byte-data för typsnittet",
+          "values": "hexpar som motsvarar storleken"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Laddar ned en kodningstabell som kopplar byte i fältdata till Unicode-värden för TrueType-typsnitt."
+    "summary": "Laddar ned en kodningstabell som kopplar byte i fältdata till Unicode-värden för TrueType-typsnitt.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "enhet som innehåller tabellen",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "tabellens namn",
+          "values": "upp till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg för tabell",
+          "values": "DAT, fast värde",
+          "default": "DAT"
+        },
+        {
+          "meaning": "tabellens storlek i byte",
+          "values": "antal byte i den konverterade tabellen"
+        },
+        {
+          "meaning": "kodad byte-data för tabellen",
+          "values": "hexpar som motsvarar storleken"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Ritar en Code 128-streckkod för ASCII-data med varierande längd, med lägen för automatiskt byte av delmängd och UCC/EAN-data."
+    "summary": "Ritar en Code 128-streckkod för ASCII-data med varierande längd, med lägen för automatiskt byte av delmängd och UCC/EAN-data.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC-kontrollsiffra",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "läge",
+          "values": "N ingen, U UCC Case Mode, A automatiskt, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Ritar en Code 39-streckkod med en valfri kontrollsiffra enligt Mod 43."
+    "summary": "Ritar en Code 39-streckkod med en valfri kontrollsiffra enligt Mod 43.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "Mod 43-kontrollsiffra",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Ritar en Code 93-streckkod som representerar fullständig ASCII-data med hjälp av skifttecken."
+    "summary": "Ritar en Code 93-streckkod som representerar fullständig ASCII-data med hjälp av skifttecken.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "skriv ut kontrollsiffra",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Ritar en Code 11-streckkod för siffror och bindestreck, med valfria kontrollsiffror."
+    "summary": "Ritar en Code 11-streckkod för siffror och bindestreck, med valfria kontrollsiffror.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "antal kontrollsiffror",
+          "values": "Y 1 siffra, N 2 siffror",
+          "default": "N"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Ritar en Interleaved 2 of 5-streckkod för numerisk data med jämn längd, med en valfri kontrollsiffra."
+    "summary": "Ritar en Interleaved 2 of 5-streckkod för numerisk data med jämn längd, med en valfri kontrollsiffra.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod 10-kontrollsiffra",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "sjätte platsen, odokumenterad",
+          "values": "odokumenterad i guiden"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Ritar en Industrial 2 of 5-streckkod, en numerisk kod där data kodas enbart i streck."
+    "summary": "Ritar en Industrial 2 of 5-streckkod, en numerisk kod där data kodas enbart i streck.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Ritar en Standard 2 of 5-streckkod, en självkontrollerande numerisk kod där data kodas enbart i streck."
+    "summary": "Ritar en Standard 2 of 5-streckkod, en självkontrollerande numerisk kod där data kodas enbart i streck.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Ritar en ANSI Codabar-streckkod, även känd som USD-4, för etiketter inom bibliotek, sjukvård och budtransport."
+    "summary": "Ritar en ANSI Codabar-streckkod, även känd som USD-4, för etiketter inom bibliotek, sjukvård och budtransport.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "kontrollsiffra, fast avstängd",
+          "values": "endast N",
+          "default": "N"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "starttecken",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "stopptecken",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Ritar en LOGMARS-streckkod, försvarsdepartementets variant av Code 39, och omvandlar gemener i data till versaler."
+    "summary": "Ritar en LOGMARS-streckkod, försvarsdepartementets variant av Code 39, och omvandlar gemener i data till versaler.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Ritar en MSI-streckkod, en numerisk kod härledd från Plessey, med valbara scheman för kontrollsiffror."
+    "summary": "Ritar en MSI-streckkod, en numerisk kod härledd från Plessey, med valbara scheman för kontrollsiffror.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "kontrollsiffreschema",
+          "values": "A ingen, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrollsiffra i tolkningsraden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Ritar en Plessey-streckkod, en äldre numerisk kod med valfria kontrollsiffror."
+    "summary": "Ritar en Plessey-streckkod, en äldre numerisk kod med valfria kontrollsiffror.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "skriv ut kontrollsiffra",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Ritar en EAN-13-streckkod för artikelnummer inom detaljhandel och beräknar kontrollsiffran från tolv datasiffror."
+    "summary": "Ritar en EAN-13-streckkod för artikelnummer inom detaljhandel och beräknar kontrollsiffran från tolv datasiffror.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Ritar en EAN-8-streckkod för mindre detaljhandelsförpackningar och beräknar kontrollsiffran från sju datasiffror."
+    "summary": "Ritar en EAN-8-streckkod för mindre detaljhandelsförpackningar och beräknar kontrollsiffran från sju datasiffror.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Ritar en UPC-A-streckkod för detaljhandelsförpackningar från elva datasiffror, med valfri utskrift av kontrollsiffran."
+    "summary": "Ritar en UPC-A-streckkod för detaljhandelsförpackningar från elva datasiffror, med valfri utskrift av kontrollsiffran.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 9999",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "skriv ut kontrollsiffra",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Ritar en UPC-E-streckkod, den korta formen av UPC-A. Fältdata utgörs av den fullständiga tiosiffriga tillverkar- och produktkoden."
+    "summary": "Ritar en UPC-E-streckkod, den korta formen av UPC-A. Fältdata utgörs av den fullständiga tiosiffriga tillverkar- och produktkoden.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "skriv ut kontrollsiffra",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Ritar en GS1 DataBar-symbol med valbar undertyp, förstoring, höjd och segmentbredd."
+    "summary": "Ritar en GS1 DataBar-symbol med valbar undertyp, förstoring, höjd och segmentbredd.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R roterad, I inverterad, B upp och ner",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar-symboltyp",
+          "values": "1 omni, 2 trunkerad, 3 staplad, 4 staplad omni, 5 begränsad, 6 expanderad, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 med CC-A/B, 12 UCC/EAN-128 med CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "förstoringsfaktor",
+          "values": "1 till 10",
+          "default": "skrivarinställning"
+        },
+        {
+          "meaning": "separatorhöjd",
+          "values": "1 eller 2",
+          "default": "1"
+        },
+        {
+          "meaning": "höjd på den linjära delen i punkter",
+          "values": "1 till 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "segmentbredd för GS1 DataBar Expanded",
+          "values": "2 till 22, endast jämna",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Ritar en postal Planet Code-streckkod från siffror kodade som höga och korta streck."
+    "summary": "Ritar en postal Planet Code-streckkod från siffror kodade som höga och korta streck.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R roterad, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 9999",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Ritar POSTNET, Planet Code eller USPS Intelligent Mail beroende på vald posttyp."
+    "summary": "Ritar POSTNET, Planet Code eller USPS Intelligent Mail beroende på vald posttyp.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "typ av postkod",
+          "values": "0 postnet, 1 planet, 2 reserverad, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Ritar en tvåsiffrig eller femsiffrig UPC/EAN-tilläggssymbol bredvid en huvudstreckkod."
+    "summary": "Ritar en tvåsiffrig eller femsiffrig UPC/EAN-tilläggssymbol bredvid en huvudstreckkod.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 32000",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "tolkningsrad",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningsrad ovanför koden",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Ritar en staplad Code 49-streckkod med två till åtta rader fullständig ASCII-data."
+    "summary": "Ritar en staplad Code 49-streckkod med två till åtta rader fullständig ASCII-data.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "höjdmultiplikator för enskilda rader",
+          "values": "1 till etikettens höjd",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "placering av tolkningsraden",
+          "values": "N ingen, A ovanför, B under",
+          "default": "N"
+        },
+        {
+          "meaning": "startläge",
+          "values": "0 alfanumeriskt, 1 multiread, 2 numeriskt, 3 gruppalfa, 4 shift 1, 5 shift 2, A auto",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Ritar en QR Code-symbol. Kommandots parametrar anger modell, förstoring och mask, medan fältdata anger felkorrigering och teckenläge."
+    "summary": "Ritar en QR Code-symbol. Kommandots parametrar anger modell, förstoring och mask, medan fältdata anger felkorrigering och teckenläge.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "fältorientering",
+          "values": "N endast normal",
+          "default": "N"
+        },
+        {
+          "meaning": "modell",
+          "values": "1 original, 2 förbättrad",
+          "default": "2"
+        },
+        {
+          "meaning": "förstoringsfaktor",
+          "values": "1 till 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "felkorrigeringsnivå",
+          "values": "H ultrahög, Q hög, M standard, L hög densitet",
+          "default": "Q när tomt, M när värdet är ogiltigt"
+        },
+        {
+          "meaning": "maskvärde",
+          "values": "0 till 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Ritar en Data Matrix-symbol med konfigurerbar elementstorlek, kvalitetsnivå och hantering av escape-sekvenser."
+    "summary": "Ritar en Data Matrix-symbol med konfigurerbar elementstorlek, kvalitetsnivå och hantering av escape-sekvenser.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "symbolelementens dimensionella höjd",
+          "values": "1 till etikettens bredd",
+          "default": "0, vilket hämtar symbolhöjden från ^BY"
+        },
+        {
+          "meaning": "kvalitetsnivå",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "kolumner att koda",
+          "values": "9 till 49, endast udda för kvalitet 0 till 140, endast jämna för kvalitet 200"
+        },
+        {
+          "meaning": "rader att koda",
+          "values": "9 till 49"
+        },
+        {
+          "meaning": "format-ID",
+          "values": "1 numeriskt, 2 versaler, 3 versaler alfanumeriskt med . , - /, 4 versaler alfanumeriskt, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "styrtecken för escape-sekvens",
+          "values": "valfritt tecken",
+          "default": "tilde"
+        },
+        {
+          "meaning": "bildförhållande",
+          "values": "1 kvadratisk, 2 rektangulär",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Ritar en staplad tvådimensionell PDF417-symbol för stora mängder text eller binär data."
+    "summary": "Ritar en staplad tvådimensionell PDF417-symbol för stora mängder text eller binär data.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd per rad i punkter",
+          "values": "1 till etikettens höjd",
+          "default": "senast satt med ^BY"
+        },
+        {
+          "meaning": "säkerhetsnivå",
+          "values": "1 till 8",
+          "default": "0"
+        },
+        {
+          "meaning": "antal datakolumner",
+          "values": "1 till 30",
+          "default": "automatiskt bildförhållande"
+        },
+        {
+          "meaning": "antal rader",
+          "values": "3 till 90",
+          "default": "automatiskt bildförhållande"
+        },
+        {
+          "meaning": "korta av högra radindikatorer och stoppmönster",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Ritar en MicroPDF417-symbol, en kompakt variant av PDF417 med radadressmönster."
+    "summary": "Ritar en MicroPDF417-symbol, en kompakt variant av PDF417 med radadressmönster.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "streckkodshöjd i punkter",
+          "values": "1 till 9999",
+          "default": "senast satt med ^BY, eller 10 om inget ^BY skickats"
+        },
+        {
+          "meaning": "läge",
+          "values": "0 till 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Ritar en Aztec-matrissymbol med konfigurerbar förstoring och felkorrigering."
+    "summary": "Ritar en Aztec-matrissymbol med konfigurerbar förstoring och felkorrigering.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R roterad, I 180, B 270",
+          "default": "senast satt med ^FW"
+        },
+        {
+          "meaning": "förstoringsfaktor",
+          "values": "1 till 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "indikator för utökad kanaltolkning",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "felkontroll och symbolstorlek",
+          "values": "0 standard, 1 till 99 felprocent, 101 till 104 kompakta lager, 201 till 232 fullständiga lager, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "indikator för menysymbol",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "antal symboler för structured append",
+          "values": "1 till 26",
+          "default": "1"
+        },
+        {
+          "meaning": "ID-fält för structured append",
+          "values": "text upp till 24 tecken",
+          "default": "inget ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Ritar en CODABLOCK-symbol i läge A, E eller F för större datamängder."
+    "summary": "Ritar en CODABLOCK-symbol i läge A, E eller F för större datamängder.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "streckkodshöjd per rad i punkter",
+          "values": "2 till 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "säkerhetsnivå",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tecken per rad",
+          "values": "2 till 62"
+        },
+        {
+          "meaning": "rader att koda",
+          "values": "läge A 1-22, läge EF 2-4"
+        },
+        {
+          "meaning": "läge",
+          "values": "A code39-set, E code128-fnc1, F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Ritar en UPS MaxiCode-symbol med ett läge för strukturerade transportörsmeddelanden eller allmän data."
+    "summary": "Ritar en UPS MaxiCode-symbol med ett läge för strukturerade transportörsmeddelanden eller allmän data.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "läge",
+          "values": "2 amerikansk post, 3 icke-amerikansk post, 4 standard, 5 full-eec, 6 läsarprogram",
+          "default": "2"
+        },
+        {
+          "meaning": "symbolnummer i sekvensen",
+          "values": "1 till 8",
+          "default": "1"
+        },
+        {
+          "meaning": "totalt antal symboler",
+          "values": "1 till 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Ritar en TLC39-symbol för telekometiketter som kombinerar Code 39 med en MicroPDF417-komponent."
+    "summary": "Ritar en TLC39-symbol för telekometiketter som kombinerar Code 39 med en MicroPDF417-komponent.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R roterad, I inverterad, B upp och ner"
+        },
+        {
+          "meaning": "bredd för Code 39-delen i punkter",
+          "values": "1 till 10",
+          "default": "600 dpi 4, annars 2"
+        },
+        {
+          "meaning": "förhållande mellan breda och smala streck för Code 39-delen",
+          "values": "2.0 till 3.0 i steg om 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "höjd för Code 39-delen i punkter",
+          "values": "1 till 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "smal streckbredd för MicroPDF417-delen",
+          "values": "1 till 10",
+          "default": "600 dpi 4, annars 2"
+        },
+        {
+          "meaning": "radhöjd för MicroPDF417-delen i punkter",
+          "values": "1 till 255",
+          "default": "600 dpi 8, annars 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "När kommandot är aktiverat valideras streckkodens data och parametrar, och texten INVALID skrivs ut istället för en felaktig symbol."
+    "summary": "När kommandot är aktiverat valideras streckkodens data och parametrar, och texten INVALID skrivs ut istället för en felaktig symbol.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "kodvalidering",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Ritar en fylld eller konturerad rektangel. Om en sida görs lika med kantlinjens tjocklek bildas en linje."
+    "summary": "Ritar en fylld eller konturerad rektangel. Om en sida görs lika med kantlinjens tjocklek bildas en linje.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "rektangelns bredd i punkter",
+          "values": "t till 32000",
+          "default": "t eller 1"
+        },
+        {
+          "meaning": "rektangelns höjd i punkter",
+          "values": "t till 32000",
+          "default": "t eller 1"
+        },
+        {
+          "meaning": "ramtjocklek i punkter",
+          "values": "1 till 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "linjefärg",
+          "values": "B svart, W vit",
+          "default": "B"
+        },
+        {
+          "meaning": "hörnavrundning",
+          "values": "0 ingen avrundning till 8 starkaste avrundning",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Ritar en diagonal linje över en angiven bredd och höjd, lutande åt höger eller vänster."
+    "summary": "Ritar en diagonal linje över en angiven bredd och höjd, lutande åt höger eller vänster.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "rektangelns bredd i punkter",
+          "values": "3 till 32000",
+          "default": "t eller 3"
+        },
+        {
+          "meaning": "rektangelns höjd i punkter",
+          "values": "3 till 32000",
+          "default": "t eller 3"
+        },
+        {
+          "meaning": "ramtjocklek i punkter",
+          "values": "1 till 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "linjefärg",
+          "values": "B svart, W vit",
+          "default": "B"
+        },
+        {
+          "meaning": "diagonalriktning",
+          "values": "R eller / höger lutning, L eller \\ vänster lutning",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Ritar en ellips utifrån bredd och höjd i punkter, med inåtgående kantlinjetjocklek och svart eller vitt utseende."
+    "summary": "Ritar en ellips utifrån bredd och höjd i punkter, med inåtgående kantlinjetjocklek och svart eller vitt utseende.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "ellipsens bredd i punkter",
+          "values": "3 till 4095",
+          "default": "t eller 1"
+        },
+        {
+          "meaning": "ellipsens höjd i punkter",
+          "values": "3 till 4095",
+          "default": "t eller 1"
+        },
+        {
+          "meaning": "ramtjocklek i punkter",
+          "values": "2 till 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "linjefärg",
+          "values": "B svart, W vit",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Ritar en cirkel med angiven diameter i punkter, med inåtgående kantlinjetjocklek och svart eller vitt utseende."
+    "summary": "Ritar en cirkel med angiven diameter i punkter, med inåtgående kantlinjetjocklek och svart eller vitt utseende.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "cirkelns diameter i punkter",
+          "values": "3 till 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "ramtjocklek i punkter",
+          "values": "2 till 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "linjefärg",
+          "values": "B svart, W vit",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Placerar en monokrom bitmapp vid den aktuella fältpositionen med hjälp av ASCII-hex, binär eller komprimerad data."
+    "summary": "Placerar en monokrom bitmapp vid den aktuella fältpositionen med hjälp av ASCII-hex, binär eller komprimerad data.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "komprimeringstyp",
+          "values": "A ascii-hex, B binärt, C komprimerat binärt",
+          "default": "A"
+        },
+        {
+          "meaning": "totalt antal byte att skicka",
+          "values": "1 till 99999"
+        },
+        {
+          "meaning": "totalt antal byte i bilden",
+          "values": "1 till 99999"
+        },
+        {
+          "meaning": "byte per bildrad",
+          "values": "1 till 99999"
+        },
+        {
+          "meaning": "bilddata",
+          "values": "ascii-hex 00 till FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Skriver ut en inbyggd symbol som valts via fältdata, till exempel copyright eller registrerat varumärke."
+    "summary": "Skriver ut en inbyggd symbol som valts via fältdata, till exempel copyright eller registrerat varumärke.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 medurs, I 180, B 270",
+          "default": "N eller senast satt med ^FW"
+        },
+        {
+          "meaning": "teckenhöjd proportionell mot bredden",
+          "values": "0 till 32000",
+          "default": "senast satt med ^CF"
+        },
+        {
+          "meaning": "teckenbredd proportionell mot höjden",
+          "values": "0 till 32000",
+          "default": "senast satt med ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Laddar en lagrad bild i början av ett format och förankrar den vid etikettens origo."
+    "summary": "Laddar en lagrad bild i början av ett format och förankrar den vid etikettens origo.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "lagringsenhet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektnamn",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": ".GRF eller .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Placerar en lagrad bild vid den aktuella fältpositionen utan att skala om den."
+    "summary": "Placerar en lagrad bild vid den aktuella fältpositionen utan att skala om den.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "lagringsenhet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "sökprioritetsordning"
+        },
+        {
+          "meaning": "objektnamn",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": ".GRF eller .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Tar bort lagrad grafik, typsnitt eller format från skrivarens minne, med stöd för jokertecken vid gruppborttagning."
+    "summary": "Tar bort lagrad grafik, typsnitt eller format från skrivarens minne, med stöd för jokertecken vid gruppborttagning.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "lagringsenhet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektnamn, jokertecken tillåtet",
+          "values": "1 till 8 tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg, jokertecken tillåtet",
+          "values": "valfritt filtillägg",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Sparar det aktuella formatet som en grafisk bild för snabb återkallning och överlägg med variabel data."
+    "summary": "Sparar det aktuella formatet som en grafisk bild för snabb återkallning och överlägg med variabel data.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "lagringsenhet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektnamn",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": ".GRF eller .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "skriv ut etiketten efter sparning",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Laddar ned en grafik i ASCII-hex-format till skrivarens minne under ett återanvändbart namn."
+    "summary": "Laddar ned en grafik i ASCII-hex-format till skrivarens minne under ett återanvändbart namn.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "lagringsenhet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "bildnamn",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "total bildstorlek i byte",
+          "values": "beräknas från bildens bredd och höjd"
+        },
+        {
+          "meaning": "byte per bildrad",
+          "values": "beräknas från bildens bredd"
+        },
+        {
+          "meaning": "bilddata för grafik",
+          "values": "ascii-hex 00 till FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Laddar ned grafik, ett typsnitt eller ett certifikat till skrivarens minne under ett återanvändbart namn."
+    "summary": "Laddar ned grafik, ett typsnitt eller ett certifikat till skrivarens minne under ett återanvändbart namn.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "lagringsenhet",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "filnamn",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "dataformat",
+          "values": "A ascii eller zb64, B binärt, C ar-komprimerat, P png zb64"
+        },
+        {
+          "meaning": "lagrad filtyp",
+          "values": "B bitmapp, E tte, G rå grf, P png, T ttf eller otf, X pcx, NRD oläsbar, PAC åtkomstuppgift, C wml-meny, F htm-sida, H skrivaråterkoppling",
+          "default": "G"
+        },
+        {
+          "meaning": "totalt antal byte i filen",
+          "values": "verklig uppackad filstorlek"
+        },
+        {
+          "meaning": "byte per rad för GRF-bilder",
+          "values": "beräknas från bildens bredd"
+        },
+        {
+          "meaning": "fildata",
+          "values": "ascii-hex, zb64 eller binärt"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Serialiserar text- eller streckkodsdata över flera etiketter med hjälp av ett startvärde, en riktning och ett stegvärde."
+    "summary": "Serialiserar text- eller streckkodsdata över flera etiketter med hjälp av ett startvärde, en riktning och ett stegvärde.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "startvärde för serienummer",
+          "values": "upp till 12 siffror",
+          "default": "1"
+        },
+        {
+          "meaning": "steg för ökning eller minskning",
+          "values": "upp till 12 siffror",
+          "default": "1"
+        },
+        {
+          "meaning": "fyll ut med inledande nollor",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Serialiserar utvalda positioner i fältdata med hjälp av en mask och teckenuppsättningar."
+    "summary": "Serialiserar utvalda positioner i fältdata med hjälp av en mask och teckenuppsättningar.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "serialiseringsmask som väljer vilka tecken som ändras",
+          "values": "D decimal, H hex, O oktal, A alfa, N alfanumeriskt, % hoppa över"
+        },
+        {
+          "meaning": "sträng för ökning eller minskning av masken",
+          "values": "ett värde per maskposition, % för att lämna den",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Lagrar de efterföljande kommandona som ett återanvändbart format istället för att skriva ut dem direkt."
+    "summary": "Lagrar de efterföljande kommandona som ett återanvändbart format istället för att skriva ut dem direkt.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "enhet för att lagra mallen",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "mallnamn",
+          "values": "1 till 16 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Återkallar ett lagrat format och fyller i värden för dess numrerade platshållarfält."
+    "summary": "Återkallar ett lagrat format och fyller i värden för dess numrerade platshållarfält.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "källenhet för den lagrade mallen",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R, sedan E, sedan B, sedan A"
+        },
+        {
+          "meaning": "namn på den lagrade mallen",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Återkallar en lagrad grafik vid den aktuella positionen med oberoende horisontell och vertikal skalning."
+    "summary": "Återkallar en lagrad grafik vid den aktuella positionen med oberoende horisontell och vertikal skalning.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "källenhet för den lagrade grafiken",
+          "values": "R, E, B, A",
+          "default": "R, sedan E, sedan B, sedan A"
+        },
+        {
+          "meaning": "namn på den lagrade grafiken",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": "GRF"
+        },
+        {
+          "meaning": "förstoringsfaktor för x-axeln",
+          "values": "1 till 10",
+          "default": "1"
+        },
+        {
+          "meaning": "förstoringsfaktor för y-axeln",
+          "values": "1 till 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Väljer hur skrivaren känner av etikettgränser, med hjälp av mellanrum, markeringar eller kontinuerligt media."
+    "summary": "Väljer hur skrivaren känner av etikettgränser, med hjälp av mellanrum, markeringar eller kontinuerligt media.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "spårningsmetod för media",
+          "values": "N kontinuerligt, Y eller W icke-kontinuerligt med mellanrum, M icke-kontinuerligt med markering, A automatisk detektering, V kontinuerligt med variabel längd",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "offset för svart markering i punkter",
+          "values": "-120 till 283 på de flesta skrivare, -240 till 566 vid 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Anger den maximala etikettlängd skrivaren söker efter vid kalibrering av icke-kontinuerligt media."
+    "summary": "Anger den maximala etikettlängd skrivaren söker efter vid kalibrering av icke-kontinuerligt media.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "maximal etikettlängd i punktrader",
+          "values": "skrivarens dpi gånger två, upp till maxlängd",
+          "default": "senast sparade värde"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Anger åtgärden vid uppstart och stängning av skrivhuvudet, till exempel kalibrering, matning eller längdmätning."
+    "summary": "Anger åtgärden vid uppstart och stängning av skrivhuvudet, till exempel kalibrering, matning eller längdmätning.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "matningsåtgärd vid uppstart",
+          "values": "F mata till första mellanrum, C kalibrera som ~JC, L ange längd som ~JL, N ingen matning, S kort kalibrering",
+          "default": "C"
+        },
+        {
+          "meaning": "matningsåtgärd efter att skrivhuvudet stängts",
+          "values": "F mata till första mellanrum, C kalibrera som ~JC, L ange längd som ~JL, N ingen matning, S kort kalibrering",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Konfigurerar utskrivna underhållsvarningar för rengöring eller byte av skrivhuvud."
+    "summary": "Konfigurerar utskrivna underhållsvarningar för rengöring eller byte av skrivhuvud.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "larmtyp",
+          "values": "R byte av skrivhuvud, C rengöring av skrivhuvud"
+        },
+        {
+          "meaning": "skriv ut larmetiketten",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "avstånd till första larmet",
+          "values": "R 0 till 150 km, C 100 till 2000 meter, 0 av",
+          "default": "50 km för R, 0 av för C"
+        },
+        {
+          "meaning": "avstånd innan larmet utfärdas igen",
+          "values": "0 till 2000 meter",
+          "default": "0"
+        },
+        {
+          "meaning": "rapporterad måttenhet",
+          "values": "C centimeter, I tum, M meter",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Styr om etikettens bitmapp rensas efter utskrift eller behålls för återanvändning av senare etiketter."
+    "summary": "Styr om etikettens bitmapp rensas efter utskrift eller behålls för återanvändning av senare etiketter.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "rensa bitmappen efter utskrift",
+          "values": "Y rensa, N behåll",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Anger texten som visas på underhållsvarningsetiketter för rengöring eller byte av skrivhuvud."
+    "summary": "Anger texten som visas på underhållsvarningsetiketter för rengöring eller byte av skrivhuvud.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "larmtyp",
+          "values": "R byte av skrivhuvud, C rengöring av skrivhuvud",
+          "default": "R"
+        },
+        {
+          "meaning": "meddelande som skrivs ut på larmetiketten",
+          "values": "upp till 63 tecken, inga kommatecken",
+          "default": "rengör skrivhuvudet eller byt skrivhuvud"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Låser en inställning på kontrollpanelen, till exempel mörkhet eller kalibrering, tills den låses upp."
+    "summary": "Låser en inställning på kontrollpanelen, till exempel mörkhet eller kalibrering, tills den låses upp.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "kontrollpanelsläge att skydda",
+          "values": "D mörkhet, P position, C kalibrering, E aktivera allt, S inga sparningar, W paus, F matning, X avbryt, M meny",
+          "default": "måste anges"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Aktiverar eller inaktiverar varningsindikatorn för kallt skrivhuvud."
+    "summary": "Aktiverar eller inaktiverar varningsindikatorn för kallt skrivhuvud.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "aktivera varningen för kallt skrivhuvud",
+          "values": "Y aktivera, N inaktivera"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Justerar utskriftens mörkhet i förhållande till skrivarens aktuellt konfigurerade mörkhet."
+    "summary": "Justerar utskriftens mörkhet i förhållande till skrivarens aktuellt konfigurerade mörkhet.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "mediemörkhet i förhållande till aktuell inställning",
+          "values": "-30 till 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Anger utskriftens mörkhet till ett absolut värde omedelbart, motsvarande inställningen på frontpanelen."
+    "summary": "Anger utskriftens mörkhet till ett absolut värde omedelbart, motsvarande inställningen på frontpanelen.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "absolut utskriftsmörkhet",
+          "values": "00 till 30",
+          "default": "senast sparade värde"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Styr om en etikett som avbrutits av media-, färgbands- eller skrivhuvudsfel skrivs ut igen efter återhämtning."
+    "summary": "Styr om en etikett som avbrutits av media-, färgbands- eller skrivhuvudsfel skrivs ut igen efter återhämtning.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "skriv ut etiketten igen efter att felet åtgärdats",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Schemalägger periodiska tester av skrivhuvudets element baserat på antal utskrivna etiketter och ett valfritt elementintervall."
+    "summary": "Schemalägger periodiska tester av skrivhuvudets element baserat på antal utskrivna etiketter och ett valfritt elementintervall.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "antal etiketter mellan skrivhuvudtester",
+          "values": "0 till 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "manuellt val av elementintervall för skrivhuvudtest",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "första testelementets nummer",
+          "values": "0 till 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "sista testelementets nummer",
+          "values": "0 till 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Justerar vilopositionen för avrivning eller klippning med en liten punktförskjutning efter utskrift."
+    "summary": "Justerar vilopositionen för avrivning eller klippning med en liten punktförskjutning efter utskrift.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "ändring av viloposition för avriv i punkter",
+          "values": "-120 till 120",
+          "default": "senast sparade värde"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Konfigurerar tröskelvärden för tidiga varningar om underhåll av media, färgband och skrivhuvud."
+    "summary": "Konfigurerar tröskelvärden för tidiga varningar om underhåll av media, färgband och skrivhuvud.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "tidig varning för media eller förbrukningsmaterial",
+          "values": "E aktivera, D inaktivera",
+          "default": "D"
+        },
+        {
+          "meaning": "antal etiketter per rulle",
+          "values": "100 till 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "media har bytts",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "kod för färgbandslängd per modell",
+          "values": "N 0 m, 0 till 7 är 100 till 450 m, 10 till 16 är 600 till 900 m",
+          "default": "1 eller 7 beroende på modell"
+        },
+        {
+          "meaning": "färgbandet har bytts",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "tidig varning för underhåll aktiverad",
+          "values": "E aktiverad, D inaktiverad",
+          "default": "D"
+        },
+        {
+          "meaning": "kod för rengöringsintervall för skrivhuvudet",
+          "values": "0 till 16 för 100 m till 900 m i steg om 50 m",
+          "default": "1 eller 7 beroende på modell"
+        },
+        {
+          "meaning": "skrivhuvudet har rengjorts",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "varningströskel för skrivhuvudets livslängd i tum",
+          "values": "0 av, eller 100 till 3500000 tum",
+          "default": "1000000"
+        },
+        {
+          "meaning": "skrivhuvudet har bytts",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Styr tidpunkten för backmatning kring utskrift och klippning, eller stänger av backmatning helt."
+    "summary": "Styr tidpunkten för backmatning kring utskrift och klippning, eller stänger av backmatning helt.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "backmatningstiming i förhållande till utskrift",
+          "values": "A full efter, B full före, N normal, O av, 10 till 90 procent",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Matar ett angivet antal tomma punktrader med matningshastighet."
+    "summary": "Matar ett angivet antal tomma punktrader med matningshastighet.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "punktrader matade från botten",
+          "values": "0 till 32000",
+          "default": "måste anges"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Kör klipparen omedelbart på KR403-skrivare i kiosk-utskriftsläge."
+    "summary": "Kör klipparen omedelbart på KR403-skrivare i kiosk-utskriftsläge.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "åsidosättningsläge för klippmängd",
+          "values": "0 kioskinställning, 1 full klippning"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Lägger till extra utmatningslängd på en KR403-kioskpresentatör, vilket gör det lättare att ta det utskrivna mediet."
+    "summary": "Lägger till extra utmatningslängd på en KR403-kioskpresentatör, vilket gör det lättare att ta det utskrivna mediet.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "extra utmatningslängd för media i mm",
+          "values": "0 till 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Kör en presentationscykel på en KR403 som erbjuder det utskrivna mediet för manuell borttagning."
+    "summary": "Kör en presentationscykel på en KR403 som erbjuder det utskrivna mediet för manuell borttagning.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "utmatningslängd för presentatör i mm",
+          "values": "0 till 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Anger färgbandets matningsspänning på skrivare i PAX-serien."
+    "summary": "Anger färgbandets matningsspänning på skrivare i PAX-serien.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "spänningsnivå för färgband",
+          "values": "L låg, M medel, H hög",
+          "default": "måste anges"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Anger datum och tid för skrivarens realtidsklocka."
+    "summary": "Anger datum och tid för skrivarens realtidsklocka.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "månad",
+          "values": "01 till 12",
+          "default": "aktuell månad"
+        },
+        {
+          "meaning": "dag",
+          "values": "01 till 31",
+          "default": "aktuell dag"
+        },
+        {
+          "meaning": "år",
+          "values": "1998 till 2097",
+          "default": "aktuellt år"
+        },
+        {
+          "meaning": "timme",
+          "values": "00 till 23",
+          "default": "aktuell timme"
+        },
+        {
+          "meaning": "minut",
+          "values": "00 till 59",
+          "default": "aktuell minut"
+        },
+        {
+          "meaning": "sekund",
+          "values": "00 till 59",
+          "default": "aktuell sekund"
+        },
+        {
+          "meaning": "fm/em- eller 24-timmarsformat",
+          "values": "A fm, P em, M 24 timmar",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Väljer formatet för datum och tid som visas på konfigurationsetiketten och kontrollpanelen."
+    "summary": "Väljer formatet för datum och tid som visas på konfigurationsetiketten och kontrollpanelen.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "visningsformat för datum och tid",
+          "values": "0 versionsnummer, 1 MM/DD/YY 24 timmar, 2 MM/DD/YY 12 timmar, 3 DD/MM/YY 24 timmar, 4 DD/MM/YY 12 timmar",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Definierar sekundära klockförskjutningar från realtidsklockan. Förskjutningarna går förlorade när skrivaren stängs av."
+    "summary": "Definierar sekundära klockförskjutningar från realtidsklockan. Förskjutningarna går förlorade när skrivaren stängs av.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "klocknummer att förskjuta",
+          "values": "2 sekundär, 3 tredje",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "förskjutning i månader",
+          "values": "-32000 till 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "förskjutning i dagar",
+          "values": "-32000 till 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "förskjutning i år",
+          "values": "-32000 till 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "förskjutning i timmar",
+          "values": "-32000 till 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "förskjutning i minuter",
+          "values": "-32000 till 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "förskjutning i sekunder",
+          "values": "-32000 till 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Anger när tidsfält stämplas och väljer språket för dag- och månadsnamn."
+    "summary": "Anger när tidsfält stämplas och väljer språket för dag- och månadsnamn.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "läsläge för klocka",
+          "values": "S starttid, T aktuell tid, 0 till 999 tolerans",
+          "default": "S"
+        },
+        {
+          "meaning": "språk för dag- och månadsnamn",
+          "values": "1 engelska, 2 spanska, 3 franska, 4 tyska, 5 italienska, 6 till 18 fler språk",
+          "default": "senast satt med ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Väljer visningsspråket för skrivarens kontrollpanel från en lista som varierar beroende på modell."
+    "summary": "Väljer visningsspråket för skrivarens kontrollpanel från en lista som varierar beroende på modell.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "visningsspråk för kontrollpanelen",
+          "values": "1 till 20 språkkoder",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Väljer en lagrad kodningstabell som används för att omvandla fältdata före utskrift."
+    "summary": "Väljer en lagrad kodningstabell som används för att omvandla fältdata före utskrift.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "enhet för kodningstabellen",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "namn på kodningstabellens fil",
+          "values": "1 till 8 alfanumeriska tecken"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": "DAT, fast värde",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Väljer tolkning enligt ursprungliga ZPL eller ZPL II för kompatibilitet med äldre format."
+    "summary": "Väljer tolkning enligt ursprungliga ZPL eller ZPL II för kompatibilitet med äldre format.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPL-tolkens version",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Tilldelar skrivaren ett nätverksnamn och en fritextbeskrivning, som båda visas på konfigurationsetiketten och skrivarens inbyggda webbsida."
+    "summary": "Tilldelar skrivaren ett nätverksnamn och en fritextbeskrivning, som båda visas på konfigurationsetiketten och skrivarens inbyggda webbsida.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "skrivarens nätverksnamn",
+          "values": "upp till 16 alfanumeriska tecken",
+          "default": "ZBR plus MAC-suffix"
+        },
+        {
+          "meaning": "skrivarbeskrivning för konfigurationsetikett och webbsida",
+          "values": "upp till 35 alfanumeriska tecken",
+          "default": "tomt"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Anger det fyrsiffriga lösenordet för kontrollpanelens inställningsmenyer."
+    "summary": "Anger det fyrsiffriga lösenordet för kontrollpanelens inställningsmenyer.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "fyrsiffrigt lösenord för kontrollpanelen",
+          "values": "0000 till 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "lösenordsnivå, endast S4M-skrivare",
+          "values": "1 till 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Sparar, återställer eller nollställer skrivarens konfigurationsinställningar."
+    "summary": "Sparar, återställer eller nollställer skrivarens konfigurationsinställningar.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "konfigurationsåtgärd",
+          "values": "A fabrik alla, F fabrik, N nätverk, R återkalla, S spara"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Ändrar prefixtecknet för formatkommandon, normalt cirkumflex, antingen globalt eller för det aktuella formatet."
+    "summary": "Ändrar prefixtecknet för formatkommandon, normalt cirkumflex, antingen globalt eller för det aktuella formatet.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "nytt prefix för formatkommandon",
+          "values": "valfritt ASCII-tecken"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Ändrar avgränsartecknet för parametrar, normalt kommatecken, antingen globalt eller för det aktuella formatet."
+    "summary": "Ändrar avgränsartecknet för parametrar, normalt kommatecken, antingen globalt eller för det aktuella formatet.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "nytt avgränsartecken för parametrar",
+          "values": "valfritt ASCII-tecken"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Ändrar prefixtecknet för direktkommandon, normalt tilde, antingen globalt eller för det aktuella formatet."
+    "summary": "Ändrar prefixtecknet för direktkommandon, normalt tilde, antingen globalt eller för det aktuella formatet.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "nytt prefix för direktkommandon",
+          "values": "valfritt ASCII-tecken"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Omkopplar skrivarens minnesbokstäver så att lagrade objekt kan behålla sina befintliga namn."
+    "summary": "Omkopplar skrivarens minnesbokstäver så att lagrade objekt kan behålla sina befintliga namn.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "minnesalias för B",
+          "values": "B minneskort, E flash, R DRAM, A Compact Flash, NONE ej angiven",
+          "default": "B"
+        },
+        {
+          "meaning": "minnesalias för E",
+          "values": "B minneskort, E flash, R DRAM, A Compact Flash, NONE ej angiven",
+          "default": "E"
+        },
+        {
+          "meaning": "minnesalias för R",
+          "values": "B minneskort, E flash, R DRAM, A Compact Flash, NONE ej angiven",
+          "default": "R"
+        },
+        {
+          "meaning": "minnesalias för A",
+          "values": "B minneskort, E flash, R DRAM, A Compact Flash, NONE ej angiven",
+          "default": "A"
+        },
+        {
+          "meaning": "tillåt dubbel aliastilldelning",
+          "values": "M flera alias",
+          "default": "ingen"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Raderar och initierar om en flashminnesenhet. Strömavbrott under åtgärden kan skada lagringen."
+    "summary": "Raderar och initierar om en flashminnesenhet. Strömavbrott under åtgärden kan skada lagringen.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "flashminnesenhet att initiera",
+          "values": "A tillvalsflash, B flash-kort, E internt flash",
+          "default": "måste anges"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Anger om låg batterispänning pausar en bärbar skrivare eller tillåter att utskriften fortsätter."
+    "summary": "Anger om låg batterispänning pausar en bärbar skrivare eller tillåter att utskriften fortsätter.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pausa vid låg batterispänning",
+          "values": "Y pausa, N fortsätt skriva ut",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Startar Zebra BASIC Interpreter på skrivaren och kan valfritt starta ett lagrat program."
+    "summary": "Startar Zebra BASIC Interpreter på skrivaren och kan valfritt starta ett lagrat program.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "lagringsplats för program",
+          "values": "R, E, B, A",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "namn på programmet att köra",
+          "values": "valfritt giltigt programnamn",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "filtillägg för programfil",
+          "values": "BAS eller BAE"
+        },
+        {
+          "meaning": "styrning av konsolutmatning",
+          "values": "Y på, N av",
+          "default": "Y"
+        },
+        {
+          "meaning": "styrning av kommandoeko",
+          "values": "Y på, N av",
+          "default": "Y"
+        },
+        {
+          "meaning": "minne tilldelat till ZBI",
+          "values": "20K till 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Konfigurerar hjälpporten för applikator- eller verifieringssignaler samt felhantering."
+    "summary": "Konfigurerar hjälpporten för applikator- eller verifieringssignaler samt felhantering.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "felhanteringsläge för verifieraren",
+          "values": "0 av, 1 skriv om vid fel, 2 max genomströmning",
+          "default": "0"
+        },
+        {
+          "meaning": "tidsläge för applikatorsignal",
+          "values": "0 av, 1 till 4 signaltiming",
+          "default": "0"
+        },
+        {
+          "meaning": "tidsläge för startsignal vid utskrift",
+          "values": "p pulsläge, l nivåläge"
+        },
+        {
+          "meaning": "åtgärdsläge vid etikettfel",
+          "values": "e felläge, f matningsläge",
+          "default": "f"
+        },
+        {
+          "meaning": "läge för omutskrift vid signal",
+          "values": "e aktiverad, d inaktiverad",
+          "default": "d"
+        },
+        {
+          "meaning": "varningsläge för lågt färgband",
+          "values": "e aktiverad, d inaktiverad",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Väljer mediesensorn som används för spårning, vanligtvis reflektiv eller genomlysande."
+    "summary": "Väljer mediesensorn som används för spårning, vanligtvis reflektiv eller genomlysande.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "sensor att använda",
+          "values": "A auto, R reflektiv, T genomlysande",
+          "default": "varierar beroende på skrivarmodell"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Anger normal eller reducerad upplösning i punkter per millimeter. Reducerad densitet fördubblar den fysiska storleken på formatets koordinater."
+    "summary": "Anger normal eller reducerad upplösning i punkter per millimeter. Reducerad densitet fördubblar den fysiska storleken på formatets koordinater.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "inställning för utskriftsdensitet",
+          "values": "A normal densitet, B halverad densitet",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Återställer en vald användningsräknare i skrivaren, till exempel användar- eller RFID-räknare."
+    "summary": "Återställer en vald användningsräknare i skrivaren, till exempel användar- eller RFID-räknare.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "räknare att återställa",
+          "values": "1 räknare ett, 2 räknare två, 3 giltig RFID, 4 void-märkt RFID, C skrivhuvud rengjort, R skrivhuvud bytt",
+          "default": "måste anges"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Konfigurerar alla kommunikationsparametrar för serieporten i ett och samma kommando."
+    "summary": "Konfigurerar alla kommunikationsparametrar för serieporten i ett och samma kommando.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "baudhastighet för serieporten",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "databitar per tecken",
+          "values": "7 eller 8",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "paritetsinställning",
+          "values": "N ingen, E jämn, O udda",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "stoppbitar",
+          "values": "1 eller 2",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "protokoll för flödeskontroll",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR och Xon/Xoff",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "handskakning för Zebra-protokollet",
+          "values": "A ACK/NAK, N ingen, Z zebra",
+          "default": "måste anges"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Åsidosätter intensitets- eller baslinjevärden för den genomlysande sensorn som normalt anges vid kalibrering."
+    "summary": "Åsidosätter intensitets- eller baslinjevärden för den genomlysande sensorn som normalt anges vid kalibrering.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "sensorinställning att ändra",
+          "values": "1 ljusstyrka, 2 baslinje",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "värde för den valda inställningen",
+          "values": "0 till 196",
+          "default": "måste anges"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Startar utskriften innan hela formatet har tagits emot för att förbättra genomströmningen vid komplexa etiketter."
+    "summary": "Startar utskriften innan hela formatet har tagits emot för att förbättra genomströmningen vid komplexa etiketter.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "punktrad att börja skriva ut från",
+          "values": "0 till 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Inaktiverar ett specifikt ZebraNet-larmvillkor och dess mottagare."
+    "summary": "Inaktiverar ett specifikt ZebraNet-larmvillkor och dess mottagare.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "larmvillkor att stoppa",
+          "values": "A till O och Q till V ett villkor var, W alla på RFID-skrivare, * alla på övriga"
+        },
+        {
+          "meaning": "larmmottagare att stoppa",
+          "values": "A serieport, B parallellport, C e-post, D TCP/IP, E UDP/IP, F SNMP-trap, * alla"
+        },
+        {
+          "meaning": "stoppa eller återuppta dessa larm",
+          "values": "Y stoppa meddelanden, N starta meddelanden",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Anger skrivhuvudets resistansvärde som används för beräkning av brännenergi."
+    "summary": "Anger skrivhuvudets resistansvärde som används för beräkning av brännenergi.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "resistansvärde för skrivhuvudet",
+          "values": "0488 till 1175",
+          "default": "senast permanent sparade värde"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Anger tröskelvärden för mediesensorn, etikettlängd och LED-intensiteter som normalt bestäms vid kalibrering."
+    "summary": "Anger tröskelvärden för mediesensorn, etikettlängd och LED-intensiteter som normalt bestäms vid kalibrering.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "mellanrumssensorvärde",
+          "values": "0 till 100",
+          "default": "visas på sensorprofil eller konfigurationsetikett"
+        },
+        {
+          "meaning": "mediesensorvärde",
+          "values": "0 till 100",
+          "default": "visas på sensorprofil eller konfigurationsetikett"
+        },
+        {
+          "meaning": "färgbandssensorvärde",
+          "values": "0 till 100",
+          "default": "visas på sensorprofil eller konfigurationsetikett"
+        },
+        {
+          "meaning": "etikettlängd i punkter",
+          "values": "1 till 32000",
+          "default": "värde från kalibrering"
+        },
+        {
+          "meaning": "LED-intensitet för media",
+          "values": "0 till 255",
+          "default": "värde från kalibrering"
+        },
+        {
+          "meaning": "LED-intensitet för färgband",
+          "values": "0 till 255",
+          "default": "värde från kalibrering"
+        },
+        {
+          "meaning": "avkänningsvärde för markering",
+          "values": "0 till 100",
+          "default": "värde från kalibrering"
+        },
+        {
+          "meaning": "mediavkänningsvärde för markering",
+          "values": "0 till 100",
+          "default": "värde från kalibrering"
+        },
+        {
+          "meaning": "LED-avkänningsvärde för markering",
+          "values": "0 till 255",
+          "default": "värde från kalibrering"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Aktiverar ett ZebraNet-larm för ett specifikt villkor och en specifik mottagare."
+    "summary": "Aktiverar ett ZebraNet-larm för ett specifikt villkor och en specifik mottagare.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "larmvillkorstyp",
+          "values": "A till V ett villkor var, * alla",
+          "default": "ignoreras om saknad eller ogiltig"
+        },
+        {
+          "meaning": "larmmottagartyp",
+          "values": "A serieport, B parallellport, C e-post, D TCP/IP, E UDP/IP, F SNMP-trap",
+          "default": "ignoreras om saknad eller ogiltig"
+        },
+        {
+          "meaning": "aktivera larm när villkoret uppstår",
+          "values": "N nej, Y ja",
+          "default": "Y eller föregående värde"
+        },
+        {
+          "meaning": "aktivera larm när villkoret upphör",
+          "values": "N nej, Y ja",
+          "default": "N eller föregående värde"
+        },
+        {
+          "meaning": "destinationsadress för larmet",
+          "values": "e-post, IP-adress eller SNMP-mål",
+          "default": "ignoreras om saknad eller ogiltig"
+        },
+        {
+          "meaning": "portnummer för larmet",
+          "values": "0 till 65535",
+          "default": "ignoreras om saknad eller ogiltig"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopierar lagrade objekt mellan skrivarens minnesenheter, med stöd för jokertecken vid gruppkopiering."
+    "summary": "Kopierar lagrade objekt mellan skrivarens minnesenheter, med stöd för jokertecken vid gruppkopiering.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "källans lagringsenhet",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "källobjektets namn",
+          "values": "valfritt befintligt objektnamn",
+          "default": "* väljer alla objekt"
+        },
+        {
+          "meaning": "källobjektets filtillägg",
+          "values": "valfritt giltigt filtillägg",
+          "default": "* väljer alla filtillägg"
+        },
+        {
+          "meaning": "destinationens lagringsenhet",
+          "values": "R, E, B, A",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "namn för objektet på destinationen",
+          "values": "upp till 8 alfanumeriska tecken",
+          "default": "källobjektets namn"
+        },
+        {
+          "meaning": "filtillägg för destinationsobjektet",
+          "values": "valfritt giltigt filtillägg",
+          "default": "källobjektets filtillägg"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Skriver ut en katalogetikett för lagrade objekt, inbyggda typsnitt eller tillgängliga streckkoder."
+    "summary": "Skriver ut en katalogetikett för lagrade objekt, inbyggda typsnitt eller tillgängliga streckkoder.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "källenhet för listningen",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "filter för objektnamn",
+          "values": "1 till 8 tecken, * eller ? jokertecken",
+          "default": "*"
+        },
+        {
+          "meaning": "filter för filtillägg",
+          "values": "valfritt giltigt filtillägg, * jokertecken",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Skriver ut begärd serviceinformation, till exempel räkneverk eller skrivhuvudets historik, på en etikett."
+    "summary": "Skriver ut begärd serviceinformation, till exempel räkneverk eller skrivhuvudets historik, på en etikett.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "typ av servicerapport att skriva ut",
+          "values": "ES status, HA hårdvaruadress, JT skrivhuvudtest, MA larminställningar, MI meddelanden, OD vägmätare, PH skrivhuvudets livslängd, PP plug and play, SN serienummer, UI USB-id",
+          "default": "måste anges"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Konfigurerar inställningar för KR403-kioskpresentatören, inklusive klipplängd, klippmarginal, indragningstid och slinglängd."
+    "summary": "Konfigurerar inställningar för KR403-kioskpresentatören, inklusive klipplängd, klippmarginal, indragningstid och slinglängd.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "klippmängd för kiosk",
+          "values": "0 normal klippning, 10 till 60 delvis i mm",
+          "default": "0"
+        },
+        {
+          "meaning": "klippmarginal för kiosk i mm",
+          "values": "2 till 9",
+          "default": "9"
+        },
+        {
+          "meaning": "presentationstyp för kiosk efter utskrift",
+          "values": "0 matar ut, 1 dra in, 2 ingen åtgärd",
+          "default": "0"
+        },
+        {
+          "meaning": "tidsgräns för kioskpresentation i sekunder",
+          "values": "0 till 300, 0 ingen tidsgräns",
+          "default": "0"
+        },
+        {
+          "meaning": "slinglängd för presentatören i mm",
+          "values": "0 rakt igenom, 3 till 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Styr dynamisk omkalibrering av etikettlängd och sensortröskelvärde efter start eller när medielocket öppnats."
+    "summary": "Styr dynamisk omkalibrering av etikettlängd och sensortröskelvärde efter start eller när medielocket öppnats.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "aktivera dynamisk längdkalibrering",
+          "values": "Y aktivera, N inaktivera",
+          "default": "Y"
+        },
+        {
+          "meaning": "aktivera dynamisk tröskelkalibrering",
+          "values": "Y aktivera, N inaktivera",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Startar avvecklingsläget för att förbereda skrivaren inför återförsäljning eller återvinning."
+    "summary": "Startar avvecklingsläget för att förbereda skrivaren inför återförsäljning eller återvinning.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "skrivarens serienummer",
+          "values": "alfanumerisk sträng",
+          "default": "måste anges"
+        },
+        {
+          "meaning": "antal rensningspass för flashminnet",
+          "values": "0 till 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Anger automatisk vänteläges-avstängning efter en period av inaktivitet, med alternativ för köade etiketter."
+    "summary": "Anger automatisk vänteläges-avstängning efter en period av inaktivitet, med alternativ för köade etiketter.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "sekunder i viloläge innan automatisk avstängning",
+          "values": "0 till 999999, 0 inaktiverar avstängning",
+          "default": "senast sparade värde eller 0"
+        },
+        {
+          "meaning": "etikettstatus vid avstängning",
+          "values": "Y stäng av med kö, N slutför kön först",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Matar ut eller drar in media som redan presenterats av en KR403-kioskpresentatör."
+    "summary": "Matar ut eller drar in media som redan presenterats av en KR403-kioskpresentatör.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "presentationsåtgärd för kiosk",
+          "values": "0 matar ut, 1 dra in, 2 använd ^KV-inställning"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Returnerar ett lagrat ZPL-format från skrivarens minne till värddatorn."
+    "summary": "Returnerar ett lagrat ZPL-format från skrivarens minne till värddatorn.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "minnesenhet att söka i",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "R"
+        },
+        {
+          "meaning": "namn på lagrat format",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": ".ZPL, fast värde",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Returnerar en lagrad grafisk bild från skrivarens minne till värddatorn."
+    "summary": "Returnerar en lagrad grafisk bild från skrivarens minne till värddatorn.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "minnesenhet att söka i",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "sökprioritet"
+        },
+        {
+          "meaning": "grafiknamn att hämta",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtillägg",
+          "values": ".GRF, fast värde",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Returnerar begärd status-, identitets-, räkneverks- eller underhållsdata till värddatorn."
+    "summary": "Returnerar begärd status-, identitets-, räkneverks- eller underhållsdata till värddatorn.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "väljare för returnerad data",
+          "values": "ES status, HA trådbunden MAC, JT skrivhuvudtest, MA underhållslarm, MI underhållsinfo, OD vägmätare, PH skrivhuvudets livslängd, PP plug and play, SN serienummer, UI USB-produkt-id"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Returnerar data från ett numrerat fält till värddatorn, med en valfri gräns för antal byte."
+    "summary": "Returnerar data från ett numrerat fält till värddatorn, med en valfri gräns för antal byte.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "fältnummer satt av ^FN",
+          "values": "0 till 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "antal byte att returnera",
+          "values": "1 till 256",
+          "default": "64"
+        },
+        {
+          "meaning": "rubriktext före datan",
+          "values": "0 till 3072 byte",
+          "default": "ingen rubrik"
+        },
+        {
+          "meaning": "avslutningstext efter datan",
+          "values": "0 till 3072 tecken"
+        },
+        {
+          "meaning": "svar skickas per",
+          "values": "F format, L etikett",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Returnerar en kataloglistning för en minnesenhet, inklusive återstående ledigt utrymme."
+    "summary": "Returnerar en kataloglistning för en minnesenhet, inklusive återstående ledigt utrymme.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "minnesenhet att lista",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash, Z övrigt",
+          "default": "R"
+        },
+        {
+          "meaning": "filter för objektnamn",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "*"
+        },
+        {
+          "meaning": "filter för filtillägg",
+          "values": "valfritt Zebra-filtillägg",
+          "default": "*"
+        },
+        {
+          "meaning": "layout för listning",
+          "values": "c kolumn, d standard",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Returnerar en lagrad grafik till värddatorn i ett nedladdningsbart filformat."
+    "summary": "Returnerar en lagrad grafik till värddatorn i ett nedladdningsbart filformat.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "minnesenhet där objektet finns",
+          "values": "R DRAM, E flash, B minneskort, A Compact Flash",
+          "default": "sökprioritet"
+        },
+        {
+          "meaning": "objektnamn att hämta",
+          "values": "1 till 8 alfanumeriska tecken",
+          "default": "namn krävs"
+        },
+        {
+          "meaning": "format för hämtning",
+          "values": "G rå bitmapp, P komprimerad bitmapp",
+          "default": "lagrat format"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Returnerar skrivarens beskrivning som XML för inställningar, objektkatalog eller status."
+    "summary": "Returnerar skrivarens beskrivning som XML för inställningar, objektkatalog eller status.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "beskrivningstyp att returnera",
+          "values": "a allt, f format, l katalog, o objekt, r status"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Läser från eller skriver till en RFID-tagg, inklusive dataformat, minnesbank och åtkomstlösenord."
+    "summary": "Läser från eller skriver till en RFID-tagg, inklusive dataformat, minnesbank och åtkomstlösenord.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "åtgärd",
+          "values": "W skriv, L skriv och lås, R läs, P läs lösenord, S sätt lösenord",
+          "default": "W"
+        },
+        {
+          "meaning": "dataformat",
+          "values": "A ASCII, H hex, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "lösenordsflagga eller startblocknummer",
+          "values": "P lösenord följer, 0 till n block",
+          "default": "0"
+        },
+        {
+          "meaning": "antal byte att läsa eller skriva",
+          "values": "1 till n, max per tagg",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen 2-minnesbank",
+          "values": "E EPC 96-bit, A EPC auto PC-bitar, 0 reserverad, 1 EPC, 2 TID, 3 användare",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Definierar bitlayouten som används för att koda RFID-EPC-fält på en tagg."
+    "summary": "Definierar bitlayouten som används för att koda RFID-EPC-fält på en tagg.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "total bitstorlek för partitionerna",
+          "values": "1 till taggens bitstorlek",
+          "default": "96"
+        },
+        {
+          "meaning": "bitar per partition, upp till 16 partitioner",
+          "values": "1 till 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Anger RFID-alternativ för efterföljande etiketter, inklusive taggtyp, programmeringsposition, felhantering och längden på VOID-stapeln."
+    "summary": "Anger RFID-alternativ för efterföljande etiketter, inklusive taggtyp, programmeringsposition, felhantering och längden på VOID-stapeln.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "taggtyp",
+          "values": "8, endast Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "programmeringsposition för taggen",
+          "values": "punkter absolut, F0 till Fxxx framåt, B0 till B30 bakåt, up nästa, down föregående",
+          "default": "skrivarinställning"
+        },
+        {
+          "meaning": "längd på VOID-utskriften",
+          "values": "0 till etikettens längd",
+          "default": "etikettens längd"
+        },
+        {
+          "meaning": "antal etiketter att försöka om vid fel",
+          "values": "1 till 10",
+          "default": "3"
+        },
+        {
+          "meaning": "felhantering efter omförsök",
+          "values": "N ingen åtgärd, P paus, E felläge",
+          "default": "N"
+        },
+        {
+          "meaning": "signaler som skickas till en applikator",
+          "values": "S enkel signal, D dubbel signal",
+          "default": "S"
+        },
+        {
+          "meaning": "reserverad, används inte",
+          "values": "ingen"
+        },
+        {
+          "meaning": "hastighet för att skriva ut VOID-etiketter",
+          "values": "valfri giltig utskriftshastighet",
+          "default": "maximal utskriftshastighet"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Bygger ett EPC-serienummer från taggens id och skriver in det i EPC-fältets lägsta bitar."
+    "summary": "Bygger ett EPC-serienummer från taggens id och skriver in det i EPC-fältets lägsta bitar.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "binärt prefix för serie-id",
+          "values": "ASCII 1:or och 0:or, upp till 38 bitar",
+          "default": "beror på chipets MDID"
+        },
+        {
+          "meaning": "specialtecken som markerar seriefältet",
+          "values": "valfritt ASCII-tecken utom kommando-, kontroll-, avgränsar- och RTC-tecken",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Anger effekten för RFID-läsning och RFID-skrivning när kalibreringen inte ger användbara värden."
+    "summary": "Anger effekten för RFID-läsning och RFID-skrivning när kalibreringen inte ger användbara värden.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "effektnivå för läsning",
+          "values": "0 till 30, eller H hög, M medel, L låg",
+          "default": "skrivarinställning"
+        },
+        {
+          "meaning": "effektnivå för skrivning",
+          "values": "0 till 30, eller H hög, M medel, L låg",
+          "default": "skrivarinställning"
+        },
+        {
+          "meaning": "val av antennelement",
+          "values": "skrivarspecifikt rutnät, A1 till F4",
+          "default": "skrivarinställning"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Låser RFID-taggens minne, antingen reversibelt eller permanent, för att förhindra senare skrivningar."
+    "summary": "Låser RFID-taggens minne, antingen reversibelt eller permanent, för att förhindra senare skrivningar.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "låsstatus för kill-lösenord",
+          "values": "U lås upp, L lås, O permanent upplåst, P permanent låst"
+        },
+        {
+          "meaning": "låsstatus för åtkomstlösenord",
+          "values": "U lås upp, L lås, O permanent upplåst, P permanent låst"
+        },
+        {
+          "meaning": "låsstatus för EPC-minnesbanken",
+          "values": "U lås upp, L lås, O permanent upplåst, P permanent låst"
+        },
+        {
+          "meaning": "låsstatus för användarminnesbanken",
+          "values": "U lås upp, L lås, O permanent upplåst, P permanent låst"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Kör RFID-kalibrering och returnerar inställningar för position, antenn och effekt till värddatorn."
+    "summary": "Kör RFID-kalibrering och returnerar inställningar för position, antenn och effekt till värddatorn.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "text före resultattabellen",
+          "values": "valfri sträng under 65 tecken",
+          "default": "start"
+        },
+        {
+          "meaning": "text efter resultattabellen",
+          "values": "valfri sträng under 65 tecken",
+          "default": "slut"
+        },
+        {
+          "meaning": "startposition för kalibrering",
+          "values": "F0 till Fxxx framåt, B0 till B30 bakåt",
+          "default": "skrivarinställning"
+        },
+        {
+          "meaning": "slutposition för kalibrering",
+          "values": "F0 till Fxxx framåt, B0 till B30 bakåt, A auto",
+          "default": "skrivarinställning"
+        },
+        {
+          "meaning": "automatiskt eller manuellt val av antenn och effekt",
+          "values": "A automatiskt, M manuellt",
+          "default": "A"
+        },
+        {
+          "meaning": "start på effektintervallet för läsning/skrivning",
+          "values": "0 till 30",
+          "default": "0"
+        },
+        {
+          "meaning": "slut på effektintervallet för läsning/skrivning",
+          "values": "0 till 30",
+          "default": "maxeffekt"
+        },
+        {
+          "meaning": "start på antennintervallet",
+          "values": "modellberoende, vanligtvis A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "slut på antennintervallet",
+          "values": "modellberoende, upp till E4",
+          "default": "skrivarinställning"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Väljer om skrivaren söker efter en trådbunden skrivarserver vid uppstart."
+    "summary": "Väljer om skrivaren söker efter en trådbunden skrivarserver vid uppstart.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "kontroll av trådbunden skrivarserver vid start",
+          "values": "C kontrollera, S hoppa över",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Väljer den primära nätverksenheten, trådbunden eller trådlös."
+    "summary": "Väljer den primära nätverksenheten, trådbunden eller trådlös.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "primär nätverksenhet",
+          "values": "1 trådbunden primär, 2 trådlös primär",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresserar en skrivare på en äldre RS-485-multidrop-linje med hjälp av dess nätverks-id."
+    "summary": "Adresserar en skrivare på en äldre RS-485-multidrop-linje med hjälp av dess nätverks-id.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "skrivarens nätverks-ID att adressera",
+          "values": "001 till 999",
+          "default": "000 ingen"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Tilldelar det nätverks-id som används för att adressera en skrivare på en äldre RS-485-multidrop-linje."
+    "summary": "Tilldelar det nätverks-id som används för att adressera en skrivare på en äldre RS-485-multidrop-linje.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "nätverks-ID tilldelat skrivaren",
+          "values": "001 till 999",
+          "default": "000 ingen"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Anger SNMP-identitet och community-strängar för skrivaren."
+    "summary": "Anger SNMP-identitet och community-strängar för skrivaren.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP-systemnamn",
+          "values": "upp till 17 tecken"
+        },
+        {
+          "meaning": "SNMP-systemkontakt",
+          "values": "upp till 50 tecken"
+        },
+        {
+          "meaning": "SNMP-systemplats",
+          "values": "upp till 50 tecken"
+        },
+        {
+          "meaning": "SNMP get-community-namn",
+          "values": "upp till 19 tecken",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set-community-namn",
+          "values": "upp till 19 tecken",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap-community-namn",
+          "values": "upp till 20 tecken",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Väljer om nätverksinställningarna vid start hämtas från skrivaren eller från en ansluten skrivarserver."
+    "summary": "Väljer om nätverksinställningarna vid start hämtas från skrivaren eller från en ansluten skrivarserver.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "primär källa för startinställningar",
+          "values": "P skrivare, M skrivarserver",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Konfigurerar SMTP-server och domäninställningar för skrivarserverns e-postlarm."
+    "summary": "Konfigurerar SMTP-server och domäninställningar för skrivarserverns e-postlarm.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTP-serveradress",
+          "values": "IPv4-adress"
+        },
+        {
+          "meaning": "domännamn för skrivarservern",
+          "values": "domännamn"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Anger hur länge en autentiserad IP-adress kan komma åt skrivarens webbsidor innan ny autentisering krävs."
+    "summary": "Anger hur länge en autentiserad IP-adress kan komma åt skrivarens webbsidor innan ny autentisering krävs.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "tidsgräns för autentisering av webbsida",
+          "values": "0 till 255 minuter",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Anger formen och värdet för DHCP-klientidentifieraren för skrivarservern."
+    "summary": "Anger formen och värdet för DHCP-klientidentifieraren för skrivarservern.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "läge för klientidentifierare",
+          "values": "0 inaktiverad, 1 MAC-adress, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "enhet som identifieraren gäller för",
+          "values": "0 alla, 1 trådlös, 2 extern trådbunden, 3 intern trådbunden",
+          "default": "1"
+        },
+        {
+          "meaning": "prefix för identifierare",
+          "values": "11 ASCII- eller 22 hex-tecken"
+        },
+        {
+          "meaning": "suffix för identifierare",
+          "values": "upp till 60 ASCII- eller 120 hex-tecken"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Konfigurerar IP-adress, nätmask och gateway för skrivarens nätverksgränssnitt."
+    "summary": "Konfigurerar IP-adress, nätmask och gateway för skrivarens nätverksgränssnitt.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "enhet som ändras",
+          "values": "1 extern trådbunden, 2 intern trådbunden, 3 trådlös"
+        },
+        {
+          "meaning": "metod för IP-tilldelning",
+          "values": "A alla, B BOOTP, C DHCP och BOOTP, D DHCP, G endast gleaning, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-adress",
+          "values": "IPv4-adress"
+        },
+        {
+          "meaning": "nätmask",
+          "values": "IPv4-nätmask"
+        },
+        {
+          "meaning": "standardgateway",
+          "values": "IPv4-adress"
+        },
+        {
+          "meaning": "WINS-serveradress",
+          "values": "IPv4-adress"
+        },
+        {
+          "meaning": "kontroll av anslutningens tidsgräns",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "värde för anslutningens tidsgräns",
+          "values": "0 till 9999 sekunder",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-sändningsintervall",
+          "values": "0 till 30 minuter",
+          "default": "0 ingen"
+        },
+        {
+          "meaning": "basportnummer för raw",
+          "values": "1 till 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Konfigurerar IP-inställningar, timeout-värden och raw-port för den trådbundna skrivarservern på äldre firmware."
+    "summary": "Konfigurerar IP-inställningar, timeout-värden och raw-port för den trådbundna skrivarservern på äldre firmware.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "metod för IP-tilldelning",
+          "values": "A alla, B BOOTP, C DHCP och BOOTP, D DHCP, G endast gleaning, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-adress",
+          "values": "IPv4-adress"
+        },
+        {
+          "meaning": "nätmask",
+          "values": "IPv4-nätmask"
+        },
+        {
+          "meaning": "standardgateway",
+          "values": "IPv4-adress"
+        },
+        {
+          "meaning": "WINS-serveradress",
+          "values": "IPv4-adress"
+        },
+        {
+          "meaning": "kontroll av anslutningens tidsgräns",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "värde för anslutningens tidsgräns",
+          "values": "0 till 9999 sekunder",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-sändningsintervall",
+          "values": "0 till 30 minuter",
+          "default": "0 ingen"
+        },
+        {
+          "meaning": "basportnummer för raw",
+          "values": "1 till 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Väljer mottagnings- och sändningsantenner för den trådlösa radion."
+    "summary": "Väljer mottagnings- och sändningsantenner för den trådlösa radion.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "mottagningsantenn",
+          "values": "D diversitet, L vänster, R höger",
+          "default": "D"
+        },
+        {
+          "meaning": "sändningsantenn",
+          "values": "D diversitet, L vänster, R höger",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Konfigurerar den föråldrade säkerhetsmetoden WEP och tillhörande nyckelmaterial för äldre trådlös firmware."
+    "summary": "Konfigurerar den föråldrade säkerhetsmetoden WEP och tillhörande nyckelmaterial för äldre trådlös firmware.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "krypteringsläge",
+          "values": "OFF ingen, 40 40-bit, 128 128-bit",
+          "default": "OFF"
+        },
+        {
+          "meaning": "index för krypteringsnyckel",
+          "values": "1 till 4",
+          "default": "1"
+        },
+        {
+          "meaning": "autentiseringstyp",
+          "values": "O öppet system, S delad nyckel",
+          "default": "O"
+        },
+        {
+          "meaning": "lagringsformat för krypteringsnyckel",
+          "values": "H hex, S sträng",
+          "default": "H"
+        },
+        {
+          "meaning": "krypteringsnyckel 1",
+          "values": "hexpar eller alfanumerisk sträng"
+        },
+        {
+          "meaning": "krypteringsnyckel 2",
+          "values": "hexpar eller alfanumerisk sträng"
+        },
+        {
+          "meaning": "krypteringsnyckel 3",
+          "values": "hexpar eller alfanumerisk sträng"
+        },
+        {
+          "meaning": "krypteringsnyckel 4",
+          "values": "hexpar eller alfanumerisk sträng"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Konfigurerar den föråldrade autentiseringsmetoden Cisco LEAP för äldre trådlös firmware."
+    "summary": "Konfigurerar den föråldrade autentiseringsmetoden Cisco LEAP för äldre trådlös firmware.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP-läge",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "användarnamn",
+          "values": "1 till 32 tecken",
+          "default": "user"
+        },
+        {
+          "meaning": "lösenord",
+          "values": "1 till 32 tecken",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Anger lösenordet för de trådlösa inställningarna på skrivarens kontrollpanel."
+    "summary": "Anger lösenordet för de trådlösa inställningarna på skrivarens kontrollpanel.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "gammalt trådlöst lösenord",
+          "values": "0000 till 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "nytt trådlöst lösenord",
+          "values": "0000 till 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Konfigurerar dataöverföringshastigheter för 802.11b och sändningseffekt på äldre trådlösa skrivarservrar."
+    "summary": "Konfigurerar dataöverföringshastigheter för 802.11b och sändningseffekt på äldre trådlösa skrivarservrar.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "sändningshastighet 1 Mbit/s",
+          "values": "Y på, N av"
+        },
+        {
+          "meaning": "sändningshastighet 2 Mbit/s",
+          "values": "Y på, N av"
+        },
+        {
+          "meaning": "sändningshastighet 5.5 Mbit/s",
+          "values": "Y på, N av"
+        },
+        {
+          "meaning": "sändningshastighet 11 Mbit/s",
+          "values": "Y på, N av"
+        },
+        {
+          "meaning": "sändningseffekt",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Konfigurerar namnet på det trådlösa nätverket, radioläge, preambellängd och keep-alive-beteende."
+    "summary": "Konfigurerar namnet på det trådlösa nätverket, radioläge, preambellängd och keep-alive-beteende.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID-värde",
+          "values": "upp till 32 tecken",
+          "default": "125"
+        },
+        {
+          "meaning": "driftläge",
+          "values": "I infrastruktur, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "preambellängd för radiokortet",
+          "values": "L lång, S kort",
+          "default": "L"
+        },
+        {
+          "meaning": "trådlös puls aktiverad",
+          "values": "0 inaktiverad, 1 aktiverad",
+          "default": "1"
+        },
+        {
+          "meaning": "intervall för trådlös puls",
+          "values": "5 till 300 sekunder",
+          "default": "15"
+        },
+        {
+          "meaning": "kanalmask",
+          "values": "4 hexsiffror med prefixet 0x",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "internationellt läge",
+          "values": "0 inaktiverad, 1 aktiverad",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Konfigurerar trådlöst säkerhetsläge, nycklar och autentiseringsuppgifter i ett och samma kommando."
+    "summary": "Konfigurerar trådlöst säkerhetsläge, nycklar och autentiseringsuppgifter i ett och samma kommando.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "kod för säkerhetstyp",
+          "values": "01 ingen, 02 WEP 40, 03 WEP 128, 04 till 08 EAP-typer, 09 WPA PSK, 10 till 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "index för WEP-krypteringsnyckel",
+          "values": "1 till 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP-autentiseringstyp",
+          "values": "O öppet system, S delad nyckel",
+          "default": "O"
+        },
+        {
+          "meaning": "lagringsformat för WEP-nyckel",
+          "values": "H hex, S sträng",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP-krypteringsnyckel 1",
+          "values": "hexpar eller alfanumerisk sträng"
+        },
+        {
+          "meaning": "WEP-krypteringsnyckel 2",
+          "values": "hexpar eller alfanumerisk sträng"
+        },
+        {
+          "meaning": "WEP-krypteringsnyckel 3",
+          "values": "hexpar eller alfanumerisk sträng"
+        },
+        {
+          "meaning": "WEP-krypteringsnyckel 4",
+          "values": "hexpar eller alfanumerisk sträng"
+        },
+        {
+          "meaning": "användar-ID för säkerhetstypen",
+          "values": "valfri sträng",
+          "default": "user"
+        },
+        {
+          "meaning": "lösenord för säkerhetstypen",
+          "values": "valfri sträng",
+          "default": "password"
+        },
+        {
+          "meaning": "valfritt lösenord för privat nyckel",
+          "values": "valfri sträng"
+        },
+        {
+          "meaning": "Kerberos-realm",
+          "values": "valfri sträng",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberos-nyckeldistributionscenter",
+          "values": "valfri sträng",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "värde för förinställd nyckel",
+          "values": "minst 64 hexsiffror"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

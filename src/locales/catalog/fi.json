@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Asettaa tulostettavan leveyden pisteinä. Tulostin rajaa tämän leveyden ylittävän sisällön."
+    "summary": "Asettaa tulostettavan leveyden pisteinä. Tulostin rajaa tämän leveyden ylittävän sisällön.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "tulostusleveys pisteinä",
+          "values": "2 etiketin leveyteen asti",
+          "default": "viimeksi tallennettu arvo"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Asettaa etiketin pituuden pisteinä ja määrittää, mihin tulostettava muoto päättyy."
+    "summary": "Asettaa etiketin pituuden pisteinä ja määrittää, mihin tulostettava muoto päättyy.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "etiketin pituus pisteinä",
+          "values": "1–32000",
+          "default": "tulostimen asetus"
+        },
+        {
+          "meaning": "koskee kaikkea materiaalia",
+          "values": "N vain jatkuva, Y kaikki materiaalit",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Siirtää etiketin kotipaikan, mikä muuttaa myöhempien kenttäkoordinaattien lähtökohtaa."
+    "summary": "Siirtää etiketin kotipaikan, mikä muuttaa myöhempien kenttäkoordinaattien lähtökohtaa.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "etiketin kotiasento x-akselilla",
+          "values": "0–32000",
+          "default": "0 tai viimeksi tallennettu arvo"
+        },
+        {
+          "meaning": "etiketin kotiasento y-akselilla",
+          "values": "0–32000",
+          "default": "0 tai viimeksi tallennettu arvo"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Kohdistaa kenttien sijainteihin vaakasuoran siirtymän yhteensopivuuden vuoksi vanhempien Zebra-muotojen kanssa."
+    "summary": "Kohdistaa kenttien sijainteihin vaakasuoran siirtymän yhteensopivuuden vuoksi vanhempien Zebra-muotojen kanssa.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "kaikkien kenttien sijaintien siirto vasemmalle",
+          "values": "-9999–9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Lisää koko muotoon pystysuoran siirtymän materiaalin yläreunaan nähden."
+    "summary": "Lisää koko muotoon pystysuoran siirtymän materiaalin yläreunaan nähden.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "siirtää koko muotoa ylös tai alas pisterivein",
+          "values": "-120–120, XiIIIPlus 600 dpi -240–240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Asettaa koordinaattiyksiköt pisteiksi, tuumiksi tai millimetreiksi ja voi skaalata muotoja eri tulostustarkkuuksien välillä."
+    "summary": "Asettaa koordinaattiyksiköt pisteiksi, tuumiksi tai millimetreiksi ja voi skaalata muotoja eri tulostustarkkuuksien välillä.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "seuraavien kenttien koordinaattiyksikkö",
+          "values": "D pistettä, I tuumaa, M millimetriä",
+          "default": "D"
+        },
+        {
+          "meaning": "muodon perustarkkuus pistettä tuumaa kohti",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "muunnoksen kohdetarkkuus",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Asettaa materiaalin käsittelytilan tulostuksen jälkeen, mukaan lukien irrotus-, kuorinta-, leikkuri-, kelaus- ja applikaattoritilat."
+    "summary": "Asettaa materiaalin käsittelytilan tulostuksen jälkeen, mukaan lukien irrotus-, kuorinta-, leikkuri-, kelaus- ja applikaattoritilat.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "materiaalinkäsittelytila tulostuksen jälkeen",
+          "values": "T irrotus, P kuorinta, R kelaus, A applikaattori, C leikkuri, D viivästetty leikkuri, F RFID, K kioski",
+          "default": "tulostimen asetus"
+        },
+        {
+          "meaning": "esikuorinta ennen seuraavaa etikettiä",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Valitsee lämpösiirto- tai suorat lämpötulostustilan sen mukaan, käyttääkö ladattu materiaali värinauhaa."
+    "summary": "Valitsee lämpösiirto- tai suorat lämpötulostustilan sen mukaan, käyttääkö ladattu materiaali värinauhaa.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "tulostimen käyttämä materiaalityyppi",
+          "values": "T lämpösiirto, D suora lämpö"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Asettaa tulostusmäärän, tauko- tai leikkuuryhmittelyn sekä kopiot sarjanumeroarvoa kohti."
+    "summary": "Asettaa tulostusmäärän, tauko- tai leikkuuryhmittelyn sekä kopiot sarjanumeroarvoa kohti.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "tulostettavien etikettien kokonaismäärä",
+          "values": "1–99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "tulostetut etiketit ennen taukoa",
+          "values": "1–99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "kopioita jokaisesta sarjanumerosta",
+          "values": "0–99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "ohita taukomäärä",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        },
+        {
+          "meaning": "leikkaus mitätöidyn RFID-etiketin jälkeen",
+          "values": "N ei, Y kyllä",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Kääntää seuraavien kenttien tulostuksen vaihtamalla etu- ja taustavärin keskenään."
+    "summary": "Kääntää seuraavien kenttien tulostuksen vaihtamalla etu- ja taustavärin keskenään.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "kääntää seuraavien kenttien tulostusvärin",
+          "values": "N ei, Y kyllä",
+          "default": "N tai viimeksi tallennettu arvo"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Kääntää koko etikettimuodon 180 astetta."
+    "summary": "Kääntää koko etikettimuodon 180 astetta.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "tulostaa etiketin ylösalaisin",
+          "values": "N normaali, I käänteinen",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Peilaa tulostettavan alueen vaakasuunnassa."
+    "summary": "Peilaa tulostettavan alueen vaakasuunnassa.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "peilaa etiketin vasemmalta oikealle",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Asettaa tulostusnopeuden, syöttönopeuden ja takaisinsyöttönopeuden tuumina sekunnissa."
+    "summary": "Asettaa tulostusnopeuden, syöttönopeuden ja takaisinsyöttönopeuden tuumina sekunnissa.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "tulostusnopeus tuumina sekunnissa",
+          "values": "1–14, tai A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "pikasyöttönopeus tyhjää etikettiä syötettäessä",
+          "values": "2–14",
+          "default": "6"
+        },
+        {
+          "meaning": "takaisinsyötön nopeus tulostuksen jälkeen",
+          "values": "2–14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Sijoittaa seuraavan kentän etiketin nollakohdasta käyttäen kentän vasenta yläkulmaa."
+    "summary": "Sijoittaa seuraavan kentän etiketin nollakohdasta käyttäen kentän vasenta yläkulmaa.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "vaakasijainti pisteinä",
+          "values": "0–32000",
+          "default": "0"
+        },
+        {
+          "meaning": "pystysijainti pisteinä",
+          "values": "0–32000",
+          "default": "0"
+        },
+        {
+          "meaning": "tasaus",
+          "values": "0 vasen, 1 oikea, 2 automaattinen",
+          "default": "viimeksi käytetty ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Sijoittaa seuraavan kentän sen perusviivan tai viivakoodin reunan mukaan, mikä antaa käännetyille kentille vakaan ankkuripisteen."
+    "summary": "Sijoittaa seuraavan kentän sen perusviivan tai viivakoodin reunan mukaan, mikä antaa käännetyille kentille vakaan ankkuripisteen.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "vaakasijainti pisteinä",
+          "values": "0–32000",
+          "default": "viimeisin kentän sijainti"
+        },
+        {
+          "meaning": "pystysijainti pisteinä",
+          "values": "0–32000",
+          "default": "viimeisin kentän sijainti"
+        },
+        {
+          "meaning": "tasaus",
+          "values": "0 vasen, 1 oikea, 2 automaattinen",
+          "default": "viimeksi käytetty ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Antaa nykyisen kentän sisällön, joka voi olla tekstiä, viivakooditietoa tai RFID-tietoa."
+    "summary": "Antaa nykyisen kentän sisällön, joka voi olla tekstiä, viivakooditietoa tai RFID-tietoa.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "kentän sisältö",
+          "values": "mikä tahansa tulostettava data enintään 3072 tavua, ei etuliitemerkkejä"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Ottaa käyttöön heksadesimaaliset ohjaussarjat kenttätiedon sisällä binääritavuja ja varattuja komentomerkkejä varten."
+    "summary": "Ottaa käyttöön heksadesimaaliset ohjaussarjat kenttätiedon sisällä binääritavuja ja varattuja komentomerkkejä varten.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "heksadesimaalin ilmaisinmerkki",
+          "values": "mikä tahansa merkki paitsi muoto- ja ohjausetuliitteet",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Lisää kommenttikentän. Tulostin ohittaa sen sisällön seuraavaan kenttäerottimeen asti."
+    "summary": "Lisää kommenttikentän. Tulostin ohittaa sen sisällön seuraavaan kenttäerottimeen asti.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "tulostumaton kommenttiteksti",
+          "values": "mikä tahansa teksti, ohitetaan seuraavaan komentoon asti"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Asettaa oletuskentän suunnan ja uudemmassa laiteohjelmistossa myös oletustasauksen."
+    "summary": "Asettaa oletuskentän suunnan ja uudemmassa laiteohjelmistossa myös oletustasauksen.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "kentän oletuskierto",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "oletustasaus",
+          "values": "0 vasen, 1 oikea, 2 automaattinen",
+          "default": "automaattinen ^TB:llä, muuten vasen"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Rivittää kenttätiedon kiinteän leveyden lohkoon, jossa on rivimäärän, riviväliuksen, sisennyksen ja tasauksen hallinta."
+    "summary": "Rivittää kenttätiedon kiinteän leveyden lohkoon, jossa on rivimäärän, riviväliuksen, sisennyksen ja tasauksen hallinta.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "lohkon leveys pisteinä",
+          "values": "0 etiketin leveyteen asti",
+          "default": "0"
+        },
+        {
+          "meaning": "rivien enimmäismäärä",
+          "values": "1–9999",
+          "default": "1"
+        },
+        {
+          "meaning": "lisärivinväli pisteinä",
+          "values": "-9999–9999",
+          "default": "0"
+        },
+        {
+          "meaning": "tasaus",
+          "values": "L vasen, C keskitetty, R oikea, J tasattu",
+          "default": "L"
+        },
+        {
+          "meaning": "seuraavien rivien riippuva sisennys pisteinä",
+          "values": "0–9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Rivittää tekstin kiinteän leveyden ja korkeuden laatikkoon ja katkaisee ylivuotavan osan."
+    "summary": "Rivittää tekstin kiinteän leveyden ja korkeuden laatikkoon ja katkaisee ylivuotavan osan.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "lohkon kierto",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^A"
+        },
+        {
+          "meaning": "lohkon leveys pisteinä",
+          "values": "1 etiketin leveyteen asti",
+          "default": "1"
+        },
+        {
+          "meaning": "lohkon korkeus pisteinä",
+          "values": "1 etiketin pituuteen asti",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Antaa numeron muuttuvalle kentälle tallennetuissa ja palautetuissa muodoissa."
+    "summary": "Antaa numeron muuttuvalle kentälle tallennetuissa ja palautetuissa muodoissa.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "kentän numero",
+          "values": "0–9999",
+          "default": "0"
+        },
+        {
+          "meaning": "KDU:n valinnainen kehoteteksti",
+          "values": "enintään 255 aakkosnumeerista merkkiä"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Antaa tiedot muuttuvalle kentälle. Toisin kuin ^FD-tieto, se tyhjennetään etiketin tulostuksen jälkeen."
+    "summary": "Antaa tiedot muuttuvalle kentälle. Toisin kuin ^FD-tieto, se tyhjennetään etiketin tulostuksen jälkeen.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "muuttuvan kentän data",
+          "values": "0–3072 tavun merkkijono"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Asettaa merkin, jota käytetään numeroitujen kenttäarvojen upottamiseen toisen kentän merkkijonon sisään."
+    "summary": "Asettaa merkin, jota käytetään numeroitujen kenttäarvojen upottamiseen toisen kentän merkkijonon sisään.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "kentän yhdistämisen erotinmerkki",
+          "values": "mikä tahansa merkki paitsi muoto- ja ohjausetuliitteet",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Asettaa kenttätiedon sisällä käytettävät merkit reaaliaikakellon tunnuksille."
+    "summary": "Asettaa kenttätiedon sisällä käytettävät merkit reaaliaikakellon tunnuksille.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "ensisijaisen kellon ilmaisinmerkki",
+          "values": "mikä tahansa ASCII-merkki",
+          "default": "%"
+        },
+        {
+          "meaning": "toissijaisen kellon ilmaisinmerkki",
+          "values": "mikä tahansa ASCII-merkki, eri kuin a"
+        },
+        {
+          "meaning": "kolmannen kellon ilmaisinmerkki",
+          "values": "mikä tahansa ASCII-merkki, eri kuin a ja b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Asettaa seuraaville viivakoodikentille oletusmoduulin leveyden, leveän ja kapean suhteen sekä korkeuden."
+    "summary": "Asettaa seuraaville viivakoodikentille oletusmoduulin leveyden, leveän ja kapean suhteen sekä korkeuden.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "moduulin leveys pisteinä",
+          "values": "1–10",
+          "default": "2"
+        },
+        {
+          "meaning": "leveän ja kapean palkin suhde",
+          "values": "2.0–3.0 , askel 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "mikä tahansa korkeus pisteinä",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Sijoittaa PDF417- tai MicroPDF417-segmentit tiettyihin lähtöpisteisiin, kun yksi viesti jakautuu useaan symboliin."
+    "summary": "Sijoittaa PDF417- tai MicroPDF417-segmentit tiettyihin lähtöpisteisiin, kun yksi viesti jakautuu useaan symboliin.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "ensimmäisen symbolin x-akseli, toista pareja useammalle",
+          "values": "0–32000, tai e tämän symbolin ohittamiseksi"
+        },
+        {
+          "meaning": "ensimmäisen symbolin y-akseli, toista pareja useammalle",
+          "values": "0–32000, tai e tämän symbolin ohittamiseksi"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Asettaa merkkijärjestyksen nykyiselle kentälle ja voi lisätä merkkien väliin ylimääräistä tilaa."
+    "summary": "Asettaa merkkijärjestyksen nykyiselle kentälle ja voi lisätä merkkien väliin ylimääräistä tilaa.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "tulostussuunta",
+          "values": "H vaaka, V pysty, R käänteinen",
+          "default": "H"
+        },
+        {
+          "meaning": "lisäväli merkkien välissä pisteinä",
+          "values": "0–9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Valitsee sisäänrakennetun skaalautuvan fontin 0 seuraavalle kentälle halutulla koolla ja suunnalla."
+    "summary": "Valitsee sisäänrakennetun skaalautuvan fontin 0 seuraavalle kentälle halutulla koolla ja suunnalla.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "merkin korkeus pisteinä",
+          "values": "10–32000",
+          "default": "viimeksi käytetty ^CF"
+        },
+        {
+          "meaning": "merkin leveys pisteinä",
+          "values": "10–32000",
+          "default": "viimeksi käytetty ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Valitsee sisäänrakennetun fontin yksimerkkisellä nimellä, valinnaisella suunnalla, korkeudella ja leveydellä."
+    "summary": "Valitsee sisäänrakennetun fontin yksimerkkisellä nimellä, valinnaisella suunnalla, korkeudella ja leveydellä.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "fontin nimi",
+          "values": "A...Z, 0–9",
+          "default": "viimeksi käytetty ^CF"
+        },
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "merkin korkeus pisteinä",
+          "values": "10–32000 skaalautuva, 1–10 kertaa peruskorkeus bittikarttafontissa",
+          "default": "viimeksi käytetty ^CF"
+        },
+        {
+          "meaning": "merkin leveys pisteinä",
+          "values": "10–32000 skaalautuva, 1–10 kertaa perusleveys bittikarttafontissa",
+          "default": "viimeksi käytetty ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Valitsee tallennetun fonttitiedoston seuraavalle kentälle, valinnaisella suunnalla, korkeudella ja leveydellä."
+    "summary": "Valitsee tallennetun fonttitiedoston seuraavalle kentälle, valinnaisella suunnalla, korkeudella ja leveydellä.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "kentän suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "merkin korkeus pisteinä",
+          "values": "10–32000 skaalautuva, 1–10 kertaa peruskorkeus bittikarttafontissa",
+          "default": "viimeksi käytetty ^CF"
+        },
+        {
+          "meaning": "merkin leveys pisteinä",
+          "values": "10–32000 skaalautuva, 1–10 kertaa perusleveys bittikarttafontissa",
+          "default": "viimeksi käytetty ^CF"
+        },
+        {
+          "meaning": "fontin sisältävä asema",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "käytettävä fonttitiedoston nimi",
+          "values": "mikä tahansa kelvollinen fontin nimi",
+          "default": "viimeksi käytetty ^CF"
+        },
+        {
+          "meaning": "fontin tiedostopääte",
+          "values": "FNT fontti, TTF TrueType, TTE TrueType-laajennus"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Asettaa varafontin, korkeuden ja leveyden, joita käyttävät tekstikentät, jotka eivät määritä omaa fonttiaan."
+    "summary": "Asettaa varafontin, korkeuden ja leveyden, joita käyttävät tekstikentät, jotka eivät määritä omaa fonttiaan.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "oletusfontti",
+          "values": "A...Z, 0–9",
+          "default": "A"
+        },
+        {
+          "meaning": "oletusmerkin korkeus pisteinä",
+          "values": "0–32000",
+          "default": "9"
+        },
+        {
+          "meaning": "oletusmerkin leveys pisteinä",
+          "values": "0–32000",
+          "default": "5 tai viimeksi tallennettu arvo"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Valitsee koodauksen, jota käytetään kenttätiedon tulkitsemiseen, mukaan lukien koodisivut ja UTF-8."
+    "summary": "Valitsee koodauksen, jota käytetään kenttätiedon tulkitsemiseen, mukaan lukien koodisivut ja UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "käytettävä merkistökoodaus",
+          "values": "0–36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "uudelleenmääritettävä merkkipaikka",
+          "values": "0–255",
+          "default": "ei mitään"
+        },
+        {
+          "meaning": "korvausmerkin paikka",
+          "values": "0–255",
+          "default": "ei mitään"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Ottaa käyttöön edistyneen tekstiasettelun seuraaville kentille, mukaan lukien kaksisuuntaisen tekstin, muotoilun ja OpenType-ominaisuudet."
+    "summary": "Ottaa käyttöön edistyneen tekstiasettelun seuraaville kentille, mukaan lukien kaksisuuntaisen tekstin, muotoilun ja OpenType-ominaisuudet.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "oletusglyyfin lähde",
+          "values": "0 välilyöntimerkki, 1 fontin glyyfi",
+          "default": "0"
+        },
+        {
+          "meaning": "kaksisuuntainen tekstiasettelu",
+          "values": "0 pois, 1 päällä",
+          "default": "0"
+        },
+        {
+          "meaning": "merkkien muotoilu",
+          "values": "0 pois, 1 päällä",
+          "default": "0"
+        },
+        {
+          "meaning": "OpenType-taulukkotuki",
+          "values": "0 pois, 1 päällä",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Yhdistää yksimerkkisen fonttinimen tallennettuun fonttitiedostoon."
+    "summary": "Yhdistää yksimerkkisen fonttinimen tallennettuun fonttitiedostoon.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "lisättävä tai korvattava fontin kirjain",
+          "values": "A...Z, 0–9"
+        },
+        {
+          "meaning": "asema, jolle fontti tallennetaan",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "tallennetun fonttitiedoston nimi",
+          "values": "enintään 8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fontin tiedostopääte",
+          "values": "FNT fontti, TTF TrueType, TTE TrueType-laajennus"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Asettaa renderöityjen skaalautuvien merkkien välimuistin koon nopeuttamaan toistuvaa suurten fonttien tulostusta."
+    "summary": "Asettaa renderöityjen skaalautuvien merkkien välimuistin koon nopeuttamaan toistuvaa suurten fonttien tulostusta.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "merkkivälimuisti käytössä",
+          "values": "N ei, Y kyllä",
+          "default": "Y"
+        },
+        {
+          "meaning": "lisävälimuisti kilotavuina",
+          "values": "1–9999",
+          "default": "40"
+        },
+        {
+          "meaning": "välimuistin puskurityyppi",
+          "values": "0 normaalit fontit, 1 aasialaiset fontit",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Määrittää TrueType-varaketjut, joita käytetään, kun perusfontista puuttuu merkki."
+    "summary": "Määrittää TrueType-varaketjut, joita käytetään, kun perusfontista puuttuu merkki.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "linkitettävä laajennusfontti, laite ja tiedosto",
+          "values": "TTF- tai TTE-tiedosto laitteella"
+        },
+        {
+          "meaning": "fontti tai fontit, jotka vastaanottavat sen",
+          "values": "FNT-, TTF- tai TTE-tiedosto, yleismerkki sallittu"
+        },
+        {
+          "meaning": "laajennuksen linkitys tai sen poisto",
+          "values": "0 pura linkitys, 1 linkitä"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Lataa bittikarttafontin ja sen mitat tulostimen muistiin."
+    "summary": "Lataa bittikarttafontin ja sen mitat tulostimen muistiin.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "asema, jolle fontti tallennetaan",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fontin nimi",
+          "values": "enintään 8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fontin tiedostopääte",
+          "values": "FNT kiinteä arvo",
+          "default": "FNT"
+        },
+        {
+          "meaning": "sisäänrakennetun fontin suunta",
+          "values": "N vain normaali",
+          "default": "N"
+        },
+        {
+          "meaning": "solun enimmäiskorkeus pisteinä",
+          "values": "1–32000"
+        },
+        {
+          "meaning": "solun enimmäisleveys pisteinä",
+          "values": "1–32000"
+        },
+        {
+          "meaning": "pisteitä solun yläreunasta perusviivaan",
+          "values": "1–32000"
+        },
+        {
+          "meaning": "välilyöntimerkkien leveys",
+          "values": "1–32000"
+        },
+        {
+          "meaning": "fontin merkkien määrä",
+          "values": "1–256"
+        },
+        {
+          "meaning": "tekijänoikeuden haltijan teksti",
+          "values": "1–63 aakkosnumeerista merkkiä"
+        },
+        {
+          "meaning": "merkkikohtainen jäsennelty bittikarttadata",
+          "values": "tiivistekoodi, sitten korkeuden ja leveyden siirtymät, sitten heksadata"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Lataa koodatun skaalautuvan Intellifont-fontin tulostimen muistiin."
+    "summary": "Lataa koodatun skaalautuvan Intellifont-fontin tulostimen muistiin.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "asema, jolle fontti tallennetaan",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fontin nimi",
+          "values": "enintään 8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fontin tiedostopääte",
+          "values": "FNT kiinteä arvo",
+          "default": "FNT"
+        },
+        {
+          "meaning": "fontin koko tavuina ZToolsista",
+          "values": "muunnetun fontin tavumäärä"
+        },
+        {
+          "meaning": "fontin koodatut tavutiedot",
+          "values": "koon mukaiset heksaparit"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Lataa koodatun TrueType-fontin, jossa on enintään 256 merkkiä, tulostimen muistiin."
+    "summary": "Lataa koodatun TrueType-fontin, jossa on enintään 256 merkkiä, tulostimen muistiin.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "asema, jolle fontti tallennetaan",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fontin nimi",
+          "values": "enintään 8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fontin tiedostopääte",
+          "values": "DAT kiinteä arvo",
+          "default": "DAT"
+        },
+        {
+          "meaning": "fontin koko tavuina",
+          "values": "muunnetun fontin tavumäärä"
+        },
+        {
+          "meaning": "fontin koodatut tavutiedot",
+          "values": "koon mukaiset heksaparit"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Lataa koodatun TrueType-fontin, jossa on yli 256 merkkiä, tulostimen muistiin."
+    "summary": "Lataa koodatun TrueType-fontin, jossa on yli 256 merkkiä, tulostimen muistiin.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "asema, jolle fontti tallennetaan",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "fontin nimi",
+          "values": "enintään 8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "fontin tiedostopääte",
+          "values": "FNT kiinteä arvo",
+          "default": "FNT"
+        },
+        {
+          "meaning": "fontin koko tavuina",
+          "values": "muunnetun fontin tavumäärä"
+        },
+        {
+          "meaning": "fontin koodatut tavutiedot",
+          "values": "koon mukaiset heksaparit"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Lataa koodaustaulukon, joka yhdistää kenttätiedon tavut Unicode-arvoihin TrueType-fontteja varten."
+    "summary": "Lataa koodaustaulukon, joka yhdistää kenttätiedon tavut Unicode-arvoihin TrueType-fontteja varten.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "taulukon sisältävä asema",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "taulukon nimi",
+          "values": "enintään 8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "taulukkotiedoston pääte",
+          "values": "DAT kiinteä arvo",
+          "default": "DAT"
+        },
+        {
+          "meaning": "taulukon koko tavuina",
+          "values": "muunnetun taulukon tavumäärä"
+        },
+        {
+          "meaning": "taulukon koodatut tavutiedot",
+          "values": "koon mukaiset heksaparit"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Piirtää Code 128 -viivakoodin vaihtuvamittaiselle ASCII-tiedolle, ja tukee automaattista osajoukon vaihtoa sekä UCC/EAN-tietoa."
+    "summary": "Piirtää Code 128 -viivakoodin vaihtuvamittaiselle ASCII-tiedolle, ja tukee automaattista osajoukon vaihtoa sekä UCC/EAN-tietoa.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "N ei, Y kyllä",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC-tarkistusnumero",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        },
+        {
+          "meaning": "tila",
+          "values": "N ei mitään, U UCC Case Mode, A automaattinen, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Piirtää Code 39 -viivakoodin valinnaisella Mod 43 -tarkistusnumerolla."
+    "summary": "Piirtää Code 39 -viivakoodin valinnaisella Mod 43 -tarkistusnumerolla.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "Mod 43 -tarkistusnumero",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Piirtää Code 93 -viivakoodin, joka esittää täyttä ASCII-tietoa vaihtomerkkien avulla."
+    "summary": "Piirtää Code 93 -viivakoodin, joka esittää täyttä ASCII-tietoa vaihtomerkkien avulla.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "tulosta tarkistusnumero",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Piirtää Code 11 -viivakoodin numeroille ja yhdysmerkeille, valinnaisilla tarkistusnumeroilla."
+    "summary": "Piirtää Code 11 -viivakoodin numeroille ja yhdysmerkeille, valinnaisilla tarkistusnumeroilla.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "tarkistusnumeroiden määrä",
+          "values": "Y 1 numero, N 2 numeroa",
+          "default": "N"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Piirtää Interleaved 2 of 5 -viivakoodin parillisen pituiselle numeeriselle tiedolle, valinnaisella tarkistusnumerolla."
+    "summary": "Piirtää Interleaved 2 of 5 -viivakoodin parillisen pituiselle numeeriselle tiedolle, valinnaisella tarkistusnumerolla.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod 10 -tarkistusnumero",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "kuudes paikka, ei dokumentoitu",
+          "values": "ei dokumentoitu oppaassa"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Piirtää Industrial 2 of 5 -viivakoodin, numeerisen koodin, jonka tieto on koodattu pelkkinä palkkeina."
+    "summary": "Piirtää Industrial 2 of 5 -viivakoodin, numeerisen koodin, jonka tieto on koodattu pelkkinä palkkeina.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Piirtää Standard 2 of 5 -viivakoodin, itsetarkistavan numeerisen koodin, jonka tieto on koodattu pelkkinä palkkeina."
+    "summary": "Piirtää Standard 2 of 5 -viivakoodin, itsetarkistavan numeerisen koodin, jonka tieto on koodattu pelkkinä palkkeina.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Piirtää ANSI Codabar -viivakoodin, joka tunnetaan myös nimellä USD-4, kirjasto-, terveydenhuolto- ja kuriirietikettejä varten."
+    "summary": "Piirtää ANSI Codabar -viivakoodin, joka tunnetaan myös nimellä USD-4, kirjasto-, terveydenhuolto- ja kuriirietikettejä varten.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "tarkistusnumero, kiinteästi pois käytöstä",
+          "values": "vain N",
+          "default": "N"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "aloitusmerkki",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "lopetusmerkki",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Piirtää LOGMARS-viivakoodin, Code 39:n puolustusministeriön muunnelman, ja muuntaa pienet kirjaimet suuriksi."
+    "summary": "Piirtää LOGMARS-viivakoodin, Code 39:n puolustusministeriön muunnelman, ja muuntaa pienet kirjaimet suuriksi.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Piirtää MSI-viivakoodin, Plesseystä johdetun numeerisen koodin, jossa on valittavissa olevia tarkistusnumerokaavoja."
+    "summary": "Piirtää MSI-viivakoodin, Plesseystä johdetun numeerisen koodin, jossa on valittavissa olevia tarkistusnumerokaavoja.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "tarkistusnumeron laskentatapa",
+          "values": "A ei mitään, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "tarkistusnumero tulkintarivillä",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Piirtää Plessey-viivakoodin, vanhemman numeerisen koodin valinnaisilla tarkistusnumeroilla."
+    "summary": "Piirtää Plessey-viivakoodin, vanhemman numeerisen koodin valinnaisilla tarkistusnumeroilla.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "tulosta tarkistusnumero",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Piirtää EAN-13-viivakoodin vähittäismyyntituotteiden numeroille ja johtaa tarkistusnumeron kahdestatoista tietonumerosta."
+    "summary": "Piirtää EAN-13-viivakoodin vähittäismyyntituotteiden numeroille ja johtaa tarkistusnumeron kahdestatoista tietonumerosta.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Piirtää EAN-8-viivakoodin pienille vähittäismyyntipakkauksille ja johtaa tarkistusnumeron seitsemästä tietonumerosta."
+    "summary": "Piirtää EAN-8-viivakoodin pienille vähittäismyyntipakkauksille ja johtaa tarkistusnumeron seitsemästä tietonumerosta.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Piirtää UPC-A-viivakoodin vähittäismyyntipakkauksille yhdestätoista tietonumerosta, valinnaisella tarkistusnumeron tulostuksella."
+    "summary": "Piirtää UPC-A-viivakoodin vähittäismyyntipakkauksille yhdestätoista tietonumerosta, valinnaisella tarkistusnumeron tulostuksella.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–9999",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "tulosta tarkistusnumero",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Piirtää UPC-E-viivakoodin, UPC-A:n lyhennetyn muodon. Kenttätieto on täysi kymmenmerkkinen valmistajan ja tuotteen koodi."
+    "summary": "Piirtää UPC-E-viivakoodin, UPC-A:n lyhennetyn muodon. Kenttätieto on täysi kymmenmerkkinen valmistajan ja tuotteen koodi.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "tulosta tarkistusnumero",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Piirtää GS1 DataBar -symbolin valittavalla alatyypillä, suurennuksella, korkeudella ja segmenttileveydellä."
+    "summary": "Piirtää GS1 DataBar -symbolin valittavalla alatyypillä, suurennuksella, korkeudella ja segmenttileveydellä.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R kierretty, I käänteinen, B alhaalta ylös",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar-symbolityyppi",
+          "values": "1 omni, 2 typistetty, 3 pinottu, 4 pinottu omni, 5 rajoitettu, 6 laajennettu, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 ja CC-A/B, 12 UCC/EAN-128 ja CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "suurennuskerroin",
+          "values": "1–10",
+          "default": "tulostimen asetus"
+        },
+        {
+          "meaning": "erottimen korkeus",
+          "values": "1 tai 2",
+          "default": "1"
+        },
+        {
+          "meaning": "lineaarisen osan korkeus pisteinä",
+          "values": "1–32000",
+          "default": "25"
+        },
+        {
+          "meaning": "GS1 DataBar Expanded -segmentin leveys",
+          "values": "2–22, vain parilliset",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Piirtää Planet Code -postiviivakoodin numeroista, jotka on koodattu pitkinä ja lyhyinä palkkeina."
+    "summary": "Piirtää Planet Code -postiviivakoodin numeroista, jotka on koodattu pitkinä ja lyhyinä palkkeina.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R kierretty, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–9999",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Piirtää valitun postikoodityypin mukaan POSTNET-, Planet Code- tai USPS Intelligent Mail -symbolin."
+    "summary": "Piirtää valitun postikoodityypin mukaan POSTNET-, Planet Code- tai USPS Intelligent Mail -symbolin.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "postikoodin tyyppi",
+          "values": "0 postnet, 1 planet, 2 varattu, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Piirtää kaksi- tai viisinumeroisen UPC/EAN-lisäsymbolin pääviivakoodin viereen."
+    "summary": "Piirtää kaksi- tai viisinumeroisen UPC/EAN-lisäsymbolin pääviivakoodin viereen.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–32000",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivi",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "tulkintarivi koodin yläpuolella",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Piirtää pinotun Code 49 -viivakoodin, jossa on kahdesta kahdeksaan riviä täyttä ASCII-tietoa."
+    "summary": "Piirtää pinotun Code 49 -viivakoodin, jossa on kahdesta kahdeksaan riviä täyttä ASCII-tietoa.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "yksittäisten rivien korkeuskerroin",
+          "values": "1 etiketin korkeuteen asti",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "tulkintarivin sijoitus",
+          "values": "N ei mitään, A yläpuolella, B alapuolella",
+          "default": "N"
+        },
+        {
+          "meaning": "aloitustila",
+          "values": "0 aakkosnumeerinen, 1 moniluku, 2 numeerinen, 3 ryhmä-alpha, 4 shift 1, 5 shift 2, A automaattinen",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Piirtää QR Code -symbolin. Komennon parametrit asettavat mallin, suurennuksen ja maskin. Kenttätieto asettaa virheenkorjauksen ja merkkitilan."
+    "summary": "Piirtää QR Code -symbolin. Komennon parametrit asettavat mallin, suurennuksen ja maskin. Kenttätieto asettaa virheenkorjauksen ja merkkitilan.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "kentän suunta",
+          "values": "N vain normaali",
+          "default": "N"
+        },
+        {
+          "meaning": "malli",
+          "values": "1 alkuperäinen, 2 parannettu",
+          "default": "2"
+        },
+        {
+          "meaning": "suurennuskerroin",
+          "values": "1–100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "virheenkorjaustaso",
+          "values": "H erittäin korkea, Q korkea, M vakio, L korkea tiheys",
+          "default": "Q kun tyhjä, M kun arvo on virheellinen"
+        },
+        {
+          "meaning": "maskin arvo",
+          "values": "0–7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Piirtää Data Matrix -symbolin säädettävällä elementtikoolla, laatutasolla ja ohjaussarjojen käsittelyllä."
+    "summary": "Piirtää Data Matrix -symbolin säädettävällä elementtikoolla, laatutasolla ja ohjaussarjojen käsittelyllä.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "symbolielementtien korkeus",
+          "values": "1 etiketin leveyteen asti",
+          "default": "0, jolloin symbolin korkeus otetaan ^BY:stä"
+        },
+        {
+          "meaning": "laatutaso",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "koodattavat sarakkeet",
+          "values": "9–49, vain parittomat laaduille 0–140, vain parilliset laadulle 200"
+        },
+        {
+          "meaning": "koodattavat rivit",
+          "values": "9–49"
+        },
+        {
+          "meaning": "muodon tunniste",
+          "values": "1 numeerinen, 2 isot kirjaimet, 3 isot aakkosnumeeriset merkit joissa . , - /, 4 isot aakkosnumeeriset merkit, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "escape-sekvenssin ohjausmerkki",
+          "values": "mikä tahansa merkki",
+          "default": "tilde"
+        },
+        {
+          "meaning": "kuvasuhde",
+          "values": "1 neliö, 2 suorakaide",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Piirtää pinotun kaksiulotteisen PDF417-symbolin suurille teksti- tai binäärikuormille."
+    "summary": "Piirtää pinotun kaksiulotteisen PDF417-symbolin suurille teksti- tai binäärikuormille.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus riviä kohti pisteinä",
+          "values": "1 etiketin korkeuteen asti",
+          "default": "viimeksi käytetty ^BY"
+        },
+        {
+          "meaning": "suojaustaso",
+          "values": "1–8",
+          "default": "0"
+        },
+        {
+          "meaning": "datasarakkeiden määrä",
+          "values": "1–30",
+          "default": "automaattinen kuvasuhde"
+        },
+        {
+          "meaning": "rivien määrä",
+          "values": "3–90",
+          "default": "automaattinen kuvasuhde"
+        },
+        {
+          "meaning": "katkaise oikean reunan rivi-ilmaisimet ja stop-kuvio",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Piirtää MicroPDF417-symbolin, kompaktin PDF417-muunnelman, jossa on rivinosoituskuvioita."
+    "summary": "Piirtää MicroPDF417-symbolin, kompaktin PDF417-muunnelman, jossa on rivinosoituskuvioita.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "viivakoodin korkeus pisteinä",
+          "values": "1–9999",
+          "default": "viimeksi käytetty ^BY, tai 10 jos ^BY:tä ei ole lähetetty"
+        },
+        {
+          "meaning": "tila",
+          "values": "0–33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Piirtää Aztec-matriisisymbolin säädettävällä suurennuksella ja virheenkorjauksella."
+    "summary": "Piirtää Aztec-matriisisymbolin säädettävällä suurennuksella ja virheenkorjauksella.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R kierretty, I 180, B 270",
+          "default": "viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "suurennuskerroin",
+          "values": "1–10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "laajennetun kanavatulkinnan ilmaisin",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "virheenhallinta ja symbolin koko",
+          "values": "0 oletus, 1–99 virheprosentti, 101–104 tiiviit kerrokset, 201–232 täydet kerrokset, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "valikkosymbolin ilmaisin",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "jaetun symbolisarjan symbolien määrä",
+          "values": "1–26",
+          "default": "1"
+        },
+        {
+          "meaning": "jaetun symbolisarjan tunnistekentä",
+          "values": "teksti, enintään 24 merkkiä",
+          "default": "ei tunnistetta"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Piirtää CODABLOCK-symbolin tilassa A, E tai F suuremmille tietokuormille."
+    "summary": "Piirtää CODABLOCK-symbolin tilassa A, E tai F suuremmille tietokuormille.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "viivakoodin korkeus riviä kohti pisteinä",
+          "values": "2–32000",
+          "default": "8"
+        },
+        {
+          "meaning": "suojaustaso",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "merkkejä riviä kohti",
+          "values": "2–62"
+        },
+        {
+          "meaning": "koodattavat rivit",
+          "values": "tila-A 1-22, tila-EF 2-4"
+        },
+        {
+          "meaning": "tila",
+          "values": "A code39-set, E code128-fnc1, F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Piirtää UPS MaxiCode -symbolin, jossa on tila jäsennellyille kuljetusviesteille tai yleiselle tiedolle."
+    "summary": "Piirtää UPS MaxiCode -symbolin, jossa on tila jäsennellyille kuljetusviesteille tai yleiselle tiedolle.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "tila",
+          "values": "2 us-postal, 3 non-us-postal, 4 vakio, 5 full-eec, 6 reader-program",
+          "default": "2"
+        },
+        {
+          "meaning": "symbolin numero sarjassa",
+          "values": "1–8",
+          "default": "1"
+        },
+        {
+          "meaning": "symbolien kokonaismäärä",
+          "values": "1–8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Piirtää TLC39-teleetikettisymbolin, joka yhdistää Code 39:n MicroPDF417-komponenttiin."
+    "summary": "Piirtää TLC39-teleetikettisymbolin, joka yhdistää Code 39:n MicroPDF417-komponenttiin.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R kierretty, I käänteinen, B alhaalta ylös"
+        },
+        {
+          "meaning": "Code 39 -osan leveys pisteinä",
+          "values": "1–10",
+          "default": "600 dpi 4, muuten 2"
+        },
+        {
+          "meaning": "Code 39 -osan leveän ja kapean suhde",
+          "values": "2.0–3.0 askelin 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "Code 39 -osan korkeus pisteinä",
+          "values": "1–9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "MicroPDF417-osan kapean palkin leveys",
+          "values": "1–10",
+          "default": "600 dpi 4, muuten 2"
+        },
+        {
+          "meaning": "MicroPDF417-osan rivikorkeus pisteinä",
+          "values": "1–255",
+          "default": "600 dpi 8, muuten 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Kun käytössä, tarkistaa viivakooditiedon ja parametrit ja tulostaa INVALID viallisen symbolin sijaan."
+    "summary": "Kun käytössä, tarkistaa viivakooditiedon ja parametrit ja tulostaa INVALID viallisen symbolin sijaan.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "koodin validointi",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Piirtää täytetyn tai ääriviivoilla varustetun suorakulmion. Sivun asettaminen reunan paksuutta vastaavaksi tuottaa viivan."
+    "summary": "Piirtää täytetyn tai ääriviivoilla varustetun suorakulmion. Sivun asettaminen reunan paksuutta vastaavaksi tuottaa viivan.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "laatikon leveys pisteinä",
+          "values": "t...32000",
+          "default": "t tai 1"
+        },
+        {
+          "meaning": "laatikon korkeus pisteinä",
+          "values": "t...32000",
+          "default": "t tai 1"
+        },
+        {
+          "meaning": "reunan paksuus pisteinä",
+          "values": "1–32000",
+          "default": "1"
+        },
+        {
+          "meaning": "viivan väri",
+          "values": "B musta, W valkoinen",
+          "default": "B"
+        },
+        {
+          "meaning": "kulman pyöristys",
+          "values": "0 ei pyöristystä...8 voimakkain pyöristys",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Piirtää vinoviivan annetun leveyden ja korkeuden yli, kallistuen oikealle tai vasemmalle."
+    "summary": "Piirtää vinoviivan annetun leveyden ja korkeuden yli, kallistuen oikealle tai vasemmalle.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "laatikon leveys pisteinä",
+          "values": "3–32000",
+          "default": "t tai 3"
+        },
+        {
+          "meaning": "laatikon korkeus pisteinä",
+          "values": "3–32000",
+          "default": "t tai 3"
+        },
+        {
+          "meaning": "reunan paksuus pisteinä",
+          "values": "1–32000",
+          "default": "1"
+        },
+        {
+          "meaning": "viivan väri",
+          "values": "B musta, W valkoinen",
+          "default": "B"
+        },
+        {
+          "meaning": "vinoviivan suunta",
+          "values": "R tai / oikealle kallistuva, L tai \\ vasemmalle kallistuva",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Piirtää ellipsin annetusta leveydestä ja korkeudesta pisteinä, sisäänpäin suuntautuvalla reunan paksuudella sekä mustalla tai valkoisella tulosteella."
+    "summary": "Piirtää ellipsin annetusta leveydestä ja korkeudesta pisteinä, sisäänpäin suuntautuvalla reunan paksuudella sekä mustalla tai valkoisella tulosteella.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "ellipsin leveys pisteinä",
+          "values": "3–4095",
+          "default": "t tai 1"
+        },
+        {
+          "meaning": "ellipsin korkeus pisteinä",
+          "values": "3–4095",
+          "default": "t tai 1"
+        },
+        {
+          "meaning": "reunan paksuus pisteinä",
+          "values": "2–4095",
+          "default": "1"
+        },
+        {
+          "meaning": "viivan väri",
+          "values": "B musta, W valkoinen",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Piirtää annetun halkaisijan mukaisen ympyrän pisteinä, sisäänpäin suuntautuvalla reunan paksuudella sekä mustalla tai valkoisella tulosteella."
+    "summary": "Piirtää annetun halkaisijan mukaisen ympyrän pisteinä, sisäänpäin suuntautuvalla reunan paksuudella sekä mustalla tai valkoisella tulosteella.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "ympyrän halkaisija pisteinä",
+          "values": "3–4095",
+          "default": "3"
+        },
+        {
+          "meaning": "reunan paksuus pisteinä",
+          "values": "2–4095",
+          "default": "1"
+        },
+        {
+          "meaning": "viivan väri",
+          "values": "B musta, W valkoinen",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Sijoittaa yksivärisen bittikartan nykyiseen kenttäasentoon käyttäen ASCII-heksadesimaali-, binääri- tai pakattua tietoa."
+    "summary": "Sijoittaa yksivärisen bittikartan nykyiseen kenttäasentoon käyttäen ASCII-heksadesimaali-, binääri- tai pakattua tietoa.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "pakkaustyyppi",
+          "values": "A ascii-heksa, B binääri, C pakattu binääri",
+          "default": "A"
+        },
+        {
+          "meaning": "lähetettävien tavujen kokonaismäärä",
+          "values": "1–99999"
+        },
+        {
+          "meaning": "kuvan kokonaistavumäärä",
+          "values": "1–99999"
+        },
+        {
+          "meaning": "tavuja kuvariviä kohti",
+          "values": "1–99999"
+        },
+        {
+          "meaning": "kuvan data",
+          "values": "ascii-heksa 00...FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Tulostaa kenttätiedolla valitun sisäänrakennetun symbolin, kuten tekijänoikeus- tai rekisteröidyn tavaramerkin merkin."
+    "summary": "Tulostaa kenttätiedolla valitun sisäänrakennetun symbolin, kuten tekijänoikeus- tai rekisteröidyn tavaramerkin merkin.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "suunta",
+          "values": "N normaali, R 90 myötäpäivään, I 180, B 270",
+          "default": "N tai viimeksi käytetty ^FW"
+        },
+        {
+          "meaning": "merkin korkeus suhteessa leveyteen",
+          "values": "0–32000",
+          "default": "viimeksi käytetty ^CF"
+        },
+        {
+          "meaning": "merkin leveys suhteessa korkeuteen",
+          "values": "0–32000",
+          "default": "viimeksi käytetty ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Lataa tallennetun kuvan muodon alkuun ja ankkuroi sen etiketin lähtöpisteeseen."
+    "summary": "Lataa tallennetun kuvan muodon alkuun ja ankkuroi sen etiketin lähtöpisteeseen.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "tallennuslaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektin nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": ".GRF tai .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Sijoittaa tallennetun kuvan nykyiseen kenttäasentoon skaalaamatta sitä."
+    "summary": "Sijoittaa tallennetun kuvan nykyiseen kenttäasentoon skaalaamatta sitä.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "tallennuslaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "hakuprioriteettijärjestys"
+        },
+        {
+          "meaning": "objektin nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": ".GRF tai .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Poistaa tallennettuja grafiikoita, fontteja tai muotoja tulostimen muistista, ja tukee jokerimerkkejä ryhmille."
+    "summary": "Poistaa tallennettuja grafiikoita, fontteja tai muotoja tulostimen muistista, ja tukee jokerimerkkejä ryhmille.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "tallennuslaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektin nimi, yleismerkki sallittu",
+          "values": "1–8 merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte, yleismerkki sallittu",
+          "values": "mikä tahansa tiedostopääte",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Tallentaa nykyisen muodon graafisena kuvana nopeaa palautusta ja muuttuvan tiedon peittokuvia varten."
+    "summary": "Tallentaa nykyisen muodon graafisena kuvana nopeaa palautusta ja muuttuvan tiedon peittokuvia varten.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "tallennuslaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektin nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": ".GRF tai .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "tulosta etiketti tallennuksen jälkeen",
+          "values": "N ei, Y kyllä",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Lataa ASCII-heksadesimaaligrafiikan tulostimen muistiin uudelleenkäytettävällä nimellä."
+    "summary": "Lataa ASCII-heksadesimaaligrafiikan tulostimen muistiin uudelleenkäytettävällä nimellä.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "tallennuslaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "kuvan nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "kuvan kokonaiskoko tavuina",
+          "values": "lasketaan kuvan leveydestä ja korkeudesta"
+        },
+        {
+          "meaning": "tavuja kuvariviä kohti",
+          "values": "lasketaan kuvan leveydestä"
+        },
+        {
+          "meaning": "grafiikkakuvan data",
+          "values": "ascii-heksa 00...FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Lataa grafiikan, fontin tai varmenteen tulostimen muistiin uudelleenkäytettävällä nimellä."
+    "summary": "Lataa grafiikan, fontin tai varmenteen tulostimen muistiin uudelleenkäytettävällä nimellä.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "tallennuslaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "tiedostonimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "datan muoto",
+          "values": "A ascii tai zb64, B binääri, C ar-pakattu, P png zb64"
+        },
+        {
+          "meaning": "tallennetun tiedoston tyyppi",
+          "values": "B bittikartta, E tte, G raaka grf, P png, T ttf tai otf, X pcx, NRD ei luettavissa, PAC pääsytunniste, C wml-valikko, F htm-sivu, H tulostimen palaute",
+          "default": "G"
+        },
+        {
+          "meaning": "tiedoston kokonaistavumäärä",
+          "values": "purettu tiedoston todellinen koko"
+        },
+        {
+          "meaning": "tavuja riviä kohti GRF-kuvissa",
+          "values": "lasketaan kuvan leveydestä"
+        },
+        {
+          "meaning": "tiedoston data",
+          "values": "ascii-heksa, zb64 tai binääri"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Sarjoittaa teksti- tai viivakoodikenttätiedon etikettien yli käyttäen aloitusarvoa, suuntaa ja lisäystä."
+    "summary": "Sarjoittaa teksti- tai viivakoodikenttätiedon etikettien yli käyttäen aloitusarvoa, suuntaa ja lisäystä.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "sarjoituksen aloitusarvo",
+          "values": "enintään 12 numeroa",
+          "default": "1"
+        },
+        {
+          "meaning": "kasvatus- tai vähennysaskel",
+          "values": "enintään 12 numeroa",
+          "default": "1"
+        },
+        {
+          "meaning": "täytä alkunollilla",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Sarjoittaa valitut kohdat kenttätiedossa maskin ja merkistöjen avulla."
+    "summary": "Sarjoittaa valitut kohdat kenttätiedossa maskin ja merkistöjen avulla.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "sarjoitusmaski, joka valitsee muuttuvat merkit",
+          "values": "D desimaali, H heksa, O oktaali, A aakkoset, N aakkosnumeerinen, % ohita"
+        },
+        {
+          "meaning": "maskin kasvatus- tai vähennysmerkkijono",
+          "values": "yksi arvo per maskin paikka, % jättää sen ennalleen",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Tallentaa seuraavat komennot uudelleenkäytettäväksi muodoksi sen sijaan, että ne tulostettaisiin heti."
+    "summary": "Tallentaa seuraavat komennot uudelleenkäytettäväksi muodoksi sen sijaan, että ne tulostettaisiin heti.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "laite, jolle malli tallennetaan",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "mallin nimi",
+          "values": "1–16 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Palauttaa tallennetun muodon ja antaa arvot sen numeroiduille paikkamerkkikentille."
+    "summary": "Palauttaa tallennetun muodon ja antaa arvot sen numeroiduille paikkamerkkikentille.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "tallennetun mallin lähdelaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R, sitten E, sitten B, sitten A"
+        },
+        {
+          "meaning": "tallennetun mallin nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Palauttaa tallennetun grafiikan nykyiseen asentoon riippumattomalla vaaka- ja pystysuuntaisella skaalauksella."
+    "summary": "Palauttaa tallennetun grafiikan nykyiseen asentoon riippumattomalla vaaka- ja pystysuuntaisella skaalauksella.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "tallennetun grafiikan lähdelaite",
+          "values": "R, E, B, A",
+          "default": "R, sitten E, sitten B, sitten A"
+        },
+        {
+          "meaning": "tallennetun grafiikan nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": "GRF"
+        },
+        {
+          "meaning": "x-akselin suurennuskerroin",
+          "values": "1–10",
+          "default": "1"
+        },
+        {
+          "meaning": "y-akselin suurennuskerroin",
+          "values": "1–10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Valitsee, miten tulostin havaitsee etiketin rajat väli-, merkki- tai jatkuvaa materiaalia käyttäen."
+    "summary": "Valitsee, miten tulostin havaitsee etiketin rajat väli-, merkki- tai jatkuvaa materiaalia käyttäen.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "materiaalin seurantatapa",
+          "values": "N jatkuva, Y tai W ei-jatkuva väli, M ei-jatkuva merkki, A automaattinen tunnistus, V jatkuva muuttuva pituus",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "mustan merkin siirtymä pisteinä",
+          "values": "-120–283 useimmissa tulostimissa, -240–566 600 dpi:llä",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Asettaa enimmäisetiketinpituuden, jota tulostin etsii kalibroidessaan epäjatkuvaa materiaalia."
+    "summary": "Asettaa enimmäisetiketinpituuden, jota tulostin etsii kalibroidessaan epäjatkuvaa materiaalia.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "etiketin enimmäispituus pisterivinä",
+          "values": "tulostimen dpi kertaa kaksi, enimmäispituuteen asti",
+          "default": "viimeksi tallennettu arvo"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Asettaa käynnistys- ja tulostuspään sulkemistoiminnon, mukaan lukien kalibroinnin, syötön tai pituuden mittauksen."
+    "summary": "Asettaa käynnistys- ja tulostuspään sulkemistoiminnon, mukaan lukien kalibroinnin, syötön tai pituuden mittauksen.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "syöttötoiminto käynnistyksessä",
+          "values": "F syötä ensimmäiseen väliin, C kalibroi kuten ~JC, L aseta pituus kuten ~JL, N ei syöttöä, S lyhyt kalibrointi",
+          "default": "C"
+        },
+        {
+          "meaning": "syöttötoiminto tulostuspään sulkemisen jälkeen",
+          "values": "F syötä ensimmäiseen väliin, C kalibroi kuten ~JC, L aseta pituus kuten ~JL, N ei syöttöä, S lyhyt kalibrointi",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Määrittää tulostetut huoltohälytykset tulostuspään puhdistusta tai vaihtoa varten."
+    "summary": "Määrittää tulostetut huoltohälytykset tulostuspään puhdistusta tai vaihtoa varten.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "hälytystyyppi",
+          "values": "R pään vaihto, C pään puhdistus"
+        },
+        {
+          "meaning": "tulosta hälytysetiketti",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "etäisyys ensimmäiseen hälytykseen",
+          "values": "R 0–150 km, C 100–2000 metriä, 0 pois",
+          "default": "50 km R:lle, 0 pois C:lle"
+        },
+        {
+          "meaning": "etäisyys ennen hälytyksen uudelleenlähetystä",
+          "values": "0–2000 metriä",
+          "default": "0"
+        },
+        {
+          "meaning": "ilmoitettava mittayksikkö",
+          "values": "C senttimetreinä, I tuumina, M metreinä",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Määrää, tyhjennetäänkö etiketin bittikartta tulostuksen jälkeen vai säilytetäänkö se myöhempien etikettien uudelleenkäyttöä varten."
+    "summary": "Määrää, tyhjennetäänkö etiketin bittikartta tulostuksen jälkeen vai säilytetäänkö se myöhempien etikettien uudelleenkäyttöä varten.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "tyhjennä bittikartta tulostuksen jälkeen",
+          "values": "Y tyhjennä, N säilytä",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Asettaa huoltohälytysetiketeissä näytettävän tekstin tulostuspään puhdistusta tai vaihtoa varten."
+    "summary": "Asettaa huoltohälytysetiketeissä näytettävän tekstin tulostuspään puhdistusta tai vaihtoa varten.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "hälytystyyppi",
+          "values": "R pään vaihto, C pään puhdistus",
+          "default": "R"
+        },
+        {
+          "meaning": "hälytysetikettiin tulostettava viesti",
+          "values": "enintään 63 merkkiä, ei pilkkuja",
+          "default": "puhdista tulostuspää tai vaihda tulostuspää"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Lukitsee ohjauspaneelin asetuksen, kuten tummuuden tai kalibroinnin, kunnes se avataan."
+    "summary": "Lukitsee ohjauspaneelin asetuksen, kuten tummuuden tai kalibroinnin, kunnes se avataan.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "suojattava ohjauspaneelin tila",
+          "values": "D tummuus, P sijainti, C kalibrointi, E ota kaikki käyttöön, S ei tallennuksia, W tauko, F syöttö, X peruuta, M valikko",
+          "default": "on määritettävä"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Ottaa käyttöön tai poistaa käytöstä tulostuspään kylmyysvaroituksen ilmaisimen."
+    "summary": "Ottaa käyttöön tai poistaa käytöstä tulostuspään kylmyysvaroituksen ilmaisimen.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "ota käyttöön tulostuspään kylmyysvaroitus",
+          "values": "Y ota käyttöön, N poista käytöstä"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Säätää tulostustummuutta suhteessa tulostimen nykyiseen määritettyyn tummuuteen."
+    "summary": "Säätää tulostustummuutta suhteessa tulostimen nykyiseen määritettyyn tummuuteen.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "materiaalin tummuus suhteessa nykyiseen asetukseen",
+          "values": "-30–30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Asettaa absoluuttisen tulostustummuuden välittömästi vastaamaan etupaneelin tummuusasetusta."
+    "summary": "Asettaa absoluuttisen tulostustummuuden välittömästi vastaamaan etupaneelin tummuusasetusta.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "absoluuttinen tulostuksen tummuustaso",
+          "values": "00–30",
+          "default": "viimeksi tallennettu arvo"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Määrää, tulostetaanko materiaali-, nauha- tai tulostuspäävian keskeyttämä etiketti uudelleen palautumisen jälkeen."
+    "summary": "Määrää, tulostetaanko materiaali-, nauha- tai tulostuspäävian keskeyttämä etiketti uudelleen palautumisen jälkeen.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "tulosta etiketti uudelleen virheen poistuttua",
+          "values": "N ei, Y kyllä",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Ajastaa säännölliset tulostuspään elementtitestit tulostettujen etikettien määrän ja valinnaisen elementtialueen mukaan."
+    "summary": "Ajastaa säännölliset tulostuspään elementtitestit tulostettujen etikettien määrän ja valinnaisen elementtialueen mukaan.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "tulostetut etiketit päätestien välillä",
+          "values": "0–9999",
+          "default": "0"
+        },
+        {
+          "meaning": "manuaalisesti valittava päätestielementtien alue",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        },
+        {
+          "meaning": "ensimmäisen testielementin numero",
+          "values": "0–9999",
+          "default": "0"
+        },
+        {
+          "meaning": "viimeisen testielementin numero",
+          "values": "0–9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Säätää lepäävää irrotus- tai leikkuukohtaa pienellä pistesiirtymällä tulostuksen jälkeen."
+    "summary": "Säätää lepäävää irrotus- tai leikkuukohtaa pienellä pistesiirtymällä tulostuksen jälkeen.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "irrotuksen lepoasennon muutos pisteinä",
+          "values": "-120–120",
+          "default": "viimeksi tallennettu arvo"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Määrittää varhaiset varoituskynnykset materiaalin, nauhan ja tulostuspään huoltoa varten."
+    "summary": "Määrittää varhaiset varoituskynnykset materiaalin, nauhan ja tulostuspään huoltoa varten.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "materiaalin tai tarvikkeiden ennakkovaroitus",
+          "values": "E ota käyttöön, D poista käytöstä",
+          "default": "D"
+        },
+        {
+          "meaning": "etikettien määrä rullassa",
+          "values": "100–9999",
+          "default": "900"
+        },
+        {
+          "meaning": "materiaali vaihdettiin",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "värinauhan pituuskoodi mallin mukaan",
+          "values": "N 0 m, 0–7 on 100–450 m, 10–16 on 600–900 m",
+          "default": "1 tai 7 mallin mukaan"
+        },
+        {
+          "meaning": "värinauha vaihdettiin",
+          "values": "Y kyllä, N ei",
+          "default": "N"
+        },
+        {
+          "meaning": "huollon ennakkovaroitus käytössä",
+          "values": "E käytössä, D ei käytössä",
+          "default": "D"
+        },
+        {
+          "meaning": "tulostuspään puhdistusvälin koodi",
+          "values": "0–16 välille 100–900 m, 50 m askelin",
+          "default": "1 tai 7 mallin mukaan"
+        },
+        {
+          "meaning": "tulostuspää puhdistettiin",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        },
+        {
+          "meaning": "tulostuspään käyttöiän varoitusraja tuumina",
+          "values": "0 pois, tai 100–3500000 tuumaa",
+          "default": "1000000"
+        },
+        {
+          "meaning": "tulostuspää vaihdettiin",
+          "values": "N ei, Y kyllä",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Ohjaa takaisinsyötön ajoitusta tulostuksen ja leikkuun ympärillä, tai poistaa takaisinsyötön käytöstä."
+    "summary": "Ohjaa takaisinsyötön ajoitusta tulostuksen ja leikkuun ympärillä, tai poistaa takaisinsyötön käytöstä.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "takaisinsyötön ajoitus suhteessa tulostukseen",
+          "values": "A täysi jälkeen, B täysi ennen, N normaali, O pois, 10–90 prosenttia",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Syöttää määritetyn määrän tyhjiä pisteriviä syöttönopeudella."
+    "summary": "Syöttää määritetyn määrän tyhjiä pisteriviä syöttönopeudella.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "alareunasta siirretyt pisterivit",
+          "values": "0–32000",
+          "default": "on määritettävä"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Käynnistää leikkurin välittömästi KR403-tulostimissa kioskitulostustilassa."
+    "summary": "Käynnistää leikkurin välittömästi KR403-tulostimissa kioskitulostustilassa.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "leikkausmäärän ohitustila",
+          "values": "0 kioskiasetus, 1 täysi leikkaus"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Lisää ylimääräisen ulostulopituuden KR403-kioskiesittelijälle, jotta tulostettu materiaali on helpompi ottaa pois."
+    "summary": "Lisää ylimääräisen ulostulopituuden KR403-kioskiesittelijälle, jotta tulostettu materiaali on helpompi ottaa pois.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "materiaalin lisäulostyöntöpituus millimetreinä",
+          "values": "0–255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Käynnistää KR403-esittelijän jakson, joka tarjoaa tulostetun materiaalin manuaalista poistoa varten."
+    "summary": "Käynnistää KR403-esittelijän jakson, joka tarjoaa tulostetun materiaalin manuaalista poistoa varten.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "esittelylaitteen ulostyöntöpituus millimetreinä",
+          "values": "0–255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Asettaa nauhan syötön kireyden PAX-sarjan tulostimissa."
+    "summary": "Asettaa nauhan syötön kireyden PAX-sarjan tulostimissa.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "värinauhan kireystaso",
+          "values": "L matala, M keskitaso, H korkea",
+          "default": "on määritettävä"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Asettaa tulostimen reaaliaikakellon päivämäärän ja ajan."
+    "summary": "Asettaa tulostimen reaaliaikakellon päivämäärän ja ajan.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "kuukausi",
+          "values": "01–12",
+          "default": "nykyinen kuukausi"
+        },
+        {
+          "meaning": "päivä",
+          "values": "01–31",
+          "default": "nykyinen päivä"
+        },
+        {
+          "meaning": "vuosi",
+          "values": "1998–2097",
+          "default": "nykyinen vuosi"
+        },
+        {
+          "meaning": "tunti",
+          "values": "00–23",
+          "default": "nykyinen tunti"
+        },
+        {
+          "meaning": "minuutti",
+          "values": "00–59",
+          "default": "nykyinen minuutti"
+        },
+        {
+          "meaning": "sekunti",
+          "values": "00–59",
+          "default": "nykyinen sekunti"
+        },
+        {
+          "meaning": "ap/ip- tai 24 tunnin muoto",
+          "values": "A ap, P ip, M 24 tuntia",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Valitsee kokoonpanoetiketissä ja ohjauspaneelissa näytettävän päivämäärän ja ajan muodon."
+    "summary": "Valitsee kokoonpanoetiketissä ja ohjauspaneelissa näytettävän päivämäärän ja ajan muodon.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "päivämäärän ja ajan näyttömuoto",
+          "values": "0 versionumero, 1 MM/DD/YY 24 tuntia, 2 MM/DD/YY 12 tuntia, 3 DD/MM/YY 24 tuntia, 4 DD/MM/YY 12 tuntia",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Määrittää toissijaiset kellopoikkeamat reaaliaikakellosta. Poikkeamat menetetään tulostimen sammuessa."
+    "summary": "Määrittää toissijaiset kellopoikkeamat reaaliaikakellosta. Poikkeamat menetetään tulostimen sammuessa.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "siirrettävä kellon numero",
+          "values": "2 toinen, 3 kolmas",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "kuukausien siirtymä",
+          "values": "-32000–32000",
+          "default": "0"
+        },
+        {
+          "meaning": "päivien siirtymä",
+          "values": "-32000–32000",
+          "default": "0"
+        },
+        {
+          "meaning": "vuosien siirtymä",
+          "values": "-32000–32000",
+          "default": "0"
+        },
+        {
+          "meaning": "tuntien siirtymä",
+          "values": "-32000–32000",
+          "default": "0"
+        },
+        {
+          "meaning": "minuuttien siirtymä",
+          "values": "-32000–32000",
+          "default": "0"
+        },
+        {
+          "meaning": "sekuntien siirtymä",
+          "values": "-32000–32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Asettaa, milloin aikakentät leimataan, ja valitsee kielen viikonpäivien ja kuukausien nimille."
+    "summary": "Asettaa, milloin aikakentät leimataan, ja valitsee kielen viikonpäivien ja kuukausien nimille.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "kellonajan lukutila",
+          "values": "S aloitusaika, T nykyinen aika, 0–999 toleranssi",
+          "default": "S"
+        },
+        {
+          "meaning": "päivien ja kuukausien nimien kieli",
+          "values": "1 englanti, 2 espanja, 3 ranska, 4 saksa, 5 italia, 6–18 muita kieliä",
+          "default": "viimeksi käytetty ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Valitsee tulostimen ohjauspaneelin näyttökielen luettelosta, joka vaihtelee mallin mukaan."
+    "summary": "Valitsee tulostimen ohjauspaneelin näyttökielen luettelosta, joka vaihtelee mallin mukaan.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "ohjauspaneelin näyttökieli",
+          "values": "1–20 kielikoodia",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Valitsee tallennetun koodaustaulukon, jota käytetään kenttätiedon yhdistämiseen ennen tulostusta."
+    "summary": "Valitsee tallennetun koodaustaulukon, jota käytetään kenttätiedon yhdistämiseen ennen tulostusta.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "koodaustaulukon asemasijainti",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "koodaustaulukkotiedoston nimi",
+          "values": "1–8 aakkosnumeerista merkkiä"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": "DAT kiinteä arvo",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Valitsee alkuperäisen ZPL- tai ZPL II -komentotulkinnan yhteensopivuutta varten vanhempien muotojen kanssa."
+    "summary": "Valitsee alkuperäisen ZPL- tai ZPL II -komentotulkinnan yhteensopivuutta varten vanhempien muotojen kanssa.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPL-tulkin versio",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Antaa tulostimelle verkkonimen ja vapaamuotoisen kuvauksen, jotka näkyvät sekä kokoonpanoetiketissä että sen sisäänrakennetulla verkkosivulla."
+    "summary": "Antaa tulostimelle verkkonimen ja vapaamuotoisen kuvauksen, jotka näkyvät sekä kokoonpanoetiketissä että sen sisäänrakennetulla verkkosivulla.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "tulostimen verkkonimi",
+          "values": "enintään 16 aakkosnumeerista merkkiä",
+          "default": "ZBR ja MAC-pääte"
+        },
+        {
+          "meaning": "tulostimen kuvaus määritysetikettiä ja verkkosivua varten",
+          "values": "enintään 35 aakkosnumeerista merkkiä",
+          "default": "tyhjä"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Asettaa nelinumeroisen salasanan ohjauspaneelin asetusvalikoita varten."
+    "summary": "Asettaa nelinumeroisen salasanan ohjauspaneelin asetusvalikoita varten.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "ohjauspaneelin nelinumeroinen salasana",
+          "values": "0000–9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "salasanataso, vain S4M-tulostin",
+          "values": "1–4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Tallentaa, palauttaa tai nollaa tulostimen kokoonpanoasetukset."
+    "summary": "Tallentaa, palauttaa tai nollaa tulostimen kokoonpanoasetukset.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "määritystoiminto",
+          "values": "A tehdas kaikki, F tehdas, N verkko, R palautus, S tallennus"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Vaihtaa muotokomennon etuliitemerkin, joka on normaalisti sirkumfleksi, joko yleisesti tai nykyistä muotoa varten."
+    "summary": "Vaihtaa muotokomennon etuliitemerkin, joka on normaalisti sirkumfleksi, joko yleisesti tai nykyistä muotoa varten.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "uusi muotokomennon etuliite",
+          "values": "mikä tahansa ASCII-merkki"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Vaihtaa parametrien erotinmerkin, joka on normaalisti pilkku, joko yleisesti tai nykyistä muotoa varten."
+    "summary": "Vaihtaa parametrien erotinmerkin, joka on normaalisti pilkku, joko yleisesti tai nykyistä muotoa varten.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "uusi parametrin erotinmerkki",
+          "values": "mikä tahansa ASCII-merkki"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Vaihtaa välittömän komennon etuliitemerkin, joka on normaalisti tilde, joko yleisesti tai nykyistä muotoa varten."
+    "summary": "Vaihtaa välittömän komennon etuliitemerkin, joka on normaalisti tilde, joko yleisesti tai nykyistä muotoa varten.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "uusi ohjauskomennon etuliite",
+          "values": "mikä tahansa ASCII-merkki"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Uudelleenmäärittää tulostimen muistikirjaimet, jotta tallennetut kohteet voivat säilyttää nykyiset nimensä."
+    "summary": "Uudelleenmäärittää tulostimen muistikirjaimet, jotta tallennetut kohteet voivat säilyttää nykyiset nimensä.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "muistin alias B:lle",
+          "values": "B muistikortti, E flash, R DRAM, A compact flash, NONE ei asetettu",
+          "default": "B"
+        },
+        {
+          "meaning": "muistin alias E:lle",
+          "values": "B muistikortti, E flash, R DRAM, A compact flash, NONE ei asetettu",
+          "default": "E"
+        },
+        {
+          "meaning": "muistin alias R:lle",
+          "values": "B muistikortti, E flash, R DRAM, A compact flash, NONE ei asetettu",
+          "default": "R"
+        },
+        {
+          "meaning": "muistin alias A:lle",
+          "values": "B muistikortti, E flash, R DRAM, A compact flash, NONE ei asetettu",
+          "default": "A"
+        },
+        {
+          "meaning": "salli päällekkäisten aliasten määritys",
+          "values": "M useita aliaksia",
+          "default": "ei mitään"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Tyhjentää ja alustaa uudelleen yhden flash-muistilaitteen. Virran katkeaminen tämän toiminnon aikana voi vioittaa tallennustilaa."
+    "summary": "Tyhjentää ja alustaa uudelleen yhden flash-muistilaitteen. Virran katkeaminen tämän toiminnon aikana voi vioittaa tallennustilaa.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "alustettava flash-muistilaite",
+          "values": "A lisävaruste flash, B flash-kortti, E sisäinen flash",
+          "default": "on määritettävä"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Asettaa, keskeyttääkö matala akkujännite kannettavan tulostimen vai sallitaanko tulostuksen jatkua."
+    "summary": "Asettaa, keskeyttääkö matala akkujännite kannettavan tulostimen vai sallitaanko tulostuksen jatkua.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "tauko akun alijännitteellä",
+          "values": "Y tauko, N jatka tulostusta",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Käynnistää Zebra BASIC -tulkin tulostimessa, valinnaisesti käynnistäen tallennetun ohjelman."
+    "summary": "Käynnistää Zebra BASIC -tulkin tulostimessa, valinnaisesti käynnistäen tallennetun ohjelman.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "ohjelman tallennussijainti",
+          "values": "R, E, B, A",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "suoritettavan ohjelman nimi",
+          "values": "mikä tahansa kelvollinen ohjelman nimi",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "ohjelman tiedostopääte",
+          "values": "BAS tai BAE"
+        },
+        {
+          "meaning": "konsolin tulostuksen hallinta",
+          "values": "Y päällä, N pois",
+          "default": "Y"
+        },
+        {
+          "meaning": "komentokaiun hallinta",
+          "values": "Y päällä, N pois",
+          "default": "Y"
+        },
+        {
+          "meaning": "ZBI:lle varattu muisti",
+          "values": "20K...1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Määrittää lisäportin applikaattorin tai tarkistimen signaaleja ja virheenkäsittelyä varten."
+    "summary": "Määrittää lisäportin applikaattorin tai tarkistimen signaaleja ja virheenkäsittelyä varten.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "tarkistuksen virheenkäsittelytila",
+          "values": "0 pois, 1 tulosta uudelleen virheessä, 2 suurin läpäisy",
+          "default": "0"
+        },
+        {
+          "meaning": "applikaattorin signaalin ajoitustila",
+          "values": "0 pois, 1–4 signaalin ajoitus",
+          "default": "0"
+        },
+        {
+          "meaning": "tulostuksen aloitussignaalin ajoitustila",
+          "values": "p pulssitila, l tasotila"
+        },
+        {
+          "meaning": "etiketin virheen vastaustila",
+          "values": "e virhetila, f syöttötila",
+          "default": "f"
+        },
+        {
+          "meaning": "uudelleentulostus signaalitilassa",
+          "values": "e käytössä, d ei käytössä",
+          "default": "d"
+        },
+        {
+          "meaning": "värinauhan vähyysvaroitustila",
+          "values": "e käytössä, d ei käytössä",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Valitsee seurantaan käytettävän materiaalianturin, yleensä heijastavan tai läpäisevän."
+    "summary": "Valitsee seurantaan käytettävän materiaalianturin, yleensä heijastavan tai läpäisevän.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "käytettävä tunnistin",
+          "values": "A automaattinen, R heijastava, T läpäisevä",
+          "default": "vaihtelee tulostinmallin mukaan"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Asettaa normaalin tai vähennetyn pisteiden määrän millimetriä kohti. Vähennetty tiheys kaksinkertaistaa muodon koordinaattien fyysisen koon."
+    "summary": "Asettaa normaalin tai vähennetyn pisteiden määrän millimetriä kohti. Vähennetty tiheys kaksinkertaistaa muodon koordinaattien fyysisen koon.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "tulostustiheyden asetus",
+          "values": "A normaali tiheys, B puolitettu tiheys",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Nollaa valitun tulostimen käyttölaskurin, mukaan lukien käyttäjä- tai RFID-laskurit."
+    "summary": "Nollaa valitun tulostimen käyttölaskurin, mukaan lukien käyttäjä- tai RFID-laskurit.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "nollattava laskuri",
+          "values": "1 laskuri yksi, 2 laskuri kaksi, 3 kelvollinen RFID, 4 mitätöity RFID, C pää puhdistettu, R pää vaihdettu",
+          "default": "on määritettävä"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Määrittää kaikki sarjaportin tietoliikenneparametrit yhdellä komennolla."
+    "summary": "Määrittää kaikki sarjaportin tietoliikenneparametrit yhdellä komennolla.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "sarjaportin siirtonopeus",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "databittejä merkkiä kohti",
+          "values": "7 tai 8",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "pariteettiasetus",
+          "values": "N ei mitään, E parillinen, O pariton",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "stop-bitit",
+          "values": "1 tai 2",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "vuonohjausprotokolla",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR ja Xon/Xoff",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "Zebra-protokollan kättely",
+          "values": "A ACK/NAK, N ei mitään, Z zebra",
+          "default": "on määritettävä"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Ohittaa normaalisti kalibroinnilla asetetut läpäisevän anturin intensiteetti- tai perusarvot."
+    "summary": "Ohittaa normaalisti kalibroinnilla asetetut läpäisevän anturin intensiteetti- tai perusarvot.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "muutettava tunnistimen asetus",
+          "values": "1 kirkkaus, 2 perusviiva",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "valitun asetuksen arvo",
+          "values": "0–196",
+          "default": "on määritettävä"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Aloittaa tulostuksen ennen kuin koko muoto on saapunut, mikä parantaa suorituskykyä monimutkaisissa etiketeissä."
+    "summary": "Aloittaa tulostuksen ennen kuin koko muoto on saapunut, mikä parantaa suorituskykyä monimutkaisissa etiketeissä.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "pisterivi jolta tulostus alkaa",
+          "values": "0–32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Poistaa käytöstä tietyn ZebraNet-hälytysehdon ja -kohteen."
+    "summary": "Poistaa käytöstä tietyn ZebraNet-hälytysehdon ja -kohteen.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "pysäytettävä hälytysehto",
+          "values": "A...O ja Q...V yksi ehto kukin, W kaikki RFID-tulostimissa, * kaikki muissa"
+        },
+        {
+          "meaning": "pysäytettävä hälytyksen kohde",
+          "values": "A sarja, B rinnakkais, C sähköposti, D TCP/IP, E UDP/IP, F SNMP trap, * kaikki"
+        },
+        {
+          "meaning": "näiden hälytysten pysäytys tai jatkaminen",
+          "values": "Y pysäytä viestit, N käynnistä viestit",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Asettaa palamisenergialaskelmissa käytettävän tulostuspään resistanssiarvon."
+    "summary": "Asettaa palamisenergialaskelmissa käytettävän tulostuspään resistanssiarvon.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "tulostuspään vastusarvo",
+          "values": "0488–1175",
+          "default": "viimeksi pysyvästi tallennettu arvo"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Asettaa materiaalianturin kynnysarvot, etiketin pituuden ja LED-intensiteetit, jotka normaalisti määritetään kalibroinnilla."
+    "summary": "Asettaa materiaalianturin kynnysarvot, etiketin pituuden ja LED-intensiteetit, jotka normaalisti määritetään kalibroinnilla.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "web-tunnistimen arvo",
+          "values": "0–100",
+          "default": "näkyy tunnistinprofiilissa tai määritysetiketissä"
+        },
+        {
+          "meaning": "materiaalitunnistimen arvo",
+          "values": "0–100",
+          "default": "näkyy tunnistinprofiilissa tai määritysetiketissä"
+        },
+        {
+          "meaning": "värinauhatunnistimen arvo",
+          "values": "0–100",
+          "default": "näkyy tunnistinprofiilissa tai määritysetiketissä"
+        },
+        {
+          "meaning": "etiketin pituus pisteinä",
+          "values": "1–32000",
+          "default": "kalibroinnista saatu arvo"
+        },
+        {
+          "meaning": "materiaalin LED-voimakkuus",
+          "values": "0–255",
+          "default": "kalibroinnista saatu arvo"
+        },
+        {
+          "meaning": "värinauhan LED-voimakkuus",
+          "values": "0–255",
+          "default": "kalibroinnista saatu arvo"
+        },
+        {
+          "meaning": "merkin tunnistuksen arvo",
+          "values": "0–100",
+          "default": "kalibroinnista saatu arvo"
+        },
+        {
+          "meaning": "merkkimateriaalin tunnistuksen arvo",
+          "values": "0–100",
+          "default": "kalibroinnista saatu arvo"
+        },
+        {
+          "meaning": "merkin LED-tunnistuksen arvo",
+          "values": "0–255",
+          "default": "kalibroinnista saatu arvo"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Ottaa käyttöön ZebraNet-hälytyksen tietylle ehdolle ja kohteelle."
+    "summary": "Ottaa käyttöön ZebraNet-hälytyksen tietylle ehdolle ja kohteelle.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "hälytysehdon tyyppi",
+          "values": "A...V yksi ehto kukin, * kaikki",
+          "default": "ohitetaan jos puuttuu tai on virheellinen"
+        },
+        {
+          "meaning": "hälytyksen kohdetyyppi",
+          "values": "A sarja, B rinnakkais, C sähköposti, D TCP/IP, E UDP/IP, F SNMP trap",
+          "default": "ohitetaan jos puuttuu tai on virheellinen"
+        },
+        {
+          "meaning": "ota hälytys käyttöön ehdon tullessa voimaan",
+          "values": "N ei, Y kyllä",
+          "default": "Y tai edellinen arvo"
+        },
+        {
+          "meaning": "ota hälytys käyttöön ehdon poistuessa",
+          "values": "N ei, Y kyllä",
+          "default": "N tai edellinen arvo"
+        },
+        {
+          "meaning": "hälytyksen kohdeosoite",
+          "values": "sähköposti, IP-osoite tai SNMP-kohde",
+          "default": "ohitetaan jos puuttuu tai on virheellinen"
+        },
+        {
+          "meaning": "hälytyksen portin numero",
+          "values": "0–65535",
+          "default": "ohitetaan jos puuttuu tai on virheellinen"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopioi tallennettuja kohteita tulostimen muistilaitteiden välillä, ja tukee jokerimerkkejä ryhmille."
+    "summary": "Kopioi tallennettuja kohteita tulostimen muistilaitteiden välillä, ja tukee jokerimerkkejä ryhmille.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "lähdetallennuslaite",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "lähdeobjektin nimi",
+          "values": "mikä tahansa olemassa oleva objektin nimi",
+          "default": "* valitsee kaikki objektit"
+        },
+        {
+          "meaning": "lähdeobjektin tiedostopääte",
+          "values": "mikä tahansa kelvollinen tiedostopääte",
+          "default": "* valitsee kaikki tiedostopäätteet"
+        },
+        {
+          "meaning": "kohdetallennuslaite",
+          "values": "R, E, B, A",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "kohteen objektin nimi",
+          "values": "enintään 8 aakkosnumeerista merkkiä",
+          "default": "lähdeobjektin nimi"
+        },
+        {
+          "meaning": "kohdeobjektin tiedostopääte",
+          "values": "mikä tahansa kelvollinen tiedostopääte",
+          "default": "lähdeobjektin tiedostopääte"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Tulostaa hakemistoetiketin tallennetuille kohteille, sisäänrakennetuille fonteille tai käytettävissä oleville viivakoodeille."
+    "summary": "Tulostaa hakemistoetiketin tallennetuille kohteille, sisäänrakennetuille fonteille tai käytettävissä oleville viivakoodeille.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "luettelon lähdelaite",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "objektin nimen suodatin",
+          "values": "1–8 merkkiä, * tai ? yleismerkki",
+          "default": "*"
+        },
+        {
+          "meaning": "tiedostopäätteen suodatin",
+          "values": "mikä tahansa kelvollinen tiedostopääte, * yleismerkki",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Tulostaa pyydetyt huoltotiedot, kuten mittarilukeman tai tulostuspään historian, etikettiin."
+    "summary": "Tulostaa pyydetyt huoltotiedot, kuten mittarilukeman tai tulostuspään historian, etikettiin.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "tulostettavan huoltoraportin tyyppi",
+          "values": "ES tila, HA laitteisto-osoite, JT päätesti, MA hälytysasetukset, MI viestit, OD matkamittari, PH pään käyttöikä, PP plug and play, SN sarjanumero, UI USB-tunniste",
+          "default": "on määritettävä"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Määrittää KR403-kioskiesittelijän asetukset, mukaan lukien leikkuupituuden, leikkuumarginaalin, vetäytymisen aikakatkaisun ja silmukan pituuden."
+    "summary": "Määrittää KR403-kioskiesittelijän asetukset, mukaan lukien leikkuupituuden, leikkuumarginaalin, vetäytymisen aikakatkaisun ja silmukan pituuden.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "kioskin leikkausmäärä",
+          "values": "0 normaali leikkaus, 10–60 osittainen mm",
+          "default": "0"
+        },
+        {
+          "meaning": "kioskin leikkausmarginaali millimetreinä",
+          "values": "2–9",
+          "default": "9"
+        },
+        {
+          "meaning": "kioskin esittelytapa tulostuksen jälkeen",
+          "values": "0 poisto, 1 veto takaisin, 2 ei toimintoa",
+          "default": "0"
+        },
+        {
+          "meaning": "kioskin esittelyn aikakatkaisu sekunteina",
+          "values": "0–300, 0 ei aikakatkaisua",
+          "default": "0"
+        },
+        {
+          "meaning": "esittelylaitteen silmukan pituus millimetreinä",
+          "values": "0 suoraan läpi, 3–1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Ohjaa etiketin pituuden ja anturikynnyksen dynaamista uudelleenkalibrointia käynnistyksen tai materiaalilokeron avaamisen jälkeen."
+    "summary": "Ohjaa etiketin pituuden ja anturikynnyksen dynaamista uudelleenkalibrointia käynnistyksen tai materiaalilokeron avaamisen jälkeen.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "ota käyttöön dynaaminen pituuskalibrointi",
+          "values": "Y ota käyttöön, N poista käytöstä",
+          "default": "Y"
+        },
+        {
+          "meaning": "ota käyttöön dynaaminen kynnysarvokalibrointi",
+          "values": "Y ota käyttöön, N poista käytöstä",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Käynnistää käytöstäpoistotilan, joka valmistelee tulostimen jälleenmyyntiä tai kierrätystä varten."
+    "summary": "Käynnistää käytöstäpoistotilan, joka valmistelee tulostimen jälleenmyyntiä tai kierrätystä varten.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "tulostimen sarjanumero",
+          "values": "aakkosnumeerinen merkkijono",
+          "default": "on määritettävä"
+        },
+        {
+          "meaning": "flash-pyyhinnän kertojen määrä",
+          "values": "0–3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Asettaa automaattisen unitilan sammutuksen joutokäynnin jälkeen, ja vaihtoehtoja jonossa oleville etiketeille."
+    "summary": "Asettaa automaattisen unitilan sammutuksen joutokäynnin jälkeen, ja vaihtoehtoja jonossa oleville etiketeille.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "joutenolosekunnit ennen automaattista sammutusta",
+          "values": "0–999999, 0 poistaa sammutuksen käytöstä",
+          "default": "viimeksi tallennettu arvo tai 0"
+        },
+        {
+          "meaning": "etiketin tila sammutuksessa",
+          "values": "Y sammuta jonon kanssa, N suorita jono loppuun ensin",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Työntää ulos tai vetää takaisin materiaalin, jonka KR403-kioskiesittelijä on jo tarjonnut."
+    "summary": "Työntää ulos tai vetää takaisin materiaalin, jonka KR403-kioskiesittelijä on jo tarjonnut.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "kioskin esittelytoiminto",
+          "values": "0 poisto, 1 veto takaisin, 2 käytä ^KV-asetusta"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Palauttaa tallennetun ZPL-muodon tulostimen muistista isäntäjärjestelmälle."
+    "summary": "Palauttaa tallennetun ZPL-muodon tulostimen muistista isäntäjärjestelmälle.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "haettava muistilaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "tallennetun muodon nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": ".ZPL kiinteä",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Palauttaa tallennetun graafisen kuvan tulostimen muistista isäntäjärjestelmälle."
+    "summary": "Palauttaa tallennetun graafisen kuvan tulostimen muistista isäntäjärjestelmälle.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "haettava muistilaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "hakuprioriteetti"
+        },
+        {
+          "meaning": "ladattavan grafiikan nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tiedostopääte",
+          "values": ".GRF kiinteä",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Palauttaa pyydetyt tila-, tunniste-, mittarilukema- tai huoltotiedot isäntäjärjestelmälle."
+    "summary": "Palauttaa pyydetyt tila-, tunniste-, mittarilukema- tai huoltotiedot isäntäjärjestelmälle.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "palautettavan datan kyselyvalitsin",
+          "values": "ES tila, HA kiinteä MAC, JT tulostuspään testi, MA huoltohälytykset, MI huoltotiedot, OD matkamittari, PH tulostuspään käyttöikä, PP plug and play, SN sarjanumero, UI USB-tuotetunniste"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Palauttaa tiedot numeroidusta kentästä isäntäjärjestelmälle, valinnaisella tavurajalla."
+    "summary": "Palauttaa tiedot numeroidusta kentästä isäntäjärjestelmälle, valinnaisella tavurajalla.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "^FN:llä asetettu kentän numero",
+          "values": "0–9999",
+          "default": "0"
+        },
+        {
+          "meaning": "palautettavien tavujen määrä",
+          "values": "1–256",
+          "default": "64"
+        },
+        {
+          "meaning": "otsikkoteksti ennen dataa",
+          "values": "0–3072 tavua",
+          "default": "ei otsikkoa"
+        },
+        {
+          "meaning": "datan jälkeinen lopetusteksti",
+          "values": "0–3072 merkkiä"
+        },
+        {
+          "meaning": "vastauksen lähetysyksikkö",
+          "values": "F muoto, L etiketti",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Palauttaa hakemistoluettelon muistilaitteelle, mukaan lukien jäljellä olevan vapaan tilan."
+    "summary": "Palauttaa hakemistoluettelon muistilaitteelle, mukaan lukien jäljellä olevan vapaan tilan.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "lueteltava muistilaite",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash, Z muu",
+          "default": "R"
+        },
+        {
+          "meaning": "objektin nimen suodatin",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "*"
+        },
+        {
+          "meaning": "tiedostopäätteen suodatin",
+          "values": "mikä tahansa Zebra-tiedostopääte",
+          "default": "*"
+        },
+        {
+          "meaning": "luettelon asettelu",
+          "values": "c sarake, d oletus",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Palauttaa tallennetun grafiikan isäntäjärjestelmälle ladattavassa tiedostomuodossa."
+    "summary": "Palauttaa tallennetun grafiikan isäntäjärjestelmälle ladattavassa tiedostomuodossa.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "objektin muistilaitesijainti",
+          "values": "R DRAM, E flash, B muistikortti, A compact flash",
+          "default": "hakuprioriteetti"
+        },
+        {
+          "meaning": "ladattavan objektin nimi",
+          "values": "1–8 aakkosnumeerista merkkiä",
+          "default": "nimi vaaditaan"
+        },
+        {
+          "meaning": "latauksen muoto",
+          "values": "G raaka bittikartta, P pakattu bittikartta",
+          "default": "tallennettu muoto"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Palauttaa tulostimen kuvaus-XML:n asetuksia, objektihakemistoa tai tilaa varten."
+    "summary": "Palauttaa tulostimen kuvaus-XML:n asetuksia, objektihakemistoa tai tilaa varten.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "palautettava kuvaustyyppi",
+          "values": "a kaikki, f muoto, l hakemisto, o objekti, r tila"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Lukee tai kirjoittaa RFID-tunnisteen, mukaan lukien tietomuodon, muistipankin ja käyttösalasanan."
+    "summary": "Lukee tai kirjoittaa RFID-tunnisteen, mukaan lukien tietomuodon, muistipankin ja käyttösalasanan.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "toiminto",
+          "values": "W kirjoitus, L kirjoitus ja lukitus, R luku, P lukusalasana, S aseta salasana",
+          "default": "W"
+        },
+        {
+          "meaning": "datan muoto",
+          "values": "A ASCII, H heksa, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "salasanalippu tai aloituslohkon numero",
+          "values": "P salasana seuraa, 0...n lohko",
+          "default": "0"
+        },
+        {
+          "meaning": "luettavien tai kirjoitettavien tavujen määrä",
+          "values": "1...n, enimmäismäärä per tagi",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen 2 -muistipankki",
+          "values": "E EPC 96-bittinen, A EPC automaattiset PC-bitit, 0 varattu, 1 EPC, 2 TID, 3 käyttäjä",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Määrittää bittiasettelun, jota käytetään RFID EPC -kenttien koodaamiseen tunnisteelle."
+    "summary": "Määrittää bittiasettelun, jota käytetään RFID EPC -kenttien koodaamiseen tunnisteelle.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "osioiden kokonaisbittikoko",
+          "values": "1 tagin bittikokoon asti",
+          "default": "96"
+        },
+        {
+          "meaning": "bittimäärä per osio, enintään 16 osiota",
+          "values": "1–64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Asettaa RFID-asetukset seuraaville etiketeille, mukaan lukien tunnistetyypin, ohjelmointiasennon, virheenkäsittelyn ja VOID-palkin pituuden."
+    "summary": "Asettaa RFID-asetukset seuraaville etiketeille, mukaan lukien tunnistetyypin, ohjelmointiasennon, virheenkäsittelyn ja VOID-palkin pituuden.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "tagin tyyppi",
+          "values": "8 vain Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "tagin ohjelmointiasento",
+          "values": "pisteinä absoluuttinen, F0...Fxxx eteenpäin, B0...B30 taakse, up seuraava, down edellinen",
+          "default": "tulostimen asetus"
+        },
+        {
+          "meaning": "VOID-tulosteen pituus",
+          "values": "0 etiketin pituuteen asti",
+          "default": "etiketin pituus"
+        },
+        {
+          "meaning": "uudelleenyritettävät etiketit virheen sattuessa",
+          "values": "1–10",
+          "default": "3"
+        },
+        {
+          "meaning": "virheenkäsittely yritysten jälkeen",
+          "values": "N ei toimintoa, P tauko, E virhetila",
+          "default": "N"
+        },
+        {
+          "meaning": "applikaattorille lähetetyt signaalit",
+          "values": "S yksittäinen signaali, D kaksoissignaali",
+          "default": "S"
+        },
+        {
+          "meaning": "varattu, ei käytössä",
+          "values": "ei mitään"
+        },
+        {
+          "meaning": "VOID-etikettien tulostusnopeus",
+          "values": "mikä tahansa kelvollinen tulostusnopeus",
+          "default": "suurin tulostusnopeus"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Muodostaa EPC-sarjanumeron tunnisteen ID:stä ja kirjoittaa sen EPC:n alempiin bitteihin."
+    "summary": "Muodostaa EPC-sarjanumeron tunnisteen ID:stä ja kirjoittaa sen EPC:n alempiin bitteihin.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "sarjatunnisteen binäärietuliite",
+          "values": "ASCII 1:t ja 0:t, enintään 38 bittiä",
+          "default": "riippuu sirun MDID:stä"
+        },
+        {
+          "meaning": "sarjoituskentän erikoismerkki",
+          "values": "mikä tahansa ASCII paitsi komento, ohjaus, erotin, RTC",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Asettaa RFID-luku- ja kirjoitustehon, kun kalibrointi ei tuota käyttökelpoisia arvoja."
+    "summary": "Asettaa RFID-luku- ja kirjoitustehon, kun kalibrointi ei tuota käyttökelpoisia arvoja.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "lukutehotaso",
+          "values": "0–30, tai H korkea, M keskitaso, L matala",
+          "default": "tulostimen asetus"
+        },
+        {
+          "meaning": "kirjoitustehotaso",
+          "values": "0–30, tai H korkea, M keskitaso, L matala",
+          "default": "tulostimen asetus"
+        },
+        {
+          "meaning": "antennielementin valinta",
+          "values": "tulostinkohtainen ruudukko, A1...F4",
+          "default": "tulostimen asetus"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Lukitsee RFID-tunnisteen muistin joko palautuvasti tai pysyvästi estääkseen myöhemmät kirjoitukset."
+    "summary": "Lukitsee RFID-tunnisteen muistin joko palautuvasti tai pysyvästi estääkseen myöhemmät kirjoitukset.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "kill-salasanan lukitustila",
+          "values": "U avaa lukitus, L lukitse, O pysyvä avaus, P pysyvä lukitus"
+        },
+        {
+          "meaning": "käyttösalasanan lukitustila",
+          "values": "U avaa lukitus, L lukitse, O pysyvä avaus, P pysyvä lukitus"
+        },
+        {
+          "meaning": "EPC-muistipankin lukitustila",
+          "values": "U avaa lukitus, L lukitse, O pysyvä avaus, P pysyvä lukitus"
+        },
+        {
+          "meaning": "käyttäjän muistipankin lukitustila",
+          "values": "U avaa lukitus, L lukitse, O pysyvä avaus, P pysyvä lukitus"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Suorittaa RFID-kalibroinnin ja palauttaa asento-, antenni- ja tehoasetukset isäntäjärjestelmälle."
+    "summary": "Suorittaa RFID-kalibroinnin ja palauttaa asento-, antenni- ja tehoasetukset isäntäjärjestelmälle.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "tulostaulukkoa edeltävä teksti",
+          "values": "mikä tahansa merkkijono alle 65 merkkiä",
+          "default": "alku"
+        },
+        {
+          "meaning": "tulostaulukon jälkeinen teksti",
+          "values": "mikä tahansa merkkijono alle 65 merkkiä",
+          "default": "loppu"
+        },
+        {
+          "meaning": "kalibroinnin alkuasento",
+          "values": "F0...Fxxx eteenpäin, B0...B30 taakse",
+          "default": "tulostimen asetus"
+        },
+        {
+          "meaning": "kalibroinnin loppuasento",
+          "values": "F0...Fxxx eteenpäin, B0...B30 taakse, A automaattinen",
+          "default": "tulostimen asetus"
+        },
+        {
+          "meaning": "antennin ja tehon automaattinen tai manuaalinen valinta",
+          "values": "A automaattinen, M manuaalinen",
+          "default": "A"
+        },
+        {
+          "meaning": "luku- ja kirjoitustehoalueen alku",
+          "values": "0–30",
+          "default": "0"
+        },
+        {
+          "meaning": "luku- ja kirjoitustehoalueen loppu",
+          "values": "0–30",
+          "default": "suurin teho"
+        },
+        {
+          "meaning": "antennialueen alku",
+          "values": "mallista riippuvainen, tavallisesti A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "antennialueen loppu",
+          "values": "mallista riippuvainen, enintään E4",
+          "default": "tulostimen asetus"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Valitsee, tarkistaako tulostin langallisen tulostuspalvelimen käynnistyksen aikana."
+    "summary": "Valitsee, tarkistaako tulostin langallisen tulostuspalvelimen käynnistyksen aikana.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "kiinteän tulostuspalvelimen tarkistus käynnistyksessä",
+          "values": "C tarkista, S ohita",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Valitsee ensisijaisen verkkolaitteen, langallisen tai langattoman."
+    "summary": "Valitsee ensisijaisen verkkolaitteen, langallisen tai langattoman.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "ensisijainen verkkolaite",
+          "values": "1 kiinteä ensisijainen, 2 langaton ensisijainen",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Osoittaa yhtä tulostinta vanhalla RS-485-monipisteyhteydellä verkkotunnuksen perusteella."
+    "summary": "Osoittaa yhtä tulostinta vanhalla RS-485-monipisteyhteydellä verkkotunnuksen perusteella.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "osoitettava tulostimen verkkotunniste",
+          "values": "001–999",
+          "default": "000 ei mitään"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Määrittää verkkotunnuksen, jota käytetään tulostimen osoittamiseen vanhalla RS-485-monipisteyhteydellä."
+    "summary": "Määrittää verkkotunnuksen, jota käytetään tulostimen osoittamiseen vanhalla RS-485-monipisteyhteydellä.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "tulostimelle osoitettu verkkotunniste",
+          "values": "001–999",
+          "default": "000 ei mitään"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Asettaa tulostimen SNMP-tunnuksen ja yhteisömerkkijonot."
+    "summary": "Asettaa tulostimen SNMP-tunnuksen ja yhteisömerkkijonot.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP-järjestelmän nimi",
+          "values": "enintään 17 merkkiä"
+        },
+        {
+          "meaning": "SNMP-järjestelmän yhteyshenkilö",
+          "values": "enintään 50 merkkiä"
+        },
+        {
+          "meaning": "SNMP-järjestelmän sijainti",
+          "values": "enintään 50 merkkiä"
+        },
+        {
+          "meaning": "SNMP get -yhteisönimi",
+          "values": "enintään 19 merkkiä",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set -yhteisönimi",
+          "values": "enintään 19 merkkiä",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap -yhteisönimi",
+          "values": "enintään 20 merkkiä",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Valitsee, tulevatko käynnistyksen verkkoasetukset tulostimelta vai liitetyltä tulostuspalvelimelta."
+    "summary": "Valitsee, tulevatko käynnistyksen verkkoasetukset tulostimelta vai liitetyltä tulostuspalvelimelta.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "käynnistysasetusten ensisijainen lähde",
+          "values": "P tulostin, M tulostuspalvelin",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Määrittää SMTP-palvelimen ja verkkotunnusasetukset tulostuspalvelimen sähköpostihälytyksiä varten."
+    "summary": "Määrittää SMTP-palvelimen ja verkkotunnusasetukset tulostuspalvelimen sähköpostihälytyksiä varten.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTP-palvelimen osoite",
+          "values": "IPv4-osoite"
+        },
+        {
+          "meaning": "tulostuspalvelimen verkkotunnus",
+          "values": "verkkotunnus"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Asettaa, kuinka kauan todennettu IP-osoite voi käyttää tulostimen verkkosivuja ennen uudelleentodennusta."
+    "summary": "Asettaa, kuinka kauan todennettu IP-osoite voi käyttää tulostimen verkkosivuja ennen uudelleentodennusta.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "verkkosivun todennuksen aikakatkaisu",
+          "values": "0–255 minuuttia",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Asettaa DHCP-asiakastunnisteen muodon ja arvon tulostuspalvelimelle."
+    "summary": "Asettaa DHCP-asiakastunnisteen muodon ja arvon tulostuspalvelimelle.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "asiakastunnisteen tila",
+          "values": "0 ei käytössä, 1 MAC-osoite, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "laite, jota tunniste koskee",
+          "values": "0 kaikki, 1 langaton, 2 ulkoinen kiinteä, 3 sisäinen kiinteä",
+          "default": "1"
+        },
+        {
+          "meaning": "tunnisteen etuliite",
+          "values": "11 ASCII- tai 22 heksamerkkiä"
+        },
+        {
+          "meaning": "tunnisteen jälkiliite",
+          "values": "enintään 60 ASCII- tai 120 heksamerkkiä"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Määrittää IP-osoitteen, aliverkon peitteen ja yhdyskäytävän tulostimen verkkoliitäntää varten."
+    "summary": "Määrittää IP-osoitteen, aliverkon peitteen ja yhdyskäytävän tulostimen verkkoliitäntää varten.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "muokattava laite",
+          "values": "1 ulkoinen kiinteä, 2 sisäinen kiinteä, 3 langaton"
+        },
+        {
+          "meaning": "IP-osoitteen hankintatapa",
+          "values": "A kaikki, B BOOTP, C DHCP ja BOOTP, D DHCP, G vain gleaning, R RARP, P pysyvä",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-osoite",
+          "values": "IPv4-osoite"
+        },
+        {
+          "meaning": "aliverkon peite",
+          "values": "IPv4-aliverkon peite"
+        },
+        {
+          "meaning": "oletusyhdyskäytävä",
+          "values": "IPv4-osoite"
+        },
+        {
+          "meaning": "WINS-palvelimen osoite",
+          "values": "IPv4-osoite"
+        },
+        {
+          "meaning": "yhteyden aikakatkaisun tarkistus",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "yhteyden aikakatkaisun arvo",
+          "values": "0–9999 sekuntia",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-yleislähetyksen aikaväli",
+          "values": "0–30 minuuttia",
+          "default": "0 ei mitään"
+        },
+        {
+          "meaning": "raaka-portin perusnumero",
+          "values": "1–65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Määrittää langallisen tulostuspalvelimen IP-asetukset, aikakatkaisut ja raakaportin vanhempaa laiteohjelmistoa varten."
+    "summary": "Määrittää langallisen tulostuspalvelimen IP-asetukset, aikakatkaisut ja raakaportin vanhempaa laiteohjelmistoa varten.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "IP-osoitteen hankintatapa",
+          "values": "A kaikki, B BOOTP, C DHCP ja BOOTP, D DHCP, G vain gleaning, R RARP, P pysyvä",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-osoite",
+          "values": "IPv4-osoite"
+        },
+        {
+          "meaning": "aliverkon peite",
+          "values": "IPv4-aliverkon peite"
+        },
+        {
+          "meaning": "oletusyhdyskäytävä",
+          "values": "IPv4-osoite"
+        },
+        {
+          "meaning": "WINS-palvelimen osoite",
+          "values": "IPv4-osoite"
+        },
+        {
+          "meaning": "yhteyden aikakatkaisun tarkistus",
+          "values": "Y kyllä, N ei",
+          "default": "Y"
+        },
+        {
+          "meaning": "yhteyden aikakatkaisun arvo",
+          "values": "0–9999 sekuntia",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-yleislähetyksen aikaväli",
+          "values": "0–30 minuuttia",
+          "default": "0 ei mitään"
+        },
+        {
+          "meaning": "raaka-portin perusnumero",
+          "values": "1–65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Valitsee langattoman radion vastaanotto- ja lähetysantennit."
+    "summary": "Valitsee langattoman radion vastaanotto- ja lähetysantennit.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "vastaanottoantenni",
+          "values": "D diversiteetti, L vasen, R oikea",
+          "default": "D"
+        },
+        {
+          "meaning": "lähetysantenni",
+          "values": "D diversiteetti, L vasen, R oikea",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Määrittää vanhentuneen WEP-suojauksen ja avainmateriaalin vanhemmalle langattomalle laiteohjelmistolle."
+    "summary": "Määrittää vanhentuneen WEP-suojauksen ja avainmateriaalin vanhemmalle langattomalle laiteohjelmistolle.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "salaustila",
+          "values": "OFF ei mitään, 40 40-bittinen, 128 128-bittinen",
+          "default": "OFF"
+        },
+        {
+          "meaning": "salausavaimen indeksi",
+          "values": "1–4",
+          "default": "1"
+        },
+        {
+          "meaning": "todennustyyppi",
+          "values": "O avoin järjestelmä, S jaettu avain",
+          "default": "O"
+        },
+        {
+          "meaning": "salausavaimen tallennusmuoto",
+          "values": "H heksa, S merkkijono",
+          "default": "H"
+        },
+        {
+          "meaning": "salausavain 1",
+          "values": "heksaparit tai aakkosnumeerinen merkkijono"
+        },
+        {
+          "meaning": "salausavain 2",
+          "values": "heksaparit tai aakkosnumeerinen merkkijono"
+        },
+        {
+          "meaning": "salausavain 3",
+          "values": "heksaparit tai aakkosnumeerinen merkkijono"
+        },
+        {
+          "meaning": "salausavain 4",
+          "values": "heksaparit tai aakkosnumeerinen merkkijono"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Määrittää vanhentuneen Cisco LEAP -todennuksen vanhemmalle langattomalle laiteohjelmistolle."
+    "summary": "Määrittää vanhentuneen Cisco LEAP -todennuksen vanhemmalle langattomalle laiteohjelmistolle.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP-tila",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "käyttäjänimi",
+          "values": "1–32 merkkiä",
+          "default": "user"
+        },
+        {
+          "meaning": "salasana",
+          "values": "1–32 merkkiä",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Asettaa salasanan tulostimen ohjauspaneelin langattomille asetuksille."
+    "summary": "Asettaa salasanan tulostimen ohjauspaneelin langattomille asetuksille.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "vanha langattoman verkon salasana",
+          "values": "0000–9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "uusi langattoman verkon salasana",
+          "values": "0000–9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Määrittää 802.11b-tiedonsiirtonopeudet ja lähetystehon vanhemmilla langattomilla tulostuspalvelimilla."
+    "summary": "Määrittää 802.11b-tiedonsiirtonopeudet ja lähetystehon vanhemmilla langattomilla tulostuspalvelimilla.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "1 Mb/s lähetysnopeus",
+          "values": "Y päällä, N pois"
+        },
+        {
+          "meaning": "2 Mb/s lähetysnopeus",
+          "values": "Y päällä, N pois"
+        },
+        {
+          "meaning": "5,5 Mb/s lähetysnopeus",
+          "values": "Y päällä, N pois"
+        },
+        {
+          "meaning": "11 Mb/s lähetysnopeus",
+          "values": "Y päällä, N pois"
+        },
+        {
+          "meaning": "lähetysteho",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Määrittää langattoman verkon nimen, radion tilan, preamblen pituuden ja keep-alive-toiminnan."
+    "summary": "Määrittää langattoman verkon nimen, radion tilan, preamblen pituuden ja keep-alive-toiminnan.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID-arvo",
+          "values": "enintään 32 merkkiä",
+          "default": "125"
+        },
+        {
+          "meaning": "käyttötila",
+          "values": "I infrastruktuuri, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "radiokortin preambelin pituus",
+          "values": "L pitkä, S lyhyt",
+          "default": "L"
+        },
+        {
+          "meaning": "langaton pulssi käytössä",
+          "values": "0 ei käytössä, 1 käytössä",
+          "default": "1"
+        },
+        {
+          "meaning": "langattoman pulssin aikaväli",
+          "values": "5–300 sekuntia",
+          "default": "15"
+        },
+        {
+          "meaning": "kanavamaski",
+          "values": "4 heksanumeroa, etuliite 0x",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "kansainvälinen tila",
+          "values": "0 ei käytössä, 1 käytössä",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Määrittää langattoman suojaustilan, avaimet ja tunnistetiedot yhdellä komennolla."
+    "summary": "Määrittää langattoman suojaustilan, avaimet ja tunnistetiedot yhdellä komennolla.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "suojaustyypin koodi",
+          "values": "01 ei mitään, 02 WEP 40, 03 WEP 128, 04–08 EAP-tyypit, 09 WPA PSK, 10–14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "WEP-salausavaimen indeksi",
+          "values": "1–4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP-todennustyyppi",
+          "values": "O avoin järjestelmä, S jaettu avain",
+          "default": "O"
+        },
+        {
+          "meaning": "WEP-avaimen tallennusmuoto",
+          "values": "H heksa, S merkkijono",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP-salausavain 1",
+          "values": "heksaparit tai aakkosnumeerinen merkkijono"
+        },
+        {
+          "meaning": "WEP-salausavain 2",
+          "values": "heksaparit tai aakkosnumeerinen merkkijono"
+        },
+        {
+          "meaning": "WEP-salausavain 3",
+          "values": "heksaparit tai aakkosnumeerinen merkkijono"
+        },
+        {
+          "meaning": "WEP-salausavain 4",
+          "values": "heksaparit tai aakkosnumeerinen merkkijono"
+        },
+        {
+          "meaning": "suojaustyypin käyttäjätunnus",
+          "values": "mikä tahansa merkkijono",
+          "default": "user"
+        },
+        {
+          "meaning": "suojaustyypin salasana",
+          "values": "mikä tahansa merkkijono",
+          "default": "password"
+        },
+        {
+          "meaning": "yksityisen avaimen valinnainen salasana",
+          "values": "mikä tahansa merkkijono"
+        },
+        {
+          "meaning": "Kerberos-alue",
+          "values": "mikä tahansa merkkijono",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberoksen avaintenjakokeskus",
+          "values": "mikä tahansa merkkijono",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "esijaetun avaimen arvo",
+          "values": "vähintään 64 heksanumeroa"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

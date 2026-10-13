@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Setează lățimea imprimabilă în puncte. Conținutul care depășește această lățime este decupat de imprimantă."
+    "summary": "Setează lățimea imprimabilă în puncte. Conținutul care depășește această lățime este decupat de imprimantă.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "lățimea de imprimare în puncte",
+          "values": "2 până la lățimea etichetei",
+          "default": "ultima valoare salvată"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Setează lungimea etichetei în puncte, definind unde se termină formatul imprimabil."
+    "summary": "Setează lungimea etichetei în puncte, definind unde se termină formatul imprimabil.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "lungimea etichetei în puncte",
+          "values": "1 până la 32000",
+          "default": "setarea imprimantei"
+        },
+        {
+          "meaning": "se aplică tuturor suporturilor",
+          "values": "N doar continuu, Y toate suporturile",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Mută poziția de origine a etichetei, schimbând originea folosită de coordonatele câmpurilor ulterioare."
+    "summary": "Mută poziția de origine a etichetei, schimbând originea folosită de coordonatele câmpurilor ulterioare.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "poziția de origine a etichetei pe axa x",
+          "values": "0 până la 32000",
+          "default": "0 sau ultima valoare salvată"
+        },
+        {
+          "meaning": "poziția de origine a etichetei pe axa y",
+          "values": "0 până la 32000",
+          "default": "0 sau ultima valoare salvată"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Aplică un decalaj orizontal pozițiilor câmpurilor pentru compatibilitate cu formatele Zebra mai vechi."
+    "summary": "Aplică un decalaj orizontal pozițiilor câmpurilor pentru compatibilitate cu formatele Zebra mai vechi.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "deplasarea la stânga a tuturor pozițiilor câmpurilor",
+          "values": "-9999 până la 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Adaugă un decalaj vertical întregului format, relativ la marginea superioară a suportului."
+    "summary": "Adaugă un decalaj vertical întregului format, relativ la marginea superioară a suportului.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "mișcă întregul format sus sau jos, în rânduri de puncte",
+          "values": "-120 până la 120, XiIIIPlus 600 dpi -240 până la 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Setează unitățile de coordonate în puncte, inch sau milimetri și poate scala formatele între rezoluții de imprimare diferite."
+    "summary": "Setează unitățile de coordonate în puncte, inch sau milimetri și poate scala formatele între rezoluții de imprimare diferite.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "unitățile de coordonate pentru câmpurile următoare",
+          "values": "D puncte, I inch, M milimetri",
+          "default": "D"
+        },
+        {
+          "meaning": "rezoluția de bază a formatului, în puncte pe inch",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "rezoluția țintă pentru conversie",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Setează modul de gestionare a suportului după imprimare, inclusiv modurile tear-off, peel-off, tăiere, rebobinare și aplicator."
+    "summary": "Setează modul de gestionare a suportului după imprimare, inclusiv modurile tear-off, peel-off, tăiere, rebobinare și aplicator.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "modul de gestionare a suportului după imprimare",
+          "values": "T tear-off, P peel-off, R rebobinare, A aplicator, C tăietor, D tăietor întârziat, F rfid, K kiosc",
+          "default": "setarea imprimantei"
+        },
+        {
+          "meaning": "prepeel înainte de următoarea etichetă",
+          "values": "N nu, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Selectează modul de transfer termic sau termic direct, în funcție de faptul că suportul încărcat folosește sau nu panglică."
+    "summary": "Selectează modul de transfer termic sau termic direct, în funcție de faptul că suportul încărcat folosește sau nu panglică.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "tipul de suport folosit de imprimantă",
+          "values": "T transfer termic, D termic direct"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Setează cantitatea de imprimare, gruparea pentru pauză sau tăiere și numărul de copii pentru fiecare valoare serializată."
+    "summary": "Setează cantitatea de imprimare, gruparea pentru pauză sau tăiere și numărul de copii pentru fiecare valoare serializată.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "numărul total de etichete de imprimat",
+          "values": "1 până la 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "etichete imprimate înainte de o pauză",
+          "values": "1 până la 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "replici ale fiecărui număr serial",
+          "values": "0 până la 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "suprascrie numărul de etichete dintre pauze",
+          "values": "N nu, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "taie după o etichetă RFID anulată",
+          "values": "N nu, Y da",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Inversează imprimarea pentru câmpurile următoare, interschimbând culoarea de prim-plan cu cea de fundal."
+    "summary": "Inversează imprimarea pentru câmpurile următoare, interschimbând culoarea de prim-plan cu cea de fundal.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "inversează culoarea de imprimare pentru câmpurile următoare",
+          "values": "N nu, Y da",
+          "default": "N sau ultima valoare salvată"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Rotește întregul format de etichetă cu 180 de grade."
+    "summary": "Rotește întregul format de etichetă cu 180 de grade.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "imprimă eticheta cu susul în jos",
+          "values": "N normal, I inversat",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Oglindește zona imprimabilă pe orizontală."
+    "summary": "Oglindește zona imprimabilă pe orizontală.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "oglindește eticheta de la stânga la dreapta",
+          "values": "N nu, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Setează viteza de imprimare, viteza de deplasare rapidă și viteza de derulare inversă, în inch pe secundă."
+    "summary": "Setează viteza de imprimare, viteza de deplasare rapidă și viteza de derulare inversă, în inch pe secundă.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "viteza de imprimare, în inch pe secundă",
+          "values": "1 până la 14, sau A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "viteza de deplasare rapidă la avansul unei etichete goale",
+          "values": "2 până la 14",
+          "default": "6"
+        },
+        {
+          "meaning": "viteza de derulare inversă după imprimare",
+          "values": "2 până la 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Poziționează următorul câmp față de originea etichetei, folosind colțul din stânga sus al câmpului."
+    "summary": "Poziționează următorul câmp față de originea etichetei, folosind colțul din stânga sus al câmpului.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "poziția orizontală în puncte",
+          "values": "0 până la 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "poziția verticală în puncte",
+          "values": "0 până la 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "justificarea",
+          "values": "0 stânga, 1 dreapta, 2 automat",
+          "default": "ultimul ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Poziționează următorul câmp în funcție de linia de bază sau de marginea codului de bare, oferind câmpurilor rotite un punct de ancorare stabil."
+    "summary": "Poziționează următorul câmp în funcție de linia de bază sau de marginea codului de bare, oferind câmpurilor rotite un punct de ancorare stabil.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "poziția orizontală în puncte",
+          "values": "0 până la 32000",
+          "default": "ultima poziție de câmp"
+        },
+        {
+          "meaning": "poziția verticală în puncte",
+          "values": "0 până la 32000",
+          "default": "ultima poziție de câmp"
+        },
+        {
+          "meaning": "justificarea",
+          "values": "0 stânga, 1 dreapta, 2 automat",
+          "default": "ultimul ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Furnizează conținutul câmpului curent, inclusiv text, date pentru cod de bare sau date RFID."
+    "summary": "Furnizează conținutul câmpului curent, inclusiv text, date pentru cod de bare sau date RFID.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "conținutul câmpului",
+          "values": "orice date imprimabile de până la 3072 de octeți, fără caractere prefix"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Activează secvențele de eludare hexazecimale în datele câmpului, pentru octeți binari și caractere rezervate de comandă."
+    "summary": "Activează secvențele de eludare hexazecimale în datele câmpului, pentru octeți binari și caractere rezervate de comandă.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "caracterul indicator hexazecimal",
+          "values": "orice caracter, cu excepția prefixelor de format și control",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Adaugă un câmp de comentariu. Imprimanta îi ignoră conținutul până la următorul separator de câmp."
+    "summary": "Adaugă un câmp de comentariu. Imprimanta îi ignoră conținutul până la următorul separator de câmp.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "text de comentariu care nu se imprimă",
+          "values": "orice text, ignorat până la următoarea comandă"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Setează orientarea implicită a câmpului și, pe firmware-urile mai noi, alinierea implicită."
+    "summary": "Setează orientarea implicită a câmpului și, pe firmware-urile mai noi, alinierea implicită.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "rotația implicită a câmpului",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "justificarea implicită",
+          "values": "0 stânga, 1 dreapta, 2 automat",
+          "default": "auto pentru ^TB, altfel la stânga"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Încadrează datele câmpului într-un bloc de lățime fixă, cu control asupra numărului de linii, spațierii, indentării și alinierii."
+    "summary": "Încadrează datele câmpului într-un bloc de lățime fixă, cu control asupra numărului de linii, spațierii, indentării și alinierii.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "lățimea blocului în puncte",
+          "values": "0 până la lățimea etichetei",
+          "default": "0"
+        },
+        {
+          "meaning": "numărul maxim de linii",
+          "values": "1 până la 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "spațiere suplimentară între linii, în puncte",
+          "values": "-9999 până la 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "justificarea",
+          "values": "L stânga, C centru, R dreapta, J justificat",
+          "default": "L"
+        },
+        {
+          "meaning": "indentarea suspendată a liniilor următoare, în puncte",
+          "values": "0 până la 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Încadrează textul într-o casetă de lățime și înălțime fixe, trunchiind conținutul care depășește spațiul."
+    "summary": "Încadrează textul într-o casetă de lățime și înălțime fixe, trunchiind conținutul care depășește spațiul.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "rotația blocului",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^A"
+        },
+        {
+          "meaning": "lățimea blocului în puncte",
+          "values": "1 până la lățimea etichetei",
+          "default": "1"
+        },
+        {
+          "meaning": "înălțimea blocului în puncte",
+          "values": "1 până la lungimea etichetei",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Atribuie un număr unui câmp variabil în formatele stocate și recuperate."
+    "summary": "Atribuie un număr unui câmp variabil în formatele stocate și recuperate.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "numărul câmpului",
+          "values": "0 până la 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "text opțional de prompt KDU",
+          "values": "până la 255 de caractere alfanumerice"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Furnizează date pentru un câmp variabil. Spre deosebire de datele ^FD, acestea sunt șterse după imprimarea etichetei."
+    "summary": "Furnizează date pentru un câmp variabil. Spre deosebire de datele ^FD, acestea sunt șterse după imprimarea etichetei.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "date de câmp variabil",
+          "values": "0 până la 3072 octeți ca șir"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Setează caracterul folosit pentru a încorpora valorile câmpurilor numerotate în interiorul șirului altui câmp."
+    "summary": "Setează caracterul folosit pentru a încorpora valorile câmpurilor numerotate în interiorul șirului altui câmp.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "delimitatorul de concatenare a câmpurilor",
+          "values": "orice caracter, cu excepția prefixelor de format și control",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Setează marcatorii folosiți pentru identificatorii de ceas în timp real din datele câmpului."
+    "summary": "Setează marcatorii folosiți pentru identificatorii de ceas în timp real din datele câmpului.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "caracterul indicator pentru ceasul principal",
+          "values": "orice caracter ASCII",
+          "default": "%"
+        },
+        {
+          "meaning": "caracterul indicator pentru ceasul secundar",
+          "values": "orice caracter ASCII, diferit de a"
+        },
+        {
+          "meaning": "caracterul indicator pentru al treilea ceas",
+          "values": "orice caracter ASCII, diferit de a și b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Setează lățimea implicită a modulului codului de bare, raportul dintre bara lată și cea îngustă și înălțimea pentru câmpurile de coduri de bare următoare."
+    "summary": "Setează lățimea implicită a modulului codului de bare, raportul dintre bara lată și cea îngustă și înălțimea pentru câmpurile de coduri de bare următoare.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "lățimea modulului în puncte",
+          "values": "1 până la 10",
+          "default": "2"
+        },
+        {
+          "meaning": "raportul dintre bara lată și cea îngustă",
+          "values": "2.0 până la 3.0 în pași de 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "orice înălțime în puncte",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Plasează segmente PDF417 sau MicroPDF417 la origini specifice, atunci când un mesaj se întinde pe mai multe simboluri."
+    "summary": "Plasează segmente PDF417 sau MicroPDF417 la origini specifice, atunci când un mesaj se întinde pe mai multe simboluri.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "axa x a primului simbol, repetă perechile pentru mai multe",
+          "values": "0 până la 32000, sau e pentru a omite acest simbol"
+        },
+        {
+          "meaning": "axa y a primului simbol, repetă perechile pentru mai multe",
+          "values": "0 până la 32000, sau e pentru a omite acest simbol"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Setează ordinea caracterelor pentru câmpul curent și poate adăuga spațiere suplimentară între caractere."
+    "summary": "Setează ordinea caracterelor pentru câmpul curent și poate adăuga spațiere suplimentară între caractere.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "direcția de imprimare",
+          "values": "H orizontal, V vertical, R invers",
+          "default": "H"
+        },
+        {
+          "meaning": "spațiu suplimentar între caractere, în puncte",
+          "values": "0 până la 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Selectează fontul scalabil rezident 0 pentru câmpul următor, la dimensiunea și orientarea solicitate."
+    "summary": "Selectează fontul scalabil rezident 0 pentru câmpul următor, la dimensiunea și orientarea solicitate.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea caracterului în puncte",
+          "values": "10 până la 32000",
+          "default": "ultimul ^CF"
+        },
+        {
+          "meaning": "lățimea caracterului în puncte",
+          "values": "10 până la 32000",
+          "default": "ultimul ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Selectează un font rezident printr-un nume de un singur caracter, cu orientare, înălțime și lățime opționale."
+    "summary": "Selectează un font rezident printr-un nume de un singur caracter, cu orientare, înălțime și lățime opționale.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "numele fontului",
+          "values": "A până la Z, 0 până la 9",
+          "default": "ultimul ^CF"
+        },
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea caracterului în puncte",
+          "values": "10 până la 32000 scalabil, 1 până la 10 ori înălțimea de bază pentru bitmap",
+          "default": "ultimul ^CF"
+        },
+        {
+          "meaning": "lățimea caracterului în puncte",
+          "values": "10 până la 32000 scalabil, 1 până la 10 ori lățimea de bază pentru bitmap",
+          "default": "ultimul ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Selectează un fișier de font stocat pentru câmpul următor, cu orientare, înălțime și lățime opționale."
+    "summary": "Selectează un fișier de font stocat pentru câmpul următor, cu orientare, înălțime și lățime opționale.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "orientarea câmpului",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea caracterului în puncte",
+          "values": "10 până la 32000 scalabil, 1 până la 10 ori înălțimea de bază pentru bitmap",
+          "default": "ultimul ^CF"
+        },
+        {
+          "meaning": "lățimea caracterului în puncte",
+          "values": "10 până la 32000 scalabil, 1 până la 10 ori lățimea de bază pentru bitmap",
+          "default": "ultimul ^CF"
+        },
+        {
+          "meaning": "unitatea care păstrează fontul",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele fișierului de font de utilizat",
+          "values": "orice nume de font valid",
+          "default": "ultimul ^CF"
+        },
+        {
+          "meaning": "extensia fișierului de font",
+          "values": "FNT font, TTF TrueType, TTE extensie TrueType"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Setează fontul, înălțimea și lățimea de rezervă folosite de câmpurile de text care nu specifică propriile valori."
+    "summary": "Setează fontul, înălțimea și lățimea de rezervă folosite de câmpurile de text care nu specifică propriile valori.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "fontul implicit",
+          "values": "A până la Z, 0 până la 9",
+          "default": "A"
+        },
+        {
+          "meaning": "înălțimea implicită a caracterului în puncte",
+          "values": "0 până la 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "lățimea implicită a caracterului în puncte",
+          "values": "0 până la 32000",
+          "default": "5 sau ultima valoare salvată"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Selectează codificarea folosită pentru interpretarea datelor câmpului, inclusiv pagini de coduri și UTF-8."
+    "summary": "Selectează codificarea folosită pentru interpretarea datelor câmpului, inclusiv pagini de coduri și UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "codificarea de caractere de utilizat",
+          "values": "0 până la 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "poziția caracterului de remapat",
+          "values": "0 până la 255",
+          "default": "niciuna"
+        },
+        {
+          "meaning": "poziția caracterului de înlocuire",
+          "values": "0 până la 255",
+          "default": "niciuna"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Activează așezarea avansată a textului pentru câmpurile următoare, inclusiv text bidirecțional, shaping și funcții OpenType."
+    "summary": "Activează așezarea avansată a textului pentru câmpurile următoare, inclusiv text bidirecțional, shaping și funcții OpenType.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "sursa implicită a glifei",
+          "values": "0 caracter spațiu, 1 glifă de font",
+          "default": "0"
+        },
+        {
+          "meaning": "așezare bidirecțională a textului",
+          "values": "0 dezactivat, 1 activat",
+          "default": "0"
+        },
+        {
+          "meaning": "shaping de caractere",
+          "values": "0 dezactivat, 1 activat",
+          "default": "0"
+        },
+        {
+          "meaning": "suport pentru tabele OpenType",
+          "values": "0 dezactivat, 1 activat",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Asociază un nume de font de un singur caracter cu un fișier de font stocat."
+    "summary": "Asociază un nume de font de un singur caracter cu un fișier de font stocat.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "litera fontului de adăugat sau înlocuit",
+          "values": "A până la Z, 0 până la 9"
+        },
+        {
+          "meaning": "unitatea de stocare a fontului",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele fișierului de font stocat",
+          "values": "până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului de font",
+          "values": "FNT font, TTF TrueType, TTE extensie TrueType"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Setează dimensiunea memoriei cache pentru glifele scalabile randate, pentru a accelera generarea repetată a textului cu fonturi mari."
+    "summary": "Setează dimensiunea memoriei cache pentru glifele scalabile randate, pentru a accelera generarea repetată a textului cu fonturi mari.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "cache de caractere activat",
+          "values": "N nu, Y da",
+          "default": "Y"
+        },
+        {
+          "meaning": "memorie cache suplimentară, în K",
+          "values": "1 până la 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "tipul bufferului de cache",
+          "values": "0 fonturi normale, 1 fonturi asiatice",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Definește lanțuri de fonturi TrueType de rezervă, folosite atunci când fontului de bază îi lipsește o glifă."
+    "summary": "Definește lanțuri de fonturi TrueType de rezervă, folosite atunci când fontului de bază îi lipsește o glifă.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "fontul de extensie de legat, dispozitiv și fișier",
+          "values": "fișier TTF sau TTE pe un dispozitiv"
+        },
+        {
+          "meaning": "fontul sau fonturile de bază care îl primesc",
+          "values": "fișier FNT, TTF sau TTE, metacaracter permis"
+        },
+        {
+          "meaning": "conectează sau deconectează extensia",
+          "values": "0 deconectare, 1 conectare"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Descarcă un font bitmap și metricele sale în memoria imprimantei."
+    "summary": "Descarcă un font bitmap și metricele sale în memoria imprimantei.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "unitatea de stocare a fontului",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele fontului",
+          "values": "până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului de font",
+          "values": "FNT valoare fixă",
+          "default": "FNT"
+        },
+        {
+          "meaning": "orientarea fontului nativ",
+          "values": "doar N normal",
+          "default": "N"
+        },
+        {
+          "meaning": "înălțimea maximă a celulei, în puncte",
+          "values": "1 până la 32000"
+        },
+        {
+          "meaning": "lățimea maximă a celulei, în puncte",
+          "values": "1 până la 32000"
+        },
+        {
+          "meaning": "puncte de la partea superioară a celulei până la linia de bază",
+          "values": "1 până la 32000"
+        },
+        {
+          "meaning": "lățimea caracterelor spațiu",
+          "values": "1 până la 32000"
+        },
+        {
+          "meaning": "numărul de caractere din font",
+          "values": "1 până la 256"
+        },
+        {
+          "meaning": "textul titularului dreptului de autor",
+          "values": "1 până la 63 caractere alfanumerice"
+        },
+        {
+          "meaning": "date bitmap structurate pe caracter",
+          "values": "cod hash, apoi decalaje de înălțime și lățime, apoi date hex"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Descarcă un font scalabil Intellifont codificat în memoria imprimantei."
+    "summary": "Descarcă un font scalabil Intellifont codificat în memoria imprimantei.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "unitatea de stocare a fontului",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele fontului",
+          "values": "până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului de font",
+          "values": "FNT valoare fixă",
+          "default": "FNT"
+        },
+        {
+          "meaning": "dimensiunea fontului în octeți, din ZTools",
+          "values": "numărul de octeți al fontului convertit"
+        },
+        {
+          "meaning": "datele codificate ale fontului, pe octeți",
+          "values": "perechi hex corespunzătoare dimensiunii"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Descarcă un font TrueType codificat, cu până la 256 de caractere, în memoria imprimantei."
+    "summary": "Descarcă un font TrueType codificat, cu până la 256 de caractere, în memoria imprimantei.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "unitatea de stocare a fontului",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele fontului",
+          "values": "până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului de font",
+          "values": "DAT valoare fixă",
+          "default": "DAT"
+        },
+        {
+          "meaning": "dimensiunea fontului, în octeți",
+          "values": "numărul de octeți al fontului convertit"
+        },
+        {
+          "meaning": "datele codificate ale fontului, pe octeți",
+          "values": "perechi hex corespunzătoare dimensiunii"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Descarcă un font TrueType codificat, cu mai mult de 256 de glife, în memoria imprimantei."
+    "summary": "Descarcă un font TrueType codificat, cu mai mult de 256 de glife, în memoria imprimantei.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "unitatea de stocare a fontului",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele fontului",
+          "values": "până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului de font",
+          "values": "FNT valoare fixă",
+          "default": "FNT"
+        },
+        {
+          "meaning": "dimensiunea fontului, în octeți",
+          "values": "numărul de octeți al fontului convertit"
+        },
+        {
+          "meaning": "datele codificate ale fontului, pe octeți",
+          "values": "perechi hex corespunzătoare dimensiunii"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Descarcă o tabelă de codificare ce asociază octeții din datele câmpului cu valori Unicode, pentru fonturile TrueType."
+    "summary": "Descarcă o tabelă de codificare ce asociază octeții din datele câmpului cu valori Unicode, pentru fonturile TrueType.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "unitatea care păstrează tabela",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele tabelei",
+          "values": "până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului tabelei",
+          "values": "DAT valoare fixă",
+          "default": "DAT"
+        },
+        {
+          "meaning": "dimensiunea tabelei, în octeți",
+          "values": "numărul de octeți al tabelei convertite"
+        },
+        {
+          "meaning": "datele codificate ale tabelei, pe octeți",
+          "values": "perechi hex corespunzătoare dimensiunii"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Desenează un cod de bare Code 128 pentru date ASCII de lungime variabilă, cu moduri pentru comutarea automată a subseturilor și pentru date UCC/EAN."
+    "summary": "Desenează un cod de bare Code 128 pentru date ASCII de lungime variabilă, cu moduri pentru comutarea automată a subseturilor și pentru date UCC/EAN.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "N nu, Y da",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "N nu, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "cifra de control UCC",
+          "values": "N nu, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "modul",
+          "values": "N niciuna, U UCC Case Mode, A automat, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Desenează un cod de bare Code 39, cu o cifră de control Mod 43 opțională."
+    "summary": "Desenează un cod de bare Code 39, cu o cifră de control Mod 43 opțională.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "cifra de control Mod 43",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Desenează un cod de bare Code 93, reprezentând date ASCII complete prin caractere de shift."
+    "summary": "Desenează un cod de bare Code 93, reprezentând date ASCII complete prin caractere de shift.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimă cifra de control",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Desenează un cod de bare Code 11 pentru cifre și cratime, cu cifre de control opționale."
+    "summary": "Desenează un cod de bare Code 11 pentru cifre și cratime, cu cifre de control opționale.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "numărul cifrelor de control",
+          "values": "Y 1 cifră, N 2 cifre",
+          "default": "N"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Desenează un cod de bare Interleaved 2 of 5 pentru date numerice de lungime pară, cu o cifră de control opțională."
+    "summary": "Desenează un cod de bare Interleaved 2 of 5 pentru date numerice de lungime pară, cu o cifră de control opțională.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "cifra de control Mod 10",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "al șaselea slot, nedocumentat",
+          "values": "nedocumentat în ghid"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Desenează un cod de bare Industrial 2 of 5, un cod numeric ale cărui date sunt codificate numai prin bare."
+    "summary": "Desenează un cod de bare Industrial 2 of 5, un cod numeric ale cărui date sunt codificate numai prin bare.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Desenează un cod de bare Standard 2 of 5, un cod numeric autoverificabil ale cărui date sunt codificate numai prin bare."
+    "summary": "Desenează un cod de bare Standard 2 of 5, un cod numeric autoverificabil ale cărui date sunt codificate numai prin bare.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Desenează un cod de bare ANSI Codabar, cunoscut și ca USD-4, pentru etichete din domeniul bibliotecilor, sănătății și curierat."
+    "summary": "Desenează un cod de bare ANSI Codabar, cunoscut și ca USD-4, pentru etichete din domeniul bibliotecilor, sănătății și curierat.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "cifra de control, dezactivată fix",
+          "values": "doar N",
+          "default": "N"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "caracterul de start",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "caracterul de stop",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Desenează un cod de bare LOGMARS, varianta Code 39 folosită de Departamentul Apărării al SUA, și convertește datele scrise cu litere mici în litere mari."
+    "summary": "Desenează un cod de bare LOGMARS, varianta Code 39 folosită de Departamentul Apărării al SUA, și convertește datele scrise cu litere mici în litere mari.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Desenează un cod de bare MSI, un cod numeric derivat din Plessey, cu scheme de cifre de control selectabile."
+    "summary": "Desenează un cod de bare MSI, un cod numeric derivat din Plessey, cu scheme de cifre de control selectabile.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "schema cifrei de control",
+          "values": "A niciuna, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "cifra de control în linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Desenează un cod de bare Plessey, un cod numeric mai vechi, cu cifre de control opționale."
+    "summary": "Desenează un cod de bare Plessey, un cod numeric mai vechi, cu cifre de control opționale.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "imprimă cifra de control",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Desenează un cod de bare EAN-13 pentru numere de articol din comerțul cu amănuntul și calculează cifra de control din douăsprezece cifre de date."
+    "summary": "Desenează un cod de bare EAN-13 pentru numere de articol din comerțul cu amănuntul și calculează cifra de control din douăsprezece cifre de date.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Desenează un cod de bare EAN-8 pentru ambalaje mici din comerțul cu amănuntul și calculează cifra de control din șapte cifre de date."
+    "summary": "Desenează un cod de bare EAN-8 pentru ambalaje mici din comerțul cu amănuntul și calculează cifra de control din șapte cifre de date.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Desenează un cod de bare UPC-A pentru ambalaje din comerțul cu amănuntul, pe baza a unsprezece cifre de date, cu imprimare opțională a cifrei de control."
+    "summary": "Desenează un cod de bare UPC-A pentru ambalaje din comerțul cu amănuntul, pe baza a unsprezece cifre de date, cu imprimare opțională a cifrei de control.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 9999",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimă cifra de control",
+          "values": "Y da, N nu",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Desenează un cod de bare UPC-E, forma scurtă a UPC-A. Datele câmpului reprezintă codul complet de producător și produs, format din zece cifre."
+    "summary": "Desenează un cod de bare UPC-E, forma scurtă a UPC-A. Datele câmpului reprezintă codul complet de producător și produs, format din zece cifre.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimă cifra de control",
+          "values": "Y da, N nu",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Desenează un simbol GS1 DataBar cu subtip, mărire, înălțime și lățime a segmentului selectabile."
+    "summary": "Desenează un simbol GS1 DataBar cu subtip, mărire, înălțime și lățime a segmentului selectabile.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R rotit, I inversat, B de jos în sus",
+          "default": "R"
+        },
+        {
+          "meaning": "tip de simbologie DataBar",
+          "values": "1 omni, 2 trunchiat, 3 stivuit, 4 stivuit omni, 5 limitat, 6 extins, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 cu CC-A/B, 12 UCC/EAN-128 cu CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "factorul de mărire",
+          "values": "1 până la 10",
+          "default": "setarea imprimantei"
+        },
+        {
+          "meaning": "înălțimea separatorului",
+          "values": "1 sau 2",
+          "default": "1"
+        },
+        {
+          "meaning": "înălțimea porțiunii lineare, în puncte",
+          "values": "1 până la 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "lățimea segmentului pentru GS1 DataBar Expanded",
+          "values": "2 până la 22, doar numere pare",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Desenează un cod de bare poștal Planet Code din cifre codificate ca bare înalte și scurte."
+    "summary": "Desenează un cod de bare poștal Planet Code din cifre codificate ca bare înalte și scurte.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R rotit, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 9999",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Desenează POSTNET, Planet Code sau USPS Intelligent Mail, în funcție de tipul de cod poștal selectat."
+    "summary": "Desenează POSTNET, Planet Code sau USPS Intelligent Mail, în funcție de tipul de cod poștal selectat.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "tipul de cod poștal",
+          "values": "0 postnet, 1 planet, 2 rezervat, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Desenează un simbol suplimentar UPC/EAN de două sau cinci cifre, alături de un cod de bare principal."
+    "summary": "Desenează un simbol suplimentar UPC/EAN de două sau cinci cifre, alături de un cod de bare principal.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 32000",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "linia de interpretare",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "linia de interpretare peste cod",
+          "values": "Y da, N nu",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Desenează un cod de bare stivuit Code 49, cu două până la opt rânduri de date ASCII complete."
+    "summary": "Desenează un cod de bare stivuit Code 49, cu două până la opt rânduri de date ASCII complete.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "multiplicatorul de înălțime al rândurilor individuale",
+          "values": "1 până la înălțimea etichetei",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "plasarea liniei de interpretare",
+          "values": "N niciuna, A deasupra, B dedesubt",
+          "default": "N"
+        },
+        {
+          "meaning": "modul de start",
+          "values": "0 alfanumeric, 1 citire multiplă, 2 numeric, 3 grup alfa, 4 shift 1, 5 shift 2, A automat",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Desenează un simbol QR Code. Parametrii comenzii setează modelul, mărirea și masca. Datele câmpului setează nivelul de corecție a erorilor și modul de caractere."
+    "summary": "Desenează un simbol QR Code. Parametrii comenzii setează modelul, mărirea și masca. Datele câmpului setează nivelul de corecție a erorilor și modul de caractere.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "orientarea câmpului",
+          "values": "doar N normal",
+          "default": "N"
+        },
+        {
+          "meaning": "modelul",
+          "values": "1 original, 2 îmbunătățit",
+          "default": "2"
+        },
+        {
+          "meaning": "factorul de mărire",
+          "values": "1 până la 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "nivelul de corecție a erorilor",
+          "values": "H ultra-ridicat, Q ridicat, M standard, L densitate mare",
+          "default": "Q când este gol, M când valoarea este nevalidă"
+        },
+        {
+          "meaning": "valoarea măștii",
+          "values": "0 până la 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Desenează un simbol Data Matrix cu dimensiune configurabilă a elementului, nivel de calitate și gestionare a secvențelor de evadare."
+    "summary": "Desenează un simbol Data Matrix cu dimensiune configurabilă a elementului, nivel de calitate și gestionare a secvențelor de evadare.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea dimensională a elementelor simbolului",
+          "values": "1 până la lățimea etichetei",
+          "default": "0, ceea ce preia înălțimea simbolului din ^BY"
+        },
+        {
+          "meaning": "nivelul de calitate",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "coloane de codificat",
+          "values": "9 până la 49, doar impar pentru calitatea 0 până la 140, doar par pentru calitatea 200"
+        },
+        {
+          "meaning": "rânduri de codificat",
+          "values": "9 până la 49"
+        },
+        {
+          "meaning": "ID-ul formatului",
+          "values": "1 numeric, 2 alfa majuscule, 3 alfanumeric majuscule cu . , - /, 4 alfanumeric majuscule, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "caracterul de control al secvenței escape",
+          "values": "orice caracter",
+          "default": "tildă"
+        },
+        {
+          "meaning": "raport de aspect",
+          "values": "1 pătrat, 2 rectangular",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Desenează un simbol bidimensional stivuit PDF417, pentru volume mari de text sau date binare."
+    "summary": "Desenează un simbol bidimensional stivuit PDF417, pentru volume mari de text sau date binare.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare pe rând, în puncte",
+          "values": "1 până la înălțimea etichetei",
+          "default": "ultimul ^BY"
+        },
+        {
+          "meaning": "nivelul de securitate",
+          "values": "1 până la 8",
+          "default": "0"
+        },
+        {
+          "meaning": "numărul de coloane de date",
+          "values": "1 până la 30",
+          "default": "raport de aspect automat"
+        },
+        {
+          "meaning": "numărul de rânduri",
+          "values": "3 până la 90",
+          "default": "raport de aspect automat"
+        },
+        {
+          "meaning": "trunchiază indicatorii de rând din dreapta și modelul de stop",
+          "values": "Y da, N nu",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Desenează un simbol MicroPDF417, o variantă compactă de PDF417 cu modele de adresare a rândurilor."
+    "summary": "Desenează un simbol MicroPDF417, o variantă compactă de PDF417 cu modele de adresare a rândurilor.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea codului de bare în puncte",
+          "values": "1 până la 9999",
+          "default": "ultimul ^BY, sau 10 dacă nu a fost trimis niciun ^BY"
+        },
+        {
+          "meaning": "modul",
+          "values": "0 până la 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Desenează un simbol matricial Aztec, cu mărire și corecție a erorilor configurabile."
+    "summary": "Desenează un simbol matricial Aztec, cu mărire și corecție a erorilor configurabile.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R rotit, I 180, B 270",
+          "default": "ultimul ^FW"
+        },
+        {
+          "meaning": "factorul de mărire",
+          "values": "1 până la 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "indicatorul de interpretare extinsă a canalului",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "controlul erorilor și dimensiunea simbolului",
+          "values": "0 implicit, 1 până la 99 procent de eroare, 101 până la 104 straturi compacte, 201 până la 232 straturi complete, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "indicatorul simbolului de meniu",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "numărul de simboluri pentru structured append",
+          "values": "1 până la 26",
+          "default": "1"
+        },
+        {
+          "meaning": "câmpul ID pentru structured append",
+          "values": "text de până la 24 de caractere",
+          "default": "fără ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Desenează un simbol CODABLOCK în modul A, E sau F, pentru volume mai mari de date."
+    "summary": "Desenează un simbol CODABLOCK în modul A, E sau F, pentru volume mai mari de date.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "înălțimea codului de bare pe rând, în puncte",
+          "values": "2 până la 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "nivelul de securitate",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "caractere pe rând",
+          "values": "2 până la 62"
+        },
+        {
+          "meaning": "rânduri de codificat",
+          "values": "mode-A 1-22, mode-EF 2-4"
+        },
+        {
+          "meaning": "modul",
+          "values": "A code39-set, E code128-fnc1, F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Desenează un simbol UPS MaxiCode, cu un mod pentru mesaje structurate de curierat sau date generale."
+    "summary": "Desenează un simbol UPS MaxiCode, cu un mod pentru mesaje structurate de curierat sau date generale.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "modul",
+          "values": "2 us-postal, 3 non-us-postal, 4 standard, 5 full-eec, 6 reader-program",
+          "default": "2"
+        },
+        {
+          "meaning": "numărul simbolului din secvență",
+          "values": "1 până la 8",
+          "default": "1"
+        },
+        {
+          "meaning": "numărul total de simboluri",
+          "values": "1 până la 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Desenează un simbol TLC39 pentru etichete din telecomunicații, combinând Code 39 cu o componentă MicroPDF417."
+    "summary": "Desenează un simbol TLC39 pentru etichete din telecomunicații, combinând Code 39 cu o componentă MicroPDF417.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R rotit, I inversat, B de jos în sus"
+        },
+        {
+          "meaning": "lățimea părții Code 39, în puncte",
+          "values": "1 până la 10",
+          "default": "600 dpi 4, altfel 2"
+        },
+        {
+          "meaning": "raportul lat-îngust al părții Code 39",
+          "values": "2.0 până la 3.0 în pași de 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "înălțimea părții Code 39, în puncte",
+          "values": "1 până la 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "lățimea barei înguste a părții MicroPDF417",
+          "values": "1 până la 10",
+          "default": "600 dpi 4, altfel 2"
+        },
+        {
+          "meaning": "înălțimea rândului părții MicroPDF417, în puncte",
+          "values": "1 până la 255",
+          "default": "600 dpi 8, altfel 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Când este activată, validează datele și parametrii codului de bare și imprimă INVALID în locul unui simbol incorect."
+    "summary": "Când este activată, validează datele și parametrii codului de bare și imprimă INVALID în locul unui simbol incorect.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "validarea codului",
+          "values": "N nu, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Desenează un dreptunghi plin sau conturat. Dacă o latură este egală cu grosimea marginii, rezultă o linie."
+    "summary": "Desenează un dreptunghi plin sau conturat. Dacă o latură este egală cu grosimea marginii, rezultă o linie.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "lățimea casetei în puncte",
+          "values": "t până la 32000",
+          "default": "t sau 1"
+        },
+        {
+          "meaning": "înălțimea casetei în puncte",
+          "values": "t până la 32000",
+          "default": "t sau 1"
+        },
+        {
+          "meaning": "grosimea marginii în puncte",
+          "values": "1 până la 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "culoarea liniei",
+          "values": "B negru, W alb",
+          "default": "B"
+        },
+        {
+          "meaning": "rotunjirea colțurilor",
+          "values": "0 fără rotunjire până la 8 cea mai puternică rotunjire",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Desenează o linie diagonală pe o lățime și înălțime date, înclinată spre dreapta sau spre stânga."
+    "summary": "Desenează o linie diagonală pe o lățime și înălțime date, înclinată spre dreapta sau spre stânga.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "lățimea casetei în puncte",
+          "values": "3 până la 32000",
+          "default": "t sau 3"
+        },
+        {
+          "meaning": "înălțimea casetei în puncte",
+          "values": "3 până la 32000",
+          "default": "t sau 3"
+        },
+        {
+          "meaning": "grosimea marginii în puncte",
+          "values": "1 până la 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "culoarea liniei",
+          "values": "B negru, W alb",
+          "default": "B"
+        },
+        {
+          "meaning": "direcția diagonalei",
+          "values": "R sau / înclinat la dreapta, L sau \\ înclinat la stânga",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Desenează o elipsă pe baza unei lățimi și înălțimi în puncte, cu grosimea marginii spre interior și ieșire în negru sau alb."
+    "summary": "Desenează o elipsă pe baza unei lățimi și înălțimi în puncte, cu grosimea marginii spre interior și ieșire în negru sau alb.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "lățimea elipsei în puncte",
+          "values": "3 până la 4095",
+          "default": "t sau 1"
+        },
+        {
+          "meaning": "înălțimea elipsei în puncte",
+          "values": "3 până la 4095",
+          "default": "t sau 1"
+        },
+        {
+          "meaning": "grosimea marginii în puncte",
+          "values": "2 până la 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "culoarea liniei",
+          "values": "B negru, W alb",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Desenează un cerc cu diametrul dat în puncte, cu grosimea marginii spre interior și ieșire în negru sau alb."
+    "summary": "Desenează un cerc cu diametrul dat în puncte, cu grosimea marginii spre interior și ieșire în negru sau alb.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "diametrul cercului în puncte",
+          "values": "3 până la 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "grosimea marginii în puncte",
+          "values": "2 până la 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "culoarea liniei",
+          "values": "B negru, W alb",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Plasează o imagine bitmap monocromă la poziția curentă a câmpului, folosind date ASCII hex, binare sau comprimate."
+    "summary": "Plasează o imagine bitmap monocromă la poziția curentă a câmpului, folosind date ASCII hex, binare sau comprimate.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "tipul de compresie",
+          "values": "A ascii hex, B binar, C binar comprimat",
+          "default": "A"
+        },
+        {
+          "meaning": "numărul total de octeți de trimis",
+          "values": "1 până la 99999"
+        },
+        {
+          "meaning": "numărul total de octeți din imagine",
+          "values": "1 până la 99999"
+        },
+        {
+          "meaning": "octeți pe rândul imaginii",
+          "values": "1 până la 99999"
+        },
+        {
+          "meaning": "datele imaginii",
+          "values": "ascii hex 00 până la FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Imprimă un simbol rezident selectat prin datele câmpului, precum copyright sau marcă înregistrată."
+    "summary": "Imprimă un simbol rezident selectat prin datele câmpului, precum copyright sau marcă înregistrată.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "orientarea",
+          "values": "N normal, R 90 în sensul acelor de ceasornic, I 180, B 270",
+          "default": "N sau ultimul ^FW"
+        },
+        {
+          "meaning": "înălțimea caracterului proporțională cu lățimea",
+          "values": "0 până la 32000",
+          "default": "ultimul ^CF"
+        },
+        {
+          "meaning": "lățimea caracterului proporțională cu înălțimea",
+          "values": "0 până la 32000",
+          "default": "ultimul ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Încarcă o imagine stocată la începutul unui format și o ancorează la originea etichetei."
+    "summary": "Încarcă o imagine stocată la începutul unui format și o ancorează la originea etichetei.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "dispozitivul de stocare",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele obiectului",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": ".GRF sau .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Plasează o imagine stocată la poziția curentă a câmpului, fără a o scala."
+    "summary": "Plasează o imagine stocată la poziția curentă a câmpului, fără a o scala.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "dispozitivul de stocare",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "ordinea priorității de căutare"
+        },
+        {
+          "meaning": "numele obiectului",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": ".GRF sau .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Șterge grafica, fonturile sau formatele stocate din memoria imprimantei, cu suport pentru caractere joker la ștergerea în grup."
+    "summary": "Șterge grafica, fonturile sau formatele stocate din memoria imprimantei, cu suport pentru caractere joker la ștergerea în grup.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "dispozitivul de stocare",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele obiectului, metacaracter permis",
+          "values": "1 până la 8 caractere",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului, metacaracter permis",
+          "values": "orice extensie",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Salvează formatul curent ca imagine grafică, pentru recuperare rapidă și suprapunerea datelor variabile."
+    "summary": "Salvează formatul curent ca imagine grafică, pentru recuperare rapidă și suprapunerea datelor variabile.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "dispozitivul de stocare",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele obiectului",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": ".GRF sau .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "imprimă eticheta după salvare",
+          "values": "N nu, Y da",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Descarcă o imagine grafică în format ASCII hex în memoria imprimantei, sub un nume reutilizabil."
+    "summary": "Descarcă o imagine grafică în format ASCII hex în memoria imprimantei, sub un nume reutilizabil.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "dispozitivul de stocare",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele imaginii",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "dimensiunea totală a imaginii, în octeți",
+          "values": "calculat din lățimea și înălțimea imaginii"
+        },
+        {
+          "meaning": "octeți pe rândul imaginii",
+          "values": "calculat din lățimea imaginii"
+        },
+        {
+          "meaning": "datele imaginii grafice",
+          "values": "ascii hex 00 până la FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Descarcă o imagine grafică, un font sau un certificat în memoria imprimantei, sub un nume reutilizabil."
+    "summary": "Descarcă o imagine grafică, un font sau un certificat în memoria imprimantei, sub un nume reutilizabil.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "dispozitivul de stocare",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele fișierului",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "formatul datelor",
+          "values": "A ascii sau zb64, B binar, C ar comprimat, P png zb64"
+        },
+        {
+          "meaning": "tipul fișierului stocat",
+          "values": "B bitmap, E tte, G grf brut, P png, T ttf sau otf, X pcx, NRD necitibil, PAC acreditare de acces, C meniu wml, F pagină htm, H feedback imprimantă",
+          "default": "G"
+        },
+        {
+          "meaning": "numărul total de octeți din fișier",
+          "values": "dimensiunea reală a fișierului decomprimat"
+        },
+        {
+          "meaning": "octeți pe rând pentru imaginile grf",
+          "values": "calculat din lățimea imaginii"
+        },
+        {
+          "meaning": "datele fișierului",
+          "values": "ascii hex, zb64 sau binar"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Serializează datele câmpurilor de text sau de coduri de bare pe mai multe etichete, folosind o valoare de start, o direcție și un increment."
+    "summary": "Serializează datele câmpurilor de text sau de coduri de bare pe mai multe etichete, folosind o valoare de start, o direcție și un increment.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "valoarea serială de start",
+          "values": "până la 12 cifre",
+          "default": "1"
+        },
+        {
+          "meaning": "pasul de incrementare sau decrementare",
+          "values": "până la 12 cifre",
+          "default": "1"
+        },
+        {
+          "meaning": "completează cu zerouri la început",
+          "values": "N nu, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Serializează poziții selectate din datele câmpului, folosind o mască și seturi de caractere."
+    "summary": "Serializează poziții selectate din datele câmpului, folosind o mască și seturi de caractere.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "masca de serializare care selectează caracterele care se schimbă",
+          "values": "D decimal, H hex, O octal, A alfa, N alfanumeric, % omite"
+        },
+        {
+          "meaning": "șirul de incrementare sau decrementare pentru mască",
+          "values": "o valoare pe poziție de mască, % pentru a o lăsa neschimbată",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Stochează comenzile următoare ca format reutilizabil, în loc să le imprime imediat."
+    "summary": "Stochează comenzile următoare ca format reutilizabil, în loc să le imprime imediat.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "dispozitivul pentru stocarea șablonului",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele șablonului",
+          "values": "1 până la 16 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Recuperează un format stocat și furnizează valori pentru câmpurile sale numerotate de tip placeholder."
+    "summary": "Recuperează un format stocat și furnizează valori pentru câmpurile sale numerotate de tip placeholder.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "dispozitivul sursă al șablonului stocat",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R apoi E apoi B apoi A"
+        },
+        {
+          "meaning": "numele șablonului stocat",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Recuperează o imagine grafică stocată la poziția curentă, cu scalare independentă pe orizontală și verticală."
+    "summary": "Recuperează o imagine grafică stocată la poziția curentă, cu scalare independentă pe orizontală și verticală.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "dispozitivul sursă al graficii stocate",
+          "values": "R, E, B, A",
+          "default": "R apoi E apoi B apoi A"
+        },
+        {
+          "meaning": "numele graficii stocate",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": "GRF"
+        },
+        {
+          "meaning": "factorul de mărire pe axa x",
+          "values": "1 până la 10",
+          "default": "1"
+        },
+        {
+          "meaning": "factorul de mărire pe axa y",
+          "values": "1 până la 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Selectează modul în care imprimanta detectează limitele etichetei, folosind spații, marcaje sau suport continuu."
+    "summary": "Selectează modul în care imprimanta detectează limitele etichetei, folosind spații, marcaje sau suport continuu.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "metoda de urmărire a suportului",
+          "values": "N continuu, Y sau W spațiu necontinuu, M marcaj necontinuu, A detectare automată, V continuu cu lungime variabilă",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "decalajul marcajului negru în puncte",
+          "values": "-120 până la 283 pe majoritatea imprimantelor, -240 până la 566 la 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Setează lungimea maximă de etichetă pe care o caută imprimanta la calibrarea suportului necontinuu."
+    "summary": "Setează lungimea maximă de etichetă pe care o caută imprimanta la calibrarea suportului necontinuu.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "lungimea maximă a etichetei, în rânduri de puncte",
+          "values": "dpi-ul imprimantei înmulțit cu doi, până la lungimea maximă",
+          "default": "ultima valoare salvată"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Setează acțiunea la pornire și la închiderea capului de imprimare, incluzând calibrare, avans sau măsurarea lungimii."
+    "summary": "Setează acțiunea la pornire și la închiderea capului de imprimare, incluzând calibrare, avans sau măsurarea lungimii.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "acțiunea de avans la pornire",
+          "values": "F avans până la primul spațiu, C calibrare ca ~JC, L setează lungimea ca ~JL, N fără avans, S calibrare scurtă",
+          "default": "C"
+        },
+        {
+          "meaning": "acțiunea de avans după închiderea capului",
+          "values": "F avans până la primul spațiu, C calibrare ca ~JC, L setează lungimea ca ~JL, N fără avans, S calibrare scurtă",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Configurează alertele de întreținere imprimate, pentru curățarea sau înlocuirea capului de imprimare."
+    "summary": "Configurează alertele de întreținere imprimate, pentru curățarea sau înlocuirea capului de imprimare.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "tipul alertei",
+          "values": "R înlocuire cap, C curățare cap"
+        },
+        {
+          "meaning": "imprimă eticheta de alertă",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "distanța până la prima alertă",
+          "values": "R 0 până la 150 km, C 100 până la 2000 metri, 0 dezactivat",
+          "default": "50 km pentru R, 0 dezactivat pentru C"
+        },
+        {
+          "meaning": "distanța înainte de reemiterea alertei",
+          "values": "0 până la 2000 metri",
+          "default": "0"
+        },
+        {
+          "meaning": "unitatea de măsură raportată",
+          "values": "C centimetri, I inch, M metri",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Controlează dacă imaginea bitmap a etichetei este ștearsă după imprimare sau păstrată pentru reutilizare de etichetele următoare."
+    "summary": "Controlează dacă imaginea bitmap a etichetei este ștearsă după imprimare sau păstrată pentru reutilizare de etichetele următoare.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "șterge bitmapul după imprimare",
+          "values": "Y șterge, N păstrează",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Setează textul afișat pe etichetele de alertă de întreținere, pentru curățarea sau înlocuirea capului de imprimare."
+    "summary": "Setează textul afișat pe etichetele de alertă de întreținere, pentru curățarea sau înlocuirea capului de imprimare.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "tipul alertei",
+          "values": "R înlocuire cap, C curățare cap",
+          "default": "R"
+        },
+        {
+          "meaning": "mesajul imprimat pe eticheta de alertă",
+          "values": "până la 63 de caractere, fără virgule",
+          "default": "curățați capul de imprimare sau înlocuiți capul de imprimare"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Blochează o setare din panoul de control, precum intensitatea sau calibrarea, până când este deblocată."
+    "summary": "Blochează o setare din panoul de control, precum intensitatea sau calibrarea, până când este deblocată.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "modul panoului de control de protejat",
+          "values": "D intensitate, P poziție, C calibrare, E activează tot, S fără salvări, W pauză, F avans, X anulare, M meniu",
+          "default": "trebuie specificat"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Activează sau dezactivează indicatorul de avertizare pentru capul de imprimare rece."
+    "summary": "Activează sau dezactivează indicatorul de avertizare pentru capul de imprimare rece.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "activează avertizarea pentru capul de imprimare rece",
+          "values": "Y activează, N dezactivează"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Ajustează intensitatea de imprimare relativ la intensitatea configurată curent a imprimantei."
+    "summary": "Ajustează intensitatea de imprimare relativ la intensitatea configurată curent a imprimantei.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "intensitatea suportului relativă la setarea curentă",
+          "values": "-30 până la 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Setează imediat intensitatea de imprimare în valoare absolută, corespunzătoare setării din panoul frontal."
+    "summary": "Setează imediat intensitatea de imprimare în valoare absolută, corespunzătoare setării din panoul frontal.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "nivelul absolut al intensității de imprimare",
+          "values": "00 până la 30",
+          "default": "ultima valoare salvată"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Controlează dacă o etichetă întreruptă din cauza unei defecțiuni de suport, panglică sau cap de imprimare este reimprimată după remediere."
+    "summary": "Controlează dacă o etichetă întreruptă din cauza unei defecțiuni de suport, panglică sau cap de imprimare este reimprimată după remediere.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "reimprimă eticheta după încetarea erorii",
+          "values": "N nu, Y da",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Programează teste periodice ale elementelor capului de imprimare, în funcție de numărul de etichete imprimate și un interval opțional de elemente."
+    "summary": "Programează teste periodice ale elementelor capului de imprimare, în funcție de numărul de etichete imprimate și un interval opțional de elemente.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "etichete imprimate între testele capului",
+          "values": "0 până la 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "selectarea manuală a intervalului de elemente pentru testul capului",
+          "values": "N nu, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "numărul primului element de test",
+          "values": "0 până la 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "numărul ultimului element de test",
+          "values": "0 până la 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Ajustează poziția de repaus pentru tear-off sau tăiere, cu un mic decalaj în puncte, după imprimare."
+    "summary": "Ajustează poziția de repaus pentru tear-off sau tăiere, cu un mic decalaj în puncte, după imprimare.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "schimbarea poziției de repaus tear-off, în puncte",
+          "values": "-120 până la 120",
+          "default": "ultima valoare salvată"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Configurează pragurile de avertizare timpurie pentru întreținerea suportului, panglicii și capului de imprimare."
+    "summary": "Configurează pragurile de avertizare timpurie pentru întreținerea suportului, panglicii și capului de imprimare.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "avertizare timpurie pentru suport sau consumabile",
+          "values": "E activare, D dezactivare",
+          "default": "D"
+        },
+        {
+          "meaning": "numărul de etichete pe rolă",
+          "values": "100 până la 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "suportul a fost înlocuit",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "codul lungimii panglicii, în funcție de model",
+          "values": "N 0 m, 0 până la 7 este 100 până la 450 m, 10 până la 16 este 600 până la 900 m",
+          "default": "1 sau 7, în funcție de model"
+        },
+        {
+          "meaning": "panglica a fost înlocuită",
+          "values": "Y da, N nu",
+          "default": "N"
+        },
+        {
+          "meaning": "avertizare timpurie de întreținere activată",
+          "values": "E activat, D dezactivat",
+          "default": "D"
+        },
+        {
+          "meaning": "codul intervalului de curățare a capului",
+          "values": "0 până la 16 pentru 100 m până la 900 m în pași de 50 m",
+          "default": "1 sau 7, în funcție de model"
+        },
+        {
+          "meaning": "capul de imprimare a fost curățat",
+          "values": "N nu, Y da",
+          "default": "N"
+        },
+        {
+          "meaning": "pragul de avertizare a duratei de viață a capului, în inch",
+          "values": "0 dezactivat, sau 100 până la 3500000 inch",
+          "default": "1000000"
+        },
+        {
+          "meaning": "capul de imprimare a fost înlocuit",
+          "values": "N nu, Y da",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Controlează momentul derulării inverse în jurul operațiilor de imprimare și tăiere sau o dezactivează."
+    "summary": "Controlează momentul derulării inverse în jurul operațiilor de imprimare și tăiere sau o dezactivează.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "temporizarea derulării inverse față de imprimare",
+          "values": "A complet după, B complet înainte, N normal, O dezactivat, 10 până la 90 procent",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Avansează un număr specificat de rânduri de puncte goale, la viteza de deplasare rapidă."
+    "summary": "Avansează un număr specificat de rânduri de puncte goale, la viteza de deplasare rapidă.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "rânduri de puncte deplasate de la partea de jos",
+          "values": "0 până la 32000",
+          "default": "trebuie specificat"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Acționează imediat tăietorul pe imprimantele KR403 aflate în modul de imprimare kiosc."
+    "summary": "Acționează imediat tăietorul pe imprimantele KR403 aflate în modul de imprimare kiosc.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "modul de suprascriere a lungimii de tăiere",
+          "values": "0 setarea kiosc, 1 tăiere completă"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Adaugă o lungime suplimentară de ejectare la presenterul kiosc KR403, astfel încât suportul imprimat să fie mai ușor de luat."
+    "summary": "Adaugă o lungime suplimentară de ejectare la presenterul kiosc KR403, astfel încât suportul imprimat să fie mai ușor de luat.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "lungime suplimentară de ejectare a suportului, în mm",
+          "values": "0 până la 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Rulează un ciclu al presenterului KR403, oferind suportul imprimat pentru scoatere manuală."
+    "summary": "Rulează un ciclu al presenterului KR403, oferind suportul imprimat pentru scoatere manuală.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "lungimea de ejectare a suportului pentru presenter, în mm",
+          "values": "0 până la 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Setează tensiunea rolei de alimentare cu panglică pe imprimantele din seria PAX."
+    "summary": "Setează tensiunea rolei de alimentare cu panglică pe imprimantele din seria PAX.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "nivelul de tensiune a panglicii",
+          "values": "L scăzut, M mediu, H ridicat",
+          "default": "trebuie specificat"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Setează data și ora ceasului în timp real al imprimantei."
+    "summary": "Setează data și ora ceasului în timp real al imprimantei.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "luna",
+          "values": "01 până la 12",
+          "default": "luna curentă"
+        },
+        {
+          "meaning": "ziua",
+          "values": "01 până la 31",
+          "default": "ziua curentă"
+        },
+        {
+          "meaning": "anul",
+          "values": "1998 până la 2097",
+          "default": "anul curent"
+        },
+        {
+          "meaning": "ora",
+          "values": "00 până la 23",
+          "default": "ora curentă"
+        },
+        {
+          "meaning": "minutul",
+          "values": "00 până la 59",
+          "default": "minutul curent"
+        },
+        {
+          "meaning": "secunda",
+          "values": "00 până la 59",
+          "default": "secunda curentă"
+        },
+        {
+          "meaning": "formatul am/pm sau 24 de ore",
+          "values": "A am, P pm, M 24 ore",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Selectează formatul de dată și oră afișat pe eticheta de configurare și pe panoul de control."
+    "summary": "Selectează formatul de dată și oră afișat pe eticheta de configurare și pe panoul de control.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "formatul de afișare a datei și orei",
+          "values": "0 numărul versiunii, 1 MM/DD/YY 24 ore, 2 MM/DD/YY 12 ore, 3 DD/MM/YY 24 ore, 4 DD/MM/YY 12 ore",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Definește decalaje secundare de ceas față de ceasul în timp real. Decalajele se pierd la oprirea imprimantei."
+    "summary": "Definește decalaje secundare de ceas față de ceasul în timp real. Decalajele se pierd la oprirea imprimantei.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "numărul ceasului de decalat",
+          "values": "2 secundar, 3 terțiar",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "decalaj în luni",
+          "values": "-32000 până la 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "decalaj în zile",
+          "values": "-32000 până la 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "decalaj în ani",
+          "values": "-32000 până la 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "decalaj în ore",
+          "values": "-32000 până la 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "decalaj în minute",
+          "values": "-32000 până la 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "decalaj în secunde",
+          "values": "-32000 până la 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Setează momentul la care sunt marcate câmpurile de timp și selectează limba pentru numele zilelor și lunilor."
+    "summary": "Setează momentul la care sunt marcate câmpurile de timp și selectează limba pentru numele zilelor și lunilor.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "modul de citire a ceasului",
+          "values": "S ora de start, T ora curentă, 0 până la 999 toleranță",
+          "default": "S"
+        },
+        {
+          "meaning": "limba pentru numele zilelor și lunilor",
+          "values": "1 engleză, 2 spaniolă, 3 franceză, 4 germană, 5 italiană, 6 până la 18 alte limbi",
+          "default": "ultimul ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Selectează limba de afișare a panoului de control al imprimantei, dintr-o listă care variază în funcție de model."
+    "summary": "Selectează limba de afișare a panoului de control al imprimantei, dintr-o listă care variază în funcție de model.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "limba afișată pe panoul de control",
+          "values": "1 până la 20 de coduri de limbă",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Selectează o tabelă de codificare stocată, folosită pentru a converti datele câmpului înainte de imprimare."
+    "summary": "Selectează o tabelă de codificare stocată, folosită pentru a converti datele câmpului înainte de imprimare.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "unitatea pe care se află tabela de codificare",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele fișierului tabelei de codificare",
+          "values": "1 până la 8 caractere alfanumerice"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": "DAT valoare fixă",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Selectează interpretarea comenzilor conform ZPL original sau ZPL II, pentru compatibilitate cu formatele mai vechi."
+    "summary": "Selectează interpretarea comenzilor conform ZPL original sau ZPL II, pentru compatibilitate cu formatele mai vechi.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "versiunea interpretorului ZPL",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Atribuie imprimantei un nume de rețea și o descriere text liber, ambele afișate pe eticheta de configurare și pe pagina web integrată."
+    "summary": "Atribuie imprimantei un nume de rețea și o descriere text liber, ambele afișate pe eticheta de configurare și pe pagina web integrată.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "numele de rețea al imprimantei",
+          "values": "până la 16 caractere alfanumerice",
+          "default": "ZBR plus sufix MAC"
+        },
+        {
+          "meaning": "descrierea imprimantei pentru eticheta de configurare și pagina web",
+          "values": "până la 35 de caractere alfanumerice",
+          "default": "necompletat"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Setează parola din patru cifre pentru meniurile de configurare din panoul de control."
+    "summary": "Setează parola din patru cifre pentru meniurile de configurare din panoul de control.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "parola din patru cifre a panoului de control",
+          "values": "0000 până la 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "nivelul parolei, doar pe imprimanta S4M",
+          "values": "1 până la 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Salvează, restaurează sau resetează setările de configurare ale imprimantei."
+    "summary": "Salvează, restaurează sau resetează setările de configurare ale imprimantei.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "acțiunea de configurare",
+          "values": "A toate din fabrică, F din fabrică, N rețea, R reapelare, S salvare"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Schimbă caracterul prefix pentru comenzile de format, în mod normal accentul circumflex, la nivel global sau doar pentru formatul curent."
+    "summary": "Schimbă caracterul prefix pentru comenzile de format, în mod normal accentul circumflex, la nivel global sau doar pentru formatul curent.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "noul prefix pentru comenzile de format",
+          "values": "orice caracter ASCII"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Schimbă caracterul delimitator de parametri, în mod normal virgula, la nivel global sau doar pentru formatul curent."
+    "summary": "Schimbă caracterul delimitator de parametri, în mod normal virgula, la nivel global sau doar pentru formatul curent.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "noul caracter delimitator de parametri",
+          "values": "orice caracter ASCII"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Schimbă caracterul prefix pentru comenzile imediate, în mod normal tilda, la nivel global sau doar pentru formatul curent."
+    "summary": "Schimbă caracterul prefix pentru comenzile imediate, în mod normal tilda, la nivel global sau doar pentru formatul curent.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "noul prefix pentru comenzile de control",
+          "values": "orice caracter ASCII"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Remapează literele de memorie ale imprimantei, astfel încât obiectele stocate să își poată păstra numele existente."
+    "summary": "Remapează literele de memorie ale imprimantei, astfel încât obiectele stocate să își poată păstra numele existente.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "aliasul de memorie pentru B",
+          "values": "B card de memorie, E flash, R DRAM, A compact flash, NONE nesetat",
+          "default": "B"
+        },
+        {
+          "meaning": "aliasul de memorie pentru E",
+          "values": "B card de memorie, E flash, R DRAM, A compact flash, NONE nesetat",
+          "default": "E"
+        },
+        {
+          "meaning": "aliasul de memorie pentru R",
+          "values": "B card de memorie, E flash, R DRAM, A compact flash, NONE nesetat",
+          "default": "R"
+        },
+        {
+          "meaning": "aliasul de memorie pentru A",
+          "values": "B card de memorie, E flash, R DRAM, A compact flash, NONE nesetat",
+          "default": "A"
+        },
+        {
+          "meaning": "permite atribuirea de aliasuri duplicate",
+          "values": "M alias multiplu",
+          "default": "niciuna"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Șterge și reinițializează un dispozitiv de memorie flash. Pierderea alimentării în timpul acestei operații poate corupe stocarea."
+    "summary": "Șterge și reinițializează un dispozitiv de memorie flash. Pierderea alimentării în timpul acestei operații poate corupe stocarea.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "dispozitivul de memorie flash de inițializat",
+          "values": "A flash opțional, B card flash, E flash intern",
+          "default": "trebuie specificat"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Setează dacă o tensiune scăzută a bateriei pune în pauză o imprimantă portabilă sau permite continuarea imprimării."
+    "summary": "Setează dacă o tensiune scăzută a bateriei pune în pauză o imprimantă portabilă sau permite continuarea imprimării.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pauză la tensiune scăzută a bateriei",
+          "values": "Y pauză, N continuă imprimarea",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Pornește interpretorul Zebra BASIC Interpreter pe imprimantă, lansând opțional un program stocat."
+    "summary": "Pornește interpretorul Zebra BASIC Interpreter pe imprimantă, lansând opțional un program stocat.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "locația de stocare a programului",
+          "values": "R, E, B, A",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "numele programului de rulat",
+          "values": "orice nume de program valid",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "extensia fișierului de program",
+          "values": "BAS or BAE"
+        },
+        {
+          "meaning": "controlul afișării în consolă",
+          "values": "Y activat, N dezactivat",
+          "default": "Y"
+        },
+        {
+          "meaning": "controlul ecoului comenzilor",
+          "values": "Y activat, N dezactivat",
+          "default": "Y"
+        },
+        {
+          "meaning": "memoria alocată ZBI",
+          "values": "20K până la 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Configurează portul auxiliar pentru semnalele de aplicator sau verificator și pentru gestionarea erorilor."
+    "summary": "Configurează portul auxiliar pentru semnalele de aplicator sau verificator și pentru gestionarea erorilor.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "modul de gestionare a erorilor verificatorului",
+          "values": "0 dezactivat, 1 reimprimare la eroare, 2 debit maxim",
+          "default": "0"
+        },
+        {
+          "meaning": "modul de temporizare a semnalului pentru aplicator",
+          "values": "0 dezactivat, 1 până la 4 temporizare semnal",
+          "default": "0"
+        },
+        {
+          "meaning": "modul de temporizare a semnalului de start imprimare",
+          "values": "p mod impuls, l mod nivel"
+        },
+        {
+          "meaning": "modul de răspuns la eroarea etichetei",
+          "values": "e mod eroare, f mod avans",
+          "default": "f"
+        },
+        {
+          "meaning": "modul de reimprimare la semnal",
+          "values": "e activat, d dezactivat",
+          "default": "d"
+        },
+        {
+          "meaning": "modul de avertizare pentru panglică redusă",
+          "values": "e activat, d dezactivat",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Selectează senzorul de suport folosit pentru urmărire, de obicei reflectiv sau transmisiv."
+    "summary": "Selectează senzorul de suport folosit pentru urmărire, de obicei reflectiv sau transmisiv.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "senzorul de utilizat",
+          "values": "A automat, R reflectiv, T transmisiv",
+          "default": "variază în funcție de modelul imprimantei"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Setează densitatea de puncte pe milimetru, normală sau redusă. Densitatea redusă dublează dimensiunea fizică a coordonatelor formatului."
+    "summary": "Setează densitatea de puncte pe milimetru, normală sau redusă. Densitatea redusă dublează dimensiunea fizică a coordonatelor formatului.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "setarea densității de imprimare",
+          "values": "A densitate normală, B densitate redusă la jumătate",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Resetează un contor de utilizare selectat al imprimantei, inclusiv contoare de utilizator sau RFID."
+    "summary": "Resetează un contor de utilizare selectat al imprimantei, inclusiv contoare de utilizator sau RFID.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "contorul de resetat",
+          "values": "1 contorul unu, 2 contorul doi, 3 RFID valid, 4 RFID anulat, C cap curățat, R cap înlocuit",
+          "default": "trebuie specificat"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Configurează toți parametrii de comunicare ai portului serial într-o singură comandă."
+    "summary": "Configurează toți parametrii de comunicare ai portului serial într-o singură comandă.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "rata baud a portului serial",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "biți de date pe caracter",
+          "values": "7 sau 8",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "setarea de paritate",
+          "values": "N niciuna, E par, O impar",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "biți de stop",
+          "values": "1 sau 2",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "protocolul de control al fluxului",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR și Xon/Xoff",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "handshake-ul protocolului Zebra",
+          "values": "A ACK/NAK, N niciuna, Z zebra",
+          "default": "trebuie specificat"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Suprascrie intensitatea senzorului transmisiv sau valorile de referință setate în mod normal de calibrare."
+    "summary": "Suprascrie intensitatea senzorului transmisiv sau valorile de referință setate în mod normal de calibrare.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "setarea senzorului de modificat",
+          "values": "1 luminozitate, 2 linie de bază",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "valoarea pentru setarea selectată",
+          "values": "0 până la 196",
+          "default": "trebuie specificat"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Începe imprimarea înainte ca formatul complet să fi ajuns, pentru a îmbunătăți debitul la etichetele complexe."
+    "summary": "Începe imprimarea înainte ca formatul complet să fi ajuns, pentru a îmbunătăți debitul la etichetele complexe.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "rândul de puncte de la care începe imprimarea",
+          "values": "0 până la 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Dezactivează o anumită condiție și destinație de alertă ZebraNet."
+    "summary": "Dezactivează o anumită condiție și destinație de alertă ZebraNet.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "condiția de alertă de oprit",
+          "values": "A până la O și Q până la V câte o condiție fiecare, W toate pe imprimantele RFID, * toate pe celelalte"
+        },
+        {
+          "meaning": "destinația de alertă de oprit",
+          "values": "A serial, B paralel, C e-mail, D TCP/IP, E UDP/IP, F SNMP trap, * toate"
+        },
+        {
+          "meaning": "oprește sau reactivează aceste alerte",
+          "values": "Y oprește mesajele, N pornește mesajele",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Setează valoarea rezistenței capului de imprimare, folosită la calculul energiei de ardere."
+    "summary": "Setează valoarea rezistenței capului de imprimare, folosită la calculul energiei de ardere.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "valoarea rezistenței capului de imprimare",
+          "values": "0488 până la 1175",
+          "default": "ultima valoare salvată permanent"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Setează pragurile senzorului de suport, lungimea etichetei și intensitățile LED, determinate în mod normal prin calibrare."
+    "summary": "Setează pragurile senzorului de suport, lungimea etichetei și intensitățile LED, determinate în mod normal prin calibrare.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "valoarea senzorului web",
+          "values": "0 până la 100",
+          "default": "afișat pe profilul senzorului sau pe eticheta de configurare"
+        },
+        {
+          "meaning": "valoarea senzorului de suport",
+          "values": "0 până la 100",
+          "default": "afișat pe profilul senzorului sau pe eticheta de configurare"
+        },
+        {
+          "meaning": "valoarea senzorului de panglică",
+          "values": "0 până la 100",
+          "default": "afișat pe profilul senzorului sau pe eticheta de configurare"
+        },
+        {
+          "meaning": "lungimea etichetei în puncte",
+          "values": "1 până la 32000",
+          "default": "valoare din calibrare"
+        },
+        {
+          "meaning": "intensitatea LED pentru suport",
+          "values": "0 până la 255",
+          "default": "valoare din calibrare"
+        },
+        {
+          "meaning": "intensitatea LED pentru panglică",
+          "values": "0 până la 255",
+          "default": "valoare din calibrare"
+        },
+        {
+          "meaning": "valoarea de detecție a marcajului",
+          "values": "0 până la 100",
+          "default": "valoare din calibrare"
+        },
+        {
+          "meaning": "valoarea de detecție a suportului cu marcaj",
+          "values": "0 până la 100",
+          "default": "valoare din calibrare"
+        },
+        {
+          "meaning": "valoarea de detecție LED pentru marcaj",
+          "values": "0 până la 255",
+          "default": "valoare din calibrare"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Activează o alertă ZebraNet pentru o anumită condiție și destinație."
+    "summary": "Activează o alertă ZebraNet pentru o anumită condiție și destinație.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "tipul condiției de alertă",
+          "values": "A până la V câte o condiție fiecare, * toate",
+          "default": "ignorat dacă lipsește sau este nevalid"
+        },
+        {
+          "meaning": "tipul destinației de alertă",
+          "values": "A serial, B paralel, C e-mail, D TCP/IP, E UDP/IP, F SNMP trap",
+          "default": "ignorat dacă lipsește sau este nevalid"
+        },
+        {
+          "meaning": "activează alerta la apariția condiției",
+          "values": "N nu, Y da",
+          "default": "Y sau valoarea anterioară"
+        },
+        {
+          "meaning": "activează alerta la încetarea condiției",
+          "values": "N nu, Y da",
+          "default": "N sau valoarea anterioară"
+        },
+        {
+          "meaning": "adresa de destinație pentru alertă",
+          "values": "e-mail, adresă IP sau țintă SNMP",
+          "default": "ignorat dacă lipsește sau este nevalid"
+        },
+        {
+          "meaning": "numărul portului pentru alertă",
+          "values": "0 până la 65535",
+          "default": "ignorat dacă lipsește sau este nevalid"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Copiază obiecte stocate între dispozitivele de memorie ale imprimantei, cu suport pentru caractere joker la copierea în grup."
+    "summary": "Copiază obiecte stocate între dispozitivele de memorie ale imprimantei, cu suport pentru caractere joker la copierea în grup.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "dispozitivul de stocare sursă",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "numele obiectului sursă",
+          "values": "orice nume de obiect existent",
+          "default": "* selectează toate obiectele"
+        },
+        {
+          "meaning": "extensia obiectului sursă",
+          "values": "orice extensie de fișier validă",
+          "default": "* selectează toate extensiile"
+        },
+        {
+          "meaning": "dispozitivul de stocare de destinație",
+          "values": "R, E, B, A",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "numele obiectului la destinație",
+          "values": "până la 8 caractere alfanumerice",
+          "default": "numele obiectului sursă"
+        },
+        {
+          "meaning": "extensia obiectului de destinație",
+          "values": "orice extensie de fișier validă",
+          "default": "extensia obiectului sursă"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Imprimă o etichetă cu directorul obiectelor stocate, al fonturilor rezidente sau al codurilor de bare disponibile."
+    "summary": "Imprimă o etichetă cu directorul obiectelor stocate, al fonturilor rezidente sau al codurilor de bare disponibile.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "dispozitivul sursă pentru listare",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "filtrul numelui obiectului",
+          "values": "1 până la 8 caractere, * sau ? ca metacaracter",
+          "default": "*"
+        },
+        {
+          "meaning": "filtrul de extensie",
+          "values": "orice extensie validă, * metacaracter",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Imprimă pe o etichetă informațiile de service solicitate, precum odometrul sau istoricul capului de imprimare."
+    "summary": "Imprimă pe o etichetă informațiile de service solicitate, precum odometrul sau istoricul capului de imprimare.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "tipul raportului de service de imprimat",
+          "values": "ES stare, HA adresă hardware, JT test cap, MA setări alertă, MI mesaje, OD odometru, PH durată de viață cap, PP plug and play, SN număr de serie, UI ID USB",
+          "default": "trebuie specificat"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Configurează setările presenterului kiosc KR403, inclusiv lungimea de tăiere, marja de tăiere, timeout-ul de retragere și lungimea buclei."
+    "summary": "Configurează setările presenterului kiosc KR403, inclusiv lungimea de tăiere, marja de tăiere, timeout-ul de retragere și lungimea buclei.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "lungimea de tăiere la kiosc",
+          "values": "0 tăiere normală, 10 până la 60 parțial în mm",
+          "default": "0"
+        },
+        {
+          "meaning": "marja de tăiere la kiosc, în mm",
+          "values": "2 până la 9",
+          "default": "9"
+        },
+        {
+          "meaning": "tipul de prezentare la kiosc după imprimare",
+          "values": "0 ejectare, 1 retractare, 2 fără acțiune",
+          "default": "0"
+        },
+        {
+          "meaning": "timeout-ul de prezentare la kiosc, în secunde",
+          "values": "0 până la 300, 0 fără timeout",
+          "default": "0"
+        },
+        {
+          "meaning": "lungimea buclei presenterului, în mm",
+          "values": "0 direct, 3 până la 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Controlează recalibrarea dinamică a lungimii etichetei și a pragului senzorului, după pornire sau după deschiderea compartimentului de suport."
+    "summary": "Controlează recalibrarea dinamică a lungimii etichetei și a pragului senzorului, după pornire sau după deschiderea compartimentului de suport.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "activează calibrarea dinamică a lungimii",
+          "values": "Y activează, N dezactivează",
+          "default": "Y"
+        },
+        {
+          "meaning": "activează calibrarea dinamică a pragului",
+          "values": "Y activează, N dezactivează",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Pornește modul de dezafectare, pentru a pregăti imprimanta în vederea revânzării sau reciclării."
+    "summary": "Pornește modul de dezafectare, pentru a pregăti imprimanta în vederea revânzării sau reciclării.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "numărul de serie al imprimantei",
+          "values": "șir alfanumeric",
+          "default": "trebuie specificat"
+        },
+        {
+          "meaning": "numărul de treceri de ștergere a memoriei flash",
+          "values": "0 până la 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Setează oprirea automată în modul sleep după o perioadă de inactivitate, cu opțiuni pentru etichetele aflate în coadă."
+    "summary": "Setează oprirea automată în modul sleep după o perioadă de inactivitate, cu opțiuni pentru etichetele aflate în coadă.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "secunde de inactivitate înainte de închiderea automată",
+          "values": "0 până la 999999, 0 dezactivează închiderea",
+          "default": "ultima valoare salvată sau 0"
+        },
+        {
+          "meaning": "starea etichetei la închidere",
+          "values": "Y închidere cu coada încărcată, N finalizează coada întâi",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Ejectează sau retrage suportul deja prezentat de presenterul kiosc KR403."
+    "summary": "Ejectează sau retrage suportul deja prezentat de presenterul kiosc KR403.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "acțiunea de prezentare la kiosc",
+          "values": "0 ejectare, 1 retractare, 2 folosește setarea ^KV"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Returnează către host un format ZPL stocat în memoria imprimantei."
+    "summary": "Returnează către host un format ZPL stocat în memoria imprimantei.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "dispozitivul de memorie de căutat",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "numele formatului stocat",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": ".ZPL fix",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Returnează către host o imagine grafică stocată în memoria imprimantei."
+    "summary": "Returnează către host o imagine grafică stocată în memoria imprimantei.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "dispozitivul de memorie de căutat",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "prioritate de căutare"
+        },
+        {
+          "meaning": "numele grafic de încărcat",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensia fișierului",
+          "values": ".GRF fix",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Returnează către host datele de stare, identitate, odometru sau întreținere solicitate."
+    "summary": "Returnează către host datele de stare, identitate, odometru sau întreținere solicitate.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "selectorul de interogare pentru datele returnate",
+          "values": "ES stare, HA MAC cu fir, JT test cap de imprimare, MA alerte de întreținere, MI informații de întreținere, OD odometru, PH durată de viață cap de imprimare, PP plug and play, SN număr de serie, UI ID produs USB"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Returnează către host datele dintr-un câmp numerotat, cu o limită opțională de octeți."
+    "summary": "Returnează către host datele dintr-un câmp numerotat, cu o limită opțională de octeți.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "numărul câmpului setat prin ^FN",
+          "values": "0 până la 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "octeți de returnat",
+          "values": "1 până la 256",
+          "default": "64"
+        },
+        {
+          "meaning": "text de antet înainte de date",
+          "values": "0 până la 3072 octeți",
+          "default": "fără antet"
+        },
+        {
+          "meaning": "text de terminare după date",
+          "values": "0 până la 3072 caractere"
+        },
+        {
+          "meaning": "răspuns trimis per",
+          "values": "F format, L etichetă",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Returnează lista directorului unui dispozitiv de memorie, inclusiv spațiul liber rămas."
+    "summary": "Returnează lista directorului unui dispozitiv de memorie, inclusiv spațiul liber rămas.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "dispozitivul de memorie de listat",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash, Z altul",
+          "default": "R"
+        },
+        {
+          "meaning": "filtrul numelui obiectului",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "*"
+        },
+        {
+          "meaning": "filtrul de extensie",
+          "values": "orice extensie de fișier Zebra",
+          "default": "*"
+        },
+        {
+          "meaning": "aspectul listării",
+          "values": "c coloană, d implicit",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Returnează către host o imagine grafică stocată, într-un format de fișier descărcabil."
+    "summary": "Returnează către host o imagine grafică stocată, într-un format de fișier descărcabil.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "dispozitivul de memorie pe care se află obiectul",
+          "values": "R DRAM, E flash, B card de memorie, A compact flash",
+          "default": "prioritate de căutare"
+        },
+        {
+          "meaning": "numele obiectului de încărcat",
+          "values": "1 până la 8 caractere alfanumerice",
+          "default": "nume necesar"
+        },
+        {
+          "meaning": "formatul de încărcare",
+          "values": "G bitmap brut, P bitmap comprimat",
+          "default": "format stocat"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Returnează un XML de descriere a imprimantei pentru setări, directorul de obiecte sau stare."
+    "summary": "Returnează un XML de descriere a imprimantei pentru setări, directorul de obiecte sau stare.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "tipul de descriere de returnat",
+          "values": "a toate, f format, l director, o obiect, r stare"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Citește sau scrie pe o etichetă RFID, incluzând formatul datelor, banca de memorie și parola de acces."
+    "summary": "Citește sau scrie pe o etichetă RFID, incluzând formatul datelor, banca de memorie și parola de acces.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "operația",
+          "values": "W scriere, L scriere și blocare, R citire, P citire parolă, S setare parolă",
+          "default": "W"
+        },
+        {
+          "meaning": "formatul datelor",
+          "values": "A ASCII, H hex, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "indicatorul de parolă sau numărul blocului de start",
+          "values": "P parola urmează, 0 până la n bloc",
+          "default": "0"
+        },
+        {
+          "meaning": "numărul de octeți de citit sau scris",
+          "values": "1 până la n, maximum per etichetă",
+          "default": "1"
+        },
+        {
+          "meaning": "banca de memorie Gen 2",
+          "values": "E EPC 96 biți, A EPC biți PC automați, 0 rezervat, 1 EPC, 2 TID, 3 utilizator",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Definește structura de biți folosită pentru codificarea câmpurilor EPC RFID pe o etichetă."
+    "summary": "Definește structura de biți folosită pentru codificarea câmpurilor EPC RFID pe o etichetă.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "dimensiunea totală în biți a partițiilor",
+          "values": "1 până la dimensiunea în biți a etichetei",
+          "default": "96"
+        },
+        {
+          "meaning": "biți în fiecare partiție, până la 16 partiții",
+          "values": "1 până la 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Setează opțiunile RFID pentru etichetele următoare, incluzând tipul de etichetă RFID, poziția de programare, gestionarea eșecurilor și lungimea barei VOID."
+    "summary": "Setează opțiunile RFID pentru etichetele următoare, incluzând tipul de etichetă RFID, poziția de programare, gestionarea eșecurilor și lungimea barei VOID.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "tipul etichetei RFID",
+          "values": "8 doar Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "poziția de programare a etichetei RFID",
+          "values": "puncte absolute, F0 până la Fxxx înainte, B0 până la B30 înapoi, up următorul, down anteriorul",
+          "default": "setarea imprimantei"
+        },
+        {
+          "meaning": "lungimea imprimării VOID",
+          "values": "0 până la lungimea etichetei",
+          "default": "lungimea etichetei"
+        },
+        {
+          "meaning": "etichete de reîncercat în caz de eroare",
+          "values": "1 până la 10",
+          "default": "3"
+        },
+        {
+          "meaning": "gestionarea erorilor după reîncercări",
+          "values": "N fără acțiune, P pauză, E mod eroare",
+          "default": "N"
+        },
+        {
+          "meaning": "semnale trimise unui aplicator",
+          "values": "S semnal simplu, D semnal dublu",
+          "default": "S"
+        },
+        {
+          "meaning": "rezervat, neutilizat",
+          "values": "niciuna"
+        },
+        {
+          "meaning": "viteza de imprimare a etichetelor VOID",
+          "values": "orice viteză de imprimare validă",
+          "default": "viteza maximă de imprimare"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Construiește un număr serial EPC pe baza ID-ului etichetei și îl scrie în biții inferiori ai EPC."
+    "summary": "Construiește un număr serial EPC pe baza ID-ului etichetei și îl scrie în biții inferiori ai EPC.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "prefix binar pentru id-ul serial",
+          "values": "ASCII 1 și 0, până la 38 de biți",
+          "default": "dependent de MDID al chipului"
+        },
+        {
+          "meaning": "caracterul special care marchează câmpul serial",
+          "values": "orice ASCII, cu excepția celor de comandă, control, delimitator, RTC",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Setează puterea de citire și scriere RFID, atunci când calibrarea nu produce valori utilizabile."
+    "summary": "Setează puterea de citire și scriere RFID, atunci când calibrarea nu produce valori utilizabile.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "nivelul de putere la citire",
+          "values": "0 până la 30, sau H ridicat, M mediu, L scăzut",
+          "default": "setarea imprimantei"
+        },
+        {
+          "meaning": "nivelul de putere la scriere",
+          "values": "0 până la 30, sau H ridicat, M mediu, L scăzut",
+          "default": "setarea imprimantei"
+        },
+        {
+          "meaning": "selecția elementului de antenă",
+          "values": "grilă specifică imprimantei, A1 până la F4",
+          "default": "setarea imprimantei"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Blochează memoria etichetei RFID, reversibil sau permanent, pentru a preveni scrierile ulterioare."
+    "summary": "Blochează memoria etichetei RFID, reversibil sau permanent, pentru a preveni scrierile ulterioare.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "starea de blocare a parolei kill",
+          "values": "U deblocare, L blocare, O deblocare permanentă, P blocare permanentă"
+        },
+        {
+          "meaning": "starea de blocare a parolei de acces",
+          "values": "U deblocare, L blocare, O deblocare permanentă, P blocare permanentă"
+        },
+        {
+          "meaning": "stare de blocare a băncii de memorie EPC",
+          "values": "U deblocare, L blocare, O deblocare permanentă, P blocare permanentă"
+        },
+        {
+          "meaning": "starea de blocare a băncii de memorie a utilizatorului",
+          "values": "U deblocare, L blocare, O deblocare permanentă, P blocare permanentă"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Rulează calibrarea RFID și returnează către host setările de poziție, antenă și putere."
+    "summary": "Rulează calibrarea RFID și returnează către host setările de poziție, antenă și putere.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "text înainte de tabelul de rezultate",
+          "values": "orice șir sub 65 de caractere",
+          "default": "start"
+        },
+        {
+          "meaning": "text după tabelul de rezultate",
+          "values": "orice șir sub 65 de caractere",
+          "default": "end"
+        },
+        {
+          "meaning": "poziția de start a calibrării",
+          "values": "F0 până la Fxxx înainte, B0 până la B30 înapoi",
+          "default": "setarea imprimantei"
+        },
+        {
+          "meaning": "poziția de final a calibrării",
+          "values": "F0 până la Fxxx înainte, B0 până la B30 înapoi, A automat",
+          "default": "setarea imprimantei"
+        },
+        {
+          "meaning": "selecție automată sau manuală a antenei și puterii",
+          "values": "A automat, M manual",
+          "default": "A"
+        },
+        {
+          "meaning": "începutul intervalului de putere de citire/scriere",
+          "values": "0 până la 30",
+          "default": "0"
+        },
+        {
+          "meaning": "finalul intervalului de putere de citire/scriere",
+          "values": "0 până la 30",
+          "default": "putere maximă"
+        },
+        {
+          "meaning": "începutul intervalului antenei",
+          "values": "dependent de model, de obicei A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "finalul intervalului antenei",
+          "values": "dependent de model, până la E4",
+          "default": "setarea imprimantei"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Selectează dacă imprimanta verifică prezența unui server de imprimare cu fir la pornire."
+    "summary": "Selectează dacă imprimanta verifică prezența unui server de imprimare cu fir la pornire.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "verificarea serverului de imprimare cu fir la pornire",
+          "values": "C verifică, S omite",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Selectează dispozitivul de rețea principal, cu fir sau wireless."
+    "summary": "Selectează dispozitivul de rețea principal, cu fir sau wireless.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "dispozitivul de rețea principal",
+          "values": "1 cu fir principal, 2 wireless principal",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresează o imprimantă de pe o linie RS-485 multidrop de tip legacy, pe baza ID-ului de rețea."
+    "summary": "Adresează o imprimantă de pe o linie RS-485 multidrop de tip legacy, pe baza ID-ului de rețea.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "ID-ul de rețea al imprimantei de adresat",
+          "values": "001 până la 999",
+          "default": "000 niciun ID"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Atribuie ID-ul de rețea folosit pentru a adresa o imprimantă de pe o linie RS-485 multidrop de tip legacy."
+    "summary": "Atribuie ID-ul de rețea folosit pentru a adresa o imprimantă de pe o linie RS-485 multidrop de tip legacy.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "ID-ul de rețea atribuit imprimantei",
+          "values": "001 până la 999",
+          "default": "000 niciun ID"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Setează identitatea SNMP și șirurile de comunitate ale imprimantei."
+    "summary": "Setează identitatea SNMP și șirurile de comunitate ale imprimantei.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "numele sistemului SNMP",
+          "values": "până la 17 caractere"
+        },
+        {
+          "meaning": "contactul de sistem SNMP",
+          "values": "până la 50 de caractere"
+        },
+        {
+          "meaning": "locația sistemului SNMP",
+          "values": "până la 50 de caractere"
+        },
+        {
+          "meaning": "numele comunității SNMP get",
+          "values": "până la 19 caractere",
+          "default": "public"
+        },
+        {
+          "meaning": "numele comunității SNMP set",
+          "values": "până la 19 caractere",
+          "default": "public"
+        },
+        {
+          "meaning": "numele comunității SNMP trap",
+          "values": "până la 20 de caractere",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Selectează dacă setările de rețea de la pornire provin de la imprimantă sau de la serverul de imprimare atașat."
+    "summary": "Selectează dacă setările de rețea de la pornire provin de la imprimantă sau de la serverul de imprimare atașat.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "sursa principală pentru setările de pornire",
+          "values": "P imprimantă, M server de imprimare",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Configurează serverul SMTP și setările de domeniu pentru alertele prin e-mail ale serverului de imprimare."
+    "summary": "Configurează serverul SMTP și setările de domeniu pentru alertele prin e-mail ale serverului de imprimare.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "adresa serverului SMTP",
+          "values": "adresă IPv4"
+        },
+        {
+          "meaning": "numele de domeniu al serverului de imprimare",
+          "values": "nume de domeniu"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Setează durata pentru care o adresă IP autentificată poate accesa paginile web ale imprimantei, înainte de o nouă autentificare."
+    "summary": "Setează durata pentru care o adresă IP autentificată poate accesa paginile web ale imprimantei, înainte de o nouă autentificare.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "timeout-ul de autentificare pentru pagina web",
+          "values": "0 până la 255 minute",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Setează forma și valoarea identificatorului de client DHCP pentru serverul de imprimare."
+    "summary": "Setează forma și valoarea identificatorului de client DHCP pentru serverul de imprimare.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "modul identificatorului de client",
+          "values": "0 dezactivat, 1 adresă MAC, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "dispozitivul căruia i se aplică identificatorul",
+          "values": "0 toate, 1 wireless, 2 cu fir extern, 3 cu fir intern",
+          "default": "1"
+        },
+        {
+          "meaning": "prefixul identificatorului",
+          "values": "11 caractere ASCII sau 22 caractere hex"
+        },
+        {
+          "meaning": "sufixul identificatorului",
+          "values": "până la 60 de caractere ASCII sau 120 hex"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Configurează adresa IP, masca de subrețea și gateway-ul pentru o interfață de rețea a imprimantei."
+    "summary": "Configurează adresa IP, masca de subrețea și gateway-ul pentru o interfață de rețea a imprimantei.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "dispozitivul modificat",
+          "values": "1 cu fir extern, 2 cu fir intern, 3 wireless"
+        },
+        {
+          "meaning": "metoda de obținere a adresei IP",
+          "values": "A toate, B BOOTP, C DHCP și BOOTP, D DHCP, G doar gleaning, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "adresă IP",
+          "values": "adresă IPv4"
+        },
+        {
+          "meaning": "masca de subrețea",
+          "values": "masca de subrețea IPv4"
+        },
+        {
+          "meaning": "gateway-ul implicit",
+          "values": "adresă IPv4"
+        },
+        {
+          "meaning": "adresa serverului WINS",
+          "values": "adresă IPv4"
+        },
+        {
+          "meaning": "verificarea timpului de expirare a conexiunii",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "valoarea timpului de expirare a conexiunii",
+          "values": "0 până la 9999 secunde",
+          "default": "300"
+        },
+        {
+          "meaning": "interval de difuzare ARP",
+          "values": "0 până la 30 minute",
+          "default": "0 dezactivat"
+        },
+        {
+          "meaning": "numărul portului raw de bază",
+          "values": "1 până la 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Configurează setările IP ale serverului de imprimare cu fir, timeout-urile și portul raw, pentru firmware-urile mai vechi."
+    "summary": "Configurează setările IP ale serverului de imprimare cu fir, timeout-urile și portul raw, pentru firmware-urile mai vechi.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "metoda de obținere a adresei IP",
+          "values": "A toate, B BOOTP, C DHCP și BOOTP, D DHCP, G doar gleaning, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "adresă IP",
+          "values": "adresă IPv4"
+        },
+        {
+          "meaning": "masca de subrețea",
+          "values": "masca de subrețea IPv4"
+        },
+        {
+          "meaning": "gateway-ul implicit",
+          "values": "adresă IPv4"
+        },
+        {
+          "meaning": "adresa serverului WINS",
+          "values": "adresă IPv4"
+        },
+        {
+          "meaning": "verificarea timpului de expirare a conexiunii",
+          "values": "Y da, N nu",
+          "default": "Y"
+        },
+        {
+          "meaning": "valoarea timpului de expirare a conexiunii",
+          "values": "0 până la 9999 secunde",
+          "default": "300"
+        },
+        {
+          "meaning": "interval de difuzare ARP",
+          "values": "0 până la 30 minute",
+          "default": "0 dezactivat"
+        },
+        {
+          "meaning": "numărul portului raw de bază",
+          "values": "1 până la 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Selectează antenele de recepție și transmisie pentru radioul wireless."
+    "summary": "Selectează antenele de recepție și transmisie pentru radioul wireless.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "antena de recepție",
+          "values": "D diversitate, L stânga, R dreapta",
+          "default": "D"
+        },
+        {
+          "meaning": "antena de transmisie",
+          "values": "D diversitate, L stânga, R dreapta",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Configurează securitatea WEP, învechită, și materialul de chei, pentru firmware-urile wireless mai vechi."
+    "summary": "Configurează securitatea WEP, învechită, și materialul de chei, pentru firmware-urile wireless mai vechi.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "modul de criptare",
+          "values": "OFF niciuna, 40 40 de biți, 128 128 de biți",
+          "default": "OFF"
+        },
+        {
+          "meaning": "indexul cheii de criptare",
+          "values": "1 până la 4",
+          "default": "1"
+        },
+        {
+          "meaning": "tipul de autentificare",
+          "values": "O sistem deschis, S cheie partajată",
+          "default": "O"
+        },
+        {
+          "meaning": "formatul de stocare a cheii de criptare",
+          "values": "H hex, S șir",
+          "default": "H"
+        },
+        {
+          "meaning": "cheia de criptare 1",
+          "values": "perechi hex sau șir alfanumeric"
+        },
+        {
+          "meaning": "cheia de criptare 2",
+          "values": "perechi hex sau șir alfanumeric"
+        },
+        {
+          "meaning": "cheia de criptare 3",
+          "values": "perechi hex sau șir alfanumeric"
+        },
+        {
+          "meaning": "cheia de criptare 4",
+          "values": "perechi hex sau șir alfanumeric"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Configurează autentificarea Cisco LEAP, învechită, pentru firmware-urile wireless mai vechi."
+    "summary": "Configurează autentificarea Cisco LEAP, învechită, pentru firmware-urile wireless mai vechi.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "modul LEAP",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "numele de utilizator",
+          "values": "1 până la 32 caractere",
+          "default": "user"
+        },
+        {
+          "meaning": "parola",
+          "values": "1 până la 32 caractere",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Setează parola pentru setările wireless din panoul de control al imprimantei."
+    "summary": "Setează parola pentru setările wireless din panoul de control al imprimantei.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "vechea parolă wireless",
+          "values": "0000 până la 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "noua parolă wireless",
+          "values": "0000 până la 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Configurează ratele de date 802.11b și puterea de transmisie pe serverele de imprimare wireless mai vechi."
+    "summary": "Configurează ratele de date 802.11b și puterea de transmisie pe serverele de imprimare wireless mai vechi.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "rată de transmisie de 1 Mb pe secundă",
+          "values": "Y activat, N dezactivat"
+        },
+        {
+          "meaning": "rată de transmisie de 2 Mb pe secundă",
+          "values": "Y activat, N dezactivat"
+        },
+        {
+          "meaning": "rată de transmisie de 5.5 Mb pe secundă",
+          "values": "Y activat, N dezactivat"
+        },
+        {
+          "meaning": "rată de transmisie de 11 Mb pe secundă",
+          "values": "Y activat, N dezactivat"
+        },
+        {
+          "meaning": "puterea de transmisie",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Configurează numele rețelei wireless, modul radio, lungimea preambulului și comportamentul keep-alive."
+    "summary": "Configurează numele rețelei wireless, modul radio, lungimea preambulului și comportamentul keep-alive.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "valoare ESSID",
+          "values": "până la 32 de caractere",
+          "default": "125"
+        },
+        {
+          "meaning": "modul de operare",
+          "values": "I infrastructură, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "lungimea preambulului cardului radio",
+          "values": "L lung, S scurt",
+          "default": "L"
+        },
+        {
+          "meaning": "impuls wireless activat",
+          "values": "0 dezactivat, 1 activat",
+          "default": "1"
+        },
+        {
+          "meaning": "intervalul impulsului wireless",
+          "values": "5 până la 300 secunde",
+          "default": "15"
+        },
+        {
+          "meaning": "masca canalului",
+          "values": "4 cifre hex cu prefixul 0x",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "modul internațional",
+          "values": "0 dezactivat, 1 activat",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Configurează modul de securitate wireless, cheile și acreditările, într-o singură comandă."
+    "summary": "Configurează modul de securitate wireless, cheile și acreditările, într-o singură comandă.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "codul tipului de securitate",
+          "values": "01 niciuna, 02 WEP 40, 03 WEP 128, 04 până la 08 tipuri EAP, 09 WPA PSK, 10 până la 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "indexul cheii de criptare WEP",
+          "values": "1 până la 4",
+          "default": "1"
+        },
+        {
+          "meaning": "tipul de autentificare WEP",
+          "values": "O sistem deschis, S cheie partajată",
+          "default": "O"
+        },
+        {
+          "meaning": "formatul de stocare a cheii WEP",
+          "values": "H hex, S șir",
+          "default": "S"
+        },
+        {
+          "meaning": "cheia de criptare WEP 1",
+          "values": "perechi hex sau șir alfanumeric"
+        },
+        {
+          "meaning": "cheia de criptare WEP 2",
+          "values": "perechi hex sau șir alfanumeric"
+        },
+        {
+          "meaning": "cheia de criptare WEP 3",
+          "values": "perechi hex sau șir alfanumeric"
+        },
+        {
+          "meaning": "cheia de criptare WEP 4",
+          "values": "perechi hex sau șir alfanumeric"
+        },
+        {
+          "meaning": "ID-ul de utilizator pentru tipul de securitate",
+          "values": "orice șir",
+          "default": "user"
+        },
+        {
+          "meaning": "parola pentru tipul de securitate",
+          "values": "orice șir",
+          "default": "password"
+        },
+        {
+          "meaning": "parolă opțională pentru cheia privată",
+          "values": "orice șir"
+        },
+        {
+          "meaning": "domeniul Kerberos",
+          "values": "orice șir",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "centrul de distribuție a cheilor Kerberos",
+          "values": "orice șir",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "valoarea cheii pre-partajate",
+          "values": "minimum 64 de cifre hex"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

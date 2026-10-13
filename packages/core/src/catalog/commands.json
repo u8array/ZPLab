@@ -1692,7 +1692,7 @@
           {
             "name": "m",
             "meaning": "mode",
-            "values": "N none, U UCC case, A automatic, D UCC/EAN",
+            "values": "N none, U UCC Case Mode, A automatic, D UCC/EAN",
             "default": "N"
           }
         ],
@@ -3087,7 +3087,7 @@
           {
             "name": "r",
             "meaning": "corner rounding",
-            "values": "0 none to 8 heaviest",
+            "values": "0 none to 8 strongest rounding",
             "default": "0"
           }
         ],

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
+export const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const CATALOG = join(ROOT, 'packages', 'core', 'src', 'catalog', 'commands.json');
 export const CAPABILITIES = ['web', 'desktop', 'docker'];
 const LEVELS = new Set(['yes', 'planned', 'no']);

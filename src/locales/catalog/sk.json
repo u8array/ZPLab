@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Nastavuje šírku tlače v bodoch. Obsah presahujúci túto šírku tlačiareň oreže."
+    "summary": "Nastavuje šírku tlače v bodoch. Obsah presahujúci túto šírku tlačiareň oreže.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "šírka tlače v bodoch",
+          "values": "2 po šírku etikety",
+          "default": "posledná uložená hodnota"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Nastavuje dĺžku etikety v bodoch a určuje, kde tlačený formát končí."
+    "summary": "Nastavuje dĺžku etikety v bodoch a určuje, kde tlačený formát končí.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "dĺžka etikety v bodoch",
+          "values": "1 až 32000",
+          "default": "nastavenie tlačiarne"
+        },
+        {
+          "meaning": "platí pre všetky médiá",
+          "values": "N iba súvislé, Y všetky médiá",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Posúva domovskú pozíciu etikety a mení počiatok súradníc pre nasledujúce polia."
+    "summary": "Posúva domovskú pozíciu etikety a mení počiatok súradníc pre nasledujúce polia.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "domovská pozícia etikety na osi X",
+          "values": "0 až 32000",
+          "default": "0 alebo posledná uložená hodnota"
+        },
+        {
+          "meaning": "domovská pozícia etikety na osi Y",
+          "values": "0 až 32000",
+          "default": "0 alebo posledná uložená hodnota"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Aplikuje horizontálny posun pozícií polí kvôli kompatibilite so staršími formátmi Zebra."
+    "summary": "Aplikuje horizontálny posun pozícií polí kvôli kompatibilite so staršími formátmi Zebra.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "posun všetkých pozícií polí vľavo",
+          "values": "-9999 až 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Pridáva vertikálny posun celého formátu voči hornému okraju média."
+    "summary": "Pridáva vertikálny posun celého formátu voči hornému okraju média.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "posúva celý formát nahor alebo nadol v riadkoch bodov",
+          "values": "-120 až 120, pri XiIIIPlus 600 dpi -240 až 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Nastavuje jednotky súradníc na body, palce alebo milimetre a umožňuje škálovať formáty medzi rôznymi tlačovými rozlíšeniami."
+    "summary": "Nastavuje jednotky súradníc na body, palce alebo milimetre a umožňuje škálovať formáty medzi rôznymi tlačovými rozlíšeniami.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "jednotky súradníc pre nasledujúce polia",
+          "values": "D body, I palce, M milimetre",
+          "default": "D"
+        },
+        {
+          "meaning": "základné rozlíšenie formátu v DPI",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "cieľové rozlíšenie na konverziu",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Nastavuje spôsob manipulácie s médiom po tlači, vrátane režimov odtrhnutia, odlepenia, rezania, previjania a aplikátora."
+    "summary": "Nastavuje spôsob manipulácie s médiom po tlači, vrátane režimov odtrhnutia, odlepenia, rezania, previjania a aplikátora.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "režim manipulácie s médiom po tlači",
+          "values": "T odtrhnutie, P odlepenie, R previnutie, A aplikátor, C rezačka, D oneskorená rezačka, F rfid, K kiosk",
+          "default": "nastavenie tlačiarne"
+        },
+        {
+          "meaning": "predodlepenie pred ďalšou etiketou",
+          "values": "N nie, Y áno",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Vyberá režim termotransferovej alebo priamej termálnej tlače podľa toho, či vložené médium používa pásku."
+    "summary": "Vyberá režim termotransferovej alebo priamej termálnej tlače podľa toho, či vložené médium používa pásku.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "typ média používaný tlačiarňou",
+          "values": "T termotransfer, D priama termotlač"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Nastavuje počet tlačených kusov, zoskupenie pre pauzu alebo rezanie a počet kópií na jednu sériovú hodnotu."
+    "summary": "Nastavuje počet tlačených kusov, zoskupenie pre pauzu alebo rezanie a počet kópií na jednu sériovú hodnotu.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "celkový počet etikiet na tlač",
+          "values": "1 až 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "etikety vytlačené pred pauzou",
+          "values": "1 až 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "počet kópií každého sériového čísla",
+          "values": "0 až 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "prepísanie počtu pauz",
+          "values": "N nie, Y áno",
+          "default": "N"
+        },
+        {
+          "meaning": "rez po zrušenej RFID etikete",
+          "values": "N nie, Y áno",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Obracia tlač nasledujúcich polí prehodením popredia a pozadia."
+    "summary": "Obracia tlač nasledujúcich polí prehodením popredia a pozadia.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "obráti farbu tlače pre nasledujúce polia",
+          "values": "N nie, Y áno",
+          "default": "N alebo posledná uložená hodnota"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Otáča celý formát etikety o 180 stupňov."
+    "summary": "Otáča celý formát etikety o 180 stupňov.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "tlačí etiketu hore nohami",
+          "values": "N normálne, I invertované",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Zrkadlí tlačovú plochu vodorovne."
+    "summary": "Zrkadlí tlačovú plochu vodorovne.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "zrkadlí etiketu zľava doprava",
+          "values": "N nie, Y áno",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Nastavuje rýchlosť tlače, posuvnú rýchlosť a rýchlosť spätného posunu v palcoch za sekundu."
+    "summary": "Nastavuje rýchlosť tlače, posuvnú rýchlosť a rýchlosť spätného posunu v palcoch za sekundu.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "rýchlosť tlače v palcoch za sekundu",
+          "values": "1 až 14, alebo A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "rýchlosť posuvu prázdnej etikety",
+          "values": "2 až 14",
+          "default": "6"
+        },
+        {
+          "meaning": "rýchlosť spätného posuvu po tlači",
+          "values": "2 až 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Umiestňuje nasledujúce pole od domovského počiatku etikety podľa jeho ľavého horného rohu."
+    "summary": "Umiestňuje nasledujúce pole od domovského počiatku etikety podľa jeho ľavého horného rohu.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "horizontálna pozícia v bodoch",
+          "values": "0 až 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "vertikálna pozícia v bodoch",
+          "values": "0 až 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "zarovnanie",
+          "values": "0 vľavo, 1 vpravo, 2 auto",
+          "default": "posledné ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Umiestňuje nasledujúce pole podľa jeho základnej čiary alebo okraja čiarového kódu, čo dáva otočeným poliam stabilný bod ukotvenia."
+    "summary": "Umiestňuje nasledujúce pole podľa jeho základnej čiary alebo okraja čiarového kódu, čo dáva otočeným poliam stabilný bod ukotvenia.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "horizontálna pozícia v bodoch",
+          "values": "0 až 32000",
+          "default": "posledná pozícia poľa"
+        },
+        {
+          "meaning": "vertikálna pozícia v bodoch",
+          "values": "0 až 32000",
+          "default": "posledná pozícia poľa"
+        },
+        {
+          "meaning": "zarovnanie",
+          "values": "0 vľavo, 1 vpravo, 2 auto",
+          "default": "posledné ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Poskytuje obsah aktuálneho poľa, vrátane textu, dát čiarového kódu alebo dát RFID."
+    "summary": "Poskytuje obsah aktuálneho poľa, vrátane textu, dát čiarového kódu alebo dát RFID.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "obsah poľa",
+          "values": "akékoľvek tlačiteľné dáta do 3072 bajtov, bez predponových znakov"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Povoľuje hexadecimálne únikové sekvencie v dátach poľa pre binárne bajty a vyhradené znaky príkazov."
+    "summary": "Povoľuje hexadecimálne únikové sekvencie v dátach poľa pre binárne bajty a vyhradené znaky príkazov.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "hexadecimálny indikačný znak",
+          "values": "akýkoľvek znak okrem formátovacích a riadiacich predpôn",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Pridáva komentárové pole. Tlačiareň ignoruje jeho obsah až po nasledujúci oddeľovač poľa."
+    "summary": "Pridáva komentárové pole. Tlačiareň ignoruje jeho obsah až po nasledujúci oddeľovač poľa.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "netlačený text komentára",
+          "values": "akýkoľvek text, ignorovaný až po ďalší príkaz"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Nastavuje predvolenú orientáciu poľa a na novšom firmvéri aj predvolené zarovnanie."
+    "summary": "Nastavuje predvolenú orientáciu poľa a na novšom firmvéri aj predvolené zarovnanie.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "predvolené otočenie poľa",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "predvolené zarovnanie",
+          "values": "0 vľavo, 1 vpravo, 2 auto",
+          "default": "auto pre ^TB, inak ľavá"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Zalamuje dáta poľa do bloku pevnej šírky s ovládaním počtu riadkov, riadkovania, odsadenia a zarovnania."
+    "summary": "Zalamuje dáta poľa do bloku pevnej šírky s ovládaním počtu riadkov, riadkovania, odsadenia a zarovnania.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "šírka bloku v bodoch",
+          "values": "0 po šírku etikety",
+          "default": "0"
+        },
+        {
+          "meaning": "maximálny počet riadkov",
+          "values": "1 až 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "dodatočné riadkovanie v bodoch",
+          "values": "-9999 až 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "zarovnanie",
+          "values": "L vľavo, C na stred, R vpravo, J zarovnané",
+          "default": "L"
+        },
+        {
+          "meaning": "previsnuté odsadenie nasledujúcich riadkov v bodoch",
+          "values": "0 až 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Zalamuje text do rámca pevnej šírky a výšky a presahujúci text orezáva."
+    "summary": "Zalamuje text do rámca pevnej šírky a výšky a presahujúci text orezáva.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "otočenie bloku",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^A"
+        },
+        {
+          "meaning": "šírka bloku v bodoch",
+          "values": "1 po šírku etikety",
+          "default": "1"
+        },
+        {
+          "meaning": "výška bloku v bodoch",
+          "values": "1 po dĺžku etikety",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Priraďuje číslo premennému poľu v uložených a znovu vyvolaných formátoch."
+    "summary": "Priraďuje číslo premennému poľu v uložených a znovu vyvolaných formátoch.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "číslo poľa",
+          "values": "0 až 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "voliteľný text výzvy KDU",
+          "values": "do 255 alfanumerických znakov"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Poskytuje dáta pre premenné pole. Na rozdiel od dát ^FD sa po vytlačení etikety vymažú."
+    "summary": "Poskytuje dáta pre premenné pole. Na rozdiel od dát ^FD sa po vytlačení etikety vymažú.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "dáta premenného poľa",
+          "values": "0 až 3072 bajtový reťazec"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Nastavuje znak používaný na vloženie hodnôt číslovaných polí do reťazca iného poľa."
+    "summary": "Nastavuje znak používaný na vloženie hodnôt číslovaných polí do reťazca iného poľa.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "oddeľovač spájania polí",
+          "values": "akýkoľvek znak okrem formátovacích a riadiacich predpôn",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Nastavuje značky používané pre tokeny reálneho času v dátach poľa."
+    "summary": "Nastavuje značky používané pre tokeny reálneho času v dátach poľa.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "indikačný znak primárnych hodín",
+          "values": "akýkoľvek znak ASCII",
+          "default": "%"
+        },
+        {
+          "meaning": "indikačný znak sekundárnych hodín",
+          "values": "akýkoľvek znak ASCII, odlišný od a"
+        },
+        {
+          "meaning": "indikačný znak tretích hodín",
+          "values": "akýkoľvek znak ASCII, odlišný od a a b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Nastavuje predvolenú šírku modulu čiarového kódu, pomer širokého k úzkemu prvku a výšku pre nasledujúce polia čiarového kódu."
+    "summary": "Nastavuje predvolenú šírku modulu čiarového kódu, pomer širokého k úzkemu prvku a výšku pre nasledujúce polia čiarového kódu.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "šírka modulu v bodoch",
+          "values": "1 až 10",
+          "default": "2"
+        },
+        {
+          "meaning": "pomer širokého k úzkemu prvku",
+          "values": "2.0 až 3.0 v krokoch po 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "akákoľvek výška v bodoch",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Umiestňuje segmenty PDF417 alebo MicroPDF417 na konkrétne pozície, keď sa jedna správa rozkladá na viac symbolov."
+    "summary": "Umiestňuje segmenty PDF417 alebo MicroPDF417 na konkrétne pozície, keď sa jedna správa rozkladá na viac symbolov.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "X-súradnica prvého symbolu, pre viac opakujte dvojice",
+          "values": "0 až 32000, alebo e na vynechanie tohto symbolu"
+        },
+        {
+          "meaning": "Y-súradnica prvého symbolu, pre viac opakujte dvojice",
+          "values": "0 až 32000, alebo e na vynechanie tohto symbolu"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Nastavuje poradie znakov aktuálneho poľa a môže pridať dodatočné medzery medzi znakmi."
+    "summary": "Nastavuje poradie znakov aktuálneho poľa a môže pridať dodatočné medzery medzi znakmi.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "smer tlače",
+          "values": "H horizontálne, V vertikálne, R obrátené",
+          "default": "H"
+        },
+        {
+          "meaning": "dodatočná medzera medzi znakmi v bodoch",
+          "values": "0 až 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Vyberá rezidentné škálovateľné písmo 0 pre nasledujúce pole v požadovanej veľkosti a orientácii."
+    "summary": "Vyberá rezidentné škálovateľné písmo 0 pre nasledujúce pole v požadovanej veľkosti a orientácii.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška znaku v bodoch",
+          "values": "10 až 32000",
+          "default": "posledné ^CF"
+        },
+        {
+          "meaning": "šírka znaku v bodoch",
+          "values": "10 až 32000",
+          "default": "posledné ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Vyberá rezidentné písmo podľa jednoznakového názvu, voliteľne s orientáciou, výškou a šírkou."
+    "summary": "Vyberá rezidentné písmo podľa jednoznakového názvu, voliteľne s orientáciou, výškou a šírkou.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "názov písma",
+          "values": "A až Z, 0 až 9",
+          "default": "posledné ^CF"
+        },
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška znaku v bodoch",
+          "values": "10 až 32000 škálovateľné, 1 až 10-násobok základnej výšky bitmapové",
+          "default": "posledné ^CF"
+        },
+        {
+          "meaning": "šírka znaku v bodoch",
+          "values": "10 až 32000 škálovateľné, 1 až 10-násobok základnej šírky bitmapové",
+          "default": "posledné ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Vyberá uložený súbor písma pre nasledujúce pole, voliteľne s orientáciou, výškou a šírkou."
+    "summary": "Vyberá uložený súbor písma pre nasledujúce pole, voliteľne s orientáciou, výškou a šírkou.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "orientácia poľa",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška znaku v bodoch",
+          "values": "10 až 32000 škálovateľné, 1 až 10-násobok základnej výšky bitmapové",
+          "default": "posledné ^CF"
+        },
+        {
+          "meaning": "šírka znaku v bodoch",
+          "values": "10 až 32000 škálovateľné, 1 až 10-násobok základnej šírky bitmapové",
+          "default": "posledné ^CF"
+        },
+        {
+          "meaning": "jednotka obsahujúca písmo",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov súboru písma na použitie",
+          "values": "akýkoľvek platný názov písma",
+          "default": "posledné ^CF"
+        },
+        {
+          "meaning": "prípona súboru písma",
+          "values": "FNT písmo, TTF TrueType, TTE rozšírenie TrueType"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Nastavuje záložné písmo, výšku a šírku pre textové polia, ktoré si vlastné hodnoty nešpecifikujú."
+    "summary": "Nastavuje záložné písmo, výšku a šírku pre textové polia, ktoré si vlastné hodnoty nešpecifikujú.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "predvolené písmo",
+          "values": "A až Z, 0 až 9",
+          "default": "A"
+        },
+        {
+          "meaning": "predvolená výška znaku v bodoch",
+          "values": "0 až 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "predvolená šírka znaku v bodoch",
+          "values": "0 až 32000",
+          "default": "5 alebo posledná uložená hodnota"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Vyberá kódovanie na interpretáciu dát poľa, vrátane znakových stránok a UTF-8."
+    "summary": "Vyberá kódovanie na interpretáciu dát poľa, vrátane znakových stránok a UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "kódovanie znakov na použitie",
+          "values": "0 až 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "pozícia znaku na premapovanie",
+          "values": "0 až 255",
+          "default": "žiadna"
+        },
+        {
+          "meaning": "pozícia náhradného znaku",
+          "values": "0 až 255",
+          "default": "žiadna"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Povoľuje pokročilé rozloženie textu pre nasledujúce polia, vrátane obojsmerného textu, tvarovania a funkcií OpenType."
+    "summary": "Povoľuje pokročilé rozloženie textu pre nasledujúce polia, vrátane obojsmerného textu, tvarovania a funkcií OpenType.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "predvolený zdroj glyfu",
+          "values": "0 znak medzery, 1 glyf písma",
+          "default": "0"
+        },
+        {
+          "meaning": "obojsmerné rozloženie textu",
+          "values": "0 vypnuté, 1 zapnuté",
+          "default": "0"
+        },
+        {
+          "meaning": "tvarovanie znakov",
+          "values": "0 vypnuté, 1 zapnuté",
+          "default": "0"
+        },
+        {
+          "meaning": "podpora tabuliek OpenType",
+          "values": "0 vypnuté, 1 zapnuté",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Priraďuje jednoznakový názov písma uloženému súboru písma."
+    "summary": "Priraďuje jednoznakový názov písma uloženému súboru písma.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "písmeno písma na pridanie alebo nahradenie",
+          "values": "A až Z, 0 až 9"
+        },
+        {
+          "meaning": "jednotka na uloženie písma",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov súboru uloženého písma",
+          "values": "do 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru písma",
+          "values": "FNT písmo, TTF TrueType, TTE rozšírenie TrueType"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Nastavuje veľkosť vyrovnávacej pamäte pre vykreslené škálovateľné glyfy a zrýchľuje tak opakovanú tlač veľkého písma."
+    "summary": "Nastavuje veľkosť vyrovnávacej pamäte pre vykreslené škálovateľné glyfy a zrýchľuje tak opakovanú tlač veľkého písma.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "zapnutá vyrovnávacia pamäť znakov",
+          "values": "N nie, Y áno",
+          "default": "Y"
+        },
+        {
+          "meaning": "dodatočná vyrovnávacia pamäť v K",
+          "values": "1 až 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "typ vyrovnávacej pamäte",
+          "values": "0 normálne písma, 1 ázijské písma",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Definuje reťazce záložných písiem TrueType používané, keď základnému písmu chýba glyf."
+    "summary": "Definuje reťazce záložných písiem TrueType používané, keď základnému písmu chýba glyf.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "rozširujúce písmo na prepojenie, zariadenie a súbor",
+          "values": "súbor TTF alebo TTE na zariadení"
+        },
+        {
+          "meaning": "základné písmo alebo písma, ktoré ho prijmú",
+          "values": "súbor FNT, TTF alebo TTE, zástupné znaky povolené"
+        },
+        {
+          "meaning": "prepojiť alebo odpojiť rozšírenie",
+          "values": "0 odpojiť, 1 prepojiť"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Stiahne bitmapové písmo a jeho metriky do pamäte tlačiarne."
+    "summary": "Stiahne bitmapové písmo a jeho metriky do pamäte tlačiarne.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "jednotka na uloženie písma",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov písma",
+          "values": "do 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru písma",
+          "values": "FNT pevná hodnota",
+          "default": "FNT"
+        },
+        {
+          "meaning": "orientácia natívneho písma",
+          "values": "N iba normálne",
+          "default": "N"
+        },
+        {
+          "meaning": "maximálna výška buňky v bodoch",
+          "values": "1 až 32000"
+        },
+        {
+          "meaning": "maximálna šírka buňky v bodoch",
+          "values": "1 až 32000"
+        },
+        {
+          "meaning": "body od vrchu buňky po základnú čiaru",
+          "values": "1 až 32000"
+        },
+        {
+          "meaning": "šírka medzerových znakov",
+          "values": "1 až 32000"
+        },
+        {
+          "meaning": "počet znakov v písme",
+          "values": "1 až 256"
+        },
+        {
+          "meaning": "text držiteľa autorských práv",
+          "values": "1 až 63 alfanumerických znakov"
+        },
+        {
+          "meaning": "štruktúrované bitmapové dáta na znak",
+          "values": "hash kód, potom offsety výšky a šírky, potom hex dáta"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Stiahne zakódované škálovateľné písmo Intellifont do pamäte tlačiarne."
+    "summary": "Stiahne zakódované škálovateľné písmo Intellifont do pamäte tlačiarne.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "jednotka na uloženie písma",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov písma",
+          "values": "do 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru písma",
+          "values": "FNT pevná hodnota",
+          "default": "FNT"
+        },
+        {
+          "meaning": "veľkosť písma v bajtoch z ZTools",
+          "values": "počet bajtov konvertovaného písma"
+        },
+        {
+          "meaning": "zakódované bajtové dáta písma",
+          "values": "hex dvojice zodpovedajúce veľkosti"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Stiahne zakódované písmo TrueType s maximálne 256 znakmi do pamäte tlačiarne."
+    "summary": "Stiahne zakódované písmo TrueType s maximálne 256 znakmi do pamäte tlačiarne.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "jednotka na uloženie písma",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov písma",
+          "values": "do 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru písma",
+          "values": "DAT pevná hodnota",
+          "default": "DAT"
+        },
+        {
+          "meaning": "veľkosť písma v bajtoch",
+          "values": "počet bajtov konvertovaného písma"
+        },
+        {
+          "meaning": "zakódované bajtové dáta písma",
+          "values": "hex dvojice zodpovedajúce veľkosti"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Stiahne zakódované písmo TrueType s viac ako 256 glyfmi do pamäte tlačiarne."
+    "summary": "Stiahne zakódované písmo TrueType s viac ako 256 glyfmi do pamäte tlačiarne.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "jednotka na uloženie písma",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov písma",
+          "values": "do 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru písma",
+          "values": "FNT pevná hodnota",
+          "default": "FNT"
+        },
+        {
+          "meaning": "veľkosť písma v bajtoch",
+          "values": "počet bajtov konvertovaného písma"
+        },
+        {
+          "meaning": "zakódované bajtové dáta písma",
+          "values": "hex dvojice zodpovedajúce veľkosti"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Stiahne kódovaciu tabuľku, ktorá priraďuje bajty dát poľa hodnotám Unicode pre písma TrueType."
+    "summary": "Stiahne kódovaciu tabuľku, ktorá priraďuje bajty dát poľa hodnotám Unicode pre písma TrueType.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "jednotka obsahujúca tabuľku",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov tabuľky",
+          "values": "do 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru tabuľky",
+          "values": "DAT pevná hodnota",
+          "default": "DAT"
+        },
+        {
+          "meaning": "veľkosť tabuľky v bajtoch",
+          "values": "počet bajtov konvertovanej tabuľky"
+        },
+        {
+          "meaning": "zakódované bajtové dáta tabuľky",
+          "values": "hex dvojice zodpovedajúce veľkosti"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Vykresľuje čiarový kód Code 128 pre ASCII dáta premenlivej dĺžky, s režimami automatického prepínania podmnožín a dát UCC/EAN."
+    "summary": "Vykresľuje čiarový kód Code 128 pre ASCII dáta premenlivej dĺžky, s režimami automatického prepínania podmnožín a dát UCC/EAN.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "N nie, Y áno",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "N nie, Y áno",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolná číslica UCC",
+          "values": "N nie, Y áno",
+          "default": "N"
+        },
+        {
+          "meaning": "režim",
+          "values": "N žiadne, U UCC Case Mode, A automatické, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Vykresľuje čiarový kód Code 39 s voliteľnou kontrolnou číslicou Mod 43."
+    "summary": "Vykresľuje čiarový kód Code 39 s voliteľnou kontrolnou číslicou Mod 43.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "kontrolná číslica Mod 43",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Vykresľuje čiarový kód Code 93, ktorý reprezentuje plné ASCII dáta pomocou prepínacích znakov."
+    "summary": "Vykresľuje čiarový kód Code 93, ktorý reprezentuje plné ASCII dáta pomocou prepínacích znakov.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "tlač kontrolnej číslice",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Vykresľuje čiarový kód Code 11 pre číslice a spojovníky, s voliteľnými kontrolnými číslicami."
+    "summary": "Vykresľuje čiarový kód Code 11 pre číslice a spojovníky, s voliteľnými kontrolnými číslicami.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "počet kontrolných číslic",
+          "values": "Y 1 číslica, N 2 číslice",
+          "default": "N"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Vykresľuje čiarový kód Interleaved 2 of 5 pre číselné dáta párnej dĺžky, s voliteľnou kontrolnou číslicou."
+    "summary": "Vykresľuje čiarový kód Interleaved 2 of 5 pre číselné dáta párnej dĺžky, s voliteľnou kontrolnou číslicou.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolná číslica Mod 10",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "šiesty slot, nedokumentovaný",
+          "values": "nedokumentované v príručke"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Vykresľuje čiarový kód Industrial 2 of 5, číselný kód, ktorého dáta sú zakódované iba v čiarach."
+    "summary": "Vykresľuje čiarový kód Industrial 2 of 5, číselný kód, ktorého dáta sú zakódované iba v čiarach.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Vykresľuje čiarový kód Standard 2 of 5, samokontrolný číselný kód, ktorého dáta sú zakódované iba v čiarach."
+    "summary": "Vykresľuje čiarový kód Standard 2 of 5, samokontrolný číselný kód, ktorého dáta sú zakódované iba v čiarach.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Vykresľuje čiarový kód ANSI Codabar, tiež známy ako USD-4, pre knižničné, zdravotnícke a kuriérske etikety."
+    "summary": "Vykresľuje čiarový kód ANSI Codabar, tiež známy ako USD-4, pre knižničné, zdravotnícke a kuriérske etikety.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "kontrolná číslica, pevne vypnutá",
+          "values": "iba N",
+          "default": "N"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "počiatočný znak",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "koncový znak",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Vykresľuje čiarový kód LOGMARS, variant Code 39 pre americké ministerstvo obrany, a malé písmená v dátach prevádza na veľké."
+    "summary": "Vykresľuje čiarový kód LOGMARS, variant Code 39 pre americké ministerstvo obrany, a malé písmená v dátach prevádza na veľké.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Vykresľuje čiarový kód MSI, číselný kód odvodený od Plessey, s voliteľnými schémami kontrolných číslic."
+    "summary": "Vykresľuje čiarový kód MSI, číselný kód odvodený od Plessey, s voliteľnými schémami kontrolných číslic.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "schéma kontrolnej číslice",
+          "values": "A žiadna, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolná číslica v interpretačnom riadku",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Vykresľuje čiarový kód Plessey, starší číselný kód s voliteľnými kontrolnými číslicami."
+    "summary": "Vykresľuje čiarový kód Plessey, starší číselný kód s voliteľnými kontrolnými číslicami.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "tlač kontrolnej číslice",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Vykresľuje čiarový kód EAN-13 pre maloobchodné čísla výrobkov a kontrolnú číslicu odvodzuje z dvanástich dátových číslic."
+    "summary": "Vykresľuje čiarový kód EAN-13 pre maloobchodné čísla výrobkov a kontrolnú číslicu odvodzuje z dvanástich dátových číslic.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Vykresľuje čiarový kód EAN-8 pre malé maloobchodné balenia a kontrolnú číslicu odvodzuje zo siedmich dátových číslic."
+    "summary": "Vykresľuje čiarový kód EAN-8 pre malé maloobchodné balenia a kontrolnú číslicu odvodzuje zo siedmich dátových číslic.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Vykresľuje čiarový kód UPC-A pre maloobchodné balenia z jedenástich dátových číslic, s voliteľnou tlačou kontrolnej číslice."
+    "summary": "Vykresľuje čiarový kód UPC-A pre maloobchodné balenia z jedenástich dátových číslic, s voliteľnou tlačou kontrolnej číslice.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 9999",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "tlač kontrolnej číslice",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Vykresľuje čiarový kód UPC-E, skrátenú formu UPC-A. Dáta poľa tvorí úplný desaťmiestny kód výrobcu a produktu."
+    "summary": "Vykresľuje čiarový kód UPC-E, skrátenú formu UPC-A. Dáta poľa tvorí úplný desaťmiestny kód výrobcu a produktu.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "tlač kontrolnej číslice",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Vykresľuje symbol GS1 DataBar s voliteľným podtypom, zväčšením, výškou a šírkou segmentu."
+    "summary": "Vykresľuje symbol GS1 DataBar s voliteľným podtypom, zväčšením, výškou a šírkou segmentu.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R otočené, I invertované, B odspodu nahor",
+          "default": "R"
+        },
+        {
+          "meaning": "typ symbológie DataBar",
+          "values": "1 omni, 2 skrátený, 3 stacked, 4 stacked omni, 5 limited, 6 expanded, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 s CC-A/B, 12 UCC/EAN-128 s CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "faktor zväčšenia",
+          "values": "1 až 10",
+          "default": "nastavenie tlačiarne"
+        },
+        {
+          "meaning": "výška oddeľovača",
+          "values": "1 alebo 2",
+          "default": "1"
+        },
+        {
+          "meaning": "výška lineárnej časti v bodoch",
+          "values": "1 až 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "šírka segmentu pre GS1 DataBar Expanded",
+          "values": "2 až 22, iba párne",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Vykresľuje poštový čiarový kód Planet Code z číslic zakódovaných ako vysoké a krátke čiary."
+    "summary": "Vykresľuje poštový čiarový kód Planet Code z číslic zakódovaných ako vysoké a krátke čiary.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R otočené, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 9999",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Vykresľuje POSTNET, Planet Code alebo USPS Intelligent Mail podľa zvoleného typu poštového kódu."
+    "summary": "Vykresľuje POSTNET, Planet Code alebo USPS Intelligent Mail podľa zvoleného typu poštového kódu.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "typ poštového kódu",
+          "values": "0 postnet, 1 planet, 2 rezervované, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Vykresľuje dvojmiestny alebo päťmiestny doplnkový symbol UPC/EAN vedľa hlavného čiarového kódu."
+    "summary": "Vykresľuje dvojmiestny alebo päťmiestny doplnkový symbol UPC/EAN vedľa hlavného čiarového kódu.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 32000",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "interpretačný riadok",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "interpretačný riadok nad kódom",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Vykresľuje skladaný čiarový kód Code 49 s dvomi až ôsmimi riadkami plných ASCII dát."
+    "summary": "Vykresľuje skladaný čiarový kód Code 49 s dvomi až ôsmimi riadkami plných ASCII dát.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "multiplikátor výšky jednotlivých riadkov",
+          "values": "1 po výšku etikety",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "umiestnenie interpretačného riadka",
+          "values": "N žiadne, A nad, B pod",
+          "default": "N"
+        },
+        {
+          "meaning": "počiatočný režim",
+          "values": "0 alfanumerické, 1 viacnásobné čítanie, 2 číselné, 3 skupinové alfa, 4 shift 1, 5 shift 2, A auto",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Vykresľuje symbol QR Code. Parametre príkazu určujú model, zväčšenie a masku. Dáta poľa určujú úroveň korekcie chýb a znakový režim."
+    "summary": "Vykresľuje symbol QR Code. Parametre príkazu určujú model, zväčšenie a masku. Dáta poľa určujú úroveň korekcie chýb a znakový režim.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "orientácia poľa",
+          "values": "N iba normálne",
+          "default": "N"
+        },
+        {
+          "meaning": "model",
+          "values": "1 pôvodný, 2 vylepšený",
+          "default": "2"
+        },
+        {
+          "meaning": "faktor zväčšenia",
+          "values": "1 až 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "úroveň korekcie chýb",
+          "values": "H ultra vysoká, Q vysoká, M štandardná, L vysoká hustota",
+          "default": "Q keď je prázdne, M keď je hodnota neplatná"
+        },
+        {
+          "meaning": "hodnota masky",
+          "values": "0 až 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Vykresľuje symbol Data Matrix s nastaviteľnou veľkosťou prvku, úrovňou kvality a spracovaním únikových znakov."
+    "summary": "Vykresľuje symbol Data Matrix s nastaviteľnou veľkosťou prvku, úrovňou kvality a spracovaním únikových znakov.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "rozmerová výška prvkov symbolu",
+          "values": "1 po šírku etikety",
+          "default": "0, čo prevezme výšku symbolu z ^BY"
+        },
+        {
+          "meaning": "úroveň kvality",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "stĺpce na zakódovanie",
+          "values": "9 až 49, iba nepárne pre kvalitu 0 až 140, iba párne pre kvalitu 200"
+        },
+        {
+          "meaning": "riadky na zakódovanie",
+          "values": "9 až 49"
+        },
+        {
+          "meaning": "ID formátu",
+          "values": "1 číselné, 2 veľké písmená, 3 veľké alfanumerické so . , - /, 4 veľké alfanumerické, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "riadiaci znak escape sekvencie",
+          "values": "akýkoľvek znak",
+          "default": "vlnka"
+        },
+        {
+          "meaning": "pomer strán",
+          "values": "1 štvorcový, 2 obdĺžnikový",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Vykresľuje skladaný dvojrozmerný symbol PDF417 pre rozsiahle textové alebo binárne dáta."
+    "summary": "Vykresľuje skladaný dvojrozmerný symbol PDF417 pre rozsiahle textové alebo binárne dáta.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu na riadok v bodoch",
+          "values": "1 po výšku etikety",
+          "default": "posledné ^BY"
+        },
+        {
+          "meaning": "úroveň zabezpečenia",
+          "values": "1 až 8",
+          "default": "0"
+        },
+        {
+          "meaning": "počet dátových stĺpcov",
+          "values": "1 až 30",
+          "default": "automatický pomer strán"
+        },
+        {
+          "meaning": "počet riadkov",
+          "values": "3 až 90",
+          "default": "automatický pomer strán"
+        },
+        {
+          "meaning": "skrátenie pravých indikátorov riadkov a vzoru zastavenia",
+          "values": "Y áno, N nie",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Vykresľuje symbol MicroPDF417, kompaktný variant PDF417 s adresovacími vzormi riadkov."
+    "summary": "Vykresľuje symbol MicroPDF417, kompaktný variant PDF417 s adresovacími vzormi riadkov.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "výška čiarového kódu v bodoch",
+          "values": "1 až 9999",
+          "default": "posledné ^BY, alebo 10, ak nebolo odoslané žiadne ^BY"
+        },
+        {
+          "meaning": "režim",
+          "values": "0 až 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Vykresľuje maticový symbol Aztec s nastaviteľným zväčšením a korekciou chýb."
+    "summary": "Vykresľuje maticový symbol Aztec s nastaviteľným zväčšením a korekciou chýb.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R otočené, I 180, B 270",
+          "default": "posledné ^FW"
+        },
+        {
+          "meaning": "faktor zväčšenia",
+          "values": "1 až 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "indikátor rozšírenej interpretácie kanála",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "riadenie chýb a veľkosť symbolu",
+          "values": "0 predvolené, 1 až 99 percento chýb, 101 až 104 kompaktné vrstvy, 201 až 232 plné vrstvy, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "indikátor symbolu menu",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "počet symbolov pre štruktúrované pripojenie",
+          "values": "1 až 26",
+          "default": "1"
+        },
+        {
+          "meaning": "pole ID štruktúrovaného pripojenia",
+          "values": "text do 24 znakov",
+          "default": "žiadne ID"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Vykresľuje symbol CODABLOCK v režime A, E alebo F pre väčší objem dát."
+    "summary": "Vykresľuje symbol CODABLOCK v režime A, E alebo F pre väčší objem dát.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "výška čiarového kódu na riadok v bodoch",
+          "values": "2 až 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "úroveň zabezpečenia",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "znakov na riadok",
+          "values": "2 až 62"
+        },
+        {
+          "meaning": "riadky na zakódovanie",
+          "values": "mode-A 1-22, mode-EF 2-4"
+        },
+        {
+          "meaning": "režim",
+          "values": "A code39-set, E code128-fnc1, F code128-set",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Vykresľuje symbol UPS MaxiCode s režimom pre štruktúrované správy prepravcu alebo všeobecné dáta."
+    "summary": "Vykresľuje symbol UPS MaxiCode s režimom pre štruktúrované správy prepravcu alebo všeobecné dáta.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "režim",
+          "values": "2 us-postal, 3 non-us-postal, 4 standard, 5 full-eec, 6 reader-program",
+          "default": "2"
+        },
+        {
+          "meaning": "číslo symbolu v sekvencii",
+          "values": "1 až 8",
+          "default": "1"
+        },
+        {
+          "meaning": "celkový počet symbolov",
+          "values": "1 až 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Vykresľuje symbol TLC39 pre telekomunikačné etikety, ktorý kombinuje Code 39 s komponentom MicroPDF417."
+    "summary": "Vykresľuje symbol TLC39 pre telekomunikačné etikety, ktorý kombinuje Code 39 s komponentom MicroPDF417.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R otočené, I invertované, B odspodu nahor"
+        },
+        {
+          "meaning": "šírka časti Code 39 v bodoch",
+          "values": "1 až 10",
+          "default": "600 dpi 4, inak 2"
+        },
+        {
+          "meaning": "pomer širokého k úzkemu prvku časti Code 39",
+          "values": "2.0 až 3.0 v krokoch po 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "výška časti Code 39 v bodoch",
+          "values": "1 až 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "šírka úzkeho prvku časti MicroPDF417",
+          "values": "1 až 10",
+          "default": "600 dpi 4, inak 2"
+        },
+        {
+          "meaning": "výška riadku časti MicroPDF417 v bodoch",
+          "values": "1 až 255",
+          "default": "600 dpi 8, inak 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Po zapnutí overuje dáta a parametre čiarového kódu a namiesto chybného symbolu vytlačí text INVALID."
+    "summary": "Po zapnutí overuje dáta a parametre čiarového kódu a namiesto chybného symbolu vytlačí text INVALID.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "validácia kódu",
+          "values": "N nie, Y áno",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Vykresľuje vyplnený alebo obrysový obdĺžnik. Ak sa strana rovná hrúbke okraja, vznikne čiara."
+    "summary": "Vykresľuje vyplnený alebo obrysový obdĺžnik. Ak sa strana rovná hrúbke okraja, vznikne čiara.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "šírka obdĺžnika v bodoch",
+          "values": "t až 32000",
+          "default": "t alebo 1"
+        },
+        {
+          "meaning": "výška obdĺžnika v bodoch",
+          "values": "t až 32000",
+          "default": "t alebo 1"
+        },
+        {
+          "meaning": "hrúbka okraja v bodoch",
+          "values": "1 až 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "farba čiary",
+          "values": "B čierna, W biela",
+          "default": "B"
+        },
+        {
+          "meaning": "zaoblenie rohov",
+          "values": "0 žiadne zaoblenie až 8 najsilnejšie zaoblenie",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Vykresľuje diagonálnu čiaru v zadanej šírke a výške, naklonenú doprava alebo doľava."
+    "summary": "Vykresľuje diagonálnu čiaru v zadanej šírke a výške, naklonenú doprava alebo doľava.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "šírka obdĺžnika v bodoch",
+          "values": "3 až 32000",
+          "default": "t alebo 3"
+        },
+        {
+          "meaning": "výška obdĺžnika v bodoch",
+          "values": "3 až 32000",
+          "default": "t alebo 3"
+        },
+        {
+          "meaning": "hrúbka okraja v bodoch",
+          "values": "1 až 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "farba čiary",
+          "values": "B čierna, W biela",
+          "default": "B"
+        },
+        {
+          "meaning": "smer uhlopriečky",
+          "values": "R alebo / sklon vpravo, L alebo \\ sklon vľavo",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Vykresľuje elipsu podľa šírky a výšky v bodoch, s hrúbkou okraja smerom dovnútra a čiernym alebo bielym výstupom."
+    "summary": "Vykresľuje elipsu podľa šírky a výšky v bodoch, s hrúbkou okraja smerom dovnútra a čiernym alebo bielym výstupom.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "šírka elipsy v bodoch",
+          "values": "3 až 4095",
+          "default": "t alebo 1"
+        },
+        {
+          "meaning": "výška elipsy v bodoch",
+          "values": "3 až 4095",
+          "default": "t alebo 1"
+        },
+        {
+          "meaning": "hrúbka okraja v bodoch",
+          "values": "2 až 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "farba čiary",
+          "values": "B čierna, W biela",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Vykresľuje kruh so zadaným priemerom v bodoch, s hrúbkou okraja smerom dovnútra a čiernym alebo bielym výstupom."
+    "summary": "Vykresľuje kruh so zadaným priemerom v bodoch, s hrúbkou okraja smerom dovnútra a čiernym alebo bielym výstupom.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "priemer kruhu v bodoch",
+          "values": "3 až 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "hrúbka okraja v bodoch",
+          "values": "2 až 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "farba čiary",
+          "values": "B čierna, W biela",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Umiestňuje monochromatickú bitmapu na aktuálnu pozíciu poľa pomocou dát ASCII hex, binárnych alebo komprimovaných dát."
+    "summary": "Umiestňuje monochromatickú bitmapu na aktuálnu pozíciu poľa pomocou dát ASCII hex, binárnych alebo komprimovaných dát.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "typ kompresie",
+          "values": "A ascii hex, B binárne, C komprimované binárne",
+          "default": "A"
+        },
+        {
+          "meaning": "celkový počet bajtov na odoslanie",
+          "values": "1 až 99999"
+        },
+        {
+          "meaning": "celkový počet bajtov v obrázku",
+          "values": "1 až 99999"
+        },
+        {
+          "meaning": "počet bajtov na riadok obrázka",
+          "values": "1 až 99999"
+        },
+        {
+          "meaning": "dáta obrázka",
+          "values": "ascii hex 00 až FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Tlačí rezidentný symbol vybraný dátami poľa, napríklad symbol copyrightu alebo registrovanej ochrannej známky."
+    "summary": "Tlačí rezidentný symbol vybraný dátami poľa, napríklad symbol copyrightu alebo registrovanej ochrannej známky.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "orientácia",
+          "values": "N normálne, R 90 v smere hodinových ručičiek, I 180, B 270",
+          "default": "N alebo posledné ^FW"
+        },
+        {
+          "meaning": "výška znaku proporčná k šírke",
+          "values": "0 až 32000",
+          "default": "posledné ^CF"
+        },
+        {
+          "meaning": "šírka znaku proporčná k výške",
+          "values": "0 až 32000",
+          "default": "posledné ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Načíta uložený obrázok na začiatku formátu a ukotví ho v počiatku etikety."
+    "summary": "Načíta uložený obrázok na začiatku formátu a ukotví ho v počiatku etikety.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "úložné zariadenie",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov objektu",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": ".GRF alebo .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Umiestňuje uložený obrázok na aktuálnu pozíciu poľa bez zmeny mierky."
+    "summary": "Umiestňuje uložený obrázok na aktuálnu pozíciu poľa bez zmeny mierky.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "úložné zariadenie",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "poradie priority vyhľadávania"
+        },
+        {
+          "meaning": "názov objektu",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": ".GRF alebo .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Maže uložené grafiky, písma alebo formáty z pamäte tlačiarne, s podporou zástupných znakov pre skupiny."
+    "summary": "Maže uložené grafiky, písma alebo formáty z pamäte tlačiarne, s podporou zástupných znakov pre skupiny.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "úložné zariadenie",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov objektu, zástupné znaky povolené",
+          "values": "1 až 8 znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru, zástupné znaky povolené",
+          "values": "akákoľvek prípona",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Uloží aktuálny formát ako grafický obrázok pre rýchle vyvolanie a prekrytie premennými dátami."
+    "summary": "Uloží aktuálny formát ako grafický obrázok pre rýchle vyvolanie a prekrytie premennými dátami.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "úložné zariadenie",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov objektu",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": ".GRF alebo .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "tlač etikety po uložení",
+          "values": "N nie, Y áno",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Stiahne grafiku vo formáte ASCII hex do pamäte tlačiarne pod opakovane použiteľným názvom."
+    "summary": "Stiahne grafiku vo formáte ASCII hex do pamäte tlačiarne pod opakovane použiteľným názvom.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "úložné zariadenie",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov obrázka",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "celková veľkosť obrázka v bajtoch",
+          "values": "vypočítané zo šírky a výšky obrázka"
+        },
+        {
+          "meaning": "počet bajtov na riadok obrázka",
+          "values": "vypočítané zo šírky obrázka"
+        },
+        {
+          "meaning": "dáta grafického obrázka",
+          "values": "ascii hex 00 až FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Stiahne grafiku, písmo alebo certifikát do pamäte tlačiarne pod opakovane použiteľným názvom."
+    "summary": "Stiahne grafiku, písmo alebo certifikát do pamäte tlačiarne pod opakovane použiteľným názvom.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "úložné zariadenie",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov súboru",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "formát dát",
+          "values": "A ascii alebo zb64, B binárne, C ar komprimované, P png zb64"
+        },
+        {
+          "meaning": "typ uloženého súboru",
+          "values": "B bitmapa, E tte, G raw grf, P png, T ttf alebo otf, X pcx, NRD needitateľné, PAC prístupové poverenie, C wml menu, F htm stránka, H odozva tlačiarne",
+          "default": "G"
+        },
+        {
+          "meaning": "celkový počet bajtov v súbore",
+          "values": "skutočná veľkosť dekomprimovaného súboru"
+        },
+        {
+          "meaning": "počet bajtov na riadok pre obrázky GRF",
+          "values": "vypočítané zo šírky obrázka"
+        },
+        {
+          "meaning": "dáta súboru",
+          "values": "ascii hex, zb64 alebo binárne"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Sérializuje textové dáta alebo dáta čiarového kódu naprieč etiketami pomocou počiatočnej hodnoty, smeru a kroku."
+    "summary": "Sérializuje textové dáta alebo dáta čiarového kódu naprieč etiketami pomocou počiatočnej hodnoty, smeru a kroku.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "počiatočná sériová hodnota",
+          "values": "do 12 číslic",
+          "default": "1"
+        },
+        {
+          "meaning": "krok zvýšenia alebo zníženia",
+          "values": "do 12 číslic",
+          "default": "1"
+        },
+        {
+          "meaning": "doplnenie úvodnými nulami",
+          "values": "N nie, Y áno",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Sérializuje vybrané pozície v dátach poľa pomocou masky a znakových sád."
+    "summary": "Sérializuje vybrané pozície v dátach poľa pomocou masky a znakových sád.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "maska serializácie určujúca, ktoré znaky sa menia",
+          "values": "D desiatkové, H hex, O osmičkové, A alfa, N alfanumerické, % vynechať"
+        },
+        {
+          "meaning": "reťazec zvýšenia alebo zníženia pre masku",
+          "values": "jedna hodnota na pozíciu masky, % na jej zachovanie",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Uloží nasledujúce príkazy ako opakovane použiteľný formát namiesto ich okamžitej tlače."
+    "summary": "Uloží nasledujúce príkazy ako opakovane použiteľný formát namiesto ich okamžitej tlače.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "zariadenie na uloženie šablóny",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov šablóny",
+          "values": "1 až 16 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Vyvolá uložený formát a dodá hodnoty pre jeho číslované zástupné polia."
+    "summary": "Vyvolá uložený formát a dodá hodnoty pre jeho číslované zástupné polia.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "zdrojové zariadenie uloženej šablóny",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R potom E potom B potom A"
+        },
+        {
+          "meaning": "názov uloženej šablóny",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Vyvolá uloženú grafiku na aktuálnej pozícii s nezávislým vodorovným a zvislým škálovaním."
+    "summary": "Vyvolá uloženú grafiku na aktuálnej pozícii s nezávislým vodorovným a zvislým škálovaním.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "zdrojové zariadenie uloženej grafiky",
+          "values": "R, E, B, A",
+          "default": "R potom E potom B potom A"
+        },
+        {
+          "meaning": "názov uloženej grafiky",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": "GRF"
+        },
+        {
+          "meaning": "faktor zväčšenia na osi X",
+          "values": "1 až 10",
+          "default": "1"
+        },
+        {
+          "meaning": "faktor zväčšenia na osi Y",
+          "values": "1 až 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Vyberá spôsob, akým tlačiareň zisťuje hranice etikiet, pomocou medzier, značiek alebo súvislého média."
+    "summary": "Vyberá spôsob, akým tlačiareň zisťuje hranice etikiet, pomocou medzier, značiek alebo súvislého média.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "metóda sledovania média",
+          "values": "N súvislé, Y alebo W nesúvislé s medzerou, M nesúvislé so značkou, A automatická detekcia, V súvislé s premenlivou dĺžkou",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "offset čiernej značky v bodoch",
+          "values": "-120 až 283 na väčšine tlačiarní, -240 až 566 pri 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Nastavuje maximálnu dĺžku etikety, ktorú tlačiareň hľadá pri kalibrácii nesúvislého média."
+    "summary": "Nastavuje maximálnu dĺžku etikety, ktorú tlačiareň hľadá pri kalibrácii nesúvislého média.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "maximálna dĺžka etikety v riadkoch bodov",
+          "values": "DPI tlačiarne krát dva, do maximálnej dĺžky",
+          "default": "posledná uložená hodnota"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Nastavuje akciu po zapnutí a po zatvorení tlačovej hlavy, vrátane kalibrácie, posunu média alebo merania dĺžky."
+    "summary": "Nastavuje akciu po zapnutí a po zatvorení tlačovej hlavy, vrátane kalibrácie, posunu média alebo merania dĺžky.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "akcia posuvu pri zapnutí",
+          "values": "F posuv na prvú medzeru, C kalibrácia ako ~JC, L nastavenie dĺžky ako ~JL, N bez posuvu, S krátka kalibrácia",
+          "default": "C"
+        },
+        {
+          "meaning": "akcia posuvu po zatvorení hlavy",
+          "values": "F posuv na prvú medzeru, C kalibrácia ako ~JC, L nastavenie dĺžky ako ~JL, N bez posuvu, S krátka kalibrácia",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Konfiguruje tlačené upozornenia na údržbu pre čistenie alebo výmenu tlačovej hlavy."
+    "summary": "Konfiguruje tlačené upozornenia na údržbu pre čistenie alebo výmenu tlačovej hlavy.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "typ upozornenia",
+          "values": "R výmena hlavy, C čistenie hlavy"
+        },
+        {
+          "meaning": "tlač etikety upozornenia",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "vzdialenosť k prvému upozorneniu",
+          "values": "R 0 až 150 km, C 100 až 2000 metrov, 0 vypnuté",
+          "default": "50 km pre R, 0 vypnuté pre C"
+        },
+        {
+          "meaning": "vzdialenosť pred opätovným vydaním upozornenia",
+          "values": "0 až 2000 metrov",
+          "default": "0"
+        },
+        {
+          "meaning": "hlásená jednotka merania",
+          "values": "C centimetre, I palce, M metre",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Určuje, či sa bitmapa etikety po vytlačení vymaže, alebo sa ponechá na opätovné použitie pri ďalších etiketách."
+    "summary": "Určuje, či sa bitmapa etikety po vytlačení vymaže, alebo sa ponechá na opätovné použitie pri ďalších etiketách.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "vymazať bitmapu po tlači",
+          "values": "Y vymazať, N zachovať",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Nastavuje text zobrazený na etiketách s upozornením na údržbu pre čistenie alebo výmenu tlačovej hlavy."
+    "summary": "Nastavuje text zobrazený na etiketách s upozornením na údržbu pre čistenie alebo výmenu tlačovej hlavy.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "typ upozornenia",
+          "values": "R výmena hlavy, C čistenie hlavy",
+          "default": "R"
+        },
+        {
+          "meaning": "správa vytlačená na etikete upozornenia",
+          "values": "do 63 znakov, bez čiarok",
+          "default": "vyčistite tlačovú hlavu alebo vymeňte tlačovú hlavu"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Uzamyká nastavenie ovládacieho panela, napríklad sýtosť tlače alebo kalibráciu, až do jeho odomknutia."
+    "summary": "Uzamyká nastavenie ovládacieho panela, napríklad sýtosť tlače alebo kalibráciu, až do jeho odomknutia.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "režim ovládacieho panela na ochranu",
+          "values": "D sýtosť, P pozícia, C kalibrácia, E zapnúť všetko, S bez ukladania, W pauza, F posuv, X zrušiť, M menu",
+          "default": "musí byť zadané"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Zapína alebo vypína indikátor upozornenia na studenú tlačovú hlavu."
+    "summary": "Zapína alebo vypína indikátor upozornenia na studenú tlačovú hlavu.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "zapnúť varovanie studenej hlavy",
+          "values": "Y zapnúť, N vypnúť"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Upravuje sýtosť tlače relatívne voči aktuálne nastavenej sýtosti tlačiarne."
+    "summary": "Upravuje sýtosť tlače relatívne voči aktuálne nastavenej sýtosti tlačiarne.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "sýtosť média relatívne k aktuálnemu nastaveniu",
+          "values": "-30 až 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Nastaví absolútnu sýtosť tlače okamžite, zodpovedajúcu nastaveniu sýtosti na prednom paneli."
+    "summary": "Nastaví absolútnu sýtosť tlače okamžite, zodpovedajúcu nastaveniu sýtosti na prednom paneli.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "úroveň absolútnej sýtosti tlače",
+          "values": "00 až 30",
+          "default": "posledná uložená hodnota"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Určuje, či sa etiketa prerušená chybou média, pásky alebo tlačovej hlavy po obnovení znova vytlačí."
+    "summary": "Určuje, či sa etiketa prerušená chybou média, pásky alebo tlačovej hlavy po obnovení znova vytlačí.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "opätovná tlač etikety po odstránení chyby",
+          "values": "N nie, Y áno",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Plánuje periodické testy prvkov tlačovej hlavy podľa počtu vytlačených etikiet a voliteľného rozsahu prvkov."
+    "summary": "Plánuje periodické testy prvkov tlačovej hlavy podľa počtu vytlačených etikiet a voliteľného rozsahu prvkov.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "etikety vytlačené medzi testami hlavy",
+          "values": "0 až 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "manuálny výber rozsahu prvkov testu hlavy",
+          "values": "N nie, Y áno",
+          "default": "N"
+        },
+        {
+          "meaning": "číslo prvého testovacieho prvku",
+          "values": "0 až 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "číslo posledného testovacieho prvku",
+          "values": "0 až 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Upravuje kľudovú pozíciu na odtrhnutie alebo rezanie o malý posun v bodoch po tlači."
+    "summary": "Upravuje kľudovú pozíciu na odtrhnutie alebo rezanie o malý posun v bodoch po tlači.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "zmena kľudovej pozície odtrhnutia v bodoch",
+          "values": "-120 až 120",
+          "default": "posledná uložená hodnota"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Konfiguruje prahové hodnoty pre včasné upozornenia na údržbu média, pásky a tlačovej hlavy."
+    "summary": "Konfiguruje prahové hodnoty pre včasné upozornenia na údržbu média, pásky a tlačovej hlavy.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "včasné varovanie pre médiá alebo spotrebný materiál",
+          "values": "E zapnúť, D vypnúť",
+          "default": "D"
+        },
+        {
+          "meaning": "počet etikiet na kotúč",
+          "values": "100 až 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "médium bolo vymenené",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "kód dĺžky pásky podľa modelu",
+          "values": "N 0 m, 0 až 7 je 100 až 450 m, 10 až 16 je 600 až 900 m",
+          "default": "1 alebo 7 podľa modelu"
+        },
+        {
+          "meaning": "páska bola vymenená",
+          "values": "Y áno, N nie",
+          "default": "N"
+        },
+        {
+          "meaning": "zapnuté včasné varovanie údržby",
+          "values": "E zapnuté, D vypnuté",
+          "default": "D"
+        },
+        {
+          "meaning": "kód intervalu čistenia hlavy",
+          "values": "0 až 16 pre 100 m až 900 m v krokoch po 50 m",
+          "default": "1 alebo 7 podľa modelu"
+        },
+        {
+          "meaning": "tlačová hlava bola vyčistená",
+          "values": "N nie, Y áno",
+          "default": "N"
+        },
+        {
+          "meaning": "prah varovania životnosti hlavy v palcoch",
+          "values": "0 vypnuté, alebo 100 až 3500000 palcov",
+          "default": "1000000"
+        },
+        {
+          "meaning": "tlačová hlava bola vymenená",
+          "values": "N nie, Y áno",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Riadi časovanie spätného posunu okolo tlače a rezania, alebo ho úplne vypína."
+    "summary": "Riadi časovanie spätného posunu okolo tlače a rezania, alebo ho úplne vypína.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "časovanie spätného posuvu vzhľadom na tlač",
+          "values": "A úplné po, B úplné pred, N normálne, O vypnuté, 10 až 90 percent",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Posunie zadaný počet prázdnych riadkov bodov posuvnou rýchlosťou."
+    "summary": "Posunie zadaný počet prázdnych riadkov bodov posuvnou rýchlosťou.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "riadky bodov posunuté od spodu",
+          "values": "0 až 32000",
+          "default": "musí byť zadané"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Okamžite spustí rezačku na tlačiarňach KR403 v kioskovom režime tlače."
+    "summary": "Okamžite spustí rezačku na tlačiarňach KR403 v kioskovom režime tlače.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "režim prepísania miery rezu",
+          "values": "0 nastavenie kiosku, 1 úplný rez"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Pridáva dodatočnú dĺžku vysunutia v prezentéri kiosku KR403, aby sa vytlačené médium dalo ľahšie odobrať."
+    "summary": "Pridáva dodatočnú dĺžku vysunutia v prezentéri kiosku KR403, aby sa vytlačené médium dalo ľahšie odobrať.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "dodatočná dĺžka vysunutia média v mm",
+          "values": "0 až 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Spustí cyklus prezentéra KR403 a ponúkne vytlačené médium na manuálne odobratie."
+    "summary": "Spustí cyklus prezentéra KR403 a ponúkne vytlačené médium na manuálne odobratie.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "dĺžka vysunutia média pre prezentér v mm",
+          "values": "0 až 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Nastavuje napätie prívodu pásky na tlačiarňach radu PAX."
+    "summary": "Nastavuje napätie prívodu pásky na tlačiarňach radu PAX.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "úroveň napnutia pásky",
+          "values": "L nízka, M stredná, H vysoká",
+          "default": "musí byť zadané"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Nastavuje dátum a čas hodín reálneho času tlačiarne."
+    "summary": "Nastavuje dátum a čas hodín reálneho času tlačiarne.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "mesiac",
+          "values": "01 až 12",
+          "default": "aktuálny mesiac"
+        },
+        {
+          "meaning": "deň",
+          "values": "01 až 31",
+          "default": "aktuálny deň"
+        },
+        {
+          "meaning": "rok",
+          "values": "1998 až 2097",
+          "default": "aktuálny rok"
+        },
+        {
+          "meaning": "hodina",
+          "values": "00 až 23",
+          "default": "aktuálna hodina"
+        },
+        {
+          "meaning": "minúta",
+          "values": "00 až 59",
+          "default": "aktuálna minúta"
+        },
+        {
+          "meaning": "sekunda",
+          "values": "00 až 59",
+          "default": "aktuálna sekunda"
+        },
+        {
+          "meaning": "formát AM/PM alebo 24-hodinový",
+          "values": "A am, P pm, M 24-hodinový",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Vyberá formát dátumu a času zobrazený na konfiguračnej etikete a ovládacom paneli."
+    "summary": "Vyberá formát dátumu a času zobrazený na konfiguračnej etikete a ovládacom paneli.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "formát zobrazenia dátumu a času",
+          "values": "0 číslo verzie, 1 MM/DD/YY 24-hodinový, 2 MM/DD/YY 12-hodinový, 3 DD/MM/YY 24-hodinový, 4 DD/MM/YY 12-hodinový",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Definuje sekundárne posuny voči hodinám reálneho času. Tieto posuny sa po vypnutí tlačiarne strácajú."
+    "summary": "Definuje sekundárne posuny voči hodinám reálneho času. Tieto posuny sa po vypnutí tlačiarne strácajú.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "číslo hodín na posun",
+          "values": "2 sekundárne, 3 terciárne",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "posun v mesiacoch",
+          "values": "-32000 až 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "posun v dňoch",
+          "values": "-32000 až 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "posun v rokoch",
+          "values": "-32000 až 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "posun v hodinách",
+          "values": "-32000 až 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "posun v minútach",
+          "values": "-32000 až 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "posun v sekundách",
+          "values": "-32000 až 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Nastavuje, kedy sa časové polia časovo označia, a vyberá jazyk pre názvy dní a mesiacov."
+    "summary": "Nastavuje, kedy sa časové polia časovo označia, a vyberá jazyk pre názvy dní a mesiacov.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "režim čítania hodín",
+          "values": "S počiatočný čas, T aktuálny čas, 0 až 999 tolerancia",
+          "default": "S"
+        },
+        {
+          "meaning": "jazyk pre názvy dní a mesiacov",
+          "values": "1 angličtina, 2 španielčina, 3 francúzština, 4 nemčina, 5 taliančina, 6 až 18 ďalšie jazyky",
+          "default": "posledné ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Vyberá jazyk zobrazenia na ovládacom paneli tlačiarne zo zoznamu, ktorý sa líši podľa modelu."
+    "summary": "Vyberá jazyk zobrazenia na ovládacom paneli tlačiarne zo zoznamu, ktorý sa líši podľa modelu.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "jazyk displeja ovládacieho panela",
+          "values": "1 až 20 jazykových kódov",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Vyberá uloženú kódovaciu tabuľku používanú na prevod dát poľa pred tlačou."
+    "summary": "Vyberá uloženú kódovaciu tabuľku používanú na prevod dát poľa pred tlačou.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "umiestnenie kódovacej tabuľky na jednotke",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov súboru kódovacej tabuľky",
+          "values": "1 až 8 alfanumerických znakov"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": "DAT pevná hodnota",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Vyberá interpretáciu príkazov podľa pôvodného ZPL alebo ZPL II kvôli kompatibilite so staršími formátmi."
+    "summary": "Vyberá interpretáciu príkazov podľa pôvodného ZPL alebo ZPL II kvôli kompatibilite so staršími formátmi.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "verzia interpreta ZPL",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Priraďuje tlačiarni sieťový názov a voľný textový popis, oba zobrazené na konfiguračnej etikete a jej vstavanej webovej stránke."
+    "summary": "Priraďuje tlačiarni sieťový názov a voľný textový popis, oba zobrazené na konfiguračnej etikete a jej vstavanej webovej stránke.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "sieťový názov tlačiarne",
+          "values": "do 16 alfanumerických znakov",
+          "default": "ZBR plus prípona MAC"
+        },
+        {
+          "meaning": "popis tlačiarne pre konfiguračnú etiketu a webovú stránku",
+          "values": "do 35 alfanumerických znakov",
+          "default": "prázdne"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Nastavuje štvormiestne heslo pre nastavovacie menu ovládacieho panela."
+    "summary": "Nastavuje štvormiestne heslo pre nastavovacie menu ovládacieho panela.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "štvorčíslicové heslo ovládacieho panela",
+          "values": "0000 až 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "úroveň hesla, iba tlačiareň S4M",
+          "values": "1 až 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Uloží, obnoví alebo resetuje konfiguračné nastavenia tlačiarne."
+    "summary": "Uloží, obnoví alebo resetuje konfiguračné nastavenia tlačiarne.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "konfiguračná akcia",
+          "values": "A továrenské všetky, F továrenské, N sieťové, R vyvolanie, S uložiť"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Mení prefixový znak formátovacích príkazov, štandardne strieška, buď globálne, alebo len pre aktuálny formát."
+    "summary": "Mení prefixový znak formátovacích príkazov, štandardne strieška, buď globálne, alebo len pre aktuálny formát.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "nová predpona formátovacieho príkazu",
+          "values": "akýkoľvek znak ASCII"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Mení oddeľovací znak parametrov, štandardne čiarka, buď globálne, alebo len pre aktuálny formát."
+    "summary": "Mení oddeľovací znak parametrov, štandardne čiarka, buď globálne, alebo len pre aktuálny formát.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "nový oddeľovací znak parametrov",
+          "values": "akýkoľvek znak ASCII"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Mení prefixový znak okamžitých príkazov, štandardne vlnovka, buď globálne, alebo len pre aktuálny formát."
+    "summary": "Mení prefixový znak okamžitých príkazov, štandardne vlnovka, buď globálne, alebo len pre aktuálny formát.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "nová predpona riadiaceho príkazu",
+          "values": "akýkoľvek znak ASCII"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Prepája písmená pamäťových zariadení tlačiarne tak, aby si uložené objekty zachovali svoje existujúce názvy."
+    "summary": "Prepája písmená pamäťových zariadení tlačiarne tak, aby si uložené objekty zachovali svoje existujúce názvy.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "pamäťový alias pre B",
+          "values": "B pamäťová karta, E flash, R DRAM, A compact flash, NONE nenastavené",
+          "default": "B"
+        },
+        {
+          "meaning": "pamäťový alias pre E",
+          "values": "B pamäťová karta, E flash, R DRAM, A compact flash, NONE nenastavené",
+          "default": "E"
+        },
+        {
+          "meaning": "pamäťový alias pre R",
+          "values": "B pamäťová karta, E flash, R DRAM, A compact flash, NONE nenastavené",
+          "default": "R"
+        },
+        {
+          "meaning": "pamäťový alias pre A",
+          "values": "B pamäťová karta, E flash, R DRAM, A compact flash, NONE nenastavené",
+          "default": "A"
+        },
+        {
+          "meaning": "povoliť duplicitné priradenie aliasu",
+          "values": "M viacnásobný alias",
+          "default": "žiadna"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Vymaže a znovu inicializuje jedno flash pamäťové zariadenie. Výpadok napájania počas tejto operácie môže poškodiť úložisko."
+    "summary": "Vymaže a znovu inicializuje jedno flash pamäťové zariadenie. Výpadok napájania počas tejto operácie môže poškodiť úložisko.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "flash pamäťové zariadenie na inicializáciu",
+          "values": "A flash modul, B flash karta, E interný flash",
+          "default": "musí byť zadané"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Nastavuje, či nízke napätie batérie pozastaví prenosnú tlačiareň, alebo umožní pokračovať v tlači."
+    "summary": "Nastavuje, či nízke napätie batérie pozastaví prenosnú tlačiareň, alebo umožní pokračovať v tlači.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pauza pri nízkom napätí batérie",
+          "values": "Y pauza, N pokračovať v tlači",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Spustí Zebra BASIC Interpreter na tlačiarni, voliteľne so spustením uloženého programu."
+    "summary": "Spustí Zebra BASIC Interpreter na tlačiarni, voliteľne so spustením uloženého programu.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "umiestnenie úložiska programu",
+          "values": "R, E, B, A",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "názov programu na spustenie",
+          "values": "akýkoľvek platný názov programu",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "prípona súboru programu",
+          "values": "BAS alebo BAE"
+        },
+        {
+          "meaning": "riadenie výstupu konzoly",
+          "values": "Y zapnuté, N vypnuté",
+          "default": "Y"
+        },
+        {
+          "meaning": "riadenie ozveny príkazov",
+          "values": "Y zapnuté, N vypnuté",
+          "default": "Y"
+        },
+        {
+          "meaning": "pamäť alokovaná pre ZBI",
+          "values": "20K až 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Konfiguruje pomocný port pre signály aplikátora alebo verifikátora a spracovanie chýb."
+    "summary": "Konfiguruje pomocný port pre signály aplikátora alebo verifikátora a spracovanie chýb.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "režim spracovania chýb verifikátora",
+          "values": "0 vypnuté, 1 opätovná tlač pri chybe, 2 maximálna priepustnosť",
+          "default": "0"
+        },
+        {
+          "meaning": "režim časovania signálu aplikátora",
+          "values": "0 vypnuté, 1 až 4 časovanie signálu",
+          "default": "0"
+        },
+        {
+          "meaning": "režim časovania signálu začiatku tlače",
+          "values": "p pulzný režim, l úrovňový režim"
+        },
+        {
+          "meaning": "režim reakcie na chybu etikety",
+          "values": "e režim chyby, f režim posuvu",
+          "default": "f"
+        },
+        {
+          "meaning": "režim opätovnej tlače na signál",
+          "values": "e zapnuté, d vypnuté",
+          "default": "d"
+        },
+        {
+          "meaning": "režim varovania o nízkej páske",
+          "values": "e zapnuté, d vypnuté",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Vyberá senzor média používaný na sledovanie, zvyčajne reflexný alebo priesvitný."
+    "summary": "Vyberá senzor média používaný na sledovanie, zvyčajne reflexný alebo priesvitný.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "snímač na použitie",
+          "values": "A auto, R reflexný, T priesvitný",
+          "default": "závisí od modelu tlačiarne"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Nastavuje normálny alebo znížený počet bodov na milimeter. Znížená hustota zdvojnásobuje fyzickú veľkosť súradníc formátu."
+    "summary": "Nastavuje normálny alebo znížený počet bodov na milimeter. Znížená hustota zdvojnásobuje fyzickú veľkosť súradníc formátu.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "nastavenie hustoty tlače",
+          "values": "A normálna hustota, B polovičná hustota",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Resetuje vybrané počítadlo využitia tlačiarne, vrátane používateľských alebo RFID počítadiel."
+    "summary": "Resetuje vybrané počítadlo využitia tlačiarne, vrátane používateľských alebo RFID počítadiel.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "počítadlo na reset",
+          "values": "1 počítadlo jeden, 2 počítadlo dva, 3 platné RFID, 4 zrušené RFID, C hlava vyčistená, R hlava vymenená",
+          "default": "musí byť zadané"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Konfiguruje všetky parametre komunikácie sériového portu jedným príkazom."
+    "summary": "Konfiguruje všetky parametre komunikácie sériového portu jedným príkazom.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "prenosová rýchlosť sériovej linky",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "dátové bity na znak",
+          "values": "7 alebo 8",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "nastavenie parity",
+          "values": "N žiadne, E párne, O nepárne",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "stop bity",
+          "values": "1 alebo 2",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "protokol riadenia toku",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR a Xon/Xoff",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "handshake protokolu zebra",
+          "values": "A ACK/NAK, N žiadny, Z zebra",
+          "default": "musí byť zadané"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Prepisuje intenzitu priesvitného senzora alebo základné hodnoty, ktoré štandardne nastavuje kalibrácia."
+    "summary": "Prepisuje intenzitu priesvitného senzora alebo základné hodnoty, ktoré štandardne nastavuje kalibrácia.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "nastavenie snímača na úpravu",
+          "values": "1 jas, 2 základná čiara",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "hodnota pre vybrané nastavenie",
+          "values": "0 až 196",
+          "default": "musí byť zadané"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Spúšťa tlač skôr, než dorazí celý formát, čo zvyšuje priepustnosť pri zložitých etiketách."
+    "summary": "Spúšťa tlač skôr, než dorazí celý formát, čo zvyšuje priepustnosť pri zložitých etiketách.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "riadok bodov, od ktorého začať tlač",
+          "values": "0 až 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Vypína konkrétnu podmienku a cieľ upozornenia ZebraNet."
+    "summary": "Vypína konkrétnu podmienku a cieľ upozornenia ZebraNet.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "podmienka upozornenia na zastavenie",
+          "values": "A až O a Q až V po jednej podmienke, W všetky na tlačiarňach RFID, * všetky na ostatných"
+        },
+        {
+          "meaning": "cieľ upozornenia na zastavenie",
+          "values": "A sériový, B paralelný, C e-mail, D TCP/IP, E UDP/IP, F SNMP trap, * všetky"
+        },
+        {
+          "meaning": "zastaviť alebo obnoviť tieto upozornenia",
+          "values": "Y zastaviť správy, N spustiť správy",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Nastavuje hodnotu odporu tlačovej hlavy používanú pri výpočtoch energie zapaľovania."
+    "summary": "Nastavuje hodnotu odporu tlačovej hlavy používanú pri výpočtoch energie zapaľovania.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "hodnota odporu tlačovej hlavy",
+          "values": "0488 až 1175",
+          "default": "posledná permanentne uložená hodnota"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Nastavuje prahové hodnoty senzora média, dĺžku etikety a intenzity LED, ktoré štandardne určuje kalibrácia."
+    "summary": "Nastavuje prahové hodnoty senzora média, dĺžku etikety a intenzity LED, ktoré štandardne určuje kalibrácia.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "hodnota webového snímača",
+          "values": "0 až 100",
+          "default": "zobrazené v profile snímača alebo na konfiguračnej etikete"
+        },
+        {
+          "meaning": "hodnota snímača média",
+          "values": "0 až 100",
+          "default": "zobrazené v profile snímača alebo na konfiguračnej etikete"
+        },
+        {
+          "meaning": "hodnota snímača pásky",
+          "values": "0 až 100",
+          "default": "zobrazené v profile snímača alebo na konfiguračnej etikete"
+        },
+        {
+          "meaning": "dĺžka etikety v bodoch",
+          "values": "1 až 32000",
+          "default": "hodnota z kalibrácie"
+        },
+        {
+          "meaning": "intenzita LED média",
+          "values": "0 až 255",
+          "default": "hodnota z kalibrácie"
+        },
+        {
+          "meaning": "intenzita LED pásky",
+          "values": "0 až 255",
+          "default": "hodnota z kalibrácie"
+        },
+        {
+          "meaning": "hodnota snímania značky",
+          "values": "0 až 100",
+          "default": "hodnota z kalibrácie"
+        },
+        {
+          "meaning": "hodnota snímania značky média",
+          "values": "0 až 100",
+          "default": "hodnota z kalibrácie"
+        },
+        {
+          "meaning": "hodnota snímania LED značky",
+          "values": "0 až 255",
+          "default": "hodnota z kalibrácie"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Zapína upozornenie ZebraNet pre konkrétnu podmienku a cieľ."
+    "summary": "Zapína upozornenie ZebraNet pre konkrétnu podmienku a cieľ.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "typ podmienky upozornenia",
+          "values": "A až V po jednej podmienke, * všetky",
+          "default": "ignorované, ak chýba alebo je neplatné"
+        },
+        {
+          "meaning": "typ cieľa upozornenia",
+          "values": "A sériový, B paralelný, C e-mail, D TCP/IP, E UDP/IP, F SNMP trap",
+          "default": "ignorované, ak chýba alebo je neplatné"
+        },
+        {
+          "meaning": "zapnúť upozornenie pri nastavení podmienky",
+          "values": "N nie, Y áno",
+          "default": "Y alebo predchádzajúca hodnota"
+        },
+        {
+          "meaning": "zapnúť upozornenie pri zrušení podmienky",
+          "values": "N nie, Y áno",
+          "default": "N alebo predchádzajúca hodnota"
+        },
+        {
+          "meaning": "cieľová adresa upozornenia",
+          "values": "e-mail, IP adresa alebo cieľ SNMP",
+          "default": "ignorované, ak chýba alebo je neplatné"
+        },
+        {
+          "meaning": "číslo portu pre upozornenie",
+          "values": "0 až 65535",
+          "default": "ignorované, ak chýba alebo je neplatné"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopíruje uložené objekty medzi pamäťovými zariadeniami tlačiarne, s podporou zástupných znakov pre skupiny."
+    "summary": "Kopíruje uložené objekty medzi pamäťovými zariadeniami tlačiarne, s podporou zástupných znakov pre skupiny.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "zdrojové úložné zariadenie",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "názov zdrojového objektu",
+          "values": "akýkoľvek existujúci názov objektu",
+          "default": "* vyberie všetky objekty"
+        },
+        {
+          "meaning": "prípona zdrojového objektu",
+          "values": "akákoľvek platná prípona súboru",
+          "default": "* vyberie všetky prípony"
+        },
+        {
+          "meaning": "cieľové úložné zariadenie",
+          "values": "R, E, B, A",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "názov objektu v cieli",
+          "values": "do 8 alfanumerických znakov",
+          "default": "názov zdrojového objektu"
+        },
+        {
+          "meaning": "prípona cieľového objektu",
+          "values": "akákoľvek platná prípona súboru",
+          "default": "prípona zdrojového objektu"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Tlačí etiketu s adresárom uložených objektov, rezidentných písiem alebo dostupných čiarových kódov."
+    "summary": "Tlačí etiketu s adresárom uložených objektov, rezidentných písiem alebo dostupných čiarových kódov.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "zdrojové zariadenie pre výpis",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "filter názvu objektu",
+          "values": "1 až 8 znakov, zástupné znaky * alebo ?",
+          "default": "*"
+        },
+        {
+          "meaning": "filter prípony",
+          "values": "akákoľvek platná prípona, * zástupný znak",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Tlačí požadované servisné informácie, napríklad stav počítadla najazdených metrov alebo históriu tlačovej hlavy, na etiketu."
+    "summary": "Tlačí požadované servisné informácie, napríklad stav počítadla najazdených metrov alebo históriu tlačovej hlavy, na etiketu.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "typ servisného reportu na tlač",
+          "values": "ES stav, HA hardvérová adresa, JT test hlavy, MA nastavenia upozornení, MI správy, OD počítadlo, PH životnosť hlavy, PP plug and play, SN sériové číslo, UI USB id",
+          "default": "musí byť zadané"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Konfiguruje nastavenia prezentéra kiosku KR403, vrátane dĺžky rezu, okraja rezu, časového limitu zaťahovania a dĺžky slučky."
+    "summary": "Konfiguruje nastavenia prezentéra kiosku KR403, vrátane dĺžky rezu, okraja rezu, časového limitu zaťahovania a dĺžky slučky.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "miera rezu kiosku",
+          "values": "0 normálny rez, 10 až 60 čiastočný mm",
+          "default": "0"
+        },
+        {
+          "meaning": "okraj rezu kiosku v mm",
+          "values": "2 až 9",
+          "default": "9"
+        },
+        {
+          "meaning": "typ podania kiosku po tlači",
+          "values": "0 vysunúť, 1 zatiahnuť, 2 bez akcie",
+          "default": "0"
+        },
+        {
+          "meaning": "časový limit podania kiosku v sekundách",
+          "values": "0 až 300, 0 bez časového limitu",
+          "default": "0"
+        },
+        {
+          "meaning": "dĺžka slučky prezentéra v mm",
+          "values": "0 priamo, 3 až 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Riadi dynamickú rekalibráciu dĺžky etikety a prahu senzora po zapnutí alebo otvorení priestoru pre médium."
+    "summary": "Riadi dynamickú rekalibráciu dĺžky etikety a prahu senzora po zapnutí alebo otvorení priestoru pre médium.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "zapnúť dynamickú kalibráciu dĺžky",
+          "values": "Y zapnúť, N vypnúť",
+          "default": "Y"
+        },
+        {
+          "meaning": "zapnúť dynamickú kalibráciu prahu",
+          "values": "Y zapnúť, N vypnúť",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Spúšťa režim vyradenia z prevádzky na prípravu tlačiarne pred ďalším predajom alebo recykláciou."
+    "summary": "Spúšťa režim vyradenia z prevádzky na prípravu tlačiarne pred ďalším predajom alebo recykláciou.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "sériové číslo tlačiarne",
+          "values": "alfanumerický reťazec",
+          "default": "musí byť zadané"
+        },
+        {
+          "meaning": "počet prechodov vymazania flash",
+          "values": "0 až 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Nastavuje automatické uspanie po období nečinnosti, s možnosťami pre etikety vo fronte."
+    "summary": "Nastavuje automatické uspanie po období nečinnosti, s možnosťami pre etikety vo fronte.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "sekundy nečinnosti pred automatickým vypnutím",
+          "values": "0 až 999999, 0 vypína vypnutie",
+          "default": "posledná uložená hodnota alebo 0"
+        },
+        {
+          "meaning": "stav etikety pri vypnutí",
+          "values": "Y vypnúť s čakajúcou tlačou, N najprv dokončiť čakajúcu tlač",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Vysunie alebo zatiahne médium už vydané prezentérom kiosku KR403."
+    "summary": "Vysunie alebo zatiahne médium už vydané prezentérom kiosku KR403.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "akcia podania kiosku",
+          "values": "0 vysunúť, 1 zatiahnuť, 2 použiť nastavenie ^KV"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Vracia hostiteľovi uložený formát ZPL z pamäte tlačiarne."
+    "summary": "Vracia hostiteľovi uložený formát ZPL z pamäte tlačiarne.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "pamäťové zariadenie na vyhľadávanie",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "názov uloženého formátu",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": ".ZPL pevné",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Vracia hostiteľovi uložený grafický obrázok z pamäte tlačiarne."
+    "summary": "Vracia hostiteľovi uložený grafický obrázok z pamäte tlačiarne.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "pamäťové zariadenie na vyhľadávanie",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "priorita vyhľadávania"
+        },
+        {
+          "meaning": "názov grafiky na nahratie",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "prípona súboru",
+          "values": ".GRF pevné",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Vracia hostiteľovi požadovaný stav, identifikačné dáta, počítadlo najazdených metrov alebo dáta o údržbe."
+    "summary": "Vracia hostiteľovi požadovaný stav, identifikačné dáta, počítadlo najazdených metrov alebo dáta o údržbe.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "selektor dotazu pre vrátené dáta",
+          "values": "ES stav, HA káblová MAC, JT test tlačovej hlavy, MA upozornenia na údržbu, MI informácie o údržbe, OD počítadlo, PH životnosť tlačovej hlavy, PP plug and play, SN sériové číslo, UI USB product id"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Vracia hostiteľovi dáta z číslovaného poľa, s voliteľným limitom počtu bajtov."
+    "summary": "Vracia hostiteľovi dáta z číslovaného poľa, s voliteľným limitom počtu bajtov.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "číslo poľa nastavené príkazom ^FN",
+          "values": "0 až 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "počet bajtov na vrátenie",
+          "values": "1 až 256",
+          "default": "64"
+        },
+        {
+          "meaning": "text hlavičky pred dátami",
+          "values": "0 až 3072 bajtov",
+          "default": "žiadna hlavička"
+        },
+        {
+          "meaning": "text ukončenia po dátach",
+          "values": "0 až 3072 znakov"
+        },
+        {
+          "meaning": "odpoveď odoslaná za",
+          "values": "F formát, L etiketa",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Vracia zoznam adresára pamäťového zariadenia, vrátane zostávajúceho voľného priestoru."
+    "summary": "Vracia zoznam adresára pamäťového zariadenia, vrátane zostávajúceho voľného priestoru.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "pamäťové zariadenie na výpis",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash, Z iné",
+          "default": "R"
+        },
+        {
+          "meaning": "filter názvu objektu",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "*"
+        },
+        {
+          "meaning": "filter prípony",
+          "values": "akákoľvek prípona súboru Zebra",
+          "default": "*"
+        },
+        {
+          "meaning": "rozloženie výpisu",
+          "values": "c stĺpec, d predvolené",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Vracia hostiteľovi uloženú grafiku v stiahnuteľnom formáte súboru."
+    "summary": "Vracia hostiteľovi uloženú grafiku v stiahnuteľnom formáte súboru.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "umiestnenie objektu na pamäťovom zariadení",
+          "values": "R DRAM, E flash, B pamäťová karta, A compact flash",
+          "default": "priorita vyhľadávania"
+        },
+        {
+          "meaning": "názov objektu na nahratie",
+          "values": "1 až 8 alfanumerických znakov",
+          "default": "vyžaduje sa názov"
+        },
+        {
+          "meaning": "formát nahrávania",
+          "values": "G raw bitmapa, P komprimovaná bitmapa",
+          "default": "uložený formát"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Vracia popisné XML tlačiarne pre nastavenia, adresár objektov alebo stav."
+    "summary": "Vracia popisné XML tlačiarne pre nastavenia, adresár objektov alebo stav.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "typ popisu na vrátenie",
+          "values": "a všetko, f formát, l adresár, o objekt, r stav"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Číta z RFID štítku alebo naň zapisuje, vrátane formátu dát, pamäťovej banky a prístupového hesla."
+    "summary": "Číta z RFID štítku alebo naň zapisuje, vrátane formátu dát, pamäťovej banky a prístupového hesla.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "operácia",
+          "values": "W zápis, L zápis a zamknutie, R čítanie, P čítanie hesla, S nastavenie hesla",
+          "default": "W"
+        },
+        {
+          "meaning": "formát dát",
+          "values": "A ASCII, H hex, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "príznak hesla alebo počiatočné číslo bloku",
+          "values": "P nasleduje heslo, 0 až n blok",
+          "default": "0"
+        },
+        {
+          "meaning": "počet bajtov na čítanie alebo zápis",
+          "values": "1 až n, maximum na štítok",
+          "default": "1"
+        },
+        {
+          "meaning": "pamäťová banka Gen 2",
+          "values": "E EPC 96-bit, A EPC auto PC bity, 0 rezervované, 1 EPC, 2 TID, 3 používateľská",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Definuje bitové rozloženie používané na zakódovanie polí EPC RFID na štítku."
+    "summary": "Definuje bitové rozloženie používané na zakódovanie polí EPC RFID na štítku.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "celková bitová veľkosť partícií",
+          "values": "1 po bitovú veľkosť štítku",
+          "default": "96"
+        },
+        {
+          "meaning": "bity v každej partícii, maximálne 16 partícií",
+          "values": "1 až 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Nastavuje možnosti RFID pre nasledujúce etikety, vrátane typu štítku, pozície programovania, spracovania zlyhania a dĺžky pruhu VOID."
+    "summary": "Nastavuje možnosti RFID pre nasledujúce etikety, vrátane typu štítku, pozície programovania, spracovania zlyhania a dĺžky pruhu VOID.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "typ štítku",
+          "values": "8, iba Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "pozícia programovania štítku",
+          "values": "body absolútne, F0 až Fxxx vpred, B0 až B30 vzad, up ďalší, down predchádzajúci",
+          "default": "nastavenie tlačiarne"
+        },
+        {
+          "meaning": "dĺžka výtlačku VOID",
+          "values": "0 po dĺžku etikety",
+          "default": "dĺžka etikety"
+        },
+        {
+          "meaning": "etikety na opakovanie pri zlyhaní",
+          "values": "1 až 10",
+          "default": "3"
+        },
+        {
+          "meaning": "spracovanie chyby po opakovaniach",
+          "values": "N bez akcie, P pauza, E režim chyby",
+          "default": "N"
+        },
+        {
+          "meaning": "signály odoslané aplikátoru",
+          "values": "S jeden signál, D dvojitý signál",
+          "default": "S"
+        },
+        {
+          "meaning": "rezervované, nepoužíva sa",
+          "values": "žiadna"
+        },
+        {
+          "meaning": "rýchlosť tlače etikiet VOID",
+          "values": "akákoľvek platná rýchlosť tlače",
+          "default": "maximálna rýchlosť tlače"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Zostavuje sériové číslo EPC z ID štítku a zapisuje ho do nižších bitov EPC."
+    "summary": "Zostavuje sériové číslo EPC z ID štítku a zapisuje ho do nižších bitov EPC.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "binárna predpona sériového ID",
+          "values": "ASCII 1 a 0, maximálne 38 bitov",
+          "default": "závisí od MDID čipu"
+        },
+        {
+          "meaning": "špeciálny znak označujúci sériové pole",
+          "values": "akýkoľvek znak ASCII okrem príkazového, riadiaceho, oddeľovača, RTC",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Nastavuje výkon čítania a zápisu RFID, keď kalibrácia neposkytne použiteľné hodnoty."
+    "summary": "Nastavuje výkon čítania a zápisu RFID, keď kalibrácia neposkytne použiteľné hodnoty.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "úroveň výkonu čítania",
+          "values": "0 až 30, alebo H vysoká, M stredná, L nízka",
+          "default": "nastavenie tlačiarne"
+        },
+        {
+          "meaning": "úroveň výkonu zápisu",
+          "values": "0 až 30, alebo H vysoká, M stredná, L nízka",
+          "default": "nastavenie tlačiarne"
+        },
+        {
+          "meaning": "výber prvku antény",
+          "values": "mriežka špecifická pre tlačiareň, A1 až F4",
+          "default": "nastavenie tlačiarne"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Uzamyká pamäť RFID štítku, buď vratne, alebo natrvalo, aby zabránila neskorším zápisom."
+    "summary": "Uzamyká pamäť RFID štítku, buď vratne, alebo natrvalo, aby zabránila neskorším zápisom.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "stav uzamknutia kill hesla",
+          "values": "U odomknúť, L zamknúť, O permanentne odomknúť, P permanentne zamknúť"
+        },
+        {
+          "meaning": "stav uzamknutia prístupového hesla",
+          "values": "U odomknúť, L zamknúť, O permanentne odomknúť, P permanentne zamknúť"
+        },
+        {
+          "meaning": "stav uzamknutia pamäťovej banky EPC",
+          "values": "U odomknúť, L zamknúť, O permanentne odomknúť, P permanentne zamknúť"
+        },
+        {
+          "meaning": "stav uzamknutia pamäťovej banky používateľa",
+          "values": "U odomknúť, L zamknúť, O permanentne odomknúť, P permanentne zamknúť"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Spustí kalibráciu RFID a vracia hostiteľovi nastavenia pozície, antény a výkonu."
+    "summary": "Spustí kalibráciu RFID a vracia hostiteľovi nastavenia pozície, antény a výkonu.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "text pred tabuľkou výsledkov",
+          "values": "akýkoľvek reťazec kratší ako 65 znakov",
+          "default": "start"
+        },
+        {
+          "meaning": "text po tabuľke výsledkov",
+          "values": "akýkoľvek reťazec kratší ako 65 znakov",
+          "default": "end"
+        },
+        {
+          "meaning": "počiatočná pozícia kalibrácie",
+          "values": "F0 až Fxxx vpred, B0 až B30 vzad",
+          "default": "nastavenie tlačiarne"
+        },
+        {
+          "meaning": "koncová pozícia kalibrácie",
+          "values": "F0 až Fxxx vpred, B0 až B30 vzad, A auto",
+          "default": "nastavenie tlačiarne"
+        },
+        {
+          "meaning": "automatický alebo manuálny výber antény a výkonu",
+          "values": "A automatický, M manuálny",
+          "default": "A"
+        },
+        {
+          "meaning": "začiatok rozsahu výkonu čítania a zápisu",
+          "values": "0 až 30",
+          "default": "0"
+        },
+        {
+          "meaning": "koniec rozsahu výkonu čítania a zápisu",
+          "values": "0 až 30",
+          "default": "maximálny výkon"
+        },
+        {
+          "meaning": "začiatok rozsahu antény",
+          "values": "závisí od modelu, zvyčajne A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "koniec rozsahu antény",
+          "values": "závisí od modelu, do E4",
+          "default": "nastavenie tlačiarne"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Určuje, či tlačiareň pri spustení kontroluje prítomnosť káblového tlačového servera."
+    "summary": "Určuje, či tlačiareň pri spustení kontroluje prítomnosť káblového tlačového servera.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "kontrola káblového tlačového servera pri zavedení",
+          "values": "C kontrola, S vynechať",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Vyberá primárne sieťové zariadenie, káblové alebo bezdrôtové."
+    "summary": "Vyberá primárne sieťové zariadenie, káblové alebo bezdrôtové.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "primárne sieťové zariadenie",
+          "values": "1 primárne káblové, 2 primárne bezdrôtové",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresuje jednu tlačiareň na staršej zbernici RS-485 podľa sieťového ID."
+    "summary": "Adresuje jednu tlačiareň na staršej zbernici RS-485 podľa sieťového ID.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "sieťové ID tlačiarne na adresovanie",
+          "values": "001 až 999",
+          "default": "000 žiadna"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Priraďuje sieťové ID používané na adresovanie tlačiarne na staršej zbernici RS-485."
+    "summary": "Priraďuje sieťové ID používané na adresovanie tlačiarne na staršej zbernici RS-485.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "sieťové ID pridelené tlačiarni",
+          "values": "001 až 999",
+          "default": "000 žiadna"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Nastavuje identitu SNMP a komunitné reťazce tlačiarne."
+    "summary": "Nastavuje identitu SNMP a komunitné reťazce tlačiarne.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "názov systému SNMP",
+          "values": "do 17 znakov"
+        },
+        {
+          "meaning": "kontakt systému SNMP",
+          "values": "do 50 znakov"
+        },
+        {
+          "meaning": "umiestnenie systému SNMP",
+          "values": "do 50 znakov"
+        },
+        {
+          "meaning": "názov komunity SNMP get",
+          "values": "do 19 znakov",
+          "default": "public"
+        },
+        {
+          "meaning": "názov komunity SNMP set",
+          "values": "do 19 znakov",
+          "default": "public"
+        },
+        {
+          "meaning": "názov komunity SNMP trap",
+          "values": "do 20 znakov",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Určuje, či sieťové nastavenia pri spustení pochádzajú z tlačiarne, alebo z pripojeného tlačového servera."
+    "summary": "Určuje, či sieťové nastavenia pri spustení pochádzajú z tlačiarne, alebo z pripojeného tlačového servera.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "primárny zdroj pre nastavenia zavedenia",
+          "values": "P tlačiareň, M tlačový server",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Konfiguruje SMTP server a nastavenia domény pre emailové upozornenia tlačového servera."
+    "summary": "Konfiguruje SMTP server a nastavenia domény pre emailové upozornenia tlačového servera.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "adresa servera SMTP",
+          "values": "IPv4 adresa"
+        },
+        {
+          "meaning": "doménový názov tlačového servera",
+          "values": "doménový názov"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Nastavuje, ako dlho môže overená IP adresa pristupovať k webovým stránkam tlačiarne pred opätovným overením."
+    "summary": "Nastavuje, ako dlho môže overená IP adresa pristupovať k webovým stránkam tlačiarne pred opätovným overením.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "časový limit autentifikácie webovej stránky",
+          "values": "0 až 255 minút",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Nastavuje formu a hodnotu identifikátora klienta DHCP pre tlačový server."
+    "summary": "Nastavuje formu a hodnotu identifikátora klienta DHCP pre tlačový server.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "režim identifikátora klienta",
+          "values": "0 vypnuté, 1 MAC adresa, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "zariadenie, na ktoré sa identifikátor vzťahuje",
+          "values": "0 všetky, 1 bezdrôtové, 2 externé káblové, 3 interné káblové",
+          "default": "1"
+        },
+        {
+          "meaning": "predpona identifikátora",
+          "values": "11 znakov ASCII alebo 22 znakov hex"
+        },
+        {
+          "meaning": "prípona identifikátora",
+          "values": "do 60 znakov ASCII alebo 120 hex"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Konfiguruje IP adresu, masku podsiete a bránu pre sieťové rozhranie tlačiarne."
+    "summary": "Konfiguruje IP adresu, masku podsiete a bránu pre sieťové rozhranie tlačiarne.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "upravované zariadenie",
+          "values": "1 externé káblové, 2 interné káblové, 3 bezdrôtové"
+        },
+        {
+          "meaning": "metóda získania IP adresy",
+          "values": "A všetky, B BOOTP, C DHCP a BOOTP, D DHCP, G iba gleaning, R RARP, P permanentné",
+          "default": "A"
+        },
+        {
+          "meaning": "IP adresa",
+          "values": "IPv4 adresa"
+        },
+        {
+          "meaning": "maska podsiete",
+          "values": "maska podsiete IPv4"
+        },
+        {
+          "meaning": "predvolená brána",
+          "values": "IPv4 adresa"
+        },
+        {
+          "meaning": "adresa servera WINS",
+          "values": "IPv4 adresa"
+        },
+        {
+          "meaning": "kontrola časového limitu pripojenia",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "hodnota časového limitu pripojenia",
+          "values": "0 až 9999 sekúnd",
+          "default": "300"
+        },
+        {
+          "meaning": "interval vysielania ARP",
+          "values": "0 až 30 minút",
+          "default": "0 žiadna"
+        },
+        {
+          "meaning": "základné číslo raw portu",
+          "values": "1 až 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Konfiguruje IP nastavenia káblového tlačového servera, časové limity a raw port pre starší firmvér."
+    "summary": "Konfiguruje IP nastavenia káblového tlačového servera, časové limity a raw port pre starší firmvér.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "metóda získania IP adresy",
+          "values": "A všetky, B BOOTP, C DHCP a BOOTP, D DHCP, G iba gleaning, R RARP, P permanentné",
+          "default": "A"
+        },
+        {
+          "meaning": "IP adresa",
+          "values": "IPv4 adresa"
+        },
+        {
+          "meaning": "maska podsiete",
+          "values": "maska podsiete IPv4"
+        },
+        {
+          "meaning": "predvolená brána",
+          "values": "IPv4 adresa"
+        },
+        {
+          "meaning": "adresa servera WINS",
+          "values": "IPv4 adresa"
+        },
+        {
+          "meaning": "kontrola časového limitu pripojenia",
+          "values": "Y áno, N nie",
+          "default": "Y"
+        },
+        {
+          "meaning": "hodnota časového limitu pripojenia",
+          "values": "0 až 9999 sekúnd",
+          "default": "300"
+        },
+        {
+          "meaning": "interval vysielania ARP",
+          "values": "0 až 30 minút",
+          "default": "0 žiadna"
+        },
+        {
+          "meaning": "základné číslo raw portu",
+          "values": "1 až 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Vyberá prijímaciu a vysielaciu anténu pre bezdrôtový rádiový modul."
+    "summary": "Vyberá prijímaciu a vysielaciu anténu pre bezdrôtový rádiový modul.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "prijímacia anténa",
+          "values": "D diverzita, L ľavá, R pravá",
+          "default": "D"
+        },
+        {
+          "meaning": "vysielacia anténa",
+          "values": "D diverzita, L ľavá, R pravá",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Konfiguruje zastarané zabezpečenie WEP a kľúčový materiál pre starší bezdrôtový firmvér."
+    "summary": "Konfiguruje zastarané zabezpečenie WEP a kľúčový materiál pre starší bezdrôtový firmvér.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "režim šifrovania",
+          "values": "OFF žiadne, 40 40-bitové, 128 128-bitové",
+          "default": "OFF"
+        },
+        {
+          "meaning": "index šifrovacieho kľúča",
+          "values": "1 až 4",
+          "default": "1"
+        },
+        {
+          "meaning": "typ autentifikácie",
+          "values": "O otvorený systém, S zdieľaný kľúč",
+          "default": "O"
+        },
+        {
+          "meaning": "formát uloženia šifrovacieho kľúča",
+          "values": "H hex, S reťazec",
+          "default": "H"
+        },
+        {
+          "meaning": "šifrovací kľúč 1",
+          "values": "hex dvojice alebo alfanumerický reťazec"
+        },
+        {
+          "meaning": "šifrovací kľúč 2",
+          "values": "hex dvojice alebo alfanumerický reťazec"
+        },
+        {
+          "meaning": "šifrovací kľúč 3",
+          "values": "hex dvojice alebo alfanumerický reťazec"
+        },
+        {
+          "meaning": "šifrovací kľúč 4",
+          "values": "hex dvojice alebo alfanumerický reťazec"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Konfiguruje zastarané overovanie Cisco LEAP pre starší bezdrôtový firmvér."
+    "summary": "Konfiguruje zastarané overovanie Cisco LEAP pre starší bezdrôtový firmvér.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "režim LEAP",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "meno používateľa",
+          "values": "1 až 32 znakov",
+          "default": "user"
+        },
+        {
+          "meaning": "heslo",
+          "values": "1 až 32 znakov",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Nastavuje heslo pre bezdrôtové nastavenia na ovládacom paneli tlačiarne."
+    "summary": "Nastavuje heslo pre bezdrôtové nastavenia na ovládacom paneli tlačiarne.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "staré bezdrôtové heslo",
+          "values": "0000 až 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "nové bezdrôtové heslo",
+          "values": "0000 až 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Konfiguruje dátové rýchlosti 802.11b a vysielací výkon na starších bezdrôtových tlačových serveroch."
+    "summary": "Konfiguruje dátové rýchlosti 802.11b a vysielací výkon na starších bezdrôtových tlačových serveroch.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "prenosová rýchlosť 1 Mb za sekundu",
+          "values": "Y zapnuté, N vypnuté"
+        },
+        {
+          "meaning": "prenosová rýchlosť 2 Mb za sekundu",
+          "values": "Y zapnuté, N vypnuté"
+        },
+        {
+          "meaning": "prenosová rýchlosť 5.5 Mb za sekundu",
+          "values": "Y zapnuté, N vypnuté"
+        },
+        {
+          "meaning": "prenosová rýchlosť 11 Mb za sekundu",
+          "values": "Y zapnuté, N vypnuté"
+        },
+        {
+          "meaning": "vysielací výkon",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Konfiguruje názov bezdrôtovej siete, rádiový režim, dĺžku preambuly a správanie udržiavania spojenia."
+    "summary": "Konfiguruje názov bezdrôtovej siete, rádiový režim, dĺžku preambuly a správanie udržiavania spojenia.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "hodnota ESSID",
+          "values": "do 32 znakov",
+          "default": "125"
+        },
+        {
+          "meaning": "operačný režim",
+          "values": "I infraštruktúra, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "dĺžka preambuly rádiovej karty",
+          "values": "L dlhé, S krátke",
+          "default": "L"
+        },
+        {
+          "meaning": "zapnutý bezdrôtový pulz",
+          "values": "0 vypnuté, 1 zapnuté",
+          "default": "1"
+        },
+        {
+          "meaning": "interval bezdrôtového pulzu",
+          "values": "5 až 300 sekúnd",
+          "default": "15"
+        },
+        {
+          "meaning": "maska kanálov",
+          "values": "4 hexadecimálne číslice s predponou 0x",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "medzinárodný režim",
+          "values": "0 vypnuté, 1 zapnuté",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Konfiguruje bezdrôtový režim zabezpečenia, kľúče a prihlasovacie údaje jedným príkazom."
+    "summary": "Konfiguruje bezdrôtový režim zabezpečenia, kľúče a prihlasovacie údaje jedným príkazom.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "kód typu zabezpečenia",
+          "values": "01 žiadne, 02 WEP 40, 03 WEP 128, 04 až 08 typy EAP, 09 WPA PSK, 10 až 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "index šifrovacieho kľúča WEP",
+          "values": "1 až 4",
+          "default": "1"
+        },
+        {
+          "meaning": "typ autentifikácie WEP",
+          "values": "O otvorený systém, S zdieľaný kľúč",
+          "default": "O"
+        },
+        {
+          "meaning": "formát uloženia kľúča WEP",
+          "values": "H hex, S reťazec",
+          "default": "S"
+        },
+        {
+          "meaning": "šifrovací kľúč WEP 1",
+          "values": "hex dvojice alebo alfanumerický reťazec"
+        },
+        {
+          "meaning": "šifrovací kľúč WEP 2",
+          "values": "hex dvojice alebo alfanumerický reťazec"
+        },
+        {
+          "meaning": "šifrovací kľúč WEP 3",
+          "values": "hex dvojice alebo alfanumerický reťazec"
+        },
+        {
+          "meaning": "šifrovací kľúč WEP 4",
+          "values": "hex dvojice alebo alfanumerický reťazec"
+        },
+        {
+          "meaning": "ID používateľa pre typ zabezpečenia",
+          "values": "akýkoľvek reťazec",
+          "default": "user"
+        },
+        {
+          "meaning": "heslo pre typ zabezpečenia",
+          "values": "akýkoľvek reťazec",
+          "default": "password"
+        },
+        {
+          "meaning": "voliteľné heslo privátneho kľúča",
+          "values": "akýkoľvek reťazec"
+        },
+        {
+          "meaning": "oblasť Kerberos",
+          "values": "akýkoľvek reťazec",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "distribučné centrum kľúčov Kerberos",
+          "values": "akýkoľvek reťazec",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "hodnota predzdieľaného kľúča",
+          "values": "minimálne 64 hex číslic"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",

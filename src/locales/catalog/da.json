@@ -9,67 +9,297 @@
   },
   "^PW": {
     "hash": "872ad16c",
-    "summary": "Angiver den udskrivbare bredde i dots. Indhold ud over denne bredde bliver beskåret af printeren."
+    "summary": "Angiver den udskrivbare bredde i dots. Indhold ud over denne bredde bliver beskåret af printeren.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "udskrivningsbredde i dots",
+          "values": "2 til etikettens bredde",
+          "default": "senest gemte værdi"
+        }
+      ]
+    }
   },
   "^LL": {
     "hash": "86c085dc",
-    "summary": "Angiver etikettens længde i dots og definerer, hvor det udskrivbare format slutter."
+    "summary": "Angiver etikettens længde i dots og definerer, hvor det udskrivbare format slutter.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "etikettens længde i dots",
+          "values": "1 til 32000",
+          "default": "printerindstilling"
+        },
+        {
+          "meaning": "gælder for alle medier",
+          "values": "N kun fortløbende, Y alle medier",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^LH": {
     "hash": "d8a36b68",
-    "summary": "Flytter etikettens startposition og ændrer dermed det udgangspunkt, som senere feltkoordinater bruger."
+    "summary": "Flytter etikettens startposition og ændrer dermed det udgangspunkt, som senere feltkoordinater bruger.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "etikettens startposition på x-aksen",
+          "values": "0 til 32000",
+          "default": "0 eller senest gemte værdi"
+        },
+        {
+          "meaning": "etikettens startposition på y-aksen",
+          "values": "0 til 32000",
+          "default": "0 eller senest gemte værdi"
+        }
+      ]
+    }
   },
   "^LS": {
     "hash": "12991cd1",
-    "summary": "Tilføjer en vandret forskydning til feltpositioner for at sikre kompatibilitet med ældre Zebra-formater."
+    "summary": "Tilføjer en vandret forskydning til feltpositioner for at sikre kompatibilitet med ældre Zebra-formater.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "venstreforskydning af alle feltpositioner",
+          "values": "-9999 til 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^LT": {
     "hash": "6d055f3e",
-    "summary": "Tilføjer en lodret forskydning til hele formatet i forhold til mediets øverste kant."
+    "summary": "Tilføjer en lodret forskydning til hele formatet i forhold til mediets øverste kant.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "flytter hele formatet op eller ned i dotrækker",
+          "values": "-120 til 120, XiIIIPlus 600 dpi -240 til 240"
+        }
+      ]
+    }
   },
   "^MU": {
     "hash": "a9e9b73e",
-    "summary": "Angiver koordinatenheden som dots, tommer eller millimeter og kan skalere formater mellem forskellige udskriftsopløsninger."
+    "summary": "Angiver koordinatenheden som dots, tommer eller millimeter og kan skalere formater mellem forskellige udskriftsopløsninger.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "koordinatenhed for efterfølgende felter",
+          "values": "D dots, I tommer, M millimeter",
+          "default": "D"
+        },
+        {
+          "meaning": "formatets grundopløsning i dots pr. tomme",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "målopløsning der konverteres til",
+          "values": "300, 600"
+        }
+      ]
+    }
   },
   "^MM": {
     "hash": "715bf316",
-    "summary": "Angiver mediehåndteringstilstanden efter udskrivning, herunder tear-off, peel-off, klipning, oprulning og applikatortilstand."
+    "summary": "Angiver mediehåndteringstilstanden efter udskrivning, herunder tear-off, peel-off, klipning, oprulning og applikatortilstand.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "mediehåndteringstilstand efter udskrivning",
+          "values": "T tear-off, P peel-off, R oprulning, A applikator, C klipper, D forsinket klipper, F rfid, K kiosk",
+          "default": "printerindstilling"
+        },
+        {
+          "meaning": "forafskrælning før næste etiket",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^MT": {
     "hash": "11020285",
-    "summary": "Vælger termotransfer- eller direkte termisk tilstand, alt efter om det ilagte medie bruger et farvebånd."
+    "summary": "Vælger termotransfer- eller direkte termisk tilstand, alt efter om det ilagte medie bruger et farvebånd.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "medietype der bruges af printeren",
+          "values": "T termotransfer, D direkte termisk"
+        }
+      ]
+    }
   },
   "^PQ": {
     "hash": "2ee04fa7",
-    "summary": "Angiver antallet af udskrifter, gruppering med pause eller klip samt antal kopier pr. serienummerværdi."
+    "summary": "Angiver antallet af udskrifter, gruppering med pause eller klip samt antal kopier pr. serienummerværdi.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "samlet antal etiketter der skal udskrives",
+          "values": "1 til 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "etiketter udskrevet før en pause",
+          "values": "1 til 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "kopier af hvert serienummer",
+          "values": "0 til 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "tilsidesæt pauseantallet",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "afskæring efter en annulleret rfid-etiket",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^LR": {
     "hash": "2a57db4c",
-    "summary": "Vender udskrivningen for efterfølgende felter ved at bytte om på forgrund og baggrund."
+    "summary": "Vender udskrivningen for efterfølgende felter ved at bytte om på forgrund og baggrund.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "vender udskriftsfarven om for efterfølgende felter",
+          "values": "N nej, Y ja",
+          "default": "N eller senest gemte værdi"
+        }
+      ]
+    }
   },
   "^PO": {
     "hash": "747bcecc",
-    "summary": "Roterer hele etiketformatet 180 grader."
+    "summary": "Roterer hele etiketformatet 180 grader.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "udskriver etiketten på hovedet",
+          "values": "N normal, I inverteret",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PM": {
     "hash": "2e2ee22b",
-    "summary": "Spejlvender det udskrivbare område vandret."
+    "summary": "Spejlvender det udskrivbare område vandret.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "spejlvender etiketten fra venstre til højre",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PR": {
     "hash": "dc62c5d8",
-    "summary": "Angiver print-, fremførings- og tilbagetrækshastighed i tommer pr. sekund."
+    "summary": "Angiver print-, fremførings- og tilbagetrækshastighed i tommer pr. sekund.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "udskrivningshastighed i tommer pr. sekund",
+          "values": "1 til 14, eller A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "fremføringshastighed ved fremføring af en blank etiket",
+          "values": "2 til 14",
+          "default": "6"
+        },
+        {
+          "meaning": "tilbagetrækshastighed efter udskrivning",
+          "values": "2 til 14",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^FO": {
     "hash": "630ff472",
-    "summary": "Placerer det næste felt i forhold til etikettens startpunkt, målt fra feltets øverste venstre hjørne."
+    "summary": "Placerer det næste felt i forhold til etikettens startpunkt, målt fra feltets øverste venstre hjørne.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "horisontal position i dots",
+          "values": "0 til 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "vertikal position i dots",
+          "values": "0 til 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "justering",
+          "values": "0 venstre, 1 højre, 2 auto",
+          "default": "senest ^FW"
+        }
+      ]
+    }
   },
   "^FT": {
     "hash": "b65c2858",
-    "summary": "Placerer det næste felt ud fra dets grundlinje eller stregkodekant, hvilket giver roterede felter et stabilt ankerpunkt."
+    "summary": "Placerer det næste felt ud fra dets grundlinje eller stregkodekant, hvilket giver roterede felter et stabilt ankerpunkt.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "horisontal position i dots",
+          "values": "0 til 32000",
+          "default": "seneste feltposition"
+        },
+        {
+          "meaning": "vertikal position i dots",
+          "values": "0 til 32000",
+          "default": "seneste feltposition"
+        },
+        {
+          "meaning": "justering",
+          "values": "0 venstre, 1 højre, 2 auto",
+          "default": "senest ^FW"
+        }
+      ]
+    }
   },
   "^FD": {
     "hash": "7d45febb",
-    "summary": "Angiver indholdet for det aktuelle felt, herunder tekst, stregkodedata eller RFID-data."
+    "summary": "Angiver indholdet for det aktuelle felt, herunder tekst, stregkodedata eller RFID-data.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "feltindhold",
+          "values": "alle udskrivbare data op til 3072 bytes, ingen præfikstegn"
+        }
+      ]
+    }
   },
   "^FS": {
     "hash": "315545e6",
@@ -77,7 +307,17 @@
   },
   "^FH": {
     "hash": "cf2f32c2",
-    "summary": "Aktiverer hexadecimale escape-sekvenser i feltdata til binære bytes og reserverede kommandotegn."
+    "summary": "Aktiverer hexadecimale escape-sekvenser i feltdata til binære bytes og reserverede kommandotegn.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "hexadecimalt indikatortegn",
+          "values": "ethvert tegn undtagen format- og kontrolpræfikser",
+          "default": "_"
+        }
+      ]
+    }
   },
   "^FR": {
     "hash": "8558c364",
@@ -85,83 +325,460 @@
   },
   "^FX": {
     "hash": "4b631378",
-    "summary": "Tilføjer et kommentarfelt. Printeren ignorerer indholdet frem til næste feltadskiller."
+    "summary": "Tilføjer et kommentarfelt. Printeren ignorerer indholdet frem til næste feltadskiller.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "ikke-udskrivende kommentartekst",
+          "values": "al tekst, ignoreres til næste kommando"
+        }
+      ]
+    }
   },
   "^FW": {
     "hash": "e6ac176b",
-    "summary": "Angiver standardorienteringen for felter og, på nyere firmware, standardjusteringen."
+    "summary": "Angiver standardorienteringen for felter og, på nyere firmware, standardjusteringen.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "standard feltrotation",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "standardjustering",
+          "values": "0 venstre, 1 højre, 2 auto",
+          "default": "auto for ^TB, venstre i andre tilfælde"
+        }
+      ]
+    }
   },
   "^FB": {
     "hash": "fff60b96",
-    "summary": "Ombryder feltdata i en blok med fast bredde, med styring af linjeantal, linjeafstand, indrykning og justering."
+    "summary": "Ombryder feltdata i en blok med fast bredde, med styring af linjeantal, linjeafstand, indrykning og justering.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "blokbredde i dots",
+          "values": "0 til etikettens bredde",
+          "default": "0"
+        },
+        {
+          "meaning": "maksimalt antal linjer",
+          "values": "1 til 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "ekstra linjeafstand i dots",
+          "values": "-9999 til 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "justering",
+          "values": "L venstre, C centreret, R højre, J lige margener",
+          "default": "L"
+        },
+        {
+          "meaning": "hængende indrykning af de følgende linjer i dots",
+          "values": "0 til 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^TB": {
     "hash": "82215c30",
-    "summary": "Ombryder tekst i en boks med fast bredde og højde og afskærer overskydende tekst."
+    "summary": "Ombryder tekst i en boks med fast bredde og højde og afskærer overskydende tekst.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "blokrotation",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^A"
+        },
+        {
+          "meaning": "blokbredde i dots",
+          "values": "1 til etikettens bredde",
+          "default": "1"
+        },
+        {
+          "meaning": "blokhøjde i dots",
+          "values": "1 til etikettens længde",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^FN": {
     "hash": "82f5e3c1",
-    "summary": "Tildeler et nummer til et variabelt felt i gemte og genindlæste formater."
+    "summary": "Tildeler et nummer til et variabelt felt i gemte og genindlæste formater.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "feltnummer",
+          "values": "0 til 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "valgfri prompttekst til KDU",
+          "values": "op til 255 alfanumeriske tegn"
+        }
+      ]
+    }
   },
   "^FV": {
     "hash": "ccd42fa5",
-    "summary": "Angiver data til et variabelt felt. I modsætning til data fra ^FD bliver dette ryddet, efter etiketten er udskrevet."
+    "summary": "Angiver data til et variabelt felt. I modsætning til data fra ^FD bliver dette ryddet, efter etiketten er udskrevet.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "data til variabelt felt",
+          "values": "0 til 3072 byte streng"
+        }
+      ]
+    }
   },
   "^FE": {
     "hash": "7edab05e",
-    "summary": "Angiver det tegn, der bruges til at indsætte nummererede feltværdier i en anden feltstreng."
+    "summary": "Angiver det tegn, der bruges til at indsætte nummererede feltværdier i en anden feltstreng.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "afgrænsningstegn til feltsammenkædning",
+          "values": "ethvert tegn undtagen format- og kontrolpræfikser",
+          "default": "#"
+        }
+      ]
+    }
   },
   "^FC": {
     "hash": "a867e6f6",
-    "summary": "Angiver de markører, der bruges til realtidsur-koder i feltdata."
+    "summary": "Angiver de markører, der bruges til realtidsur-koder i feltdata.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "indikatortegn for primær klokke",
+          "values": "ethvert ASCII-tegn",
+          "default": "%"
+        },
+        {
+          "meaning": "indikatortegn for sekundær klokke",
+          "values": "ethvert ASCII-tegn, forskelligt fra a"
+        },
+        {
+          "meaning": "indikatortegn for tredje klokke",
+          "values": "ethvert ASCII-tegn, forskelligt fra a og b"
+        }
+      ]
+    }
   },
   "^BY": {
     "hash": "ff32dae7",
-    "summary": "Angiver standard modulbredde, forholdet mellem brede og smalle streger samt højde for efterfølgende stregkodefelter."
+    "summary": "Angiver standard modulbredde, forholdet mellem brede og smalle streger samt højde for efterfølgende stregkodefelter.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "modulbredde i dots",
+          "values": "1 til 10",
+          "default": "2"
+        },
+        {
+          "meaning": "forhold mellem brede og smalle streger",
+          "values": "2.0 til 3.0 i trin af 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "enhver højde i dots",
+          "default": "10"
+        }
+      ]
+    }
   },
   "^FM": {
     "hash": "3f270842",
-    "summary": "Placerer PDF417- eller MicroPDF417-segmenter på bestemte startpunkter, når en besked fordeles over flere symboler."
+    "summary": "Placerer PDF417- eller MicroPDF417-segmenter på bestemte startpunkter, når en besked fordeles over flere symboler.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "x-position for første symbol, gentag par for flere",
+          "values": "0 til 32000, eller e for at springe dette symbol over"
+        },
+        {
+          "meaning": "y-position for første symbol, gentag par for flere",
+          "values": "0 til 32000, eller e for at springe dette symbol over"
+        }
+      ]
+    }
   },
   "^FP": {
     "hash": "7e64a235",
-    "summary": "Angiver tegnrækkefølgen for det aktuelle felt og kan tilføje ekstra tegnafstand."
+    "summary": "Angiver tegnrækkefølgen for det aktuelle felt og kan tilføje ekstra tegnafstand.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "udskrivningsretning",
+          "values": "H horisontal, V vertikal, R omvendt",
+          "default": "H"
+        },
+        {
+          "meaning": "ekstra afstand mellem tegn i dots",
+          "values": "0 til 9999",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^A0": {
     "hash": "8e0f770f",
-    "summary": "Vælger den indbyggede skalerbare skrifttype 0 til det næste felt i den ønskede størrelse og orientering."
+    "summary": "Vælger den indbyggede skalerbare skrifttype 0 til det næste felt i den ønskede størrelse og orientering.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "tegnhøjde i dots",
+          "values": "10 til 32000",
+          "default": "senest ^CF"
+        },
+        {
+          "meaning": "tegnbredde i dots",
+          "values": "10 til 32000",
+          "default": "senest ^CF"
+        }
+      ]
+    }
   },
   "^A": {
     "hash": "29c0b50a",
-    "summary": "Vælger en indbygget skrifttype ud fra et etbogstavsnavn, med valgfri orientering, højde og bredde."
+    "summary": "Vælger en indbygget skrifttype ud fra et etbogstavsnavn, med valgfri orientering, højde og bredde.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "skrifttypenavn",
+          "values": "A til Z, 0 til 9",
+          "default": "senest ^CF"
+        },
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "tegnhøjde i dots",
+          "values": "10 til 32000 skalerbar, 1 til 10 gange basishøjden bitmappet",
+          "default": "senest ^CF"
+        },
+        {
+          "meaning": "tegnbredde i dots",
+          "values": "10 til 32000 skalerbar, 1 til 10 gange basisbredden bitmappet",
+          "default": "senest ^CF"
+        }
+      ]
+    }
   },
   "^A@": {
     "hash": "79b7d2f4",
-    "summary": "Vælger en gemt skrifttypefil til det næste felt, med valgfri orientering, højde og bredde."
+    "summary": "Vælger en gemt skrifttypefil til det næste felt, med valgfri orientering, højde og bredde.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "feltorientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "tegnhøjde i dots",
+          "values": "10 til 32000 skalerbar, 1 til 10 gange basishøjde bitmappet",
+          "default": "senest ^CF"
+        },
+        {
+          "meaning": "tegnbredde i dots",
+          "values": "10 til 32000 skalerbar, 1 til 10 gange basisbredde bitmappet",
+          "default": "senest ^CF"
+        },
+        {
+          "meaning": "drev med skrifttypen",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "skrifttypefilnavn der skal bruges",
+          "values": "ethvert gyldigt skrifttypenavn",
+          "default": "senest ^CF"
+        },
+        {
+          "meaning": "skrifttypefilens filtype",
+          "values": "FNT skrifttype, TTF TrueType, TTE TrueType-udvidelse"
+        }
+      ]
+    }
   },
   "^CF": {
     "hash": "c92321e4",
-    "summary": "Angiver den standardskrifttype, højde og bredde, der bruges af tekstfelter, som ikke selv angiver disse værdier."
+    "summary": "Angiver den standardskrifttype, højde og bredde, der bruges af tekstfelter, som ikke selv angiver disse værdier.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "standardskrifttype",
+          "values": "A til Z, 0 til 9",
+          "default": "A"
+        },
+        {
+          "meaning": "standard tegnhøjde i dots",
+          "values": "0 til 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "standard tegnbredde i dots",
+          "values": "0 til 32000",
+          "default": "5 eller senest gemte værdi"
+        }
+      ]
+    }
   },
   "^CI": {
     "hash": "b21e3b71",
-    "summary": "Vælger den tegnkodning, der bruges til at fortolke feltdata, herunder kodesider og UTF-8."
+    "summary": "Vælger den tegnkodning, der bruges til at fortolke feltdata, herunder kodesider og UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "tegnkodning der skal bruges",
+          "values": "0 til 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "tegnposition der skal omfordeles",
+          "values": "0 til 255",
+          "default": "ingen"
+        },
+        {
+          "meaning": "position for erstatningstegn",
+          "values": "0 til 255",
+          "default": "ingen"
+        }
+      ]
+    }
   },
   "^PA": {
     "hash": "01139df4",
-    "summary": "Aktiverer avanceret tekstlayout for efterfølgende felter, herunder bidirektional tekst, tegnformning og OpenType-funktioner."
+    "summary": "Aktiverer avanceret tekstlayout for efterfølgende felter, herunder bidirektional tekst, tegnformning og OpenType-funktioner.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "standard glyfkilde",
+          "values": "0 mellemrumstegn, 1 skrifttypeglyf",
+          "default": "0"
+        },
+        {
+          "meaning": "retningsbestemt tekstlayout",
+          "values": "0 fra, 1 til",
+          "default": "0"
+        },
+        {
+          "meaning": "tegnformning",
+          "values": "0 fra, 1 til",
+          "default": "0"
+        },
+        {
+          "meaning": "understøttelse af OpenType-tabeller",
+          "values": "0 fra, 1 til",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^CW": {
     "hash": "0e41c729",
-    "summary": "Knytter et etbogstavsnavn til en gemt skrifttypefil."
+    "summary": "Knytter et etbogstavsnavn til en gemt skrifttypefil.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "skrifttypebogstav der skal tilføjes eller udskiftes",
+          "values": "A til Z, 0 til 9"
+        },
+        {
+          "meaning": "drev til lagring af skrifttypen",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "filnavn på den gemte skrifttype",
+          "values": "op til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "skrifttypefilens filtype",
+          "values": "FNT skrifttype, TTF TrueType, TTE TrueType-udvidelse"
+        }
+      ]
+    }
   },
   "^CO": {
     "hash": "737205eb",
-    "summary": "Angiver cachestørrelsen for optegnede skalerbare glyffer for at fremskynde gentagen udskrivning med store skrifttyper."
+    "summary": "Angiver cachestørrelsen for optegnede skalerbare glyffer for at fremskynde gentagen udskrivning med store skrifttyper.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "tegncache aktiveret",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        },
+        {
+          "meaning": "ekstra cachehukommelse i K",
+          "values": "1 til 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "type af cachebuffer",
+          "values": "0 normale skrifttyper, 1 asiatiske skrifttyper",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^FL": {
     "hash": "c18f889f",
-    "summary": "Definerer kæder af TrueType-reserveskrifttyper, der bruges, når grundskrifttypen mangler en glyf."
+    "summary": "Definerer kæder af TrueType-reserveskrifttyper, der bruges, når grundskrifttypen mangler en glyf.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "udvidelsesskrifttype der skal kædes, enhed og fil",
+          "values": "TTF- eller TTE-fil på en enhed"
+        },
+        {
+          "meaning": "grundskrifttype eller skrifttyper, der skal modtage den",
+          "values": "FNT-, TTF- eller TTE-fil, jokertegn tilladt"
+        },
+        {
+          "meaning": "kæd eller fjern kæden til udvidelsen",
+          "values": "0 fjern kæde, 1 kæd"
+        }
+      ]
+    }
   },
   "^LF": {
     "hash": "93f13086",
@@ -169,183 +786,1462 @@
   },
   "~DB": {
     "hash": "3aed3cba",
-    "summary": "Downloader en bitmap-skrifttype og dens metrikker til printerens hukommelse."
+    "summary": "Downloader en bitmap-skrifttype og dens metrikker til printerens hukommelse.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "drev til lagring af skrifttypen",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "skrifttypens navn",
+          "values": "op til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "skrifttypefilens filtype",
+          "values": "FNT fast værdi",
+          "default": "FNT"
+        },
+        {
+          "meaning": "orientering af den indbyggede skrifttype",
+          "values": "N kun normal",
+          "default": "N"
+        },
+        {
+          "meaning": "maksimal cellehøjde i dots",
+          "values": "1 til 32000"
+        },
+        {
+          "meaning": "maksimal cellebredde i dots",
+          "values": "1 til 32000"
+        },
+        {
+          "meaning": "dots fra cellens top til baseline",
+          "values": "1 til 32000"
+        },
+        {
+          "meaning": "bredde på mellemrumstegn",
+          "values": "1 til 32000"
+        },
+        {
+          "meaning": "antal tegn i skrifttypen",
+          "values": "1 til 256"
+        },
+        {
+          "meaning": "tekst om ophavsretsindehaver",
+          "values": "1 til 63 alfanumeriske tegn"
+        },
+        {
+          "meaning": "struktureret bitmapdata pr. tegn",
+          "values": "hashkode, så højde, bredde og offsets, så hexdata"
+        }
+      ]
+    }
   },
   "~DS": {
     "hash": "15997aa7",
-    "summary": "Downloader en kodet skalerbar Intellifont-skrifttype til printerens hukommelse."
+    "summary": "Downloader en kodet skalerbar Intellifont-skrifttype til printerens hukommelse.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "drev til lagring af skrifttypen",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "skrifttypens navn",
+          "values": "op til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "skrifttypefilens filtype",
+          "values": "FNT fast værdi",
+          "default": "FNT"
+        },
+        {
+          "meaning": "skrifttypestørrelse i bytes fra ZTools",
+          "values": "byteantal for den konverterede skrifttype"
+        },
+        {
+          "meaning": "kodede byte-data for skrifttypen",
+          "values": "hexpar svarende til størrelsen"
+        }
+      ]
+    }
   },
   "~DT": {
     "hash": "dd726145",
-    "summary": "Downloader en kodet TrueType-skrifttype med op til 256 tegn til printerens hukommelse."
+    "summary": "Downloader en kodet TrueType-skrifttype med op til 256 tegn til printerens hukommelse.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "drev til lagring af skrifttypen",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "skrifttypens navn",
+          "values": "op til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "skrifttypefilens filtype",
+          "values": "DAT fast værdi",
+          "default": "DAT"
+        },
+        {
+          "meaning": "skrifttypestørrelse i bytes",
+          "values": "byteantal for den konverterede skrifttype"
+        },
+        {
+          "meaning": "kodede byte-data for skrifttypen",
+          "values": "hexpar svarende til størrelsen"
+        }
+      ]
+    }
   },
   "~DU": {
     "hash": "060fb361",
-    "summary": "Downloader en kodet TrueType-skrifttype med mere end 256 glyffer til printerens hukommelse."
+    "summary": "Downloader en kodet TrueType-skrifttype med mere end 256 glyffer til printerens hukommelse.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "drev til lagring af skrifttypen",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "skrifttypens navn",
+          "values": "op til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "skrifttypefilens filtype",
+          "values": "FNT fast værdi",
+          "default": "FNT"
+        },
+        {
+          "meaning": "skrifttypestørrelse i bytes",
+          "values": "byteantal for den konverterede skrifttype"
+        },
+        {
+          "meaning": "kodede byte-data for skrifttypen",
+          "values": "hexpar svarende til størrelsen"
+        }
+      ]
+    }
   },
   "~DE": {
     "hash": "07fddda6",
-    "summary": "Downloader en kodningstabel, der knytter bytes i feltdata til Unicode-værdier for TrueType-skrifttyper."
+    "summary": "Downloader en kodningstabel, der knytter bytes i feltdata til Unicode-værdier for TrueType-skrifttyper.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "drev med tabellen",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "tabellens navn",
+          "values": "op til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "tabelfilens filtype",
+          "values": "DAT fast værdi",
+          "default": "DAT"
+        },
+        {
+          "meaning": "tabellens størrelse i bytes",
+          "values": "byteantal for den konverterede tabel"
+        },
+        {
+          "meaning": "kodede byte-data for tabellen",
+          "values": "hexpar svarende til størrelsen"
+        }
+      ]
+    }
   },
   "^BC": {
     "hash": "e992c85f",
-    "summary": "Tegner en Code 128-stregkode til ASCII-data med variabel længde, med tilstande for automatisk skift mellem delsæt og UCC/EAN-data."
+    "summary": "Tegner en Code 128-stregkode til ASCII-data med variabel længde, med tilstande for automatisk skift mellem delsæt og UCC/EAN-data.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "UCC-kontrolciffer",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "tilstand",
+          "values": "N ingen, U UCC Case Mode, A automatisk, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B3": {
     "hash": "dece8a28",
-    "summary": "Tegner en Code 39-stregkode med et valgfrit Mod 43-kontrolciffer."
+    "summary": "Tegner en Code 39-stregkode med et valgfrit Mod 43-kontrolciffer.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "Mod 43-kontrolciffer",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BA": {
     "hash": "699bb436",
-    "summary": "Tegner en Code 93-stregkode, der gengiver fuld ASCII-data ved hjælp af skifttegn."
+    "summary": "Tegner en Code 93-stregkode, der gengiver fuld ASCII-data ved hjælp af skifttegn.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "udskriv kontrolciffer",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B1": {
     "hash": "8ca731c4",
-    "summary": "Tegner en Code 11-stregkode til cifre og bindestreger, med valgfrie kontrolcifre."
+    "summary": "Tegner en Code 11-stregkode til cifre og bindestreger, med valgfrie kontrolcifre.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "antal kontrolcifre",
+          "values": "Y 1 ciffer, N 2 cifre",
+          "default": "N"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B2": {
     "hash": "8a4f8a6a",
-    "summary": "Tegner en Interleaved 2 of 5-stregkode til numeriske data med lige længde, med et valgfrit kontrolciffer."
+    "summary": "Tegner en Interleaved 2 of 5-stregkode til numeriske data med lige længde, med et valgfrit kontrolciffer.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "Mod 10-kontrolciffer",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "sjette plads, ikke dokumenteret",
+          "values": "ikke dokumenteret i vejledningen"
+        }
+      ]
+    }
   },
   "^BI": {
     "hash": "4a34e094",
-    "summary": "Tegner en Industrial 2 of 5-stregkode, en numerisk kode, hvor data kun kodes i stregerne."
+    "summary": "Tegner en Industrial 2 of 5-stregkode, en numerisk kode, hvor data kun kodes i stregerne.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BJ": {
     "hash": "b593e233",
-    "summary": "Tegner en Standard 2 of 5-stregkode, en selvkontrollerende numerisk kode, hvor data kun kodes i stregerne."
+    "summary": "Tegner en Standard 2 of 5-stregkode, en selvkontrollerende numerisk kode, hvor data kun kodes i stregerne.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BK": {
     "hash": "60c5d7b4",
-    "summary": "Tegner en ANSI Codabar-stregkode, også kendt som USD-4, til etiketter inden for biblioteker, sundhedsvæsen og kurervirksomhed."
+    "summary": "Tegner en ANSI Codabar-stregkode, også kendt som USD-4, til etiketter inden for biblioteker, sundhedsvæsen og kurervirksomhed.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "kontrolciffer, fast fra",
+          "values": "N kun",
+          "default": "N"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "starttegn",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "stoptegn",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BL": {
     "hash": "5423204e",
-    "summary": "Tegner en LOGMARS-stregkode, forsvarsministeriets variant af Code 39, og konverterer små bogstaver i data til store."
+    "summary": "Tegner en LOGMARS-stregkode, forsvarsministeriets variant af Code 39, og konverterer små bogstaver i data til store.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BM": {
     "hash": "e86eb289",
-    "summary": "Tegner en MSI-stregkode, en numerisk kode afledt af Plessey, med valgbare kontrolcifferskemaer."
+    "summary": "Tegner en MSI-stregkode, en numerisk kode afledt af Plessey, med valgbare kontrolcifferskemaer.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "kontrolcifferskema",
+          "values": "A ingen, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "kontrolciffer i tolkningslinjen",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BP": {
     "hash": "1c540146",
-    "summary": "Tegner en Plessey-stregkode, en ældre numerisk kode med valgfrie kontrolcifre."
+    "summary": "Tegner en Plessey-stregkode, en ældre numerisk kode med valgfrie kontrolcifre.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "udskriv kontrolciffer",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BE": {
     "hash": "8292a7c9",
-    "summary": "Tegner en EAN-13-stregkode til detailvarenumre og udleder kontrolcifferet fra tolv datacifre."
+    "summary": "Tegner en EAN-13-stregkode til detailvarenumre og udleder kontrolcifferet fra tolv datacifre.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^B8": {
     "hash": "18351c75",
-    "summary": "Tegner en EAN-8-stregkode til små detailemballager og udleder kontrolcifferet fra syv datacifre."
+    "summary": "Tegner en EAN-8-stregkode til små detailemballager og udleder kontrolcifferet fra syv datacifre.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BU": {
     "hash": "3b71109a",
-    "summary": "Tegner en UPC-A-stregkode til detailemballage ud fra elleve datacifre, med valgfri udskrivning af kontrolcifferet."
+    "summary": "Tegner en UPC-A-stregkode til detailemballage ud fra elleve datacifre, med valgfri udskrivning af kontrolcifferet.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 9999",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "udskriv kontrolciffer",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B9": {
     "hash": "355b9a9c",
-    "summary": "Tegner en UPC-E-stregkode, den korte form af UPC-A. Feltdataene er den fulde ticifrede producent- og produktkode."
+    "summary": "Tegner en UPC-E-stregkode, den korte form af UPC-A. Feltdataene er den fulde ticifrede producent- og produktkode.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "udskriv kontrolciffer",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^BR": {
     "hash": "106cb78e",
-    "summary": "Tegner et GS1 DataBar-symbol med valgbar undertype, forstørrelse, højde og segmentbredde."
+    "summary": "Tegner et GS1 DataBar-symbol med valgbar undertype, forstørrelse, højde og segmentbredde.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R roteret, I inverteret, B bund-op",
+          "default": "R"
+        },
+        {
+          "meaning": "DataBar-symboltype",
+          "values": "1 omni, 2 afkortet, 3 stablet, 4 stablet omni, 5 begrænset, 6 udvidet, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 med CC-A/B, 12 UCC/EAN-128 med CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "forstørrelsesfaktor",
+          "values": "1 til 10",
+          "default": "printerindstilling"
+        },
+        {
+          "meaning": "adskillerhøjde",
+          "values": "1 eller 2",
+          "default": "1"
+        },
+        {
+          "meaning": "højde på den lineære del i dots",
+          "values": "1 til 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "segmentbredde for GS1 DataBar Expanded",
+          "values": "2 til 22 kun lige",
+          "default": "22"
+        }
+      ]
+    }
   },
   "^B5": {
     "hash": "7a401432",
-    "summary": "Tegner en Planet Code-portostregkode ud fra cifre, der kodes som høje og korte streger."
+    "summary": "Tegner en Planet Code-portostregkode ud fra cifre, der kodes som høje og korte streger.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R roteret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 9999",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BZ": {
     "hash": "7bb58ff4",
-    "summary": "Tegner POSTNET, Planet Code eller USPS Intelligent Mail, alt efter den valgte postkodetype."
+    "summary": "Tegner POSTNET, Planet Code eller USPS Intelligent Mail, alt efter den valgte postkodetype.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "postnummertype",
+          "values": "0 postnet, 1 planet, 2 reserveret, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^BS": {
     "hash": "697bbc1d",
-    "summary": "Tegner et to- eller femcifret UPC/EAN-tillægssymbol ved siden af en hovedstregkode."
+    "summary": "Tegner et to- eller femcifret UPC/EAN-tillægssymbol ved siden af en hovedstregkode.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 32000",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "tolkningslinje",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tolkningslinje over koden",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^B4": {
     "hash": "0d426450",
-    "summary": "Tegner en stablet Code 49-stregkode med to til otte rækker af fuld ASCII-data."
+    "summary": "Tegner en stablet Code 49-stregkode med to til otte rækker af fuld ASCII-data.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "højdemultiplikator for de enkelte rækker",
+          "values": "1 til etikettens højde",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "placering af tolkningslinjen",
+          "values": "N ingen, A over, B under",
+          "default": "N"
+        },
+        {
+          "meaning": "starttilstand",
+          "values": "0 alfanumerisk, 1 multiread, 2 numerisk, 3 gruppe alfa, 4 shift 1, 5 shift 2, A auto",
+          "default": "A"
+        }
+      ]
+    }
   },
   "^BQ": {
     "hash": "51883826",
-    "summary": "Tegner et QR Code-symbol. Kommandoparametrene angiver model, forstørrelse og maske. Feltdataene angiver fejlkorrektion og tegntilstand."
+    "summary": "Tegner et QR Code-symbol. Kommandoparametrene angiver model, forstørrelse og maske. Feltdataene angiver fejlkorrektion og tegntilstand.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "feltorientering",
+          "values": "N kun normal",
+          "default": "N"
+        },
+        {
+          "meaning": "model",
+          "values": "1 original, 2 forbedret",
+          "default": "2"
+        },
+        {
+          "meaning": "forstørrelsesfaktor",
+          "values": "1 til 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "fejlkorrektionsniveau",
+          "values": "H ultrahøj, Q høj, M standard, L høj densitet",
+          "default": "Q når tom, M når værdien er ugyldig"
+        },
+        {
+          "meaning": "maskeværdi",
+          "values": "0 til 7",
+          "default": "7"
+        }
+      ]
+    }
   },
   "^BX": {
     "hash": "edec7520",
-    "summary": "Tegner et Data Matrix-symbol med konfigurerbar elementstørrelse, kvalitetsniveau og håndtering af escape-tegn."
+    "summary": "Tegner et Data Matrix-symbol med konfigurerbar elementstørrelse, kvalitetsniveau og håndtering af escape-tegn.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "symbolelementernes højde",
+          "values": "1 til etikettens bredde",
+          "default": "0, hvilket tager symbolhøjden fra ^BY"
+        },
+        {
+          "meaning": "kvalitetsniveau",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "kolonner der skal kodes",
+          "values": "9 til 49, kun ulige for kvalitet 0 til 140, kun lige for kvalitet 200"
+        },
+        {
+          "meaning": "rækker der skal kodes",
+          "values": "9 til 49"
+        },
+        {
+          "meaning": "format-id",
+          "values": "1 numerisk, 2 store bogstaver, 3 store alfanumeriske med . , - /, 4 store alfanumeriske, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "kontroltegn for escape-sekvens",
+          "values": "ethvert tegn",
+          "default": "tilde"
+        },
+        {
+          "meaning": "sideforhold",
+          "values": "1 kvadratisk, 2 rektangulær",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^B7": {
     "hash": "70fe1379",
-    "summary": "Tegner et stablet PDF417 to-dimensionelt symbol til store mængder tekst- eller binærdata."
+    "summary": "Tegner et stablet PDF417 to-dimensionelt symbol til store mængder tekst- eller binærdata.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde pr. række i dots",
+          "values": "1 til etikettens højde",
+          "default": "senest ^BY"
+        },
+        {
+          "meaning": "sikkerhedsniveau",
+          "values": "1 til 8",
+          "default": "0"
+        },
+        {
+          "meaning": "antal datakolonner",
+          "values": "1 til 30",
+          "default": "automatisk sideforhold"
+        },
+        {
+          "meaning": "antal rækker",
+          "values": "3 til 90",
+          "default": "automatisk sideforhold"
+        },
+        {
+          "meaning": "afkort højre rækkeindikatorer og stopmønster",
+          "values": "Y ja, N nej",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^BF": {
     "hash": "fe48da2b",
-    "summary": "Tegner et MicroPDF417-symbol, en kompakt variant af PDF417 med rækkeadressemønstre."
+    "summary": "Tegner et MicroPDF417-symbol, en kompakt variant af PDF417 med rækkeadressemønstre.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "stregkodehøjde i dots",
+          "values": "1 til 9999",
+          "default": "senest ^BY, eller 10 hvis intet ^BY er sendt"
+        },
+        {
+          "meaning": "tilstand",
+          "values": "0 til 33",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^B0": {
     "hash": "b7e0a784",
-    "summary": "Tegner et Aztec-matrixsymbol med konfigurerbar forstørrelse og fejlkorrektion."
+    "summary": "Tegner et Aztec-matrixsymbol med konfigurerbar forstørrelse og fejlkorrektion.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R roteret, I 180, B 270",
+          "default": "senest ^FW"
+        },
+        {
+          "meaning": "forstørrelsesfaktor",
+          "values": "1 til 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "indikator for udvidet kanaltolkning",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "fejlstyring og symbolstørrelse",
+          "values": "0 standard, 1 til 99 fejlprocent, 101 til 104 kompakte lag, 201 til 232 fulde lag, 300 rune",
+          "default": "0"
+        },
+        {
+          "meaning": "indikator for menusymbol",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "antal symboler til structured append",
+          "values": "1 til 26",
+          "default": "1"
+        },
+        {
+          "meaning": "id-felt til structured append",
+          "values": "tekst op til 24 tegn",
+          "default": "intet id"
+        }
+      ]
+    }
   },
   "^BB": {
     "hash": "f0c04fb6",
-    "summary": "Tegner et CODABLOCK-symbol i tilstand A, E eller F til større datamængder."
+    "summary": "Tegner et CODABLOCK-symbol i tilstand A, E eller F til større datamængder.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "stregkodehøjde pr. række i dots",
+          "values": "2 til 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "sikkerhedsniveau",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "tegn pr. række",
+          "values": "2 til 62"
+        },
+        {
+          "meaning": "rækker der skal kodes",
+          "values": "mode-A 1-22, mode-EF 2-4"
+        },
+        {
+          "meaning": "tilstand",
+          "values": "A code39-sæt, E code128-fnc1, F code128-sæt",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^BD": {
     "hash": "3bb22e31",
-    "summary": "Tegner et UPS MaxiCode-symbol med en tilstand til strukturerede fragtmandsbeskeder eller generelle data."
+    "summary": "Tegner et UPS MaxiCode-symbol med en tilstand til strukturerede fragtmandsbeskeder eller generelle data.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "tilstand",
+          "values": "2 us-postal, 3 non-us-postal, 4 standard, 5 full-eec, 6 reader-program",
+          "default": "2"
+        },
+        {
+          "meaning": "symbolnummer i sekvensen",
+          "values": "1 til 8",
+          "default": "1"
+        },
+        {
+          "meaning": "samlet antal symboler",
+          "values": "1 til 8",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^BT": {
     "hash": "52326a87",
-    "summary": "Tegner et TLC39-symbol til telekommunikationsetiketter, der kombinerer Code 39 med en MicroPDF417-komponent."
+    "summary": "Tegner et TLC39-symbol til telekommunikationsetiketter, der kombinerer Code 39 med en MicroPDF417-komponent.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R roteret, I inverteret, B bund-op"
+        },
+        {
+          "meaning": "bredde på Code 39-delen i dots",
+          "values": "1 til 10",
+          "default": "600 dpi 4, ellers 2"
+        },
+        {
+          "meaning": "forhold mellem brede og smalle streger på Code 39-delen",
+          "values": "2.0 til 3.0 i trin af 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "højde på Code 39-delen i dots",
+          "values": "1 til 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "smal stregbredde på MicroPDF417-delen",
+          "values": "1 til 10",
+          "default": "600 dpi 4, ellers 2"
+        },
+        {
+          "meaning": "rækkehøjde på MicroPDF417-delen i dots",
+          "values": "1 til 255",
+          "default": "600 dpi 8, ellers 4"
+        }
+      ]
+    }
   },
   "^CV": {
     "hash": "f82fc556",
-    "summary": "Når funktionen er aktiveret, valideres stregkodedata og -parametre, og der udskrives INVALID i stedet for et ugyldigt symbol."
+    "summary": "Når funktionen er aktiveret, valideres stregkodedata og -parametre, og der udskrives INVALID i stedet for et ugyldigt symbol.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "kodevalidering",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^GB": {
     "hash": "bd69726e",
-    "summary": "Tegner et udfyldt rektangel eller et rektangel med kant. Hvis en side svarer til kanttykkelsen, dannes der en linje."
+    "summary": "Tegner et udfyldt rektangel eller et rektangel med kant. Hvis en side svarer til kanttykkelsen, dannes der en linje.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "boksens bredde i dots",
+          "values": "t til 32000",
+          "default": "t eller 1"
+        },
+        {
+          "meaning": "boksens højde i dots",
+          "values": "t til 32000",
+          "default": "t eller 1"
+        },
+        {
+          "meaning": "kanttykkelse i dots",
+          "values": "1 til 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "linjefarve",
+          "values": "B sort, W hvid",
+          "default": "B"
+        },
+        {
+          "meaning": "hjørneafrunding",
+          "values": "0 ingen afrunding til 8 stærkeste afrunding",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^GD": {
     "hash": "74d7e804",
-    "summary": "Tegner en diagonal linje inden for en given bredde og højde, hældende mod højre eller venstre."
+    "summary": "Tegner en diagonal linje inden for en given bredde og højde, hældende mod højre eller venstre.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "boksens bredde i dots",
+          "values": "3 til 32000",
+          "default": "t eller 3"
+        },
+        {
+          "meaning": "boksens højde i dots",
+          "values": "3 til 32000",
+          "default": "t eller 3"
+        },
+        {
+          "meaning": "kanttykkelse i dots",
+          "values": "1 til 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "linjefarve",
+          "values": "B sort, W hvid",
+          "default": "B"
+        },
+        {
+          "meaning": "diagonal retning",
+          "values": "R eller / hældning til højre, L eller \\ hældning til venstre",
+          "default": "R"
+        }
+      ]
+    }
   },
   "^GE": {
     "hash": "7f37613a",
-    "summary": "Tegner en ellipse ud fra en bredde og højde i dots, med indadgående kanttykkelse og sort eller hvid udskrift."
+    "summary": "Tegner en ellipse ud fra en bredde og højde i dots, med indadgående kanttykkelse og sort eller hvid udskrift.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "ellipsens bredde i dots",
+          "values": "3 til 4095",
+          "default": "t eller 1"
+        },
+        {
+          "meaning": "ellipsens højde i dots",
+          "values": "3 til 4095",
+          "default": "t eller 1"
+        },
+        {
+          "meaning": "kanttykkelse i dots",
+          "values": "2 til 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "linjefarve",
+          "values": "B sort, W hvid",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GC": {
     "hash": "075461c2",
-    "summary": "Tegner en cirkel med den angivne diameter i dots, med indadgående kanttykkelse og sort eller hvid udskrift."
+    "summary": "Tegner en cirkel med den angivne diameter i dots, med indadgående kanttykkelse og sort eller hvid udskrift.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "cirklens diameter i dots",
+          "values": "3 til 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "kanttykkelse i dots",
+          "values": "2 til 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "linjefarve",
+          "values": "B sort, W hvid",
+          "default": "B"
+        }
+      ]
+    }
   },
   "^GF": {
     "hash": "ebe9c440",
-    "summary": "Placerer et sort-hvidt bitmap på den aktuelle feltposition ved hjælp af ASCII-hex-, binære eller komprimerede data."
+    "summary": "Placerer et sort-hvidt bitmap på den aktuelle feltposition ved hjælp af ASCII-hex-, binære eller komprimerede data.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "komprimeringstype",
+          "values": "A ascii hex, B binær, C komprimeret binær",
+          "default": "A"
+        },
+        {
+          "meaning": "samlet antal bytes der skal sendes",
+          "values": "1 til 99999"
+        },
+        {
+          "meaning": "samlet antal bytes i billedet",
+          "values": "1 til 99999"
+        },
+        {
+          "meaning": "bytes pr. billedrække",
+          "values": "1 til 99999"
+        },
+        {
+          "meaning": "billeddata",
+          "values": "ascii hex 00 til FF"
+        }
+      ]
+    }
   },
   "^GS": {
     "hash": "a5bcd861",
-    "summary": "Udskriver et indbygget symbol valgt ud fra feltdata, f.eks. copyright- eller registreret varemærke-symbolet."
+    "summary": "Udskriver et indbygget symbol valgt ud fra feltdata, f.eks. copyright- eller registreret varemærke-symbolet.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "orientering",
+          "values": "N normal, R 90 med uret, I 180, B 270",
+          "default": "N eller senest ^FW"
+        },
+        {
+          "meaning": "tegnhøjde i forhold til bredde",
+          "values": "0 til 32000",
+          "default": "senest ^CF"
+        },
+        {
+          "meaning": "tegnbredde i forhold til højde",
+          "values": "0 til 32000",
+          "default": "senest ^CF"
+        }
+      ]
+    }
   },
   "^IL": {
     "hash": "2530cc9c",
-    "summary": "Indlæser et gemt billede ved starten af et format og forankrer det i etikettens startpunkt."
+    "summary": "Indlæser et gemt billede ved starten af et format og forankrer det i etikettens startpunkt.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "lagerenhed",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektnavn",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": ".GRF eller .PNG"
+        }
+      ]
+    }
   },
   "^IM": {
     "hash": "4f79eb5a",
-    "summary": "Placerer et gemt billede på den aktuelle feltposition uden at skalere det."
+    "summary": "Placerer et gemt billede på den aktuelle feltposition uden at skalere det.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "lagerenhed",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "søgeprioritetens rækkefølge"
+        },
+        {
+          "meaning": "objektnavn",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": ".GRF eller .PNG"
+        }
+      ]
+    }
   },
   "^ID": {
     "hash": "daa69cf9",
-    "summary": "Sletter gemt grafik, skrifttyper eller formater fra printerens hukommelse, med understøttelse af wildcards til grupper."
+    "summary": "Sletter gemt grafik, skrifttyper eller formater fra printerens hukommelse, med understøttelse af wildcards til grupper.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "lagerenhed",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektnavn, jokertegn tilladt",
+          "values": "1 til 8 tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype, jokertegn tilladt",
+          "values": "enhver filtype",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^IS": {
     "hash": "4ccfff35",
-    "summary": "Gemmer det aktuelle format som et grafikbillede til hurtig genindlæsning og overlejring med variable data."
+    "summary": "Gemmer det aktuelle format som et grafikbillede til hurtig genindlæsning og overlejring med variable data.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "lagerenhed",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "objektnavn",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": ".GRF eller .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "udskriv etiket efter gemning",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~DG": {
     "hash": "220038fa",
-    "summary": "Downloader en ASCII-hex-grafik til printerens hukommelse under et genanvendeligt navn."
+    "summary": "Downloader en ASCII-hex-grafik til printerens hukommelse under et genanvendeligt navn.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "lagerenhed",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "billednavn",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "billedets samlede størrelse i bytes",
+          "values": "beregnet fra billedets bredde og højde"
+        },
+        {
+          "meaning": "bytes pr. billedrække",
+          "values": "beregnet fra billedets bredde"
+        },
+        {
+          "meaning": "grafikbillededata",
+          "values": "ascii hex 00 til FF"
+        }
+      ]
+    }
   },
   "~DN": {
     "hash": "b004ef7d",
@@ -353,7 +2249,43 @@
   },
   "~DY": {
     "hash": "e14aeb32",
-    "summary": "Downloader en grafik, skrifttype eller certifikat til printerens hukommelse under et genanvendeligt navn."
+    "summary": "Downloader en grafik, skrifttype eller certifikat til printerens hukommelse under et genanvendeligt navn.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "lagerenhed",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "filnavn",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "dataformat",
+          "values": "A ascii eller zb64, B binær, C ar komprimeret, P png zb64"
+        },
+        {
+          "meaning": "gemt filtype",
+          "values": "B bitmap, E tte, G rå grf, P png, T ttf eller otf, X pcx, NRD ulæselig, PAC adgangscertifikat, C wml-menu, F htm-side, H printerfeedback",
+          "default": "G"
+        },
+        {
+          "meaning": "samlet antal bytes i filen",
+          "values": "faktisk dekomprimeret filstørrelse"
+        },
+        {
+          "meaning": "bytes pr. række for grf-billeder",
+          "values": "beregnet fra billedets bredde"
+        },
+        {
+          "meaning": "fildata",
+          "values": "ascii hex, zb64 eller binær"
+        }
+      ]
+    }
   },
   "~EG": {
     "hash": "2d5c2385",
@@ -361,35 +2293,176 @@
   },
   "^SN": {
     "hash": "0675b2ba",
-    "summary": "Serialiserer tekst- eller stregkodefeltdata på tværs af etiketter ud fra en startværdi, retning og trinstørrelse."
+    "summary": "Serialiserer tekst- eller stregkodefeltdata på tværs af etiketter ud fra en startværdi, retning og trinstørrelse.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "startværdi for serienummer",
+          "values": "op til 12 cifre",
+          "default": "1"
+        },
+        {
+          "meaning": "trin for forøgelse eller formindskelse",
+          "values": "op til 12 cifre",
+          "default": "1"
+        },
+        {
+          "meaning": "udfyld med foranstillede nuller",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^SF": {
     "hash": "de570c17",
-    "summary": "Serialiserer udvalgte positioner i feltdata ved hjælp af en maske og tegnsæt."
+    "summary": "Serialiserer udvalgte positioner i feltdata ved hjælp af en maske og tegnsæt.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "serialiseringsmaske der angiver hvilke tegn ændres",
+          "values": "D decimal, H hex, O oktal, A alfa, N alfanumerisk, % spring over"
+        },
+        {
+          "meaning": "streng til forøgelse eller formindskelse af masken",
+          "values": "én værdi pr. maskeposition, % for at lade den stå",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^DF": {
     "hash": "f84ea776",
-    "summary": "Gemmer de efterfølgende kommandoer som et genanvendeligt format i stedet for at udskrive dem med det samme."
+    "summary": "Gemmer de efterfølgende kommandoer som et genanvendeligt format i stedet for at udskrive dem med det samme.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "enhed til lagring af skabelonen",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "skabelonnavn",
+          "values": "1 til 16 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XF": {
     "hash": "651406b0",
-    "summary": "Genindlæser et gemt format og angiver værdier til dets nummererede pladsholderfelter."
+    "summary": "Genindlæser et gemt format og angiver værdier til dets nummererede pladsholderfelter.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "kildeenhed for den gemte skabelon",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R, så E, så B, så A"
+        },
+        {
+          "meaning": "den gemte skabelons navn",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": "ZPL"
+        }
+      ]
+    }
   },
   "^XG": {
     "hash": "87f554d0",
-    "summary": "Genindlæser en gemt grafik på den aktuelle position med uafhængig vandret og lodret skalering."
+    "summary": "Genindlæser en gemt grafik på den aktuelle position med uafhængig vandret og lodret skalering.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "kildeenhed for den gemte grafik",
+          "values": "R, E, B, A",
+          "default": "R, så E, så B, så A"
+        },
+        {
+          "meaning": "den gemte grafiks navn",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": "GRF"
+        },
+        {
+          "meaning": "forstørrelsesfaktor på x-aksen",
+          "values": "1 til 10",
+          "default": "1"
+        },
+        {
+          "meaning": "forstørrelsesfaktor på y-aksen",
+          "values": "1 til 10",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^MN": {
     "hash": "151d39b8",
-    "summary": "Vælger, hvordan printeren registrerer etiketgrænser, ved hjælp af mellemrum, mærker eller sammenhængende medier."
+    "summary": "Vælger, hvordan printeren registrerer etiketgrænser, ved hjælp af mellemrum, mærker eller sammenhængende medier.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "metode til medieregistrering",
+          "values": "N fortløbende, Y eller W ikke-fortløbende web, M ikke-fortløbende mærke, A autodetekter, V fortløbende variabel længde",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "forskydning af sort mærke i dots",
+          "values": "-120 til 283 på de fleste printere, -240 til 566 ved 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ML": {
     "hash": "f893dead",
-    "summary": "Angiver den maksimale etiketlængde, printeren søger efter under kalibrering af ikke-sammenhængende medier."
+    "summary": "Angiver den maksimale etiketlængde, printeren søger efter under kalibrering af ikke-sammenhængende medier.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "maksimal etiketlængde i dotrækker",
+          "values": "printerens dpi gange to, op til maks. længde",
+          "default": "senest gemte værdi"
+        }
+      ]
+    }
   },
   "^MF": {
     "hash": "cb8cb6e8",
-    "summary": "Angiver handlingen ved opstart og lukning af printhovedet, herunder kalibrering, fremføring eller længdemåling."
+    "summary": "Angiver handlingen ved opstart og lukning af printhovedet, herunder kalibrering, fremføring eller længdemåling.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "fremføringshandling ved opstart",
+          "values": "F fremfør til første mærke, C kalibrer som ~JC, L angiv længde som ~JL, N ingen fremføring, S kort kalibrering",
+          "default": "C"
+        },
+        {
+          "meaning": "fremføringshandling efter printhovedet lukkes",
+          "values": "F fremfør til første mærke, C kalibrer som ~JC, L angiv længde som ~JL, N ingen fremføring, S kort kalibrering",
+          "default": "C"
+        }
+      ]
+    }
   },
   "^XB": {
     "hash": "81ff9b03",
@@ -397,55 +2470,268 @@
   },
   "^MA": {
     "hash": "eafb8b50",
-    "summary": "Konfigurerer udskrevne vedligeholdelsesadvarsler om rengøring eller udskiftning af printhovedet."
+    "summary": "Konfigurerer udskrevne vedligeholdelsesadvarsler om rengøring eller udskiftning af printhovedet.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "alarmtype",
+          "values": "R printhovedudskiftning, C printhovedrensning"
+        },
+        {
+          "meaning": "udskriv alarmetiketten",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "afstand til første alarm",
+          "values": "R 0 til 150 km, C 100 til 2000 meter, 0 fra",
+          "default": "50 km for R, 0 fra for C"
+        },
+        {
+          "meaning": "afstand før alarmen gentages",
+          "values": "0 til 2000 meter",
+          "default": "0"
+        },
+        {
+          "meaning": "rapporteret måleenhed",
+          "values": "C centimeter, I tommer, M meter",
+          "default": "I"
+        }
+      ]
+    }
   },
   "^MC": {
     "hash": "56f218a2",
-    "summary": "Styrer, om etikettens bitmap ryddes efter udskrivning, eller om den beholdes til genbrug af senere etiketter."
+    "summary": "Styrer, om etikettens bitmap ryddes efter udskrivning, eller om den beholdes til genbrug af senere etiketter.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "ryd bitmappet efter udskrivning",
+          "values": "Y ryd, N bevar",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^MI": {
     "hash": "04285e97",
-    "summary": "Angiver den tekst, der vises på vedligeholdelsesetiketter om rengøring eller udskiftning af printhovedet."
+    "summary": "Angiver den tekst, der vises på vedligeholdelsesetiketter om rengøring eller udskiftning af printhovedet.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "alarmtype",
+          "values": "R printhovedudskiftning, C printhovedrensning",
+          "default": "R"
+        },
+        {
+          "meaning": "meddelelse udskrevet på alarmetiketten",
+          "values": "op til 63 tegn, ingen kommaer",
+          "default": "rens printhovedet eller udskift printhovedet"
+        }
+      ]
+    }
   },
   "^MP": {
     "hash": "2bf0486e",
-    "summary": "Låser en indstilling på kontrolpanelet, f.eks. mørkhed eller kalibrering, indtil den låses op igen."
+    "summary": "Låser en indstilling på kontrolpanelet, f.eks. mørkhed eller kalibrering, indtil den låses op igen.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "kontrolpaneltilstand der skal beskyttes",
+          "values": "D mørkhed, P position, C kalibrering, E aktiver alle, S ingen gemning, W pause, F fremføring, X annuller, M menu",
+          "default": "skal angives"
+        }
+      ]
+    }
   },
   "^MW": {
     "hash": "a6985480",
-    "summary": "Aktiverer eller deaktiverer advarselsindikatoren for koldt printhoved."
+    "summary": "Aktiverer eller deaktiverer advarselsindikatoren for koldt printhoved.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "aktiver advarslen om koldt printhoved",
+          "values": "Y aktiver, N deaktiver"
+        }
+      ]
+    }
   },
   "^MD": {
     "hash": "7bbdd180",
-    "summary": "Justerer udskriftsmørkheden i forhold til printerens aktuelt konfigurerede mørkhed."
+    "summary": "Justerer udskriftsmørkheden i forhold til printerens aktuelt konfigurerede mørkhed.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "mediemørkhed i forhold til aktuel indstilling",
+          "values": "-30 til 30",
+          "default": "0"
+        }
+      ]
+    }
   },
   "~SD": {
     "hash": "f4cce0b1",
-    "summary": "Angiver den absolutte udskriftsmørkhed med det samme, svarende til mørkhedsindstillingen på frontpanelet."
+    "summary": "Angiver den absolutte udskriftsmørkhed med det samme, svarende til mørkhedsindstillingen på frontpanelet.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "absolut udskrivningsmørkhed",
+          "values": "00 til 30",
+          "default": "senest gemte værdi"
+        }
+      ]
+    }
   },
   "^JZ": {
     "hash": "0311743b",
-    "summary": "Styrer, om en etiket, der blev afbrudt af medie-, bånd- eller printhovedfejl, genudskrives efter fejlretning."
+    "summary": "Styrer, om en etiket, der blev afbrudt af medie-, bånd- eller printhovedfejl, genudskrives efter fejlretning.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "genudskriv etiket når fejlen ophører",
+          "values": "N nej, Y ja",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^JT": {
     "hash": "f1d59c73",
-    "summary": "Planlægger periodiske tests af printhovedets elementer ud fra antallet af udskrevne etiketter og et valgfrit elementinterval."
+    "summary": "Planlægger periodiske tests af printhovedets elementer ud fra antallet af udskrevne etiketter og et valgfrit elementinterval.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "etiketter udskrevet mellem printhovedtests",
+          "values": "0 til 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "manuelt valg af testelementområde for printhovedet",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "nummer på det første testelement",
+          "values": "0 til 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "nummer på det sidste testelement",
+          "values": "0 til 9999",
+          "default": "9999"
+        }
+      ]
+    }
   },
   "~TA": {
     "hash": "8c0ec36b",
-    "summary": "Justerer hvilepositionen for tear-off eller klip med en lille dot-forskydning efter udskrivning."
+    "summary": "Justerer hvilepositionen for tear-off eller klip med en lille dot-forskydning efter udskrivning.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "ændring af tear-off-hvileposition i dots",
+          "values": "-120 til 120",
+          "default": "senest gemte værdi"
+        }
+      ]
+    }
   },
   "^JH": {
     "hash": "bb049b9c",
-    "summary": "Konfigurerer tærskler for tidlig advarsel om vedligeholdelse af medie, farvebånd og printhoved."
+    "summary": "Konfigurerer tærskler for tidlig advarsel om vedligeholdelse af medie, farvebånd og printhoved.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "tidlig advarsel om medier eller forbrugsstoffer",
+          "values": "E aktiver, D deaktiver",
+          "default": "D"
+        },
+        {
+          "meaning": "antal etiketter pr. rulle",
+          "values": "100 til 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "medie blev udskiftet",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "kode for farvebåndslængde efter model",
+          "values": "N 0 m, 0 til 7 er 100 til 450 m, 10 til 16 er 600 til 900 m",
+          "default": "1 eller 7 afhængigt af model"
+        },
+        {
+          "meaning": "farvebånd blev udskiftet",
+          "values": "Y ja, N nej",
+          "default": "N"
+        },
+        {
+          "meaning": "tidlig advarsel om vedligeholdelse aktiveret",
+          "values": "E aktiveret, D deaktiveret",
+          "default": "D"
+        },
+        {
+          "meaning": "kode for printhovedets rensningsinterval",
+          "values": "0 til 16 for 100 m til 900 m i trin af 50 m",
+          "default": "1 eller 7 afhængigt af model"
+        },
+        {
+          "meaning": "printhovedet blev rengjort",
+          "values": "N nej, Y ja",
+          "default": "N"
+        },
+        {
+          "meaning": "advarselstærskel for printhovedets levetid i tommer",
+          "values": "0 fra, eller 100 til 3500000 tommer",
+          "default": "1000000"
+        },
+        {
+          "meaning": "printhovedet blev udskiftet",
+          "values": "N nej, Y ja",
+          "default": "N"
+        }
+      ]
+    }
   },
   "~JS": {
     "hash": "5bd1e99b",
-    "summary": "Styrer timingen af tilbagetræk omkring udskrivning og klipning, eller slår tilbagetræk fra."
+    "summary": "Styrer timingen af tilbagetræk omkring udskrivning og klipning, eller slår tilbagetræk fra.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "tilbagetrækstiming i forhold til udskrivning",
+          "values": "A fuld efter, B fuld før, N normal, O fra, 10 til 90 procent",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^PF": {
     "hash": "aaf17a35",
-    "summary": "Fremfører et angivet antal tomme dot-rækker med fremføringshastighed."
+    "summary": "Fremfører et angivet antal tomme dot-rækker med fremføringshastighed.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "dotrækker fremført fra bunden",
+          "values": "0 til 32000",
+          "default": "skal angives"
+        }
+      ]
+    }
   },
   "^PH": {
     "hash": "41c6c916",
@@ -473,75 +2759,353 @@
   },
   "^CN": {
     "hash": "f73bb8bf",
-    "summary": "Aktiverer klipperen med det samme på KR403-printere i kiosk-udskrivningstilstand."
+    "summary": "Aktiverer klipperen med det samme på KR403-printere i kiosk-udskrivningstilstand.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "tilstand til at tilsidesætte afskæringsmængde",
+          "values": "0 kiosk-indstilling, 1 fuld afskæring"
+        }
+      ]
+    }
   },
   "~PL": {
     "hash": "e2c87f54",
-    "summary": "Tilføjer ekstra udskubningslængde til en KR403-kiosk-fremviser, så det udskrevne medie er nemmere at tage."
+    "summary": "Tilføjer ekstra udskubningslængde til en KR403-kiosk-fremviser, så det udskrevne medie er nemmere at tage.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "ekstra udskubningslængde for medie i mm",
+          "values": "0 til 255",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^PN": {
     "hash": "98d9df86",
-    "summary": "Kører en KR403-fremvisercyklus, hvor det udskrevne medie gøres klar til manuel fjernelse."
+    "summary": "Kører en KR403-fremvisercyklus, hvor det udskrevne medie gøres klar til manuel fjernelse.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "udskubningslængde for medie til presenter i mm",
+          "values": "0 til 255"
+        }
+      ]
+    }
   },
   "^JW": {
     "hash": "13f2c7f4",
-    "summary": "Angiver stramningen af farvebåndets forsyningsside på printere i PAX-serien."
+    "summary": "Angiver stramningen af farvebåndets forsyningsside på printere i PAX-serien.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "spændingsniveau for farvebånd",
+          "values": "L lav, M middel, H høj",
+          "default": "skal angives"
+        }
+      ]
+    }
   },
   "^ST": {
     "hash": "2405167f",
-    "summary": "Angiver dato og klokkeslæt for printerens realtidsur."
+    "summary": "Angiver dato og klokkeslæt for printerens realtidsur.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "måned",
+          "values": "01 til 12",
+          "default": "aktuel måned"
+        },
+        {
+          "meaning": "dag",
+          "values": "01 til 31",
+          "default": "aktuel dag"
+        },
+        {
+          "meaning": "år",
+          "values": "1998 til 2097",
+          "default": "aktuelt år"
+        },
+        {
+          "meaning": "time",
+          "values": "00 til 23",
+          "default": "aktuel time"
+        },
+        {
+          "meaning": "minut",
+          "values": "00 til 59",
+          "default": "aktuelt minut"
+        },
+        {
+          "meaning": "sekund",
+          "values": "00 til 59",
+          "default": "aktuelt sekund"
+        },
+        {
+          "meaning": "am/pm- eller 24-timersformat",
+          "values": "A am, P pm, M 24-timer",
+          "default": "M"
+        }
+      ]
+    }
   },
   "^KD": {
     "hash": "0799ff99",
-    "summary": "Vælger det dato- og klokkeslætsformat, der vises på konfigurationsetiketten og kontrolpanelet."
+    "summary": "Vælger det dato- og klokkeslætsformat, der vises på konfigurationsetiketten og kontrolpanelet.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "visningsformat for dato og klokketid",
+          "values": "0 versionsnummer, 1 MM/DD/YY 24-timer, 2 MM/DD/YY 12-timer, 3 DD/MM/YY 24-timer, 4 DD/MM/YY 12-timer",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SO": {
     "hash": "b1f8a0fe",
-    "summary": "Definerer sekundære urforskydninger i forhold til realtidsuret. Forskydningerne går tabt, når printeren slukkes."
+    "summary": "Definerer sekundære urforskydninger i forhold til realtidsuret. Forskydningerne går tabt, når printeren slukkes.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "klokkenummer der skal forskydes",
+          "values": "2 sekundær, 3 tertiær",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "månedsforskydning",
+          "values": "-32000 til 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "dageforskydning",
+          "values": "-32000 til 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "årsforskydning",
+          "values": "-32000 til 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "timeforskydning",
+          "values": "-32000 til 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "minutforskydning",
+          "values": "-32000 til 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "sekundforskydning",
+          "values": "-32000 til 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SL": {
     "hash": "c92ac3ae",
-    "summary": "Angiver, hvornår tidsfelter tidsstemples, og vælger sproget for dags- og månedsnavne."
+    "summary": "Angiver, hvornår tidsfelter tidsstemples, og vælger sproget for dags- og månedsnavne.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "klokkeaflæsningstilstand",
+          "values": "S starttid, T nuværende tid, 0 til 999 tolerance",
+          "default": "S"
+        },
+        {
+          "meaning": "sprog for navne på dage og måneder",
+          "values": "1 engelsk, 2 spansk, 3 fransk, 4 tysk, 5 italiensk, 6 til 18 flere sprog",
+          "default": "senest ^KL"
+        }
+      ]
+    }
   },
   "^KL": {
     "hash": "cc881728",
-    "summary": "Vælger displaysproget på printerens kontrolpanel fra en liste, der varierer efter model."
+    "summary": "Vælger displaysproget på printerens kontrolpanel fra en liste, der varierer efter model.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "visningssprog på kontrolpanelet",
+          "values": "1 til 20 sprogkoder",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^SE": {
     "hash": "e934d1c1",
-    "summary": "Vælger en gemt kodningstabel, der bruges til at konvertere feltdata før udskrivning."
+    "summary": "Vælger en gemt kodningstabel, der bruges til at konvertere feltdata før udskrivning.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "drevplacering for kodningstabel",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "filnavn på kodningstabellen",
+          "values": "1 til 8 alfanumeriske tegn"
+        },
+        {
+          "meaning": "filtype",
+          "values": "DAT fast værdi",
+          "default": "DAT"
+        }
+      ]
+    }
   },
   "^SZ": {
     "hash": "ea549756",
-    "summary": "Vælger fortolkning af kommandoer efter oprindelig ZPL eller ZPL II for kompatibilitet med ældre formater."
+    "summary": "Vælger fortolkning af kommandoer efter oprindelig ZPL eller ZPL II for kompatibilitet med ældre formater.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "ZPL-fortolkerversion",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
   },
   "^KN": {
     "hash": "0269028a",
-    "summary": "Tildeler printeren et netværksnavn og en fritekstbeskrivelse, som begge vises på konfigurationsetiketten og printerens indbyggede webside."
+    "summary": "Tildeler printeren et netværksnavn og en fritekstbeskrivelse, som begge vises på konfigurationsetiketten og printerens indbyggede webside.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "printerens netværksnavn",
+          "values": "op til 16 alfanumeriske tegn",
+          "default": "ZBR plus MAC-suffiks"
+        },
+        {
+          "meaning": "printerbeskrivelse til konfigurationsetiket og webside",
+          "values": "op til 35 alfanumeriske tegn",
+          "default": "tom"
+        }
+      ]
+    }
   },
   "^KP": {
     "hash": "dfff2683",
-    "summary": "Angiver den firecifrede adgangskode til opsætningsmenuerne på kontrolpanelet."
+    "summary": "Angiver den firecifrede adgangskode til opsætningsmenuerne på kontrolpanelet.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "firecifret adgangskode til kontrolpanelet",
+          "values": "0000 til 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "adgangskodeniveau, kun S4M-printer",
+          "values": "1 til 4",
+          "default": "3"
+        }
+      ]
+    }
   },
   "^JU": {
     "hash": "0d28f5a3",
-    "summary": "Gemmer, gendanner eller nulstiller printerens konfigurationsindstillinger."
+    "summary": "Gemmer, gendanner eller nulstiller printerens konfigurationsindstillinger.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "konfigurationshandling",
+          "values": "A fabrik alle, F fabrik, N netværk, R genkald, S gem"
+        }
+      ]
+    }
   },
   "^CC": {
     "hash": "872b8b17",
-    "summary": "Ændrer præfikstegnet for formatkommandoer, normalt cirkumfleksen, enten globalt eller for det aktuelle format."
+    "summary": "Ændrer præfikstegnet for formatkommandoer, normalt cirkumfleksen, enten globalt eller for det aktuelle format.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "nyt præfiks for formatkommandoer",
+          "values": "ethvert ASCII-tegn"
+        }
+      ]
+    }
   },
   "^CD": {
     "hash": "c0ef72ac",
-    "summary": "Ændrer skilletegnet mellem parametre, normalt kommaet, enten globalt eller for det aktuelle format."
+    "summary": "Ændrer skilletegnet mellem parametre, normalt kommaet, enten globalt eller for det aktuelle format.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "nyt afgrænsningstegn for parametre",
+          "values": "ethvert ASCII-tegn"
+        }
+      ]
+    }
   },
   "^CT": {
     "hash": "841d0676",
-    "summary": "Ændrer præfikstegnet for straks-kommandoer, normalt tilden, enten globalt eller for det aktuelle format."
+    "summary": "Ændrer præfikstegnet for straks-kommandoer, normalt tilden, enten globalt eller for det aktuelle format.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "nyt præfiks for kontrolkommandoer",
+          "values": "ethvert ASCII-tegn"
+        }
+      ]
+    }
   },
   "^CM": {
     "hash": "a8e66bc4",
-    "summary": "Omfordeler printerens hukommelsesbogstaver, så gemte objekter kan beholde deres eksisterende navne."
+    "summary": "Omfordeler printerens hukommelsesbogstaver, så gemte objekter kan beholde deres eksisterende navne.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "hukommelsesalias for B",
+          "values": "B hukommelseskort, E flash, R DRAM, A compact flash, NONE ikke angivet",
+          "default": "B"
+        },
+        {
+          "meaning": "hukommelsesalias for E",
+          "values": "B hukommelseskort, E flash, R DRAM, A compact flash, NONE ikke angivet",
+          "default": "E"
+        },
+        {
+          "meaning": "hukommelsesalias for R",
+          "values": "B hukommelseskort, E flash, R DRAM, A compact flash, NONE ikke angivet",
+          "default": "R"
+        },
+        {
+          "meaning": "hukommelsesalias for A",
+          "values": "B hukommelseskort, E flash, R DRAM, A compact flash, NONE ikke angivet",
+          "default": "A"
+        },
+        {
+          "meaning": "tillad dubleret aliastildeling",
+          "values": "M flere aliasser",
+          "default": "ingen"
+        }
+      ]
+    }
   },
   "~JA": {
     "hash": "4acd9d0f",
@@ -549,7 +3113,17 @@
   },
   "^JB": {
     "hash": "46fa3633",
-    "summary": "Sletter og geninitialiserer én flashhukommelsesenhed. Strømsvigt under denne handling kan ødelægge lagringen."
+    "summary": "Sletter og geninitialiserer én flashhukommelsesenhed. Strømsvigt under denne handling kan ødelægge lagringen.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "flashhukommelsesenhed der skal initialiseres",
+          "values": "A ekstra flash, B flashkort, E intern flash",
+          "default": "skal angives"
+        }
+      ]
+    }
   },
   "~JB": {
     "hash": "67e8395b",
@@ -569,7 +3143,17 @@
   },
   "~JF": {
     "hash": "b38d6228",
-    "summary": "Angiver, om lav batterispænding sætter en bærbar printer på pause, eller om udskrivningen kan fortsætte."
+    "summary": "Angiver, om lav batterispænding sætter en bærbar printer på pause, eller om udskrivningen kan fortsætte.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pause ved lav batterispænding",
+          "values": "Y pause, N fortsæt udskrivning",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~JG": {
     "hash": "4554b6c3",
@@ -577,15 +3161,93 @@
   },
   "^JI": {
     "hash": "06eabfbb",
-    "summary": "Starter Zebra BASIC Interpreter på printeren og kan samtidig starte et gemt program."
+    "summary": "Starter Zebra BASIC Interpreter på printeren og kan samtidig starte et gemt program.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "lagerplacering for program",
+          "values": "R, E, B, A",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "navn på programmet der skal køres",
+          "values": "ethvert gyldigt programnavn",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "programfilens filtype",
+          "values": "BAS eller BAE"
+        },
+        {
+          "meaning": "styring af konsoludskrift",
+          "values": "Y til, N fra",
+          "default": "Y"
+        },
+        {
+          "meaning": "styring af kommandoekko",
+          "values": "Y til, N fra",
+          "default": "Y"
+        },
+        {
+          "meaning": "hukommelse tildelt ZBI",
+          "values": "20K til 1024K",
+          "default": "50K"
+        }
+      ]
+    }
   },
   "^JJ": {
     "hash": "4432cbae",
-    "summary": "Konfigurerer hjælpeporten til applikator- eller verifikationssignaler samt fejlhåndtering."
+    "summary": "Konfigurerer hjælpeporten til applikator- eller verifikationssignaler samt fejlhåndtering.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "fejlhåndteringstilstand for verifikator",
+          "values": "0 fra, 1 genudskriv ved fejl, 2 maks. gennemløb",
+          "default": "0"
+        },
+        {
+          "meaning": "timingtilstand for applikatorsignal",
+          "values": "0 fra, 1 til 4 signaltiming",
+          "default": "0"
+        },
+        {
+          "meaning": "timingtilstand for startsignal ved udskrivning",
+          "values": "p pulstilstand, l niveautilstand"
+        },
+        {
+          "meaning": "svartilstand ved etiketfejl",
+          "values": "e fejltilstand, f fremføringstilstand",
+          "default": "f"
+        },
+        {
+          "meaning": "tilstand for genudskrivning ved signal",
+          "values": "e aktiveret, d deaktiveret",
+          "default": "d"
+        },
+        {
+          "meaning": "advarselstilstand ved lavt farvebånd",
+          "values": "e aktiveret, d deaktiveret",
+          "default": "e"
+        }
+      ]
+    }
   },
   "^JS": {
     "hash": "bc9a5fde",
-    "summary": "Vælger den mediesensor, der bruges til sporing, normalt reflektiv eller transmissiv."
+    "summary": "Vælger den mediesensor, der bruges til sporing, normalt reflektiv eller transmissiv.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "sensor der skal bruges",
+          "values": "A auto, R reflektiv, T transmissiv",
+          "default": "varierer efter printermodel"
+        }
+      ]
+    }
   },
   "~JL": {
     "hash": "f3148843",
@@ -593,7 +3255,17 @@
   },
   "^JM": {
     "hash": "dff7a8d7",
-    "summary": "Angiver normal eller reduceret opløsning målt i dots pr. millimeter. Reduceret tæthed fordobler den fysiske størrelse af formatets koordinater."
+    "summary": "Angiver normal eller reduceret opløsning målt i dots pr. millimeter. Reduceret tæthed fordobler den fysiske størrelse af formatets koordinater.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "indstilling af udskrivningsdensitet",
+          "values": "A normal densitet, B halveret densitet",
+          "default": "A"
+        }
+      ]
+    }
   },
   "~JN": {
     "hash": "1e9fd837",
@@ -621,39 +3293,256 @@
   },
   "~RO": {
     "hash": "305ffa34",
-    "summary": "Nulstiller en valgt brugstæller på printeren, herunder bruger- eller RFID-tællere."
+    "summary": "Nulstiller en valgt brugstæller på printeren, herunder bruger- eller RFID-tællere.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "tæller der skal nulstilles",
+          "values": "1 tæller et, 2 tæller to, 3 gyldig RFID, 4 annulleret RFID, C printhoved rengjort, R printhoved udskiftet",
+          "default": "skal angives"
+        }
+      ]
+    }
   },
   "^SC": {
     "hash": "7fc83e36",
-    "summary": "Konfigurerer alle kommunikationsparametre for serieporten i én kommando."
+    "summary": "Konfigurerer alle kommunikationsparametre for serieporten i én kommando.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "seriel baudrate",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "databit pr. tegn",
+          "values": "7 eller 8",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "paritetsindstilling",
+          "values": "N ingen, E lige, O ulige",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "stopbit",
+          "values": "1 eller 2",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "protokol for flowkontrol",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR og Xon/Xoff",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "zebra-protokolhandshake",
+          "values": "A ACK/NAK, N ingen, Z zebra",
+          "default": "skal angives"
+        }
+      ]
+    }
   },
   "^SI": {
     "hash": "a54846c8",
-    "summary": "Tilsidesætter intensitets- eller baseline-værdier for den transmissive sensor, som normalt fastsættes ved kalibrering."
+    "summary": "Tilsidesætter intensitets- eller baseline-værdier for den transmissive sensor, som normalt fastsættes ved kalibrering.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "sensorindstilling der skal ændres",
+          "values": "1 lysstyrke, 2 baseline",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "værdi for den valgte indstilling",
+          "values": "0 til 196",
+          "default": "skal angives"
+        }
+      ]
+    }
   },
   "^SP": {
     "hash": "6881d909",
-    "summary": "Starter udskrivningen, før hele formatet er modtaget, for at øge gennemløbet på komplekse etiketter."
+    "summary": "Starter udskrivningen, før hele formatet er modtaget, for at øge gennemløbet på komplekse etiketter.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "dotrække hvor udskrivningen starter",
+          "values": "0 til 32000",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^SQ": {
     "hash": "ce9e1949",
-    "summary": "Deaktiverer en bestemt ZebraNet-alarmbetingelse og -destination."
+    "summary": "Deaktiverer en bestemt ZebraNet-alarmbetingelse og -destination.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "alarmbetingelse der skal stoppes",
+          "values": "A til O og Q til V hver én betingelse, W alle på RFID-printere, * alle på andre"
+        },
+        {
+          "meaning": "alarmdestination der skal stoppes",
+          "values": "A serielt, B parallelt, C e-mail, D TCP/IP, E UDP/IP, F SNMP-trap, * alle"
+        },
+        {
+          "meaning": "stop eller genoptag disse alarmer",
+          "values": "Y stop meddelelser, N start meddelelser",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "^SR": {
     "hash": "aa5bd741",
-    "summary": "Angiver printhovedets modstandsværdi, der bruges til beregning af brændeenergi."
+    "summary": "Angiver printhovedets modstandsværdi, der bruges til beregning af brændeenergi.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "printhovedets modstandsværdi",
+          "values": "0488 til 1175",
+          "default": "senest permanent gemte værdi"
+        }
+      ]
+    }
   },
   "^SS": {
     "hash": "7276b95c",
-    "summary": "Angiver tærskler for mediesensoren, etiketlængde og LED-intensiteter, som normalt fastsættes ved kalibrering."
+    "summary": "Angiver tærskler for mediesensoren, etiketlængde og LED-intensiteter, som normalt fastsættes ved kalibrering.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "sensorværdi for mellemrum",
+          "values": "0 til 100",
+          "default": "vist på sensorprofilen eller konfigurationsetiketten"
+        },
+        {
+          "meaning": "mediesensorværdi",
+          "values": "0 til 100",
+          "default": "vist på sensorprofilen eller konfigurationsetiketten"
+        },
+        {
+          "meaning": "sensorværdi for farvebånd",
+          "values": "0 til 100",
+          "default": "vist på sensorprofilen eller konfigurationsetiketten"
+        },
+        {
+          "meaning": "etikettens længde i dots",
+          "values": "1 til 32000",
+          "default": "værdi fra kalibrering"
+        },
+        {
+          "meaning": "LED-intensitet for medie",
+          "values": "0 til 255",
+          "default": "værdi fra kalibrering"
+        },
+        {
+          "meaning": "LED-intensitet for farvebånd",
+          "values": "0 til 255",
+          "default": "værdi fra kalibrering"
+        },
+        {
+          "meaning": "sensorværdi for mærke",
+          "values": "0 til 100",
+          "default": "værdi fra kalibrering"
+        },
+        {
+          "meaning": "mediesensorværdi for mærke",
+          "values": "0 til 100",
+          "default": "værdi fra kalibrering"
+        },
+        {
+          "meaning": "LED-sensorværdi for mærke",
+          "values": "0 til 255",
+          "default": "værdi fra kalibrering"
+        }
+      ]
+    }
   },
   "^SX": {
     "hash": "c13a4455",
-    "summary": "Aktiverer en ZebraNet-alarm for en bestemt betingelse og destination."
+    "summary": "Aktiverer en ZebraNet-alarm for en bestemt betingelse og destination.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "type af alarmbetingelse",
+          "values": "A til V hver én betingelse, * alle",
+          "default": "ignoreres hvis den mangler eller er ugyldig"
+        },
+        {
+          "meaning": "type af alarmdestination",
+          "values": "A serielt, B parallelt, C e-mail, D TCP/IP, E UDP/IP, F SNMP-trap",
+          "default": "ignoreres hvis den mangler eller er ugyldig"
+        },
+        {
+          "meaning": "aktiver alarm når betingelsen indtræffer",
+          "values": "N nej, Y ja",
+          "default": "Y eller forrige værdi"
+        },
+        {
+          "meaning": "aktiver alarm når betingelsen ophører",
+          "values": "N nej, Y ja",
+          "default": "N eller forrige værdi"
+        },
+        {
+          "meaning": "destinationsadresse for alarmen",
+          "values": "e-mail, IP-adresse eller SNMP-mål",
+          "default": "ignoreres hvis den mangler eller er ugyldig"
+        },
+        {
+          "meaning": "portnummer til alarmen",
+          "values": "0 til 65535",
+          "default": "ignoreres hvis den mangler eller er ugyldig"
+        }
+      ]
+    }
   },
   "^TO": {
     "hash": "8f37a07b",
-    "summary": "Kopierer gemte objekter mellem printerens hukommelsesenheder, med understøttelse af wildcards til grupper."
+    "summary": "Kopierer gemte objekter mellem printerens hukommelsesenheder, med understøttelse af wildcards til grupper.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "kildelagerenhed",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "kildeobjektets navn",
+          "values": "ethvert eksisterende objektnavn",
+          "default": "* vælger alle objekter"
+        },
+        {
+          "meaning": "kildeobjektets filtype",
+          "values": "enhver gyldig filtype",
+          "default": "* vælger alle filtyper"
+        },
+        {
+          "meaning": "destinationslagerenhed",
+          "values": "R, E, B, A",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "navn på objektet ved destinationen",
+          "values": "op til 8 alfanumeriske tegn",
+          "default": "kildeobjektets navn"
+        },
+        {
+          "meaning": "destinationsobjektets filtype",
+          "values": "enhver gyldig filtype",
+          "default": "kildeobjektets filtype"
+        }
+      ]
+    }
   },
   "~WC": {
     "hash": "9ffb7f98",
@@ -661,31 +3550,145 @@
   },
   "^WD": {
     "hash": "a4c9ed19",
-    "summary": "Udskriver en mappeetiket over gemte objekter, indbyggede skrifttyper eller tilgængelige stregkoder."
+    "summary": "Udskriver en mappeetiket over gemte objekter, indbyggede skrifttyper eller tilgængelige stregkoder.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "kildeenhed til listen",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "objektnavnefilter",
+          "values": "1 til 8 tegn, * eller ? jokertegn",
+          "default": "*"
+        },
+        {
+          "meaning": "filtypefilter",
+          "values": "enhver gyldig filtype, * jokertegn",
+          "default": "*"
+        }
+      ]
+    }
   },
   "~WQ": {
     "hash": "598068da",
-    "summary": "Udskriver de ønskede serviceoplysninger, f.eks. kilometertæller eller printhovedhistorik, på en etiket."
+    "summary": "Udskriver de ønskede serviceoplysninger, f.eks. kilometertæller eller printhovedhistorik, på en etiket.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "type servicerapport der skal udskrives",
+          "values": "ES status, HA hardwareadresse, JT printhovedtest, MA alarmindstillinger, MI meddelelser, OD kilometertæller, PH printhovedets levetid, PP plug and play, SN serienummer, UI USB-id",
+          "default": "skal angives"
+        }
+      ]
+    }
   },
   "^KV": {
     "hash": "b56294a5",
-    "summary": "Konfigurerer indstillingerne for KR403-kiosk-fremviseren, herunder klippelængde, klippemargen, timeout for tilbagetræk og løkkelængde."
+    "summary": "Konfigurerer indstillingerne for KR403-kiosk-fremviseren, herunder klippelængde, klippemargen, timeout for tilbagetræk og løkkelængde.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "afskæringsmængde i kiosktilstand",
+          "values": "0 normal afskæring, 10 til 60 delvis i mm",
+          "default": "0"
+        },
+        {
+          "meaning": "afskæringsmargen i kiosktilstand i mm",
+          "values": "2 til 9",
+          "default": "9"
+        },
+        {
+          "meaning": "fremvisningstype i kiosktilstand efter udskrivning",
+          "values": "0 skub ud, 1 træk tilbage, 2 ingen handling",
+          "default": "0"
+        },
+        {
+          "meaning": "fremvisningstimeout i kiosktilstand i sekunder",
+          "values": "0 til 300, 0 ingen timeout",
+          "default": "0"
+        },
+        {
+          "meaning": "presenter-loopets længde i mm",
+          "values": "0 direkte igennem, 3 til 1023",
+          "default": "400"
+        }
+      ]
+    }
   },
   "^XS": {
     "hash": "69f3838a",
-    "summary": "Styrer dynamisk genkalibrering af etiketlængde og sensortærskel efter opstart eller åbning af medierummet."
+    "summary": "Styrer dynamisk genkalibrering af etiketlængde og sensortærskel efter opstart eller åbning af medierummet.",
+    "reference": {
+      "hash": "90fbe297",
+      "params": [
+        {
+          "meaning": "aktiver dynamisk længdekalibrering",
+          "values": "Y aktiver, N deaktiver",
+          "default": "Y"
+        },
+        {
+          "meaning": "aktiver dynamisk tærskelkalibrering",
+          "values": "Y aktiver, N deaktiver",
+          "default": "Y"
+        }
+      ]
+    }
   },
   "~PM": {
     "hash": "e553f937",
-    "summary": "Starter udtjeningstilstand for at klargøre en printer til videresalg eller genbrug."
+    "summary": "Starter udtjeningstilstand for at klargøre en printer til videresalg eller genbrug.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "printerens serienummer",
+          "values": "alfanumerisk streng",
+          "default": "skal angives"
+        },
+        {
+          "meaning": "antal gennemløb ved flashsletning",
+          "values": "0 til 3",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^ZZ": {
     "hash": "e2f8b46f",
-    "summary": "Angiver automatisk dvale-nedlukning efter en periode uden aktivitet, med valgmuligheder for kølagte etiketter."
+    "summary": "Angiver automatisk dvale-nedlukning efter en periode uden aktivitet, med valgmuligheder for kølagte etiketter.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "sekunder inaktiv før automatisk nedlukning",
+          "values": "0 til 999999, 0 deaktiverer nedlukning",
+          "default": "senest gemte værdi eller 0"
+        },
+        {
+          "meaning": "etiketstatus ved nedlukning",
+          "values": "Y luk ned med kø, N afslut køen først",
+          "default": "N"
+        }
+      ]
+    }
   },
   "^CP": {
     "hash": "9c24bb8c",
-    "summary": "Skubber medie ud eller trækker det tilbage, når det allerede er fremvist af en KR403-kiosk-fremviser."
+    "summary": "Skubber medie ud eller trækker det tilbage, når det allerede er fremvist af en KR403-kiosk-fremviser.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "fremvisningshandling i kiosktilstand",
+          "values": "0 skub ud, 1 træk tilbage, 2 brug ^KV-indstilling"
+        }
+      ]
+    }
   },
   "~KB": {
     "hash": "09113ec1",
@@ -701,11 +3704,51 @@
   },
   "^HF": {
     "hash": "b3930522",
-    "summary": "Returnerer et gemt ZPL-format fra printerens hukommelse til værtssystemet."
+    "summary": "Returnerer et gemt ZPL-format fra printerens hukommelse til værtssystemet.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "hukommelsesenhed der skal gennemsøges",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "R"
+        },
+        {
+          "meaning": "navn på det gemte format",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": ".ZPL fast værdi",
+          "default": ".ZPL"
+        }
+      ]
+    }
   },
   "^HG": {
     "hash": "2b6246b8",
-    "summary": "Returnerer et gemt grafikbillede fra printerens hukommelse til værtssystemet."
+    "summary": "Returnerer et gemt grafikbillede fra printerens hukommelse til værtssystemet.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "hukommelsesenhed der skal gennemsøges",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "søgeprioritet"
+        },
+        {
+          "meaning": "grafiknavn der skal uploades",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "filtype",
+          "values": ".GRF fast værdi",
+          "default": ".GRF"
+        }
+      ]
+    }
   },
   "^HH": {
     "hash": "2c08ade4",
@@ -721,7 +3764,16 @@
   },
   "~HQ": {
     "hash": "11a92108",
-    "summary": "Returnerer de ønskede data om status, identitet, kilometertæller eller vedligeholdelse til værtssystemet."
+    "summary": "Returnerer de ønskede data om status, identitet, kilometertæller eller vedligeholdelse til værtssystemet.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "forespørgselsvælger for returnerede data",
+          "values": "ES status, HA kablet MAC, JT printhovedtest, MA vedligeholdelsesalarmer, MI vedligeholdelsesinfo, OD kilometertæller, PH printhovedets levetid, PP plug and play, SN serienummer, UI USB-produkt-id"
+        }
+      ]
+    }
   },
   "~HS": {
     "hash": "d72f1996",
@@ -737,23 +3789,136 @@
   },
   "^HV": {
     "hash": "6d4cead9",
-    "summary": "Returnerer data fra et nummereret felt til værtssystemet, med en valgfri grænse for antal bytes."
+    "summary": "Returnerer data fra et nummereret felt til værtssystemet, med en valgfri grænse for antal bytes.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "feltnummer angivet med ^FN",
+          "values": "0 til 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "bytes der skal returneres",
+          "values": "1 til 256",
+          "default": "64"
+        },
+        {
+          "meaning": "headertekst før data",
+          "values": "0 til 3072 bytes",
+          "default": "ingen header"
+        },
+        {
+          "meaning": "afslutningstekst efter data",
+          "values": "0 til 3072 tegn"
+        },
+        {
+          "meaning": "svar sendes per",
+          "values": "F format, L etiket",
+          "default": "F"
+        }
+      ]
+    }
   },
   "^HW": {
     "hash": "624ddd80",
-    "summary": "Returnerer en mappeoversigt for en hukommelsesenhed, herunder resterende ledig plads."
+    "summary": "Returnerer en mappeoversigt for en hukommelsesenhed, herunder resterende ledig plads.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "hukommelsesenhed der skal vises",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash, Z andet",
+          "default": "R"
+        },
+        {
+          "meaning": "objektnavnefilter",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "*"
+        },
+        {
+          "meaning": "filtypefilter",
+          "values": "enhver Zebra-filtype",
+          "default": "*"
+        },
+        {
+          "meaning": "layout for listen",
+          "values": "c kolonne, d standard",
+          "default": "d"
+        }
+      ]
+    }
   },
   "^HY": {
     "hash": "29d47808",
-    "summary": "Returnerer en gemt grafik til værtssystemet i et downloadbart filformat."
+    "summary": "Returnerer en gemt grafik til værtssystemet i et downloadbart filformat.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "hukommelsesenhed hvor objektet ligger",
+          "values": "R DRAM, E flash, B hukommelseskort, A compact flash",
+          "default": "søgeprioritet"
+        },
+        {
+          "meaning": "objektnavn der skal uploades",
+          "values": "1 til 8 alfanumeriske tegn",
+          "default": "navn påkrævet"
+        },
+        {
+          "meaning": "uploadformat",
+          "values": "G rå bitmap, P komprimeret bitmap",
+          "default": "gemt format"
+        }
+      ]
+    }
   },
   "^HZ": {
     "hash": "14da0a93",
-    "summary": "Returnerer printerbeskrivelse som XML for indstillinger, objektmappe eller status."
+    "summary": "Returnerer printerbeskrivelse som XML for indstillinger, objektmappe eller status.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "beskrivelsestype der skal returneres",
+          "values": "a alle, f format, l mappe, o objekt, r status"
+        }
+      ]
+    }
   },
   "^RF": {
     "hash": "8984b485",
-    "summary": "Læser fra eller skriver til et RFID-tag, herunder dataformat, hukommelsesbank og adgangskode."
+    "summary": "Læser fra eller skriver til et RFID-tag, herunder dataformat, hukommelsesbank og adgangskode.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "handling",
+          "values": "W skriv, L skriv og lås, R læs, P læs adgangskode, S angiv adgangskode",
+          "default": "W"
+        },
+        {
+          "meaning": "dataformat",
+          "values": "A ASCII, H hex, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "adgangskodeflag eller startblokkens nummer",
+          "values": "P adgangskode følger, 0 til n blok",
+          "default": "0"
+        },
+        {
+          "meaning": "antal bytes der skal læses eller skrives",
+          "values": "1 til n, maks. pr. tag",
+          "default": "1"
+        },
+        {
+          "meaning": "Gen 2-hukommelsesbank",
+          "values": "E EPC 96-bit, A EPC auto PC-bit, 0 reserveret, 1 EPC, 2 TID, 3 bruger",
+          "default": "E"
+        }
+      ]
+    }
   },
   "^RI": {
     "hash": "87091064",
@@ -773,11 +3938,70 @@
   },
   "^RB": {
     "hash": "15939ef7",
-    "summary": "Definerer bitlayoutet, der bruges til at kode RFID EPC-felter på et tag."
+    "summary": "Definerer bitlayoutet, der bruges til at kode RFID EPC-felter på et tag.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "partitionernes samlede bitstørrelse",
+          "values": "1 til tagets bitstørrelse",
+          "default": "96"
+        },
+        {
+          "meaning": "bit i hver partition, op til 16 partitioner",
+          "values": "1 til 64",
+          "default": "1"
+        }
+      ]
+    }
   },
   "^RS": {
     "hash": "62e2b805",
-    "summary": "Angiver RFID-indstillinger for efterfølgende etiketter, herunder tagtype, programmeringsposition, fejlhåndtering og længden af VOID-stregen."
+    "summary": "Angiver RFID-indstillinger for efterfølgende etiketter, herunder tagtype, programmeringsposition, fejlhåndtering og længden af VOID-stregen.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "tagtype",
+          "values": "8 kun Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "programposition på tagget",
+          "values": "dots absolut, F0 til Fxxx fremad, B0 til B30 tilbage, up næste, down forrige",
+          "default": "printerindstilling"
+        },
+        {
+          "meaning": "længden af void-udskriften",
+          "values": "0 til etikettens længde",
+          "default": "etikettens længde"
+        },
+        {
+          "meaning": "etiketter der skal gentages ved fejl",
+          "values": "1 til 10",
+          "default": "3"
+        },
+        {
+          "meaning": "fejlhåndtering efter gentagne forsøg",
+          "values": "N ingen handling, P pause, E fejltilstand",
+          "default": "N"
+        },
+        {
+          "meaning": "signaler sendt til en applikator",
+          "values": "S enkeltsignal, D dobbeltsignal",
+          "default": "S"
+        },
+        {
+          "meaning": "reserveret, bruges ikke",
+          "values": "ingen"
+        },
+        {
+          "meaning": "hastighed til udskrivning af VOID-etiketter",
+          "values": "enhver gyldig udskrivningshastighed",
+          "default": "maksimal udskrivningshastighed"
+        }
+      ]
+    }
   },
   "^RT": {
     "hash": "c17c6fe0",
@@ -789,7 +4013,22 @@
   },
   "^RU": {
     "hash": "8e5d397e",
-    "summary": "Opbygger et EPC-serienummer ud fra tag-id'et og skriver det ind i EPC'ens lave bits."
+    "summary": "Opbygger et EPC-serienummer ud fra tag-id'et og skriver det ind i EPC'ens lave bits.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "binært præfiks til serie-id",
+          "values": "ASCII 1-taller og 0-taller, op til 38 bit",
+          "default": "afhænger af chippens MDID"
+        },
+        {
+          "meaning": "specialtegn der markerer seriefeltet",
+          "values": "ethvert ASCII-tegn undtagen kommando-, kontrol-, afgrænsnings- og RTC-tegn",
+          "default": "#"
+        }
+      ]
+    }
   },
   "~RV": {
     "hash": "a091b913",
@@ -797,15 +4036,106 @@
   },
   "^RW": {
     "hash": "cd769095",
-    "summary": "Angiver RFID-læse- og skriveeffekt, når kalibreringen ikke giver brugbare værdier."
+    "summary": "Angiver RFID-læse- og skriveeffekt, når kalibreringen ikke giver brugbare værdier.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "læseeffektniveau",
+          "values": "0 til 30, eller H høj, M middel, L lav",
+          "default": "printerindstilling"
+        },
+        {
+          "meaning": "skriveeffektniveau",
+          "values": "0 til 30, eller H høj, M middel, L lav",
+          "default": "printerindstilling"
+        },
+        {
+          "meaning": "valg af antenneelement",
+          "values": "printerspecifikt grid, A1 til F4",
+          "default": "printerindstilling"
+        }
+      ]
+    }
   },
   "^RL": {
     "hash": "5296a877",
-    "summary": "Låser RFID-tagets hukommelse, enten reversibelt eller permanent, for at forhindre senere skrivninger."
+    "summary": "Låser RFID-tagets hukommelse, enten reversibelt eller permanent, for at forhindre senere skrivninger.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "låsestatus for kill-adgangskode",
+          "values": "U lås op, L lås, O permanent oplåst, P permanent låst"
+        },
+        {
+          "meaning": "låsestatus for adgangskode",
+          "values": "U lås op, L lås, O permanent oplåst, P permanent låst"
+        },
+        {
+          "meaning": "låsestatus for EPC-hukommelsesbank",
+          "values": "U lås op, L lås, O permanent oplåst, P permanent låst"
+        },
+        {
+          "meaning": "låsestatus for brugerhukommelsesbank",
+          "values": "U lås op, L lås, O permanent oplåst, P permanent låst"
+        }
+      ]
+    }
   },
   "^HR": {
     "hash": "4b742e7c",
-    "summary": "Kører RFID-kalibrering og returnerer indstillinger for position, antenne og effekt til værtssystemet."
+    "summary": "Kører RFID-kalibrering og returnerer indstillinger for position, antenne og effekt til værtssystemet.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "tekst før resultattabellen",
+          "values": "enhver streng under 65 tegn",
+          "default": "start"
+        },
+        {
+          "meaning": "tekst efter resultattabellen",
+          "values": "enhver streng under 65 tegn",
+          "default": "slut"
+        },
+        {
+          "meaning": "kalibreringens startposition",
+          "values": "F0 til Fxxx fremad, B0 til B30 tilbage",
+          "default": "printerindstilling"
+        },
+        {
+          "meaning": "kalibreringens slutposition",
+          "values": "F0 til Fxxx fremad, B0 til B30 tilbage, A auto",
+          "default": "printerindstilling"
+        },
+        {
+          "meaning": "automatisk eller manuelt valg af antenne og effekt",
+          "values": "A automatisk, M manuel",
+          "default": "A"
+        },
+        {
+          "meaning": "start af effektområdet for læsning/skrivning",
+          "values": "0 til 30",
+          "default": "0"
+        },
+        {
+          "meaning": "slutning af effektområdet for læsning/skrivning",
+          "values": "0 til 30",
+          "default": "maks. effekt"
+        },
+        {
+          "meaning": "start af antenneområdet",
+          "values": "afhænger af model, normalt A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "slutning af antenneområdet",
+          "values": "afhænger af model, op til E4",
+          "default": "printerindstilling"
+        }
+      ]
+    }
   },
   "^HL": {
     "hash": "6d5b0917",
@@ -813,27 +4143,109 @@
   },
   "^NB": {
     "hash": "193460c2",
-    "summary": "Vælger, om printeren søger efter en kablet printerserver under opstart."
+    "summary": "Vælger, om printeren søger efter en kablet printerserver under opstart.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "kontrol af kablet printserver ved opstart",
+          "values": "C kontroller, S spring over",
+          "default": "S"
+        }
+      ]
+    }
   },
   "^NC": {
     "hash": "c6c1871a",
-    "summary": "Vælger den primære netværksenhed, kablet eller trådløs."
+    "summary": "Vælger den primære netværksenhed, kablet eller trådløs.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "primær netværksenhed",
+          "values": "1 kablet primær, 2 trådløs primær",
+          "default": "1"
+        }
+      ]
+    }
   },
   "~NC": {
     "hash": "c7cd746c",
-    "summary": "Adresserer én printer på en ældre RS-485-multidroplinje ud fra netværks-id."
+    "summary": "Adresserer én printer på en ældre RS-485-multidroplinje ud fra netværks-id.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "printerens netværks-id der skal adresseres",
+          "values": "001 til 999",
+          "default": "000 ingen"
+        }
+      ]
+    }
   },
   "^NI": {
     "hash": "9aba9688",
-    "summary": "Tildeler det netværks-id, der bruges til at adressere en printer på en ældre RS-485-multidroplinje."
+    "summary": "Tildeler det netværks-id, der bruges til at adressere en printer på en ældre RS-485-multidroplinje.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "netværks-id tildelt printeren",
+          "values": "001 til 999",
+          "default": "000 ingen"
+        }
+      ]
+    }
   },
   "^NN": {
     "hash": "39fe7d3a",
-    "summary": "Angiver SNMP-identitet og community-strenge for printeren."
+    "summary": "Angiver SNMP-identitet og community-strenge for printeren.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "SNMP-systemnavn",
+          "values": "op til 17 tegn"
+        },
+        {
+          "meaning": "SNMP-systemkontakt",
+          "values": "op til 50 tegn"
+        },
+        {
+          "meaning": "SNMP-systemplacering",
+          "values": "op til 50 tegn"
+        },
+        {
+          "meaning": "SNMP get-communitynavn",
+          "values": "op til 19 tegn",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP set-communitynavn",
+          "values": "op til 19 tegn",
+          "default": "public"
+        },
+        {
+          "meaning": "SNMP trap-communitynavn",
+          "values": "op til 20 tegn",
+          "default": "public"
+        }
+      ]
+    }
   },
   "^NP": {
     "hash": "3ed49c57",
-    "summary": "Vælger, om netværksindstillingerne ved opstart hentes fra printeren eller den tilsluttede printerserver."
+    "summary": "Vælger, om netværksindstillingerne ved opstart hentes fra printeren eller den tilsluttede printerserver.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "primær kilde til startindstillinger",
+          "values": "P printer, M printserver",
+          "default": "P"
+        }
+      ]
+    }
   },
   "~NR": {
     "hash": "0851302e",
@@ -841,7 +4253,20 @@
   },
   "^NT": {
     "hash": "e3b92a35",
-    "summary": "Konfigurerer SMTP-server og domæneindstillinger til e-mailalarmer fra printerserveren."
+    "summary": "Konfigurerer SMTP-server og domæneindstillinger til e-mailalarmer fra printerserveren.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "SMTP-serveradresse",
+          "values": "IPv4-adresse"
+        },
+        {
+          "meaning": "printserverens domænenavn",
+          "values": "domænenavn"
+        }
+      ]
+    }
   },
   "~NT": {
     "hash": "de5ea89e",
@@ -849,47 +4274,401 @@
   },
   "^NW": {
     "hash": "5d240db5",
-    "summary": "Angiver, hvor længe en godkendt IP-adresse kan tilgå printerens websider, før der kræves fornyet godkendelse."
+    "summary": "Angiver, hvor længe en godkendt IP-adresse kan tilgå printerens websider, før der kræves fornyet godkendelse.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "godkendelsestimeout for webside",
+          "values": "0 til 255 minutter",
+          "default": "5"
+        }
+      ]
+    }
   },
   "^KC": {
     "hash": "26bd4700",
-    "summary": "Angiver formen og værdien af DHCP-klientidentifikatoren for printerserveren."
+    "summary": "Angiver formen og værdien af DHCP-klientidentifikatoren for printerserveren.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "klientidentifikatortilstand",
+          "values": "0 deaktiveret, 1 MAC-adresse, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "enhed identifikatoren gælder for",
+          "values": "0 alle, 1 trådløs, 2 ekstern kablet, 3 intern kablet",
+          "default": "1"
+        },
+        {
+          "meaning": "identifikatorpræfiks",
+          "values": "11 ASCII- eller 22 hex-tegn"
+        },
+        {
+          "meaning": "identifikatorsuffiks",
+          "values": "op til 60 ASCII- eller 120 hex-tegn"
+        }
+      ]
+    }
   },
   "^ND": {
     "hash": "a1c35169",
-    "summary": "Konfigurerer IP-adresse, subnetmaske og gateway for printerens netværksinterface."
+    "summary": "Konfigurerer IP-adresse, subnetmaske og gateway for printerens netværksinterface.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "enhed der ændres",
+          "values": "1 ekstern kablet, 2 intern kablet, 3 trådløs"
+        },
+        {
+          "meaning": "metode til IP-tildeling",
+          "values": "A alle, B BOOTP, C DHCP og BOOTP, D DHCP, G kun gleaning, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-adresse",
+          "values": "IPv4-adresse"
+        },
+        {
+          "meaning": "undernetmaske",
+          "values": "IPv4-undernetmaske"
+        },
+        {
+          "meaning": "standardgateway",
+          "values": "IPv4-adresse"
+        },
+        {
+          "meaning": "WINS-serveradresse",
+          "values": "IPv4-adresse"
+        },
+        {
+          "meaning": "kontrol af forbindelsestimeout",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "værdi for forbindelsestimeout",
+          "values": "0 til 9999 sekunder",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-broadcastinterval",
+          "values": "0 til 30 minutter",
+          "default": "0 ingen"
+        },
+        {
+          "meaning": "grundlæggende raw-portnummer",
+          "values": "1 til 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^NS": {
     "hash": "fc79ac31",
-    "summary": "Konfigurerer IP-indstillinger, timeouts og raw-port for den kablede printerserver på ældre firmware."
+    "summary": "Konfigurerer IP-indstillinger, timeouts og raw-port for den kablede printerserver på ældre firmware.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "metode til IP-tildeling",
+          "values": "A alle, B BOOTP, C DHCP og BOOTP, D DHCP, G kun gleaning, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "IP-adresse",
+          "values": "IPv4-adresse"
+        },
+        {
+          "meaning": "undernetmaske",
+          "values": "IPv4-undernetmaske"
+        },
+        {
+          "meaning": "standardgateway",
+          "values": "IPv4-adresse"
+        },
+        {
+          "meaning": "WINS-serveradresse",
+          "values": "IPv4-adresse"
+        },
+        {
+          "meaning": "kontrol af forbindelsestimeout",
+          "values": "Y ja, N nej",
+          "default": "Y"
+        },
+        {
+          "meaning": "værdi for forbindelsestimeout",
+          "values": "0 til 9999 sekunder",
+          "default": "300"
+        },
+        {
+          "meaning": "ARP-broadcastinterval",
+          "values": "0 til 30 minutter",
+          "default": "0 ingen"
+        },
+        {
+          "meaning": "grundlæggende raw-portnummer",
+          "values": "1 til 65535",
+          "default": "9100"
+        }
+      ]
+    }
   },
   "^WA": {
     "hash": "f99f03e7",
-    "summary": "Vælger modtage- og sendeantenner til den trådløse radio."
+    "summary": "Vælger modtage- og sendeantenner til den trådløse radio.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "modtageantenne",
+          "values": "D diversitet, L venstre, R højre",
+          "default": "D"
+        },
+        {
+          "meaning": "sendeantenne",
+          "values": "D diversitet, L venstre, R højre",
+          "default": "D"
+        }
+      ]
+    }
   },
   "^WE": {
     "hash": "25d26998",
-    "summary": "Konfigurerer forældet WEP-sikkerhed og nøglemateriale til ældre trådløs firmware."
+    "summary": "Konfigurerer forældet WEP-sikkerhed og nøglemateriale til ældre trådløs firmware.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "krypteringstilstand",
+          "values": "OFF ingen, 40 40-bit, 128 128-bit",
+          "default": "OFF"
+        },
+        {
+          "meaning": "indeks for krypteringsnøgle",
+          "values": "1 til 4",
+          "default": "1"
+        },
+        {
+          "meaning": "godkendelsestype",
+          "values": "O åbent system, S delt nøgle",
+          "default": "O"
+        },
+        {
+          "meaning": "lagringsformat for krypteringsnøgle",
+          "values": "H hex, S streng",
+          "default": "H"
+        },
+        {
+          "meaning": "krypteringsnøgle 1",
+          "values": "hexpar eller alfanumerisk streng"
+        },
+        {
+          "meaning": "krypteringsnøgle 2",
+          "values": "hexpar eller alfanumerisk streng"
+        },
+        {
+          "meaning": "krypteringsnøgle 3",
+          "values": "hexpar eller alfanumerisk streng"
+        },
+        {
+          "meaning": "krypteringsnøgle 4",
+          "values": "hexpar eller alfanumerisk streng"
+        }
+      ]
+    }
   },
   "^WL": {
     "hash": "e6ff25b4",
-    "summary": "Konfigurerer forældet Cisco LEAP-godkendelse til ældre trådløs firmware."
+    "summary": "Konfigurerer forældet Cisco LEAP-godkendelse til ældre trådløs firmware.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "LEAP-tilstand",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "brugernavn",
+          "values": "1 til 32 tegn",
+          "default": "user"
+        },
+        {
+          "meaning": "adgangskode",
+          "values": "1 til 32 tegn",
+          "default": "password"
+        }
+      ]
+    }
   },
   "^WP": {
     "hash": "d5dd34db",
-    "summary": "Angiver adgangskoden til de trådløse indstillinger på printerens kontrolpanel."
+    "summary": "Angiver adgangskoden til de trådløse indstillinger på printerens kontrolpanel.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "gammel trådløs adgangskode",
+          "values": "0000 til 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "ny trådløs adgangskode",
+          "values": "0000 til 9999",
+          "default": "0000"
+        }
+      ]
+    }
   },
   "^WR": {
     "hash": "05fd2fa2",
-    "summary": "Konfigurerer 802.11b-datahastigheder og sendeeffekt på ældre trådløse printerservere."
+    "summary": "Konfigurerer 802.11b-datahastigheder og sendeeffekt på ældre trådløse printerservere.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "sendehastighed på 1 Mb pr. sekund",
+          "values": "Y til, N fra"
+        },
+        {
+          "meaning": "sendehastighed på 2 Mb pr. sekund",
+          "values": "Y til, N fra"
+        },
+        {
+          "meaning": "sendehastighed på 5.5 Mb pr. sekund",
+          "values": "Y til, N fra"
+        },
+        {
+          "meaning": "sendehastighed på 11 Mb pr. sekund",
+          "values": "Y til, N fra"
+        },
+        {
+          "meaning": "sendeeffekt",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
   },
   "^WS": {
     "hash": "ee8de274",
-    "summary": "Konfigurerer navnet på det trådløse netværk, radiotilstand, præamballængde og keep-alive-adfærd."
+    "summary": "Konfigurerer navnet på det trådløse netværk, radiotilstand, præamballængde og keep-alive-adfærd.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "ESSID-værdi",
+          "values": "op til 32 tegn",
+          "default": "125"
+        },
+        {
+          "meaning": "driftstilstand",
+          "values": "I infrastruktur, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "radiokortets præambellængde",
+          "values": "L lang, S kort",
+          "default": "L"
+        },
+        {
+          "meaning": "trådløs puls aktiveret",
+          "values": "0 deaktiveret, 1 aktiveret",
+          "default": "1"
+        },
+        {
+          "meaning": "interval for trådløs puls",
+          "values": "5 til 300 sekunder",
+          "default": "15"
+        },
+        {
+          "meaning": "kanalmaske",
+          "values": "4 hex-cifre med 0x-præfiks",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "international tilstand",
+          "values": "0 deaktiveret, 1 aktiveret",
+          "default": "0"
+        }
+      ]
+    }
   },
   "^WX": {
     "hash": "80bedceb",
-    "summary": "Konfigurerer trådløs sikkerhedstilstand, nøgler og legitimationsoplysninger i én kommando."
+    "summary": "Konfigurerer trådløs sikkerhedstilstand, nøgler og legitimationsoplysninger i én kommando.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "kode for sikkerhedstype",
+          "values": "01 ingen, 02 WEP 40, 03 WEP 128, 04 til 08 EAP-typer, 09 WPA PSK, 10 til 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "indeks for WEP-krypteringsnøgle",
+          "values": "1 til 4",
+          "default": "1"
+        },
+        {
+          "meaning": "WEP-godkendelsestype",
+          "values": "O åbent system, S delt nøgle",
+          "default": "O"
+        },
+        {
+          "meaning": "lagringsformat for WEP-nøgle",
+          "values": "H hex, S streng",
+          "default": "S"
+        },
+        {
+          "meaning": "WEP-krypteringsnøgle 1",
+          "values": "hexpar eller alfanumerisk streng"
+        },
+        {
+          "meaning": "WEP-krypteringsnøgle 2",
+          "values": "hexpar eller alfanumerisk streng"
+        },
+        {
+          "meaning": "WEP-krypteringsnøgle 3",
+          "values": "hexpar eller alfanumerisk streng"
+        },
+        {
+          "meaning": "WEP-krypteringsnøgle 4",
+          "values": "hexpar eller alfanumerisk streng"
+        },
+        {
+          "meaning": "bruger-id til sikkerhedstypen",
+          "values": "enhver streng",
+          "default": "user"
+        },
+        {
+          "meaning": "adgangskode til sikkerhedstypen",
+          "values": "enhver streng",
+          "default": "password"
+        },
+        {
+          "meaning": "valgfri adgangskode til privat nøgle",
+          "values": "enhver streng"
+        },
+        {
+          "meaning": "Kerberos-realm",
+          "values": "enhver streng",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "Kerberos-nøglefordelingscenter",
+          "values": "enhver streng",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "værdi for fordelt nøgle",
+          "values": "mindst 64 hex-cifre"
+        }
+      ]
+    }
   },
   "~WL": {
     "hash": "a70658c1",
