@@ -12,6 +12,7 @@ import {
   resolveDefaultPrinterFontName,
   resolvePreviewFontName,
   upsertCustomFontMapping,
+  patchCustomFontMapping,
 } from "@zplab/core/lib/customFonts";
 import { loadFontFile, removeFont, EMBED_WARN_FONT_BYTES } from "@zplab/core/lib/fontCache";
 import { customFontMappingSchema } from "@zplab/core/types/LabelConfig";
@@ -113,7 +114,25 @@ describe("normalizeAlias", () => {
   });
 });
 
+describe("patchCustomFontMapping", () => {
+  const m = { alias: "A", path: "E:A.TTF" };
+
+  it("hands back the mapping when the patch holds its values", () => {
+    expect(patchCustomFontMapping(m, { alias: "A" })).toBe(m);
+    expect(patchCustomFontMapping(m, { path: "E:A.TTF", embedInZpl: undefined })).toBe(m);
+  });
+
+  it("builds a new mapping for a changed value", () => {
+    expect(patchCustomFontMapping(m, { alias: "B" })).toEqual({ alias: "B", path: "E:A.TTF" });
+  });
+});
+
 describe("upsertCustomFontMapping", () => {
+  it("keeps the mapping when the alias is unchanged", () => {
+    const list = [{ alias: "A", path: "E:A.TTF" }];
+    expect(upsertCustomFontMapping(list, "E:A.TTF", "A")[0]).toBe(list[0]);
+  });
+
   it("appends a new mapping when path is absent", () => {
     expect(
       upsertCustomFontMapping(

@@ -58,6 +58,7 @@ export function applyChanges(
 ): LabelObject {
   const normalize = getEntry(obj.type)?.normalizeChanges;
   const normalized = normalize ? normalize(obj as never, changes as never, ctx) : changes;
+  if (changesNothing(obj, normalized as ObjectChanges)) return obj;
   const current = (obj as { props?: object }).props ?? {};
   const next = {
     ...obj,
@@ -68,4 +69,18 @@ export function applyChanges(
     props: normalized.props ? { ...current, ...normalized.props } : (obj as { props?: object }).props,
   } as LabelObject;
   return anchorRepin(obj, normalized as ObjectChanges, next, probe);
+}
+
+/** Shallow compare, props one level down. */
+export function changesNothing(obj: LabelObject, changes: ObjectChanges): boolean {
+  const o = obj as Record<string, unknown>;
+  const props = (o.props ?? {}) as Record<string, unknown>;
+  for (const [k, v] of Object.entries(changes)) {
+    if (k !== "props") {
+      if (o[k] !== v) return false;
+      continue;
+    }
+    if (v && Object.entries(v).some(([pk, pv]) => props[pk] !== pv)) return false;
+  }
+  return true;
 }

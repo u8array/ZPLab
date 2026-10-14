@@ -111,7 +111,14 @@ export function upsertCustomFontMapping(
   // An empty alias removes the entry: the schema has no representation for it.
   if (!alias) return entries.filter((m) => !matches(m));
   const prior = entries.find(matches);
+  if (prior?.alias === alias) return [...entries];
   return prior ? entries.map((m) => (m === prior ? { ...m, alias } : m)) : [...entries, { alias, path }];
+}
+
+/** The mapping itself when the patch holds its values. */
+export function patchCustomFontMapping(m: CustomFontMapping, patch: Partial<CustomFontMapping>): CustomFontMapping {
+  const held = m as Record<string, unknown>;
+  return Object.entries(patch).every(([k, v]) => held[k] === v) ? m : { ...m, ...patch };
 }
 
 /** Drop path-less canvas-only bindings left by the removed built-in

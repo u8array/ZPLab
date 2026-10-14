@@ -79,8 +79,6 @@ export function NumberInput({
         onBlur={() => {
           if (draft !== null && selfValue.current === value) {
             const next = min !== undefined ? clampMin(draft, min) : Number(draft);
-            // Skip the no-op re-commit: the store snapshots every write, so
-            // an equal value would land a duplicate undo step.
             if (!isNaN(next) && clampFull(next) !== value) onChange(clampFull(next));
           }
           setDraft(null);

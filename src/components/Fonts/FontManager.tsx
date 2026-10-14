@@ -20,6 +20,7 @@ import {
   nextFreeAlias,
   normalizeAlias,
   upsertCustomFontMapping,
+  patchCustomFontMapping,
 } from '@zplab/core/lib/customFonts';
 import { inputCls } from '../ui/formStyles';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
@@ -81,12 +82,13 @@ export function FontManager() {
   const deliverPath = (path: string, next: ResourceDelivery) => {
     const result = applyFontDelivery(next, entryForPath(path), path, setupFonts);
     if (result.setupFonts !== setupFonts && !patchPrinterProfile({ setupFonts: result.setupFonts ? [...result.setupFonts] : undefined })) return;
-    if (!result.patch) return;
+    const { patch } = result;
+    if (!patch) return;
     const list = customFonts ?? [];
     replaceList(
       list.map((m) =>
         m.path !== undefined && storageRefMatchesPath(m.path, path)
-          ? { ...m, ...result.patch }
+          ? patchCustomFontMapping(m, patch)
           : m,
       ),
     );
@@ -100,14 +102,10 @@ export function FontManager() {
     replaceList(
       list.map((m, i) =>
         i === index
-          ? {
-              ...m,
-              alias:
-                patch.alias !== undefined
-                  ? normalizeAlias(patch.alias)
-                  : m.alias,
+          ? patchCustomFontMapping(m, {
+              alias: patch.alias !== undefined ? normalizeAlias(patch.alias) : m.alias,
               path: patch.path ?? m.path,
-            }
+            })
           : m,
       ),
     );

@@ -1410,7 +1410,6 @@ export function useKonvaTransformer({
           x: mr.bboxDots.x + pxToDots(endX - mr.start.x, scale, dpmm),
           y: mr.bboxDots.y + pxToDots(endY - mr.start.y, scale, dpmm),
         };
-        // Drop no-op entries so a sub-dot jiggle records no undo step.
         const measured = getMeasuredSnapshot();
         const changes = projectMultiResize(
           leafs,

@@ -3,7 +3,7 @@ import type { ObjectChanges } from '@zplab/core/types/LabelObject';
 import { NON_EMITTING_CONFIG_FIELDS } from '@zplab/core/types/LabelConfig';
 import { isLocaleCode, type LocaleCode } from '../locales';
 export { rewriteTemplateMarkers, rewriteTemplateMarkersMap } from '@zplab/core/lib/templateObjects';
-import { applyChanges } from '@zplab/core/lib/anchorRepin';
+import { applyChanges, changesNothing } from '@zplab/core/lib/anchorRepin';
 import type { DeviceFontLabel } from '@zplab/core/lib/customFonts';
 import { probeBarcodeFootprint } from './anchorRepin';
 
@@ -36,6 +36,13 @@ export const NON_EMITTING_CONFIG_KEYS: ReadonlySet<string> = new Set<string>(
 // Shared with the MCP boundary, so it lives in core.
 export { NON_EMITTING_PROP_KEYS } from '@zplab/core/types/LabelObject';
 
+/** The keys a config patch changes, lists compared by content. */
+export function changedConfigKeys(prev: Record<string, unknown>, patch: Record<string, unknown>): string[] {
+  const same = (a: unknown, b: unknown) =>
+    a === b || (Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((v, i) => v === b[i]));
+  return Object.keys(patch).filter((k) => !same(prev[k], patch[k]));
+}
+
 /** True when a config patch changes a field that reaches emitted ZPL. Used to
  *  drop page overlays: until config-segment linkage lands, an overlay replays
  *  config verbatim, so an emit-affecting edit must force full regeneration. */
@@ -43,9 +50,7 @@ export function configPatchAffectsEmit(
   prev: Record<string, unknown>,
   patch: Record<string, unknown>,
 ): boolean {
-  return Object.keys(patch).some(
-    (k) => !NON_EMITTING_CONFIG_KEYS.has(k) && prev[k] !== patch[k],
-  );
+  return changedConfigKeys(prev, patch).some((k) => !NON_EMITTING_CONFIG_KEYS.has(k));
 }
 
 /** Drop round-trip provenance from a leaf: a clone/copy is a net-new object with
@@ -75,7 +80,7 @@ export function applyObjectChanges(
     // Groups have no registry entry (no normalize hook) and no props to
     // merge; apply top-level changes only. Children stay untouched;
     // tree updates reach them through their own mapObjectById call.
-    return { ...obj, ...changes } as LabelObject;
+    return changesNothing(obj, changes) ? obj : ({ ...obj, ...changes } as LabelObject);
   }
   // Dirty-tracking is centralized in the dirtyTracking middleware (a state diff),
   // so this mutator no longer stamps dirty itself.
@@ -187,15 +192,16 @@ export interface PageState {
   currentPageIndex: number;
 }
 
+/** The page patch for a mapper over the current page, empty when it kept every object. */
 export function updateCurrentObjects(
   state: PageState,
   fn: (objects: LabelObject[]) => LabelObject[]
-): { pages: Page[] } {
-  return {
-    pages: state.pages.map((p, i) =>
-      i === state.currentPageIndex ? { ...p, objects: fn(p.objects) } : p
-    ),
-  };
+): { pages?: Page[] } {
+  const page = state.pages[state.currentPageIndex];
+  if (!page) return {};
+  const objects = fn(page.objects);
+  if (objects.length === page.objects.length && objects.every((o, i) => o === page.objects[i])) return {};
+  return { pages: state.pages.map((p, i) => (i === state.currentPageIndex ? { ...p, objects } : p)) };
 }
 
 /** zundo attaches `.temporal` to the store api. Slices reach it through the injected api, since importing the store module would cycle. */

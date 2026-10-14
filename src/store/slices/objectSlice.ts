@@ -212,9 +212,6 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
         const mapped = mapper(o);
         return mapped === o ? o : anchorRepin(o, { props: {} }, mapped);
       });
-      // A no-op mapper must not rebuild pages: the fresh array would record a
-      // phantom undo step (temporalEquality is a ref compare).
-      if (next === objs) return {};
       return updateCurrentObjects(state, () => next);
     }),
 
@@ -275,8 +272,8 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
   duplicateSelectedObjects: () =>
     set((state) => {
       if (selectEditorFrozen(state)) return {};
-      if (state.selectedIds.length === 0) return {};
       const copies = buildOffsetCopies(currentObjects(state), state.selectedIds);
+      if (copies.length === 0) return {};
       return {
         ...updateCurrentObjects(state, (curr) => [...curr, ...copies]),
         selectedIds: copies.map((c) => c.id),
@@ -386,7 +383,6 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
       const next = reparentNodes(objs, ids, target);
-      if (next === objs) return {};
       return updateCurrentObjects(state, () => next);
     }),
 
@@ -514,7 +510,6 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       // Lock blocks reordering too, mirroring delete/group/ungroup.
       if (isSelectionLocked(objs, state.selectedIds)) return {};
       const next = reorderForZ(objs, new Set(state.selectedIds), dir);
-      if (next === objs) return {};
       return updateCurrentObjects(state, () => next as LabelObject[]);
     }),
 

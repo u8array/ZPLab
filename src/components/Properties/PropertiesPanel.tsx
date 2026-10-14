@@ -348,13 +348,7 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
               </Tooltip>
               <SegmentedControl
                 value={obj.fieldJustify ?? "L"}
-                onChange={(v) => {
-                  // L maps back to the implicit default; skip no-op clicks so
-                  // they don't mint phantom undo steps / document diffs.
-                  const fieldJustify = v === "L" ? undefined : v;
-                  if (fieldJustify === obj.fieldJustify) return;
-                  updateObject(obj.id, { fieldJustify });
-                }}
+                onChange={(v) => updateObject(obj.id, { fieldJustify: v === "L" ? undefined : v })}
                 options={[
                   { value: "L", label: t.registry.text.justifyL, icon: JUSTIFY_ICONS.L, tooltip: t.registry.text.justifyL },
                   { value: "C", label: t.registry.text.justifyC, icon: JUSTIFY_ICONS.C, tooltip: t.registry.text.justifyC },

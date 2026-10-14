@@ -1,6 +1,6 @@
 /** Stacking-order moves on a page's top-level object array (later index = drawn
  *  on top). Pure and identity-preserving: returns the same array reference when
- *  the move is a no-op, so callers can skip a store write. A multi-selection
+ *  the move is a no-op, so the caller's patch stays empty. A multi-selection
  *  moves as one block, keeping the members' relative order. */
 export type ZOrderDir = "front" | "back" | "forward" | "backward";
 

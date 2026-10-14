@@ -14,7 +14,7 @@ import { mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel, type 
 import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
 import { countChangedProfileSettings } from '@zplab/core/types/PrinterProfile';
 import { applyProfilePatch } from './printerProfileSlice';
-import { configPatchAffectsEmit, type WithTemporal } from '../labelStore.internals';
+import { changedConfigKeys, configPatchAffectsEmit, type WithTemporal } from '../labelStore.internals';
 import { dropPageOverlays } from '@zplab/core/lib/pageOverlay';
 import { rescaleDesign, rescaleParamsFor } from '../../lib/densityRescale';
 import type { LabelState } from '../labelStore';
@@ -111,8 +111,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       columnMapping: columnMapping ?? null,
       dataset: null,
       dataSourceRef: dataSource ?? null,
-      // Replacing the document supersedes any in-flight dataset fetch and any
-      // open import dialog, so they can't commit into the new document.
+      // Replacing the document supersedes any in-flight dataset fetch.
       datasetFetchToken: get().datasetFetchToken + 1,
       // Close the transient modals: they seed local state (selected profile/
       // table, mapping draft) from the old document at mount and would otherwise
@@ -183,11 +182,8 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
     set((state) => {
       if (selectEditorFrozen(state)) return {};
       const p = rescaleParamsFor({ kind: 'jm', toJm: jmDensity }, state.label);
-      // Emission changes either way (^JMA vs none), so overlays go stale
-      // even without a ratio change; mirror setLabelConfig.
-      if (p.fromEff === p.toEff) {
-        return { label: { ...state.label, jmDensity }, pages: dropPageOverlays(state.pages) };
-      }
+      // A and none share the effective density but not the emitted bytes, so the patch still lands.
+      if (p.fromEff === p.toEff) return labelConfigPatch(state, { jmDensity });
       const { pages, label } = rescaleDesign(state.pages, state.label, p.fromEff, p.toEff, p.patch, p.includeCalibrationFields);
       return { label, pages: dropPageOverlays(pages) };
     }),
@@ -224,7 +220,8 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
 
 /** A config edit as a patch, so a caller can land it in a `set()` of its own. */
 export function labelConfigPatch(state: LabelState, config: Partial<LabelConfig>): Partial<LabelState> {
-  if (Object.keys(config).length === 0) return {};
+  // A control may re-commit the value it shows, which must not become an undo step.
+  if (changedConfigKeys(state.label, config).length === 0) return {};
   const label = { ...state.label, ...config };
   // An emit-affecting config edit invalidates each page overlay's verbatim config bytes.
   if (!configPatchAffectsEmit(state.label, config)) return { label };

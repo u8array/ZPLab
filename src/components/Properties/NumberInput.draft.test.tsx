@@ -12,8 +12,7 @@ const inputOf = (r: ReturnType<typeof render>) =>
 describe("NumberInput decimal drafts", () => {
   it("accepts a typed decimal and does not re-commit the same value on blur", () => {
     // jsdom's number input sanitises "2." to "", so the observable pin is the
-    // full sequence: the draft keeps the field editable and 2.5 sticks. The
-    // blur must not append a duplicate commit (double undo step otherwise).
+    // full sequence: the draft keeps the field editable and 2.5 sticks.
     const committed: number[] = [];
     function Spy() {
       const [value, setValue] = useState(2);
@@ -30,7 +29,7 @@ describe("NumberInput decimal drafts", () => {
     expect(committed).toEqual([2.5]);
   });
 
-  it("never commits a numerically equal value (no phantom undo steps)", () => {
+  it("never commits a numerically equal value", () => {
     const committed: number[] = [];
     function Spy() {
       const [value, setValue] = useState(2);
