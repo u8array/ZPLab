@@ -2645,6 +2645,14 @@ describe('dataset', () => {
     expect(state().mappingModalOpen).toBe(false);
   });
 
+  it('loadDesign closes the builders of the displaced document', () => {
+    useLabelStore.setState({ variableBuilderObjectId: 't1', gs1BuilderObjectId: 't1', contentBuilderObjectId: 't1' });
+    state().loadDesign({ widthMm: 50, heightMm: 30, dpmm: 8 }, [{ objects: [] }]);
+    expect(state().variableBuilderObjectId).toBeNull();
+    expect(state().gs1BuilderObjectId).toBeNull();
+    expect(state().contentBuilderObjectId).toBeNull();
+  });
+
   it('isCurrentDataContext tracks the epoch a held-open dialog captured', () => {
     const token = currentDataContext();
     expect(isCurrentDataContext(token)).toBe(true);

@@ -24,6 +24,12 @@ describe("RFID position pick lifecycle", () => {
     expect(useLabelStore.getState().pickingRfidPosition).toBe(false);
   });
 
+  it("ends when a loaded design replaces the document", () => {
+    useLabelStore.getState().startRfidPositionPick();
+    useLabelStore.getState().loadDesign({ widthMm: 50, heightMm: 30, dpmm: 8 }, [{ objects: [] }]);
+    expect(useLabelStore.getState().pickingRfidPosition).toBe(false);
+  });
+
   it("is not persisted, so a reload cannot resume it", () => {
     useLabelStore.getState().startRfidPositionPick();
     const persisted = JSON.parse(localStorage.getItem("zpl-designer-session") ?? "{}") as {

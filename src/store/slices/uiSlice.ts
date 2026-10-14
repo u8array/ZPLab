@@ -324,6 +324,22 @@ function defaultUiPrefs(): UiPrefs {
   };
 }
 
+type DocumentUiReset = Pick<LabelState, 'mappingModalOpen' | 'connectWizardOpen' | 'printerSettingsTab'
+  | 'pickingRfidPosition' | 'gs1BuilderObjectId' | 'contentBuilderObjectId' | 'variableBuilderObjectId'>;
+
+/** Reset by every writer that replaces the document: the dialogs seed from it at mount, the pick would commit into the next one. */
+export function resetDocumentUi(): DocumentUiReset {
+  return {
+    mappingModalOpen: false,
+    connectWizardOpen: false,
+    printerSettingsTab: null,
+    pickingRfidPosition: false,
+    gs1BuilderObjectId: null,
+    contentBuilderObjectId: null,
+    variableBuilderObjectId: null,
+  };
+}
+
 export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, get) => ({
   locale: detectLocale(),
   loadedLocale: 'en',

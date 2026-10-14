@@ -11,6 +11,7 @@ import { selectEditorFrozen, clampPageIndex } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 import type { WithTemporal } from '../labelStore.internals';
 import type { Dataset } from './dataSlice';
+import { resetDocumentUi } from './uiSlice';
 
 export const SHADOW_IMAGE_OWNER = 'sourceShadow';
 
@@ -169,12 +170,7 @@ export const createSourceEditSlice: StateCreator<LabelState, [], [], SourceEditS
       // The implicit blur-apply must not yank a multi-page edit to page 1.
       currentPageIndex: clampPageIndex(get().currentPageIndex, plan.next.pages.length),
       selectedIds: [],
-      // Mapping drafts seed from variable ids and the settings modal from the
-      // profile, both at mount; the apply replaces both sources. Unlike
-      // loadDesign, an apply without recall rows keeps the dataset and its fetch token.
-      mappingModalOpen: false,
-      connectWizardOpen: false,
-      printerSettingsTab: null,
+      ...resetDocumentUi(),
       ...endSourceSession(),
     });
     if (plan.batch) {

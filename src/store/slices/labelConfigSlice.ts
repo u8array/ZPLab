@@ -10,6 +10,7 @@ import { dropLegacyFontBindings } from '@zplab/core/lib/customFonts';
 import { parseDesignFile, designFileErrors } from '@zplab/core/lib/designFile';
 import { selectEditorFrozen, selectSourceEditDirty, selectSourceEditing } from '../labelStore.selectors';
 import { endSourceSession } from './sourceEditSlice';
+import { resetDocumentUi } from './uiSlice';
 import { mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult } from '@zplab/core/lib/zplImportService';
 import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
 import { countChangedProfileSettings } from '@zplab/core/types/PrinterProfile';
@@ -113,12 +114,7 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       dataSourceRef: dataSource ?? null,
       // Replacing the document supersedes any in-flight dataset fetch.
       datasetFetchToken: get().datasetFetchToken + 1,
-      // Close the transient modals: they seed local state (selected profile/
-      // table, mapping draft) from the old document at mount and would otherwise
-      // load stale selections into the new one.
-      printerSettingsTab: null,
-      mappingModalOpen: false,
-      connectWizardOpen: false,
+      ...resetDocumentUi(),
       // An open source buffer and a kept restore both belong to the displaced document.
       ...endSourceSession(),
       replacedDesign: null,

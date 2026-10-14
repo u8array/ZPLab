@@ -58,6 +58,12 @@ beforeEach(() => {
 });
 
 describe("applyZplSource", () => {
+  it("closes the builders of the displaced document", () => {
+    useLabelStore.getState().openVariableBuilder("t1");
+    applyCurrentZpl();
+    expect(useLabelStore.getState().variableBuilderObjectId).toBeNull();
+  });
+
   it("is exactly one undo step and undo restores the overlays", () => {
     const before = useLabelStore.getState().pages;
     expect(before[0]?.overlay).toBeUndefined();
