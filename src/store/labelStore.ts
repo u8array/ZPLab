@@ -18,7 +18,7 @@ import { removeVariables } from '@zplab/core/lib/variableRemoval';
 import { pinBareFontDriveLeaf, reconstructLegacyHeads } from '@zplab/core/lib/designFile';
 import type { DesignFilePage } from '@zplab/core/lib/designFile';
 import type { CustomFontMapping, JmDensity, LabelConfig } from '@zplab/core/types/LabelConfig';
-import type { LabelObject, Page } from '@zplab/core/types/Group';
+import { findObjectById, type LabelObject, type Page } from '@zplab/core/types/Group';
 import { documentUsage, fileDeletability, liveUsage, usageOfDesignText, type BlockingOwner, type LiveUsage, type Usage } from '@zplab/core/lib/liveUsage';
 import {
   createPrinterProfileSlice,
@@ -592,6 +592,14 @@ useLabelStore.subscribe((state, prev) => {
   if (next.length !== state.pristineEmptyIds.length) {
     useLabelStore.setState({ pristineEmptyIds: next });
   }
+});
+
+// The selection is not part of an undo step, so every writer that drops its objects prunes it here.
+useLabelStore.subscribe((state, prev) => {
+  if (state.pages === prev.pages || state.selectedIds.length === 0) return;
+  const objects = currentObjects(state);
+  const kept = state.selectedIds.filter((id) => findObjectById(objects, id) !== undefined);
+  if (kept.length !== state.selectedIds.length) useLabelStore.setState({ selectedIds: kept });
 });
 
 export const useCurrentObjects = () => useLabelStore(currentObjects);

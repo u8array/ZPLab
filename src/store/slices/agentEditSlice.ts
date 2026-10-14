@@ -35,9 +35,6 @@ export const createAgentEditSlice: StateCreator<LabelState, [], [], AgentEditSli
     const page = first === undefined ? undefined : result.doc.pages.find((p) => nodesById(p.objects).has(first));
     const onPage = page === undefined ? undefined : nodesById(page.objects);
     const pageIndex = page === undefined ? -1 : result.doc.pages.indexOf(page);
-    // Otherwise the selection stays, minus what a remove took, like the editor's own remove.
-    const live = new Set(result.doc.pages.flatMap((p) => [...nodesById(p.objects).keys()]));
-    const kept = state.selectedIds.filter((id) => live.has(id));
     // Raw setState like applyZplSource: the reducer's dirty flags are authoritative. The dirty-tracking
     // diff would also stamp fields a rename rewrote, and export would then drop a capture the receipt calls intact.
     api.setState({
@@ -46,9 +43,7 @@ export const createAgentEditSlice: StateCreator<LabelState, [], [], AgentEditSli
       columnMapping: result.doc.columnMapping,
       ...(onPage
         ? { currentPageIndex: pageIndex, selectedIds: touched.filter((id) => onPage.has(id)) }
-        : kept.length !== state.selectedIds.length
-          ? { selectedIds: kept }
-          : {}),
+        : {}),
     });
     const loss = captureLoss(state.pages, result.touched, result.edited);
     return { ok: true, assignedIds: Object.fromEntries(result.assignedIds), capturesLost: loss.lost, capturesAtRisk: loss.atRisk };

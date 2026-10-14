@@ -252,10 +252,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       if (selectEditorFrozen(state)) return {};
       const obj = currentObjects(state).find((o) => o.id === id);
       if (obj?.locked) return {};
-      return {
-        ...updateCurrentObjects(state, (objs) => objs.filter((o) => o.id !== id)),
-        selectedIds: state.selectedIds.filter((s) => s !== id),
-      };
+      return updateCurrentObjects(state, (objs) => objs.filter((o) => o.id !== id));
     }),
 
   duplicateObject: (id) =>

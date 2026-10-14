@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import { selectEditorFrozen, currentObjects } from '../labelStore.selectors';
+import { selectEditorFrozen } from '../labelStore.selectors';
 import type { LabelState } from '../labelStore';
 import { updateCurrentObjects } from '../labelStore.internals';
 
@@ -66,14 +66,7 @@ export const createSelectionSlice: StateCreator<LabelState, [], [], SelectionSli
     set((state) => {
       if (selectEditorFrozen(state)) return {};
       const sel = new Set(state.selectedIds);
-      const objs = currentObjects(state);
-      const lockedIds = objs.flatMap((o) => sel.has(o.id) && o.locked ? [o.id] : []);
-      return {
-        ...updateCurrentObjects(state, (curr) =>
-          curr.filter((o) => !sel.has(o.id) || o.locked),
-        ),
-        selectedIds: lockedIds,
-      };
+      return updateCurrentObjects(state, (curr) => curr.filter((o) => !sel.has(o.id) || o.locked));
     }),
 
   setSelectionLocked: (locked) => {

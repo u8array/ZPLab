@@ -100,8 +100,10 @@ describe("a write that changes nothing", () => {
     state().addObject("text", { x: 10, y: 10 });
     state().selectObjects([firstId()]);
     state().setSelectionLocked(true);
+    const selected = state().selectedIds;
     history().clear();
     state().removeSelectedObjects();
     expect(history().pastStates).toHaveLength(0);
+    expect(state().selectedIds).toBe(selected);
   });
 });

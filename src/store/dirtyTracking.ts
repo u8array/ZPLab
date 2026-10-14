@@ -80,8 +80,8 @@ export function stampDirtyLeaves(prevPages: Page[], nextPages: Page[], emit1dZ =
 
 /** zustand middleware: stamp dirty on emit-affecting object changes in one place.
  *  Mutator-preserving pass-through (adds no store type). Only the `set` injected
- *  into slices is wrapped; a direct `useLabelStore.setState` would bypass
- *  stamping, but all production mutations go through slice actions. */
+ *  into slices is wrapped. loadDesign, applyZplSource and the agent reducer set raw
+ *  and stamp dirty themselves. */
 export const dirtyTracking = (<T extends { pages: Page[]; label?: { emit1dZJustify?: boolean } }>(
   initializer: StateCreator<T, [], []>,
 ): StateCreator<T, [], []> =>
