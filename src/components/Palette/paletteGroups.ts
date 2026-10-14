@@ -12,8 +12,6 @@ export const PALETTE_GROUPS = [
   { key: 'legacy' as ObjectGroup, labelKey: 'groupLegacy' },
 ] as const;
 
-export type PaletteGroupLabelKey = typeof PALETTE_GROUPS[number]['labelKey'];
-
 /** Single source for the palette groups; each consumer maps entries onto its
  *  own shape (flat browse, canvas add-here, favorites add). */
 export function addableGroupsFor(

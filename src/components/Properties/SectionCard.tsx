@@ -15,23 +15,11 @@ function Dot({ active }: { active: boolean }) {
   );
 }
 
-/** Dot + title, shared by all three card header variants. `titleId` lets a
- *  control (e.g. the toggle switch) reference the title as its accessible name. */
-function CardLabel({
-  active,
-  title,
-  titleId,
-}: {
-  active: boolean;
-  title: ReactNode;
-  titleId?: string;
-}) {
+function CardLabel({ active, title }: { active: boolean; title: ReactNode }) {
   return (
     <>
       <Dot active={active} />
-      <span id={titleId} className={titleCls}>
-        {title}
-      </span>
+      <span className={titleCls}>{title}</span>
     </>
   );
 }
@@ -138,58 +126,6 @@ export function StaticSectionCard({
         </div>
       </div>
       <div className={bodyCls}>{children}</div>
-    </div>
-  );
-}
-
-/**
- * Card whose header switch toggles a feature on/off (e.g. ^FB field block).
- * The switch is the section's enable control, so the body shows only while
- * on; there is no separate collapse and no persisted open-state (the toggled
- * feature itself is the source of truth).
- */
-export function ToggleSectionCard({
-  title,
-  cmd,
-  checked,
-  onCheckedChange,
-  children,
-}: {
-  title: ReactNode;
-  /** ZPL command this toggle controls (e.g. ^FB); shown when showZplCommands is on. */
-  cmd?: string;
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-  children: ReactNode;
-}) {
-  const contentId = useId();
-  const titleId = useId();
-  return (
-    <div className={cardCls}>
-      <div className="flex items-center gap-2 px-2.5 py-2.5">
-        <CardLabel active={checked} title={title} titleId={titleId} />
-        <div className="ml-auto flex items-center gap-2">
-          <ZplCmd cmd={cmd} />
-          <button
-            type="button"
-            role="switch"
-            aria-checked={checked}
-            aria-labelledby={titleId}
-            aria-controls={checked ? contentId : undefined}
-            onClick={() => onCheckedChange(!checked)}
-            className={`relative inline-flex h-4 w-7 shrink-0 items-center rounded-full transition-colors ${checked ? 'bg-accent' : 'bg-border-2'}`}
-          >
-            <span
-              className={`inline-block h-3 w-3 rounded-full bg-surface transition-transform ${checked ? 'translate-x-3.5' : 'translate-x-0.5'}`}
-            />
-          </button>
-        </div>
-      </div>
-      {checked && (
-        <div id={contentId} className={bodyCls}>
-          {children}
-        </div>
-      )}
     </div>
   );
 }

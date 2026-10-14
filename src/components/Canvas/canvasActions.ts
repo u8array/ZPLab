@@ -1,7 +1,7 @@
 import type { ZOrderDir } from "../../lib/zorder";
 import type { MenuAction, MenuSection } from "../ui/ContextMenu";
 
-export type { MenuAction, MenuSection };
+export type { MenuSection };
 
 /** What the right-click targeted plus the capabilities + dispatchers needed to
  *  build the menu. Kept data-only (no Konva/React) so the builder is pure and

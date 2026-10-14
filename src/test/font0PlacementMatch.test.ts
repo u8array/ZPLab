@@ -16,9 +16,8 @@ import {
 /**
  * Font-0 placement gate: size AND position of the calibrated glyphs vs
  * Labelary, through the production chain (^FO anchor -> zplAnchorToModel
- * -> Konva placement). Guards the font-patch results that the drift
- * report only measures; a rebuilt TTF without the patch pipeline turns
- * this red.
+ * -> Konva placement). Guards the font-patch results: a rebuilt TTF
+ * without the patch pipeline turns this red.
  */
 
 const FIXTURES_DIR = path.resolve(

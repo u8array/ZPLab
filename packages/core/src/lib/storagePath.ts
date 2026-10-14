@@ -6,7 +6,6 @@ import { newId } from "./ids";
 
 /** R volatile RAM, E flash, B alt flash, A alias. */
 export const STORAGE_DEVICES = ["R", "E", "B", "A"] as const;
-export type StorageDevice = (typeof STORAGE_DEVICES)[number];
 /** Where a locally picked font goes. */
 export const DEFAULT_FONT_DEVICE = "E";
 

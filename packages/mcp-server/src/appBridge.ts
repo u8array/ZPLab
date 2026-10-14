@@ -86,7 +86,7 @@ export const RASTER_TIMEOUT_MS = 20_000;
 export const OPEN_DRAFT_TIMEOUT_MS = 20_000;
 
 /** Waits for the canvas to settle like a design read-back. */
-export const EDIT_DESIGN_TIMEOUT_MS = DESIGN_RESPONSE_TIMEOUT_MS;
+const EDIT_DESIGN_TIMEOUT_MS = DESIGN_RESPONSE_TIMEOUT_MS;
 
 /** The event a pending entry is waiting on. Kept per request because the
  *  reply schemas are mutually satisfiable: a draft receipt, a raster response

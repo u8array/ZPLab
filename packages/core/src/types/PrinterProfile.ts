@@ -96,7 +96,6 @@ export const isMaintenanceAlertType = makeEnumGuard(MAINTENANCE_ALERT_TYPES);
 
 /** ^MA print slot: Y=emit warning label, N=skip. */
 export const MAINTENANCE_ALERT_PRINT_VALUES = ['Y', 'N'] as const;
-export type MaintenanceAlertPrint = (typeof MAINTENANCE_ALERT_PRINT_VALUES)[number];
 export const isMaintenanceAlertPrint = makeEnumGuard(MAINTENANCE_ALERT_PRINT_VALUES);
 
 /** ^MA units slot: C=centimeters, I=inches, M=meters. */

@@ -25,11 +25,6 @@ export function registerFootprintMeasurer(m: FootprintMeasurer | null): void {
   cache = new WeakMap();
 }
 
-/** Clears only if `m` is still active (stale cleanup must not null a successor). */
-export function unregisterFootprintMeasurer(m: FootprintMeasurer): void {
-  if (measurer === m) measurer = null;
-}
-
 /** Drop the memo. The cache keys on the props reference, not the resolution
  *  binding, so a caller that re-measures the same props under a new binding
  *  (withFootprintBinding) must reset it or read a stale width. */

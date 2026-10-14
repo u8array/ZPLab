@@ -16,7 +16,7 @@ const qrFdTransform =
     qrFdWire(isQrEcLevel(obj.props.errorCorrection) ? obj.props.errorCorrection : QR_EC_DEFAULT, s);
 
 // Re-exported from lib/qrBy (the cycle-free spot) because this is the prop's home.
-export { QR_BY_DEFAULT_HEIGHT, isQrByHeight, qrByHeight } from '../lib/qrBy';
+export { QR_BY_DEFAULT_HEIGHT, qrByHeight } from '../lib/qrBy';
 const DEFAULT_MAGNIFICATION = 4;
 
 /** ^BQ b per spec p.128: only 1 and 2 exist, anything else is the default. */

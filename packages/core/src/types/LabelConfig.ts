@@ -116,7 +116,6 @@ export const RFID_RETRIES_RANGE = { min: 1, max: 10 } as const;
 /** ^RW r/w numeric power band; some firmware takes H/M/L instead. */
 export const RFID_POWER_RANGE = { min: 0, max: 30 } as const;
 export const RFID_POWER_LEVELS = ['H', 'M', 'L'] as const;
-export type RfidPowerLevel = (typeof RFID_POWER_LEVELS)[number];
 export const isRfidPowerLevel = makeEnumGuard(RFID_POWER_LEVELS);
 const rfidPowerSchema = z.union([
   intInRange(RFID_POWER_RANGE),

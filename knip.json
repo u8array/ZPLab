@@ -1,0 +1,32 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": [
+    "src-tauri/**"
+  ],
+  "ignoreBinaries": [
+    "reg"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "workspaces": {
+    ".": {
+      "entry": [
+        "scripts/*.d.mts",
+        "scripts/catalog-reference-merge.mjs",
+        "scripts/gen-gs1-catalog.mjs",
+        "tests/scripts/*.ts"
+      ]
+    },
+    "packages/core": {
+      "includeEntryExports": true
+    },
+    "packages/mcp-server": {
+      "entry": [
+        "scripts/*.d.mts"
+      ],
+      "ignoreDependencies": [
+        "esbuild",
+        "postject"
+      ]
+    }
+  }
+}

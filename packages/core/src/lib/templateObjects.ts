@@ -50,16 +50,6 @@ export function rewriteTemplateMarkersMap(
   return mapLeafContent(objects, (content) => renameTemplateMarkers(content, renames));
 }
 
-/** Replace every `«name»` marker with `replacement` across a subtree's leaf
- *  `content`. Used on variable deletion. */
-export function substituteTemplateMarkers(
-  objects: LabelObject[],
-  name: string,
-  replacement: string,
-): LabelObject[] {
-  return substituteTemplateMarkersMap(objects, new Map([[name, replacement]]));
-}
-
 /** Substitute many names in ONE pass per leaf. */
 export function substituteTemplateMarkersMap(
   objects: LabelObject[],

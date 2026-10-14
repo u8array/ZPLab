@@ -1,16 +1,8 @@
-/** Measurement input for the per-glyph drift report, deliberately NOT
+/** Glyph cases the Labelary fetch keeps fixtures for, deliberately NOT
  *  wired into the strict box-match test: measurement precedes gating.
  *  Ids reuse textBoxMatchCases' scheme (see fixtureIdContract). */
 import type { TextBoxMatchCase } from './textBoxMatchCases';
 import { CHAR_SLUGS, charSlug } from './charSlug';
-
-export const UNSUPPORTED_CHARS = ['\u212e'];
-
-/** Residuals the calibration deliberately leaves: <=3 dots of accent
- *  ink on the I family and fraction/ellipsis inner spacing, plus the
- *  spacing accents, whose shared outlines cannot move to Zebra's
- *  standalone positions without breaking the accented composites. */
-export const KNOWN_DRIFT = [...'ÍÎÏÌìíîïýÿðøÙÚÛÜ«²³¹¼½¾…`\u00b4\u00b8\u2018\u2019\u201c\u201d'];
 
 /** Ink-less space, NBSP and soft hyphen excluded; a missing slug
  *  throws instead of silently dropping coverage. */

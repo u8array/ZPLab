@@ -39,7 +39,6 @@ export type {
   ImportFindingKind,
   ImportFinding,
   ImportReport,
-  ParsedPage,
   ParsedZPL,
   FontLossReason,
   UnbalancedFormat,

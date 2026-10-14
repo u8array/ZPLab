@@ -1,6 +1,6 @@
 // Generates THIRD-PARTY-LICENSES.md from the actual production dependency tree,
 // so attribution stays exact as deps come and go. The npm section is derived
-// from `pnpm licenses list --prod --json`, reading each package's own license
+// from the scoped pnpm licenses read in lib/pnpm-licenses.mjs, reading each package's own license
 // text out of its install path; the vendored-font notices (assets npm doesn't
 // track) are read from src/assets/fonts so editing one is caught by the drift
 // check too. The preamble and IBM Plex note live here as the source of truth.

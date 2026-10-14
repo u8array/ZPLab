@@ -22,6 +22,7 @@
     "store:listing": "node scripts/build-store-listing.mjs",
     "coverage:gen": "node scripts/gen-coverage.mjs",
     "coverage:check": "node scripts/gen-coverage.mjs --check",
+    "knip": "pnpm dlx knip@6.41.0",
     "preview": "vite preview",
     "tauri": "tauri",
     "e2e": "pnpm build && playwright test"
@@ -54,7 +55,6 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-konva": "^19.3.0",
-    "zod": "^4.6.5",
     "zundo": "^2.3.0",
     "zustand": "^5.0.15"
   },
@@ -68,11 +68,8 @@
     "@tauri-apps/cli": "^2.12.1",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^14.6.7",
-    "@types/babel__core": "^7.20.5",
     "@types/node": "^26.6.4",
     "@types/papaparse": "^5.5.2",
-    "@types/pixelmatch": "^7.1.0",
     "@types/pngjs": "^6.0.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

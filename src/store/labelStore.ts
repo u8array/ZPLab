@@ -42,15 +42,10 @@ import { createLifecycleSlice, type LifecycleSlice } from './slices/lifecycleSli
 import { createSourceEditSlice, type SourceEditSlice } from './slices/sourceEditSlice';
 import { createRestoreSlice, type ReplacedDesign, type RestoreSlice } from './slices/restoreSlice';
 import { createAgentEditSlice, type AgentEditSlice } from './slices/agentEditSlice';
-import {
-  type ColumnMapping,
-  type Variable,
-  type VariableInput,
-} from '@zplab/core/types/Variable';
+import { type ColumnMapping, type Variable } from '@zplab/core/types/Variable';
 
 export { __resetPreviewCacheForTests } from './slices/previewSlice';
 export type { ObjectChanges };
-export type { Variable, VariableInput };
 
 /** Composed store shape; intersection of every slice. */
 export type LabelState =

@@ -3,8 +3,6 @@ import { useT } from "../../hooks/useT";
 import { useLabelStore } from "../../store/labelStore";
 import { rescaleDesign, rescaleParamsFor, type PendingDensity } from "../../lib/densityRescale";
 
-export type { PendingDensity } from "../../lib/densityRescale";
-
 interface Props {
   pending: PendingDensity;
   onClose: () => void;

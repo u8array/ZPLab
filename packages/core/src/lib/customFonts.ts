@@ -49,19 +49,6 @@ export function isTrueTypeFileName(path: string): boolean {
 /** E=flash, R=RAM, A=removable, B=on-board flash. */
 export const ZPL_DRIVE_PREFIXES = ["E:", "R:", "A:", "B:"] as const;
 
-/** Firmware built-ins; excluded from nextFreeAlias auto-pick range. */
-export const ZPL_BUILTIN_FONT_IDS = [
-  "0",
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-] as const;
-
 /** The printer path for a locally picked file: a real device, up to 8 name chars, and an extension
  *  ^A@ and ^CW can reference (spec p.63, p.168). .TTE stays, .OTF and the rest become .TTF (p.184). */
 export function printerFontFileName(fileName: string): string | undefined {

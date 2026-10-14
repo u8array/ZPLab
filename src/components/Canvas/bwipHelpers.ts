@@ -39,16 +39,8 @@ import {
 } from "@zplab/core/lib/barcodeDims";
 import type { DataMatrixProps } from "@zplab/core/registry/datamatrix";
 
-export { ZEBRA_WIDTH_BAR_TYPES };
-export {
-  buildBwipOptions,
-  BWIP_SCALE,
-  get1DBwipScale,
-  getDisplaySize,
-  splitTlc39Content,
-} from "@zplab/core/lib/barcodeDims";
+export { buildBwipOptions, get1DBwipScale, getDisplaySize } from "@zplab/core/lib/barcodeDims";
 export type { BarcodeDisplaySize, EanUpcType, EanUpcHriFragment } from "@zplab/core/lib/barcodeDims";
-export { eanCheckDigit, upceCheckDigit } from "@zplab/core/lib/barcodeCheckDigits";
 
 const bwipEngine = bwipjs as unknown as BwipEngine;
 
@@ -65,7 +57,7 @@ function getValidationCanvas(): HTMLCanvasElement {
 }
 
 /** Strip `bwip-js: bwipp.symbology:` prefixes from encoder errors for UI display. */
-export function cleanBwipError(e: unknown): string {
+function cleanBwipError(e: unknown): string {
   const raw = errorMessage(e);
   return raw.replace(/^bwip-js:\s*/i, "").replace(/^bwipp\.[^:]+:\s*/i, "");
 }
@@ -191,7 +183,7 @@ export function measureBarcodeFootprintDots(
 /** TLC39 composite (ZD230-true): MicroPDF417 indented 1*w1 on top, Code 39
  *  below, and in linked form the lone linkage T behind a 10-module gap
  *  printed 1.4*h1 tall (see tlc39Code39Runs / tlc39CompositeLayout). */
-export function renderTlc39Canvas(
+function renderTlc39Canvas(
   props: Tlc39RenderProps,
   scale: number,
   dpmm: number,

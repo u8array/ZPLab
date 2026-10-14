@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { splitTlc39Content } from '@zplab/core/lib/barcodeDims';
 import { parseZPL, BY_CONSUMING_BARCODE_TYPES } from '@zplab/core/lib/zplParser';
 import { generateZPL } from '@zplab/core/lib/zplGenerator';
 import { formatLabelMetaComment } from '@zplab/core/lib/zplLabelMeta';
@@ -2724,18 +2725,15 @@ describe('parseZPL — ^BF MicroPDF417 mode', () => {
 });
 
 describe('splitTlc39Content', () => {
-  it('splits on first comma; ECI before, serial after', async () => {
-    const { splitTlc39Content } = await import('../components/Canvas/bwipHelpers');
+  it('splits on first comma; ECI before, serial after', () => {
     expect(splitTlc39Content('123456,ABC123')).toEqual({ eci: '123456', serial: 'ABC123' });
   });
 
-  it('keeps a leading S in the serial (spec p.141: stored verbatim)', async () => {
-    const { splitTlc39Content } = await import('../components/Canvas/bwipHelpers');
+  it('keeps a leading S in the serial (spec p.141: stored verbatim)', () => {
     expect(splitTlc39Content('123456,SXYZ789')).toEqual({ eci: '123456', serial: 'SXYZ789' });
   });
 
-  it('returns empty serial when no comma is present', async () => {
-    const { splitTlc39Content } = await import('../components/Canvas/bwipHelpers');
+  it('returns empty serial when no comma is present', () => {
     expect(splitTlc39Content('123456')).toEqual({ eci: '123456', serial: '' });
   });
 });

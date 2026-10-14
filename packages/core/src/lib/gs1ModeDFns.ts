@@ -77,19 +77,3 @@ export function code128PlainExclusiveFns(
 ): Set<number> {
   return fnConsumerBuckets(objects, variables).plainExclusive;
 }
-
-/** Mode-D slots shared with another field type. */
-export function gs1ModeDSharedFns(
-  objects: readonly LabelObject[],
-  variables: readonly Variable[],
-): Set<number> {
-  return fnConsumerBuckets(objects, variables).modeDShared;
-}
-
-/** Plain-^BC slots shared with another field type. */
-export function code128PlainSharedFns(
-  objects: readonly LabelObject[],
-  variables: readonly Variable[],
-): Set<number> {
-  return fnConsumerBuckets(objects, variables).plainShared;
-}
