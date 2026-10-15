@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { lineThicknessMax } from "@zplab/core/registry/line";
 import { useNodeDraggable } from "./hooks/useNodeDraggable";
 import { Group, Line as KLine, Rect } from "react-konva";
 import type Konva from "konva";
@@ -137,18 +138,16 @@ export function LineObject({
   const dispX2 = livePt2?.x ?? x2 + dx;
   const dispY2 = livePt2?.y ?? y2 + dy;
 
-  // Cap visual stroke at live length so the band stays within the
-  // t <= length invariant we commit to on dragEnd.
-  const visualLenPx = Math.hypot(dispX2 - dispX1, dispY2 - dispY1);
-  const lineStrokeWidth = Math.min(rawStrokePx, visualLenPx);
-  const halfStrokePx = lineStrokeWidth / 2;
-
   // <0.5 px epsilon for float residue on constrainLine's 45-step snap.
   const ddxDisp = dispX2 - dispX1;
   const ddyDisp = dispY2 - dispY1;
   const isHorizontal = Math.abs(ddyDisp) < 0.5;
   const isVertical = Math.abs(ddxDisp) < 0.5;
   const isAxisAligned = isHorizontal || isVertical;
+  // Same cap as the commit, see lineThicknessMax.
+  const visualLenPx = Math.hypot(ddxDisp, ddyDisp);
+  const lineStrokeWidth = isAxisAligned ? Math.min(rawStrokePx, visualLenPx) : rawStrokePx;
+  const halfStrokePx = lineStrokeWidth / 2;
   const visualShiftX = isVertical ? halfStrokePx : 0;
   const visualShiftY = isHorizontal ? halfStrokePx : 0;
 
@@ -258,10 +257,10 @@ export function LineObject({
     );
     const snappedExtPx = isHorizontal ? result.height : result.width;
     const cappedT = Math.min(
-      p.length,
+      lineThicknessMax(p.angle, p.length),
       Math.max(1, Math.round(pxToDots(snappedExtPx, scale, dpmm))),
     );
-    // Clear guide when the t<=length cap shortened the band past the snap target.
+    // Clear guide when the thickness cap shortened the band past the snap target.
     const cappedExtPx = dotsToPx(cappedT, scale, dpmm);
     setGuides(Math.abs(cappedExtPx - snappedExtPx) < 0.5 ? result.guides : []);
     return cappedT;
@@ -477,7 +476,6 @@ export function LineObject({
                 e.target.getParent(),
               );
               clearSnap();
-              // Cap thickness to length; t > length triggers ^GB promotion (t x t).
               if (alt) {
                 const c = centeredEndpointCommit(
                   {
@@ -490,13 +488,13 @@ export function LineObject({
                 onChange({
                   x: c.x,
                   y: c.y,
-                  props: { length: c.length, angle: c.angle, thickness: Math.min(p.thickness, c.length) },
+                  props: { length: c.length, angle: c.angle },
                 });
               } else {
                 onChange({
                   x: r.movingDotX,
                   y: r.movingDotY,
-                  props: { length: r.length, angle: r.angle, thickness: Math.min(p.thickness, r.length) },
+                  props: { length: r.length, angle: r.angle },
                 });
               }
             }}
@@ -573,11 +571,11 @@ export function LineObject({
                 onChange({
                   x: c.x,
                   y: c.y,
-                  props: { length: c.length, angle: c.angle, thickness: Math.min(p.thickness, c.length) },
+                  props: { length: c.length, angle: c.angle },
                 });
               } else {
                 onChange({
-                  props: { length: r.length, angle: r.angle, thickness: Math.min(p.thickness, r.length) },
+                  props: { length: r.length, angle: r.angle },
                 });
               }
             }}
@@ -608,9 +606,8 @@ export function LineObject({
               const extPx = isHorizontal
                 ? cursorY - lineCenterY
                 : cursorX - lineCenterX;
-              // Cap at p.length to avoid ^GB t > length promotion.
               const rawT = Math.min(
-                p.length,
+                lineThicknessMax(p.angle, p.length),
                 Math.max(1, Math.round(pxToDots(extPx, scale, dpmm))),
               );
               const newT = snapThickness(

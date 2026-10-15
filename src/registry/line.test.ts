@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { pickAngle, line, lineZplCmd } from "@zplab/core/registry/line";
+import { LINE_DOTS_RANGE, pickAngle, line, lineZplCmd } from "@zplab/core/registry/line";
 import type { LabelObject } from "@zplab/core/types/Group";
 
 describe("lineZplCmd", () => {
@@ -105,6 +105,44 @@ describe("pickAngle", () => {
       //   dist(0, -135) = 135, dist(0, 45) = 45 → 45 wins
       expect(pickAngle(0, [-45, 135], 90)).toBe(45);
     });
+  });
+});
+
+describe("line.normalizeChanges", () => {
+  const obj = makeLine({ length: 200, thickness: 3 });
+
+  const { max } = LINE_DOTS_RANGE;
+
+  it("clamps the thickness to a length shrunk below it", () => {
+    expect(line.normalizeChanges?.(obj, { props: { length: 2 } })).toEqual({ props: { length: 2, thickness: 2 } });
+  });
+
+  it("clamps a thickness raised above the length", () => {
+    expect(line.normalizeChanges?.(obj, { props: { thickness: 500 } })).toEqual({ props: { thickness: 200 } });
+    expect(line.normalizeChanges?.(obj, { props: { length: 30, thickness: 90 } })).toEqual({ props: { length: 30, thickness: 30 } });
+  });
+
+  it("keeps the length inside the spec range", () => {
+    expect(line.normalizeChanges?.(obj, { props: { length: max + 8000, thickness: max + 3000 } })).toEqual({ props: { length: max, thickness: max } });
+    expect(line.normalizeChanges?.(obj, { props: { length: 0 } })).toEqual({ props: { length: 1, thickness: 1 } });
+  });
+
+  it("caps a diagonal's thickness only at the spec maximum", () => {
+    const diagonal = makeLine({ angle: 45, length: 100, thickness: 3 });
+    const changes = { props: { thickness: 500 } };
+    expect(line.normalizeChanges?.(diagonal, changes)).toBe(changes);
+    expect(line.normalizeChanges?.(diagonal, { props: { thickness: max + 8000 } })).toEqual({ props: { thickness: max } });
+  });
+
+  it("caps a thick diagonal once a rotation makes it an axis line", () => {
+    const thick = makeLine({ angle: 45, length: 200, thickness: 500 });
+    expect(line.normalizeChanges?.(thick, { props: { angle: 90 } })).toEqual({ props: { angle: 90, thickness: 200 } });
+  });
+
+  it("hands back a valid change untouched", () => {
+    const changes = { props: { length: 50 } };
+    expect(line.normalizeChanges?.(obj, changes)).toBe(changes);
+    expect(line.normalizeChanges?.(obj, { x: 5 })).toEqual({ x: 5 });
   });
 });
 

@@ -71,7 +71,7 @@ describe("projectMultiResize", () => {
       1,
       ident,
     );
-    expect(h?.props).toEqual({ angle: 0, length: 200, thickness: 2 });
+    expect(h?.props).toEqual({ angle: 0, length: 200 });
     // A 45 degree line under x-only scaling flattens toward the x axis.
     const [d] = projectMultiResize(
       [leaf("l2", "line", 100, 100, { angle: 45, length: 100, thickness: 2, color: "B" })],
@@ -85,9 +85,7 @@ describe("projectMultiResize", () => {
     expect(d?.props?.length).toBe(158);
   });
 
-  // Same invariant as the endpoint/panel commits: t > length would land in
-  // the ^GB t-promotion regime and print a t x t block.
-  it("caps line thickness to the shrunken length", () => {
+  it("does not clamp the thickness when the line shrinks", () => {
     const [c] = projectMultiResize(
       [leaf("l1", "line", 100, 100, { angle: 0, length: 100, thickness: 40, color: "B" })],
       bbox,
@@ -96,7 +94,7 @@ describe("projectMultiResize", () => {
       1,
       ident,
     );
-    expect(c?.props).toEqual({ angle: 0, length: 25, thickness: 25 });
+    expect(c?.props).toEqual({ angle: 0, length: 25 });
   });
 
   it("ellipse honors lockAspect via its registry commit", () => {

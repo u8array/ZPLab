@@ -63,7 +63,7 @@ export function projectMultiResize(
       continue;
     }
     if (leaf.type === "line") {
-      const p = leaf.props as { angle: number; length: number; thickness: number };
+      const p = leaf.props as { angle: number; length: number };
       const rad = (p.angle * Math.PI) / 180;
       // Reproject the endpoint, then read the new angle/length back off it.
       const free = makeFree(Math.cos(rad) * p.length * fx, Math.sin(rad) * p.length * fy);
@@ -72,13 +72,7 @@ export function projectMultiResize(
         id: leaf.id,
         x,
         y,
-        props: {
-          angle: free.angle,
-          length,
-          // Same cap as the endpoint/panel commits; t > length lands in the
-          // ^GB t-promotion regime and prints a t x t block.
-          thickness: Math.min(p.thickness, length),
-        },
+        props: { angle: free.angle, length },
       });
       continue;
     }

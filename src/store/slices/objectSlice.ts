@@ -203,7 +203,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       if (!target || isGroup(target) || target.locked) return {};
       if (hasLockedAncestor(objs, id)) return {};
       // Wholesale node replacement, so registry normalizeChanges is bypassed by
-      // design; the mapper owns the result's validity (line/box have no hook).
+      // design; the mapper owns the result's validity.
       // The type/props change is stamped dirty centrally by the dirtyTracking
       // middleware.
       // anchorRepin still runs: a type switch changes the measured width, so

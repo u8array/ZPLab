@@ -26,6 +26,11 @@ const CASES: {
     props: { moduleWidth: 6 },
   },
   {
+    name: "line length shrink caps the thickness",
+    object: { type: "line", id: "o", x: 50, y: 50, props: { angle: 0, length: 100, thickness: 40, color: "B" } },
+    props: { length: 10 },
+  },
+  {
     name: "right-justified code128 repins on a width-changing edit",
     object: {
       type: "code128", id: "o", x: 400, y: 50, fieldJustify: "R",

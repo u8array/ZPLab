@@ -9,7 +9,7 @@ import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
 import { fieldGridCols, fieldGridCell } from '../components/ui/formStyles';
 import { ShapeModeToggle } from '../components/Properties/ShapeModeToggle';
-import { LINE_PROP_SPECS, type LineProps, pickAngle, lineZplCmd } from '@zplab/core/registry/line';
+import { LINE_DOTS_RANGE, LINE_PROP_SPECS, type LineProps, pickAngle, lineThicknessMax, lineZplCmd } from '@zplab/core/registry/line';
 
 /**
  * Quick-orientation picker.
@@ -53,19 +53,9 @@ export const linePanel: ObjectTypeUi<LineProps> = {
             label={t.registry.line.length}
             scope="page"
             valueDots={p.length}
-            minDots={1}
-            // Shrinking length below the current thickness would land
-            // the model in the ^GB promotion regime where t > length
-            // prints `t × t`; auto-clamp thickness down to match the
-            // new length, mirroring the endpoint-handle drag.
-            onChangeDots={(length) => {
-              if (length === undefined) return;
-              onChange(
-                length < p.thickness
-                  ? { length, thickness: length }
-                  : { length },
-              );
-            }}
+            minDots={LINE_DOTS_RANGE.min}
+            maxDots={LINE_DOTS_RANGE.max}
+            onChangeDots={(length) => onChange({ length })}
             zplCmd={cmd}
             className={fieldGridCell}
           />
@@ -84,11 +74,8 @@ export const linePanel: ObjectTypeUi<LineProps> = {
           label={t.registry.line.thickness}
           scope="page"
           valueDots={p.thickness}
-          minDots={1}
-          // Capped at length so the ZPL output stays out of the ^GB
-          // promotion regime (max(w, t) × max(h, t)), where the printer
-          // would extend the line beyond its declared length.
-          maxDots={p.length}
+          minDots={LINE_DOTS_RANGE.min}
+          maxDots={lineThicknessMax(p.angle, p.length)}
           onChangeDots={(thickness) => onChange({ thickness })}
           zplCmd={cmd}
         />

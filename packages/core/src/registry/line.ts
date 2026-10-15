@@ -50,10 +50,18 @@ export function lineZplCmd(angle: number): '^GB' | '^GD' {
   return norm === 0 || norm === 90 ? '^GB' : '^GD';
 }
 
+/** Spec p.210 and p.213 range for every ^GB and ^GD dimension. */
+export const LINE_DOTS_RANGE = { min: 1, max: 32000 } as const;
+
+/** ^GB promotes a thicker band to a block, see gbPromotedSize. ^GD takes any thickness. */
+export function lineThicknessMax(angle: number, length: number): number {
+  return lineZplCmd(angle) === '^GB' ? Math.min(length, LINE_DOTS_RANGE.max) : LINE_DOTS_RANGE.max;
+}
+
 export const LINE_PROP_SPECS: PropSpecs<LineProps> = {
   angle: { type: 'number', min: -359, max: 359, scale: 'never' },
-  length: { type: 'number', scale: 'dots' },
-  thickness: { type: 'number', scale: 'dots' },
+  length: { type: 'number', integer: true, ...LINE_DOTS_RANGE, scale: 'dots' },
+  thickness: { type: 'number', integer: true, ...LINE_DOTS_RANGE, scale: 'dots' },
   color: { type: 'string', values: ZPL_COLORS },
   reverse: { type: 'boolean' },
 };
@@ -72,6 +80,22 @@ export const line: ObjectTypeCore<LineProps> = {
     color: 'B',
   },
   defaultSize: { width: 200, height: 3 },
+
+  // A rotation can turn ^GD into ^GB, so an angle edit can cap the thickness.
+  normalizeChanges: (obj, changes) => {
+    const next = changes.props as Partial<LineProps> | undefined;
+    const touchesGeometry = next?.length !== undefined || next?.thickness !== undefined || next?.angle !== undefined;
+    if (!next || !touchesGeometry) return changes;
+    const rawLength = next.length ?? obj.props.length;
+    if (!Number.isFinite(rawLength)) return changes;
+    const length = Math.min(Math.max(rawLength, LINE_DOTS_RANGE.min), LINE_DOTS_RANGE.max);
+    const max = lineThicknessMax(next.angle ?? obj.props.angle, length);
+    const thickness = next.thickness ?? obj.props.thickness;
+    let props = next;
+    if (next.length !== undefined && next.length !== length) props = { ...props, length };
+    if (thickness > max) props = { ...props, thickness: max };
+    return props === next ? changes : { ...changes, props };
+  },
 
   toZPL: (obj) => {
     const p = obj.props;
