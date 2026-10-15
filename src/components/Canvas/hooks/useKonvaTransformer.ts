@@ -1,4 +1,5 @@
 import { editBounds, moduleScaledProps, wireBounds, type Range } from "@zplab/core/types/propSpec";
+import { tryFinally } from "../../../lib/tryFinally";
 import { useRef, useEffect, useLayoutEffect } from "react";
 import { flushSync } from "react-dom";
 import type Konva from "konva";
@@ -553,16 +554,19 @@ export function useKonvaTransformer({
     node?.scaleX(1);
     node?.scaleY(1);
     const temporal = useLabelStore.temporal.getState();
-    try {
-      if (id && commit) {
-        updateObject(id, commit.restore);
+    tryFinally(
+      () => {
+        if (id && commit) {
+          updateObject(id, commit.restore);
+          temporal.resume();
+          updateObject(id, commit.final);
+        }
+      },
+      () => {
         temporal.resume();
-        updateObject(id, commit.final);
-      }
-    } finally {
-      temporal.resume();
-      cleanupTransformState();
-    }
+        cleanupTransformState();
+      },
+    );
   }
 
   const onTransformStart = () => {
@@ -1568,40 +1572,42 @@ export function useKonvaTransformer({
           blockJustify?: BlockJustify;
         };
         const temporal = useLabelStore.temporal.getState();
-        // try/finally so a throw from flushSync/getClientRect can't leave undo
-        // recording globally paused (resume is idempotent).
+        // A throw from flushSync or getClientRect must not leave undo recording paused.
         temporal.pause();
-        try {
-          // Konva left the node at the drag position; the font-only commit does
-          // not change x/y so react-konva won't reset it. Move it back to the
-          // model origin so the re-measure reflects the block at obj.x/y.
-          node.x(objectsOffsetX + dotsToPx(obj.x, scale, dpmm));
-          node.y(labelOffsetY + dotsToPx(obj.y, scale, dpmm));
-          flushSync(() => updateObject(singleId, { props: propChanges }));
-          const newRect = stageRect(node, stageRef.current);
-          const edges = activeEdgesRef.current;
-          const justify = fp.blockJustify ?? "L";
-          const anchorArgs = { rotation: fp.rotation, justify, edges, centeredStacking: centeredScaling };
-          const startA = blockGlyphAnchorPoint({ rect: start, ...anchorArgs });
-          const newA = blockGlyphAnchorPoint({ rect: newRect, ...anchorArgs });
-          const model = modelPositionFromRenderedTopLeft(
-            obj,
-            pxToDots(node.x() + (startA.x - newA.x) - objectsOffsetX, scale, dpmm),
-            pxToDots(node.y() + (startA.y - newA.y) - labelOffsetY, scale, dpmm),
-          );
-          // Restore pre-drag state while paused, resume, then apply the final as
-          // one tracked change so undo records pre-drag -> final once.
-          updateObject(singleId, {
-            x: obj.x,
-            y: obj.y,
-            props: { fontWidth: fp.fontWidth, fontHeight: fp.fontHeight },
-          });
-          temporal.resume();
-          updateObject(singleId, { x: model.x, y: model.y, props: propChanges });
-        } finally {
-          temporal.resume();
-          cleanupTransformState();
-        }
+        tryFinally(
+          () => {
+            // Konva left the node at the drag position; the font-only commit does
+            // not change x/y so react-konva won't reset it. Move it back to the
+            // model origin so the re-measure reflects the block at obj.x/y.
+            node.x(objectsOffsetX + dotsToPx(obj.x, scale, dpmm));
+            node.y(labelOffsetY + dotsToPx(obj.y, scale, dpmm));
+            flushSync(() => updateObject(singleId, { props: propChanges }));
+            const newRect = stageRect(node, stageRef.current);
+            const edges = activeEdgesRef.current;
+            const justify = fp.blockJustify ?? "L";
+            const anchorArgs = { rotation: fp.rotation, justify, edges, centeredStacking: centeredScaling };
+            const startA = blockGlyphAnchorPoint({ rect: start, ...anchorArgs });
+            const newA = blockGlyphAnchorPoint({ rect: newRect, ...anchorArgs });
+            const model = modelPositionFromRenderedTopLeft(
+              obj,
+              pxToDots(node.x() + (startA.x - newA.x) - objectsOffsetX, scale, dpmm),
+              pxToDots(node.y() + (startA.y - newA.y) - labelOffsetY, scale, dpmm),
+            );
+            // Restore pre-drag state while paused, resume, then apply the final as
+            // one tracked change so undo records pre-drag -> final once.
+            updateObject(singleId, {
+              x: obj.x,
+              y: obj.y,
+              props: { fontWidth: fp.fontWidth, fontHeight: fp.fontHeight },
+            });
+            temporal.resume();
+            updateObject(singleId, { x: model.x, y: model.y, props: propChanges });
+          },
+          () => {
+            temporal.resume();
+            cleanupTransformState();
+          },
+        );
         return;
       }
       updateObject(singleId, { ...pos, props: propChanges });

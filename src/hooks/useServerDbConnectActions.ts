@@ -94,10 +94,8 @@ export function useServerDbConnectActions(driver: 'postgres' | 'mysql') {
         if (draftEpoch.current === epoch) setTables(listed);
       } catch (e) {
         if (draftEpoch.current === epoch) setListError(String(e));
-      } finally {
-        setBusy(false);
       }
-    })();
+    })().finally(() => setBusy(false));
   };
 
   /** Run a load attempt via `run` (the wizard marks a success as its own load)

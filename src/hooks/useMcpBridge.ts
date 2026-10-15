@@ -13,6 +13,10 @@ import {
 } from "../lib/mcpServer";
 import { isDesktopShell } from "../lib/platform";
 
+// Module level, since the compiler cannot lower an import expression inside the hook.
+const tauriEvent = () => import("@tauri-apps/api/event");
+const tauriCore = () => import("@tauri-apps/api/core");
+
 /** Register the sidecar listeners, then have Rust flush the events it
  *  queued while none existed (see event_buffer in mcp.rs). */
 export function useMcpBridge(): void {
@@ -24,10 +28,7 @@ export function useMcpBridge(): void {
     // teardown withdraws its own and never the one that replaced it.
     let attachedSession: string | null = null;
     void (async () => {
-      const [{ listen }, { invoke }] = await Promise.all([
-        import("@tauri-apps/api/event"),
-        import("@tauri-apps/api/core"),
-      ]);
+      const [{ listen }, { invoke }] = await Promise.all([tauriEvent(), tauriCore()]);
       const fns = await Promise.all([
         listen<[number, string]>("mcp://open-draft", (e) => {
           void respondToOpenDraft(e.payload[0], e.payload[1]).catch(() => undefined);

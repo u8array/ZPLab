@@ -14,7 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "licenses:check": "node scripts/check-licenses.mjs",
     "attribution:gen": "node scripts/gen-attribution.mjs",
     "attribution:check": "node scripts/gen-attribution.mjs --check",

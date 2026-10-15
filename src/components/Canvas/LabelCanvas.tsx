@@ -1,3 +1,4 @@
+import { tryFinally } from "../../lib/tryFinally";
 import {
   forwardRef,
   useImperativeHandle,
@@ -1827,13 +1828,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                 }}
                 onTransform={onTransform}
                 boundBoxFunc={boundBoxFunc}
-                onTransformEnd={() => {
-                  try {
-                    onTransformEnd();
-                  } finally {
-                    transformActiveRef.current = false;
-                  }
-                }}
+                onTransformEnd={() => tryFinally(onTransformEnd, () => { transformActiveRef.current = false; })}
                 borderStroke={colors.selection}
                 anchorStroke={colors.selection}
                 anchorFill="#ffffff"
