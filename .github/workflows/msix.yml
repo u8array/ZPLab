@@ -15,6 +15,9 @@ on:
       - 'packages/mcp-server/scripts/**'
       - '.github/workflows/msix.yml'
 
+permissions:
+  contents: read
+
 concurrency:
   group: msix-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}

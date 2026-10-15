@@ -6,44 +6,10 @@ on:
   push:
     branches: [main, prod]
 
+permissions:
+  contents: read
+
 jobs:
+  # The prod ruleset requires the check context lint-test-build / gates, so neither job name may change.
   lint-test-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-
-      - run: pnpm licenses:check
-
-      - uses: EmbarkStudios/cargo-deny-action@v2
-        with:
-          command: check licenses advisories
-          manifest-path: ./src-tauri/Cargo.toml
-
-      - run: pnpm attribution:check
-      - run: pnpm coverage:check
-
-      - run: pnpm lint
-
-      - run: pnpm test
-
-      - run: pnpm build
-
-      - uses: actions/cache@v6
-        id: pw-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - if: steps.pw-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install chromium
-      # OS deps are not cacheable; the runner image must not be relied on.
-      - run: pnpm exec playwright install-deps chromium
-      - run: pnpm exec playwright test
+    uses: ./.github/workflows/gates.yml

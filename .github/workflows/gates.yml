@@ -1,0 +1,74 @@
+name: Gates
+
+# The one frontend gate list pr.yml, deploy.yml and release.yml share.
+on:
+  workflow_call:
+    inputs:
+      upload-dist:
+        description: upload dist/ as the web-dist artifact for a later job
+        type: boolean
+        default: false
+    outputs:
+      version:
+        description: package.json version
+        value: ${{ jobs.gates.outputs.version }}
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # A missing field prints the word undefined, which the guard would let through as a tag.
+      - id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version || ''")
+          echo "version=${VERSION:?package.json has no version}" >> "$GITHUB_OUTPUT"
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm licenses:check
+
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check licenses advisories
+          manifest-path: ./src-tauri/Cargo.toml
+
+      - run: pnpm attribution:check
+      - run: pnpm coverage:check
+
+      - run: pnpm lint
+
+      - run: pnpm test
+
+      - run: pnpm build
+
+      - uses: actions/cache@v6
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install chromium
+      # OS deps are not cacheable, so the runner image must not be relied on.
+      - run: pnpm exec playwright install-deps chromium
+      - run: pnpm exec playwright test
+
+      - if: inputs.upload-dist
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-dist
+          path: dist
+          if-no-files-found: error

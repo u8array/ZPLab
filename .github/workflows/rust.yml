@@ -1,14 +1,18 @@
 name: Rust
 
-# src-tauri gets no other PR gate, because Rust and the packaging data only matter in a release build.
+# Also called from release.yml, so a release runs these gates on its own commit.
 # Path-filtered because the Tauri dependency compile is too heavy for pure-frontend PRs.
 on:
+  workflow_call:
   pull_request:
     branches: [main, prod]
     paths: ['src-tauri/**', '.github/workflows/rust.yml']
   push:
     branches: [main, prod]
     paths: ['src-tauri/**', '.github/workflows/rust.yml']
+
+permissions:
+  contents: read
 
 defaults:
   run:
@@ -32,6 +36,26 @@ jobs:
         with:
           components: rustfmt
       - run: cargo fmt --all --check
+
+  # Only Cargo.lock and about.* can stale the notice, and both sit under this workflow's path filter.
+  attribution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+          shared-key: attribution
+          cache-targets: false
+      # bash here runs with pipefail, so a failed download cannot hide behind tar.
+      - name: rust attribution freshness
+        shell: bash
+        run: |
+          curl -fsSL https://github.com/EmbarkStudios/cargo-about/releases/download/0.9.1/cargo-about-0.9.1-x86_64-unknown-linux-musl.tar.gz \
+            | tar xz --strip-components=1 -C /tmp
+          cargo fetch --locked
+          /tmp/cargo-about generate about.hbs -o THIRD-PARTY-LICENSES-RUST.md
+          git diff --exit-code -- THIRD-PARTY-LICENSES-RUST.md
 
   clippy-test:
     name: clippy-test (${{ matrix.platform }})
@@ -60,7 +84,8 @@ jobs:
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
+          shared-key: clippy-${{ matrix.platform }}
 
-      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo clippy --all-targets --locked -- -D warnings
 
-      - run: cargo test
+      - run: cargo test --locked

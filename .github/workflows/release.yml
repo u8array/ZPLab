@@ -3,72 +3,25 @@ name: Release
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: release
 
 jobs:
   gates:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v7
+    uses: ./.github/workflows/gates.yml
+    with:
+      upload-dist: true
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-
-      - uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './src-tauri -> target'
-
-      - run: pnpm licenses:check
-
-      - run: pnpm attribution:check
-      - run: pnpm coverage:check
-
-      - run: pnpm lint
-
-      - run: pnpm test
-
-      # Regenerate before `pnpm build` so the Vite plugin ships the freshly
-      # validated .md into dist/; the diff fails the build on any drift.
-      - name: rust attribution freshness
-        run: |
-          curl -fsSL https://github.com/EmbarkStudios/cargo-about/releases/download/0.9.1/cargo-about-0.9.1-x86_64-unknown-linux-musl.tar.gz \
-            | tar xz --strip-components=1 -C /tmp
-          cd src-tauri
-          cargo fetch
-          /tmp/cargo-about generate about.hbs -o THIRD-PARTY-LICENSES-RUST.md
-          git diff --exit-code -- THIRD-PARTY-LICENSES-RUST.md
-
-      - run: pnpm build
-
-      - uses: EmbarkStudios/cargo-deny-action@v2
-        with:
-          command: check licenses advisories
-          manifest-path: ./src-tauri/Cargo.toml
-
-      - id: version
-        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-
-      - name: stage web dist for the release zip
-        run: cp .github/release/web-README.md dist/README.md
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: web-dist
-          path: dist
+  rust:
+    uses: ./.github/workflows/rust.yml
 
   # Single creation point: tauri-action's own tag lookup races across matrix
   # legs and can split assets over duplicate drafts (tauri-action#914).
   create-release:
-    needs: gates
+    needs: [gates, rust]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -173,7 +126,7 @@ jobs:
           [ "$(printf '%s\n%s\n' "$MAX" "$FLOOR" | sort -V | tail -1)" = "$FLOOR" ] || { echo "$MAX is newer than the floor $FLOOR"; exit 1; }
 
   msix:
-    needs: gates
+    needs: [gates, rust]
     uses: ./.github/workflows/msix.yml
 
   upload-web-dist:
@@ -182,10 +135,15 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v7
+
       - uses: actions/download-artifact@v8
         with:
           name: web-dist
           path: dist
+
+      - name: stage the self-hosting readme
+        run: cp .github/release/web-README.md dist/README.md
 
       - name: zip browser build
         run: |
