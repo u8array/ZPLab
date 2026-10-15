@@ -388,6 +388,13 @@ describe("rescaleDensity store action", () => {
     expect(useLabelStore.temporal.getState().pastStates.length).toBe(0);
   });
 
+  it("still lands the config patch when the density stays", () => {
+    useLabelStore.getState().rescaleDensity(8, { widthMm: 120 });
+    expect(useLabelStore.getState().label.widthMm).toBe(120);
+    expect(firstBox().props.width).toBe(100);
+    expect(useLabelStore.temporal.getState().pastStates.length).toBe(1);
+  });
+
   it("does nothing under the preview lock", () => {
     useLabelStore.setState({ previewMode: { status: "loading" } });
     useLabelStore.getState().rescaleDensity(16);

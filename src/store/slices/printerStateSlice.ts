@@ -67,8 +67,8 @@ export const createPrinterStateSlice: StateCreator<LabelState, [], [], PrinterSt
     if (selectEditorFrozen(state)) return false;
     const { label, profile } = adoptionPatches(rows);
     const { dpmm, ...rest } = label;
-    // A new density reinterprets every dot value in the design, so the whole patch goes through the rescale seam.
-    const labelPatch = dpmm !== undefined && dpmm !== state.label.dpmm ? densityRescalePatch(state, dpmm, rest) : labelConfigPatch(state, rest);
+    // Density and config land together, so an unchanged density still takes the rescale seam.
+    const labelPatch = dpmm !== undefined ? densityRescalePatch(state, dpmm, rest) : labelConfigPatch(state, rest);
     const profilePatch = Object.keys(profile).length > 0 ? applyProfilePatch(state, () => profile) : {};
     if (profilePatch === null) return false;
     const next = { ...labelPatch, ...profilePatch };

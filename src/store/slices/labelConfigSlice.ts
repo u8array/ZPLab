@@ -226,7 +226,7 @@ export function labelConfigPatch(state: LabelState, config: Partial<LabelConfig>
 
 /** A density change as a patch, with `configPatch` folded into the same step. */
 export function densityRescalePatch(state: LabelState, toDpmm: number, configPatch?: Partial<LabelConfig>): Partial<LabelState> {
-  if (toDpmm === state.label.dpmm) return {};
+  if (toDpmm === state.label.dpmm) return configPatch === undefined ? {} : labelConfigPatch(state, configPatch);
   const p = rescaleParamsFor({ kind: 'dpmm', toDpmm, configPatch }, state.label);
   // Rescaled geometry invalidates the captured overlay bytes.
   const { pages, label } = rescaleDesign(state.pages, state.label, p.fromEff, p.toEff, p.patch, p.includeCalibrationFields);
