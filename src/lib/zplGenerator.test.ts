@@ -2104,8 +2104,6 @@ describe('generateBatchZpl', () => {
   }] as unknown as LabelObject[];
 
   it('emits a control-key chip as a Code 128 subset invocation, not ^FH hex', () => {
-    // ^FH hex reaches the printer but ^BC drops every C0 byte from the symbol
-    // (ZD230-verified, pixel-identical to no chip at all).
     const out = generateZPL(baseLabel, code128Chip('A«ctrl:GS»B«ctrl:CR»'));
     expect(out).toContain('^FD>933933477^FS');
     expect(out).not.toContain('^FH_');

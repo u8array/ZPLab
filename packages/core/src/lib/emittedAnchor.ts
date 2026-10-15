@@ -6,10 +6,10 @@ import { objectBoundsDots, type BoundingBoxDots, type ObjectBoundsCtx } from "./
 /** The ^FO/^FT origin (dots) the generator actually emits for this leaf, i.e.
  *  the coordinate the printer sees. The single source the off-label preflight
  *  shares with emission, so "is the position off-label" can't drift from what
- *  prints: text uses the cap-top/baseline transform, graphics anchor at their
- *  bbox (top-left under ^FO, a bottom corner under ^FT), barcodes/symbol emit at
- *  the model coord (a gated R 1D at the measured right edge). Pass `box` when the caller already has the bbox to skip a
- *  recompute. Known minor gap: an ^FT right-justified diagonal line or image uses
+ *  prints: text uses the cap-top/baseline transform, graphics go through
+ *  {@link graphicAnchorCoords}, barcodes/symbol emit at the model coord, a
+ *  gated R 1D at the measured right edge. Pass `box` when the caller already
+ *  has the bbox to skip a recompute. Known minor gap: an ^FT right-justified diagonal line or image uses
  *  the visual bbox width, a few dots off the emitted ^GD/^GF width, which only
  *  shifts the near-left edge for a field whose right corner sits at ~x=0. */
 export function emittedAnchorDots(

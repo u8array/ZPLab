@@ -55,8 +55,6 @@ export function LayersPanel() {
   }, [rows]);
   const allRowIds = useMemo(() => rows.map((r) => r.obj.id), [rows]);
 
-  // Drives the row highlight and tint (selecting all of a group's members reads
-  // as the group being selected too). NOT used for the drag block.
   const effectiveSelected = useMemo(
     () => effectiveSelection(objects, selectedIds),
     [objects, selectedIds],

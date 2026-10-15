@@ -10,8 +10,8 @@ export interface PendingExcelImport {
   path: string;
   filename: string;
   sheets: string[];
-  /** datasetFetchToken at pick time; a mismatch on Load means the data context
-   *  (or the whole document) changed underneath, so the sheet is not committed. */
+  /** datasetFetchToken at pick time, see isCurrentDataContext. A stale token
+   *  leaves the sheet uncommitted. */
   token: number;
 }
 

@@ -281,8 +281,6 @@ describe('parseZPL — text field position', () => {
 });
 
 describe('parseZPL — ^FT graphic box/line bottom-left anchor', () => {
-  // Spec p.205: a ^FT graphic origin is the bottom-left corner; the model stores
-  // the top-left, so it lifts by the box height. ^FO is the top-left verbatim.
   it('lifts a ^FT box by its height to the top-left', () => {
     const { objects } = parseSingle('^XA^FT100,200^GB50,40,3,B,0^FS^XZ', 8);
     expect(objects[0]?.type).toBe('box');
@@ -2645,7 +2643,6 @@ describe('parseZPL — ^BT TLC39', () => {
   });
 
   it('maps the ^BT w2/h2 slots to MicroPDF module width and row height', () => {
-    // Row count has no ^BT param; the firmware derives it from the serial.
     const zpl = '^XA^FO0,0^BTN,2,2,40,3,6^FD123456,X^FS^XZ';
     const p = props(parseSingle(zpl, 8).objects[0]);
     expect(p.microPdfModuleWidth).toBe(3);

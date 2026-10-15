@@ -1,22 +1,14 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeAll, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
+import { stubKonvaCanvas2d } from "../../test/helpers";
 import { Stage, Layer } from "react-konva";
 import type Konva from "konva";
 import { BarcodeObject } from "./BarcodeObject";
 import { ObjectRegistry, type LeafType } from "@zplab/core/registry";
 import type { LeafObject } from "@zplab/core/registry";
 
-beforeAll(() => {
-  const noop = () => undefined;
-  HTMLCanvasElement.prototype.getContext = (() =>
-    new Proxy({
-      getImageData: () => ({ data: new Uint8ClampedArray(4) }),
-      measureText: () => ({ width: 10 }),
-    }, {
-      get: (target, prop) => (prop in target ? target[prop as keyof typeof target] : noop),
-    })) as unknown as typeof HTMLCanvasElement.prototype.getContext;
-});
+beforeAll(stubKonvaCanvas2d);
 
 afterEach(cleanup);
 

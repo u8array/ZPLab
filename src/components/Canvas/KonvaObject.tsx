@@ -606,7 +606,6 @@ function KonvaObjectInner({
     return () => clearMeasuredBounds(obj.id);
   }, [obj.id, isSingleLineText]);
 
-  // Whole-object drag (snap + commit) is centralized in the drag controller.
   const handleDragMove = dragHandlers?.onDragMove;
   const handleDragEnd = dragHandlers?.onDragEnd;
 

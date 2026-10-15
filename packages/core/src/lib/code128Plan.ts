@@ -12,8 +12,8 @@ import { C0_RE, resolveControlMarkers } from "../types/controlKey";
 export type Code128FdMode = "whole" | "template" | "templateValue" | "sharedRaw";
 
 export type Code128FdLoss =
-  /** Control bytes cannot ride this mode's FD: they fall to ^FH, which the
-   *  firmware drops from the symbol (ZD230). */
+  /** Control bytes cannot ride this mode's FD, they fall to ^FH, see
+   *  code128Subset. */
   | { kind: "controlBytesDropped" }
   /** `>` before an invocation char stays verbatim (import round-trip channel),
    *  so the firmware reads an invocation, not text. */

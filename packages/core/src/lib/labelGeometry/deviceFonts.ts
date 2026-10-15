@@ -85,8 +85,8 @@ function deviceFontMags(
 
 /** Deterministic field extent in dots for the ^FO anchor of rotated (I/B)
  *  bitmap fields: cells are monospaced, and Labelary measures the printed
- *  extent at n*advance - gap/2 within 2 dots across fonts. Null for
- *  Font 0 / unknown ids (measured PrintLab width applies there). */
+ *  extent at n*advance - gap/2 within 2 dots across fonts. Null as in
+ *  deviceFontMags, the measured PrintLab width applies there. */
 export function deviceFontInkWidthDots(
   fontId: string | undefined,
   heightDots: number,
@@ -102,8 +102,8 @@ export function deviceFontInkWidthDots(
   return magW * (n * spec.advancePerMag - gap / 2);
 }
 
-/** Snapped character-cell width (the effective ^A font width), or null
- *  for Font 0 / unknown ids. */
+/** Snapped character-cell width (the effective ^A font width), or null as in
+ *  deviceFontMags. */
 export function deviceFontSnappedWidthDots(
   fontId: string | undefined,
   heightDots: number,
@@ -113,9 +113,9 @@ export function deviceFontSnappedWidthDots(
   return mags ? mags.magW * mags.spec.magWidthStep : null;
 }
 
-/** Requested ^A height snapped to the cell grid, or null for Font 0 /
- *  unknown ids / non-positive heights. The firmware anchors a bitmap field
- *  by its snapped cell, so the anchor transform needs this too. */
+/** Requested ^A height snapped to the cell grid, null as in deviceFontMags.
+ *  The firmware anchors a bitmap field by its snapped cell, so the anchor
+ *  transform needs this too. */
 export function deviceFontSnappedHeightDots(
   fontId: string | undefined,
   heightDots: number,

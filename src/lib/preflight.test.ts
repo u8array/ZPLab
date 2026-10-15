@@ -835,9 +835,6 @@ describe("markerValueFindings (mode-D shared ^FN slot)", () => {
   });
 
   it("flags control bytes in a template-consumed plain slot, not in a lone bind", () => {
-    // A template keeps the ^FH path and the firmware drops the C0 byte from
-    // the symbol; an EXCLUSIVE lone bind encodes it losslessly as an
-    // invocation, but a SHARED lone bind emits raw/^FH and loses it too.
     const dirty = [{ id: "v", name: "batch", fnNumber: 1, defaultValue: "A\tB" }];
     const deps = { variables: dirty, dataset: null, columnMapping: null };
     const out = markerValueFindings([code128("c", "X«batch»Y", false)], deps);

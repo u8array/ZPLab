@@ -148,8 +148,6 @@ export const text: ObjectTypeCore<TextProps> = {
     // encodeTbContent), so wrap the collapsed form there to avoid false overset.
     const content = mode === "tb" ? (p.content ?? "").replace(/\n/g, " ") : (p.content ?? "");
     const lines = wrapBlockLines(content, p.blockWidth ?? 0, lineWidth);
-    // ^TB clips at blockHeight; N lines occupy (N-1) steps plus the last line's
-    // own height, not N steps (the trailing 0.25 line-gap doesn't render).
     const tbHeight = (p.blockHeight ?? 0) > 0
       ? tbStackHeightDots(lines.length, p.fontHeight, deviceFontId)
       : 0;

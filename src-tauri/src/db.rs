@@ -514,8 +514,7 @@ async fn run_list_tables(spec: &DbSpec) -> Result<Vec<String>, DbError> {
   out
 }
 
-/// Refuse a sqlite path the user never granted via the native pick command
-/// (scope::PathGrants); network specs carry no path.
+/// Refuse a sqlite path scope::PathGrants never granted, network specs carry no path.
 fn check_path_scope(app: &tauri::AppHandle, spec: &DbSpec) -> Result<(), DbError> {
   use tauri::Manager;
   match spec {

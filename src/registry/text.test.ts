@@ -113,11 +113,6 @@ describe('text — normalizeChanges ^FP un-emit shape', () => {
   });
 });
 
-/**
- * Serial is a plain single-line counter that suppresses block/reverse/^FP at
- * emit and render, but must not DESTROY those props: turning serial off has to
- * restore the formatting. So they lie dormant on the model while serial is on.
- */
 describe('text — serial suppresses block/reverse without destroying them', () => {
   const serial = { increment: 1, zplMode: 'SN' as const };
 

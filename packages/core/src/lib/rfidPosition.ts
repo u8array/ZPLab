@@ -14,7 +14,7 @@ export interface RfidPositionValue {
 }
 
 /** Media-motion distance the position declares, in mm off the label top.
- *  Dots are physical head dots like ^ML (^JM does not scale the feed). */
+ *  Dots are physical head dots like ^ML, ^JM does not scale the feed. */
 export function rfidPositionValue(
   position: string | undefined,
   dpmm: number,

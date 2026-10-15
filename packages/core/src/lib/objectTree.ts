@@ -13,7 +13,8 @@ interface UnknownNode {
 
 /** Apply `visit` to every leaf (non-group) node found under `pages`.
  *  `pages` is treated permissively: any nested `objects`/`children`
- *  arrays are walked. Mutates leaves in-place via the visitor. */
+ *  arrays are walked. Mutates leaves in place, which is safe because
+ *  the callers hand it the persisted payload, never the live store. */
 export function visitLeavesInPages(pages: unknown, visit: (leaf: UnknownNode) => void): void {
   if (!Array.isArray(pages)) return;
   for (const page of pages) walkNode(page, visit);

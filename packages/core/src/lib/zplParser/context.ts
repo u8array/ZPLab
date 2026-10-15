@@ -256,9 +256,9 @@ export interface FieldState {
   /** ^FN seen since this opener. Such a slot dies with the field, while a slot
    *  armed before the opener survives it, measured on a format recalled by ^XF. */
   fnArmedSinceOpener: boolean;
-  /** ^FE armed for the next ^FD only (spec p.191); reset at ^FS. */
+  /** See consumeOneShotArms. */
   feArmed: boolean;
-  /** ^FC armed for the next ^FD only (spec p.1614); reset at ^FS. */
+  /** See consumeOneShotArms. */
   fcArmed: boolean;
   /** ^FR: single-field reverse, reset at ^FS. */
   frActive: boolean;

@@ -81,9 +81,8 @@ export const line: ObjectTypeCore<LineProps> = {
 
     // Pure horizontal: angle 180 means the line extends LEFT from (obj.x, obj.y),
     // so the ^GB box must start at (obj.x - l) to overlap the same pixels.
-    // ^FT graphic origin is a bottom corner (spec p.205): lower by the ^GB box
-    // height (band t horizontal, length l vertical) and, when right-justified
-    // (z=1), shift to the right edge (band width l horizontal, t vertical).
+    // ^FT lowers by the ^GB box height, band t horizontal and length l vertical,
+    // and a right-justified field shifts by its width, see graphicAnchorCoords.
     const right = obj.fieldJustify === 'R';
     if (a === 0 || a === 180) {
       const bx = a === 180 ? obj.x - l : obj.x;
@@ -119,8 +118,6 @@ export const line: ObjectTypeCore<LineProps> = {
     const orientation = dx * dy >= 0 ? 'L' : 'R';
     const boxX = obj.x + (dx < 0 ? Math.round(dx) : 0);
     const boxY = obj.y + (dy < 0 ? Math.round(dy) : 0);
-    // ^FT anchors the ^GD bounding box at a bottom corner (spec p.205); ^FO
-    // emits the box top-left verbatim.
     const anchor = graphicAnchor(boxX, boxY, w, h, obj.positionType, obj.fieldJustify);
     return wrapReverse(
       p.reverse,

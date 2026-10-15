@@ -63,9 +63,9 @@ export function imageEmitDims(p: ImageProps): { width: number; height: number } 
 export interface ImageProps {
   /** ID into the image cache */
   imageId: string;
-  /** 90-degree orientation. `^GF` has no orientation letter, so a non-N
-   *  rotation is baked into the emitted bitmap (see toZPL); the canvas shows it
-   *  via rotatedGroupTransform. Only cached (editable) images honour it.
+  /** 90-degree orientation. A non-N rotation is baked into the emitted bitmap
+   *  by rasterizeMono, the canvas shows it via rotatedGroupTransform. Only
+   *  cached (editable) images honour it.
    *  Optional: designs saved before image rotation existed omit it (read as
    *  'N' via objectRotation). New images seed it from defaultProps. */
   rotation?: ZplRotation;
@@ -496,10 +496,9 @@ export const image: ObjectTypeCore<ImageProps> = {
   toZPL: (obj) => {
     const p = obj.props;
     const cached = getImage(p.imageId);
-    // ^FT anchors the graphic's bottom-left (spec p.205); right-justified ^FT
-    // keys its x off the byte-padded ^GF width. imageEmitDims applies the R/B
-    // axis swap (cached only), and the same helper feeds the home-shift drop
-    // check so the two agree. ^FO ignores the footprint.
+    // Right-justified ^FT keys its x off the byte-padded ^GF width.
+    // imageEmitDims applies the R/B axis swap for cached images and also feeds
+    // the home-shift drop check, so the two agree.
     const d = imageEmitDims(p);
     const anchor = graphicFieldPos(obj, d.width, d.height);
     // Opaque graphic: re-emit the original ^GF verbatim at the (possibly moved)

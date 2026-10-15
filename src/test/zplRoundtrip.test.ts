@@ -510,7 +510,6 @@ describe('round-trip — ^LH label home offset', () => {
 // ── MSI barcode ──────────────────────────────────────────────────────────────
 
 describe('round-trip — MSI barcode', () => {
-  // ^BMo,e,h,f,g; e: A=no check, B=1 Mod 10 (default), C/D=multi-check.
   it('parses ^BM height from third parameter (new format)', () => {
     const { first } = roundtrip(
       '^XA^PW784^LL264^CI28^BY2^FO0,0^BMN,A,80,Y,N^FD12345678^FS^XZ',

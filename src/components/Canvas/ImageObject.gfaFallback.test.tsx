@@ -1,13 +1,14 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeAll, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
+import { stubKonvaCanvas2d } from "../../test/helpers";
 import { Stage, Layer } from "react-konva";
 import type Konva from "konva";
 import { ImageObject } from "./ImageObject";
 import type { LabelObject } from "@zplab/core/types/Group";
 
 beforeAll(() => {
-  const noop = () => undefined;
+  stubKonvaCanvas2d();
   // jsdom ships no ImageData; the preview builds one from the decoded raster.
   globalThis.ImageData = class {
     data: Uint8ClampedArray;
@@ -19,15 +20,6 @@ beforeAll(() => {
       this.height = height;
     }
   } as unknown as typeof globalThis.ImageData;
-  HTMLCanvasElement.prototype.getContext = (() =>
-    new Proxy(
-      {
-        getImageData: () => ({ data: new Uint8ClampedArray(4) }),
-        measureText: () => ({ width: 0 }),
-        putImageData: noop,
-      },
-      { get: (target, prop) => (prop in target ? target[prop as keyof typeof target] : noop) },
-    )) as unknown as typeof HTMLCanvasElement.prototype.getContext;
 });
 
 afterEach(cleanup);

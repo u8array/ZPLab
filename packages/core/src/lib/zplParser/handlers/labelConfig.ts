@@ -18,8 +18,8 @@ export function createLabelConfigHandlers(
 ): Record<string, Handler> {
   const labelConfig = s.result.labelConfig;
   const { dotsOrUndef } = dotsFor(s);
-  // ^PW/^LL/^ML are physical head dots, ^JM-independent (ZD230-verified): omit
-  // jmDensity from the scale so the un-halved ^MU multiplier applies.
+  // ^PW/^LL/^ML read at the physical density, see deriveUnitScale, so the
+  // scale omits jmDensity and the un-halved ^MU multiplier applies.
   const physDots = (raw: string | undefined): number | undefined =>
     intDotsOrUndef(raw, deriveUnitScale({ muMode: s.format.muMode }, dpmm));
   return {

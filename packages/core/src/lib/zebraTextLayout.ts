@@ -158,11 +158,10 @@ export function tbBlockExtentDots(
   return Math.max(0, blockHeightDots - effH * (1 - EM_TOP_ABOVE_CAP));
 }
 
-/** Anchor extent of a block beyond its first line, ^TB or ^FB. The single
- *  tb-vs-fb dispatch shared by generator, parser and the box-match gate;
- *  a one-sided change here shifts anchors silently. tbHeightDots > 0
- *  selects ^TB (the parser's native signal: ^TB is stream state, not a
- *  stored mode). */
+/** Anchor extent of a block beyond its first line: ^TB is a fixed clip height,
+ *  ^FB stacks lines. The single tb-vs-fb dispatch shared by generator, parser
+ *  and the box-match gate, so a one-sided change shifts anchors silently.
+ *  tbHeightDots > 0 selects ^TB, the parser's native signal. */
 export function blockAnchorExtentDots(args: {
   tbHeightDots: number;
   blockWidthDots: number;

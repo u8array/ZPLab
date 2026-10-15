@@ -129,9 +129,6 @@ describe("projectMultiResize", () => {
 });
 
 describe("a right-justified member of the selection", () => {
-  // Its model x IS the printed right edge while the union bbox is ink space, so
-  // projecting the raw x walked the field right by its own box width and out of
-  // the selection frame.
   it("keeps its ink edge flush with a left-anchored twin", () => {
     const symbol = leaf("s", "symbol", 400, 100, { width: 120, height: 40, symbol: "A", rotation: "N" });
     (symbol as unknown as { fieldJustify: string }).fieldJustify = "R";

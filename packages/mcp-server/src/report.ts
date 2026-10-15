@@ -280,9 +280,7 @@ function measuredBarcodes(
   return map;
 }
 
-/** These objects' own x is the printed RIGHT edge while the bounds row shows
- *  the ink left edge, so a patch aimed at the reported x moves them a full
- *  width. Named only when such an object exists, to keep clean reports quiet. */
+/** Names right-anchored objects only when one exists, to keep clean reports quiet. */
 function rightAnchorNotes(pages: Page[]): string[] {
   const ids = pages.flatMap((page) =>
     exportableLeaves(page.objects).filter(isRightAnchoredField).map((l) => l.id),

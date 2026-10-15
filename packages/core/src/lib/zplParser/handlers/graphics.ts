@@ -79,11 +79,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     color: "B" | "W", rounding: number, reverseFlag: boolean | undefined,
     comment: string | undefined, positionType: "FO" | "FT", justify: "L" | "R",
   ): LabelObject => {
-    // ^FT graphic origin is a bottom corner (spec p.205): bottom-left, or
-    // bottom-right when z=1 (justify R). The model stores the top-left, so
-    // lift by the height and, for R, shift left by the width. ^FO is top-left.
-    const topLeftY = positionType === "FT" ? gy - h : gy;
-    const topLeftX = positionType === "FT" && justify === "R" ? gx - w : gx;
+    const { x: topLeftX, y: topLeftY } = ftTopLeft(gx, gy, w, h, positionType, justify);
     let obj;
     if (h === t && w > t) {
       obj = makeObj(
@@ -315,9 +311,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       const gdColor = readColor(p[3]);
       const gdOri = (p[4] ?? "L").toUpperCase();
       const gdLen = Math.round(Math.sqrt(gdW * gdW + gdH * gdH));
-      // ^FT anchors the ^GD bounding box at a bottom corner; lift to the box
-      // top-left before recovering the start point (gdOri is the diagonal
-      // direction, distinct from the z-justify "R").
+      // gdOri is the diagonal direction, distinct from the z-justify "R".
       const posType = getPosType(s.field);
       const justify = s.field.justify;
       const { x: boxX, y: boxY } = ftTopLeft(s.field.x, s.field.y, gdW, gdH, posType, justify);
@@ -535,8 +529,8 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       if (parsed) recallStoredGraphic("^IL", parsed, { x: s.label.lhX, y: s.label.lhY + s.label.ltY });
     },
 
-    // ^GS{rotation},{height},{width}: selects the internal-font
-    // legal-symbol glyph (^FD picks which: A=®, B=©, C=™, D=UL, E=CSA).
+    // ^GS{rotation},{height},{width}: selects the internal-font legal-symbol
+    // glyph, ^FD picks which, see SymbolProps.symbol.
     GS(p) {
       s.field.fieldType = "symbol";
       s.field.symRot = readRotation(p[0]);

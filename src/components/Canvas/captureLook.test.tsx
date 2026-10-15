@@ -9,15 +9,9 @@ import { ObjectRegistry, type LeafType } from "@zplab/core/registry";
 import type { LeafObject } from "@zplab/core/registry";
 import { useLabelStore } from "../../store/labelStore";
 import { CANVAS_WARNING } from "../../hooks/useColorScheme";
+import { stubKonvaCanvas2d } from "../../test/helpers";
 
-beforeAll(() => {
-  // jsdom has no 2d context. Konva needs one for Stage/Layer plumbing and sceneFunc draws.
-  const noop = () => undefined;
-  HTMLCanvasElement.prototype.getContext = (() =>
-    new Proxy({ getImageData: () => ({ data: new Uint8ClampedArray(4) }), measureText: () => ({ width: 10 }) }, {
-      get: (target, prop) => (prop in target ? target[prop as keyof typeof target] : noop),
-    })) as unknown as typeof HTMLCanvasElement.prototype.getContext;
-});
+beforeAll(stubKonvaCanvas2d);
 
 afterEach(cleanup);
 

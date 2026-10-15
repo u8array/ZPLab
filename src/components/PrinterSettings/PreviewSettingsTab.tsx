@@ -56,8 +56,7 @@ export function PreviewSettingsTab() {
   // so the field is write-only there: it shows the draft, never a stored value.
   const keyValue = keyDraft ?? (isDesktopShell ? '' : storeKey);
   const [keySaveFailed, setKeySaveFailed] = useState(false);
-  // A keychain write can raise an OS unlock prompt and take seconds; block a
-  // second save (and its duplicate prompt) until this one settles.
+  // A keychain write can raise an OS unlock prompt and take seconds, so block a second save.
   const [keySaving, setKeySaving] = useState(false);
   const keyDirty = isDesktopShell ? keyDraft !== null : keyValue.trim() !== storeKey;
   const saveKey = () => {
@@ -189,8 +188,7 @@ export function PreviewSettingsTab() {
               <>
                 {/* The notice must stand wherever Labelary renders or is about to: a stored printer choice degrades to it on the web. */}
                 {chosen === "labelary" || provider === "labelary" ? t.output.previewNoticeBody : loc.labelaryIdleHint}{" "}
-                {/* The plans/retention link is about the public service; a
-                    custom endpoint is the operator's own, so omit it there. */}
+                {/* The plans/retention link is about the public service only. */}
                 <a
                   href="https://labelary.com/service.html#pricing"
                   target="_blank"

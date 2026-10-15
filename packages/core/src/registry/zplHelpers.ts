@@ -62,12 +62,11 @@ export function fieldPosZ(obj: LabelObjectBase): string {
   return `${fieldPos(obj)}${z}`;
 }
 
-/** Graphic leaf types whose ^FO/^FT origin comes from {@link graphicAnchor}
- *  (the footprint top-left under ^FO, a bottom corner under ^FT). For box /
- *  ellipse / image the model x/y already is that top-left; a line's x/y is an
- *  endpoint, so its emitted origin is the bbox top-left instead. Single source
- *  shared by the generator's home-shift drop test and the preflight off-label
- *  check, so the two can't disagree on which types anchor this way. */
+/** Graphic leaf types whose ^FO/^FT origin comes from {@link graphicAnchorCoords}.
+ *  For box, ellipse and image the model x/y already is that top-left. A line's
+ *  x/y is an endpoint, so its emitted origin is the bbox top-left instead.
+ *  Single source shared by the generator's home-shift drop test and the
+ *  preflight off-label check. */
 export const GRAPHIC_ANCHOR_TYPES: ReadonlySet<string> = new Set([
   "box",
   "ellipse",
@@ -135,7 +134,7 @@ interface TextLikeObjForFieldPos extends LabelObjectBase {
 }
 
 /** Vertical extent of a block beyond its first line, in dots. Shifts the
- *  FT baseline / FO-R/I anchor. ^TB is a fixed clip height; ^FB stacks lines. */
+ *  FT baseline / FO-R/I anchor. */
 function blockExtentFor(
   p: TextLikeObjForFieldPos["props"],
   mode: TextMode,

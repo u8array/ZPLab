@@ -247,8 +247,6 @@ export function createCloseField(
     const hexControl = recallValue === undefined ? s.field.pendingHexControl : (s.declaredHexControl.get(s.comment.fnNumber ?? -1) ?? null);
     if (hexControl && truncatesAtHexControl(s, rawDecoded)) s.result.hexControl.push(hexControl);
     // FN embeds → markers, then ^FC clock tokens (order matters: `%FN#1#%Y`).
-    // Both decode only when armed for THIS field: firmware honours ^FE/^FC
-    // solely for the next ^FD (spec p.191/p.1614), unarmed data is literal.
     // Taken as a function because ^BQ replays it on a different string.
     const expandTokens = (raw: string): string => {
       const withFn = s.field.feArmed ? applyFnEmbeds(raw) : raw;
@@ -287,10 +285,9 @@ export function createCloseField(
     if (s.field.fieldType !== "text") commitPendingReverseBg();
     switch (s.field.fieldType) {
       case "text": {
-        // FT pins the last baseline, so the EM-top sits one block-extent above;
-        // FO R/I stack the same way. ^TB is a fixed clip height, ^FB stacks
-        // lines. Must match the generator's blockExtentFor for byte-exact
-        // round-trips and matching WYSIWYG.
+        // FT pins the last baseline, so the EM-top sits one block-extent above,
+        // FO R/I stack the same way. Must match the generator's blockExtentFor
+        // for byte-exact round-trips and matching WYSIWYG.
         // Same resolution as the generator so anchors round-trip.
         const anchorFontId = resolveDeviceFontId(
           s.field.pendingFontId,
@@ -751,9 +748,8 @@ export function createCloseField(
         const variable = upsertVariable(s.comment.fnNumber, varDefault, s.comment.fnComment);
         // Serial wins over the binding, but only when actually applied
         // (serialisable type); else a 2D field's ^FN binding would be silently
-        // dropped. The upsert still runs: the slot is shared, so a later field
-        // or embed may reference it and must see this default. If none does,
-        // the end-of-parse sweep drops the orphan.
+        // dropped. The upsert still runs so a later reference sees this
+        // default.
         const serialApplied = s.field.snPending && lastSerialisable;
         if (serialApplied) {
           s.serialStrippedFns.add(s.comment.fnNumber);

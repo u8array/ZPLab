@@ -66,9 +66,8 @@ const specOf = (profile: DbProfile): DbSpec =>
         sslMode: profile.sslMode ?? 'prefer',
       };
 
-/** Native pick that also grants the path Rust-side (persisted): the sqlite
- *  db_* commands refuse paths that did not come from this dialog. Returns the
- *  canonical path (store it verbatim), null on cancel; `suggest` preseeds. */
+/** Native pick the db_* commands require a path to come from, see scope::PathGrants.
+ *  Returns the canonical path to store verbatim, null on cancel. `suggest` preseeds. */
 export async function pickSqliteFile(suggest?: string): Promise<string | null> {
   const { invoke } = await import('@tauri-apps/api/core');
   return invoke<string | null>('pick_sqlite_file', { suggest: suggest ?? null });

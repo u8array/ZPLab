@@ -172,9 +172,6 @@ function migrateReverseTextBackground(json: unknown): void {
       const p = pg && typeof pg === "object" ? (pg as Record<string, unknown>) : {};
       if (!Array.isArray(p.objects)) return p;
       const objects = p.objects as LabelObject[];
-      // Inserting a model object the overlay doesn't link would force a full
-      // regeneration on export and lose the overlay's preserved bytes; drop the
-      // overlay on a touched page so it regenerates cleanly from the new model.
       const next: Record<string, unknown> = {
         ...p,
         objects: insertReverseBackingBoxes(objects, label),

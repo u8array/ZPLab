@@ -515,9 +515,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const labelWidthPx = effectiveWidthMm * scale;
   const physicalWidthPx = label.widthMm * scale;
   const labelHeightPx = label.heightMm * scale;
-  // Printer bitmap is physical head-raster dots: the preview stream carries
-  // ^JMB, but ^PW/^LL stay physical (ZD230-verified), so this projection uses
-  // physical dpmm, not effective.
+  // ^PW/^LL are physical head dots, see deriveUnitScale, so this projection
+  // uses physical dpmm, not effective.
   const toPreviewPx = (dots: number) => dotsToPx(dots, scale, label.dpmm);
   const printerLayout =
     previewMode.status === 'active' && previewMode.printerDims

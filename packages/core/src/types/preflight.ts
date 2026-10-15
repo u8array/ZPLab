@@ -72,14 +72,13 @@ export const PREFLIGHT_SEVERITY: Record<PreflightKind, PreflightSeverity> = {
   // A blank field is legal ZPL and a normal drafting state; it prints a gap,
   // so warn rather than block. Mirrors the canvas placeholder.
   emptyContent: 'warning',
-  // A legacy/niche symbology (Code 49, TLC39) many printers, especially
-  // entry-level, do not implement; the ZPL is valid but may print nothing.
+  // A legacy/niche symbology whose ZPL is valid but may print nothing, see
+  // limitedSupportPreflight.
   printerSupportLimited: 'warning',
   // A rotated QR prints as a static graphic: variable/serial values are baked
   // at export, the printer no longer substitutes them per label.
   qrRotatedStatic: 'warning',
-  // The graphic encoder only produces Model 2 symbols, so a rotated Model 1
-  // QR prints as Model 2 (legacy scanners may reject it).
+  // A rotated Model 1 QR prints as Model 2, which legacy scanners may reject.
   qrRotatedModel2: 'warning',
   // Modes 2/3 need a structured carrier message (GS-separated postcode,
   // country, service); without it the symbol cannot encode.

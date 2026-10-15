@@ -100,9 +100,7 @@ export const createDataSlice: StateCreator<LabelState, [], [], DataSlice> = (set
   datasetFetchToken: 0,
   pendingDatasetReplace: null,
 
-  // Replacing the dataset invalidates any active preview snapshot; tear the
-  // preview down and apply, rather than no-op under the lock (which would let
-  // callers close dialogs / clear state as if the load had succeeded).
+  // Replacing the dataset invalidates any active preview snapshot.
   loadDataset: (result) => {
     get().exitPreviewMode();
     set((s) => ({
@@ -172,8 +170,7 @@ export const createDataSlice: StateCreator<LabelState, [], [], DataSlice> = (set
           ? 0
           : Math.max(0, Math.min(activeRowIndex, rows.length - 1));
       // Renaming an existing variable here must ripple to its `«name»` markers,
-      // else bound fields orphan and print the marker literally. Diff by id, then
-      // rewrite in ONE pass against the original names so a name swap is safe.
+      // else bound fields orphan and print the marker literally. Diff by id.
       const oldNameById = new Map(state.variables.map((v) => [v.id, v.name]));
       const renames = new Map<string, string>();
       for (const v of variables) {

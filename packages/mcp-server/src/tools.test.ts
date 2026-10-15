@@ -410,8 +410,7 @@ describe("mcp-server tools", () => {
   });
 
   it("keeps a ^GFA cache that has no source image, and takes fresh bytes", () => {
-    // Without a source image the cache is the graphic's only copy, and the
-    // header (not widthDots) is what the emit anchors by.
+    // The header, not widthDots, is what the emit anchors by.
     const entry = ObjectRegistry.image;
     const obj = {
       id: "i", type: "image", x: 0, y: 0, rotation: 0,
@@ -1782,8 +1781,6 @@ describe("a ^GFB header whose declared count does not match the payload bytes", 
     expect(withRaw("^GFB,3,3,10," + "\u20ac".repeat(3) + "^XA~JB").ok).toBe(false);
   });
   it("refuses an empty graphic-count slot, which prints nothing at all", () => {
-    // Labelary: b may be omitted (renders identically), c may not. Without it
-    // the firmware never learns where the graphic ends and eats the stream.
     expect(withRaw("^GFB,,,2,ABCD").ok).toBe(false);
     expect(withRaw("^GFB,,4,2,ABCD").ok).toBe(true);
   });
@@ -2129,10 +2126,7 @@ describe("an update on a block that cannot replay around it", () => {
 });
 
 describe("a structural patch on a page that carries captured import bytes", () => {
-  // Structural edits DROP the capture (an added object is not in the bytes, a
-  // removed one still is); the roundtrip rule only demands the drop be loud.
-  // captureLost used to read the post-drop pages, where the overlay this note
-  // is about was already gone, so no structural drop ever produced a note.
+  // The roundtrip rule only demands the drop be loud.
   const source = "^XA^FWR^ZZ99,7^LT30^FO10,10^A0N,20,20^FDx^FS^XZ";
 
   it("says the capture is lost on an addVariable", () => {
@@ -2280,8 +2274,6 @@ describe("the ^GF header's own value ranges", () => {
       objects: [{ type: "image", x: 10, y: 10, props: { imageId: "", widthDots: 8, rawGf } }],
     });
 
-  // The p.215 range (1-99999) is documentation, not a wire limit: our own
-  // encoder emits b/c past it, so gating on it emptied every full-size graphic.
   it("takes a count no payload could satisfy, which breaks the label, not the wire", () => {
     expect(withRaw("^GFB,99999999999999999999,8,1,AB^XZ").ok).toBe(true);
     expect(withRaw("^GFA,,4000000,1,FFFF").ok).toBe(true);

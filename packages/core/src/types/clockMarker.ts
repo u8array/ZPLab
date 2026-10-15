@@ -7,7 +7,6 @@
  *  Capture groups: 1 = channel suffix (`""`|`"2"`|`"3"`), 2 = token letter. */
 export const CLOCK_BODY_SRC = "clock([23]?):([A-Za-z])";
 
-/** Whole-string match: the entire marker body IS a clock token. */
 export const CLOCK_BODY_RE = new RegExp(`^${CLOCK_BODY_SRC}$`);
 
 /** A `«clock…»` marker embedded in content. Caller adds the `g` flag via

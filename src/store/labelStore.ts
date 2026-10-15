@@ -187,9 +187,7 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     }
   }
 
-  // v7→v8: drop path-less canvas-only font bindings left by the removed
-  // built-in preview feature. They still resolve on canvas via alias but
-  // only persist in saved JSON; scrub them so legacy sessions are clean.
+  // v7→v8: scrub the path-less font bindings.
   if (version < 8) {
     const label = s.label;
     if (label && typeof label === 'object') {
@@ -261,8 +259,6 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
         const p = pg && typeof pg === 'object' ? (pg as Record<string, unknown>) : {};
         if (!Array.isArray(p.objects)) return p;
         const objects = p.objects as LabelObject[];
-        // Drop the overlay on a touched page: a new model object the overlay
-        // doesn't link would force full regeneration and lose its bytes.
         const next: Record<string, unknown> = {
           ...p,
           objects: insertReverseBackingBoxes(objects, label),
@@ -412,8 +408,6 @@ function migrateMaintenanceTypeCodes(pp: Record<string, unknown>): Record<string
 }
 
 function migrateSerialTypeInPages(pages: unknown): unknown {
-  // Mutates in place via the shared leaf walker (recurses groups); pages is the
-  // persisted payload, not the live store, so mutation is safe.
   visitLeavesInPages(pages, foldSerialLeaf);
   return pages;
 }
@@ -422,15 +416,11 @@ function migrateSingleBindInPages(
   pages: unknown,
   nameById: ReadonlyMap<string, string>,
 ): unknown {
-  // Mutates in place via the shared leaf walker; pages is the persisted payload,
-  // not the live store, so mutation is safe.
   visitLeavesInPages(pages, (leaf) => bindSingleMarkerLeaf(leaf, nameById));
   return pages;
 }
 
 function migrateGs1DatabarInPages(pages: unknown): unknown {
-  // Mutates in place via the shared leaf walker; pages is the persisted
-  // payload not the live store, so mutation is safe.
   visitLeavesInPages(pages, (leaf) => {
     if (
       leaf.type !== 'gs1databar' ||

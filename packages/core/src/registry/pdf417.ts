@@ -17,7 +17,6 @@ export interface Pdf417Props {
   rotation: ZplRotation;
 }
 
-// One switch for the capability flag and the emitter's chip resolution.
 const CONTROL_CHARS = true;
 
 export const PDF417_PROP_SPECS: PropSpecs<Pdf417Props> = {

@@ -590,7 +590,7 @@ function LabelConfigPanel({
           </div>
         </div>
 
-        {/* ^PW/^LL are physical head dots (never ^JM-scaled); bridge via raw dpmm.
+        {/* ^PW/^LL are physical head dots, see deriveUnitScale, so bridge via raw dpmm.
             No allowUnset: a transient clear keeps the last valid value, not 0. */}
         <div className={`grid grid-cols-2 ${fieldGridCols}`}>
           <UnitNumberInput

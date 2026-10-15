@@ -3,17 +3,9 @@ import { describe, it, expect, beforeAll } from "vitest";
 import Konva from "konva";
 import { getIdsIntersectingRect } from "./lassoGeometry";
 import { shapeHitProps } from "./konvaObjectProps";
+import { stubKonvaCanvas2d } from "../../test/helpers";
 
-beforeAll(() => {
-  // jsdom has no 2d context; Konva probes one once per Shape construction
-  // (canvas-farbling detection). Scene-graph math itself never draws.
-  const noop = () => undefined;
-  HTMLCanvasElement.prototype.getContext = (() => ({
-    clearRect: noop,
-    fillRect: noop,
-    getImageData: () => ({ data: new Uint8ClampedArray(4) }),
-  })) as unknown as typeof HTMLCanvasElement.prototype.getContext;
-});
+beforeAll(stubKonvaCanvas2d);
 
 // Production-path slice on real Konva nodes: shapeHitProps stamps the marker
 // exactly as the box renderer spreads it, findOne resolves it off the live

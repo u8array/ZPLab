@@ -326,10 +326,8 @@ export function makeObj(
   } as unknown as LabelObject;
 }
 
-/** Convert an imported graphic anchor to the model's top-left. `^FT` anchors a
- *  bottom corner (spec p.205): bottom-left, or bottom-right (z=1) when justify
- *  is "R". Lift by the height and, for "R", shift left by the width. `^FO` is
- *  already top-left. Mirrors the generator's {@link graphicAnchor}. */
+/** Convert an imported graphic anchor to the model's top-left, the inverse of
+ *  the generator's {@link graphicAnchorCoords}. */
 export function ftTopLeft(
   x: number,
   y: number,

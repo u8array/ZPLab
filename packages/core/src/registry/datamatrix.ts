@@ -50,7 +50,6 @@ export interface DataMatrixProps {
   rows?: number;
 }
 
-// One switch for the capability flag and the emitter's chip resolution.
 const CONTROL_CHARS = true;
 
 export const DATAMATRIX_PROP_SPECS: PropSpecs<DataMatrixProps> = {

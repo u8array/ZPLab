@@ -27,8 +27,6 @@ export interface Barcode1DProps {
   printInterpretationAbove?: boolean;
   checkDigit: boolean;
   rotation: ZplRotation;
-  /** Per-field firmware counter (^SN/^SF). When set, the ^FD payload is the
-   *  seed and serializes per label. Mutually exclusive with variable binding. */
   serial?: SerialMode;
   /** Template snapshot from before serial mode replaced `content` with the
    *  seed; consumed by the serial-off restore. Never emitted. */
@@ -77,8 +75,8 @@ export interface Barcode1DCoreConfig {
   /** See {@link ObjectTypeCore.controlChars}. */
   controlChars?: boolean;
   /** Encode a resolved literal payload that carries control bytes into the
-   *  symbology's own escape form, because the firmware drops ^FH-escaped C0
-   *  bytes from the symbol. Null falls back to the ^FH emit. */
+   *  symbology's own escape form, see code128Subset. Null falls back to the
+   *  ^FH emit. */
   ctrlFdEncode?: (payload: string) => string | null;
   /** Escape the characters the symbology's own ^FD grammar would swallow
    *  (Code 128 reads `>` as an invocation code). Applied to every non-GS1
@@ -264,8 +262,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
             config.controlChars === true && !p.gs1);
       return [
         fieldPos1d(obj, ctx),
-        // In-span (after the field opener) so the overlay's bare-^BY check sees
-        // it and an own export round-trips regenSafe; mirrors the QR emitter.
+        // In-span after the field opener, see qrcode.
         byCmd,
         config.zplCommand(p),
         fieldData,

@@ -260,8 +260,7 @@ describe("printed vs rendered module count", () => {
   });
 
   it("drops the control bytes a template payload cannot print", () => {
-    // The ^FE path keeps the ^FH escape, whose C0 bytes the firmware strips
-    // from the symbol; the preview must show the same symbol.
+    // The preview must show the symbol the printer prints.
     const obj = code128("A«sku»B«ctrl:TAB»");
     const variables = [{ id: "v1", name: "sku", fnNumber: 1, defaultValue: "X" }];
     const resolved = resolveForMeasure(obj as LabelObject, variables);

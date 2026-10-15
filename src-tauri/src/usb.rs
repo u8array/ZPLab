@@ -51,7 +51,7 @@ fn zebra_first(a: &UsbPrinter, b: &UsbPrinter) -> std::cmp::Ordering {
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum UsbSendResult {
   Sent,
-  /// Linux only: the udev uaccess rule has not applied yet.
+  /// See classify_lp_io_err.
   #[cfg(target_os = "linux")]
   PermissionDenied,
   NotFound,
@@ -66,7 +66,7 @@ pub enum UsbQueryResult {
   Data {
     body: String,
   },
-  /// Linux only: the udev uaccess rule has not applied yet.
+  /// See classify_lp_io_err.
   #[cfg(target_os = "linux")]
   PermissionDenied,
   NotFound,
@@ -74,7 +74,6 @@ pub enum UsbQueryResult {
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 impl UsbQueryResult {
-  /// ~DY payloads are ASCII (ZB64); lossy keeps any stray control bytes benign.
   fn from_reply(body: Vec<u8>) -> Self {
     Self::Data {
       body: String::from_utf8_lossy(&body).into_owned(),
@@ -349,7 +348,7 @@ fn resolve_node(usbmisc_root: &Path, dev_root: &Path, id: &str) -> Result<PathBu
 }
 
 // EACCES: the udev uaccess rule has not applied yet. ENOENT: the node vanished
-// (replug). Anything else (e.g. EBUSY while CUPS holds it) is a genuine error.
+// on replug. Anything else, such as EBUSY while CUPS holds it, is a genuine error.
 #[cfg(target_os = "linux")]
 fn classify_lp_io_err<T>(e: std::io::Error, on_perm: T, on_missing: T) -> Result<T, String> {
   match e.kind() {
@@ -797,8 +796,6 @@ mod hardware_tests {
   }
 }
 
-// Talks to real hardware; excluded from the default run. With the ZD230
-// attached: cd src-tauri && cargo test -- --ignored
 #[cfg(all(test, target_os = "linux"))]
 mod linux_hardware_tests {
   #[test]
@@ -811,7 +808,6 @@ mod linux_hardware_tests {
     rt.block_on(async {
       let printers = super::list_usb_printers().await.unwrap();
       let printer = printers.first().expect("a USB printer should be attached");
-      // ~HI answers with the model string, e.g. "ZD230-203dpi,V84.20.18Z,...".
       let res = super::query_zpl_usb(printer.id.clone(), "~HI".to_string())
         .await
         .unwrap();
@@ -822,8 +818,6 @@ mod linux_hardware_tests {
         }
         other => panic!("expected data, got {other:?}"),
       }
-      // The preview flow the frontend runs: store the rendered format without
-      // printing (^IS..,N), then upload its bitmap (^HY answers with ~DY).
       let preview = "^XA^FO30,30^A0N,40,40^FDUSB Preview^FS^ISR:PRE.GRF,N^XZ\n^XA^HYR:PRE.GRF^XZ";
       let res = super::query_zpl_usb(printer.id.clone(), preview.to_string())
         .await

@@ -80,7 +80,8 @@ export interface ObjectTypeCore<P extends object = object> {
   gs1EnterProps?: Partial<P>;
   /** Symbology can encode raw control bytes (TAB/CR/...): gates the content
    *  editor's control-key chips and the import's byte-to-chip tokenising.
-   *  False/absent for fixed-charset symbologies (EAN/UPC, Code 39) and text. */
+   *  False/absent for fixed-charset symbologies (EAN/UPC, Code 39) and text.
+   *  Each registry feeds the same constant to its emitter, so flag and chips never desync. */
   controlChars?: boolean;
   /** Control bytes reach this symbology's symbol only through its own escape
    *  form (Code 128 invocations), never through ^FH hex, which the firmware

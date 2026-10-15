@@ -255,7 +255,7 @@ describe('applyBindingToObject', () => {
 
   it('drops the chip byte when a clock marker forces the lossy ^FH path', () => {
     // The emitter gates ctrlFdEncode BEFORE ^FC token substitution, so a clock
-    // marker keeps ^FH and the firmware drops the C0 byte from the symbol.
+    // marker keeps the ^FH path.
     const o = { id: 'c1', type: 'code128', x: 0, y: 0, rotation: 0,
       props: { content: 'A«ctrl:TAB»B«clock:Y»' } } as unknown as LabelObject;
     const out = applyBindingToObject(o, [], null, 'preview', undefined, 'byteOutsideTemplate');

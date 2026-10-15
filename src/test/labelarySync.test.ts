@@ -163,7 +163,6 @@ describe("Labelary Sync - Canvas Dimension Logic", () => {
       if (obj.positionType === "FT") {
         // Mirror the real render/bounds anchor (objectBounds.barcodeTopLeft):
         // rotation-aware bar-base offset + HRI text-zone shift (px*8 -> dots).
-        // Mirrors BarcodeObject: a rotated QR prints as a shift-free ^GFA.
         const gQr = qrPrintsAsGraphic(obj);
         const off = barcodeFtAnchorOffset(
           gQr ? "N" : rotation,

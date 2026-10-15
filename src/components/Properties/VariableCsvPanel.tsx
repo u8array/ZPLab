@@ -11,14 +11,13 @@ import {
 
 /** Read-only CSV context: file, mapped count, row stepper, and the selected
  *  variable's mapping + live active-row value. Mapping and import stay in the
- *  Variables tab (one source of truth); the link hands off there. */
+ *  Variables tab, the single source. The link hands off there and closes the
+ *  modal, whose content is already live. */
 export function VariableCsvPanel({
   selectedVarName,
   onLeave,
 }: {
   selectedVarName: string | null;
-  /** Close the modal (content is already live); used by the deep-link out to the
-   *  Variables tab. */
   onLeave: () => void;
 }) {
   const t = useT();

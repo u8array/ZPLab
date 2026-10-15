@@ -113,8 +113,7 @@ describe("the header count, not the stream", () => {
   });
 
   it("refuses a header without the count, which prints nothing", () => {
-    // Labelary: omitting b renders identically, omitting c produces no label
-    // at all, because the firmware never learns where the graphic ends.
+    // Labelary: omitting b renders identically, omitting c produces no label.
     expect(rasterFromGfa("^GFA,,,2,C3D4FFFF")).toBeNull();
     expect(rasterFromGfa("^GFA,,4,2,C3D4FFFF")?.heightDots).toBe(2);
   });

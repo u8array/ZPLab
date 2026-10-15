@@ -83,9 +83,9 @@ function foldRecallPages(pages: readonly ParsedPage[]): RecallFold | null {
 }
 
 export function importZplText(zpl: string, dpmm: number): ZplImportResult {
-  // Single pass: stream-persistent state (^MU, ^CC/^CT/^CD, ^CI, ^CW/uploads,
-  // ^CF/^BY, ^LH/^LT/^LR) carries across ^XA blocks, and the parser owns the
-  // page boundaries (prefix-aware, unlike a literal ^XA split).
+  // Single pass: stream-persistent state carries across ^XA blocks, see
+  // resetFormatScopedState, and the parser owns the page boundaries,
+  // prefix-aware unlike a literal ^XA split.
   const r = parseZPL(zpl, dpmm, { captureOverlay: true });
   // storedGraphicShips below reads the cache.
   const imageOwner = newId();

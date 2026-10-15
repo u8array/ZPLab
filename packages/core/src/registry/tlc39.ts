@@ -19,9 +19,7 @@ export interface Tlc39Props {
   height: number;
   /** MicroPDF417 narrow bar width in dots (^BT w2, 1-10, default 2). */
   microPdfModuleWidth: number;
-  /** MicroPDF417 row height in dots (^BT h2, 1-255, default 4). The row
-   *  COUNT has no ZPL param: the firmware derives it from the serial
-   *  (always 4 columns, smallest version from 6 rows up, ZD230-measured). */
+  /** MicroPDF417 row height in dots (^BT h2, 1-255, default 4). The row count has no param, see Tlc39MicroPdf. */
   microPdfRowHeight: number;
   rotation: ZplRotation;
 }

@@ -100,8 +100,8 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
         : "A";
     },
 
-    // MSI ^BMN,{e},{h},{f},{g},{e2}; e: A=no check, B/C/D=checked (default
-    // B; the firmware also treats invalid values as B, ZD230-measured).
+    // MSI ^BMN,{e},{h},{f},{g},{e2}. The firmware reads an invalid e as B,
+    // ZD230-measured, see msiCoreConfig for the e values.
     BM(p) {
       s.field.fieldType = "msi";
       s.field.bcRotation = readRotation(p[0]);
@@ -218,8 +218,7 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
       s.field.cbColumns = clampCodablockColumns(int(p[3], 0) || undefined);
     },
 
-    // ^BTo,w1,r1,h1,w2,h2 (spec p.140). The MicroPDF row count has no
-    // param: the firmware derives it from the serial (always 4 columns).
+    // ^BTo,w1,r1,h1,w2,h2 (spec p.140). The row count has no param, see Tlc39MicroPdf.
     BT(p) {
       s.field.fieldType = "tlc39";
       s.field.bcRotation = readRotation(p[0]);

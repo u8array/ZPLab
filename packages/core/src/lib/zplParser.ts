@@ -557,8 +557,7 @@ export function parseZPL(
 
   const dispatch = ({ cmd, rest, start, end }: ZplToken): void => {
     // Read by the finding push sites (notePartial, pushBrowserLimit). End is
-    // trimmed: the tokenizer's end runs to the next command's prefix, and a
-    // span must not swallow the line break plus following indent.
+    // trimmed because the tokenizer's end runs to the next command's prefix.
     s.result.prevTokenEnd = s.result.tokenSpan?.end ?? 0;
     s.result.tokenSpan = { start, end: trimmedSpanEnd(zpl, start, end) };
     s.result.tokenEnd = end;

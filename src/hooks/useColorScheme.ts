@@ -26,10 +26,8 @@ export interface CanvasColors {
    *  on the canvas; e.g. the ^FB wrap-guide line so the user can tell
    *  it apart from selection/transformer chrome. */
   accent: string;
-  /** Panel surface / muted text / hairline / destructive — mirror the DOM
-   *  theme tokens in index.css so canvas chrome (e.g. the action bar pill)
-   *  matches. index.css is the source of truth; useColorScheme.test.ts pins
-   *  these (+ accent) to it so the two can't drift. Konva can't read CSS
+  /** Panel surface / muted text / hairline / destructive, mirroring the DOM theme
+   *  tokens in index.css. index.css is the source of truth, Konva can't read CSS
    *  variables and jsdom can't resolve them in tests, hence the JS copy. */
   surface: string;
   surface2: string;

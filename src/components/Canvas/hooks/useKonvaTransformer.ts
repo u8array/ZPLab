@@ -233,8 +233,6 @@ export function useKonvaTransformer({
   // edges are moving relative to the start state (oldBox in boundBoxFunc is the
   // previous frame, which would always look "everything moved").
   const transformStartBboxRef = useRef<SnapRect | null>(null);
-  // Snapshot of the other objects' bboxes at transform start. Other objects
-  // can't move during a resize, so we avoid re-querying Konva on every tick.
   const othersSnapshotRef = useRef<SnapRect[]>([]);
   // Anchor name at drag start; commit skips grid-snap on inactive axes
   // so the opposite corner stays put.

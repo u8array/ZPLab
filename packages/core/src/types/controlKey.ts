@@ -21,10 +21,9 @@ export const CONTROL_KEY_NAMES = Object.keys(CONTROL_KEYS) as ControlKeyName[];
 
 const CTRL_BODY_SRC = `ctrl:(${CONTROL_KEY_NAMES.join("|")})`;
 
-/** Whole-string match: the entire marker body IS a control key. */
 export const CTRL_BODY_RE = new RegExp(`^${CTRL_BODY_SRC}$`);
 
-/** Fresh global regex per call (stateful `lastIndex`, so never share one). */
+/** See clockMarkerReGlobal. */
 export const ctrlMarkerReGlobal = (): RegExp => new RegExp(`«${CTRL_BODY_SRC}»`, "g");
 
 export function controlKeyBody(key: ControlKeyName): string {

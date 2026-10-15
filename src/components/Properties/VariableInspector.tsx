@@ -23,8 +23,6 @@ export function VariableInspector({
 }: {
   selected: SelectedMarker | null;
   onRemoveSelected: () => void;
-  /** Close the modal (content is already live); used by deep-links out to the
-   *  Variables tab. */
   onLeave: () => void;
   /** Renaming a variable here ripples through the store; the modal must also
    *  rewrite its uncommitted content draft so Apply doesn't revert the marker. */
@@ -129,7 +127,7 @@ function VariableState({
     }
   };
 
-  // Delete / CSV mapping live in the Variables tab (one source of truth).
+  // Delete and CSV mapping live in the Variables tab.
   const goManage = () => {
     onLeave();
     setSidebarTab("variables");

@@ -271,10 +271,9 @@ export function precedingBackingExists(
   return false;
 }
 
-/** True when a page has at least one reverse text that the migration would give
- *  a new backing (i.e. none covering it already). The migration uses this to
- *  invalidate that page's overlay, since inserting a model object the overlay
- *  doesn't know about would otherwise silently force a full regeneration. */
+/** True when a page has at least one reverse text with no backing covering it
+ *  yet, so the migration would add one. The caller drops that page's overlay,
+ *  see designOps. */
 export function pageNeedsReverseBacking(
   objects: readonly LabelObject[],
   label?: FontLabel,

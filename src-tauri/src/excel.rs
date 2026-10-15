@@ -76,8 +76,7 @@ async fn timed_read<T>(
   parsed?
 }
 
-/// Refuse a path the user never granted via the native pick command
-/// (scope::PathGrants).
+/// Refuse a path scope::PathGrants never granted.
 fn check_path_scope(app: &tauri::AppHandle, path: &str) -> Result<(), ExcelError> {
   use tauri::Manager;
   if !app.state::<crate::scope::PathGrants>().is_granted(path) {

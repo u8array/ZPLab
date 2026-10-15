@@ -12,8 +12,8 @@ import type { SqliteProfile } from '../lib/db';
 export interface PendingSqliteImport {
   profile: SqliteProfile;
   tables: string[];
-  /** datasetFetchToken at pick time; a mismatch on Load means the data context
-   *  changed underneath, so the table is not committed. */
+  /** datasetFetchToken at pick time, see isCurrentDataContext. A stale token
+   *  leaves the table uncommitted. */
   token: number;
 }
 

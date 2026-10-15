@@ -3,6 +3,17 @@ import { zlibSync } from 'fflate';
 import type { SerialMode } from '@zplab/core/registry/serialField';
 import { parseZPL, type ImportFindingKind } from '@zplab/core/lib/zplParser';
 
+/** jsdom has no 2d context. Konva needs one for Stage/Layer plumbing, sceneFunc
+ *  draws and its per-Shape probe, and geometry never reads pixels back. */
+export function stubKonvaCanvas2d(): void {
+  const noop = () => undefined;
+  HTMLCanvasElement.prototype.getContext = (() =>
+    new Proxy(
+      { getImageData: () => ({ data: new Uint8ClampedArray(4) }), measureText: () => ({ width: 10 }) },
+      { get: (target, prop) => (prop in target ? target[prop as keyof typeof target] : noop) },
+    )) as unknown as typeof HTMLCanvasElement.prototype.getContext;
+}
+
 /** Parse a single-label stream: the sole page merged with the document-wide
  *  fields. Asserts exactly one page; multi-page tests read `pages` directly. */
 export function parseSingle(zpl: string, dpmm = 8, opts?: { captureOverlay?: boolean }) {

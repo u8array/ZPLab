@@ -136,8 +136,7 @@ export function planTemplateHeader(
       }
       // Mode-D-exclusive slot: > needs its >0 invocation (parser reverses).
       // Plain-^BC-exclusive slot likewise: >/^/~ need their invocation
-      // literals; the ^FH hex fdField would otherwise use is dropped from
-      // the symbol.
+      // literals, see code128Subset.
       const def = modeDFns.has(fn)
         ? escapeGs1FdValue(v.defaultValue)
         : plain128Fns.has(fn)
@@ -926,11 +925,6 @@ export function generateBatchZpl(
   return [...(lead === '' ? [] : [lead]), ...recallBlocks].join('\n');
 }
 
-// ^FT graphics anchor at a bottom corner (spec p.205), so the drop test uses
-// that anchor for GRAPHIC_ANCHOR_TYPES. Barcodes emit ^FT at the model coord
-// (the plain check holds); rotated text ^FT uses a baseline anchor, where the
-// top-left check is only approximate (a pre-existing edge, untouched here).
-
 /** Home-relative to a parsed ^LH/^LT frame, not the label's own home/top (see OverlayFrame). */
 export function shiftIntoFrame(objects: LabelObject[], frame: OverlayFrame | undefined, label: PageLabel): LabelObject[] {
   return frame ? shiftObjectsByHome(objects, frame.homeX, frame.homeY, frame.top, label) : objects;
@@ -978,6 +972,7 @@ function shiftObjectsByHome(
       const ax = printerAnchoredX(obj, label);
       if (ax !== null) return ax - homeX < 0 || y < 0 ? [] : [{ ...obj, x, y }];
     }
+    // ^FT text emits at a baseline, so for it this top-left check is approximate.
     return x < 0 || y < 0 ? [] : [{ ...obj, x, y }];
   };
   return objects.flatMap(shiftOrDrop);
@@ -1042,9 +1037,8 @@ function generateZplBlock(
   /** Shared across a document's blocks so a font ships once. A replayed block's own ~DY stays invisible to it, which costs size only. */
   shippedFonts = new Set<string>(),
 ): PageBlock {
-  // ^PW/^LL are consumed in physical head dots (ZD230-verified), even under
-  // ^JMB: the body's object dots emit in the effective (halved) scale, but the
-  // print width/length stay physical.
+  // ^PW/^LL are physical head dots, see deriveUnitScale, while the body's object
+  // dots emit in the effective ^JM scale.
   const widthDots = mmToDots(label.widthMm, label.dpmm);
   const heightDots = mmToDots(label.heightMm, label.dpmm);
 

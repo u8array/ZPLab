@@ -128,7 +128,6 @@ export function ImageObject({
   }, [obj.id, footprintWDots, footprintHDots]);
   useEffect(() => () => clearMeasuredBounds(obj.id), [obj.id]);
 
-  // Whole-object drag (snap + commit) is centralized in the drag controller.
   const handleDragMove = dragHandlers?.onDragMove;
   const handleDragEnd = dragHandlers?.onDragEnd;
 

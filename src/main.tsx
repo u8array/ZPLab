@@ -36,10 +36,8 @@ async function bootstrap() {
     hydrateLabelaryApiKey,
     migrateLabelaryKey,
   } = useLabelStore.getState();
-  // Migrate a legacy unbound key into the host-bound rust-only credential (so
-  // an existing key doesn't stay IPC-readable), then load it. Startup, not
-  // settings-open, so a user who never visits Preview settings is still
-  // covered. Fire-and-forget; a keychain failure must not delay paint or throw.
+  // Migrate then load at startup, not on settings-open, so a user who never visits
+  // Preview settings is still covered. A keychain failure must not delay paint or throw.
   void migrateLabelaryKey().catch(() => undefined).then(hydrateLabelaryApiKey);
   // Stamp the build's sidecar capability so the settings rail and MCP tab can
   // read it synchronously; fire-and-forget like the key hydration above.

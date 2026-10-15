@@ -6,9 +6,7 @@ import type { PrinterBitmap } from "./zebraGraphic";
 
 export type MonoRaster = Pick<PdfPage, "width" | "height" | "mono">;
 
-/** The label's size in physical head dots, the raster every renderer is brought to. ^JMB halves the
- *  format's density, but ^PW and ^LL stay physical (ZD230-verified), so the head and Labelary keep rendering
- *  at the printer's own dpmm. */
+/** The label's size in physical head dots, the raster every renderer is brought to. */
 export function labelDots(label: LabelConfig): { width: number; height: number } {
   return { width: mmToDots(label.widthMm, label.dpmm), height: mmToDots(label.heightMm, label.dpmm) };
 }

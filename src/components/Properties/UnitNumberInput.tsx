@@ -19,7 +19,7 @@ interface UnitNumberInputProps {
   allowUnset?: boolean;
   disabled?: boolean;
   zplCmd?: string;
-  /** Replaces the cell layout (e.g. fieldGridCell); omit for the default column. */
+  /** Replaces the default layout, not merged. */
   className?: string;
   /** Density scope for the dots: 'page' object props (page ^JM-scaled), 'design'
    *  the label's own scale (a page ^JM must not reinterpret it), 'physical' raw

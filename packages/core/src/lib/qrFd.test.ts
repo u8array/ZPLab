@@ -35,9 +35,6 @@ describe("qrFdToModel", () => {
     });
   }
 
-  // ZD230-measured: a count that does not land on a comma loses only the
-  // overhanging bytes; the firmware resyncs at the next comma and reads on
-  // (`QM,B0002abc,N12` prints `ab12`).
   it("resyncs at the next comma when a byte count overruns its segment", () => {
     expect(qrFdToModel("QM,B0002abc,N12").content).toBe("ab12");
   });

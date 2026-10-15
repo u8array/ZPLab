@@ -137,7 +137,6 @@ describe("Visual Regression - bwip-js vs Labelary", () => {
       // then apply rotatedGroupTransform-equivalent rotation around that.
       // FT barcodes anchor at the rotation-aware bar base (mirrors the render);
       // FO uses drawY above. px == dots here (getDisplaySize scale 8, dpmm 8).
-      // Mirrors BarcodeObject: a rotated QR prints as a shift-free ^GFA.
       const gQr = qrPrintsAsGraphic(obj);
       const ftOff =
         obj.positionType === "FT" && isBarcode(obj)

@@ -239,8 +239,6 @@ describe("a variable referenced only by a hidden object", () => {
 
 describe("a page past the geometry cap", () => {
   it("says the probes were skipped instead of showing a clean report", () => {
-    // Off-label checks judge registry-default boxes there; a clean warnings
-    // array on such a page is partiality, not health.
     const objects = Array.from({ length: 2001 }, (_, i) => ({
       id: `t${i}`, type: "text", x: 0, y: 0, rotation: 0, props: { content: "x" },
     }));

@@ -13,7 +13,6 @@ export interface MicroPdf417Props {
   rotation: ZplRotation;
 }
 
-// One switch for the capability flag and the emitter's chip resolution.
 const CONTROL_CHARS = true;
 
 interface Micropdf417Mode {

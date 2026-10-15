@@ -80,7 +80,7 @@ export function ZplSubField({
 }: {
   label: string;
   children: (id: string) => ReactNode;
-  /** Replaces the cell layout entirely (not merged), e.g. `fieldGridCell`. */
+  /** Replaces the default layout, not merged. */
   className?: string;
 }) {
   const id = useId();
@@ -286,12 +286,11 @@ export function ZplEnumSubCustomSelect<T extends string>({
   values: readonly T[];
   value: T | undefined;
   onChange: (next: T | undefined) => void;
-  /** Omit for a required field (no "unset" segment). */
   defaultLabel?: string;
   optionLabel: (v: T) => string;
   optionBadge?: (v: T) => string;
   disabled?: boolean;
-  /** Replaces the cell layout entirely (not merged), e.g. `fieldGridCell`. */
+  /** Replaces the default layout, not merged. */
   className?: string;
 }) {
   const groups = [

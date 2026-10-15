@@ -8,19 +8,9 @@ import { naturalRect } from "./nodeRect";
 import { convertSymbologyMapper } from "../../lib/symbologySwitch";
 import { ObjectRegistry, type LeafType } from "@zplab/core/registry";
 import type { LeafObject } from "@zplab/core/registry";
+import { stubKonvaCanvas2d } from "../../test/helpers";
 
-beforeAll(() => {
-  // jsdom has no 2d context; Konva needs one for Stage/Layer plumbing.
-  // Geometry (getClientRect) never reads pixels back.
-  const noop = () => undefined;
-  HTMLCanvasElement.prototype.getContext = (() =>
-    new Proxy({
-      getImageData: () => ({ data: new Uint8ClampedArray(4) }),
-      measureText: () => ({ width: 10 }),
-    }, {
-      get: (target, prop) => (prop in target ? target[prop as keyof typeof target] : noop),
-    })) as unknown as typeof HTMLCanvasElement.prototype.getContext;
-});
+beforeAll(stubKonvaCanvas2d);
 
 afterEach(cleanup);
 

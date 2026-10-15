@@ -52,7 +52,6 @@ export interface QrCodeProps {
   byHeight?: number;
 }
 
-// One switch for the capability flag and the emitter's chip resolution.
 const CONTROL_CHARS = true;
 
 export const QRCODE_PROP_SPECS: PropSpecs<QrCodeProps> = {

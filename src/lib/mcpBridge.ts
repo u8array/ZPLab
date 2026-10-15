@@ -107,8 +107,7 @@ export async function respondToEditDesign(line: string): Promise<void> {
 /** Apply a pushed draft and tell the sidecar whether it took, so open_in_app
  *  reports what happened instead of assuming it arrived. */
 export async function respondToOpenDraft(id: number, designText: string): Promise<void> {
-  // Refusing loudly beats destruction: a dirty buffer is unsaved work that
-  // exists nowhere else; an untouched session just closes.
+  // An untouched session just closes, see applyZplImport.
   if (selectSourceEditDirty(useLabelStore.getState())) {
     await postDraftReceipt({
       id,

@@ -5,8 +5,7 @@ export type { SourceRefusal };
 
 /** Reason→message for the refusals with no position. A located imbalance is
  *  named per kind by buildSourceDiagnostics, which is why 'unbalanced' is
- *  excluded here rather than answered twice. ZPL command names stay out of
- *  the locale strings (translator safety) and interpolate here. */
+ *  excluded here rather than answered twice. */
 export function sourceRefusalText(
   reason: Exclude<SourceRefusal, 'unbalanced'>,
   t: Translations,

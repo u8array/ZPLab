@@ -29,9 +29,8 @@ export type PendingImportKind = "same" | "different";
 export interface PendingImport {
   kind: PendingImportKind;
   parsed: ParsedImport;
-  /** datasetFetchToken at dialog-open; a mismatch on confirm means the data
-   *  context (or the whole document) changed underneath, so the import is
-   *  dropped rather than applied to the new context. */
+  /** datasetFetchToken at dialog-open, see isCurrentDataContext. A stale token
+   *  drops the import rather than applying it to the new context. */
   token: number;
   /** Display name of the dataset being replaced (filename or db link). */
   replacingFilename: string;

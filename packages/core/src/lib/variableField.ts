@@ -11,15 +11,6 @@ import { extractClockTokens } from "./fcTemplate";
 export type BindableLeaf = LabelObjectBase & { props: { content: string } };
 export const asLabelObject = (obj: BindableLeaf): LabelObject => obj as unknown as LabelObject;
 
-/**
- * Single source of truth for the unified token field. `content` is the only
- * state: content that is exactly one known variable marker is Single-Bind
- * (emits the inline `^FN{n}^FD{default}^FS`); any other `«name»`/`«clock:T»`
- * marker shape is Template; no markers is Literal. Preview
- * (`applyBindingToObject`) and export (`fdFieldFor`) consume the same
- * `classifyField` decision, so they can never diverge.
- */
-
 /** True when content is exactly one `«marker»` and nothing else: the shape that
  *  emits inline (single-bind) rather than expanding to `^FE` embeds. */
 export function isLoneMarker(content: string): boolean {

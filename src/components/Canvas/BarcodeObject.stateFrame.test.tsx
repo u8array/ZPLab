@@ -6,6 +6,7 @@ import type Konva from "konva";
 import { StateFrame } from "./BarcodeObject";
 import { stateFrameProps } from "./bwipHelpers";
 import { naturalRect } from "./nodeRect";
+import { stubKonvaCanvas2d } from "../../test/helpers";
 
 describe("stateFrameProps", () => {
   it("frames the bar rect below-zone (EAN/UPC)", () => {
@@ -24,15 +25,7 @@ describe("stateFrameProps", () => {
   });
 });
 
-beforeAll(() => {
-  // jsdom has no 2d context; Konva needs one for Stage/Layer plumbing and
-  // sceneFunc draws. Geometry (getClientRect) never reads pixels back.
-  const noop = () => undefined;
-  HTMLCanvasElement.prototype.getContext = (() =>
-    new Proxy({ getImageData: () => ({ data: new Uint8ClampedArray(4) }) }, {
-      get: (target, prop) => (prop in target ? target[prop as keyof typeof target] : noop),
-    })) as unknown as typeof HTMLCanvasElement.prototype.getContext;
-});
+beforeAll(stubKonvaCanvas2d);
 
 afterEach(cleanup);
 

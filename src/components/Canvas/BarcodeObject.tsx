@@ -212,7 +212,6 @@ export function BarcodeObject({
   // render shift (-barLeftPx, -barTopPx) so objectBounds lands the same origin.
   const footprintBarLeftDots = pxToDots(dim.barLeftPx, scale, dpmm);
   const footprintBarTopDots = pxToDots(dim.barTopPx, scale, dpmm);
-  // Upright (unrotated) bar-rect size, for the rotation-aware ^FT anchor.
   const uprightBarWDots = pxToDots(dim.upright.barW, scale, dpmm);
   const uprightBarHDots = pxToDots(dim.upright.barH, scale, dpmm);
   useEffect(() => {
@@ -243,7 +242,7 @@ export function BarcodeObject({
       : BARCODE_1D_TYPES.has(obj.type)
         ? (obj.props as { height: number }).height
         : 0;
-  // A rotated QR prints as a shift-free ^GFA, so the ^BQ artifacts below are N-only.
+  // Shift-free as a graphic, see qrPrintsAsGraphic, so the ^BQ artifacts below are N-only.
   const graphicQr = qrPrintsAsGraphic(obj);
   const ftOffset = barcodeFtAnchorOffset(graphicQr ? "N" : rotation, uprightBarWDots, ftBarHDots);
   // ^FT QR rises exactly 3 modules above the anchor (^BY-independent, both
@@ -275,8 +274,6 @@ export function BarcodeObject({
   const showStateFrame = warnBlank || invalid;
   const stateFrameColor = invalid ? colors.error : CANVAS_WARNING;
 
-  // Whole-object drag (snap + commit) is centralized in the drag controller;
-  // the commit is a pure translation, so the bar-anchor offset math is moot.
   const handleDragMove = dragHandlers?.onDragMove;
   const handleDragEnd = dragHandlers?.onDragEnd;
 

@@ -3,10 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, it, expect } from 'vitest';
 import { DARK_COLORS, LIGHT_COLORS, type CanvasColors } from './useColorScheme';
 
-// Canvas chrome mirrors a handful of DOM theme tokens as JS literals because
-// Konva can't read CSS variables (and jsdom can't resolve them in tests).
-// index.css is the source of truth; this test fails if the JS copy drifts.
-// See project_ticket_theme_token_single_source.
+// Pins the JS copy to index.css, see useColorScheme and project_ticket_theme_token_single_source.
 const css = readFileSync(fileURLToPath(new URL('../index.css', import.meta.url)), 'utf8');
 
 /** CanvasColors key -> CSS custom property in index.css. */
