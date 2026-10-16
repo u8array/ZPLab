@@ -98,6 +98,38 @@ export const XS_SLOTS = ['dynamicCalibrationLength', 'dynamicCalibrationThreshol
 /** ^SR, spec p.348. */
 export const PRINTHEAD_RESISTANCE_RANGE = { min: 488, max: 1175 } as const;
 
+/** ^SC slots, spec p.332. */
+export const SERIAL_BAUD_VALUES = ['110', '300', '600', '1200', '2400', '4800', '9600', '14400', '19200', '28800', '38400', '57600', '115200'] as const;
+export const isSerialBaud = makeEnumGuard(SERIAL_BAUD_VALUES);
+export const SERIAL_DATA_BITS_VALUES = ['7', '8'] as const;
+export const isSerialDataBits = makeEnumGuard(SERIAL_DATA_BITS_VALUES);
+export const SERIAL_PARITY_VALUES = ['N', 'E', 'O'] as const;
+export const isSerialParity = makeEnumGuard(SERIAL_PARITY_VALUES);
+export const SERIAL_STOP_BITS_VALUES = ['1', '2'] as const;
+export const isSerialStopBits = makeEnumGuard(SERIAL_STOP_BITS_VALUES);
+export const SERIAL_HANDSHAKE_VALUES = ['X', 'D', 'R', 'M'] as const;
+export const isSerialHandshake = makeEnumGuard(SERIAL_HANDSHAKE_VALUES);
+export const SERIAL_PROTOCOL_VALUES = ['A', 'N', 'Z'] as const;
+export const isSerialProtocol = makeEnumGuard(SERIAL_PROTOCOL_VALUES);
+export const SERIAL_PORT_FIELDS = ['baud', 'dataBits', 'parity', 'stopBits', 'handshake', 'protocol'] as const;
+
+export const AUX_PORT_MODE_VALUES = ['0', '1', '2'] as const;
+export const AUX_PORT_END_PRINT_VALUES = ['0', '1', '2', '3', '4'] as const;
+export const AUX_PORT_START_PRINT_VALUES = ['p', 'l'] as const;
+export const AUX_PORT_ERROR_MODE_VALUES = ['e', 'f'] as const;
+export const AUX_PORT_SWITCH_VALUES = ['e', 'd'] as const;
+/** ^JJ slots in wire order with their values and the printer default, spec p.266.
+ *  The guide prints 0 as the start print default, the SGD device.applicator.start_print_mode says pulse, p.682. */
+export const AUX_PORT_SLOTS = [
+  ['auxPortMode', AUX_PORT_MODE_VALUES, '0'],
+  ['auxPortEndPrint', AUX_PORT_END_PRINT_VALUES, '0'],
+  ['auxPortStartPrint', AUX_PORT_START_PRINT_VALUES, 'p'],
+  ['auxPortErrorMode', AUX_PORT_ERROR_MODE_VALUES, 'f'],
+  ['auxPortReprint', AUX_PORT_SWITCH_VALUES, 'd'],
+  ['auxPortRibbonLow', AUX_PORT_SWITCH_VALUES, 'e'],
+] as const satisfies readonly (readonly [keyof PrinterProfile, readonly string[], string])[];
+export type AuxPortField = (typeof AUX_PORT_SLOTS)[number][0];
+
 /** ^SS slots in wire order with their range and digit width, spec p.349. */
 export const SENSOR_SLOTS = [
   ['sensorWebThreshold', SENSOR_THRESHOLD_RANGE, 3],
@@ -276,6 +308,22 @@ export const printerProfileSchema = z.object({
   dynamicCalibrationGain: z.enum(YES_NO_VALUES).optional(),
   /** ^SR, a value above the head's rating damages it. */
   printheadResistance: intInRange(PRINTHEAD_RESISTANCE_RANGE).optional(),
+  /** ^SC. The spec gives no slot a default, so the wire carries all six or none, p.332. */
+  serialPort: z.object({
+    baud: z.enum(SERIAL_BAUD_VALUES).optional(),
+    dataBits: z.enum(SERIAL_DATA_BITS_VALUES).optional(),
+    parity: z.enum(SERIAL_PARITY_VALUES).optional(),
+    stopBits: z.enum(SERIAL_STOP_BITS_VALUES).optional(),
+    handshake: z.enum(SERIAL_HANDSHAKE_VALUES).optional(),
+    protocol: z.enum(SERIAL_PROTOCOL_VALUES).optional(),
+  }).refine((o) => SERIAL_PORT_FIELDS.some((f) => o[f] !== undefined), 'an empty serial port carries nothing').optional(),
+  /** ^JJ slots, each with its own printer default. */
+  auxPortMode: z.enum(AUX_PORT_MODE_VALUES).optional(),
+  auxPortEndPrint: z.enum(AUX_PORT_END_PRINT_VALUES).optional(),
+  auxPortStartPrint: z.enum(AUX_PORT_START_PRINT_VALUES).optional(),
+  auxPortErrorMode: z.enum(AUX_PORT_ERROR_MODE_VALUES).optional(),
+  auxPortReprint: z.enum(AUX_PORT_SWITCH_VALUES).optional(),
+  auxPortRibbonLow: z.enum(AUX_PORT_SWITCH_VALUES).optional(),
   /** ^JH f master gate; without `E` ^MA sits dormant. */
   earlyWarningMaintenance: z.enum(['E', 'D']).optional(),
   /** ^JH g; stored as meters for UX, wire is index into table. */
@@ -369,7 +417,7 @@ export const isSetupPath = (path: string): boolean => path.length <= FONT_LINKS_
 /** Fields with their own Objects group: a source edit never strips them and Clear keeps them. */
 export const SETUP_UPLOAD_FIELDS = ["setupFonts", "setupGraphics"] as const;
 
-/** Fields whose value differs. By value: four fields hold objects. */
+/** Fields whose value differs, by value since some fields hold objects. */
 export function changedProfileFields(before: PrinterProfile, after: PrinterProfile): PrinterProfileField[] {
   return PRINTER_PROFILE_FIELDS.filter((field) => JSON.stringify(after[field]) !== JSON.stringify(before[field]));
 }
