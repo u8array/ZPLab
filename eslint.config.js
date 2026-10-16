@@ -26,12 +26,12 @@ export default defineConfig([
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       // Omit-via-rest (`const { drop, ...keep } = obj`) is the intended pattern.
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
-      // Syntax the compiler cannot lower, so the whole hook silently loses its memoization.
+      // Syntax the compiler cannot lower, so the enclosing component silently loses its memoization.
       'react-hooks/todo': 'error',
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', 'src/test/**', 'tests/**/*.ts', 'e2e/**/*.ts'],
+    files: ['**/*.test.ts', '**/*.test.tsx', 'src/test/**', 'tests/**/*.ts'],
     rules: {
       '@typescript-eslint/no-non-null-assertion': 'off',
     },

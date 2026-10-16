@@ -1,4 +1,3 @@
-import { tryFinally } from "../../lib/tryFinally";
 import {
   forwardRef,
   useImperativeHandle,
@@ -36,6 +35,7 @@ import { registerBarcodeWidthProber, unregisterBarcodeWidthProber, type ProbeCtx
 import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
 import { measureBarcodeFootprintDots } from "./bwipHelpers";
 import { copyText } from "../../lib/clipboard";
+import { tryFinally } from "../../lib/tryFinally";
 import { selectTidyTargets } from "../../lib/tidyClassify";
 import { safeAreaRectDots } from "../../lib/safeArea";
 import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "../../lib/measuredBoundsCache";
@@ -1828,7 +1828,11 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                 }}
                 onTransform={onTransform}
                 boundBoxFunc={boundBoxFunc}
-                onTransformEnd={() => tryFinally(onTransformEnd, () => { transformActiveRef.current = false; })}
+                onTransformEnd={() =>
+                  tryFinally(onTransformEnd, () => {
+                    transformActiveRef.current = false;
+                  })
+                }
                 borderStroke={colors.selection}
                 anchorStroke={colors.selection}
                 anchorFill="#ffffff"

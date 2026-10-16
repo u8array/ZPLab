@@ -1,5 +1,4 @@
 import { editBounds, moduleScaledProps, wireBounds, type Range } from "@zplab/core/types/propSpec";
-import { tryFinally } from "../../../lib/tryFinally";
 import { useRef, useEffect, useLayoutEffect } from "react";
 import { flushSync } from "react-dom";
 import type Konva from "konva";
@@ -49,6 +48,7 @@ import { projectedAnchorXDots, projectMultiResize } from "../../../lib/multiResi
 import { lineHandlesNodeId, lineRootNodeId } from "../konvaObjectProps";
 import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
 import { getMeasuredSnapshot } from "../../../lib/measuredBoundsCache";
+import { tryFinally } from "../../../lib/tryFinally";
 import {
   computeResizeSnap,
   deriveActiveEdges,

@@ -92,9 +92,9 @@ interface InstalledMenu {
 let latest: MenuData | null = null;
 let installed: InstalledMenu | null = null;
 let updateGen = 0;
+// Hoisted: ++ on a module variable inside the hook is a compiler bailout.
+const bumpUpdateGen = (): number => ++updateGen;
 let queue: Promise<void> = Promise.resolve();
-// A function, since the compiler cannot lower ++ on a module variable inside the hook.
-const nextUpdateGen = (): number => ++updateGen;
 /** The OS toggles a clicked CheckMenuItem's checkmark itself; after a jump we
  *  re-assert every step's checkmark so that stray toggle can't linger. */
 let checkmarkDirty = false;
@@ -106,7 +106,7 @@ if (import.meta.hot) {
   import.meta.hot.dispose(() => {
     // Invalidate queued rebuilds and drain the in-flight update before closing,
     // so a mid-await patch/rebuild can't touch freed handles.
-    nextUpdateGen();
+    bumpUpdateGen();
     queue = queue.then(() => {
       if (installed) closeAll(installed.resources);
       installed = null;
@@ -386,7 +386,7 @@ async function patchMenu(inst: InstalledMenu, d: MenuData): Promise<void> {
     // for the next unrelated signature change.
     if (installed) closeAll(installed.resources);
     installed = null;
-    const gen = nextUpdateGen();
+    const gen = bumpUpdateGen();
     queue = queue.then(() => runUpdate(gen)).catch(() => undefined);
   }
 }
@@ -436,12 +436,12 @@ export function useNativeMenu(
 
   useEffect(() => {
     if (!isDesktopShell) return;
-    const gen = nextUpdateGen();
+    const gen = bumpUpdateGen();
     queue = queue.then(() => runUpdate(gen)).catch(() => undefined);
     // Invalidate a queued-but-unstarted update on re-run/unmount (StrictMode
     // remounts included); the re-run queues a fresh one.
     return () => {
-      nextUpdateGen();
+      bumpUpdateGen();
     };
   }, [signature]);
 }

@@ -1,5 +1,5 @@
-/** The React Compiler cannot lower a try/finally inside a hook, so the finally lives here.
- *  `body` is a closure, so a return inside it leaves only the closure. */
+/** Keeps the finally out of a component or hook, where the React Compiler cannot lower it.
+ *  A `return` inside `body` leaves `body`, not the caller. */
 export function tryFinally(body: () => void, cleanup: () => void): void {
   try {
     body();
