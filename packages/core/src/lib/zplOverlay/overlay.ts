@@ -10,8 +10,7 @@
 
 import { z } from "zod";
 
-/** Key identifying a labelConfig/printerProfile field a config command sets.
- *  Refined to a union as config linkage lands (later stage); string for now. */
+/** The labelConfig or printerProfile field a config command sets. */
 export type ConfigFieldKey = string;
 
 export type OverlaySegment =

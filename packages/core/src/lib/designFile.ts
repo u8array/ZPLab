@@ -20,11 +20,8 @@ import { schemaIssues } from "./schemaIssues";
 import { getEntry } from "../registry";
 import { propDomainIssue, truncateIntegerProps, type PropSpec } from "../types/propSpec";
 
-/** Current design-file schema version. Bump when the persisted shape
- *  changes in a way an older app cannot read. Add a vN schema +
- *  migrator below and dispatch on `schemaVersion` in `parseDesignFile`.
- *  The persist middleware in `labelStore` has its own independent
- *  version for localStorage state; do not conflate. */
+/** Bump when an older app could not read the persisted shape, with a hop in the migration chain
+ *  of `parseDesignFile`. The persist middleware in `labelStore` versions localStorage on its own. */
 export const CURRENT_DESIGN_SCHEMA_VERSION = 6;
 
 export type DesignFileError = "parse_error" | "invalid_schema" | "fn_slots_exhausted";
