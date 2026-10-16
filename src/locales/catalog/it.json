@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Controlla la ricalibrazione dinamica della lunghezza dell'etichetta e della soglia del sensore dopo l'accensione o l'apertura del vano supporto.",
+    "hash": "8f9e3e07",
+    "summary": "Controlla la ricalibrazione dinamica della lunghezza dell'etichetta e della soglia del sensore dopo l'accensione o l'apertura del vano supporto. Il parametro di guadagno è annunciato per un firmware successivo.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "abilita la calibrazione dinamica della lunghezza",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "abilita la calibrazione dinamica della soglia",
+          "values": "Y abilita, N disabilita",
+          "default": "Y"
+        },
+        {
+          "meaning": "abilita la calibrazione dinamica del guadagno",
           "values": "Y abilita, N disabilita",
           "default": "Y"
         }

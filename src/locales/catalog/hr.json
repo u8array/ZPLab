@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Kontrolira dinamičku ponovnu kalibraciju duljine naljepnice i praga senzora nakon uključivanja ili otvaranja odjeljka za medij.",
+    "hash": "8f9e3e07",
+    "summary": "Kontrolira dinamičku ponovnu kalibraciju duljine naljepnice i praga senzora nakon uključivanja ili otvaranja odjeljka za medij. Parametar pojačanja najavljen je za buduću verziju firmvera.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "omogući dinamičku kalibraciju duljine",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "omogući dinamičku kalibraciju praga",
+          "values": "Y omogući, N onemogući",
+          "default": "Y"
+        },
+        {
+          "meaning": "omogući dinamičku kalibraciju pojačanja",
           "values": "Y omogući, N onemogući",
           "default": "Y"
         }
