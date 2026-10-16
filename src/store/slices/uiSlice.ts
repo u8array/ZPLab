@@ -71,6 +71,7 @@ export type PrinterSettingsTab =
   | 'dataSources'
   | 'mediaFeed'
   | 'sensors'
+  | 'interfaces'
   | 'rfid'
   | 'printQuality'
   | 'output'
