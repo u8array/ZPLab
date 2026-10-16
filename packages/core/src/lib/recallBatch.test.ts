@@ -3,7 +3,7 @@ import { importZplText } from "./zplImportService";
 import { generateBatchZpl, generateMultiPageZPL } from "./zplGenerator";
 import { prepareSourceApply, type SourceDocumentState } from "./zplSourceEdit";
 import type { LabelConfig, PageLabel } from "../types/LabelConfig";
-import type { LabelObject } from "../types/Group";
+import { pageLabelConfig, type LabelObject, type Page } from "../types/Group";
 
 const label: LabelConfig = { widthMm: 50, heightMm: 30, dpmm: 8 };
 const obj = (id: string, type: string, props: object, y = 10): LabelObject =>
@@ -372,6 +372,24 @@ describe("^XF recall blocks fold into rows of their ^DF template", () => {
     expect(unit.batch?.dataset.rows).toEqual([["a"]]);
     const charset = importZplText(["^XA^CI28^DFR:A.ZPL^FS^FO10,10^A0N,30,30^FN1^FS^XZ", "^XA^CI13^XFR:A.ZPL^FS^FN1^FDa^FS^XZ"].join(NL), 8);
     expect(charset.batch).toBeUndefined();
+  });
+
+  it("folds a template that asks the printer, and keeps the stream as pages when a row or another page asks too", () => {
+    const asking = importZplText([`^XA^DFR:A.ZPL^FS~HS${FIELD}^XZ`, "^XA^XFR:A.ZPL^FS^FN1^FDone^FS^XZ"].join(NL), 8);
+    expect(asking.batch?.dataset.rows).toEqual([["one"]]);
+    const page = asking.pages[0] as Page;
+    expect(generateBatchZpl(pageLabelConfig(label, page), page.objects, asking.variables, asking.batch!.dataset, asking.batch!.columnMapping)).toContain("~HS");
+    // A send carries only the batch, so one asking row keeps every row as a page.
+    const row = importZplText([template("R:A.ZPL", FIELD), "^XA^XFR:A.ZPL^FS^FN1^FDone^FS^XZ", "^XA^XFR:A.ZPL^FS^FN1^FDtwo^FS~HM^XZ"].join(NL), 8);
+    expect(row.batch).toBeUndefined();
+    expect(row.pages).toHaveLength(3);
+    const out = generateMultiPageZPL(label, row.pages, row.variables);
+    expect(out).toContain("~HM");
+    expect(out).toContain("^FDtwo");
+    // A page beside the batch asks too: the send would carry the batch alone and drop it.
+    const beside = importZplText(["^XA~HS^XZ", template("R:A.ZPL", FIELD), "^XA^XFR:A.ZPL^FS^FN1^FDone^FS^XZ"].join(NL), 8);
+    expect(beside.batch).toBeUndefined();
+    expect(generateMultiPageZPL(label, beside.pages, beside.variables)).toContain("~HS");
   });
 
   it("binds no column to another page's variable, even when every slot number is taken or a page follows the template", () => {

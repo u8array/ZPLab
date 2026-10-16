@@ -47,7 +47,11 @@ pub async fn send_zpl_tcp(host: String, port: u16, zpl: String) -> Result<TcpSen
 #[derive(serde::Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum TcpQueryResult {
-  Data { body: String },
+  Data {
+    body: String,
+  },
+  /// The printer took the bytes and sent nothing back.
+  Silent,
   Refused,
   Unreachable,
 }
@@ -69,6 +73,9 @@ pub async fn query_zpl_tcp(host: String, port: u16, zpl: String) -> Result<TcpQu
   write_all_timeout(&mut stream, zpl.as_bytes()).await?;
 
   let body = read_reply(&mut stream).await?;
+  if body.is_empty() {
+    return Ok(TcpQueryResult::Silent);
+  }
   // ~DY payloads are ASCII (ZB64); lossy keeps any stray control bytes benign.
   Ok(TcpQueryResult::Data {
     body: String::from_utf8_lossy(&body).into_owned(),
@@ -210,7 +217,7 @@ mod tests {
   }
 
   #[test]
-  fn query_errors_when_the_printer_stays_silent() {
+  fn query_reports_silent_when_the_printer_stays_quiet() {
     rt().block_on(async {
       let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
       let port = listener.local_addr().unwrap().port();
@@ -220,8 +227,10 @@ mod tests {
         let _ = sock.read(&mut buf).await.unwrap();
         // Close without replying: print-only endpoints behave like this.
       });
-      let res = query_zpl_tcp("127.0.0.1".into(), port, "^XA^XZ".into()).await;
-      assert!(res.is_err());
+      let res = query_zpl_tcp("127.0.0.1".into(), port, "^XA^XZ".into())
+        .await
+        .unwrap();
+      assert!(matches!(res, TcpQueryResult::Silent));
     });
   }
 

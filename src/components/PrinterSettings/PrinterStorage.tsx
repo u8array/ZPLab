@@ -5,12 +5,12 @@ import { isWritableDevice } from "@zplab/core/lib/storagePath";
 import { deleteKnowledge, driveUsage, listedObject, originState, type DeleteKnowledge, type OriginState, type StoredObjectKind, type StoredObjectOrigin } from "@zplab/core/lib/storedObjectOrigins";
 import { isDesktopShell } from "../../lib/platform";
 import { usePrinterListing } from "../../hooks/usePrinterListing";
+import { useReplyRead } from "../../hooks/useReplyRead";
 import { useT } from "../../hooks/useT";
 import type { Translations } from "../../locales";
 import { formatTemplate } from "../../lib/formatTemplate";
-import type { PrinterOutcome } from "../../lib/printerQuery";
 import type { PrinterObjectsState } from "../../store/slices/printerObjectsSlice";
-import { failureText, readingText } from "../../lib/printerStatusText";
+import { driveUsageText, failureText, kilobytes, readingText } from "../../lib/printerStatusText";
 import { selectPrinterObjects, useLabelStore } from "../../store/labelStore";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { MemoryBar } from "../ui/MemoryBar";
@@ -18,8 +18,6 @@ import { Tooltip } from "../ui/Tooltip";
 import { buttonCls, disabledCls, sectionHeadingCls, zplCommandTagCls } from "../ui/formStyles";
 import { PrinterImageDialog } from "./PrinterImageDialog";
 import { useStoredObjectHover } from "../../hooks/useStoredObjectHover";
-
-const kb = (bytes: number): string => String(bytes === 0 ? 0 : Math.max(1, Math.round(bytes / 1024)));
 
 export function StoredObjectsHeading() {
   const loc = useT().printerSettings.objects;
@@ -85,7 +83,7 @@ export function PrinterStorageUsage() {
           <div key={usage.device} className="flex flex-col gap-0.5">
             <Tooltip content={loc.usageHint}>
               <span className="text-[10px] text-muted cursor-help">
-                {formatTemplate(loc.usageFmt, { device: usage.device, used: kb(usage.used), free: kb(usage.free) })}
+                {driveUsageText(loc, usage)}
               </span>
             </Tooltip>
             <MemoryBar used={usage.used} capacity={usage.capacity} highlight={share?.size ?? 0} />
@@ -93,7 +91,7 @@ export function PrinterStorageUsage() {
               <span className="text-[10px] text-accent truncate" title={hostObjectPath(share)}>
                 {formatTemplate(loc.usageObjectFmt, {
                   path: hostObjectPath(share),
-                  kb: kb(share.size),
+                  kb: kilobytes(share.size),
                   percent: ((share.size / usage.capacity) * 100).toFixed(1),
                 })}
               </span>
@@ -119,7 +117,7 @@ export function PrinterOriginMark({ origin }: { origin: StoredObjectOrigin }) {
   return (
     <span className="flex items-center gap-2">
       <span className={`text-[10px] ${state === "missingOnPrinter" ? "text-warning" : "text-muted"}`}>{loc[ORIGIN_KEY[state]]}</span>
-      {origin.hostObject && <span className="text-[10px] text-muted">{formatTemplate(loc.objectSizeFmt, { kb: kb(origin.hostObject.size) })}</span>}
+      {origin.hostObject && <span className="text-[10px] text-muted">{formatTemplate(loc.objectSizeFmt, { kb: kilobytes(origin.hostObject.size) })}</span>}
     </span>
   );
 }
@@ -141,14 +139,10 @@ export function PrinterObjectActions({ origin, kind }: { origin: StoredObjectOri
   const [pendingDelete, setPendingDelete] = useState(false);
   // The message belongs to the listing it was reported against, so the next read retires it.
   const [issue, setIssue] = useState<{ listing: PrinterObjectsState; text: string }>();
-  const [image, setImage] = useState<PrinterOutcome<string | null> | "reading">();
+  const image = useReplyRead<string | null>();
   const writable = isWritableDevice(object.device);
 
-  const show = () => {
-    setImage("reading");
-    // The dialog closed while the read ran, so its result has nowhere to land.
-    void readImage(object).then((read) => setImage((current) => (current === undefined ? current : read)));
-  };
+  const show = () => image.start(() => readImage(object));
   const confirmDelete = () => {
     setPendingDelete(false);
     setIssue(undefined);
@@ -185,7 +179,7 @@ export function PrinterObjectActions({ origin, kind }: { origin: StoredObjectOri
           onCancel={() => setPendingDelete(false)}
         />
       )}
-      {image && <PrinterImageDialog path={origin.path} read={image} blankText={kind === "font" ? loc.fontSampleBlank : loc.graphicUnreadable} onClose={() => setImage(undefined)} />}
+      {image.read && <PrinterImageDialog path={origin.path} read={image.read} blankText={kind === "font" ? loc.fontSampleBlank : loc.graphicUnreadable} onClose={image.close} />}
     </>
   );
 }

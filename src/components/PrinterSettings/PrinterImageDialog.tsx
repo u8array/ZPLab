@@ -1,9 +1,9 @@
-import type { PrinterOutcome } from "../../lib/printerQuery";
+import type { ReplyShown } from "../../hooks/useReplyRead";
 import { PrinterReplyDialog } from "../Output/PrinterReplyDialog";
 
 interface Props {
   path: string;
-  read: PrinterOutcome<string | null> | "reading";
+  read: ReplyShown<string | null>;
   /** Null is a blank sample for a font and an unreadable raster for a graphic, so the caller words it. */
   blankText: string;
   onClose: () => void;

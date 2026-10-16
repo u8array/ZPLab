@@ -154,7 +154,8 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "is stored as a format and recalled once per row, bound by the file's csvMapping: the page " +
         "batch.formatPath names, else the sole page with storedFormatPath, else the only page. " +
         "Other pages are left out and noted. A page whose storedFormatDelivery is setup or printer " +
-        "is recalled instead of stored, as the app's own export does; the field is set in the app, not by create_draft.",
+        "is recalled instead of stored, as the app's own export does; the field is set in the app, not by create_draft. " +
+        "A page's hostCommands are asked once per batch job, ahead of its fields. ^HV rides with the fields. A job that stores the format keeps it there. Where the printer already holds the format, every recall block asks it.",
       inputSchema: strictInput(exportZplInputSchema.shape, INSIDE_DESIGN_FILE),
     },
     async ({ designFile, metadata, batch }) => json(exportZpl(designFile, { metadata, batch })),
@@ -166,7 +167,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
       title: "Validate raw ZPL",
       description:
         "Parse a raw ZPL stream (one page per ^XA block) and report it: object/page " +
-        "count, detected label, parser findings (unknown/partial/hardware-bound " +
+        "count, detected label, parser findings (unknown/partial/hardware-bound/host-answered " +
         "commands, fields the printer discards for a missing ^FS), preflight warnings, " +
         "per-object bounds (dots), and bbox overlaps. A stream that stores a format with ^DF, declares " +
         "^FN fields in it and recalls it with ^XF once per row reports the rows' headers and count as `batch`. " +
@@ -189,6 +190,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
         "measured, same as the app import) and enable the label's emit1dZJustify gate. " +
         "A stream that stores a format with ^DF, declares ^FN fields in it and recalls it with ^XF " +
         "once per row folds those rows into `batch` bound by a csvMapping. Other pages stay pages. " +
+        "Host commands such as ~HS stay on their page as hostCommands and are reported as hostQuery. " +
         "Hand batch to export_zpl.",
       inputSchema: strictInput(zplInputShape),
     },

@@ -1,7 +1,12 @@
 import { payloadSettings } from "./payloadProps";
+import { overlayText, type BlockOverlay } from "./zplOverlay/overlay";
+import { prefixCharsAt, spellPrefix } from "./zplCanonicalPrefixes";
 import type { ParsedPage, PageSource, SourceSpan } from "./zplParser/types";
 import { parseZPL, type FontLossReason, type ImportFinding, type ImportReport, type ParsedZPL, type UnbalancedFormat } from "./zplParser";
-import { DOCUMENT_FINDING, replayRiskFindings, reportOf } from "./importReport";
+import { DOCUMENT_FINDING, overlayBound, reportOf, riskPageIndexes } from "./importReport";
+import { needsOpenFormat, renumberFieldHostCommands } from "./hostCommands";
+import { pageEmits, pageHasContent, pageHostCommands } from "../types/Group";
+
 import { dropPageOverlays } from "./pageOverlay";
 import { mergeSetupEntries } from "./setupEntries";
 import { releaseStaged, stageImages, type CachedImage } from "./imageCache";
@@ -20,6 +25,18 @@ import { resolveForMeasure } from "./barcodeDims";
 import { clockCtxFromLabel } from "./variableBinding";
 import { measureFootprintDots } from "./footprintProber";
 
+/** The closer takes the prefix a ^CC left in force, and the head offsets move with the wrapper. */
+function wrapBareOverlay(overlay: BlockOverlay): BlockOverlay {
+  const text = overlayText(overlay);
+  const sep = text.includes("\r\n") ? "\r\n" : "\n";
+  const open = `^XA${sep}`;
+  const close = /\r?\n$/.test(text) ? "" : sep;
+  const shift = <T extends { start: number; end: number }>(s: T): T => ({ ...s, start: s.start + open.length, end: s.end + open.length });
+  const head = overlay.head
+    ? { ...overlay.head, at: 3, jmSpans: overlay.head.jmSpans.map(shift), dfSpans: overlay.head.dfSpans?.map(shift) }
+    : undefined;
+  return { ...overlay, segments: [{ kind: "raw", text: open }, ...overlay.segments, { kind: "raw", text: `${close}${spellPrefix("^XZ", prefixCharsAt(text))}` }], head };
+}
 export interface ZplImportResult {
   labelConfig: Partial<LabelConfig>;
   /** Setup-Script fields extracted from the import. Caller decides
@@ -74,6 +91,9 @@ function foldRecallPages(pages: readonly ParsedPage[]): RecallFold | null {
   const recalled = new Set(pages.flatMap((p) => (p.recall?.slotsOnly ? [p.recall.pageIndex] : [])));
   const [templateIndex] = recalled;
   if (templateIndex === undefined || recalled.size > 1 || pages[templateIndex]?.variables.length === 0) return null;
+  // A question outside the template would go out once per row, so the stream stays as pages. A device action
+  // between blocks carries no answer and folds.
+  if (pages.some((page, i) => i !== templateIndex && page.hostCommands.length > 0)) return null;
   const rows = pages.flatMap((page, pageIndex) =>
     page.recall?.pageIndex === templateIndex && page.recall.slotsOnly
       ? [{ pageIndex, values: new Map(page.variables.map((v) => [v.fnNumber, v.defaultValue])) }]
@@ -148,6 +168,7 @@ function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
       page.variables = [...page.variables.slice(0, v0), ...declarations, ...page.variables.slice(v1)];
     }
     const keptHere: { sourceFn: number; kept: Variable }[] = [];
+    const movedSlots = new Map<number, number>();
     // Objects link to their variable by marker NAME. When this page's variable
     // merges into an earlier page's (same ^FN number) under a different name,
     // OR a new fnNumber's name collides and gets disambiguated, its `«name»`
@@ -179,6 +200,7 @@ function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
           continue;
         }
         fnNumber = free;
+        movedSlots.set(v.fnNumber, free);
         findings.push({ kind: "fnRenumbered", command: `^FN${v.fnNumber} → ^FN${free}`, pageIndex: outIndex(i) });
       }
       const uniqueName = uniqueVariableName(v.name, variables);
@@ -222,19 +244,23 @@ function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
         zNormalized = true;
       }
     }
-    // A bare page (no ^XA wrapper) usually carries just fonts/profile. But a
-    // wrapper-less paste of real fields also lands here; import those as a page
-    // so they aren't silently dropped (no overlay: the wrapper-less source has
-    // nothing to replay byte-for-byte, and re-export adds the ^XA/^XZ wrapper).
+    // A bare page usually carries just fonts and profile, but a wrapper-less paste of real fields lands here too
+    // and must not be dropped. Re-export adds the ^XA/^XZ wrapper, so the overlay goes unless the page asks.
     const jmDensity = page.labelConfig.jmDensity;
     const storedFormatPath = page.storedFormatPath;
-    if (!page.bare || page.objects.length > 0) {
-      pages.push(page.bare ? { objects: page.objects, jmDensity, storedFormatPath } : { objects: page.objects, overlay: page.overlay, jmDensity, storedFormatPath });
+    // A bare host command replays, so this one bare case keeps its overlay, wrapped only where a command needs the format.
+    const questions = pageHostCommands(page);
+    const bareQuery = page.bare === true && r.unbalanced === null && page.overlay !== undefined && questions !== undefined;
+    if (!page.bare || pageHasContent(page)) {
+      const overlay = bareQuery && page.overlay !== undefined && needsOpenFormat(overlayText(page.overlay)) ? wrapBareOverlay(page.overlay) : page.overlay;
+      const asked = questions === undefined ? {} : { hostCommands: renumberFieldHostCommands(questions, movedSlots) };
+      const own: Page = { objects: page.objects, jmDensity, storedFormatPath, ...asked };
+      pages.push(page.bare && !bareQuery ? own : { ...own, overlay });
       pageSources.push({ span: page.span, objectSpans: page.objectSpans, objectFrames: page.objectFrames });
     }
     for (const f of page.findings) {
-      // A bare page replays nothing, so its lossyEdit caveat is moot.
-      if (page.bare && f.kind === "lossyEdit") continue;
+      // A bare page without its overlay replays nothing, so the findings bound to those bytes go with it.
+      if (page.bare && !bareQuery && overlayBound(f)) continue;
       findings.push({ ...f, pageIndex: outIndex(f.pageIndex) });
     }
   });
@@ -403,6 +429,15 @@ function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
   };
 }
 
+/** Whether the stream is worth committing: content on a page, a setting, or a profile value. */
+export function documentHasContent(imported: ZplImportResult): boolean {
+  return (
+    imported.pages.some(pageHasContent) ||
+    Object.keys(imported.labelConfig).length > 0 ||
+    Object.keys(imported.printerProfile).length > 0
+  );
+}
+
 /** Current label patched with the imported stream, except ^JM, which the
  *  import always sets (absent means full density): inheriting the open
  *  document's mode would reinterpret every imported dot at the wrong scale. */
@@ -467,14 +502,14 @@ export function routeSetupCommands(
       keptPageIndexes: result.pages.map((_p, i) => i),
     };
   }
-  const riskPages = new Set(replayRiskFindings(result.report).map((f) => f.pageIndex));
+  const riskPages = riskPageIndexes(result.report);
   // A routed page left empty (setup-only block) must not survive as a blank
   // page; keptPageIndexes lets the report drop/remap its findings.
   const dropped = dropPageOverlays(result.pages, (_p, i) => riskPages.has(i));
   const pages: Page[] = [];
   const keptPageIndexes: number[] = [];
   dropped.forEach((p, i) => {
-    if (p.objects.length > 0 || !riskPages.has(i)) {
+    if (pageEmits(p) || !riskPages.has(i)) {
       pages.push(p);
       keptPageIndexes.push(i);
     }

@@ -688,3 +688,14 @@ describe("the header copy button and the sidecar setting", () => {
     expect(copiedTexts.at(-1)).toContain("^FXZPLab:");
   });
 });
+
+describe("a buffer that only queries the printer", () => {
+  it("applies and ends the edit", () => {
+    render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XA\n~HS\n^XZ");
+    fireEvent.click(screen.getByRole("button", { name: t().output.editSourceApply }));
+    expect(screen.queryByText(t().importModal.errNoObjects)).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: t().output.editSourceConfirmApply }));
+    expect(useLabelStore.getState().sourceEdit.status).toBe("off");
+  });
+});

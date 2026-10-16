@@ -103,6 +103,14 @@ describe('parseDesignFile', () => {
     expect(result.value.pages[0]?.objects).toHaveLength(1);
   });
 
+  it('drops host command lines that are not canonical and leaves no empty list behind', () => {
+    const file = { schemaVersion: 5, label: { widthMm: 70, heightMm: 40, dpmm: 8 }, pages: [{ objects: [], hostCommands: ['~HS~JR', '~HS'] }, { objects: [], hostCommands: ['junk'] }], variables: [] };
+    const result = parseDesignFile(JSON.stringify(file));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.pages.map((p) => p.hostCommands)).toEqual([['~HS'], undefined]);
+  });
+
   it('conforms loaded props: a string to its set or dropped, a fraction off an integer slot, a number past its range kept', () => {
     const file = {
       schemaVersion: 5,

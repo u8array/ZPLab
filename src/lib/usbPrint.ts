@@ -23,6 +23,7 @@ export type UsbPrintResult =
 /** Mirrors the Rust UsbQueryResult; `error` covers the invoke rejection. */
 export type UsbQueryResult =
   | { kind: "data"; body: string }
+  | { kind: "silent" }
   | { kind: "permission_denied" }
   | { kind: "not_found" }
   | UsbError;

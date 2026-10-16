@@ -24,6 +24,8 @@ export interface Page {
   storedFormatPath?: string;
   /** How this page's ^DF reaches the printer without this design storing it again. */
   storedFormatDelivery?: StoredFormatDelivery;
+  /** Host commands in canonical spelling, such as `~HS` or `^HWR:*.*`: a regenerated block asks what its source asked. */
+  hostCommands?: readonly string[];
   /** Source-patch overlay of the ^XA…^XZ block this page was imported from,
    *  letting export replay untouched bytes verbatim. Absent on fresh designs
    *  and on pages the parser couldn't fully link; those regenerate from the
@@ -31,21 +33,42 @@ export interface Page {
   overlay?: BlockOverlay;
 }
 
+/** The questions a page asks, an empty list being none. */
+export const pageHostCommands = (page: Pick<Page, 'hostCommands'>): readonly string[] | undefined =>
+  page.hostCommands?.length ? page.hostCommands : undefined;
+
+/** The fields of a label that are one page's own, so a label handed in with another page's values drops them. */
+const PAGE_SCOPED_KEYS = ['storedFormatPath', 'storedFormatDelivery', 'hostCommands'] as const;
+
 /** The label as this page prints it: its own ^JM wins, so a block imported at
  *  a diverging density keeps that density through export (coordinates included,
  *  since every dots<->mm boundary reads it through effectiveDpmm). */
-export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity' | 'storedFormatPath' | 'storedFormatDelivery'>): PageLabel {
-  // The only mint backed by a real resolution: folding the page's ^JM and ^DF in.
+export function pageLabelConfig(label: LabelConfig, page: Pick<Page, 'jmDensity' | 'storedFormatPath' | 'storedFormatDelivery' | 'hostCommands'>): PageLabel {
+  // The only mint backed by a real resolution: folding the page's ^JM, ^DF and host commands in.
   const folded = withJmDensity(label, page.jmDensity) as PageLabel;
-  if (page.storedFormatPath === undefined && folded.storedFormatPath === undefined) return folded;
-  // A label handed in with another page's ^DF is not this page's.
-  const { storedFormatPath: _other, storedFormatDelivery: _way, ...base } = folded;
-  if (page.storedFormatPath === undefined) return base as PageLabel;
-  const way = page.storedFormatDelivery === undefined ? {} : { storedFormatDelivery: page.storedFormatDelivery };
-  return { ...base, storedFormatPath: page.storedFormatPath, ...way } as PageLabel;
+  const own: Partial<Pick<PageLabel, (typeof PAGE_SCOPED_KEYS)[number]>> = {};
+  if (page.storedFormatPath !== undefined) {
+    own.storedFormatPath = page.storedFormatPath;
+    if (page.storedFormatDelivery !== undefined) own.storedFormatDelivery = page.storedFormatDelivery;
+  }
+  const questions = pageHostCommands(page);
+  if (questions !== undefined) own.hostCommands = questions;
+  if (Object.keys(own).length === 0 && PAGE_SCOPED_KEYS.every((key) => folded[key] === undefined)) return folded;
+  const { storedFormatPath: _path, storedFormatDelivery: _delivery, hostCommands: _questions, ...base } = folded;
+  return { ...base, ...own };
 }
 
-/** The label for a render that must print: a preview never stores. */
+/** Content the design keeps: objects or questions. An empty replayed block is none. */
+export function pageHasContent(page: Pick<Page, 'objects' | 'hostCommands'>): boolean {
+  return page.objects.length > 0 || pageHostCommands(page) !== undefined;
+}
+
+/** True when the page exports bytes: objects, a replayed overlay, or a question for the printer. */
+export function pageEmits(page: Pick<Page, 'objects' | 'overlay' | 'hostCommands'>): boolean {
+  return page.objects.length > 0 || page.overlay !== undefined || pageHostCommands(page) !== undefined;
+}
+
+/** The label for a render that must print and ask nothing: a preview never stores or queries. */
 export function withoutStoredFormat(label: LabelConfig): PageLabel {
   return pageLabelConfig(label, {});
 }

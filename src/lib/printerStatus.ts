@@ -1,45 +1,30 @@
-import {
-  hostStatusAnswers,
-  parseHostIdentification,
-  parseHostMemory,
-  parseHostQueryStatus,
-  parseHostStatus,
-  unframed,
-  type HostMemory,
-  type HostQueryStatus,
-  type HostStatus,
-  type PrinterIdentity,
-} from "@zplab/core/lib/hostStatus";
-import { queryPrinter, type PrinterOutcome } from "./printerQuery";
+import { parseHostReplies, type HostReplyParts } from "@zplab/core/lib/hostReplies";
+import { hostStatusAnswers, unframed } from "@zplab/core/lib/hostStatus";
+import { answered, queryPrinter, type PrinterOutcome } from "./printerQuery";
 import type { QueryTarget } from "./printTarget";
 
-export interface PrinterStatusReport {
-  identity: PrinterIdentity | undefined;
-  flags: HostQueryStatus | undefined;
-  memory: HostMemory | undefined;
-  /** Set only when ~HS was asked and its reply parsed. */
-  status: HostStatus | undefined;
+export interface PrinterStatusReport extends Pick<HostReplyParts, "identity" | "flags" | "memory" | "status"> {
   /** True when the flags name a state that makes ~HS silent. */
   withheld: boolean;
   /** Each reply under its command, so the user can read what the parsers could not. */
   raw: string;
 }
 
-const parsed = <T>(outcome: PrinterOutcome<string> | undefined, parse: (text: string) => T | undefined): T | undefined =>
-  outcome?.kind === "ok" ? parse(outcome.value) : undefined;
+const read = (outcome: PrinterOutcome<string> | undefined, id: string): HostReplyParts =>
+  outcome?.kind === "ok" ? parseHostReplies(outcome.value, [id]) : {};
 
 /** Asks ~HS only when the flags say the printer would answer. */
 export async function readPrinterStatus(target: QueryTarget, onStep?: (command: string) => void): Promise<PrinterOutcome<PrinterStatusReport>> {
-  const ask = (command: string) => {
+  const ask = async (command: string) => {
     onStep?.(command);
-    return queryPrinter(target, command);
+    return answered(await queryPrinter(target, command));
   };
   const hi = await ask("~HI");
   if (hi.kind !== "ok") return hi;
   const es = await ask("~HQES");
   const hm = await ask("~HM");
-  const flags = parsed(es, parseHostQueryStatus);
-  const withheld = flags !== undefined && !hostStatusAnswers(flags);
+  const esParts = read(es, "~HQES");
+  const withheld = esParts.flags !== undefined && !hostStatusAnswers(esParts.flags);
   const hs = withheld ? undefined : await ask("~HS");
   const raw: string[] = [];
   for (const [command, outcome] of [["~HI", hi], ["~HQES", es], ["~HM", hm], ["~HS", hs]] as const) {
@@ -47,19 +32,11 @@ export async function readPrinterStatus(target: QueryTarget, onStep?: (command: 
   }
   return {
     kind: "ok",
-    value: {
-      identity: parseHostIdentification(hi.value),
-      flags,
-      memory: parsed(hm, parseHostMemory),
-      status: parsed(hs, parseHostStatus),
-      withheld,
-      raw: raw.join("\n\n"),
-    },
+    value: { ...read(hi, "~HI"), ...esParts, ...read(hm, "~HM"), ...read(hs, "~HS"), withheld, raw: raw.join("\n\n") },
   };
 }
 
 /** ^HH echoes the configuration label to the host as text (spec p.222). */
 export async function readPrinterConfiguration(target: QueryTarget): Promise<PrinterOutcome<string>> {
-  const res = await queryPrinter(target, "^XA^HH^XZ");
-  return res.kind === "ok" ? { kind: "ok", value: unframed(res.value).trim() } : res;
+  return answered(await queryPrinter(target, "^XA^HH^XZ"));
 }

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import raw from "./commands.json";
 import { catalogSchema, type StoredCommandEntry } from "./schema";
-import { CATALOG_SECTIONS, ZPL_COMMANDS, catalogEntry, commandId, commandIds, filterCatalog } from "./index";
+import { CATALOG_SECTIONS, ZPL_COMMANDS, catalogEntry, commandId, commandIds, commandSyntax, filterCatalog, isHostCommand } from "./index";
 
 describe("zpl command catalog", () => {
   it("validates the checked-in data against the schema", () => {
@@ -132,6 +132,20 @@ describe("zpl command catalog", () => {
     expect(filterCatalog("bo").some((e) => e.cmd === "B0")).toBe(true);
     expect(filterCatalog("label length").map((e) => e.cmd)).toContain("LL");
     expect(filterCatalog("")).toHaveLength(ZPL_COMMANDS.length);
+  });
+
+  it("names a printer-bound loss only where the desktop does not answer the command", () => {
+    for (const entry of ZPL_COMMANDS) {
+      if (entry.loss === "printerComms") expect(entry.support.desktop, commandId(entry)).not.toBe("yes");
+    }
+  });
+
+  it("knows the host section by its fifteen commands and which of them take no parameter", () => {
+    const hosts = ZPL_COMMANDS.map(commandId).filter(isHostCommand);
+    expect(hosts).toEqual(["~HB", "~HD", "^HF", "^HG", "^HH", "~HI", "~HM", "~HQ", "~HS", "^HT", "~HU", "^HV", "^HW", "^HY", "^HZ"]);
+    expect(hosts.filter((id) => commandSyntax(id) === id)).toEqual(["~HB", "~HD", "^HH", "~HI", "~HM", "~HS", "^HT", "~HU"]);
+    // ~HB answers only on a mobile printer, none measured.
+    expect(catalogEntry("~HB")?.support.desktop).toBe("planned");
   });
 
   it("carries the import loss cause the report wording is keyed by", () => {

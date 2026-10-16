@@ -62,6 +62,11 @@ export function needsRawChannel(way: PrintWay, renderer: PreviewProvider): boole
   return way === "network" || way === "usb" || (way === "system" && renderer === "printer");
 }
 
+/** Only the desktop shell holds a bidirectional channel, so only its network and USB ways bring an answer back. */
+export function carriesReply(way: PrintWay, desktop: boolean): boolean {
+  return desktop && (way === "network" || way === "usb");
+}
+
 /** The stored way when the build offers it, else the network form, without rewriting the choice. */
 export function effectiveTransport(transport: PrintTransport, offered: readonly PrintWay[]): PrintTransport {
   return offered.includes(transport) ? transport : "network";

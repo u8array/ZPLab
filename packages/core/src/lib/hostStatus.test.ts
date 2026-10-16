@@ -1,12 +1,10 @@
 import { describe, it, expect } from "vitest";
+import { ETX, STX, ZD230_HI, ZD230_HS } from "./hostStatus.fixture";
 import { hostStatusAnswers, parseHostIdentification, parseHostMemory, parseHostQueryStatus, parseHostStatus, printerReadiness } from "./hostStatus";
-
-const STX = "\u0002";
-const ETX = "\u0003";
 
 describe("host replies", () => {
   it("reads the identity line of ~HI", () => {
-    expect(parseHostIdentification("ZD230,V89.21.46Z,8,4096KB,\r\n")).toEqual({
+    expect(parseHostIdentification(`${ZD230_HI}\r\n`)).toEqual({
       model: "ZD230",
       firmware: "V89.21.46Z",
       dpmm: 8,
@@ -16,6 +14,20 @@ describe("host replies", () => {
     expect(parseHostIdentification("XXXXXX,V1.0.0,dpm,000KB,X")?.dpmm).toBeUndefined();
     expect(parseHostIdentification("ZD230,V1.0,8,4096KB,X\rZZZ,V2,6,1024KB,")?.options).toBe("X");
     expect(parseHostIdentification("")).toBeUndefined();
+    expect(parseHostIdentification("ZQ520,89.21.46Z,8,4096,X")).toEqual({ model: "ZQ520", firmware: "89.21.46Z", dpmm: 8, memoryKb: 4096, options: "X" });
+    // A lone ~HS string or memory line is not an identity.
+    expect(parseHostIdentification("030,0,0,0892,000,0,0,0,000,0,0,0")).toBeUndefined();
+    expect(parseHostIdentification("4096,2048,1500")).toBeUndefined();
+  });
+
+  it("finds the identity line behind the ~HS strings of the same reply", () => {
+    expect(parseHostIdentification(`${ZD230_HS}\r\n${ZD230_HI}`)).toEqual({
+      model: "ZD230",
+      firmware: "V89.21.46Z",
+      dpmm: 8,
+      memoryKb: 4096,
+      options: "",
+    });
   });
 
   it("reads the two state strings of ~HS behind their control bytes", () => {
@@ -71,7 +83,14 @@ describe("host replies", () => {
 
   it("reads the memory line of ~HM", () => {
     expect(parseHostMemory("1024,0780,0780")).toEqual({ totalKb: 1024, maxKb: 780, availableKb: 780 });
+    expect(parseHostMemory("1024,0800,0696,0")).toEqual({ totalKb: 1024, maxKb: 800, availableKb: 696 });
     expect(parseHostMemory("1024")).toBeUndefined();
+    // A lone ~HS string is not memory.
+    expect(parseHostMemory("030,0,0,0892,000,0,0,0,000,0,0,0")).toBeUndefined();
+  });
+
+  it("finds the memory line behind the ~HS strings of the same reply", () => {
+    expect(parseHostMemory(`${ZD230_HS}\r\n4096,2048,1500`)).toEqual({ totalKb: 4096, maxKb: 2048, availableKb: 1500 });
   });
 
   it("decodes the guide's ~HQES example into media out, head open and a printhead to clean", () => {

@@ -8,6 +8,7 @@ import {
 } from "./zplSourceEdit";
 import { generateMultiPageZPL } from "./zplGenerator";
 import { replayRiskFindings } from "./importReport";
+import { repliesToHost } from "./hostCommands";
 import type { LabelConfig } from "../types/LabelConfig";
 import type { Page } from "../types/Group";
 import type { PrinterProfile } from "../types/PrinterProfile";
@@ -327,5 +328,35 @@ describe("degenerate buffers", () => {
     const plan = prepareSourceApply({ text: "^JZY", current: current() });
     expect(plan.ok).toBe(true);
     if (plan.ok) expect(plan.next.pages).toEqual([{ objects: [] }]);
+  });
+
+  it("refuses a format that neither asks nor draws", () => {
+    expect(prepareSourceApply({ text: "^XA^XZ", current: current() })).toMatchObject({
+      ok: false,
+      reason: "noContent",
+    });
+  });
+});
+
+describe("a buffer that only queries the printer", () => {
+  const applied = (text: string): string[] => {
+    const plan = prepareSourceApply({ text, current: current() });
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return [];
+    expect(plan.objectCount).toBe(0);
+    return repliesToHost(generateMultiPageZPL(plan.next.label, plan.next.pages, plan.next.variables));
+  };
+
+  it("applies a status request and keeps it in the export", () => {
+    expect(applied("^XA\n~HS\n^XZ")).toEqual(["~HS"]);
+  });
+
+  it("applies a directory listing and keeps it in the export", () => {
+    expect(applied("^XA^HWE:*.*^XZ")).toEqual(["^HWE:*.*"]);
+  });
+
+  it("keeps a bare stream of immediate commands", () => {
+    expect(applied("~HS")).toEqual(["~HS"]);
+    expect(applied("~HS\n~HM")).toEqual(["~HS", "~HM"]);
   });
 });

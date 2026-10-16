@@ -1,11 +1,14 @@
 import type { ImportFinding } from '@zplab/core/lib/importReport';
 import type { SetupCommandChoice } from '@zplab/core/lib/zplImportService';
 import { useT } from '../../hooks/useT';
+import { formatTemplate } from '../../lib/formatTemplate';
 import { FindingRow } from './ImportSummary';
 
 interface Props {
   /** Routable setup commands plus (for awareness) device actions. */
   findings: ImportFinding[];
+  /** The device actions a routed page loses, from commandsLostByRouting. */
+  lost: readonly string[];
   /** False in append-mode: appended pages regenerate, so "keep" can't hold. */
   canKeep: boolean;
   onChoose: (choice: SetupCommandChoice) => void;
@@ -13,9 +16,10 @@ interface Props {
 
 /** Pre-commit prompt for imported setup commands; preselects "setup script"
  *  (their channel), so they don't silently reconfigure the printer. */
-export function ImportSetupChoice({ findings, canKeep, onChoose }: Props) {
+export function ImportSetupChoice({ findings, lost, canKeep, onChoose }: Props) {
   const t = useT();
   const multiPage = findings.some((f) => f.pageIndex > 0);
+  const lostCommands = lost.join(', ');
 
   return (
     <>
@@ -31,6 +35,11 @@ export function ImportSetupChoice({ findings, canKeep, onChoose }: Props) {
         <p className="font-mono text-[10px] text-muted leading-relaxed">
           {t.app.importSetupBody}
         </p>
+        {lostCommands && (
+          <p role="status" className="font-mono text-[10px] text-amber-400 leading-relaxed">
+            {formatTemplate(t.app.importSetupDropsFmt, { commands: lostCommands })}
+          </p>
+        )}
       </div>
       <div className="flex justify-end gap-2 px-4 py-3 border-t border-border shrink-0">
         <button

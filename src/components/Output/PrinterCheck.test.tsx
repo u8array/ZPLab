@@ -18,8 +18,6 @@ const loc = en.printerSettings.printerStatus;
 const report = (over: Partial<PrinterStatusReport>): PrinterStatusReport => ({
   identity: { model: "ZD230", firmware: "V89.21.46Z", dpmm: 8, memoryKb: 4096, options: "" },
   flags: { errors: [], warnings: [] },
-  memory: undefined,
-  status: undefined,
   withheld: false,
   raw: "",
   ...over,

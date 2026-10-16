@@ -1,16 +1,17 @@
 import type { StateCreator } from 'zustand';
 import type { ObjectChanges } from '@zplab/core/types/LabelObject';
 import {
-  isGroup,
-  getAllLeaves,
-  isSelectionLocked,
-  mapObjectById,
-  findObjectById,
-  hasLockedAncestor,
-  reparentNodes,
   type GroupObject,
   type LabelObject,
   type Page,
+  findObjectById,
+  getAllLeaves,
+  hasLockedAncestor,
+  isGroup,
+  isSelectionLocked,
+  mapObjectById,
+  pageHostCommands,
+  reparentNodes,
 } from '@zplab/core/types/Group';
 import { getEntry } from '@zplab/core/registry';
 import { anchorRepin } from '../anchorRepin';
@@ -556,6 +557,8 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       // The ^JM override travels along: the cloned dots are in its density.
       const cloned: Page = { objects: cloneChildrenFresh(source.objects) };
       if (source.jmDensity !== undefined) cloned.jmDensity = source.jmDensity;
+      const questions = pageHostCommands(source);
+      if (questions !== undefined) cloned.hostCommands = questions;
       // The ^DF does not: two blocks under one name would overwrite each other on the printer.
       const insertPos = index + 1;
       const newPages = [

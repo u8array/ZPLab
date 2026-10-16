@@ -41,6 +41,8 @@ interface HeadToken {
   isCaret: boolean;
   /** Caret prefix live at this token, for a ^JM behind a ^CC remap. */
   caret: string;
+  /** Tilde prefix live at this token, so a head records what its questions were spelled with. */
+  tilde: string;
   /** Delimiter live at this token, for reading a ^JM value. */
   delim: string;
 }
@@ -60,7 +62,7 @@ function* headTokens(zpl: string, fromOffset: number, st: PrefixState): Generato
   for (const t of tokenize(zpl.slice(fromOffset), st)) {
     if (applyPrefixRemap(st, t.cmd, t.rest[0])) continue;
     const start = fromOffset + t.start;
-    yield { cmd: t.cmd, rest: t.rest, start, isCaret: zpl[start] === st.caretChar, caret: st.caretChar, delim: st.delimiterChar };
+    yield { cmd: t.cmd, rest: t.rest, start, isCaret: zpl[start] === st.caretChar, caret: st.caretChar, tilde: st.tildeChar, delim: st.delimiterChar };
   }
 }
 
@@ -110,6 +112,7 @@ function scanBlockHead(
 ): { density: JmDensity | undefined; head: FormatHead | undefined; storedFormat: StoredFormatHead | undefined } {
   let seenXa = false;
   let openerCaret = "";
+  let openerTilde = "";
   let at: number | null = null;
   let inHead = false;
   let density: JmDensity | undefined;
@@ -121,6 +124,7 @@ function scanBlockHead(
         seenXa = true;
         inHead = true;
         openerCaret = t.caret;
+        openerTilde = t.tilde;
         at = t.start + 3;
       }
       continue;
@@ -136,7 +140,7 @@ function scanBlockHead(
     density = jmDensityOf(t.rest, t.delim) ?? density;
     jmSpans.push({ start: t.start, end: t.start + MIN_JM_SPAN + t.rest.trimEnd().length, delim: t.delim, caret: t.caret });
   }
-  const head: FormatHead | undefined = at === null ? undefined : { caret: openerCaret, at, jmSpans, ...(storedFormat ? { dfSpans: storedFormat.spans } : {}) };
+  const head: FormatHead | undefined = at === null ? undefined : { caret: openerCaret, tilde: openerTilde, at, jmSpans, ...(storedFormat ? { dfSpans: storedFormat.spans } : {}) };
   return { density, head, storedFormat };
 }
 
@@ -180,7 +184,7 @@ export function scanBareStream(
   let inHead = true;
   const st: PrefixState = { caretChar: chars.caretChar, tildeChar: chars.tildeChar, delimiterChar: delimiter };
   for (const t of headTokens(zpl, 0, st)) {
-    if (t.cmd === "XA") return { hasXa: true, density: undefined, storedFormat: undefined };
+    if (t.cmd === "XA" && t.isCaret) return { hasXa: true, density: undefined, storedFormat: undefined };
     if (t.cmd === "FS" || t.cmd === "XZ") { inHead = false; continue; }
     if (!inHead) continue;
     storedFormat = collectStoredFormat(storedFormat, storedFormatOf(t));

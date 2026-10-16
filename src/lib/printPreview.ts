@@ -34,6 +34,6 @@ export function buildPreviewZpl(
   const substituted = applyBindingToTree(objects, variables, active, "preview", clockCtxFromLabel(label), ctrlParityFor);
   const previewed = opts.blankSamples ? withBlankSamples(substituted) : substituted;
   // A preview is never re-imported, so nothing but printer bytes goes to the renderer,
-  // and a render must print, so the format is not stored (^DF prints nothing, p.1704).
+  // and a render must print, so the format is not stored (^DF prints nothing, p.1704) and nothing is asked.
   return stripSidecarComments(generateZPL(withoutStoredFormat(label), previewed, []));
 }

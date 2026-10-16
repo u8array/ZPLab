@@ -105,6 +105,12 @@ export function recallCandidates(p: StoragePath): string[] {
   return devices.map((device) => storageKey(formatStoragePath({ ...p, device }, true)));
 }
 
+/** An ^XF path's keys through recallCandidates, the extension defaulting to .ZPL. */
+export function recallKeys(path: string): string[] {
+  const ref = parseStoragePath(path);
+  return ref ? recallCandidates({ ...ref, ext: ref.ext ?? "ZPL" }) : [];
+}
+
 /** ^ID pattern as a test over `device:name.ext`: `*` is the only wildcard, device defaults to R: and extension to .GRF (spec p.245). */
 export function storagePathMatcher(pattern: string): (path: string) => boolean {
   const withDevice = storageKey(pattern);

@@ -27,10 +27,21 @@ export interface PrinterIdentity {
   options: string;
 }
 
+/** One reply can hold several host commands' answers, so each parser finds its line by shape, not by position. */
+const splitLines = (body: string): string[][] => replyLines(body).map((line) => line.split(","));
+/** A reply to one command alone is one line, matched loosely, as long as its shape is not another command's. */
+const onlyLine = (lines: string[][], shape: (f: string[]) => boolean): string[] | undefined => {
+  const [only, second] = lines;
+  return only !== undefined && second === undefined && shape(only) ? only : undefined;
+};
+
 /** ~HI answers one line `model,firmware,dpmm,memoryKB,options` (spec p.224). */
 export function parseHostIdentification(body: string): PrinterIdentity | undefined {
-  const [first] = replyLines(body);
-  const [model, firmware, dpmm, memory, ...options] = first?.split(",") ?? [];
+  const lines = splitLines(body);
+  const line =
+    lines.find((f) => f.length >= 4 && /^V[\d.]/i.test(f[1] ?? "") && /^\d+\s*KB$/i.test(f[3] ?? "")) ??
+    onlyLine(lines, (f) => f.length >= 4 && /[A-Za-z]/.test(f[1] ?? ""));
+  const [model, firmware, dpmm, memory, ...options] = line ?? [];
   if (!model || !firmware) return undefined;
   return { model, firmware, dpmm: int(dpmm), memoryKb: int(memory?.replace(/KB$/i, "")), options: options.join(",") };
 }
@@ -57,8 +68,7 @@ export interface HostStatus {
 
 /** Of the three strings ~HS answers, the state sits in the first two (spec p.233). */
 export function parseHostStatus(body: string): HostStatus | undefined {
-  // Some firmware prepends a banner line, so the state strings are picked by field count.
-  const fields = replyLines(body).map((line) => line.split(","));
+  const fields = splitLines(body);
   const first = fields.findIndex((f) => f.length >= 12);
   const a = fields[first] ?? [];
   const b = fields.slice(first + 1).find((f) => f.length >= 11) ?? [];
@@ -92,8 +102,11 @@ export interface HostMemory {
 
 /** ~HM answers one line `total,maximum,available` in kilobytes (spec p.225). */
 export function parseHostMemory(body: string): HostMemory | undefined {
-  const [first] = replyLines(body);
-  const [total, max, available] = (first?.split(",") ?? []).map(int);
+  const lines = splitLines(body);
+  const numeric = (f: string[]) => f.every((v) => /^\d+$/.test(v.trim()));
+  // The guide's example answers four fields, unmeasured on the ZD230.
+  const line = lines.find((f) => f.length === 3 && numeric(f)) ?? onlyLine(lines, (f) => f.length === 4 && numeric(f));
+  const [total, max, available] = (line ?? []).map(int);
   if (total === undefined || max === undefined || available === undefined) return undefined;
   return { totalKb: total, maxKb: max, availableKb: available };
 }

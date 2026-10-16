@@ -4,8 +4,8 @@ Every command of the ZPL II Programming Guide and what it takes to use it in ZPL
 
 | Column | Meaning |
 |---|---|
-| **Web** | The browser build reads the command on import and writes it back on export: as itself, folded into object properties (`^FW`, `^LR`, `^BY`, `^MU`, `^LH`, `^LT`, `^CI`), or into the Setup Script (printer setup commands). Structural commands (`^XA`, `^FS`, prefix changers) carry no user state |
-| **Desktop** | The same in the desktop app, which also talks to a connected printer; commands that need one (host queries, calibration, downloads to printer storage, RFID hardware) can only ever get a mark here |
+| **Web** | The browser build reads the command on import and writes it back on export: as itself, folded into object properties (`^FW`, `^LR`, `^BY`, `^MU`, `^LH`, `^LT`, `^CI`), or into the Setup Script (printer setup commands). Structural commands (`^XA`, `^FS`, prefix changers) carry no user state. Host commands count only where an answer can come back. The browser build has no channel for one |
+| **Desktop** | The same in the desktop app, which also talks to a connected printer; commands that need one (host queries, calibration, downloads to printer storage, RFID hardware) can only ever get a mark here. `~HB` answers only on a mobile printer, so it stays planned until one is measured |
 | **Docker** | The same in the self-hosted image, which serves the web build today. A container can open a printer connection, so what the desktop reaches that way is planned here |
 
 | Mark | Meaning |
@@ -273,21 +273,21 @@ Printer-side control, calibration and device actions; most need a connection or 
 
 | Command | Name | Web | Desktop | Docker |
 |---|---|:-:|:-:|:-:|
-| `~HB` | battery status, mobile printers only | `[ ]` | `[ ]` | `[ ]` |
-| `~HD` | printhead diagnostic | `[ ]` | `[~]` | `[~]` |
-| `^HF` | host format | `[ ]` | `[~]` | `[~]` |
+| `~HB` | battery status, mobile printers only | `[ ]` | `[~]` | `[~]` |
+| `~HD` | printhead diagnostic | `[ ]` | `[x]` | `[~]` |
+| `^HF` | host format | `[ ]` | `[x]` | `[~]` |
 | `^HG` | host graphic | `[ ]` | `[x]` | `[~]` |
 | `^HH` | configuration label return | `[ ]` | `[x]` | `[~]` |
 | `~HI` | host identification | `[ ]` | `[x]` | `[~]` |
 | `~HM` | host RAM status | `[ ]` | `[x]` | `[~]` |
-| `~HQ` | host query | `[ ]` | `[~]` | `[~]` |
+| `~HQ` | host query | `[ ]` | `[x]` | `[~]` |
 | `~HS` | host status return | `[ ]` | `[x]` | `[~]` |
-| `^HT` | host linked fonts list | `[ ]` | `[~]` | `[~]` |
-| `~HU` | ZebraNet alert configuration | `[ ]` | `[~]` | `[~]` |
+| `^HT` | host linked fonts list | `[ ]` | `[x]` | `[~]` |
+| `~HU` | ZebraNet alert configuration | `[ ]` | `[x]` | `[~]` |
 | `^HV` | host verification | `[ ]` | `[~]` | `[~]` |
 | `^HW` | host directory | `[ ]` | `[x]` | `[~]` |
 | `^HY` | upload graphics | `[ ]` | `[x]` | `[~]` |
-| `^HZ` | display description information | `[ ]` | `[~]` | `[~]` |
+| `^HZ` | display description information | `[ ]` | `[x]` | `[~]` |
 
 ## RFID
 

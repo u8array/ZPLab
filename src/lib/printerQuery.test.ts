@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { queryPrinter } from "./printerQuery";
+import { answered, queryPrinter } from "./printerQuery";
 import type * as TauriCore from "@tauri-apps/api/core";
 
 vi.mock("./platform", () => ({ isDesktopShell: true }));
@@ -19,11 +19,22 @@ describe("queryPrinter over the network", () => {
     expect(await queryPrinter(target, "~HQES")).toEqual({ kind: "error", message: "no response from printer" });
   });
 
-  it("forwards a refused connection and a reply", async () => {
+  it("forwards a refused connection, a silent printer and a reply", async () => {
     invoke.mockResolvedValueOnce({ kind: "refused" });
     expect(await queryPrinter(target, "~HI")).toEqual({ kind: "refused", port: 9100 });
     invoke.mockResolvedValueOnce({ kind: "data", body: "ZD230" });
     expect(await queryPrinter(target, "~HI")).toEqual({ kind: "ok", value: "ZD230" });
     expect(invoke).toHaveBeenLastCalledWith("query_zpl_tcp", { host: "172.17.17.175", port: 9100, zpl: "~HI" });
+    invoke.mockResolvedValueOnce({ kind: "silent" });
+    expect(await queryPrinter(target, "~HU")).toEqual({ kind: "silent" });
+  });
+});
+
+describe("answered", () => {
+  it("keeps a reply's spaces, drops the line break around it, and calls a bare frame or whitespace silence", () => {
+    expect(answered({ kind: "ok", value: " HEADER 1 \r\n" })).toEqual({ kind: "ok", value: " HEADER 1 " });
+    expect(answered({ kind: "ok", value: "\u0002\u0003" })).toEqual({ kind: "silent" });
+    expect(answered({ kind: "ok", value: "" })).toEqual({ kind: "silent" });
+    expect(answered({ kind: "ok", value: "  " })).toEqual({ kind: "silent" });
   });
 });

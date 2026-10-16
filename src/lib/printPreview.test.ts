@@ -16,6 +16,14 @@ const blankBarcode = (): LabelObject[] => [
   } as LabelObject,
 ];
 
+describe("buildPreviewZpl host commands", () => {
+  it("never asks the printer, with or without the blank-field samples", () => {
+    const asking = { ...label, hostCommands: ["~HS", "^HV1,20,H,E,F"] } as PageLabel;
+    expect(buildPreviewZpl(asking, blankBarcode(), [], null)).not.toMatch(/~HS|\^HV/);
+    expect(buildPreviewZpl(asking, blankBarcode(), [], null, { blankSamples: true })).not.toMatch(/~HS|\^HV/);
+  });
+});
+
 describe("buildPreviewZpl blank-field samples", () => {
   it("overlay opt-in renders a blank barcode with its symbology sample", () => {
     const zpl = buildPreviewZpl(label, blankBarcode(), [], null, { blankSamples: true });

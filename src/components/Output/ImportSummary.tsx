@@ -16,6 +16,8 @@ const TONE: Record<ImportFindingKind, string> = {
   replayRisk: 'text-red-400',
   // Higher severity: a transient device action that runs on the device.
   deviceAction: 'text-red-400',
+  // Informational: the printer answers over the host port, the label is unchanged.
+  hostQuery: 'text-muted',
   // Round-trip caveat: byte-exact replay ends at the first edit.
   lossyEdit: 'text-amber-400',
   // Informational: the field kept its data, only the slot number moved.

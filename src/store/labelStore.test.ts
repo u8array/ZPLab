@@ -1111,6 +1111,12 @@ describe('duplicatePage', () => {
     state().duplicatePage(0);
     expect(defined(state().pages[1]).jmDensity).toBe('B');
   });
+
+  it('keeps the questions, so the clone asks what its source asked', () => {
+    useLabelStore.setState({ pages: [{ objects: [], hostCommands: ['~HS'] }] });
+    state().duplicatePage(0);
+    expect(defined(state().pages[1]).hostCommands).toEqual(['~HS']);
+  });
 });
 
 describe('currentPageLabel', () => {

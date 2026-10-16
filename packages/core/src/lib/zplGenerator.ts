@@ -1,12 +1,13 @@
 import { mmToDots } from './coordinates';
 import { CONTROL_BYTES_RE } from './binaryText';
 import { unsafeRawFieldSpans } from './zplParser/helpers';
+import { hostCommandTokens, isFieldHostCommand, splitHostCommands, type HostCommandPlacement } from './hostCommands';
 import { rewriteRawFieldSpans } from './zplParser/decoders/gfa';
 import { getEntry, loneBindFdTransform, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import { stripZplParamChars } from './zplParams';
 import { isRecallableFormatPath, storageKey, storageRefMatchesPath } from './storagePath';
-import { recallOnlyPath } from './storedFormat';
+import { formatDelivery, recallOnlyPath } from './storedFormat';
 import {
   extractTemplateRefs,
   hasTemplateMarkers,
@@ -251,7 +252,7 @@ export function generateMultiPageZplWithMap(
       if (out.length > 0 && !out.endsWith('\n')) out += '\n';
       const base = out.length;
       const { recalls } = planRecalls(pageLabel, p.objects, variables, NO_ROWS, NO_BINDINGS);
-      out += `${regen.preamble ?? ''}${recallBlock(recallPath, recallFields(recalls))}`;
+      out += `${regen.preamble ?? ''}${recallBlock(recallPath, recallFields(recalls), recallHostCommands(pageLabel, 'first'))}`;
       blocks.push({ start: base, end: out.length });
       wireUnknown = true;
       return;
@@ -281,6 +282,9 @@ export function generateMultiPageZplWithMap(
         // applyJmDensity can't read a head-less block, so latch the wire here.
         wireJm = target;
       }
+    }
+    if (emitted.head && !emitted.head.dfSpans?.length && pageLabel.storedFormatPath !== undefined && wouldStoreAHostCommand(emitted.block, emitted.head)) {
+      emitted = regenPage();
     }
     const stored = applyStoredFormat(emitted, pageLabel.storedFormatPath);
     emitted = { ...emitted, block: stored.block, head: stored.head };
@@ -437,6 +441,25 @@ function shiftHead(head: FormatHead, edits: readonly HeadEdit[], dfSpans: readon
   };
 }
 
+/** The head's leading run of questions: a ^DF or ^JM goes behind it, and a format question past it would be stored
+ *  with the format. The run ends at the first byte that is not a question, so no ^CC sits inside it. */
+function headHostCommandRun(block: string, head: FormatHead): { anchor: number; storesAQuestion: boolean } {
+  const tail = block.slice(head.at);
+  let anchor = 0;
+  let leading = true;
+  let storesAQuestion = false;
+  // A design file without the recorded tilde may store a question behind a ^CT remap.
+  for (const t of hostCommandTokens(tail, { caretChar: head.caret, tildeChar: head.tilde ?? '~', delimiterChar: ',' })) {
+    leading &&= tail.slice(anchor, t.start).trim() === '' && !isFieldHostCommand(t.id);
+    if (leading) anchor = t.end;
+    else if (!isFieldHostCommand(t.id)) storesAQuestion = true;
+  }
+  return { anchor: head.at + anchor, storesAQuestion };
+}
+
+const headAnchor = (block: string, head: FormatHead): number => headHostCommandRun(block, head).anchor;
+const wouldStoreAHostCommand = (block: string, head: FormatHead): boolean => headHostCommandRun(block, head).storesAQuestion;
+
 /** Rewrites, cuts or inserts the block's ^DF so it names `path`. Untouched bytes replay as they are;
  *  once the model differs it owns the head, and a second declaration is cut with the first rewritten. */
 function applyStoredFormat(
@@ -449,12 +472,13 @@ function applyStoredFormat(
   const first = spans[0];
   if (!first) {
     if (path === undefined) return { block, head, edits: [] };
-    // Right after the ^XA (p.174); a ^JM inserted later lands behind it.
+    // At the head (p.174), behind the questions the block asks first, where a ^JM inserted later lands too.
+    const at = headAnchor(block, head);
     const injected = `${head.caret}DF${path}`;
-    const edits = [{ at: head.at, delta: injected.length }];
+    const edits = [{ at, delta: injected.length }];
     return {
-      block: `${block.slice(0, head.at)}${injected}${block.slice(head.at)}`,
-      head: shiftHead(head, edits, [{ start: head.at, end: head.at + injected.length, caret: head.caret, path }]),
+      block: `${block.slice(0, at)}${injected}${block.slice(at)}`,
+      head: shiftHead(head, edits, [{ start: at, end: at + injected.length, caret: head.caret, path }]),
       edits,
     };
   }
@@ -516,10 +540,10 @@ function applyJmDensity(
   if (!target) return { block, wireJm: undefined, edits: [] };
   // Behind the head's last ^JM or ^DF, whichever comes later, since an unreadable ^JM must not
   // outrank a fresh one and a density ahead of the ^DF would sit outside the stored format.
-  // With no spans, the ^XA caret is the injection point.
+  // With no spans, the head behind any question is the injection point.
   const lastDf = head.dfSpans?.[head.dfSpans.length - 1];
   const tail = [head.jmSpans[head.jmSpans.length - 1], lastDf].filter((s) => s !== undefined).sort((a, b) => a.end - b.end).pop();
-  const at = tail?.end ?? head.at;
+  const at = tail?.end ?? headAnchor(block, head);
   const caret = tail?.caret ?? head.caret;
   const injected = `${caret}JM${target}`;
   return {
@@ -802,8 +826,16 @@ function emitPageBlock(
 /** Where a batch stores its template when the design names none ^XF could recall: R: is volatile RAM, matching a single run. */
 const BATCH_TEMPLATE_PATH = 'R:LBL.ZPL';
 
-function recallBlock(path: string, fields: readonly string[]): string {
-  return ['^XA', `^XF${path}`, ...fields, '^XZ'].join('\n');
+function recallBlock(path: string, fields: readonly string[], asks: HostCommandPlacement): string {
+  return [...asks.immediate, '^XA', ...asks.head, `^XF${path}`, ...fields, ...asks.field, '^XZ'].join('\n');
+}
+
+/** What a recall block asks: the immediate and head questions once per job, the field questions only where the printer
+ *  already holds the format. */
+function recallHostCommands(label: PageLabel, block: 'first' | 'repeat'): HostCommandPlacement {
+  const { immediate, head, field } = splitHostCommands(label.hostCommands);
+  const once = block === 'first';
+  return { immediate: once ? immediate : [], head: once ? head : [], field: formatDelivery(label) === 'printer' ? field : [] };
 }
 
 interface RecallEntry {
@@ -878,7 +910,8 @@ function planRecalls(
   // Supplied slots stay bare in the stored format; the recall fills them.
   const bareFns = new Set(entries.map((e) => e.fn));
   const path = recallOnlyPath(label) ?? (label.storedFormatPath && isRecallableFormatPath(label.storedFormatPath) ? label.storedFormatPath : BATCH_TEMPLATE_PATH);
-  const template = generateZplBlock({ ...label, storedFormatPath: path }, objects, variables, bareFns);
+  // Only the field questions are stored, the recall asks the rest, so no question goes out twice.
+  const template = generateZplBlock({ ...label, storedFormatPath: path, hostCommands: splitHostCommands(label.hostCommands).field }, objects, variables, bareFns);
   // A recall for a slot the stored format never declares prints as a stray field (ZD230).
   const stored = declaredSlots(template.block);
   return { template, path, recalls: entries.filter((e) => stored.has(e.fn)) };
@@ -920,7 +953,8 @@ export function generateBatchZpl(
   columnMapping: { bindings: Record<string, string> },
 ): string {
   const { template, path, recalls } = planRecalls(label, objects, variables, dataset, columnMapping);
-  const recallBlocks = dataset.rows.map((row) => recallBlock(path, recallFields(recalls, row)));
+  // The job asks once, in its first block.
+  const recallBlocks = dataset.rows.map((row, i) => recallBlock(path, recallFields(recalls, row), recallHostCommands(label, i === 0 ? 'first' : 'repeat')));
   const lead = recallOnlyPath(label) === undefined ? template.block : (template.preamble ?? '').trimEnd();
   return [...(lead === '' ? [] : [lead]), ...recallBlocks].join('\n');
 }
@@ -1064,12 +1098,15 @@ function generateZplBlock(
 
   // ~JS is immediate/transient like ~SD; emit before ^XA.
   if (label.backfeedSequence) lines.push(`~JS${label.backfeedSequence}`);
+  const questions = splitHostCommands(label.hostCommands);
+  lines.push(...questions.immediate);
 
   const preambleLines = lines.length;
   lines.push('^XA');
   const lineStart = () => lines.reduce((n, l) => n + l.length + 1, 0);
   // Offset just past the ^XA: every preceding line plus its newline.
   const headAt = lineStart() - 1;
+  lines.push(...questions.head);
   // ^DF stores everything after it, so it comes first (p.174), and without ^FS
   // (p.269: a terminator ahead of ^JM disables the density).
   let dfSpans: DfSpan[] | undefined;
@@ -1205,6 +1242,7 @@ function generateZplBlock(
     lines.push(`^PQ${pq}`);
   }
 
+  lines.push(...questions.field);
   lines.push('^XZ');
 
   // Per-line aliasing so the span offsets stay true against the final bytes;

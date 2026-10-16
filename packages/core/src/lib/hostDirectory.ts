@@ -44,8 +44,12 @@ export function parseHostDirectories(body: string): HostDirectory[] {
   for (const line of replyLines(body)) {
     const [, drive = ""] = DIR_LINE.exec(line) ?? [];
     if (drive) {
-      current = { device: drive.toUpperCase(), objects: [], bytesFree: undefined };
-      out.push(current);
+      // A document that asks ^HW twice lists a drive twice, and the later listing is the fresher one.
+      const listing: HostDirectory = { device: drive.toUpperCase(), objects: [], bytesFree: undefined };
+      const earlier = out.findIndex((d) => d.device === listing.device);
+      if (earlier === -1) out.push(listing);
+      else out[earlier] = listing;
+      current = listing;
       continue;
     }
     if (!current) continue;

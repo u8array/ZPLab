@@ -6,12 +6,16 @@ import { primaryButtonCls } from "../ui/formStyles";
 import { sendViaBrowserPrint, sendViaNetwork } from "../../lib/zebraPrint";
 import { isDesktopShell } from "../../lib/platform";
 import { needsRawChannel, resolveQueryTarget, type PrintTransport } from "../../lib/printTarget";
+import { queryOffer } from "../../lib/printWayText";
+import { QueryHints } from "./QueryHints";
+import type { DocumentQueryFacts } from "../../lib/outputChoice";
 import { useLabelStore, selectEffectivePreviewProvider, selectPrinterReading } from "../../store/labelStore";
 import { sendZplLocal } from "../../lib/localPrint";
 import { sendZplUsb, setupUsbAccess } from "../../lib/usbPrint";
 import { pickerOptions } from "../../hooks/usePrintDevices";
 import type { PrintDeviceLists } from "../../hooks/usePrintWays";
 import { PrinterAddressFields } from "../PrinterSettings/PrinterAddressFields";
+import { DocumentQueryAction } from "./DocumentQueryAction";
 import { PrinterCheck } from "./PrinterCheck";
 import type { PrinterQueryFailure } from "../../lib/printerQuery";
 
@@ -41,7 +45,7 @@ interface TransportView {
   extra?: ReactNode;
 }
 
-function TransportBody({ view, fieldLabel }: { view: TransportView; fieldLabel: string }) {
+function TransportBody({ view, fieldLabel, hints, action }: { view: TransportView; fieldLabel: string; hints: readonly string[]; action: ReactNode }) {
   return (
     <div className="flex flex-col gap-3 p-4">
       <div className="flex flex-col gap-1">
@@ -53,22 +57,17 @@ function TransportBody({ view, fieldLabel }: { view: TransportView; fieldLabel: 
           groups={[{ options: view.options }]}
         />
       </div>
+      <QueryHints hints={hints} />
       <div className="flex items-start justify-between gap-2">
         {view.extra ?? <span />}
-        <button
-          onClick={view.onSend}
-          disabled={view.sendDisabled}
-          className={primaryButtonCls}
-        >
-          {view.sendLabel}
-        </button>
+        {action}
       </div>
       <StatusMessage status={view.status} />
     </div>
   );
 }
 
-export function ZebraWayPanel({ zpl, way, devices }: { zpl: () => string; way: PrintTransport; devices: PrintDeviceLists }) {
+export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string; way: PrintTransport; devices: PrintDeviceLists; query: DocumentQueryFacts }) {
   const t = useT();
   const printTarget = useLabelStore((s) => s.printTarget);
   const host = printTarget.host;
@@ -195,18 +194,15 @@ export function ZebraWayPanel({ zpl, way, devices }: { zpl: () => string; way: P
     }
   }
 
-  const checkProps = (sending: boolean) => ({
-    transport: way,
-    sendBusy: sending,
-    onFailure: (failure: PrinterQueryFailure) => {
-      if (failure.kind !== "permission_denied") return;
-      setUsbNeedsSetup(true);
-      setUsbStatus({ type: "error", message: t.zebraPrint.usbPermissionDenied });
-    },
-  });
+  const onReadFailure = (failure: PrinterQueryFailure) => {
+    if (failure.kind !== "permission_denied") return;
+    setUsbNeedsSetup(true);
+    setUsbStatus({ type: "error", message: t.zebraPrint.usbPermissionDenied });
+  };
+  const checkProps = (sending: boolean) => ({ transport: way, sendBusy: sending, onFailure: onReadFailure });
 
-  // Every way reaches the same device, so every way may ask it. Only the desktop shell can read a
-  // reply, and a way that cannot be questioned itself falls back to the configured address.
+  // Every way reaches the same device, so every way may ask it, and a way that cannot be questioned
+  // itself falls back to the configured address.
   const addressCheck = (sending: boolean) => {
     if (!isDesktopShell) return null;
     const resolved = resolveQueryTarget(printTarget, way);
@@ -283,6 +279,10 @@ export function ZebraWayPanel({ zpl, way, devices }: { zpl: () => string; way: P
     },
   ];
   const activeView = views.find((v) => v.key === way);
+  const offer = queryOffer(t.zebraPrint, query, way, isDesktopShell);
+  const netSendDisabled = !host || netStatus.type === "sending" || locked;
+  const action = (send: ReactNode, sendDisabled: boolean): ReactNode =>
+    offer.queries ? <DocumentQueryAction zpl={zpl} commands={query.commands} transport={way} disabled={sendDisabled} onFailure={onReadFailure} /> : send;
 
   if (way === "network") {
     return (
@@ -294,15 +294,16 @@ export function ZebraWayPanel({ zpl, way, devices }: { zpl: () => string; way: P
         )}
         <PrinterAddressFields />
 
+        <QueryHints hints={offer.hints} />
+
         <div className="flex items-start justify-between gap-2">
           {addressCheck(netStatus.type === "sending") ?? <span />}
-          <button
-            onClick={handleNetworkSend}
-            disabled={!host || netStatus.type === "sending" || locked}
-            className={primaryButtonCls}
-          >
-            {netStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send}
-          </button>
+          {action(
+            <button onClick={handleNetworkSend} disabled={netSendDisabled} className={primaryButtonCls}>
+              {netStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send}
+            </button>,
+            netSendDisabled,
+          )}
         </div>
 
         <StatusMessage status={netStatus} />
@@ -310,5 +311,17 @@ export function ZebraWayPanel({ zpl, way, devices }: { zpl: () => string; way: P
     );
   }
 
-  return activeView ? <TransportBody view={activeView} fieldLabel={t.zebraPrint.printer} /> : null;
+  return activeView ? (
+    <TransportBody
+      view={activeView}
+      fieldLabel={t.zebraPrint.printer}
+      hints={offer.hints}
+      action={action(
+        <button onClick={activeView.onSend} disabled={activeView.sendDisabled} className={primaryButtonCls}>
+          {activeView.sendLabel}
+        </button>,
+        activeView.sendDisabled,
+      )}
+    />
+  ) : null;
 }

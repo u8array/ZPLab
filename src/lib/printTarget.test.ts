@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PRINT_TARGET, effectiveTransport, needsRawChannel, offeredTransports, parsePort, readLegacyPrintTarget, resolveQueryTarget } from "./printTarget";
+import { carriesReply, DEFAULT_PRINT_TARGET, effectiveTransport, needsRawChannel, offeredTransports, parsePort, readLegacyPrintTarget, resolveQueryTarget } from "./printTarget";
 
 function storageOf(entries: Record<string, string>) {
   const map = new Map(Object.entries(entries));
@@ -40,6 +40,16 @@ describe("printTarget", () => {
     // The system way sends no code, so only the render it needs first can contend.
     expect(needsRawChannel("system", "printer")).toBe(true);
     expect(needsRawChannel("system", "labelary")).toBe(false);
+  });
+
+  it("names the ways that can bring an answer back", () => {
+    expect(carriesReply("network", true)).toBe(true);
+    expect(carriesReply("usb", true)).toBe(true);
+    expect(carriesReply("browserprint", true)).toBe(false);
+    expect(carriesReply("local", true)).toBe(false);
+    expect(carriesReply("system", true)).toBe(false);
+    expect(carriesReply("network", false)).toBe(false);
+    expect(carriesReply("usb", false)).toBe(false);
   });
 
   it("takes the pre-0.7.0 browser keys over once and clears them", () => {

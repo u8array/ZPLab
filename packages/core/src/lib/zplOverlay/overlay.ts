@@ -43,6 +43,8 @@ export interface OverlayFrame {
 export interface FormatHead {
   /** Command prefix char in effect at the opener. */
   caret: string;
+  /** Control prefix char in effect at the opener, absent in design files written before it was recorded. */
+  tilde?: string;
   /** Offset just past the `^XA`; 0 when the block has no wrapper. */
   at: number;
   /** Spans of the head's own `^JM` commands, in source order. Invalid values
@@ -190,6 +192,7 @@ export const blockOverlaySchema = z
     head: z
       .object({
         caret: z.string().length(1),
+        tilde: z.string().length(1).optional(),
         at: z.number().int().min(0),
         jmSpans: z.array(z.object({ start: z.number().int().min(0), end: z.number().int().min(0), delim: z.string().length(1), caret: z.string().length(1) })),
         dfSpans: z.array(z.object({ start: z.number().int().min(0), end: z.number().int().min(0), caret: z.string().length(1), path: z.string().optional() })).optional(),

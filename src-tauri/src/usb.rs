@@ -66,6 +66,7 @@ pub enum UsbQueryResult {
   Data {
     body: String,
   },
+  Silent,
   /// See classify_lp_io_err.
   #[cfg(target_os = "linux")]
   PermissionDenied,
@@ -75,6 +76,9 @@ pub enum UsbQueryResult {
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 impl UsbQueryResult {
   fn from_reply(body: Vec<u8>) -> Self {
+    if body.is_empty() {
+      return Self::Silent;
+    }
     Self::Data {
       body: String::from_utf8_lossy(&body).into_owned(),
     }
@@ -556,6 +560,8 @@ mod tests {
     assert_eq!(json, r#"{"kind":"data","body":"~DY"}"#);
     let json = serde_json::to_string(&UsbQueryResult::NotFound).unwrap();
     assert_eq!(json, r#"{"kind":"not_found"}"#);
+    let json = serde_json::to_string(&UsbQueryResult::from_reply(Vec::new())).unwrap();
+    assert_eq!(json, r#"{"kind":"silent"}"#);
   }
 
   #[test]

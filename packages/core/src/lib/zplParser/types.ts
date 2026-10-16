@@ -12,6 +12,7 @@ export type ImportFindingKind =
   | "unknown"
   | "replayRisk"
   | "deviceAction"
+  | "hostQuery"
   | "lossyEdit"
   | "fnRenumbered"
   | "fnDefaultDropped"
@@ -34,7 +35,7 @@ export interface SourceSpan {
 export interface ImportFinding {
   kind: ImportFindingKind;
   /** Command token. For 'partial' the bare code (e.g. "^A@"). For
-   *  'browserLimit' / 'unknown' the full token including parameters
+   *  'browserLimit' / 'unknown' / 'hostQuery' the full token including parameters
    *  (e.g. "^GFA,8,8,0,…"). For 'lossyEdit' a human-readable reason.
    *  For 'unterminatedField' the ^FO/^FT token that opened the dropped field. For
    *  'hexControl' the hex escape as written. */
@@ -66,7 +67,7 @@ export interface FontLoss {
 
 export interface ImportReport {
   findings: ImportFinding[];
-  // The buckets below are dedup views for these seven kinds only.
+  // The buckets below are dedup views for these eight kinds only.
   // Every other kind (lossyEdit, fnRenumbered, fnDefaultDropped, mixedPageGeometry)
   // lives solely in `findings`; iterate `findings` for a kind-complete view.
   /** Commands imported with known loss. Deduplicated by command code. */
@@ -79,6 +80,8 @@ export interface ImportReport {
   replayRisk: string[];
   /** Device actions in source spelling: run on re-emit, no profile field, not routable. */
   deviceAction: string[];
+  /** Host commands in source spelling: the printer answers them over the host port. */
+  hostQuery: string[];
   /** Openers of fields the printer discards: no ^FS before the next ^FO/^FT.
    *  Deduplicated by opener token, so two dropped fields at the same coordinates collapse. */
   unterminatedField: string[];
@@ -94,6 +97,8 @@ export interface ParsedPage {
    *  import service's job). */
   variables: Variable[];
   findings: ImportFinding[];
+  /** Host commands in canonical spelling. */
+  hostCommands: string[];
   /** Source-patch overlay for byte-verbatim replay, present only when
    *  `captureOverlay` is set and every parsed object linked to a source span;
    *  `undefined` means the block regenerates from the model. */
@@ -113,8 +118,7 @@ export interface ParsedPage {
   /** The parser's recall record, its ranges made page-relative.
    *  `slotsOnly`: the block held nothing but the recall and slot data, so it prints only that format. */
   recall?: { pageIndex: number; slotsOnly: boolean; objects: [number, number]; variables: [number, number]; declarations: Variable[] };
-  /** Page 0 only: stream had no ^XA wrapper (bare field paste). Re-export
-   *  regenerates the wrapper, so the overlay is suppressed by the caller. */
+  /** Page 0 only: the stream had no ^XA wrapper, a bare field paste. */
   bare?: boolean;
   /** This page's bytes in the source (page 0 owns any preamble). */
   span: SourceSpan;

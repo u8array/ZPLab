@@ -215,10 +215,13 @@ describe("^DF in the design file, the source pane and the page label", () => {
     expect(removed.ok && removed.next.pages[0]?.storedFormatPath).toBeUndefined();
   });
 
-  it("folds the page's ^DF into its label and never another page's", () => {
+  it("folds the page's ^DF and host commands into its label and never another page's", () => {
     expect(pageLabelConfig(label, {})).toBe(label);
     expect(pageLabelConfig(label, { storedFormatPath: "R:B.ZPL" }).storedFormatPath).toBe("R:B.ZPL");
     const carried = pageLabelConfig(label, { storedFormatPath: "R:B.ZPL" });
     expect(pageLabelConfig(carried, {}).storedFormatPath).toBeUndefined();
+    const asking = pageLabelConfig(label, { hostCommands: ["~HS"] });
+    expect(asking.hostCommands).toEqual(["~HS"]);
+    expect(pageLabelConfig(asking, {}).hostCommands).toBeUndefined();
   });
 });
