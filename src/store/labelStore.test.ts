@@ -988,6 +988,14 @@ describe('setPageStoredFormatPath', () => {
   });
 });
 
+describe('migrateLegacy: v5 gs1databar moduleWidth', () => {
+  it('becomes the magnification', () => {
+    const persisted = { pages: [{ objects: [{ id: 'g', type: 'gs1databar', x: 0, y: 0, rotation: 0, props: { moduleWidth: 4 } }] }] };
+    const migrated = migrateLegacy(persisted, 5) as { pages: { objects: { props: Record<string, unknown> }[] }[] };
+    expect(migrated.pages[0]?.objects[0]?.props).toEqual({ magnification: 4 });
+  });
+});
+
 describe('migrateLegacy: a main-era ^DF that only the overlay bytes carried', () => {
   it('lands on the page and its head, so naming the page rewrites instead of doubling', () => {
     const imported = importZplText(['^XA', '^DFE:OLD.ZPL', '^FO10,10^A0N,30,30^FDa^FS', '^XZ'].join('\n'), 8);

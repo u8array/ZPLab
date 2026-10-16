@@ -12,7 +12,7 @@ import { dbSourceRefSchema, type DbSourceRef } from "../types/DataSource";
 import type { LabelObject } from "../types/Group";
 import { blockOverlaySchema, overlayText, type BlockOverlay } from "./zplOverlay/overlay";
 import { reconstructLegacyBlockHeads, storedFormatPathOf } from "./zplHeadScan";
-import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, safeUniqueNameById } from "./objectTree";
+import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, migrateGs1DatabarLeaf, safeUniqueNameById } from "./objectTree";
 import { sanitiseLoadedVariables } from "./loadedVariables";
 import { insertReverseBackingBoxes, pageNeedsReverseBacking } from "./reverseBacking";
 import { ok, err } from "./result";
@@ -129,7 +129,7 @@ export function parseDesignFile(text: string): DesignFileResult {
   // Valid JSON that is not an object (null, true, "x") must reject, not throw.
   if (!json || typeof json !== "object") return err("invalid_schema");
 
-  migrateGs1databarModuleWidth(json);
+  visitLeavesInPages((json as { pages?: unknown }).pages, migrateGs1DatabarLeaf);
   visitLeavesInPages((json as { pages?: unknown }).pages, fixTlc39SlotsLeaf);
   migrateReverseTextBackground(json);
   migrateSerialToTextMode(json);
@@ -182,27 +182,6 @@ function migrateReverseTextBackground(json: unknown): void {
     });
   }
   j.schemaVersion = 2;
-}
-
-/** Rename gs1databar `props.moduleWidth` → `props.magnification` on
- *  legacy design files. Mirrors the persist-store v5→v6 hop in
- *  `labelStore.ts`. Idempotent. */
-function migrateGs1databarModuleWidth(json: unknown): void {
-  if (!json || typeof json !== "object") return;
-  const pages = (json as { pages?: unknown }).pages;
-  visitLeavesInPages(pages, (leaf) => {
-    if (
-      leaf.type === "gs1databar" &&
-      leaf.props &&
-      typeof leaf.props === "object" &&
-      "moduleWidth" in leaf.props &&
-      !("magnification" in leaf.props)
-    ) {
-      const props = leaf.props as Record<string, unknown>;
-      props.magnification = props.moduleWidth;
-      delete props.moduleWidth;
-    }
-  });
 }
 
 /** Convert the legacy standalone `serial` object type into a `text` field with

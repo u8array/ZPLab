@@ -69,6 +69,15 @@ export function fixTlc39SlotsLeaf(leaf: UnknownNode): void {
   }
 }
 
+/** Legacy gs1databar `moduleWidth` is the ^BR magnification. */
+export function migrateGs1DatabarLeaf(leaf: UnknownNode): void {
+  if (leaf.type !== "gs1databar" || !leaf.props || typeof leaf.props !== "object") return;
+  const props = leaf.props as Record<string, unknown>;
+  if (!("moduleWidth" in props) || "magnification" in props) return;
+  props.magnification = props.moduleWidth;
+  delete props.moduleWidth;
+}
+
 /** Legacy standalone `serial` object type → `text` field with a `serial` prop. */
 export function foldSerialLeaf(leaf: UnknownNode): void {
   if (leaf.type !== "serial" || !leaf.props || typeof leaf.props !== "object") return;

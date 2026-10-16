@@ -8,6 +8,7 @@ import {
   visitLeavesInPages,
   foldSerialLeaf,
   fixTlc39SlotsLeaf,
+  migrateGs1DatabarLeaf,
   bindSingleMarkerLeaf,
   safeUniqueNameById,
 } from '@zplab/core/lib/objectTree';
@@ -165,11 +166,9 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     s = { ...s, printerProfile: {} };
   }
 
-  // v5→v6: gs1databar props.moduleWidth → props.magnification. The
-  // value was always semantically the ^BR magnification multiplier
-  // (1-10), not a dot quantity; the rename clarifies that.
+  // v5→v6: gs1databar props.moduleWidth → props.magnification.
   if (version < 6) {
-    s = { ...s, pages: migrateGs1DatabarInPages(s.pages) };
+    visitLeavesInPages(s.pages, migrateGs1DatabarLeaf);
   }
 
   // v6→v7: ^MA/^MI type codes corrected to match spec (R/C instead of
@@ -412,21 +411,6 @@ function migrateSingleBindInPages(
   nameById: ReadonlyMap<string, string>,
 ): unknown {
   visitLeavesInPages(pages, (leaf) => bindSingleMarkerLeaf(leaf, nameById));
-  return pages;
-}
-
-function migrateGs1DatabarInPages(pages: unknown): unknown {
-  visitLeavesInPages(pages, (leaf) => {
-    if (
-      leaf.type !== 'gs1databar' ||
-      !leaf.props ||
-      typeof leaf.props !== 'object'
-    ) return;
-    const props = leaf.props as Record<string, unknown>;
-    if (!('moduleWidth' in props) || 'magnification' in props) return;
-    props.magnification = props.moduleWidth;
-    delete props.moduleWidth;
-  });
   return pages;
 }
 
