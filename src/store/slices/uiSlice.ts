@@ -181,6 +181,8 @@ export interface UiSlice {
   pickingRfidPosition: boolean;
   /** Reference for the "Align" section toggle; see AlignSelectionRef. Transient. */
   alignRef: AlignSelectionRef;
+  /** Props the canvas shows over one object while a panel option is hovered, never committed. Transient. */
+  propsPreview: { id: string; props: Record<string, unknown> } | null;
   printerSettingsTab: PrinterSettingsTab | null;
   /** Cross-component trigger for the output dialog. `null` keeps it closed. */
   outputSource: OutputSource | null;
@@ -251,6 +253,7 @@ export interface UiSlice {
   setBlockDragMode: (mode: BlockDragMode) => void;
   startRfidPositionPick: () => void;
   endRfidPositionPick: () => void;
+  setPropsPreview: (preview: { id: string; props: Record<string, unknown> } | null) => void;
   setAlignRef: (ref: AlignSelectionRef) => void;
   setPrinterSettingsTab: (tab: PrinterSettingsTab | null) => void;
   openOutput: (source: OutputSource) => void;
@@ -325,9 +328,9 @@ function defaultUiPrefs(): UiPrefs {
 }
 
 type DocumentUiReset = Pick<LabelState, 'mappingModalOpen' | 'connectWizardOpen' | 'printerSettingsTab'
-  | 'pickingRfidPosition' | 'gs1BuilderObjectId' | 'contentBuilderObjectId' | 'variableBuilderObjectId'>;
+  | 'pickingRfidPosition' | 'gs1BuilderObjectId' | 'contentBuilderObjectId' | 'variableBuilderObjectId' | 'propsPreview'>;
 
-/** Reset by every writer that replaces the document: the dialogs seed from it at mount, the pick would commit into the next one. */
+/** Reset by every writer that replaces the document: nothing here may outlive the document it was keyed to. */
 export function resetDocumentUi(): DocumentUiReset {
   return {
     mappingModalOpen: false,
@@ -337,6 +340,7 @@ export function resetDocumentUi(): DocumentUiReset {
     gs1BuilderObjectId: null,
     contentBuilderObjectId: null,
     variableBuilderObjectId: null,
+    propsPreview: null,
   };
 }
 
@@ -361,6 +365,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   blockDragMode: 'frame',
   pickingRfidPosition: false,
   alignRef: 'selection',
+  propsPreview: null,
   printerSettingsTab: null,
   outputSource: null,
   outputChoice: defaultOutputChoice(isDesktopShell),
@@ -490,6 +495,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   togglePaletteEditing: () => set((state) => ({ paletteEditing: !state.paletteEditing })),
   startRfidPositionPick: () => set({ pickingRfidPosition: true, printerSettingsTab: null }),
   endRfidPositionPick: () => set({ pickingRfidPosition: false, printerSettingsTab: 'rfid' }),
+  setPropsPreview: (preview) => set({ propsPreview: preview }),
   setShowZplCommands: (show) => set({ showZplCommands: show }),
   setKeepExportMetadata: (on) => set({ keepExportMetadata: on }),
   setMcpServerEnabled: (enabled) => set({ mcpServerEnabled: enabled }),

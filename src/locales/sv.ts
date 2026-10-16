@@ -1254,7 +1254,8 @@ const sv = {
       color: 'Färg',
       colorB: 'Svart',
       colorW: 'Vit',
-      rounding: 'Avrundning (0–8)',
+      rounding: 'Avrundning',
+      roundingHint: 'Skrivaren använder bara hela steg, vardera en sextondel av den kortare sidan. Listan visar hörnradien som varje steg ger den här rutan.',
       reverse: 'Invert',
     },
     shapeMode: {

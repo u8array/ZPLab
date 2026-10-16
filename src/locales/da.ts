@@ -1254,7 +1254,8 @@ const da = {
       color: 'Farve',
       colorB: 'Sort',
       colorW: 'Hvid',
-      rounding: 'Afrunding (0–8)',
+      rounding: 'Afrunding',
+      roundingHint: 'Printeren bruger kun hele trin, hvert på en sekstendedel af den kortere side. Listen viser hjørneradiussen, som hvert trin giver denne boks.',
       reverse: 'Invert',
     },
     shapeMode: {

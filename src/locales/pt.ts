@@ -1254,7 +1254,8 @@ const pt = {
       color: 'Cor',
       colorB: 'Preto',
       colorW: 'Branco',
-      rounding: 'Arredondamento (0–8)',
+      rounding: 'Arredondamento',
+      roundingHint: 'A impressora usa apenas etapas completas, cada uma de um dezasseisavo do lado mais curto. A lista mostra o raio do canto que cada etapa dá a esta caixa.',
       reverse: 'Invert',
     },
     shapeMode: {

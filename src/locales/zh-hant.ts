@@ -1254,7 +1254,8 @@ const zhHant = {
       color: '顏色',
       colorB: '黑色',
       colorW: '白色',
-      rounding: '圓角 (0–8)',
+      rounding: '圓角',
+      roundingHint: '印表機只使用整數級，每一級是較短邊的十六分之一。清單顯示每一級賦予此方框的圓角半徑。',
       reverse: 'Invert',
     },
     shapeMode: {

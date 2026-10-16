@@ -1254,7 +1254,8 @@ const et = {
       color: 'Värvus',
       colorB: 'Must',
       colorW: 'Valge',
-      rounding: 'Ümardus (0–8)',
+      rounding: 'Ümardus',
+      roundingHint: 'Printer kasutab ainult täissamme, millest igaüks on üks kuueteistkümnendik lühemast küljest. Loend näitab nurgaraadiust, mille iga samm annab sellele kastile.',
       reverse: 'Invert',
     },
     shapeMode: {

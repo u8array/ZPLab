@@ -1319,7 +1319,8 @@ const de = {
       color: 'Farbe',
       colorB: 'Schwarz',
       colorW: 'Weiß',
-      rounding: 'Rundung (0–8)',
+      rounding: 'Rundung',
+      roundingHint: 'Der Drucker verwendet nur ganze Schritte, jeder ein Sechzehntel der kürzeren Seite. Die Liste zeigt den Eckradius, den jeder Schritt dieser Box gibt.',
       reverse: 'Invertieren',
     },
     shapeMode: {

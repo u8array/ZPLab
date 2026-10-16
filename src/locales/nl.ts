@@ -1254,7 +1254,8 @@ const nl = {
       color: 'Kleur',
       colorB: 'Zwart',
       colorW: 'Wit',
-      rounding: 'Afronding (0–8)',
+      rounding: 'Afronding',
+      roundingHint: 'De printer gebruikt alleen hele stappen, elk een zestiende van de kortere zijde. De lijst toont de hoekradius die elke stap aan dit kader geeft.',
       reverse: 'Invert',
     },
     shapeMode: {

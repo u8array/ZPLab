@@ -1254,7 +1254,8 @@ const tr = {
       color: 'Renk',
       colorB: 'Siyah',
       colorW: 'Beyaz',
-      rounding: 'Yuvarlama (0–8)',
+      rounding: 'Yuvarlama',
+      roundingHint: 'Yazıcı yalnızca tam adımlar kullanır, her biri daha kısa kenarın on altıda biri kadardır. Liste, her adımın bu kutuya verdiği köşe yarıçapını gösterir.',
       reverse: 'Invert',
     },
     shapeMode: {

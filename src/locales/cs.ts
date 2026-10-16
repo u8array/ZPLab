@@ -1254,7 +1254,8 @@ const cs = {
       color: 'Barva',
       colorB: 'Černá',
       colorW: 'Bílá',
-      rounding: 'Zaoblení (0–8)',
+      rounding: 'Zaoblení',
+      roundingHint: 'Tiskárna používá jen celé kroky, každý o velikosti jedné šestnáctiny kratší strany. Seznam zobrazuje poloměr rohu, který každý krok dává tomuto obdélníku.',
       reverse: 'Invert',
     },
     shapeMode: {

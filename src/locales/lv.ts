@@ -1254,7 +1254,8 @@ const lv = {
       color: 'Krāsa',
       colorB: 'Melna',
       colorW: 'Balta',
-      rounding: 'Noapaļojums (0–8)',
+      rounding: 'Noapaļojums',
+      roundingHint: 'Printeris izmanto tikai veselus soļus, no kuriem katrs ir viena sešpadsmitā daļa no īsākās malas. Sarakstā ir redzams stūra rādiuss, ko katrs solis piešķir šim taisnstūrim.',
       reverse: 'Invert',
     },
     shapeMode: {

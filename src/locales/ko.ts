@@ -1254,7 +1254,8 @@ const ko = {
       color: '색상',
       colorB: '검정',
       colorW: '흰색',
-      rounding: '모서리 둥글기 (0–8)',
+      rounding: '모서리 둥글기',
+      roundingHint: '프린터는 정수 단계만 사용하며, 각 단계는 더 짧은 변의 16분의 1입니다. 목록에는 각 단계가 이 상자에 부여하는 모서리 반경이 표시됩니다.',
       reverse: 'Invert',
     },
     shapeMode: {

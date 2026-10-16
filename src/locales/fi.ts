@@ -1254,7 +1254,8 @@ const fi = {
       color: 'Väri',
       colorB: 'Musta',
       colorW: 'Valkoinen',
-      rounding: 'Pyöristys (0–8)',
+      rounding: 'Pyöristys',
+      roundingHint: 'Tulostin käyttää vain kokonaisia askelia, joista jokainen on yksi kuudestoistaosa lyhyemmästä sivusta. Luettelo näyttää kulmasäteen, jonka jokainen askel antaa tälle laatikolle.',
       reverse: 'Invert',
     },
     shapeMode: {

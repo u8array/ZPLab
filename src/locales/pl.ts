@@ -1254,7 +1254,8 @@ const pl = {
       color: 'Kolor',
       colorB: 'Czarny',
       colorW: 'Biały',
-      rounding: 'Zaokrąglenie (0–8)',
+      rounding: 'Zaokrąglenie',
+      roundingHint: 'Drukarka używa tylko całych kroków, każdy o wielkości jednej szesnastej krótszej strony. Lista pokazuje promień rogu, który każdy krok daje temu prostokątowi.',
       reverse: 'Invert',
     },
     shapeMode: {

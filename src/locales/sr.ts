@@ -1254,7 +1254,8 @@ const sr = {
       color: 'Boja',
       colorB: 'Crna',
       colorW: 'Bela',
-      rounding: 'Zaobljenje (0–8)',
+      rounding: 'Zaobljenje',
+      roundingHint: 'Штампач користи само целе кораке, сваки у износу од једне шеснаестине краће странице. Листа приказује радијус угла који сваки корак даје овом оквиру.',
       reverse: 'Invert',
     },
     shapeMode: {

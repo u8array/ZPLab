@@ -1254,7 +1254,8 @@ const lt = {
       color: 'Spalva',
       colorB: 'Juoda',
       colorW: 'Balta',
-      rounding: 'Apvalinimas (0–8)',
+      rounding: 'Apvalinimas',
+      roundingHint: 'Spausdintuvas naudoja tik sveikus žingsnius, kurių kiekvienas yra viena šešioliktoji trumpesnės kraštinės. Sąraše rodomas kampo spindulys, kurį kiekvienas žingsnis suteikia šiam stačiakampiui.',
       reverse: 'Invert',
     },
     shapeMode: {

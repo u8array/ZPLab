@@ -1254,7 +1254,8 @@ const zhHans = {
       color: '颜色',
       colorB: '黑色',
       colorW: '白色',
-      rounding: '圆角 (0–8)',
+      rounding: '圆角',
+      roundingHint: '打印机只使用整数级，每一级是较短边的十六分之一。列表显示每一级赋予此方框的圆角半径。',
       reverse: 'Invert',
     },
     shapeMode: {

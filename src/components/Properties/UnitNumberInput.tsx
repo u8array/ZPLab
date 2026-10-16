@@ -2,8 +2,8 @@ import { useId, useState } from 'react';
 import { useLabelStore, currentPageLabel } from '../../store/labelStore';
 import { inputCls } from './styles';
 import { FieldLabel } from './ZplCmd';
-import { mmToUnit, unitToMm, unitLabel, unitStep } from '@zplab/core/lib/units';
-import { dotsToMm, mmToDots } from '@zplab/core/lib/coordinates';
+import { dotsToUnit, unitToMm, unitLabel, unitStep } from '@zplab/core/lib/units';
+import { mmToDots } from '@zplab/core/lib/coordinates';
 import { effectiveDpmm } from '@zplab/core/types/LabelConfig';
 
 interface UnitNumberInputProps {
@@ -53,7 +53,7 @@ export function UnitNumberInput({
     if (scope === 'physical') return s.label.dpmm;
     return effectiveDpmm(scope === 'design' ? s.label : currentPageLabel(s));
   });
-  const toUnit = (dots: number) => mmToUnit(dotsToMm(dots, dpmm), unit);
+  const toUnit = (dots: number) => dotsToUnit(dots, dpmm, unit);
   // null = not editing; show the canonical store value. Otherwise show the raw
   // keystrokes verbatim so the input never fights the user mid-entry.
   const [draft, setDraft] = useState<string | null>(null);

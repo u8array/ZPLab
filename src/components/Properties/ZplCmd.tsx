@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { useLabelStore } from '../../store/labelStore';
 import { labelCls, zplCommandTagCls } from '../ui/formStyles';
+import { Tooltip } from '../ui/Tooltip';
+import { InformationCircleIcon } from '@heroicons/react/16/solid';
 
 /**
  * Read-only ZPL command tag for a properties field (e.g. `^A`). Renders only
@@ -15,25 +17,30 @@ export function ZplCmd({ cmd }: { cmd?: string }) {
   return <span className={zplCommandTagCls}>{cmd}</span>;
 }
 
-/**
- * Field label row with an optional command tag pushed to the right. Drop-in
- * for the `<label className={labelCls}>…</label>` rows in registry panels;
- * collapses to a plain label when the tag is hidden or absent.
- */
+/** Field label row: the label, an optional hint icon beside it, the command tag right. */
 export function FieldLabel({
   children,
   cmd,
   htmlFor,
+  hint,
 }: {
   children: ReactNode;
   cmd?: string;
   htmlFor?: string;
+  hint?: string;
 }) {
   return (
     <div className="flex items-start justify-between gap-2">
-      <label htmlFor={htmlFor} className={labelCls}>
-        {children}
-      </label>
+      <span className="flex items-center gap-2">
+        <label htmlFor={htmlFor} className={labelCls}>
+          {children}
+        </label>
+        {hint && (
+          <Tooltip content={hint}>
+            <InformationCircleIcon className="w-3 h-3 text-muted/60 cursor-help shrink-0" />
+          </Tooltip>
+        )}
+      </span>
       <ZplCmd cmd={cmd} />
     </div>
   );

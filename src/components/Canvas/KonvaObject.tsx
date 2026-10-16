@@ -18,6 +18,7 @@ import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useLabelStore, selectRenderDesignLabel, selectRenderColumnMapping, selectRenderDataset } from "../../store/labelStore";
 import { applyBindingToObject } from "@zplab/core/lib/variableBinding";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
+import { withPreviewProps } from "../../lib/previewProps";
 import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/textPositionTransforms";
 import { getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
 import { selectionHandlers, shapeHitProps, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
@@ -463,13 +464,15 @@ const BARCODE_TYPES = new Set([
 ]);
 
 export function KonvaObject(props_: Props) {
+  const preview = useLabelStore((s) => (s.propsPreview?.id === props_.obj.id ? s.propsPreview.props : undefined));
+  const previewed = withPreviewProps(props_.obj, preview);
   const { variables, active, clock } = usePreviewBinding();
   // Render dataset and mapping, like the binding above: the tint must classify the same
   // document the canvas is showing (a shadow remaps onto fresh variable ids).
   const dataset = useLabelStore(selectRenderDataset);
   const columnMapping = useLabelStore(selectRenderColumnMapping);
   const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
-  const obj = applyBindingToObject(props_.obj, variables, active, dataRenderMode, clock, ctrlParityFor(props_.obj));
+  const obj = applyBindingToObject(previewed, variables, active, dataRenderMode, clock, ctrlParityFor(props_.obj));
   const renderProps = obj === props_.obj ? props_ : { ...props_, obj };
 
   // Classify the ORIGINAL content: `obj` has had its markers resolved to print

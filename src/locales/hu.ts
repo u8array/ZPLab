@@ -1254,7 +1254,8 @@ const hu = {
       color: 'Szín',
       colorB: 'Fekete',
       colorW: 'Fehér',
-      rounding: 'Lekerekítés (0–8)',
+      rounding: 'Lekerekítés',
+      roundingHint: 'A nyomtató csak egész lépéseket használ, amelyek mindegyike a rövidebb oldal egy tizenhatoda. A lista megmutatja a sarokrádiuszt, amelyet minden lépés ennek a doboznak ad.',
       reverse: 'Invert',
     },
     shapeMode: {

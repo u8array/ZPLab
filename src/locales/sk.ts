@@ -1254,7 +1254,8 @@ const sk = {
       color: 'Farba',
       colorB: 'Čierna',
       colorW: 'Biela',
-      rounding: 'Zaoblenie (0–8)',
+      rounding: 'Zaoblenie',
+      roundingHint: 'Tlačiareň používa iba celé kroky, každý v hodnote jednej šestnástiny kratšej strany. Zoznam zobrazuje polomer rohu, ktorý každý krok dáva tomuto obdĺžniku.',
       reverse: 'Invert',
     },
     shapeMode: {

@@ -1319,7 +1319,8 @@ const en = {
       color: 'Color',
       colorB: 'Black',
       colorW: 'White',
-      rounding: 'Rounding (0–8)',
+      rounding: 'Rounding',
+      roundingHint: 'The printer takes whole steps only, each one sixteenth of the shorter side. The list shows the corner radius each step gives this box.',
       reverse: 'Invert',
     },
     shapeMode: {

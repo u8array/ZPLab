@@ -1254,7 +1254,8 @@ const es = {
       color: 'Color',
       colorB: 'Negro',
       colorW: 'Blanco',
-      rounding: 'Redondeo (0–8)',
+      rounding: 'Redondeo',
+      roundingHint: 'La impresora solo usa pasos completos, cada uno de un dieciseisavo del lado más corto. La lista muestra el radio de esquina que cada paso da a esta caja.',
       reverse: 'Invert',
     },
     shapeMode: {

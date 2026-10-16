@@ -1254,7 +1254,8 @@ const fr = {
       color: 'Couleur',
       colorB: 'Noir',
       colorW: 'Blanc',
-      rounding: 'Arrondi (0–8)',
+      rounding: 'Arrondi',
+      roundingHint: "L'imprimante n'utilise que des étapes entières, chacune d'un seizième du côté le plus court. La liste indique le rayon d'angle que chaque étape donne à ce cadre.",
       reverse: 'Invert',
     },
     shapeMode: {

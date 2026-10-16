@@ -1254,7 +1254,8 @@ const hr = {
       color: 'Boja',
       colorB: 'Crna',
       colorW: 'Bijela',
-      rounding: 'Zaobljenje (0–8)',
+      rounding: 'Zaobljenje',
+      roundingHint: 'Pisač koristi samo cijele korake, svaki u iznosu od jedne šesnaestine kraće stranice. Popis prikazuje radijus kuta koji svaki korak daje ovom okviru.',
       reverse: 'Invert',
     },
     shapeMode: {

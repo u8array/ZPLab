@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from 'react';
+import { Fragment, useEffect, useRef, type ReactNode } from 'react';
 import {
   Listbox,
   ListboxButton,
@@ -36,6 +36,8 @@ interface SelectProps<T extends string | number> {
   id?: string;
   disabled?: boolean;
   'aria-label'?: string;
+  /** The focused option, or null once the list closes. */
+  onHoverOption?: (value: T | null) => void;
 }
 
 const triggerCls =
@@ -55,6 +57,7 @@ export function Select<T extends string | number>({
   id,
   disabled,
   'aria-label': ariaLabel,
+  onHoverOption,
 }: SelectProps<T>) {
   const selected = groups.flatMap((g) => g.options).find((o) => o.value === value);
   return (
@@ -67,7 +70,9 @@ export function Select<T extends string | number>({
       <ListboxOptions
         anchor="bottom start"
         className="w-(--button-width) [--anchor-gap:4px] max-h-60 overflow-auto rounded border border-border-2 bg-surface shadow-lg z-50 py-1 focus:outline-none"
+        onMouseLeave={() => onHoverOption?.(null)}
       >
+        {onHoverOption && <HoverEnd onEnd={onHoverOption} />}
         {groups.map((group, gi) => (
           <Fragment key={group.label ?? gi}>
             {group.label && (
@@ -83,8 +88,9 @@ export function Select<T extends string | number>({
                 title={opt.tooltip}
                 className="flex items-center gap-2 px-2 py-1 cursor-pointer text-xs text-text data-[focus]:bg-surface-2 data-[selected]:bg-accent-dim data-[disabled]:opacity-40 data-[disabled]:cursor-not-allowed"
               >
-                {({ selected: isSel }) => (
+                {({ selected: isSel, focus }) => (
                   <>
+                    {onHoverOption && <HoverStart active={focus} onStart={() => onHoverOption(opt.value)} />}
                     <CheckIcon
                       className={`w-3 h-3 shrink-0 ${isSel ? 'text-accent' : 'invisible'}`}
                     />
@@ -104,4 +110,26 @@ export function Select<T extends string | number>({
       </ListboxOptions>
     </Listbox>
   );
+}
+
+// Headless UI marks the option under the pointer or the arrow keys as focused, so one signal serves both.
+function HoverStart({ active, onStart }: { active: boolean; onStart: () => void }) {
+  const latest = useRef(onStart);
+  useEffect(() => {
+    latest.current = onStart;
+  });
+  useEffect(() => {
+    if (active) latest.current();
+  }, [active]);
+  return null;
+}
+
+// The options unmount when the list closes, with or without a choice.
+function HoverEnd<T extends string | number>({ onEnd }: { onEnd: (value: T | null) => void }) {
+  const latest = useRef(onEnd);
+  useEffect(() => {
+    latest.current = onEnd;
+  });
+  useEffect(() => () => latest.current(null), []);
+  return null;
 }

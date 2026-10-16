@@ -1,3 +1,5 @@
+import { dotsToMm } from './coordinates';
+
 export type Unit = 'mm' | 'cm' | 'in';
 
 export function mmToUnit(mm: number, unit: Unit): number {
@@ -18,6 +20,11 @@ export function mmToUnitExact(mm: number, unit: Unit): number {
   if (unit === 'cm') return mm / 10;
   if (unit === 'in') return mm / 25.4;
   return mm;
+}
+
+/** A dots length as the panels show it, rounded like the inputs. */
+export function dotsToUnit(dots: number, dpmm: number, unit: Unit): number {
+  return mmToUnit(dotsToMm(dots, dpmm), unit);
 }
 
 export function unitLabel(unit: Unit): string {

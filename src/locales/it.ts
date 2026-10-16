@@ -1254,7 +1254,8 @@ const it = {
       color: 'Colore',
       colorB: 'Nero',
       colorW: 'Bianco',
-      rounding: 'Arrotondamento (0–8)',
+      rounding: 'Arrotondamento',
+      roundingHint: "La stampante usa solo passi interi, ciascuno di un sedicesimo del lato più corto. L'elenco mostra il raggio d'angolo che ciascun passo dà a questo riquadro.",
       reverse: 'Invert',
     },
     shapeMode: {

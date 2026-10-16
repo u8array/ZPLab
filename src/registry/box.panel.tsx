@@ -2,7 +2,6 @@ import type { ObjectTypeUi } from './panelTypes';
 import { useT } from '../hooks/useT';
 import { useLabelStore } from '../store/labelStore';
 import { labelCls } from '../components/Properties/styles';
-import { NumberInput } from '../components/Properties/NumberInput';
 import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { SectionCard } from '../components/Properties/SectionCard';
 import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
@@ -10,12 +9,26 @@ import { Select } from '../components/ui/Select';
 import { fieldGridCols, fieldGridCell } from '../components/ui/formStyles';
 import { ShapeModeToggle } from '../components/Properties/ShapeModeToggle';
 import { BOX_PROP_SPECS, type BoxProps } from '@zplab/core/registry/box';
+import { boxCornerRadii } from '@zplab/core/lib/shapeGeometry';
+import { editBounds } from '@zplab/core/types/propSpec';
+import { effectiveDpmm } from '@zplab/core/types/LabelConfig';
+import { dotsToUnit, unitLabel } from '@zplab/core/lib/units';
+import { currentPageLabel } from '../store/labelStore.selectors';
+
+const ROUNDING_BOUNDS = editBounds(BOX_PROP_SPECS.rounding);
+const ROUNDING_STEPS = Array.from({ length: ROUNDING_BOUNDS.max - ROUNDING_BOUNDS.min + 1 }, (_, i) => ROUNDING_BOUNDS.min + i);
+// An imported ^GB may carry an index past the spec range, so the list keeps it without a radius.
+const roundingOptions = (current: number) => (ROUNDING_STEPS.includes(current) ? ROUNDING_STEPS : [...ROUNDING_STEPS, current]);
 
 export const boxPanel: ObjectTypeUi<BoxProps> = {
   PropertiesPanel: ({ obj, onChange }) => {
     const t = useT();
     const p = obj.props;
     const showZpl = useLabelStore((s) => s.showZplCommands);
+    const unit = useLabelStore((s) => s.canvasSettings.unit);
+    const dpmm = useLabelStore((s) => effectiveDpmm(currentPageLabel(s)));
+    const setPropsPreview = useLabelStore((s) => s.setPropsPreview);
+    const radiusLabel = (rounding: number) => `${dotsToUnit(boxCornerRadii(p.width, p.height, p.thickness, rounding).outer, dpmm, unit)} ${unitLabel(unit)}`;
     return (
       <SectionCard
         id={`${obj.type}-settings`}
@@ -80,15 +93,16 @@ export const boxPanel: ObjectTypeUi<BoxProps> = {
               ] }]}
             />
           </div>
-          <NumberInput
-            label={t.registry.box.rounding}
-            value={p.rounding}
-            min={BOX_PROP_SPECS.rounding.min}
-            max={BOX_PROP_SPECS.rounding.max}
-            onChange={(rounding) => onChange({ rounding })}
-            zplCmd="^GB"
-            className={fieldGridCell}
-          />
+          <div className={fieldGridCell}>
+            <FieldLabel cmd="^GB" hint={t.registry.box.roundingHint}>{t.registry.box.rounding}</FieldLabel>
+            <Select<number>
+              value={p.rounding}
+              onChange={(rounding) => onChange({ rounding })}
+              onHoverOption={(rounding) => setPropsPreview(rounding === null ? null : { id: obj.id, props: { rounding } })}
+              aria-label={t.registry.box.rounding}
+              groups={[{ options: roundingOptions(p.rounding).map((rounding) => ({ value: rounding, label: String(rounding), badge: ROUNDING_STEPS.includes(rounding) ? radiusLabel(rounding) : '' })) }]}
+            />
+          </div>
         </div>
 
         <div className="flex items-center justify-between gap-2">

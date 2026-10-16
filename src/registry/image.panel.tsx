@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback } from 'react';
-import { InformationCircleIcon } from '@heroicons/react/16/solid';
 import type { ObjectTypeUi } from './panelTypes';
 import { useT } from '../hooks/useT';
 import { buttonCls, inputCls, labelCls } from '../components/Properties/styles';
@@ -7,11 +6,10 @@ import { disabledCls } from '../components/ui/formStyles';
 import { loadImageFile, getImage } from '@zplab/core/lib/imageCache';
 import { imageToGFA } from '@zplab/core/lib/imageToZpl';
 import { formatStoragePath, MAX_STORAGE_NAME_LEN, sanitizeStorageName, STORAGE_DEVICES, uploadedGraphicPath } from '@zplab/core/lib/storagePath';
-import { Tooltip } from '../components/ui/Tooltip';
 import { SectionCard, StaticSectionCard } from '../components/Properties/SectionCard';
 import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { RotationSelect } from '../components/Properties/RotationSelect';
-import { FieldLabel, ZplCmd } from '../components/Properties/ZplCmd';
+import { FieldLabel } from '../components/Properties/ZplCmd';
 import { Select } from '../components/ui/Select';
 import { IMAGE_PROP_SPECS, isImageRotatable, profileGraphicRecall, recallCommand, recalledSetupEntry, recallStoragePath, retiredSources, setupGraphicState, type ImageProps } from '@zplab/core/registry/image';
 import { applyGraphicDelivery, draftGraphicIdentity, graphicDelivery, graphicWayBlocks, providedGraphic, type GraphicWayBlock, type ResourceDelivery } from '@zplab/core/lib/resourceDelivery';
@@ -224,15 +222,7 @@ export const imagePanel: ObjectTypeUi<ImageProps> = {
           )}
 
           <div className="flex flex-col gap-1 mt-1 pt-3 border-t border-border">
-            <div className="flex items-center gap-2">
-              <label className={labelCls}>{t.registry.image.storage}</label>
-              <Tooltip content={t.registry.image.storeOnPrinterHint}>
-                <InformationCircleIcon className="w-3 h-3 text-muted/60 cursor-help shrink-0" />
-              </Tooltip>
-              <div className="ml-auto">
-                <ZplCmd cmd="~DY" />
-              </div>
-            </div>
+            <FieldLabel cmd="~DY" hint={t.registry.image.storeOnPrinterHint}>{t.registry.image.storage}</FieldLabel>
             {storedAs ? (
               <>
                 <div className="grid grid-cols-[auto_1fr] gap-2">

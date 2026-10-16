@@ -1254,7 +1254,8 @@ const ro = {
       color: 'Culoare',
       colorB: 'Negru',
       colorW: 'Alb',
-      rounding: 'Rotunjire (0–8)',
+      rounding: 'Rotunjire',
+      roundingHint: 'Imprimanta folosește doar pași întregi, fiecare de o șaisprezecime din latura mai scurtă. Lista arată raza colțului pe care fiecare pas o oferă acestei casete.',
       reverse: 'Invert',
     },
     shapeMode: {

@@ -1254,7 +1254,8 @@ const sl = {
       color: 'Barva',
       colorB: 'Črna',
       colorW: 'Bela',
-      rounding: 'Zaobljenje (0–8)',
+      rounding: 'Zaobljenje',
+      roundingHint: 'Tiskalnik uporablja samo cele korake, vsak v velikosti ene šestnajstine krajše stranice. Seznam prikazuje polmer kota, ki ga vsak korak daje temu okvirju.',
       reverse: 'Invert',
     },
     shapeMode: {

@@ -1254,7 +1254,8 @@ const no = {
       color: 'Farge',
       colorB: 'Svart',
       colorW: 'Hvit',
-      rounding: 'Avrunding (0–8)',
+      rounding: 'Avrunding',
+      roundingHint: 'Skriveren bruker bare hele trinn, hvert på en sekstendedel av den kortere siden. Listen viser hjørneradiusen som hvert trinn gir denne boksen.',
       reverse: 'Invert',
     },
     shapeMode: {

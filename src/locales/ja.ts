@@ -1254,7 +1254,8 @@ const ja = {
       color: '色',
       colorB: '黒',
       colorW: '白',
-      rounding: '角丸 (0–8)',
+      rounding: '角丸',
+      roundingHint: 'プリンターは整数の段階のみを使い、各段階はより短い辺の16分の1です。リストには、各段階がこのボックスに与える角の半径が表示されます。',
       reverse: 'Invert',
     },
     shapeMode: {
