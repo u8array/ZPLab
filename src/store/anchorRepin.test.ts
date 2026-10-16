@@ -229,6 +229,15 @@ describe("dirty semantics of fieldJustify", () => {
   });
 });
 
+describe("applyChanges on an integer slot", () => {
+  it("drops a fraction and leaves a whole value untouched", () => {
+    const box = { id: "b", type: "box", x: 0, y: 0, rotation: 0, props: { width: 200, height: 100, thickness: 3, filled: false, color: "B", rounding: 0 } } as LabelObject;
+    expect((applyChanges(box, { props: { rounding: 1.5 } }, () => null) as { props: { rounding: number } }).props.rounding).toBe(1);
+    expect((applyChanges(box, { props: { rounding: 2.5, width: 300 } }, () => null) as { props: { rounding: number; width: number } }).props).toMatchObject({ rounding: 2, width: 300 });
+    expect(applyChanges(box, { props: { rounding: 0 } }, () => null)).toBe(box);
+  });
+});
+
 describe("applyChanges with an explicit props: undefined", () => {
   it("keeps the object's props instead of wiping them", () => {
     // ObjectChanges declares props?: object, and a conditional spread left the

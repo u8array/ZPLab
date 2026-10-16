@@ -2,6 +2,7 @@ import type { LabelObject } from "../types/Group";
 import type { ObjectChanges } from "../types/LabelObject";
 import { BARCODE_1D_TYPES, getEntry } from "../registry";
 import type { NormalizeChangesCtx } from "../types/ObjectType";
+import { truncateIntegerProps, type PropSpec } from "../types/propSpec";
 import { isAxisSwapped, objectRotation } from "../registry/rotation";
 import { valueAnchorShift } from "./valueAnchor";
 import type { Footprint as BarcodeFootprint } from "./footprintProber";
@@ -56,9 +57,10 @@ export function applyChanges(
   probe: (o: LabelObject) => BarcodeFootprint | null,
   ctx?: NormalizeChangesCtx,
 ): LabelObject {
-  const normalize = getEntry(obj.type)?.normalizeChanges;
-  const normalized = normalize ? normalize(obj as never, changes as never, ctx) : changes;
-  if (changesNothing(obj, normalized as ObjectChanges)) return obj;
+  const entry = getEntry(obj.type);
+  const shaped = entry?.normalizeChanges ? entry.normalizeChanges(obj as never, changes as never, ctx) : changes;
+  const normalized = wholeProps(entry?.propSpecs as Readonly<Record<string, PropSpec>> | undefined, shaped as ObjectChanges);
+  if (changesNothing(obj, normalized)) return obj;
   const current = (obj as { props?: object }).props ?? {};
   const next = {
     ...obj,
@@ -69,6 +71,12 @@ export function applyChanges(
     props: normalized.props ? { ...current, ...normalized.props } : (obj as { props?: object }).props,
   } as LabelObject;
   return anchorRepin(obj, normalized as ObjectChanges, next, probe);
+}
+
+function wholeProps(specs: Readonly<Record<string, PropSpec>> | undefined, changes: ObjectChanges): ObjectChanges {
+  if (!specs || !changes.props) return changes;
+  const props = truncateIntegerProps(specs, changes.props as Record<string, unknown>);
+  return props === changes.props ? changes : { ...changes, props };
 }
 
 /** Shallow compare, props one level down. */

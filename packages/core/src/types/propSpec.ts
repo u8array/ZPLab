@@ -81,6 +81,19 @@ export function propTypeIssue(spec: PropSpec, value: unknown): string | null {
   return null;
 }
 
+/** The printer reads an integer slot up to the first non-digit, so a fraction prints as its integer part.
+ *  Same object back when nothing changes. */
+export function truncateIntegerProps(specs: Readonly<Record<string, PropSpec>>, props: Record<string, unknown>): Record<string, unknown> {
+  let next: Record<string, unknown> | undefined;
+  for (const [key, value] of Object.entries(props)) {
+    const spec = Object.hasOwn(specs, key) ? specs[key] : undefined;
+    if (spec?.type !== 'number' || !spec.integer || typeof value !== 'number' || Number.isInteger(value) || !Number.isFinite(value)) continue;
+    next ??= { ...props };
+    next[key] = Math.trunc(value);
+  }
+  return next ?? props;
+}
+
 /** Assumes `propTypeIssue` passed. */
 export function propDomainIssue(spec: PropSpec, value: unknown): string | null {
   if (spec.type === 'number') {

@@ -18,7 +18,7 @@ import { insertReverseBackingBoxes, pageNeedsReverseBacking } from "./reverseBac
 import { ok, err } from "./result";
 import { schemaIssues } from "./schemaIssues";
 import { getEntry } from "../registry";
-import { propDomainIssue, type PropSpec } from "../types/propSpec";
+import { propDomainIssue, truncateIntegerProps, type PropSpec } from "../types/propSpec";
 
 /** Current design-file schema version. Bump when the persisted shape
  *  changes in a way an older app cannot read. Add a vN schema +
@@ -101,13 +101,13 @@ const designFileSchema = z.object({
 });
 
 // A string outside its set would reach a parameter slot as written (^A090). One without a default is dropped.
-function conformEnumProps(leaf: { type?: unknown; props?: unknown }): void {
+function conformProps(leaf: { type?: unknown; props?: unknown }): void {
   const entry = typeof leaf.type === "string" ? getEntry(leaf.type) : undefined;
   const props = leaf.props;
   if (!entry || !props || typeof props !== "object" || Array.isArray(props)) return;
   const specs = entry.propSpecs as Record<string, PropSpec>;
   const defaults = entry.defaultProps as Record<string, unknown>;
-  leaf.props = Object.fromEntries(
+  const conformed = Object.fromEntries(
     Object.entries(props as Record<string, unknown>)
       .map(([key, value]) => {
         const spec = Object.hasOwn(specs, key) ? specs[key] : undefined;
@@ -116,6 +116,7 @@ function conformEnumProps(leaf: { type?: unknown; props?: unknown }): void {
       })
       .filter(([, value]) => value !== undefined),
   );
+  leaf.props = truncateIntegerProps(specs, conformed);
 }
 
 export function parseDesignFile(text: string): DesignFileResult {
@@ -134,7 +135,7 @@ export function parseDesignFile(text: string): DesignFileResult {
   migrateSerialToTextMode(json);
   migrateSingleBindToMarker(json);
   migrateBareFontDrive(json);
-  visitLeavesInPages((json as { pages?: unknown }).pages, conformEnumProps);
+  visitLeavesInPages((json as { pages?: unknown }).pages, conformProps);
 
   const parsed = designFileSchema.safeParse(json);
   if (parsed.success) {

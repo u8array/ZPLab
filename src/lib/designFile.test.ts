@@ -103,7 +103,7 @@ describe('parseDesignFile', () => {
     expect(result.value.pages[0]?.objects).toHaveLength(1);
   });
 
-  it('repairs a string outside its set on load and leaves every number as written', () => {
+  it('conforms loaded props: a string to its set or dropped, a fraction off an integer slot, a number past its range kept', () => {
     const file = {
       schemaVersion: 5,
       label: { widthMm: 70, heightMm: 40, dpmm: 8 },
@@ -119,7 +119,7 @@ describe('parseDesignFile', () => {
     if (!result.ok) return;
     const props = result.value.pages[0]!.objects.map((o) => (o as unknown as { props: Record<string, unknown> }).props);
     expect(props[0]).toMatchObject({ rounding: 12 });
-    expect(props[1]).toMatchObject({ magnification: 99.4, errorCorrection: 'Q', rotation: 'N' });
+    expect(props[1]).toMatchObject({ magnification: 99, errorCorrection: 'Q', rotation: 'N' });
     expect(props[2]).not.toHaveProperty('blockJustify');
   });
 
