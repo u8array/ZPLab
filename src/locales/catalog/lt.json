@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Valdo dinaminį etiketės ilgio ir jutiklio ribos perkalibravimą po įjungimo arba medijos skyriaus atidarymo.",
+    "hash": "8f9e3e07",
+    "summary": "Valdo dinaminį etiketės ilgio ir jutiklio ribos perkalibravimą po įjungimo arba medijos skyriaus atidarymo. Stiprinimo parametras paskelbtas vėlesnei integruotai programinei įrangai.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "įjungia dinaminį ilgio kalibravimą",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "įjungia dinaminį slenksčio kalibravimą",
+          "values": "Y įjungti, N išjungti",
+          "default": "Y"
+        },
+        {
+          "meaning": "įjungia dinaminį stiprinimo kalibravimą",
           "values": "Y įjungti, N išjungti",
           "default": "Y"
         }

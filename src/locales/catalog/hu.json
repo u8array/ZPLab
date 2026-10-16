@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Vezérli a címkehossz és az érzékelő küszöbértékének dinamikus újrakalibrálását bekapcsolás vagy a médiarekesz kinyitása után.",
+    "hash": "8f9e3e07",
+    "summary": "Vezérli a címkehossz és az érzékelő küszöbértékének dinamikus újrakalibrálását bekapcsolás vagy a médiarekesz kinyitása után. Az erősítés-paraméter egy későbbi firmware-hez van bejelentve.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "dinamikus hosszkalibrálás engedélyezése",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "dinamikus küszöbérték-kalibrálás engedélyezése",
+          "values": "Y engedélyezés, N letiltás",
+          "default": "Y"
+        },
+        {
+          "meaning": "dinamikus erősítés-kalibrálás engedélyezése",
           "values": "Y engedélyezés, N letiltás",
           "default": "Y"
         }

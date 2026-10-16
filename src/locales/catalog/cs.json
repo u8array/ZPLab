@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Řídí dynamickou rekalibraci délky štítku a prahu senzoru po zapnutí nebo otevření prostoru pro médium.",
+    "hash": "8f9e3e07",
+    "summary": "Řídí dynamickou rekalibraci délky štítku a prahu senzoru po zapnutí nebo otevření prostoru pro médium. Parametr zisku je ohlášen pro pozdější firmware.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "povolit dynamickou kalibraci délky",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "povolit dynamickou kalibraci prahu",
+          "values": "Y povolit, N zakázat",
+          "default": "Y"
+        },
+        {
+          "meaning": "povolit dynamickou kalibraci zisku",
           "values": "Y povolit, N zakázat",
           "default": "Y"
         }

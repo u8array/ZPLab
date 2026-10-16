@@ -161,7 +161,7 @@ export const BY_CONSUMING_BARCODE_TYPES = new Set<string>([
  *  support "no" plus a handler also holds for ^FM, ^HT and ^LF. */
 export const DEVICE_ACTION_IDS: ReadonlySet<string> = new Set([
   "~JA", "~JC", "~JD", "~JE", "^JI", "~JI", "~JR", "^ID", "^IS", "~EG",
-  "~PH", "~PP", "~PM", "~PR", "^JS",
+  "~PH", "~PP", "~PM", "~PR",
 ]);
 
 /** Commands defining persistent state a later field may consume implicitly;
@@ -575,7 +575,7 @@ export function parseZPL(
     const canonical = `${prefix}${cmd}`;
     const takesPrefix = commandTakesPrefix(cmd, prefix);
     // The device action quotes its payload: the report must name the bytes that will run.
-    if (takesPrefix && replayRiskCodes.has(cmd)) replayRisk.push({ command: s.result.tokenCommand, span: s.result.tokenSpan });
+    if (takesPrefix && (replayRiskCodes.has(cmd) || replayRiskCodes.has(canonical))) replayRisk.push({ command: s.result.tokenCommand, span: s.result.tokenSpan });
     else if (takesPrefix && DEVICE_ACTION_IDS.has(canonical)) deviceAction.push({ command: sourceToken, span: s.result.tokenSpan });
     // Balance bookkeeping needs the token offset and the state the handler is
     // about to flip, so it sits here rather than in the two handlers.

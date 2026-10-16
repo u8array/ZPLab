@@ -37,9 +37,10 @@ describe('parseZPL — the catalog is the one source of prefix knowledge', () =>
     expect(commandsOf(tilde, 'deviceAction')).toEqual(['~PH', '~PP', '~PMY', '~PR4']);
     expect(commandsOf(tilde, 'unknown')).toEqual([]);
     expect(parseSingle('~JSB\n^XA^XZ', 8).labelConfig.backfeedSequence).toBe('B');
-    const caretJs = parseSingle('^XA^JSB^XZ', 8);
+    const caretJs = parseSingle('^XA^JST^XZ', 8);
     expect(caretJs.labelConfig).toEqual(baseline);
-    expect(commandsOf(caretJs, 'deviceAction')).toEqual(['^JSB']);
+    expect(caretJs.printerProfile.mediaSensorSelect).toBe('T');
+    expect(commandsOf(caretJs, 'replayRisk')).toEqual(['^JS']);
   });
 
   it('keeps every unmodelled twin side out of the model, whatever the catalog adds later', () => {
@@ -58,12 +59,12 @@ describe('parseZPL — the catalog is the one source of prefix knowledge', () =>
     for (const id of DEVICE_ACTION_IDS) expect(catalogEntry(id), id).toBeDefined();
   });
 
-  it('registers twin-split names only under spelled keys, and setup-script codes only bare', () => {
+  it('registers twin-split names only under spelled keys, and every other code bare', () => {
     const s = createParserState();
-    const keys = [...Object.keys(createLabelConfigHandlers(s, 8)), ...Object.keys(createUnsupportedHandlers(s))];
+    const keys = [...Object.keys(createLabelConfigHandlers(s, 8)), ...Object.keys(createUnsupportedHandlers(s)), ...Object.keys(createSetupScriptHandlers(s))];
     const bareTwins = keys.filter((key) => !/^[\^~]/.test(key) && commandTwinSplit(key));
     expect(bareTwins).toEqual([]);
-    expect(Object.keys(createSetupScriptHandlers(s)).filter((key) => /^[\^~]/.test(key))).toEqual([]);
+    expect(keys.filter((key) => /^[\^~]/.test(key) && !commandTwinSplit(key.slice(1)))).toEqual([]);
   });
 
   it('quotes a browser-limit token under the live prefix chars', () => {

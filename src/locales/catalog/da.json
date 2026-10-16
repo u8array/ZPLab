@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Styrer dynamisk genkalibrering af etiketlængde og sensortærskel efter opstart eller åbning af medierummet.",
+    "hash": "8f9e3e07",
+    "summary": "Styrer dynamisk genkalibrering af etiketlængde og sensortærskel efter opstart eller åbning af medierummet. Gain-parameteren er annonceret til en senere firmware.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "aktiver dynamisk længdekalibrering",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "aktiver dynamisk tærskelkalibrering",
+          "values": "Y aktiver, N deaktiver",
+          "default": "Y"
+        },
+        {
+          "meaning": "aktiver dynamisk gainkalibrering",
           "values": "Y aktiver, N deaktiver",
           "default": "Y"
         }

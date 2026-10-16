@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Regelt dynamische herkalibratie van labellengte en sensordrempel na het inschakelen of het openen van het mediacompartiment.",
+    "hash": "8f9e3e07",
+    "summary": "Regelt dynamische herkalibratie van labellengte en sensordrempel na het inschakelen of het openen van het mediacompartiment. De gainparameter is aangekondigd voor een latere firmware.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "dynamische lengtekalibratie inschakelen",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "dynamische drempelkalibratie inschakelen",
+          "values": "Y inschakelen, N uitschakelen",
+          "default": "Y"
+        },
+        {
+          "meaning": "dynamische gainkalibratie inschakelen",
           "values": "Y inschakelen, N uitschakelen",
           "default": "Y"
         }

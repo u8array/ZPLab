@@ -81,6 +81,40 @@ export function toggleModeProtection(
 }
 export const TEAR_OFF_ADJUST_RANGE = { min: -120, max: 120 } as const;
 
+/** ^JS: A auto, R reflective, T transmissive. */
+export const MEDIA_SENSOR_SELECT_VALUES = ['A', 'R', 'T'] as const;
+export type MediaSensorSelect = (typeof MEDIA_SENSOR_SELECT_VALUES)[number];
+export const isMediaSensorSelect = makeEnumGuard(MEDIA_SENSOR_SELECT_VALUES);
+/** ^SS w, m, r, a, b, spec p.349. */
+const SENSOR_THRESHOLD_RANGE = { min: 0, max: 100 } as const;
+/** ^SS n, o, c. */
+const SENSOR_LED_RANGE = { min: 0, max: 255 } as const;
+/** ^SS l. */
+const SENSOR_LABEL_LENGTH_RANGE = { min: 1, max: 32000 } as const;
+/** ^SI b, spec p.338. */
+export const SENSOR_INTENSITY_RANGE = { min: 0, max: 196 } as const;
+/** ^XS a, b, c in wire order, spec p.374. */
+export const XS_SLOTS = ['dynamicCalibrationLength', 'dynamicCalibrationThreshold', 'dynamicCalibrationGain'] as const;
+/** ^SR, spec p.348. */
+export const PRINTHEAD_RESISTANCE_RANGE = { min: 488, max: 1175 } as const;
+
+/** ^SS slots in wire order with their range and digit width, spec p.349. */
+export const SENSOR_SLOTS = [
+  ['sensorWebThreshold', SENSOR_THRESHOLD_RANGE, 3],
+  ['sensorMediaThreshold', SENSOR_THRESHOLD_RANGE, 3],
+  ['sensorRibbonThreshold', SENSOR_THRESHOLD_RANGE, 3],
+  ['sensorLabelLengthDots', SENSOR_LABEL_LENGTH_RANGE, 4],
+  ['sensorMediaLedIntensity', SENSOR_LED_RANGE, 3],
+  ['sensorRibbonLedIntensity', SENSOR_LED_RANGE, 3],
+  ['sensorMarkThreshold', SENSOR_THRESHOLD_RANGE, 3],
+  ['sensorMarkMediaThreshold', SENSOR_THRESHOLD_RANGE, 3],
+  ['sensorMarkLedIntensity', SENSOR_LED_RANGE, 3],
+] as const satisfies readonly (readonly [keyof PrinterProfile, { min: number; max: number }, number])[];
+export type SensorSlotField = (typeof SENSOR_SLOTS)[number][0];
+export const SENSOR_SLOT_RANGE = Object.fromEntries(SENSOR_SLOTS.map(([field, range]) => [field, range])) as Record<SensorSlotField, { min: number; max: number }>;
+/** ^SI a picks the value the b slot sets, spec p.338. */
+export const SI_FIELD_BY_SLOT: Readonly<Record<string, 'sensorBrightness' | 'sensorBaseline' | undefined>> = { '1': 'sensorBrightness', '2': 'sensorBaseline' };
+
 /** ^KP 4-digit; '0000' disables LCD-setup protection. */
 export const PRINTER_PASSWORD_REGEX = /^\d{4}$/;
 
@@ -220,6 +254,28 @@ export const printerProfileSchema = z.object({
     path: z.string().min(1).max(FONT_LINKS_PATH_MAX_LEN).regex(setupScriptSafeStringRegex),
     gfa: z.string().min(1).max(SETUP_UPLOAD_MAX_CHARS),
   })).optional(),
+  /** ^JS media sensor. */
+  mediaSensorSelect: z.enum(MEDIA_SENSOR_SELECT_VALUES).optional(),
+  /** ^SS slots, each on its own so one bad value drops one slot. */
+  sensorWebThreshold: intInRange(SENSOR_THRESHOLD_RANGE).optional(),
+  sensorMediaThreshold: intInRange(SENSOR_THRESHOLD_RANGE).optional(),
+  sensorRibbonThreshold: intInRange(SENSOR_THRESHOLD_RANGE).optional(),
+  /** The calibrated length, not the design's ^LL. */
+  sensorLabelLengthDots: intInRange(SENSOR_LABEL_LENGTH_RANGE).optional(),
+  sensorMediaLedIntensity: intInRange(SENSOR_LED_RANGE).optional(),
+  sensorRibbonLedIntensity: intInRange(SENSOR_LED_RANGE).optional(),
+  sensorMarkThreshold: intInRange(SENSOR_THRESHOLD_RANGE).optional(),
+  sensorMarkMediaThreshold: intInRange(SENSOR_THRESHOLD_RANGE).optional(),
+  sensorMarkLedIntensity: intInRange(SENSOR_LED_RANGE).optional(),
+  /** ^SI1 and ^SI2, the transmissive sensor's brightness and baseline. */
+  sensorBrightness: intInRange(SENSOR_INTENSITY_RANGE).optional(),
+  sensorBaseline: intInRange(SENSOR_INTENSITY_RANGE).optional(),
+  /** ^XS length, threshold and gain slots. */
+  dynamicCalibrationLength: z.enum(YES_NO_VALUES).optional(),
+  dynamicCalibrationThreshold: z.enum(YES_NO_VALUES).optional(),
+  dynamicCalibrationGain: z.enum(YES_NO_VALUES).optional(),
+  /** ^SR, a value above the head's rating damages it. */
+  printheadResistance: intInRange(PRINTHEAD_RESISTANCE_RANGE).optional(),
   /** ^JH f master gate; without `E` ^MA sits dormant. */
   earlyWarningMaintenance: z.enum(['E', 'D']).optional(),
   /** ^JH g; stored as meters for UX, wire is index into table. */

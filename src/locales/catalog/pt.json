@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Controla a recalibração dinâmica do comprimento da etiqueta e do limiar do sensor, após ligar a impressora ou abrir o compartimento do suporte.",
+    "hash": "8f9e3e07",
+    "summary": "Controla a recalibração dinâmica do comprimento da etiqueta e do limiar do sensor, após ligar a impressora ou abrir o compartimento do suporte. O parâmetro de ganho está anunciado para um firmware posterior.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "ativar calibração dinâmica do comprimento",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "ativar calibração dinâmica do limiar",
+          "values": "Y habilitar, N desabilitar",
+          "default": "Y"
+        },
+        {
+          "meaning": "ativar calibração dinâmica do ganho",
           "values": "Y habilitar, N desabilitar",
           "default": "Y"
         }

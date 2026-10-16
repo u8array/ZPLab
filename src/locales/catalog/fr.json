@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "69f3838a",
-    "summary": "Contrôle le réétalonnage dynamique de la longueur d'étiquette et du seuil de capteur après la mise sous tension ou l'ouverture du compartiment support.",
+    "hash": "8f9e3e07",
+    "summary": "Contrôle le réétalonnage dynamique de la longueur d'étiquette et du seuil de capteur après la mise sous tension ou l'ouverture du compartiment support. Le paramètre de gain est annoncé pour un micrologiciel ultérieur.",
     "reference": {
-      "hash": "90fbe297",
+      "hash": "4c3c08cd",
       "params": [
         {
           "meaning": "activer l'étalonnage dynamique de la longueur",
@@ -3633,6 +3633,11 @@
         },
         {
           "meaning": "activer l'étalonnage dynamique du seuil",
+          "values": "Y activer, N désactiver",
+          "default": "Y"
+        },
+        {
+          "meaning": "activer l'étalonnage dynamique du gain",
           "values": "Y activer, N désactiver",
           "default": "Y"
         }
