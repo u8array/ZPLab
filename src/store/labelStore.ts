@@ -229,17 +229,6 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     }
   }
 
-  // v15→v16: TLC39 props move to the real ^BT slots (w2/h2, wideRatio);
-  // emit and canvas read the new shape unguarded.
-  if (version < 16 && Array.isArray(s.pages)) {
-    visitLeavesInPages(s.pages, fixTlc39SlotsLeaf);
-  }
-
-  // v17→v18: the same drive pin the .zpld lane applies at schema v6.
-  if (version < 18 && Array.isArray(s.pages)) {
-    visitLeavesInPages(s.pages, pinBareFontDriveLeaf);
-  }
-
   // v9→v10: reverse text dropped its synthesized self-background ^GB for a
   // spec-true ^FR knockout. Give every legacy reverse text a real black box
   // behind it so the white-on-black look survives the model change.
@@ -350,6 +339,17 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
       const { csvRenderMode, ...restCs } = cs as Record<string, unknown>;
       s = { ...s, canvasSettings: { ...restCs, dataRenderMode: csvRenderMode } };
     }
+  }
+
+  // v15→v16: TLC39 props move to the real ^BT slots (w2/h2, wideRatio);
+  // emit and canvas read the new shape unguarded.
+  if (version < 16 && Array.isArray(s.pages)) {
+    visitLeavesInPages(s.pages, fixTlc39SlotsLeaf);
+  }
+
+  // v17→v18: the same drive pin the .zpld lane applies at schema v6.
+  if (version < 18 && Array.isArray(s.pages)) {
+    visitLeavesInPages(s.pages, pinBareFontDriveLeaf);
   }
 
   // v18→v19: the print target moves from loose browser keys into the session. Persist writes the
