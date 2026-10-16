@@ -42,20 +42,34 @@ describe("applyDesignOps", () => {
     const seen: { dpmm: number; variables: string[] }[] = [];
     const input = doc();
     input.pages[0]!.objects.push(rightBarcode("bc"));
-    const result = applyDesignOps(
-      input,
-      [{ op: "addVariable", variable: { name: "qty" } }, { op: "update", id: "bc", props: { content: "«qty»" } }],
-      (_o, ctx) => {
-        seen.push({ dpmm: ctx.label.dpmm, variables: ctx.variables.map((v) => v.name) });
-        return null;
-      },
-    );
+    input.variables.push(variable("qty", 2, "1"));
+    const result = applyDesignOps(input, [{ op: "update", id: "bc", props: { content: "«qty»" } }], (_o, ctx) => {
+      seen.push({ dpmm: ctx.label.dpmm, variables: ctx.variables.map((v) => v.name) });
+      return null;
+    });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.doc.pages[0]?.objects[1]).toMatchObject({ dirty: true, props: { content: "«qty»" } });
     expect([...result.edited]).toEqual([0]);
+    expect([...result.touched]).toEqual([]);
+    expect(result.doc.pages.every((p) => p.overlay === overlay)).toBe(true);
     expect(seen.length).toBeGreaterThan(0);
     expect(seen.every((s) => s.dpmm === 8 && s.variables.includes("qty"))).toBe(true);
+  });
+
+  it("measures under a variable the same batch adds, and that addition costs every capture", () => {
+    const seen: string[][] = [];
+    const input = doc();
+    input.pages[0]!.objects.push(rightBarcode("bc"));
+    const result = applyDesignOps(input, [{ op: "addVariable", variable: { name: "qty" } }, { op: "update", id: "bc", props: { content: "«qty»" } }], (_o, ctx) => {
+      seen.push(ctx.variables.map((v) => v.name));
+      return null;
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.every((names) => names.includes("qty"))).toBe(true);
+    expect([...result.touched]).toEqual([0, 1]);
   });
 
   it("renames a variable through every marker without costing the captures", () => {
