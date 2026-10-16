@@ -1,3 +1,4 @@
+import { unframed } from "@zplab/core/lib/hostStatus";
 import { errorMessage } from "./errorMessage";
 import { isDesktopShell } from "./platform";
 import type { QueryTarget } from "./printTarget";
@@ -7,6 +8,7 @@ export type PrinterQueryFailure =
   | { kind: "unconfigured" }
   | { kind: "busy" }
   | { kind: "unparsed" }
+  | { kind: "silent" }
   | { kind: "ignored" }
   | { kind: "refused"; port: number }
   | { kind: "unreachable" }
@@ -16,9 +18,16 @@ export type PrinterQueryFailure =
 
 export type PrinterOutcome<T> = { kind: "ok"; value: T } | PrinterQueryFailure;
 
+/** A reply that is only a frame is silence. Spaces are kept, since they may be an ^HV header or terminator. */
+export function answered(outcome: PrinterOutcome<string>): PrinterOutcome<string> {
+  if (outcome.kind !== "ok") return outcome;
+  const text = unframed(outcome.value).replace(/^[\r\n]+|[\r\n]+$/g, "");
+  return text.trim() ? { kind: "ok", value: text } : { kind: "silent" };
+}
+
 /** Mirrors the Rust TcpQueryResult. */
 interface TcpQueryResult {
-  kind: "data" | "refused" | "unreachable";
+  kind: "data" | "silent" | "refused" | "unreachable";
   body?: string;
 }
 
@@ -31,6 +40,8 @@ export function printerFailureMessage(failure: PrinterQueryFailure): string {
       return "Another printer read is still running. Try again in a moment.";
     case "unparsed":
       return "The printer answered, but the reply could not be read.";
+    case "silent":
+      return "The printer did not answer.";
     case "ignored":
       return "The printer ignored the command. The object is still there.";
     case "refused":
@@ -62,6 +73,7 @@ export async function queryPrinter(target: QueryTarget, zpl: string): Promise<Pr
     });
     if (res.kind === "refused") return { kind: "refused", port: target.port };
     if (res.kind === "unreachable") return { kind: "unreachable" };
+    if (res.kind === "silent") return { kind: "silent" };
     return { kind: "ok", value: res.body ?? "" };
   } catch (e) {
     return { kind: "error", message: errorMessage(e) };

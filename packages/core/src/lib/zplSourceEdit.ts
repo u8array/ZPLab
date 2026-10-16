@@ -1,6 +1,6 @@
 import { LABEL_META_KEYS } from "./zplLabelMeta";
 import type { CachedImage } from "./imageCache";
-import { importZplText, type ZplImportResult, mergeSetupUploads, replaceImportLabel } from "./zplImportService";
+import { documentHasContent, importZplText, type ZplImportResult, mergeSetupUploads, replaceImportLabel } from "./zplImportService";
 import { repairPrinterProfile, SETUP_UPLOAD_FIELDS } from "../types/PrinterProfile";
 import type { ImportReport, UnbalancedFormat } from "./zplParser";
 import type { LabelConfig } from "../types/LabelConfig";
@@ -124,13 +124,7 @@ export function prepareSourceApply(input: SourceApplyInput): SourceApplyPlan {
   }
   if (imported.pages.length > MAX_SOURCE_PAGES) return { ok: false, reason: "tooManyPages" };
   const objectCount = imported.pages.reduce((s, p) => s + p.objects.length, 0);
-  if (
-    objectCount === 0 &&
-    Object.keys(imported.labelConfig).length === 0 &&
-    Object.keys(imported.printerProfile).length === 0
-  ) {
-    return { ok: false, reason: "noContent" };
-  }
+  if (!documentHasContent(imported)) return { ok: false, reason: "noContent" };
 
   let label = replaceImportLabel(current.label, imported.labelConfig);
   const uploads = mergeSetupUploads(current.printerProfile, imported.printerProfile);

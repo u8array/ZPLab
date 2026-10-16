@@ -63,6 +63,11 @@ describe("buildSourceDiagnostics", () => {
     ]);
   });
 
+  it("words a host query with the report title", () => {
+    const f: ImportFinding = { kind: "hostQuery", command: "~HS", pageIndex: 0, span: { start: 3, end: 6 } };
+    expect(describeFinding(f, en.importReport)).toEqual({ title: en.importReport.hostQueryTitle, detail: "~HS" });
+  });
+
   it("offers the ^FS repair only on a dropped field, at the field's last byte", () => {
     const dropped: ImportFinding = { kind: "unterminatedField", command: "^FO40,40", pageIndex: 0, span: { start: 3, end: 29 } };
     const other: ImportFinding = { kind: "deviceAction", command: "~PH", pageIndex: 0, span: { start: 40, end: 43 } };

@@ -1,5 +1,8 @@
-// One wording per printer condition, shared by chip, check and dialog.
-import { printerReadiness, type HostWarningFlag, type PrinterCondition, type PrinterReadiness } from "@zplab/core/lib/hostStatus";
+// One wording per printer condition and reading, shared by chip, check and dialog.
+import { hostObjectPath } from "@zplab/core/lib/hostDirectory";
+import { printerReadiness, type HostMemory, type HostWarningFlag, type PrinterCondition, type PrinterIdentity, type PrinterReadiness } from "@zplab/core/lib/hostStatus";
+import { driveUsage, hostListing, type DriveUsage } from "@zplab/core/lib/storedObjectOrigins";
+import type { DocumentReply } from "./printerDocumentQuery";
 import type { PrinterQueryFailure } from "./printerQuery";
 import type { PrinterStatusReport } from "./printerStatus";
 import type { Translations } from "../locales";
@@ -50,6 +53,8 @@ export function failureText(loc: Loc, failure: PrinterQueryFailure): string {
       return loc.failBusy;
     case "unparsed":
       return loc.failUnparsed;
+    case "silent":
+      return loc.failSilent;
     case "ignored":
       return loc.failIgnored;
     case "refused":
@@ -76,3 +81,34 @@ export const reportView = (loc: Loc, report: PrinterStatusReport | undefined): R
   const readiness = printerReadiness(report.flags, report.status);
   return { report, readiness, line: readinessText(loc, readiness) };
 };
+
+export const modelText = (identity: PrinterIdentity): string => `${identity.model} ${identity.firmware}`;
+export const memoryText = (loc: Loc, memory: HostMemory): string =>
+  formatTemplate(loc.memoryFmt, { available: String(memory.availableKb), max: String(memory.maxKb) });
+
+/** A listed object under a kilobyte is still there, so only a true zero reads as nothing. */
+export const kilobytes = (bytes: number): string => String(bytes === 0 ? 0 : Math.max(1, Math.round(bytes / 1024)));
+
+export const driveUsageText = (loc: Translations["printerSettings"]["objects"], usage: Pick<DriveUsage, "device" | "used" | "free">): string =>
+  formatTemplate(loc.usageFmt, { device: usage.device, used: kilobytes(usage.used), free: kilobytes(usage.free) });
+
+/** A document's reply as lines, in the wording each reading already has elsewhere. */
+export function documentReplyLines(loc: Loc, storage: Translations["printerSettings"]["objects"], reply: DocumentReply): string[] {
+  const { status, identity, memory, flags, directories } = reply.parsed;
+  const lines: string[] = [];
+  if (flags !== undefined || status !== undefined) {
+    const readiness = printerReadiness(flags, status);
+    lines.push(readinessText(loc, readiness).text);
+    if (flags !== undefined) lines.push(`${loc.warnings}: ${warningsText(loc, readiness)}`);
+  }
+  if (identity !== undefined) lines.push(`${loc.model}: ${modelText(identity)}`);
+  if (memory !== undefined) lines.push(`${loc.memory}: ${memoryText(loc, memory)}`);
+  if (directories !== undefined) {
+    const listing = hostListing(directories);
+    lines.push(...listing.objects.map(hostObjectPath));
+    lines.push(
+      ...driveUsage(listing).map((d) => driveUsageText(storage, d)),
+    );
+  }
+  return lines;
+}

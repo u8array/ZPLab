@@ -9,6 +9,7 @@ import { ZD230_ALLCV_EXCERPT } from "@zplab/core/lib/sgd.fixture";
 const readPrinterStatus = vi.fn();
 const readPrinterConfiguration = vi.fn();
 const readPrinterSettings = vi.fn();
+const queryDocument = vi.fn();
 vi.mock("../../lib/printerStatus", () => ({
   readPrinterStatus: (...args: unknown[]) => readPrinterStatus(...args),
   readPrinterConfiguration: (...args: unknown[]) => readPrinterConfiguration(...args),
@@ -16,11 +17,13 @@ vi.mock("../../lib/printerStatus", () => ({
 vi.mock("../../lib/printerSettings", () => ({
   readPrinterSettings: (...args: unknown[]) => readPrinterSettings(...args),
 }));
+vi.mock("../../lib/printerDocumentQuery", () => ({ queryDocument: (...args: unknown[]) => queryDocument(...args) }));
 
-const report = { identity: undefined, flags: { errors: [], warnings: [] }, memory: undefined, status: undefined, withheld: false, raw: "" };
+const report = { flags: { errors: [], warnings: [] }, withheld: false, raw: "" };
 
 beforeEach(() => {
   readPrinterStatus.mockReset();
+  queryDocument.mockReset();
   useLabelStore.setState({ printerState: { phase: "idle" }, printTarget: { ...DEFAULT_PRINT_TARGET, host: "172.17.17.175", usbId: "usb-1" } });
 });
 
@@ -130,5 +133,26 @@ describe("adoptPrinterSettings", () => {
     expect(useLabelStore.getState().adoptPrinterSettings(rowsFor(["printSpeed"]))).toBe(false);
     expect(useLabelStore.getState().label.printSpeed).toBeUndefined();
     useLabelStore.setState({ sourceEdit: { status: "off" } });
+  });
+});
+
+describe("queryDocument", () => {
+  it("sends the document over the named way, names the asked commands as the step and holds the channel", async () => {
+    let finish: (value: unknown) => void = () => undefined;
+    queryDocument.mockImplementation(() => new Promise((resolve) => (finish = resolve)));
+    const document = "^XA~HS^HWR:*.*^FO10,10^FDx^FS^XZ";
+    const pending = useLabelStore.getState().queryDocument(document, ["~HS", "^HW"], "usb");
+    expect(useLabelStore.getState().printerReading).toBe("~HS ^HW");
+    expect(await useLabelStore.getState().checkPrinter()).toEqual({ kind: "busy" });
+    finish({ kind: "ok", value: { raw: "ok", commands: ["~HS", "^HW"], configuration: false, parsed: {} } });
+    expect(await pending).toMatchObject({ kind: "ok" });
+    expect(queryDocument).toHaveBeenCalledWith({ kind: "usb", id: "usb-1" }, document, ["~HS", "^HW"]);
+    expect(useLabelStore.getState().printerReading).toBeUndefined();
+  });
+
+  it("names a missing target without asking", async () => {
+    useLabelStore.setState({ printTarget: DEFAULT_PRINT_TARGET });
+    expect(await useLabelStore.getState().queryDocument("^XA~HS^XZ", ["~HS"])).toEqual({ kind: "unconfigured" });
+    expect(queryDocument).not.toHaveBeenCalled();
   });
 });

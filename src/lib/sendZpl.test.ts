@@ -41,6 +41,14 @@ describe("sendZpl", () => {
     expect(zpl.match(/\^XFR:LBL\.ZPL/g)).toHaveLength(3);
   });
 
+  it("asks the page's host commands once per job, in the first recall block", () => {
+    useLabelStore.setState({ pages: [{ ...pages[0]!, hostCommands: ["~HS"] }], dataset, columnMapping: { bindings: { v1: "sku" }, headerSnapshot: ["sku"] } });
+    const zpl = sendZpl(useLabelStore.getState());
+    expect(zpl.split("~HS")).toHaveLength(2);
+    expect(zpl.indexOf("^DFR:LBL.ZPL")).toBeLessThan(zpl.indexOf("~HS"));
+    expect(sendZpl(useLabelStore.getState(), 1).split("~HS")).toHaveLength(2);
+  });
+
   it("keeps the printer impact of the whole job in a one-row sample", () => {
     useLabelStore.setState({ dataset, columnMapping: { bindings: { v1: "sku" }, headerSnapshot: ["sku"] } });
     const s = useLabelStore.getState();

@@ -26,9 +26,22 @@ export function replayRiskFindings(report: ImportReport): ImportFinding[] {
   return report.findings.filter((f) => f.kind === 'replayRisk');
 }
 
+/** The pages whose overlay routing strips. */
+export const riskPageIndexes = (report: ImportReport): ReadonlySet<number> => new Set(replayRiskFindings(report).map((f) => f.pageIndex));
+
 /** Routable setup commands plus non-routable device actions, for the prompt list. */
 export function printerCommandFindings(report: ImportReport): ImportFinding[] {
   return report.findings.filter((f) => f.kind === 'replayRisk' || f.kind === 'deviceAction');
+}
+
+/** Findings about bytes only an overlay replays, so they leave with the overlay. */
+const OVERLAY_BOUND_KINDS: ReadonlySet<ImportFindingKind> = new Set(['lossyEdit', 'deviceAction']);
+export const overlayBound = (f: ImportFinding): boolean => OVERLAY_BOUND_KINDS.has(f.kind);
+
+/** The commands a routed page loses with its overlay, so the choice is made knowing them. */
+export function commandsLostByRouting(report: ImportReport): string[] {
+  const riskPages = riskPageIndexes(report);
+  return [...new Set(report.findings.filter((f) => f.kind === 'deviceAction' && riskPages.has(f.pageIndex)).map((f) => f.command))];
 }
 
 /** `pageIndex` of a finding about the stream as a whole, which no page routing may drop. */
@@ -41,13 +54,11 @@ export function resolveRoutedReport(
   report: ImportReport,
   keptPageIndexes: readonly number[],
 ): ImportReport {
-  const riskPages = new Set(replayRiskFindings(report).map((f) => f.pageIndex));
+  const riskPages = riskPageIndexes(report);
   const newIndexOf = new Map(keptPageIndexes.map((orig, i) => [orig, i]));
   const findings = report.findings.flatMap((f) => {
     if (f.kind === 'replayRisk') return [];
-    if ((f.kind === 'lossyEdit' || f.kind === 'deviceAction') && riskPages.has(f.pageIndex)) {
-      return [];
-    }
+    if (overlayBound(f) && riskPages.has(f.pageIndex)) return [];
     if (f.pageIndex === DOCUMENT_FINDING) return [f];
     const newIndex = newIndexOf.get(f.pageIndex);
     // A setup-only page leaves with its block, but what the profile could not take is still lost.
@@ -66,6 +77,7 @@ export function reportOf(findings: ImportFinding[]): ImportReport {
     unknown: dedupCommandsByKind(findings, 'unknown'),
     replayRisk: dedupCommandsByKind(findings, 'replayRisk'),
     deviceAction: dedupCommandsByKind(findings, 'deviceAction'),
+    hostQuery: dedupCommandsByKind(findings, 'hostQuery'),
     unterminatedField: dedupCommandsByKind(findings, 'unterminatedField'),
     hexControl: dedupCommandsByKind(findings, 'hexControl', 0),
   };

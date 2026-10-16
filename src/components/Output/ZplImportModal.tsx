@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
 import { XMarkIcon, ClipboardDocumentIcon, CheckIcon, FolderOpenIcon } from '@heroicons/react/16/solid';
-import { importZplText, routeSetupCommands, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
+import { documentHasContent, importZplText, routeSetupCommands, type ZplImportResult, type SetupCommandChoice } from '@zplab/core/lib/zplImportService';
+import { pageEmits } from '@zplab/core/types/Group';
 import { readFileAsZplText } from '../../lib/readFile';
 import { useLabelStore } from '../../store/labelStore';
 import { commitUsedImages } from '@zplab/core/lib/imageUsage';
 import { formatReportAsText, type ImportResult } from '../../lib/importReport';
-import { replayRiskFindings, printerCommandFindings, resolveRoutedReport, type ImportReport } from '@zplab/core/lib/importReport';
+import { replayRiskFindings, printerCommandFindings, resolveRoutedReport, commandsLostByRouting, type ImportReport } from '@zplab/core/lib/importReport';
 import { ImportSummaryBody } from './ImportSummary';
 import { ImportSetupChoice } from './ImportSetupChoice';
 import { useT } from '../../hooks/useT';
@@ -36,8 +37,7 @@ export function ZplImportModal({ onClose }: Props) {
   // On a fresh designer (one empty page) we hide the toggle entirely
   // because the resulting [empty, imported] state would just be clutter
   // the user has to clean up manually.
-  const hasExistingContent =
-    pages.length > 1 || (pages[0]?.objects.length ?? 0) > 0;
+  const hasExistingContent = pages.length > 1 || (pages[0] !== undefined && pageEmits(pages[0]));
 
   // Stop on the result view only for what the changed canvas cannot show: findings, uploads parked in the profile, rows left behind.
   const finishImport = (totalObjects: number, report: ImportReport, changed: { fonts: number; graphics: number; settings: number }, droppedRows: number) => {
@@ -71,14 +71,8 @@ export function ZplImportModal({ onClose }: Props) {
   // they obtain the text.
   const processImport = (text: string) => {
     const imported = importZplText(text, dpmm);
-    const { labelConfig, printerProfile, pages } = imported;
-    const totalObjects = pages.reduce((s, p) => s + p.objects.length, 0);
-    if (
-      totalObjects === 0 &&
-      Object.keys(labelConfig).length === 0 &&
-      Object.keys(printerProfile).length === 0 &&
-      imported.report.findings.length === 0
-    ) {
+    // A findings-only stream earns the report view.
+    if (!documentHasContent(imported) && imported.report.findings.length === 0) {
       setError(t.importModal.errNoObjects);
       return;
     }
@@ -148,6 +142,7 @@ export function ZplImportModal({ onClose }: Props) {
       {pending ? (
         <ImportSetupChoice
           findings={printerCommandFindings(pending.report)}
+          lost={commandsLostByRouting(pending.report)}
           canKeep={!(appendMode && hasExistingContent)}
           onChoose={(choice) => {
             const imported = pending;

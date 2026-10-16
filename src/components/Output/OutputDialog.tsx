@@ -10,11 +10,14 @@ import { formatTemplate } from "../../lib/formatTemplate";
 import { isDesktopShell } from "../../lib/platform";
 import { needsRawChannel, type PrintWay } from "../../lib/printTarget";
 import { wayHint, wayLabel } from "../../lib/printWayText";
+import { repliesToHost } from "@zplab/core/lib/hostCommands";
 import {
   effectiveKind,
   effectiveScope,
   offeredKinds,
   offeredScopes,
+  printsFields,
+  type DocumentQueryFacts,
   type FileFormat,
   type OutputFacts,
   type OutputKind,
@@ -22,6 +25,7 @@ import {
   type PdfScope,
 } from "../../lib/outputChoice";
 import { useLabelaryConsent } from "../../hooks/useLabelaryConsent";
+import { sendZpl } from "../../lib/sendZpl";
 import { usePrintWays } from "../../hooks/usePrintWays";
 import { useSendNotices } from "../../hooks/useSendNotices";
 import { ActiveRowNotice, DatasetNotice } from "./DatasetNotice";
@@ -40,8 +44,8 @@ interface Props {
   onExportPng: () => void;
 }
 
-function ImpactNotices() {
-  const notices = useSendNotices();
+function ImpactNotices({ zpl }: { zpl: string }) {
+  const notices = useSendNotices(zpl);
   if (notices.length === 0) return null;
   return (
     <div role="status">
@@ -83,6 +87,10 @@ export function OutputDialog({ zpl, source, facts, onClose, onPrintImage, onExpo
   };
 
   const ways = usePrintWays(source, facts);
+  // One row is enough, only the commands matter here.
+  const outgoing = useLabelStore((s) => (source === "label" ? sendZpl(s, 1) : ""));
+  const commands = repliesToHost(source === "label" ? outgoing : zpl());
+  const query: DocumentQueryFacts = { commands, prints: printsFields(source, facts) };
   const waySegments: Segment<PrintWay>[] = ways.offered.map((key) => ({
     key,
     label: wayLabel(loc, key),
@@ -152,8 +160,8 @@ export function OutputDialog({ zpl, source, facts, onClose, onPrintImage, onExpo
               {source === "label" && (
                 <>
                   {ways.way === "system" ? <ActiveRowNotice /> : <DatasetNotice />}
-                  {/* These are the exact bytes sent, which the dialog may never have shown. */}
-                  {ways.way !== "system" && <ImpactNotices />}
+                  {/* The first row's bytes carry every command a send carries, which the dialog may never have shown. */}
+                  {ways.way !== "system" && <ImpactNotices zpl={outgoing} />}
                 </>
               )}
               <div className="flex flex-col gap-1 px-3 py-2.5 border-b border-border">
@@ -166,9 +174,9 @@ export function OutputDialog({ zpl, source, facts, onClose, onPrintImage, onExpo
 
             <div className="flex-1 min-h-0 overflow-y-auto">
               {ways.way === "system" ? (
-                <SystemPrintBody onPrint={printImage} rendering={rendering} locked={checking && needsRawChannel(ways.way, renderer)} />
+                <SystemPrintBody onPrint={printImage} rendering={rendering} locked={checking && needsRawChannel(ways.way, renderer)} query={query} />
               ) : (
-                <ZebraWayPanel zpl={zpl} way={ways.tab} devices={ways.devices} />
+                <ZebraWayPanel zpl={zpl} way={ways.tab} devices={ways.devices} query={query} />
               )}
             </div>
           </div>

@@ -74,6 +74,11 @@ export interface SpannedToken {
   span?: SourceSpan;
 }
 
+/** A question the design keeps: spelled as the generator spells it, since the block may regenerate without the remap that spelled the source. */
+export interface HostQueryToken extends SpannedToken {
+  canonical: string;
+}
+
 /** Shared parse accumulators; pages slice the arrays via offset marks, the
  *  document-wide fields hand back via `ParsedZPL`. */
 export interface ParserResult {
@@ -109,6 +114,8 @@ export interface ParserResult {
   unknown: SpannedToken[];
   replayRisk: SpannedToken[];
   deviceAction: SpannedToken[];
+  /** Commands the printer answers over the host port, such as ~HS. */
+  hostQuery: HostQueryToken[];
   /** Every in-range ^FN slot the tokenizer saw, including on fields that end
    *  up passthrough-only (no Variable). Import renumbering must avoid these:
    *  overlays replay the original bytes. */
@@ -648,6 +655,7 @@ export function createParserState(): ParserState {
       unknown: [],
       replayRisk: [],
       deviceAction: [],
+      hostQuery: [],
       sourceFnNumbers: new Set<number>(),
     },
     label: {

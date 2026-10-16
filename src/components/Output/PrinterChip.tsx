@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import { ArrowDownTrayIcon, ArrowPathIcon, ChevronDownIcon, CircleStackIcon, Cog6ToothIcon, DocumentTextIcon } from "@heroicons/react/16/solid";
 import type { SgdSetting } from "@zplab/core/lib/sgd";
+import { useReplyRead } from "../../hooks/useReplyRead";
 import { useT } from "../../hooks/useT";
 import { useDismiss } from "../../hooks/useDismiss";
 import { formatTemplate } from "../../lib/formatTemplate";
-import type { PrinterOutcome } from "../../lib/printerQuery";
-import { failureText, readingText, reportView, warningsText, type ReadinessTone } from "../../lib/printerStatusText";
+import { failureText, memoryText, modelText, readingText, reportView, warningsText, type ReadinessTone } from "../../lib/printerStatusText";
 import { resolveQueryTarget } from "../../lib/printTarget";
 import { selectPrinterState, useLabelStore } from "../../store/labelStore";
 import { DropdownItem, DropdownSeparator } from "../ui/DropdownMenu";
@@ -40,8 +40,8 @@ export function PrinterChip() {
   const readPrinterSettings = useLabelStore((s) => s.readPrinterSettings);
   const setPrinterSettingsTab = useLabelStore((s) => s.setPrinterSettingsTab);
   const [open, setOpen] = useState(false);
-  const [configuration, setConfiguration] = useState<PrinterOutcome<string> | "reading" | undefined>();
-  const [settings, setSettings] = useState<PrinterOutcome<SgdSetting[]> | "reading" | undefined>();
+  const configuration = useReplyRead<string>();
+  const settings = useReplyRead<SgdSetting[]>();
   const rootRef = useRef<HTMLDivElement>(null);
   useDismiss(rootRef, () => setOpen(false), { active: open });
 
@@ -59,14 +59,8 @@ export function PrinterChip() {
     setOpen(false);
     action();
   };
-  const openConfiguration = () => {
-    setConfiguration("reading");
-    void readPrinterConfiguration().then((result) => setConfiguration((current) => (current === "reading" ? result : current)));
-  };
-  const openSettings = () => {
-    setSettings("reading");
-    void readPrinterSettings().then((result) => setSettings((current) => (current === "reading" ? result : current)));
-  };
+  const openConfiguration = () => configuration.start(readPrinterConfiguration);
+  const openSettings = () => settings.start(readPrinterSettings);
 
   return (
     <div ref={rootRef} className="relative">
@@ -89,10 +83,8 @@ export function PrinterChip() {
           )}
           <Row label={loc.state} value={stateText} />
           {view?.report.flags && <Row label={loc.warnings} value={warningsText(loc, view.readiness)} />}
-          {view?.report.identity && <Row label={loc.model} value={`${view.report.identity.model} ${view.report.identity.firmware}`} />}
-          {view?.report.memory && (
-            <Row label={loc.memory} value={formatTemplate(loc.memoryFmt, { available: String(view.report.memory.availableKb), max: String(view.report.memory.maxKb) })} />
-          )}
+          {view?.report.identity && <Row label={loc.model} value={modelText(view.report.identity)} />}
+          {view?.report.memory && <Row label={loc.memory} value={memoryText(loc, view.report.memory)} />}
           {checkedAt && <div className="px-3 py-0.5 text-[10px] font-mono text-muted text-right">{checkedAt}</div>}
           <DropdownSeparator />
           <DropdownItem icon={ArrowPathIcon} disabled={reading} onClick={closeThen(() => void checkPrinter())}>
@@ -112,8 +104,8 @@ export function PrinterChip() {
           </DropdownItem>
         </div>
       )}
-      {configuration && <PrinterConfigurationDialog read={configuration} onClose={() => setConfiguration(undefined)} />}
-      {settings && <AdoptSettingsDialog read={settings} onClose={() => setSettings(undefined)} />}
+      {configuration.read && <PrinterConfigurationDialog read={configuration.read} onClose={configuration.close} />}
+      {settings.read && <AdoptSettingsDialog read={settings.read} onClose={settings.close} />}
     </div>
   );
 }

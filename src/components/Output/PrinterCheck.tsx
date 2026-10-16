@@ -1,6 +1,6 @@
 import { useT } from "../../hooks/useT";
 import type { PrinterQueryFailure } from "../../lib/printerQuery";
-import { failureText, readingText, reportView, warningsText, type ReadinessTone } from "../../lib/printerStatusText";
+import { failureText, modelText, readingText, reportView, warningsText, type ReadinessTone } from "../../lib/printerStatusText";
 import type { PrintTransport } from "../../lib/printTarget";
 import { selectPrinterState, useLabelStore } from "../../store/labelStore";
 
@@ -51,7 +51,7 @@ export function PrinterCheck({ transport, sendBusy, onFailure }: Props) {
               {view.report.identity && (
                 <>
                   <dt>{loc.model}</dt>
-                  <dd className="m-0 text-text">{`${view.report.identity.model} ${view.report.identity.firmware}`}</dd>
+                  <dd className="m-0 text-text">{modelText(view.report.identity)}</dd>
                 </>
               )}
               {view.report.flags && (

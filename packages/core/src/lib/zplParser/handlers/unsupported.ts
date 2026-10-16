@@ -23,7 +23,6 @@ export function createUnsupportedHandlers(s: ParserState): Record<string, Handle
     IS: noop,
     // Spec p.185 only refers ~EG to ^ID, so its reach is taken from ^ID's defaults: R: and .GRF (p.245).
     EG: () => deleteStoredObjects(s, "R:*.GRF"),
-    HT: browserLimit,
     LF: browserLimit,
   };
 }

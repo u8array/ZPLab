@@ -2813,9 +2813,10 @@ describe('parseZPL — partial findings', () => {
 });
 
 describe('parseZPL — browserLimit findings', () => {
-  it('records ^HT as browserLimit', () => {
-    const { findings } = parseSingle('^XA^HT^XZ', 8);
-    expect(commandsOf({ findings }, 'browserLimit')).toEqual(['^HT']);
+  it('records ^LF as browserLimit and ^HT, which answers over the host port, as a host query', () => {
+    const { findings } = parseSingle('^XA^LF^HT^XZ', 8);
+    expect(commandsOf({ findings }, 'browserLimit')).toEqual(['^LF']);
+    expect(commandsOf({ findings }, 'hostQuery')).toEqual(['^HT']);
   });
 
   it('records an upload in a format it cannot decode as browserLimit', () => {
@@ -2838,10 +2839,10 @@ describe('parseZPL — unknown findings', () => {
   });
 
   it('surfaces unknown/browserLimit tokens without a trailing newline', () => {
-    const parsed = parseSingle('^XA\n^XX99\n^HT\n^XZ', 8);
+    const parsed = parseSingle('^XA\n^XX99\n^LF\n^XZ', 8);
     const skipped = [...commandsOf(parsed, 'browserLimit'), ...commandsOf(parsed, 'unknown')];
     expect(commandsOf(parsed, 'unknown')).toContain('^XX99');
-    expect(commandsOf(parsed, 'browserLimit')).toContain('^HT');
+    expect(commandsOf(parsed, 'browserLimit')).toContain('^LF');
     for (const s of [...commandsOf(parsed, 'unknown'), ...commandsOf(parsed, 'browserLimit'), ...skipped]) {
       expect(s).toBe(s.trimEnd());
     }
@@ -2887,7 +2888,7 @@ describe('parseZPL — unknown findings', () => {
 
 describe('parseZPL: page findings', () => {
   it('emits one finding per kind with the page index stamped', () => {
-    const zpl = '^XA^FO0,0^A@N,30,0,E:ARIAL.TTF^FDText^FS^HT^XX99^XZ';
+    const zpl = '^XA^FO0,0^A@N,30,0,E:ARIAL.TTF^FDText^FS^LF^XX99^XZ';
     const { findings } = parseSingle(zpl, 8);
     const kinds = findings.map((f) => f.kind);
     expect(kinds).toContain('partial');
@@ -2896,10 +2897,10 @@ describe('parseZPL: page findings', () => {
     expect(findings.every((f) => f.pageIndex === 0)).toBe(true);
     // Tripwire: findings emit in source order. A pipeline split that
     // collects unknowns / browser-limits in a separate pass would
-    // reorder these. Order: ^A@ (L1 partial) → ^HT (L1 browserLimit) →
+    // reorder these. Order: ^A@ (L1 partial) → ^LF (L1 browserLimit) →
     // ^XX (L1 unknown).
     expect(findings.map((f) => f.command)).toEqual([
-      '^A@', '^HT', '^XX99',
+      '^A@', '^LF', '^XX99',
     ]);
   });
 

@@ -7,6 +7,7 @@ import {
   effectiveScope,
   offeredKinds,
   offeredScopes,
+  printsFields,
   renderableOutput,
   type OutputFacts,
 } from "./outputChoice";
@@ -21,6 +22,14 @@ const everything: OutputFacts = {
   pdfCurrentPageOnly: false,
   batchRowCount: 3,
 };
+
+describe("printsFields", () => {
+  it("is true only for a label that has objects, never for a setup script", () => {
+    expect(printsFields("label", everything)).toBe(true);
+    expect(printsFields("setupScript", everything)).toBe(false);
+    expect(printsFields("label", { ...everything, hasObjects: false })).toBe(false);
+  });
+});
 
 describe("anyProducible", () => {
   it("opens the dialog for a config-only document", () => {

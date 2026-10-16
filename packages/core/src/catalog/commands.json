@@ -6145,7 +6145,8 @@
       },
       "support": {
         "web": "no",
-        "desktop": "no"
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -6163,7 +6164,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned",
+        "desktop": "yes",
         "docker": "planned"
       }
     },
@@ -6201,7 +6202,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned",
+        "desktop": "yes",
         "docker": "planned"
       }
     },
@@ -6321,7 +6322,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned",
+        "desktop": "yes",
         "docker": "planned"
       }
     },
@@ -6359,10 +6360,9 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned",
+        "desktop": "yes",
         "docker": "planned"
-      },
-      "loss": "printerComms"
+      }
     },
     {
       "cmd": "HU",
@@ -6379,7 +6379,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned",
+        "desktop": "yes",
         "docker": "planned"
       }
     },
@@ -6535,7 +6535,7 @@
       },
       "support": {
         "web": "no",
-        "desktop": "planned",
+        "desktop": "yes",
         "docker": "planned"
       }
     },

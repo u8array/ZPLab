@@ -1,3 +1,4 @@
+import { ZD230_HI } from "@zplab/core/lib/hostStatus.fixture";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { readPrinterConfiguration, readPrinterStatus } from "./printerStatus";
 import type * as PrinterQuery from "./printerQuery";
@@ -10,7 +11,7 @@ vi.mock("./printerQuery", async (importOriginal) => ({
 
 const target = { kind: "network", host: "172.17.17.175", port: 9100 } as const;
 const data = (body: string) => ({ kind: "ok", value: body });
-const identity = data("ZD230,V89.21.46Z,8,4096KB,");
+const identity = data(ZD230_HI);
 const clear = data("PRINTER STATUS\r\nERRORS: 0 00000000 00000000\r\nWARNINGS: 0 00000000 00000000");
 const memory = data("4096,2048,1500");
 const strings = data("\u0002030,0,0,1200,000,0,0,0,000,0,0,0\u0003\r\n\u0002001,0,0,0,1,2,0,0,00000000,1,000\u0003\r\n");
@@ -41,7 +42,7 @@ describe("readPrinterStatus", () => {
       .mockResolvedValueOnce(memory);
     const result = await readPrinterStatus(target);
     expect(queryPrinter).toHaveBeenCalledTimes(3);
-    expect(result).toMatchObject({ kind: "ok", value: { flags: { errors: ["headOpen"] }, status: undefined, withheld: true } });
+    expect(result).toMatchObject({ kind: "ok", value: { flags: { errors: ["headOpen"] }, withheld: true } });
   });
 
   it("keeps the identity and still asks the status strings when the flag and memory queries fail", async () => {
@@ -54,8 +55,9 @@ describe("readPrinterStatus", () => {
     expect(queryPrinter.mock.calls.map((c) => c[1])).toEqual(["~HI", "~HQES", "~HM", "~HS"]);
     expect(result).toMatchObject({
       kind: "ok",
-      value: { identity: { model: "ZD230" }, flags: undefined, memory: undefined, status: { printMode: 2 }, withheld: false },
+      value: { identity: { model: "ZD230" }, status: { printMode: 2 }, withheld: false },
     });
+    expect(result.kind === "ok" && "memory" in result.value).toBe(false);
   });
 
   it("forwards a failed first contact unchanged", async () => {
@@ -67,9 +69,9 @@ describe("readPrinterStatus", () => {
 });
 
 describe("readPrinterConfiguration", () => {
-  it("returns the echo as text without its frame bytes", async () => {
-    queryPrinter.mockResolvedValueOnce(data("\u0002  ZD230  PRINTER\r\n  V89.21.46Z  FIRMWARE\u0003"));
-    expect(await readPrinterConfiguration(target)).toEqual({ kind: "ok", value: "ZD230  PRINTER\r\n  V89.21.46Z  FIRMWARE" });
+  it("returns the echo as text without its frame bytes, its padding kept", async () => {
+    queryPrinter.mockResolvedValueOnce(data("\u0002  ZD230  PRINTER\r\n  V89.21.46Z  FIRMWARE\r\n\u0003"));
+    expect(await readPrinterConfiguration(target)).toEqual({ kind: "ok", value: "  ZD230  PRINTER\r\n  V89.21.46Z  FIRMWARE" });
     expect(queryPrinter).toHaveBeenLastCalledWith(target, "^XA^HH^XZ");
   });
 });

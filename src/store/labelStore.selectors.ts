@@ -1,5 +1,5 @@
 import type { ImportFinding } from '@zplab/core/lib/importReport';
-import { pageLabelConfig, type LabelObject, type Page } from '@zplab/core/types/Group';
+import { type LabelObject, type Page, pageEmits, pageLabelConfig, pageHostCommands } from '@zplab/core/types/Group';
 import { boundColumnIndex } from '@zplab/core/lib/variableBinding';
 import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
 import { isDesktopShell } from '../lib/platform';
@@ -24,22 +24,23 @@ export const currentObjects = (state: PageState): LabelObject[] =>
 // label, density) so subscribers only re-render when one of them changes.
 const overrideCache = new WeakMap<LabelConfig, Map<string, PageLabel>>();
 
-type PageOverrides = Pick<Page, 'jmDensity' | 'storedFormatPath' | 'storedFormatDelivery'>;
+type PageOverrides = Pick<Page, 'jmDensity' | 'storedFormatPath' | 'storedFormatDelivery' | 'hostCommands'>;
 
 const resolvedPageLabel = (label: LabelConfig, page: PageOverrides | undefined): PageLabel => {
   const jm = page?.jmDensity;
   const stored = page?.storedFormatPath;
+  const questions = page === undefined ? undefined : pageHostCommands(page);
   // No divergence means the design label already IS this page's resolved label.
-  if ((jm === undefined || jm === label.jmDensity) && stored === undefined) return designAsPageLabel(label);
+  if ((jm === undefined || jm === label.jmDensity) && stored === undefined && questions === undefined) return designAsPageLabel(label);
   let byOverride = overrideCache.get(label);
   if (!byOverride) {
     byOverride = new Map();
     overrideCache.set(label, byOverride);
   }
-  const key = JSON.stringify([jm ?? null, stored ?? null, page?.storedFormatDelivery ?? null]);
+  const key = JSON.stringify([jm ?? null, stored ?? null, page?.storedFormatDelivery ?? null, questions ?? null]);
   const cached = byOverride.get(key);
   if (cached) return cached;
-  const built = pageLabelConfig(label, { jmDensity: jm, storedFormatPath: stored, storedFormatDelivery: page?.storedFormatDelivery });
+  const built = pageLabelConfig(label, { jmDensity: jm, storedFormatPath: stored, storedFormatDelivery: page?.storedFormatDelivery, hostCommands: questions });
   byOverride.set(key, built);
   return built;
 };
@@ -156,11 +157,9 @@ export const selectEffectivePreviewProvider = (s: LabelState): PreviewProvider =
 export const selectPreviewLocksEditor = (s: LabelState): boolean =>
   s.previewMode.status === 'loading' || s.previewMode.status === 'active';
 
-/** True when the document exports non-trivial ZPL: an overlay page replays
- *  its bytes even with zero objects. Gates panel and export/save entries;
- *  canvas affordances keep their own objects-only question. */
-export const selectDocumentEmits = (s: LabelState): boolean =>
-  s.pages.some((p) => p.objects.length > 0 || p.overlay !== undefined);
+/** True when the document exports non-trivial ZPL. Gates panel and export/save entries, while canvas
+ *  affordances keep their own objects-only question. */
+export const selectDocumentEmits = (s: LabelState): boolean => s.pages.some(pageEmits);
 
 /** True while a source-edit session owns the model. Consumers that block
  *  ONLY for source edit (the preview conflict resolves by exiting the preview

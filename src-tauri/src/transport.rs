@@ -72,10 +72,8 @@ pub(crate) async fn write_all_timeout(stream: &mut TcpStream, bytes: &[u8]) -> R
 }
 
 /// Read one printer reply: wait for the first byte, then collect until an idle
-/// gap marks the end. A close/short-read (0 bytes) also ends the reply; a
-/// reply that never starts, trickles past the deadline, or overflows the bound
-/// is an error. An empty body is reported as "no response" because print-only
-/// endpoints accept a job silently, which is not a queryable response.
+/// gap or a close ends it. A trickle past the deadline or an overflow is an error,
+/// while an empty body means the printer sent nothing and the caller decides.
 pub(crate) async fn read_reply<R: tokio::io::AsyncRead + Unpin>(
   stream: &mut R,
 ) -> Result<Vec<u8>, String> {
@@ -102,12 +100,9 @@ pub(crate) async fn read_reply<R: tokio::io::AsyncRead + Unpin>(
         body.extend_from_slice(&buf[..n]);
       }
       Ok(Err(e)) => return Err(e.to_string()),
-      Err(_) if body.is_empty() => return Err("no response from printer".to_string()),
-      Err(_) => break, // idle gap after data = end of reply
+      // Timeout: end of reply.
+      Err(_) => break,
     }
-  }
-  if body.is_empty() {
-    return Err("no response from printer".to_string());
   }
   Ok(body)
 }
@@ -138,21 +133,19 @@ mod tests {
   }
 
   #[test]
-  fn read_reply_reports_no_response() {
+  fn read_reply_returns_empty_when_nothing_arrives() {
     rt().block_on(async {
       let (_a, mut b) = tokio::io::duplex(1024);
-      let err = read_reply(&mut b).await.unwrap_err();
-      assert_eq!(err, "no response from printer");
+      assert!(read_reply(&mut b).await.unwrap().is_empty());
     });
   }
 
   #[test]
-  fn read_reply_treats_eof_without_data_as_no_response() {
+  fn read_reply_returns_empty_on_eof_without_data() {
     rt().block_on(async {
       let (a, mut b) = tokio::io::duplex(1024);
       drop(a);
-      let err = read_reply(&mut b).await.unwrap_err();
-      assert_eq!(err, "no response from printer");
+      assert!(read_reply(&mut b).await.unwrap().is_empty());
     });
   }
 

@@ -1,4 +1,5 @@
 // The two levels of the output dialog: where the label goes, and how, where there is a choice.
+import { hostCommandParts } from "@zplab/core/lib/hostCommands";
 import { effectiveTransport, type PrintTransport, type PrintWay } from "./printTarget";
 
 /** The bytes the dialog is about: the label itself, or a script that only configures the printer. */
@@ -64,6 +65,20 @@ export function offeredKinds(source: OutputSource, f: OutputFacts): OutputKind[]
   const can = producibleKinds(f);
   return (["print", "file"] as const).filter((kind) => can[kind]);
 }
+
+export interface DocumentQueryFacts {
+  commands: readonly string[];
+  prints: boolean;
+}
+
+export const asksPrinter = (query: DocumentQueryFacts): boolean => query.commands.length > 0;
+
+/** ^HV answers only after the print, past the reader's idle gap, so a document asking it keeps the plain send. */
+export const answersOnReceipt = (commands: readonly string[]): boolean =>
+  commands.every((command) => hostCommandParts(command).id !== "^HV");
+
+/** The fields ride along with a query only when the label itself goes out. */
+export const printsFields = (source: OutputSource, f: OutputFacts): boolean => source === "label" && f.hasObjects;
 
 /** A rendered label is what the system dialog and a PNG carry, and a setup script draws nothing. */
 export const renderableOutput = (source: OutputSource, f: OutputFacts): boolean =>

@@ -1,13 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { importZplText, routeSetupCommands } from '@zplab/core/lib/zplImportService';
+import { documentHasContent, importZplText, routeSetupCommands } from '@zplab/core/lib/zplImportService';
 import { mergeSetupEntries } from '@zplab/core/lib/setupEntries';
 import { generateSetupScript } from './zplSetupScript';
 import { generateMultiPageZPL, generateZPL } from '@zplab/core/lib/zplGenerator';
 import { parseZPL } from '@zplab/core/lib/zplParser';
+import { repliesToHost } from '@zplab/core/lib/hostCommands';
 import { hasFontBytes, loadFontBytesSync } from '@zplab/core/lib/fontCache';
 import { describeFinding, formatReportAsText } from './importReport';
 import { fallbackTranslations } from '../locales';
-import { DOCUMENT_FINDING, replayRiskFindings, printerCommandFindings, resolveRoutedReport } from '@zplab/core/lib/importReport';
+import { DOCUMENT_FINDING, replayRiskFindings, printerCommandFindings, resolveRoutedReport, commandsLostByRouting } from '@zplab/core/lib/importReport';
 import { isSetupPath, printerProfileSchema, type PrinterProfile } from '@zplab/core/types/PrinterProfile';
 import type { LabelConfig } from '@zplab/core/types/LabelConfig';
 
@@ -293,11 +294,11 @@ describe('importZplText: findings.pageIndex', () => {
   });
 
   it('stamps the correct page index across multiple blocks', () => {
-    // Page 0: clean. Page 1: ^A@ partial. Page 2: ^HT browser-limit + ^XX unknown.
+    // Page 0: clean. Page 1: ^A@ partial. Page 2: ^LF browser-limit + ^XX unknown.
     const zpl = [
       '^XA^FO0,0^A0N,30,0^FDclean^FS^XZ',
       '^XA^FO0,0^A@N,30,0,E:A.TTF^FDfont^FS^XZ',
-      '^XA^HT^XX99^XZ',
+      '^XA^LF^XX99^XZ',
     ].join('\n');
     const { report } = importZplText(zpl, 8);
     const byPage = (idx: number) =>
@@ -949,6 +950,16 @@ describe('routeSetupCommands', () => {
     expect(printerProfile.setupFonts).toEqual([{ path: 'E:SETUP.TTF' }]);
   });
 
+  it('keeps the query of a routed page, since the model regenerates it, and names only the device action it loses', () => {
+    const imported = importZplText('^XA^JUS~HS~JC^FO10,10^A0N,20,0^FDhi^FS^XZ', 8);
+    expect(imported.report.hostQuery).toEqual(['~HS']);
+    expect(commandsLostByRouting(imported.report)).toEqual(['~JC']);
+    const { pages, keptPageIndexes } = routeSetupCommands('setupScript', imported);
+    expect(pages[0]?.overlay).toBeUndefined();
+    expect(generateMultiPageZPL(imported.labelConfig as LabelConfig, pages, imported.variables)).toContain('~HS');
+    expect(resolveRoutedReport(imported.report, keptPageIndexes).hostQuery).toEqual(['~HS']);
+  });
+
   it('setupScript keeps the profile but drops the overlay of replay-risk pages', () => {
     const imported = importZplText(STREAM, 8);
     const { printerProfile, pages } = routeSetupCommands('setupScript', imported);
@@ -1139,21 +1150,148 @@ describe('replay-risk report helpers', () => {
   });
 
   it('drops findings on a removed page and remaps survivors to the new index', () => {
-    // Page 0 (setup-only, ^HT finding) is routed away; page 1 has an ^A@ partial.
+    // Page 0 (setup-only, ^LF finding) is routed away; page 1 has an ^A@ partial.
     const zpl =
-      '^XA^ST05,20,2026,12,00,00^HT^XZ\n' +
+      '^XA^ST05,20,2026,12,00,00^LF^XZ\n' +
       '^XA^FO0,0^A@N,20,0,E:A.TTF^FDx^FS^XZ';
     const imported = importZplText(zpl, 8);
     const { pages, keptPageIndexes } = routeSetupCommands('remove', imported);
     expect(pages).toHaveLength(1); // the setup-only page 0 is dropped
     expect(keptPageIndexes).toEqual([1]);
     const stripped = resolveRoutedReport(imported.report, keptPageIndexes);
-    // The removed page's ^HT finding is gone; the survivor is remapped to page 0.
+    // The removed page's ^LF finding is gone; the survivor is remapped to page 0.
     expect(stripped.browserLimit).toEqual([]);
     expect(stripped.findings.some((f) => f.kind === 'browserLimit')).toBe(false);
     const partial = stripped.findings.filter((f) => f.kind === 'partial');
     expect(partial).toHaveLength(1);
     expect(partial[0]?.pageIndex).toBe(0);
+  });
+});
+
+describe('a host command in the import report', () => {
+  it('drops a format command behind the closing ^XZ, as the printer ignores it', () => {
+    const after = importZplText('^XA^FO10,10^A0N,20,20^FDx^FS^XZ^HWR:*.*', 8);
+    expect(after.pages.map((p) => p.hostCommands)).toEqual([undefined]);
+    expect(after.report.findings.filter((f) => f.kind === 'partial').map((f) => f.command)).toEqual(['^HW']);
+    const twice = importZplText('^XA^HWR:*.*^XZ^HWR:*.*', 8);
+    expect(twice.pages[0]?.hostCommands).toEqual(['^HWR:*.*']);
+  });
+
+  it('treats a stream whose only XA carries the tilde as wrapper-less, so a format command there is asked', () => {
+    expect(importZplText('~XA^HWR:*.*^FO10,10^A0N,20,20^FDx^FS', 8).pages[0]?.hostCommands).toEqual(['^HWR:*.*']);
+  });
+
+  it('drops a format command behind a ^DF anywhere in the block, keeping only the field question', () => {
+    const r = importZplText('^XA^FO10,10^A0N,20,20^FN1^FS^DFR:A.ZPL^FS^HWR:*.*^HV1,20^XZ', 8);
+    expect(r.pages[0]?.hostCommands).toEqual(['^HV1,20']);
+    expect(r.report.findings.filter((f) => f.kind === 'partial').map((f) => f.command)).toContain('^HW');
+  });
+
+  it('keeps the query when the overlay never formed, since the model carries it', () => {
+    const r = importZplText('^XA~HS^FO20,40^GB50,50,2^GB60,60,2^FS^XZ', 8);
+    expect(r.pages[0]?.overlay).toBeUndefined();
+    expect(r.pages[0]?.hostCommands).toEqual(['~HS']);
+    expect(generateMultiPageZPL(r.labelConfig as LabelConfig, r.pages, r.variables)).toContain('~HS');
+  });
+
+  it('is a host query, never an unknown or hardware-limited command', () => {
+    for (const [zpl, command] of [['~HS', '~HS'], ['^XA~HS^XZ', '~HS'], ['^XA^HT^XZ', '^HT'], ['^XA^HWR:*.*^XZ', '^HWR:*.*']] as const) {
+      const kinds = importZplText(zpl, 8).report.findings.map((f) => [f.kind, f.command]);
+      expect(kinds).toContainEqual(['hostQuery', command]);
+      expect(kinds.filter(([k]) => k === 'unknown' || k === 'browserLimit')).toEqual([]);
+    }
+  });
+
+  it('reports every occurrence on its page and none on the rows that replay a template', () => {
+    const r = importZplText('^XA~HS~HS^FO10,10^A0N,20,20^FDx^FS^XZ', 8);
+    expect(r.report.findings.filter((f) => f.kind === 'hostQuery').map((f) => f.command)).toEqual(['~HS', '~HS']);
+    const NL = String.fromCharCode(10);
+    const replayed = importZplText(['^XA^DFR:A.ZPL^FS~HS^FO10,10^A0N,30,30^FN1^FS^XZ', '^XA^XFR:A.ZPL^FS^FN1^FDone^FS^XZ', '^XA^XFR:A.ZPL^FS^FN1^FDtwo^FS^XZ'].join(NL), 8);
+    expect(replayed.report.findings.filter((f) => f.kind === 'hostQuery').map((f) => [f.command, f.pageIndex])).toEqual([['~HS', 0]]);
+  });
+});
+
+describe('a bare query page', () => {
+  it('keeps a host command that shares the paste with fields, and exports it wrapped', () => {
+    const r = importZplText('~HS^FO10,10^A0N,20,20^FDx^FS', 8);
+    expect(r.pages[0]?.objects).toHaveLength(1);
+    const out = generateMultiPageZPL(r.labelConfig as LabelConfig, r.pages, r.variables);
+    expect(repliesToHost(out)).toEqual(['~HS']);
+    expect(out.startsWith('^XA')).toBe(true);
+    expect(out.trimEnd().endsWith('^XZ')).toBe(true);
+  });
+
+  it('wraps a format host command, which answers only inside a format', () => {
+    const r = importZplText('^HWR:*.*', 8);
+    expect(generateMultiPageZPL(r.labelConfig as LabelConfig, r.pages, r.variables)).toBe('^XA\n^HWR:*.*\n^XZ');
+    const trailing = importZplText('^HWR:*.*\n', 8);
+    expect(generateMultiPageZPL(trailing.labelConfig as LabelConfig, trailing.pages, trailing.variables)).toBe('^XA\n^HWR:*.*\n^XZ');
+  });
+
+  it('closes the wrapper with the prefix a ^CC left in force', () => {
+    const r = importZplText('^CC##FO10,10#A0N,20,20#FDx#FS~HS', 8);
+    expect(generateMultiPageZPL(r.labelConfig as LabelConfig, r.pages, r.variables)).toBe('^XA\n^CC##FO10,10#A0N,20,20#FDx#FS~HS\n#XZ');
+  });
+
+  it('wraps a bare stream only where a command needs the format, whatever caret spells it', () => {
+    const remapped = importZplText('~CC#\n#HWR:*.*', 8);
+    const out = generateMultiPageZPL(remapped.labelConfig as LabelConfig, remapped.pages, remapped.variables);
+    expect(out.startsWith('^XA')).toBe(true);
+    expect(repliesToHost(out)).toEqual(['^HWR:*.*']);
+    const immediate = importZplText('^CC#~HS', 8);
+    expect(generateMultiPageZPL(immediate.labelConfig as LabelConfig, immediate.pages, immediate.variables)).toBe('^CC#~HS');
+  });
+
+  it('leaves an unbalanced paste alone, so a stray ^XZ is not closed twice, and still asks from the model', () => {
+    const r = importZplText('~HS^FO10,10^A0N,20,20^FDx^FS^XZ', 8);
+    expect(r.unbalanced?.kind).toBe('strayXz');
+    expect(r.pages[0]?.overlay).toBeUndefined();
+    expect(generateMultiPageZPL(r.labelConfig as LabelConfig, r.pages, r.variables)).toContain('~HS');
+    expect(documentHasContent(importZplText('~HS^XZ', 8))).toBe(true);
+  });
+
+  it('rewrites the stored-format path in place instead of adding a second ^DF', () => {
+    const r = importZplText('^DFR:A.ZPL^FS~HS', 8);
+    const out = generateMultiPageZPL(r.labelConfig as LabelConfig, r.pages, r.variables);
+    expect(out.split('^DF')).toHaveLength(2);
+    expect(out).toContain('^DFR:A.ZPL^FS~HS');
+  });
+
+  it('drops a device action with the overlay of a bare field paste, since the wrapper regenerates without it', () => {
+    const r = importZplText('~JA^FO10,10^A0N,20,20^FDx^FS', 8);
+    expect(r.pages[0]?.overlay).toBeUndefined();
+    expect(r.report.deviceAction).toEqual([]);
+  });
+
+  it('records an open tail, so an appended field gets its ^FS before the added ^XZ', () => {
+    const r = importZplText('~HS^FO10,10^A0N,20,20^FDx', 8);
+    expect(r.pages[0]?.overlay?.openTail).toBe(true);
+  });
+
+  it('keeps the lossyEdit finding, because the page replays its overlay', () => {
+    const r = importZplText('^LRY~HS', 8);
+    expect(r.pages[0]?.overlay).toBeDefined();
+    expect(r.report.findings.some((f) => f.kind === 'lossyEdit')).toBe(true);
+  });
+});
+
+describe('documentHasContent', () => {
+  const has = (zpl: string) => documentHasContent(importZplText(zpl, 8));
+
+  it('counts a host command as content', () => {
+    expect(has('^XA\n~HS\n^XZ')).toBe(true);
+    expect(has('^XA^HWE:*.*^XZ')).toBe(true);
+  });
+
+  it('counts objects, label config and profile fields as content', () => {
+    expect(has('^XA^FO10,10^A0N,20,20^FDx^FS^XZ')).toBe(true);
+    expect(has('^XA^PW800^XZ')).toBe(true);
+    expect(has('^JZY')).toBe(true);
+  });
+
+  it('rejects a format that neither asks nor draws', () => {
+    expect(has('^XA^XZ')).toBe(false);
+    expect(has('no zpl here')).toBe(false);
   });
 });
 

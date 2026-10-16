@@ -111,6 +111,7 @@ While you edit, the canvas renders the source. Canvas editing and the **Properti
 Import covers text, barcodes, shapes, label settings and `^FN` fields. Images include printer-stored and compressed graphics. `^FN` slots appear in the **Variables** tab. `^FE` embeds such as `^FD#1#-#2#` import as `«name»` markers. A stream that stores a format with `^DF` and declares `^FN` fields in it opens as that page. Its `^XF` recall blocks that carry only field data become the rows of a dataset, one row per block.
 
 - Unrecognised commands are listed in the import report and do not appear on the canvas.
+- Host commands such as `~HS` stay with their page. On the network and USB ways they offer **Query printer**, and the reply opens in the dialog.
 - Commands between fields survive export.
 - Commands inside a field survive until you edit that object.
 - Whole-page regeneration drops every unrecognised command on that page.
@@ -141,7 +142,7 @@ The **Fonts** tab uploads TrueType fonts and assigns their `^CW` alias. On the d
 
 **File → Import CSV data** (web) or **File → Connect data** (desktop) loads a CSV. Assign a column to each variable in the mapping dialog. **File → Export batch ZPL** writes one label per row and names the row count. **File → Output** sends the same rows to the printer, and the dialog names the labels it will produce.
 
-The batch stores the page as a format on the printer and recalls it per row. A page that names a stored format keeps that name when the name itself is at most 8 characters. Longer names fall back to `R:LBL.ZPL`.
+The batch stores the page as a format on the printer and recalls it per row. A page that names a stored format keeps that name when the name itself is at most 8 characters. Longer names fall back to `R:LBL.ZPL`. The batch carries only the one page. A stream whose rows or other pages ask the printer something opens as pages instead.
 
 On desktop, **Connect data** also reads an Excel worksheet. **File → Settings… → App → Database connection** loads rows from a read-only SQLite, PostgreSQL or MySQL database, with the password in the OS keychain. The design saves the assignments and the connection.
 
@@ -188,7 +189,7 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-132 of the 225 ZPL II commands are modelled in the browser; desktop covers 9 more with a connected printer. 2 more are planned for both builds. 60 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+132 of the 225 ZPL II commands are modelled in the browser; desktop covers 15 more with a connected printer. 2 more are planned for both builds. 55 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|

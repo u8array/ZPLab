@@ -166,6 +166,7 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
         case 'unconfigured':
         case 'busy':
         case 'unparsed':
+        case 'silent':
         case 'ignored':
         case 'refused':
         case 'unreachable':

@@ -12,10 +12,11 @@ import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";
 import { stripLineWrap, stripTrailingSpaces, tokenize, trimmedSpanEnd, type ZplToken } from "./zplParser/helpers";
 import { lookaheadJmDensity, lookaheadStoredFormat, scanBareStream } from "./zplHeadScan";
-import { parseStoragePath, recallCandidates, storageKey } from "./storagePath";
+import { recallKeys, storageKey } from "./storagePath";
 import { printShape } from "./payloadProps";
 import { qrPrintsAsGraphic } from "./objectBounds";
-import { commandTakesPrefix, commandTwinSplit } from "../catalog";
+import { commandTakesPrefix, commandTwinSplit, isHostCommand } from "../catalog";
+import { canonicalHostCommand, hostCommandAsks, hostCommandParams, isFieldHostCommand, type HostAsk } from "./hostCommands";
 import { claimVariableName, createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, notePartial, openTailHasContent, payloadSummary, releaseVariableName, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField, resolveLiveFonts } from "./zplParser/context";
 import { createCloseField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
@@ -158,7 +159,7 @@ export const BY_CONSUMING_BARCODE_TYPES = new Set<string>([
 ]);
 
 /** Commands whose replay acts on the device, not the design. A catalog rule cannot stand in: web
- *  support "no" plus a handler also holds for ^FM, ^HT and ^LF. */
+ *  support "no" plus a handler also holds for ^FM and ^LF. */
 export const DEVICE_ACTION_IDS: ReadonlySet<string> = new Set([
   "~JA", "~JC", "~JD", "~JE", "^JI", "~JI", "~JR", "^ID", "^IS", "~EG",
   "~PH", "~PP", "~PM", "~PR",
@@ -207,7 +208,7 @@ export function parseZPL(
   // so per-format repeats of a command are re-reported on their own page.
   const {
     objects, labelConfig, printerProfile, variables,
-    browserLimit, unknown, replayRisk, deviceAction, unterminated, hexControl,
+    browserLimit, unknown, replayRisk, deviceAction, hostQuery, unterminated, hexControl,
   } = s.result;
 
   const takeComment = (): string | undefined => {
@@ -337,6 +338,7 @@ export function parseZPL(
     unknown: unknown.length,
     replay: replayRisk.length,
     device: deviceAction.length,
+    host: hostQuery.length,
     unterminated: unterminated.length,
     hexControl: hexControl.length,
     span: overlaySpans.length,
@@ -360,6 +362,7 @@ export function parseZPL(
     // without one keeps at 0, where a ^JM is equally valid.
     head: {
       caret: s.format.caretChar,
+      tilde: s.format.tildeChar,
       at: 0,
       jmSpans: [] as JmSpan[],
       dfSpans: undefined as DfSpan[] | undefined,
@@ -375,13 +378,21 @@ export function parseZPL(
   // leading ^JM is resolved here instead; a ^JM ahead of a real ^XA is not.
   const bare = scanBareStream(zpl, s.format, s.format.delimiterChar);
   s.format.inFormatHead = !bare.hasXa;
+  // The same walk the output dialog reads, so the two cannot disagree. The first verdict per offset wins, so a
+  // recall that lists a stored token again does not overwrite it. A wrapper-less stream counts as open, since a
+  // format question there makes the import wrap it.
+  const hostAsks = new Map<number, HostAsk>();
+  for (const a of hostCommandAsks(zpl, { caretChar: s.format.caretChar, tildeChar: s.format.tildeChar, delimiterChar: s.format.delimiterChar }, !bare.hasXa)) {
+    if (!hostAsks.has(a.start)) hostAsks.set(a.start, a.ask);
+  }
   if (bare.density) {
     s.format.jmDensity = bare.density;
     labelConfig.jmDensity = bare.density;
     s.format.unitScale = deriveUnitScale(s.format, dpmm);
   }
-  // No head to record spans in: the wrapper-less source regenerates anyway.
+  // A bare page may replay its bytes, so its head keeps the ^DF spans like a wrapped page does.
   pg.storedFormatPath = bare.storedFormat?.path;
+  pg.head.dfSpans = bare.storedFormat?.spans;
 
   const bucketFindings = (
     pageIndex: number,
@@ -390,6 +401,7 @@ export function parseZPL(
     unk: readonly SpannedToken[],
     replay: readonly SpannedToken[],
     device: readonly SpannedToken[],
+    host: readonly SpannedToken[],
     dropped: readonly UnterminatedField[],
     hexControl: readonly SpannedToken[],
   ): ImportFinding[] => [
@@ -399,6 +411,7 @@ export function parseZPL(
     ...unk.map((t): ImportFinding => ({ kind: "unknown", command: t.command, pageIndex, span: t.span })),
     ...replay.map((t): ImportFinding => ({ kind: "replayRisk", command: t.command, pageIndex, span: t.span })),
     ...device.map((t): ImportFinding => ({ kind: "deviceAction", command: t.command, pageIndex, span: t.span })),
+    ...host.map((t): ImportFinding => ({ kind: "hostQuery", command: t.command, pageIndex, span: t.span })),
     ...hexControl.map((t): ImportFinding => ({ kind: "hexControl", command: t.command, pageIndex, span: t.span })),
   ];
 
@@ -408,6 +421,8 @@ export function parseZPL(
   // Judged at page close, once bytes behind the ^XZ have had their say.
   let pendingClose: { kind: "store"; template: Template } | { kind: "recall"; template: Template; carried: Set<string>; atRecall: string | null } | null = null;
   const closePage = (end: number): void => {
+    // A bare page ends at the stream, so its open tail is read here instead of at a ^XZ.
+    if (!s.sawXa && openTailHasContent(s)) pg.openTail = true;
     // ^SN stripped a single-bind marker: drop this format's variables that no
     // marker in THIS page's objects points at (declarations stay).
     for (let i = variables.length - 1; i >= pg.vari; i--) {
@@ -441,6 +456,7 @@ export function parseZPL(
       unknown.slice(pg.unknown),
       replayRisk.slice(pg.replay),
       deviceAction.slice(pg.device),
+      hostQuery.slice(pg.host),
       unterminated.slice(pg.unterminated),
       hexControl.slice(pg.hexControl),
     );
@@ -489,6 +505,8 @@ export function parseZPL(
       objects: pageObjects,
       variables: pageVariables,
       findings,
+      // A question between two blocks rides the page whose ^XZ it followed.
+      hostCommands: hostQuery.slice(pg.host).map((t) => t.canonical),
       labelSize: { widthMm: w, heightMm: h },
       labelConfig: pageConfig,
       span: { start: pg.start, end },
@@ -504,8 +522,8 @@ export function parseZPL(
       const replayed: [number, number] = [rc.objects[0] - pg.obj, rc.objects[1] - pg.obj];
       const row = closing?.kind === "recall" ? closing : undefined;
       // A row prints the replay and nothing else: no object, finding or state of its own. A control byte in a
-      // row value is the row's data, a device action prints nothing anywhere, and the edit loss is the template's.
-      const ownFinding = findings.some((f) => f.kind !== "partial" && f.kind !== "hexControl" && f.kind !== "deviceAction" && f.kind !== "lossyEdit")
+      // row value is the row's data, a device action or host query prints nothing anywhere, and the edit loss is the template's.
+      const ownFinding = findings.some((f) => f.kind !== "partial" && f.kind !== "hexControl" && f.kind !== "deviceAction" && f.kind !== "hostQuery" && f.kind !== "lossyEdit")
         || [...s.result.partials.keys()].some((key) => !row?.carried.has(key));
       const ownObject = replayed[0] !== 0 || replayed[1] !== pageObjects.length;
       // ZD230-measured: the recalled fields form under the state at ^XF, so the replay at ^XZ is
@@ -742,6 +760,7 @@ export function parseZPL(
         // head the lookahead reads, so export must not rewrite them either.
         pg.head = {
           caret: s.format.caretChar,
+          tilde: s.format.tildeChar,
           at: start - pg.start + 3,
           jmSpans: [],
           dfSpans: undefined,
@@ -762,7 +781,17 @@ export function parseZPL(
       return;
     }
 
-    if (rest.trim() || cmd.trim()) {
+    if (takesPrefix && isHostCommand(canonical)) {
+      // The design keeps what the printer answers, and of a stored frame only the field questions.
+      const ask = hostAsks.get(start);
+      if (ask !== "asked" && !(ask === "stored" && isFieldHostCommand(canonical))) {
+        notePartial(s.result, canonical, "droppedHostCommand");
+      } else {
+        const spelled = canonicalHostCommand(canonical, hostCommandParams(canonical, rest), s.format.delimiterChar);
+        if (spelled === undefined) notePartial(s.result, canonical, "droppedHostCommand");
+        else hostQuery.push({ command: sourceToken, span: s.result.tokenSpan, canonical: spelled });
+      }
+    } else if (rest.trim() || cmd.trim()) {
       // Source prefix from `start`: tilde commands must not surface as `^`.
       unknown.push({ command: payloadSummary(`${zpl[start] ?? "^"}${cmd}`, rest), span: s.result.tokenSpan });
     }
@@ -797,9 +826,7 @@ export function parseZPL(
   const replayRecall = (): void => {
     const path = s.result.recallFormatPath;
     if (path === undefined) return;
-    const ref = parseStoragePath(path);
-    if (!ref) return;
-    const template = recallCandidates({ ...ref, ext: ref.ext ?? "ZPL" }).map((key) => templates.get(key)).find((t) => t !== undefined);
+    const template = recallKeys(path).map((key) => templates.get(key)).find((t) => t !== undefined);
     if (!template) return;
     // Slot declarations feed the replay. A variable bound by one of the block's own fields stays.
     const own = variables.slice(pg.vari);
@@ -811,7 +838,7 @@ export function parseZPL(
     const variablesFrom = variables.length;
     const replayFrom = { objects: objectsFrom, variables: variablesFrom };
     // The template's findings were reported on its own page.
-    const marks = { unknown: unknown.length, browser: browserLimit.length, replay: replayRisk.length, device: deviceAction.length, unterminated: unterminated.length, hexControl: hexControl.length };
+    const marks = { unknown: unknown.length, browser: browserLimit.length, replay: replayRisk.length, device: deviceAction.length, host: hostQuery.length, unterminated: unterminated.length, hexControl: hexControl.length };
     const partials = s.result.partials;
     s.result.partials = new Map();
     const replayPartials = s.result.partials;
@@ -830,6 +857,7 @@ export function parseZPL(
     browserLimit.length = marks.browser;
     replayRisk.length = marks.replay;
     deviceAction.length = marks.device;
+    hostQuery.length = marks.host;
     unterminated.length = marks.unterminated;
     // A control byte in a row value truncates that row, so its finding stays with the block.
     const rowHexControl = hexControl.slice(marks.hexControl).filter((t, i, all) => t.span !== undefined && t.span.start >= pg.start && all.findIndex((o) => o.span?.start === t.span?.start) === i);

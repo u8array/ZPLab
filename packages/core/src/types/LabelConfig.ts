@@ -339,6 +339,8 @@ export type PageLabel = LabelConfig & {
   storedFormatPath?: string;
   /** Absent means every job stores the format again. */
   storedFormatDelivery?: StoredFormatDelivery;
+  /** The page's host commands, folded in like its ^DF. */
+  hostCommands?: readonly string[];
 };
 
 /** The label slice device-font resolution reads (^CF default + ^CW-style

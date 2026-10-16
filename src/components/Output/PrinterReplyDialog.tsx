@@ -1,17 +1,30 @@
 import { useId, type ReactNode } from "react";
 import { XMarkIcon } from "@heroicons/react/16/solid";
 import { useT } from "../../hooks/useT";
-import type { PrinterOutcome } from "../../lib/printerQuery";
+import type { ReplyShown } from "../../hooks/useReplyRead";
 import { failureText, readingText } from "../../lib/printerStatusText";
 import { useLabelStore } from "../../store/labelStore";
 import { DialogShell } from "../ui/DialogShell";
+import { labelCls } from "../ui/formStyles";
+
+/** Reply text keeps its own line breaks, because the printer laid the columns out itself. */
+export const replyPreCls = "max-h-[50vh] overflow-auto rounded border border-border p-2 font-mono text-[10px] leading-relaxed text-text whitespace-pre m-0";
+
+export function RawReplyBlock({ label, text }: { label: string; text: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className={labelCls}>{label}</span>
+      <pre className={replyPreCls}>{text}</pre>
+    </div>
+  );
+}
 
 interface Props<T> {
   title: string;
   titleClassName?: string;
   /** Off by default, so a click inside the panel's dialog does not count as leaving the source session. */
   portal?: boolean;
-  read: PrinterOutcome<T> | "reading";
+  read: ReplyShown<T>;
   onClose: () => void;
   children: (value: T) => ReactNode;
   after?: ReactNode;

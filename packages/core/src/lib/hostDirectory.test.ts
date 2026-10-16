@@ -24,6 +24,13 @@ describe("parseHostDirectories", () => {
     expect(dirs[1]?.objects.map(hostObjectPath)).toEqual(["E:ANGELINE_VINTAGE.TTF", "E:CHK06.PNG"]);
   });
 
+  it("keeps the later listing of a drive a reply lists twice", () => {
+    const twice =
+      `${STX}\r\n- DIR R:*.* \r\n* R:OLD.ZPL       214          \r\n${ETX}` +
+      `${STX}\r\n- DIR R:*.* \r\n* R:NEW.ZPL       214          \r\n-   7467008 bytes free R: RAM \r\n${ETX}`;
+    expect(parseHostDirectories(twice).map((d) => [d.device, d.objects.map((o) => o.name), d.bytesFree])).toEqual([["R", ["NEW"], 7467008]]);
+  });
+
   it("reads firmware objects with their flag columns and ignores lines before the first DIR head", () => {
     const dirs = parseHostDirectories(`noise\n- DIR Z:*.*\n* Z:A.FNT      6839  P    A  \n* Z:EAN-13.BAR         0  P       `);
     expect(dirs).toHaveLength(1);

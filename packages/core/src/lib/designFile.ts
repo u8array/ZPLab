@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isHostCommandLine } from "./hostCommands";
 import { DEFAULT_FONT_DEVICE, storedFormatPathSchema } from "./storagePath";
 import { JM_DENSITY_VALUES, STORED_FORMAT_DELIVERIES, labelConfigSchema, sanitizeRfidEpc, type JmDensity, type LabelConfig, type StoredFormatDelivery } from "../types/LabelConfig";
 import { labelObjectBaseSchema } from "../types/LabelObject";
@@ -10,6 +11,7 @@ import {
 } from "../types/Variable";
 import { dbSourceRefSchema, type DbSourceRef } from "../types/DataSource";
 import type { LabelObject } from "../types/Group";
+import { pageHostCommands } from "../types/Group";
 import { blockOverlaySchema, overlayText, type BlockOverlay } from "./zplOverlay/overlay";
 import { reconstructLegacyBlockHeads, storedFormatPathOf } from "./zplHeadScan";
 import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, migrateGs1DatabarLeaf, safeUniqueNameById } from "./objectTree";
@@ -35,7 +37,7 @@ export interface DesignFileFailure {
 
 export type DesignFileResult = { ok: true; value: DesignFile } | DesignFileFailure;
 
-export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity; storedFormatPath?: string; storedFormatDelivery?: StoredFormatDelivery }
+export interface DesignFilePage { objects: LabelObject[]; overlay?: BlockOverlay; jmDensity?: JmDensity; storedFormatPath?: string; storedFormatDelivery?: StoredFormatDelivery; hostCommands?: readonly string[] }
 export interface DesignFile {
   label: LabelConfig;
   pages: DesignFilePage[];
@@ -80,7 +82,11 @@ const pageSchema = z.object({
   jmDensity: z.enum(JM_DENSITY_VALUES).optional(),
   storedFormatPath: storedFormatPathSchema().optional(),
   storedFormatDelivery: z.enum(STORED_FORMAT_DELIVERIES).optional(),
+  hostCommands: z.array(z.string()).optional().transform((lines) => pageHostCommands({ hostCommands: lines?.filter(isHostCommandLine) })),
 });
+
+/** The page keys the file persists, for the tripwire that keeps every page field accounted for. */
+export const DESIGN_FILE_PAGE_KEYS = Object.keys(pageSchema.shape) as readonly (keyof typeof pageSchema.shape)[];
 
 const designFileSchema = z.object({
   // v3 predates ^JM: it loads through the legacy JM reconstruction. v4 carries

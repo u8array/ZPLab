@@ -274,9 +274,10 @@ describe("mcp-server tools", () => {
   });
 
   it("validate_zpl surfaces commands it could not fully model", () => {
-    // ^HT needs a printer to answer (browserLimit); ^JU is a setup command (replayRisk).
-    const v = ok(validateZpl("^XA^FO10,10^FDX^FS^HT^JUS^XZ"));
-    expect(v.findings.browserLimit).toEqual(["^HT"]);
+    // ^LF needs printer hardware, ^HT is answered over the host port, ^JU is a setup command.
+    const v = ok(validateZpl("^XA^FO10,10^FDX^FS^LF^HT^JUS^XZ"));
+    expect(v.findings.browserLimit).toEqual(["^LF"]);
+    expect(v.findings.hostQuery).toEqual(["^HT"]);
     expect(v.findings.replayRisk).toContain("^JU");
   });
 
@@ -448,13 +449,14 @@ describe("mcp-server tools", () => {
 
   // Roundtrip guarantee: unmodeled commands survive import → export via the
   // captured overlay instead of being silently dropped.
-  it("re-exports unmodeled commands verbatim after import_zpl", () => {
-    const imported = ok(importZpl("^XA^FO10,10^A0N,30,30^FDX^FS^HT^JUS^XZ"));
-    expect(imported.findings.browserLimit).toEqual(["^HT"]);
+  it("re-exports an unmodeled command and a host command verbatim after import_zpl", () => {
+    const imported = ok(importZpl("^XA^FO10,10^A0N,30,30^FDX^FS^LF^HT^JUS^XZ"));
+    expect(imported.findings.browserLimit).toEqual(["^LF"]);
+    expect(imported.findings.hostQuery).toEqual(["^HT"]);
     const back = exportZpl(imported.designFile);
     expect(back.ok).toBe(true);
     if (!back.ok) return;
-    expect(back.zpl).toContain("^HT");
+    expect(back.zpl).toContain("^LF^HT");
     expect(back.zpl).toContain("^JUS");
   });
 
@@ -467,7 +469,7 @@ describe("mcp-server tools", () => {
     const v = ok(validateZpl("^XA^FO10,10^FDX^FS^XZ"));
     expect(v.findings).not.toHaveProperty("findings");
     expect(Object.keys(v.findings).sort()).toEqual(
-      ["browserLimit", "deviceAction", "hexControl", "partial", "replayRisk", "unknown", "unterminatedField"],
+      ["browserLimit", "deviceAction", "hexControl", "hostQuery", "partial", "replayRisk", "unknown", "unterminatedField"],
     );
   });
 

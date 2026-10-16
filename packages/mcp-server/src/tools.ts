@@ -9,7 +9,7 @@ import { generateBatchZpl, generateMultiPageZPL } from "@zplab/core/lib/zplGener
 import { contestedFormatKeys, recallOnlyPath } from "@zplab/core/lib/storedFormat";
 import { pageLabelConfig } from "@zplab/core/types/Group";
 import { boundColumnIndex } from "@zplab/core/lib/variableBinding";
-import { isRecallableFormatPath, parseStoragePath, recallCandidates, storageKey } from "@zplab/core/lib/storagePath";
+import { isRecallableFormatPath, parseStoragePath, recallKeys, storageKey } from "@zplab/core/lib/storagePath";
 import { zplForExport } from "@zplab/core/lib/zplLabelMeta";
 import { importZplText, type ZplImportResult } from "@zplab/core/lib/zplImportService";
 import {
@@ -205,8 +205,7 @@ export function exportZpl(
   const named = opts.batch?.formatPath;
   const namedRef = named === undefined ? undefined : isRecallableFormatPath(named) ? parseStoragePath(named) : null;
   if (named !== undefined && !namedRef) return { ok: false, errors: ["batch.formatPath is not a name ^XF could recall"] };
-  // A bare name resolves through the printer's device search, as ^XF does.
-  const namedKeys = namedRef ? recallCandidates({ ...namedRef, ext: namedRef.ext ?? "ZPL" }) : undefined;
+  const namedKeys = named === undefined ? undefined : recallKeys(named);
   const stored = pages.filter((p) => p.storedFormatPath !== undefined && (namedKeys === undefined || namedKeys.includes(storageKey(p.storedFormatPath))));
   const page = stored.length === 1 ? stored[0] : stored.length === 0 && named === undefined && pages.length === 1 ? pages[0] : undefined;
   if (opts.batch && !page) return { ok: false, errors: ["batch needs the page its formatPath names, exactly one page with storedFormatPath, or a single-page design"] };

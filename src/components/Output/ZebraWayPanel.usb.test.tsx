@@ -18,6 +18,8 @@ vi.mock("../../lib/printerStatus", () => ({
   readPrinterStatus: (...args: unknown[]) => readPrinterStatus(...args),
   readPrinterConfiguration: vi.fn(),
 }));
+const queryDocument = vi.fn();
+vi.mock("../../lib/printerDocumentQuery", () => ({ queryDocument: (...args: unknown[]) => queryDocument(...args) }));
 vi.mock("../../lib/usbPrint", async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   listUsbPrinters: vi.fn().mockResolvedValue([{ id: "usb1", name: "Zebra ZD230", vendor_id: "0a5f" }]),
@@ -36,6 +38,18 @@ beforeEach(() => {
 });
 
 describe("ZebraWayPanel USB access", () => {
+  it("offers the setup route after a denied query, as after a denied check", async () => {
+    queryDocument.mockResolvedValue({ kind: "permission_denied" });
+    act(() => useLabelStore.setState({ printerState: { phase: "idle" }, printTarget: { ...DEFAULT_PRINT_TARGET, transport: "usb", usbId: "usb1" } }));
+    const r = render(<WayPanel way="usb" zpl={() => "^XA~HS^XZ"} query={{ commands: ["~HS"], prints: false }} />);
+    await waitFor(() => expect((r.getByText(en.zebraPrint.queryButton) as HTMLButtonElement).disabled).toBe(false));
+    await act(async () => {
+      fireEvent.click(r.getByText(en.zebraPrint.queryButton));
+    });
+    expect(r.getByText(en.zebraPrint.usbSetupAccess)).toBeTruthy();
+    expect(r.getByText(en.zebraPrint.usbPermissionDenied)).toBeTruthy();
+  });
+
   it("offers the setup route with its message after a denied check, as after a denied send", async () => {
     readPrinterStatus.mockResolvedValue({ kind: "permission_denied" });
     act(() => useLabelStore.setState({ printerState: { phase: "idle" }, printTarget: { ...DEFAULT_PRINT_TARGET, transport: "usb", usbId: "usb1" } }));

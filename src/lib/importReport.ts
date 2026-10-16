@@ -50,6 +50,7 @@ const LOSS_KEY: Record<ImportLossCause, keyof ReportStrings> = {
   recallFormat: 'lossRecallFormat',
   recallSlot: 'lossRecallSlot',
   recallSettings: 'lossRecallSettings',
+  droppedHostCommand: 'lossDroppedHostCommand',
 };
 
 /** Loss description of a partial: the finding's own cause, else the catalog row's. */
@@ -87,6 +88,9 @@ export function describeFinding(
   }
   if (f.kind === 'deviceAction') {
     return { title: tr.deviceActionTitle, detail: f.command };
+  }
+  if (f.kind === 'hostQuery') {
+    return { title: tr.hostQueryTitle, detail: f.command };
   }
   if (f.kind === 'lossyEdit') {
     return { title: tr.lossyEditTitle, detail: f.command };

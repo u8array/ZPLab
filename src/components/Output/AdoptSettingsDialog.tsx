@@ -2,14 +2,14 @@ import { useState } from "react";
 import { adoptionDiff, isAdoptable, preselectedRows, type AdoptionRow } from "@zplab/core/lib/printerSettingsAdoption";
 import type { SgdSetting } from "@zplab/core/lib/sgd";
 import { useT } from "../../hooks/useT";
-import type { PrinterOutcome } from "../../lib/printerQuery";
+import type { ReplyShown } from "../../hooks/useReplyRead";
 import { selectEditorFrozen, useLabelStore } from "../../store/labelStore";
 import { labelCls, primaryButtonCls, zplCommandTagCls } from "../ui/formStyles";
 import { Tooltip } from "../ui/Tooltip";
 import { PrinterReplyDialog } from "./PrinterReplyDialog";
 
 interface Props {
-  read: PrinterOutcome<SgdSetting[]> | "reading";
+  read: ReplyShown<SgdSetting[]>;
   portal?: boolean;
   onClose: () => void;
 }

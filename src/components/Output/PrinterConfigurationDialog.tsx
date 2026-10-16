@@ -1,15 +1,12 @@
 import { useT } from "../../hooks/useT";
-import type { PrinterOutcome } from "../../lib/printerQuery";
+import type { ReplyShown } from "../../hooks/useReplyRead";
 import { selectPrinterState, useLabelStore } from "../../store/labelStore";
-import { labelCls } from "../ui/formStyles";
-import { PrinterReplyDialog } from "./PrinterReplyDialog";
+import { PrinterReplyDialog, RawReplyBlock, replyPreCls } from "./PrinterReplyDialog";
 
 interface Props {
-  read: PrinterOutcome<string> | "reading";
+  read: ReplyShown<string>;
   onClose: () => void;
 }
-
-const preCls = "max-h-[50vh] overflow-auto rounded border border-border p-2 font-mono text-[10px] leading-relaxed text-text whitespace-pre m-0";
 
 /** ^HH as the printer echoes it, beside the raw replies. */
 export function PrinterConfigurationDialog({ read, onClose }: Props) {
@@ -23,16 +20,9 @@ export function PrinterConfigurationDialog({ read, onClose }: Props) {
       title={loc.configuration}
       read={read}
       onClose={onClose}
-      after={
-        raw && (
-          <div className="flex flex-col gap-1">
-            <span className={labelCls}>{loc.rawReply}</span>
-            <pre className={preCls}>{raw}</pre>
-          </div>
-        )
-      }
+      after={raw && <RawReplyBlock label={loc.rawReply} text={raw} />}
     >
-      {(text) => <pre className={preCls}>{text}</pre>}
+      {(text) => <pre className={replyPreCls}>{text}</pre>}
     </PrinterReplyDialog>
   );
 }

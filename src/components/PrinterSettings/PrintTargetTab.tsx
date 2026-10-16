@@ -1,11 +1,10 @@
-import { useState } from "react";
 import type { SgdSetting } from "@zplab/core/lib/sgd";
+import { useReplyRead } from "../../hooks/useReplyRead";
 import { useT } from "../../hooks/useT";
 import { useLabelStore } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
 import { wayHint, wayLabel } from "../../lib/printWayText";
-import type { PrinterOutcome } from "../../lib/printerQuery";
 import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useUsbPrinters, type DeviceListState } from "../../hooks/usePrintDevices";
 import { AdoptSettingsDialog } from "../Output/AdoptSettingsDialog";
 import { buttonCls, sectionHeadingCls } from "../ui/formStyles";
@@ -34,7 +33,7 @@ export function PrintTargetTab() {
   const setPrintTarget = useLabelStore((s) => s.setPrintTarget);
   const readPrinterSettings = useLabelStore((s) => s.readPrinterSettings);
   const reading = useLabelStore((s) => s.printerReading) !== undefined;
-  const [settings, setSettings] = useState<PrinterOutcome<SgdSetting[]> | "reading" | undefined>();
+  const settings = useReplyRead<SgdSetting[]>();
   const usb = useUsbPrinters(isDesktopShell);
   const local = useLocalPrinters(isDesktopShell);
   const bp = useBrowserPrintDevices();
@@ -43,10 +42,7 @@ export function PrintTargetTab() {
 
   // A device way without devices stays visible, and then its reason replaces the description.
   const deviceWayHint = (value: PrintTransport) => (offered.includes(value) ? undefined : t.zebraPrint.noPrinters);
-  const openSettings = () => {
-    setSettings("reading");
-    void readPrinterSettings().then((result) => setSettings((current) => (current === "reading" ? result : current)));
-  };
+  const openSettings = () => settings.start(readPrinterSettings);
   const ways: { value: PrintTransport; desktopOnly?: boolean }[] = [
     { value: "network" },
     { value: "browserprint" },
@@ -97,7 +93,7 @@ export function PrintTargetTab() {
           {t.printerSettings.printerStatus.adoptFromPrinter}
         </button>
       )}
-      {settings && <AdoptSettingsDialog read={settings} portal onClose={() => setSettings(undefined)} />}
+      {settings.read && <AdoptSettingsDialog read={settings.read} portal onClose={settings.close} />}
     </div>
   );
 }

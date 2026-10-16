@@ -41,6 +41,17 @@ export function catalogEntry(command: string): ZplCommandEntry | undefined {
   return byId.get(`^${key}`) ?? byId.get(`~${key}`);
 }
 
+/** The section whose commands all answer over the host port. */
+const HOST_SECTION = "Host communication";
+
+/** True for a spelled id in the host section. Prefix-exact, so `^HS` is not `~HS`. */
+export function isHostCommand(command: string): boolean {
+  return catalogEntry(command)?.section === HOST_SECTION;
+}
+
+/** The format line of the reference, such as `^HWd:o.x,f`, or empty where the catalog has none. */
+export const commandSyntax = (command: string): string => catalogEntry(command)?.reference?.syntax ?? "";
+
 /** False only when the catalog knows the name under the other prefix alone: `^DG` is not `~DG`. */
 export function commandTakesPrefix(name: string, prefix: "^" | "~"): boolean {
   if (catalogEntry(`${prefix}${name}`)) return true;

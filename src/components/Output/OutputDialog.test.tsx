@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { cleanup, act, fireEvent } from "@testing-library/react";
+import { importZplText } from "@zplab/core/lib/zplImportService";
 import { useLabelStore } from "../../store/labelStore";
 import { fallbackTranslations as en } from "../../locales";
 import { formatTemplate } from "../../lib/formatTemplate";
@@ -338,6 +339,22 @@ describe("OutputDialog", () => {
       });
     });
     expect(showDialog().container.textContent).toContain(formatTemplate(loc.batchNoticeFmt, { n: "2" }));
+  });
+
+  it("keeps the print button on the system way and only warns that the reply has nowhere to land", () => {
+    const imported = importZplText("^XA~HS^FO10,10^A0N,20,20^FDx^FS^XZ", 8);
+    act(() => {
+      useLabelStore.setState({ label: { widthMm: 50, heightMm: 30, dpmm: 8, ...imported.labelConfig }, pages: imported.pages, variables: imported.variables });
+      useLabelStore.getState().setOutputChoice({ printWay: "system" });
+    });
+    const r = showDialog();
+
+    expect(r.getByText(loc.queryNoRender)).toBeTruthy();
+    expect(r.queryByText(loc.queryNoChannel)).toBeNull();
+    // The kind strip spells Print as well, so the body's own button is the second one.
+    const prints = [...r.container.querySelectorAll("button")].filter((b) => b.textContent === loc.kindPrint);
+    expect(prints).toHaveLength(2);
+    expect(prints.at(-1)?.disabled).toBe(false);
   });
 
   it("reads the code only where it is sent", () => {
