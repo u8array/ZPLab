@@ -494,6 +494,7 @@ const tr = {
     close: 'Kapat',
     sendToZebra: 'Yazıcıya gönder',
     instantApply: 'Değişiklikler anında uygulanır',
+    setupScriptPending: 'Kurulum betiği gönderilene kadar yazıcıya hiçbir şey ulaşmaz. Ayarlar, yalnızca Kimlik sekmesindeki "Yapılandırma güncelleme" onları kaydettikten sonra yeniden başlatmaya dayanır.',
     wip: 'WIP',
     previewHeading: 'Kurulum betiği önizlemesi',
     previewClear: 'Temizle',

@@ -494,6 +494,7 @@ const lt = {
     close: 'Uždaryti',
     sendToZebra: 'Siųsti į spausdintuvą',
     instantApply: 'Pakeitimai taikomi iš karto',
+    setupScriptPending: 'Kol sąrankos scenarijus nebus išsiųstas, prie spausdintuvo nieko nepasieks. Nustatymai išlieka po paleidimo iš naujo tik tada, kai juos išsaugo "Konfigūracijos atnaujinimas" kortelėje Tapatybė.',
     wip: 'WIP',
     previewHeading: 'Sąrankos scenarijaus peržiūra',
     previewClear: 'Išvalyti',

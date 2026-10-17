@@ -494,6 +494,7 @@ const no = {
     close: 'Lukk',
     sendToZebra: 'Send til skriver',
     instantApply: 'Endringer trer i kraft umiddelbart',
+    setupScriptPending: 'Ingenting når skriveren før oppsettskriptet sendes. Innstillinger overlever en omstart bare etter at "Konfigurasjonsoppdatering" i Identitet-fanen har lagret dem.',
     wip: 'WIP',
     previewHeading: 'Forhåndsvisning av oppsett-skript',
     previewClear: 'Tøm',

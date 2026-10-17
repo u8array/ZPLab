@@ -494,6 +494,7 @@ const pl = {
     close: 'Zamknij',
     sendToZebra: 'Wyślij do drukarki',
     instantApply: 'Zmiany są stosowane natychmiast',
+    setupScriptPending: 'Nic nie trafia do drukarki, dopóki skrypt konfiguracji nie zostanie wysłany. Ustawienia przetrwają ponowne uruchomienie tylko wtedy, gdy zapisze je "Aktualizacja konfiguracji" na karcie Identyfikacja.',
     wip: 'WIP',
     previewHeading: 'Podgląd skryptu konfiguracji',
     previewClear: 'Wyczyść',

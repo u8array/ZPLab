@@ -494,6 +494,7 @@ const lv = {
     close: 'Aizvērt',
     sendToZebra: 'Sūtīt uz printeri',
     instantApply: 'Izmaiņas tiek piemērotas nekavējoties',
+    setupScriptPending: 'Nekas nenonāk printerī, kamēr netiek nosūtīts iestatīšanas skripts. Iestatījumi pārdzīvo atkārtotu ieslēgšanu tikai pēc tam, kad tos saglabā "Konfigurācijas atjaunināšana" cilnē Identitāte.',
     wip: 'WIP',
     previewHeading: 'Iestatīšanas skripta priekšskatījums',
     previewClear: 'Notīrīt',

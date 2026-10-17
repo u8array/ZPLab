@@ -494,6 +494,7 @@ const es = {
     close: 'Cerrar',
     sendToZebra: 'Enviar a la impresora',
     instantApply: 'Los cambios se aplican de inmediato',
+    setupScriptPending: 'Nada llega a la impresora hasta que se envía el script de configuración. La configuración solo sobrevive a un reinicio después de que "Actualización de configuración" en la pestaña Identidad la guarde.',
     wip: 'WIP',
     previewHeading: 'Vista previa del script de configuración',
     previewClear: 'Limpiar',

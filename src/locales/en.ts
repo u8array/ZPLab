@@ -494,6 +494,7 @@ const en = {
     close: 'Close',
     sendToZebra: 'Send to printer',
     instantApply: 'Changes apply immediately',
+    setupScriptPending: 'Nothing reaches the printer until you send the setup script. Settings survive a restart only after Configuration update on the Identity tab saves them.',
     wip: 'WIP',
     previewHeading: 'Setup Script Preview',
     previewClear: 'Clear',
