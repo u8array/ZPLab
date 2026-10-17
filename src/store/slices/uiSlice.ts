@@ -70,6 +70,7 @@ export type PrinterSettingsTab =
   | 'mcpServer'
   | 'dataSources'
   | 'mediaFeed'
+  | 'sensors'
   | 'rfid'
   | 'printQuality'
   | 'output'
