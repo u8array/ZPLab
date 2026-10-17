@@ -494,6 +494,7 @@ const et = {
     close: 'Sulge',
     sendToZebra: 'Saada printerisse',
     instantApply: 'Muudatused rakenduvad kohe',
+    setupScriptPending: 'Printerini ei jõua midagi enne, kui seadistusskript saadetakse. Seaded jäävad taaskäivituse järel alles ainult pärast seda, kui "Konfiguratsiooni värskendamine" vahekaardil Identiteet need salvestab.',
     wip: 'WIP',
     previewHeading: 'Seadistusskripti eelvaade',
     previewClear: 'Tühjenda',

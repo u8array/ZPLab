@@ -494,6 +494,7 @@ const da = {
     close: 'Luk',
     sendToZebra: 'Send til printeren',
     instantApply: 'Ændringer træder i kraft med det samme',
+    setupScriptPending: 'Intet når printeren, før opsætningsscriptet sendes. Indstillinger overlever kun en genstart, efter at "Konfigurationsopdatering" under fanen Identitet har gemt dem.',
     wip: 'WIP',
     previewHeading: 'Forhåndsvisning af opsætningsscript',
     previewClear: 'Ryd',

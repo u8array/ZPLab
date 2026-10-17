@@ -494,6 +494,7 @@ const sl = {
     close: 'Zapri',
     sendToZebra: 'Pošlji v tiskalnik',
     instantApply: 'Spremembe se uveljavijo takoj',
+    setupScriptPending: 'Nič ne doseže tiskalnika, dokler ni poslan namestitveni skript. Nastavitve preživijo ponovni zagon samo, ko jih shrani "Posodobitev konfiguracije" na zavihku Identiteta.',
     wip: 'WIP',
     previewHeading: 'Predogled namestitvene skripte',
     previewClear: 'Počisti',
