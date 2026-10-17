@@ -24,6 +24,7 @@ import { StoredFontsTab } from "./StoredFontsTab";
 import { StoredGraphicsTab } from "./StoredGraphicsTab";
 import { IdentityTab } from "./IdentityTab";
 import { MaintenanceTab } from "./MaintenanceTab";
+import { SensorsTab } from "./SensorsTab";
 import { McpServerTab } from "./McpServerTab";
 import { MediaFeedTab } from "./MediaFeedTab";
 import { RfidTab } from "./RfidTab";
@@ -54,6 +55,7 @@ const TOP_TAB_OF = {
   fonts: 'setupScript',
   identity: 'setupScript',
   maintenance: 'setupScript',
+  sensors: 'setupScript',
   storedFonts: 'objects',
   storedGraphics: 'objects',
 } as const satisfies Record<PrinterSettingsTab, TopTabId>;
@@ -98,6 +100,7 @@ const TAB_COMPONENTS: Partial<Record<PrinterSettingsTab, FC>> = {
   storedGraphics: StoredGraphicsTab,
   identity: IdentityTab,
   maintenance: MaintenanceTab,
+  sensors: SensorsTab,
 };
 
 const MODAL_BOX_CLS =
