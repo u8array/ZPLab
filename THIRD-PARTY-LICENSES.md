@@ -240,7 +240,7 @@ the same license). Source: https://github.com/gs1/gs1-syntax-dictionary
 ```
 ## npm dependencies
 
-63 production packages ship in the bundle, each listed with its
+64 production packages ship in the bundle, each listed with its
 SPDX license and the verbatim license text from its package.
 
 ### @codemirror/commands 6.11.1
@@ -272,7 +272,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/language 6.12.4
+### @codemirror/language 6.13.1
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -359,7 +359,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/view 6.43.13
+### @codemirror/streamparser 6.0.0
+
+- License: MIT
+- Author: Marijn Haverbeke
+
+```
+MIT License
+
+Copyright (C) 2018-2021 by Marijn Haverbeke <marijn@haverbeke.berlin> and others
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+```
+
+### @codemirror/view 6.43.14
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -1124,7 +1153,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### @internationalized/number 3.6.8
+### @internationalized/number 3.6.9
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -1600,7 +1629,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @lezer/lr 1.4.10
+### @lezer/lr 1.4.11
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -2077,7 +2106,7 @@ THE SOFTWARE.
    limitations under the License.
 ```
 
-### @react-types/shared 3.36.1
+### @react-types/shared 3.37.0
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -2496,7 +2525,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-### @tanstack/react-virtual 3.14.10
+### @tanstack/react-virtual 3.14.21
 
 - License: MIT
 - Author: Tanner Linsley
@@ -2526,7 +2555,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @tanstack/virtual-core 3.17.8
+### @tanstack/virtual-core 3.19.6
 
 - License: MIT
 - Author: Tanner Linsley
@@ -2556,7 +2585,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @tauri-apps/api 2.12.1
+### @tauri-apps/api 2.12.4
 
 - License: Apache-2.0 OR MIT
 - Homepage: https://github.com/tauri-apps/tauri#readme
@@ -2741,7 +2770,7 @@ SOFTWARE.
    END OF TERMS AND CONDITIONS
 ```
 
-### @tauri-apps/plugin-dialog 2.8.1
+### @tauri-apps/plugin-dialog 2.8.3
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2769,7 +2798,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-fs 2.6.0
+### @tauri-apps/plugin-fs 2.7.1
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2797,7 +2826,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-opener 2.7.0
+### @tauri-apps/plugin-opener 2.7.2
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2853,7 +2882,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-updater 2.13.1
+### @tauri-apps/plugin-updater 2.14.0
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2910,7 +2939,7 @@ Creator: Person: Daniel Thompson-Yvetot
     SOFTWARE
 ```
 
-### @types/react-reconciler 0.28.9, 0.33.0
+### @types/react-reconciler 0.28.9, 0.34.0
 
 - License: MIT
 - Homepage: https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-reconciler
@@ -3105,7 +3134,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### its-fine 2.0.0
+### its-fine 2.1.1
 
 - License: MIT
 - Author: Cody Bennett
@@ -3135,7 +3164,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### konva 10.7.0
+### konva 10.9.0
 
 - License: MIT
 - Author: Anton Lavrenov
@@ -3195,7 +3224,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### react 19.3.0
+### react 19.3.1
 
 - License: MIT
 - Homepage: https://react.dev/
@@ -3224,7 +3253,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-aria 3.52.1
+### react-aria 3.53.1
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -3433,7 +3462,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### react-dom 19.3.0
+### react-dom 19.3.1
 
 - License: MIT
 - Homepage: https://react.dev/
@@ -3462,7 +3491,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-konva 19.3.0
+### react-konva 19.3.2
 
 - License: MIT
 - Homepage: https://konvajs.org/docs/react/index.html
@@ -3520,7 +3549,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### react-stately 3.50.0
+### react-stately 3.51.0
 
 - License: Apache-2.0
 - Homepage: https://github.com/adobe/react-spectrum#readme
@@ -3758,7 +3787,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### style-mod 4.1.3, 4.1.4
+### style-mod 4.1.4
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -3837,10 +3866,10 @@ OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ```
 
-### use-sync-external-store 1.6.0
+### use-sync-external-store 1.7.0
 
 - License: MIT
-- Homepage: https://github.com/facebook/react#readme
+- Homepage: https://github.com/react/react#readme
 
 ```
 MIT License

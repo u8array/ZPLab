@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (444)
+- MIT License (445)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -4411,7 +4411,7 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [swift-rs 1.0.8](https://github.com/Brendonovich/swift-rs)
+- [swift-rs 1.0.9](https://github.com/Brendonovich/swift-rs)
 ````
 Copyright (c) 2023 The swift-rs Developers
 
@@ -5059,13 +5059,13 @@ SOFTWARE.
 
 Used by:
 
-- [tauri-build 2.7.1](https://github.com/tauri-apps/tauri)
-- [tauri-codegen 2.7.1](https://github.com/tauri-apps/tauri)
-- [tauri-macros 2.7.1](https://github.com/tauri-apps/tauri)
-- [tauri-runtime-wry 2.12.1](https://github.com/tauri-apps/tauri)
-- [tauri-runtime 2.12.1](https://github.com/tauri-apps/tauri)
-- [tauri-utils 2.10.1](https://github.com/tauri-apps/tauri)
-- [tauri 2.12.1](https://github.com/tauri-apps/tauri)
+- [tauri-build 2.7.3](https://github.com/tauri-apps/tauri)
+- [tauri-codegen 2.7.3](https://github.com/tauri-apps/tauri)
+- [tauri-macros 2.7.3](https://github.com/tauri-apps/tauri)
+- [tauri-runtime-wry 2.12.2](https://github.com/tauri-apps/tauri)
+- [tauri-runtime 2.12.2](https://github.com/tauri-apps/tauri)
+- [tauri-utils 2.10.2](https://github.com/tauri-apps/tauri)
+- [tauri 2.12.4](https://github.com/tauri-apps/tauri)
 ````
 MIT License
 
@@ -5628,6 +5628,24 @@ SOFTWARE.
 
 Used by:
 
+- [static_vcruntime 3.0.0](https://github.com/ChrisDenton/static_vcruntime)
+````
+MIT License
+
+Copyright (c) 2021 Chris Denton.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice (including the next paragraph) shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+````
+
+### MIT License
+
+Used by:
+
 - [urlpattern 0.6.0](https://github.com/denoland/rust-urlpattern)
 ````
 MIT License
@@ -5883,7 +5901,7 @@ Used by:
 - [dlopen2 0.8.2](https://github.com/OpenByteDev/dlopen2)
 - [dlopen2_derive 0.4.3](https://github.com/OpenByteDev/dlopen2)
 - [dpi 0.1.2](https://github.com/rust-windowing/winit)
-- [minisign-verify 0.2.5](https://github.com/jedisct1/rust-minisign-verify)
+- [minisign-verify 0.3.0](https://github.com/jedisct1/rust-minisign-verify)
 - [objc2-app-kit 0.3.2](https://github.com/madsmtm/objc2)
 - [objc2-core-foundation 0.3.2](https://github.com/madsmtm/objc2)
 - [objc2-core-graphics 0.3.2](https://github.com/madsmtm/objc2)
@@ -5899,13 +5917,13 @@ Used by:
 - [sqlx-mysql 0.9.0](https://github.com/launchbadge/sqlx)
 - [sqlx-postgres 0.9.0](https://github.com/launchbadge/sqlx)
 - [sqlx-sqlite 0.9.0](https://github.com/launchbadge/sqlx)
-- [tauri-plugin-dialog 2.8.1](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-fs 2.6.0](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-opener 2.7.0](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-dialog 2.8.3](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-fs 2.7.1](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-opener 2.7.2](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-process 2.4.0](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-updater 2.13.1](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-updater 2.14.0](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-window-state 2.5.0](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin 2.7.1](https://github.com/tauri-apps/tauri)
+- [tauri-plugin 2.7.2](https://github.com/tauri-apps/tauri)
 - [webview2-com-macros 0.8.1](https://github.com/wravery/webview2-rs)
 - [webview2-com-sys 0.39.1](https://github.com/wravery/webview2-rs)
 - [webview2-com 0.39.1](https://github.com/wravery/webview2-rs)
@@ -6198,7 +6216,7 @@ Used by:
 - [serde_core 1.0.229](https://github.com/serde-rs/serde)
 - [serde_derive 1.0.229](https://github.com/serde-rs/serde)
 - [serde_derive_internals 0.29.1](https://github.com/serde-rs/serde)
-- [serde_json 1.0.151](https://github.com/serde-rs/json)
+- [serde_json 1.0.154](https://github.com/serde-rs/json)
 - [serde_repr 0.1.20](https://github.com/dtolnay/serde-repr)
 - [servo_arc 0.4.3](https://github.com/servo/stylo)
 - [syn 1.0.109](https://github.com/dtolnay/syn)
