@@ -6,10 +6,11 @@
 [advisories]
 unmaintained = "workspace"
 yanked = "deny"
-# Every zip release below 9 is yanked.
+# The updater pins zip ^4 for its Windows bundle and only extracts signed updates.
 ignore = [
-    { crate = "zip@4.6.1", reason = "tauri-plugin-updater 2.14 pins zip ^4" },
-    { crate = "zip@8.6.0", reason = "calamine 0.36.1 pins zip ^8.6" },
+    { id = "RUSTSEC-2026-0367", reason = "zip 4 via the updater, fixed in zip 9" },
+    { id = "RUSTSEC-2026-0368", reason = "zip 4 via the updater, fixed in zip 9" },
+    { id = "RUSTSEC-2026-0369", reason = "zip 4 via the updater, fixed in zip 9" },
 ]
 
 [licenses]
