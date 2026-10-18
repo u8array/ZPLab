@@ -1280,7 +1280,7 @@ const lv = {
     },
     qrcode: {
       content: 'Saturs',
-      magnification: 'Izmērs (1–10)',
+      magnification: 'Izmērs (1–100)',
       errorCorrection: 'Kļūdu labošana',
       ecL: '7%',
       ecM: '15%',

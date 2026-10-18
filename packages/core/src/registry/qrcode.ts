@@ -30,9 +30,8 @@ export function qrBqHeader(model: 1 | 2, magnification: number): string {
   return `^BQN,${model},${magnification}`;
 }
 
-/** ^BQ c is 1-100 (spec p.128); the whole range round-trips, even though the
- *  panel edits only 1-10. Its printer-dependent default needs a dpmm this pass
- *  lacks, so an out-of-range value takes the designer default instead. */
+/** ^BQ c is 1-100 (spec p.128). Its printer-dependent default needs a dpmm
+ *  this pass lacks, so an out-of-range value takes the designer default instead. */
 export function qrMagnificationFromZpl(c: number): number {
   return c >= 1 && c <= 100 ? c : DEFAULT_MAGNIFICATION;
 }
@@ -56,7 +55,7 @@ const CONTROL_CHARS = true;
 
 export const QRCODE_PROP_SPECS: PropSpecs<QrCodeProps> = {
   content: { type: 'string' },
-  magnification: { type: 'number', integer: true, min: 1, max: 100, scale: 'uniform', clamp: { min: 1, max: 10 } },
+  magnification: { type: 'number', integer: true, min: 1, max: 100, scale: 'uniform' },
   errorCorrection: { type: 'string', values: QR_EC_LEVELS },
   model: { type: 'number', integer: true, min: 1, max: 2, scale: 'never' },
   rotation: ROTATION_SPEC,

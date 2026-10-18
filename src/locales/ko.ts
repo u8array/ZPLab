@@ -1280,7 +1280,7 @@ const ko = {
     },
     qrcode: {
       content: '내용',
-      magnification: '크기 (1–10)',
+      magnification: '크기 (1–100)',
       errorCorrection: '오류 수정',
       ecL: '7%',
       ecM: '15%',

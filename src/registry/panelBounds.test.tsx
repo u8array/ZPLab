@@ -12,10 +12,10 @@ const maxOf = (container: HTMLElement, value: number) =>
   [...container.querySelectorAll("input")].find((i) => i.value === String(value))?.getAttribute("max");
 
 describe("panel bounds", () => {
-  it("clamp into the editor's range where the wire allows more", () => {
+  it("take the editor clamp where set, the wire bound otherwise", () => {
     const Qr = qrcodePanel.PropertiesPanel;
     const qr = render(<Qr obj={{ id: "q", type: "qrcode", x: 0, y: 0, rotation: 0, props: qrcode.defaultProps } as never} onChange={() => undefined} />);
-    expect(maxOf(qr.container, qrcode.defaultProps.magnification)).toBe("10");
+    expect(maxOf(qr.container, qrcode.defaultProps.magnification)).toBe("100");
     const Dm = datamatrixPanel.PropertiesPanel;
     const dm = render(<Dm obj={{ id: "d", type: "datamatrix", x: 0, y: 0, rotation: 0, props: datamatrix.defaultProps } as never} onChange={() => undefined} />);
     expect(maxOf(dm.container, datamatrix.defaultProps.dimension)).toBe("12");

@@ -1280,7 +1280,7 @@ const cs = {
     },
     qrcode: {
       content: 'Obsah',
-      magnification: 'Velikost (1–10)',
+      magnification: 'Velikost (1–100)',
       errorCorrection: 'Oprava chyb',
       ecL: '7%',
       ecM: '15%',

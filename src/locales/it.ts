@@ -1280,7 +1280,7 @@ const it = {
     },
     qrcode: {
       content: 'Contenuto',
-      magnification: 'Dimensione (1–10)',
+      magnification: 'Dimensione (1–100)',
       errorCorrection: 'Correzione errori',
       ecL: '7%',
       ecM: '15%',

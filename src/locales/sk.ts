@@ -1280,7 +1280,7 @@ const sk = {
     },
     qrcode: {
       content: 'Obsah',
-      magnification: 'Veľkosť (1–10)',
+      magnification: 'Veľkosť (1–100)',
       errorCorrection: 'Oprava chýb',
       ecL: '7%',
       ecM: '15%',

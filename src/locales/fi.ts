@@ -1280,7 +1280,7 @@ const fi = {
     },
     qrcode: {
       content: 'Sisältö',
-      magnification: 'Koko (1–10)',
+      magnification: 'Koko (1–100)',
       errorCorrection: 'Virheen korjaus',
       ecL: '7%',
       ecM: '15%',

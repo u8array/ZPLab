@@ -1280,7 +1280,7 @@ const tr = {
     },
     qrcode: {
       content: 'İçerik',
-      magnification: 'Boyut (1–10)',
+      magnification: 'Boyut (1–100)',
       errorCorrection: 'Hata düzeltme',
       ecL: '7%',
       ecM: '15%',

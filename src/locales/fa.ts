@@ -1280,7 +1280,7 @@ const fa = {
     },
     qrcode: {
       content: 'محتوا',
-      magnification: 'اندازه (1–10)',
+      magnification: 'اندازه (1–100)',
       errorCorrection: 'تصحیح خطا',
       ecL: '7%',
       ecM: '15%',

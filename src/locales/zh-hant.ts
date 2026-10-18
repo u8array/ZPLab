@@ -1280,7 +1280,7 @@ const zhHant = {
     },
     qrcode: {
       content: '內容',
-      magnification: '大小 (1–10)',
+      magnification: '大小 (1–100)',
       errorCorrection: '錯誤修正',
       ecL: '7%',
       ecM: '15%',

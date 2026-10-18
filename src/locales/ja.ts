@@ -1280,7 +1280,7 @@ const ja = {
     },
     qrcode: {
       content: 'コンテンツ',
-      magnification: 'サイズ (1–10)',
+      magnification: 'サイズ (1–100)',
       errorCorrection: '誤り訂正',
       ecL: '7%',
       ecM: '15%',

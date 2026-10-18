@@ -1280,7 +1280,7 @@ const no = {
     },
     qrcode: {
       content: 'Innhold',
-      magnification: 'Størrelse (1–10)',
+      magnification: 'Størrelse (1–100)',
       errorCorrection: 'Feilretting',
       ecL: '7%',
       ecM: '15%',

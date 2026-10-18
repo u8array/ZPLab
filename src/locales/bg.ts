@@ -1280,7 +1280,7 @@ const bg = {
     },
     qrcode: {
       content: 'Съдържание',
-      magnification: 'Размер (1–10)',
+      magnification: 'Размер (1–100)',
       errorCorrection: 'Корекция на грешки',
       ecL: '7%',
       ecM: '15%',

@@ -1280,7 +1280,7 @@ const sl = {
     },
     qrcode: {
       content: 'Vsebina',
-      magnification: 'Velikost (1–10)',
+      magnification: 'Velikost (1–100)',
       errorCorrection: 'Popravljanje napak',
       ecL: '7%',
       ecM: '15%',

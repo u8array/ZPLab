@@ -106,12 +106,17 @@ describe("rescaleDesign", () => {
     expect((out.props as { byHeight?: number }).byHeight).toBe(15);
   });
 
-  it("clamps QR magnification to 10 and warns", () => {
+  it("scales QR magnification to 15 and clamps at 100", () => {
     const qr = leaf("q", "qrcode", 0, 0, { content: "QA,hi", magnification: 5, errorCorrection: "Q", model: 2, rotation: "N" } as never);
-    const r = rescaleDesign(page(qr), label, 8, 24, { dpmm: 24 }); // factor 3 -> 15 clamps to 10
+    const r = rescaleDesign(page(qr), label, 8, 24, { dpmm: 24 }); // factor 3 -> 15
     const out = r.pages[0]!.objects[0] as typeof qr;
-    expect((out.props as { magnification: number }).magnification).toBe(10);
-    expect(r.warnings.some((w) => w.reason === "magnificationClamped")).toBe(true);
+    expect((out.props as { magnification: number }).magnification).toBe(15);
+    expect(r.warnings.some((w) => w.reason === "magnificationClamped")).toBe(false);
+    const big = leaf("q", "qrcode", 0, 0, { content: "QA,hi", magnification: 40, errorCorrection: "Q", model: 2, rotation: "N" } as never);
+    const clamped = rescaleDesign(page(big), label, 8, 24, { dpmm: 24 }); // factor 3 -> 120 clamps to 100
+    const outBig = clamped.pages[0]!.objects[0] as typeof big;
+    expect((outBig.props as { magnification: number }).magnification).toBe(100);
+    expect(clamped.warnings.some((w) => w.reason === "magnificationClamped")).toBe(true);
   });
 
   it("enforces pdf417 module width minimum of 2", () => {

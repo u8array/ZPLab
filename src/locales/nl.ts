@@ -1280,7 +1280,7 @@ const nl = {
     },
     qrcode: {
       content: 'Inhoud',
-      magnification: 'Grootte (1–10)',
+      magnification: 'Grootte (1–100)',
       errorCorrection: 'Foutcorrectie',
       ecL: '7%',
       ecM: '15%',

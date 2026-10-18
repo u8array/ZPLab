@@ -1345,7 +1345,7 @@ const de = {
     },
     qrcode: {
       content: 'Inhalt',
-      magnification: 'Größe (1–10)',
+      magnification: 'Größe (1–100)',
       errorCorrection: 'Fehlerkorrektur',
       ecL: '7%',
       ecM: '15%',

@@ -1280,7 +1280,7 @@ const et = {
     },
     qrcode: {
       content: 'Sisu',
-      magnification: 'Suurus (1–10)',
+      magnification: 'Suurus (1–100)',
       errorCorrection: 'Veaparandus',
       ecL: '7%',
       ecM: '15%',

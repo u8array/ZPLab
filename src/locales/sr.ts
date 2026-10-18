@@ -1280,7 +1280,7 @@ const sr = {
     },
     qrcode: {
       content: 'Sadržaj',
-      magnification: 'Veličina (1–10)',
+      magnification: 'Veličina (1–100)',
       errorCorrection: 'Ispravka grešaka',
       ecL: '7%',
       ecM: '15%',

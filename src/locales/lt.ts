@@ -1280,7 +1280,7 @@ const lt = {
     },
     qrcode: {
       content: 'Turinys',
-      magnification: 'Dydis (1–10)',
+      magnification: 'Dydis (1–100)',
       errorCorrection: 'Klaidų taisymas',
       ecL: '7%',
       ecM: '15%',

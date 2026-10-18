@@ -1280,7 +1280,7 @@ const hu = {
     },
     qrcode: {
       content: 'Tartalom',
-      magnification: 'Méret (1–10)',
+      magnification: 'Méret (1–100)',
       errorCorrection: 'Hibajavítás',
       ecL: '7%',
       ecM: '15%',

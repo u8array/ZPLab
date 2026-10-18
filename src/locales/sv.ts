@@ -1280,7 +1280,7 @@ const sv = {
     },
     qrcode: {
       content: 'Innehåll',
-      magnification: 'Storlek (1–10)',
+      magnification: 'Storlek (1–100)',
       errorCorrection: 'Felkorrigering',
       ecL: '7%',
       ecM: '15%',
