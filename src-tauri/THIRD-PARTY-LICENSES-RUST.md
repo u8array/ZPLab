@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (441)
+- MIT License (444)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -5459,6 +5459,24 @@ SOFTWARE.
 
 Used by:
 
+- [cfg_aliases 0.2.2](https://github.com/katharostech/cfg_aliases)
+````
+MIT License
+
+Copyright (c) 2020 Katharos Technology
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+````
+
+### MIT License
+
+Used by:
+
 - [embed_plist 1.2.2](https://github.com/nvzqz/embed-plist-rs)
 ````
 MIT License
@@ -6458,7 +6476,7 @@ SOFTWARE.
 
 Used by:
 
-- [zip 8.6.0](https://github.com/zip-rs/zip2)
+- [zip 9.0.5](https://github.com/zip-rs/zip2)
 ````
 The MIT License (MIT)
 
@@ -6647,6 +6665,36 @@ THE SOFTWARE.
 
 Used by:
 
+- [nix 0.31.3](https://github.com/nix-rust/nix)
+````
+The MIT License (MIT)
+
+Copyright (c) 2015 Carl Lerche + nix-rust Authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+````
+
+### MIT License
+
+Used by:
+
 - [strsim 0.11.1](https://github.com/rapidfuzz/strsim-rs)
 ````
 The MIT License (MIT)
@@ -6770,7 +6818,8 @@ SOFTWARE.
 
 Used by:
 
-- [calamine 0.36.1](https://github.com/tafia/calamine)
+- [calamine 0.37.0](https://github.com/tafia/calamine)
+- [quick-xml 0.42.0](https://github.com/tafia/quick-xml)
 ````
 The MIT License (MIT)
 
