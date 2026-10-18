@@ -295,18 +295,19 @@ export function wrapBlockLines(
   return out;
 }
 
-/** L/J start at left; J inner-stretch not visualised. Labelary centers as if
- *  each line carries one trailing space, so a centered line sits half a
- *  space-width left of the geometric center; R/L trim it, so only C shifts. */
+/** The printer centers as if the line carried a trailing space, until that space no longer fits. */
 export function zebraAlignOffsetDots(
   lineWidthDots: number,
   blockWidthDots: number,
   justify: BlockJustify,
   spaceWidthDots = 0,
 ): number {
-  if (justify === "C")
-    return Math.max(0, (blockWidthDots - lineWidthDots - spaceWidthDots) / 2);
-  if (justify === "R") return Math.max(0, blockWidthDots - lineWidthDots);
+  const extra = blockWidthDots - lineWidthDots;
+  if (justify === "C") {
+    const phantom = extra >= spaceWidthDots ? spaceWidthDots : 0;
+    return Math.max(0, (extra - phantom) / 2);
+  }
+  if (justify === "R") return Math.max(0, extra);
   return 0;
 }
 

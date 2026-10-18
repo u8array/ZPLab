@@ -174,6 +174,13 @@ describe("zebraAlignOffsetDots", () => {
     expect(zebraAlignOffsetDots(100, 400, "L", 20)).toBe(0);
   });
 
+  it("C drops the phantom space once it no longer fits", () => {
+    // ZD230 and Labelary, 8 dpmm, "FA" in ^FB812. ^A0N,700: (812 - 736) / 2 = 38
+    expect(zebraAlignOffsetDots(736, 812, "C", 207)).toBe(38);
+    // ^A0N,600 still fits the space: (812 - 631 - 177) / 2 = 2
+    expect(zebraAlignOffsetDots(631, 812, "C", 177)).toBe(2);
+  });
+
   it("clamps to 0 when the line is wider than the block (no negative offsets)", () => {
     expect(zebraAlignOffsetDots(500, 400, "C")).toBe(0);
     expect(zebraAlignOffsetDots(500, 400, "R")).toBe(0);
