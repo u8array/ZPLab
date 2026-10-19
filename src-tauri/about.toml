@@ -29,3 +29,13 @@ accepted = [
     "MPL-2.0",
     "CDLA-Permissive-2.0",
 ]
+
+# miniz_oxide ships the MIT text twice, LICENSE and LICENSE-MIT.md, differing by one
+# blank line. Harvesting picks either, so Windows and Linux runs disagreed. Pin one.
+[miniz_oxide.clarify]
+license = "MIT"
+
+[[miniz_oxide.clarify.files]]
+path = "LICENSE-MIT.md"
+license = "MIT"
+checksum = "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d"
