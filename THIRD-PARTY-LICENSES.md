@@ -3923,7 +3923,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### zod 4.6.5
+### zod 4.6.7
 
 - License: MIT
 - Author: Colin McDonnell
