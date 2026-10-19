@@ -431,7 +431,8 @@ mod lp_io {
 
   impl LpDevice {
     pub(super) fn new(file: File) -> std::io::Result<Self> {
-      Ok(Self(AsyncFd::new(file)?))
+      // SAFETY: the File owns the fd for the whole lifetime of the AsyncFd.
+      Ok(Self(unsafe { AsyncFd::register(file) }?))
     }
   }
 
