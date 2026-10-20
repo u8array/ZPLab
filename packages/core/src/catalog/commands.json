@@ -5286,8 +5286,9 @@
         "example": "^JJ1,0,p,f,d,e"
       },
       "support": {
-        "web": "yes",
-        "desktop": "yes"
+        "web": "no",
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5550,8 +5551,9 @@
         "example": "^SC9600,8,N,1,X,N"
       },
       "support": {
-        "web": "yes",
-        "desktop": "yes"
+        "web": "no",
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {

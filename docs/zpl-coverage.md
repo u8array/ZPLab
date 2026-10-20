@@ -240,7 +240,7 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `~JF` | set battery condition, PA400 and PT400 only | `[ ]` | `[ ]` | `[ ]` |
 | `~JG` | graphing sensor calibration | `[ ]` | `[~]` | `[~]` |
 | `^JI` / `~JI` | start ZBI | `[ ]` | `[~]` | `[~]` |
-| `^JJ` | set auxiliary port | `[x]` | `[x]` | `[x]` |
+| `^JJ` | set auxiliary port | `[ ]` | `[~]` | `[~]` |
 | `^JS` | sensor select | `[x]` | `[x]` | `[x]` |
 | `~JL` | set label length | `[ ]` | `[~]` | `[~]` |
 | `^JM` | dots per millimeter | `[x]` | `[x]` | `[x]` |
@@ -251,7 +251,7 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `~JR` | power on reset | `[ ]` | `[~]` | `[~]` |
 | `~JX` | cancel partial format | `[ ]` | `[~]` | `[~]` |
 | `~RO` | reset advanced counter | `[ ]` | `[~]` | `[~]` |
-| `^SC` | set serial communications | `[x]` | `[x]` | `[x]` |
+| `^SC` | set serial communications | `[ ]` | `[~]` | `[~]` |
 | `^SI` | set sensor intensity | `[x]` | `[x]` | `[x]` |
 | `^SP` | start print at dot row, throughput hint only | `[ ]` | `[ ]` | `[ ]` |
 | `^SQ` | halt ZebraNet alert | `[ ]` | `[~]` | `[~]` |

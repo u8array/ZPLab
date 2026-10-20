@@ -147,7 +147,7 @@ On desktop, **Connect data** also reads an Excel worksheet. **File → Settings�
 
 ### Printer settings
 
-**File → Settings… → Per Label** configures media, print quality, output and RFID. The **Setup Script** covers clock, encoding, fonts, printer identity, maintenance, sensors and interfaces.
+**File → Settings… → Per Label** configures media, print quality, output and RFID. The **Setup Script** covers clock, encoding, fonts, printer identity, maintenance and sensors.
 
 - The **Objects** group selects the fonts and graphics the **Setup Script** uploads.
 - It lists cached images and deletes the unused ones.
@@ -188,7 +188,7 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-132 of the 225 ZPL II commands are modelled in the browser; desktop covers 9 more with a connected printer. 2 more are planned for both builds. 60 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+130 of the 225 ZPL II commands are modelled in the browser; desktop covers 9 more with a connected printer. 2 more are planned for both builds. 62 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|
@@ -205,7 +205,7 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 | Text & fonts | 14 / 15 |
 | Print quality | 10 / 18 |
 | Configuration & persistence | 4 / 5 |
-| Hardware / Host comm / RFID / Network | 11 / 89 |
+| Hardware / Host comm / RFID / Network | 9 / 89 |
 <!-- coverage:end -->
 
 ## Limitations

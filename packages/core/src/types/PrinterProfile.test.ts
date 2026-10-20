@@ -33,11 +33,6 @@ describe("setupFonts download", () => {
 });
 
 describe("repairPrinterProfile", () => {
-  it("drops the serial port as one key, while an applicator slot costs only itself", () => {
-    expect(repairPrinterProfile({ serialPort: { baud: "9600", dataBits: "9" }, auxPortMode: "1", auxPortEndPrint: "9" })).toEqual({ auxPortMode: "1" });
-    expect(repairPrinterProfile({ serialPort: {} })).toEqual({});
-  });
-
   it("drops the key a cross-field rule names, even when the rule reports the absent side", () => {
     expect(repairPrinterProfile({ clockMode: "TOL" })).toEqual({});
     expect(repairPrinterProfile({ clockMode: "S", clockTolerance: 30, printerName: "P1" })).toEqual({ clockMode: "S", printerName: "P1" });

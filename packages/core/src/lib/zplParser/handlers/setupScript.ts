@@ -1,4 +1,4 @@
-import { AUX_PORT_SLOTS, CLOCK_TOLERANCE_RANGE, FONT_CACHE_KB_RANGE, FONT_LINKS_PATH_MAX_LEN, HEAD_CLEANING_INTERVAL_METERS, HEAD_TEST_INTERVAL_RANGE, JH_SLOT_F, JH_SLOT_G, MAINTENANCE_ALERT_DEFAULTS, MAINTENANCE_DISTANCE_MAX_BY_TYPE, MAINTENANCE_MESSAGE_MAX_LEN, PRINTER_NAME_MAX_LEN, PRINTER_PASSWORD_REGEX, PRINTHEAD_RESISTANCE_RANGE, SENSOR_INTENSITY_RANGE, SENSOR_SLOTS, SI_FIELD_BY_SLOT, TEAR_OFF_ADJUST_RANGE, XS_SLOTS, isClockFormat, isClockLanguage, isConfigUpdateAction, isFontCacheType, isMaintenanceAlertPrint, isMaintenanceAlertType, isMaintenanceAlertUnit, isMediaSensorSelect, isModeProtection, isPrinterLocale, isSerialBaud, isSerialDataBits, isSerialHandshake, isSerialParity, isSerialProtocol, isSerialStopBits, isZplMode, setupScriptUnsafeCharRegex, type AuxPortField, type SensorSlotField } from "../../../types/PrinterProfile";
+import { CLOCK_TOLERANCE_RANGE, FONT_CACHE_KB_RANGE, FONT_LINKS_PATH_MAX_LEN, HEAD_CLEANING_INTERVAL_METERS, HEAD_TEST_INTERVAL_RANGE, JH_SLOT_F, JH_SLOT_G, MAINTENANCE_ALERT_DEFAULTS, MAINTENANCE_DISTANCE_MAX_BY_TYPE, MAINTENANCE_MESSAGE_MAX_LEN, PRINTER_NAME_MAX_LEN, PRINTER_PASSWORD_REGEX, PRINTHEAD_RESISTANCE_RANGE, SENSOR_INTENSITY_RANGE, SENSOR_SLOTS, SI_FIELD_BY_SLOT, TEAR_OFF_ADJUST_RANGE, XS_SLOTS, isClockFormat, isClockLanguage, isConfigUpdateAction, isFontCacheType, isMaintenanceAlertPrint, isMaintenanceAlertType, isMaintenanceAlertUnit, isMediaSensorSelect, isModeProtection, isPrinterLocale, isZplMode, setupScriptUnsafeCharRegex, type SensorSlotField } from "../../../types/PrinterProfile";
 import { parseIntOrUndef } from "../../inputParse";
 import { isYesNo } from "../../../types/typeHelpers";
 import { parseRealtimeClock } from "../../realtimeClock";
@@ -260,30 +260,6 @@ export function createSetupScriptHandlers(s: ParserState): Record<string, Handle
         if (v === undefined) notePartial(s.result, "^SR");
         else printerProfile.printheadResistance = v;
       }
-    },
-    SC(p) {
-      const baud = strParam(p[0]);
-      const dataBits = strParam(p[1]);
-      const parity = strParam(p[2]);
-      const stopBits = strParam(p[3]);
-      const handshake = strParam(p[4]);
-      const protocol = strParam(p[5]);
-      if (!isSerialBaud(baud) || !isSerialDataBits(dataBits) || !isSerialParity(parity) || !isSerialStopBits(stopBits) || !isSerialHandshake(handshake) || !isSerialProtocol(protocol)) {
-        notePartial(s.result, "^SC");
-        return;
-      }
-      printerProfile.serialPort = { baud, dataBits, parity, stopBits, handshake, protocol };
-    },
-    JJ(p) {
-      // Every slot has a default, so a bare ^JJ must not vanish on re-emit.
-      const bare = p.every((v) => v.trim() === "");
-      AUX_PORT_SLOTS.forEach(([field, values, fallback], i) => {
-        const v = bare ? fallback : (p[i] ?? "").trim().toLowerCase();
-        Reflect.deleteProperty(printerProfile, field);
-        if (v === "") return;
-        if (values.some((allowed) => allowed === v)) (printerProfile as Record<AuxPortField, string>)[field] = v;
-        else notePartial(s.result, "^JJ");
-      });
     },
     // ^JH: only f/g modelled; other slots are runtime reset flags.
     // g is a 0..16 index into HEAD_CLEANING_INTERVAL_METERS per spec.

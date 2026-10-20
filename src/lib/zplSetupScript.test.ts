@@ -453,13 +453,6 @@ describe("generateSetupScript — output shape", () => {
       "dynamicCalibrationThreshold",
       "dynamicCalibrationGain",
       "printheadResistance",
-      "serialPort",
-      "auxPortMode",
-      "auxPortEndPrint",
-      "auxPortStartPrint",
-      "auxPortErrorMode",
-      "auxPortReprint",
-      "auxPortRibbonLow",
       "setRealtimeClock",
       "useCurrentTimeForClock",
       "clockFormat",
@@ -532,34 +525,6 @@ describe("generateSetupScript — output shape", () => {
     expect(parseZPL("^XA^SR0675^SR9999^XZ").printerProfile).toEqual({ printheadResistance: 675 });
     expect(pages[0]?.findings.filter((f) => f.kind === "partial").map((f) => f.command)).toEqual(["^SS", "^SI", "^XS", "^SR", "^JS"]);
     expect(pages[0]?.findings.filter((f) => f.kind === "replayRisk").map((f) => f.command)).toContain("^JS");
-  });
-
-  it("emits the interface commands as the spec writes them, a partial ^JJ included and a partial ^SC not", () => {
-    const ports = {
-      serialPort: { baud: "9600", dataBits: "8", parity: "N", stopBits: "1", handshake: "X", protocol: "N" },
-      auxPortMode: "1", auxPortEndPrint: "3", auxPortStartPrint: "p", auxPortErrorMode: "e", auxPortReprint: "e", auxPortRibbonLow: "d",
-      configurationUpdate: "S",
-    } as const;
-    const script = generateSetupScript(ports);
-    expect(script).toContain("^SC9600,8,N,1,X,N\n^JJ1,3,p,e,e,d\n^JUS");
-    expect(parseZPL(script).printerProfile).toEqual(ports);
-    for (const [partial, wire] of [
-      [{ auxPortStartPrint: "l" }, "^JJ,,l"],
-      [{ auxPortRibbonLow: "e" }, "^JJ,,,,,e"],
-    ] as const) {
-      const out = generateSetupScript(partial);
-      expect(out).toContain(wire);
-      expect(parseZPL(out).printerProfile).toEqual(partial);
-    }
-    expect(generateSetupScript({ serialPort: { baud: "9600" } })).not.toContain("^SC");
-    expect(generateSetupScript({})).not.toMatch(/\^(SC|JJ)/);
-  });
-
-  it("keeps a serial setup only whole, reads an applicator slot case-blind, and lets a later ^JJ clear the earlier slots", () => {
-    const { printerProfile, pages } = parseZPL("^XA^SC9600,8,N,1,X^SC9600,9,N,1,X,N^SC115200,7,o,2,m,z^JJ2,5,L,E^JJ,,,F^XZ");
-    expect(printerProfile).toEqual({ serialPort: { baud: "115200", dataBits: "7", parity: "O", stopBits: "2", handshake: "M", protocol: "Z" }, auxPortErrorMode: "f" });
-    expect(pages[0]?.findings.filter((f) => f.kind === "partial").map((f) => f.command)).toEqual(["^SC", "^JJ"]);
-    expect(parseZPL("^XA^JJ1,2^JJ^XZ").printerProfile).toEqual({ auxPortMode: "0", auxPortEndPrint: "0", auxPortStartPrint: "p", auxPortErrorMode: "f", auxPortReprint: "d", auxPortRibbonLow: "e" });
   });
 
   it("emits ^CO with only the slots the profile sets (parse-generate identity)", () => {

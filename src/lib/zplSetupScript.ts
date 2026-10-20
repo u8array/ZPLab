@@ -3,8 +3,6 @@ import {
   JH_SLOT_COUNT,
   JH_SLOT_F,
   JH_SLOT_G,
-  AUX_PORT_SLOTS,
-  SERIAL_PORT_FIELDS,
   SENSOR_SLOTS,
   XS_SLOTS,
   type PrinterProfile,
@@ -144,29 +142,6 @@ const SETUP_SCRIPT_EMITTERS = {
     scope: 'persistent',
     emit: (p) => p.printheadResistance !== undefined ? `^SR${pad(p.printheadResistance, 4)}` : null,
   },
-  serialPort: {
-    kind: 'emit',
-    channel: 'block',
-    scope: 'persistent',
-    emit: (p) => {
-      const slots = SERIAL_PORT_FIELDS.map((f) => p.serialPort?.[f]);
-      return slots.every((v) => v !== undefined) ? `^SC${slots.join(',')}` : null;
-    },
-  },
-  auxPortMode: {
-    kind: 'emit',
-    channel: 'block',
-    scope: 'persistent',
-    emit: (p) => {
-      const slots = trimTrailingEmptySlots(AUX_PORT_SLOTS.map(([field]) => p[field] ?? ''));
-      return slots.length > 0 ? `^JJ${slots.join(',')}` : null;
-    },
-  },
-  auxPortEndPrint: { kind: 'foldedInto', target: 'auxPortMode' },
-  auxPortStartPrint: { kind: 'foldedInto', target: 'auxPortMode' },
-  auxPortErrorMode: { kind: 'foldedInto', target: 'auxPortMode' },
-  auxPortReprint: { kind: 'foldedInto', target: 'auxPortMode' },
-  auxPortRibbonLow: { kind: 'foldedInto', target: 'auxPortMode' },
   setRealtimeClock: {
     kind: 'emit',
     channel: 'block',
