@@ -494,7 +494,6 @@ const cs = {
     close: 'Zavřít',
     sendToZebra: 'Odeslat na tiskárnu',
     instantApply: 'Změny se použijí okamžitě',
-    setupScriptPending: 'Nic se nedostane k tiskárně, dokud není odeslán instalační skript. Nastavení přežije restart jen poté, co ho uloží „Aktualizace konfigurace" na kartě Identita.',
     wip: 'WIP',
     previewHeading: 'Náhled instalačního skriptu',
     previewClear: 'Vymazat',

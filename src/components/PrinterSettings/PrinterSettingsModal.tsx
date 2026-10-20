@@ -299,7 +299,7 @@ export function PrinterSettingsModal() {
 
       <footer className="px-5 py-3 border-t border-border flex items-center justify-between gap-4">
         <span className="text-[11px] text-muted">
-          {activeTopTab === 'setupScript' ? t.printerSettings.setupScriptPending : t.printerSettings.instantApply}
+          {t.printerSettings.instantApply}
         </span>
         <button
           type="button"

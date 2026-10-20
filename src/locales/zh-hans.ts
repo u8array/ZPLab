@@ -494,7 +494,6 @@ const zhHans = {
     close: '关闭',
     sendToZebra: '发送到打印机',
     instantApply: '更改立即生效',
-    setupScriptPending: '在发送设置脚本之前，打印机不会收到任何内容。 只有"标识"选项卡中的"配置更新"保存后，设置才能在重启后保留。',
     wip: 'WIP',
     previewHeading: '设置脚本预览',
     previewClear: '清除',

@@ -494,7 +494,6 @@ const zhHant = {
     close: '關閉',
     sendToZebra: '傳送到印表機',
     instantApply: '變更立即生效',
-    setupScriptPending: '在傳送設定指令稿之前，印表機不會收到任何內容。 只有「識別」分頁中的「設定更新」儲存後，設定才能在重新開機後保留。',
     wip: 'WIP',
     previewHeading: '設定指令稿預覽',
     previewClear: '清除',

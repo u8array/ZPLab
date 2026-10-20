@@ -494,7 +494,6 @@ const hu = {
     close: 'Bezárás',
     sendToZebra: 'Küldés a nyomtatóra',
     instantApply: 'A módosítások azonnal érvénybe lépnek',
-    setupScriptPending: 'Semmi nem jut el a nyomtatóhoz, amíg a telepítő szkript elküldésre nem kerül. A beállítások csak akkor élik túl az újraindítást, ha az Azonosító lapon végzett "Konfiguráció frissítése" elmenti őket.',
     wip: 'WIP',
     previewHeading: 'Telepítő szkript előnézete',
     previewClear: 'Törlés',

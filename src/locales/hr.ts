@@ -494,7 +494,6 @@ const hr = {
     close: 'Zatvori',
     sendToZebra: 'Pošalji na pisač',
     instantApply: 'Promjene se primjenjuju odmah',
-    setupScriptPending: 'Ništa ne stiže do pisača dok se ne pošalje skripta za postavljanje. Postavke preživljavaju ponovno pokretanje samo nakon što ih spremi "Ažuriranje konfiguracije" na kartici Identitet.',
     wip: 'WIP',
     previewHeading: 'Pregled skripte postavljanja',
     previewClear: 'Očisti',

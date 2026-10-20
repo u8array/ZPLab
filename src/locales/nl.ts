@@ -494,7 +494,6 @@ const nl = {
     close: 'Sluiten',
     sendToZebra: 'Naar printer sturen',
     instantApply: 'Wijzigingen worden direct toegepast',
-    setupScriptPending: 'Er bereikt niets de printer totdat je het installatiescript verstuurt. Instellingen overleven een herstart alleen nadat "Configuratie-update" op het tabblad Identiteit ze heeft opgeslagen.',
     wip: 'WIP',
     previewHeading: 'Voorbeeld setup-script',
     previewClear: 'Wissen',

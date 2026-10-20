@@ -494,7 +494,6 @@ const pt = {
     close: 'Fechar',
     sendToZebra: 'Enviar para impressora',
     instantApply: 'As alterações são aplicadas imediatamente',
-    setupScriptPending: 'Nada chega à impressora até que o script de configuração seja enviado. As configurações só sobrevivem a um reinício depois de "Atualização de configuração", no separador Identidade, as guardar.',
     wip: 'WIP',
     previewHeading: 'Pré-visualização do script de configuração',
     previewClear: 'Limpar',

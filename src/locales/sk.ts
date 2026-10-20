@@ -494,7 +494,6 @@ const sk = {
     close: 'Zavrieť',
     sendToZebra: 'Odoslať do tlačiarne',
     instantApply: 'Zmeny sa použijú okamžite',
-    setupScriptPending: 'Nič sa nedostane k tlačiarni, kým sa neodošle inštalačný skript. Nastavenia prežijú reštart len po tom, čo ich uloží "Aktualizácia konfigurácie" na karte Identita.',
     wip: 'WIP',
     previewHeading: 'Náhľad inštalačného skriptu',
     previewClear: 'Vymazať',

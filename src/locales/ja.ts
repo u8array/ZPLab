@@ -494,7 +494,6 @@ const ja = {
     close: '閉じる',
     sendToZebra: 'プリンターに送信',
     instantApply: '変更は即時に適用されます',
-    setupScriptPending: 'セットアップスクリプトを送信するまで、何もプリンターに届きません。 「識別情報」タブの「設定の更新」が保存した後にのみ、設定は再起動後も保持されます。',
     wip: 'WIP',
     previewHeading: 'セットアップスクリプトのプレビュー',
     previewClear: 'クリア',

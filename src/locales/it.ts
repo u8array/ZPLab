@@ -494,7 +494,6 @@ const it = {
     close: 'Chiudi',
     sendToZebra: 'Invia alla stampante',
     instantApply: 'Le modifiche vengono applicate immediatamente',
-    setupScriptPending: 'Nulla raggiunge la stampante finché lo script di configurazione non viene inviato. Le impostazioni sopravvivono a un riavvio solo dopo che "Aggiornamento configurazione", nella scheda Identità, le salva.',
     wip: 'WIP',
     previewHeading: 'Anteprima script di configurazione',
     previewClear: 'Cancella',

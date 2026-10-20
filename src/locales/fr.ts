@@ -494,7 +494,6 @@ const fr = {
     close: 'Fermer',
     sendToZebra: 'Envoyer à l\'imprimante',
     instantApply: 'Les modifications s’appliquent immédiatement',
-    setupScriptPending: "Rien n’atteint l’imprimante jusqu’à ce que vous envoyiez le script de configuration. Les paramètres ne survivent à un redémarrage qu'après que « Mise à jour de la configuration », dans l'onglet Identité, les a enregistrés.",
     wip: 'WIP',
     previewHeading: 'Aperçu du script de configuration',
     previewClear: 'Effacer',

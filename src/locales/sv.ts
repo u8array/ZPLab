@@ -494,7 +494,6 @@ const sv = {
     close: 'Stäng',
     sendToZebra: 'Skicka till skrivare',
     instantApply: 'Ändringar tillämpas omedelbart',
-    setupScriptPending: 'Inget når skrivaren förrän installationsskriptet skickas. Inställningar överlever en omstart endast efter att "Konfigurationsuppdatering" på fliken Identitet har sparat dem.',
     wip: 'WIP',
     previewHeading: 'Förhandsvisning av installationsskript',
     previewClear: 'Rensa',

@@ -494,7 +494,6 @@ const de = {
     close: 'Schließen',
     sendToZebra: 'An Drucker senden',
     instantApply: 'Änderungen werden sofort übernommen',
-    setupScriptPending: 'Nichts erreicht den Drucker, bis du das Setup-Skript sendest. Einstellungen überstehen einen Neustart nur, nachdem „Konfiguration speichern / laden" im Tab Identität sie gespeichert hat.',
     wip: 'WIP',
     previewHeading: 'Setup-Script Vorschau',
     previewClear: 'Leeren',

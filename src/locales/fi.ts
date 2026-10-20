@@ -494,7 +494,6 @@ const fi = {
     close: 'Sulje',
     sendToZebra: 'Lähetä tulostimeen',
     instantApply: 'Muutokset tulevat voimaan heti',
-    setupScriptPending: 'Mikään ei saavuta tulostinta ennen kuin asennusskripti lähetetään. Asetukset säilyvät uudelleenkäynnistyksen yli vain, kun Tunniste-välilehden "Asetusten päivitys" -toiminto on tallentanut ne.',
     wip: 'WIP',
     previewHeading: 'Asennusskriptin esikatselu',
     previewClear: 'Tyhjennä',

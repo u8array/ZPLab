@@ -1,6 +1,4 @@
 import { useId, useState, type InputHTMLAttributes, type ReactNode } from "react";
-import { InformationCircleIcon } from "@heroicons/react/16/solid";
-import { Tooltip } from "../ui/Tooltip";
 import { labelCls, inputCls, zplCommandTagCls } from "../ui/formStyles";
 import { SegmentedControl } from "../ui/SegmentedControl";
 import { Select } from "../ui/Select";
@@ -14,32 +12,19 @@ export function ZplFieldHint({ children }: { children: ReactNode }) {
   return <span className={hintCls}>{children}</span>;
 }
 
-/** The info mark a label carries when a sentence has to say what the value does to the printer. */
-function LabelTooltip({ text }: { text: string | undefined }) {
-  if (!text) return null;
-  return (
-    <Tooltip content={text}>
-      <InformationCircleIcon className="w-3 h-3 ml-1 inline-block align-text-bottom text-muted/60 cursor-help" />
-    </Tooltip>
-  );
-}
-
 export function ZplCommandLabel({
   text,
   command,
   htmlFor,
-  tooltip,
 }: {
   text: string;
   command: string;
   htmlFor?: string;
-  tooltip?: string;
 }) {
   return (
     <div className="flex items-start justify-between gap-2">
       <label htmlFor={htmlFor} className={labelCls}>
         {text}
-        <LabelTooltip text={tooltip} />
       </label>
       <span className={commandTagCls}>{command}</span>
     </div>
@@ -92,20 +77,17 @@ export function ZplSubField({
   label,
   children,
   className,
-  tooltip,
 }: {
   label: string;
   children: (id: string) => ReactNode;
   /** Replaces the default layout, not merged. */
   className?: string;
-  tooltip?: string;
 }) {
   const id = useId();
   return (
     <div className={className ?? "flex flex-col gap-1"}>
       <label htmlFor={id} className={labelCls}>
         {label}
-        <LabelTooltip text={tooltip} />
       </label>
       {children(id)}
     </div>
@@ -250,7 +232,6 @@ export function ZplEnumCustomSelect<T extends string>({
   defaultLabel,
   optionLabel,
   optionBadge,
-  tooltip,
 }: {
   label: string;
   command: string;
@@ -262,7 +243,6 @@ export function ZplEnumCustomSelect<T extends string>({
   optionLabel: (v: T) => string;
   /** Right-badge; defaults to the value itself (the ZPL parameter letter). */
   optionBadge?: (v: T) => string;
-  tooltip?: string;
 }) {
   const groups = [
     {
@@ -278,7 +258,7 @@ export function ZplEnumCustomSelect<T extends string>({
   ];
   return (
     <ZplField>
-      <ZplCommandLabel text={label} command={command} tooltip={tooltip} />
+      <ZplCommandLabel text={label} command={command} />
       <Select
         aria-label={label}
         value={value ?? ""}
@@ -301,7 +281,6 @@ export function ZplEnumSubCustomSelect<T extends string>({
   optionBadge,
   disabled,
   className,
-  tooltip,
 }: {
   label: string;
   values: readonly T[];
@@ -313,7 +292,6 @@ export function ZplEnumSubCustomSelect<T extends string>({
   disabled?: boolean;
   /** Replaces the default layout, not merged. */
   className?: string;
-  tooltip?: string;
 }) {
   const groups = [
     {
@@ -329,10 +307,7 @@ export function ZplEnumSubCustomSelect<T extends string>({
   ];
   return (
     <div className={className ?? "flex flex-col gap-1"}>
-      <label className={labelCls}>
-        {label}
-        <LabelTooltip text={tooltip} />
-      </label>
+      <label className={labelCls}>{label}</label>
       <Select
         aria-label={label}
         value={value ?? ""}
@@ -355,7 +330,6 @@ export function ZplEnumSegmented<T extends string>({
   defaultLabel,
   optionLabel,
   hint,
-  tooltip,
 }: {
   label: string;
   command: string;
@@ -365,11 +339,10 @@ export function ZplEnumSegmented<T extends string>({
   defaultLabel: string;
   optionLabel: (v: T) => string;
   hint?: ReactNode;
-  tooltip?: string;
 }) {
   return (
     <ZplField>
-      <ZplCommandLabel text={label} command={command} tooltip={tooltip} />
+      <ZplCommandLabel text={label} command={command} />
       <SegmentedControl
         aria-label={label}
         value={value}
@@ -391,7 +364,6 @@ export function ZplBoundedIntInput({
   onChange,
   unit,
   hint,
-  tooltip,
 }: {
   label: string;
   command: string;
@@ -401,7 +373,6 @@ export function ZplBoundedIntInput({
   onChange: (next: number | undefined) => void;
   unit?: string;
   hint?: ReactNode;
-  tooltip?: string;
 }) {
   const id = useId();
   const inputBox = (
@@ -411,7 +382,7 @@ export function ZplBoundedIntInput({
   );
   return (
     <ZplField>
-      <ZplCommandLabel text={label} command={command} htmlFor={id} tooltip={tooltip} />
+      <ZplCommandLabel text={label} command={command} htmlFor={id} />
       {unit
         ? (
           <div className="flex items-center gap-2">

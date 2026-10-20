@@ -494,7 +494,6 @@ const ro = {
     close: 'Închide',
     sendToZebra: 'Trimite la imprimantă',
     instantApply: 'Modificările se aplică imediat',
-    setupScriptPending: 'Nimic nu ajunge la imprimantă până nu este trimis scriptul de configurare. Setările supraviețuiesc unei reporniri doar după ce "Actualizare configurație" din fila Identitate le salvează.',
     wip: 'WIP',
     previewHeading: 'Previzualizare script de configurare',
     previewClear: 'Șterge',

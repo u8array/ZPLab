@@ -494,7 +494,6 @@ const ko = {
     close: '닫기',
     sendToZebra: '프린터로 보내기',
     instantApply: '변경 사항이 즉시 적용됩니다',
-    setupScriptPending: '설정 스크립트를 보내기 전까지는 아무것도 프린터에 도달하지 않습니다. 설정은 식별 탭의 "구성 업데이트"가 저장한 후에만 재시작 후에도 유지됩니다.',
     wip: 'WIP',
     previewHeading: '설정 스크립트 미리보기',
     previewClear: '지우기',

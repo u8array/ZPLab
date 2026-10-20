@@ -494,7 +494,6 @@ const sr = {
     close: 'Затвори',
     sendToZebra: 'Pošalji na štampač',
     instantApply: 'Промене се примењују одмах',
-    setupScriptPending: 'Ništa ne stiže do štampača dok se ne pošalje skripta za podešavanje. Podešavanja preživljavaju ponovno pokretanje samo nakon što ih sačuva "Ažuriranje konfiguracije" na kartici Идентитет.',
     wip: 'WIP',
     previewHeading: 'Преглед скрипте за подешавање',
     previewClear: 'Очисти',
