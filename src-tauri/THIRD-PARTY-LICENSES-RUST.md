@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (446)
+- MIT License (445)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -1081,7 +1081,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Used by:
 
-- [webpki-roots 1.0.8](https://github.com/rustls/webpki-roots)
+- [webpki-roots 1.0.10](https://github.com/rustls/webpki-roots)
 ````
 # Community Data License Agreement - Permissive - Version 2.0
 
@@ -1195,7 +1195,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 Used by:
 
-- [rustls-webpki 0.103.15](https://github.com/rustls/webpki)
+- [rustls-webpki 0.103.16](https://github.com/rustls/webpki)
 ````
 Except as otherwise noted, this project is licensed under the following
 (ISC-style) terms:
@@ -4765,7 +4765,7 @@ SOFTWARE.
 
 Used by:
 
-- [libc 0.2.190](https://github.com/rust-lang/libc)
+- [libc 0.2.191](https://github.com/rust-lang/libc)
 ````
 Copyright (c) The Rust Project Developers
 
@@ -5938,7 +5938,6 @@ Used by:
 - [windows-registry 0.6.1](https://github.com/microsoft/windows-rs)
 - [windows-result 0.4.1](https://github.com/microsoft/windows-rs)
 - [windows-strings 0.5.1](https://github.com/microsoft/windows-rs)
-- [windows-sys 0.52.0](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.59.0](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.60.2](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.61.2](https://github.com/microsoft/windows-rs)
