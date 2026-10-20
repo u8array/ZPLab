@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Määrab sildipikkuse ja anduri läve dünaamilise ümberkalibreerimise pärast sisselülitamist või kandjaosakonna avamist. Võimendusparameeter on välja kuulutatud hilisemale püsivarale.",
+    "hash": "69f3838a",
+    "summary": "Määrab sildipikkuse ja anduri läve dünaamilise ümberkalibreerimise pärast sisselülitamist või kandjaosakonna avamist.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "luba dünaamiline pikkuse kalibreerimine",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "luba dünaamiline läve kalibreerimine",
-          "values": "Y luba, N keela",
-          "default": "Y"
-        },
-        {
-          "meaning": "luba dünaamiline võimenduse kalibreerimine",
           "values": "Y luba, N keela",
           "default": "Y"
         }

@@ -1770,14 +1770,12 @@ describe('parseZPL — printer params', () => {
     expect(parseZPL('^XA^PF33000^XZ', 8).labelConfig.slewDotRows).toBeUndefined();
   });
 
-  it('keeps ^JS out of the per-label config and ~PM, ~PR out of the model', () => {
+  it('keeps the twins ^JS, ~PM and ~PR off the modelled ~JS, ^PM and ^PR', () => {
     const r = parseSingle('^XA^JSA~PMY123456,3~PR2^XZ', 8);
     expect(r.labelConfig.backfeedSequence).toBeUndefined();
     expect(r.labelConfig.mirror).toBeUndefined();
     expect(r.labelConfig.printSpeed).toBeUndefined();
-    expect(r.printerProfile.mediaSensorSelect).toBe('A');
-    expect(commandsOf(r, 'replayRisk')).toEqual(['^JS']);
-    expect(commandsOf(r, 'deviceAction')).toEqual(expect.arrayContaining(['~PMY123456,3', '~PR2']));
+    expect(commandsOf(r, 'deviceAction')).toEqual(expect.arrayContaining(['^JSA', '~PMY123456,3', '~PR2']));
   });
 
   it('routes ~PH/~PP as device actions without touching the model', () => {

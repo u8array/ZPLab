@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Ohjaa etiketin pituuden ja anturikynnyksen dynaamista uudelleenkalibrointia käynnistyksen tai materiaalilokeron avaamisen jälkeen. Vahvistusparametri on ilmoitettu tulevaa laiteohjelmistoa varten.",
+    "hash": "69f3838a",
+    "summary": "Ohjaa etiketin pituuden ja anturikynnyksen dynaamista uudelleenkalibrointia käynnistyksen tai materiaalilokeron avaamisen jälkeen.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "ota käyttöön dynaaminen pituuskalibrointi",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "ota käyttöön dynaaminen kynnysarvokalibrointi",
-          "values": "Y ota käyttöön, N poista käytöstä",
-          "default": "Y"
-        },
-        {
-          "meaning": "ota käyttöön dynaaminen vahvistuskalibrointi",
           "values": "Y ota käyttöön, N poista käytöstä",
           "default": "Y"
         }

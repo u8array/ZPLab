@@ -1100,20 +1100,6 @@ describe('replay-risk report helpers', () => {
     expect(stripped.partial).toEqual(report.partial);
   });
 
-  it('a recall row that switches the media sensor stops batching and stays a page', () => {
-    const rows = (body: string) => `^XA^DFR:T.ZPL^FS^FO10,10^A0N,30,30^FN1^FS^XZ^XA^XFR:T.ZPL^FS${body}^FN1^FDa^FS^XZ^XA^XFR:T.ZPL^FS${body}^FN1^FDb^FS^XZ`;
-    expect(importZplText(rows('~PH'), 8).batch?.dataset.rows).toEqual([['a'], ['b']]);
-    expect(importZplText(rows('^JSA'), 8).batch).toBeUndefined();
-  });
-
-  it('resolveRoutedReport keeps a partial of a routed setup-only page as a document finding', () => {
-    const imported = importZplText('^XA^SS999^SR0300^XZ', 8);
-    expect(imported.report.partial).toEqual(['^SS', '^SR']);
-    const routed = resolveRoutedReport(imported.report, []);
-    expect(routed.partial).toEqual(['^SS', '^SR']);
-    expect(routed.findings.every((f) => f.pageIndex === DOCUMENT_FINDING)).toBe(true);
-  });
-
   it('resolveRoutedReport keeps the dropped-field bucket', () => {
     const { report } = importZplText('^XA^FO10,10^A0N,30,30^FDa^FO10,60^A0N,30,30^FDb^FS^XZ', 8);
     expect(resolveRoutedReport(report, [0]).unterminatedField).toEqual(['^FO10,10']);

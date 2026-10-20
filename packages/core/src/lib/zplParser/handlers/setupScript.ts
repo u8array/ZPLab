@@ -1,8 +1,8 @@
-import { CLOCK_TOLERANCE_RANGE, FONT_CACHE_KB_RANGE, FONT_LINKS_PATH_MAX_LEN, HEAD_CLEANING_INTERVAL_METERS, HEAD_TEST_INTERVAL_RANGE, JH_SLOT_F, JH_SLOT_G, MAINTENANCE_ALERT_DEFAULTS, MAINTENANCE_DISTANCE_MAX_BY_TYPE, MAINTENANCE_MESSAGE_MAX_LEN, PRINTER_NAME_MAX_LEN, PRINTER_PASSWORD_REGEX, PRINTHEAD_RESISTANCE_RANGE, SENSOR_INTENSITY_RANGE, SENSOR_SLOTS, SI_FIELD_BY_SLOT, TEAR_OFF_ADJUST_RANGE, XS_SLOTS, isClockFormat, isClockLanguage, isConfigUpdateAction, isFontCacheType, isMaintenanceAlertPrint, isMaintenanceAlertType, isMaintenanceAlertUnit, isMediaSensorSelect, isModeProtection, isPrinterLocale, isZplMode, setupScriptUnsafeCharRegex, type SensorSlotField } from "../../../types/PrinterProfile";
+import { CLOCK_TOLERANCE_RANGE, FONT_CACHE_KB_RANGE, FONT_LINKS_PATH_MAX_LEN, HEAD_CLEANING_INTERVAL_METERS, HEAD_TEST_INTERVAL_RANGE, JH_SLOT_F, JH_SLOT_G, MAINTENANCE_ALERT_DEFAULTS, MAINTENANCE_DISTANCE_MAX_BY_TYPE, MAINTENANCE_MESSAGE_MAX_LEN, PRINTER_NAME_MAX_LEN, PRINTER_PASSWORD_REGEX, TEAR_OFF_ADJUST_RANGE, isClockFormat, isClockLanguage, isConfigUpdateAction, isFontCacheType, isMaintenanceAlertPrint, isMaintenanceAlertType, isMaintenanceAlertUnit, isModeProtection, isPrinterLocale, isZplMode, setupScriptUnsafeCharRegex } from "../../../types/PrinterProfile";
 import { parseIntOrUndef } from "../../inputParse";
 import { isYesNo } from "../../../types/typeHelpers";
 import { parseRealtimeClock } from "../../realtimeClock";
-import { notePartial, type ParserState } from "../context";
+import type { ParserState } from "../context";
 import { inRange, strParam } from "../helpers";
 import type { Handler } from "../types";
 
@@ -206,60 +206,6 @@ export function createSetupScriptHandlers(s: ParserState): Record<string, Handle
       }
       if (list.length > 0) printerProfile.fontLinks = list;
       else delete printerProfile.fontLinks;
-    },
-    // Keyed with its prefix: ~JS is the backfeed sequence.
-    "^JS"(p) {
-      const v = strParam(p[0]);
-      if (isMediaSensorSelect(v)) printerProfile.mediaSensorSelect = v;
-      else notePartial(s.result, "^JS");
-    },
-    // The spec says nothing about a bad ^SS slot, so it follows ^SI and ^SC: the command changes nothing and the loss is reported.
-    SS(p) {
-      const read = new Map<SensorSlotField, number | undefined>();
-      for (const [i, [field, range]] of SENSOR_SLOTS.entries()) {
-        const text = strParam(p[i]);
-        // An empty slot leaves the calibrated value in force, so it clears the field.
-        const v = text === "" ? undefined : inRange(parseIntOrUndef(text), range);
-        if (text !== "" && v === undefined) {
-          notePartial(s.result, "^SS");
-          return;
-        }
-        read.set(field, v);
-      }
-      for (const [field, v] of read) {
-        if (v === undefined) Reflect.deleteProperty(printerProfile, field);
-        else printerProfile[field] = v;
-      }
-    },
-    // ^SI names one value and sets it, so an empty slot is a loss and not a clear, spec p.338.
-    SI(p) {
-      const field = SI_FIELD_BY_SLOT[strParam(p[0])];
-      const v = inRange(parseIntOrUndef(p[1]), SENSOR_INTENSITY_RANGE);
-      if (field === undefined || v === undefined) notePartial(s.result, "^SI");
-      else printerProfile[field] = v;
-    },
-    XS(p) {
-      // Every slot defaults to Y, spec p.374, so a bare ^XS must not vanish on re-emit.
-      const bare = p.every((v) => v.trim() === "");
-      const values = XS_SLOTS.map((_field, i) => (bare ? "Y" : strParam(p[i])));
-      if (values.some((v) => v !== "" && !isYesNo(v)) || p.slice(XS_SLOTS.length).some((v) => v.trim() !== "")) {
-        notePartial(s.result, "^XS");
-        return;
-      }
-      XS_SLOTS.forEach((field, i) => {
-        const v = values[i] ?? "";
-        if (isYesNo(v)) printerProfile[field] = v;
-        else Reflect.deleteProperty(printerProfile, field);
-      });
-    },
-    SR(p) {
-      const text = strParam(p[0]);
-      if (text === "") delete printerProfile.printheadResistance;
-      else {
-        const v = inRange(parseIntOrUndef(text), PRINTHEAD_RESISTANCE_RANGE);
-        if (v === undefined) notePartial(s.result, "^SR");
-        else printerProfile.printheadResistance = v;
-      }
     },
     // ^JH: only f/g modelled; other slots are runtime reset flags.
     // g is a 0..16 index into HEAD_CLEANING_INTERVAL_METERS per spec.

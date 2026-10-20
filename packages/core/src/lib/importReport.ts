@@ -50,9 +50,7 @@ export function resolveRoutedReport(
     }
     if (f.pageIndex === DOCUMENT_FINDING) return [f];
     const newIndex = newIndexOf.get(f.pageIndex);
-    // A setup-only page leaves with its block, but what the profile could not take is still lost.
-    if (newIndex === undefined) return f.kind === 'partial' ? [{ ...f, pageIndex: DOCUMENT_FINDING }] : [];
-    return [{ ...f, pageIndex: newIndex }];
+    return newIndex === undefined ? [] : [{ ...f, pageIndex: newIndex }];
   });
   return reportOf(findings);
 }

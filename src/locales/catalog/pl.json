@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Steruje dynamiczną rekalibracją długości etykiety i progu czujnika po włączeniu zasilania lub otwarciu komory nośnika. Parametr wzmocnienia jest zapowiedziany dla późniejszego firmware.",
+    "hash": "69f3838a",
+    "summary": "Steruje dynamiczną rekalibracją długości etykiety i progu czujnika po włączeniu zasilania lub otwarciu komory nośnika.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "włączenie dynamicznej kalibracji długości",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "włączenie dynamicznej kalibracji progu",
-          "values": "Y włącz, N wyłącz",
-          "default": "Y"
-        },
-        {
-          "meaning": "włączenie dynamicznej kalibracji wzmocnienia",
           "values": "Y włącz, N wyłącz",
           "default": "Y"
         }

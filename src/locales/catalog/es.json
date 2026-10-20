@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Controla la recalibración dinámica de la longitud de la etiqueta y el umbral del sensor tras el encendido o la apertura del compartimento de material. El parámetro de ganancia está anunciado para un firmware posterior.",
+    "hash": "69f3838a",
+    "summary": "Controla la recalibración dinámica de la longitud de la etiqueta y el umbral del sensor tras el encendido o la apertura del compartimento de material.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "activar calibración dinámica de longitud",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "activar calibración dinámica de umbral",
-          "values": "Y activar, N desactivar",
-          "default": "Y"
-        },
-        {
-          "meaning": "activar calibración dinámica de ganancia",
           "values": "Y activar, N desactivar",
           "default": "Y"
         }

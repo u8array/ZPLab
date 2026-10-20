@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Controlează recalibrarea dinamică a lungimii etichetei și a pragului senzorului, după pornire sau după deschiderea compartimentului de suport. Parametrul de câștig este anunțat pentru un firmware ulterior.",
+    "hash": "69f3838a",
+    "summary": "Controlează recalibrarea dinamică a lungimii etichetei și a pragului senzorului, după pornire sau după deschiderea compartimentului de suport.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "activează calibrarea dinamică a lungimii",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "activează calibrarea dinamică a pragului",
-          "values": "Y activează, N dezactivează",
-          "default": "Y"
-        },
-        {
-          "meaning": "activează calibrarea dinamică a câștigului",
           "values": "Y activează, N dezactivează",
           "default": "Y"
         }

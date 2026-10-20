@@ -5312,8 +5312,9 @@
         "example": "^JSA"
       },
       "support": {
-        "web": "yes",
-        "desktop": "yes"
+        "web": "no",
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5583,8 +5584,9 @@
         "example": "^SI1,120"
       },
       "support": {
-        "web": "yes",
-        "desktop": "yes"
+        "web": "no",
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5669,8 +5671,9 @@
         "example": "^SR0675"
       },
       "support": {
-        "web": "yes",
-        "desktop": "yes"
+        "web": "no",
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5742,8 +5745,9 @@
         "example": "^SS075,045,070,0812,090,085,060,055,075"
       },
       "support": {
-        "web": "yes",
-        "desktop": "yes"
+        "web": "no",
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {
@@ -5996,9 +6000,9 @@
       ],
       "section": "Hardware control & calibration",
       "title": "set dynamic media calibration",
-      "summary": "Controls dynamic recalibration of label length and sensor threshold after power-up or media-compartment open. The gain slot is announced for a later firmware.",
+      "summary": "Controls dynamic recalibration of label length and sensor threshold after power-up or media-compartment open.",
       "reference": {
-        "syntax": "^XSa,b,c",
+        "syntax": "^XSa,b",
         "params": [
           {
             "name": "a",
@@ -6011,19 +6015,14 @@
             "meaning": "enable dynamic threshold calibration",
             "values": "Y enable, N disable",
             "default": "Y"
-          },
-          {
-            "name": "c",
-            "meaning": "enable dynamic gain calibration",
-            "values": "Y enable, N disable",
-            "default": "Y"
           }
         ],
-        "example": "^XSY,Y,Y"
+        "example": "^XSY,Y"
       },
       "support": {
-        "web": "yes",
-        "desktop": "yes"
+        "web": "no",
+        "desktop": "planned",
+        "docker": "planned"
       }
     },
     {

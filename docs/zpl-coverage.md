@@ -241,7 +241,7 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `~JG` | graphing sensor calibration | `[ ]` | `[~]` | `[~]` |
 | `^JI` / `~JI` | start ZBI | `[ ]` | `[~]` | `[~]` |
 | `^JJ` | set auxiliary port | `[ ]` | `[~]` | `[~]` |
-| `^JS` | sensor select | `[x]` | `[x]` | `[x]` |
+| `^JS` | sensor select | `[ ]` | `[~]` | `[~]` |
 | `~JL` | set label length | `[ ]` | `[~]` | `[~]` |
 | `^JM` | dots per millimeter | `[x]` | `[x]` | `[x]` |
 | `~JN` | printhead test fatal | `[ ]` | `[~]` | `[~]` |
@@ -252,18 +252,18 @@ Printer-side control, calibration and device actions; most need a connection or 
 | `~JX` | cancel partial format | `[ ]` | `[~]` | `[~]` |
 | `~RO` | reset advanced counter | `[ ]` | `[~]` | `[~]` |
 | `^SC` | set serial communications | `[ ]` | `[~]` | `[~]` |
-| `^SI` | set sensor intensity | `[x]` | `[x]` | `[x]` |
+| `^SI` | set sensor intensity | `[ ]` | `[~]` | `[~]` |
 | `^SP` | start print at dot row, throughput hint only | `[ ]` | `[ ]` | `[ ]` |
 | `^SQ` | halt ZebraNet alert | `[ ]` | `[~]` | `[~]` |
-| `^SR` | set printhead resistance | `[x]` | `[x]` | `[x]` |
-| `^SS` | set media sensors | `[x]` | `[x]` | `[x]` |
+| `^SR` | set printhead resistance | `[ ]` | `[~]` | `[~]` |
+| `^SS` | set media sensors | `[ ]` | `[~]` | `[~]` |
 | `^SX` | set ZebraNet alert | `[ ]` | `[~]` | `[~]` |
 | `^TO` | transfer object | `[ ]` | `[~]` | `[~]` |
 | `~WC` | print configuration label | `[ ]` | `[~]` | `[~]` |
 | `^WD` | print directory label | `[ ]` | `[~]` | `[~]` |
 | `~WQ` | write query | `[ ]` | `[~]` | `[~]` |
 | `^KV` | cutter and presenter settings, KR403 only | `[ ]` | `[ ]` | `[ ]` |
-| `^XS` | set dynamic media calibration | `[x]` | `[x]` | `[x]` |
+| `^XS` | set dynamic media calibration | `[ ]` | `[~]` | `[~]` |
 | `~PM` | decommissioning mode | `[ ]` | `[~]` | `[~]` |
 | `^ZZ` | printer sleep, PA400 and PT400 only | `[ ]` | `[ ]` | `[ ]` |
 | `^CP` | eject or retract a presented page, KR403 only | `[ ]` | `[ ]` | `[ ]` |

@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Kontrolē etiķetes garuma un sensora robežvērtības dinamisku pārkalibrēšanu pēc ieslēgšanas vai materiāla nodalījuma atvēršanas. Pastiprinājuma parametrs ir paziņots turpmākam aparātprogrammatūras laidienam.",
+    "hash": "69f3838a",
+    "summary": "Kontrolē etiķetes garuma un sensora robežvērtības dinamisku pārkalibrēšanu pēc ieslēgšanas vai materiāla nodalījuma atvēršanas.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "iespējot dinamisku garuma kalibrēšanu",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "iespējot dinamisku sliekšņa kalibrēšanu",
-          "values": "Y iespējot, N atspējot",
-          "default": "Y"
-        },
-        {
-          "meaning": "iespējot dinamisku stiprinājuma kalibrēšanu",
           "values": "Y iespējot, N atspējot",
           "default": "Y"
         }

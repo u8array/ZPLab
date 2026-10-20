@@ -437,22 +437,6 @@ describe("generateSetupScript — output shape", () => {
       "tearOffAdjust",
       "reprintAfterError",
       "headTestInterval",
-      "mediaSensorSelect",
-      "sensorWebThreshold",
-      "sensorMediaThreshold",
-      "sensorRibbonThreshold",
-      "sensorLabelLengthDots",
-      "sensorMediaLedIntensity",
-      "sensorRibbonLedIntensity",
-      "sensorMarkThreshold",
-      "sensorMarkMediaThreshold",
-      "sensorMarkLedIntensity",
-      "sensorBrightness",
-      "sensorBaseline",
-      "dynamicCalibrationLength",
-      "dynamicCalibrationThreshold",
-      "dynamicCalibrationGain",
-      "printheadResistance",
       "setRealtimeClock",
       "useCurrentTimeForClock",
       "clockFormat",
@@ -483,48 +467,6 @@ describe("generateSetupScript — output shape", () => {
       "modeProtection",
       "modeProtectionExplicit",
     ]);
-  });
-
-  it("emits the sensor commands as the spec writes them", () => {
-    const sensors = {
-      mediaSensorSelect: "T", sensorWebThreshold: 75, sensorMediaThreshold: 45, sensorRibbonThreshold: 70, sensorLabelLengthDots: 812,
-      sensorMediaLedIntensity: 90, sensorRibbonLedIntensity: 85, sensorMarkThreshold: 60, sensorMarkMediaThreshold: 55, sensorMarkLedIntensity: 75,
-      sensorBrightness: 120, sensorBaseline: 30, dynamicCalibrationLength: "N", dynamicCalibrationThreshold: "Y", dynamicCalibrationGain: "N", printheadResistance: 675, configurationUpdate: "S",
-    } as const;
-    const script = generateSetupScript(sensors);
-    expect(script).toContain("^JST\n^SS075,045,070,0812,090,085,060,055,075\n^SI1,120\n^SI2,30\n^XSN,Y,N\n^SR0675");
-    expect(script.indexOf("^SR0675")).toBeLessThan(script.indexOf("^JUS"));
-    expect(generateSetupScript({})).not.toMatch(/\^(JS|SS|SI|XS|SR)/);
-    expect(parseZPL(script).printerProfile).toEqual(sensors);
-    for (const [partial, wire] of [
-      [{ sensorLabelLengthDots: 812 }, "^SS,,,0812"],
-      [{ sensorBaseline: 30 }, "^SI2,30"],
-      [{ dynamicCalibrationThreshold: "N" }, "^XS,N"],
-      [{ dynamicCalibrationGain: "N" }, "^XS,,N"],
-    ] as const) {
-      const out = generateSetupScript(partial);
-      expect(out).toContain(wire);
-      expect(parseZPL(out).printerProfile).toEqual(partial);
-    }
-  });
-
-  it("applies calibration commands the way the printer does: a bad value changes nothing, an empty slot clears, a bare ^XS means Y", () => {
-    const { printerProfile, pages } = parseZPL("^XA^SS075,045,070,0812,090,085,060,055,075^SS,50,,,,300^SI3,10^SI1,200^SI2,40^XSY,,Y^XSQ^SR0400^JSB^XZ");
-    expect(printerProfile).toEqual({
-      sensorWebThreshold: 75, sensorMediaThreshold: 45, sensorRibbonThreshold: 70, sensorLabelLengthDots: 812,
-      sensorMediaLedIntensity: 90, sensorRibbonLedIntensity: 85, sensorMarkThreshold: 60, sensorMarkMediaThreshold: 55, sensorMarkLedIntensity: 75,
-      sensorBaseline: 40,
-      dynamicCalibrationLength: "Y",
-      dynamicCalibrationGain: "Y",
-    });
-    expect(parseZPL("^XA^SS075,045^SS,050,,,,120^XZ").printerProfile).toEqual({ sensorMediaThreshold: 50, sensorRibbonLedIntensity: 120 });
-    expect(parseZPL("^XA^XS^XZ").printerProfile).toEqual({ dynamicCalibrationLength: "Y", dynamicCalibrationThreshold: "Y", dynamicCalibrationGain: "Y" });
-    expect(parseZPL("^XA^XSY,N^XSQ^XZ").printerProfile).toEqual({ dynamicCalibrationLength: "Y", dynamicCalibrationThreshold: "N" });
-    expect(parseZPL("^XA^XSY,N,N^XS,,,Y^XZ").printerProfile).toEqual({ dynamicCalibrationLength: "Y", dynamicCalibrationThreshold: "N", dynamicCalibrationGain: "N" });
-    expect(parseZPL("^XA^SI1,120^SI1,200^XZ").printerProfile).toEqual({ sensorBrightness: 120 });
-    expect(parseZPL("^XA^SR0675^SR9999^XZ").printerProfile).toEqual({ printheadResistance: 675 });
-    expect(pages[0]?.findings.filter((f) => f.kind === "partial").map((f) => f.command)).toEqual(["^SS", "^SI", "^XS", "^SR", "^JS"]);
-    expect(pages[0]?.findings.filter((f) => f.kind === "replayRisk").map((f) => f.command)).toContain("^JS");
   });
 
   it("emits ^CO with only the slots the profile sets (parse-generate identity)", () => {

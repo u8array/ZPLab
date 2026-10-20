@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Styrer dynamisk rekalibrering av etikettlengde og sensorterskel etter oppstart eller åpning av materialrommet. Gain-parameteren er annonsert for en senere firmware.",
+    "hash": "69f3838a",
+    "summary": "Styrer dynamisk rekalibrering av etikettlengde og sensorterskel etter oppstart eller åpning av materialrommet.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "aktiver dynamisk lengdekalibrering",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "aktiver dynamisk terskelkalibrering",
-          "values": "Y aktiver, N deaktiver",
-          "default": "Y"
-        },
-        {
-          "meaning": "aktiver dynamisk gainkalibrering",
           "values": "Y aktiver, N deaktiver",
           "default": "Y"
         }

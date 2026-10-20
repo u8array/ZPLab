@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Açılış veya medya bölmesi açıldıktan sonra etiket uzunluğunun ve sensör eşiğinin dinamik yeniden kalibrasyonunu denetler. Kazanç parametresi daha sonraki bir firmware için duyuruldu.",
+    "hash": "69f3838a",
+    "summary": "Açılış veya medya bölmesi açıldıktan sonra etiket uzunluğunun ve sensör eşiğinin dinamik yeniden kalibrasyonunu denetler.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "dinamik uzunluk kalibrasyonunu etkinleştir",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "dinamik eşik kalibrasyonunu etkinleştir",
-          "values": "Y etkinleştir, N devre dışı bırak",
-          "default": "Y"
-        },
-        {
-          "meaning": "dinamik kazanç kalibrasyonunu etkinleştir",
           "values": "Y etkinleştir, N devre dışı bırak",
           "default": "Y"
         }

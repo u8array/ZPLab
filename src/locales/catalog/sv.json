@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Styr dynamisk omkalibrering av etikettlängd och sensortröskelvärde efter start eller när medielocket öppnats. Gain-parametern är aviserad för en senare firmware.",
+    "hash": "69f3838a",
+    "summary": "Styr dynamisk omkalibrering av etikettlängd och sensortröskelvärde efter start eller när medielocket öppnats.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "aktivera dynamisk längdkalibrering",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "aktivera dynamisk tröskelkalibrering",
-          "values": "Y aktivera, N inaktivera",
-          "default": "Y"
-        },
-        {
-          "meaning": "aktivera dynamisk gainkalibrering",
           "values": "Y aktivera, N inaktivera",
           "default": "Y"
         }

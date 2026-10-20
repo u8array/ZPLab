@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Steuert die dynamische Neukalibrierung von Etikettenlänge und Sensorschwelle nach dem Einschalten oder Öffnen des Medienfachs. Der Verstärkungsparameter ist für eine spätere Firmware angekündigt.",
+    "hash": "69f3838a",
+    "summary": "Steuert die dynamische Neukalibrierung von Etikettenlänge und Sensorschwelle nach dem Einschalten oder Öffnen des Medienfachs.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "dynamische Längenkalibrierung aktivieren",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "dynamische Schwellwertkalibrierung aktivieren",
-          "values": "Y aktivieren, N deaktivieren",
-          "default": "Y"
-        },
-        {
-          "meaning": "dynamische Verstärkungskalibrierung aktivieren",
           "values": "Y aktivieren, N deaktivieren",
           "default": "Y"
         }

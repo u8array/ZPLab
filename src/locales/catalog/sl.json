@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Nadzoruje dinamično ponovno umerjanje dolžine etikete in praga senzorja po vklopu ali odprtju predala za medij. Parameter ojačanja je napovedan za poznejšo strojno programsko opremo.",
+    "hash": "69f3838a",
+    "summary": "Nadzoruje dinamično ponovno umerjanje dolžine etikete in praga senzorja po vklopu ali odprtju predala za medij.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "omogoči dinamično umerjanje dolžine",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "omogoči dinamično umerjanje praga",
-          "values": "Y omogoči, N onemogoči",
-          "default": "Y"
-        },
-        {
-          "meaning": "omogoči dinamično umerjanje ojačanja",
           "values": "Y omogoči, N onemogoči",
           "default": "Y"
         }

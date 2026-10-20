@@ -3,8 +3,6 @@ import {
   JH_SLOT_COUNT,
   JH_SLOT_F,
   JH_SLOT_G,
-  SENSOR_SLOTS,
-  XS_SLOTS,
   type PrinterProfile,
 } from '@zplab/core/types/PrinterProfile';
 import { formatFontDownloadFromPath } from '@zplab/core/lib/customFonts';
@@ -27,8 +25,6 @@ import { formatRealtimeClockForZpl, toLocalIsoString } from '@zplab/core/lib/rea
  *  kept rather than skipped: emitting the documented default is the
  *  only way to be sure the field actually lands there after an
  *  earlier script left the printer in a non-default state. */
-
-const pad = (v: number | undefined, width: number): string => (v === undefined ? '' : String(v).padStart(width, '0'));
 
 type SetupScriptEntry =
   | { kind: 'emit'; channel: 'tilde'; emit: (p: PrinterProfile) => string | null }
@@ -73,7 +69,7 @@ const SETUP_SCRIPT_EMITTERS = {
       if (p.tearOffAdjust === undefined) return null;
       const v = p.tearOffAdjust;
       const sign = v < 0 ? '-' : '';
-      const mag = pad(Math.abs(v), 3);
+      const mag = String(Math.abs(v)).padStart(3, '0');
       return `~TA${sign}${mag}`;
     },
   },
@@ -88,59 +84,6 @@ const SETUP_SCRIPT_EMITTERS = {
     channel: 'block',
     scope: 'persistent',
     emit: (p) => p.headTestInterval !== undefined ? `^JT${p.headTestInterval}` : null,
-  },
-  mediaSensorSelect: {
-    kind: 'emit',
-    channel: 'block',
-    scope: 'persistent',
-    emit: (p) => p.mediaSensorSelect !== undefined ? `^JS${p.mediaSensorSelect}` : null,
-  },
-  sensorWebThreshold: {
-    kind: 'emit',
-    channel: 'block',
-    scope: 'persistent',
-    emit: (p) => {
-      const slots = trimTrailingEmptySlots(SENSOR_SLOTS.map(([field, , width]) => pad(p[field], width)));
-      return slots.length > 0 ? `^SS${slots.join(',')}` : null;
-    },
-  },
-  sensorMediaThreshold: { kind: 'foldedInto', target: 'sensorWebThreshold' },
-  sensorRibbonThreshold: { kind: 'foldedInto', target: 'sensorWebThreshold' },
-  sensorLabelLengthDots: { kind: 'foldedInto', target: 'sensorWebThreshold' },
-  sensorMediaLedIntensity: { kind: 'foldedInto', target: 'sensorWebThreshold' },
-  sensorRibbonLedIntensity: { kind: 'foldedInto', target: 'sensorWebThreshold' },
-  sensorMarkThreshold: { kind: 'foldedInto', target: 'sensorWebThreshold' },
-  sensorMarkMediaThreshold: { kind: 'foldedInto', target: 'sensorWebThreshold' },
-  sensorMarkLedIntensity: { kind: 'foldedInto', target: 'sensorWebThreshold' },
-  sensorBrightness: {
-    kind: 'emit',
-    channel: 'block',
-    scope: 'persistent',
-    emit: (p) => {
-      const lines = [
-        ...(p.sensorBrightness !== undefined ? [`^SI1,${p.sensorBrightness}`] : []),
-        ...(p.sensorBaseline !== undefined ? [`^SI2,${p.sensorBaseline}`] : []),
-      ];
-      return lines.length > 0 ? lines.join('\n') : null;
-    },
-  },
-  sensorBaseline: { kind: 'foldedInto', target: 'sensorBrightness' },
-  dynamicCalibrationLength: {
-    kind: 'emit',
-    channel: 'block',
-    scope: 'persistent',
-    emit: (p) => {
-      const slots = trimTrailingEmptySlots(XS_SLOTS.map((field) => p[field] ?? ''));
-      return slots.length > 0 ? `^XS${slots.join(',')}` : null;
-    },
-  },
-  dynamicCalibrationThreshold: { kind: 'foldedInto', target: 'dynamicCalibrationLength' },
-  dynamicCalibrationGain: { kind: 'foldedInto', target: 'dynamicCalibrationLength' },
-  printheadResistance: {
-    kind: 'emit',
-    channel: 'block',
-    scope: 'persistent',
-    emit: (p) => p.printheadResistance !== undefined ? `^SR${pad(p.printheadResistance, 4)}` : null,
   },
   setRealtimeClock: {
     kind: 'emit',

@@ -3621,10 +3621,10 @@
     }
   },
   "^XS": {
-    "hash": "8f9e3e07",
-    "summary": "Riadi dynamickú rekalibráciu dĺžky etikety a prahu senzora po zapnutí alebo otvorení priestoru pre médium. Parameter zisku je ohlásený pre neskorší firmware.",
+    "hash": "69f3838a",
+    "summary": "Riadi dynamickú rekalibráciu dĺžky etikety a prahu senzora po zapnutí alebo otvorení priestoru pre médium.",
     "reference": {
-      "hash": "4c3c08cd",
+      "hash": "90fbe297",
       "params": [
         {
           "meaning": "zapnúť dynamickú kalibráciu dĺžky",
@@ -3633,11 +3633,6 @@
         },
         {
           "meaning": "zapnúť dynamickú kalibráciu prahu",
-          "values": "Y zapnúť, N vypnúť",
-          "default": "Y"
-        },
-        {
-          "meaning": "zapnúť dynamickú kalibráciu zisku",
           "values": "Y zapnúť, N vypnúť",
           "default": "Y"
         }

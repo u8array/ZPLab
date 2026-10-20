@@ -18,6 +18,7 @@ export function createUnsupportedHandlers(s: ParserState): Record<string, Handle
     "~PP": noop,
     "~PM": noop,
     "~PR": noop,
+    "^JS": noop,
     // A delete decides what a later recall resolves.
     ID: (p) => deleteStoredObjects(s, p[0] ?? ""),
     IS: noop,
