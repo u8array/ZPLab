@@ -4,10 +4,10 @@ import { describe, it, expect } from "vitest";
 // SDK, so the MCP server, the REST server and a browser can all consume it.
 const ALLOWED = [/^\.\//, /^@zplab\/core\//, /^zod$/, /^bwip-js\//, /^vitest$/];
 
-// All import forms (static `from`, side-effect, dynamic import()). A static
-// import is matched from its line start, so quoted prose never counts.
+// All import forms (static `from`, re-export `from`, side-effect, dynamic
+// import()). A static form is matched from its line start, so quoted prose never counts.
 const importSpecs = (src: string): string[] => [
-  ...[...src.matchAll(/^import\s[^'"]*?from\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
+  ...[...src.matchAll(/^(?:import|export)\s[^'"]*?from\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
   ...[...src.matchAll(/^\s*import\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
   ...[...src.matchAll(/import\(\s*['"]([^'"]+)['"]\s*\)/g)].map((m) => m[1] ?? ""),
 ];

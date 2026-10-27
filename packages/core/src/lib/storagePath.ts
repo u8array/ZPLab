@@ -23,8 +23,11 @@ export function sanitizeStorageName(raw: string): string {
 
 /** ^DF stores under a name of up to 16 chars; a missing device means R: (p.174). */
 export const MAX_STORED_FORMAT_NAME_LEN = 16;
-const storedFormatPathRe = (maxLen: number) =>
-  new RegExp(`^(?:[${STORAGE_DEVICES.join("")}]:)?[A-Z0-9_]{1,${maxLen}}(?:\\.ZPL)?$`, "i");
+// No regex flag: the pattern is published as a JSON Schema pattern, which has none.
+const storedFormatPathRe = (maxLen: number) => {
+  const devices = STORAGE_DEVICES.join("");
+  return new RegExp(`^(?:[${devices}${devices.toLowerCase()}]:)?[A-Za-z0-9_]{1,${maxLen}}(?:\\.[Zz][Pp][Ll])?$`);
+};
 export const STORED_FORMAT_PATH_RE = storedFormatPathRe(MAX_STORED_FORMAT_NAME_LEN);
 /** ^XF recalls a name of 8 chars at most (p.372). */
 const RECALLABLE_FORMAT_PATH_RE = storedFormatPathRe(MAX_STORAGE_NAME_LEN);

@@ -2,6 +2,7 @@
 // envelope every design-shaped tool parses first.
 
 import { z } from "zod";
+import { schemaIssues } from "@zplab/core/lib/schemaIssues";
 import {
   parseDesignFile,
   designFileErrors,
@@ -33,7 +34,7 @@ export { buildVariables, propIssues, typeIssues };
 
 /** A key at the wrong level is refused by name, since a plain object would strip it and the
  *  model would chase the symptoms elsewhere. `props` stays open because the notes report it. */
-function strictShape<T extends z.ZodRawShape>(shape: T, noun: string, of: string, belongs: string): z.ZodObject<T, z.core.$strict> {
+export function strictShape<T extends z.ZodRawShape>(shape: T, noun: string, of: string, belongs: string): z.ZodObject<T, z.core.$strict> {
   const takes = Object.keys(shape);
   return z.strictObject(shape, {
     error: (issue) => {
@@ -66,7 +67,7 @@ export const objectInputSchema: z.ZodType<ObjectInput> = strictEntry({
   props: z.record(z.string(), z.unknown()).optional(),
 }, "An object entry", INSIDE_PROPS);
 
-const dpmmSchema = z.literal([...DPMM_VALUES]);
+export const dpmmSchema = z.literal([...DPMM_VALUES]);
 
 /** A reusable slot: content referencing it as `«name»` emits ^FN, so the
  *  same design prints many rows. Slot numbers are assigned when omitted. */
@@ -127,6 +128,11 @@ export const exportZplInputSchema = designFileEnvelopeSchema.extend({
 export interface ToolError {
   ok: false;
   errors: string[];
+}
+
+/** A schema refusal in the ToolError shape, paths relative to `root`. */
+export function schemaToolError(error: z.ZodError, root: string): ToolError {
+  return { ok: false, errors: schemaIssues(error, root) };
 }
 
 /** Re-checks the dpmm/dimension bounds on a parsed label: the core design-file

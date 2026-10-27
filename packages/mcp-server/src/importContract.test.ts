@@ -15,11 +15,10 @@ const ALLOWED = [
   /^vitest$/,
 ];
 
-// All import forms (static `from`, side-effect, dynamic import()), so a breach
-// can't hide behind an unscanned form.
+// All import forms (static `from`, re-export `from`, side-effect, dynamic
+// import()). A static form is matched from its line start, so quoted prose never counts.
 const importSpecs = (src: string): string[] => [
-  // The closing `";` keeps prose like `"... from " +` in tool descriptions out.
-  ...[...src.matchAll(/from\s+['"]([^'"]+)['"];/g)].map((m) => m[1] ?? ""),
+  ...[...src.matchAll(/^(?:import|export)\s[^'"]*?from\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
   ...[...src.matchAll(/^\s*import\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
   ...[...src.matchAll(/import\(\s*['"]([^'"]+)['"]\s*\)/g)].map((m) => m[1] ?? ""),
 ];
