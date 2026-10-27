@@ -8,5 +8,5 @@ Hromadná tlač z CSV, Excelu, SQLite, PostgreSQL a MySQL
 Tlač cez sieť a cez zaraďovač tlače
 Export ako PDF alebo obrázok
 Nastavenia tlačiarne pre jednotlivý štítok alebo ako inštalačný skript
-32 jazykov rozhrania, svetlý a tmavý motív
+33 jazykov rozhrania, svetlý a tmavý motív
 Server MCP pre asistentov AI

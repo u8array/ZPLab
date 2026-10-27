@@ -8,5 +8,5 @@ Seriendruck aus CSV, Excel, SQLite, PostgreSQL und MySQL
 Druck über das Netzwerk und die Druckwarteschlange
 Export als PDF oder Bild
 Druckereinstellungen pro Etikett oder als Setup-Skript
-32 Oberflächensprachen, helles und dunkles Farbschema
+33 Oberflächensprachen, helles und dunkles Farbschema
 MCP-Server für KI-Assistenten

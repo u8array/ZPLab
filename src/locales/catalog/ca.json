@@ -1,0 +1,4686 @@
+{
+  "^XA": {
+    "hash": "f3d074de",
+    "summary": "Inicia un format d’etiqueta nou. Les ordres posteriors defineixen els camps, la gestió del material i el comportament de la impressora per a aquesta etiqueta."
+  },
+  "^XZ": {
+    "hash": "bf5bc6ff",
+    "summary": "Tanca el format d’etiqueta actual i l’envia a imprimir."
+  },
+  "^PW": {
+    "hash": "872ad16c",
+    "summary": "Estableix l’amplada imprimible en punts. La impressora retalla el contingut que supera aquesta amplada.",
+    "reference": {
+      "hash": "7f2591f0",
+      "params": [
+        {
+          "meaning": "amplada d’impressió en punts",
+          "values": "de 2 a l’amplada de l’etiqueta",
+          "default": "últim valor desat"
+        }
+      ]
+    }
+  },
+  "^LL": {
+    "hash": "86c085dc",
+    "summary": "Estableix la longitud de l’etiqueta en punts i defineix on acaba el format imprimible.",
+    "reference": {
+      "hash": "97877e8d",
+      "params": [
+        {
+          "meaning": "longitud de l’etiqueta en punts",
+          "values": "d’1 a 32000",
+          "default": "ajust de la impressora"
+        },
+        {
+          "meaning": "s’aplica a tot el material",
+          "values": "N només continu, Y tot el material",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^LH": {
+    "hash": "d8a36b68",
+    "summary": "Mou la posició d’origen de l’etiqueta i canvia l’origen de les coordenades dels camps posteriors.",
+    "reference": {
+      "hash": "87ecbcbd",
+      "params": [
+        {
+          "meaning": "posició d’origen de l’etiqueta a l’eix x",
+          "values": "de 0 a 32000",
+          "default": "0 o l’últim valor desat"
+        },
+        {
+          "meaning": "posició d’origen de l’etiqueta a l’eix y",
+          "values": "de 0 a 32000",
+          "default": "0 o l’últim valor desat"
+        }
+      ]
+    }
+  },
+  "^LS": {
+    "hash": "12991cd1",
+    "summary": "Aplica un desplaçament horitzontal a les posicions dels camps per mantenir la compatibilitat amb formats Zebra antics.",
+    "reference": {
+      "hash": "6a356728",
+      "params": [
+        {
+          "meaning": "desplaçament a l’esquerra de totes les posicions de camp",
+          "values": "de -9999 a 9999",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^LT": {
+    "hash": "6d055f3e",
+    "summary": "Afegeix un desplaçament vertical a tot el format respecte de la vora superior del material.",
+    "reference": {
+      "hash": "7fb651cd",
+      "params": [
+        {
+          "meaning": "mou tot el format amunt o avall en files de punts",
+          "values": "de -120 a 120, XiIIIPlus 600 dpi de -240 a 240"
+        }
+      ]
+    }
+  },
+  "^MU": {
+    "hash": "a9e9b73e",
+    "summary": "Estableix les unitats de coordenades en punts, polzades o mil·límetres i permet escalar formats entre resolucions d’impressió.",
+    "reference": {
+      "hash": "ab766c80",
+      "params": [
+        {
+          "meaning": "unitats de coordenades dels camps següents",
+          "values": "D punts, I polzades, M mil·límetres",
+          "default": "D"
+        },
+        {
+          "meaning": "resolució base del format en punts per polzada",
+          "values": "150, 200, 300"
+        },
+        {
+          "meaning": "resolució de destinació de la conversió",
+          "values": "300, 600"
+        }
+      ]
+    }
+  },
+  "^MM": {
+    "hash": "715bf316",
+    "summary": "Estableix el mode de gestió del material després d’imprimir, incloent-hi esquinçament, despreniment, tallador, rebobinatge i aplicador.",
+    "reference": {
+      "hash": "188f7006",
+      "params": [
+        {
+          "meaning": "mode de gestió del material després d’imprimir",
+          "values": "T esquinçament, P despreniment, R rebobinatge, A aplicador, C tallador, D tallador diferit, F rfid, K quiosc",
+          "default": "ajust de la impressora"
+        },
+        {
+          "meaning": "despreniment previ abans de l’etiqueta següent",
+          "values": "N no, Y sí",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^MT": {
+    "hash": "11020285",
+    "summary": "Selecciona el mode de transferència tèrmica o tèrmica directa segons si el material carregat fa servir cinta.",
+    "reference": {
+      "hash": "6bd664fd",
+      "params": [
+        {
+          "meaning": "tipus de material que fa servir la impressora",
+          "values": "T transferència tèrmica, D tèrmica directa"
+        }
+      ]
+    }
+  },
+  "^PQ": {
+    "hash": "2ee04fa7",
+    "summary": "Estableix la quantitat d’impressió, l’agrupació de pauses o talls i les còpies per valor de sèrie.",
+    "reference": {
+      "hash": "45d2bc7d",
+      "params": [
+        {
+          "meaning": "nombre total d’etiquetes a imprimir",
+          "values": "d’1 a 99999999",
+          "default": "1"
+        },
+        {
+          "meaning": "etiquetes impreses abans d’una pausa",
+          "values": "d’1 a 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "còpies de cada número de sèrie",
+          "values": "de 0 a 99999999",
+          "default": "0"
+        },
+        {
+          "meaning": "omet el recompte de pausa",
+          "values": "N no, Y sí",
+          "default": "N"
+        },
+        {
+          "meaning": "talla després d’una etiqueta RFID invalidada",
+          "values": "N no, Y sí",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "^LR": {
+    "hash": "2a57db4c",
+    "summary": "Inverteix la impressió dels camps posteriors intercanviant el primer pla i el fons.",
+    "reference": {
+      "hash": "a999a955",
+      "params": [
+        {
+          "meaning": "inverteix el color d’impressió dels camps següents",
+          "values": "N no, Y sí",
+          "default": "N o l’últim valor desat"
+        }
+      ]
+    }
+  },
+  "^PO": {
+    "hash": "747bcecc",
+    "summary": "Gira tot el format d’etiqueta 180 graus.",
+    "reference": {
+      "hash": "954b8a54",
+      "params": [
+        {
+          "meaning": "imprimeix l’etiqueta cap per avall",
+          "values": "N normal, I invertit",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^PM": {
+    "hash": "2e2ee22b",
+    "summary": "Reflecteix horitzontalment l’àrea imprimible.",
+    "reference": {
+      "hash": "12ca3665",
+      "params": [
+        {
+          "meaning": "reflecteix l’etiqueta d’esquerra a dreta",
+          "values": "N no, Y sí",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^PR": {
+    "hash": "dc62c5d8",
+    "summary": "Estableix les velocitats d’impressió, avanç ràpid i retrocés en polzades per segon.",
+    "reference": {
+      "hash": "70b838c7",
+      "params": [
+        {
+          "meaning": "velocitat d’impressió en polzades per segon",
+          "values": "d’1 a 14, o A 2, B 3, C 4, D 6, E 8",
+          "default": "6"
+        },
+        {
+          "meaning": "velocitat d’avanç ràpid d’una etiqueta en blanc",
+          "values": "de 2 a 14",
+          "default": "6"
+        },
+        {
+          "meaning": "velocitat de retrocés després d’imprimir",
+          "values": "de 2 a 14",
+          "default": "2"
+        }
+      ]
+    }
+  },
+  "^FO": {
+    "hash": "630ff472",
+    "summary": "Situa el camp següent respecte de l’origen de l’etiqueta fent servir la cantonada superior esquerra.",
+    "reference": {
+      "hash": "6d7d1abf",
+      "params": [
+        {
+          "meaning": "posició horitzontal en punts",
+          "values": "de 0 a 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "posició vertical en punts",
+          "values": "de 0 a 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "justificació",
+          "values": "0 esquerra, 1 dreta, 2 automàtic",
+          "default": "últim ^FW"
+        }
+      ]
+    }
+  },
+  "^FT": {
+    "hash": "b65c2858",
+    "summary": "Situa el camp següent respecte de la línia de base o la vora del codi de barres, amb un ancoratge estable per als camps girats.",
+    "reference": {
+      "hash": "8622dfba",
+      "params": [
+        {
+          "meaning": "posició horitzontal en punts",
+          "values": "de 0 a 32000",
+          "default": "última posició de camp"
+        },
+        {
+          "meaning": "posició vertical en punts",
+          "values": "de 0 a 32000",
+          "default": "última posició de camp"
+        },
+        {
+          "meaning": "justificació",
+          "values": "0 esquerra, 1 dreta, 2 automàtic",
+          "default": "últim ^FW"
+        }
+      ]
+    }
+  },
+  "^FD": {
+    "hash": "7d45febb",
+    "summary": "Proporciona el contingut del camp actual, incloent-hi text, dades de codis de barres o dades RFID.",
+    "reference": {
+      "hash": "9d86f113",
+      "params": [
+        {
+          "meaning": "contingut del camp",
+          "values": "qualsevol dada imprimible de fins a 3072 bytes, sense caràcters de prefix"
+        }
+      ]
+    }
+  },
+  "^FS": {
+    "hash": "315545e6",
+    "summary": "Acaba la definició del camp actual."
+  },
+  "^FH": {
+    "hash": "cf2f32c2",
+    "summary": "Activa els escapaments hexadecimals dins de les dades del camp per a bytes binaris i caràcters reservats d’ordres.",
+    "reference": {
+      "hash": "ee6b1d75",
+      "params": [
+        {
+          "meaning": "caràcter indicador hexadecimal",
+          "values": "qualsevol caràcter excepte els prefixos de format i control",
+          "default": "_"
+        }
+      ]
+    }
+  },
+  "^FR": {
+    "hash": "8558c364",
+    "summary": "Inverteix el primer pla i el fons només per al camp següent."
+  },
+  "^FX": {
+    "hash": "4b631378",
+    "summary": "Afegeix un camp de comentari. La impressora n’ignora el contingut fins al separador de camp següent.",
+    "reference": {
+      "hash": "fada4673",
+      "params": [
+        {
+          "meaning": "text de comentari que no s’imprimeix",
+          "values": "qualsevol text, ignorat fins a l’ordre següent"
+        }
+      ]
+    }
+  },
+  "^FW": {
+    "hash": "e6ac176b",
+    "summary": "Estableix l’orientació per defecte dels camps i, en microprogramari recent, la justificació per defecte.",
+    "reference": {
+      "hash": "46229c71",
+      "params": [
+        {
+          "meaning": "rotació per defecte dels camps",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "justificació per defecte",
+          "values": "0 esquerra, 1 dreta, 2 automàtic",
+          "default": "automàtic per a ^TB, esquerra en els altres casos"
+        }
+      ]
+    }
+  },
+  "^FB": {
+    "hash": "fff60b96",
+    "summary": "Distribueix les dades del camp dins d’un bloc d’amplada fixa amb controls de nombre de línies, espaiat, sagnat i justificació.",
+    "reference": {
+      "hash": "ad6b7cab",
+      "params": [
+        {
+          "meaning": "amplada del bloc en punts",
+          "values": "de 0 a l’amplada de l’etiqueta",
+          "default": "0"
+        },
+        {
+          "meaning": "màxim de línies",
+          "values": "d’1 a 9999",
+          "default": "1"
+        },
+        {
+          "meaning": "interlineat addicional en punts",
+          "values": "de -9999 a 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "justificació",
+          "values": "L esquerra, C centre, R dreta, J justificat",
+          "default": "L"
+        },
+        {
+          "meaning": "sagnat francès de les línies següents en punts",
+          "values": "de 0 a 9999",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^TB": {
+    "hash": "82215c30",
+    "summary": "Distribueix el text dins d’un rectangle d’amplada i alçada fixes i retalla el que en sobresurt.",
+    "reference": {
+      "hash": "a7cfb9e1",
+      "params": [
+        {
+          "meaning": "rotació del bloc",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^A"
+        },
+        {
+          "meaning": "amplada del bloc en punts",
+          "values": "d’1 a l’amplada de l’etiqueta",
+          "default": "1"
+        },
+        {
+          "meaning": "alçada del bloc en punts",
+          "values": "d’1 a la longitud de l’etiqueta",
+          "default": "1"
+        }
+      ]
+    }
+  },
+  "^FN": {
+    "hash": "82f5e3c1",
+    "summary": "Assigna un número a un camp variable en formats emmagatzemats i recuperats.",
+    "reference": {
+      "hash": "2c9942a6",
+      "params": [
+        {
+          "meaning": "número del camp",
+          "values": "de 0 a 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "text opcional de la sol·licitud KDU",
+          "values": "fins a 255 caràcters alfanumèrics"
+        }
+      ]
+    }
+  },
+  "^FV": {
+    "hash": "ccd42fa5",
+    "summary": "Proporciona dades per a un camp variable. A diferència de les dades ^FD, s’esborren després d’imprimir l’etiqueta.",
+    "reference": {
+      "hash": "a86e6531",
+      "params": [
+        {
+          "meaning": "dades del camp variable",
+          "values": "cadena de 0 a 3072 bytes"
+        }
+      ]
+    }
+  },
+  "^FE": {
+    "hash": "7edab05e",
+    "summary": "Estableix el caràcter per incrustar valors de camps numerats dins de la cadena d’un altre camp.",
+    "reference": {
+      "hash": "2bb6b78f",
+      "params": [
+        {
+          "meaning": "delimitador de concatenació de camps",
+          "values": "qualsevol caràcter excepte els prefixos de format i control",
+          "default": "#"
+        }
+      ]
+    }
+  },
+  "^FC": {
+    "hash": "a867e6f6",
+    "summary": "Estableix els marcadors dels tokens del rellotge en temps real dins de les dades del camp.",
+    "reference": {
+      "hash": "048c0ec1",
+      "params": [
+        {
+          "meaning": "caràcter indicador del rellotge principal",
+          "values": "qualsevol caràcter ASCII",
+          "default": "%"
+        },
+        {
+          "meaning": "caràcter indicador del rellotge secundari",
+          "values": "qualsevol caràcter ASCII diferent d’a"
+        },
+        {
+          "meaning": "caràcter indicador del tercer rellotge",
+          "values": "qualsevol caràcter ASCII diferent d’a i b"
+        }
+      ]
+    }
+  },
+  "^BY": {
+    "hash": "ff32dae7",
+    "summary": "Estableix l’amplada del mòdul, la relació entre barres amples i estretes i l’alçada per defecte dels camps de codi de barres posteriors.",
+    "reference": {
+      "hash": "50612c57",
+      "params": [
+        {
+          "meaning": "amplada del mòdul en punts",
+          "values": "d’1 a 10",
+          "default": "2"
+        },
+        {
+          "meaning": "relació entre barres amples i estretes",
+          "values": "de 2.0 a 3.0 en passos de 0.1",
+          "default": "3.0"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "qualsevol alçada en punts",
+          "default": "10"
+        }
+      ]
+    }
+  },
+  "^FM": {
+    "hash": "3f270842",
+    "summary": "Situa segments PDF417 o MicroPDF417 en orígens específics quan un missatge ocupa diversos símbols.",
+    "reference": {
+      "hash": "32d7679b",
+      "params": [
+        {
+          "meaning": "eix x del primer símbol, repeteix els parells per afegir-ne més",
+          "values": "de 0 a 32000, o e per ometre aquest símbol"
+        },
+        {
+          "meaning": "eix y del primer símbol, repeteix els parells per afegir-ne més",
+          "values": "de 0 a 32000, o e per ometre aquest símbol"
+        }
+      ]
+    }
+  },
+  "^FP": {
+    "hash": "7e64a235",
+    "summary": "Estableix l’ordre dels caràcters del camp actual i pot afegir espaiat addicional entre caràcters.",
+    "reference": {
+      "hash": "ba99b0c7",
+      "params": [
+        {
+          "meaning": "direcció d’impressió",
+          "values": "H horitzontal, V vertical, R invers",
+          "default": "H"
+        },
+        {
+          "meaning": "espai addicional entre caràcters en punts",
+          "values": "de 0 a 9999",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^A0": {
+    "hash": "8e0f770f",
+    "summary": "Selecciona el tipus de lletra escalable resident 0 per al camp següent amb la mida i l’orientació indicades.",
+    "reference": {
+      "hash": "ff3e3dd4",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada dels caràcters en punts",
+          "values": "de 10 a 32000",
+          "default": "últim ^CF"
+        },
+        {
+          "meaning": "amplada dels caràcters en punts",
+          "values": "de 10 a 32000",
+          "default": "últim ^CF"
+        }
+      ]
+    }
+  },
+  "^A": {
+    "hash": "29c0b50a",
+    "summary": "Selecciona un tipus de lletra resident pel seu nom d’un caràcter, amb orientació, alçada i amplada opcionals.",
+    "reference": {
+      "hash": "6ce2e841",
+      "params": [
+        {
+          "meaning": "nom del tipus de lletra",
+          "values": "d’A a Z, de 0 a 9",
+          "default": "últim ^CF"
+        },
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada dels caràcters en punts",
+          "values": "de 10 a 32000 per a escalables, d’1 a 10 vegades l’alçada base per a mapes de bits",
+          "default": "últim ^CF"
+        },
+        {
+          "meaning": "amplada dels caràcters en punts",
+          "values": "de 10 a 32000 per a escalables, d’1 a 10 vegades l’amplada base per a mapes de bits",
+          "default": "últim ^CF"
+        }
+      ]
+    }
+  },
+  "^A@": {
+    "hash": "79b7d2f4",
+    "summary": "Selecciona un fitxer de tipus de lletra emmagatzemat per al camp següent, amb orientació, alçada i amplada opcionals.",
+    "reference": {
+      "hash": "aba82fa4",
+      "params": [
+        {
+          "meaning": "orientació del camp",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada dels caràcters en punts",
+          "values": "de 10 a 32000 per a escalables, d’1 a 10 vegades l’alçada base per a mapes de bits",
+          "default": "últim ^CF"
+        },
+        {
+          "meaning": "amplada dels caràcters en punts",
+          "values": "de 10 a 32000 per a escalables, d’1 a 10 vegades l’amplada base per a mapes de bits",
+          "default": "últim ^CF"
+        },
+        {
+          "meaning": "unitat que conté el tipus de lletra",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del fitxer de tipus de lletra a fer servir",
+          "values": "qualsevol nom vàlid de tipus de lletra",
+          "default": "últim ^CF"
+        },
+        {
+          "meaning": "extensió del fitxer del tipus de lletra",
+          "values": "FNT tipus de lletra, TTF TrueType, TTE extensió TrueType"
+        }
+      ]
+    }
+  },
+  "^CF": {
+    "hash": "c92321e4",
+    "summary": "Estableix el tipus de lletra, l’alçada i l’amplada alternatius per als camps de text que no els especifiquen.",
+    "reference": {
+      "hash": "40bf32e6",
+      "params": [
+        {
+          "meaning": "tipus de lletra per defecte",
+          "values": "d’A a Z, de 0 a 9",
+          "default": "A"
+        },
+        {
+          "meaning": "alçada per defecte dels caràcters en punts",
+          "values": "de 0 a 32000",
+          "default": "9"
+        },
+        {
+          "meaning": "amplada per defecte dels caràcters en punts",
+          "values": "de 0 a 32000",
+          "default": "5 o l’últim valor desat"
+        }
+      ]
+    }
+  },
+  "^CI": {
+    "hash": "b21e3b71",
+    "summary": "Selecciona la codificació per interpretar les dades del camp, incloent-hi pàgines de codis i UTF-8.",
+    "reference": {
+      "hash": "c4702cc7",
+      "params": [
+        {
+          "meaning": "codificació de caràcters a fer servir",
+          "values": "de 0 a 36, 28 UTF-8, 29 UTF-16BE, 30 UTF-16LE",
+          "default": "0"
+        },
+        {
+          "meaning": "posició del caràcter a reassignar",
+          "values": "de 0 a 255",
+          "default": "cap"
+        },
+        {
+          "meaning": "posició del caràcter de substitució",
+          "values": "de 0 a 255",
+          "default": "cap"
+        }
+      ]
+    }
+  },
+  "^PA": {
+    "hash": "01139df4",
+    "summary": "Activa la disposició avançada del text per als camps posteriors, incloent-hi text bidireccional, conformació i funcions OpenType.",
+    "reference": {
+      "hash": "fb3e7ed3",
+      "params": [
+        {
+          "meaning": "origen de glifs per defecte",
+          "values": "0 caràcter d’espai, 1 glif del tipus de lletra",
+          "default": "0"
+        },
+        {
+          "meaning": "disposició de text bidireccional",
+          "values": "0 desactivat, 1 activat",
+          "default": "0"
+        },
+        {
+          "meaning": "conformació de caràcters",
+          "values": "0 desactivat, 1 activat",
+          "default": "0"
+        },
+        {
+          "meaning": "compatibilitat amb taules OpenType",
+          "values": "0 desactivat, 1 activat",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^CW": {
+    "hash": "0e41c729",
+    "summary": "Assigna un nom de tipus de lletra d’un caràcter a un fitxer de tipus de lletra emmagatzemat.",
+    "reference": {
+      "hash": "83fde160",
+      "params": [
+        {
+          "meaning": "lletra del tipus de lletra a afegir o substituir",
+          "values": "d’A a Z, de 0 a 9"
+        },
+        {
+          "meaning": "unitat on desar el tipus de lletra",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del fitxer del tipus de lletra emmagatzemat",
+          "values": "fins a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer del tipus de lletra",
+          "values": "FNT tipus de lletra, TTF TrueType, TTE extensió TrueType"
+        }
+      ]
+    }
+  },
+  "^CO": {
+    "hash": "737205eb",
+    "summary": "Estableix la mida de la memòria cau dels glifs escalables representats per accelerar la impressió repetida de tipus de lletra grans.",
+    "reference": {
+      "hash": "9df7f1f9",
+      "params": [
+        {
+          "meaning": "memòria cau de caràcters activada",
+          "values": "N no, Y sí",
+          "default": "Y"
+        },
+        {
+          "meaning": "memòria cau addicional en K",
+          "values": "d’1 a 9999",
+          "default": "40"
+        },
+        {
+          "meaning": "tipus de memòria intermèdia de la memòria cau",
+          "values": "0 tipus de lletra normals, 1 tipus de lletra asiàtics",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^FL": {
+    "hash": "c18f889f",
+    "summary": "Defineix cadenes de tipus de lletra TrueType alternatius per quan el tipus de lletra base no té un glif.",
+    "reference": {
+      "hash": "727a92db",
+      "params": [
+        {
+          "meaning": "tipus de lletra d’extensió a enllaçar, dispositiu i fitxer",
+          "values": "fitxer TTF o TTE en un dispositiu"
+        },
+        {
+          "meaning": "tipus de lletra base que el rebran",
+          "values": "fitxer FNT, TTF o TTE, s’hi admeten comodins"
+        },
+        {
+          "meaning": "enllaça o desenllaça l’extensió",
+          "values": "0 desenllaça, 1 enllaça"
+        }
+      ]
+    }
+  },
+  "^LF": {
+    "hash": "93f13086",
+    "summary": "Imprimeix una etiqueta amb els enllaços de tipus de lletra configurats i les seves cadenes d’alternatives."
+  },
+  "~DB": {
+    "hash": "3aed3cba",
+    "summary": "Descarrega un tipus de lletra de mapa de bits i les seves mètriques a la memòria de la impressora.",
+    "reference": {
+      "hash": "89cb2754",
+      "params": [
+        {
+          "meaning": "unitat on desar el tipus de lletra",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del tipus de lletra",
+          "values": "fins a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer del tipus de lletra",
+          "values": "FNT valor fix",
+          "default": "FNT"
+        },
+        {
+          "meaning": "orientació del tipus de lletra natiu",
+          "values": "N només normal",
+          "default": "N"
+        },
+        {
+          "meaning": "alçada màxima de la cel·la en punts",
+          "values": "d’1 a 32000"
+        },
+        {
+          "meaning": "amplada màxima de la cel·la en punts",
+          "values": "d’1 a 32000"
+        },
+        {
+          "meaning": "punts de la part superior de la cel·la a la línia de base",
+          "values": "d’1 a 32000"
+        },
+        {
+          "meaning": "amplada dels caràcters d’espai",
+          "values": "d’1 a 32000"
+        },
+        {
+          "meaning": "nombre de caràcters del tipus de lletra",
+          "values": "d’1 a 256"
+        },
+        {
+          "meaning": "text del titular dels drets d’autor",
+          "values": "d’1 a 63 caràcters alfanumèrics"
+        },
+        {
+          "meaning": "dades estructurades de mapa de bits per caràcter",
+          "values": "codi coixinet seguit d’alçada, amplada, desplaçaments i dades hexadecimals"
+        }
+      ]
+    }
+  },
+  "~DS": {
+    "hash": "15997aa7",
+    "summary": "Descarrega un tipus de lletra escalable Intellifont codificat a la memòria de la impressora.",
+    "reference": {
+      "hash": "4d1c3ffa",
+      "params": [
+        {
+          "meaning": "unitat on desar el tipus de lletra",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del tipus de lletra",
+          "values": "fins a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer del tipus de lletra",
+          "values": "FNT valor fix",
+          "default": "FNT"
+        },
+        {
+          "meaning": "mida del tipus de lletra en bytes de ZTools",
+          "values": "nombre de bytes del tipus de lletra convertit"
+        },
+        {
+          "meaning": "dades en bytes del tipus de lletra codificat",
+          "values": "parells hexadecimals que coincideixen amb la mida"
+        }
+      ]
+    }
+  },
+  "~DT": {
+    "hash": "dd726145",
+    "summary": "Descarrega un tipus de lletra TrueType codificat de fins a 256 caràcters a la memòria de la impressora.",
+    "reference": {
+      "hash": "3419fdb4",
+      "params": [
+        {
+          "meaning": "unitat on desar el tipus de lletra",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del tipus de lletra",
+          "values": "fins a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer del tipus de lletra",
+          "values": "DAT valor fix",
+          "default": "DAT"
+        },
+        {
+          "meaning": "mida del tipus de lletra en bytes",
+          "values": "nombre de bytes del tipus de lletra convertit"
+        },
+        {
+          "meaning": "dades en bytes del tipus de lletra codificat",
+          "values": "parells hexadecimals que coincideixen amb la mida"
+        }
+      ]
+    }
+  },
+  "~DU": {
+    "hash": "060fb361",
+    "summary": "Descarrega un tipus de lletra TrueType codificat de més de 256 glifs a la memòria de la impressora.",
+    "reference": {
+      "hash": "9ca55d45",
+      "params": [
+        {
+          "meaning": "unitat on desar el tipus de lletra",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del tipus de lletra",
+          "values": "fins a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer del tipus de lletra",
+          "values": "FNT valor fix",
+          "default": "FNT"
+        },
+        {
+          "meaning": "mida del tipus de lletra en bytes",
+          "values": "nombre de bytes del tipus de lletra convertit"
+        },
+        {
+          "meaning": "dades en bytes del tipus de lletra codificat",
+          "values": "parells hexadecimals que coincideixen amb la mida"
+        }
+      ]
+    }
+  },
+  "~DE": {
+    "hash": "07fddda6",
+    "summary": "Descarrega una taula de codificació que associa els bytes de dades dels camps a valors Unicode per a tipus de lletra TrueType.",
+    "reference": {
+      "hash": "57df4bf5",
+      "params": [
+        {
+          "meaning": "unitat que conté la taula",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de la taula",
+          "values": "fins a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer de taula",
+          "values": "DAT valor fix",
+          "default": "DAT"
+        },
+        {
+          "meaning": "mida de la taula en bytes",
+          "values": "nombre de bytes de la taula convertida"
+        },
+        {
+          "meaning": "dades en bytes de la taula codificada",
+          "values": "parells hexadecimals que coincideixen amb la mida"
+        }
+      ]
+    }
+  },
+  "^BC": {
+    "hash": "e992c85f",
+    "summary": "Dibuixa un codi de barres Code 128 per a dades ASCII de longitud variable, amb modes de canvi automàtic de subconjunt i dades UCC/EAN.",
+    "reference": {
+      "hash": "efa0586e",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "N no, Y sí",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "N no, Y sí",
+          "default": "N"
+        },
+        {
+          "meaning": "dígit de control UCC",
+          "values": "N no, Y sí",
+          "default": "N"
+        },
+        {
+          "meaning": "mode",
+          "values": "N cap, U mode UCC Case, A automàtic, D UCC/EAN",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^B3": {
+    "hash": "dece8a28",
+    "summary": "Dibuixa un codi de barres Code 39 amb un dígit de control Mod 43 opcional.",
+    "reference": {
+      "hash": "ebc06976",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "dígit de control Mod 43",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BA": {
+    "hash": "699bb436",
+    "summary": "Dibuixa un codi de barres Code 93 que representa totes les dades ASCII mitjançant caràcters de canvi.",
+    "reference": {
+      "hash": "d464a5c5",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimeix el dígit de control",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^B1": {
+    "hash": "8ca731c4",
+    "summary": "Dibuixa un codi de barres Code 11 per a dígits i guionets, amb dígits de control opcionals.",
+    "reference": {
+      "hash": "23baf94d",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "nombre de dígits de control",
+          "values": "Y 1 dígit, N 2 dígits",
+          "default": "N"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^B2": {
+    "hash": "8a4f8a6a",
+    "summary": "Dibuixa un codi de barres 2 de 5 intercalat per a dades numèriques de longitud parella, amb un dígit de control opcional.",
+    "reference": {
+      "hash": "a4f4f257",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "dígit de control Mod 10",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "sisena posició, no documentada",
+          "values": "no documentat a la guia"
+        }
+      ]
+    }
+  },
+  "^BI": {
+    "hash": "4a34e094",
+    "summary": "Dibuixa un codi de barres 2 de 5 industrial, un codi numèric amb les dades codificades només a les barres.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BJ": {
+    "hash": "b593e233",
+    "summary": "Dibuixa un codi de barres 2 de 5 estàndard, un codi numèric amb autocomprovació i dades codificades només a les barres.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BK": {
+    "hash": "60c5d7b4",
+    "summary": "Dibuixa un codi de barres ANSI Codabar, també conegut com a USD-4, per a etiquetes de biblioteques, sanitat i missatgeria.",
+    "reference": {
+      "hash": "9baaa417",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "dígit de control, sempre desactivat",
+          "values": "només N",
+          "default": "N"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "caràcter d’inici",
+          "values": "A, B, C, D",
+          "default": "A"
+        },
+        {
+          "meaning": "caràcter de final",
+          "values": "A, B, C, D",
+          "default": "A"
+        }
+      ]
+    }
+  },
+  "^BL": {
+    "hash": "5423204e",
+    "summary": "Dibuixa un codi de barres LOGMARS, la variant de Code 39 del Departament de Defensa, i converteix les minúscules a majúscules.",
+    "reference": {
+      "hash": "38dc9df5",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BM": {
+    "hash": "e86eb289",
+    "summary": "Dibuixa un codi de barres MSI, un codi numèric derivat de Plessey amb esquemes de dígits de control seleccionables.",
+    "reference": {
+      "hash": "5f13bdf8",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "esquema del dígit de control",
+          "values": "A cap, B 1-Mod10, C 2-Mod10, D Mod11-Mod10",
+          "default": "B"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "dígit de control a la línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BP": {
+    "hash": "1c540146",
+    "summary": "Dibuixa un codi de barres Plessey, un codi numèric antic amb dígits de control opcionals.",
+    "reference": {
+      "hash": "74620966",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "imprimeix el dígit de control",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BE": {
+    "hash": "8292a7c9",
+    "summary": "Dibuixa un codi de barres EAN-13 per a articles de venda al detall i calcula el dígit de control a partir de dotze dígits de dades.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^B8": {
+    "hash": "18351c75",
+    "summary": "Dibuixa un codi de barres EAN-8 per a envasos petits de venda al detall i calcula el dígit de control a partir de set dígits de dades.",
+    "reference": {
+      "hash": "810d04b0",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BU": {
+    "hash": "3b71109a",
+    "summary": "Dibuixa un codi de barres UPC-A per a envasos de venda al detall a partir d’onze dígits de dades, amb impressió opcional del dígit de control.",
+    "reference": {
+      "hash": "ad71d17d",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 9999",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimeix el dígit de control",
+          "values": "Y sí, N no",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "^B9": {
+    "hash": "355b9a9c",
+    "summary": "Dibuixa un codi de barres UPC-E, la forma curta d’UPC-A. Les dades del camp són el codi complet de fabricant i producte de deu dígits.",
+    "reference": {
+      "hash": "e87ee6a3",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "imprimeix el dígit de control",
+          "values": "Y sí, N no",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "^BR": {
+    "hash": "106cb78e",
+    "summary": "Dibuixa un símbol GS1 DataBar amb subtipus, ampliació, alçada i amplada de segment seleccionables.",
+    "reference": {
+      "hash": "e797e531",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R girat, I invertit, B de baix a dalt",
+          "default": "R"
+        },
+        {
+          "meaning": "tipus de simbologia DataBar",
+          "values": "1 omnidireccional, 2 truncat, 3 apilat, 4 apilat omnidireccional, 5 limitat, 6 expandit, 7 UPC-A, 8 UPC-E, 9 EAN-13, 10 EAN-8, 11 UCC/EAN-128 amb CC-A/B, 12 UCC/EAN-128 amb CC-C",
+          "default": "1"
+        },
+        {
+          "meaning": "factor d’ampliació",
+          "values": "d’1 a 10",
+          "default": "ajust de la impressora"
+        },
+        {
+          "meaning": "alçada del separador",
+          "values": "1 o 2",
+          "default": "1"
+        },
+        {
+          "meaning": "alçada de la part lineal en punts",
+          "values": "d’1 a 32000",
+          "default": "25"
+        },
+        {
+          "meaning": "amplada del segment per a GS1 DataBar Expanded",
+          "values": "de 2 a 22, només parells",
+          "default": "22"
+        }
+      ]
+    }
+  },
+  "^B5": {
+    "hash": "7a401432",
+    "summary": "Dibuixa un codi de barres postal Planet Code a partir de dígits codificats com a barres altes i curtes.",
+    "reference": {
+      "hash": "89c55346",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R girat, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 9999",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BZ": {
+    "hash": "7bb58ff4",
+    "summary": "Dibuixa POSTNET, Planet Code o USPS Intelligent Mail segons el tipus de codi postal seleccionat.",
+    "reference": {
+      "hash": "88985f55",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "tipus de codi postal",
+          "values": "0 postnet, 1 planet, 2 reservat, 3 intelligent-mail",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^BS": {
+    "hash": "697bbc1d",
+    "summary": "Dibuixa un símbol complementari UPC/EAN de dos o cinc dígits al costat d’un codi de barres principal.",
+    "reference": {
+      "hash": "24d48584",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 32000",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "línia d’interpretació",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "línia d’interpretació damunt del codi",
+          "values": "Y sí, N no",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "^B4": {
+    "hash": "0d426450",
+    "summary": "Dibuixa un codi de barres apilat Code 49 amb entre dues i vuit files de dades ASCII completes.",
+    "reference": {
+      "hash": "bf48ed59",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "multiplicador d’alçada de les files individuals",
+          "values": "d’1 a l’alçada de l’etiqueta",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "posició de la línia d’interpretació",
+          "values": "N cap, A a sobre, B a sota",
+          "default": "N"
+        },
+        {
+          "meaning": "mode inicial",
+          "values": "0 alfanumèric, 1 lectura múltiple, 2 numèric, 3 grup alfabètic, 4 canvi 1, 5 canvi 2, A automàtic",
+          "default": "A"
+        }
+      ]
+    }
+  },
+  "^BQ": {
+    "hash": "51883826",
+    "summary": "Dibuixa un símbol de codi QR. Els paràmetres de l’ordre estableixen el model, l’ampliació i la màscara. Les dades del camp estableixen la correcció d’errors i el mode de caràcters.",
+    "reference": {
+      "hash": "535da24f",
+      "params": [
+        {
+          "meaning": "orientació del camp",
+          "values": "N només normal",
+          "default": "N"
+        },
+        {
+          "meaning": "model",
+          "values": "1 original, 2 millorat",
+          "default": "2"
+        },
+        {
+          "meaning": "factor d’ampliació",
+          "values": "d’1 a 100",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "nivell de correcció d’errors",
+          "values": "H ultraalt, Q alt, M estàndard, L alta densitat",
+          "default": "Q si és buit, M si el valor no és vàlid"
+        },
+        {
+          "meaning": "valor de màscara",
+          "values": "de 0 a 7",
+          "default": "7"
+        }
+      ]
+    }
+  },
+  "^BX": {
+    "hash": "edec7520",
+    "summary": "Dibuixa un símbol Data Matrix amb mida d’element, nivell de qualitat i tractament d’escapaments configurables.",
+    "reference": {
+      "hash": "14f660d1",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada dimensional dels elements del símbol",
+          "values": "d’1 a l’amplada de l’etiqueta",
+          "default": "0, que pren l’alçada del símbol de ^BY"
+        },
+        {
+          "meaning": "nivell de qualitat",
+          "values": "0, 50, 80, 100, 140, 200",
+          "default": "0"
+        },
+        {
+          "meaning": "columnes a codificar",
+          "values": "de 9 a 49, només senars per a qualitat de 0 a 140, només parells per a qualitat 200"
+        },
+        {
+          "meaning": "files a codificar",
+          "values": "de 9 a 49"
+        },
+        {
+          "meaning": "ID del format",
+          "values": "1 numèric, 2 alfabètic en majúscules, 3 alfanumèric en majúscules amb . , - /, 4 alfanumèric en majúscules, 5 ascii7, 6 iso8",
+          "default": "6"
+        },
+        {
+          "meaning": "caràcter de control de la seqüència d’escapament",
+          "values": "qualsevol caràcter",
+          "default": "titlla"
+        },
+        {
+          "meaning": "relació d’aspecte",
+          "values": "1 quadrat, 2 rectangular",
+          "default": "1"
+        }
+      ]
+    }
+  },
+  "^B7": {
+    "hash": "70fe1379",
+    "summary": "Dibuixa un símbol bidimensional apilat PDF417 per a càrregues de text o dades binàries grans.",
+    "reference": {
+      "hash": "74e5565e",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres per fila en punts",
+          "values": "d’1 a l’alçada de l’etiqueta",
+          "default": "últim ^BY"
+        },
+        {
+          "meaning": "nivell de seguretat",
+          "values": "d’1 a 8",
+          "default": "0"
+        },
+        {
+          "meaning": "nombre de columnes de dades",
+          "values": "d’1 a 30",
+          "default": "relació d’aspecte automàtica"
+        },
+        {
+          "meaning": "nombre de files",
+          "values": "de 3 a 90",
+          "default": "relació d’aspecte automàtica"
+        },
+        {
+          "meaning": "retalla els indicadors drets de fila i el patró de final",
+          "values": "Y sí, N no",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^BF": {
+    "hash": "fe48da2b",
+    "summary": "Dibuixa un símbol MicroPDF417, una variant compacta de PDF417 amb patrons d’adreça de fila.",
+    "reference": {
+      "hash": "732ba291",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "alçada del codi de barres en punts",
+          "values": "d’1 a 9999",
+          "default": "últim ^BY, o 10 si no s’ha enviat cap ^BY"
+        },
+        {
+          "meaning": "mode",
+          "values": "de 0 a 33",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^B0": {
+    "hash": "b7e0a784",
+    "summary": "Dibuixa un símbol matricial Aztec amb ampliació i correcció d’errors configurables.",
+    "reference": {
+      "hash": "e2b438ff",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R girat, I 180, B 270",
+          "default": "últim ^FW"
+        },
+        {
+          "meaning": "factor d’ampliació",
+          "values": "d’1 a 10",
+          "default": "150 dpi 1, 200 dpi 2, 300 dpi 3, 600 dpi 6"
+        },
+        {
+          "meaning": "indicador d’interpretació de canal ampliat",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "control d’errors i mida del símbol",
+          "values": "0 per defecte, d’1 a 99 percentatge d’error, de 101 a 104 capes compactes, de 201 a 232 capes completes, 300 runa",
+          "default": "0"
+        },
+        {
+          "meaning": "indicador de símbol de menú",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "nombre de símbols per a l’addició estructurada",
+          "values": "d’1 a 26",
+          "default": "1"
+        },
+        {
+          "meaning": "camp d’ID de l’addició estructurada",
+          "values": "text de fins a 24 caràcters",
+          "default": "sense ID"
+        }
+      ]
+    }
+  },
+  "^BB": {
+    "hash": "f0c04fb6",
+    "summary": "Dibuixa un símbol CODABLOCK en mode A, E o F per a càrregues de dades més grans.",
+    "reference": {
+      "hash": "570ab96d",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "N"
+        },
+        {
+          "meaning": "alçada del codi de barres per fila en punts",
+          "values": "de 2 a 32000",
+          "default": "8"
+        },
+        {
+          "meaning": "nivell de seguretat",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "caràcters per fila",
+          "values": "de 2 a 62"
+        },
+        {
+          "meaning": "files a codificar",
+          "values": "mode-A 1-22, mode-EF 2-4"
+        },
+        {
+          "meaning": "mode",
+          "values": "A conjunt code39, E code128-fnc1, F conjunt code128",
+          "default": "F"
+        }
+      ]
+    }
+  },
+  "^BD": {
+    "hash": "3bb22e31",
+    "summary": "Dibuixa un símbol UPS MaxiCode amb un mode per a missatges estructurats del transportista o dades generals.",
+    "reference": {
+      "hash": "8dd74ae0",
+      "params": [
+        {
+          "meaning": "mode",
+          "values": "2 postal dels EUA, 3 postal fora dels EUA, 4 estàndard, 5 correcció completa, 6 programa del lector",
+          "default": "2"
+        },
+        {
+          "meaning": "número de símbol dins la seqüència",
+          "values": "d’1 a 8",
+          "default": "1"
+        },
+        {
+          "meaning": "nombre total de símbols",
+          "values": "d’1 a 8",
+          "default": "1"
+        }
+      ]
+    }
+  },
+  "^BT": {
+    "hash": "52326a87",
+    "summary": "Dibuixa un símbol d’etiqueta de telecomunicacions TLC39 que combina Code 39 amb un component MicroPDF417.",
+    "reference": {
+      "hash": "5681aee9",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R girat, I invertit, B de baix a dalt"
+        },
+        {
+          "meaning": "amplada de la part Code 39 en punts",
+          "values": "d’1 a 10",
+          "default": "600 dpi 4, altrament 2"
+        },
+        {
+          "meaning": "relació entre ample i estret de la part Code 39",
+          "values": "de 2.0 a 3.0 en passos de 0.1",
+          "default": "2.0"
+        },
+        {
+          "meaning": "alçada de la part Code 39 en punts",
+          "values": "d’1 a 9999",
+          "default": "600 dpi 120, 300 dpi 60, 200 dpi 40"
+        },
+        {
+          "meaning": "amplada de la barra estreta de la part MicroPDF417",
+          "values": "d’1 a 10",
+          "default": "600 dpi 4, altrament 2"
+        },
+        {
+          "meaning": "alçada de fila de la part MicroPDF417 en punts",
+          "values": "d’1 a 255",
+          "default": "600 dpi 8, altrament 4"
+        }
+      ]
+    }
+  },
+  "^CV": {
+    "hash": "f82fc556",
+    "summary": "Quan està activat, valida les dades i els paràmetres dels codis de barres i imprimeix INVALID en lloc d’un símbol incorrecte.",
+    "reference": {
+      "hash": "3d54062f",
+      "params": [
+        {
+          "meaning": "validació de codis",
+          "values": "N no, Y sí",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^GB": {
+    "hash": "bd69726e",
+    "summary": "Dibuixa un rectangle ple o amb contorn. Igualar un costat al gruix de la vora produeix una línia.",
+    "reference": {
+      "hash": "e23ccb76",
+      "params": [
+        {
+          "meaning": "amplada del rectangle en punts",
+          "values": "de t a 32000",
+          "default": "t o 1"
+        },
+        {
+          "meaning": "alçada del rectangle en punts",
+          "values": "de t a 32000",
+          "default": "t o 1"
+        },
+        {
+          "meaning": "gruix de la vora en punts",
+          "values": "d’1 a 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "color de la línia",
+          "values": "B negre, W blanc",
+          "default": "B"
+        },
+        {
+          "meaning": "arrodoniment de cantonades",
+          "values": "de 0 sense arrodoniment a 8 arrodoniment màxim",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^GD": {
+    "hash": "74d7e804",
+    "summary": "Dibuixa una línia diagonal en una amplada i alçada donades, inclinada a la dreta o a l’esquerra.",
+    "reference": {
+      "hash": "fc48270e",
+      "params": [
+        {
+          "meaning": "amplada del rectangle en punts",
+          "values": "de 3 a 32000",
+          "default": "t o 3"
+        },
+        {
+          "meaning": "alçada del rectangle en punts",
+          "values": "de 3 a 32000",
+          "default": "t o 3"
+        },
+        {
+          "meaning": "gruix de la vora en punts",
+          "values": "d’1 a 32000",
+          "default": "1"
+        },
+        {
+          "meaning": "color de la línia",
+          "values": "B negre, W blanc",
+          "default": "B"
+        },
+        {
+          "meaning": "direcció de la diagonal",
+          "values": "R o / inclinació a la dreta, L o \\ inclinació a l’esquerra",
+          "default": "R"
+        }
+      ]
+    }
+  },
+  "^GE": {
+    "hash": "7f37613a",
+    "summary": "Dibuixa una el·lipse a partir d’una amplada i alçada en punts, amb gruix de vora cap a dins i sortida negra o blanca.",
+    "reference": {
+      "hash": "db784bf9",
+      "params": [
+        {
+          "meaning": "amplada de l’el·lipse en punts",
+          "values": "de 3 a 4095",
+          "default": "t o 1"
+        },
+        {
+          "meaning": "alçada de l’el·lipse en punts",
+          "values": "de 3 a 4095",
+          "default": "t o 1"
+        },
+        {
+          "meaning": "gruix de la vora en punts",
+          "values": "de 2 a 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "color de la línia",
+          "values": "B negre, W blanc",
+          "default": "B"
+        }
+      ]
+    }
+  },
+  "^GC": {
+    "hash": "075461c2",
+    "summary": "Dibuixa un cercle del diàmetre indicat en punts, amb gruix de vora cap a dins i sortida negra o blanca.",
+    "reference": {
+      "hash": "a8ed2df3",
+      "params": [
+        {
+          "meaning": "diàmetre del cercle en punts",
+          "values": "de 3 a 4095",
+          "default": "3"
+        },
+        {
+          "meaning": "gruix de la vora en punts",
+          "values": "de 2 a 4095",
+          "default": "1"
+        },
+        {
+          "meaning": "color de la línia",
+          "values": "B negre, W blanc",
+          "default": "B"
+        }
+      ]
+    }
+  },
+  "^GF": {
+    "hash": "ebe9c440",
+    "summary": "Situa un mapa de bits monocrom a la posició del camp actual amb dades hexadecimals ASCII, binàries o comprimides.",
+    "reference": {
+      "hash": "755a86a1",
+      "params": [
+        {
+          "meaning": "tipus de compressió",
+          "values": "A hexadecimal ascii, B binari, C binari comprimit",
+          "default": "A"
+        },
+        {
+          "meaning": "nombre total de bytes a enviar",
+          "values": "d’1 a 99999"
+        },
+        {
+          "meaning": "nombre total de bytes de la imatge",
+          "values": "d’1 a 99999"
+        },
+        {
+          "meaning": "bytes per fila d’imatge",
+          "values": "d’1 a 99999"
+        },
+        {
+          "meaning": "dades de la imatge",
+          "values": "hexadecimal ascii de 00 a FF"
+        }
+      ]
+    }
+  },
+  "^GS": {
+    "hash": "a5bcd861",
+    "summary": "Imprimeix un símbol resident seleccionat per les dades del camp, com ara drets d’autor o marca registrada.",
+    "reference": {
+      "hash": "76550a48",
+      "params": [
+        {
+          "meaning": "orientació",
+          "values": "N normal, R 90 en sentit horari, I 180, B 270",
+          "default": "N o l’últim ^FW"
+        },
+        {
+          "meaning": "alçada dels caràcters proporcional a l’amplada",
+          "values": "de 0 a 32000",
+          "default": "últim ^CF"
+        },
+        {
+          "meaning": "amplada dels caràcters proporcional a l’alçada",
+          "values": "de 0 a 32000",
+          "default": "últim ^CF"
+        }
+      ]
+    }
+  },
+  "^IL": {
+    "hash": "2530cc9c",
+    "summary": "Carrega una imatge emmagatzemada a l’inici d’un format i l’ancora a l’origen de l’etiqueta.",
+    "reference": {
+      "hash": "ef71968c",
+      "params": [
+        {
+          "meaning": "dispositiu d’emmagatzematge",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de l’objecte",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": ".GRF o .PNG"
+        }
+      ]
+    }
+  },
+  "^IM": {
+    "hash": "4f79eb5a",
+    "summary": "Situa una imatge emmagatzemada a la posició del camp actual sense escalar-la.",
+    "reference": {
+      "hash": "6ab179d9",
+      "params": [
+        {
+          "meaning": "dispositiu d’emmagatzematge",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "ordre de prioritat de cerca"
+        },
+        {
+          "meaning": "nom de l’objecte",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": ".GRF o .PNG"
+        }
+      ]
+    }
+  },
+  "^ID": {
+    "hash": "daa69cf9",
+    "summary": "Elimina gràfics, tipus de lletra o formats emmagatzemats de la memòria de la impressora, amb comodins per a grups.",
+    "reference": {
+      "hash": "6772eef0",
+      "params": [
+        {
+          "meaning": "dispositiu d’emmagatzematge",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de l’objecte, s’hi admeten comodins",
+          "values": "d’1 a 8 caràcters",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer, s’hi admeten comodins",
+          "values": "qualsevol extensió",
+          "default": ".GRF"
+        }
+      ]
+    }
+  },
+  "^IS": {
+    "hash": "4ccfff35",
+    "summary": "Desa el format actual com a imatge gràfica per recuperar-lo ràpidament i superposar-hi dades variables.",
+    "reference": {
+      "hash": "363a0b50",
+      "params": [
+        {
+          "meaning": "dispositiu d’emmagatzematge",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de l’objecte",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": ".GRF o .PNG",
+          "default": ".GRF"
+        },
+        {
+          "meaning": "imprimeix l’etiqueta després de desar",
+          "values": "N no, Y sí",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "~DG": {
+    "hash": "220038fa",
+    "summary": "Descarrega un gràfic hexadecimal ASCII a la memòria de la impressora amb un nom reutilitzable.",
+    "reference": {
+      "hash": "e40d2595",
+      "params": [
+        {
+          "meaning": "dispositiu d’emmagatzematge",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de la imatge",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": ".GRF"
+        },
+        {
+          "meaning": "mida total de la imatge en bytes",
+          "values": "calculat a partir de l’amplada i l’alçada de la imatge"
+        },
+        {
+          "meaning": "bytes per fila d’imatge",
+          "values": "calculat a partir de l’amplada de la imatge"
+        },
+        {
+          "meaning": "dades de la imatge gràfica",
+          "values": "hexadecimal ascii de 00 a FF"
+        }
+      ]
+    }
+  },
+  "~DN": {
+    "hash": "b004ef7d",
+    "summary": "Atura una pujada de gràfic interrompuda a mig camí i retorna la impressora al funcionament normal."
+  },
+  "~DY": {
+    "hash": "e14aeb32",
+    "summary": "Descarrega un gràfic, tipus de lletra o certificat a la memòria de la impressora amb un nom reutilitzable.",
+    "reference": {
+      "hash": "9ba6824f",
+      "params": [
+        {
+          "meaning": "dispositiu d’emmagatzematge",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del fitxer",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "format de dades",
+          "values": "A ascii o zb64, B binari, C comprimit ar, P png zb64"
+        },
+        {
+          "meaning": "tipus de fitxer emmagatzemat",
+          "values": "B mapa de bits, E tte, G grf en brut, P png, T ttf o otf, X pcx, NRD no llegible, PAC credencial d’accés, C menú wml, F pàgina htm, H resposta de la impressora",
+          "default": "G"
+        },
+        {
+          "meaning": "nombre total de bytes del fitxer",
+          "values": "mida real del fitxer descomprimit"
+        },
+        {
+          "meaning": "bytes per fila per a imatges grf",
+          "values": "calculat a partir de l’amplada de la imatge"
+        },
+        {
+          "meaning": "dades del fitxer",
+          "values": "hexadecimal ascii, zb64 o binari"
+        }
+      ]
+    }
+  },
+  "~EG": {
+    "hash": "2d5c2385",
+    "summary": "Esborra tots els gràfics descarregats de la memòria de la impressora. Fes servir ^ID per eliminar objectes concrets."
+  },
+  "^SN": {
+    "hash": "0675b2ba",
+    "summary": "Serialitza les dades de camps de text o codis de barres entre etiquetes amb un valor inicial, una direcció i un increment.",
+    "reference": {
+      "hash": "e90cf989",
+      "params": [
+        {
+          "meaning": "valor de sèrie inicial",
+          "values": "fins a 12 dígits",
+          "default": "1"
+        },
+        {
+          "meaning": "pas d’increment o decrement",
+          "values": "fins a 12 dígits",
+          "default": "1"
+        },
+        {
+          "meaning": "omple amb zeros a l’esquerra",
+          "values": "N no, Y sí",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^SF": {
+    "hash": "de570c17",
+    "summary": "Serialitza posicions concretes de les dades del camp amb una màscara i conjunts de caràcters.",
+    "reference": {
+      "hash": "9eee1e00",
+      "params": [
+        {
+          "meaning": "màscara de serialització que selecciona els caràcters que canvien",
+          "values": "D decimal, H hexadecimal, O octal, A alfabètic, N alfanumèric, % omet"
+        },
+        {
+          "meaning": "cadena d’increment o decrement de la màscara",
+          "values": "un valor per posició de màscara, % per conservar-la",
+          "default": "1"
+        }
+      ]
+    }
+  },
+  "^DF": {
+    "hash": "f84ea776",
+    "summary": "Emmagatzema les ordres següents com a format reutilitzable en lloc d’imprimir-les immediatament.",
+    "reference": {
+      "hash": "bafd49c7",
+      "params": [
+        {
+          "meaning": "dispositiu on desar la plantilla",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom de la plantilla",
+          "values": "d’1 a 16 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": "ZPL"
+        }
+      ]
+    }
+  },
+  "^XF": {
+    "hash": "651406b0",
+    "summary": "Recupera un format emmagatzemat i proporciona valors per als seus camps numerats.",
+    "reference": {
+      "hash": "bcd407fd",
+      "params": [
+        {
+          "meaning": "dispositiu d’origen de la plantilla emmagatzemada",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R, després E, després B, després A"
+        },
+        {
+          "meaning": "nom de la plantilla emmagatzemada",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": "ZPL"
+        }
+      ]
+    }
+  },
+  "^XG": {
+    "hash": "87f554d0",
+    "summary": "Recupera un gràfic emmagatzemat a la posició actual amb escalat horitzontal i vertical independents.",
+    "reference": {
+      "hash": "97af30d7",
+      "params": [
+        {
+          "meaning": "dispositiu d’origen del gràfic emmagatzemat",
+          "values": "R, E, B, A",
+          "default": "R, després E, després B, després A"
+        },
+        {
+          "meaning": "nom del gràfic emmagatzemat",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": "GRF"
+        },
+        {
+          "meaning": "factor d’ampliació de l’eix x",
+          "values": "d’1 a 10",
+          "default": "1"
+        },
+        {
+          "meaning": "factor d’ampliació de l’eix y",
+          "values": "d’1 a 10",
+          "default": "1"
+        }
+      ]
+    }
+  },
+  "^MN": {
+    "hash": "151d39b8",
+    "summary": "Selecciona com detecta la impressora els límits de les etiquetes, amb separacions, marques o material continu.",
+    "reference": {
+      "hash": "bdca1f65",
+      "params": [
+        {
+          "meaning": "mètode de detecció del material",
+          "values": "N continu, Y o W banda no contínua, M marca no contínua, A detecció automàtica, V continu de longitud variable",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "desplaçament de la marca negra en punts",
+          "values": "de -120 a 283 a la majoria d’impressores, de -240 a 566 a 600 dpi",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^ML": {
+    "hash": "f893dead",
+    "summary": "Estableix la longitud màxima d’etiqueta que cerca la impressora en calibrar material no continu.",
+    "reference": {
+      "hash": "369383c1",
+      "params": [
+        {
+          "meaning": "longitud màxima de l’etiqueta en files de punts",
+          "values": "el doble dels dpi de la impressora, fins a la longitud màxima",
+          "default": "últim valor desat"
+        }
+      ]
+    }
+  },
+  "^MF": {
+    "hash": "cb8cb6e8",
+    "summary": "Estableix l’acció en engegar i tancar el capçal, incloent-hi calibratge, avanç o mesura de longitud.",
+    "reference": {
+      "hash": "3eb1892a",
+      "params": [
+        {
+          "meaning": "acció d’avanç en engegar",
+          "values": "F avança fins a la primera separació, C calibra com ~JC, L estableix la longitud com ~JL, N sense avanç, S calibratge curt",
+          "default": "C"
+        },
+        {
+          "meaning": "acció d’avanç després de tancar el capçal",
+          "values": "F avança fins a la primera separació, C calibra com ~JC, L estableix la longitud com ~JL, N sense avanç, S calibratge curt",
+          "default": "C"
+        }
+      ]
+    }
+  },
+  "^XB": {
+    "hash": "81ff9b03",
+    "summary": "Suprimeix el retrocés per a l’etiqueta actual quan no cal moure-la a la posició d’esquinçament."
+  },
+  "^MA": {
+    "hash": "eafb8b50",
+    "summary": "Configura avisos de manteniment impresos per a la neteja o substitució del capçal.",
+    "reference": {
+      "hash": "b338453a",
+      "params": [
+        {
+          "meaning": "tipus d’avís",
+          "values": "R substitució del capçal, C neteja del capçal"
+        },
+        {
+          "meaning": "imprimeix l’etiqueta d’avís",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "distància fins al primer avís",
+          "values": "R de 0 a 150 km, C de 100 a 2000 metres, 0 desactivat",
+          "default": "50 km per a R, 0 desactivat per a C"
+        },
+        {
+          "meaning": "distància abans de repetir l’avís",
+          "values": "de 0 a 2000 metres",
+          "default": "0"
+        },
+        {
+          "meaning": "unitat de mesura indicada",
+          "values": "C centímetres, I polzades, M metres",
+          "default": "I"
+        }
+      ]
+    }
+  },
+  "^MC": {
+    "hash": "56f218a2",
+    "summary": "Controla si el mapa de bits de l’etiqueta s’esborra després d’imprimir o es conserva per reutilitzar-lo en etiquetes posteriors.",
+    "reference": {
+      "hash": "a7f8d552",
+      "params": [
+        {
+          "meaning": "esborra el mapa de bits després d’imprimir",
+          "values": "Y esborra, N conserva",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "^MI": {
+    "hash": "04285e97",
+    "summary": "Estableix el text de les etiquetes d’avís de manteniment per a la neteja o substitució del capçal.",
+    "reference": {
+      "hash": "9f714fd1",
+      "params": [
+        {
+          "meaning": "tipus d’avís",
+          "values": "R substitució del capçal, C neteja del capçal",
+          "default": "R"
+        },
+        {
+          "meaning": "missatge imprès a l’etiqueta d’avís",
+          "values": "fins a 63 caràcters, sense comes",
+          "default": "netegeu el capçal o substituïu el capçal"
+        }
+      ]
+    }
+  },
+  "^MP": {
+    "hash": "2bf0486e",
+    "summary": "Bloca un paràmetre del panell de control, com ara la foscor o el calibratge, fins que es desbloqueja.",
+    "reference": {
+      "hash": "87c9d0ee",
+      "params": [
+        {
+          "meaning": "mode del panell de control a protegir",
+          "values": "D foscor, P posició, C calibratge, E activa-ho tot, S sense desaments, W pausa, F avanç, X cancel·la, M menú",
+          "default": "cal especificar-lo"
+        }
+      ]
+    }
+  },
+  "^MW": {
+    "hash": "a6985480",
+    "summary": "Activa o desactiva l’indicador d’avís de capçal fred.",
+    "reference": {
+      "hash": "b85dcc16",
+      "params": [
+        {
+          "meaning": "activa l’avís de capçal fred",
+          "values": "Y activa, N desactiva"
+        }
+      ]
+    }
+  },
+  "^MD": {
+    "hash": "7bbdd180",
+    "summary": "Ajusta la foscor d’impressió respecte de la foscor configurada actualment a la impressora.",
+    "reference": {
+      "hash": "8b14cd4d",
+      "params": [
+        {
+          "meaning": "foscor del material respecte de l’ajust actual",
+          "values": "de -30 a 30",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "~SD": {
+    "hash": "f4cce0b1",
+    "summary": "Estableix immediatament la foscor absoluta d’impressió, com l’ajust de foscor del panell frontal.",
+    "reference": {
+      "hash": "835fc643",
+      "params": [
+        {
+          "meaning": "nivell absolut de foscor d’impressió",
+          "values": "de 00 a 30",
+          "default": "últim valor desat"
+        }
+      ]
+    }
+  },
+  "^JZ": {
+    "hash": "0311743b",
+    "summary": "Controla si es torna a imprimir una etiqueta interrompuda per errors de material, cinta o capçal després de recuperar-se.",
+    "reference": {
+      "hash": "1d1be33a",
+      "params": [
+        {
+          "meaning": "torna a imprimir l’etiqueta després de resoldre l’error",
+          "values": "N no, Y sí",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "^JT": {
+    "hash": "f1d59c73",
+    "summary": "Programa comprovacions periòdiques dels elements del capçal segons el nombre d’etiquetes impreses i un interval opcional d’elements.",
+    "reference": {
+      "hash": "4176754c",
+      "params": [
+        {
+          "meaning": "etiquetes impreses entre comprovacions del capçal",
+          "values": "de 0 a 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "selecció manual de l’interval d’elements a comprovar",
+          "values": "N no, Y sí",
+          "default": "N"
+        },
+        {
+          "meaning": "número del primer element a comprovar",
+          "values": "de 0 a 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "número de l’últim element a comprovar",
+          "values": "de 0 a 9999",
+          "default": "9999"
+        }
+      ]
+    }
+  },
+  "~TA": {
+    "hash": "8c0ec36b",
+    "summary": "Ajusta la posició de repòs per a esquinçament o tall amb un petit desplaçament en punts després d’imprimir.",
+    "reference": {
+      "hash": "5ba878ee",
+      "params": [
+        {
+          "meaning": "canvi de posició de repòs per a esquinçament en punts",
+          "values": "de -120 a 120",
+          "default": "últim valor desat"
+        }
+      ]
+    }
+  },
+  "^JH": {
+    "hash": "bb049b9c",
+    "summary": "Configura llindars d’avís anticipat per al manteniment del material, la cinta i el capçal.",
+    "reference": {
+      "hash": "c9d8f4dd",
+      "params": [
+        {
+          "meaning": "avís anticipat de material o consumibles",
+          "values": "E activa, D desactiva",
+          "default": "D"
+        },
+        {
+          "meaning": "nombre d’etiquetes per rotlle",
+          "values": "de 100 a 9999",
+          "default": "900"
+        },
+        {
+          "meaning": "s’ha substituït el material",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "codi de longitud de cinta segons el model",
+          "values": "N 0 m, de 0 a 7 equival a de 100 a 450 m, de 10 a 16 equival a de 600 a 900 m",
+          "default": "1 o 7 segons el model"
+        },
+        {
+          "meaning": "s’ha substituït la cinta",
+          "values": "Y sí, N no",
+          "default": "N"
+        },
+        {
+          "meaning": "avís anticipat de manteniment activat",
+          "values": "E activat, D desactivat",
+          "default": "D"
+        },
+        {
+          "meaning": "codi de l’interval de neteja del capçal",
+          "values": "de 0 a 16 per a de 100 m a 900 m en passos de 50 m",
+          "default": "1 o 7 segons el model"
+        },
+        {
+          "meaning": "s’ha netejat el capçal",
+          "values": "N no, Y sí",
+          "default": "N"
+        },
+        {
+          "meaning": "llindar d’avís de vida útil del capçal en polzades",
+          "values": "0 desactivat, o de 100 a 3500000 polzades",
+          "default": "1000000"
+        },
+        {
+          "meaning": "s’ha substituït el capçal",
+          "values": "N no, Y sí",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "~JS": {
+    "hash": "5bd1e99b",
+    "summary": "Controla el moment del retrocés abans o després d’imprimir i tallar, o el desactiva.",
+    "reference": {
+      "hash": "821c3d59",
+      "params": [
+        {
+          "meaning": "moment del retrocés respecte de la impressió",
+          "values": "A tot després, B tot abans, N normal, O desactivat, del 10 al 90 per cent",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^PF": {
+    "hash": "aaf17a35",
+    "summary": "Avança un nombre determinat de files de punts en blanc a velocitat d’avanç ràpid.",
+    "reference": {
+      "hash": "7730e5a1",
+      "params": [
+        {
+          "meaning": "files de punts d’avanç ràpid des de la part inferior",
+          "values": "de 0 a 32000",
+          "default": "cal especificar-lo"
+        }
+      ]
+    }
+  },
+  "^PH": {
+    "hash": "41c6c916",
+    "summary": "Avança una etiqueta en blanc després d’imprimir el format actual."
+  },
+  "~PH": {
+    "hash": "28c7d3d5",
+    "summary": "Avança una etiqueta en blanc tan aviat com la impressora queda lliure, després del format actual o mentre està en pausa."
+  },
+  "^PP": {
+    "hash": "9d3255df",
+    "summary": "Posa la impressora en pausa després d’imprimir el format actual. Les etiquetes ja carregades a la memòria intermèdia encara es poden imprimir abans."
+  },
+  "~PP": {
+    "hash": "f5847428",
+    "summary": "Posa la impressora en pausa quan acaba l’etiqueta actual. La impressió es reprèn quan s’elimina l’estat de pausa."
+  },
+  "~PR": {
+    "hash": "77f066a6",
+    "summary": "Torna a imprimir l’etiqueta anterior quan està activat el mode de reimpressió de l’aplicador."
+  },
+  "~PS": {
+    "hash": "1ad15d52",
+    "summary": "Elimina el mode de pausa i reprèn la impressió."
+  },
+  "^CN": {
+    "hash": "f73bb8bf",
+    "summary": "Acciona immediatament el tallador en impressores KR403 en mode d’impressió de quiosc.",
+    "reference": {
+      "hash": "d3d9e357",
+      "params": [
+        {
+          "meaning": "mode de substitució de la quantitat de tall",
+          "values": "0 ajust del quiosc, 1 tall complet"
+        }
+      ]
+    }
+  },
+  "~PL": {
+    "hash": "e2c87f54",
+    "summary": "Afegeix longitud d’expulsió al presentador de quiosc KR403 per facilitar la recollida del material imprès.",
+    "reference": {
+      "hash": "f9e6ffa8",
+      "params": [
+        {
+          "meaning": "longitud addicional d’expulsió del material en mm",
+          "values": "de 0 a 255",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^PN": {
+    "hash": "98d9df86",
+    "summary": "Executa un cicle del presentador KR403 i ofereix el material imprès per retirar-lo manualment.",
+    "reference": {
+      "hash": "a4c3eb6f",
+      "params": [
+        {
+          "meaning": "longitud d’expulsió del material del presentador en mm",
+          "values": "de 0 a 255"
+        }
+      ]
+    }
+  },
+  "^JW": {
+    "hash": "13f2c7f4",
+    "summary": "Estableix la tensió de subministrament de cinta en impressores de la sèrie PAX.",
+    "reference": {
+      "hash": "8fea311a",
+      "params": [
+        {
+          "meaning": "nivell de tensió de la cinta",
+          "values": "L baix, M mitjà, H alt",
+          "default": "cal especificar-lo"
+        }
+      ]
+    }
+  },
+  "^ST": {
+    "hash": "2405167f",
+    "summary": "Estableix la data i l’hora del rellotge en temps real de la impressora.",
+    "reference": {
+      "hash": "d2806f61",
+      "params": [
+        {
+          "meaning": "mes",
+          "values": "de 01 a 12",
+          "default": "mes actual"
+        },
+        {
+          "meaning": "dia",
+          "values": "de 01 a 31",
+          "default": "dia actual"
+        },
+        {
+          "meaning": "any",
+          "values": "de 1998 a 2097",
+          "default": "any actual"
+        },
+        {
+          "meaning": "hora",
+          "values": "de 00 a 23",
+          "default": "hora actual"
+        },
+        {
+          "meaning": "minut",
+          "values": "de 00 a 59",
+          "default": "minut actual"
+        },
+        {
+          "meaning": "segon",
+          "values": "de 00 a 59",
+          "default": "segon actual"
+        },
+        {
+          "meaning": "format AM, PM o 24 hores",
+          "values": "A AM, P PM, M 24 hores",
+          "default": "M"
+        }
+      ]
+    }
+  },
+  "^KD": {
+    "hash": "0799ff99",
+    "summary": "Selecciona el format de data i hora mostrat a l’etiqueta de configuració i al panell de control.",
+    "reference": {
+      "hash": "f1d97e96",
+      "params": [
+        {
+          "meaning": "format de visualització de data i hora",
+          "values": "0 número de versió, 1 MM/DD/YY 24 hores, 2 MM/DD/YY 12 hores, 3 DD/MM/YY 24 hores, 4 DD/MM/YY 12 hores",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^SO": {
+    "hash": "b1f8a0fe",
+    "summary": "Defineix desplaçaments secundaris del rellotge en temps real. Els desplaçaments es perden en apagar la impressora.",
+    "reference": {
+      "hash": "ed3a7fe4",
+      "params": [
+        {
+          "meaning": "número del rellotge a desplaçar",
+          "values": "2 secundari, 3 tercer",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "desplaçament en mesos",
+          "values": "de -32000 a 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "desplaçament en dies",
+          "values": "de -32000 a 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "desplaçament en anys",
+          "values": "de -32000 a 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "desplaçament en hores",
+          "values": "de -32000 a 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "desplaçament en minuts",
+          "values": "de -32000 a 32000",
+          "default": "0"
+        },
+        {
+          "meaning": "desplaçament en segons",
+          "values": "de -32000 a 32000",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^SL": {
+    "hash": "c92ac3ae",
+    "summary": "Estableix quan es fixen els camps d’hora i selecciona l’idioma dels noms de dies i mesos.",
+    "reference": {
+      "hash": "dfefa096",
+      "params": [
+        {
+          "meaning": "mode de lectura del rellotge",
+          "values": "S hora inicial, T hora actual, de 0 a 999 de tolerància",
+          "default": "S"
+        },
+        {
+          "meaning": "idioma dels noms de dies i mesos",
+          "values": "1 anglès, 2 castellà, 3 francès, 4 alemany, 5 italià, de 6 a 18 més idiomes",
+          "default": "últim ^KL"
+        }
+      ]
+    }
+  },
+  "^KL": {
+    "hash": "cc881728",
+    "summary": "Selecciona l’idioma de la pantalla del panell de control de la impressora d’una llista que varia segons el model.",
+    "reference": {
+      "hash": "53ee3577",
+      "params": [
+        {
+          "meaning": "idioma de la pantalla del panell de control",
+          "values": "codis d’idioma d’1 a 20",
+          "default": "1"
+        }
+      ]
+    }
+  },
+  "^SE": {
+    "hash": "e934d1c1",
+    "summary": "Selecciona una taula de codificació emmagatzemada per transformar les dades dels camps abans d’imprimir.",
+    "reference": {
+      "hash": "362bf452",
+      "params": [
+        {
+          "meaning": "unitat on és la taula de codificació",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del fitxer de taula de codificació",
+          "values": "d’1 a 8 caràcters alfanumèrics"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": "DAT valor fix",
+          "default": "DAT"
+        }
+      ]
+    }
+  },
+  "^SZ": {
+    "hash": "ea549756",
+    "summary": "Selecciona la interpretació d’ordres ZPL original o ZPL II per mantenir la compatibilitat amb formats antics.",
+    "reference": {
+      "hash": "c1d4e690",
+      "params": [
+        {
+          "meaning": "versió de l’intèrpret ZPL",
+          "values": "1 ZPL, 2 ZPL II",
+          "default": "2"
+        }
+      ]
+    }
+  },
+  "^KN": {
+    "hash": "0269028a",
+    "summary": "Assigna un nom de xarxa i una descripció de text lliure a la impressora, mostrats a l’etiqueta de configuració i a la pàgina web integrada.",
+    "reference": {
+      "hash": "13c7fb1f",
+      "params": [
+        {
+          "meaning": "nom de xarxa de la impressora",
+          "values": "fins a 16 caràcters alfanumèrics",
+          "default": "ZBR més el sufix MAC"
+        },
+        {
+          "meaning": "descripció de la impressora per a l’etiqueta de configuració i la pàgina web",
+          "values": "fins a 35 caràcters alfanumèrics",
+          "default": "en blanc"
+        }
+      ]
+    }
+  },
+  "^KP": {
+    "hash": "dfff2683",
+    "summary": "Estableix la contrasenya de quatre dígits dels menús de configuració del panell de control.",
+    "reference": {
+      "hash": "4ba8180f",
+      "params": [
+        {
+          "meaning": "contrasenya de quatre dígits del panell de control",
+          "values": "de 0000 a 9999",
+          "default": "1234"
+        },
+        {
+          "meaning": "nivell de contrasenya, només per a la impressora S4M",
+          "values": "d’1 a 4",
+          "default": "3"
+        }
+      ]
+    }
+  },
+  "^JU": {
+    "hash": "0d28f5a3",
+    "summary": "Desa, restaura o restableix la configuració de la impressora.",
+    "reference": {
+      "hash": "e01c6e1c",
+      "params": [
+        {
+          "meaning": "acció de configuració",
+          "values": "A tots de fàbrica, F fàbrica, N xarxa, R recupera, S desa"
+        }
+      ]
+    }
+  },
+  "^CC": {
+    "hash": "872b8b17",
+    "summary": "Canvia el caràcter de prefix de les ordres de format, normalment l’accent circumflex, globalment o per al format actual.",
+    "reference": {
+      "hash": "24fe574f",
+      "params": [
+        {
+          "meaning": "prefix nou de les ordres de format",
+          "values": "qualsevol caràcter ASCII"
+        }
+      ]
+    }
+  },
+  "^CD": {
+    "hash": "c0ef72ac",
+    "summary": "Canvia el caràcter delimitador de paràmetres, normalment la coma, globalment o per al format actual.",
+    "reference": {
+      "hash": "d9bf15a2",
+      "params": [
+        {
+          "meaning": "caràcter delimitador nou de paràmetres",
+          "values": "qualsevol caràcter ASCII"
+        }
+      ]
+    }
+  },
+  "^CT": {
+    "hash": "841d0676",
+    "summary": "Canvia el caràcter de prefix de les ordres immediates, normalment la titlla, globalment o per al format actual.",
+    "reference": {
+      "hash": "71a6fc0c",
+      "params": [
+        {
+          "meaning": "prefix nou de les ordres de control",
+          "values": "qualsevol caràcter ASCII"
+        }
+      ]
+    }
+  },
+  "^CM": {
+    "hash": "a8e66bc4",
+    "summary": "Reassigna les lletres de memòria de la impressora perquè els objectes emmagatzemats puguin conservar els noms existents.",
+    "reference": {
+      "hash": "e827b9f2",
+      "params": [
+        {
+          "meaning": "àlies de memòria per a B",
+          "values": "B targeta de memòria, E flaix, R DRAM, A CompactFlash, NONE sense definir",
+          "default": "B"
+        },
+        {
+          "meaning": "àlies de memòria per a E",
+          "values": "B targeta de memòria, E flaix, R DRAM, A CompactFlash, NONE sense definir",
+          "default": "E"
+        },
+        {
+          "meaning": "àlies de memòria per a R",
+          "values": "B targeta de memòria, E flaix, R DRAM, A CompactFlash, NONE sense definir",
+          "default": "R"
+        },
+        {
+          "meaning": "àlies de memòria per a A",
+          "values": "B targeta de memòria, E flaix, R DRAM, A CompactFlash, NONE sense definir",
+          "default": "A"
+        },
+        {
+          "meaning": "permet l’assignació duplicada d’àlies",
+          "values": "M àlies múltiple",
+          "default": "cap"
+        }
+      ]
+    }
+  },
+  "~JA": {
+    "hash": "4acd9d0f",
+    "summary": "Cancel·la els formats en cua i el lot actual. L’etiqueta que ja s’està imprimint pot acabar."
+  },
+  "^JB": {
+    "hash": "46fa3633",
+    "summary": "Esborra i reinicialitza un dispositiu de memòria flaix. Una interrupció de corrent durant l’operació pot corrompre l’emmagatzematge.",
+    "reference": {
+      "hash": "4548dced",
+      "params": [
+        {
+          "meaning": "dispositiu de memòria flaix a inicialitzar",
+          "values": "A flaix opcional, B targeta flaix, E flaix intern",
+          "default": "cal especificar-lo"
+        }
+      ]
+    }
+  },
+  "~JB": {
+    "hash": "67e8395b",
+    "summary": "Reinicialitza la targeta de memòria amb bateria després d’instal·lar-la o substituir-ne la bateria."
+  },
+  "~JC": {
+    "hash": "3aa08e00",
+    "summary": "Executa el calibratge del material per mesurar la longitud de l’etiqueta i ajustar els sensors de material i cinta."
+  },
+  "~JD": {
+    "hash": "4d020bbb",
+    "summary": "Imprimeix els bytes entrants i els seus valors hexadecimals en lloc d’executar-los, per diagnosticar la comunicació amb l’ordinador."
+  },
+  "~JE": {
+    "hash": "7d4e29da",
+    "summary": "Surt del mode de diagnòstic de comunicacions i torna a la impressió normal d’etiquetes."
+  },
+  "~JF": {
+    "hash": "b38d6228",
+    "summary": "Estableix si una tensió baixa de bateria posa en pausa una impressora portàtil o permet continuar imprimint.",
+    "reference": {
+      "hash": "8ef68420",
+      "params": [
+        {
+          "meaning": "pausa amb tensió baixa de bateria",
+          "values": "Y pausa, N continua imprimint",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "~JG": {
+    "hash": "4554b6c3",
+    "summary": "Executa el calibratge del material i imprimeix un gràfic del perfil del sensor per a la transició entre material i separació."
+  },
+  "^JI": {
+    "hash": "06eabfbb",
+    "summary": "Inicia l’intèrpret Zebra BASIC a la impressora i, opcionalment, executa un programa emmagatzemat.",
+    "reference": {
+      "hash": "95546a5f",
+      "params": [
+        {
+          "meaning": "ubicació d’emmagatzematge del programa",
+          "values": "R, E, B, A",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "nom del programa a executar",
+          "values": "qualsevol nom de programa vàlid",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "extensió del fitxer de programa",
+          "values": "BAS o BAE"
+        },
+        {
+          "meaning": "control de sortida de la consola",
+          "values": "Y activat, N desactivat",
+          "default": "Y"
+        },
+        {
+          "meaning": "control de l’eco d’ordres",
+          "values": "Y activat, N desactivat",
+          "default": "Y"
+        },
+        {
+          "meaning": "memòria assignada a ZBI",
+          "values": "de 20K a 1024K",
+          "default": "50K"
+        }
+      ]
+    }
+  },
+  "^JJ": {
+    "hash": "4432cbae",
+    "summary": "Configura el port auxiliar per als senyals de l’aplicador o verificador i la gestió d’errors.",
+    "reference": {
+      "hash": "328aa9f4",
+      "params": [
+        {
+          "meaning": "mode de gestió d’errors del verificador",
+          "values": "0 desactivat, 1 reimprimeix en cas d’error, 2 rendiment màxim",
+          "default": "0"
+        },
+        {
+          "meaning": "mode de temporització del senyal de l’aplicador",
+          "values": "0 desactivat, d’1 a 4 temporització del senyal",
+          "default": "0"
+        },
+        {
+          "meaning": "mode de temporització del senyal d’inici d’impressió",
+          "values": "p mode de pols, l mode de nivell"
+        },
+        {
+          "meaning": "mode de resposta a errors d’etiqueta",
+          "values": "e mode d’error, f mode d’avanç",
+          "default": "f"
+        },
+        {
+          "meaning": "mode de reimpressió per senyal",
+          "values": "e activat, d desactivat",
+          "default": "d"
+        },
+        {
+          "meaning": "mode d’avís de cinta baixa",
+          "values": "e activat, d desactivat",
+          "default": "e"
+        }
+      ]
+    }
+  },
+  "^JS": {
+    "hash": "bc9a5fde",
+    "summary": "Selecciona el sensor de material per al seguiment, habitualment reflectant o transmissiu.",
+    "reference": {
+      "hash": "8321755c",
+      "params": [
+        {
+          "meaning": "sensor a fer servir",
+          "values": "A automàtic, R reflectant, T transmissiu",
+          "default": "varia segons el model de la impressora"
+        }
+      ]
+    }
+  },
+  "~JL": {
+    "hash": "f3148843",
+    "summary": "Mesura i desa la longitud de l’etiqueta, avançant etiquetes en blanc durant el procés."
+  },
+  "^JM": {
+    "hash": "dff7a8d7",
+    "summary": "Estableix una densitat de punts per mil·límetre normal o reduïda. La densitat reduïda duplica la mida física de les coordenades del format.",
+    "reference": {
+      "hash": "990b4d92",
+      "params": [
+        {
+          "meaning": "ajust de densitat d’impressió",
+          "values": "A densitat normal, B mitja densitat",
+          "default": "A"
+        }
+      ]
+    }
+  },
+  "~JN": {
+    "hash": "1e9fd837",
+    "summary": "Fa que les comprovacions fallides dels elements del capçal aturin la impressió fins que es reinicia la impressora o es restaura el mode tolerant."
+  },
+  "~JO": {
+    "hash": "4d4bdb11",
+    "summary": "Indica una comprovació fallida dels elements del capçal com a error que es pot esborrar amb PAUSE sense apagar la impressora."
+  },
+  "~JP": {
+    "hash": "8d1d171d",
+    "summary": "Cancel·la el format següent de la cua i posa la impressora en pausa, un format de la memòria intermèdia per ordre."
+  },
+  "~JQ": {
+    "hash": "e7b46150",
+    "summary": "Surt d’una sessió activa de l’intèrpret Zebra BASIC i retorna el port al processament ZPL."
+  },
+  "~JR": {
+    "hash": "4b7d74fb",
+    "summary": "Reinicia el microprogramari de la impressora i recarrega els valors de comunicació i configuració desats."
+  },
+  "~JX": {
+    "hash": "541ca0f0",
+    "summary": "Cancel·la el format que s’està rebent sense cancel·lar les etiquetes que ja s’estan imprimint."
+  },
+  "~RO": {
+    "hash": "305ffa34",
+    "summary": "Restableix un comptador d’ús de la impressora seleccionat, inclosos els d’usuari o RFID.",
+    "reference": {
+      "hash": "c8be415f",
+      "params": [
+        {
+          "meaning": "comptador a restablir",
+          "values": "1 comptador u, 2 comptador dos, 3 RFID vàlid, 4 RFID invalidat, C capçal netejat, R capçal substituït",
+          "default": "cal especificar-lo"
+        }
+      ]
+    }
+  },
+  "^SC": {
+    "hash": "7fc83e36",
+    "summary": "Configura tots els paràmetres de comunicació del port sèrie en una sola ordre.",
+    "reference": {
+      "hash": "9dbc12e3",
+      "params": [
+        {
+          "meaning": "velocitat en bauds del port sèrie",
+          "values": "110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "bits de dades per caràcter",
+          "values": "7 o 8",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "ajust de paritat",
+          "values": "N cap, E parell, O senar",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "bits d’aturada",
+          "values": "1 o 2",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "protocol de control de flux",
+          "values": "X Xon/Xoff, D DTR/DSR, R RTS, M DTR/DSR i Xon/Xoff",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "control de flux del protocol Zebra",
+          "values": "A ACK/NAK, N cap, Z zebra",
+          "default": "cal especificar-lo"
+        }
+      ]
+    }
+  },
+  "^SI": {
+    "hash": "a54846c8",
+    "summary": "Substitueix els valors d’intensitat o de referència del sensor transmissiu que normalment estableix el calibratge.",
+    "reference": {
+      "hash": "4df4bac5",
+      "params": [
+        {
+          "meaning": "paràmetre del sensor a modificar",
+          "values": "1 lluminositat, 2 referència",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "valor del paràmetre seleccionat",
+          "values": "de 0 a 196",
+          "default": "cal especificar-lo"
+        }
+      ]
+    }
+  },
+  "^SP": {
+    "hash": "6881d909",
+    "summary": "Inicia la impressió abans que arribi tot el format per millorar el rendiment amb etiquetes complexes.",
+    "reference": {
+      "hash": "59d44e26",
+      "params": [
+        {
+          "meaning": "fila de punts on començar a imprimir",
+          "values": "de 0 a 32000",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^SQ": {
+    "hash": "ce9e1949",
+    "summary": "Desactiva una condició i una destinació específiques d’avís ZebraNet.",
+    "reference": {
+      "hash": "25195c87",
+      "params": [
+        {
+          "meaning": "condició d’avís a aturar",
+          "values": "d’A a O i de Q a V una condició cadascun, W totes a les impressores RFID, * totes a les altres"
+        },
+        {
+          "meaning": "destinació d’avís a aturar",
+          "values": "A sèrie, B paral·lel, C correu electrònic, D TCP/IP, E UDP/IP, F notificació SNMP, * tot"
+        },
+        {
+          "meaning": "atura o reprèn aquests avisos",
+          "values": "Y atura els missatges, N inicia els missatges",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "^SR": {
+    "hash": "aa5bd741",
+    "summary": "Estableix el valor de resistència del capçal emprat per calcular l’energia tèrmica.",
+    "reference": {
+      "hash": "06ad705b",
+      "params": [
+        {
+          "meaning": "valor de resistència del capçal",
+          "values": "de 0488 a 1175",
+          "default": "últim valor desat permanentment"
+        }
+      ]
+    }
+  },
+  "^SS": {
+    "hash": "7276b95c",
+    "summary": "Estableix els llindars dels sensors de material, la longitud de l’etiqueta i les intensitats dels LED que normalment determina el calibratge.",
+    "reference": {
+      "hash": "e3e9bbaa",
+      "params": [
+        {
+          "meaning": "valor del sensor de separació",
+          "values": "de 0 a 100",
+          "default": "indicat al perfil del sensor o a l’etiqueta de configuració"
+        },
+        {
+          "meaning": "valor del sensor de material",
+          "values": "de 0 a 100",
+          "default": "indicat al perfil del sensor o a l’etiqueta de configuració"
+        },
+        {
+          "meaning": "valor del sensor de cinta",
+          "values": "de 0 a 100",
+          "default": "indicat al perfil del sensor o a l’etiqueta de configuració"
+        },
+        {
+          "meaning": "longitud de l’etiqueta en punts",
+          "values": "d’1 a 32000",
+          "default": "valor del calibratge"
+        },
+        {
+          "meaning": "intensitat del LED de material",
+          "values": "de 0 a 255",
+          "default": "valor del calibratge"
+        },
+        {
+          "meaning": "intensitat del LED de cinta",
+          "values": "de 0 a 255",
+          "default": "valor del calibratge"
+        },
+        {
+          "meaning": "valor de detecció de marca",
+          "values": "de 0 a 100",
+          "default": "valor del calibratge"
+        },
+        {
+          "meaning": "valor de detecció del suport de marca",
+          "values": "de 0 a 100",
+          "default": "valor del calibratge"
+        },
+        {
+          "meaning": "valor de detecció del LED de marca",
+          "values": "de 0 a 255",
+          "default": "valor del calibratge"
+        }
+      ]
+    }
+  },
+  "^SX": {
+    "hash": "c13a4455",
+    "summary": "Activa un avís ZebraNet per a una condició i una destinació específiques.",
+    "reference": {
+      "hash": "cc5632f8",
+      "params": [
+        {
+          "meaning": "tipus de condició d’avís",
+          "values": "d’A a V una condició cadascun, * totes",
+          "default": "s’ignora si falta o no és vàlid"
+        },
+        {
+          "meaning": "tipus de destinació de l’avís",
+          "values": "A sèrie, B paral·lel, C correu electrònic, D TCP/IP, E UDP/IP, F notificació SNMP",
+          "default": "s’ignora si falta o no és vàlid"
+        },
+        {
+          "meaning": "activa l’avís en activar-se la condició",
+          "values": "N no, Y sí",
+          "default": "Y o valor anterior"
+        },
+        {
+          "meaning": "activa l’avís en desactivar-se la condició",
+          "values": "N no, Y sí",
+          "default": "N o valor anterior"
+        },
+        {
+          "meaning": "adreça de destinació de l’avís",
+          "values": "correu electrònic, adreça IP o destinació SNMP",
+          "default": "s’ignora si falta o no és vàlid"
+        },
+        {
+          "meaning": "número de port de l’avís",
+          "values": "de 0 a 65535",
+          "default": "s’ignora si falta o no és vàlid"
+        }
+      ]
+    }
+  },
+  "^TO": {
+    "hash": "8f37a07b",
+    "summary": "Copia objectes emmagatzemats entre dispositius de memòria de la impressora, amb comodins per a grups.",
+    "reference": {
+      "hash": "69a63b26",
+      "params": [
+        {
+          "meaning": "dispositiu d’emmagatzematge d’origen",
+          "values": "R, E, B, A"
+        },
+        {
+          "meaning": "nom de l’objecte d’origen",
+          "values": "qualsevol nom d’objecte existent",
+          "default": "* selecciona tots els objectes"
+        },
+        {
+          "meaning": "extensió de l’objecte d’origen",
+          "values": "qualsevol extensió de fitxer vàlida",
+          "default": "* selecciona totes les extensions"
+        },
+        {
+          "meaning": "dispositiu d’emmagatzematge de destinació",
+          "values": "R, E, B, A",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "nom de l’objecte a la destinació",
+          "values": "fins a 8 caràcters alfanumèrics",
+          "default": "nom de l’objecte d’origen"
+        },
+        {
+          "meaning": "extensió de l’objecte de destinació",
+          "values": "qualsevol extensió de fitxer vàlida",
+          "default": "extensió de l’objecte d’origen"
+        }
+      ]
+    }
+  },
+  "~WC": {
+    "hash": "9ffb7f98",
+    "summary": "Imprimeix una etiqueta de configuració amb informació de sensors, xarxa, microprogramari i memòria."
+  },
+  "^WD": {
+    "hash": "a4c9ed19",
+    "summary": "Imprimeix una etiqueta de directori dels objectes emmagatzemats, tipus de lletra residents o codis de barres disponibles.",
+    "reference": {
+      "hash": "a4185e4c",
+      "params": [
+        {
+          "meaning": "dispositiu d’origen del llistat",
+          "values": "R, E, B, A, Z",
+          "default": "R"
+        },
+        {
+          "meaning": "filtre de noms d’objecte",
+          "values": "d’1 a 8 caràcters, comodins * o ?",
+          "default": "*"
+        },
+        {
+          "meaning": "filtre d’extensions",
+          "values": "qualsevol extensió vàlida, comodí *",
+          "default": "*"
+        }
+      ]
+    }
+  },
+  "~WQ": {
+    "hash": "598068da",
+    "summary": "Imprimeix en una etiqueta la informació de servei demanada, com ara el comptador de distància o l’historial del capçal.",
+    "reference": {
+      "hash": "5942779b",
+      "params": [
+        {
+          "meaning": "tipus d’informe de servei a imprimir",
+          "values": "ES estat, HA adreça de maquinari, JT comprovació del capçal, MA ajustos d’avís, MI missatges, OD comptador de distància, PH vida útil del capçal, PP plug and play, SN número de sèrie, UI ID USB",
+          "default": "cal especificar-lo"
+        }
+      ]
+    }
+  },
+  "^KV": {
+    "hash": "b56294a5",
+    "summary": "Configura el presentador de quiosc KR403, incloent-hi longitud de tall, marge de tall, temps d’espera de retracció i longitud del bucle.",
+    "reference": {
+      "hash": "3a176152",
+      "params": [
+        {
+          "meaning": "quantitat de tall del quiosc",
+          "values": "0 tall normal, de 10 a 60 mm de tall parcial",
+          "default": "0"
+        },
+        {
+          "meaning": "marge de tall del quiosc en mm",
+          "values": "de 2 a 9",
+          "default": "9"
+        },
+        {
+          "meaning": "tipus de presentació del quiosc després d’imprimir",
+          "values": "0 expulsa, 1 retreu, 2 cap acció",
+          "default": "0"
+        },
+        {
+          "meaning": "temps d’espera de presentació del quiosc en segons",
+          "values": "de 0 a 300, 0 sense temps d’espera",
+          "default": "0"
+        },
+        {
+          "meaning": "longitud del bucle del presentador en mm",
+          "values": "0 pas directe, de 3 a 1023",
+          "default": "400"
+        }
+      ]
+    }
+  },
+  "^XS": {
+    "hash": "8f9e3e07",
+    "summary": "Controla el recalibratge dinàmic de la longitud de l’etiqueta i del llindar del sensor després d’engegar o obrir el compartiment del material. La posició de guany està anunciada per a un microprogramari posterior.",
+    "reference": {
+      "hash": "4c3c08cd",
+      "params": [
+        {
+          "meaning": "activa el calibratge dinàmic de longitud",
+          "values": "Y activa, N desactiva",
+          "default": "Y"
+        },
+        {
+          "meaning": "activa el calibratge dinàmic dels llindars",
+          "values": "Y activa, N desactiva",
+          "default": "Y"
+        },
+        {
+          "meaning": "activa el calibratge dinàmic del guany",
+          "values": "Y activa, N desactiva",
+          "default": "Y"
+        }
+      ]
+    }
+  },
+  "~PM": {
+    "hash": "e553f937",
+    "summary": "Inicia el mode de retirada de servei per preparar una impressora per a la revenda o el reciclatge.",
+    "reference": {
+      "hash": "6ce7cdca",
+      "params": [
+        {
+          "meaning": "número de sèrie de la impressora",
+          "values": "cadena alfanumèrica",
+          "default": "cal especificar-lo"
+        },
+        {
+          "meaning": "nombre de passades d’esborrament de la memòria flaix",
+          "values": "de 0 a 3",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^ZZ": {
+    "hash": "e2f8b46f",
+    "summary": "Estableix l’aturada automàtica després d’un període d’inactivitat, amb opcions per a etiquetes en cua.",
+    "reference": {
+      "hash": "b0e91194",
+      "params": [
+        {
+          "meaning": "segons d’inactivitat abans de l’aturada automàtica",
+          "values": "de 0 a 999999, 0 desactiva l’aturada",
+          "default": "últim valor desat o 0"
+        },
+        {
+          "meaning": "estat de les etiquetes en aturar",
+          "values": "Y atura amb cua, N acaba primer la cua",
+          "default": "N"
+        }
+      ]
+    }
+  },
+  "^CP": {
+    "hash": "9c24bb8c",
+    "summary": "Expulsa o retreu el material ja ofert per un presentador de quiosc KR403.",
+    "reference": {
+      "hash": "37757720",
+      "params": [
+        {
+          "meaning": "acció de presentació del quiosc",
+          "values": "0 expulsa, 1 retreu, 2 fes servir l’ajust ^KV"
+        }
+      ]
+    }
+  },
+  "~KB": {
+    "hash": "09113ec1",
+    "summary": "Executa el mode de descàrrega de bateria en impressores portàtils per condicionar-la."
+  },
+  "~HB": {
+    "hash": "a0d9d150",
+    "summary": "Retorna lectures d’alimentació de la bateria i del capçal d’impressores mòbils."
+  },
+  "~HD": {
+    "hash": "57bb5bf6",
+    "summary": "Retorna dades de diagnòstic del capçal, incloent-hi temperatures, resultats de comprovació d’elements, foscor i velocitat."
+  },
+  "^HF": {
+    "hash": "b3930522",
+    "summary": "Retorna un format ZPL emmagatzemat de la memòria de la impressora a l’ordinador.",
+    "reference": {
+      "hash": "7e702f4e",
+      "params": [
+        {
+          "meaning": "dispositiu de memòria on cercar",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "R"
+        },
+        {
+          "meaning": "nom del format emmagatzemat",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": ".ZPL fix",
+          "default": ".ZPL"
+        }
+      ]
+    }
+  },
+  "^HG": {
+    "hash": "2b6246b8",
+    "summary": "Retorna una imatge gràfica emmagatzemada de la memòria de la impressora a l’ordinador.",
+    "reference": {
+      "hash": "e7012334",
+      "params": [
+        {
+          "meaning": "dispositiu de memòria on cercar",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "prioritat de cerca"
+        },
+        {
+          "meaning": "nom del gràfic a enviar",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "UNKNOWN"
+        },
+        {
+          "meaning": "extensió del fitxer",
+          "values": ".GRF fix",
+          "default": ".GRF"
+        }
+      ]
+    }
+  },
+  "^HH": {
+    "hash": "2c08ade4",
+    "summary": "Retorna la configuració actual de la impressora com a text llegible pel port de l’ordinador."
+  },
+  "~HI": {
+    "hash": "2e21fab4",
+    "summary": "Retorna dades d’identitat de la impressora, incloent-hi model, microprogramari, resolució, memòria i opcions instal·lades."
+  },
+  "~HM": {
+    "hash": "2e56f6ca",
+    "summary": "Retorna la memòria total, la màxima disponible i la lliure actual de la impressora en kilobytes."
+  },
+  "~HQ": {
+    "hash": "11a92108",
+    "summary": "Retorna a l’ordinador les dades d’estat, identitat, comptadors o manteniment demanades.",
+    "reference": {
+      "hash": "9d96a508",
+      "params": [
+        {
+          "meaning": "selector de consulta de les dades retornades",
+          "values": "ES estat, HA MAC per cable, JT comprovació del capçal, MA avisos de manteniment, MI informació de manteniment, OD comptador de distància, PH vida útil del capçal, PP plug and play, SN número de sèrie, UI ID de producte USB"
+        }
+      ]
+    }
+  },
+  "~HS": {
+    "hash": "d72f1996",
+    "summary": "Retorna textos d’estat per a la interfície, el material, la pausa, la longitud d’etiqueta i els formats de la memòria intermèdia."
+  },
+  "^HT": {
+    "hash": "1c66e981",
+    "summary": "Retorna a l’ordinador la taula d’enllaços de tipus de lletra, amb els tipus base i les alternatives."
+  },
+  "~HU": {
+    "hash": "753044eb",
+    "summary": "Retorna els avisos ZebraNet configurats, incloent-hi condicions, destinacions i indicadors d’activació o desactivació."
+  },
+  "^HV": {
+    "hash": "6d4cead9",
+    "summary": "Retorna a l’ordinador les dades d’un camp numerat, amb un límit opcional de bytes.",
+    "reference": {
+      "hash": "9cf067c9",
+      "params": [
+        {
+          "meaning": "número de camp establert per ^FN",
+          "values": "de 0 a 9999",
+          "default": "0"
+        },
+        {
+          "meaning": "bytes a retornar",
+          "values": "d’1 a 256",
+          "default": "64"
+        },
+        {
+          "meaning": "text de capçalera abans de les dades",
+          "values": "de 0 a 3072 bytes",
+          "default": "sense capçalera"
+        },
+        {
+          "meaning": "text de final després de les dades",
+          "values": "de 0 a 3072 caràcters"
+        },
+        {
+          "meaning": "resposta enviada per",
+          "values": "F format, L etiqueta",
+          "default": "F"
+        }
+      ]
+    }
+  },
+  "^HW": {
+    "hash": "624ddd80",
+    "summary": "Retorna el llistat de directori d’un dispositiu de memòria, incloent-hi l’espai lliure restant.",
+    "reference": {
+      "hash": "4589d283",
+      "params": [
+        {
+          "meaning": "dispositiu de memòria a llistar",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash, Z altre",
+          "default": "R"
+        },
+        {
+          "meaning": "filtre de noms d’objecte",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "*"
+        },
+        {
+          "meaning": "filtre d’extensions",
+          "values": "qualsevol extensió de fitxer Zebra",
+          "default": "*"
+        },
+        {
+          "meaning": "disposició del llistat",
+          "values": "c columna, d per defecte",
+          "default": "d"
+        }
+      ]
+    }
+  },
+  "^HY": {
+    "hash": "29d47808",
+    "summary": "Retorna a l’ordinador un gràfic emmagatzemat en un format de fitxer descarregable.",
+    "reference": {
+      "hash": "d1550c45",
+      "params": [
+        {
+          "meaning": "dispositiu de memòria on és l’objecte",
+          "values": "R DRAM, E flaix, B targeta de memòria, A CompactFlash",
+          "default": "prioritat de cerca"
+        },
+        {
+          "meaning": "nom de l’objecte a enviar",
+          "values": "d’1 a 8 caràcters alfanumèrics",
+          "default": "cal indicar un nom"
+        },
+        {
+          "meaning": "format d’enviament",
+          "values": "G mapa de bits en brut, P mapa de bits comprimit",
+          "default": "format emmagatzemat"
+        }
+      ]
+    }
+  },
+  "^HZ": {
+    "hash": "14da0a93",
+    "summary": "Retorna l’XML de descripció de la impressora per a la configuració, el directori d’objectes o l’estat.",
+    "reference": {
+      "hash": "639f8fb7",
+      "params": [
+        {
+          "meaning": "tipus de descripció a retornar",
+          "values": "a tot, f format, l directori, o objecte, r estat"
+        }
+      ]
+    }
+  },
+  "^RF": {
+    "hash": "8984b485",
+    "summary": "Llegeix o escriu una etiqueta RFID, incloent-hi format de dades, banc de memòria i contrasenya d’accés.",
+    "reference": {
+      "hash": "13026ef7",
+      "params": [
+        {
+          "meaning": "operació",
+          "values": "W escriu, L escriu i bloca, R llegeix, P llegeix la contrasenya, S estableix la contrasenya",
+          "default": "W"
+        },
+        {
+          "meaning": "format de dades",
+          "values": "A ASCII, H hexadecimal, E EPC",
+          "default": "H"
+        },
+        {
+          "meaning": "indicador de contrasenya o número de bloc inicial",
+          "values": "P contrasenya a continuació, bloc de 0 a n",
+          "default": "0"
+        },
+        {
+          "meaning": "nombre de bytes a llegir o escriure",
+          "values": "d’1 a n, màxim segons l’etiqueta RFID",
+          "default": "1"
+        },
+        {
+          "meaning": "banc de memòria Gen 2",
+          "values": "E EPC de 96 bits, A EPC amb bits PC automàtics, 0 reservat, 1 EPC, 2 TID, 3 usuari",
+          "default": "E"
+        }
+      ]
+    }
+  },
+  "^RI": {
+    "hash": "87091064",
+    "summary": "Llegeix l’ID de l’etiqueta RFID actual per fer-lo servir a les dades de l’etiqueta o a una resposta a l’ordinador."
+  },
+  "^RM": {
+    "hash": "f86988c8",
+    "summary": "Controla el moviment del material durant operacions RFID antigues. Els formats Link-OS fan servir ^RS."
+  },
+  "^RN": {
+    "hash": "201c03cf",
+    "summary": "Detecta més d’una etiqueta RFID al camp de codificació i pot invalidar etiquetes si n’hi ha d’altres a prop."
+  },
+  "^RR": {
+    "hash": "789cab49",
+    "summary": "Estableix el nombre de reintents de lectura o escriptura RFID antiga. Els formats Link-OS fan servir ^RS."
+  },
+  "^RB": {
+    "hash": "15939ef7",
+    "summary": "Defineix la disposició de bits per codificar camps EPC RFID en una etiqueta.",
+    "reference": {
+      "hash": "59b61787",
+      "params": [
+        {
+          "meaning": "mida total en bits de les particions",
+          "values": "d’1 a la mida en bits de l’etiqueta RFID",
+          "default": "96"
+        },
+        {
+          "meaning": "bits de cada partició, fins a 16 particions",
+          "values": "d’1 a 64",
+          "default": "1"
+        }
+      ]
+    }
+  },
+  "^RS": {
+    "hash": "62e2b805",
+    "summary": "Estableix les opcions RFID per a les etiquetes següents, incloent-hi tipus d’etiqueta, posició de programació, gestió d’errors i longitud de la barra VOID.",
+    "reference": {
+      "hash": "548b93db",
+      "params": [
+        {
+          "meaning": "tipus d’etiqueta RFID",
+          "values": "8 només Gen 2",
+          "default": "8"
+        },
+        {
+          "meaning": "posició de programació de l’etiqueta RFID",
+          "values": "punts absoluts, de F0 a Fxxx endavant, de B0 a B30 enrere, up següent, down anterior",
+          "default": "ajust de la impressora"
+        },
+        {
+          "meaning": "longitud de la impressió d’invalidació",
+          "values": "de 0 a la longitud de l’etiqueta",
+          "default": "longitud de l’etiqueta"
+        },
+        {
+          "meaning": "etiquetes a reintentar en cas d’error",
+          "values": "d’1 a 10",
+          "default": "3"
+        },
+        {
+          "meaning": "gestió d’errors després dels reintents",
+          "values": "N cap acció, P pausa, E mode d’error",
+          "default": "N"
+        },
+        {
+          "meaning": "senyals enviats a un aplicador",
+          "values": "S senyal únic, D senyal doble",
+          "default": "S"
+        },
+        {
+          "meaning": "reservat, no es fa servir",
+          "values": "cap"
+        },
+        {
+          "meaning": "velocitat per imprimir etiquetes VOID",
+          "values": "qualsevol velocitat d’impressió vàlida",
+          "default": "velocitat màxima d’impressió"
+        }
+      ]
+    }
+  },
+  "^RT": {
+    "hash": "c17c6fe0",
+    "summary": "Llegeix dades de l’etiqueta RFID en un camp d’etiqueta en formats RFID antics."
+  },
+  "^WT": {
+    "hash": "4386d9c8",
+    "summary": "Escriu dades de l’etiqueta RFID en formats antics. ^RF cobreix lectura, escriptura i gestió de contrasenyes."
+  },
+  "^RU": {
+    "hash": "8e5d397e",
+    "summary": "Construeix un número de sèrie EPC a partir de l’ID de l’etiqueta RFID i l’escriu als bits baixos de l’EPC.",
+    "reference": {
+      "hash": "8b177e8b",
+      "params": [
+        {
+          "meaning": "prefix binari de l’ID de sèrie",
+          "values": "1 i 0 ASCII, fins a 38 bits",
+          "default": "depèn del MDID del xip"
+        },
+        {
+          "meaning": "caràcter especial que marca el camp de sèrie",
+          "values": "qualsevol ASCII excepte ordre, control, delimitador i RTC",
+          "default": "#"
+        }
+      ]
+    }
+  },
+  "~RV": {
+    "hash": "a091b913",
+    "summary": "Retorna a l’ordinador el resultat de cada codificació RFID perquè el programari distingeixi les etiquetes correctes de les invalidades."
+  },
+  "^RW": {
+    "hash": "cd769095",
+    "summary": "Estableix la potència de lectura i escriptura RFID quan el calibratge no produeix valors útils.",
+    "reference": {
+      "hash": "eee83762",
+      "params": [
+        {
+          "meaning": "nivell de potència de lectura",
+          "values": "de 0 a 30, o H alt, M mitjà, L baix",
+          "default": "ajust de la impressora"
+        },
+        {
+          "meaning": "nivell de potència d’escriptura",
+          "values": "de 0 a 30, o H alt, M mitjà, L baix",
+          "default": "ajust de la impressora"
+        },
+        {
+          "meaning": "selecció d’element d’antena",
+          "values": "graella específica de la impressora, d’A1 a F4",
+          "default": "ajust de la impressora"
+        }
+      ]
+    }
+  },
+  "^RL": {
+    "hash": "5296a877",
+    "summary": "Bloca la memòria d’una etiqueta RFID, de manera reversible o permanent, per impedir escriptures posteriors.",
+    "reference": {
+      "hash": "219f8eab",
+      "params": [
+        {
+          "meaning": "estat de blocatge de la contrasenya de desactivació",
+          "values": "U desbloqueja, L bloca, O desbloqueig permanent, P blocatge permanent"
+        },
+        {
+          "meaning": "estat de blocatge de la contrasenya d’accés",
+          "values": "U desbloqueja, L bloca, O desbloqueig permanent, P blocatge permanent"
+        },
+        {
+          "meaning": "estat de blocatge del banc de memòria EPC",
+          "values": "U desbloqueja, L bloca, O desbloqueig permanent, P blocatge permanent"
+        },
+        {
+          "meaning": "estat de blocatge del banc de memòria d’usuari",
+          "values": "U desbloqueja, L bloca, O desbloqueig permanent, P blocatge permanent"
+        }
+      ]
+    }
+  },
+  "^HR": {
+    "hash": "4b742e7c",
+    "summary": "Executa el calibratge RFID i retorna a l’ordinador els paràmetres de posició, antena i potència.",
+    "reference": {
+      "hash": "cbaa1895",
+      "params": [
+        {
+          "meaning": "text abans de la taula de resultats",
+          "values": "qualsevol cadena de menys de 65 caràcters",
+          "default": "inici"
+        },
+        {
+          "meaning": "text després de la taula de resultats",
+          "values": "qualsevol cadena de menys de 65 caràcters",
+          "default": "final"
+        },
+        {
+          "meaning": "posició inicial del calibratge",
+          "values": "de F0 a Fxxx endavant, de B0 a B30 enrere",
+          "default": "ajust de la impressora"
+        },
+        {
+          "meaning": "posició final del calibratge",
+          "values": "de F0 a Fxxx endavant, de B0 a B30 enrere, A automàtic",
+          "default": "ajust de la impressora"
+        },
+        {
+          "meaning": "selecció automàtica o manual d’antena i potència",
+          "values": "A automàtic, M manual",
+          "default": "A"
+        },
+        {
+          "meaning": "inici de l’interval de potència de lectura i escriptura",
+          "values": "de 0 a 30",
+          "default": "0"
+        },
+        {
+          "meaning": "final de l’interval de potència de lectura i escriptura",
+          "values": "de 0 a 30",
+          "default": "potència màxima"
+        },
+        {
+          "meaning": "inici de l’interval d’antenes",
+          "values": "segons el model, habitualment A1",
+          "default": "A1"
+        },
+        {
+          "meaning": "final de l’interval d’antenes",
+          "values": "segons el model, fins a E4",
+          "default": "ajust de la impressora"
+        }
+      ]
+    }
+  },
+  "^HL": {
+    "hash": "6d5b0917",
+    "summary": "Retorna el registre d’operacions RFID, incloent-hi posició, antena, nivell de potència i resultat."
+  },
+  "^NB": {
+    "hash": "193460c2",
+    "summary": "Selecciona si la impressora cerca un servidor d’impressió per cable durant l’arrencada.",
+    "reference": {
+      "hash": "5502f293",
+      "params": [
+        {
+          "meaning": "comprovació del servidor d’impressió per cable en arrencar",
+          "values": "C comprova, S omet",
+          "default": "S"
+        }
+      ]
+    }
+  },
+  "^NC": {
+    "hash": "c6c1871a",
+    "summary": "Selecciona el dispositiu de xarxa principal, per cable o sense fils.",
+    "reference": {
+      "hash": "8fd615de",
+      "params": [
+        {
+          "meaning": "dispositiu de xarxa principal",
+          "values": "1 principal per cable, 2 principal sense fils",
+          "default": "1"
+        }
+      ]
+    }
+  },
+  "~NC": {
+    "hash": "c7cd746c",
+    "summary": "S’adreça a una impressora d’una línia multipunt RS-485 antiga mitjançant l’ID de xarxa.",
+    "reference": {
+      "hash": "0b522f70",
+      "params": [
+        {
+          "meaning": "ID de xarxa de la impressora de destinació",
+          "values": "de 001 a 999",
+          "default": "000 cap"
+        }
+      ]
+    }
+  },
+  "^NI": {
+    "hash": "9aba9688",
+    "summary": "Assigna l’ID de xarxa per adreçar-se a una impressora d’una línia multipunt RS-485 antiga.",
+    "reference": {
+      "hash": "fffe906a",
+      "params": [
+        {
+          "meaning": "ID de xarxa assignat a la impressora",
+          "values": "de 001 a 999",
+          "default": "000 cap"
+        }
+      ]
+    }
+  },
+  "^NN": {
+    "hash": "39fe7d3a",
+    "summary": "Estableix les cadenes d’identitat i comunitat SNMP de la impressora.",
+    "reference": {
+      "hash": "770a45b2",
+      "params": [
+        {
+          "meaning": "nom del sistema SNMP",
+          "values": "fins a 17 caràcters"
+        },
+        {
+          "meaning": "contacte del sistema SNMP",
+          "values": "fins a 50 caràcters"
+        },
+        {
+          "meaning": "ubicació del sistema SNMP",
+          "values": "fins a 50 caràcters"
+        },
+        {
+          "meaning": "nom de comunitat de lectura SNMP",
+          "values": "fins a 19 caràcters",
+          "default": "public"
+        },
+        {
+          "meaning": "nom de comunitat d’escriptura SNMP",
+          "values": "fins a 19 caràcters",
+          "default": "public"
+        },
+        {
+          "meaning": "nom de comunitat de notificacions SNMP",
+          "values": "fins a 20 caràcters",
+          "default": "public"
+        }
+      ]
+    }
+  },
+  "^NP": {
+    "hash": "3ed49c57",
+    "summary": "Selecciona si la configuració de xarxa d’arrencada prové de la impressora o del servidor d’impressió connectat.",
+    "reference": {
+      "hash": "f30ea072",
+      "params": [
+        {
+          "meaning": "origen principal de la configuració d’arrencada",
+          "values": "P impressora, M servidor d’impressió",
+          "default": "P"
+        }
+      ]
+    }
+  },
+  "~NR": {
+    "hash": "0851302e",
+    "summary": "Canvia totes les impressores d’una línia multipunt antiga al mode de recepció transparent."
+  },
+  "^NT": {
+    "hash": "e3b92a35",
+    "summary": "Configura el servidor SMTP i el domini per als avisos de correu electrònic del servidor d’impressió.",
+    "reference": {
+      "hash": "42dd3fdc",
+      "params": [
+        {
+          "meaning": "adreça del servidor SMTP",
+          "values": "adreça IPv4"
+        },
+        {
+          "meaning": "nom de domini del servidor d’impressió",
+          "values": "nom de domini"
+        }
+      ]
+    }
+  },
+  "~NT": {
+    "hash": "de5ea89e",
+    "summary": "Canvia la impressora multipunt antiga seleccionada al mode de recepció transparent."
+  },
+  "^NW": {
+    "hash": "5d240db5",
+    "summary": "Estableix durant quant de temps una adreça IP autenticada pot accedir a les pàgines web de la impressora abans de tornar-se a autenticar.",
+    "reference": {
+      "hash": "5f44828e",
+      "params": [
+        {
+          "meaning": "temps d’espera d’autenticació de la pàgina web",
+          "values": "de 0 a 255 minuts",
+          "default": "5"
+        }
+      ]
+    }
+  },
+  "^KC": {
+    "hash": "26bd4700",
+    "summary": "Estableix la forma i el valor de l’identificador de client DHCP del servidor d’impressió.",
+    "reference": {
+      "hash": "6ebfc852",
+      "params": [
+        {
+          "meaning": "mode d’identificador de client",
+          "values": "0 desactivat, 1 adreça MAC, 2 ASCII, 3 HEX",
+          "default": "0"
+        },
+        {
+          "meaning": "dispositiu al qual s’aplica l’identificador",
+          "values": "0 tot, 1 sense fils, 2 per cable extern, 3 per cable intern",
+          "default": "1"
+        },
+        {
+          "meaning": "prefix de l’identificador",
+          "values": "11 caràcters ASCII o 22 hexadecimals"
+        },
+        {
+          "meaning": "sufix de l’identificador",
+          "values": "fins a 60 caràcters ASCII o 120 hexadecimals"
+        }
+      ]
+    }
+  },
+  "^ND": {
+    "hash": "a1c35169",
+    "summary": "Configura l’adreça IP, la màscara de subxarxa i la passarel·la d’una interfície de xarxa de la impressora.",
+    "reference": {
+      "hash": "21a22736",
+      "params": [
+        {
+          "meaning": "dispositiu que es modifica",
+          "values": "1 per cable extern, 2 per cable intern, 3 sense fils"
+        },
+        {
+          "meaning": "mètode de resolució IP",
+          "values": "A tot, B BOOTP, C DHCP i BOOTP, D DHCP, G només descobriment, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "adreça IP",
+          "values": "adreça IPv4"
+        },
+        {
+          "meaning": "màscara de subxarxa",
+          "values": "màscara de subxarxa IPv4"
+        },
+        {
+          "meaning": "passarel·la per defecte",
+          "values": "adreça IPv4"
+        },
+        {
+          "meaning": "adreça del servidor WINS",
+          "values": "adreça IPv4"
+        },
+        {
+          "meaning": "comprovació del temps d’espera de connexió",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "valor del temps d’espera de connexió",
+          "values": "de 0 a 9999 segons",
+          "default": "300"
+        },
+        {
+          "meaning": "interval de difusió ARP",
+          "values": "de 0 a 30 minuts",
+          "default": "0 cap"
+        },
+        {
+          "meaning": "número base del port directe",
+          "values": "d’1 a 65535",
+          "default": "9100"
+        }
+      ]
+    }
+  },
+  "^NS": {
+    "hash": "fc79ac31",
+    "summary": "Configura els paràmetres IP, els temps d’espera i el port directe del servidor d’impressió per cable en microprogramari antic.",
+    "reference": {
+      "hash": "2953005f",
+      "params": [
+        {
+          "meaning": "mètode de resolució IP",
+          "values": "A tot, B BOOTP, C DHCP i BOOTP, D DHCP, G només descobriment, R RARP, P permanent",
+          "default": "A"
+        },
+        {
+          "meaning": "adreça IP",
+          "values": "adreça IPv4"
+        },
+        {
+          "meaning": "màscara de subxarxa",
+          "values": "màscara de subxarxa IPv4"
+        },
+        {
+          "meaning": "passarel·la per defecte",
+          "values": "adreça IPv4"
+        },
+        {
+          "meaning": "adreça del servidor WINS",
+          "values": "adreça IPv4"
+        },
+        {
+          "meaning": "comprovació del temps d’espera de connexió",
+          "values": "Y sí, N no",
+          "default": "Y"
+        },
+        {
+          "meaning": "valor del temps d’espera de connexió",
+          "values": "de 0 a 9999 segons",
+          "default": "300"
+        },
+        {
+          "meaning": "interval de difusió ARP",
+          "values": "de 0 a 30 minuts",
+          "default": "0 cap"
+        },
+        {
+          "meaning": "número base del port directe",
+          "values": "d’1 a 65535",
+          "default": "9100"
+        }
+      ]
+    }
+  },
+  "^WA": {
+    "hash": "f99f03e7",
+    "summary": "Selecciona les antenes de recepció i transmissió de la ràdio sense fils.",
+    "reference": {
+      "hash": "b3bd5f36",
+      "params": [
+        {
+          "meaning": "antena de recepció",
+          "values": "D diversitat, L esquerra, R dreta",
+          "default": "D"
+        },
+        {
+          "meaning": "antena de transmissió",
+          "values": "D diversitat, L esquerra, R dreta",
+          "default": "D"
+        }
+      ]
+    }
+  },
+  "^WE": {
+    "hash": "25d26998",
+    "summary": "Configura la seguretat WEP obsoleta i les claus en microprogramari sense fils antic.",
+    "reference": {
+      "hash": "6d4f4827",
+      "params": [
+        {
+          "meaning": "mode de xifratge",
+          "values": "OFF cap, 40 de 40 bits, 128 de 128 bits",
+          "default": "OFF"
+        },
+        {
+          "meaning": "índex de clau de xifratge",
+          "values": "d’1 a 4",
+          "default": "1"
+        },
+        {
+          "meaning": "tipus d’autenticació",
+          "values": "O sistema obert, S clau compartida",
+          "default": "O"
+        },
+        {
+          "meaning": "format d’emmagatzematge de la clau de xifratge",
+          "values": "H hexadecimal, S cadena",
+          "default": "H"
+        },
+        {
+          "meaning": "clau de xifratge 1",
+          "values": "parells hexadecimals o cadena alfanumèrica"
+        },
+        {
+          "meaning": "clau de xifratge 2",
+          "values": "parells hexadecimals o cadena alfanumèrica"
+        },
+        {
+          "meaning": "clau de xifratge 3",
+          "values": "parells hexadecimals o cadena alfanumèrica"
+        },
+        {
+          "meaning": "clau de xifratge 4",
+          "values": "parells hexadecimals o cadena alfanumèrica"
+        }
+      ]
+    }
+  },
+  "^WL": {
+    "hash": "e6ff25b4",
+    "summary": "Configura l’autenticació Cisco LEAP obsoleta en microprogramari sense fils antic.",
+    "reference": {
+      "hash": "21993ff5",
+      "params": [
+        {
+          "meaning": "mode LEAP",
+          "values": "OFF, ON",
+          "default": "OFF"
+        },
+        {
+          "meaning": "nom d’usuari",
+          "values": "d’1 a 32 caràcters",
+          "default": "user"
+        },
+        {
+          "meaning": "contrasenya",
+          "values": "d’1 a 32 caràcters",
+          "default": "password"
+        }
+      ]
+    }
+  },
+  "^WP": {
+    "hash": "d5dd34db",
+    "summary": "Estableix la contrasenya de la configuració sense fils al panell de control de la impressora.",
+    "reference": {
+      "hash": "07867798",
+      "params": [
+        {
+          "meaning": "contrasenya sense fils anterior",
+          "values": "de 0000 a 9999",
+          "default": "0000"
+        },
+        {
+          "meaning": "contrasenya sense fils nova",
+          "values": "de 0000 a 9999",
+          "default": "0000"
+        }
+      ]
+    }
+  },
+  "^WR": {
+    "hash": "05fd2fa2",
+    "summary": "Configura les velocitats de dades 802.11b i la potència de transmissió en servidors d’impressió sense fils antics.",
+    "reference": {
+      "hash": "2b8cba42",
+      "params": [
+        {
+          "meaning": "velocitat de transmissió d’1 Mb per segon",
+          "values": "Y activat, N desactivat"
+        },
+        {
+          "meaning": "velocitat de transmissió de 2 Mb per segon",
+          "values": "Y activat, N desactivat"
+        },
+        {
+          "meaning": "velocitat de transmissió de 5.5 Mb per segon",
+          "values": "Y activat, N desactivat"
+        },
+        {
+          "meaning": "velocitat de transmissió d’11 Mb per segon",
+          "values": "Y activat, N desactivat"
+        },
+        {
+          "meaning": "potència de transmissió",
+          "values": "1, 5, 20, 30, 50, 100"
+        }
+      ]
+    }
+  },
+  "^WS": {
+    "hash": "ee8de274",
+    "summary": "Configura el nom de xarxa sense fils, el mode de ràdio, la longitud del preàmbul i el manteniment de connexió.",
+    "reference": {
+      "hash": "2d24be79",
+      "params": [
+        {
+          "meaning": "valor ESSID",
+          "values": "fins a 32 caràcters",
+          "default": "125"
+        },
+        {
+          "meaning": "mode de funcionament",
+          "values": "I infraestructura, A adhoc",
+          "default": "I"
+        },
+        {
+          "meaning": "longitud del preàmbul de la targeta de ràdio",
+          "values": "L llarg, S curt",
+          "default": "L"
+        },
+        {
+          "meaning": "pols sense fils activat",
+          "values": "0 desactivat, 1 activat",
+          "default": "1"
+        },
+        {
+          "meaning": "interval de pols sense fils",
+          "values": "de 5 a 300 segons",
+          "default": "15"
+        },
+        {
+          "meaning": "màscara de canals",
+          "values": "4 dígits hexadecimals amb prefix 0x",
+          "default": "0x7FF"
+        },
+        {
+          "meaning": "mode internacional",
+          "values": "0 desactivat, 1 activat",
+          "default": "0"
+        }
+      ]
+    }
+  },
+  "^WX": {
+    "hash": "80bedceb",
+    "summary": "Configura el mode de seguretat sense fils, les claus i les credencials en una sola ordre.",
+    "reference": {
+      "hash": "a5b89256",
+      "params": [
+        {
+          "meaning": "codi del tipus de seguretat",
+          "values": "01 cap, 02 WEP 40, 03 WEP 128, de 04 a 08 tipus EAP, 09 WPA PSK, de 10 a 14 WPA EAP, 15 Kerberos",
+          "default": "01"
+        },
+        {
+          "meaning": "índex de clau de xifratge WEP",
+          "values": "d’1 a 4",
+          "default": "1"
+        },
+        {
+          "meaning": "tipus d’autenticació WEP",
+          "values": "O sistema obert, S clau compartida",
+          "default": "O"
+        },
+        {
+          "meaning": "format d’emmagatzematge de la clau WEP",
+          "values": "H hexadecimal, S cadena",
+          "default": "S"
+        },
+        {
+          "meaning": "clau de xifratge WEP 1",
+          "values": "parells hexadecimals o cadena alfanumèrica"
+        },
+        {
+          "meaning": "clau de xifratge WEP 2",
+          "values": "parells hexadecimals o cadena alfanumèrica"
+        },
+        {
+          "meaning": "clau de xifratge WEP 3",
+          "values": "parells hexadecimals o cadena alfanumèrica"
+        },
+        {
+          "meaning": "clau de xifratge WEP 4",
+          "values": "parells hexadecimals o cadena alfanumèrica"
+        },
+        {
+          "meaning": "ID d’usuari del tipus de seguretat",
+          "values": "qualsevol cadena",
+          "default": "user"
+        },
+        {
+          "meaning": "contrasenya del tipus de seguretat",
+          "values": "qualsevol cadena",
+          "default": "password"
+        },
+        {
+          "meaning": "contrasenya opcional de la clau privada",
+          "values": "qualsevol cadena"
+        },
+        {
+          "meaning": "regne Kerberos",
+          "values": "qualsevol cadena",
+          "default": "kerberos"
+        },
+        {
+          "meaning": "centre de distribució de claus Kerberos",
+          "values": "qualsevol cadena",
+          "default": "krbtgt"
+        },
+        {
+          "meaning": "valor de la clau precompartida",
+          "values": "mínim de 64 dígits hexadecimals"
+        }
+      ]
+    }
+  },
+  "~WL": {
+    "hash": "a70658c1",
+    "summary": "Imprimeix una etiqueta de configuració de xarxa mentre la impressora està inactiva."
+  },
+  "~WR": {
+    "hash": "cfda76bd",
+    "summary": "Reinicia la targeta de ràdio sense fils i el servidor d’impressió perquè la ràdio es torni a connectar a la xarxa."
+  }
+}

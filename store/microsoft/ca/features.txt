@@ -1,0 +1,12 @@
+Capes, guies d’alineació, comptadors de sèrie, imatges i símbols gràfics
+28 simbologies de codi de barres, incloent-hi Code 128, GS1-128, EAN/UPC, codi QR, Data Matrix i PDF417
+Creadors de contingut per a GS1, codi QR, Data Matrix i Aztec
+Dissenys de diverses pàgines
+Tipus de lletra TrueType personalitzats
+Importació i edició ZPL amb una referència d’ordres
+Impressió per lots des de CSV, Excel, SQLite, PostgreSQL i MySQL
+Impressió per xarxa i a través de la cua d’impressió
+Exportació a PDF o imatge
+Configuració de la impressora per etiqueta o com a script de configuració
+33 idiomes d’interfície, tema clar i fosc
+Servidor MCP per a assistents d’IA

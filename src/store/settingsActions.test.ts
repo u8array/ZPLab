@@ -48,16 +48,16 @@ describe("Labelary consent (revocable)", () => {
 });
 
 describe("applyLocale", () => {
-  it("swaps translations and loadedLocale atomically once the chunk loads", async () => {
+  it.each([["de", "Objekte"], ["ca", "Objectes"]] as const)("swaps translations and loadedLocale atomically once the %s chunk loads", async (code, heading) => {
     const s = useLabelStore.getState();
-    s.setLocale("de");
+    s.setLocale(code);
     // setLocale kicked applyLocale off already; await an explicit call to
     // observe the settled state deterministically (loader is cached).
-    await useLabelStore.getState().applyLocale("de");
+    await useLabelStore.getState().applyLocale(code);
     const after = useLabelStore.getState();
-    expect(after.locale).toBe("de");
-    expect(after.loadedLocale).toBe("de");
-    expect(after.translations.palette.heading).toBe("Objekte");
+    expect(after.locale).toBe(code);
+    expect(after.loadedLocale).toBe(code);
+    expect(after.translations.palette.heading).toBe(heading);
   });
 
   it("drops a stale load when the preference changed meanwhile", async () => {

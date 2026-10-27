@@ -8,5 +8,5 @@ Pakešu drukāšana no CSV, Excel, SQLite, PostgreSQL un MySQL
 Drukāšana tīklā un ar drukas rindu
 Eksportēšana PDF vai attēla formātā
 Printera iestatījumi katrai etiķetei vai kā iestatīšanas skripts
-32 saskarnes valodas, gaišais un tumšais motīvs
+33 saskarnes valodas, gaišais un tumšais motīvs
 MCP serveris MI asistentiem

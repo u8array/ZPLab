@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import en from "./en";
-import { isLocaleCode, LOCALE_CODES, loadLocale } from "./index";
+import { isLocaleCode, LOCALE_CODES, loadLocale, localeOptions } from "./index";
 
 /** Dotted key paths of every leaf; arrays count as leaves. */
 function keyPaths(obj: Record<string, unknown>, prefix = ""): string[] {
@@ -17,6 +17,26 @@ function keyPaths(obj: Record<string, unknown>, prefix = ""): string[] {
 }
 
 describe("locale registry", () => {
+  it("offers Catalan and loads its translations with intact placeholders", async () => {
+    expect(isLocaleCode("ca")).toBe(true);
+    expect(localeOptions()).toContainEqual({ value: "ca", label: "Català" });
+    const ca = await loadLocale("ca");
+    expect(ca.palette.heading).toBe("Objectes");
+    expect(ca.app.saveDesign).toBe("Desa el disseny");
+    for (const path of keyPaths(en)) {
+      let source: unknown = en;
+      let translated: unknown = ca;
+      for (const key of path.split(".")) {
+        source = (source as Record<string, unknown>)[key];
+        translated = (translated as Record<string, unknown>)[key];
+      }
+      expect(typeof translated, path).toBe("string");
+      expect(String(translated).trim(), path).not.toBe("");
+      expect(String(translated).match(/\{\w+\}/g)?.sort() ?? [], path)
+        .toEqual(String(source).match(/\{\w+\}/g)?.sort() ?? []);
+    }
+  });
+
   it("caches loaded locales (same identity on repeat loads)", async () => {
     const a = await loadLocale("de");
     const b = await loadLocale("de");

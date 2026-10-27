@@ -8,5 +8,5 @@ Massutskrift från CSV, Excel, SQLite, PostgreSQL och MySQL
 Utskrift via nätverk och skrivarkön
 Export som PDF eller bild
 Skrivarinställningar per etikett eller som installationsskript
-32 gränssnittsspråk, ljust och mörkt tema
+33 gränssnittsspråk, ljust och mörkt tema
 MCP-server för AI-assistenter

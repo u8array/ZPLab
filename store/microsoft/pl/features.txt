@@ -8,5 +8,5 @@ Druk wsadowy z CSV, Excel, SQLite, PostgreSQL i MySQL
 Drukowanie przez sieć i kolejkę wydruku
 Eksport do PDF lub pliku graficznego
 Ustawienia drukarki osobno dla każdej etykiety lub jako skrypt konfiguracyjny
-32 języki interfejsu, jasny i ciemny motyw
+33 języki interfejsu, jasny i ciemny motyw
 Serwer MCP dla asystentów AI

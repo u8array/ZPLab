@@ -8,5 +8,5 @@ Skupni ispis iz CSV-a, Excela, SQLite-a, PostgreSQL-a i MySQL-a
 Ispis putem mreže i reda čekanja za ispis
 Izvoz u PDF ili slikovnu datoteku
 Postavke pisača po naljepnici ili kao skripta postavljanja
-32 jezika sučelja, svijetla i tamna tema
+33 jezika sučelja, svijetla i tamna tema
 MCP poslužitelj za AI asistente

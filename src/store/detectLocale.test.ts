@@ -10,6 +10,11 @@ afterEach(() => {
 });
 
 describe("detectLocale", () => {
+  it.each(["ca", "ca-ES", "ca-AD", "CA-es"])("detects Catalan from %s", (tag) => {
+    withLanguage(tag);
+    expect(detectLocale()).toBe("ca");
+  });
+
   it("maps plain two-letter tags to their locale", () => {
     withLanguage("de-DE");
     expect(detectLocale()).toBe("de");

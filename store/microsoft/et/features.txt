@@ -8,5 +8,5 @@ Hulgiprintimine CSV, Exceli, SQLite'i, PostgreSQL-i ja MySQL-i andmetest
 Printimine võrgu ja prindijärjekorra kaudu
 Eksport PDF- või pildifailina
 Printeri seaded iga etiketi jaoks või seadistusskriptina
-32 liidesekeelt, hele ja tume teema
+33 liidesekeelt, hele ja tume teema
 MCP-server AI-assistentidele

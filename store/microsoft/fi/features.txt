@@ -8,5 +8,5 @@ Erätulostus CSV-, Excel-, SQLite-, PostgreSQL- ja MySQL-lähteistä
 Tulostus verkon ja tulostusjonon kautta
 Vienti PDF- tai kuvatiedostona
 Tulostinasetukset etikettikohtaisesti tai asennusskriptinä
-32 käyttöliittymäkieltä, vaalea ja tumma teema
+33 käyttöliittymäkieltä, vaalea ja tumma teema
 MCP-palvelin tekoälyavustajille

@@ -36,7 +36,7 @@
       <li>Printing over raw TCP, the system print queue, or USB</li>
       <li>An optional second rendering of the label, from Labelary or from the connected printer's own firmware, to compare against the canvas</li>
       <li>An MCP server that lets a local AI assistant read, build and validate labels, and edit the open design directly</li>
-      <li>32 interface languages, light and dark theme</li>
+      <li>33 interface languages, light and dark theme</li>
       <li>MIT-licensed, with no account and no backend</li>
     </ul>
     <p>

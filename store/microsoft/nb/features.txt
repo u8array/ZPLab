@@ -8,5 +8,5 @@ Batch-utskrift fra CSV, Excel, SQLite, PostgreSQL og MySQL
 Utskrift over nettverk og via utskriftskøen
 Eksport som PDF eller bilde
 Skriverinnstillinger per etikett eller som oppsettsskript
-32 grensesnittspråk, lyst og mørkt tema
+33 grensesnittspråk, lyst og mørkt tema
 MCP-server for AI-assistenter

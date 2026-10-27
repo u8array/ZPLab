@@ -8,5 +8,5 @@ Kötegelt nyomtatás CSV, Excel, SQLite, PostgreSQL és MySQL forrásból
 Nyomtatás a hálózaton és a nyomtatási soron keresztül
 Exportálás PDF- vagy képfájlként
 Nyomtatóbeállítások címkénként vagy beállító szkriptként
-32 nyelvű kezelőfelület, világos és sötét téma
+33 nyelvű kezelőfelület, világos és sötét téma
 MCP-szerver AI-asszisztensekhez

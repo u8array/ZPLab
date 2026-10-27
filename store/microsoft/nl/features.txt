@@ -8,5 +8,5 @@ Batchafdrukken vanuit CSV, Excel, SQLite, PostgreSQL en MySQL
 Afdrukken via het netwerk en de afdrukwachtrij
 Exporteren als PDF of afbeelding
 Printerinstellingen per etiket of als installatiescript
-32 interfacetalen, licht en donker thema
+33 interfacetalen, licht en donker thema
 MCP-server voor AI-assistenten

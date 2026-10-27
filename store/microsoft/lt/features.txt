@@ -8,5 +8,5 @@ Paketinis spausdinimas iš CSV, Excel, SQLite, PostgreSQL ir MySQL
 Spausdinimas per tinklą ir spausdinimo eilę
 Eksportas į PDF arba vaizdą
 Spausdintuvo nustatymai kiekvienai etiketei arba kaip sąrankos scenarijus
-32 sąsajos kalbos, šviesi ir tamsi tema
+33 sąsajos kalbos, šviesi ir tamsi tema
 MCP serveris dirbtinio intelekto asistentams

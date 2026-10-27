@@ -8,5 +8,5 @@ Impression en lot depuis CSV, Excel, SQLite, PostgreSQL et MySQL
 Impression via le réseau et la file d'attente d'impression
 Export en PDF ou image
 Paramètres d'imprimante par étiquette ou sous forme de script d'installation
-32 langues d'interface, thèmes clair et sombre
+33 langues d'interface, thèmes clair et sombre
 Serveur MCP pour assistants IA

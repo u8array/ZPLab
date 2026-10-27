@@ -8,5 +8,5 @@ CSV, Excel, SQLite, PostgreSQL ve MySQL'den toplu yazdırma
 Ağ üzerinden ve yazdırma kuyruğu ile yazdırma
 PDF veya görsel olarak dışa aktarma
 Etiket başına veya kurulum betiği olarak yazıcı ayarları
-32 arayüz dili, açık ve koyu tema
+33 arayüz dili, açık ve koyu tema
 Yapay zeka asistanları için MCP sunucusu

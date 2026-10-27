@@ -8,5 +8,5 @@ Stampa in serie da CSV, Excel, SQLite, PostgreSQL e MySQL
 Stampa in rete e tramite lo spooler di stampa
 Esportazione come PDF o immagine
 Impostazioni stampante per etichetta o come script di configurazione
-32 lingue dell'interfaccia, tema chiaro e scuro
+33 lingue dell'interfaccia, tema chiaro e scuro
 Server MCP per assistenti IA

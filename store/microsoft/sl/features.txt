@@ -8,5 +8,5 @@ Paketno tiskanje iz CSV, Excel, SQLite, PostgreSQL in MySQL
 Tiskanje prek omrežja in čakalne vrste tiskalnika
 Izvoz v PDF ali sliko
 Nastavitve tiskalnika za posamezno nalepko ali kot namestitveni skript
-32 jezikov vmesnika, svetla in temna tema
+33 jezikov vmesnika, svetla in temna tema
 Strežnik MCP za pomočnike UI

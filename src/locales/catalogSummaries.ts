@@ -15,6 +15,7 @@ const loaders = {
   de: () => import("./catalog/de.json"),
   fr: () => import("./catalog/fr.json"),
   es: () => import("./catalog/es.json"),
+  ca: () => import("./catalog/ca.json"),
   pt: () => import("./catalog/pt.json"),
   it: () => import("./catalog/it.json"),
   nl: () => import("./catalog/nl.json"),

@@ -8,5 +8,5 @@ Batch printing from CSV, Excel, SQLite, PostgreSQL and MySQL
 Printing over the network and through the print spooler
 Export as PDF or image
 Printer settings per label or as a setup script
-32 interface languages, light and dark theme
+33 interface languages, light and dark theme
 MCP server for AI assistants

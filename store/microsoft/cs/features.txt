@@ -8,5 +8,5 @@ Hromadný tisk z CSV, Excelu, SQLite, PostgreSQL a MySQL
 Tisk přes síť a tiskovou frontu
 Export jako PDF nebo obrázek
 Nastavení tiskárny pro jednotlivou etiketu nebo jako instalační skript
-32 jazyků rozhraní, světlý a tmavý motiv
+33 jazyků rozhraní, světlý a tmavý motiv
 Server MCP pro AI asistenty

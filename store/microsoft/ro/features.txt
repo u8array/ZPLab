@@ -8,5 +8,5 @@ Imprimare în lot din CSV, Excel, SQLite, PostgreSQL și MySQL
 Imprimare în rețea și prin coada de imprimare
 Export ca PDF sau imagine
 Setări de imprimantă pentru fiecare etichetă sau ca script de configurare
-32 de limbi de interfață, temă luminoasă și întunecată
+33 de limbi de interfață, temă luminoasă și întunecată
 Server MCP pentru asistenți IA
