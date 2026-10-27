@@ -4,12 +4,11 @@
 // who opens only this file sees why the values look the way they do.
 import { describe, it, expect } from "vitest";
 import { z } from "zod";
-import { rasterImageShape, buildCurrentDesignResult, createDraft, patchDesign, patchDesignShape, rasterImageResult, createDraftShape, validateDraft, exportZpl, getSchema, importZpl, validateZpl, openInApp } from "./tools";
-import { parseEnvelope } from "./boundary.js";
-import { wireBounds } from "@zplab/core/types/propSpec";
-import { IMAGE_PROP_SPECS } from "@zplab/core/registry/image";
+import { createDraft, validateDraft, exportZpl, getSchema, importZpl, validateZpl, openInApp } from "./tools";
+import { createDraftShape, parseEnvelope } from "./boundary.js";
+import { patchDesign, patchDesignShape } from "./patchOps.js";
 import { ObjectRegistry } from "@zplab/core/registry";
-import { demoLabel, textObject } from "./testFixtures";
+import { demoLabel, textObject } from "./testing";
 import { serializeDesign } from "@zplab/core/lib/designFile";
 
 /** Assert a tool succeeded and narrow away the ToolError branch. */
@@ -18,7 +17,7 @@ function ok<T extends { ok: boolean }>(r: T): Extract<T, { ok: true }> {
   return r as Extract<T, { ok: true }>;
 }
 
-describe("mcp-server tools", () => {
+describe("headless tools", () => {
   it("round-trips create → validate → export for a text + code128 label", () => {
     const created = createDraft({
       widthMm: 100,
@@ -176,26 +175,6 @@ describe("mcp-server tools", () => {
     const zpl = ok(exportZpl(patched.designFile)).zpl;
     expect(zpl).toContain("new");
     expect(zpl).not.toContain("old");
-  });
-
-  it("shapes a raster into a placeable image object", () => {
-    const shaped = rasterImageResult({
-      id: 1, ok: true, gfa: "^GFA,8,8,1,00FF00FF00FF00FF", widthDots: 8, heightDots: 8,
-    }, 128);
-    expect(shaped.ok).toBe(true);
-    if (!shaped.ok) return;
-    const created = ok(createDraft({
-      widthMm: 50, heightMm: 30, dpmm: 8,
-      objects: [{ ...shaped.object, x: 10, y: 10 }],
-    }));
-    expect(ok(exportZpl(created.designFile)).zpl).toContain("^GFA,8,8,1,00FF00FF00FF00FF");
-  });
-
-  it("passes the app's raster failure through instead of a blank image", () => {
-    const failed = rasterImageResult({ id: 1, ok: false, error: "not an image" }, 128);
-    expect(failed.ok).toBe(false);
-    if (failed.ok) return;
-    expect(failed.errors).toEqual(["not an image"]);
   });
 
   it("rejects duplicate explicit ids with a structured error", () => {
@@ -584,7 +563,7 @@ describe("mcp-server tools", () => {
   it("caps object count on the raw-ZPL path too, not just bytes", () => {
     // ~10001 tiny fields: well under the 256 KB byte cap but over the object cap.
     const raw = "^XA" + "^FO1,1^GB2,2,1^FS".repeat(10001) + "^XZ";
-    expect(Buffer.byteLength(raw, "utf8")).toBeLessThan(256 * 1024);
+    expect(new TextEncoder().encode(raw).length).toBeLessThan(256 * 1024);
     const v = validateZpl(raw);
     expect(v.ok).toBe(false);
     if (v.ok) return;
@@ -649,48 +628,6 @@ describe("mcp-server tools", () => {
     expect(created.ok).toBe(false);
     if (created.ok) return;
     expect(created.errors[0]).toMatch(/object limit/);
-  });
-});
-
-describe("buildCurrentDesignResult", () => {
-  const barcode = {
-    id: "bc1",
-    type: "code128",
-    x: 20,
-    y: 20,
-    rotation: 0,
-    props: { content: "12345678", height: 100, moduleWidth: 2, rotation: "N" },
-  };
-  const design = {
-    schemaVersion: 3,
-    label: { widthMm: 100, heightMm: 50, dpmm: 8 },
-    pages: [{ objects: [barcode] }],
-  };
-
-  it("keeps the print-true kernel bounds over the app's zoom-scaled number", () => {
-    // The canvas measures the SCREEN at the user's zoom (module widths collapse
-    // to whole pixels there); the kernel measures the print. Letting the app
-    // entry shadow the kernel gave the same design two verdicts from two tools.
-    const kernel = ok(buildCurrentDesignResult({ id: 2, designFile: design }));
-    const truth = kernel.bounds.find((x) => x.objectId === "bc1")!;
-    const result = ok(buildCurrentDesignResult({
-      id: 1,
-      designFile: design,
-      measured: { bc1: { width: 321, height: 118 } },
-    }));
-    const b = result.bounds.find((x) => x.objectId === "bc1")!;
-    expect(b.width).toBe(truth.width);
-    expect(b.width).not.toBe(321);
-    expect(b.approx).toBe(false);
-  });
-
-  it("probes a barcode the app did not measure (kernel fallback, exact)", () => {
-    const result = ok(buildCurrentDesignResult({ id: 2, designFile: design }));
-    expect(result.bounds.find((x) => x.objectId === "bc1")?.approx).toBe(false);
-  });
-
-  it("maps a malformed design to the ToolError shape", () => {
-    expect(buildCurrentDesignResult({ id: 3, designFile: { schemaVersion: 3 } }).ok).toBe(false);
   });
 });
 
@@ -801,18 +738,6 @@ describe("agent-facing reporting", () => {
     expect(r.ok).toBe(false);
     if (r.ok) return;
     expect(r.errors[0]).toContain("qrcode.magnification must be between 1 and 100 (got 101)");
-  });
-
-  it("takes a raster threshold only where the image contract will accept it back", () => {
-    const shape = z.object(rasterImageShape);
-    const { min, max } = wireBounds(IMAGE_PROP_SPECS.threshold);
-    expect(shape.safeParse({ dataUrl: "data:,", widthDots: 8, threshold: min - 1 }).success).toBe(false);
-    expect(shape.safeParse({ dataUrl: "data:,", widthDots: 8, threshold: max + 1 }).success).toBe(false);
-    for (const threshold of [min, max]) {
-      expect(shape.safeParse({ dataUrl: "data:,", widthDots: 8, threshold }).success).toBe(true);
-      const r = label([{ type: "image", x: 1, y: 1, props: { imageId: "", widthDots: 8, threshold, rotation: "N" } }]);
-      expect(r.ok, String(threshold)).toBe(true);
-    }
   });
 
   it("publishes each bounded domain in get_schema", () => {
@@ -1194,14 +1119,6 @@ describe("what a patch must not touch", () => {
     );
     const ids = r.bounds.map((b) => b.objectId);
     expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  it("reports the threshold the raster actually used", () => {
-    const shaped = rasterImageResult(
-      { id: 1, ok: true, gfa: "^GFA,8,8,1,00FF00FF00FF00FF", widthDots: 8, heightDots: 8 },
-      80,
-    );
-    expect(shaped.ok && (shaped.object.props as { threshold: number }).threshold).toBe(80);
   });
 });
 

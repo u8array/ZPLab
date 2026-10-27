@@ -36,7 +36,7 @@ const measure = (o: LabelObject, dpmm?: number) => {
 };
 
 /** Idempotent; re-registering only resets the seam's memo. */
-export function registerSidecarFootprintMeasurer(): void {
+export function registerHeadlessFootprintMeasurer(): void {
   registerFootprintMeasurer(measure);
 }
 
@@ -55,7 +55,7 @@ export function barcodeEncodeIssueResolved(resolved: LabelObject, dpmm: number):
 }
 
 /** Run `fn` with markers resolving against the design's own bindings, the
- *  sidecar twin of the app bridge's store-bound resolution. */
+ *  headless twin of the app's store-bound resolution. */
 export function withFootprintBinding<T>(
   label: Pick<LabelConfig, "secondaryClockOffset" | "tertiaryClockOffset">,
   variables: readonly Variable[],

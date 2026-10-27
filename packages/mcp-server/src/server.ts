@@ -1,10 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { isAppAttached, requestCurrentDesign, requestEditDesign, requestOpenDraft, requestRaster } from "./appBridge.js";
-import { registerSidecarFootprintMeasurer } from "./footprint.js";
 import { registerPrompts } from "./prompts.js";
+import { buildCurrentDesignResult, buildEditDesignResult, rasterImageResult, rasterImageShape } from "./appResults.js";
 import {
-  buildCurrentDesignResult,
-  buildEditDesignResult,
   createDraft,
   createDraftShape,
   designFileEnvelopeSchema,
@@ -18,13 +16,12 @@ import {
   patchDesign,
   patchDesignShape,
   patchOperationsSchema,
-  rasterImageResult,
-  rasterImageShape,
+  registerHeadlessFootprintMeasurer,
   strictInput,
   validateDraft,
   validateZpl,
   zplInputShape,
-} from "./tools.js";
+} from "@zplab/headless";
 
 export interface BuildServerOptions {
   /** This transport can reach a desktop window. HTTP only: the app tools talk
@@ -83,7 +80,7 @@ export const SERVER_INSTRUCTIONS =
 
 /** Single tool definition shared by the stdio and HTTP entry points. */
 export function buildServer(options: BuildServerOptions = {}): McpServer {
-  registerSidecarFootprintMeasurer();
+  registerHeadlessFootprintMeasurer();
   // Display identity the MCP client shows; matches the config-snippet key.
   const server = new McpServer(
     { name: "zplab", version: "0.0.0" },

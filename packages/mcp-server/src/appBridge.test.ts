@@ -16,7 +16,7 @@ import {
   markAppAttached,
   markAppDetached,
 } from "./appBridge";
-import { designFile } from "./testFixtures";
+import { designFile } from "@zplab/headless/testing";
 
 function spyStdout(): { writes: string[]; restore: () => void } {
   const writes: string[] = [];

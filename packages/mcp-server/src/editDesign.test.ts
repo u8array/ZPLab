@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { buildServer } from "./server";
-import { buildEditDesignResult, createDraft } from "./tools";
+import { createDraft } from "@zplab/headless";
+import { buildEditDesignResult } from "./appResults.js";
 import { markAppAttached, resolveEditReceipt } from "./appBridge";
 import { connect, spyStdout } from "./testFixtures";
 

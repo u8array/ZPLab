@@ -132,7 +132,7 @@ describe("a hand-built envelope with sparse props", () => {
 describe("open_in_app forwards the parsed design, not the raw envelope", () => {
   it("fills defaults before the app sees the file", () => {
     // The app fills no defaults on load: forwarding the raw sparse envelope
-    // printed ^FO10,NaN from the app while every sidecar tool reported ok.
+    // printed ^FO10,NaN from the app while every headless call reported ok.
     const design = {
       schemaVersion: 5,
       label: { widthMm: 100, heightMm: 50, dpmm: 8 },

@@ -3,15 +3,15 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it, expect } from "vitest";
 
-// The sidecar consumes @zplab/core only, plus its declared runtime deps; the
-// allowlist makes adding a dependency here as deliberate as in package.json.
+// The sidecar consumes the headless facade, core and its declared runtime
+// deps; the allowlist makes adding a dependency as deliberate as in package.json.
 const ALLOWED = [
   /^\.\//,
   /^@zplab\/core\//,
+  /^@zplab\/headless(\/testing)?$/,
   /^node:/,
   /^zod$/,
   /^@modelcontextprotocol\/sdk\//,
-  /^bwip-js\//,
   /^vitest$/,
 ];
 
@@ -28,7 +28,7 @@ describe("mcp-server import contract", () => {
   it("every import is core, node, or a declared dependency", () => {
     const dir = dirname(fileURLToPath(import.meta.url));
     const files = readdirSync(dir).filter((f) => f.endsWith(".ts"));
-    expect(files.length).toBeGreaterThan(15);
+    expect(files.length).toBeGreaterThan(10);
     const offenders = files.flatMap((f) =>
       importSpecs(readFileSync(join(dir, f), "utf8"))
         .filter((spec) => !ALLOWED.some((re) => re.test(spec)))

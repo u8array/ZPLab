@@ -5,6 +5,7 @@
     { "path": "./tsconfig.node.json" },
     { "path": "./tsconfig.test.json" },
     { "path": "./tsconfig.e2e.json" },
+    { "path": "./packages/headless/tsconfig.json" },
     { "path": "./packages/mcp-server/tsconfig.json" }
   ]
 }

@@ -52,7 +52,7 @@ export const patchOpSchema: z.ZodType<DesignOp> = z.discriminatedUnion("op", [
 ]);
 export type PatchOp = DesignOp;
 
-/** Unbounded ops on a 10k-object design would wedge the single-threaded sidecar, which also serves the app's reply routes. */
+/** Unbounded ops on a 10k-object design would wedge a single-threaded server for every other caller. */
 export const MAX_PATCH_OPS = 1000;
 
 export const patchOperationsSchema = z.array(patchOpSchema).min(1).max(MAX_PATCH_OPS);

@@ -75,6 +75,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "@vitest/coverage-v8": "^5.1.0",
+    "@zplab/headless": "workspace:*",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^10.15.0",
     "eslint-plugin-react-hooks": "^7.1.1",

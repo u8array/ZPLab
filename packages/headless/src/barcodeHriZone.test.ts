@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { HRI_LINE_TYPES, barcodeTextZoneDots, hriZoneDots } from "@zplab/core/lib/barcodeHri";
-import { registerSidecarFootprintMeasurer } from "./footprint";
+import { registerHeadlessFootprintMeasurer } from "./footprint";
 import { createDraft, validateDraft } from "./tools";
 
-registerSidecarFootprintMeasurer();
+registerHeadlessFootprintMeasurer();
 
 /** Measured footprint height of one barcode, with the interpretation line on
  *  or off, through the same kernel the canvas uses. */

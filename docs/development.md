@@ -14,7 +14,8 @@
 ## Architecture
 
 - `packages/core`: domain logic, parser and generator, no React
-- `packages/mcp-server`: the MCP server over `@zplab/core`
+- `packages/headless`: the validate, import, export and patch facade over `@zplab/core`, without node or MCP imports
+- `packages/mcp-server`: the MCP server over `@zplab/headless`
 - `src/`: the React app, with `lib` helpers, `store` UI state and `components`
 - `src-tauri/`: the desktop shell
 
