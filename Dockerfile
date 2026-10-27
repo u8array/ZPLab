@@ -8,6 +8,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/core/package.json packages/core/
 COPY packages/headless/package.json packages/headless/
 COPY packages/mcp-server/package.json packages/mcp-server/
+COPY packages/server/package.json packages/server/
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile
 COPY . .
 # Self-hosters can point previews at a private Labelary or switch them off.

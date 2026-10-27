@@ -15,9 +15,9 @@ import {
 } from "./footprint.js";
 import type { ImportReport } from "@zplab/core/lib/zplParser";
 import { ObjectRegistry } from "@zplab/core/registry";
-import { DPMM_VALUES, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
+import type { Dpmm, LabelConfig } from "@zplab/core/types/LabelConfig";
 
-import { buildObjects, buildVariables, pagesSizeError, parseEnvelope, typeIssues, unknownPropNotes, propIssues, type DesignFileJson, type ToolError, type CreateDraftInput, PROP_SUMMARIES } from "./boundary.js";
+import { buildObjects, buildVariables, dpmmSchema, pagesSizeError, parseEnvelope, typeIssues, unknownPropNotes, propIssues, type DesignFileJson, type ToolError, type CreateDraftInput, PROP_SUMMARIES } from "./boundary.js";
 import { boundReport, warningReport, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
 
 export type CreateDraftResult =
@@ -210,7 +210,7 @@ function importRejection(imported: ZplImportResult): ToolError | null {
 
 export const zplInputShape = {
   zpl: z.string(),
-  dpmm: z.optional(z.literal([...DPMM_VALUES])),
+  dpmm: z.optional(dpmmSchema),
   widthMm: z.optional(z.number().positive()),
   heightMm: z.optional(z.number().positive()),
 };

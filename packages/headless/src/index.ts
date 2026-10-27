@@ -7,15 +7,19 @@ export {
   validateDraft,
   validateZpl,
   zplInputShape,
+  type ZplFindings,
 } from "./tools.js";
 export {
   createDraftShape,
   designFileEnvelopeSchema,
+  dpmmSchema,
   exportZplInputSchema,
   INSIDE_DESIGN_FILE,
   INSIDE_OBJECT_ENTRY,
   parseEnvelope,
+  schemaToolError,
   strictInput,
+  strictShape,
   type CreateDraftInput,
   type DesignFileJson,
   type ToolError,
@@ -36,3 +40,4 @@ export {
   type PreflightWarning,
 } from "./report.js";
 export { registerHeadlessFootprintMeasurer } from "./footprint.js";
+export { labelConfigSchema } from "@zplab/core/types/LabelConfig";
