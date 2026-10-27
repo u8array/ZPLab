@@ -15,7 +15,7 @@ ARG VITE_THIRD_PARTY_LABELARY
 # CI type-checks the same commit, so the image only needs the bundle.
 RUN pnpm exec vite build
 
-FROM nginxinc/nginx-unprivileged:1.29-alpine-slim
+FROM nginxinc/nginx-unprivileged:1.31-alpine-slim
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 # Own root so the served directory holds only the app's files.
 COPY --from=build /app/dist /srv/zplab
