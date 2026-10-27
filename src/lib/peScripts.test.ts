@@ -2,7 +2,7 @@ import { afterAll, describe, it, expect } from "vitest";
 import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { certificateTable, hasCertificateTable, stripCertificateTable, withoutCertificateTable } from "../../packages/mcp-server/scripts/pe.mjs";
+import { certificateTable, hasCertificateTable, stripCertificateTable, withoutCertificateTable } from "../../scripts/sea/pe.mjs";
 
 const PE_AT = 0x80;
 const OPTIONAL_AT = PE_AT + 4 + 20;

@@ -11,9 +11,14 @@
     ".": {
       "entry": [
         "scripts/*.d.mts",
+        "scripts/sea/*.mjs",
+        "scripts/sea/*.d.mts",
         "scripts/catalog-reference-merge.mjs",
         "scripts/gen-gs1-catalog.mjs",
         "tests/scripts/*.ts"
+      ],
+      "ignoreDependencies": [
+        "postject"
       ]
     },
     "packages/core": {
@@ -21,15 +26,6 @@
     },
     "packages/headless": {
       "includeEntryExports": true
-    },
-    "packages/mcp-server": {
-      "entry": [
-        "scripts/*.d.mts"
-      ],
-      "ignoreDependencies": [
-        "esbuild",
-        "postject"
-      ]
     }
   }
 }

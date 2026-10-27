@@ -4,7 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "build:bundle": "node ../../scripts/sea/build.mjs --name zplab-server --bundle-only",
+    "build:sea": "node ../../scripts/sea/build.mjs --name zplab-server",
+    "smoke:sea": "node scripts/smoke-sea.mjs"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.5",

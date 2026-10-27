@@ -1,11 +1,10 @@
 // Single source for reading the production dependency license tree. Both the
 // license gate and the attribution generator depend on the exact same scope:
-// the shipped app and the workspace packages it bundles. An unscoped read would
-// also pull packages/mcp-server's tree, which runs as a separate process and
-// never lands in dist/.
+// the shipped app, the MCP sidecar and the REST server, each with the workspace
+// packages it bundles. Named filters keep the scope to the shipped packages.
 import { execSync } from 'node:child_process';
 
-const LICENSES_CMD = 'pnpm licenses list --prod --json --filter zplab...';
+const LICENSES_CMD = 'pnpm licenses list --prod --json --filter zplab... --filter @zplab/mcp-server... --filter @zplab/server...';
 
 // Returns pnpm's grouped output: { [spdxId]: Array<{name, versions, paths,
 // license, author, homepage, description}> }. Fails closed (exit 2) if the

@@ -1,0 +1,14 @@
+# The designer and the REST server side by side. Export ZPLAB_TOKEN, then:
+#   docker compose -f compose.example.yml up
+services:
+  zplab:
+    image: ghcr.io/u8array/zplab:latest
+    ports:
+      - "8080:8080"
+  zplab-server:
+    image: ghcr.io/u8array/zplab-server:latest
+    environment:
+      ZPLAB_TOKEN: ${ZPLAB_TOKEN:?export ZPLAB_TOKEN first}
+    # The token travels in plain text, so only loopback without a TLS proxy in front.
+    ports:
+      - "127.0.0.1:8787:8787"

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts",
-    "build:sea": "node scripts/build-sea.mjs",
+    "build:sea": "node ../../scripts/sea/build.mjs --name zplab-mcp",
     "smoke:sea": "node scripts/smoke-sea.mjs"
   },
   "dependencies": {
@@ -15,8 +15,6 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "esbuild": "^0.28.2",
-    "postject": "^1.0.0-alpha.6",
     "tsx": "^4.23.15",
     "vitest": "^5.1.0"
   }

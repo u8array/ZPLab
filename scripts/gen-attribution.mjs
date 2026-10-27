@@ -24,10 +24,10 @@ const DATA_DIR = join(ROOT, 'scripts', 'data');
 const PREAMBLE = `# Third-party licenses
 
 ZPLab's own source is under the license in \`LICENSE\`. This file records
-third-party material redistributed in the built app (\`dist/\`) and its
-attribution terms, and it ships in \`dist/\` so the notices accompany the code
-and fonts they cover. The npm section is generated from the production
-dependency tree by \`scripts/gen-attribution.mjs\`; a \`pnpm attribution:check\`
+third-party material redistributed in the built app (\`dist/\`), the MCP sidecar
+and the REST server, with their attribution terms. It ships in \`dist/\`, in the
+server archives and in the image, so the notices accompany the code and fonts
+they cover. The npm section is generated from the production dependency tree by \`scripts/gen-attribution.mjs\`; a \`pnpm attribution:check\`
 gate (run in CI) fails the build if it drifts from the installed deps, and
 \`pnpm licenses:check\` separately blocks any non-permissive license from
 shipping.
