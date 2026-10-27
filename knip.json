@@ -19,6 +19,9 @@
     "packages/core": {
       "includeEntryExports": true
     },
+    "packages/headless": {
+      "includeEntryExports": true
+    },
     "packages/mcp-server": {
       "entry": [
         "scripts/*.d.mts"

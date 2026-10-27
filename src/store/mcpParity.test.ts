@@ -6,11 +6,9 @@ import { measureFootprintDots } from "@zplab/core/lib/footprintProber";
 import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
-// Test-only reach across the process boundary: parity between the editor's
-// mutation pipeline and patch_design is exactly what this file pins, and no
-// runtime code imports the server.
-import { createDraft, patchDesign, type CreateDraftInput } from "../../packages/mcp-server/src/tools";
-import { registerSidecarFootprintMeasurer } from "../../packages/mcp-server/src/footprint";
+// Test-only: parity between the editor's mutation pipeline and patch_design is
+// exactly what this file pins, and no runtime code imports the facade.
+import { createDraft, patchDesign, registerHeadlessFootprintMeasurer, type CreateDraftInput } from "@zplab/headless";
 
 /** One update op, run through both pipelines with the SAME width probe, so a
  *  hook one side skips (normalize, repin) shows as an object diff. */
@@ -70,7 +68,7 @@ afterEach(() => unregisterBarcodeWidthProber(probe));
 describe("an update edits the same object the same way on both paths", () => {
   for (const c of CASES) {
     it(c.name, () => {
-      registerSidecarFootprintMeasurer();
+      registerHeadlessFootprintMeasurer();
       const base = createDraft({
         widthMm: 100, heightMm: 50, dpmm: 8, objects: [c.object],
         ...(c.variables ? { variables: c.variables } : {}),
@@ -113,7 +111,7 @@ describe("a device-font block edit normalizes the same on both paths", () => {
     // Both write paths must hand normalizeChanges the same device-font ctx:
     // without it the sidecar derived ^FB growth from font-0 metrics while the
     // editor used the label's ^CF font's cell grid.
-    registerSidecarFootprintMeasurer();
+    registerHeadlessFootprintMeasurer();
     // Hard breaks with no prior blockWidth: the ^FB activation backfills the
     // line cap by wrapping at the default width with the RESOLVED font's
     // advance, the one derivation in this hook that reads the ctx.

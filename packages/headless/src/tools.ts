@@ -1,6 +1,4 @@
-import { describePropDomain, wireBounds, type PropSpec } from "@zplab/core/types/propSpec";
-import { intInRange } from "@zplab/core/types/typeHelpers";
-import { IMAGE_PROP_SPECS } from "@zplab/core/registry/image";
+import { describePropDomain, type PropSpec } from "@zplab/core/types/propSpec";
 import { z } from "zod";
 import {
   serializeDesign,
@@ -16,17 +14,11 @@ import {
   withFootprintBinding,
 } from "./footprint.js";
 import type { ImportReport } from "@zplab/core/lib/zplParser";
-import type { DesignResponse, EditReceipt, RasterResponse } from "./appBridge.js";
 import { ObjectRegistry } from "@zplab/core/registry";
 import { DPMM_VALUES, type Dpmm, type LabelConfig } from "@zplab/core/types/LabelConfig";
 
-
-export * from "./boundary.js";
-export * from "./report.js";
-export * from "./patchOps.js";
 import { buildObjects, buildVariables, pagesSizeError, parseEnvelope, typeIssues, unknownPropNotes, propIssues, type DesignFileJson, type ToolError, type CreateDraftInput, PROP_SUMMARIES } from "./boundary.js";
-import { captureNotes, editNotes, type PatchOp } from "./patchOps.js";
-import { boundReport, reportFor, warningReport, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
+import { boundReport, warningReport, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
 
 export type CreateDraftResult =
   | {
@@ -83,92 +75,6 @@ export function validateDraft(designFile: unknown): ValidateDraftResult {
   if (!parsed.ok) return parsed;
   const { label, pages, variables } = parsed.value;
   return { ok: true, ...boundReport(label, variables, pages, undefined, parsed.value.columnMapping !== null) };
-}
-
-export type GetCurrentDesignResult =
-  | {
-      ok: true;
-      designFile: DesignFileJson;
-      warnings: PreflightWarning[];
-      notes?: string[];
-      bounds: ObjectBounds[];
-      overlaps: ObjectOverlap[];
-      geometryTruncated?: boolean;
-    }
-  | ToolError;
-
-/** Turn the app's read-back (design + render-measured footprints) into the
- *  standard tool report. Barcodes are re-probed print-true (the app's number
- *  is its zoom view); the other measurements make text/images render-exact. */
-export function buildCurrentDesignResult(response: DesignResponse): GetCurrentDesignResult {
-  const parsed = parseEnvelope(response.designFile);
-  if (!parsed.ok) return parsed;
-  return {
-    ok: true,
-    designFile: response.designFile as unknown as DesignFileJson,
-    ...reportFor(parsed.value, response.measured),
-  };
-}
-
-export type EditDesignResult =
-  | ({ ok: true; applied: number; added: { opIndex: number; id: string }[] } & ReturnType<typeof boundReport>)
-  | (ToolError & { opIndex?: number });
-
-/** The report for an edit the app applied. Bounds are render-measured like get_current_design's. */
-export function buildEditDesignResult(receipt: EditReceipt, operations: readonly PatchOp[]): EditDesignResult {
-  if (!receipt.ok) {
-    return { ok: false, errors: receipt.errors ?? ["the app refused the edit"], ...(receipt.opIndex !== undefined ? { opIndex: receipt.opIndex } : {}) };
-  }
-  const parsed = parseEnvelope(receipt.designFile);
-  // The edit landed before the report failed, so a retry would apply it twice.
-  if (!parsed.ok) return { ok: false, errors: ["The edit was applied but the design could not be reported. Do not retry. Read it back with get_current_design.", ...parsed.errors] };
-  const report = reportFor(parsed.value, receipt.measured);
-  const assignedIds = new Map(Object.entries(receipt.assignedIds ?? {}).map(([i, id]) => [Number(i), id]));
-  const notes = [
-    ...editNotes(operations, parsed.value.pages, assignedIds),
-    ...captureNotes({ lost: receipt.capturesLost ?? [], atRisk: receipt.capturesAtRisk ?? [] }),
-    ...(report.notes ?? []),
-  ];
-  return {
-    ok: true,
-    applied: operations.length,
-    added: [...assignedIds].map(([opIndex, id]) => ({ opIndex, id })),
-    ...report,
-    ...(notes.length > 0 ? { notes } : {}),
-  };
-}
-
-/** A data URL keeps the fetch on the agent's side: the app only ever renders
- *  bytes it was handed, so no tool call reaches into the network or the disk. */
-export const rasterImageShape = {
-  dataUrl: z.string().startsWith("data:"),
-  widthDots: z.number().int().positive().max(4000),
-  threshold: intInRange(wireBounds(IMAGE_PROP_SPECS.threshold)).optional(),
-};
-
-export type RasterImageResult =
-  | { ok: true; object: { type: "image"; props: Record<string, unknown> } }
-  | ToolError;
-
-/** Shape the raster into the image object create_draft and patch_design take. */
-export function rasterImageResult(response: RasterResponse, threshold: number): RasterImageResult {
-  if (!response.ok || !response.gfa || response.widthDots === undefined) {
-    return { ok: false, errors: [response.error ?? "The image could not be rasterized."] };
-  }
-  return {
-    ok: true,
-    object: {
-      type: "image",
-      props: {
-        imageId: "",
-        widthDots: response.widthDots,
-        ...(response.heightDots !== undefined ? { heightDots: response.heightDots } : {}),
-        threshold,
-        rotation: "N",
-        _gfaCache: response.gfa,
-      },
-    },
-  };
 }
 
 export type OpenInAppResult = { ok: true; designFile: unknown } | ToolError;

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import bwipjs from "bwip-js/generic";
-import { registerSidecarFootprintMeasurer } from "./footprint.js";
-import { importZpl, exportZpl, buildCurrentDesignResult, validateDraft } from "./tools.js";
+import { registerHeadlessFootprintMeasurer } from "./footprint.js";
+import { importZpl, exportZpl } from "./tools.js";
 import { withFootprintBinding } from "./footprint.js";
 import { measureFootprintDots } from "@zplab/core/lib/footprintProber";
 import { registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
@@ -14,10 +14,10 @@ const engine: BwipEngine = bwipjs as unknown as BwipEngine;
 const leaf = (type: string, props: object): LeafObject =>
   ({ id: "t", type, x: 0, y: 0, props }) as unknown as LeafObject;
 
-beforeAll(() => registerSidecarFootprintMeasurer());
+beforeAll(() => registerHeadlessFootprintMeasurer());
 afterAll(() => registerFootprintMeasurer(null));
 
-describe("sidecar footprint kernel", () => {
+describe("headless footprint kernel", () => {
   it("code128 width matches the raw encodation module count", () => {
     // Same forced-Code-B raw stream buildBwipOptions emits for plain ASCII.
     const rawB = "^104" + [..."123"].map((c) => `^${String(c.charCodeAt(0) - 32).padStart(3, "0")}`).join("");
@@ -65,7 +65,7 @@ describe("sidecar footprint kernel", () => {
   });
 });
 
-describe("MCP import/export with the sidecar measurer", () => {
+describe("import/export with the headless measurer", () => {
   it("import_zpl normalises a ^FT z=1 1D barcode and enables the gate", () => {
     const fp = measureBarcodeFootprintDotsWith(
       engine,
@@ -80,40 +80,6 @@ describe("MCP import/export with the sidecar measurer", () => {
     const obj = (r.designFile.pages as { objects: { x: number; fieldJustify?: string }[] }[])[0]!.objects[0]!;
     expect(obj.fieldJustify).toBe("R");
     expect(obj.x).toBe(300 - fp!.w);
-  });
-
-  it("get_current_design resolves markers before measuring the anchor", () => {
-    // Default (15 chars) is wider than the code128 sample fallback (8 chars):
-    // resolved anchor = 100 (on-label), unresolved would be negative (outside).
-    const r = importZpl("^XA^PW800^FT100,150,1^BCN,100,Y,N,N^FN1^FD123456789012345^FS^XZ", 8);
-    expect(r.ok).toBe(true);
-    if (!r.ok) return;
-    const out = buildCurrentDesignResult({ designFile: r.designFile } as never);
-    expect(out.ok).toBe(true);
-    if (!out.ok) return;
-    expect(out.warnings.filter((w) => w.kind.startsWith("offLabel"))).toEqual([]);
-  });
-
-  it("reports the print-true barcode box even when the app measured its zoom view", () => {
-    // Same zoom/kernel shadowing as tools.test.ts's buildCurrentDesignResult
-    // case; here mw 2 and mw 3 both collapse to 1 screen pixel at zoom 1.
-    const r = importZpl("^XA^PW800^FO10,10^BCN,100,Y,N,N^FD12345678901234567890^FS^XZ", 8);
-    expect(r.ok).toBe(true);
-    if (!r.ok) return;
-    const id = (r.designFile.pages as { objects: { id: string }[] }[])[0]!.objects[0]!.id;
-    const headless = validateDraft(r.designFile);
-    expect(headless.ok).toBe(true);
-    if (!headless.ok) return;
-    const truth = headless.bounds.find((b) => b.objectId === id)!;
-    const out = buildCurrentDesignResult({
-      designFile: r.designFile,
-      measured: { [id]: { width: 539, height: 100 } },
-    } as never);
-    expect(out.ok).toBe(true);
-    if (!out.ok) return;
-    const reported = out.bounds.find((b) => b.objectId === id)!;
-    expect(reported.width).toBe(truth.width);
-    expect(reported.width).not.toBe(539);
   });
 
   it("withFootprintBinding restores an outer binding when a nested scope exits", () => {

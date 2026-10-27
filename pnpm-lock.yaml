@@ -144,6 +144,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^5.1.0
         version: 5.1.0(vitest@5.1.0)
+      '@zplab/headless':
+        specifier: workspace:*
+        version: link:packages/headless
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
@@ -203,6 +206,22 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(jsdom@31.0.1(@napi-rs/canvas@1.1.1))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
 
+  packages/headless:
+    dependencies:
+      '@zplab/core':
+        specifier: workspace:*
+        version: link:../core
+      bwip-js:
+        specifier: ^4.11.4
+        version: 4.11.4
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      vitest:
+        specifier: ^5.1.0
+        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(jsdom@31.0.0(@napi-rs/canvas@1.1.0))(vite@8.3.7(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
+
   packages/mcp-server:
     dependencies:
       '@modelcontextprotocol/sdk':
@@ -211,9 +230,9 @@ importers:
       '@zplab/core':
         specifier: workspace:*
         version: link:../core
-      bwip-js:
-        specifier: ^4.11.4
-        version: 4.11.4
+      '@zplab/headless':
+        specifier: workspace:*
+        version: link:../headless
       zod:
         specifier: ^4.6.7
         version: 4.6.7

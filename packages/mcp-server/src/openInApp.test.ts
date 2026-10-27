@@ -3,9 +3,9 @@ import { describe, it, expect, vi } from "vitest";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { buildServer } from "./server";
-import { openInApp } from "./tools";
+import { openInApp } from "@zplab/headless";
 import { resolveDraftReceipt } from "./appBridge";
-import { designFile, textObject } from "./testFixtures";
+import { designFile, textObject } from "@zplab/headless/testing";
 import { CURRENT_DESIGN_SCHEMA_VERSION } from "@zplab/core/lib/designFile";
 
 async function connect(server: ReturnType<typeof buildServer>): Promise<Client> {

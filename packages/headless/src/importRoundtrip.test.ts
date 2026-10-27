@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { exportZpl, importZpl, patchDesign, validateDraft } from "./tools";
+import { exportZpl, importZpl, validateDraft } from "./tools";
+import { patchDesign } from "./patchOps.js";
 
 /** Streams chosen to hit every form the parser PRESERVES rather than models:
  *  those are the bytes that reach the boundary as-is, where three review

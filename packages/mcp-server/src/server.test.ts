@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { buildServer, SERVER_INSTRUCTIONS } from "./server";
-import { demoLabel } from "./testFixtures";
+import { demoLabel } from "@zplab/headless/testing";
 
 async function connect(hosted = false): Promise<Client> {
   const [clientT, serverT] = InMemoryTransport.createLinkedPair();

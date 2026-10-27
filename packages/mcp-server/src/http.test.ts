@@ -1,7 +1,7 @@
 import { markAppAttached, resetAppAttachedForTest } from "./appBridge";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { startHttpServer, type RunningHttpServer } from "./http";
-import { designFile } from "./testFixtures";
+import { designFile } from "@zplab/headless/testing";
 
 const TOKEN = "s3cret-token";
 

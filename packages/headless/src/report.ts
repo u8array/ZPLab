@@ -416,15 +416,20 @@ export function reportFor(design: DesignFile, measured?: Record<string, Measured
   );
 }
 
-/** Preflight + geometry with markers resolved against the design's own
- *  bindings; the report block every design-returning tool carries. */
+/** The report block every design-returning call carries. */
+export interface BoundReport extends Geometry {
+  warnings: PreflightWarning[];
+  notes?: string[];
+}
+
+/** Preflight + geometry with markers resolved against the design's own bindings. */
 export function boundReport(
   label: LabelConfig,
   variables: readonly Variable[],
   pages: Page[],
   measured?: ObjectBoundsCtx["measured"],
   datasetBound = false,
-) {
+): BoundReport {
   return withFootprintBinding(label, variables, () => {
     const core = reportCore(label, variables, pages, measured, datasetBound);
     return {
