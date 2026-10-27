@@ -1,4 +1,4 @@
-// Split out of build-sea.mjs so peScripts.test.ts can check the header arithmetic on a synthetic binary.
+// PE header arithmetic, kept apart so peScripts.test.ts can check it on a synthetic binary.
 import { readFileSync, writeFileSync } from "node:fs";
 
 const E_LFANEW = 0x3c;

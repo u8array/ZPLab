@@ -228,11 +228,21 @@ Then open `http://localhost:8080`. The image is published with each release from
 docker build -t zplab .
 ```
 
-- The container serves static files only. Printing and previews run in the browser. Server-side features are planned but not scheduled.
+- The container serves static files only. Printing and previews run in the browser.
 - Outbound calls go to `api.labelary.com` for previews and to the printer or Zebra Browser Print agent a user configures.
 - `VITE_THIRD_PARTY_LABELARY=false` switches Labelary previews off for every user of that build. `VITE_LABELARY_API_URL` only sets the default endpoint, which a user can still change in Settings.
 - Both are read at build time. Rebuild the image to change them, see the [build options](docs/development.md#build-options).
 - A premium Labelary key entered in the web app is stored in that browser.
+
+### REST server
+
+An optional server exposes the draft, validate, patch, export and import logic to scripts and integrations, behind a bearer token. Download the archive for your platform from the release assets. Set `ZPLAB_TOKEN` in your shell. Then start the binary or run the image:
+
+```sh
+docker run -p 127.0.0.1:8787:8787 -e ZPLAB_TOKEN ghcr.io/u8array/zplab-server:latest
+```
+
+Routes and variables are in [packages/server/README.md](packages/server/README.md). [docker/compose.example.yml](docker/compose.example.yml) starts the designer and the server together. The server has no designer, no printing and no storage.
 
 ## Development
 

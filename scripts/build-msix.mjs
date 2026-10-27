@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { manifestExecutable, packageVersion, readManifest, stampVersion, storeVersion } from './msix.mjs';
-import { hasCertificateTable } from '../packages/mcp-server/scripts/pe.mjs';
+import { hasCertificateTable } from './sea/pe.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const TAURI = join(ROOT, 'src-tauri');

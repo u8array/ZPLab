@@ -1,28 +1,19 @@
 name: Docker
 
+# Any source change can change the bundles, so only prose is ignored.
 on:
   pull_request:
-    paths:
-      - Dockerfile
-      - .dockerignore
-      - docker/**
-      - .github/workflows/docker.yml
-      - package.json
-      - pnpm-lock.yaml
-      - pnpm-workspace.yaml
-      - packages/*/package.json
+    paths-ignore:
+      - '**/*.md'
+      - docs/**
+      - store/**
   # A main build seeds the layer cache a release run can read.
   push:
     branches: [main]
-    paths:
-      - Dockerfile
-      - .dockerignore
-      - docker/**
-      - .github/workflows/docker.yml
-      - package.json
-      - pnpm-lock.yaml
-      - pnpm-workspace.yaml
-      - packages/*/package.json
+    paths-ignore:
+      - '**/*.md'
+      - docs/**
+      - store/**
   release:
     types: [published]
 
@@ -32,6 +23,15 @@ concurrency:
 
 jobs:
   image:
+    strategy:
+      # A failed server build still pushes the web image.
+      fail-fast: false
+      matrix:
+        include:
+          - target: web
+            image: ghcr.io/u8array/zplab
+          - target: server
+            image: ghcr.io/u8array/zplab-server
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -47,8 +47,11 @@ jobs:
       - uses: docker/metadata-action@v6
         id: meta
         with:
-          images: ghcr.io/u8array/zplab
-          tags: type=semver,pattern={{version}}
+          images: ${{ matrix.image }}
+          # semver tags only exist on a release, the smoke needs a tag to run.
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=ci,enable=${{ github.event_name != 'release' }}
 
       - uses: docker/login-action@v4
         if: github.event_name == 'release'
@@ -60,10 +63,25 @@ jobs:
       - uses: docker/build-push-action@v7
         with:
           context: .
+          target: ${{ matrix.target }}
           # Both arches only for the push, because a pull request just proves the build.
           platforms: ${{ github.event_name == 'release' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           push: ${{ github.event_name == 'release' }}
+          load: ${{ github.event_name != 'release' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # Both legs read both scopes, the deps stage is shared.
+          cache-from: |
+            type=gha,scope=${{ matrix.target }}
+            type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
+
+      # The build proves the image assembles; only a running container proves it serves.
+      - name: smoke the server container
+        if: matrix.target == 'server' && github.event_name != 'release'
+        run: |
+          docker run -d --rm --name zplab-server-smoke -e ZPLAB_TOKEN=smoketok -p 127.0.0.1:8787:8787 "${{ matrix.image }}:ci"
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8787/api/v1/health && break; sleep 1; done
+          curl -sf -H "Authorization: Bearer smoketok" -H "content-type: application/json" \
+            -d '{"zpl":"^XA^FO10,10^A0N,30,30^FDsmoke^FS^XZ"}' http://127.0.0.1:8787/api/v1/validate-zpl
+          docker stop zplab-server-smoke

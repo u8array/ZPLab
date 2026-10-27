@@ -55,6 +55,10 @@ jobs:
 
       - run: pnpm build
 
+      # Guards the release binary and the image bundle.
+      - run: pnpm --filter @zplab/server build:sea
+      - run: pnpm --filter @zplab/server smoke:sea
+
       - uses: actions/cache@v6
         id: pw-cache
         with:

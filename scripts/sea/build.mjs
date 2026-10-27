@@ -1,32 +1,36 @@
-// Build the sidecar as a Node SEA binary: esbuild CJS bundle -> SEA blob ->
-// inject into a node copy. Cross builds (CI macOS x86_64 on the arm64 runner)
+// Build a Node SEA binary for the package in the current directory. Cross builds
 // must pass --node with a downloaded target-arch node, not the runner's own.
 import { execFileSync } from "node:child_process";
-import { chmodSync, copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { chmodSync, copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { stripCertificateTable } from "./pe.mjs";
 
-const pkgDir = dirname(dirname(fileURLToPath(import.meta.url)));
+const rootDir = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+const pkgDir = process.cwd();
 const { values } = parseArgs({
   options: {
-    // Node to clone for the target arch; env form for the CI cross legs.
+    name: { type: "string" },
+    // Stop after the CJS bundle, which the container runs with its own node.
+    "bundle-only": { type: "boolean", default: false },
+    // Node to clone for the target arch, as an env for the CI cross legs.
     node: { type: "string", default: process.env.ZPLAB_SEA_NODE ?? process.execPath },
   },
 });
+if (!values.name) throw new Error("--name is required");
 
 const isWindows = process.platform === "win32";
 const isMac = process.platform === "darwin";
 // Under `tauri build` (env from the CLI) the exe goes where externalBin
 // expects it; standalone runs keep dist-sea. Intermediates stay in dist-sea.
 const triple = process.env.TAURI_ENV_TARGET_TRIPLE;
+// ZPLAB_SEA_TRIPLE is the release job's counterpart to the Tauri triple.
+const targetTriple = triple ?? process.env.ZPLAB_SEA_TRIPLE;
 const workDir = join(pkgDir, "dist-sea");
-const outDir = triple ? join(dirname(dirname(pkgDir)), "src-tauri", "binaries") : workDir;
-const exeName = triple
-  ? `zplab-mcp-${triple}${isWindows ? ".exe" : ""}`
-  : `zplab-mcp${isWindows ? ".exe" : ""}`;
+const outDir = triple ? join(rootDir, "src-tauri", "binaries") : workDir;
+const exeName = triple ? `${values.name}-${triple}${isWindows ? ".exe" : ""}` : `${values.name}${isWindows ? ".exe" : ""}`;
 
 const run = (cmd, args) => execFileSync(cmd, args, { stdio: "inherit", cwd: pkgDir });
 // Both tool bins are JS shims, so run them through node directly: no shell,
@@ -36,18 +40,25 @@ const runBin = (spec, args) => run(process.execPath, [require.resolve(spec), ...
 
 mkdirSync(workDir, { recursive: true });
 mkdirSync(outDir, { recursive: true });
-const bundle = join(workDir, "zplab-mcp.cjs");
-const blob = join(workDir, "zplab-mcp.blob");
+const bundle = join(workDir, `${values.name}.cjs`);
+const blob = join(workDir, `${values.name}.blob`);
 const exe = join(outDir, exeName);
 
+// The server reports the release version from /health.
+const { version } = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8"));
 runBin("esbuild/bin/esbuild", [
   join(pkgDir, "src", "index.ts"),
   "--bundle",
   "--platform=node",
   "--format=cjs",
   "--minify",
+  `--define:process.env.ZPLAB_VERSION=${JSON.stringify(version)}`,
   `--outfile=${bundle}`,
 ]);
+if (values["bundle-only"]) {
+  console.log(`bundled ${bundle}`);
+  process.exit(0);
+}
 
 writeFileSync(
   join(workDir, "sea-config.json"),
@@ -70,8 +81,8 @@ if (values.node !== process.execPath) {
 }
 // A runner-arch node under a target-triple name would ship a binary the
 // target machines cannot start.
-if (triple) {
-  const tripleArch = triple.startsWith("aarch64") ? "arm64" : "x64";
+if (targetTriple) {
+  const tripleArch = targetTriple.startsWith("aarch64") ? "arm64" : "x64";
   let nodeArch = process.arch;
   if (values.node !== process.execPath) {
     try {

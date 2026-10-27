@@ -15,9 +15,11 @@ $env:ZPLAB_TOKEN = "change-me"; pnpm --filter @zplab/server start
 | Variable | Default | Meaning |
 |---|---|---|
 | `ZPLAB_TOKEN` | required | The bearer token every design route expects |
-| `ZPLAB_HOST` | `127.0.0.1` | Bind address. `0.0.0.0` exposes the server to the network |
+| `ZPLAB_HOST` | `127.0.0.1` | Bind address. `0.0.0.0` serves the network |
 | `ZPLAB_PORT` | `8787` | Port |
-| `ZPLAB_VERSION` | `dev` | Reported by `/health` and the OpenAPI document |
+| `ZPLAB_VERSION` | `dev` | Reported by `/health` and the OpenAPI document. The release binaries and the image carry their version and ignore it |
+
+The token travels in plain text. Serve the network only behind a reverse proxy with TLS.
 
 ## Routes
 

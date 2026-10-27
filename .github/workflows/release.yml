@@ -133,6 +133,70 @@ jobs:
           echo "$BIN requires ${MAX:?no glibc symbols found}, floor $FLOOR"
           [ "$(printf '%s\n%s\n' "$MAX" "$FLOOR" | sort -V | tail -1)" = "$FLOOR" ] || { echo "$MAX is newer than the floor $FLOOR"; exit 1; }
 
+  server-binaries:
+    needs: [gates, create-release]
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            triple: aarch64-apple-darwin
+          - platform: macos-latest # Intel, cross-built on the arm64 runner
+            triple: x86_64-apple-darwin
+          - platform: ubuntu-22.04
+            triple: x86_64-unknown-linux-gnu
+          - platform: ubuntu-24.04-arm
+            triple: aarch64-unknown-linux-gnu
+          - platform: windows-latest
+            triple: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: fetch x86_64 node
+        if: matrix.triple == 'x86_64-apple-darwin'
+        run: |
+          V=$(node --version)
+          curl -fsSL "https://nodejs.org/dist/${V}/node-${V}-darwin-x64.tar.gz" | tar xz -C "$RUNNER_TEMP"
+          echo "ZPLAB_SEA_NODE=$RUNNER_TEMP/node-${V}-darwin-x64/bin/node" >> "$GITHUB_ENV"
+
+      - run: pnpm --filter @zplab/server build:sea
+        env:
+          ZPLAB_SEA_TRIPLE: ${{ matrix.triple }}
+
+      # Rosetta on the arm64 runner runs the cross-built x86_64 binary too.
+      - run: pnpm --filter @zplab/server smoke:sea
+
+      - name: upload to draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          EXT=""
+          [ "$RUNNER_OS" = "Windows" ] && EXT=".exe"
+          STAGE="$RUNNER_TEMP/zplab-server"
+          mkdir -p "$STAGE"
+          cp "packages/server/dist-sea/zplab-server$EXT" LICENSE THIRD-PARTY-LICENSES.md "$STAGE/"
+          cp .github/release/server-README.md "$STAGE/README.md"
+          # build.mjs embeds the runner's node, so its license matches by version.
+          curl -fsSL "https://raw.githubusercontent.com/nodejs/node/$(node --version)/LICENSE" -o "$STAGE/NODE-LICENSE"
+          ASSET="ZPLab_${{ needs.gates.outputs.version }}_server_${{ matrix.triple }}.tar.gz"
+          # macOS tar must not add ._ sidecars for the xattrs.
+          COPYFILE_DISABLE=1 tar -czf "$ASSET" -C "$RUNNER_TEMP" zplab-server
+          gh release upload "v${{ needs.gates.outputs.version }}" "$ASSET" --clobber
+
   msix:
     needs: [gates, rust]
     uses: ./.github/workflows/msix.yml

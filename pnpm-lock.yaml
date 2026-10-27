@@ -150,6 +150,9 @@ importers:
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
       eslint:
         specifier: ^10.15.0
         version: 10.15.0(jiti@2.7.0)
@@ -171,6 +174,9 @@ importers:
       pngjs:
         specifier: ^7.0.0
         version: 7.0.0
+      postject:
+        specifier: ^1.0.0-alpha.6
+        version: 1.0.0-alpha.6
       spdx-expression-parse:
         specifier: ^5.0.0
         version: 5.0.0
@@ -237,12 +243,6 @@ importers:
         specifier: ^4.6.7
         version: 4.6.7
     devDependencies:
-      esbuild:
-        specifier: ^0.28.2
-        version: 0.28.2
-      postject:
-        specifier: ^1.0.0-alpha.6
-        version: 1.0.0-alpha.6
       tsx:
         specifier: ^4.23.15
         version: 4.23.15
