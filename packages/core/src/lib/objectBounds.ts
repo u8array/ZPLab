@@ -393,7 +393,8 @@ function groupBounds(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots {
   return union ?? { x: obj.x, y: obj.y, width: 0, height: 0 };
 }
 
-function unionOf(boxes: BoundingBoxDots[]): BoundingBoxDots | null {
+/** Enclosing box of the inputs, null when there are none. */
+export function unionOf(boxes: BoundingBoxDots[]): BoundingBoxDots | null {
   if (boxes.length === 0) return null;
   let minX = Infinity;
   let minY = Infinity;
