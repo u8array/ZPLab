@@ -31,8 +31,7 @@ const noopHandlers = {
   snap: (n: number) => n,
 };
 
-// Regression: the EAN/UPC getSelfRect patch survived Konva's Image reuse
-// across symbology switches, freezing every later type's measured rect.
+// Regression: a left-over EAN/UPC bar clip froze every later rect.
 describe("symbology switch re-measures the node footprint", () => {
   it("footprints track the type through a chain crossing EAN/UPC", () => {
     let obj = makeBarcode("code128");
@@ -63,9 +62,8 @@ describe("symbology switch re-measures the node footprint", () => {
       rerender(ui(obj));
       return rectOf();
     };
-    // EAN first: this is the branch that arms the stale getSelfRect patch.
     const ean = switchTo("ean13");
-    // Direct EAN -> 2D (skips the HRI branch): must not inherit the EAN rect.
+    // Direct EAN to 2D skips the HRI branch, so this stop must not inherit the EAN rect.
     const qr = switchTo("qrcode");
     expect(qr.width).toBeCloseTo(qr.height, 3);
     expect({ w: qr.width, h: qr.height }).not.toEqual({ w: ean.width, h: ean.height });
@@ -75,8 +73,7 @@ describe("symbology switch re-measures the node footprint", () => {
     expect(dm.width).not.toBeCloseTo(qr.width, 1);
     const pdf = switchTo("pdf417");
     expect(pdf.width).toBeGreaterThan(pdf.height);
-    // Back to EAN and out through the 1D HRI branch (KImage reused, else-path
-    // restore): the next type must measure its own footprint, not the EAN rect.
+    // Back to EAN and out again: the next type must measure its own footprint.
     const upc = switchTo("upca");
     const c128 = switchTo("code128");
     expect(c128.width).not.toBeCloseTo(upc.width, 1);

@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNodeDraggable } from "./hooks/useNodeDraggable";
 import { Image as KImage, Group, Rect, Shape, Text } from "react-konva";
-import type Konva from "konva";
+import { HriOverlay } from "./hriOverlayNode";
 import { BARCODE_1D_TYPES, ObjectRegistry, objectResolvesCtrl } from "@zplab/core/registry";
 import { dotsToPx, mmToDots, pxToDots } from "@zplab/core/lib/coordinates";
 import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "@zplab/core/lib/objectBounds";
@@ -46,13 +46,6 @@ import {
   EAN_UPC_TYPES,
   QR_FT_MODULE_OFFSET,
 } from "@zplab/core/lib/bwipConstants";
-
-/** Drops the EAN/UPC getSelfRect patch so the prototype method resurfaces.
- *  Konva reuses the Image instance across symbology switches; without this
- *  every type after an EAN/UPC visit keeps measuring the stale bar rect. */
-function restoreSelfRect(node: Konva.Image | null): void {
-  if (node) delete (node as Partial<Konva.Image>).getSelfRect;
-}
 
 /** Resolve a registry value that may be a constant or a function of
  *  moduleWidth. Mirrors the pattern formatHri uses for content. */
@@ -129,14 +122,6 @@ export function BarcodeObject({
   // fontFamily once the FontFace resolves. Keying the overlay on this
   // version remounts it on `loadingdone` for a fresh paint.
   const fontVersion = useFontCacheVersion();
-
-  // Overlay group (HRI text + start/stop glyphs, or EAN/UPC digits) with
-  // getClientRect zeroed so the parent bbox stays tight on the bars.
-  const setOverlayGroupRef = useCallback((node: Konva.Group | null) => {
-    if (node) {
-      node.getClientRect = () => ({ x: 0, y: 0, width: 0, height: 0 });
-    }
-  }, []);
 
   // Cross-type props read once so the canvas builder and the HRI overlay
   // share one source of truth. Single-field casts at the boundary instead
@@ -456,19 +441,9 @@ export function BarcodeObject({
               height={isEanUpc
                 ? ub.barH + dotsToPx(EAN_TEXT_ZONE_DOTS, scale, dpmm)
                 : ub.barH}
-              // Clip Transformer bbox to the bar area so resize handles ignore
-              // the guard tails; the non-EAN case must undo the patch on the
-              // reused instance (see restoreSelfRect).
-              ref={(node) => {
-                if (!node) return;
-                if (isEanUpc) {
-                  const w = ub.barW;
-                  const h = ub.barH;
-                  node.getSelfRect = () => ({ x: 0, y: 0, width: w, height: h });
-                } else {
-                  restoreSelfRect(node);
-                }
-              }}
+              // EAN/UPC stops the box at the bars so resize handles ignore the guard tails.
+              // The undefined branch matters because Konva reuses the Image across types.
+              selfRectFunc={isEanUpc ? () => ({ x: 0, y: 0, width: ub.barW, height: ub.barH }) : undefined}
               imageSmoothingEnabled={false}
               // EAN/UPC draws its selection stroke as the Rect below so
               // the highlight skips the guard tails.
@@ -490,7 +465,7 @@ export function BarcodeObject({
                 listening={false}
               />
             )}
-            <Group key={`hri-${fontVersion}`} ref={setOverlayGroupRef}>{overlayContent}</Group>
+            <HriOverlay key={`hri-${fontVersion}`}>{overlayContent}</HriOverlay>
             {showStateFrame && (
               <StateFrame {...stateFrameProps(ub)} color={stateFrameColor} />
             )}
@@ -521,7 +496,6 @@ export function BarcodeObject({
             crop={bitmapCrop}
             width={ub.barW}
             height={ub.barH}
-            ref={restoreSelfRect}
             imageSmoothingEnabled={false}
             stroke={isSelected ? colors.selection : undefined}
             strokeWidth={isSelected ? 2 : 0}
