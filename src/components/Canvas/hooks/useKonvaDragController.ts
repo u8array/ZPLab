@@ -5,7 +5,7 @@ import { gridSnapDelta, smartSnapDelta, labelSnapRectDots } from "../dragGeometr
 import { SNAP_THRESHOLD_PX } from "../../../lib/snapGuides";
 import type { SnapGuide, SnapRect } from "../../../lib/snapGuides";
 import {
-  objectBoundsDots,
+  barBoxDots,
   selectionUnionDots,
   type BoundingBoxDots,
 } from "@zplab/core/lib/objectBounds";
@@ -64,9 +64,9 @@ interface DragState {
   startLocal: Map<string, { x: number; y: number }>;
   /** Stored model position (dots) per id at drag start, for the commit. */
   startModel: Map<string, { x: number; y: number }>;
-  /** Selection union (dots) at drag start, for snapping. */
+  /** Union of the selection's bar boxes (dots) at drag start, for snapping. */
   startUnionDots: BoundingBoxDots;
-  /** Non-dragged object bounds (dots) as smart-snap targets. */
+  /** Bar boxes (dots) of the non-dragged objects as smart-snap targets. */
   others: SnapRect[];
   /** Printable label rect (dots) as a smart-snap target. */
   labelDots: SnapRect;
@@ -76,7 +76,7 @@ interface DragState {
 
 /**
  * Centralizes whole-object drag (single + multi), the move counterpart to
- * useKonvaTransformer. Snaps in model dots off `objectBoundsDots` so it needs no
+ * useKonvaTransformer. Snaps in model dots off `barBoxDots` so it needs no
  * rotation math; multi-select moves by one delta. Lines follow via a registered
  * mover.
  */
@@ -155,15 +155,14 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
     }
     if (!ids.includes(primaryId)) return;
 
-    const startUnionDots = selectionUnionDots(objs, ids, ctx);
+    const startUnionDots = selectionUnionDots(objs, ids, ctx, barBoxDots);
     if (!startUnionDots) return;
 
     const dragged = new Set(ids);
     const others: SnapRect[] = [];
     for (const leaf of getAllLeaves(objs)) {
       if (dragged.has(leaf.id)) continue;
-      const b = objectBoundsDots(leaf, ctx);
-      others.push({ id: leaf.id, ...b });
+      others.push({ id: leaf.id, ...barBoxDots(leaf, ctx) });
     }
     const labelDots = labelSnapRectDots(currentPageLabel(state));
 

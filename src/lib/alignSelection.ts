@@ -5,13 +5,12 @@ import {
   printableRectDots,
   unionOf,
   type BoundingBoxDots,
+  type BoxOf,
   type ObjectBoundsCtx,
 } from "@zplab/core/lib/objectBounds";
 import type { AlignBox, AlignRef } from "./align";
 import { safeAreaRectDots } from "./safeArea";
 import { selectTidyTargets } from "./tidyClassify";
-
-export type BoxOf = (obj: LabelObject, ctx: ObjectBoundsCtx) => BoundingBoxDots;
 
 interface AlignSelection {
   boxes: AlignBox[];

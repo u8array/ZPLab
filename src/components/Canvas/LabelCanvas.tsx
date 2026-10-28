@@ -25,8 +25,8 @@ import { Select } from "../ui/Select";
 import type { SnapGuide } from "../../lib/snapGuides";
 import { computeAlignDeltas, computeDistribute, computeTidy } from "../../lib/align";
 import type { AlignOp, DistributeAxis, AlignRef } from "../../lib/align";
-import { buildAlignSelection, type BoxOf } from "../../lib/alignSelection";
-import { objectBoundsDots, selectionUnionDots, isBarcode } from "@zplab/core/lib/objectBounds";
+import { buildAlignSelection } from "../../lib/alignSelection";
+import { barBoxDots, objectBoundsDots, selectionUnionDots, isBarcode, type BoxOf } from "@zplab/core/lib/objectBounds";
 import { computePreflight, markerValueFindings, suppressPristineEmpty } from "@zplab/core/lib/preflight";
 import { barcodeEncodeFindings } from "./barcodePreflight";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
@@ -617,7 +617,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     [physicalVisualX, physicalVisualY, physicalVisualWidthPx, physicalVisualHeightPx],
   );
 
-  // Group frame from selectionUnionDots so it matches the snap borders.
+  // Group frame from the bar boxes, like the single frame and the snap guides.
+  // The resize proxy and the action bar keep the full boxes.
   // Positioned imperatively (no x/y props) so a mid-drag re-render can't reset
   // the live position the controller's onDelta applies. Split into a movable
   // part (follows the drag) and a static part (locked, stays put) so the chrome
@@ -656,10 +657,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   useLayoutEffect(() => {
     frameRef.current = { toFramePx, frameCtx, visibleLeafById, dotRatio };
   });
-  // Frame Rect is multi-only; the movable/static bases also drive the action bar
-  // (single drags too), so compute them for any selection.
+  // Frame Rect is multi-only, but the box bases also drive the action bar on a
+  // single drag, so compute them for any selection.
   const hasSelection = visibleSelIds.length > 0;
-  const selectionFrameBase = isMultiFrame ? toFramePx(selectionUnionDots(objects, visibleSelIds, frameCtx)) : null;
+  const selectionFrameBase = isMultiFrame ? toFramePx(selectionUnionDots(objects, visibleSelIds, frameCtx, barBoxDots)) : null;
   const movableUnionDots = hasSelection ? selectionUnionDots(objects, movableSelIds, frameCtx) : null;
   // Needs >1 visible movable leaf (attachableIds counts hidden ones) and no
   // locked member; either would break the projected union.
@@ -667,8 +668,11 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     movableSelIds.length > 1 && staticSelIds.length === 0 && !editorFrozen
       ? movableUnionDots
       : null;
-  const movableFrameBase = toFramePx(movableUnionDots);
-  const staticFrameBase = hasSelection ? toFramePx(selectionUnionDots(objects, staticSelIds, frameCtx)) : null;
+  const movableBoxBase = toFramePx(movableUnionDots);
+  const staticBoxBase = hasSelection ? toFramePx(selectionUnionDots(objects, staticSelIds, frameCtx)) : null;
+  // The bar-box pair keeps the frame on the bars mid-drag as well.
+  const movableFrameBase = hasSelection ? toFramePx(selectionUnionDots(objects, movableSelIds, frameCtx, barBoxDots)) : null;
+  const staticFrameBase = hasSelection ? toFramePx(selectionUnionDots(objects, staticSelIds, frameCtx, barBoxDots)) : null;
   // Preflight runs over the EXPORTABLE leaves (includeInExport), not the visible
   // ones, so a hidden-but-exported object is still warned and a visible-but-not-
   // exported one isn't falsely flagged: the warnings track what prints. Suppressed
@@ -712,8 +716,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       const o = findObjectById(objects, id);
       if (!o || !isGroup(o) || o.visible === false) continue;
       const leaves = getAllLeaves(o.children).filter((l) => visibleLeafById.has(l.id));
-      const movable = toFramePx(selectionUnionDots(objects, leaves.filter((l) => !visibleLeafById.get(l.id)?.locked).map((l) => l.id), frameCtx));
-      const fixed = toFramePx(selectionUnionDots(objects, leaves.filter((l) => visibleLeafById.get(l.id)?.locked).map((l) => l.id), frameCtx));
+      const movable = toFramePx(selectionUnionDots(objects, leaves.filter((l) => !visibleLeafById.get(l.id)?.locked).map((l) => l.id), frameCtx, barBoxDots));
+      const fixed = toFramePx(selectionUnionDots(objects, leaves.filter((l) => visibleLeafById.get(l.id)?.locked).map((l) => l.id), frameCtx, barBoxDots));
       if (movable) movableGroupRects.push(movable);
       if (fixed) staticGroupRects.push(fixed);
     }
@@ -792,16 +796,25 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     setGuides: setDragGuides,
     onDelta: (dx, dy) => {
       // Live union: movable part shifted by the drag, locked part where it sits.
-      const moved = movableFrameBase && {
+      const moved = movableBoxBase && {
+        x: movableBoxBase.x + dx,
+        y: movableBoxBase.y + dy,
+        width: movableBoxBase.width,
+        height: movableBoxBase.height,
+      };
+      const live = unionPx(moved, staticBoxBase);
+      if (!live) return;
+      const movedFrame = movableFrameBase && {
         x: movableFrameBase.x + dx,
         y: movableFrameBase.y + dy,
         width: movableFrameBase.width,
         height: movableFrameBase.height,
       };
-      const live = unionPx(moved, staticFrameBase);
-      if (!live) return;
-      selectionFrameRef.current?.position({ x: live.x, y: live.y });
-      selectionFrameRef.current?.size({ width: live.width, height: live.height });
+      const liveFrame = unionPx(movedFrame, staticFrameBase);
+      if (liveFrame) {
+        selectionFrameRef.current?.position({ x: liveFrame.x, y: liveFrame.y });
+        selectionFrameRef.current?.size({ width: liveFrame.width, height: liveFrame.height });
+      }
       // Proxy follows the drag so the transformer chrome tracks live (the
       // controller already forceUpdates the transformer each tick).
       if (multiResizeBboxDots && moved) {
@@ -849,13 +862,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
 
       return {
         alignSelection: (op: AlignOp, ref: AlignRef) => {
-          const sel = buildSelection(ref, objectBoundsDots);
+          const sel = buildSelection(ref, barBoxDots);
           if (!sel || !sel.ref || sel.boxes.length === 0) return;
           const deltas = computeAlignDeltas(sel.boxes, sel.ref, op);
           const updates = deltas.flatMap(sel.apply);
           if (updates.length > 0) updateObjects(updates);
         },
-        // Distribute is inherently selection-relative; ref is fixed.
+        // Distribute and tidy space what prints, so they keep the full box.
+        // Distribute is selection-relative, so its ref is fixed.
         distributeSelection: (axis: DistributeAxis) => {
           const sel = buildSelection("selection", objectBoundsDots);
           if (!sel || sel.boxes.length < 3) return;
@@ -1201,7 +1215,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       !!singleForSwitch &&
       (!!singleForSwitch.locked || hasLockedAncestor(objects, singleForSwitch.id));
     const captureLabel = () => labelCapture(rotationGroupRef.current, labelPaperRef.current);
-    // The region comes from the model like the selection frame: groups have no node, a sample barcode's
+    // The region comes from the model, not the nodes: groups have no node, a sample barcode's
     // node is chrome, and a line's node is its hit stroke. Frame px are stage px once the view rotation is 0.
     const captureSelection = () => {
       const group = rotationGroupRef.current;
