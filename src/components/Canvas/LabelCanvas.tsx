@@ -24,8 +24,9 @@ import type { Unit } from "@zplab/core/lib/units";
 import { Select } from "../ui/Select";
 import type { SnapGuide } from "../../lib/snapGuides";
 import { computeAlignDeltas, computeDistribute, computeTidy } from "../../lib/align";
-import type { AlignOp, AlignBox, DistributeAxis, AlignRef } from "../../lib/align";
-import { objectBoundsDots, selectionUnionDots, printableRectDots, isBarcode } from "@zplab/core/lib/objectBounds";
+import type { AlignOp, DistributeAxis, AlignRef } from "../../lib/align";
+import { buildAlignSelection, type BoxOf } from "../../lib/alignSelection";
+import { objectBoundsDots, selectionUnionDots, isBarcode } from "@zplab/core/lib/objectBounds";
 import { computePreflight, markerValueFindings, suppressPristineEmpty } from "@zplab/core/lib/preflight";
 import { barcodeEncodeFindings } from "./barcodePreflight";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
@@ -36,7 +37,6 @@ import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
 import { measureBarcodeFootprintDots } from "./bwipHelpers";
 import { copyText } from "../../lib/clipboard";
 import { tryFinally } from "../../lib/tryFinally";
-import { selectTidyTargets } from "../../lib/tidyClassify";
 import { safeAreaRectDots } from "../../lib/safeArea";
 import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "../../lib/measuredBoundsCache";
 import { isEditableTarget } from "../../lib/dom";
@@ -842,80 +842,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   useImperativeHandle(
     ref,
     () => {
-      // All in DOTS, so align/distribute is zoom- and view-rotation-independent.
-      // A group is one bbox; its delta shifts every leaf (absolute coordinates).
-      const buildSelection = (alignRef: AlignRef): {
-        boxes: AlignBox[];
-        ref: ReturnType<typeof selectionUnionDots>;
-        container: NonNullable<ReturnType<typeof selectionUnionDots>>;
-        apply: (delta: { id: string; dx: number; dy: number }) => { id: string; changes: { x: number; y: number } }[];
-      } | null => {
+      const buildSelection = (alignRef: AlignRef, boxOf: BoxOf) => {
         const state = useLabelStore.getState();
-        const ids = state.selectedIds;
-        if (ids.length === 0) return null;
-        const objs = currentObjects(state);
-        const measured = measuredBoundsMap();
-        const ctx = { label: currentPageLabel(state), measured };
-
-        // Locked/hidden objects are non-participants (like drag/nudge/lasso).
-        const movable = ids
-          .map((id) => findObjectById(objs, id))
-          .filter((o): o is LabelObject => o !== undefined && !o.locked && o.visible !== false);
-        if (movable.length === 0) return null;
-
-        const printable = printableRectDots(currentPageLabel(state));
-        // Exclude structural primitives (full-label frame, spanning dividers) so
-        // they neither inflate the reference nor get rearranged; content only,
-        // consistent with tidy. Falls back to all when fewer than 2 content.
-        const items = movable.map((o) => ({
-          id: o.id,
-          type: isGroup(o) ? "group" : o.type,
-          box: objectBoundsDots(o, ctx),
-        }));
-        const contentIds = new Set(selectTidyTargets(items, printable.width, printable.height));
-        const content = movable.filter((o) => contentIds.has(o.id));
-        const contentIdList = content.map((o) => o.id);
-        const boxes: AlignBox[] = items
-          .filter((it) => contentIds.has(it.id))
-          .map((it) => ({ id: it.id, ...it.box }));
-
-        // Align-to-label pins to the safe-area inset when configured, so the
-        // 6-edge buttons keep a uniform margin; otherwise the printable rect.
-        const labelBox = safeAreaRectDots(currentPageLabel(state)) ?? printable;
-        let refBox: ReturnType<typeof selectionUnionDots>;
-        // A single unit (one object or one group) has no meaningful "selection"
-        // or "key" frame of its own, so it aligns to the label (Figma: a single
-        // element aligns to its parent). Multi-select honors the chosen ref.
-        if (alignRef === "label" || content.length === 1) {
-          refBox = labelBox;
-        } else if (alignRef === "key") {
-          const keyObj = content[content.length - 1];
-          refBox = keyObj ? objectBoundsDots(keyObj, ctx) : selectionUnionDots(objs, contentIdList, ctx);
-        } else {
-          refBox = selectionUnionDots(objs, contentIdList, ctx);
-        }
-
-        const byId = new Map(content.map((o) => [o.id, o]));
-        const apply = (delta: { id: string; dx: number; dy: number }) => {
-          const dx = Math.round(delta.dx);
-          const dy = Math.round(delta.dy);
-          if (dx === 0 && dy === 0) return [];
-          const node = byId.get(delta.id);
-          if (!node) return [];
-          // A group has no own x/y; shift each leaf by the same delta.
-          const targets = isGroup(node) ? getAllLeaves(node.children) : [node];
-          return targets.map((leaf) => ({
-            id: leaf.id,
-            changes: { x: leaf.x + dx, y: leaf.y + dy },
-          }));
-        };
-
-        return { boxes, ref: refBox, container: labelBox, apply };
+        return buildAlignSelection(currentObjects(state), state.selectedIds, currentPageLabel(state), measuredBoundsMap(), alignRef, boxOf);
       };
 
       return {
         alignSelection: (op: AlignOp, ref: AlignRef) => {
-          const sel = buildSelection(ref);
+          const sel = buildSelection(ref, objectBoundsDots);
           if (!sel || !sel.ref || sel.boxes.length === 0) return;
           const deltas = computeAlignDeltas(sel.boxes, sel.ref, op);
           const updates = deltas.flatMap(sel.apply);
@@ -923,7 +857,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         },
         // Distribute is inherently selection-relative; ref is fixed.
         distributeSelection: (axis: DistributeAxis) => {
-          const sel = buildSelection("selection");
+          const sel = buildSelection("selection", objectBoundsDots);
           if (!sel || sel.boxes.length < 3) return;
           const deltas = computeDistribute(sel.boxes, axis, { kind: "equalGap" });
           const updates = deltas.flatMap(sel.apply);
@@ -932,7 +866,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         // Tidy spreads the content across the safe area (else label) and centers
         // it. buildSelection already excludes structural frame/divider primitives.
         tidySelection: () => {
-          const sel = buildSelection("selection");
+          const sel = buildSelection("selection", objectBoundsDots);
           if (!sel || sel.boxes.length < 2) return;
           const deltas = computeTidy(sel.boxes, sel.container);
           const updates = deltas.flatMap(sel.apply);
