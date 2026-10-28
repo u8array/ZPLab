@@ -1354,6 +1354,7 @@ const hu = {
       printInterpretation: 'Ember által olvasható',
       checkDigit: 'Ellenőrzőjegy',
       gs1Mode: 'GS1 mód',
+      autoMode: 'Automatikus készlet (tömör számjegyek)',
       moduleWidth: 'Modulszélesség',
     },
     box: {

@@ -80,6 +80,64 @@ export function planCode128Symbols(text: string): number[] | null {
   return values;
 }
 
+const CODE_C = 99;
+
+const isDigitAt = (text: string, i: number): boolean => /\d/.test(text.charAt(i));
+
+/** Length of the digit run starting at `from`. */
+function digitRun(text: string, from: number): number {
+  let n = 0;
+  while (isDigitAt(text, from + n)) n += 1;
+  return n;
+}
+
+/**
+ * Symbol values (start code first, no check/stop) for `^BC` mode A, the
+ * firmware's automatic subset selection: four or more digits in a row pack
+ * into Subset C, two per symbol (ISO/IEC 15417 Annex E). Printable ASCII
+ * only; returns null for control bytes or anything outside SP..DEL so the
+ * caller falls back to the plain (Subset A/B) plan.
+ */
+export function planCode128AutoSymbols(text: string): number[] | null {
+  if (!text) return null;
+  const bValues: number[] = [];
+  for (let i = 0; i < text.length; i += 1) {
+    const value = valueInB(text.charCodeAt(i));
+    if (value === null) return null;
+    bValues.push(value);
+  }
+  const lead = digitRun(text, 0);
+  let inC = lead >= 4 || (lead === 2 && text.length === 2);
+  const values = [inC ? START_C : START_B];
+  let i = 0;
+  while (i < text.length) {
+    if (inC) {
+      if (digitRun(text, i) >= 2) {
+        values.push(parseInt(text.slice(i, i + 2), 10));
+        i += 2;
+        continue;
+      }
+      values.push(CODE_B);
+      inC = false;
+      continue;
+    }
+    const run = digitRun(text, i);
+    if (run >= 4) {
+      // Odd run: the first digit stays in B so the rest pairs up evenly.
+      if (run % 2 === 1) {
+        values.push(bValues[i] ?? 0);
+        i += 1;
+      }
+      values.push(CODE_C);
+      inC = true;
+      continue;
+    }
+    values.push(bValues[i] ?? 0);
+    i += 1;
+  }
+  return values;
+}
+
 /** Literal escapes (spec p.96, Table 2); same codes in Subsets A and B, the
  *  values here are Subset B's. */
 const B_LITERAL_ESCAPE = new Map([

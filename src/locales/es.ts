@@ -1354,6 +1354,7 @@ const es = {
       printInterpretation: 'Legible por humanos',
       checkDigit: 'Dígito de control',
       gs1Mode: 'Modo GS1',
+      autoMode: 'Subconjunto automático (dígitos compactos)',
       moduleWidth: 'Ancho de módulo',
     },
     box: {

@@ -1354,6 +1354,7 @@ const fr = {
       printInterpretation: 'Lisible par l\'homme',
       checkDigit: 'Chiffre de contrôle',
       gs1Mode: 'Mode GS1',
+      autoMode: 'Sous-ensemble auto (chiffres compacts)',
       moduleWidth: 'Largeur de module',
     },
     box: {

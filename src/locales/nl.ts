@@ -1354,6 +1354,7 @@ const nl = {
       printInterpretation: 'Leesbaar voor mensen',
       checkDigit: 'Controlegetal',
       gs1Mode: 'GS1-modus',
+      autoMode: 'Automatische subset (compacte cijfers)',
       moduleWidth: 'Modulebreedte',
     },
     box: {

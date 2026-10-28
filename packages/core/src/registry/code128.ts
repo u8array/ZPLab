@@ -17,9 +17,10 @@ export const code128CoreConfig: Barcode1DCoreConfig = {
   zplCommand: (p) => {
     const interp = p.printInterpretation ? 'Y' : 'N';
     const check = p.checkDigit ? 'Y' : 'N';
-    // m=D (UCC/EAN) turns a plain Code 128 into GS1-128; omit it otherwise so a
-    // non-GS1 field round-trips as the bare command.
-    const mode = p.gs1 ? ',D' : '';
+    // m=D (UCC/EAN) turns a plain Code 128 into GS1-128; m=A lets the firmware
+    // pick subsets (digit runs in C). Omit m for the default N so a plain field
+    // round-trips as the bare command.
+    const mode = p.gs1 ? ',D' : p.mode === 'A' ? ',A' : '';
     return `^BC${p.rotation},${p.height},${interp},${p.printInterpretationAbove ? 'Y' : 'N'},${check}${mode}`;
   },
 };

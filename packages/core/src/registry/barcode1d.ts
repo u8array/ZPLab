@@ -17,6 +17,7 @@ import type { ContentSpec } from '../types/contentSpec';
 import { ROTATION_SPEC, type ZplRotation } from './rotation';
 
 export const MSI_CHECK_MODES = ['C', 'D'] as const;
+export const CODE128_MODES = ['N', 'A'] as const;
 
 export interface Barcode1DProps {
   content: string;
@@ -33,6 +34,10 @@ export interface Barcode1DProps {
   preSerialContent?: string;
   /** GS1-128 mode (`^BC…,D`). Only honoured by a `gs1Capable` symbology. */
   gs1?: boolean;
+  /** Code 128 m-param: N (default, Subset B unless the ^FD carries
+   *  invocation codes) or A (automatic: the firmware packs digit runs into
+   *  Subset C). Only honoured by Code 128; `gs1` (m=D) wins over it. */
+  mode?: (typeof CODE128_MODES)[number];
   /** MSI multi-check ^BM e beyond the boolean (C = 2x Mod 10, D = Mod 11 +
    *  Mod 10); set by import, not the panel. */
   msiCheckMode?: (typeof MSI_CHECK_MODES)[number];
@@ -97,6 +102,7 @@ export const BARCODE_1D_PROP_SPECS: PropSpecs<Barcode1DProps> = {
   serial: { type: 'object' },
   preSerialContent: { type: 'string' },
   gs1: { type: 'boolean' },
+  mode: { type: 'string', values: CODE128_MODES },
   msiCheckMode: { type: 'string', values: MSI_CHECK_MODES },
   msiHriCheck: { type: 'boolean' },
 };

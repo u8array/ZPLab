@@ -1354,6 +1354,7 @@ const zhHant = {
       printInterpretation: '人工可讀',
       checkDigit: '校驗碼',
       gs1Mode: 'GS1 模式',
+      autoMode: '自動子集（數字緊湊）',
       moduleWidth: '模組寬度',
     },
     box: {

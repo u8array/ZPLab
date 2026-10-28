@@ -1354,6 +1354,7 @@ const tr = {
       printInterpretation: 'İnsan tarafından okunabilir',
       checkDigit: 'Kontrol hanesi',
       gs1Mode: 'GS1 modu',
+      autoMode: 'Otomatik alt küme (sıkıştırılmış rakamlar)',
       moduleWidth: 'Modül genişliği',
     },
     box: {

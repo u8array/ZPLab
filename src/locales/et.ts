@@ -1354,6 +1354,7 @@ const et = {
       printInterpretation: 'Inimesele loetav',
       checkDigit: 'Kontrollnumber',
       gs1Mode: 'GS1-režiim',
+      autoMode: 'Automaatne alamhulk (kompaktsed numbrid)',
       moduleWidth: 'Mooduli laius',
     },
     box: {

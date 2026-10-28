@@ -1354,6 +1354,7 @@ const sr = {
       printInterpretation: 'Čitljivo za čoveka',
       checkDigit: 'Kontrolna cifra',
       gs1Mode: 'GS1 режим',
+      autoMode: 'Automatski podskup (kompaktne cifre)',
       moduleWidth: 'Širina modula',
     },
     box: {

@@ -1354,6 +1354,7 @@ const ja = {
       printInterpretation: '人間可読',
       checkDigit: 'チェックデジット',
       gs1Mode: 'GS1モード',
+      autoMode: '自動サブセット（数字を圧縮）',
       moduleWidth: 'モジュール幅',
     },
     box: {

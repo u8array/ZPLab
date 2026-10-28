@@ -1354,6 +1354,7 @@ const it = {
       printInterpretation: "Leggibile dall'uomo",
       checkDigit: 'Cifra di controllo',
       gs1Mode: 'Modalità GS1',
+      autoMode: 'Sottoinsieme automatico (cifre compatte)',
       moduleWidth: 'Larghezza modulo',
     },
     box: {

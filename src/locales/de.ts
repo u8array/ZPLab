@@ -1419,6 +1419,7 @@ const de = {
       printInterpretation: 'Klartext',
       checkDigit: 'Prüfziffer',
       gs1Mode: 'GS1-Modus',
+      autoMode: 'Auto-Subset (Ziffern kompakt)',
       moduleWidth: 'Modulbreite',
     },
     box: {
