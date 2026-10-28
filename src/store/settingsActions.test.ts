@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { useLabelStore, canCallLabelary } from "./labelStore";
 import { DEFAULT_CANVAS_SETTINGS } from "./slices/uiSlice";
+import { loadLocale, LOCALE_CODES } from "../locales";
 
 // Pin the public host so these consent assertions hold regardless of the
 // runner's env: on a custom host canCallLabelary is intentionally true
@@ -48,16 +49,16 @@ describe("Labelary consent (revocable)", () => {
 });
 
 describe("applyLocale", () => {
-  it.each([["de", "Objekte"], ["ca", "Objectes"]] as const)("swaps translations and loadedLocale atomically once the %s chunk loads", async (code, heading) => {
+  it.each(LOCALE_CODES)("swaps translations and loadedLocale atomically once the %s chunk loads", async (code) => {
     const s = useLabelStore.getState();
     s.setLocale(code);
     // setLocale kicked applyLocale off already; await an explicit call to
-    // observe the settled state deterministically (loader is cached).
+    // observe the settled state deterministically.
     await useLabelStore.getState().applyLocale(code);
     const after = useLabelStore.getState();
     expect(after.locale).toBe(code);
     expect(after.loadedLocale).toBe(code);
-    expect(after.translations.palette.heading).toBe(heading);
+    expect(after.translations).toBe(await loadLocale(code));
   });
 
   it("drops a stale load when the preference changed meanwhile", async () => {

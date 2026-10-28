@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LOCALE_CODES } from "../locales";
 import { detectLocale } from "./labelStore.internals";
 
 function withLanguage(lang: string): void {
@@ -10,16 +11,9 @@ afterEach(() => {
 });
 
 describe("detectLocale", () => {
-  it.each(["ca", "ca-ES", "ca-AD", "CA-es"])("detects Catalan from %s", (tag) => {
-    withLanguage(tag);
-    expect(detectLocale()).toBe("ca");
-  });
-
-  it("maps plain two-letter tags to their locale", () => {
-    withLanguage("de-DE");
-    expect(detectLocale()).toBe("de");
-    withLanguage("fr");
-    expect(detectLocale()).toBe("fr");
+  it.each(LOCALE_CODES)("detects %s from a mixed-case region tag", (code) => {
+    withLanguage(`${code.toUpperCase()}-zz`);
+    expect(detectLocale()).toBe(code);
   });
 
   it("falls back to en for unsupported languages", () => {

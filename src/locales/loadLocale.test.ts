@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import en from "./en";
 import { isLocaleCode, LOCALE_CODES, loadLocale, localeOptions } from "./index";
@@ -16,25 +17,35 @@ function keyPaths(obj: Record<string, unknown>, prefix = ""): string[] {
   return out;
 }
 
+/** The leaf a dotted path names. */
+function leafAt(obj: unknown, path: string): unknown {
+  return path.split(".").reduce<unknown>((node, key) => (node as Record<string, unknown>)[key], obj);
+}
+
+const enKeys = keyPaths(en as unknown as Record<string, unknown>).sort();
+const placeholders = (value: unknown) => String(value).match(/\{\w+\}/g)?.sort() ?? [];
+const placeholderPaths = enKeys.map((path) => [path, placeholders(leafAt(en, path))] as const).filter(([, found]) => found.length > 0);
+
 describe("locale registry", () => {
-  it("offers Catalan and loads its translations with intact placeholders", async () => {
-    expect(isLocaleCode("ca")).toBe(true);
-    expect(localeOptions()).toContainEqual({ value: "ca", label: "Català" });
-    const ca = await loadLocale("ca");
-    expect(ca.palette.heading).toBe("Objectes");
-    expect(ca.app.saveDesign).toBe("Desa el disseny");
-    for (const path of keyPaths(en)) {
-      let source: unknown = en;
-      let translated: unknown = ca;
-      for (const key of path.split(".")) {
-        source = (source as Record<string, unknown>)[key];
-        translated = (translated as Record<string, unknown>)[key];
-      }
-      expect(typeof translated, path).toBe("string");
-      expect(String(translated).trim(), path).not.toBe("");
-      expect(String(translated).match(/\{\w+\}/g)?.sort() ?? [], path)
-        .toEqual(String(source).match(/\{\w+\}/g)?.sort() ?? []);
-    }
+  it("offers every locale under a label no other locale uses", () => {
+    const labels = localeOptions().map((o) => o.label);
+    expect(labels.length).toBe(LOCALE_CODES.length);
+    expect(new Set(labels).size).toBe(labels.length);
+    for (const label of labels) expect(label).toMatch(/\S/);
+  });
+
+  // The loader map is the only place a code meets its file, and a dynamic import
+  // cannot be asked which module it names, so the source line is the evidence.
+  it.each(["index.ts", "catalogSummaries.ts"])("%s loads each code from the file of the same name", (file) => {
+    const source = readFileSync(new URL(file, import.meta.url), "utf8");
+    const loaders = [...source.matchAll(/^\s+["']?([a-z-]+)["']?: \(\) => import\(["'](.+?)["']\)/gm)];
+    expect(loaders.length, file).toBe(LOCALE_CODES.length - 1);
+    for (const [, code, path] of loaders) expect(path?.replace(/^\.\/(?:catalog\/)?|\.json$/g, ""), file).toBe(code);
+  });
+
+  it("loads a dictionary of its own for every locale", { timeout: 10_000 }, async () => {
+    const dictionaries = await Promise.all(LOCALE_CODES.map((code) => loadLocale(code)));
+    expect(new Set(dictionaries).size).toBe(LOCALE_CODES.length);
   });
 
   it("caches loaded locales (same identity on repeat loads)", async () => {
@@ -49,18 +60,21 @@ describe("locale registry", () => {
     expect(isLocaleCode("de")).toBe(true);
   });
 
-  // Own timeout: 33 dynamic locale imports are transform-bound, and the default
-  // 5s is a coin flip once the rest of the suite runs alongside them.
-  it("every locale matches the en key structure exactly", { timeout: 30_000 }, async () => {
-    // Replaces the compile-time guarantee the old eager map gave implicitly;
-    // deep both-direction parity so a missing OR extra key fails per locale.
-    const enKeys = keyPaths(en as unknown as Record<string, unknown>).sort();
-    for (const code of LOCALE_CODES) {
-      const t = await loadLocale(code);
-      expect(
-        keyPaths(t as unknown as Record<string, unknown>).sort(),
-        `locale ${code} diverges from en key structure`,
-      ).toEqual(enKeys);
-    }
+  // Own timeout: the first load of a locale is a dynamic import, transform-bound
+  // once the rest of the suite runs alongside.
+  it.each(LOCALE_CODES)("%s matches the en key structure exactly", { timeout: 10_000 }, async (code) => {
+    // Replaces the compile-time guarantee the old eager map gave implicitly.
+    const t = await loadLocale(code);
+    expect(keyPaths(t as unknown as Record<string, unknown>).sort()).toEqual(enKeys);
+  });
+
+  it.each(LOCALE_CODES)("%s translates every string to a non-empty one", async (code) => {
+    const t = await loadLocale(code);
+    for (const path of enKeys) expect(String(leafAt(t, path)).trim(), path).not.toBe("");
+  });
+
+  it.each(LOCALE_CODES)("%s keeps each placeholder of the English string", async (code) => {
+    const t = await loadLocale(code);
+    for (const [path, expected] of placeholderPaths) expect(placeholders(leafAt(t, path)), path).toEqual(expected);
   });
 });
