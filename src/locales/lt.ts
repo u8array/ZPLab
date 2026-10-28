@@ -1354,6 +1354,7 @@ const lt = {
       printInterpretation: 'Žmogui skaitomas',
       checkDigit: 'Tikrinimo skaitmuo',
       gs1Mode: 'GS1 režimas',
+      autoMode: 'Automatinis poaibis (kompaktiški skaitmenys)',
       moduleWidth: 'Modulio plotis',
     },
     box: {

@@ -1354,6 +1354,7 @@ const hr = {
       printInterpretation: 'Čitljivo za čovjeka',
       checkDigit: 'Kontrolna znamenka',
       gs1Mode: 'GS1 način',
+      autoMode: 'Automatski podskup (kompaktne znamenke)',
       moduleWidth: 'Širina modula',
     },
     box: {

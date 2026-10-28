@@ -31,6 +31,8 @@ export interface BarcodeLocale {
   placeholder?: string;
   /** GS1 mode toggle label; only needed by a `gs1Capable` symbology. */
   gs1Mode?: string;
+  /** Automatic subset (^BC m=A) toggle label; only needed with `autoModeCapable`. */
+  autoMode?: string;
 }
 
 export interface Barcode1DPanelConfig {
@@ -50,6 +52,8 @@ export interface Barcode1DPanelConfig {
   /** Symbology offers a GS1 mode: renders the toggle + builder and swaps in the
    *  GS1 charset while on. */
   gs1Capable?: boolean;
+  /** Symbology offers the automatic subset mode (Code 128 m=A). */
+  autoModeCapable?: boolean;
 }
 
 export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi<Barcode1DProps> {
@@ -102,6 +106,15 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
                 checked={p.gs1 ?? false}
                 onChange={(c) => onChange(c ? gs1EnablePatch(p.content, bound) : { gs1: false })}
                 label={loc.gs1Mode ?? ''}
+                cmd={config.zplCommand}
+              />
+            )}
+
+            {config.autoModeCapable && !p.gs1 && (
+              <CheckboxRow
+                checked={p.mode === 'A'}
+                onChange={(c) => onChange({ mode: c ? 'A' : undefined })}
+                label={loc.autoMode ?? ''}
                 cmd={config.zplCommand}
               />
             )}

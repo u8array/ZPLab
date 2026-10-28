@@ -1354,6 +1354,7 @@ const el = {
       printInterpretation: 'Αναγνώσιμο από άνθρωπο',
       checkDigit: 'Ψηφίο ελέγχου',
       gs1Mode: 'Λειτουργία GS1',
+      autoMode: 'Αυτόματο υποσύνολο (συμπαγή ψηφία)',
       moduleWidth: 'Πλάτος module',
     },
     box: {

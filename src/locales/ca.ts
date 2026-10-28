@@ -1410,6 +1410,7 @@ const ca = {
       "printInterpretation": "Text llegible",
       "checkDigit": "Dígit de control",
       "gs1Mode": "Mode GS1",
+      "autoMode": "Subconjunt automàtic (dígits compactes)",
       "moduleWidth": "Amplada del mòdul"
     },
     "box": {

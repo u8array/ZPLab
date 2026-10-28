@@ -1354,6 +1354,7 @@ const ro = {
       printInterpretation: 'Lizibil de om',
       checkDigit: 'Cifră de control',
       gs1Mode: 'Mod GS1',
+      autoMode: 'Subset automat (cifre compacte)',
       moduleWidth: 'Lățime modul',
     },
     box: {

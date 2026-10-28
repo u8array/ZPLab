@@ -387,6 +387,7 @@ export function createCloseField(
               checkDigit: s.field.bcCheck,
               rotation: s.field.bcRotation,
               ...(gs1 ? { gs1: true } : {}),
+              ...(s.field.bcAuto ? { mode: "A" as const } : {}),
             } satisfies Code128Props,
             posType,
             comment,

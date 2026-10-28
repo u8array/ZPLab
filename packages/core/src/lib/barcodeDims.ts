@@ -18,7 +18,7 @@ import {
   gtin14WithCheck,
 } from "./gs1";
 import { planGs1Fd } from "./gs1Plan";
-import { code128FdToSymbols, code128SymbolsToBwipRaw } from "./code128Subset";
+import { code128FdToSymbols, code128SymbolsToBwipRaw, planCode128AutoSymbols } from "./code128Subset";
 import { planCode128Fd } from "./code128Plan";
 import { isRectangular, dmVersionString, type DataMatrixProps } from "../registry/datamatrix";
 import { MAXICODE_WIDTH_MM, MAXICODE_HEIGHT_MM } from "../registry/maxicode";
@@ -328,6 +328,13 @@ export function buildBwipOptions(
         break;
       }
       const text = p.content || "0";
+      // Mode A: the firmware picks subsets itself (digit runs in C), so the
+      // canvas follows the same automatic plan instead of forcing Subset B.
+      const autoSymbols = p.mode === "A" ? planCode128AutoSymbols(text) : null;
+      if (autoSymbols) {
+        opts = { bcid, text: code128SymbolsToBwipRaw(autoSymbols), raw: true, scale, height: 10 };
+        break;
+      }
       // The printer reads the emitted ^FD, not the model text, so the canvas
       // draws its Table-2 read; a byte no subset carries is left to bwip.
       const symbols = code128FdToSymbols(planCode128Fd(text, "whole").fd);

@@ -1354,6 +1354,7 @@ const sv = {
       printInterpretation: 'Läsbar för människa',
       checkDigit: 'Kontrollsiffra',
       gs1Mode: 'GS1-läge',
+      autoMode: 'Automatisk delmängd (kompakta siffror)',
       moduleWidth: 'Modulbredd',
     },
     box: {

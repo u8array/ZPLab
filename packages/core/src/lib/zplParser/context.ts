@@ -280,6 +280,8 @@ export interface FieldState {
   bcRotation: ZplRotation;
   /** ^BC m=D (UCC/EAN) → GS1-128; consumed by the code128 case in flushField. */
   bcGs1: boolean;
+  /** ^BC m=A (automatic subset selection); consumed by the code128 case in flushField. */
+  bcAuto: boolean;
   bcCode49Mode: Code49Props["mode"];
   /** ^B4 h as sent, or null when omitted; resolved at ^FS. */
   bcCode49Mult: number | null;
@@ -581,6 +583,7 @@ export function resetSymbologyModeFlags(field: FieldState): void {
   field.qrHeaderPartial = false;
   field.qrHeaderLossy = false;
   field.bcGs1 = false;
+  field.bcAuto = false;
   field.dmEscape = undefined;
   field.dmQuality = 200;
   field.bcMsiCheckMode = undefined;
@@ -744,6 +747,7 @@ export function freshFieldState(): FieldState {
     bcMsiHriCheck: false,
     bcRotation: "N",
     bcGs1: false,
+    bcAuto: false,
     bcCode49Mode: "A",
     bcCode49Mult: null,
     symRot: "N",

@@ -1354,6 +1354,7 @@ const cs = {
       printInterpretation: 'Čitelný pro člověka',
       checkDigit: 'Kontrolní číslice',
       gs1Mode: 'Režim GS1',
+      autoMode: 'Automatická sada (kompaktní číslice)',
       moduleWidth: 'Šířka modulu',
     },
     box: {

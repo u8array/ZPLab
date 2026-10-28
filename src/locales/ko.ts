@@ -1354,6 +1354,7 @@ const ko = {
       printInterpretation: '사람이 읽을 수 있는',
       checkDigit: '체크 숫자',
       gs1Mode: 'GS1 모드',
+      autoMode: '자동 서브셋 (숫자 압축)',
       moduleWidth: '모듈 너비',
     },
     box: {

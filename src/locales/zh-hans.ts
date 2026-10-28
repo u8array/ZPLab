@@ -1354,6 +1354,7 @@ const zhHans = {
       printInterpretation: '人工可读',
       checkDigit: '校验位',
       gs1Mode: 'GS1 模式',
+      autoMode: '自动子集（数字紧凑）',
       moduleWidth: '模块宽度',
     },
     box: {

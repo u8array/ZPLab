@@ -64,6 +64,7 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     BC: (p, rest, cmd) => {
       mkBarcode("code128", 1, 2, "Y", 4)(p, rest, cmd);
       s.field.bcGs1 = (p[5] ?? "").toUpperCase() === "D";
+      s.field.bcAuto = (p[5] ?? "").toUpperCase() === "A";
     },
     B3: mkBarcode("code39", 2, 3, "Y", 1), // ^B3N,c,h,i,N
     BE: mkBarcode("ean13", 1, 2), // ^BEN,h,i,N
