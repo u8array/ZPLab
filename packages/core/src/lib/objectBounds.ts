@@ -221,8 +221,8 @@ export function boundsAreApprox(
   return !(resolveTextMode(p) !== "normal" && !!p.blockWidth && p.blockWidth > 0);
 }
 
-/** Axis-aligned model-space bbox (dots) for one object. Always the VISUAL
- *  top-left regardless of FO/FT, so align/distribute can use min/max edges. */
+/** Axis-aligned model-space bbox (dots) for one object, the reserved footprint.
+ *  Always the VISUAL top-left regardless of FO/FT, so edges compare directly. */
 export function objectBoundsDots(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots {
   const box = objectBoxDots(obj, ctx);
   const shift = rightAnchorShiftDots(obj, box.width);
@@ -385,12 +385,26 @@ function lineBounds(obj: LeafObject & { type: "line" }): BoundingBoxDots {
   return { x: minX, y: minY, width: dx + thickness, height: dy };
 }
 
+export type BoxOf = (obj: LabelObject, ctx: ObjectBoundsCtx) => BoundingBoxDots;
+
 /** Union of every leaf descendant. Group children are absolute-coordinated,
  *  so each leaf's own bbox already lands in model space. */
-function groupBounds(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots {
+function groupBounds(obj: LabelObject, ctx: ObjectBoundsCtx, boxOf: BoxOf = objectBoundsDots): BoundingBoxDots {
   const leaves = isGroup(obj) ? getAllLeaves(obj.children) : [];
-  const union = unionOf(leaves.map((l) => objectBoundsDots(l, ctx)));
+  const union = unionOf(leaves.map((l) => boxOf(l, ctx)));
   return union ?? { x: obj.x, y: obj.y, width: 0, height: 0 };
+}
+
+/** The bars without the HRI zone, so the text cannot pull the symbol's centre.
+ *  The renderer's record placed that zone, so read it rather than recompute it.
+ *  A non-barcode and a barcode without measured bar dims both fall back to the full box. */
+export function barBoxDots(obj: LabelObject, ctx: ObjectBoundsCtx): BoundingBoxDots {
+  if (isGroup(obj)) return groupBounds(obj, ctx, barBoxDots);
+  const box = objectBoundsDots(obj, ctx);
+  const m = isBarcode(obj) ? ctx.measured?.get(obj.id) : undefined;
+  if (!m?.uprightBarWDots || !m.uprightBarHDots) return box;
+  const bars = rotatedFootprint(m.uprightBarWDots, m.uprightBarHDots, objectRotation(obj.props));
+  return { x: box.x + (m.barLeftDots ?? 0), y: box.y + (m.barTopDots ?? 0), ...bars };
 }
 
 /** Enclosing box of the inputs, null when there are none. */
@@ -409,12 +423,13 @@ export function unionOf(boxes: BoundingBoxDots[]): BoundingBoxDots | null {
   return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
 }
 
-/** Union bbox of a selection. A group id resolves to one bbox via its own
- *  objectBoundsDots. Returns null for an empty selection or no matches. */
+/** Union bbox of a selection. A group id resolves to one bbox via boxOf.
+ *  Returns null for an empty selection or no matches. */
 export function selectionUnionDots(
   objects: LabelObject[],
   ids: readonly string[],
   ctx: ObjectBoundsCtx,
+  boxOf: BoxOf = objectBoundsDots,
 ): BoundingBoxDots | null {
   const byId = new Map<string, LabelObject>();
   const index = (nodes: LabelObject[]) => {
@@ -427,7 +442,7 @@ export function selectionUnionDots(
   const boxes: BoundingBoxDots[] = [];
   for (const id of ids) {
     const node = byId.get(id);
-    if (node) boxes.push(objectBoundsDots(node, ctx));
+    if (node) boxes.push(boxOf(node, ctx));
   }
   return unionOf(boxes);
 }
