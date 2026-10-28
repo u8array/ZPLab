@@ -83,7 +83,6 @@ export const TEAR_OFF_ADJUST_RANGE = { min: -120, max: 120 } as const;
 
 /** ^JS: A auto, R reflective, T transmissive. */
 export const MEDIA_SENSOR_SELECT_VALUES = ['A', 'R', 'T'] as const;
-export type MediaSensorSelect = (typeof MEDIA_SENSOR_SELECT_VALUES)[number];
 export const isMediaSensorSelect = makeEnumGuard(MEDIA_SENSOR_SELECT_VALUES);
 /** ^SS w, m, r, a, b, spec p.349. */
 const SENSOR_THRESHOLD_RANGE = { min: 0, max: 100 } as const;
