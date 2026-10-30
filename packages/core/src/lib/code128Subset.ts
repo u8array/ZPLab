@@ -1,9 +1,10 @@
 /** Code 128 subset-invocation coding for ^BC field data (spec p.95-99).
  *
  *  The firmware drops ^FH-escaped C0 bytes from the symbol (ZD230-verified);
- *  only the invocation form encodes them. Emit and canvas share the planned
- *  symbol values, so printed module count equals rendered by construction
- *  (shared ^FN slots excepted: they emit raw and preflight warns). */
+ *  only the invocation form encodes them. The canvas reads the emitted ^FD
+ *  back through the same Table-2 walk, so printed module count equals
+ *  rendered by construction (shared ^FN slots excepted: they emit raw and
+ *  preflight warns). */
 
 import { mapLiteralSpans } from "./fnTemplate";
 import { C0_OR_DEL_RE } from "../types/controlKey";
@@ -142,13 +143,6 @@ export function code128ControlFd(text: string): string | null {
   if (!hasControlBytes(text)) return null;
   const values = planCode128Symbols(text);
   return values ? code128SymbolsToFd(values) : null;
-}
-
-/** {@link code128ControlFd}'s canvas twin: the same plan as bwip raw data. */
-export function code128ControlBwipRaw(text: string): string | null {
-  if (!hasControlBytes(text)) return null;
-  const values = planCode128Symbols(text);
-  return values ? code128SymbolsToBwipRaw(values) : null;
 }
 
 /** Shared Table-2 walk over a ^BC ^FD payload: symbol values plus the data

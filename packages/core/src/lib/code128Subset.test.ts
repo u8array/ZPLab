@@ -1,20 +1,42 @@
 import { describe, expect, it } from "vitest";
 import bwipjs from "bwip-js/generic";
 import {
-  code128ControlBwipRaw,
   code128ControlFd,
   code128FdToBytes,
   code128FdToDisplayText,
   code128FdToSymbols,
   code128PlainFd,
+  code128SymbolsToBwipRaw,
   code128SymbolsToFd,
+  hasControlBytes,
   planCode128Symbols,
 } from "./code128Subset";
-import { measureBarcodeFootprintDotsWith, resolveForMeasure, type BwipEngine } from "./barcodeDims";
+import { buildBwipOptions, measureBarcodeFootprintDotsWith, resolveForMeasure, type BwipEngine } from "./barcodeDims";
 import type { LeafObject } from "../registry";
 import type { LabelObject } from "../types/Group";
 
 const engine = bwipjs as unknown as BwipEngine;
+
+const code128 = (content: string): LeafObject =>
+  ({
+    id: "b", type: "code128", x: 0, y: 0, rotation: 0, positionType: "FO",
+    props: {
+      content, height: 100, moduleWidth: 2, printInterpretation: false,
+      printInterpretationAbove: false, checkDigit: false, rotation: "N",
+    },
+  }) as LabelObject as LeafObject;
+
+/** Deterministic LCG corpus so a failure reproduces. */
+function seededCorpus(seed: number, atoms: readonly string[], count: number, maxLen: number): string[] {
+  let state = seed;
+  const rnd = () => (state = (state * 48271) % 0x7fffffff) / 0x7fffffff;
+  return Array.from({ length: count }, () => {
+    const len = 1 + Math.floor(rnd() * maxLen);
+    let text = "";
+    for (let j = 0; j < len; j++) text += atoms[Math.floor(rnd() * atoms.length)];
+    return text;
+  });
+}
 
 const HT = "\x09";
 const LF = "\x0A";
@@ -48,7 +70,6 @@ describe("planCode128Symbols", () => {
 
   it("returns null without a control byte (the plain path stays untouched)", () => {
     expect(code128ControlFd("ABC123")).toBeNull();
-    expect(code128ControlBwipRaw("ABC123")).toBeNull();
   });
 });
 
@@ -156,16 +177,10 @@ describe("code128FdToSymbols", () => {
 
 describe("strict/lenient reader drift", () => {
   it("the lenient reader reproduces every emitted invocation plan", () => {
-    // Deterministic LCG so failures reproduce; the two Table-2 readers are
-    // separate by design (adoption gate vs firmware emulation), this pins
-    // that they agree on everything the emitter can produce.
-    let seed = 0x2f6e2b1;
-    const rnd = () => (seed = (seed * 48271) % 0x7fffffff) / 0x7fffffff;
-    const alphabet = "AZaz09 >^~\t\r\n\x1D\x1C\x01\x7F";
-    for (let i = 0; i < 2000; i++) {
-      const len = 1 + Math.floor(rnd() * 12);
-      let text = "";
-      for (let j = 0; j < len; j++) text += alphabet[Math.floor(rnd() * alphabet.length)];
+    // The two Table-2 readers are separate by design (adoption gate vs
+    // firmware emulation); this pins that they agree on everything the
+    // emitter can produce.
+    for (const text of seededCorpus(0x2f6e2b1, [..."AZaz09 >^~\t\r\n\x1D\x1C\x01\x7F"], 2000, 12)) {
       const plan = planCode128Symbols(text);
       if (!plan) continue;
       const fd = code128SymbolsToFd(plan);
@@ -217,15 +232,6 @@ describe("code128PlainFd", () => {
 });
 
 describe("printed vs rendered module count", () => {
-  const code128 = (content: string): LeafObject =>
-    ({
-      id: "b", type: "code128", x: 0, y: 0, rotation: 0, positionType: "FO",
-      props: {
-        content, height: 100, moduleWidth: 2, printInterpretation: false,
-        printInterpretationAbove: false, checkDigit: false, rotation: "N",
-      },
-    }) as LabelObject as LeafObject;
-
   /** Symbols = plan + check + stop; stop carries 2 modules more than the rest. */
   const plannedModules = (text: string) => 11 * (planCode128Symbols(text)!.length + 1) + 13;
 
@@ -267,5 +273,51 @@ describe("printed vs rendered module count", () => {
     expect((resolved as { props: { content: string } }).props.content).toBe("AXB");
     const dots = measureBarcodeFootprintDotsWith(engine, resolved as LeafObject, 8);
     expect(dots?.w).toBe(plainModules(3) * 2);
+  });
+});
+
+describe("canvas read of the emitted FD", () => {
+  const START_B = 104;
+
+  /** Printed symbols per payload class: control bytes via the invocation
+   *  plan, invocation sequences via the Table-2 read, plain ASCII as one
+   *  Subset-B symbol per character, a byte no subset carries left to bwip. */
+  const printed = (text: string): { text: string; raw: boolean } => {
+    if (hasControlBytes(text)) {
+      const values = planCode128Symbols(text);
+      if (values) return { text: code128SymbolsToBwipRaw(values), raw: true };
+    }
+    const fd = code128PlainFd(text);
+    if (/>[0-9:;<=]/.test(fd)) {
+      const symbols = code128FdToSymbols(fd);
+      if (symbols) return { text: code128SymbolsToBwipRaw(symbols), raw: true };
+    }
+    const values = [START_B];
+    for (const ch of text) {
+      const code = ch.charCodeAt(0);
+      if (code < 32 || code > 126) return { text, raw: false };
+      values.push(code - 32);
+    }
+    return { text: code128SymbolsToBwipRaw(values), raw: true };
+  };
+
+  it("renders every payload class as the printer reads it", () => {
+    const atoms = [
+      ..."AZaz09 >^~\t\r\n\x1D\x1C\x01\x7Fä€",
+      ...[..."0123456789:;<="].map((c) => `>${c}`),
+    ];
+    for (const text of ["", ...seededCorpus(0x5bd1e99, atoms, 3000, 8)]) {
+      const expected = printed(text || "0");
+      const opts = buildBwipOptions(code128(text), 1, 8);
+      expect(opts?.text, JSON.stringify(text)).toBe(expected.text);
+      expect(opts?.raw ?? false, JSON.stringify(text)).toBe(expected.raw);
+    }
+  });
+
+  it("resolves a control chip like the whole-field emit does", () => {
+    // Callers without a binding chain (MCP footprint) hand chips through
+    // unresolved; the whole-mode plan still encodes the byte the printer gets.
+    expect(buildBwipOptions(code128("A«ctrl:TAB»B"), 1, 8)?.text)
+      .toBe(buildBwipOptions(code128(`A${HT}B`), 1, 8)?.text);
   });
 });
