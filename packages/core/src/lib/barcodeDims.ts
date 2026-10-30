@@ -18,7 +18,8 @@ import {
   gtin14WithCheck,
 } from "./gs1";
 import { planGs1Fd } from "./gs1Plan";
-import { code128ControlBwipRaw, code128FdToSymbols, code128PlainFd, code128SymbolsToBwipRaw } from "./code128Subset";
+import { code128FdToSymbols, code128SymbolsToBwipRaw } from "./code128Subset";
+import { planCode128Fd } from "./code128Plan";
 import { isRectangular, dmVersionString, type DataMatrixProps } from "../registry/datamatrix";
 import { MAXICODE_WIDTH_MM, MAXICODE_HEIGHT_MM } from "../registry/maxicode";
 import { micropdf417ModeDims, micropdf417ModeFits } from "../registry/micropdf417";
@@ -249,19 +250,6 @@ export function getEanUpcHriFragmentsWith(
   return txt.map((t) => ({ char: t[0], xModule: t[1] }));
 }
 
-// Forcing Code B keeps module count in sync with Labelary (^BC default).
-// Returns null for chars outside ASCII 32..126.
-function toCode128BRaw(text: string): string | null {
-  if (!text) return null;
-  const parts = ["^104"]; // Start B
-  for (const ch of text) {
-    const code = ch.charCodeAt(0);
-    if (code < 32 || code > 126) return null;
-    parts.push(`^${String(code - 32).padStart(3, "0")}`);
-  }
-  return parts.join("");
-}
-
 export function buildBwipOptions(
   obj: LeafObject,
   renderScale?: number,
@@ -340,31 +328,12 @@ export function buildBwipOptions(
         break;
       }
       const text = p.content || "0";
-      // Control bytes render from the same symbol plan the emitter writes as
-      // subset invocations, so canvas width equals printed width by
-      // construction. This is planCode128Fd's whole mode in bwip symbol
-      // values; keep the two branches in lockstep with code128Plan.ts.
-      const ctrlRaw = code128ControlBwipRaw(text);
-      if (ctrlRaw) {
-        opts = { bcid, text: ctrlRaw, raw: true, scale, height: 10 };
-        break;
-      }
-      // Interpret the EMITTED payload: the printer only reads the
-      // fdPlainEscape form, and a bare `>` diverges from the model content.
-      const fdText = code128PlainFd(text);
-      if (/>[0-9:;<=]/.test(fdText)) {
-        const symbols = code128FdToSymbols(fdText);
-        if (symbols) {
-          opts = { bcid, text: code128SymbolsToBwipRaw(symbols), raw: true, scale, height: 10 };
-          break;
-        }
-      }
-      const rawB = toCode128BRaw(text);
-      if (rawB) {
-        opts = { bcid, text: rawB, raw: true, scale, height: 10 };
-      } else {
-        opts = { bcid, text, scale, height: 10 };
-      }
+      // The printer reads the emitted ^FD, not the model text, so the canvas
+      // draws its Table-2 read; a byte no subset carries is left to bwip.
+      const symbols = code128FdToSymbols(planCode128Fd(text, "whole").fd);
+      opts = symbols
+        ? { bcid, text: code128SymbolsToBwipRaw(symbols), raw: true, scale, height: 10 }
+        : { bcid, text, scale, height: 10 };
       break;
     }
     case "code39":
