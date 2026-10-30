@@ -14,6 +14,11 @@ const START_B = 104;
 const START_C = 105;
 const CODE_B = 100;
 const CODE_A = 101;
+const CODE_C = 99;
+const SHIFT = 98;
+const FNC3 = 96;
+const FNC2 = 97;
+const FNC1 = 102;
 
 /** Subset A: C0 bytes plus SP..`_`. */
 function valueInA(code: number): number | null {
@@ -145,75 +150,94 @@ export function code128ControlFd(text: string): string | null {
   return values ? code128SymbolsToFd(values) : null;
 }
 
+const ESCAPE_SYMBOL = new Map([
+  ["2", FNC3],
+  ["3", FNC2],
+  ["4", SHIFT],
+  ["5", CODE_C],
+  ["6", CODE_B],
+  ["7", CODE_A],
+  ["8", FNC1],
+]);
+
 /** Shared Table-2 walk over a ^BC ^FD payload: symbol values plus the data
  *  characters the interpretation line shows. `ok` is false when a byte fits no
  *  subset (the only unreadable case under the lenient rules). */
 function readCode128Fd(fd: string): { values: number[]; text: string; ok: boolean } {
-  let mode: "A" | "B" | "C" = "B";
+  let subset: "A" | "B" | "C" = "B";
   let i = 0;
   const values = [START_B];
-  if (fd.startsWith(">9")) { mode = "A"; values[0] = START_A; i = 2; }
+  if (fd.startsWith(">9")) { subset = "A"; values[0] = START_A; i = 2; }
   else if (fd.startsWith(">:")) { i = 2; }
-  else if (fd.startsWith(">;")) { mode = "C"; values[0] = START_C; i = 2; }
-  // SHIFT reads exactly the next character in the other subset (A<->B).
+  else if (fd.startsWith(">;")) { subset = "C"; values[0] = START_C; i = 2; }
+  // A SHIFT's effect reaches the next emitted symbol, so it outlasts the
+  // bytes the pair rule drops, ZD230-measured.
   let shifted = false;
+  const readingSubset = (): "A" | "B" | "C" => (shifted ? (subset === "A" ? "B" : "A") : subset);
+  const emit = (value: number): void => {
+    shifted = false;
+    values.push(value);
+  };
   let text = "";
+  // Value 100 is CODE B from A and C but FNC4 from B, 101 is CODE A from B
+  // and C but FNC4 from A, read in the subset a SHIFT selects (p.96).
+  // Table 2's C column is blank for SHIFT, CODE C, FNC2 and FNC3.
+  const symbol = (value: number): void => {
+    const reading = readingSubset();
+    if (value === SHIFT) {
+      if (reading !== "C") {
+        values.push(SHIFT);
+        shifted = true;
+      }
+    } else if (value === CODE_C) {
+      if (reading !== "C") { emit(CODE_C); subset = "C"; }
+    } else if (value === CODE_B) {
+      emit(CODE_B);
+      if (reading !== "B") subset = "B";
+    } else if (value === CODE_A) {
+      emit(CODE_A);
+      if (reading !== "A") subset = "A";
+    } else if (value === FNC1 || reading !== "C") {
+      emit(value);
+    }
+  };
   let ok = true;
   while (i < fd.length) {
-    const litMode = shifted ? (mode === "A" ? "B" : "A") : mode;
+    const reading = readingSubset();
     if (fd[i] === ">") {
       const esc = fd[i + 1];
       i += 2;
       const literal = esc === undefined ? undefined : ESCAPE_VALUE.get(esc);
-      if (literal !== undefined && litMode !== "C") {
-        values.push(literal);
-        text += litMode === "A" ? charFromA(literal) : charFromB(literal);
-        shifted = false;
+      if (literal !== undefined && reading !== "C") {
+        text += reading === "A" ? charFromA(literal) : charFromB(literal);
+        emit(literal);
         continue;
       }
-      // FNC symbols consume a pending SHIFT; the shift never reaches past them.
-      switch (esc) {
-        case "2": if (litMode !== "C") values.push(96); shifted = false; continue; // FNC3
-        case "3": if (litMode !== "C") values.push(97); shifted = false; continue; // FNC2
-        case "4":
-          if (mode === "C") continue;
-          values.push(98);
-          shifted = true;
-          continue;
-        // Table 2's C column is blank for >5 and SHIFT: ignored there.
-        case "5": if (mode !== "C") { values.push(99); mode = "C"; } shifted = false; continue;
-        // Value 100 is CODE B from A/C and FNC4 from B; 101 is CODE A from
-        // B/C and FNC4 from A. Either way the subset afterwards is the same.
-        case "6": values.push(100); mode = "B"; shifted = false; continue;
-        case "7": values.push(101); mode = "A"; shifted = false; continue;
-        case "8": values.push(102); shifted = false; continue; // FNC1
-        // Firmware swallows `>` plus an invalid escape char from the symbol
-        // (ZD230-measured on a bare `>`), so model the same loss. `><`/`>=`
-        // in C land here too (see the literal gate above).
-        default: continue;
-      }
+      // The firmware swallows a `>` whose escape char means nothing in this
+      // subset, ZD230-measured on a bare `>`.
+      const value = esc === undefined ? undefined : ESCAPE_SYMBOL.get(esc);
+      if (value !== undefined) symbol(value);
+      continue;
     }
     // A/C data is two-digit values, B is ASCII (p.98). Lenient per p.99:
     // noninteger at D1 ignored, at D2 kills the pair, unpaired digit dropped.
-    if (litMode !== "B") {
-      const d1 = fd[i];
-      if (!/\d/.test(d1 ?? "")) { i += 1; continue; }
-      const d2 = fd[i + 1];
-      if (d2 === undefined || d2 === ">") { i += 1; continue; }
+    if (reading !== "B") {
+      const d1 = fd.charAt(i);
+      const d2 = fd.charAt(i + 1);
+      if (!/\d/.test(d1)) { i += 1; continue; }
+      if (d2 === ">") { i += 1; continue; }
       i += 2;
       if (!/\d/.test(d2)) continue;
-      const value = parseInt(d1 + d2, 10);
-      values.push(value);
-      if (litMode === "C") text += d1 + d2;
-      else if (value <= 95) text += charFromA(value);
-      shifted = false;
+      const pair = parseInt(d1 + d2, 10);
+      if (reading === "A" && pair >= 96) { symbol(pair); continue; }
+      text += reading === "C" ? d1 + d2 : charFromA(pair);
+      emit(pair);
       continue;
     }
     const value = valueInB(fd.charCodeAt(i));
-    if (value === null) { ok = false; text += fd[i]; i += 1; continue; }
-    values.push(value);
-    text += fd[i];
-    shifted = false;
+    if (value === null) { ok = false; text += fd.charAt(i); i += 1; continue; }
+    text += fd.charAt(i);
+    emit(value);
     i += 1;
   }
   return { values, text, ok };
@@ -245,12 +269,12 @@ export function code128FdToDisplayText(fd: string): string {
  */
 export function code128FdToBytes(fd: string): string | null {
   // No start code means Subset B (spec p.98).
-  let mode: "A" | "B" | "C" = "B";
+  let subset: "A" | "B" | "C" = "B";
   let out = "";
   let i = 0;
-  if (fd.startsWith(">9")) { mode = "A"; i = 2; }
-  else if (fd.startsWith(">:")) { mode = "B"; i = 2; }
-  else if (fd.startsWith(">;")) { mode = "C"; i = 2; }
+  if (fd.startsWith(">9")) { subset = "A"; i = 2; }
+  else if (fd.startsWith(">:")) { subset = "B"; i = 2; }
+  else if (fd.startsWith(">;")) { subset = "C"; i = 2; }
   while (i < fd.length) {
     if (fd[i] === ">") {
       const esc = fd[i + 1];
@@ -259,22 +283,21 @@ export function code128FdToBytes(fd: string): string | null {
       // subset and FNC4 from the other, and Subset C has no literal column.
       const literal = esc === undefined ? undefined : ESCAPE_VALUE.get(esc);
       if (literal !== undefined) {
-        if (mode === "C") return null;
-        out += mode === "A" ? charFromA(literal) : charFromB(literal);
+        if (subset === "C") return null;
+        out += subset === "A" ? charFromA(literal) : charFromB(literal);
         continue;
       }
-      switch (esc) {
-        case "5": mode = "C"; continue;
-        case "6": if (mode === "B") return null; mode = "B"; continue;
-        case "7": if (mode === "A") return null; mode = "A"; continue;
-        default: return null;
-      }
+      const value = esc === undefined ? undefined : ESCAPE_SYMBOL.get(esc);
+      if (value === CODE_C) { subset = "C"; continue; }
+      if (value === CODE_B && subset !== "B") { subset = "B"; continue; }
+      if (value === CODE_A && subset !== "A") { subset = "A"; continue; }
+      return null;
     }
-    if (mode === "B") { out += fd[i]; i += 1; continue; }
+    if (subset === "B") { out += fd[i]; i += 1; continue; }
     const pair = fd.slice(i, i + 2);
     if (!/^\d\d$/.test(pair)) return null;
     i += 2;
-    if (mode === "C") { out += pair; continue; }
+    if (subset === "C") { out += pair; continue; }
     const value = parseInt(pair, 10);
     if (value > 95) return null;
     out += charFromA(value);

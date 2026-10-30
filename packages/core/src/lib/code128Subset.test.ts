@@ -170,6 +170,33 @@ describe("code128FdToSymbols", () => {
     ]);
   });
 
+  it("reads a Subset A pair 96 to 99 as the symbol the escape would spell", () => {
+    expect(code128FdToSymbols(">9991234")).toEqual([103, 99, 12, 34]);
+    expect(code128FdToDisplayText(">9991234")).toBe("1234");
+    expect(code128FdToSymbols(">99833")).toEqual([103, 98, 19]);
+    expect(code128FdToDisplayText(">99833")).toBe("3");
+  });
+
+  it("reads a switch under a SHIFT in the shifted subset, where 100 and 101 are FNC4", () => {
+    expect(code128FdToSymbols(">9>4>6a")).toEqual([103, 98, 100]);
+    expect(code128FdToDisplayText(">9>4>6a")).toBe("");
+    expect(code128FdToSymbols(">:AB>4>7CD")).toEqual([104, 33, 34, 98, 101, 35, 36]);
+    expect(code128FdToDisplayText(">:AB>4>7CD")).toBe("ABCD");
+  });
+
+  it("emits SHIFT as its own codeword at once and keeps its effect for the next emitted symbol", () => {
+    // ZD230 at ^BY2: >:>4 92 dots, >:>4x33 114, >:>4Xdr 92, >:>4>433 136.
+    // Labelary draws >:>4Xdr at 136 and lets the shift lapse. The project follows the device.
+    expect(code128FdToSymbols(">:>4")).toEqual([104, 98]);
+    expect(code128FdToSymbols(">:>4>8x")).toEqual([104, 98, 102, 88]);
+    expect(code128FdToSymbols(">:>4x33")).toEqual([104, 98, 33]);
+    expect(code128FdToDisplayText(">:>4x33")).toBe("A");
+    expect(code128FdToSymbols(">:>4Xdr")).toEqual([104, 98]);
+    expect(code128FdToDisplayText(">:>4Xdr")).toBe("");
+    expect(code128FdToSymbols(">:>4>433")).toEqual([104, 98, 98, 33]);
+    expect(code128FdToDisplayText(">:>4>433")).toBe("A");
+  });
+
   it("bails only on a byte no subset carries", () => {
     expect(code128FdToSymbols("ä>5")).toBeNull();
   });
