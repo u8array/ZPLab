@@ -15,7 +15,7 @@ import { paletteGhostHandlers } from "./paletteGhostMonitor";
 import { Stage, Layer, Group, Image as KImage, Rect, Transformer } from "react-konva";
 import type Konva from "konva";
 import { useLabelStore, currentObjects, currentPageLabel, getCurrentObjects, selectEditorFrozen, selectPreviewLocksEditor, selectRenderPageLabel, selectRenderObjects, selectRenderColumnMapping, selectRenderDataset } from "../../store/labelStore";
-import { isGroup, getAllLeaves, exportableLeaves, expandSelection, selectionTargetId, findObjectById, canDeleteSelection, canGroupSelection, canUngroupSelection, hasLockedAncestor, isSelectionLocked, type LabelObject } from "@zplab/core/types/Group";
+import { isGroup, getAllLeaves, exportableLeaves, expandSelection, selectionTargetId, findObjectById, canDeleteSelection, canGroupSelection, canUngroupSelection, hasLockedAncestor, isSelectionLocked, visibleLeaves, type LabelObject } from "@zplab/core/types/Group";
 import { pxToDots, dotsToPx, mmToDots, SCREEN_PX_PER_MM } from "@zplab/core/lib/coordinates";
 import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 import { loadImage } from "@zplab/core/lib/loadImage";
@@ -343,23 +343,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     };
   }, []);
 
-  // Leaves only; group lock/visible cascades down so per-leaf checks see one value.
-  const visibleLeaves = useMemo(() => {
-    const out: LeafObject[] = [];
-    const walk = (nodes: LabelObject[], inheritedLocked: boolean) => {
-      for (const n of nodes) {
-        if (n.visible === false) continue;
-        const locked = inheritedLocked || !!n.locked;
-        if (isGroup(n)) {
-          walk(n.children, locked);
-        } else {
-          out.push(locked && !n.locked ? ({ ...n, locked: true } as LeafObject) : n);
-        }
-      }
-    };
-    walk(objects, false);
-    return out;
-  }, [objects]);
+  const renderedLeaves = useMemo(() => visibleLeaves(objects), [objects]);
 
   // Expand selection so group-click feels like Figma multi-drag.
   const attachableIds = useMemo(
@@ -585,7 +569,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const stage = stageRef.current;
     if (!stage) return [];
     const rects = [];
-    for (const o of getCurrentObjects()) {
+    for (const o of visibleLeaves(getCurrentObjects())) {
       if (o.id === excludeId) continue;
       const n = stage.findOne<Konva.Node>(`#${o.id}`);
       if (!n) continue;
@@ -637,10 +621,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const frameCtx = { label, measured: measuredSnapshot, variables: renderVariables };
   // Hidden leaves never render, so the old client-rect path ignored them; keep
   // them out of the model-based bounds too.
-  // visibleLeaves carries the cascaded (effective) lock; read it, not the raw
+  // renderedLeaves carries the cascaded (effective) lock; read it, not the raw
   // leaf in `objects`, so a locked group's children count as static here just
   // like the controller skips them.
-  const visibleLeafById = new Map(visibleLeaves.map((l) => [l.id, l]));
+  const visibleLeafById = new Map(renderedLeaves.map((l) => [l.id, l]));
   const visibleSelIds = attachableIds.filter((id) => visibleLeafById.has(id));
   const movableSelIds = visibleSelIds.filter((id) => !visibleLeafById.get(id)?.locked);
   const staticSelIds = visibleSelIds.filter((id) => !movableSelIds.includes(id));
@@ -930,7 +914,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     selectedIds: attachableIds,
     // Cascade-aware leaves so a child of a locked group reads as locked and the
     // transformer detaches (raw leaves would show dead resize handles).
-    objects: visibleLeaves,
+    objects: renderedLeaves,
     scale,
     dpmm: effDpmm,
     objectsOffsetX,
@@ -972,10 +956,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // outline since the transformer skips locked nodes.
   const lockedLeafIds = useMemo(() => {
     const locked = new Set(
-      visibleLeaves.flatMap((l) => (l.locked ? [l.id] : [])),
+      renderedLeaves.flatMap((l) => (l.locked ? [l.id] : [])),
     );
     return attachableIds.filter((id) => locked.has(id));
-  }, [visibleLeaves, attachableIds]);
+  }, [renderedLeaves, attachableIds]);
 
   useSelectionActionBar({
     stageRef,
@@ -1602,7 +1586,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                   </>
                 )
               ) : (
-                visibleLeaves.map((obj) => (
+                renderedLeaves.map((obj) => (
                   <KonvaObject
                     key={obj.id}
                     obj={obj}
