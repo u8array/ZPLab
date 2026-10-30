@@ -3,8 +3,9 @@
 // stage and the controller stays a thin imperative layer.
 
 import { computeSnap, type SnapGuide, type SnapRect } from "../../lib/snapGuides";
-import { printableRectDots, type BoundingBoxDots } from "@zplab/core/lib/objectBounds";
+import { barBoxDots, printableRectDots, type BoundingBoxDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
+import { visibleLeaves, type LabelObject } from "@zplab/core/types/Group";
 
 /** Printable-area snap rect (dots), the {@link printableRectDots} rect tagged
  *  with the snap id so it shares one source with the out-of-bounds check. */
@@ -40,4 +41,15 @@ export function smartSnapDelta(
 ): { dx: number; dy: number; guides: SnapGuide[] } {
   const r = computeSnap(box, others, threshold, labelRect, labelRect);
   return { dx: r.x - box.x, dy: r.y - box.y, guides: r.guides };
+}
+
+/** Bar boxes, so a barcode's text cannot pull the symbol. */
+export function dragSnapTargets(
+  objects: readonly LabelObject[],
+  dragged: ReadonlySet<string>,
+  ctx: ObjectBoundsCtx,
+): SnapRect[] {
+  return visibleLeaves(objects)
+    .filter((leaf) => !dragged.has(leaf.id))
+    .map((leaf) => ({ id: leaf.id, ...barBoxDots(leaf, ctx) }));
 }

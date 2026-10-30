@@ -136,6 +136,22 @@ export function hasLockedAncestor(objects: LabelObject[], id: string): boolean {
   return findAncestors(objects, id).some((g) => !!g.locked);
 }
 
+/** Carries the cascaded group lock, so one list serves snap, select and
+ *  transform and none of them can target what is not drawn. */
+export function visibleLeaves(objects: readonly LabelObject[]): LeafObject[] {
+  const out: LeafObject[] = [];
+  const walk = (nodes: readonly LabelObject[], inheritedLocked: boolean) => {
+    for (const n of nodes) {
+      if (n.visible === false) continue;
+      const locked = inheritedLocked || !!n.locked;
+      if (isGroup(n)) walk(n.children, locked);
+      else out.push(locked && !n.locked ? { ...n, locked: true } : n);
+    }
+  };
+  walk(objects, false);
+  return out;
+}
+
 /** Identity-preserving: unaffected subtrees keep their original references. */
 export function mapObjectById(
   objects: LabelObject[],

@@ -18,6 +18,7 @@ import {
   canDeleteSelection,
   isSelectionLocked,
   mapObjectById,
+  visibleLeaves,
   type GroupObject,
   type LabelObject,
 } from '@zplab/core/types/Group';
@@ -75,6 +76,23 @@ describe('Group helpers', () => {
 
     it('returns empty for a tree of only empty groups', () => {
       expect(getAllLeaves([group('g', [group('g2', [])])])).toEqual([]);
+    });
+  });
+
+  describe('visibleLeaves', () => {
+    it('drops a hidden leaf and the subtree of a hidden group', () => {
+      const tree = [
+        leaf('a'),
+        { ...leaf('hidden'), visible: false },
+        { ...group('g', [leaf('b')]), visible: false },
+      ];
+      expect(visibleLeaves(tree).map((l) => l.id)).toEqual(['a']);
+    });
+
+    it('cascades a group lock onto its leaves', () => {
+      const lockedGroup = { ...group('g', [leaf('a'), { ...leaf('b'), locked: true }]), locked: true };
+      expect(visibleLeaves([lockedGroup, leaf('c')]).map((l) => [l.id, l.locked]))
+        .toEqual([['a', true], ['b', true], ['c', undefined]]);
     });
   });
 
