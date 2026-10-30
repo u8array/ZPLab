@@ -278,10 +278,8 @@ export interface FieldState {
   bcMsiCheckMode: "C" | "D" | undefined;
   bcMsiHriCheck: boolean;
   bcRotation: ZplRotation;
-  /** ^BC m=D (UCC/EAN) → GS1-128; consumed by the code128 case in flushField. */
-  bcGs1: boolean;
-  /** ^BC m=A (automatic subset selection); consumed by the code128 case in flushField. */
-  bcAuto: boolean;
+  /** ^BC m as parsed: A maps to `mode`, D to `gs1`. */
+  bcMode: "A" | "D" | undefined;
   bcCode49Mode: Code49Props["mode"];
   /** ^B4 h as sent, or null when omitted; resolved at ^FS. */
   bcCode49Mult: number | null;
@@ -577,13 +575,15 @@ export function getPosType(field: FieldState): "FT" | "FO" {
   return field.positionIsFT ? "FT" : "FO";
 }
 
+/** m=D is UCC/EAN, the GS1-128 form. */
+export const bcIsGs1 = (field: Pick<FieldState, "bcMode">): boolean => field.bcMode === "D";
+
 /** Sticky per-field symbology state (GS1/^BX modes, the ^BQ header verdicts)
  *  would act on any later field, so every flush path drops it. */
 export function resetSymbologyModeFlags(field: FieldState): void {
   field.qrHeaderPartial = false;
   field.qrHeaderLossy = false;
-  field.bcGs1 = false;
-  field.bcAuto = false;
+  field.bcMode = undefined;
   field.dmEscape = undefined;
   field.dmQuality = 200;
   field.bcMsiCheckMode = undefined;
@@ -746,8 +746,7 @@ export function freshFieldState(): FieldState {
     bcMsiCheckMode: undefined,
     bcMsiHriCheck: false,
     bcRotation: "N",
-    bcGs1: false,
-    bcAuto: false,
+    bcMode: undefined,
     bcCode49Mode: "A",
     bcCode49Mult: null,
     symRot: "N",

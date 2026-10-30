@@ -176,4 +176,8 @@ describe('convertSymbologyMapper', () => {
     const text = barcode('text', { content: 'hi' });
     expect(convertSymbologyMapper('qrcode' as never)(text)).toBe(text);
   });
+
+  it("drops the Code 128 mode on a symbology switch", () => {
+    expect((convertSymbologyMapper("code39")(barcode("code128", { mode: "A" })) as { props: object }).props).not.toHaveProperty("mode");
+  });
 });

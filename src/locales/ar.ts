@@ -1354,7 +1354,7 @@ const ar = {
       printInterpretation: 'قابل للقراءة البشرية',
       checkDigit: 'رقم التحقق',
       gs1Mode: 'وضع GS1',
-      autoMode: 'مجموعة فرعية تلقائية (أرقام مضغوطة)',
+      autoMode: 'مجموعة فرعية تلقائية',
       moduleWidth: 'عرض الوحدة',
     },
     box: {

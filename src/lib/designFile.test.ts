@@ -801,3 +801,22 @@ describe('parseDesignFile', () => {
     expect(result.value.columnMapping).toBeNull();
   });
 });
+
+describe("Code 128 mode", () => {
+  const leaf = (mode: string): LabelObject =>
+    ({
+      id: "b", type: "code128", x: 0, y: 0, rotation: 0, positionType: "FO",
+      props: { content: "1234", height: 100, moduleWidth: 2, printInterpretation: false, printInterpretationAbove: false, checkDigit: false, rotation: "N", mode },
+    }) as unknown as LabelObject;
+  const modeOf = (mode: string) => {
+    const loaded = parseDesignFile(serializeDesign({ widthMm: 50, heightMm: 30, dpmm: 8 }, [{ objects: [leaf(mode)] }], []));
+    if (!loaded.ok) throw new Error(loaded.error);
+    return (loaded.value.pages[0]?.objects[0] as { props: { mode?: string } }).props.mode;
+  };
+
+  it("keeps A and drops N and D, which the design stores as the default and as gs1", () => {
+    expect(modeOf("A")).toBe("A");
+    expect(modeOf("N")).toBeUndefined();
+    expect(modeOf("D")).toBeUndefined();
+  });
+});

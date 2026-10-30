@@ -1,5 +1,6 @@
 import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
 import { code128ControlFd, code128PlainFd } from '../lib/code128Subset';
+import { code128Mode } from '../lib/code128Plan';
 import { formatCode128Hri } from './hriFormatters';
 export type { Barcode1DProps as Code128Props } from './barcode1d';
 
@@ -9,6 +10,7 @@ export const code128CoreConfig: Barcode1DCoreConfig = {
   placeholderContent: '12345678',
   group: 'code-1d',
   gs1Capable: true,
+  autoModeCapable: true,
   // Code Set A covers the C0 range.
   controlChars: true,
   ctrlFdEncode: code128ControlFd,
@@ -17,11 +19,9 @@ export const code128CoreConfig: Barcode1DCoreConfig = {
   zplCommand: (p) => {
     const interp = p.printInterpretation ? 'Y' : 'N';
     const check = p.checkDigit ? 'Y' : 'N';
-    // m=D (UCC/EAN) turns a plain Code 128 into GS1-128; m=A lets the firmware
-    // pick subsets (digit runs in C). Omit m for the default N so a plain field
-    // round-trips as the bare command.
-    const mode = p.gs1 ? ',D' : p.mode === 'A' ? ',A' : '';
-    return `^BC${p.rotation},${p.height},${interp},${p.printInterpretationAbove ? 'Y' : 'N'},${check}${mode}`;
+    // m=N is the bare command, so a plain field round-trips byte-identically.
+    const mode = code128Mode(p);
+    return `^BC${p.rotation},${p.height},${interp},${p.printInterpretationAbove ? 'Y' : 'N'},${check}${mode === 'N' ? '' : `,${mode}`}`;
   },
 };
 

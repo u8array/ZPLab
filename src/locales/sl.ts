@@ -1354,7 +1354,7 @@ const sl = {
       printInterpretation: 'Berljivo za človeka',
       checkDigit: 'Kontrolna številka',
       gs1Mode: 'Način GS1',
-      autoMode: 'Samodejna podmnožica (strnjene števke)',
+      autoMode: 'Samodejna podmnožica',
       moduleWidth: 'Širina modula',
     },
     box: {

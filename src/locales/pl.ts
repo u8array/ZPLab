@@ -1354,7 +1354,7 @@ const pl = {
       printInterpretation: 'Czytelny dla człowieka',
       checkDigit: 'Cyfra kontrolna',
       gs1Mode: 'Tryb GS1',
-      autoMode: 'Automatyczny podzbiór (zwarte cyfry)',
+      autoMode: 'Automatyczny podzbiór',
       moduleWidth: 'Szerokość modułu',
     },
     box: {

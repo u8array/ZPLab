@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNodeDraggable } from "./hooks/useNodeDraggable";
 import { Image as KImage, Group, Rect, Shape, Text } from "react-konva";
 import { HriOverlay } from "./hriOverlayNode";
-import { BARCODE_1D_TYPES, ObjectRegistry, objectResolvesCtrl } from "@zplab/core/registry";
+import { BARCODE_1D_TYPES, ObjectRegistry, getEntry, isGs1Active, objectResolvesCtrl } from "@zplab/core/registry";
 import { dotsToPx, mmToDots, pxToDots } from "@zplab/core/lib/coordinates";
 import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "@zplab/core/lib/objectBounds";
 import { qrByHeight } from "@zplab/core/registry/qrcode";
@@ -132,7 +132,7 @@ export function BarcodeObject({
     (obj.props as { moduleWidth?: number }).moduleWidth ?? 2;
   // GS1-128 shows the parenthesized element string as HRI (firmware prints the
   // parens it strips for encoding).
-  const gs1Hri = !!(obj.props as { gs1?: boolean }).gs1;
+  const gs1Hri = isGs1Active(getEntry(obj.type), obj.props);
   const contentRaw = getObjectStringContent(obj) ?? "";
   // A blank (unconfigured) field renders the symbology's sample (GS1 sample
   // in GS1 mode): bwip still gets encodable content, so the object keeps its
@@ -298,7 +298,7 @@ export function BarcodeObject({
     // plain escape the code128 formatter decodes, and prints the element
     // string as-is.
     const displayText = stripHriControlBytes(
-      // Weak-type cast: non-barcode props share none of the optional keys.
+      // Cast to the HRI slice: the formatter reads only its own keys.
       (gs1Hri ? undefined : hri?.formatHri?.(rawContent, obj.props as HriFormatProps)) ?? rawContent,
     );
     const isTextAbove = resolveHriAbove(obj);

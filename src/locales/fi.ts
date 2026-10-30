@@ -1354,7 +1354,7 @@ const fi = {
       printInterpretation: 'Ihmisluettava',
       checkDigit: 'Tarkistusnumero',
       gs1Mode: 'GS1-tila',
-      autoMode: 'Automaattinen osajoukko (tiiviit numerot)',
+      autoMode: 'Automaattinen osajoukko',
       moduleWidth: 'Moduulin leveys',
     },
     box: {

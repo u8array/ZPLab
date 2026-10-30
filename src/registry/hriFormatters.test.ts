@@ -8,6 +8,7 @@ import {
   formatCode11Hri, formatCode39Hri, formatInterleaved2of5Hri, formatMsiHri,
   formatLogmarsHri,
   formatUpcEanExtensionHri,
+  formatCode128Hri,
 } from '@zplab/core/registry/hriFormatters';
 
 describe('HRI formatters', () => {
@@ -133,6 +134,13 @@ describe('HRI formatters', () => {
     });
     it('strips non-digits then routes by length', () => {
       expect(formatUpcEanExtensionHri('5-1-9-9-9')).toBe('51999');
+    });
+  });
+
+  describe('formatCode128Hri', () => {
+    it('prints the Table-2 read under m=N and the payload as typed under m=A', () => {
+      expect(formatCode128Hri('>;123')).toBe('12');
+      expect(formatCode128Hri('>;123', { mode: 'A' })).toBe('>;123');
     });
   });
 });

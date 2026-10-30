@@ -285,7 +285,7 @@ export const PROP_SUMMARIES: Record<string, Record<string, string>> = {
     checkDigit: "boolean",
     rotation: "N | R | I | B",
     gs1: "boolean, GS1-128 mode",
-    mode: "N (default) | A: A lets the printer pick subsets, packing 4+ digit runs two per symbol (Subset C) for a much narrower numeric barcode; ignored when gs1 is on",
+    mode: "A, the printer's automatic subsets. Omit for the default, and gs1 wins over it.",
   },
   image: {
     imageId: "string, id of an image the app holds; empty for a pure ZPL graphic",

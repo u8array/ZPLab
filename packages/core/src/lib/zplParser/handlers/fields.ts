@@ -9,6 +9,7 @@ import { notePartial,
   dropArmedSlot,
   fieldHasContent,
   getDefaultTextH,
+  bcIsGs1,
   getDefaultTextW,
   openDefaultText,
   resetFieldBlockDefaults,
@@ -245,7 +246,7 @@ export function createFieldHandlers(
         // empty-seed serial still survives (the pendingFD===null guard).
         // GS1 fields drop the ^SN at flush, so the seed must not replace
         // their ^FD either.
-        const serialisable = !!getEntry(s.field.fieldType)?.serialisable && !s.field.bcGs1;
+        const serialisable = !!getEntry(s.field.fieldType)?.serialisable && !bcIsGs1(s.field);
         if (snStart && serialisable) {
           s.field.pendingFD = snStart;
           // The seed is the token's first parameter. A later parameter cannot decode, so the

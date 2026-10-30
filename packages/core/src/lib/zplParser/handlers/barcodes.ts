@@ -59,12 +59,13 @@ export function createBarcodeHandlers(s: ParserState): Record<string, Handler> {
     },
 
     // ── 1D barcodes via mkBarcode(type, hIdx, iIdx, iDefault?, cIdx?) ─────
-    // ^BCo,h,f,g,e,m; m=D (UCC/EAN) is GS1-128. Assigned every time so a later
-    // plain ^BC clears it.
+    // ^BCo,h,f,g,e,m. Assigned every time so a later plain ^BC clears it.
     BC: (p, rest, cmd) => {
       mkBarcode("code128", 1, 2, "Y", 4)(p, rest, cmd);
-      s.field.bcGs1 = (p[5] ?? "").toUpperCase() === "D";
-      s.field.bcAuto = (p[5] ?? "").toUpperCase() === "A";
+      const m = strParam(p[5]);
+      s.field.bcMode = m === "A" || m === "D" ? m : undefined;
+      // Any other m, m=U included, has no model, so the import must report the loss.
+      if (!["", "N", "A", "D"].includes(m)) notePartial(s.result, "^BC");
     },
     B3: mkBarcode("code39", 2, 3, "Y", 1), // ^B3N,c,h,i,N
     BE: mkBarcode("ean13", 1, 2), // ^BEN,h,i,N

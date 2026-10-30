@@ -1354,7 +1354,7 @@ const lv = {
       printInterpretation: 'Cilvēkam lasāms',
       checkDigit: 'Pārbaudes cipars',
       gs1Mode: 'GS1 režīms',
-      autoMode: 'Automātiska apakškopa (kompakti cipari)',
+      autoMode: 'Automātiska apakškopa',
       moduleWidth: 'Moduļa platums',
     },
     box: {

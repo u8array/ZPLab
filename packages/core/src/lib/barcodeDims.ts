@@ -19,7 +19,8 @@ import {
 } from "./gs1";
 import { planGs1Fd } from "./gs1Plan";
 import { code128FdToSymbols, code128SymbolsToBwipRaw, planCode128AutoSymbols } from "./code128Subset";
-import { planCode128Fd } from "./code128Plan";
+import { code128Mode, planCode128Fd } from "./code128Plan";
+import { resolveControlMarkers } from "../types/controlKey";
 import { isRectangular, dmVersionString, type DataMatrixProps } from "../registry/datamatrix";
 import { MAXICODE_WIDTH_MM, MAXICODE_HEIGHT_MM } from "../registry/maxicode";
 import { micropdf417ModeDims, micropdf417ModeFits } from "../registry/micropdf417";
@@ -318,26 +319,19 @@ export function buildBwipOptions(
     case "code128": {
       const p = obj.props;
       const scale = bwipScale1D(p.moduleWidth, renderScale, renderDpmm);
+      const mode = code128Mode(p);
       // GS1-128 renders from the emit plan; unparsed content is the raw
       // mode-D read (leading FNC1 plus literals, see the plan's parsefnc doc).
-      if (p.gs1) {
+      if (mode === "D") {
         const plan = planGs1Fd(p.content, "code128");
         opts = plan.bwipParsefncText !== null
           ? { bcid: "code128", text: plan.bwipParsefncText, parsefnc: true, scale, height: 10 }
           : { bcid: "gs1-128", text: plan.bwipText || "(01)00000000000000", scale, height: 10 };
         break;
       }
-      const text = p.content || "0";
-      // Mode A: the firmware picks subsets itself (digit runs in C), so the
-      // canvas follows the same automatic plan instead of forcing Subset B.
-      const autoSymbols = p.mode === "A" ? planCode128AutoSymbols(text) : null;
-      if (autoSymbols) {
-        opts = { bcid, text: code128SymbolsToBwipRaw(autoSymbols), raw: true, scale, height: 10 };
-        break;
-      }
-      // The printer reads the emitted ^FD, not the model text, so the canvas
-      // draws its Table-2 read; a byte no subset carries is left to bwip.
-      const symbols = code128FdToSymbols(planCode128Fd(text, "whole").fd);
+      // m=A plans the literal payload, m=N the emitted ^FD. A byte no subset carries falls to bwip.
+      const text = mode === "A" ? resolveControlMarkers(p.content) || "0" : p.content || "0";
+      const symbols = mode === "A" ? planCode128AutoSymbols(text) : code128FdToSymbols(planCode128Fd(text, "whole").fd);
       opts = symbols
         ? { bcid, text: code128SymbolsToBwipRaw(symbols), raw: true, scale, height: 10 }
         : { bcid, text, scale, height: 10 };
