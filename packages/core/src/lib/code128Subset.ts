@@ -1,10 +1,11 @@
 /** Code 128 subset-invocation coding for ^BC field data (spec p.95-99).
  *
- *  The firmware drops ^FH-escaped C0 bytes from the symbol (ZD230-verified);
- *  only the invocation form encodes them. The canvas reads the emitted ^FD
+ *  At m=N the firmware drops ^FH-escaped C0 bytes from the symbol (ZD230-verified).
+ *  Only the invocation form encodes them, and the canvas reads the emitted ^FD
  *  back through the same Table-2 walk, so printed module count equals
  *  rendered by construction (shared ^FN slots excepted: they emit raw and
- *  preflight warns). */
+ *  preflight warns). At m=A the firmware reads the payload literally and packs
+ *  it itself, so the canvas plans the bytes. */
 
 import { mapLiteralSpans } from "./fnTemplate";
 import { C0_OR_DEL_RE } from "../types/controlKey";
@@ -80,60 +81,97 @@ export function planCode128Symbols(text: string): number[] | null {
   return values;
 }
 
-const CODE_C = 99;
+/** Encoder position: Subset A, Subset B, or Subset C with the pairs of its stretch so far, capped at two. */
+type State = "A" | "B" | 0 | 1 | 2;
+const STATES: readonly State[] = ["B", "A", 0, 1, 2];
+const C_AFTER_PAIR: Record<0 | 1 | 2, 1 | 2> = { 0: 1, 1: 2, 2: 2 };
+const START: Record<"A" | "B" | 0, number> = { A: START_A, B: START_B, 0: START_C };
+const CODE: Record<"A" | "B" | 0, number> = { A: CODE_A, B: CODE_B, 0: CODE_C };
 
-const isDigitAt = (text: string, i: number): boolean => /\d/.test(text.charAt(i));
-
-/** Length of the digit run starting at `from`. */
-function digitRun(text: string, from: number): number {
-  let n = 0;
-  while (isDigitAt(text, from + n)) n += 1;
-  return n;
+/** The last two terms exist only to break symbol-count ties as ISO/IEC 15417 Annex E does, which opens C for four digits. */
+interface Cost {
+  symbols: number;
+  shortStretches: number;
+  pairs: number;
 }
 
-/**
- * Symbol values (start code first, no check/stop) for `^BC` mode A, the
- * firmware's automatic subset selection: four or more digits in a row pack
- * into Subset C, two per symbol (ISO/IEC 15417 Annex E). Printable ASCII
- * only; returns null for control bytes or anything outside SP..DEL so the
- * caller falls back to the plain (Subset A/B) plan.
- */
-export function planCode128AutoSymbols(text: string): number[] | null {
-  if (!text) return null;
-  const bValues: number[] = [];
-  for (let i = 0; i < text.length; i += 1) {
-    const value = valueInB(text.charCodeAt(i));
-    if (value === null) return null;
-    bValues.push(value);
+const cheaper = (a: Cost, b: Cost): boolean =>
+  a.symbols !== b.symbols ? a.symbols < b.symbols : a.shortStretches !== b.shortStretches ? a.shortStretches < b.shortStretches : a.pairs > b.pairs;
+
+const add = (step: Cost, tail: Cost): Cost => ({ symbols: step.symbols + tail.symbols, shortStretches: step.shortStretches + tail.shortStretches, pairs: step.pairs + tail.pairs });
+
+/** Annex E's four-digit rule prefers a C stretch of two pairs, so a shorter one costs. */
+const shortLeave = (state: State): number => (state === 0 || state === 1 ? 1 : 0);
+
+const letterValue = (subset: "A" | "B", code: number): number | null => (subset === "A" ? valueInA(code) : valueInB(code));
+const other = (subset: "A" | "B"): "A" | "B" => (subset === "A" ? "B" : "A");
+
+interface Move {
+  emits: number[];
+  consumed: number;
+  to: State;
+  cost: Cost;
+}
+
+const move = (emits: number[], consumed: number, to: State, shortStretches = 0, pairs = 0): Move => ({ emits, consumed, to, cost: { symbols: emits.length, shortStretches, pairs } });
+
+/** Moves at `i`. `cheaper` is strict, so this order decides every tie. */
+function movesAt(text: string, i: number, from: State): Move[] {
+  const code = text.charCodeAt(i);
+  const next = text.charCodeAt(i + 1);
+  const pair = /\d/.test(text.charAt(i)) && /\d/.test(text.charAt(i + 1)) ? (code - 48) * 10 + (next - 48) : undefined;
+  if (from === 0 || from === 1 || from === 2) {
+    if (pair !== undefined) return [move([pair], 2, C_AFTER_PAIR[from], 0, 1)];
+    const leave = shortLeave(from);
+    return (["B", "A"] as const).flatMap((subset) => {
+      const value = letterValue(subset, code);
+      return value === null ? [] : [move([CODE[subset], value], 1, subset, leave)];
+    });
   }
-  const lead = digitRun(text, 0);
-  let inC = lead >= 4 || (lead === 2 && text.length === 2);
-  const values = [inC ? START_C : START_B];
-  let i = 0;
-  while (i < text.length) {
-    if (inC) {
-      if (digitRun(text, i) >= 2) {
-        values.push(parseInt(text.slice(i, i + 2), 10));
-        i += 2;
-        continue;
+  const own = letterValue(from, code);
+  const away = letterValue(other(from), code);
+  const moves: Move[] = [];
+  if (own !== null) moves.push(move([own], 1, from));
+  if (pair !== undefined) moves.push(move([CODE_C, pair], 2, 1, 0, 1));
+  if (away !== null) moves.push(move([SHIFT, away], 1, from), move([CODE[other(from)], away], 1, other(from)));
+  return moves;
+}
+
+/** Symbol values (start code first, no check and stop) for ^BC mode A: the cheapest plan over Subsets A, B and C,
+ *  ties read as ISO/IEC 15417 Annex E does. Null for no data or a byte above DEL. Which digit of an odd run the
+ *  firmware leaves in B is unmeasured. */
+export function planCode128AutoSymbols(text: string): number[] | null {
+  if (text === "" || [...text].some((ch) => ch.charCodeAt(0) > 127)) return null;
+  const key = (i: number, state: State): string => `${i}:${state}`;
+  // Filled from the end, so a move's tail is scored before the move.
+  const plan = new Map<string, { cost: Cost; move: Move }>();
+  const planned = (i: number, state: State): { cost: Cost; move: Move } => {
+    const entry = plan.get(key(i, state));
+    if (entry === undefined) throw new Error("plan table filled from the end");
+    return entry;
+  };
+  const tail = (i: number, state: State): Cost =>
+    i === text.length ? { symbols: 0, shortStretches: shortLeave(state), pairs: 0 } : planned(i, state).cost;
+  for (let i = text.length - 1; i >= 0; i -= 1) {
+    for (const state of STATES) {
+      let best: { cost: Cost; move: Move } | undefined;
+      for (const candidate of movesAt(text, i, state)) {
+        const cost = add(candidate.cost, tail(i + candidate.consumed, candidate.to));
+        if (best === undefined || cheaper(cost, best.cost)) best = { cost, move: candidate };
       }
-      values.push(CODE_B);
-      inC = false;
-      continue;
+      if (best !== undefined) plan.set(key(i, state), best);
     }
-    const run = digitRun(text, i);
-    if (run >= 4) {
-      // Odd run: the first digit stays in B so the rest pairs up evenly.
-      if (run % 2 === 1) {
-        values.push(bValues[i] ?? 0);
-        i += 1;
-      }
-      values.push(CODE_C);
-      inC = true;
-      continue;
-    }
-    values.push(bValues[i] ?? 0);
-    i += 1;
+  }
+  const start = (state: "A" | "B" | 0): Cost => add({ symbols: 1, shortStretches: 0, pairs: 0 }, tail(0, state));
+  // A full tie opens in C for a leading run, and in B before A, as Annex E does.
+  let state: State = cheaper(start("B"), start(0)) ? "B" : 0;
+  if (cheaper(start("A"), start(state))) state = "A";
+  const values = [START[state]];
+  for (let i = 0; i < text.length; ) {
+    const { move } = planned(i, state);
+    values.push(...move.emits);
+    state = move.to;
+    i += move.consumed;
   }
   return values;
 }

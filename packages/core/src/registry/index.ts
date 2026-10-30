@@ -1,3 +1,4 @@
+import { code128Mode } from '../lib/code128Plan';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { gs1CarrierFor, planGs1Fd } from '../lib/gs1Plan';
@@ -140,13 +141,12 @@ export function isGs1Active(
   return entry.gs1Capable === true && (props as { gs1?: boolean }).gs1 === true;
 }
 
-/** The leaf's ^FD grammar is the plain Code 128 escape (ctrl-capable type
- *  outside GS1 mode). */
+/** The leaf's ^FD grammar is the plain Code 128 escape: a ctrl-capable type at ^BC m=N. */
 export function usesPlainCode128Escape(
   entry: Parameters<typeof isGs1Active>[0],
   props: object | undefined,
 ): boolean {
-  return entry?.ctrlNeedsOwnEscape === true && !isGs1Active(entry, props);
+  return entry?.ctrlNeedsOwnEscape === true && code128Mode(props) === "N";
 }
 
 /** Static GS1 content that ships verbatim: owns the gs1ContentUnparsed
@@ -173,7 +173,9 @@ export function objectResolvesCtrl(obj: { type: string; props?: object }): boole
  *  so a preview renders what the firmware prints (see {@link CtrlParity}). */
 export function ctrlParityFor(obj: { type: string; props?: object }): CtrlParity {
   if (!objectResolvesCtrl(obj)) return "literal";
-  return getEntry(obj.type)?.ctrlNeedsOwnEscape ? "byteOutsideTemplate" : "byte";
+  const entry = getEntry(obj.type);
+  if (!entry?.ctrlResolvesBound) return "byte";
+  return usesPlainCode128Escape(entry, obj.props) ? "byteOutsideTemplate" : "byteWhole";
 }
 
 /** The object's effective content spec: its entry's rule resolved against props. */

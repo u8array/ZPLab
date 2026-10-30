@@ -5,6 +5,14 @@ import {
 } from "./code128Subset";
 import { C0_RE, resolveControlMarkers } from "../types/controlKey";
 
+type Code128Mode = "N" | "A" | "D";
+
+/** The ^BC m from the props: GS1 wins over m=A. The content never decides, since a template or serial field
+ *  changes it per label. */
+export function code128Mode(p?: { gs1?: boolean; mode?: string }): Code128Mode {
+  return p?.gs1 === true ? "D" : p?.mode === "A" ? "A" : "N";
+}
+
 /** How a payload reaches a plain-^BC ^FD: `whole` = entire field (chips
  *  resolve), `template` = literal spans around markers, `templateValue` =
  *  ^FN declaration (chips stay marker TEXT in `fd`, losses approximate on

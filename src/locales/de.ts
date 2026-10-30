@@ -1419,7 +1419,7 @@ const de = {
       printInterpretation: 'Klartext',
       checkDigit: 'Prüfziffer',
       gs1Mode: 'GS1-Modus',
-      autoMode: 'Auto-Subset (Ziffern kompakt)',
+      autoMode: 'Automatisches Subset',
       moduleWidth: 'Modulbreite',
     },
     box: {

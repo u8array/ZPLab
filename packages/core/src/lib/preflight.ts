@@ -243,8 +243,7 @@ export function markerValueFindings(
       }
     }
   };
-  const plainLeaf = (leaf: LeafObject) =>
-    !!getEntry(leaf.type)?.ctrlNeedsOwnEscape && !isModeDLeaf(leaf);
+  const plainLeaf = (leaf: LeafObject) => usesPlainCode128Escape(getEntry(leaf.type), leaf.props);
   const buckets = fnConsumerBuckets(leaves, deps.variables);
   slotValueWarnings(
     buckets.modeDShared,

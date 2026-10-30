@@ -1354,7 +1354,7 @@ const no = {
       printInterpretation: 'Lesbar for mennesker',
       checkDigit: 'Kontrollsiffer',
       gs1Mode: 'GS1-modus',
-      autoMode: 'Automatisk delsett (kompakte sifre)',
+      autoMode: 'Automatisk delsett',
       moduleWidth: 'Modulbredde',
     },
     box: {

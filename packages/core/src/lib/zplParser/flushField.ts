@@ -55,6 +55,7 @@ import { notePartial,
   claimVariableName,
   type FnDefaultCandidate,
   type ParserState,
+  bcIsGs1,
   isTbField,
   truncatesAtHexControl,
 } from "./context";
@@ -108,6 +109,7 @@ function fnDefaultCandidate(
   leaf: LabelObject,
   varDefault: string,
 ): NonNullable<FnDefaultCandidate> {
+  // No m=A branch: the ctrlNeedsOwnEscape gate below already excludes every ^BC slot.
   if (!isGroup(leaf) && !isModeDLeaf(leaf) && !getEntry(leaf.type)?.ctrlNeedsOwnEscape) {
     const leafContent = getObjectStringContent(leaf);
     // Resolve the hook against THIS leaf: an optional encoder (plain ^BX) has
@@ -257,10 +259,11 @@ export function createCloseField(
     // and never in GS1 mode: there a raw GS is the AI separator the GS1
     // normalisation in the type cases below must still see. Text keeps raw
     // newlines (^FB); other types keep the bytes for the suspicious preflight.
-    const gs1Field = s.field.bcGs1 || (s.field.dmQuality === 200 && !!s.field.dmEscape);
+    const gs1Field = bcIsGs1(s.field) || (s.field.dmQuality === 200 && !!s.field.dmEscape);
     // ^FN defaults are excluded: their escape depends on slot exclusivity,
     // which only the page-close pass knows (normalizeCode128PlainDefaults).
-    if (!gs1Field && s.field.fieldType === "code128" && s.comment.fnNumber === null) {
+    // ^BC m=A reads its payload literally (ZD230), so only m=N has an escape form to adopt.
+    if (!gs1Field && s.field.bcMode !== "A" && s.field.fieldType === "code128" && s.comment.fnNumber === null) {
       content = adoptCode128Fd(content, s);
     }
     if (!gs1Field && s.field.fieldType && getEntry(s.field.fieldType)?.controlChars) {
@@ -372,7 +375,7 @@ export function createCloseField(
       }
       case "code128": {
         // GS1-128 (^BC…,D): store the canonical compact form, not the parens.
-        const gs1 = s.field.bcGs1;
+        const gs1 = bcIsGs1(s.field);
         pushLeaf(
           makeObj(
             "code128",
@@ -387,7 +390,7 @@ export function createCloseField(
               checkDigit: s.field.bcCheck,
               rotation: s.field.bcRotation,
               ...(gs1 ? { gs1: true } : {}),
-              ...(s.field.bcAuto ? { mode: "A" as const } : {}),
+              ...(s.field.bcMode === "A" ? { mode: "A" as const } : {}),
             } satisfies Code128Props,
             posType,
             comment,

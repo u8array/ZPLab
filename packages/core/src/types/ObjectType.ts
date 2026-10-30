@@ -83,10 +83,12 @@ export interface ObjectTypeCore<P extends object = object> {
    *  False/absent for fixed-charset symbologies (EAN/UPC, Code 39) and text.
    *  Each registry feeds the same constant to its emitter, so flag and chips never desync. */
   controlChars?: boolean;
-  /** Control bytes reach this symbology's symbol only through its own escape
-   *  form (Code 128 invocations), never through ^FH hex, which the firmware
-   *  drops. Set by the emitters that carry such an encoder. */
+  /** At ^BC m=N, control bytes reach this symbology's symbol only through its
+   *  own escape form, since the firmware drops ^FH hex there. Set by the
+   *  emitters that carry such an encoder. */
   ctrlNeedsOwnEscape?: boolean;
+  /** The type's `fdTransform` resolves control chips in a whole bound value. */
+  ctrlResolvesBound?: boolean;
   /** 1:1 aspect-locked free resize (ellipse with lockAspect). For
    *  integer-module 2D symbologies use uniformScaleProp instead. */
   uniformScale?: boolean | ((props: P) => boolean);

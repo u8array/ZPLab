@@ -1419,7 +1419,7 @@ const en = {
       printInterpretation: 'Human readable',
       checkDigit: 'Check digit',
       gs1Mode: 'GS1 mode',
-      autoMode: 'Auto subset (compact digits)',
+      autoMode: 'Automatic subset',
       moduleWidth: 'Module width',
     },
     box: {

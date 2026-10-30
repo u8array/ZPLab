@@ -1354,7 +1354,7 @@ const bg = {
       printInterpretation: 'Четливо от хора',
       checkDigit: 'Контролна цифра',
       gs1Mode: 'Режим GS1',
-      autoMode: 'Автоматичен набор (компактни цифри)',
+      autoMode: 'Автоматично подмножество',
       moduleWidth: 'Ширина на модула',
     },
     box: {

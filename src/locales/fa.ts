@@ -1354,7 +1354,7 @@ const fa = {
       printInterpretation: 'قابل خواندن توسط انسان',
       checkDigit: 'رقم کنترل',
       gs1Mode: 'حالت GS1',
-      autoMode: 'زیرمجموعه خودکار (ارقام فشرده)',
+      autoMode: 'زیرمجموعه خودکار',
       moduleWidth: 'عرض ماژول',
     },
     box: {

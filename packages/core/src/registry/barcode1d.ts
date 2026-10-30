@@ -8,7 +8,7 @@ import { commitBarcodeWidthHeightTransform, moduleWidthSpec } from './transformH
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { classifyField, isLoneMarker } from '../lib/variableField';
-import { planCode128Fd } from '../lib/code128Plan';
+import { code128Mode, planCode128Fd } from '../lib/code128Plan';
 import { resolveControlMarkers } from '../types/controlKey';
 import { parseGs1ToSegments, segmentsToZplFd } from '../lib/gs1';
 import { planGs1Fd } from '../lib/gs1Plan';
@@ -17,7 +17,8 @@ import type { ContentSpec } from '../types/contentSpec';
 import { ROTATION_SPEC, type ZplRotation } from './rotation';
 
 export const MSI_CHECK_MODES = ['C', 'D'] as const;
-export const CODE128_MODES = ['N', 'A'] as const;
+/** Absent is N, and D comes from `gs1`. */
+export const CODE128_STORED_MODES = ['A'] as const;
 
 export interface Barcode1DProps {
   content: string;
@@ -34,10 +35,8 @@ export interface Barcode1DProps {
   preSerialContent?: string;
   /** GS1-128 mode (`^BC…,D`). Only honoured by a `gs1Capable` symbology. */
   gs1?: boolean;
-  /** Code 128 m-param: N (default, Subset B unless the ^FD carries
-   *  invocation codes) or A (automatic: the firmware packs digit runs into
-   *  Subset C). Only honoured by Code 128; `gs1` (m=D) wins over it. */
-  mode?: (typeof CODE128_MODES)[number];
+  /** ^BC m=A, the firmware's automatic subsets. Code 128 only, and `gs1` wins. */
+  mode?: (typeof CODE128_STORED_MODES)[number];
   /** MSI multi-check ^BM e beyond the boolean (C = 2x Mod 10, D = Mod 11 +
    *  Mod 10); set by import, not the panel. */
   msiCheckMode?: (typeof MSI_CHECK_MODES)[number];
@@ -75,6 +74,8 @@ export interface Barcode1DCoreConfig {
   /** Symbology offers a GS1 mode (Code 128 → GS1-128); `zplCommand` must emit
    *  the mode flag when `props.gs1` is set. */
   gs1Capable?: boolean;
+  /** Symbology offers ^BC m=A. Declared here so the panel reads one flag, the emit reads m from the props. */
+  autoModeCapable?: boolean;
   /** See {@link ObjectTypeCore.contentSpec}; static half, GS1 mode is derived. */
   contentSpec?: ContentSpec;
   /** See {@link ObjectTypeCore.controlChars}. */
@@ -102,7 +103,7 @@ export const BARCODE_1D_PROP_SPECS: PropSpecs<Barcode1DProps> = {
   serial: { type: 'object' },
   preSerialContent: { type: 'string' },
   gs1: { type: 'boolean' },
-  mode: { type: 'string', values: CODE128_MODES },
+  mode: { type: 'string', values: CODE128_STORED_MODES },
   msiCheckMode: { type: 'string', values: MSI_CHECK_MODES },
   msiHriCheck: { type: 'boolean' },
 };
@@ -123,8 +124,9 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
   const fdTransformFor =
     config.fdContent || config.gs1Capable || config.fdPlainEscape
       ? (obj: LabelObjectBase & { props: Barcode1DProps }) => {
-          // GS1 mode brings its own escaping.
-          const escape = obj.props.gs1 ? undefined : config.fdPlainEscape;
+          const gs1 = config.gs1Capable === true && obj.props.gs1 === true;
+          // GS1 mode brings its own escaping, and m=A reads the payload literally.
+          const escape = code128Mode(obj.props) === 'N' ? config.fdPlainEscape : undefined;
           // A lone marker (single-bind) still transforms its default/CSV value;
           // only a real template is skipped. Ctrl-capable types resolve chips
           // first: chips-only is non-template there (whole-field ctrlEncode).
@@ -134,21 +136,15 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
                 ? resolveControlMarkers(obj.props.content)
                 : obj.props.content,
             ) && !isLoneMarker(obj.props.content);
-          const base = isTemplate
-            ? undefined
-            : config.gs1Capable && obj.props.gs1
-              ? gs1ModeDFd
-              : config.fdContent;
-          // Non-template payloads are whole ^FD values; the plan owns the
-          // invocation-vs-^FH decision (fdPlainEscape implies the code128
-          // grammar, pinned by the carrier tripwire in gs1ModeDFns.test).
-          const ctrlWhole =
-            !isTemplate && escape && config.ctrlFdEncode && config.controlChars === true;
-          const plain = !base ? escape : !escape ? base : (s: string) => escape(base(s));
-          if (!ctrlWhole || !plain) return plain;
-          // base stays in the chain (runs pre chip-resolve; unreachable until
-          // a carrier defines both fdContent and ctrlFdEncode).
-          return (s: string) => planCode128Fd(base ? base(s) : s, 'whole').fd;
+          const base = isTemplate ? undefined : gs1 ? gs1ModeDFd : config.fdContent;
+          // The plain grammar's own encoder plans the bytes, otherwise fdField's ^FH pass carries them.
+          const chips = !isTemplate && config.controlChars === true && !gs1;
+          const whole = chips && escape && config.ctrlFdEncode
+            ? (s: string) => planCode128Fd(s, 'whole').fd
+            : chips && escape
+              ? (s: string) => escape(resolveControlMarkers(s))
+              : chips ? resolveControlMarkers : escape;
+          return !base ? whole : !whole ? base : (s: string) => whole(base(s));
         }
       : undefined;
 
@@ -179,6 +175,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
     gs1Capable: config.gs1Capable,
     controlChars: config.controlChars,
     ctrlNeedsOwnEscape: config.ctrlFdEncode !== undefined,
+    ctrlResolvesBound: config.controlChars === true,
 
     preflight: moduleTooSmallPreflight<Barcode1DProps>('moduleWidth'),
 
@@ -222,7 +219,8 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
       // Shared-slot single-bind: one ^FN value serves several field types, so
       // the Code 128 escape would corrupt the co-consumers; emit raw like
       // mode-D does (preflight warns on the value instead).
-      if (!p.gs1 && config.fdPlainEscape && ctx?.rawFdFns && ctx.variables
+      const plainEscape = code128Mode(p) === 'N' ? config.fdPlainEscape : undefined;
+      if (plainEscape && ctx?.rawFdFns && ctx.variables
           && isLoneMarker(content)) {
         const cls = classifyField(content, ctx.variables);
         if (cls.kind === 'single' && ctx.rawFdFns.has(cls.variable.fnNumber)) {
@@ -234,7 +232,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
       // literal `>` next to a token as an invocation and skip the `>0`.
       // Chips-only payloads stay raw for fdTransformFor's invocation plan;
       // marker BODIES stay raw too (names may carry >/^/~).
-      if (!p.gs1 && config.fdPlainEscape && !isLoneMarker(content)
+      if (plainEscape && !isLoneMarker(content)
           && hasTemplateMarkers(resolveControlMarkers(content))) {
         content = planCode128Fd(content, 'template').fd;
         fdTransformOnce = undefined;

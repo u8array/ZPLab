@@ -39,10 +39,10 @@ export function clockDatesThunk(clock?: ClockResolveCtx): () => ChannelDates {
   );
 }
 
-/** How the emitter treats control bytes, so preview resolution can mirror it.
- *  `byteOutsideTemplate`: the symbology's own escape form (Code 128) cannot
- *  wrap a ^FE template payload, so the firmware drops the bytes there. */
-export type CtrlParity = "literal" | "byte" | "byteOutsideTemplate";
+/** Where the emitter turns a chip into a byte, so preview resolution mirrors it.
+ *  `byte` in the field's own content, `byteWhole` in a bound whole value too.
+ *  `byteOutsideTemplate` as byteWhole, minus ^FE templates, where ^FH drops the bytes. */
+export type CtrlParity = "literal" | "byte" | "byteWhole" | "byteOutsideTemplate";
 
 /** Shared control -> clock -> variable order: field-own display markers first
  *  (a chip in substituted data stays literal, matching export; lone binds are
@@ -63,9 +63,9 @@ export function resolveMarkerChain(
   if (getDates) {
     if (ctrl !== "literal" && hasControlMarkers(next)) next = resolveControlMarkers(next);
     // Emitter gate, evaluated pre-^FC there too: clock markers keep the lossy
-    // ^FH path; a lone bind is a whole ^FD and encodes its own escape form.
-    // Chips-only payloads stay raw (they print via the invocation plan).
-    loneBind = ctrl === "byteOutsideTemplate" && SINGLE_MARKER_RE.test(next);
+    // ^FH path; a lone bind is a whole ^FD and takes the field's whole-value
+    // transform. Chips-only payloads are bytes by now and match neither gate.
+    loneBind = (ctrl === "byteWhole" || ctrl === "byteOutsideTemplate") && SINGLE_MARKER_RE.test(next);
     templateFd = ctrl === "byteOutsideTemplate" && hasTemplateMarkers(next) && !loneBind;
     if (templateFd) next = code128EscapeLiterals(next);
     if (hasClockMarkers(next)) next = resolveClockMarkers(next, getDates());

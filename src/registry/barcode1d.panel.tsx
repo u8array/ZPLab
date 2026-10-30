@@ -31,7 +31,7 @@ export interface BarcodeLocale {
   placeholder?: string;
   /** GS1 mode toggle label; only needed by a `gs1Capable` symbology. */
   gs1Mode?: string;
-  /** Automatic subset (^BC m=A) toggle label; only needed with `autoModeCapable`. */
+  /** Toggle label for ^BC m=A. */
   autoMode?: string;
 }
 
@@ -52,7 +52,7 @@ export interface Barcode1DPanelConfig {
   /** Symbology offers a GS1 mode: renders the toggle + builder and swaps in the
    *  GS1 charset while on. */
   gs1Capable?: boolean;
-  /** Symbology offers the automatic subset mode (Code 128 m=A). */
+  /** Symbology offers ^BC m=A: renders the toggle, hidden while GS1 is on. */
   autoModeCapable?: boolean;
 }
 

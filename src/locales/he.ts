@@ -1354,7 +1354,7 @@ const he = {
       printInterpretation: 'קריא לאדם',
       checkDigit: 'ספרת ביקורת',
       gs1Mode: 'מצב GS1',
-      autoMode: 'תת-קבוצה אוטומטית (ספרות דחוסות)',
+      autoMode: 'תת-קבוצה אוטומטית',
       moduleWidth: 'רוחב מודול',
     },
     box: {

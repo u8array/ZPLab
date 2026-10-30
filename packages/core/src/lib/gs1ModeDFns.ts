@@ -1,11 +1,13 @@
 import { exportableLeaves, type LabelObject } from "../types/Group";
+import { getEntry, usesPlainCode128Escape } from "../registry";
 import { extractTemplateRefs } from "./fnTemplate";
 import { getObjectStringContent } from "./variableBinding";
+import { code128Mode } from "./code128Plan";
 import type { Variable } from "../types/Variable";
 
 /** ^BR and GS1 DataMatrix encode FNC1 differently and must not match. */
 export function isModeDLeaf(leaf: LabelObject): boolean {
-  return leaf.type === "code128" && (leaf.props as { gs1?: boolean }).gs1 === true;
+  return leaf.type === "code128" && code128Mode(leaf.props as { gs1?: boolean; mode?: string }) === "D";
 }
 
 function sweepFnConsumers(
@@ -20,11 +22,9 @@ function sweepFnConsumers(
   for (const leaf of exportableLeaves(objects)) {
     const c = getObjectStringContent(leaf);
     if (c === undefined) continue;
-    // Type literal mirrors the only fdPlainEscape carrier (registry/code128);
-    // a second carrier must be bucketed here too or its defaults emit raw.
     const target = isModeDLeaf(leaf)
       ? modeD
-      : leaf.type === "code128" ? plain128 : other;
+      : usesPlainCode128Escape(getEntry(leaf.type), (leaf as { props?: object }).props) ? plain128 : other;
     for (const name of extractTemplateRefs(c)) {
       const fn = fnByName.get(name);
       if (fn !== undefined) target.add(fn);

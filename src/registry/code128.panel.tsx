@@ -8,5 +8,5 @@ export const code128Panel = createBarcode1DPanel({
   hriAboveConfigurable: true,
   // Single-source the capability from the core config so emit + UI never skew.
   gs1Capable: code128CoreConfig.gs1Capable,
-  autoModeCapable: true,
+  autoModeCapable: code128CoreConfig.autoModeCapable,
 });
