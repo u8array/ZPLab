@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import type Konva from "konva";
 import { pxToDots, dotsToPx } from "@zplab/core/lib/coordinates";
-import { gridSnapDelta, smartSnapDelta, labelSnapRectDots } from "../dragGeometry";
+import { dragSnapTargets, gridSnapDelta, smartSnapDelta, labelSnapRectDots } from "../dragGeometry";
 import { SNAP_THRESHOLD_PX } from "../../../lib/snapGuides";
 import type { SnapGuide, SnapRect } from "../../../lib/snapGuides";
 import {
@@ -10,7 +10,7 @@ import {
   type BoundingBoxDots,
 } from "@zplab/core/lib/objectBounds";
 import { measuredBoundsMap } from "../../../lib/measuredBoundsCache";
-import { expandSelection, findObjectById, getAllLeaves } from "@zplab/core/types/Group";
+import { expandSelection, findObjectById, visibleLeaves } from "@zplab/core/types/Group";
 import { useLabelStore, currentObjects, currentPageLabel, type ObjectChanges } from "../../../store/labelStore";
 
 /** Everything the controller needs from LabelCanvas; mirrors the param style of
@@ -140,6 +140,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
     // selection; otherwise just the grabbed object.
     const selection = expandSelection(objs, state.selectedIds);
     const set = selection.includes(primaryId) && selection.length > 1 ? selection : [primaryId];
+    const rendered = new Set(visibleLeaves(objs).map((l) => l.id));
     const startLocal = new Map<string, { x: number; y: number }>();
     const startModel = new Map<string, { x: number; y: number }>();
     const ids: string[] = [];
@@ -148,7 +149,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
       const node = stage.findOne<Konva.Node>(`#${id}`);
       // node.draggable() carries the cascaded lock (renderers set it), so a
       // locked group's children are skipped even though their raw leaf isn't.
-      if (!obj || obj.visible === false || !node || !node.draggable()) continue;
+      if (!obj || !rendered.has(id) || !node || !node.draggable()) continue;
       startLocal.set(id, { x: node.x(), y: node.y() });
       startModel.set(id, { x: obj.x, y: obj.y });
       ids.push(id);
@@ -158,12 +159,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
     const startUnionDots = selectionUnionDots(objs, ids, ctx, barBoxDots);
     if (!startUnionDots) return;
 
-    const dragged = new Set(ids);
-    const others: SnapRect[] = [];
-    for (const leaf of getAllLeaves(objs)) {
-      if (dragged.has(leaf.id)) continue;
-      others.push({ id: leaf.id, ...barBoxDots(leaf, ctx) });
-    }
+    const others = dragSnapTargets(objs, new Set(ids), ctx);
     const labelDots = labelSnapRectDots(currentPageLabel(state));
 
     dragRef.current = {

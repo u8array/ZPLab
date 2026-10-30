@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { snapToGrid, gridSnapDelta, smartSnapDelta, labelSnapRectDots } from "./dragGeometry";
+import { dragSnapTargets, snapToGrid, gridSnapDelta, smartSnapDelta, labelSnapRectDots } from "./dragGeometry";
+import { ObjectRegistry, type LeafObject } from "@zplab/core/registry";
+import type { LabelObject } from "@zplab/core/types/Group";
 import type { BoundingBoxDots } from "@zplab/core/lib/objectBounds";
 import type { SnapRect } from "../../lib/snapGuides";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
@@ -76,5 +78,26 @@ describe("smartSnapDelta", () => {
     const dragged = rect("sel", 83, 300, 40, 40);
     const { dx } = smartSnapDelta(dragged, [], label, 6);
     expect(dx).toBe(-3);
+  });
+});
+
+describe("dragSnapTargets", () => {
+  const label = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
+  const box = (id: string, x: number, extra: Partial<LeafObject> = {}): LabelObject =>
+    ({
+      id, type: "box", x, y: 0, rotation: 0,
+      props: { ...ObjectRegistry.box.defaultProps, width: 10, height: 10 },
+      ...extra,
+    }) as LabelObject;
+
+  it("offers only what is drawn: no hidden leaf, nothing inside a hidden group", () => {
+    const objects: LabelObject[] = [
+      box("dragged", 0),
+      box("shown", 20),
+      box("hidden", 40, { visible: false }),
+      { id: "g", type: "group", x: 0, y: 0, rotation: 0, visible: false, children: [box("inHidden", 60)] },
+    ];
+    const ids = dragSnapTargets(objects, new Set(["dragged"]), { label }).map((r) => r.id);
+    expect(ids).toEqual(["shown"]);
   });
 });
