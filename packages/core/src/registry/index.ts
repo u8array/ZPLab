@@ -2,9 +2,10 @@ import { code128Mode } from '../lib/code128Plan';
 import type { ObjectTypeCore } from '../types/ObjectType';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { gs1CarrierFor, planGs1Fd } from '../lib/gs1Plan';
-import type { LeafType, ObjectRegistryMap } from './leafObject';
+import type { LeafObject, LeafType, ObjectRegistryMap } from './leafObject';
 import { resolveContentSpec, type ContentSpec } from './contentSpec';
 import type { CtrlParity } from '../lib/markerResolve';
+import { withChipPass } from './zplHelpers';
 
 export type { LeafObject, LeafType } from './leafObject';
 
@@ -169,13 +170,18 @@ export function objectResolvesCtrl(obj: { type: string; props?: object }): boole
   return entry?.controlChars === true && !isGs1Active(entry, obj.props);
 }
 
+/** fdFieldFor's single-bind transform for a leaf's own entry, so recall and emit agree.
+ *  The parser keeps reading `fdTransform` raw, since its question is whether an encoder exists. */
+export function loneBindFdTransform(obj: LeafObject): ((payload: string) => string) | undefined {
+  const wire = getEntry(obj.type)?.fdTransform?.(obj);
+  return objectResolvesCtrl(obj) ? withChipPass(wire) : wire;
+}
+
 /** {@link objectResolvesCtrl} refined by how the byte survives to the symbol,
  *  so a preview renders what the firmware prints (see {@link CtrlParity}). */
 export function ctrlParityFor(obj: { type: string; props?: object }): CtrlParity {
   if (!objectResolvesCtrl(obj)) return "literal";
-  const entry = getEntry(obj.type);
-  if (!entry?.ctrlResolvesBound) return "byte";
-  return usesPlainCode128Escape(entry, obj.props) ? "byteOutsideTemplate" : "byteWhole";
+  return usesPlainCode128Escape(getEntry(obj.type), obj.props) ? "byteOutsideTemplate" : "byte";
 }
 
 /** The object's effective content spec: its entry's rule resolved against props. */

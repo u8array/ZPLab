@@ -1,5 +1,5 @@
-import { markerOf, markerRe, type Variable } from "../types/Variable";
-import { isControlBody } from "../types/controlKey";
+import { isLoneMarker, markerOf, markerRe, type Variable } from "../types/Variable";
+import { isControlBody, resolveControlMarkers } from "../types/controlKey";
 import { clockBodyLength } from "./fcTemplate";
 import { escapeRegExp } from "./escapeRegExp";
 
@@ -68,13 +68,19 @@ export function hasTemplateMarkers(content: string): boolean {
  *  and an unknown marker counts as its literal characters (matching emit,
  *  where unresolved markers stay literal). A control-key chip counts one byte
  *  only when `ctrlAsByte` (the field's emitter resolves chips); elsewhere it
- *  stays literal at emit and counts its full marker text. */
+ *  stays literal at emit and counts its full marker text. A bound value's
+ *  chips count as bytes only on a lone bind. */
 export function resolvedContentLength(
   content: string,
   variables: readonly Variable[],
   ctrlAsByte = false,
 ): number {
-  const byName = new Map(variables.map((v) => [v.name, v.defaultValue.length]));
+  const loneBind = ctrlAsByte && isLoneMarker(content);
+  const byName = new Map(variables.map((v) => [v.name, v.defaultValue]));
+  const boundLength = (body: string): number | undefined => {
+    const value = byName.get(body);
+    return value === undefined ? undefined : (loneBind ? resolveControlMarkers(value) : value).length;
+  };
   let len = 0;
   let last = 0;
   for (const m of content.matchAll(markerRe())) {
@@ -82,7 +88,7 @@ export function resolvedContentLength(
     const body = m[1] ?? "";
     len += clockBodyLength(body)
       ?? (ctrlAsByte && isControlBody(body) ? 1 : undefined)
-      ?? byName.get(body)
+      ?? boundLength(body)
       ?? m[0].length;
     last = (m.index ?? 0) + m[0].length;
   }

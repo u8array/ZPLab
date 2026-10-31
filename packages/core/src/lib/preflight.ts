@@ -15,7 +15,8 @@ import { extractTemplateRefs, hasTemplateMarkers, pickEmbedChar } from "./fnTemp
 import { hasClockMarkers, pickClockChars } from "./fcTemplate";
 import { planCode128Fd, planHasLoss } from "./code128Plan";
 import { resolveControlMarkers } from "../types/controlKey";
-import { classifyField, isLoneMarker } from "./variableField";
+import { classifyField } from "./variableField";
+import { isLoneMarker } from "../types/Variable";
 import { parseContent, typedContentIncompleteRows, typedContentMarkerFindings } from "./typedContent";
 import { getObjectStringContent, resolveForRow, variableSubstitutions } from "./variableBinding";
 import { fnConsumerBuckets, isModeDLeaf } from "./gs1ModeDFns";

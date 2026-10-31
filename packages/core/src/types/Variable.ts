@@ -69,6 +69,10 @@ export const markerRe = (): RegExp => /«([^»]+)»/g;
 /** Whole string is exactly one marker: the single-bind shape. */
 export const SINGLE_MARKER_RE = /^«([^»]+)»$/;
 
+export function isLoneMarker(content: string): boolean {
+  return SINGLE_MARKER_RE.test(content);
+}
+
 /** Strip variable-marker delimiters from a literal value. A default/fallback
  *  can't carry a `«…»` marker: preview would resolve it while single-bind export
  *  emits it verbatim (a phantom re-bind / silent drift). Single source for that

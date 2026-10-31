@@ -3,13 +3,18 @@ import { classifyField } from "./variableField";
 import { qrPrintsAsGraphic } from "./objectBounds";
 import { resolveContentPreview } from "./markerResolve";
 import { planCode128Fd } from "./code128Plan";
-import { getEntry, isGs1Active, usesPlainCode128Escape } from "../registry";
+import { ctrlParityFor, getEntry, isGs1Active, loneBindFdTransform, usesPlainCode128Escape } from "../registry";
+import { resolveControlMarkers } from "../types/controlKey";
 import { extractTemplateRefs } from "./fnTemplate";
 import { getObjectStringContent } from "./variableBinding";
 import { fnConsumerBuckets, type FnConsumerBuckets } from "./gs1ModeDFns";
 import type { Variable } from "../types/Variable";
 
-type SlotEncoder = ((s: string) => string) | undefined;
+/** The slot forms a consumer accepts, derived from the raw value. */
+type SlotAccepts = (raw: string) => readonly string[];
+
+const RAW: SlotAccepts = (raw) => [raw];
+const RAW_OR_BYTES: SlotAccepts = (raw) => [raw, resolveControlMarkers(raw)];
 
 export interface SlotConflicts {
   fns: Set<number>;
@@ -17,10 +22,9 @@ export interface SlotConflicts {
   consumerIds: Set<string>;
 }
 
-/** Slots whose consumers would put DIFFERENT bytes in the one substituted
- *  value: the emitting field wins, every consumer prints its encoding.
- *  Values must be RAW (chips unresolved): fdFieldFor transforms the
- *  unresolved default; the code128 plans resolve chips internally. */
+/** Slots with no form every consumer accepts: the emitting field wins and every
+ *  other consumer prints that encoding. Values must be RAW with chips unresolved,
+ *  since the consumers resolve them. */
 export function slotEncodingConflicts(
   objects: readonly LabelObject[],
   variables: readonly Variable[],
@@ -30,13 +34,13 @@ export function slotEncodingConflicts(
   const byName = new Map(variables.map((v) => [v.name, v]));
   const perSlot = new Map<
     number,
-    { encoders: SlotEncoder[]; vars: Set<Variable>; leafIds: string[] }
+    { consumers: SlotAccepts[]; vars: Set<Variable>; leafIds: string[] }
   >();
-  const note = (v: Variable, encode: SlotEncoder, leafId: string) => {
+  const note = (v: Variable, accepts: SlotAccepts, leafId: string) => {
     const slot =
       perSlot.get(v.fnNumber) ??
-      { encoders: [], vars: new Set<Variable>(), leafIds: [] };
-    slot.encoders.push(encode);
+      { consumers: [], vars: new Set<Variable>(), leafIds: [] };
+    slot.consumers.push(accepts);
     slot.vars.add(v);
     slot.leafIds.push(leafId);
     perSlot.set(v.fnNumber, slot);
@@ -57,34 +61,34 @@ export function slotEncodingConflicts(
     if (cls.kind === "single") {
       // fdFieldFor encodes the single-bind value; a plain-^BC lone bind on a
       // shared slot is degraded to sharedRaw by the emit (barcode1d, rawFdFns).
-      note(
-        cls.variable,
+      const encode =
         usesPlainCode128Escape(entry, props) && buckets.plainShared.has(cls.variable.fnNumber)
           ? (s: string) => planCode128Fd(s, "sharedRaw").fd
-          : entry.fdTransform?.(leaf),
-        leaf.id,
-      );
+          : loneBindFdTransform(leaf);
+      note(cls.variable, encode ? (raw) => [encode(raw)] : RAW, leaf.id);
       continue;
     }
-    // Every other shape embeds the slot inside its own payload and reads it raw.
+    // A type whose template keeps the byte also accepts it, since a lone bind of its kind writes bytes into the slot.
+    const accepts = ctrlParityFor(leaf) === "byte" ? RAW_OR_BYTES : RAW;
     for (const name of extractTemplateRefs(c)) {
       const v = byName.get(name);
-      if (v) note(v, undefined, leaf.id);
+      if (v) note(v, accepts, leaf.id);
     }
   }
   const fns = new Set<number>();
   const consumerIds = new Set<string>();
-  for (const [fn, { encoders, vars, leafIds }] of perSlot) {
-    if (encoders.length < 2) continue;
+  for (const [fn, { consumers, vars, leafIds }] of perSlot) {
+    if (consumers.length < 2) continue;
     // Exclusive code128-family slots are emit-coordinated: all consumers
     // share the ^BC grammar, so byte differences (>0) decode identically.
     if (buckets.modeDExclusive.has(fn) || buckets.plainExclusive.has(fn)) continue;
-    // All-raw readers cannot diverge; skip the row walk.
-    if (encoders.every((e) => e === undefined)) continue;
+    // All-raw readers cannot diverge, so skip the row walk. RAW is the one shared constant.
+    if (consumers.every((accepts) => accepts === RAW)) continue;
     const diverges = [...vars].some((v) =>
-      substitutionsOf(v).some(
-        (val) => new Set(encoders.map((e) => (e ? e(val) : val))).size > 1,
-      ),
+      substitutionsOf(v).some((val) => {
+        const forms = consumers.map((accepts) => accepts(val));
+        return !forms.flat().some((form) => forms.every((f) => f.includes(form)));
+      }),
     );
     if (diverges) {
       fns.add(fn);

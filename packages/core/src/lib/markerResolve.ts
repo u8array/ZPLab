@@ -1,7 +1,5 @@
 import { hasTemplateMarkers, resolveTemplateMarkers } from "./fnTemplate";
-// SINGLE_MARKER_RE direct: variableField's isLoneMarker would cycle back into
-// this leaf module via variableBinding.
-import { SINGLE_MARKER_RE } from "../types/Variable";
+import { isLoneMarker } from "../types/Variable";
 import { code128EscapeLiterals, code128PlainFd } from "./code128Subset";
 import { channelDatesFrom, hasClockMarkers, resolveClockMarkers, type ChannelDates } from "./fcTemplate";
 import { hasControlMarkers, resolveControlMarkers, stripControlBytes } from "../types/controlKey";
@@ -39,14 +37,14 @@ export function clockDatesThunk(clock?: ClockResolveCtx): () => ChannelDates {
   );
 }
 
-/** Where the emitter turns a chip into a byte, so preview resolution mirrors it.
- *  `byte` in the field's own content, `byteWhole` in a bound whole value too.
- *  `byteOutsideTemplate` as byteWhole, minus ^FE templates, where ^FH drops the bytes. */
-export type CtrlParity = "literal" | "byte" | "byteWhole" | "byteOutsideTemplate";
+/** Where the emitter turns a chip into a byte, so preview resolution mirrors it. `byte` resolves
+ *  in the field's own content and in a bound whole value. `byteOutsideTemplate` does the same but
+ *  drops the byte in ^FE templates, where ^FH is lossy. `literal` resolves nowhere. */
+export type CtrlParity = "literal" | "byte" | "byteOutsideTemplate";
 
-/** Shared control -> clock -> variable order: field-own display markers first
- *  (a chip in substituted data stays literal, matching export; lone binds are
- *  the exception below). `ctrl` mirrors the emitter's capability gate. */
+/** Shared control -> clock -> variable order: field-own display markers first. A chip in
+ *  substituted data stays literal, since a template consumer prints the slot verbatim. Lone
+ *  binds are the exception below, and `ctrl` mirrors the emitter's capability gate. */
 export function resolveMarkerChain(
   content: string,
   resolveVar: (name: string) => string | undefined,
@@ -65,7 +63,7 @@ export function resolveMarkerChain(
     // Emitter gate, evaluated pre-^FC there too: clock markers keep the lossy
     // ^FH path; a lone bind is a whole ^FD and takes the field's whole-value
     // transform. Chips-only payloads are bytes by now and match neither gate.
-    loneBind = (ctrl === "byteWhole" || ctrl === "byteOutsideTemplate") && SINGLE_MARKER_RE.test(next);
+    loneBind = ctrl !== "literal" && isLoneMarker(next);
     templateFd = ctrl === "byteOutsideTemplate" && hasTemplateMarkers(next) && !loneBind;
     if (templateFd) next = code128EscapeLiterals(next);
     if (hasClockMarkers(next)) next = resolveClockMarkers(next, getDates());
@@ -76,8 +74,7 @@ export function resolveMarkerChain(
       return value === undefined ? value : code128PlainFd(value);
     });
   }
-  // The emitter resolves chips inside a lone-bind value too (fdTransformFor
-  // runs resolveControlMarkers on the whole-field default/CSV cell).
+  // The emitter resolves chips inside a lone-bind value too, see withChipPass.
   if (loneBind && hasControlMarkers(next)) next = resolveControlMarkers(next);
   // After substitution, so a control byte from the bound value drops too.
   return templateFd ? stripControlBytes(next) : next;

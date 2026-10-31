@@ -6,7 +6,7 @@ import { code128FdToBytes, hasControlBytes } from "./code128Subset";
 import { planCode128Fd } from "./code128Plan";
 import { extractTemplateRefs, hasTemplateMarkers } from "./fnTemplate";
 import { controlBytesToMarkers, resolveControlMarkers } from "../types/controlKey";
-import { isLoneMarker } from "./variableField";
+import { isLoneMarker } from "../types/Variable";
 import { markerOf } from "../types/Variable";
 import { getObjectStringContent } from "./variableBinding";
 import { parseLabelMetaComment, type LabelMeta } from "./zplLabelMeta";

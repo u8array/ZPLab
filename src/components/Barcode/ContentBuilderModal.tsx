@@ -135,7 +135,8 @@ function ContentBuilder({ objectId }: { objectId: string }) {
   const columnMapping = useLabelStore((s) => s.columnMapping);
   const markerErrors = typedContentMarkerFindings(type, fields, variables, dataset, columnMapping);
   const valid = isContentComplete(type, validationFields, fields) && Object.keys(markerErrors).length === 0;
-  const ec = recommendedEc(resolveDefaults(content));
+  const resolveCtrl = target ? objectResolvesCtrl(target) : false;
+  const ec = recommendedEc(resolveDefaults(content, { resolveCtrl }));
   // EC recommendation is QR-only; DataMatrix uses fixed ECC200.
   const isQr = target?.type === "qrcode";
   const currentEc =
@@ -252,12 +253,10 @@ function ContentBuilder({ objectId }: { objectId: string }) {
         <section className="flex flex-col gap-1">
           <div className="flex items-center justify-between gap-2">
             <span className="text-[10px] text-muted">{tc.preview}</span>
-            <span className="text-[10px] text-muted">{tc.charsFmt.replace("{n}", String(resolvedContentLength(content, variables, target ? objectResolvesCtrl(target) : false)))}</span>
+            <span className="text-[10px] text-muted">{tc.charsFmt.replace("{n}", String(resolvedContentLength(content, variables, resolveCtrl)))}</span>
           </div>
-          {/* Print preview: markers resolved in the assembled payload,
-              matching the GS1 modal's semantics. */}
           <code className="text-xs font-mono text-text break-all whitespace-pre-wrap bg-surface-2 rounded px-2 py-1">
-            {resolveDefaults(content)}
+            {resolveDefaults(content, { resolveCtrl })}
           </code>
           {isQr && (
             <div className="flex items-center gap-2">

@@ -268,6 +268,11 @@ export function fdField(payload: string, arm = ''): string {
   return `^FH${FH_DELIM}${arm}^FD${escaped}^FS`;
 }
 
+/** The chip pass runs first so the wire form escapes the byte, not the marker text. */
+export function withChipPass(wire?: (payload: string) => string): (payload: string) => string {
+  return wire ? (s) => wire(resolveControlMarkers(s)) : resolveControlMarkers;
+}
+
 /** Single-bind content (`«name»`) emits `^FN{n}` + default; a template expands
  *  to `^FE` embeds, everything else stays literal. `transform` (e.g. GS1 FNC1
  *  escaping) is applied to the final field-data payload so it composes with
@@ -293,7 +298,8 @@ export function fdFieldFor(
     if (cls.kind === "single") {
       const v = cls.variable;
       if (ctx.bareFnSlots?.has(v.fnNumber)) return `^FN${v.fnNumber}^FS`;
-      return `^FN${v.fnNumber}${fdField(transform(encodeDefault(v.defaultValue)))}`;
+      const whole = resolveCtrl ? withChipPass(transform) : transform;
+      return `^FN${v.fnNumber}${fdField(whole(encodeDefault(v.defaultValue)))}`;
     }
   }
   // Template path: arm ^FE/^FC on this field (absent ctx delim = templates not
@@ -314,7 +320,7 @@ export function fdFieldFor(
     payload = markersToTokens(payload, ctx.clockChars);
     arm = `^FC${ctx.clockChars.date},${ctx.clockChars.time},${ctx.clockChars.tertiary}${arm}`;
   }
-  // Control-key chips become their raw byte; fdField hex-escapes it via ^FH.
+  // Byte before transform, as at withChipPass.
   if (resolveCtrl && hasControlMarkers(payload)) payload = resolveControlMarkers(payload);
   return fdField(transform(payload), arm);
 }

@@ -7,7 +7,7 @@ import {
   typedGs1ToDataMatrixFd,
 } from '../lib/dataMatrixFd';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
-import { isLoneMarker } from '../lib/variableField';
+import { isLoneMarker } from '../types/Variable';
 import { planGs1Fd } from '../lib/gs1Plan';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
 import { type ZplRotation, ROTATION_SPEC } from './rotation';

@@ -2,7 +2,7 @@ import { mmToDots } from './coordinates';
 import { CONTROL_BYTES_RE } from './binaryText';
 import { unsafeRawFieldSpans } from './zplParser/helpers';
 import { rewriteRawFieldSpans } from './zplParser/decoders/gfa';
-import { getEntry, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
+import { getEntry, loneBindFdTransform, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
 import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
 import { stripZplParamChars } from './zplParams';
 import { isRecallableFormatPath, storageKey, storageRefMatchesPath } from './storagePath';
@@ -866,7 +866,7 @@ function planRecalls(
       && plainSharedFns.has(v.fnNumber);
     const transform = boundPlainShared
       ? (s: string) => planCode128Fd(s, 'sharedRaw').fd
-      : (bound && !isGroup(bound) ? boundEntry?.fdTransform?.(bound) : undefined) ??
+      : (bound && !isGroup(bound) ? loneBindFdTransform(bound) : undefined) ??
         (modeDFns.has(v.fnNumber)
           ? escapeGs1FdValue
           : plain128Fns.has(v.fnNumber)

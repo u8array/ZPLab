@@ -7,7 +7,8 @@ import { serialFieldData, type SerialMode } from './serialField';
 import { commitBarcodeWidthHeightTransform, moduleWidthSpec } from './transformHelpers';
 import { hasTemplateMarkers } from '../lib/fnTemplate';
 import { moduleTooSmallPreflight } from '../lib/barcodeScannability';
-import { classifyField, isLoneMarker } from '../lib/variableField';
+import { classifyField } from '../lib/variableField';
+import { isLoneMarker } from '../types/Variable';
 import { code128Mode, planCode128Fd } from '../lib/code128Plan';
 import { resolveControlMarkers } from '../types/controlKey';
 import { parseGs1ToSegments, segmentsToZplFd } from '../lib/gs1';
@@ -129,7 +130,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
           const escape = code128Mode(obj.props) === 'N' ? config.fdPlainEscape : undefined;
           // A lone marker (single-bind) still transforms its default/CSV value;
           // only a real template is skipped. Ctrl-capable types resolve chips
-          // first: chips-only is non-template there (whole-field ctrlEncode).
+          // first: chips-only is non-template there.
           const isTemplate =
             hasTemplateMarkers(
               config.controlChars === true
@@ -137,14 +138,12 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
                 : obj.props.content,
             ) && !isLoneMarker(obj.props.content);
           const base = isTemplate ? undefined : gs1 ? gs1ModeDFd : config.fdContent;
-          // The plain grammar's own encoder plans the bytes, otherwise fdField's ^FH pass carries them.
-          const chips = !isTemplate && config.controlChars === true && !gs1;
-          const whole = chips && escape && config.ctrlFdEncode
+          // The plain grammar encodes a control byte in its invocation form. Any other m leaves it to ^FH,
+          // and so does a template, as ^FE tokens cannot survive inside the invocation form.
+          const wire = !isTemplate && config.controlChars === true && !gs1 && escape && config.ctrlFdEncode
             ? (s: string) => planCode128Fd(s, 'whole').fd
-            : chips && escape
-              ? (s: string) => escape(resolveControlMarkers(s))
-              : chips ? resolveControlMarkers : escape;
-          return !base ? whole : !whole ? base : (s: string) => whole(base(s));
+            : escape;
+          return !base ? wire : !wire ? base : (s: string) => wire(base(s));
         }
       : undefined;
 
@@ -175,7 +174,6 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
     gs1Capable: config.gs1Capable,
     controlChars: config.controlChars,
     ctrlNeedsOwnEscape: config.ctrlFdEncode !== undefined,
-    ctrlResolvesBound: config.controlChars === true,
 
     preflight: moduleTooSmallPreflight<Barcode1DProps>('moduleWidth'),
 
@@ -245,9 +243,6 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
           fdTransformOnce = undefined;
         }
       }
-      // Control bytes on non-template payloads take the symbology's own
-      // escape via the fdTransformFor ctrlEncode wrap; templates keep ^FH
-      // (^FE tokens cannot survive inside the escape form).
       const fieldData = obj.props.serial && !p.gs1
         // GS1 excluded (legacy models may carry both flags): the alnum seed
         // filter would eat the >8 FNC1 and merge AI values. Serial seeds skip
