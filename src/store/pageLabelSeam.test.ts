@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { describe, it, expect } from "vitest";
+import { beforeAll, describe, it, expect } from "vitest";
 
 // The brand's one blind spot: a cast mints it out of thin air, so the set of
 // minting sites is pinned here instead of by the type.
@@ -77,29 +77,33 @@ describe("page-label seam", () => {
     }
   });
 
-  const sourceFiles = (root: string): string[] =>
-    readdirSync(root + "src", { recursive: true, encoding: "utf8" })
-      .map((f) => "src/" + f)
-      .concat(
-        readdirSync(root + "packages", { recursive: true, encoding: "utf8" }).map(
-          (f) => "packages/" + f,
-        ),
-        readdirSync(root + "e2e", { recursive: true, encoding: "utf8" }).map((f) => "e2e/" + f),
-      )
-      .map((f) => f.replaceAll("\\", "/"))
-      .filter((f) => /\.tsx?$/.test(f) && !f.includes(".test.") && !f.includes("node_modules"));
-
-  it("only the documented resolvers mint the PageLabel brand", () => {
+  describe("pinned sites", () => {
     const root = fileURLToPath(new URL("../../", import.meta.url));
-    const minting = sourceFiles(root).filter((f) => MINT.test(readFileSync(root + f, "utf8")));
-    expect(minting.sort()).toEqual(MINTERS.sort());
-  });
+    let sources: { file: string; text: string }[];
 
-  it("only the pinned callers invoke the unbranded generateZPL entry", () => {
-    const root = fileURLToPath(new URL("../../", import.meta.url));
-    const callers = sourceFiles(root).filter((f) =>
-      GENERATE_ZPL_CALL.test(readFileSync(root + f, "utf8")),
-    );
-    expect(callers.sort()).toEqual(GENERATE_ZPL_CALLERS.sort());
+    beforeAll(() => {
+      // Not from `packages`: that would walk every installed dependency.
+      // No existence check: a renamed tree must fail, not shrink the scan.
+      const packageTrees = readdirSync(root + "packages").map((p) => `packages/${p}/src`);
+      sources = ["src", "e2e", ...packageTrees]
+        .flatMap((tree) =>
+          readdirSync(root + tree, { recursive: true, encoding: "utf8" }).map(
+            (f) => `${tree}/${f.replaceAll("\\", "/")}`,
+          ),
+        )
+        .filter((f) => /\.tsx?$/.test(f) && !f.includes(".test."))
+        .map((file) => ({ file, text: readFileSync(root + file, "utf8") }));
+    });
+
+    const filesMatching = (re: RegExp): string[] =>
+      sources.filter((s) => re.test(s.text)).map((s) => s.file);
+
+    it("only the documented resolvers mint the PageLabel brand", () => {
+      expect(filesMatching(MINT).sort()).toEqual(MINTERS.sort());
+    });
+
+    it("only the pinned callers invoke the unbranded generateZPL entry", () => {
+      expect(filesMatching(GENERATE_ZPL_CALL).sort()).toEqual(GENERATE_ZPL_CALLERS.sort());
+    });
   });
 });
