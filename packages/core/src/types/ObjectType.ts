@@ -81,14 +81,12 @@ export interface ObjectTypeCore<P extends object = object> {
   /** Symbology can encode raw control bytes (TAB/CR/...): gates the content
    *  editor's control-key chips and the import's byte-to-chip tokenising.
    *  False/absent for fixed-charset symbologies (EAN/UPC, Code 39) and text.
-   *  Each registry feeds the same constant to its emitter, so flag and chips never desync. */
+   *  Each registry feeds the same constant to its emitter and clears it under GS1, so flag and chips never desync. */
   controlChars?: boolean;
   /** At ^BC m=N, control bytes reach this symbology's symbol only through its
    *  own escape form, since the firmware drops ^FH hex there. Set by the
    *  emitters that carry such an encoder. */
   ctrlNeedsOwnEscape?: boolean;
-  /** The type's `fdTransform` resolves control chips in a whole bound value. */
-  ctrlResolvesBound?: boolean;
   /** 1:1 aspect-locked free resize (ellipse with lockAspect). For
    *  integer-module 2D symbologies use uniformScaleProp instead. */
   uniformScale?: boolean | ((props: P) => boolean);
@@ -107,7 +105,8 @@ export interface ObjectTypeCore<P extends object = object> {
   toZPL: (obj: LabelObjectBase & { props: P }, ctx?: ZplEmitContext) => string;
   /** Optional ^FD payload transform (QR `{ec}A,` prefix, UPC-E compaction, GS1
    *  FNC1 escaping). Returned per object so the single emit AND the CSV batch
-   *  ^FN override apply the same transform; undefined when none applies. */
+   *  ^FN override apply the same transform through loneBindFdTransform. Undefined
+   *  when none applies. */
   fdTransform?: (
     obj: LabelObjectBase & { props: P },
   ) => ((payload: string) => string) | undefined;

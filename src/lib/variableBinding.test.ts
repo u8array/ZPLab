@@ -243,7 +243,7 @@ describe('applyBindingToObject', () => {
     const vars = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'A\tB' }];
     const out = applyBindingToObject(o, vars, null, 'preview', undefined, 'byteOutsideTemplate');
     expect((out as unknown as { props: { content: string } }).props.content).toBe('A\tB');
-    // A chip inside the lone-bind default resolves too, like fdTransformFor.
+    // A chip inside the lone-bind default resolves too, like withChipPass.
     const chipVars = [{ id: 'v1', name: 'sku', fnNumber: 1, defaultValue: 'A«ctrl:TAB»B' }];
     const outChip = applyBindingToObject(o, chipVars, null, 'preview', undefined, 'byteOutsideTemplate');
     expect((outChip as unknown as { props: { content: string } }).props.content).toBe('A\tB');

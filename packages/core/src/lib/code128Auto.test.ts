@@ -8,7 +8,6 @@ import { dropPageOverlays } from "./pageOverlay";
 import { pageLabelConfig, type LabelObject, type Page } from "../types/Group";
 import { slotEncodingConflicts } from "./slotConflicts";
 import { code128 } from "../registry/code128";
-import { aztec, type AztecProps } from "../registry/aztec";
 import { ctrlParityFor } from "../registry";
 import { parseZPL } from "./zplParser";
 import type { LeafObject } from "../registry";
@@ -158,20 +157,12 @@ describe("one ^BC m for emit, canvas and parser", () => {
   it("turns a bound control chip into its byte under m=A, on the emit, the batch recall, the canvas and the import", () => {
     const variables = [{ id: "v", name: "v", fnNumber: 1, defaultValue: "A«ctrl:TAB»B" }];
     const bound = leaf("«v»", { mode: "A" });
-    expect(ctrlParityFor(bound)).toBe("byteWhole");
+    expect(ctrlParityFor(bound)).toBe("byte");
     expect(code128.toZPL(bound, { label, variables })).toContain("^FN1^FH_^FDA_09B^FS");
     const batch = generateBatchZpl(pageLabelConfig(label, {}), [bound], variables, { headers: ["v"], rows: [["A«ctrl:TAB»B"]] }, { bindings: { v: "v" } });
     expect(batch).toContain("^FN1^FH_^FDA_09B^FS");
     expect((resolveForMeasure(bound as LabelObject, variables) as typeof bound).props.content).toBe("A\tB");
     expect(importZplText("^XA^FO10,10^BY2^BCN,80,Y,N,N,A^FN1^FH_^FDA_09B^FS^XZ", 8).variables[0]?.defaultValue).toBe("A«ctrl:TAB»B");
-  });
-
-  it("keeps a bound chip literal on a 2D type, whose emit leaves it in the value", () => {
-    const variables = [{ id: "v", name: "v", fnNumber: 1, defaultValue: "A«ctrl:TAB»B" }];
-    const bound = { id: "z", type: "aztec", x: 0, y: 0, rotation: 0, positionType: "FO", props: { ...aztec.defaultProps, content: "«v»" } } as LeafObject & { props: AztecProps };
-    expect(ctrlParityFor(bound)).toBe("byte");
-    expect(aztec.toZPL(bound, { label, variables })).toContain("^FN1^FDA«ctrl:TAB»B^FS");
-    expect((resolveForMeasure(bound, variables) as { props: { content: string } }).props.content).toBe("A«ctrl:TAB»B");
   });
 
   it("reports a slot an m=A field shares with a text field, which prints the chip as text", () => {

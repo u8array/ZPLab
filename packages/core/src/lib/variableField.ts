@@ -11,12 +11,6 @@ import { extractClockTokens } from "./fcTemplate";
 export type BindableLeaf = LabelObjectBase & { props: { content: string } };
 export const asLabelObject = (obj: BindableLeaf): LabelObject => obj as unknown as LabelObject;
 
-/** True when content is exactly one `«marker»` and nothing else: the shape that
- *  emits inline (single-bind) rather than expanding to `^FE` embeds. */
-export function isLoneMarker(content: string): boolean {
-  return SINGLE_MARKER_RE.test(content);
-}
-
 /** The single-bound Variable for a field (content === exactly one known
  *  marker), or undefined for template/literal/empty content. Drives the layer
  *  badge and the canvas fallback tint. */

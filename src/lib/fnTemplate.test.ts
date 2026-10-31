@@ -169,6 +169,12 @@ describe("resolvedContentLength", () => {
     expect(resolvedContentLength("A«ctrl:TAB»B", [], true)).toBe(3);
     expect(resolvedContentLength("A«ctrl:TAB»B", [])).toBe("A«ctrl:TAB»B".length);
   });
+  it("counts a bound value's chips as bytes only on a lone bind", () => {
+    const bound = [{ id: "v", name: "v", fnNumber: 1, defaultValue: "A«ctrl:TAB»B" }];
+    expect(resolvedContentLength("«v»", bound, true)).toBe(3);
+    expect(resolvedContentLength("«v»", bound)).toBe("A«ctrl:TAB»B".length);
+    expect(resolvedContentLength("x«v»y", bound, true)).toBe("xA«ctrl:TAB»By".length);
+  });
   it("handles empty defaults and plain literals", () => {
     expect(resolvedContentLength("abc", VARS)).toBe(3);
     expect(resolvedContentLength("«e»", [{ id: "v", name: "e", fnNumber: 3, defaultValue: "" }])).toBe(0);
