@@ -1,5 +1,18 @@
+import type { Channel } from "@tauri-apps/api/core";
 import { isDesktopShell } from "./platform";
 import { errorMessage } from "./errorMessage";
+
+/** Mirrors the Rust ReplyEnd. */
+export type ReplyEnd = "closed" | "deadline" | "stopped" | "lost";
+
+/** Mirrors the Rust StreamDone. */
+export interface StreamDone {
+  end: ReplyEnd;
+  chunks: number;
+}
+
+/** The `done` member the TCP and USB query results share. */
+export type StreamDoneResult = { kind: "done" } & StreamDone;
 
 /** Mirrors the Rust UsbPrinter DTO (one USB printer). */
 export interface UsbPrinter {
@@ -22,8 +35,7 @@ export type UsbPrintResult =
 
 /** Mirrors the Rust UsbQueryResult; `error` covers the invoke rejection. */
 export type UsbQueryResult =
-  | { kind: "data"; body: string }
-  | { kind: "silent" }
+  | StreamDoneResult
   | { kind: "permission_denied" }
   | { kind: "not_found" }
   | UsbError;
@@ -59,9 +71,8 @@ export function sendZplUsb(id: string, zpl: string): Promise<UsbPrintResult> {
   return invokeUsbCommand<UsbPrintResult>("send_zpl_usb", { device: id, zpl });
 }
 
-/** Send ZPL and read the printer's reply. Desktop transports only. */
-export function queryZplUsb(id: string, zpl: string): Promise<UsbQueryResult> {
-  return invokeUsbCommand<UsbQueryResult>("query_zpl_usb", { device: id, zpl });
+export function queryZplUsb(id: string, zpl: string, deadlineMs: number, onChunk: Channel<string>): Promise<UsbQueryResult> {
+  return invokeUsbCommand<UsbQueryResult>("query_zpl_usb", { device: id, zpl, deadlineMs, onChunk });
 }
 
 export async function setupUsbAccess(): Promise<void> {

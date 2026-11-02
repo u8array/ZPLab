@@ -163,24 +163,9 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
           set({ previewMode: { status: 'active', ...render } });
           return;
         }
-        case 'unconfigured':
-        case 'busy':
-        case 'unparsed':
-        case 'silent':
-        case 'ignored':
-        case 'refused':
-        case 'unreachable':
-        case 'not_found':
-        case 'permission_denied':
-        case 'error':
+        default:
           fail(printerFailureMessage(result));
           return;
-        default: {
-          // Exhaustive: a new result kind must be handled here, not silently
-          // fall through to the Labelary path below with printer-specific ZPL.
-          const _exhaustive: never = result;
-          throw new Error(`unhandled preview result: ${JSON.stringify(_exhaustive)}`);
-        }
       }
     }
 

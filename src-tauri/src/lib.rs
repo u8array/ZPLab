@@ -19,6 +19,7 @@ pub fn run() {
   let builder = tauri::Builder::default()
     .manage(mcp::McpState::default())
     .manage(system_fonts::SystemFonts::default())
+    .manage(transport::QueryStops::default())
     // In setup, not manage(): loading the persisted grants needs the app paths.
     .setup(|app| {
       let grants = scope::PathGrants::load(app.handle());
@@ -28,6 +29,7 @@ pub fn run() {
     .invoke_handler(tauri::generate_handler![
       print::send_zpl_tcp,
       print::query_zpl_tcp,
+      transport::query_stop,
       print::list_printers,
       print::send_zpl_local,
       usb::list_usb_printers,

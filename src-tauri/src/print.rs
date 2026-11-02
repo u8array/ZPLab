@@ -1,6 +1,9 @@
 use crate::transport::{
-  blocking, check_payload, connect, read_reply, write_all_timeout, ConnectError,
+  blocking, check_payload, connect, stream_done, write_all_timeout, ChunkSink, ConnectError,
+  QueryStops, StopFlag, StreamDone,
 };
+use std::time::Duration;
+use tauri::ipc::Channel;
 
 /// Kinds mirror the frontend NetworkPrintResult union. `unreachable` (not the
 /// browser's ambiguous `no_response`) says the send did not complete, so the UI
@@ -41,27 +44,45 @@ pub async fn send_zpl_tcp(host: String, port: u16, zpl: String) -> Result<TcpSen
   Ok(TcpSendResult::Sent)
 }
 
-/// Reply kinds for a bidirectional query. `Data` carries the printer's raw
-/// response (e.g. a ~DY graphic upload); connect failures mirror TcpSendResult
-/// so the UI reuses its message mapping.
-#[derive(serde::Serialize)]
+#[derive(Debug, PartialEq, Eq, serde::Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum TcpQueryResult {
-  Data {
-    body: String,
-  },
-  /// The printer took the bytes and sent nothing back.
-  Silent,
+  Done(StreamDone),
   Refused,
   Unreachable,
 }
 
-/// Send ZPL and read the reply (host-status / graphic-upload commands like
-/// ^HY answer on the same connection). Not for plain print jobs: those use
-/// send_zpl_tcp, which never waits.
+/// Not for plain print jobs: those use send_zpl_tcp, which never waits.
 #[tauri::command]
-pub async fn query_zpl_tcp(host: String, port: u16, zpl: String) -> Result<TcpQueryResult, String> {
-  let host = host.trim();
+pub async fn query_zpl_tcp(
+  host: String,
+  port: u16,
+  zpl: String,
+  deadline_ms: u64,
+  on_chunk: Channel<String>,
+  stops: tauri::State<'_, QueryStops>,
+) -> Result<TcpQueryResult, String> {
+  let stop = stops.begin(on_chunk.id());
+  let mut sink = ChunkSink::new(&on_chunk);
+  query_tcp(
+    host.trim(),
+    port,
+    &zpl,
+    Duration::from_millis(deadline_ms),
+    &stop.flag,
+    &mut sink,
+  )
+  .await
+}
+
+async fn query_tcp(
+  host: &str,
+  port: u16,
+  zpl: &str,
+  deadline: Duration,
+  stop: &StopFlag,
+  sink: &mut ChunkSink<'_>,
+) -> Result<TcpQueryResult, String> {
   validate(host, port, zpl.len())?;
 
   let mut stream = match connect(host, port).await {
@@ -71,15 +92,9 @@ pub async fn query_zpl_tcp(host: String, port: u16, zpl: String) -> Result<TcpQu
   };
 
   write_all_timeout(&mut stream, zpl.as_bytes()).await?;
-
-  let body = read_reply(&mut stream).await?;
-  if body.is_empty() {
-    return Ok(TcpQueryResult::Silent);
-  }
-  // ~DY payloads are ASCII (ZB64); lossy keeps any stray control bytes benign.
-  Ok(TcpQueryResult::Data {
-    body: String::from_utf8_lossy(&body).into_owned(),
-  })
+  Ok(TcpQueryResult::Done(
+    stream_done(&mut stream, deadline, stop, sink).await?,
+  ))
 }
 
 /// One local OS print queue for the picker. driver_name/port_name let the UI
@@ -143,6 +158,7 @@ pub async fn send_zpl_local(printer: String, zpl: String) -> Result<(), String> 
 #[cfg(test)]
 mod tests {
   use super::*;
+  use crate::transport::ReplyEnd;
   use std::time::Duration;
   use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
@@ -190,8 +206,55 @@ mod tests {
     });
   }
 
+  async fn query_collecting(port: u16, zpl: &str, deadline: Duration) -> (String, TcpQueryResult) {
+    let (channel, texts) = crate::transport::collecting_channel();
+    let mut sink = ChunkSink::new(&channel);
+    let res = query_tcp(
+      "127.0.0.1",
+      port,
+      zpl,
+      deadline,
+      &StopFlag::default(),
+      &mut sink,
+    )
+    .await
+    .unwrap();
+    let body = texts.lock().unwrap().concat();
+    (body, res)
+  }
+
   #[test]
-  fn query_returns_the_printers_reply() {
+  fn query_streams_an_answer_that_comes_seconds_after_the_first() {
+    rt().block_on(async {
+      let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+      let port = listener.local_addr().unwrap().port();
+      tokio::spawn(async move {
+        let (mut sock, _) = listener.accept().await.unwrap();
+        let mut buf = [0u8; 1024];
+        let _ = sock.read(&mut buf).await.unwrap();
+        sock.write_all(b"\x02030,0,0,0892\x03\r\n").await.unwrap();
+        tokio::time::sleep(Duration::from_secs(2)).await;
+        sock.write_all(b"HEADER 4711 END").await.unwrap();
+      });
+      let (body, res) = query_collecting(
+        port,
+        "^XA~HS^FN1^FD4711^FS^HV1,20,HEADER ,END^XZ",
+        Duration::from_secs(30),
+      )
+      .await;
+      assert_eq!(body, "\u{2}030,0,0,0892\u{3}\r\nHEADER 4711 END");
+      assert_eq!(
+        res,
+        TcpQueryResult::Done(StreamDone {
+          end: ReplyEnd::Closed,
+          chunks: 2
+        })
+      );
+    });
+  }
+
+  #[test]
+  fn query_ends_at_its_deadline_while_the_printer_keeps_the_socket_open() {
     rt().block_on(async {
       let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
       let port = listener.local_addr().unwrap().port();
@@ -203,21 +266,23 @@ mod tests {
           .write_all(b"~DYPRE,A,G,4,2,:B64:gAE=:AAAA")
           .await
           .unwrap();
-        // Keep the socket open: the client must end on the idle gap, not FIN.
         tokio::time::sleep(Duration::from_secs(5)).await;
       });
-      let res = query_zpl_tcp("127.0.0.1".into(), port, "^XA^HYR:PRE.GRF^XZ".into())
-        .await
-        .unwrap();
-      match res {
-        TcpQueryResult::Data { body } => assert!(body.starts_with("~DYPRE,A,G,4,2,")),
-        _ => panic!("expected data"),
-      }
+      let (body, res) =
+        query_collecting(port, "^XA^HYR:PRE.GRF^XZ", Duration::from_millis(1500)).await;
+      assert_eq!(body, "~DYPRE,A,G,4,2,:B64:gAE=:AAAA");
+      assert!(matches!(
+        res,
+        TcpQueryResult::Done(StreamDone {
+          end: ReplyEnd::Deadline,
+          ..
+        })
+      ));
     });
   }
 
   #[test]
-  fn query_reports_silent_when_the_printer_stays_quiet() {
+  fn query_ends_empty_when_the_printer_closes_without_a_reply() {
     rt().block_on(async {
       let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
       let port = listener.local_addr().unwrap().port();
@@ -227,11 +292,26 @@ mod tests {
         let _ = sock.read(&mut buf).await.unwrap();
         // Close without replying: print-only endpoints behave like this.
       });
-      let res = query_zpl_tcp("127.0.0.1".into(), port, "^XA^XZ".into())
-        .await
-        .unwrap();
-      assert!(matches!(res, TcpQueryResult::Silent));
+      let (body, res) = query_collecting(port, "^XA^XZ", Duration::from_secs(30)).await;
+      assert!(body.is_empty());
+      assert_eq!(
+        res,
+        TcpQueryResult::Done(StreamDone {
+          end: ReplyEnd::Closed,
+          chunks: 0
+        })
+      );
     });
+  }
+
+  #[test]
+  fn query_results_serialize_with_kind_end_and_chunks() {
+    let json = serde_json::to_string(&TcpQueryResult::Done(StreamDone {
+      end: ReplyEnd::Stopped,
+      chunks: 2,
+    }))
+    .unwrap();
+    assert_eq!(json, r#"{"kind":"done","end":"stopped","chunks":2}"#);
   }
 
   #[test]
@@ -245,6 +325,8 @@ mod tests {
         .await
         .unwrap();
       assert!(matches!(res, TcpSendResult::Refused));
+      let (_, res) = query_collecting(port, "^XA^XZ", Duration::from_secs(30)).await;
+      assert_eq!(res, TcpQueryResult::Refused);
     });
   }
 }

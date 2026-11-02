@@ -106,6 +106,9 @@ export function bitmapToDataUrl(bmp: PrinterBitmap): string | null {
   return canvas.toDataURL("image/png");
 }
 
+/** A full label bitmap streams for a while behind the render, so the upload gets more than a lone command. */
+const PREVIEW_DEADLINE_MS = 90_000;
+
 /** Ask the printer to render the design and upload the resulting bitmap
  *  (^IS store + ^HY upload over one bidirectional channel). Ground truth from
  *  the firmware renderer, so it needs raw TCP (9100) or a USB read channel,
@@ -115,7 +118,7 @@ export async function fetchPrinterPreview(
   designZpl: string,
 ): Promise<PrinterOutcome<PrinterBitmap>> {
   try {
-    const res = await queryPrinter(target, buildPrinterPreviewZpl(designZpl));
+    const res = await queryPrinter(target, buildPrinterPreviewZpl(designZpl), PREVIEW_DEADLINE_MS);
     if (res.kind !== "ok") return res;
     const bitmap = decodeDyGraphic(res.value);
     return bitmap ? { kind: "ok", value: bitmap } : { kind: "unparsed" };

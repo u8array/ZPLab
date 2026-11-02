@@ -65,6 +65,12 @@ export function failureText(loc: Loc, failure: PrinterQueryFailure): string {
       return loc.failNotFound;
     case "permission_denied":
       return loc.failPermissionDenied;
+    case "timed_out":
+      return loc.failTimedOut;
+    case "incomplete":
+      return loc.failIncomplete;
+    case "lost":
+      return loc.failLost;
     case "error":
       return failure.message;
   }
