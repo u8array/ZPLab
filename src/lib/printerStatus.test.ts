@@ -27,11 +27,11 @@ describe("readPrinterStatus", () => {
     expect(steps).toEqual(["~HI", "~HQES", "~HM", "~HS"]);
     expect(result).toMatchObject({
       kind: "ok",
-      value: { identity: { model: "ZD230" }, memory: { availableKb: 1500 }, status: { paused: false }, withheld: false },
+      value: { identity: { model: "ZD230-200dpi" }, memory: { availableKb: 1500 }, status: { paused: false }, withheld: false },
     });
     if (result.kind !== "ok") throw new Error("expected a report");
     expect(result.value.raw).toBe(
-      "~HI\nZD230,V89.21.46Z,8,4096KB,\n\n~HQES\nPRINTER STATUS\r\nERRORS: 0 00000000 00000000\r\nWARNINGS: 0 00000000 00000000\n\n~HM\n4096,2048,1500\n\n~HS\n030,0,0,1200,000,0,0,0,000,0,0,0\r\n001,0,0,0,1,2,0,0,00000000,1,000",
+      "~HI\nZD230-200dpi,V89.21.46Z,8,8176KB\n\n~HQES\nPRINTER STATUS\r\nERRORS: 0 00000000 00000000\r\nWARNINGS: 0 00000000 00000000\n\n~HM\n4096,2048,1500\n\n~HS\n030,0,0,1200,000,0,0,0,000,0,0,0\r\n001,0,0,0,1,2,0,0,00000000,1,000",
     );
   });
 
@@ -55,7 +55,7 @@ describe("readPrinterStatus", () => {
     expect(queryPrinter.mock.calls.map((c) => c[1])).toEqual(["~HI", "~HQES", "~HM", "~HS"]);
     expect(result).toMatchObject({
       kind: "ok",
-      value: { identity: { model: "ZD230" }, status: { printMode: 2 }, withheld: false },
+      value: { identity: { model: "ZD230-200dpi" }, status: { printMode: 2 }, withheld: false },
     });
     expect(result.kind === "ok" && "memory" in result.value).toBe(false);
   });
