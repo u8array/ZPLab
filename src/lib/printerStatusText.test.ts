@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { fallbackTranslations as en } from "../locales";
-import { failureText, readinessText, reportView, warningsText } from "./printerStatusText";
+import { failureText, owedReplyLines, readinessText, reportView, warningsText } from "./printerStatusText";
 
 const loc = en.printerSettings.printerStatus;
 
@@ -42,5 +42,16 @@ describe("warningsText", () => {
   it("lists the warnings or says none", () => {
     expect(warningsText(loc, { conditions: [], warnings: ["cleanPrinthead"], known: true })).toBe(loc.flagCleanPrinthead);
     expect(warningsText(loc, { conditions: [], warnings: [], known: true })).toBe(loc.none);
+  });
+});
+
+describe("owedReplyLines", () => {
+  it("words a whole and a partial miss, names every command of a group, and shows a wording once", () => {
+    const owed = [
+      { commands: ["^HV1,20,H,E", "^HV2,20,H,E"], missing: 2, of: 2 },
+      { commands: ["^HV3,20,K,U,L"], missing: 1, of: 3 },
+      { commands: ["^HV3,20,K,U,L"], missing: 1, of: 3 },
+    ];
+    expect(owedReplyLines(en.zebraPrint, owed)).toEqual(["No reply to ^HV1,20,H,E ^HV2,20,H,E.", "Only 2 of 3 replies to ^HV3,20,K,U,L."]);
   });
 });

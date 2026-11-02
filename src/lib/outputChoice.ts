@@ -1,5 +1,4 @@
 // The two levels of the output dialog: where the label goes, and how, where there is a choice.
-import { hostCommandParts } from "@zplab/core/lib/hostCommands";
 import { effectiveTransport, type PrintTransport, type PrintWay } from "./printTarget";
 
 /** The bytes the dialog is about: the label itself, or a script that only configures the printer. */
@@ -69,13 +68,15 @@ export function offeredKinds(source: OutputSource, f: OutputFacts): OutputKind[]
 export interface DocumentQueryFacts {
   commands: readonly string[];
   prints: boolean;
+  /** The ^HV spellings whose reply a reader could not find, see unmarkedReplies. */
+  unmarked: readonly string[];
+  /** The ^HV spellings whose replies a reader could not tell apart, see ambiguousReplies. */
+  ambiguous: readonly string[];
+  /** The ^HV spellings the document cannot vouch for, see uncountedReplies. */
+  uncounted: readonly string[];
 }
 
 export const asksPrinter = (query: DocumentQueryFacts): boolean => query.commands.length > 0;
-
-/** ^HV answers only after the print, past the reader's idle gap, so a document asking it keeps the plain send. */
-export const answersOnReceipt = (commands: readonly string[]): boolean =>
-  commands.every((command) => hostCommandParts(command).id !== "^HV");
 
 /** The fields ride along with a query only when the label itself goes out. */
 export const printsFields = (source: OutputSource, f: OutputFacts): boolean => source === "label" && f.hasObjects;

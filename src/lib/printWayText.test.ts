@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { formatTemplate } from "./formatTemplate";
 import en from "../locales/en";
 import { queryOffer, wayHint } from "./printWayText";
 import { asksPrinter } from "./outputChoice";
@@ -17,13 +18,14 @@ describe("wayHint", () => {
 
 describe("queryOffer", () => {
   const loc = en.zebraPrint;
-  const prints = { commands: ["~HS"], prints: true };
-  const asks = { commands: ["~HS"], prints: false };
+  const prints = { commands: ["~HS"], prints: true, unmarked: [], ambiguous: [], uncounted: [] };
+  const asks = { commands: ["~HS"], prints: false, unmarked: [], ambiguous: [], uncounted: [] };
+  const none = { commands: [], prints: true, unmarked: [], ambiguous: [], uncounted: [] };
 
   it("offers nothing for a document that only prints", () => {
-    expect(asksPrinter({ commands: [], prints: true })).toBe(false);
-    expect(queryOffer(loc, { commands: [], prints: true }, "network", true)).toEqual({ queries: false, hints: [] });
-    expect(queryOffer(loc, { commands: [], prints: true }, "system", false)).toEqual({ queries: false, hints: [] });
+    expect(asksPrinter(none)).toBe(false);
+    expect(queryOffer(loc, none, "network", true)).toEqual({ queries: false, hints: [] });
+    expect(queryOffer(loc, none, "system", false)).toEqual({ queries: false, hints: [] });
   });
 
   it("replaces the send where the reply can come back and names the printed fields that ride along", () => {
@@ -31,11 +33,18 @@ describe("queryOffer", () => {
     expect(queryOffer(loc, prints, "usb", true)).toEqual({ queries: true, hints: [loc.queryHint, loc.queryMixedHint] });
   });
 
-  it("offers the send, not the query, where a reply comes only after the print, and the system way keeps its own reason", () => {
-    const late = { commands: ["~HS", "^HV1,20,H,E,F"], prints: true };
-    expect(queryOffer(loc, late, "network", true)).toEqual({ queries: false, hints: [loc.queryAfterPrint] });
-    expect(queryOffer(loc, late, "local", false)).toEqual({ queries: false, hints: [loc.queryAfterPrint] });
-    expect(queryOffer(loc, late, "system", true)).toEqual({ queries: false, hints: [loc.queryNoRender] });
+  it("queries for a marked ^HV, and sends where a reply would carry no mark", () => {
+    const marked = { commands: ["~HS", "^HV1,20,H,E,F"], prints: true, unmarked: [], ambiguous: [], uncounted: [] };
+    expect(queryOffer(loc, marked, "network", true)).toEqual({ queries: true, hints: [loc.queryHint, loc.queryMixedHint] });
+    const bare = { commands: ["~HS", "^HV1,20"], prints: true, unmarked: ["^HV1,20"], ambiguous: [], uncounted: [] };
+    const bareHint = formatTemplate(loc.queryUnmarkedFmt, { commands: "^HV1,20" });
+    expect(queryOffer(loc, bare, "network", true)).toEqual({ queries: false, hints: [bareHint] });
+    expect(queryOffer(loc, bare, "local", false)).toEqual({ queries: false, hints: [bareHint] });
+    const overlapping = { commands: ["^HV1,20,H,E", "^HV2,20,E,H"], prints: false, unmarked: [], ambiguous: ["^HV1,20,H,E", "^HV2,20,E,H"], uncounted: [] };
+    expect(queryOffer(loc, overlapping, "network", true)).toEqual({ queries: false, hints: [formatTemplate(loc.queryAmbiguousFmt, { commands: "^HV1,20,H,E ^HV2,20,E,H" })] });
+    const recalled = { commands: ["^HV1,20,H,E,L"], prints: false, unmarked: [], ambiguous: [], uncounted: ["^HV1,20,H,E,L"] };
+    expect(queryOffer(loc, recalled, "usb", true)).toEqual({ queries: false, hints: [formatTemplate(loc.queryUncountedFmt, { commands: "^HV1,20,H,E,L" })] });
+    expect(queryOffer(loc, bare, "system", true)).toEqual({ queries: false, hints: [loc.queryNoRender] });
   });
 
   it("keeps the send and says the answer is lost where no channel carries it, the web build included", () => {

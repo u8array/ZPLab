@@ -30,7 +30,7 @@ export interface PrinterStateSlice {
   /** Writes the chosen rows into the label settings and the printer profile. False when the store refused them. */
   adoptPrinterSettings: (rows: readonly AdoptionRow[]) => boolean;
   /** The document itself over the read channel, for the host commands it carries. */
-  queryDocument: (zpl: string, commands: readonly string[], transport?: PrintTransport) => Promise<PrinterOutcome<DocumentReply>>;
+  queryDocument: (zpl: string, commands: readonly string[], transport?: PrintTransport, signal?: AbortSignal) => Promise<PrinterOutcome<DocumentReply>>;
 }
 
 export const createPrinterStateSlice: StateCreator<LabelState, [], [], PrinterStateSlice> = (set, get) => ({
@@ -80,10 +80,10 @@ export const createPrinterStateSlice: StateCreator<LabelState, [], [], PrinterSt
     return true;
   },
 
-  queryDocument: (zpl, commands, transport) => {
+  queryDocument: (zpl, commands, transport, signal) => {
     const resolved = resolveQueryTarget(get().printTarget, transport);
     return overPrinterChannel(get, set, commands.join(' '), () =>
-      'failure' in resolved ? Promise.resolve(resolved.failure) : sendQueryDocument(resolved.target, zpl, commands),
+      'failure' in resolved ? Promise.resolve(resolved.failure) : sendQueryDocument(resolved.target, zpl, commands, signal),
     );
   },
 });

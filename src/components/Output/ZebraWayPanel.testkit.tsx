@@ -13,7 +13,7 @@ const FACTS: OutputFacts = {
   batchRowCount: 0,
 };
 
-const PRINTS_ONLY: DocumentQueryFacts = { commands: [], prints: true };
+const PRINTS_ONLY: DocumentQueryFacts = { commands: [], prints: true, unmarked: [], ambiguous: [], uncounted: [] };
 
 /** The dialog owns the device lists, so the panel under test gets them from the same hook. */
 export function WayPanel({ way, zpl, query = PRINTS_ONLY }: { way: PrintTransport; zpl: () => string; query?: DocumentQueryFacts }) {

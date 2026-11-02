@@ -111,7 +111,7 @@ While you edit, the canvas renders the source. Canvas editing and the **Properti
 Import covers text, barcodes, shapes, label settings and `^FN` fields. Images include printer-stored and compressed graphics. `^FN` slots appear in the **Variables** tab. `^FE` embeds such as `^FD#1#-#2#` import as `«name»` markers. A stream that stores a format with `^DF` and declares `^FN` fields in it opens as that page. Its `^XF` recall blocks that carry only field data become the rows of a dataset, one row per block.
 
 - Unrecognised commands are listed in the import report and do not appear on the canvas.
-- Host commands such as `~HS` stay with their page. On the network and USB ways they offer **Query printer**, and the reply opens in the dialog.
+- Host commands such as `~HS` stay with their page. On the network and USB ways they offer **Query printer**, and the reply opens in the dialog. A `^HV` with a header or terminator is read through the print, one reply per format or per label as the command asks, until every reply is in, you stop the wait, the connection drops, or five minutes pass.
 - Commands between fields survive export.
 - Commands inside a field survive until you edit that object.
 - Whole-page regeneration drops every unrecognised command on that page.

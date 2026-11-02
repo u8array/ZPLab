@@ -141,12 +141,13 @@ describe("queryDocument", () => {
     let finish: (value: unknown) => void = () => undefined;
     queryDocument.mockImplementation(() => new Promise((resolve) => (finish = resolve)));
     const document = "^XA~HS^HWR:*.*^FO10,10^FDx^FS^XZ";
-    const pending = useLabelStore.getState().queryDocument(document, ["~HS", "^HW"], "usb");
+    const signal = new AbortController().signal;
+    const pending = useLabelStore.getState().queryDocument(document, ["~HS", "^HW"], "usb", signal);
     expect(useLabelStore.getState().printerReading).toBe("~HS ^HW");
     expect(await useLabelStore.getState().checkPrinter()).toEqual({ kind: "busy" });
-    finish({ kind: "ok", value: { raw: "ok", commands: ["~HS", "^HW"], configuration: false, parsed: {} } });
+    finish({ kind: "ok", value: { raw: "ok", commands: ["~HS", "^HW"], configuration: false, parsed: {}, unanswered: [] } });
     expect(await pending).toMatchObject({ kind: "ok" });
-    expect(queryDocument).toHaveBeenCalledWith({ kind: "usb", id: "usb-1" }, document, ["~HS", "^HW"]);
+    expect(queryDocument).toHaveBeenCalledWith({ kind: "usb", id: "usb-1" }, document, ["~HS", "^HW"], signal);
     expect(useLabelStore.getState().printerReading).toBeUndefined();
   });
 

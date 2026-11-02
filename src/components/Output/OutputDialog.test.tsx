@@ -5,7 +5,7 @@ import { importZplText } from "@zplab/core/lib/zplImportService";
 import { useLabelStore } from "../../store/labelStore";
 import { fallbackTranslations as en } from "../../locales";
 import { formatTemplate } from "../../lib/formatTemplate";
-import { BASE_STATE, batchScope, everything, loc, printButton, showDialog } from "./OutputDialog.testkit";
+import { BASE_STATE, batch, batchScope, everything, loc, printButton, showDialog } from "./OutputDialog.testkit";
 
 // The printer ways and the printer render only exist in the desktop shell.
 vi.mock("../../lib/platform", async (importOriginal) => ({ ...(await importOriginal<Record<string, unknown>>()), isDesktopShell: true }));
@@ -308,16 +308,7 @@ describe("OutputDialog", () => {
 
     cleanup();
     act(() => {
-      useLabelStore.setState({
-        dataset: {
-          headers: ["sku"],
-          rows: [["A1"], ["B2"]],
-          source: { kind: "csv", filename: "t.csv", importedAt: "", encoding: "utf-8", delimiter: ",", rowCount: 2 },
-          activeRowIndex: 1,
-        },
-        columnMapping: { bindings: { v1: "sku" }, headerSnapshot: ["sku"] },
-        variables: [{ id: "v1", name: "sku", fnNumber: 1, defaultValue: "" }],
-      });
+      useLabelStore.setState(batch([["A1"], ["B2"]], 1));
     });
     const shown = showDialog().container.textContent;
 
@@ -327,18 +318,21 @@ describe("OutputDialog", () => {
 
   it("keeps the batch total on a Zebra way, which sends every row", () => {
     act(() => {
-      useLabelStore.setState({
-        dataset: {
-          headers: ["sku"],
-          rows: [["A1"], ["B2"]],
-          source: { kind: "csv", filename: "t.csv", importedAt: "", encoding: "utf-8", delimiter: ",", rowCount: 2 },
-          activeRowIndex: 0,
-        },
-        columnMapping: { bindings: { v1: "sku" }, headerSnapshot: ["sku"] },
-        variables: [{ id: "v1", name: "sku", fnNumber: 1, defaultValue: "" }],
-      });
+      useLabelStore.setState(batch([["A1"], ["B2"]]));
     });
     expect(showDialog().container.textContent).toContain(formatTemplate(loc.batchNoticeFmt, { n: "2" }));
+  });
+
+  it("judges the query on every row of the batch, since a later row can spoil the reply", () => {
+    act(() => {
+      useLabelStore.setState({
+        label: { widthMm: 50, heightMm: 30, dpmm: 8 },
+        pages: [{ objects: [{ id: "t", type: "text", x: 10, y: 10, rotation: 0, props: { content: "«sku»", fontHeight: 30 } } as never], hostCommands: ["^HV1,20,H,E,L"] }],
+        currentPageIndex: 0,
+        ...batch([["A1"], ["B2"], ["EH"]]),
+      });
+    });
+    expect(showDialog().container.textContent).toContain(formatTemplate(loc.queryAmbiguousFmt, { commands: "^HV1,20,H,E,L" }));
   });
 
   it("keeps the print button on the system way and only warns that the reply has nowhere to land", () => {

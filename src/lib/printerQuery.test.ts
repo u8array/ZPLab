@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { answered, queryPrinter } from "./printerQuery";
+import { STX, ETX } from "@zplab/core/lib/hostStatus.fixture";
+import { answered, queryPrinter, readPrinterReply } from "./printerQuery";
 
 vi.mock("./platform", () => ({ isDesktopShell: true }));
 
@@ -201,5 +202,133 @@ describe("answered", () => {
     expect(answered({ kind: "ok", value: "\u0002\u0003" })).toEqual({ kind: "silent" });
     expect(answered({ kind: "ok", value: "" })).toEqual({ kind: "silent" });
     expect(answered({ kind: "ok", value: "  " })).toEqual({ kind: "silent" });
+  });
+});
+
+const HV_HEADER_END = (count: number) => ({ header: "HEADER ", terminator: "END", count, commands: ["^HV1,20,HEADER ,END,L"] });
+const HV_H_E = { header: "H", terminator: "E", count: 1, commands: ["^HV1,20,H,E,F"] };
+const HV_H_E_PLAIN = { header: "H", terminator: "E", count: 1, commands: ["^HV1,20,H,E"] };
+
+describe("readPrinterReply", () => {
+  it("waits past the first-byte limit while a reply is owed, and reads like a lone command where none is", async () => {
+    const controller = new AbortController();
+    const owed = readPrinterReply(target, "^XA^FN1^FDx^FS^HV1,20,H,E^XZ", { awaited: [HV_H_E_PLAIN], signal: controller.signal });
+    await open();
+    await vi.advanceTimersByTimeAsync(120_000);
+    expect(stops).toEqual([]);
+    const lone = readPrinterReply(target, "^XA~HS^XZ");
+    await open();
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(stops).toHaveLength(1);
+    expect(await lone).toEqual({ kind: "silent" });
+    controller.abort();
+    expect(await owed).toEqual({ kind: "ok", value: { body: "", unanswered: [{ commands: ["^HV1,20,H,E"], missing: 1, of: 1 }] } });
+  });
+
+  it("waits through the print for every ^HV reply the document earns, past any idle gap", async () => {
+    const read = readPrinterReply(target, "^XA~HS^FN1^FD4711^FS^HV1,20,HEADER ,END,L^PQ2^XZ", { deadlineMs: 300_000, awaited: [HV_HEADER_END(2)] });
+    const query = await open();
+    expect(query.args).toMatchObject({ deadlineMs: 300_000 });
+    query.chunk(HS);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(stops).toEqual([]);
+    query.chunk("HEADER 4711 END");
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(stops).toEqual([]);
+    query.chunk("HEADER 47");
+    query.chunk("12 END");
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(stops).toHaveLength(1);
+    expect(await read).toEqual({ kind: "ok", value: { body: `${HS}HEADER 4711 ENDHEADER 4712 END`, unanswered: [] } });
+  });
+
+  it("does not take a mark inside another command's frame for a reply", async () => {
+    const read = readPrinterReply(target, "^XA^HH^FN1^FDx^FS^HV1,20,,E^XZ", { awaited: [{ header: "", terminator: "E", count: 1, commands: ["^HV1,20,,E"] }] });
+    const query = await open();
+    query.chunk(`${STX}DARKNESS E\r\nMODE E${ETX}`);
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(stops).toEqual([]);
+    query.chunk("xE");
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(stops).toHaveLength(1);
+    const res = await read;
+    expect(res).toMatchObject({ kind: "ok", value: { unanswered: [] } });
+  });
+
+  it("ends on the signal with what came, naming the replies still owed, and honours a signal aborted up front", async () => {
+    const controller = new AbortController();
+    const read = readPrinterReply(target, "^XA~HS^FN1^FDx^FS^HV1,20,H,E,F^XZ", { signal: controller.signal, awaited: [HV_H_E] });
+    const query = await open();
+    query.chunk(HS);
+    await vi.advanceTimersByTimeAsync(40_000);
+    expect(stops).toEqual([]);
+    controller.abort();
+    expect(await read).toEqual({ kind: "ok", value: { body: HS, unanswered: [{ commands: ["^HV1,20,H,E,F"], missing: 1, of: 1 }] } });
+
+    const early = readPrinterReply(target, "^XA^FN1^FDx^FS^HV1,20,H,E,F^XZ", { signal: AbortSignal.abort(), awaited: [HV_H_E] });
+    await open();
+    expect(stops).toHaveLength(2);
+    expect(await early).toEqual({ kind: "ok", value: { body: "", unanswered: [{ commands: ["^HV1,20,H,E,F"], missing: 1, of: 1 }] } });
+  });
+
+  it("keeps what a deadline ended while a reply was owed, whole or not, and calls it a timeout for a lone command", async () => {
+    const owed = readPrinterReply(target, "^XA^FN1^FDx^FS^HV1,20,H,E^XZ", { awaited: [HV_H_E_PLAIN] });
+    const query = await open();
+    query.chunk("x");
+    query.end({ kind: "done", end: "deadline", chunks: 1 });
+    expect(await owed).toEqual({ kind: "ok", value: { body: "x", unanswered: [{ commands: ["^HV1,20,H,E"], missing: 1, of: 1 }] } });
+    expect(stops).toEqual([]);
+
+    const whole = readPrinterReply(target, "^XA^FN1^FDx^FS^HV1,20,H,E^XZ", { awaited: [HV_H_E_PLAIN] });
+    const late = await open();
+    late.chunk("H x E");
+    await vi.advanceTimersByTimeAsync(500);
+    late.end({ kind: "done", end: "deadline", chunks: 1 });
+    expect(await whole).toEqual({ kind: "ok", value: { body: "H x E", unanswered: [] } });
+
+    const lone = readPrinterReply(target, "^XA~HS^XZ");
+    const plain = await open();
+    plain.chunk("x");
+    plain.end({ kind: "done", end: "deadline", chunks: 1 });
+    expect(await lone).toEqual({ kind: "timed_out" });
+  });
+
+  it("keeps what came when the link drops behind it, naming the replies still owed", async () => {
+    const owed = readPrinterReply(target, "^XA^FN1^FDx^FS^HV1,20,H,E^PQ2^XZ", { awaited: [{ ...HV_H_E_PLAIN, count: 2 }] });
+    const query = await open();
+    query.chunk("H x E");
+    query.end({ kind: "done", end: "lost", chunks: 1 });
+    expect(await owed).toEqual({ kind: "ok", value: { body: "H x E", unanswered: [{ commands: ["^HV1,20,H,E"], missing: 1, of: 2 }] } });
+  });
+
+  it("waits for the chunks a stop left in flight, so the stopped read shows the whole reply", async () => {
+    const controller = new AbortController();
+    const read = readPrinterReply(target, "^XA~HS^FN1^FDx^FS^HV1,20,H,E^XZ", { signal: controller.signal, awaited: [HV_H_E_PLAIN] });
+    const query = await open();
+    query.chunk(HS);
+    endsOnStop = false;
+    controller.abort();
+    query.end({ kind: "done", end: "stopped", chunks: 2 });
+    await vi.advanceTimersByTimeAsync(10);
+    query.chunk("H x E");
+    expect(await read).toEqual({ kind: "ok", value: { body: `${HS}H x E`, unanswered: [] } });
+
+    const lost = readPrinterReply(target, "^XA~HS^FN1^FDx^FS^HV1,20,H,E^XZ", { signal: AbortSignal.abort(), awaited: [HV_H_E_PLAIN] });
+    const gone = await open();
+    gone.chunk(HS);
+    gone.end({ kind: "done", end: "stopped", chunks: 2 });
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(await lost).toEqual({ kind: "incomplete" });
+  });
+
+  it("lets the signal end the wait for a late chunk with what came", async () => {
+    const controller = new AbortController();
+    const read = readPrinterReply(target, "^XA~HS^XZ", { signal: controller.signal });
+    const query = await open();
+    query.chunk(HS);
+    query.end({ kind: "done", end: "closed", chunks: 2 });
+    await vi.advanceTimersByTimeAsync(1000);
+    controller.abort();
+    expect(await read).toEqual({ kind: "ok", value: { body: HS, unanswered: [] } });
   });
 });
