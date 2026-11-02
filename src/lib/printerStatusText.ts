@@ -2,6 +2,7 @@
 import { hostObjectPath } from "@zplab/core/lib/hostDirectory";
 import { printerReadiness, type HostMemory, type HostWarningFlag, type PrinterCondition, type PrinterIdentity, type PrinterReadiness } from "@zplab/core/lib/hostStatus";
 import { driveUsage, hostListing, type DriveUsage } from "@zplab/core/lib/storedObjectOrigins";
+import type { OwedReply } from "@zplab/core/lib/hostCommands";
 import type { DocumentReply } from "./printerDocumentQuery";
 import type { PrinterQueryFailure } from "./printerQuery";
 import type { PrinterStatusReport } from "./printerStatus";
@@ -97,6 +98,16 @@ export const kilobytes = (bytes: number): string => String(bytes === 0 ? 0 : Mat
 
 export const driveUsageText = (loc: Translations["printerSettings"]["objects"], usage: Pick<DriveUsage, "device" | "used" | "free">): string =>
   formatTemplate(loc.usageFmt, { device: usage.device, used: kilobytes(usage.used), free: kilobytes(usage.free) });
+
+/** The replies a document is still owed, one line per reply shape. One spelling under two ^FH indicators owes two
+ *  shapes that word the same, so a line shows once. */
+export function owedReplyLines(zebra: Translations["zebraPrint"], owed: readonly OwedReply[]): string[] {
+  const lines = owed.map(({ commands, missing, of }) => {
+    const names = commands.join(" ");
+    return missing === of ? formatTemplate(zebra.unansweredFmt, { commands: names }) : formatTemplate(zebra.unansweredPartFmt, { got: String(of - missing), of: String(of), commands: names });
+  });
+  return [...new Set(lines)];
+}
 
 /** A document's reply as lines, in the wording each reading already has elsewhere. */
 export function documentReplyLines(loc: Loc, storage: Translations["printerSettings"]["objects"], reply: DocumentReply): string[] {

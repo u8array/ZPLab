@@ -10,7 +10,7 @@ import { formatTemplate } from "../../lib/formatTemplate";
 import { isDesktopShell } from "../../lib/platform";
 import { needsRawChannel, type PrintWay } from "../../lib/printTarget";
 import { wayHint, wayLabel } from "../../lib/printWayText";
-import { repliesToHost } from "@zplab/core/lib/hostCommands";
+import { ambiguousReplies, awaitedReplies, fieldReplies, repliesToHost, uncountedReplies, unmarkedReplies } from "@zplab/core/lib/hostCommands";
 import {
   effectiveKind,
   effectiveScope,
@@ -87,10 +87,14 @@ export function OutputDialog({ zpl, source, facts, onClose, onPrintImage, onExpo
   };
 
   const ways = usePrintWays(source, facts);
-  // One row is enough, only the commands matter here.
-  const outgoing = useLabelStore((s) => (source === "label" ? sendZpl(s, 1) : ""));
-  const commands = repliesToHost(source === "label" ? outgoing : zpl());
-  const query: DocumentQueryFacts = { commands, prints: printsFields(source, facts) };
+  // One row carries every command, so the notices and a document that asks nothing stop there. A query reads every row,
+  // since any row can spoil a reply.
+  const sample = useLabelStore((s) => (source === "label" ? sendZpl(s, 1) : ""));
+  const asks = repliesToHost(source === "label" ? sample : zpl()).length > 0;
+  const outgoing = useLabelStore((s) => (source === "label" && asks ? sendZpl(s) : ""));
+  const bytes = source === "label" ? (asks ? outgoing : sample) : zpl();
+  const replies = fieldReplies(bytes);
+  const query: DocumentQueryFacts = { commands: repliesToHost(bytes), prints: printsFields(source, facts), unmarked: unmarkedReplies(replies), ambiguous: ambiguousReplies(awaitedReplies(replies)), uncounted: uncountedReplies(bytes) };
   const waySegments: Segment<PrintWay>[] = ways.offered.map((key) => ({
     key,
     label: wayLabel(loc, key),
@@ -161,7 +165,7 @@ export function OutputDialog({ zpl, source, facts, onClose, onPrintImage, onExpo
                 <>
                   {ways.way === "system" ? <ActiveRowNotice /> : <DatasetNotice />}
                   {/* The first row's bytes carry every command a send carries, which the dialog may never have shown. */}
-                  {ways.way !== "system" && <ImpactNotices zpl={outgoing} />}
+                  {ways.way !== "system" && <ImpactNotices zpl={sample} />}
                 </>
               )}
               <div className="flex flex-col gap-1 px-3 py-2.5 border-b border-border">

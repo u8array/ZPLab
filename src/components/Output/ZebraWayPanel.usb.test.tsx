@@ -41,7 +41,7 @@ describe("ZebraWayPanel USB access", () => {
   it("offers the setup route after a denied query, as after a denied check", async () => {
     queryDocument.mockResolvedValue({ kind: "permission_denied" });
     act(() => useLabelStore.setState({ printerState: { phase: "idle" }, printTarget: { ...DEFAULT_PRINT_TARGET, transport: "usb", usbId: "usb1" } }));
-    const r = render(<WayPanel way="usb" zpl={() => "^XA~HS^XZ"} query={{ commands: ["~HS"], prints: false }} />);
+    const r = render(<WayPanel way="usb" zpl={() => "^XA~HS^XZ"} query={{ commands: ["~HS"], prints: false, unmarked: [], ambiguous: [], uncounted: [] }} />);
     await waitFor(() => expect((r.getByText(en.zebraPrint.queryButton) as HTMLButtonElement).disabled).toBe(false));
     await act(async () => {
       fireEvent.click(r.getByText(en.zebraPrint.queryButton));

@@ -5,7 +5,7 @@ import type { ReplyShown } from "../../hooks/useReplyRead";
 import { failureText, readingText } from "../../lib/printerStatusText";
 import { useLabelStore } from "../../store/labelStore";
 import { DialogShell } from "../ui/DialogShell";
-import { labelCls } from "../ui/formStyles";
+import { buttonCls, labelCls } from "../ui/formStyles";
 
 /** Reply text keeps its own line breaks, because the printer laid the columns out itself. */
 export const replyPreCls = "max-h-[50vh] overflow-auto rounded border border-border p-2 font-mono text-[10px] leading-relaxed text-text whitespace-pre m-0";
@@ -26,12 +26,14 @@ interface Props<T> {
   portal?: boolean;
   read: ReplyShown<T>;
   onClose: () => void;
+  /** Ends the wait and shows what came so far. */
+  onStop?: () => void;
   children: (value: T) => ReactNode;
   after?: ReactNode;
 }
 
 /** One printer reply, with the reading step and the failure wording every reply shares. */
-export function PrinterReplyDialog<T>({ title, titleClassName = "", portal, read, onClose, children, after }: Props<T>) {
+export function PrinterReplyDialog<T>({ title, titleClassName = "", portal, read, onClose, onStop, children, after }: Props<T>) {
   const t = useT();
   const loc = t.printerSettings.printerStatus;
   const titleId = useId();
@@ -48,7 +50,14 @@ export function PrinterReplyDialog<T>({ title, titleClassName = "", portal, read
       </div>
       <div className="flex min-h-0 flex-col gap-3 px-4 py-4 overflow-auto" aria-live="polite" aria-busy={read === "reading" || undefined}>
         {read === "reading" ? (
-          step !== undefined && <span className="text-[10px] font-mono text-muted">{readingText(loc, step)}</span>
+          <>
+            {step !== undefined && <span className="text-[10px] font-mono text-muted">{readingText(loc, step)}</span>}
+            {onStop !== undefined && (
+              <button type="button" onClick={onStop} className={`${buttonCls} self-start`}>
+                {loc.stopWaiting}
+              </button>
+            )}
+          </>
         ) : read.kind === "ok" ? (
           children(read.value)
         ) : (

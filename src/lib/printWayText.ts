@@ -1,6 +1,7 @@
 // One wording per way to the printer, shared by the output dialog and the printer settings.
 import { carriesReply, type PrintWay } from "./printTarget";
-import { answersOnReceipt, asksPrinter, type DocumentQueryFacts } from "./outputChoice";
+import { asksPrinter, type DocumentQueryFacts } from "./outputChoice";
+import { formatTemplate } from "./formatTemplate";
 import type { Translations } from "../locales";
 
 type Loc = Translations["zebraPrint"];
@@ -38,7 +39,13 @@ interface QueryOffer {
 export function queryOffer(loc: Loc, query: DocumentQueryFacts, way: PrintWay, desktop: boolean): QueryOffer {
   if (!asksPrinter(query)) return { queries: false, hints: [] };
   if (way === "system") return { queries: false, hints: [loc.queryNoRender] };
-  if (!answersOnReceipt(query.commands)) return { queries: false, hints: [loc.queryAfterPrint] };
+  // The reader waits for a ^HV reply through the print only where marks it can tell apart name it.
+  const uncountable = [
+    ...(query.unmarked.length > 0 ? [formatTemplate(loc.queryUnmarkedFmt, { commands: query.unmarked.join(" ") })] : []),
+    ...(query.ambiguous.length > 0 ? [formatTemplate(loc.queryAmbiguousFmt, { commands: query.ambiguous.join(" ") })] : []),
+    ...(query.uncounted.length > 0 ? [formatTemplate(loc.queryUncountedFmt, { commands: query.uncounted.join(" ") })] : []),
+  ];
+  if (uncountable.length > 0) return { queries: false, hints: uncountable };
   if (!carriesReply(way, desktop)) return { queries: false, hints: [loc.queryNoChannel] };
   return { queries: true, hints: query.prints ? [loc.queryHint, loc.queryMixedHint] : [loc.queryHint] };
 }
