@@ -57,32 +57,16 @@ pub enum UsbSendResult {
   NotFound,
 }
 
-/// Serialized like TcpQueryResult; only the Data payload shape is shared (the
-/// USB path has no refused/unreachable, and a TCP path has no not_found).
+/// Serialized like TcpQueryResult, which shares only the Done shape.
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 #[derive(Debug, serde::Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum UsbQueryResult {
-  Data {
-    body: String,
-  },
-  Silent,
+  Done(crate::transport::StreamDone),
   /// See classify_lp_io_err.
   #[cfg(target_os = "linux")]
   PermissionDenied,
   NotFound,
-}
-
-#[cfg(any(target_os = "linux", target_os = "macos"))]
-impl UsbQueryResult {
-  fn from_reply(body: Vec<u8>) -> Self {
-    if body.is_empty() {
-      return Self::Silent;
-    }
-    Self::Data {
-      body: String::from_utf8_lossy(&body).into_owned(),
-    }
-  }
 }
 
 #[cfg(not(any(target_os = "linux", target_os = "macos")))]
@@ -99,7 +83,12 @@ pub async fn send_zpl_usb(_device: String, _zpl: String) -> Result<(), String> {
 
 #[cfg(not(any(target_os = "linux", target_os = "macos")))]
 #[tauri::command]
-pub async fn query_zpl_usb(_device: String, _zpl: String) -> Result<(), String> {
+pub async fn query_zpl_usb(
+  _device: String,
+  _zpl: String,
+  _deadline_ms: u64,
+  _on_chunk: tauri::ipc::Channel<String>,
+) -> Result<(), String> {
   Err("USB query is not supported on this platform".to_string())
 }
 
@@ -112,9 +101,11 @@ pub async fn setup_usb_access() -> Result<(), String> {
 #[cfg(target_os = "macos")]
 mod macos {
   use super::{zebra_first, UsbPrinter, UsbQueryResult, UsbSendResult, SEND_TIMEOUT};
+  use crate::transport::{stream_done, ChunkSink, StopFlag};
   use nusb::descriptors::TransferType;
   use nusb::transfer::{Bulk, Direction, In, Out};
   use nusb::{DeviceInfo, Interface};
+  use std::time::Duration;
   use tokio::io::AsyncWriteExt;
   use tokio::time::timeout;
 
@@ -210,7 +201,13 @@ mod macos {
     Ok(UsbSendResult::Sent)
   }
 
-  pub(super) async fn query(device: &str, zpl: &[u8]) -> Result<UsbQueryResult, String> {
+  pub(super) async fn query(
+    device: &str,
+    zpl: &[u8],
+    deadline: Duration,
+    stop: &StopFlag,
+    sink: &mut ChunkSink<'_>,
+  ) -> Result<UsbQueryResult, String> {
     let Some((info, interface)) = resolve(device).await? else {
       return Ok(UsbQueryResult::NotFound);
     };
@@ -219,16 +216,16 @@ mod macos {
     // answer, and the job must not print as a side effect of a failed preview.
     let input = bulk_endpoint(&interface, Direction::In)
       .ok_or_else(|| "printer interface has no read-back endpoint".to_string())?;
+    // Not until_short_packet: that ended the read at the first transfer, so an
+    // answer behind the print never landed.
     let mut reader = interface
       .endpoint::<Bulk, In>(input)
       .map_err(|e| e.to_string())?
       .reader(TRANSFER_SIZE);
     write_zpl(&interface, zpl).await?;
-    // The short packet ends the reply immediately in the common case; the
-    // idle gap inside read_reply is the fallback for firmware that omits it.
-    let mut short = reader.until_short_packet();
-    let body = crate::transport::read_reply(&mut short).await?;
-    Ok(UsbQueryResult::from_reply(body))
+    Ok(UsbQueryResult::Done(
+      stream_done(&mut reader, deadline, stop, sink).await?,
+    ))
   }
 }
 
@@ -247,9 +244,24 @@ pub async fn send_zpl_usb(device: String, zpl: String) -> Result<UsbSendResult, 
 
 #[cfg(target_os = "macos")]
 #[tauri::command]
-pub async fn query_zpl_usb(device: String, zpl: String) -> Result<UsbQueryResult, String> {
+pub async fn query_zpl_usb(
+  device: String,
+  zpl: String,
+  deadline_ms: u64,
+  on_chunk: tauri::ipc::Channel<String>,
+  stops: tauri::State<'_, crate::transport::QueryStops>,
+) -> Result<UsbQueryResult, String> {
   crate::transport::check_payload(zpl.len())?;
-  macos::query(&device, zpl.as_bytes()).await
+  let stop = stops.begin(on_chunk.id());
+  let mut sink = crate::transport::ChunkSink::new(&on_chunk);
+  macos::query(
+    &device,
+    zpl.as_bytes(),
+    std::time::Duration::from_millis(deadline_ms),
+    &stop.flag,
+    &mut sink,
+  )
+  .await
 }
 
 #[cfg(target_os = "linux")]
@@ -421,7 +433,7 @@ pub async fn setup_usb_access() -> Result<(), String> {
 }
 
 // AsyncRead/AsyncWrite over the non-blocking usblp fd, so the shared
-// transport::read_reply loop drives the char device like a socket.
+// transport::stream_reply loop drives the char device like a socket.
 #[cfg(target_os = "linux")]
 mod lp_io {
   use std::fs::File;
@@ -453,6 +465,11 @@ mod lp_io {
           Poll::Pending => return Poll::Pending,
         };
         match guard.try_io(|inner| inner.get_mut().read(buf.initialize_unfilled())) {
+          // A zero-length packet reads 0 on usblp and an end comes as ENODEV, so yield and read on.
+          Ok(Ok(0)) => {
+            cx.waker().wake_by_ref();
+            return Poll::Pending;
+          }
           Ok(Ok(n)) => {
             buf.advance(n);
             return Poll::Ready(Ok(()));
@@ -496,8 +513,34 @@ mod lp_io {
 
 #[cfg(target_os = "linux")]
 #[tauri::command]
-pub async fn query_zpl_usb(device: String, zpl: String) -> Result<UsbQueryResult, String> {
+pub async fn query_zpl_usb(
+  device: String,
+  zpl: String,
+  deadline_ms: u64,
+  on_chunk: tauri::ipc::Channel<String>,
+  stops: tauri::State<'_, crate::transport::QueryStops>,
+) -> Result<UsbQueryResult, String> {
   check_payload(zpl.len())?;
+  let stop = stops.begin(on_chunk.id());
+  let mut sink = crate::transport::ChunkSink::new(&on_chunk);
+  query_lp(
+    device,
+    zpl.as_bytes(),
+    std::time::Duration::from_millis(deadline_ms),
+    &stop.flag,
+    &mut sink,
+  )
+  .await
+}
+
+#[cfg(target_os = "linux")]
+async fn query_lp(
+  device: String,
+  zpl: &[u8],
+  deadline: std::time::Duration,
+  stop: &crate::transport::StopFlag,
+  sink: &mut crate::transport::ChunkSink<'_>,
+) -> Result<UsbQueryResult, String> {
   // Resolve (sysfs walk) and open (a char-device open can sleep) off the runtime
   // like the send path; only the read-back needs it.
   let opened = blocking(
@@ -530,14 +573,13 @@ pub async fn query_zpl_usb(device: String, zpl: String) -> Result<UsbQueryResult
   };
   let mut dev = lp_io::LpDevice::new(file).map_err(|e| e.to_string())?;
   use tokio::io::AsyncWriteExt;
-  tokio::time::timeout(SEND_TIMEOUT, dev.write_all(zpl.as_bytes()))
+  tokio::time::timeout(SEND_TIMEOUT, dev.write_all(zpl))
     .await
     .map_err(|_| "write timed out".to_string())?
     .map_err(|e| e.to_string())?;
-  // No short-packet boundary on the char device; the idle gap inside
-  // read_reply delimits the reply instead.
-  let body = crate::transport::read_reply(&mut dev).await?;
-  Ok(UsbQueryResult::from_reply(body))
+  Ok(UsbQueryResult::Done(
+    crate::transport::stream_done(&mut dev, deadline, stop, sink).await?,
+  ))
 }
 
 #[cfg(all(test, any(target_os = "linux", target_os = "macos")))]
@@ -553,15 +595,14 @@ mod tests {
 
   #[test]
   fn query_result_serializes_with_kind_tag() {
-    let json = serde_json::to_string(&UsbQueryResult::Data {
-      body: "~DY".to_string(),
-    })
+    let json = serde_json::to_string(&UsbQueryResult::Done(crate::transport::StreamDone {
+      end: crate::transport::ReplyEnd::Closed,
+      chunks: 1,
+    }))
     .unwrap();
-    assert_eq!(json, r#"{"kind":"data","body":"~DY"}"#);
+    assert_eq!(json, r#"{"kind":"done","end":"closed","chunks":1}"#);
     let json = serde_json::to_string(&UsbQueryResult::NotFound).unwrap();
     assert_eq!(json, r#"{"kind":"not_found"}"#);
-    let json = serde_json::to_string(&UsbQueryResult::from_reply(Vec::new())).unwrap();
-    assert_eq!(json, r#"{"kind":"silent"}"#);
   }
 
   #[test]
@@ -611,7 +652,7 @@ mod linux_tests {
 
   // A pipe stands in for the usblp node: both deliver readiness via poll.
   #[test]
-  fn lp_device_reply_ends_on_idle_gap() {
+  fn lp_device_streams_what_the_pipe_holds_until_the_deadline() {
     use std::io::Write;
     use std::os::fd::FromRawFd;
     let mut fds = [0i32; 2];
@@ -635,8 +676,20 @@ mod linux_tests {
       .unwrap();
     rt.block_on(async {
       let mut dev = lp_io::LpDevice::new(read_end).unwrap();
-      let body = crate::transport::read_reply(&mut dev).await.unwrap();
+      let mut body = Vec::new();
+      let end = crate::transport::stream_reply(
+        &mut dev,
+        std::time::Duration::from_secs(5),
+        &crate::transport::StopFlag::default(),
+        |chunk| {
+          body.extend_from_slice(chunk);
+          Ok(())
+        },
+      )
+      .await
+      .unwrap();
       assert_eq!(body, b"~HIreply");
+      assert_eq!(end, crate::transport::ReplyEnd::Deadline);
     });
   }
 
@@ -765,6 +818,27 @@ mod linux_tests {
 // attached: cd src-tauri && cargo test -- --ignored
 #[cfg(all(test, target_os = "macos"))]
 mod hardware_tests {
+  // No stop here, so the deadline ends every read: the printer never closes the pipe.
+  async fn query_body(device: &str, zpl: &[u8]) -> String {
+    let (channel, texts) = crate::transport::collecting_channel();
+    let mut sink = crate::transport::ChunkSink::new(&channel);
+    let res = super::macos::query(
+      device,
+      zpl,
+      std::time::Duration::from_secs(5),
+      &crate::transport::StopFlag::default(),
+      &mut sink,
+    )
+    .await
+    .unwrap();
+    assert!(
+      matches!(res, super::UsbQueryResult::Done(_)),
+      "expected a stream, got {res:?}"
+    );
+    let body = texts.lock().unwrap().concat();
+    body
+  }
+
   #[test]
   #[ignore = "needs a USB printer attached"]
   fn lists_and_queries_the_attached_printer() {
@@ -777,34 +851,45 @@ mod hardware_tests {
       let printer = printers.first().expect("a USB printer should be attached");
       assert!(!printer.id.is_empty());
       // ~HI answers with the model string, e.g. "ZD230-203dpi,V84.20.18Z,...".
-      let res = super::macos::query(&printer.id, b"~HI").await.unwrap();
-      match res {
-        super::UsbQueryResult::Data { body } => {
-          assert!(!body.is_empty(), "expected a ~HI reply");
-          println!("~HI reply: {body}");
-        }
-        other => panic!("expected data, got {other:?}"),
-      }
+      let body = query_body(&printer.id, b"~HI").await;
+      assert!(!body.is_empty(), "expected a ~HI reply");
+      println!("~HI reply: {body}");
       // Plain send path: an empty format is accepted without feeding a label.
       let res = super::macos::send(&printer.id, b"^XA^XZ").await.unwrap();
       assert!(matches!(res, super::UsbSendResult::Sent));
       // The preview flow the frontend runs: store the rendered format without
       // printing (^IS..,N), then upload its bitmap (^HY answers with ~DY).
       let preview = b"^XA^FO30,30^A0N,40,40^FDUSB Preview^FS^ISR:PRE.GRF,N^XZ\n^XA^HYR:PRE.GRF^XZ";
-      let res = super::macos::query(&printer.id, preview).await.unwrap();
-      match res {
-        super::UsbQueryResult::Data { body } => {
-          assert!(body.contains("~DY"), "expected a ~DY graphic upload");
-          println!("preview reply: {} bytes", body.len());
-        }
-        other => panic!("expected data, got {other:?}"),
-      }
+      let body = query_body(&printer.id, preview).await;
+      assert!(body.contains("~DY"), "expected a ~DY graphic upload");
+      println!("preview reply: {} bytes", body.len());
     });
   }
 }
 
 #[cfg(all(test, target_os = "linux"))]
 mod linux_hardware_tests {
+  // usblp never reports an end, so the deadline ends every read.
+  async fn query_body(device: &str, zpl: &str) -> String {
+    let (channel, texts) = crate::transport::collecting_channel();
+    let mut sink = crate::transport::ChunkSink::new(&channel);
+    let res = super::query_lp(
+      device.to_string(),
+      zpl.as_bytes(),
+      std::time::Duration::from_secs(5),
+      &crate::transport::StopFlag::default(),
+      &mut sink,
+    )
+    .await
+    .unwrap();
+    assert!(
+      matches!(res, super::UsbQueryResult::Done(_)),
+      "expected a stream, got {res:?}"
+    );
+    let body = texts.lock().unwrap().concat();
+    body
+  }
+
   #[test]
   #[ignore = "needs a USB printer attached"]
   fn queries_the_attached_printer() {
@@ -815,31 +900,15 @@ mod linux_hardware_tests {
     rt.block_on(async {
       let printers = super::list_usb_printers().await.unwrap();
       let printer = printers.first().expect("a USB printer should be attached");
-      let res = super::query_zpl_usb(printer.id.clone(), "~HI".to_string())
-        .await
-        .unwrap();
-      match res {
-        super::UsbQueryResult::Data { body } => {
-          assert!(!body.is_empty(), "expected a ~HI reply");
-          println!("~HI reply: {body}");
-        }
-        other => panic!("expected data, got {other:?}"),
-      }
+      let body = query_body(&printer.id, "~HI").await;
+      assert!(!body.is_empty(), "expected a ~HI reply");
+      println!("~HI reply: {body}");
       let preview = "^XA^FO30,30^A0N,40,40^FDUSB Preview^FS^ISR:PRE.GRF,N^XZ\n^XA^HYR:PRE.GRF^XZ";
-      let res = super::query_zpl_usb(printer.id.clone(), preview.to_string())
-        .await
-        .unwrap();
-      match res {
-        super::UsbQueryResult::Data { body } => {
-          assert!(body.contains("~DY"), "expected a ~DY graphic upload");
-          println!("preview reply: {} bytes", body.len());
-        }
-        other => panic!("expected data, got {other:?}"),
-      }
-      // Multi-packet read: dense varied text resists Z64, so this ~DY spans many
-      // USB packets. Two identical replies past the CRC prove read_reply never
-      // takes a mid-stream boundary for the end (usblp signals no-more-data with
-      // EAGAIN, not a zero-length read). Sequential: usblp is single-opener.
+      let body = query_body(&printer.id, preview).await;
+      assert!(body.contains("~DY"), "expected a ~DY graphic upload");
+      println!("preview reply: {} bytes", body.len());
+      // Dense varied text resists Z64, so this ~DY spans many USB packets. Two
+      // identical replies past the CRC prove no packet boundary ends the read.
       let mut big = String::from("^XA^PW812^LL1218");
       let mut y = 0;
       while y < 1180 {
@@ -849,27 +918,23 @@ mod linux_hardware_tests {
         y += 20;
       }
       big.push_str("^ISR:PRE.GRF,N^XZ\n^XA^HYR:PRE.GRF^XZ");
-      let run = || super::query_zpl_usb(printer.id.clone(), big.clone());
-      match (run().await.unwrap(), run().await.unwrap()) {
-        (super::UsbQueryResult::Data { body: a }, super::UsbQueryResult::Data { body: b }) => {
-          println!("multi-packet reply: {} bytes", a.len());
-          assert!(
-            a.len() > 4000,
-            "expected a multi-packet reply, got {}",
-            a.len()
-          );
-          assert_eq!(a, b, "reply differed across runs (truncation)");
-          // A complete Z64 stream ends with ":crc16" (4 hex digits); a
-          // truncated reply would not.
-          assert!(a.contains(":Z64:"), "expected a Z64 payload");
-          let crc = a.trim_end().rsplit(':').next().unwrap_or_default();
-          assert!(
-            crc.len() == 4 && crc.bytes().all(|c| c.is_ascii_hexdigit()),
-            "reply did not end with a Z64 CRC: {crc:?}"
-          );
-        }
-        other => panic!("expected data twice, got {other:?}"),
-      }
+      let a = query_body(&printer.id, &big).await;
+      // Sequential: usblp is single-opener.
+      let b = query_body(&printer.id, &big).await;
+      println!("multi-packet reply: {} bytes", a.len());
+      assert!(
+        a.len() > 4000,
+        "expected a multi-packet reply, got {}",
+        a.len()
+      );
+      assert_eq!(a, b, "reply differed across runs (truncation)");
+      // A complete Z64 stream ends with a four-digit hex crc16, a truncated one does not.
+      assert!(a.contains(":Z64:"), "expected a Z64 payload");
+      let crc = a.trim_end().rsplit(':').next().unwrap_or_default();
+      assert!(
+        crc.len() == 4 && crc.bytes().all(|c| c.is_ascii_hexdigit()),
+        "reply did not end with a Z64 CRC: {crc:?}"
+      );
     });
   }
 }

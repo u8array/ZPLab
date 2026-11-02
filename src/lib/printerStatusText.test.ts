@@ -31,6 +31,9 @@ describe("failureText", () => {
     expect(failureText(loc, { kind: "busy" })).toBe(loc.failBusy);
     expect(failureText(loc, { kind: "unparsed" })).toBe(loc.failUnparsed);
     expect(failureText(loc, { kind: "ignored" })).toBe(loc.failIgnored);
+    expect(failureText(loc, { kind: "timed_out" })).toBe(loc.failTimedOut);
+    expect(failureText(loc, { kind: "incomplete" })).toBe(loc.failIncomplete);
+    expect(failureText(loc, { kind: "lost" })).toBe(loc.failLost);
     expect(failureText(loc, { kind: "error", message: "no response from printer" })).toBe("no response from printer");
   });
 });
