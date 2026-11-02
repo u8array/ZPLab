@@ -16,7 +16,7 @@ import { notePartial,
   type ParserState,
   spanInRest,
 } from "../context";
-import { acceptsPrefixRemap, ciToEncoding, dotsFor, getDecoder, hexControlEscape, int, readJustify, readRotation, stripDataLineBreaks, stripLineWrap } from "../helpers";
+import { acceptsPrefixRemap, ciToEncoding, dotsFor, fhIndicator, getDecoder, hexControlEscape, int, readJustify, readRotation, stripDataLineBreaks } from "../helpers";
 import type { SpannedToken } from "../context";
 import type { Handler, Wildcard } from "../types";
 
@@ -189,8 +189,7 @@ export function createFieldHandlers(
     // ── Field hex indicator ───────────────────────────────────────────────
     FH(_, rest) {
       s.format.fhActive = true;
-      // ZD230-measured: a line break after ^FH is not the delimiter, the default stays.
-      s.format.fhDelimiter = stripLineWrap(rest)[0] ?? "_";
+      s.format.fhDelimiter = fhIndicator(rest);
     },
 
     // ── Field data / separator ────────────────────────────────────────────

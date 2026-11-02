@@ -24,10 +24,10 @@ describe("queryDocument", () => {
     expect(queryPrinter).toHaveBeenCalledWith(TARGET, document);
     if (res.kind !== "ok") throw new Error(res.kind);
     expect(res.value.commands).toEqual(["~HS", "~HI", "^HW"]);
-    expect(res.value.parsed.identity?.model).toBe("ZD230");
+    expect(res.value.parsed.identity?.model).toBe("ZD230-200dpi");
     expect(res.value.parsed.status?.labelLengthDots).toBe(892);
     expect(res.value.parsed.directories?.[0]?.objects).toHaveLength(1);
-    expect(res.value.raw).toContain("ZD230,V89.21.46Z");
+    expect(res.value.raw).toContain("ZD230-200dpi,V89.21.46Z");
     expect(res.value.raw).not.toContain(STX);
   });
 
@@ -66,7 +66,7 @@ describe("documentReplyLines", () => {
     if (res.kind !== "ok") throw new Error(res.kind);
     const lines = documentReplyLines(en.printerSettings.printerStatus, en.printerSettings.objects, res.value);
     expect(lines[0]).toBe(loc.ready);
-    expect(lines).toContain(`${loc.model}: ZD230 V89.21.46Z`);
+    expect(lines).toContain(`${loc.model}: ZD230-200dpi V89.21.46Z`);
     expect(lines).toContain("R:PRE.GRF");
     expect(lines.at(-1)).toBe(formatTemplate(en.printerSettings.objects.usageFmt, { device: "R", used: "49", free: "7292" }));
   });

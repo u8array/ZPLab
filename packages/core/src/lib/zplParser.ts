@@ -16,7 +16,7 @@ import { recallKeys, storageKey } from "./storagePath";
 import { printShape } from "./payloadProps";
 import { qrPrintsAsGraphic } from "./objectBounds";
 import { commandTakesPrefix, commandTwinSplit, isHostCommand } from "../catalog";
-import { canonicalHostCommand, hostCommandAsks, hostCommandParams, isFieldHostCommand, type HostAsk } from "./hostCommands";
+import { hostCommandAsks, isFieldHostCommand, type HostCommandAsk } from "./hostCommands";
 import { claimVariableName, createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, notePartial, openTailHasContent, payloadSummary, releaseVariableName, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField, resolveLiveFonts } from "./zplParser/context";
 import { createCloseField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
@@ -381,9 +381,9 @@ export function parseZPL(
   // The same walk the output dialog reads, so the two cannot disagree. The first verdict per offset wins, so a
   // recall that lists a stored token again does not overwrite it. A wrapper-less stream counts as open, since a
   // format question there makes the import wrap it.
-  const hostAsks = new Map<number, HostAsk>();
+  const hostAsks = new Map<number, HostCommandAsk>();
   for (const a of hostCommandAsks(zpl, { caretChar: s.format.caretChar, tildeChar: s.format.tildeChar, delimiterChar: s.format.delimiterChar }, !bare.hasXa)) {
-    if (!hostAsks.has(a.start)) hostAsks.set(a.start, a.ask);
+    if (!hostAsks.has(a.start)) hostAsks.set(a.start, a);
   }
   if (bare.density) {
     s.format.jmDensity = bare.density;
@@ -784,12 +784,10 @@ export function parseZPL(
     if (takesPrefix && isHostCommand(canonical)) {
       // The design keeps what the printer answers, and of a stored frame only the field questions.
       const ask = hostAsks.get(start);
-      if (ask !== "asked" && !(ask === "stored" && isFieldHostCommand(canonical))) {
+      if (ask === undefined || !ask.canonical || (ask.ask !== "asked" && !(ask.ask === "stored" && isFieldHostCommand(canonical)))) {
         notePartial(s.result, canonical, "droppedHostCommand");
       } else {
-        const spelled = canonicalHostCommand(canonical, hostCommandParams(canonical, rest), s.format.delimiterChar);
-        if (spelled === undefined) notePartial(s.result, canonical, "droppedHostCommand");
-        else hostQuery.push({ command: sourceToken, span: s.result.tokenSpan, canonical: spelled });
+        hostQuery.push({ command: sourceToken, span: s.result.tokenSpan, canonical: `${ask.id}${ask.params}` });
       }
     } else if (rest.trim() || cmd.trim()) {
       // Source prefix from `start`: tilde commands must not surface as `^`.

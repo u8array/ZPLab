@@ -1,7 +1,9 @@
 import { commandSyntax, commandTakesPrefix, isHostCommand } from "../catalog";
 import { CONTROL_BYTES_RE } from "./binaryText";
+import { printQuantityOf } from "./printQuantity";
 import { canonicalStoredFormatPath, isStoredFormatPath, recallKeys, storageKey } from "./storagePath";
-import { applyPrefixRemap, tokenize, type TokenizerChars } from "./zplParser/helpers";
+import { holdsFrameByte, leavesFrameOpen, outsideFrames, repliesIn, scanReplies, type ReplyMarks } from "./hostStatus";
+import { applyPrefixRemap, fhBytes, fhIndicator, getDecoder, inRange, int, strParam, stripDataLineBreaks, tokenize, type TokenizerChars } from "./zplParser/helpers";
 
 /** A canonical line is a two-letter id behind its prefix, then the parameters. */
 export const hostCommandParts = (line: string): { id: string; params: string } => ({ id: line.slice(0, 3), params: line.slice(3) });
@@ -9,7 +11,34 @@ export const hostCommandParts = (line: string): { id: string; params: string } =
 /** ^HV returns a ^FN field of its own format, so unlike its section mates it stays with the fields. */
 export const isFieldHostCommand = (id: string): boolean => id === "^HV";
 
-const fieldSlotOf = (line: string): number => Number(hostCommandParts(line).params.split(",")[0]);
+export interface FieldHostParams {
+  slot: number;
+  /** How many bytes of the field the reply carries, 1 to 256, and 64 where unspelled or out of range (spec p.239). */
+  bytes: number;
+  header: string;
+  terminator: string;
+  perLabel: boolean;
+}
+
+const REPLY_BYTES = { min: 1, max: 256 };
+
+export function fieldHostParams(params: string, delimiter = ","): FieldHostParams {
+  const [slot = "", bytes = "", header = "", terminator = "", per = ""] = params.split(delimiter);
+  return { slot: int(slot), bytes: inRange(Number.parseInt(bytes, 10), REPLY_BYTES) ?? 64, header, terminator, perLabel: strParam(per) === "L" };
+}
+
+const fieldSlotOf = (line: string): number => fieldHostParams(hostCommandParts(line).params).slot;
+
+/** A mark that is only whitespace cannot be told from the reply around it. */
+/** A mark that is only whitespace goes out all the same, yet a reader cannot tell it from the reply around it. */
+const blankMark = (mark: string): boolean => mark !== "" && mark.trim() === "";
+
+/** The marks a reader finds a ^HV reply by. Undefined where neither shows, where one is only whitespace, or where
+ *  one holds a frame byte. */
+function fieldReplyMarks({ header, terminator }: Pick<FieldHostParams, "header" | "terminator">): { header: string; terminator: string } | undefined {
+  if (holdsFrameByte(header) || holdsFrameByte(terminator) || blankMark(header) || blankMark(terminator)) return undefined;
+  return header === "" && terminator === "" ? undefined : { header, terminator };
+}
 
 function withFieldSlot(line: string, slot: number): string {
   const { id, params } = hostCommandParts(line);
@@ -31,7 +60,7 @@ const keepsPadding = (id: string): boolean => id === "^HV";
 
 /** The bytes behind the id that are the command's own: none where the catalog's syntax takes no parameter, since the rest
  *  is the field data around it. A line break around them is always the stream's. */
-export const hostCommandParams = (id: string, rest: string): string => {
+const hostCommandParams = (id: string, rest: string): string => {
   if (commandSyntax(id) === id) return "";
   return keepsPadding(id) ? rest.replace(/^[\r\n]+|[\r\n]+$/g, "") : rest.trim();
 };
@@ -119,39 +148,192 @@ export function* hostCommandTokens(zpl: string, chars: TokenizerChars): Generato
  *  behind the block's ^DF and ignored otherwise. */
 export type HostAsk = "asked" | "ignored" | "stored";
 
-interface HostCommandAsk extends HostCommandToken {
+export interface HostCommandAsk extends HostCommandToken {
   ask: HostAsk;
+  /** False where the document's delimiter cannot be spelled back to a comma, so `params` are the raw bytes. */
+  canonical: boolean;
+  /** What `params` split by: the comma of the canonical spelling, or the document's delimiter where none exists. */
+  delimiter: string;
+  /** The ^FD a ^HV may return, cut to its bytes: the stored format's, which seals the slot on the ZD230, and the printing
+   *  format's, which prints as a stray field, since which of the two the reply carries is unmeasured. */
+  data: string[];
+  /** The ^FH indicator in force, under which the printer decodes a hex-spelled header or terminator, spec p.239. */
+  hex?: string;
+  /** How many labels the format that answers it prints, from the last ^PQ the printer meets in that format. Zero where
+   *  no format answers it, or where that format only stores. Only ^HV multiplies by it. */
+  labels: number;
+  /** False where the document cannot vouch for the replies: the printer fills the slot at print time, or it may void
+   *  and print again a label the ^HV answers per label. */
+  vouched: boolean;
 }
 
-/** A stored frame in printer order: its format questions and the recalls it makes, both resolved at its own recall. */
-type FrameEntry = HostCommandAsk | { recall: string };
+/** The transport sends the document as UTF-8 and a ^FH run as the bytes it spells, which is what the printer keeps. */
+const sentBytes = (text: string, hex: string | undefined): Uint8Array => (hex === undefined ? new TextEncoder().encode(text) : fhBytes(text, hex));
+
+/** As the transport hands a reply over, decoded as UTF-8 with replacement. */
+const received = (bytes: Uint8Array): string => getDecoder("utf-8").decode(bytes);
+
+/** A field as it closes: the slot it numbers, the data it sends, and whether the printer fills it at print time. */
+interface FieldClose {
+  kind: "field";
+  slot: number;
+  data: Uint8Array | undefined;
+  filled: boolean;
+}
+
+/** What a format does in printer order. A storing format keeps it as its frame, replayed at every recall. */
+type FrameEntry =
+  | { kind: "ask"; ask: HostCommandAsk }
+  | { kind: "recall"; path: string }
+  | { kind: "quantity"; labels: number }
+  | FieldClose
+  | { kind: "tagged" }
+  | { kind: "serialised" };
+
+/** ^SN and ^SF fill their field at print time, spec p.341 and p.335. */
+const FILLS_FIELD = new Set(["^SN", "^SF"]);
+
+/** An ^RF with operation R or P reads the tag into its field, spec p.426. */
+const readsTag = (id: string, rest: string): boolean => id === "^RF" && /^\s*[RP]/i.test(rest);
+
+/** A tag read, write or lock that fails voids the label and prints it again, spec p.434. */
+const TOUCHES_TAG = new Set(["^RF", "^RL", "^RU", "^RI", "^RT", "^WT"]);
+
+interface HostCommandWalk {
+  asks: HostCommandAsk[];
+  /** False where the document recalls a frame it does not hold, which may count, fill or ask on its own unseen. */
+  held: boolean;
+}
 
 /** The host commands in `zpl` in printer order with their {@link HostAsk}. A stored command is listed again as asked at
  *  every ^XF of its frame, through the recalls the frame holds. */
-export function* hostCommandAsks(zpl: string, chars: TokenizerChars, formatOpen = false): Generator<HostCommandAsk> {
+export const hostCommandAsks = (zpl: string, chars: TokenizerChars, formatOpen = false): HostCommandAsk[] => walkHostCommands(zpl, chars, formatOpen).asks;
+
+function walkHostCommands(zpl: string, chars: TokenizerChars, formatOpen: boolean): HostCommandWalk {
   const frames = new Map<string, FrameEntry[]>();
+  const asks: HostCommandAsk[] = [];
+  let held = true;
+  // A format's ^PQ may follow its questions, so the answered ones learn it when the format closes.
+  let answeredHere: HostCommandAsk[] = [];
+  let labels = 1;
+  // The printing format's fields and the recalled frame's fill the slots of its own ^HV and of the frame's.
+  const fields = new Map<number, Uint8Array>();
+  const stored = new Map<number, Uint8Array>();
+  const dynamic = new Set<number>();
+  let tagged = false;
+  // ^RU puts the tag's serial into any ^FD from there on, spec p.439. Whether that ends with the format is unmeasured, so it is taken to last.
+  let serialised = false;
+  const closeSlot = ({ slot, data, filled }: FieldClose, into: Map<number, Uint8Array>) => {
+    if (data !== undefined) into.set(slot, data);
+    if (filled || serialised) dynamic.add(slot);
+  };
+  const slotData = ({ slot, bytes }: FieldHostParams): string[] =>
+    [...new Set([stored.get(slot), fields.get(slot)].filter((data) => data !== undefined).map((data) => received(data.subarray(0, bytes))))];
+  const closeFormat = (prints: boolean) => {
+    for (const ask of answeredHere) {
+      ask.labels = prints ? labels : 0;
+      if (!isFieldHostCommand(ask.id)) continue;
+      const params = fieldHostParams(ask.params, ask.delimiter);
+      ask.data = slotData(params);
+      ask.vouched = !dynamic.has(params.slot) && !(params.perLabel && (tagged || serialised));
+    }
+    answeredHere = [];
+    fields.clear();
+    stored.clear();
+    dynamic.clear();
+    tagged = false;
+    labels = 1;
+  };
+  const answer = (token: Omit<HostCommandAsk, "ask" | "labels">) => {
+    const ask: HostCommandAsk = { ...token, ask: "asked", labels: 1 };
+    asks.push(ask);
+    answeredHere.push(ask);
+  };
+  const apply = (entry: FrameEntry, into: Map<number, Uint8Array>, visited: ReadonlySet<string>) => {
+    switch (entry.kind) {
+      case "ask":
+        answer(entry.ask);
+        break;
+      case "recall":
+        recall(entry.path, visited);
+        break;
+      case "quantity":
+        labels = entry.labels;
+        break;
+      case "field":
+        closeSlot(entry, into);
+        break;
+      case "tagged":
+        tagged = true;
+        break;
+      case "serialised":
+        serialised = true;
+        break;
+    }
+  };
   // The visited set ends a recall cycle, so a frame that recalls itself stops there.
-  function* recalledAsks(path: string, visited: ReadonlySet<string>): Generator<HostCommandAsk> {
+  const recall = (path: string, visited: ReadonlySet<string>) => {
     for (const key of recallKeys(path.trimEnd())) {
       const entries = frames.get(key);
       if (entries === undefined) continue;
       if (visited.has(key)) return;
       const seen = new Set(visited).add(key);
-      for (const entry of entries) {
-        if ("recall" in entry) yield* recalledAsks(entry.recall, seen);
-        else yield { ...entry, ask: "asked" };
-      }
+      for (const entry of entries) apply(entry, stored, seen);
       return;
     }
-  }
+    held = false;
+  };
   let open = formatOpen;
   let frame: FrameEntry[] | undefined;
+  const act = (entry: FrameEntry) => {
+    if (frame !== undefined) frame.push(entry);
+    else apply(entry, fields, new Set());
+  };
   let named = false;
+  let hex: string | undefined;
+  let slot: number | undefined;
+  let filled = false;
+  let dataSeen = false;
+  let data: Uint8Array | undefined;
+  const closeField = () => {
+    if (slot !== undefined) act({ kind: "field", slot, data, filled });
+    filled = false;
+    dataSeen = false;
+    data = undefined;
+    hex = undefined;
+    slot = undefined;
+  };
   for (const t of commandTokens(zpl, chars)) {
+    if (open && TOUCHES_TAG.has(t.id)) act({ kind: "tagged" });
     if (t.id === "^XA" || t.id === "^XZ") {
+      closeField();
+      closeFormat(frame === undefined);
       open = t.id === "^XA";
       frame = undefined;
       named = false;
+    } else if (t.id === "^FH") {
+      hex = fhIndicator(t.rest);
+    } else if (t.id === "^FS") {
+      closeField();
+    } else if (FILLS_FIELD.has(t.id) || readsTag(t.id, t.rest)) {
+      filled = true;
+    } else if ((t.id === "^RT" || t.id === "^RI") && open) {
+      // Both read the tag into the field their first parameter numbers, RFID Programming Guide p.115 and Guide 2 p.76.
+      act({ kind: "field", slot: int(t.rest), data: undefined, filled: true });
+    } else if (t.id === "^RU" && open) {
+      act({ kind: "serialised" });
+    } else if (t.id === "^FE" || t.id === "^FC") {
+      // Ahead of the field's data, ^FE has the printer splice other fields into it, p.191, and ^FC the clock, p.189 and p.1614.
+      if (!dataSeen) filled = true;
+    } else if (t.id === "^FN" && open) {
+      // A bare ^FN numbers its field 0, spec p.200.
+      slot = int(t.rest);
+    } else if (t.id === "^FD" || t.id === "^FV") {
+      const text = stripDataLineBreaks(t.rest);
+      // An empty ^FV is ignored, spec p.207.
+      if (t.id === "^FV" && text === "") continue;
+      dataSeen = true;
+      data = sentBytes(text, hex);
     } else if (t.id === "^DF" && open) {
       // The first ^DF opens the frame and the first usable path names it, as the parser keys its template.
       frame ??= [];
@@ -161,19 +343,177 @@ export function* hostCommandAsks(zpl: string, chars: TokenizerChars, formatOpen 
         named = true;
       }
     } else if (t.id === "^XF" && open) {
-      if (frame !== undefined) frame.push({ recall: t.rest });
-      else yield* recalledAsks(t.rest, new Set());
+      act({ kind: "recall", path: t.rest });
+    } else if (t.id === "^PQ" && open) {
+      const quantity = printQuantityOf(t.rest.split(chars.delimiterChar)[0]);
+      // A storing format prints nothing, so its ^PQ counts only where the frame is recalled.
+      if (quantity === undefined) continue;
+      act({ kind: "quantity", labels: quantity });
     } else if (isHostCommand(t.id)) {
-      const token = { id: t.id, params: hostCommandParams(t.id, t.rest), start: t.start, end: t.end };
-      if (t.id.startsWith("~") || (open && frame === undefined)) yield { ...token, ask: "asked" };
-      else if (frame === undefined) yield { ...token, ask: "ignored" };
+      // The params in the document's delimiter would split wrong, so the canonical spelling wins where one exists.
+      const raw = hostCommandParams(t.id, t.rest);
+      const spelled = canonicalHostCommand(t.id, raw, chars.delimiterChar);
+      const token = { id: t.id, params: spelled === undefined ? raw : spelled.slice(3), canonical: spelled !== undefined, delimiter: spelled === undefined ? chars.delimiterChar : ",", data: [], vouched: true, hex, start: t.start, end: t.end };
+      if (t.id.startsWith("~") || (open && frame === undefined)) answer(token);
+      else if (frame === undefined) asks.push({ ...token, ask: "ignored", labels: 0 });
       else {
-        const stored: HostCommandAsk = { ...token, ask: "stored" };
-        frame.push(stored);
-        yield stored;
+        const ask: HostCommandAsk = { ...token, ask: "stored", labels: 0 };
+        frame.push({ kind: "ask", ask });
+        asks.push(ask);
       }
     }
   }
+  closeFormat(frame === undefined);
+  return { asks, held };
+}
+
+export interface FieldReply {
+  command: string;
+  /** As the printer sends them, a ^FH spelling decoded. */
+  header: string;
+  terminator: string;
+  /** How many replies this spelling earns over the whole document. */
+  count: number;
+  /** The field data the document holds for the slot, one per format that fills it. */
+  data: string[];
+}
+
+/** A mark the transport hands back as spelled. One it garbles merges with its neighbours on the wire, so it is no mark. */
+function receivedMark(mark: string, hex: string | undefined): string {
+  const bytes = sentBytes(mark, hex);
+  const text = received(bytes);
+  const back = new TextEncoder().encode(text);
+  return back.length === bytes.length && back.every((byte, i) => byte === bytes[i]) ? text : "";
+}
+
+/** The ^HV replies a document earns, each spelling once with its count, and none where the document cannot vouch for
+ *  them. */
+export function fieldReplies(zpl: string): FieldReply[] {
+  const { asks, held } = walkHostCommands(zpl, { ...PLAIN_CHARS }, false);
+  if (!held) return [];
+  const found = new Map<string, Omit<FieldReply, "data"> & { data: Set<string> }>();
+  for (const t of asks) {
+    // A format that only stores prints no field, so its ^HV earns no reply.
+    if (t.ask !== "asked" || !isFieldHostCommand(t.id) || t.labels === 0 || !t.vouched) continue;
+    const command = `${t.id}${t.params}`;
+    const { header, terminator, perLabel } = fieldHostParams(t.params, t.delimiter);
+    const marks = { header: receivedMark(header, t.hex), terminator: receivedMark(terminator, t.hex) };
+    // One spelling under two ^FH indicators sends two reply shapes.
+    const key = JSON.stringify([command, marks.header, marks.terminator]);
+    const reply = found.get(key) ?? { command, ...marks, count: 0, data: new Set<string>() };
+    reply.count += perLabel ? t.labels : 1;
+    for (const data of t.data) reply.data.add(data);
+    found.set(key, reply);
+  }
+  return [...found.values()].map((reply) => ({ ...reply, data: [...reply.data] }));
+}
+
+/** The ^HV spellings the document cannot vouch for: it recalls a frame that lies on the printer and may count, fill
+ *  or ask on its own, the printer fills the slot at print time, or it may void and print again a label the ^HV
+ *  answers per label. */
+export function uncountedReplies(zpl: string): string[] {
+  const { asks, held } = walkHostCommands(zpl, { ...PLAIN_CHARS }, false);
+  const unvouched = asks.filter((t) => t.ask === "asked" && isFieldHostCommand(t.id) && t.labels > 0 && (!held || !t.vouched));
+  return [...new Set(unvouched.map((t) => `${t.id}${t.params}`))];
+}
+
+/** The ^HV spellings a reader could not find in the reply, for want of a header and a terminator. */
+export const unmarkedReplies = (replies: readonly FieldReply[]): string[] =>
+  replies.filter((reply) => fieldReplyMarks(reply) === undefined).map((reply) => reply.command);
+
+/** A reply shape a reader waits for: the ^HV spellings that share a header and terminator, which is all it can tell apart. */
+export interface AwaitedReply {
+  header: string;
+  terminator: string;
+  count: number;
+  commands: string[];
+}
+
+export interface ReplyGroup extends AwaitedReply {
+  /** The field data the document holds for these replies. */
+  data: Set<string>;
+}
+
+/** Groups the replies by their marks, which is all a reader can tell them apart by. */
+export function awaitedReplies(replies: readonly FieldReply[]): ReplyGroup[] {
+  const groups = new Map<string, ReplyGroup>();
+  for (const reply of replies) {
+    const marks = fieldReplyMarks(reply);
+    if (marks === undefined) continue;
+    const { header, terminator } = marks;
+    const key = JSON.stringify([header, terminator]);
+    const group = groups.get(key) ?? { header, terminator, count: 0, commands: [], data: new Set<string>() };
+    group.count += reply.count;
+    group.commands.push(reply.command);
+    for (const data of reply.data) group.data.add(data);
+    groups.set(key, group);
+  }
+  return [...groups.values()];
+}
+
+/** What a reader sees of a group's replies: the marks around the field data the document holds, and around an empty
+ *  field, since a reply with data the document does not hold shows at least its marks. */
+const replyTexts = (group: ReplyGroup): string[] => [group.header + group.terminator, ...[...group.data].map((data) => group.header + data + group.terminator)];
+
+/** What a reply leaves the reader for the one behind it: the replies counted beyond its own, the mark the scan still
+ *  wants, the tail that could still begin that mark, and whether it leaves a frame open. */
+interface Seam {
+  surplus: number;
+  afterHeader: boolean;
+  carry: string;
+  open: boolean;
+}
+
+/** The longest tail that is a proper prefix of the mark, which is all a mark across the seam can use of the text. */
+function markStart(text: string, mark: string): string {
+  for (let k = Math.max(0, text.length - mark.length + 1); k < text.length; k += 1) {
+    const tail = text.slice(k);
+    if (mark.startsWith(tail)) return tail;
+  }
+  return "";
+}
+
+function seamOf(text: string, own: number, marks: ReplyMarks): Seam {
+  const seen = outsideFrames(text);
+  const { count, afterHeader, at } = scanReplies(seen, marks);
+  return { surplus: count - own, afterHeader, carry: markStart(seen.slice(at), afterHeader ? marks.terminator : marks.header), open: leavesFrameOpen(text) };
+}
+
+/** The seam check grows with the square of the groups, and a thousand take a second. */
+export const MAX_REPLY_GROUPS = 200;
+
+/** The commands whose replies a reader would miscount: two replies in a row, its own or another group's, read as more
+ *  or fewer of the group's replies than they are. The first reply reaches the second only through its seam, so the
+ *  distinct seams stand in for every first reply. */
+export function ambiguousReplies(groups: readonly ReplyGroup[]): string[] {
+  if (groups.length > MAX_REPLY_GROUPS) return groups.flatMap((group) => group.commands);
+  const commands = new Set<string>();
+  const texts = groups.flatMap((group) => replyTexts(group).map((text) => ({ group, text })));
+  for (const group of groups) {
+    const own = (part: { group: ReplyGroup }) => (part.group === group ? 1 : 0);
+    const seams = new Map(texts.map((p) => { const seam = seamOf(p.text, own(p), group); return [JSON.stringify(seam), seam]; }));
+    const miscounts = [...seams.values()].some((seam) =>
+      texts.some((q) => seam.surplus + scanReplies(seam.carry + outsideFrames(q.text, seam.open), group, seam.afterHeader).count !== own(q)),
+    );
+    if (miscounts) group.commands.forEach((command) => commands.add(command));
+  }
+  return [...commands];
+}
+
+/** A reply the printer still owes: how many of the group's replies the body lacks. */
+export interface OwedReply {
+  commands: string[];
+  missing: number;
+  of: number;
+}
+
+/** The awaited replies the body does not hold yet. A framed reply holds no ^HV reply, so the marks are counted
+ *  outside the frames. */
+export function owedReplies(body: string, awaited: readonly AwaitedReply[]): OwedReply[] {
+  const text = outsideFrames(body);
+  return awaited
+    .map((group) => ({ commands: group.commands, missing: group.count - repliesIn(text, group), of: group.count }))
+    .filter((owed) => owed.missing > 0);
 }
 
 /** The host commands a document asks, each spelling once, in the order the printer meets them. */

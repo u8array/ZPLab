@@ -392,22 +392,40 @@ export function hexControlEscape(text: string, delimiter: string): { text: strin
   return m ? { text: m[0], index: m.index } : null;
 }
 
-/** ^FH hex escapes → decoded string; contiguous pairs collect for multi-byte glyphs. */
-export function decodeFH(
-  text: string,
-  delimiter: string,
-  decoder: TextDecoder,
-): string {
-  const escaped = escapeRegExp(delimiter);
-  const runRe = new RegExp(`(?:${escaped}[0-9A-Fa-f]{2})+`, "g");
+/** Contiguous ^FH escapes form one run, so a multi-byte glyph decodes whole. */
+const fhRunRe = (delimiter: string): RegExp => new RegExp(`(?:${escapeRegExp(delimiter)}[0-9A-Fa-f]{2})+`, "g");
+
+function fhRunBytes(run: string, delimiter: string): Uint8Array {
   const stride = delimiter.length + 2;
-  return text.replace(runRe, (run) => {
-    const bytes = new Uint8Array(run.length / stride);
-    for (let i = 0, b = 0; i < run.length; i += stride, b++) {
-      bytes[b] = parseInt(run.slice(i + delimiter.length, i + stride), 16);
-    }
-    return decoder.decode(bytes);
-  });
+  const bytes = new Uint8Array(run.length / stride);
+  for (let i = 0, b = 0; i < run.length; i += stride, b++) {
+    bytes[b] = parseInt(run.slice(i + delimiter.length, i + stride), 16);
+  }
+  return bytes;
+}
+
+/** ^FH hex escapes → decoded string. */
+export function decodeFH(text: string, delimiter: string, decoder: TextDecoder): string {
+  return text.replace(fhRunRe(delimiter), (run) => decoder.decode(fhRunBytes(run, delimiter)));
+}
+
+/** The bytes a ^FH spelling puts on the wire: each hex run as the bytes it spells, the rest as UTF-8. */
+export function fhBytes(text: string, delimiter: string): Uint8Array {
+  const encoder = new TextEncoder();
+  const parts: Uint8Array[] = [];
+  let at = 0;
+  for (const run of text.matchAll(fhRunRe(delimiter))) {
+    parts.push(encoder.encode(text.slice(at, run.index)), fhRunBytes(run[0], delimiter));
+    at = run.index + run[0].length;
+  }
+  parts.push(encoder.encode(text.slice(at)));
+  const bytes = new Uint8Array(parts.reduce((length, part) => length + part.length, 0));
+  let offset = 0;
+  for (const part of parts) {
+    bytes.set(part, offset);
+    offset += part.length;
+  }
+  return bytes;
 }
 
 /** Field data without raw line breaks: the printer drops them and prints the rest,
@@ -421,6 +439,9 @@ export function stripDataLineBreaks(data: string): string {
 export function trimmedSpanEnd(zpl: string, start: number, end: number): number {
   return start + zpl.slice(start, end).trimEnd().length;
 }
+
+/** The hex indicator ^FH names. A line break after ^FH is not the indicator, ZD230-measured, so the default stays. */
+export const fhIndicator = (rest: string): string => stripLineWrap(rest)[0] ?? "_";
 
 /** Scanned, not regex-matched: the old pattern backtracked cubically on long break runs. */
 export function stripLineWrap(rest: string): string {

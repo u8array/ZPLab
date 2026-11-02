@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { ETX, STX, ZD230_HI, ZD230_HS } from "./hostStatus.fixture";
-import { hostStatusAnswers, parseHostIdentification, parseHostMemory, parseHostQueryStatus, parseHostStatus, printerReadiness } from "./hostStatus";
+import { hostStatusAnswers, leavesFrameOpen, outsideFrames, parseHostIdentification, parseHostMemory, parseHostQueryStatus, parseHostStatus, printerReadiness, repliesIn, scanReplies } from "./hostStatus";
 
 describe("host replies", () => {
   it("reads the identity line of ~HI", () => {
     expect(parseHostIdentification(`${ZD230_HI}\r\n`)).toEqual({
-      model: "ZD230",
+      model: "ZD230-200dpi",
       firmware: "V89.21.46Z",
       dpmm: 8,
-      memoryKb: 4096,
+      memoryKb: 8176,
       options: "",
     });
     expect(parseHostIdentification("XXXXXX,V1.0.0,dpm,000KB,X")?.dpmm).toBeUndefined();
@@ -22,10 +22,10 @@ describe("host replies", () => {
 
   it("finds the identity line behind the ~HS strings of the same reply", () => {
     expect(parseHostIdentification(`${ZD230_HS}\r\n${ZD230_HI}`)).toEqual({
-      model: "ZD230",
+      model: "ZD230-200dpi",
       firmware: "V89.21.46Z",
       dpmm: 8,
-      memoryKb: 4096,
+      memoryKb: 8176,
       options: "",
     });
   });
@@ -139,5 +139,42 @@ describe("host replies", () => {
     expect(hostStatusAnswers({ errors: [], warnings: ["cleanPrinthead"] })).toBe(true);
     expect(hostStatusAnswers({ errors: ["cutterFault"], warnings: [] })).toBe(true);
     expect(hostStatusAnswers({ errors: ["headOpen"], warnings: [] })).toBe(false);
+  });
+});
+
+describe("outsideFrames and repliesIn", () => {
+  it("keeps the text outside the frames, and nothing of a frame still open", () => {
+    expect(outsideFrames(`A${STX}030,0${ETX}B${STX}1,2${ETX}C`)).toBe("ABC");
+    expect(outsideFrames(`A${STX}HEADER x END`)).toBe("A");
+    expect(outsideFrames(`A${ETX}B`)).toBe(`A${ETX}B`);
+    expect(outsideFrames("")).toBe("");
+  });
+
+  it("counts a header and terminator pair once, a lone mark per occurrence, never overlapping, and nothing for no marks", () => {
+    expect(repliesIn("A x END A y END", { header: "A", terminator: "END" })).toBe(2);
+    expect(repliesIn("A x END A y", { header: "A", terminator: "END" })).toBe(1);
+    expect(repliesIn("END END", { header: "", terminator: "END" })).toBe(2);
+    expect(repliesIn("ENDEND", { header: "", terminator: "END" })).toBe(2);
+    expect(repliesIn("AA", { header: "A", terminator: "A" })).toBe(1);
+    expect(repliesIn("", { header: "A", terminator: "" })).toBe(0);
+    expect(repliesIn("anything", { header: "", terminator: "" })).toBe(0);
+  });
+
+  it("scans from the start or from behind a header, and says where it stopped", () => {
+    const marks = { header: "A", terminator: "END" };
+    expect(scanReplies("A x END A y", marks)).toEqual({ count: 1, afterHeader: true, at: 9 });
+    expect(scanReplies("A x END", marks)).toEqual({ count: 1, afterHeader: false, at: 7 });
+    expect(scanReplies("x END", marks, true)).toEqual({ count: 1, afterHeader: false, at: 5 });
+    expect(scanReplies("ENDEND", { header: "", terminator: "END" })).toEqual({ count: 2, afterHeader: true, at: 6 });
+    expect(scanReplies("AA", { header: "A", terminator: "" })).toEqual({ count: 2, afterHeader: false, at: 2 });
+    expect(scanReplies("x", { header: "", terminator: "" })).toEqual({ count: 0, afterHeader: false, at: 0 });
+  });
+
+  it("knows a frame left open, and reads the next text from inside one", () => {
+    expect(leavesFrameOpen(`A${STX}B`)).toBe(true);
+    expect(leavesFrameOpen(`A${STX}B${ETX}C`)).toBe(false);
+    expect(leavesFrameOpen(`${ETX}A`)).toBe(false);
+    expect(outsideFrames(`x${ETX}y${STX}z`, true)).toBe("y");
+    expect(outsideFrames("xy", true)).toBe("");
   });
 });
