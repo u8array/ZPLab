@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { formatTemplate } from "./formatTemplate";
 import en from "../locales/en";
 import { queryOffer, wayHint } from "./printWayText";
+import { queryFacts } from "./outputChoice.testkit";
 import { asksPrinter } from "./outputChoice";
 
 describe("wayHint", () => {
@@ -18,9 +19,9 @@ describe("wayHint", () => {
 
 describe("queryOffer", () => {
   const loc = en.zebraPrint;
-  const prints = { commands: ["~HS"], prints: true, unmarked: [], ambiguous: [], uncounted: [] };
-  const asks = { commands: ["~HS"], prints: false, unmarked: [], ambiguous: [], uncounted: [] };
-  const none = { commands: [], prints: true, unmarked: [], ambiguous: [], uncounted: [] };
+  const prints = queryFacts({ commands: ["~HS"] });
+  const asks = queryFacts({ commands: ["~HS"], prints: false });
+  const none = queryFacts();
 
   it("offers nothing for a document that only prints", () => {
     expect(asksPrinter(none)).toBe(false);
@@ -34,15 +35,15 @@ describe("queryOffer", () => {
   });
 
   it("queries for a marked ^HV, and sends where a reply would carry no mark", () => {
-    const marked = { commands: ["~HS", "^HV1,20,H,E,F"], prints: true, unmarked: [], ambiguous: [], uncounted: [] };
+    const marked = queryFacts({ commands: ["~HS", "^HV1,20,H,E,F"] });
     expect(queryOffer(loc, marked, "network", true)).toEqual({ queries: true, hints: [loc.queryHint, loc.queryMixedHint] });
-    const bare = { commands: ["~HS", "^HV1,20"], prints: true, unmarked: ["^HV1,20"], ambiguous: [], uncounted: [] };
+    const bare = queryFacts({ commands: ["~HS", "^HV1,20"], unmarked: ["^HV1,20"] });
     const bareHint = formatTemplate(loc.queryUnmarkedFmt, { commands: "^HV1,20" });
     expect(queryOffer(loc, bare, "network", true)).toEqual({ queries: false, hints: [bareHint] });
     expect(queryOffer(loc, bare, "local", false)).toEqual({ queries: false, hints: [bareHint] });
-    const overlapping = { commands: ["^HV1,20,H,E", "^HV2,20,E,H"], prints: false, unmarked: [], ambiguous: ["^HV1,20,H,E", "^HV2,20,E,H"], uncounted: [] };
+    const overlapping = queryFacts({ commands: ["^HV1,20,H,E", "^HV2,20,E,H"], prints: false, ambiguous: ["^HV1,20,H,E", "^HV2,20,E,H"] });
     expect(queryOffer(loc, overlapping, "network", true)).toEqual({ queries: false, hints: [formatTemplate(loc.queryAmbiguousFmt, { commands: "^HV1,20,H,E ^HV2,20,E,H" })] });
-    const recalled = { commands: ["^HV1,20,H,E,L"], prints: false, unmarked: [], ambiguous: [], uncounted: ["^HV1,20,H,E,L"] };
+    const recalled = queryFacts({ commands: ["^HV1,20,H,E,L"], prints: false, uncounted: ["^HV1,20,H,E,L"] });
     expect(queryOffer(loc, recalled, "usb", true)).toEqual({ queries: false, hints: [formatTemplate(loc.queryUncountedFmt, { commands: "^HV1,20,H,E,L" })] });
     expect(queryOffer(loc, bare, "system", true)).toEqual({ queries: false, hints: [loc.queryNoRender] });
   });

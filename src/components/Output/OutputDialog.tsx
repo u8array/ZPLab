@@ -10,14 +10,11 @@ import { formatTemplate } from "../../lib/formatTemplate";
 import { isDesktopShell } from "../../lib/platform";
 import { needsRawChannel, type PrintWay } from "../../lib/printTarget";
 import { wayHint, wayLabel } from "../../lib/printWayText";
-import { ambiguousReplies, awaitedReplies, fieldReplies, repliesToHost, uncountedReplies, unmarkedReplies } from "@zplab/core/lib/hostCommands";
 import {
   effectiveKind,
   effectiveScope,
   offeredKinds,
   offeredScopes,
-  printsFields,
-  type DocumentQueryFacts,
   type FileFormat,
   type OutputFacts,
   type OutputKind,
@@ -25,7 +22,7 @@ import {
   type PdfScope,
 } from "../../lib/outputChoice";
 import { useLabelaryConsent } from "../../hooks/useLabelaryConsent";
-import { sendZpl } from "../../lib/sendZpl";
+import { useDocumentQuery } from "../../hooks/useDocumentQuery";
 import { usePrintWays } from "../../hooks/usePrintWays";
 import { useSendNotices } from "../../hooks/useSendNotices";
 import { ActiveRowNotice, DatasetNotice } from "./DatasetNotice";
@@ -87,14 +84,7 @@ export function OutputDialog({ zpl, source, facts, onClose, onPrintImage, onExpo
   };
 
   const ways = usePrintWays(source, facts);
-  // One row carries every command, so the notices and a document that asks nothing stop there. A query reads every row,
-  // since any row can spoil a reply.
-  const sample = useLabelStore((s) => (source === "label" ? sendZpl(s, 1) : ""));
-  const asks = repliesToHost(source === "label" ? sample : zpl()).length > 0;
-  const outgoing = useLabelStore((s) => (source === "label" && asks ? sendZpl(s) : ""));
-  const bytes = source === "label" ? (asks ? outgoing : sample) : zpl();
-  const replies = fieldReplies(bytes);
-  const query: DocumentQueryFacts = { commands: repliesToHost(bytes), prints: printsFields(source, facts), unmarked: unmarkedReplies(replies), ambiguous: ambiguousReplies(awaitedReplies(replies)), uncounted: uncountedReplies(bytes) };
+  const { sample, query } = useDocumentQuery(source, facts, zpl);
   const waySegments: Segment<PrintWay>[] = ways.offered.map((key) => ({
     key,
     label: wayLabel(loc, key),

@@ -7,7 +7,7 @@ import {
   effectiveScope,
   offeredKinds,
   offeredScopes,
-  printsFields,
+  documentQueryFacts,
   renderableOutput,
   type OutputFacts,
 } from "./outputChoice";
@@ -23,11 +23,13 @@ const everything: OutputFacts = {
   batchRowCount: 3,
 };
 
-describe("printsFields", () => {
-  it("is true only for a label that has objects, never for a setup script", () => {
-    expect(printsFields("label", everything)).toBe(true);
-    expect(printsFields("setupScript", everything)).toBe(false);
-    expect(printsFields("label", { ...everything, hasObjects: false })).toBe(false);
+describe("documentQueryFacts", () => {
+  it("reads the asked commands and the unmarked ^HV from the bytes, and prints the fields only for a label with objects", () => {
+    const bytes = "^XA~HS^FN1^FDx^FS^HV1,20^XZ";
+    expect(documentQueryFacts(bytes, "label", everything)).toEqual({ commands: ["~HS", "^HV1,20"], prints: true, unmarked: ["^HV1,20"], ambiguous: [], uncounted: [] });
+    expect(documentQueryFacts(bytes, "setupScript", everything).prints).toBe(false);
+    expect(documentQueryFacts(bytes, "label", { ...everything, hasObjects: false }).prints).toBe(false);
+    expect(documentQueryFacts("^XA^FN1^FDx^FS^HV1,20,H,E^XZ", "label", everything)).toEqual({ commands: ["^HV1,20,H,E"], prints: true, unmarked: [], ambiguous: [], uncounted: [] });
   });
 });
 

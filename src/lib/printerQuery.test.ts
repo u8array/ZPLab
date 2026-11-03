@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { STX, ETX } from "@zplab/core/lib/hostStatus.fixture";
-import { answered, queryPrinter, readPrinterReply } from "./printerQuery";
+import { CHUNKS_SETTLE_MS, FIRST_BYTE_MS, REPLY_DEADLINE_MS, REPLY_IDLE_MS, answered, queryPrinter, readPrinterReply } from "./printerQuery";
+import { DOCUMENT_DEADLINE_MS } from "./printerDocumentQuery";
 
 vi.mock("./platform", () => ({ isDesktopShell: true }));
 
@@ -76,9 +77,9 @@ describe("queryPrinter over the network", () => {
     const read = queryPrinter(target, "~HS");
     const query = await open();
     expect(query.cmd).toBe("query_zpl_tcp");
-    expect(query.args).toMatchObject({ host: "172.17.17.175", port: 9100, zpl: "~HS", deadlineMs: 60_000 });
+    expect(query.args).toMatchObject({ host: "172.17.17.175", port: 9100, zpl: "~HS", deadlineMs: REPLY_DEADLINE_MS });
     query.chunk(HS);
-    await vi.advanceTimersByTimeAsync(1199);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS - 1);
     expect(stops).toEqual([]);
     await vi.advanceTimersByTimeAsync(1);
     expect(stops).toEqual([(query.args.onChunk as FakeChannel<string>).id]);
@@ -89,11 +90,11 @@ describe("queryPrinter over the network", () => {
     const read = queryPrinter(target, "^XA^HWR:*.*^XZ");
     const query = await open();
     query.chunk("\u0002\r\n- DIR R:*.*");
-    await vi.advanceTimersByTimeAsync(1000);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS - 1);
     query.chunk("\r\n* R:PRE.GRF 49924\r\n\u0003");
-    await vi.advanceTimersByTimeAsync(1000);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS - 1);
     expect(stops).toEqual([]);
-    await vi.advanceTimersByTimeAsync(200);
+    await vi.advanceTimersByTimeAsync(1);
     expect(await read).toEqual({ kind: "ok", value: "\u0002\r\n- DIR R:*.*\r\n* R:PRE.GRF 49924\r\n\u0003" });
   });
 
@@ -114,7 +115,7 @@ describe("queryPrinter over the network", () => {
     const late = await open();
     late.chunk("~DYPRE");
     late.end({ kind: "done", end: "closed", chunks: 2 });
-    await vi.advanceTimersByTimeAsync(5000);
+    await vi.advanceTimersByTimeAsync(CHUNKS_SETTLE_MS);
     expect(await cut).toEqual({ kind: "incomplete" });
   });
 
@@ -129,7 +130,7 @@ describe("queryPrinter over the network", () => {
   it("stops waiting for a first byte past the first-byte limit and calls that silence, like a stream that closes without one", async () => {
     const quiet = queryPrinter(target, "~HU");
     await open();
-    await vi.advanceTimersByTimeAsync(29_999);
+    await vi.advanceTimersByTimeAsync(FIRST_BYTE_MS - 1);
     expect(stops).toEqual([]);
     await vi.advanceTimersByTimeAsync(1);
     expect(stops).toHaveLength(1);
@@ -137,6 +138,11 @@ describe("queryPrinter over the network", () => {
     const closed = queryPrinter(target, "~HU");
     (await open()).end({ kind: "done", end: "closed", chunks: 0 });
     expect(await closed).toEqual({ kind: "silent" });
+    const framed = queryPrinter(target, "~HU");
+    const frame = await open();
+    frame.chunk(`${STX}${ETX}`);
+    frame.end({ kind: "done", end: "closed", chunks: 1 });
+    expect(await framed).toEqual({ kind: "silent" });
   });
 
   it("forwards a refusal, an unreachable host, a rejected invoke and a throwing runtime as values", async () => {
@@ -161,7 +167,7 @@ describe("queryPrinter over the network", () => {
     expect(query.cmd).toBe("query_zpl_usb");
     expect(query.args).toMatchObject({ device: "0a5f:0166:X1", zpl: "~HI", deadlineMs: 90_000 });
     query.chunk("ZD230");
-    await vi.advanceTimersByTimeAsync(1200);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS);
     expect(await read).toEqual({ kind: "ok", value: "ZD230" });
   });
 
@@ -176,7 +182,7 @@ describe("queryPrinter over the network", () => {
     const whole = queryPrinter(target, "~HS");
     const query = await open();
     query.chunk("x");
-    await vi.advanceTimersByTimeAsync(1200);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS);
     expect(stops).toHaveLength(1);
     query.end({ kind: "done", end: "lost", chunks: 1 });
     expect(await whole).toEqual({ kind: "ok", value: "x" });
@@ -214,11 +220,11 @@ describe("readPrinterReply", () => {
     const controller = new AbortController();
     const owed = readPrinterReply(target, "^XA^FN1^FDx^FS^HV1,20,H,E^XZ", { awaited: [HV_H_E_PLAIN], signal: controller.signal });
     await open();
-    await vi.advanceTimersByTimeAsync(120_000);
+    await vi.advanceTimersByTimeAsync(REPLY_DEADLINE_MS * 2);
     expect(stops).toEqual([]);
     const lone = readPrinterReply(target, "^XA~HS^XZ");
     await open();
-    await vi.advanceTimersByTimeAsync(30_000);
+    await vi.advanceTimersByTimeAsync(FIRST_BYTE_MS);
     expect(stops).toHaveLength(1);
     expect(await lone).toEqual({ kind: "silent" });
     controller.abort();
@@ -226,18 +232,18 @@ describe("readPrinterReply", () => {
   });
 
   it("waits through the print for every ^HV reply the document earns, past any idle gap", async () => {
-    const read = readPrinterReply(target, "^XA~HS^FN1^FD4711^FS^HV1,20,HEADER ,END,L^PQ2^XZ", { deadlineMs: 300_000, awaited: [HV_HEADER_END(2)] });
+    const read = readPrinterReply(target, "^XA~HS^FN1^FD4711^FS^HV1,20,HEADER ,END,L^PQ2^XZ", { deadlineMs: DOCUMENT_DEADLINE_MS, awaited: [HV_HEADER_END(2)] });
     const query = await open();
-    expect(query.args).toMatchObject({ deadlineMs: 300_000 });
+    expect(query.args).toMatchObject({ deadlineMs: DOCUMENT_DEADLINE_MS });
     query.chunk(HS);
-    await vi.advanceTimersByTimeAsync(5000);
+    await vi.advanceTimersByTimeAsync(CHUNKS_SETTLE_MS);
     expect(stops).toEqual([]);
     query.chunk("HEADER 4711 END");
-    await vi.advanceTimersByTimeAsync(5000);
+    await vi.advanceTimersByTimeAsync(CHUNKS_SETTLE_MS);
     expect(stops).toEqual([]);
     query.chunk("HEADER 47");
     query.chunk("12 END");
-    await vi.advanceTimersByTimeAsync(1200);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS);
     expect(stops).toHaveLength(1);
     expect(await read).toEqual({ kind: "ok", value: { body: `${HS}HEADER 4711 ENDHEADER 4712 END`, unanswered: [] } });
   });
@@ -246,10 +252,10 @@ describe("readPrinterReply", () => {
     const read = readPrinterReply(target, "^XA^HH^FN1^FDx^FS^HV1,20,,E^XZ", { awaited: [{ header: "", terminator: "E", count: 1, commands: ["^HV1,20,,E"] }] });
     const query = await open();
     query.chunk(`${STX}DARKNESS E\r\nMODE E${ETX}`);
-    await vi.advanceTimersByTimeAsync(1200);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS);
     expect(stops).toEqual([]);
     query.chunk("xE");
-    await vi.advanceTimersByTimeAsync(1200);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS);
     expect(stops).toHaveLength(1);
     const res = await read;
     expect(res).toMatchObject({ kind: "ok", value: { unanswered: [] } });
@@ -260,7 +266,7 @@ describe("readPrinterReply", () => {
     const read = readPrinterReply(target, "^XA~HS^FN1^FDx^FS^HV1,20,H,E,F^XZ", { signal: controller.signal, awaited: [HV_H_E] });
     const query = await open();
     query.chunk(HS);
-    await vi.advanceTimersByTimeAsync(40_000);
+    await vi.advanceTimersByTimeAsync(FIRST_BYTE_MS);
     expect(stops).toEqual([]);
     controller.abort();
     expect(await read).toEqual({ kind: "ok", value: { body: HS, unanswered: [{ commands: ["^HV1,20,H,E,F"], missing: 1, of: 1 }] } });
@@ -317,7 +323,7 @@ describe("readPrinterReply", () => {
     const gone = await open();
     gone.chunk(HS);
     gone.end({ kind: "done", end: "stopped", chunks: 2 });
-    await vi.advanceTimersByTimeAsync(5000);
+    await vi.advanceTimersByTimeAsync(CHUNKS_SETTLE_MS);
     expect(await lost).toEqual({ kind: "incomplete" });
   });
 

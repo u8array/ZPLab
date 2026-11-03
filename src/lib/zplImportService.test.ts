@@ -4,7 +4,7 @@ import { mergeSetupEntries } from '@zplab/core/lib/setupEntries';
 import { generateSetupScript } from './zplSetupScript';
 import { generateMultiPageZPL, generateZPL } from '@zplab/core/lib/zplGenerator';
 import { parseZPL } from '@zplab/core/lib/zplParser';
-import { repliesToHost } from '@zplab/core/lib/hostCommands';
+import { documentReplies } from '@zplab/core/lib/hostCommands';
 import { hasFontBytes, loadFontBytesSync } from '@zplab/core/lib/fontCache';
 import { describeFinding, formatReportAsText } from './importReport';
 import { fallbackTranslations } from '../locales';
@@ -1223,7 +1223,7 @@ describe('a bare query page', () => {
     const r = importZplText('~HS^FO10,10^A0N,20,20^FDx^FS', 8);
     expect(r.pages[0]?.objects).toHaveLength(1);
     const out = generateMultiPageZPL(r.labelConfig as LabelConfig, r.pages, r.variables);
-    expect(repliesToHost(out)).toEqual(['~HS']);
+    expect(documentReplies(out).commands).toEqual(['~HS']);
     expect(out.startsWith('^XA')).toBe(true);
     expect(out.trimEnd().endsWith('^XZ')).toBe(true);
   });
@@ -1244,7 +1244,7 @@ describe('a bare query page', () => {
     const remapped = importZplText('~CC#\n#HWR:*.*', 8);
     const out = generateMultiPageZPL(remapped.labelConfig as LabelConfig, remapped.pages, remapped.variables);
     expect(out.startsWith('^XA')).toBe(true);
-    expect(repliesToHost(out)).toEqual(['^HWR:*.*']);
+    expect(documentReplies(out).commands).toEqual(['^HWR:*.*']);
     const immediate = importZplText('^CC#~HS', 8);
     expect(generateMultiPageZPL(immediate.labelConfig as LabelConfig, immediate.pages, immediate.variables)).toBe('^CC#~HS');
   });

@@ -23,11 +23,12 @@ export type PrinterQueryFailure =
 export type PrinterOutcome<T> = { kind: "ok"; value: T } | PrinterQueryFailure;
 
 /** A reply that is only a frame is silence. Spaces are kept, since they may be an ^HV header or terminator. */
-export function answered(outcome: PrinterOutcome<string>): PrinterOutcome<string> {
-  if (outcome.kind !== "ok") return outcome;
-  const text = unframed(outcome.value).replace(/^[\r\n]+|[\r\n]+$/g, "");
+export function answeredText(body: string): PrinterOutcome<string> {
+  const text = unframed(body).replace(/^[\r\n]+|[\r\n]+$/g, "");
   return text.trim() ? { kind: "ok", value: text } : { kind: "silent" };
 }
+
+export const answered = (outcome: PrinterOutcome<string>): PrinterOutcome<string> => (outcome.kind === "ok" ? answeredText(outcome.value) : outcome);
 
 /** The wording for the preview path, which keeps its errors as plain text. */
 export function printerFailureMessage(failure: PrinterQueryFailure): string {
@@ -70,13 +71,13 @@ interface ReplyStream {
 }
 
 /** Bounds the read alone, the connect and the write have their own timeouts in Rust. */
-const REPLY_DEADLINE_MS = 60_000;
+export const REPLY_DEADLINE_MS = 60_000;
 /** The printer renders before it answers, and a ~DY font download took a ZD230 past 10 s. */
-const FIRST_BYTE_MS = 30_000;
+export const FIRST_BYTE_MS = 30_000;
 /** The printer keeps the channel open, so a gap behind the reply is its end. */
-const REPLY_IDLE_MS = 1200;
+export const REPLY_IDLE_MS = 1200;
 /** A channel message can land after the command's return. */
-const CHUNKS_SETTLE_MS = 5000;
+export const CHUNKS_SETTLE_MS = 5000;
 
 async function openReplyStream(target: QueryTarget, zpl: string, deadlineMs: number, onChunk: (chunk: string) => void): Promise<ReplyStream> {
   const { Channel, invoke } = await import("@tauri-apps/api/core");
@@ -173,11 +174,12 @@ async function readReply(target: QueryTarget, zpl: string, deadlineMs: number, a
   // the printer off mid-reply. A document's last owed reply may land inside the idle gap ahead of either, and is whole.
   if (awaitsNone && !stopped && end.value.end === "deadline") return { kind: "timed_out" };
   if (awaitsNone && !stopped && end.value.end === "lost") return { kind: "lost" };
+  if (unanswered.length === 0 && answeredText(body).kind === "silent") return { kind: "silent" };
   return { kind: "ok", value: { body, unanswered } };
 }
 
 /** The reply of a command that answers at once, whole or not at all. */
-export async function queryPrinter(target: QueryTarget, zpl: string, deadlineMs = REPLY_DEADLINE_MS): Promise<PrinterOutcome<string>> {
+export async function queryPrinter(target: QueryTarget, zpl: string, deadlineMs?: number): Promise<PrinterOutcome<string>> {
   const res = await readPrinterReply(target, zpl, { deadlineMs });
   return res.kind === "ok" ? { kind: "ok", value: res.value.body } : res;
 }
