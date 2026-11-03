@@ -6,7 +6,7 @@ import { CheckboxRow } from "./CheckboxRow";
 import { NumberInput } from "./NumberInput";
 import { SegmentedControl } from "../ui/SegmentedControl";
 import { inputCls, labelCls } from "../ui/formStyles";
-import { getEntry, objectResolvesCtrl, specForObject } from "@zplab/core/registry";
+import { getEntry, isGs1Active, objectResolvesCtrl, specForObject } from "@zplab/core/registry";
 import {
   serialDisablePatch,
   serialEnablePatch,
@@ -16,7 +16,7 @@ import {
 import type { LabelObjectBase } from "@zplab/core/types/LabelObject";
 
 type SerialLeaf = LabelObjectBase & {
-  props: { content?: string; serial?: SerialMode; gs1?: boolean; preSerialContent?: string };
+  props: { content?: string; serial?: SerialMode; preSerialContent?: string };
 };
 
 interface Props {
@@ -33,7 +33,7 @@ export function SerialModeCheckbox({ obj, onChange }: Props) {
   const entry = getEntry(obj.type);
   // gs1 hides the toggle only while serial is OFF; legacy designs may still
   // carry both flags, so serial-on must keep its way out.
-  if (!entry?.serialisable || (obj.props.gs1 && !obj.props.serial)) return null;
+  if (!entry?.serialisable || (isGs1Active(entry, obj.props) && !obj.props.serial)) return null;
   const spec = specForObject(obj);
   return (
     <CheckboxRow

@@ -1,4 +1,4 @@
-import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
 import { formatEan8Hri } from './hriFormatters';
 export type { Barcode1DProps as Ean8Props } from './barcode1d';
 
@@ -7,6 +7,7 @@ export const ean8CoreConfig: Barcode1DCoreConfig = {
   icon: 'E8',
   placeholderContent: '1234567',
   group: 'code-1d',
+  propSpecs: BARCODE_1D_PROP_SPECS,
   serialisable: false,
   zplCommand: (p) => {
     const interp = p.printInterpretation ? 'Y' : 'N';

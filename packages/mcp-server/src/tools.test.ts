@@ -953,6 +953,20 @@ describe("agent-facing reporting", () => {
     expect(r.notes?.[0]).toContain("t1: fontSize is not a known text prop");
   });
 
+  it("a symbology's own props stay off the shared 1D schema; a foreign one is refused on input and inert in a file", () => {
+    const code39 = Object.keys(ObjectRegistry.code39.propSpecs);
+    expect(Object.keys(ObjectRegistry.code128.propSpecs)).toEqual(expect.arrayContaining(["gs1", "mode"]));
+    for (const key of ["gs1", "mode"]) expect(code39).not.toContain(key);
+    const r = label([{ type: "code39", x: 1, y: 1, id: "b1", props: { content: "x", gs1: true } }]);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.errors[0]).toContain("code39.gs1 is not a code39 prop");
+    const base = ok(label([{ type: "code39", x: 1, y: 1, id: "b1", props: { content: "x" } }]));
+    const file = JSON.parse(JSON.stringify(base.designFile)) as { pages: { objects: { props: Record<string, unknown> }[] }[] };
+    file.pages[0]!.objects[0]!.props.gs1 = true;
+    expect(ok(exportZpl(file)).zpl).toBe(ok(exportZpl(base.designFile)).zpl);
+  });
+
   it("remarks on a marker that binds nothing, and on an unused variable", () => {
     const r = ok(
       label([{ type: "text", x: 1, y: 1, id: "t1", props: { content: "Lot «LOT»" } }], [

@@ -1,4 +1,4 @@
-import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
 export type { Barcode1DProps as PlanetProps } from "./barcode1d";
 
 export const planetCoreConfig: Barcode1DCoreConfig = {
@@ -6,6 +6,7 @@ export const planetCoreConfig: Barcode1DCoreConfig = {
   icon: "✉P",
   placeholderContent: '12345678901',
   group: 'legacy',
+  propSpecs: BARCODE_1D_PROP_SPECS,
   zplCommand: (p) => {
     const interp = p.printInterpretation ? "Y" : "N";
     return `^B5${p.rotation},${p.height},${interp},${p.printInterpretationAbove ? "Y" : "N"}`;

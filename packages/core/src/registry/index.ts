@@ -10,6 +10,7 @@ import { withChipPass } from './zplHelpers';
 export type { LeafObject, LeafType } from './leafObject';
 
 import { text } from './text';
+import { isGs1Active } from './gs1Active';
 import { code128 } from './code128';
 import { code39 } from './code39';
 import { ean13 } from './ean13';
@@ -132,19 +133,11 @@ export function getEntry(type: string): (typeof ObjectRegistry)[LeafType] | unde
   return (ObjectRegistry as Record<string, (typeof ObjectRegistry)[LeafType] | undefined>)[type];
 }
 
-/** Single evaluation point for {@link ObjectTypeCore.gs1Active}. */
-export function isGs1Active(
-  entry: (typeof ObjectRegistry)[LeafType] | undefined,
-  props: object | undefined,
-): boolean {
-  if (!entry || !props) return false;
-  if (entry.gs1Active) return entry.gs1Active(props);
-  return entry.gs1Capable === true && (props as { gs1?: boolean }).gs1 === true;
-}
+export { isGs1Active };
 
 /** The leaf's ^FD grammar is the plain Code 128 escape: a ctrl-capable type at ^BC m=N. */
 export function usesPlainCode128Escape(
-  entry: Parameters<typeof isGs1Active>[0],
+  entry: (typeof ObjectRegistry)[LeafType] | undefined,
   props: object | undefined,
 ): boolean {
   return entry?.ctrlNeedsOwnEscape === true && code128Mode(props) === "N";

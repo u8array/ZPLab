@@ -9,8 +9,9 @@ type Code128Mode = "N" | "A" | "D";
 
 /** The ^BC m from the props: GS1 wins over m=A. The content never decides, since a template or serial field
  *  changes it per label. */
-export function code128Mode(p?: { gs1?: boolean; mode?: string }): Code128Mode {
-  return p?.gs1 === true ? "D" : p?.mode === "A" ? "A" : "N";
+export function code128Mode(p: object | undefined): Code128Mode {
+  const { gs1, mode } = (p ?? {}) as { gs1?: boolean; mode?: string };
+  return gs1 === true ? "D" : mode === "A" ? "A" : "N";
 }
 
 /** How a payload reaches a plain-^BC ^FD: `whole` = entire field (chips

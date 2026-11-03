@@ -1,4 +1,4 @@
-import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
 export type { Barcode1DProps as Code93Props } from './barcode1d';
 
 export const code93CoreConfig: Barcode1DCoreConfig = {
@@ -6,6 +6,7 @@ export const code93CoreConfig: Barcode1DCoreConfig = {
   icon: '|93|',
   placeholderContent: 'CODE93',
   group: 'code-1d',
+  propSpecs: BARCODE_1D_PROP_SPECS,
   zplCommand: (p) => {
     const interp = p.printInterpretation ? 'Y' : 'N';
     const check = p.checkDigit ? 'Y' : 'N';

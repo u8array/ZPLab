@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { ObjectTypeUi } from './panelTypes';
 import type { Translations } from '../locales';
 import { useT } from '../hooks/useT';
@@ -9,8 +10,6 @@ import { NumberInput } from '../components/Properties/NumberInput';
 import { UnitNumberInput } from '../components/Properties/UnitNumberInput';
 import { ContentEditorButton } from '../components/Properties/ContentEditorButton';
 import { fieldMode, boundDefaultOrContent, fieldVariableRefs, fieldHasVariable, asLabelObject } from '@zplab/core/lib/variableField';
-import { gs1EnablePatch } from '@zplab/core/registry/gs1FieldSpec';
-import { Gs1BuilderButton } from './gs1PanelControls';
 import { CheckboxRow } from '../components/Properties/CheckboxRow';
 import { HriAboveRow } from '../components/Properties/HriAboveRow';
 import { extractClockTokens } from '@zplab/core/lib/fcTemplate';
@@ -20,6 +19,7 @@ import { EanInlineStatus } from '../components/Properties/EanInlineStatus';
 import { SerialModeCheckbox, SerialParts } from '../components/Properties/SerialModeSection';
 import type { EanUpcType } from '../lib/eanUpcValidate';
 import { BARCODE_1D_PROP_SPECS, type Barcode1DProps } from '@zplab/core/registry/barcode1d';
+import type { LabelObjectBase } from '@zplab/core/types/LabelObject';
 
 /** Per-symbology locale block: labels rendered by the panel. */
 export interface BarcodeLocale {
@@ -29,13 +29,18 @@ export interface BarcodeLocale {
   printInterpretation: string;
   checkDigit?: string;
   placeholder?: string;
-  /** GS1 mode toggle label; only needed by a `gs1Capable` symbology. */
-  gs1Mode?: string;
-  /** Toggle label for ^BC m=A. */
-  autoMode?: string;
 }
 
-export interface Barcode1DPanelConfig {
+/** What the rows for a symbology's own props render from. */
+export interface SymbologyRowsContext<P extends Barcode1DProps> {
+  obj: LabelObjectBase & { props: P };
+  onChange: (props: Partial<P>) => void;
+  t: Translations;
+  /** The field carries a chip, so a builder writing a literal is off. */
+  bound: boolean;
+}
+
+export interface Barcode1DPanelConfig<P extends Barcode1DProps = Barcode1DProps> {
   locale: (t: Translations) => BarcodeLocale;
   hasCheckDigit: boolean;
   heightLocked?: boolean;
@@ -49,19 +54,22 @@ export interface Barcode1DPanelConfig {
   /** Opt-in: show the inline EAN/UPC length + check-digit helper under the
    *  content field (fixed-digit symbologies only). */
   eanValidation?: EanUpcType;
-  /** Symbology offers a GS1 mode: renders the toggle + builder and swaps in the
-   *  GS1 charset while on. */
-  gs1Capable?: boolean;
-  /** Symbology offers ^BC m=A: renders the toggle, hidden while GS1 is on. */
-  autoModeCapable?: boolean;
+  /** Under the content editor. */
+  contentRows?: (rows: SymbologyRowsContext<P>) => ReactNode;
+  /** First in the settings section. */
+  settingsRows?: (rows: SymbologyRowsContext<P>) => ReactNode;
 }
 
-export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi<Barcode1DProps> {
+export function createBarcode1DPanel<P extends Barcode1DProps = Barcode1DProps>(
+  config: Barcode1DPanelConfig<P>,
+): ObjectTypeUi<P> {
   return {
     PropertiesPanel: ({ obj, onChange }) => {
       const t = useT();
       const loc = config.locale(t);
       const p = obj.props;
+      // A base-prop patch fits every P, which the generic cannot express.
+      const set = onChange as (props: Partial<Barcode1DProps>) => void;
       const variables = useLabelStore((s) => s.variables);
       // Validate the literal value AND the single-bind default. Skip only for a
       // REAL template (resolvable variable or clock markers), whose content has
@@ -83,12 +91,12 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
         <>
           <StaticSectionCard title={t.properties.contentSection}>
             {p.serial ? (
-              <SerialParts obj={obj} onChange={onChange} />
+              <SerialParts obj={obj} onChange={set} />
             ) : (
               <div className="flex flex-col gap-1">
                 <FieldLabel cmd="^FD">{loc.content}</FieldLabel>
                 <ContentEditorButton obj={obj} />
-                {config.gs1Capable && p.gs1 && <Gs1BuilderButton objId={obj.id} />}
+                {config.contentRows?.({ obj, onChange, t, bound })}
                 {validate && !config.eanValidation && !hasValidLength(validationContent, specForObject(obj)) && loc.placeholder && (
                   <p className="font-mono text-[10px] text-warning">{loc.placeholder}</p>
                 )}
@@ -100,24 +108,8 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
           </StaticSectionCard>
 
           <SectionCard id={`${obj.type}-settings`} title={t.properties.settingsSection}>
-            <SerialModeCheckbox obj={obj} onChange={onChange} />
-            {config.gs1Capable && !p.serial && (
-              <CheckboxRow
-                checked={p.gs1 ?? false}
-                onChange={(c) => onChange(c ? gs1EnablePatch(p.content, bound) : { gs1: false })}
-                label={loc.gs1Mode ?? ''}
-                cmd={config.zplCommand}
-              />
-            )}
-
-            {config.autoModeCapable && !p.gs1 && (
-              <CheckboxRow
-                checked={p.mode === 'A'}
-                onChange={(c) => onChange({ mode: c ? 'A' : undefined })}
-                label={loc.autoMode ?? ''}
-                cmd={config.zplCommand}
-              />
-            )}
+            <SerialModeCheckbox obj={obj} onChange={set} />
+            {config.settingsRows?.({ obj, onChange, t, bound })}
 
             <UnitNumberInput
               label={loc.height}
@@ -125,7 +117,7 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
               valueDots={p.height}
               minDots={1}
               disabled={config.heightLocked}
-              onChangeDots={(height) => onChange({ height })}
+              onChangeDots={(height) => set({ height })}
               zplCmd={config.zplCommand}
             />
 
@@ -134,14 +126,14 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
               value={p.moduleWidth}
               min={BARCODE_1D_PROP_SPECS.moduleWidth.min}
               max={BARCODE_1D_PROP_SPECS.moduleWidth.max}
-              onChange={(moduleWidth) => onChange({ moduleWidth })}
+              onChange={(moduleWidth) => set({ moduleWidth })}
               zplCmd="^BY"
             />
 
             {!config.interpretationLocked && (
               <CheckboxRow
                 checked={p.printInterpretation}
-                onChange={(printInterpretation) => onChange({ printInterpretation })}
+                onChange={(printInterpretation) => set({ printInterpretation })}
                 label={loc.printInterpretation}
                 cmd={config.zplCommand}
               />
@@ -150,7 +142,7 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
             {!config.interpretationLocked && config.hriAboveConfigurable && p.printInterpretation && (
               <HriAboveRow
                 checked={p.printInterpretationAbove}
-                onChange={(printInterpretationAbove) => onChange({ printInterpretationAbove })}
+                onChange={(printInterpretationAbove) => set({ printInterpretationAbove })}
                 cmd={config.zplCommand}
               />
             )}
@@ -161,7 +153,7 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
                 // Toggling drops the imported ^BM extras (C/D mode, e2 HRI
                 // digit): they would otherwise stick invisibly to the emit.
                 onChange={(checkDigit) =>
-                  onChange({ checkDigit, msiCheckMode: undefined, msiHriCheck: undefined })}
+                  set({ checkDigit, msiCheckMode: undefined, msiHriCheck: undefined })}
                 label={loc.checkDigit ?? ''}
                 cmd={config.zplCommand}
               />
@@ -169,7 +161,7 @@ export function createBarcode1DPanel(config: Barcode1DPanelConfig): ObjectTypeUi
 
             <RotationSelect
               value={p.rotation}
-              onChange={(rotation) => onChange({ rotation })}
+              onChange={(rotation) => set({ rotation })}
               zplCmd={config.zplCommand}
             />
           </SectionCard>

@@ -7,7 +7,7 @@ import type { Variable } from "../types/Variable";
 
 /** ^BR and GS1 DataMatrix encode FNC1 differently and must not match. */
 export function isModeDLeaf(leaf: LabelObject): boolean {
-  return leaf.type === "code128" && code128Mode(leaf.props as { gs1?: boolean; mode?: string }) === "D";
+  return leaf.type === "code128" && code128Mode(leaf.props) === "D";
 }
 
 function sweepFnConsumers(
