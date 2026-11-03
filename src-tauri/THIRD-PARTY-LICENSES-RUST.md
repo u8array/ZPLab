@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (445)
+- MIT License (443)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -2146,7 +2146,6 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [png 0.17.16](https://github.com/image-rs/image-png)
 - [png 0.18.1](https://github.com/image-rs/image-png)
 ````
 Copyright (c) 2015 nwin
@@ -5059,13 +5058,13 @@ SOFTWARE.
 
 Used by:
 
-- [tauri-build 2.7.3](https://github.com/tauri-apps/tauri)
-- [tauri-codegen 2.7.3](https://github.com/tauri-apps/tauri)
-- [tauri-macros 2.7.3](https://github.com/tauri-apps/tauri)
-- [tauri-runtime-wry 2.12.2](https://github.com/tauri-apps/tauri)
+- [tauri-build 2.7.4](https://github.com/tauri-apps/tauri)
+- [tauri-codegen 2.7.4](https://github.com/tauri-apps/tauri)
+- [tauri-macros 2.7.4](https://github.com/tauri-apps/tauri)
+- [tauri-runtime-wry 2.12.3](https://github.com/tauri-apps/tauri)
 - [tauri-runtime 2.12.2](https://github.com/tauri-apps/tauri)
 - [tauri-utils 2.10.2](https://github.com/tauri-apps/tauri)
-- [tauri 2.12.4](https://github.com/tauri-apps/tauri)
+- [tauri 2.12.5](https://github.com/tauri-apps/tauri)
 ````
 MIT License
 
@@ -5247,7 +5246,7 @@ SOFTWARE.
 
 Used by:
 
-- [ico 0.5.0](https://github.com/mdsteele/rust-ico)
+- [ico 0.6.0](https://github.com/mdsteele/rust-ico)
 ````
 MIT License
 
@@ -5921,7 +5920,7 @@ Used by:
 - [tauri-plugin-fs 2.7.1](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-opener 2.7.2](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-process 2.4.0](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-updater 2.14.0](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-updater 2.14.1](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-window-state 2.5.0](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin 2.7.2](https://github.com/tauri-apps/tauri)
 - [webview2-com-macros 0.8.1](https://github.com/wravery/webview2-rs)
@@ -5978,7 +5977,7 @@ Used by:
 
 - [tokio-stream 0.1.19](https://github.com/tokio-rs/tokio)
 - [tokio-util 0.7.18](https://github.com/tokio-rs/tokio)
-- [tokio 1.53.3](https://github.com/tokio-rs/tokio)
+- [tokio 1.54.1](https://github.com/tokio-rs/tokio)
 ````
 MIT License
 
@@ -6169,7 +6168,7 @@ Used by:
 - [adler2 2.0.1](https://github.com/oyvindln/adler2)
 - [anyhow 1.0.103](https://github.com/dtolnay/anyhow)
 - [async-channel 2.5.0](https://github.com/smol-rs/async-channel)
-- [async-executor 1.14.0](https://github.com/smol-rs/async-executor)
+- [async-executor 1.14.1](https://github.com/smol-rs/async-executor)
 - [async-io 2.6.0](https://github.com/smol-rs/async-io)
 - [async-lock 3.4.2](https://github.com/smol-rs/async-lock)
 - [async-process 2.5.0](https://github.com/smol-rs/async-process)
@@ -6226,7 +6225,7 @@ Used by:
 - [thiserror-impl 2.0.21](https://github.com/dtolnay/thiserror)
 - [thiserror 1.0.69](https://github.com/dtolnay/thiserror)
 - [thiserror 2.0.21](https://github.com/dtolnay/thiserror)
-- [typed-path 0.12.3](https://github.com/chipsenkbeil/typed-path)
+- [typed-path 0.13.0](https://github.com/chipsenkbeil/typed-path)
 - [typeid 1.0.3](https://github.com/dtolnay/typeid)
 - [unicode-ident 1.0.24](https://github.com/dtolnay/unicode-ident)
 - [x11-dl 2.21.0](https://github.com/AltF02/x11-rs.git)
@@ -6493,7 +6492,7 @@ SOFTWARE.
 
 Used by:
 
-- [zip 9.0.5](https://github.com/zip-rs/zip2)
+- [zip 9.3.0](https://github.com/zip-rs/zip2)
 ````
 The MIT License (MIT)
 
@@ -6517,38 +6516,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-````
-
-### MIT License
-
-Used by:
-
-- [zip 4.6.1](https://github.com/zip-rs/zip2.git)
-````
-The MIT License (MIT)
-
-Copyright (c) 2014 Mathijs van de Nes
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-Some files in the "tests/data" subdirectory of this repository are under other
-licences; see files named LICENSE.*.txt for details.
 ````
 
 ### MIT License
@@ -6835,7 +6802,7 @@ SOFTWARE.
 
 Used by:
 
-- [calamine 0.37.0](https://github.com/tafia/calamine)
+- [calamine 0.38.0](https://github.com/tafia/calamine)
 - [quick-xml 0.42.0](https://github.com/tafia/quick-xml)
 ````
 The MIT License (MIT)
