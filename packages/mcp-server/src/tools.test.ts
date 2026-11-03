@@ -956,7 +956,8 @@ describe("agent-facing reporting", () => {
   it("a symbology's own props stay off the shared 1D schema; a foreign one is refused on input and inert in a file", () => {
     const code39 = Object.keys(ObjectRegistry.code39.propSpecs);
     expect(Object.keys(ObjectRegistry.code128.propSpecs)).toEqual(expect.arrayContaining(["gs1", "mode"]));
-    for (const key of ["gs1", "mode"]) expect(code39).not.toContain(key);
+    expect(Object.keys(ObjectRegistry.msi.propSpecs)).toEqual(expect.arrayContaining(["msiCheckMode", "msiHriCheck"]));
+    for (const key of ["gs1", "mode", "msiCheckMode", "msiHriCheck"]) expect(code39).not.toContain(key);
     const r = label([{ type: "code39", x: 1, y: 1, id: "b1", props: { content: "x", gs1: true } }]);
     expect(r.ok).toBe(false);
     if (r.ok) return;

@@ -58,6 +58,8 @@ export interface Barcode1DPanelConfig<P extends Barcode1DProps = Barcode1DProps>
   contentRows?: (rows: SymbologyRowsContext<P>) => ReactNode;
   /** First in the settings section. */
   settingsRows?: (rows: SymbologyRowsContext<P>) => ReactNode;
+  /** What the check-digit toggle writes besides `checkDigit`. */
+  checkDigitPatch?: (checkDigit: boolean) => Partial<P>;
 }
 
 export function createBarcode1DPanel<P extends Barcode1DProps = Barcode1DProps>(
@@ -150,10 +152,8 @@ export function createBarcode1DPanel<P extends Barcode1DProps = Barcode1DProps>(
             {config.hasCheckDigit && (
               <CheckboxRow
                 checked={p.checkDigit}
-                // Toggling drops the imported ^BM extras (C/D mode, e2 HRI
-                // digit): they would otherwise stick invisibly to the emit.
                 onChange={(checkDigit) =>
-                  set({ checkDigit, msiCheckMode: undefined, msiHriCheck: undefined })}
+                  config.checkDigitPatch ? onChange(config.checkDigitPatch(checkDigit)) : set({ checkDigit })}
                 label={loc.checkDigit ?? ''}
                 cmd={config.zplCommand}
               />
