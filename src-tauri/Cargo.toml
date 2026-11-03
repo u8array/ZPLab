@@ -39,7 +39,7 @@ keyring = { version = "3", features = ["windows-native", "apple-native", "sync-s
 sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "sqlite", "postgres", "mysql", "tls-rustls-ring"] }
 # Excel as a plain file reader (excel.rs): ZebraDesigner-parity without the
 # ODBC driver-manager tax. dates maps serial datetimes via chrono.
-calamine = { version = "0.37", features = ["dates"] }
+calamine = { version = "0.38", features = ["dates"] }
 # Already transitive via calamine; used directly in excel.rs to bound a
 # workbook's DECLARED uncompressed size before calamine materializes it, so a
 # decompression bomb can't defeat the compressed-only file-size cap.
