@@ -39,3 +39,13 @@ license = "MIT"
 path = "LICENSE-MIT.md"
 license = "MIT"
 checksum = "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d"
+
+# rfd ships a second MIT text in a backend subfolder. Both score alike, so the scan's directory order
+# picks one and Windows and Linux disagreed. Pin the crate's own.
+[rfd.clarify]
+license = "MIT"
+
+[[rfd.clarify.files]]
+path = "LICENSE"
+license = "MIT"
+checksum = "65fc947f4bac882a2cd104ef73c246b1b037059df9f2b3a58b7f77f0b9e56071"
