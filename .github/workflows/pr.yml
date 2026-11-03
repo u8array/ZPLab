@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  # dependabot-attribution.yml dispatches this, since its token push starts no run.
+  workflow_dispatch:
   pull_request:
     branches: [main, prod]
   push:

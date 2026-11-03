@@ -4,6 +4,8 @@ name: Rust
 # Path-filtered because the Tauri dependency compile is too heavy for pure-frontend PRs.
 on:
   workflow_call:
+  # dependabot-attribution.yml dispatches this, since its token push starts no run.
+  workflow_dispatch:
   pull_request:
     branches: [main, prod]
     paths: ['src-tauri/**', '.github/workflows/rust.yml']
@@ -47,15 +49,9 @@ jobs:
           workspaces: './src-tauri -> target'
           shared-key: attribution
           cache-targets: false
-      # bash here runs with pipefail, so a failed download cannot hide behind tar.
       - name: rust attribution freshness
-        shell: bash
-        run: |
-          curl -fsSL https://github.com/EmbarkStudios/cargo-about/releases/download/0.9.1/cargo-about-0.9.1-x86_64-unknown-linux-musl.tar.gz \
-            | tar xz --strip-components=1 -C /tmp
-          cargo fetch --locked
-          /tmp/cargo-about generate about.hbs -o THIRD-PARTY-LICENSES-RUST.md
-          git diff --exit-code -- THIRD-PARTY-LICENSES-RUST.md
+        working-directory: .
+        run: bash scripts/rust-attribution.sh --check
 
   clippy-test:
     name: clippy-test (${{ matrix.platform }})
