@@ -8,7 +8,7 @@ import {
 } from "./zplSourceEdit";
 import { generateMultiPageZPL } from "./zplGenerator";
 import { replayRiskFindings } from "./importReport";
-import { repliesToHost } from "./hostCommands";
+import { documentReplies } from "./hostCommands";
 import type { LabelConfig } from "../types/LabelConfig";
 import type { Page } from "../types/Group";
 import type { PrinterProfile } from "../types/PrinterProfile";
@@ -344,7 +344,7 @@ describe("a buffer that only queries the printer", () => {
     expect(plan.ok).toBe(true);
     if (!plan.ok) return [];
     expect(plan.objectCount).toBe(0);
-    return repliesToHost(generateMultiPageZPL(plan.next.label, plan.next.pages, plan.next.variables));
+    return documentReplies(generateMultiPageZPL(plan.next.label, plan.next.pages, plan.next.variables)).commands;
   };
 
   it("applies a status request and keeps it in the export", () => {

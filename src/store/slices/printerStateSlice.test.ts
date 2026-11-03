@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useLabelStore } from "../labelStore";
+import { documentReply } from "../../lib/printerDocumentQuery.testkit";
 import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
 import { selectPrinterState } from "../labelStore.selectors";
 import { adoptionDiff } from "@zplab/core/lib/printerSettingsAdoption";
@@ -142,18 +143,18 @@ describe("queryDocument", () => {
     queryDocument.mockImplementation(() => new Promise((resolve) => (finish = resolve)));
     const document = "^XA~HS^HWR:*.*^FO10,10^FDx^FS^XZ";
     const signal = new AbortController().signal;
-    const pending = useLabelStore.getState().queryDocument(document, ["~HS", "^HW"], "usb", signal);
-    expect(useLabelStore.getState().printerReading).toBe("~HS ^HW");
+    const pending = useLabelStore.getState().queryDocument(document, "usb", signal);
+    expect(useLabelStore.getState().printerReading).toBe("~HS ^HWR:*.*");
     expect(await useLabelStore.getState().checkPrinter()).toEqual({ kind: "busy" });
-    finish({ kind: "ok", value: { raw: "ok", commands: ["~HS", "^HW"], configuration: false, parsed: {}, unanswered: [] } });
+    finish({ kind: "ok", value: documentReply({ raw: "ok" }) });
     expect(await pending).toMatchObject({ kind: "ok" });
-    expect(queryDocument).toHaveBeenCalledWith({ kind: "usb", id: "usb-1" }, document, ["~HS", "^HW"], signal);
+    expect(queryDocument).toHaveBeenCalledWith({ kind: "usb", id: "usb-1" }, document, signal);
     expect(useLabelStore.getState().printerReading).toBeUndefined();
   });
 
   it("names a missing target without asking", async () => {
     useLabelStore.setState({ printTarget: DEFAULT_PRINT_TARGET });
-    expect(await useLabelStore.getState().queryDocument("^XA~HS^XZ", ["~HS"])).toEqual({ kind: "unconfigured" });
+    expect(await useLabelStore.getState().queryDocument("^XA~HS^XZ")).toEqual({ kind: "unconfigured" });
     expect(queryDocument).not.toHaveBeenCalled();
   });
 });

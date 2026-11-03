@@ -1,6 +1,7 @@
 import type { StateCreator } from 'zustand';
 import { adoptionPatches, type AdoptionRow } from '@zplab/core/lib/printerSettingsAdoption';
 import { SGD_ALL_SETTINGS, sgdGetvarCommand, type SgdSetting } from '@zplab/core/lib/sgd';
+import { documentReplies } from '@zplab/core/lib/hostCommands';
 import { queryDocument as sendQueryDocument, type DocumentReply } from '../../lib/printerDocumentQuery';
 import type { PrinterOutcome, PrinterQueryFailure } from '../../lib/printerQuery';
 import { readPrinterSettings as querySettings } from '../../lib/printerSettings';
@@ -30,7 +31,7 @@ export interface PrinterStateSlice {
   /** Writes the chosen rows into the label settings and the printer profile. False when the store refused them. */
   adoptPrinterSettings: (rows: readonly AdoptionRow[]) => boolean;
   /** The document itself over the read channel, for the host commands it carries. */
-  queryDocument: (zpl: string, commands: readonly string[], transport?: PrintTransport, signal?: AbortSignal) => Promise<PrinterOutcome<DocumentReply>>;
+  queryDocument: (zpl: string, transport?: PrintTransport, signal?: AbortSignal) => Promise<PrinterOutcome<DocumentReply>>;
 }
 
 export const createPrinterStateSlice: StateCreator<LabelState, [], [], PrinterStateSlice> = (set, get) => ({
@@ -80,10 +81,10 @@ export const createPrinterStateSlice: StateCreator<LabelState, [], [], PrinterSt
     return true;
   },
 
-  queryDocument: (zpl, commands, transport, signal) => {
+  queryDocument: (zpl, transport, signal) => {
     const resolved = resolveQueryTarget(get().printTarget, transport);
-    return overPrinterChannel(get, set, commands.join(' '), () =>
-      'failure' in resolved ? Promise.resolve(resolved.failure) : sendQueryDocument(resolved.target, zpl, commands, signal),
+    return overPrinterChannel(get, set, documentReplies(zpl).commands.join(' '), () =>
+      'failure' in resolved ? Promise.resolve(resolved.failure) : sendQueryDocument(resolved.target, zpl, signal),
     );
   },
 });

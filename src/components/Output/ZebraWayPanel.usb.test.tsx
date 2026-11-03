@@ -2,6 +2,7 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { render, cleanup, act, fireEvent, waitFor } from "@testing-library/react";
 import { WayPanel } from "./ZebraWayPanel.testkit";
+import { queryFacts } from "../../lib/outputChoice.testkit";
 import { useLabelStore } from "../../store/labelStore";
 import { DEFAULT_PRINT_TARGET } from "../../lib/printTarget";
 import { fallbackTranslations as en } from "../../locales";
@@ -41,7 +42,7 @@ describe("ZebraWayPanel USB access", () => {
   it("offers the setup route after a denied query, as after a denied check", async () => {
     queryDocument.mockResolvedValue({ kind: "permission_denied" });
     act(() => useLabelStore.setState({ printerState: { phase: "idle" }, printTarget: { ...DEFAULT_PRINT_TARGET, transport: "usb", usbId: "usb1" } }));
-    const r = render(<WayPanel way="usb" zpl={() => "^XA~HS^XZ"} query={{ commands: ["~HS"], prints: false, unmarked: [], ambiguous: [], uncounted: [] }} />);
+    const r = render(<WayPanel way="usb" zpl={() => "^XA~HS^XZ"} query={queryFacts({ commands: ["~HS"], prints: false })} />);
     await waitFor(() => expect((r.getByText(en.zebraPrint.queryButton) as HTMLButtonElement).disabled).toBe(false));
     await act(async () => {
       fireEvent.click(r.getByText(en.zebraPrint.queryButton));

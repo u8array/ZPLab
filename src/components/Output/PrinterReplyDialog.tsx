@@ -26,7 +26,6 @@ interface Props<T> {
   portal?: boolean;
   read: ReplyShown<T>;
   onClose: () => void;
-  /** Ends the wait and shows what came so far. */
   onStop?: () => void;
   children: (value: T) => ReactNode;
   after?: ReactNode;

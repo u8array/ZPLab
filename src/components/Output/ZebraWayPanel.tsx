@@ -282,7 +282,7 @@ export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string;
   const offer = queryOffer(t.zebraPrint, query, way, isDesktopShell);
   const netSendDisabled = !host || netStatus.type === "sending" || locked;
   const action = (send: ReactNode, sendDisabled: boolean): ReactNode =>
-    offer.queries ? <DocumentQueryAction zpl={zpl} commands={query.commands} transport={way} disabled={sendDisabled} onFailure={onReadFailure} /> : send;
+    offer.queries ? <DocumentQueryAction zpl={zpl} transport={way} disabled={sendDisabled} onFailure={onReadFailure} /> : send;
 
   if (way === "network") {
     return (

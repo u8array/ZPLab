@@ -1,4 +1,5 @@
 // The two levels of the output dialog: where the label goes, and how, where there is a choice.
+import { documentReplies, type DocumentReplies } from "@zplab/core/lib/hostCommands";
 import { effectiveTransport, type PrintTransport, type PrintWay } from "./printTarget";
 
 /** The bytes the dialog is about: the label itself, or a script that only configures the printer. */
@@ -65,21 +66,20 @@ export function offeredKinds(source: OutputSource, f: OutputFacts): OutputKind[]
   return (["print", "file"] as const).filter((kind) => can[kind]);
 }
 
-export interface DocumentQueryFacts {
-  commands: readonly string[];
+export interface DocumentQueryFacts extends Pick<DocumentReplies, "commands" | "unmarked" | "ambiguous" | "uncounted"> {
   prints: boolean;
-  /** The ^HV spellings whose reply a reader could not find, see unmarkedReplies. */
-  unmarked: readonly string[];
-  /** The ^HV spellings whose replies a reader could not tell apart, see ambiguousReplies. */
-  ambiguous: readonly string[];
-  /** The ^HV spellings the document cannot vouch for, see uncountedReplies. */
-  uncounted: readonly string[];
 }
 
 export const asksPrinter = (query: DocumentQueryFacts): boolean => query.commands.length > 0;
 
 /** The fields ride along with a query only when the label itself goes out. */
-export const printsFields = (source: OutputSource, f: OutputFacts): boolean => source === "label" && f.hasObjects;
+const printsFields = (source: OutputSource, f: OutputFacts): boolean => source === "label" && f.hasObjects;
+
+/** What the bytes going out ask the printer, for the ways and the reader alike. */
+export function documentQueryFacts(bytes: string, source: OutputSource, f: OutputFacts): DocumentQueryFacts {
+  const { commands, unmarked, ambiguous, uncounted } = documentReplies(bytes);
+  return { commands, unmarked, ambiguous, uncounted, prints: printsFields(source, f) };
+}
 
 /** A rendered label is what the system dialog and a PNG carry, and a setup script draws nothing. */
 export const renderableOutput = (source: OutputSource, f: OutputFacts): boolean =>

@@ -4,7 +4,7 @@ import { render, cleanup, fireEvent, screen } from "@testing-library/react";
 import { ZplImportModal } from "./ZplImportModal";
 import { useLabelStore } from "../../store/labelStore";
 import { sendZpl } from "../../lib/sendZpl";
-import { repliesToHost } from "@zplab/core/lib/hostCommands";
+import { documentReplies } from "@zplab/core/lib/hostCommands";
 
 beforeEach(() => {
   useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8 }, pages: [{ objects: [] }], variables: [], currentPageIndex: 0, selectedIds: [] });
@@ -23,7 +23,7 @@ describe("the import dialog's content gate", () => {
     render(<ZplImportModal onClose={vi.fn()} />);
     paste("^XA\n~HS\n^XZ");
     expect(screen.queryByText(t().importModal.errNoObjects)).toBeNull();
-    expect(repliesToHost(sendZpl(useLabelStore.getState()))).toEqual(["~HS"]);
+    expect(documentReplies(sendZpl(useLabelStore.getState())).commands).toEqual(["~HS"]);
   });
 
   it("refuses a format that neither asks nor draws", () => {
