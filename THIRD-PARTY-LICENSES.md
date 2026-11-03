@@ -388,7 +388,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/view 6.43.14
+### @codemirror/view 6.43.15
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -1571,7 +1571,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### @lezer/common 1.5.3
+### @lezer/common 1.5.4
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -3983,7 +3983,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### zustand 5.0.15
+### zustand 5.0.16
 
 - License: MIT
 - Author: Paul Henschel
