@@ -1,0 +1,66 @@
+name: Dependabot attribution
+
+# Dependabot cannot regenerate the attribution notice, so its PRs fail the freshness gates. A push with
+# the workflow token starts no run, hence the explicit dispatch. Not pull_request_target: a fork's PR
+# never earns a write token this way, whatever the guard says.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - pnpm-lock.yaml
+      - src-tauri/Cargo.lock
+
+permissions:
+  contents: write
+  actions: write
+
+# A Dependabot force-push right behind the open event would race this job's push.
+concurrency:
+  group: dependabot-attribution-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regenerate:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    # Dependabot groups per ecosystem, so the branch name says which notice a PR can stale.
+    env:
+      CARGO: ${{ startsWith(github.head_ref, 'dependabot/cargo/') }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
+          # The head's scripts run below and must not find a write token in .git/config.
+          persist-credentials: false
+
+      - if: env.CARGO == 'false'
+        uses: pnpm/action-setup@v6
+      - if: env.CARGO == 'false'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      # No lifecycle scripts: nothing from the bumped packages may run here.
+      - if: env.CARGO == 'false'
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: npm notice
+        if: env.CARGO == 'false'
+        run: pnpm attribution:gen
+
+      - name: rust notice
+        if: env.CARGO == 'true'
+        run: bash scripts/rust-attribution.sh
+
+      - name: commit the notice and start the gates on it
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if git diff --quiet -- THIRD-PARTY-LICENSES.md src-tauri/THIRD-PARTY-LICENSES-RUST.md; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # The tag lets Dependabot force-push over this commit when it rebases.
+          git commit -m "chore(deps): the attribution notice follows the bumped dependencies" -m "[dependabot skip]" -- THIRD-PARTY-LICENSES.md src-tauri/THIRD-PARTY-LICENSES-RUST.md
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${HEAD_REF}"
+          gh workflow run pr.yml --ref "$HEAD_REF"
+          if [ "$CARGO" = "true" ]; then gh workflow run rust.yml --ref "$HEAD_REF"; fi
