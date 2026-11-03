@@ -5705,7 +5705,7 @@ SOFTWARE.
 
 Used by:
 
-- [rfd 0.16.0](https://github.com/PolyMeilex/rfd)
+- [rfd 0.17.2](https://github.com/PolyMeilex/rfd)
 ````
 MIT License
 
@@ -5916,7 +5916,7 @@ Used by:
 - [sqlx-mysql 0.9.0](https://github.com/launchbadge/sqlx)
 - [sqlx-postgres 0.9.0](https://github.com/launchbadge/sqlx)
 - [sqlx-sqlite 0.9.0](https://github.com/launchbadge/sqlx)
-- [tauri-plugin-dialog 2.8.3](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-dialog 2.8.4](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-fs 2.7.1](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-opener 2.7.2](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-process 2.4.0](https://github.com/tauri-apps/plugins-workspace)
@@ -6194,7 +6194,7 @@ Used by:
 - [futures-lite 2.6.1](https://github.com/smol-rs/futures-lite)
 - [itoa 1.0.18](https://github.com/dtolnay/itoa)
 - [linux-raw-sys 0.12.1](https://github.com/sunfishcode/linux-raw-sys)
-- [nusb 0.2.8](https://github.com/kevinmehall/nusb)
+- [nusb 0.2.9](https://github.com/kevinmehall/nusb)
 - [once_cell 1.21.4](https://github.com/matklad/once_cell)
 - [ordered-stream 0.2.0](https://github.com/danieldg/ordered-stream)
 - [parking 2.2.1](https://github.com/smol-rs/parking)
