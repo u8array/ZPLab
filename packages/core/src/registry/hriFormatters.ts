@@ -1,9 +1,9 @@
 import { mod10CheckDigit } from "../lib/gs1";
 import type { HriFormatProps } from "../types/ZplEmit";
 import { code11CheckDigits, msiCheckDigits, eanCheckDigit, upceCheckDigit } from '../lib/barcodeCheckDigits';
-import { code128FdToDisplayText, code128PlainFd } from '../lib/code128Subset';
-import { code128Mode } from '../lib/code128Plan';
-import { C0_OR_DEL_RE } from '../types/controlKey';
+import { code128FdToDisplayText } from '../lib/code128Subset';
+import { code128Mode, planCode128Fd } from '../lib/code128Plan';
+import { C0_OR_DEL_RE, resolveControlMarkers } from '../types/controlKey';
 
 /**
  * HRI text formatters per 1D symbology. Each takes the user-provided
@@ -113,10 +113,11 @@ export function stripHriControlBytes(text: string): string {
   return text.replace(C0_OR_DEL_RE_G, '');
 }
 
-/** Plain ^BC HRI shows the DECODED data, never invocation codes (spec p.98,
- *  Fig 3/4). Runs on the emit-escaped form (planCode128Fd's plain fallback;
- *  keep in lockstep), so typed text the escape protects is a fixed point.
- *  At m=A the line is the payload as typed. GS1 mode bypasses this (mode-D grammar). */
+/** Plain ^BC HRI shows the DECODED data of the emitted field, never invocation
+ *  codes (spec p.98, Fig 3/4). At m=A every byte is literal. GS1 mode bypasses
+ *  this (mode-D grammar). */
 export function formatCode128Hri(content: string, props?: HriFormatProps): string {
-  return code128Mode(props) === 'A' ? content : code128FdToDisplayText(code128PlainFd(content));
+  return code128Mode(props) === 'A'
+    ? resolveControlMarkers(content)
+    : code128FdToDisplayText(planCode128Fd(content, 'whole').fd);
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import bwipjs from "bwip-js/generic";
-import { planCode128AutoSymbols } from "./code128Subset";
+import { code128FdToDisplayText, planCode128AutoSymbols } from "./code128Subset";
 import { measureBarcodeFootprintDotsWith, resolveForMeasure, type BwipEngine } from "./barcodeDims";
 import { importZplText } from "./zplImportService";
 import { generateBatchZpl, generateMultiPageZPL } from "./zplGenerator";
@@ -8,10 +8,12 @@ import { dropPageOverlays } from "./pageOverlay";
 import { pageLabelConfig, type LabelObject, type Page } from "../types/Group";
 import { slotEncodingConflicts } from "./slotConflicts";
 import { code128 } from "../registry/code128";
+import { formatCode128Hri, stripHriControlBytes } from "../registry/hriFormatters";
 import { ctrlParityFor } from "../registry";
 import { parseZPL } from "./zplParser";
 import type { LeafObject } from "../registry";
 import type { Code128Props } from "../registry/code128";
+import type { HriFormatProps } from "../types/ZplEmit";
 
 const label = { widthMm: 70, heightMm: 40, dpmm: 8 };
 
@@ -216,5 +218,17 @@ describe("one ^BC m for emit, canvas and parser", () => {
   it("regenerates an imported m=A once the overlay is gone", () => {
     const r = importZplText("^XA^FO10,10^BY2^BCN,80,Y,N,N,A^FD0240018268623^FS^XZ", 8);
     expect(generateMultiPageZPL(label, dropPageOverlays(r.pages), r.variables)).toContain("^BCN,80,Y,N,N,A");
+  });
+});
+
+describe("the HRI shows what the barcode encodes", () => {
+  const hri = (content: string, props?: HriFormatProps) => stripHriControlBytes(formatCode128Hri(content, props));
+  const emittedFd = (content: string) => /\^FD(.*)\^FS/.exec(code128.toZPL(leaf(content)))![1]!;
+
+  it("keeps the `>` before an invocation character next to a control chip, under m=N and m=A", () => {
+    const content = "A«ctrl:TAB»>1B";
+    expect(hri(content)).toBe("A>1B");
+    expect(hri(content)).toBe(stripHriControlBytes(code128FdToDisplayText(emittedFd(content))));
+    expect(hri(content, { mode: "A" })).toBe("A>1B");
   });
 });

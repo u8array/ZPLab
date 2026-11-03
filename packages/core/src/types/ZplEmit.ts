@@ -42,7 +42,7 @@ export interface ZplEmitContext {
 
 /** The prop slice HRI formatters may read. */
 export interface HriFormatProps {
-  /** Code 128 ^BC m: under A the interpretation line is the payload as typed. */
+  /** Code 128 ^BC m: under A every byte is literal. */
   mode?: 'A';
   checkDigit?: boolean;
   msiCheckMode?: "C" | "D";
