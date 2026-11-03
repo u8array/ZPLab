@@ -18,8 +18,6 @@ import type { ContentSpec } from '../types/contentSpec';
 import { ROTATION_SPEC, type ZplRotation } from './rotation';
 import { isGs1Active } from './gs1Active';
 
-export const MSI_CHECK_MODES = ['C', 'D'] as const;
-
 export interface Barcode1DProps {
   content: string;
   height: number;
@@ -33,11 +31,6 @@ export interface Barcode1DProps {
   /** Template snapshot from before serial mode replaced `content` with the
    *  seed; consumed by the serial-off restore. Never emitted. */
   preSerialContent?: string;
-  /** MSI multi-check ^BM e beyond the boolean (C = 2x Mod 10, D = Mod 11 +
-   *  Mod 10); set by import, not the panel. */
-  msiCheckMode?: (typeof MSI_CHECK_MODES)[number];
-  /** ^BM e2: HRI includes the check digits. Set by import, not the panel. */
-  msiHriCheck?: boolean;
 }
 
 export interface Barcode1DCoreConfig<P extends Barcode1DProps = Barcode1DProps> {
@@ -98,8 +91,6 @@ export const BARCODE_1D_PROP_SPECS: PropSpecs<Barcode1DProps> = {
   rotation: ROTATION_SPEC,
   serial: { type: 'object' },
   preSerialContent: { type: 'string' },
-  msiCheckMode: { type: 'string', values: MSI_CHECK_MODES },
-  msiHriCheck: { type: 'boolean' },
 };
 
 export function createBarcode1DCore<P extends Barcode1DProps = Barcode1DProps>(
