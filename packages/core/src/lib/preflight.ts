@@ -466,8 +466,7 @@ export function gs1NormalizationFindings(leaves: readonly LeafObject[]): Preflig
   const out: PreflightFinding[] = [];
   for (const leaf of leaves) {
     const carrier = gs1CarrierFor(leaf.type);
-    if (!carrier || (leaf.props as { gs1?: boolean }).gs1 === false) continue;
-    if (leaf.type !== "gs1databar" && !(leaf.props as { gs1?: boolean }).gs1) continue;
+    if (!carrier || !isGs1Active(getEntry(leaf.type), leaf.props)) continue;
     const content = getObjectStringContent(leaf) ?? "";
     if (content === "") continue;
     // ^BR ships the content verbatim on every path (no fd transform), so
