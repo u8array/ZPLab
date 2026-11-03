@@ -1,6 +1,6 @@
 import { useT } from '../hooks/useT';
 import { useLabelStore } from '../store/labelStore';
-import { getEntry } from '@zplab/core/registry';
+import { getEntry, isGs1Active } from '@zplab/core/registry';
 import { StaticSectionCard } from '../components/Properties/SectionCard';
 import { ContentEditorButton } from '../components/Properties/ContentEditorButton';
 import { builderButtonCls } from '../components/ui/formStyles';
@@ -15,7 +15,7 @@ import { Gs1BuilderButton } from './gs1PanelControls';
 export function TypedContentSection({ obj }: { obj: BindableLeaf }) {
   const t = useT();
   const openContentBuilder = useLabelStore((s) => s.openContentBuilder);
-  const gs1 = !!(obj.props as { gs1?: boolean }).gs1;
+  const gs1 = isGs1Active(getEntry(obj.type), obj.props);
   return (
     <StaticSectionCard title={t.properties.contentSection} cmd="^FD">
       <ContentEditorButton obj={obj} />
