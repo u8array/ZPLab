@@ -1,4 +1,4 @@
-import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
 import { formatUpcEanExtensionHri } from './hriFormatters';
 import {
   eanUpcHriFontFamily,
@@ -24,6 +24,7 @@ export const upcEanExtensionCoreConfig: Barcode1DCoreConfig = {
   icon: 'EXT',
   placeholderContent: '51999',
   group: 'code-1d',
+  propSpecs: BARCODE_1D_PROP_SPECS,
   // Exactly 2 or 5 digits; ^SN/^SF could roll it to an invalid 3/4/6-digit
   // supplement, so it opts out of serial like EAN/UPC.
   serialisable: false,

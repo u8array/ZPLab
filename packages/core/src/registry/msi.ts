@@ -1,4 +1,4 @@
-import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
 import { formatMsiHri } from './hriFormatters';
 export type { Barcode1DProps as MsiProps } from "./barcode1d";
 
@@ -7,6 +7,7 @@ export const msiCoreConfig: Barcode1DCoreConfig = {
   icon: "MSI",
   placeholderContent: '12345678',
   group: 'legacy',
+  propSpecs: BARCODE_1D_PROP_SPECS,
   // MSI standard specifies a 2:1 wide:narrow ratio, which bwip-js hardcodes
   // internally. ZPL ^BY defaults to 3.0, so we must override to keep canvas
   // and Labelary preview in sync.

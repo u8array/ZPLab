@@ -1,4 +1,4 @@
-import { createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
 import { formatUpceHri, upceData6FromFd } from './hriFormatters';
 export type { Barcode1DProps as UpcEProps } from './barcode1d';
 
@@ -7,6 +7,7 @@ export const upceCoreConfig: Barcode1DCoreConfig = {
   icon: 'UPE',
   placeholderContent: '012345',
   group: 'code-1d',
+  propSpecs: BARCODE_1D_PROP_SPECS,
   serialisable: false,
   zplCommand: (p) => {
     const interp = p.printInterpretation ? 'Y' : 'N';

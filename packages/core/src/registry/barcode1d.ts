@@ -16,10 +16,9 @@ import { planGs1Fd } from '../lib/gs1Plan';
 import { GS1_CONTENT_SPEC } from './gs1FieldSpec';
 import type { ContentSpec } from '../types/contentSpec';
 import { ROTATION_SPEC, type ZplRotation } from './rotation';
+import { isGs1Active } from './gs1Active';
 
 export const MSI_CHECK_MODES = ['C', 'D'] as const;
-/** Absent is N, and D comes from `gs1`. */
-export const CODE128_STORED_MODES = ['A'] as const;
 
 export interface Barcode1DProps {
   content: string;
@@ -34,10 +33,6 @@ export interface Barcode1DProps {
   /** Template snapshot from before serial mode replaced `content` with the
    *  seed; consumed by the serial-off restore. Never emitted. */
   preSerialContent?: string;
-  /** GS1-128 mode (`^BC…,D`). Only honoured by a `gs1Capable` symbology. */
-  gs1?: boolean;
-  /** ^BC m=A, the firmware's automatic subsets. Code 128 only, and `gs1` wins. */
-  mode?: (typeof CODE128_STORED_MODES)[number];
   /** MSI multi-check ^BM e beyond the boolean (C = 2x Mod 10, D = Mod 11 +
    *  Mod 10); set by import, not the panel. */
   msiCheckMode?: (typeof MSI_CHECK_MODES)[number];
@@ -45,13 +40,15 @@ export interface Barcode1DProps {
   msiHriCheck?: boolean;
 }
 
-export interface Barcode1DCoreConfig {
+export interface Barcode1DCoreConfig<P extends Barcode1DProps = Barcode1DProps> {
   label: string;
   icon: string;
   /** See {@link ObjectTypeCore.placeholderContent}. New objects start blank. */
   placeholderContent: string;
   /** Build the ZPL barcode command (e.g. `^BUN,100,Y,N,N`). */
-  zplCommand: (p: Barcode1DProps) => string;
+  zplCommand: (p: P) => string;
+  /** {@link BARCODE_1D_PROP_SPECS}, extended by a symbology with props of its own. */
+  propSpecs: PropSpecs<P>;
   group: ObjectGroup;
   /**
    * Explicit wide-to-narrow ratio for the ^BY command.
@@ -75,8 +72,6 @@ export interface Barcode1DCoreConfig {
   /** Symbology offers a GS1 mode (Code 128 → GS1-128); `zplCommand` must emit
    *  the mode flag when `props.gs1` is set. */
   gs1Capable?: boolean;
-  /** Symbology offers ^BC m=A. Declared here so the panel reads one flag, the emit reads m from the props. */
-  autoModeCapable?: boolean;
   /** See {@link ObjectTypeCore.contentSpec}; static half, GS1 mode is derived. */
   contentSpec?: ContentSpec;
   /** See {@link ObjectTypeCore.controlChars}. */
@@ -103,14 +98,15 @@ export const BARCODE_1D_PROP_SPECS: PropSpecs<Barcode1DProps> = {
   rotation: ROTATION_SPEC,
   serial: { type: 'object' },
   preSerialContent: { type: 'string' },
-  gs1: { type: 'boolean' },
-  mode: { type: 'string', values: CODE128_STORED_MODES },
   msiCheckMode: { type: 'string', values: MSI_CHECK_MODES },
   msiHriCheck: { type: 'boolean' },
 };
 
-export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore<Barcode1DProps> {
-  const defaultProps: Barcode1DProps = {
+export function createBarcode1DCore<P extends Barcode1DProps = Barcode1DProps>(
+  config: Barcode1DCoreConfig<P>,
+): ObjectTypeCore<P> {
+  const gs1On = (p: object) => isGs1Active(config, p);
+  const defaultProps = {
     content: '',
     height: 100,
     moduleWidth: 2,
@@ -118,14 +114,14 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
     printInterpretationAbove: false,
     checkDigit: false,
     rotation: 'N',
-  };
+  } satisfies Barcode1DProps as P;
   // Obj-aware ^FD transform for literal/single-bind payloads, shared by toZPL
   // and the batch override. Templates skip the content transform (it would
   // mangle #n# references); GS1 templates pre-map at segment level in toZPL.
   const fdTransformFor =
     config.fdContent || config.gs1Capable || config.fdPlainEscape
-      ? (obj: LabelObjectBase & { props: Barcode1DProps }) => {
-          const gs1 = config.gs1Capable === true && obj.props.gs1 === true;
+      ? (obj: LabelObjectBase & { props: P }) => {
+          const gs1 = gs1On(obj.props);
           // GS1 mode brings its own escaping, and m=A reads the payload literally.
           const escape = code128Mode(obj.props) === 'N' ? config.fdPlainEscape : undefined;
           // A lone marker (single-bind) still transforms its default/CSV value;
@@ -159,7 +155,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
     bindable: true,
     // EAN/UPC opt out (fixed-length check digit); every other 1D serializes cleanly.
     serialisable: config.serialisable ?? true,
-    propSpecs: BARCODE_1D_PROP_SPECS,
+    propSpecs: config.propSpecs,
     defaultProps,
     placeholderContent: config.placeholderContent,
     defaultSize: { width: 300, height: 120 },
@@ -169,19 +165,19 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
     // GS1 mode swaps in the shared GS1 element-string spec; the static half
     // stays the symbology's own rule.
     contentSpec: config.gs1Capable
-      ? (props) => ((props as Barcode1DProps).gs1 ? GS1_CONTENT_SPEC : config.contentSpec)
+      ? (props) => (gs1On(props) ? GS1_CONTENT_SPEC : config.contentSpec)
       : config.contentSpec,
     gs1Capable: config.gs1Capable,
     controlChars: config.controlChars,
     ctrlNeedsOwnEscape: config.ctrlFdEncode !== undefined,
 
-    preflight: moduleTooSmallPreflight<Barcode1DProps>('moduleWidth'),
+    preflight: moduleTooSmallPreflight<P>('moduleWidth'),
 
     // heightLocked symbologies disable the transformer entirely; others scale
     // bar height with sy and module width with sx (clamped in the helper).
     commitTransform: config.heightLocked
       ? undefined
-      : (obj, ctx) => commitBarcodeWidthHeightTransform(obj, ctx, BARCODE_1D_PROP_SPECS),
+      : (obj, ctx) => commitBarcodeWidthHeightTransform(obj, ctx, config.propSpecs),
 
     // e.g. UPC-E compaction; shared with the CSV batch override so a per-row
     // value is compacted the same way as the single-format default. A template
@@ -201,6 +197,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
         printInterpretationAbove:
           printInterpretation && obj.props.printInterpretationAbove,
       };
+      const gs1 = gs1On(p);
       const byCmd = config.byRatio !== undefined
         ? `^BY${p.moduleWidth},${config.byRatio}`
         : `^BY${p.moduleWidth}`;
@@ -235,7 +232,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
         content = planCode128Fd(content, 'template').fd;
         fdTransformOnce = undefined;
       }
-      if (config.gs1Capable && p.gs1 && hasTemplateMarkers(content) && !isLoneMarker(content)) {
+      if (gs1 && hasTemplateMarkers(content) && !isLoneMarker(content)) {
         const segs = ctx?.variables ? parseGs1ToSegments(content, ctx.variables) : null;
         // Already the ^FD form; a second transform would double the >0 escapes.
         if (segs && segs.length > 0) {
@@ -243,13 +240,13 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
           fdTransformOnce = undefined;
         }
       }
-      const fieldData = obj.props.serial && !p.gs1
+      const fieldData = obj.props.serial && !gs1
         // GS1 excluded (legacy models may carry both flags): the alnum seed
         // filter would eat the >8 FNC1 and merge AI values. Serial seeds skip
         // fdPlainEscape (an injected `>0` would leave a stray 0 in the ^SF
         // mask) and a template seed skips the base transform too.
         ? serialFieldData(
-            // No gs1 arm: the serial path is gated on !p.gs1 above.
+            // No gs1 arm: the serial path is gated on !gs1 above.
             (hasTemplateMarkers(p.content) && !isLoneMarker(p.content)
               ? undefined
               : config.fdContent
@@ -258,7 +255,7 @@ export function createBarcode1DCore(config: Barcode1DCoreConfig): ObjectTypeCore
         : fdFieldFor(content, ctx, fdTransformOnce, undefined,
             // Chips resolve only outside GS1 mode (a raw byte would corrupt
             // the element-string payload).
-            config.controlChars === true && !p.gs1);
+            config.controlChars === true && !gs1);
       return [
         fieldPos1d(obj, ctx),
         // In-span after the field opener, see qrcode.
