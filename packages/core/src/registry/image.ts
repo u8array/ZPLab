@@ -151,7 +151,7 @@ export function parseGfHeader(value: string | undefined): GfHeader | null {
 }
 
 /** 8192 dots a row, far past any real label at 24 dpmm. Shared cap so bounds,
- *  emit and the preview decoder reject the same runaway header. */
+ *  emit and the decoder reject the same runaway header. */
 export const GF_MAX_BYTES_PER_ROW = 1024;
 
 /** Rows a header may declare. Past this it is not a label graphic, and the

@@ -404,15 +404,15 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
   });
 
   it('reports an unclaimed upload the profile cannot keep instead of handing it on', () => {
-    const rows = 600_000;
-    const zpl = `~DGR:BIG.GRF,${rows},1,${'F'.repeat(rows * 2)}\n^XA^FO0,0^GB10,10,1^FS^XZ`;
+    const big = `~DGR:BIG.GRF,600000,100,${'F'.repeat(1_200_000)}`;
+    const zpl = `${big}\n^XA^FO0,0^GB10,10,1^FS^XZ`;
     const { printerProfile, report } = importZplText(zpl, 8);
     expect(printerProfile.setupGraphics).toBeUndefined();
     expect(printerProfileSchema.safeParse(printerProfile).success).toBe(true);
     const finding = report.findings.find((f) => f.loss === 'oversizeUpload');
     expect(finding).toMatchObject({ kind: 'partial', command: '~DG' });
     expect(describeFinding(finding!, fallbackTranslations.importReport).detail).toContain('printer profile');
-    const only = importZplText(`~DGR:BIG.GRF,${rows},1,${'F'.repeat(rows * 2)}`, 8);
+    const only = importZplText(big, 8);
     expect(only.pages).toHaveLength(0);
     expect(resolveRoutedReport(only.report, []).findings.map((f) => f.loss)).toEqual(['oversizeUpload']);
   });
@@ -685,9 +685,9 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
   });
 
   it('reports one row for two graphic uploads that hit the same refusal', () => {
-    const wide = (name: string) => `~DGR:${name}.GRF,4000,2000,${'F'.repeat(8000)}`;
-    const { report } = importZplText(`${wide('A')}\n${wide('B')}\n^XA^FO0,0^GB10,10,1^FS^XZ`, 8);
-    expect(report.findings.filter((f) => f.loss === 'unshippableUpload')).toHaveLength(1);
+    const big = (name: string) => `~DGR:${name}.GRF,600000,100,${'F'.repeat(1_200_000)}`;
+    const { report } = importZplText(`${big('A')}\n${big('B')}\n^XA^FO0,0^GB10,10,1^FS^XZ`, 8);
+    expect(report.findings.filter((f) => f.loss === 'oversizeUpload')).toHaveLength(1);
   });
 
   it('reports one row for three uploads that hit the same refusal, since the row names no file', () => {
@@ -730,16 +730,23 @@ describe('importZplText - ~DY font scope (setup vs design)', () => {
     expect(generateSetupScript(printerProfile as PrinterProfile)).toBe('~DYE:OLD.FNT,A,B,4,,0001FFAB\n^XA\n^JUS\n^XZ');
   });
 
-  it('reports an unclaimed upload the emitter would refuse, and prints neither without a page', () => {
-    const zpl = `~DGR:WIDE.GRF,4000,2000,${'F'.repeat(8000)}\n^XA^FO0,0^GB10,10,1^FS^XZ\n^XA^FO0,0^GB10,10,1^FS^QQ1^XZ`;
+  it('refuses an upload past the width cap at the decoder', () => {
+    const { printerProfile, report } = importZplText(`~DGR:WIDE.GRF,4000,2000,${'F'.repeat(8000)}\n^XA^FO0,0^GB10,10,1^FS^XZ`, 8);
+    expect(printerProfile.setupGraphics).toBeUndefined();
+    expect(report.findings).toContainEqual(expect.objectContaining({ kind: 'browserLimit' }));
+    expect(report.findings.some((f) => f.loss === 'unshippableUpload')).toBe(false);
+  });
+
+  it('reports an unclaimed upload the profile refuses, and prints neither without a page', () => {
+    const zpl = `~DGR:BIG.GRF,600000,100,${'F'.repeat(1_200_000)}\n^XA^FO0,0^GB10,10,1^FS^XZ\n^XA^FO0,0^GB10,10,1^FS^QQ1^XZ`;
     const { printerProfile, report, pages } = importZplText(zpl, 8);
     expect(printerProfile.setupGraphics).toBeUndefined();
-    expect(report.findings).toContainEqual(expect.objectContaining({ kind: 'partial', command: '~DG', loss: 'unshippableUpload' }));
+    expect(report.findings).toContainEqual(expect.objectContaining({ kind: 'partial', command: '~DG', loss: 'oversizeUpload' }));
     const text = formatReportAsText({ objectCount: pages.flatMap((p) => p.objects).length, report }, fallbackTranslations.importReport);
     const rows = text.split('\n').filter((line) => line.includes(':'));
     expect(rows.some((line) => line.startsWith('Page 2: '))).toBe(true);
     expect(rows.some((line) => line.startsWith('Page 0'))).toBe(false);
-    expect(rows.some((line) => !line.startsWith('Page ') && line.includes('wider'))).toBe(true);
+    expect(rows.some((line) => !line.startsWith('Page ') && line.includes('printer profile'))).toBe(true);
   });
 
   it('validates setupGraphics like the other setup-script paths', () => {
