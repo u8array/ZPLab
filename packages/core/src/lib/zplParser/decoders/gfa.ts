@@ -26,7 +26,7 @@ export function rewriteRawFieldSpans(
 }
 
 /** Inflates a :Z64: zlib payload, streamed so a zip bomb aborts at the cap instead of OOMing the webview. */
-function tryInflateZlib(input: Uint8Array): Uint8Array | null {
+export function tryInflateZlib(input: Uint8Array): Uint8Array | null {
   // unzlibSync threw on empty input; the streamed loop simply never runs, so
   // without this a 0-byte payload decoded "successfully" to nothing and the
   // canvas painted a transparent graphic over the missing-graphic placeholder.

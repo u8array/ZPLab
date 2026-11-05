@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { zlibSync } from "fflate";
+import { GF_MAX_DECODED_BYTES } from "@zplab/core/lib/zplParser/decoders/gfa";
 import { buildPrinterPreviewZpl, contentBounds, cropBitmap, decodeDyGraphic, monoToRgba, type PrinterBitmap } from "./zebraGraphic";
 
 const b64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes));
@@ -115,6 +116,11 @@ describe("decodeDyGraphic", () => {
     // Header claims 8 bytes (4 rows) but the payload only carries MONO (4).
     const resp = `~DYPRE,A,G,8,${BPR},:Z64:${b64(zlibSync(MONO))}:5A3C`;
     expect(decodeDyGraphic(resp)).toBeNull();
+  });
+
+  it("refuses a zip bomb even when its header declares a tiny bitmap", () => {
+    const bomb = b64(zlibSync(new Uint8Array(GF_MAX_DECODED_BYTES + 1)));
+    expect(decodeDyGraphic(`~DYR:X.GRF,A,G,1,1,:Z64:${bomb}:0000`)).toBeNull();
   });
 
   it("returns null when there is no ~DY graphic in the response", () => {

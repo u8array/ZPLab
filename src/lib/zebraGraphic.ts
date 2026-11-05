@@ -1,4 +1,4 @@
-import { unzlibSync } from "fflate";
+import { tryInflateZlib } from "@zplab/core/lib/zplParser/decoders/gfa";
 
 /** A monochrome bitmap uploaded from a Zebra printer: raw GRF rows (1 bit per
  *  pixel, MSB-first, 1 = black) plus the pixel dimensions. */
@@ -55,13 +55,14 @@ export function decodeDyGraphic(raw: string): PrinterBitmap | null {
   const crcIdx = afterMarker.indexOf(":");
   const payload = crcIdx >= 0 ? afterMarker.slice(0, crcIdx) : afterMarker;
 
-  let grf: Uint8Array;
+  let grf: Uint8Array | null;
   try {
     const bytes = base64ToBytes(payload);
-    grf = marker[1] === "Z" ? unzlibSync(bytes) : bytes;
+    grf = marker[1] === "Z" ? tryInflateZlib(bytes) : bytes;
   } catch {
     return null;
   }
+  if (!grf) return null;
   // Size from the header's declared byte count `total`, not the decoded length:
   // a short (truncated) upload is rejected instead of rendered a row short, and
   // any overshoot is trimmed to the declared bitmap.
