@@ -129,6 +129,11 @@ describe('parseCsvText options', () => {
       ['B2', '5', 'extra'],
     ]);
   });
+
+  it('names the columns of a very long file without a header row', () => {
+    const result = parseCsvText('a,b\n'.repeat(200_000), { hasHeaderRow: false });
+    expect(result.ok && result.value.headers).toEqual(['Column 1', 'Column 2']);
+  });
 });
 
 describe('encoding cache', () => {

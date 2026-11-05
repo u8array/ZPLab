@@ -65,7 +65,7 @@ export function parseCsvText(
     if (headers.length === 0) return err("no_headers");
     dataRows = data.slice(1);
   } else {
-    const width = Math.max(...data.map((r) => r.length), 0);
+    const width = data.reduce((max, r) => Math.max(max, r.length), 0);
     if (width === 0) return err("no_headers");
     headers = Array.from({ length: width }, (_, i) => `Column ${i + 1}`);
     dataRows = data;
