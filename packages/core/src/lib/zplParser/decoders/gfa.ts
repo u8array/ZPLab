@@ -1,6 +1,7 @@
 import { Unzlib } from "fflate";
 import { parseGfWrapper, wrapGfB64 } from "./crc";
 import { latin1ToBytes, NON_LATIN1_RE } from "../../binaryText";
+import { GF_MAX_BYTES_PER_ROW } from "../../../registry/image";
 import type { UnsafeRawFieldSpan } from "../helpers";
 
 /** Rewrite unsafe byte-counted spans text-safe, in place: the payload
@@ -104,6 +105,8 @@ export function gfPayloadToBytes(
   bytesPerRow: number,
   byteCount: number,
 ): GfPayloadDecoded | null {
+  // Format A pads each row to this width, so a header claiming 2^28 bytes throws RangeError.
+  if (!Number.isInteger(bytesPerRow) || bytesPerRow > GF_MAX_BYTES_PER_ROW) return null;
   const wrapper = parseGfWrapper(rawData);
   if (wrapper) {
     if (format === "C" && wrapper.kind === "b64") return null;

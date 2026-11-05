@@ -2,7 +2,7 @@
 // that own only the encoded bytes. The payload decoding stays the parser's.
 
 import type { MonoRaster } from "./imageToZpl";
-import { GF_MAX_BYTES_PER_ROW, GF_MAX_ROWS, parseGfHeader } from "../registry/image";
+import { GF_MAX_ROWS, parseGfHeader } from "../registry/image";
 import { GF_MAX_DECODED_BYTES, gfPayloadToBytes } from "./zplParser/decoders/gfa";
 
 /** And the two together: the caps multiply out to 163 Mpx, which the preview
@@ -19,11 +19,6 @@ export function rasterFromGfa(gfa: string, visibleWidthDots?: number): MonoRaste
   // a measured footprint for a field that prints nothing.
   if (!head || head.payload.trim() === "") return null;
   const { format, bytesPerRow } = head;
-  // Bounded before the decoder runs: it pads each row to the declared width, so
-  // a header claiming 2^28 bytes throws RangeError out of the render body.
-  if (!Number.isInteger(bytesPerRow) || bytesPerRow > GF_MAX_BYTES_PER_ROW) {
-    return null;
-  }
   // b, or c when b is omitted (spec p.215: b == c uncompressed), same fallback the boundary applies.
   // A bare parseInt("") is NaN, and the raw-binary branch then length-compares against it and refuses a graphic that prints.
   const countStr = head.totalBytes !== "" ? head.totalBytes : head.dataBytes;

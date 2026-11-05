@@ -2,7 +2,7 @@ import { FONT_EXT_BY_FORMAT, type FontFormatCode } from "../../customFonts";
 import { byteDigest } from "../../byteDigest";
 import type { BoxProps } from "../../../registry/box";
 import type { EllipseProps } from "../../../registry/ellipse";
-import { clampMagnification, type ImageProps } from "../../../registry/image";
+import { clampMagnification, GF_MAX_BYTES_PER_ROW, GF_MAX_ROWS, type ImageProps } from "../../../registry/image";
 import type { LineProps } from "../../../registry/line";
 import { hasFontBytes, loadFontBytesSync, removeFont } from "../../fontCache";
 import { parseStoragePath, recallCandidates, storageKey, uploadedGraphicPath, type StoragePath } from "../../storagePath";
@@ -201,13 +201,15 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       String(size),
       `uploaded_${path.replace(/[:.]/g, "_")}.png`,
     ));
+    const key = uploadedGraphicPath(parsed);
     if (!image) {
+      // The stream overwrote this path, so a later recall must miss.
+      s.fonts.downloadedGraphics.delete(key);
       pushBrowserLimit(s.result, summary);
       return;
     }
     if (!image.crcOk) notePartial(s.result, code, "checksumMismatch");
     if (image.truncated) notePartial(s.result, code, "shortPayload");
-    const key = uploadedGraphicPath(parsed);
     onUpload(key, image.truncated);
     s.fonts.downloadedGraphics.set(key, {
       via: code,
@@ -387,11 +389,17 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         gfParams[1] ?? "",
       ));
       if (!gfImage) {
+        const gfFieldCount = int(gfParams[1], 0);
+        // A placeholder would take the declared size.
+        if (gfBytesPerRow > GF_MAX_BYTES_PER_ROW || gfFieldCount / gfBytesPerRow > GF_MAX_ROWS) {
+          noteFieldInk(s);
+          pushBrowserLimit(s.result, gfSummary);
+          return;
+        }
         // Undecodable, but the header still describes the bitmap, so preserve
         // the field verbatim instead of dropping it. Height is param c (field
         // count), not b (compressed length). Rebuild the header with the default
         // delimiter so a ^CD source still round-trips (generator never re-emits ^CD).
-        const gfFieldCount = int(gfParams[1], 0);
         const opaqueWidth = gfBytesPerRow * 8;
         // Malformed c (<=0 or under one full row, flooring to a 0-dot sliver)
         // falls back to a square so the placeholder stays grabbable.

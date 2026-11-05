@@ -1,12 +1,13 @@
 import type { CachedImage } from "../../imageCache";
 import { BITS_PER_BYTE } from "./constants";
-import { gfPayloadToBytes } from "./gfa";
+import { GF_MAX_DECODED_BYTES, gfPayloadToBytes } from "./gfa";
 import { wrapGfB64 } from "./crc";
+import { GF_MAX_ROWS } from "../../../registry/image";
 import type { DecodedGraphic } from "../types";
 
 import { newId } from "../../ids";
 /** Decode a GF-shaped payload into a cache row, shared by inline `^GF` and the `~DG`/`~DY` uploads.
- *  Returns `null` when the payload cannot be decoded, which the caller surfaces as browserLimit. */
+ *  Returns `null` when the payload cannot be decoded or is past the caps. */
 export function decodeGraphicToImage(
   rawData: string,
   format: "A" | "B" | "C",
@@ -31,7 +32,9 @@ export function decodeGraphicToImage(
   const bitmapBytes = Number.parseInt(dataBytesHeader, 10);
   const budget = bitmapBytes > 0 ? Math.min(decoded.data.length, bitmapBytes) : decoded.data.length;
   const heightDots = Math.floor(budget / bytesPerRow);
-  if (heightDots <= 0) return null;
+  if (heightDots <= 0 || heightDots > GF_MAX_ROWS) return null;
+  // :B64: and raw B skip the decoder's ceiling, and each dot costs four canvas bytes.
+  if (heightDots * bytesPerRow > GF_MAX_DECODED_BYTES) return null;
   const canvas = document.createElement("canvas");
   canvas.width = widthDots;
   canvas.height = heightDots;
