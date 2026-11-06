@@ -7,10 +7,9 @@ import type { LabelObject, Page } from '@zplab/core/types/Group';
 
 const LABEL: LabelConfig = { widthMm: 100, heightMm: 60, dpmm: 8 };
 const pageOf = (zpl: string): Page => importZplText(zpl, 8).pages[0]!;
-const moved = (zpl: string, type?: string) => {
+const moved = (zpl: string) => {
   const page = pageOf(zpl);
-  const object = (type ? page.objects.find((o) => o.type === type) : page.objects[0])!;
-  Object.assign(object, { x: 7, dirty: true });
+  Object.assign(page.objects[0]!, { x: 7, dirty: true });
   return generateMultiPageZPL(LABEL, [page]);
 };
 
