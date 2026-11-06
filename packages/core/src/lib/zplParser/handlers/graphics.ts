@@ -44,12 +44,10 @@ export interface GraphicsHelpers {
 function decodeGraphicOnce(s: ParserState, decode: () => DecodedGraphic | null): DecodedGraphic | null {
   const key = s.result.tokenSpan?.start ?? -1;
   const hit = s.graphicMemo.get(key);
-  if (hit) return hit;
+  if (hit !== undefined) return hit;
   const decoded = decode();
-  if (decoded) {
-    s.graphicMemo.set(key, decoded);
-    s.result.decodedImages.push(decoded.image);
-  }
+  s.graphicMemo.set(key, decoded);
+  if (decoded) s.result.decodedImages.push(decoded.image);
   return decoded;
 }
 

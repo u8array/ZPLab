@@ -388,8 +388,8 @@ export interface ParserState {
   declaredHexControl: Map<number, SpannedToken>;
   /** Each field's ^FO/^FT anchor in dots, since an I or B rotated ^FO field folds its data's ink width into its model position. */
   anchorById: Map<string, [number, number]>;
-  /** Decoded graphics by token offset, filled by decodeGraphicOnce. */
-  graphicMemo: Map<number, DecodedGraphic>;
+  /** Decoded graphics by token offset, null for a refused one, filled by decodeGraphicOnce. */
+  graphicMemo: Map<number, DecodedGraphic | null>;
   /** Names in result.variables, kept in step so a stream of thousands of slots names each in constant time. */
   variableNames: Set<string>;
   /** Next suffix to try per base name, so a stream of thousands of pages does not probe from 2 on each. */
