@@ -31,7 +31,7 @@ describe("payloads that must never ship verbatim", () => {
 describe("payloads the importer preserves and that must keep shipping", () => {
   const ACCEPTED: [string, string][] = [
     ["plain hex", "^GFA,4,4,2,FF00FF00"],
-    ["the wrapper the parser writes", "^GFB,4,4,2,:B64:AAAA:9c02"],
+    ["a wrapper from a saved design or from source ZPL", "^GFB,4,4,2,:B64:AAAA:9c02"],
     ["control bytes inside the declared count", "^GFB,4,4,2,A^B~"],
     ["under-read payload, count over-declared", "^GFB,9999,9999,10,AB"],
     ["b omitted, which Labelary prints identically", "^GFB,,4,2,ABCD"],
