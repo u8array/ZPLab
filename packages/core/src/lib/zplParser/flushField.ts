@@ -220,6 +220,8 @@ export function createCloseField(
     // Decoded once under the recall block's own ^FH, so it replaces the decoded bytes, not the raw ^FD.
     const recallValue = s.comment.fnNumber === null ? undefined : s.recall?.get(s.comment.fnNumber);
     if (!s.field.fieldType || s.field.pendingFD === null) {
+      // Otherwise the next object inherits this ^FX and re-emits bytes the overlay already holds.
+      if (s.field.inkWithoutObject) takeComment();
       // ^FN with no field type declares the slot; a ^FD is its default.
       if (s.comment.fnNumber !== null) {
         const own = s.field.pendingFD === null
