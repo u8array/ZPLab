@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { decodeGraphicToImage } from '@zplab/core/lib/zplParser/decoders/graphic';
 import { GF_MAX_DECODED_BYTES, gfPayloadToBytes } from '@zplab/core/lib/zplParser/decoders/gfa';
-import { wrapGfB64 } from '@zplab/core/lib/zplParser/decoders/crc';
 import { getAllImages, getImage } from '@zplab/core/lib/imageCache';
 import { rasterFromGfa } from '@zplab/core/lib/gfaDecode';
 import { commandsOf, parseSingle } from '../test/helpers';
@@ -46,7 +45,10 @@ describe('untrusted ^GF sizes', () => {
   it('refuses an uncompressed graphic past the decode ceiling, as it does a compressed one', () => {
     const bytesPerRow = 1000;
     const rows = GF_MAX_DECODED_BYTES / bytesPerRow;
-    const decode = (n: number) => decodeGraphicToImage(wrapGfB64(new Uint8Array(n * bytesPerRow)), 'A', bytesPerRow, '', '');
+    const decode = (n: number) => {
+      const size = String(n * bytesPerRow);
+      return decodeGraphicToImage('\0'.repeat(n * bytesPerRow), 'B', bytesPerRow, size, size);
+    };
     expect(decode(rows + 1)).toBeNull();
     expect(decode(rows)?.heightDots).toBe(rows);
   });
