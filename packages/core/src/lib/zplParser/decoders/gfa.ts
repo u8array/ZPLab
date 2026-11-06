@@ -4,9 +4,11 @@ import { latin1ToBytes, NON_LATIN1_RE } from "../../binaryText";
 import { GF_MAX_BYTES_PER_ROW } from "../../../registry/image";
 import type { UnsafeRawFieldSpan } from "../helpers";
 
-/** Rewrite unsafe byte-counted spans text-safe, in place: the payload
- *  re-wraps as `:B64:` and format B transcodes to A (the spec pairing for
- *  wrapped data, p.1602/181); C keeps its letter. */
+/** Wrapped data pairs with format A, spec p.1602/181. */
+const wrappedLetter = <T extends string>(format: "A" | "B" | "C", written: T): T | "A" =>
+  format === "B" ? "A" : written;
+
+/** Rewrite unsafe byte-counted spans text-safe, in place. */
 export function rewriteRawFieldSpans(
   text: string,
   spans: readonly UnsafeRawFieldSpan[],
@@ -14,10 +16,9 @@ export function rewriteRawFieldSpans(
   let out = "";
   let cursor = 0;
   for (const sp of spans) {
-    const letter = sp.format === "B" ? "A" : text.slice(sp.formatStart, sp.formatEnd);
     out +=
       text.slice(cursor, sp.formatStart) +
-      letter +
+      wrappedLetter(sp.format, text.slice(sp.formatStart, sp.formatEnd)) +
       text.slice(sp.formatEnd, sp.dataStart) +
       wrapGfB64(latin1ToBytes(text.slice(sp.dataStart, sp.end)));
     cursor = sp.end;
@@ -80,20 +81,21 @@ interface GfPayloadDecoded {
   raw?: boolean;
 }
 
-/** Text-safe data slot for a preserved raw field: a byte-counted binary
- *  payload re-wraps as `:B64:` (data-identical to the device, survives UTF-8
- *  write-out and CRLF normalization); anything else stays verbatim. */
-export function preserveGfData(
+/** Text-safe format and data for a preserved raw field. `:B64:` is data-identical to the device
+ *  and survives UTF-8 write-out and CRLF normalization, which raw bytes do not. */
+export function preserveGfField(
   rawData: string,
   format: "A" | "B" | "C",
   byteCount: number,
-): string {
-  if (format === "A" || rawData.length !== byteCount || NON_LATIN1_RE.test(rawData)) {
-    return rawData;
+): { format: "A" | "B" | "C"; data: string } {
+  const verbatim = { format, data: rawData };
+  // An empty wrapper fails the wrapper regex, so format A would read it as run-length hex.
+  if (format === "A" || !rawData || rawData.length !== byteCount || NON_LATIN1_RE.test(rawData)) {
+    return verbatim;
   }
   const t = rawData.trimStart();
-  if (t.startsWith(":B64:") || t.startsWith(":Z64:")) return rawData;
-  return wrapGfB64(latin1ToBytes(rawData));
+  if (t.startsWith(":B64:") || t.startsWith(":Z64:")) return verbatim;
+  return { format: wrappedLetter(format, format), data: wrapGfB64(latin1ToBytes(rawData)) };
 }
 
 /** :B64:/:Z64: -> base64 (+inflate); A -> RLE-hex; raw B -> latin1 bytes

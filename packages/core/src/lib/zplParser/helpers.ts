@@ -97,7 +97,7 @@ export function unsafeRawFieldSpans(text: string): UnsafeRawFieldSpan[] {
     if (!span) continue;
     const payload = text.slice(span.dataStart, span.end);
     // Chars above 0xFF (paste path) have no byte truth left to wrap; the
-    // verbatim string is the only faithful preserve (see preserveGfData).
+    // verbatim string is the only faithful preserve (see preserveGfField).
     if (UNSAFE_PAYLOAD_RE.test(payload) && !NON_LATIN1_RE.test(payload)) {
       spans.push({ start: t.start, ...span });
     }

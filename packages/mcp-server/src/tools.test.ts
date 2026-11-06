@@ -1556,7 +1556,7 @@ describe("props that reach the printed stream as written", () => {
   });
 
   it("accepts the compression alphabet and :B64: an import round-trips", () => {
-    // preserveGfData keeps these verbatim, so a hex-only class would refuse a
+    // preserveGfField keeps these verbatim, so a hex-only class would refuse a
     // graphic this repo itself produced.
     for (const payload of ["M60", ":B64:iVBORw0KGgo=:1a2b"]) {
       expect(draftWithProps({ rawGf: `^GFA,4,4,4,${payload}` }).ok, payload).toBe(true);
@@ -1705,7 +1705,7 @@ describe("an imported binary ^GF graphic", () => {
   });
 
   it("keeps the roundtrip for an under-read raw payload too", () => {
-    // preserveGfData keeps this verbatim (length !== count); the boundary's
+    // preserveGfField keeps this verbatim (length !== count); the boundary's
     // exact-fit rule then failed every design-shaped tool on the import.
     const imported = ok(importZpl("^XA^FO10,10^GFB,20,20,2,ABCD^FS^XZ", 8));
     expect(validateDraft(imported.designFile).ok).toBe(true);

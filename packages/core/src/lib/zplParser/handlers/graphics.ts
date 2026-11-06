@@ -10,7 +10,7 @@ import type { DecodedGraphic } from "../types";
 import { cacheServes, fontNamedSoFar, notePartial, getPosType, noteFieldInk, payloadSummary, pushBrowserLimit, REGEN_LOSSY_REASONS, type DownloadedFont, type ParserState, type PendingReverseBg } from "../context";
 import type { LabelObject } from "../../../types/Group";
 import { decodeGraphicToImage } from "../decoders/graphic";
-import { preserveGfData } from "../decoders/gfa";
+import { preserveGfField } from "../decoders/gfa";
 import { extractQrSidecar } from "../../qrGraphic";
 import type { QrCodeProps } from "../../../registry/qrcode";
 import { dotsFor, ftTopLeft, int, makeObj, readColor, readRotation } from "../helpers";
@@ -405,6 +405,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         // falls back to a square so the placeholder stays grabbable.
         const opaqueHeight = gfFieldCount > 0 ? Math.floor(gfFieldCount / gfBytesPerRow) : 0;
         const opaqueH = opaqueHeight > 0 ? opaqueHeight : opaqueWidth;
+        const preserved = preserveGfField(gfRawData, format, int(gfParams[0], -1));
         notePartial(s.result, "^GF");
         pushGraphic(
           "image",
@@ -415,7 +416,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
             widthDots: opaqueWidth,
             heightDots: opaqueH,
             threshold: 128,
-            rawGf: `^GF${format},${gfParams[0]},${gfParams[1]},${gfParams[2]},${preserveGfData(gfRawData, format, int(gfParams[0], -1))}`,
+            rawGf: `^GF${preserved.format},${gfParams[0]},${gfParams[1]},${gfParams[2]},${preserved.data}`,
           } satisfies ImageProps,
           takeComment(),
         );
