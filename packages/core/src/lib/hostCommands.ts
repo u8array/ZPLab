@@ -395,7 +395,8 @@ export interface DocumentReplies {
   awaited: AwaitedReply[];
   /** The ^HV spellings a reader could not find in the reply, for want of a header and a terminator. */
   unmarked: string[];
-  /** The ^HV spellings a reader would miscount, by their marks and the field data the document holds. */
+  /** The ^HV spellings a reader would miscount, by their marks and the field data the document holds, or beside a reply
+   *  it cannot frame off. */
   ambiguous: string[];
   /** The ^HV spellings the document cannot vouch for: it recalls a frame that lies on the printer and may count, fill
    *  or ask on its own, the printer fills the slot at print time, or it may void and print again a label the ^HV
@@ -504,17 +505,26 @@ function receivedMark(mark: string, hex: string | undefined): string {
   return back.length === bytes.length && back.every((byte, i) => byte === bytes[i]) ? text : "";
 }
 
+/** The host replies that come framed in STX..ETX, measured on the ZD230 in probe 3 of 2026-11-02, and ~HQ, which the
+ *  spec frames on p.233. Any other, such as the format text ^HF returns on p.220, may carry a ^HV mark. */
+const FRAMED_REPLIES = new Set(["~HI", "~HM", "~HS", "^HH", "^HW", "~HQ"]);
+
 /** A ^HV in a format that only stores earns nothing, since no field prints. */
 export function documentReplies(zpl: string): DocumentReplies {
   const { asks, held } = walkHostCommands(zpl, { ...PLAIN_CHARS }, false);
   const commands = new Set<string>();
   const uncounted = new Set<string>();
   const replies = new Map<string, FieldReply>();
+  let framed = true;
   for (const t of asks) {
     if (t.ask !== "asked") continue;
     const command = `${t.id}${t.params}`;
     commands.add(command);
-    if (!isFieldHostCommand(t.id) || t.labels === 0) continue;
+    if (!isFieldHostCommand(t.id)) {
+      framed &&= FRAMED_REPLIES.has(t.id);
+      continue;
+    }
+    if (t.labels === 0) continue;
     if (!held || !t.vouched) {
       uncounted.add(command);
       continue;
@@ -530,5 +540,7 @@ export function documentReplies(zpl: string): DocumentReplies {
   }
   const unmarked = [...replies.values()].filter((reply) => fieldReplyMarks(reply) === undefined).map((reply) => reply.command);
   const groups = awaitedReplies(replies.values());
-  return { commands: [...commands], awaited: groups.map(readerShape), unmarked: [...new Set(unmarked)], ambiguous: ambiguousReplies(groups), uncounted: [...uncounted] };
+  // A reply the reader cannot frame off may hold any mark, so no group beside it counts right.
+  const ambiguous = framed ? ambiguousReplies(groups) : groups.flatMap((group) => group.commands);
+  return { commands: [...commands], awaited: groups.map(readerShape), unmarked: [...new Set(unmarked)], ambiguous: [...new Set(ambiguous)], uncounted: [...uncounted] };
 }
