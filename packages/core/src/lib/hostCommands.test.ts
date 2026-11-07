@@ -390,6 +390,17 @@ describe("documentReplies", () => {
     expect(documentReplies("^XA^FH_^HV1,20,_02#02,E^FS^FH#^HV1,20,_02#02,E^XZ").unmarked).toEqual(["^HV1,20,_02#02,E"]);
   });
 
+  it("counts no ^HV beside a host reply the reader cannot frame off, since the format text a ^HF returns may hold its marks", () => {
+    expect(documentReplies("^XA^HFR:A.ZPL^FN1^FDx^FS^HV1,20,H,E,F^HV2,20,K,U,F^XZ").ambiguous).toEqual(["^HV1,20,H,E,F", "^HV2,20,K,U,F"]);
+    expect(documentReplies("^XA^HFR:A.ZPL^XZ^XA^FN1^FDx^FS^HV1,20,H,E,F^XZ").ambiguous).toEqual(["^HV1,20,H,E,F"]);
+    // The replies measured in frames on the ZD230, and the ~HQ the spec frames, count nothing.
+    expect(documentReplies("^XA~HI~HM~HS~HQES^HH^HWR:*.*^FN1^FDx^FS^HV1,20,H,E,F^XZ").ambiguous).toEqual([]);
+    // One that is ignored or only stored sends nothing, and an unmarked ^HV stays unmarked.
+    expect(documentReplies("^XA^FN1^FDx^FS^HV1,20,H,E,F^XZ^HFR:A.ZPL").ambiguous).toEqual([]);
+    expect(documentReplies("^XA^DFR:A.ZPL^FS^HFR:A.ZPL^XZ^XA^FN1^FDx^FS^HV1,20,H,E,F^XZ").ambiguous).toEqual([]);
+    expect(documentReplies("^XA^HFR:A.ZPL^HV1,20^XZ")).toMatchObject({ unmarked: ["^HV1,20"], ambiguous: [] });
+  });
+
   it("groups the replies by their exact marks and adds their counts, and names groups whose marks lie inside each other's ambiguous", () => {
     const doc = documentReplies("^XA^FN1^FDx^FS^HV1,20,A,END^HV2,20,A,END,L^HV3,20,,END^HV4,20, ,^PQ3^XZ");
     expect(doc.awaited).toEqual([
