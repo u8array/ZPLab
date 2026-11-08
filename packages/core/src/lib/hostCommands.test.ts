@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fieldHostParams, hostCommandAsks } from "./hostCommands";
+import { fieldHostParams, hostCommandAsks, walkHostCommands } from "./hostCommands";
 
 describe("fieldHostParams", () => {
   it("reads the slot, the header, the terminator and the per-label flag, each with a default", () => {
@@ -16,14 +16,30 @@ describe("hostCommandAsks", () => {
   const labelsOf = (zpl: string) => hostCommandAsks(zpl).map((a) => `${a.id}:${a.ask}:${a.labels}`);
   const dataOf = (zpl: string) => hostCommandAsks(zpl).filter((a) => a.ask === "asked").map((a) => a.data);
 
-  it("gives every answered command the labels of its format, from a ^PQ before or behind it", () => {
-    expect(labelsOf("^XA^PQ3^HV1,20,H,E,L~HS^XZ")).toEqual(["^HV:asked:3", "~HS:asked:3"]);
-    expect(labelsOf("^XA^PQ100000000^HV1,20^XZ^HV2,20")).toEqual(["^HV:asked:100000000", "^HV:ignored:0"]);
-    expect(labelsOf("^XA^PQ3^PQ0^HV1,20^XZ^XA^CD;^PQ4;1^HV1,20^XZ")).toEqual(["^HV:asked:3", "^HV:asked:4"]);
-    expect(labelsOf("^XA^PQ3^HV1,20,H,E,L")).toEqual(["^HV:asked:3"]);
-    expect(labelsOf("^XA^HV1,20,H,E,L^PQ3^XZ^XA^HV1,20,H,E,L^XZ")).toEqual(["^HV:asked:3", "^HV:asked:1"]);
-    expect(labelsOf("^XA^PQ0^HV1,20^XZ^XA^PQ 2,1^HV1,20^XZ")).toEqual(["^HV:asked:1", "^HV:asked:2"]);
-    expect(labelsOf("^XA^PQ3^PQ^HV1,20,H,E,L^XZ^XA^PQ,2^HV1,20,H,E,L^XZ")).toEqual(["^HV:asked:1", "^HV:asked:1"]);
+  it("counts the labels the document prints, and none for a format without a field", () => {
+    const printed = (zpl: string) => walkHostCommands(zpl).labels;
+    expect(printed("^XA^FN1^FDx^FS^HV1,20,H,E,L^PQ2^XZ")).toBe(2);
+    expect(printed("^XA^FO10,10^GB10,10,1^FS^XZ^XA^FDx^PQ4^XZ")).toBe(5);
+    expect(printed("^XA~HS^XZ^XA^PQ3^XZ^XA^HV1,20,H,E,F^XZ")).toBe(0);
+    const frame = "^XA^DFR:A.ZPL^FS^FN1^FS^HV1,20,H,E,L^XZ";
+    expect(printed(`${frame}^XA^XFR:A.ZPL^FS^PQ2^XZ^XA^XFR:B.ZPL^FS^XZ`)).toBe(3);
+    expect(printed("^XA^DFR:A.ZPL^XZ^XA^XFR:A.ZPL^PQ2^XZ^XA^XFR:B.ZPL^PQ3^XZ")).toBe(3);
+    expect(printed("^XA^RT1^PQ2^XZ^XA^FN1^PQ4^XZ")).toBe(6);
+    expect(printed("^FN1^FDx^FS^PQ2")).toBe(0);
+    expect(printed("^XA^FO10,10^A0N,30,30^SN001,1,Y^PQ2^XZ")).toBe(2);
+    expect(printed("^XA^FO10,10^RFR,H^PQ2^XZ")).toBe(2);
+    expect(printed("^XA^FO10,10^A0N,30,30^SFddd^PQ2^XZ")).toBe(0);
+  });
+
+  it("gives every answered command the labels of its format, from a ^PQ before or behind it, and none without a field", () => {
+    expect(labelsOf("^XA^PQ3^FDx^FS^HV1,20,H,E,L~HS^XZ")).toEqual(["^HV:asked:3", "~HS:asked:3"]);
+    expect(labelsOf("^XA^PQ100000000^FDx^FS^HV1,20^XZ^HV2,20")).toEqual(["^HV:asked:100000000", "^HV:ignored:0"]);
+    expect(labelsOf("^XA^PQ3^PQ0^FDx^FS^HV1,20^XZ^XA^CD;^PQ4;1^FDx^FS^HV1,20^XZ")).toEqual(["^HV:asked:3", "^HV:asked:4"]);
+    expect(labelsOf("^XA^PQ3^FDx^FS^HV1,20,H,E,L")).toEqual(["^HV:asked:3"]);
+    expect(labelsOf("^XA^FDx^FS^HV1,20,H,E,L^PQ3^XZ^XA^FDx^FS^HV1,20,H,E,L^XZ")).toEqual(["^HV:asked:3", "^HV:asked:1"]);
+    expect(labelsOf("^XA^PQ0^FDx^FS^HV1,20^XZ^XA^PQ 2,1^FDx^FS^HV1,20^XZ")).toEqual(["^HV:asked:1", "^HV:asked:2"]);
+    expect(labelsOf("^XA^PQ3^PQ^FDx^FS^HV1,20,H,E,L^XZ^XA^PQ,2^FDx^FS^HV1,20,H,E,L^XZ")).toEqual(["^HV:asked:1", "^HV:asked:1"]);
+    expect(labelsOf("^XA^PQ3^HV1,20,H,E,L~HS^XZ")).toEqual(["^HV:asked:0", "~HS:asked:0"]);
   });
 
   it("replays a stored ^PQ at the recall, where a later ^PQ in the recalling format wins", () => {

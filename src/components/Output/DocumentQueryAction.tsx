@@ -1,5 +1,4 @@
 import { useReplyRead } from "../../hooks/useReplyRead";
-import { useT } from "../../hooks/useT";
 import type { DocumentReply } from "../../lib/printerDocumentQuery";
 import type { PrinterQueryFailure } from "../../lib/printerQuery";
 import type { PrintTransport } from "../../lib/printTarget";
@@ -9,13 +8,13 @@ import { DocumentReplyDialog } from "./DocumentReplyDialog";
 
 interface Props {
   zpl: () => string;
+  label: string;
   transport: PrintTransport;
   disabled: boolean;
   onFailure: (failure: PrinterQueryFailure) => void;
 }
 
-export function DocumentQueryAction({ zpl, transport, disabled, onFailure }: Props) {
-  const t = useT();
+export function DocumentQueryAction({ zpl, label, transport, disabled, onFailure }: Props) {
   const query = useLabelStore((s) => s.queryDocument);
   const reply = useReplyRead<DocumentReply>();
   const run = () =>
@@ -27,7 +26,7 @@ export function DocumentQueryAction({ zpl, transport, disabled, onFailure }: Pro
   return (
     <>
       <button type="button" onClick={run} disabled={disabled} className={primaryButtonCls}>
-        {t.zebraPrint.queryButton}
+        {label}
       </button>
       {reply.read !== undefined && <DocumentReplyDialog read={reply.read} onClose={reply.close} onStop={reply.stop} />}
     </>

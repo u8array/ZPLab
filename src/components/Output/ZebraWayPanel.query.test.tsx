@@ -23,7 +23,7 @@ vi.mock("../../lib/printerDocumentQuery", () => ({ queryDocument: (...args: unkn
 vi.mock("../../lib/printerStatus", () => ({ readPrinterStatus: vi.fn(), readPrinterConfiguration: vi.fn() }));
 
 const loc = en.zebraPrint;
-const ASKS = queryFacts({ commands: ["~HS"], prints: false });
+const ASKS = queryFacts({ commands: ["~HS"], labels: 0 });
 const DOCUMENT = "^XA~HS^XZ";
 
 const resolvesOnAbort = (outcome: unknown) => {
@@ -61,7 +61,6 @@ describe("ZebraWayPanel on a document that asks the printer something", () => {
     const r = render(<WayPanel way="network" zpl={() => DOCUMENT} query={ASKS} />);
     expect(r.queryByText(loc.send)).toBeNull();
     expect(r.getByText(loc.queryHint)).toBeTruthy();
-    expect(r.queryByText(loc.queryMixedHint)).toBeNull();
 
     await act(async () => {
       fireEvent.click(r.getByText(loc.queryButton));
@@ -72,8 +71,20 @@ describe("ZebraWayPanel on a document that asks the printer something", () => {
     expect(r.queryByText(en.printerSettings.printerStatus.stopWaiting)).toBeNull();
   });
 
+  it("switches the query button to its print label where the document prints labels", async () => {
+    queryDocument.mockResolvedValue({ kind: "ok", value: documentReply({ raw: "x" }) });
+    const prints = queryFacts({ commands: ["^HV1,20,H,E,F"], labels: 2 });
+    const r = render(<WayPanel way="network" zpl={() => "^XA^FN1^FDx^FS^HV1,20,H,E,F^PQ2^XZ"} query={prints} />);
+    expect(r.queryByText(loc.queryButton)).toBeNull();
+    expect(r.getByText(formatTemplate(loc.queryPrintsManyFmt, { n: "2" }))).toBeTruthy();
+    await act(async () => {
+      fireEvent.click(r.getByText(loc.queryPrintButton));
+    });
+    expect(queryDocument).toHaveBeenCalledWith({ kind: "network", host: "172.17.17.175", port: 9100 }, "^XA^FN1^FDx^FS^HV1,20,H,E,F^PQ2^XZ", expect.any(AbortSignal));
+  });
+
   it("stops the wait from the dialog, and the reply names what never came", async () => {
-    const marked = queryFacts({ commands: ["~HS", "^HV1,20,H,E,F"], prints: false });
+    const marked = queryFacts({ commands: ["~HS", "^HV1,20,H,E,F"], labels: 0 });
     const signal = resolvesOnAbort({ kind: "ok", value: documentReply({ raw: "030,0,0,0892", unanswered: [{ commands: ["^HV1,20,H,E,F"], missing: 1, of: 1 }] }) });
     const r = render(<WayPanel way="network" zpl={() => "^XA~HS^FN1^FDx^FS^HV1,20,H,E,F^XZ"} query={marked} />);
     await act(async () => {
