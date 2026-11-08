@@ -112,14 +112,15 @@ function awaitedReplies(replies: Iterable<FieldReply>): ReplyGroup[] {
  *  field, since a reply with data the document does not hold shows at least its marks. */
 const replyTexts = (group: ReplyGroup): string[] => [group.header + group.terminator, ...[...group.data].map((data) => group.header + data + group.terminator)];
 
-/** What a reply leaves the reader for the one behind it: the replies counted beyond its own, the mark the scan still
- *  wants, the tail that could still begin that mark, and whether it leaves a frame open. */
+/** What a reply leaves the reader for the one behind it: the mark the scan still wants, the tail that could still
+ *  begin that mark, and whether it leaves a frame open. */
 interface Seam {
-  surplus: number;
   afterHeader: boolean;
   carry: string;
   open: boolean;
 }
+
+const FRESH_SEAM: Seam = { afterHeader: false, carry: "", open: false };
 
 /** The longest tail that is a proper prefix of the mark, which is all a mark across the seam can use of the text. */
 function markStart(text: string, mark: string): string {
@@ -130,32 +131,37 @@ function markStart(text: string, mark: string): string {
   return "";
 }
 
-function seamOf(text: string, own: number, marks: ReplyMarks): Seam {
-  const seen = outsideFrames(text);
-  const { count, afterHeader, at } = scanReplies(seen, marks);
-  return { surplus: count - own, afterHeader, carry: markStart(seen.slice(at), afterHeader ? marks.terminator : marks.header), open: leavesFrameOpen(text) };
+/** The seam a reply leaves behind the one before it, and whether the reader counted it right. */
+function seamAfter(seam: Seam, text: string, own: number, marks: ReplyMarks): { seam: Seam; counted: boolean } {
+  const seen = seam.carry + outsideFrames(text, seam.open);
+  const { count, afterHeader, at } = scanReplies(seen, marks, seam.afterHeader);
+  const carry = markStart(seen.slice(at), afterHeader ? marks.terminator : marks.header);
+  const open = holdsFrameByte(text) ? leavesFrameOpen(text) : seam.open;
+  return { seam: { afterHeader, carry, open }, counted: count === own };
 }
 
 /** The seam check grows with the square of the groups, and a thousand take a second. */
 export const MAX_REPLY_GROUPS = 200;
 
-/** The commands whose replies a reader would miscount: two replies in a row, its own or another group's, read as more
- *  or fewer of the group's replies than they are. The first reply reaches the second only through its seam, so the
- *  distinct seams stand in for every first reply. */
+/** The commands whose replies a reader would miscount in some run of replies, its own or another group's. A reply
+ *  reaches the next only through its seam, so the seams closed under every next reply stand in for every run. */
 function ambiguousReplies(groups: readonly ReplyGroup[]): string[] {
   if (groups.length > MAX_REPLY_GROUPS) return groups.flatMap((group) => group.commands);
   const commands = new Set<string>();
   const texts = groups.flatMap((group) => replyTexts(group).map((text) => ({ group, text })));
   for (const group of groups) {
     const own = (part: { group: ReplyGroup }) => (part.group === group ? 1 : 0);
-    const seams = new Map<string, Seam>();
-    for (const p of texts) {
-      const seam = seamOf(p.text, own(p), group);
-      seams.set(JSON.stringify(seam), seam);
+    const seams = new Map<string, Seam>([[JSON.stringify(FRESH_SEAM), FRESH_SEAM]]);
+    let miscounts = false;
+    // A Map iterates the seams added on the way, so this runs until no reply leaves a new one.
+    for (const seam of seams.values()) {
+      for (const q of texts) {
+        const next = seamAfter(seam, q.text, own(q), group);
+        miscounts ||= !next.counted;
+        seams.set(JSON.stringify(next.seam), next.seam);
+      }
+      if (miscounts) break;
     }
-    const miscounts = [...seams.values()].some((seam) =>
-      texts.some((q) => seam.surplus + scanReplies(seam.carry + outsideFrames(q.text, seam.open), group, seam.afterHeader).count !== own(q)),
-    );
     if (miscounts) group.commands.forEach((command) => commands.add(command));
   }
   return [...commands];
