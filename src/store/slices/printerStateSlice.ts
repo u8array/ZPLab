@@ -1,7 +1,7 @@
 import type { StateCreator } from 'zustand';
 import { adoptionPatches, type AdoptionRow } from '@zplab/core/lib/printerSettingsAdoption';
 import { SGD_ALL_SETTINGS, sgdGetvarCommand, type SgdSetting } from '@zplab/core/lib/sgd';
-import { documentReplies } from '@zplab/core/lib/hostCommands';
+import { documentReplies } from '@zplab/core/lib/documentReplies';
 import { queryDocument as sendQueryDocument, type DocumentReply } from '../../lib/printerDocumentQuery';
 import type { PrinterOutcome, PrinterQueryFailure } from '../../lib/printerQuery';
 import { readPrinterSettings as querySettings } from '../../lib/printerSettings';

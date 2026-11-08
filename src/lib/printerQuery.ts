@@ -1,4 +1,4 @@
-import { owedReplies, type AwaitedReply, type OwedReply } from "@zplab/core/lib/hostCommands";
+import { owedReplies, type AwaitedReply, type OwedReply } from "@zplab/core/lib/documentReplies";
 import { unframed } from "@zplab/core/lib/hostStatus";
 import { errorMessage } from "./errorMessage";
 import { isDesktopShell } from "./platform";

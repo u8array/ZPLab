@@ -1,13 +1,13 @@
 const STX = "\u0002";
 const ETX = "\u0003";
 
-/** A byte that would open or close a frame where a reader counts outside of them. */
-export const holdsFrameByte = (text: string): boolean => text.includes(STX) || text.includes(ETX);
-
 /** ~HS and ~HQES frame their replies in STX and ETX (spec p.226, p.233). */
 export function unframed(body: string): string {
   return body.replaceAll(STX, "").replaceAll(ETX, "");
 }
+
+/** A byte that would open or close a frame where a reader counts outside of them. */
+export const holdsFrameByte = (text: string): boolean => text.includes(STX) || text.includes(ETX);
 
 /** The text outside the frames, an open frame at the end holding nothing yet, and read from inside one where `open`. */
 export function outsideFrames(body: string, open = false): string {
@@ -19,44 +19,6 @@ export function leavesFrameOpen(text: string): boolean {
   const last = text.lastIndexOf(STX);
   return last >= 0 && text.indexOf(ETX, last) < 0;
 }
-
-export interface ReplyMarks {
-  header: string;
-  terminator: string;
-}
-
-/** Where a scan stopped: the replies it counted, whether a header it found still waits for its terminator, and the
- *  index behind the last mark it found. */
-export interface ReplyScan {
-  count: number;
-  afterHeader: boolean;
-  at: number;
-}
-
-/** Reads the replies with these marks left to right, so a mark counts once, from the start or from behind a header. */
-export function scanReplies(text: string, marks: ReplyMarks, afterHeader = false): ReplyScan {
-  const { header, terminator } = marks;
-  let count = 0;
-  let at = 0;
-  if (header === "" && terminator === "") return { count, afterHeader, at };
-  let wantsTerminator = afterHeader;
-  for (;;) {
-    if (header !== "" && !wantsTerminator) {
-      const h = text.indexOf(header, at);
-      if (h < 0) return { count, afterHeader: false, at };
-      at = h + header.length;
-    }
-    wantsTerminator = false;
-    if (terminator !== "") {
-      const t = text.indexOf(terminator, at);
-      if (t < 0) return { count, afterHeader: true, at };
-      at = t + terminator.length;
-    }
-    count += 1;
-  }
-}
-
-export const repliesIn = (text: string, marks: ReplyMarks): number => scanReplies(text, marks).count;
 
 export function replyLines(body: string): string[] {
   return unframed(body)

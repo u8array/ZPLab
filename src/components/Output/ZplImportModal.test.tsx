@@ -4,7 +4,7 @@ import { render, cleanup, fireEvent, screen } from "@testing-library/react";
 import { ZplImportModal } from "./ZplImportModal";
 import { useLabelStore } from "../../store/labelStore";
 import { sendZpl } from "../../lib/sendZpl";
-import { documentReplies } from "@zplab/core/lib/hostCommands";
+import { documentReplies } from "@zplab/core/lib/documentReplies";
 
 beforeEach(() => {
   useLabelStore.setState({ label: { widthMm: 70, heightMm: 40, dpmm: 8 }, pages: [{ objects: [] }], variables: [], currentPageIndex: 0, selectedIds: [] });

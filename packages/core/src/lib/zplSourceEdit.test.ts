@@ -8,7 +8,7 @@ import {
 } from "./zplSourceEdit";
 import { generateMultiPageZPL } from "./zplGenerator";
 import { replayRiskFindings } from "./importReport";
-import { documentReplies } from "./hostCommands";
+import { documentReplies } from "./documentReplies";
 import type { LabelConfig } from "../types/LabelConfig";
 import type { Page } from "../types/Group";
 import type { PrinterProfile } from "../types/PrinterProfile";
