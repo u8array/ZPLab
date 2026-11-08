@@ -216,8 +216,7 @@ mod macos {
     // answer, and the job must not print as a side effect of a failed preview.
     let input = bulk_endpoint(&interface, Direction::In)
       .ok_or_else(|| "printer interface has no read-back endpoint".to_string())?;
-    // Not until_short_packet: that ended the read at the first transfer, so an
-    // answer behind the print never landed.
+    // Not until_short_packet: it ends the read at the first transfer, ahead of an answer behind the print.
     let mut reader = interface
       .endpoint::<Bulk, In>(input)
       .map_err(|e| e.to_string())?

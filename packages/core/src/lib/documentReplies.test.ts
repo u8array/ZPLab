@@ -4,6 +4,7 @@ import { outsideFrames } from "./hostStatus";
 import { ETX, STX } from "./hostStatus.fixture";
 
 const commandsOf = (zpl: string): string[] => documentReplies(zpl).commands;
+const NOTHING = { commands: [], awaited: [], unmarked: [], ambiguous: [], uncounted: [] };
 
 describe("documentReplies commands", () => {
   it("accepts only the prefix the catalog spells", () => {
@@ -93,13 +94,19 @@ describe("documentReplies", () => {
 
   it("counts a stored ^HV once per recall, each with the labels its recall prints", () => {
     const frame = "^XA^DFR:A.ZPL^FS^FN1^FS^HV1,20,H,E,L^XZ";
-    expect(documentReplies(frame)).toEqual({ commands: [], awaited: [], unmarked: [], ambiguous: [], uncounted: [] });
+    expect(documentReplies(frame)).toEqual(NOTHING);
     expect(awaited(`${frame}^XA^XFR:A.ZPL^FS^FN1^FDa^FS^PQ2^XZ^XA^XFR:A.ZPL^FS^FN1^FDb^FS^XZ`)).toEqual(one("^HV1,20,H,E,L", "H", "E", 3));
   });
 
-  it("names a bare ^HV as unmarked, leaves one outside a format and the other host commands out, and follows a prefix remap", () => {
+  it("names a bare ^HV as unmarked and leaves the other host commands out of the awaited replies", () => {
     expect(documentReplies("^XA~HS^HWR:*.*^HV1,20^XZ")).toEqual({ commands: ["~HS", "^HWR:*.*", "^HV1,20"], awaited: [], unmarked: ["^HV1,20"], ambiguous: [], uncounted: [] });
-    expect(documentReplies("^HV1,20,H,E^XA^FDx^FS^XZ")).toEqual({ commands: [], awaited: [], unmarked: [], ambiguous: [], uncounted: [] });
+  });
+
+  it("asks nothing for a ^HV outside a format", () => {
+    expect(documentReplies("^HV1,20,H,E^XA^FDx^FS^XZ")).toEqual(NOTHING);
+  });
+
+  it("counts a ^HV under a ^CC remap", () => {
     expect(awaited("^XA^CC#^FN1^FDx^FS#HV1,20,H,E,F#PQ2#XZ")).toEqual(one("^HV1,20,H,E,F", "H", "E"));
     expect(awaited("^XA^CC#^FN1^FDx^FS#HV1,20,H,E,L#PQ2#XZ")).toEqual(one("^HV1,20,H,E,L", "H", "E", 2));
   });
@@ -119,7 +126,6 @@ describe("documentReplies", () => {
     expect(ambiguous("^XA^FN1^FDa^FS^HV1,5,H,E,F^HV2,5,K,U,F^HV2,5,H,E,F^XZ")).toEqual([]);
     // The guide's own pair shares a terminator behind distinct headers, which a reader counts right.
     expect(ambiguous("^XA^FH_^HV1,24,EPC[,]_0D_0A,F^FH_^HV2,24,TID[,]_0D_0A,F^XZ")).toEqual([]);
-    // A reply with an empty field, or the seam between two replies, can show a mark too.
     expect(ambiguous("^XA^HV1,20,AB,CD,F^HV2,20,DA,,F^XZ")).toEqual(["^HV2,20,DA,,F"]);
     expect(ambiguous("^XA^HV1,20,QY,ZX,F^HV2,20,YZ,,F^XZ")).toEqual(["^HV2,20,YZ,,F"]);
     // The field data the document holds can read as a mark too, in the reply itself or in another group's.
@@ -135,21 +141,16 @@ describe("documentReplies", () => {
     expect(ambiguous("^XA^PQ2^FN1^FD#^FS^HV1,20,,##,L^XZ")).toEqual(["^HV1,20,,##,L"]);
     expect(ambiguous("^XA^FN1^FDx^FS^FN2^FDEND^FS^HV1,20,S,;^HV2,20,,;END^XZ")).toEqual(["^HV2,20,,;END"]);
     expect(ambiguous("^XA^FN1^FDEA\nB^FS^HV1,20,AB,E^XZ")).toEqual(["^HV1,20,AB,E"]);
-    // The reply carries n bytes of the field, so a mark behind them never shows.
+    // A mark behind the reply's byte count never shows.
     expect(ambiguous("^XA^FN1^FDEH^FS^HV1,1,H,E,F^XZ")).toEqual([]);
     expect(ambiguous("^XA^FN1^FDEH^FS^HV1,2,H,E,F^XZ")).toEqual(["^HV1,2,H,E,F"]);
     expect(ambiguous(`^XA^FN1^FD${"x".repeat(64)}EH^FS^HV1,,H,E,F^XZ`)).toEqual([]);
-    // A stored ^FD prints too, so its data counts beside the recall's.
     expect(ambiguous("^XA^DFR:A.ZPL^FS^FN1^FDEH^FS^HV1,20,H,E^XZ^XA^XFR:A.ZPL^FS^XZ")).toEqual(["^HV1,20,H,E"]);
     expect(ambiguous("^XA^DFR:A.ZPL^FS^FN1^FDEH^FS^HV1,20,H,E^XZ^XA^XFR:A.ZPL^FS^FN1^FDx^FS^XZ")).toEqual(["^HV1,20,H,E"]);
     // A frame byte in the data hides the terminator from a reader, unless the data closes the frame again.
     expect(ambiguous("^XA^FH_^FN1^FD_02x^FS^HV1,20,H,E^XZ")).toEqual(["^HV1,20,H,E"]);
     expect(ambiguous("^XA^FH_^FN1^FD_02x_03^FS^HV1,20,H,E^XZ")).toEqual([]);
     expect(ambiguous("^XA^FH_^FN1^FD_03x^FS^HV1,20,H,E^XZ")).toEqual([]);
-    expect(awaited("^XA^FN1^FDa^FS^HV1,5,H,E,F^HV2,5,K,U,F^HV2,5,H,E,F^XZ")).toEqual([
-      { header: "H", terminator: "E", count: 2, commands: ["^HV1,5,H,E,F", "^HV2,5,H,E,F"] },
-      { header: "K", terminator: "U", count: 1, commands: ["^HV2,5,K,U,F"] },
-    ]);
   });
 
   it("names exactly the groups a reader would miscount in up to three replies in a row, over every small document", () => {
@@ -178,9 +179,9 @@ describe("documentReplies", () => {
                   groups.set(`${header},${terminator}`, group);
                 }
                 const all = [...groups.values()];
-                const texts = all.flatMap((group) => [group.header + group.terminator, ...group.data.map((d) => group.header + d + group.terminator)].map((text) => ({ group, text })));
+                const parts = all.flatMap((group) => [group.header + group.terminator, ...group.data.map((d) => group.header + d + group.terminator)].map((text) => ({ group, text })));
                 const own = (group: Group, ...parts: { group: Group }[]) => parts.filter((part) => part.group === group).length;
-                const runs = texts.flatMap((p) => [[p], ...texts.flatMap((q) => [[p, q], ...texts.map((r) => [p, q, r])])]);
+                const runs = parts.flatMap((p) => [[p], ...parts.flatMap((q) => [[p, q], ...parts.map((r) => [p, q, r])])]);
                 const expected = all.filter((group) => runs.some((run) => repliesIn(outsideFrames(run.map((part) => part.text).join("")), group) !== own(group, ...run))).flatMap((group) => group.commands);
                 expect(documentReplies(zpl).ambiguous, zpl).toEqual(expected);
                 checked += 1;
@@ -206,14 +207,12 @@ describe("documentReplies", () => {
     expect(filled("^XA^FN1^SN1,1,N^FS^HV1,20,1,,L^PQ2^XZ")).toEqual(["^HV1,20,1,,L"]);
     expect(filled("^XA^FN1^FDABCD1000^SF%%%%dddd,1^FS^HV1,20,H,E,L^PQ2^XZ")).toEqual(["^HV1,20,H,E,L"]);
     expect(filled("^XA^FC%^FN1^FD%H:%M^FS^HV1,20,H,E^XZ")).toEqual(["^HV1,20,H,E"]);
-    // Behind the data the clock stays text, spec p.1614.
     expect(filled("^XA^FN1^FD%H:%M^FC%^FS^HV1,20,H,E^XZ")).toEqual([]);
     expect(filled("^XA^RFR,H,0,8,2^FN1^FS^HV1,,8-byte Tag ID Data:^FS^XZ")).toEqual(["^HV1,,8-byte Tag ID Data:"]);
     expect(filled("^XA^RU^XZ^XA^FN1^FDSerial #H^FS^HV1,20,H,E^XZ")).toEqual(["^HV1,20,H,E"]);
     expect(filled("^XA^DFR:A.ZPL^FS^FN1^SN1,1,Y^FS^HV1,20,H,E,L^XZ^XA^XFR:A.ZPL^FS^PQ2^XZ")).toEqual(["^HV1,20,H,E,L"]);
     expect(documentReplies("^XA^FN1^SN1,1,N^FS^HV1,20,1,,L^PQ2^XZ").awaited).toEqual([]);
-    // A writing ^RF takes the field's data, a serial on another slot or in another format leaves this one alone, and a ^SN
-    // behind ^FS opens a field of its own.
+    // A ^SN behind ^FS opens a field of its own.
     const vouched = "^XA^RFW,H^FN1^FDx^FS^FN2^SN1^FS^SN2^FS^HV1,20,H,E^XZ^XA^FN1^SN1^FS^XZ^XA^FN1^FDx^FS^HV1,20,H,E^XZ";
     expect(documentReplies(vouched)).toMatchObject({ awaited: one("^HV1,20,H,E", "H", "E", 2), uncounted: [] });
   });
@@ -223,9 +222,7 @@ describe("documentReplies", () => {
     expect(spliced("^XA^FN2^FDH^FS^FN1^FE#^FD#2#^FS^HV1,20,H,,L^PQ2^XZ")).toEqual(["^HV1,20,H,,L"]);
     expect(spliced("^XA^FN2^FDH^FS^FE#^FN1^FV#2#^FS^HV1,20,H,,L^PQ2^XZ")).toEqual(["^HV1,20,H,,L"]);
     expect(spliced("^XA^DFR:A.ZPL^FS^FN1^FE#^FS^HV1,20,H,,L^XZ^XA^XFR:A.ZPL^FS^FN2^FDH^FS^FN1^FD#2#^FS^PQ2^XZ")).toEqual(["^HV1,20,H,,L"]);
-    // The printer ignores the empty ^FV, so the ^FE still stands ahead of the data.
     expect(spliced("^XA^FN2^FDH^FS^FN1^FV^FE#^FD#2#^FS^HV1,20,H,,L^PQ2^XZ")).toEqual(["^HV1,20,H,,L"]);
-    // An ^FE behind the data concatenates nothing, so the data stands as spelled.
     expect(documentReplies("^XA^FN2^FDH^FS^FN1^FD#2#^FE#^FS^HV1,20,H,E,L^PQ2^XZ")).toMatchObject({ awaited: one("^HV1,20,H,E,L", "H", "E", 2), uncounted: [] });
     expect(documentReplies("^XA^FN2^FDH^FS^FN1^FD#2#^FE#^FV^FS^HV1,20,H,,L^PQ2^XZ")).toMatchObject({ awaited: one("^HV1,20,H,,L", "H", "", 2), uncounted: [] });
     // Data counts as seen on either side of the ^FN, as the parser reads it.
@@ -240,7 +237,6 @@ describe("documentReplies", () => {
     expect(voided("^XA^RT2^FN1^FDx^FS^HV1,20,H,E,L^XZ")).toEqual(["^HV1,20,H,E,L"]);
     expect(voided("^XA^DFR:A.ZPL^FS^RFW,H^FD1111^FS^FN1^FS^HV1,20,H,E,L^XZ^XA^XFR:A.ZPL^FS^FN1^FDx^FS^PQ2^XZ")).toEqual(["^HV1,20,H,E,L"]);
     expect(voided("^XA^DFR:A.ZPL^FS^FN1^FS^HV1,20,H,E,L^XZ^XA^XFR:A.ZPL^FS^RFR,H,0,8,2^FN2^FS^FN1^FDx^FS^XZ")).toEqual(["^HV1,20,H,E,L"]);
-    // A per-format ^HV answers once whatever the printer voids, and without a tag command nothing voids.
     expect(documentReplies("^XA^RS8^RFW,H^FD1111^FS^FN1^FDx^FS^HV1,20,H,E^PQ2^XZ")).toMatchObject({ awaited: one("^HV1,20,H,E", "H", "E", 1), uncounted: [] });
     expect(documentReplies("^XA^RS8^RB96,8,3,3,20,24,38^FN1^FDx^FS^HV1,20,H,E,L^PQ2^XZ")).toMatchObject({ awaited: one("^HV1,20,H,E,L", "H", "E", 2), uncounted: [] });
   });
@@ -308,7 +304,6 @@ describe("documentReplies", () => {
     const zpl = `^XA^DFR:B.ZPL^FS^FN1^FS^HV1,20,H,E,L^XZ${rows}`;
     const started = performance.now();
     expect(documentReplies(zpl).awaited).toEqual(one("^HV1,20,H,E,L", "H", "E", 50_000));
-    // Collecting the values by linear search took 2.4 s for 40000 rows.
     expect(performance.now() - started).toBeLessThan(3000);
   });
 
@@ -324,7 +319,6 @@ describe("documentReplies", () => {
 
   it("decodes a header or terminator spelled in hex under ^FH the way the transport decodes the reply, as the guide's RFID example does", () => {
     expect(awaited("^XA^FH_^HV0,8,EPC[,]_0D_0A,L^XZ")).toEqual(one("^HV0,8,EPC[,]_0D_0A,L", "EPC[", "]\r\n"));
-    // A mark the transport garbles merges with its neighbours on the wire, so it is no mark.
     expect(awaited("^XA^CI27^FH_^HV1,8,_E4,END^XZ")).toEqual(one("^HV1,8,_E4,END", "", "END"));
     expect(awaited("^XA^FH_^HV1,8,H,_E4^XZ^XA^FH_^HV1,8,_A4_B8,E^XZ")).toEqual([...one("^HV1,8,H,_E4", "H", ""), ...one("^HV1,8,_A4_B8,E", "", "E")]);
     expect(documentReplies("^XA^FH_^HV1,8,_E4,_A4^XZ").unmarked).toEqual(["^HV1,8,_E4,_A4"]);
@@ -345,12 +339,9 @@ describe("documentReplies", () => {
     expect(documentReplies("^XA^HV1,20,H,E,F^DFR:A.ZPL^FS^FN1^FS^XZ")).toEqual({ commands: ["^HV1,20,H,E,F"], awaited: [], unmarked: [], ambiguous: [], uncounted: [] });
   });
 
-  it("names a reply unmarked where one mark is only whitespace, which goes out but a reader cannot find", () => {
-    expect(documentReplies("^XA^HV1,,a, ^HV2,, ,b^HV3,,a,b^XZ").unmarked).toEqual(["^HV1,,a, ", "^HV2,, ,b"]);
-  });
-
   it("names a reply a reader could not find: no header, no terminator, only whitespace, or a frame byte in the mark", () => {
     expect(documentReplies("^XA^HV1,20,H^FS^HV2,20,,E,L^XZ").unmarked).toEqual([]);
+    expect(documentReplies("^XA^HV1,,a, ^HV2,, ,b^HV3,,a,b^XZ").unmarked).toEqual(["^HV1,,a, ", "^HV2,, ,b"]);
     expect(documentReplies("^XA^HV1,20^FS^HV2,20, , ^FS^FH_^HV3,20,_02H,_03^XZ").unmarked).toEqual(["^HV1,20", "^HV2,20, , ", "^HV3,20,_02H,_03"]);
     expect(documentReplies("^XA^FH_^HV1,20,_02H,END^XZ").unmarked).toEqual(["^HV1,20,_02H,END"]);
     expect(documentReplies("^XA^FH_^HV1,20,_02#02,E^FS^FH#^HV1,20,_02#02,E^XZ").unmarked).toEqual(["^HV1,20,_02#02,E"]);
@@ -359,7 +350,6 @@ describe("documentReplies", () => {
   it("counts no ^HV beside a host reply the reader cannot frame off, since the format text a ^HF returns may hold its marks", () => {
     expect(documentReplies("^XA^HFR:A.ZPL^FN1^FDx^FS^HV1,20,H,E,F^HV2,20,K,U,F^XZ").ambiguous).toEqual(["^HV1,20,H,E,F", "^HV2,20,K,U,F"]);
     expect(documentReplies("^XA^HFR:A.ZPL^XZ^XA^FN1^FDx^FS^HV1,20,H,E,F^XZ").ambiguous).toEqual(["^HV1,20,H,E,F"]);
-    // The replies measured in frames on the ZD230, and the ~HQ the spec frames, count nothing.
     expect(documentReplies("^XA~HI~HM~HS~HQES^HH^HWR:*.*^FN1^FDx^FS^HV1,20,H,E,F^XZ").ambiguous).toEqual([]);
     // One that is ignored or only stored sends nothing, and an unmarked ^HV stays unmarked.
     expect(documentReplies("^XA^FN1^FDx^FS^HV1,20,H,E,F^XZ^HFR:A.ZPL").ambiguous).toEqual([]);
@@ -375,6 +365,10 @@ describe("documentReplies", () => {
     ]);
     expect(doc.unmarked).toEqual(["^HV4,20, ,"]);
     expect(doc.ambiguous).toEqual(["^HV3,20,,END"]);
+    expect(awaited("^XA^FN1^FDa^FS^HV1,5,H,E,F^HV2,5,K,U,F^HV2,5,H,E,F^XZ")).toEqual([
+      { header: "H", terminator: "E", count: 2, commands: ["^HV1,5,H,E,F", "^HV2,5,H,E,F"] },
+      { header: "K", terminator: "U", count: 1, commands: ["^HV2,5,K,U,F"] },
+    ]);
     expect(documentReplies("^XA^FN1^FDx^FS^HV1,20,H1,E,L^HV2,20,H,E^PQ3^XZ").ambiguous).toEqual(["^HV2,20,H,E"]);
     expect(documentReplies("^XA^HV1,20,H^HV2,20,HEAD^XZ").ambiguous).toEqual(["^HV1,20,H"]);
     expect(documentReplies("^XA^HV1,20,A,X^HV2,20,B,Y^XZ")).toMatchObject({ ambiguous: [], uncounted: [] });

@@ -12,7 +12,7 @@ export const isFieldHostCommand = (id: string): boolean => id === "^HV";
 
 export interface FieldHostParams {
   slot: number;
-  /** How many bytes of the field the reply carries, 1 to 256, and 64 where unspelled or out of range (spec p.239). */
+  /** How many bytes of the field the reply carries, 1 to 256, and 64 where unspelled or out of range, spec p.239. */
   bytes: number;
   header: string;
   terminator: string;
@@ -146,22 +146,19 @@ export interface HostCommandAsk extends HostCommandToken {
    *  format's, which prints as a stray field, since which of the two the reply carries is unmeasured. */
   data: string[];
   /** The ^FH indicator in force, under which the printer decodes a hex-spelled header or terminator, spec p.239. */
-  hex?: string;
+  fhIndicator?: string;
   /** How many labels the format that answers it prints, from the last ^PQ the printer meets in that format. Zero where
-   *  no format answers it, or where that format only stores. Only ^HV multiplies by it. */
+   *  no format answers it, or where that format only stores. */
   labels: number;
-  /** False where the document cannot vouch for the replies: the printer fills the slot at print time, or it may void
-   *  and print again a label the ^HV answers per label. */
+  /** False where the document cannot vouch for the replies, see FILLS_FIELD and TOUCHES_TAG. */
   vouched: boolean;
 }
 
-/** The transport sends the document as UTF-8 and a ^FH run as the bytes it spells, which is what the printer keeps. */
-export const sentBytes = (text: string, hex: string | undefined): Uint8Array => (hex === undefined ? new TextEncoder().encode(text) : fhBytes(text, hex));
+export const sentBytes = (text: string, fhIndicator: string | undefined): Uint8Array => (fhIndicator === undefined ? new TextEncoder().encode(text) : fhBytes(text, fhIndicator));
 
 /** As the transport hands a reply over, decoded as UTF-8 with replacement. */
 export const received = (bytes: Uint8Array): string => getDecoder("utf-8").decode(bytes);
 
-/** A field as it closes: the slot it numbers, the data it sends, and whether the printer fills it at print time. */
 interface FieldClose {
   kind: "field";
   slot: number;
@@ -169,27 +166,26 @@ interface FieldClose {
   filled: boolean;
 }
 
-/** The field being read, up to its ^FS. */
 interface OpenField {
   slot?: number;
   data?: Uint8Array;
   filled: boolean;
-  hex?: string;
+  fhIndicator?: string;
 }
 
 /** What a format has done so far. Its questions learn the ^PQ and the field data when it closes. */
 interface OpenFormat {
   answered: HostCommandAsk[];
   labels: number;
-  /** The field data by slot, from the format itself and from the frame it recalls. */
+  /** The field data by slot that the format spells itself. */
   fields: Map<number, Uint8Array>;
+  /** The field data by slot from the frames it recalls. */
   stored: Map<number, Uint8Array>;
-  /** The slots the printer fills at print time. */
-  dynamic: Set<number>;
-  tagged: boolean;
+  filledSlots: Set<number>;
+  touchesTag: boolean;
 }
 
-const freshFormat = (): OpenFormat => ({ answered: [], labels: 1, fields: new Map(), stored: new Map(), dynamic: new Set(), tagged: false });
+const freshFormat = (): OpenFormat => ({ answered: [], labels: 1, fields: new Map(), stored: new Map(), filledSlots: new Set(), touchesTag: false });
 
 /** What a format does in printer order. A storing format keeps it as its frame, replayed at every recall. */
 type FrameEntry =
@@ -197,7 +193,7 @@ type FrameEntry =
   | { kind: "recall"; path: string }
   | { kind: "quantity"; labels: number }
   | FieldClose
-  | { kind: "tagged" }
+  | { kind: "touchesTag" }
   | { kind: "serialised" };
 
 /** ^SN and ^SF fill their field at print time, spec p.341 and p.335. */
@@ -217,7 +213,7 @@ export interface HostCommandWalk {
 
 /** The host commands in `zpl` in printer order with their {@link HostAsk}. A stored command is listed again as asked at
  *  every ^XF of its frame, through the recalls the frame holds. */
-export const hostCommandAsks = (zpl: string, chars: TokenizerChars, formatOpen = false): HostCommandAsk[] => walkHostCommands(zpl, chars, formatOpen).asks;
+export const hostCommandAsks = (zpl: string, chars: TokenizerChars = { ...PLAIN_CHARS }, formatOpen = false): HostCommandAsk[] => walkHostCommands(zpl, chars, formatOpen).asks;
 
 export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN_CHARS }, formatOpen = false): HostCommandWalk {
   const frames = new Map<string, FrameEntry[]>();
@@ -228,7 +224,7 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
   let serialised = false;
   const recordField = ({ slot, data, filled }: FieldClose, into: Map<number, Uint8Array>) => {
     if (data !== undefined) into.set(slot, data);
-    if (filled || serialised) format.dynamic.add(slot);
+    if (filled || serialised) format.filledSlots.add(slot);
   };
   const slotData = ({ slot, bytes }: FieldHostParams): string[] =>
     [...new Set([format.stored.get(slot), format.fields.get(slot)].filter((data) => data !== undefined).map((data) => received(data.subarray(0, bytes))))];
@@ -238,7 +234,7 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
       if (!isFieldHostCommand(ask.id)) continue;
       const params = fieldHostParams(ask.params, ask.delimiter);
       ask.data = slotData(params);
-      ask.vouched = !format.dynamic.has(params.slot) && !(params.perLabel && (format.tagged || serialised));
+      ask.vouched = !format.filledSlots.has(params.slot) && !(params.perLabel && (format.touchesTag || serialised));
     }
     format = freshFormat();
   };
@@ -261,8 +257,8 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
       case "field":
         recordField(entry, into);
         break;
-      case "tagged":
-        format.tagged = true;
+      case "touchesTag":
+        format.touchesTag = true;
         break;
       case "serialised":
         serialised = true;
@@ -294,7 +290,7 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
     field = { filled: false };
   };
   for (const t of commandTokens(zpl, chars)) {
-    if (open && TOUCHES_TAG.has(t.id)) act({ kind: "tagged" });
+    if (open && TOUCHES_TAG.has(t.id)) act({ kind: "touchesTag" });
     if (t.id === "^XA" || t.id === "^XZ") {
       closeField();
       closeFormat(frame === undefined);
@@ -302,7 +298,7 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
       frame = undefined;
       named = false;
     } else if (t.id === "^FH") {
-      field.hex = fhIndicator(t.rest);
+      field.fhIndicator = fhIndicator(t.rest);
     } else if (t.id === "^FS") {
       closeField();
     } else if (FILLS_FIELD.has(t.id) || readsTag(t.id, t.rest)) {
@@ -322,7 +318,7 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
       const text = stripDataLineBreaks(t.rest);
       // An empty ^FV is ignored, spec p.207.
       if (t.id === "^FV" && text === "") continue;
-      field.data = sentBytes(text, field.hex);
+      field.data = sentBytes(text, field.fhIndicator);
     } else if (t.id === "^DF" && open) {
       // The first ^DF opens the frame and the first usable path names it, as the parser keys its template.
       frame ??= [];
@@ -335,14 +331,13 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
       act({ kind: "recall", path: t.rest });
     } else if (t.id === "^PQ" && open) {
       const quantity = printQuantityOf(t.rest.split(chars.delimiterChar)[0]);
-      // A storing format prints nothing, so its ^PQ counts only where the frame is recalled.
       if (quantity === undefined) continue;
       act({ kind: "quantity", labels: quantity });
     } else if (isHostCommand(t.id)) {
-      // The params in the document's delimiter would split wrong, so the canonical spelling wins where one exists.
       const raw = hostCommandParams(t.id, t.rest);
       const spelled = canonicalHostParams(t.id, raw, chars.delimiterChar);
-      const token = { id: t.id, params: spelled ?? raw, canonical: spelled !== undefined, delimiter: spelled === undefined ? chars.delimiterChar : ",", data: [], vouched: true, hex: field.hex, start: t.start, end: t.end };
+      const canonical = spelled !== undefined;
+      const token = { id: t.id, params: spelled ?? raw, canonical, delimiter: canonical ? "," : chars.delimiterChar, data: [], vouched: true, fhIndicator: field.fhIndicator, start: t.start, end: t.end };
       if (t.id.startsWith("~") || (open && frame === undefined)) answer(token);
       else if (frame === undefined) asks.push({ ...token, ask: "ignored", labels: 0 });
       else {

@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { STX, ETX } from "@zplab/core/lib/hostStatus.fixture";
 import { CHUNKS_SETTLE_MS, FIRST_BYTE_MS, REPLY_DEADLINE_MS, REPLY_IDLE_MS, answered, queryPrinter, readPrinterReply } from "./printerQuery";
-import { DOCUMENT_DEADLINE_MS } from "./printerDocumentQuery";
 
 vi.mock("./platform", () => ({ isDesktopShell: true }));
 
@@ -54,7 +53,8 @@ const invoke = vi.fn((cmd: string, args: Record<string, unknown>) => {
 vi.mock("@tauri-apps/api/core", () => ({ Channel: FakeChannel, invoke: (cmd: string, args: Record<string, unknown>) => invoke(cmd, args) }));
 
 const target = { kind: "network", host: "172.17.17.175", port: 9100 } as const;
-const HS = "\u0002030,0,0,0892,000,0,0,0,000,0,0,0\u0003\r\n";
+const HS = `${STX}030,0,0,0892,000,0,0,0,000,0,0,0${ETX}\r\n`;
+const GIVEN_DEADLINE_MS = 42_000;
 
 const open = async (): Promise<Opened> => {
   await vi.advanceTimersByTimeAsync(0);
@@ -72,7 +72,7 @@ beforeEach(() => {
 });
 afterEach(() => vi.useRealTimers());
 
-describe("queryPrinter over the network", () => {
+describe("queryPrinter", () => {
   it("ends the read at the idle gap behind the reply, by stopping the stream", async () => {
     const read = queryPrinter(target, "~HS");
     const query = await open();
@@ -138,6 +138,9 @@ describe("queryPrinter over the network", () => {
     const closed = queryPrinter(target, "~HU");
     (await open()).end({ kind: "done", end: "closed", chunks: 0 });
     expect(await closed).toEqual({ kind: "silent" });
+  });
+
+  it("calls a reply that is only a frame silence", async () => {
     const framed = queryPrinter(target, "~HU");
     const frame = await open();
     frame.chunk(`${STX}${ETX}`);
@@ -222,7 +225,7 @@ describe("readPrinterReply", () => {
     await open();
     await vi.advanceTimersByTimeAsync(REPLY_DEADLINE_MS * 2);
     expect(stops).toEqual([]);
-    const lone = readPrinterReply(target, "^XA~HS^XZ");
+    const lone = readPrinterReply(target, "^XA~HS^XZ", {});
     await open();
     await vi.advanceTimersByTimeAsync(FIRST_BYTE_MS);
     expect(stops).toHaveLength(1);
@@ -232,9 +235,9 @@ describe("readPrinterReply", () => {
   });
 
   it("waits through the print for every ^HV reply the document earns, past any idle gap", async () => {
-    const read = readPrinterReply(target, "^XA~HS^FN1^FD4711^FS^HV1,20,HEADER ,END,L^PQ2^XZ", { deadlineMs: DOCUMENT_DEADLINE_MS, awaited: [HV_HEADER_END(2)] });
+    const read = readPrinterReply(target, "^XA~HS^FN1^FD4711^FS^HV1,20,HEADER ,END,L^PQ2^XZ", { deadlineMs: GIVEN_DEADLINE_MS, awaited: [HV_HEADER_END(2)] });
     const query = await open();
-    expect(query.args).toMatchObject({ deadlineMs: DOCUMENT_DEADLINE_MS });
+    expect(query.args).toMatchObject({ deadlineMs: GIVEN_DEADLINE_MS });
     query.chunk(HS);
     await vi.advanceTimersByTimeAsync(CHUNKS_SETTLE_MS);
     expect(stops).toEqual([]);
@@ -288,11 +291,11 @@ describe("readPrinterReply", () => {
     const whole = readPrinterReply(target, "^XA^FN1^FDx^FS^HV1,20,H,E^XZ", { awaited: [HV_H_E_PLAIN] });
     const late = await open();
     late.chunk("H x E");
-    await vi.advanceTimersByTimeAsync(500);
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS - 1);
     late.end({ kind: "done", end: "deadline", chunks: 1 });
     expect(await whole).toEqual({ kind: "ok", value: { body: "H x E", unanswered: [] } });
 
-    const lone = readPrinterReply(target, "^XA~HS^XZ");
+    const lone = readPrinterReply(target, "^XA~HS^XZ", {});
     const plain = await open();
     plain.chunk("x");
     plain.end({ kind: "done", end: "deadline", chunks: 1 });
@@ -333,7 +336,7 @@ describe("readPrinterReply", () => {
     const query = await open();
     query.chunk(HS);
     query.end({ kind: "done", end: "closed", chunks: 2 });
-    await vi.advanceTimersByTimeAsync(1000);
+    await vi.advanceTimersByTimeAsync(CHUNKS_SETTLE_MS - 1);
     controller.abort();
     expect(await read).toEqual({ kind: "ok", value: { body: HS, unanswered: [] } });
   });

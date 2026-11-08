@@ -1,18 +1,7 @@
 import type { Channel } from "@tauri-apps/api/core";
 import { isDesktopShell } from "./platform";
 import { errorMessage } from "./errorMessage";
-
-/** Mirrors the Rust ReplyEnd. */
-export type ReplyEnd = "closed" | "deadline" | "stopped" | "lost";
-
-/** Mirrors the Rust StreamDone. */
-export interface StreamDone {
-  end: ReplyEnd;
-  chunks: number;
-}
-
-/** The `done` member the TCP and USB query results share. */
-export type StreamDoneResult = { kind: "done" } & StreamDone;
+import type { StreamDoneResult } from "./replyStream";
 
 /** Mirrors the Rust UsbPrinter DTO (one USB printer). */
 export interface UsbPrinter {

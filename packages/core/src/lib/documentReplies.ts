@@ -1,13 +1,12 @@
 import { fieldHostParams, isFieldHostCommand, received, sentBytes, walkHostCommands, type FieldHostParams } from "./hostCommands";
-import { holdsFrameByte, leavesFrameOpen, outsideFrames } from "./hostStatus";
+import { framesReply, holdsFrameByte, leavesFrameOpen, outsideFrames } from "./hostStatus";
 
 export interface ReplyMarks {
   header: string;
   terminator: string;
 }
 
-/** Where a scan stopped: the replies it counted, whether a header it found still waits for its terminator, and the
- *  index behind the last mark it found. */
+/** Where a scan stopped, `at` being the index behind the last mark it found. */
 export interface ReplyScan {
   count: number;
   afterHeader: boolean;
@@ -42,18 +41,15 @@ export const repliesIn = (text: string, marks: ReplyMarks): number => scanReplie
 /** A mark that is only whitespace goes out all the same, yet a reader cannot tell it from the reply around it. */
 const blankMark = (mark: string): boolean => mark !== "" && mark.trim() === "";
 
-/** The marks a reader finds a ^HV reply by. Undefined where neither shows, where one is only whitespace, or where
- *  one holds a frame byte. */
+/** The marks a reader finds a ^HV reply by, undefined where it can find none. */
 function fieldReplyMarks({ header, terminator }: Pick<FieldHostParams, "header" | "terminator">): ReplyMarks | undefined {
   if (holdsFrameByte(header) || holdsFrameByte(terminator) || blankMark(header) || blankMark(terminator)) return undefined;
   return header === "" && terminator === "" ? undefined : { header, terminator };
 }
 
-interface FieldReply {
+/** One ^HV spelling with its marks as the printer sends them, a ^FH spelling decoded. */
+interface FieldReply extends ReplyMarks {
   command: string;
-  /** As the printer sends them, a ^FH spelling decoded. */
-  header: string;
-  terminator: string;
   /** How many replies this spelling earns over the whole document. */
   count: number;
   /** The distinct field data the document holds for the slot. */
@@ -61,9 +57,7 @@ interface FieldReply {
 }
 
 /** A reply shape a reader waits for: the ^HV spellings that share a header and terminator, which is all it can tell apart. */
-export interface AwaitedReply {
-  header: string;
-  terminator: string;
+export interface AwaitedReply extends ReplyMarks {
   count: number;
   commands: string[];
 }
@@ -74,25 +68,22 @@ export interface DocumentReplies {
   commands: string[];
   /** The ^HV replies a reader waits for, by the marks it finds them by. */
   awaited: AwaitedReply[];
-  /** The ^HV spellings a reader could not find in the reply, for want of a header and a terminator. */
+  /** The ^HV spellings with no header or terminator a reader can find. */
   unmarked: string[];
   /** The ^HV spellings a reader would miscount, by their marks and the field data the document holds, or beside a reply
    *  it cannot frame off. */
   ambiguous: string[];
-  /** The ^HV spellings the walk cannot vouch for, or that stand behind a recall it does not hold. */
+  /** The ^HV spellings the walk cannot vouch for, and all of them once the document recalls a frame it does not hold. */
   uncounted: string[];
 }
 
-/** An awaited reply with the field data its replies may carry. */
 interface ReplyGroup extends AwaitedReply {
   data: Set<string>;
 }
 
-/** The field data stays off the reader's shape, which counts replies by their marks alone. */
 const readerShape = ({ header, terminator, count, commands }: ReplyGroup): AwaitedReply => ({ header, terminator, count, commands });
 
-/** The replies grouped by their marks, which is all a reader can tell them apart by. */
-function awaitedReplies(replies: Iterable<FieldReply>): ReplyGroup[] {
+function replyGroups(replies: Iterable<FieldReply>): ReplyGroup[] {
   const groups = new Map<string, ReplyGroup>();
   for (const reply of replies) {
     const marks = fieldReplyMarks(reply);
@@ -112,8 +103,7 @@ function awaitedReplies(replies: Iterable<FieldReply>): ReplyGroup[] {
  *  field, since a reply with data the document does not hold shows at least its marks. */
 const replyTexts = (group: ReplyGroup): string[] => [group.header + group.terminator, ...[...group.data].map((data) => group.header + data + group.terminator)];
 
-/** What a reply leaves the reader for the one behind it: the mark the scan still wants, the tail that could still
- *  begin that mark, and whether it leaves a frame open. */
+/** What a reply leaves the reader for the one behind it. */
 interface Seam {
   afterHeader: boolean;
   carry: string;
@@ -148,15 +138,15 @@ export const MAX_REPLY_GROUPS = 200;
 function ambiguousReplies(groups: readonly ReplyGroup[]): string[] {
   if (groups.length > MAX_REPLY_GROUPS) return groups.flatMap((group) => group.commands);
   const commands = new Set<string>();
-  const texts = groups.flatMap((group) => replyTexts(group).map((text) => ({ group, text })));
+  const parts = groups.flatMap((group) => replyTexts(group).map((text) => ({ group, text })));
   for (const group of groups) {
     const own = (part: { group: ReplyGroup }) => (part.group === group ? 1 : 0);
     const seams = new Map<string, Seam>([[JSON.stringify(FRESH_SEAM), FRESH_SEAM]]);
     let miscounts = false;
     // A Map iterates the seams added on the way, so this runs until no reply leaves a new one.
     for (const seam of seams.values()) {
-      for (const q of texts) {
-        const next = seamAfter(seam, q.text, own(q), group);
+      for (const part of parts) {
+        const next = seamAfter(seam, part.text, own(part), group);
         miscounts ||= !next.counted;
         seams.set(JSON.stringify(next.seam), next.seam);
       }
@@ -174,8 +164,7 @@ export interface OwedReply {
   of: number;
 }
 
-/** The awaited replies the body does not hold yet. A framed reply holds no ^HV reply, so the marks are counted
- *  outside the frames. */
+/** The awaited replies the body does not hold yet. */
 export function owedReplies(body: string, awaited: readonly AwaitedReply[]): OwedReply[] {
   const text = outsideFrames(body);
   return awaited
@@ -184,18 +173,13 @@ export function owedReplies(body: string, awaited: readonly AwaitedReply[]): Owe
 }
 
 /** A mark the transport hands back as spelled. One it garbles merges with its neighbours on the wire, so it is no mark. */
-function receivedMark(mark: string, hex: string | undefined): string {
-  const bytes = sentBytes(mark, hex);
+function receivedMark(mark: string, fhIndicator: string | undefined): string {
+  const bytes = sentBytes(mark, fhIndicator);
   const text = received(bytes);
   const back = new TextEncoder().encode(text);
   return back.length === bytes.length && back.every((byte, i) => byte === bytes[i]) ? text : "";
 }
 
-/** The host replies that come framed in STX..ETX, measured on the ZD230 in probe 3 of 2026-11-02, and ~HQ, which the
- *  spec frames on p.233. Any other, such as the format text ^HF returns on p.220, may carry a ^HV mark. */
-const FRAMED_REPLIES = new Set(["~HI", "~HM", "~HS", "^HH", "^HW", "~HQ"]);
-
-/** What a document asks the printer, and the ^HV replies a reader can await from it. */
 export function documentReplies(zpl: string): DocumentReplies {
   const { asks, held } = walkHostCommands(zpl);
   const commands = new Set<string>();
@@ -207,17 +191,16 @@ export function documentReplies(zpl: string): DocumentReplies {
     const command = `${t.id}${t.params}`;
     commands.add(command);
     if (!isFieldHostCommand(t.id)) {
-      framed &&= FRAMED_REPLIES.has(t.id);
+      framed &&= framesReply(t.id);
       continue;
     }
-    // A ^HV in a format that only stores earns nothing, since no field prints.
     if (t.labels === 0) continue;
     if (!held || !t.vouched) {
       uncounted.add(command);
       continue;
     }
     const { header, terminator, perLabel } = fieldHostParams(t.params, t.delimiter);
-    const marks = { header: receivedMark(header, t.hex), terminator: receivedMark(terminator, t.hex) };
+    const marks = { header: receivedMark(header, t.fhIndicator), terminator: receivedMark(terminator, t.fhIndicator) };
     // One spelling under two ^FH indicators sends two reply shapes.
     const key = JSON.stringify([command, marks.header, marks.terminator]);
     const reply = replies.get(key) ?? { command, ...marks, count: 0, data: new Set<string>() };
@@ -226,8 +209,7 @@ export function documentReplies(zpl: string): DocumentReplies {
     replies.set(key, reply);
   }
   const unmarked = [...replies.values()].filter((reply) => fieldReplyMarks(reply) === undefined).map((reply) => reply.command);
-  const groups = awaitedReplies(replies.values());
-  // A reply the reader cannot frame off may hold any mark, so no group beside it counts right.
+  const groups = replyGroups(replies.values());
   const ambiguous = framed ? ambiguousReplies(groups) : groups.flatMap((group) => group.commands);
   return { commands: [...commands], awaited: groups.map(readerShape), unmarked: [...new Set(unmarked)], ambiguous: [...new Set(ambiguous)], uncounted: [...uncounted] };
 }

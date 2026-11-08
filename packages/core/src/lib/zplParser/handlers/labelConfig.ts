@@ -1,4 +1,3 @@
-import { printQuantityOf } from "../../printQuantity";
 import { DARKNESS_INSTANT_RANGE, DARKNESS_PERMANENT_RANGE, LABEL_SHIFT_RANGE, MAX_LABEL_LENGTH_RANGE, RFID_EPC_BITS_RANGE, RFID_EPC_MAX_PARTITIONS, RFID_EPC_PARTITION_RANGE, RFID_POSITION_RE, RFID_RETRIES_RANGE, SLEW_DOT_ROWS_RANGE, SPEED_RANGE, isBackfeedPercent, isBackfeedSequence, isMediaFeedMode, isMediaMode, isMediaTracking, isMediaType, isPrintOrientation, isRfidErrorHandling, parseRfidPower, type RfidPower } from "../../../types/LabelConfig";
 import { parseIntOrUndef } from "../../inputParse";
 import { isYesNo } from "../../../types/typeHelpers";
@@ -40,8 +39,8 @@ export function createLabelConfigHandlers(
       else notePartial(s.result, "^LL");
     },
     PQ(p) {
-      const qty = printQuantityOf(p[0]);
-      if (qty !== undefined) labelConfig.printQuantity = qty;
+      const qty = int(p[0], 0);
+      if (qty > 0) labelConfig.printQuantity = qty;
       // ^PQ q,p,r,o: preserve extended params when present.
       if (p.length > 1) {
         const pause = int(p[1], 0);

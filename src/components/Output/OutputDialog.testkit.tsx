@@ -7,7 +7,6 @@ import { fallbackTranslations as en } from "../../locales";
 
 export const loc = en.zebraPrint;
 
-/** A mapped dataset over one variable, as the batch tests set it. */
 export const batch = (rows: string[][], activeRowIndex = 0) => ({
   dataset: { headers: ["sku"], rows, source: { kind: "csv" as const, filename: "t.csv", importedAt: "", encoding: "utf-8", delimiter: ",", rowCount: rows.length }, activeRowIndex },
   columnMapping: { bindings: { v1: "sku" }, headerSnapshot: ["sku"] },
