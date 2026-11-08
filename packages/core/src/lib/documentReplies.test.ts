@@ -152,7 +152,7 @@ describe("documentReplies", () => {
     ]);
   });
 
-  it("names exactly the groups a reader would miscount in two replies in a row, over every small document", () => {
+  it("names exactly the groups a reader would miscount in up to three replies in a row, over every small document", () => {
     const marks = ["", "a", "ab"];
     const data: [string, string][] = [["", ""], ["a", "a"], ["b", "b"], ["ab", "ab"], ["ba", "ba"], ["_02", STX], ["_02a_03", `${STX}a${ETX}`], ["_03", ETX]];
     interface Group {
@@ -180,7 +180,8 @@ describe("documentReplies", () => {
                 const all = [...groups.values()];
                 const texts = all.flatMap((group) => [group.header + group.terminator, ...group.data.map((d) => group.header + d + group.terminator)].map((text) => ({ group, text })));
                 const own = (group: Group, ...parts: { group: Group }[]) => parts.filter((part) => part.group === group).length;
-                const expected = all.filter((group) => texts.some((p) => texts.some((q) => repliesIn(outsideFrames(p.text + q.text), group) !== own(group, p, q)))).flatMap((group) => group.commands);
+                const runs = texts.flatMap((p) => [[p], ...texts.flatMap((q) => [[p, q], ...texts.map((r) => [p, q, r])])]);
+                const expected = all.filter((group) => runs.some((run) => repliesIn(outsideFrames(run.map((part) => part.text).join("")), group) !== own(group, ...run))).flatMap((group) => group.commands);
                 expect(documentReplies(zpl).ambiguous, zpl).toEqual(expected);
                 checked += 1;
               }
@@ -272,6 +273,30 @@ describe("documentReplies", () => {
     expect(serial("^XA^RU^XZ^XA^DFR:A.ZPL^FS^FN1^FS^HV1,20,H,E,F^XZ^XA^XFR:A.ZPL^FS^XZ")).toEqual(["^HV1,20,H,E,F"]);
     expect(serial("^XA^DFR:A.ZPL^FS^FN1^FDx^RU^FS^HV1,20,H,E,F^XZ^XA^XFR:A.ZPL^FS^XZ")).toEqual(["^HV1,20,H,E,F"]);
     expect(serial("^XA^DFR:A.ZPL^FS^RU^FN1^FDx^FS^HV1,20,H,E,F^XZ^XA^XFR:A.ZPL^FS^XZ")).toEqual(["^HV1,20,H,E,F"]);
+  });
+
+  it("names exactly the groups a reader would miscount in up to five replies in a row, over one group with longer marks", () => {
+    const marks = ["", "a", "ab", "aa", "aba"];
+    const data = ["", "a", "b", "ab", "ba", "aa", "aab", "baa", "aba"];
+    for (const h of marks)
+      for (const t of marks)
+        for (const d of data) {
+          if (h === "" && t === "") continue;
+          const texts = [...new Set([h + t, h + d + t])];
+          let runs = texts.map((text) => [text]);
+          let miscounts = false;
+          for (let depth = 1; depth <= 5 && !miscounts; depth += 1) {
+            miscounts = runs.some((run) => repliesIn(run.join(""), { header: h, terminator: t }) !== run.length);
+            runs = runs.flatMap((run) => texts.map((text) => [...run, text]));
+          }
+          const zpl = `^XA^FN1^FD${d}^FS^HV1,20,${h},${t},L^PQ5^XZ`;
+          expect(documentReplies(zpl).ambiguous, zpl).toEqual(miscounts ? ["^HV1,20," + h + "," + t + ",L"] : []);
+        }
+  });
+
+  it("tells the reader's state behind two replies apart, which no single reply leaves behind", () => {
+    expect(documentReplies("^XA^PQ3^FN1^FDa^FS^HV1,64,aa,a,L^XZ").ambiguous).toEqual(["^HV1,64,aa,a,L"]);
+    expect(documentReplies("^XA^PQ3^FN1^FDx^FS^FN2^FDab^FS^HV1,64,abc,b,F^HV2,64,a,aa,L^XZ").ambiguous).toEqual(["^HV2,64,a,aa,L"]);
   });
 
   it("ignores an empty ^FV like the printer does, spec p.207, so the ^FD before it still spoils the marks", () => {
