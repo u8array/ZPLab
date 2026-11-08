@@ -1,5 +1,5 @@
 // The two levels of the output dialog: where the label goes, and how, where there is a choice.
-import { documentReplies, type DocumentReplies } from "@zplab/core/lib/documentReplies";
+import type { DocumentReplies } from "@zplab/core/lib/documentReplies";
 import { effectiveTransport, type PrintTransport, type PrintWay } from "./printTarget";
 
 /** The bytes the dialog is about: the label itself, or a script that only configures the printer. */
@@ -66,17 +66,9 @@ export function offeredKinds(source: OutputSource, f: OutputFacts): OutputKind[]
   return (["print", "file"] as const).filter((kind) => can[kind]);
 }
 
-export interface DocumentQueryFacts extends Pick<DocumentReplies, "commands" | "unmarked" | "ambiguous" | "uncounted"> {
-  prints: boolean;
-}
+export type DocumentQueryFacts = Pick<DocumentReplies, "commands" | "unmarked" | "ambiguous" | "uncounted" | "held" | "labels">;
 
 export const asksPrinter = (query: DocumentQueryFacts): boolean => query.commands.length > 0;
-
-export function documentQueryFacts(bytes: string, source: OutputSource, f: OutputFacts): DocumentQueryFacts {
-  const { commands, unmarked, ambiguous, uncounted } = documentReplies(bytes);
-  // The fields ride along with a query only when the label itself goes out.
-  return { commands, unmarked, ambiguous, uncounted, prints: source === "label" && f.hasObjects };
-}
 
 /** A rendered label is what the system dialog and a PNG carry, and a setup script draws nothing. */
 export const renderableOutput = (source: OutputSource, f: OutputFacts): boolean =>

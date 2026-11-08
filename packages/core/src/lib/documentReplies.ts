@@ -75,6 +75,10 @@ export interface DocumentReplies {
   ambiguous: string[];
   /** The ^HV spellings the walk cannot vouch for, and all of them once the document recalls a frame it does not hold. */
   uncounted: string[];
+  /** False where the document recalls a frame it does not hold, see HostCommandWalk. */
+  held: boolean;
+  /** The labels the document prints, see HostCommandWalk. */
+  labels: number;
 }
 
 interface ReplyGroup extends AwaitedReply {
@@ -181,7 +185,7 @@ function receivedMark(mark: string, fhIndicator: string | undefined): string {
 }
 
 export function documentReplies(zpl: string): DocumentReplies {
-  const { asks, held } = walkHostCommands(zpl);
+  const { asks, held, labels } = walkHostCommands(zpl);
   const commands = new Set<string>();
   const uncounted = new Set<string>();
   const replies = new Map<string, FieldReply>();
@@ -211,5 +215,5 @@ export function documentReplies(zpl: string): DocumentReplies {
   const unmarked = [...replies.values()].filter((reply) => fieldReplyMarks(reply) === undefined).map((reply) => reply.command);
   const groups = replyGroups(replies.values());
   const ambiguous = framed ? ambiguousReplies(groups) : groups.flatMap((group) => group.commands);
-  return { commands: [...commands], awaited: groups.map(readerShape), unmarked: [...new Set(unmarked)], ambiguous: [...new Set(ambiguous)], uncounted: [...uncounted] };
+  return { commands: [...commands], awaited: groups.map(readerShape), unmarked: [...new Set(unmarked)], ambiguous: [...new Set(ambiguous)], uncounted: [...uncounted], held, labels };
 }

@@ -148,7 +148,7 @@ export interface HostCommandAsk extends HostCommandToken {
   /** The ^FH indicator in force, under which the printer decodes a hex-spelled header or terminator, spec p.239. */
   fhIndicator?: string;
   /** How many labels the format that answers it prints, from the last ^PQ the printer meets in that format. Zero where
-   *  no format answers it, or where that format only stores. */
+   *  no format answers it, or where that format only stores or holds no field. */
   labels: number;
   /** False where the document cannot vouch for the replies, see FILLS_FIELD and TOUCHES_TAG. */
   vouched: boolean;
@@ -161,7 +161,7 @@ export const received = (bytes: Uint8Array): string => getDecoder("utf-8").decod
 
 interface FieldClose {
   kind: "field";
-  slot: number;
+  slot: number | undefined;
   data: Uint8Array | undefined;
   filled: boolean;
 }
@@ -170,6 +170,8 @@ interface OpenField {
   slot?: number;
   data?: Uint8Array;
   filled: boolean;
+  /** The command brings the field's data itself, so the field holds content without ^FD. */
+  sourced: boolean;
   fhIndicator?: string;
 }
 
@@ -183,9 +185,11 @@ interface OpenFormat {
   stored: Map<number, Uint8Array>;
   filledSlots: Set<number>;
   touchesTag: boolean;
+  /** An empty format prints no label. A recall the document does not hold may fill it. */
+  blank: boolean;
 }
 
-const freshFormat = (): OpenFormat => ({ answered: [], labels: 1, fields: new Map(), stored: new Map(), filledSlots: new Set(), touchesTag: false });
+const freshFormat = (): OpenFormat => ({ answered: [], labels: 1, fields: new Map(), stored: new Map(), filledSlots: new Set(), touchesTag: false, blank: true });
 
 /** What a format does in printer order. A storing format keeps it as its frame, replayed at every recall. */
 type FrameEntry =
@@ -207,8 +211,10 @@ const TOUCHES_TAG = new Set(["^RF", "^RL", "^RU", "^RI", "^RT", "^WT"]);
 
 export interface HostCommandWalk {
   asks: HostCommandAsk[];
-  /** False where the document recalls a frame it does not hold, which may count, fill or ask on its own unseen. */
+  /** False where the document recalls a frame it does not hold, which may print, count, fill or ask unseen. */
   held: boolean;
+  /** The labels the document prints, summed over the formats that print. */
+  labels: number;
 }
 
 /** The host commands in `zpl` in printer order with their {@link HostAsk}. A stored command is listed again as asked at
@@ -219,18 +225,22 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
   const frames = new Map<string, FrameEntry[]>();
   const asks: HostCommandAsk[] = [];
   let held = true;
+  let labels = 0;
   let format = freshFormat();
   // ^RU puts the tag's serial into any ^FD from there on, spec p.439. Whether that ends with the format is unmeasured, so it is taken to last.
   let serialised = false;
   const recordField = ({ slot, data, filled }: FieldClose, into: Map<number, Uint8Array>) => {
+    if (slot === undefined) return;
     if (data !== undefined) into.set(slot, data);
     if (filled || serialised) format.filledSlots.add(slot);
   };
   const slotData = ({ slot, bytes }: FieldHostParams): string[] =>
     [...new Set([format.stored.get(slot), format.fields.get(slot)].filter((data) => data !== undefined).map((data) => received(data.subarray(0, bytes))))];
   const closeFormat = (prints: boolean) => {
+    const printed = prints && !format.blank ? format.labels : 0;
+    labels += printed;
     for (const ask of format.answered) {
-      ask.labels = prints ? format.labels : 0;
+      ask.labels = printed;
       if (!isFieldHostCommand(ask.id)) continue;
       const params = fieldHostParams(ask.params, ask.delimiter);
       ask.data = slotData(params);
@@ -255,6 +265,7 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
         format.labels = entry.labels;
         break;
       case "field":
+        format.blank = false;
         recordField(entry, into);
         break;
       case "touchesTag":
@@ -276,6 +287,7 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
       return;
     }
     held = false;
+    format.blank = false;
   };
   let open = formatOpen;
   let frame: FrameEntry[] | undefined;
@@ -284,15 +296,15 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
     else apply(entry, format.fields, new Set());
   };
   let named = false;
-  let field: OpenField = { filled: false };
-  const closeField = () => {
-    if (field.slot !== undefined) act({ kind: "field", slot: field.slot, data: field.data, filled: field.filled });
-    field = { filled: false };
+  let field: OpenField = { filled: false, sourced: false };
+  const closeField = (sealed: boolean) => {
+    if (open && (sealed || field.slot !== undefined || field.data !== undefined || field.sourced)) act({ kind: "field", slot: field.slot, data: field.data, filled: field.filled });
+    field = { filled: false, sourced: false };
   };
   for (const t of commandTokens(zpl, chars)) {
     if (open && TOUCHES_TAG.has(t.id)) act({ kind: "touchesTag" });
     if (t.id === "^XA" || t.id === "^XZ") {
-      closeField();
+      closeField(false);
       closeFormat(frame === undefined);
       open = t.id === "^XA";
       frame = undefined;
@@ -300,9 +312,11 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
     } else if (t.id === "^FH") {
       field.fhIndicator = fhIndicator(t.rest);
     } else if (t.id === "^FS") {
-      closeField();
+      closeField(true);
     } else if (FILLS_FIELD.has(t.id) || readsTag(t.id, t.rest)) {
       field.filled = true;
+      // ^SF serialises the ^FD it follows, p.335, and brings no data of its own.
+      if (t.id !== "^SF") field.sourced = true;
     } else if ((t.id === "^RT" || t.id === "^RI") && open) {
       // Both read the tag into the field their first parameter numbers, RFID Programming Guide p.115 and Guide 2 p.76.
       act({ kind: "field", slot: int(t.rest), data: undefined, filled: true });
@@ -348,5 +362,5 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
     }
   }
   closeFormat(frame === undefined);
-  return { asks, held };
+  return { asks, held, labels };
 }

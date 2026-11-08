@@ -6,7 +6,7 @@ import { primaryButtonCls } from "../ui/formStyles";
 import { sendViaBrowserPrint, sendViaNetwork } from "../../lib/zebraPrint";
 import { isDesktopShell } from "../../lib/platform";
 import { needsRawChannel, resolveQueryTarget, type PrintTransport } from "../../lib/printTarget";
-import { queryOffer } from "../../lib/printWayText";
+import { queryButtonText, queryOffer } from "../../lib/printWayText";
 import { QueryHints } from "./QueryHints";
 import type { DocumentQueryFacts } from "../../lib/outputChoice";
 import { useLabelStore, selectEffectivePreviewProvider, selectPrinterReading } from "../../store/labelStore";
@@ -282,7 +282,7 @@ export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string;
   const offer = queryOffer(t.zebraPrint, query, way, isDesktopShell);
   const netSendDisabled = !host || netStatus.type === "sending" || locked;
   const action = (send: ReactNode, sendDisabled: boolean): ReactNode =>
-    offer.queries ? <DocumentQueryAction zpl={zpl} transport={way} disabled={sendDisabled} onFailure={onReadFailure} /> : send;
+    offer.queries ? <DocumentQueryAction zpl={zpl} label={queryButtonText(t.zebraPrint, query)} transport={way} disabled={sendDisabled} onFailure={onReadFailure} /> : send;
 
   if (way === "network") {
     return (

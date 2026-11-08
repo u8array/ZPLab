@@ -84,7 +84,7 @@ export function OutputDialog({ zpl, source, facts, onClose, onPrintImage, onExpo
   };
 
   const ways = usePrintWays(source, facts);
-  const { sample, query } = useDocumentQuery(source, facts, zpl);
+  const { sample, query } = useDocumentQuery(source, zpl);
   const waySegments: Segment<PrintWay>[] = ways.offered.map((key) => ({
     key,
     label: wayLabel(loc, key),

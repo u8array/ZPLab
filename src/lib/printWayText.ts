@@ -35,6 +35,15 @@ interface QueryOffer {
   hints: string[];
 }
 
+const printsLabels = (query: DocumentQueryFacts): boolean => query.labels > 0;
+
+const printsHint = (loc: Loc, query: DocumentQueryFacts): string => {
+  if (!query.held) return loc.queryPrintsRecalled;
+  return query.labels === 1 ? loc.queryPrintsOne : formatTemplate(loc.queryPrintsManyFmt, { n: String(query.labels) });
+};
+
+export const queryButtonText = (loc: Loc, query: DocumentQueryFacts): string => (printsLabels(query) ? loc.queryPrintButton : loc.queryButton);
+
 /** What the dialog offers a document that asks the printer something, for the way at hand. */
 export function queryOffer(loc: Loc, query: DocumentQueryFacts, way: PrintWay, desktop: boolean): QueryOffer {
   if (!asksPrinter(query)) return { queries: false, hints: [] };
@@ -46,5 +55,6 @@ export function queryOffer(loc: Loc, query: DocumentQueryFacts, way: PrintWay, d
   ];
   if (blockers.length > 0) return { queries: false, hints: blockers };
   if (!carriesReply(way, desktop)) return { queries: false, hints: [loc.queryNoChannel] };
-  return { queries: true, hints: query.prints ? [loc.queryHint, loc.queryMixedHint] : [loc.queryHint] };
+  if (!printsLabels(query)) return { queries: true, hints: [loc.queryHint] };
+  return { queries: true, hints: [loc.queryHint, printsHint(loc, query)] };
 }
