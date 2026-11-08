@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { OwedReply } from "@zplab/core/lib/hostCommands";
+import type { OwedReply } from "@zplab/core/lib/documentReplies";
 import { ETX, STX, ZD230_HI, ZD230_HS, ZD230_HW } from "@zplab/core/lib/hostStatus.fixture";
 import { fallbackTranslations as en } from "../locales";
 import { DOCUMENT_DEADLINE_MS, queryDocument } from "./printerDocumentQuery";

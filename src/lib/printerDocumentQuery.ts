@@ -1,4 +1,5 @@
-import { documentReplies, hostCommandParts, type OwedReply } from "@zplab/core/lib/hostCommands";
+import { documentReplies, type OwedReply } from "@zplab/core/lib/documentReplies";
+import { hostCommandParts } from "@zplab/core/lib/hostCommands";
 import { parseHostReplies, type HostReplyParts } from "@zplab/core/lib/hostReplies";
 import { answeredText, readPrinterReply, type PrinterOutcome } from "./printerQuery";
 import type { QueryTarget } from "./printTarget";

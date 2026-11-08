@@ -1,5 +1,5 @@
 // The two levels of the output dialog: where the label goes, and how, where there is a choice.
-import { documentReplies, type DocumentReplies } from "@zplab/core/lib/hostCommands";
+import { documentReplies, type DocumentReplies } from "@zplab/core/lib/documentReplies";
 import { effectiveTransport, type PrintTransport, type PrintWay } from "./printTarget";
 
 /** The bytes the dialog is about: the label itself, or a script that only configures the printer. */

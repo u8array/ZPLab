@@ -4,7 +4,7 @@ import { mergeSetupEntries } from '@zplab/core/lib/setupEntries';
 import { generateSetupScript } from './zplSetupScript';
 import { generateMultiPageZPL, generateZPL } from '@zplab/core/lib/zplGenerator';
 import { parseZPL } from '@zplab/core/lib/zplParser';
-import { documentReplies } from '@zplab/core/lib/hostCommands';
+import { documentReplies } from '@zplab/core/lib/documentReplies';
 import { hasFontBytes, loadFontBytesSync } from '@zplab/core/lib/fontCache';
 import { describeFinding, formatReportAsText } from './importReport';
 import { fallbackTranslations } from '../locales';

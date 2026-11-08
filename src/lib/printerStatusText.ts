@@ -2,7 +2,7 @@
 import { hostObjectPath } from "@zplab/core/lib/hostDirectory";
 import { printerReadiness, type HostMemory, type HostWarningFlag, type PrinterCondition, type PrinterIdentity, type PrinterReadiness } from "@zplab/core/lib/hostStatus";
 import { driveUsage, hostListing, type DriveUsage } from "@zplab/core/lib/storedObjectOrigins";
-import type { OwedReply } from "@zplab/core/lib/hostCommands";
+import type { OwedReply } from "@zplab/core/lib/documentReplies";
 import type { DocumentReply } from "./printerDocumentQuery";
 import type { PrinterQueryFailure } from "./printerQuery";
 import type { PrinterStatusReport } from "./printerStatus";
