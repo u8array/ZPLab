@@ -1,7 +1,6 @@
 const STX = "\u0002";
 const ETX = "\u0003";
 
-/** ~HS and ~HQES frame their replies in STX and ETX (spec p.226, p.233). */
 export function unframed(body: string): string {
   return body.replaceAll(STX, "").replaceAll(ETX, "");
 }
@@ -19,6 +18,11 @@ export function leavesFrameOpen(text: string): boolean {
   const last = text.lastIndexOf(STX);
   return last >= 0 && text.indexOf(ETX, last) < 0;
 }
+
+/** The host replies that come framed in STX..ETX, measured on the ZD230 in probe 3 of 2026-11-02, and ~HQ, which the
+ *  spec frames on p.233. Any other, such as the format text ^HF returns on p.220, may carry a ^HV mark. */
+const FRAMED_REPLIES = new Set(["~HI", "~HM", "~HS", "^HH", "^HW", "~HQ"]);
+export const framesReply = (id: string): boolean => FRAMED_REPLIES.has(id);
 
 export function replyLines(body: string): string[] {
   return unframed(body)

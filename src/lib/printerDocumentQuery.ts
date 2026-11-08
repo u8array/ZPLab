@@ -20,8 +20,8 @@ export async function queryDocument(target: QueryTarget, zpl: string, signal?: A
   const { commands, awaited } = documentReplies(zpl);
   const res = await readPrinterReply(target, zpl, { signal, deadlineMs: DOCUMENT_DEADLINE_MS, awaited });
   if (res.kind !== "ok") return res;
-  const { unanswered } = res.value;
-  const text = answeredText(res.value.body);
+  const { body, unanswered } = res.value;
+  const text = answeredText(body);
   const raw = text.kind === "ok" ? text.value : "";
   return {
     kind: "ok",

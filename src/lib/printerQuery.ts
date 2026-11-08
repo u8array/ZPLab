@@ -3,7 +3,8 @@ import { unframed } from "@zplab/core/lib/hostStatus";
 import { errorMessage } from "./errorMessage";
 import { isDesktopShell } from "./platform";
 import type { QueryTarget } from "./printTarget";
-import { queryZplUsb, type StreamDone, type StreamDoneResult } from "./usbPrint";
+import type { StreamDone, StreamDoneResult } from "./replyStream";
+import { queryZplUsb } from "./usbPrint";
 
 export type PrinterQueryFailure =
   | { kind: "unconfigured" }
@@ -65,7 +66,7 @@ export function printerFailureMessage(failure: PrinterQueryFailure): string {
 /** Mirrors the Rust TcpQueryResult. */
 type TcpQueryResult = StreamDoneResult | { kind: "refused" } | { kind: "unreachable" };
 
-interface ReplyStream {
+interface OpenStream {
   done: Promise<PrinterOutcome<StreamDone>>;
   stop: () => void;
 }
@@ -79,7 +80,7 @@ export const REPLY_IDLE_MS = 1200;
 /** A channel message can land after the command's return. */
 export const CHUNKS_SETTLE_MS = 5000;
 
-async function openReplyStream(target: QueryTarget, zpl: string, deadlineMs: number, onChunk: (chunk: string) => void): Promise<ReplyStream> {
+async function openReplyStream(target: QueryTarget, zpl: string, deadlineMs: number, onChunk: (chunk: string) => void): Promise<OpenStream> {
   const { Channel, invoke } = await import("@tauri-apps/api/core");
   const chunks = new Channel<string>(onChunk);
   const stop = () => {
@@ -113,7 +114,7 @@ export interface PrinterReply {
   unanswered: readonly OwedReply[];
 }
 
-async function readReply(target: QueryTarget, zpl: string, deadlineMs: number, awaited: readonly AwaitedReply[], signal?: AbortSignal): Promise<PrinterOutcome<PrinterReply>> {
+async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_DEADLINE_MS, awaited = [], signal }: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
   let body = "";
   let received = 0;
   let returned = false;
@@ -144,7 +145,6 @@ async function readReply(target: QueryTarget, zpl: string, deadlineMs: number, a
   clearTimeout(idle);
   signal?.removeEventListener("abort", stop);
   if (end.kind !== "ok") return end;
-  // The last chunks may land after the command returned, so the body waits for them, unless the signal aborts meanwhile.
   if (received < end.value.chunks) {
     let cut = false;
     await new Promise<void>((resolve) => {
@@ -172,8 +172,9 @@ async function readReply(target: QueryTarget, zpl: string, deadlineMs: number, a
   if (body === "" && unanswered.length === 0) return { kind: "silent" };
   // A read that awaits no ^HV stops itself behind the reply, so a deadline or a lost link ahead of its own stop cut
   // the printer off mid-reply. A document's last owed reply may land inside the idle gap ahead of either, and is whole.
-  if (awaitsNone && !stopped && end.value.end === "deadline") return { kind: "timed_out" };
-  if (awaitsNone && !stopped && end.value.end === "lost") return { kind: "lost" };
+  const aheadOfOwnStop = awaitsNone && !stopped;
+  if (aheadOfOwnStop && end.value.end === "deadline") return { kind: "timed_out" };
+  if (aheadOfOwnStop && end.value.end === "lost") return { kind: "lost" };
   if (unanswered.length === 0 && answeredText(body).kind === "silent") return { kind: "silent" };
   return { kind: "ok", value: { body, unanswered } };
 }
@@ -186,10 +187,10 @@ export async function queryPrinter(target: QueryTarget, zpl: string, deadlineMs?
 
 /** Reads until every awaited reply is in and the printer has gone quiet, or until the deadline or the signal ends
  *  the wait with what came. Every failure comes back as a value, never as a throw. */
-export async function readPrinterReply(target: QueryTarget, zpl: string, wait: ReplyWait = {}): Promise<PrinterOutcome<PrinterReply>> {
+export async function readPrinterReply(target: QueryTarget, zpl: string, wait: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
   if (!isDesktopShell) return { kind: "error", message: "The printer query requires the desktop app" };
   try {
-    return await readReply(target, zpl, wait.deadlineMs ?? REPLY_DEADLINE_MS, wait.awaited ?? [], wait.signal);
+    return await readReply(target, zpl, wait);
   } catch (e) {
     return { kind: "error", message: errorMessage(e) };
   }

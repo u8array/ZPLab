@@ -44,6 +44,7 @@ pub async fn send_zpl_tcp(host: String, port: u16, zpl: String) -> Result<TcpSen
   Ok(TcpSendResult::Sent)
 }
 
+/// Connect failures mirror TcpSendResult, so the UI reuses its wording.
 #[derive(Debug, PartialEq, Eq, serde::Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum TcpQueryResult {
@@ -223,19 +224,31 @@ mod tests {
     (body, res)
   }
 
+  async fn serve<F, Fut>(reply: F) -> u16
+  where
+    F: FnOnce(tokio::net::TcpStream) -> Fut + Send + 'static,
+    Fut: std::future::Future<Output = ()> + Send,
+  {
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let port = listener.local_addr().unwrap().port();
+    tokio::spawn(async move {
+      let (mut sock, _) = listener.accept().await.unwrap();
+      let mut buf = [0u8; 1024];
+      let _ = sock.read(&mut buf).await.unwrap();
+      reply(sock).await;
+    });
+    port
+  }
+
   #[test]
   fn query_streams_an_answer_that_comes_seconds_after_the_first() {
     rt().block_on(async {
-      let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-      let port = listener.local_addr().unwrap().port();
-      tokio::spawn(async move {
-        let (mut sock, _) = listener.accept().await.unwrap();
-        let mut buf = [0u8; 1024];
-        let _ = sock.read(&mut buf).await.unwrap();
+      let port = serve(|mut sock| async move {
         sock.write_all(b"\x02030,0,0,0892\x03\r\n").await.unwrap();
         tokio::time::sleep(Duration::from_secs(2)).await;
         sock.write_all(b"HEADER 4711 END").await.unwrap();
-      });
+      })
+      .await;
       let (body, res) = query_collecting(
         port,
         "^XA~HS^FN1^FD4711^FS^HV1,20,HEADER ,END^XZ",
@@ -256,18 +269,14 @@ mod tests {
   #[test]
   fn query_ends_at_its_deadline_while_the_printer_keeps_the_socket_open() {
     rt().block_on(async {
-      let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-      let port = listener.local_addr().unwrap().port();
-      tokio::spawn(async move {
-        let (mut sock, _) = listener.accept().await.unwrap();
-        let mut buf = [0u8; 1024];
-        let _ = sock.read(&mut buf).await.unwrap();
+      let port = serve(|mut sock| async move {
         sock
           .write_all(b"~DYPRE,A,G,4,2,:B64:gAE=:AAAA")
           .await
           .unwrap();
         tokio::time::sleep(Duration::from_secs(5)).await;
-      });
+      })
+      .await;
       let (body, res) =
         query_collecting(port, "^XA^HYR:PRE.GRF^XZ", Duration::from_millis(1500)).await;
       assert_eq!(body, "~DYPRE,A,G,4,2,:B64:gAE=:AAAA");
@@ -284,14 +293,8 @@ mod tests {
   #[test]
   fn query_ends_empty_when_the_printer_closes_without_a_reply() {
     rt().block_on(async {
-      let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-      let port = listener.local_addr().unwrap().port();
-      tokio::spawn(async move {
-        let (mut sock, _) = listener.accept().await.unwrap();
-        let mut buf = [0u8; 1024];
-        let _ = sock.read(&mut buf).await.unwrap();
-        // Close without replying: print-only endpoints behave like this.
-      });
+      // Close without replying: print-only endpoints behave like this.
+      let port = serve(|_sock| async {}).await;
       let (body, res) = query_collecting(port, "^XA^XZ", Duration::from_secs(30)).await;
       assert!(body.is_empty());
       assert_eq!(

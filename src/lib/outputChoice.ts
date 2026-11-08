@@ -72,13 +72,10 @@ export interface DocumentQueryFacts extends Pick<DocumentReplies, "commands" | "
 
 export const asksPrinter = (query: DocumentQueryFacts): boolean => query.commands.length > 0;
 
-/** The fields ride along with a query only when the label itself goes out. */
-const printsFields = (source: OutputSource, f: OutputFacts): boolean => source === "label" && f.hasObjects;
-
-/** What the bytes going out ask the printer, for the ways and the reader alike. */
 export function documentQueryFacts(bytes: string, source: OutputSource, f: OutputFacts): DocumentQueryFacts {
   const { commands, unmarked, ambiguous, uncounted } = documentReplies(bytes);
-  return { commands, unmarked, ambiguous, uncounted, prints: printsFields(source, f) };
+  // The fields ride along with a query only when the label itself goes out.
+  return { commands, unmarked, ambiguous, uncounted, prints: source === "label" && f.hasObjects };
 }
 
 /** A rendered label is what the system dialog and a PNG carry, and a setup script draws nothing. */

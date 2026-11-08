@@ -99,8 +99,7 @@ export const kilobytes = (bytes: number): string => String(bytes === 0 ? 0 : Mat
 export const driveUsageText = (loc: Translations["printerSettings"]["objects"], usage: Pick<DriveUsage, "device" | "used" | "free">): string =>
   formatTemplate(loc.usageFmt, { device: usage.device, used: kilobytes(usage.used), free: kilobytes(usage.free) });
 
-/** The replies a document is still owed, one line per reply shape. One spelling under two ^FH indicators owes two
- *  shapes that word the same, so a line shows once. */
+/** The replies a document is still owed, one line per distinct wording. */
 export function owedReplyLines(zebra: Translations["zebraPrint"], owed: readonly OwedReply[]): string[] {
   const lines = owed.map(({ commands, missing, of }) => {
     const names = commands.join(" ");

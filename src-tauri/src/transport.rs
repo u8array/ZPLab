@@ -1,5 +1,3 @@
-// Shared plumbing for the printer commands: connect, write, the reply stream and its stop registry.
-
 use std::collections::{HashMap, VecDeque};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
@@ -168,7 +166,6 @@ pub(crate) async fn stream_done<R: tokio::io::AsyncRead + Unpin>(
   })
 }
 
-/// Reads until the link closes, the deadline passes, the caller stops it, or the link fails.
 pub(crate) async fn stream_reply<R, F>(
   stream: &mut R,
   deadline: Duration,
@@ -181,16 +178,16 @@ where
 {
   let mut buf = [0u8; 64 * 1024];
   let mut total = 0usize;
-  let end = tokio::time::Instant::now() + deadline.min(MAX_READ_DEADLINE);
+  let until = tokio::time::Instant::now() + deadline.min(MAX_READ_DEADLINE);
   loop {
     if stop.load(Ordering::Relaxed) {
       return Ok(ReplyEnd::Stopped);
     }
     let now = tokio::time::Instant::now();
-    if now >= end {
+    if now >= until {
       return Ok(ReplyEnd::Deadline);
     }
-    match tokio::time::timeout_at(end.min(now + STOP_TICK), stream.read(&mut buf)).await {
+    match tokio::time::timeout_at(until.min(now + STOP_TICK), stream.read(&mut buf)).await {
       Ok(Ok(0)) => return Ok(ReplyEnd::Closed),
       Ok(Ok(n)) => {
         total += n;
@@ -256,7 +253,6 @@ impl<'a> ChunkSink<'a> {
     self.send(text)
   }
 
-  /// So the webview can wait for every message.
   pub(crate) fn finish(&mut self) -> Result<u32, String> {
     if !self.tail.is_empty() {
       let text = String::from_utf8_lossy(&self.tail).into_owned();
@@ -345,7 +341,6 @@ mod tests {
     });
   }
 
-  /// Serves its bytes once, then fails like a reset link.
   struct ResetAfter(Option<&'static [u8]>);
   impl tokio::io::AsyncRead for ResetAfter {
     fn poll_read(
@@ -363,7 +358,6 @@ mod tests {
     }
   }
 
-  /// Fails once like a signalled read, then serves its bytes and closes.
   struct InterruptedOnce(Option<&'static [u8]>, bool);
   impl tokio::io::AsyncRead for InterruptedOnce {
     fn poll_read(
@@ -477,7 +471,7 @@ mod tests {
   }
 
   #[test]
-  fn a_stop_reaches_its_stream_even_ahead_of_its_begin_and_a_lost_one_ages_out() {
+  fn a_stop_reaches_its_stream_even_ahead_of_its_begin() {
     let stops = QueryStops::default();
     let one = stops.begin(1);
     let two = stops.begin(2);
@@ -486,15 +480,20 @@ mod tests {
     assert!(!one.flag.load(Ordering::Relaxed));
     assert!(two.flag.load(Ordering::Relaxed));
     drop(two);
-    assert!(!stops.0.lock().unwrap().running.contains_key(&2));
-    let three = stops.begin(3);
-    assert!(three.flag.load(Ordering::Relaxed));
-    assert!(stops.0.lock().unwrap().early.is_empty());
+    stops.stop(2);
+    assert!(stops.begin(2).flag.load(Ordering::Relaxed));
+    assert!(stops.begin(3).flag.load(Ordering::Relaxed));
+    assert!(!stops.begin(3).flag.load(Ordering::Relaxed));
+  }
+
+  #[test]
+  fn an_early_stop_ages_out_behind_newer_ones() {
+    let stops = QueryStops::default();
     for id in 10..(10 + EARLY_STOPS_KEPT as u32 + 1) {
       stops.stop(id);
     }
-    assert_eq!(stops.0.lock().unwrap().early.len(), EARLY_STOPS_KEPT);
     assert!(!stops.begin(10).flag.load(Ordering::Relaxed));
+    assert!(stops.begin(11).flag.load(Ordering::Relaxed));
   }
 
   #[test]
@@ -518,7 +517,8 @@ mod tests {
     drop(first);
     stops.stop(7);
     assert!(second.flag.load(Ordering::Relaxed));
-    assert!(stops.0.lock().unwrap().early.is_empty());
+    drop(second);
+    assert!(!stops.begin(7).flag.load(Ordering::Relaxed));
   }
 
   fn sink_texts(chunks: &[&[u8]]) -> (Vec<String>, u32) {

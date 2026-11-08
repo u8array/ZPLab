@@ -784,10 +784,10 @@ export function parseZPL(
     if (takesPrefix && isHostCommand(canonical)) {
       // The design keeps what the printer answers, and of a stored frame only the field questions.
       const ask = hostAsks.get(start);
-      if (ask === undefined || !ask.canonical || (ask.ask !== "asked" && !(ask.ask === "stored" && isFieldHostCommand(canonical)))) {
-        notePartial(s.result, canonical, "droppedHostCommand");
-      } else {
+      if (ask !== undefined && ask.canonical && (ask.ask === "asked" || (ask.ask === "stored" && isFieldHostCommand(canonical)))) {
         hostQuery.push({ command: sourceToken, span: s.result.tokenSpan, canonical: `${ask.id}${ask.params}` });
+      } else {
+        notePartial(s.result, canonical, "droppedHostCommand");
       }
     } else if (rest.trim() || cmd.trim()) {
       // Source prefix from `start`: tilde commands must not surface as `^`.

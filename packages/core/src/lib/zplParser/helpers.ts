@@ -404,7 +404,6 @@ function fhRunBytes(run: string, delimiter: string): Uint8Array {
   return bytes;
 }
 
-/** ^FH hex escapes → decoded string. */
 export function decodeFH(text: string, delimiter: string, decoder: TextDecoder): string {
   return text.replace(fhRunRe(delimiter), (run) => decoder.decode(fhRunBytes(run, delimiter)));
 }
