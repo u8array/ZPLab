@@ -108,7 +108,7 @@ function HistoryList({ t }: { t: Translations }) {
 
 /** History timeline as a popover anchored to the undo controls in the header.
  *  The list stays open while jumping so the user can scrub back and forth;
- *  outside-click and Escape close it (same idiom as `DropdownMenu`). */
+ *  an outside click and Escape close it. */
 export function HistoryDropdown() {
   const t = useT();
   const [open, setOpen] = useState(false);

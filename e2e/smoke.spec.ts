@@ -23,7 +23,7 @@ test('boots, imports ZPL, adds a page, and regenerates output', async ({ page })
   await expect(page.getByRole('button', { name: 'File', exact: true })).toBeVisible();
 
   await openFileMenu(page);
-  await page.getByRole('button', { name: 'Import ZPL' }).click();
+  await page.getByRole('menuitem', { name: 'Import ZPL' }).click();
   await page.getByRole('dialog').getByRole('textbox').fill(SAMPLE_ZPL);
   await page.getByRole('button', { name: 'Import', exact: true }).click();
   // A clean import closes the dialog; a summary/choice view staying open
@@ -38,7 +38,7 @@ test('boots, imports ZPL, adds a page, and regenerates output', async ({ page })
   await expect(output).toContainText('^PW640');
 
   await openFileMenu(page);
-  await page.getByRole('button', { name: 'Add page' }).click();
+  await page.getByRole('menuitem', { name: 'Add page' }).click();
   // Focus moves onto the inserted page (2 / 2) and it starts empty: exactly
   // two pages, and the imported field exactly once (a duplicated or in-place
   // mutated page would double it or keep the pager on 1).

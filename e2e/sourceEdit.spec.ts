@@ -12,7 +12,7 @@ const openOutput = async (page: Page) => {
 
 const importSample = async (page: Page) => {
   await page.getByRole('button', { name: 'File', exact: true }).click();
-  await page.getByRole('button', { name: 'Import ZPL' }).click();
+  await page.getByRole('menuitem', { name: 'Import ZPL' }).click();
   await page.getByRole('dialog').getByRole('textbox').fill(SAMPLE_ZPL);
   await page.getByRole('button', { name: 'Import', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeHidden();
@@ -53,7 +53,7 @@ test('a multi-page edit applied by an outside click stays on the current page', 
   await page.goto('/');
   const output = await importSample(page);
   await page.getByRole('button', { name: 'File', exact: true }).click();
-  await page.getByRole('button', { name: 'Add page' }).click();
+  await page.getByRole('menuitem', { name: 'Add page' }).click();
   await expect(page.getByText('2 / 2')).toBeVisible();
 
   await retype(
@@ -98,15 +98,15 @@ test('Escape asks to discard and restores the export', async ({ page }) => {
   await expect(output).not.toContainText('^FDedited');
 });
 
-test('a held exit swallows the click on a real control (File menu stays closed)', async ({ page }) => {
+test('a held exit keeps the File menu closed on a real control', async ({ page }) => {
   await page.goto('/');
   const output = await importSample(page);
   await retype(page, output, '^XA^JZY^FO10,10^A0N,30,30^FDX^FS^XZ');
 
-  // The click lands on a click-driven control; the held exit must stop it.
+  // The File trigger opens on pointerdown, so the held exit has to stop that press.
   await page.getByRole('button', { name: 'File', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Import ZPL' })).toBeHidden();
+  await expect(page.getByRole('menuitem', { name: 'Import ZPL' })).toBeHidden();
 });
 
 test('a lossy edit stops on the confirm dialog; cancel refocuses the editor', async ({ page }) => {
