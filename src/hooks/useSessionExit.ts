@@ -1,5 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
 
+/** A surface the panel owns but renders elsewhere, like a portaled menu. Moving into it is no exit. */
+export const SESSION_SURFACE_ATTRS = { 'data-session-surface': true } as const;
+
 /** The source-edit session's exit surface on a panel root. Not useDismiss:
  *  capture phase, a focusout fallback, and a held exit that swallows the
  *  click so nothing fires under it. */
@@ -20,19 +23,19 @@ export function useSessionExit(
     let timer: ReturnType<typeof setTimeout> | undefined;
     // Under a modal's backdrop a held session would swallow every click, so a modal is no exit.
     const modalOpen = () => document.querySelector('[aria-modal="true"]') !== null;
+    const inside = (el: Element) => root.contains(el) || el.closest('[data-session-surface]') !== null;
     // Capture-phase, so the exit lands BEFORE the target's own handlers and
     // chrome/stage clicks act on the unfrozen store in the same click. (A
     // click on a canvas OBJECT still needs a second one: the apply re-ids
     // the Konva node under the pointer mid-gesture.)
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Element | null;
-      if (!target || root.contains(target) || modalOpen()) return;
+      if (!target || inside(target) || modalOpen()) return;
       if (!handlersRef.current.onExit()) {
         e.preventDefault();
         e.stopPropagation();
-        // Cancelling pointerdown does NOT suppress the gesture's click (it is
-        // its own event after pointerup), so onClick targets like menu
-        // triggers or the pager would still fire under the held session.
+        // Cancelling pointerdown does not suppress the gesture's click, which fires
+        // after pointerup, so onClick targets like the pager would still fire under the held session.
         const swallowClick = (ce: Event) => {
           ce.preventDefault();
           ce.stopPropagation();
@@ -54,7 +57,7 @@ export function useSessionExit(
       timer = setTimeout(() => {
         if (!document.hasFocus()) return;
         const active = document.activeElement;
-        if (active && root.contains(active)) return;
+        if (active && inside(active)) return;
         if (modalOpen()) return;
         handlersRef.current.onExit();
       }, 0);

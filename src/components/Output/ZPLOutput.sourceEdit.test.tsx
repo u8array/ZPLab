@@ -4,6 +4,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { render, cleanup, fireEvent, screen, act, waitFor, within } from "@testing-library/react";
 
 const copiedTexts: string[] = [];
+vi.mock("../../lib/platform", async (importOriginal) => ({ ...(await importOriginal<Record<string, unknown>>()), isDesktopShell: true }));
 vi.mock("../../lib/clipboard", () => ({
   copyText: (text: string) => {
     copiedTexts.push(text);
@@ -97,6 +98,19 @@ const leavePanel = async (container: HTMLElement) => {
 };
 
 describe("the implicit session", () => {
+  it("survives opening the printer chip's menu", async () => {
+    vi.spyOn(document, "hasFocus").mockReturnValue(true);
+    const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
+    typeDraft("^XA^FO10,10^A0N,30,30^FDedited^FS^XZ");
+    editor().focus();
+    fireEvent.click(container.querySelector('[aria-haspopup="menu"]') as HTMLButtonElement);
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(screen.getByRole("menu")).toBeTruthy();
+    expect(useLabelStore.getState().sourceEdit.status).toBe("editing");
+  });
+
   it("survives folding a catalog pane, whose toggle keeps the focus it took", async () => {
     const { container } = render(<ZPLOutput onResizeMouseDown={vi.fn()} />);
     typeDraft("^XA^FO1,1^FDx^FS^XZ");

@@ -47,6 +47,12 @@ describe("PrinterChip", () => {
     expect(r.getByText("ZD230 V89.21.46Z")).toBeTruthy();
   });
 
+  it("renders its menu in a portal, outside the panel", () => {
+    const r = render(<PrinterChip />);
+    fireEvent.click(r.getByText("172.17.17.175"));
+    expect(r.container.contains(r.getByText(loc.checkNow))).toBe(false);
+  });
+
   it("tones the dot blocked for a blocking condition and drops a reply that belongs to another printer", () => {
     const blocked = report({ flags: { errors: ["headOpen"], warnings: [] } });
     act(() => useLabelStore.setState({ printerState: { phase: "done", key: "net:172.17.17.175:9100", at: 0, report: blocked } }));

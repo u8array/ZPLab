@@ -1,14 +1,15 @@
-import { useRef, useState } from "react";
+import { useId } from "react";
+import { Menu, MenuButton, MenuItems } from "@headlessui/react";
 import { ArrowDownTrayIcon, ArrowPathIcon, ChevronDownIcon, CircleStackIcon, Cog6ToothIcon, DocumentTextIcon } from "@heroicons/react/16/solid";
 import type { SgdSetting } from "@zplab/core/lib/sgd";
 import { useReplyRead } from "../../hooks/useReplyRead";
+import { SESSION_SURFACE_ATTRS } from "../../hooks/useSessionExit";
 import { useT } from "../../hooks/useT";
-import { useDismiss } from "../../hooks/useDismiss";
 import { formatTemplate } from "../../lib/formatTemplate";
 import { failureText, memoryText, modelText, readingText, reportView, warningsText, type ReadinessTone } from "../../lib/printerStatusText";
 import { resolveQueryTarget } from "../../lib/printTarget";
 import { selectPrinterState, useLabelStore } from "../../store/labelStore";
-import { DropdownItem, DropdownSeparator } from "../ui/DropdownMenu";
+import { DropdownItem, DropdownSeparator, menuPanelCls, menuTriggerCls } from "../ui/DropdownMenu";
 import { AdoptSettingsDialog } from "./AdoptSettingsDialog";
 import { PrinterConfigurationDialog } from "./PrinterConfigurationDialog";
 
@@ -39,11 +40,9 @@ export function PrinterChip() {
   const readPrinterConfiguration = useLabelStore((s) => s.readPrinterConfiguration);
   const readPrinterSettings = useLabelStore((s) => s.readPrinterSettings);
   const setPrinterSettingsTab = useLabelStore((s) => s.setPrinterSettingsTab);
-  const [open, setOpen] = useState(false);
+  const statusId = useId();
   const configuration = useReplyRead<string>();
   const settings = useReplyRead<SgdSetting[]>();
-  const rootRef = useRef<HTMLDivElement>(null);
-  useDismiss(rootRef, () => setOpen(false), { active: open });
 
   const resolved = resolveQueryTarget(printTarget);
   const name = "failure" in resolved ? t.zebraPrint.printer : resolved.target.kind === "usb" ? t.zebraPrint.tabUsb : resolved.target.host;
@@ -55,57 +54,53 @@ export function PrinterChip() {
   const checkedAt = state.phase === "done" || state.phase === "failed" ? formatTemplate(loc.checkedAtFmt, { time: new Date(state.at).toLocaleTimeString() }) : undefined;
   const stateText =
     step !== undefined ? readingText(loc, step) : state.phase === "failed" ? failureText(loc, state.failure) : (view?.line.text ?? loc.notChecked);
-  const closeThen = (action: () => void) => () => {
-    setOpen(false);
-    action();
-  };
   const openConfiguration = () => configuration.start(readPrinterConfiguration);
   const openSettings = () => settings.start(readPrinterSettings);
 
   return (
-    <div ref={rootRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        className={`flex items-center gap-1.5 px-2 py-1 rounded font-mono text-[10px] transition-colors ${open ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`}
-      >
-        <span data-tone={tone} className={`w-2 h-2 rounded-full ${DOT_CLS[tone]} ${reading ? "animate-pulse" : ""}`} />
-        {name}
-        <ChevronDownIcon className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-
-      {open && (
-        <div className="absolute right-0 top-full mt-1 z-50 w-64 bg-surface border border-border rounded-lg shadow-2xl py-1">
-          {askedOverAddress && (
-            <div className="px-3 pb-1 font-mono text-[10px] text-muted leading-snug">{t.zebraPrint.wayQueryAddress}</div>
+    <>
+      <Menu>
+        <MenuButton className={`${menuTriggerCls} gap-1.5 px-2 py-1 text-[10px]`}>
+          {({ open }) => (
+            <>
+              <span data-tone={tone} className={`w-2 h-2 rounded-full ${DOT_CLS[tone]} ${reading ? "animate-pulse" : ""}`} />
+              {name}
+              <ChevronDownIcon className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
+            </>
           )}
-          <Row label={loc.state} value={stateText} />
-          {view?.report.flags && <Row label={loc.warnings} value={warningsText(loc, view.readiness)} />}
-          {view?.report.identity && <Row label={loc.model} value={modelText(view.report.identity)} />}
-          {view?.report.memory && <Row label={loc.memory} value={memoryText(loc, view.report.memory)} />}
-          {checkedAt && <div className="px-3 py-0.5 text-[10px] font-mono text-muted text-right">{checkedAt}</div>}
+        </MenuButton>
+        <MenuItems anchor="bottom end" modal={false} aria-describedby={statusId} {...SESSION_SURFACE_ATTRS} className={`${menuPanelCls} w-64 py-1`}>
+          {/* A plain row is not a menu item, so screen readers announce the status as the menu's description. */}
+          <div id={statusId}>
+            {askedOverAddress && (
+              <div className="px-3 pb-1 font-mono text-[10px] text-muted leading-snug">{t.zebraPrint.wayQueryAddress}</div>
+            )}
+            <Row label={loc.state} value={stateText} />
+            {view?.report.flags && <Row label={loc.warnings} value={warningsText(loc, view.readiness)} />}
+            {view?.report.identity && <Row label={loc.model} value={modelText(view.report.identity)} />}
+            {view?.report.memory && <Row label={loc.memory} value={memoryText(loc, view.report.memory)} />}
+            {checkedAt && <div className="px-3 py-0.5 text-[10px] font-mono text-muted text-right">{checkedAt}</div>}
+          </div>
           <DropdownSeparator />
-          <DropdownItem icon={ArrowPathIcon} disabled={reading} onClick={closeThen(() => void checkPrinter())}>
+          <DropdownItem icon={ArrowPathIcon} disabled={reading} onClick={() => void checkPrinter()}>
             {loc.checkNow}
           </DropdownItem>
-          <DropdownItem icon={DocumentTextIcon} disabled={reading} onClick={closeThen(openConfiguration)}>
+          <DropdownItem icon={DocumentTextIcon} disabled={reading} onClick={openConfiguration}>
             {loc.readConfiguration}
           </DropdownItem>
-          <DropdownItem icon={ArrowDownTrayIcon} disabled={reading} onClick={closeThen(openSettings)}>
+          <DropdownItem icon={ArrowDownTrayIcon} disabled={reading} onClick={openSettings}>
             {loc.adoptFromPrinter}
           </DropdownItem>
-          <DropdownItem icon={CircleStackIcon} onClick={closeThen(() => setPrinterSettingsTab("storedFonts"))}>
+          <DropdownItem icon={CircleStackIcon} onClick={() => setPrinterSettingsTab("storedFonts")}>
             {t.printerSettings.objects.listHeading}
           </DropdownItem>
-          <DropdownItem icon={Cog6ToothIcon} onClick={closeThen(() => setPrinterSettingsTab("printTarget"))}>
+          <DropdownItem icon={Cog6ToothIcon} onClick={() => setPrinterSettingsTab("printTarget")}>
             {t.printerSettings.title}
           </DropdownItem>
-        </div>
-      )}
+        </MenuItems>
+      </Menu>
       {configuration.read && <PrinterConfigurationDialog read={configuration.read} onClose={configuration.close} />}
       {settings.read && <AdoptSettingsDialog read={settings.read} onClose={settings.close} />}
-    </div>
+    </>
   );
 }
