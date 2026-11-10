@@ -38,7 +38,8 @@ describe("FontManager installed fonts", () => {
     const r = render(<FontManager />);
     open(r);
     await waitFor(() => expect(r.getByText("Arial")).toBeTruthy());
-    expect(r.getByText("Arial").style.fontFamily).toBe('"Arial"');
+    // jsdom may drop the quotes around a plain identifier, so the assertion accepts both forms.
+    expect(r.getByText("Arial").style.fontFamily).toMatch(/^"?Arial"?$/);
   });
 
   it("fills the printer filename from the picked row, then caches it on Add", async () => {
