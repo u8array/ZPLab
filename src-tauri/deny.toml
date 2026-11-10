@@ -6,6 +6,9 @@
 [advisories]
 unmaintained = "workspace"
 yanked = "deny"
+ignore = [
+    { id = "RUSTSEC-2026-0459", reason = "sqlx 0.9.0 caps libsqlite3-sys below 0.38 and the fix is in 0.39, lifted upstream in sqlx#4502, drop with the next sqlx release" },
+]
 
 [licenses]
 allow = [
