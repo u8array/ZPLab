@@ -1,4 +1,5 @@
 import { FONT_EXT_BY_FORMAT, type FontFormatCode } from "../../customFonts";
+import { parseGfWrapper } from "../decoders/crc";
 import { byteDigest } from "../../byteDigest";
 import type { BoxProps } from "../../../registry/box";
 import type { EllipseProps } from "../../../registry/ellipse";
@@ -50,6 +51,9 @@ function decodeGraphicOnce(s: ParserState, decode: () => DecodedGraphic | null):
   if (decoded) s.result.decodedImages.push(decoded.image);
   return decoded;
 }
+
+/** The format letters ~DY accepts, spec p.181. */
+const DY_FORMATS = new Set(["A", "B", "C", "P"]);
 
 const hexOf = (bytes: Uint8Array): string => Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
 
@@ -170,7 +174,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     const parsed = parseStoragePath(raw, defaultDevice);
     if (!parsed) {
       noteFieldInk(s);
-      pushBrowserLimit(s.result, `${s.result.tokenCommand}${rest}`);
+      pushBrowserLimit(s.result, `${s.result.tokenCommand}${rest}`, "malformed");
     }
     return parsed;
   };
@@ -187,7 +191,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     const parsed = parseStoragePath(path, "R");
     // Both counts are mandatory on the device: without them the download is ignored.
     if (!parsed || !(bytesPerRow > 0) || !(size > 0)) {
-      pushBrowserLimit(s.result, summary);
+      pushBrowserLimit(s.result, summary, "malformed");
       return;
     }
     // Text payloads drag the stream terminator along; a counted binary one ends where the tokenizer cut it.
@@ -203,7 +207,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     if (!image) {
       // The stream overwrote this path, so a later recall must miss.
       s.fonts.downloadedGraphics.delete(key);
-      pushBrowserLimit(s.result, summary);
+      pushBrowserLimit(s.result, summary, "undecodable");
       return;
     }
     if (!image.crcOk) notePartial(s.result, code, "checksumMismatch");
@@ -241,7 +245,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       }
       s.fonts.downloadedFonts.set(key, { digest, status: "live", kind, via: `~${cmd}`, ...(cached ? {} : { download: download(fullPath) }) });
     } catch {
-      pushBrowserLimit(s.result, `${s.result.tokenCommand}${path}`);
+      pushBrowserLimit(s.result, `${s.result.tokenCommand}${path}`, "undecodable");
     }
   };
 
@@ -252,13 +256,15 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
     const c0 = rest.indexOf(delim);
     const c1 = c0 < 0 ? -1 : rest.indexOf(delim, c0 + 1);
     if (c1 < 0) {
-      pushBrowserLimit(s.result, summary);
+      pushBrowserLimit(s.result, summary, "malformed");
       return;
     }
     const path = rest.slice(0, c0).trim();
-    const bytes = hexBytes(rest.slice(c1 + 1), parseInt(rest.slice(c0 + 1, c1), 10));
+    const data = rest.slice(c1 + 1);
+    const size = parseInt(rest.slice(c0 + 1, c1), 10);
+    const bytes = hexBytes(data, size);
     if (!path || !bytes) {
-      pushBrowserLimit(s.result, summary);
+      pushBrowserLimit(s.result, summary, path && size > 0 && parseGfWrapper(data) ? "undecodable" : "malformed");
       return;
     }
     registerFontUpload(cmd, path, kind, defaultExt, bytes, (fullPath) => `~${cmd}${fullPath},${bytes.length},${hexOf(bytes)}`);
@@ -345,17 +351,18 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       commitPendingReverseBg();
       const gfSummary = payloadSummary(s.result.tokenCommand, rest);
       // ^GF{A|B|C},{totalBytes},{totalBytes},{bytesPerRow},{payload}
-      const format = rest[0]?.toUpperCase();
+      const delim = s.format.delimiterChar;
+      // An empty compression type is A, spec p.215.
+      const format = rest[0] === delim ? "A" : rest[0]?.toUpperCase();
       if (format !== "A" && format !== "B" && format !== "C") {
         noteFieldInk(s);
-        pushBrowserLimit(s.result, gfSummary);
+        pushBrowserLimit(s.result, gfSummary, "malformed");
         return;
       }
 
       // Extract params: skip "A," then find 3rd delimiter to separate params from data.
       // Respects ^CD-mutated delimiter so ^CD;^GFA;total;total;bpr;data still parses.
-      const delim = s.format.delimiterChar;
-      const gfRest = rest.slice(2); // "total,total,bytesPerRow,data..."
+      const gfRest = rest[0] === delim ? rest.slice(1) : rest.slice(2); // "total,total,bytesPerRow,data..."
       let commaPos = -1;
       for (let n = 0; n < 3; n++) {
         commaPos = gfRest.indexOf(delim, commaPos + 1);
@@ -363,7 +370,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       }
       if (commaPos === -1) {
         noteFieldInk(s);
-        pushBrowserLimit(s.result, gfSummary);
+        pushBrowserLimit(s.result, gfSummary, "malformed");
         return;
       }
 
@@ -374,7 +381,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
 
       if (gfBytesPerRow <= 0) {
         noteFieldInk(s);
-        pushBrowserLimit(s.result, gfSummary);
+        pushBrowserLimit(s.result, gfSummary, "malformed");
         return;
       }
 
@@ -391,7 +398,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         // A placeholder would take the declared size.
         if (gfBytesPerRow > GF_MAX_BYTES_PER_ROW || gfFieldCount / gfBytesPerRow > GF_MAX_ROWS) {
           noteFieldInk(s);
-          pushBrowserLimit(s.result, gfSummary);
+          pushBrowserLimit(s.result, gfSummary, "undecodable");
           return;
         }
         // Undecodable, but the header still describes the bitmap, so preserve
@@ -564,7 +571,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
         c3 === undefined ||
         c4 === undefined
       ) {
-        pushBrowserLimit(s.result, dySummary);
+        pushBrowserLimit(s.result, dySummary, "malformed");
         return;
       }
       const path = rest.slice(0, c0).trim();
@@ -581,13 +588,17 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
 
       // Only ASCII-hex font imports are supported. Z64 / compressed
       // payloads need a CRC-checked decoder and stay out of scope.
+      if (!DY_FORMATS.has(fmt)) {
+        pushBrowserLimit(s.result, dySummary, "malformed");
+        return;
+      }
       if (fmt !== "A" || !(extCode in FONT_EXT_BY_FORMAT)) {
-        pushBrowserLimit(s.result, dySummary);
+        pushBrowserLimit(s.result, dySummary, "undecodable");
         return;
       }
       const bytes = path ? hexBytes(data, size) : null;
       if (!bytes) {
-        pushBrowserLimit(s.result, dySummary);
+        pushBrowserLimit(s.result, dySummary, path && size > 0 && parseGfWrapper(data) ? "undecodable" : "malformed");
         return;
       }
       const bpr = rest.slice(c3 + 1, c4).trim();
@@ -615,8 +626,13 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       const path = dataStart === undefined ? "" : rest.slice(0, cuts[0]).trim();
       const header = cuts.slice(0, 7).map((c, i) => rest.slice(c + 1, cuts[i + 1]).trim());
       const data = dataStart === undefined ? "" : rest.slice(dataStart + 1).trimEnd();
-      if (!path || !header.every((f) => DB_HEADER_FIELD_RE.test(f)) || !DB_DATA_RE.test(data)) {
-        pushBrowserLimit(s.result, payloadSummary(s.result.tokenCommand, rest));
+      if (!path) {
+        pushBrowserLimit(s.result, payloadSummary(s.result.tokenCommand, rest), "malformed");
+        return;
+      }
+      // A header or glyph segment the replay cannot carry, though the printer may still read it.
+      if (!header.every((f) => DB_HEADER_FIELD_RE.test(f)) || !DB_DATA_RE.test(data)) {
+        pushBrowserLimit(s.result, payloadSummary(s.result.tokenCommand, rest), "undecodable");
         return;
       }
       // Cell metrics change the print as much as the glyphs, so a replacement is judged on both.
@@ -634,7 +650,7 @@ export function createGraphicsHandlers(s: ParserState, helpers: GraphicsHelpers)
       const [c0, c1, c2] = c;
       const dgSummary = payloadSummary(s.result.tokenCommand, rest);
       if (c0 === undefined || c1 === undefined || c2 === undefined) {
-        pushBrowserLimit(s.result, dgSummary);
+        pushBrowserLimit(s.result, dgSummary, "malformed");
         return;
       }
       const size = parseInt(rest.slice(c0 + 1, c1), 10);

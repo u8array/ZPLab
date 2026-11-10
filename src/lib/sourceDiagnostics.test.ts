@@ -3,7 +3,7 @@ import { buildSourceDiagnostics } from "./sourceDiagnostics";
 import { describeFinding } from "./importReport";
 import { formatTemplate } from "./formatTemplate";
 import { fallbackTranslations as en } from "../locales";
-import type { ImportFinding } from "@zplab/core/lib/importReport";
+import type { BrowserLimitReason, ImportFinding } from "@zplab/core/lib/importReport";
 
 describe("buildSourceDiagnostics", () => {
   it("names each imbalance kind with the bytes it found and offers the missing command", () => {
@@ -66,6 +66,13 @@ describe("buildSourceDiagnostics", () => {
   it("words a host query with the report title", () => {
     const f: ImportFinding = { kind: "hostQuery", command: "~HS", pageIndex: 0, span: { start: 3, end: 6 } };
     expect(describeFinding(f, en.importReport)).toEqual({ title: en.importReport.hostQueryTitle, detail: "~HS" });
+  });
+
+  it("titles a browserLimit finding by its reason", () => {
+    const title = (reason: BrowserLimitReason) => describeFinding({ kind: "browserLimit", command: "~DE", pageIndex: 0, reason }, en.importReport).title;
+    expect(title("printerOnly")).toBe(en.importReport.browserLimitPrinterOnlyTitle);
+    expect(title("undecodable")).toBe(en.importReport.browserLimitUndecodableTitle);
+    expect(title("malformed")).toBe(en.importReport.browserLimitMalformedTitle);
   });
 
   it("offers the ^FS repair only on a dropped field, at the field's last byte", () => {

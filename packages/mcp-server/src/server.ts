@@ -167,7 +167,7 @@ export function buildServer(options: BuildServerOptions = {}): McpServer {
       title: "Validate raw ZPL",
       description:
         "Parse a raw ZPL stream (one page per ^XA block) and report it: object/page " +
-        "count, detected label, parser findings (unknown/partial/hardware-bound/host-answered " +
+        "count, detected label, parser findings (unknown/partial/skipped/host-answered " +
         "commands, fields the printer discards for a missing ^FS), preflight warnings, " +
         "per-object bounds (dots), and bbox overlaps. A stream that stores a format with ^DF, declares " +
         "^FN fields in it and recalls it with ^XF once per row reports the rows' headers and count as `batch`. " +

@@ -1430,7 +1430,7 @@ describe('importZplText - ~DT, ~DU, ~DS, ~DB and ~DE downloads replay from their
     ]) {
       const r = importZplText(`${bad}\n^XA^FO0,0^GB10,10,1^FS^XZ`, 8);
       expect(r.printerProfile.setupFonts, bad).toBeUndefined();
-      expect(r.report.findings.filter((f) => f.kind === 'browserLimit'), bad).toHaveLength(1);
+      expect(r.report.findings.filter((f) => f.kind === 'browserLimit').map((f) => f.reason), bad).toEqual([bad.includes('5,24\n') ? 'malformed' : 'undecodable']);
     }
   });
 
@@ -1447,11 +1447,16 @@ describe('importZplText - ~DT, ~DU, ~DS, ~DB and ~DE downloads replay from their
     expect(r.report.findings.map((f) => [f.command, f.loss])).toEqual([['~DU', 'unshippableFontName']]);
   });
 
-  it('rejects a ZB64 payload and a short payload with a finding', () => {
-    const zb64 = importZplText('~DTR:ARIAL,59494,:Z64:H4sICMB8:a1b2', 8);
-    expect(zb64.report.findings.map((f) => [f.kind, f.command.slice(0, 3)])).toEqual([['browserLimit', '~DT']]);
-    const short = importZplText('~DTR:FONT,8,0102', 8);
-    expect(short.report.findings.map((f) => f.kind)).toEqual(['browserLimit']);
+  it('reports undecodable and malformed downloads as browserLimit findings', () => {
+    const reasons = (zpl: string) => importZplText(zpl, 8).report.findings.map((f) => [f.kind, f.command.slice(0, 3), f.reason]);
+    expect(reasons('~DTR:ARIAL,59494,:Z64:H4sICMB8:a1b2')).toEqual([['browserLimit', '~DT', 'undecodable']]);
+    expect(reasons('~DER:UTF8.DAT,59494,:Z64:H4sICMB8:a1b2')).toEqual([['browserLimit', '~DE', 'undecodable']]);
+    expect(reasons('~DYR:LOGO,A,P,4,,89504E47')).toEqual([['browserLimit', '~DY', 'undecodable']]);
+    expect(reasons('~DBR:T.FNT,N,5,24,3,10,2,C,:Z64:H4sICMB8:a1b2')).toEqual([['browserLimit', '~DB', 'undecodable']]);
+    expect(reasons('~DTR:FONT,8,0102')).toEqual([['browserLimit', '~DT', 'malformed']]);
+    expect(reasons('~DTR:FONT')).toEqual([['browserLimit', '~DT', 'malformed']]);
+    expect(reasons('~DTR:FONT,0,:Z64:H4sICMB8:a1b2')).toEqual([['browserLimit', '~DT', 'malformed']]);
+    expect(reasons('~DYR:X,Q,T,4,,00000000')).toEqual([['browserLimit', '~DY', 'malformed']]);
   });
 
   it('leaves a caret ^DT unknown, since the catalog knows only the tilde form', () => {
@@ -1492,5 +1497,11 @@ describe('importZplText - ~DT, ~DU, ~DS, ~DB and ~DE downloads replay from their
     const other = mergeSetupEntries([one], [{ path: 'R:X.FNT', download: '~DSR:X.FNT,4,05060708' }]);
     expect(other.merged).toEqual([{ path: 'R:X.FNT', download: '~DSR:X.FNT,4,05060708' }]);
     expect(other.changed).toBe(1);
+  });
+});
+
+describe('importZplText - printer-only commands', () => {
+  it('marks ^LF as printer-only', () => {
+    expect(importZplText('^XA^LF^XZ', 8).report.findings.map((f) => [f.kind, f.command, f.reason])).toEqual([['browserLimit', '^LF', 'printerOnly']]);
   });
 });

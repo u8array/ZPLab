@@ -1,9 +1,9 @@
-import type { ImportFinding, ImportFindingKind, ImportReport } from './zplParser';
+import type { BrowserLimitReason, ImportFinding, ImportFindingKind, ImportReport } from './zplParser';
 
 // Re-export the parser-side domain types so UI code talks to the report
 // surface through this module exclusively instead of reaching into the
 // parser for type imports.
-export type { ImportFinding, ImportFindingKind, ImportReport };
+export type { BrowserLimitReason, ImportFinding, ImportFindingKind, ImportReport };
 
 /** Distinct command codes of one finding kind; backs the report's bucket views. */
 export function dedupCommandsByKind(

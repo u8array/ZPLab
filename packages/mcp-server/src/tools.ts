@@ -310,7 +310,7 @@ export const zplInputShape = {
 };
 
 /** The report's deduped command buckets, so the agent learns which commands
- *  were dropped, lossy, or hardware-bound. Drops the per-occurrence findings
+ *  were dropped, lossy, or skipped. Drops the per-occurrence findings
  *  (an app-UI navigation aid). */
 export type ZplFindings = Omit<ImportReport, "findings">;
 

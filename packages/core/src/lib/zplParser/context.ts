@@ -1,6 +1,6 @@
 import { storageRefMatchesPath } from "../storagePath";
 import { getAllLeaves, type LabelObject } from "../../types/Group";
-import type { SourceSpan, FontLoss } from "./types";
+import type { BrowserLimitReason, SourceSpan, FontLoss } from "./types";
 import type { ImportLossCause } from "../../catalog/schema";
 import type { LabelConfig } from "../../types/LabelConfig";
 import type { CachedImage } from "../imageCache";
@@ -74,6 +74,10 @@ export interface SpannedToken {
   span?: SourceSpan;
 }
 
+export interface BrowserLimitToken extends SpannedToken {
+  reason: BrowserLimitReason;
+}
+
 /** A question the design keeps: spelled as the generator spells it, since the block may regenerate without the remap that spelled the source. */
 export interface HostQueryToken extends SpannedToken {
   canonical: string;
@@ -109,7 +113,7 @@ export interface ParserResult {
   unterminated: UnterminatedField[];
   /** ^FH escapes of a byte the printer ends the text field at. */
   hexControl: SpannedToken[];
-  browserLimit: SpannedToken[];
+  browserLimit: BrowserLimitToken[];
   decodedImages: CachedImage[];
   unknown: SpannedToken[];
   replayRisk: SpannedToken[];
@@ -409,8 +413,8 @@ export function payloadSummary(prefix: string, rest: string): string {
 
 /** trimEnd: `token` carries `rest` up to the next command, which in multi-line
  *  ZPL includes the trailing newline (noise in this diagnostic surface). */
-export function pushBrowserLimit(result: ParserResult, token: string): void {
-  result.browserLimit.push({ command: token.trimEnd(), span: result.tokenSpan });
+export function pushBrowserLimit(result: ParserResult, token: string, reason: BrowserLimitReason): void {
+  result.browserLimit.push({ command: token.trimEnd(), span: result.tokenSpan, reason });
 }
 
 /** Whether the stream has named this file so far. A ^ID clears the alias map, so it cannot answer this. */
