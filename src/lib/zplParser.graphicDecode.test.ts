@@ -22,6 +22,14 @@ describe('decodeGraphicToImage', () => {
   });
 });
 
+describe('^GF compression type', () => {
+  it('reads an empty compression type as A', () => {
+    const parsed = parseSingle('^XA^FO0,0^GF,2,2,1,FFFF^FS^XZ', 8);
+    expect(commandsOf(parsed, 'browserLimit')).toEqual([]);
+    expect(parsed.objects).toHaveLength(1);
+  });
+});
+
 describe('untrusted ^GF sizes', () => {
   const gf = (c: number, bytesPerRow: number, data: string) => `^XA^FO0,0^GFA,${c},${c},${bytesPerRow},${data}^FS^XZ`;
   const refused = (zpl: string) => {

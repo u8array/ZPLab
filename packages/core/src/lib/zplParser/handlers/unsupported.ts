@@ -4,7 +4,7 @@ import type { Handler } from "../types";
 /** Commands with no model: noops, storage actions, and the ones needing printer hardware. */
 export function createUnsupportedHandlers(s: ParserState): Record<string, Handler> {
   const noop: Handler = () => void 0;
-  const browserLimit: Handler = (_, rest) => pushBrowserLimit(s.result, `${s.result.tokenCommand}${rest}`);
+  const printerOnly: Handler = (_, rest) => pushBrowserLimit(s.result, `${s.result.tokenCommand}${rest}`, "printerOnly");
 
   return {
     FM: noop,
@@ -23,6 +23,6 @@ export function createUnsupportedHandlers(s: ParserState): Record<string, Handle
     IS: noop,
     // Spec p.185 only refers ~EG to ^ID, so its reach is taken from ^ID's defaults: R: and .GRF (p.245).
     EG: () => deleteStoredObjects(s, "R:*.GRF"),
-    LF: browserLimit,
+    LF: printerOnly,
   };
 }

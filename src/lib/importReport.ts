@@ -81,7 +81,9 @@ export function describeFinding(
     };
   }
   if (f.kind === 'browserLimit') {
-    return { title: tr.browserLimitTitle, detail: f.command };
+    if (f.reason === 'printerOnly') return { title: tr.browserLimitPrinterOnlyTitle, detail: f.command };
+    if (f.reason === 'malformed') return { title: tr.browserLimitMalformedTitle, detail: f.command };
+    return { title: tr.browserLimitUndecodableTitle, detail: f.command };
   }
   if (f.kind === 'replayRisk') {
     return { title: tr.replayRiskTitle, detail: f.command };

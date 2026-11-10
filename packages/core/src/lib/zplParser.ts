@@ -17,7 +17,7 @@ import { printShape } from "./payloadProps";
 import { qrPrintsAsGraphic } from "./objectBounds";
 import { commandTakesPrefix, commandTwinSplit, isHostCommand } from "../catalog";
 import { hostCommandAsks, isFieldHostCommand, type HostCommandAsk } from "./hostCommands";
-import { claimVariableName, createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, notePartial, openTailHasContent, payloadSummary, releaseVariableName, resetFormatScopedState, type FnDefaultCandidate, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField, resolveLiveFonts } from "./zplParser/context";
+import { claimVariableName, createParserState, deriveUnitScale, REGEN_LOSSY_REASONS, notePartial, openTailHasContent, payloadSummary, releaseVariableName, resetFormatScopedState, type FnDefaultCandidate, type BrowserLimitToken, type PartialNote, type RegenLossyReason, type SpannedToken, type UnterminatedField, resolveLiveFonts } from "./zplParser/context";
 import { createCloseField } from "./zplParser/flushField";
 import { createBarcodeHandlers } from "./zplParser/handlers/barcodes";
 import { createDynamicFontAWildcard, createFieldHandlers } from "./zplParser/handlers/fields";
@@ -37,6 +37,7 @@ import type {
   Wildcard,
 } from "./zplParser/types";
 export type {
+  BrowserLimitReason,
   ImportFindingKind,
   ImportFinding,
   ImportReport,
@@ -397,7 +398,7 @@ export function parseZPL(
   const bucketFindings = (
     pageIndex: number,
     partial: readonly PartialNote[],
-    browser: readonly SpannedToken[],
+    browser: readonly BrowserLimitToken[],
     unk: readonly SpannedToken[],
     replay: readonly SpannedToken[],
     device: readonly SpannedToken[],
@@ -407,7 +408,7 @@ export function parseZPL(
   ): ImportFinding[] => [
     ...partial.map((n): ImportFinding => ({ kind: "partial", command: n.command, pageIndex, span: n.span, loss: n.loss })),
     ...dropped.map((u): ImportFinding => ({ kind: "unterminatedField", command: zpl.slice(u.opener.start, u.opener.end), pageIndex, span: { start: u.opener.start, end: trimmedSpanEnd(zpl, u.opener.start, u.end) } })),
-    ...browser.map((t): ImportFinding => ({ kind: "browserLimit", command: t.command, pageIndex, span: t.span })),
+    ...browser.map((t): ImportFinding => ({ kind: "browserLimit", command: t.command, pageIndex, span: t.span, reason: t.reason })),
     ...unk.map((t): ImportFinding => ({ kind: "unknown", command: t.command, pageIndex, span: t.span })),
     ...replay.map((t): ImportFinding => ({ kind: "replayRisk", command: t.command, pageIndex, span: t.span })),
     ...device.map((t): ImportFinding => ({ kind: "deviceAction", command: t.command, pageIndex, span: t.span })),

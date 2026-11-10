@@ -48,11 +48,15 @@ export interface ImportFinding {
   cause?: 'size' | 'jm';
   /** Why a 'partial' lost something when it is not the catalog row's usual loss. */
   loss?: ImportLossCause;
+  /** Why the model holds nothing for a 'browserLimit' command. */
+  reason?: BrowserLimitReason;
   /** Source anchor, always stamped: a partial points at the command it
    *  names (even when raised later, at field flush); every other bucketed
    *  kind at the token being processed. Absent for post-parse kinds. */
   span?: SourceSpan;
 }
+
+export type BrowserLimitReason = "printerOnly" | "undecodable" | "malformed";
 
 /** What a font download took away from the design. */
 export type FontLossReason = "versionReplaced" | "faceDropped";
@@ -72,7 +76,7 @@ export interface ImportReport {
   // lives solely in `findings`; iterate `findings` for a kind-complete view.
   /** Commands imported with known loss. Deduplicated by command code. */
   partial: string[];
-  /** Commands skipped because they require printer hardware or file storage. */
+  /** Commands the model holds nothing for. */
   browserLimit: string[];
   /** Commands not recognised at all. */
   unknown: string[];
