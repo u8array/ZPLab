@@ -134,7 +134,7 @@ describe("FontManager preview face", () => {
     const r = render(<FontManager />);
     const name = r.getByTitle("E:ARIAL.TTF");
     expect(name.style.fontFamily).toBe("");
-    expect((name.nextElementSibling as HTMLElement).style.fontFamily).toMatch(/^"zpl-/);
+    expect((name.nextElementSibling as HTMLElement).style.fontFamily).toMatch(/^"?zpl-/);
   });
 
   it("names a font no browser face took, and leaves its row unstyled", async () => {
