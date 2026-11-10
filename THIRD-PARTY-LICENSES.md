@@ -1571,7 +1571,7 @@ SOFTWARE.
    limitations under the License.
 ```
 
-### @lezer/common 1.5.4
+### @lezer/common 1.5.5
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -2770,7 +2770,7 @@ SOFTWARE.
    END OF TERMS AND CONDITIONS
 ```
 
-### @tauri-apps/plugin-dialog 2.8.3
+### @tauri-apps/plugin-dialog 2.8.4
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -2882,7 +2882,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-updater 2.14.0
+### @tauri-apps/plugin-updater 2.14.1
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -3164,7 +3164,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### konva 10.9.0
+### konva 10.9.1
 
 - License: MIT
 - Author: Anton Lavrenov
@@ -3983,7 +3983,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### zustand 5.0.16
+### zustand 5.1.0
 
 - License: MIT
 - Author: Paul Henschel
