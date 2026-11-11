@@ -22,6 +22,8 @@ jobs:
   # legs and can split assets over duplicate drafts (tauri-action#914).
   create-release:
     needs: [gates, rust]
+    # Tag, web zip and Pages are built from the prod commit.
+    if: github.ref == 'refs/heads/prod'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,11 +40,17 @@ jobs:
           DRAFTS=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
             --jq ".[] | select(.tag_name==\"$TAG\" and .draft) | .id")
           ID=$(printf '%s\n' "$DRAFTS" | head -n1)
-          if [ -z "$ID" ]; then
+          # The tag is created at publish time from target_commitish, which defaults to main, so the draft must point at this run's commit.
+          if [ -n "$ID" ]; then
+            echo "reusing draft $ID, moving it to $GITHUB_SHA"
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$ID" \
+              -f target_commitish="$GITHUB_SHA" > /dev/null
+          else
             # prerelease default: 0.x must not become "latest" by a publish
             # click alone (the updater endpoint serves releases/latest).
             ID=$(gh api -X POST "repos/$GITHUB_REPOSITORY/releases" \
               -f tag_name="$TAG" \
+              -f target_commitish="$GITHUB_SHA" \
               -f name="ZPLab $TAG" \
               -f body="See the assets to download this version and install." \
               -F draft=true -F prerelease=true --jq .id)
