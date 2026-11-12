@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseStoragePath, formatStoragePath, recallCandidates, sanitizeStorageName, storageKey, storagePathMatcher, storageRefMatchesPath, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
+import { parseStoragePath, formatStoragePath, recallCandidates, recallKeys, sanitizeStorageName, storageKey, storedFormatKey, storagePathMatcher, storageRefMatchesPath, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
 
 describe("storagePath", () => {
   it("parses device:name without extension", () => {
@@ -29,6 +29,17 @@ describe("storagePath", () => {
     expect(recallCandidates({ name: "LOGO" })).toEqual(["R:LOGO.GRF", "E:LOGO.GRF", "B:LOGO.GRF", "A:LOGO.GRF"]);
     expect(recallCandidates({ device: "E", name: "LOGO", ext: "PNG" })).toEqual(["E:LOGO.PNG"]);
     expect(uploadedGraphicPath({ name: "LOGO" })).toBe("R:LOGO.GRF");
+  });
+
+  it("reads a ^DF or ^XF parameter as the printer names the format", () => {
+    expect(storedFormatKey("")).toBe("R:UNKNOWN.ZPL");
+    expect(storedFormatKey("e: ")).toBe("E:UNKNOWN.ZPL");
+    expect(storedFormatKey("R:ABCDEFGHIJKLMNOP")).toBe("R:ABCDEFGHIJKLMNOP.ZPL");
+    expect(storedFormatKey("R:A.GRF")).toBeUndefined();
+    expect(recallKeys("R:")).toEqual(["R:UNKNOWN.ZPL"]);
+    expect(recallKeys("A")).toEqual(["R:A.ZPL", "E:A.ZPL", "B:A.ZPL", "A:A.ZPL"]);
+    expect(recallKeys("R:ABCDEFGHI")).toEqual([]);
+    expect(recallKeys("R:A.GRF")).toEqual([]);
   });
 
   it("returns null for paths with empty stem", () => {

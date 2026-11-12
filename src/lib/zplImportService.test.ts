@@ -1500,6 +1500,29 @@ describe('importZplText - ~DT, ~DU, ~DS, ~DB and ~DE downloads replay from their
   });
 });
 
+describe('stored format names in the parser and the reply walk', () => {
+  const read = (df: string, xf: string) => {
+    const zpl = `^XA^DF${df}^FS^FO10,10^A0N,30,30^FN1^FS^HV1,20,H,E^XZ^XA^XF${xf}^FS^FN1^FDx^FS^XZ`;
+    const { pages } = parseZPL(zpl, 8);
+    return { stored: pages[0]?.storedFormatPath, replayed: pages[1]?.recall !== undefined, held: documentReplies(zpl).held };
+  };
+
+  it('stores and recalls R:UNKNOWN.ZPL where the path names no format', () => {
+    for (const [df, xf] of [['', ''], ['R:', 'R:'], [' ', 'R:UNKNOWN.ZPL'], ['R:UNKNOWN', '']] as const) {
+      expect(read(df, xf)).toEqual({ stored: 'R:UNKNOWN.ZPL', replayed: true, held: true });
+    }
+  });
+
+  it('stores a 12-character name ^DF keeps, but neither the parser nor the reply walk recalls it under ^XF', () => {
+    expect(read('R:ABCDEFGHIJKL.ZPL', 'R:ABCDEFGHIJKL.ZPL')).toEqual({ stored: 'R:ABCDEFGHIJKL.ZPL', replayed: false, held: false });
+  });
+
+  it('recalls a format under a bare name or .ZPL, not under another extension', () => {
+    for (const xf of ['R:A.GRF', 'R:A.XYZ']) expect(read('R:A.ZPL', xf)).toEqual({ stored: 'R:A.ZPL', replayed: false, held: false });
+    expect(read('R:A', 'R:A')).toEqual({ stored: 'R:A.ZPL', replayed: true, held: true });
+  });
+});
+
 describe('importZplText - printer-only commands', () => {
   it('marks ^LF as printer-only', () => {
     expect(importZplText('^XA^LF^XZ', 8).report.findings.map((f) => [f.kind, f.command, f.reason])).toEqual([['browserLimit', '^LF', 'printerOnly']]);

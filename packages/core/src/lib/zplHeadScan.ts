@@ -1,7 +1,7 @@
 import { jmDensityOf, type JmDensity } from "../types/LabelConfig";
 import { applyPrefixRemap, tokenize } from "./zplParser/helpers";
 import { MIN_DF_SPAN, MIN_JM_SPAN, type DfSpan, type FormatHead, type JmSpan } from "./zplOverlay/overlay";
-import { canonicalStoredFormatPath, isStoredFormatPath } from "./storagePath";
+import { storedFormatKey } from "./storagePath";
 
 /** A head's ^DF: the bytes of every one, and the path the first usable one names. */
 export interface StoredFormatHead {
@@ -14,7 +14,8 @@ function storedFormatOf(t: HeadToken): DfSpan | undefined {
   if (t.cmd !== "DF" || !t.isCaret) return undefined;
   const raw = t.rest.trimEnd();
   const span: DfSpan = { start: t.start, end: t.start + MIN_DF_SPAN + raw.length, caret: t.caret };
-  if (isStoredFormatPath(raw)) span.path = canonicalStoredFormatPath(raw);
+  const path = storedFormatKey(raw);
+  if (path !== undefined) span.path = path;
   return span;
 }
 

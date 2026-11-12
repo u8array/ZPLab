@@ -1,7 +1,7 @@
 import { commandSyntax, commandTakesPrefix, isHostCommand } from "../catalog";
 import { CONTROL_BYTES_RE } from "./binaryText";
 import { printQuantityOf } from "./printQuantity";
-import { canonicalStoredFormatPath, isStoredFormatPath, recallKeys, storageKey } from "./storagePath";
+import { recallKeys, storedFormatKey } from "./storagePath";
 import { applyPrefixRemap, fhBytes, fhIndicator, getDecoder, inRange, int, strParam, stripDataLineBreaks, tokenize, type TokenizerChars } from "./zplParser/helpers";
 
 /** A canonical line is a two-letter id behind its prefix, then the parameters. */
@@ -278,7 +278,7 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
   };
   // The visited set ends a recall cycle, so a frame that recalls itself stops there.
   const recall = (path: string, visited: ReadonlySet<string>) => {
-    for (const key of recallKeys(path.trimEnd())) {
+    for (const key of recallKeys(path)) {
       const entries = frames.get(key);
       if (entries === undefined) continue;
       if (visited.has(key)) return;
@@ -336,9 +336,9 @@ export function walkHostCommands(zpl: string, chars: TokenizerChars = { ...PLAIN
     } else if (t.id === "^DF" && open) {
       // The first ^DF opens the frame and the first usable path names it, as the parser keys its template.
       frame ??= [];
-      const raw = t.rest.trimEnd();
-      if (!named && isStoredFormatPath(raw)) {
-        frames.set(storageKey(canonicalStoredFormatPath(raw)), frame);
+      const key = storedFormatKey(t.rest);
+      if (!named && key !== undefined) {
+        frames.set(key, frame);
         named = true;
       }
     } else if (t.id === "^XF" && open) {

@@ -26,7 +26,6 @@ export const MAX_STORED_FORMAT_NAME_LEN = 16;
 const storedFormatPathRe = (maxLen: number) =>
   new RegExp(`^(?:[${STORAGE_DEVICES.join("")}]:)?[A-Z0-9_]{1,${maxLen}}(?:\\.ZPL)?$`, "i");
 export const STORED_FORMAT_PATH_RE = storedFormatPathRe(MAX_STORED_FORMAT_NAME_LEN);
-export const isStoredFormatPath = (raw: string): boolean => STORED_FORMAT_PATH_RE.test(raw);
 /** ^XF recalls a name of 8 chars at most (p.372). */
 const RECALLABLE_FORMAT_PATH_RE = storedFormatPathRe(MAX_STORAGE_NAME_LEN);
 export const isRecallableFormatPath = (path: string): boolean => RECALLABLE_FORMAT_PATH_RE.test(path);
@@ -40,6 +39,18 @@ export function canonicalStoredFormatPath(raw: string): string {
 }
 export const storedFormatPathSchema = (message?: string) =>
   z.string().regex(STORED_FORMAT_PATH_RE, message).transform(canonicalStoredFormatPath);
+
+/** ^DF and ^XF name the format UNKNOWN when the path names none (p.174, p.372). */
+function namedFormatPath(raw: string): string {
+  const path = raw.trim();
+  return /^(?:[^:]*:)?$/.test(path) ? `${path}UNKNOWN` : path;
+}
+
+/** Undefined where ^DF cannot store the path. */
+export function storedFormatKey(raw: string): string | undefined {
+  const path = namedFormatPath(raw);
+  return STORED_FORMAT_PATH_RE.test(path) ? canonicalStoredFormatPath(path) : undefined;
+}
 
 /** Short UUID slice avoids collisions without forcing user-chosen name. */
 export function defaultStorageName(): string {
@@ -105,10 +116,11 @@ export function recallCandidates(p: StoragePath): string[] {
   return devices.map((device) => storageKey(formatStoragePath({ ...p, device }, true)));
 }
 
-/** An ^XF path's keys through recallCandidates, the extension defaulting to .ZPL. */
-export function recallKeys(path: string): string[] {
-  const ref = parseStoragePath(path);
-  return ref ? recallCandidates({ ...ref, ext: ref.ext ?? "ZPL" }) : [];
+/** No keys where ^XF cannot read the path. */
+export function recallKeys(raw: string): string[] {
+  const path = namedFormatPath(raw);
+  const ref = isRecallableFormatPath(path) ? parseStoragePath(path) : null;
+  return ref ? recallCandidates({ ...ref, ext: "ZPL" }) : [];
 }
 
 /** ^ID pattern as a test over `device:name.ext`: `*` is the only wildcard, device defaults to R: and extension to .GRF (spec p.245). */

@@ -1,4 +1,4 @@
-import { isRecallableFormatPath, isStoredFormatPath } from "../../storagePath";
+import { recallKeys, storedFormatKey } from "../../storagePath";
 import { isMuDpi, jmDensityOf } from "../../../types/LabelConfig";
 import { notePartial, deriveUnitScale, type ParserState, payloadSummary } from "../context";
 import type { Handler } from "../types";
@@ -43,12 +43,12 @@ export function createUnitsHandler(s: ParserState, dpmm: number): Record<string,
     },
     // Read by the format-head lookahead; outside a head the model does not take it, and an unusable path stays raw.
     DF(_p, rest) {
-      if (!s.format.inFormatHead || !isStoredFormatPath(rest.trimEnd())) notePartial(s.result, "^DF");
+      if (!s.format.inFormatHead || storedFormatKey(rest) === undefined) notePartial(s.result, "^DF");
     },
     // Only the path is read here. The block's ^XZ replays the template it names.
     XF(_p, rest) {
       const raw = rest.trim();
-      if (!isRecallableFormatPath(raw) || s.result.recallFormatPath !== undefined) {
+      if (recallKeys(raw).length === 0 || s.result.recallFormatPath !== undefined) {
         notePartial(s.result, payloadSummary("^XF", raw));
         return;
       }
