@@ -216,7 +216,7 @@ impl Directory {
   }
 
   fn entry(&self, tag: &[u8; 4]) -> Option<(u64, u64)> {
-    self.0.chunks_exact(16).find_map(|e| {
+    self.0.as_chunks::<16>().0.iter().find_map(|e| {
       if &e[..4] != tag {
         return None;
       }
@@ -263,8 +263,10 @@ fn name_string(name: &[u8], id: u16) -> Option<String> {
     match (platform, encoding) {
       (3, 1) | (3, 10) | (0, _) => {
         let units: Vec<u16> = data
-          .chunks_exact(2)
-          .map(|c| u16::from_be_bytes([c[0], c[1]]))
+          .as_chunks::<2>()
+          .0
+          .iter()
+          .map(|c| u16::from_be_bytes(*c))
           .collect();
         return Some(String::from_utf16_lossy(&units));
       }
