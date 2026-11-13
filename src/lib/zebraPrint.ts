@@ -37,7 +37,8 @@ export async function sendViaBrowserPrint(
 ): Promise<void> {
   const res = await bpFetch("/write", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    // Without the charset the agent misreads the payload and mangles non-ASCII characters.
+    headers: { "Content-Type": "application/json; charset=utf-8" },
     body: JSON.stringify({ device, data: zpl }),
   });
   if (!res.ok) throw new Error(`Agent write failed: ${res.status}`);

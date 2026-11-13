@@ -109,6 +109,14 @@ describe("sendViaBrowserPrint", () => {
     expect(body.data).toBe("^XA^XZ");
   });
 
+  it("sends the body with a UTF-8 charset header", async () => {
+    const fetch = mockFetch({});
+    vi.stubGlobal("fetch", fetch);
+    await sendViaBrowserPrint(DEVICE, "^XA^FDtörött^FS^XZ");
+    const [, init] = fetch.mock.calls[0] as [string, RequestInit];
+    expect(new Headers(init.headers).get("Content-Type")).toBe("application/json; charset=utf-8");
+  });
+
   it("throws when agent returns non-ok status", async () => {
     vi.stubGlobal("fetch", mockFetch(null, false));
     await expect(sendViaBrowserPrint(DEVICE, "^XA^XZ")).rejects.toThrow(
