@@ -35,7 +35,7 @@ export function useSessionExit(
         e.preventDefault();
         e.stopPropagation();
         // Cancelling pointerdown does not suppress the gesture's click, which fires
-        // after pointerup, so onClick targets like the pager would still fire under the held session.
+        // after pointerup, so onClick targets like the grid toggle would still fire under the held session.
         const swallowClick = (ce: Event) => {
           ce.preventDefault();
           ce.stopPropagation();

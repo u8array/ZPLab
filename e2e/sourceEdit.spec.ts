@@ -25,6 +25,15 @@ const retype = async (page: Page, output: ReturnType<Page['locator']>, zpl: stri
   await page.keyboard.type(zpl);
 };
 
+const editTwoPages = async (page: Page) => {
+  const output = await importSample(page);
+  await page.getByRole('button', { name: 'File', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Add page' }).click();
+  await expect(page.getByText('2 / 2')).toBeVisible();
+  await retype(page, output, '^XA^FO10,10^A0N,30,30^FDp1^FS^XZ\n^XA^FO10,10^A0N,30,30^FDp2^FS^XZ');
+  return output;
+};
+
 test('a blank document accepts ZPL typed straight into the pane', async ({ page }) => {
   await page.goto('/');
   const output = await openOutput(page);
@@ -51,20 +60,32 @@ test('a clean edit applies on the outside click that leaves the panel', async ({
 
 test('a multi-page edit applied by an outside click stays on the current page', async ({ page }) => {
   await page.goto('/');
-  const output = await importSample(page);
-  await page.getByRole('button', { name: 'File', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Add page' }).click();
-  await expect(page.getByText('2 / 2')).toBeVisible();
-
-  await retype(
-    page,
-    output,
-    '^XA^FO10,10^A0N,30,30^FDp1^FS^XZ\n^XA^FO10,10^A0N,30,30^FDp2^FS^XZ',
-  );
+  await editTwoPages(page);
   await page.locator('main').click({ position: { x: 20, y: 20 } });
   await expect(page.getByRole('button', { name: 'Apply' })).toBeHidden();
   // The implicit apply must not yank the user back to page 1.
   await expect(page.getByText('2 / 2')).toBeVisible();
+});
+
+test('a press on the page navigation leaves the focus in the editor', async ({ page }) => {
+  await page.goto('/');
+  const output = await editTwoPages(page);
+  await page.getByRole('button', { name: 'Previous page (Page Up)' }).click();
+  await expect(page.getByText('1 / 2')).toBeVisible();
+  await page.getByText('1 / 2').click();
+  await expect(output).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Apply' })).toBeVisible();
+});
+
+test('paging by keyboard to the first page keeps the session open', async ({ page }) => {
+  await page.goto('/');
+  await editTwoPages(page);
+  const prev = page.getByRole('button', { name: 'Previous page (Page Up)' });
+  await prev.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('1 / 2')).toBeVisible();
+  await expect(prev).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Apply' })).toBeVisible();
 });
 
 test('an unbalanced draft shows a positioned lint error while typing', async ({ page }) => {

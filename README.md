@@ -136,7 +136,7 @@ The **Fonts** tab uploads TrueType fonts and assigns their `^CW` alias. On the d
 
 ### Pages
 
-**File → Add page** creates another page. The page controls below the canvas switch and remove pages. All pages share one size. Export and import treat each page as a separate label.
+**File → Add page** creates another page. The page controls in the header of the ZPL panel switch and remove pages. All pages share one size. Export and import treat each page as a separate label.
 
 ### Batch printing
 
