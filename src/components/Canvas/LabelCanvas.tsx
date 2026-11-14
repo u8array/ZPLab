@@ -61,7 +61,6 @@ import { useCanvasLasso } from "./hooks/useCanvasLasso";
 import { useKonvaTransformer, MULTI_RESIZE_PROXY_ID } from "./hooks/useKonvaTransformer";
 import { useKonvaDragController } from "./hooks/useKonvaDragController";
 import { useSnapBypassRef } from "./hooks/useSnapBypassRef";
-import { PaginationControl } from "./PaginationControl";
 import { Tooltip } from "../ui/Tooltip";
 import {
   axisReversal,
@@ -1363,8 +1362,6 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         </div>
       )}
 
-      <PaginationControl />
-
       <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-1">
         {label.printOrientation === "I" && (
           <div className="bg-surface border border-border rounded px-2 py-0.5 text-[10px] font-mono text-muted">
@@ -1383,69 +1380,74 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       </div>
 
       {/* Bottom-right controls: view options + zoom */}
-      <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1 bg-surface border border-border rounded px-1 py-0.5">
-        <Tooltip content={`${t.app.toggleGrid} (G)`}>
-          <button
-            onClick={onGridToggle}
-            className={`px-2 h-6 rounded text-xs font-mono transition-colors ${showGrid ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`}
-          >
-            {t.app.toggleGrid}
-          </button>
-        </Tooltip>
-        <Tooltip content={`${t.app.toggleSnap} (S)`}>
-          <button
-            onClick={onSnapToggle}
-            className={`px-2 h-6 rounded text-xs font-mono transition-colors ${snapEnabled ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`}
-          >
-            {t.app.toggleSnap}
-          </button>
-        </Tooltip>
-        <div className="w-28">
-          <Select<number>
-            value={snapSizeMm}
-            onChange={(value) => onSnapSizeChange(value)}
-            disabled={!snapEnabled}
-            groups={[
-              {
-                options: SNAP_OPTIONS[unit].map((o) => ({ value: o.mm, label: o.label })),
-              },
-            ]}
-          />
+      <div className="absolute bottom-3 right-3 z-10 max-w-[calc(100%-1.5rem)] flex flex-wrap items-center justify-end gap-1 bg-surface border border-border rounded px-1 py-0.5">
+        <div className="max-w-full flex flex-wrap items-center justify-end gap-1">
+          <Tooltip content={`${t.app.toggleGrid} (G)`} className="max-w-full">
+            <button
+              onClick={onGridToggle}
+              aria-pressed={showGrid}
+              className={`truncate px-2 h-6 rounded text-xs font-mono transition-colors ${showGrid ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`}
+            >
+              {t.app.toggleGrid}
+            </button>
+          </Tooltip>
+          <Tooltip content={`${t.app.toggleSnap} (S)`} className="max-w-full">
+            <button
+              onClick={onSnapToggle}
+              aria-pressed={snapEnabled}
+              className={`truncate px-2 h-6 rounded text-xs font-mono transition-colors ${snapEnabled ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`}
+            >
+              {t.app.toggleSnap}
+            </button>
+          </Tooltip>
+          <div className="w-22">
+            <Select<number>
+              value={snapSizeMm}
+              onChange={(value) => onSnapSizeChange(value)}
+              disabled={!snapEnabled}
+              groups={[
+                {
+                  options: SNAP_OPTIONS[unit].map((o) => ({ value: o.mm, label: o.label })),
+                },
+              ]}
+            />
+          </div>
         </div>
-        <div className="w-px h-3.5 bg-border mx-0.5" />
-        <button
-          onClick={zoomOut}
-          className="w-6 h-6 flex items-center justify-center text-muted hover:text-text font-mono text-sm transition-colors"
-        >
-          −
-        </button>
-        <button
-          onClick={zoomFit}
-          className="font-mono text-[10px] text-muted hover:text-accent w-10 text-center transition-colors"
-        >
-          {Math.round(zoom * 100)}%
-        </button>
-        <button
-          onClick={zoomIn}
-          className="w-6 h-6 flex items-center justify-center text-muted hover:text-text font-mono text-sm transition-colors"
-        >
-          +
-        </button>
-        <div className="w-px h-3.5 bg-border mx-0.5" />
-        <Tooltip content={`${t.app.rotateView} (R)`}>
-          {/* Degree readout lives inside the button so the whole chip is one
-              click target, not just the arrow with a separate label beside it. */}
+        <div className="flex flex-wrap items-center justify-end gap-1">
           <button
-            onClick={rotateView}
-            aria-label={t.app.rotateView}
-            className={`h-6 px-1.5 flex items-center justify-center gap-1 text-sm transition-colors ${viewRotation !== 0 ? "text-accent" : "text-muted hover:text-text"}`}
+            onClick={zoomOut}
+            className="w-6 h-6 flex items-center justify-center text-muted hover:text-text font-mono text-sm transition-colors"
           >
-            <span>↻</span>
-            {viewRotation !== 0 && (
-              <span className="font-mono text-[10px]">{viewRotation}°</span>
-            )}
+            −
           </button>
-        </Tooltip>
+          <button
+            onClick={zoomFit}
+            className="font-mono text-[10px] text-muted hover:text-accent w-10 text-center transition-colors"
+          >
+            {Math.round(zoom * 100)}%
+          </button>
+          <button
+            onClick={zoomIn}
+            className="w-6 h-6 flex items-center justify-center text-muted hover:text-text font-mono text-sm transition-colors"
+          >
+            +
+          </button>
+          <div className="w-px h-3.5 bg-border mx-0.5" />
+          <Tooltip content={`${t.app.rotateView} (R)`}>
+            {/* Degree readout lives inside the button so the whole chip is one
+                click target, not just the arrow with a separate label beside it. */}
+            <button
+              onClick={rotateView}
+              aria-label={t.app.rotateView}
+              className={`h-6 px-1.5 flex items-center justify-center gap-1 text-sm transition-colors ${viewRotation !== 0 ? "text-accent" : "text-muted hover:text-text"}`}
+            >
+              <span>↻</span>
+              {viewRotation !== 0 && (
+                <span className="font-mono text-[10px]">{viewRotation}°</span>
+              )}
+            </button>
+          </Tooltip>
+        </div>
       </div>
       {containerSize.width > 0 && (
         <Stage

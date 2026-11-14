@@ -10,6 +10,7 @@ import { ZplSourceEditor } from './ZplSourceEditor';
 import { Tooltip } from '../ui/Tooltip';
 import { isDesktopShell } from '../../lib/platform';
 import { PrinterChip } from './PrinterChip';
+import { PaginationControl } from './PaginationControl';
 import { sectionHeadingCls } from '../ui/formStyles';
 
 interface Props {
@@ -62,7 +63,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
         />
       )}
       <div className="flex flex-col flex-1 min-h-0">
-        <div className="flex items-center justify-between px-3 py-1.5 border-b border-border shrink-0">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-3 py-1.5 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             {onCollapseToggle && (
               <Tooltip content={collapseLabel}>
@@ -77,7 +78,8 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
             )}
             <span className={sectionHeadingCls}>{t.output.zplHeading}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <PaginationControl />
+          <div className="col-start-3 justify-self-end flex items-center gap-3">
             {isDesktopShell && <PrinterChip />}
             {previewAvailable && (
               <Tooltip content={t.output.previewHeading}>
