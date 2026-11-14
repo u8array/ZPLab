@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen, selectRenderPages } from "../store/labelStore";
+import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen, selectRenderPages, selectRenderPageIndex } from "../store/labelStore";
 import { nextRotation } from "../components/Canvas/rotationGeometry";
 import { isEditableTarget } from "../lib/dom";
 
@@ -28,15 +28,15 @@ export function useGlobalShortcuts() {
       // setCurrentPage guard decides (blocked by a preview, open in a session).
       if (e.code === "PageUp") {
         e.preventDefault();
-        const { currentPageIndex } = useLabelStore.getState();
-        if (currentPageIndex > 0) setCurrentPage(currentPageIndex - 1);
+        const index = selectRenderPageIndex(useLabelStore.getState());
+        if (index > 0) setCurrentPage(index - 1);
         return;
       }
       if (e.code === "PageDown") {
         e.preventDefault();
-        const { currentPageIndex } = useLabelStore.getState();
-        if (currentPageIndex < selectRenderPages(useLabelStore.getState()).length - 1)
-          setCurrentPage(currentPageIndex + 1);
+        const state = useLabelStore.getState();
+        const index = selectRenderPageIndex(state);
+        if (index < selectRenderPages(state).length - 1) setCurrentPage(index + 1);
         return;
       }
 
