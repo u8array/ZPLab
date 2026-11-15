@@ -60,9 +60,30 @@ describe("ZPLOutput page navigation", () => {
     expect(r.queryByRole("alertdialog")).toBeNull();
   });
 
-  it("offers no page navigation for a single page", () => {
+  it("locks the step buttons and the delete button on a single page", () => {
     setPages(1);
     const r = render(<ZPLOutput collapsed onResizeMouseDown={() => undefined} />);
-    expect(r.queryByRole("button", { name: en.app.nextPage })).toBeNull();
+    for (const name of [en.app.prevPage, en.app.nextPage, en.app.deletePage]) {
+      expect(r.getByRole("button", { name }).getAttribute("aria-disabled")).toBe("true");
+    }
+    fireEvent.click(r.getByRole("button", { name: en.app.deletePage }));
+    expect(r.queryByRole("alertdialog")).toBeNull();
+  });
+
+  it("adds a page and turns to the new one", () => {
+    setPages(1);
+    const r = render(<ZPLOutput collapsed onResizeMouseDown={() => undefined} />);
+    fireEvent.click(r.getByRole("button", { name: en.app.addPage }));
+    expect(useLabelStore.getState().pages).toHaveLength(2);
+    expect(useLabelStore.getState().currentPageIndex).toBe(1);
+  });
+
+  it("locks the add button during source editing", () => {
+    const r = render(<ZPLOutput collapsed onResizeMouseDown={() => undefined} />);
+    act(() => useLabelStore.getState().enterSourceEdit("^XA^XZ"));
+    const add = r.getByRole("button", { name: en.app.addPage });
+    expect(add.getAttribute("aria-disabled")).toBe("true");
+    fireEvent.click(add);
+    expect(useLabelStore.getState().pages).toHaveLength(2);
   });
 });
