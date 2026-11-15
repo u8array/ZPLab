@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TrashIcon } from "@heroicons/react/16/solid";
+import { PlusIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { useLabelStore, selectEditorFrozen, selectPreviewLocksEditor, selectRenderPages, selectRenderPageIndex, selectSourceEditing } from "../../store/labelStore";
 import { useT } from "../../hooks/useT";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
@@ -15,18 +15,16 @@ export function PaginationControl() {
   const pageCount = useLabelStore((s) => selectRenderPages(s).length);
   const currentPageIndex = useLabelStore(selectRenderPageIndex);
   const setCurrentPage = useLabelStore((s) => s.setCurrentPage);
+  const addPage = useLabelStore((s) => s.addPage);
   const removePage = useLabelStore((s) => s.removePage);
   const editorFrozen = useLabelStore(selectEditorFrozen);
   const previewLocked = useLabelStore(selectPreviewLocksEditor);
   const sourceEditing = useLabelStore(selectSourceEditing);
 
-  // Hide entirely on single-page documents; adding pages lives in the File menu.
-  if (pageCount <= 1) return null;
-
-  // Paging is view-only (see setCurrentPage); deleting mutates the model
-  // and stays frozen.
+  // Paging only changes the view. Adding and deleting change the model, so they stay frozen.
   const canPrev = !previewLocked && currentPageIndex > 0;
   const canNext = !previewLocked && currentPageIndex < pageCount - 1;
+  const canDelete = !editorFrozen && pageCount > 1;
 
   const indicator = t.app.pageIndicatorFmt
     .replace("{current}", String(currentPageIndex + 1))
@@ -66,10 +64,20 @@ export function PaginationControl() {
         </button>
       </Tooltip>
       <div className="w-px h-3.5 bg-border mx-0.5" />
+      <Tooltip content={t.app.addPage}>
+        <button
+          onClick={addPage}
+          aria-disabled={editorFrozen}
+          aria-label={t.app.addPage}
+          className={`${btnCls} hover:text-text`}
+        >
+          <PlusIcon className="w-3.5 h-3.5" />
+        </button>
+      </Tooltip>
       <Tooltip content={t.app.deletePage}>
         <button
-          onClick={() => !editorFrozen && setConfirmOpen(true)}
-          aria-disabled={editorFrozen}
+          onClick={() => canDelete && setConfirmOpen(true)}
+          aria-disabled={!canDelete}
           aria-label={t.app.deletePage}
           className={`${btnCls} hover:text-red-400`}
         >
