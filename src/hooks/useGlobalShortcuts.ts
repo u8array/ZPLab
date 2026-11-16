@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen, selectRenderPages, selectRenderPageIndex } from "../store/labelStore";
 import { nextRotation } from "../components/Canvas/rotationGeometry";
 import { isEditableTarget } from "../lib/dom";
+import { shortcutLetter } from "../lib/kbd";
 
 export function useGlobalShortcuts() {
   const duplicateSelectedObjects = useLabelStore((s) => s.duplicateSelectedObjects);
@@ -45,39 +46,41 @@ export function useGlobalShortcuts() {
       // which would visibly drift away from the frozen snapshot.
       if (selectEditorFrozen(useLabelStore.getState())) return;
 
-      if (mod && e.code === "KeyZ") {
+      const letter = shortcutLetter(e);
+
+      if (mod && letter === "z") {
         e.preventDefault();
         if (e.shiftKey) redo();
         else undo();
         return;
       }
-      if (mod && !e.altKey && !e.shiftKey && e.code === "KeyY") {
+      if (mod && !e.altKey && !e.shiftKey && letter === "y") {
         e.preventDefault();
         redo();
         return;
       }
-      if (mod && e.code === "KeyA") {
+      if (mod && letter === "a") {
         e.preventDefault();
         selectObjects(getCurrentObjects().map((o) => o.id));
         return;
       }
-      if (mod && e.code === "KeyD") {
+      if (mod && letter === "d") {
         e.preventDefault();
         duplicateSelectedObjects();
         return;
       }
-      if (mod && e.code === "KeyC") {
+      if (mod && letter === "c") {
         if (window.getSelection()?.toString()) return;
         e.preventDefault();
         copySelectedObjects();
         return;
       }
-      if (mod && e.code === "KeyV") {
+      if (mod && letter === "v") {
         e.preventDefault();
         pasteObjects();
         return;
       }
-      if (mod && e.code === "KeyL") {
+      if (mod && letter === "l") {
         // Ctrl+L locks the current selection, Ctrl+Shift+L unlocks. No-op
         // for an empty selection so the browser's default address-bar
         // focus binding stays intact when nothing is selected.
@@ -87,7 +90,7 @@ export function useGlobalShortcuts() {
         setSelectionLocked(!e.shiftKey);
         return;
       }
-      if (mod && e.code === "KeyG") {
+      if (mod && letter === "g") {
         // Ctrl+G groups the current selection, Ctrl+Shift+G ungroups.
         // Listed before the bare-G grid toggle so the modifier wins.
         e.preventDefault();
@@ -95,15 +98,15 @@ export function useGlobalShortcuts() {
         else groupSelection();
         return;
       }
-      if (e.code === "KeyG" && !mod) {
+      if (letter === "g" && !mod) {
         e.preventDefault();
         setCanvasSettings({ showGrid: !useLabelStore.getState().canvasSettings.showGrid });
       }
-      if (e.code === "KeyS" && !mod) {
+      if (letter === "s" && !mod) {
         e.preventDefault();
         setCanvasSettings({ snapEnabled: !useLabelStore.getState().canvasSettings.snapEnabled });
       }
-      if (e.code === "KeyR" && !mod) {
+      if (letter === "r" && !mod) {
         e.preventDefault();
         const current = useLabelStore.getState().canvasSettings.viewRotation;
         setCanvasSettings({ viewRotation: nextRotation(current) });

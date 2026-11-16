@@ -95,3 +95,54 @@ describe("useGlobalShortcuts paging", () => {
     expect(useLabelStore.getState().currentPageIndex).toBe(0);
   });
 });
+
+describe("useGlobalShortcuts keyboard layouts", () => {
+  const initial = useLabelStore.getState();
+  const undone = () => useLabelStore.getState().label.widthMm === initial.label.widthMm;
+
+  beforeEach(() => {
+    useLabelStore.temporal.getState().clear();
+    useLabelStore.setState({ label: { ...initial.label, widthMm: initial.label.widthMm + 1 } });
+  });
+
+  afterEach(() => {
+    useLabelStore.setState({ label: initial.label });
+    useLabelStore.temporal.getState().clear();
+  });
+
+  // QWERTZ swaps Y and Z, so the printed Z sits at the position KeyY.
+  it("Ctrl+Z undoes on QWERTZ", () => {
+    renderHook(() => useGlobalShortcuts());
+    key("KeyY", { key: "z", ctrlKey: true });
+    expect(undone()).toBe(true);
+  });
+
+  it("Ctrl+Y redoes on QWERTZ", () => {
+    renderHook(() => useGlobalShortcuts());
+    useLabelStore.temporal.getState().undo();
+    key("KeyZ", { key: "y", ctrlKey: true });
+    expect(undone()).toBe(false);
+  });
+
+  it("Ctrl+Shift+Z redoes on QWERTZ", () => {
+    renderHook(() => useGlobalShortcuts());
+    useLabelStore.temporal.getState().undo();
+    key("KeyY", { key: "Z", ctrlKey: true, shiftKey: true });
+    expect(undone()).toBe(false);
+  });
+
+  it("Ctrl+Z undoes by position on a layout without Latin letters", () => {
+    renderHook(() => useGlobalShortcuts());
+    key("KeyZ", { key: "я", ctrlKey: true });
+    expect(undone()).toBe(true);
+  });
+
+  it("the printed G toggles the grid from another position", () => {
+    renderHook(() => useGlobalShortcuts());
+    const before = useLabelStore.getState().canvasSettings.showGrid;
+    key("KeyI", { key: "g" });
+    expect(useLabelStore.getState().canvasSettings.showGrid).toBe(!before);
+    key("KeyI", { key: "G", shiftKey: true });
+    expect(useLabelStore.getState().canvasSettings.showGrid).toBe(before);
+  });
+});
