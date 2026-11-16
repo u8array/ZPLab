@@ -2,6 +2,13 @@ import { useEffect } from "react";
 import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen, selectRenderPages, selectRenderPageIndex } from "../store/labelStore";
 import { nextRotation } from "../components/Canvas/rotationGeometry";
 import { isEditableTarget } from "../lib/dom";
+import { findObjectById, hasLockedAncestor, isGroup } from "@zplab/core/types/Group";
+import { objectResolvesCtrl, specForObject } from "@zplab/core/registry";
+import { contentSanitiser } from "@zplab/core/registry/contentSpec";
+import { serialSeed } from "@zplab/core/registry/serialField";
+import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
+import { resolvedContentLength } from "@zplab/core/lib/fnTemplate";
+import { findAtomicMarker } from "../lib/markerTokens";
 
 export function useGlobalShortcuts() {
   const duplicateSelectedObjects = useLabelStore((s) => s.duplicateSelectedObjects);
@@ -16,6 +23,35 @@ export function useGlobalShortcuts() {
   const { undo, redo } = useHistory();
 
   useEffect(() => {
+    const onType = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (isEditableTarget(e.target as HTMLElement)) return;
+      if (document.querySelector('[aria-modal="true"]')) return;
+      const backspace = e.key === "Backspace";
+      if (!backspace && [...e.key].length !== 1) return;
+      // Space still activates a focused control through its native keyboard behavior.
+      if (e.key === " " && e.target instanceof Element && e.target.closest('button, a, [role="button"], [role="checkbox"]')) return;
+      const state = useLabelStore.getState();
+      if (selectEditorFrozen(state) || state.selectedIds.length !== 1) return;
+      const objects = getCurrentObjects();
+      const obj = findObjectById(objects, state.selectedIds[0] ?? "");
+      if (!obj || isGroup(obj) || obj.locked || hasLockedAncestor(objects, obj.id)) return;
+      const content = getObjectStringContent(obj);
+      if (content === undefined) return;
+      // Capture before canvas shortcuts: G/S/R and Space become content, and
+      // Backspace edits the content instead of deleting the selected object.
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      // ponytail: append-only canvas typing; use the content editor for caret/IME editing.
+      const last = [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(content)].at(-1);
+      const end = findAtomicMarker(content, content.length, "backspace")?.start ?? last?.index ?? 0;
+      let next = backspace ? content.slice(0, end) : content + e.key;
+      const spec = specForObject(obj);
+      next = "serial" in obj.props && obj.props.serial ? serialSeed(next, spec) : spec ? contentSanitiser(spec)(next) : next;
+      if (spec?.maxLength !== undefined &&
+        resolvedContentLength(next, state.variables, objectResolvesCtrl(obj)) > Math.max(spec.maxLength, resolvedContentLength(content, state.variables, objectResolvesCtrl(obj)))) return;
+      if (next !== content) state.updateObject(obj.id, { props: { content: next } });
+    };
     const onKeyDown = (e: KeyboardEvent) => {
       const mod = e.metaKey || e.ctrlKey;
 
@@ -104,7 +140,11 @@ export function useGlobalShortcuts() {
         setCanvasSettings({ viewRotation: nextRotation(current) });
       }
     };
+    window.addEventListener("keydown", onType, true);
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onType, true);
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [undo, redo, duplicateSelectedObjects, copySelectedObjects, pasteObjects, selectObjects, setCanvasSettings, setCurrentPage, setSelectionLocked, groupSelection, ungroup]);
 }
