@@ -167,6 +167,7 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 | Shortcut | Action |
 |---|---|
 | `Ctrl/⌘+Z` / `Ctrl/⌘+Shift+Z` | Undo / Redo |
+| `Ctrl/⌘+Y` | Redo (alternative) |
 | `Ctrl/⌘+A` | Select all |
 | `Ctrl/⌘+C` / `Ctrl/⌘+V` | Copy / Paste |
 | `Ctrl/⌘+D` | Duplicate selection |

@@ -51,6 +51,11 @@ export function useGlobalShortcuts() {
         else undo();
         return;
       }
+      if (mod && !e.altKey && !e.shiftKey && e.code === "KeyY") {
+        e.preventDefault();
+        redo();
+        return;
+      }
       if (mod && e.code === "KeyA") {
         e.preventDefault();
         selectObjects(getCurrentObjects().map((o) => o.id));

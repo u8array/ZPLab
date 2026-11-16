@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { renderHook, cleanup } from "@testing-library/react";
+import { renderHook, cleanup, fireEvent } from "@testing-library/react";
 import { useGlobalShortcuts } from "./useGlobalShortcuts";
 import { useLabelStore } from "../store/labelStore";
 import type { Page } from "@zplab/core/types/Group";
@@ -10,6 +10,31 @@ afterEach(cleanup);
 function key(code: string, init: KeyboardEventInit = {}) {
   window.dispatchEvent(new KeyboardEvent("keydown", { code, ...init }));
 }
+
+describe("useGlobalShortcuts history", () => {
+  const initial = useLabelStore.getState();
+  const editedLabel = { ...initial.label, widthMm: initial.label.widthMm + 1 };
+
+  beforeEach(() => {
+    useLabelStore.setState({ ...initial, sourceEdit: { status: "off" }, previewMode: { status: "idle" } });
+    useLabelStore.temporal.getState().clear();
+    useLabelStore.setState({ label: editedLabel });
+    useLabelStore.temporal.getState().undo();
+  });
+
+  afterEach(() => {
+    useLabelStore.setState(initial);
+    useLabelStore.temporal.getState().clear();
+  });
+
+  it.each([{ ctrlKey: true }, { metaKey: true }])("Y redoes one design edit and prevents the browser default with %j", (modifier) => {
+    renderHook(() => useGlobalShortcuts());
+    expect(fireEvent.keyDown(document.body, { code: "KeyY", ...modifier })).toBe(false);
+    expect(useLabelStore.getState().label).toEqual(editedLabel);
+    expect(useLabelStore.temporal.getState().futureStates).toHaveLength(0);
+    expect(useLabelStore.temporal.getState().pastStates).toHaveLength(1);
+  });
+});
 
 // Regression: bare S/R toggle snap / rotate the view, but with a modifier they
 // must stay inert (Ctrl+S / Ctrl+R belong to the browser, like the G guard).
