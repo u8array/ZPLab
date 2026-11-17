@@ -301,7 +301,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/lint 6.9.7
+### @codemirror/lint 6.9.8
 
 - License: MIT
 - Author: Marijn Haverbeke
@@ -2826,7 +2826,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 ```
 
-### @tauri-apps/plugin-opener 2.7.2
+### @tauri-apps/plugin-opener 2.7.3
 
 - License: MIT OR Apache-2.0
 - Homepage: https://github.com/tauri-apps/plugins-workspace#readme
@@ -3195,7 +3195,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### papaparse 5.7.0
+### papaparse 5.7.1
 
 - License: MIT
 - Author: Matthew Holt
@@ -3845,7 +3845,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### tslib 2.8.1
+### tslib 2.8.1, 2.9.1
 
 - License: 0BSD
 - Author: Microsoft Corp.
