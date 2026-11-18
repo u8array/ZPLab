@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (444)
+- MIT License (443)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -1313,7 +1313,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [sqlx 0.9.0](https://github.com/launchbadge/sqlx)
+- [sqlx-core 0.9.1](https://github.com/launchbadge/sqlx)
+- [sqlx-mysql 0.9.1](https://github.com/launchbadge/sqlx)
+- [sqlx-postgres 0.9.1](https://github.com/launchbadge/sqlx)
+- [sqlx-sqlite 0.9.1](https://github.com/launchbadge/sqlx)
+- [sqlx 0.9.1](https://github.com/launchbadge/sqlx)
 ````
 Copyright (C) SQLx Contributors
 Portions of this work Copyright (C) LaunchBadge, LLC
@@ -1795,6 +1799,34 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
+- [libsqlite3-sys 0.40.0](https://github.com/rusqlite/rusqlite)
+````
+Copyright (c) 2014 The rusqlite developers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+````
+
+### MIT License
+
+Used by:
+
 - [dbus 0.9.12](https://github.com/diwic/dbus-rs)
 - [libdbus-sys 0.2.7](https://github.com/diwic/dbus-rs)
 ````
@@ -1817,34 +1849,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-````
-
-### MIT License
-
-Used by:
-
-- [libsqlite3-sys 0.30.1](https://github.com/rusqlite/rusqlite)
-````
-Copyright (c) 2014-2021 The rusqlite developers
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
 ````
 
 ### MIT License
@@ -5895,7 +5899,6 @@ Used by:
 - [block2 0.6.2](https://github.com/madsmtm/objc2)
 - [brotli-decompressor 6.0.1](https://github.com/dropbox/rust-brotli-decompressor)
 - [cargo_toml 1.0.1](https://gitlab.com/lib.rs/cargo_toml)
-- [chrono 0.4.45](https://github.com/chronotope/chrono)
 - [dispatch2 0.3.1](https://github.com/madsmtm/objc2)
 - [dlopen2 0.8.2](https://github.com/OpenByteDev/dlopen2)
 - [dlopen2_derive 0.4.3](https://github.com/OpenByteDev/dlopen2)
@@ -5909,13 +5912,10 @@ Used by:
 - [objc2-foundation 0.3.2](https://github.com/madsmtm/objc2)
 - [objc2-osa-kit 0.3.2](https://github.com/madsmtm/objc2)
 - [objc2-quartz-core 0.3.2](https://github.com/madsmtm/objc2)
+- [objc2-system-configuration 0.3.2](https://github.com/madsmtm/objc2)
 - [objc2-web-kit 0.3.2](https://github.com/madsmtm/objc2)
 - [objc2 0.6.4](https://github.com/madsmtm/objc2)
 - [siphasher 1.0.3](https://github.com/jedisct1/rust-siphash)
-- [sqlx-core 0.9.0](https://github.com/launchbadge/sqlx)
-- [sqlx-mysql 0.9.0](https://github.com/launchbadge/sqlx)
-- [sqlx-postgres 0.9.0](https://github.com/launchbadge/sqlx)
-- [sqlx-sqlite 0.9.0](https://github.com/launchbadge/sqlx)
 - [tauri-plugin-dialog 2.8.4](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-fs 2.7.1](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-opener 2.7.2](https://github.com/tauri-apps/plugins-workspace)
@@ -5937,7 +5937,6 @@ Used by:
 - [windows-registry 0.6.1](https://github.com/microsoft/windows-rs)
 - [windows-result 0.4.1](https://github.com/microsoft/windows-rs)
 - [windows-strings 0.5.1](https://github.com/microsoft/windows-rs)
-- [windows-sys 0.52.0](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.59.0](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.60.2](https://github.com/microsoft/windows-rs)
 - [windows-sys 0.61.2](https://github.com/microsoft/windows-rs)

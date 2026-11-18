@@ -161,18 +161,20 @@ enum DbConn {
   Mysql(MySqlConnection),
 }
 
-/// Identifier-quoting and text-cast flavour. MySQL differs; the rest are ANSI.
+/// Identifier-quoting and text-cast flavour.
 #[derive(Clone, Copy)]
 enum Dialect {
   Ansi,
   MySql,
+  Sqlite,
 }
 
 impl DbConn {
   fn dialect(&self) -> Dialect {
     match self {
       DbConn::Mysql(_) => Dialect::MySql,
-      _ => Dialect::Ansi,
+      DbConn::Sqlite(_) => Dialect::Sqlite,
+      DbConn::Postgres(_) => Dialect::Ansi,
     }
   }
 }
@@ -335,7 +337,7 @@ async fn close(conn: DbConn) {
 fn quote_ident(dialect: Dialect, name: &str) -> String {
   match dialect {
     Dialect::MySql => format!("`{}`", name.replace('`', "``")),
-    Dialect::Ansi => format!("\"{}\"", name.replace('"', "\"\"")),
+    Dialect::Ansi | Dialect::Sqlite => format!("\"{}\"", name.replace('"', "\"\"")),
   }
 }
 
@@ -345,6 +347,10 @@ fn text_cell(dialect: Dialect, quoted_ident: &str) -> String {
   match dialect {
     Dialect::MySql => format!("COALESCE(CAST({quoted_ident} AS CHAR), '')"),
     Dialect::Ansi => format!("COALESCE(CAST({quoted_ident} AS TEXT), '')"),
+    // SQLite casts a REAL with 17 digits, so 0.1 + 0.2 prints as 0.30000000000000004.
+    Dialect::Sqlite => format!(
+      "COALESCE(CASE typeof({quoted_ident}) WHEN 'real' THEN printf('%!.15g', {quoted_ident}) ELSE CAST({quoted_ident} AS TEXT) END, '')"
+    ),
   }
 }
 
@@ -605,6 +611,35 @@ mod tests {
     std::fs::create_dir_all(&dir).unwrap();
     let path = seeded_db(&dir).await;
     connect(&DbSpec::Sqlite { path }).await.unwrap()
+  }
+
+  #[test]
+  fn real_cells_print_fifteen_significant_digits() {
+    rt().block_on(async {
+      let dir = std::env::temp_dir().join("zplab-db-test-real");
+      let _ = std::fs::remove_dir_all(&dir);
+      std::fs::create_dir_all(&dir).unwrap();
+      let path = dir.join("r.sqlite").to_string_lossy().into_owned();
+      let mut c = SqliteConnectOptions::new()
+        .filename(&path)
+        .create_if_missing(true)
+        .connect()
+        .await
+        .unwrap();
+      sqlx::query("CREATE TABLE r (v REAL)")
+        .execute(&mut c)
+        .await
+        .unwrap();
+      sqlx::query("INSERT INTO r VALUES (0.1 + 0.2), (4.35 * 100), (1e16), (NULL)")
+        .execute(&mut c)
+        .await
+        .unwrap();
+      c.close().await.unwrap();
+      let mut conn = connect(&DbSpec::Sqlite { path }).await.unwrap();
+      let got = fetch_table(&mut conn, "r").await.unwrap();
+      let cells: Vec<&str> = got.rows.iter().map(|r| r[0].as_str()).collect();
+      assert_eq!(cells, ["", "0.3", "1.0e+16", "435.0"]);
+    });
   }
 
   #[test]
