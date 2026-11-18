@@ -1,0 +1,3 @@
+disallowed-methods = [
+  { path = "sqlx::postgres::PgConnectOptions::new", reason = "it reads the pgpass file, the keychain is the only password source" },
+]

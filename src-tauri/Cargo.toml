@@ -80,6 +80,11 @@ nusb = { version = "0.2", features = ["tokio"] }
 # on crates.io, so tests build their runtime by hand instead.
 tokio = { version = "1", features = ["rt", "test-util"] }
 
+[[test]]
+name = "pg_env"
+# libtest would run it on a worker thread next to the main thread.
+harness = false
+
 [target.'cfg(any(target_os = "macos", windows, target_os = "linux"))'.dependencies]
 tauri-plugin-window-state = "2"
 tauri-plugin-updater = "2"

@@ -12,10 +12,11 @@ mod transport;
 mod updates;
 mod usb;
 
+pub use db::{clear_inherited_pg_env, PgEnvCleared};
+
 use tauri::Manager;
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+pub fn run(_: PgEnvCleared) {
   let builder = tauri::Builder::default()
     .manage(mcp::McpState::default())
     .manage(system_fonts::SystemFonts::default())
