@@ -156,10 +156,7 @@ pub async fn excel_fetch(
 
 /// Excel's day-zero (the 1900 leap-year bug puts it at 1899-12-30/31); a
 /// serial below 1 lands here and means "time, no date".
-const EXCEL_EPOCH: chrono::NaiveDate = match chrono::NaiveDate::from_ymd_opt(1899, 12, 31) {
-  Some(d) => d,
-  None => unreachable!(),
-};
+const EXCEL_EPOCH: (u16, u8, u8) = (1899, 12, 31);
 
 fn cell_text(cell: &Data) -> String {
   match cell {
@@ -171,14 +168,15 @@ fn cell_text(cell: &Data) -> String {
     Data::Int(i) => i.to_string(),
     Data::Bool(b) => (if *b { "TRUE" } else { "FALSE" }).to_string(),
     Data::Error(e) => e.to_string(),
-    Data::DateTime(dt) => match dt.as_datetime() {
+    // Excel shows no date outside this range. calamine clamps the serial to a border date.
+    Data::DateTime(dt) if !(0.0..2_958_466.0).contains(&dt.as_f64()) => dt.as_f64().to_string(),
+    Data::DateTime(dt) => match dt.to_ymd_hms_milli() {
       // Date-only cells sit at midnight; keep them free of a phantom time.
-      Some(ndt) if ndt.time() == chrono::NaiveTime::MIN => ndt.format("%Y-%m-%d").to_string(),
+      (y, mo, d, 0, 0, 0, 0) => format!("{y:04}-{mo:02}-{d:02}"),
       // A pure time is a sub-1 serial, so calamine dates it at the Excel
       // epoch (1899-12-30/31); drop that phantom date and emit time only.
-      Some(ndt) if ndt.date() <= EXCEL_EPOCH => ndt.format("%H:%M:%S").to_string(),
-      Some(ndt) => ndt.format("%Y-%m-%d %H:%M:%S").to_string(),
-      None => dt.as_f64().to_string(),
+      (y, mo, d, h, mi, s, _) if (y, mo, d) <= EXCEL_EPOCH => format!("{h:02}:{mi:02}:{s:02}"),
+      (y, mo, d, h, mi, s, _) => format!("{y:04}-{mo:02}-{d:02} {h:02}:{mi:02}:{s:02}"),
     },
     Data::DateTimeIso(s) | Data::DurationIso(s) => s.clone(),
   }
@@ -232,16 +230,36 @@ mod tests {
     );
   }
 
+  fn date_cell(serial: f64) -> String {
+    cell_text(&Data::DateTime(calamine::ExcelDateTime::new(
+      serial,
+      calamine::ExcelDateTimeType::DateTime,
+      false,
+    )))
+  }
+
   #[test]
   fn time_only_cell_drops_the_phantom_epoch_date() {
     // Serial 0.395833… = 09:30, no date component.
-    assert_eq!(
-      cell_text(&Data::DateTime(calamine::ExcelDateTime::new(
-        0.395_833_333_333_333_3,
-        calamine::ExcelDateTimeType::DateTime,
-        false,
-      ))),
-      "09:30:00"
-    );
+    assert_eq!(date_cell(0.395_833_333_333_333_3), "09:30:00");
+  }
+
+  #[test]
+  fn date_cells_print_the_date_and_only_a_set_time() {
+    assert_eq!(date_cell(46000.0), "2025-12-09");
+    assert_eq!(date_cell(45943.541), "2025-10-13 12:59:02");
+  }
+
+  #[test]
+  fn day_60_prints_the_1900_leap_day() {
+    assert_eq!(date_cell(60.0), "1900-02-29");
+  }
+
+  #[test]
+  fn serials_outside_the_excel_range_stay_numbers() {
+    assert_eq!(date_cell(-0.5), "-0.5");
+    assert_eq!(date_cell(-1.1e11), "-110000000000");
+    assert_eq!(date_cell(2_958_466.0), "2958466");
+    assert_eq!(date_cell(f64::NAN), "NaN");
   }
 }

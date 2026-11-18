@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (444)
+- MIT License (443)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -5895,7 +5895,6 @@ Used by:
 - [block2 0.6.2](https://github.com/madsmtm/objc2)
 - [brotli-decompressor 6.0.1](https://github.com/dropbox/rust-brotli-decompressor)
 - [cargo_toml 1.0.1](https://gitlab.com/lib.rs/cargo_toml)
-- [chrono 0.4.45](https://github.com/chronotope/chrono)
 - [dispatch2 0.3.1](https://github.com/madsmtm/objc2)
 - [dlopen2 0.8.2](https://github.com/OpenByteDev/dlopen2)
 - [dlopen2_derive 0.4.3](https://github.com/OpenByteDev/dlopen2)
