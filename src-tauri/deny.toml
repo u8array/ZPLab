@@ -1,8 +1,8 @@
 # Fail-closed license gate for the Rust dependency tree shipped in the desktop
 # binaries; mirror of scripts/check-licenses.mjs for npm. Adding an id to
 # `allow` or a crate to `exceptions` is a deliberate review step.
-# RustSec advisories fail the same CI gate; unmaintained crates only warn
-# (no fix available by definition, tracked via dependabot bumps instead).
+# RustSec advisories fail the same CI gate. An unmaintained crate fails it only as a
+# direct dependency, because a transitive one is not ours to replace.
 [advisories]
 unmaintained = "workspace"
 yanked = "deny"
