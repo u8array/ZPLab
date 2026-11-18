@@ -25,7 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     # Dependabot groups per ecosystem, so the branch name says which notice a PR can stale.
     env:
-      CARGO: ${{ startsWith(github.head_ref, 'dependabot/cargo/') }}
+      # Cargo tools read a variable named CARGO as the cargo binary, so this one is not named CARGO.
+      IS_CARGO_PR: ${{ startsWith(github.head_ref, 'dependabot/cargo/') }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -33,22 +34,22 @@ jobs:
           # The head's scripts run below and must not find a write token in .git/config.
           persist-credentials: false
 
-      - if: env.CARGO == 'false'
+      - if: env.IS_CARGO_PR == 'false'
         uses: pnpm/action-setup@v6
-      - if: env.CARGO == 'false'
+      - if: env.IS_CARGO_PR == 'false'
         uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
       # No lifecycle scripts: nothing from the bumped packages may run here.
-      - if: env.CARGO == 'false'
+      - if: env.IS_CARGO_PR == 'false'
         run: pnpm install --frozen-lockfile --ignore-scripts
       - name: npm notice
-        if: env.CARGO == 'false'
+        if: env.IS_CARGO_PR == 'false'
         run: pnpm attribution:gen
 
       - name: rust notice
-        if: env.CARGO == 'true'
+        if: env.IS_CARGO_PR == 'true'
         run: bash scripts/rust-attribution.sh
 
       - name: commit the notice and start the gates on it
@@ -63,4 +64,4 @@ jobs:
           git commit -m "chore(deps): the attribution notice follows the bumped dependencies" -m "[dependabot skip]" -- THIRD-PARTY-LICENSES.md src-tauri/THIRD-PARTY-LICENSES-RUST.md
           git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${HEAD_REF}"
           gh workflow run pr.yml --ref "$HEAD_REF"
-          if [ "$CARGO" = "true" ]; then gh workflow run rust.yml --ref "$HEAD_REF"; fi
+          if [ "$IS_CARGO_PR" = "true" ]; then gh workflow run rust.yml --ref "$HEAD_REF"; fi
