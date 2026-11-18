@@ -127,6 +127,37 @@ impl From<SslMode> for MySqlSslMode {
 const PG_DEFAULT_PORT: u16 = 5432;
 const MYSQL_DEFAULT_PORT: u16 = 3306;
 
+/// Every environment variable sqlx-postgres reads at the version the test below pins.
+const INHERITED_PG_ENV: [&str; 13] = [
+  "PGAPPNAME",
+  "PGDATABASE",
+  "PGHOST",
+  "PGHOSTADDR",
+  "PGOPTIONS",
+  "PGPASSFILE",
+  "PGPASSWORD",
+  "PGPORT",
+  "PGSSLCERT",
+  "PGSSLKEY",
+  "PGSSLMODE",
+  "PGSSLROOTCERT",
+  "PGUSER",
+];
+
+/// Only `clear_inherited_pg_env` creates it, so `run` cannot start without that call.
+pub struct PgEnvCleared(());
+
+/// The profile alone determines the connection target and its parameters.
+///
+/// # Safety
+/// Call before the program starts a thread: removing a variable races with readers.
+pub unsafe fn clear_inherited_pg_env() -> PgEnvCleared {
+  for name in INHERITED_PG_ENV {
+    std::env::remove_var(name);
+  }
+  PgEnvCleared(())
+}
+
 #[derive(Deserialize, Clone)]
 #[serde(tag = "driver", rename_all = "lowercase")]
 pub enum DbSpec {
@@ -284,7 +315,7 @@ async fn connect(spec: &DbSpec) -> Result<DbConn, DbError> {
         ssl_mode,
         ..
       } => {
-        let mut opts = PgConnectOptions::new()
+        let mut opts = PgConnectOptions::new_without_pgpass()
           .host(host)
           .port(port.unwrap_or(PG_DEFAULT_PORT))
           .database(database)
@@ -579,6 +610,22 @@ mod tests {
       .enable_all()
       .build()
       .unwrap()
+  }
+
+  #[test]
+  fn inherited_pg_env_was_audited_for_this_sqlx_postgres() {
+    let lock = include_str!("../Cargo.lock");
+    let locked: Vec<&str> = lock
+      .lines()
+      .zip(lock.lines().skip(1))
+      .filter(|(name, _)| *name == r#"name = "sqlx-postgres""#)
+      .map(|(_, version)| version)
+      .collect();
+    assert_eq!(
+      locked,
+      [r#"version = "0.9.1""#],
+      "compare INHERITED_PG_ENV with every environment read in the new sqlx-postgres, then update this version"
+    );
   }
 
   async fn seeded_db(dir: &std::path::Path) -> String {
