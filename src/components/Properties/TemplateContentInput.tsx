@@ -274,11 +274,12 @@ export const TemplateContentInput = forwardRef<TemplateEditorHandle, Props>(
       }
     }, [value, segments, showZpl, variables, t, resyncNonce, selectedIndex]);
 
-    // External focus request (canvas dblclick): focus + selectAll for rename.
+    // Canvas edit gesture: focus and select the field's current content.
     useEffect(() => {
       if (!editorFocusRequest || editorFocusRequest.id !== objectId) return;
       const editor = editorRef.current;
       if (!editor) return;
+      if (!useLabelStore.getState().consumeContentEditorFocus(editorFocusRequest)) return;
       if (document.activeElement === editor) return;
       editor.focus();
       const range = document.createRange();

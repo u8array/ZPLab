@@ -83,6 +83,7 @@ export interface KonvaObjectProps {
   offsetY: number;
   isSelected: boolean;
   onSelect: (addToSelection: boolean) => void;
+  onOpenEditor?: (id: string) => void;
   onChange: (changes: ObjectChanges) => void;
   snap: (dots: number) => number;
   /** Whole-object drag handlers from useKonvaDragController; renderers spread

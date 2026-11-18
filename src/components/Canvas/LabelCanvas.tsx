@@ -87,6 +87,7 @@ import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { captureLabelBlob, captureRegionBlob, copyPngToClipboard, CAPTURE_CHROME } from "../../lib/canvasImage";
 import { saveLabelImage } from "../../lib/saveLabelImage";
 import { printerPreviewLayout } from "../../lib/printerPreview";
+import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 
 /** Object types offered by the context menu's "Add object here". */
 // Curated quick-add subset for the context menu, not every registry type; the
@@ -154,6 +155,7 @@ interface Props {
   onZoomChange: (zoom: number) => void;
   viewRotation: ViewRotation;
   onViewRotationChange: (rotation: ViewRotation) => void;
+  onOpenProperties?: () => void;
 }
 
 /** Nothing drawn yet is nothing to capture, so the context menu and the output dialog get a click that
@@ -185,6 +187,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   onZoomChange,
   viewRotation,
   onViewRotationChange,
+  onOpenProperties,
 }, ref) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
@@ -353,6 +356,21 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // a locked-only selection gets no dead affordance.
   const hasDeletable = canDeleteSelection(objects, selectedIds);
 
+  const openEditor = useCallback((id: string) => {
+    const state = useLabelStore.getState();
+    if (selectEditorFrozen(state)) return false;
+    const objects = currentObjects(state);
+    const obj = findObjectById(objects, id);
+    if (!obj || obj.locked || hasLockedAncestor(objects, id)) return false;
+    if (obj.type !== "text" && getObjectStringContent(obj) === undefined) return false;
+    // Select the leaf directly so double-click can edit fields inside a group.
+    state.selectObjects([id]);
+    onOpenProperties?.();
+    state.setSidebarTab("properties");
+    state.requestContentEditorFocus(id);
+    return true;
+  }, [onOpenProperties]);
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -380,10 +398,11 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // Delete/Backspace removes all selected objects; ignored when focus is inside an input
+  // Enter opens the selected field; Delete/Backspace removes the selection.
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== "Delete" && e.code !== "Backspace") return;
+      const enter = e.key === "Enter";
+      if (!enter && e.code !== "Delete" && e.code !== "Backspace") return;
       if (isEditableTarget(e.target as HTMLElement)) return;
       // The frozen model must not change under the preview snapshot or an
       // open source buffer.
@@ -391,13 +410,20 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       // Deleting mid-resize would destroy the nodes under the active gesture.
       if (transformActiveRef.current) return;
       const { selectedIds: ids } = useLabelStore.getState();
+      if (enter) {
+        if (e.defaultPrevented || e.isComposing || e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+        if (e.target !== document.body && e.target !== containerRef.current) return;
+        if (dragActiveRef.current || document.querySelector('[aria-modal="true"], [role="menu"], [role="listbox"]')) return;
+        if (ids.length === 1 && ids[0] && openEditor(ids[0])) e.preventDefault();
+        return;
+      }
       if (ids.length === 0) return;
       e.preventDefault();
       useLabelStore.getState().removeSelectedObjects();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [openEditor]);
 
   // arrow keys move the selected object; ignored when focus is inside an input
   useEffect(() => {
@@ -1289,7 +1315,22 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       locked: editorFrozen,
       pointerPos: () => pointerToLabelDots(lastPointerRef.current.x, lastPointerRef.current.y),
       setGhost,
-      addObject,
+      addObject: (type, position, propsOverride) => {
+        const id = addObject(type, position, propsOverride);
+        if (!id || !openEditor(id)) return;
+
+        // ponytail: dnd-kit keeps clearing document selection for 50 ms after
+        // drop. Shield the focused editor's caret until its listener detaches.
+        // Selection changes from the palette search can bubble to it too.
+        // Remove this guard when the pointer sensor cleans up on release.
+        const keepEditorCaret = (event: Event) => {
+          const editor = document.activeElement;
+          if (editor instanceof HTMLElement && editor.isContentEditable &&
+            editor.contains(document.getSelection()?.anchorNode ?? null)) event.stopPropagation();
+        };
+        window.addEventListener("selectionchange", keepEditorCaret, true);
+        window.setTimeout(() => window.removeEventListener("selectionchange", keepEditorCaret, true), 50);
+      },
       viewRotation: () => viewRotation,
       label: () => label,
       measured: () => getMeasuredSnapshot(),
@@ -1309,6 +1350,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   return (
     <div
       ref={mergedRef}
+      role="region"
+      aria-label={t.label.heading}
+      tabIndex={0}
       className="w-full h-full relative"
       style={{
         background: colors.canvasBg,
@@ -1597,6 +1641,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                     offsetX={objectsOffsetX}
                     offsetY={labelOffsetY}
                     isSelected={attachableIds.includes(obj.id)}
+                    onOpenEditor={openEditor}
                     onSelect={(add) => {
                       // Click child -> select outermost group. Locked objects
                       // are selectable so the action bar's unlock is reachable;

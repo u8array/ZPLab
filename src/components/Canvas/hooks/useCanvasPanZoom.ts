@@ -62,7 +62,7 @@ export function useCanvasPanZoom({ zoom, onZoomChange, fitZoom, containerRef }: 
   // space key toggles the grab cursor and enables space+drag panning
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space" && e.target === document.body) {
+      if (e.code === "Space" && (e.target === document.body || e.target === containerRef.current)) {
         e.preventDefault();
         setSpaceDown(true);
       }
@@ -76,7 +76,7 @@ export function useCanvasPanZoom({ zoom, onZoomChange, fitZoom, containerRef }: 
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
     };
-  }, []);
+  }, [containerRef]);
 
   const zoomIn = () => onZoomChange(ZOOM_STEPS.find((s) => s > zoomRef.current) ?? ZOOM_MAX);
   const zoomOut = () => onZoomChange([...ZOOM_STEPS].reverse().find((s) => s < zoomRef.current) ?? ZOOM_MIN);

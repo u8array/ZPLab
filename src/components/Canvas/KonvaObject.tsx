@@ -528,6 +528,7 @@ function KonvaObjectInner({
   offsetY,
   isSelected,
   onSelect,
+  onOpenEditor,
   dragHandlers,
 }: Props) {
   const fontVersion = useFontCacheVersion();
@@ -536,9 +537,6 @@ function KonvaObjectInner({
   // Pass label so metrics resolves uploaded-TTF previews. ZPL emit/parse
   // call without `label` so round-trip stays PrintLab-based.
   const label = useLabelStore(selectRenderDesignLabel);
-  const requestContentEditorFocus = useLabelStore((s) => s.requestContentEditorFocus);
-  const setSidebarTab = useLabelStore((s) => s.setSidebarTab);
-  const selectObjects = useLabelStore((s) => s.selectObjects);
   const blockDragMode = useLabelStore((s) => s.blockDragMode);
   const emptyPlaceholderColor = useBlankFieldWarns(obj.id) ? CANVAS_WARNING : colors.accent;
   // obj.x/y is the EM-bbox top-left; ZPL anchor delta is applied only
@@ -612,14 +610,6 @@ function KonvaObjectInner({
   const handleDragMove = dragHandlers?.onDragMove;
   const handleDragEnd = dragHandlers?.onDragEnd;
 
-  // selectObjects directly so leaf-in-group pierces auto-promotion.
-  const openEditor = () => {
-    if (obj.locked) return;
-    selectObjects([obj.id]);
-    setSidebarTab("properties");
-    requestContentEditorFocus(obj.id);
-  };
-
   if (obj.type === "text" && textMetrics) {
     const p = obj.props;
     const { content, fontFamily, fontScaleX, fontSizePx } = textMetrics;
@@ -670,8 +660,8 @@ function KonvaObjectInner({
         {...selectionHandlers(onSelect)}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
-        onDblClick={openEditor}
-        onDblTap={openEditor}
+        onDblClick={() => onOpenEditor?.(obj.id)}
+        onDblTap={() => onOpenEditor?.(obj.id)}
       >
         <TextFieldContent
           obj={obj as TextFieldObj}

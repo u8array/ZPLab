@@ -40,7 +40,7 @@ export interface ObjectSlice {
     type: string,
     position?: { x: number; y: number },
     propsOverride?: object,
-  ) => void;
+  ) => string | undefined;
   updateObject: (id: string, changes: ObjectChanges) => void;
   updateObjects: (updates: { id: string; changes: ObjectChanges }[]) => void;
   /** Insert a black backing box just behind a reverse text so its ^FR knockout
@@ -126,6 +126,7 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
       selectedIds: [obj.id],
       ...(blank ? { pristineEmptyIds: [...state.pristineEmptyIds, obj.id] } : {}),
     }));
+    return obj.id;
   },
 
   addReverseBackground: (textId) =>

@@ -198,10 +198,8 @@ export interface UiSlice {
   /** Object id whose variable-builder modal is open; null = closed. The single
    *  content editor for bindable fields (variables/clock/serial tokens). */
   variableBuilderObjectId: string | null;
-  /** One-shot focus request scoped to a single object. The nonce
-   *  increments per call so consumers can re-fire even for the same
-   *  id; TemplateContentInput's effect compares its own `objectId`
-   *  prop to `id` so only the requested editor takes focus. Transient. */
+  /** One-shot focus request scoped to a single object. The nonce distinguishes
+   *  repeated requests while one is pending. Transient. */
   editorFocusRequest: { id: string; nonce: number } | null;
 
   setLocale: (locale: LocaleCode) => void;
@@ -273,6 +271,7 @@ export interface UiSlice {
    *  composes `setSidebarTab('properties')` when the request would
    *  otherwise land on an unmounted editor. */
   requestContentEditorFocus: (id: string) => void;
+  consumeContentEditorFocus: (request: NonNullable<UiSlice['editorFocusRequest']>) => boolean;
 }
 
 /** Canvas defaults; shared by initial state and `resetSettings` so the two
@@ -574,4 +573,9 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
         nonce: (state.editorFocusRequest?.nonce ?? 0) + 1,
       },
     })),
+  consumeContentEditorFocus: (request) => {
+    if (get().editorFocusRequest !== request) return false;
+    set({ editorFocusRequest: null });
+    return true;
+  },
 });
