@@ -5918,7 +5918,7 @@ Used by:
 - [siphasher 1.0.3](https://github.com/jedisct1/rust-siphash)
 - [tauri-plugin-dialog 2.8.4](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-fs 2.7.1](https://github.com/tauri-apps/plugins-workspace)
-- [tauri-plugin-opener 2.7.2](https://github.com/tauri-apps/plugins-workspace)
+- [tauri-plugin-opener 2.7.3](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-process 2.4.0](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-updater 2.14.1](https://github.com/tauri-apps/plugins-workspace)
 - [tauri-plugin-window-state 2.5.0](https://github.com/tauri-apps/plugins-workspace)
@@ -6492,7 +6492,7 @@ SOFTWARE.
 
 Used by:
 
-- [zip 9.5.0](https://github.com/zip-rs/zip2)
+- [zip 9.6.0](https://github.com/zip-rs/zip2)
 ````
 The MIT License (MIT)
 
@@ -6649,7 +6649,7 @@ THE SOFTWARE.
 
 Used by:
 
-- [nix 0.31.3](https://github.com/nix-rust/nix)
+- [nix 0.32.0](https://github.com/nix-rust/nix)
 ````
 The MIT License (MIT)
 
