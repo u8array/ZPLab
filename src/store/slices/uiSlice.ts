@@ -15,7 +15,9 @@ import { makeCredentialHydrator, setCredential, setLabelaryKeyBound, migrateLabe
 import { isDesktopShell } from '../../lib/platform';
 import { resolveHost } from '../../lib/labelary';
 import { generateMcpToken } from '../../lib/mcpServer';
-import { selectEffectivePreviewProvider } from '../labelStore.selectors';
+import { currentObjects, selectEditorFrozen, selectEffectivePreviewProvider } from '../labelStore.selectors';
+import { findObjectById, hasLockedAncestor } from '@zplab/core/types/Group';
+import { getEntry } from '@zplab/core/registry';
 
 import { newId } from "@zplab/core/lib/ids";
 /** Credential-store account name for the Labelary API key. */
@@ -272,6 +274,8 @@ export interface UiSlice {
    *  otherwise land on an unmounted editor. */
   requestContentEditorFocus: (id: string) => void;
   consumeContentEditorFocus: (request: NonNullable<UiSlice['editorFocusRequest']>) => boolean;
+  /** Selects `id`, shows Properties and requests focus for its content field. False when nothing can open. */
+  openContentEditor: (id: string) => boolean;
 }
 
 /** Canvas defaults; shared by initial state and `resetSettings` so the two
@@ -576,6 +580,20 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   consumeContentEditorFocus: (request) => {
     if (get().editorFocusRequest !== request) return false;
     set({ editorFocusRequest: null });
+    return true;
+  },
+  openContentEditor: (id) => {
+    const state = get();
+    if (selectEditorFrozen(state)) return false;
+    const objects = currentObjects(state);
+    const obj = findObjectById(objects, id);
+    if (!obj || obj.locked || hasLockedAncestor(objects, id)) return false;
+    // The panels mount a content field for exactly the bindable types.
+    if (!getEntry(obj.type)?.bindable) return false;
+    // Selecting the leaf itself reaches a field inside a group.
+    state.selectObjects([id]);
+    state.setSidebarTab('properties');
+    state.requestContentEditorFocus(id);
     return true;
   },
 });

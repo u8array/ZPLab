@@ -495,7 +495,7 @@ export function AppShell() {
             onZoomChange={(v) => setCanvasSettings({ zoom: v })}
             viewRotation={canvasSettings.viewRotation}
             onViewRotationChange={(v) => setCanvasSettings({ viewRotation: v })}
-            onOpenProperties={rightPanel.collapsed ? rightPanel.expand : undefined}
+            onOpenProperties={rightPanel.expand}
           />
         </main>
 

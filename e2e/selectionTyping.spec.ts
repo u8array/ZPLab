@@ -12,6 +12,21 @@ async function dropOnCanvas(page: Page, entry: string) {
   await page.mouse.up();
 }
 
+function nodeCenter(page: Page, type: 'Text' | 'Image', text?: string) {
+  return page.locator('.konvajs-content').evaluate((canvas, wanted) => {
+    interface Node {
+      text?: () => string;
+      getClientRect: () => { x: number; y: number; width: number; height: number };
+    }
+    const stage = (window as unknown as { Konva?: { stages: { find: (type: string) => Node[] }[] } }).Konva?.stages[0];
+    const node = stage?.find(wanted.type).find((n) => wanted.text === undefined || n.text?.() === wanted.text);
+    if (!node) throw new Error(`${wanted.type} ${wanted.text ?? ''} is missing from the canvas`);
+    const { x, y, width, height } = node.getClientRect();
+    const { left, top } = canvas.getBoundingClientRect();
+    return { x: left + x + width / 2, y: top + y + height / 2 };
+  }, { type, text });
+}
+
 for (const collapsed of [false, true]) {
   test(`typing immediately after a text drop works with Properties ${collapsed ? 'collapsed' : 'open'}`, async ({ page }) => {
     await page.addInitScript((closed) => localStorage.setItem('zpl-panel-right', closed ? '1' : '0'), collapsed);
@@ -36,9 +51,6 @@ for (const collapsed of [false, true]) {
     await page.keyboard.insertText('€');
     await expect(editor).toHaveText('gSr 123€');
 
-    await page.getByRole('tab', { name: 'Layers' }).click();
-    await properties.click();
-    await expect(properties).toBeFocused();
     await page.getByRole('region', { name: 'Label', exact: true }).focus();
     await page.keyboard.press('Enter');
     await expect(editor).toBeFocused();
@@ -49,17 +61,17 @@ for (const collapsed of [false, true]) {
   });
 }
 
-test('dropping Code 128 accepts typing and Enter and double-click select its content', async ({ page }) => {
+test('a Code 128 drop keeps the open tab, and Enter and double-click open the content field', async ({ page }) => {
   await page.goto('/');
   const grid = page.getByRole('button', { name: 'Grid', exact: true });
   const gridBefore = await grid.getAttribute('aria-pressed');
-  await page.getByRole('tab', { name: 'Layers' }).click();
+  const layers = page.getByRole('tab', { name: 'Layers' });
+  await layers.click();
   await dropOnCanvas(page, 'Code 128');
   await page.keyboard.press('g');
+  await expect(grid).toHaveAttribute('aria-pressed', gridBefore === 'true' ? 'false' : 'true');
+  await expect(layers).toHaveAttribute('aria-selected', 'true');
   const editor = page.getByRole('textbox', { name: 'Type text or insert a variable…' });
-  await expect(editor).toBeFocused();
-  await expect(editor).toHaveText('g');
-  expect(await grid.getAttribute('aria-pressed')).toBe(gridBefore);
 
   await page.getByRole('region', { name: 'Label', exact: true }).focus();
   await page.keyboard.press('Enter');
@@ -67,22 +79,62 @@ test('dropping Code 128 accepts typing and Enter and double-click select its con
   await page.keyboard.type('ABC 123');
   await expect(editor).toHaveText('ABC 123');
 
-  const point = await page.locator('.konvajs-content').evaluate((canvas) => {
-    interface Stage {
-      findOne: (name: string) => { getClientRect: () => { x: number; y: number; width: number; height: number } } | undefined;
-    }
-    const stage = (window as unknown as { Konva?: { stages: Stage[] } }).Konva?.stages[0];
-    const bars = stage?.findOne('Image');
-    if (!bars) throw new Error('Rendered barcode is missing');
-    const { x, y, width, height } = bars.getClientRect();
-    const { left, top } = canvas.getBoundingClientRect();
-    return { x: left + x + width / 2, y: top + y + height / 2 };
-  });
+  const point = await nodeCenter(page, 'Image');
   await page.mouse.dblclick(point.x, point.y);
   await expect(editor).toBeFocused();
   await expect.poll(() => page.evaluate(() => window.getSelection()?.toString())).toBe('ABC 123');
   await page.keyboard.press('x');
   await expect(editor).toHaveText('x');
+});
+
+test('a serial text drop selects its start value', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('searchbox').fill('serial');
+  await dropOnCanvas(page, 'Serial');
+  const seed = page.getByRole('textbox', { name: 'Start value' });
+  await expect(seed).toBeFocused();
+  // Outlasts the window the drop shield in LabelCanvas covers.
+  await page.waitForTimeout(100);
+  expect(await seed.evaluate((input: HTMLInputElement) => [input.selectionStart, input.selectionEnd])).toEqual([0, 3]);
+});
+
+test('Enter opens the content field while the ZPL panel is expanded', async ({ page }) => {
+  await page.goto('/');
+  await dropOnCanvas(page, 'Text');
+  const editor = page.getByRole('textbox', { name: 'Type text or insert a variable…' });
+  await expect(editor).toBeFocused();
+  await page.getByRole('button', { name: 'Expand', exact: true }).click();
+  await expect(page.getByRole('listbox')).toBeVisible();
+  await page.getByRole('region', { name: 'Label', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(editor).toBeFocused();
+});
+
+test('Enter stays with an open context menu', async ({ page }) => {
+  await page.goto('/');
+  await dropOnCanvas(page, 'Text');
+  const editor = page.getByRole('textbox', { name: 'Type text or insert a variable…' });
+  await expect(editor).toBeFocused();
+  await page.keyboard.type('Hello');
+  const point = await nodeCenter(page, 'Text', 'Hello');
+  await page.getByRole('region', { name: 'Label', exact: true }).focus();
+  await page.mouse.click(point.x, point.y, { button: 'right' });
+  await expect(page.getByRole('menu')).toBeVisible();
+  await page.keyboard.press('Enter');
+  await expect(editor).toBeVisible();
+  await expect(editor).not.toBeFocused();
+});
+
+test('a right-click straight after a click opens only the context menu', async ({ page }) => {
+  await page.goto('/');
+  await dropOnCanvas(page, 'Code 128');
+  const layers = page.getByRole('tab', { name: 'Layers' });
+  await layers.click();
+  const point = await nodeCenter(page, 'Image');
+  await page.mouse.click(point.x, point.y);
+  await page.mouse.click(point.x, point.y, { button: 'right' });
+  await expect(page.getByRole('menu')).toBeVisible();
+  await expect(layers).toHaveAttribute('aria-selected', 'true');
 });
 
 test('a selected text field leaves the menu and canvas keys available', async ({ page }) => {
@@ -140,18 +192,7 @@ test('double-click and Enter preserve an imported field binding', async ({ page 
   await dialog.getByRole('button', { name: 'Import', exact: true }).click();
   await expect(dialog).toBeHidden();
 
-  const point = await page.locator('.konvajs-content').evaluate((canvas) => {
-    interface TextNode {
-      text: () => string;
-      getClientRect: () => { x: number; y: number; width: number; height: number };
-    }
-    const stage = (window as unknown as { Konva?: { stages: { find: (type: string) => TextNode[] }[] } }).Konva?.stages[0];
-    const field = stage?.find('Text').find((node) => node.text() === 'John Doe');
-    if (!field) throw new Error('Imported field is missing from the canvas');
-    const { x, y, width, height } = field.getClientRect();
-    const { left, top } = canvas.getBoundingClientRect();
-    return { x: left + x + width / 2, y: top + y + height / 2 };
-  });
+  const point = await nodeCenter(page, 'Text', 'John Doe');
   const editor = page.getByRole('textbox', { name: 'Type text or insert a variable…' });
   await page.mouse.dblclick(point.x, point.y);
   await expect(editor).toBeFocused();

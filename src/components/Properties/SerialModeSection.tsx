@@ -61,8 +61,7 @@ export function SerialParts({ obj, onChange }: Props) {
   const t = useT();
   const seedRef = useRef<HTMLInputElement>(null);
   const editorFocusRequest = useLabelStore((s) => s.editorFocusRequest);
-  // Canvas edit gesture: the seed input is this field's
-  // content editor, so it takes the gesture TemplateContentInput otherwise gets.
+  // The seed input is this field's content editor, so it receives the focus request.
   useEffect(() => {
     if (editorFocusRequest?.id !== obj.id) return;
     const seed = seedRef.current;

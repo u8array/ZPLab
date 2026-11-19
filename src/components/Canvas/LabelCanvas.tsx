@@ -87,7 +87,6 @@ import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
 import { captureLabelBlob, captureRegionBlob, copyPngToClipboard, CAPTURE_CHROME } from "../../lib/canvasImage";
 import { saveLabelImage } from "../../lib/saveLabelImage";
 import { printerPreviewLayout } from "../../lib/printerPreview";
-import { getObjectStringContent } from "@zplab/core/lib/variableBinding";
 
 /** Object types offered by the context menu's "Add object here". */
 // Curated quick-add subset for the context menu, not every registry type; the
@@ -155,7 +154,7 @@ interface Props {
   onZoomChange: (zoom: number) => void;
   viewRotation: ViewRotation;
   onViewRotationChange: (rotation: ViewRotation) => void;
-  onOpenProperties?: () => void;
+  onOpenProperties: () => void;
 }
 
 /** Nothing drawn yet is nothing to capture, so the context menu and the output dialog get a click that
@@ -356,20 +355,16 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // a locked-only selection gets no dead affordance.
   const hasDeletable = canDeleteSelection(objects, selectedIds);
 
-  const openEditor = useCallback((id: string) => {
-    const state = useLabelStore.getState();
-    if (selectEditorFrozen(state)) return false;
-    const objects = currentObjects(state);
-    const obj = findObjectById(objects, id);
-    if (!obj || obj.locked || hasLockedAncestor(objects, id)) return false;
-    if (obj.type !== "text" && getObjectStringContent(obj) === undefined) return false;
-    // Select the leaf directly so double-click can edit fields inside a group.
-    state.selectObjects([id]);
-    onOpenProperties?.();
-    state.setSidebarTab("properties");
-    state.requestContentEditorFocus(id);
+  const openEditor = (id: string) => {
+    if (!useLabelStore.getState().openContentEditor(id)) return false;
+    onOpenProperties();
     return true;
-  }, [onOpenProperties]);
+  };
+  // The key listener mounts once and still needs the latest closure.
+  const openEditorRef = useRef(openEditor);
+  useLayoutEffect(() => {
+    openEditorRef.current = openEditor;
+  });
 
   useEffect(() => {
     const el = containerRef.current;
@@ -398,7 +393,6 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // Enter opens the selected field; Delete/Backspace removes the selection.
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       const enter = e.key === "Enter";
@@ -411,10 +405,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       if (transformActiveRef.current) return;
       const { selectedIds: ids } = useLabelStore.getState();
       if (enter) {
-        if (e.defaultPrevented || e.isComposing || e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
         if (e.target !== document.body && e.target !== containerRef.current) return;
-        if (dragActiveRef.current || document.querySelector('[aria-modal="true"], [role="menu"], [role="listbox"]')) return;
-        if (ids.length === 1 && ids[0] && openEditor(ids[0])) e.preventDefault();
+        if (dragActiveRef.current || document.querySelector('[aria-modal="true"], [role="menu"]')) return;
+        if (ids.length === 1 && ids[0] && openEditorRef.current(ids[0])) e.preventDefault();
         return;
       }
       if (ids.length === 0) return;
@@ -423,7 +417,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [openEditor]);
+  }, []);
 
   // arrow keys move the selected object; ignored when focus is inside an input
   useEffect(() => {
@@ -1317,19 +1311,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       setGhost,
       addObject: (type, position, propsOverride) => {
         const id = addObject(type, position, propsOverride);
-        if (!id || !openEditor(id)) return;
-
-        // ponytail: dnd-kit keeps clearing document selection for 50 ms after
-        // drop. Shield the focused editor's caret until its listener detaches.
-        // Selection changes from the palette search can bubble to it too.
-        // Remove this guard when the pointer sensor cleans up on release.
-        const keepEditorCaret = (event: Event) => {
-          const editor = document.activeElement;
-          if (editor instanceof HTMLElement && editor.isContentEditable &&
-            editor.contains(document.getSelection()?.anchorNode ?? null)) event.stopPropagation();
+        // Only a text is typed on the spot, so a barcode drop leaves the open tab alone.
+        if (!id || type !== "text" || !openEditor(id)) return;
+        // dnd-kit clears the document selection for 50 ms after a drop, which would take the field's selection.
+        const keepFieldSelection = (event: Event) => {
+          if (isEditableTarget(document.activeElement as HTMLElement | null)) event.stopPropagation();
         };
-        window.addEventListener("selectionchange", keepEditorCaret, true);
-        window.setTimeout(() => window.removeEventListener("selectionchange", keepEditorCaret, true), 50);
+        window.addEventListener("selectionchange", keepFieldSelection, true);
+        window.setTimeout(() => window.removeEventListener("selectionchange", keepFieldSelection, true), 50);
       },
       viewRotation: () => viewRotation,
       label: () => label,
@@ -1353,7 +1342,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       role="region"
       aria-label={t.label.heading}
       tabIndex={0}
-      className="w-full h-full relative"
+      // The stage paints over the container, so the focus ring sits on an overlay.
+      className="w-full h-full relative outline-none focus-visible:after:absolute focus-visible:after:inset-0 focus-visible:after:z-10 focus-visible:after:pointer-events-none focus-visible:after:ring-1 focus-visible:after:ring-inset focus-visible:after:ring-accent"
       style={{
         background: colors.canvasBg,
         backgroundImage: `radial-gradient(circle, ${colors.canvasDot} 1px, transparent 1px)`,

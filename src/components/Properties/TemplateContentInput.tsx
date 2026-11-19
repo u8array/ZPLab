@@ -274,7 +274,6 @@ export const TemplateContentInput = forwardRef<TemplateEditorHandle, Props>(
       }
     }, [value, segments, showZpl, variables, t, resyncNonce, selectedIndex]);
 
-    // Canvas edit gesture: focus and select the field's current content.
     useEffect(() => {
       if (!editorFocusRequest || editorFocusRequest.id !== objectId) return;
       const editor = editorRef.current;

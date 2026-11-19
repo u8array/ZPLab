@@ -48,6 +48,8 @@ export function shapeHitProps(
   };
 }
 
+const addsToSelection = (evt: MouseEvent) => evt.shiftKey || evt.ctrlKey || evt.metaKey;
+
 /**
  * Click / tap handlers shared across every per-type renderer. Click reads
  * shift / ctrl / meta to toggle multi-select; tap (touch) is always a
@@ -64,9 +66,23 @@ export function selectionHandlers(onSelect: (add: boolean) => void): {
     // survives; the context-menu handler selects an unselected target itself.
     onClick: (e) => {
       if (e.evt.button === 2) return;
-      onSelect(e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey);
+      onSelect(addsToSelection(e.evt));
     },
     onTap: () => onSelect(false),
+  };
+}
+
+/** Double-click and double-tap handlers that open the content field. */
+export function editHandlers(open: () => void): {
+  onDblClick: (e: Konva.KonvaEventObject<MouseEvent>) => void;
+  onDblTap: () => void;
+} {
+  return {
+    // Konva reports a double-click for any mouse button, and only the primary one edits.
+    onDblClick: (e) => {
+      if (e.evt.button === 0 && !addsToSelection(e.evt)) open();
+    },
+    onDblTap: open,
   };
 }
 

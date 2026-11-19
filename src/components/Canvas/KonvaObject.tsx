@@ -21,7 +21,7 @@ import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { withPreviewProps } from "../../lib/previewProps";
 import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/textPositionTransforms";
 import { getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
-import { selectionHandlers, shapeHitProps, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
+import { editHandlers, selectionHandlers, shapeHitProps, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
 import { CAPTURE_CHROME, CAPTURE_SELECTION } from "../../lib/canvasImage";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import { DEFAULT_GS_SYMBOL_META, GS_SYMBOLS, symbolCodeOf } from "@zplab/core/registry/symbol";
@@ -658,10 +658,9 @@ function KonvaObjectInner({
         y={y}
         draggable={draggable}
         {...selectionHandlers(onSelect)}
+        {...editHandlers(() => onOpenEditor?.(obj.id))}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
-        onDblClick={() => onOpenEditor?.(obj.id)}
-        onDblTap={() => onOpenEditor?.(obj.id)}
       >
         <TextFieldContent
           obj={obj as TextFieldObj}
