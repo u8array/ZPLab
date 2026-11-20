@@ -26,14 +26,15 @@ import { resolveTextMode } from "../registry/text";
 import type { ColumnMapping, Variable } from "../types/Variable";
 import type { Unit } from "./units";
 import {
+  PREFLIGHT_KINDS,
+  PREFLIGHT_SEVERITIES,
   PREFLIGHT_SEVERITY,
   type PreflightFinding,
   type PreflightKind,
-  type PreflightSeverity,
 } from "../types/preflight";
 
-export { PREFLIGHT_SEVERITY };
-export type { PreflightFinding, PreflightKind, PreflightSeverity };
+export { PREFLIGHT_KINDS, PREFLIGHT_SEVERITIES, PREFLIGHT_SEVERITY };
+export type { PreflightFinding, PreflightKind };
 
 /** Untouched-field grace: drop emptyContent findings for just-created,
  *  still-selected objects (store `pristineEmptyIds`) so the panel does not

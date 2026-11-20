@@ -125,10 +125,10 @@ export const exportZplInputSchema = designFileEnvelopeSchema.extend({
 });
 
 
-export interface ToolError {
-  ok: false;
-  errors: string[];
-}
+export const toolErrorSchema = z
+  .object({ ok: z.literal(false), errors: z.array(z.string()) })
+  .meta({ id: "ToolError", description: "Every refusal, whichever layer raised it" });
+export type ToolError = z.infer<typeof toolErrorSchema>;
 
 /** A schema refusal in the ToolError shape, paths relative to `root`. */
 export function schemaToolError(error: z.ZodError, root: string): ToolError {

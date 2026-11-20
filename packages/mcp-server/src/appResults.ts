@@ -8,26 +8,14 @@ import {
   editNotes,
   parseEnvelope,
   reportFor,
+  type designReportSchema,
   type DesignFileJson,
-  type ObjectBounds,
-  type ObjectOverlap,
   type PatchOp,
-  type PreflightWarning,
   type ToolError,
   type BoundReport,
 } from "@zplab/headless";
 
-export type GetCurrentDesignResult =
-  | {
-      ok: true;
-      designFile: DesignFileJson;
-      warnings: PreflightWarning[];
-      notes?: string[];
-      bounds: ObjectBounds[];
-      overlaps: ObjectOverlap[];
-      geometryTruncated?: boolean;
-    }
-  | ToolError;
+export type GetCurrentDesignResult = z.infer<typeof designReportSchema> | ToolError;
 
 /** Turn the app's read-back (design + render-measured footprints) into the
  *  standard tool report. Barcodes are re-probed print-true (the app's number

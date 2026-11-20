@@ -68,6 +68,25 @@ describe("public routes", () => {
     }
   });
 
+  it("documents the warning kind as an enum of the answered kinds", async () => {
+    const doc = await get("/openapi.json", null);
+    const schemas = (doc.json.components as { schemas: Record<string, { properties: Record<string, { enum?: string[] }> }> }).schemas;
+    const answered = await post("/validate-zpl", { zpl: "^XA^FO10,10^A0N,30,30^FDone^FS^FO10,60^BEN,80,Y,N^FD12345^FS^XZ" });
+    const kinds = (answered.json.warnings as { kind: string }[]).map((w) => w.kind);
+    expect(kinds.length).toBeGreaterThan(0);
+    expect(schemas.PreflightWarning?.properties.kind?.enum).toEqual(expect.arrayContaining(kinds));
+  });
+
+  it("documents the design file and the label as required in every answer that carries them", async () => {
+    const doc = await get("/openapi.json", null);
+    interface Op { post: { responses: Record<string, { content: Record<string, { schema: { required: string[] } }> }> } }
+    const always = { draft: ["designFile"], patch: ["designFile"], import: ["designFile", "label"], "validate-zpl": ["label"] };
+    for (const [route, keys] of Object.entries(always)) {
+      const { required } = (doc.json.paths as Record<string, Op>)[`/api/v1/${route}`]!.post.responses["200"]!.content["application/json"]!.schema;
+      expect(required, route).toEqual(expect.arrayContaining(keys));
+    }
+  });
+
   it("documents every setting a label answer carries", async () => {
     const doc = await get("/openapi.json", null);
     const schemas = (doc.json.components as { schemas: Record<string, { properties: Record<string, unknown> }> }).schemas;
