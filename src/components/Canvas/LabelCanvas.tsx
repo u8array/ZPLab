@@ -1099,45 +1099,12 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     });
   }
 
-  const handleObjectChange = (
-    id: string,
-    changes: Parameters<typeof updateObject>[1],
-  ) => {
-    const finalChanges = {
+  const handleObjectChange = (id: string, changes: Parameters<typeof updateObject>[1]) =>
+    updateObject(id, {
       ...changes,
       ...(changes.x !== undefined && { x: snap(changes.x) }),
       ...(changes.y !== undefined && { y: snap(changes.y) }),
-    };
-    // Fresh getState() guards stale closure across simultaneous DragEnd
-    // events; expandSelection propagates the delta to group leaves.
-    const state = useLabelStore.getState();
-    const currentObjs = currentObjects(state);
-    const selIds = expandSelection(currentObjs, state.selectedIds);
-    if (
-      selIds.length > 1 &&
-      selIds.includes(id) &&
-      (finalChanges.x !== undefined || finalChanges.y !== undefined)
-    ) {
-      const srcObj = findObjectById(currentObjs, id);
-      if (srcObj) {
-        const ddx = finalChanges.x !== undefined ? finalChanges.x - srcObj.x : 0;
-        const ddy = finalChanges.y !== undefined ? finalChanges.y - srcObj.y : 0;
-        updateObjects([
-          { id, changes: finalChanges },
-          ...selIds
-            .filter((sid) => sid !== id)
-            .flatMap((sid) => {
-              const other = findObjectById(currentObjs, sid);
-              return other
-                ? [{ id: sid, changes: { x: other.x + ddx, y: other.y + ddy } }]
-                : [];
-            }),
-        ]);
-        return;
-      }
-    }
-    updateObject(id, finalChanges);
-  };
+    });
 
   const handleStageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
     if (editorFrozen) return;
