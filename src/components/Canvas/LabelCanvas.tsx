@@ -46,7 +46,7 @@ import { RfidPositionGuide } from "./RfidPositionGuide";
 import { Grid } from "./Grid";
 import { GuideLines } from "./GuideLines";
 import { Ruler, RULER_SIZE, type RulerProps } from "./Ruler";
-import { SelectionGuides, type SelectionGuidesHandle } from "./SelectionGuides";
+import { SelectionGuideLines, SelectionGuides, type SelectionGuidesHandle } from "./SelectionGuides";
 import { SHAPE_PRIMITIVE_TYPES } from "@zplab/core/registry";
 import type { LeafObject } from "@zplab/core/registry";
 import { isImageRotatable, type ImageProps } from "@zplab/core/registry/image";
@@ -208,6 +208,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // live (its own beforeDraw lags for controller-moved siblings).
   const actionBarRef = useRef<Konva.Group>(null);
   const selectionGuidesRef = useRef<SelectionGuidesHandle>(null);
+  const selectionGuideLinesRef = useRef<Konva.Group>(null);
   // The view-rotation / label group. The action bar lives outside it (stage
   // coords), so its rest bounds map through this group's transform when rotated;
   // image export also captures it to exclude the transformer / action-bar chrome.
@@ -1017,7 +1018,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     getBarBounds: () => selectionBoundsStage(),
   });
   useSelectionGuides({
-    stageRef,
+    linesRef: selectionGuideLinesRef,
     guidesRef: selectionGuidesRef,
     dragActiveRef,
     getBounds: () => selectionBoundsStage(frameOnBars ? barBoxDots : undefined),
@@ -1867,8 +1868,18 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               </Group>
             )}
 
+            {/* Under the action bar, which covers the vertical guides on a narrow selection. */}
+            {selectionGuidesEnabled && !editorFrozen && (
+              <SelectionGuideLines
+                ref={selectionGuideLinesRef}
+                canvasWidth={containerSize.width}
+                canvasHeight={containerSize.height}
+                colors={colors}
+              />
+            )}
+
             {!editorFrozen && attachableIds.length > 0 && actionButtons.length > 0 && (
-              <Group ref={actionBarRef}>
+              <Group ref={actionBarRef} name="action-bar">
                 {(() => {
                   const n = actionButtons.length;
                   const w = (n - 1) * BUTTON_STEP_PX + 2 * BUTTON_RADIUS + 16;
@@ -1927,7 +1938,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
           <Layer listening={false}>
             <Ruler {...rulerProps} />
             {selectionGuidesEnabled && !editorFrozen && (
-              <SelectionGuides ref={selectionGuidesRef} {...rulerProps} dpmm={effDpmm} />
+              <SelectionGuides ref={selectionGuidesRef} linesRef={selectionGuideLinesRef} {...rulerProps} dpmm={effDpmm} />
             )}
           </Layer>
         </Stage>

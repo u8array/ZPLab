@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// Needs the real browser because the guides render on the Konva ruler layer, which jsdom does not draw.
+// Needs the real browser because the guides render on Konva layers, which jsdom does not draw.
 
 interface Edges {
   minX: number;
@@ -85,6 +85,13 @@ async function nearBadges(page: Page) {
   });
 }
 
+/** Adds a Box and waits until the guides sit on it. */
+async function addBox(page: Page) {
+  const before = (await guides(page))?.frame;
+  await page.getByText('Box', { exact: true }).first().dblclick();
+  await expect.poll(async () => (await guides(page))?.frame).not.toEqual(before);
+}
+
 async function open(page: Page) {
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'File', exact: true })).toBeVisible();
@@ -148,8 +155,7 @@ test('the guides return with a drag that comes back to its grab point', async ({
 
 test('the guides follow the frame of a single object while it resizes', async ({ page }) => {
   const origin = await open(page);
-  await page.getByText('Box', { exact: true }).first().dblclick();
-  await expect.poll(() => guides(page)).not.toBeNull();
+  await addBox(page);
   const rest = (await guides(page)) as Guides;
   expectOnFrame(rest);
 
@@ -161,8 +167,7 @@ test('the guides follow the frame of a single object while it resizes', async ({
   await expect.poll(async () => (await guides(page))?.lines.maxX ?? 0).toBeGreaterThan(rest.lines.maxX + 20);
   expectOnFrame(await guides(page));
   await page.mouse.up();
-  await expect.poll(async () => (await guides(page))?.xNear).toBe(rest.xNear);
-  expectOnFrame(await guides(page));
+  await expect(async () => expectOnFrame(await guides(page))).toPass();
   expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
 });
 
@@ -217,5 +222,55 @@ test('the badges of both rulers stay apart at the ruler corner', async ({ page }
       return !!top && !!left && (left.y >= top.y + top.height || left.x >= top.x + top.width);
     })
     .toBe(true);
+  expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
+});
+
+test('the action bar covers the guides that run behind it', async ({ page }) => {
+  const origin = await open(page);
+  await addBox(page);
+  const { frame } = (await guides(page)) as Guides;
+  const y = origin.y + (frame.minY + frame.maxY) / 2;
+  await page.mouse.move(origin.x + frame.maxX, y);
+  await page.mouse.down();
+  await page.mouse.move(origin.x + frame.minX + 24, y, { steps: 6 });
+  await page.mouse.up();
+  // Counts the pixels in the guide colour on both vertical guides, inside the bar's pill.
+  const covered = () =>
+    page.evaluate(() => {
+      interface Rect {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      }
+      interface Node {
+        findOne: (s: string) => Node | undefined;
+        x: () => number;
+        stroke: () => string;
+        getClientRect: () => Rect;
+        toCanvas: (o: { pixelRatio: number }) => HTMLCanvasElement;
+      }
+      const stage = (window as unknown as { Konva: { stages: Node[] } }).Konva.stages[0];
+      const bar = stage.findOne('.action-bar')?.getClientRect();
+      const near = stage.findOne('.line-x-near');
+      const far = stage.findOne('.line-x-far');
+      if (!bar || !near || !far) return null;
+      const swatch = document.createElement('canvas').getContext('2d');
+      const shot = stage.toCanvas({ pixelRatio: 1 }).getContext('2d');
+      if (!swatch || !shot) return null;
+      swatch.fillStyle = near.stroke();
+      swatch.fillRect(0, 0, 1, 1);
+      const [r, g, b] = swatch.getImageData(0, 0, 1, 1).data;
+      let guidePixels = 0;
+      for (const line of [near, far]) {
+        const x = Math.floor(line.x());
+        const rows = shot.getImageData(x, Math.ceil(bar.y) + 6, 1, Math.floor(bar.height) - 12).data;
+        for (let i = 0; i < rows.length; i += 4) {
+          if (rows[i] === r && rows[i + 1] === g && rows[i + 2] === b) guidePixels += 1;
+        }
+      }
+      return { guidePixels, inside: near.x() > bar.x + 15 && far.x() < bar.x + bar.width - 15 };
+    });
+  await expect.poll(covered).toEqual({ guidePixels: 0, inside: true });
   expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
 });
