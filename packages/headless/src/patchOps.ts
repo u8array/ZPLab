@@ -1,7 +1,8 @@
 // patch_design: the envelope around the core op reducer, plus the report the agent reads.
 
 import { designFileInputSchema, INSIDE_PROPS, objectInputSchema, pagesSizeError, parseEnvelope, strictEntry, unknownPropNotes, variableInputSchema, type DesignFileJson, type ToolError } from "./boundary.js";
-import { reportFor, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
+import { reportFor } from "./report.js";
+import type { designReportSchema } from "./results.js";
 
 import { z } from "zod";
 import {
@@ -62,17 +63,7 @@ export const patchDesignShape = {
   operations: patchOperationsSchema,
 };
 
-export type PatchDesignResult =
-  | {
-      ok: true;
-      designFile: DesignFileJson;
-      warnings: PreflightWarning[];
-      notes?: string[];
-      bounds: ObjectBounds[];
-      overlaps: ObjectOverlap[];
-      geometryTruncated?: boolean;
-    }
-  | ToolError;
+export type PatchDesignResult = z.infer<typeof designReportSchema> | ToolError;
 
 export function patchDesign(designFile: unknown, operations: readonly PatchOp[]): PatchDesignResult {
   const parsed = parseEnvelope(designFile);

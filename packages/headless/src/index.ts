@@ -7,8 +7,15 @@ export {
   validateDraft,
   validateZpl,
   zplInputShape,
-  type ZplFindings,
 } from "./tools.js";
+export {
+  designReportSchema,
+  exportZplReportSchema,
+  importZplReportSchema,
+  schemaResultSchema,
+  validateDraftReportSchema,
+  validateZplReportSchema,
+} from "./results.js";
 export {
   createDraftShape,
   designFileEnvelopeSchema,
@@ -20,6 +27,7 @@ export {
   schemaToolError,
   strictInput,
   strictShape,
+  toolErrorSchema,
   type CreateDraftInput,
   type DesignFileJson,
   type ToolError,
@@ -32,12 +40,5 @@ export {
   patchOperationsSchema,
   type PatchOp,
 } from "./patchOps.js";
-export {
-  reportFor,
-  type BoundReport,
-  type ObjectBounds,
-  type ObjectOverlap,
-  type PreflightWarning,
-} from "./report.js";
+export { reportFor, type BoundReport } from "./report.js";
 export { registerHeadlessFootprintMeasurer } from "./footprint.js";
-export { labelConfigSchema } from "@zplab/core/types/LabelConfig";

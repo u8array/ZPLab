@@ -1,6 +1,7 @@
 // The agent-facing report: preflight producers, geometry, and the shared
 // probe pass behind boundReport/warningReport.
 
+import { z } from "zod";
 import {
   barcodeEncodeIssueResolved,
   measureBoundsEntry,
@@ -14,6 +15,8 @@ import {
   gs1NormalizationFindings,
   markerValueFindings,
   templateFieldFindings,
+  PREFLIGHT_KINDS,
+  PREFLIGHT_SEVERITIES,
   type PreflightFinding,
 } from "@zplab/core/lib/preflight";
 import { barcodeEncodeFindingsCore } from "@zplab/core/lib/barcodeEncodePreflight";
@@ -36,19 +39,24 @@ import {
   type Page,
 } from "@zplab/core/types/Group";
 import { effectiveDpmm, type JmDensity, type LabelConfig, type PageLabel } from "@zplab/core/types/LabelConfig";
-import type { PreflightKind, PreflightSeverity } from "@zplab/core/lib/preflight";
 import {
   type Variable,
 } from "@zplab/core/types/Variable";
 
 
-export interface PreflightWarning {
-  pageIndex: number;
-  objectId: string;
-  kind: PreflightKind;
-  severity: PreflightSeverity;
-  detail?: string;
-}
+// A key that core adds fails the build until the answer documents it.
+export type ShapeOf<T> = { [K in keyof T]-?: z.ZodType<T[K]> };
+
+const preflightWarningSchema = z
+  .object({
+    pageIndex: z.number(),
+    objectId: z.string(),
+    kind: z.enum(PREFLIGHT_KINDS),
+    severity: z.enum(PREFLIGHT_SEVERITIES),
+    detail: z.string().optional(),
+  })
+  .meta({ id: "PreflightWarning", description: "A print problem on one object" });
+type PreflightWarning = z.infer<typeof preflightWarningSchema>;
 
 interface PageLike {
   objects: LabelObject[];
@@ -104,32 +112,37 @@ function preflightOf(
   ];
 }
 
-/** Per-object geometry so the agent can reason about size/placement without
- *  recomputing it. Dots, visual top-left. `approx` marks headless estimates
- *  (single-line text, unprobed leaves); probed barcodes share the app's kernel and report exact. */
-export interface ObjectBounds extends BoundingBoxDots {
-  pageIndex: number;
-  objectId: string;
-  /** Registry type and a content excerpt, so an edit can be aimed straight
-   *  from this report; imported ids are opaque uuids on their own. */
-  type: string;
-  content?: string;
-  approx: boolean;
-}
+const rectDots = { x: z.number(), y: z.number(), width: z.number(), height: z.number() } satisfies ShapeOf<BoundingBoxDots>;
 
-/** Axis-aligned bbox intersections. Neutral facts, not errors: a frame/reverse
- *  box overlaps its contents by design, so the agent judges relevance. */
-export interface ObjectOverlap extends OverlapDots {
-  pageIndex: number;
-}
+// `approx` marks headless estimates such as single-line text and unprobed leaves.
+const objectBoundsSchema = z
+  .object({
+    pageIndex: z.number(),
+    objectId: z.string(),
+    // Imported ids are opaque uuids, so type and content let the agent aim an edit from this report.
+    type: z.string().meta({ description: "The object type, as the schema route lists it" }),
+    content: z.string().optional().meta({ description: "The first 40 characters of the object's content" }),
+    ...rectDots,
+    approx: z.boolean(),
+  })
+  .meta({ id: "ObjectBounds", description: "The box of one object in dots from the top-left, an estimate where approx is true" });
+type ObjectBounds = z.infer<typeof objectBoundsSchema>;
 
-export interface Geometry {
-  bounds: ObjectBounds[];
-  overlaps: ObjectOverlap[];
-  /** Set when a page was too dense to report fully (see the caps below), so the
-   *  agent knows the geometry is partial rather than assuming a clean label. */
-  geometryTruncated?: boolean;
-}
+// A frame or reverse box overlaps its contents by design, so the agent judges relevance.
+const objectOverlapSchema = z
+  .object({
+    pageIndex: z.number(),
+    ...({ a: z.string(), b: z.string(), ...rectDots, approx: z.boolean() } satisfies ShapeOf<OverlapDots>),
+  })
+  .meta({ id: "ObjectOverlap", description: "The dots the boxes of objects a and b share" });
+type ObjectOverlap = z.infer<typeof objectOverlapSchema>;
+
+const geometrySchema = z.object({
+  bounds: z.array(objectBoundsSchema),
+  overlaps: z.array(objectOverlapSchema),
+  geometryTruncated: z.boolean().optional().meta({ description: "True when a page was too dense to report in full, so bounds and overlaps are partial" }),
+});
+type Geometry = z.infer<typeof geometrySchema>;
 
 /** Per-page object cap for geometry. The overlap scan is O(n²); past this a
  *  per-object report is noise anyway, so skip the page's geometry. Well beyond
@@ -416,11 +429,11 @@ export function reportFor(design: DesignFile, measured?: Record<string, Measured
   );
 }
 
+export const warningReportSchema = z.object({ warnings: z.array(preflightWarningSchema), notes: z.array(z.string()).optional() });
+
 /** The report block every design-returning call carries. */
-export interface BoundReport extends Geometry {
-  warnings: PreflightWarning[];
-  notes?: string[];
-}
+export const boundReportSchema = warningReportSchema.extend(geometrySchema.shape);
+export type BoundReport = z.infer<typeof boundReportSchema>;
 
 /** Preflight + geometry with markers resolved against the design's own bindings. */
 export function boundReport(

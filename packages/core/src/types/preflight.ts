@@ -1,32 +1,8 @@
 import type { LabelConfig } from './LabelConfig';
 import type { Unit } from '../lib/units';
 
-export type PreflightSeverity = 'error' | 'warning';
-
-/** Distinct preflight problem kinds. Producers: geometry (off-label), render
- *  (encode failure), and per-type pure checks (block-too-narrow, barcode module
- *  too small). Each new producer adds its kind here. */
-export type PreflightKind =
-  | 'offLabelOutside'
-  | 'offLabelClipped'
-  | 'renderFailed'
-  | 'blockTooNarrow'
-  | 'barcodeTooSmall'
-  | 'textOverset'
-  | 'imageMissing'
-  | 'suspiciousChars'
-  | 'markerValueUnsafe'
-  | 'markerArmFailed'
-  | 'gs1ValueInvalid'
-  | 'gs1ContentUnparsed'
-  | 'previewApproximate'
-  | 'emptyContent'
-  | 'printerSupportLimited'
-  | 'qrRotatedStatic'
-  | 'qrRotatedModel2'
-  | 'maxicodeModeMissingScm'
-  | 'aztecEcLevelOutOfRange'
-  | 'unknownType';
+export const PREFLIGHT_SEVERITIES = ['error', 'warning'] as const;
+export type PreflightSeverity = (typeof PREFLIGHT_SEVERITIES)[number];
 
 export interface PreflightFinding {
   objectId: string;
@@ -37,9 +13,9 @@ export interface PreflightFinding {
   detail?: string;
 }
 
-/** Single source for kind -> severity so canvas styling and badge tiering can't
- *  drift apart. */
-export const PREFLIGHT_SEVERITY: Record<PreflightKind, PreflightSeverity> = {
+/** Single source for the kinds and their severity, so canvas styling and badge
+ *  tiering can't drift apart. Each new producer adds its kind here. */
+export const PREFLIGHT_SEVERITY = {
   offLabelOutside: 'error',
   offLabelClipped: 'warning',
   renderFailed: 'error',
@@ -89,7 +65,10 @@ export const PREFLIGHT_SEVERITY: Record<PreflightKind, PreflightSeverity> = {
   // A leaf whose type isn't in the registry: it has no emitter, so it prints
   // nothing. Only reachable via an imported/foreign design file.
   unknownType: 'error',
-};
+} satisfies Record<string, PreflightSeverity>;
+
+export type PreflightKind = keyof typeof PREFLIGHT_SEVERITY;
+export const PREFLIGHT_KINDS = Object.keys(PREFLIGHT_SEVERITY) as readonly PreflightKind[];
 
 /** What a per-type `preflight` producer receives. Minimal on purpose (the
  *  label for dpmm, the display unit for measurement details) so the registry

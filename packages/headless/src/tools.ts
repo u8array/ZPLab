@@ -18,19 +18,18 @@ import { ObjectRegistry } from "@zplab/core/registry";
 import type { Dpmm, LabelConfig } from "@zplab/core/types/LabelConfig";
 
 import { buildObjects, buildVariables, dpmmSchema, pagesSizeError, parseEnvelope, typeIssues, unknownPropNotes, propIssues, type DesignFileJson, type ToolError, type CreateDraftInput, PROP_SUMMARIES } from "./boundary.js";
-import { boundReport, warningReport, type ObjectBounds, type ObjectOverlap, type PreflightWarning } from "./report.js";
+import { boundReport, warningReport } from "./report.js";
+import type {
+  designReportSchema,
+  exportZplReportSchema,
+  importZplReportSchema,
+  schemaResultSchema,
+  validateDraftReportSchema,
+  validateZplReportSchema,
+  ZplFindings,
+} from "./results.js";
 
-export type CreateDraftResult =
-  | {
-      ok: true;
-      designFile: DesignFileJson;
-      warnings: PreflightWarning[];
-      notes?: string[];
-      bounds: ObjectBounds[];
-      overlaps: ObjectOverlap[];
-      geometryTruncated?: boolean;
-    }
-  | ToolError;
+export type CreateDraftResult = z.infer<typeof designReportSchema> | ToolError;
 
 
 export function createDraft(input: CreateDraftInput): CreateDraftResult {
@@ -59,16 +58,7 @@ export function createDraft(input: CreateDraftInput): CreateDraftResult {
   return { ok: true, designFile, ...report, ...(notes.length > 0 ? { notes } : {}) };
 }
 
-export type ValidateDraftResult =
-  | {
-      ok: true;
-      warnings: PreflightWarning[];
-      notes?: string[];
-      bounds: ObjectBounds[];
-      overlaps: ObjectOverlap[];
-      geometryTruncated?: boolean;
-    }
-  | ToolError;
+export type ValidateDraftResult = z.infer<typeof validateDraftReportSchema> | ToolError;
 
 export function validateDraft(designFile: unknown): ValidateDraftResult {
   const parsed = parseEnvelope(designFile);
@@ -94,9 +84,7 @@ export function openInApp(designFile: unknown): OpenInAppResult {
   };
 }
 
-export type ExportZplResult =
-  | { ok: true; zpl: string; warnings: PreflightWarning[]; notes?: string[] }
-  | ToolError;
+export type ExportZplResult = z.infer<typeof exportZplReportSchema> | ToolError;
 
 /** The ZPL plus the warnings that apply to it: an agent that exports straight
  *  from a design it did not build itself would otherwise never see them. */
@@ -215,11 +203,6 @@ export const zplInputShape = {
   heightMm: z.optional(z.number().positive()),
 };
 
-/** The report's deduped command buckets, so the agent learns which commands
- *  were dropped, lossy, or skipped. Drops the per-occurrence findings
- *  (an app-UI navigation aid). */
-export type ZplFindings = Omit<ImportReport, "findings">;
-
 const findingsOf = ({ findings: _drop, ...buckets }: ImportReport): ZplFindings => buckets;
 
 /** Complete the parsed (partial) label: the stream's own dpmm/size wins, then
@@ -238,22 +221,7 @@ function completeLabel(
   };
 }
 
-export type ValidateZplResult =
-  | {
-      ok: true;
-      objectCount: number;
-      pageCount: number;
-      label: LabelConfig;
-      /** Row count of the stream's ^XF recall blocks for its ^DF template. */
-      batch?: { headers: string[]; rowCount: number };
-      findings: ZplFindings;
-      warnings: PreflightWarning[];
-      notes?: string[];
-      bounds: ObjectBounds[];
-      overlaps: ObjectOverlap[];
-      geometryTruncated?: boolean;
-    }
-  | ToolError;
+export type ValidateZplResult = z.infer<typeof validateZplReportSchema> | ToolError;
 
 /** Parse raw ZPL and report it: how many objects/pages came back, the detected
  *  label, the parser's findings, and preflight warnings. A lint pass, not a
@@ -281,23 +249,7 @@ export function validateZpl(
   };
 }
 
-export type ImportZplResult =
-  | {
-      ok: true;
-      designFile: DesignFileJson;
-      /** Rows the stream's ^XF recall blocks carry for its ^DF template, bound to the variables by the design file's csvMapping. */
-      batch?: { headers: string[]; rows: string[][]; formatPath?: string };
-      findings: ZplFindings;
-      /** What the stream itself declared, after the caller's hints and the
-       *  fallback size: ^PW/^LL win, so the result is worth reading back. */
-      label: LabelConfig;
-      warnings: PreflightWarning[];
-      notes?: string[];
-      bounds: ObjectBounds[];
-      overlaps: ObjectOverlap[];
-      geometryTruncated?: boolean;
-    }
-  | ToolError;
+export type ImportZplResult = z.infer<typeof importZplReportSchema> | ToolError;
 
 /** Parse raw ZPL into an editable design file (ready for export_zpl/open_in_app)
  *  plus the parser's findings. Shares the app's import path: one page per ^XA
@@ -326,20 +278,7 @@ export function importZpl(
 }
 
 
-export interface SchemaObjectType {
-  type: string;
-  label: string;
-  defaultProps: Record<string, unknown>;
-  props?: Record<string, string>;
-  /** Wire domain per bounded prop. */
-  domains?: Record<string, string>;
-}
-
-export interface SchemaResult {
-  note: string;
-  objectShape: Record<string, string>;
-  types: SchemaObjectType[];
-}
+export type SchemaResult = z.infer<typeof schemaResultSchema>;
 
 const SCHEMA: SchemaResult = {
   note:
@@ -368,7 +307,7 @@ const SCHEMA: SchemaResult = {
   },
   types: (Object.keys(ObjectRegistry) as (keyof typeof ObjectRegistry)[]).map((type) => {
     const entry = ObjectRegistry[type];
-    const out: SchemaObjectType = {
+    const out: SchemaResult["types"][number] = {
       type: String(type),
       label: entry.label,
       defaultProps: entry.defaultProps as Record<string, unknown>,
