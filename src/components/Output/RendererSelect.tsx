@@ -2,6 +2,7 @@ import { useId } from "react";
 import { useT } from "../../hooks/useT";
 import { formatTemplate } from "../../lib/formatTemplate";
 import { previewProviderChoices, previewProviderLabel } from "../../lib/previewProviderLabel";
+import { printReach } from "../../lib/printReach";
 import { selectEffectivePreviewProvider, selectReadsPrinter, useLabelStore } from "../../store/labelStore";
 import type { PreviewProvider } from "../../store/slices/uiSlice";
 import { sectionHeadingCls } from "../ui/formStyles";
@@ -16,7 +17,7 @@ export function RendererSelect() {
   const labelaryAvailable = useLabelStore((s) => s.thirdParty.labelary);
   const readsPrinter = useLabelStore(selectReadsPrinter);
   const setProvider = useLabelStore((s) => s.setPreviewProvider);
-  const choices = previewProviderChoices(t, { labelary: labelaryAvailable, printer: readsPrinter });
+  const choices = previewProviderChoices(t, { labelary: labelaryAvailable, printer: readsPrinter }, printReach);
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={id} className={sectionHeadingCls}>

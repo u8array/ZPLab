@@ -1,18 +1,21 @@
+import { useId, useState } from "react";
 import type { SgdSetting } from "@zplab/core/lib/sgd";
 import { useReplyRead } from "../../hooks/useReplyRead";
 import { useT } from "../../hooks/useT";
 import { useLabelStore, selectReadsPrinter } from "../../store/labelStore";
-import { isDesktopShell } from "../../lib/platform";
-import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
+import { printReach } from "../../lib/printReach";
+import { effectiveTransport, offeredTransports, reachableTransports, type PrintTransport } from "../../lib/printTarget";
+import { failureText } from "../../lib/printerStatusText";
 import { wayHint, wayLabel } from "../../lib/printWayText";
-import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useUsbPrinters, type DeviceListState } from "../../hooks/usePrintDevices";
+import { saveServerToken } from "../../lib/serverPrint";
+import { pickerOptions, useBrowserPrintDevices, useLocalPrinters, useServerPrinters, useUsbPrinters, type DeviceListState } from "../../hooks/usePrintDevices";
 import { AdoptSettingsDialog } from "../Output/AdoptSettingsDialog";
-import { buttonCls, sectionHeadingCls } from "../ui/formStyles";
+import { buttonCls, inputCls, labelCls, sectionHeadingCls } from "../ui/formStyles";
 import { RadioOption } from "../ui/RadioOption";
 import { Select } from "../ui/Select";
 import { PrinterAddressFields } from "./PrinterAddressFields";
 
-function DevicePicker({ list, error }: { list: DeviceListState; error: string | null }) {
+function DevicePicker({ list, error }: { list: Pick<DeviceListState, "options" | "loading" | "selectedId" | "select">; error: string | null }) {
   const t = useT();
   return (
     <section className="flex flex-col gap-2">
@@ -22,6 +25,43 @@ function DevicePicker({ list, error }: { list: DeviceListState; error: string | 
       </div>
       {error && <span className="text-[10px] font-mono text-error">{error}</span>}
     </section>
+  );
+}
+
+/** The field holds only the draft, so a save empties it again. */
+function ServerTokenField({ onSaved }: { onSaved: () => void }) {
+  const loc = useT().printerSettings.printTarget;
+  const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const id = useId();
+  const save = async () => {
+    setFailed(false);
+    setSaving(true);
+    const saved = await saveServerToken(draft).then(
+      () => true,
+      () => false,
+    );
+    setSaving(false);
+    if (!saved) return setFailed(true);
+    setDraft("");
+    onSaved();
+  };
+
+  return (
+    <div className="flex flex-col gap-1 max-w-md">
+      <label htmlFor={id} className={labelCls}>
+        {loc.serverToken}
+      </label>
+      <div className="flex gap-2">
+        <input id={id} type="password" value={draft} onChange={(e) => setDraft(e.target.value)} disabled={saving} autoComplete="off" className={`${inputCls} flex-1`} />
+        <button type="button" className={`${buttonCls} disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-surface-2`} disabled={!draft.trim() || saving} onClick={() => void save()}>
+          {loc.serverTokenSave}
+        </button>
+      </div>
+      <span className="text-[10px] text-muted">{loc.serverTokenHint}</span>
+      {failed && <span className="text-[10px] font-mono text-error">{loc.serverTokenSaveError}</span>}
+    </div>
   );
 }
 
@@ -35,41 +75,35 @@ export function PrintTargetTab() {
   const reading = useLabelStore((s) => s.printerReading) !== undefined;
   const readsPrinter = useLabelStore(selectReadsPrinter);
   const settings = useReplyRead<SgdSetting[]>();
-  const usb = useUsbPrinters(isDesktopShell);
-  const local = useLocalPrinters(isDesktopShell);
+  const usb = useUsbPrinters(printReach.desktop);
+  const local = useLocalPrinters(printReach.desktop);
+  const server = useServerPrinters(printReach.server);
   const bp = useBrowserPrintDevices();
-  const offered = offeredTransports(isDesktopShell, { local: local.present, usb: usb.present });
+  const offered = offeredTransports(printReach, { local: local.present, usb: usb.present, server: server.present });
   const way = effectiveTransport(transport, offered);
 
   // A device way without devices stays visible, and then its reason replaces the description.
   const deviceWayHint = (value: PrintTransport) => (offered.includes(value) ? undefined : t.zebraPrint.noPrinters);
   const openSettings = () => settings.start(readPrinterSettings);
-  const ways: { value: PrintTransport; desktopOnly?: boolean }[] = [
-    { value: "network" },
-    { value: "browserprint" },
-    { value: "local", desktopOnly: true },
-    { value: "usb", desktopOnly: true },
-  ];
 
   return (
     <div className="flex flex-col gap-5">
       <section className="flex flex-col gap-2">
         <h3 className={sectionHeadingCls}>{loc.transportHeading}</h3>
-        {ways
-          .filter((w) => offered.includes(w.value) || (w.desktopOnly && isDesktopShell))
-          .map((w) => (
-            <RadioOption
-              key={w.value}
-              name="print-transport"
-              value={w.value}
-              current={way}
-              onSelect={(next) => setPrintTarget({ transport: next })}
-              label={wayLabel(t.zebraPrint, w.value)}
-              hint={deviceWayHint(w.value) ?? wayHint(t.zebraPrint, w.value, isDesktopShell)}
-              disabled={!offered.includes(w.value)}
-            />
-          ))}
-        <span className="text-[10px] text-muted max-w-md">{loc.hint}</span>
+        {reachableTransports(printReach).map((value) => (
+          <RadioOption
+            key={value}
+            name="print-transport"
+            value={value}
+            current={way}
+            onSelect={(next) => setPrintTarget({ transport: next })}
+            label={wayLabel(t.zebraPrint, value)}
+            hint={deviceWayHint(value) ?? wayHint(t.zebraPrint, value, printReach.desktop)}
+            disabled={!offered.includes(value)}
+          />
+        ))}
+        {/* The hint names the preview fallback, which only the desktop shell has. */}
+        {printReach.desktop && <span className="text-[10px] text-muted max-w-md">{loc.hint}</span>}
       </section>
 
       {way === "browserprint" && (
@@ -82,12 +116,21 @@ export function PrintTargetTab() {
       )}
       {way === "local" && <DevicePicker list={local} error={local.error} />}
       {way === "usb" && <DevicePicker list={usb} error={usb.error} />}
+      {way === "server" && (
+        <>
+          <DevicePicker list={server} error={server.error && failureText(t.printerSettings.printerStatus, server.error)} />
+          <ServerTokenField onSaved={() => void server.refresh()} />
+        </>
+      )}
 
-      <section className="flex flex-col gap-2">
-        <h3 className={sectionHeadingCls}>{loc.addressHeading}</h3>
-        <PrinterAddressFields />
-        <span className="text-[10px] text-muted max-w-md">{loc.addressHint}</span>
-      </section>
+      {/* The server keeps the address of each printer it names. */}
+      {way !== "server" && (
+        <section className="flex flex-col gap-2">
+          <h3 className={sectionHeadingCls}>{loc.addressHeading}</h3>
+          <PrinterAddressFields />
+          <span className="text-[10px] text-muted max-w-md">{loc.addressHint}</span>
+        </section>
+      )}
 
       {readsPrinter && (
         <button type="button" className={`${buttonCls} self-start`} disabled={reading} onClick={openSettings}>

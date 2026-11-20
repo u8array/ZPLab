@@ -9,10 +9,10 @@ describe("print target takeover", () => {
     localStorage.setItem("zpl-designer-session", JSON.stringify({ state: { label: { widthMm: 100, heightMm: 150, dpmm: 8 }, printerProfile: {} }, version: 18 }));
     vi.resetModules();
     const { useLabelStore } = await import("./labelStore");
-    expect(useLabelStore.getState().printTarget).toMatchObject({ host: "172.17.17.175", usbId: "usb-1", transport: "network" });
+    expect(useLabelStore.getState().printTarget).toMatchObject({ host: "172.17.17.175", usbId: "usb-1", transport: "network", serverPrinter: "" });
     const persisted = JSON.parse(localStorage.getItem("zpl-designer-session") ?? "{}") as { state: { printTarget?: { host: string } }; version: number };
     expect(persisted.state.printTarget?.host).toBe("172.17.17.175");
-    expect(persisted.version).toBe(20);
+    expect(persisted.version).toBe(21);
     expect(localStorage.getItem("zebra_print_ip")).toBeNull();
     expect(useLabelStore.persist.hasHydrated()).toBe(true);
     expect(useLabelStore.temporal.getState().pastStates).toHaveLength(0);

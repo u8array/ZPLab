@@ -4,13 +4,15 @@ import { useT } from "../../hooks/useT";
 import { Select } from "../ui/Select";
 import { primaryButtonCls } from "../ui/formStyles";
 import { sendViaBrowserPrint, sendViaNetwork } from "../../lib/zebraPrint";
-import { isDesktopShell } from "../../lib/platform";
+import { printReach } from "../../lib/printReach";
 import { needsRawChannel, readsPrinter, resolveQueryTarget, type PrintTransport } from "../../lib/printTarget";
+import { failureText } from "../../lib/printerStatusText";
 import { queryButtonText, queryOffer } from "../../lib/printWayText";
 import { QueryHints } from "./QueryHints";
 import type { DocumentQueryFacts } from "../../lib/outputChoice";
 import { useLabelStore, selectEffectivePreviewProvider, selectPrinterReading } from "../../store/labelStore";
 import { sendZplLocal } from "../../lib/localPrint";
+import { sendZplServer } from "../../lib/serverPrint";
 import { sendZplUsb, setupUsbAccess } from "../../lib/usbPrint";
 import { pickerOptions } from "../../hooks/usePrintDevices";
 import type { PrintDeviceLists } from "../../hooks/usePrintWays";
@@ -31,7 +33,7 @@ function StatusMessage({ status }: { status: Status }) {
   );
 }
 
-// Browser print, the OS spooler and USB share this body, because each picks from a device list.
+// Browser print, the OS spooler, USB and the server share this body, because each picks from a device list.
 interface TransportView {
   key: PrintTransport;
   selected: string;
@@ -76,10 +78,11 @@ export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string;
   const locked = checking && needsRawChannel(way, renderer);
   const [netStatus, setNetStatus] = useState<Status>({ type: "idle" });
 
-  const { bp, local, usb } = devices;
+  const { bp, local, usb, server } = devices;
   const [bpStatus, setBpStatus] = useState<Status>({ type: "idle" });
   const [localStatus, setLocalStatus] = useState<Status>({ type: "idle" });
   const [usbStatus, setUsbStatus] = useState<Status>({ type: "idle" });
+  const [serverStatus, setServerStatus] = useState<Status>({ type: "idle" });
   // Tracks the last USB send being permission-denied, so the setup affordance
   // survives locale changes and a cancelled polkit prompt.
   const [usbNeedsSetup, setUsbNeedsSetup] = useState(false);
@@ -89,6 +92,7 @@ export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string;
   const usbViewStatus = withListError(usbStatus, usb.error);
   const localViewStatus = withListError(localStatus, local.error);
   const bpViewStatus = withListError(bpStatus, bp.error && t.zebraPrint.agentNotFound);
+  const serverViewStatus = withListError(serverStatus, server.error && failureText(t.printerSettings.printerStatus, server.error));
 
   async function handleNetworkSend() {
     const target = useLabelStore.getState().printTarget;
@@ -181,6 +185,13 @@ export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string;
     }
   }
 
+  async function handleServerSend() {
+    if (!server.selectedId) return;
+    setServerStatus({ type: "sending" });
+    const result = await sendZplServer(server.selectedId, zpl());
+    setServerStatus(result.kind === "sent" ? { type: "success", message: t.zebraPrint.success } : { type: "error", message: failureText(t.printerSettings.printerStatus, result) });
+  }
+
   async function handleUsbSetup() {
     try {
       await setupUsbAccess();
@@ -201,10 +212,9 @@ export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string;
   };
   const checkProps = (sending: boolean) => ({ transport: way, sendBusy: sending, onFailure: onReadFailure });
 
-  // Every way reaches the same device, so every way may ask it, and a way that cannot be questioned
-  // itself falls back to the configured address.
+  // In the desktop shell every way reaches the same device, so a way without a query falls back to the configured address.
   const addressCheck = (sending: boolean) => {
-    if (!readsPrinter(printTarget, isDesktopShell, way)) return null;
+    if (!readsPrinter(printTarget, printReach, way)) return null;
     const resolved = resolveQueryTarget(printTarget, way);
     if ("failure" in resolved) return null;
     return (
@@ -277,9 +287,21 @@ export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string;
         addressCheck(usbStatus.type === "sending")
       ),
     },
+    {
+      key: "server",
+      selected: server.selectedId,
+      onSelect: server.select,
+      options: pickerOptions(t, server),
+      selectDisabled: server.options.length === 0,
+      onSend: handleServerSend,
+      sendLabel: serverStatus.type === "sending" ? t.zebraPrint.sending : t.zebraPrint.send,
+      sendDisabled: !server.selectedId || server.options.length === 0 || server.loading || serverStatus.type === "sending" || locked,
+      status: serverViewStatus,
+      extra: addressCheck(serverStatus.type === "sending") ?? undefined,
+    },
   ];
   const activeView = views.find((v) => v.key === way);
-  const offer = queryOffer(t.zebraPrint, query, way, isDesktopShell);
+  const offer = queryOffer(t.zebraPrint, query, way, printReach);
   const netSendDisabled = !host || netStatus.type === "sending" || locked;
   const action = (send: ReactNode, sendDisabled: boolean): ReactNode =>
     offer.queries ? <DocumentQueryAction zpl={zpl} label={queryButtonText(t.zebraPrint, query)} transport={way} disabled={sendDisabled} onFailure={onReadFailure} /> : send;

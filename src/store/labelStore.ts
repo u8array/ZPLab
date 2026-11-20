@@ -367,6 +367,14 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     }
   }
 
+  // v20→v21: a persisted print target without the server printer needs a backfill.
+  if (version < 21) {
+    const pt = s.printTarget;
+    if (pt && typeof pt === 'object' && !('serverPrinter' in pt)) {
+      s = { ...s, printTarget: { ...(pt as Record<string, unknown>), serverPrinter: '' } };
+    }
+  }
+
   // Unconditional rather than version-gated: main-era sessions persist at the current
   // version but carry legacy overlays whose head ^JM or ^DF rode only in the bytes, so
   // a full regen would drop them. Latch both back the way a load does.
@@ -547,7 +555,7 @@ export const useLabelStore = create<LabelState>()(
     {
       name: 'zpl-designer-session',
       // Bumped for every rehydrate repair: persist runs migrate only on a version change.
-      version: 20,
+      version: 21,
       migrate: (persistedState, version) => migrateLegacy(persistedState, version) as LabelState,
       storage: sessionStore,
       partialize: persistPartialize,

@@ -1,7 +1,7 @@
 import { useT } from "../../hooks/useT";
 import { queryOffer } from "../../lib/printWayText";
 import type { DocumentQueryFacts } from "../../lib/outputChoice";
-import { isDesktopShell } from "../../lib/platform";
+import { printReach } from "../../lib/printReach";
 import { primaryButtonCls } from "../ui/formStyles";
 import { Tooltip } from "../ui/Tooltip";
 import { QueryHints } from "./QueryHints";
@@ -24,7 +24,7 @@ export function SystemPrintBody({ onPrint, rendering, locked, query }: Props) {
       <p aria-live="polite" className="font-mono text-[10px] text-muted min-h-4">
         {rendering ? loc.systemRendering : ""}
       </p>
-      <QueryHints hints={queryOffer(loc, query, "system", isDesktopShell).hints} />
+      <QueryHints hints={queryOffer(loc, query, "system", printReach).hints} />
       <div className="flex justify-end">
         <Tooltip content={locked ? t.printerSettings.printerStatus.failBusy : undefined}>
           <button onClick={onPrint} disabled={rendering || locked} className={primaryButtonCls}>

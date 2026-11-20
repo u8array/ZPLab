@@ -112,7 +112,7 @@ const PREVIEW_DEADLINE_MS = 90_000;
 /** Ask the printer to render the design and upload the resulting bitmap
  *  (^IS store + ^HY upload over one bidirectional channel). Ground truth from
  *  the firmware renderer, so it needs raw TCP (9100) or a USB read channel,
- *  not IPP. Desktop shell only: the web build has neither. */
+ *  not IPP. */
 export async function fetchPrinterPreview(
   target: QueryTarget,
   designZpl: string,

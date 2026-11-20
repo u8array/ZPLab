@@ -1,5 +1,6 @@
 import type { Translations } from "../locales";
 import type { PreviewProvider } from "../store/slices/uiSlice";
+import type { PrintReach } from "./printTarget";
 
 /** The one wording per renderer, so every place names it the same. */
 export function previewProviderLabel(t: Translations, provider: PreviewProvider): string {
@@ -16,11 +17,11 @@ export interface PreviewProviderChoice {
 }
 
 /** The renderers as one choice list, so every place locks the same ones. */
-export function previewProviderChoices(t: Translations, offered: { labelary: boolean; printer: boolean }): PreviewProviderChoice[] {
+export function previewProviderChoices(t: Translations, offered: { labelary: boolean; printer: boolean }, reach: PrintReach): PreviewProviderChoice[] {
   const loc = t.printerSettings.preview;
   return [
     { provider: "labelary", label: loc.providerLabelary, disabled: !offered.labelary },
-    { provider: "printer", label: loc.providerPrinter, disabled: !offered.printer, ...(offered.printer ? {} : { reason: loc.providerPrinterDesktopOnly }) },
+    { provider: "printer", label: loc.providerPrinter, disabled: !offered.printer, ...(offered.printer ? {} : { reason: reach.server ? loc.providerPrinterServerOnly : loc.providerPrinterDesktopOnly }) },
     { provider: "none", label: loc.providerNone, disabled: false },
   ];
 }

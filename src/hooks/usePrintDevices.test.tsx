@@ -2,11 +2,14 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import type * as LocalPrint from "../lib/localPrint";
+import type * as ServerPrint from "../lib/serverPrint";
 
 const listLocalPrinters = vi.hoisted(() => vi.fn());
+const listServerPrinters = vi.hoisted(() => vi.fn());
 vi.mock("../lib/localPrint", async (importOriginal) => ({ ...(await importOriginal<typeof LocalPrint>()), listLocalPrinters }));
+vi.mock("../lib/serverPrint", async (importOriginal) => ({ ...(await importOriginal<typeof ServerPrint>()), listServerPrinters }));
 
-import { useLocalPrinters } from "./usePrintDevices";
+import { useLocalPrinters, useServerPrinters } from "./usePrintDevices";
 import { useLabelStore } from "../store/labelStore";
 import { DEFAULT_PRINT_TARGET } from "../lib/printTarget";
 
@@ -30,5 +33,18 @@ describe("usePrintDevices", () => {
     const empty = renderHook(() => useLocalPrinters(true));
     await waitFor(() => expect(empty.result.current.loading).toBe(false));
     expect(empty.result.current.present).toBe(false);
+  });
+
+  it("keeps the failure of the server list by its kind, and binds a listed printer by its id", async () => {
+    listServerPrinters.mockResolvedValueOnce({ kind: "unauthorized" });
+    const refused = renderHook(() => useServerPrinters(true));
+    await waitFor(() => expect(refused.result.current.loading).toBe(false));
+    expect(refused.result.current.error).toEqual({ kind: "unauthorized" });
+    expect(refused.result.current.present).toBe(true);
+    listServerPrinters.mockResolvedValueOnce({ kind: "ok", printers: [{ id: "dock", name: "Dock 3" }] });
+    const { result } = renderHook(() => useServerPrinters(true));
+    await waitFor(() => expect(result.current.selectedId).toBe("dock"));
+    expect(result.current.options).toEqual([{ value: "dock", label: "Dock 3" }]);
+    expect(useLabelStore.getState().printTarget.serverPrinter).toBe("dock");
   });
 });

@@ -45,9 +45,10 @@ export function PrinterChip() {
   const settings = useReplyRead<SgdSetting[]>();
 
   const resolved = resolveQueryTarget(printTarget);
-  const name = "failure" in resolved ? t.zebraPrint.printer : resolved.target.kind === "usb" ? t.zebraPrint.tabUsb : resolved.target.host;
+  const target = "failure" in resolved ? undefined : resolved.target;
+  const name = target === undefined ? t.zebraPrint.printer : target.kind === "network" ? target.host : target.kind === "usb" ? t.zebraPrint.tabUsb : target.id;
   // The stored way, because the effective one would enumerate printers on every mount.
-  const askedOverAddress = !("failure" in resolved) && resolved.target.kind === "network" && printTarget.transport !== "network";
+  const askedOverAddress = target?.kind === "network" && printTarget.transport !== "network";
   const view = reportView(loc, state.phase === "done" ? state.report : undefined);
   const reading = step !== undefined;
   const tone: ReadinessTone = state.phase === "failed" ? "blocked" : (view?.line.tone ?? "unknown");
