@@ -228,3 +228,32 @@ describe("computePointSnap", () => {
     expect(result.y).toBe(102); // 102 - 100.5 = 1.5, closer than 100.5 - 96 = 4.5
   });
 });
+
+describe("fixed snap lines", () => {
+  const lines = { x: [200], y: [90] };
+
+  it("pull each anchor of a dragged box: start, centre and end", () => {
+    const box = (x: number) => ({ id: "d", x, y: 300, width: 40, height: 20 });
+    expect(computeSnap(box(203), [], 6, undefined, undefined, lines).x).toBe(200);
+    expect(computeSnap(box(177), [], 6, undefined, undefined, lines).x).toBe(180);
+    expect(computeSnap(box(163), [], 6, undefined, undefined, lines).x).toBe(160);
+    expect(computeSnap(box(230), [], 6, undefined, undefined, lines).x).toBe(230);
+  });
+
+  it("show where the box snapped", () => {
+    const r = computeSnap({ id: "d", x: 203, y: 300, width: 40, height: 20 }, [], 6, undefined, undefined, lines);
+    expect(r.guides).toEqual([{ orientation: "V", type: "align", pos: 200, from: 292, to: 328 }]);
+  });
+
+  it("pull the edges a resize moves", () => {
+    const grown = { id: "d", x: 100, y: 40, width: 97, height: 47 };
+    const edges = { left: false, right: true, top: false, bottom: true };
+    expect(computeResizeSnap(grown, [], edges, 6, undefined, undefined, lines)).toMatchObject({ x: 100, y: 40, width: 100, height: 50 });
+    expect(computeResizeSnap({ ...grown, x: 197 }, [], edges, 6, undefined, undefined, lines).x).toBe(197);
+  });
+
+  it("pull a line endpoint", () => {
+    expect(computePointSnap({ x: 204, y: 87 }, [], 6, undefined, lines)).toMatchObject({ x: 200, y: 90 });
+    expect(computePointSnap({ x: 210, y: 100 }, [], 6, undefined, lines)).toMatchObject({ x: 210, y: 100 });
+  });
+});

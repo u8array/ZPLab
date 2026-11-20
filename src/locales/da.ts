@@ -1136,6 +1136,7 @@ const da = {
     toggleSnap: 'Fastgør',
     toggleGrid: 'Gitter',
     toggleGuides: 'Hjælpelinjer',
+    guidePosition: 'Hjælpelinjens position',
     deletePageConfirm: 'Slet den aktuelle side?',
     openDesign: 'Åbn design',
     saveDesign: 'Gem design',

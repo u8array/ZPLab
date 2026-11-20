@@ -1130,6 +1130,7 @@ const ca = {
     toggleSnap: 'Ajust',
     toggleGrid: 'Quadrícula',
     toggleGuides: 'Guies',
+    guidePosition: 'Posició de la guia',
     deletePageConfirm: 'Vols eliminar la pàgina actual?',
     openDesign: 'Obre un disseny',
     saveDesign: 'Desa el disseny',

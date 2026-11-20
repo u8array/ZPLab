@@ -1136,6 +1136,7 @@ const hr = {
     toggleSnap: 'Privlačenje',
     toggleGrid: 'Mreža',
     toggleGuides: 'Vodilice',
+    guidePosition: 'Položaj vodilice',
     deletePageConfirm: 'Izbrisati trenutnu stranicu?',
     openDesign: 'Otvori dizajn',
     saveDesign: 'Spremi dizajn',

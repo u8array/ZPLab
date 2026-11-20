@@ -1136,6 +1136,7 @@ const bg = {
     toggleSnap: 'Прилепване',
     toggleGrid: 'Мрежа',
     toggleGuides: 'Направляващи',
+    guidePosition: 'Позиция на направляващата',
     deletePageConfirm: 'Изтриване на текущата страница?',
     openDesign: 'Отвори дизайн',
     saveDesign: 'Запази дизайн',

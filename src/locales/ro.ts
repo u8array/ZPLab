@@ -1136,6 +1136,7 @@ const ro = {
     toggleSnap: 'Aliniere',
     toggleGrid: 'Grilă',
     toggleGuides: 'Ghidaje',
+    guidePosition: 'Poziția ghidajului',
     deletePageConfirm: 'Ștergeți pagina curentă?',
     openDesign: 'Deschide design',
     saveDesign: 'Salvează design',

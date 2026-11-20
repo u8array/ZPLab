@@ -1136,6 +1136,7 @@ const et = {
     toggleSnap: 'Haaramine',
     toggleGrid: 'Ruudustik',
     toggleGuides: 'Juhtjooned',
+    guidePosition: 'Juhtjoone asukoht',
     deletePageConfirm: 'Kustuta praegune leht?',
     openDesign: 'Ava kujundus',
     saveDesign: 'Salvesta kujundus',

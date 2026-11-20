@@ -1136,6 +1136,7 @@ const zhHant = {
     toggleSnap: '貼齊',
     toggleGrid: '格線',
     toggleGuides: '參考線',
+    guidePosition: '參考線位置',
     deletePageConfirm: '刪除目前頁面？',
     openDesign: '開啟設計',
     saveDesign: '儲存設計',

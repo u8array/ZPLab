@@ -3,7 +3,8 @@ import type Konva from "konva";
 import { pxToDots, dotsToPx } from "@zplab/core/lib/coordinates";
 import { dragSnapTargets, gridSnapDelta, smartSnapDelta, labelSnapRectDots } from "../dragGeometry";
 import { SNAP_THRESHOLD_PX } from "../../../lib/snapGuides";
-import type { SnapGuide, SnapRect } from "../../../lib/snapGuides";
+import type { SnapGuide, SnapLines, SnapRect } from "../../../lib/snapGuides";
+import { guideSnapLinesDots } from "../../../lib/rulerGuides";
 import {
   barBoxDots,
   selectionUnionDots,
@@ -70,6 +71,8 @@ interface DragState {
   others: SnapRect[];
   /** Printable label rect (dots) as a smart-snap target. */
   labelDots: SnapRect;
+  /** Ruler guides in dots, smart-snap targets. */
+  guideDots: SnapLines;
   /** Latest model-space delta (dots), applied to all on commit. */
   lastDelta: { x: number; y: number };
 }
@@ -170,6 +173,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
       startUnionDots,
       others,
       labelDots,
+      guideDots: guideSnapLinesDots(state.rulerGuides, args.dpmm),
       lastDelta: { x: 0, y: 0 },
     };
   };
@@ -216,7 +220,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
         height: drag.startUnionDots.height,
       };
       const thresholdDots = pxToDots(SNAP_THRESHOLD_PX, args.scale, args.dpmm);
-      const { dx, dy, guides } = smartSnapDelta(cur, drag.others, drag.labelDots, thresholdDots);
+      const { dx, dy, guides } = smartSnapDelta(cur, drag.others, drag.labelDots, thresholdDots, drag.guideDots);
       deltaDots = { x: rawDx + dx, y: rawDy + dy };
       setGuides(guides.map(toLocalGuide));
     }

@@ -1136,6 +1136,7 @@ const fr = {
     toggleSnap: 'Magnétisme',
     toggleGrid: 'Grille',
     toggleGuides: 'Repères',
+    guidePosition: 'Position du repère',
     deletePageConfirm: 'Supprimer la page actuelle ?',
     openDesign: 'Ouvrir le design',
     saveDesign: 'Enregistrer le design',

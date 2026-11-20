@@ -1136,6 +1136,7 @@ const ar = {
     toggleSnap: 'محاذاة',
     toggleGrid: 'الشبكة',
     toggleGuides: 'خطوط الإرشاد',
+    guidePosition: 'موضع الخط الإرشادي',
     deletePageConfirm: 'حذف الصفحة الحالية؟',
     openDesign: 'فتح تصميم',
     saveDesign: 'حفظ تصميم',

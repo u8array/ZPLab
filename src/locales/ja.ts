@@ -1136,6 +1136,7 @@ const ja = {
     toggleSnap: 'スナップ',
     toggleGrid: 'グリッド',
     toggleGuides: 'ガイド線',
+    guidePosition: 'ガイド線の位置',
     deletePageConfirm: '現在のページを削除しますか?',
     openDesign: 'デザインを開く',
     saveDesign: 'デザインを保存',

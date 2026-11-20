@@ -1136,6 +1136,7 @@ const pt = {
     toggleSnap: 'Encaixe',
     toggleGrid: 'Grade',
     toggleGuides: 'Guias',
+    guidePosition: 'Posição da guia',
     deletePageConfirm: 'Eliminar a página atual?',
     openDesign: 'Abrir design',
     saveDesign: 'Salvar design',

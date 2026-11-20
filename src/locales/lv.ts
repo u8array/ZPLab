@@ -1136,6 +1136,7 @@ const lv = {
     toggleSnap: 'Pievilkšana',
     toggleGrid: 'Režģis',
     toggleGuides: 'Palīglīnijas',
+    guidePosition: 'Palīglīnijas pozīcija',
     deletePageConfirm: 'Dzēst pašreizējo lapu?',
     openDesign: 'Atvērt dizainu',
     saveDesign: 'Saglabāt dizainu',

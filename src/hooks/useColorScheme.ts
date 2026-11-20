@@ -26,6 +26,8 @@ export interface CanvasColors {
    *  on the canvas; e.g. the ^FB wrap-guide line so the user can tell
    *  it apart from selection/transformer chrome. */
   accent: string;
+  /** Guides the user drags out of the rulers, in cyan to set them apart from selection and accent chrome. */
+  rulerGuide: string;
   /** Panel surface / muted text / hairline / destructive, mirroring the DOM theme
    *  tokens in index.css. index.css is the source of truth, Konva can't read CSS
    *  variables and jsdom can't resolve them in tests, hence the JS copy. */
@@ -49,6 +51,7 @@ export const DARK_COLORS: CanvasColors = {
   rulerSeparator: '#2a2a2a',
   selection:      '#6366f1',
   accent:         '#f59e0b',
+  rulerGuide:     '#22b8d4',
   surface:        '#1f1f1f',
   surface2:       '#282828',
   border:         '#333333',
@@ -69,6 +72,7 @@ export const LIGHT_COLORS: CanvasColors = {
   rulerSeparator: '#d4d4d8',
   selection:      '#6366f1',
   accent:         '#d97706',
+  rulerGuide:     '#0891b2',
   surface:        '#fafafa',
   surface2:       '#f4f4f5',
   border:         '#d4d4d8',

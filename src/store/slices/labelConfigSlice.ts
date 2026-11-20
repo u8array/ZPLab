@@ -11,6 +11,7 @@ import { parseDesignFile, designFileErrors } from '@zplab/core/lib/designFile';
 import { selectEditorFrozen, selectSourceEditDirty, selectSourceEditing } from '../labelStore.selectors';
 import { endSourceSession } from './sourceEditSlice';
 import { resetDocumentUi } from './uiSlice';
+import { NO_RULER_GUIDES } from '../../lib/rulerGuides';
 import { mergeSetupUploads, rebaseAppendedPageDensity, replaceImportLabel, type ZplImportResult } from '@zplab/core/lib/zplImportService';
 import type { PrinterProfile } from '@zplab/core/types/PrinterProfile';
 import { countChangedProfileSettings } from '@zplab/core/types/PrinterProfile';
@@ -115,6 +116,8 @@ export const createLabelConfigSlice: StateCreator<LabelState, [], [], LabelConfi
       // Replacing the document supersedes any in-flight dataset fetch.
       datasetFetchToken: get().datasetFetchToken + 1,
       ...resetDocumentUi(),
+      // Guides belong to the displaced document. A source edit rewrites the same document and keeps them.
+      rulerGuides: NO_RULER_GUIDES,
       // An open source buffer and a kept restore both belong to the displaced document.
       ...endSourceSession(),
       replacedDesign: null,

@@ -9,6 +9,7 @@ export function computePointSnap(
   others: SnapRect[],
   threshold = SNAP_THRESHOLD_PX,
   labelRect?: SnapRect,
+  lines?: SnapLines,
 ): { x: number; y: number; guides: SnapGuide[] } {
   const snapAxisPt = (
     drag: number,
@@ -57,6 +58,7 @@ export function computePointSnap(
       consider(center, perpStart, perpEnd);
       consider(endEdge, perpStart, perpEnd);
     }
+    for (const line of lines?.[axis] ?? []) consider(line, dragPerp, dragPerp);
     return { value: bestValue, guides: bestGuides };
   };
 
@@ -71,6 +73,12 @@ export interface SnapRect {
   y: number;
   width: number;
   height: number;
+}
+
+/** Fixed lines to snap to, in the caller's space: `x` holds the positions that pull along x, `y` along y. */
+export interface SnapLines {
+  x: readonly number[];
+  y: readonly number[];
 }
 
 export interface SnapGuide {
@@ -121,6 +129,25 @@ function objectAnchorCandidates(
   }));
 }
 
+/** A fixed line is one anchor candidate, shown over the dragged object's own extent. */
+function lineAnchorCandidates(
+  lines: readonly number[],
+  dragPerp: number,
+  dragPerpSize: number,
+  alignOrientation: 'H' | 'V',
+): AnchorCandidate[] {
+  return lines.map(value => ({
+    value,
+    guide: {
+      orientation: alignOrientation,
+      type: 'align',
+      pos: value,
+      from: dragPerp - GUIDE_PADDING_PX,
+      to: dragPerp + dragPerpSize + GUIDE_PADDING_PX,
+    },
+  }));
+}
+
 function labelAnchorCandidates(
   labelAxis: AxisInfo,
   alignOrientation: 'H' | 'V',
@@ -161,6 +188,7 @@ export function computeSnap(
   labelBounds?: { x: number; y: number; width: number; height: number },
   /** Separate from `others` so it bypasses nearest-2 filter. */
   labelRect?: SnapRect,
+  lines?: SnapLines,
 ): SnapResult {
   const xDrag: AxisInfo = { pos: dragged.x, size: dragged.width,  perp: dragged.y, perpSize: dragged.height };
   const yDrag: AxisInfo = { pos: dragged.y, size: dragged.height, perp: dragged.x, perpSize: dragged.width  };
@@ -174,8 +202,8 @@ export function computeSnap(
   const xLblAxis = labelRect ? { pos: labelRect.x, size: labelRect.width, perp: labelRect.y, perpSize: labelRect.height } : undefined;
   const yLblAxis = labelRect ? { pos: labelRect.y, size: labelRect.height, perp: labelRect.x, perpSize: labelRect.width } : undefined;
 
-  const { snapped: x, guides: xGuides } = snapAxis(xDrag, xOthers, threshold, 'V', xLabelExtent, xLblAxis);
-  const { snapped: y, guides: yGuides } = snapAxis(yDrag, yOthers, threshold, 'H', yLabelExtent, yLblAxis);
+  const { snapped: x, guides: xGuides } = snapAxis(xDrag, xOthers, threshold, 'V', xLabelExtent, xLblAxis, lines?.x);
+  const { snapped: y, guides: yGuides } = snapAxis(yDrag, yOthers, threshold, 'H', yLabelExtent, yLblAxis, lines?.y);
 
   return { x, y, guides: [...xGuides, ...yGuides] };
 }
@@ -188,6 +216,7 @@ function snapAxis(
   alignOrientation: 'H' | 'V',
   labelExtent?: { from: number; to: number },
   labelAxis?: AxisInfo,
+  lines: readonly number[] = [],
 ): { snapped: number; guides: SnapGuide[] } {
   const spaceOrientation: 'H' | 'V' = alignOrientation === 'V' ? 'H' : 'V';
   let bestDelta = Infinity;
@@ -264,6 +293,12 @@ function snapAxis(
       for (const da of dragAnchors) {
         trySnap(drag.pos + (cand.value - da), [cand.guide]);
       }
+    }
+  }
+
+  for (const cand of lineAnchorCandidates(lines, drag.perp, drag.perpSize, alignOrientation)) {
+    for (const da of dragAnchors) {
+      trySnap(drag.pos + (cand.value - da), [cand.guide]);
     }
   }
 
@@ -345,6 +380,7 @@ function snapResizeAxis(
   alignOrientation: 'H' | 'V',
   labelAxis?: AxisInfo,
   labelExtent?: { from: number; to: number },
+  lines: readonly number[] = [],
 ): AxisSnapResult {
   const dragEnd = drag.pos + drag.size;
   const nearby = filterNearby(drag.pos, drag.size, others);
@@ -357,6 +393,7 @@ function snapResizeAxis(
   if (labelAxis) {
     candidates.push(...labelAnchorCandidates(labelAxis, alignOrientation, labelExtent));
   }
+  candidates.push(...lineAnchorCandidates(lines, drag.perp, drag.perpSize, alignOrientation));
 
   let leadMatch = noMatch();
   let endMatch = noMatch();
@@ -392,6 +429,7 @@ export function computeResizeSnap(
   labelBounds?: { x: number; y: number; width: number; height: number },
   /** Full-size label rect for edge / center anchor matching. */
   labelRect?: SnapRect,
+  lines?: SnapLines,
 ): ResizeSnapResult {
   const xOthers = others.map<AxisInfo>(o => ({ pos: o.x, size: o.width,  perp: o.y, perpSize: o.height }));
   const yOthers = others.map<AxisInfo>(o => ({ pos: o.y, size: o.height, perp: o.x, perpSize: o.width  }));
@@ -409,7 +447,7 @@ export function computeResizeSnap(
       pos: newBox.x, size: newBox.width,
       perp: newBox.y, perpSize: newBox.height,
     },
-    xOthers, threshold, 'V', xLblAxis, xLabelExtent,
+    xOthers, threshold, 'V', xLblAxis, xLabelExtent, lines?.x,
   );
   const yResult = snapResizeAxis(
     {
@@ -418,7 +456,7 @@ export function computeResizeSnap(
       pos: newBox.y, size: newBox.height,
       perp: newBox.x, perpSize: newBox.width,
     },
-    yOthers, threshold, 'H', yLblAxis, yLabelExtent,
+    yOthers, threshold, 'H', yLblAxis, yLabelExtent, lines?.y,
   );
 
   return {

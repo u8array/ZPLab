@@ -1136,6 +1136,7 @@ const nl = {
     toggleSnap: 'Uitlijnen',
     toggleGrid: 'Raster',
     toggleGuides: 'Hulplijnen',
+    guidePosition: 'Positie van hulplijn',
     deletePageConfirm: 'Huidige pagina verwijderen?',
     openDesign: 'Ontwerp openen',
     saveDesign: 'Ontwerp opslaan',

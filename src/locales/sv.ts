@@ -1136,6 +1136,7 @@ const sv = {
     toggleSnap: 'Fäst',
     toggleGrid: 'Rutnät',
     toggleGuides: 'Hjälplinjer',
+    guidePosition: 'Hjälplinjens position',
     deletePageConfirm: 'Ta bort aktuell sida?',
     openDesign: 'Öppna design',
     saveDesign: 'Spara design',

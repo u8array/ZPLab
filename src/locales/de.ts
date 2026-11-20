@@ -1136,6 +1136,7 @@ const de = {
     toggleSnap: 'Einrasten',
     toggleGrid: 'Raster',
     toggleGuides: 'Hilfslinien',
+    guidePosition: 'Position der Hilfslinie',
     deletePageConfirm: 'Aktuelle Seite löschen?',
     openDesign: 'Design öffnen',
     saveDesign: 'Design speichern',

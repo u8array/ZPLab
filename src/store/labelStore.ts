@@ -469,6 +469,7 @@ export const persistPartialize = (state: LabelState) => ({
   labelaryHost: state.labelaryHost,
   previewProvider: state.previewProvider,
   canvasSettings: state.canvasSettings,
+  rulerGuides: state.rulerGuides,
   paletteRows: state.paletteRows,
   paletteView: state.paletteView,
   showZplCommands: state.showZplCommands,
