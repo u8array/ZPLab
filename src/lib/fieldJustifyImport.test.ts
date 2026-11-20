@@ -1,11 +1,11 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { importZplText } from "@zplab/core/lib/zplImportService";
 import { generateZPL } from "@zplab/core/lib/zplGenerator";
-import { registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
 import type { LabelObject } from "@zplab/core/types/Group";
 
 const BASE = { widthMm: 100, heightMm: 50, dpmm: 8 };
-const measure40 = () => ({ w: 40, h: 100 });
+// Code 128 "123" at module width 2 is 68 modules wide.
+const W123 = 136;
 
 const leaf = (zpl: string): LabelObject => {
   const r = importZplText(zpl, 8);
@@ -14,14 +14,10 @@ const leaf = (zpl: string): LabelObject => {
   return o!;
 };
 
-afterEach(() => registerFootprintMeasurer(null));
-
 describe("^FO/^FT z-justification import", () => {
   it("stamps fieldJustify=R from an explicit z=1 on a barcode", () => {
     const o = leaf("^XA^FO100,50,1^BCN,100,Y,N,N^FD123^FS^XZ");
     expect(o.fieldJustify).toBe("R");
-    // No measurer: x stays at the ZPL (right-edge) value.
-    expect(o.x).toBe(100);
   });
 
   it("leaves fieldJustify absent without z (left is implicit)", () => {
@@ -29,66 +25,39 @@ describe("^FO/^FT z-justification import", () => {
     expect(o.fieldJustify).toBeUndefined();
   });
 
-  it("normalises a right-justified ^FT barcode x via the registered measurer", () => {
-    registerFootprintMeasurer(measure40);
-    const o = leaf("^XA^FT100,150,1^BCN,100,Y,N,N^FD123^FS^XZ");
-    expect(o.x).toBe(60);
+  it("normalises a right-justified ^FT barcode x to its left edge", () => {
+    const o = leaf("^XA^FT300,150,1^BCN,100,Y,N,N^FD123^FS^XZ");
+    expect(o.x).toBe(300 - W123);
     expect(o.fieldJustify).toBe("R");
   });
 
   it("enables the emit gate on the imported label when normalisation ran", () => {
-    registerFootprintMeasurer(measure40);
-    const r = importZplText("^XA^FT100,150,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
+    const r = importZplText("^XA^FT300,150,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
     expect(r.labelConfig.emit1dZJustify).toBe(true);
-    const plain = importZplText("^XA^FT100,150^BCN,100,Y,N,N^FD123^FS^XZ", 8);
+    const plain = importZplText("^XA^FT300,150^BCN,100,Y,N,N^FD123^FS^XZ", 8);
     expect(plain.labelConfig.emit1dZJustify).toBeUndefined();
-    registerFootprintMeasurer(null);
-    const unmeasured = importZplText("^XA^FT100,150,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
-    expect(unmeasured.labelConfig.emit1dZJustify).toBeUndefined();
   });
 
   it("measures normalisation against the imported bindings, not raw markers", () => {
-    const seen: string[] = [];
-    registerFootprintMeasurer((o) => {
-      seen.push((o as { props: { content: string } }).props.content);
-      return { w: 40, h: 100 };
-    });
-    const r = importZplText("^XA^FT100,150,1^BCN,100,Y,N,N^FN1^FD123^FS^XZ", 8);
+    const r = importZplText("^XA^FT300,150,1^BCN,100,Y,N,N^FN1^FD123^FS^XZ", 8);
     const props = r.pages[0]?.objects[0] as unknown as { x: number; props: { content: string } };
-    // The parsed field itself is marker-bound; only the measured clone resolves.
     expect(props.props.content).toContain("«");
-    expect(props.x).toBe(60);
-    expect(seen.length).toBeGreaterThan(0);
-    for (const c of seen) expect(c).not.toContain("«");
-  });
-
-  it("measures with the sidecar dpmm when the stream carries one", () => {
-    const seen: number[] = [];
-    registerFootprintMeasurer((_o, dpmm) => {
-      if (dpmm !== undefined) seen.push(dpmm);
-      return { w: 40, h: 100 };
-    });
-    const meta = String.raw`^FXZPLLAB:{"dpmm":12,"wMm":100,"hMm":50}^FS`;
-    importZplText(`^XA${meta}^FT100,150,1^BCN,100,Y,N,N^FD123^FS^XZ`, 8);
-    expect(seen).toEqual([12]);
+    expect(props.x).toBe(300 - W123);
   });
 
   it("leaves a ROTATED ^FT z=1 barcode unshifted (rotation interaction unverified)", () => {
-    registerFootprintMeasurer(measure40);
     const o = leaf("^XA^FT100,150,1^BCR,100,Y,N,N^FD123^FS^XZ");
     expect(o.x).toBe(100);
     expect(o.fieldJustify).toBe("R");
   });
 
   it("normalises a right-justified ^FO barcode x (ZD230-verified mirror)", () => {
-    registerFootprintMeasurer(measure40);
-    const o = leaf("^XA^FO100,50,1^BCN,100,Y,N,N^FD123^FS^XZ");
-    expect(o.x).toBe(60);
+    const o = leaf("^XA^FO300,50,1^BCN,100,Y,N,N^FD123^FS^XZ");
+    expect(o.x).toBe(300 - W123);
     expect(o.fieldJustify).toBe("R");
   });
 
   it("stamps but never shifts text (import-time text measurement unreliable)", () => {
-    registerFootprintMeasurer(measure40);
     const o = leaf("^XA^FO100,50,1^A0N,30,30^FDHi^FS^XZ");
     expect(o.type).toBe("text");
     expect(o.fieldJustify).toBe("R");
@@ -148,58 +117,50 @@ describe("1D z-emit behind the emit1dZJustify gate", () => {
       ...over,
     }) as unknown as LabelObject;
 
-  it("gate off (tripwire): emits z-less regardless of measurement", () => {
-    registerFootprintMeasurer(measure40);
+  it("gate off emits z-less", () => {
     const zpl = generateZPL(BASE, [barcode1dR()]);
     expect(zpl).toContain("^FT60,50^");
     expect(zpl).not.toContain(",1^BC");
   });
 
   it("gate on: emits the printer-side anchor ^FT x+w,y,1", () => {
-    registerFootprintMeasurer(measure40);
     const zpl = generateZPL({ ...BASE, emit1dZJustify: true }, [barcode1dR()]);
-    expect(zpl).toContain("^FT100,50,1");
+    expect(zpl).toContain(`^FT${60 + W123},50,1`);
   });
 
   it("round-trip fixpoint: FT+R import normalises, gated emit restores the bytes", () => {
-    registerFootprintMeasurer(measure40);
-    const r = importZplText("^XA^FT100,150,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
-    expect(r.pages[0]!.objects[0]!.x).toBe(60);
+    const r = importZplText("^XA^FT300,150,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
+    expect(r.pages[0]!.objects[0]!.x).toBe(300 - W123);
     const zpl = generateZPL({ ...BASE, emit1dZJustify: true }, r.pages[0]!.objects);
-    expect(zpl).toContain("^FT100,150,1");
+    expect(zpl).toContain("^FT300,150,1");
   });
 
   it("round-trip fixpoint: FO+R import normalises, gated emit restores the bytes", () => {
-    registerFootprintMeasurer(measure40);
-    const r = importZplText("^XA^FO100,50,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
-    expect(r.pages[0]!.objects[0]!.x).toBe(60);
+    const r = importZplText("^XA^FO300,50,1^BCN,100,Y,N,N^FD123^FS^XZ", 8);
+    expect(r.pages[0]!.objects[0]!.x).toBe(300 - W123);
     const zpl = generateZPL({ ...BASE, emit1dZJustify: true }, r.pages[0]!.objects);
-    expect(zpl).toContain("^FO100,50,1");
+    expect(zpl).toContain("^FO300,50,1");
   });
 
   it("home-shift drop-tests the printer anchor, not the model left edge", () => {
-    registerFootprintMeasurer(measure40);
-    // labelHomeX 30: left edge 10-30 < 0, right anchor 50-30 = 20 stays on-label.
+    // labelHomeX 30 puts the left edge off the label, the right anchor stays on it.
     const zpl = generateZPL(
       { ...BASE, emit1dZJustify: true, labelHomeX: 30 } as never,
       [barcode1dR({ x: 10 })],
     );
-    expect(zpl).toContain("^FT20,50,1");
+    expect(zpl).toContain(`^FT${10 + W123 - 30},50,1`);
   });
 
   it("preflight sees the printer anchor, not the model left edge", async () => {
-    registerFootprintMeasurer(measure40);
     const { emittedAnchorDots } = await import("@zplab/core/lib/emittedAnchor");
     const a = emittedAnchorDots(
       barcode1dR({ x: -10 }) as never,
       { label: { ...BASE, emit1dZJustify: true } } as never,
     );
-    // Left edge -10 but the emitted anchor is -10+40 = 30 (on-label).
-    expect(a.x).toBe(30);
+    expect(a.x).toBe(-10 + W123);
   });
 
   it("preflight anchor of a non-1D R field stays the emitted model x", async () => {
-    registerFootprintMeasurer(measure40);
     const { emittedAnchorDots } = await import("@zplab/core/lib/emittedAnchor");
     const qr = leaf("^XA^FT100,150,1^BQN,2,4^FDQA,123^FS^XZ");
     expect(qr.type).toBe("qrcode");
@@ -212,23 +173,16 @@ describe("1D z-emit behind the emit1dZJustify gate", () => {
   });
 
   it("gate on emits the anchored ^FO for an FO-positioned R barcode", () => {
-    registerFootprintMeasurer(measure40);
     const fo = generateZPL({ ...BASE, emit1dZJustify: true }, [barcode1dR({ positionType: undefined })]);
-    expect(fo).toContain("^FO100,50,1^");
+    expect(fo).toContain(`^FO${60 + W123},50,1^`);
   });
 
-  it("gate on but unverified combos stay z-less (rotated, no measurer)", () => {
-    registerFootprintMeasurer(measure40);
+  it("a rotated field stays z-less with the gate on", () => {
     const rot = barcode1dR();
     (rot as unknown as { props: { rotation: string } }).props = {
       ...(rot as unknown as { props: object }).props, rotation: "R",
     } as never;
     const rotZpl = generateZPL({ ...BASE, emit1dZJustify: true }, [rot]);
     expect(rotZpl).toContain("^FT60,50^");
-    registerFootprintMeasurer(null);
-    const unmeasured = generateZPL({ ...BASE, emit1dZJustify: true }, [barcode1dR()]);
-    expect(unmeasured).toContain("^FT60,50^");
-    const unmeasuredFo = generateZPL({ ...BASE, emit1dZJustify: true }, [barcode1dR({ positionType: undefined })]);
-    expect(unmeasuredFo).toContain("^FO60,50^");
   });
 });

@@ -1,8 +1,7 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import bwipjs from "bwip-js/generic";
 import { importZpl, exportZpl } from "./tools.js";
-import { withFootprintBinding } from "./footprint.js";
-import { measureFootprintDots, registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
+import { measureBoundsEntry, withFootprintBinding } from "./footprint.js";
 import { measureBarcodeFootprintDotsWith, type BwipEngine } from "@zplab/core/lib/barcodeDims";
 import { EAN_TEXT_ZONE_DOTS } from "@zplab/core/lib/bwipConstants";
 import type { LeafObject } from "@zplab/core/registry";
@@ -11,8 +10,6 @@ const engine: BwipEngine = bwipjs as unknown as BwipEngine;
 
 const leaf = (type: string, props: object): LeafObject =>
   ({ id: "t", type, x: 0, y: 0, props }) as unknown as LeafObject;
-
-afterEach(() => registerFootprintMeasurer(null));
 
 describe("headless footprint kernel", () => {
   it("code128 width matches the raw encodation module count", () => {
@@ -60,6 +57,26 @@ describe("headless footprint kernel", () => {
     const r = measureBarcodeFootprintDotsWith(engine, leaf("code128", props), 8);
     expect(r).toEqual({ w: n!.h, h: n!.w });
   });
+
+  it("a nested binding measures its own width and restores the outer binding's width", () => {
+    const label = { secondaryClockOffset: undefined, tertiaryClockOffset: undefined };
+    const vars = (val: string) => [{ id: "v1", name: "v", fnNumber: 1, defaultValue: val }];
+    const bound = leaf("code128", {
+      content: "«v»", height: 100, moduleWidth: 2,
+      printInterpretation: false, checkDigit: false, rotation: "N",
+    });
+    const literal = (val: string) =>
+      measureBarcodeFootprintDotsWith(engine, leaf("code128", {
+        content: val, height: 100, moduleWidth: 2,
+        printInterpretation: false, checkDigit: false, rotation: "N",
+      }), 8)?.w;
+    const widths = withFootprintBinding(label, vars("1234567890"), () => {
+      const before = measureBoundsEntry(bound, 8)?.width;
+      const inner = withFootprintBinding(label, vars("XX"), () => measureBoundsEntry(bound, 8)?.width);
+      return { before, inner, after: measureBoundsEntry(bound, 8)?.width };
+    });
+    expect(widths).toEqual({ before: literal("1234567890"), inner: literal("XX"), after: literal("1234567890") });
+  });
 });
 
 describe("import/export through the facade", () => {
@@ -82,35 +99,6 @@ describe("import/export through the facade", () => {
     const obj = firstObject(r.designFile);
     expect(obj.fieldJustify).toBe("R");
     expect(obj.x).toBe(300 - kernelWidth());
-  });
-
-  it("import_zpl measures with the kernel under a registered measurer and restores the seam", () => {
-    registerFootprintMeasurer(() => ({ w: 7, h: 7 }));
-    const r = importZpl(anchored, 8);
-    expect(r.ok).toBe(true);
-    if (!r.ok) return;
-    expect(firstObject(r.designFile).x).toBe(300 - kernelWidth());
-    expect(measureFootprintDots(leaf("code128", { content: "123" }), 8)).toEqual({ w: 7, h: 7 });
-  });
-
-  it("a nested binding measures its own width and restores the outer binding's width", () => {
-    const label = { secondaryClockOffset: undefined, tertiaryClockOffset: undefined };
-    const vars = (val: string) => [{ id: "v1", name: "v", fnNumber: 1, defaultValue: val }];
-    const bound = leaf("code128", {
-      content: "«v»", height: 100, moduleWidth: 2,
-      printInterpretation: false, checkDigit: false, rotation: "N",
-    });
-    const literal = (val: string) =>
-      measureBarcodeFootprintDotsWith(engine, leaf("code128", {
-        content: val, height: 100, moduleWidth: 2,
-        printInterpretation: false, checkDigit: false, rotation: "N",
-      }), 8)?.w;
-    const widths = withFootprintBinding(label, vars("1234567890"), () => {
-      const before = measureFootprintDots(bound, 8)?.w;
-      const inner = withFootprintBinding(label, vars("XX"), () => measureFootprintDots(bound, 8)?.w);
-      return { before, inner, after: measureFootprintDots(bound, 8)?.w };
-    });
-    expect(widths).toEqual({ before: literal("1234567890"), inner: literal("XX"), after: literal("1234567890") });
   });
 
   it("regenerated export restores the original anchored bytes", () => {

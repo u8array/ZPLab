@@ -1,5 +1,4 @@
 import type { LabelObjectBase } from "../types/LabelObject";
-import { effectiveDpmm, type JmDensity } from "../types/LabelConfig";
 import type { ZplEmitContext } from "../types/ZplEmit";
 import type { Variable } from "../types/Variable";
 import { hasTemplateMarkers, markersToEmbeds } from "../lib/fnTemplate";
@@ -10,10 +9,8 @@ import { modelToZplAnchor } from "../lib/labelGeometry/textPositionTransforms";
 import { blockAnchorExtentDots } from "../lib/zebraTextLayout";
 import { resolveDeviceFontId, type DeviceFontLabel } from "../lib/customFonts";
 import { anchorInkWidthDots } from "../lib/labelGeometry/textRenderMetrics";
-import type { LabelObject } from "../types/Group";
 import { objectRotation } from "./rotation";
 import { resolveTextMode, type TextMode } from "./textMode";
-import { measureFootprintDots } from "../lib/footprintProber";
 import { stripZplParamChars } from "../lib/zplParams";
 
 /** Emit `^FT` or `^FO` depending on how the object was originally positioned.
@@ -31,27 +28,10 @@ export function verifiedZJustifyCombo(obj: LabelObjectBase & { type: string }): 
   return objectRotation((obj as unknown as { props: object }).props) === "N";
 }
 
-/** Printer-side right-anchor x (model x + measured width) when the gated,
- *  verified combo applies; null otherwise. Single source for the emit, the
- *  home-shift drop test and the off-label preflight, so the three can never
- *  disagree on which edge the printer sees. Callers own the 1D-type check
- *  (importing BARCODE_1D_TYPES here would cycle the registry). */
-export function printerAnchoredX(
-  obj: LabelObjectBase & { type: string },
-  label: { emit1dZJustify?: boolean; dpmm?: number; jmDensity?: JmDensity },
-): number | null {
-  if (!label.emit1dZJustify || !verifiedZJustifyCombo(obj)) return null;
-  const fp = measureFootprintDots(
-    obj as LabelObject,
-    label.dpmm === undefined ? undefined : effectiveDpmm({ dpmm: label.dpmm, jmDensity: label.jmDensity }),
-  );
-  return fp ? obj.x + fp.w : null;
-}
-
 /** {@link fieldPos} for 1D: behind the emit1dZJustify gate an R field emits
  *  `x+w,y,1` so the PRINTER anchors the right edge (^SN/variable data). */
 export function fieldPos1d(obj: LabelObjectBase & { type: string }, ctx?: ZplEmitContext): string {
-  const ax = ctx ? printerAnchoredX(obj, ctx.label) : null;
+  const ax = ctx?.anchoredX?.(obj) ?? null;
   return ax === null ? fieldPos(obj) : `${fieldPos({ ...obj, x: ax })},1`;
 }
 

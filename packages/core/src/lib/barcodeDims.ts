@@ -1,7 +1,6 @@
 // Headless barcode dimension kernel: bwip option building, pixel-dims
 // providers and the footprint measurement shared by the app canvas and the
-// MCP sidecar. bwip-js is injected (BwipEngine) so core carries no copy of
-// BWIPP and each host binds its own build (browser / generic).
+// MCP sidecar. bwip-js is injected as BwipEngine, so each caller binds its own build.
 
 import type { LeafObject } from "../registry";
 import type { LabelObject } from "../types/Group";

@@ -5,7 +5,7 @@ import type { NormalizeChangesCtx } from "../types/ObjectType";
 import { truncateIntegerProps, type PropSpec } from "../types/propSpec";
 import { isAxisSwapped, objectRotation } from "../registry/rotation";
 import { valueAnchorShift } from "./valueAnchor";
-import type { Footprint as BarcodeFootprint } from "./footprintProber";
+import type { Footprint as BarcodeFootprint } from "./printerAnchor";
 
 export type { BarcodeFootprint };
 

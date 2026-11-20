@@ -10,7 +10,6 @@ import { boundColumnIndex } from "@zplab/core/lib/variableBinding";
 import { isRecallableFormatPath, parseStoragePath, recallKeys, storageKey } from "@zplab/core/lib/storagePath";
 import { zplForExport } from "@zplab/core/lib/zplLabelMeta";
 import { importZplText, type ZplImportResult } from "@zplab/core/lib/zplImportService";
-import { withFootprintBinding, withHeadlessMeasurer } from "./footprint.js";
 import type { ImportReport } from "@zplab/core/lib/zplParser";
 import { ObjectRegistry } from "@zplab/core/registry";
 import type { Dpmm, LabelConfig } from "@zplab/core/types/LabelConfig";
@@ -113,11 +112,9 @@ export function exportZpl(
   // list read as a clean bill of health is worst right before printing.
   const report = warningReport(label, variables, printed, columnMapping !== null);
   // Same paths as the app's exports: per-page emit replays captured overlays.
-  const zpl = withFootprintBinding(label, variables, () =>
-    opts.batch && columnMapping && page
-      ? generateBatchZpl(pageLabelConfig(label, page), page.objects, variables, opts.batch, columnMapping)
-      : generateMultiPageZPL(label, pages, variables),
-  );
+  const zpl = opts.batch && columnMapping && page
+    ? generateBatchZpl(pageLabelConfig(label, page), page.objects, variables, opts.batch, columnMapping)
+    : generateMultiPageZPL(label, pages, variables);
   const notes = [
     ...(report.notes ?? []),
     ...(opts.batch && page && pages.length > 1 ? [`batch printed page ${pages.indexOf(page) + 1} of ${pages.length}; the other pages are not in the ZPL`] : []),
@@ -227,7 +224,7 @@ function importForTool(
 ): { ok: true; imported: ZplImportResult; label: LabelConfig } | ToolError {
   const oversize = oversizeError(zpl);
   if (oversize) return oversize;
-  const imported = withHeadlessMeasurer(() => importZplText(zpl, dpmm));
+  const imported = importZplText(zpl, dpmm);
   const rejected = importRejection(imported);
   if (rejected) return rejected;
   return { ok: true, imported, label: completeLabel(imported.labelConfig, dpmm, widthMm, heightMm) };
