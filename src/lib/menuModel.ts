@@ -63,6 +63,8 @@ export interface HistorySubmenu {
 
 /** `OutputFacts` plus what only a menu asks. */
 export interface MenuFlags extends OutputFacts {
+  /** True under a preview and under a source session, where the editor is frozen. */
+  editorFrozen: boolean;
   /** Desktop routes every data source through the connect-data wizard (one File
    *  entry); web keeps the direct CSV import as its only supported source. */
   connectDataWizard: boolean;
@@ -77,7 +79,7 @@ export function buildMenuModel(t: Translations, f: MenuFlags): MenuModel {
   const file: MenuSection[] = [
     [
       { id: 'new', label: t.app.newDesign, enabled: live },
-      { id: 'addPage', label: t.app.addPage, enabled: live },
+      { id: 'addPage', label: t.app.addPage, enabled: !f.editorFrozen },
     ],
     [{ id: 'importZpl', label: t.app.importZpl, enabled: live }],
     [

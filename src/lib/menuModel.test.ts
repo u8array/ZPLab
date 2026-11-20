@@ -6,6 +6,7 @@ const FLAGS: MenuFlags = {
   hasObjects: true,
   documentEmits: true,
   sourceEditing: false,
+  editorFrozen: false,
   canBatchExport: false,
   batchRowCount: 0,
   connectDataWizard: false,
@@ -31,7 +32,7 @@ describe("buildMenuModel", () => {
   });
 
   it("disables the import under a source session, like opening a file", () => {
-    const m = buildMenuModel(en, { ...FLAGS, sourceEditing: true });
+    const m = buildMenuModel(en, { ...FLAGS, sourceEditing: true, editorFrozen: true });
     expect(byId(m, "importZpl")?.enabled).toBe(false);
     expect(byId(m, "openDesign")?.enabled).toBe(false);
     expect(byId(m, "settings")?.enabled).toBe(true);
@@ -52,11 +53,19 @@ describe("buildMenuModel", () => {
   });
 
   it("disables document-replacing and emitting entries during a source-edit session", () => {
-    const m = buildMenuModel(en, { ...FLAGS, sourceEditing: true });
+    const m = buildMenuModel(en, { ...FLAGS, sourceEditing: true, editorFrozen: true });
     for (const id of ["new", "addPage", "importZpl", "openDesign", "saveDesign", "importCsv", "exportZpl", "output"]) {
       expect(byId(m, id)?.enabled, id).toBe(false);
     }
     expect(byId(m, "settings")?.enabled).toBe(true);
+  });
+
+  it("disables add page under a preview and keeps the other entries working", () => {
+    const m = buildMenuModel(en, { ...FLAGS, editorFrozen: true });
+    expect(byId(m, "addPage")?.enabled).toBe(false);
+    for (const id of ["new", "importZpl", "settings", "exportZpl", "output", "openDesign", "saveDesign", "importCsv"]) {
+      expect(byId(m, id)?.enabled, id).toBe(true);
+    }
   });
 
   it("shows the batch export with the row count only when a CSV is mapped", () => {
