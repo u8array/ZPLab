@@ -1,7 +1,7 @@
 // Default export only: the generic build's NAMED `raw` is the raw-input
 // symbology encoder, not the ToRaw encodation API the kernel needs.
 import bwipjs from "bwip-js/generic";
-import { registerFootprintMeasurer, resetFootprintCache } from "@zplab/core/lib/footprintProber";
+import { withFootprintMeasurer } from "@zplab/core/lib/footprintProber";
 import {
   barcodeEncodeIssueWith,
   measureBarcodeBoundsWith,
@@ -35,9 +35,8 @@ const measure = (o: LabelObject, dpmm?: number) => {
   return measureBarcodeFootprintDotsWith(engine, resolved as LeafObject, dpmm ?? 8);
 };
 
-/** Idempotent; re-registering only resets the seam's memo. */
-export function registerHeadlessFootprintMeasurer(): void {
-  registerFootprintMeasurer(measure);
+export function withHeadlessMeasurer<T>(fn: () => T): T {
+  return withFootprintMeasurer(measure, fn);
 }
 
 /** Full measured-bounds record for the geometry report, resolved against the
@@ -63,13 +62,10 @@ export function withFootprintBinding<T>(
 ): T {
   const prev = binding;
   binding = { variables, clock: clockCtxFromLabel(label) };
-  // The prober cache keys on props, not on this binding, so a nested call under
-  // a different binding would otherwise read the outer binding's width.
-  resetFootprintCache();
   try {
-    return fn();
+    // Re-entering the measurer drops the props-keyed memo, so a nested binding measures its own width.
+    return withHeadlessMeasurer(fn);
   } finally {
     binding = prev;
-    resetFootprintCache();
   }
 }

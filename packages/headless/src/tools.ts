@@ -10,9 +10,7 @@ import { boundColumnIndex } from "@zplab/core/lib/variableBinding";
 import { isRecallableFormatPath, parseStoragePath, recallKeys, storageKey } from "@zplab/core/lib/storagePath";
 import { zplForExport } from "@zplab/core/lib/zplLabelMeta";
 import { importZplText, type ZplImportResult } from "@zplab/core/lib/zplImportService";
-import {
-  withFootprintBinding,
-} from "./footprint.js";
+import { withFootprintBinding, withHeadlessMeasurer } from "./footprint.js";
 import type { ImportReport } from "@zplab/core/lib/zplParser";
 import { ObjectRegistry } from "@zplab/core/registry";
 import type { Dpmm, LabelConfig } from "@zplab/core/types/LabelConfig";
@@ -221,6 +219,20 @@ function completeLabel(
   };
 }
 
+function importForTool(
+  zpl: string,
+  dpmm: Dpmm,
+  widthMm?: number,
+  heightMm?: number,
+): { ok: true; imported: ZplImportResult; label: LabelConfig } | ToolError {
+  const oversize = oversizeError(zpl);
+  if (oversize) return oversize;
+  const imported = withHeadlessMeasurer(() => importZplText(zpl, dpmm));
+  const rejected = importRejection(imported);
+  if (rejected) return rejected;
+  return { ok: true, imported, label: completeLabel(imported.labelConfig, dpmm, widthMm, heightMm) };
+}
+
 export type ValidateZplResult = z.infer<typeof validateZplReportSchema> | ToolError;
 
 /** Parse raw ZPL and report it: how many objects/pages came back, the detected
@@ -232,12 +244,9 @@ export function validateZpl(
   widthMm?: number,
   heightMm?: number,
 ): ValidateZplResult {
-  const oversize = oversizeError(zpl);
-  if (oversize) return oversize;
-  const imported = importZplText(zpl, dpmm);
-  const rejected = importRejection(imported);
-  if (rejected) return rejected;
-  const label = completeLabel(imported.labelConfig, dpmm, widthMm, heightMm);
+  const parsed = importForTool(zpl, dpmm, widthMm, heightMm);
+  if (!parsed.ok) return parsed;
+  const { imported, label } = parsed;
   return {
     ok: true,
     objectCount: imported.pages.reduce((n, p) => n + p.objects.length, 0),
@@ -260,12 +269,9 @@ export function importZpl(
   widthMm?: number,
   heightMm?: number,
 ): ImportZplResult {
-  const oversize = oversizeError(zpl);
-  if (oversize) return oversize;
-  const imported = importZplText(zpl, dpmm);
-  const rejected = importRejection(imported);
-  if (rejected) return rejected;
-  const label = completeLabel(imported.labelConfig, dpmm, widthMm, heightMm);
+  const parsed = importForTool(zpl, dpmm, widthMm, heightMm);
+  if (!parsed.ok) return parsed;
+  const { imported, label } = parsed;
   const serialized = serializeDesign(label, imported.pages, imported.variables, imported.batch?.columnMapping ?? null);
   return {
     ok: true,

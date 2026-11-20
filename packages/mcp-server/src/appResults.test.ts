@@ -1,9 +1,8 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import { z } from "zod";
 import { wireBounds } from "@zplab/core/types/propSpec";
 import { IMAGE_PROP_SPECS } from "@zplab/core/registry/image";
-import { createDraft, exportZpl, importZpl, registerHeadlessFootprintMeasurer, validateDraft } from "@zplab/headless";
-import { registerFootprintMeasurer } from "@zplab/core/lib/footprintProber";
+import { createDraft, exportZpl, importZpl, validateDraft } from "@zplab/headless";
 import { buildCurrentDesignResult, rasterImageResult, rasterImageShape } from "./appResults.js";
 
 /** Assert a tool succeeded and narrow away the ToolError branch. */
@@ -96,16 +95,14 @@ describe("buildCurrentDesignResult", () => {
   });
 });
 
-describe("buildCurrentDesignResult with the headless measurer", () => {
-  beforeAll(() => registerHeadlessFootprintMeasurer());
-  afterAll(() => registerFootprintMeasurer(null));
-
+describe("buildCurrentDesignResult measures what prints", () => {
   it("get_current_design resolves markers before measuring the anchor", () => {
     // Default (15 chars) is wider than the code128 sample fallback (8 chars):
     // resolved anchor = 100 (on-label), unresolved would be negative (outside).
     const r = importZpl("^XA^PW800^FT100,150,1^BCN,100,Y,N,N^FN1^FD123456789012345^FS^XZ", 8);
     expect(r.ok).toBe(true);
     if (!r.ok) return;
+    expect((r.designFile.label as { emit1dZJustify?: boolean }).emit1dZJustify).toBe(true);
     const out = buildCurrentDesignResult({ designFile: r.designFile } as never);
     expect(out.ok).toBe(true);
     if (!out.ok) return;

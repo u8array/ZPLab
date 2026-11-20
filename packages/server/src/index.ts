@@ -1,5 +1,4 @@
 import { serve } from "@hono/node-server";
-import { registerHeadlessFootprintMeasurer } from "@zplab/headless";
 import { createApp } from "./app.js";
 
 function fail(message: string): never {
@@ -16,7 +15,6 @@ function main(): void {
   // Same for the host: empty must not mean every interface.
   const hostname = process.env.ZPLAB_HOST || "127.0.0.1";
 
-  registerHeadlessFootprintMeasurer();
   const app = createApp({ token, version: process.env.ZPLAB_VERSION || "dev" });
   const server = serve({ fetch: app.fetch, hostname, port }, (info) => {
     process.stdout.write(`zplab-server listening on http://${info.address}:${info.port}/api/v1\n`);

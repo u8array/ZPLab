@@ -16,7 +16,6 @@ import {
   patchDesign,
   patchDesignShape,
   patchOperationsSchema,
-  registerHeadlessFootprintMeasurer,
   strictInput,
   validateDraft,
   validateZpl,
@@ -80,7 +79,6 @@ export const SERVER_INSTRUCTIONS =
 
 /** Single tool definition shared by the stdio and HTTP entry points. */
 export function buildServer(options: BuildServerOptions = {}): McpServer {
-  registerHeadlessFootprintMeasurer();
   // Display identity the MCP client shows; matches the config-snippet key.
   const server = new McpServer(
     { name: "zplab", version: "0.0.0" },

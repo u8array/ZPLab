@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
-import { registerHeadlessFootprintMeasurer } from "@zplab/headless";
+import { describe, it, expect } from "vitest";
 import { demoLabel, designFile } from "@zplab/headless/testing";
 import { createApp } from "./app.js";
 
@@ -21,8 +20,6 @@ async function get(path: string, token: string | null = TOKEN): Promise<{ status
   const res = await app.request(`/api/v1${path}`, { headers: token === null ? {} : { authorization: `Bearer ${token}` } });
   return { status: res.status, json: (await res.json()) as Body };
 }
-
-beforeAll(() => registerHeadlessFootprintMeasurer());
 
 describe("public routes", () => {
   it("answers health without a token", async () => {
