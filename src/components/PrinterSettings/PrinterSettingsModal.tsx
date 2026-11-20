@@ -7,7 +7,7 @@ import { useT } from "../../hooks/useT";
 import { generateSetupScript, setupFormatBlocks, setupScriptLines, type SetupScriptField } from "../../lib/zplSetupScript";
 import type { SETUP_UPLOAD_FIELDS } from "@zplab/core/types/PrinterProfile";
 import type { Translations } from "../../locales";
-import { useLabelStore, selectEditorFrozen, selectHasPerLabelOverrides } from "../../store/labelStore";
+import { useLabelStore, selectEditorFrozen, selectHasPerLabelOverrides, selectReadsPrinter } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import type { PrinterSettingsTab } from "../../store/slices/uiSlice";
 import { TAB_GATES, type TabGateCtx } from "./tabVisibility";
@@ -167,6 +167,7 @@ export function PrinterSettingsModal() {
     resetPerLabelConfig();
   };
   const hasPerLabelOverrides = useLabelStore(selectHasPerLabelOverrides);
+  const readsPrinter = useLabelStore(selectReadsPrinter);
   const mcpSidecarAvailable = useLabelStore((s) => s.mcpSidecarAvailable);
   const gateCtx: TabGateCtx = { mcpSidecarAvailable, isDesktop: isDesktopShell };
   const openOutput = useLabelStore((s) => s.openOutput);
@@ -271,7 +272,7 @@ export function PrinterSettingsModal() {
                 />
               ))}
             </nav>
-            {activeTopTab === 'objects' && isDesktopShell && <PrinterStorageUsage />}
+            {activeTopTab === 'objects' && readsPrinter && <PrinterStorageUsage />}
             {activeTopTab === 'perLabel' && hasPerLabelOverrides && (
               <div className="px-3 pb-3">
                 <ResetPerLabelButton

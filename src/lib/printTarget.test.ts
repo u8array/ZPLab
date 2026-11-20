@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { carriesReply, DEFAULT_PRINT_TARGET, effectiveTransport, needsRawChannel, offeredTransports, parsePort, readLegacyPrintTarget, resolveQueryTarget } from "./printTarget";
+import { carriesReply, DEFAULT_PRINT_TARGET, effectiveTransport, needsRawChannel, offeredTransports, parsePort, queryChannel, readLegacyPrintTarget, readsPrinter, resolveQueryTarget } from "./printTarget";
 
 function storageOf(entries: Record<string, string>) {
   const map = new Map(Object.entries(entries));
@@ -84,5 +84,23 @@ describe("printTarget", () => {
     expect(resolveQueryTarget({ ...usb, transport: "local" })).toEqual({ target: { kind: "network", host: "10.0.0.5", port: 9100 } });
     expect(resolveQueryTarget(DEFAULT_PRINT_TARGET)).toEqual({ failure: { kind: "unconfigured" } });
     expect(resolveQueryTarget(usb, "network")).toEqual({ target: { kind: "network", host: "10.0.0.5", port: 9100 } });
+  });
+
+  it("routes a USB way with a device to USB and the rest to the network", () => {
+    const usb = { ...DEFAULT_PRINT_TARGET, usbId: "usb-1", transport: "usb" as const };
+    expect(queryChannel(usb)).toBe("usb");
+    expect(queryChannel({ ...usb, usbId: "" })).toBe("network");
+    expect(queryChannel(usb, "local")).toBe("network");
+    expect(queryChannel(DEFAULT_PRINT_TARGET)).toBe("network");
+  });
+
+  it("reads the printer over USB and the network in the desktop shell and over none in the browser", () => {
+    const usb = { ...DEFAULT_PRINT_TARGET, usbId: "usb-1", transport: "usb" as const };
+    expect(readsPrinter(usb, true)).toBe(true);
+    expect(readsPrinter(usb, true, "local")).toBe(true);
+    expect(readsPrinter(DEFAULT_PRINT_TARGET, true, "browserprint")).toBe(true);
+    expect(readsPrinter(usb, false)).toBe(false);
+    expect(readsPrinter(usb, false, "local")).toBe(false);
+    expect(readsPrinter(DEFAULT_PRINT_TARGET, false)).toBe(false);
   });
 });

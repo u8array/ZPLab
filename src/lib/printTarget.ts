@@ -98,9 +98,19 @@ export function readLegacyPrintTarget(storage: Pick<Storage, "getItem" | "remove
   return target;
 }
 
-/** The channel for `transport`, default the stored way. A USB way without a device falls through to the network, so a re-plug restores it. */
-export function resolveQueryTarget(target: PrintTarget, transport: PrintTransport = target.transport): { target: QueryTarget } | { failure: { kind: "unconfigured" } } {
-  if (transport === "usb" && target.usbId) return { target: { kind: "usb", id: target.usbId } };
+/** The channel a query for `transport` takes, the stored way by default. A USB way without a device falls through to the network, so a re-plug restores it. */
+export function queryChannel(target: PrintTarget, transport: PrintTransport = target.transport): QueryTarget["kind"] {
+  return transport === "usb" && target.usbId ? "usb" : "network";
+}
+
+/** Whether the build reads what the printer behind `transport` answers. */
+export function readsPrinter(target: PrintTarget, desktop: boolean, transport?: PrintTransport): boolean {
+  return carriesReply(queryChannel(target, transport), desktop);
+}
+
+/** The device a query for `transport` reaches, or the failure when the network way has no host set. */
+export function resolveQueryTarget(target: PrintTarget, transport?: PrintTransport): { target: QueryTarget } | { failure: { kind: "unconfigured" } } {
+  if (queryChannel(target, transport) === "usb") return { target: { kind: "usb", id: target.usbId } };
   return target.host ? { target: { kind: "network", host: target.host, port: target.port } } : { failure: { kind: "unconfigured" } };
 }
 

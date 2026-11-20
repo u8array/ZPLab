@@ -1,7 +1,7 @@
 import type { SgdSetting } from "@zplab/core/lib/sgd";
 import { useReplyRead } from "../../hooks/useReplyRead";
 import { useT } from "../../hooks/useT";
-import { useLabelStore } from "../../store/labelStore";
+import { useLabelStore, selectReadsPrinter } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { effectiveTransport, offeredTransports, type PrintTransport } from "../../lib/printTarget";
 import { wayHint, wayLabel } from "../../lib/printWayText";
@@ -33,6 +33,7 @@ export function PrintTargetTab() {
   const setPrintTarget = useLabelStore((s) => s.setPrintTarget);
   const readPrinterSettings = useLabelStore((s) => s.readPrinterSettings);
   const reading = useLabelStore((s) => s.printerReading) !== undefined;
+  const readsPrinter = useLabelStore(selectReadsPrinter);
   const settings = useReplyRead<SgdSetting[]>();
   const usb = useUsbPrinters(isDesktopShell);
   const local = useLocalPrinters(isDesktopShell);
@@ -88,7 +89,7 @@ export function PrintTargetTab() {
         <span className="text-[10px] text-muted max-w-md">{loc.addressHint}</span>
       </section>
 
-      {isDesktopShell && (
+      {readsPrinter && (
         <button type="button" className={`${buttonCls} self-start`} disabled={reading} onClick={openSettings}>
           {t.printerSettings.printerStatus.adoptFromPrinter}
         </button>

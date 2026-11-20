@@ -5,7 +5,7 @@ import { Select } from "../ui/Select";
 import { primaryButtonCls } from "../ui/formStyles";
 import { sendViaBrowserPrint, sendViaNetwork } from "../../lib/zebraPrint";
 import { isDesktopShell } from "../../lib/platform";
-import { needsRawChannel, resolveQueryTarget, type PrintTransport } from "../../lib/printTarget";
+import { needsRawChannel, readsPrinter, resolveQueryTarget, type PrintTransport } from "../../lib/printTarget";
 import { queryButtonText, queryOffer } from "../../lib/printWayText";
 import { QueryHints } from "./QueryHints";
 import type { DocumentQueryFacts } from "../../lib/outputChoice";
@@ -204,7 +204,7 @@ export function ZebraWayPanel({ zpl, way, devices, query }: { zpl: () => string;
   // Every way reaches the same device, so every way may ask it, and a way that cannot be questioned
   // itself falls back to the configured address.
   const addressCheck = (sending: boolean) => {
-    if (!isDesktopShell) return null;
+    if (!readsPrinter(printTarget, isDesktopShell, way)) return null;
     const resolved = resolveQueryTarget(printTarget, way);
     if ("failure" in resolved) return null;
     return (

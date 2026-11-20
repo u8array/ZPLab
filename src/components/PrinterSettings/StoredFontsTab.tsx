@@ -9,8 +9,7 @@ import { listsStoredFont } from "@zplab/core/lib/storedObjects";
 import { storedObjectOrigins } from "@zplab/core/lib/storedObjectOrigins";
 import { storageKey, storageRefMatchesPath } from "@zplab/core/lib/storagePath";
 import { useCachedFonts } from "../../hooks/useCachedFonts";
-import { useLabelStore, selectEditorFrozen } from "../../store/labelStore";
-import { isDesktopShell } from "../../lib/platform";
+import { useLabelStore, selectEditorFrozen, selectReadsPrinter } from "../../store/labelStore";
 import { PrinterObjectActions, PrinterOriginMark, PrinterStorageBar, StoredObjectsHeading } from "./PrinterStorage";
 import { buttonCls, disabledCls } from "../ui/formStyles";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
@@ -41,6 +40,7 @@ export function StoredFontsTab() {
   const loc = t.printerSettings.fonts;
   const { setHoveredKey } = useStoredObjectHover();
   const frozen = useLabelStore(selectEditorFrozen);
+  const readsPrinter = useLabelStore(selectReadsPrinter);
 
   // A cache row is named by its printer path, so profile and cache rows share one identity rule.
   const cachedPaths = fonts.map(cachedFontPath).filter((path) => listsStoredFont(path, setupFonts));
@@ -95,7 +95,7 @@ export function StoredFontsTab() {
             </span>
           )}
         </div>
-        {isDesktopShell && <PrinterStorageBar />}
+        {readsPrinter && <PrinterStorageBar />}
         {rows.length === 0 ? (
           <p className="text-xs text-muted/70">{loc.noFonts}</p>
         ) : (

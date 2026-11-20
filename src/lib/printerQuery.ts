@@ -2,7 +2,7 @@ import { owedReplies, type AwaitedReply, type OwedReply } from "@zplab/core/lib/
 import { unframed } from "@zplab/core/lib/hostStatus";
 import { errorMessage } from "./errorMessage";
 import { isDesktopShell } from "./platform";
-import type { QueryTarget } from "./printTarget";
+import { carriesReply, type QueryTarget } from "./printTarget";
 import type { StreamDone, StreamDoneResult } from "./replyStream";
 import { queryZplUsb } from "./usbPrint";
 
@@ -188,7 +188,7 @@ export async function queryPrinter(target: QueryTarget, zpl: string, deadlineMs?
 /** Reads until every awaited reply is in and the printer has gone quiet, or until the deadline or the signal ends
  *  the wait with what came. Every failure comes back as a value, never as a throw. */
 export async function readPrinterReply(target: QueryTarget, zpl: string, wait: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
-  if (!isDesktopShell) return { kind: "error", message: "The printer query requires the desktop app" };
+  if (!carriesReply(target.kind, isDesktopShell)) return { kind: "error", message: "The printer query requires the desktop app" };
   try {
     return await readReply(target, zpl, wait);
   } catch (e) {

@@ -74,6 +74,7 @@ export {
   currentPageLabel,
   canCallLabelary,
   selectLabelaryNoticeRequired,
+  selectReadsPrinter,
   selectEffectivePreviewProvider,
   selectPreviewLocksEditor,
   selectEditorFrozen,

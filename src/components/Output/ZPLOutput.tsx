@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { CheckIcon, ClipboardDocumentIcon, ChevronDownIcon, ChevronUpIcon, EyeIcon, PrinterIcon } from '@heroicons/react/16/solid';
-import { useLabelStore, selectEffectivePreviewProvider, selectPreviewLocksEditor } from '../../store/labelStore';
+import { useLabelStore, selectEffectivePreviewProvider, selectPreviewLocksEditor, selectReadsPrinter } from '../../store/labelStore';
 import { useZplOutputView } from '../../hooks/useZplOutputView';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import { finishZplExport } from '../../lib/exportZpl';
@@ -8,7 +8,6 @@ import { useT } from '../../hooks/useT';
 import { useLabelaryConsent } from '../../hooks/useLabelaryConsent';
 import { ZplSourceEditor } from './ZplSourceEditor';
 import { Tooltip } from '../ui/Tooltip';
-import { isDesktopShell } from '../../lib/platform';
 import { PrinterChip } from './PrinterChip';
 import { PaginationControl } from './PaginationControl';
 import { sectionHeadingCls } from '../ui/formStyles';
@@ -27,6 +26,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
   const t = useT();
   const effectiveProvider = useLabelStore(selectEffectivePreviewProvider);
   const previewActive = useLabelStore(selectPreviewLocksEditor);
+  const readsPrinter = useLabelStore(selectReadsPrinter);
   const enterPreviewMode = useLabelStore((s) => s.enterPreviewMode);
   const exitPreviewMode = useLabelStore((s) => s.exitPreviewMode);
   const { gate, notice: consentNotice } = useLabelaryConsent();
@@ -80,7 +80,7 @@ export function ZPLOutput({ collapsed, onCollapse, onExpand, onResizeMouseDown }
           </div>
           <PaginationControl />
           <div className="col-start-3 justify-self-end flex items-center gap-3">
-            {isDesktopShell && <PrinterChip />}
+            {readsPrinter && <PrinterChip />}
             {previewAvailable && (
               <Tooltip content={t.output.previewHeading}>
                 <button
