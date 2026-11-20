@@ -490,6 +490,7 @@ export function AppShell() {
             onSnapToggle={() => setCanvasSettings({ snapEnabled: !snapEnabled })}
             smartSnapEnabled={smartSnapEnabled}
             selectionGuidesEnabled={selectionGuidesEnabled}
+            onSelectionGuidesToggle={() => setCanvasSettings({ selectionGuidesEnabled: !selectionGuidesEnabled })}
             snapSizeMm={snapSizeMm}
             onSnapSizeChange={(v) => setCanvasSettings({ snapSizeMm: v })}
             zoom={canvasSettings.zoom}

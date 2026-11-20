@@ -1135,6 +1135,7 @@ const fi = {
     rotateView: 'Kierrä näkymää',
     toggleSnap: 'Kiinnitys',
     toggleGrid: 'Ruudukko',
+    toggleGuides: 'Apuviivat',
     deletePageConfirm: 'Poistetaanko nykyinen sivu?',
     openDesign: 'Avaa rakenne',
     saveDesign: 'Tallenna rakenne',

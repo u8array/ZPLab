@@ -1135,6 +1135,7 @@ const ro = {
     rotateView: 'Rotire vizualizare',
     toggleSnap: 'Aliniere',
     toggleGrid: 'Grilă',
+    toggleGuides: 'Ghidaje',
     deletePageConfirm: 'Ștergeți pagina curentă?',
     openDesign: 'Deschide design',
     saveDesign: 'Salvează design',

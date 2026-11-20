@@ -1135,6 +1135,7 @@ const it = {
     rotateView: 'Ruota vista',
     toggleSnap: 'Aggancio',
     toggleGrid: 'Griglia',
+    toggleGuides: 'Guide',
     deletePageConfirm: 'Eliminare la pagina corrente?',
     openDesign: 'Apri design',
     saveDesign: 'Salva design',

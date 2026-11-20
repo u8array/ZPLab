@@ -1135,6 +1135,7 @@ const en = {
     rotateView: 'Rotate view',
     toggleSnap: 'Snap',
     toggleGrid: 'Grid',
+    toggleGuides: 'Guides',
     deletePageConfirm: 'Delete the current page?',
     openDesign: 'Open design',
     saveDesign: 'Save design',

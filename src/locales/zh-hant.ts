@@ -1135,6 +1135,7 @@ const zhHant = {
     rotateView: '旋轉檢視',
     toggleSnap: '貼齊',
     toggleGrid: '格線',
+    toggleGuides: '參考線',
     deletePageConfirm: '刪除目前頁面？',
     openDesign: '開啟設計',
     saveDesign: '儲存設計',

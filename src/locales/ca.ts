@@ -1129,6 +1129,7 @@ const ca = {
     rotateView: 'Gira la vista',
     toggleSnap: 'Ajust',
     toggleGrid: 'Quadrícula',
+    toggleGuides: 'Guies',
     deletePageConfirm: 'Vols eliminar la pàgina actual?',
     openDesign: 'Obre un disseny',
     saveDesign: 'Desa el disseny',

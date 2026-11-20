@@ -1135,6 +1135,7 @@ const tr = {
     rotateView: 'Görünümü döndür',
     toggleSnap: 'Yapışma',
     toggleGrid: 'Izgara',
+    toggleGuides: 'Kılavuzlar',
     deletePageConfirm: 'Geçerli sayfa silinsin mi?',
     openDesign: 'Tasarım Aç',
     saveDesign: 'Tasarım Kaydet',

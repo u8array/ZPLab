@@ -287,7 +287,7 @@ export const DEFAULT_CANVAS_SETTINGS: CanvasSettings = {
   snapEnabled: false,
   snapSizeMm: 1,
   smartSnapEnabled: true,
-  selectionGuidesEnabled: true,
+  selectionGuidesEnabled: false,
   zoom: 1,
   unit: 'mm',
   viewRotation: 0,

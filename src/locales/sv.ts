@@ -1135,6 +1135,7 @@ const sv = {
     rotateView: 'Rotera vy',
     toggleSnap: 'Fäst',
     toggleGrid: 'Rutnät',
+    toggleGuides: 'Hjälplinjer',
     deletePageConfirm: 'Ta bort aktuell sida?',
     openDesign: 'Öppna design',
     saveDesign: 'Spara design',

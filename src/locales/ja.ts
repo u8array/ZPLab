@@ -1135,6 +1135,7 @@ const ja = {
     rotateView: 'ビューを回転',
     toggleSnap: 'スナップ',
     toggleGrid: 'グリッド',
+    toggleGuides: 'ガイド線',
     deletePageConfirm: '現在のページを削除しますか?',
     openDesign: 'デザインを開く',
     saveDesign: 'デザインを保存',

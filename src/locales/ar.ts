@@ -1135,6 +1135,7 @@ const ar = {
     rotateView: 'تدوير العرض',
     toggleSnap: 'محاذاة',
     toggleGrid: 'الشبكة',
+    toggleGuides: 'خطوط الإرشاد',
     deletePageConfirm: 'حذف الصفحة الحالية؟',
     openDesign: 'فتح تصميم',
     saveDesign: 'حفظ تصميم',

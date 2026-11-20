@@ -1135,6 +1135,7 @@ const lt = {
     rotateView: 'Sukti vaizdą',
     toggleSnap: 'Pritraukti',
     toggleGrid: 'Tinklelis',
+    toggleGuides: 'Pagalbinės linijos',
     deletePageConfirm: 'Ištrinti dabartinį puslapį?',
     openDesign: 'Atidaryti dizainą',
     saveDesign: 'Išsaugoti dizainą',

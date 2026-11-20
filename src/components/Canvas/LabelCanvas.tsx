@@ -129,6 +129,9 @@ function loadHatchTile(): Promise<HTMLImageElement> {
   }
 }
 
+const viewToggleClass = (on: boolean) =>
+  `truncate px-2 h-6 rounded text-xs font-mono transition-colors ${on ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`;
+
 interface RectPx { x: number; y: number; width: number; height: number }
 function boundsOf(r: RectPx): Bounds {
   return { minX: r.x, minY: r.y, maxX: r.x + r.width, maxY: r.y + r.height };
@@ -155,6 +158,7 @@ interface Props {
   onSnapToggle: () => void;
   smartSnapEnabled: boolean;
   selectionGuidesEnabled: boolean;
+  onSelectionGuidesToggle: () => void;
   snapSizeMm: number;
   onSnapSizeChange: (mm: number) => void;
   zoom: number;
@@ -188,6 +192,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   onSnapToggle,
   smartSnapEnabled,
   selectionGuidesEnabled,
+  onSelectionGuidesToggle,
   snapSizeMm,
   onSnapSizeChange,
   zoom,
@@ -1447,7 +1452,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
             <button
               onClick={onGridToggle}
               aria-pressed={showGrid}
-              className={`truncate px-2 h-6 rounded text-xs font-mono transition-colors ${showGrid ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`}
+              className={viewToggleClass(showGrid)}
             >
               {t.app.toggleGrid}
             </button>
@@ -1456,7 +1461,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
             <button
               onClick={onSnapToggle}
               aria-pressed={snapEnabled}
-              className={`truncate px-2 h-6 rounded text-xs font-mono transition-colors ${snapEnabled ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`}
+              className={viewToggleClass(snapEnabled)}
             >
               {t.app.toggleSnap}
             </button>
@@ -1473,6 +1478,15 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               ]}
             />
           </div>
+          <Tooltip content={t.printerSettings.app.selectionGuidesHint} className="max-w-full">
+            <button
+              onClick={onSelectionGuidesToggle}
+              aria-pressed={selectionGuidesEnabled}
+              className={viewToggleClass(selectionGuidesEnabled)}
+            >
+              {t.app.toggleGuides}
+            </button>
+          </Tooltip>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-1">
           <button

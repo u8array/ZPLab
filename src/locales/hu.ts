@@ -1135,6 +1135,7 @@ const hu = {
     rotateView: 'Nézet forgatása',
     toggleSnap: 'Illesztés',
     toggleGrid: 'Rács',
+    toggleGuides: 'Segédvonalak',
     deletePageConfirm: 'Törli az aktuális oldalt?',
     openDesign: 'Terv megnyitása',
     saveDesign: 'Terv mentése',

@@ -1135,6 +1135,7 @@ const no = {
     rotateView: 'Roter visning',
     toggleSnap: 'Fest',
     toggleGrid: 'Rutenett',
+    toggleGuides: 'Hjelpelinjer',
     deletePageConfirm: 'Slette gjeldende side?',
     openDesign: 'Åpne design',
     saveDesign: 'Lagre design',

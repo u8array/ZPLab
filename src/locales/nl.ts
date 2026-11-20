@@ -1135,6 +1135,7 @@ const nl = {
     rotateView: 'Weergave draaien',
     toggleSnap: 'Uitlijnen',
     toggleGrid: 'Raster',
+    toggleGuides: 'Hulplijnen',
     deletePageConfirm: 'Huidige pagina verwijderen?',
     openDesign: 'Ontwerp openen',
     saveDesign: 'Ontwerp opslaan',

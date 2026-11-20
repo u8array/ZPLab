@@ -1135,6 +1135,7 @@ const es = {
     rotateView: 'Rotar vista',
     toggleSnap: 'Ajustar',
     toggleGrid: 'Cuadrícula',
+    toggleGuides: 'Guías',
     deletePageConfirm: '¿Eliminar la página actual?',
     openDesign: 'Abrir diseño',
     saveDesign: 'Guardar diseño',

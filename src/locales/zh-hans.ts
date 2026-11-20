@@ -1135,6 +1135,7 @@ const zhHans = {
     rotateView: '旋转视图',
     toggleSnap: '对齐',
     toggleGrid: '网格',
+    toggleGuides: '参考线',
     deletePageConfirm: '删除当前页面？',
     openDesign: '打开设计',
     saveDesign: '保存设计',

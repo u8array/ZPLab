@@ -1135,6 +1135,7 @@ const da = {
     rotateView: 'Roter visning',
     toggleSnap: 'Fastgør',
     toggleGrid: 'Gitter',
+    toggleGuides: 'Hjælpelinjer',
     deletePageConfirm: 'Slet den aktuelle side?',
     openDesign: 'Åbn design',
     saveDesign: 'Gem design',

@@ -79,7 +79,7 @@ describe("resetSettings (scoped)", () => {
     s.setLocale("fr");
     s.setShowZplCommands(true);
     s.setKeepExportMetadata(true);
-    s.setCanvasSettings({ smartSnapEnabled: false, selectionGuidesEnabled: false, snapEnabled: true });
+    s.setCanvasSettings({ smartSnapEnabled: false, selectionGuidesEnabled: true, snapEnabled: true });
     s.acknowledgeLabelaryNotice();
     s.addPage();
     const pagesBefore = useLabelStore.getState().pages.length;
@@ -91,7 +91,7 @@ describe("resetSettings (scoped)", () => {
     expect(after.showZplCommands).toBe(false);
     expect(after.keepExportMetadata).toBe(false);
     expect(after.canvasSettings.smartSnapEnabled).toBe(true);
-    expect(after.canvasSettings.selectionGuidesEnabled).toBe(true);
+    expect(after.canvasSettings.selectionGuidesEnabled).toBe(false);
     expect(after.canvasSettings.snapEnabled).toBe(false);
     expect(after.labelaryNoticeAcknowledged).toBe(false);
     // Design + language kept:

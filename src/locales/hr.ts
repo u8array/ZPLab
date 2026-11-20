@@ -1135,6 +1135,7 @@ const hr = {
     rotateView: 'Zakreni prikaz',
     toggleSnap: 'Privlačenje',
     toggleGrid: 'Mreža',
+    toggleGuides: 'Vodilice',
     deletePageConfirm: 'Izbrisati trenutnu stranicu?',
     openDesign: 'Otvori dizajn',
     saveDesign: 'Spremi dizajn',

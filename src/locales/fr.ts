@@ -1135,6 +1135,7 @@ const fr = {
     rotateView: 'Pivoter la vue',
     toggleSnap: 'Magnétisme',
     toggleGrid: 'Grille',
+    toggleGuides: 'Repères',
     deletePageConfirm: 'Supprimer la page actuelle ?',
     openDesign: 'Ouvrir le design',
     saveDesign: 'Enregistrer le design',

@@ -1135,6 +1135,7 @@ const sl = {
     rotateView: 'Zavrti pogled',
     toggleSnap: 'Pripenjanje',
     toggleGrid: 'Mreža',
+    toggleGuides: 'Vodila',
     deletePageConfirm: 'Izbrišem trenutno stran?',
     openDesign: 'Odpri dizajn',
     saveDesign: 'Shrani dizajn',

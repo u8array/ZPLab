@@ -1135,6 +1135,7 @@ const fa = {
     rotateView: 'چرخش نما',
     toggleSnap: 'چفت‌شدن',
     toggleGrid: 'شبکه',
+    toggleGuides: 'خطوط راهنما',
     deletePageConfirm: 'صفحه فعلی حذف شود؟',
     openDesign: 'باز کردن طرح',
     saveDesign: 'ذخیره طرح',
