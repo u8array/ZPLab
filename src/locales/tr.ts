@@ -947,6 +947,8 @@ const tr = {
       keepExportMetadataHint: 'Etiket boyutu, yoğunluk ve QR bilgilerini içeren ^FX yorumları ekler, böylece ZPLab dosyayı tam olarak yeniden açar; yazıcılar bunları yok sayar. Kapalı: sade ZPL, ZPL panelinde de.',
       smartSnap: 'Akıllı hizalama',
       smartSnapHint: 'Sürükleme sırasında diğer nesnelere hizala. Atlamak için Ctrl/Cmd basılı tutun.',
+      selectionGuides: 'Seçim kılavuzları',
+      selectionGuidesHint: 'Seçimin kenarlarını cetvellere kadar uzat ve konumlarını göster.',
       resetHeading: 'Sıfırla',
       resetHint: 'Uygulama tercihlerini varsayılanlarına döndürür. Tasarımınız ve diliniz korunur.',
       reset: 'Ayarları sıfırla',

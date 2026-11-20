@@ -947,6 +947,8 @@ const hr = {
       keepExportMetadataHint: 'Dodaje ^FX komentare s veličinom naljepnice, gustoćom i QR podacima, kako bi ZPLab točno ponovno otvorio datoteku; pisači ih zanemaruju. Isključeno: čisti ZPL, i u ZPL panelu.',
       smartSnap: 'Pametno prianjanje',
       smartSnapHint: 'Poravnaj s drugim objektima pri povlačenju. Drži Ctrl/Cmd za zaobilaženje.',
+      selectionGuides: 'Vodilice odabira',
+      selectionGuidesHint: 'Produlji rubove odabira do ravnala i prikaži njihove položaje.',
       resetHeading: 'Resetiraj',
       resetHint: 'Vraća zadane postavke aplikacije. Vaš dizajn i jezik se čuvaju.',
       reset: 'Resetiraj postavke',

@@ -947,6 +947,8 @@ const nl = {
       keepExportMetadataHint: 'Voegt ^FX-opmerkingen toe met labelgrootte, dichtheid en QR-details, zodat ZPLab het bestand exact opnieuw opent; printers negeren ze. Uit: gewone ZPL, ook in het ZPL-paneel.',
       smartSnap: 'Slim uitlijnen',
       smartSnapHint: 'Uitlijnen op andere objecten tijdens slepen. Houd Ctrl/Cmd ingedrukt om te omzeilen.',
+      selectionGuides: 'Hulplijnen voor selectie',
+      selectionGuidesHint: 'Randen van de selectie verlengen tot de linialen en hun posities tonen.',
       resetHeading: 'Herstellen',
       resetHint: 'Herstelt de standaard app-voorkeuren. Uw ontwerp en taal blijven behouden.',
       reset: 'Instellingen herstellen',

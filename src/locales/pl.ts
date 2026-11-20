@@ -947,6 +947,8 @@ const pl = {
       keepExportMetadataHint: 'Dodaje komentarze ^FX z rozmiarem etykiety, gęstością i danymi QR, dzięki czemu ZPLab dokładnie otworzy plik ponownie; drukarki je ignorują. Wyłączone: czysty ZPL, także w panelu ZPL.',
       smartSnap: 'Inteligentne przyciąganie',
       smartSnapHint: 'Wyrównuje do innych obiektów podczas przeciągania. Przytrzymaj Ctrl/Cmd, aby pominąć.',
+      selectionGuides: 'Prowadnice zaznaczenia',
+      selectionGuidesHint: 'Wydłuża krawędzie zaznaczenia do linijek i pokazuje ich położenie.',
       resetHeading: 'Resetuj',
       resetHint: 'Przywraca domyślne ustawienia aplikacji. Twój projekt i język są zachowane.',
       reset: 'Resetuj ustawienia',

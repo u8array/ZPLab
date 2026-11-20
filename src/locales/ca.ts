@@ -918,6 +918,8 @@ const ca = {
       keepExportMetadataHint: 'Afegeix comentaris ^FX amb la mida de l’etiqueta, la densitat i els detalls QR perquè ZPLab torni a obrir el fitxer exactament; les impressores els ignoren. Desactivat: ZPL pur, també al panell ZPL.',
       smartSnap: 'Ajust intel·ligent',
       smartSnapHint: 'Alinea amb altres objectes en arrossegar. Mantén premut Ctrl/Cmd per ometre’l.',
+      selectionGuides: 'Guies de selecció',
+      selectionGuidesHint: 'Allarga les vores de la selecció fins als regles i mostra’n les posicions.',
       resetHeading: 'Restabliment',
       resetHint: 'Restaura les preferències de l’aplicació als valors per defecte. Es conserven el disseny i l’idioma.',
       reset: 'Restableix la configuració',

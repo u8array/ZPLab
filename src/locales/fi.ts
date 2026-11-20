@@ -947,6 +947,8 @@ const fi = {
       keepExportMetadataHint: 'Lisää ^FX-kommentteja, joissa on tarran koko, tiheys ja QR-tiedot, jotta ZPLab avaa tiedoston täsmälleen uudelleen; tulostimet jättävät ne huomiotta. Pois päältä: tavallista ZPL:ää, myös ZPL-paneelissa.',
       smartSnap: 'Älykäs napsautus',
       smartSnapHint: 'Kohdistaa muihin objekteihin vedettäessä. Pidä Ctrl/Cmd ohitusta varten.',
+      selectionGuides: 'Valinnan apuviivat',
+      selectionGuidesHint: 'Jatkaa valinnan reunoja viivaimiin asti ja näyttää niiden sijainnit.',
       resetHeading: 'Nollaa',
       resetHint: 'Palauttaa sovelluksen oletusasetukset. Suunnitelmasi ja kielesi säilytetään.',
       reset: 'Nollaa asetukset',

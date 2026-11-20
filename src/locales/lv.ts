@@ -947,6 +947,8 @@ const lv = {
       keepExportMetadataHint: 'Pievieno ^FX komentārus ar etiķetes izmēru, blīvumu un QR datiem, lai ZPLab varētu precīzi atkārtoti atvērt failu; printeri tos ignorē. Izslēgts: parasts ZPL, arī ZPL panelī.',
       smartSnap: 'Viedā piestiprināšana',
       smartSnapHint: 'Vilkšanas laikā izlīdzina ar citiem objektiem. Turiet Ctrl/Cmd, lai apietu.',
+      selectionGuides: 'Atlases palīglīnijas',
+      selectionGuidesHint: 'Pagarina atlases malas līdz lineāliem un parāda to pozīcijas.',
       resetHeading: 'Atiestatīt',
       resetHint: 'Atjauno lietotnes noklusētās preferences. Jūsu dizains un valoda tiek saglabāti.',
       reset: 'Atiestatīt iestatījumus',

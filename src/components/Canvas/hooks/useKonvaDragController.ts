@@ -34,9 +34,9 @@ interface DragControllerArgs {
   snapBypassRef: React.RefObject<boolean>;
   /** Guides in group-local px (rendered inside the rotation group). */
   setGuides: (guides: SnapGuide[]) => void;
-  /** Live group-local drag delta (px) each tick, (0,0) on end. Lets the
-   *  selection frame follow the drag without reading node client-rects. */
-  onDelta?: (localDx: number, localDy: number) => void;
+  /** Live group-local drag delta (px) each tick, (0,0) with `ended` on end, so the selection
+   *  frame follows the drag without reading node client-rects. */
+  onDelta?: (localDx: number, localDy: number, ended: boolean) => void;
 }
 
 /** Applies a live group-local pixel offset to one object during a drag.
@@ -225,7 +225,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
     const localDx = dotsToPx(deltaDots.x, args.scale, args.dpmm);
     const localDy = dotsToPx(deltaDots.y, args.scale, args.dpmm);
     for (const id of drag.ids) applyOffset(id, stage, localDx, localDy);
-    args.onDelta?.(localDx, localDy);
+    args.onDelta?.(localDx, localDy, false);
     args.transformerRef.current?.forceUpdate();
   };
 
@@ -234,7 +234,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
     const stage = args.stageRef.current;
     dragRef.current = null;
     setGuides([]);
-    args.onDelta?.(0, 0);
+    args.onDelta?.(0, 0, true);
     if (!drag) return;
     // State-driven renderers (movers): clear the live offset and reset the node
     // to base, since the committed model position drives the final render. Plain

@@ -3,10 +3,12 @@ import type { CanvasColors } from '../../hooks/useColorScheme';
 import { DARK_COLORS } from '../../hooks/useColorScheme';
 import { rulerTicksMm, rulerLabel } from '@zplab/core/lib/units';
 import type { Unit } from '@zplab/core/lib/units';
+import { rulerValueMm, type RulerAxis } from './rulerGeometry';
 
 export const RULER_SIZE = 20; // px; width/height of the ruler strip
+export const RULER_FONT = "'IBM Plex Mono', monospace";
 
-interface Props {
+export interface RulerProps {
   labelOffsetX: number;
   labelOffsetY: number;
   labelWidthMm: number;
@@ -34,8 +36,10 @@ export function Ruler({
   colors = DARK_COLORS,
   horizontalReversed = false,
   verticalReversed = false,
-}: Props) {
+}: RulerProps) {
   const { major, minor } = rulerTicksMm(scale, unit);
+  const xAxis: RulerAxis = { originPx: labelOffsetX, lengthMm: labelWidthMm, reversed: horizontalReversed };
+  const yAxis: RulerAxis = { originPx: labelOffsetY, lengthMm: labelHeightMm, reversed: verticalReversed };
   const els: React.ReactElement[] = [];
 
   // ── Backgrounds ───────────────────────────────────────────────
@@ -64,19 +68,15 @@ export function Ruler({
         strokeWidth={isMajor ? 1 : 0.5}
         listening={false} />,
     );
-    // `mm` was rounded above; subtraction reintroduces IEEE-754 artefacts
-    // (e.g. 100 - 30 = 70.00000000000001), so re-round to keep tick labels
-    // free of trailing-decimal noise on rotated labels.
-    const displayMm = horizontalReversed
-      ? Math.round((labelWidthMm - mm) * 1000) / 1000
-      : mm;
+    // A reversed ruler computes lengthMm - mm, which leaves IEEE-754 noise like 70.00000000000001. Re-round to drop it.
+    const displayMm = Math.round(rulerValueMm(mm, xAxis) * 1000) / 1000;
     if (isMajor && displayMm > 0 && displayMm <= labelWidthMm) {
       els.push(
         <Text key={`ht-${i}`}
           x={x + 2} y={RULER_SIZE - 14}
           text={rulerLabel(displayMm, unit)}
           fontSize={8} fill={colors.rulerLabel}
-          fontFamily="'IBM Plex Mono', monospace"
+          fontFamily={RULER_FONT}
           listening={false} />,
       );
     }
@@ -97,16 +97,14 @@ export function Ruler({
         strokeWidth={isMajor ? 1 : 0.5}
         listening={false} />,
     );
-    const displayMm = verticalReversed
-      ? Math.round((labelHeightMm - mm) * 1000) / 1000
-      : mm;
+    const displayMm = Math.round(rulerValueMm(mm, yAxis) * 1000) / 1000;
     if (isMajor && displayMm > 0 && displayMm <= labelHeightMm) {
       els.push(
         <Text key={`vt-${i}`}
           x={2} y={y + 2}
           text={rulerLabel(displayMm, unit)}
           fontSize={8} fill={colors.rulerLabel}
-          fontFamily="'IBM Plex Mono', monospace"
+          fontFamily={RULER_FONT}
           rotation={0}
           listening={false} />,
       );

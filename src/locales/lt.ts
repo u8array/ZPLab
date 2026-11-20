@@ -947,6 +947,8 @@ const lt = {
       keepExportMetadataHint: 'Prideda ^FX komentarus su etiketės dydžiu, tankiu ir QR duomenimis, kad ZPLab tiksliai vėl atvertų failą; spausdintuvai jų nepaiso. Išjungta: paprastas ZPL, taip pat ZPL skydelyje.',
       smartSnap: 'Išmanusis pritvirtinimas',
       smartSnapHint: 'Lygiuoja su kitais objektais tempiant. Laikykite Ctrl/Cmd, kad praleistumėte.',
+      selectionGuides: 'Pasirinkimo pagalbinės linijos',
+      selectionGuidesHint: 'Pratęsia pasirinkimo kraštus iki liniuočių ir rodo jų padėtis.',
       resetHeading: 'Atkurti',
       resetHint: 'Atkuria numatytuosius programos nuostatus. Jūsų dizainas ir kalba išsaugomi.',
       reset: 'Atstatyti nustatymus',

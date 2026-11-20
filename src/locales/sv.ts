@@ -947,6 +947,8 @@ const sv = {
       keepExportMetadataHint: 'Lägger till ^FX-kommentarer med etikettstorlek, densitet och QR-detaljer, så att ZPLab kan öppna filen exakt igen; skrivare ignorerar dem. Av: vanlig ZPL, även i ZPL-panelen.',
       smartSnap: 'Smart snäppning',
       smartSnapHint: 'Justera mot andra objekt under dragning. Håll Ctrl/Cmd för att kringgå.',
+      selectionGuides: 'Hjälplinjer för markering',
+      selectionGuidesHint: 'Förläng markeringens kanter till linjalerna och visa deras positioner.',
       resetHeading: 'Återställ',
       resetHint: 'Återställer standardinställningarna för appen. Ditt design och språk behålls.',
       reset: 'Återställ inställningar',

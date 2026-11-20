@@ -43,6 +43,7 @@ export function AppSettingsTab() {
   const keepExportMetadata = useLabelStore((s) => s.keepExportMetadata);
   const setKeepExportMetadata = useLabelStore((s) => s.setKeepExportMetadata);
   const smartSnapEnabled = useLabelStore((s) => s.canvasSettings.smartSnapEnabled);
+  const selectionGuidesEnabled = useLabelStore((s) => s.canvasSettings.selectionGuidesEnabled);
   const setCanvasSettings = useLabelStore((s) => s.setCanvasSettings);
   const resetSettings = useLabelStore((s) => s.resetSettings);
   const appUpdate = useLabelStore((s) => s.appUpdate);
@@ -106,6 +107,12 @@ export function AppSettingsTab() {
           onChange={(v) => setCanvasSettings({ smartSnapEnabled: v })}
           label={loc.smartSnap}
           hint={loc.smartSnapHint}
+        />
+        <SettingToggle
+          checked={selectionGuidesEnabled}
+          onChange={(v) => setCanvasSettings({ selectionGuidesEnabled: v })}
+          label={loc.selectionGuides}
+          hint={loc.selectionGuidesHint}
         />
       </section>
 

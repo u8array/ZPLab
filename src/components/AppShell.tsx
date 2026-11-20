@@ -127,7 +127,7 @@ export function AppShell() {
   const { undo, redo, pastStates, futureStates } = useHistory();
   const canvasSettings = useLabelStore((s) => s.canvasSettings);
   const setCanvasSettings = useLabelStore((s) => s.setCanvasSettings);
-  const { showGrid, snapEnabled, snapSizeMm, smartSnapEnabled, unit } = canvasSettings;
+  const { showGrid, snapEnabled, snapSizeMm, smartSnapEnabled, selectionGuidesEnabled, unit } = canvasSettings;
 
   // A frozen editor no-ops undo/redo (see useHistory); reflect that on the
   // buttons so they aren't enabled-but-dead, matching the gated history dropdown.
@@ -489,6 +489,7 @@ export function AppShell() {
             snapEnabled={snapEnabled}
             onSnapToggle={() => setCanvasSettings({ snapEnabled: !snapEnabled })}
             smartSnapEnabled={smartSnapEnabled}
+            selectionGuidesEnabled={selectionGuidesEnabled}
             snapSizeMm={snapSizeMm}
             onSnapSizeChange={(v) => setCanvasSettings({ snapSizeMm: v })}
             zoom={canvasSettings.zoom}

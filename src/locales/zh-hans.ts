@@ -947,6 +947,8 @@ const zhHans = {
       keepExportMetadataHint: '添加包含标签尺寸、密度和二维码详情的 ^FX 注释，以便 ZPLab 精确重新打开文件；打印机会忽略它们。关闭时：纯 ZPL，ZPL 面板中也是如此。',
       smartSnap: '智能吸附',
       smartSnapHint: '拖动时对齐其他对象。按住Ctrl/Cmd可跳过对齐。',
+      selectionGuides: '选区参考线',
+      selectionGuidesHint: '将选区边缘延伸到标尺并显示其位置。',
       resetHeading: '重置',
       resetHint: '将应用偏好恢复为默认值。您的设计和语言不受影响。',
       reset: '重置设置',

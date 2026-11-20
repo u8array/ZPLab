@@ -10,6 +10,13 @@ export interface NodeRect {
   height: number;
 }
 
+export interface Bounds {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}
+
 /** Local-frame bbox (transform skipped), so it is independent of the live
  *  drag scale. */
 export function naturalRect(node: Konva.Node): NodeRect {

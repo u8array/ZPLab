@@ -947,6 +947,8 @@ const ro = {
       keepExportMetadataHint: 'Adaugă comentarii ^FX cu dimensiunea etichetei, densitatea și detaliile QR, astfel încât ZPLab să redeschidă fișierul exact; imprimantele le ignoră. Dezactivat: ZPL simplu, și în panoul ZPL.',
       smartSnap: 'Fixare inteligentă',
       smartSnapHint: 'Aliniați la alte obiecte în timp ce trageți. Țineți Ctrl/Cmd pentru a ocoli.',
+      selectionGuides: 'Ghidaje de selecție',
+      selectionGuidesHint: 'Prelungiți marginile selecției până la rigle și afișați pozițiile lor.',
       resetHeading: 'Resetare',
       resetHint: 'Restabilește preferințele implicite ale aplicației. Designul și limba dvs. sunt păstrate.',
       reset: 'Resetare setări',

@@ -947,6 +947,8 @@ const hu = {
       keepExportMetadataHint: '^FX megjegyzéseket ad hozzá a címke méretével, sűrűségével és QR-adataival, hogy a ZPLab pontosan visszanyissa a fájlt; a nyomtatók figyelmen kívül hagyják őket. Kikapcsolva: egyszerű ZPL, a ZPL panelen is.',
       smartSnap: 'Intelligens illesztés',
       smartSnapHint: 'Igazítás más objektumokhoz húzás közben. Tartsa lenyomva a Ctrl/Cmd billentyűt az átugráshoz.',
+      selectionGuides: 'Kijelölés segédvonalai',
+      selectionGuidesHint: 'Meghosszabbítja a kijelölés széleit a vonalzókig, és megjeleníti azok pozícióját.',
       resetHeading: 'Visszaállítás',
       resetHint: 'Visszaállítja az alkalmazás alapértelmezett beállításait. A tervezés és a nyelv megmarad.',
       reset: 'Beállítások visszaállítása',
