@@ -8,6 +8,7 @@ const FLAGS: MenuFlags = {
   hasObjects: true,
   documentEmits: true,
   sourceEditing: false,
+  editorFrozen: false,
   canBatchExport: false,
   batchRowCount: 0,
   connectDataWizard: false,

@@ -131,9 +131,9 @@ export function AppShell() {
 
   // A frozen editor no-ops undo/redo (see useHistory); reflect that on the
   // buttons so they aren't enabled-but-dead, matching the gated history dropdown.
-  const historyLocked = useLabelStore(selectEditorFrozen);
-  const canUndo = pastStates.length > 0 && !historyLocked;
-  const canRedo = futureStates.length > 0 && !historyLocked;
+  const editorFrozen = useLabelStore(selectEditorFrozen);
+  const canUndo = pastStates.length > 0 && !editorFrozen;
+  const canRedo = futureStates.length > 0 && !editorFrozen;
   const hasObjects = pages.some((p) => p.objects.length > 0);
   const documentEmits = useLabelStore(selectDocumentEmits);
   const sourceEditing = useLabelStore(selectSourceEditing);
@@ -204,6 +204,7 @@ export function AppShell() {
     hasObjects,
     documentEmits,
     sourceEditing,
+    editorFrozen,
     canBatchExport,
     batchRowCount,
     connectDataWizard: isDesktopShell,
