@@ -1,4 +1,4 @@
-/** Shared design-file fixtures for the headless and MCP tests. */
+/** Shared fixtures and the import scanner for the headless, MCP and server tests. */
 
 export function textObject(id: string, content: string) {
   return {
@@ -38,3 +38,10 @@ export const designFile = {
   label: { widthMm: 100, heightMm: 50, dpmm: 8 },
   pages: [{ objects: [textObject("t1", "HELLO")] }],
 };
+
+/** A static form is matched from its line start, so quoted prose never counts. */
+export const importSpecs = (src: string): string[] => [
+  ...[...src.matchAll(/^(?:import|export)\s[^'"]*?from\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
+  ...[...src.matchAll(/^\s*import\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
+  ...[...src.matchAll(/import\(\s*['"]([^'"]+)['"]\s*\)/g)].map((m) => m[1] ?? ""),
+];
