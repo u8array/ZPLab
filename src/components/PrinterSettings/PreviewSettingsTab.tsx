@@ -7,6 +7,7 @@ import { labelCls, inputCls, buttonCls, sectionHeadingCls } from "../ui/formStyl
 import { RadioOption } from "../ui/RadioOption";
 import { formatTemplate } from "../../lib/formatTemplate";
 import { previewProviderChoices, previewProviderLabel } from "../../lib/previewProviderLabel";
+import { printReach } from "../../lib/printReach";
 
 /** Preview configuration: which renderer draws the overlay and the Labelary privacy consent. */
 export function PreviewSettingsTab() {
@@ -19,7 +20,9 @@ export function PreviewSettingsTab() {
   const setProvider = useLabelStore((s) => s.setPreviewProvider);
   const labelaryAvailable = useLabelStore((s) => s.thirdParty.labelary);
   const readsPrinter = useLabelStore(selectReadsPrinter);
-  const locked = Object.fromEntries(previewProviderChoices(t, { labelary: labelaryAvailable, printer: readsPrinter }).map((c) => [c.provider, c.disabled]));
+  const choices = previewProviderChoices(t, { labelary: labelaryAvailable, printer: readsPrinter }, printReach);
+  const locked = Object.fromEntries(choices.map((c) => [c.provider, c.disabled]));
+  const printerLock = choices.find((c) => c.provider === "printer")?.reason;
   const labelaryConsent = useLabelStore((s) => s.labelaryNoticeAcknowledged);
   const acknowledgeLabelaryNotice = useLabelStore((s) => s.acknowledgeLabelaryNotice);
   const revokeLabelaryNotice = useLabelStore((s) => s.revokeLabelaryNotice);
@@ -93,7 +96,7 @@ export function PreviewSettingsTab() {
           current={chosen}
           onSelect={setProvider}
           label={loc.providerPrinter}
-          hint={readsPrinter ? loc.providerPrinterHint : loc.providerPrinterDesktopOnly}
+          hint={printerLock ?? loc.providerPrinterHint}
           disabled={locked.printer}
         />
         <RadioOption

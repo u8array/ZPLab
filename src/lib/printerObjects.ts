@@ -4,6 +4,7 @@ import { HOST_LISTING_DEVICES, hostObjectKind, hostObjectPath, parseHostDirector
 import { bitmapToDataUrl, fetchPrinterPreview } from "./printerPreview";
 import { queryPrinter, type PrinterOutcome, type PrinterQueryFailure } from "./printerQuery";
 import type { QueryTarget } from "./printTarget";
+import { sendZplServer } from "./serverPrint";
 import { sendZplUsb } from "./usbPrint";
 import { sendViaNetwork } from "./zebraPrint";
 import { contentBounds, cropBitmap, type PrinterBitmap } from "./zebraGraphic";
@@ -56,6 +57,10 @@ export async function deletePrinterObject(target: QueryTarget, object: HostObjec
   const zpl = `^XA^ID${hostObjectPath(object)}^FS^XZ`;
   if (target.kind === "usb") {
     const res = await sendZplUsb(target.id, zpl);
+    return res.kind === "sent" ? undefined : res;
+  }
+  if (target.kind === "server") {
+    const res = await sendZplServer(target.id, zpl);
     return res.kind === "sent" ? undefined : res;
   }
   const res = await sendViaNetwork(target.host, target.port, zpl);

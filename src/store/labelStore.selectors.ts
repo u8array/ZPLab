@@ -2,7 +2,7 @@ import type { ImportFinding } from '@zplab/core/lib/importReport';
 import { type LabelObject, type Page, pageEmits, pageLabelConfig, pageHostCommands } from '@zplab/core/types/Group';
 import { boundColumnIndex } from '@zplab/core/lib/variableBinding';
 import { isDefaultHost, resolveHost, resolveApiKey } from '../lib/labelary';
-import { isDesktopShell } from '../lib/platform';
+import { printReach } from '../lib/printReach';
 import { queryKeyFor, readsPrinter, type PrintTransport } from '../lib/printTarget';
 import type { PrinterState } from './slices/printerStateSlice';
 import type { PrinterObjectsState } from './slices/printerObjectsSlice';
@@ -143,10 +143,10 @@ export const selectLabelaryEndpoint = (s: LabelState): { host: string; apiKey?: 
   apiKey: resolveApiKey(s.labelaryApiKey),
 });
 
-/** Whether this build reads the printer. */
-export const selectReadsPrinter = (s: LabelState): boolean => readsPrinter(s.printTarget, isDesktopShell);
+/** Whether the build reads what the printer behind the stored way answers. */
+export const selectReadsPrinter = (s: LabelState): boolean => readsPrinter(s.printTarget, printReach);
 
-/** The provider a preview uses: the printer path needs a build that reads the printer, else Labelary when enabled, else none. */
+/** The provider a preview uses. The printer path needs a build that reads what the printer behind the stored way answers, Labelary needs its consent, else none. */
 export const selectEffectivePreviewProvider = (s: LabelState): PreviewProvider => {
   if (s.previewProvider === 'printer' && selectReadsPrinter(s)) return 'printer';
   return s.previewProvider === 'none' || !s.thirdParty.labelary ? 'none' : 'labelary';

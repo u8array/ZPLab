@@ -3,6 +3,8 @@ import { STX, ETX } from "@zplab/core/lib/hostStatus.fixture";
 import { CHUNKS_SETTLE_MS, FIRST_BYTE_MS, REPLY_DEADLINE_MS, REPLY_IDLE_MS, answered, queryPrinter, readPrinterReply } from "./printerQuery";
 
 vi.mock("./platform", () => ({ isDesktopShell: true }));
+// The server client loads the credential store, which would load the Tauri mock before FakeChannel exists.
+vi.mock("./serverPrint", () => ({ queryZplServer: vi.fn() }));
 
 let channels = 0;
 
@@ -73,6 +75,11 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 describe("queryPrinter", () => {
+  it("opens nothing for a printer this build has no channel to", async () => {
+    expect(await queryPrinter({ kind: "server", id: "dock" }, "~HS")).toEqual({ kind: "error", message: "This build has no channel that reads this printer" });
+    expect(invoke).not.toHaveBeenCalled();
+  });
+
   it("ends the read at the idle gap behind the reply, by stopping the stream", async () => {
     const read = queryPrinter(target, "~HS");
     const query = await open();

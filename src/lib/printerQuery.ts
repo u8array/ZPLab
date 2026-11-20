@@ -1,9 +1,10 @@
 import { owedReplies, type AwaitedReply, type OwedReply } from "@zplab/core/lib/documentReplies";
 import { unframed } from "@zplab/core/lib/hostStatus";
 import { errorMessage } from "./errorMessage";
-import { isDesktopShell } from "./platform";
+import { printReach } from "./printReach";
 import { carriesReply, type QueryTarget } from "./printTarget";
 import type { StreamDone, StreamDoneResult } from "./replyStream";
+import { queryZplServer } from "./serverPrint";
 import { queryZplUsb } from "./usbPrint";
 
 export type PrinterQueryFailure =
@@ -12,8 +13,10 @@ export type PrinterQueryFailure =
   | { kind: "unparsed" }
   | { kind: "silent" }
   | { kind: "ignored" }
-  | { kind: "refused"; port: number }
+  | { kind: "refused"; port?: number }
   | { kind: "unreachable" }
+  | { kind: "server_unreachable" }
+  | { kind: "unauthorized" }
   | { kind: "not_found" }
   | { kind: "permission_denied" }
   | { kind: "timed_out" }
@@ -35,7 +38,7 @@ export const answered = (outcome: PrinterOutcome<string>): PrinterOutcome<string
 export function printerFailureMessage(failure: PrinterQueryFailure): string {
   switch (failure.kind) {
     case "unconfigured":
-      return "No printer configured. Set a USB device or IP under Settings, Printer.";
+      return "No printer configured. Set one under Settings, Printer.";
     case "busy":
       return "Another printer read is still running. Try again in a moment.";
     case "unparsed":
@@ -45,9 +48,13 @@ export function printerFailureMessage(failure: PrinterQueryFailure): string {
     case "ignored":
       return "The printer ignored the command. The object is still there.";
     case "refused":
-      return `The printer refused the connection. Check that port ${failure.port} is open.`;
+      return failure.port === undefined ? "The printer refused the connection." : `The printer refused the connection. Check that port ${failure.port} is open.`;
     case "unreachable":
-      return "Could not reach the printer. Check the IP address and network.";
+      return "Could not reach the printer. Check its address and the network.";
+    case "server_unreachable":
+      return "Could not reach the server. Check the network and whether the server is running.";
+    case "unauthorized":
+      return "The server asks for its access token. Set it under Settings, Printer.";
     case "not_found":
       return "USB printer not found. Re-plug it and check Settings, Printer.";
     case "permission_denied":
@@ -71,7 +78,7 @@ interface OpenStream {
   stop: () => void;
 }
 
-/** Bounds the read alone, the connect and the write have their own timeouts in Rust. */
+/** Bounds the read alone, the connect and the write have their own timeouts. */
 export const REPLY_DEADLINE_MS = 60_000;
 /** The printer renders before it answers, and a ~DY font download took a ZD230 past 10 s. */
 export const FIRST_BYTE_MS = 30_000;
@@ -81,6 +88,11 @@ export const REPLY_IDLE_MS = 1200;
 export const CHUNKS_SETTLE_MS = 5000;
 
 async function openReplyStream(target: QueryTarget, zpl: string, deadlineMs: number, onChunk: (chunk: string) => void): Promise<OpenStream> {
+  if (target.kind === "server") {
+    const abort = new AbortController();
+    const done = queryZplServer(target.id, zpl, deadlineMs, abort.signal, onChunk).then((res): PrinterOutcome<StreamDone> => (res.kind === "done" ? { kind: "ok", value: res } : res));
+    return { done, stop: () => abort.abort() };
+  }
   const { Channel, invoke } = await import("@tauri-apps/api/core");
   const chunks = new Channel<string>(onChunk);
   const stop = () => {
@@ -188,7 +200,7 @@ export async function queryPrinter(target: QueryTarget, zpl: string, deadlineMs?
 /** Reads until every awaited reply is in and the printer has gone quiet, or until the deadline or the signal ends
  *  the wait with what came. Every failure comes back as a value, never as a throw. */
 export async function readPrinterReply(target: QueryTarget, zpl: string, wait: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
-  if (!carriesReply(target.kind, isDesktopShell)) return { kind: "error", message: "The printer query requires the desktop app" };
+  if (!carriesReply(target.kind, printReach)) return { kind: "error", message: "This build has no channel that reads this printer" };
   try {
     return await readReply(target, zpl, wait);
   } catch (e) {

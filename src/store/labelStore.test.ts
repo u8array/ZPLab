@@ -1831,6 +1831,20 @@ describe('migrateLegacy — v19→v20 selectionGuidesEnabled', () => {
   });
 });
 
+describe('migrateLegacy — v20→v21 serverPrinter', () => {
+  it('backfills an empty server printer into a v20 print target', () => {
+    const persisted = { printTarget: { transport: 'usb', host: '10.0.0.5', port: 9100, usbId: 'usb-1', browserPrintUid: '', localPrinter: '' } };
+    const migrated = migrateLegacy(persisted, 20) as { printTarget: Record<string, unknown> };
+    expect(migrated.printTarget).toEqual({ ...persisted.printTarget, serverPrinter: '' });
+  });
+
+  it('keeps a server printer a v20 snapshot already carries', () => {
+    const persisted = { printTarget: { transport: 'server', serverPrinter: 'dock' } };
+    const migrated = migrateLegacy(persisted, 20) as { printTarget: Record<string, unknown> };
+    expect(migrated.printTarget.serverPrinter).toBe('dock');
+  });
+});
+
 describe('migrateLegacy — v14→v15 dataset-model renames', () => {
   it('renames csvMapping → columnMapping and csvRenderMode → dataRenderMode', () => {
     const persisted = {

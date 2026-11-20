@@ -2,12 +2,14 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { deletePrinterObject, readPrinterFontSample, readPrinterGraphic, readPrinterObjectImage, readPrinterObjects } from "./printerObjects";
 import type * as PrinterPreview from "./printerPreview";
 import type * as PrinterQuery from "./printerQuery";
+import type * as ServerPrint from "./serverPrint";
 import type * as ZebraPrint from "./zebraPrint";
 import type * as UsbPrint from "./usbPrint";
 
 const queryPrinter = vi.fn();
 const sendViaNetwork = vi.fn();
 const sendZplUsb = vi.fn();
+const sendZplServer = vi.fn();
 const fetchPrinterPreview = vi.fn();
 vi.mock("./printerPreview", async (importOriginal) => ({
   ...(await importOriginal<typeof PrinterPreview>()),
@@ -21,6 +23,10 @@ vi.mock("./zebraPrint", async (importOriginal) => ({
   ...(await importOriginal<typeof ZebraPrint>()),
   sendViaNetwork: (...args: unknown[]) => sendViaNetwork(...args),
 }));
+vi.mock("./serverPrint", async (importOriginal) => ({
+  ...(await importOriginal<typeof ServerPrint>()),
+  sendZplServer: (...args: unknown[]) => sendZplServer(...args),
+}));
 vi.mock("./usbPrint", async (importOriginal) => ({
   ...(await importOriginal<typeof UsbPrint>()),
   sendZplUsb: (...args: unknown[]) => sendZplUsb(...args),
@@ -28,6 +34,7 @@ vi.mock("./usbPrint", async (importOriginal) => ({
 
 const network = { kind: "network", host: "172.17.17.175", port: 9100 } as const;
 const usb = { kind: "usb", id: "usb-1" } as const;
+const server = { kind: "server", id: "dock" } as const;
 const pre = { device: "R", name: "PRE", ext: "GRF", size: 49924 };
 const listingOf = (zpl: string) => {
   const drive = zpl.slice(6, 8);
@@ -38,6 +45,7 @@ beforeEach(() => {
   queryPrinter.mockReset();
   sendViaNetwork.mockReset();
   sendZplUsb.mockReset();
+  sendZplServer.mockReset();
   fetchPrinterPreview.mockReset();
 });
 
@@ -119,5 +127,13 @@ describe("deletePrinterObject", () => {
     sendZplUsb.mockResolvedValueOnce({ kind: "permission_denied" });
     expect(await deletePrinterObject(usb, pre)).toEqual({ kind: "permission_denied" });
     expect(sendZplUsb).toHaveBeenCalledWith("usb-1", "^XA^IDR:PRE.GRF^FS^XZ");
+  });
+
+  it("sends ^ID through the server to the printer it names", async () => {
+    sendZplServer.mockResolvedValueOnce({ kind: "sent" });
+    expect(await deletePrinterObject(server, pre)).toBeUndefined();
+    expect(sendZplServer).toHaveBeenCalledWith("dock", "^XA^IDR:PRE.GRF^FS^XZ");
+    sendZplServer.mockResolvedValueOnce({ kind: "unauthorized" });
+    expect(await deletePrinterObject(server, pre)).toEqual({ kind: "unauthorized" });
   });
 });

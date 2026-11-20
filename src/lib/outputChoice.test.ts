@@ -90,7 +90,7 @@ describe("the remembered decision", () => {
 });
 
 describe("effectivePrintWay", () => {
-  const webWays = offeredWays(false, { local: false, usb: false }, true);
+  const webWays = offeredWays({ desktop: false, server: false }, { local: false, usb: false, server: false }, true);
 
   it("shows the stored Zebra way while nothing else is remembered", () => {
     expect(effectivePrintWay(null, "browserprint", webWays)).toEqual({ way: "browserprint", tab: "browserprint" });
@@ -102,7 +102,7 @@ describe("effectivePrintWay", () => {
   });
 
   it("falls back to a Zebra way where nothing renders", () => {
-    const script = offeredWays(false, { local: false, usb: false }, false);
+    const script = offeredWays({ desktop: false, server: false }, { local: false, usb: false, server: false }, false);
 
     expect(effectivePrintWay("system", "browserprint", script)).toEqual({ way: "browserprint", tab: "browserprint" });
   });

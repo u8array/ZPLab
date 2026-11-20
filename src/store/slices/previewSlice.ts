@@ -128,8 +128,7 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
       currentObjects(get()) !== objs;
 
     if (printerTarget) {
-      // Firmware render over raw TCP or USB; errors stay plain strings like
-      // labelary's so the UI maps both providers the same.
+      // Errors of the firmware render stay plain strings like labelary's.
       const fail = (error: string): void => {
         if (!isStale()) set({ previewMode: { status: 'error', error } });
       };

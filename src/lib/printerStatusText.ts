@@ -59,9 +59,13 @@ export function failureText(loc: Loc, failure: PrinterQueryFailure): string {
     case "ignored":
       return loc.failIgnored;
     case "refused":
-      return formatTemplate(loc.failRefusedFmt, { port: String(failure.port) });
+      return failure.port === undefined ? loc.failRefused : formatTemplate(loc.failRefusedFmt, { port: String(failure.port) });
     case "unreachable":
       return loc.failUnreachable;
+    case "server_unreachable":
+      return loc.failServerUnreachable;
+    case "unauthorized":
+      return loc.failUnauthorized;
     case "not_found":
       return loc.failNotFound;
     case "permission_denied":

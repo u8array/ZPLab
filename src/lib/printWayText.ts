@@ -1,5 +1,5 @@
 // One wording per way to the printer, shared by the output dialog and the printer settings.
-import { carriesReply, type PrintWay } from "./printTarget";
+import { carriesReply, type PrintReach, type PrintWay } from "./printTarget";
 import { asksPrinter, type DocumentQueryFacts } from "./outputChoice";
 import { formatTemplate } from "./formatTemplate";
 import type { Translations } from "../locales";
@@ -11,6 +11,7 @@ const WAY_KEY = {
   browserprint: "wayBrowserPrint",
   local: "wayLocal",
   usb: "wayUsb",
+  server: "wayServer",
   system: "waySystem",
 } as const satisfies Record<PrintWay, keyof Loc>;
 
@@ -19,6 +20,7 @@ const LABEL_KEY = {
   browserprint: "tabBrowserPrint",
   local: "tabLocal",
   usb: "tabUsb",
+  server: "tabServer",
   system: "tabSystem",
 } as const satisfies Record<PrintWay, keyof Loc>;
 
@@ -45,7 +47,7 @@ const printsHint = (loc: Loc, query: DocumentQueryFacts): string => {
 export const queryButtonText = (loc: Loc, query: DocumentQueryFacts): string => (printsLabels(query) ? loc.queryPrintButton : loc.queryButton);
 
 /** What the dialog offers a document that asks the printer something, for the way at hand. */
-export function queryOffer(loc: Loc, query: DocumentQueryFacts, way: PrintWay, desktop: boolean): QueryOffer {
+export function queryOffer(loc: Loc, query: DocumentQueryFacts, way: PrintWay, reach: PrintReach): QueryOffer {
   if (!asksPrinter(query)) return { queries: false, hints: [] };
   if (way === "system") return { queries: false, hints: [loc.queryNoRender] };
   const blockers = [
@@ -54,7 +56,7 @@ export function queryOffer(loc: Loc, query: DocumentQueryFacts, way: PrintWay, d
     ...(query.uncounted.length > 0 ? [formatTemplate(loc.queryUncountedFmt, { commands: query.uncounted.join(" ") })] : []),
   ];
   if (blockers.length > 0) return { queries: false, hints: blockers };
-  if (!carriesReply(way, desktop)) return { queries: false, hints: [loc.queryNoChannel] };
+  if (!carriesReply(way, reach)) return { queries: false, hints: [loc.queryNoChannel] };
   if (!printsLabels(query)) return { queries: true, hints: [loc.queryHint] };
   return { queries: true, hints: [loc.queryHint, printsHint(loc, query)] };
 }
