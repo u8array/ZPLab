@@ -19,6 +19,11 @@ ARG VITE_THIRD_PARTY_LABELARY
 # CI type-checks the same commit, so the image only needs the bundle.
 RUN pnpm exec vite build
 
+FROM deps AS designer
+ARG VITE_LABELARY_API_URL
+ARG VITE_THIRD_PARTY_LABELARY
+RUN VITE_SERVER_API_URL=/api/v1 pnpm exec vite build
+
 FROM deps AS server-bundle
 RUN pnpm --filter @zplab/server build:bundle
 
@@ -26,7 +31,8 @@ FROM node:24-alpine AS server
 WORKDIR /app
 COPY --from=server-bundle /app/packages/server/dist-sea/zplab-server.cjs ./zplab-server.cjs
 COPY --from=server-bundle /app/LICENSE /app/THIRD-PARTY-LICENSES.md ./
-ENV ZPLAB_HOST=0.0.0.0 ZPLAB_PORT=8787
+COPY --from=designer /app/dist ./designer
+ENV ZPLAB_HOST=0.0.0.0 ZPLAB_PORT=8787 ZPLAB_DESIGNER_DIR=/app/designer
 EXPOSE 8787
 USER node
 # A one-second start does not need the default 30 s probe interval.

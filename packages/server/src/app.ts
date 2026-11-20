@@ -1,4 +1,5 @@
 import { OpenAPIHono, createRoute, z, type RouteConfig } from "@hono/zod-openapi";
+import type { Context } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { HTTPException } from "hono/http-exception";
 import { stream } from "hono/streaming";
@@ -127,6 +128,8 @@ const routes = {
   }),
 };
 
+export const noSuchRoute = (c: Context) => c.json(toolError("no such route"), 404);
+
 /** The app without a listener, so tests drive it through `app.request()`. */
 export function createApp({ token, version, printers }: AppOptions) {
   if (token === "") throw new Error("the bearer token must not be empty");
@@ -140,7 +143,7 @@ export function createApp({ token, version, printers }: AppOptions) {
     process.stderr.write(`${err.stack ?? err.message}\n`);
     return c.json(toolError("internal error"), 500);
   });
-  app.notFound((c) => c.json(toolError("no such route"), 404));
+  app.notFound(noSuchRoute);
 
   app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", { type: "http", scheme: "bearer" });
   app.doc31("/openapi.json", { openapi: "3.1.0", info: { title: "ZPLab server", version } });
@@ -192,6 +195,8 @@ export function createApp({ token, version, printers }: AppOptions) {
     if (!printer) return c.json(toolError("no such printer"), 404);
     const { zpl, deadlineMs } = c.req.valid("json");
     c.header("Content-Type", "application/x-ndjson");
+    // nginx buffers a proxied answer by default, which would hold the reply back until the read ends.
+    c.header("X-Accel-Buffering", "no");
     // The route types take x-ndjson for a JSON type and allow it no answer, so the cast is needed.
     return stream(c, async (out) => {
       const stop = new AbortController();

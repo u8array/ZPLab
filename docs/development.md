@@ -28,4 +28,5 @@ Set as environment variables for `pnpm build`, or as `--build-arg` for `docker b
 
 - `VITE_LABELARY_API_URL`: the default Labelary endpoint. A user can change it in **Settings → App → Preview**.
 - `VITE_THIRD_PARTY_LABELARY`: `false` disables Labelary previews for every user
+- `VITE_SERVER_API_URL`: the API base of the ZPLab server that serves the build. The designer prints through that server. The Dockerfile sets the value for the server image. It takes no build argument for this variable.
 - `VITE_LABELARY_API_KEY`: a key for a local `pnpm build` only, never for a published build. The Dockerfile does not accept it.
