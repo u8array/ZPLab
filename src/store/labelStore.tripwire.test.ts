@@ -23,6 +23,7 @@ const EXPECTED_PERSIST_KEYS = [
   'previewProvider',
   'printerProfile',
   'printTarget',
+  'rulerGuides',
   'showZplCommands',
   'theme',
   'variables',

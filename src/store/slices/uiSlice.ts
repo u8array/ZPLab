@@ -18,6 +18,7 @@ import { generateMcpToken } from '../../lib/mcpServer';
 import { currentObjects, selectEditorFrozen, selectEffectivePreviewProvider } from '../labelStore.selectors';
 import { findObjectById, hasLockedAncestor } from '@zplab/core/types/Group';
 import { getEntry } from '@zplab/core/registry';
+import { NO_RULER_GUIDES, type RulerGuides } from '../../lib/rulerGuides';
 
 import { newId } from "@zplab/core/lib/ids";
 /** Credential-store account name for the Labelary API key. */
@@ -188,6 +189,8 @@ export interface UiSlice {
   alignRef: AlignSelectionRef;
   /** Props the canvas shows over one object while a panel option is hovered, never committed. Transient. */
   propsPreview: { id: string; props: Record<string, unknown> } | null;
+  /** Guides the user dragged out of the rulers, view chrome that does not print. */
+  rulerGuides: RulerGuides;
   printerSettingsTab: PrinterSettingsTab | null;
   /** Cross-component trigger for the output dialog. `null` keeps it closed. */
   outputSource: OutputSource | null;
@@ -257,6 +260,7 @@ export interface UiSlice {
   startRfidPositionPick: () => void;
   endRfidPositionPick: () => void;
   setPropsPreview: (preview: { id: string; props: Record<string, unknown> } | null) => void;
+  setRulerGuides: (guides: RulerGuides) => void;
   setAlignRef: (ref: AlignSelectionRef) => void;
   setPrinterSettingsTab: (tab: PrinterSettingsTab | null) => void;
   openOutput: (source: OutputSource) => void;
@@ -373,6 +377,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   pickingRfidPosition: false,
   alignRef: 'selection',
   propsPreview: null,
+  rulerGuides: NO_RULER_GUIDES,
   printerSettingsTab: null,
   outputSource: null,
   outputChoice: defaultOutputChoice(isDesktopShell),
@@ -503,6 +508,7 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
   startRfidPositionPick: () => set({ pickingRfidPosition: true, printerSettingsTab: null }),
   endRfidPositionPick: () => set({ pickingRfidPosition: false, printerSettingsTab: 'rfid' }),
   setPropsPreview: (preview) => set({ propsPreview: preview }),
+  setRulerGuides: (guides) => set({ rulerGuides: guides }),
   setShowZplCommands: (show) => set({ showZplCommands: show }),
   setKeepExportMetadata: (on) => set({ keepExportMetadata: on }),
   setMcpServerEnabled: (enabled) => set({ mcpServerEnabled: enabled }),

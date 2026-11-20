@@ -58,6 +58,12 @@ beforeEach(() => {
 });
 
 describe("applyZplSource", () => {
+  it("keeps the ruler guides", () => {
+    useLabelStore.getState().setRulerGuides({ x: [10], y: [] });
+    applyCurrentZpl();
+    expect(useLabelStore.getState().rulerGuides).toEqual({ x: [10], y: [] });
+  });
+
   it("closes the builders of the displaced document", () => {
     useLabelStore.getState().openVariableBuilder("t1");
     applyCurrentZpl();
