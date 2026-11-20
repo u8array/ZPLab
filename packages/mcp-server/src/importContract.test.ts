@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it, expect } from "vitest";
+import { importSpecs } from "@zplab/headless/testing";
 
 // The sidecar consumes the headless facade, core and its declared runtime
 // deps; the allowlist makes adding a dependency as deliberate as in package.json.
@@ -13,14 +14,6 @@ const ALLOWED = [
   /^zod$/,
   /^@modelcontextprotocol\/sdk\//,
   /^vitest$/,
-];
-
-// All import forms (static `from`, re-export `from`, side-effect, dynamic
-// import()). A static form is matched from its line start, so quoted prose never counts.
-const importSpecs = (src: string): string[] => [
-  ...[...src.matchAll(/^(?:import|export)\s[^'"]*?from\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
-  ...[...src.matchAll(/^\s*import\s+['"]([^'"]+)['"]/gm)].map((m) => m[1] ?? ""),
-  ...[...src.matchAll(/import\(\s*['"]([^'"]+)['"]\s*\)/g)].map((m) => m[1] ?? ""),
 ];
 
 describe("mcp-server import contract", () => {
