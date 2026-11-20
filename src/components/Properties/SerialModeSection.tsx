@@ -61,12 +61,12 @@ export function SerialParts({ obj, onChange }: Props) {
   const t = useT();
   const seedRef = useRef<HTMLInputElement>(null);
   const editorFocusRequest = useLabelStore((s) => s.editorFocusRequest);
-  // External focus request (canvas dblclick): the seed input is this field's
-  // content editor, so it takes the gesture TemplateContentInput otherwise gets.
+  // The seed input is this field's content editor, so it receives the focus request.
   useEffect(() => {
     if (editorFocusRequest?.id !== obj.id) return;
     const seed = seedRef.current;
-    if (!seed || document.activeElement === seed) return;
+    if (!seed || !useLabelStore.getState().consumeContentEditorFocus(editorFocusRequest)) return;
+    if (document.activeElement === seed) return;
     seed.focus();
     seed.select();
   }, [editorFocusRequest, obj.id]);

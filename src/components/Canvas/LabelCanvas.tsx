@@ -154,6 +154,7 @@ interface Props {
   onZoomChange: (zoom: number) => void;
   viewRotation: ViewRotation;
   onViewRotationChange: (rotation: ViewRotation) => void;
+  onOpenProperties: () => void;
 }
 
 /** Nothing drawn yet is nothing to capture, so the context menu and the output dialog get a click that
@@ -185,6 +186,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   onZoomChange,
   viewRotation,
   onViewRotationChange,
+  onOpenProperties,
 }, ref) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
@@ -353,6 +355,17 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // a locked-only selection gets no dead affordance.
   const hasDeletable = canDeleteSelection(objects, selectedIds);
 
+  const openEditor = (id: string) => {
+    if (!useLabelStore.getState().openContentEditor(id)) return false;
+    onOpenProperties();
+    return true;
+  };
+  // The key listener mounts once and still needs the latest closure.
+  const openEditorRef = useRef(openEditor);
+  useLayoutEffect(() => {
+    openEditorRef.current = openEditor;
+  });
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -380,10 +393,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // Delete/Backspace removes all selected objects; ignored when focus is inside an input
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== "Delete" && e.code !== "Backspace") return;
+      const enter = e.key === "Enter";
+      if (!enter && e.code !== "Delete" && e.code !== "Backspace") return;
       if (isEditableTarget(e.target as HTMLElement)) return;
       // The frozen model must not change under the preview snapshot or an
       // open source buffer.
@@ -391,6 +404,13 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       // Deleting mid-resize would destroy the nodes under the active gesture.
       if (transformActiveRef.current) return;
       const { selectedIds: ids } = useLabelStore.getState();
+      if (enter) {
+        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+        if (e.target !== document.body && e.target !== containerRef.current) return;
+        if (dragActiveRef.current || document.querySelector('[aria-modal="true"], [role="menu"]')) return;
+        if (ids.length === 1 && ids[0] && openEditorRef.current(ids[0])) e.preventDefault();
+        return;
+      }
       if (ids.length === 0) return;
       e.preventDefault();
       useLabelStore.getState().removeSelectedObjects();
@@ -1289,7 +1309,17 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       locked: editorFrozen,
       pointerPos: () => pointerToLabelDots(lastPointerRef.current.x, lastPointerRef.current.y),
       setGhost,
-      addObject,
+      addObject: (type, position, propsOverride) => {
+        const id = addObject(type, position, propsOverride);
+        // Only a text is typed on the spot, so a barcode drop leaves the open tab alone.
+        if (!id || type !== "text" || !openEditor(id)) return;
+        // dnd-kit clears the document selection for 50 ms after a drop, which would take the field's selection.
+        const keepFieldSelection = (event: Event) => {
+          if (isEditableTarget(document.activeElement as HTMLElement | null)) event.stopPropagation();
+        };
+        window.addEventListener("selectionchange", keepFieldSelection, true);
+        window.setTimeout(() => window.removeEventListener("selectionchange", keepFieldSelection, true), 50);
+      },
       viewRotation: () => viewRotation,
       label: () => label,
       measured: () => getMeasuredSnapshot(),
@@ -1309,7 +1339,11 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   return (
     <div
       ref={mergedRef}
-      className="w-full h-full relative"
+      role="region"
+      aria-label={t.label.heading}
+      tabIndex={0}
+      // The stage paints over the container, so the focus ring sits on an overlay.
+      className="w-full h-full relative outline-none focus-visible:after:absolute focus-visible:after:inset-0 focus-visible:after:z-10 focus-visible:after:pointer-events-none focus-visible:after:ring-1 focus-visible:after:ring-inset focus-visible:after:ring-accent"
       style={{
         background: colors.canvasBg,
         backgroundImage: `radial-gradient(circle, ${colors.canvasDot} 1px, transparent 1px)`,
@@ -1597,6 +1631,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                     offsetX={objectsOffsetX}
                     offsetY={labelOffsetY}
                     isSelected={attachableIds.includes(obj.id)}
+                    onOpenEditor={openEditor}
                     onSelect={(add) => {
                       // Click child -> select outermost group. Locked objects
                       // are selectable so the action bar's unlock is reachable;

@@ -21,7 +21,7 @@ import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { withPreviewProps } from "../../lib/previewProps";
 import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/textPositionTransforms";
 import { getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
-import { selectionHandlers, shapeHitProps, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
+import { editHandlers, selectionHandlers, shapeHitProps, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
 import { CAPTURE_CHROME, CAPTURE_SELECTION } from "../../lib/canvasImage";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import { DEFAULT_GS_SYMBOL_META, GS_SYMBOLS, symbolCodeOf } from "@zplab/core/registry/symbol";
@@ -528,6 +528,7 @@ function KonvaObjectInner({
   offsetY,
   isSelected,
   onSelect,
+  onOpenEditor,
   dragHandlers,
 }: Props) {
   const fontVersion = useFontCacheVersion();
@@ -536,9 +537,6 @@ function KonvaObjectInner({
   // Pass label so metrics resolves uploaded-TTF previews. ZPL emit/parse
   // call without `label` so round-trip stays PrintLab-based.
   const label = useLabelStore(selectRenderDesignLabel);
-  const requestContentEditorFocus = useLabelStore((s) => s.requestContentEditorFocus);
-  const setSidebarTab = useLabelStore((s) => s.setSidebarTab);
-  const selectObjects = useLabelStore((s) => s.selectObjects);
   const blockDragMode = useLabelStore((s) => s.blockDragMode);
   const emptyPlaceholderColor = useBlankFieldWarns(obj.id) ? CANVAS_WARNING : colors.accent;
   // obj.x/y is the EM-bbox top-left; ZPL anchor delta is applied only
@@ -612,14 +610,6 @@ function KonvaObjectInner({
   const handleDragMove = dragHandlers?.onDragMove;
   const handleDragEnd = dragHandlers?.onDragEnd;
 
-  // selectObjects directly so leaf-in-group pierces auto-promotion.
-  const openEditor = () => {
-    if (obj.locked) return;
-    selectObjects([obj.id]);
-    setSidebarTab("properties");
-    requestContentEditorFocus(obj.id);
-  };
-
   if (obj.type === "text" && textMetrics) {
     const p = obj.props;
     const { content, fontFamily, fontScaleX, fontSizePx } = textMetrics;
@@ -668,10 +658,9 @@ function KonvaObjectInner({
         y={y}
         draggable={draggable}
         {...selectionHandlers(onSelect)}
+        {...editHandlers(() => onOpenEditor?.(obj.id))}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
-        onDblClick={openEditor}
-        onDblTap={openEditor}
       >
         <TextFieldContent
           obj={obj as TextFieldObj}

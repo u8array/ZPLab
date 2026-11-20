@@ -64,6 +64,8 @@ function reset() {
     thirdParty: { labelary: true },
     canvasSettings: { ...DEFAULT_CANVAS_SETTINGS },
     pristineEmptyIds: [],
+    sidebarTab: 'properties',
+    editorFocusRequest: null,
     // Pre-load so enterPreviewMode skips the one-shot keychain-hydrate await;
     // these tests exercise the fetch/cache path, not key loading.
     labelaryApiKeyLoaded: true,
@@ -110,6 +112,14 @@ describe('addObject', () => {
   it('ignores unknown types', () => {
     state().addObject('nonexistent_type_xyz');
     expect(objs()).toHaveLength(0);
+  });
+
+  it('returns the new id, and nothing when it adds nothing', () => {
+    const id = state().addObject('text');
+    expect(id).toBe(defined(objs()[0]).id);
+    expect(state().addObject('nonexistent_type_xyz')).toBeUndefined();
+    useLabelStore.setState({ previewMode: { status: 'active', url: 'blob:x' } });
+    expect(state().addObject('text')).toBeUndefined();
   });
 
   it('spawns step-rotation types pre-rotated in a rotated view', () => {
@@ -2779,6 +2789,96 @@ describe('sidebar tab + content-editor focus request', () => {
     state().requestContentEditorFocus('obj-1');
     state().requestContentEditorFocus('obj-2');
     expect(state().editorFocusRequest?.id).toBe('obj-2');
+  });
+
+  it('consumeContentEditorFocus clears the pending request exactly once', () => {
+    state().requestContentEditorFocus('obj-1');
+    const request = defined(state().editorFocusRequest);
+    expect(state().consumeContentEditorFocus(request)).toBe(true);
+    expect(state().editorFocusRequest).toBeNull();
+    expect(state().consumeContentEditorFocus(request)).toBe(false);
+  });
+
+  it('consumeContentEditorFocus refuses a request that a newer one replaced', () => {
+    state().requestContentEditorFocus('obj-1');
+    const stale = defined(state().editorFocusRequest);
+    state().requestContentEditorFocus('obj-1');
+    const pending = state().editorFocusRequest;
+    expect(state().consumeContentEditorFocus(stale)).toBe(false);
+    expect(state().editorFocusRequest).toBe(pending);
+  });
+});
+
+describe('openContentEditor', () => {
+  beforeEach(reset);
+
+  const expectNothingOpened = () => {
+    expect(state().sidebarTab).toBe('layers');
+    expect(state().editorFocusRequest).toBeNull();
+  };
+
+  it.each(['text', 'code128', 'qrcode'])('selects a %s, shows Properties and requests focus', (type) => {
+    const id = defined(state().addObject(type));
+    state().selectObjects([]);
+    state().setSidebarTab('layers');
+    expect(state().openContentEditor(id)).toBe(true);
+    expect(state().selectedIds).toEqual([id]);
+    expect(state().sidebarTab).toBe('properties');
+    expect(state().editorFocusRequest?.id).toBe(id);
+  });
+
+  it('selects the leaf itself inside a group', () => {
+    state().addObject('text');
+    state().addObject('box');
+    state().selectObjects(ids());
+    state().groupSelection();
+    const leafId = defined(getAllLeaves(objs()).find((l) => l.type === 'text')).id;
+    expect(state().openContentEditor(leafId)).toBe(true);
+    expect(state().selectedIds).toEqual([leafId]);
+  });
+
+  it('refuses a symbol bound to a slot, which has content and no content field', () => {
+    const imported = importZplText('^XA^FO50,50^GSN,30,30^FN1^FS^XZ', 8);
+    useLabelStore.setState({ pages: imported.pages, sidebarTab: 'layers' });
+    const symbol = defined(objs()[0]);
+    expect(symbol.type).toBe('symbol');
+    expect(typeof props(symbol).content).toBe('string');
+    expect(state().openContentEditor(symbol.id)).toBe(false);
+    expectNothingOpened();
+  });
+
+  it('refuses a type without content and an unknown id', () => {
+    const id = defined(state().addObject('box'));
+    state().setSidebarTab('layers');
+    expect(state().openContentEditor(id)).toBe(false);
+    expect(state().openContentEditor('missing')).toBe(false);
+    expectNothingOpened();
+  });
+
+  it('refuses a locked object and a leaf inside a locked group', () => {
+    const lockedId = defined(state().addObject('text'));
+    state().updateObject(lockedId, { locked: true });
+    state().addObject('text');
+    state().addObject('box');
+    state().selectObjects(ids().slice(1));
+    state().groupSelection();
+    const group = defined(objs().find(isGroup));
+    state().updateObject(group.id, { locked: true });
+    const leafId = defined(getAllLeaves([group])[0]).id;
+    state().selectObjects([]);
+    state().setSidebarTab('layers');
+    expect(state().openContentEditor(lockedId)).toBe(false);
+    expect(state().openContentEditor(leafId)).toBe(false);
+    expect(state().selectedIds).toEqual([]);
+    expectNothingOpened();
+  });
+
+  it('refuses while the editor is frozen', () => {
+    const id = defined(state().addObject('text'));
+    state().setSidebarTab('layers');
+    useLabelStore.setState({ previewMode: { status: 'active', url: 'blob:x' } });
+    expect(state().openContentEditor(id)).toBe(false);
+    expectNothingOpened();
   });
 });
 

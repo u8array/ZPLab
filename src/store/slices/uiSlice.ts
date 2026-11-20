@@ -15,7 +15,9 @@ import { makeCredentialHydrator, setCredential, setLabelaryKeyBound, migrateLabe
 import { isDesktopShell } from '../../lib/platform';
 import { resolveHost } from '../../lib/labelary';
 import { generateMcpToken } from '../../lib/mcpServer';
-import { selectEffectivePreviewProvider } from '../labelStore.selectors';
+import { currentObjects, selectEditorFrozen, selectEffectivePreviewProvider } from '../labelStore.selectors';
+import { findObjectById, hasLockedAncestor } from '@zplab/core/types/Group';
+import { getEntry } from '@zplab/core/registry';
 
 import { newId } from "@zplab/core/lib/ids";
 /** Credential-store account name for the Labelary API key. */
@@ -198,10 +200,8 @@ export interface UiSlice {
   /** Object id whose variable-builder modal is open; null = closed. The single
    *  content editor for bindable fields (variables/clock/serial tokens). */
   variableBuilderObjectId: string | null;
-  /** One-shot focus request scoped to a single object. The nonce
-   *  increments per call so consumers can re-fire even for the same
-   *  id; TemplateContentInput's effect compares its own `objectId`
-   *  prop to `id` so only the requested editor takes focus. Transient. */
+  /** One-shot focus request scoped to a single object. The nonce distinguishes
+   *  repeated requests while one is pending. Transient. */
   editorFocusRequest: { id: string; nonce: number } | null;
 
   setLocale: (locale: LocaleCode) => void;
@@ -273,6 +273,9 @@ export interface UiSlice {
    *  composes `setSidebarTab('properties')` when the request would
    *  otherwise land on an unmounted editor. */
   requestContentEditorFocus: (id: string) => void;
+  consumeContentEditorFocus: (request: NonNullable<UiSlice['editorFocusRequest']>) => boolean;
+  /** Selects `id`, shows Properties and requests focus for its content field. False when nothing can open. */
+  openContentEditor: (id: string) => boolean;
 }
 
 /** Canvas defaults; shared by initial state and `resetSettings` so the two
@@ -574,4 +577,23 @@ export const createUiSlice: StateCreator<LabelState, [], [], UiSlice> = (set, ge
         nonce: (state.editorFocusRequest?.nonce ?? 0) + 1,
       },
     })),
+  consumeContentEditorFocus: (request) => {
+    if (get().editorFocusRequest !== request) return false;
+    set({ editorFocusRequest: null });
+    return true;
+  },
+  openContentEditor: (id) => {
+    const state = get();
+    if (selectEditorFrozen(state)) return false;
+    const objects = currentObjects(state);
+    const obj = findObjectById(objects, id);
+    if (!obj || obj.locked || hasLockedAncestor(objects, id)) return false;
+    // The panels mount a content field for exactly the bindable types.
+    if (!getEntry(obj.type)?.bindable) return false;
+    // Selecting the leaf itself reaches a field inside a group.
+    state.selectObjects([id]);
+    state.setSidebarTab('properties');
+    state.requestContentEditorFocus(id);
+    return true;
+  },
 });

@@ -8,7 +8,7 @@ import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "
 import { qrByHeight } from "@zplab/core/registry/qrcode";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
-import { selectionHandlers, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
+import { editHandlers, selectionHandlers, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
 import { CAPTURE_CHROME, CAPTURE_SELECTION } from "../../lib/canvasImage";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import {
@@ -107,6 +107,7 @@ export function BarcodeObject({
   offsetY,
   isSelected,
   onSelect,
+  onOpenEditor,
   dragHandlers,
   preBindingContent,
 }: KonvaObjectProps & {
@@ -118,6 +119,7 @@ export function BarcodeObject({
 }) {
   const colors = useColorScheme();
   const draggable = useNodeDraggable(obj);
+  const clickHandlers = { ...selectionHandlers(onSelect), ...editHandlers(() => onOpenEditor?.(obj.id)) };
   // Vera Mono (HRI) loads async; Konva won't repaint on an unchanged
   // fontFamily once the FontFace resolves. Keying the overlay on this
   // version remounts it on `loadingdone` for a fresh paint.
@@ -427,7 +429,7 @@ export function BarcodeObject({
           y={y}
           {...clipProps}
           draggable={draggable}
-          {...selectionHandlers(onSelect)}
+          {...clickHandlers}
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
         >
@@ -484,7 +486,7 @@ export function BarcodeObject({
         x={x}
         y={y}
         draggable={draggable}
-        {...selectionHandlers(onSelect)}
+        {...clickHandlers}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
       >
@@ -535,7 +537,7 @@ export function BarcodeObject({
       x={x}
       y={y}
       draggable={draggable}
-      {...selectionHandlers(onSelect)}
+      {...clickHandlers}
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
     >

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import type Konva from "konva";
-import { selectionHandlers, shapeHitProps, MIN_HIT_STROKE_PX } from "./konvaObjectProps";
+import { editHandlers, selectionHandlers, shapeHitProps, MIN_HIT_STROKE_PX } from "./konvaObjectProps";
 import { HOLLOW_HIT_NAME } from "./lassoGeometry";
 
 const clickEvt = (evt: Partial<MouseEvent>) =>
@@ -34,6 +34,20 @@ describe("selectionHandlers", () => {
     const onSelect = vi.fn();
     selectionHandlers(onSelect).onTap();
     expect(onSelect).toHaveBeenCalledWith(false);
+  });
+});
+
+describe("editHandlers", () => {
+  it("only a plain primary double-click opens the field", () => {
+    const open = vi.fn();
+    const h = editHandlers(open);
+    h.onDblClick(clickEvt({ button: 2 }));
+    h.onDblClick(clickEvt({ button: 0, shiftKey: true }));
+    h.onDblClick(clickEvt({ button: 0, ctrlKey: true }));
+    h.onDblClick(clickEvt({ button: 0, metaKey: true }));
+    expect(open).not.toHaveBeenCalled();
+    h.onDblClick(clickEvt({ button: 0 }));
+    expect(open).toHaveBeenCalledTimes(1);
   });
 });
 
