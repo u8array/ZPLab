@@ -130,7 +130,7 @@ function loadHatchTile(): Promise<HTMLImageElement> {
 }
 
 const viewToggleClass = (on: boolean) =>
-  `truncate px-2 h-6 rounded text-xs font-mono transition-colors ${on ? "text-accent bg-[--color-accent-dim]" : "text-muted hover:text-text hover:bg-surface-2"}`;
+  `truncate px-2 h-6 rounded text-xs font-mono transition-colors ${on ? "text-accent bg-accent-dim" : "text-muted hover:text-text hover:bg-surface-2"}`;
 
 interface RectPx { x: number; y: number; width: number; height: number }
 function boundsOf(r: RectPx): Bounds {
