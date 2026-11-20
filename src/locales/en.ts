@@ -1136,6 +1136,7 @@ const en = {
     toggleSnap: 'Snap',
     toggleGrid: 'Grid',
     toggleGuides: 'Guides',
+    guidePosition: 'Guide position',
     deletePageConfirm: 'Delete the current page?',
     openDesign: 'Open design',
     saveDesign: 'Save design',

@@ -1136,6 +1136,7 @@ const es = {
     toggleSnap: 'Ajustar',
     toggleGrid: 'Cuadrícula',
     toggleGuides: 'Guías',
+    guidePosition: 'Posición de la guía',
     deletePageConfirm: '¿Eliminar la página actual?',
     openDesign: 'Abrir diseño',
     saveDesign: 'Guardar diseño',

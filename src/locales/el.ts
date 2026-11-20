@@ -1136,6 +1136,7 @@ const el = {
     toggleSnap: 'Προσκόλληση',
     toggleGrid: 'Πλέγμα',
     toggleGuides: 'Οδηγοί',
+    guidePosition: 'Θέση οδηγού',
     deletePageConfirm: 'Διαγραφή της τρέχουσας σελίδας;',
     openDesign: 'Άνοιγμα σχεδίου',
     saveDesign: 'Αποθήκευση σχεδίου',

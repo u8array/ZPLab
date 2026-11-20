@@ -1136,6 +1136,7 @@ const cs = {
     toggleSnap: 'Přichytávání',
     toggleGrid: 'Mřížka',
     toggleGuides: 'Vodítka',
+    guidePosition: 'Pozice vodítka',
     deletePageConfirm: 'Smazat aktuální stránku?',
     openDesign: 'Otevřít návrh',
     saveDesign: 'Uložit návrh',

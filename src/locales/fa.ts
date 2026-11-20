@@ -1136,6 +1136,7 @@ const fa = {
     toggleSnap: 'چفت‌شدن',
     toggleGrid: 'شبکه',
     toggleGuides: 'خطوط راهنما',
+    guidePosition: 'موقعیت خط راهنما',
     deletePageConfirm: 'صفحه فعلی حذف شود؟',
     openDesign: 'باز کردن طرح',
     saveDesign: 'ذخیره طرح',

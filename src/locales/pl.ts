@@ -1136,6 +1136,7 @@ const pl = {
     toggleSnap: 'Przyciąganie',
     toggleGrid: 'Siatka',
     toggleGuides: 'Prowadnice',
+    guidePosition: 'Pozycja prowadnicy',
     deletePageConfirm: 'Usunąć bieżącą stronę?',
     openDesign: 'Otwórz projekt',
     saveDesign: 'Zapisz projekt',

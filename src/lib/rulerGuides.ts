@@ -81,12 +81,14 @@ export function guideAtStage(at: StageRulerGuide, view: RulerGuideView, dpmm: nu
   return { ...guide, mm: guideMmOnDot(guide.mm, dpmm) };
 }
 
-/** The nearest guide whose stage line lies within `tolerance` px of `px` and runs the same way. */
-export function guideNear(guides: RulerGuides, at: StageRulerGuide, view: RulerGuideView, tolerance: number): RulerGuide | undefined {
+/** The nearest guide whose stage line lies within `tolerance` px of a crossing of the same direction. */
+export function guideNear(guides: RulerGuides, crossings: readonly StageRulerGuide[], view: RulerGuideView, tolerance: number): RulerGuide | undefined {
+  const away = (line: StageRulerGuide) =>
+    Math.min(...crossings.filter((at) => at.vertical === line.vertical).map((at) => Math.abs(at.px - line.px)));
   return guideList(guides)
-    .map((guide) => ({ guide, stage: guideToStage(guide, view) }))
-    .filter(({ stage }) => stage.vertical === at.vertical && Math.abs(stage.px - at.px) <= tolerance)
-    .sort((a, b) => Math.abs(a.stage.px - at.px) - Math.abs(b.stage.px - at.px))[0]?.guide;
+    .map((guide) => ({ guide, away: away(guideToStage(guide, view)) }))
+    .filter((near) => near.away <= tolerance)
+    .sort((a, b) => a.away - b.away)[0]?.guide;
 }
 
 const isGuide = (a: RulerGuide | undefined, b: RulerGuide) => a?.axis === b.axis && a.mm === b.mm;
@@ -111,6 +113,11 @@ export function guidesAfterDrop(
   const dropped = guideAtStage(at, view, dpmm);
   const px = guideToStage(dropped, view).px;
   return px < canvas.from || px > (at.vertical ? canvas.width : canvas.height) ? rest : withGuide(rest, dropped);
+}
+
+/** The guides after `edited` moves to the line of a typed position. */
+export function guidesAfterEdit(guides: RulerGuides, edited: RulerGuide, at: StageRulerGuide, view: RulerGuideView, dpmm: number): RulerGuides {
+  return withGuide(withoutGuide(guides, edited), guideAtStage(at, view, dpmm));
 }
 
 /** The guides as snap lines in model dots, the space a move snaps in. */

@@ -1,6 +1,6 @@
 import type { StageRulerGuide } from "../../lib/rulerGuides";
 import { RULER_SIZE, type RulerProps } from "./Ruler";
-import { rulerReadingDots, type RulerAxis } from "./rulerGeometry";
+import { rulerPxAtReading, rulerReadingDots, type RulerAxis } from "./rulerGeometry";
 
 export const RULER_STRIP_TOP = "ruler-strip-top";
 export const RULER_STRIP_LEFT = "ruler-strip-left";
@@ -27,4 +27,9 @@ function guideRulerAxis({ vertical }: StageRulerGuide, ruler: RulerPlacement): R
 
 export function guideReadingDots(line: StageRulerGuide, ruler: RulerPlacement, dpmm: number): number {
   return rulerReadingDots(line.px, guideRulerAxis(line, ruler), ruler.scale, dpmm);
+}
+
+/** The guide at a reading of its ruler. A reading beyond the ruler stops at its end. */
+export function guideLineAtReading(line: StageRulerGuide, mm: number, ruler: RulerPlacement): StageRulerGuide {
+  return { ...line, px: rulerPxAtReading(mm, guideRulerAxis(line, ruler), ruler.scale) };
 }

@@ -1136,6 +1136,7 @@ const sk = {
     toggleSnap: 'Prichytávanie',
     toggleGrid: 'Mriežka',
     toggleGuides: 'Vodidlá',
+    guidePosition: 'Pozícia vodidla',
     deletePageConfirm: 'Odstrániť aktuálnu stránku?',
     openDesign: 'Otvoriť návrh',
     saveDesign: 'Uložiť návrh',

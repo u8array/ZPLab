@@ -19,7 +19,7 @@ import { isGroup, getAllLeaves, exportableLeaves, expandSelection, selectionTarg
 import { pxToDots, dotsToPx, mmToDots, SCREEN_PX_PER_MM } from "@zplab/core/lib/coordinates";
 import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
 import { loadImage } from "@zplab/core/lib/loadImage";
-import { SNAP_OPTIONS, dotsToUnit, unitLabel } from "@zplab/core/lib/units";
+import { SNAP_OPTIONS, dotsToUnit, unitLabel, unitToMm } from "@zplab/core/lib/units";
 import type { Unit } from "@zplab/core/lib/units";
 import { Select } from "../ui/Select";
 import type { SnapGuide } from "../../lib/snapGuides";
@@ -75,9 +75,10 @@ import { useSelectionActionBar, actionBarPosition } from "./hooks/useSelectionAc
 import type { Bounds } from "./nodeRect";
 import { useSelectionGuides } from "./hooks/useSelectionGuides";
 import { useRulerGuideGestures } from "./hooks/useRulerGuideGestures";
+import { RulerGuideInput } from "./RulerGuideInput";
 import { RulerGuideLines, RulerGuideMarks, RulerStrips } from "./RulerGuides";
-import { guideAtStage, guideSnapLinesStage, guideToStage, stageRulerGuides, type RulerGuideView } from "../../lib/rulerGuides";
-import { guideReadingDots } from "./rulerGuideLayout";
+import { guideAtStage, guideSnapLinesStage, guideToStage, stageRulerGuides, type RulerGuideView, type StageRulerGuide } from "../../lib/rulerGuides";
+import { guideLineAtReading, guideReadingDots } from "./rulerGuideLayout";
 import { FloatingCanvasButton, RADIUS as BUTTON_RADIUS, type ButtonTone } from "./FloatingCanvasButton";
 import { ROTATE_ICON, TRASH_ICON, LOCK_ICON, UNLOCK_ICON, GROUP_ICON, UNGROUP_ICON, LINE_ICON, BOX_ICON } from "./canvasIcons";
 import { isShapeToggleable, canToggleShapeMode, oppositeShapeMode, toggleShapeMode } from "../../lib/lineBoxConvert";
@@ -644,12 +645,16 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     onMouseUp: onLassoMouseUp,
     onStageMouseDown,
   } = useCanvasLasso({ containerRef, stageRef, spaceDown, selectObjects });
+  // The stage and the label paper, where no object takes a press.
+  const isBare = (target: Konva.Node) => target === target.getStage() || target === labelPaperRef.current;
   const guideGestures = useRulerGuideGestures({
     containerRef,
+    guides: rulerGuides,
     view: guideView,
     dpmm: effDpmm,
     canvasWidth: containerSize.width,
     canvasHeight: containerSize.height,
+    isBare,
     spaceDown,
     editorFrozen,
   });
@@ -657,6 +662,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // The draft shows on the dot it would land on.
   const draftOnDot = guideGestures.draft && guideAtStage(guideGestures.draft, guideView, effDpmm);
   const draftGuide = draftOnDot && guideToStage(draftOnDot, guideView);
+  const guideReading = (line: StageRulerGuide) => dotsToUnit(guideReadingDots(line, rulerProps, effDpmm), effDpmm, unit);
+  const badgeLine = draftGuide ?? (guideGestures.hovered && guideToStage(guideGestures.hovered, guideView));
+  const guideBadge = badgeLine && { at: badgeLine, text: `${guideReading(badgeLine)} ${unitLabel(unit)}` };
+  const editedLine = guideGestures.editing && guideToStage(guideGestures.editing, guideView);
 
   // Snap math operates in stage-screen space, so the label rect must
   // reflect the rotation-aware visual bounds, not layout coords.
@@ -1166,7 +1175,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     if (consumeDidPan()) return;
     if (consumeDidLasso()) return;
     if (guideGestures.consumeDidDrag()) return;
-    if (e.target === e.target.getStage()) selectObjects([]);
+    if (isBare(e.target)) selectObjects([]);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -1372,7 +1381,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         backgroundImage: `radial-gradient(circle, ${colors.canvasDot} 1px, transparent 1px)`,
         backgroundSize: "24px 24px",
         // Locus-of-attention feedback for the frozen editor.
-        cursor: editorFrozen ? 'not-allowed' : pickingRfidPosition ? 'crosshair' : cursor,
+        cursor: editorFrozen ? 'not-allowed' : pickingRfidPosition ? 'crosshair' : (cursor ?? guideGestures.cursor),
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -1526,6 +1535,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
             if (guideGestures.onStageMouseDown(e)) return;
             onStageMouseDown(e);
           }}
+          onMouseMove={guideGestures.onStageMouseMove}
+          onMouseLeave={guideGestures.onStageMouseLeave}
+          onDblClick={guideGestures.onStageDblClick}
           onDragStart={(e) => {
             cancelLasso();
             if (isPanningRef.current) {
@@ -1581,7 +1593,6 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                 }
                 shadowBlur={editorFrozen ? 28 : 12}
                 shadowOffsetY={editorFrozen ? 0 : 2}
-                onClick={() => selectObjects([])}
               />
 
               {/* Safe-area guide: non-interactive dashed inset, accent like the ^FB wrap-guide. */}
@@ -1945,8 +1956,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
             {!editorFrozen && (
               <RulerGuideMarks
                 guides={stageGuides}
-                draft={draftGuide}
-                draftText={draftGuide ? `${dotsToUnit(guideReadingDots(draftGuide, rulerProps, effDpmm), effDpmm, unit)} ${unitLabel(unit)}` : ""}
+                badge={guideBadge}
                 colors={colors}
               />
             )}
@@ -1955,6 +1965,15 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
             )}
           </Layer>
         </Stage>
+      )}
+      {editedLine && (
+        <RulerGuideInput
+          at={editedLine}
+          value={guideReading(editedLine)}
+          unit={unitLabel(unit)}
+          label={t.app.guidePosition}
+          onEnd={(value) => guideGestures.endEdit(value === null ? null : guideLineAtReading(editedLine, unitToMm(value, unit), rulerProps))}
+        />
       )}
       {ctxMenu.menu && (
         <CanvasContextMenu

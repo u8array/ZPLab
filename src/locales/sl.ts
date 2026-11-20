@@ -1136,6 +1136,7 @@ const sl = {
     toggleSnap: 'Pripenjanje',
     toggleGrid: 'Mreža',
     toggleGuides: 'Vodila',
+    guidePosition: 'Položaj vodila',
     deletePageConfirm: 'Izbrišem trenutno stran?',
     openDesign: 'Odpri dizajn',
     saveDesign: 'Shrani dizajn',

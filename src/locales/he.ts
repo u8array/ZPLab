@@ -1136,6 +1136,7 @@ const he = {
     toggleSnap: 'הצמדה',
     toggleGrid: 'רשת',
     toggleGuides: 'קווי עזר',
+    guidePosition: 'מיקום קו העזר',
     deletePageConfirm: 'למחוק את הדף הנוכחי?',
     openDesign: 'פתח עיצוב',
     saveDesign: 'שמור עיצוב',

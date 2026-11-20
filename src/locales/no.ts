@@ -1136,6 +1136,7 @@ const no = {
     toggleSnap: 'Fest',
     toggleGrid: 'Rutenett',
     toggleGuides: 'Hjelpelinjer',
+    guidePosition: 'Hjelpelinjens posisjon',
     deletePageConfirm: 'Slette gjeldende side?',
     openDesign: 'Åpne design',
     saveDesign: 'Lagre design',

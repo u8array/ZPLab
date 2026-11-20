@@ -1136,6 +1136,7 @@ const lt = {
     toggleSnap: 'Pritraukti',
     toggleGrid: 'Tinklelis',
     toggleGuides: 'Pagalbinės linijos',
+    guidePosition: 'Pagalbinės linijos padėtis',
     deletePageConfirm: 'Ištrinti dabartinį puslapį?',
     openDesign: 'Atidaryti dizainą',
     saveDesign: 'Išsaugoti dizainą',

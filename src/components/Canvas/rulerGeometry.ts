@@ -16,3 +16,9 @@ export function rulerReadingMm(px: number, axis: RulerAxis, scale: number): numb
 export function rulerReadingDots(px: number, axis: RulerAxis, scale: number, dpmm: number): number {
   return Math.round(rulerReadingMm(px, axis, scale) * dpmm);
 }
+
+/** Stage px of a reading, clamped to the ruler. */
+export function rulerPxAtReading(mm: number, axis: RulerAxis, scale: number): number {
+  const onRuler = Math.min(Math.max(mm, 0), axis.lengthMm);
+  return axis.originPx + rulerValueMm(onRuler, axis) * scale;
+}

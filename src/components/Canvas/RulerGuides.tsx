@@ -56,12 +56,11 @@ export function RulerStrips({ canvasWidth, canvasHeight }: StripsProps) {
 
 interface MarksProps {
   guides: readonly StageRulerGuide[];
-  draft: StageRulerGuide | null;
-  draftText: string;
+  badge: { at: StageRulerGuide; text: string } | null;
   colors: CanvasColors;
 }
 
-export function RulerGuideMarks({ guides, draft, draftText, colors }: MarksProps) {
+export function RulerGuideMarks({ guides, badge, colors }: MarksProps) {
   return (
     <Group listening={false}>
       {guides
@@ -78,10 +77,10 @@ export function RulerGuideMarks({ guides, draft, draftText, colors }: MarksProps
             fill={colors.rulerGuide}
           />
         ))}
-      {draft && draft.px >= RULER_SIZE && (
-        <Label name="ruler-guide-badge" {...guideBadgeOrigin(draft)}>
+      {badge && badge.at.px >= RULER_SIZE && (
+        <Label name="ruler-guide-badge" {...guideBadgeOrigin(badge.at)}>
           <Tag fill={colors.rulerGuide} cornerRadius={3} />
-          <Text text={draftText} fill="#ffffff" fontSize={9} fontFamily={RULER_FONT} padding={3} />
+          <Text text={badge.text} fill="#ffffff" fontSize={9} fontFamily={RULER_FONT} padding={3} />
         </Label>
       )}
     </Group>

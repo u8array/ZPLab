@@ -1136,6 +1136,7 @@ const sr = {
     toggleSnap: 'Лепљење',
     toggleGrid: 'Мрежа',
     toggleGuides: 'Помоћне линије',
+    guidePosition: 'Положај помоћне линије',
     deletePageConfirm: 'Обрисати тренутну страницу?',
     openDesign: 'Отвори дизајн',
     saveDesign: 'Сачувај дизајн',

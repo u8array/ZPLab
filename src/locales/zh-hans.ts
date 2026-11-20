@@ -1136,6 +1136,7 @@ const zhHans = {
     toggleSnap: '对齐',
     toggleGrid: '网格',
     toggleGuides: '参考线',
+    guidePosition: '参考线位置',
     deletePageConfirm: '删除当前页面？',
     openDesign: '打开设计',
     saveDesign: '保存设计',

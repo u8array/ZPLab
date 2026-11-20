@@ -1136,6 +1136,7 @@ const it = {
     toggleSnap: 'Aggancio',
     toggleGrid: 'Griglia',
     toggleGuides: 'Guide',
+    guidePosition: 'Posizione della guida',
     deletePageConfirm: 'Eliminare la pagina corrente?',
     openDesign: 'Apri design',
     saveDesign: 'Salva design',

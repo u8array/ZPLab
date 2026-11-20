@@ -1136,6 +1136,7 @@ const fi = {
     toggleSnap: 'Kiinnitys',
     toggleGrid: 'Ruudukko',
     toggleGuides: 'Apuviivat',
+    guidePosition: 'Apuviivan sijainti',
     deletePageConfirm: 'Poistetaanko nykyinen sivu?',
     openDesign: 'Avaa rakenne',
     saveDesign: 'Tallenna rakenne',

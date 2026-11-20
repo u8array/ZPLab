@@ -125,6 +125,18 @@ test('pulling a guide out leaves the selection alone', async ({ page }) => {
   await page.mouse.up();
   await expect.poll(async () => (await canvas(page)).lines).toHaveLength(2);
   expect((await canvas(page)).selected).toBe(true);
+
+  // Konva fires a click when the press and the release land on the same shape.
+  const frame = (await canvas(page)).frame;
+  const level = (await canvas(page)).lines.find((line) => !line.vertical);
+  if (!frame || !level) throw new Error('no frame or guide');
+  const beside = frame.x + frame.width + 12;
+  await page.mouse.move(origin.x + beside, origin.y + level.px);
+  await page.mouse.down();
+  await page.mouse.move(origin.x + beside, origin.y + level.px + 30, { steps: 6 });
+  await page.mouse.up();
+  await expect.poll(async () => (await canvas(page)).lines.find((line) => !line.vertical)?.px ?? 0).toBeGreaterThan(level.px + 20);
+  expect((await canvas(page)).selected).toBe(true);
   expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
 });
 
@@ -209,7 +221,17 @@ test('a click on a mark leaves the guide in place, a drag off the canvas removes
   await page.mouse.click(origin.x + placed.px + 3, origin.y + RULER / 2);
   expect((await canvas(page)).lines).toEqual([placed]);
 
-  await page.mouse.move(origin.x + placed.px, origin.y + RULER / 2);
+  // A press there that travels moves this guide, so the press grabbed it.
+  await page.mouse.move(origin.x + placed.px + 3, origin.y + RULER / 2);
+  await page.mouse.down();
+  await page.mouse.move(origin.x + placed.px + 63, origin.y + RULER / 2, { steps: 6 });
+  await page.mouse.up();
+  await expect.poll(async () => (await canvas(page)).lines).toHaveLength(1);
+  const moved = (await canvas(page)).lines[0] as Line;
+  expect(moved.vertical).toBe(true);
+  expect(Math.abs(moved.px - (placed.px + 60))).toBeLessThanOrEqual(2);
+
+  await page.mouse.move(origin.x + moved.px, origin.y + RULER / 2);
   await page.mouse.down();
   await page.mouse.move(origin.x - 40, origin.y + 200, { steps: 3 });
   await page.mouse.up();
@@ -227,5 +249,133 @@ test('Escape drops the guide being dragged', async ({ page }) => {
   await expect.poll(async () => (await canvas(page)).badge).toBeNull();
   await page.mouse.up();
   expect((await canvas(page)).lines).toHaveLength(0);
+  expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
+});
+
+/** Brings a level guide out of the top ruler to `y` and returns its line. */
+async function pullLevelGuide(page: Page, origin: { x: number; y: number }, y: number) {
+  await page.mouse.move(origin.x + 300, origin.y + RULER / 2);
+  await page.mouse.down();
+  await page.mouse.move(origin.x + 300, origin.y + y, { steps: 6 });
+  await page.mouse.up();
+  await expect.poll(async () => (await canvas(page)).lines).toHaveLength(1);
+  return (await canvas(page)).lines[0] as Line;
+}
+
+test('a guide shows its position under the pointer and moves by its line', async ({ page }) => {
+  const origin = await open(page);
+  const placed = await pullLevelGuide(page, origin, 200);
+
+  await page.mouse.move(origin.x + 300, origin.y + placed.px + 40);
+  await expect.poll(async () => (await canvas(page)).badge).toBeNull();
+  await page.mouse.move(origin.x + 300, origin.y + placed.px + 1);
+  await expect.poll(async () => (await canvas(page)).badge).toMatch(/^[\d.]+ mm$/);
+
+  await page.mouse.down();
+  await page.mouse.move(origin.x + 300, origin.y + placed.px + 61, { steps: 6 });
+  await page.mouse.up();
+  await expect.poll(async () => (await canvas(page)).lines[0]?.px ?? 0).toBeGreaterThan(placed.px + 50);
+  expect((await canvas(page)).lines).toHaveLength(1);
+  expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
+});
+
+test('an object that lies on a guide keeps the press', async ({ page }) => {
+  const origin = await open(page);
+  await page.getByText('Code 128', { exact: true }).first().dblclick();
+  await expect.poll(async () => (await canvas(page)).frame).not.toBeNull();
+  const start = (await canvas(page)).frame;
+  if (!start) throw new Error('no frame');
+  const middle = { x: start.x + start.width / 2, y: start.y + start.height / 2 };
+  const placed = await pullLevelGuide(page, origin, middle.y);
+
+  await page.mouse.move(origin.x + middle.x, origin.y + placed.px);
+  await page.mouse.down();
+  await page.mouse.move(origin.x + middle.x + 80, origin.y + placed.px + 90, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => ((await canvas(page)).frame?.y ?? 0) - start.y).toBeGreaterThan(60);
+  expect((await canvas(page)).lines).toEqual([placed]);
+  expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
+});
+
+test('a double-click on a guide opens its position field', async ({ page }) => {
+  const origin = await open(page);
+  const placed = await pullLevelGuide(page, origin, 200);
+  const field = page.getByRole('spinbutton', { name: 'Guide position (mm)' });
+  const line = async () => (await canvas(page)).lines[0] as Line;
+
+  await page.mouse.dblclick(origin.x + 300, origin.y + placed.px);
+  await expect(field).toBeFocused();
+  await field.fill('10');
+  await field.press('Enter');
+  await expect(field).toBeHidden();
+  await expect.poll(async () => (await line()).px).not.toBe(placed.px);
+  const typed = await line();
+  await page.mouse.move(origin.x + 300, origin.y + typed.px);
+  await expect.poll(async () => (await canvas(page)).badge).toBe('10 mm');
+
+  await page.mouse.dblclick(origin.x + RULER / 2, origin.y + typed.px);
+  await field.fill('12');
+  await field.press('Escape');
+  await expect(field).toBeHidden();
+  expect((await canvas(page)).lines).toEqual([typed]);
+
+  // A press elsewhere takes the typed position, and a position past the ruler stops at its end.
+  await page.mouse.dblclick(origin.x + 300, origin.y + typed.px);
+  await field.fill('9999');
+  await page.mouse.click(origin.x + 300, origin.y + typed.px + 20);
+  await expect(field).toBeHidden();
+  await expect.poll(async () => (await line()).px).toBeGreaterThan(typed.px);
+  const stopped = await line();
+  await page.mouse.dblclick(origin.x + RULER / 2, origin.y + stopped.px);
+  expect(Number(await field.inputValue())).toBeLessThan(9999);
+  expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
+});
+
+test('a position field left unchanged keeps a guide beside the label', async ({ page }) => {
+  const origin = await open(page);
+  await page.mouse.move(origin.x + RULER / 2, origin.y + 300);
+  await page.mouse.down();
+  await page.mouse.move(origin.x + 40, origin.y + 300, { steps: 6 });
+  await page.mouse.up();
+  await expect.poll(async () => (await canvas(page)).lines).toHaveLength(1);
+  const placed = (await canvas(page)).lines[0] as Line;
+
+  // Konva counts two stage clicks as a double-click, so a click on the paper comes between.
+  await page.mouse.click(origin.x + 300, origin.y + 400);
+  await page.mouse.dblclick(origin.x + placed.px, origin.y + 300);
+  await expect(page.getByRole('spinbutton', { name: 'Guide position (mm)' })).toBeFocused();
+  await page.mouse.click(origin.x + 300, origin.y + 400);
+  await expect(page.getByRole('spinbutton', { name: 'Guide position (mm)' })).toBeHidden();
+  expect((await canvas(page)).lines).toEqual([placed]);
+  expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
+});
+
+test('a double-click with an unsteady hand still opens the position field', async ({ page }) => {
+  const origin = await open(page);
+  const placed = await pullLevelGuide(page, origin, 200);
+  const at = { x: origin.x + 300, y: origin.y + placed.px };
+
+  await page.mouse.move(at.x, at.y);
+  await page.mouse.down();
+  await page.mouse.up();
+  await page.mouse.down();
+  await page.mouse.move(at.x, at.y + 2);
+  await page.mouse.up();
+  await expect(page.getByRole('spinbutton', { name: 'Guide position (mm)' })).toBeFocused();
+  expect((await canvas(page)).lines).toEqual([placed]);
+  expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
+});
+
+test('a click with an unsteady hand leaves the guide in place', async ({ page }) => {
+  const origin = await open(page);
+  const placed = await pullLevelGuide(page, origin, 200);
+
+  await page.mouse.move(origin.x + 300, origin.y + placed.px);
+  await page.mouse.down();
+  await page.mouse.move(origin.x + 300, origin.y + placed.px + 2);
+  await page.mouse.up();
+  await page.mouse.move(origin.x + 300, origin.y + placed.px + 40);
+  await expect.poll(async () => (await canvas(page)).badge).toBeNull();
+  expect((await canvas(page)).lines).toEqual([placed]);
   expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
 });

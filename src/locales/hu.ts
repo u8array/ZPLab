@@ -1136,6 +1136,7 @@ const hu = {
     toggleSnap: 'Illesztés',
     toggleGrid: 'Rács',
     toggleGuides: 'Segédvonalak',
+    guidePosition: 'Segédvonal pozíciója',
     deletePageConfirm: 'Törli az aktuális oldalt?',
     openDesign: 'Terv megnyitása',
     saveDesign: 'Terv mentése',

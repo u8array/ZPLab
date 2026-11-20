@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { ViewRotation } from "@zplab/core/registry/rotation";
-import { guideMmOnDot, guideNear, guideSnapLinesDots, guideSnapLinesStage, guidesAfterDrop, guideToStage, stageRulerGuides, stageToGuide, withGuide, withoutGuide, NO_RULER_GUIDES, type RulerGuideView } from "./rulerGuides";
+import { guideMmOnDot, guideNear, guideSnapLinesDots, guideSnapLinesStage, guidesAfterDrop, guidesAfterEdit, guideToStage, stageRulerGuides, stageToGuide, withGuide, withoutGuide, NO_RULER_GUIDES, type RulerGuideView } from "./rulerGuides";
 import { axisReversal, isAxisSwapped } from "../components/Canvas/rotationGeometry";
 import { rulerReadingMm } from "../components/Canvas/rulerGeometry";
 
@@ -80,17 +80,25 @@ describe("guideNear", () => {
   it("finds the nearest guide in the pressed line's direction within the tolerance", () => {
     const v = view(0);
     const at = (mm: number) => ({ vertical: true, px: v.originX + mm * v.scale });
-    expect(guideNear(guides, at(10.5), v, 4)).toEqual({ axis: "x", mm: 10 });
-    expect(guideNear(guides, at(11.5), v, 4)).toEqual({ axis: "x", mm: 12 });
-    expect(guideNear(guides, at(14), v, 4)).toBeUndefined();
-    expect(guideNear(guides, { vertical: false, px: v.originY + 10 * v.scale + 3 }, v, 4)).toEqual({ axis: "y", mm: 10 });
+    expect(guideNear(guides, [at(10.5)], v, 4)).toEqual({ axis: "x", mm: 10 });
+    expect(guideNear(guides, [at(11.5)], v, 4)).toEqual({ axis: "x", mm: 12 });
+    expect(guideNear(guides, [at(14)], v, 4)).toBeUndefined();
+    expect(guideNear(guides, [{ vertical: false, px: v.originY + 10 * v.scale + 3 }], v, 4)).toEqual({ axis: "y", mm: 10 });
   });
 
   it("follows the view rotation, an x guide lies level at a quarter turn", () => {
     const v = view(90);
     const stage = guideToStage({ axis: "x", mm: 12 }, v);
     expect(stage.vertical).toBe(false);
-    expect(guideNear(guides, { vertical: false, px: stage.px + 1 }, v, 4)).toEqual({ axis: "x", mm: 12 });
+    expect(guideNear(guides, [{ vertical: false, px: stage.px + 1 }], v, 4)).toEqual({ axis: "x", mm: 12 });
+  });
+
+  it("takes the nearer of two crossings", () => {
+    const v = view(0);
+    const upright = { vertical: true, px: v.originX + 12 * v.scale + 3 };
+    const level = { vertical: false, px: v.originY + 10 * v.scale + 1 };
+    expect(guideNear(guides, [upright, level], v, 4)).toEqual({ axis: "y", mm: 10 });
+    expect(guideNear(guides, [], v, 4)).toBeUndefined();
   });
 });
 
@@ -147,5 +155,19 @@ describe("stageRulerGuides", () => {
   it("leaves the moving guide out of the returned lines", () => {
     const v = view(0);
     expect(stageRulerGuides({ x: [10, 20], y: [] }, v, { axis: "x", mm: 10 })).toEqual([{ vertical: true, px: v.originX + 20 * v.scale }]);
+  });
+});
+
+describe("guidesAfterEdit", () => {
+  const guides = { x: [10, 20], y: [10] };
+  const v = view(0);
+  const upright = (mm: number) => ({ vertical: true, px: v.originX + mm * v.scale });
+
+  it("moves the edited guide to the typed position", () => {
+    expect(guidesAfterEdit(guides, { axis: "x", mm: 10 }, upright(30.07), v, 8)).toEqual({ x: [20, 30.125], y: [10] });
+  });
+
+  it("merges into a guide that already sits there", () => {
+    expect(guidesAfterEdit(guides, { axis: "x", mm: 10 }, upright(20), v, 8)).toEqual({ x: [20], y: [10] });
   });
 });

@@ -1136,6 +1136,7 @@ const tr = {
     toggleSnap: 'Yapışma',
     toggleGrid: 'Izgara',
     toggleGuides: 'Kılavuzlar',
+    guidePosition: 'Kılavuz konumu',
     deletePageConfirm: 'Geçerli sayfa silinsin mi?',
     openDesign: 'Tasarım Aç',
     saveDesign: 'Tasarım Kaydet',
