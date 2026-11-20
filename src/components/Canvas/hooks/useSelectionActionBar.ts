@@ -5,25 +5,27 @@ import type { Bounds } from "../nodeRect";
 
 export const ACTION_BAR_GAP_PX = 22;
 
-/** Shared action-bar placement: centered over the selection, clamped to the
- *  canvas, flipped below when it would clip the ruler. */
+/** Places the bar over the selection, clamped to the canvas. It flips below the selection
+ *  when it would clip the ruler, and `topInset` keeps a strip under the ruler free. */
 export function actionBarPosition(
   sel: Bounds,
   halfW: number,
   halfH: number,
   stageWidth: number,
   stageHeight: number,
+  topInset: number,
 ): { x: number; y: number } {
+  const top = RULER_SIZE + topInset;
   const minCx = RULER_SIZE + halfW;
   const maxCx = Math.max(minCx, stageWidth - halfW);
   const x = Math.min(Math.max((sel.minX + sel.maxX) / 2, minCx), maxCx);
   const aboveY = sel.minY - ACTION_BAR_GAP_PX - halfH;
   const belowY = sel.maxY + ACTION_BAR_GAP_PX + halfH;
   const y =
-    aboveY - halfH < RULER_SIZE
+    aboveY - halfH < top
       ? belowY + halfH <= stageHeight
         ? belowY
-        : RULER_SIZE + halfH
+        : top + halfH
       : aboveY;
   return { x, y };
 }
@@ -43,14 +45,15 @@ interface Options {
   /** Selection bounds in stage px from objectBoundsDots (the optical box, incl.
    *  the ^GD diagonal overhang) so the rest position matches the drag center. */
   getBarBounds: () => Bounds | null;
+  /** Inset under the top ruler that the bar leaves free, in px. */
+  topInset: number;
 }
 
 /**
- * Positions the floating selection action bar (centred above the selection,
- * flipped below when it would clip past the ruler, clamped horizontally) and an
- * amber outline per locked leaf (the transformer skips locked nodes). Imperative
- * via beforeDraw so the chrome tracks live node positions during drags, the same
- * timing useKonvaTransformer relies on.
+ * Positions the floating selection action bar through actionBarPosition and draws an amber
+ * outline per locked leaf, since the transformer skips locked nodes. Runs in beforeDraw so
+ * the chrome tracks live node positions during drags, the same timing useKonvaTransformer
+ * relies on.
  */
 export function useSelectionActionBar({
   stageRef,
@@ -61,6 +64,7 @@ export function useSelectionActionBar({
   actionBarRef,
   lockedFrameRef,
   getBarBounds,
+  topInset,
 }: Options) {
   useLayoutEffect(() => {
     if (editorFrozen || attachableIds.length === 0) return;
@@ -84,7 +88,7 @@ export function useSelectionActionBar({
       if (bar) {
         const barRect = bar.getClientRect({ relativeTo: stage, skipShadow: true });
         bar.position(
-          actionBarPosition(sel, barRect.width / 2, barRect.height / 2, stage.width(), stage.height()),
+          actionBarPosition(sel, barRect.width / 2, barRect.height / 2, stage.width(), stage.height(), topInset),
         );
       }
 
@@ -106,5 +110,5 @@ export function useSelectionActionBar({
     return () => {
       layer?.off(".actionbar");
     };
-  }, [stageRef, attachableIds, lockedLeafIds, editorFrozen, dragActiveRef, actionBarRef, lockedFrameRef, getBarBounds]);
+  }, [stageRef, attachableIds, lockedLeafIds, editorFrozen, dragActiveRef, actionBarRef, lockedFrameRef, getBarBounds, topInset]);
 }

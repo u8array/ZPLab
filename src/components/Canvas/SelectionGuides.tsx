@@ -6,6 +6,10 @@ import type { Bounds } from "./nodeRect";
 import { axisGuides, badgeOffsets, type AxisGuides, type GuideAxis, type GuideReadout } from "./selectionGuideGeometry";
 
 const BADGE_GAP = 3;
+const BADGE_FONT_SIZE = 9;
+const BADGE_PADDING = 3;
+/** Height of the badge row under the top ruler, gaps included. */
+export const BADGE_ROW_PX = 2 * BADGE_GAP + BADGE_FONT_SIZE + 2 * BADGE_PADDING;
 const AXES = ["x", "y"] as const;
 const SIDES = ["near", "far"] as const;
 type Axis = (typeof AXES)[number];
@@ -97,8 +101,7 @@ export function SelectionGuides({
       return edge && badge ? { edgePx: edge.px, size: badge[extent]() } : null;
     };
     // The x badges sit in the row under the top ruler. The y badges start below it.
-    const rowHeight = (badges.near ?? badges.far)?.height() ?? 0;
-    const lead = key === "y" ? rowHeight + BADGE_GAP : 0;
+    const lead = key === "y" ? BADGE_ROW_PX - BADGE_GAP : 0;
     const at = badgeOffsets(span("near"), span("far"), { ...axes[key], fromPx: axes[key].fromPx + lead }, BADGE_GAP);
     for (const side of SIDES) {
       const offset = at[side];
@@ -138,7 +141,7 @@ export function SelectionGuides({
         SIDES.map((side) => (
           <Label key={`${key}-${side}`} name={`badge-${key}-${side}`}>
             <Tag fill={colors.selection} cornerRadius={3} />
-            <Text fill="#ffffff" fontSize={9} fontFamily={RULER_FONT} padding={3} />
+            <Text fill="#ffffff" fontSize={BADGE_FONT_SIZE} fontFamily={RULER_FONT} padding={BADGE_PADDING} />
           </Label>
         )),
       )}
