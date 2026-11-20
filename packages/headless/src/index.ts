@@ -41,4 +41,3 @@ export {
   type PatchOp,
 } from "./patchOps.js";
 export { reportFor, type BoundReport } from "./report.js";
-export { registerHeadlessFootprintMeasurer } from "./footprint.js";

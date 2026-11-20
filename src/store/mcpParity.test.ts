@@ -1,14 +1,15 @@
 import { describe, it, expect, afterEach } from "vitest";
+import bwipjs from "bwip-js/generic";
 import { applyObjectChanges } from "./labelStore.internals";
 import { useLabelStore } from "./labelStore";
 import { registerBarcodeWidthProber, unregisterBarcodeWidthProber } from "./anchorRepin";
-import { measureFootprintDots } from "@zplab/core/lib/footprintProber";
-import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
+import { measureBarcodeFootprintDotsWith, resolveForMeasure, type BwipEngine } from "@zplab/core/lib/barcodeDims";
+import type { LeafObject } from "@zplab/core/registry";
 import type { LabelObject } from "@zplab/core/types/Group";
 import type { Variable } from "@zplab/core/types/Variable";
 // Test-only: parity between the editor's mutation pipeline and patch_design is
 // exactly what this file pins, and no runtime code imports the facade.
-import { createDraft, patchDesign, registerHeadlessFootprintMeasurer, type CreateDraftInput } from "@zplab/headless";
+import { createDraft, patchDesign, type CreateDraftInput } from "@zplab/headless";
 
 /** One update op, run through both pipelines with the SAME width probe, so a
  *  hook one side skips (normalize, repin) shows as an object diff. */
@@ -58,17 +59,16 @@ const CASES: {
 /** The store-side probe the CANVAS registers: markers resolved to their variable
  *  defaults (resolveForMeasure), never a dataset row or render mode, comparable to the sidecar's.
  *  Without the resolve step this harness would measure literal «marker» text, proving parity only for marker-free fields. */
-let probe = (o: LabelObject) => measureFootprintDots(o, 8);
+const probeOver = (variables: readonly Variable[]) => (o: LabelObject) =>
+  measureBarcodeFootprintDotsWith(bwipjs as unknown as BwipEngine, resolveForMeasure(o, variables) as LeafObject, 8);
+let probe = probeOver([]);
 
 afterEach(() => unregisterBarcodeWidthProber(probe));
 
-// SCOPE: both sides deliberately share ONE probe (measureFootprintDots), so this
-// harness proves hook parity (normalize/commit/repin), never probe parity. The
-// canvas's real zoom-scaled prober cannot run headless; that gap is pinned separately (footprint.test.ts, kernel-overrides-measured).
+// Both sides measure with the barcodeDims kernel, so this harness proves hook parity.
 describe("an update edits the same object the same way on both paths", () => {
   for (const c of CASES) {
     it(c.name, () => {
-      registerHeadlessFootprintMeasurer();
       const base = createDraft({
         widthMm: 100, heightMm: 50, dpmm: 8, objects: [c.object],
         ...(c.variables ? { variables: c.variables } : {}),
@@ -76,7 +76,7 @@ describe("an update edits the same object the same way on both paths", () => {
       expect(base.ok).toBe(true);
       if (!base.ok) return;
       const declared = (base.designFile as { variables?: Variable[] }).variables ?? [];
-      probe = (o: LabelObject) => measureFootprintDots(resolveForMeasure(o, declared), 8);
+      probe = probeOver(declared);
       registerBarcodeWidthProber(probe);
       const stored = (base.designFile as { pages: { objects: LabelObject[] }[] }).pages[0]!.objects[0]!;
 
@@ -111,7 +111,6 @@ describe("a device-font block edit normalizes the same on both paths", () => {
     // Both write paths must hand normalizeChanges the same device-font ctx:
     // without it the sidecar derived ^FB growth from font-0 metrics while the
     // editor used the label's ^CF font's cell grid.
-    registerHeadlessFootprintMeasurer();
     // Hard breaks with no prior blockWidth: the ^FB activation backfills the
     // line cap by wrapping at the default width with the RESOLVED font's
     // advance, the one derivation in this hook that reads the ctx.
