@@ -205,7 +205,7 @@ export function VariablesPanel() {
               }
               className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-mono transition-colors ${
                 dataRenderMode === 'preview'
-                  ? 'text-accent bg-[--color-accent-dim]'
+                  ? 'text-accent bg-accent-dim'
                   : 'text-muted hover:text-text hover:bg-surface-2 border border-border'
               }`}
             >
