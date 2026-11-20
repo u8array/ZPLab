@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useT } from "../../hooks/useT";
-import { useLabelStore, selectEffectivePreviewProvider } from "../../store/labelStore";
+import { useLabelStore, selectEffectivePreviewProvider, selectReadsPrinter } from "../../store/labelStore";
 import { isDesktopShell } from "../../lib/platform";
 import { isDefaultHost } from "../../lib/labelary";
 import { labelCls, inputCls, buttonCls, sectionHeadingCls } from "../ui/formStyles";
@@ -18,7 +18,8 @@ export function PreviewSettingsTab() {
   const provider = useLabelStore(selectEffectivePreviewProvider);
   const setProvider = useLabelStore((s) => s.setPreviewProvider);
   const labelaryAvailable = useLabelStore((s) => s.thirdParty.labelary);
-  const locked = Object.fromEntries(previewProviderChoices(t, { thirdParty: { labelary: labelaryAvailable } }).map((c) => [c.provider, c.disabled]));
+  const readsPrinter = useLabelStore(selectReadsPrinter);
+  const locked = Object.fromEntries(previewProviderChoices(t, { labelary: labelaryAvailable, printer: readsPrinter }).map((c) => [c.provider, c.disabled]));
   const labelaryConsent = useLabelStore((s) => s.labelaryNoticeAcknowledged);
   const acknowledgeLabelaryNotice = useLabelStore((s) => s.acknowledgeLabelaryNotice);
   const revokeLabelaryNotice = useLabelStore((s) => s.revokeLabelaryNotice);
@@ -92,7 +93,7 @@ export function PreviewSettingsTab() {
           current={chosen}
           onSelect={setProvider}
           label={loc.providerPrinter}
-          hint={isDesktopShell ? loc.providerPrinterHint : loc.providerPrinterDesktopOnly}
+          hint={readsPrinter ? loc.providerPrinterHint : loc.providerPrinterDesktopOnly}
           disabled={locked.printer}
         />
         <RadioOption
@@ -110,7 +111,7 @@ export function PreviewSettingsTab() {
         )}
       </section>
 
-      {provider === "printer" && isDesktopShell && (
+      {provider === "printer" && (
         <section className="flex items-center gap-3">
           <span className="text-[10px] text-muted">{loc.printerTargetHint}</span>
           <button type="button" className={buttonCls} onClick={() => setPrinterSettingsTab("printTarget")}>

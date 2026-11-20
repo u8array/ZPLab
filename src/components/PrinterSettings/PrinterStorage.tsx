@@ -3,7 +3,6 @@ import { InformationCircleIcon } from "@heroicons/react/16/solid";
 import { hostObjectPath, type HostObject } from "@zplab/core/lib/hostDirectory";
 import { isWritableDevice } from "@zplab/core/lib/storagePath";
 import { deleteKnowledge, driveUsage, listedObject, originState, type DeleteKnowledge, type OriginState, type StoredObjectKind, type StoredObjectOrigin } from "@zplab/core/lib/storedObjectOrigins";
-import { isDesktopShell } from "../../lib/platform";
 import { usePrinterListing } from "../../hooks/usePrinterListing";
 import { useReplyRead } from "../../hooks/useReplyRead";
 import { useT } from "../../hooks/useT";
@@ -11,7 +10,7 @@ import type { Translations } from "../../locales";
 import { formatTemplate } from "../../lib/formatTemplate";
 import type { PrinterObjectsState } from "../../store/slices/printerObjectsSlice";
 import { driveUsageText, failureText, kilobytes, readingText } from "../../lib/printerStatusText";
-import { selectPrinterObjects, useLabelStore } from "../../store/labelStore";
+import { selectPrinterObjects, selectReadsPrinter, useLabelStore } from "../../store/labelStore";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { MemoryBar } from "../ui/MemoryBar";
 import { Tooltip } from "../ui/Tooltip";
@@ -21,17 +20,18 @@ import { useStoredObjectHover } from "../../hooks/useStoredObjectHover";
 
 export function StoredObjectsHeading() {
   const loc = useT().printerSettings.objects;
+  const readsPrinter = useLabelStore(selectReadsPrinter);
   return (
     <div className="flex items-baseline justify-between gap-2">
       <div className="flex items-center gap-1.5">
         <h3 className={sectionHeadingCls}>{loc.listHeading}</h3>
-        <Tooltip content={isDesktopShell ? `${loc.listHint} ${loc.listHintPrinter}` : loc.listHint}>
+        <Tooltip content={readsPrinter ? `${loc.listHint} ${loc.listHintPrinter}` : loc.listHint}>
           <InformationCircleIcon className="w-3 h-3 text-muted/60 cursor-help shrink-0" />
         </Tooltip>
       </div>
       <span className="flex items-center gap-1">
         <span className={zplCommandTagCls}>~DY</span>
-        {isDesktopShell && <span className={zplCommandTagCls}>^HW</span>}
+        {readsPrinter && <span className={zplCommandTagCls}>^HW</span>}
       </span>
     </div>
   );

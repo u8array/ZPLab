@@ -6,7 +6,7 @@ import { useStoredObjectHover } from "../../hooks/useStoredObjectHover";
 import { usePrinterListing } from "../../hooks/usePrinterListing";
 import { useT } from "../../hooks/useT";
 import { useUpload } from "../../hooks/useUpload";
-import { useLabelStore, useFileDeletability, forgetHistoryUsing, selectEditorFrozen, type DeleteBlock } from "../../store/labelStore";
+import { useLabelStore, useFileDeletability, forgetHistoryUsing, selectEditorFrozen, selectReadsPrinter, type DeleteBlock } from "../../store/labelStore";
 import { encodeGraphicFile } from "@zplab/core/lib/imageToZpl";
 import { sanitizeStorageName, uploadedGraphicPath } from "@zplab/core/lib/storagePath";
 import { setupEntryHoldsOther, withSetupEntry, withoutSetupEntry } from "@zplab/core/lib/setupEntries";
@@ -18,7 +18,6 @@ import { storedObjectOrigins } from "@zplab/core/lib/storedObjectOrigins";
 import { removeImage } from "@zplab/core/lib/imageCache";
 import { imageUsage } from "@zplab/core/lib/imageUsage";
 import type { SetupGraphic } from "@zplab/core/types/PrinterProfile";
-import { isDesktopShell } from "../../lib/platform";
 import { PrinterObjectActions, PrinterOriginMark, PrinterStorageBar, StoredObjectsHeading } from "./PrinterStorage";
 
 export function StoredGraphicsTab() {
@@ -52,6 +51,7 @@ export function StoredGraphicsTab() {
 
   // Frozen, the open pages are not what a source session will apply, so no control may act on them.
   const frozen = useLabelStore(selectEditorFrozen);
+  const readsPrinter = useLabelStore(selectReadsPrinter);
   const usage = imageUsage(pages);
   const deletability = useFileDeletability();
   const cached = useCachedImages();
@@ -116,7 +116,7 @@ export function StoredGraphicsTab() {
             </span>
           )}
         </div>
-        {isDesktopShell && <PrinterStorageBar />}
+        {readsPrinter && <PrinterStorageBar />}
         {origins.length === 0 ? (
           <p className="text-xs text-muted/70">{loc.noGraphics}</p>
         ) : (
