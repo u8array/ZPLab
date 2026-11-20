@@ -84,4 +84,7 @@ jobs:
           for i in $(seq 1 30); do curl -sf http://127.0.0.1:8787/api/v1/health && break; sleep 1; done
           curl -sf -H "Authorization: Bearer smoketok" -H "content-type: application/json" \
             -d '{"zpl":"^XA^FO10,10^A0N,30,30^FDsmoke^FS^XZ"}' http://127.0.0.1:8787/api/v1/validate-zpl
+          curl -sf http://127.0.0.1:8787/ | grep -q '<div id="root">'
+          # Only the server build carries /api/v1, the plain designer build does not.
+          docker exec zplab-server-smoke grep -rq /api/v1 /app/designer/assets
           docker stop zplab-server-smoke

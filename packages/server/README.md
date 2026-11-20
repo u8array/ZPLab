@@ -18,6 +18,7 @@ $env:ZPLAB_TOKEN = "change-me"; pnpm --filter @zplab/server start
 | `ZPLAB_HOST` | `127.0.0.1` | Bind address. `0.0.0.0` serves the network |
 | `ZPLAB_PORT` | `8787` | Port |
 | `ZPLAB_PRINTERS` | none | The printers the server may reach, as a JSON list. See [Printers](#printers) |
+| `ZPLAB_DESIGNER_DIR` | none | A designer build to serve at `/`. See [Designer](#designer) |
 | `ZPLAB_VERSION` | `dev` | Reported by `/health` and the OpenAPI document. The release binaries and the image carry their version and ignore it |
 
 The token travels in plain text. Serve the network only behind a reverse proxy with TLS.
@@ -61,3 +62,21 @@ curl -sN -H "Authorization: Bearer change-me" -H "Content-Type: application/json
 ```
 
 Whoever holds the token can send any ZPL to every listed printer.
+
+## Designer
+
+The image serves the designer at `/`. That designer prints through the server and reads the printer's reply. Choose **ZPL printer (server)** under **File → Settings… → App → Printer** and enter the token there.
+
+From a checkout, build the designer for the server and name its directory:
+
+```sh
+VITE_SERVER_API_URL=/api/v1 pnpm exec vite build
+ZPLAB_DESIGNER_DIR="$PWD/dist" ZPLAB_TOKEN=change-me pnpm --filter @zplab/server start
+```
+
+```powershell
+$env:VITE_SERVER_API_URL = "/api/v1"; pnpm exec vite build
+$env:ZPLAB_DESIGNER_DIR = "$PWD\dist"; $env:ZPLAB_TOKEN = "change-me"; pnpm --filter @zplab/server start
+```
+
+Behind a reverse proxy, do not buffer the answer of `POST /printers/{id}/query`. The route sets `X-Accel-Buffering: no`, which nginx follows. Other proxies need their own setting.

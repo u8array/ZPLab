@@ -328,6 +328,7 @@ describe("printer routes", () => {
     const res = await send(to, "/printers/stub/query", { zpl: "~HS", deadlineMs: 5000 });
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toBe("application/x-ndjson");
+    expect(res.headers.get("x-accel-buffering")).toBe("no");
     const got = await lines(res);
     expect(got.at(-1)).toEqual({ kind: "done", end: "closed" });
     expect(got.slice(0, -1).every((line) => line.kind === "text")).toBe(true);

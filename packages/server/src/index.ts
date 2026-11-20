@@ -1,6 +1,9 @@
+import { existsSync } from "node:fs";
 import type { Server } from "node:http";
+import { join } from "node:path";
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
+import { withDesigner } from "./designer.js";
 import { parsePrinters } from "./printers.js";
 import { shutdown } from "./shutdown.js";
 
@@ -24,7 +27,11 @@ function main(): void {
   const listed = parsePrinters(process.env.ZPLAB_PRINTERS);
   if (!listed.ok) fail(`ZPLAB_PRINTERS must be a JSON list of printers: ${listed.errors.join("; ")}`);
 
-  const app = createApp({ token, version: process.env.ZPLAB_VERSION || "dev", printers: listed.printers });
+  const designer = process.env.ZPLAB_DESIGNER_DIR;
+  if (designer && !existsSync(join(designer, "index.html"))) fail("ZPLAB_DESIGNER_DIR must be the directory of a designer build, with its index.html");
+
+  const api = createApp({ token, version: process.env.ZPLAB_VERSION || "dev", printers: listed.printers });
+  const app = designer ? withDesigner(api, designer) : api;
   // serve() types the result for HTTP/2 too, so the cast to Server is needed for plain HTTP.
   const server = serve({ fetch: app.fetch, hostname, port }, (info) => {
     process.stdout.write(`zplab-server listening on http://${info.address}:${info.port}/api/v1\n`);

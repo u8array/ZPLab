@@ -236,13 +236,15 @@ docker build -t zplab .
 
 ### REST server
 
-An optional server exposes the draft, validate, patch, export and import logic to scripts and integrations, behind a bearer token. Download the archive for your platform from the release assets. Set `ZPLAB_TOKEN` in your shell. Then start the binary or run the image:
+An optional server exposes the draft, validate, patch, export and import logic to scripts and integrations, behind a bearer token. It also sends ZPL to the printers from `ZPLAB_PRINTERS` and reads their replies. Download the archive for your platform from the release assets. Set `ZPLAB_TOKEN` in your shell. Then start the binary or run the image:
 
 ```sh
 docker run -p 127.0.0.1:8787:8787 -e ZPLAB_TOKEN ghcr.io/u8array/zplab-server:latest
 ```
 
-Routes and variables are in [packages/server/README.md](packages/server/README.md). [docker/compose.example.yml](docker/compose.example.yml) starts the designer and the server together. The server has no designer, no printing and no storage.
+The image also serves the designer at `http://localhost:8787`. That designer prints through the server and reads the printer's reply. Choose **ZPL printer (server)** under **File → Settings… → App → Printer** and enter the token there.
+
+Routes and variables are in [packages/server/README.md](packages/server/README.md). [docker/compose.example.yml](docker/compose.example.yml) starts the static designer on port 8080 and the server on port 8787 together. The server has no storage.
 
 ## Development
 
