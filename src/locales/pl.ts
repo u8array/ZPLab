@@ -1135,6 +1135,7 @@ const pl = {
     rotateView: 'Obróć widok',
     toggleSnap: 'Przyciąganie',
     toggleGrid: 'Siatka',
+    toggleGuides: 'Prowadnice',
     deletePageConfirm: 'Usunąć bieżącą stronę?',
     openDesign: 'Otwórz projekt',
     saveDesign: 'Zapisz projekt',

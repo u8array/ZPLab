@@ -1135,6 +1135,7 @@ const de = {
     rotateView: 'Ansicht drehen',
     toggleSnap: 'Einrasten',
     toggleGrid: 'Raster',
+    toggleGuides: 'Hilfslinien',
     deletePageConfirm: 'Aktuelle Seite löschen?',
     openDesign: 'Design öffnen',
     saveDesign: 'Design speichern',

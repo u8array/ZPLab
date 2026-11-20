@@ -1135,6 +1135,7 @@ const sr = {
     rotateView: 'Заокрени приказ',
     toggleSnap: 'Лепљење',
     toggleGrid: 'Мрежа',
+    toggleGuides: 'Помоћне линије',
     deletePageConfirm: 'Обрисати тренутну страницу?',
     openDesign: 'Отвори дизајн',
     saveDesign: 'Сачувај дизајн',

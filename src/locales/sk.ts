@@ -1135,6 +1135,7 @@ const sk = {
     rotateView: 'Otočiť zobrazenie',
     toggleSnap: 'Prichytávanie',
     toggleGrid: 'Mriežka',
+    toggleGuides: 'Vodidlá',
     deletePageConfirm: 'Odstrániť aktuálnu stránku?',
     openDesign: 'Otvoriť návrh',
     saveDesign: 'Uložiť návrh',

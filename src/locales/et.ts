@@ -1135,6 +1135,7 @@ const et = {
     rotateView: 'Pööra vaadet',
     toggleSnap: 'Haaramine',
     toggleGrid: 'Ruudustik',
+    toggleGuides: 'Juhtjooned',
     deletePageConfirm: 'Kustuta praegune leht?',
     openDesign: 'Ava kujundus',
     saveDesign: 'Salvesta kujundus',

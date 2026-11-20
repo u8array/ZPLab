@@ -1135,6 +1135,7 @@ const cs = {
     rotateView: 'Otočit zobrazení',
     toggleSnap: 'Přichytávání',
     toggleGrid: 'Mřížka',
+    toggleGuides: 'Vodítka',
     deletePageConfirm: 'Smazat aktuální stránku?',
     openDesign: 'Otevřít návrh',
     saveDesign: 'Uložit návrh',

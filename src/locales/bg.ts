@@ -1135,6 +1135,7 @@ const bg = {
     rotateView: 'Завъртане на изгледа',
     toggleSnap: 'Прилепване',
     toggleGrid: 'Мрежа',
+    toggleGuides: 'Направляващи',
     deletePageConfirm: 'Изтриване на текущата страница?',
     openDesign: 'Отвори дизайн',
     saveDesign: 'Запази дизайн',

@@ -89,6 +89,11 @@ async function open(page: Page) {
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'File', exact: true })).toBeVisible();
   await page.getByText('Code 128', { exact: true }).first().dblclick();
+  const toggle = page.getByRole('button', { name: 'Guides', exact: true });
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  expect(await guides(page)).toBeNull();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(() => guides(page)).not.toBeNull();
   const origin = await page.locator('.konvajs-content').boundingBox();
   if (!origin) throw new Error('no canvas');

@@ -1135,6 +1135,7 @@ const ko = {
     rotateView: '보기 회전',
     toggleSnap: '스냅',
     toggleGrid: '격자',
+    toggleGuides: '안내선',
     deletePageConfirm: '현재 페이지를 삭제하시겠습니까?',
     openDesign: '디자인 열기',
     saveDesign: '디자인 저장',

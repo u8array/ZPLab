@@ -362,7 +362,7 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
   if (version < 20) {
     const cs = s.canvasSettings;
     if (cs && typeof cs === 'object' && !('selectionGuidesEnabled' in cs)) {
-      s = { ...s, canvasSettings: { ...(cs as Record<string, unknown>), selectionGuidesEnabled: true } };
+      s = { ...s, canvasSettings: { ...(cs as Record<string, unknown>), selectionGuidesEnabled: false } };
     }
   }
 

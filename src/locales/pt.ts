@@ -1135,6 +1135,7 @@ const pt = {
     rotateView: 'Girar vista',
     toggleSnap: 'Encaixe',
     toggleGrid: 'Grade',
+    toggleGuides: 'Guias',
     deletePageConfirm: 'Eliminar a página atual?',
     openDesign: 'Abrir design',
     saveDesign: 'Salvar design',

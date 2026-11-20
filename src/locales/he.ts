@@ -1135,6 +1135,7 @@ const he = {
     rotateView: 'סובב תצוגה',
     toggleSnap: 'הצמדה',
     toggleGrid: 'רשת',
+    toggleGuides: 'קווי עזר',
     deletePageConfirm: 'למחוק את הדף הנוכחי?',
     openDesign: 'פתח עיצוב',
     saveDesign: 'שמור עיצוב',

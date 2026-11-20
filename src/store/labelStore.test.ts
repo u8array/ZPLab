@@ -1818,16 +1818,16 @@ describe('migrateLegacy — v13→v14 smartSnapEnabled', () => {
 });
 
 describe('migrateLegacy — v19→v20 selectionGuidesEnabled', () => {
-  it('backfills selectionGuidesEnabled=true into a session that predates the flag', () => {
+  it('backfills selectionGuidesEnabled=false into a v19 snapshot without the flag', () => {
     const persisted = { canvasSettings: { showGrid: false, smartSnapEnabled: false, zoom: 1, unit: 'mm' } };
     const migrated = migrateLegacy(persisted, 19) as { canvasSettings: Record<string, unknown> };
-    expect(migrated.canvasSettings).toEqual({ ...persisted.canvasSettings, selectionGuidesEnabled: true });
+    expect(migrated.canvasSettings).toEqual({ ...persisted.canvasSettings, selectionGuidesEnabled: false });
   });
 
-  it('preserves an explicit selectionGuidesEnabled=false from a newer snapshot', () => {
-    const persisted = { canvasSettings: { showGrid: false, selectionGuidesEnabled: false, zoom: 1, unit: 'mm' } };
+  it('preserves an explicit selectionGuidesEnabled=true from a v19 snapshot', () => {
+    const persisted = { canvasSettings: { showGrid: false, selectionGuidesEnabled: true, zoom: 1, unit: 'mm' } };
     const migrated = migrateLegacy(persisted, 19) as { canvasSettings: Record<string, unknown> };
-    expect(migrated.canvasSettings.selectionGuidesEnabled).toBe(false);
+    expect(migrated.canvasSettings.selectionGuidesEnabled).toBe(true);
   });
 });
 
