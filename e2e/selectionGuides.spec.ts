@@ -85,6 +85,10 @@ async function nearBadges(page: Page) {
   });
 }
 
+const RULER = 20;
+const BAR_GAP = 22;
+const BADGE_ROW_BOTTOM = 38;
+
 /** Adds a Box and waits until the guides sit on it. */
 async function addBox(page: Page) {
   const before = (await guides(page))?.frame;
@@ -272,5 +276,63 @@ test('the action bar covers the guides that run behind it', async ({ page }) => 
       return { guidePixels, inside: near.x() > bar.x + 15 && far.x() < bar.x + bar.width - 15 };
     });
   await expect.poll(covered).toEqual({ guidePixels: 0, inside: true });
+  expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
+});
+
+test('the action bar stays out of the badge row under the top ruler', async ({ page }) => {
+  const origin = await open(page);
+  await addBox(page);
+  const { frame } = (await guides(page)) as Guides;
+  const midY = origin.y + (frame.minY + frame.maxY) / 2;
+  await page.mouse.move(origin.x + frame.maxX, midY);
+  await page.mouse.down();
+  await page.mouse.move(origin.x + frame.minX + 24, midY, { steps: 6 });
+  await page.mouse.up();
+  await expect.poll(async () => ((await guides(page))?.frame.maxX ?? Infinity) - frame.minX).toBeLessThan(40);
+
+  // Drag up to where the bar still sits above the box and would reach into the badge row.
+  const barHeight = await page.evaluate(() => {
+    interface Node {
+      findOne: (s: string) => { getClientRect: () => { height: number } } | undefined;
+    }
+    return (window as unknown as { Konva: { stages: Node[] } }).Konva.stages[0].findOne('.action-bar')?.getClientRect().height ?? 0;
+  });
+  const reach = { from: RULER + BAR_GAP + barHeight, to: BADGE_ROW_BOTTOM + BAR_GAP + barHeight };
+  const grabX = origin.x + frame.minX + 12;
+  await page.mouse.move(grabX, midY);
+  await page.mouse.down();
+  // Ctrl suspends smart snapping so the box stays in reach.
+  await page.keyboard.down('Control');
+  await page.mouse.move(grabX, midY - (frame.minY - (reach.from + reach.to) / 2), { steps: 8 });
+  await page.mouse.up();
+  await page.keyboard.up('Control');
+  await expect.poll(async () => (await guides(page))?.frame.minY ?? Infinity).toBeLessThan(reach.to - 1);
+  expect((await guides(page))?.frame.minY).toBeGreaterThan(reach.from + 1);
+
+  const overlaps = () =>
+    page.evaluate(() => {
+      interface Rect {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      }
+      interface Node {
+        find: (s: string) => Node[];
+        findOne: (s: string) => Node | undefined;
+        isVisible: () => boolean;
+        getClientRect: () => Rect;
+      }
+      const stage = (window as unknown as { Konva: { stages: Node[] } }).Konva.stages[0];
+      const bar = stage.findOne('.action-bar')?.getClientRect();
+      if (!bar) return null;
+      const badges = ['x-near', 'x-far', 'y-near', 'y-far'].flatMap((name) => stage.find(`.badge-${name}`));
+      return badges
+        .filter((badge) => badge.isVisible())
+        .map((badge) => badge.getClientRect())
+        .filter((b) => b.x < bar.x + bar.width && bar.x < b.x + b.width && b.y < bar.y + bar.height && bar.y < b.y + b.height)
+        .length;
+    });
+  await expect.poll(overlaps).toBe(0);
   expect(pageErrors, pageErrors.map((e) => e.message).join('\n')).toHaveLength(0);
 });

@@ -46,7 +46,7 @@ import { RfidPositionGuide } from "./RfidPositionGuide";
 import { Grid } from "./Grid";
 import { GuideLines } from "./GuideLines";
 import { Ruler, RULER_SIZE, type RulerProps } from "./Ruler";
-import { SelectionGuideLines, SelectionGuides, type SelectionGuidesHandle } from "./SelectionGuides";
+import { BADGE_ROW_PX, SelectionGuideLines, SelectionGuides, type SelectionGuidesHandle } from "./SelectionGuides";
 import { SHAPE_PRIMITIVE_TYPES } from "@zplab/core/registry";
 import type { LeafObject } from "@zplab/core/registry";
 import { isImageRotatable, type ImageProps } from "@zplab/core/registry/image";
@@ -733,6 +733,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       : null;
   // The resize proxy frames the full boxes, while the other selection frames sit on the bars.
   const frameOnBars = !multiResizeBboxDots;
+  // Reserves the badge row under the top ruler, see BADGE_ROW_PX.
+  const barTopInset = selectionGuidesEnabled ? BADGE_ROW_PX : 0;
   const movableBoxBase = toFramePx(movableUnionDots);
   const staticBoxBase = hasSelection ? toFramePx(selectionUnionDots(objects, staticSelIds, frameCtx)) : null;
   // The bar-box pair keeps the frame on the bars mid-drag as well.
@@ -905,6 +907,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
             barHalfRef.current.h,
             stage.width(),
             stage.height(),
+            barTopInset,
           ),
         );
       }
@@ -1047,6 +1050,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     actionBarRef,
     lockedFrameRef,
     getBarBounds: () => selectionBoundsStage(),
+    topInset: barTopInset,
   });
   useSelectionGuides({
     linesRef: selectionGuideLinesRef,
