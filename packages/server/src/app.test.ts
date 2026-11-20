@@ -1,18 +1,24 @@
 import { describe, it, expect } from "vitest";
+import type { Socket } from "node:net";
 import { demoLabel, designFile } from "@zplab/headless/testing";
 import { createApp } from "./app.js";
+import type { Printer } from "./printers.js";
+import { deadPrinter, received, stubPrinter } from "./printerStub.js";
 
 const TOKEN = "test-token";
-const app = createApp({ token: TOKEN, version: "test" });
+const app = createApp({ token: TOKEN, version: "test", printers: new Map() });
 
 type Body = Record<string, unknown>;
 
-async function post(path: string, body: unknown, token: string | null = TOKEN): Promise<{ status: number; json: Body }> {
-  const res = await app.request(`/api/v1${path}`, {
+const send = (to: ReturnType<typeof createApp>, path: string, body: unknown, token: string | null = TOKEN) =>
+  to.request(`/api/v1${path}`, {
     method: "POST",
     headers: { "content-type": "application/json", ...(token === null ? {} : { authorization: `Bearer ${token}` }) },
     body: typeof body === "string" ? body : JSON.stringify(body),
   });
+
+async function post(path: string, body: unknown, token: string | null = TOKEN): Promise<{ status: number; json: Body }> {
+  const res = await send(app, path, body, token);
   return { status: res.status, json: (await res.json()) as Body };
 }
 
@@ -117,7 +123,7 @@ describe("public routes", () => {
 
 describe("the bearer gate", () => {
   it("refuses to build an app without a token", () => {
-    expect(() => createApp({ token: "", version: "test" })).toThrow();
+    expect(() => createApp({ token: "", version: "test", printers: new Map() })).toThrow();
   });
 
   it("gates exactly the routes the document marks with security", async () => {
@@ -271,5 +277,93 @@ describe("rejections keep the ToolError shape", () => {
     const r = await post("/validate-zpl", { zpl: "x".repeat(16 * 1024 * 1024) });
     expect(r.status).toBe(413);
     expect(r.json).toEqual({ ok: false, errors: ["body exceeds 16 MiB"] });
+  });
+});
+
+describe("printer routes", () => {
+  const appFor = (...printers: Printer[]) => createApp({ token: TOKEN, version: "test", printers: new Map(printers.map((p) => [p.id, p])) });
+  const appWithStub = async (serve: (socket: Socket) => void) => appFor(await stubPrinter(serve));
+  const lines = async (res: Response) => (await res.text()).split("\n").filter(Boolean).map((line) => JSON.parse(line) as Body);
+
+  it("lists each printer by id and name without its address", async () => {
+    const res = await appFor({ id: "dock", name: "Dock 3", host: "10.0.0.5", port: 9100 }).request("/api/v1/printers", { headers: { authorization: `Bearer ${TOKEN}` } });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ printers: [{ id: "dock", name: "Dock 3" }] });
+  });
+
+  it("answers an id it does not know with 404 on both routes", async () => {
+    for (const [path, body] of [["/printers/nope/send", { zpl: "^XA^XZ" }], ["/printers/nope/query", { zpl: "~HS", deadlineMs: 1000 }]] as const) {
+      const res = await send(app, path, body);
+      expect(res.status, path).toBe(404);
+      expect(await res.json(), path).toEqual({ ok: false, errors: ["no such printer"] });
+    }
+  });
+
+  it("sends the ZPL to the printer", async () => {
+    let got: Promise<string> | undefined;
+    const to = await appWithStub((socket) => {
+      got = received(socket);
+    });
+    const res = await send(to, "/printers/stub/send", { zpl: "^XA^FDx^FS^XZ" });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ kind: "sent" });
+    expect(await got).toBe("^XA^FDx^FS^XZ");
+  });
+
+  it("reports a printer that refuses the connection on both routes", async () => {
+    const to = appFor(await deadPrinter());
+    expect(await (await send(to, "/printers/stub/send", { zpl: "^XA^XZ" })).json()).toEqual({ kind: "refused" });
+    const res = await send(to, "/printers/stub/query", { zpl: "~HS", deadlineMs: 1000 });
+    expect(res.status).toBe(200);
+    expect(await lines(res)).toEqual([{ kind: "refused" }]);
+  });
+
+  it("streams the reply as JSON lines and ends with the read end", async () => {
+    const to = await appWithStub((socket) => {
+      socket.once("data", () => {
+        socket.write("first ");
+        setTimeout(() => socket.end("second"), 100);
+      });
+    });
+    const res = await send(to, "/printers/stub/query", { zpl: "~HS", deadlineMs: 5000 });
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toBe("application/x-ndjson");
+    const got = await lines(res);
+    expect(got.at(-1)).toEqual({ kind: "done", end: "closed" });
+    expect(got.slice(0, -1).every((line) => line.kind === "text")).toBe(true);
+    expect(got.map((line) => line.text ?? "").join("")).toBe("first second");
+  });
+
+  it("refuses a query without a deadline or with one outside 1 to 600000 ms", async () => {
+    for (const body of [{ zpl: "~HS" }, { zpl: "~HS", deadlineMs: 600_001 }, { zpl: "~HS", deadlineMs: 0 }]) {
+      const res = await send(app, "/printers/nope/query", body);
+      expect(res.status, JSON.stringify(body)).toBe(400);
+      expect(((await res.json()) as { errors: string[] }).errors[0], JSON.stringify(body)).toMatch(/^deadlineMs: /);
+    }
+  });
+
+  it("drops the printer link when the request is cancelled", async () => {
+    const dropped = Promise.withResolvers<boolean>();
+    const to = await appWithStub((socket) => {
+      socket.on("close", dropped.resolve);
+      socket.resume();
+      socket.write("partial");
+    });
+    const res = await send(to, "/printers/stub/query", { zpl: "~HS", deadlineMs: 15_000 });
+    const reader = res.body!.getReader();
+    expect(new TextDecoder().decode((await reader.read()).value)).toBe(`${JSON.stringify({ kind: "text", text: "partial" })}\n`);
+    await reader.cancel();
+    await dropped.promise;
+  });
+
+  it("documents the reply lines and the unknown-printer answer", async () => {
+    const doc = await get("/openapi.json", null);
+    interface Op { post: { parameters: { name: string; in: string }[]; responses: Record<string, { content: Record<string, { schema: unknown }> }> } }
+    const paths = doc.json.paths as Record<string, Op>;
+    const query = paths["/api/v1/printers/{id}/query"]!.post;
+    expect(query.parameters.map((p) => [p.name, p.in])).toEqual([["id", "path"]]);
+    expect(query.responses["200"]!.content["application/x-ndjson"]!.schema).toEqual({ $ref: "#/components/schemas/PrinterReplyLine" });
+    expect(paths["/api/v1/printers/{id}/send"]!.post.responses["200"]!.content["application/json"]!.schema).toEqual({ $ref: "#/components/schemas/PrinterSendResult" });
+    for (const route of ["send", "query"]) expect(paths[`/api/v1/printers/{id}/${route}`]!.post.responses["404"], route).toBeDefined();
   });
 });
