@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
+import { isModalOpen } from '../lib/dom';
 
 /** A surface the panel owns but renders elsewhere, like a portaled menu. Moving into it is no exit. */
 export const SESSION_SURFACE_ATTRS = { 'data-session-surface': true } as const;
@@ -21,8 +22,6 @@ export function useSessionExit(
     const root = panelRef.current;
     if (!root) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
-    // Under a modal's backdrop a held session would swallow every click, so a modal is no exit.
-    const modalOpen = () => document.querySelector('[aria-modal="true"]') !== null;
     const inside = (el: Element) => root.contains(el) || el.closest('[data-session-surface]') !== null;
     // Capture-phase, so the exit lands BEFORE the target's own handlers and
     // chrome/stage clicks act on the unfrozen store in the same click. (A
@@ -30,7 +29,8 @@ export function useSessionExit(
     // the Konva node under the pointer mid-gesture.)
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Element | null;
-      if (!target || inside(target) || modalOpen()) return;
+      // The dialog renders outside the panel root, so a held session would swallow every click in it, Confirm and Cancel included.
+      if (!target || inside(target) || isModalOpen()) return;
       if (!handlersRef.current.onExit()) {
         e.preventDefault();
         e.stopPropagation();
@@ -58,7 +58,7 @@ export function useSessionExit(
         if (!document.hasFocus()) return;
         const active = document.activeElement;
         if (active && inside(active)) return;
-        if (modalOpen()) return;
+        if (isModalOpen()) return;
         handlersRef.current.onExit();
       }, 0);
     };

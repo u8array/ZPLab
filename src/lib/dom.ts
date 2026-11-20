@@ -14,3 +14,8 @@ export function isEditableTarget(el: HTMLElement | null): boolean {
     el.isContentEditable || el.closest("[data-text-surface]") !== null
   );
 }
+
+/** True while a modal dialog is open. */
+export function isModalOpen(): boolean {
+  return document.querySelector('[aria-modal="true"]') !== null;
+}
