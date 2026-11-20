@@ -1,11 +1,9 @@
 // Default export only: the generic build's NAMED `raw` is the raw-input
 // symbology encoder, not the ToRaw encodation API the kernel needs.
 import bwipjs from "bwip-js/generic";
-import { withFootprintMeasurer } from "@zplab/core/lib/footprintProber";
 import {
   barcodeEncodeIssueWith,
   measureBarcodeBoundsWith,
-  measureBarcodeFootprintDotsWith,
   resolveForMeasure,
   type BwipEngine,
 } from "@zplab/core/lib/barcodeDims";
@@ -17,7 +15,6 @@ import type { LabelConfig } from "@zplab/core/types/LabelConfig";
 
 const engine: BwipEngine = bwipjs as unknown as BwipEngine;
 
-// Emit/preflight binding context; import measures its own resolved clones.
 let binding: { variables: readonly Variable[]; clock: ClockResolveCtx } | null = null;
 
 /** Marker content resolved to its defaults, so a box measures what prints
@@ -26,21 +23,7 @@ export function resolveForReport<T extends LabelObject>(o: T): T {
   return binding ? resolveForMeasure(o, binding.variables, binding.clock) : o;
 }
 
-const measure = (o: LabelObject, dpmm?: number) => {
-  if (isGroup(o)) return null;
-  const resolved = resolveForReport(o);
-  // The 8 only backs the 1D z-justify callers, whose dot width is dpmm-invariant.
-  // Fixed-physical types (maxicode) scale with dpmm, so any caller reaching them
-  // must pass a density.
-  return measureBarcodeFootprintDotsWith(engine, resolved as LeafObject, dpmm ?? 8);
-};
-
-export function withHeadlessMeasurer<T>(fn: () => T): T {
-  return withFootprintMeasurer(measure, fn);
-}
-
-/** Full measured-bounds record for the geometry report, resolved against the
- *  active binding like `measure`. */
+/** Measured-bounds record for the geometry report. */
 export function measureBoundsEntry(o: LabelObject, dpmm: number) {
   if (isGroup(o)) return null;
   return measureBarcodeBoundsWith(engine, resolveForReport(o) as LeafObject, dpmm);
@@ -53,8 +36,7 @@ export function barcodeEncodeIssueResolved(resolved: LabelObject, dpmm: number):
   return barcodeEncodeIssueWith(engine, resolved as LeafObject, dpmm);
 }
 
-/** Run `fn` with markers resolving against the design's own bindings, the
- *  headless twin of the app's store-bound resolution. */
+/** Runs `fn` with markers resolved against the design's bindings. */
 export function withFootprintBinding<T>(
   label: Pick<LabelConfig, "secondaryClockOffset" | "tertiaryClockOffset">,
   variables: readonly Variable[],
@@ -63,8 +45,7 @@ export function withFootprintBinding<T>(
   const prev = binding;
   binding = { variables, clock: clockCtxFromLabel(label) };
   try {
-    // Re-entering the measurer drops the props-keyed memo, so a nested binding measures its own width.
-    return withHeadlessMeasurer(fn);
+    return fn();
   } finally {
     binding = prev;
   }

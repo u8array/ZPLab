@@ -3,8 +3,9 @@ import { CONTROL_BYTES_RE } from './binaryText';
 import { unsafeRawFieldSpans } from './zplParser/helpers';
 import { hostCommandTokens, isFieldHostCommand, splitHostCommands, type HostCommandPlacement } from './hostCommands';
 import { rewriteRawFieldSpans } from './zplParser/decoders/gfa';
-import { getEntry, loneBindFdTransform, usesPlainCode128Escape, BARCODE_1D_TYPES } from '../registry';
-import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES, printerAnchoredX } from '../registry/zplHelpers';
+import { getEntry, loneBindFdTransform, usesPlainCode128Escape } from '../registry';
+import { fdField, stripZplCommandChars, GRAPHIC_ANCHOR_TYPES } from '../registry/zplHelpers';
+import { printerAnchoredX } from './printerAnchor';
 import { stripZplParamChars } from './zplParams';
 import { isRecallableFormatPath, storageKey, storageRefMatchesPath } from './storagePath';
 import { formatDelivery, recallOnlyPath } from './storedFormat';
@@ -123,7 +124,7 @@ export function planTemplateHeader(
   const pickedEmbedChar =
     templatePayloads.length > 0 ? pickEmbedChar(templatePayloads) : '#';
   const headerLines: string[] = [];
-  const emitCtx: ZplEmitContext = { label, variables };
+  const emitCtx: ZplEmitContext = { label, variables, anchoredX: (o) => printerAnchoredX(o as LabelObject, label, variables) };
   if (plainSharedFns.size > 0) emitCtx.rawFdFns = plainSharedFns;
   if (bareFnSlots && bareFnSlots.size > 0) emitCtx.bareFnSlots = bareFnSlots;
 
@@ -713,8 +714,8 @@ function emitPageBlock(
   }
 
   // One shared emit context so a picked ^FE/^FC covers dirty and new fields alike.
-  const dirtyShifted = shiftIntoFrame(dirtyLeaves, overlay.frame, label);
-  const newShifted = shiftIntoFrame(newLeaves, overlay.frame, label);
+  const dirtyShifted = shiftIntoFrame(dirtyLeaves, overlay.frame, label, variables);
+  const newShifted = shiftIntoFrame(newLeaves, overlay.frame, label, variables);
   const { headerLines, emitCtx } = planTemplateHeader(
     [...dirtyShifted, ...newShifted],
     label,
@@ -863,7 +864,7 @@ function planRecalls(
   // transform: an excluded or home-dropped leaf or a rotated QR shipped as
   // ^GFA would stamp a foreign encoding onto the surviving co-consumer.
   const shifted = shiftObjectsByHome(
-    objects, label.labelHomeX ?? 0, label.labelHomeY ?? 0, label.labelTop ?? 0, label,
+    objects, label.labelHomeX ?? 0, label.labelHomeY ?? 0, label.labelTop ?? 0, label, variables,
   );
   const leaves = exportableLeaves(shifted).filter(
     (o) => !(qrPrintsAsGraphic(o) && resolveContentPreview(getObjectStringContent(o) ?? '', variables)),
@@ -960,8 +961,8 @@ export function generateBatchZpl(
 }
 
 /** Home-relative to a parsed ^LH/^LT frame, not the label's own home/top (see OverlayFrame). */
-export function shiftIntoFrame(objects: LabelObject[], frame: OverlayFrame | undefined, label: PageLabel): LabelObject[] {
-  return frame ? shiftObjectsByHome(objects, frame.homeX, frame.homeY, frame.top, label) : objects;
+export function shiftIntoFrame(objects: LabelObject[], frame: OverlayFrame | undefined, label: PageLabel, variables: readonly Variable[]): LabelObject[] {
+  return frame ? shiftObjectsByHome(objects, frame.homeX, frame.homeY, frame.top, label, variables) : objects;
 }
 
 /** Subtract label home/top from each object so emit matches the editor, the
@@ -974,6 +975,7 @@ function shiftObjectsByHome(
   homeY: number,
   top: number,
   label: PageLabel,
+  variables: readonly Variable[],
 ): LabelObject[] {
   if (homeX === 0 && homeY === 0 && top === 0) return objects;
   const ctx: ObjectBoundsCtx = { label };
@@ -1002,10 +1004,8 @@ function shiftObjectsByHome(
       return anchorX < 0 || anchorY < 0 ? [] : [{ ...obj, x, y }];
     }
     // Gated 1D-R emits its right anchor (x+w); drop-test that, like graphics.
-    if (BARCODE_1D_TYPES.has(obj.type)) {
-      const ax = printerAnchoredX(obj, label);
-      if (ax !== null) return ax - homeX < 0 || y < 0 ? [] : [{ ...obj, x, y }];
-    }
+    const ax = printerAnchoredX(obj, label, variables);
+    if (ax !== null) return ax - homeX < 0 || y < 0 ? [] : [{ ...obj, x, y }];
     // ^FT text emits at a baseline, so for it this top-left check is approximate.
     return x < 0 || y < 0 ? [] : [{ ...obj, x, y }];
   };
@@ -1025,7 +1025,7 @@ export function planFieldEmission(
   const homeX = label.labelHomeX ?? 0;
   const homeY = label.labelHomeY ?? 0;
   const top = label.labelTop ?? 0;
-  const shifted = shiftObjectsByHome(objects, homeX, homeY, top, label);
+  const shifted = shiftObjectsByHome(objects, homeX, homeY, top, label, variables);
 
   const { headerLines, emitCtx } = planTemplateHeader(shifted, label, variables, { homeX, homeY, top }, bareFnSlots);
 

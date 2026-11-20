@@ -1,5 +1,6 @@
 import type { Variable } from './Variable';
 import type { LabelConfig } from './LabelConfig';
+import type { LabelObjectBase } from './LabelObject';
 
 export interface TransformContext {
   /** Konva scaleX from the transform end. */
@@ -38,6 +39,8 @@ export interface ZplEmitContext {
    *  for them or the template data wins, for placed fields and ^FE embeds
    *  alike (ZD230-measured, #407; Labelary cannot referee the embed case). */
   bareFnSlots?: ReadonlySet<number>;
+  /** The generator supplies printerAnchoredX here because the measuring kernel imports the registry. */
+  anchoredX?: (obj: LabelObjectBase & { type: string }) => number | null;
 }
 
 /** The prop slice HRI formatters may read. */

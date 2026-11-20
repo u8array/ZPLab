@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { prepareSourceApply, type SourceDocumentState } from "./zplSourceEdit";
 import { generateMultiPageZPL } from "./zplGenerator";
 import { importZplText } from "./zplImportService";
+import { ObjectRegistry } from "../registry";
 import type { LabelConfig } from "../types/LabelConfig";
 import type { LabelObject, Page } from "../types/Group";
 import type { Variable } from "../types/Variable";
@@ -299,6 +300,21 @@ describe("hidden objects across a source apply", () => {
       expect((back as { children: LabelObject[] }).children.map(content)).toEqual(["c1", "c2"]);
       expect(plan.loss.excludedLost).toBe(0);
     }
+  });
+
+  it("are recognised when an older export reprints a right-justified barcode and the import renames its variable", () => {
+    const gated: LabelConfig = { ...label, emit1dZJustify: true };
+    const variables: Variable[] = [{ id: "v1", name: "v", fnNumber: 1, defaultValue: "123" }];
+    const code = (over: Over = {}) =>
+      leaf("h", { type: "code128", x: 300, y: 50, positionType: "FT", fieldJustify: "R", props: { ...ObjectRegistry.code128.defaultProps, content: "«v»" }, ...over });
+    const pages: Page[] = [{ objects: [leaf("a"), code({ includeInExport: false })] }];
+    const plan = prepareSourceApply({
+      text: generateMultiPageZPL(gated, [{ objects: [leaf("a"), code()] }], variables),
+      baseline: generateMultiPageZPL(gated, pages, variables),
+      current: { ...current(pages, variables), label: gated },
+    });
+    expect(plan.ok && plan.next.pages[0]?.objects.map((o) => o.type)).toEqual(["text", "code128"]);
+    expect(plan.ok && plan.next.variables.map((v) => v.name)).toEqual(["field_1"]);
   });
 
   it("leave a field the user typed alone, even when its bytes equal a hidden object's", () => {

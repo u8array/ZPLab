@@ -13,9 +13,6 @@ import App from './App.tsx'
 import { useLabelStore } from './store/labelStore'
 import { mcpServerStatus } from './lib/mcpServer'
 import { initMcpLifecycle } from './lib/mcpLifecycle'
-import { initFootprintMeasurer } from './lib/footprintMeasurer'
-
-initFootprintMeasurer();
 
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('Root element not found');

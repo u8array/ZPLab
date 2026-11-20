@@ -28,7 +28,6 @@ const UNBRANDABLE_FILES = [
   "../components/Canvas/LabelCanvas.tsx",
   "../components/Properties/PropertiesPanel.tsx",
   "../components/Properties/UnitNumberInput.tsx",
-  "../lib/footprintMeasurer.ts",
   "./slices/objectSlice.ts",
 ];
 

@@ -10,11 +10,9 @@ import {
   serializeDesign,
 } from "@zplab/core/lib/designFile";
 import { applyDesignOps, captureLoss, nodesById, type DesignOp } from "@zplab/core/lib/designOps";
-import { withFootprintBinding } from "./footprint.js";
 import { gfaCacheIsOnlyCopy, type ImageProps } from "@zplab/core/registry/image";
 import type { Page } from "@zplab/core/types/Group";
-import { measureFootprintDots } from "@zplab/core/lib/footprintProber";
-import { effectiveDpmm } from "@zplab/core/types/LabelConfig";
+import { footprintDots } from "@zplab/core/lib/printerAnchor";
 
 
 export const patchOpSchema: z.ZodType<DesignOp> = z.discriminatedUnion("op", [
@@ -72,12 +70,7 @@ export function patchDesign(designFile: unknown, operations: readonly PatchOp[])
   const applied = applyDesignOps(
     { label, pages: parsed.value.pages, variables: parsed.value.variables, columnMapping: parsed.value.columnMapping },
     operations,
-    // Bound so the repin measures resolved defaults, not marker text. The editor binds the preview row instead.
-    (object, ctx) =>
-      withFootprintBinding(label, ctx.variables, () => {
-        const fp = measureFootprintDots(object, effectiveDpmm(ctx.label));
-        return fp ? { w: fp.w, h: fp.h } : null;
-      }),
+    (object, ctx) => footprintDots(object, ctx.label, ctx.variables),
   );
   if (!applied.ok) return { ok: false, errors: applied.errors };
   const { doc, touched, edited, assignedIds } = applied;

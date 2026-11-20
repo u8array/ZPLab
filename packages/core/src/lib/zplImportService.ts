@@ -13,7 +13,7 @@ import { releaseStaged, stageImages, type CachedImage } from "./imageCache";
 import { newId } from "./ids";
 import type { ImportLossCause } from "../catalog";
 import { renameTemplateMarkers } from "./fnTemplate";
-import { PER_FORMAT_ZPL_FIELDS, effectiveDpmm, type CustomFontMapping, type JmDensity, type LabelConfig } from "../types/LabelConfig";
+import { PER_FORMAT_ZPL_FIELDS, type CustomFontMapping, type JmDensity, type LabelConfig } from "../types/LabelConfig";
 import { isSetupDownload, isSetupPath, SETUP_UPLOAD_MAX_CHARS, type PrinterProfile, type SetupGraphic } from "../types/PrinterProfile";
 import { exportableLeaves, type LabelObject, type Page, isGroup } from "../types/Group";
 import { nextFreeFnNumber, uniqueVariableName, type ColumnMapping, type Variable } from "../types/Variable";
@@ -21,9 +21,7 @@ import type { DatasetInput } from "../types/DataSource";
 import { BARCODE_1D_TYPES } from "../registry";
 import { setupGraphicFits, storedGraphicShips, uploadKey, type ImageProps } from "../registry/image";
 import { verifiedZJustifyCombo } from "../registry/zplHelpers";
-import { resolveForMeasure } from "./barcodeDims";
-import { clockCtxFromLabel } from "./variableBinding";
-import { measureFootprintDots } from "./footprintProber";
+import { footprintDots } from "./printerAnchor";
 
 /** The closer takes the prefix a ^CC left in force, and the head offsets move with the wrapper. */
 function wrapBareOverlay(overlay: BlockOverlay): BlockOverlay {
@@ -229,16 +227,9 @@ function assembleImport(r: ParsedZPL, dpmm: number): ZplImportResult {
     }
     // ^FO/^FT + rotation N (ZD230-verified mirror); rotated z needs the
     // axis-aware shift first. Text unshifted (import measurement fragile).
-    // Markers resolve against the IMPORTED bindings (defaults, no dataset row)
-    // so the shift can't depend on whatever document happens to be open.
     for (const o of page.objects) {
       if (!BARCODE_1D_TYPES.has(o.type) || !verifiedZJustifyCombo(o)) continue;
-      const resolved = resolveForMeasure(o, variables, clockCtxFromLabel(page.labelConfig));
-      // Sidecar density wins; under ^JMB the stream dots live halved.
-      const fp = measureFootprintDots(
-        resolved,
-        effectiveDpmm({ dpmm: r.labelConfig.dpmm ?? dpmm, jmDensity: page.labelConfig.jmDensity }),
-      );
+      const fp = footprintDots(o, { ...page.labelConfig, dpmm: r.labelConfig.dpmm ?? dpmm }, variables);
       if (fp) {
         o.x -= fp.w;
         zNormalized = true;

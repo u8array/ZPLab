@@ -1,7 +1,7 @@
 import type { LeafObject } from "../registry";
-import { BARCODE_1D_TYPES } from "../registry";
-import { GRAPHIC_ANCHOR_TYPES, graphicAnchorCoords, printerAnchoredX, textZplAnchorCoords } from "../registry/zplHelpers";
+import { GRAPHIC_ANCHOR_TYPES, graphicAnchorCoords, textZplAnchorCoords } from "../registry/zplHelpers";
 import { objectBoundsDots, type BoundingBoxDots, type ObjectBoundsCtx } from "./objectBounds";
+import { printerAnchoredX } from "./printerAnchor";
 
 /** The ^FO/^FT origin (dots) the generator actually emits for this leaf, i.e.
  *  the coordinate the printer sees. The single source the off-label preflight
@@ -27,6 +27,6 @@ export function emittedAnchorDots(
     const b = box ?? objectBoundsDots(obj, ctx);
     return graphicAnchorCoords(b.x, b.y, b.width, b.height, obj.positionType, obj.fieldJustify);
   }
-  const ax = BARCODE_1D_TYPES.has(obj.type) ? printerAnchoredX(obj, ctx.label) : null;
+  const ax = printerAnchoredX(obj, ctx.label, ctx.variables ?? []);
   return { x: ax ?? obj.x, y: obj.y };
 }

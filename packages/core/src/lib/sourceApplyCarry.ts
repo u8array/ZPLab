@@ -88,7 +88,7 @@ function neighbours(ctx: Ctx, page: Page, offset: number): { inside?: Parsed; be
 
 /** One object's comment-free bytes as the model emits them, the ^LH/^LT of `frame` unfolded. */
 function canonicalBytes(ctx: Ctx, page: Page, object: LabelObject, variables: readonly Variable[], frame?: OverlayFrame): string | undefined {
-  const [unframed] = shiftIntoFrame([object], frame, pageLabelConfig(ctx.importedLabel, page));
+  const [unframed] = shiftIntoFrame([object], frame, pageLabelConfig(ctx.importedLabel, page), variables);
   if (!unframed) return undefined;
   const { text, spans } = generateMultiPageZplWithMap(ctx.importedLabel, [{ ...page, overlay: undefined, objects: [unframed] }], variables);
   const span = spans[0];

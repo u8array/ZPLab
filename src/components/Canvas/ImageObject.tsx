@@ -18,9 +18,9 @@ import { isAxisSwapped, objectRotation } from "@zplab/core/registry/rotation";
 type ImageLabelObject = Extract<LabelObject, { type: "image" }>;
 type Props = Omit<KonvaObjectProps, "obj"> & { obj: ImageLabelObject };
 
-/** Keyed on the props object (like footprintProber's caches): entries die with
- *  their design instead of pinning megabyte payload strings for the process
- *  lifetime, and the canvas on screen can never be evicted from under Konva. */
+/** Keyed on the props object: entries die with their design, so payload strings are not pinned
+ *  for the process lifetime. A size-bounded cache could evict the canvas Konva is drawing,
+ *  a WeakMap cannot because the live object holds the key. */
 const gfaPreviewCache = new WeakMap<object, HTMLCanvasElement | null>();
 
 /** Decode-and-draw for an image the store cannot supply. Memoised per props
