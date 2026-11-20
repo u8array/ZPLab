@@ -39,7 +39,7 @@ import { copyText } from "../../lib/clipboard";
 import { tryFinally } from "../../lib/tryFinally";
 import { safeAreaRectDots } from "../../lib/safeArea";
 import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "../../lib/measuredBoundsCache";
-import { isEditableTarget } from "../../lib/dom";
+import { isEditableTarget, isModalOpen } from "../../lib/dom";
 import { KonvaObject } from "./KonvaObject";
 import { PreflightOverlay } from "./PreflightOverlay";
 import { RfidPositionGuide } from "./RfidPositionGuide";
@@ -310,7 +310,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       return;
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") endRfidPositionPick();
+      if (e.key === "Escape" && !e.defaultPrevented) endRfidPositionPick();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -401,7 +401,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // on purpose: Escape must not silently discard a source-edit buffer.
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== 'Escape') return;
+      if (e.code !== 'Escape' || e.defaultPrevented) return;
       if (!selectPreviewLocksEditor(useLabelStore.getState())) return;
       e.preventDefault();
       useLabelStore.getState().exitPreviewMode();
@@ -414,7 +414,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const onKeyDown = (e: KeyboardEvent) => {
       const enter = e.key === "Enter";
       if (!enter && e.code !== "Delete" && e.code !== "Backspace") return;
-      if (isEditableTarget(e.target as HTMLElement)) return;
+      if (isModalOpen() || isEditableTarget(e.target as HTMLElement)) return;
       // The frozen model must not change under the preview snapshot or an
       // open source buffer.
       if (selectEditorFrozen(useLabelStore.getState())) return;
@@ -424,7 +424,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       if (enter) {
         if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
         if (e.target !== document.body && e.target !== containerRef.current) return;
-        if (dragActiveRef.current || document.querySelector('[aria-modal="true"], [role="menu"]')) return;
+        if (dragActiveRef.current || document.querySelector('[role="menu"]')) return;
         if (ids.length === 1 && ids[0] && openEditorRef.current(ids[0])) e.preventDefault();
         return;
       }
@@ -441,7 +441,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     const ARROW = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
     const onKeyDown = (e: KeyboardEvent) => {
       if (!ARROW.has(e.code)) return;
-      if (isEditableTarget(e.target as HTMLElement)) return;
+      if (isModalOpen() || isEditableTarget(e.target as HTMLElement)) return;
 
       const state = useLabelStore.getState();
       if (selectEditorFrozen(state)) return;

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen, selectRenderPages, selectRenderPageIndex } from "../store/labelStore";
 import { nextRotation } from "../components/Canvas/rotationGeometry";
-import { isEditableTarget } from "../lib/dom";
+import { isEditableTarget, isModalOpen } from "../lib/dom";
 import { shortcutLetter } from "../lib/kbd";
 
 export function useGlobalShortcuts() {
@@ -18,6 +18,8 @@ export function useGlobalShortcuts() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (isModalOpen()) return;
+
       const mod = e.metaKey || e.ctrlKey;
 
       // Editable targets keep their native undo/redo, copy/paste and
