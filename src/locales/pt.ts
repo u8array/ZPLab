@@ -947,6 +947,8 @@ const pt = {
       keepExportMetadataHint: 'Adiciona comentários ^FX com tamanho da etiqueta, densidade e detalhes do QR, para que o ZPLab reabra o arquivo com exatidão; as impressoras os ignoram. Desativado: ZPL simples, também no painel ZPL.',
       smartSnap: 'Encaixe inteligente',
       smartSnapHint: 'Alinhar com outros objetos ao arrastar. Segure Ctrl/Cmd para ignorar.',
+      selectionGuides: 'Guias de seleção',
+      selectionGuidesHint: 'Estender as bordas da seleção até as réguas e mostrar suas posições.',
       resetHeading: 'Repor',
       resetHint: 'Restaura as preferências padrão do app. O seu design e idioma são mantidos.',
       reset: 'Repor definições',

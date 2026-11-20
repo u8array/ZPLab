@@ -947,6 +947,8 @@ const sk = {
       keepExportMetadataHint: 'Pridáva komentáre ^FX s veľkosťou etikety, hustotou a údajmi QR, aby ZPLab presne znova otvoril súbor; tlačiarne ich ignorujú. Vypnuté: čisté ZPL, aj v paneli ZPL.',
       smartSnap: 'Inteligentné prichytávanie',
       smartSnapHint: 'Zarovnanie na ostatné objekty pri presúvaní. Podržte Ctrl/Cmd pre preskočenie.',
+      selectionGuides: 'Vodidlá výberu',
+      selectionGuidesHint: 'Predĺžiť hrany výberu k pravítkam a zobraziť ich polohy.',
       resetHeading: 'Resetovanie',
       resetHint: 'Obnoví predvolené nastavenia aplikácie. Váš dizajn a jazyk zostanú zachované.',
       reset: 'Resetovať nastavenia',

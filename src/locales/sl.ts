@@ -947,6 +947,8 @@ const sl = {
       keepExportMetadataHint: 'Doda komentarje ^FX z velikostjo nalepke, gostoto in podrobnostmi QR, da ZPLab datoteko znova odpre povsem natančno; tiskalniki jih prezrejo. Izklopljeno: čist ZPL, tudi v podoknu ZPL.',
       smartSnap: 'Pametno pritrjevanje',
       smartSnapHint: 'Poravnaj z drugimi objekti med vlečenjem. Drži Ctrl/Cmd za obhod.',
+      selectionGuides: 'Vodila izbora',
+      selectionGuidesHint: 'Podaljšaj robove izbora do ravnil in prikaži njihove položaje.',
       resetHeading: 'Ponastavitev',
       resetHint: 'Obnovi privzete nastavitve aplikacije. Vaš dizajn in jezik sta ohranjena.',
       reset: 'Ponastavi nastavitve',

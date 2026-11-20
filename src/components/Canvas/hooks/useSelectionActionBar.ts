@@ -1,14 +1,14 @@
 import { useLayoutEffect } from "react";
 import type Konva from "konva";
 import { RULER_SIZE } from "../Ruler";
+import type { Bounds } from "../nodeRect";
 
 export const ACTION_BAR_GAP_PX = 22;
 
-export interface BarBounds { minX: number; minY: number; maxX: number; maxY: number }
 /** Shared action-bar placement: centered over the selection, clamped to the
  *  canvas, flipped below when it would clip the ruler. */
 export function actionBarPosition(
-  sel: BarBounds,
+  sel: Bounds,
   halfW: number,
   halfH: number,
   stageWidth: number,
@@ -42,7 +42,7 @@ interface Options {
   lockedFrameRef: React.RefObject<Konva.Group | null>;
   /** Selection bounds in stage px from objectBoundsDots (the optical box, incl.
    *  the ^GD diagonal overhang) so the rest position matches the drag center. */
-  getBarBounds: () => BarBounds | null;
+  getBarBounds: () => Bounds | null;
 }
 
 /**

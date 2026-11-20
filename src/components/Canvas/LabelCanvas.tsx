@@ -45,7 +45,8 @@ import { PreflightOverlay } from "./PreflightOverlay";
 import { RfidPositionGuide } from "./RfidPositionGuide";
 import { Grid } from "./Grid";
 import { GuideLines } from "./GuideLines";
-import { Ruler, RULER_SIZE } from "./Ruler";
+import { Ruler, RULER_SIZE, type RulerProps } from "./Ruler";
+import { SelectionGuides, type SelectionGuidesHandle } from "./SelectionGuides";
 import { SHAPE_PRIMITIVE_TYPES } from "@zplab/core/registry";
 import type { LeafObject } from "@zplab/core/registry";
 import { isImageRotatable, type ImageProps } from "@zplab/core/registry/image";
@@ -70,7 +71,9 @@ import {
   type ViewRotation,
 } from "./rotationGeometry";
 import { useAltClickCycle } from "./hooks/useAltClickCycle";
-import { useSelectionActionBar, actionBarPosition, type BarBounds } from "./hooks/useSelectionActionBar";
+import { useSelectionActionBar, actionBarPosition } from "./hooks/useSelectionActionBar";
+import type { Bounds } from "./nodeRect";
+import { useSelectionGuides } from "./hooks/useSelectionGuides";
 import { FloatingCanvasButton, RADIUS as BUTTON_RADIUS, type ButtonTone } from "./FloatingCanvasButton";
 import { ROTATE_ICON, TRASH_ICON, LOCK_ICON, UNLOCK_ICON, GROUP_ICON, UNGROUP_ICON, LINE_ICON, BOX_ICON } from "./canvasIcons";
 import { isShapeToggleable, canToggleShapeMode, oppositeShapeMode, toggleShapeMode } from "../../lib/lineBoxConvert";
@@ -127,6 +130,9 @@ function loadHatchTile(): Promise<HTMLImageElement> {
 }
 
 interface RectPx { x: number; y: number; width: number; height: number }
+function boundsOf(r: RectPx): Bounds {
+  return { minX: r.x, minY: r.y, maxX: r.x + r.width, maxY: r.y + r.height };
+}
 /** Union of two optional rects (px); null only when both are null. */
 function unionPx(a: RectPx | null, b: RectPx | null): RectPx | null {
   if (!a) return b;
@@ -148,6 +154,7 @@ interface Props {
   snapEnabled: boolean;
   onSnapToggle: () => void;
   smartSnapEnabled: boolean;
+  selectionGuidesEnabled: boolean;
   snapSizeMm: number;
   onSnapSizeChange: (mm: number) => void;
   zoom: number;
@@ -180,6 +187,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   snapEnabled,
   onSnapToggle,
   smartSnapEnabled,
+  selectionGuidesEnabled,
   snapSizeMm,
   onSnapSizeChange,
   zoom,
@@ -194,6 +202,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // Action-bar chrome refs live here so the drag onDelta can translate the bar
   // live (its own beforeDraw lags for controller-moved siblings).
   const actionBarRef = useRef<Konva.Group>(null);
+  const selectionGuidesRef = useRef<SelectionGuidesHandle>(null);
   // The view-rotation / label group. The action bar lives outside it (stage
   // coords), so its rest bounds map through this group's transform when rotated;
   // image export also captures it to exclude the transformer / action-bar chrome.
@@ -302,9 +311,11 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   }, [pickingRfidPosition, editorFrozen, endRfidPositionPick]);
   const exitPreviewMode = useLabelStore((s) => s.exitPreviewMode);
   // Entering preview unmounts the dragged node, so a mid-drag dragend may never
-  // fire; clear the flag so off-label marks aren't stranded hidden afterwards.
+  // fire; clear the flags so off-label marks and the selection chrome aren't stranded.
   useEffect(() => {
-    if (editorFrozen) setIsDragging(false);
+    if (!editorFrozen) return;
+    setIsDragging(false);
+    dragActiveRef.current = false;
   }, [editorFrozen]);
 
   // Pre-decode so toggling preview on doesn't flash a frame of empty space.
@@ -564,6 +575,19 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const rulerWidthMm = axisSwapped ? label.heightMm : effectiveWidthMm;
   const rulerHeightMm = axisSwapped ? effectiveWidthMm : label.heightMm;
   const rulerReversal = axisReversal(viewRotation);
+  const rulerProps: Required<RulerProps> = {
+    labelOffsetX: visualLabelX,
+    labelOffsetY: visualLabelY,
+    labelWidthMm: rulerWidthMm,
+    labelHeightMm: rulerHeightMm,
+    scale,
+    canvasWidth: containerSize.width,
+    canvasHeight: containerSize.height,
+    unit,
+    colors,
+    horizontalReversed: rulerReversal.horizontal,
+    verticalReversed: rulerReversal.vertical,
+  };
 
   // Safe-area guide rect in screen px (dots scaled, object-offset aligned).
   const safeAreaDots = safeAreaRectDots(label);
@@ -671,6 +695,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     movableSelIds.length > 1 && staticSelIds.length === 0 && !editorFrozen
       ? movableUnionDots
       : null;
+  // The resize proxy frames the full boxes, while the other selection frames sit on the bars.
+  const frameOnBars = !multiResizeBboxDots;
   const movableBoxBase = toFramePx(movableUnionDots);
   const staticBoxBase = hasSelection ? toFramePx(selectionUnionDots(objects, staticSelIds, frameCtx)) : null;
   // The bar-box pair keeps the frame on the bars mid-drag as well.
@@ -725,11 +751,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       if (fixed) staticGroupRects.push(fixed);
     }
   }
-  // Action-bar bounds: live client-rects during a transformer resize (model
-  // commits only at the end), else optical model bounds (matches the drag center).
-  // Map group-local bounds into stage coords (identity when unrotated). Single
-  // source for the rest position (getBarBounds) and on-drag position (onDelta).
-  const barBoundsToStage = (b: BarBounds): BarBounds => {
+  // Maps group-local bounds into stage coords. Without rotation the map is the identity.
+  const boundsToStage = (b: Bounds): Bounds => {
     const rg = rotationGroupRef.current;
     if (!rg || viewRotation === 0) return b;
     const tf = rg.getAbsoluteTransform();
@@ -749,13 +772,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     };
   };
 
-  const getBarBounds = (): BarBounds | null => {
+  // Live client-rects during a transformer resize, since not every resize writes the model per tick.
+  // Otherwise the model bounds apply, which match the drag center.
+  const selectionBoundsStage = (boxOf?: BoxOf): Bounds | null => {
     const stage = stageRef.current;
     if (transformActiveRef.current && stage) {
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-      for (const id of visibleSelIds) {
-        const node = stage.findOne(`#${id}`);
-        if (!node) continue;
+      // The transformer frames its own nodes, so a line member's rect sits off that frame.
+      for (const node of transformerRef.current?.nodes() ?? []) {
         const r = node.getClientRect({ relativeTo: stage, skipStroke: true });
         minX = Math.min(minX, r.x);
         minY = Math.min(minY, r.y);
@@ -764,10 +788,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       }
       return minX === Infinity ? null : { minX, minY, maxX, maxY };
     }
-    const u = toFramePx(selectionUnionDots(getCurrentObjects(), visibleSelIds, frameCtx));
-    return u
-      ? barBoundsToStage({ minX: u.x, minY: u.y, maxX: u.x + u.width, maxY: u.y + u.height })
-      : null;
+    const u = toFramePx(selectionUnionDots(getCurrentObjects(), visibleSelIds, frameCtx, boxOf));
+    return u ? boundsToStage(boundsOf(u)) : null;
   };
   useLayoutEffect(() => {
     const r = selectionFrameRef.current;
@@ -797,7 +819,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     smartSnapEnabled,
     snapBypassRef,
     setGuides: setDragGuides,
-    onDelta: (dx, dy) => {
+    onDelta: (dx, dy, ended) => {
       // Live union: movable part shifted by the drag, locked part where it sits.
       const moved = movableBoxBase && {
         x: movableBoxBase.x + dx,
@@ -818,6 +840,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         selectionFrameRef.current?.position({ x: liveFrame.x, y: liveFrame.y });
         selectionFrameRef.current?.size({ width: liveFrame.width, height: liveFrame.height });
       }
+      // The end tick resets to the pre-drag frame. The rest path then places guides and bar from the model.
+      const tracking = dragActiveRef.current && !ended;
+      const shown = frameOnBars ? liveFrame : live;
+      if (shown && tracking) selectionGuidesRef.current?.show(boundsToStage(boundsOf(shown)));
       // Proxy follows the drag so the transformer chrome tracks live (the
       // controller already forceUpdates the transformer each tick).
       if (multiResizeBboxDots && moved) {
@@ -829,7 +855,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       // a new object renders it only after selectObject (absent at drag start).
       const bar = actionBarRef.current;
       const stage = stageRef.current;
-      if (bar && stage && dragActiveRef.current && (dx !== 0 || dy !== 0)) {
+      if (bar && stage && tracking) {
         if (barHalfRef.current.h === 0) {
           const r = bar.getClientRect({ relativeTo: stage, skipShadow: true });
           barHalfRef.current = { w: r.width / 2, h: r.height / 2 };
@@ -838,12 +864,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
           actionBarPosition(
             // `live` is group-local (the drag delta is in model space); map it to
             // stage coords so the bar tracks the rotated selection on-drag too.
-            barBoundsToStage({
-              minX: live.x,
-              minY: live.y,
-              maxX: live.x + live.width,
-              maxY: live.y + live.height,
-            }),
+            boundsToStage(boundsOf(live)),
             barHalfRef.current.w,
             barHalfRef.current.h,
             stage.width(),
@@ -988,7 +1009,13 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     dragActiveRef,
     actionBarRef,
     lockedFrameRef,
-    getBarBounds,
+    getBarBounds: () => selectionBoundsStage(),
+  });
+  useSelectionGuides({
+    stageRef,
+    guidesRef: selectionGuidesRef,
+    dragActiveRef,
+    getBounds: () => selectionBoundsStage(frameOnBars ? barBoxDots : undefined),
   });
 
   const handleRotateStep = () => {
@@ -1884,19 +1911,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
 
           {/* Ruler tracks visual edges; labels reverse when axis flips. */}
           <Layer listening={false}>
-            <Ruler
-              labelOffsetX={visualLabelX}
-              labelOffsetY={visualLabelY}
-              labelWidthMm={rulerWidthMm}
-              labelHeightMm={rulerHeightMm}
-              scale={scale}
-              canvasWidth={containerSize.width}
-              canvasHeight={containerSize.height}
-              unit={unit}
-              colors={colors}
-              horizontalReversed={rulerReversal.horizontal}
-              verticalReversed={rulerReversal.vertical}
-            />
+            <Ruler {...rulerProps} />
+            {selectionGuidesEnabled && !editorFrozen && (
+              <SelectionGuides ref={selectionGuidesRef} {...rulerProps} dpmm={effDpmm} />
+            )}
           </Layer>
         </Stage>
       )}

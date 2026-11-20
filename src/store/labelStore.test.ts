@@ -1817,6 +1817,20 @@ describe('migrateLegacy — v13→v14 smartSnapEnabled', () => {
   });
 });
 
+describe('migrateLegacy — v19→v20 selectionGuidesEnabled', () => {
+  it('backfills selectionGuidesEnabled=true into a session that predates the flag', () => {
+    const persisted = { canvasSettings: { showGrid: false, smartSnapEnabled: false, zoom: 1, unit: 'mm' } };
+    const migrated = migrateLegacy(persisted, 19) as { canvasSettings: Record<string, unknown> };
+    expect(migrated.canvasSettings).toEqual({ ...persisted.canvasSettings, selectionGuidesEnabled: true });
+  });
+
+  it('preserves an explicit selectionGuidesEnabled=false from a newer snapshot', () => {
+    const persisted = { canvasSettings: { showGrid: false, selectionGuidesEnabled: false, zoom: 1, unit: 'mm' } };
+    const migrated = migrateLegacy(persisted, 19) as { canvasSettings: Record<string, unknown> };
+    expect(migrated.canvasSettings.selectionGuidesEnabled).toBe(false);
+  });
+});
+
 describe('migrateLegacy — v14→v15 dataset-model renames', () => {
   it('renames csvMapping → columnMapping and csvRenderMode → dataRenderMode', () => {
     const persisted = {

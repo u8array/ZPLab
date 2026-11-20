@@ -947,6 +947,8 @@ const fr = {
       keepExportMetadataHint: "Ajoute des commentaires ^FX avec taille d'étiquette, densité et détails QR, pour que ZPLab rouvre le fichier à l'identique ; les imprimantes les ignorent. Désactivé : ZPL brut, aussi dans le panneau ZPL.",
       smartSnap: 'Accrochage intelligent',
       smartSnapHint: 'Aligner sur les autres objets en faisant glisser. Maintenir Ctrl/Cmd pour ignorer.',
+      selectionGuides: 'Repères de sélection',
+      selectionGuidesHint: 'Prolonger les bords de la sélection jusqu’aux règles et afficher leurs positions.',
       resetHeading: 'Réinitialiser',
       resetHint: "Restaure les préférences par défaut de l'application. Votre conception et langue sont conservées.",
       reset: 'Réinitialiser les paramètres',

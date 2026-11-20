@@ -947,6 +947,8 @@ const zhHant = {
       keepExportMetadataHint: '加入包含標籤尺寸、密度與 QR 詳細資料的 ^FX 註解，讓 ZPLab 能精確重新開啟檔案；印表機會忽略它們。關閉時：純 ZPL，ZPL 面板中也是如此。',
       smartSnap: '智慧對齊',
       smartSnapHint: '拖曳時對齊其他物件。按住Ctrl/Cmd可跳過對齊。',
+      selectionGuides: '選取參考線',
+      selectionGuidesHint: '將選取範圍的邊緣延伸至尺標並顯示其位置。',
       resetHeading: '重設',
       resetHint: '將應用程式偏好恢復為預設值。您的設計和語言不受影響。',
       reset: '重設設定',

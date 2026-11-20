@@ -44,6 +44,7 @@ export interface CanvasSettings {
    *  Ctrl/Cmd bypasses it per-gesture (move, resize, line reshape via the
    *  shared useSnapBypassRef), this switch disables it entirely. */
   smartSnapEnabled: boolean;
+  selectionGuidesEnabled: boolean;
   zoom: number;
   unit: Unit;
   viewRotation: ViewRotation;
@@ -286,6 +287,7 @@ export const DEFAULT_CANVAS_SETTINGS: CanvasSettings = {
   snapEnabled: false,
   snapSizeMm: 1,
   smartSnapEnabled: true,
+  selectionGuidesEnabled: true,
   zoom: 1,
   unit: 'mm',
   viewRotation: 0,

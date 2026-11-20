@@ -358,6 +358,14 @@ export function migrateLegacy(persistedState: unknown, version: number): unknown
     s = { ...s, printTarget: readLegacyPrintTarget() };
   }
 
+  // v19→v20: a persisted canvasSettings without the new flag needs a backfill.
+  if (version < 20) {
+    const cs = s.canvasSettings;
+    if (cs && typeof cs === 'object' && !('selectionGuidesEnabled' in cs)) {
+      s = { ...s, canvasSettings: { ...(cs as Record<string, unknown>), selectionGuidesEnabled: true } };
+    }
+  }
+
   // Unconditional rather than version-gated: main-era sessions persist at the current
   // version but carry legacy overlays whose head ^JM or ^DF rode only in the bytes, so
   // a full regen would drop them. Latch both back the way a load does.
@@ -537,7 +545,7 @@ export const useLabelStore = create<LabelState>()(
     {
       name: 'zpl-designer-session',
       // Bumped for every rehydrate repair: persist runs migrate only on a version change.
-      version: 19,
+      version: 20,
       migrate: (persistedState, version) => migrateLegacy(persistedState, version) as LabelState,
       storage: sessionStore,
       partialize: persistPartialize,

@@ -947,6 +947,8 @@ const ko = {
       keepExportMetadataHint: '^FX 주석에 라벨 크기, 밀도, QR 세부정보를 담아 ZPLab이 파일을 정확히 다시 열 수 있게 하며, 프린터는 이를 무시합니다. 꺼짐: 일반 ZPL, ZPL 패널에서도 동일합니다.',
       smartSnap: '스마트 스냅',
       smartSnapHint: '드래그하는 동안 다른 오브젝트에 맞춰 정렬합니다. Ctrl/Cmd를 누르면 건너뜁니다.',
+      selectionGuides: '선택 항목 안내선',
+      selectionGuidesHint: '선택 항목의 가장자리를 눈금자까지 연장하고 위치를 표시합니다.',
       resetHeading: '초기화',
       resetHint: '앱 환경설정을 기본값으로 복원합니다. 디자인과 언어는 유지됩니다.',
       reset: '설정 초기화',

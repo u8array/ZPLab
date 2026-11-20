@@ -947,6 +947,8 @@ const et = {
       keepExportMetadataHint: 'Lisab ^FX-kommentaarid sildi suuruse, tiheduse ja QR-i andmetega, et ZPLab avaks faili täpselt uuesti; printerid eiravad neid. Väljas: tavaline ZPL, ka ZPL-paanil.',
       smartSnap: 'Nutikas haakimine',
       smartSnapHint: 'Joonda teiste objektidega lohistades. Hoidke Ctrl/Cmd all, et vahele jätta.',
+      selectionGuides: 'Valiku juhtjooned',
+      selectionGuidesHint: 'Pikenda valiku servad joonlaudadeni ja näita nende asukohti.',
       resetHeading: 'Lähtestamine',
       resetHint: 'Taastab rakenduse vaikimisi eelistused. Teie kujundus ja keel säilivad.',
       reset: 'Lähtesta seaded',

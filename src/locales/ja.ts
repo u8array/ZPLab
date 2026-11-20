@@ -947,6 +947,8 @@ const ja = {
       keepExportMetadataHint: '^FXコメントでラベルサイズ・濃度・QR情報を保持し、ZPLabがファイルを正確に再度開けるようにしますが、プリンターはこれを無視します。オフ:通常のZPL、ZPLパネルでも同じです。',
       smartSnap: 'スマートスナップ',
       smartSnapHint: 'ドラッグ中に他のオブジェクトに合わせて整列します。Ctrl/Cmdを押し続けると無効になります。',
+      selectionGuides: '選択範囲のガイド線',
+      selectionGuidesHint: '選択範囲の端をルーラーまで延長し、位置を表示します。',
       resetHeading: 'リセット',
       resetHint: 'アプリの設定をデフォルトに戻します。デザインと言語は保持されます。',
       reset: '設定をリセット',

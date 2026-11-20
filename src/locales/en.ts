@@ -947,6 +947,8 @@ const en = {
       keepExportMetadataHint: 'Adds ^FX comments with label size, density and QR details, so ZPLab reopens the file exactly; printers ignore them. Off: plain ZPL, also in the ZPL panel.',
       smartSnap: 'Smart snapping',
       smartSnapHint: 'Align to other objects while dragging. Hold Ctrl/Cmd to bypass.',
+      selectionGuides: 'Selection guides',
+      selectionGuidesHint: 'Extend the edges of the selection to the rulers and show their positions.',
       resetHeading: 'Reset',
       resetHint: 'Restore app preferences to their defaults. Your design and language are kept.',
       reset: 'Reset settings',
