@@ -4,7 +4,8 @@ import type { SelectionGuidesHandle } from "../SelectionGuides";
 import type { Bounds } from "../nodeRect";
 
 interface Options {
-  stageRef: React.RefObject<Konva.Stage | null>;
+  /** The guide lines share a layer with the selection, whose draw the guides follow. */
+  linesRef: React.RefObject<Konva.Group | null>;
   guidesRef: React.RefObject<SelectionGuidesHandle | null>;
   /** While true, onDelta feeds the guides. */
   dragActiveRef: React.RefObject<boolean>;
@@ -12,12 +13,12 @@ interface Options {
   getBounds: () => Bounds | null;
 }
 
-/** Keeps the selection guides on the selection frame, at rest and during a drag or resize. */
-export function useSelectionGuides({ stageRef, guidesRef, dragActiveRef, getBounds }: Options) {
+/** Keeps the selection guides on the selection frame, at rest and during a resize. A drag feeds them through onDelta. */
+export function useSelectionGuides({ linesRef, guidesRef, dragActiveRef, getBounds }: Options) {
   // No dependency list: zoom, pan, unit and view rotation each move the readings.
   useLayoutEffect(() => {
     const guides = guidesRef.current;
-    const layer = stageRef.current?.getLayers()[0];
+    const layer = linesRef.current?.getLayer();
     if (!guides || !layer) return;
     const update = (sync: boolean) => {
       if (dragActiveRef.current) return;
