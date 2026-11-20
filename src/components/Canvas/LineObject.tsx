@@ -80,6 +80,7 @@ export function LineObject({
   registerMover,
   getOthersSnapshot,
   labelRect,
+  snapLines,
   setGuides,
   snapBypassRef,
 }: Props) {
@@ -180,6 +181,7 @@ export function LineObject({
       othersSnapshotRef.current,
       undefined,
       labelRect,
+      snapLines,
     );
     setGuides(result.guides);
     const back = transform.copy().invert().point({ x: result.x, y: result.y });
@@ -254,6 +256,7 @@ export function LineObject({
       undefined,
       labelRect,
       labelRect,
+      snapLines,
     );
     const snappedExtPx = isHorizontal ? result.height : result.width;
     const cappedT = Math.min(

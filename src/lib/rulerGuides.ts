@@ -16,7 +16,7 @@ export interface RulerGuide {
 
 export const NO_RULER_GUIDES: RulerGuides = { x: [], y: [] };
 
-export function guideDots(mm: number, dpmm: number): number {
+function guideDots(mm: number, dpmm: number): number {
   return Math.round(mm * dpmm);
 }
 

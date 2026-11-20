@@ -1,5 +1,5 @@
 import { dotsToUnit, unitLabel, type Unit } from "@zplab/core/lib/units";
-import { rulerReadingMm, type RulerAxis } from "./rulerGeometry";
+import { rulerReadingDots, type RulerAxis } from "./rulerGeometry";
 
 export interface GuideAxis extends RulerAxis {
   /** Visible stage px range of the canvas along this axis. */
@@ -35,7 +35,7 @@ export function axisGuides(
 ): AxisGuides {
   // Rounds through dotsToUnit after snapping to the dot, so a badge reads what the property inputs show.
   const text = (px: number) =>
-    `${dotsToUnit(Math.round(rulerReadingMm(px, axis, scale) * dpmm), dpmm, unit)} ${unitLabel(unit)}`;
+    `${dotsToUnit(rulerReadingDots(px, axis, scale, dpmm), dpmm, unit)} ${unitLabel(unit)}`;
   const edge = (px: number): GuideEdge | null =>
     px < axis.fromPx || px > axis.toPx ? null : { px, text: text(px) };
   const from = Math.max(minPx, axis.fromPx);

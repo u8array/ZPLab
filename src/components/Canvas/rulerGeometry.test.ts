@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { rulerReadingMm, type RulerAxis } from "./rulerGeometry";
+import { rulerReadingDots, rulerReadingMm, type RulerAxis } from "./rulerGeometry";
 
 const SCALE = 4;
 const axis = (over: Partial<RulerAxis> = {}): RulerAxis => ({ originPx: 100, lengthMm: 100, reversed: false, ...over });
@@ -14,5 +14,11 @@ describe("rulerReadingMm", () => {
   it("counts down on a reversed ruler", () => {
     expect(rulerReadingMm(100, axis({ reversed: true }), SCALE)).toBe(100);
     expect(rulerReadingMm(140, axis({ reversed: true }), SCALE)).toBe(90);
+  });
+});
+
+describe("rulerReadingDots", () => {
+  it("reads to the nearest dot", () => {
+    expect(rulerReadingDots(141, axis(), SCALE, 8)).toBe(82);
   });
 });

@@ -55,6 +55,7 @@ import {
   deriveActiveEdges,
   type SnapGuide,
   type SnapRect,
+  type SnapLines,
 } from "../../../lib/snapGuides";
 
 /** Minimum bounding-box edge length during a resize, in stage pixels. Below
@@ -99,6 +100,7 @@ function applyResizeObjectSnap(
   startBbox: SnapRect,
   others: SnapRect[],
   labelRect: SnapRect,
+  lines: SnapLines,
 ): { bbox: BoundingBox; guides: SnapGuide[] } {
   const draggedRect = toSnapRect(startBbox.id, bbox);
   const activeEdges = deriveActiveEdges(startBbox, draggedRect);
@@ -109,6 +111,7 @@ function applyResizeObjectSnap(
     undefined,
     labelRect,
     labelRect,
+    lines,
   );
   return {
     bbox: {
@@ -181,6 +184,8 @@ interface Options {
   multiResizeBboxDots: BoundingBoxDots | null;
   /** Label rect in stage-screen space, used as a snap target. */
   labelRect: SnapRect;
+  /** Ruler guides in stage-screen space. */
+  snapLines: SnapLines;
   /** True when grid-snap is OFF; object-snap during resize mirrors drag. */
   objectSnapEnabled: boolean;
   /** Shared Ctrl/Cmd bypass state (useSnapBypassRef). boundBoxFunc receives no
@@ -232,6 +237,7 @@ export function useKonvaTransformer({
   updateObjects,
   multiResizeBboxDots,
   labelRect,
+  snapLines,
   objectSnapEnabled,
   snapBypassRef,
   setGuides,
@@ -1272,6 +1278,7 @@ export function useKonvaTransformer({
           startBbox,
           othersSnapshotRef.current,
           labelRect,
+          snapLines,
         );
         setGuides(snapped.guides);
         bbox = snapped.bbox;

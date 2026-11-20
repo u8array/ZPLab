@@ -2,7 +2,7 @@
 // delta to apply to the whole drag, so the snap policy stays testable without a
 // stage and the controller stays a thin imperative layer.
 
-import { computeSnap, type SnapGuide, type SnapRect } from "../../lib/snapGuides";
+import { computeSnap, type SnapGuide, type SnapLines, type SnapRect } from "../../lib/snapGuides";
 import { barBoxDots, printableRectDots, type BoundingBoxDots, type ObjectBoundsCtx } from "@zplab/core/lib/objectBounds";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import { visibleLeaves, type LabelObject } from "@zplab/core/types/Group";
@@ -38,8 +38,9 @@ export function smartSnapDelta(
   others: SnapRect[],
   labelRect: SnapRect | undefined,
   threshold: number,
+  lines?: SnapLines,
 ): { dx: number; dy: number; guides: SnapGuide[] } {
-  const r = computeSnap(box, others, threshold, labelRect, labelRect);
+  const r = computeSnap(box, others, threshold, labelRect, labelRect, lines);
   return { dx: r.x - box.x, dy: r.y - box.y, guides: r.guides };
 }
 

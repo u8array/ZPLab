@@ -2,7 +2,7 @@ import type Konva from "konva";
 import type { RefObject } from "react";
 import type { LeafObject } from "@zplab/core/registry";
 import { useLabelStore, type ObjectChanges } from "../../store/labelStore";
-import type { SnapGuide, SnapRect } from "../../lib/snapGuides";
+import type { SnapGuide, SnapLines, SnapRect } from "../../lib/snapGuides";
 import { PALETTE_GHOST_ID } from "./paletteGhostMonitor";
 import { HOLLOW_HIT_NAME } from "./lassoGeometry";
 
@@ -120,6 +120,8 @@ export interface KonvaObjectProps {
    *  renderer without per-object closure allocations. */
   getOthersSnapshot?: (excludeId: string) => SnapRect[];
   labelRect?: SnapRect;
+  /** Ruler guides in stage px. */
+  snapLines?: SnapLines;
   setGuides?: (guides: SnapGuide[]) => void;
   /** Shared Ctrl/Cmd smart-snap bypass (useSnapBypassRef), same source the
    *  drag controller and Transformer read so the gesture works everywhere. */

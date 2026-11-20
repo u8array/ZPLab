@@ -12,3 +12,7 @@ export function rulerValueMm(mm: number, axis: RulerAxis): number {
 export function rulerReadingMm(px: number, axis: RulerAxis, scale: number): number {
   return rulerValueMm((px - axis.originPx) / scale, axis);
 }
+
+export function rulerReadingDots(px: number, axis: RulerAxis, scale: number, dpmm: number): number {
+  return Math.round(rulerReadingMm(px, axis, scale) * dpmm);
+}
