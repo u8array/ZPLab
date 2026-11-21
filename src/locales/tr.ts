@@ -1234,7 +1234,7 @@ const tr = {
     catalogInsert: 'Ekle',
     catalogWeb: 'Web',
     catalogDesktop: 'Masaüstü',
-    catalogDocker: 'Docker',
+    catalogServer: 'Sunucu',
     catalogDefault: 'Varsayılan',
     catalogExample: 'Örnek',
     catalogSyntax: 'Sözdizimi',

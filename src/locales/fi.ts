@@ -1234,7 +1234,7 @@ const fi = {
     catalogInsert: 'Lisää',
     catalogWeb: 'Web',
     catalogDesktop: 'Työpöytä',
-    catalogDocker: 'Docker',
+    catalogServer: 'Palvelin',
     catalogDefault: 'Oletus',
     catalogExample: 'Esimerkki',
     catalogSyntax: 'Syntaksi',

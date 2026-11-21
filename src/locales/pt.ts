@@ -1234,7 +1234,7 @@ const pt = {
     catalogInsert: 'Inserir',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogDocker: 'Docker',
+    catalogServer: 'Servidor',
     catalogDefault: 'Padrão',
     catalogExample: 'Exemplo',
     catalogSyntax: 'Sintaxe',

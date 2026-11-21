@@ -11,7 +11,7 @@ const catalog = raw as unknown as Catalog;
 export const CATALOG_SECTIONS: readonly CatalogSection[] = catalog.sections;
 export const ZPL_COMMANDS: readonly ZplCommandEntry[] = catalog.commands.map((entry) => ({
   ...entry,
-  support: { ...entry.support, docker: entry.support.docker ?? entry.support.web },
+  support: { ...entry.support, server: entry.support.server ?? entry.support.web },
 }));
 
 /** The one spelling of an entry's id (`^LL`, `~JA`); twins answer to their first prefix. */

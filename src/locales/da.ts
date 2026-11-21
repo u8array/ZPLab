@@ -1234,7 +1234,7 @@ const da = {
     catalogInsert: 'Indsæt',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Standard',
     catalogExample: 'Eksempel',
     catalogSyntax: 'Syntaks',

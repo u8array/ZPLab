@@ -1234,7 +1234,7 @@ const cs = {
     catalogInsert: 'Vložit',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Výchozí',
     catalogExample: 'Příklad',
     catalogSyntax: 'Syntaxe',

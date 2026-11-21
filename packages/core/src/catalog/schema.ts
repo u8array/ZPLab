@@ -9,8 +9,8 @@ export type SupportLevel = (typeof SUPPORT_LEVELS)[number];
 const IMPORT_LOSS_CAUSES = ["fontFace", "printerComms", "gfRawBinary", "qrFdMode", "storedGraphic", "shortPayload", "recallMagnification", "checksumMismatch", "oversizeUpload", "oversizeFontUpload", "unreplayableUpload", "cachedFaceDropped", "unshippableUpload", "unshippableFontName", "unshippableGraphicName", "fontVersionReplaced", "fnPartialInsert", "recallFormat", "recallSlot", "recallSettings", "droppedHostCommand"] as const;
 export type ImportLossCause = (typeof IMPORT_LOSS_CAUSES)[number];
 
-/** Support per axis as docs/zpl-coverage.md defines them. The image serves the web build, so `docker` is stored only where it diverges. */
-const supportSchema = z.object({ web: z.enum(SUPPORT_LEVELS), desktop: z.enum(SUPPORT_LEVELS), docker: z.enum(SUPPORT_LEVELS).optional() }).strict();
+/** Support per axis as docs/zpl-coverage.md defines them. `server` is stored only where it diverges from `web`. */
+const supportSchema = z.object({ web: z.enum(SUPPORT_LEVELS), desktop: z.enum(SUPPORT_LEVELS), server: z.enum(SUPPORT_LEVELS).optional() }).strict();
 export type CommandSupport = Required<z.infer<typeof supportSchema>>;
 
 /** Slot letters of the format line in order. `name` stays English like `title`; the other cells are translated per locale, keyed by the English block. */

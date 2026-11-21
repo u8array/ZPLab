@@ -1234,7 +1234,7 @@ const fr = {
     catalogInsert: 'Insérer',
     catalogWeb: 'Web',
     catalogDesktop: 'Bureau',
-    catalogDocker: 'Docker',
+    catalogServer: 'Serveur',
     catalogDefault: 'Par défaut',
     catalogExample: 'Exemple',
     catalogSyntax: 'Syntaxe',

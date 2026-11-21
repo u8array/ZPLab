@@ -1234,7 +1234,7 @@ const et = {
     catalogInsert: 'Lisa',
     catalogWeb: 'Veeb',
     catalogDesktop: 'Töölaud',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Vaikeväärtus',
     catalogExample: 'Näide',
     catalogSyntax: 'Süntaks',

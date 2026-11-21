@@ -1234,7 +1234,7 @@ const sk = {
     catalogInsert: 'Vložiť',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Predvolené',
     catalogExample: 'Príklad',
     catalogSyntax: 'Syntax',

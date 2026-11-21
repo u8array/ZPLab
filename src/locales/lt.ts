@@ -1234,7 +1234,7 @@ const lt = {
     catalogInsert: 'Įterpti',
     catalogWeb: 'Žiniatinklis',
     catalogDesktop: 'Darbalaukis',
-    catalogDocker: 'Docker',
+    catalogServer: 'Serveris',
     catalogDefault: 'Numatytoji',
     catalogExample: 'Pavyzdys',
     catalogSyntax: 'Sintaksė',

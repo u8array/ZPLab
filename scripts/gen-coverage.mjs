@@ -14,7 +14,7 @@ const DOC = join(ROOT, 'docs', 'zpl-coverage.md');
 const README = join(ROOT, 'README.md');
 const SRC_ROOTS = [join(ROOT, 'src'), join(ROOT, 'packages', 'core', 'src')];
 const MARK = { yes: '[x]', planned: '[~]', no: '[ ]' };
-const CAPABILITY_LABEL = { web: 'Web', desktop: 'Desktop', docker: 'Docker' };
+const CAPABILITY_LABEL = { web: 'Web', desktop: 'Desktop', server: 'Server' };
 /** README shows one figure per area: web-modelled commands, which the desktop build always covers too. */
 const README_COLUMN = 'web';
 
@@ -84,14 +84,15 @@ function readmeIntro(commands) {
   const total = commands.length;
   const web = count(commands, 'web', 'yes');
   const desktopExtra = count(commands, 'desktop', 'yes') - web;
-  const bothPlanned = count(commands, 'web', 'planned');
+  const everyPlanned = commands.filter((e) => CAPABILITIES.every((cap) => e.support[cap] === 'planned')).length;
   const printerPlanned = commands.filter((e) => e.support.web === 'no' && e.support.desktop === 'planned').length;
+  const printerBuilds = commands.every((e) => e.support.server === e.support.desktop) ? 'desktop and server' : 'desktop';
   const modelled = desktopExtra
-    ? `${web} of the ${total} ZPL II commands are modelled in the browser; desktop covers ${desktopExtra} more with a connected printer.`
+    ? `${web} of the ${total} ZPL II commands are modelled in the browser. ${desktopExtra} more work with a connected printer on ${printerBuilds}.`
     : `${web} of the ${total} ZPL II commands are modelled in both the web and desktop builds.`;
   const planned = [
-    bothPlanned ? `${bothPlanned} more are planned for both builds.` : '',
-    printerPlanned ? `${printerPlanned} need a connected printer and are planned for desktop.` : '',
+    everyPlanned ? `${everyPlanned} more are planned for every build.` : '',
+    printerPlanned ? `${printerPlanned} need a connected printer and are planned for ${printerBuilds}.` : '',
   ];
   return [modelled, ...planned, 'See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).'].filter(Boolean).join(' ');
 }

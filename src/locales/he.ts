@@ -1234,7 +1234,7 @@ const he = {
     catalogInsert: 'הוסף',
     catalogWeb: 'אינטרנט',
     catalogDesktop: 'שולחן עבודה',
-    catalogDocker: 'Docker',
+    catalogServer: 'שרת',
     catalogDefault: 'ברירת מחדל',
     catalogExample: 'דוגמה',
     catalogSyntax: 'תחביר',

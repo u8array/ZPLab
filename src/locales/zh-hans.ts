@@ -1234,7 +1234,7 @@ const zhHans = {
     catalogInsert: '插入',
     catalogWeb: '网页',
     catalogDesktop: '桌面',
-    catalogDocker: 'Docker',
+    catalogServer: '服务器',
     catalogDefault: '默认值',
     catalogExample: '示例',
     catalogSyntax: '语法',

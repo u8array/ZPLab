@@ -1234,7 +1234,7 @@ const es = {
     catalogInsert: 'Insertar',
     catalogWeb: 'Web',
     catalogDesktop: 'Escritorio',
-    catalogDocker: 'Docker',
+    catalogServer: 'Servidor',
     catalogDefault: 'Predeterminado',
     catalogExample: 'Ejemplo',
     catalogSyntax: 'Sintaxis',

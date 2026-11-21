@@ -1234,7 +1234,7 @@ const fa = {
     catalogInsert: 'درج',
     catalogWeb: 'وب',
     catalogDesktop: 'دسکتاپ',
-    catalogDocker: 'Docker',
+    catalogServer: 'سرور',
     catalogDefault: 'پیش‌فرض',
     catalogExample: 'مثال',
     catalogSyntax: 'نحو',

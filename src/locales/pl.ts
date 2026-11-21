@@ -1234,7 +1234,7 @@ const pl = {
     catalogInsert: 'Wstaw',
     catalogWeb: 'Web',
     catalogDesktop: 'Komputer',
-    catalogDocker: 'Docker',
+    catalogServer: 'Serwer',
     catalogDefault: 'Domyślna',
     catalogExample: 'Przykład',
     catalogSyntax: 'Składnia',

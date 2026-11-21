@@ -190,7 +190,7 @@ On desktop, **File → Settings… → App → MCP** starts a local MCP server, 
 ## Coverage
 
 <!-- coverage:start (generated from the command catalog by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
-132 of the 225 ZPL II commands are modelled in the browser; desktop covers 15 more with a connected printer. 2 more are planned for both builds. 55 need a connected printer and are planned for desktop. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
+132 of the 225 ZPL II commands are modelled in the browser. 15 more work with a connected printer on desktop and server. 2 more are planned for every build. 55 need a connected printer and are planned for desktop and server. See per-command coverage: [docs/zpl-coverage.md](docs/zpl-coverage.md).
 
 | Area | Modelled |
 |---|---|

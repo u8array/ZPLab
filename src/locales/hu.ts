@@ -1234,7 +1234,7 @@ const hu = {
     catalogInsert: 'Beszúrás',
     catalogWeb: 'Web',
     catalogDesktop: 'Asztali',
-    catalogDocker: 'Docker',
+    catalogServer: 'Szerver',
     catalogDefault: 'Alapérték',
     catalogExample: 'Példa',
     catalogSyntax: 'Szintaxis',

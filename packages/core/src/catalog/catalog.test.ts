@@ -9,9 +9,9 @@ describe("zpl command catalog", () => {
     expect(result.success ? [] : result.error.issues).toEqual([]);
   });
 
-  it("stores a docker level only where it diverges from the web", () => {
+  it("stores a server level only where it diverges from the web", () => {
     for (const c of (raw as unknown as { commands: StoredCommandEntry[] }).commands) {
-      if (c.support.docker !== undefined) expect(c.support.docker, c.cmd).not.toBe(c.support.web);
+      if (c.support.server !== undefined) expect(c.support.server, c.cmd).not.toBe(c.support.web);
     }
   });
 
@@ -84,10 +84,14 @@ describe("zpl command catalog", () => {
     const rank = { no: 0, planned: 1, yes: 2 } as const;
     for (const c of ZPL_COMMANDS) {
       expect(rank[c.support.desktop], c.cmd).toBeGreaterThanOrEqual(rank[c.support.web]);
-      expect(rank[c.support.docker], c.cmd).toBeGreaterThanOrEqual(rank[c.support.web]);
+      expect(rank[c.support.server], c.cmd).toBeGreaterThanOrEqual(rank[c.support.web]);
       // The coverage legend promises the reason in the name: a qualifier after a comma.
       if (Object.values(c.support).every((level) => level === "no")) expect(c.title, c.cmd).toMatch(/,/);
     }
+  });
+
+  it("marks the host status query for the desktop and the server, not the web", () => {
+    expect(catalogEntry("~HS")?.support).toEqual({ web: "no", desktop: "yes", server: "yes" });
   });
 
   it("resolves prefixed, bare and alias lookups", () => {
@@ -97,8 +101,8 @@ describe("zpl command catalog", () => {
     expect(catalogEntry("~HL")).toBe(catalogEntry("^HL"));
     expect(commandId(catalogEntry("~HL")!)).toBe("^HL");
     // Prefix twins with diverging support are separate entries.
-    expect(catalogEntry("^PH")?.support).toEqual({ web: "yes", desktop: "yes", docker: "yes" });
-    expect(catalogEntry("~PH")?.support).toEqual({ web: "no", desktop: "planned", docker: "planned" });
+    expect(catalogEntry("^PH")?.support).toEqual({ web: "yes", desktop: "yes", server: "yes" });
+    expect(catalogEntry("~PH")?.support).toEqual({ web: "no", desktop: "planned", server: "planned" });
     expect(catalogEntry("^QQ")).toBeUndefined();
   });
 
