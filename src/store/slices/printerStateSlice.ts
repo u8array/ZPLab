@@ -27,7 +27,7 @@ export interface PrinterStateSlice {
   /** ^HH as text. The echo is handed back, not kept. */
   readPrinterConfiguration: () => Promise<PrinterOutcome<string>>;
   /** Every setting the printer reports. */
-  readPrinterSettings: () => Promise<PrinterOutcome<SgdSetting[]>>;
+  readPrinterSettings: (signal?: AbortSignal) => Promise<PrinterOutcome<SgdSetting[]>>;
   /** Writes the chosen rows into the label settings and the printer profile. False when the store refused them. */
   adoptPrinterSettings: (rows: readonly AdoptionRow[]) => boolean;
   /** The document itself over the read channel, for the host commands it carries. */
@@ -61,9 +61,9 @@ export const createPrinterStateSlice: StateCreator<LabelState, [], [], PrinterSt
     return overPrinterChannel(get, set, '^HH', () => ('failure' in resolved ? Promise.resolve(resolved.failure) : queryConfiguration(resolved.target)));
   },
 
-  readPrinterSettings: () => {
+  readPrinterSettings: (signal) => {
     const resolved = resolveQueryTarget(get().printTarget);
-    return overPrinterChannel(get, set, sgdGetvarCommand(SGD_ALL_SETTINGS), () => ('failure' in resolved ? Promise.resolve(resolved.failure) : querySettings(resolved.target)));
+    return overPrinterChannel(get, set, sgdGetvarCommand(SGD_ALL_SETTINGS), () => ('failure' in resolved ? Promise.resolve(resolved.failure) : querySettings(resolved.target, signal)));
   },
 
   adoptPrinterSettings: (rows) => {

@@ -3,7 +3,7 @@ import { unframed } from "@zplab/core/lib/hostStatus";
 import { errorMessage } from "./errorMessage";
 import { printReach } from "./printReach";
 import { carriesReply, type QueryTarget } from "./printTarget";
-import type { StreamDone, StreamDoneResult } from "./replyStream";
+import type { ReplyEnd, StreamDone, StreamDoneResult } from "./replyStream";
 import { queryZplServer } from "./serverPrint";
 import { queryZplUsb } from "./usbPrint";
 
@@ -116,17 +116,28 @@ export interface ReplyWait {
   deadlineMs?: number;
   /** The replies the printer still owes after its first answer, which the idle gap alone would miss. */
   awaited?: readonly AwaitedReply[];
+  /** The awaited reply starts at once instead of behind a print, so a printer that stays mute ends the read at the first-byte limit. */
+  answersAtOnce?: boolean;
   /** Ends the read with what came so far. */
   signal?: AbortSignal;
 }
 
 export interface PrinterReply {
   body: string;
-  /** The ^HV replies that had not all come when the read ended. */
+  /** The awaited replies the body does not hold when the read ended. */
   unanswered: readonly OwedReply[];
+  /** A stop can surface as a lost link, so a read the reader ended itself reports `stopped`. */
+  end: ReplyEnd;
 }
 
-async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_DEADLINE_MS, awaited = [], signal }: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
+/** The failure a reply's end names, undefined for an end that is no failure. */
+export function endFailure(end: ReplyEnd): PrinterQueryFailure | undefined {
+  if (end === "deadline") return { kind: "timed_out" };
+  if (end === "lost") return { kind: "lost" };
+  return undefined;
+}
+
+async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_DEADLINE_MS, awaited = [], answersAtOnce = false, signal }: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
   let body = "";
   let received = 0;
   let returned = false;
@@ -148,8 +159,8 @@ async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_
     stopped = true;
     stream.stop();
   };
-  // Only an owed reply is worth the whole deadline.
-  if (awaitsNone) idle = setTimeout(stop, FIRST_BYTE_MS);
+  // Only a reply owed behind a print waits the whole deadline, every other read gives up on a mute printer at the first-byte limit.
+  if (awaitsNone || answersAtOnce) idle = setTimeout(stop, FIRST_BYTE_MS);
   signal?.addEventListener("abort", stop, { once: true });
   if (signal?.aborted) stop();
   const end = await stream.done;
@@ -182,13 +193,12 @@ async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_
   const unanswered = owedReplies(body, awaited);
   // A stopped wait with nothing in still names what it waited for.
   if (body === "" && unanswered.length === 0) return { kind: "silent" };
-  // A read that awaits no ^HV stops itself behind the reply, so a deadline or a lost link ahead of its own stop cut
-  // the printer off mid-reply. A document's last owed reply may land inside the idle gap ahead of either, and is whole.
-  const aheadOfOwnStop = awaitsNone && !stopped;
-  if (aheadOfOwnStop && end.value.end === "deadline") return { kind: "timed_out" };
-  if (aheadOfOwnStop && end.value.end === "lost") return { kind: "lost" };
+  const ended: ReplyEnd = stopped ? "stopped" : end.value.end;
+  // A read that awaits nothing stops itself behind the reply, so a deadline or a lost link before that stop would cut the printer off mid-reply.
+  const failure = awaitsNone ? endFailure(ended) : undefined;
+  if (failure) return failure;
   if (unanswered.length === 0 && answeredText(body).kind === "silent") return { kind: "silent" };
-  return { kind: "ok", value: { body, unanswered } };
+  return { kind: "ok", value: { body, unanswered, end: ended } };
 }
 
 /** The reply of a command that answers at once, whole or not at all. */

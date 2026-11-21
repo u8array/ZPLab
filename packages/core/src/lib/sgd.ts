@@ -7,6 +7,9 @@ export interface SgdSetting {
 /** A single getvar answers the value without its key, so the whole configuration is read under this one key. */
 export const SGD_ALL_SETTINGS = 'allcv';
 
+/** The ZD230 closes the dump on a line holding an empty quoted value. */
+export const SGD_ALL_SETTINGS_END = '\r\n""';
+
 /** The getvar command without its terminator, so a progress text can name it. */
 export const sgdGetvarCommand = (key: string): string => `! U1 getvar "${key}"`;
 
