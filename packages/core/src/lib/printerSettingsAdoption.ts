@@ -34,7 +34,7 @@ type Mapping<Target extends string, Fields> = {
   [K in keyof Fields]-?: {
     target: Target;
     field: K;
-    /** The keys read, the first one naming the row. */
+    /** The keys answering the field. */
     keys: readonly string[];
     /** The ZPL command the field emits, empty when the field emits none. */
     command: string;
@@ -182,8 +182,8 @@ const LABEL_MAPPINGS: readonly LabelMapping[] = [
     read: (v) => mediaType(v('ezpl.print_method')) ?? thermalMode(v('media.thermal_mode')),
   },
   { target: 'label', field: 'dpmm', keys: ['head.resolution.in_dpi'], command: '', read: headDpmm },
-  { target: 'label', field: 'widthMm', keys: ['ezpl.print_width', 'head.resolution.in_dpi'], command: '^PW', read: (v) => millimetres(v, 'ezpl.print_width', PRINT_WIDTH_RANGE) },
-  { target: 'label', field: 'heightMm', keys: ['zpl.label_length', 'head.resolution.in_dpi'], command: '^LL', read: (v) => millimetres(v, 'zpl.label_length', LABEL_LENGTH_RANGE) },
+  { target: 'label', field: 'widthMm', keys: ['ezpl.print_width'], command: '^PW', read: (v) => millimetres(v, 'ezpl.print_width', PRINT_WIDTH_RANGE) },
+  { target: 'label', field: 'heightMm', keys: ['zpl.label_length'], command: '^LL', read: (v) => millimetres(v, 'zpl.label_length', LABEL_LENGTH_RANGE) },
   { target: 'label', field: 'labelTop', keys: ['zpl.label_top'], command: '^LT', read: (v) => integer(v('zpl.label_top'), LABEL_TOP_RANGE), unsetValue: 0 },
   { target: 'label', field: 'labelShift', keys: ['zpl.left_position'], command: '^LS', read: (v) => integer(v('zpl.left_position'), LABEL_SHIFT_RANGE), unsetValue: 0 },
   {

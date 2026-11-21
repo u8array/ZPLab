@@ -137,6 +137,10 @@ describe('adoptionDiff rows', () => {
     expect(row?.printerValue).toBe('tear off');
   });
 
+  it('lists no size row for a dump that answers only the head density', () => {
+    expect(diff('head.resolution.in_dpi : 203\n').map((r) => r.field)).toEqual(['dpmm']);
+  });
+
   it('says a value the app already holds does not differ', () => {
     const row = diff('zpl.label_top : 30\n', { ...LABEL, labelTop: 30 })[0];
     expect(row).toMatchObject({ currentValue: '30', differs: false });
