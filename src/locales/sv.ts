@@ -1234,7 +1234,7 @@ const sv = {
     catalogInsert: 'Infoga',
     catalogWeb: 'Webb',
     catalogDesktop: 'Skrivbord',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Standard',
     catalogExample: 'Exempel',
     catalogSyntax: 'Syntax',

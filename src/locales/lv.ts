@@ -1234,7 +1234,7 @@ const lv = {
     catalogInsert: 'Ievietot',
     catalogWeb: 'Tīmeklis',
     catalogDesktop: 'Darbvirsma',
-    catalogDocker: 'Docker',
+    catalogServer: 'Serveris',
     catalogDefault: 'Noklusējums',
     catalogExample: 'Piemērs',
     catalogSyntax: 'Sintakse',

@@ -1234,7 +1234,7 @@ const ar = {
     catalogInsert: 'إدراج',
     catalogWeb: 'الويب',
     catalogDesktop: 'سطح المكتب',
-    catalogDocker: 'Docker',
+    catalogServer: 'الخادم',
     catalogDefault: 'الافتراضي',
     catalogExample: 'مثال',
     catalogSyntax: 'الصياغة',

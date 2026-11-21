@@ -142,16 +142,17 @@ describe("catalog panes", () => {
     expect((within(getByRole("menu")).getByRole("button", { name: /^Insert$/ }) as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it("shows the three support levels in web, desktop, docker order", () => {
-    const levelsOf = (id: string) => {
+  it("shows the three support levels in web, desktop and server order", () => {
+    const cellsOf = (id: string, tag: "dt" | "dd") => {
       const { getByTestId, unmount } = render(<CatalogPanes cursor={{ id, from: 0, pointed: true }} onInsert={vi.fn()} />);
-      const levels = [...getByTestId("catalog-detail").querySelectorAll("dd")].map((dd) => dd.textContent);
+      const cells = [...getByTestId("catalog-detail").querySelectorAll(tag)].map((cell) => cell.textContent);
       unmount();
-      return levels;
+      return cells;
     };
-    expect(levelsOf("^LL")).toEqual(["yes", "yes", "yes"]);
-    expect(levelsOf("^LF")).toEqual(["no", "planned", "planned"]);
-    expect(levelsOf("^JW")).toEqual(["no", "no", "no"]);
+    expect(cellsOf("^LL", "dt")).toEqual(["Web", "Desktop", "Server"]);
+    expect(cellsOf("^LL", "dd")).toEqual(["yes", "yes", "yes"]);
+    expect(cellsOf("^LF", "dd")).toEqual(["no", "planned", "planned"]);
+    expect(cellsOf("^JW", "dd")).toEqual(["no", "no", "no"]);
   });
 
   it("inserts the spelling under the caret, not the row's first prefix", () => {

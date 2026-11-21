@@ -1234,7 +1234,7 @@ const ko = {
     catalogInsert: '삽입',
     catalogWeb: '웹',
     catalogDesktop: '데스크톱',
-    catalogDocker: 'Docker',
+    catalogServer: '서버',
     catalogDefault: '기본값',
     catalogExample: '예시',
     catalogSyntax: '구문',

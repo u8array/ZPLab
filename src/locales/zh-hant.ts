@@ -1234,7 +1234,7 @@ const zhHant = {
     catalogInsert: '插入',
     catalogWeb: '網頁',
     catalogDesktop: '桌面',
-    catalogDocker: 'Docker',
+    catalogServer: '伺服器',
     catalogDefault: '預設值',
     catalogExample: '範例',
     catalogSyntax: '語法',

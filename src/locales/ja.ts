@@ -1234,7 +1234,7 @@ const ja = {
     catalogInsert: '挿入',
     catalogWeb: 'Web',
     catalogDesktop: 'デスクトップ',
-    catalogDocker: 'Docker',
+    catalogServer: 'サーバー',
     catalogDefault: 'デフォルト',
     catalogExample: '例',
     catalogSyntax: '構文',

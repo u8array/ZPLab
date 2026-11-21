@@ -1234,7 +1234,7 @@ const no = {
     catalogInsert: 'Sett inn',
     catalogWeb: 'Web',
     catalogDesktop: 'Skrivebord',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Standard',
     catalogExample: 'Eksempel',
     catalogSyntax: 'Syntaks',

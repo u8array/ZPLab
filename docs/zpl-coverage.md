@@ -4,9 +4,9 @@ Every command of the ZPL II Programming Guide and what it takes to use it in ZPL
 
 | Column | Meaning |
 |---|---|
-| **Web** | The browser build reads the command on import and writes it back on export: as itself, folded into object properties (`^FW`, `^LR`, `^BY`, `^MU`, `^LH`, `^LT`, `^CI`), or into the Setup Script (printer setup commands). Structural commands (`^XA`, `^FS`, prefix changers) carry no user state. Host commands count only where an answer can come back. The browser build has no channel for one |
-| **Desktop** | The same in the desktop app, which also talks to a connected printer; commands that need one (host queries, calibration, downloads to printer storage, RFID hardware) can only ever get a mark here. `~HB` answers only on a mobile printer, so it stays planned until one is measured |
-| **Docker** | The same in the self-hosted image, which serves the web build today. A container can open a printer connection, so what the desktop reaches that way is planned here |
+| **Web** | The browser build reads the command on import and writes it back on export: as itself, folded into object properties (`^FW`, `^LR`, `^BY`, `^MU`, `^LH`, `^LT`, `^CI`), or into the Setup Script (printer setup commands). Structural commands (`^XA`, `^FS`, prefix changers) carry no user state. Host commands count only where an answer can come back. The browser build has no channel for one. The static self-hosted image serves this build |
+| **Desktop** | The same in the desktop app, which also talks to a connected printer; commands that need one (host queries, calibration, downloads to printer storage, RFID hardware) get a mark only here and under Server. `~HB` answers only on a mobile printer, so it stays planned until one is measured |
+| **Server** | The same in the designer served by the self-hosted server. The server talks to the printers it lists and passes their answers back to the designer |
 
 | Mark | Meaning |
 |:-:|---|
@@ -26,7 +26,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 <!-- coverage:start (generated from packages/core/src/catalog/commands.json by scripts/gen-coverage.mjs; run `pnpm coverage:gen`) -->
 ## Layout & flow
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^XA` | start label | `[x]` | `[x]` | `[x]` |
 | `^XZ` | end label | `[x]` | `[x]` | `[x]` |
@@ -46,7 +46,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Fields
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^FO` | field origin | `[x]` | `[x]` | `[x]` |
 | `^FT` | field top | `[x]` | `[x]` | `[x]` |
@@ -68,7 +68,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Text & fonts
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^A0` | scalable font 0 | `[x]` | `[x]` | `[x]` |
 | `^A` | fonts A to Z and 0 to 9 | `[x]` | `[x]` | `[x]` |
@@ -88,7 +88,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Barcodes
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^BC` | Code 128 | `[x]` | `[x]` | `[x]` |
 | `^B3` | Code 39 | `[x]` | `[x]` | `[x]` |
@@ -122,7 +122,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Graphics
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^GB` | graphic box | `[x]` | `[x]` | `[x]` |
 | `^GD` | diagonal line | `[x]` | `[x]` | `[x]` |
@@ -132,8 +132,8 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 | `^GS` | graphic symbol | `[x]` | `[x]` | `[x]` |
 | `^IL` | image load | `[x]` | `[x]` | `[x]` |
 | `^IM` | image move | `[x]` | `[x]` | `[x]` |
-| `^ID` | delete stored graphics, fonts and formats | `[ ]` | `[x]` | `[~]` |
-| `^IS` | image save | `[ ]` | `[x]` | `[~]` |
+| `^ID` | delete stored graphics, fonts and formats | `[ ]` | `[x]` | `[x]` |
+| `^IS` | image save | `[ ]` | `[x]` | `[x]` |
 | `~DG` | download graphic | `[x]` | `[x]` | `[x]` |
 | `~DN` | abort download | `[ ]` | `[~]` | `[~]` |
 | `~DY` | download font / graphic | `[x]` | `[x]` | `[x]` |
@@ -141,14 +141,14 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Serialisation
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^SN` | serial counter with its own start value | `[x]` | `[x]` | `[x]` |
 | `^SF` | serial mask over ^FD data | `[x]` | `[x]` | `[x]` |
 
 ## Templates & variables
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^DF` | store template | `[x]` | `[x]` | `[x]` |
 | `^XF` | recall template | `[x]` | `[x]` | `[x]` |
@@ -156,7 +156,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Media & feed
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^MN` | media tracking | `[x]` | `[x]` | `[x]` |
 | `^ML` | maximum label length | `[x]` | `[x]` | `[x]` |
@@ -170,7 +170,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Print quality
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^MD` | media darkness | `[x]` | `[x]` | `[x]` |
 | `~SD` | set darkness | `[x]` | `[x]` | `[x]` |
@@ -193,7 +193,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Clock & time
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^ST` | set date and time | `[x]` | `[x]` | `[x]` |
 | `^KD` | date and time format | `[x]` | `[x]` | `[x]` |
@@ -202,7 +202,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Encoding & language
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^KL` | define language | `[x]` | `[x]` | `[x]` |
 | `^SE` | encoding table | `[x]` | `[x]` | `[x]` |
@@ -210,14 +210,14 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 ## Identity & access
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^KN` | printer name and description | `[x]` | `[x]` | `[x]` |
 | `^KP` | set password | `[x]` | `[x]` | `[x]` |
 
 ## Configuration & persistence
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^JU` | configuration update | `[x]` | `[x]` | `[x]` |
 | `^CC` / `~CC` | change caret | `[x]` | `[x]` | `[x]` |
@@ -229,7 +229,7 @@ never share. The row total is pinned in `packages/core/src/catalog/catalog.test.
 
 Printer-side control, calibration and device actions; most need a connection or feedback from the device.
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `~JA` | cancel all | `[ ]` | `[~]` | `[~]` |
 | `^JB` | initialize flash memory | `[ ]` | `[~]` | `[~]` |
@@ -271,23 +271,23 @@ Printer-side control, calibration and device actions; most need a connection or 
 
 ## Host communication
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `~HB` | battery status, mobile printers only | `[ ]` | `[~]` | `[~]` |
-| `~HD` | printhead diagnostic | `[ ]` | `[x]` | `[~]` |
-| `^HF` | host format | `[ ]` | `[x]` | `[~]` |
-| `^HG` | host graphic | `[ ]` | `[x]` | `[~]` |
-| `^HH` | configuration label return | `[ ]` | `[x]` | `[~]` |
-| `~HI` | host identification | `[ ]` | `[x]` | `[~]` |
-| `~HM` | host RAM status | `[ ]` | `[x]` | `[~]` |
-| `~HQ` | host query | `[ ]` | `[x]` | `[~]` |
-| `~HS` | host status return | `[ ]` | `[x]` | `[~]` |
-| `^HT` | host linked fonts list | `[ ]` | `[x]` | `[~]` |
-| `~HU` | ZebraNet alert configuration | `[ ]` | `[x]` | `[~]` |
+| `~HD` | printhead diagnostic | `[ ]` | `[x]` | `[x]` |
+| `^HF` | host format | `[ ]` | `[x]` | `[x]` |
+| `^HG` | host graphic | `[ ]` | `[x]` | `[x]` |
+| `^HH` | configuration label return | `[ ]` | `[x]` | `[x]` |
+| `~HI` | host identification | `[ ]` | `[x]` | `[x]` |
+| `~HM` | host RAM status | `[ ]` | `[x]` | `[x]` |
+| `~HQ` | host query | `[ ]` | `[x]` | `[x]` |
+| `~HS` | host status return | `[ ]` | `[x]` | `[x]` |
+| `^HT` | host linked fonts list | `[ ]` | `[x]` | `[x]` |
+| `~HU` | ZebraNet alert configuration | `[ ]` | `[x]` | `[x]` |
 | `^HV` | host verification | `[ ]` | `[~]` | `[~]` |
-| `^HW` | host directory | `[ ]` | `[x]` | `[~]` |
-| `^HY` | upload graphics | `[ ]` | `[x]` | `[~]` |
-| `^HZ` | display description information | `[ ]` | `[x]` | `[~]` |
+| `^HW` | host directory | `[ ]` | `[x]` | `[x]` |
+| `^HY` | upload graphics | `[ ]` | `[x]` | `[x]` |
+| `^HZ` | display description information | `[ ]` | `[x]` | `[x]` |
 
 ## RFID
 
@@ -296,7 +296,7 @@ spec-only. Stage A: ^RS/^RB/^RW settings. Stage B: ^RF write element plus its
 password-coupled ^RL. Read-back stays native. ^RM/^RR folded into ^RS,
 ^RN/~RV dropped from the current guide; all four passthrough only.
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^RF` | read / write RFID | `[~]` | `[~]` | `[~]` |
 | `^RI` | get tag ID | `[ ]` | `[~]` | `[~]` |
@@ -316,7 +316,7 @@ password-coupled ^RL. Read-back stays native. ^RM/^RR folded into ^RS,
 
 ## Network
 
-| Command | Name | Web | Desktop | Docker |
+| Command | Name | Web | Desktop | Server |
 |---|---|:-:|:-:|:-:|
 | `^NB` | check for wired print server at boot | `[ ]` | `[~]` | `[~]` |
 | `^NC` | select wired / wireless primary device | `[ ]` | `[~]` | `[~]` |

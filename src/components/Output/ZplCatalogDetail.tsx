@@ -13,7 +13,7 @@ import { CAPTION_CLS, focusKeeper, type OutputKey, PANE_ATTRS, paneClass, slotCl
 const CAPABILITIES: readonly { cap: keyof CommandSupport; key: OutputKey }[] = [
   { cap: "web", key: "catalogWeb" },
   { cap: "desktop", key: "catalogDesktop" },
-  { cap: "docker", key: "catalogDocker" },
+  { cap: "server", key: "catalogServer" },
 ];
 
 export function ZplCatalogDetail({ selection, editorHasFocus }: { selection: CatalogSelection; editorHasFocus?: () => boolean }) {

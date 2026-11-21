@@ -1234,7 +1234,7 @@ const sl = {
     catalogInsert: 'Vstavi',
     catalogWeb: 'Splet',
     catalogDesktop: 'Namizje',
-    catalogDocker: 'Docker',
+    catalogServer: 'Strežnik',
     catalogDefault: 'Privzeto',
     catalogExample: 'Primer',
     catalogSyntax: 'Skladnja',

@@ -1234,7 +1234,7 @@ const ro = {
     catalogInsert: 'Inserați',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Implicit',
     catalogExample: 'Exemplu',
     catalogSyntax: 'Sintaxă',

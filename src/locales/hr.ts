@@ -1234,7 +1234,7 @@ const hr = {
     catalogInsert: 'Umetni',
     catalogWeb: 'Web',
     catalogDesktop: 'Radna površina',
-    catalogDocker: 'Docker',
+    catalogServer: 'Poslužitelj',
     catalogDefault: 'Zadano',
     catalogExample: 'Primjer',
     catalogSyntax: 'Sintaksa',

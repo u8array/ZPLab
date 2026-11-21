@@ -1307,7 +1307,7 @@ const ca = {
     catalogInsert: 'Insereix',
     catalogWeb: 'Web',
     catalogDesktop: 'Escriptori',
-    catalogDocker: 'Docker',
+    catalogServer: 'Servidor',
     catalogDefault: 'Per defecte',
     catalogExample: 'Exemple',
     catalogSyntax: 'Sintaxi',

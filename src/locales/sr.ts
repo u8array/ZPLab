@@ -1234,7 +1234,7 @@ const sr = {
     catalogInsert: 'Umetni',
     catalogWeb: 'Веб',
     catalogDesktop: 'Десктоп',
-    catalogDocker: 'Docker',
+    catalogServer: 'Сервер',
     catalogDefault: 'Podrazumevano',
     catalogExample: 'Primer',
     catalogSyntax: 'Sintaksa',

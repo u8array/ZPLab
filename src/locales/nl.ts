@@ -1234,7 +1234,7 @@ const nl = {
     catalogInsert: 'Invoegen',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Standaard',
     catalogExample: 'Voorbeeld',
     catalogSyntax: 'Syntaxis',

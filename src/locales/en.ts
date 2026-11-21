@@ -1315,7 +1315,7 @@ const en = {
     catalogInsert: 'Insert',
     catalogWeb: 'Web',
     catalogDesktop: 'Desktop',
-    catalogDocker: 'Docker',
+    catalogServer: 'Server',
     catalogDefault: 'Default',
     catalogExample: 'Example',
     catalogSyntax: 'Syntax',

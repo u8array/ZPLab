@@ -1234,7 +1234,7 @@ const el = {
     catalogInsert: 'Εισαγωγή',
     catalogWeb: 'Ιστός',
     catalogDesktop: 'Επιτραπέζιο',
-    catalogDocker: 'Docker',
+    catalogServer: 'Διακομιστής',
     catalogDefault: 'Προεπιλογή',
     catalogExample: 'Παράδειγμα',
     catalogSyntax: 'Σύνταξη',

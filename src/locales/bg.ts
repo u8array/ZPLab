@@ -1234,7 +1234,7 @@ const bg = {
     catalogInsert: 'Вмъкни',
     catalogWeb: 'Уеб',
     catalogDesktop: 'Настолно приложение',
-    catalogDocker: 'Docker',
+    catalogServer: 'Сървър',
     catalogDefault: 'По подразбиране',
     catalogExample: 'Пример',
     catalogSyntax: 'Синтаксис',
