@@ -70,6 +70,19 @@ describe("the designer around the API", () => {
     }
   });
 
+  it("sends the same content security policy with the page and its assets and none with an API answer", async () => {
+    const policy = (await app.request("/")).headers.get("content-security-policy");
+    expect(policy).toBeTruthy();
+    expect((await app.request("/assets/index-abc123.js")).headers.get("content-security-policy")).toBe(policy);
+    expect((await app.request("/api/v1/health")).headers.get("content-security-policy")).toBeNull();
+  });
+
+  it("forbids framing and leaves HSTS to the proxy in front", async () => {
+    const res = await app.request("/");
+    expect(res.headers.get("x-frame-options")).toBe("DENY");
+    expect(res.headers.get("strict-transport-security")).toBeNull();
+  });
+
   it("leaves the API paths to the API", async () => {
     expect(await (await app.request("/api/v1/health")).json()).toEqual({ ok: true, version: "test" });
     expect((await app.request("/api/v1/nope")).status).toBe(401);
