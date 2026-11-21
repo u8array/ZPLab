@@ -13,7 +13,7 @@ vi.mock("./printerQuery", async (importOriginal) => ({
   ...(await importOriginal<typeof PrinterQuery>()),
   readPrinterReply: (...args: Parameters<typeof PrinterQuery.readPrinterReply>) => readPrinterReply(...args),
 }));
-const came = (body: string, unanswered: OwedReply[] = []) => readPrinterReply.mockResolvedValue({ kind: "ok", value: { body, unanswered } });
+const came = (body: string, unanswered: OwedReply[] = []) => readPrinterReply.mockResolvedValue({ kind: "ok", value: { body, unanswered, end: "stopped" } });
 
 const TARGET = { kind: "network", host: "172.17.17.175", port: 9100 } as const;
 const loc = en.printerSettings.printerStatus;

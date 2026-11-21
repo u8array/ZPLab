@@ -56,7 +56,7 @@ interface FieldReply extends ReplyMarks {
   data: Set<string>;
 }
 
-/** A reply shape a reader waits for: the ^HV spellings that share a header and terminator, which is all it can tell apart. */
+/** A reply shape a reader waits for. ^HV spellings that share a header and terminator are one shape. */
 export interface AwaitedReply extends ReplyMarks {
   count: number;
   commands: string[];

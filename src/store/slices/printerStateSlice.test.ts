@@ -80,13 +80,14 @@ describe("readPrinterSettings", () => {
   it("holds the channel under the dump command and hands the settings back", async () => {
     let finish: (value: unknown) => void = () => undefined;
     readPrinterSettings.mockImplementation(() => new Promise((resolve) => (finish = resolve)));
-    const pending = useLabelStore.getState().readPrinterSettings();
+    const signal = new AbortController().signal;
+    const pending = useLabelStore.getState().readPrinterSettings(signal);
     expect(useLabelStore.getState().printerReading).toBe('! U1 getvar "allcv"');
     expect(await useLabelStore.getState().checkPrinter()).toEqual({ kind: "busy" });
     finish({ kind: "ok", value: [{ key: "print.tone", value: "15.0" }] });
     expect(await pending).toEqual({ kind: "ok", value: [{ key: "print.tone", value: "15.0" }] });
     expect(useLabelStore.getState().printerReading).toBeUndefined();
-    expect(readPrinterSettings).toHaveBeenCalledWith({ kind: "network", host: "172.17.17.175", port: 9100 });
+    expect(readPrinterSettings).toHaveBeenCalledWith({ kind: "network", host: "172.17.17.175", port: 9100 }, signal);
     useLabelStore.setState({ printTarget: DEFAULT_PRINT_TARGET });
     expect(await useLabelStore.getState().readPrinterSettings()).toEqual({ kind: "unconfigured" });
   });
