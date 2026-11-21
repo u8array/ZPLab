@@ -5,22 +5,7 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZPLab</title>
-    <script>
-      // Set data-theme before first paint so the user's persisted preference
-      // applies before React mounts. Without this, a light-theme user sees
-      // a brief dark flash while the bridge effect in AppShell catches up.
-      (function () {
-        try {
-          var raw = localStorage.getItem('zpl-designer-session');
-          var parsed = raw ? JSON.parse(raw) : null;
-          var stored = parsed && parsed.state && parsed.state.theme;
-          var theme = stored === 'light' || stored === 'dark'
-            ? stored
-            : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          document.documentElement.setAttribute('data-theme', theme);
-        } catch (e) { /* fall through to dark default in CSS */ }
-      })();
-    </script>
+    <script src="/theme.js"></script>
   </head>
   <body>
     <div id="root"></div>

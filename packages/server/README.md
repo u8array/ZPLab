@@ -80,3 +80,5 @@ $env:ZPLAB_DESIGNER_DIR = "$PWD\dist"; $env:ZPLAB_TOKEN = "change-me"; pnpm --fi
 ```
 
 Behind a reverse proxy, do not buffer the answer of `POST /printers/{id}/query`. The route sets `X-Accel-Buffering: no`, which nginx follows. Other proxies need their own setting.
+
+The server sends the designer with a content security policy. The policy carries `frame-ancestors 'none'`, and the server sets `X-Frame-Options: DENY`. Set `Strict-Transport-Security` on the proxy that ends TLS.
