@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { STX } from "@zplab/core/lib/hostStatus.fixture";
 import { parseSgdDump } from "@zplab/core/lib/sgd";
 import { ZD230_ALLCV_EXCERPT } from "@zplab/core/lib/sgd.fixture";
 import { FIRST_BYTE_MS, REPLY_DEADLINE_MS, REPLY_IDLE_MS } from "./printerQuery";
@@ -18,7 +19,6 @@ vi.mock("./printReach", () => ({ printReach: { desktop: false, server: true } })
 vi.mock("./serverPrint", () => ({ queryZplServer }));
 
 const target = { kind: "server", id: "dock" } as const;
-// The ZD230 line endings and dump end, see SGD_ALL_SETTINGS_END.
 const DUMP = `${ZD230_ALLCV_EXCERPT.replace(/\n/g, "\r\n")}""`;
 const PAUSE_AT = DUMP.indexOf("zpl.label_length");
 
@@ -119,11 +119,30 @@ describe("readPrinterSettings", () => {
     expect(await read).toEqual({ kind: "ok", value: parseSgdDump(ZD230_ALLCV_EXCERPT) });
   });
 
-  it("calls a whole reply that lists no setting unparsed", async () => {
+  it("keeps a whole dump whose link dropped after its end", async () => {
     const read = readPrinterSettings(target);
     const query = await open();
-    query.text('"?"\r\n""');
+    query.text(DUMP);
+    query.end("lost");
+    expect(await read).toEqual({ kind: "ok", value: parseSgdDump(ZD230_ALLCV_EXCERPT) });
+  });
+
+  it("finds the dump end behind a raw frame byte in the prefix", async () => {
+    const framed = DUMP.replace("^ (5E)", `${STX} (02)`);
+    const read = readPrinterSettings(target);
+    const query = await open();
+    query.text(framed);
     await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS);
+    expect(query.signal.aborted).toBe(true);
+    expect(await read).toEqual({ kind: "ok", value: parseSgdDump(framed) });
+  });
+
+  it("calls the lone value of a printer without the dump unparsed at the idle gap", async () => {
+    const read = readPrinterSettings(target);
+    const query = await open();
+    query.text('"?"');
+    await vi.advanceTimersByTimeAsync(REPLY_IDLE_MS);
+    expect(query.signal.aborted).toBe(true);
     expect(await read).toEqual({ kind: "unparsed" });
   });
 });

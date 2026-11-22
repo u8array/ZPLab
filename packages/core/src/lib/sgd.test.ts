@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ZD230_ALLCV_EXCERPT } from './sgd.fixture';
-import { SGD_ALL_SETTINGS, parseSgdDump, sgdGetvar, sgdGetvarCommand, sgdValues } from './sgd';
+import { SGD_ALL_SETTINGS, parseSgdDump, sgdAllSettingsWhole, sgdGetvar, sgdGetvarCommand, sgdValues } from './sgd';
 
 const byKey = (key: string) => parseSgdDump(ZD230_ALLCV_EXCERPT).find((s) => s.key === key);
 
@@ -40,6 +40,20 @@ describe('sgdValues', () => {
     expect(values('ezpl.print_width')).toBe('813');
     expect(values('bluetooth.version')).toBeUndefined();
     expect(values('media.nothing')).toBeUndefined();
+  });
+});
+
+describe('sgdAllSettingsWhole', () => {
+  const dump = ZD230_ALLCV_EXCERPT.replace(/\n/g, '\r\n');
+
+  it('calls the dump whole only at its closing line', () => {
+    expect(sgdAllSettingsWhole(dump)).toBe(false);
+    expect(sgdAllSettingsWhole(`${dump}""`)).toBe(true);
+  });
+
+  it('calls a lone "?" whole, an answer inside the dump not', () => {
+    expect(sgdAllSettingsWhole('"?"\r\n')).toBe(true);
+    expect(sgdAllSettingsWhole(`${dump}file.type : "?" \r\n`)).toBe(false);
   });
 });
 

@@ -116,8 +116,8 @@ export interface ReplyWait {
   deadlineMs?: number;
   /** The replies the printer still owes after its first answer, which the idle gap alone would miss. */
   awaited?: readonly AwaitedReply[];
-  /** The awaited reply starts at once instead of behind a print, so a printer that stays mute ends the read at the first-byte limit. */
-  answersAtOnce?: boolean;
+  /** Whether the text proves the reply whole, for a reply that pauses longer than the idle gap. A read that ends short of it fails. */
+  whole?: (body: string) => boolean;
   /** Ends the read with what came so far. */
   signal?: AbortSignal;
 }
@@ -131,13 +131,13 @@ export interface PrinterReply {
 }
 
 /** The failure a reply's end names, undefined for an end that is no failure. */
-export function endFailure(end: ReplyEnd): PrinterQueryFailure | undefined {
+function endFailure(end: ReplyEnd): PrinterQueryFailure | undefined {
   if (end === "deadline") return { kind: "timed_out" };
   if (end === "lost") return { kind: "lost" };
   return undefined;
 }
 
-async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_DEADLINE_MS, awaited = [], answersAtOnce = false, signal }: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
+async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_DEADLINE_MS, awaited = [], whole, signal }: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
   let body = "";
   let received = 0;
   let returned = false;
@@ -152,7 +152,7 @@ async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_
     if (returned) return;
     clearTimeout(idle);
     idle = setTimeout(() => {
-      if (owedReplies(body, awaited).length === 0) stop();
+      if (whole ? whole(body) : owedReplies(body, awaited).length === 0) stop();
     }, REPLY_IDLE_MS);
   });
   const stop = () => {
@@ -160,7 +160,7 @@ async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_
     stream.stop();
   };
   // Only a reply owed behind a print waits the whole deadline, every other read gives up on a mute printer at the first-byte limit.
-  if (awaitsNone || answersAtOnce) idle = setTimeout(stop, FIRST_BYTE_MS);
+  if (awaitsNone) idle = setTimeout(stop, FIRST_BYTE_MS);
   signal?.addEventListener("abort", stop, { once: true });
   if (signal?.aborted) stop();
   const end = await stream.done;
@@ -194,11 +194,14 @@ async function readReply(target: QueryTarget, zpl: string, { deadlineMs = REPLY_
   // A stopped wait with nothing in still names what it waited for.
   if (body === "" && unanswered.length === 0) return { kind: "silent" };
   const ended: ReplyEnd = stopped ? "stopped" : end.value.end;
+  const reply: PrinterOutcome<PrinterReply> = { kind: "ok", value: { body, unanswered, end: ended } };
+  // A reply the text proves whole is kept, even when the link or the deadline ends the read behind it.
+  if (whole?.(body)) return reply;
   // A read that awaits nothing stops itself behind the reply, so a deadline or a lost link before that stop would cut the printer off mid-reply.
   const failure = awaitsNone ? endFailure(ended) : undefined;
   if (failure) return failure;
   if (unanswered.length === 0 && answeredText(body).kind === "silent") return { kind: "silent" };
-  return { kind: "ok", value: { body, unanswered, end: ended } };
+  return whole ? { kind: "incomplete" } : reply;
 }
 
 /** The reply of a command that answers at once, whole or not at all. */
@@ -207,8 +210,8 @@ export async function queryPrinter(target: QueryTarget, zpl: string, deadlineMs?
   return res.kind === "ok" ? { kind: "ok", value: res.value.body } : res;
 }
 
-/** Reads until every awaited reply is in and the printer has gone quiet, or until the deadline or the signal ends
- *  the wait with what came. Every failure comes back as a value, never as a throw. */
+/** Reads until the reply is whole and the printer has gone quiet, or until the deadline or the signal ends the wait.
+ *  Every failure comes back as a value, never as a throw. */
 export async function readPrinterReply(target: QueryTarget, zpl: string, wait: ReplyWait): Promise<PrinterOutcome<PrinterReply>> {
   if (!carriesReply(target.kind, printReach)) return { kind: "error", message: "This build has no channel that reads this printer" };
   try {
