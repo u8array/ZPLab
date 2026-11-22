@@ -8,7 +8,13 @@ export interface SgdSetting {
 export const SGD_ALL_SETTINGS = 'allcv';
 
 /** The ZD230 closes the dump on a line holding an empty quoted value. */
-export const SGD_ALL_SETTINGS_END = '\r\n""';
+const DUMP_END = '\r\n""';
+
+/** The value a printer writes for a getvar it cannot answer, here file.type in the ZD230 dump. */
+const NO_ANSWER = '"?"';
+
+/** Whether the all-settings getvar has answered whole. */
+export const sgdAllSettingsWhole = (reply: string): boolean => reply.includes(DUMP_END) || reply.trim() === NO_ANSWER;
 
 /** The getvar command without its terminator, so a progress text can name it. */
 export const sgdGetvarCommand = (key: string): string => `! U1 getvar "${key}"`;
