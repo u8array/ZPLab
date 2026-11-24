@@ -8,7 +8,7 @@ drifts from the locked dependencies.
 
 ## Overview
 
-- MIT License (443)
+- MIT License (439)
 - Unicode License v3 (19)
 - Apache License 2.0 (7)
 - BSD 3-Clause "New" or "Revised" License (5)
@@ -1321,42 +1321,6 @@ Used by:
 ````
 Copyright (C) SQLx Contributors
 Portions of this work Copyright (C) LaunchBadge, LLC
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-````
-
-### MIT License
-
-Used by:
-
-- [sha2 0.10.9](https://github.com/RustCrypto/hashes)
-````
-Copyright (c) 2006-2009 Graydon Hoare
-Copyright (c) 2009-2013 Mozilla Foundation
-Copyright (c) 2016 Artyom Pavlov
 
 Permission is hereby granted, free of charge, to any
 person obtaining a copy of this software and associated
@@ -2801,7 +2765,6 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [digest 0.10.7](https://github.com/RustCrypto/traits)
 - [hmac 0.13.0](https://github.com/RustCrypto/MACs)
 ````
 Copyright (c) 2017 Artyom Pavlov
@@ -3466,40 +3429,6 @@ THE SOFTWARE.
 
 Used by:
 
-- [block-buffer 0.10.4](https://github.com/RustCrypto/utils)
-````
-Copyright (c) 2018-2019 The RustCrypto Project Developers
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-````
-
-### MIT License
-
-Used by:
-
 - [dirs-sys 0.5.0](https://github.com/dirs-dev/dirs-sys-rs)
 - [dirs 7.0.0](https://codeberg.org/dirs/dirs-rs)
 ````
@@ -4145,7 +4074,6 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [cpufeatures 0.2.17](https://github.com/RustCrypto/utils)
 - [cpufeatures 0.3.0](https://github.com/RustCrypto/utils)
 ````
 Copyright (c) 2020-2025 The RustCrypto Project Developers
@@ -4180,9 +4108,9 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [crypto-common 0.1.7](https://github.com/RustCrypto/traits)
+- [const-oid 0.10.3](https://github.com/RustCrypto/formats)
 ````
-Copyright (c) 2021 RustCrypto Developers
+Copyright (c) 2020-2026 The RustCrypto Project Developers
 
 Permission is hereby granted, free of charge, to any
 person obtaining a copy of this software and associated
@@ -5062,13 +4990,13 @@ SOFTWARE.
 
 Used by:
 
-- [tauri-build 2.7.4](https://github.com/tauri-apps/tauri)
-- [tauri-codegen 2.7.4](https://github.com/tauri-apps/tauri)
-- [tauri-macros 2.7.4](https://github.com/tauri-apps/tauri)
-- [tauri-runtime-wry 2.12.3](https://github.com/tauri-apps/tauri)
-- [tauri-runtime 2.12.2](https://github.com/tauri-apps/tauri)
-- [tauri-utils 2.10.2](https://github.com/tauri-apps/tauri)
-- [tauri 2.12.5](https://github.com/tauri-apps/tauri)
+- [tauri-build 2.7.6](https://github.com/tauri-apps/tauri)
+- [tauri-codegen 2.7.6](https://github.com/tauri-apps/tauri)
+- [tauri-macros 2.7.6](https://github.com/tauri-apps/tauri)
+- [tauri-runtime-wry 2.12.5](https://github.com/tauri-apps/tauri)
+- [tauri-runtime 2.12.4](https://github.com/tauri-apps/tauri)
+- [tauri-utils 2.10.4](https://github.com/tauri-apps/tauri)
+- [tauri 2.12.7](https://github.com/tauri-apps/tauri)
 ````
 MIT License
 
@@ -6492,7 +6420,7 @@ SOFTWARE.
 
 Used by:
 
-- [zip 9.6.0](https://github.com/zip-rs/zip2)
+- [zip 9.8.1](https://github.com/zip-rs/zip2)
 ````
 The MIT License (MIT)
 
