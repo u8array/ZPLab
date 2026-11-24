@@ -2124,6 +2124,32 @@ describe('parseZPL — ^SF serialization', () => {
     expect(serialOf(objects[0])?.increment).toBe(3);
   });
 
+  it('reads the increment per mask position, as the printer does', () => {
+    const inc = (zpl: string) => serialOf(parseSingle(`^XA^FO0,0^A0N,30,0${zpl}^FS^XZ`, 8).objects[0])?.increment;
+    expect(inc('^FDA9^SFAd,B2')).toBe(12);
+    // A digit under a letter counts as nothing, so only the 2 moves the field.
+    expect(inc('^FDA9^SFAd,12')).toBe(2);
+  });
+
+  it('reads an increment that counts nowhere as standing still', () => {
+    const inc = (zpl: string) => serialOf(parseSingle(`^XA^FO0,0^A0N,30,0${zpl}^FS^XZ`, 8).objects[0])?.increment;
+    // A zero, a digit under a letter, and a letter of the other case.
+    expect(inc('^FDAB^SFAA,A')).toBe(0);
+    expect(inc('^FDAB^SFAA,1')).toBe(0);
+    expect(inc('^FDq^SFa,T')).toBe(0);
+  });
+
+  it('reads an empty increment as one', () => {
+    const { objects } = parseSingle('^XA^FO0,0^A0N,30,0^FD007^SFddd,^FS^XZ', 8);
+    expect(serialOf(objects[0])?.increment).toBe(1);
+  });
+
+  // Read as the number 10000, the guide's example would count its trailing letters.
+  it('keeps a skip mask counting the same digits once the field regenerates', () => {
+    const { objects } = parseSingle('^XA^FO0,0^A0N,30,0^FDABCD1000EFGH^SF%%%%dddd%%%%,10000^FS^XZ', 8);
+    expect(generateZPL({ widthMm: 100, heightMm: 50, dpmm: 8 }, objects)).toContain('^FDABCD1000EFGH^SFAAAAddddAAAA,1AAAA^FS');
+  });
+
   it('serializes a barcode field but does not leak to a sibling', () => {
     const zpl =
       '^XA^FO10,10^BCN,100,Y,N,N^FD123^SF%%%,1^FS^FO50,50^A0N,30,0^FDtext^FS^XZ';
