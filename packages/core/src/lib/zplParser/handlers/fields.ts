@@ -237,6 +237,7 @@ export function createFieldHandlers(
         s.field.snPending = true;
         s.field.snIncrement = snInc;
         s.field.snMode = "SN";
+        s.field.sf = null;
         // ^SN's explicit start value is the seed and overrides any prior ^FD,
         // consistent with the post-^FS path, but only for a field that will
         // actually serialise (text/1D). On a non-serialisable type the ^SN is
@@ -286,11 +287,11 @@ export function createFieldHandlers(
       }
     },
     SF(p) {
-      // ^SFa,b: a=mask (derived from the seed on emit, ignored here), b=increment
-      // string. We model only the decimal increment; a complex/aligned mask is
-      // not round-tripped (regenerated from the seed). Pairs with the field's ^FD.
+      // ^SFa,b: a=mask (rebuilt from the seed on emit), b=increment string. The flush reads the
+      // count off both once the field data is known.
       s.field.snPending = true;
-      s.field.snIncrement = int(p[1], 1);
+      s.field.snIncrement = 1;
+      s.field.sf = { mask: p[0] ?? "", increment: p[1] ?? "" };
       s.field.snMode = "SF";
     },
 

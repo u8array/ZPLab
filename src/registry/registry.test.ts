@@ -620,9 +620,9 @@ describe('text.toZPL serial mode', () => {
   });
 
   it('builds the ^SF mask from the sanitized seed', () => {
-    // 'ab^cd' → 'abcd' (^ stripped); mask all-lowercase-alpha 'aaaa'.
+    // 'ab^cd' → 'abcd' (^ stripped); mask 'aaaa'.
     const zpl = def.toZPL(serialText('ab^cd', 'SF'));
-    expect(zpl).toContain('^FDabcd^SFaaaa,1^FS');
+    expect(zpl).toContain('^FDabcd^SFaaaa,b^FS');
   });
 });
 

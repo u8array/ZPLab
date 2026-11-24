@@ -347,6 +347,8 @@ export interface FieldState {
   snPending: boolean;
   snIncrement: number;
   snMode: SerialMode["zplMode"];
+  /** Mask and increment of an ^SF as written, null for ^SN. */
+  sf: { mask: string; increment: string } | null;
 }
 
 export type FnDefaultCandidate = { value: string; decoded: boolean } | null;
@@ -561,6 +563,7 @@ export function consumeOneShotArms(s: ParserState): void {
   s.field.feArmed = false;
   s.field.fcArmed = false;
   s.field.snPending = false;
+  s.field.sf = null;
 }
 
 /** Default text height: ^CF override, else ZPL baseline 30. */
@@ -799,5 +802,6 @@ export function freshFieldState(): FieldState {
     snPending: false,
     snIncrement: 1,
     snMode: "SN",
+    sf: null,
   };
 }

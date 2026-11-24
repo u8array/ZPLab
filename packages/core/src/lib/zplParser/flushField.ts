@@ -36,7 +36,7 @@ import {
   symbolCodeFromPayload,
   type SymbolProps,
 } from "../../registry/symbol";
-import { applySerialToLeaf } from "../../registry/serialField";
+import { applySerialToLeaf, sfIncrementValue } from "../../registry/serialField";
 import { getEntry, isGs1Active } from "../../registry";
 import type { AztecProps } from "../../registry/aztec";
 import type { MaxicodeProps } from "../../registry/maxicode";
@@ -787,14 +787,16 @@ export function createCloseField(
     // also declared.
     if (s.field.snPending) {
       if (justPushed && lastSerialisable) {
+        const seed = getObjectStringContent(justPushed) ?? "";
         applySerialToLeaf(justPushed, {
-          increment: s.field.snIncrement,
+          increment: s.field.sf ? sfIncrementValue(seed, s.field.sf.mask, s.field.sf.increment) : s.field.snIncrement,
           zplMode: s.field.snMode,
         });
       }
       s.field.snPending = false;
       s.field.snIncrement = 1;
       s.field.snMode = "SN";
+      s.field.sf = null;
     }
 
     s.field.fieldType = null;
