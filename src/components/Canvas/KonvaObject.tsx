@@ -23,6 +23,7 @@ import { ZPL_FONT_HEIGHT_TO_CSS_RATIO } from "@zplab/core/lib/labelGeometry/text
 import { getTextRenderMetrics } from "@zplab/core/lib/labelGeometry/textRenderMetrics";
 import { editHandlers, selectionHandlers, shapeHitProps, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
 import { CAPTURE_CHROME, CAPTURE_SELECTION } from "../../lib/canvasImage";
+import { useDrawnRenderMode } from "./canvasCapture";
 import { setMeasuredBounds, clearMeasuredBounds } from "../../lib/measuredBoundsCache";
 import { DEFAULT_GS_SYMBOL_META, GS_SYMBOLS, symbolCodeOf } from "@zplab/core/registry/symbol";
 import { GS_SYMBOL_PATHS, GS_VECTOR_CODES, type GsVectorCode } from "../../registry/gsSymbolPaths";
@@ -471,15 +472,18 @@ export function KonvaObject(props_: Props) {
   // document the canvas is showing (a shadow remaps onto fresh variable ids).
   const dataset = useLabelStore(selectRenderDataset);
   const columnMapping = useLabelStore(selectRenderColumnMapping);
-  const dataRenderMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
-  const obj = applyBindingToObject(previewed, variables, active, dataRenderMode, clock, ctrlParityFor(props_.obj));
+  const viewMode = useLabelStore((s) => s.canvasSettings.dataRenderMode);
+  const drawnMode = useDrawnRenderMode(viewMode);
+  const obj = applyBindingToObject(previewed, variables, active, drawnMode, clock, ctrlParityFor(props_.obj));
   const renderProps = obj === props_.obj ? props_ : { ...props_, obj };
 
   // Classify the ORIGINAL content: `obj` has had its markers resolved to print
   // values by applyBindingToObject, so its content no longer matches `«name»`.
   const boundVariable = lookupBoundVariable(props_.obj, variables);
+  // The tint asks the view mode: with the mode a capture draws in, the tint would appear during the capture,
+  // wrap the root in a Group and remount the node.
   const showFallbackTint = shouldShowFallbackTint(
-    boundVariable, dataset, columnMapping, dataRenderMode,
+    boundVariable, dataset, columnMapping, viewMode,
   );
 
   const shape =
