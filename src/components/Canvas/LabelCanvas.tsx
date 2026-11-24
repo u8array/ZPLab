@@ -93,7 +93,8 @@ import { buildContextMenu, type MenuSection } from "./canvasActions";
 import { zplForSelection } from "../../lib/zplForSelection";
 import { finishZplExport } from "../../lib/exportZpl";
 import { generateMultiPageZPL } from "@zplab/core/lib/zplGenerator";
-import { captureLabelBlob, captureRegionBlob, copyPngToClipboard, CAPTURE_CHROME } from "../../lib/canvasImage";
+import { copyPngToClipboard, CAPTURE_CHROME } from "../../lib/canvasImage";
+import { captureLabelBlob, captureRegionBlob } from "./canvasCapture";
 import { saveLabelImage } from "../../lib/saveLabelImage";
 import { printerPreviewLayout } from "../../lib/printerPreview";
 
@@ -1263,8 +1264,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       const frame = frameRef.current;
       const now = getCurrentObjects();
       const ids = expandSelection(now, sel).filter((id) => frame.visibleLeafById.has(id));
-      const rect = frame.toFramePx(selectionUnionDots(now, ids, frame.frameCtx));
-      return group && rect ? captureRegionBlob(group, labelPaperRef.current, rect, frame.dotRatio) : Promise.resolve(null);
+      return group
+        ? captureRegionBlob(group, labelPaperRef.current, (measured) => frame.toFramePx(selectionUnionDots(now, ids, { ...frame.frameCtx, measured })), frame.dotRatio)
+        : Promise.resolve(null);
     };
     const copyImage = (pending: Promise<Blob | null>) => {
       // Unsupported or failed clipboard writes stay a silent no-op.

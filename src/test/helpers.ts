@@ -6,10 +6,15 @@ import { parseZPL, type ImportFindingKind } from '@zplab/core/lib/zplParser';
 /** jsdom has no 2d context. Konva needs one for Stage/Layer plumbing, sceneFunc
  *  draws and its per-Shape probe, and geometry never reads pixels back. */
 export function stubKonvaCanvas2d(): void {
+  stubKonvaCanvas2dWithTextWidth(() => 10);
+}
+
+/** The measuring stub for tests that compare footprints. */
+export function stubKonvaCanvas2dWithTextWidth(textWidth: (text: string) => number): void {
   const noop = () => undefined;
   HTMLCanvasElement.prototype.getContext = (() =>
     new Proxy(
-      { getImageData: () => ({ data: new Uint8ClampedArray(4) }), measureText: () => ({ width: 10 }) },
+      { getImageData: () => ({ data: new Uint8ClampedArray(4) }), measureText: (text: string) => ({ width: textWidth(text) }) },
       { get: (target, prop) => (prop in target ? target[prop as keyof typeof target] : noop) },
     )) as unknown as typeof HTMLCanvasElement.prototype.getContext;
 }
