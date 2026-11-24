@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLabelStore, useHistory, getCurrentObjects, selectEditorFrozen, selectRenderPages, selectRenderPageIndex } from "../store/labelStore";
 import { nextRotation } from "../components/Canvas/rotationGeometry";
+import { isCanvasGestureActive } from "../components/Canvas/canvasGesture";
 import { isEditableTarget, isModalOpen } from "../lib/dom";
 import { shortcutLetter } from "../lib/kbd";
 
@@ -26,6 +27,9 @@ export function useGlobalShortcuts() {
       // select-all; every document shortcut below (incl. Ctrl+Z) applies only
       // outside text fields, so typing in an input isn't hijacked by the model.
       if (isEditableTarget(e.target as HTMLElement)) return;
+
+      // A gesture must keep its nodes, and the shortcuts below can remove them.
+      if (isCanvasGestureActive()) return;
 
       // Paging is view-only, so it mirrors the pager buttons: the store's own
       // setCurrentPage guard decides (blocked by a preview, open in a session).
