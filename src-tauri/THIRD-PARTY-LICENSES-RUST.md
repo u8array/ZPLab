@@ -3026,7 +3026,7 @@ DEALINGS IN THE SOFTWARE.
 
 Used by:
 
-- [cookie 0.18.1](https://github.com/SergioBenitez/cookie-rs)
+- [cookie 0.18.3](https://github.com/SergioBenitez/cookie-rs)
 ````
 Copyright (c) 2017 Sergio Benitez
 Copyright (c) 2014 Alex Crichton
