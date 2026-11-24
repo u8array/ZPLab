@@ -12,6 +12,7 @@ import {
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { CANVAS_DROPPABLE_ID } from "../../dnd/types";
 import { paletteGhostHandlers } from "./paletteGhostMonitor";
+import { isCanvasGestureActive } from "./canvasGesture";
 import { Stage, Layer, Group, Image as KImage, Rect, Transformer } from "react-konva";
 import type Konva from "konva";
 import { useLabelStore, currentObjects, currentPageLabel, getCurrentObjects, selectEditorFrozen, selectPreviewLocksEditor, selectRenderPageLabel, selectRenderObjects, selectRenderColumnMapping, selectRenderDataset } from "../../store/labelStore";
@@ -424,13 +425,13 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       // The frozen model must not change under the preview snapshot or an
       // open source buffer.
       if (selectEditorFrozen(useLabelStore.getState())) return;
-      // Deleting mid-resize would destroy the nodes under the active gesture.
-      if (transformActiveRef.current) return;
+      // Deleting mid-gesture would destroy the nodes the gesture holds.
+      if (isCanvasGestureActive()) return;
       const { selectedIds: ids } = useLabelStore.getState();
       if (enter) {
         if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
         if (e.target !== document.body && e.target !== containerRef.current) return;
-        if (dragActiveRef.current || document.querySelector('[role="menu"]')) return;
+        if (document.querySelector('[role="menu"]')) return;
         if (ids.length === 1 && ids[0] && openEditorRef.current(ids[0])) e.preventDefault();
         return;
       }
@@ -455,6 +456,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       const objs = currentObjects(state);
       if (ids.length === 0) return;
       e.preventDefault();
+      if (isCanvasGestureActive()) return;
 
       // shift = 10 mm, normal = snapSize when snap on, 1 dot when snap off
       const step = e.shiftKey
