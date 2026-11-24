@@ -4,7 +4,8 @@
 // packages it bundles. Named filters keep the scope to the shipped packages.
 import { execSync } from 'node:child_process';
 
-const LICENSES_CMD = 'pnpm licenses list --prod --json --filter zplab... --filter @zplab/mcp-server... --filter @zplab/server...';
+// --no-optional drops packages reached only through optional edges, such as the native canvas backend that differs per platform.
+const LICENSES_CMD = 'pnpm licenses list --prod --no-optional --json --filter zplab... --filter @zplab/mcp-server... --filter @zplab/server...';
 
 // Returns pnpm's grouped output: { [spdxId]: Array<{name, versions, paths,
 // license, author, homepage, description}> }. Fails closed (exit 2) if the
