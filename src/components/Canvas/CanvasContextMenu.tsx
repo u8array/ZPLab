@@ -17,6 +17,8 @@ import {
   ArrowDownTrayIcon,
   PlusIcon,
   Squares2X2Icon,
+  ViewColumnsIcon,
+  ArrowsPointingOutIcon,
 } from "@heroicons/react/16/solid";
 import { ContextMenu, type MenuAction, type MenuSection } from "../ui/ContextMenu";
 
@@ -35,6 +37,8 @@ const ICONS: Record<string, IconType> = {
   toBack: ChevronDoubleDownIcon,
   group: RectangleGroupIcon,
   ungroup: RectangleStackIcon,
+  repeat: ViewColumnsIcon,
+  decouple: ArrowsPointingOutIcon,
   copyZplSelected: CodeBracketIcon,
   copyZplLabel: CodeBracketIcon,
   copyImageSelected: PhotoIcon,

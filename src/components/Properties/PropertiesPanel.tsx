@@ -7,6 +7,7 @@ import type { AlignSelectionRef } from "../../store/slices/uiSlice";
 import { getEntry, BARCODE_1D_TYPES } from "@zplab/core/registry";
 import { getPanel } from "../../registry/panels";
 import { canGroupSelection, findObjectById, hasLockedAncestor, isGroup } from "@zplab/core/types/Group";
+import { repeatSwitch } from "@zplab/core/lib/repeatCopies";
 import { symbologyTargets } from "../../lib/symbologySwitch";
 import { typeLabelFor } from "../../registry/palettePresets";
 import { SymbologySelect } from "./SymbologySelect";
@@ -120,6 +121,7 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
   const {
     selectedIds,
     updateObject,
+    toggleRepeat,
     groupSelection,
     setLabelConfig,
     canvasSettings,
@@ -200,6 +202,7 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
   const definition = getEntry(obj.type);
   const TypePanel = getPanel(obj.type)?.PropertiesPanel;
   const groupRow = isGroup(obj);
+  const repeat = repeatSwitch(objects, obj.id, label);
   // Groups intentionally have no registry entry; surface a folder-shape
   // glyph here so the header reads as something rather than blank.
   const icon = groupRow ? '⊞' : definition?.icon;
@@ -423,6 +426,18 @@ export function PropertiesPanel({ canvasRef }: PropertiesPanelProps) {
               <InformationCircleIcon className="w-3.5 h-3.5 text-muted/60 cursor-help shrink-0" />
             </Tooltip>
           </label>
+
+          {repeat && (
+            <label className="flex items-center gap-2 text-xs text-text cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={repeat.active}
+                disabled={!repeat.canToggle}
+                onChange={() => toggleRepeat([obj.id])}
+              />
+              <span>{t.layers.repeatOnLabels}</span>
+            </label>
+          )}
         </SectionCard>
       </div>
     </div>

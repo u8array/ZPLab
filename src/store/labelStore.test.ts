@@ -159,6 +159,16 @@ describe('addReverseBackground', () => {
     expect(state().selectedIds).toEqual([bg.id]);
   });
 
+  it('gives the backing of a repeating text the mark, so every copy has its box', () => {
+    state().setLabelConfig({ widthMm: 94, labelsAcross: { count: 3, gapMm: 2 } });
+    state().addObject('text');
+    const text = defined(objs()[0]);
+    state().updateObject(text.id, { props: { reverse: true } });
+    state().toggleRepeat([text.id]);
+    state().addReverseBackground(text.id);
+    expect(objs().map((o) => o.repeat)).toEqual([true, true]);
+  });
+
   it('is idempotent: no second backing when one already sits behind', () => {
     state().addObject('text');
     const text = defined(objs()[0]);
@@ -1311,6 +1321,136 @@ describe('updateObject — leaves inside groups', () => {
     if (!isGroup(grp)) throw new Error('expected group');
     const sibling = grp.children.find((c) => c.id === defined(b).id);
     expect(defined(sibling).x).toBe(50); // default position from addObject
+  });
+});
+
+describe('repeat', () => {
+  const repeatingGroup = (): string => {
+    state().setLabelConfig({ widthMm: 94, labelsAcross: { count: 3, gapMm: 2 } });
+    state().addObject('box');
+    state().selectObject(defined(objs()[0]).id);
+    state().groupSelection();
+    const id = defined(state().selectedIds[0]);
+    state().toggleRepeat([id]);
+    return id;
+  };
+
+  it('toggleRepeat marks the group and takes the mark off again', () => {
+    const id = repeatingGroup();
+    expect(objs()[0]).toMatchObject({ id, repeat: true });
+    state().toggleRepeat([id]);
+    expect('repeat' in defined(objs()[0])).toBe(false);
+  });
+
+  it('toggleRepeat leaves a locked group alone', () => {
+    const id = repeatingGroup();
+    state().toggleRepeat([id]);
+    state().updateObject(id, { locked: true });
+    state().toggleRepeat([id]);
+    expect('repeat' in defined(objs()[0])).toBe(false);
+  });
+
+  it('toggleRepeat turns nothing on while the liner has one label', () => {
+    state().addObject('box');
+    state().toggleRepeat([defined(objs()[0]).id]);
+    expect('repeat' in defined(objs()[0])).toBe(false);
+  });
+
+  it('decoupleRepeats makes one group per label with fresh ids in one undo step', () => {
+    const id = repeatingGroup();
+    useLabelStore.temporal.getState().clear();
+    state().decoupleRepeats();
+    expect(objs()).toHaveLength(3);
+    expect(objs().every((o) => isGroup(o) && !o.repeat)).toBe(true);
+    const ids = objs().flatMap((o) => (isGroup(o) ? [o.id, ...o.children.map((c) => c.id)] : []));
+    expect(new Set(ids).size).toBe(6);
+    expect(ids.every((i) => !i.includes('~'))).toBe(true);
+    expect(useLabelStore.temporal.getState().pastStates).toHaveLength(1);
+    useLabelStore.temporal.getState().undo();
+    expect(objs()).toHaveLength(1);
+    expect(objs()[0]).toMatchObject({ id, repeat: true });
+  });
+
+  it('toggleRepeat marks each selected top-level object, a leaf as well', () => {
+    state().setLabelConfig({ widthMm: 94, labelsAcross: { count: 3, gapMm: 2 } });
+    state().addObject('box');
+    state().addObject('text');
+    const ids = objs().map((o) => o.id);
+    state().toggleRepeat(ids);
+    expect(objs().every((o) => o.repeat === true)).toBe(true);
+  });
+
+  it('a repeating leaf keeps the mark through a type change', () => {
+    state().setLabelConfig({ widthMm: 94, labelsAcross: { count: 3, gapMm: 2 } });
+    state().addObject('line');
+    const id = defined(objs()[0]).id;
+    state().toggleRepeat([id]);
+    state().convertObjectType(id, toggleShapeMode);
+    expect(objs()[0]).toMatchObject({ type: 'box', repeat: true });
+  });
+
+  it('ungroup hands the mark of a repeating group to its children', () => {
+    const id = repeatingGroup();
+    state().selectObject(id);
+    state().ungroup();
+    expect(objs()).toHaveLength(1);
+    expect(objs()[0]).toMatchObject({ type: 'box', repeat: true });
+  });
+
+  it('decoupleRepeats turns the copies of a leaf into leaves', () => {
+    state().setLabelConfig({ widthMm: 94, labelsAcross: { count: 3, gapMm: 2 } });
+    state().addObject('box');
+    const id = defined(objs()[0]).id;
+    state().toggleRepeat([id]);
+    state().selectObject(id);
+    state().decoupleRepeats();
+    expect(objs().map((o) => o.type)).toEqual(['box', 'box', 'box']);
+    expect(objs().some((o) => o.repeat)).toBe(false);
+  });
+
+  it('groupSelection moves the mark of repeating objects to their group', () => {
+    const id = repeatingGroup();
+    state().groupSelection();
+    const outer = defined(objs()[0]);
+    expect(outer.repeat).toBe(true);
+    expect(isGroup(outer) && outer.children[0]).toMatchObject({ id });
+    expect(isGroup(outer) && 'repeat' in defined(outer.children[0])).toBe(false);
+  });
+
+  it('groupSelection drops the mark where not every member repeats', () => {
+    const id = repeatingGroup();
+    state().addObject('text');
+    state().selectObjects(objs().map((o) => o.id));
+    state().groupSelection();
+    const outer = defined(objs()[0]);
+    expect('repeat' in outer).toBe(false);
+    expect(isGroup(outer) && outer.children.some((c) => 'repeat' in c)).toBe(false);
+    expect(isGroup(outer) && outer.children[0]).toMatchObject({ id });
+  });
+
+  it('a duplicate of a repeating object repeats as well', () => {
+    const id = repeatingGroup();
+    state().selectObject(id);
+    state().duplicateSelectedObjects();
+    expect(objs().map((o) => o.repeat)).toEqual([true, true]);
+  });
+
+  it('a child that leaves a repeating group for the top level goes on repeating', () => {
+    const id = repeatingGroup();
+    const child = defined(objs()[0]);
+    const childId = isGroup(child) ? defined(child.children[0]).id : '';
+    state().reparentObject(childId, { parentId: null, index: 0 });
+    expect(objs()[0]).toMatchObject({ id: childId, repeat: true });
+    expect(objs()[1]).toMatchObject({ id });
+  });
+
+  it('an object that moves into a group stops repeating', () => {
+    const id = repeatingGroup();
+    state().addGroup();
+    const target = defined(state().selectedIds[0]);
+    state().reparentObject(id, { parentId: target, index: 0 });
+    const parent = defined(objs().find((o) => o.id === target));
+    expect(isGroup(parent) && 'repeat' in defined(parent.children[0])).toBe(false);
   });
 });
 

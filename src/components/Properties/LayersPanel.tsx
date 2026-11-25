@@ -6,6 +6,8 @@ import { useLabelStore, useCurrentObjects } from '../../store/labelStore';
 import { canGroupSelection, dragBlockIds, effectiveSelection, findObjectById, isGroup, walkObjects } from '@zplab/core/types/Group';
 import { getEntry } from '@zplab/core/registry';
 import { useT } from '../../hooks/useT';
+import { repeatSwitch } from '@zplab/core/lib/repeatCopies';
+import { currentPageLabel } from '../../store/labelStore.selectors';
 import { buildBulkToggleUpdates, type ToggleField } from '../../lib/bulkToggle';
 import { buildFlatRows, useLayerDnd, type FlatRow } from './useLayerDnd';
 import { LayerRow } from './LayerRow';
@@ -39,8 +41,10 @@ export function LayersPanel() {
     groupSelection,
     addGroup,
     ungroupIds,
+    toggleRepeat,
     reparentObjects,
   } = useLabelStore();
+  const label = useLabelStore(currentPageLabel);
   const objects = useCurrentObjects();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   // Anchor for shift-range selection over the flat display order.
@@ -181,6 +185,9 @@ export function LayersPanel() {
         <SortableContext items={allRowIds} strategy={verticalListSortingStrategy}>
           <div ref={panelRef} className="flex flex-col">
             {rows.map(({ obj, depth, guides, containerId }, i) => {
+              const repeatState = repeatSwitch(objects, obj.id, label);
+              const onToggleRepeat = repeatState?.canToggle ? () => toggleRepeat([obj.id]) : undefined;
+              const repeat = repeatState ? { active: repeatState.active, onToggle: onToggleRepeat } : undefined;
               const showGap = preview.insertionLineRowId === obj.id;
               const gapDepth = preview.insertionLineDepth ?? depth;
               return (
@@ -207,6 +214,7 @@ export function LayersPanel() {
                     onToggleVisible={() => toggleField(obj.id, 'visible')}
                     onToggleExpand={() => toggleExpand(obj.id)}
                     onUngroup={() => ungroupIds([obj.id])}
+                    repeat={repeat}
                     onRename={(name) => updateObject(obj.id, { name })}
                   />
                   {showGap && !preview.insertionLineAbove && <LayerDropGap depth={gapDepth} />}

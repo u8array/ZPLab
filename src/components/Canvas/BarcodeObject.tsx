@@ -6,6 +6,7 @@ import { BARCODE_1D_TYPES, ObjectRegistry, getEntry, isGs1Active, objectResolves
 import { dotsToPx, mmToDots, pxToDots } from "@zplab/core/lib/coordinates";
 import { barcodeFtAnchorOffset, qrPrintsAsGraphic, rightAnchorShiftDots } from "@zplab/core/lib/objectBounds";
 import { qrByHeight } from "@zplab/core/registry/qrcode";
+import { designIdOf } from "@zplab/core/lib/repeatCopies";
 import { useColorScheme, CANVAS_WARNING } from "../../hooks/useColorScheme";
 import { useFontCacheVersion } from "../../hooks/useFontCacheVersion";
 import { editHandlers, selectionHandlers, useBlankFieldWarns, PLACEHOLDER_DASH, PLACEHOLDER_STROKE_PX, type KonvaObjectProps } from "./konvaObjectProps";
@@ -141,7 +142,7 @@ export function BarcodeObject({
   // true footprint. The sample never reaches emit; the blank field's ^FD
   // stays empty.
   const blank = contentRaw.trim() === "";
-  const blankWarns = useBlankFieldWarns(obj.id);
+  const blankWarns = useBlankFieldWarns(designIdOf(obj.id));
   const warnBlank = blank && blankWarns;
   const sample = placeholderContentFor(obj.type, obj.props) ?? "";
   const withSample = { ...obj, props: { ...samplePropsFor(obj.type, obj.props), content: sample } } as typeof obj;

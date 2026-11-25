@@ -25,6 +25,7 @@ import { isPrintedBlank } from "./zebraTextLayout";
 import { resolveTextMode } from "../registry/text";
 import type { ColumnMapping, Variable } from "../types/Variable";
 import type { Unit } from "./units";
+import { designIdOf } from "./repeatCopies";
 import {
   PREFLIGHT_KINDS,
   PREFLIGHT_SEVERITIES,
@@ -539,4 +540,19 @@ export function templateFieldFindings(
     });
   }
   return out;
+}
+
+/** Where the leaves of repeat copies print off their labels. Their other findings repeat the source's.
+ *  A copy nobody drew is measured by its source, as a footprint does not depend on the place. */
+export function repeatCopyPlacementFindings(
+  copyLeaves: readonly LeafObject[],
+  ctx: ObjectBoundsCtx,
+  unit: Unit,
+): PreflightFinding[] {
+  const known = ctx.measured;
+  const measured = known && new Map(copyLeaves.flatMap((l) => {
+    const footprint = known.get(l.id) ?? known.get(designIdOf(l.id));
+    return footprint ? [[l.id, footprint] as const] : [];
+  }));
+  return computePreflight(copyLeaves, { ...ctx, measured }, unit).filter((f) => f.kind === "offLabelOutside" || f.kind === "offLabelClipped");
 }

@@ -11,7 +11,7 @@ import {
 } from "../types/Variable";
 import { dbSourceRefSchema, type DbSourceRef } from "../types/DataSource";
 import type { LabelObject } from "../types/Group";
-import { pageHostCommands } from "../types/Group";
+import { pageHostCommands, withoutRepeat } from "../types/Group";
 import { blockOverlaySchema, overlayText, type BlockOverlay } from "./zplOverlay/overlay";
 import { reconstructLegacyBlockHeads, storedFormatPathOf } from "./zplHeadScan";
 import { visitLeavesInPages, foldSerialLeaf, fixTlc39SlotsLeaf, bindSingleMarkerLeaf, migrateGs1DatabarLeaf, safeUniqueNameById } from "./objectTree";
@@ -68,7 +68,7 @@ const leafSchema = labelObjectBaseSchema.extend({
 const groupSchema: z.ZodType<unknown> = z.lazy(() =>
   labelObjectBaseSchema.extend({
     type: z.literal('group'),
-    children: z.array(labelObjectSchema),
+    children: z.array(labelObjectSchema).transform((children) => children.map((c) => withoutRepeat(c as LabelObject))),
   }),
 );
 

@@ -106,6 +106,16 @@ export function exportableLeaves(objects: readonly LabelObject[]): LeafObject[] 
   return out;
 }
 
+/** Deep copy of a node moved by (dx, dy), its ids from `idOf`. Children carry absolute coords,
+ *  so the move recurses into them. A copied leaf has no source bytes, so it drops `dirty`. */
+export function cloneTree(src: LabelObject, dx: number, dy: number, idOf: (o: LabelObject) => string): LabelObject {
+  if (isGroup(src)) {
+    return { ...src, id: idOf(src), x: src.x + dx, y: src.y + dy, children: src.children.map((c) => cloneTree(c, dx, dy, idOf)) };
+  }
+  const { dirty: _dirty, ...leaf } = src;
+  return { ...leaf, id: idOf(src), x: src.x + dx, y: src.y + dy, props: { ...src.props } } as LabelObject;
+}
+
 /** Flat list of every leaf descendant of `objects`. Skips group nodes themselves. */
 export function getAllLeaves(objects: LabelObject[]): LeafObject[] {
   const out: LeafObject[] = [];
@@ -294,6 +304,29 @@ export function dragBlockIds(
   return covered ? roots.map((n) => n.id) : [id];
 }
 
+/** The object without its repeat mark. */
+export function withoutRepeat<T extends LabelObject>(obj: T): T {
+  if (!("repeat" in obj)) return obj;
+  const { repeat: _repeat, ...plain } = obj;
+  return plain as T;
+}
+
+export const isRepeating = (obj: LabelObject): boolean => obj.repeat === true;
+
+export const withRepeatMark = <T extends LabelObject>(obj: T): T => ({ ...obj, repeat: true });
+
+/** The children a dissolved group frees, which go on repeating where it did. */
+export const ungrouped = (group: GroupObject): LabelObject[] =>
+  isRepeating(group) ? group.children.map(withRepeatMark) : group.children;
+
+/** A moved node as its new place holds it. In a group nothing repeats. A child of a repeating group
+ *  goes on repeating at the top level, as after an ungroup. */
+function arriving(objects: LabelObject[], node: LabelObject, parentId: string | null): LabelObject {
+  if (parentId !== null) return withoutRepeat(node);
+  const from = findAncestors(objects, node.id)[0];
+  return from && isRepeating(from) ? withRepeatMark(node) : node;
+}
+
 /** Move several nodes as one block to `target`, preserving the given order.
  *  Pure: returns the new tree, or the SAME reference (no-op) when the move is
  *  invalid. Single source for multi-select layer drag, mirroring the single
@@ -323,7 +356,7 @@ export function reparentNodes(
   for (const id of roots) {
     const { removed, rest: next } = detachObjectById(rest, id);
     if (!removed) return objects; // unknown id: abort rather than move a partial block
-    moved.push(removed);
+    moved.push(arriving(objects, removed, parentId));
     rest = next;
   }
   const insertBlock = (arr: LabelObject[]): LabelObject[] => {
@@ -357,36 +390,25 @@ function sameStructure(a: LabelObject[], b: LabelObject[]): boolean {
   return true;
 }
 
-/** True when groupSelection() would act (>=1 top-level unlocked). */
-export function canGroupSelection(
-  objects: LabelObject[],
-  selectedIds: readonly string[],
-): boolean {
-  return selectedIds.some((id) =>
-    objects.some((o) => o.id === id && !o.locked),
-  );
+/** The selected top-level objects an action may change, so the unlocked ones. */
+export function selectedTopObjects(objects: readonly LabelObject[], selectedIds: readonly string[]): LabelObject[] {
+  return objects.filter((o) => !o.locked && selectedIds.includes(o.id));
 }
+
+export const selectedTopGroups = (objects: readonly LabelObject[], selectedIds: readonly string[]): GroupObject[] =>
+  selectedTopObjects(objects, selectedIds).filter(isGroup);
+
+/** True when groupSelection() would act (>=1 top-level unlocked). */
+export const canGroupSelection = (objects: readonly LabelObject[], selectedIds: readonly string[]): boolean =>
+  selectedTopObjects(objects, selectedIds).length > 0;
 
 /** True when removeSelectedObjects() would act (>=1 top-level unlocked). */
-export function canDeleteSelection(
-  objects: LabelObject[],
-  selectedIds: readonly string[],
-): boolean {
-  return selectedIds.some((id) =>
-    objects.some((o) => o.id === id && !o.locked),
-  );
-}
+export const canDeleteSelection = (objects: readonly LabelObject[], selectedIds: readonly string[]): boolean =>
+  selectedTopObjects(objects, selectedIds).length > 0;
 
-/** True when ungroup() would act: a selected top-level object is an unlocked
- *  group. The lock check mirrors ungroupIds, which skips locked groups. */
-export function canUngroupSelection(
-  objects: LabelObject[],
-  selectedIds: readonly string[],
-): boolean {
-  return objects.some(
-    (o) => selectedIds.includes(o.id) && isGroup(o) && !o.locked,
-  );
-}
+/** True when ungroupIds would act, which skips locked groups. */
+export const canUngroupSelection = (objects: readonly LabelObject[], selectedIds: readonly string[]): boolean =>
+  selectedTopGroups(objects, selectedIds).length > 0;
 
 /** True when the selection is non-empty and every selected top-level object
  *  is locked; drives the lock/unlock toggle direction. */

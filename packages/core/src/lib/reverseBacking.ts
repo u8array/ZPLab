@@ -22,6 +22,8 @@ interface TextLike {
   visible?: boolean;
   includeInExport?: boolean;
   locked?: boolean;
+  /** Inherited, so a repeating text keeps its box on every copy. */
+  repeat?: boolean;
 }
 
 /** True when a (possibly unvalidated) text has the fields the geometry needs,
@@ -141,6 +143,7 @@ export function makeReverseBackingBox(
   if (text.visible !== undefined) base.visible = text.visible;
   if (text.includeInExport !== undefined) base.includeInExport = text.includeInExport;
   if (text.locked !== undefined) base.locked = text.locked;
+  if (text.repeat !== undefined) base.repeat = text.repeat;
 
   if (height === thickness && width > thickness) {
     base.type = "line";

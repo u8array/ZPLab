@@ -12,8 +12,13 @@ import {
   mapObjectById,
   pageHostCommands,
   reparentNodes,
+  selectedTopGroups,
+  selectedTopObjects,
+  ungrouped,
+  withoutRepeat,
 } from '@zplab/core/types/Group';
 import { getEntry } from '@zplab/core/registry';
+import { decoupledRepeats, groupRepeats, toggledRepeat } from '@zplab/core/lib/repeatCopies';
 import { anchorRepin } from '../anchorRepin';
 import { reorderForZ, type ZOrderDir } from '../../lib/zorder';
 import { makeReverseBackingBox, precedingBackingExists, isOwnReverseBacking } from '@zplab/core/lib/reverseBacking';
@@ -23,6 +28,7 @@ import {
   DUPLICATE_OFFSET_DOTS,
   buildOffsetCopies,
   cloneChildrenFresh,
+  cloneShifted,
   freshPasteCopies,
   updateCurrentObjects,
 } from '../labelStore.internals';
@@ -69,6 +75,8 @@ export interface ObjectSlice {
   ungroup: () => void;
   /** Like `ungroup`, but operates on an explicit id list. */
   ungroupIds: (ids: readonly string[]) => void;
+  toggleRepeat: (ids: readonly string[]) => void;
+  decoupleRepeats: () => void;
   /** Move `id` to a new tree position. `parentId: null` targets top
    *  level; otherwise a group. Silently refuses cycles. */
   reparentObject: (id: string, target: { parentId: string | null; index: number }) => void;
@@ -334,12 +342,9 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
     set((state) => {
       if (selectEditorFrozen(state)) return {};
       const objs = currentObjects(state);
-      const sel = new Set(state.selectedIds);
       // Only top-level objects of the current page; nested children of an
       // existing group need ungroup first.
-      const candidates = objs.flatMap((o) =>
-        sel.has(o.id) && !o.locked ? [o] : [],
-      );
+      const candidates = selectedTopObjects(objs, state.selectedIds);
       if (candidates.length === 0) return {};
       const candidateIds = new Set(candidates.map((o) => o.id));
       // Insert at the position of the last (topmost) selected item so
@@ -354,7 +359,8 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
         x: 0,
         y: 0,
         rotation: 0,
-        children: candidates,
+        children: candidates.map(withoutRepeat),
+        ...(groupRepeats(candidates, { label: currentPageLabel(state), variables: state.variables }) ? { repeat: true } : {}),
       };
       const remaining = objs.filter((o) => !candidateIds.has(o.id));
       // lastIndex is pre-filter; convert by counting removed items before it.
@@ -407,18 +413,15 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
   ungroupIds: (ids) =>
     set((state) => {
       if (selectEditorFrozen(state)) return {};
-      const wanted = new Set(ids);
       const objs = currentObjects(state);
-      const targets = objs.flatMap((o) =>
-        wanted.has(o.id) && isGroup(o) && !o.locked ? [o] : [],
-      );
+      const targets = selectedTopGroups(objs, ids);
       if (targets.length === 0) return {};
       const targetIds = new Set(targets.map((g) => g.id));
       const next: LabelObject[] = [];
       const newSelection: string[] = [];
       for (const o of objs) {
         if (targetIds.has(o.id) && isGroup(o)) {
-          next.push(...o.children);
+          next.push(...ungrouped(o));
           newSelection.push(...o.children.map((c) => c.id));
         } else {
           next.push(o);
@@ -428,6 +431,18 @@ export const createObjectSlice: StateCreator<LabelState, [], [], ObjectSlice> = 
         ...updateCurrentObjects(state, () => next),
         selectedIds: newSelection,
       };
+    }),
+
+  toggleRepeat: (ids) =>
+    set((state) => {
+      if (selectEditorFrozen(state)) return {};
+      return updateCurrentObjects(state, (objs) => toggledRepeat(objs, ids, currentPageLabel(state)));
+    }),
+
+  decoupleRepeats: () =>
+    set((state) => {
+      if (selectEditorFrozen(state)) return {};
+      return updateCurrentObjects(state, (objs) => decoupledRepeats(objs, state.selectedIds, { label: currentPageLabel(state), variables: state.variables }, (copy) => cloneShifted(copy, 0, 0)));
     }),
 
   moveObjectToFront: (id) =>
