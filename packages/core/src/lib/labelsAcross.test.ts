@@ -16,6 +16,13 @@ describe("acrossWidthMm", () => {
     expect(acrossWidthMm(liner({ count: 1, gapMm: 2 }))).toBeNull();
   });
 
+  it("is null where a label rounds to one dot but lies between two dots", () => {
+    // 0.53 dots wide. The middle label starts and ends on dot 376.
+    const row = liner({ count: 3, gapMm: 46.9 });
+    expect(acrossWidthMm(row)).toBeNull();
+    expect(acrossLayoutDots(row)).toBeNull();
+  });
+
   it("is null for a row wider than the liner or a label under one dot", () => {
     expect(acrossWidthMm(liner({ count: 3, gapMm: 50 }))).toBeNull();
     // 0.0725 mm at 3 effective dpmm rounds to no dot at all.

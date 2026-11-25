@@ -933,8 +933,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       return {
         alignSelection: (op: AlignOp, ref: AlignRef) => {
           const sel = buildSelection(ref, barBoxDots);
-          if (!sel || !sel.ref || sel.boxes.length === 0) return;
-          const deltas = computeAlignDeltas(sel.boxes, sel.ref, op);
+          if (!sel) return;
+          const deltas = sel.targets.flatMap((target) => computeAlignDeltas(target.boxes, target.frame, op));
           const updates = deltas.flatMap(sel.apply);
           if (updates.length > 0) updateObjects(updates);
         },
@@ -952,7 +952,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         tidySelection: () => {
           const sel = buildSelection("selection", objectBoundsDots);
           if (!sel || sel.boxes.length < 2) return;
-          const deltas = computeTidy(sel.boxes, sel.container);
+          const deltas = sel.labels.flatMap((target) => computeTidy(target.boxes, target.frame));
           const updates = deltas.flatMap(sel.apply);
           if (updates.length > 0) updateObjects(updates);
         },

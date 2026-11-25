@@ -17,7 +17,8 @@ export function acrossWidthMm(label: AcrossLabel): number | null {
   const across = label.labelsAcross;
   if (!across || across.count < 2) return null;
   const width = (label.widthMm - (across.count - 1) * across.gapMm) / across.count;
-  return mmToDots(width, effectiveDpmm(label)) >= 1 ? width : null;
+  // Unrounded, as a width that rounds up to a dot can fall between two dots.
+  return width * effectiveDpmm(label) >= 1 ? width : null;
 }
 
 /** The gap in mm that yields labels of this width, 0 when the liner cannot hold them. */
