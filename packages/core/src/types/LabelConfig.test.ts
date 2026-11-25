@@ -45,7 +45,7 @@ describe('LABEL_CONFIG_FIELDS derivations', () => {
   });
 
   it('derives NON_EMITTING_CONFIG_FIELDS', () => {
-    expect(sorted(NON_EMITTING_CONFIG_FIELDS)).toEqual(['safeAreaMm']);
+    expect(sorted(NON_EMITTING_CONFIG_FIELDS)).toEqual(['labelsAcross', 'safeAreaMm']);
   });
 
   it('derives the scaled field sets', () => {

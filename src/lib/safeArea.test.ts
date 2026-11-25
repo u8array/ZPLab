@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { safeAreaRectDots } from "./safeArea";
+import { safeAreaRectDots, safeAreaRectsDots } from "./safeArea";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
 
 const base = { widthMm: 100, heightMm: 50, dpmm: 8 } as PageLabel;
@@ -36,5 +36,24 @@ describe("safeAreaRectDots", () => {
       width: 800 - 32,
       height: 400 - 32,
     });
+  });
+});
+
+describe("safeAreaRectsDots", () => {
+  it("insets every label of a row", () => {
+    // 100 mm in two with a gap of 4 mm: labels of 384 dots at 0 and 416.
+    const row = { ...base, safeAreaMm: 2, labelsAcross: { count: 2, gapMm: 4 } };
+    expect(safeAreaRectsDots(row)).toEqual([
+      { x: 16, y: 16, width: 352, height: 368 },
+      { x: 432, y: 16, width: 352, height: 368 },
+    ]);
+  });
+
+  it("is the one inset without a row", () => {
+    expect(safeAreaRectsDots({ ...base, safeAreaMm: 2 })).toEqual([{ x: 16, y: 16, width: 768, height: 368 }]);
+  });
+
+  it("is empty without a safe area", () => {
+    expect(safeAreaRectsDots(base)).toEqual([]);
   });
 });

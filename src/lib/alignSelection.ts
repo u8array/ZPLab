@@ -2,6 +2,7 @@ import type { LabelObject } from "@zplab/core/types/Group";
 import { findObjectById, getAllLeaves, isGroup } from "@zplab/core/types/Group";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import {
+  ownLabelRectDots,
   printableRectDots,
   unionOf,
   type BoundingBoxDots,
@@ -38,15 +39,16 @@ export function buildAlignSelection(
     .filter((o): o is LabelObject => o !== undefined && !o.locked && o.visible !== false);
   if (movable.length === 0) return null;
 
-  const printable = printableRectDots(label);
   const items = movable.map((o) => ({
     id: o.id,
     type: isGroup(o) ? "group" : o.type,
     box: boxOf(o, ctx),
   }));
+  const all = unionOf(items.map((it) => it.box));
+  const labelRect = all ? ownLabelRectDots(label, all) : printableRectDots(label);
   // Structural primitives such as a full-label frame or a spanning divider
   // neither inflate the reference nor get rearranged, consistent with tidy.
-  const contentIds = new Set(selectTidyTargets(items, printable.width, printable.height));
+  const contentIds = new Set(selectTidyTargets(items, labelRect.width, labelRect.height));
   const content = movable.filter((o) => contentIds.has(o.id));
   const boxes: AlignBox[] = items
     .filter((it) => contentIds.has(it.id))
@@ -54,7 +56,7 @@ export function buildAlignSelection(
 
   // Align-to-label pins to the safe-area inset when configured, so the
   // edge buttons keep a uniform margin.
-  const labelBox = safeAreaRectDots(label) ?? printable;
+  const labelBox = safeAreaRectDots(label, labelRect) ?? labelRect;
   let refBox: BoundingBoxDots | null;
   // A single unit has no selection or key frame of its own, so it aligns to
   // the label the way a single element aligns to its parent in Figma.

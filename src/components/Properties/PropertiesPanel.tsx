@@ -25,6 +25,7 @@ import type { Unit } from "@zplab/core/lib/units";
 import { useT } from "../../hooks/useT";
 import { SectionCard, StaticSectionCard } from "./SectionCard";
 import { UnitNumberInput } from "./UnitNumberInput";
+import { AcrossFields } from "./AcrossFields";
 import { FieldLabel } from "./ZplCmd";
 import { Tooltip } from "../ui/Tooltip";
 import { SegmentedControl } from "../ui/SegmentedControl";
@@ -692,6 +693,8 @@ function LabelConfigPanel({
             }}
           />
         </div>
+
+        <AcrossFields label={label} onUpdate={onUpdate} unit={unit} />
 
         <label className="flex items-start gap-2 cursor-pointer">
           <input

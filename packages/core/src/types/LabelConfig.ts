@@ -217,6 +217,8 @@ export function applyClockOffset(d: Date, offset: ClockOffset | undefined): Date
   return next;
 }
 
+export const LABELS_ACROSS_MAX = 20;
+
 export const labelConfigSchema = z.object({
   widthMm: z.number(),
   heightMm: z.number(),
@@ -224,6 +226,13 @@ export const labelConfigSchema = z.object({
   /** Design-time safe-area inset (mm) from every edge. Drives the align/pin
    *  reference rect and a canvas guide; optional so older designs stay valid. */
   safeAreaMm: z.number().min(0).optional(),
+  /** The liner carries this many labels side by side. The canvas draws them, the print does not read it. */
+  labelsAcross: z
+    .object({
+      count: z.number().int().min(1).max(LABELS_ACROSS_MAX),
+      gapMm: z.number().min(0),
+    })
+    .optional(),
   /** Emit x,y,1 (^FO/^FT) for right-justified 1D barcodes so the PRINTER
    *  anchors the right edge (variable data stays pinned). ZD230-verified;
    *  needs V50.14/V60.14+, older firmware would misplace x, hence opt-in. */
@@ -390,6 +399,7 @@ export const LABEL_CONFIG_FIELDS = {
   // dot value, so it is neither a per-label override nor itself scaled.
   dpmm: { scope: 'design', emits: true, scales: 'never' },
   safeAreaMm: { scope: 'design', emits: false, scales: 'never' },
+  labelsAcross: { scope: 'design', emits: false, scales: 'never' },
   emit1dZJustify: { scope: 'design', emits: true, scales: 'never' },
   printQuantity: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },
   pauseCount: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },

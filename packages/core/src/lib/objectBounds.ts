@@ -26,6 +26,7 @@ import { blockBoundsDots, blockLineWidthDots, EMPTY_TEXT_PLACEHOLDER_GLYPHS, isB
 import { effectiveFontHeightDots } from "./labelGeometry/deviceFonts";
 import { resolveDefaultSizeDots } from "./resolveDefaultSize";
 import { mmToDots } from "./coordinates";
+import { acrossLayoutDots } from "./labelsAcross";
 import { QR_FT_MODULE_OFFSET } from "./bwipConstants";
 import { qrByHeight } from "./qrBy";
 
@@ -461,11 +462,38 @@ export function printableRectDots(label: PageLabel): BoundingBoxDots {
   };
 }
 
+/** The rects objects are laid out in: every label of a row across the liner, else the printable area alone. */
+export function labelRectsDots(label: PageLabel): BoundingBoxDots[] {
+  const liner = printableRectDots(label);
+  const labels = acrossLayoutDots(label)?.labelsDots;
+  return labels ? labels.map((l) => ({ ...liner, x: liner.x + l.x, width: l.width })) : [liner];
+}
+
+/** The one of them a box belongs to: the label its centre lies on, else the nearest. */
+export function ownLabelRectDots(label: PageLabel, box: BoundingBoxDots): BoundingBoxDots {
+  const centre = box.x + box.width / 2;
+  const off = (r: BoundingBoxDots) => Math.max(r.x - centre, centre - (r.x + r.width), 0);
+  return labelRectsDots(label).reduce((own, r) => (off(r) < off(own) ? r : own));
+}
+
 /** Half-dot tolerance for the off-label edge checks so an object resting exactly
  *  on an edge isn't flagged. */
 const EDGE_EPS = 0.5;
 
 export type OffLabel = "clipped" | "outside";
+
+/** Where a box on the liner misses the labels of a row. Over a label edge it is clipped,
+ *  in a gap it is outside. Null inside one label and without a row. */
+function offRowLabels(box: BoundingBoxDots, label: PageLabel): OffLabel | null {
+  const labels = labelRectsDots(label);
+  if (labels.length < 2) return null;
+  const right = box.x + box.width;
+  const touched = labels.filter((l) => right > l.x + EDGE_EPS && box.x < l.x + l.width - EDGE_EPS);
+  const [only] = touched;
+  if (!only) return "outside";
+  const inside = touched.length === 1 && box.x >= only.x - EDGE_EPS && right <= only.x + only.width + EDGE_EPS;
+  return inside ? null : "clipped";
+}
 
 /** Off-label placement of a field vs the printable rect, or null when inside.
  *  Asymmetric on purpose, and the two edges read DIFFERENT inputs:
@@ -492,12 +520,13 @@ export function offLabelPlacement(
   const overLeft = rightAnchored && box.x < r.x - EDGE_EPS;
   const overRight = box.x + box.width > r.x + r.width + EDGE_EPS;
   const overBottom = box.y + box.height > r.y + r.height + EDGE_EPS;
-  if (!overLeft && !overRight && !overBottom) return null;
+  if (!overLeft && !overRight && !overBottom) return offRowLabels(box, label);
   // Real overlap in both axes = part still prints (clipped); no overlap = gone.
   const onLabel =
     box.x + box.width > r.x + EDGE_EPS &&
     box.x < r.x + r.width - EDGE_EPS &&
     box.y + box.height > r.y + EDGE_EPS &&
     box.y < r.y + r.height - EDGE_EPS;
-  return onLabel ? "clipped" : "outside";
+  // What the liner still holds can lie in a gap of a row, on no label at all.
+  return onLabel && offRowLabels(box, label) !== "outside" ? "clipped" : "outside";
 }

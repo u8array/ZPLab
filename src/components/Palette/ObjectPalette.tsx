@@ -11,7 +11,7 @@ import { resolveAddable, typeLabelFor, type AddableEntry } from '../../registry/
 import { getEntry } from '@zplab/core/registry';
 import { useT } from '../../hooks/useT';
 import { useLabelStore, currentPageLabel, selectEditorFrozen } from '../../store/labelStore';
-import { printableRectDots } from '@zplab/core/lib/objectBounds';
+import { labelRectsDots, printableRectDots } from '@zplab/core/lib/objectBounds';
 import { centeredSpawnAnchor } from '../../lib/spawn';
 import { DragHandleIcon } from '../ui/DragHandleIcon';
 import { DragChip } from '../ui/DragChip';
@@ -39,7 +39,8 @@ function entryCategory(entry: AddableEntry, t: Translations): string {
 }
 
 /** Drop an entry centred on the visible (printable) label area, which ^LS can
- *  shift off the physical center (double-click / "no drag" path). Shares
+ *  shift off the physical center (double-click / "no drag" path). In a row
+ *  across the liner that is the first label, as the liner's middle can be a gap. Shares
  *  centeredSpawnAnchor with the drag path, so both gestures land the same way
  *  and honour the spawn rotation of a rotated canvas view. */
 function spawnCentered(entry: AddableEntry) {
@@ -47,7 +48,7 @@ function spawnCentered(entry: AddableEntry) {
   // Current page's dot scale: addObject writes into it, so a jm-diverged page
   // must not size/place against the design label.
   const label = currentPageLabel(state);
-  const r = printableRectDots(label);
+  const [r = printableRectDots(label)] = labelRectsDots(label);
   const at = { x: r.x + r.width / 2, y: r.y + r.height / 2 };
   const pos = centeredSpawnAnchor(entry.type, entry.propsOverride, at, label, state.canvasSettings.viewRotation);
   if (pos) state.addObject(entry.type, pos, entry.propsOverride);

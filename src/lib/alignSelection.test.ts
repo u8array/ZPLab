@@ -55,4 +55,19 @@ describe("buildAlignSelection", () => {
     const sel = buildAlignSelection([locked, code128], ["rect", "bc"], label, measured, "selection", barBoxDots);
     expect(sel?.boxes.map((b) => b.id)).toEqual(["bc"]);
   });
+
+  it("takes the label of a row the selection lies on as the label reference", () => {
+    // 100 mm in two with a gap of 4 mm: labels of 384 dots at 0 and 416.
+    const row = { ...label, labelsAcross: { count: 2, gapMm: 4 } } as PageLabel;
+    const right = { ...rect, x: 500 } as LeafObject;
+    expect(buildAlignSelection([right], ["rect"], row, measured, "label", barBoxDots)?.ref).toMatchObject({ x: 416, width: 384 });
+    const left = { ...rect, x: 100 } as LeafObject;
+    expect(buildAlignSelection([left], ["rect"], row, measured, "label", barBoxDots)?.ref).toMatchObject({ x: 0, width: 384 });
+  });
+
+  it("insets that label by the safe area", () => {
+    const row = { ...label, safeAreaMm: 2, labelsAcross: { count: 2, gapMm: 4 } } as PageLabel;
+    const right = { ...rect, x: 500 } as LeafObject;
+    expect(buildAlignSelection([right], ["rect"], row, measured, "label", barBoxDots)?.ref).toMatchObject({ x: 432, width: 352 });
+  });
 });
