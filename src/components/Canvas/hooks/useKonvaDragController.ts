@@ -5,6 +5,7 @@ import { dragSnapTargets, gridSnapDelta, smartSnapDelta, labelSnapRectDots } fro
 import { SNAP_THRESHOLD_PX } from "../../../lib/snapGuides";
 import type { SnapGuide, SnapLines, SnapRect } from "../../../lib/snapGuides";
 import { guideSnapLinesDots } from "../../../lib/rulerGuides";
+import { withAcrossGuides } from "../acrossLayout";
 import {
   barBoxDots,
   selectionUnionDots,
@@ -173,7 +174,7 @@ export function useKonvaDragController(args: DragControllerArgs): DragHandlers {
       startUnionDots,
       others,
       labelDots,
-      guideDots: guideSnapLinesDots(state.rulerGuides, args.dpmm),
+      guideDots: guideSnapLinesDots(withAcrossGuides(state.rulerGuides, currentPageLabel(state)), args.dpmm),
       lastDelta: { x: 0, y: 0 },
     };
   };

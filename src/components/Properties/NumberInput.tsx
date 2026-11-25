@@ -17,6 +17,8 @@ interface NumberInputProps {
   /** Optional ZPL command this field emits; shown as a tag when the
    *  showZplCommands preference is on. */
   zplCmd?: string;
+  /** Shown as a tooltip on an info icon beside the label. */
+  hint?: string;
   /** Replaces the cell layout entirely (not merged), e.g. `fieldGridCell` for
    *  subgrid; omit for the default flex column. */
   className?: string;
@@ -38,6 +40,7 @@ export function NumberInput({
   disabled,
   readOnly,
   zplCmd,
+  hint,
   className,
 }: NumberInputProps) {
   // Raw keystrokes stay in `draft` while focused so an intermediate "2." or
@@ -55,7 +58,7 @@ export function NumberInput({
   };
   return (
     <div className={className ?? 'flex flex-col gap-1'}>
-      <FieldLabel cmd={zplCmd}>{label}</FieldLabel>
+      <FieldLabel cmd={zplCmd} hint={hint}>{label}</FieldLabel>
       <input
         type="number"
         className={inputCls}

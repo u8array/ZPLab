@@ -38,7 +38,7 @@ import { resolveForMeasure } from "@zplab/core/lib/barcodeDims";
 import { measureBarcodeFootprintDots } from "./bwipHelpers";
 import { copyText } from "../../lib/clipboard";
 import { tryFinally } from "../../lib/tryFinally";
-import { safeAreaRectDots } from "../../lib/safeArea";
+import { safeAreaRectsDots } from "../../lib/safeArea";
 import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "../../lib/measuredBoundsCache";
 import { isEditableTarget, isModalOpen } from "../../lib/dom";
 import { KonvaObject } from "./KonvaObject";
@@ -71,6 +71,9 @@ import {
   nextRotation,
   type ViewRotation,
 } from "./rotationGeometry";
+import { acrossLayoutPx, withAcrossGuides } from "./acrossLayout";
+import { AcrossPaper } from "./AcrossPaper";
+import { PAPER_SHADOW } from "./paperShadow";
 import { useAltClickCycle } from "./hooks/useAltClickCycle";
 import { useSelectionActionBar, actionBarPosition } from "./hooks/useSelectionActionBar";
 import type { Bounds } from "./nodeRect";
@@ -605,16 +608,17 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   };
 
   const guideView: RulerGuideView = { originX: objectsOffsetX, originY: labelOffsetY, centerX: labelCenterX, centerY: labelCenterY, scale, rotation: viewRotation };
-  const guideSnapLines = guideSnapLinesStage(rulerGuides, guideView);
+  const guideSnapLines = guideSnapLinesStage(withAcrossGuides(rulerGuides, label), guideView);
+  // The frozen editor shows the paper whole.
+  const acrossPx = editorFrozen ? null : acrossLayoutPx(label, scale);
 
   // Safe-area guide rect in screen px (dots scaled, object-offset aligned).
-  const safeAreaDots = safeAreaRectDots(label);
-  const safeAreaPx = safeAreaDots && {
-    x: objectsOffsetX + (safeAreaDots.x / effDpmm) * scale,
-    y: labelOffsetY + (safeAreaDots.y / effDpmm) * scale,
-    width: (safeAreaDots.width / effDpmm) * scale,
-    height: (safeAreaDots.height / effDpmm) * scale,
-  };
+  const safeAreasPx = safeAreaRectsDots(label).map((r) => ({
+    x: objectsOffsetX + (r.x / effDpmm) * scale,
+    y: labelOffsetY + (r.y / effDpmm) * scale,
+    width: (r.width / effDpmm) * scale,
+    height: (r.height / effDpmm) * scale,
+  }));
 
   const snapUnit = Math.round(snapSizeMm * effDpmm);
   const snap = (dots: number) =>
@@ -1597,26 +1601,31 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                     ? previewCoversCanvas
                       ? 'rgba(251, 191, 36, 0.55)'
                       : 'rgba(34, 184, 212, 0.55)'
-                    : 'rgba(0,0,0,0.4)'
+                    : PAPER_SHADOW.shadowColor
                 }
-                shadowBlur={editorFrozen ? 28 : 12}
-                shadowOffsetY={editorFrozen ? 0 : 2}
+                shadowBlur={editorFrozen ? 28 : PAPER_SHADOW.shadowBlur}
+                shadowOffsetY={editorFrozen ? 0 : PAPER_SHADOW.shadowOffsetY}
+                // The labels of a row carry their own shadow.
+                shadowOpacity={acrossPx ? 0 : 1}
               />
+              {/* Above the paper, so grid and objects draw over the gaps. */}
+              {acrossPx && (
+                <AcrossPaper across={acrossPx} linerX={physicalLabelX} y={labelOffsetY} height={labelHeightPx} background={colors.canvasBg} />
+              )}
 
               {/* Safe-area guide: non-interactive dashed inset, accent like the ^FB wrap-guide. */}
-              {!editorFrozen && safeAreaPx && (
-                <Rect
-                  name={CAPTURE_CHROME}
-                  x={safeAreaPx.x}
-                  y={safeAreaPx.y}
-                  width={safeAreaPx.width}
-                  height={safeAreaPx.height}
-                  stroke={colors.accent}
-                  strokeWidth={1}
-                  dash={[4, 3]}
-                  listening={false}
-                />
-              )}
+              {!editorFrozen &&
+                safeAreasPx.map((area) => (
+                  <Rect
+                    key={area.x}
+                    name={CAPTURE_CHROME}
+                    {...area}
+                    stroke={colors.accent}
+                    strokeWidth={1}
+                    dash={[4, 3]}
+                    listening={false}
+                  />
+                ))}
 
               {/* ^RS programming position: label-config guide, drawn with
                   the safe area rather than as an object. */}
@@ -1635,7 +1644,16 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
               )}
 
               {showGrid && (
-                <Group name={CAPTURE_CHROME} listening={false}>
+                <Group
+                  name={CAPTURE_CHROME}
+                  listening={false}
+                  // The grid stops at the gaps, as it belongs to the labels.
+                  clipFunc={
+                    acrossPx
+                      ? (ctx) => acrossPx.labels.forEach((l) => ctx.rect(physicalLabelX + l.x, labelOffsetY, l.width, labelHeightPx))
+                      : undefined
+                  }
+                >
                   <Grid
                     labelOffsetX={labelOffsetX}
                     labelOffsetY={labelOffsetY}

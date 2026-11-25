@@ -17,8 +17,8 @@ const BASE_LABEL: LabelConfig = {
 describe('NON_EMITTING_CONFIG_KEYS tripwire', () => {
   // A config key wrongly listed as non-emitting would skip the overlay drop and
   // export stale config. Lock the membership and prove each member is invariant.
-  it('contains only safeAreaMm', () => {
-    expect([...NON_EMITTING_CONFIG_KEYS]).toEqual(['safeAreaMm']);
+  it('lists exactly safeAreaMm and labelsAcross', () => {
+    expect([...NON_EMITTING_CONFIG_KEYS].sort()).toEqual(['labelsAcross', 'safeAreaMm']);
   });
 
   it('changing safeAreaMm does not change generated ZPL', () => {
@@ -27,6 +27,14 @@ describe('NON_EMITTING_CONFIG_KEYS tripwire', () => {
         props: { content: 'Hi', fontHeight: 30, fontWidth: 0, rotation: 'N', reverse: false } },
     ] as unknown as LabelObject[];
     expect(generateZPL({ ...BASE_LABEL, safeAreaMm: 7 }, objs)).toBe(generateZPL(BASE_LABEL, objs));
+  });
+
+  it('changing labelsAcross does not change generated ZPL', () => {
+    const objs = [
+      { id: 'a', type: 'text', x: 10, y: 10, rotation: 0,
+        props: { content: 'Hi', fontHeight: 30, fontWidth: 0, rotation: 'N', reverse: false } },
+    ] as unknown as LabelObject[];
+    expect(generateZPL({ ...BASE_LABEL, labelsAcross: { count: 3, gapMm: 2 } }, objs)).toBe(generateZPL(BASE_LABEL, objs));
   });
 });
 
