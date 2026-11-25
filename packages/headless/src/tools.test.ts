@@ -535,6 +535,18 @@ describe("headless tools", () => {
     expect(r.errors[0]).toMatch(/object limit/);
   });
 
+  it("reports an object in a gap between the labels of a row", () => {
+    // 100 mm in two with a gap of 4 mm. The gap covers dots 384 to 416.
+    const df = {
+      schemaVersion: 3,
+      label: { widthMm: 100, heightMm: 50, dpmm: 8, labelsAcross: { count: 2, gapMm: 4 } },
+      pages: [{ objects: [{ id: "b", type: "box", x: 390, y: 50, rotation: 0, props: { width: 20, height: 20, thickness: 2, filled: false, color: "B", rounding: 0 } }] }],
+    };
+    expect(ok(validateDraft(df)).warnings.map((w) => w.kind)).toContain("offLabelOutside");
+    const single = { ...df, label: { widthMm: 100, heightMm: 50, dpmm: 8 } };
+    expect(ok(validateDraft(single)).warnings.map((w) => w.kind)).not.toContain("offLabelOutside");
+  });
+
   it("resolves per-page ^JM density in preflight and geometry", () => {
     // 100mm at dpmm 12: printable width 1200 dots at density A, 600 at B.
     // x=700 is inside the design-density rect but outside the page's B rect.

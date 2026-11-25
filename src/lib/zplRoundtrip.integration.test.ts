@@ -355,6 +355,14 @@ describe("round-trip integration (real import -> store -> export)", () => {
     expect(exportZpl()).toBe(src);
   });
 
+  it("a row of labels across keeps the overlay byte-identical", () => {
+    const src = "^XA\n^FO50,50^A0N,30,30^FDHello^FS\n^XZ";
+    importInto(src);
+    store().setLabelConfig({ labelsAcross: { count: 3, gapMm: 2 } });
+    expect(store().pages[0]!.overlay).toBeDefined();
+    expect(exportZpl()).toBe(src);
+  });
+
   it("preserves a fontless-^CF field verbatim, regenerates self-contained on edit", () => {
     const src = "^XA^CF0,40^FO10,10^FDhi^FS^XZ";
     importInto(src);

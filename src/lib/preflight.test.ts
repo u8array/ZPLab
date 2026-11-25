@@ -34,6 +34,16 @@ describe('tlc39 scannability covers both module widths', () => {
 });
 
 describe("computePreflight (off-label producer)", () => {
+  it("reports a leaf over a label edge as clipped and one in a gap as outside", () => {
+    // 100 mm in two with a gap of 4 mm: labels of 384 dots at 0 and 416.
+    const row = { label: { ...label, labelsAcross: { count: 2, gapMm: 4 } } };
+    const kinds = (leaf: LeafObject) => computePreflight([leaf], row, "mm").map((f) => f.kind);
+    expect(kinds(box("a", 10, 10, 100, 50))).toEqual([]);
+    expect(kinds(box("a", 500, 10, 100, 50))).toEqual([]);
+    expect(kinds(box("a", 350, 10, 100, 50))).toEqual(["offLabelClipped"]);
+    expect(kinds(box("a", 390, 10, 20, 50))).toEqual(["offLabelOutside"]);
+  });
+
   it("returns no findings when every leaf is inside", () => {
     expect(computePreflight([box("a", 10, 10, 100, 50)], ctx, "mm")).toEqual([]);
   });

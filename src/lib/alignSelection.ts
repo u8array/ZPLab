@@ -2,6 +2,7 @@ import type { LabelObject } from "@zplab/core/types/Group";
 import { findObjectById, getAllLeaves, isGroup } from "@zplab/core/types/Group";
 import type { PageLabel } from "@zplab/core/types/LabelConfig";
 import {
+  labelRectsDots,
   ownLabelRectDots,
   printableRectDots,
   unionOf,
@@ -13,10 +14,19 @@ import type { AlignBox, AlignRef } from "./align";
 import { safeAreaRectDots } from "./safeArea";
 import { selectTidyTargets } from "./tidyClassify";
 
+/** Boxes with the frame they are aligned to or spread in. */
+interface AlignTarget {
+  boxes: AlignBox[];
+  frame: BoundingBoxDots;
+}
+
 interface AlignSelection {
   boxes: AlignBox[];
-  ref: BoundingBoxDots | null;
-  container: BoundingBoxDots;
+  /** What align moves and where to. The content of every label with that label for the
+   *  label reference, else all of it with the one frame. Empty when the reference has none. */
+  targets: AlignTarget[];
+  /** The content of every label with the frame tidy spreads it in. */
+  labels: AlignTarget[];
   apply: (delta: { id: string; dx: number; dy: number }) => { id: string; changes: { x: number; y: number } }[];
 }
 
@@ -44,30 +54,36 @@ export function buildAlignSelection(
     type: isGroup(o) ? "group" : o.type,
     box: boxOf(o, ctx),
   }));
-  const all = unionOf(items.map((it) => it.box));
-  const labelRect = all ? ownLabelRectDots(label, all) : printableRectDots(label);
+  // Every label of a row has the size of the first, to a dot.
+  const [labelSize = printableRectDots(label)] = labelRectsDots(label);
   // Structural primitives such as a full-label frame or a spanning divider
   // neither inflate the reference nor get rearranged, consistent with tidy.
-  const contentIds = new Set(selectTidyTargets(items, labelRect.width, labelRect.height));
+  const contentIds = new Set(selectTidyTargets(items, labelSize.width, labelSize.height));
   const content = movable.filter((o) => contentIds.has(o.id));
   const boxes: AlignBox[] = items
     .filter((it) => contentIds.has(it.id))
     .map((it) => ({ id: it.id, ...it.box }));
 
-  // Align-to-label pins to the safe-area inset when configured, so the
-  // edge buttons keep a uniform margin.
-  const labelBox = safeAreaRectDots(label, labelRect) ?? labelRect;
-  let refBox: BoundingBoxDots | null;
+  // In a row every object keeps to the label it lies on. Align-to-label pins to
+  // the safe-area inset when configured, so the edge buttons keep a uniform margin.
+  const byLabel = new Map<number, AlignTarget>();
+  for (const box of boxes) {
+    const own = ownLabelRectDots(label, box);
+    const target = byLabel.get(own.x) ?? { boxes: [], frame: safeAreaRectDots(label, own) ?? own };
+    target.boxes.push(box);
+    byLabel.set(own.x, target);
+  }
+  const labels = [...byLabel.values()];
+
   // A single unit has no selection or key frame of its own, so it aligns to
   // the label the way a single element aligns to its parent in Figma.
-  if (alignRef === "label" || content.length === 1) {
-    refBox = labelBox;
-  } else if (alignRef === "key") {
-    const key = boxes[boxes.length - 1];
-    refBox = key ? { x: key.x, y: key.y, width: key.width, height: key.height } : null;
-  } else {
-    refBox = unionOf(boxes);
-  }
+  const frame = alignRef === "key" ? boxes[boxes.length - 1] : unionOf(boxes);
+  const targets =
+    alignRef === "label" || content.length === 1
+      ? labels
+      : frame
+        ? [{ boxes, frame: { x: frame.x, y: frame.y, width: frame.width, height: frame.height } }]
+        : [];
 
   const byId = new Map(content.map((o) => [o.id, o]));
   const apply = (delta: { id: string; dx: number; dy: number }) => {
@@ -84,5 +100,5 @@ export function buildAlignSelection(
     }));
   };
 
-  return { boxes, ref: refBox, container: labelBox, apply };
+  return { boxes, targets, labels, apply };
 }
