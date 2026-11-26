@@ -1643,6 +1643,35 @@ describe('ungroup', () => {
       expect(activeUrl()).toBe('blob:fresh-2');
     });
 
+    it('discards a stale in-flight fetch when a later request supersedes it', async () => {
+      const labelary = await import('../lib/labelary');
+      const fetchSpy = vi.mocked(labelary.fetchPreview);
+      fetchSpy.mockClear();
+      type Resolver = (url: string) => void;
+      let resolveFirst: Resolver = () => undefined;
+      let resolveSecond: Resolver = () => undefined;
+      fetchSpy.mockImplementationOnce(() => new Promise<string>((r) => (resolveFirst = r)));
+      fetchSpy.mockImplementationOnce(() => new Promise<string>((r) => (resolveSecond = r)));
+      const sku = state().addVariable({ name: 'sku', defaultValue: 'D' });
+      state().addObject('text');
+      state().updateObject(state().pages[0]!.objects[0]!.id, { props: { content: '«sku»' } });
+      const source = { kind: 'csv' as const, filename: 't.csv', importedAt: '', encoding: 'utf-8', delimiter: ',', rowCount: 1 };
+
+      const first = state().enterPreviewMode();
+      state().loadDataset({ headers: ['sku'], rows: [['A1']], source });
+      useLabelStore.setState({ columnMapping: { bindings: { [sku!]: 'sku' }, headerSnapshot: ['sku'] } });
+      const second = state().enterPreviewMode();
+
+      resolveFirst('blob:stale-1');
+      await first;
+      expect(state().previewMode.status).toBe('loading');
+      expect(vi.mocked(globalThis.URL.revokeObjectURL)).toHaveBeenCalledWith('blob:stale-1');
+
+      resolveSecond('blob:fresh-2');
+      await second;
+      expect(activeUrl()).toBe('blob:fresh-2');
+    });
+
     it('re-fetches and revokes the stale URL when the ZPL changes', async () => {
       const labelary = await import('../lib/labelary');
       const fetchSpy = vi.mocked(labelary.fetchPreview);

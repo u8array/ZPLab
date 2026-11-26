@@ -59,6 +59,8 @@ export interface PreviewSlice {
   exitPreviewMode: () => void;
 }
 
+let previewRequests = 0;
+
 export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> = (set, get) => ({
   previewMode: { status: 'idle' },
 
@@ -117,12 +119,15 @@ export const createPreviewSlice: StateCreator<LabelState, [], [], PreviewSlice> 
       : [provider, endpoint.host, endpoint.apiKey ?? '', String(state.labelaryKeyEpoch), zpl].join('\0');
     if (serveCached(cacheKey)) return;
     set({ previewMode: { status: 'loading' } });
+    const request = ++previewRequests;
     // Stale-request guard: status check catches an exit mid-fetch; the
     // reference-equality check catches re-entry with a different design
     // (status is `loading` again but for a different request whose result
     // we mustn't overwrite). Refs change on every mutation thanks to
     // immutable updates.
+    // A dataset change leaves page and objects alone, so a later request supersedes this one.
     const isStale = (): boolean =>
+      request !== previewRequests ||
       get().previewMode.status !== 'loading' ||
       currentPageLabel(get()) !== pageLabel ||
       currentObjects(get()) !== objs;
