@@ -1,4 +1,5 @@
 import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { upperAZ } from './firmwareRules';
 import { formatCode39Hri } from './hriFormatters';
 export type { Barcode1DProps as Code39Props } from './barcode1d';
 
@@ -6,6 +7,7 @@ export const code39CoreConfig: Barcode1DCoreConfig = {
   label: 'Code 39',
   icon: '|·|',
   placeholderContent: 'CODE39',
+  firmwareData: upperAZ,
   group: 'code-1d',
   propSpecs: BARCODE_1D_PROP_SPECS,
   zplCommand: (p) => {

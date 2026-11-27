@@ -9,6 +9,7 @@
  */
 
 import { PLESSEY_RATIO } from "../registry/plessey";
+import { firmwareData } from "./firmwareData";
 
 export interface RawBarRect {
   x: number;
@@ -30,17 +31,9 @@ export const ZEBRA_WIDTH_BAR_TYPES: ReadonlySet<string> = new Set(
   Object.keys(ZEBRA_WIDTH_BCID),
 );
 
-/** Encode text per type: Plessey uppercases like firmware, PLANET strips to
- *  digits and pads to 11/13, POSTNET stays verbatim (bwip throws on
- *  non-digits, which is the encode error the preflight surfaces; stripping
- *  would silently encode a shorter symbol). */
+/** The text the bars encode. Empty content becomes "0". */
 export function zebraWidthBarText(type: ZebraWidthBarType, content: string): string {
-  if (type === "plessey") return (content || "0").toUpperCase();
-  if (type === "postal") return content || "0";
-  let text = (content || "0").replace(/\D/g, "") || "0";
-  if (text.length < 11) text = text.padStart(11, "0");
-  else if (text.length === 12) text = text.padStart(13, "0");
-  return text;
+  return firmwareData(type, content || "0");
 }
 
 /** First entry of a bwipjs.raw() stack; absorbs the per-site double cast

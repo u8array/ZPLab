@@ -64,7 +64,7 @@ describe("public routes", () => {
   it("documents every field of a warning, a bound and an overlap", async () => {
     const doc = await get("/openapi.json", null);
     const schemas = (doc.json.components as { schemas: Record<string, { properties: Record<string, unknown> }> }).schemas;
-    const answered = await post("/validate-zpl", { zpl: "^XA^FO10,10^A0N,30,30^FDone^FS^FO10,10^A0N,30,30^FDtwo^FS^FO10,60^BEN,80,Y,N^FD12345^FS^XZ" });
+    const answered = await post("/validate-zpl", { zpl: "^XA^FO10,10^A0N,30,30^FDone^FS^FO10,10^A0N,30,30^FDtwo^FS^FO10,60^BEN,80,Y,N^FD40123451234567^FS^XZ" });
     for (const [name, key] of [["PreflightWarning", "warnings"], ["ObjectBounds", "bounds"], ["ObjectOverlap", "overlaps"]] as const) {
       const answeredKeys = new Set((answered.json[key] as Body[]).flatMap((row) => Object.keys(row)));
       expect(Object.keys(schemas[name]?.properties ?? {}).sort(), name).toEqual([...answeredKeys].sort());
@@ -74,7 +74,7 @@ describe("public routes", () => {
   it("documents the warning kind as an enum of the answered kinds", async () => {
     const doc = await get("/openapi.json", null);
     const schemas = (doc.json.components as { schemas: Record<string, { properties: Record<string, { enum?: string[] }> }> }).schemas;
-    const answered = await post("/validate-zpl", { zpl: "^XA^FO10,10^A0N,30,30^FDone^FS^FO10,60^BEN,80,Y,N^FD12345^FS^XZ" });
+    const answered = await post("/validate-zpl", { zpl: "^XA^FO10,10^A0N,30,30^FDone^FS^FO10,60^BEN,80,Y,N^FD40123451234567^FS^XZ" });
     const kinds = (answered.json.warnings as { kind: string }[]).map((w) => w.kind);
     expect(kinds.length).toBeGreaterThan(0);
     expect(schemas.PreflightWarning?.properties.kind?.enum).toEqual(expect.arrayContaining(kinds));

@@ -1,4 +1,5 @@
 import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { fixedDigits } from './firmwareRules';
 import { formatUpcaHri } from './hriFormatters';
 export type { Barcode1DProps as UpcAProps } from './barcode1d';
 
@@ -6,6 +7,7 @@ export const upcaCoreConfig: Barcode1DCoreConfig = {
   label: 'UPC-A',
   icon: 'UPC',
   placeholderContent: '01234567890',
+  firmwareData: (c) => fixedDigits(c, 11),
   group: 'code-1d',
   propSpecs: BARCODE_1D_PROP_SPECS,
   serialisable: false,

@@ -43,7 +43,7 @@ import type { MaxicodeProps } from "../../registry/maxicode";
 import type { MicroPdf417Props } from "../../registry/micropdf417";
 import type { CodablockProps } from "../../registry/codablock";
 import type { Tlc39Props } from "../../registry/tlc39";
-import { upceData6FromFd } from "../../registry/hriFormatters";
+import { upceData6FromFd } from "../../registry/firmwareRules";
 import { decodeFH, makeObj, variableNameFromComment } from "./helpers";
 import { notePartial,
   getPosType,

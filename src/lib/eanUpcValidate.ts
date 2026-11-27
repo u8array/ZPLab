@@ -2,10 +2,7 @@
  * Inline EAN/UPC field validation: length progress + check digit. Pure, no UI.
  *
  * Typing is capped at N data digits, but imported/parsed content can carry the
- * full code (N+1, the check digit included). The helper therefore mirrors what
- * bwip-js does with the raw content: N data digits get a computed check; an N+1
- * full code is verified; anything longer is rejected. Reuses the existing
- * check-digit math; nothing new is implemented here.
+ * full code (N+1, the check digit included). N data digits get a computed check, an N+1 full code is verified, longer content is rejected.
  */
 
 import { eanCheckDigit, upceCheckDigit } from "@zplab/core/lib/barcodeCheckDigits";

@@ -7,7 +7,7 @@ import type { LabelObject } from "../types/Group";
 import { errorMessage } from "./errorMessage";
 import { clampCodablockColumns, CODABLOCK_PREVIEW_COLUMNS_MIN } from "../registry/codablock";
 import { EC_PERCENT_MIN, EC_PERCENT_MAX } from "../registry/aztec";
-import { upceData6FromFd } from "../registry/hriFormatters";
+import { firmwareData } from "./firmwareData";
 import type { Gs1DatabarProps } from "../registry/gs1databar";
 import { isAxisSwapped, objectRotation } from "../registry/rotation";
 import { dotsToPx, mmToDots, pxToDots } from "./coordinates";
@@ -221,14 +221,9 @@ export interface EanUpcHriFragment {
   xModule: number;
 }
 
-/** bwip raw geometry (bars + HRI text) for an EAN/UPC symbol. UPC-E
- *  accepts 6-digit content but bwip rejects it, so pre-pad with the
- *  number-system digit as the firmware does. Shared by the bars and HRI
- *  paths so both encode the identical symbol. */
+/** bwip raw geometry of the EAN/UPC symbol, shared by the bars and the HRI line. */
 export function rawEanUpc(bwip: BwipEngine, type: EanUpcType, text: string): BwipRawLinear | null {
-  // UPC-E: always feed bwip the canonical 7-digit form (NS 0 + 6 data),
-  // NS-aware so a content that already carries the prefix is not doubled.
-  const encoded = type === "upce" ? `0${upceData6FromFd(text)}` : text;
+  const encoded = firmwareData(type, text);
   try {
     const stack = bwip.raw({ bcid: type, text: encoded, includetext: true }) as BwipRawLinear[];
     return stack?.[0] ?? null;
@@ -268,14 +263,7 @@ export function buildBwipOptions(
     case "upce": {
       const p = obj.props;
       const scale = bwipScale1D(p.moduleWidth, renderScale, renderDpmm);
-      let text: string;
-      if (obj.type === "upce") {
-        const r = p.content || "000000";
-        text = r.length === 6 ? `0${r}` : r;
-      } else {
-        text = p.content || "0";
-      }
-      opts = { bcid, text, scale, height: 10 };
+      opts = { bcid, text: firmwareData(obj.type, p.content) || "0", scale, height: 10 };
       break;
     }
     case "code49": {
@@ -304,7 +292,7 @@ export function buildBwipOptions(
       // bwip splits ^BS into ean2/ean5 by length; non-2 falls back to ean5.
       // HRI rendered as separate Konva overlay (Zebra puts it above bars)
       // so rotation lands at the firmware anchor.
-      const text = p.content || "00000";
+      const text = firmwareData(obj.type, p.content) || "00000";
       const variantBcid = text.length === 2 ? "ean2" : "ean5";
       opts = {
         bcid: variantBcid,
@@ -343,10 +331,7 @@ export function buildBwipOptions(
     case "codabar": {
       const p = obj.props;
       const scale = bwipScale1D(p.moduleWidth, renderScale, renderDpmm);
-      // Zebra silently uppercases for these symbologies; bwip-js throws.
-      const needsUpper = obj.type === "code39" || obj.type === "codabar";
-      const raw = p.content || "0";
-      const text = needsUpper ? raw.toUpperCase() : raw;
+      const text = firmwareData(obj.type, p.content || "0");
       // ^B3/^B2 e encode Mod 43 / Mod 10 into the bars (ZD230-measured: +1
       // char / +1 digit pair). Codabar's e-slot is a spec-fixed N and the
       // 2of5 pair has no check param.
@@ -360,7 +345,7 @@ export function buildBwipOptions(
       const scale = bwipScale1D(p.moduleWidth, renderScale, renderDpmm);
       // Zebra ^BA always encodes the C+K check chars; the ZPL e param only
       // gates the HRI. Without includecheck bwip's symbol is 18 modules short.
-      opts = { bcid, text: p.content || "0", scale, height: 10, includecheck: true };
+      opts = { bcid, text: firmwareData(obj.type, p.content || "0"), scale, height: 10, includecheck: true };
       break;
     }
     case "code11": {
@@ -393,10 +378,9 @@ export function buildBwipOptions(
     case "logmars": {
       const p = obj.props;
       const scale = bwipScale1D(p.moduleWidth, renderScale, renderDpmm);
-      // LOGMARS is a Code39 subset; same uppercase rule applies.
       opts = {
         bcid,
-        text: (p.content || "0").toUpperCase(),
+        text: firmwareData(obj.type, p.content || "0"),
         scale,
         height: 10,
         includecheck: true,
@@ -1124,9 +1108,7 @@ export function barcodeEncodeIssueWith(
 function encodeFailureReason(bwip: BwipEngine, obj: LeafObject, dpmm: number): string {
   try {
     if (EAN_UPC_TYPES.has(obj.type)) {
-      const text = getObjectStringContent(obj) ?? "";
-      const encoded = obj.type === "upce" ? `0${upceData6FromFd(text)}` : text;
-      bwip.raw({ bcid: obj.type, text: encoded, includetext: true });
+      bwip.raw({ bcid: obj.type, text: firmwareData(obj.type, getObjectStringContent(obj) ?? ""), includetext: true });
       return "the encoder produced no symbol for this payload";
     }
     // barcodeDimsPx routes these past buildBwipOptions, so their missing BCID
