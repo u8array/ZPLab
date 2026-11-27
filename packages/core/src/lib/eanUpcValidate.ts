@@ -5,7 +5,8 @@
  * full code (N+1, the check digit included). N data digits get a computed check, an N+1 full code is verified, longer content is rejected.
  */
 
-import { eanCheckDigit, upceCheckDigit } from "@zplab/core/lib/barcodeCheckDigits";
+import type { PreflightProducerResult } from "../types/preflight";
+import { eanCheckDigit, upceCheckDigit } from "./barcodeCheckDigits";
 
 export type EanUpcType = "ean13" | "ean8" | "upca" | "upce";
 export type EanUpcStatus = "empty" | "short" | "complete" | "badCheck" | "tooLong";
@@ -53,4 +54,15 @@ export function validateEanUpc(type: EanUpcType, raw: string): EanUpcValidation 
       : { status: "badCheck", dataLen, digits: data, remaining: 0, expected: checkDigit, got };
   }
   return { status: "tooLong", dataLen, digits: data, remaining: 0 };
+}
+
+const ALL_DIGITS = /^[0-9]+$/;
+
+/** Registry `valuePreflight` for a check digit the printer computes. Non-digit content yields no findings. */
+export function checkDigitPreflight(type: EanUpcType): (content: string) => PreflightProducerResult[] {
+  return (content) => {
+    if (!ALL_DIGITS.test(content)) return [];
+    const v = validateEanUpc(type, content);
+    return v.status === "badCheck" ? [{ kind: "checkDigitMismatch", detail: `${v.got} ≠ ${v.expected}` }] : [];
+  };
 }

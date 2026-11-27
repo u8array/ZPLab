@@ -475,6 +475,7 @@ const sv = {
     renderFailed: 'Kan inte kodas',
     blockTooNarrow: 'Block för smalt',
     barcodeTooSmall: 'Modul för liten',
+    checkDigitMismatch: 'Fel kontrollsiffra',
     textOverset: 'Text avklippt',
     imageMissing: 'Bild saknas',
     emptyContent: 'Fält tomt',

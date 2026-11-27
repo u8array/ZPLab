@@ -475,6 +475,7 @@ const zhHans = {
     renderFailed: '无法编码',
     blockTooNarrow: '块太窄',
     barcodeTooSmall: '模块太小',
+    checkDigitMismatch: '校验位错误',
     textOverset: '文本截断',
     imageMissing: '图像缺失',
     emptyContent: '字段为空',

@@ -475,6 +475,7 @@ const fa = {
     renderFailed: 'رمزگذاری ناموفق',
     blockTooNarrow: 'بلوک خیلی باریک',
     barcodeTooSmall: 'ماژول خیلی کوچک',
+    checkDigitMismatch: 'رقم کنترل نادرست',
     textOverset: 'متن برش‌خورده',
     imageMissing: 'تصویر ناموجود',
     emptyContent: 'فیلد خالی',

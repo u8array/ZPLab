@@ -475,6 +475,7 @@ const el = {
     renderFailed: 'Δεν κωδικοποιείται',
     blockTooNarrow: 'Πλαίσιο πολύ στενό',
     barcodeTooSmall: 'Μονάδα πολύ μικρή',
+    checkDigitMismatch: 'Λάθος ψηφίο ελέγχου',
     textOverset: 'Κείμενο αποκόπηκε',
     imageMissing: 'Λείπει εικόνα',
     emptyContent: 'Πεδίο κενό',

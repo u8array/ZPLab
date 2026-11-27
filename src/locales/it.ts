@@ -475,6 +475,7 @@ const it = {
     renderFailed: 'Non codificabile',
     blockTooNarrow: 'Blocco troppo stretto',
     barcodeTooSmall: 'Modulo troppo piccolo',
+    checkDigitMismatch: 'Cifra di controllo errata',
     textOverset: 'Testo tagliato',
     imageMissing: 'Immagine assente',
     emptyContent: 'Campo vuoto',

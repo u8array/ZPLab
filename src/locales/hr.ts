@@ -475,6 +475,7 @@ const hr = {
     renderFailed: 'Nije kodirivo',
     blockTooNarrow: 'Blok preuzak',
     barcodeTooSmall: 'Modul premali',
+    checkDigitMismatch: 'Pogrešna kontrolna znamenka',
     textOverset: 'Tekst odrezan',
     imageMissing: 'Slika nedostaje',
     emptyContent: 'Polje prazno',

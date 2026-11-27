@@ -58,6 +58,8 @@ export interface Barcode1DCoreConfig<P extends Barcode1DProps = Barcode1DProps> 
   hri?: HriBehavior;
   /** See {@link ObjectTypeCore.firmwareData}. */
   firmwareData?: (content: string) => string;
+  /** See {@link ObjectTypeCore.valuePreflight}. */
+  valuePreflight?: ObjectTypeCore<P>['valuePreflight'];
   /** Transform stored content into the ^FD payload (e.g. UPC-E prepends
    *  the number-system digit the spec requires). Default: identity. */
   fdContent?: (content: string) => string;
@@ -166,6 +168,7 @@ export function createBarcode1DCore<P extends Barcode1DProps = Barcode1DProps>(
     ctrlNeedsOwnEscape: config.ctrlFdEncode !== undefined,
 
     preflight: moduleTooSmallPreflight<P>('moduleWidth'),
+    valuePreflight: config.valuePreflight,
 
     // heightLocked symbologies disable the transformer entirely; others scale
     // bar height with sy and module width with sx (clamped in the helper).

@@ -475,6 +475,7 @@ const de = {
     renderFailed: 'Nicht kodierbar',
     blockTooNarrow: 'Block zu schmal',
     barcodeTooSmall: 'Modul zu klein',
+    checkDigitMismatch: 'Falsche Prüfziffer',
     textOverset: 'Text beschnitten',
     imageMissing: 'Bild fehlt',
     emptyContent: 'Feld ist leer',

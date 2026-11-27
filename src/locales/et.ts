@@ -475,6 +475,7 @@ const et = {
     renderFailed: 'Ei kodeeritav',
     blockTooNarrow: 'Plokk liiga kitsas',
     barcodeTooSmall: 'Moodul liiga väike',
+    checkDigitMismatch: 'Vale kontrollnumber',
     textOverset: 'Tekst lõigatud',
     imageMissing: 'Pilt puudub',
     emptyContent: 'Väli tühi',

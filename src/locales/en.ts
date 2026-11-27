@@ -475,6 +475,7 @@ const en = {
     renderFailed: 'Cannot encode',
     blockTooNarrow: 'Block too narrow',
     barcodeTooSmall: 'Module too small',
+    checkDigitMismatch: 'Wrong check digit',
     textOverset: 'Text clipped',
     imageMissing: 'Image missing',
     emptyContent: 'Field is empty',

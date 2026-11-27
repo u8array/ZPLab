@@ -475,6 +475,7 @@ const cs = {
     renderFailed: 'Nelze zakódovat',
     blockTooNarrow: 'Blok příliš úzký',
     barcodeTooSmall: 'Modul příliš malý',
+    checkDigitMismatch: 'Chybná kontrolní číslice',
     textOverset: 'Text oříznut',
     imageMissing: 'Chybí obrázek',
     emptyContent: 'Pole prázdné',

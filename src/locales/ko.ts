@@ -475,6 +475,7 @@ const ko = {
     renderFailed: '인코딩 불가',
     blockTooNarrow: '블록이 너무 좁음',
     barcodeTooSmall: '모듈이 너무 작음',
+    checkDigitMismatch: '잘못된 검사 숫자',
     textOverset: '텍스트 잘림',
     imageMissing: '이미지 없음',
     emptyContent: '빈칸',

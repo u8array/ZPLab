@@ -17,7 +17,7 @@ import { SectionCard, StaticSectionCard } from '../components/Properties/Section
 import { FieldLabel } from '../components/Properties/ZplCmd';
 import { EanInlineStatus } from '../components/Properties/EanInlineStatus';
 import { SerialModeCheckbox, SerialParts } from '../components/Properties/SerialModeSection';
-import type { EanUpcType } from '../lib/eanUpcValidate';
+import type { EanUpcType } from '@zplab/core/lib/eanUpcValidate';
 import { BARCODE_1D_PROP_SPECS, type Barcode1DProps } from '@zplab/core/registry/barcode1d';
 import type { LabelObjectBase } from '@zplab/core/types/LabelObject';
 

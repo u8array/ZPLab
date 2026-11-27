@@ -475,6 +475,7 @@ const hu = {
     renderFailed: 'Nem kódolható',
     blockTooNarrow: 'Blokk túl keskeny',
     barcodeTooSmall: 'Modul túl kicsi',
+    checkDigitMismatch: 'Hibás ellenőrző számjegy',
     textOverset: 'Szöveg vágva',
     imageMissing: 'Kép hiányzik',
     emptyContent: 'Mező üres',

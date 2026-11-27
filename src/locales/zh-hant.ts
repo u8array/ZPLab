@@ -475,6 +475,7 @@ const zhHant = {
     renderFailed: '無法編碼',
     blockTooNarrow: '區塊太窄',
     barcodeTooSmall: '模組太小',
+    checkDigitMismatch: '檢查碼錯誤',
     textOverset: '文字截斷',
     imageMissing: '圖像缺失',
     emptyContent: '欄位為空',

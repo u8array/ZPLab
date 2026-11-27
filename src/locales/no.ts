@@ -475,6 +475,7 @@ const no = {
     renderFailed: 'Kan ikke kodes',
     blockTooNarrow: 'Blokk for smal',
     barcodeTooSmall: 'Modul for liten',
+    checkDigitMismatch: 'Feil kontrollsiffer',
     textOverset: 'Tekst avkortet',
     imageMissing: 'Bilde mangler',
     emptyContent: 'Felt tomt',

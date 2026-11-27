@@ -718,6 +718,17 @@ describe("encode preflight", () => {
       }),
     ).warnings.filter((w) => w.kind === "renderFailed");
 
+  it("warns about a check digit mismatch", () => {
+    const r = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [{ type: "ean13", x: 10, y: 10, props: { content: "5901234123450", height: 60 } }] }));
+    expect(r.warnings.filter((w) => w.kind === "checkDigitMismatch")).toHaveLength(1);
+    expect(ean("5901234123450")).toHaveLength(0);
+  });
+
+  it("warns about a check digit mismatch in a variable default", () => {
+    const r = ok(createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects: [{ type: "ean13", x: 10, y: 10, props: { content: "«code»", height: 60 } }], variables: [{ name: "code", defaultValue: "5901234123450" }] }));
+    expect(r.warnings.filter((w) => w.kind === "checkDigitMismatch")).toHaveLength(1);
+  });
+
   it("flags a payload the encoder rejects", () => {
     expect(ean("40123451234567")).toHaveLength(1);
   });

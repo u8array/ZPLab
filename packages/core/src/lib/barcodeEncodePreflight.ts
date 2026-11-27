@@ -1,6 +1,6 @@
 // Single decision tree for encode findings, shared by editor and MCP sidecar so the two reports cannot drift.
 
-import { ctrlParityFor, gs1StaticUnparsed, type LeafObject } from "../registry";
+import { ctrlParityFor, getEntry, gs1StaticUnparsed, type LeafObject } from "../registry";
 import { maxicodeScmOwnedByPreflight, type MaxicodeProps } from "../registry/maxicode";
 import { isBarcode } from "./objectBounds";
 import { PREFLIGHT_SEVERITY, type PreflightFinding } from "./preflight";
@@ -54,7 +54,8 @@ export function barcodeEncodeFindingsCore(
     // shows an honest empty box there, unlike the barcode's sample bars).
     if (!isBarcode(leaf)) continue;
     const resolved = resolveForEncode(leaf, env);
-    if ((getObjectStringContent(resolved) ?? "").trim() === "") {
+    const printed = getObjectStringContent(resolved) ?? "";
+    if (printed.trim() === "") {
       // A literal-blank field is already owned by computePreflight's
       // emptyContent (raw content ""); a BARCODE whose marker resolves empty
       // is raw-nonempty there, yet renders as sample bars, so surface it here.
@@ -62,6 +63,9 @@ export function barcodeEncodeFindingsCore(
         findings.push({ objectId: leaf.id, kind: "emptyContent", severity: PREFLIGHT_SEVERITY.emptyContent });
       }
       continue;
+    }
+    for (const r of getEntry(leaf.type)?.valuePreflight?.(printed) ?? []) {
+      findings.push({ objectId: leaf.id, kind: r.kind, severity: PREFLIGHT_SEVERITY[r.kind], detail: r.detail });
     }
     // A literal mode 2/3 MaxiCode without a carrier message is owned by
     // maxicodeModeMissingScm (computePreflight); skip renderFailed to avoid a

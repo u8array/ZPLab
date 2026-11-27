@@ -21,6 +21,8 @@ export const PREFLIGHT_SEVERITY = {
   renderFailed: 'error',
   blockTooNarrow: 'error',
   barcodeTooSmall: 'warning',
+  // The printer recomputes the check digit, so the symbol scans as a different number than the one typed.
+  checkDigitMismatch: 'warning',
   textOverset: 'warning',
   // Warning, not error like blockTooNarrow, although both print blank: image
   // bytes may still be hydrating from storage, so the state can self-resolve.
