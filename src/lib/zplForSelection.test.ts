@@ -42,6 +42,13 @@ describe("zplForSelection", () => {
     expect(zpl).not.toContain("^FO200,10");
   });
 
+  it("emits a repeating group once per label of the row", () => {
+    const row = { widthMm: 94, heightMm: 30, dpmm: 8, labelsAcross: { count: 3, gapMm: 2 } } as PageLabel;
+    const repeating = { ...group("g", [box("a", 10)]), repeat: true } as LabelObject;
+    const zpl = zplForSelection(row, [repeating, box("b", 300)], ["g"]);
+    expect(zpl.match(/\^FO\d+/g)).toEqual(["^FO10", "^FO266", "^FO522"]);
+  });
+
   it("includes the template header the bodies depend on", () => {
     const variables = [{ id: "v", name: "qty", fnNumber: 5, defaultValue: "X" }];
     const tmpl = {

@@ -12,6 +12,7 @@ import { isBarcode, isRightAnchoredField } from "@zplab/core/lib/objectBounds";
 import { boxCornerRadii } from "@zplab/core/lib/shapeGeometry";
 import {
   computePreflight,
+  repeatCopyPlacementFindings,
   gs1NormalizationFindings,
   markerValueFindings,
   templateFieldFindings,
@@ -31,6 +32,7 @@ import { isControlBody } from "@zplab/core/types/controlKey";
 import { markerRe } from "@zplab/core/types/Variable";
 import { CLOCK_BODY_RE } from "@zplab/core/types/clockMarker";
 import { clockBodyLength } from "@zplab/core/lib/fcTemplate";
+import { allRepeatCopies, designIdOf, type RepeatCtx } from "@zplab/core/lib/repeatCopies";
 import {
   exportableLeaves,
   getAllLeaves,
@@ -84,6 +86,20 @@ const toWarning =
     ...(f.detail !== undefined ? { detail: f.detail } : {}),
   });
 
+/** Off-label copies of repeating objects under the id of the object they repeat.
+ *  `own` are that object's findings, which a copy repeats only when it shares the kind. */
+function copyPlacementFindings(objects: LabelObject[], ctx: ObjectBoundsCtx & RepeatCtx, own: readonly PreflightFinding[]): PreflightFinding[] {
+  const copyLeaves = exportableLeaves(allRepeatCopies(objects, ctx));
+  const seen = new Set(own.map((f) => `${f.kind}:${f.objectId}`));
+  return repeatCopyPlacementFindings(copyLeaves, ctx, "mm").flatMap((f) => {
+    const objectId = designIdOf(f.objectId);
+    const key = `${f.kind}:${objectId}`;
+    if (seen.has(key)) return [];
+    seen.add(key);
+    return [{ ...f, objectId }];
+  });
+}
+
 function preflightOf(
   objects: LabelObject[],
   label: PageLabel,
@@ -93,8 +109,11 @@ function preflightOf(
 ): PreflightWarning[] {
   const leaves = exportableLeaves(objects);
   const warn = toWarning(pageIndex);
+  const ctx = { label, measured, variables };
+  const own = computePreflight(leaves, ctx, "mm");
   return [
-    ...computePreflight(leaves, { label, measured, variables }, "mm").map(warn),
+    ...own.map(warn),
+    ...copyPlacementFindings(objects, ctx, own).map(warn),
     // The app's twin check (LabelCanvas): a failed ^FE arming would otherwise
     // print wrong under a clean report. No rows headless, so values are judged
     // at the variables' defaults.

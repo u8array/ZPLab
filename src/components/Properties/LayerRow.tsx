@@ -8,6 +8,7 @@ import {
   ChevronRightIcon,
   ChevronDownIcon,
   LinkSlashIcon,
+  ViewColumnsIcon,
   VariableIcon,
 } from '@heroicons/react/16/solid';
 import { getEntry } from '@zplab/core/registry';
@@ -43,6 +44,8 @@ export interface LayerRowProps {
   onToggleVisible: () => void;
   onToggleExpand: () => void;
   onUngroup: () => void;
+  /** Absent where the row has no repeat to show; without `onToggle` it only shows the mark. */
+  repeat?: { active: boolean; onToggle?: () => void };
   /** Commit the new name; empty string clears it back to the default. */
   onRename: (name: string | undefined) => void;
 }
@@ -62,6 +65,7 @@ export function LayerRow({
   onToggleVisible,
   onToggleExpand,
   onUngroup,
+  repeat,
   onRename,
 }: LayerRowProps) {
   const t = useT();
@@ -217,6 +221,21 @@ export function LayerRow({
           </span>
         )}
       </div>
+      {repeat && (
+        <Tooltip content={repeat.active && repeat.onToggle ? t.layers.stopRepeating : t.layers.repeatOnLabels}>
+          <button
+            type="button"
+            onPointerDown={stopRowClick}
+            onClick={(e) => { stopRowClick(e); repeat.onToggle?.(); }}
+            disabled={!repeat.onToggle}
+            aria-label={t.layers.repeatOnLabels}
+            aria-pressed={repeat.active}
+            className={`w-5 h-5 flex items-center justify-center rounded transition-colors ${repeat.active ? 'text-accent' : 'text-muted opacity-0 group-hover:opacity-100'} hover:text-text hover:bg-surface`}
+          >
+            <ViewColumnsIcon className="w-3.5 h-3.5" />
+          </button>
+        </Tooltip>
+      )}
       {groupRow && (
         <Tooltip content={t.layers.ungroup}>
           <button

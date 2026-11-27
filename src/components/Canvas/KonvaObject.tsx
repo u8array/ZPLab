@@ -9,6 +9,7 @@ import { LineObject } from "./LineObject";
 import { ImageObject } from "./ImageObject";
 import { dotsToPx, pxToDots } from "@zplab/core/lib/coordinates";
 import { rotatedFootprint } from "@zplab/core/lib/objectBounds";
+import { designIdOf } from "@zplab/core/lib/repeatCopies";
 import { rightAnchorShift } from "./transformPosition";
 import { measureInkWidthPx } from "@zplab/core/lib/labelGeometry/measureTextDots";
 import { boxCornerRadii, outlineInset } from "@zplab/core/lib/shapeGeometry";
@@ -465,7 +466,7 @@ const BARCODE_TYPES = new Set([
 ]);
 
 export function KonvaObject(props_: Props) {
-  const preview = useLabelStore((s) => (s.propsPreview?.id === props_.obj.id ? s.propsPreview.props : undefined));
+  const preview = useLabelStore((s) => (s.propsPreview?.id === designIdOf(props_.obj.id) ? s.propsPreview.props : undefined));
   const previewed = withPreviewProps(props_.obj, preview);
   const { variables, active, clock } = usePreviewBinding();
   // Render dataset and mapping, like the binding above: the tint must classify the same
@@ -542,7 +543,7 @@ function KonvaObjectInner({
   // call without `label` so round-trip stays PrintLab-based.
   const label = useLabelStore(selectRenderDesignLabel);
   const blockDragMode = useLabelStore((s) => s.blockDragMode);
-  const emptyPlaceholderColor = useBlankFieldWarns(obj.id) ? CANVAS_WARNING : colors.accent;
+  const emptyPlaceholderColor = useBlankFieldWarns(designIdOf(obj.id)) ? CANVAS_WARNING : colors.accent;
   // obj.x/y is the EM-bbox top-left; ZPL anchor delta is applied only
   // at the zplGenerator/zplParser boundary.
   const baseMetrics = getTextRenderMetrics(obj, undefined, label);

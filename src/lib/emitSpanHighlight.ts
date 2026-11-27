@@ -1,4 +1,5 @@
 import type { EmitSpan } from "@zplab/core/lib/zplGenerator";
+import { designIdOf } from "@zplab/core/lib/repeatCopies";
 
 /** Zero-based line indices of `text` that the given objects' spans touch. */
 export function spanCoveredLines(
@@ -8,7 +9,7 @@ export function spanCoveredLines(
 ): Set<number> {
   const covered = new Set<number>();
   // Ascending and non-overlapping by the emit map's contract.
-  const picked = spans.filter((s) => leafIds.has(s.objectId));
+  const picked = spans.filter((s) => leafIds.has(designIdOf(s.objectId)));
   if (picked.length === 0) return covered;
   let lineStart = 0;
   let line = 0;

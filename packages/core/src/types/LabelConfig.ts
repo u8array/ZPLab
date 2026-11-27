@@ -399,6 +399,7 @@ export const LABEL_CONFIG_FIELDS = {
   // dot value, so it is neither a per-label override nor itself scaled.
   dpmm: { scope: 'design', emits: true, scales: 'never' },
   safeAreaMm: { scope: 'design', emits: false, scales: 'never' },
+  // A repeating object prints by it, but its copies are generated on every export.
   labelsAcross: { scope: 'design', emits: false, scales: 'never' },
   emit1dZJustify: { scope: 'design', emits: true, scales: 'never' },
   printQuantity: { scope: 'perLabel', emits: true, scales: 'never', perFormat: true },

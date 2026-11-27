@@ -31,3 +31,11 @@ export const LINE_ICON = "M5 12h14";
 /** Lucide "square": switch-to-box mode. */
 export const BOX_ICON =
   "M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z";
+
+/** Lucide "columns-3": one frame split in three, the liner's row an object repeats on. */
+export const REPEAT_ICON =
+  "M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z M9 3v18 M15 3v18";
+
+/** Lucide "unlink-2": a chain link with its bar gone. */
+export const DECOUPLE_ICON =
+  "M15 7h2a5 5 0 0 1 0 10h-2 M9 17H7A5 5 0 0 1 7 7h2";

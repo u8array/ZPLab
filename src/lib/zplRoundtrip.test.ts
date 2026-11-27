@@ -85,7 +85,7 @@ describe("round-trip dirty guardrails", () => {
   });
 
   it("every base field is classified emit-affecting or metadata", () => {
-    const META = new Set(["locked", "visible", "includeInExport", "name"]);
+    const META = new Set(["locked", "visible", "includeInExport", "name", "repeat"]);
     const ignore = new Set(["id", "type", "dirty"]);
     for (const k of Object.keys(labelObjectBaseSchema.shape)) {
       if (ignore.has(k)) continue;

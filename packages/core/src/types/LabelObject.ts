@@ -40,11 +40,14 @@ export const labelObjectBaseSchema = z.object({
    *  so a corrupt persisted value drops to undefined rather than failing the
    *  whole design-file load. */
   dirty: z.boolean().optional().catch(undefined),
+  /** Prints on every label of the liner's row. Read for a top-level object only. */
+  repeat: z.boolean().optional().catch(undefined),
 });
 
 export type LabelObjectBase = z.infer<typeof labelObjectBaseSchema>;
 
-export type ObjectChanges = Partial<Omit<LabelObjectBase, 'id' | 'type'>> & { props?: object };
+// `repeat` is left out: a patch reaches nested objects, which drop it on entry.
+export type ObjectChanges = Partial<Omit<LabelObjectBase, 'id' | 'type' | 'repeat'>> & { props?: object };
 
 /** Prop keys that are design-time only and never emitted; drives dirty-tracking and the boundary's control-char check. */
 export const NON_EMITTING_PROP_KEYS: ReadonlySet<string> = new Set(['preSerialContent']);

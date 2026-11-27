@@ -12,6 +12,9 @@ export interface ContextMenuCtx {
   hasSelection: boolean;
   canGroup: boolean;
   canUngroup: boolean;
+  /** Whether the repeat entry turns it on or off, null where the selection offers none. */
+  repeatTurnsOn: boolean | null;
+  canDecouple: boolean;
   canDelete: boolean;
   locked: boolean;
   hasClipboard: boolean;
@@ -37,6 +40,8 @@ export interface ContextMenuCtx {
     reorder: (dir: ZOrderDir) => void;
     group: () => void;
     ungroup: () => void;
+    toggleRepeat: () => void;
+    decouple: () => void;
     toggleLock: () => void;
     addHere: (type: string, propsOverride?: object) => void;
     switchType: (type: string) => void;
@@ -113,6 +118,10 @@ export function buildContextMenu(ctx: ContextMenuCtx): MenuSection[] {
     }
     if (ctx.canGroup) arrange.push({ id: "group", labelKey: "group", run: d.group, disabled: off });
     if (ctx.canUngroup) arrange.push({ id: "ungroup", labelKey: "ungroup", run: d.ungroup, disabled: off });
+    if (ctx.repeatTurnsOn !== null) {
+      arrange.push({ id: "repeat", labelKey: ctx.repeatTurnsOn ? "repeatOnLabels" : "stopRepeating", run: d.toggleRepeat, disabled: off });
+    }
+    if (ctx.canDecouple) arrange.push({ id: "decouple", labelKey: "decoupleCopies", run: d.decouple, disabled: off });
     arrange.push({
       id: "lock",
       labelKey: ctx.locked ? "unlock" : "lock",

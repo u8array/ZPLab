@@ -1,4 +1,4 @@
-import { isGroup, type LabelObject, type Page } from '@zplab/core/types/Group';
+import { cloneTree, isGroup, type LabelObject, type Page } from '@zplab/core/types/Group';
 import type { ObjectChanges } from '@zplab/core/types/LabelObject';
 import { NON_EMITTING_CONFIG_FIELDS } from '@zplab/core/types/LabelConfig';
 import { isLocaleCode, type LocaleCode } from '../locales';
@@ -51,15 +51,6 @@ export function configPatchAffectsEmit(
   patch: Record<string, unknown>,
 ): boolean {
   return changedConfigKeys(prev, patch).some((k) => !NON_EMITTING_CONFIG_KEYS.has(k));
-}
-
-/** Drop round-trip provenance from a leaf: a clone/copy is a net-new object with
- *  a new id, so it has no overlay segment and must regenerate from the model. */
-function dropProvenance<T extends LabelObject>(node: T): T {
-  if (node.dirty === undefined) return node;
-  const next = { ...node };
-  delete next.dirty;
-  return next;
 }
 
 export function applyObjectChanges(
@@ -122,45 +113,12 @@ export function thirdPartyDefaults(): { labelary: boolean } {
  *  don't sit exactly on top of the source. 20 dots ≈ 2.5 mm at 8dpmm. */
 export const DUPLICATE_OFFSET_DOTS = 20;
 
-/** Deep-clone a children list with fresh ids and shallow-cloned props on
- *  every leaf. Recurses through nested groups. */
 export function cloneChildrenFresh(children: LabelObject[]): LabelObject[] {
-  return children.map((c) => {
-    if (isGroup(c)) {
-      return {
-        ...c,
-        id: newId(),
-        children: cloneChildrenFresh(c.children),
-      };
-    }
-    return dropProvenance({
-      ...c,
-      id: newId(),
-      props: { ...c.props },
-    } as LabelObject);
-  });
+  return children.map((c) => cloneTree(c, 0, 0, newId));
 }
 
-/** Deep-clone one node with fresh ids, shifted by (dx, dy). Group children
- *  carry absolute coords, so the shift recurses into them; shifting only the
- *  group's structural x/y would leave the copy on top of the original. */
 export function cloneShifted(src: LabelObject, dx: number, dy: number): LabelObject {
-  if (isGroup(src)) {
-    return {
-      ...src,
-      id: newId(),
-      x: src.x + dx,
-      y: src.y + dy,
-      children: src.children.map((c) => cloneShifted(c, dx, dy)),
-    };
-  }
-  return dropProvenance({
-    ...src,
-    id: newId(),
-    x: src.x + dx,
-    y: src.y + dy,
-    props: { ...src.props },
-  } as LabelObject);
+  return cloneTree(src, dx, dy, newId);
 }
 
 /** Clone clipboard entries with fresh ids, shifted by (dx, dy). Fresh ids per

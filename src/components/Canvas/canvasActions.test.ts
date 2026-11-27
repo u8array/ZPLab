@@ -4,12 +4,13 @@ import { buildContextMenu, type ContextMenuCtx } from "./canvasActions";
 const dispatch = () => ({
   copy: vi.fn(), cut: vi.fn(), duplicate: vi.fn(), remove: vi.fn(),
   pasteHere: vi.fn(), reorder: vi.fn(), group: vi.fn(), ungroup: vi.fn(),
+  toggleRepeat: vi.fn(), decouple: vi.fn(),
   toggleLock: vi.fn(), addHere: vi.fn(), switchType: vi.fn(), copyZplSelected: vi.fn(),
   copyZplLabel: vi.fn(), copyImageSelected: vi.fn(), exportImageSelected: vi.fn(), copyImageLabel: vi.fn(), exportImageLabel: vi.fn(), selectAll: vi.fn(),
 });
 
 const ctx = (over: Partial<ContextMenuCtx> = {}): ContextMenuCtx => ({
-  onObject: true, hasSelection: true, canGroup: false, canUngroup: false,
+  onObject: true, hasSelection: true, canGroup: false, canUngroup: false, repeatTurnsOn: null, canDecouple: false,
   canDelete: true, locked: false, hasClipboard: false, hasObjects: true,
   editorFrozen: false,
   addableGroups: [{ id: "text", label: "Text", types: [{ id: "text", type: "text", label: "Text" }] }],
@@ -29,6 +30,20 @@ const ids = (sections: ReturnType<typeof buildContextMenu>) =>
   sections.flatMap((s) => s.items.map((i) => i.id));
 
 describe("buildContextMenu", () => {
+  it("labels the repeat entry by its action and hides decouple when not allowed", () => {
+    const items = (over: Partial<ContextMenuCtx>) => buildContextMenu(ctx(over)).flatMap((s) => s.items);
+    expect(ids(buildContextMenu(ctx()))).not.toContain("repeat");
+    expect(ids(buildContextMenu(ctx()))).not.toContain("decouple");
+    expect(items({ repeatTurnsOn: true }).find((i) => i.id === "repeat")?.labelKey).toBe("repeatOnLabels");
+    const d = dispatch();
+    const on = items({ repeatTurnsOn: false, canDecouple: true, dispatch: d });
+    expect(on.find((i) => i.id === "repeat")?.labelKey).toBe("stopRepeating");
+    on.find((i) => i.id === "repeat")?.run?.();
+    on.find((i) => i.id === "decouple")?.run?.();
+    expect(d.toggleRepeat).toHaveBeenCalledOnce();
+    expect(d.decouple).toHaveBeenCalledOnce();
+  });
+
   it("object menu has clipboard, order, arrange, export sections", () => {
     const got = ids(buildContextMenu(ctx()));
     expect(got).toEqual(expect.arrayContaining(["copy", "cut", "duplicate", "delete", "toFront", "toBack", "lock", "copyZplSelected", "copyImageSelected", "exportImageSelected"]));

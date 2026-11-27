@@ -28,7 +28,7 @@ import { computeAlignDeltas, computeDistribute, computeTidy } from "../../lib/al
 import type { AlignOp, DistributeAxis, AlignRef } from "../../lib/align";
 import { buildAlignSelection } from "../../lib/alignSelection";
 import { barBoxDots, objectBoundsDots, selectionUnionDots, isBarcode, type BoxOf } from "@zplab/core/lib/objectBounds";
-import { computePreflight, markerValueFindings, suppressPristineEmpty } from "@zplab/core/lib/preflight";
+import { computePreflight, markerValueFindings, repeatCopyPlacementFindings, suppressPristineEmpty } from "@zplab/core/lib/preflight";
 import { barcodeEncodeFindings } from "./barcodePreflight";
 import { usePreviewBinding } from "../../store/usePreviewBinding";
 import { useContextMenu } from "../../hooks/useContextMenu";
@@ -42,6 +42,8 @@ import { safeAreaRectsDots } from "../../lib/safeArea";
 import { measuredBoundsMap, subscribeMeasuredBounds, getMeasuredSnapshot } from "../../lib/measuredBoundsCache";
 import { isEditableTarget, isModalOpen } from "../../lib/dom";
 import { KonvaObject } from "./KonvaObject";
+import { RepeatCopies } from "./RepeatCopies";
+import { allRepeatCopies, canDecoupleRepeats, designIdOf, repeatToggle } from "@zplab/core/lib/repeatCopies";
 import { PreflightOverlay } from "./PreflightOverlay";
 import { RfidPositionGuide } from "./RfidPositionGuide";
 import { Grid } from "./Grid";
@@ -84,7 +86,7 @@ import { RulerGuideLines, RulerGuideMarks, RulerStrips } from "./RulerGuides";
 import { guideAtStage, guideSnapLinesStage, guideToStage, stageRulerGuides, type RulerGuideView, type StageRulerGuide } from "../../lib/rulerGuides";
 import { guideLineAtReading, guideReadingDots } from "./rulerGuideLayout";
 import { FloatingCanvasButton, RADIUS as BUTTON_RADIUS, type ButtonTone } from "./FloatingCanvasButton";
-import { ROTATE_ICON, TRASH_ICON, LOCK_ICON, UNLOCK_ICON, GROUP_ICON, UNGROUP_ICON, LINE_ICON, BOX_ICON } from "./canvasIcons";
+import { ROTATE_ICON, TRASH_ICON, LOCK_ICON, UNLOCK_ICON, GROUP_ICON, UNGROUP_ICON, LINE_ICON, BOX_ICON, REPEAT_ICON, DECOUPLE_ICON } from "./canvasIcons";
 import { isShapeToggleable, canToggleShapeMode, oppositeShapeMode, toggleShapeMode } from "../../lib/lineBoxConvert";
 import {
   getStepRotation,
@@ -284,6 +286,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     setSelectionLocked,
     groupSelection,
     ungroup,
+    toggleRepeat,
+    decoupleRepeats,
     copySelectedObjects,
     pasteObjectsAt,
     duplicateSelectedObjects,
@@ -697,6 +701,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   const multiResizeProxyRef = useRef<Konva.Rect>(null);
   // Movable group sub-outlines share one drag offset.
   const subOutlineGroupRef = useRef<Konva.Group>(null);
+  const repeatMovingRef = useRef<Konva.Group>(null);
   const isMultiFrame = attachableIds.length > 1;
   // One selected group = solid frame (persistent); several picks = dashed (ad-hoc).
   const isMultiSelection = selectedIds.length > 1;
@@ -754,11 +759,14 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // validates in real time.
   const preflightSuppressed = previewCoversCanvas || isDragging;
   const preflightLeaves = preflightSuppressed ? [] : exportableLeaves(objects);
+  const repeatCopyObjects = allRepeatCopies(objects, frameCtx);
+  const copyLeaves = preflightSuppressed ? [] : exportableLeaves(repeatCopyObjects);
   const preflightFindings = preflightSuppressed
     ? []
     : suppressPristineEmpty(
         [
           ...computePreflight(preflightLeaves, frameCtx, unit),
+          ...repeatCopyPlacementFindings(copyLeaves, frameCtx, unit),
           ...barcodeEncodeFindings(preflightLeaves, scale, effDpmm, previewBinding),
           ...markerValueFindings(preflightLeaves, {
             variables: previewBinding.variables,
@@ -774,9 +782,10 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // future non-off-label finding won't borrow the off-label treatment. A hidden
   // exported object has no on-canvas node (absent from visibleLeafById), so it
   // gets a badge entry but no outline.
+  const visibleCopyById = new Map(visibleLeaves(repeatCopyObjects).map((l) => [l.id, l]));
   const outOfBoundsMarks = preflightFindings.flatMap((f) => {
     if (f.kind !== "offLabelOutside" && f.kind !== "offLabelClipped") return [];
-    const leaf = visibleLeafById.get(f.objectId);
+    const leaf = visibleLeafById.get(f.objectId) ?? visibleCopyById.get(f.objectId);
     if (!leaf) return [];
     const rect = toFramePx(objectBoundsDots(leaf, frameCtx));
     return rect ? [{ id: f.objectId, kind: f.kind, rect }] : [];
@@ -896,6 +905,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       }
       // Movable sub-outlines follow the drag (reset to 0 on end).
       subOutlineGroupRef.current?.position({ x: dx, y: dy });
+      repeatMovingRef.current?.position({ x: dx, y: dy });
       // Shared clamp/flip policy; measure the bar lazily since a drag that selects
       // a new object renders it only after selectObject (absent at drag start).
       const bar = actionBarRef.current;
@@ -1099,6 +1109,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
   // a loose object), so both buttons can show.
   const canGroup = selectedIds.length > 1 && canGroupSelection(objects, selectedIds);
   const canUngroup = canUngroupSelection(objects, selectedIds);
+  const repeatAction = repeatToggle(objects, selectedIds, label);
 
   // Contextual action bar. Rotate is a 90-degree step (ZPL only stores N/R/I/B,
   // so a button beats the free-rotation drag handle other tools use). Icons rest
@@ -1154,6 +1165,22 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       iconPath: UNGROUP_ICON,
       tone: "neutral",
       onClick: ungroup,
+    });
+  }
+  if (repeatAction) {
+    actionButtons.push({
+      key: "repeat",
+      iconPath: REPEAT_ICON,
+      tone: repeatAction.turnOn ? "neutral" : "active",
+      onClick: () => toggleRepeat(selectedIds),
+    });
+  }
+  if (canDecoupleRepeats(objects, selectedIds, label)) {
+    actionButtons.push({
+      key: "decouple",
+      iconPath: DECOUPLE_ICON,
+      tone: "neutral",
+      onClick: decoupleRepeats,
     });
   }
   if (selectedIds.length > 0) {
@@ -1235,7 +1262,9 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
     let hitLeafId: string | null = null;
     let node: Konva.Node | null = e.target;
     while (node && node !== stage) {
-      const id = node.id?.();
+      const drawn = node.id?.();
+      // A copy of a repeating object opens the menu of that object.
+      const id = drawn && designIdOf(drawn);
       if (id && findObjectById(objects, id)) {
         hitLeafId = id;
         // Resolve a grouped child to its outermost group, like the drag handler.
@@ -1280,6 +1309,7 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       });
       void copyPngToClipboard(blob).catch(() => undefined);
     };
+    const repeatFor = repeatToggle(objects, sel, label);
     const dispatch = {
       copy: copySelectedObjects,
       cut: () => {
@@ -1292,6 +1322,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       reorder: reorderSelection,
       group: groupSelection,
       ungroup,
+      toggleRepeat: () => toggleRepeat(sel),
+      decouple: decoupleRepeats,
       toggleLock: () => setSelectionLocked(!isSelectionLocked(objects, sel)),
       addHere: (type: string, propsOverride?: object) => addObject(type, click, propsOverride),
       copyZplSelected: () => {
@@ -1333,6 +1365,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
       hasSelection: sel.length > 0,
       canGroup: sel.length > 1 && canGroupSelection(objects, sel),
       canUngroup: canUngroupSelection(objects, sel),
+      repeatTurnsOn: repeatFor?.turnOn ?? null,
+      canDecouple: canDecoupleRepeats(objects, sel, label),
       canDelete: canDeleteSelection(objects, sel),
       locked: isSelectionLocked(objects, sel),
       hasClipboard: clipboard.length > 0,
@@ -1452,8 +1486,8 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
         <PreflightOverlay
           key={preflightFindings.length > 0 ? "active" : "empty"}
           findings={preflightFindings}
-          objects={preflightLeaves}
-          onSelect={(id) => selectObject(selectionTargetId(objects, id))}
+          objects={[...preflightLeaves, ...copyLeaves]}
+          onSelect={(id) => selectObject(selectionTargetId(objects, designIdOf(id)))}
         />
       </div>
 
@@ -1694,35 +1728,50 @@ export const LabelCanvas = forwardRef<LabelCanvasHandle, Props>(function LabelCa
                   </>
                 )
               ) : (
-                renderedLeaves.map((obj) => (
-                  <KonvaObject
-                    key={obj.id}
-                    obj={obj}
+                <>
+                  {renderedLeaves.map((obj) => (
+                    <KonvaObject
+                      key={obj.id}
+                      obj={obj}
+                      scale={scale}
+                      dpmm={effDpmm}
+                      offsetX={objectsOffsetX}
+                      offsetY={labelOffsetY}
+                      isSelected={attachableIds.includes(obj.id)}
+                      onOpenEditor={openEditor}
+                      onSelect={(add) => {
+                        // Click child -> select outermost group. Locked objects
+                        // are selectable so the action bar's unlock is reachable;
+                        // the lock guard still blocks any move/transform.
+                        const target = selectionTargetId(objects, obj.id);
+                        if (add) toggleSelectObject(target);
+                        else selectObject(target);
+                      }}
+                      onChange={(changes) => handleObjectChange(obj.id, changes)}
+                      snap={snap}
+                      dragHandlers={dragController.nodeDragHandlers}
+                      registerMover={dragController.registerMover}
+                      getOthersSnapshot={smartSnapActive ? getOthersSnapshot : undefined}
+                      labelRect={transformerSnapLabelRect}
+                      snapLines={guideSnapLines}
+                      setGuides={setGuides}
+                      snapBypassRef={snapBypassRef}
+                    />
+                  ))}
+                  <RepeatCopies
+                    copies={repeatCopyObjects}
                     scale={scale}
                     dpmm={effDpmm}
                     offsetX={objectsOffsetX}
                     offsetY={labelOffsetY}
-                    isSelected={attachableIds.includes(obj.id)}
-                    onOpenEditor={openEditor}
-                    onSelect={(add) => {
-                      // Click child -> select outermost group. Locked objects
-                      // are selectable so the action bar's unlock is reachable;
-                      // the lock guard still blocks any move/transform.
-                      const target = selectionTargetId(objects, obj.id);
-                      if (add) toggleSelectObject(target);
-                      else selectObject(target);
+                    movingIds={new Set(movableSelIds)}
+                    movingRef={repeatMovingRef}
+                    onSelect={(sourceId, add) => {
+                      if (add) toggleSelectObject(sourceId);
+                      else selectObject(sourceId);
                     }}
-                    onChange={(changes) => handleObjectChange(obj.id, changes)}
-                    snap={snap}
-                    dragHandlers={dragController.nodeDragHandlers}
-                    registerMover={dragController.registerMover}
-                    getOthersSnapshot={smartSnapActive ? getOthersSnapshot : undefined}
-                    labelRect={transformerSnapLabelRect}
-                    snapLines={guideSnapLines}
-                    setGuides={setGuides}
-                    snapBypassRef={snapBypassRef}
                   />
-                ))
+                </>
               )}
 
               {/* Off-label preflight, two severities: clipped = solid amber

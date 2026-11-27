@@ -36,6 +36,17 @@ describe("spanCoveredLines", () => {
     expect(covered.has(fx + 1)).toBe(true);
   });
 
+  it("marks the copies of a repeating group with its leaves", () => {
+    const row: LabelConfig = { widthMm: 94, heightMm: 30, dpmm: 8, labelsAcross: { count: 3, gapMm: 2 } };
+    const group = { id: "g", type: "group", x: 0, y: 0, rotation: 0, repeat: true, children: [text("a", "Alpha")] } as LabelObject;
+    const out = generateMultiPageZplWithMap(row, [{ objects: [group, text("b", "Beta", 60)] }]);
+    const covered = spanCoveredLines(out.text, out.spans, new Set(["a"]));
+    for (const [i, line] of out.text.split("\n").entries()) {
+      expect(covered.has(i)).toBe(line.includes("Alpha"));
+    }
+    expect(covered.size).toBe(3);
+  });
+
   it("is empty for no selection", () => {
     const pages: Page[] = [{ objects: [text("a", "Alpha")] }];
     const out = generateMultiPageZplWithMap(label, pages);

@@ -28,6 +28,7 @@ import type { ClockOffset, CustomFontMapping, JmDensity, LabelConfig, PageLabel 
 import type { ZplEmitContext } from '../types/ZplEmit';
 import type { Variable } from '../types/Variable';
 import { exportableLeaves, isGroup, pageLabelConfig, type LabelObject, type LeafObject, type Page } from '../types/Group';
+import { withRepeatCopies } from './repeatCopies';
 import { isOverlayConsistent, MIN_DF_SPAN, MIN_JM_SPAN, type DfSpan, type FormatHead, type JmSpan, type OverlayFrame, type UploadSegment } from './zplOverlay/overlay';
 import type { SourceSpan } from './zplParser/types';
 import { reconstructBlockHead, storedFormatSpanOf } from './zplHeadScan';
@@ -226,9 +227,14 @@ export interface EmitSpan {
  *  hidden/excluded/dropped leaves have none. */
 export function generateMultiPageZplWithMap(
   label: LabelConfig,
-  pages: Page[],
+  designPages: Page[],
   variables: readonly Variable[] = [],
 ): { text: string; spans: EmitSpan[]; blocks: SourceSpan[] } {
+  // Before any walk, so replay, upload ledger and regeneration share one object list.
+  const pages = designPages.map((p) => {
+    const objects = withRepeatCopies(p.objects, { label: pageLabelConfig(label, p), variables });
+    return objects === p.objects ? p : { ...p, objects };
+  });
   let out = '';
   const spans: EmitSpan[] = [];
   const blocks: SourceSpan[] = [];
@@ -853,11 +859,13 @@ const NO_BINDINGS = { bindings: {} as Record<string, string> };
  *  every slot once the printer holds it, since a stored ^FD seals its slot against the recall (ZD230). */
 function planRecalls(
   label: PageLabel,
-  objects: LabelObject[],
+  designObjects: LabelObject[],
   variables: readonly Variable[],
   dataset: { headers: readonly string[]; rows: readonly (readonly string[])[] },
   columnMapping: { bindings: Record<string, string> },
 ): { template: PageBlock; path: string; recalls: RecallEntry[] } {
+  // The template stores the copies of a repeating object, so they donate like any leaf.
+  const objects = withRepeatCopies(designObjects, { label, variables });
   const identity = (s: string) => s;
   const recallOnly = recallOnlyPath(label) !== undefined;
   // Only leaves that emit an ^FN in the stored template may donate their
@@ -1025,7 +1033,7 @@ export function planFieldEmission(
   const homeX = label.labelHomeX ?? 0;
   const homeY = label.labelHomeY ?? 0;
   const top = label.labelTop ?? 0;
-  const shifted = shiftObjectsByHome(objects, homeX, homeY, top, label, variables);
+  const shifted = shiftObjectsByHome(withRepeatCopies(objects, { label, variables }), homeX, homeY, top, label, variables);
 
   const { headerLines, emitCtx } = planTemplateHeader(shifted, label, variables, { homeX, homeY, top }, bareFnSlots);
 

@@ -535,6 +535,18 @@ describe("headless tools", () => {
     expect(r.errors[0]).toMatch(/object limit/);
   });
 
+  it("reports a repeating group's box once, however many of its copies run off their labels", () => {
+    // Labels of 384 dots. The box and its copy both reach 116 dots over the right edge.
+    const box = { id: "b", type: "box", x: 300, y: 50, rotation: 0, props: { width: 200, height: 20, thickness: 2, filled: false, color: "B", rounding: 0 } };
+    const df = {
+      schemaVersion: 3,
+      label: { widthMm: 100, heightMm: 50, dpmm: 8, labelsAcross: { count: 2, gapMm: 4 } },
+      pages: [{ objects: [{ id: "g", type: "group", x: 0, y: 0, rotation: 0, repeat: true, children: [box] }] }],
+    };
+    expect(ok(validateDraft(df)).warnings.filter((w) => w.kind.startsWith("offLabel")).map((w) => w.objectId)).toEqual(["b"]);
+    expect(ok(exportZpl(df)).zpl.match(/\^GB/g)).toHaveLength(2);
+  });
+
   it("reports an object in a gap between the labels of a row", () => {
     // 100 mm in two with a gap of 4 mm. The gap covers dots 384 to 416.
     const df = {
