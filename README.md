@@ -245,7 +245,7 @@ Requires Node.js ≥ 24 and pnpm. The desktop app prints over raw TCP or the sys
 
 ## Contributing
 
-Issues and pull requests are welcome. If a ZPL file imports incorrectly, attach it to the issue and describe the expected result.
+Issues and pull requests are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
