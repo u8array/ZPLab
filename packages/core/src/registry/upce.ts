@@ -1,11 +1,13 @@
 import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
-import { formatUpceHri, upceData6FromFd } from './hriFormatters';
+import { upceCanonical } from './firmwareRules';
+import { formatUpceHri } from './hriFormatters';
 export type { Barcode1DProps as UpcEProps } from './barcode1d';
 
 export const upceCoreConfig: Barcode1DCoreConfig = {
   label: 'UPC-E',
   icon: 'UPE',
   placeholderContent: '012345',
+  firmwareData: upceCanonical,
   group: 'code-1d',
   propSpecs: BARCODE_1D_PROP_SPECS,
   serialisable: false,
@@ -20,7 +22,7 @@ export const upceCoreConfig: Barcode1DCoreConfig = {
   // assumed 0 (spec allows 0 or 1; NS 1 round-trips lossily, see ticket).
   // Empty stays empty: the padding would otherwise fabricate a scannable
   // 0000000 UPC-E from a blank field, breaking the empty-^FD invariant.
-  fdContent: (c) => (c === '' ? '' : `0${upceData6FromFd(c)}`),
+  fdContent: (c) => (c === '' ? '' : upceCanonical(c)),
   contentSpec: { charset: '0-9', maxLength: 6 },
 };
 

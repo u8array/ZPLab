@@ -126,6 +126,8 @@ export interface ObjectTypeCore<P extends object = object> {
   ) => Partial<P>;
   /** Only for 1D barcodes with an HRI overlay; see {@link HriBehavior}. */
   hri?: HriBehavior;
+  /** The data the firmware encodes from the field content. */
+  firmwareData?: (content: string) => string;
   /** Pure per-type preflight checks the geometry pass can't see (e.g. block
    *  text too narrow to print, barcode module too small to scan). Returns
    *  findings without objectId/severity; computePreflight stamps both. */

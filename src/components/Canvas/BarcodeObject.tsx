@@ -20,7 +20,7 @@ import {
   type BarcodeDisplaySize,
   type EanUpcType,
 } from "./bwipHelpers";
-import { resolveHriAbove, gs1HriFontDots } from "@zplab/core/lib/barcodeHri";
+import { resolveHriAbove, gs1HriFontDots, hriText } from "@zplab/core/lib/barcodeHri";
 import { gs1CarrierFor, planGs1Fd } from "@zplab/core/lib/gs1Plan";
 import type { HriFormatProps } from "@zplab/core/types/ZplEmit";
 import { placeholderContentFor, samplePropsFor } from "@zplab/core/registry/placeholderContent";
@@ -301,7 +301,7 @@ export function BarcodeObject({
     // string as-is.
     const displayText = stripHriControlBytes(
       // Cast to the HRI slice: the formatter reads only its own keys.
-      (gs1Hri ? undefined : hri?.formatHri?.(rawContent, obj.props as HriFormatProps)) ?? rawContent,
+      gs1Hri ? rawContent : hriText(obj.type, rawContent, obj.props as HriFormatProps),
     );
     const isTextAbove = resolveHriAbove(obj);
     // Above-gap grows with module width (Labelary); per-symbology override

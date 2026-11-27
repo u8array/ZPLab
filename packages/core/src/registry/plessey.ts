@@ -1,4 +1,5 @@
 import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { upperAZ } from './firmwareRules';
 export type { Barcode1DProps as PlesseyProps } from "./barcode1d";
 
 /** Plessey uses 2:1 wide:narrow (same as MSI), overriding the ZPL default of
@@ -9,6 +10,7 @@ export const plesseyCoreConfig: Barcode1DCoreConfig = {
   label: "Plessey",
   icon: "PLS",
   placeholderContent: '12345678',
+  firmwareData: upperAZ,
   group: 'legacy',
   propSpecs: BARCODE_1D_PROP_SPECS,
   byRatio: PLESSEY_RATIO,

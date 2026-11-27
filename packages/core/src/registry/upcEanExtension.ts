@@ -1,4 +1,5 @@
 import { BARCODE_1D_PROP_SPECS, createBarcode1DCore, type Barcode1DCoreConfig } from './barcode1d';
+import { supplementData } from './firmwareRules';
 import { formatUpcEanExtensionHri } from './hriFormatters';
 import {
   eanUpcHriFontFamily,
@@ -13,9 +14,8 @@ export type { Barcode1DProps as UpcEanExtensionProps } from './barcode1d';
  *
  *  Standalone object by design: the user positions it manually next
  *  to the main barcode. Same `^BSo,h,f` ZPL syntax for both lengths;
- *  the canvas renderer picks `ean2` vs `ean5` from `content.length`.
- *  validLengths surfaces an inline warning when the field isn't 2
- *  or 5 digits (bwip-js / the printer reject other lengths).
+ *  the printer zero-fills other lengths to one of the two.
+ *  validLengths warns on those.
  *  Default '51999' = $19.99 in the ISBN price-code form, the
  *  dominant use case. */
 
@@ -23,10 +23,10 @@ export const upcEanExtensionCoreConfig: Barcode1DCoreConfig = {
   label: 'UPC/EAN extension',
   icon: 'EXT',
   placeholderContent: '51999',
+  firmwareData: supplementData,
   group: 'code-1d',
   propSpecs: BARCODE_1D_PROP_SPECS,
-  // Exactly 2 or 5 digits; ^SN/^SF could roll it to an invalid 3/4/6-digit
-  // supplement, so it opts out of serial like EAN/UPC.
+  // ^SN/^SF could turn a 2-digit supplement into the 5-digit form, so serial is off.
   serialisable: false,
   zplCommand: (p) => {
     const interp = p.printInterpretation ? 'Y' : 'N';

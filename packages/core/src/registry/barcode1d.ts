@@ -56,6 +56,8 @@ export interface Barcode1DCoreConfig<P extends Barcode1DProps = Barcode1DProps> 
   interpretationLocked?: boolean;
   /** See {@link HriBehavior}. */
   hri?: HriBehavior;
+  /** See {@link ObjectTypeCore.firmwareData}. */
+  firmwareData?: (content: string) => string;
   /** Transform stored content into the ^FD payload (e.g. UPC-E prepends
    *  the number-system digit the spec requires). Default: identity. */
   fdContent?: (content: string) => string;
@@ -153,6 +155,7 @@ export function createBarcode1DCore<P extends Barcode1DProps = Barcode1DProps>(
     heightLocked: config.heightLocked,
     interpretationLocked: config.interpretationLocked,
     hri: config.hri,
+    firmwareData: config.firmwareData,
     // GS1 mode swaps in the shared GS1 element-string spec; the static half
     // stays the symbology's own rule.
     contentSpec: config.gs1Capable

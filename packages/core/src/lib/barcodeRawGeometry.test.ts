@@ -14,7 +14,7 @@ describe("zebraWidthBarText", () => {
     expect(zebraWidthBarText("plessey", "")).toBe("0");
   });
 
-  it("pads PLANET like firmware (11/13 digits) and strips non-digits", () => {
+  it("fills PLANET to 11 or 13 digits and strips non-digits", () => {
     expect(zebraWidthBarText("planet", "12345678")).toBe("00012345678");
     expect(zebraWidthBarText("planet", "123456789012")).toBe("0123456789012");
     expect(zebraWidthBarText("planet", "1a2b3")).toBe("00000000123");

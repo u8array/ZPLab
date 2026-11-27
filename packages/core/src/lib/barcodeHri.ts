@@ -1,7 +1,9 @@
 // Pure HRI text-zone resolution shared by the barcode renderer (getDisplaySize)
 // and the group-rotation bbox probe, so zone height and side never drift apart.
 
-import { isGs1Active, ObjectRegistry, type LeafObject } from "../registry";
+import { getEntry, isGs1Active, ObjectRegistry, type LeafObject } from "../registry";
+import type { HriFormatProps } from "../types/ZplEmit";
+import { firmwareData } from "./firmwareData";
 import {
   EAN_TEXT_ZONE_DOTS,
   LOGMARS_TEXT_ZONE_DOTS,
@@ -59,6 +61,11 @@ export const HRI_LINE_TYPES: ReadonlySet<string> = new Set([
  *  (spec p.142). ZD230 verification still open. */
 export function hriZoneDots(moduleWidth: number): number {
   return 7 * (Math.max(1, Math.round(moduleWidth)) + 1);
+}
+
+/** The line text: the type's own format, else the data the firmware encodes. */
+export function hriText(type: string, content: string, props?: HriFormatProps): string {
+  return getEntry(type)?.hri?.formatHri?.(content, props) ?? firmwareData(type, content);
 }
 
 /** Firmware-reserved HRI text-zone height in dots. ^BS reserves it only when

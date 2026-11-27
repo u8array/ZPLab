@@ -719,7 +719,7 @@ describe("encode preflight", () => {
     ).warnings.filter((w) => w.kind === "renderFailed");
 
   it("flags a payload the encoder rejects", () => {
-    expect(ean("123")).toHaveLength(1);
+    expect(ean("40123451234567")).toHaveLength(1);
   });
 
   it("stays quiet on a valid payload", () => {
@@ -732,7 +732,7 @@ describe("agent-facing reporting", () => {
     createDraft({ widthMm: 60, heightMm: 40, dpmm: 8, objects, ...(variables ? { variables } : {}) });
 
   it("says WHY a payload did not encode", () => {
-    const r = ok(label([{ type: "ean13", x: 10, y: 10, props: { content: "123", height: 60 } }]));
+    const r = ok(label([{ type: "ean13", x: 10, y: 10, props: { content: "40123451234567", height: 60 } }]));
     const failed = r.warnings.find((w) => w.kind === "renderFailed");
     expect(failed?.detail).toBeTruthy();
   });
@@ -961,7 +961,7 @@ describe("agent-facing reporting", () => {
   });
 
   it("marks the box of a payload that does not encode as an estimate", () => {
-    const r = ok(label([{ type: "ean13", x: 1, y: 1, props: { content: "123", height: 60 } }]));
+    const r = ok(label([{ type: "ean13", x: 1, y: 1, props: { content: "40123451234567", height: 60 } }]));
     expect(r.bounds[0]?.approx).toBe(true);
   });
 

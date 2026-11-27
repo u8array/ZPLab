@@ -61,8 +61,7 @@ export interface HriBehavior {
   zoneDots?: (moduleWidth: number, above: boolean) => number;
   /** Bar-to-text gap in dots; function form for moduleWidth dependence (^BS). */
   aboveGapDots?: number | ((moduleWidth: number) => number);
-  /** Transform raw content for display; default identity. `props` is the
-   *  leaf's props bag (Code 11 reads checkDigit, MSI its ^BM extras). */
+  /** Formats the content for the line. Without it the line shows the data the firmware encodes. `props` is the leaf's props bag. */
   formatHri?: (content: string, props?: HriFormatProps) => string;
   /** Start/stop marker flanking the HRI text: Code 11 triangle and Code 93
    *  square are shapes (no font glyph); Code 39 asterisk is a real glyph but

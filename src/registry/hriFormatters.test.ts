@@ -4,12 +4,12 @@ import {
   formatEan8Hri,
   formatUpcaHri,
   formatUpceHri,
-  upceData6FromFd,
   formatCode11Hri, formatCode39Hri, formatInterleaved2of5Hri, formatMsiHri,
   formatLogmarsHri,
   formatUpcEanExtensionHri,
   formatCode128Hri,
 } from '@zplab/core/registry/hriFormatters';
+import { upceData6FromFd } from '@zplab/core/registry/firmwareRules';
 
 describe('HRI formatters', () => {
   describe('formatEan13Hri', () => {
@@ -17,8 +17,7 @@ describe('HRI formatters', () => {
       expect(formatEan13Hri('590123412345')).toBe('5901234123457');
     });
     it('pads short input with zeros before computing check digit', () => {
-      // "123" padded to "123000000000" → sum=1*1+2*3+3*1=10 → check=0
-      expect(formatEan13Hri('123')).toBe('1230000000000');
+      expect(formatEan13Hri('123')).toBe('0000000001236');
     });
     it('strips non-digits', () => {
       expect(formatEan13Hri('5-9-0-1-2-3-4-1-2-3-4-5')).toBe('5901234123457');
@@ -29,11 +28,17 @@ describe('HRI formatters', () => {
     it('appends check digit to 7-digit input', () => {
       expect(formatEan8Hri('1234567')).toBe('12345670');
     });
+    it('pads short input on the left and appends the check digit', () => {
+      expect(formatEan8Hri('123')).toBe('00001236');
+    });
   });
 
   describe('formatUpcaHri', () => {
     it('appends check digit to 11-digit input', () => {
       expect(formatUpcaHri('01234567890')).toBe('012345678905');
+    });
+    it('pads short input on the left and appends the check digit', () => {
+      expect(formatUpcaHri('123')).toBe('000000001236');
     });
   });
 
@@ -108,8 +113,8 @@ describe('HRI formatters', () => {
       // = 21+24+16+22+10+27+28+1 = 149 → 149 % 43 = 20 → "K"
       expect(formatLogmarsHri('LOGMARS1')).toBe('LOGMARS1K');
     });
-    it('treats lowercase as uppercase (charset is upper-only)', () => {
-      expect(formatLogmarsHri('logmars1')).toBe('logmars1K');
+    it('uppercases lowercase input and appends the check char', () => {
+      expect(formatLogmarsHri('logmars1')).toBe('LOGMARS1K');
     });
     it('ignores characters not in the LOGMARS charset', () => {
       // The single valid char 'A' (index 10) sums to 10 → check = "A".
@@ -125,9 +130,11 @@ describe('HRI formatters', () => {
     it('keeps 2-digit content as-is', () => {
       expect(formatUpcEanExtensionHri('12')).toBe('12');
     });
-    it('pads short 5-digit form with zeros', () => {
+    it('fills and cuts to the 2 or 5 digit form', () => {
       expect(formatUpcEanExtensionHri('51')).toBe('51');
-      expect(formatUpcEanExtensionHri('519')).toBe('51900');
+      expect(formatUpcEanExtensionHri('519')).toBe('00519');
+      expect(formatUpcEanExtensionHri('1')).toBe('01');
+      expect(formatUpcEanExtensionHri('123456')).toBe('12345');
     });
     it('preserves 5-digit content', () => {
       expect(formatUpcEanExtensionHri('51999')).toBe('51999');

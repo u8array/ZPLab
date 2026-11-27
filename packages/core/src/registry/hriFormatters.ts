@@ -1,4 +1,5 @@
 import { mod10CheckDigit } from "../lib/gs1";
+import { fixedDigits, supplementData, upceData6FromFd, upperAZ } from "./firmwareRules";
 import type { HriFormatProps } from "../types/ZplEmit";
 import { code11CheckDigits, msiCheckDigits, eanCheckDigit, upceCheckDigit } from '../lib/barcodeCheckDigits';
 import { code128FdToDisplayText } from '../lib/code128Subset';
@@ -11,37 +12,26 @@ import { C0_OR_DEL_RE, resolveControlMarkers } from '../types/controlKey';
  * Pure functions; kept here (not inline in each leaf) so they can be
  * unit-tested independently and re-used across the canvas + any future
  * non-canvas renderer (export, preview, …).
- *
- * EAN/UPC formatters pad short content to the spec length so the
- * displayed HRI matches what bwip actually encoded.
  */
 
+/** The data digits of the line, cut or zero-filled to the bar length. */
+function dataDigits(content: string, length: number): string {
+  return fixedDigits(content.replace(/\D/g, ''), length).slice(0, length).padStart(length, '0');
+}
+
 export function formatEan13Hri(content: string): string {
-  const d12 = content.replace(/\D/g, '').slice(0, 12).padEnd(12, '0');
+  const d12 = dataDigits(content, 12);
   return d12 + eanCheckDigit(d12, 1, 3);
 }
 
 export function formatEan8Hri(content: string): string {
-  const d7 = content.replace(/\D/g, '').slice(0, 7).padEnd(7, '0');
+  const d7 = dataDigits(content, 7);
   return d7 + eanCheckDigit(d7, 3, 1);
 }
 
 export function formatUpcaHri(content: string): string {
-  const d11 = content.replace(/\D/g, '').slice(0, 11).padEnd(11, '0');
+  const d11 = dataDigits(content, 11);
   return d11 + eanCheckDigit(d11, 3, 1);
-}
-
-/** The 6 UPC-E data digits (number system and check digit excluded). */
-function upceData6(content: string): string {
-  return content.replace(/\D/g, "").slice(0, 6).padEnd(6, "0");
-}
-
-/** Extract the 6 data digits from a parsed ^B9 ^FD payload. ZPL carries
- *  the number-system digit (and optionally the check digit), so 7- and
- *  8-digit payloads drop the leading NS before keeping 6 data digits. */
-export function upceData6FromFd(fd: string): string {
-  const digits = fd.replace(/\D/g, "");
-  return upceData6(digits.length >= 7 ? digits.slice(1) : digits);
 }
 
 export function formatUpceHri(content: string): string {
@@ -58,10 +48,9 @@ export function formatCode11Hri(content: string, props?: HriFormatProps): string
 
 const MOD43_CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
 
-/** ^B3 e=Y encodes AND prints the Mod-43 check char; the firmware also
- *  uppercases the data (spec p.70; Labelary: ^FD1234 -> *1234A*). */
+/** ^B3 e=Y encodes and prints the Mod-43 check char (Labelary: ^FD1234 -> *1234A*). */
 export function formatCode39Hri(content: string, props?: HriFormatProps): string {
-  const data = content.toUpperCase();
+  const data = upperAZ(content);
   if (!props?.checkDigit) return data;
   let sum = 0;
   for (const ch of data) {
@@ -88,20 +77,18 @@ export function formatMsiHri(content: string, props?: HriFormatProps): string {
 
 
 export function formatLogmarsHri(content: string): string {
+  const data = upperAZ(content);
   let sum = 0;
-  for (const c of content) {
-    const idx = MOD43_CHARSET.indexOf(c.toUpperCase());
+  for (const c of data) {
+    const idx = MOD43_CHARSET.indexOf(c);
     if (idx >= 0) sum += idx;
   }
-  return `${content}${MOD43_CHARSET[sum % 43] ?? ''}`;
+  return `${data}${MOD43_CHARSET[sum % 43] ?? ''}`;
 }
 
-/** ^BS shows the supplement as a single 2- or 5-digit string, padded
- *  to whichever variant bwip actually rendered (anything other than 2
- *  becomes the 5-digit form). */
+/** ^BS shows the supplement as a 2- or 5-digit string. */
 export function formatUpcEanExtensionHri(content: string): string {
-  const t = content.replace(/\D/g, '');
-  return t.length === 2 ? t : t.slice(0, 5).padEnd(5, '0');
+  return supplementData(content.replace(/\D/g, '')) || '00000';
 }
 
 /** Firmware prints no glyph for a control byte in the interpretation line
