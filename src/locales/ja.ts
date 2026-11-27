@@ -475,6 +475,7 @@ const ja = {
     renderFailed: 'エンコード不可',
     blockTooNarrow: 'ブロックが狭すぎる',
     barcodeTooSmall: 'モジュールが小さすぎる',
+    checkDigitMismatch: 'チェックディジットが不正',
     textOverset: 'テキスト切れ',
     imageMissing: '画像なし',
     emptyContent: '空欄',

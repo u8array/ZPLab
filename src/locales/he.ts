@@ -475,6 +475,7 @@ const he = {
     renderFailed: 'לא ניתן לקודד',
     blockTooNarrow: 'בלוק צר מדי',
     barcodeTooSmall: 'מודול קטן מדי',
+    checkDigitMismatch: 'ספרת ביקורת שגויה',
     textOverset: 'טקסט חתוך',
     imageMissing: 'תמונה חסרה',
     emptyContent: 'שדה ריק',

@@ -475,6 +475,7 @@ const fi = {
     renderFailed: 'Ei koodattavissa',
     blockTooNarrow: 'Lohko liian kapea',
     barcodeTooSmall: 'Moduuli liian pieni',
+    checkDigitMismatch: 'Väärä tarkistusnumero',
     textOverset: 'Teksti katkaistu',
     imageMissing: 'Kuva puuttuu',
     emptyContent: 'Kenttä tyhjä',

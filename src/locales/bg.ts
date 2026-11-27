@@ -475,6 +475,7 @@ const bg = {
     renderFailed: 'Неуспешно кодиране',
     blockTooNarrow: 'Блокът е твърде тесен',
     barcodeTooSmall: 'Модулът е твърде малък',
+    checkDigitMismatch: 'Грешна контролна цифра',
     textOverset: 'Текст отрязан',
     imageMissing: 'Липсва изображение',
     emptyContent: 'Полето е празно',

@@ -475,6 +475,7 @@ const pt = {
     renderFailed: 'Não codificável',
     blockTooNarrow: 'Bloco muito estreito',
     barcodeTooSmall: 'Módulo muito pequeno',
+    checkDigitMismatch: 'Dígito verificador incorreto',
     textOverset: 'Texto cortado',
     imageMissing: 'Imagem ausente',
     emptyContent: 'Campo vazio',

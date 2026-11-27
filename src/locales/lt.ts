@@ -475,6 +475,7 @@ const lt = {
     renderFailed: 'Negalima koduoti',
     blockTooNarrow: 'Blokas per siauras',
     barcodeTooSmall: 'Modulis per mažas',
+    checkDigitMismatch: 'Neteisingas kontrolinis skaitmuo',
     textOverset: 'Tekstas apkarpytas',
     imageMissing: 'Trūksta vaizdo',
     emptyContent: 'Laukas tuščias',

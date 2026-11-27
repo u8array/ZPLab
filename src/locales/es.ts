@@ -475,6 +475,7 @@ const es = {
     renderFailed: 'No codificable',
     blockTooNarrow: 'Bloque demasiado estrecho',
     barcodeTooSmall: 'Módulo demasiado pequeño',
+    checkDigitMismatch: 'Dígito de control incorrecto',
     textOverset: 'Texto recortado',
     imageMissing: 'Falta imagen',
     emptyContent: 'Campo vacío',

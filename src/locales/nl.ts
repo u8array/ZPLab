@@ -475,6 +475,7 @@ const nl = {
     renderFailed: 'Niet codeerbaar',
     blockTooNarrow: 'Blok te smal',
     barcodeTooSmall: 'Module te klein',
+    checkDigitMismatch: 'Onjuist controlecijfer',
     textOverset: 'Tekst afgesneden',
     imageMissing: 'Afbeelding ontbreekt',
     emptyContent: 'Veld leeg',

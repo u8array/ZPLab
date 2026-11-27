@@ -475,6 +475,7 @@ const fr = {
     renderFailed: 'Encodage impossible',
     blockTooNarrow: 'Bloc trop étroit',
     barcodeTooSmall: 'Module trop petit',
+    checkDigitMismatch: 'Clé de contrôle incorrecte',
     textOverset: 'Texte coupé',
     imageMissing: 'Image absente',
     emptyContent: 'Champ vide',

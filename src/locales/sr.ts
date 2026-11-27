@@ -475,6 +475,7 @@ const sr = {
     renderFailed: 'Nije kodirljivo',
     blockTooNarrow: 'Блок превише узак',
     barcodeTooSmall: 'Модул превише мали',
+    checkDigitMismatch: 'Погрешна контролна цифра',
     textOverset: 'Tekst odsečen',
     imageMissing: 'Slika nedostaje',
     emptyContent: 'Поље празно',

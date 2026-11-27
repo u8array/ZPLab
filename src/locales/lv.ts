@@ -475,6 +475,7 @@ const lv = {
     renderFailed: 'Nevar kodēt',
     blockTooNarrow: 'Bloks pārāk šaurs',
     barcodeTooSmall: 'Modulis pārāk mazs',
+    checkDigitMismatch: 'Nepareizs kontrolcipars',
     textOverset: 'Teksts apgriezts',
     imageMissing: 'Attēls trūkst',
     emptyContent: 'Lauks tukšs',

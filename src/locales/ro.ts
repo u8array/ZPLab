@@ -475,6 +475,7 @@ const ro = {
     renderFailed: 'Necodificabil',
     blockTooNarrow: 'Bloc prea îngust',
     barcodeTooSmall: 'Modul prea mic',
+    checkDigitMismatch: 'Cifră de control greșită',
     textOverset: 'Text trunchiat',
     imageMissing: 'Imagine lipsă',
     emptyContent: 'Câmp gol',

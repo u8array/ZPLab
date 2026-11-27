@@ -475,6 +475,7 @@ const pl = {
     renderFailed: 'Błąd kodowania',
     blockTooNarrow: 'Blok zbyt wąski',
     barcodeTooSmall: 'Moduł zbyt mały',
+    checkDigitMismatch: 'Błędna cyfra kontrolna',
     textOverset: 'Tekst przycięty',
     imageMissing: 'Brak obrazu',
     emptyContent: 'Pole puste',

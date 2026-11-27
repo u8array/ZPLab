@@ -471,6 +471,7 @@ const ca = {
     renderFailed: 'No es pot codificar',
     blockTooNarrow: 'Bloc massa estret',
     barcodeTooSmall: 'Mòdul massa petit',
+    checkDigitMismatch: 'Dígit de control incorrecte',
     textOverset: 'Text retallat',
     imageMissing: 'Falta la imatge',
     emptyContent: 'El camp és buit',

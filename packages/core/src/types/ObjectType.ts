@@ -135,6 +135,8 @@ export interface ObjectTypeCore<P extends object = object> {
     obj: LabelObjectBase & { props: P },
     ctx: PreflightCtx,
   ) => PreflightProducerResult[];
+  /** Only for barcodes; checks the resolved content, the value that prints. */
+  valuePreflight?: (content: string) => PreflightProducerResult[];
 }
 
 // The UI half (ObjectTypeUi, ObjectPanelsMap) lives in registry/panelTypes.ts:

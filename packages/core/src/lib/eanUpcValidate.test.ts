@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validateEanUpc } from "./eanUpcValidate";
+import { checkDigitPreflight, validateEanUpc } from "./eanUpcValidate";
 
 describe("validateEanUpc", () => {
   it("reports empty with the required data length", () => {
@@ -49,5 +49,17 @@ describe("validateEanUpc", () => {
 
   it("rejects content longer than the full code", () => {
     expect(validateEanUpc("ean8", "963850749")).toMatchObject({ status: "tooLong" });
+  });
+});
+
+describe("checkDigitPreflight", () => {
+  const findings = checkDigitPreflight("ean13");
+
+  it("warns when the typed check digit is not the one the printer computes", () => {
+    expect(findings("5901234123450")).toEqual([{ kind: "checkDigitMismatch", detail: "0 ≠ 7" }]);
+  });
+
+  it.each(["5901234123457", "590123412345", "12345", "", "5901234-123450"])("stays quiet for %s", (content) => {
+    expect(findings(content)).toEqual([]);
   });
 });

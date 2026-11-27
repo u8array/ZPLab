@@ -475,6 +475,7 @@ const sl = {
     renderFailed: 'Ni kodirljivo',
     blockTooNarrow: 'Blok preozek',
     barcodeTooSmall: 'Modul premajhen',
+    checkDigitMismatch: 'Napačna kontrolna števka',
     textOverset: 'Besedilo odrezano',
     imageMissing: 'Slika manjka',
     emptyContent: 'Polje prazno',

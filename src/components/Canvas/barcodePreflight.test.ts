@@ -126,6 +126,29 @@ describe("barcodeEncodeFindings", () => {
   });
 });
 
+describe("check digit of the value that prints", () => {
+  const ean = (content: string): LeafObject =>
+    ({ id: "e", type: "ean13", x: 0, y: 0, rotation: 0,
+       props: { content, height: 50, moduleWidth: 2, printInterpretation: true, rotation: "N" } } as LabelObject as LeafObject);
+  const row = (value: string): EncodeEnv => ({
+    variables: [{ id: "v", name: "code", fnNumber: 1, defaultValue: "5901234123457" }],
+    active: { headers: ["ean"], row: [value], mapping: { bindings: { v: "ean" }, headerSnapshot: ["ean"] } },
+  });
+  const mismatch = [{ objectId: "e", kind: "checkDigitMismatch", severity: "warning", detail: "0 ≠ 7" }];
+
+  it("warns when the active row carries a wrong check digit", () => {
+    expect(barcodeEncodeFindings([ean("«code»")], 1, 8, row("5901234123450"), () => null)).toEqual(mismatch);
+  });
+
+  it("returns no findings when the active row is valid", () => {
+    expect(barcodeEncodeFindings([ean("«code»")], 1, 8, row("5901234123457"), () => null)).toEqual([]);
+  });
+
+  it("warns for typed content too", () => {
+    expect(barcodeEncodeFindings([ean("5901234123450")], 1, 8, noEnv, () => null)).toEqual(mismatch);
+  });
+});
+
 describe("resolveForEncode", () => {
   it("resolves markers like the canvas preview so the check encodes what prints", () => {
     // Raw GS1 content `1100«d»` is 4+7 chars and would flag AI 11 as too long;

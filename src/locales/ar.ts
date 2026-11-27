@@ -475,6 +475,7 @@ const ar = {
     renderFailed: 'تعذّر الترميز',
     blockTooNarrow: 'الكتلة ضيقة جداً',
     barcodeTooSmall: 'الوحدة صغيرة جداً',
+    checkDigitMismatch: 'رقم تحقق خاطئ',
     textOverset: 'نص مقتطع',
     imageMissing: 'الصورة مفقودة',
     emptyContent: 'الحقل فارغ',

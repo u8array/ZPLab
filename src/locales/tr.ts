@@ -475,6 +475,7 @@ const tr = {
     renderFailed: 'Kodlanamıyor',
     blockTooNarrow: 'Blok çok dar',
     barcodeTooSmall: 'Modül çok küçük',
+    checkDigitMismatch: 'Hatalı kontrol hanesi',
     textOverset: 'Metin kesildi',
     imageMissing: 'Resim eksik',
     emptyContent: 'Alan boş',

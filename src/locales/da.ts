@@ -475,6 +475,7 @@ const da = {
     renderFailed: 'Kan ikke kodes',
     blockTooNarrow: 'Blok for smal',
     barcodeTooSmall: 'Modul for lille',
+    checkDigitMismatch: 'Forkert kontrolciffer',
     textOverset: 'Tekst afskåret',
     imageMissing: 'Billede mangler',
     emptyContent: 'Felt tomt',

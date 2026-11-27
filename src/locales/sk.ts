@@ -475,6 +475,7 @@ const sk = {
     renderFailed: 'Nekódovateľné',
     blockTooNarrow: 'Blok príliš úzky',
     barcodeTooSmall: 'Modul príliš malý',
+    checkDigitMismatch: 'Chybná kontrolná číslica',
     textOverset: 'Text orezaný',
     imageMissing: 'Chýba obrázok',
     emptyContent: 'Pole prázdne',

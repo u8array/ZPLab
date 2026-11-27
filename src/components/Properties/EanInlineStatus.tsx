@@ -1,6 +1,6 @@
 import { useT } from '../../hooks/useT';
 import { hasTemplateMarkers } from '@zplab/core/lib/fnTemplate';
-import { validateEanUpc, type EanUpcType, type EanUpcStatus } from '../../lib/eanUpcValidate';
+import { validateEanUpc, type EanUpcType, type EanUpcStatus } from '@zplab/core/lib/eanUpcValidate';
 import { eanPrefixKey } from '../../lib/eanPrefix';
 import {
   formatEan13Hri,
